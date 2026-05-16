@@ -48,11 +48,13 @@
                 <option>Loading scenarios&hellip;</option>
             </select>
         </div>
-        <div class="control-field">
-            <label class="control-label" for="year-select">Model year</label>
-            <select class="control-select" id="year-select" disabled>
-                <option>&mdash;</option>
-            </select>
+        <div class="control-field control-field--slider">
+            <label class="control-label" for="year-slider">
+                Model year &middot; <span class="year-value" id="year-value">&mdash;</span>
+            </label>
+            <input type="range" class="control-slider" id="year-slider"
+                   min="2026" max="2050" step="1" value="2026" disabled
+                   aria-label="Model year">
         </div>
     </section>
 
@@ -92,23 +94,23 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Price Duration Curves</div>
-            <div class="card-subtitle">Sorted hourly LMPs by zone for the selected year</div>
+            <div class="card-title">Price Duration Curve</div>
+            <div class="card-subtitle">Hourly LMPs sorted high&ndash;to&ndash;low for the year on the slider</div>
             <div class="chart-container" id="chart-price-duration">
                 <div class="chart-placeholder">
                     <strong>Price duration curve</strong>
-                    <span>Select a scenario and year to render (Plotly line)</span>
+                    <span>Select a scenario to render (Plotly line)</span>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">Storage Utilization</div>
-            <div class="card-subtitle">Charge/discharge intensity by hour of day</div>
-            <div class="chart-container" id="chart-storage-heatmap">
+            <div class="card-title">Capacity Mix</div>
+            <div class="card-subtitle">Installed nameplate capacity by resource for the year on the slider</div>
+            <div class="chart-container" id="chart-capacity-mix">
                 <div class="chart-placeholder">
-                    <strong>Storage utilization heatmap</strong>
-                    <span>Select a scenario and year to render (Plotly heatmap)</span>
+                    <strong>Capacity mix chart</strong>
+                    <span>Select a scenario to render (Plotly bar)</span>
                 </div>
             </div>
         </div>
@@ -122,62 +124,129 @@
     &mdash; <a href="../index.html">Project home</a>
 </footer>
 
-<!-- App scripts — order matters: data-loader + app define globals used here. -->
+<!-- App scripts — order matters: data-loader + app + charts define globals used here. -->
 <script src="js/data-loader.js"></script>
 <script src="js/app.js"></script>
+<script src="js/charts.js"></script>
 <script>
 // ============================================================================
-// Page bootstrap — wire the scenario index into the selectors. Chart rendering
-// (charts.js) is added in a later phase; this skeleton only proves the data
-// path and selector state work end to end.
+// Page bootstrap — wire the scenario index into the selectors, then drive the
+// four Plotly panels (charts.js) off the shared App state. Generation mix and
+// emissions span the whole horizon; the price duration curve and capacity bar
+// re-render whenever the year slider moves.
 // ============================================================================
 (function () {
     'use strict';
 
     var scenarioSelect = document.getElementById('scenario-select');
-    var yearSelect = document.getElementById('year-select');
+    var yearSlider = document.getElementById('year-slider');
+    var yearValue = document.getElementById('year-value');
 
-    function populateYears(range) {
-        yearSelect.innerHTML = '';
-        for (var y = range.start; y <= range.end; y++) {
-            var opt = document.createElement('option');
-            opt.value = String(y);
-            opt.textContent = String(y);
-            yearSelect.appendChild(opt);
-        }
-        yearSelect.disabled = false;
-        App.setYear(yearSelect.value);
+    // The per-scenario result document currently loaded, or null.
+    var currentData = null;
+
+    /** Stable id for a scenario index entry (export uses cache_key). */
+    function scenarioId(s) {
+        return s.id || s.cache_key || '';
     }
 
+    /** Human-readable label for a scenario index entry. */
+    function scenarioName(s) {
+        if (s.name) { return s.name; }
+        var cfg = s.config || {};
+        var bits = [s.iso || cfg.iso || 'Scenario'];
+        if (cfg.gas_price_path) { bits.push(cfg.gas_price_path + ' gas'); }
+        if (cfg.carbon_price) { bits.push('$' + cfg.carbon_price + '/t CO₂'); }
+        var id = scenarioId(s);
+        return id ? bits.join(' · ') + ' (' + id.slice(0, 8) + ')'
+                  : bits.join(' · ');
+    }
+
+    /** Re-render only the year-dependent panels. */
+    function renderYearCharts() {
+        if (!currentData) { return; }
+        Charts.renderPriceDuration(currentData, App.state.selectedYear);
+        Charts.renderCapacity(currentData, App.state.selectedYear);
+    }
+
+    /** Re-render every panel for the loaded scenario. */
+    function renderAll() {
+        if (!currentData) { return; }
+        Charts.renderGenerationMix(currentData);
+        Charts.renderEmissions(currentData);
+        renderYearCharts();
+    }
+
+    App.on('selectedScenario', function (id) {
+        if (!id) { return; }
+        currentData = null;
+        Charts.loadingAll();
+        DataLoader.loadScenario(id).then(function (data) {
+            currentData = data;
+            renderAll();
+        }).catch(function (err) {
+            console.error(err);
+            Charts.placeholderAll('Failed to load scenario',
+                'Could not fetch results for "' + id + '".');
+        });
+    });
+
+    App.on('selectedYear', function (year) {
+        if (year != null) { yearValue.textContent = String(year); }
+        renderYearCharts();
+    });
+
     DataLoader.loadScenarioIndex().then(function (index) {
+        var scenarios = index.scenarios || [];
         scenarioSelect.innerHTML = '';
 
-        if (!index.scenarios || index.scenarios.length === 0) {
+        if (scenarios.length === 0) {
             var empty = document.createElement('option');
             empty.textContent = 'No scenarios exported yet';
             scenarioSelect.appendChild(empty);
-        } else {
-            index.scenarios.forEach(function (scenario) {
-                var opt = document.createElement('option');
-                opt.value = scenario.id;
-                opt.textContent = scenario.name || scenario.id;
-                scenarioSelect.appendChild(opt);
-            });
-            scenarioSelect.disabled = false;
-            App.setScenario(scenarioSelect.value);
+            Charts.placeholderAll('No scenarios yet',
+                'Run scripts/export_results.py to populate the dashboard.');
+            return;
         }
 
-        if (index.year_range) { populateYears(index.year_range); }
+        scenarios.forEach(function (scenario) {
+            var opt = document.createElement('option');
+            opt.value = scenarioId(scenario);
+            opt.textContent = scenarioName(scenario);
+            scenarioSelect.appendChild(opt);
+        });
+        scenarioSelect.disabled = false;
+
+        // Year slider bounds: index range, else first scenario's span.
+        var range = index.year_range;
+        if (!range) {
+            var first = scenarios[0];
+            range = {
+                start: first.year_start || Number(yearSlider.min),
+                end: first.year_end || Number(yearSlider.max)
+            };
+        }
+        yearSlider.min = range.start;
+        yearSlider.max = range.end;
+        yearSlider.value = range.start;
+        yearSlider.disabled = false;
+        yearValue.textContent = String(range.start);
+
+        App.setYear(yearSlider.value);
+        App.setScenario(scenarioSelect.value);
     }).catch(function (err) {
         scenarioSelect.innerHTML = '<option>Failed to load scenarios</option>';
+        Charts.placeholderAll('Failed to load scenarios',
+            'Could not fetch the scenario index (data/scenarios.json).');
         console.error(err);
     });
 
     scenarioSelect.addEventListener('change', function () {
         App.setScenario(scenarioSelect.value);
     });
-    yearSelect.addEventListener('change', function () {
-        App.setYear(yearSelect.value);
+    yearSlider.addEventListener('input', function () {
+        yearValue.textContent = yearSlider.value;
+        App.setYear(yearSlider.value);
     });
 })();
 </script>
