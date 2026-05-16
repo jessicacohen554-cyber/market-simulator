@@ -1,14 +1,25 @@
-# Market Sim — Claude Code Prompt Pack
+# Market Sim — Reconciled Session Registry + Prompt Pack
 
-**How to use:** Run each session in order. Copy-paste the prompt into Claude Code. Wait for completion, review, commit, then move to the next. Each session should finish in 5–15 minutes.
+**Merged from:** `Session-tasks.md` (metadata, dependencies, quality gates) + `prompt-pack.md` (copy-pasteable Claude Code prompts). This is the single authoritative document.
 
-**Pre-flight:** Make sure `CLAUDE.md` is at repo root and the methodology + build-plan markdown docs are in the repo (so Claude Code can read them if needed). Don’t paste those docs into prompts — they’re too long.
+**How to use:** Work top to bottom. Each session has metadata (for you) and a prompt block (for Claude Code). Copy the fenced prompt into Claude Code, wait for completion, verify the “Done when” checklist, commit, move on.
+
+**Tags:**
+
+- 📂 **NEEDS DATA** — requires real data files on disk (EIA parquets, EIA-860 fleet data). Skip on first pass if data isn’t ready; come back later.
+- 🔧 **CORE** — critical path for the LP engine. Do these first.
+- 🧪 **QA** — testing/validation session. Don’t skip.
 
 -----
 
-## PHASE 0 — Repo Scaffold
+## Phase 0 — Repo Scaffold
 
-### Session 0.1: Initialize project structure
+### Session 0.1: Initialize Project Structure
+
+**Depends on:** Nothing
+**Scope:** Light
+**Outputs:** Full directory tree, `pyproject.toml`, `CONVENTIONS.md`, `CHANGELOG.md`, stub files
+**Done when:** `pip install -e .` succeeds; `import market_sim` works; ruff finds no errors
 
 ```
 Create the project skeleton for market-sim. Do NOT write any logic yet — just structure and stubs.
@@ -16,7 +27,7 @@ Create the project skeleton for market-sim. Do NOT write any logic yet — just 
 1. pyproject.toml with:
    name = "market-sim"
    requires-python = ">=3.11"
-   dependencies: highspy>=1.7, numpy>=1.26, pandas>=2.1, pyarrow>=14.0, pydantic>=2.5, pyyaml>=6.0
+   dependencies: highspy>=1.7, numpy>=1.26, scipy>=1.12, pandas>=2.1, pyarrow>=14.0, pydantic>=2.5, pyyaml>=6.0
    optional dev deps: pytest>=8.0, ruff>=0.5
    console script: market-sim = "market_sim.runner:main"
 
@@ -27,7 +38,8 @@ Create the project skeleton for market-sim. Do NOT write any logic yet — just 
    docs/
    scripts/
    frontend/ (with subdirs: css/, js/, data/, data/results/)
-   learning-hub/
+   learning-hub/shared/
+   context/
 
 3. CONVENTIONS.md with these rules:
    - Python snake_case.py, frontend kebab-case
@@ -39,18 +51,31 @@ Create the project skeleton for market-sim. Do NOT write any logic yet — just 
    - Every public function needs a docstring
    - Raw data in data/ never modified in place
 
-4. Empty CHANGELOG.md with a header
+4. Empty CHANGELOG.md with a header and dated "Phase 0 started" entry.
 
-5. A minimal README.md: project name, one-line description, "See CLAUDE.md for build instructions"
+5. Minimal README.md: project name, one-line description, "See CLAUDE.md for build instructions"
+
+6. Create empty stub files (module-level docstrings only) for every Python module in the directory tree:
+   config/scenarios.py, config/constants.py, config/iso_configs.py
+   data/eia_loader.py, data/fleet.py, data/renewables.py, data/fuel.py
+   model/dispatch.py, model/transmission.py, model/storage.py, model/capacity.py
+   policy/ira.py, policy/rps.py, policy/carbon.py
+   results/cache.py, results/outputs.py, results/emissions.py, results/export.py
+   runner.py
 
 Don't write any Python logic. Just the skeleton.
 ```
 
 -----
 
-## PHASE 1 — Config & Data Layer
+## Phase 1 — Config & Data Layer
 
-### Session 1.1: ScenarioConfig dataclass
+### Session 1.1: ScenarioConfig Dataclass + YAML Pipeline 🔧
+
+**Depends on:** 0.1
+**Scope:** Heavy
+**Outputs:** `config/scenarios.py`, `tests/test_config.py`
+**Done when:** All tests pass. YAML with 3 overrides loads correctly. 3×3 sweep → 9 configs. Cache key deterministic.
 
 ```
 Build src/market_sim/config/scenarios.py
@@ -79,6 +104,15 @@ This is the central configuration system. Create:
    - storage_rte_8hr: float = 0.80
    - discount_rate: float = 0.08
    - retirement_consecutive_years: int = 2
+   - sigmoid_midpoint: float = 0.50
+   - sigmoid_steepness: float = 12.0
+   - fixed_om_gas_cc: float = 12.0  # $/kW-yr
+   - fixed_om_gas_ct: float = 8.0
+   - fixed_om_coal: float = 40.0
+   - ira_ptc_wind: float = 26.0  # $/MWh
+   - ira_itc_solar: float = 0.30  # 30%
+   - ira_itc_storage: float = 0.30
+   - ira_expiry_year: int = 2035
 
    Tier 3 (calibration):
    - renewable_cf_adjustment: float = 1.0
@@ -86,89 +120,94 @@ This is the central configuration system. Create:
 
 2. Methods:
    - cache_key() -> str: SHA256 hash of the full config dict, truncated to 16 chars
-   - to_yaml(path) and from_yaml(path) class method: round-trip YAML serialization
-     Only non-default values need to appear in YAML. Loading merges overrides onto defaults.
-   - resolve(): returns a copy with any string lookups expanded (e.g. gas_price_path "high" -> actual array)
+   - to_yaml(path) and from_yaml(path): round-trip YAML serialization. Only non-default values in YAML. Loading merges overrides onto defaults.
+   - to_yaml_full(path): write all fields for reproducibility
+   - with_overrides(**kwargs) -> ScenarioConfig: return modified copy
 
-3. SweepDefinition dataclass:
+3. TIER_TAGS dict mapping field name -> tier number (for metadata/frontend use)
+
+4. SweepDefinition dataclass:
    - sweep: dict[str, list] — parameter name to list of values
-   - mode: str = "factorial"  # only factorial for now
-   - generate() -> list[ScenarioConfig]: produces the cartesian product
+   - mode: str = "factorial"
+   - generate() -> list[ScenarioConfig]: cartesian product
+   - from_yaml(path) class method
 
-4. Tests in tests/test_config.py:
+5. Tests in tests/test_config.py:
    - Default config cache_key is deterministic (call twice, same result)
    - Changing one parameter changes the cache_key
    - YAML round-trip: write config, read back, assertEqual
    - YAML with partial overrides: unspecified fields keep defaults
+   - to_yaml only writes non-default values
+   - with_overrides doesn't mutate original
    - Sweep with 2 params × 3 values each → 6 configs, all unique cache keys
+   - Sweep from_yaml loads correctly
 ```
 
-### Session 1.2: Constants file
+-----
+
+### Session 1.2: Constants Extraction 🔧
+
+**Depends on:** 0.1
+**Scope:** Moderate
+**Outputs:** `config/constants.py`
+**Done when:** Every constant has a citation comment. File imports without error.
 
 ```
 Build src/market_sim/config/constants.py
 
 This is a pure data file — no logic, no imports except typing. Every value has an inline citation comment.
 
-Include these constants (use placeholder values with TODO comments where you don't have the exact number — I'll fill them in later):
+Include these constants:
 
 # Efficiency bins (heat rate in MMBtu/MWh) by fuel class
-HEAT_RATE_BINS = {
-    "gas_cc": {"h_class": 6.3, "f_class": 6.7, "older": 7.5},  # Source: EIA Table 8.1, 2024
-    "gas_ct": {"aero": 9.0, "frame": 10.5, "older": 11.5},
-    "coal": {"supercritical": 8.8, "subcritical": 10.0, "older": 10.8},
-}
+HEAT_RATE_BINS — gas_cc (h_class 6.3, f_class 6.7, older 7.5), gas_ct (aero 9.0, frame 10.5, older 11.5), coal (supercritical 8.8, subcritical 10.0, older 10.8)
+Source: EIA Table 8.1, 2024
 
-# CO2 emission rates by fuel (tCO2/MWh) — derived from EPA eGRID 2022
-CO2_RATES = {
-    "gas_cc": {"h_class": 0.35, "f_class": 0.37, "older": 0.42},
-    "gas_ct": {"aero": 0.50, "frame": 0.58, "older": 0.64},
-    "coal": {"supercritical": 0.85, "subcritical": 0.95, "older": 1.02},
-}
+# CO2 emission rates (tCO2/MWh) — derived from heat rate × fuel emission factor
+CO2_RATES — by fuel class and efficiency bin. Source: EPA eGRID 2022
 
-# Gas availability factors (1 - summer derate)
-GAS_AVAILABILITY = {"ERCOT": 0.83, "CAISO": 0.88}  # Source: NERC GADS
+# NOx rates (tons NOx/MWh) by class. Source: EPA CEMS 2022
 
-# Nuclear monthly capacity factors (fraction)
-NUCLEAR_MONTHLY_CF = {
-    "ERCOT": [0.95, 0.95, 0.90, 0.85, 0.80, 0.92, 0.95, 0.95, 0.93, 0.90, 0.95, 0.95],
-    "CAISO": [0.90, 0.90, 0.88, 0.82, 0.78, 0.85, 0.90, 0.92, 0.90, 0.88, 0.90, 0.90],
-}  # Source: NRC PRIS 2019-2023 averages
+# Variable O&M ($/MWh) by fuel type. Source: NREL ATB 2024
 
-# Demand growth rates (annual fraction)
-DEMAND_GROWTH_RATES = {
-    "low": {"ERCOT": 0.005, "CAISO": 0.002},
-    "mid": {"ERCOT": 0.015, "CAISO": 0.008},
-    "high": {"ERCOT": 0.030, "CAISO": 0.015},
-}
+# Gas availability factors: ERCOT 0.83, CAISO 0.88. Source: NERC GADS
 
-# Storage technology parameters
-STORAGE_TECHS = {
-    "li_ion_4hr": {"duration_hr": 4, "rte": 0.85, "cycles": 5000, "cost_kwh": 250},
-    "li_ion_8hr": {"duration_hr": 8, "rte": 0.80, "cycles": 4000, "cost_kwh": 200},
-    "iron_air":   {"duration_hr": 100, "rte": 0.45, "cycles": 10000, "cost_kwh": 25},
-}  # Source: NREL ATB 2024, DOE LDES Liftoff
+# Nuclear monthly CF (12 values per ISO). Source: NRC PRIS 2019-2023
 
-# Carbon price trajectories ($/ton CO2, selected years)
-CARBON_PRICE_PATHS = {
-    "zero": 0.0,
-    "low":  {"2026": 10, "2030": 15, "2040": 25, "2050": 35},
-    "mid":  {"2026": 25, "2030": 40, "2040": 65, "2050": 85},
-    "high": {"2026": 45, "2030": 75, "2040": 120, "2050": 150},
-}
+# EFORd by technology. Source: NERC GADS
 
-# State RPS floors (minimum clean energy fraction)
-STATE_RPS_FLOORS = {
-    "CAISO": {"2026": 0.52, "2030": 0.60, "2035": 0.75, "2040": 0.90, "2045": 1.0},
-}  # Source: CA SB 100
+# Demand growth rates: low/mid/high × ERCOT/CAISO. Source: ERCOT CDR, CAISO IEPR
 
-# ERCOT queue throughput cap (GW/year)
-QUEUE_CAP_GW = {"ERCOT": 12.0, "CAISO": 8.0}
+# Gas price paths: low/mid/high × ERCOT/CAISO ($/MMBtu delivered). Source: EIA AEO 2024
+# Gas price escalation rate. Source: EIA AEO 2024
 
-Add a module docstring explaining this is the single source of truth for physical and economic constants, and that every value must have a citation comment.
+# Carbon price trajectories: zero/low/mid/high keyed by year. Source: RFF/state programs
+
+# Storage tech params: li_ion_4hr, li_ion_8hr, iron_air — duration, RTE, cycles, cost, learning rate
+Source: NREL ATB 2024, DOE LDES Liftoff
+
+# State RPS floors: CAISO SB 100 trajectory. Source: CA SB 100
+
+# Queue caps (GW/yr): ERCOT 12, CAISO 8. Source: ERCOT CDR, CAISO TPP
+
+# New entry technology costs: wind, solar, gas_cc — capex, FOM, learning rate, base CF, lifetime
+Source: NREL ATB 2024
+
+# Wright's Law reference capacities (GW global installed). Source: IRENA 2024
+
+# Model-wide: STORAGE_TIEBREAKER_EPSILON = 0.001, HOURS_PER_YEAR = 8760, START_YEAR = 2026, END_YEAR = 2050
+
+Add a module docstring explaining this is the single source of truth for physical and economic constants.
 ```
 
-### Session 1.3: ISO topology configs
+-----
+
+### Session 1.3: ISO Topology Configs 🔧
+
+**Depends on:** 0.1
+**Scope:** Light
+**Outputs:** `config/iso_configs.py`, `tests/test_iso_config.py`
+**Done when:** Both ISOs defined. All links reference valid zones. Tests pass.
 
 ```
 Build src/market_sim/config/iso_configs.py
@@ -179,100 +218,225 @@ Define the physical topology for each ISO using Pydantic models:
 
 2. TransferLink model: from_zone (str), to_zone (str), ttc_mw (float), is_bidirectional (bool = True)
 
-3. ERCOT config:
+3. ISOConfig model: zones, links, voll, properties for n_zones, zone_names, n_links.
+   validate_topology() method: check link endpoints reference valid zones, load shares sum to 1.0
+
+4. ERCOT config:
    Zones: North (0.38), South (0.20), West (0.08), Houston (0.34)
    Links (6 bidirectional): North↔South 5000 MW, North↔West 3000 MW, North↔Houston 8000 MW,
    South↔Houston 4000 MW, South↔West 2000 MW, West↔Houston 2500 MW
-   (These are placeholder TTCs — mark with TODO: verify from ERCOT CDR)
+   VOLL: $5,000/MWh
+   (TTCs are placeholder — mark with TODO: verify from ERCOT CDR)
 
-4. CAISO config:
+5. CAISO config:
    Zones: CAISO_main (1.0), WECC_import (0.0 — not a load zone)
-   Links: CAISO_main↔WECC_import 15000 MW import / 5000 MW export
-   
-5. ISOConfig model that bundles zones + links + metadata (iso name, n_zones, voll, etc.)
+   Links: WECC_import→CAISO_main 15000 MW
+   VOLL: $2,000/MWh
 
 6. get_iso_config(iso_name: str) -> ISOConfig factory function
 
-Write tests in tests/test_iso_config.py:
+Tests in tests/test_iso_config.py:
 - ERCOT has 4 zones, load shares sum to 1.0
 - CAISO has 2 zones (1 real + 1 import node)
 - All links reference valid zone names
-```
-
-### Session 1.4: Pydantic data models + FleetArrays
-
-```
-Build src/market_sim/data/fleet.py
-
-1. Generator Pydantic model:
-   unit_id: str
-   name: str
-   zone: str
-   fuel_type: str  # gas_cc, gas_ct, coal, nuclear, wind, solar, hydro
-   efficiency_bin: str  # h_class, f_class, older, etc.
-   pmax_mw: float
-   pmin_mw: float = 0.0  # >0 for must-run units
-   heat_rate: float  # MMBtu/MWh
-   vom: float = 0.0  # $/MWh variable O&M
-   emission_rate_co2: float = 0.0  # tCO2/MWh
-   nox_rate: float = 0.0  # tons NOx/MWh
-   eford: float = 0.05  # forced outage rate
-   online_year: int = 2000
-   retirement_year: int | None = None
-
-2. FleetArrays dataclass (plain dataclass, not Pydantic):
-   All numpy arrays indexed by generator index g:
-   pmax, pmin, heat_rate, vom, emission_rate, nox_rate: np.ndarray (n_gen,)
-   zone_idx: np.ndarray int (n_gen,) — maps to zone integer index
-   fuel_type_idx: np.ndarray int (n_gen,) — integer enum
-   availability: np.ndarray (n_gen, 8760)
-   unit_id: list[str] (n_gen,) — for mapping results back
-
-3. Conversion function:
-   def generators_to_fleet_arrays(generators: list[Generator], zone_names: list[str], hours: int = 8760) -> FleetArrays
-   Builds the struct-of-arrays. Availability = (1 - eford) broadcast to all hours (seasonal factors added later).
-
-4. Tests in tests/test_fleet.py:
-   - Create 3 generators, convert to FleetArrays, verify shapes
-   - zone_idx correctly maps zone names to integer indices
-   - availability = (1 - eford) for each generator
-```
-
-### Session 1.5: Marginal cost assembly
-
-```
-Build the assemble_mc function in src/market_sim/data/fleet.py (add to existing file).
-
-def assemble_mc(
-    fleet: FleetArrays,
-    fuel_prices: np.ndarray,   # (n_gen, 8760) or broadcastable
-    carbon_price: np.ndarray,  # (8760,) or scalar
-    nox_price: np.ndarray,     # (8760,) or scalar
-    **adders: tuple[np.ndarray, np.ndarray]  # (rate_array, price_array) pairs
-) -> np.ndarray:
-    """
-    Returns (n_gen, 8760) marginal cost array.
-    Fully vectorized — no loops.
-    mc = heat_rate × fuel_price + vom + emission_rate × carbon_price + nox_rate × nox_price + ...
-    """
-
-Implementation: use numpy broadcasting. heat_rate[:, None] * fuel_prices, etc.
-The **adders kwarg allows extensibility — each is a (generator_rate, hourly_price) pair.
-
-Tests in tests/test_fleet.py (append):
-- 1 generator, constant fuel price → mc = heat_rate * fuel_price + vom
-- 2 generators with different heat rates → different mc values
-- Adding carbon_price increases mc proportional to emission_rate
-- Custom adder works correctly
+- Unknown ISO raises ValueError
+- CAISO VOLL is 2000
 ```
 
 -----
 
-## PHASE 2 — LP Dispatch Engine
+### Session 1.4: Pydantic Data Models + FleetArrays 🔧
 
-This is the hardest phase. Split into 4 sessions to avoid timeouts.
+**Depends on:** 1.2
+**Scope:** Moderate
+**Outputs:** `data/fleet.py`, `tests/test_fleet.py`
+**Done when:** Generator model validates. FleetArrays conversion works. Shapes match.
 
-### Session 2.1: Variable layout + cost vector
+```
+Build src/market_sim/data/fleet.py
+
+1. FUEL_TYPE_MAP dict: gas_cc=0, gas_ct=1, coal=2, nuclear=3, wind=4, solar=5, hydro=6, import=7
+
+2. Generator Pydantic model:
+   unit_id: str, name: str, zone: str, fuel_type: str, efficiency_bin: str = "default"
+   pmax_mw: float, pmin_mw: float = 0.0, heat_rate: float = 0.0
+   vom: float = 0.0, emission_rate_co2: float = 0.0, nox_rate: float = 0.0
+   eford: float = 0.05, online_year: int = 2000, retirement_year: int | None = None
+   is_must_run: bool = False
+
+3. FleetArrays dataclass (plain dataclass, NOT Pydantic):
+   pmax, pmin, heat_rate, vom, emission_rate, nox_rate: np.ndarray (n_gen,)
+   zone_idx: np.ndarray int (n_gen,)
+   fuel_type_idx: np.ndarray int (n_gen,)
+   availability: np.ndarray (n_gen, T)
+   unit_ids: list[str]
+   n_gen property
+
+4. generators_to_fleet_arrays(generators, zone_names, hours=8760) -> FleetArrays
+   Availability = (1 - eford) broadcast to all hours (seasonal factors applied later).
+
+5. Tests in tests/test_fleet.py:
+   - Create 3 generators (gas_cc, gas_ct, coal) in 2 zones, convert to FleetArrays
+   - Verify shapes: pmax (3,), availability (3, T)
+   - zone_idx correctly maps zone names
+   - fuel_type_idx matches FUEL_TYPE_MAP
+   - availability = (1 - eford) for each generator
+   - unit_ids list matches
+```
+
+-----
+
+### Session 1.5: Marginal Cost Assembly 🔧
+
+**Depends on:** 1.4
+**Scope:** Light
+**Outputs:** `assemble_mc()` added to `data/fleet.py`, additional tests in `tests/test_fleet.py`
+**Done when:** MC assembly is fully vectorized. All test cases pass.
+
+```
+Add the assemble_mc function to src/market_sim/data/fleet.py
+
+def assemble_mc(
+    fleet: FleetArrays,
+    fuel_prices: np.ndarray,   # (n_gen, T) or broadcastable
+    carbon_price: np.ndarray | float,  # (T,) or scalar
+    nox_price: np.ndarray | float = 0.0,
+    **adders: tuple[np.ndarray, np.ndarray]  # (rate_array, price_array) pairs
+) -> np.ndarray:
+    """Returns (n_gen, T) marginal cost array. Fully vectorized — no loops.
+    mc = heat_rate × fuel_price + vom + emission_rate × carbon_price + nox_rate × nox_price + ..."""
+
+Use numpy broadcasting: heat_rate[:, None] * fuel_prices, etc.
+Handle scalar and array carbon_price/nox_price.
+**adders kwarg: each value is (generator_rate_array, hourly_price_array) for extensibility.
+
+Append tests to tests/test_fleet.py:
+- 1 gen, constant fuel price → mc = heat_rate * fuel_price + vom
+- 2 gens with different heat rates → different mc values
+- Carbon price increases mc proportional to emission_rate
+- Custom adder (e.g. SO2) works correctly
+- Time-varying fuel price produces time-varying mc
+```
+
+-----
+
+### Session 1.6: EIA Data Loader 📂 NEEDS DATA
+
+**Depends on:** 1.4
+**Scope:** Moderate
+**Outputs:** `data/eia_loader.py`, `tests/test_eia_loader.py`
+**Done when:** Loader reads real EIA parquets, returns typed structs. 8760 rows, no NaNs, peak demand matches.
+
+```
+Build src/market_sim/data/eia_loader.py
+
+Read EIA Hourly Grid Monitor parquet files and return typed data structs.
+
+1. HourlyInputs Pydantic model:
+   demand: np.ndarray (n_zones, 8760) MW
+   wind_generation: np.ndarray (n_zones, 8760) MW
+   solar_generation: np.ndarray (n_zones, 8760) MW
+   interchange: np.ndarray (8760,) MW (net imports, CAISO only)
+
+2. Function: load_eia_hourly(iso: str, year: int, data_dir: Path) -> HourlyInputs
+   - Read parquet from data/eia_hourly/
+   - Filter to requested ISO and year
+   - Validate: assert 8760 rows, no NaN, peak demand > 0
+   - For multi-zone ISOs (ERCOT), allocate total demand to zones using load_share from iso_configs
+
+3. Function: derive_capacity_factors(generation_mw, installed_capacity_mw) -> np.ndarray
+   CF = actual_gen / installed_capacity. Document the ~5% embedded curtailment conservatism.
+
+Tests (use sample parquet or mock data):
+- Row count = 8760
+- No NaN values
+- Peak demand within expected range for ISO
+- CF values in [0, 1] range
+```
+
+-----
+
+### Session 1.7: Fleet Builder + Renewable Profiles 📂 NEEDS DATA
+
+**Depends on:** 1.4, 1.6
+**Scope:** Moderate
+**Outputs:** `data/fleet.py` (fleet builder functions), `data/renewables.py`, tests
+**Done when:** Fleet builds for ERCOT and CAISO. Total capacity within 5% of known. CF profiles clean.
+
+```
+Add fleet builder functions to src/market_sim/data/fleet.py and build src/market_sim/data/renewables.py
+
+1. In fleet.py, add:
+   def build_fleet_from_eia860(iso: str, year: int, data_dir: Path) -> list[Generator]:
+   - Read EIA-860 generator data from data/fleet/
+   - Assign efficiency bins using HEAT_RATE_BINS from constants
+   - Assign emission rates from CO2_RATES and NOX_RATES
+   - Assign VOM from constants
+   - Assign generators to zones based on ISO config
+   - Return list of Generator objects
+
+2. Build data/renewables.py:
+   def load_renewable_profiles(iso: str, year: int, data_dir: Path) -> tuple[np.ndarray, np.ndarray]:
+   """Load wind and solar CF profiles from EIA Hourly Grid Monitor.
+   Returns (wind_cf, solar_cf) each (n_zones, 8760)."""
+   - Derive from EIA hourly generation / installed capacity
+   - Apply renewable_cf_adjustment from ScenarioConfig
+   - Document embedded ~5% curtailment conservatism
+
+3. Seasonal availability factors:
+   def apply_seasonal_factors(fleet: FleetArrays, iso: str) -> FleetArrays:
+   Apply nuclear monthly CF and gas availability factors from constants.
+
+Tests:
+- Total fleet capacity within 5% of known installed capacity for ERCOT
+- CF profiles in [0, 1] range
+- Seasonal factors correctly applied (nuclear dips in spring/fall)
+```
+
+-----
+
+### Session 1.8: Fuel Price Loader 📂 NEEDS DATA
+
+**Depends on:** 1.1, 1.2
+**Scope:** Moderate
+**Outputs:** `data/fuel.py`, `tests/test_fuel.py`
+**Done when:** Fuel prices resolve for all three paths. Prices are (n_gen, T) or broadcastable.
+
+```
+Build src/market_sim/data/fuel.py
+
+Gas price, carbon price, and basis curve loaders.
+
+1. def resolve_gas_prices(config: ScenarioConfig, fleet: FleetArrays, year: int) -> np.ndarray:
+   """Returns (n_gen, T) fuel price array in $/MMBtu.
+   Maps gas_price_path (low/mid/high) to per-ISO delivered prices from constants.
+   Applies annual escalation for years beyond 2026.
+   Assigns prices to generators based on fuel_type_idx.
+   Non-gas generators get 0 (or their respective fuel cost)."""
+
+2. def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
+   """Resolve carbon_price — either scalar from config or interpolate from trajectory."""
+
+3. def resolve_nox_price(config: ScenarioConfig) -> float:
+   """Resolve NOx price from config."""
+
+Tests:
+- "mid" path for ERCOT returns expected $/MMBtu
+- Price escalates correctly year over year
+- Carbon price interpolates between trajectory years
+- Non-gas generators get zero fuel price
+```
+
+-----
+
+## Phase 2 — LP Dispatch Engine
+
+### Session 2.1: Variable Layout + Cost Vector 🔧
+
+**Depends on:** 1.4, 1.5
+**Scope:** Moderate
+**Outputs:** `VariableLayout` and `build_cost_vector` in `model/dispatch.py`, tests in `tests/test_dispatch.py`
+**Done when:** Layout computes correct column counts. Cost vector places values in correct positions.
 
 ```
 Create src/market_sim/model/dispatch.py — PART 1 of 4.
@@ -283,718 +447,870 @@ Build the variable layout system and cost vector assembly. DO NOT build constrai
    Given n_gen, n_zones, n_storage, n_links, T=8760, compute:
    - vars_per_hour = n_gen + 2*n_zones + 3*n_storage + n_links + n_zones
    - Total columns = vars_per_hour * T
-   - Methods to get column slice for any variable type at any hour:
-     p_idx(g, t), w_idx(z, t), s_idx(z, t), chg_idx(s, t), dis_idx(s, t),
-     soc_idx(s, t), flow_idx(l, t), slack_idx(z, t)
-   - Also: slice-based access for "all generators at hour t" etc.
+   - Per-hour offset properties: _p_off, _w_off, _s_off, _chg_off, _dis_off, _soc_off, _flow_off, _slack_off
+   - Methods to get column index: p_col(g,t), w_col(z,t), s_col(z,t), chg_col(s,t), dis_col(s,t), soc_col(s,t), flow_col(l,t), slack_col(z,t)
+   - Slice-based: p_cols_gen(g) for all T columns of generator g
 
-2. build_cost_vector function:
-   Takes FleetArrays, mc array (n_gen, 8760), voll, storage_epsilon=0.001, n_storage, n_links, n_zones, T
+2. build_cost_vector(layout, mc, voll, storage_epsilon=0.001):
    Returns flat numpy cost vector of length total_columns.
-   - Thermal slots filled from mc array
-   - Wind/solar slots = 0
-   - Storage charge/discharge = epsilon
-   - SOC slots = 0
-   - Flow slots = 0
-   - Slack slots = voll
+   - Thermal slots: mc[g, t]
+   - Wind/solar: 0
+   - Storage charge/discharge: epsilon
+   - SOC/Flow: 0
+   - Slack: voll
 
 3. Tests in tests/test_dispatch.py:
-   - VariableLayout with 2 gens, 1 zone, 0 storage, 0 links: verify total cols = (2+2+0+0+1)*T
+   - VariableLayout with 2 gens, 1 zone, 0 storage, 0 links: verify total cols
    - Cost vector: thermal costs in correct positions, slack = voll, renewables = 0
-   - Round-trip: cost_vector[layout.p_idx(g, t)] == mc[g, t] for several g, t values
+   - Round-trip: cost_vector[layout.p_col(g, t)] == mc[g, t]
 
-NO constraints, NO solver calls in this session. Just layout and cost vector.
+NO constraints, NO solver calls.
 ```
 
-### Session 2.2: Energy balance + generator bound constraints
+-----
+
+### Session 2.2: Constraint Matrix — Energy Balance + Bounds 🔧
+
+**Depends on:** 2.1
+**Scope:** Heavy
+**Outputs:** `build_constraints` and `build_variable_bounds` in `model/dispatch.py`, tests
+**Done when:** Constraint matrix builds. Sparsity correct. No Python loops over hours. < 1 second for full fleet.
 
 ```
 Edit src/market_sim/model/dispatch.py — PART 2 of 4.
 
-Add constraint matrix construction for energy balance and generator bounds. NO storage yet, NO transmission yet. Single zone only.
+Add constraint matrix construction and variable bounds. Supports multi-zone, storage, and transmission from the start (with zero storage/links it reduces to single-zone).
 
-Build a function:
-def build_single_zone_constraints(layout, fleet, demand, wind_cf, wind_cap, solar_cf, solar_cap, T=8760):
-    Returns (A_sparse, row_lower, row_upper) as scipy.sparse CSC matrix and bound vectors.
+1. _build_zone_gen_map(fleet, n_zones) -> sparse (n_zones × n_gen) zone membership matrix
 
-Constraints (per hour t):
-1. Energy balance (1 row per hour, equality):
-   Σ_g P[g,t] + W[0,t] + S[0,t] + Slack[0,t] = demand[t]
-   Row has +1 for each P[g,t], +1 for W, +1 for S, +1 for Slack. RHS = demand[t].
+2. build_constraints(layout, fleet, demand, wind_cf, wind_cap, solar_cf, solar_cap,
+   incidence=None, storage params=None, ttc=None):
+   Returns (A_sparse, row_lower, row_upper) as CSC matrix and bound vectors.
 
-2. Generator upper bounds (n_gen rows per hour):
-   P[g,t] ≤ pmax[g] * availability[g,t]
-   Single entry per row.
+   Energy balance (n_zones rows per hour, equality):
+   Σ_g∈z P[g,t] + W[z,t] + S[z,t] + Σ_s∈z Dis[s,t] - Σ_s∈z Chg[s,t]
+   + incidence @ Flow[l,t] + Slack[z,t] = Demand[z,t]
 
-3. Generator lower bounds (n_gen rows per hour, only if pmin > 0):
-   P[g,t] ≥ pmin[g]
+   CRITICAL: Build the per-hour energy balance block as a sparse row, then replicate
+   across T hours using scipy.sparse.kron(eye(T), block). NO Python loops over hours.
 
-4. Wind upper bound (1 row per hour): W[0,t] ≤ wind_cf[t] * wind_cap
-5. Solar upper bound (1 row per hour): S[0,t] ≤ solar_cf[t] * solar_cap
+   Storage SOC dynamics (if storage present):
+   SOC[s,t] - SOC[s,t-1] - η_chg*Chg[s,t] + Dis[s,t]/η_dis = 0
+   Cyclic boundary: SOC[s,0] - SOC[s,T-1] = 0
+   Build vectorized per storage unit using np.arange for column indices.
 
-CRITICAL: Build vectorized. Strategy:
-- Precompute the sparsity pattern for ONE hour-block (indices + indptr)
-- Use scipy.sparse.kron or block_diag to replicate across all hours
-- Fill the data array with vectorized numpy operations
-- Convert final result to CSC
-
-Do NOT loop over hours in Python. Use scipy.sparse.kron(eye(T), hour_block_pattern) or similar.
+3. build_variable_bounds(layout, fleet, wind_cf, wind_cap, solar_cf, solar_cap,
+   storage_power_cap=None, storage_energy_cap=None, ttc=None):
+   Returns (col_lower, col_upper).
+   Generator: pmin ≤ P ≤ pmax × availability
+   Wind: 0 ≤ W ≤ cf × cap
+   Solar: 0 ≤ S ≤ cf × cap
+   Storage: 0 ≤ Chg,Dis ≤ power_cap; 0 ≤ SOC ≤ energy_cap
+   Flow: -ttc ≤ Flow ≤ ttc
 
 Tests:
-- 1 gen, 1 zone, 24 hours: A matrix has correct shape (24 energy + 24 upper + 24 lower = 72 rows)
-- Verify specific entries: A[energy_row_5, p_col_gen0_hour5] == 1.0
-- demand vector correctly placed in row bounds
+- 1 gen, 1 zone, 24 hours: verify A shape
+- Verify energy balance row has correct entries
+- Demand vector in row bounds
 ```
 
-### Session 2.3: Solve + extract duals
+-----
+
+### Session 2.3: HiGHS Solver + Dual Extraction 🔧
+
+**Depends on:** 2.2
+**Scope:** Moderate
+**Outputs:** `solve_dispatch()` and `DispatchResult` in `model/dispatch.py`, full test suite
+**Done when:** All 5 canonical tests pass. Duals produce valid prices. Energy balance holds every hour.
 
 ```
 Edit src/market_sim/model/dispatch.py — PART 3 of 4.
 
-Add the solve function that ties layout + cost + constraints together and calls HiGHS.
+Add the solve function and result extraction.
 
-def solve_dispatch(
-    fleet: FleetArrays,
-    demand: np.ndarray,        # (T,) for single zone
-    wind_cf: np.ndarray,       # (T,)
-    wind_cap: float,
-    solar_cf: np.ndarray,      # (T,)
-    solar_cap: float,
-    voll: float = 5000.0,
-    T: int = 8760,
-) -> DispatchResult:
+1. DispatchResult dataclass:
+   dispatch (n_gen, T), wind_dispatched (n_zones, T), solar_dispatched (n_zones, T),
+   slack (n_zones, T), prices (n_zones, T), storage_charge/discharge/soc (optional),
+   flows (optional), objective_value, status, build_time, solve_time
 
-Steps:
-1. Build VariableLayout
-2. Build cost vector (use assemble_mc from fleet module, or pass mc directly)
-3. Build constraint matrix and bounds
-4. Set variable lower bounds (all >= 0) and upper bounds (inf for most, specific for bounded vars)
-5. Create highspy.Highs() instance
-6. Load the LP: h.addVars, h.addRows with CSC matrix
-7. h.run()
-8. Check status — if not optimal, raise with diagnostic info
-9. Extract primal solution → map back to named arrays using layout
-10. Extract dual solution → energy balance duals = zonal prices
+2. solve_dispatch(fleet, demand, wind_cf, wind_cap, solar_cf, solar_cap,
+   mc=None, fuel_prices=None, carbon_price=0, nox_price=0, voll=5000,
+   incidence=None, ttc=None, storage params=None, T=None) -> DispatchResult:
+   - Build layout, cost vector, constraints, variable bounds
+   - Time matrix construction
+   - Create highspy.Highs(), set silent, add vars, set costs, add rows via CSC
+   - h.run()
+   - Check model status == optimal, raise if not
+   - Extract primal → dispatch arrays using layout offsets
+   - Extract dual → prices from energy balance rows (row duals, not negated)
+   - Time solve
+   - Log both timings
 
-DispatchResult dataclass:
-- dispatch: np.ndarray (n_gen, T) — thermal dispatch MW
-- wind_dispatched: np.ndarray (T,)
-- solar_dispatched: np.ndarray (T,)
-- slack: np.ndarray (T,) — unserved energy
-- prices: np.ndarray (T,) — dual on energy balance
-- objective_value: float
-- status: str
-
-Tests in tests/test_dispatch.py:
-- 1 gen (MC=50, pmax=100), flat demand=80 → price=50 for all hours, dispatch=80
-- 2 gens (MC=30 pmax=50, MC=60 pmax=50), demand=40 → price=30, only cheap gen runs
-- 2 gens, demand=70 → price=60, cheap gen at 50 + expensive gen at 20
-- demand=200 exceeds capacity → slack > 0, price = VOLL
-- energy balance: dispatch + wind + solar + slack = demand, every hour (use np.allclose)
-
-Use T=24 for all tests to keep solve fast.
+3. Canonical tests in tests/test_dispatch.py (all use T=24):
+   a) 1 gen (MC=50, pmax=100), flat demand=80 → price≈50, dispatch=80
+   b) 2 gens (MC=30 pmax=50, MC=60 pmax=50), demand=40 → price≈30
+   c) 2 gens same, demand=70 → price≈60, cheap at 50 + expensive at 20
+   d) demand=200 exceeds all capacity → slack > 0, price ≈ VOLL
+   e) energy balance: sum(dispatch) + wind + solar + slack = demand, every hour
 ```
 
-### Session 2.4: Vectorization audit + 8760 test
+-----
+
+### Session 2.4: Vectorization Audit + 8760 Performance Test 🧪
+
+**Depends on:** 2.3
+**Scope:** Moderate
+**Outputs:** Performance test in `tests/test_dispatch.py`, timing instrumentation in dispatch.py
+**Done when:** No `for t in range` loops in matrix builder. 8760-hour solve < 15 seconds. Energy balance holds.
 
 ```
 Review and optimize src/market_sim/model/dispatch.py for performance.
 
-1. Search the entire file for any `for t in range` or `for hour in` loops in matrix construction.
-   If found, replace with vectorized scipy.sparse operations.
+1. Search the ENTIRE file for any `for t in range` or `for hour in` loops in matrix construction code (build_constraints, build_variable_bounds, build_cost_vector).
+   If found, replace with vectorized operations using numpy broadcasting or scipy.sparse.
+   Note: loops over generators/zones/storage units (small N) are acceptable. Loops over hours (8760) are NOT.
 
-2. Add timing instrumentation:
-   import time at the top. In solve_dispatch, time matrix construction and solve separately.
-   Log both: f"Matrix build: {build_time:.3f}s, Solve: {solve_time:.3f}s"
+2. Verify timing instrumentation exists in solve_dispatch:
+   Log: f"Matrix build: {build_time:.3f}s, Solve: {solve_time:.3f}s"
 
-3. Add a performance test in tests/test_dispatch.py:
-   - Create a synthetic fleet: 200 generators across a range of marginal costs (20-80 $/MWh)
-   - Sinusoidal demand profile over 8760 hours, peak = 80% of total capacity
-   - Flat wind_cf=0.35, solar_cf following a daily pattern (0 at night, peak 0.6 midday)
+3. Add performance test in tests/test_dispatch.py:
+   - Synthetic fleet: 200 generators, marginal costs ranging 20-80 $/MWh
+   - 1 zone, no storage, no transmission (simplest full-scale case)
+   - Sinusoidal demand over 8760 hours, peak = 80% of total capacity
+   - Flat wind_cf=0.35, solar_cf daily pattern (0 at night, 0.6 midday)
+   - Wind cap = 10% of total gen cap, solar cap = 10%
    - Solve for full 8760 hours
-   - Assert matrix build < 2 seconds (relaxed target for now)
-   - Assert solve < 10 seconds
-   - Assert energy balance holds for all 8760 hours
+   - Assert build time < 3 seconds
+   - Assert solve time < 15 seconds
+   - Assert energy balance holds for all 8760 hours (np.allclose)
    - Print timing results
 
-4. If the 8760-hour test fails on time, profile and identify the bottleneck.
-   Common fix: ensure CSC conversion happens once at the end, not inside a loop.
-
-Don't change the public API — just optimize internals and add the perf test.
+4. If performance test fails, profile and fix. Common issues:
+   - CSC conversion happening multiple times (should be once at the end)
+   - Dense operations where sparse would suffice
 ```
 
 -----
 
-## PHASE 3 — Multi-Zone Transmission
+## Phase 3 — Multi-Zone Transmission
 
-### Session 3.1: Transmission model
+### Session 3.1: Pipe-and-Bubble Transmission Model 🔧
+
+**Depends on:** 2.3
+**Scope:** Moderate
+**Outputs:** `model/transmission.py`, tests in `tests/test_transmission.py`
+**Done when:** Zonal price separation under congestion. Zero-TTC decoupling. Prices equalize without congestion.
 
 ```
 Create src/market_sim/model/transmission.py
 
-Build the pipe-and-bubble transmission model. This adds flow variables and modifies the energy balance.
+Build the pipe-and-bubble transmission model.
 
-1. TransmissionModel dataclass:
-   - links: list of TransferLink (from iso_configs)
-   - n_links: int
-   - ttc: np.ndarray (n_links,) — MW limits
-   - incidence_matrix: np.ndarray (n_zones, n_links) — +1 for receiving zone, -1 for sending zone
+1. Function: build_incidence_matrix(links: list[TransferLink], zone_names: list[str]) -> scipy.sparse matrix
+   Returns (n_zones, n_links) matrix. For each link:
+   - from_zone row gets -1 (exporting)
+   - to_zone row gets +1 (importing)
+   Flow > 0 means power flows from_zone → to_zone.
 
-   Method: build_incidence_matrix(links, zone_names) -> sparse matrix
-   For bidirectional links, flow > 0 means from_zone → to_zone.
+2. Function: get_ttc_array(links) -> np.ndarray
+   Returns (n_links,) array of TTC values in MW.
 
-2. Modify dispatch.py energy balance to accept flow variables:
-   Energy balance row for zone z now includes:
-   ... + Σ (incidence[z,l] * Flow[l,t]) + Slack[z,t] = Demand[z,t]
+3. The incidence matrix and ttc array are passed to solve_dispatch() which already
+   supports them via the incidence and ttc parameters. No changes to dispatch.py needed
+   (it was built to accept these from the start).
 
-3. Add flow bound constraints: -ttc[l] ≤ Flow[l,t] ≤ ttc[l]
-   (Or set as variable bounds directly in HiGHS — even simpler.)
-
-4. Update solve_dispatch to accept multi-zone inputs:
-   - demand: np.ndarray (n_zones, T) instead of (T,)
-   - wind/solar per zone
-   - TransmissionModel
-   - Returns prices per zone: np.ndarray (n_zones, T)
-
-5. Tests in tests/test_transmission.py:
-   - 2 zones, 1 link (1000 MW), cheap gen in zone A, demand in zone B:
-     Power flows from A to B, prices equalize
-   - Same but link TTC = 0: zones decouple, zone B hits VOLL or expensive gen
-   - 2 zones, surplus wind in zone A: flow = min(surplus, TTC), zone A price ≤ zone B price
-
-Use T=24 for tests.
+4. Tests in tests/test_transmission.py (all T=24):
+   a) 2 zones, 1 link (1000 MW), cheap gen (MC=30) only in zone A, expensive gen (MC=80) only in zone B, demand in both:
+      Power flows from A to B. If link uncongested, prices equalize.
+   b) Same setup but TTC=0: zones fully decouple. Zone B price = MC of zone B gen.
+   c) 2 zones, surplus wind in zone A: flow = min(surplus, TTC). Zone A price ≤ zone B price.
+   d) ERCOT-like: 4 zones, 6 links, generators spread across zones. Verify energy balance per zone.
 ```
 
-### Session 3.2: CAISO import tranches
+-----
+
+### Session 3.2: CAISO WECC Import Tranches
+
+**Depends on:** 3.1
+**Scope:** Light
+**Outputs:** `build_wecc_import_generators()` in `model/transmission.py`, tests
+**Done when:** CAISO imports at stepped prices. Low demand → only cheap tranche. High demand → all tranches.
 
 ```
 Add CAISO WECC import model to src/market_sim/model/transmission.py
 
-The WECC import node is modeled as pseudo-generators with stepped marginal costs on a supply curve.
+The WECC import node is modeled as pseudo-generators with stepped marginal costs.
 
 1. Function: build_wecc_import_generators() -> list[Generator]
-   Creates 3-4 synthetic Generator objects representing import tranches:
-   - Tranche 1: "PNW_hydro" — 3000 MW at $15/MWh (cheap Pacific NW hydro)
-   - Tranche 2: "DSW_CCGT" — 5000 MW at $35/MWh (Desert Southwest gas CC)
-   - Tranche 3: "DSW_CT" — 4000 MW at $55/MWh (Desert Southwest gas CT)
-   - Tranche 4: "Expensive_import" — 3000 MW at $80/MWh (marginal import)
-   All assigned to zone "WECC_import".
-   Mark with TODO: fit these from EIA-930 interchange data.
+   Creates synthetic Generator objects as import tranches:
+   - Tranche 1: "PNW_hydro" — 3000 MW at MC=$15/MWh (zone="WECC_import")
+   - Tranche 2: "DSW_CCGT" — 5000 MW at MC=$35/MWh
+   - Tranche 3: "DSW_CT" — 4000 MW at MC=$55/MWh
+   - Tranche 4: "Expensive_import" — 3000 MW at MC=$80/MWh
+   All with heat_rate=0 (cost is set directly via vom field), eford=0.02.
+   Mark with TODO: fit from EIA-930 interchange data.
 
-2. For CAISO export: add an export "sink" generator in WECC zone with negative cost
-   (or zero cost) and capacity limit of 5000 MW. This lets CAISO dump surplus solar.
+2. Function: build_wecc_export_sink() -> Generator
+   Export "sink" in WECC zone. pmax_mw=5000, vom=0 (or small negative).
+   Lets CAISO dump surplus solar.
 
-3. These pseudo-generators just get added to the fleet before LP construction.
-   No special LP formulation needed — they participate normally via the energy balance
-   and transmission link between CAISO_main and WECC_import.
+3. These just get appended to the generator fleet before LP construction.
+   No special formulation — they participate via energy balance + transmission link.
 
-4. Test:
-   - CAISO with low demand: only cheap import tranche dispatches
-   - CAISO with high demand: all tranches dispatch in order, prices follow stepped curve
-   - CAISO with surplus solar: export to WECC (negative flow or export gen dispatches)
+4. Tests:
+   - CAISO low demand: only cheap tranche dispatches, price ≈ $15
+   - CAISO high demand: all tranches dispatch in merit order
+   - CAISO surplus solar: export gen dispatches (power flows CAISO → WECC)
 ```
 
 -----
 
-## PHASE 4 — Storage
+## Phase 4 — Storage Co-Optimization
 
-### Session 4.1: Storage SOC constraints
+### Session 4.1: Storage Constraint Builder + SOC Dynamics 🔧
+
+**Depends on:** 2.3
+**Scope:** Heavy
+**Outputs:** `model/storage.py`, tests in `tests/test_storage.py`
+**Done when:** Storage arbitrages peak/off-peak. SOC cyclic. RTE losses correct. No hour loops.
 
 ```
 Create src/market_sim/model/storage.py
 
-Build the storage formulation as an add-on to the dispatch LP.
+Storage parameter structs. The SOC constraints are already built inside dispatch.py's
+build_constraints function (it accepts storage params). This module provides the data layer.
 
-1. StorageUnit dataclass:
-   unit_id: str
-   zone: str
-   power_cap_mw: float    # charge and discharge limit
-   energy_cap_mwh: float  # SOC limit
-   eta_charge: float      # charging efficiency
-   eta_discharge: float   # discharging efficiency
-   zone_idx: int          # integer zone index
+1. StorageUnit dataclass (Pydantic):
+   unit_id, zone, power_cap_mw, energy_cap_mwh, eta_charge, eta_discharge, zone_idx
 
-2. StorageArrays dataclass (struct-of-arrays):
+2. StorageArrays dataclass (plain, struct-of-arrays):
    power_cap, energy_cap, eta_chg, eta_dis: np.ndarray (n_storage,)
    zone_idx: np.ndarray int (n_storage,)
+   n_storage property
 
-3. Function: build_storage_constraints(layout, storage, T=8760)
-   Returns sparse constraint matrix rows and bounds for:
+3. Function: storage_units_to_arrays(units, zone_names) -> StorageArrays
 
-   a) SOC dynamics (n_storage * T rows, equality):
-      SOC[s,t] - SOC[s,t-1] - eta_chg[s] * Chg[s,t] + Dis[s,t] / eta_dis[s] = 0
+4. Function: build_default_storage(iso, config) -> list[StorageUnit]
+   Creates storage fleet from constants.STORAGE_TECHS + config.storage_deployment pace.
 
-   b) Cyclic boundary (n_storage rows, equality):
-      SOC[s,0] - SOC[s,T-1] = 0
-
-   c) SOC upper bounds: SOC[s,t] ≤ energy_cap[s]  (can use variable bounds)
-   d) Charge bounds: Chg[s,t] ≤ power_cap[s]  (can use variable bounds)
-   e) Discharge bounds: Dis[s,t] ≤ power_cap[s]  (can use variable bounds)
-
-   The SOC dynamics matrix is banded — build it with scipy.sparse.diags:
-   Main diagonal = +1 (SOC[s,t]), sub-diagonal = -1 (SOC[s,t-1]),
-   plus columns for Chg and Dis.
-
-   CRITICAL: Vectorize. Do NOT loop over hours.
-
-4. Update energy balance in dispatch.py to include storage:
-   + Dis[s,t] - Chg[s,t] for each storage unit s in zone z
-
-5. Storage tiebreaker: cost vector has ε=0.001 for Chg and Dis columns (already in build_cost_vector).
-
-Tests in tests/test_storage.py:
-- 1 storage unit, 24 hours, cheap hours 0-11, expensive hours 12-23:
-  Storage charges during cheap hours, discharges during expensive hours
-- SOC cyclic: SOC[0] == SOC[23] (within tolerance)
-- Energy conservation: sum(charge * eta) ≈ sum(discharge / eta) over 24 hours
-- RTE loss: total discharge energy < total charge energy
-```
-
-### Session 4.2: Storage integration test
-
-```
-Add an integration test combining dispatch + transmission + storage.
-
-In tests/test_storage.py, add:
-
-1. ERCOT-like test: 4 zones, 6 links, 10 thermal generators spread across zones,
-   wind in West zone, solar in South zone, 2 storage units (one in Houston, one in North).
-   T=168 hours (one week) for reasonable solve time.
-
-   Verify:
-   - Storage charges when prices are low (high renewables)
-   - Storage discharges when prices are high (evening peak)
-   - Inter-zonal flows are within TTC limits
-   - Energy balance holds per zone per hour
-   - Prices differ across zones when transmission is congested
-
-2. Also run the 8760-hour performance test with storage included:
-   200 gens + 5 storage units + 4 zones + 6 links.
-   Time the full build+solve. Print results.
-   Assert solve < 15 seconds (relaxed for multi-zone + storage).
+Tests in tests/test_storage.py (all T=24 unless noted):
+a) 1 storage unit (100MW/400MWh, RTE=0.85), 2 thermal gens (cheap MC=20, expensive MC=80),
+   demand is low hours 0-11 (use cheap gen), high hours 12-23 (need expensive gen):
+   → Storage charges during cheap hours, discharges during expensive hours
+b) SOC cyclic: SOC[0] ≈ SOC[23]
+c) Energy conservation: total_discharge ≈ total_charge * RTE (within 1%)
+d) RTE loss: total discharge energy < total charge energy
 ```
 
 -----
 
-## PHASE 5 — Capacity Evolution
+### Session 4.2: Multi-Zone + Storage Integration Test 🧪
 
-### Session 5.1: Retirement logic
+**Depends on:** 3.1, 4.1
+**Scope:** Moderate
+**Outputs:** Integration tests in `tests/test_integration.py`
+**Done when:** 4-zone + storage solve works. Energy balance per zone. Flows within TTC. 8760-hour perf < 30s.
+
+```
+Build tests/test_integration.py
+
+Integration tests combining dispatch + transmission + storage.
+
+1. ERCOT-like test (T=168 hours = one week):
+   - 4 zones, 6 links with TTCs from iso_configs
+   - 10 thermal generators spread across zones (mix of gas CC, CT, coal)
+   - Wind in West zone (high CF), solar in South zone
+   - 2 storage units: one in Houston (200MW/800MWh), one in North (100MW/400MWh)
+   - Demand varies: low overnight, high afternoon
+
+   Verify:
+   - Storage charges when prices low (high renewables midday)
+   - Storage discharges when prices high (evening peak)
+   - Inter-zonal flows within TTC limits: abs(flow) <= ttc for every link, every hour
+   - Energy balance per zone per hour: sum(gen) + wind + solar + discharge - charge + net_flow + slack = demand
+   - Prices differ across zones when transmission congested
+
+2. 8760-hour performance test:
+   - 200 gens + 5 storage units + 4 zones + 6 links
+   - Full year sinusoidal demand + realistic wind/solar profiles
+   - Assert total time (build + solve) < 30 seconds
+   - Assert energy balance holds for all 4 zones × 8760 hours
+   - Print timing breakdown
+```
+
+-----
+
+## Phase 5 — Capacity Evolution Engine
+
+### Session 5.1: Retirement Logic 🔧
+
+**Depends on:** 2.3
+**Scope:** Moderate
+**Outputs:** `model/capacity.py` (retirement portion), `tests/test_capacity.py`
+**Done when:** Known retirements match schedule. Sigmoid triggers. Economic retirement works.
 
 ```
 Build src/market_sim/model/capacity.py — PART 1: retirements
 
-1. Function: apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator]
-   Removes generators where retirement_year <= year.
-   Returns the filtered list.
+1. apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator]
+   Remove generators where retirement_year is not None and retirement_year <= year.
 
-2. Function: apply_economic_retirements(
-    fleet: list[Generator],
-    fleet_arrays: FleetArrays,
-    dispatch_result: DispatchResult,
-    prices: np.ndarray,  # (n_zones, T)
-    config: ScenarioConfig,
-    consecutive_loss_years: dict[str, int],  # unit_id -> count of unprofitable years
-) -> tuple[list[Generator], dict[str, int]]:
-
+2. apply_economic_retirements(fleet, fleet_arrays, dispatch_result, prices, config,
+   consecutive_loss_years: dict[str, int]) -> tuple[list[Generator], dict]:
    For each thermal generator:
-   - Compute net revenue = Σ_t price[zone, t] * dispatch[g, t]
-   - Compute going_forward_cost = fixed_om * pmax * 8760 (annualized)
-   - If net_revenue < going_forward_cost: increment consecutive_loss_years[unit_id]
-   - If consecutive_loss_years >= config.retirement_consecutive_years: mark for retirement
-   - Within each fuel class, retire highest heat_rate first
+   - net_revenue = Σ_t price[zone, t] * dispatch[g, t]
+   - going_forward_cost = fixed_om_per_kw_yr * pmax * 1000 (convert kW→MW)
+   - If net_revenue < going_forward_cost: increment loss counter
+   - If counter >= config.retirement_consecutive_years: retire
+   - Within fuel class, retire highest heat_rate first
+   Return updated fleet and loss tracker.
 
-   Returns updated fleet and updated loss-year tracker.
+3. apply_sigmoid_retirement(fleet, clean_share: float, config) -> list[Generator]
+   retirement_fraction = 1 / (1 + exp(-config.sigmoid_steepness * (clean_share - config.sigmoid_midpoint)))
+   Apply to coal first, then gas_ct, then gas_cc.
+   Remove fraction of each class's capacity (retire least efficient units).
 
-3. Function: apply_sigmoid_retirement(
-    fleet: list[Generator], clean_share: float, config: ScenarioConfig
-) -> list[Generator]:
-   Accelerated retirement when clean_share exceeds a threshold.
-   Sigmoid function: retirement_fraction = 1 / (1 + exp(-k * (clean_share - midpoint)))
-   k and midpoint are Tier 2 parameters in config (add them if not present).
-   Applies to coal first, then gas CT, then gas CC.
+4. Helper: compute_clean_share(fleet) -> float
+   (wind + solar + nuclear + hydro capacity) / total capacity
 
 Tests in tests/test_capacity.py:
-- Known retirement: generator with retirement_year=2028 removed in year 2028, present in 2027
-- Economic: unprofitable generator with 2 consecutive loss years → retired
+- Known: gen with retirement_year=2028 removed in 2028, present in 2027
+- Economic: unprofitable gen with 2 consecutive loss years → retired
+- Economic: profitable gen resets counter
 - Sigmoid: clean_share=0.6 with midpoint=0.5 → some coal retires
-```
-
-### Session 5.2: New entry + year-over-year loop
-
-```
-Edit src/market_sim/model/capacity.py — PART 2: new entry + evolution loop
-
-1. Function: compute_lcoe(tech_type, year, config) -> float
-   LCOE with Wright's Law learning curve:
-   cost = base_cost * (cumulative_capacity / reference_capacity) ^ (-learning_rate)
-   Apply IRA credits: PTC for wind ($/MWh reduction), ITC for solar/storage (% capex reduction)
-   Tier 1 parameters for IRA credit values and phase-out schedule.
-
-2. Function: apply_economic_new_entry(
-    fleet: list[Generator], prices: np.ndarray, year: int, config: ScenarioConfig
-) -> list[Generator]:
-   For each candidate technology (wind, solar, li_ion_4hr, gas_cc):
-   - Compute LCOE
-   - Estimate expected revenue from price duration curve of prior year
-   - If expected_revenue > LCOE: economic, add capacity up to annual queue cap
-   - Queue cap from constants.QUEUE_CAP_GW
-
-3. Function: apply_rps_mandate(fleet, year, config) -> list[Generator]:
-   If ISO has RPS floors (CAISO), check if current clean share meets target.
-   If not, force-build cheapest clean technology to fill the gap.
-
-4. Main evolution function:
-   def evolve_fleet(
-       fleet: list[Generator],
-       prior_results: DispatchResult | None,
-       year: int,
-       config: ScenarioConfig,
-       loss_tracker: dict,
-   ) -> tuple[list[Generator], dict]:
-   Applies in order:
-   1. Known retirements
-   2. Economic retirements (if prior_results exist)
-   3. Sigmoid retirements
-   4. Known additions (generators with online_year == year)
-   5. Economic new entry
-   6. RPS mandates
-   Returns updated fleet and loss tracker.
-
-Tests:
-- LCOE decreases over time with learning curve
-- IRA credit reduces LCOE
-- Queue cap limits annual additions
-- evolve_fleet applies steps in correct order
-- RPS mandate forces builds when clean share is below target
+- Sigmoid: clean_share=0.3 with midpoint=0.5 → minimal retirement
 ```
 
 -----
 
-## PHASE 6 — Runner + Caching
+### Session 5.2: New Entry + Learning Curves + IRA Credits
 
-### Session 6.1: Cache system
+**Depends on:** 5.1
+**Scope:** Heavy
+**Outputs:** `model/capacity.py` (entry portion), `policy/ira.py`, `policy/rps.py`, tests
+**Done when:** LCOE decreases with learning. IRA reduces LCOE. Queue cap binds. RPS forces builds.
 
 ```
-Build src/market_sim/results/cache.py
+Edit src/market_sim/model/capacity.py — PART 2: new entry
 
-1. DispatchResult needs a to_parquet(path) and from_parquet(path) method.
-   Schema: one row per hour, columns for each output variable.
-   Use pyarrow for writing.
+1. In policy/ira.py:
+   def apply_ira_credits(tech_type, lcoe, year, config) -> float:
+   PTC for wind: subtract config.ira_ptc_wind from LCOE ($/MWh)
+   ITC for solar/storage: multiply capex component by (1 - config.ira_itc_solar)
+   Credits phase out after config.ira_expiry_year.
 
-2. Cache functions:
-   def get_cache_path(iso: str, cache_key: str, year: int) -> Path:
-       return Path(f"results/{iso}/{cache_key}/year_{year}.parquet")
+2. In policy/rps.py:
+   def get_rps_target(iso, year) -> float | None:
+   Interpolate from STATE_RPS_FLOORS in constants. Return None if no RPS.
 
-   def is_cached(iso, cache_key, year) -> bool:
-       return get_cache_path(iso, cache_key, year).exists()
+3. In capacity.py:
+   def wright_cost(base_cost, cumulative_gw, reference_gw, learning_rate) -> float:
+   cost = base_cost * (cumulative_gw / reference_gw) ** (-log2(1-learning_rate)/log2(2))
+   Simpler: cost = base_cost * (cumulative_gw / reference_gw) ** (-learning_rate)
 
-   def save_result(result: DispatchResult, config: ScenarioConfig, iso: str, year: int):
-       path = get_cache_path(iso, config.cache_key(), year)
-       path.parent.mkdir(parents=True, exist_ok=True)
-       result.to_parquet(path)
-       # Also save config.yaml alongside if not already present
-       config_path = path.parent / "config.yaml"
-       if not config_path.exists():
-           config.to_yaml(config_path)
+   def compute_lcoe(tech_type, year, config, cumulative_gw=None) -> float:
+   LCOE with Wright's Law + IRA credits.
+   Use NEW_ENTRY_COST from constants for base costs.
 
-   def load_result(iso, cache_key, year) -> DispatchResult:
-       return DispatchResult.from_parquet(get_cache_path(iso, cache_key, year))
+   def estimate_expected_revenue(prices, cf, hours=8760) -> float:
+   Expected annual revenue per MW from price duration curve × capacity factor.
+
+   def apply_economic_new_entry(fleet, prices, year, config, iso) -> list[Generator]:
+   For each candidate tech: if expected_revenue > LCOE, add up to queue cap.
+   Queue cap from QUEUE_CAP_GW. Priority: highest margin first.
+
+   def apply_rps_mandate(fleet, year, config) -> list[Generator]:
+   If clean_share < rps_target, force-build cheapest clean tech to fill gap.
+
+4. Main evolution function:
+   def evolve_fleet(fleet, prior_results, year, config, loss_tracker) -> tuple[list, dict]:
+   Order: known retirements → economic retirements → sigmoid → known additions
+   (online_year == year) → economic new entry → RPS mandates.
 
 Tests:
-- Save a result, load it back, all arrays match (np.allclose)
-- is_cached returns True after save, False before
-- Config YAML saved alongside results
+- LCOE decreases over time with learning
+- IRA credit reduces LCOE; expires after ira_expiry_year
+- Queue cap limits annual additions
+- evolve_fleet applies steps in order
+- RPS mandate forces builds when clean share below target (CAISO)
 ```
 
-### Session 6.2: Runner orchestrator
+-----
+
+### Session 5.3: Capacity Evolution Year-Loop Integration
+
+**Depends on:** 5.1, 5.2
+**Scope:** Moderate
+**Outputs:** Complete `model/capacity.py`, `policy/carbon.py`, integration tests
+**Done when:** 5-year trajectory runs. Fleet changes are deterministic. Two scenarios diverge correctly.
+
+```
+Wire together the complete year-over-year evolution loop.
+
+1. Build policy/carbon.py:
+   def resolve_carbon_price(config, year) -> float:
+   If config.carbon_price is scalar, return it.
+   If it's a path string, interpolate from CARBON_PRICE_PATHS in constants.
+
+2. Verify evolve_fleet handles edge cases:
+   - Year 2026 (no prior results): skip economic retirement, only apply known pipeline
+   - Empty fleet after retirements: should still work (new entry fills gap)
+   - All clean fleet: sigmoid has no thermal to retire
+
+3. Policy extension point (stub for now):
+   In dispatch.py or a policy module, add a check:
+   def get_active_policy_constraints(config, year) -> list:
+   Returns empty list for now. When constraint-type policies are added later,
+   they'll return sparse matrix rows to append to the LP.
+
+4. Integration tests:
+   - 3-year trajectory (2026-2028) with small fleet, verify fleet composition each year
+   - Two scenarios identical except gas_price_path: fleets identical year 1, diverge by year 3
+   - Coal plant with retirement_year=2027: present in 2026, gone in 2027
+   - Fleet capacity never goes to zero (new entry should fill gaps)
+```
+
+-----
+
+## Phase 6 — Scenario Runner + Caching
+
+### Session 6.1: Parquet Cache + Result Serialization
+
+**Depends on:** 5.3
+**Scope:** Moderate
+**Outputs:** `results/cache.py`, `results/outputs.py`, tests
+**Done when:** Save/load round-trips. is_cached works. Config YAML saved alongside.
+
+```
+Build src/market_sim/results/cache.py and src/market_sim/results/outputs.py
+
+1. In outputs.py: extend DispatchResult with to_parquet(path) and from_parquet(path).
+   Schema: flatten arrays to one row per hour. Columns: hour, zone, dispatch_by_gen (or aggregate),
+   price, wind, solar, slack, emissions, storage_soc, flows, etc.
+   Use pyarrow for Parquet writing.
+
+2. In cache.py:
+   def get_cache_path(iso, cache_key, year) -> Path:
+       return Path(f"results/{iso}/{cache_key}/year_{year}.parquet")
+
+   def is_cached(iso, cache_key, year) -> bool
+   def save_result(result, config, iso, year): save parquet + config.yaml
+   def load_result(iso, cache_key, year) -> DispatchResult
+
+3. Tests:
+   - Save result, load back, all arrays match (np.allclose)
+   - is_cached True after save, False before
+   - Config YAML present alongside parquet
+   - Loading nonexistent path raises appropriate error
+```
+
+-----
+
+### Session 6.2: Runner Orchestrator + CLI
+
+**Depends on:** 6.1
+**Scope:** Moderate
+**Outputs:** `runner.py`, tests
+**Done when:** Single-run CLI works. Caching skips completed years. Sweep generates parallel runs.
 
 ```
 Build src/market_sim/runner.py
 
-1. Main function:
-   def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
-       """Run all years 2026-2050 for one scenario × one ISO. Returns cache_key."""
-       iso_config = get_iso_config(iso)
-       fleet = load_base_fleet(iso)  # placeholder: load from data/fleet/
-       loss_tracker = {}
-       prior_result = None
+1. def run_scenario_iso(config, iso) -> str:
+   Run all years 2026-2050 for one scenario × one ISO. Sequential.
+   For each year: check cache → evolve fleet → assemble inputs → solve → save → log.
+   Returns cache_key.
 
-       for year in range(2026, 2051):
-           if is_cached(iso, config.cache_key(), year):
-               prior_result = load_result(iso, config.cache_key(), year)
-               logger.info(f"Cached: {iso} {year}")
-               continue
+2. def main():
+   argparse CLI with two subcommands:
+   - run: python -m market_sim run --config scenario.yaml [--iso ERCOT]
+   - sweep: python -m market_sim sweep --sweep sweep.yaml [--workers N]
 
-           fleet, loss_tracker = evolve_fleet(fleet, prior_result, year, config, loss_tracker)
-           # assemble inputs, solve dispatch
-           result = solve_dispatch(...)
-           save_result(result, config, iso, year)
-           prior_result = result
-           logger.info(f"Solved: {iso} {year} in {result.solve_time:.1f}s")
+   Sweep mode: generate configs, use ProcessPoolExecutor across (config, iso) pairs.
+   Workers default to cpu_count - 1.
 
-       return config.cache_key()
+3. Logging: Python logging module. Log full resolved config at start.
+   Log per-year: "Solved: ERCOT 2026 in 3.2s" or "Cached: ERCOT 2026"
 
-2. CLI entry points using argparse:
-   python -m market_sim run --config path/to/scenario.yaml
-   python -m market_sim sweep --sweep path/to/sweep.yaml [--workers N]
-
-   For sweep mode:
-   - Load SweepDefinition from YAML
-   - Generate configs
-   - Use ProcessPoolExecutor with --workers (default: cpu_count - 1)
-   - Run each (config, iso) pair in parallel
-
-3. Logging: use Python logging. Log full resolved config at start of each scenario.
-
-Tests:
-- Mock the solve step. Run 3 years → 3 cache files created.
-- Re-run → all 3 skipped (check logs for "Cached" messages).
-- Sweep with 2 configs → 2 independent runs.
+Tests (mock the solve step for speed):
+- Run 3 years → 3 cache files created
+- Re-run → all 3 skipped (check log messages)
+- Sweep with 2 configs → 2 cache directories
 ```
 
 -----
 
-## PHASE 7 — Outputs + Emissions
+## Phase 7 — Outputs + Emissions + Calibration
 
-### Session 7.1: Emissions + output formatting
+### Session 7.1: Emissions Accounting + JSON Export
+
+**Depends on:** 6.1
+**Scope:** Moderate
+**Outputs:** `results/emissions.py`, `results/export.py`, `scripts/export_results.py`, `docs/data-dictionary.md`
+**Done when:** Emissions vectorized. Export produces valid JSON < 2 MB. Data dictionary covers all fields.
 
 ```
-Build src/market_sim/results/emissions.py and src/market_sim/results/outputs.py
+Build src/market_sim/results/emissions.py, results/export.py, and scripts/export_results.py
 
 1. emissions.py:
-   def compute_emissions(dispatch: np.ndarray, emission_rates: np.ndarray) -> np.ndarray:
-       """Vectorized: (n_gen, T) × (n_gen,) -> (T,) total CO2 per hour."""
+   def compute_emissions(dispatch, emission_rates) -> np.ndarray:
+       """(n_gen, T) × (n_gen,) → (T,) total CO2 per hour. Vectorized."""
        return (dispatch * emission_rates[:, None]).sum(axis=0)
+   Same pattern for NOx.
 
-   def compute_nox_emissions(dispatch, nox_rates):
-       Same pattern.
+2. export.py:
+   def export_scenario_json(cache_key, iso, output_dir):
+   Load all 25 years of Parquet, aggregate to annual summaries:
+   { cache_key, iso, config, years: { "2026": { generation_twh by fuel, emissions_mt,
+     avg_price, peak_price, curtailment_twh, capacity_gw by fuel, storage_cycles }, ... } }
+   Keep < 2 MB per file.
 
-2. outputs.py — DispatchResult should include (update if needed):
-   - dispatch (n_gen, T)
-   - wind_dispatched (n_zones, T)
-   - solar_dispatched (n_zones, T)
-   - storage_charge (n_storage, T)
-   - storage_discharge (n_storage, T)
-   - storage_soc (n_storage, T)
-   - flows (n_links, T)
-   - slack (n_zones, T)
-   - prices (n_zones, T)
-   - emissions_co2 (T,)
-   - curtailment_wind (n_zones, T): potential - dispatched
-   - curtailment_solar (n_zones, T)
-   - objective_value: float
-   - solve_time: float
+3. scripts/export_results.py:
+   CLI: find all completed scenarios in results/, export each to frontend/data/results/.
+   Build frontend/data/scenarios.json with metadata.
 
-3. Add summary statistics method to DispatchResult:
-   def summarize(self) -> dict: returns annual totals, averages, peaks, capacity factors
+4. Create docs/data-dictionary.md: every Parquet column with name, type, unit, range.
 
 Tests:
-- Emissions = sum of dispatch × rates
+- Emissions = sum(dispatch × rates), matches manual calc
+- Export produces valid JSON, file size < 2 MB
 - Curtailment = potential - dispatched, always >= 0
 ```
 
-### Session 7.2: JSON export for frontend
+-----
+
+### Session 7.2: Calibration Framework 📂 NEEDS DATA
+
+**Depends on:** 7.1
+**Scope:** Heavy
+**Outputs:** Calibration code, `docs/calibration-log.md`, validation tests
+**Done when:** Calibration diagnostic runs. ±5% gen mix check works.
 
 ```
-Build src/market_sim/results/export.py and scripts/export_results.py
+Build calibration framework.
 
-1. export.py:
-   def export_scenario_json(cache_key: str, iso: str, output_dir: Path):
-       """Load all 25 years of Parquet results, aggregate to annual summaries, write JSON."""
-       Export per scenario:
-       {
-           "cache_key": "...",
-           "iso": "...",
-           "config": { ... resolved config ... },
-           "years": {
-               "2026": {
-                   "generation_twh": {"gas_cc": X, "gas_ct": X, "coal": X, "nuclear": X, "wind": X, "solar": X},
-                   "emissions_mt_co2": X,
-                   "avg_price": X,
-                   "peak_price": X,
-                   "curtailment_twh": X,
-                   "unserved_energy_mwh": X,
-                   "capacity_gw": {"gas_cc": X, ...},
-                   "storage_cycles": X,
-               },
-               "2027": { ... },
-               ...
-           }
-       }
-       Keep under 2 MB per file. Hourly data stays in Parquet.
+1. def check_generation_mix(result, benchmark, tolerance=0.05) -> dict:
+   Compare generation by fuel type (TWh) against benchmark.
+   Return {fuel: {model, benchmark, pct_diff, pass_fail}} for each fuel.
 
-2. scripts/export_results.py:
-   CLI script that finds all completed scenarios in results/ and exports each to
-   frontend/data/results/{cache_key}.json
-   Also builds frontend/data/scenarios.json with metadata for all scenarios.
+2. def check_price_duration_curve(prices, benchmark_prices) -> dict:
+   Compare sorted price arrays. Return shape metrics (P10, P50, P90, mean).
+
+3. def run_calibration_check(scenario_cache_key, iso, benchmarks) -> CalibrationReport:
+   Diagnostic order: (1) gen mix, (2) price duration curve, (3) avg price, (4) capacity factors.
+
+4. CalibrationReport dataclass with pass/fail per diagnostic + details.
+
+5. Create docs/calibration-log.md template.
 
 Tests:
-- Export a 3-year scenario, verify JSON structure, verify file size < 2 MB
+- Gen mix check correctly flags >5% deviation
+- Gen mix check passes within tolerance
+- Price duration curve comparison produces sensible metrics
 ```
 
 -----
 
-## PHASE 8 — Frontend
+## Phase 8 — Interactive Frontend
 
-### Session 8.1: Results dashboard
+### Session 8.1: Frontend Skeleton + Design System
+
+**Depends on:** 7.1
+**Scope:** Moderate
+**Outputs:** `frontend/css/style.css`, `frontend/js/app.js`, `frontend/js/data-loader.js`, `frontend/index.html` shell
+**Done when:** Shell loads in browser. Navigation works. Data loader fetches sample JSON.
 
 ```
-Build frontend/index.html, frontend/css/style.css, frontend/js/app.js, frontend/js/charts.js, frontend/js/data-loader.js
+Build frontend skeleton: index.html, css/style.css, js/app.js, js/data-loader.js
 
-Results dashboard — static HTML page that loads scenario JSONs and renders charts.
+1. style.css — design system:
+   - CSS custom properties for fuel colors: --gas-cc: #4A90D9, --gas-ct: #7BB3E0,
+     --coal: #8B4513, --nuclear: #9B59B6, --wind: #2ECC71, --solar: #F1C40F,
+     --storage: #E67E22, --hydro: #1ABC9C
+   - Typography, layout grid, responsive breakpoints (desktop-first)
+   - Navigation bar styles, card styles, chart container styles
 
-1. Layout:
-   - Header with project title
-   - Scenario selector: dropdown populated from scenarios.json
-   - Chart area with 4 panels:
-     a) Generation mix stacked area (2026-2050) — Plotly.js
-     b) Emissions trajectory line chart
-     c) Price duration curve (sort prices descending) for selected year
-     d) Capacity mix bar chart for selected year
-   - Year slider to pick which year's duration curve / capacity bar to show
+2. app.js — minimal routing/state:
+   - Track current page, selected scenario, selected year
+   - Navigation between index, decisions, parameters pages
 
-2. data-loader.js:
-   - fetch scenarios.json on load
+3. data-loader.js:
+   - fetch('data/scenarios.json') on load
    - Lazy-load per-scenario JSON on selection
-   - Cache loaded JSONs in memory (not localStorage — they may be large)
+   - Cache in memory (not localStorage)
 
-3. charts.js:
-   - Fuel color mapping: gas_cc=#4A90D9, gas_ct=#7BB3E0, coal=#8B4513,
-     nuclear=#9B59B6, wind=#2ECC71, solar=#F1C40F, storage=#E67E22, hydro=#1ABC9C
-   - Functions: renderGenerationMix(data), renderEmissions(data),
-     renderPriceDuration(data, year), renderCapacity(data, year)
+4. index.html — shell with nav bar linking to all 3 pages
+   - CDN imports: Plotly.js, D3.js
+   - Placeholder chart containers
 
-4. Use Plotly.js from CDN. No npm, no build step.
-   Responsive layout but desktop-first.
-
-5. Root index.html at repo root that links to frontend/index.html and learning-hub/index.html.
-```
-
-### Session 8.2: Decision tracker page
-
-```
-Build frontend/decisions.html and frontend/js/decisions.js
-
-Interactive decision tracker with form persistence.
-
-1. Define decision domains as a JS data structure:
-   [
-     {
-       id: "weather_year",
-       domain: "Structural",
-       question: "Which weather year for base case?",
-       options: ["2022", "2023", "2024", "2025"],
-       status: "open",  // "open", "leaning", "decided"
-       leaning: "2024",
-       notes: ""
-     },
-     {
-       id: "caiso_voll",
-       domain: "Structural",
-       question: "CAISO VOLL level?",
-       options: ["$1,000/MWh", "$2,000/MWh"],
-       status: "open",
-       leaning: "$2,000/MWh",
-       notes: ""
-     },
-     // Add 8-10 more from build-plan §5 Open Items + reasonable additions
-   ]
-
-2. Render: collapsible sections by domain. Each decision shows:
-   - Question text
-   - Radio buttons for options
-   - Notes textarea
-   - Status badge (open/leaning/decided)
-
-3. On change: save to localStorage with key marketsim_decision_{id}
-   On load: restore from localStorage
-
-4. Export button: JSON dump of all decisions to clipboard
-
-5. Clean styling consistent with index.html
-```
-
-### Session 8.3: Parameter citation browser
-
-```
-Build frontend/parameters.html and create frontend/data/parameters.json
-
-1. parameters.json: Create an initial version with 20-30 parameters from constants.py.
-   Schema per entry matches build-plan §9:
-   { param_id, display_name, value, unit, domain, tier, source, source_date,
-     page_or_table, url, notes, old_repo_location, last_verified }
-
-2. parameters.html:
-   - Search box (filters by param_id, display_name, source, domain)
-   - Filter dropdowns: by domain, by tier
-   - Table with columns: Name, Value, Unit, Tier, Source, Domain
-   - Click row to expand: shows full citation details (all fields)
-   - Sortable columns
-
-3. Load from parameters.json. No build step.
-   Consistent styling with other frontend pages.
+5. Root index.html at repo root linking to frontend/ and learning-hub/
 ```
 
 -----
 
-## PHASE 9 — Learning Hub (optional, do after core model works)
+### Session 8.2: Results Dashboard
 
-### Session 9.1: Scrollytell framework
+**Depends on:** 8.1
+**Scope:** Heavy
+**Outputs:** `frontend/js/charts.js`, complete `frontend/index.html`
+**Done when:** All 4 chart types render. Scenario switching works. No console errors.
 
 ```
-Build learning-hub/shared/scrollytell.css and scrollytell.js, plus learning-hub/index.html
+Build frontend/js/charts.js and complete frontend/index.html
 
-Lightweight scrollytell engine:
-1. scrollytell.js:
-   - Uses IntersectionObserver to detect which narrative step is in view
-   - Fires custom events: 'step-enter', 'step-exit' with step index
-   - Sticky chart panel stays fixed while narrative text scrolls
+1. Scenario selector: dropdown populated from scenarios.json
+
+2. Chart panels:
+   a) Generation mix stacked area chart (2026-2050) — Plotly.js
+   b) Emissions trajectory line chart
+   c) Price duration curve (sorted descending) for selected year
+   d) Capacity mix bar chart for selected year
+
+3. Year slider to select which year's duration curve / capacity bar to show
+
+4. charts.js functions:
+   renderGenerationMix(data), renderEmissions(data),
+   renderPriceDuration(data, year), renderCapacity(data, year)
+
+5. Use fuel color tokens from CSS custom properties.
+   Responsive layout. Plotly.js from CDN.
+```
+
+-----
+
+### Session 8.3: Decision Tracker + Parameter Browser
+
+**Depends on:** 8.1
+**Scope:** Moderate
+**Outputs:** `frontend/decisions.html`, `frontend/js/decisions.js`, `frontend/parameters.html`, `frontend/data/parameters.json`
+**Done when:** Decision forms persist via localStorage. Parameter table searchable and filterable.
+
+```
+Build frontend/decisions.html, js/decisions.js, parameters.html, and data/parameters.json
+
+1. decisions.html — decision tracker with form persistence:
+   Define 10+ decisions as JS data (weather_year, caiso_voll, ercot_ttc_source,
+   caiso_import_curve, p10p50p90_method, etc. from build-plan §5).
+   Collapsible sections by domain. Radio buttons + notes textarea.
+   Save to localStorage: marketsim_decision_{id}
+   Restore on load. Export button dumps JSON to clipboard.
+
+2. parameters.html — citation browser:
+   Load from parameters.json. Searchable, filterable by domain and tier.
+   Table: Name, Value, Unit, Tier, Source, Domain.
+   Click row to expand full citation details.
+
+3. parameters.json — initial 20-30 parameters from constants.py.
+   Schema: param_id, display_name, value, unit, domain, tier, source, source_date,
+   page_or_table, url, notes, old_repo_location, last_verified
+```
+
+-----
+
+## Phase 9 — Learning Hub
+
+### Session 9.1: Shared Scrollytell Framework
+
+**Depends on:** Nothing (can run in parallel)
+**Scope:** Moderate
+**Outputs:** `learning-hub/shared/scrollytell.js`, `scrollytell.css`, `learning-hub/index.html`
+**Done when:** Test page scrolls correctly. Transitions trigger. Works on mobile.
+
+```
+Build learning-hub/shared/scrollytell.css, scrollytell.js, and learning-hub/index.html
+
+1. scrollytell.js — lightweight engine:
+   - IntersectionObserver detects which narrative step is in view
+   - Fires 'step-enter'/'step-exit' events with step index
+   - Sticky chart panel stays fixed while narrative scrolls
    - Auto-advances through animation states
 
 2. scrollytell.css:
-   - Two-column layout: sticky chart (60% width) + scrolling narrative (40%)
-   - Mobile: stacks vertically, chart shrinks
-   - Step highlighting: active step has accent color, others fade
-   - Smooth transitions between chart states
+   - Two-column: sticky chart (60%) + scrolling narrative (40%)
+   - Mobile: stacks vertically
+   - Step highlighting with accent color
 
-3. learning-hub/index.html:
-   Landing page with cards linking to each topic:
-   - LP Dispatch, Capacity Evolution, Storage, Transmission, Scenarios
-   - Each card has a short description and an icon/illustration
-
-Keep it minimal. D3.js from CDN for charts. No other dependencies.
-```
-
-### Session 9.2: LP Dispatch explainer
-
-```
-Build learning-hub/lp-dispatch/index.html
-
-Scrollytell page: "How the Model Decides Who Generates"
-
-Use the shared scrollytell framework. 5-generator, 24-hour example.
-
-Steps:
-1. "Meet the generators" — show 5 generators as blocks with their marginal costs
-2. "Stack them by cost" — animate into merit order
-3. "Draw the demand line" — show 24-hour demand curve
-4. "The LP fills from cheapest" — animate dispatch filling from bottom of merit order
-5. "The price = the last unit needed" — highlight marginal generator, show dual = price
-6. "Add wind at zero cost" — insert wind, show it displaces expensive generators
-7. "Surplus wind → curtailment" — show what happens when wind exceeds demand
-8. "Why LP beats heuristics" — side-by-side: LP global optimum vs. greedy
-
-Use D3.js for the animated bar charts. Synthetic data, not real model results.
+3. learning-hub/index.html — landing page:
+   Cards linking to: LP Dispatch, Capacity Evolution, Storage, Transmission, Scenarios
+   D3.js from CDN. No other dependencies.
 ```
 
 -----
 
-## TIPS FOR EACH SESSION
+### Session 9.2: LP Dispatch Scrollytell
 
-1. **Copy-paste one session prompt at a time.** Don’t combine sessions.
-1. **After each session succeeds:** `git add -A && git commit -m "phase X.Y: description"`
-1. **If it times out mid-session:** paste “Continue where you left off” — Claude Code can see the files on disk.
-1. **If it writes buggy code:** paste “Run the tests and fix any failures” as a follow-up.
-1. **If tests fail on import:** paste “Run pytest tests/test_X.py -x and fix the first failure.”
-1. **Before Phase 2:** manually verify `pip install -e .` works, and that `from market_sim.config.scenarios import ScenarioConfig` imports without error.
-1. **Before Phase 8:** run the model on a toy scenario and export JSON so the frontend has data to load.
+**Depends on:** 9.1
+**Scope:** Heavy
+**Outputs:** `learning-hub/lp-dispatch/index.html`
+**Done when:** Full story from merit order to LP pricing. Animations trigger on scroll.
+
+```
+Build learning-hub/lp-dispatch/index.html — "How the Model Decides Who Generates"
+
+5-generator, 24-hour example with D3 animated visuals. Steps:
+1. "Meet the generators" — 5 blocks with marginal costs
+2. "Stack them by cost" — animate into merit order
+3. "Draw the demand line" — 24-hour demand curve
+4. "The LP fills from cheapest" — animate dispatch stacking
+5. "The price = the last unit needed" — highlight marginal gen, show dual = price
+6. "Add wind at zero cost" — wind displaces expensive gens
+7. "Surplus wind → curtailment" — excess wind, price drops
+8. "Why LP beats heuristics" — side-by-side comparison
+
+D3.js for animated bar charts. Synthetic data.
+```
+
+-----
+
+### Session 9.3: Capacity Evolution Scrollytell
+
+**Depends on:** 9.1
+**Scope:** Moderate
+**Outputs:** `learning-hub/capacity-evolution/index.html`
+**Done when:** Waterfall animates. Sigmoid and learning curve explanations clear.
+
+```
+Build learning-hub/capacity-evolution/index.html
+
+1. Animated fleet waterfall chart 2026-2050 (retirements leaving, additions entering)
+2. Sigmoid retirement trigger visualization (interactive slider for clean_share)
+3. Wright's Law cost curve animation (cumulative capacity → declining cost)
+```
+
+-----
+
+### Session 9.4: Remaining Scrollytell Pages
+
+**Depends on:** 9.1
+**Scope:** Heavy (3 pages, can split into separate sessions)
+
+```
+Build three remaining scrollytell pages:
+
+1. learning-hub/storage-cooptimization/index.html:
+   Animated SOC profile over a week. Greedy vs LP global optimum side-by-side.
+   RTE loss visualization.
+
+2. learning-hub/transmission-pricing/index.html:
+   Map-based ERCOT 4-zone with animated flows. Congestion → price divergence.
+   Copper-plate vs zonal comparison.
+
+3. learning-hub/scenario-uncertainty/index.html:
+   Interactive fan chart builder. Toggle scenario dimensions on/off.
+   P10/P50/P90 bands respond.
+```
+
+-----
+
+## Sub-Agent Sessions
+
+*These run on their own cadence, triggered by phase completions.*
+
+### Session SA-1: Documentation Pass (after each phase merge)
+
+```
+Update all docs to reflect current system state:
+1. docs/architecture.md — module structure and data flow
+2. docs/data-dictionary.md — all Parquet columns, types, units, ranges
+3. docs/lp-formulation.md — current constraint set
+4. docs/decision-log.md — append new decisions with dates
+5. CHANGELOG.md — dated entries for this phase
+6. Audit: flag any public function missing a docstring
+```
+
+-----
+
+### Session SA-2: Expert Review (after Phase 2, 5, 7)
+
+```
+Review model against industry standard practice. Read context/ folder (Aurora, PLEXOS,
+ReEDS, IPM, GenX, US-REGEN, Cambium, eGRID summaries).
+
+Produce docs/reviewer-notes.md:
+- LP formulation vs production cost modeling standards
+- Capacity evolution vs capacity expansion approaches
+- Storage formulation vs NREL ATB defaults
+- Scenario parameter space completeness
+- Calibration target achievability
+
+Format: finding → implication → recommendation. Tags: [CRITICAL], [IMPORTANT], [MINOR].
+```
+
+-----
+
+### Session SA-3: Parameter Citation Audit (after Phase 1, then incremental)
+
+```
+Build and maintain the full parameter citation registry.
+
+1. docs/parameter-citations.md — every constant traced to primary source
+2. frontend/data/parameters.json — machine-readable with full schema:
+   param_id, display_name, value, unit, domain, tier, source, source_date,
+   page_or_table, url, notes, old_repo_location, last_verified
+
+3. scripts/validate_parameters.py — cross-check every constant in constants.py
+   and every ScenarioConfig default has a matching parameters.json entry.
+
+4. Flag parameters sourced from other models (not empirical).
+5. Flag parameters older than 3 years.
+```
+
+-----
+
+## Dependency Map
+
+```
+0.1 ──┬── 1.1 (ScenarioConfig)
+      ├── 1.2 (Constants)
+      ├── 1.3 (ISO Configs)
+      │
+      ├── 1.4 (Fleet/FleetArrays) ── 1.5 (MC Assembly)
+      │         │
+      │    1.6 (EIA Loader) 📂 ── 1.7 (Fleet Builder) 📂
+      │
+      └── 1.8 (Fuel Loader) 📂
+               │
+      1.4+1.5 ─┴── 2.1 (Layout) ── 2.2 (Constraints) ── 2.3 (Solve) ── 2.4 (Perf) 🧪
+                                                              │
+                                                    3.1 (Transmission) ── 3.2 (CAISO Imports)
+                                                              │
+                                                    4.1 (Storage) ── 4.2 (Integration) 🧪
+                                                              │
+                                                    5.1 (Retirements) ── 5.2 (New Entry) ── 5.3 (Year Loop)
+                                                                                                │
+                                                                                    6.1 (Cache) ── 6.2 (Runner)
+                                                                                         │
+                                                                                7.1 (Emissions+Export) ── 7.2 (Calibration) 📂
+                                                                                         │
+                                                                                8.1 (Frontend Skeleton)
+                                                                                    ├── 8.2 (Dashboard)
+                                                                                    └── 8.3 (Decisions+Params)
+
+9.1 (Scrollytell Framework) ──┬── 9.2 (LP Dispatch)
+                              ├── 9.3 (Capacity)
+                              └── 9.4 (Storage + Transmission + Scenarios)
+
+SA-1: after each phase
+SA-2: after 2.3, 5.3, 7.2
+SA-3: after 1.2, then incremental
+```
+
+-----
+
+## Total: 31 sessions + 3 sub-agent sessions
+
+|Phase         |Sessions|Scope                            |
+|--------------|--------|---------------------------------|
+|0 Scaffold    |0.1     |1 light                          |
+|1 Config+Data |1.1–1.8 |3 moderate, 2 heavy, 1 light, 2 📂|
+|2 LP Engine   |2.1–2.4 |1 heavy, 2 moderate, 1 QA        |
+|3 Transmission|3.1–3.2 |1 moderate, 1 light              |
+|4 Storage     |4.1–4.2 |1 heavy, 1 QA                    |
+|5 Capacity    |5.1–5.3 |1 heavy, 2 moderate              |
+|6 Runner      |6.1–6.2 |2 moderate                       |
+|7 Outputs     |7.1–7.2 |1 moderate, 1 📂 heavy            |
+|8 Frontend    |8.1–8.3 |1 heavy, 2 moderate              |
+|9 Learning Hub|9.1–9.4 |1 heavy, 2 moderate, 1 heavy     |
+|Sub-agents    |SA-1–3  |recurring                        |
+
+**Critical path (skip 📂 sessions first pass):** 0.1 → 1.1 → 1.2 → 1.3 → 1.4 → 1.5 → 2.1 → 2.2 → 2.3 → 2.4 → 3.1 → 4.1 → 5.1 → 5.2 → 5.3 → 6.1 → 6.2 → 7.1 = **18 sessions to a working model.**
