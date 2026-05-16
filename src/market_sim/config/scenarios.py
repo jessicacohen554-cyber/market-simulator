@@ -38,9 +38,16 @@ class ScenarioConfig:
     storage_rte_4hr: float = 0.85
     storage_rte_8hr: float = 0.80
     discount_rate: float = 0.08
-    retirement_consecutive_years: int = 2
-    sigmoid_midpoint: float = 0.50
-    sigmoid_steepness: float = 12.0
+    retirement_consecutive_years: int = 2  # fallback if no per-fuel override
+    retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
+    retirement_years_gas_ct: int = 2  # CTs get 2 years
+    retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
+    retirement_fom_multiplier_coal: float = 1.3  # coal faces higher effective FOM
+    # (regulatory risk, carbon liability, rising insurance). Source: Lazard LCOE 2024.
+    retirement_fom_multiplier_gas_ct: float = 1.0
+    retirement_fom_multiplier_gas_cc: float = 1.0
+    retirement_reserve_margin: float = 0.15  # 15% reserve margin over peak net demand
+    # Don't retire thermal below (peak_demand - firm_clean) * (1 + reserve_margin)
     fixed_om_gas_cc: float = 12.0  # $/kW-yr
     fixed_om_gas_ct: float = 8.0
     fixed_om_coal: float = 40.0
@@ -104,8 +111,13 @@ TIER_TAGS: dict[str, int] = {
     "storage_rte_8hr": 2,
     "discount_rate": 2,
     "retirement_consecutive_years": 2,
-    "sigmoid_midpoint": 2,
-    "sigmoid_steepness": 2,
+    "retirement_years_coal": 2,
+    "retirement_years_gas_ct": 2,
+    "retirement_years_gas_cc": 2,
+    "retirement_fom_multiplier_coal": 2,
+    "retirement_fom_multiplier_gas_ct": 2,
+    "retirement_fom_multiplier_gas_cc": 2,
+    "retirement_reserve_margin": 2,
     "fixed_om_gas_cc": 2,
     "fixed_om_gas_ct": 2,
     "fixed_om_coal": 2,
