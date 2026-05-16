@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parameters — Market Simulator</title>
+<meta name="description" content="Searchable, filterable citation browser for the market simulator's physical and economic constants: values, units, source tiers and provenance.">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== Navigation ===================== -->
+<nav class="nav">
+    <a class="nav-brand" href="index.html">
+        <span class="nav-brand-mark">&#9650;</span> Market Simulator
+    </a>
+    <ul class="nav-links">
+        <li><a class="nav-link" data-page="index" href="index.html">Dashboard</a></li>
+        <li><a class="nav-link" data-page="decisions" href="decisions.html">Decisions</a></li>
+        <li><a class="nav-link active" data-page="parameters" href="parameters.html">Parameters</a></li>
+    </ul>
+    <span class="nav-spacer"></span>
+</nav>
+
+<main class="page">
+
+    <header class="page-header">
+        <div class="eyebrow">Provenance &middot; Citation Browser</div>
+        <h1>Parameter Library</h1>
+        <p>
+            Every physical and economic constant the model relies on, with its
+            value, unit, source tier and full citation. Search by name or
+            source, filter by domain and tier, and click any row to expand the
+            provenance detail.
+        </p>
+    </header>
+
+    <!-- ===================== Filters ===================== -->
+    <section class="control-bar" aria-label="Parameter filters">
+        <div class="control-field" style="flex:1; min-width:240px;">
+            <label class="control-label" for="search-input">Search</label>
+            <input type="text" class="text-input" id="search-input"
+                   placeholder="Name, source, notes, param id…" autocomplete="off">
+        </div>
+        <div class="control-field">
+            <label class="control-label" for="domain-select">Domain</label>
+            <select class="control-select" id="domain-select">
+                <option value="">All domains</option>
+            </select>
+        </div>
+        <div class="control-field">
+            <label class="control-label" for="tier-select">Tier</label>
+            <select class="control-select" id="tier-select">
+                <option value="">All tiers</option>
+            </select>
+        </div>
+    </section>
+
+    <div class="card">
+        <p class="result-count" id="result-count">Loading parameters&hellip;</p>
+        <div style="overflow-x:auto;">
+            <table class="data-table" id="param-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Unit</th>
+                        <th>Tier</th>
+                        <th>Source</th>
+                        <th>Domain</th>
+                    </tr>
+                </thead>
+                <tbody id="param-body">
+                    <tr><td colspan="6" class="table-empty">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<footer class="page-footer">
+    Source tiers: 0 identity &middot; 1 primary &middot; 2 secondary &middot; 3 placeholder &mdash;
+    <a href="../index.html">Project home</a>
+</footer>
+
+<script>
+// ============================================================================
+// Parameter browser — loads data/parameters.json, renders a sortable citation
+// table with text search and domain / tier filters. Each row expands to a
+// detail panel with the full provenance record.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var TIER_NAMES = {
+        0: 'Tier 0 · Identity',
+        1: 'Tier 1 · Primary',
+        2: 'Tier 2 · Secondary',
+        3: 'Tier 3 · Placeholder'
+    };
+
+    var allParams = [];
+    var fieldOrder = [];
+
+    var searchInput = document.getElementById('search-input');
+    var domainSelect = document.getElementById('domain-select');
+    var tierSelect = document.getElementById('tier-select');
+    var tbody = document.getElementById('param-body');
+    var resultCount = document.getElementById('result-count');
+
+    /** Render a primitive value (numbers, arrays, objects) as display text. */
+    function formatValue(v) {
+        if (v == null) { return '—'; }
+        if (Array.isArray(v) || typeof v === 'object') { return JSON.stringify(v); }
+        return String(v);
+    }
+
+    function tierBadge(tier) {
+        var span = document.createElement('span');
+        span.className = 'tier-badge tier-badge--' + tier;
+        span.textContent = TIER_NAMES[tier] ? TIER_NAMES[tier].split(' · ')[0] : ('Tier ' + tier);
+        return span;
+    }
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) { node.className = className; }
+        if (text != null) { node.textContent = text; }
+        return node;
+    }
+
+    /** Build the hidden detail row holding the full citation record. */
+    function buildDetailRow(param) {
+        var tr = document.createElement('tr');
+        tr.className = 'detail-row is-hidden';
+
+        var td = document.createElement('td');
+        td.colSpan = 6;
+
+        var dl = el('dl', 'detail-grid');
+
+        // Prefer the file's declared field order; fall back to the object keys.
+        var keys = (fieldOrder.length ? fieldOrder : Object.keys(param));
+        keys.forEach(function (key) {
+            if (!(key in param)) { return; }
+            var value = param[key];
+            if (key === 'flags') { return; } // rendered separately below
+
+            var dt = el('dt', null, key.replace(/_/g, ' '));
+            var dd = el('dd');
+
+            if (key === 'url' && value) {
+                var a = document.createElement('a');
+                a.href = value;
+                a.textContent = value;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                dd.appendChild(a);
+            } else if (key === 'param_id' || key === 'old_repo_location') {
+                dd.className = 'mono';
+                dd.textContent = formatValue(value);
+            } else {
+                dd.textContent = formatValue(value);
+            }
+            dl.appendChild(dt);
+            dl.appendChild(dd);
+        });
+
+        if (Array.isArray(param.flags) && param.flags.length) {
+            var dtFlags = el('dt', null, 'flags');
+            var ddFlags = el('dd');
+            param.flags.forEach(function (f) {
+                ddFlags.appendChild(el('span', 'flag-chip', String(f)));
+            });
+            dl.appendChild(dtFlags);
+            dl.appendChild(ddFlags);
+        }
+
+        td.appendChild(dl);
+        tr.appendChild(td);
+        return tr;
+    }
+
+    /** Build the visible summary row; clicking it toggles the detail row. */
+    function buildParamRow(param) {
+        var tr = document.createElement('tr');
+        tr.className = 'param-row';
+
+        var nameTd = document.createElement('td');
+        var nameCell = el('div', 'param-name-cell');
+        nameCell.appendChild(document.createTextNode(param.display_name || param.param_id));
+        nameTd.appendChild(nameCell);
+        tr.appendChild(nameTd);
+
+        tr.appendChild(el('td', 'param-value', formatValue(param.value)));
+        tr.appendChild(el('td', null, param.unit || '—'));
+
+        var tierTd = document.createElement('td');
+        tierTd.appendChild(tierBadge(param.tier));
+        tr.appendChild(tierTd);
+
+        tr.appendChild(el('td', null, param.source || '—'));
+        tr.appendChild(el('td', null, param.domain || '—'));
+
+        var detailRow = buildDetailRow(param);
+
+        tr.addEventListener('click', function () {
+            var open = tr.classList.toggle('is-open');
+            detailRow.classList.toggle('is-hidden', !open);
+        });
+
+        return { summary: tr, detail: detailRow };
+    }
+
+    /** Apply the current search + filter state and repaint the table body. */
+    function applyFilters() {
+        var query = searchInput.value.trim().toLowerCase();
+        var domain = domainSelect.value;
+        var tier = tierSelect.value;
+
+        var matches = allParams.filter(function (p) {
+            if (domain && p.domain !== domain) { return false; }
+            if (tier !== '' && String(p.tier) !== tier) { return false; }
+            if (query) {
+                var haystack = [
+                    p.display_name, p.param_id, p.source, p.notes,
+                    p.domain, p.unit, p.page_or_table, p.old_repo_location
+                ].filter(Boolean).join(' ').toLowerCase();
+                if (haystack.indexOf(query) === -1) { return false; }
+            }
+            return true;
+        });
+
+        tbody.innerHTML = '';
+        if (matches.length === 0) {
+            var emptyRow = document.createElement('tr');
+            var emptyTd = document.createElement('td');
+            emptyTd.colSpan = 6;
+            emptyTd.className = 'table-empty';
+            emptyTd.textContent = 'No parameters match the current filters.';
+            emptyRow.appendChild(emptyTd);
+            tbody.appendChild(emptyRow);
+        } else {
+            matches.forEach(function (p) {
+                var rows = buildParamRow(p);
+                tbody.appendChild(rows.summary);
+                tbody.appendChild(rows.detail);
+            });
+        }
+
+        resultCount.textContent = 'Showing ' + matches.length + ' of ' +
+            allParams.length + ' parameters';
+    }
+
+    /** Populate the domain and tier filter dropdowns from the loaded data. */
+    function populateFilters() {
+        var domains = {};
+        var tiers = {};
+        allParams.forEach(function (p) {
+            if (p.domain) { domains[p.domain] = true; }
+            if (p.tier != null) { tiers[p.tier] = true; }
+        });
+
+        Object.keys(domains).sort().forEach(function (d) {
+            var opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            domainSelect.appendChild(opt);
+        });
+
+        Object.keys(tiers).sort(function (a, b) { return a - b; }).forEach(function (t) {
+            var opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = TIER_NAMES[t] || ('Tier ' + t);
+            tierSelect.appendChild(opt);
+        });
+    }
+
+    function showError(message) {
+        tbody.innerHTML = '';
+        var tr = document.createElement('tr');
+        var td = document.createElement('td');
+        td.colSpan = 6;
+        td.className = 'table-empty';
+        td.textContent = message;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        resultCount.textContent = '';
+    }
+
+    fetch('data/parameters.json')
+        .then(function (resp) {
+            if (!resp.ok) { throw new Error('HTTP ' + resp.status); }
+            return resp.json();
+        })
+        .then(function (doc) {
+            allParams = doc.parameters || [];
+            fieldOrder = doc.field_order || [];
+            populateFilters();
+            applyFilters();
+        })
+        .catch(function (err) {
+            console.error(err);
+            showError('Failed to load data/parameters.json — ' + err.message);
+        });
+
+    searchInput.addEventListener('input', applyFilters);
+    domainSelect.addEventListener('change', applyFilters);
+    tierSelect.addEventListener('change', applyFilters);
+})();
+</script>
+
+</body>
+</html>
