@@ -28,6 +28,7 @@ class ScenarioConfig:
     # Tier 1 (scenario levers)
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
     carbon_price: float = 0.0  # $/ton CO2
+    carbon_price_path: str = "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
     nox_price: float = 0.0  # $/ton NOx
     demand_growth_rate: float = 0.01  # annual
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
@@ -108,6 +109,7 @@ TIER_TAGS: dict[str, int] = {
     "hours": 0,
     "gas_price_path": 1,
     "carbon_price": 1,
+    "carbon_price_path": 1,
     "nox_price": 1,
     "demand_growth_rate": 1,
     "renewable_buildout_pace": 1,
