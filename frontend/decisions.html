@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decisions — Market Simulator</title>
+<meta name="description" content="Tracker for open modeling decisions from the build plan: weather year, VOLL, transmission limits, cost methodology and more. Selections persist locally.">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== Navigation ===================== -->
+<nav class="nav">
+    <a class="nav-brand" href="index.html">
+        <span class="nav-brand-mark">&#9650;</span> Market Simulator
+    </a>
+    <ul class="nav-links">
+        <li><a class="nav-link" data-page="index" href="index.html">Dashboard</a></li>
+        <li><a class="nav-link active" data-page="decisions" href="decisions.html">Decisions</a></li>
+        <li><a class="nav-link" data-page="parameters" href="parameters.html">Parameters</a></li>
+    </ul>
+    <span class="nav-spacer"></span>
+</nav>
+
+<main class="page">
+
+    <header class="page-header">
+        <div class="eyebrow">Build Plan &sect;5 &middot; Open Items</div>
+        <h1>Decision Tracker</h1>
+        <p>
+            Open modeling choices that must be resolved during the build. Pick
+            an option and record the rationale; every selection is saved to
+            this browser's local storage and restored on your next visit. Use
+            <strong>Export</strong> to copy the full decision set as JSON.
+        </p>
+    </header>
+
+    <!-- ===================== Toolbar ===================== -->
+    <div class="toolbar">
+        <span class="progress-pill" id="progress-pill">&mdash;</span>
+        <span class="toolbar-spacer"></span>
+        <button type="button" class="btn" id="expand-btn">Collapse all</button>
+        <button type="button" class="btn btn--primary" id="export-btn">Export JSON</button>
+    </div>
+
+    <!-- ===================== Decision sections ===================== -->
+    <!-- Collapsible domain sections + decision cards are injected by decisions.js. -->
+    <div id="decisions-root"></div>
+
+</main>
+
+<footer class="page-footer">
+    Decisions persist to <code>localStorage</code> under
+    <code>marketsim_decision_&#123;id&#125;</code> &mdash;
+    <a href="../index.html">Project home</a>
+</footer>
+
+<!-- Toast for export confirmation. -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/decisions.js"></script>
+
+</body>
+</html>
