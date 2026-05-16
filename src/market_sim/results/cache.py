@@ -10,7 +10,7 @@ from pathlib import Path
 
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.dispatch import DispatchResult
-from market_sim.results import outputs  # noqa: F401 -- attaches parquet methods
+from market_sim.results.outputs import FleetContext, read_fleet_context
 
 # Root directory under which all cached results are stored. Exposed as a
 # module attribute so tests can redirect it to a temporary directory.
@@ -44,7 +44,11 @@ def is_cached(iso: str, cache_key: str, year: int) -> bool:
 
 
 def save_result(
-    result: DispatchResult, config: ScenarioConfig, iso: str, year: int
+    result: DispatchResult,
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+    context: FleetContext | None = None,
 ) -> Path:
     """Persist a dispatch result and its config to the cache.
 
@@ -57,6 +61,8 @@ def save_result(
             ``cache_key`` selects the cache directory.
         iso: ISO identifier, e.g. ``"ERCOT"``.
         year: Weather/simulation year.
+        context: Optional fleet context stored in the Parquet metadata so
+            the result can be aggregated without re-deriving the fleet.
 
     Returns:
         The Parquet path written.
@@ -64,7 +70,7 @@ def save_result(
     cache_key = config.cache_key()
     path = get_cache_path(iso, cache_key, year)
     path.parent.mkdir(parents=True, exist_ok=True)
-    result.to_parquet(path)
+    result.to_parquet(path, context=context)
     config.to_yaml_full(path.parent / _CONFIG_FILENAME)
     return path
 
@@ -90,3 +96,27 @@ def load_result(iso: str, cache_key: str, year: int) -> DispatchResult:
             f"year={year} (expected {path})"
         )
     return DispatchResult.from_parquet(path)
+
+
+def load_fleet_context(iso: str, cache_key: str, year: int) -> FleetContext:
+    """Load the fleet context stored alongside a cached dispatch result.
+
+    Args:
+        iso: ISO identifier, e.g. ``"ERCOT"``.
+        cache_key: Deterministic config hash from ``ScenarioConfig.cache_key``.
+        year: Weather/simulation year.
+
+    Returns:
+        The cached :class:`~market_sim.results.outputs.FleetContext`.
+
+    Raises:
+        FileNotFoundError: When no cached result exists for this scenario-year.
+        ValueError: When the cached result carries no fleet context.
+    """
+    path = get_cache_path(iso, cache_key, year)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"no cached result for iso={iso} cache_key={cache_key} "
+            f"year={year} (expected {path})"
+        )
+    return read_fleet_context(path)

@@ -57,3 +57,24 @@ reconstructs exactly.
 | `has_storage` | bool | Whether the storage columns are present. |
 | `has_flows` | bool | Whether the `flows` column is present. |
 | `has_emissions` | bool | Whether the `emissions` column is present. |
+
+## Fleet context metadata
+
+A second JSON object is stored under the key `market_sim_fleet`, holding
+the fleet and resource attributes that produced the result. It lets an
+aggregated export attribute dispatch to fuels and compute emissions and
+curtailment without re-deriving the fleet. The three per-generator lists
+are aligned with the generator axis of the `dispatch` column and have
+length `n_gen`. This object is absent for results written without a fleet
+context.
+
+| Key | Type | Unit | Description |
+|---|---|---|---|
+| `fuel_types` | list of string | — | Fuel type of each generator. |
+| `pmax_mw` | list of float | MW | Nameplate capacity of each generator. |
+| `emission_rate` | list of float | tCO2/MWh | CO2 rate of each generator. |
+| `wind_cap_mw` | float | MW | Total installed wind capacity. |
+| `solar_cap_mw` | float | MW | Total installed solar capacity. |
+| `wind_potential_mwh` | float | MWh | Annual available wind energy (capacity factor × capacity, summed over zones and hours). |
+| `solar_potential_mwh` | float | MWh | Annual available solar energy. |
+| `storage_energy_cap_mwh` | float | MWh | Total storage energy capacity. |

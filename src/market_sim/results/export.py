@@ -5,11 +5,10 @@ frontend only needs annual headline numbers. :func:`export_scenario_json`
 loads every year, aggregates each to a small annual summary, and writes one
 JSON file well under 2 MB.
 
-The Parquet files store dispatch quantities but not the fleet that produced
-them. Fuel-level breakdowns therefore require the per-year fleet, which is
-recovered by replaying the deterministic fleet evolution from
-:mod:`market_sim.runner` -- given the scenario config the evolution is
-reproducible exactly, so no re-solving is needed.
+Each Parquet file carries a :class:`~market_sim.results.outputs.FleetContext`
+in its schema metadata -- the per-generator fuel types, capacities and
+emission rates, plus resource scalars -- so the aggregation here is fully
+self-contained and needs no access to the fleet or weather inputs.
 """
 
 from __future__ import annotations
@@ -22,14 +21,7 @@ from pathlib import Path
 import numpy as np
 
 from market_sim.config.constants import END_YEAR, START_YEAR
-from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.eia_loader import load_demand
-from market_sim.data.fleet import generators_to_fleet_arrays, load_fleet_from_csv
-from market_sim.data.renewables import load_renewable_profiles
-from market_sim.model.capacity import evolve_fleet
-from market_sim.model.storage import build_default_storage, storage_units_to_arrays
-from market_sim.model.transmission import build_wecc_import_generators
 from market_sim.results import cache
 from market_sim.results.emissions import compute_emissions
 
@@ -43,9 +35,7 @@ _MWH_PER_TWH: float = 1e6
 _MW_PER_GW: float = 1e3
 
 
-def compute_curtailment(
-    potential: np.ndarray, dispatched: np.ndarray
-) -> np.ndarray:
+def compute_curtailment(potential, dispatched):
     """Return curtailed energy as available potential minus dispatched output.
 
     Args:
@@ -61,28 +51,28 @@ def compute_curtailment(
     return np.asarray(potential, dtype=float) - np.asarray(dispatched, dtype=float)
 
 
-def _summarize_year(
-    result,
-    dispatch_fleet: list,
-    emission_rates: np.ndarray,
-    wind_curtail: np.ndarray,
-    solar_curtail: np.ndarray,
-    wind_cap_mw: float,
-    solar_cap_mw: float,
-    energy_cap_mwh: float,
-) -> dict:
-    """Aggregate one year's hourly dispatch into an annual summary dict."""
+def _summarize_year(result, context) -> dict:
+    """Aggregate one year's hourly dispatch into an annual summary dict.
+
+    Args:
+        result: The year's :class:`~market_sim.model.dispatch.DispatchResult`.
+        context: The :class:`~market_sim.results.outputs.FleetContext`
+            describing the fleet that produced ``result``.
+
+    Returns:
+        A dict of annual headline numbers for the year.
+    """
     dispatch = result.dispatch
+    gen_per_unit = dispatch.sum(axis=1)  # MWh per generator over the year
 
     generation_twh: dict[str, float] = {}
     capacity_gw: dict[str, float] = {}
-    for g, gen in enumerate(dispatch_fleet):
-        fuel = gen.fuel_type
+    for g, fuel in enumerate(context.fuel_types):
         generation_twh[fuel] = (
-            generation_twh.get(fuel, 0.0) + float(dispatch[g].sum()) / _MWH_PER_TWH
+            generation_twh.get(fuel, 0.0) + float(gen_per_unit[g]) / _MWH_PER_TWH
         )
         capacity_gw[fuel] = (
-            capacity_gw.get(fuel, 0.0) + gen.pmax_mw / _MW_PER_GW
+            capacity_gw.get(fuel, 0.0) + context.pmax_mw[g] / _MW_PER_GW
         )
 
     # Zonal capacity-factor wind and solar are modeled outside the thermal
@@ -95,25 +85,42 @@ def _summarize_year(
         generation_twh.get("solar", 0.0)
         + float(result.solar_dispatched.sum()) / _MWH_PER_TWH
     )
-    capacity_gw["wind"] = capacity_gw.get("wind", 0.0) + wind_cap_mw / _MW_PER_GW
-    capacity_gw["solar"] = capacity_gw.get("solar", 0.0) + solar_cap_mw / _MW_PER_GW
+    capacity_gw["wind"] = (
+        capacity_gw.get("wind", 0.0) + context.wind_cap_mw / _MW_PER_GW
+    )
+    capacity_gw["solar"] = (
+        capacity_gw.get("solar", 0.0) + context.solar_cap_mw / _MW_PER_GW
+    )
 
-    emissions_t = float(compute_emissions(dispatch, emission_rates).sum())
+    emissions_t = float(
+        compute_emissions(dispatch, np.asarray(context.emission_rate)).sum()
+    )
 
-    curtailment_twh = (
-        float(wind_curtail.sum()) + float(solar_curtail.sum())
-    ) / _MWH_PER_TWH
+    curtailed_mwh = float(
+        compute_curtailment(
+            context.wind_potential_mwh, result.wind_dispatched.sum()
+        )
+        + compute_curtailment(
+            context.solar_potential_mwh, result.solar_dispatched.sum()
+        )
+    )
 
     storage_cycles = 0.0
-    if result.storage_discharge is not None and energy_cap_mwh > 0.0:
-        storage_cycles = float(result.storage_discharge.sum()) / energy_cap_mwh
+    if (
+        result.storage_discharge is not None
+        and context.storage_energy_cap_mwh > 0.0
+    ):
+        storage_cycles = (
+            float(result.storage_discharge.sum())
+            / context.storage_energy_cap_mwh
+        )
 
     return {
         "generation_twh": {k: round(v, 4) for k, v in generation_twh.items()},
         "emissions_mt": round(emissions_t / 1e6, 4),
         "avg_price": round(float(result.prices.mean()), 2),
         "peak_price": round(float(result.prices.max()), 2),
-        "curtailment_twh": round(max(curtailment_twh, 0.0), 4),
+        "curtailment_twh": round(max(curtailed_mwh, 0.0) / _MWH_PER_TWH, 4),
         "capacity_gw": {k: round(v, 3) for k, v in capacity_gw.items()},
         "storage_cycles": round(storage_cycles, 2),
     }
@@ -122,9 +129,9 @@ def _summarize_year(
 def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
     """Export one cached scenario to a compact annual-summary JSON file.
 
-    Loads every simulation year's cached Parquet result, aggregates each to
-    annual headline numbers, and writes ``{cache_key}.json`` to
-    ``output_dir``.
+    Loads every simulation year's cached Parquet result and its fleet
+    context, aggregates each to annual headline numbers, and writes
+    ``{cache_key}.json`` to ``output_dir``.
 
     Args:
         cache_key: Deterministic config hash identifying the cached run.
@@ -136,87 +143,21 @@ def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
 
     Raises:
         FileNotFoundError: When a year's cached Parquet result is missing.
-        RuntimeError: When the replayed fleet does not match a cached
-            result's generator count, indicating non-reproducible state.
-        ValueError: When the written file exceeds :data:`MAX_FILE_BYTES`.
+        ValueError: When a year's result carries no fleet context, or when
+            the written file exceeds :data:`MAX_FILE_BYTES`.
     """
     iso = iso.upper()
     output_dir = Path(output_dir)
-    iso_config = get_iso_config(iso)
-    zone_names = iso_config.zone_names
 
     config = ScenarioConfig.from_yaml(
         cache.get_config_path(iso, cache_key, START_YEAR)
     )
 
-    # Weather-year inputs are fixed across the run, mirroring the runner.
-    base_demand = load_demand(iso, config.weather_year, iso_config)
-    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
-        iso, config.weather_year, iso_config, config
-    )
-    wind_potential = wind_cf * wind_cap[:, None]
-    solar_potential = solar_cf * solar_cap[:, None]
-    wind_cap_mw = float(wind_cap.sum())
-    solar_cap_mw = float(solar_cap.sum())
-
-    storage = storage_units_to_arrays(
-        build_default_storage(iso_config, config), zone_names
-    )
-    energy_cap_mwh = float(storage.energy_cap.sum())
-
-    wecc_generators = (
-        build_wecc_import_generators() if iso == "CAISO" else []
-    )
-
     years: dict[str, dict] = {}
-    fleet = None
-    loss_tracker: dict[str, int] = {}
-    prior_results = None
-
     for year in range(START_YEAR, END_YEAR + 1):
-        if fleet is None:
-            fleet = load_fleet_from_csv(iso, iso_config)
-        else:
-            fleet, loss_tracker = evolve_fleet(
-                fleet, prior_results, year, config, loss_tracker
-            )
-        dispatch_fleet = fleet + wecc_generators
-        fleet_arrays = generators_to_fleet_arrays(
-            dispatch_fleet, zone_names, hours=config.hours
-        )
-
         result = cache.load_result(iso, cache_key, year)
-        if result.dispatch.shape[0] != fleet_arrays.n_gen:
-            raise RuntimeError(
-                f"replayed fleet for {iso}/{cache_key} year {year} has "
-                f"{fleet_arrays.n_gen} generators but the cached result has "
-                f"{result.dispatch.shape[0]}; fleet evolution is not "
-                f"reproducible from the stored config"
-            )
-
-        year_demand = base_demand * (1.0 + config.demand_growth_rate) ** (
-            year - START_YEAR
-        )
-        peak_demand = float(year_demand.sum(axis=0).max())
-
-        years[str(year)] = _summarize_year(
-            result,
-            dispatch_fleet,
-            fleet_arrays.emission_rate,
-            compute_curtailment(wind_potential, result.wind_dispatched),
-            compute_curtailment(solar_potential, result.solar_dispatched),
-            wind_cap_mw,
-            solar_cap_mw,
-            energy_cap_mwh,
-        )
-
-        prior_results = {
-            "fleet_arrays": fleet_arrays,
-            "dispatch_result": result,
-            "prices": result.prices,
-            "peak_demand": peak_demand,
-            "planned_additions": [],
-        }
+        context = cache.load_fleet_context(iso, cache_key, year)
+        years[str(year)] = _summarize_year(result, context)
 
     payload = {
         "cache_key": cache_key,
