@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-05-16",
+  "note": "Placeholder scenario index. Populated by scripts/export_results.py once model runs are cached.",
+  "year_range": { "start": 2026, "end": 2050 },
+  "isos": ["ERCOT", "CAISO"],
+  "scenarios": []
+}

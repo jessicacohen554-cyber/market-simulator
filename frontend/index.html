@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results Dashboard — Market Simulator</title>
+<meta name="description" content="Scenario results explorer for the LP-based electricity market dispatch simulator: generation mix, emissions, prices and storage utilization, 2026–2050.">
+
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Charting libraries — CDN only, no build toolchain. -->
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+<!-- ===================== Navigation ===================== -->
+<nav class="nav">
+    <a class="nav-brand" href="index.html">
+        <span class="nav-brand-mark">&#9650;</span> Market Simulator
+    </a>
+    <ul class="nav-links">
+        <li><a class="nav-link" data-page="index" href="index.html">Dashboard</a></li>
+        <li><a class="nav-link" data-page="decisions" href="decisions.html">Decisions</a></li>
+        <li><a class="nav-link" data-page="parameters" href="parameters.html">Parameters</a></li>
+    </ul>
+    <span class="nav-spacer"></span>
+</nav>
+
+<main class="page">
+
+    <header class="page-header">
+        <div class="eyebrow">Phase 8 · Interactive Frontend</div>
+        <h1>Scenario Results Dashboard</h1>
+        <p>
+            Explore dispatch outcomes across the 2026–2050 horizon. Pick a
+            scenario and year to load generation mix, emissions, locational
+            prices and storage utilization. All charts read from exported
+            static JSON — no backend.
+        </p>
+    </header>
+
+    <!-- ===================== Selectors ===================== -->
+    <section class="control-bar" aria-label="Scenario selectors">
+        <div class="control-field">
+            <label class="control-label" for="scenario-select">Scenario</label>
+            <select class="control-select" id="scenario-select" disabled>
+                <option>Loading scenarios&hellip;</option>
+            </select>
+        </div>
+        <div class="control-field">
+            <label class="control-label" for="year-select">Model year</label>
+            <select class="control-select" id="year-select" disabled>
+                <option>&mdash;</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- ===================== Chart placeholders ===================== -->
+    <section class="grid grid-2col">
+
+        <div class="card">
+            <div class="card-title">Generation Mix</div>
+            <div class="card-subtitle">Stacked annual energy by resource, 2026&ndash;2050</div>
+            <div class="chart-container" id="chart-generation-mix">
+                <div class="chart-placeholder">
+                    <strong>Generation mix chart</strong>
+                    <span>Select a scenario to render (Plotly stacked area)</span>
+                </div>
+            </div>
+            <div class="legend" aria-label="Resource colors">
+                <span class="legend-item"><span class="legend-dot legend-dot--gas-cc"></span>Gas CC</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--gas-ct"></span>Gas CT</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--coal"></span>Coal</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--nuclear"></span>Nuclear</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--wind"></span>Wind</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--solar"></span>Solar</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--storage"></span>Storage</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--hydro"></span>Hydro</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Emissions Trajectory</div>
+            <div class="card-subtitle">Annual CO&#8322; from dispatch, 2026&ndash;2050</div>
+            <div class="chart-container" id="chart-emissions">
+                <div class="chart-placeholder">
+                    <strong>Emissions trajectory chart</strong>
+                    <span>Select a scenario to render (Plotly line)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Price Duration Curves</div>
+            <div class="card-subtitle">Sorted hourly LMPs by zone for the selected year</div>
+            <div class="chart-container" id="chart-price-duration">
+                <div class="chart-placeholder">
+                    <strong>Price duration curve</strong>
+                    <span>Select a scenario and year to render (Plotly line)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Storage Utilization</div>
+            <div class="card-subtitle">Charge/discharge intensity by hour of day</div>
+            <div class="chart-container" id="chart-storage-heatmap">
+                <div class="chart-placeholder">
+                    <strong>Storage utilization heatmap</strong>
+                    <span>Select a scenario and year to render (Plotly heatmap)</span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="page-footer">
+    LP-based electricity market dispatch simulator &middot; Full 8,760-hour resolution &middot; Prices are LP duals
+    &mdash; <a href="../index.html">Project home</a>
+</footer>
+
+<!-- App scripts — order matters: data-loader + app define globals used here. -->
+<script src="js/data-loader.js"></script>
+<script src="js/app.js"></script>
+<script>
+// ============================================================================
+// Page bootstrap — wire the scenario index into the selectors. Chart rendering
+// (charts.js) is added in a later phase; this skeleton only proves the data
+// path and selector state work end to end.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var scenarioSelect = document.getElementById('scenario-select');
+    var yearSelect = document.getElementById('year-select');
+
+    function populateYears(range) {
+        yearSelect.innerHTML = '';
+        for (var y = range.start; y <= range.end; y++) {
+            var opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = String(y);
+            yearSelect.appendChild(opt);
+        }
+        yearSelect.disabled = false;
+        App.setYear(yearSelect.value);
+    }
+
+    DataLoader.loadScenarioIndex().then(function (index) {
+        scenarioSelect.innerHTML = '';
+
+        if (!index.scenarios || index.scenarios.length === 0) {
+            var empty = document.createElement('option');
+            empty.textContent = 'No scenarios exported yet';
+            scenarioSelect.appendChild(empty);
+        } else {
+            index.scenarios.forEach(function (scenario) {
+                var opt = document.createElement('option');
+                opt.value = scenario.id;
+                opt.textContent = scenario.name || scenario.id;
+                scenarioSelect.appendChild(opt);
+            });
+            scenarioSelect.disabled = false;
+            App.setScenario(scenarioSelect.value);
+        }
+
+        if (index.year_range) { populateYears(index.year_range); }
+    }).catch(function (err) {
+        scenarioSelect.innerHTML = '<option>Failed to load scenarios</option>';
+        console.error(err);
+    });
+
+    scenarioSelect.addEventListener('change', function () {
+        App.setScenario(scenarioSelect.value);
+    });
+    yearSelect.addEventListener('change', function () {
+        App.setYear(yearSelect.value);
+    });
+})();
+</script>
+
+</body>
+</html>
