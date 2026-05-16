@@ -4,6 +4,7 @@ import unittest
 
 import numpy as np
 
+from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import (
     VariableLayout,
@@ -175,7 +176,7 @@ class TestBuildConstraints(unittest.TestCase):
         # vars_per_hour = 1 + 2*1 + 0 + 0 + 1 = 4.
         self.assertEqual(layout.vars_per_hour, 4)
         self.assertEqual(A.shape, (24, 24 * layout.vars_per_hour))
-        self.assertEqual(A.format, "csc")
+        self.assertEqual(A.format, "csr")
 
     def test_energy_balance_row_entries(self):
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
@@ -400,6 +401,67 @@ class TestSolveDispatch(unittest.TestCase):
             + result.slack[0]
         )
         np.testing.assert_allclose(supply, demand[0])
+
+
+class TestDispatchPerformance(unittest.TestCase):
+    """Full-scale (8760-hour) timing and energy-balance checks."""
+
+    def test_full_year_200_generator_fleet(self):
+        T = HOURS_PER_YEAR  # 8760 hours
+        n_gen = 200
+        pmax = 100.0  # MW per unit
+        total_cap = n_gen * pmax  # 20_000 MW installed thermal capacity
+
+        # 1 zone, no storage, no transmission -- the simplest full-scale case.
+        fleet = _make_fleet(
+            ["Z0"] * n_gen, ["Z0"], hours=T, pmax=pmax, pmin=0.0, eford=0.0
+        )
+
+        # Marginal costs spanning 20-80 $/MWh, flat across the year.
+        mc = np.tile(np.linspace(20.0, 80.0, n_gen)[:, np.newaxis], (1, T))
+
+        # Sinusoidal demand peaking at 80% of total installed capacity.
+        peak = 0.8 * total_cap  # 16_000 MW
+        hours = np.arange(T)
+        demand = (0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T))
+        demand = demand.reshape(1, T)
+
+        # Flat wind; solar follows a daily bell curve (0 at night, 0.6 midday).
+        wind_cf = np.full((1, T), 0.35)
+        hour_of_day = hours % 24
+        solar_shape = np.clip(np.sin(np.pi * (hour_of_day - 6) / 12), 0.0, None)
+        solar_cf = (0.6 * solar_shape).reshape(1, T)
+
+        wind_cap = np.array([0.10 * total_cap])  # 10% of thermal capacity
+        solar_cap = np.array([0.10 * total_cap])
+
+        result = solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=solar_cf,
+            solar_cap=solar_cap,
+            mc=mc,
+            T=T,
+        )
+
+        print(
+            f"\n[dispatch perf] 200 gens x {T} hours -- "
+            f"build: {result.build_time:.3f}s, solve: {result.solve_time:.3f}s"
+        )
+
+        # Energy balance must hold in every one of the 8760 hours.
+        supply = (
+            result.dispatch.sum(axis=0)
+            + result.wind_dispatched[0]
+            + result.solar_dispatched[0]
+            + result.slack[0]
+        )
+        self.assertTrue(np.allclose(supply, demand[0]))
+
+        self.assertLess(result.build_time, 3.0)
+        self.assertLess(result.solve_time, 15.0)
 
 
 if __name__ == "__main__":
