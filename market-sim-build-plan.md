@@ -257,7 +257,7 @@ Follow `model-methodology-spec.md` §5 for the one-pass sequential architecture.
 - Year-loop skeleton from `step2_3_de_pathway_tf.py`
 - Wright’s Law learning curves from `step6_1`
 - LCOE calculation with IRA credits from `step6_1`
-- Retirement sigmoid from `pipeline_config` `thermal_fleet_mw()`
+- Economic retirement logic (profit-driven)
 - Queue caps and build rate limits from `step6_1`
 - State RPS floors from `pipeline_config`
 
@@ -266,7 +266,7 @@ Follow `model-methodology-spec.md` §5 for the one-pass sequential architecture.
 **Tests:**
 
 - Known coal retirement schedule → correct units removed in correct years
-- Clean share above sigmoid threshold → accelerated thermal retirement
+- Unprofitable thermal unit → economic retirement triggered
 - LCOE below expected revenue → new entry appears (capped by queue)
 - CAISO RPS floor binding → forces additional clean builds even if uneconomic
 
@@ -350,7 +350,7 @@ Key implementation points:
 **Pages (one scrollytell per topic):**
 
 1. **LP Dispatch** — “How the model decides who generates.” Simplified 5-generator, 24-hour example. Merit order stacking, LP solver animation, dual variable = price. Side-by-side: heuristic vs. LP.
-1. **Capacity Evolution** — “How the fleet changes over time.” Animated fleet waterfall chart 2026–2050. Sigmoid retirement trigger. Wright’s Law cost curves.
+1. **Capacity Evolution** — “How the fleet changes over time.” Animated fleet waterfall chart 2026–2050. Economics-driven retirement. Wright’s Law cost curves.
 1. **Storage Co-optimization** — “Why LP storage beats rules of thumb.” Animated SOC profile over a week. Greedy vs. LP global optimum. Round-trip efficiency losses.
 1. **Transmission & Zonal Pricing** — “How zones create price separation.” Map-based ERCOT 4-zone with animated flows. Congestion → price divergence. Copper-plate vs. zonal.
 1. **Scenario Uncertainty** — “N futures — reading the fan chart.” Interactive fan chart builder. Toggle scenario dimensions on/off, watch P10/P50/P90 bands respond.
@@ -367,18 +367,18 @@ Summary of every file/function to extract from the old repo, organized by destin
 
 ### Constants & Parameters → `config/constants.py`
 
-|Source File                |What                     |Lines    |Notes                         |
-|---------------------------|-------------------------|---------|------------------------------|
-|`lmp_engine.py`            |`EFFICIENCY_BINS`        |85–113   |3 bins × 3 fuel classes       |
-|`lmp_engine.py`            |`GAS_AVAILABILITY_FACTOR`|—        |ERCOT 0.83, CAISO 0.88        |
-|`lmp_engine.py`            |`CO2_RATES`              |—        |By fuel class + efficiency bin|
-|`pipeline_config.py`       |`NUCLEAR_MONTHLY_CF`     |—        |Per-ISO monthly factors       |
-|`pipeline_config.py`       |`DEMAND_GROWTH_RATES`    |—        |L/M/H by ISO                  |
-|`pipeline_config.py`       |`CO2_PRICES`             |—        |L/M/H carbon paths            |
-|`pipeline_config.py`       |Storage tech params      |368–397  |4hr, 8hr, LDES, H2            |
-|`pipeline_config.py`       |`STATE_RPS_FLOORS`       |—        |CAISO SB 100 trajectory       |
-|`pipeline_config.py`       |`thermal_fleet_mw()`     |1837–1890|Retirement sigmoid            |
-|`egrid_emission_rates.json`|Unit emission factors    |full file|EPA CEMS source               |
+|Source File                |What                     |Lines    |Notes                              |
+|---------------------------|-------------------------|---------|-----------------------------------|
+|`lmp_engine.py`            |`EFFICIENCY_BINS`        |85–113   |3 bins × 3 fuel classes            |
+|`lmp_engine.py`            |`GAS_AVAILABILITY_FACTOR`|—        |ERCOT 0.83, CAISO 0.88             |
+|`lmp_engine.py`            |`CO2_RATES`              |—        |By fuel class + efficiency bin     |
+|`pipeline_config.py`       |`NUCLEAR_MONTHLY_CF`     |—        |Per-ISO monthly factors            |
+|`pipeline_config.py`       |`DEMAND_GROWTH_RATES`    |—        |L/M/H by ISO                       |
+|`pipeline_config.py`       |`CO2_PRICES`             |—        |L/M/H carbon paths                 |
+|`pipeline_config.py`       |Storage tech params      |368–397  |4hr, 8hr, LDES, H2                 |
+|`pipeline_config.py`       |`STATE_RPS_FLOORS`       |—        |CAISO SB 100 trajectory            |
+|`pipeline_config.py`       |`thermal_fleet_mw()`     |1837–1890|Economic retirement (profit-driven)|
+|`egrid_emission_rates.json`|Unit emission factors    |full file|EPA CEMS source                    |
 
 All extracted constants become parameters in the `ScenarioConfig` at the appropriate tier (see `model-methodology-spec.md` §4.1). No hardcoded values.
 
@@ -464,7 +464,7 @@ Before moving to the next phase, verify:
 |2 — LP Dispatch |Single-zone prices match marginal cost of marginal unit; energy balance holds exactly; dual extraction works; matrix builds in <1 sec |
 |3 — Transmission|Zonal price separation appears under congestion; zero-limit test decouples zones                                                      |
 |4 — Storage     |SOC conserved; cyclic boundary holds; RTE losses correct; storage arbitrages peak/off-peak                                            |
-|5 — Capacity    |Known retirements match schedule; sigmoid accelerates at threshold; LCOE screening adds units below queue cap                         |
+|5 — Capacity    |Known retirements match schedule; unprofitable units retire economically; LCOE screening adds units below queue cap                   |
 |6 — Runner      |Caching works (skip on re-run); parallel scenarios produce identical results to serial; single-run CLI works; sweep CLI works         |
 |7 — Outputs     |Emissions sum matches expected order of magnitude; generation mix within ±5% of reference; price duration curve shape reasonable      |
 |8 — Frontend    |Dashboard loads scenario JSON and renders charts; decision forms persist to localStorage; parameter table is searchable and complete  |
