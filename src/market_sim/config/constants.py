@@ -169,27 +169,27 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     },
 }
 
-# Total storage power capacity (MW) by deployment pace, for the base year (2026).
+# Storage power capacity (MW) by deployment pace, for the base year (2026).
+# Subsequent years grow via economics-based new entry, not this constant.
 # Source: NREL ATB 2024 mid-case projections for ERCOT-scale grids.
-STORAGE_DEPLOYMENT_MW: dict[str, float] = {
+STORAGE_BASE_FLEET_MW: dict[str, float] = {
     "low": 3_000.0,
     "mid": 8_000.0,
     "high": 20_000.0,
 }
 
-# Annual compound growth rate of total deployed storage power by deployment pace.
-# Applied to the STORAGE_DEPLOYMENT_MW base year capacity for every year past 2026.
-# Source: NREL ATB 2024 storage deployment projections.
-STORAGE_GROWTH_RATE: dict[str, float] = {
-    "low": 0.05,   # NREL ATB 2024 — 5% annual growth from base
-    "mid": 0.12,   # NREL ATB 2024 mid-case — 12% annual growth
-    "high": 0.20,  # NREL ATB 2024 — 20% annual growth, aggressive deployment
+# Ceiling on total deployed storage power (MW) per ISO, capping cumulative
+# new entry at a realistic share of system peak demand.
+STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
+    "ERCOT": 45_000.0,  # ~53% of ~85 GW peak. Source: ERCOT CDR
+    "CAISO": 25_000.0,  # ~52% of ~48 GW peak. Source: CAISO IEPR
 }
 
-# Ceiling on total deployed storage power (MW), capping compound growth so the
-# fleet cannot exceed a realistic share (~50%) of ERCOT-scale system peak demand.
-# Source: NREL ATB 2024 storage deployment projections.
-STORAGE_DEPLOYMENT_CEILING_MW: float = 50_000.0
+# Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data.
+STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
+    "ERCOT": 5_000.0,
+    "CAISO": 3_000.0,
+}
 
 # Share of deployed storage power by technology type.
 # Source: NREL ATB 2024 technology mix assumptions.
