@@ -5,6 +5,7 @@ Part 2: constraint-matrix construction and decision-variable bounds.
 Part 3: HiGHS solver invocation and result extraction.
 """
 
+import logging
 import time
 from dataclasses import dataclass
 
@@ -14,6 +15,8 @@ import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.data.fleet import FleetArrays, assemble_mc
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -207,7 +210,7 @@ def build_constraints(
     storage_zone_idx: np.ndarray | None = None,
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
-) -> tuple[sp.csc_matrix, np.ndarray, np.ndarray]:
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
     Two constraint families are built, both equalities (``row_lower ==
@@ -238,8 +241,9 @@ def build_constraints(
             to ``1.0`` (lossless).
 
     Returns:
-        Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSC matrix and
-        the bound vectors give the (equal) lower and upper row bounds.
+        Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSR matrix --
+        the row-wise layout HiGHS consumes directly -- and the bound
+        vectors give the (equal) lower and upper row bounds.
     """
     T = layout.T  # T: number of hours
     n_zones = layout.n_zones
@@ -280,9 +284,8 @@ def build_constraints(
     eb_rhs = np.asarray(demand, dtype=float).T.ravel()
 
     if n_storage == 0:
-        A = energy_balance.tocsc()
         row_lower = eb_rhs.copy()
-        return A, row_lower, row_lower.copy()
+        return energy_balance, row_lower, row_lower.copy()
 
     eta_c = np.broadcast_to(
         np.asarray(1.0 if eta_chg is None else eta_chg, dtype=float), (n_storage,)
@@ -328,7 +331,7 @@ def build_constraints(
         )
 
     soc_block = sp.vstack(soc_mats, format="csr")
-    A = sp.vstack([energy_balance, soc_block], format="csc")
+    A = sp.vstack([energy_balance, soc_block], format="csr")
     row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
     return A, row_lower, row_lower.copy()
 
@@ -549,11 +552,11 @@ def solve_dispatch(
         ttc=ttc,
     )
 
-    # HiGHS addRows consumes the matrix row-wise; convert from CSC to CSR.
-    A_csr = A.tocsr()
-    starts = A_csr.indptr[:-1].astype(np.int32)
-    indices = A_csr.indices.astype(np.int32)
-    values = A_csr.data.astype(np.float64)
+    # build_constraints returns CSR -- the row-wise layout HiGHS addRows
+    # consumes directly, so no format conversion is needed here.
+    starts = A.indptr[:-1].astype(np.int32)
+    indices = A.indices.astype(np.int32)
+    values = A.data.astype(np.float64)
 
     inf = highspy.kHighsInf
     col_upper = np.where(np.isinf(col_upper), inf, col_upper)
@@ -561,6 +564,12 @@ def solve_dispatch(
 
     h = highspy.Highs()
     h.setOptionValue("output_flag", False)
+    # Economic-dispatch LPs are already tight, and the per-hour blocks make
+    # the matrix huge but trivially structured. HiGHS presolve then scales
+    # with the ~1.8M column count while removing almost nothing -- on a full
+    # 8760-hour model it costs ~17s of pure overhead. Skipping it lets the
+    # dual simplex solve the model directly in a few seconds.
+    h.setOptionValue("presolve", "off")
     h.addCols(
         layout.total_columns,
         cost,
@@ -572,10 +581,10 @@ def solve_dispatch(
         np.array([], dtype=np.float64),
     )
     h.addRows(
-        A_csr.shape[0],
+        A.shape[0],
         row_lower,
         row_upper,
-        A_csr.nnz,
+        A.nnz,
         starts,
         indices,
         values,
@@ -585,6 +594,8 @@ def solve_dispatch(
     solve_start = time.perf_counter()
     h.run()
     solve_time = time.perf_counter() - solve_start
+
+    logger.info(f"Matrix build: {build_time:.3f}s, Solve: {solve_time:.3f}s")
 
     _, primal_status = h.getInfoValue("primal_solution_status")
     if primal_status != 2:
