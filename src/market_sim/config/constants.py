@@ -197,6 +197,14 @@ QUEUE_CAP_GW: dict[str, float] = {
     "CAISO": 8,   # CAISO TPP — annual queue throughput cap
 }
 
+# Per-technology annual interconnection queue caps (GW/yr) by ISO.
+# Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech
+# The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
+QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 5.0, "solar": 5.0, "gas_cc": 3.0},
+    "CAISO": {"wind": 3.0, "solar": 4.0, "gas_cc": 2.0},
+}
+
 # New entry technology cost and performance parameters.
 # Source: NREL ATB 2024.
 NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
