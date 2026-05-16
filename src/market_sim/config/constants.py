@@ -162,6 +162,22 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     },
 }
 
+# Total storage power capacity (MW) by deployment pace.
+# Source: NREL ATB 2024 mid-case projections for ERCOT-scale grids.
+STORAGE_DEPLOYMENT_MW: dict[str, float] = {
+    "low": 3_000.0,
+    "mid": 8_000.0,
+    "high": 20_000.0,
+}
+
+# Share of deployed storage power by technology type.
+# Source: NREL ATB 2024 technology mix assumptions.
+STORAGE_TECH_POWER_SHARE: dict[str, float] = {
+    "li_ion_4hr": 0.70,
+    "li_ion_8hr": 0.25,
+    "iron_air": 0.05,
+}
+
 # State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
 # Source: CA SB 100.
 STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
