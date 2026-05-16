@@ -26,7 +26,8 @@ class VariableLayout:
     Decision variables are grouped into per-hour blocks laid out
     contiguously across ``T`` hours. Within each hour the block order is:
     thermal generation, wind, solar, storage charge, storage discharge,
-    storage state-of-charge, transmission flow, then per-zone load slack.
+    storage state-of-charge, transmission flow, per-zone load slack,
+    then per-zone overgeneration dump.
     """
 
     n_gen: int
@@ -40,10 +41,9 @@ class VariableLayout:
         """Return the number of decision variables in a single hour block."""
         return (
             self.n_gen
-            + 2 * self.n_zones
+            + 4 * self.n_zones
             + 3 * self.n_storage
             + self.n_links
-            + self.n_zones
         )
 
     @property
@@ -91,6 +91,17 @@ class VariableLayout:
         """Per-hour offset of the per-zone load slack block."""
         return self.n_gen + 2 * self.n_zones + 3 * self.n_storage + self.n_links
 
+    @property
+    def _dump_off(self) -> int:
+        """Per-hour offset of the per-zone overgeneration dump block."""
+        return (
+            self.n_gen
+            + 2 * self.n_zones
+            + 3 * self.n_storage
+            + self.n_links
+            + self.n_zones
+        )
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -123,6 +134,10 @@ class VariableLayout:
         """Return the column index of load slack for zone ``z`` in hour ``t``."""
         return t * self.vars_per_hour + self._slack_off + z
 
+    def dump_col(self, z: int, t: int) -> int:
+        """Return the column index of dump for zone ``z`` in hour ``t``."""
+        return t * self.vars_per_hour + self._dump_off + z
+
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
         start = self._p_off + g
@@ -143,7 +158,8 @@ def build_cost_vector(
     discharge carry a small ``storage_epsilon`` penalty to break degeneracy,
     load slack carries the value of lost load (``voll``), wind and solar
     carry their dispatch marginal cost (negative under a production credit),
-    and SOC/flow slots are zero-cost.
+    overgeneration dump carries a tiny cost that still exceeds any
+    production credit, and SOC/flow slots are zero-cost.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -179,7 +195,20 @@ def build_cost_vector(
     block[:, layout._dis_off : layout._soc_off] = storage_epsilon
 
     # Load slack: value of lost load.
-    block[:, layout._slack_off :] = voll
+    block[:, layout._slack_off : layout._dump_off] = voll
+
+    # Overgeneration dump: a tiny cost breaks degeneracy, but it must also
+    # exceed the magnitude of any production credit (negative wind/solar
+    # marginal cost). Otherwise the LP would overgenerate credited renewables
+    # to full capacity and dump the surplus, paying the credit on curtailed
+    # energy and collapsing the marginal price.
+    min_renewable_mc = min(
+        0.0,
+        float(np.min(np.asarray(wind_mc, dtype=float))),
+        float(np.min(np.asarray(solar_mc, dtype=float))),
+    )
+    dump_cost = max(storage_epsilon, -min_renewable_mc + storage_epsilon)
+    block[:, layout._dump_off :] = dump_cost
 
     return cost
 
@@ -280,7 +309,7 @@ def build_constraints(
         flow_block = sp.csr_matrix(incidence)
 
     # Per-hour energy-balance block, column order matching the layout:
-    # P | W | S | Chg | Dis | SOC | Flow | Slack.
+    # P | W | S | Chg | Dis | SOC | Flow | Slack | Dump.
     per_hour = sp.hstack(
         [
             zone_gen,                            # thermal generation
@@ -290,7 +319,8 @@ def build_constraints(
             zone_storage,                        # discharge (injection)
             sp.csr_matrix((n_zones, n_storage)),  # SOC: no balance contribution
             flow_block,                          # transmission flow
-            eye_z,                               # load slack
+            eye_z,                               # load slack (+)
+            -eye_z,                              # overgeneration dump (-)
         ],
         format="csr",
     )
@@ -380,6 +410,7 @@ def build_variable_bounds(
     * Storage: ``0 <= Chg, Dis <= power_cap``; ``0 <= SOC <= energy_cap``.
     * Transmission: ``-ttc <= Flow <= ttc`` (bidirectional).
     * Load slack: ``0 <= Slack <= inf``.
+    * Overgeneration dump: ``0 <= Dump <= inf``.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -435,7 +466,10 @@ def build_variable_bounds(
         col_upper[:, layout._flow_off : layout._slack_off] = ttc_row
 
     # Load slack: 0 <= Slack <= inf.
-    col_upper[:, layout._slack_off :] = np.inf
+    col_upper[:, layout._slack_off : layout._dump_off] = np.inf
+
+    # Overgeneration dump: 0 <= Dump <= inf.
+    col_upper[:, layout._dump_off :] = np.inf
 
     return col_lower.ravel(), col_upper.ravel()
 
@@ -452,6 +486,7 @@ class DispatchResult:
         wind_dispatched: Dispatched wind per zone, shape ``(n_zones, T)``.
         solar_dispatched: Dispatched solar per zone, shape ``(n_zones, T)``.
         slack: Unserved load per zone, shape ``(n_zones, T)``.
+        dump: Overgeneration absorbed per zone, shape ``(n_zones, T)``.
         prices: Zonal energy prices, shape ``(n_zones, T)``.
         storage_charge: Storage charging power, shape ``(n_storage, T)``.
         storage_discharge: Storage discharging power, shape ``(n_storage, T)``.
@@ -469,6 +504,7 @@ class DispatchResult:
     wind_dispatched: np.ndarray
     solar_dispatched: np.ndarray
     slack: np.ndarray
+    dump: np.ndarray
     prices: np.ndarray
     storage_charge: np.ndarray | None
     storage_discharge: np.ndarray | None
@@ -646,7 +682,8 @@ def solve_dispatch(
     dispatch = block[:, layout._p_off : layout._w_off].T
     wind_dispatched = block[:, layout._w_off : layout._s_off].T
     solar_dispatched = block[:, layout._s_off : layout._chg_off].T
-    slack = block[:, layout._slack_off :].T
+    slack = block[:, layout._slack_off : layout._dump_off].T
+    dump = block[:, layout._dump_off :].T
 
     storage_charge = storage_discharge = storage_soc = None
     if n_storage:
@@ -667,6 +704,7 @@ def solve_dispatch(
         wind_dispatched=wind_dispatched,
         solar_dispatched=solar_dispatched,
         slack=slack,
+        dump=dump,
         prices=prices,
         storage_charge=storage_charge,
         storage_discharge=storage_discharge,
