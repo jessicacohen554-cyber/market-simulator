@@ -15,7 +15,10 @@ import numpy as np
 from pydantic import BaseModel
 
 from market_sim.config.constants import (
+    START_YEAR,
+    STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_DEPLOYMENT_MW,
+    STORAGE_GROWTH_RATE,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
 )
@@ -79,38 +82,23 @@ def storage_units_to_arrays(
     )
 
 
-def build_default_storage(
+def _distribute_storage(
     iso: ISOConfig,
     config: ScenarioConfig,
+    total_mw: float,
 ) -> list[StorageUnit]:
-    """Build a default storage fleet for an ISO and scenario.
+    """Split ``total_mw`` of storage power across an ISO's zones and techs.
 
-    The total deployed power is set by ``config.storage_deployment`` (see
-    ``STORAGE_DEPLOYMENT_MW``), split across load zones in proportion to each
-    zone's ``load_share`` and across technologies by ``STORAGE_TECH_POWER_SHARE``.
-    Each technology's duration and round-trip efficiency come from
-    ``constants.STORAGE_TECHS``; the round-trip efficiency is split evenly
-    into one-way charge and discharge efficiencies.
-
-    Args:
-        iso: ISO topology supplying the zones and their load shares.
-        config: Scenario config supplying the ``storage_deployment`` pace.
+    Power is allocated to each load zone in proportion to its ``load_share``
+    and across technologies by ``STORAGE_TECH_POWER_SHARE``. Each technology's
+    duration and round-trip efficiency come from ``constants.STORAGE_TECHS``;
+    the round-trip efficiency is split evenly into one-way charge and discharge
+    efficiencies.
 
     Returns:
         One ``StorageUnit`` per (load zone, technology) pair with nonzero
         power capacity.
-
-    Raises:
-        ValueError: if ``config.storage_deployment`` is not a known pace.
     """
-    pace = config.storage_deployment
-    if pace not in STORAGE_DEPLOYMENT_MW:
-        supported = ", ".join(sorted(STORAGE_DEPLOYMENT_MW))
-        raise ValueError(
-            f"Unknown storage_deployment '{pace}'. Supported: {supported}"
-        )
-    total_mw = STORAGE_DEPLOYMENT_MW[pace]
-
     units: list[StorageUnit] = []
     for z_idx, zone in enumerate(iso.zones):
         if zone.load_share <= 0.0:
@@ -138,3 +126,74 @@ def build_default_storage(
                 )
             )
     return units
+
+
+def _resolve_pace(config: ScenarioConfig) -> str:
+    """Return the validated ``storage_deployment`` pace from ``config``.
+
+    Raises:
+        ValueError: if ``config.storage_deployment`` is not a known pace.
+    """
+    pace = config.storage_deployment
+    if pace not in STORAGE_DEPLOYMENT_MW:
+        supported = ", ".join(sorted(STORAGE_DEPLOYMENT_MW))
+        raise ValueError(
+            f"Unknown storage_deployment '{pace}'. Supported: {supported}"
+        )
+    return pace
+
+
+def build_default_storage(
+    iso: ISOConfig,
+    config: ScenarioConfig,
+) -> list[StorageUnit]:
+    """Build a default storage fleet for an ISO and scenario.
+
+    The total deployed power is the base-year capacity set by
+    ``config.storage_deployment`` (see ``STORAGE_DEPLOYMENT_MW``), split across
+    load zones in proportion to each zone's ``load_share`` and across
+    technologies by ``STORAGE_TECH_POWER_SHARE``.
+
+    Args:
+        iso: ISO topology supplying the zones and their load shares.
+        config: Scenario config supplying the ``storage_deployment`` pace.
+
+    Returns:
+        One ``StorageUnit`` per (load zone, technology) pair with nonzero
+        power capacity.
+
+    Raises:
+        ValueError: if ``config.storage_deployment`` is not a known pace.
+    """
+    pace = _resolve_pace(config)
+    return _distribute_storage(iso, config, STORAGE_DEPLOYMENT_MW[pace])
+
+
+def build_storage_for_year(
+    iso: ISOConfig, config: ScenarioConfig, year: int
+) -> list[StorageUnit]:
+    """Build the storage fleet for a specific simulation year.
+
+    Total power grows from ``STORAGE_DEPLOYMENT_MW`` base at the annual
+    growth rate for the configured deployment pace. The grown total is
+    capped at ``STORAGE_DEPLOYMENT_CEILING_MW`` to prevent runaway growth,
+    then distributed across zones and techs as in ``build_default_storage``.
+
+    Args:
+        iso: ISO topology supplying the zones and their load shares.
+        config: Scenario config supplying the ``storage_deployment`` pace.
+        year: Simulation year; capacity compounds from :data:`START_YEAR`.
+
+    Returns:
+        One ``StorageUnit`` per (load zone, technology) pair with nonzero
+        power capacity.
+
+    Raises:
+        ValueError: if ``config.storage_deployment`` is not a known pace.
+    """
+    pace = _resolve_pace(config)
+    base_mw = STORAGE_DEPLOYMENT_MW[pace]
+    growth_rate = STORAGE_GROWTH_RATE[pace]
+    total_mw = base_mw * (1.0 + growth_rate) ** (year - START_YEAR)
+    total_mw = min(total_mw, STORAGE_DEPLOYMENT_CEILING_MW)
+    return _distribute_storage(iso, config, total_mw)
