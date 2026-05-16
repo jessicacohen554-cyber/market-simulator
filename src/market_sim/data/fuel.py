@@ -67,9 +67,11 @@ def resolve_fuel_prices(
     per_gen_price[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price
     per_gen_price[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
 
+    # Broadcast view is safe: assemble_mc creates a new array via
+    # multiplication and never mutates fuel_prices in place.
     return np.broadcast_to(
         per_gen_price[:, np.newaxis], (fleet.n_gen, config.hours)
-    ).copy()
+    )
 
 
 def resolve_nox_price(config: ScenarioConfig) -> float:
