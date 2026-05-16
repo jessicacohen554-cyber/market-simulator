@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Hub — The 8,760 Problem</title>
+<meta name="description" content="Scrollytelling explainers for the LP-based electricity market dispatch simulator: dispatch, capacity, storage, transmission and scenarios.">
+
+<!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Shared design tokens (also used by the scrollytell story pages) -->
+<link rel="stylesheet" href="shared/scrollytell.css">
+
+<!-- D3.js — the only external dependency -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-body);
+        background: var(--sc-bg);
+        color: var(--sc-text);
+        line-height: 1.7;
+        min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    /* ---------- Top bar ---------- */
+    .hub-nav {
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hub-nav span {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .hub-nav span b { color: var(--sc-accent); font-weight: 800; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, var(--sc-navy) 0%, var(--sc-navy-dark) 100%);
+        color: #fff;
+        padding: 72px 24px 96px;
+    }
+    .hero-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+    .hero .eyebrow {
+        font-family: var(--font-heading);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sc-accent);
+        margin-bottom: 14px;
+    }
+    .hero h1 {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: clamp(2.1rem, 5vw, 3.4rem);
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+    }
+    .hero p {
+        font-size: 1.12rem;
+        max-width: 620px;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .hero p .accent { color: var(--sc-accent); font-weight: 600; }
+
+    /* D3 duck-curve animation, layered behind the hero copy */
+    #hero-chart {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: min(46%, 560px);
+        height: 100%;
+        z-index: 1;
+        opacity: 0.9;
+        pointer-events: none;
+    }
+    @media (max-width: 820px) { #hero-chart { display: none; } }
+
+    /* ---------- Card grid ---------- */
+    .hub-main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 64px 24px 88px;
+    }
+    .section-head {
+        margin-bottom: 36px;
+    }
+    .section-head h2 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.7rem;
+        color: var(--sc-navy);
+        letter-spacing: -0.3px;
+        margin-bottom: 8px;
+    }
+    .section-head p { color: var(--sc-text-muted); }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 22px;
+    }
+
+    .hub-card {
+        display: flex;
+        flex-direction: column;
+        background: var(--sc-card);
+        border: 1px solid var(--sc-border-soft);
+        border-top: 4px solid var(--card-accent, var(--sc-accent));
+        border-radius: var(--sc-radius);
+        padding: 26px 24px 22px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: var(--sc-shadow);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .hub-card:hover,
+    .hub-card:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: var(--sc-shadow-lg);
+        outline: none;
+    }
+    .hub-card:focus-visible { box-shadow: var(--sc-shadow-lg), 0 0 0 3px var(--sc-accent-border); }
+
+    .card-index {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        color: var(--card-accent, var(--sc-accent-deep));
+        margin-bottom: 10px;
+    }
+    .hub-card h3 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.28rem;
+        color: var(--sc-navy);
+        margin-bottom: 8px;
+    }
+    .hub-card p {
+        font-size: 0.98rem;
+        color: var(--sc-text-muted);
+        flex: 1;
+        margin-bottom: 18px;
+    }
+    .card-cta {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: var(--card-accent, var(--sc-accent-deep));
+    }
+    .card-cta .arrow {
+        display: inline-block;
+        transition: transform 0.22s ease;
+    }
+    .hub-card:hover .card-cta .arrow,
+    .hub-card:focus-visible .card-cta .arrow { transform: translateX(4px); }
+
+    /* Each card carries its own accent, drawn from the resource palette */
+    .card-dispatch  { --card-accent: #6366F1; }
+    .card-capacity  { --card-accent: #22C55E; }
+    .card-storage   { --card-accent: #06B6D4; }
+    .card-transmission { --card-accent: #0EA5E9; }
+    .card-scenarios { --card-accent: #D97706; }
+
+    /* ---------- Footer ---------- */
+    .hub-footer {
+        border-top: 1px solid var(--sc-border);
+        padding: 28px 24px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-card);
+    }
+</style>
+</head>
+<body>
+
+<nav class="hub-nav">
+    <span>The 8,760 Problem · <b>Learning Hub</b></span>
+</nav>
+
+<header class="hero">
+    <svg id="hero-chart" aria-hidden="true"></svg>
+    <div class="hero-inner">
+        <div class="eyebrow">Electricity Market Dispatch Simulator</div>
+        <h1>How a grid clears itself,<br>8,760 hours a year</h1>
+        <p>
+            Five scrollytelling explainers that open up the LP-based dispatch model
+            piece by piece — from <span class="accent">a single optimized hour</span>
+            to <span class="accent">a quarter-century of fleet evolution</span>.
+            Scroll a story; the chart keeps pace.
+        </p>
+    </div>
+</header>
+
+<main class="hub-main">
+    <div class="section-head">
+        <h2>Pick a story</h2>
+        <p>Each explainer is a self-contained scroll. Start anywhere.</p>
+    </div>
+
+    <div class="card-grid">
+
+        <a class="hub-card card-dispatch" href="lp-dispatch/index.html">
+            <div class="card-index">01 · THE LP CORE</div>
+            <h3>LP Dispatch</h3>
+            <p>
+                Watch a linear program clear one hour of demand: stack generators
+                by marginal cost, satisfy the energy balance, and read the price
+                straight off the dual.
+            </p>
+            <span class="card-cta">Explore <span class="arrow">&rarr;</span></span>
+        </a>
+
+        <a class="hub-card card-capacity" href="capacity-evolution/index.html">
+            <div class="card-index">02 · 2026 &rarr; 2050</div>
+            <h3>Capacity Evolution</h3>
+            <p>
+                Step through one-pass capacity expansion: why plants retire, what
+                gets built to replace them, and how the fleet reshapes itself
+                across twenty-five years.
+            </p>
+            <span class="card-cta">Explore <span class="arrow">&rarr;</span></span>
+        </a>
+
+        <a class="hub-card card-storage" href="storage/index.html">
+            <div class="card-index">03 · ARBITRAGE</div>
+            <h3>Storage</h3>
+            <p>
+                Follow a battery through the duck curve — charging on midday solar,
+                discharging into the evening peak — and see how state-of-charge
+                constraints bind.
+            </p>
+            <span class="card-cta">Explore <span class="arrow">&rarr;</span></span>
+        </a>
+
+        <a class="hub-card card-transmission" href="transmission/index.html">
+            <div class="card-index">04 · BETWEEN ZONES</div>
+            <h3>Transmission</h3>
+            <p>
+                See power flow across zonal links up to their transfer limits,
+                why congestion splits prices, and how a binding line creates
+                a locational spread.
+            </p>
+            <span class="card-cta">Explore <span class="arrow">&rarr;</span></span>
+        </a>
+
+        <a class="hub-card card-scenarios" href="scenarios/index.html">
+            <div class="card-index">05 · WHAT-IF</div>
+            <h3>Scenarios</h3>
+            <p>
+                Change the assumptions — fuel prices, carbon price, build costs,
+                policy — and watch the same model converge on a very different
+                2050 grid.
+            </p>
+            <span class="card-cta">Explore <span class="arrow">&rarr;</span></span>
+        </a>
+
+    </div>
+</main>
+
+<footer class="hub-footer">
+    Built on the LP dispatch simulator · Full 8,760-hour resolution · Prices are LP duals
+</footer>
+
+<script>
+// ============================================================================
+// Hero animation — a D3-rendered "duck curve" that deepens as solar grows.
+// Demand stays roughly fixed; net load (demand minus solar) is carved out at
+// midday and rebounds into a sharper evening ramp. Loops continuously.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var svg = d3.select('#hero-chart');
+    var node = svg.node();
+    if (!node) return;
+
+    var W = 560, H = 460;
+    svg.attr('viewBox', '0 0 ' + W + ' ' + H)
+       .attr('preserveAspectRatio', 'xMidYMax slice');
+
+    var hours = d3.range(24);
+
+    // Baseline demand: morning rise, evening peak. (Illustrative shape.)
+    var demand = hours.map(function (h) {
+        return 0.62
+             + 0.20 * Math.sin((h - 8) / 24 * 2 * Math.PI)
+             + 0.16 * Math.exp(-Math.pow(h - 19, 2) / 7);
+    });
+
+    // Solar availability: a midday bell, zero overnight.
+    var solar = hours.map(function (h) {
+        var s = Math.exp(-Math.pow(h - 13, 2) / 9);
+        return h < 6 || h > 20 ? 0 : s;
+    });
+
+    var x = d3.scaleLinear().domain([0, 23]).range([0, W]);
+    var y = d3.scaleLinear().domain([0, 1.05]).range([H - 20, 24]);
+
+    var area = d3.area()
+        .x(function (d, i) { return x(i); })
+        .y0(H - 20)
+        .y1(function (d) { return y(d); })
+        .curve(d3.curveBasis);
+
+    var line = d3.line()
+        .x(function (d, i) { return x(i); })
+        .y(function (d) { return y(d); })
+        .curve(d3.curveBasis);
+
+    // Net load = demand - solarShare * solar, clamped at a floor.
+    function netLoad(share) {
+        return hours.map(function (h, i) {
+            return Math.max(0.16, demand[i] - share * solar[i]);
+        });
+    }
+
+    var netPath = svg.append('path')
+        .attr('fill', 'rgba(56, 189, 248, 0.22)')
+        .attr('stroke', 'none');
+
+    var netLine = svg.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', '#38bdf8')
+        .attr('stroke-width', 2.5)
+        .attr('stroke-linecap', 'round');
+
+    // Static demand reference line.
+    svg.append('path')
+        .datum(demand)
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(255, 255, 255, 0.35)')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '4 4')
+        .attr('d', line);
+
+    function render(share) {
+        var nl = netLoad(share);
+        netPath.attr('d', area(nl));
+        netLine.attr('d', line(nl));
+    }
+
+    // Animate solar share 0 -> 1 -> 0, easing, on a continuous loop.
+    var reduceMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion) {
+        render(0.85);
+        return;
+    }
+
+    function loop() {
+        netLine.transition()
+            .duration(4200)
+            .ease(d3.easeSinInOut)
+            .tween('duck', function () {
+                return function (t) { render(t); };
+            })
+            .transition()
+            .duration(4200)
+            .ease(d3.easeSinInOut)
+            .tween('duck', function () {
+                return function (t) { render(1 - t); };
+            })
+            .on('end', loop);
+    }
+
+    render(0);
+    loop();
+})();
+</script>
+
+</body>
+</html>
