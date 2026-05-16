@@ -86,7 +86,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
-    # Weather-year inputs are fixed across the run; load them once.
+    # Weather-year inputs are fixed across the run; load them once. The CF
+    # profiles (wind_cf, solar_cf) are resource-driven and stay fixed, but
+    # wind_cap and solar_cap are mutable: capacity evolution grows them each
+    # year as new renewables are built.
     base_demand = load_demand(iso, config.weather_year, iso_config)
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, config.weather_year, iso_config, config
@@ -112,9 +115,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # back to the deterministic synthetic fleet inside the loader.
             fleet = load_fleet_from_csv(iso, iso_config)
         else:
-            fleet, loss_tracker = evolve_fleet(
+            fleet, loss_tracker, renewable_additions = evolve_fleet(
                 fleet, prior_results, year, config, loss_tracker
             )
+            # New wind/solar grow the zonal capacity pools that bound the
+            # W[z,t] and S[z,t] dispatch variables -- they are not added as
+            # flat-availability thermal generators.
+            for zone_name, additions in renewable_additions.items():
+                z_idx = zone_names.index(zone_name)
+                wind_cap[z_idx] += additions.get("wind", 0.0)
+                solar_cap[z_idx] += additions.get("solar", 0.0)
 
         dispatch_fleet = fleet + wecc_generators
         fleet_arrays = generators_to_fleet_arrays(
