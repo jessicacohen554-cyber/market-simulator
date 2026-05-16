@@ -9,19 +9,6 @@ LP-based electricity market dispatch simulator. Two ISOs (ERCOT 4-zone, CAISO 1-
 - Python 3.11+, HiGHS via `highspy`, numpy, scipy.sparse, pandas, pyarrow, pydantic, pyyaml
 - **FORBIDDEN:** Pyomo, PuLP, scipy.optimize, Numba. Direct CSC matrix → HiGHS only.
 
-## Environment Setup
-
-Before running scripts or tests, install dependencies:
-
-```
-pip install -e ".[dev]"
-```
-
-This installs the runtime stack (highspy, numpy, scipy, pandas, pyarrow,
-pydantic, pyyaml) plus dev tools (pytest, ruff) from `pyproject.toml`.
-Run tests with `pytest`, or `PYTHONPATH=src python -m unittest discover tests`
-if the package is not installed editable.
-
 ## Architecture
 
 ```
@@ -50,21 +37,30 @@ tests/       → pytest, one file per module
 
 ## LP Variable Layout (per ISO-year)
 
-Flat column vector: P[g,t] | W[z,t] | S[z,t] | Chg[s,t] | Dis[s,t] | SOC[s,t] | Flow[l,t] | Slack[z,t]
-Total columns = T × (n_gen + 2×n_zones + 3×n_storage + n_links + n_zones), T=8760
+Flat column vector: P[g,t] | W[z,t] | S[z,t] | Chg[s,t] | Dis[s,t] | SOC[s,t] | Flow[l,t] | Slack[z,t] | Dump[z,t]
+Total columns = T × (n_gen + 4×n_zones + 3×n_storage + n_links), T=8760
 
 ## Objective
 
-min Σ mc[g,t]×P[g,t] + ε×(Chg+Dis) + VOLL×Slack
+min Σ mc[g,t]×P[g,t] + ε×(Chg+Dis) + VOLL×Slack + dump_cost×Dump
 Where mc = heat_rate × fuel_price + vom + emission_rate × carbon_price + nox_rate × nox_price + …
+dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negative-MC production credits
 
 ## Key Constraints
 
-- Energy balance (per zone, per hour): thermal + wind + solar + discharge - charge + net_flow + slack = demand
+- Energy balance (per zone, per hour): thermal + wind + solar + discharge - charge + net_flow + slack - dump = demand
 - Generator bounds: pmin ≤ P[g,t] ≤ pmax × availability[g,t]
 - Renewable bounds: 0 ≤ W/S ≤ cf × capacity
 - Storage SOC: SOC[t] = SOC[t-1] + η_chg×Chg[t] - Dis[t]/η_dis, cyclic boundary
 - Transmission: -TTC ≤ Flow ≤ TTC
+
+## Capacity Evolution (per year, one-pass)
+
+1. Known retirements → 2. Economic retirements (fuel-type-aware thresholds + reliability floor) → 3. Known additions → 4. Economic new entry → 5. RPS mandates
+
+Economic retirement uses per-fuel thresholds: coal=1yr, gas_ct=2yr, gas_cc=3yr. Coal FOM multiplier 1.3× for regulatory/ESG risk. Reliability floor prevents thermal below (peak - firm_clean) × 1.15.
+
+Storage grows via compound growth rate (Tier 1 param), not economic entry screen. Capped at 50% peak demand.
 
 ## Naming Conventions
 
