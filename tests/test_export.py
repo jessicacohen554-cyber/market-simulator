@@ -1,0 +1,124 @@
+"""Tests for scenario export to compact frontend JSON.
+
+The dispatch LP is mocked: ``solve_dispatch`` is patched to return a
+synthetic :class:`DispatchResult`, so a scenario is run and cached without
+the cost of solving, then exported.
+"""
+
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+import numpy as np
+
+from market_sim import runner
+from market_sim.config.scenarios import ScenarioConfig
+from market_sim.model.dispatch import DispatchResult
+from market_sim.results import cache, export
+
+
+def _fake_solve(fleet, demand, *args, **kwargs):
+    """Return a synthetic ``DispatchResult`` sized to the fleet and demand."""
+    n_gen = fleet.n_gen
+    T = demand.shape[1]
+    n_zones = demand.shape[0]
+    return DispatchResult(
+        dispatch=np.full((n_gen, T), 5.0),
+        wind_dispatched=np.zeros((n_zones, T)),
+        solar_dispatched=np.zeros((n_zones, T)),
+        slack=np.zeros((n_zones, T)),
+        dump=np.zeros((n_zones, T)),
+        prices=np.full((n_zones, T), 30.0),
+        storage_charge=None,
+        storage_discharge=None,
+        storage_soc=None,
+        flows=None,
+        objective_value=0.0,
+        status="Optimal",
+        build_time=0.0,
+        solve_time=0.0,
+    )
+
+
+class TestComputeCurtailment(unittest.TestCase):
+    """``compute_curtailment`` is available potential minus dispatched."""
+
+    def test_potential_minus_dispatched(self):
+        potential = np.array([[10.0, 8.0], [5.0, 6.0]])
+        dispatched = np.array([[6.0, 8.0], [5.0, 2.0]])
+
+        result = export.compute_curtailment(potential, dispatched)
+
+        np.testing.assert_allclose(result, [[4.0, 0.0], [0.0, 4.0]])
+
+    def test_non_negative_when_dispatch_within_potential(self):
+        rng = np.random.default_rng(1)
+        potential = rng.uniform(0.0, 100.0, size=(4, 50))
+        dispatched = potential * rng.uniform(0.0, 1.0, size=(4, 50))
+
+        curtailment = export.compute_curtailment(potential, dispatched)
+
+        self.assertTrue(np.all(curtailment >= 0.0))
+
+
+class TestExportScenarioJson(unittest.TestCase):
+    """A cached scenario exports to one valid, compact JSON file."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._original_root = cache.CACHE_ROOT
+        cache.CACHE_ROOT = Path(self._tmp.name) / "results"
+
+    def tearDown(self):
+        cache.CACHE_ROOT = self._original_root
+        self._tmp.cleanup()
+
+    def _run_and_export(self, end_year=2028):
+        """Run and cache an ERCOT scenario, then export it; return the path."""
+        config = ScenarioConfig(iso="ERCOT")
+        with patch.object(runner, "END_YEAR", end_year), patch.object(
+            runner, "solve_dispatch", side_effect=_fake_solve
+        ):
+            key = runner.run_scenario_iso(config, "ERCOT")
+
+        out_dir = Path(self._tmp.name) / "out"
+        with patch.object(export, "END_YEAR", end_year):
+            path = export.export_scenario_json(key, "ERCOT", out_dir)
+        return key, path
+
+    def test_produces_valid_json_under_size_limit(self):
+        key, path = self._run_and_export()
+
+        self.assertTrue(path.exists())
+        self.assertLess(path.stat().st_size, export.MAX_FILE_BYTES)
+
+        payload = json.loads(path.read_text())
+        self.assertEqual(payload["cache_key"], key)
+        self.assertEqual(payload["iso"], "ERCOT")
+        self.assertEqual(sorted(payload["years"]), ["2026", "2027", "2028"])
+
+    def test_year_summary_has_expected_fields(self):
+        _, path = self._run_and_export()
+
+        summary = json.loads(path.read_text())["years"]["2026"]
+        for field in (
+            "generation_twh", "emissions_mt", "avg_price", "peak_price",
+            "curtailment_twh", "capacity_gw", "storage_cycles",
+        ):
+            self.assertIn(field, summary)
+
+        # The fake solve returns a flat $30/MWh price in every zone-hour.
+        self.assertEqual(summary["avg_price"], 30.0)
+        self.assertEqual(summary["peak_price"], 30.0)
+
+    def test_curtailment_never_negative(self):
+        _, path = self._run_and_export()
+
+        for summary in json.loads(path.read_text())["years"].values():
+            self.assertGreaterEqual(summary["curtailment_twh"], 0.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
