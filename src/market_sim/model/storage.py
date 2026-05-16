@@ -14,23 +14,13 @@ from dataclasses import dataclass
 import numpy as np
 from pydantic import BaseModel
 
-from market_sim.config.constants import STORAGE_TECHS
+from market_sim.config.constants import (
+    STORAGE_DEPLOYMENT_MW,
+    STORAGE_TECH_POWER_SHARE,
+    STORAGE_TECHS,
+)
 from market_sim.config.iso_configs import ISOConfig
 from market_sim.config.scenarios import ScenarioConfig
-
-# Total storage power capacity (MW) deployed across the fleet, by pace.
-STORAGE_DEPLOYMENT_MW: dict[str, float] = {
-    "low": 3_000.0,
-    "mid": 8_000.0,
-    "high": 20_000.0,
-}
-
-# Share of total deployed power allocated to each storage technology.
-_TECH_POWER_SHARE: dict[str, float] = {
-    "li_ion_4hr": 0.70,
-    "li_ion_8hr": 0.25,
-    "iron_air": 0.05,
-}
 
 
 class StorageUnit(BaseModel):
@@ -97,7 +87,7 @@ def build_default_storage(
 
     The total deployed power is set by ``config.storage_deployment`` (see
     ``STORAGE_DEPLOYMENT_MW``), split across load zones in proportion to each
-    zone's ``load_share`` and across technologies by ``_TECH_POWER_SHARE``.
+    zone's ``load_share`` and across technologies by ``STORAGE_TECH_POWER_SHARE``.
     Each technology's duration and round-trip efficiency come from
     ``constants.STORAGE_TECHS``; the round-trip efficiency is split evenly
     into one-way charge and discharge efficiencies.
@@ -126,7 +116,7 @@ def build_default_storage(
         if zone.load_share <= 0.0:
             continue
         for tech_name, tech in STORAGE_TECHS.items():
-            share = _TECH_POWER_SHARE.get(tech_name, 0.0)
+            share = STORAGE_TECH_POWER_SHARE.get(tech_name, 0.0)
             power_mw = total_mw * zone.load_share * share
             if power_mw <= 0.0:
                 continue
