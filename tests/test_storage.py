@@ -141,6 +141,27 @@ class TestBuildDefaultStorage(unittest.TestCase):
             build_default_storage(iso, ScenarioConfig(storage_deployment="huge"))
 
 
+class TestStorageRTEOverride(unittest.TestCase):
+    """Tests that ScenarioConfig RTE overrides reach the built fleet."""
+
+    def test_config_rte_overrides_constant(self):
+        iso = get_iso_config("ERCOT")
+        config = ScenarioConfig(storage_rte_4hr=0.80)  # lower than default 0.85
+        units = build_default_storage(iso, config)
+        li4_units = [u for u in units if "li_ion_4hr" in u.unit_id]
+        for u in li4_units:
+            # eta_charge * eta_discharge should equal the config RTE
+            self.assertAlmostEqual(u.eta_charge * u.eta_discharge, 0.80, places=4)
+
+    def test_default_config_matches_constant(self):
+        iso = get_iso_config("ERCOT")
+        config = ScenarioConfig()  # defaults: storage_rte_4hr=0.85
+        units = build_default_storage(iso, config)
+        li4_units = [u for u in units if "li_ion_4hr" in u.unit_id]
+        for u in li4_units:
+            self.assertAlmostEqual(u.eta_charge * u.eta_discharge, 0.85, places=4)
+
+
 class TestStorageArbitrageDispatch(unittest.TestCase):
     """End-to-end storage behaviour in ``solve_dispatch`` (all use T=24).
 
