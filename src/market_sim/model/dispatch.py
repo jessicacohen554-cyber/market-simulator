@@ -151,15 +151,18 @@ def build_cost_vector(
     storage_epsilon: float = STORAGE_TIEBREAKER_EPSILON,
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
+    storage_discharge_credit: float = 0.0,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
-    Thermal slots carry their hourly marginal cost, storage charge and
-    discharge carry a small ``storage_epsilon`` penalty to break degeneracy,
-    load slack carries the value of lost load (``voll``), wind and solar
-    carry their dispatch marginal cost (negative under a production credit),
-    overgeneration dump carries a tiny cost that still exceeds any
-    production credit, and SOC/flow slots are zero-cost.
+    Thermal slots carry their hourly marginal cost, storage charge carries
+    a small ``storage_epsilon`` penalty to break degeneracy, storage
+    discharge carries that penalty net of any exogenous discharge REC
+    credit (so its slot cost can go negative), load slack carries the
+    value of lost load (``voll``), wind and solar carry their dispatch
+    marginal cost (negative under a production credit), overgeneration
+    dump carries a tiny cost that still exceeds any production credit, and
+    SOC/flow slots are zero-cost.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -171,6 +174,9 @@ def build_cost_vector(
             wind willing to pay to generate.
         solar_mc: Solar dispatch marginal cost in $/MWh; scalar (flat) or
             ``(n_zones, T)``.
+        storage_discharge_credit: Exogenous REC paid per MWh discharged in
+            $/MWh. Subtracted from the discharge slot cost; the discharge
+            level stays bounded by SOC dynamics and the power cap.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -190,22 +196,28 @@ def build_cost_vector(
         np.asarray(solar_mc, dtype=float), (layout.n_zones, layout.T)
     ).T
 
-    # Storage charge and discharge: flat cycling penalty.
+    # Storage charge: flat cycling penalty. Discharge: cycling penalty net
+    # of any exogenous discharge REC credit, so the slot cost can go
+    # negative; SOC dynamics and the power cap still bound the discharge.
     block[:, layout._chg_off : layout._dis_off] = storage_epsilon
-    block[:, layout._dis_off : layout._soc_off] = storage_epsilon
+    block[:, layout._dis_off : layout._soc_off] = (
+        storage_epsilon - storage_discharge_credit
+    )
 
     # Load slack: value of lost load.
     block[:, layout._slack_off : layout._dump_off] = voll
 
     # Overgeneration dump: a tiny cost breaks degeneracy, but it must also
     # exceed the magnitude of any production credit (negative wind/solar
-    # marginal cost). Otherwise the LP would overgenerate credited renewables
-    # to full capacity and dump the surplus, paying the credit on curtailed
-    # energy and collapsing the marginal price.
+    # marginal cost, or the storage discharge REC). Otherwise the LP would
+    # overgenerate credited renewables to full capacity and dump the
+    # surplus, paying the credit on curtailed energy and collapsing the
+    # marginal price.
     min_renewable_mc = min(
         0.0,
         float(np.min(np.asarray(wind_mc, dtype=float))),
         float(np.min(np.asarray(solar_mc, dtype=float))),
+        -storage_discharge_credit,
     )
     dump_cost = max(storage_epsilon, -min_renewable_mc + storage_epsilon)
     block[:, layout._dump_off :] = dump_cost
@@ -598,6 +610,7 @@ def solve_dispatch(
     eta_dis: np.ndarray | float | None = None,
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
+    storage_discharge_credit: float = 0.0,
     rps_target: float | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -633,6 +646,8 @@ def solve_dispatch(
             ``(n_zones, T)``. Negative under a production tax credit.
         solar_mc: Solar dispatch marginal cost in $/MWh; scalar or
             ``(n_zones, T)``.
+        storage_discharge_credit: Exogenous REC paid per MWh discharged in
+            $/MWh, lowering the storage discharge slot cost.
         rps_target: Required clean-energy share. When not ``None`` and
             positive, an annual RPS constraint is enforced and its dual is
             returned as ``DispatchResult.rec_price``.
@@ -663,7 +678,8 @@ def solve_dispatch(
     mc = np.asarray(mc, dtype=float)
 
     cost = build_cost_vector(
-        layout, mc, voll, wind_mc=wind_mc, solar_mc=solar_mc
+        layout, mc, voll, wind_mc=wind_mc, solar_mc=solar_mc,
+        storage_discharge_credit=storage_discharge_credit,
     )
     A, row_lower, row_upper = build_constraints(
         layout,

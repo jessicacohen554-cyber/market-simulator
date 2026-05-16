@@ -33,6 +33,11 @@ class ScenarioConfig:
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
+    rec_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
+    rec_price_wind: float = 0.0  # $/MWh, stacks with IRA PTC
+    rec_price_solar: float = 0.0  # $/MWh
+    rec_price_gas_cc: float = 0.0  # $/MWh, for CCS-equipped or clean H2 CC
+    rec_price_storage: float = 0.0  # $/MWh on discharge
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
 
     # Tier 2 (expert/sensitivity)
@@ -108,6 +113,11 @@ TIER_TAGS: dict[str, int] = {
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "retirement_aggressiveness": 1,
+    "rec_price_nuclear": 1,
+    "rec_price_wind": 1,
+    "rec_price_solar": 1,
+    "rec_price_gas_cc": 1,
+    "rec_price_storage": 1,
     "rps_enabled": 1,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
