@@ -9,6 +9,19 @@ LP-based electricity market dispatch simulator. Two ISOs (ERCOT 4-zone, CAISO 1-
 - Python 3.11+, HiGHS via `highspy`, numpy, scipy.sparse, pandas, pyarrow, pydantic, pyyaml
 - **FORBIDDEN:** Pyomo, PuLP, scipy.optimize, Numba. Direct CSC matrix → HiGHS only.
 
+## Environment Setup
+
+Before running scripts or tests, install dependencies:
+
+```
+pip install -e ".[dev]"
+```
+
+This installs the runtime stack (highspy, numpy, scipy, pandas, pyarrow,
+pydantic, pyyaml) plus dev tools (pytest, ruff) from `pyproject.toml`.
+Run tests with `pytest`, or `PYTHONPATH=src python -m unittest discover tests`
+if the package is not installed editable.
+
 ## Architecture
 
 ```
