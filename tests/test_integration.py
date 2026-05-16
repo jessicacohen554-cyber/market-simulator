@@ -25,7 +25,9 @@ def _check_energy_balance(result, fleet, demand, incidence, storage_arrays, atol
         for s in range(storage_arrays.n_storage):
             chg_by_zone[storage_arrays.zone_idx[s]] += result.storage_charge[s]
             dis_by_zone[storage_arrays.zone_idx[s]] += result.storage_discharge[s]
-    supply = gen_by_zone + result.wind_dispatched + result.solar_dispatched + dis_by_zone - chg_by_zone + net_flow + result.slack
+    dump = result.dump if result.dump is not None else np.zeros_like(result.slack)
+    supply = (gen_by_zone + result.wind_dispatched + result.solar_dispatched
+              + dis_by_zone - chg_by_zone + net_flow + result.slack - dump)
     np.testing.assert_allclose(supply, demand, atol=atol)
 
 
