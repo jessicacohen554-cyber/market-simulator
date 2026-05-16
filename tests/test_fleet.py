@@ -1,14 +1,20 @@
 """Tests for the generation fleet inventory and vectorization."""
 
+import tempfile
 import unittest
+from pathlib import Path
 
 import numpy as np
 
+from market_sim.config.constants import HEAT_RATE_BINS
+from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     Generator,
     assemble_mc,
+    build_synthetic_fleet,
     generators_to_fleet_arrays,
+    load_fleet_from_csv,
 )
 
 
@@ -159,6 +165,83 @@ class TestAssembleMC(unittest.TestCase):
         mc = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
         np.testing.assert_allclose(mc[0], 7.0 * fuel_prices[0] + 2.0)
         self.assertFalse(np.allclose(mc[0], mc[0, 0]))
+
+
+class TestFleetLoader(unittest.TestCase):
+    """Tests for ``load_fleet_from_csv`` and the synthetic fleet fallback."""
+
+    ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]
+
+    def _gw(self, generators: list[Generator]) -> float:
+        """Return the total fleet capacity in GW."""
+        return sum(g.pmax_mw for g in generators) / 1000.0
+
+    def test_ercot_fleet_total_in_range(self):
+        fleet = load_fleet_from_csv("ERCOT")
+        self.assertGreaterEqual(self._gw(fleet), 80.0)
+        self.assertLessEqual(self._gw(fleet), 120.0)
+
+    def test_caiso_fleet_total_in_range(self):
+        fleet = load_fleet_from_csv("CAISO")
+        self.assertGreaterEqual(self._gw(fleet), 25.0)
+        self.assertLessEqual(self._gw(fleet), 50.0)
+
+    def test_pjm_fleet_total_in_range(self):
+        fleet = load_fleet_from_csv("PJM")
+        self.assertGreaterEqual(self._gw(fleet), 150.0)
+        self.assertLessEqual(self._gw(fleet), 200.0)
+
+    def test_no_generators_in_wecc_import_zone(self):
+        fleet = load_fleet_from_csv("CAISO")
+        self.assertTrue(all(g.zone != "WECC_import" for g in fleet))
+
+    def test_nuclear_units_are_must_run(self):
+        fleet = load_fleet_from_csv("ERCOT")
+        nuclear = [g for g in fleet if g.fuel_type == "nuclear"]
+        self.assertTrue(nuclear)
+        self.assertTrue(all(g.is_must_run for g in nuclear))
+
+    def test_heat_rates_match_constants(self):
+        fleet = load_fleet_from_csv("ERCOT")
+        for gen in fleet:
+            if gen.fuel_type in HEAT_RATE_BINS:
+                expected = HEAT_RATE_BINS[gen.fuel_type][gen.efficiency_bin]
+                self.assertEqual(gen.heat_rate, expected)
+
+    def test_some_coal_units_have_retirement_year(self):
+        fleet = load_fleet_from_csv("ERCOT")
+        coal = [g for g in fleet if g.fuel_type == "coal"]
+        self.assertTrue(any(g.retirement_year is not None for g in coal))
+
+    def test_fleet_converts_to_fleet_arrays(self):
+        config = get_iso_config("ERCOT")
+        fleet = load_fleet_from_csv("ERCOT", config)
+        arrays = generators_to_fleet_arrays(fleet, config.zone_names, hours=24)
+        self.assertEqual(arrays.n_gen, len(fleet))
+        self.assertEqual(arrays.pmax.shape, (len(fleet),))
+        self.assertEqual(arrays.availability.shape, (len(fleet), 24))
+
+    def test_all_seven_isos_load(self):
+        for iso in self.ALL_ISOS:
+            fleet = load_fleet_from_csv(iso)
+            self.assertTrue(fleet, f"{iso} fleet is empty")
+            zone_names = sorted({g.zone for g in fleet})
+            arrays = generators_to_fleet_arrays(fleet, zone_names, hours=4)
+            self.assertEqual(arrays.n_gen, len(fleet))
+
+    def test_synthetic_fallback_when_no_csv(self):
+        with tempfile.TemporaryDirectory() as empty_dir:
+            fleet = load_fleet_from_csv("ERCOT", data_dir=Path(empty_dir))
+        self.assertGreaterEqual(self._gw(fleet), 80.0)
+        self.assertLessEqual(self._gw(fleet), 120.0)
+
+    def test_synthetic_matches_csv_load(self):
+        with tempfile.TemporaryDirectory() as empty_dir:
+            from_fallback = load_fleet_from_csv(
+                "SPP", data_dir=Path(empty_dir)
+            )
+        direct = build_synthetic_fleet("SPP")
+        self.assertEqual(len(from_fallback), len(direct))
 
 
 if __name__ == "__main__":
