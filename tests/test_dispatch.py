@@ -11,6 +11,7 @@ from market_sim.model.dispatch import (
     build_constraints,
     build_cost_vector,
     build_variable_bounds,
+    solve_dispatch,
 )
 
 
@@ -146,9 +147,9 @@ class TestBuildCostVector(unittest.TestCase):
         )
         mc = np.full((1, 3), 5.0)
         cost = build_cost_vector(layout, mc, voll=1000.0)
-        for l in range(2):  # l: transmission link index
+        for ln in range(2):  # ln: transmission link index
             for t in range(layout.T):  # t: hour index
-                self.assertEqual(cost[layout.flow_col(l, t)], 0.0)
+                self.assertEqual(cost[layout.flow_col(ln, t)], 0.0)
 
 
 class TestBuildZoneGenMap(unittest.TestCase):
@@ -309,6 +310,96 @@ class TestBuildVariableBounds(unittest.TestCase):
             for z in range(2):  # z: zone index
                 self.assertEqual(col_lower[layout.slack_col(z, t)], 0.0)
                 self.assertTrue(np.isinf(col_upper[layout.slack_col(z, t)]))
+
+
+class TestSolveDispatch(unittest.TestCase):
+    """End-to-end tests for ``solve_dispatch`` (all use T=24)."""
+
+    T = 24
+
+    def _no_renewables(self, n_zones):
+        """Return zero-capacity wind/solar kwargs for ``n_zones`` zones."""
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def test_single_marginal_generator_sets_price(self):
+        # 1 gen, MC=50, pmax=100; flat demand 80 -> price 50, dispatch 80.
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
+        )
+        np.testing.assert_allclose(result.prices, 50.0)
+        np.testing.assert_allclose(result.dispatch, 80.0)
+
+    def test_cheap_generator_sets_price_below_capacity(self):
+        # 2 gens (MC=30/pmax=50, MC=60/pmax=50); demand 40 -> price 30.
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=50.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(self.T, 30.0), np.full(self.T, 60.0)])
+        demand = np.full((1, self.T), 40.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
+        )
+        np.testing.assert_allclose(result.prices, 30.0)
+
+    def test_expensive_generator_sets_price_at_the_margin(self):
+        # Demand 70 -> cheap gen full at 50, expensive at 20, price 60.
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=50.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(self.T, 30.0), np.full(self.T, 60.0)])
+        demand = np.full((1, self.T), 70.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
+        )
+        np.testing.assert_allclose(result.prices, 60.0)
+        np.testing.assert_allclose(result.dispatch[0], 50.0)
+        np.testing.assert_allclose(result.dispatch[1], 20.0)
+
+    def test_unserved_load_prices_at_voll(self):
+        # Demand 200 exceeds the 100 MW fleet -> slack > 0, price = VOLL.
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=50.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(self.T, 30.0), np.full(self.T, 60.0)])
+        demand = np.full((1, self.T), 200.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, voll=5000.0, T=self.T, **self._no_renewables(1)
+        )
+        self.assertTrue(np.all(result.slack > 0.0))
+        np.testing.assert_allclose(result.prices, 5000.0)
+
+    def test_energy_balance_holds_every_hour(self):
+        # Generation + wind + solar + slack must equal demand each hour.
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=50.0, pmin=0.0, eford=0.0
+        )
+        mc = np.vstack([np.full(self.T, 30.0), np.full(self.T, 60.0)])
+        demand = np.full((1, self.T), 75.0)
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([20.0]),
+            solar_cf=np.full((1, self.T), 0.3),
+            solar_cap=np.array([10.0]),
+        )
+        supply = (
+            result.dispatch.sum(axis=0)
+            + result.wind_dispatched[0]
+            + result.solar_dispatched[0]
+            + result.slack[0]
+        )
+        np.testing.assert_allclose(supply, demand[0])
 
 
 if __name__ == "__main__":
