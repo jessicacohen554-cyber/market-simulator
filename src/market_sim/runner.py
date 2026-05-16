@@ -48,6 +48,7 @@ from market_sim.model.transmission import (
 )
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.ira import compute_dispatch_credits
+from market_sim.policy.rec import apply_rec_to_mc, compute_rec_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.outputs import FleetContext
@@ -212,6 +213,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             mc = assemble_mc(
                 fleet_arrays, fuel_prices, carbon_price, config.nox_price
             )
+            # Exogenous RECs shift the cost vector: thermal-resource RECs
+            # lower per-generator MC, wind/solar RECs lower their dispatch
+            # adders, and the storage REC credits discharge. These stack
+            # with IRA credits and the endogenous RPS shadow price.
+            apply_rec_to_mc(mc, fleet_arrays, config)
+            wind_rec, solar_rec, storage_rec = compute_rec_dispatch_credits(config)
+            wind_mc -= wind_rec
+            solar_mc -= solar_rec
             # The RPS is enforced as an LP constraint when enabled; its dual
             # is the implicit REC price returned in the dispatch result.
             rps_target = None
@@ -235,6 +244,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 eta_dis=storage.eta_dis,
                 wind_mc=wind_mc,
                 solar_mc=solar_mc,
+                storage_discharge_credit=storage_rec,
                 rps_target=rps_target,
                 T=config.hours,
             )

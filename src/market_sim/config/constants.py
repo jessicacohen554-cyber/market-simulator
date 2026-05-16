@@ -318,6 +318,23 @@ WECC_EXPORT_CAP_MW: float = 5000.0
 # Source: NERC GADS — representative availability for out-of-state imports.
 WECC_IMPORT_EFORD: float = 0.02
 
+# Exogenous REC price reference ranges ($/MWh) by resource type, as
+# low/mid/high values. Documentation only — these are NOT used as defaults
+# (every ScenarioConfig.rec_price_* defaults to 0.0); they give plausible
+# ranges for scenario authors setting REC prices by hand.
+REC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
+    "nuclear_zec": {"low": 10.0, "mid": 17.0, "high": 25.0},
+    # Source: NY PSC Order, Case 15-E-0302; IL FEJA
+    "wind_rec": {"low": 2.0, "mid": 8.0, "high": 15.0},
+    # Source: PJM GATS, S&P Global Platts
+    "solar_rec": {"low": 2.0, "mid": 10.0, "high": 20.0},
+    # Source: PJM GATS, S&P Global Platts
+    "gas_cc_ccs": {"low": 0.0, "mid": 15.0, "high": 30.0},
+    # Source: 45Q credit ranges
+    "storage": {"low": 0.0, "mid": 5.0, "high": 15.0},
+    # Source: emerging state programs
+}
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760
