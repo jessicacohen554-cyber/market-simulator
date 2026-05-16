@@ -356,6 +356,24 @@ class TestGetRPSTarget(unittest.TestCase):
         self.assertAlmostEqual(get_rps_target("ERCOT", 2030), 0.0)
 
 
+def _entry_by_tech(
+    new_fleet: list, renewable_additions: dict[str, dict[str, float]]
+) -> dict[str, float]:
+    """Collapse a new-entry result into ``{fuel: total_mw}``.
+
+    Thermal builds come from ``new_fleet`` Generators; wind and solar come
+    from the ``renewable_additions`` dict, since they no longer enter as
+    Generator objects.
+    """
+    by_tech: dict[str, float] = {}
+    for g in new_fleet:
+        by_tech[g.fuel_type] = by_tech.get(g.fuel_type, 0.0) + g.pmax_mw
+    for by_fuel in renewable_additions.values():
+        for fuel, mw in by_fuel.items():
+            by_tech[fuel] = by_tech.get(fuel, 0.0) + mw
+    return by_tech
+
+
 class TestEconomicNewEntry(unittest.TestCase):
     """Revenue-driven capacity additions under per-tech and ISO queue caps."""
 
@@ -364,13 +382,15 @@ class TestEconomicNewEntry(unittest.TestCase):
         # total while the per-tech caps bind each technology individually.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 250.0)  # high prices make entry profitable
-        new_fleet = apply_economic_new_entry([], prices, 2030, config, "ERCOT")
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT"
+        )
 
-        added_mw = sum(g.pmax_mw for g in new_fleet)
+        by_tech = _entry_by_tech(new_fleet, additions)
+        added_mw = sum(by_tech.values())
         # The ISO total cap (12 GW) binds: the per-tech caps sum to 13 GW.
         self.assertAlmostEqual(added_mw, QUEUE_CAP_GW["ERCOT"] * 1000.0)
 
-        by_tech = {g.fuel_type: g.pmax_mw for g in new_fleet}
         caps = QUEUE_CAP_PER_TECH_GW["ERCOT"]
         # No technology exceeds its own per-tech cap.
         for tech, built_mw in by_tech.items():
@@ -380,15 +400,21 @@ class TestEconomicNewEntry(unittest.TestCase):
         self.assertAlmostEqual(by_tech["gas_cc"], caps["gas_cc"] * 1000.0)
         self.assertAlmostEqual(by_tech["wind"], caps["wind"] * 1000.0)
         self.assertLess(by_tech["solar"], caps["solar"] * 1000.0)
+        # Wind and solar are routed to the renewable pools, not the fleet.
+        self.assertFalse(
+            any(g.fuel_type in ("wind", "solar") for g in new_fleet)
+        )
 
     def test_per_tech_cap_binds_below_iso_cap(self):
-        # CAISO per-tech caps sum to 9 GW, below the 8 GW ISO cap, so at
+        # CAISO per-tech caps sum to 9 GW, above the 8 GW ISO cap, so at
         # least one per-tech cap binds before the ISO total is reached.
         config = ScenarioConfig(iso="CAISO")
         prices = np.full(8760, 250.0)
-        new_fleet = apply_economic_new_entry([], prices, 2030, config, "CAISO")
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "CAISO"
+        )
 
-        by_tech = {g.fuel_type: g.pmax_mw for g in new_fleet}
+        by_tech = _entry_by_tech(new_fleet, additions)
         caps = QUEUE_CAP_PER_TECH_GW["CAISO"]
         for tech, built_mw in by_tech.items():
             self.assertLessEqual(built_mw, caps[tech] * 1000.0 + 1e-6)
@@ -398,8 +424,62 @@ class TestEconomicNewEntry(unittest.TestCase):
     def test_no_entry_when_prices_too_low(self):
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 1.0)  # far below any technology's LCOE
-        new_fleet = apply_economic_new_entry([], prices, 2030, config, "ERCOT")
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT"
+        )
         self.assertEqual(new_fleet, [])
+        self.assertEqual(additions, {})
+
+
+class TestRenewableNewEntryRouting(unittest.TestCase):
+    """New wind/solar route to the zonal capacity pools, not the fleet.
+
+    Variable-output renewables must dispatch through the ``W[z,t]`` /
+    ``S[z,t]`` LP variables (bounded by ``CF * capacity``). Adding them as
+    thermal Generators with flat availability would let a new solar plant
+    dispatch around the clock instead of following the solar curve.
+    """
+
+    def test_economic_wind_build_reported_in_additions(self):
+        # High prices make wind economic: the build MW lands in the
+        # renewable-additions dict and no wind Generator joins the fleet.
+        config = ScenarioConfig(iso="ERCOT")
+        prices = np.full(8760, 250.0)
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT"
+        )
+        wind_mw = sum(by.get("wind", 0.0) for by in additions.values())
+        self.assertGreater(wind_mw, 0.0)
+        self.assertFalse(any(g.fuel_type == "wind" for g in new_fleet))
+        # Wind is allocated to ERCOT's designated wind zone.
+        self.assertIn("West", additions)
+        self.assertGreater(additions["West"].get("wind", 0.0), 0.0)
+
+    def test_solar_additions_increment_solar_cap(self):
+        # Mirror the runner's fold: a 1000 MW solar build increments the
+        # zonal solar_cap by exactly 1000 MW; no solar Generator is created.
+        zone_names = _zone_names("ERCOT")
+        solar_cap = np.zeros(len(zone_names))
+        renewable_additions = {"South": {"solar": 1000.0}}
+        for zone_name, additions in renewable_additions.items():
+            z_idx = zone_names.index(zone_name)
+            solar_cap[z_idx] += additions.get("solar", 0.0)
+        self.assertAlmostEqual(solar_cap[zone_names.index("South")], 1000.0)
+        self.assertAlmostEqual(solar_cap.sum(), 1000.0)
+
+    def test_gas_cc_entry_stays_a_thermal_generator(self):
+        # gas_cc new entry remains a Generator in the fleet and never
+        # appears in the renewable-additions dict.
+        config = ScenarioConfig(iso="ERCOT")
+        prices = np.full(8760, 250.0)
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT"
+        )
+        gas = [g for g in new_fleet if g.fuel_type == "gas_cc"]
+        self.assertEqual(len(gas), 1)
+        self.assertGreater(gas[0].pmax_mw, 0.0)
+        for by_fuel in additions.values():
+            self.assertNotIn("gas_cc", by_fuel)
 
 
 class TestEstimateExpectedRevenue(unittest.TestCase):
@@ -419,22 +499,29 @@ class TestRPSMandate(unittest.TestCase):
     def test_caiso_mandate_fills_clean_gap(self):
         config = ScenarioConfig(iso="CAISO")  # 2030 target 0.60
         fleet = [_gen("C0", "coal", pmax=1000.0)]  # clean share 0.0
-        result = apply_rps_mandate(fleet, 2030, config)
-        self.assertEqual(len(result), 2)
-        # Enough clean capacity is built to reach the target exactly.
-        self.assertAlmostEqual(compute_clean_share(result), 0.60)
+        result, additions = apply_rps_mandate(fleet, 2030, config)
+        # The thermal fleet is unchanged: mandated wind/solar is routed to
+        # the renewable capacity pools, not appended as a Generator.
+        self.assertEqual([g.unit_id for g in result], ["C0"])
+        built_mw = sum(
+            mw for by_fuel in additions.values() for mw in by_fuel.values()
+        )
+        # gap_mw = (0.6 * 1000 - 0) / (1 - 0.6) = 1500 MW closes the gap.
+        self.assertAlmostEqual(built_mw, 1500.0)
 
     def test_no_mandate_when_target_already_met(self):
         config = ScenarioConfig(iso="CAISO")
         fleet = [_gen("W0", "wind", pmax=1000.0)]  # clean share 1.0
-        result = apply_rps_mandate(fleet, 2030, config)
+        result, additions = apply_rps_mandate(fleet, 2030, config)
         self.assertEqual([g.unit_id for g in result], ["W0"])
+        self.assertEqual(additions, {})
 
     def test_no_mandate_for_iso_without_rps(self):
         config = ScenarioConfig(iso="ERCOT")  # ERCOT floor is 0.0
         fleet = [_gen("C0", "coal", pmax=1000.0)]
-        result = apply_rps_mandate(fleet, 2030, config)
+        result, additions = apply_rps_mandate(fleet, 2030, config)
         self.assertEqual([g.unit_id for g in result], ["C0"])
+        self.assertEqual(additions, {})
 
 
 class TestEvolveFleet(unittest.TestCase):
@@ -451,7 +538,7 @@ class TestEvolveFleet(unittest.TestCase):
             fleet_arrays=None, dispatch_result=None, prices=None,
             planned_additions=[new],
         )
-        fleet, tracker = evolve_fleet([old], prior, 2030, config, {})
+        fleet, tracker, _ = evolve_fleet([old], prior, 2030, config, {})
         # OLD retires this year; NEW comes online this year.
         self.assertEqual([g.unit_id for g in fleet], ["NEW"])
         self.assertIsInstance(tracker, dict)
@@ -468,17 +555,19 @@ class TestEvolveFleet(unittest.TestCase):
             planned_additions=[],
         )
         # Counter already at 1; a second loss year this step triggers retirement.
-        fleet, tracker = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
+        fleet, tracker, _ = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
         self.assertEqual(fleet, [])
         self.assertNotIn("C0", tracker)
 
-    def test_returns_fleet_and_tracker_tuple(self):
+    def test_returns_fleet_tracker_and_additions_tuple(self):
         config = ScenarioConfig(iso="ERCOT")
         result = evolve_fleet([_gen("G0", "gas_cc")], None, 2030, config, {})
         self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 3)
         self.assertIsInstance(result[0], list)
         self.assertIsInstance(result[1], dict)
+        # The third element is the {zone: {fuel: mw}} renewable additions.
+        self.assertIsInstance(result[2], dict)
 
 
 class TestResolveCarbonPrice(unittest.TestCase):
@@ -564,14 +653,24 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         ]
         retiring = _gen("C_RET", "coal", pmax=1000.0, heat_rate=8.0,
                         retirement_year=2026)
-        fleet, tracker = evolve_fleet(coal + [retiring], None, 2026, config, {})
+        fleet, tracker, additions = evolve_fleet(
+            coal + [retiring], None, 2026, config, {}
+        )
 
         self.assertIsInstance(fleet, list)
         self.assertIsInstance(tracker, dict)
         # The scheduled retirement is gone.
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
-        # CAISO RPS (0.50 in 2026) force-built clean capacity to the floor.
-        self.assertGreaterEqual(compute_clean_share(fleet), 0.50 - 1e-6)
+        # CAISO RPS (0.50 in 2026) force-built clean capacity. It is routed
+        # to the zonal renewable pools, not appended to the thermal fleet.
+        built_mw = sum(
+            mw for by_fuel in additions.values() for mw in by_fuel.values()
+        )
+        thermal_mw = sum(g.pmax_mw for g in fleet)
+        self.assertGreater(built_mw, 0.0)
+        self.assertGreaterEqual(
+            built_mw / (built_mw + thermal_mw), 0.50 - 1e-6
+        )
 
     def test_empty_fleet_after_retirements_is_refilled(self):
         # The whole fleet retires on schedule; new entry fills the gap.
@@ -579,7 +678,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         coal = _gen("C0", "coal", pmax=100.0, zone="North",
                     retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
-        fleet, tracker = evolve_fleet([coal], prior, 2027, config, {})
+        fleet, tracker, _ = evolve_fleet([coal], prior, 2027, config, {})
 
         # Known retirement empties the fleet, then economic new entry refills.
         self.assertNotIn("C0", {g.unit_id for g in fleet})
@@ -608,7 +707,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in (2026, 2027, 2028):
-            fleet, tracker = evolve_fleet(fleet, prior, year, config, tracker)
+            fleet, tracker, _ = evolve_fleet(fleet, prior, year, config, tracker)
             snapshots.append(frozenset(g.unit_id for g in fleet))
             prior = _make_prior(fleet, _zone_names(), price=10.0)
 
@@ -644,7 +743,7 @@ class TestCapacityIntegration(unittest.TestCase):
             prior = None
             yearly = {}
             for year in (2026, 2027, 2028):
-                fleet, tracker = evolve_fleet(
+                fleet, tracker, _ = evolve_fleet(
                     fleet, prior, year, config, tracker
                 )
                 yearly[year] = fleet
@@ -685,10 +784,10 @@ class TestCapacityIntegration(unittest.TestCase):
         ]
         tracker: dict[str, int] = {}
 
-        fleet, tracker = evolve_fleet(fleet, None, 2026, config, tracker)
+        fleet, tracker, _ = evolve_fleet(fleet, None, 2026, config, tracker)
         self.assertIn("C_RET", {g.unit_id for g in fleet})
 
-        fleet, tracker = evolve_fleet(fleet, None, 2027, config, tracker)
+        fleet, tracker, _ = evolve_fleet(fleet, None, 2027, config, tracker)
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
 
     def test_fleet_capacity_never_zero_over_five_years(self):
@@ -703,7 +802,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in range(2026, 2031):
-            fleet, tracker = evolve_fleet(fleet, prior, year, config, tracker)
+            fleet, tracker, _ = evolve_fleet(fleet, prior, year, config, tracker)
             self.assertGreater(
                 sum(g.pmax_mw for g in fleet), 0.0,
                 f"fleet capacity hit zero in {year}",
@@ -712,19 +811,24 @@ class TestCapacityIntegration(unittest.TestCase):
 
     def test_per_tech_queue_cap_builds_both_wind_and_solar(self):
         # With wind and solar both profitable, both are built and neither
-        # exceeds its per-technology queue cap.
+        # exceeds its per-technology queue cap. Wind and solar are routed
+        # to the renewable pools rather than the thermal fleet.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 250.0)
-        new_fleet = apply_economic_new_entry([], prices, 2030, config, "ERCOT")
+        new_fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT"
+        )
 
-        by_tech: dict[str, float] = {}
-        for g in new_fleet:
-            by_tech[g.fuel_type] = by_tech.get(g.fuel_type, 0.0) + g.pmax_mw
+        by_tech = _entry_by_tech(new_fleet, additions)
         caps = QUEUE_CAP_PER_TECH_GW["ERCOT"]
 
         # Both wind and solar entered.
         self.assertGreater(by_tech.get("wind", 0.0), 0.0)
         self.assertGreater(by_tech.get("solar", 0.0), 0.0)
+        # Neither leaked into the thermal fleet as a Generator.
+        self.assertFalse(
+            any(g.fuel_type in ("wind", "solar") for g in new_fleet)
+        )
         # Neither exceeds its per-tech cap.
         self.assertLessEqual(by_tech["wind"], caps["wind"] * 1000.0 + 1e-6)
         self.assertLessEqual(by_tech["solar"], caps["solar"] * 1000.0 + 1e-6)
@@ -732,6 +836,31 @@ class TestCapacityIntegration(unittest.TestCase):
         self.assertLessEqual(
             sum(by_tech.values()), QUEUE_CAP_GW["ERCOT"] * 1000.0 + 1e-6
         )
+
+    def test_renewable_capacity_grows_over_multi_year_run(self):
+        # Over a five-year trajectory with economic entry profitable, the
+        # accumulated wind + solar capacity is strictly higher by year five
+        # than after year one. Mirrors how the runner folds each year's
+        # renewable_additions into the zonal wind_cap/solar_cap pools.
+        config = ScenarioConfig(iso="ERCOT")
+        fleet = [_gen("G0", "gas_cc", pmax=1000.0, zone="North", heat_rate=7.0)]
+        tracker: dict[str, int] = {}
+        prior = None
+        cumulative_renewable_mw = 0.0
+        yearly_cap: dict[int, float] = {}
+        for year in range(2026, 2031):
+            fleet, tracker, additions = evolve_fleet(
+                fleet, prior, year, config, tracker
+            )
+            for by_fuel in additions.values():
+                cumulative_renewable_mw += sum(by_fuel.values())
+            yearly_cap[year] = cumulative_renewable_mw
+            prior = _make_prior(fleet, _zone_names(), price=250.0)
+
+        # Year one (2026) has no prior results, so no economic entry runs;
+        # later years accumulate profitable wind/solar builds.
+        self.assertGreater(yearly_cap[2030], yearly_cap[2026])
+        self.assertGreater(yearly_cap[2030], 0.0)
 
 
 if __name__ == "__main__":

@@ -52,6 +52,27 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
 }
 
 
+def get_renewable_zone(iso: str, fuel: str) -> str:
+    """Return the zone that absorbs new ``fuel`` capacity for ``iso``.
+
+    New wind and solar built by capacity evolution are routed to the same
+    single zone that holds the existing fleet (see
+    :data:`RENEWABLE_ZONE_ALLOCATION`), so the build increments that zone's
+    ``wind_cap`` / ``solar_cap`` rather than entering as a thermal unit.
+
+    Args:
+        iso: ISO identifier, e.g. ``"ERCOT"``.
+        fuel: Renewable fuel, ``"wind"`` or ``"solar"``.
+
+    Returns:
+        The target zone name.
+
+    Raises:
+        KeyError: if ``iso`` or ``fuel`` has no allocation entry.
+    """
+    return RENEWABLE_ZONE_ALLOCATION[iso][fuel]
+
+
 def derive_cf_profile(
     generation_values: np.ndarray, avg_cf: float
 ) -> np.ndarray:
