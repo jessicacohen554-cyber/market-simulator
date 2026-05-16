@@ -18,7 +18,12 @@ from multiprocessing import cpu_count
 
 import numpy as np
 
-from market_sim.config.constants import END_YEAR, START_YEAR
+from market_sim.config.constants import (
+    END_YEAR,
+    GAS_PRICE_BASE,
+    GAS_PRICE_ESCALATION,
+    START_YEAR,
+)
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
@@ -29,7 +34,7 @@ from market_sim.data.fleet import (
 )
 from market_sim.data.fuel import resolve_fuel_prices
 from market_sim.data.renewables import load_renewable_profiles
-from market_sim.model.capacity import evolve_fleet
+from market_sim.model.capacity import CumulativeDeployment, evolve_fleet
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.storage import (
     apply_storage_new_entry,
@@ -114,8 +119,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # economic new-entry screen.
     storage_units = build_default_storage(iso_config, config)
 
+    # Global cumulative deployment drives the Wright's-Law learning curves.
+    # It starts from the reference-year installed base and advances one year
+    # of worldwide deployment (plus this ISO's local builds) every year.
+    cumulative = CumulativeDeployment.initial()
+
     for year in range(START_YEAR, END_YEAR + 1):
         year_start = time.perf_counter()
+        renewable_additions: dict[str, dict[str, float]] = {}
 
         if fleet is None:
             # First year: no EIA-860 vintage yet, so the base fleet falls
@@ -127,9 +138,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             rec_price = 0.0
             if prior_results is not None and prior_results.get("rec_price"):
                 rec_price = prior_results["rec_price"]
+            # Gas price and carbon price for the year feed the new-entry
+            # screen so gas CC is charged its expected variable fuel cost.
+            gas_base_price = GAS_PRICE_BASE[iso][config.gas_price_path]
+            gas_price_year = (
+                gas_base_price
+                * (1.0 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
+            )
+            carbon_price_year = resolve_carbon_price(config, year)
             fleet, loss_tracker, renewable_additions = evolve_fleet(
                 fleet, prior_results, year, config, loss_tracker,
                 rec_price=rec_price,
+                cumulative=cumulative,
+                gas_price_per_mmbtu=gas_price_year,
+                carbon_price=carbon_price_year,
             )
             # New wind/solar grow the zonal capacity pools that bound the
             # W[z,t] and S[z,t] dispatch variables -- they are not added as
@@ -141,11 +163,33 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         # Storage grows endogenously: year 2026 uses the base fleet, and
         # 2027+ screens arbitrage revenue against cost on prior-year prices.
+        prior_storage_mw = sum(u.power_cap_mw for u in storage_units)
         if prior_results is not None:
             storage_units = apply_storage_new_entry(
-                storage_units, prior_results["prices"], year, config, iso
+                storage_units, prior_results["prices"], year, config, iso,
+                cumulative=cumulative,
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
+
+        # Advance global cumulative deployment by one year, folding in this
+        # ISO's local builds (GW) so the learning curves see them next year.
+        local_builds: dict[str, float] = {}
+        for zone_adds in renewable_additions.values():
+            for fuel, mw in zone_adds.items():
+                local_builds[fuel] = local_builds.get(fuel, 0.0) + mw / 1000.0
+        for g in fleet:
+            if g.online_year == year and g.fuel_type in ("gas_cc", "nuclear"):
+                local_builds[g.fuel_type] = (
+                    local_builds.get(g.fuel_type, 0.0) + g.pmax_mw / 1000.0
+                )
+        new_storage_mw = (
+            sum(u.power_cap_mw for u in storage_units) - prior_storage_mw
+        )
+        if new_storage_mw > 0:
+            local_builds["li_ion"] = (
+                local_builds.get("li_ion", 0.0) + new_storage_mw / 1000.0
+            )
+        cumulative.advance_year(local_builds)
 
         dispatch_fleet = fleet + wecc_generators
         fleet_arrays = generators_to_fleet_arrays(
