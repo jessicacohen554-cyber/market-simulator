@@ -567,5 +567,117 @@ class TestOvergeneration(unittest.TestCase):
         np.testing.assert_allclose(supply, demand[0], atol=1e-4)
 
 
+class TestRPSConstraint(unittest.TestCase):
+    """The annual RPS constraint row and its REC-price dual."""
+
+    T = 24
+
+    def _no_renewables(self, n_zones):
+        """Return zero-capacity wind/solar kwargs for ``n_zones`` zones."""
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def _nuclear_gas_fleet(self):
+        """A two-unit fleet: one nuclear unit, one gas unit, both in Z0."""
+        generators = [
+            Generator(
+                unit_id="N0", name="N0", zone="Z0", fuel_type="nuclear",
+                pmax_mw=100.0, pmin_mw=0.0, eford=0.0,
+            ),
+            Generator(
+                unit_id="G0", name="G0", zone="Z0", fuel_type="gas_cc",
+                pmax_mw=100.0, pmin_mw=0.0, eford=0.0,
+            ),
+        ]
+        return generators_to_fleet_arrays(generators, ["Z0"], hours=self.T)
+
+    def test_rps_none_matches_unconstrained_dispatch(self):
+        # rps_target=None adds no constraint row: the solve is identical to
+        # one that never mentions an RPS, and rec_price stays None.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+
+        baseline = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
+        )
+        with_none = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, rps_target=None,
+            **self._no_renewables(1),
+        )
+        np.testing.assert_allclose(with_none.prices, baseline.prices)
+        np.testing.assert_allclose(with_none.dispatch, baseline.dispatch)
+        self.assertIsNone(baseline.rec_price)
+        self.assertIsNone(with_none.rec_price)
+
+    def test_rps_binds_with_thermal_only_fleet(self):
+        # A nuclear + gas fleet with cheap gas and expensive nuclear: the
+        # RPS forces expensive nuclear up to cover half of demand, so the
+        # constraint binds and its dual (the REC price) is positive.
+        fleet = self._nuclear_gas_fleet()
+        # Row 0 is nuclear (expensive), row 1 is gas (cheap).
+        mc = np.vstack(
+            [np.full(self.T, 100.0), np.full(self.T, 20.0)]
+        )
+        demand = np.full((1, self.T), 80.0)
+
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, rps_target=0.5,
+            **self._no_renewables(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rec_price)
+        self.assertGreater(result.rec_price, 0.0)
+        # The REC price equals the cost premium of nuclear over gas: an
+        # extra MWh of clean swaps 1 MWh gas (20) for nuclear (100).
+        self.assertAlmostEqual(result.rec_price, 80.0, delta=0.5)
+        # Nuclear is pushed up to supply at least half of total demand.
+        self.assertGreaterEqual(
+            result.dispatch[0].sum(), 0.5 * demand.sum() - 1.0
+        )
+
+    def test_rps_non_binding_with_enough_wind(self):
+        # Cheap wind already supplies more than the RPS floor, so the
+        # constraint is slack and its dual is zero.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, rps_target=0.5,
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),  # 50 MW available vs 80 MW demand
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rec_price)
+        # Wind covers 62.5% of demand, comfortably above the 50% floor.
+        self.assertAlmostEqual(result.rec_price, 0.0, places=3)
+
+    def test_rps_infeasible_with_no_clean_capacity(self):
+        # A gas-only fleet can produce no clean energy at all, so a 100%
+        # RPS has no feasible solution and the solve raises.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+
+        with self.assertRaises(RuntimeError):
+            solve_dispatch(
+                fleet, demand, mc=mc, T=self.T, rps_target=1.0,
+                **self._no_renewables(1),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
