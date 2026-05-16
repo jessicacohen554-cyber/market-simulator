@@ -120,7 +120,12 @@ def build_default_storage(
             power_mw = total_mw * zone.load_share * share
             if power_mw <= 0.0:
                 continue
-            eta = float(tech["rte"]) ** 0.5
+            rte = float(tech["rte"])
+            if tech_name == "li_ion_4hr":
+                rte = config.storage_rte_4hr
+            elif tech_name == "li_ion_8hr":
+                rte = config.storage_rte_8hr
+            eta = rte**0.5
             units.append(
                 StorageUnit(
                     unit_id=f"{zone.name}_{tech_name}",
