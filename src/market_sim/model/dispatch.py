@@ -13,7 +13,7 @@ import highspy
 import numpy as np
 import scipy.sparse as sp
 
-from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.constants import HOURS_PER_YEAR, STORAGE_TIEBREAKER_EPSILON
 from market_sim.data.fleet import FleetArrays, assemble_mc
 
 logger = logging.getLogger(__name__)
@@ -133,7 +133,7 @@ def build_cost_vector(
     layout: VariableLayout,
     mc: np.ndarray,
     voll: float,
-    storage_epsilon: float = 0.001,
+    storage_epsilon: float = STORAGE_TIEBREAKER_EPSILON,
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
 ) -> np.ndarray:
@@ -489,7 +489,7 @@ def solve_dispatch(
     fuel_prices: np.ndarray | None = None,
     carbon_price: np.ndarray | float = 0,
     nox_price: np.ndarray | float = 0,
-    voll: float = 5000,
+    voll: float = 5000,  # default matches ScenarioConfig.voll for ERCOT
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
     storage_power_cap: np.ndarray | None = None,
