@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LP Dispatch · The LP Core — The 8,760 Problem</title>
-<meta name="description" content="A scrollytelling explainer: how a linear program clears one hour of electricity demand — meet the generators, stack them by marginal cost, and watch the dispatch fill from the cheapest up.">
+<meta name="description" content="A scrollytelling explainer: how a linear program clears electricity demand — stack generators by marginal cost, read the price off the dual, add zero-cost wind, watch curtailment, and see why an LP beats a greedy heuristic.">
 
 <!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -308,6 +308,74 @@
             </p>
         </section>
 
+        <section class="scrolly-step" data-step-id="price">
+            <span class="scrolly-step-label">Step 5 · The price</span>
+            <h2>The price is the last unit needed</h2>
+            <p>
+                Freeze the solve at the afternoon peak. The stack has filled
+                from the bottom, and one plant sits part-dispatched at the top
+                of the fill — the <span class="sc-mark">marginal generator</span>.
+            </p>
+            <p>
+                The energy-balance constraint carries a
+                <strong>dual variable</strong>: the cost of serving one more
+                megawatt. That dual is exactly the marginal generator's cost —
+                <strong>$60/MWh</strong> here. Every megawatt clears at that one
+                price, even the nuclear bought at $15.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="wind">
+            <span class="scrolly-step-label">Step 6 · Zero-cost wind</span>
+            <h2>Add wind at zero cost</h2>
+            <p>
+                Bring a <span class="sc-mark">150&nbsp;MW wind farm</span> onto
+                the system. Its fuel is free, so its marginal cost is
+                <strong>$0/MWh</strong> — it slots in beneath everything else,
+                at the very bottom of the merit order.
+            </p>
+            <p>
+                Wind output is not steady; it rises and falls with the weather.
+                But every megawatt it produces is a megawatt the grid no longer
+                buys from the top of the stack. Watch the
+                <strong>expensive gas</strong> get pushed off.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="curtail">
+            <span class="scrolly-step-label">Step 7 · Curtailment</span>
+            <h2>Surplus wind has nowhere to go</h2>
+            <p>
+                Double the wind farm to <span class="sc-mark">300&nbsp;MW</span>.
+                On breezy overnight hours it can generate more power than the
+                whole grid is asking for.
+            </p>
+            <p>
+                The energy balance forbids overproduction, so the LP
+                <strong>curtails</strong> the surplus — wind is available but
+                left unused. With a zero-cost unit on the margin, the dual
+                variable collapses and the <strong>price falls to $0</strong>.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="compare">
+            <span class="scrolly-step-label">Step 8 · Why LP wins</span>
+            <h2>Why the LP beats a heuristic</h2>
+            <p>
+                A <span class="sc-mark">greedy heuristic</span> clears each hour
+                on its own, cheapest-first. It cannot see that the gas peaker it
+                switches off in the midday valley will be wanted again at the
+                evening peak — and it pays a fresh <strong>start-up cost</strong>
+                each time it cycles.
+            </p>
+            <p>
+                The <span class="sc-mark">linear program</span> co-optimizes all
+                24 hours at once. It holds the peaker online through the cheap
+                hours, trading a little extra fuel for one fewer start — and
+                lands on a <strong>lower total cost</strong>.
+            </p>
+        </section>
+
     </div>
 </div>
 </div>
@@ -386,6 +454,89 @@
         return null;
     }
 
+    // ---- Wind + dispatchable fleet for steps 6-8 ---------------------------
+    // A utility-scale wind farm at zero marginal cost. Its nameplate changes
+    // between steps; hourly output is nameplate x capacity factor.
+    var WIND_CF = [0.92, 0.95, 0.96, 0.95, 0.90, 0.83, 0.72, 0.60,
+                   0.49, 0.41, 0.37, 0.35, 0.34, 0.34, 0.37, 0.41,
+                   0.47, 0.55, 0.64, 0.73, 0.81, 0.87, 0.90, 0.93];
+
+    // Dispatchable fleet, listed in merit order (cheapest first).
+    var WFLEET = [
+        { id: 'nuclear', name: 'Vela Point',  fuelKey: 'nuclear', mc: 15, cap: 150 },
+        { id: 'coal',    name: 'Ashford',     fuelKey: 'coal',    mc: 45, cap: 120 },
+        { id: 'gascc',   name: 'Cedar CC',    fuelKey: 'gas-cc',  mc: 60, cap: 110 },
+        { id: 'gasct',   name: 'Junction CT', fuelKey: 'gas-ct',  mc: 80, cap: 80  }
+    ];
+    // Stacking order for the area charts, bottom to top.
+    var FUELS_UP = ['wind', 'nuclear', 'coal', 'gascc', 'gasct'];
+    var FUEL_KEY = {
+        wind: 'wind', nuclear: 'nuclear', coal: 'coal',
+        gascc: 'gas-cc', gasct: 'gas-ct'
+    };
+
+    // Merit-order dispatch for one hour against the day's demand curve, with a
+    // given wind nameplate. Returns per-fuel MW, curtailed wind, and price.
+    function dispatchHour(hour, windCap) {
+        var dem = DEMAND[hour];
+        var windAvail = windCap * WIND_CF[hour];
+        var row = { wind: Math.min(windAvail, dem) };
+        row.curtail = windAvail - row.wind;
+        var rem = dem - row.wind;
+        row.price = 0;   // zero if wind alone clears the hour
+        WFLEET.forEach(function (g) {
+            var take = Math.max(0, Math.min(g.cap, rem));
+            row[g.id] = take;
+            if (take > 0.01) row.price = g.mc;
+            rem -= take;
+        });
+        return row;
+    }
+
+    // ---- Two-humped demand curve for the heuristic-vs-LP comparison --------
+    // A morning and an evening peak with a midday valley — so the gas peaker
+    // is needed twice, with a dip between.
+    var DEMAND8 = [225, 215, 210, 215, 250, 310, 370, 405, 410, 400,
+                   375, 350, 335, 330, 345, 365, 385, 405, 415, 410,
+                   375, 320, 275, 240];
+    var CT_VALLEY = [10, 11, 12, 13, 14, 15];   // hours the LP holds CT online
+    var CT_MIN = 25;                            // CT minimum stable output, MW
+    var START_COST = 4000;                      // $ per gas-peaker start-up
+
+    // Merit-order dispatch of DEMAND8. When holdCT is set, the gas peaker is
+    // held at its minimum output through the valley instead of shutting off.
+    function buildDay(holdCT) {
+        return DEMAND8.map(function (dem, h) {
+            var rem = dem, row = {};
+            WFLEET.forEach(function (g) {
+                var take = Math.max(0, Math.min(g.cap, rem));
+                row[g.id] = take;
+                rem -= take;
+            });
+            if (holdCT && CT_VALLEY.indexOf(h) !== -1 && row.gasct < CT_MIN) {
+                var bump = CT_MIN - row.gasct;
+                row.gasct += bump;
+                row.gascc = Math.max(0, row.gascc - bump);
+            }
+            return row;
+        });
+    }
+
+    // Total cost = fuel ($/MWh x MW summed) + start-up costs.
+    function dayCost(rows) {
+        var mc = { nuclear: 15, coal: 45, gascc: 60, gasct: 80 };
+        var fuel = 0, starts = 0, prevOn = false;
+        rows.forEach(function (row) {
+            Object.keys(mc).forEach(function (id) {
+                fuel += (row[id] || 0) * mc[id];
+            });
+            var on = (row.gasct || 0) > 0.01;
+            if (on && !prevOn) starts += 1;
+            prevOn = on;
+        });
+        return { fuel: fuel, starts: starts, total: fuel + starts * START_COST };
+    }
+
     // ========================================================================
     // GEOMETRY
     // ========================================================================
@@ -402,6 +553,20 @@
 
     var svg = d3.select('#dispatch-svg');
 
+    // Diagonal-hatch pattern used to mark curtailed (unused) wind.
+    var defs = svg.append('defs');
+    var hatch = defs.append('pattern')
+        .attr('id', 'curtail-hatch')
+        .attr('width', 7).attr('height', 7)
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('patternTransform', 'rotate(45)');
+    hatch.append('rect')
+        .attr('width', 7).attr('height', 7)
+        .attr('fill', 'rgba(46, 204, 113, 0.14)');
+    hatch.append('line')
+        .attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 7)
+        .attr('stroke', '#2ECC71').attr('stroke-width', 2.4);
+
     // Persistent groups, drawn back-to-front.
     var gGrid     = svg.append('g');
     var gDemand   = svg.append('g');
@@ -409,6 +574,7 @@
     var gLabels   = svg.append('g');
     var gDispatch = svg.append('g');
     var gMarker   = svg.append('g');
+    var gArea     = svg.append('g');   // 24-hour stacked-area charts (steps 6-8)
 
     // ---- Static MW gridlines + axis label ----------------------------------
     [0, 150, 300, 450, 600].forEach(function (mw) {
@@ -689,13 +855,310 @@
     }
 
     // ========================================================================
+    // STEP 5 — freeze the solve and annotate the price (the LP dual)
+    // ========================================================================
+    function showPrice() {
+        clearDispatch();
+        var hr = 13;                          // afternoon peak
+        updateDispatch(hr);                   // static dispatch, no timer
+        var marg = marginalGen(DEMAND[hr]);   // Cedar CC, $60/MWh
+
+        var cw = 214, ch = 56;
+        var cax = x1 - cw, cay = y1 + 4;
+        var box = gMarker.append('g');
+        box.append('rect')
+            .attr('x', cax).attr('y', cay)
+            .attr('width', cw).attr('height', ch).attr('rx', 8)
+            .attr('fill', '#fff')
+            .attr('stroke', ACCENT_DEEP).attr('stroke-width', 1.6);
+        box.append('text')
+            .attr('x', cax + 14).attr('y', cay + 24)
+            .style('font-family', 'var(--font-heading)')
+            .style('font-weight', '800').style('font-size', '17px')
+            .style('fill', NAVY)
+            .text('Price  λ = $' + marg.mc + '/MWh');
+        box.append('text')
+            .attr('x', cax + 14).attr('y', cay + 43)
+            .style('font-size', '11px').style('font-weight', '600')
+            .style('fill', ACCENT_DEEP)
+            .text('= marginal cost of ' + marg.name);
+    }
+
+    // ========================================================================
+    // STEPS 6-8 — 24-hour stacked-area dispatch charts
+    // ========================================================================
+    var areaTimer = null;
+
+    function clearArea() {
+        if (areaTimer) { areaTimer.stop(); areaTimer = null; }
+        gArea.selectAll('*').remove();
+    }
+
+    // Hide / restore the merit-order column used by steps 1-5.
+    function hideColumn() {
+        blocks.interrupt();
+        gGrid.attr('display', 'none');
+        gBlocks.attr('display', 'none');
+        clearLabels();
+        gDemand.selectAll('*').remove();
+        clearDispatch();
+    }
+    function showColumn() {
+        gGrid.attr('display', null);
+        gBlocks.attr('display', null);
+    }
+
+    // Draw one stacked-area dispatch panel inside the rect p = {l,r,t,b}.
+    //   rows  — 24 per-hour dispatch objects (keys: wind/nuclear/coal/...)
+    //   opts  — demand, ticks, showCurtail, markStarts, title, subtitle,
+    //           highlight (hours), callout
+    function drawAreaPanel(p, rows, opts) {
+        opts = opts || {};
+        var dem = opts.demand || DEMAND;
+        var idx = d3.range(24);
+        var ax = d3.scaleLinear().domain([0, 23]).range([p.l, p.r]);
+        var ay = d3.scaleLinear().domain([0, 460]).range([p.b, p.t]);
+
+        // Valley highlight band.
+        if (opts.highlight && opts.highlight.length) {
+            var hl0 = d3.min(opts.highlight), hl1 = d3.max(opts.highlight);
+            gArea.append('rect')
+                .attr('x', ax(hl0)).attr('y', p.t)
+                .attr('width', ax(hl1) - ax(hl0)).attr('height', p.b - p.t)
+                .attr('fill', 'rgba(99,102,241,0.08)');
+        }
+
+        // MW gridlines.
+        [0, 150, 300, 450].forEach(function (mw) {
+            gArea.append('line')
+                .attr('class', mw === 0 ? 'axis-line' : 'grid-line')
+                .attr('x1', p.l).attr('x2', p.r)
+                .attr('y1', ay(mw)).attr('y2', ay(mw));
+            if (opts.ticks) {
+                gArea.append('text').attr('class', 'ax-tick')
+                    .attr('x', p.l - 8).attr('y', ay(mw) + 4)
+                    .attr('text-anchor', 'end').text(mw);
+            }
+        });
+
+        // Stacked fuel bands, bottom to top.
+        var base = idx.map(function () { return 0; });
+        FUELS_UP.forEach(function (fid) {
+            var lo = base.slice();
+            var hi = rows.map(function (r, i) { return lo[i] + (r[fid] || 0); });
+            gArea.append('path').datum(idx)
+                .attr('fill', COLOR[FUEL_KEY[fid]])
+                .attr('fill-opacity', 0.93)
+                .attr('d', d3.area()
+                    .x(function (d) { return ax(d); })
+                    .y0(function (d) { return ay(lo[d]); })
+                    .y1(function (d) { return ay(hi[d]); })
+                    .curve(d3.curveMonotoneX));
+            base = hi;
+        });
+
+        // Curtailed wind — hatched band above the dispatch stack.
+        if (opts.showCurtail) {
+            gArea.append('path').datum(idx)
+                .attr('fill', 'url(#curtail-hatch)')
+                .attr('stroke', '#2ECC71').attr('stroke-width', 1)
+                .attr('stroke-dasharray', '3 2')
+                .attr('d', d3.area()
+                    .x(function (d) { return ax(d); })
+                    .y0(function (d) { return ay(base[d]); })
+                    .y1(function (d) {
+                        return ay(base[d] + (rows[d].curtail || 0));
+                    })
+                    .curve(d3.curveMonotoneX));
+        }
+
+        // Demand line.
+        gArea.append('path').datum(dem)
+            .attr('fill', 'none')
+            .attr('stroke', NAVY).attr('stroke-width', 2)
+            .attr('stroke-dasharray', '5 3')
+            .attr('d', d3.line()
+                .x(function (d, i) { return ax(i); })
+                .y(function (d) { return ay(d); })
+                .curve(d3.curveMonotoneX));
+        gArea.append('text')
+            .attr('x', ax(23) - 2).attr('y', ay(dem[23]) - 8)
+            .attr('text-anchor', 'end')
+            .style('font-size', '10.5px').style('font-weight', '700')
+            .style('fill', NAVY)
+            .text('Demand');
+
+        // Hour axis.
+        [0, 6, 12, 18].forEach(function (h) {
+            gArea.append('text').attr('class', 'ax-tick')
+                .attr('x', ax(h)).attr('y', p.b + 16)
+                .attr('text-anchor', 'middle').text(h + 'h');
+        });
+
+        // Start-up markers on the gas peaker.
+        if (opts.markStarts) {
+            var prevOn = false;
+            rows.forEach(function (r, h) {
+                var on = (r.gasct || 0) > 0.01;
+                if (on && !prevOn && h > 0) {
+                    var sx = ax(h);
+                    var sy = ay((r.nuclear || 0) + (r.coal || 0) + (r.gascc || 0));
+                    gArea.append('circle')
+                        .attr('cx', sx).attr('cy', sy).attr('r', 4)
+                        .attr('fill', '#fff')
+                        .attr('stroke', '#5a6b8c').attr('stroke-width', 2);
+                    gArea.append('text')
+                        .attr('x', sx).attr('y', sy - 9)
+                        .attr('text-anchor', 'middle')
+                        .style('font-family', 'var(--font-heading)')
+                        .style('font-weight', '800').style('font-size', '9px')
+                        .style('fill', '#5a6b8c')
+                        .text('START');
+                }
+                prevOn = on;
+            });
+        }
+
+        // Title + subtitle.
+        if (opts.title) {
+            gArea.append('text')
+                .attr('x', p.l).attr('y', p.t - 20)
+                .style('font-family', 'var(--font-heading)')
+                .style('font-weight', '800').style('font-size', '13px')
+                .style('fill', NAVY)
+                .text(opts.title);
+        }
+        if (opts.subtitle) {
+            gArea.append('text')
+                .attr('x', p.l).attr('y', p.t - 5)
+                .style('font-size', '11px').style('font-weight', '600')
+                .style('fill', opts.subtitleColor || ACCENT_DEEP)
+                .text(opts.subtitle);
+        }
+
+        // Curtailed-wind legend chip.
+        if (opts.showCurtail) {
+            var lx = p.r - 128, ly = p.t - 30;
+            gArea.append('rect')
+                .attr('x', lx).attr('y', ly)
+                .attr('width', 13).attr('height', 13).attr('rx', 2)
+                .attr('fill', 'url(#curtail-hatch)')
+                .attr('stroke', '#2ECC71').attr('stroke-width', 1);
+            gArea.append('text')
+                .attr('x', lx + 19).attr('y', ly + 11)
+                .style('font-size', '11px').style('font-weight', '600')
+                .style('fill', '#1f8b4c')
+                .text('Curtailed wind');
+        }
+
+        // Annotation callout.
+        if (opts.callout) {
+            var c = opts.callout;
+            var ptX = ax(c.hour), ptY = ay(c.yMW);
+            var bw = c.boxW || 160;
+            var lines = c.lines || [];
+            var bh = 14 + lines.length * 15;
+            var bx = Math.min(ptX + 16, p.r - bw - 2);
+            var by = c.boxY != null ? c.boxY : p.t + 14;
+            var col = c.color || ACCENT_DEEP;
+            gArea.append('line')
+                .attr('x1', ptX).attr('y1', ptY)
+                .attr('x2', bx + 8).attr('y2', by + bh)
+                .attr('stroke', col).attr('stroke-width', 1.2)
+                .attr('stroke-dasharray', '3 2');
+            gArea.append('circle')
+                .attr('cx', ptX).attr('cy', ptY).attr('r', 4)
+                .attr('fill', '#fff')
+                .attr('stroke', col).attr('stroke-width', 2);
+            gArea.append('rect')
+                .attr('x', bx).attr('y', by)
+                .attr('width', bw).attr('height', bh).attr('rx', 6)
+                .attr('fill', '#fff')
+                .attr('stroke', col).attr('stroke-width', 1.4);
+            lines.forEach(function (ln, i) {
+                gArea.append('text')
+                    .attr('x', bx + 10).attr('y', by + 17 + i * 15)
+                    .style('font-family', 'var(--font-heading)')
+                    .style('font-weight', i === 0 ? '800' : '600')
+                    .style('font-size', i === 0 ? '12px' : '10.5px')
+                    .style('fill', i === 0 ? NAVY : col)
+                    .text(ln);
+            });
+        }
+    }
+
+    // Steps 6 & 7 — one wide panel, animating the wind nameplate fromCap->toCap.
+    function renderWindStep(fromCap, toCap, opts) {
+        if (areaTimer) { areaTimer.stop(); areaTimer = null; }
+        var panel = { l: x0 + 42, r: x1, t: y1 + 40, b: y0 };
+        function frame(cap, withCallout) {
+            gArea.selectAll('*').remove();
+            var rows = d3.range(24).map(function (h) {
+                return dispatchHour(h, cap);
+            });
+            var o = {};
+            for (var k in opts) { o[k] = opts[k]; }
+            if (!withCallout) { o.callout = null; }
+            drawAreaPanel(panel, rows, o);
+        }
+        if (REDUCE || fromCap === toCap) { frame(toCap, true); return; }
+        var DUR = 1500;
+        areaTimer = d3.timer(function (el) {
+            var t = Math.min(1, el / DUR);
+            var cap = fromCap + (toCap - fromCap) * d3.easeCubicInOut(t);
+            frame(cap, t >= 1);
+            if (t >= 1) { areaTimer.stop(); areaTimer = null; }
+        });
+    }
+
+    // Step 8 — two static panels, greedy heuristic vs. co-optimized LP.
+    function renderCompare() {
+        clearArea();
+        var greedy = buildDay(false), lp = buildDay(true);
+        var gc = dayCost(greedy), lc = dayCost(lp);
+        var fmt = function (n) { return '$' + Math.round(n).toLocaleString(); };
+        var pL = { l: 86, r: 388, t: y1 + 52, b: y0 };
+        var pR = { l: 446, r: 730, t: y1 + 52, b: y0 };
+        drawAreaPanel(pL, greedy, {
+            demand: DEMAND8, ticks: true,
+            title: 'Greedy heuristic',
+            subtitle: 'Each hour cleared on its own',
+            subtitleColor: '#D97706',
+            highlight: CT_VALLEY, markStarts: true,
+            callout: {
+                hour: 13, yMW: DEMAND8[13], color: '#D97706', boxW: 150,
+                lines: ['Peaker cycled twice',
+                        gc.starts + ' starts · ' + fmt(gc.total)]
+            }
+        });
+        drawAreaPanel(pR, lp, {
+            demand: DEMAND8, ticks: true,
+            title: 'Linear program',
+            subtitle: 'All 24 hours co-optimized',
+            subtitleColor: ACCENT_DEEP,
+            highlight: CT_VALLEY, markStarts: true,
+            callout: {
+                hour: 13, yMW: DEMAND8[13] - CT_MIN / 2, color: ACCENT_DEEP,
+                boxW: 158,
+                lines: ['Peaker held online',
+                        lc.starts + ' start · ' + fmt(lc.total),
+                        'Saves ' + fmt(gc.total - lc.total)]
+            }
+        });
+    }
+
+    // ========================================================================
     // STEP DRIVER
     // ========================================================================
     var HEAD = {
         generators: ['The fleet', 'Five generators, ready to run'],
         stack:      ['Merit order', 'The supply curve, cheapest at the bottom'],
         demand:     ['The load', 'A 24-hour demand curve'],
-        dispatch:   ['The solve', 'Dispatch — filling from the cheapest up']
+        dispatch:   ['The solve', 'Dispatch — filling from the cheapest up'],
+        price:      ['The price', 'The dual variable is the marginal cost'],
+        wind:       ['Zero-cost wind', 'Wind displaces the top of the stack'],
+        curtail:    ['Curtailment', 'Surplus wind is spilled, the price hits zero'],
+        compare:    ['LP vs heuristic', 'Co-optimizing beats clearing hour-by-hour']
     };
     var NOTE = {
         generators: 'Each block is one generator — its height is capacity in ' +
@@ -703,7 +1166,19 @@
         stack:      'Sorted cheapest to dearest. The LP always buys upward ' +
                     'from the bottom of this staircase.',
         demand:     'Load swings from about <b>200 MW</b> overnight to a ' +
-                    '<b>400 MW</b> afternoon peak — the line the LP must meet.'
+                    '<b>400 MW</b> afternoon peak — the line the LP must meet.',
+        price:      'The energy-balance <b>dual</b> equals the marginal ' +
+                    'generator&rsquo;s cost — <b>$60/MWh</b>. Every megawatt ' +
+                    'clears at that one price.',
+        wind:       'A <b>150 MW</b> wind farm at <b>$0/MWh</b> sits below the ' +
+                    'whole fleet — each windy megawatt pushes pricey gas off ' +
+                    'the top of the stack.',
+        curtail:    'At <b>300 MW</b>, overnight wind outruns demand. The ' +
+                    'surplus is <b>curtailed</b> and the clearing price falls ' +
+                    'to <b>$0/MWh</b>.',
+        compare:    'The greedy heuristic restarts the peaker twice; the LP ' +
+                    'holds it online through the valley — <b>one start, lower ' +
+                    'total cost</b>.'
     };
 
     function setNote(html) {
@@ -716,6 +1191,14 @@
 
     function enterStep(id) {
         setHead(id);
+        var areaStep = (id === 'wind' || id === 'curtail' || id === 'compare');
+        if (areaStep) {
+            hideColumn();
+        } else {
+            clearArea();
+            showColumn();
+        }
+
         if (id === 'generators') {
             clearDispatch();
             gDemand.selectAll('*').remove();
@@ -739,6 +1222,40 @@
             labelStack(true);
             drawDemand(false);
             runDispatch();
+        } else if (id === 'price') {
+            moveBlocks('dim', 500);
+            labelStack(true);
+            drawDemand(false);
+            showPrice();
+            setNote(NOTE.price);
+        } else if (id === 'wind') {
+            renderWindStep(0, 150, {
+                ticks: true,
+                title: '150 MW wind farm added',
+                subtitle: 'Wind ($0/MWh) fills the bottom of every hour',
+                callout: {
+                    hour: 13, yMW: DEMAND[13], boxW: 156,
+                    lines: ['Gas peaker displaced',
+                            'wind serves the base']
+                }
+            });
+            setNote(NOTE.wind);
+        } else if (id === 'curtail') {
+            renderWindStep(150, 300, {
+                ticks: true, showCurtail: true,
+                title: '300 MW wind farm',
+                subtitle: 'Surplus wind is curtailed — the price falls to $0',
+                subtitleColor: '#1f8b4c',
+                callout: {
+                    hour: 2, yMW: DEMAND[2] + 46, color: '#1f8b4c', boxW: 164,
+                    lines: ['Surplus wind curtailed',
+                            'Price = $0/MWh']
+                }
+            });
+            setNote(NOTE.curtail);
+        } else if (id === 'compare') {
+            renderCompare();
+            setNote(NOTE.compare);
         }
     }
 
