@@ -42,7 +42,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 PAGE_SIZE = 5000  # max rows per request
 
-# Balancing authority codes for the six major wholesale markets
+# Balancing authority codes for the seven major wholesale markets
 MARKETS = {
     "ERCO": "ERCOT",
     "PJM":  "PJM",
@@ -50,6 +50,7 @@ MARKETS = {
     "ISNE": "NEISO",
     "NYIS": "NYISO",
     "SWPP": "SPP",
+    "MISO": "MISO",
 }
 
 # Data columns to request from the API
