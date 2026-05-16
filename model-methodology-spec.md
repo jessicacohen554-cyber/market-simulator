@@ -114,19 +114,27 @@ Some policy parameters are **cost adders** (change the objective vector): carbon
 
 Some policy parameters are **constraints** (add rows to the LP): NOx emission caps, RPS minimums (minimum % clean generation), potentially others.
 
-**Build rule:** Every policy parameter in the config is tagged `kind: "adder"` or `kind: "constraint"`. The LP builder checks for active constraint-type policies and appends rows:
+**Build rule:** Every policy parameter in the config is tagged `kind: "adder"` or `kind: "constraint"`. The LP builder checks for active constraint-type policies and appends rows.
+
+**RPS (active):** When `rps_enabled` is set and the ISO has an RPS floor for the year, the dispatch LP appends one annual constraint row requiring wind, solar and nuclear generation to reach `rps_target` of total demand:
 
 ```
-# Example: RPS constraint
-Σ_z (W[z,t] + S[z,t] + nuclear[z,t]) ≥ rps_target × Σ_z Demand[z,t]   # annual
+# RPS constraint (annual)
+Σ_z Σ_t (W[z,t] + S[z,t]) + Σ_{g∈nuclear} Σ_t P[g,t]
+    ≥ rps_target × Σ_z Σ_t Demand[z,t]
+
+Dual on this constraint = REC price ($/MWh), which feeds into
+the economic new entry screen as additional clean energy revenue.
 ```
 
+The constraint creates a shadow price that raises clean revenue and compresses thermal margins, so clean additions and thermal retirements are driven entirely through the economic screens — no force-build in capacity evolution.
+
 ```
-# Example: NOx cap
+# Example: NOx cap (extension point, not yet defined)
 Σ_g Σ_t nox_rate[g] × P[g,t] ≤ nox_limit                              # annual
 ```
 
-**Initial build:** All policies are cost adders. The constraint extension point exists in the builder (check config, append rows if flagged) but no constraint-type policies are defined yet. This avoids variable matrix structure in the first version while keeping the door open.
+Other constraint-type policies (NOx caps, etc.) are not yet defined; the extension point in the builder keeps the door open for them.
 
 -----
 
@@ -428,10 +436,12 @@ For year in 2026..2050:
     2. Apply known retirements (EIA-860 announced)
     3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results)
     4. Apply known additions (EIA-860 under construction, signed PPAs)
-    5. Apply economic new entry screen (LCOE vs expected revenue)
-    6. Apply policy-mandated builds (RPS compliance)
-    7. Assemble updated fleet → run dispatch LP → cache results
+    5. Apply economic new entry screen (LCOE vs expected revenue, including
+       the prior year's REC price as clean-energy revenue)
+    6. Assemble updated fleet → run dispatch LP (with RPS constraint) → cache results
 ```
+
+The four capacity-evolution mechanisms are steps 2–5. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 6), and its shadow price feeds back into the economic new-entry screen the following year. Known retirements and known additions (the EIA-860 near-term pipeline) remain deterministic — these are committed projects, not modeled decisions. After the data horizon (~2030), the model is fully economics-driven.
 
 ### 5.2 Economic Retirement
 
@@ -460,7 +470,8 @@ Screen by technology: if `expected_revenue > LCOE`, the technology is economic f
 - LCOE from technology cost assumptions with learning curves (Tier 2 parameters)
 - IRA credits reduce LCOE (PTC for wind, ITC for solar/storage — Tier 1 parameters)
 - Annual build rate capped per technology (e.g., ERCOT ~12 GW/yr queue throughput)
-- Technology priority: policy-mandated first, then ranked by revenue-minus-LCOE margin
+- Clean technologies (wind, solar) earn the prior year's REC price — the RPS constraint's shadow price — as additional expected revenue, so a binding RPS pulls more of them across the LCOE hurdle
+- Technology priority: ranked by revenue-minus-LCOE margin, highest first
 
 ### 5.4 Known Pipeline
 

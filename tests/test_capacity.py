@@ -17,7 +17,6 @@ from market_sim.model.capacity import (
     apply_economic_new_entry,
     apply_economic_retirements,
     apply_known_retirements,
-    apply_rps_mandate,
     compute_clean_share,
     compute_lcoe,
     estimate_expected_revenue,
@@ -280,7 +279,7 @@ class TestComputeCleanShare(unittest.TestCase):
     def test_zero_renewable_cap_matches_fleet_only_share(self):
         # With no separately-tracked renewables, a pure-coal fleet is 0.0.
         coal = _gen("C0", "coal", pmax=100.0)
-        self.assertEqual(compute_clean_share([coal], renewable_cap_mw=0.0), 0.0)
+        self.assertEqual(compute_clean_share([coal]), 0.0)
 
     def test_renewable_cap_raises_share(self):
         # 100 MW coal + 1000 MW zonal renewables: clean share is the
@@ -512,77 +511,47 @@ class TestEstimateExpectedRevenue(unittest.TestCase):
         self.assertEqual(estimate_expected_revenue(np.array([]), 0.5), 0.0)
 
 
-class TestRPSMandate(unittest.TestCase):
-    """Force-build of clean capacity to satisfy an RPS target."""
+class TestRECPriceInNewEntry(unittest.TestCase):
+    """The RPS shadow price raises clean-tech revenue in the entry screen."""
 
-    def test_caiso_mandate_fills_clean_gap(self):
-        config = ScenarioConfig(iso="CAISO")  # 2030 target 0.60
-        fleet = [_gen("C0", "coal", pmax=1000.0)]  # clean share 0.0
-        result, additions = apply_rps_mandate(
-            fleet, 2030, config, renewable_cap_mw=0.0
+    def test_rec_price_makes_renewables_economic(self):
+        # Prices too low for any technology to clear its LCOE on energy
+        # revenue alone: with no REC price, nothing is built.
+        config = ScenarioConfig(iso="ERCOT")
+        prices = np.full(8760, 1.0)
+
+        _, no_rec = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", rec_price=0.0
         )
-        # The thermal fleet is unchanged: mandated wind/solar is routed to
-        # the renewable capacity pools, not appended as a Generator.
-        self.assertEqual([g.unit_id for g in result], ["C0"])
-        built_mw = sum(
-            mw for by_fuel in additions.values() for mw in by_fuel.values()
+        without = sum(
+            mw for by_fuel in no_rec.values() for mw in by_fuel.values()
         )
-        # gap_mw = (0.6 * 1000 - 0) / (1 - 0.6) = 1500 MW closes the gap.
-        self.assertAlmostEqual(built_mw, 1500.0)
+        self.assertEqual(without, 0.0)
 
-    def test_caiso_mandate_accounts_for_existing_renewables(self):
-        # 1000 MW coal fleet plus 2000 MW of separately-tracked zonal
-        # renewables: total 3000 MW, clean 2000 MW, share 67% > 60% target.
-        # The RPS is already satisfied, so nothing is force-built.
-        config = ScenarioConfig(iso="CAISO")  # 2030 target 0.60
-        fleet = [_gen("C0", "coal", pmax=1000.0)]
-        result, additions = apply_rps_mandate(
-            fleet, 2030, config, renewable_cap_mw=2000.0
+        # A REC price lifts wind and solar over the LCOE hurdle: the RPS
+        # shadow price is added to their effective renewable revenue.
+        _, with_rec = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", rec_price=500.0
         )
-        self.assertEqual([g.unit_id for g in result], ["C0"])
-        self.assertEqual(additions, {})
+        with_rec_mw = sum(
+            mw for by_fuel in with_rec.values() for mw in by_fuel.values()
+        )
+        self.assertGreater(with_rec_mw, without)
 
-    def test_rps_does_not_double_build_across_years(self):
-        # Without crediting prior renewables the mandate would rebuild the
-        # full gap every year. Feeding year one's build back as
-        # renewable_cap_mw makes year two build strictly less (here nothing).
-        config = ScenarioConfig(iso="CAISO")  # 2030 target 0.60
-        fleet = [_gen("C0", "coal", pmax=1000.0)]
-
-        cumulative_renewable_mw = 0.0
-        yearly_build: list[float] = []
-        for _ in range(3):
-            _, additions = apply_rps_mandate(
-                fleet, 2030, config,
-                renewable_cap_mw=cumulative_renewable_mw,
+    def test_rec_price_lifts_renewable_margin_monotonically(self):
+        # A higher REC price never builds less renewable capacity.
+        config = ScenarioConfig(iso="ERCOT")
+        prices = np.full(8760, 1.0)
+        builds = []
+        for rec_price in (0.0, 100.0, 300.0):
+            _, additions = apply_economic_new_entry(
+                [], prices, 2030, config, "ERCOT", rec_price=rec_price
             )
-            built_mw = sum(
-                mw for by_fuel in additions.values()
-                for mw in by_fuel.values()
+            builds.append(
+                sum(mw for by in additions.values() for mw in by.values())
             )
-            yearly_build.append(built_mw)
-            cumulative_renewable_mw += built_mw
-
-        # Year one closes the whole gap; later years see the target already
-        # met and build nothing -- no redundant year-over-year construction.
-        self.assertAlmostEqual(yearly_build[0], 1500.0)
-        self.assertLess(yearly_build[1], yearly_build[0])
-        self.assertEqual(yearly_build[1], 0.0)
-        self.assertEqual(yearly_build[2], 0.0)
-
-    def test_no_mandate_when_target_already_met(self):
-        config = ScenarioConfig(iso="CAISO")
-        fleet = [_gen("W0", "wind", pmax=1000.0)]  # clean share 1.0
-        result, additions = apply_rps_mandate(fleet, 2030, config)
-        self.assertEqual([g.unit_id for g in result], ["W0"])
-        self.assertEqual(additions, {})
-
-    def test_no_mandate_for_iso_without_rps(self):
-        config = ScenarioConfig(iso="ERCOT")  # ERCOT floor is 0.0
-        fleet = [_gen("C0", "coal", pmax=1000.0)]
-        result, additions = apply_rps_mandate(fleet, 2030, config)
-        self.assertEqual([g.unit_id for g in result], ["C0"])
-        self.assertEqual(additions, {})
+        self.assertLessEqual(builds[0], builds[1])
+        self.assertLessEqual(builds[1], builds[2])
 
 
 class TestEvolveFleet(unittest.TestCase):
@@ -600,7 +569,7 @@ class TestEvolveFleet(unittest.TestCase):
             planned_additions=[new],
         )
         fleet, tracker, _ = evolve_fleet(
-            [old], prior, 2030, config, {}, renewable_cap_mw=0.0
+            [old], prior, 2030, config, {}
         )
         # OLD retires this year; NEW comes online this year.
         self.assertEqual([g.unit_id for g in fleet], ["NEW"])
@@ -619,7 +588,7 @@ class TestEvolveFleet(unittest.TestCase):
         )
         # Counter already at 1; a second loss year this step triggers retirement.
         fleet, tracker, _ = evolve_fleet(
-            [coal], prior, 2031, config, {"C0": 1}, renewable_cap_mw=0.0
+            [coal], prior, 2031, config, {"C0": 1}
         )
         self.assertEqual(fleet, [])
         self.assertNotIn("C0", tracker)
@@ -627,7 +596,7 @@ class TestEvolveFleet(unittest.TestCase):
     def test_returns_fleet_tracker_and_additions_tuple(self):
         config = ScenarioConfig(iso="ERCOT")
         result = evolve_fleet(
-            [_gen("G0", "gas_cc")], None, 2030, config, {}, renewable_cap_mw=0.0
+            [_gen("G0", "gas_cc")], None, 2030, config, {}
         )
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 3)
@@ -711,8 +680,9 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
     """Boundary conditions of the year-step orchestration."""
 
     def test_first_year_with_no_prior_results(self):
-        # Year 2026, prior_results=None: only known retirements,
-        # known additions and RPS run -- the price-driven steps are skipped.
+        # Year 2026, prior_results=None: only known retirements and known
+        # additions run -- the price-driven steps are skipped, and the RPS
+        # is no longer a force-build step.
         config = ScenarioConfig(iso="CAISO")
         coal = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.2 * i)
@@ -721,23 +691,18 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         retiring = _gen("C_RET", "coal", pmax=1000.0, heat_rate=8.0,
                         retirement_year=2026)
         fleet, tracker, additions = evolve_fleet(
-            coal + [retiring], None, 2026, config, {}, renewable_cap_mw=0.0
+            coal + [retiring], None, 2026, config, {}
         )
 
         self.assertIsInstance(fleet, list)
         self.assertIsInstance(tracker, dict)
-        # The scheduled retirement is gone.
+        # The scheduled retirement is gone; the rest of the fleet remains.
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
-        # CAISO RPS (0.50 in 2026) force-built clean capacity. It is routed
-        # to the zonal renewable pools, not appended to the thermal fleet.
-        built_mw = sum(
-            mw for by_fuel in additions.values() for mw in by_fuel.values()
+        self.assertEqual(
+            {g.unit_id for g in fleet}, {f"C{i}" for i in range(5)}
         )
-        thermal_mw = sum(g.pmax_mw for g in fleet)
-        self.assertGreater(built_mw, 0.0)
-        self.assertGreaterEqual(
-            built_mw / (built_mw + thermal_mw), 0.50 - 1e-6
-        )
+        # No price signal yet, so economic new entry does not run.
+        self.assertEqual(additions, {})
 
     def test_empty_fleet_after_retirements_is_refilled(self):
         # The whole fleet retires on schedule; new entry fills the gap.
@@ -746,7 +711,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
                     retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
         fleet, tracker, _ = evolve_fleet(
-            [coal], prior, 2027, config, {}, renewable_cap_mw=0.0
+            [coal], prior, 2027, config, {}
         )
 
         # Known retirement empties the fleet, then economic new entry refills.
@@ -756,7 +721,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
 
 
 class TestCapacityIntegration(unittest.TestCase):
-    """Multi-year fleet-evolution trajectories across all six mechanisms."""
+    """Multi-year fleet-evolution trajectories across the four mechanisms."""
 
     def test_three_year_trajectory_changes_each_year(self):
         # A small fleet evolved 2026-2028: composition shifts every year as
@@ -777,7 +742,7 @@ class TestCapacityIntegration(unittest.TestCase):
         prior = None
         for year in (2026, 2027, 2028):
             fleet, tracker, _ = evolve_fleet(
-                fleet, prior, year, config, tracker, renewable_cap_mw=0.0
+                fleet, prior, year, config, tracker
             )
             snapshots.append(frozenset(g.unit_id for g in fleet))
             prior = _make_prior(fleet, _zone_names(), price=10.0)
@@ -815,7 +780,7 @@ class TestCapacityIntegration(unittest.TestCase):
             yearly = {}
             for year in (2026, 2027, 2028):
                 fleet, tracker, _ = evolve_fleet(
-                    fleet, prior, year, config, tracker, renewable_cap_mw=0.0
+                    fleet, prior, year, config, tracker
                 )
                 yearly[year] = fleet
                 prior = _make_prior(
@@ -856,12 +821,12 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
 
         fleet, tracker, _ = evolve_fleet(
-            fleet, None, 2026, config, tracker, renewable_cap_mw=0.0
+            fleet, None, 2026, config, tracker
         )
         self.assertIn("C_RET", {g.unit_id for g in fleet})
 
         fleet, tracker, _ = evolve_fleet(
-            fleet, None, 2027, config, tracker, renewable_cap_mw=0.0
+            fleet, None, 2027, config, tracker
         )
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
 
@@ -878,7 +843,7 @@ class TestCapacityIntegration(unittest.TestCase):
         prior = None
         for year in range(2026, 2031):
             fleet, tracker, _ = evolve_fleet(
-                fleet, prior, year, config, tracker, renewable_cap_mw=0.0
+                fleet, prior, year, config, tracker
             )
             self.assertGreater(
                 sum(g.pmax_mw for g in fleet), 0.0,
@@ -927,8 +892,7 @@ class TestCapacityIntegration(unittest.TestCase):
         yearly_cap: dict[int, float] = {}
         for year in range(2026, 2031):
             fleet, tracker, additions = evolve_fleet(
-                fleet, prior, year, config, tracker,
-                renewable_cap_mw=cumulative_renewable_mw,
+                fleet, prior, year, config, tracker
             )
             for by_fuel in additions.values():
                 cumulative_renewable_mw += sum(by_fuel.values())

@@ -33,6 +33,7 @@ class ScenarioConfig:
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
+    rps_enabled: bool = True  # whether to enforce RPS as LP constraint
 
     # Tier 2 (expert/sensitivity)
     storage_rte_4hr: float = 0.85
@@ -107,6 +108,7 @@ TIER_TAGS: dict[str, int] = {
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "retirement_aggressiveness": 1,
+    "rps_enabled": 1,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
     "discount_rate": 2,

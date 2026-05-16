@@ -160,6 +160,7 @@ def to_parquet(
         "has_storage": self.storage_soc is not None,
         "has_flows": self.flows is not None,
         "has_emissions": self.emissions is not None,
+        "rec_price": self.rec_price,
     }
 
     schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
@@ -243,6 +244,7 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         build_time=meta["build_time"],
         solve_time=meta["solve_time"],
         emissions=array("emissions") if has_emissions else None,
+        rec_price=meta.get("rec_price"),
     )
 
 
