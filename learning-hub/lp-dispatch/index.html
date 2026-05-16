@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP Dispatch · The LP Core — The 8,760 Problem</title>
+<meta name="description" content="A scrollytelling explainer: how a linear program clears one hour of electricity demand — meet the generators, stack them by marginal cost, and watch the dispatch fill from the cheapest up.">
+
+<!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Shared scrollytell engine styles + design tokens -->
+<link rel="stylesheet" href="../shared/scrollytell.css">
+
+<!-- D3.js — the only external dependency -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+    /* Theme this story indigo to match the "LP Dispatch" card in the hub */
+    :root {
+        --sc-accent:        #6366F1;
+        --sc-accent-deep:   #4338CA;
+        --sc-accent-soft:   rgba(99, 102, 241, 0.12);
+        --sc-accent-border: rgba(99, 102, 241, 0.45);
+
+        /* Fuel colour tokens — shared across the hub charts */
+        --fuel-gas-cc:  #4A90D9;
+        --fuel-gas-ct:  #7BB3E0;
+        --fuel-coal:    #8B4513;
+        --fuel-nuclear: #9B59B6;
+        --fuel-wind:    #2ECC71;
+        --fuel-solar:   #F1C40F;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-body);
+        background: var(--sc-bg);
+        color: var(--sc-text);
+        line-height: 1.7;
+        min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    /* ---------- Top bar ---------- */
+    .hub-nav {
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hub-nav span {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .hub-nav span b { color: var(--sc-accent); font-weight: 800; }
+    .hub-nav a.back {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+    }
+    .hub-nav a.back:hover { color: var(--sc-accent); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        background: linear-gradient(160deg, var(--sc-navy) 0%, var(--sc-navy-dark) 100%);
+        color: #fff;
+        padding: 64px 24px 72px;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero .eyebrow {
+        font-family: var(--font-heading);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sc-accent);
+        margin-bottom: 14px;
+    }
+    .hero h1 {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        line-height: 1.12;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .hero p .accent { color: var(--sc-accent); font-weight: 600; }
+    .scroll-cue {
+        margin-top: 30px;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+    }
+    .scroll-cue::after { content: " ↓"; }
+
+    /* ---------- Scrolly section ---------- */
+    .story-wrap { padding: 56px 0 40px; }
+
+    .chart-head {
+        font-family: var(--font-heading);
+        margin-bottom: 6px;
+    }
+    .chart-head .kicker {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sc-accent-deep);
+        margin-bottom: 4px;
+    }
+    .chart-head .title {
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--sc-navy);
+    }
+
+    /* SVG text defaults */
+    .chart svg text { font-family: var(--font-body); }
+    .ax-label  { fill: var(--sc-text-muted); font-size: 12px; }
+    .ax-tick   { fill: #94A3B8; font-size: 11px; }
+    .grid-line { stroke: var(--sc-border-soft); stroke-width: 1; }
+    .axis-line { stroke: var(--sc-border); stroke-width: 1.5; }
+
+    /* Generator block labels */
+    .blk-name { font-family: var(--font-heading); font-weight: 800; }
+    .blk-meta { font-weight: 600; }
+
+    /* ---------- Legend ---------- */
+    .mini-legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--sc-border-soft);
+        font-size: 0.78rem;
+        color: var(--sc-text-muted);
+    }
+    .mini-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .mini-legend i {
+        width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+    }
+
+    .chart-note {
+        margin-top: 12px;
+        font-size: 0.82rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-accent-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 12px;
+        line-height: 1.55;
+        min-height: 1.55em;
+    }
+    .chart-note b { color: var(--sc-accent-deep); }
+
+    /* ---------- Footer ---------- */
+    .hub-footer {
+        border-top: 1px solid var(--sc-border);
+        padding: 28px 24px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-card);
+    }
+    .hub-footer a { color: var(--sc-accent-deep); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="hub-nav">
+    <a class="back" href="../index.html">&larr; Hub</a>
+    <span>LP Dispatch · <b>01</b></span>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div class="eyebrow">The 8,760 Problem · Story 01</div>
+        <h1>How a grid clears<br>a single hour</h1>
+        <p>
+            Strip the model down to its core: one hour, a handful of
+            generators, one number for demand. The dispatch is a
+            <span class="accent">linear program</span> — and its answer is
+            almost embarrassingly simple. Use the
+            <span class="accent">cheapest power first</span>. Scroll to watch
+            it solve.
+        </p>
+        <div class="scroll-cue">Scroll to begin</div>
+    </div>
+</header>
+
+<div class="story-wrap">
+<div class="scrolly">
+
+    <!-- ============ STICKY CHART PANEL ============ -->
+    <div class="scrolly-graphic">
+        <div class="scrolly-graphic-inner">
+            <div class="chart" id="chart-dispatch">
+                <div class="chart-head">
+                    <span class="kicker" id="ch-kicker">The fleet</span>
+                    <span class="title" id="ch-title">Five generators, ready to run</span>
+                </div>
+                <svg id="dispatch-svg" viewBox="0 0 760 520" role="img"
+                     aria-label="A merit-order dispatch chart: generators stacked by marginal cost against a 24-hour demand curve"></svg>
+                <div class="mini-legend">
+                    <span><i style="background:#9B59B6"></i> Nuclear</span>
+                    <span><i style="background:#2ECC71"></i> Wind</span>
+                    <span><i style="background:#8B4513"></i> Coal</span>
+                    <span><i style="background:#4A90D9"></i> Gas CC</span>
+                    <span><i style="background:#7BB3E0"></i> Gas CT</span>
+                </div>
+                <div class="chart-note" id="ch-note">
+                    Each block is one generator. Height is its capacity in
+                    megawatts; the label carries its marginal cost.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SCROLLING NARRATIVE ============ -->
+    <div class="scrolly-narrative">
+
+        <section class="scrolly-step" data-step-id="generators">
+            <span class="scrolly-step-label">Step 1 · The fleet</span>
+            <h2>Meet the generators</h2>
+            <p>
+                The whole market reduces to five machines. Each has a
+                <span class="sc-mark">capacity</span> — the most power it can
+                produce — and a <span class="sc-mark">marginal cost</span>, the
+                price of generating one more megawatt-hour.
+            </p>
+            <p>
+                Marginal cost is mostly fuel: a nuclear plant burns cheap,
+                steady fuel; a gas combustion turbine burns expensive gas
+                inefficiently. That single number, <strong>$/MWh</strong>, is
+                all the linear program needs to know about a plant.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="stack">
+            <span class="scrolly-step-label">Step 2 · Merit order</span>
+            <h2>Stack them by cost</h2>
+            <p>
+                Sort the fleet from cheapest to most expensive and stack it —
+                the <span class="sc-mark">merit order</span>. Nuclear settles
+                at the bottom at <strong>$15/MWh</strong>; the gas peaker sits
+                on top at <strong>$80/MWh</strong>.
+            </p>
+            <p>
+                This staircase is the grid's <strong>supply curve</strong>. The
+                LP never reorders it — the cheapest megawatt-hour available is
+                always the next one it will buy.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="demand">
+            <span class="scrolly-step-label">Step 3 · The load</span>
+            <h2>The demand line</h2>
+            <p>
+                Demand is not one number — it breathes across the day. Overnight
+                the grid idles near <span class="sc-mark">200&nbsp;MW</span>;
+                by mid-afternoon it climbs to a peak around
+                <span class="sc-mark">400&nbsp;MW</span>.
+            </p>
+            <p>
+                Lay that 24-hour curve against the same megawatt axis as the
+                stack. Every hour, the LP must find generation that exactly
+                meets the line — the <strong>energy-balance constraint</strong>.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-step-id="dispatch">
+            <span class="scrolly-step-label">Step 4 · The solve</span>
+            <h2>The LP fills from cheapest</h2>
+            <p>
+                Now watch it clear. For each hour the program fills the stack
+                from the bottom: nuclear first, then wind, then coal — buying
+                the <span class="sc-mark">cheapest megawatt-hour available</span>
+                until supply meets the demand line.
+            </p>
+            <p>
+                The plant that supplies that last megawatt is the
+                <strong>marginal generator</strong>. Its cost is the price the
+                whole market pays — and it shifts hour by hour as the demand
+                line sweeps across the day.
+            </p>
+        </section>
+
+    </div>
+</div>
+</div>
+
+<footer class="hub-footer">
+    Story 01 of the <a href="../index.html">Learning Hub</a> &middot;
+    Synthetic, illustrative data &middot; Built on the LP dispatch simulator
+</footer>
+
+<!-- Shared scrollytell engine -->
+<script src="../shared/scrollytell.js"></script>
+
+<script>
+// ============================================================================
+// LP Dispatch — a single D3 chart driven by the scrollytell engine.
+//   Step 1  Meet the generators   — five capacity blocks
+//   Step 2  Stack them by cost    — collapse into the merit order
+//   Step 3  The demand line       — overlay a 24-hour load curve
+//   Step 4  The LP fills cheapest — sweep the dispatch hour by hour
+// All data below is synthetic and illustrative.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var REDUCE = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Fuel colour tokens (kept in sync with the CSS :root block).
+    var COLOR = {
+        'gas-cc':  '#4A90D9',
+        'gas-ct':  '#7BB3E0',
+        'coal':    '#8B4513',
+        'nuclear': '#9B59B6',
+        'wind':    '#2ECC71',
+        'solar':   '#F1C40F'
+    };
+    var NAVY = '#1A2744';
+    var ACCENT = '#6366F1', ACCENT_DEEP = '#4338CA';
+
+    // ---- Synthetic fleet, listed in merit order (cheapest first) -----------
+    var GEN = [
+        { id: 'nuclear', name: 'Vela Point',  fuel: 'Nuclear', fuelKey: 'nuclear', mc: 15, cap: 150 },
+        { id: 'wind',    name: 'Ridgeline',   fuel: 'Wind',    fuelKey: 'wind',    mc: 30, cap: 90  },
+        { id: 'coal',    name: 'Ashford',     fuel: 'Coal',    fuelKey: 'coal',    mc: 45, cap: 120 },
+        { id: 'gascc',   name: 'Cedar CC',    fuel: 'Gas CC',  fuelKey: 'gas-cc',  mc: 60, cap: 110 },
+        { id: 'gasct',   name: 'Junction CT', fuel: 'Gas CT',  fuelKey: 'gas-ct',  mc: 80, cap: 80  }
+    ];
+    // Running totals so every block knows its slot in the stack.
+    (function () {
+        var run = 0;
+        GEN.forEach(function (g) { g.cumBot = run; run += g.cap; g.cumTop = run; });
+    })();
+
+    // Order the blocks appear in for step 1 — deliberately not merit order,
+    // so step 2 has something to sort.
+    var DISPLAY = ['coal', 'gasct', 'nuclear', 'gascc', 'wind'];
+
+    // ---- Synthetic 24-hour demand curve (MW) -------------------------------
+    // Low overnight (~200 MW), climbing to an afternoon peak (~400 MW).
+    var DEMAND = [210, 200, 195, 195, 205, 225, 260, 300, 330, 350, 360, 375,
+                  390, 400, 398, 395, 392, 388, 360, 330, 300, 275, 245, 225];
+
+    function demandAt(hf) {
+        var i = Math.floor(hf);
+        var f = hf - i;
+        var a = DEMAND[Math.max(0, Math.min(23, i))];
+        var b = DEMAND[Math.max(0, Math.min(23, i + 1))];
+        return a + (b - a) * f;
+    }
+
+    // The generator supplying the last megawatt at a given demand level.
+    function marginalGen(dem) {
+        for (var i = 0; i < GEN.length; i++) {
+            if (dem > GEN[i].cumBot && dem <= GEN[i].cumTop) return GEN[i];
+        }
+        return null;
+    }
+
+    // ========================================================================
+    // GEOMETRY
+    // ========================================================================
+    var W = 760, H = 520, M = { t: 44, r: 30, b: 70, l: 64 };
+    var x0 = M.l, x1 = W - M.r;          // plot left / right
+    var y0 = H - M.b, y1 = M.t;          // plot bottom / top
+    var STACK_X = 92, STACK_W = 120;     // the merit-order column
+
+    var ySc = d3.scaleLinear().domain([0, 600]).range([y0, y1]);
+    var band = d3.scaleBand().domain(DISPLAY)
+        .range([x0 + 6, x1 - 6]).padding(0.34);
+    var hourX = d3.scaleLinear().domain([0, 23])
+        .range([STACK_X + STACK_W + 56, x1]);
+
+    var svg = d3.select('#dispatch-svg');
+
+    // Persistent groups, drawn back-to-front.
+    var gGrid     = svg.append('g');
+    var gDemand   = svg.append('g');
+    var gBlocks   = svg.append('g');
+    var gLabels   = svg.append('g');
+    var gDispatch = svg.append('g');
+    var gMarker   = svg.append('g');
+
+    // ---- Static MW gridlines + axis label ----------------------------------
+    [0, 150, 300, 450, 600].forEach(function (mw) {
+        gGrid.append('line')
+            .attr('class', mw === 0 ? 'axis-line' : 'grid-line')
+            .attr('x1', x0).attr('x2', x1)
+            .attr('y1', ySc(mw)).attr('y2', ySc(mw));
+        gGrid.append('text')
+            .attr('class', 'ax-tick')
+            .attr('x', x0 - 9).attr('y', ySc(mw) + 4)
+            .attr('text-anchor', 'end')
+            .text(mw);
+    });
+    gGrid.append('text')
+        .attr('class', 'ax-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -(y1 + (y0 - y1) / 2))
+        .attr('y', 16)
+        .attr('text-anchor', 'middle')
+        .text('Power (MW)');
+
+    // ---- Generator rects (one keyed selection, geometry transitions) -------
+    var blocks = gBlocks.selectAll('rect.gen')
+        .data(GEN, function (d) { return d.id; })
+        .enter().append('rect')
+        .attr('class', 'gen')
+        .attr('rx', 3)
+        .attr('fill', function (d) { return COLOR[d.fuelKey]; })
+        .attr('x', function (d) { return band(d.id); })
+        .attr('width', band.bandwidth())
+        .attr('y', function (d) { return ySc(d.cap); })
+        .attr('height', function (d) { return ySc(0) - ySc(d.cap); });
+
+    // Move the blocks between layouts: 'blocks' | 'stack' | 'dim'.
+    function moveBlocks(mode, dur) {
+        var t = blocks.transition().duration(REDUCE ? 0 : dur)
+            .ease(d3.easeCubicInOut);
+        if (mode === 'blocks') {
+            t.attr('x', function (d) { return band(d.id); })
+             .attr('width', band.bandwidth())
+             .attr('y', function (d) { return ySc(d.cap); })
+             .attr('height', function (d) { return ySc(0) - ySc(d.cap); })
+             .attr('fill-opacity', 1);
+        } else {
+            t.attr('x', STACK_X)
+             .attr('width', STACK_W)
+             .attr('y', function (d) { return ySc(d.cumTop); })
+             .attr('height', function (d) { return ySc(d.cumBot) - ySc(d.cumTop); })
+             .attr('fill-opacity', mode === 'dim' ? 0.16 : 1);
+        }
+    }
+
+    // ========================================================================
+    // LABELS — redrawn per step
+    // ========================================================================
+    function clearLabels() { gLabels.selectAll('*').remove(); }
+
+    function labelGenerators() {
+        clearLabels();
+        GEN.forEach(function (d) {
+            var cx = band(d.id) + band.bandwidth() / 2;
+            var top = ySc(d.cap), mid = (top + ySc(0)) / 2;
+            gLabels.append('text')
+                .attr('class', 'ax-tick')
+                .attr('x', cx).attr('y', top - 24)
+                .attr('text-anchor', 'middle')
+                .style('font-weight', '700')
+                .style('letter-spacing', '0.08em')
+                .style('fill', COLOR[d.fuelKey])
+                .text(d.fuel.toUpperCase());
+            gLabels.append('text')
+                .attr('class', 'blk-name')
+                .attr('x', cx).attr('y', top - 8)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '13px')
+                .style('fill', NAVY)
+                .text(d.name);
+            gLabels.append('text')
+                .attr('x', cx).attr('y', mid - 3)
+                .attr('text-anchor', 'middle')
+                .style('font-family', 'var(--font-heading)')
+                .style('font-weight', '800')
+                .style('font-size', '17px')
+                .style('fill', '#fff')
+                .text('$' + d.mc);
+            gLabels.append('text')
+                .attr('x', cx).attr('y', mid + 14)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '11px')
+                .style('font-weight', '600')
+                .style('fill', 'rgba(255,255,255,0.92)')
+                .text(d.cap + ' MW');
+        });
+    }
+
+    function labelStack(dim) {
+        clearLabels();
+        GEN.forEach(function (d) {
+            var cy = (ySc(d.cumTop) + ySc(d.cumBot)) / 2;
+            var op = dim ? 0.55 : 1;
+            gLabels.append('text')
+                .attr('x', STACK_X + 11).attr('y', cy + 4)
+                .attr('text-anchor', 'start')
+                .style('font-family', 'var(--font-heading)')
+                .style('font-weight', '800')
+                .style('font-size', '12px')
+                .style('fill', '#fff')
+                .attr('fill-opacity', op)
+                .text(d.name);
+            gLabels.append('text')
+                .attr('x', STACK_X + STACK_W - 11).attr('y', cy + 4)
+                .attr('text-anchor', 'end')
+                .style('font-weight', '700')
+                .style('font-size', '12px')
+                .style('fill', '#fff')
+                .attr('fill-opacity', op)
+                .text('$' + d.mc + '/MWh');
+        });
+        // Caption above the column.
+        gLabels.append('text')
+            .attr('class', 'ax-tick')
+            .attr('x', STACK_X + STACK_W / 2).attr('y', ySc(GEN[GEN.length - 1].cumTop) - 12)
+            .attr('text-anchor', 'middle')
+            .style('font-weight', '700')
+            .style('letter-spacing', '0.1em')
+            .text('MERIT ORDER');
+    }
+
+    // ========================================================================
+    // DEMAND CURVE (steps 3 & 4)
+    // ========================================================================
+    var demLine = d3.line()
+        .x(function (d, i) { return hourX(i); })
+        .y(function (d) { return ySc(d); })
+        .curve(d3.curveMonotoneX);
+    var demArea = d3.area()
+        .x(function (d, i) { return hourX(i); })
+        .y0(y0)
+        .y1(function (d) { return ySc(d); })
+        .curve(d3.curveMonotoneX);
+
+    function drawDemand(animate) {
+        gDemand.selectAll('*').remove();
+
+        // Hour axis ticks.
+        [0, 3, 6, 9, 12, 15, 18, 21].forEach(function (h) {
+            gDemand.append('line')
+                .attr('class', 'grid-line')
+                .attr('x1', hourX(h)).attr('x2', hourX(h))
+                .attr('y1', y0).attr('y2', y0 + 5);
+            gDemand.append('text')
+                .attr('class', 'ax-tick')
+                .attr('x', hourX(h)).attr('y', y0 + 19)
+                .attr('text-anchor', 'middle')
+                .text(h + 'h');
+        });
+        gDemand.append('text')
+            .attr('class', 'ax-label')
+            .attr('x', (hourX(0) + hourX(23)) / 2)
+            .attr('y', y0 + 42)
+            .attr('text-anchor', 'middle')
+            .text('Hour of day');
+
+        gDemand.append('path')
+            .datum(DEMAND)
+            .attr('fill', 'rgba(99, 102, 241, 0.12)')
+            .attr('d', demArea);
+
+        var path = gDemand.append('path')
+            .datum(DEMAND)
+            .attr('fill', 'none')
+            .attr('stroke', ACCENT)
+            .attr('stroke-width', 3)
+            .attr('stroke-linecap', 'round')
+            .attr('d', demLine);
+
+        gDemand.append('text')
+            .attr('class', 'blk-meta')
+            .attr('x', hourX(13)).attr('y', ySc(DEMAND[13]) - 12)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '12px')
+            .style('fill', ACCENT_DEEP)
+            .text('Demand');
+
+        if (animate && !REDUCE) {
+            var len = path.node().getTotalLength();
+            path.attr('stroke-dasharray', len)
+                .attr('stroke-dashoffset', len)
+                .transition().duration(1200).ease(d3.easeCubicInOut)
+                .attr('stroke-dashoffset', 0);
+        }
+    }
+
+    // ========================================================================
+    // DISPATCH SWEEP (step 4)
+    // ========================================================================
+    var dispTimer = null;
+
+    function clearDispatch() {
+        if (dispTimer) { dispTimer.stop(); dispTimer = null; }
+        gDispatch.selectAll('*').remove();
+        gMarker.selectAll('*').remove();
+    }
+
+    function updateDispatch(hf) {
+        var dem = demandAt(hf);
+        var marg = marginalGen(dem);
+
+        // Dispatched portion of each generator, filling from the bottom up.
+        var data = GEN.map(function (g) {
+            return { g: g, disp: Math.max(0, Math.min(g.cap, dem - g.cumBot)) };
+        });
+        var rs = gDispatch.selectAll('rect.disp')
+            .data(data, function (d) { return d.g.id; });
+        rs.enter().append('rect')
+            .attr('class', 'disp')
+            .attr('rx', 3)
+            .attr('x', STACK_X).attr('width', STACK_W)
+          .merge(rs)
+            .attr('fill', function (d) { return COLOR[d.g.fuelKey]; })
+            .attr('stroke', function (d) {
+                return marg && d.g.id === marg.id ? ACCENT_DEEP : 'none';
+            })
+            .attr('stroke-width', 2)
+            .attr('y', function (d) { return ySc(d.g.cumBot + d.disp); })
+            .attr('height', function (d) {
+                return ySc(d.g.cumBot) - ySc(d.g.cumBot + d.disp);
+            });
+
+        // Crosshair: stack fill level out to the demand curve marker.
+        var mx = hourX(hf), my = ySc(dem);
+        var mk = gMarker;
+        mk.selectAll('*').remove();
+        mk.append('line')
+            .attr('x1', STACK_X).attr('x2', mx)
+            .attr('y1', my).attr('y2', my)
+            .attr('stroke', ACCENT_DEEP)
+            .attr('stroke-width', 1.3)
+            .attr('stroke-dasharray', '4 3');
+        mk.append('line')
+            .attr('x1', mx).attr('x2', mx)
+            .attr('y1', y0).attr('y2', my)
+            .attr('stroke', ACCENT_DEEP)
+            .attr('stroke-width', 1.3)
+            .attr('stroke-dasharray', '4 3')
+            .attr('stroke-opacity', 0.5);
+        mk.append('circle')
+            .attr('cx', mx).attr('cy', my).attr('r', 7)
+            .attr('fill', '#fff')
+            .attr('stroke', ACCENT_DEEP).attr('stroke-width', 3);
+
+        // Marker readout.
+        mk.append('text')
+            .attr('x', Math.min(mx + 12, x1 - 116))
+            .attr('y', my - 13)
+            .attr('text-anchor', 'start')
+            .style('font-family', 'var(--font-heading)')
+            .style('font-weight', '800')
+            .style('font-size', '12px')
+            .style('fill', NAVY)
+            .text(Math.round(dem) + ' MW  ·  $' + (marg ? marg.mc : '—') + '/MWh');
+
+        // Live caption.
+        var hrLabel = ('0' + Math.round(hf)).slice(-2) + ':00';
+        setNote('Hour <b>' + hrLabel + '</b> &middot; demand <b>' +
+                Math.round(dem) + ' MW</b> &middot; cleared at <b>$' +
+                (marg ? marg.mc : '—') + '/MWh</b>' +
+                (marg ? ' — set by ' + marg.fuel : ''));
+    }
+
+    function runDispatch() {
+        clearDispatch();
+        if (REDUCE) { updateDispatch(13); return; }
+        var DUR = 9000;   // one full 24-hour sweep, then loops
+        dispTimer = d3.timer(function (elapsed) {
+            updateDispatch((elapsed % DUR) / DUR * 23);
+        });
+    }
+
+    // ========================================================================
+    // STEP DRIVER
+    // ========================================================================
+    var HEAD = {
+        generators: ['The fleet', 'Five generators, ready to run'],
+        stack:      ['Merit order', 'The supply curve, cheapest at the bottom'],
+        demand:     ['The load', 'A 24-hour demand curve'],
+        dispatch:   ['The solve', 'Dispatch — filling from the cheapest up']
+    };
+    var NOTE = {
+        generators: 'Each block is one generator — its height is capacity in ' +
+                    'MW, its label the marginal cost in $/MWh.',
+        stack:      'Sorted cheapest to dearest. The LP always buys upward ' +
+                    'from the bottom of this staircase.',
+        demand:     'Load swings from about <b>200 MW</b> overnight to a ' +
+                    '<b>400 MW</b> afternoon peak — the line the LP must meet.'
+    };
+
+    function setNote(html) {
+        document.getElementById('ch-note').innerHTML = html;
+    }
+    function setHead(id) {
+        document.getElementById('ch-kicker').textContent = HEAD[id][0];
+        document.getElementById('ch-title').textContent = HEAD[id][1];
+    }
+
+    function enterStep(id) {
+        setHead(id);
+        if (id === 'generators') {
+            clearDispatch();
+            gDemand.selectAll('*').remove();
+            moveBlocks('blocks', 800);
+            labelGenerators();
+            setNote(NOTE.generators);
+        } else if (id === 'stack') {
+            clearDispatch();
+            gDemand.selectAll('*').remove();
+            moveBlocks('stack', 900);
+            labelStack(false);
+            setNote(NOTE.stack);
+        } else if (id === 'demand') {
+            clearDispatch();
+            moveBlocks('stack', 600);
+            labelStack(false);
+            drawDemand(true);
+            setNote(NOTE.demand);
+        } else if (id === 'dispatch') {
+            moveBlocks('dim', 600);
+            labelStack(true);
+            drawDemand(false);
+            runDispatch();
+        }
+    }
+
+    var story = new Scrollytell({
+        container: '.scrolly',
+        step: '.scrolly-step',
+        offset: 0.55
+    });
+    story.on('step-enter', function (e) {
+        enterStep(e.element.dataset.stepId);
+    });
+
+    // Render whatever step is already on screen at load.
+    enterStep('generators');
+})();
+</script>
+
+</body>
+</html>
