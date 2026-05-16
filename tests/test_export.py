@@ -119,6 +119,16 @@ class TestExportScenarioJson(unittest.TestCase):
         for summary in json.loads(path.read_text())["years"].values():
             self.assertGreaterEqual(summary["curtailment_twh"], 0.0)
 
+    def test_generation_broken_down_by_fuel(self):
+        _, path = self._run_and_export()
+
+        summary = json.loads(path.read_text())["years"]["2026"]
+        # The ERCOT synthetic fleet carries every thermal fuel type, and
+        # the export folds in zonal wind and solar.
+        for fuel in ("gas_cc", "gas_ct", "coal", "nuclear", "wind", "solar"):
+            self.assertIn(fuel, summary["generation_twh"])
+            self.assertIn(fuel, summary["capacity_gw"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,8 +7,10 @@ from pathlib import Path
 import numpy as np
 
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results import cache
+from market_sim.results.outputs import FleetContext
 
 
 def _make_result(*, with_storage=True, with_flows=True, with_emissions=True):
@@ -143,6 +145,86 @@ class TestConfigSidecar(CacheTestBase):
 
         reloaded = ScenarioConfig.from_yaml(config_yaml)
         self.assertEqual(reloaded.cache_key(), config.cache_key())
+
+
+def _make_context(n_gen=5):
+    """Build a ``FleetContext`` with deterministic per-generator attributes."""
+    return FleetContext(
+        fuel_types=["gas_cc", "gas_ct", "coal", "nuclear", "wind"][:n_gen],
+        pmax_mw=[400.0, 150.0, 600.0, 1200.0, 300.0][:n_gen],
+        emission_rate=[0.38, 0.6, 1.0, 0.0, 0.0][:n_gen],
+        wind_cap_mw=40000.0,
+        solar_cap_mw=25000.0,
+        wind_potential_mwh=1.2e8,
+        solar_potential_mwh=6.0e7,
+        storage_energy_cap_mwh=32000.0,
+    )
+
+
+class TestFleetContext(CacheTestBase):
+    """The fleet context survives the Parquet metadata round trip."""
+
+    def test_context_round_trips(self):
+        config = ScenarioConfig(iso="ERCOT")
+        context = _make_context()
+        cache.save_result(
+            _make_result(), config, iso="ERCOT", year=2030, context=context
+        )
+
+        loaded = cache.load_fleet_context("ERCOT", config.cache_key(), 2030)
+        self.assertEqual(loaded, context)
+
+    def test_load_context_without_context_raises(self):
+        config = ScenarioConfig(iso="ERCOT")
+        cache.save_result(_make_result(), config, iso="ERCOT", year=2030)
+
+        with self.assertRaises(ValueError):
+            cache.load_fleet_context("ERCOT", config.cache_key(), 2030)
+
+    def test_result_arrays_unaffected_by_context(self):
+        config = ScenarioConfig(iso="ERCOT")
+        result = _make_result()
+        cache.save_result(
+            result, config, iso="ERCOT", year=2030, context=_make_context()
+        )
+
+        loaded = cache.load_result("ERCOT", config.cache_key(), 2030)
+        _assert_results_match(self, result, loaded)
+
+
+class TestFleetContextFromArrays(unittest.TestCase):
+    """``FleetContext.from_arrays`` derives the context from run inputs."""
+
+    def test_maps_fuel_codes_and_sums_resources(self):
+        generators = [
+            Generator(
+                unit_id="G0", name="G0", zone="North", fuel_type="coal",
+                pmax_mw=600.0, emission_rate_co2=1.0,
+            ),
+            Generator(
+                unit_id="G1", name="G1", zone="North", fuel_type="gas_cc",
+                pmax_mw=400.0, emission_rate_co2=0.38,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(generators, ["North"], hours=4)
+
+        context = FleetContext.from_arrays(
+            fleet,
+            wind_cf=np.full((1, 4), 0.5),
+            wind_cap=np.array([1000.0]),
+            solar_cf=np.full((1, 4), 0.25),
+            solar_cap=np.array([800.0]),
+            storage_energy_cap=np.array([200.0, 300.0]),
+        )
+
+        self.assertEqual(context.fuel_types, ["coal", "gas_cc"])
+        self.assertEqual(context.pmax_mw, [600.0, 400.0])
+        self.assertEqual(context.emission_rate, [1.0, 0.38])
+        self.assertEqual(context.wind_cap_mw, 1000.0)
+        # 0.5 capacity factor x 1000 MW x 4 hours.
+        self.assertEqual(context.wind_potential_mwh, 2000.0)
+        self.assertEqual(context.solar_potential_mwh, 800.0)
+        self.assertEqual(context.storage_energy_cap_mwh, 500.0)
 
 
 class TestMissingResult(CacheTestBase):
