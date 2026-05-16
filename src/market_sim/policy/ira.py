@@ -24,30 +24,30 @@ def compute_dispatch_credits(config: ScenarioConfig, year: int) -> tuple[float, 
 def apply_ira_credits_to_lcoe(
     tech_type: str, lcoe: float, year: int, config: ScenarioConfig
 ) -> float:
-    """Reduce a technology's LCOE by IRA investment credits.
+    """Reduce a technology's LCOE by the IRA wind production tax credit.
 
-    Used for new-entry economics, separate from the dispatch-side
-    :func:`compute_dispatch_credits`. The wind PTC is a production credit
-    that lowers effective levelized cost by a flat $/MWh amount; the solar
-    and storage ITC is a capital credit, modeled here as scaling the
-    capex-driven LCOE by ``(1 - ira_itc_solar)``. Both credits phase out
-    after ``config.ira_expiry_year``.
+    The wind PTC is a production credit that lowers effective levelized
+    cost by a flat $/MWh amount, so it is correctly applied post-hoc to a
+    finished LCOE. The solar and storage ITC is a capital credit and is
+    *not* handled here: applying it to a finished LCOE would wrongly
+    discount the fixed-O&M component too, so it is instead applied to
+    capex inside :func:`market_sim.model.capacity.compute_lcoe` and
+    :func:`market_sim.model.storage.compute_storage_annual_cost`. The PTC
+    phases out after ``config.ira_expiry_year``.
 
     Args:
-        tech_type: Candidate technology, e.g. ``"wind"``, ``"solar"``,
-            ``"storage"`` or ``"gas_cc"``.
+        tech_type: Candidate technology, e.g. ``"wind"``, ``"solar"`` or
+            ``"gas_cc"``.
         lcoe: Pre-credit levelized cost of energy in $/MWh.
         year: Simulation year, compared against the IRA expiry year.
         config: Scenario config supplying credit magnitudes and expiry.
 
     Returns:
-        The IRA-adjusted LCOE in $/MWh. Unchanged for technologies with no
-        applicable credit, or once the credits have expired.
+        The IRA-adjusted LCOE in $/MWh. Unchanged for non-wind technologies
+        and once the wind PTC has expired.
     """
     if year > config.ira_expiry_year:
         return lcoe
     if tech_type == "wind":
         return lcoe - config.ira_ptc_wind
-    if tech_type in ("solar", "storage"):
-        return lcoe * (1.0 - config.ira_itc_solar)
     return lcoe

@@ -7,13 +7,19 @@ import numpy as np
 
 from market_sim.config.constants import (
     GAS_PRICE_BASE,
+    GLOBAL_ANNUAL_DEPLOYMENT_GW,
+    HOURS_PER_YEAR,
+    NEW_ENTRY_COSTS,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
+    WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.capacity import (
+    CumulativeDeployment,
+    _capital_recovery_factor,
     apply_economic_new_entry,
     apply_economic_retirements,
     apply_known_retirements,
@@ -23,6 +29,7 @@ from market_sim.model.capacity import (
     evolve_fleet,
     wright_cost,
 )
+from market_sim.model.storage import compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import apply_ira_credits_to_lcoe
@@ -331,6 +338,109 @@ class TestComputeLCOE(unittest.TestCase):
         after_expiry = compute_lcoe("wind", 2040, config)
         self.assertLess(with_credit, after_expiry)
 
+    def test_learning_curve_lowers_wind_lcoe(self):
+        # Cumulative deployment past the reference discounts wind capex,
+        # and a lower capex flows through to a lower LCOE.
+        config = ScenarioConfig()
+        at_ref = compute_lcoe(
+            "wind", 2030, config, cumulative_gw=WRIGHT_REFERENCE_GW["wind"]
+        )
+        grown = compute_lcoe(
+            "wind", 2030, config, cumulative_gw=2 * WRIGHT_REFERENCE_GW["wind"]
+        )
+        self.assertLess(grown, at_ref)
+
+    def test_learning_curve_applies_to_nuclear(self):
+        # Nuclear is a candidate technology with its own reference capacity,
+        # so the learning curve must work for it too.
+        config = ScenarioConfig()
+        at_ref = compute_lcoe(
+            "nuclear", 2030, config,
+            cumulative_gw=WRIGHT_REFERENCE_GW["nuclear"],
+        )
+        grown = compute_lcoe(
+            "nuclear", 2030, config,
+            cumulative_gw=2 * WRIGHT_REFERENCE_GW["nuclear"],
+        )
+        self.assertGreater(at_ref, 0.0)
+        self.assertLess(grown, at_ref)
+
+    def test_solar_itc_discounts_only_the_capital_component(self):
+        # The IRA ITC reduces capex before annualization, so the credit
+        # never discounts fixed O&M. The ITC-adjusted LCOE is therefore
+        # higher than naively scaling the raw LCOE by (1 - itc).
+        config = ScenarioConfig()  # ira_itc_solar = 0.30
+        with_itc = compute_lcoe("solar", 2030, config)   # ITC active
+        raw = compute_lcoe("solar", 2040, config)        # ITC expired
+        self.assertLess(with_itc, raw)
+        self.assertGreater(with_itc, raw * 0.70)
+
+        # Verify the exact split: only capex * (1 - itc) is annualized.
+        costs = NEW_ENTRY_COSTS["solar"]
+        crf = _capital_recovery_factor(
+            config.discount_rate, costs["lifetime_yr"]
+        )
+        gen_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
+        expected = (
+            costs["capex_per_kw"] * (1.0 - config.ira_itc_solar) * crf
+            + costs["fom_per_kw_yr"]
+        ) / gen_per_kw
+        self.assertAlmostEqual(with_itc, expected)
+
+
+class TestCumulativeDeployment(unittest.TestCase):
+    """Global cumulative-deployment tracking for Wright's-Law learning."""
+
+    def test_initial_starts_from_reference_capacities(self):
+        cumulative = CumulativeDeployment.initial()
+        for tech, gw in WRIGHT_REFERENCE_GW.items():
+            self.assertAlmostEqual(cumulative.get(tech), gw)
+
+    def test_advance_year_adds_global_deployment(self):
+        cumulative = CumulativeDeployment.initial()
+        cumulative.advance_year()
+        for tech, annual_gw in GLOBAL_ANNUAL_DEPLOYMENT_GW.items():
+            self.assertAlmostEqual(
+                cumulative.get(tech),
+                WRIGHT_REFERENCE_GW[tech] + annual_gw,
+            )
+
+    def test_advance_year_folds_in_local_builds(self):
+        cumulative = CumulativeDeployment.initial()
+        cumulative.advance_year({"wind": 10.0})
+        self.assertAlmostEqual(
+            cumulative.get("wind"),
+            WRIGHT_REFERENCE_GW["wind"]
+            + GLOBAL_ANNUAL_DEPLOYMENT_GW["wind"]
+            + 10.0,
+        )
+
+    def test_get_untracked_technology_is_none(self):
+        self.assertIsNone(CumulativeDeployment.initial().get("fusion"))
+
+
+class TestStorageLearningCurve(unittest.TestCase):
+    """Wright's-Law learning curves wired into storage costs."""
+
+    def test_cumulative_deployment_lowers_storage_cost(self):
+        config = ScenarioConfig()
+        base = compute_storage_annual_cost("li_ion_4hr", 2030, config)
+        learned = compute_storage_annual_cost(
+            "li_ion_4hr", 2030, config,
+            cumulative_gw=2 * WRIGHT_REFERENCE_GW["li_ion"],
+        )
+        self.assertLess(learned, base)
+
+    def test_li_ion_8hr_shares_the_li_ion_learning_curve(self):
+        # Both li-ion durations map to the "li_ion" reference key.
+        config = ScenarioConfig()
+        base = compute_storage_annual_cost("li_ion_8hr", 2030, config)
+        learned = compute_storage_annual_cost(
+            "li_ion_8hr", 2030, config,
+            cumulative_gw=2 * WRIGHT_REFERENCE_GW["li_ion"],
+        )
+        self.assertLess(learned, base)
+
 
 class TestIRACreditsToLCOE(unittest.TestCase):
     """IRA investment-credit adjustment to candidate LCOE."""
@@ -340,10 +450,13 @@ class TestIRACreditsToLCOE(unittest.TestCase):
         adjusted = apply_ira_credits_to_lcoe("wind", 50.0, 2030, config)
         self.assertAlmostEqual(adjusted, 50.0 - 26.0)
 
-    def test_solar_itc_scales_lcoe(self):
+    def test_solar_itc_not_applied_post_hoc(self):
+        # The solar ITC is a capital credit: it is applied to capex inside
+        # compute_lcoe, not as a post-hoc scaling of a finished LCOE (which
+        # would wrongly discount the fixed-O&M component too).
         config = ScenarioConfig()  # ira_itc_solar = 0.30
         adjusted = apply_ira_credits_to_lcoe("solar", 50.0, 2030, config)
-        self.assertAlmostEqual(adjusted, 50.0 * 0.70)
+        self.assertEqual(adjusted, 50.0)
 
     def test_credit_expires_after_expiry_year(self):
         config = ScenarioConfig()  # ira_expiry_year = 2035
@@ -447,6 +560,44 @@ class TestEconomicNewEntry(unittest.TestCase):
         )
         self.assertEqual(new_fleet, [])
         self.assertEqual(additions, {})
+
+    def test_gas_cc_charged_its_fuel_cost(self):
+        # At a $40/MWh average price and $3.50/MMBtu gas, a gas CC's
+        # expected variable fuel cost pushes its margin negative, so it
+        # does not build. Ignoring fuel cost (the prior bug) would let it
+        # build every year regardless of economics.
+        config = ScenarioConfig(iso="ERCOT")
+        prices = np.full(8760, 40.0)
+
+        priced, _ = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=3.50
+        )
+        self.assertFalse(any(g.fuel_type == "gas_cc" for g in priced))
+
+        # With fuel treated as free, the same screen builds gas CC.
+        free, _ = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=0.0
+        )
+        self.assertTrue(any(g.fuel_type == "gas_cc" for g in free))
+
+    def test_nuclear_builds_only_when_prices_clear_capex(self):
+        # Nuclear's ~$6800/kW capex needs high sustained prices to clear.
+        config = ScenarioConfig(iso="ERCOT")
+
+        high, _ = apply_economic_new_entry(
+            [], np.full(8760, 250.0), 2030, config, "ERCOT"
+        )
+        nuclear = [g for g in high if g.fuel_type == "nuclear"]
+        self.assertEqual(len(nuclear), 1)
+        # A new nuclear unit is must-run, carbon-free and burns no fuel.
+        self.assertTrue(nuclear[0].is_must_run)
+        self.assertEqual(nuclear[0].heat_rate, 0.0)
+        self.assertEqual(nuclear[0].emission_rate_co2, 0.0)
+
+        low, _ = apply_economic_new_entry(
+            [], np.full(8760, 40.0), 2030, config, "ERCOT"
+        )
+        self.assertFalse(any(g.fuel_type == "nuclear" for g in low))
 
 
 class TestRenewableNewEntryRouting(unittest.TestCase):
