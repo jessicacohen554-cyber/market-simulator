@@ -203,6 +203,8 @@ def estimate_storage_revenue(
 
     prices: (n_zones, T) or (T,). If multi-zone, uses zone with
     highest daily spread. Returns $/MW-yr.
+
+    Fully vectorized — no Python loop over days.
     """
     price_arr = np.asarray(prices, dtype=float)
     if price_arr.ndim == 1:
@@ -213,18 +215,23 @@ def estimate_storage_revenue(
     if n_days == 0 or d <= 0:
         return 0.0
 
-    revenue = 0.0
-    for day in range(n_days):
-        block = price_arr[:, day * 24:(day + 1) * 24]
-        ordered = np.sort(block, axis=1)
-        charge_avg = ordered[:, :d].mean(axis=1)
-        discharge_avg = ordered[:, -d:].mean(axis=1)
-        # When multi-zone, screen the zone with the widest daily spread.
-        best = int(np.argmax(discharge_avg - charge_avg))
-        margin = discharge_avg[best] - charge_avg[best] / rte
-        if margin > 0.0:
-            revenue += margin * d
-    return float(revenue)
+    # Reshape to (n_zones, n_days, 24) and sort each day's 24 prices.
+    daily = price_arr[:, :n_days * 24].reshape(price_arr.shape[0], n_days, 24)
+    ordered = np.sort(daily, axis=2)
+
+    # Cheapest d hours (charge) and most expensive d hours (discharge).
+    charge_avg = ordered[:, :, :d].mean(axis=2)       # (n_zones, n_days)
+    discharge_avg = ordered[:, :, -d:].mean(axis=2)   # (n_zones, n_days)
+
+    # For each day, pick the zone with the widest spread.
+    spread = discharge_avg - charge_avg               # (n_zones, n_days)
+    best_zone = np.argmax(spread, axis=0)             # (n_days,)
+    days_idx = np.arange(n_days)
+
+    margin = (discharge_avg[best_zone, days_idx]
+              - charge_avg[best_zone, days_idx] / rte)
+    margin = np.maximum(margin, 0.0)
+    return float(margin.sum() * d)
 
 
 def compute_storage_annual_cost(
