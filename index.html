@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market Simulator — LP-Based Electricity Dispatch Model</title>
+<meta name="description" content="LP-based electricity market dispatch simulator. Two ISOs, hourly dispatch 2026–2050, parameterized scenarios. Explore results or learn how the model works.">
+
+<link rel="stylesheet" href="frontend/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+    <a class="nav-brand" href="index.html">
+        <span class="nav-brand-mark">&#9650;</span> Market Simulator
+    </a>
+    <span class="nav-spacer"></span>
+</nav>
+
+<main class="page">
+
+    <header class="page-header">
+        <div class="eyebrow">Electricity Market Dispatch Simulator</div>
+        <h1>An LP grid model, 8,760 hours a year</h1>
+        <p>
+            A linear-programming electricity market dispatch simulator covering
+            two ISOs (ERCOT and CAISO) at full hourly resolution across the
+            2026&ndash;2050 horizon, with a parameterized scenario system.
+            Pick a destination below.
+        </p>
+    </header>
+
+    <section class="grid grid-2col">
+
+        <a class="card link-card" href="frontend/index.html" style="--card-accent: var(--gas-cc);">
+            <div class="card-title">Results Dashboard</div>
+            <div class="card-subtitle">Explore the model output</div>
+            <p class="text-muted">
+                Scenario results explorer &mdash; generation mix, emissions
+                trajectories, price duration curves and storage utilization
+                across every model year. Browse design decisions and the full
+                parameter citation registry.
+            </p>
+            <span class="link-card-cta">Open the dashboard &rarr;</span>
+        </a>
+
+        <a class="card link-card" href="learning-hub/index.html" style="--card-accent: var(--wind);">
+            <div class="card-title">Learning Hub</div>
+            <div class="card-subtitle">Understand how the model works</div>
+            <p class="text-muted">
+                Five scrollytelling explainers that open up the model piece by
+                piece &mdash; LP dispatch, capacity evolution, storage
+                arbitrage, transmission pricing and scenario uncertainty.
+            </p>
+            <span class="link-card-cta">Start learning &rarr;</span>
+        </a>
+
+    </section>
+
+</main>
+
+<footer class="page-footer">
+    LP-based electricity market dispatch simulator &middot; Full 8,760-hour resolution &middot; Prices are LP duals
+</footer>
+
+</body>
+</html>
