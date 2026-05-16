@@ -239,6 +239,22 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
     "li_ion": 90.0,   # IRENA 2024 — global installed li-ion grid storage
 }
 
+# Annual-average renewable capacity factors (fraction) by ISO and technology.
+# Used to rescale the normalized EIA-930 generation distributions into hourly
+# capacity-factor profiles.
+# Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report.
+RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.35, "solar": 0.27},
+    "CAISO": {"wind": 0.30, "solar": 0.28},
+}
+
+# Installed renewable nameplate capacity (MW) by ISO and technology.
+# Source: ERCOT CDR Dec 2024, CAISO annual report 2024.
+RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 40000.0, "solar": 25000.0},
+    "CAISO": {"wind": 7000.0, "solar": 20000.0},
+}
+
 # CAISO WECC import supply curve tranches: (name, capacity MW, marginal cost $/MWh).
 # Ordered cheapest first. Represents the aggregate WECC supply available to CAISO.
 # TODO: fit from EIA-930 interchange data. Current values are hand-set placeholders.
