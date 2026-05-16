@@ -44,6 +44,7 @@ from market_sim.config.constants import (
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
+from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
 from market_sim.policy.ira import apply_ira_credits_to_lcoe
 from market_sim.policy.rps import get_rps_target
@@ -237,6 +238,26 @@ def apply_economic_retirements(
 # Candidate technologies considered for economic new entry.
 _NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc")
 
+# Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
+# the W[z,t]/S[z,t] dispatch variables) rather than entering as thermal
+# Generator objects. Variable-output renewables must follow a CF profile.
+_RENEWABLE_NEW_FUELS: frozenset[str] = frozenset({"wind", "solar"})
+
+
+def _merge_renewable_additions(
+    target: dict[str, dict[str, float]],
+    source: dict[str, dict[str, float]],
+) -> None:
+    """Accumulate ``source`` renewable build MW into ``target`` in place.
+
+    Both dicts are keyed ``{zone: {fuel: mw}}``; overlapping zone/fuel pairs
+    have their megawatts summed.
+    """
+    for zone, by_fuel in source.items():
+        zone_acc = target.setdefault(zone, {})
+        for fuel, mw in by_fuel.items():
+            zone_acc[fuel] = zone_acc.get(fuel, 0.0) + mw
+
 
 def wright_cost(
     base_cost: float,
@@ -391,7 +412,7 @@ def apply_economic_new_entry(
     year: int,
     config: ScenarioConfig,
     iso: str,
-) -> list[Generator]:
+) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
     For each candidate technology the expected annual revenue per MW is
@@ -407,6 +428,13 @@ def apply_economic_new_entry(
     The highest-margin technology draws on the shared ISO budget first;
     once that budget is exhausted no further technologies are built.
 
+    Thermal new entry (``gas_cc``) is appended to the returned fleet as a
+    :class:`Generator`. Wind and solar are *not*: variable-output
+    renewables must follow a capacity-factor profile, so their build MW is
+    routed to the zonal ``wind_cap`` / ``solar_cap`` pools (the bounds of
+    the ``W[z,t]`` and ``S[z,t]`` dispatch variables) rather than entering
+    as flat-availability thermal units.
+
     Args:
         fleet: The current generator fleet.
         prices: Hourly zonal energy prices in $/MWh from the prior solve.
@@ -415,7 +443,9 @@ def apply_economic_new_entry(
         iso: ISO identifier, supplying the queue caps and build zone.
 
     Returns:
-        A new list with the entering generators appended.
+        Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
+        thermal generators appended, and a ``{zone: {fuel: mw}}`` dict of
+        wind/solar build MW to fold into the zonal renewable capacity.
     """
     iso_config = get_iso_config(iso)
     queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
@@ -435,6 +465,7 @@ def apply_economic_new_entry(
     margins.sort(reverse=True)
 
     new_fleet = list(fleet)
+    renewable_additions: dict[str, dict[str, float]] = {}
     remaining = queue_budget_mw
     for seq, (_, tech) in enumerate(margins):
         if remaining <= 0.0:
@@ -446,14 +477,19 @@ def apply_economic_new_entry(
         if build_mw <= 0.0:
             continue
         remaining -= build_mw
-        new_fleet.append(_make_new_generator(tech, build_mw, zone, year, seq))
+        if tech in _RENEWABLE_NEW_FUELS:
+            target_zone = get_renewable_zone(iso_config.name, tech)
+            zone_acc = renewable_additions.setdefault(target_zone, {})
+            zone_acc[tech] = zone_acc.get(tech, 0.0) + build_mw
+        else:
+            new_fleet.append(_make_new_generator(tech, build_mw, zone, year, seq))
 
-    return new_fleet
+    return new_fleet, renewable_additions
 
 
 def apply_rps_mandate(
     fleet: list[Generator], year: int, config: ScenarioConfig
-) -> list[Generator]:
+) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Force-build clean capacity to meet an ISO renewable portfolio standard.
 
     When the fleet's clean share falls below the ISO's RPS target for the
@@ -461,21 +497,27 @@ def apply_rps_mandate(
     needed to lift the clean share to the target. ISOs with no RPS, or a
     fleet already meeting the target, are left unchanged.
 
+    A mandated wind or solar build is routed to the zonal ``wind_cap`` /
+    ``solar_cap`` pools (see :func:`apply_economic_new_entry`); any other
+    clean technology would still enter as a :class:`Generator`.
+
     Args:
         fleet: The current generator fleet.
         year: Simulation year.
         config: Scenario config supplying the ISO and discount rate.
 
     Returns:
-        A new list with the mandated clean capacity appended, if any.
+        Tuple ``(fleet, renewable_additions)`` -- the fleet with any
+        mandated thermal clean capacity appended, and a ``{zone: {fuel:
+        mw}}`` dict of mandated wind/solar build MW.
     """
     target = get_rps_target(config.iso, year)
     if target is None:
-        return list(fleet)
+        return list(fleet), {}
 
     share = compute_clean_share(fleet)
     if share >= target:
-        return list(fleet)
+        return list(fleet), {}
 
     total_cap = sum(g.pmax_mw for g in fleet)
     clean_cap = sum(g.pmax_mw for g in fleet if g.fuel_type in _CLEAN_FUELS)
@@ -486,16 +528,23 @@ def apply_rps_mandate(
     effective_target = min(target, 0.999)
     gap_mw = (effective_target * total_cap - clean_cap) / (1.0 - effective_target)
     if gap_mw <= 0.0:
-        return list(fleet)
+        return list(fleet), {}
 
     clean_techs = [t for t in NEW_ENTRY_COSTS if t in _CLEAN_FUELS]
     cheapest = min(clean_techs, key=lambda t: compute_lcoe(t, year, config))
 
     new_fleet = list(fleet)
-    new_fleet.append(
-        _make_new_generator(cheapest, gap_mw, _primary_zone(config.iso), year, 0)
-    )
-    return new_fleet
+    renewable_additions: dict[str, dict[str, float]] = {}
+    if cheapest in _RENEWABLE_NEW_FUELS:
+        target_zone = get_renewable_zone(config.iso, cheapest)
+        renewable_additions[target_zone] = {cheapest: gap_mw}
+    else:
+        new_fleet.append(
+            _make_new_generator(
+                cheapest, gap_mw, _primary_zone(config.iso), year, 0
+            )
+        )
+    return new_fleet, renewable_additions
 
 
 def _prior_attr(prior_results: object, name: str, default: object = None) -> object:
@@ -513,7 +562,7 @@ def evolve_fleet(
     year: int,
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
-) -> tuple[list[Generator], dict[str, int]]:
+) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]]]:
     """Advance the fleet by one simulation year.
 
     The five capacity mechanisms are applied in a fixed order:
@@ -540,9 +589,15 @@ def evolve_fleet(
             place.
 
     Returns:
-        Tuple ``(fleet, loss_tracker)`` after all mechanisms are applied.
+        Tuple ``(fleet, loss_tracker, renewable_additions)`` after all
+        mechanisms are applied. ``renewable_additions`` is a ``{zone:
+        {"wind": mw, "solar": mw}}`` dict of new wind/solar capacity built
+        this year; the caller folds it into the zonal ``wind_cap`` /
+        ``solar_cap`` pools that bound the ``W[z,t]`` / ``S[z,t]`` dispatch
+        variables.
     """
     loss_tracker = dict(loss_tracker)
+    renewable_additions: dict[str, dict[str, float]] = {}
 
     fleet_arrays = _prior_attr(prior_results, "fleet_arrays")
     dispatch_result = _prior_attr(prior_results, "dispatch_result")
@@ -569,9 +624,13 @@ def evolve_fleet(
 
     # 4. Economic new entry (needs a price signal).
     if prices is not None:
-        fleet = apply_economic_new_entry(fleet, prices, year, config, config.iso)
+        fleet, entry_additions = apply_economic_new_entry(
+            fleet, prices, year, config, config.iso
+        )
+        _merge_renewable_additions(renewable_additions, entry_additions)
 
     # 5. RPS mandates.
-    fleet = apply_rps_mandate(fleet, year, config)
+    fleet, rps_additions = apply_rps_mandate(fleet, year, config)
+    _merge_renewable_additions(renewable_additions, rps_additions)
 
-    return fleet, loss_tracker
+    return fleet, loss_tracker, renewable_additions
