@@ -31,7 +31,11 @@ from market_sim.data.fuel import resolve_fuel_prices
 from market_sim.data.renewables import load_renewable_profiles
 from market_sim.model.capacity import evolve_fleet
 from market_sim.model.dispatch import solve_dispatch
-from market_sim.model.storage import build_storage_for_year, storage_units_to_arrays
+from market_sim.model.storage import (
+    apply_storage_new_entry,
+    build_default_storage,
+    storage_units_to_arrays,
+)
 from market_sim.model.transmission import (
     build_incidence_matrix,
     build_wecc_import_generators,
@@ -104,14 +108,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     loss_tracker: dict[str, int] = {}
     prior_results = None
 
+    # Storage is managed across years like the generation fleet: the base
+    # year starts from the deployment-pace fleet, later years grow via the
+    # economic new-entry screen.
+    storage_units = build_default_storage(iso_config, config)
+
     for year in range(START_YEAR, END_YEAR + 1):
         year_start = time.perf_counter()
-
-        # Storage grows year over year, so the fleet is rebuilt each year
-        # sized for that year's deployment.
-        storage = storage_units_to_arrays(
-            build_storage_for_year(iso_config, config, year), zone_names
-        )
 
         if fleet is None:
             # First year: no EIA-860 vintage yet, so the base fleet falls
@@ -129,6 +132,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 z_idx = zone_names.index(zone_name)
                 wind_cap[z_idx] += additions.get("wind", 0.0)
                 solar_cap[z_idx] += additions.get("solar", 0.0)
+
+        # Storage grows endogenously: year 2026 uses the base fleet, and
+        # 2027+ screens arbitrage revenue against cost on prior-year prices.
+        if prior_results is not None:
+            storage_units = apply_storage_new_entry(
+                storage_units, prior_results["prices"], year, config, iso
+            )
+        storage = storage_units_to_arrays(storage_units, zone_names)
 
         dispatch_fleet = fleet + wecc_generators
         fleet_arrays = generators_to_fleet_arrays(
