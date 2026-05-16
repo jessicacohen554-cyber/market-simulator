@@ -39,15 +39,15 @@ class TestVariableLayout(unittest.TestCase):
     def test_total_columns_minimal(self):
         # 2 thermal gens, 1 zone, no storage, no links.
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=24)
-        # vars_per_hour = 2 + 2*1 + 3*0 + 0 + 1 = 5
-        self.assertEqual(layout.vars_per_hour, 5)
-        self.assertEqual(layout.total_columns, 5 * 24)
+        # vars_per_hour = 2 + 4*1 + 3*0 + 0 = 6
+        self.assertEqual(layout.vars_per_hour, 6)
+        self.assertEqual(layout.total_columns, 6 * 24)
 
     def test_vars_per_hour_with_storage_and_links(self):
         layout = VariableLayout(n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10)
-        # 3 + 2*2 + 3*4 + 2 + 2 = 23
-        self.assertEqual(layout.vars_per_hour, 23)
-        self.assertEqual(layout.total_columns, 23 * 10)
+        # 3 + 4*2 + 3*4 + 2 = 25
+        self.assertEqual(layout.vars_per_hour, 25)
+        self.assertEqual(layout.total_columns, 25 * 10)
 
     def test_block_offsets_are_ordered_and_contiguous(self):
         layout = VariableLayout(n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10)
@@ -59,6 +59,7 @@ class TestVariableLayout(unittest.TestCase):
         self.assertEqual(layout._soc_off, 15)
         self.assertEqual(layout._flow_off, 19)
         self.assertEqual(layout._slack_off, 21)
+        self.assertEqual(layout._dump_off, 23)
 
     def test_columns_unique_within_an_hour(self):
         layout = VariableLayout(n_gen=2, n_zones=2, n_storage=1, n_links=1, T=5)
@@ -70,6 +71,7 @@ class TestVariableLayout(unittest.TestCase):
             cols.append(layout.w_col(z, 2))
             cols.append(layout.s_col(z, 2))
             cols.append(layout.slack_col(z, 2))
+            cols.append(layout.dump_col(z, 2))
         for s in range(1):  # s: storage unit index
             cols.append(layout.chg_col(s, 2))
             cols.append(layout.dis_col(s, 2))
@@ -173,8 +175,8 @@ class TestBuildConstraints(unittest.TestCase):
         fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
         demand = np.arange(24, dtype=float).reshape(1, 24)
         A, row_lower, row_upper = build_constraints(layout, fleet, demand)
-        # vars_per_hour = 1 + 2*1 + 0 + 0 + 1 = 4.
-        self.assertEqual(layout.vars_per_hour, 4)
+        # vars_per_hour = 1 + 4*1 + 3*0 + 0 = 5.
+        self.assertEqual(layout.vars_per_hour, 5)
         self.assertEqual(A.shape, (24, 24 * layout.vars_per_hour))
         self.assertEqual(A.format, "csr")
 
@@ -189,8 +191,9 @@ class TestBuildConstraints(unittest.TestCase):
             self.assertEqual(dense[t, layout.w_col(0, t)], 1.0)
             self.assertEqual(dense[t, layout.s_col(0, t)], 1.0)
             self.assertEqual(dense[t, layout.slack_col(0, t)], 1.0)
-            # The balance row touches exactly those four columns.
-            self.assertEqual(int((dense[t] != 0).sum()), 4)
+            self.assertEqual(dense[t, layout.dump_col(0, t)], -1.0)
+            # The balance row touches exactly those five columns.
+            self.assertEqual(int((dense[t] != 0).sum()), 5)
 
     def test_multizone_balance_places_gens_in_their_zone(self):
         layout = VariableLayout(n_gen=2, n_zones=2, n_storage=0, n_links=0, T=3)
@@ -516,6 +519,52 @@ class TestNegativePricing(unittest.TestCase):
         self.assertEqual(s_mc, 0.0)
         w_mc, s_mc = compute_dispatch_credits(config, year=2030)
         self.assertEqual(w_mc, -26.0)
+
+
+class TestOvergeneration(unittest.TestCase):
+    """Tests that must-run overgeneration is absorbed by the dump variable."""
+
+    T = 24
+
+    def test_must_run_exceeds_demand_uses_dump(self):
+        """Nuclear pmin=800 MW, demand=500 MW — dump absorbs 300 MW."""
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
+                            pmax=1000.0, pmin=800.0, eford=0.0)
+        mc = np.full((1, self.T), 5.0)
+        demand = np.full((1, self.T), 500.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+        self.assertEqual(result.status, "Optimal")
+        np.testing.assert_allclose(result.dispatch[0], 800.0, atol=1.0)
+        np.testing.assert_allclose(result.dump[0], 300.0, atol=1.0)
+        self.assertTrue(np.all(result.prices < 0))
+
+    def test_no_dump_when_balanced(self):
+        """Normal operation: dump is zero."""
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
+                            pmax=200.0, pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+        np.testing.assert_allclose(result.dump, 0.0, atol=1e-6)
+
+    def test_energy_balance_with_dump(self):
+        """Supply - dump + slack = demand for every hour."""
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
+                            pmax=1000.0, pmin=800.0, eford=0.0)
+        mc = np.full((1, self.T), 5.0)
+        demand = np.full((1, self.T), 500.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+        supply = result.dispatch.sum(axis=0) + result.slack[0] - result.dump[0]
+        np.testing.assert_allclose(supply, demand[0], atol=1e-4)
 
 
 if __name__ == "__main__":
