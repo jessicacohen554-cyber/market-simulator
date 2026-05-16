@@ -14,7 +14,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR, STORAGE_TIEBREAKER_EPSILON
-from market_sim.data.fleet import FleetArrays, assemble_mc
+from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays, assemble_mc
 
 logger = logging.getLogger(__name__)
 
@@ -248,6 +248,41 @@ def _build_zone_storage_map(
     )
 
 
+def _build_rps_row(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    rps_target: float,
+    demand: np.ndarray,
+) -> tuple[sp.csr_matrix, float]:
+    """Return the single annual RPS constraint row and its lower bound.
+
+    The row carries a ``+1`` coefficient on every wind, solar and nuclear
+    dispatch column across all ``T`` hours; the lower bound is
+    ``rps_target`` times total annual demand. The resulting constraint
+    ``clean >= rps_target * demand`` is an inequality with no upper bound,
+    and its dual is the implicit REC price ($/MWh clean-energy premium).
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    hours = np.arange(T)[:, np.newaxis]  # t: hour index
+    zones = np.arange(layout.n_zones)  # z: zone index
+
+    wind_cols = (hours * vph + layout._w_off + zones).ravel()
+    solar_cols = (hours * vph + layout._s_off + zones).ravel()
+    nuclear_idx = np.flatnonzero(
+        np.asarray(fleet.fuel_type_idx) == FUEL_TYPE_MAP["nuclear"]
+    )
+    nuclear_cols = (hours * vph + layout._p_off + nuclear_idx).ravel()
+
+    cols = np.concatenate([wind_cols, solar_cols, nuclear_cols])
+    row = sp.coo_matrix(
+        (np.ones(cols.size), (np.zeros(cols.size, dtype=int), cols)),
+        shape=(1, layout.total_columns),
+    ).tocsr()
+    rhs = rps_target * float(np.asarray(demand, dtype=float).sum())
+    return row, rhs
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -256,11 +291,11 @@ def build_constraints(
     storage_zone_idx: np.ndarray | None = None,
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
+    rps_target: float | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
-    Two constraint families are built, both equalities (``row_lower ==
-    row_upper``):
+    Two equality constraint families are built (``row_lower == row_upper``):
 
     * **Energy balance** -- ``n_zones`` rows per hour. For zone ``z`` and
       hour ``t`` the dispatched thermal, wind, solar, net storage, net
@@ -273,6 +308,11 @@ def build_constraints(
       hour ``0`` takes ``t-1`` to be the final hour ``T-1`` so the SOC
       trajectory is a closed cycle and hour ``0``'s charge/discharge are
       bound by the same dynamics as every other hour.
+
+    A third, optional family adds one **RPS** inequality row when
+    ``rps_target`` is set: total annual wind, solar and nuclear generation
+    must reach ``rps_target`` times total annual demand. Its dual is the
+    implicit REC price.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -287,11 +327,15 @@ def build_constraints(
             to ``1.0`` (lossless).
         eta_dis: Discharge efficiency, scalar or ``(n_storage,)``. Defaults
             to ``1.0`` (lossless).
+        rps_target: Required clean-energy share. When not ``None`` and
+            positive, one annual RPS constraint row is appended.
 
     Returns:
         Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSR matrix --
         the row-wise layout HiGHS consumes directly -- and the bound
-        vectors give the (equal) lower and upper row bounds.
+        vectors give the lower and upper row bounds. The energy-balance and
+        storage rows are equalities; the optional RPS row has an infinite
+        upper bound.
     """
     T = layout.T  # T: number of hours
     n_zones = layout.n_zones
@@ -333,60 +377,73 @@ def build_constraints(
     eb_rhs = np.asarray(demand, dtype=float).T.ravel()
 
     if n_storage == 0:
+        A = energy_balance
         row_lower = eb_rhs.copy()
-        return energy_balance, row_lower, row_lower.copy()
+        row_upper = eb_rhs.copy()
+    else:
+        eta_c = np.broadcast_to(
+            np.asarray(1.0 if eta_chg is None else eta_chg, dtype=float),
+            (n_storage,),
+        )
+        eta_d = np.broadcast_to(
+            np.asarray(1.0 if eta_dis is None else eta_dis, dtype=float),
+            (n_storage,),
+        )
 
-    eta_c = np.broadcast_to(
-        np.asarray(1.0 if eta_chg is None else eta_chg, dtype=float), (n_storage,)
-    )
-    eta_d = np.broadcast_to(
-        np.asarray(1.0 if eta_dis is None else eta_dis, dtype=float), (n_storage,)
-    )
-
-    hours = np.arange(T)  # t: hour index
-    dyn_rows = np.arange(1, T)  # dynamics rows cover hours 1..T-1
-    soc_mats = []
-    for s in range(n_storage):  # s: storage unit index
-        soc_cols = hours * vph + layout._soc_off + s
-        chg_cols = hours * vph + layout._chg_off + s
-        dis_cols = hours * vph + layout._dis_off + s
-        rows = np.concatenate(
-            [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0], [0], [0]]
-        )
-        cols = np.concatenate(
-            [
-                soc_cols[1:],       # SOC[s,t]
-                soc_cols[:-1],      # SOC[s,t-1]
-                chg_cols[1:],       # Chg[s,t]
-                dis_cols[1:],       # Dis[s,t]
-                [soc_cols[0]],      # cyclic: SOC[s,0]
-                [soc_cols[-1]],     # cyclic: SOC[s,T-1]
-                [chg_cols[0]],      # cyclic: Chg[s,0]
-                [dis_cols[0]],      # cyclic: Dis[s,0]
-            ]
-        )
-        data = np.concatenate(
-            [
-                np.ones(T - 1),
-                -np.ones(T - 1),
-                np.full(T - 1, -eta_c[s]),
-                np.full(T - 1, 1.0 / eta_d[s]),
-                [1.0],
-                [-1.0],
-                [-eta_c[s]],
-                [1.0 / eta_d[s]],
-            ]
-        )
-        soc_mats.append(
-            sp.coo_matrix(
-                (data, (rows, cols)), shape=(T, layout.total_columns)
+        hours = np.arange(T)  # t: hour index
+        dyn_rows = np.arange(1, T)  # dynamics rows cover hours 1..T-1
+        soc_mats = []
+        for s in range(n_storage):  # s: storage unit index
+            soc_cols = hours * vph + layout._soc_off + s
+            chg_cols = hours * vph + layout._chg_off + s
+            dis_cols = hours * vph + layout._dis_off + s
+            rows = np.concatenate(
+                [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0], [0], [0]]
             )
-        )
+            cols = np.concatenate(
+                [
+                    soc_cols[1:],       # SOC[s,t]
+                    soc_cols[:-1],      # SOC[s,t-1]
+                    chg_cols[1:],       # Chg[s,t]
+                    dis_cols[1:],       # Dis[s,t]
+                    [soc_cols[0]],      # cyclic: SOC[s,0]
+                    [soc_cols[-1]],     # cyclic: SOC[s,T-1]
+                    [chg_cols[0]],      # cyclic: Chg[s,0]
+                    [dis_cols[0]],      # cyclic: Dis[s,0]
+                ]
+            )
+            data = np.concatenate(
+                [
+                    np.ones(T - 1),
+                    -np.ones(T - 1),
+                    np.full(T - 1, -eta_c[s]),
+                    np.full(T - 1, 1.0 / eta_d[s]),
+                    [1.0],
+                    [-1.0],
+                    [-eta_c[s]],
+                    [1.0 / eta_d[s]],
+                ]
+            )
+            soc_mats.append(
+                sp.coo_matrix(
+                    (data, (rows, cols)), shape=(T, layout.total_columns)
+                )
+            )
 
-    soc_block = sp.vstack(soc_mats, format="csr")
-    A = sp.vstack([energy_balance, soc_block], format="csr")
-    row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
-    return A, row_lower, row_lower.copy()
+        soc_block = sp.vstack(soc_mats, format="csr")
+        A = sp.vstack([energy_balance, soc_block], format="csr")
+        row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
+        row_upper = row_lower.copy()
+
+    # Optional RPS inequality: one annual row, clean generation must reach
+    # rps_target * total demand, with an infinite upper bound.
+    if rps_target is not None and rps_target > 0.0:
+        rps_row, rhs = _build_rps_row(layout, fleet, rps_target, demand)
+        A = sp.vstack([A, rps_row], format="csr")
+        row_lower = np.concatenate([row_lower, [rhs]])
+        row_upper = np.concatenate([row_upper, [np.inf]])
+
+    return A, row_lower, row_upper
 
 
 def build_variable_bounds(
@@ -498,6 +555,8 @@ class DispatchResult:
         solve_time: Seconds spent inside the solver.
         emissions: CO2 emissions per generator, shape ``(n_gen, T)``;
             ``None`` until populated by downstream emissions accounting.
+        rec_price: Dual of the annual RPS constraint in $/MWh -- the
+            implicit REC price. ``None`` when no RPS constraint was active.
     """
 
     dispatch: np.ndarray
@@ -515,6 +574,7 @@ class DispatchResult:
     build_time: float
     solve_time: float
     emissions: np.ndarray | None = None
+    rec_price: float | None = None
 
 
 def solve_dispatch(
@@ -538,6 +598,7 @@ def solve_dispatch(
     eta_dis: np.ndarray | float | None = None,
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
+    rps_target: float | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -572,6 +633,9 @@ def solve_dispatch(
             ``(n_zones, T)``. Negative under a production tax credit.
         solar_mc: Solar dispatch marginal cost in $/MWh; scalar or
             ``(n_zones, T)``.
+        rps_target: Required clean-energy share. When not ``None`` and
+            positive, an annual RPS constraint is enforced and its dual is
+            returned as ``DispatchResult.rec_price``.
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -609,6 +673,7 @@ def solve_dispatch(
         storage_zone_idx=storage_zone_idx,
         eta_chg=eta_chg,
         eta_dis=eta_dis,
+        rps_target=rps_target,
     )
     col_lower, col_upper = build_variable_bounds(
         layout,
@@ -631,6 +696,8 @@ def solve_dispatch(
     inf = highspy.kHighsInf
     col_upper = np.where(np.isinf(col_upper), inf, col_upper)
     col_lower = np.where(np.isinf(col_lower), -inf, col_lower)
+    row_upper = np.where(np.isinf(row_upper), inf, row_upper)
+    row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
 
     h = highspy.Highs()
     h.setOptionValue("output_flag", False)
@@ -699,6 +766,13 @@ def solve_dispatch(
     # for a minimization the equality dual is the zonal price (no negation).
     prices = row_dual[: n_zones * T].reshape(T, n_zones).T
 
+    # The RPS row, when present, is the final constraint row; its dual is
+    # the implicit REC price -- the marginal cost of raising the clean-
+    # energy floor by one MWh.
+    rec_price = None
+    if rps_target is not None and rps_target > 0.0:
+        rec_price = float(row_dual[-1])
+
     return DispatchResult(
         dispatch=dispatch,
         wind_dispatched=wind_dispatched,
@@ -714,4 +788,5 @@ def solve_dispatch(
         status=h.modelStatusToString(h.getModelStatus()),
         build_time=build_time,
         solve_time=solve_time,
+        rec_price=rec_price,
     )
