@@ -4,7 +4,31 @@ import unittest
 
 import numpy as np
 
-from market_sim.model.dispatch import VariableLayout, build_cost_vector
+from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+from market_sim.model.dispatch import (
+    VariableLayout,
+    _build_zone_gen_map,
+    build_constraints,
+    build_cost_vector,
+    build_variable_bounds,
+)
+
+
+def _make_fleet(zones_of_gens, zone_names, hours, pmax=100.0, pmin=10.0, eford=0.05):
+    """Build ``FleetArrays`` with one generator per entry of ``zones_of_gens``."""
+    generators = [
+        Generator(
+            unit_id=f"G{i}",
+            name=f"G{i}",
+            zone=z,
+            fuel_type="gas_cc",
+            pmax_mw=pmax,
+            pmin_mw=pmin,
+            eford=eford,
+        )
+        for i, z in enumerate(zones_of_gens)
+    ]
+    return generators_to_fleet_arrays(generators, zone_names, hours=hours)
 
 
 class TestVariableLayout(unittest.TestCase):
@@ -125,6 +149,166 @@ class TestBuildCostVector(unittest.TestCase):
         for l in range(2):  # l: transmission link index
             for t in range(layout.T):  # t: hour index
                 self.assertEqual(cost[layout.flow_col(l, t)], 0.0)
+
+
+class TestBuildZoneGenMap(unittest.TestCase):
+    """Tests for the sparse zone-membership matrix."""
+
+    def test_membership_entries(self):
+        fleet = _make_fleet(["Z0", "Z1", "Z1"], ["Z0", "Z1"], hours=4)
+        zone_gen = _build_zone_gen_map(fleet, n_zones=2)
+        self.assertEqual(zone_gen.shape, (2, 3))
+        np.testing.assert_array_equal(
+            zone_gen.toarray(), [[1.0, 0.0, 0.0], [0.0, 1.0, 1.0]]
+        )
+
+
+class TestBuildConstraints(unittest.TestCase):
+    """Tests for energy-balance and storage-SOC constraint assembly."""
+
+    def test_energy_balance_only_shape(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
+        demand = np.arange(24, dtype=float).reshape(1, 24)
+        A, row_lower, row_upper = build_constraints(layout, fleet, demand)
+        # vars_per_hour = 1 + 2*1 + 0 + 0 + 1 = 4.
+        self.assertEqual(layout.vars_per_hour, 4)
+        self.assertEqual(A.shape, (24, 24 * layout.vars_per_hour))
+        self.assertEqual(A.format, "csc")
+
+    def test_energy_balance_row_entries(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
+        demand = np.zeros((1, 24))
+        A, _, _ = build_constraints(layout, fleet, demand)
+        dense = A.toarray()
+        for t in range(layout.T):  # t: hour index
+            self.assertEqual(dense[t, layout.p_col(0, t)], 1.0)
+            self.assertEqual(dense[t, layout.w_col(0, t)], 1.0)
+            self.assertEqual(dense[t, layout.s_col(0, t)], 1.0)
+            self.assertEqual(dense[t, layout.slack_col(0, t)], 1.0)
+            # The balance row touches exactly those four columns.
+            self.assertEqual(int((dense[t] != 0).sum()), 4)
+
+    def test_multizone_balance_places_gens_in_their_zone(self):
+        layout = VariableLayout(n_gen=2, n_zones=2, n_storage=0, n_links=0, T=3)
+        fleet = _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=3)
+        demand = np.zeros((2, 3))
+        A, _, _ = build_constraints(layout, fleet, demand)
+        dense = A.toarray()
+        for t in range(layout.T):  # t: hour index
+            # Row for zone 0 holds gen 0; row for zone 1 holds gen 1.
+            self.assertEqual(dense[t * 2 + 0, layout.p_col(0, t)], 1.0)
+            self.assertEqual(dense[t * 2 + 0, layout.p_col(1, t)], 0.0)
+            self.assertEqual(dense[t * 2 + 1, layout.p_col(1, t)], 1.0)
+            self.assertEqual(dense[t * 2 + 1, layout.p_col(0, t)], 0.0)
+
+    def test_demand_appears_in_row_bounds(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
+        demand = np.arange(100.0, 124.0).reshape(1, 24)
+        _, row_lower, row_upper = build_constraints(layout, fleet, demand)
+        # Equality rows: lower == upper == demand, in hour order.
+        np.testing.assert_array_equal(row_lower, demand.ravel())
+        np.testing.assert_array_equal(row_upper, demand.ravel())
+
+    def test_storage_soc_rows_link_adjacent_hours(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=1, n_links=0, T=4)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=4)
+        demand = np.array([[10.0, 20.0, 30.0, 40.0]])
+        A, row_lower, row_upper = build_constraints(
+            layout, fleet, demand, storage_zone_idx=[0], eta_chg=0.9, eta_dis=0.8
+        )
+        # 4 energy-balance rows + 4 SOC rows (one per hour).
+        self.assertEqual(A.shape, (8, layout.total_columns))
+        dense = A.toarray()
+
+        # Dynamics row for hour 2 sits at global row 4 + 2.
+        r = 4 + 2
+        self.assertEqual(dense[r, layout.soc_col(0, 2)], 1.0)
+        self.assertEqual(dense[r, layout.soc_col(0, 1)], -1.0)
+        self.assertEqual(dense[r, layout.chg_col(0, 2)], -0.9)
+        self.assertAlmostEqual(dense[r, layout.dis_col(0, 2)], 1.0 / 0.8)
+
+        # Cyclic boundary row links the first and last hour.
+        self.assertEqual(dense[4, layout.soc_col(0, 0)], 1.0)
+        self.assertEqual(dense[4, layout.soc_col(0, 3)], -1.0)
+
+        # SOC rows are equalities with a zero RHS.
+        np.testing.assert_array_equal(row_lower[4:8], np.zeros(4))
+        np.testing.assert_array_equal(row_upper[4:8], np.zeros(4))
+
+    def test_incidence_enters_flow_columns(self):
+        layout = VariableLayout(n_gen=1, n_zones=2, n_storage=0, n_links=1, T=2)
+        fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=2)
+        demand = np.zeros((2, 2))
+        incidence = np.array([[1.0], [-1.0]])  # link injects to Z0, withdraws Z1
+        A, _, _ = build_constraints(layout, fleet, demand, incidence=incidence)
+        dense = A.toarray()
+        for t in range(layout.T):  # t: hour index
+            self.assertEqual(dense[t * 2 + 0, layout.flow_col(0, t)], 1.0)
+            self.assertEqual(dense[t * 2 + 1, layout.flow_col(0, t)], -1.0)
+
+
+class TestBuildVariableBounds(unittest.TestCase):
+    """Tests for decision-variable bound assembly."""
+
+    def test_generator_upper_is_pmax_times_availability(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=24, pmax=100.0, pmin=10.0, eford=0.05)
+        col_lower, col_upper = build_variable_bounds(
+            layout,
+            fleet,
+            wind_cf=np.full((1, 24), 0.3),
+            wind_cap=np.array([200.0]),
+            solar_cf=np.full((1, 24), 0.2),
+            solar_cap=np.array([150.0]),
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertAlmostEqual(col_upper[layout.p_col(0, t)], 100.0 * 0.95)
+            self.assertEqual(col_lower[layout.p_col(0, t)], 10.0)
+
+    def test_wind_and_solar_upper_are_cf_times_cap(self):
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
+        col_lower, col_upper = build_variable_bounds(
+            layout,
+            fleet,
+            wind_cf=np.full((1, 24), 0.3),
+            wind_cap=np.array([200.0]),
+            solar_cf=np.full((1, 24), 0.2),
+            solar_cap=np.array([150.0]),
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertAlmostEqual(col_upper[layout.w_col(0, t)], 0.3 * 200.0)
+            self.assertEqual(col_lower[layout.w_col(0, t)], 0.0)
+            self.assertAlmostEqual(col_upper[layout.s_col(0, t)], 0.2 * 150.0)
+            self.assertEqual(col_lower[layout.s_col(0, t)], 0.0)
+
+    def test_storage_and_flow_and_slack_bounds(self):
+        layout = VariableLayout(n_gen=1, n_zones=2, n_storage=1, n_links=1, T=5)
+        fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=5)
+        col_lower, col_upper = build_variable_bounds(
+            layout,
+            fleet,
+            wind_cf=np.full((2, 5), 0.4),
+            wind_cap=np.array([10.0, 20.0]),
+            solar_cf=np.full((2, 5), 0.1),
+            solar_cap=np.array([30.0, 40.0]),
+            storage_power_cap=np.array([50.0]),
+            storage_energy_cap=np.array([200.0]),
+            ttc=np.array([300.0]),
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertEqual(col_upper[layout.chg_col(0, t)], 50.0)
+            self.assertEqual(col_upper[layout.dis_col(0, t)], 50.0)
+            self.assertEqual(col_lower[layout.chg_col(0, t)], 0.0)
+            self.assertEqual(col_upper[layout.soc_col(0, t)], 200.0)
+            self.assertEqual(col_lower[layout.flow_col(0, t)], -300.0)
+            self.assertEqual(col_upper[layout.flow_col(0, t)], 300.0)
+            for z in range(2):  # z: zone index
+                self.assertEqual(col_lower[layout.slack_col(z, t)], 0.0)
+                self.assertTrue(np.isinf(col_upper[layout.slack_col(z, t)]))
 
 
 if __name__ == "__main__":
