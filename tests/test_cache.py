@@ -1,15 +1,17 @@
 """Tests for results caching and Parquet round-tripping."""
 
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
 import numpy as np
+import pyarrow as pa
 
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import DispatchResult
-from market_sim.results import cache
+from market_sim.results import cache, outputs
 from market_sim.results.outputs import FleetContext
 
 
@@ -238,6 +240,96 @@ class TestMissingResult(CacheTestBase):
         missing = Path(self._tmp.name) / "nope.parquet"
         with self.assertRaises(FileNotFoundError):
             DispatchResult.from_parquet(missing)
+
+
+def _legacy_list_column(array: np.ndarray) -> pa.Array:
+    """The pre-optimization ``_list_column``: round-trips through Python.
+
+    Used to write a Parquet file the old way so the new read path can be
+    checked for backward compatibility.
+    """
+    by_hour = np.asarray(array, dtype=float).T
+    return pa.array(by_hour.tolist(), type=pa.list_(pa.float64()))
+
+
+class TestParquetSerialization(unittest.TestCase):
+    """The zero-copy Parquet path round-trips and reads legacy files."""
+
+    def test_round_trip_recovers_all_arrays(self):
+        result = _make_result()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "result.parquet"
+            result.to_parquet(path)
+            loaded = DispatchResult.from_parquet(path)
+        _assert_results_match(self, result, loaded)
+        for field in ("dispatch", "prices", "storage_soc", "flows", "emissions"):
+            exp, act = getattr(result, field), getattr(loaded, field)
+            self.assertEqual(exp.shape, act.shape, f"{field} shape differs")
+            self.assertTrue(np.allclose(exp, act), f"{field} values differ")
+
+    def test_reads_file_written_by_legacy_serializer(self):
+        """A Parquet file written with the old ``.tolist()`` path still loads.
+
+        The on-disk ``list<float64>`` schema is unchanged, so the new
+        zero-copy read path must reconstruct legacy files identically.
+        """
+        result = _make_result()
+        original = outputs._list_column
+        outputs._list_column = _legacy_list_column
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "legacy.parquet"
+                result.to_parquet(path)
+                loaded = DispatchResult.from_parquet(path)
+        finally:
+            outputs._list_column = original
+        _assert_results_match(self, result, loaded)
+
+
+class TestParquetBenchmark(unittest.TestCase):
+    """Micro-benchmark: a year-scale result must serialize quickly."""
+
+    def test_to_and_from_parquet_under_two_seconds(self):
+        # dispatch/emissions are sized per the task (200, 8760); zones,
+        # storage and links use realistic ISO-scale widths.
+        n_gen, n_zones, n_storage, n_links, T = 200, 8, 8, 12, 8760
+        rng = np.random.default_rng(7)
+        result = DispatchResult(
+            dispatch=rng.random((n_gen, T)) * 100.0,
+            wind_dispatched=rng.random((n_zones, T)) * 50.0,
+            solar_dispatched=rng.random((n_zones, T)) * 40.0,
+            slack=rng.random((n_zones, T)),
+            dump=rng.random((n_zones, T)) * 0.01,
+            prices=rng.random((n_zones, T)) * 80.0 - 10.0,
+            storage_charge=rng.random((n_storage, T)),
+            storage_discharge=rng.random((n_storage, T)),
+            storage_soc=rng.random((n_storage, T)),
+            flows=rng.random((n_links, T)) * 200.0 - 100.0,
+            objective_value=1.0,
+            status="Optimal",
+            build_time=1.0,
+            solve_time=1.0,
+            emissions=rng.random((n_gen, T)) * 30.0,
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bench.parquet"
+
+            start = time.perf_counter()
+            result.to_parquet(path)
+            write_s = time.perf_counter() - start
+
+            start = time.perf_counter()
+            loaded = DispatchResult.from_parquet(path)
+            read_s = time.perf_counter() - start
+
+        print(
+            f"\n[benchmark] dispatch shape {result.dispatch.shape}: "
+            f"to_parquet={write_s:.3f}s from_parquet={read_s:.3f}s"
+        )
+        self.assertTrue(np.allclose(result.dispatch, loaded.dispatch))
+        self.assertLess(write_s, 2.0, f"to_parquet too slow: {write_s:.3f}s")
+        self.assertLess(read_s, 2.0, f"from_parquet too slow: {read_s:.3f}s")
 
 
 if __name__ == "__main__":

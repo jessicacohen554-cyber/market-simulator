@@ -118,10 +118,17 @@ def _list_column(array: np.ndarray) -> pa.Array:
     """Return a ``list<float64>`` column holding one row per hour.
 
     ``array`` has shape ``(n_entity, T)``; the transpose gives, per hour,
-    the vector across entities that becomes a single list cell.
+    the vector across entities that becomes a single list cell. The
+    PyArrow column is built directly from the contiguous buffer, so no
+    temporary Python float objects are materialized.
     """
-    by_hour = np.asarray(array, dtype=float).T
-    return pa.array(by_hour.tolist(), type=pa.list_(pa.float64()))
+    arr = np.ascontiguousarray(np.asarray(array).T, dtype=np.float64)
+    T, n_entity = arr.shape
+    flat = pa.array(arr.ravel(), type=pa.float64())
+    offsets = pa.array(
+        np.arange(0, (T + 1) * n_entity, n_entity, dtype=np.int32)
+    )
+    return pa.ListArray.from_arrays(offsets, flat)
 
 
 def to_parquet(
@@ -221,8 +228,16 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
     meta = json.loads(raw_meta)
 
     def array(col_name: str) -> np.ndarray:
-        """Return the ``(n_entity, T)`` array stored under ``col_name``."""
-        return np.array(table.column(col_name).to_pylist(), dtype=float).T
+        """Return the ``(n_entity, T)`` array stored under ``col_name``.
+
+        The list column's values buffer is read straight into NumPy, so
+        no temporary Python float objects are materialized.
+        """
+        col = table.column(col_name)
+        flat = col.combine_chunks().values.to_numpy(zero_copy_only=False)
+        n_entity = len(col[0].as_py())
+        T_actual = len(col)
+        return flat.reshape(T_actual, n_entity).T
 
     has_storage = meta["has_storage"]
     has_flows = meta["has_flows"]
