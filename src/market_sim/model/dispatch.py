@@ -402,47 +402,67 @@ def build_constraints(
             (n_storage,),
         )
 
-        hours = np.arange(T)  # t: hour index
-        dyn_rows = np.arange(1, T)  # dynamics rows cover hours 1..T-1
-        soc_mats = []
-        for s in range(n_storage):  # s: storage unit index
-            soc_cols = hours * vph + layout._soc_off + s
-            chg_cols = hours * vph + layout._chg_off + s
-            dis_cols = hours * vph + layout._dis_off + s
-            rows = np.concatenate(
-                [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0], [0], [0]]
-            )
-            cols = np.concatenate(
-                [
-                    soc_cols[1:],       # SOC[s,t]
-                    soc_cols[:-1],      # SOC[s,t-1]
-                    chg_cols[1:],       # Chg[s,t]
-                    dis_cols[1:],       # Dis[s,t]
-                    [soc_cols[0]],      # cyclic: SOC[s,0]
-                    [soc_cols[-1]],     # cyclic: SOC[s,T-1]
-                    [chg_cols[0]],      # cyclic: Chg[s,0]
-                    [dis_cols[0]],      # cyclic: Dis[s,0]
-                ]
-            )
-            data = np.concatenate(
-                [
-                    np.ones(T - 1),
-                    -np.ones(T - 1),
-                    np.full(T - 1, -eta_c[s]),
-                    np.full(T - 1, 1.0 / eta_d[s]),
-                    [1.0],
-                    [-1.0],
-                    [-eta_c[s]],
-                    [1.0 / eta_d[s]],
-                ]
-            )
-            soc_mats.append(
-                sp.coo_matrix(
-                    (data, (rows, cols)), shape=(T, layout.total_columns)
-                )
-            )
+        # Build every storage unit's SOC rows in one sparse construction.
+        # Unit s occupies rows s*T .. (s+1)*T-1 of the combined block; its
+        # T rows hold the dynamics for hours 1..T-1 plus the cyclic hour 0.
+        units = np.arange(n_storage)  # s: storage unit index
+        hour_off = np.arange(T) * vph  # per-hour column stride, (T,)
 
-        soc_block = sp.vstack(soc_mats, format="csr")
+        # Column indices per variable type, for all units: (n_storage, T).
+        all_soc_cols = hour_off[None, :] + layout._soc_off + units[:, None]
+        all_chg_cols = hour_off[None, :] + layout._chg_off + units[:, None]
+        all_dis_cols = hour_off[None, :] + layout._dis_off + units[:, None]
+
+        # Row indices: dynamics rows are local hours 1..T-1, the cyclic row
+        # is local hour 0, both shifted by unit s's row offset s*T.
+        dyn_rows = units[:, None] * T + np.arange(1, T)[None, :]  # (n_storage, T-1)
+        cyc_rows = units * T  # (n_storage,)
+
+        neg_eta_c = -eta_c
+        inv_eta_d = 1.0 / eta_d
+        ones_dyn = np.ones(n_storage * (T - 1))
+
+        all_rows = np.concatenate(
+            [
+                dyn_rows.ravel(),  # SOC[s,t]
+                dyn_rows.ravel(),  # SOC[s,t-1]
+                dyn_rows.ravel(),  # Chg[s,t]
+                dyn_rows.ravel(),  # Dis[s,t]
+                cyc_rows,          # cyclic: SOC[s,0]
+                cyc_rows,          # cyclic: SOC[s,T-1]
+                cyc_rows,          # cyclic: Chg[s,0]
+                cyc_rows,          # cyclic: Dis[s,0]
+            ]
+        )
+        all_cols = np.concatenate(
+            [
+                all_soc_cols[:, 1:].ravel(),   # SOC[s,t]
+                all_soc_cols[:, :-1].ravel(),  # SOC[s,t-1]
+                all_chg_cols[:, 1:].ravel(),   # Chg[s,t]
+                all_dis_cols[:, 1:].ravel(),   # Dis[s,t]
+                all_soc_cols[:, 0],            # cyclic: SOC[s,0]
+                all_soc_cols[:, -1],           # cyclic: SOC[s,T-1]
+                all_chg_cols[:, 0],            # cyclic: Chg[s,0]
+                all_dis_cols[:, 0],            # cyclic: Dis[s,0]
+            ]
+        )
+        all_data = np.concatenate(
+            [
+                ones_dyn,
+                -ones_dyn,
+                np.broadcast_to(neg_eta_c[:, None], (n_storage, T - 1)).ravel(),
+                np.broadcast_to(inv_eta_d[:, None], (n_storage, T - 1)).ravel(),
+                np.ones(n_storage),
+                -np.ones(n_storage),
+                neg_eta_c,
+                inv_eta_d,
+            ]
+        )
+
+        soc_block = sp.coo_matrix(
+            (all_data, (all_rows, all_cols)),
+            shape=(n_storage * T, layout.total_columns),
+        ).tocsr()
         A = sp.vstack([energy_balance, soc_block], format="csr")
         row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
         row_upper = row_lower.copy()
