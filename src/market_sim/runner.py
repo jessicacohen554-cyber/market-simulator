@@ -43,6 +43,7 @@ from market_sim.model.transmission import (
 )
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.ira import compute_dispatch_credits
+from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.outputs import FleetContext
 
@@ -121,9 +122,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # back to the deterministic synthetic fleet inside the loader.
             fleet = load_fleet_from_csv(iso, iso_config)
         else:
+            # The RPS shadow price from the prior year's dispatch raises the
+            # expected revenue of clean technologies in the new-entry screen.
+            rec_price = 0.0
+            if prior_results is not None and prior_results.get("rec_price"):
+                rec_price = prior_results["rec_price"]
             fleet, loss_tracker, renewable_additions = evolve_fleet(
                 fleet, prior_results, year, config, loss_tracker,
-                renewable_cap_mw=float(wind_cap.sum() + solar_cap.sum()),
+                rec_price=rec_price,
             )
             # New wind/solar grow the zonal capacity pools that bound the
             # W[z,t] and S[z,t] dispatch variables -- they are not added as
@@ -162,6 +168,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             mc = assemble_mc(
                 fleet_arrays, fuel_prices, carbon_price, config.nox_price
             )
+            # The RPS is enforced as an LP constraint when enabled; its dual
+            # is the implicit REC price returned in the dispatch result.
+            rps_target = None
+            if config.rps_enabled:
+                rps_target = get_rps_target(iso, year)
             result = solve_dispatch(
                 fleet_arrays,
                 year_demand,
@@ -180,6 +191,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 eta_dis=storage.eta_dis,
                 wind_mc=wind_mc,
                 solar_mc=solar_mc,
+                rps_target=rps_target,
                 T=config.hours,
             )
             context = FleetContext.from_arrays(
@@ -198,6 +210,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "prices": result.prices,
             "peak_demand": peak_demand,
             "planned_additions": [],
+            "rec_price": result.rec_price or 0.0,
         }
 
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
