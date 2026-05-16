@@ -14,18 +14,21 @@
 
 For a single ISO, single year (8,760 hours):
 
-|Variable    |Dimensions        |Description           |
-|------------|------------------|----------------------|
-|`P[g,t]`    |generators × hours|Thermal dispatch (MW) |
-|`W[z,t]`    |zones × hours     |Wind dispatched (MW)  |
-|`S[z,t]`    |zones × hours     |Solar dispatched (MW) |
-|`Chg[s,t]`  |storage × hours   |Storage charge (MW)   |
-|`Dis[s,t]`  |storage × hours   |Storage discharge (MW)|
-|`SOC[s,t]`  |storage × hours   |State of charge (MWh) |
-|`Flow[l,t]` |links × hours     |Transmission flow (MW)|
-|`Slack[z,t]`|zones × hours     |Unserved energy (MW)  |
+|Variable    |Dimensions        |Description                 |
+|------------|------------------|----------------------------|
+|`P[g,t]`    |generators × hours|Thermal dispatch (MW)       |
+|`W[z,t]`    |zones × hours     |Wind dispatched (MW)        |
+|`S[z,t]`    |zones × hours     |Solar dispatched (MW)       |
+|`Chg[s,t]`  |storage × hours   |Storage charge (MW)         |
+|`Dis[s,t]`  |storage × hours   |Storage discharge (MW)      |
+|`SOC[s,t]`  |storage × hours   |State of charge (MWh)       |
+|`Flow[l,t]` |links × hours     |Transmission flow (MW)      |
+|`Slack[z,t]`|zones × hours     |Unserved energy (MW)        |
+|`Dump[z,t]` |zones × hours     |Overgeneration absorbed (MW)|
 
 Renewables are **decision variables on the LHS of the energy balance**, not netted from demand. This is critical — the LP decides how much renewable generation to dispatch. Curtailment = potential minus dispatched.
+
+The dump variable absorbs overgeneration in hours where minimum generation (must-run nuclear with `Pmin > 0`, storage mid-discharge) exceeds demand. With negative-MC renewables (e.g., wind receiving PTC production credits), the LP could otherwise face infeasibility or game production credits by overproducing credited energy just to collect the subsidy on curtailed power. The dump variable makes the LP always feasible and its cost structure prevents credit gaming.
 
 ### 1.2 Objective Function
 
@@ -36,9 +39,12 @@ min  Σ_g Σ_t  mc[g,t] × P[g,t]
    + Σ_z Σ_t  0 × W[z,t]  +  0 × S[z,t]        # zero marginal cost
    + Σ_s Σ_t  ε × (Chg[s,t] + Dis[s,t])          # small tiebreaker to avoid degeneracy
    + Σ_z Σ_t  VOLL[z] × Slack[z,t]
+   + Σ_z Σ_t  dump_cost × Dump[z,t]
 ```
 
 Where `mc[g,t] = heat_rate[g] × fuel_price[g,t] + vom[g] + emission_rate[g] × carbon_price[t] + nox_rate[g] × nox_price[t] + <other adders>`
+
+`dump_cost = max(ε, -min(wind_mc, solar_mc) + ε)`. When renewables have zero MC, dump_cost = ε (negligible). When renewables have negative MC (e.g., wind with PTC = -$26/MWh), dump_cost = $26.001/MWh — just above the absolute value of the production credit. This ensures the LP never profits from overproducing credited renewables into the dump.
 
 The marginal cost vector is assembled from parameters. Every cost component is a named parameter (Tier 1 or Tier 2). No hardcoded values in the cost calculation.
 
@@ -51,7 +57,7 @@ Storage tiebreaker `ε` = 0.001 $/MWh. Prevents degenerate solutions where the s
 ```
 Σ_{g∈z} P[g,t] + W[z,t] + S[z,t] + Σ_{s∈z} Dis[s,t] - Σ_{s∈z} Chg[s,t]
   + Σ_{imports to z} Flow[l,t] - Σ_{exports from z} Flow[l,t]
-  + Slack[z,t]
+  + Slack[z,t] - Dump[z,t]
   = Demand[z,t]
 ```
 
@@ -100,7 +106,7 @@ CAISO: single zone + WECC import/export node modeled as **pseudo-generators on a
 - Export: allow CAISO to push power to the import node at a cost of zero or small negative (represents dumping surplus solar).
 - Aggregate limit: ~12–15 GW import, ~5 GW export. Derive from EIA-930 interchange data.
 
-**Non-negativity:** All dispatch, charge, discharge, slack, SOC ≥ 0. Flows can be negative (bidirectional) or modeled as two non-negative variables per link.
+**Non-negativity:** All dispatch, charge, discharge, slack, dump, SOC ≥ 0. Flows can be negative (bidirectional) or modeled as two non-negative variables per link.
 
 ### 1.4 Policy Constraint Extension Point
 
@@ -173,10 +179,11 @@ def build_lp(fleet_arrays, demand, wind_cf, solar_cf, storage, transmission, par
     # SOC[s,t]: n_storage × T       (state of charge)
     # Flow[l,t]: n_links × T        (transmission)
     # Slack[z,t]: n_zones × T       (unserved energy)
+    # Dump[z,t]: n_zones × T        (overgeneration absorbed)
     #
-    # Total columns = T × (n_gen + 2*n_zones + 3*n_storage + n_links + n_zones)
+    # Total columns = T × (n_gen + 4*n_zones + 3*n_storage + n_links)
 
-    vars_per_hour = n_gen + 2*n_zones + 3*n_storage + n_links + n_zones
+    vars_per_hour = n_gen + 4*n_zones + 3*n_storage + n_links
 
     # --- Cost vector (objective) ---
     # Assemble as a flat array. mc[g,t] varies by hour (fuel price changes).
@@ -296,7 +303,7 @@ Examples: weather year, ISO selection, zone topology, hourly resolution, VOLL by
 
 **Tier 1 — Scenario levers.** The parameters varied across runs. Define the uncertainty space.
 
-Examples: gas price path, carbon price trajectory, NOx price, demand growth rate, renewable buildout pace, storage deployment schedule, retirement aggressiveness.
+Examples: gas price path, carbon price trajectory, NOx price, demand growth rate, renewable buildout pace, storage deployment schedule, storage growth rate, retirement aggressiveness.
 
 **Tier 2 — Expert/sensitivity.** Changeable but normally held at defaults.
 
@@ -417,7 +424,7 @@ Fleet evolves year-over-year within a scenario. Year N+1’s fleet depends on Ye
 For year in 2026..2050:
     1. Start with fleet from prior year (or base fleet for 2026)
     2. Apply known retirements (EIA-860 announced)
-    3. Apply economic retirement screen (uses Year N-1 results)
+    3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results)
     4. Apply known additions (EIA-860 under construction, signed PPAs)
     5. Apply economic new entry screen (LCOE vs expected revenue)
     6. Apply policy-mandated builds (RPS compliance)
@@ -426,11 +433,22 @@ For year in 2026..2050:
 
 ### 5.2 Economic Retirement
 
-A unit retires if its **net revenue < going-forward cost** for N consecutive years (N = configurable, default 2, Tier 2 parameter).
+A unit retires if its **net revenue < going-forward cost** for N consecutive years, where N varies by fuel type:
+
+- **Coal:** 1 consecutive loss year (faster exit — reflects regulatory risk and carbon liability)
+- **Gas CT:** 2 consecutive loss years
+- **Gas CC:** 3 consecutive loss years (most patient — higher capital sunk, longer expected life)
+
+Revenue and cost definitions:
 
 - Net revenue = `Σ_t price[z,t] × dispatch[g,t]` (from prior year’s LP results)
-- Going-forward cost = fixed O&M + fuel contract obligations (not capital — sunk cost)
+- Going-forward cost = fixed O&M × FOM multiplier (not capital — sunk cost)
+- FOM multipliers: coal = 1.3× (captures regulatory risk, carbon liability, ESG pressure), gas = 1.0×
 - Retirement ordering: within each fuel class, least efficient (highest heat rate) retires first
+
+**Reliability floor:** Thermal capacity cannot fall below `(peak_demand - firm_clean) × (1 + reserve_margin)`, where `reserve_margin` defaults to 15% (Tier 2 parameter) and `firm_clean = nuclear + hydro capacity`. If economic retirements would breach the floor, the most efficient units are retained.
+
+**Design note:** Sigmoid retirement was considered and rejected in favor of fully economic retirement with fuel-type-aware thresholds. The economic approach is more transparent — every retirement is traceable to a revenue shortfall — and avoids the arbitrary sigmoid midpoint parameter. The coal FOM multiplier (1.3×) captures the non-economic pressures (regulatory risk, ESG) that the sigmoid was designed to model.
 
 ### 5.3 Economic New Entry
 
@@ -445,6 +463,12 @@ Screen by technology: if `expected_revenue > LCOE`, the technology is economic f
 ### 5.4 Known Pipeline
 
 EIA-860 provides: units under construction (with expected online date), announced retirements (with expected date). These are deterministic — they happen regardless of economics. Transition point from known to modeled: ~2030 for near-term pipeline, model takes over for years beyond the data horizon.
+
+### 5.5 Storage Growth
+
+Storage capacity grows annually from a base-year deployment level at a pace-dependent compound growth rate. The base capacity and growth rate are both scenario parameters (Tier 1). Storage technology mix shares are held fixed; only total deployed MW evolves. Total storage is capped at 50% of peak demand to prevent runaway growth in high-price scenarios.
+
+The storage fleet for each year is rebuilt from the growth trajectory — it does not go through the economic new entry screen. This is a deliberate simplification: battery storage deployment is driven by policy mandates, utility procurement, and developer pipelines that don’t respond to a single year’s price signal the way thermal entry does.
 
 -----
 
