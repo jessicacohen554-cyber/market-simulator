@@ -39,6 +39,7 @@ from market_sim.config.constants import (
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
     QUEUE_CAP_GW,
+    QUEUE_CAP_PER_TECH_GW,
     VOM,
     WRIGHT_REFERENCE_GW,
 )
@@ -392,22 +393,30 @@ def apply_economic_new_entry(
 
     For each candidate technology the expected annual revenue per MW is
     compared with its annualized levelized cost. Profitable technologies
-    are ranked by margin and built in priority order, drawing on a shared
-    annual interconnection-queue budget (:data:`QUEUE_CAP_GW`); the
-    highest-margin technology consumes the queue first.
+    are ranked by margin and built in priority order, highest margin
+    first. Two caps bind independently:
+
+    * each technology builds at most its per-tech cap from
+      :data:`QUEUE_CAP_PER_TECH_GW`, and
+    * the total across all technologies builds at most the ISO-level
+      cap :data:`QUEUE_CAP_GW`.
+
+    The highest-margin technology draws on the shared ISO budget first;
+    once that budget is exhausted no further technologies are built.
 
     Args:
         fleet: The current generator fleet.
         prices: Hourly zonal energy prices in $/MWh from the prior solve.
         year: Simulation year.
         config: Scenario config.
-        iso: ISO identifier, supplying the queue cap and build zone.
+        iso: ISO identifier, supplying the queue caps and build zone.
 
     Returns:
         A new list with the entering generators appended.
     """
     iso_config = get_iso_config(iso)
     queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
+    per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW.get(iso_config.name, {})
     zone = max(iso_config.zones, key=lambda z: z.load_share).name
 
     margins: list[tuple[float, str]] = []
@@ -427,7 +436,12 @@ def apply_economic_new_entry(
     for seq, (_, tech) in enumerate(margins):
         if remaining <= 0.0:
             break
-        build_mw = remaining  # priority order: top margin takes the queue
+        # Each tech is capped by its own queue limit and by what is left
+        # of the shared ISO budget; both caps bind independently.
+        tech_cap_mw = per_tech_cap_gw.get(tech, 0.0) * 1000.0
+        build_mw = min(tech_cap_mw, remaining)
+        if build_mw <= 0.0:
+            continue
         remaining -= build_mw
         new_fleet.append(_make_new_generator(tech, build_mw, zone, year, seq))
 
