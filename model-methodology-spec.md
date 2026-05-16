@@ -303,7 +303,9 @@ Examples: weather year, ISO selection, zone topology, hourly resolution, VOLL by
 
 **Tier 1 — Scenario levers.** The parameters varied across runs. Define the uncertainty space.
 
-Examples: gas price path, carbon price trajectory, NOx price, demand growth rate, renewable buildout pace, storage deployment schedule, storage growth rate, retirement aggressiveness.
+Examples: gas price path, carbon price trajectory, NOx price, demand growth rate, renewable buildout pace, storage deployment, retirement aggressiveness.
+
+`storage_deployment` sets the base-year (2026) storage fleet size. Subsequent years grow via economic screening.
 
 **Tier 2 — Expert/sensitivity.** Changeable but normally held at defaults.
 
@@ -469,6 +471,17 @@ EIA-860 provides: units under construction (with expected online date), announce
 Storage capacity grows annually from a base-year deployment level at a pace-dependent compound growth rate. The base capacity and growth rate are both scenario parameters (Tier 1). Storage technology mix shares are held fixed; only total deployed MW evolves. Total storage is capped at 50% of peak demand to prevent runaway growth in high-price scenarios.
 
 The storage fleet for each year is rebuilt from the growth trajectory — it does not go through the economic new entry screen. This is a deliberate simplification: battery storage deployment is driven by policy mandates, utility procurement, and developer pipelines that don’t respond to a single year’s price signal the way thermal entry does.
+
+### 5.6 Storage New Entry
+
+Storage enters via economics-based screening. For each technology,
+expected arbitrage revenue from the prior year's price profile is
+compared against annualized cost (capex × CRF + FOM, with IRA ITC).
+Revenue = Σ_days max(0, discharge_avg - charge_avg/RTE) × duration.
+Profitable techs ranked by margin, built highest-margin first,
+subject to annual build cap and cumulative ceiling per ISO. Base-year
+fleet set by storage_deployment parameter; all subsequent growth
+is endogenous.
 
 -----
 
