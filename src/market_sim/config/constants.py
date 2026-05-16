@@ -231,6 +231,25 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
     "li_ion": 90.0,   # IRENA 2024 — global installed li-ion grid storage
 }
 
+# CAISO WECC import supply curve tranches: (name, capacity MW, marginal cost $/MWh).
+# Ordered cheapest first. Represents the aggregate WECC supply available to CAISO.
+# TODO: fit from EIA-930 interchange data. Current values are hand-set placeholders.
+# Source: placeholder pending EIA-930 calibration.
+WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = [
+    ("PNW_hydro", 3000.0, 15.0),      # Pacific NW hydro — cheap but limited
+    ("DSW_CCGT", 5000.0, 35.0),        # Desert SW combined-cycle gas
+    ("DSW_CT", 4000.0, 55.0),          # Desert SW combustion turbine
+    ("Expensive_import", 3000.0, 80.0), # High-cost marginal import
+]
+
+# CAISO export capability to WECC (MW).
+# Source: placeholder pending EIA-930 calibration.
+WECC_EXPORT_CAP_MW: float = 5000.0
+
+# WECC import tranche forced outage rate.
+# Source: NERC GADS — representative availability for out-of-state imports.
+WECC_IMPORT_EFORD: float = 0.02
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760
