@@ -222,9 +222,11 @@ def build_constraints(
       per-hour pattern is identical across hours, so a single sparse block
       is replicated with ``scipy.sparse.kron`` -- no Python loop over hours.
     * **Storage SOC dynamics** -- ``T`` rows per storage unit (only when
-      storage is present). Hours ``1..T-1`` enforce
-      ``SOC[s,t] - SOC[s,t-1] - eta_chg*Chg[s,t] + Dis[s,t]/eta_dis = 0``
-      and hour ``0`` enforces the cyclic boundary ``SOC[s,0] = SOC[s,T-1]``.
+      storage is present). Every hour ``t`` enforces
+      ``SOC[s,t] - SOC[s,t-1] - eta_chg*Chg[s,t] + Dis[s,t]/eta_dis = 0``;
+      hour ``0`` takes ``t-1`` to be the final hour ``T-1`` so the SOC
+      trajectory is a closed cycle and hour ``0``'s charge/discharge are
+      bound by the same dynamics as every other hour.
 
     Args:
         layout: Variable layout describing the column structure.
@@ -302,7 +304,7 @@ def build_constraints(
         chg_cols = hours * vph + layout._chg_off + s
         dis_cols = hours * vph + layout._dis_off + s
         rows = np.concatenate(
-            [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0]]
+            [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0], [0], [0]]
         )
         cols = np.concatenate(
             [
@@ -312,6 +314,8 @@ def build_constraints(
                 dis_cols[1:],       # Dis[s,t]
                 [soc_cols[0]],      # cyclic: SOC[s,0]
                 [soc_cols[-1]],     # cyclic: SOC[s,T-1]
+                [chg_cols[0]],      # cyclic: Chg[s,0]
+                [dis_cols[0]],      # cyclic: Dis[s,0]
             ]
         )
         data = np.concatenate(
@@ -322,6 +326,8 @@ def build_constraints(
                 np.full(T - 1, 1.0 / eta_d[s]),
                 [1.0],
                 [-1.0],
+                [-eta_c[s]],
+                [1.0 / eta_d[s]],
             ]
         )
         soc_mats.append(
