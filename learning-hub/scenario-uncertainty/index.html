@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenario Uncertainty · Fan Charts — The 8,760 Problem</title>
+<meta name="description" content="A scrollytelling explainer: how scenario uncertainty compounds over 2026–2050 — toggle gas price, carbon price, demand growth and renewable pace to rebuild the P10/P50/P90 fan.">
+
+<!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Shared scrollytell engine styles + design tokens -->
+<link rel="stylesheet" href="../shared/scrollytell.css">
+
+<!-- D3.js — the only external dependency -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+    /* Theme this story amber to match the "Scenarios" card in the hub */
+    :root {
+        --sc-accent:        #D97706;
+        --sc-accent-deep:   #B45309;
+        --sc-accent-soft:   rgba(217, 119, 6, 0.12);
+        --sc-accent-border: rgba(217, 119, 6, 0.45);
+
+        --dim-gas:    #EA580C;
+        --dim-carbon: #475569;
+        --dim-demand: #7C3AED;
+        --dim-ren:    #16A34A;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-body);
+        background: var(--sc-bg);
+        color: var(--sc-text);
+        line-height: 1.7;
+        min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    /* ---------- Top bar ---------- */
+    .hub-nav {
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hub-nav span {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .hub-nav span b { color: var(--sc-accent); font-weight: 800; }
+    .hub-nav a.back {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+    }
+    .hub-nav a.back:hover { color: var(--sc-accent); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        background: linear-gradient(160deg, var(--sc-navy) 0%, var(--sc-navy-dark) 100%);
+        color: #fff;
+        padding: 64px 24px 72px;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero .eyebrow {
+        font-family: var(--font-heading);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sc-accent);
+        margin-bottom: 14px;
+    }
+    .hero h1 {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        line-height: 1.12;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .hero p .accent { color: var(--sc-accent); font-weight: 600; }
+    .scroll-cue {
+        margin-top: 30px;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+    }
+    .scroll-cue::after { content: " ↓"; }
+
+    /* ---------- Scrolly section ---------- */
+    .story-wrap { padding: 56px 0 40px; }
+
+    .chart { display: none; }
+    .chart.is-visible { display: block; }
+
+    .chart-head {
+        font-family: var(--font-heading);
+        margin-bottom: 6px;
+    }
+    .chart-head .kicker {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sc-accent-deep);
+        margin-bottom: 4px;
+    }
+    .chart-head .title {
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--sc-navy);
+    }
+
+    .chart svg text { font-family: var(--font-body); }
+    .ax-label  { fill: var(--sc-text-muted); font-size: 12px; }
+    .ax-tick   { fill: #94A3B8; font-size: 11px; }
+    .grid-line { stroke: var(--sc-border-soft); stroke-width: 1; }
+    .axis-line { stroke: var(--sc-border); stroke-width: 1.5; }
+    .bar-cap   { font-size: 11px; font-weight: 600; }
+
+    /* ---------- Dimension toggles ---------- */
+    .dim-toggles {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 14px;
+    }
+    .dim-toggle {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-align: center;
+        padding: 9px 6px;
+        border-radius: var(--sc-radius-sm);
+        border: 1.5px solid var(--sc-border);
+        background: var(--sc-card);
+        color: var(--sc-text-muted);
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+    }
+    .dim-toggle .dim-state {
+        display: block;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin-top: 2px;
+        opacity: 0.7;
+    }
+    .dim-toggle.on {
+        color: #fff;
+        border-color: var(--dc);
+        background: var(--dc);
+        box-shadow: var(--sc-shadow);
+    }
+    .dim-toggle:focus-visible { outline: 2px solid var(--sc-accent); }
+
+    .readout-row { display: flex; gap: 10px; margin-top: 12px; }
+    .readout {
+        flex: 1;
+        background: var(--sc-bg);
+        border: 1px solid var(--sc-border-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 10px;
+        text-align: center;
+    }
+    .readout.hot { border-color: var(--sc-accent-border); background: var(--sc-accent-soft); }
+    .readout .r-num {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--sc-navy);
+        display: block;
+    }
+    .readout .r-lab {
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--sc-text-muted);
+    }
+
+    .chart-note {
+        margin-top: 12px;
+        font-size: 0.82rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-accent-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 12px;
+        line-height: 1.55;
+    }
+    .chart-note b { color: var(--sc-accent-deep); }
+
+    /* ---------- Footer ---------- */
+    .hub-footer {
+        border-top: 1px solid var(--sc-border);
+        padding: 28px 24px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-card);
+    }
+    .hub-footer a { color: var(--sc-accent-deep); font-weight: 600; }
+
+    @media (max-width: 820px) {
+        .dim-toggles { grid-template-columns: repeat(2, 1fr); }
+        .readout-row { flex-wrap: wrap; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="hub-nav">
+    <a class="back" href="../index.html">&larr; Hub</a>
+    <span>Scenario Uncertainty · <b>05</b></span>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div class="eyebrow">The 8,760 Problem · Story 05</div>
+        <h1>The forecast is a fan,<br>not a line</h1>
+        <p>
+            Run the model to <span class="accent">2050</span> and the honest answer is
+            not a single price &mdash; it is a <span class="accent">range</span>. Gas
+            prices, carbon policy, demand growth and the pace of renewables are each
+            uncertain, and that uncertainty <span class="accent">compounds</span> with
+            every year. Scroll to build the fan, one source of doubt at a time.
+        </p>
+        <div class="scroll-cue">Scroll to begin</div>
+    </div>
+</header>
+
+<div class="story-wrap">
+<div class="scrolly">
+
+    <!-- ============ STICKY CHART PANEL ============ -->
+    <div class="scrolly-graphic">
+        <div class="scrolly-graphic-inner">
+
+            <!-- Chart 1: the fan chart -->
+            <div class="chart is-visible" id="chart-fan">
+                <div class="chart-head">
+                    <span class="kicker" id="fan-kicker">Central forecast</span>
+                    <span class="title" id="fan-title">Wholesale price · 2026 → 2050 ($/MWh)</span>
+                </div>
+                <svg id="fan-svg" viewBox="0 0 760 440" role="img"
+                     aria-label="Fan chart of projected wholesale electricity price with P10, P50 and P90 bands"></svg>
+                <div class="dim-toggles" id="dim-toggles"></div>
+                <div class="readout-row">
+                    <div class="readout">
+                        <span class="r-num" id="rd-p10">&mdash;</span>
+                        <span class="r-lab">2050 · P10 (low)</span>
+                    </div>
+                    <div class="readout">
+                        <span class="r-num" id="rd-p50">&mdash;</span>
+                        <span class="r-lab">2050 · P50 (median)</span>
+                    </div>
+                    <div class="readout">
+                        <span class="r-num" id="rd-p90">&mdash;</span>
+                        <span class="r-lab">2050 · P90 (high)</span>
+                    </div>
+                    <div class="readout hot">
+                        <span class="r-num" id="rd-width">&mdash;</span>
+                        <span class="r-lab">2050 band width</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 2: variance contribution -->
+            <div class="chart" id="chart-var">
+                <div class="chart-head">
+                    <span class="kicker">Where the doubt comes from</span>
+                    <span class="title">Variance contribution by dimension, 2026 → 2050</span>
+                </div>
+                <svg id="var-svg" viewBox="0 0 760 440" role="img"
+                     aria-label="Stacked area chart of how each scenario dimension contributes to total variance over time"></svg>
+                <div class="chart-note" id="var-note">
+                    Independent uncertainties add as <b>variances</b>, not as widths.
+                    Carbon policy contributes little early on but dominates by 2050 &mdash;
+                    its uncertainty <b>compounds</b> the hardest.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============ SCROLLING NARRATIVE ============ -->
+    <div class="scrolly-narrative">
+
+        <section class="scrolly-step" data-chart="fan" data-dims="">
+            <span class="scrolly-step-label">The base case</span>
+            <h2>One line, full of false confidence</h2>
+            <p>
+                Here is the model's <span class="sc-mark">central forecast</span> for
+                the wholesale price: a gentle decline from the mid-$40s today toward
+                the low-$30s by 2050, as cheap renewables crowd out gas.
+            </p>
+            <p>
+                It is a clean line. It is also a fiction &mdash; it pretends we know
+                the next twenty-five years. We do not. The line is only the
+                <strong>P50</strong>: the outcome with as much chance above as below.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas">
+            <span class="scrolly-step-label">Dimension one</span>
+            <h2>Gas prices — doubt from day one</h2>
+            <p>
+                Switch on the first source of uncertainty:
+                <span class="sc-mark">gas prices</span>. Gas still sets the price in
+                most hours today, so this doubt bites <em>immediately</em> &mdash; the
+                fan opens even in the near term.
+            </p>
+            <p>
+                The shaded band is now a <strong>P10&ndash;P90</strong> range: a 1-in-10
+                chance of landing below it, 1-in-10 above. A single line has become a
+                fan.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas,carbon">
+            <span class="scrolly-step-label">Dimension two</span>
+            <h2>Carbon price — the slow-burn wildcard</h2>
+            <p>
+                Add <span class="sc-mark">carbon price</span>. Today there is barely
+                any carbon policy to be uncertain <em>about</em> &mdash; so near-term
+                the fan hardly changes.
+            </p>
+            <p>
+                But stretch to the 2040s and the range of plausible carbon policy is
+                enormous. Carbon uncertainty starts small and
+                <strong>compounds steeply</strong> &mdash; the fan flares wide at the
+                far end.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas,carbon,demand">
+            <span class="scrolly-step-label">Dimension three</span>
+            <h2>Demand growth — electrify everything?</h2>
+            <p>
+                Add <span class="sc-mark">demand growth</span>. How fast do EVs, heat
+                pumps and data centres pull up electricity demand? Each year's
+                surprise stacks on the last.
+            </p>
+            <p>
+                Notice the bands do <em>not</em> simply add their widths. Independent
+                uncertainties combine as <strong>variances</strong> &mdash; the fan
+                grows, but more slowly than a naive sum would suggest.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas,carbon,demand,renewable">
+            <span class="scrolly-step-label">Dimension four</span>
+            <h2>Renewable pace — the full fan</h2>
+            <p>
+                Finally, <span class="sc-mark">renewable build pace</span>: how
+                quickly wind, solar and storage actually get permitted and
+                connected. With all four dimensions live, the fan reaches its
+                full spread.
+            </p>
+            <p>
+                By 2050 the plausible price range spans tens of dollars per MWh.
+                That width is not noise &mdash; it is an honest measure of what the
+                model does not know.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="var" data-dims="gas,carbon,demand,renewable">
+            <span class="scrolly-step-label">Anatomy of the fan</span>
+            <h2>Which doubt dominates when</h2>
+            <p>
+                Break the fan's width into the variance each dimension contributes.
+                Early on, <span class="sc-mark">gas</span> is almost the whole story.
+            </p>
+            <p>
+                But its share shrinks as the others compound past it. By 2050,
+                <span class="sc-mark">carbon policy</span> is the single largest band
+                of doubt. The dominant uncertainty in 2026 is not the dominant
+                uncertainty in 2050.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas,carbon,demand,renewable">
+            <span class="scrolly-step-label">Your turn</span>
+            <h2>Build your own fan</h2>
+            <p>
+                The four buttons under the chart are <strong>live</strong>. Toggle any
+                dimension on or off and the P10/P50/P90 bands recompute instantly.
+            </p>
+            <p>
+                Turn everything off and you are back to the lonely central line. Turn
+                a single dimension on and you isolate exactly how much doubt it adds —
+                and how that doubt <span class="sc-mark">compounds</span> toward 2050.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="fan" data-dims="gas,carbon,demand,renewable">
+            <span class="scrolly-step-label">The takeaway</span>
+            <h2>Plan for the fan, not the line</h2>
+            <p>
+                A capacity plan tuned to the P50 line is tuned to an outcome that
+                almost certainly will not happen. The useful question is whether a
+                plan still works across the <em>whole fan</em>.
+            </p>
+            <p>
+                That is why the simulator runs many scenarios rather than one. The fan
+                is the deliverable &mdash; and a robust grid is one that stays
+                affordable from its P10 edge to its P90 edge.
+            </p>
+        </section>
+
+    </div>
+</div>
+</div>
+
+<footer class="hub-footer">
+    Story 05 of the <a href="../index.html">Learning Hub</a> &middot;
+    Synthetic, illustrative scenario data &middot; Built on the LP dispatch simulator
+</footer>
+
+<!-- Shared scrollytell engine -->
+<script src="../shared/scrollytell.js"></script>
+
+<script>
+// ============================================================================
+// Scenario Uncertainty — an interactive fan-chart builder.
+//   Chart 1 : P10/P50/P90 fan for the 2026→2050 wholesale price
+//   Chart 2 : variance contribution of each scenario dimension
+// Four scenario dimensions can be toggled on/off; their uncertainties are
+// treated as independent and combine as variances. All data is synthetic.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var REDUCE = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var NAVY = '#1A2744';
+    var ACCENT = '#D97706', ACCENT_DEEP = '#B45309';
+
+    var YEAR0 = 2026, YEAR1 = 2050, SPAN = YEAR1 - YEAR0;   // 24
+    var YEARS = d3.range(YEAR0, YEAR1 + 1);                  // 25 points
+    var Z90 = 1.2816, Z75 = 0.6745;                          // normal quantiles
+
+    // ---- Central forecast: gentle decline as renewables crowd out gas -----
+    function p50(year) {
+        var t = (year - YEAR0) / SPAN;
+        return 44 - 13 * Math.pow(t, 0.9);
+    }
+
+    // ---- Scenario dimensions ----------------------------------------------
+    // Each carries a per-year standard deviation that compounds over time.
+    var DIMS = [
+        { key: 'gas',       label: 'Gas price',     css: 'gas',
+          color: '#EA580C', sigma: function (t) { return 5.5 * (0.30 + 0.70 * Math.pow(t, 0.8)); } },
+        { key: 'carbon',    label: 'Carbon price',  css: 'carbon',
+          color: '#475569', sigma: function (t) { return 9.0 * Math.pow(t, 1.7); } },
+        { key: 'demand',    label: 'Demand growth', css: 'demand',
+          color: '#7C3AED', sigma: function (t) { return 7.0 * Math.pow(t, 1.3); } },
+        { key: 'renewable', label: 'Renewable pace', css: 'ren',
+          color: '#16A34A', sigma: function (t) { return 6.0 * Math.pow(t, 1.1); } }
+    ];
+    var DIM_BY_KEY = {};
+    DIMS.forEach(function (d) { DIM_BY_KEY[d.key] = d; });
+
+    var enabled = {};   // key -> bool, the live state of the toggles
+
+    // Total standard deviation at a given year from the enabled dimensions.
+    function totalSigma(year) {
+        var t = (year - YEAR0) / SPAN, v = 0;
+        DIMS.forEach(function (d) {
+            if (enabled[d.key]) { var s = d.sigma(t); v += s * s; }
+        });
+        return Math.sqrt(v);
+    }
+
+    // Quantile bands for every year.
+    function bandData() {
+        return YEARS.map(function (yr) {
+            var mid = p50(yr), sig = totalSigma(yr);
+            return {
+                year: yr, p50: mid,
+                p10: Math.max(6, mid - Z90 * sig),
+                p90: mid + Z90 * sig,
+                p25: Math.max(6, mid - Z75 * sig),
+                p75: mid + Z75 * sig
+            };
+        });
+    }
+
+    // ========================================================================
+    // CHART 1 — THE FAN CHART
+    // ========================================================================
+    var FAN = { w: 760, h: 440, m: { t: 30, r: 64, b: 48, l: 56 } };
+    var fanSvg = d3.select('#fan-svg');
+    var fanX = d3.scaleLinear().domain([YEAR0, YEAR1])
+        .range([FAN.m.l, FAN.w - FAN.m.r]);
+    var fanY = d3.scaleLinear().domain([8, 64])
+        .range([FAN.h - FAN.m.b, FAN.m.t]);
+
+    var fanOuter, fanInner, fanMid, fanLineLo, fanLineHi, fanEndLabels;
+
+    var aOuter = d3.area().x(function (d) { return fanX(d.year); })
+        .y0(function (d) { return fanY(d.p10); })
+        .y1(function (d) { return fanY(d.p90); })
+        .curve(d3.curveMonotoneX);
+    var aInner = d3.area().x(function (d) { return fanX(d.year); })
+        .y0(function (d) { return fanY(d.p25); })
+        .y1(function (d) { return fanY(d.p75); })
+        .curve(d3.curveMonotoneX);
+    var lMid = d3.line().x(function (d) { return fanX(d.year); })
+        .y(function (d) { return fanY(d.p50); })
+        .curve(d3.curveMonotoneX);
+    var lLo = d3.line().x(function (d) { return fanX(d.year); })
+        .y(function (d) { return fanY(d.p10); })
+        .curve(d3.curveMonotoneX);
+    var lHi = d3.line().x(function (d) { return fanX(d.year); })
+        .y(function (d) { return fanY(d.p90); })
+        .curve(d3.curveMonotoneX);
+
+    function drawFanBase() {
+        fanSvg.selectAll('*').remove();
+        var g = fanSvg.append('g');
+
+        fanY.ticks(6).forEach(function (t) {
+            g.append('line').attr('class', 'grid-line')
+                .attr('x1', FAN.m.l).attr('x2', FAN.w - FAN.m.r)
+                .attr('y1', fanY(t)).attr('y2', fanY(t));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', FAN.m.l - 9).attr('y', fanY(t) + 4)
+                .attr('text-anchor', 'end').text('$' + t);
+        });
+        [2026, 2032, 2038, 2044, 2050].forEach(function (yr) {
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', fanX(yr)).attr('y', FAN.h - FAN.m.b + 20)
+                .attr('text-anchor', 'middle').text(yr);
+        });
+        g.append('text').attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(FAN.m.t + (FAN.h - FAN.m.b - FAN.m.t) / 2))
+            .attr('y', 14).attr('text-anchor', 'middle')
+            .text('Wholesale price ($/MWh)');
+
+        fanOuter = fanSvg.append('path').attr('fill', 'rgba(217,119,6,0.16)');
+        fanInner = fanSvg.append('path').attr('fill', 'rgba(217,119,6,0.30)');
+        fanLineLo = fanSvg.append('path').attr('fill', 'none')
+            .attr('stroke', ACCENT_DEEP).attr('stroke-width', 1.3)
+            .attr('stroke-dasharray', '4 3').attr('opacity', 0.7);
+        fanLineHi = fanSvg.append('path').attr('fill', 'none')
+            .attr('stroke', ACCENT_DEEP).attr('stroke-width', 1.3)
+            .attr('stroke-dasharray', '4 3').attr('opacity', 0.7);
+        fanMid = fanSvg.append('path').attr('fill', 'none')
+            .attr('stroke', NAVY).attr('stroke-width', 3);
+        fanEndLabels = fanSvg.append('g');
+    }
+
+    function renderFan() {
+        var data = bandData();
+        var dur = REDUCE ? 0 : 700;
+
+        fanOuter.transition().duration(dur).attr('d', aOuter(data));
+        fanInner.transition().duration(dur).attr('d', aInner(data));
+        fanLineLo.transition().duration(dur).attr('d', lLo(data));
+        fanLineHi.transition().duration(dur).attr('d', lHi(data));
+        fanMid.transition().duration(dur).attr('d', lMid(data));
+
+        var last = data[data.length - 1];
+        var labels = [
+            { t: 'P90', v: last.p90, c: ACCENT_DEEP },
+            { t: 'P50', v: last.p50, c: NAVY },
+            { t: 'P10', v: last.p10, c: ACCENT_DEEP }
+        ];
+        var sel = fanEndLabels.selectAll('text').data(labels);
+        sel.enter().append('text')
+            .attr('class', 'bar-cap')
+            .attr('text-anchor', 'start')
+          .merge(sel)
+            .attr('x', FAN.w - FAN.m.r + 6)
+            .attr('fill', function (d) { return d.c; })
+            .transition().duration(dur)
+            .attr('y', function (d) { return fanY(d.v) + 4; })
+            .text(function (d) { return d.t + ' $' + d.v.toFixed(0); });
+
+        // readouts
+        d3.select('#rd-p10').text('$' + last.p10.toFixed(0));
+        d3.select('#rd-p50').text('$' + last.p50.toFixed(0));
+        d3.select('#rd-p90').text('$' + last.p90.toFixed(0));
+        d3.select('#rd-width').text('$' + (last.p90 - last.p10).toFixed(0));
+    }
+
+    // ========================================================================
+    // CHART 2 — VARIANCE CONTRIBUTION (stacked area)
+    // ========================================================================
+    var VAR = { w: 760, h: 440, m: { t: 30, r: 110, b: 48, l: 58 } };
+    var varSvg = d3.select('#var-svg');
+    var varX = d3.scaleLinear().domain([YEAR0, YEAR1])
+        .range([VAR.m.l, VAR.w - VAR.m.r]);
+    var varY = d3.scaleLinear().range([VAR.h - VAR.m.b, VAR.m.t]);
+
+    function drawVar() {
+        varSvg.selectAll('*').remove();
+        var dur = REDUCE ? 0 : 800;
+
+        var active = DIMS.filter(function (d) { return enabled[d.key]; });
+
+        // Per-year cumulative variance bands for the active dimensions.
+        var maxTot = 1;
+        var series = YEARS.map(function (yr) {
+            var t = (yr - YEAR0) / SPAN, cum = 0, row = { year: yr, parts: [] };
+            active.forEach(function (d) {
+                var s = d.sigma(t), v = s * s;
+                row.parts.push({ key: d.key, lo: cum, hi: cum + v });
+                cum += v;
+            });
+            row.total = cum;
+            if (cum > maxTot) maxTot = cum;
+            return row;
+        });
+        varY.domain([0, maxTot * 1.05]);
+
+        var g = varSvg.append('g');
+        varY.ticks(5).forEach(function (t) {
+            g.append('line').attr('class', t === 0 ? 'axis-line' : 'grid-line')
+                .attr('x1', VAR.m.l).attr('x2', VAR.w - VAR.m.r)
+                .attr('y1', varY(t)).attr('y2', varY(t));
+        });
+        [2026, 2032, 2038, 2044, 2050].forEach(function (yr) {
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', varX(yr)).attr('y', VAR.h - VAR.m.b + 20)
+                .attr('text-anchor', 'middle').text(yr);
+        });
+        g.append('text').attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(VAR.m.t + (VAR.h - VAR.m.b - VAR.m.t) / 2))
+            .attr('y', 15).attr('text-anchor', 'middle')
+            .text('Variance contribution (price²)');
+
+        if (active.length === 0) {
+            varSvg.append('text')
+                .attr('x', VAR.w / 2).attr('y', VAR.h / 2)
+                .attr('text-anchor', 'middle').attr('class', 'ax-label')
+                .style('font-size', '14px')
+                .text('No dimensions enabled — toggle one on.');
+            return;
+        }
+
+        active.forEach(function (d) {
+            var area = d3.area()
+                .x(function (r) { return varX(r.year); })
+                .y0(function (r) {
+                    var p = r.parts.find(function (x) { return x.key === d.key; });
+                    return varY(p.lo);
+                })
+                .y1(function (r) {
+                    var p = r.parts.find(function (x) { return x.key === d.key; });
+                    return varY(p.hi);
+                })
+                .curve(d3.curveMonotoneX);
+            var path = varSvg.append('path')
+                .datum(series)
+                .attr('fill', d.color).attr('fill-opacity', 0.82)
+                .attr('stroke', '#fff').attr('stroke-width', 1)
+                .attr('d', area);
+            if (!REDUCE) {
+                path.attr('opacity', 0).transition().duration(dur).attr('opacity', 1);
+            }
+            // end label
+            var lastRow = series[series.length - 1];
+            var lp = lastRow.parts.find(function (x) { return x.key === d.key; });
+            varSvg.append('text').attr('class', 'bar-cap')
+                .attr('x', VAR.w - VAR.m.r + 8)
+                .attr('y', varY((lp.lo + lp.hi) / 2) + 4)
+                .attr('fill', d.color)
+                .text(d.label);
+        });
+    }
+
+    // ========================================================================
+    // DIMENSION TOGGLES
+    // ========================================================================
+    var currentChart = 'fan';
+    function buildToggles() {
+        var box = d3.select('#dim-toggles');
+        DIMS.forEach(function (d) {
+            var btn = box.append('div')
+                .attr('class', 'dim-toggle')
+                .attr('tabindex', 0)
+                .attr('role', 'switch')
+                .style('--dc', d.color)
+                .attr('data-key', d.key);
+            btn.append('span').text(d.label);
+            btn.append('span').attr('class', 'dim-state').text('OFF');
+            btn.on('click', function () { toggleDim(d.key); });
+            btn.on('keydown', function (ev) {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault(); toggleDim(d.key);
+                }
+            });
+        });
+    }
+    function syncToggles() {
+        d3.selectAll('#dim-toggles .dim-toggle').each(function () {
+            var key = this.getAttribute('data-key');
+            var on = !!enabled[key];
+            d3.select(this).classed('on', on)
+                .select('.dim-state').text(on ? 'ON' : 'OFF');
+        });
+    }
+    function toggleDim(key) {
+        enabled[key] = !enabled[key];
+        syncToggles();
+        if (currentChart === 'fan') renderFan();
+        else drawVar();
+    }
+    function setDims(csv) {
+        enabled = {};
+        (csv ? csv.split(',') : []).forEach(function (k) {
+            if (DIM_BY_KEY[k]) enabled[k] = true;
+        });
+        syncToggles();
+    }
+
+    // ========================================================================
+    // INITIALISE + WIRE TO THE SCROLLYTELL ENGINE
+    // ========================================================================
+    drawFanBase();
+    buildToggles();
+    setDims('');
+    renderFan();
+
+    var KICKER = {
+        fan: ['Fan chart builder', 'Wholesale price · 2026 → 2050 ($/MWh)'],
+        var: ['Variance anatomy',  'Variance contribution by dimension']
+    };
+
+    function showChart(name) {
+        currentChart = name;
+        document.getElementById('chart-fan')
+            .classList.toggle('is-visible', name === 'fan');
+        document.getElementById('chart-var')
+            .classList.toggle('is-visible', name === 'var');
+        d3.select('#fan-kicker').text(KICKER[name][0]);
+        d3.select('#fan-title').text(KICKER[name][1]);
+    }
+
+    function enterStep(chart, dims) {
+        setDims(dims);
+        showChart(chart);
+        if (chart === 'fan') renderFan();
+        else drawVar();
+    }
+
+    var story = new Scrollytell({
+        container: '.scrolly',
+        step: '.scrolly-step',
+        offset: 0.55
+    });
+    story.on('step-enter', function (e) {
+        var d = e.element.dataset;
+        enterStep(d.chart, d.dims || '');
+    });
+
+    // Render whatever step is already on screen at load.
+    enterStep('fan', '');
+})();
+</script>
+
+</body>
+</html>
