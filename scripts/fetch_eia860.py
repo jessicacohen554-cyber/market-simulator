@@ -1,6 +1,6 @@
 """
 Fetch EIA Form 860 plant/generator data via EIA API v2 and save to
-inputs/raw-data/eia860/.
+inputs/raw-data/eia-860/.
 
 Usage:
     python scripts/fetch_eia860.py [--scope full|markets]
@@ -10,9 +10,9 @@ Scopes:
     markets Pull only generators in ERCOT, PJM, CAISO, NEISO, NYISO, SPP
 
 Outputs (CSV, one file per scope/BA):
-    inputs/raw-data/eia860/generators_us.csv          (full scope)
-    inputs/raw-data/eia860/generators_<BA>.csv        (markets scope, per BA)
-    inputs/raw-data/eia860/metadata.json              (column/facet reference)
+    inputs/raw-data/eia-860/generators_us.csv          (full scope)
+    inputs/raw-data/eia-860/generators_<BA>.csv        (markets scope, per BA)
+    inputs/raw-data/eia-860/metadata.json              (column/facet reference)
 """
 
 import argparse
@@ -37,7 +37,7 @@ if not API_KEY:
             if line.startswith("EIA_API_KEY="):
                 API_KEY = line.split("=", 1)[1].strip()
 
-OUTPUT_DIR = Path(__file__).parent.parent / "inputs" / "raw-data" / "eia860"
+OUTPUT_DIR = Path(__file__).parent.parent / "inputs" / "raw-data" / "eia-860"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 PAGE_SIZE = 5000  # max rows per request
