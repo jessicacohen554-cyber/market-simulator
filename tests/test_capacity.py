@@ -596,8 +596,7 @@ class TestCapacityIntegration(unittest.TestCase):
         # the first year, guaranteeing the year-one fleet differs.
         config = ScenarioConfig(iso="ERCOT")
         fleet = [
-            _gen("C0", "coal", pmax=100.0, zone="North", heat_rate=10.0,
-                 retirement_year=2026),
+            _gen("C0", "coal", pmax=100.0, zone="North", heat_rate=10.0),
             _gen("C1", "coal", pmax=100.0, zone="North", heat_rate=10.5),
             _gen("G0", "gas_cc", pmax=100.0, zone="North", heat_rate=7.0),
             _gen("W0", "wind", pmax=100.0, zone="North"),
@@ -637,8 +636,7 @@ class TestCapacityIntegration(unittest.TestCase):
             return gas + wind
 
         def _run(gas_price_path):
-            config = ScenarioConfig(iso="ERCOT", gas_price_path=gas_price_path,
-                                    retirement_years_gas_cc=1)
+            config = ScenarioConfig(iso="ERCOT", gas_price_path=gas_price_path)
             gas_price = GAS_PRICE_BASE["ERCOT"][gas_price_path]
             gas_cf = max(0.02, 0.6 - 0.1 * gas_price)
             fleet = _fleet()
