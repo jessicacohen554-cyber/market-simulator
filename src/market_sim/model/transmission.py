@@ -17,6 +17,11 @@ the ordinary energy balance and the WECC_import -> CAISO_main link.
 import numpy as np
 import scipy.sparse as sp
 
+from market_sim.config.constants import (
+    WECC_EXPORT_CAP_MW,
+    WECC_IMPORT_EFORD,
+    WECC_IMPORT_TRANCHES,
+)
 from market_sim.config.iso_configs import TransferLink
 from market_sim.data.fleet import Generator
 
@@ -77,15 +82,7 @@ def build_wecc_import_generators() -> list[Generator]:
     Returns:
         Four import tranches ordered cheapest first, spanning 15000 MW.
     """
-    # (name, capacity MW, marginal cost $/MWh) for each import tranche.
-    # TODO: fit these tranche capacities and marginal costs from EIA-930
-    # interchange data instead of the hand-set placeholders below.
-    tranches: list[tuple[str, float, float]] = [
-        ("PNW_hydro", 3000.0, 15.0),
-        ("DSW_CCGT", 5000.0, 35.0),
-        ("DSW_CT", 4000.0, 55.0),
-        ("Expensive_import", 3000.0, 80.0),
-    ]
+    tranches = WECC_IMPORT_TRANCHES
     return [
         Generator(
             unit_id=f"WECC_import_{name}",
@@ -96,7 +93,7 @@ def build_wecc_import_generators() -> list[Generator]:
             pmin_mw=0.0,
             heat_rate=0.0,
             vom=marginal_cost,
-            eford=0.02,
+            eford=WECC_IMPORT_EFORD,
         )
         for name, capacity, marginal_cost in tranches
     ]
@@ -124,7 +121,7 @@ def build_wecc_export_sink() -> Generator:
         zone="WECC_import",
         fuel_type="import",
         pmax_mw=0.0,
-        pmin_mw=-5000.0,
+        pmin_mw=-WECC_EXPORT_CAP_MW,
         heat_rate=0.0,
         vom=0.0,
         eford=0.0,
