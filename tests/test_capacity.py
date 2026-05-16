@@ -586,8 +586,10 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         self.assertGreater(len(fleet), 0)
         self.assertGreater(sum(g.pmax_mw for g in fleet), 0.0)
 
-    def test_all_clean_fleet_survives_sigmoid_unchanged(self):
-        # With no thermal capacity, sigmoid retirement has nothing to do.
+    def test_all_clean_fleet_passes_through_unchanged(self):
+        # An all-clean fleet has no thermal units, so fuel-aware economic
+        # retirement finds nothing to retire and evolve_fleet returns the
+        # fleet unchanged.
         config = ScenarioConfig(iso="ERCOT")
         fleet = [
             _gen("W0", "wind", pmax=100.0),
@@ -595,10 +597,11 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
             _gen("N0", "nuclear", pmax=100.0),
             _gen("H0", "hydro", pmax=100.0),
         ]
-        survivors = apply_sigmoid_retirement(fleet, 0.9, config)
+        survivors, tracker = evolve_fleet(fleet, None, 2030, config, {})
         self.assertEqual(
             [g.unit_id for g in survivors], [g.unit_id for g in fleet]
         )
+        self.assertEqual(tracker, {})
 
 
 class TestCapacityIntegration(unittest.TestCase):
@@ -615,7 +618,9 @@ class TestCapacityIntegration(unittest.TestCase):
             _gen("W0", "wind", pmax=100.0, zone="North"),
             _gen("W1", "wind", pmax=100.0, zone="North"),
         ]
-        snapshots = [frozenset(g.unit_id for g in fleet)]
+        # The first simulated year has no prior dispatch, so it leaves the
+        # fleet untouched -- only the evolved snapshots are compared.
+        snapshots: list[frozenset[str]] = []
         tracker: dict[str, int] = {}
         prior = None
         for year in (2026, 2027, 2028):
@@ -627,10 +632,13 @@ class TestCapacityIntegration(unittest.TestCase):
         for earlier, later in zip(snapshots, snapshots[1:]):
             self.assertNotEqual(earlier, later)
 
-    def test_gas_price_path_diverges_fleet_by_year_three(self):
+    def test_gas_price_path_diverges_fleet_economically(self):
         # Two scenarios identical but for gas_price_path. Higher gas prices
         # depress gas-plant revenue, so gas units retire economically and
-        # the fleets diverge.
+        # the fleets diverge. gas_cc carries a three-consecutive-loss-year
+        # retirement threshold, and the first simulated year has no prior
+        # dispatch to score, so the run spans four years to give the
+        # high-gas fleet time to cross that threshold.
         def _fleet():
             gas = [
                 _gen(f"G{i}", "gas_cc", pmax=100.0, zone="North",
@@ -651,7 +659,7 @@ class TestCapacityIntegration(unittest.TestCase):
             tracker: dict[str, int] = {}
             prior = None
             yearly = {}
-            for year in (2026, 2027, 2028):
+            for year in (2026, 2027, 2028, 2029):
                 fleet, tracker = evolve_fleet(
                     fleet, prior, year, config, tracker
                 )
@@ -672,13 +680,13 @@ class TestCapacityIntegration(unittest.TestCase):
             {g.unit_id for g in low[2026]},
             {g.unit_id for g in high[2026]},
         )
-        # By year 3 the high-gas scenario has shed its gas fleet
-        # economically while the low-gas scenario retains it.
-        self.assertGreater(_gas(low[2028]), _gas(high[2028]))
-        self.assertEqual(_gas(high[2028]), 0)
+        # The high-gas scenario crosses the gas_cc loss-year threshold and
+        # sheds its gas fleet economically; the low-gas scenario retains it.
+        self.assertGreater(_gas(low[2029]), _gas(high[2029]))
+        self.assertEqual(_gas(high[2029]), 0)
         self.assertNotEqual(
-            {g.unit_id for g in low[2028]},
-            {g.unit_id for g in high[2028]},
+            {g.unit_id for g in low[2029]},
+            {g.unit_id for g in high[2029]},
         )
 
     def test_scheduled_coal_retirement_across_trajectory(self):

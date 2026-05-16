@@ -286,3 +286,12 @@ STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charg
 HOURS_PER_YEAR: int = 8760
 START_YEAR: int = 2026
 END_YEAR: int = 2050
+
+# --- Fleet Binning Configuration ---
+# LP solve time scales linearly with generator count × 8760 hours.
+# At 36 representative generators: ~5-10s. At 300 units: ~45s.
+# The fleet builder MUST aggregate EIA-860 units into representative bins.
+# Source: internal performance testing, May 2026.
+FLEET_BINNING_REQUIRED: bool = True
+MAX_THERMAL_GENERATORS: int = 50  # per ISO; 36 typical for ERCOT
+MAX_STORAGE_UNITS: int = 8  # per ISO; 4 typical for ERCOT
