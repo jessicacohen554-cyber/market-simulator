@@ -10,11 +10,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
-from market_sim.data.fuel import (
-    resolve_carbon_price,
-    resolve_fuel_prices,
-    resolve_nox_price,
-)
+from market_sim.data.fuel import resolve_fuel_prices, resolve_nox_price
 
 _TEST_HOURS = 12
 _ZONE_NAMES = ["north", "south"]
@@ -127,13 +123,6 @@ def test_both_gas_types_get_gas_price():
     expected = GAS_PRICE_BASE["ERCOT"]["mid"]
     np.testing.assert_allclose(prices[0], expected)
     np.testing.assert_allclose(prices[1], expected)
-
-
-def test_carbon_price_passes_through_from_config():
-    """The carbon price is the scalar carried on the config."""
-    config = _config(carbon_price=42.0)
-    assert resolve_carbon_price(config, START_YEAR) == 42.0
-    assert resolve_carbon_price(config, 2050) == 42.0
 
 
 def test_nox_price_passes_through_from_config():
