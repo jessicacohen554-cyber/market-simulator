@@ -121,6 +121,13 @@ GAS_PRICE_BASE: dict[str, dict[str, float]] = {
 # Source: EIA AEO 2024.
 GAS_PRICE_ESCALATION: float = 0.02  # EIA AEO 2024 — annual gas price escalation
 
+# Base delivered coal prices ($/MMBtu) by ISO.
+# Source: EIA AEO 2024.
+COAL_PRICE_BASE: dict[str, float] = {
+    "ERCOT": 2.0,  # EIA AEO 2024 — delivered coal price
+    "CAISO": 2.5,  # EIA AEO 2024 — delivered coal price
+}
+
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
