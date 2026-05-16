@@ -1,14 +1,17 @@
 """Economic dispatch optimization model.
 
 Part 1: variable layout bookkeeping and objective cost-vector assembly.
-Constraints and solver invocation are built in later parts.
+Part 2: constraint-matrix construction and decision-variable bounds.
+Solver invocation is built in later parts.
 """
 
 from dataclasses import dataclass
 
 import numpy as np
+import scipy.sparse as sp
 
-HOURS_PER_YEAR = 8760
+from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.data.fleet import FleetArrays
 
 
 @dataclass(frozen=True)
@@ -157,3 +160,253 @@ def build_cost_vector(
     block[:, layout._slack_off :] = voll
 
     return cost
+
+
+def _build_zone_gen_map(fleet: FleetArrays, n_zones: int) -> sp.csr_matrix:
+    """Return the sparse ``(n_zones, n_gen)`` zone-membership matrix.
+
+    Entry ``(z, g)`` is ``1`` when thermal generator ``g`` resides in zone
+    ``z``. Multiplying this matrix by a generation vector sums each zone's
+    generators into its energy-balance row.
+    """
+    n_gen = fleet.n_gen
+    data = np.ones(n_gen, dtype=float)
+    return sp.csr_matrix(
+        (data, (fleet.zone_idx, np.arange(n_gen))),
+        shape=(n_zones, n_gen),
+    )
+
+
+def _build_zone_storage_map(
+    storage_zone_idx: np.ndarray | None, n_zones: int, n_storage: int
+) -> sp.csr_matrix:
+    """Return the sparse ``(n_zones, n_storage)`` storage-membership matrix.
+
+    Entry ``(z, s)`` is ``1`` when storage unit ``s`` resides in zone ``z``.
+    When ``storage_zone_idx`` is ``None`` all units default to zone ``0``.
+    """
+    if n_storage == 0:
+        return sp.csr_matrix((n_zones, 0))
+    if storage_zone_idx is None:
+        zone_idx = np.zeros(n_storage, dtype=int)
+    else:
+        zone_idx = np.asarray(storage_zone_idx, dtype=int)
+    return sp.csr_matrix(
+        (np.ones(n_storage, dtype=float), (zone_idx, np.arange(n_storage))),
+        shape=(n_zones, n_storage),
+    )
+
+
+def build_constraints(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    demand: np.ndarray,
+    incidence: np.ndarray | sp.spmatrix | None = None,
+    storage_zone_idx: np.ndarray | None = None,
+    eta_chg: np.ndarray | float | None = None,
+    eta_dis: np.ndarray | float | None = None,
+) -> tuple[sp.csc_matrix, np.ndarray, np.ndarray]:
+    """Assemble the LP constraint matrix and its row bound vectors.
+
+    Two constraint families are built, both equalities (``row_lower ==
+    row_upper``):
+
+    * **Energy balance** -- ``n_zones`` rows per hour. For zone ``z`` and
+      hour ``t`` the dispatched thermal, wind, solar, net storage, net
+      transmission flow and load slack must equal ``demand[z, t]``. The
+      per-hour pattern is identical across hours, so a single sparse block
+      is replicated with ``scipy.sparse.kron`` -- no Python loop over hours.
+    * **Storage SOC dynamics** -- ``T`` rows per storage unit (only when
+      storage is present). Hours ``1..T-1`` enforce
+      ``SOC[s,t] - SOC[s,t-1] - eta_chg*Chg[s,t] + Dis[s,t]/eta_dis = 0``
+      and hour ``0`` enforces the cyclic boundary ``SOC[s,0] = SOC[s,T-1]``.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        fleet: Vectorized fleet arrays; supplies generator zone membership.
+        demand: Zonal demand of shape ``(n_zones, T)`` in MW.
+        incidence: Node-link incidence of shape ``(n_zones, n_links)``; the
+            coefficient of ``Flow`` in each zone's balance. ``None`` when
+            there are no links.
+        storage_zone_idx: Zone index of each storage unit, shape
+            ``(n_storage,)``. Defaults to zone ``0`` for every unit.
+        eta_chg: Charge efficiency, scalar or ``(n_storage,)``. Defaults
+            to ``1.0`` (lossless).
+        eta_dis: Discharge efficiency, scalar or ``(n_storage,)``. Defaults
+            to ``1.0`` (lossless).
+
+    Returns:
+        Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSC matrix and
+        the bound vectors give the (equal) lower and upper row bounds.
+    """
+    T = layout.T  # T: number of hours
+    n_zones = layout.n_zones
+    n_storage = layout.n_storage
+    n_links = layout.n_links
+    vph = layout.vars_per_hour
+
+    zone_gen = _build_zone_gen_map(fleet, n_zones)
+    zone_storage = _build_zone_storage_map(storage_zone_idx, n_zones, n_storage)
+    eye_z = sp.eye(n_zones, format="csr")
+
+    if incidence is None:
+        flow_block = sp.csr_matrix((n_zones, n_links))
+    else:
+        flow_block = sp.csr_matrix(incidence)
+
+    # Per-hour energy-balance block, column order matching the layout:
+    # P | W | S | Chg | Dis | SOC | Flow | Slack.
+    per_hour = sp.hstack(
+        [
+            zone_gen,                            # thermal generation
+            eye_z,                               # wind
+            eye_z,                               # solar
+            -zone_storage,                       # charge (withdrawal)
+            zone_storage,                        # discharge (injection)
+            sp.csr_matrix((n_zones, n_storage)),  # SOC: no balance contribution
+            flow_block,                          # transmission flow
+            eye_z,                               # load slack
+        ],
+        format="csr",
+    )
+
+    # Replicate the per-hour block across all hours without a Python loop.
+    energy_balance = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+
+    # RHS: row r = t * n_zones + z must hold demand[z, t]; demand.T ravels
+    # in that hour-major, zone-minor order.
+    eb_rhs = np.asarray(demand, dtype=float).T.ravel()
+
+    if n_storage == 0:
+        A = energy_balance.tocsc()
+        row_lower = eb_rhs.copy()
+        return A, row_lower, row_lower.copy()
+
+    eta_c = np.broadcast_to(
+        np.asarray(1.0 if eta_chg is None else eta_chg, dtype=float), (n_storage,)
+    )
+    eta_d = np.broadcast_to(
+        np.asarray(1.0 if eta_dis is None else eta_dis, dtype=float), (n_storage,)
+    )
+
+    hours = np.arange(T)  # t: hour index
+    dyn_rows = np.arange(1, T)  # dynamics rows cover hours 1..T-1
+    soc_mats = []
+    for s in range(n_storage):  # s: storage unit index
+        soc_cols = hours * vph + layout._soc_off + s
+        chg_cols = hours * vph + layout._chg_off + s
+        dis_cols = hours * vph + layout._dis_off + s
+        rows = np.concatenate(
+            [dyn_rows, dyn_rows, dyn_rows, dyn_rows, [0], [0]]
+        )
+        cols = np.concatenate(
+            [
+                soc_cols[1:],       # SOC[s,t]
+                soc_cols[:-1],      # SOC[s,t-1]
+                chg_cols[1:],       # Chg[s,t]
+                dis_cols[1:],       # Dis[s,t]
+                [soc_cols[0]],      # cyclic: SOC[s,0]
+                [soc_cols[-1]],     # cyclic: SOC[s,T-1]
+            ]
+        )
+        data = np.concatenate(
+            [
+                np.ones(T - 1),
+                -np.ones(T - 1),
+                np.full(T - 1, -eta_c[s]),
+                np.full(T - 1, 1.0 / eta_d[s]),
+                [1.0],
+                [-1.0],
+            ]
+        )
+        soc_mats.append(
+            sp.coo_matrix(
+                (data, (rows, cols)), shape=(T, layout.total_columns)
+            )
+        )
+
+    soc_block = sp.vstack(soc_mats, format="csr")
+    A = sp.vstack([energy_balance, soc_block], format="csc")
+    row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
+    return A, row_lower, row_lower.copy()
+
+
+def build_variable_bounds(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    wind_cf: np.ndarray,
+    wind_cap: np.ndarray,
+    solar_cf: np.ndarray,
+    solar_cap: np.ndarray,
+    storage_power_cap: np.ndarray | None = None,
+    storage_energy_cap: np.ndarray | None = None,
+    ttc: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Assemble the LP column (decision-variable) bound vectors.
+
+    Bounds, by variable block:
+
+    * Thermal generation: ``pmin <= P <= pmax * availability``.
+    * Wind: ``0 <= W <= wind_cf * wind_cap``.
+    * Solar: ``0 <= S <= solar_cf * solar_cap``.
+    * Storage: ``0 <= Chg, Dis <= power_cap``; ``0 <= SOC <= energy_cap``.
+    * Transmission: ``-ttc <= Flow <= ttc`` (bidirectional).
+    * Load slack: ``0 <= Slack <= inf``.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        fleet: Vectorized fleet arrays; supplies ``pmin``, ``pmax`` and the
+            ``(n_gen, T)`` availability profile.
+        wind_cf: Wind capacity factor of shape ``(n_zones, T)``.
+        wind_cap: Installed wind capacity per zone, shape ``(n_zones,)``.
+        solar_cf: Solar capacity factor of shape ``(n_zones, T)``.
+        solar_cap: Installed solar capacity per zone, shape ``(n_zones,)``.
+        storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``.
+        storage_energy_cap: SOC energy cap, shape ``(n_storage,)``.
+        ttc: Total transfer capability per link, shape ``(n_links,)``.
+
+    Returns:
+        Tuple ``(col_lower, col_upper)`` of length ``layout.total_columns``.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+
+    col_lower = np.zeros((T, vph), dtype=float)
+    col_upper = np.zeros((T, vph), dtype=float)
+
+    # Thermal generation: pmin <= P <= pmax * availability.
+    col_lower[:, layout._p_off : layout._w_off] = fleet.pmin[np.newaxis, :]
+    col_upper[:, layout._p_off : layout._w_off] = (
+        fleet.pmax[:, np.newaxis] * fleet.availability
+    ).T
+
+    # Wind: 0 <= W <= wind_cf * wind_cap.
+    col_upper[:, layout._w_off : layout._s_off] = (
+        np.asarray(wind_cap, dtype=float)[:, np.newaxis]
+        * np.asarray(wind_cf, dtype=float)
+    ).T
+
+    # Solar: 0 <= S <= solar_cf * solar_cap.
+    col_upper[:, layout._s_off : layout._chg_off] = (
+        np.asarray(solar_cap, dtype=float)[:, np.newaxis]
+        * np.asarray(solar_cf, dtype=float)
+    ).T
+
+    # Storage: 0 <= Chg, Dis <= power_cap; 0 <= SOC <= energy_cap.
+    if layout.n_storage:
+        power_cap = np.asarray(storage_power_cap, dtype=float)[np.newaxis, :]
+        energy_cap = np.asarray(storage_energy_cap, dtype=float)[np.newaxis, :]
+        col_upper[:, layout._chg_off : layout._dis_off] = power_cap
+        col_upper[:, layout._dis_off : layout._soc_off] = power_cap
+        col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
+
+    # Transmission flow: -ttc <= Flow <= ttc (bidirectional).
+    if layout.n_links:
+        ttc_row = np.asarray(ttc, dtype=float)[np.newaxis, :]
+        col_lower[:, layout._flow_off : layout._slack_off] = -ttc_row
+        col_upper[:, layout._flow_off : layout._slack_off] = ttc_row
+
+    # Load slack: 0 <= Slack <= inf.
+    col_upper[:, layout._slack_off :] = np.inf
+
+    return col_lower.ravel(), col_upper.ravel()
