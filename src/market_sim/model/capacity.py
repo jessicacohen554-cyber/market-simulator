@@ -98,20 +98,21 @@ def apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator
     ]
 
 
-def compute_clean_share(fleet: list[Generator]) -> float:
+def compute_clean_share(
+    fleet: list[Generator],
+    renewable_cap_mw: float = 0.0,
+) -> float:
     """Return the clean-capacity fraction of the fleet.
 
-    Clean capacity is the summed ``pmax_mw`` of wind, solar, nuclear and
-    hydro units, divided by the total fleet ``pmax_mw``. An empty fleet
-    (zero total capacity) yields ``0.0``.
-
-    This is a reporting/RPS utility -- it informs :func:`apply_rps_mandate`
-    and downstream metrics, and does not drive any retirement decision.
+    Clean capacity includes wind, solar, nuclear and hydro Generators
+    in the fleet PLUS any separately-tracked renewable capacity from
+    the zonal wind_cap/solar_cap pools.
     """
-    total = sum(g.pmax_mw for g in fleet)
+    total = sum(g.pmax_mw for g in fleet) + renewable_cap_mw
     if total <= 0.0:
         return 0.0
     clean = sum(g.pmax_mw for g in fleet if g.fuel_type in _CLEAN_FUELS)
+    clean += renewable_cap_mw
     return clean / total
 
 
@@ -488,7 +489,10 @@ def apply_economic_new_entry(
 
 
 def apply_rps_mandate(
-    fleet: list[Generator], year: int, config: ScenarioConfig
+    fleet: list[Generator],
+    year: int,
+    config: ScenarioConfig,
+    renewable_cap_mw: float = 0.0,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Force-build clean capacity to meet an ISO renewable portfolio standard.
 
@@ -505,6 +509,10 @@ def apply_rps_mandate(
         fleet: The current generator fleet.
         year: Simulation year.
         config: Scenario config supplying the ISO and discount rate.
+        renewable_cap_mw: Cumulative renewable capacity tracked outside the
+            fleet in the zonal ``wind_cap`` / ``solar_cap`` pools. Counted
+            as both clean and total capacity in the clean-share and gap
+            calculations.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with any
@@ -515,12 +523,15 @@ def apply_rps_mandate(
     if target is None:
         return list(fleet), {}
 
-    share = compute_clean_share(fleet)
+    share = compute_clean_share(fleet, renewable_cap_mw)
     if share >= target:
         return list(fleet), {}
 
-    total_cap = sum(g.pmax_mw for g in fleet)
-    clean_cap = sum(g.pmax_mw for g in fleet if g.fuel_type in _CLEAN_FUELS)
+    total_cap = sum(g.pmax_mw for g in fleet) + renewable_cap_mw
+    clean_cap = (
+        sum(g.pmax_mw for g in fleet if g.fuel_type in _CLEAN_FUELS)
+        + renewable_cap_mw
+    )
 
     # Capacity X to add so (clean_cap + X) / (total_cap + X) >= target.
     # A target of 1.0 is unreachable while fossil capacity remains, so the
@@ -562,6 +573,7 @@ def evolve_fleet(
     year: int,
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
+    renewable_cap_mw: float = 0.0,
 ) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]]]:
     """Advance the fleet by one simulation year.
 
@@ -587,6 +599,10 @@ def evolve_fleet(
         config: Scenario config.
         loss_tracker: Per-unit consecutive-loss counters; not mutated in
             place.
+        renewable_cap_mw: Cumulative renewable capacity held in the zonal
+            ``wind_cap`` / ``solar_cap`` pools at the start of the year,
+            before this year's economic new entry. The RPS check folds in
+            any wind/solar built by step 4 on top of this figure.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions)`` after all
@@ -629,8 +645,17 @@ def evolve_fleet(
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
-    # 5. RPS mandates.
-    fleet, rps_additions = apply_rps_mandate(fleet, year, config)
+    # 5. RPS mandates. The clean-share check must see the total renewable
+    # capacity: the prior cumulative pool plus any wind/solar built by this
+    # year's economic new entry in step 4.
+    entry_renewable_mw = sum(
+        mw for by_fuel in renewable_additions.values()
+        for mw in by_fuel.values()
+    )
+    fleet, rps_additions = apply_rps_mandate(
+        fleet, year, config,
+        renewable_cap_mw=renewable_cap_mw + entry_renewable_mw,
+    )
     _merge_renewable_additions(renewable_additions, rps_additions)
 
     return fleet, loss_tracker, renewable_additions
