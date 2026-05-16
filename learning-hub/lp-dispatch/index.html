@@ -395,6 +395,10 @@
 //   Step 2  Stack them by cost    — collapse into the merit order
 //   Step 3  The demand line       — overlay a 24-hour load curve
 //   Step 4  The LP fills cheapest — sweep the dispatch hour by hour
+//   Step 5  The price             — freeze the peak, annotate the dual
+//   Step 6  Zero-cost wind        — wind fills the bottom of every hour
+//   Step 7  Curtailment           — surplus wind is spilled, price hits $0
+//   Step 8  LP vs heuristic       — co-optimized day vs hour-by-hour greedy
 // All data below is synthetic and illustrative.
 // ============================================================================
 (function () {
