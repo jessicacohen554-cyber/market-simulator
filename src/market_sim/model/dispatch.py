@@ -134,19 +134,27 @@ def build_cost_vector(
     mc: np.ndarray,
     voll: float,
     storage_epsilon: float = 0.001,
+    wind_mc: np.ndarray | float = 0.0,
+    solar_mc: np.ndarray | float = 0.0,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
     Thermal slots carry their hourly marginal cost, storage charge and
     discharge carry a small ``storage_epsilon`` penalty to break degeneracy,
-    load slack carries the value of lost load (``voll``), and renewable and
-    SOC/flow slots are zero-cost.
+    load slack carries the value of lost load (``voll``), wind and solar
+    carry their dispatch marginal cost (negative under a production credit),
+    and SOC/flow slots are zero-cost.
 
     Args:
         layout: Variable layout describing the column structure.
         mc: Marginal cost array of shape ``(n_gen, T)``.
         voll: Value of lost load applied to slack variables.
         storage_epsilon: Cycling penalty on storage charge/discharge.
+        wind_mc: Wind dispatch marginal cost in $/MWh; scalar (flat) or
+            ``(n_zones, T)``. Negative when a production tax credit makes
+            wind willing to pay to generate.
+        solar_mc: Solar dispatch marginal cost in $/MWh; scalar (flat) or
+            ``(n_zones, T)``.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -156,6 +164,15 @@ def build_cost_vector(
 
     # Thermal: mc is (n_gen, T); the per-hour block wants (T, n_gen).
     block[:, layout._p_off : layout._w_off] = mc.T
+
+    # Wind and solar: dispatch marginal cost. wind_mc/solar_mc are scalar or
+    # (n_zones, T); the per-hour block wants (T, n_zones).
+    block[:, layout._w_off : layout._s_off] = np.broadcast_to(
+        np.asarray(wind_mc, dtype=float), (layout.n_zones, layout.T)
+    ).T
+    block[:, layout._s_off : layout._chg_off] = np.broadcast_to(
+        np.asarray(solar_mc, dtype=float), (layout.n_zones, layout.T)
+    ).T
 
     # Storage charge and discharge: flat cycling penalty.
     block[:, layout._chg_off : layout._dis_off] = storage_epsilon
@@ -480,6 +497,8 @@ def solve_dispatch(
     storage_zone_idx: np.ndarray | None = None,
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
+    wind_mc: np.ndarray | float = 0.0,
+    solar_mc: np.ndarray | float = 0.0,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -510,6 +529,10 @@ def solve_dispatch(
         storage_zone_idx: Zone index of each storage unit.
         eta_chg: Storage charge efficiency, scalar or ``(n_storage,)``.
         eta_dis: Storage discharge efficiency, scalar or ``(n_storage,)``.
+        wind_mc: Wind dispatch marginal cost in $/MWh; scalar or
+            ``(n_zones, T)``. Negative under a production tax credit.
+        solar_mc: Solar dispatch marginal cost in $/MWh; scalar or
+            ``(n_zones, T)``.
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -536,7 +559,9 @@ def solve_dispatch(
         mc = assemble_mc(fleet, fuel_prices, carbon_price, nox_price)
     mc = np.asarray(mc, dtype=float)
 
-    cost = build_cost_vector(layout, mc, voll)
+    cost = build_cost_vector(
+        layout, mc, voll, wind_mc=wind_mc, solar_mc=solar_mc
+    )
     A, row_lower, row_upper = build_constraints(
         layout,
         fleet,

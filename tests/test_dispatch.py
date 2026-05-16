@@ -467,5 +467,56 @@ class TestDispatchPerformance(unittest.TestCase):
         self.assertLess(result.solve_time, 15.0)
 
 
+class TestNegativePricing(unittest.TestCase):
+    """Tests that production credits drive prices below zero."""
+
+    T = 24
+
+    def test_ptc_wind_creates_negative_prices(self):
+        """Wind with PTC at -26 $/MWh sets price negative when at margin."""
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 50.0)  # thermal at $50
+        demand = np.full((1, self.T), 80.0)
+        # Wind capacity exceeds demand — wind is marginal
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            wind_cf=np.full((1, self.T), 1.0),
+            wind_cap=np.array([200.0]),  # 200 MW available, only 80 needed
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            wind_mc=-26.0,  # PTC
+        )
+        # Wind is marginal and has MC=-26, so price should be -26
+        np.testing.assert_allclose(result.prices, -26.0, atol=0.1)
+        # Thermal gen should be off (wind is cheaper)
+        np.testing.assert_allclose(result.dispatch, 0.0, atol=0.1)
+
+    def test_zero_mc_wind_without_ptc(self):
+        """Without PTC, wind at margin gives price=0 (backward compatible)."""
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            wind_cf=np.full((1, self.T), 1.0),
+            wind_cap=np.array([200.0]),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            # wind_mc defaults to 0.0 — no PTC
+        )
+        np.testing.assert_allclose(result.prices, 0.0, atol=0.1)
+
+    def test_ptc_expired_no_negative_prices(self):
+        """After IRA expiry, wind reverts to MC=0."""
+        from market_sim.policy.ira import compute_dispatch_credits
+        from market_sim.config.scenarios import ScenarioConfig
+        config = ScenarioConfig(ira_ptc_wind=26.0, ira_expiry_year=2035)
+        w_mc, s_mc = compute_dispatch_credits(config, year=2036)
+        self.assertEqual(w_mc, 0.0)
+        self.assertEqual(s_mc, 0.0)
+        w_mc, s_mc = compute_dispatch_credits(config, year=2030)
+        self.assertEqual(w_mc, -26.0)
+
+
 if __name__ == "__main__":
     unittest.main()
