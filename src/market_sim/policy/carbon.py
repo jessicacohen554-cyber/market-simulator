@@ -11,7 +11,7 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
 
     If ``config.carbon_price`` is nonzero, return it directly (flat
     trajectory). If ``config.carbon_price`` is 0 and
-    ``config.gas_price_path`` names a carbon path in
+    ``config.carbon_price_path`` names a carbon path in
     :data:`CARBON_PRICE_PATHS`, interpolate from that path: the trajectory
     is defined at a few knot years, intermediate years are linearly
     interpolated, and years outside the knot range take the nearest
@@ -19,7 +19,7 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
 
     Args:
         config: Scenario config supplying the flat carbon price and the
-            gas/carbon path name.
+            carbon path name.
         year: Simulation year.
 
     Returns:
@@ -28,7 +28,7 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
     if config.carbon_price != 0:
         return float(config.carbon_price)
 
-    path = CARBON_PRICE_PATHS.get(config.gas_price_path)
+    path = CARBON_PRICE_PATHS.get(config.carbon_price_path)
     if path is None:
         return 0.0
 
