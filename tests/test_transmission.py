@@ -5,9 +5,18 @@ import unittest
 import numpy as np
 
 from market_sim.config.iso_configs import TransferLink
-from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+from market_sim.data.fleet import (
+    Generator,
+    assemble_mc,
+    generators_to_fleet_arrays,
+)
 from market_sim.model.dispatch import solve_dispatch
-from market_sim.model.transmission import build_incidence_matrix, get_ttc_array
+from market_sim.model.transmission import (
+    build_incidence_matrix,
+    build_wecc_export_sink,
+    build_wecc_import_generators,
+    get_ttc_array,
+)
 
 T = 24  # all transmission tests run a 24-hour horizon
 
@@ -230,6 +239,120 @@ class TestTransmissionDispatch(unittest.TestCase):
         np.testing.assert_allclose(supply, demand, atol=1e-6)
         # The flows respect the link transfer limits in both directions.
         self.assertTrue(np.all(np.abs(result.flows) <= ttc[:, None] + 1e-6))
+
+
+# Availability factor of the WECC import tranches (1 - eford, eford=0.02).
+_IMPORT_AVAIL = 0.98
+
+
+class TestWeccImportModel(unittest.TestCase):
+    """End-to-end tests for the CAISO WECC import/export pseudo-generators."""
+
+    def _solve_caiso(self, generators, caiso_demand, solar_cap=None, solar_cf=None):
+        """Solve a 2-zone CAISO dispatch and return ``(result, fleet)``.
+
+        Zones are ``["CAISO_main", "WECC_import"]`` joined by the single
+        WECC_import -> CAISO_main link; demand sits only in CAISO_main.
+        Marginal costs are assembled from each generator's ``vom`` field
+        (all heat rates are zero), so the import merit order is exercised
+        through the real cost path.
+        """
+        zone_names = ["CAISO_main", "WECC_import"]
+        fleet = generators_to_fleet_arrays(generators, zone_names, hours=T)
+        links = [
+            TransferLink(
+                from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=15000.0
+            )
+        ]
+        incidence = build_incidence_matrix(links, zone_names)
+        ttc = get_ttc_array(links)
+        mc = assemble_mc(fleet, np.zeros((len(generators), T)), carbon_price=0.0)
+        demand = np.vstack([np.full(T, caiso_demand), np.zeros(T)])
+        renewables = dict(
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)) if solar_cf is None else solar_cf,
+            solar_cap=np.zeros(2) if solar_cap is None else solar_cap,
+        )
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc, **renewables
+        )
+        return result, fleet
+
+    def test_low_demand_dispatches_only_cheapest_tranche(self):
+        # CAISO demand (2000 MW) fits inside the $15 PNW_hydro tranche
+        # (3000 MW * 0.98 availability = 2940 MW).
+        generators = build_wecc_import_generators()
+        result, _ = self._solve_caiso(generators, caiso_demand=2000.0)
+
+        # Only tranche 0 (PNW_hydro) carries the load; the rest stay off.
+        np.testing.assert_allclose(result.dispatch[0], 2000.0, atol=1e-6)
+        np.testing.assert_allclose(result.dispatch[1:], 0.0, atol=1e-6)
+        # The 15000 MW link is uncongested, so CAISO prices at the
+        # marginal import tranche's marginal cost.
+        np.testing.assert_allclose(result.prices[0], 15.0, atol=1e-6)
+
+    def test_high_demand_dispatches_all_tranches_in_merit_order(self):
+        # CAISO demand (14000 MW) needs every tranche but not their full
+        # 14700 MW of available capacity.
+        generators = build_wecc_import_generators()
+        result, _ = self._solve_caiso(generators, caiso_demand=14000.0)
+
+        # The three cheaper tranches load to their available maxima.
+        np.testing.assert_allclose(
+            result.dispatch[0], 3000.0 * _IMPORT_AVAIL, atol=1e-6
+        )
+        np.testing.assert_allclose(
+            result.dispatch[1], 5000.0 * _IMPORT_AVAIL, atol=1e-6
+        )
+        np.testing.assert_allclose(
+            result.dispatch[2], 4000.0 * _IMPORT_AVAIL, atol=1e-6
+        )
+        # The $80 tranche is marginal and only partly loaded.
+        served_by_cheaper = (3000.0 + 5000.0 + 4000.0) * _IMPORT_AVAIL
+        np.testing.assert_allclose(
+            result.dispatch[3], 14000.0 - served_by_cheaper, atol=1e-6
+        )
+        # CAISO prices at the most expensive dispatched tranche.
+        np.testing.assert_allclose(result.prices[0], 80.0, atol=1e-6)
+
+    def test_surplus_solar_exports_to_sink(self):
+        # A must-run CAISO_main unit (pmin 4000 MW) forces 3000 MW of
+        # surplus past the 1000 MW of in-state demand; with abundant solar
+        # on top, CAISO must export rather than shed.
+        must_run = Generator(
+            unit_id="CAISO_gas",
+            name="CAISO_gas",
+            zone="CAISO_main",
+            fuel_type="gas_cc",
+            pmax_mw=6000.0,
+            pmin_mw=4000.0,
+            heat_rate=0.0,
+            vom=40.0,
+            eford=0.0,
+        )
+        generators = build_wecc_import_generators() + [
+            build_wecc_export_sink(),
+            must_run,
+        ]
+        solar_cap = np.array([3000.0, 0.0])
+        solar_cf = np.vstack([np.full(T, 1.0), np.zeros(T)])
+        result, _ = self._solve_caiso(
+            generators, caiso_demand=1000.0, solar_cap=solar_cap, solar_cf=solar_cf
+        )
+
+        # Generator order: 4 import tranches, then the sink (index 4),
+        # then the CAISO_main must-run unit (index 5).
+        sink_dispatch = result.dispatch[4]
+        forced_surplus = 4000.0 - 1000.0  # must-run pmin minus CAISO demand
+
+        # Link flow is negative: power moves CAISO_main -> WECC_import.
+        self.assertTrue(np.all(result.flows[0] <= -forced_surplus + 1e-6))
+        # The sink absorbs the export as negative generation.
+        self.assertTrue(np.all(sink_dispatch <= -forced_surplus + 1e-6))
+        # The must-run unit honors its minimum; the import tranches stay off.
+        self.assertTrue(np.all(result.dispatch[5] >= 4000.0 - 1e-6))
+        np.testing.assert_allclose(result.dispatch[:4], 0.0, atol=1e-6)
 
 
 if __name__ == "__main__":
