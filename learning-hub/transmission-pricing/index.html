@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmission Pricing · ERCOT Zones — The 8,760 Problem</title>
+<meta name="description" content="A scrollytelling explainer: how binding transmission limits split a single electricity price into zonal prices — a copper-plate grid versus the four-zone ERCOT topology.">
+
+<!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Shared scrollytell engine styles + design tokens -->
+<link rel="stylesheet" href="../shared/scrollytell.css">
+
+<!-- D3.js — the only external dependency -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+    /* Theme this story sky-blue to match the "Transmission" card in the hub */
+    :root {
+        --sc-accent:        #0EA5E9;
+        --sc-accent-deep:   #0369A1;
+        --sc-accent-soft:   rgba(14, 165, 233, 0.12);
+        --sc-accent-border: rgba(14, 165, 233, 0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-body);
+        background: var(--sc-bg);
+        color: var(--sc-text);
+        line-height: 1.7;
+        min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    /* ---------- Top bar ---------- */
+    .hub-nav {
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hub-nav span {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .hub-nav span b { color: var(--sc-accent); font-weight: 800; }
+    .hub-nav a.back {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+    }
+    .hub-nav a.back:hover { color: var(--sc-accent); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        background: linear-gradient(160deg, var(--sc-navy) 0%, var(--sc-navy-dark) 100%);
+        color: #fff;
+        padding: 64px 24px 72px;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero .eyebrow {
+        font-family: var(--font-heading);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sc-accent);
+        margin-bottom: 14px;
+    }
+    .hero h1 {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        line-height: 1.12;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .hero p .accent { color: var(--sc-accent); font-weight: 600; }
+    .scroll-cue {
+        margin-top: 30px;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+    }
+    .scroll-cue::after { content: " ↓"; }
+
+    /* ---------- Scrolly section ---------- */
+    .story-wrap { padding: 56px 0 40px; }
+
+    .chart { display: none; }
+    .chart.is-visible { display: block; }
+
+    .chart-head {
+        font-family: var(--font-heading);
+        margin-bottom: 6px;
+    }
+    .chart-head .kicker {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sc-accent-deep);
+        margin-bottom: 4px;
+    }
+    .chart-head .title {
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--sc-navy);
+    }
+
+    .chart svg text { font-family: var(--font-body); }
+    .ax-label  { fill: var(--sc-text-muted); font-size: 12px; }
+    .ax-tick   { fill: #94A3B8; font-size: 11px; }
+    .grid-line { stroke: var(--sc-border-soft); stroke-width: 1; }
+    .axis-line { stroke: var(--sc-border); stroke-width: 1.5; }
+    .zone-name { font-family: var(--font-heading); font-weight: 800; }
+    .zone-sub  { font-size: 10px; fill: rgba(255,255,255,0.85); font-weight: 600; }
+    .zone-price{ font-family: var(--font-heading); font-weight: 800; }
+    .ttc-label { font-size: 10px; font-weight: 700; fill: #64748B; }
+
+    /* ---------- Slider ---------- */
+    .map-controls {
+        margin-top: 12px;
+        padding-top: 14px;
+        border-top: 1px solid var(--sc-border-soft);
+    }
+    .slider-row { display: flex; align-items: center; gap: 14px; }
+    .slider-row label {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.86rem;
+        color: var(--sc-navy);
+        white-space: nowrap;
+    }
+    .slider-row input[type=range] {
+        flex: 1;
+        accent-color: var(--sc-accent);
+        height: 6px;
+    }
+    .slider-val {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--sc-accent-deep);
+        min-width: 64px;
+        text-align: right;
+    }
+
+    .readout-row { display: flex; gap: 10px; margin-top: 12px; }
+    .readout {
+        flex: 1;
+        background: var(--sc-bg);
+        border: 1px solid var(--sc-border-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 10px;
+        text-align: center;
+    }
+    .readout.hot { border-color: var(--sc-accent-border); background: var(--sc-accent-soft); }
+    .readout .r-num {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--sc-navy);
+        display: block;
+    }
+    .readout .r-lab {
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--sc-text-muted);
+    }
+
+    .mini-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 0.78rem;
+        color: var(--sc-text-muted);
+    }
+    .mini-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .mini-legend i { width: 13px; height: 13px; border-radius: 3px; display: inline-block; }
+
+    .chart-note {
+        margin-top: 12px;
+        font-size: 0.82rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-accent-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 12px;
+        line-height: 1.55;
+    }
+    .chart-note b { color: var(--sc-accent-deep); }
+
+    /* ---------- Footer ---------- */
+    .hub-footer {
+        border-top: 1px solid var(--sc-border);
+        padding: 28px 24px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-card);
+    }
+    .hub-footer a { color: var(--sc-accent-deep); font-weight: 600; }
+
+    @media (max-width: 820px) {
+        .readout-row { flex-wrap: wrap; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="hub-nav">
+    <a class="back" href="../index.html">&larr; Hub</a>
+    <span>Transmission Pricing · <b>04</b></span>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div class="eyebrow">The 8,760 Problem · Story 04</div>
+        <h1>One grid, one price &mdash;<br>until a wire fills up</h1>
+        <p>
+            ERCOT is one synchronous grid, but it is not one big node. Split it into
+            its <span class="accent">four zones</span> &mdash; North, South, West and
+            Houston &mdash; and the wires between them have limits. When a line hits
+            its <span class="accent">transfer capability</span>, a single price tears
+            into several. Scroll to watch congestion split the map.
+        </p>
+        <div class="scroll-cue">Scroll to begin</div>
+    </div>
+</header>
+
+<div class="story-wrap">
+<div class="scrolly">
+
+    <!-- ============ STICKY CHART PANEL ============ -->
+    <div class="scrolly-graphic">
+        <div class="scrolly-graphic-inner">
+
+            <!-- Chart 1: the four-zone map -->
+            <div class="chart is-visible" id="chart-map">
+                <div class="chart-head">
+                    <span class="kicker" id="map-kicker">The ERCOT zones</span>
+                    <span class="title" id="map-title">Four load zones, six transfer links</span>
+                </div>
+                <svg id="map-svg" viewBox="0 0 760 470" role="img"
+                     aria-label="Map of the four ERCOT zones with transmission links and zonal prices"></svg>
+                <div class="map-controls">
+                    <div class="slider-row">
+                        <label for="wind-slider">West wind output</label>
+                        <input type="range" id="wind-slider" min="0" max="18" step="0.5" value="6">
+                        <span class="slider-val" id="wind-val">6.0 GW</span>
+                    </div>
+                    <div class="readout-row">
+                        <div class="readout" id="rd-west-box">
+                            <span class="r-num" id="rd-west">&mdash;</span>
+                            <span class="r-lab">West price</span>
+                        </div>
+                        <div class="readout">
+                            <span class="r-num" id="rd-rest">&mdash;</span>
+                            <span class="r-lab">North / South / Houston</span>
+                        </div>
+                        <div class="readout" id="rd-spread-box">
+                            <span class="r-num" id="rd-spread">&mdash;</span>
+                            <span class="r-lab">Price spread</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-legend">
+                    <span><i style="background:#1D9BF0"></i> Cheap</span>
+                    <span><i style="background:#F6C445"></i> Mid</span>
+                    <span><i style="background:#E5484D"></i> Expensive</span>
+                    <span><i style="background:#E5484D;border-radius:2px;height:5px;width:18px"></i> Binding link (at TTC)</span>
+                </div>
+            </div>
+
+            <!-- Chart 2: copper-plate vs zonal price bars -->
+            <div class="chart" id="chart-bars">
+                <div class="chart-head">
+                    <span class="kicker">Copper-plate vs zonal</span>
+                    <span class="title">The same hour priced two ways ($/MWh)</span>
+                </div>
+                <svg id="bars-svg" viewBox="0 0 760 430" role="img"
+                     aria-label="Grouped bar chart comparing one uniform copper-plate price with four zonal prices"></svg>
+                <div class="chart-note" id="bars-note">
+                    A <b>copper-plate</b> model assumes infinite wires &mdash; one price
+                    for everyone. The <b>zonal</b> solve respects every TTC, so a zone
+                    that cannot export its cheap power keeps a lower price of its own.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============ SCROLLING NARRATIVE ============ -->
+    <div class="scrolly-narrative">
+
+        <section class="scrolly-step" data-chart="map" data-mode="intro" data-wind="6">
+            <span class="scrolly-step-label">The geography</span>
+            <h2>Four zones, one grid</h2>
+            <p>
+                The dispatch model carves ERCOT into four load zones:
+                <span class="sc-mark">North</span> around the Dallas&ndash;Fort Worth
+                metroplex, <span class="sc-mark">Houston</span> on the Gulf Coast,
+                <span class="sc-mark">South</span> toward San Antonio, and a sprawling,
+                lightly-populated <span class="sc-mark">West</span>.
+            </p>
+            <p>
+                Each circle is sized by how much load it carries. North and Houston are
+                the demand heavyweights; West is small &mdash; but it is where the wind
+                blows.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="topology" data-wind="6">
+            <span class="scrolly-step-label">The wires</span>
+            <h2>Six links, each with a limit</h2>
+            <p>
+                The zones are tied together by six transfer links. Every link has a
+                <span class="sc-mark">total transfer capability</span> &mdash; the most
+                power it can carry &mdash; drawn here in megawatts.
+            </p>
+            <p>
+                Note the asymmetry. North&ndash;Houston is a fat 8,000&nbsp;MW
+                corridor. The links <em>out of West</em> are thin: 3,000 to North,
+                2,500 to Houston, just 2,000 to South. West can only push so much
+                power before those wires run out.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="copper" data-wind="15">
+            <span class="scrolly-step-label">The simple model</span>
+            <h2>If the grid were one node</h2>
+            <p>
+                Start with the easy assumption: a <span class="sc-mark">copper plate
+                </span>. Pretend every wire has infinite capacity. Power sloshes
+                wherever it is needed at no cost.
+            </p>
+            <p>
+                Under copper-plate, there is exactly <strong>one price</strong>. West's
+                cheap wind reaches every zone, all four nodes glow the same colour, and
+                congestion simply does not exist. Clean &mdash; and wrong.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="zonal" data-wind="15">
+            <span class="scrolly-step-label">The wire fills up</span>
+            <h2>Congestion splits the price</h2>
+            <p>
+                Now enforce the limits. West is generating far more wind than its own
+                small load can use, so it exports &mdash; but its links saturate at a
+                combined <span class="sc-mark">7,500&nbsp;MW</span>.
+            </p>
+            <p>
+                The binding links flash <strong>red</strong>. Stranded behind them,
+                West's surplus wind has nowhere to go: its local price collapses, while
+                North, South and Houston still pay for gas. One price has become two.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="zonal" data-wind="15">
+            <span class="scrolly-step-label">Explore it</span>
+            <h2>Drag the West wind</h2>
+            <p>
+                Use the <strong>slider</strong> to change how hard West is blowing.
+                Below about <span class="sc-mark">12&nbsp;GW</span> the export links
+                have slack &mdash; one price holds across the grid.
+            </p>
+            <p>
+                Push past that point and the links bind. Every extra gigawatt of
+                trapped wind drives the West price down and widens the
+                <span class="sc-mark">spread</span> against the rest of the grid.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="bars" data-mode="bars" data-wind="15">
+            <span class="scrolly-step-label">Side by side</span>
+            <h2>Copper-plate vs zonal</h2>
+            <p>
+                Same hour, same fleet, same demand &mdash; priced two ways. The
+                copper-plate model returns one tidy number for the whole system.
+            </p>
+            <p>
+                The zonal solve returns four. North, South and Houston sit
+                <em>above</em> the copper-plate price &mdash; they are short of cheap
+                imports &mdash; while West sits far below it. The wire, not the
+                generator, is setting the difference.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="zonal" data-wind="15">
+            <span class="scrolly-step-label">Who collects the gap</span>
+            <h2>Congestion has a rent</h2>
+            <p>
+                That price gap, multiplied by the power flowing across the binding
+                links, is <span class="sc-mark">congestion rent</span> &mdash; value
+                that belongs to neither the cheap generator nor the expensive load,
+                but to the constrained wire itself.
+            </p>
+            <p>
+                It is the market's signal, in dollars per hour, that this corridor is
+                worth more copper. Persistent rent is how a grid decides
+                <em>where to build the next transmission line</em>.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="map" data-mode="zonal" data-wind="9">
+            <span class="scrolly-step-label">The takeaway</span>
+            <h2>Price separation is physics</h2>
+            <p>
+                Zonal prices are not an accounting quirk. They are the linear
+                program reporting, hour by hour, exactly where the network
+                <strong>cannot deliver</strong> the cheapest available megawatt.
+            </p>
+            <p>
+                Ease the wind back below the limit and the prices snap together again.
+                Across all <strong>8,760 hours</strong>, every zone's price is just
+                the copper-plate price plus the cost of the wires in the way.
+            </p>
+        </section>
+
+    </div>
+</div>
+</div>
+
+<footer class="hub-footer">
+    Story 04 of the <a href="../index.html">Learning Hub</a> &middot;
+    Topology from the ERCOT iso_config &middot; Synthetic, illustrative dispatch
+</footer>
+
+<!-- Shared scrollytell engine -->
+<script src="../shared/scrollytell.js"></script>
+
+<script>
+// ============================================================================
+// Transmission Pricing — the four-zone ERCOT topology and zonal price formation.
+//   Chart 1 : a zone map with animated flows; congestion splits the price
+//   Chart 2 : copper-plate vs zonal price bars
+// Zone names, load shares and link TTCs are taken from the ERCOT iso_config.
+// The dispatch behind the prices is a simplified, illustrative model.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var REDUCE = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var NAVY = '#1A2744';
+
+    // ---- ERCOT topology (from src/market_sim/config/iso_configs.py) -------
+    var ZONES = {
+        North:   { share: 0.38, x: 392, y: 116, label: 'NORTH',   sub: 'Dallas–Ft Worth' },
+        West:    { share: 0.08, x: 150, y: 244, label: 'WEST',     sub: 'Wind country' },
+        South:   { share: 0.20, x: 372, y: 372, label: 'SOUTH',    sub: 'San Antonio' },
+        Houston: { share: 0.34, x: 606, y: 256, label: 'HOUSTON',  sub: 'Gulf Coast' }
+    };
+    var LINKS = [
+        { a: 'North',   b: 'South',   ttc: 5000 },
+        { a: 'North',   b: 'West',    ttc: 3000 },
+        { a: 'North',   b: 'Houston', ttc: 8000 },
+        { a: 'South',   b: 'Houston', ttc: 4000 },
+        { a: 'South',   b: 'West',    ttc: 2000 },
+        { a: 'West',    b: 'Houston', ttc: 2500 }
+    ];
+
+    // ---- Simplified dispatch model ----------------------------------------
+    // System load 60 GW, split by the iso_config load shares. West generates
+    // cheap wind; the other three zones ("the rest") run a rising gas stack.
+    var SYS_LOAD   = 60.0;                       // GW
+    var WEST_LOAD  = SYS_LOAD * ZONES.West.share;     // 4.8 GW
+    var REST_LOAD  = SYS_LOAD * (1 - ZONES.West.share); // 55.2 GW
+    var WEST_EXPORT_CAP = 7.5;                   // GW — sum of West's three TTCs
+    var WEST_IMPORT_CAP = 3.0;                   // GW
+
+    // Rising marginal cost of the "rest" gas fleet, $/MWh at q GW dispatched.
+    function restCost(q) { return 18 + 0.85 * (q - 38); }
+
+    // Solve prices + flows for a given West wind output and pricing model.
+    function solve(windGW, copperPlate) {
+        var desired = windGW - WEST_LOAD;        // West's wish to export (GW)
+        var cap = copperPlate ? Infinity : WEST_EXPORT_CAP;
+        var exportGW = Math.max(-WEST_IMPORT_CAP, Math.min(cap, desired));
+        var curtailed = Math.max(0, desired - cap);
+        var congested = !copperPlate && desired > WEST_EXPORT_CAP + 1e-9;
+
+        var restGas = REST_LOAD - exportGW;
+        var restPrice = restCost(restGas);
+        var westPrice = congested ? 0 : restPrice;
+
+        return {
+            exportGW: exportGW, curtailed: curtailed, congested: congested,
+            westPrice: westPrice, restPrice: restPrice,
+            spread: restPrice - westPrice
+        };
+    }
+
+    function pairKey(a, b) { return [a, b].sort().join('|'); }
+    function linkKey(l) { return pairKey(l.a, l.b); }
+
+    // Per-link flow (GW) and direction for a given solution.
+    function linkFlows(sol) {
+        var E = sol.exportGW;                    // West net export, GW
+        var flows = {};
+        // West's three links carry the export, split proportional to TTC.
+        flows[pairKey('North', 'West')]    = { gw: E * 3000 / 7500, from: 'West', to: 'North' };
+        flows[pairKey('South', 'West')]    = { gw: E * 2000 / 7500, from: 'West', to: 'South' };
+        flows[pairKey('West', 'Houston')]  = { gw: E * 2500 / 7500, from: 'West', to: 'Houston' };
+        // Internal redistribution — modest, never binding here.
+        flows[pairKey('North', 'South')]   = { gw: 1.6, from: 'South', to: 'North' };
+        flows[pairKey('North', 'Houston')] = { gw: 2.2, from: 'North', to: 'Houston' };
+        flows[pairKey('South', 'Houston')] = { gw: 1.1, from: 'South', to: 'Houston' };
+        return flows;
+    }
+
+    // Colour scale: cheap (blue) → mid (amber) → expensive (red).
+    var priceColor = d3.scaleLinear()
+        .domain([0, 17, 34])
+        .range(['#1D9BF0', '#F6C445', '#E5484D'])
+        .clamp(true);
+
+    // ========================================================================
+    // CHART 1 — THE FOUR-ZONE MAP
+    // ========================================================================
+    var MAP = { w: 760, h: 470 };
+    var mapSvg = d3.select('#map-svg');
+    var mapLinkLayer, mapNodeLayer, mapState = { mode: 'intro', wind: 6 };
+    var flowTimer = null;
+
+    function zoneRadius(z) { return 24 + ZONES[z].share * 62; }
+
+    function drawMapBase() {
+        mapSvg.selectAll('*').remove();
+
+        // Faint Texas-ish backdrop panel.
+        mapSvg.append('rect')
+            .attr('x', 28).attr('y', 18)
+            .attr('width', MAP.w - 56).attr('height', MAP.h - 56)
+            .attr('rx', 18)
+            .attr('fill', '#F1F5F9')
+            .attr('stroke', 'var(--sc-border-soft)');
+        mapSvg.append('text')
+            .attr('x', MAP.w - 44).attr('y', MAP.h - 48)
+            .attr('text-anchor', 'end')
+            .attr('class', 'ax-tick')
+            .style('font-weight', '700').style('letter-spacing', '0.12em')
+            .text('ERCOT');
+
+        // Arrowhead marker for flows.
+        var defs = mapSvg.append('defs');
+        defs.append('marker').attr('id', 'flow-arrow')
+            .attr('viewBox', '0 0 10 10').attr('refX', 6).attr('refY', 5)
+            .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+          .append('path').attr('d', 'M0,0 L10,5 L0,10 Z').attr('fill', '#fff');
+
+        mapLinkLayer = mapSvg.append('g');
+        mapNodeLayer = mapSvg.append('g');
+
+        // ---- static link lines + TTC labels ----
+        LINKS.forEach(function (l) {
+            var za = ZONES[l.a], zb = ZONES[l.b];
+            var g = mapLinkLayer.append('g').attr('data-key', linkKey(l));
+            g.append('line').attr('class', 'link-base')
+                .attr('x1', za.x).attr('y1', za.y)
+                .attr('x2', zb.x).attr('y2', zb.y)
+                .attr('stroke', '#CBD5E1').attr('stroke-width', 6)
+                .attr('stroke-linecap', 'round');
+            g.append('line').attr('class', 'link-flow')
+                .attr('x1', za.x).attr('y1', za.y)
+                .attr('x2', zb.x).attr('y2', zb.y)
+                .attr('stroke', '#94A3B8').attr('stroke-width', 5)
+                .attr('stroke-linecap', 'round')
+                .attr('stroke-dasharray', '9 7')
+                .attr('opacity', 0);
+            g.append('text').attr('class', 'ttc-label')
+                .attr('x', (za.x + zb.x) / 2)
+                .attr('y', (za.y + zb.y) / 2 - 7)
+                .attr('text-anchor', 'middle')
+                .attr('opacity', 0)
+                .text((l.ttc / 1000).toFixed(1) + ' GW TTC');
+        });
+
+        // ---- zone nodes ----
+        Object.keys(ZONES).forEach(function (name) {
+            var z = ZONES[name];
+            var g = mapNodeLayer.append('g')
+                .attr('data-zone', name)
+                .attr('transform', 'translate(' + z.x + ',' + z.y + ')');
+            g.append('circle').attr('class', 'zone-disc')
+                .attr('r', zoneRadius(name))
+                .attr('fill', '#64748B')
+                .attr('stroke', '#fff').attr('stroke-width', 3);
+            g.append('text').attr('class', 'zone-name')
+                .attr('text-anchor', 'middle').attr('y', -6)
+                .attr('fill', '#fff')
+                .style('font-size', '13px')
+                .text(z.label);
+            g.append('text').attr('class', 'zone-sub')
+                .attr('text-anchor', 'middle').attr('y', 9)
+                .text(z.sub);
+            g.append('text').attr('class', 'zone-price')
+                .attr('text-anchor', 'middle').attr('y', 27)
+                .attr('fill', '#fff')
+                .style('font-size', '14px')
+                .text('');
+        });
+    }
+
+    function startFlowAnim() {
+        if (flowTimer || REDUCE) return;
+        flowTimer = d3.timer(function (elapsed) {
+            mapLinkLayer.selectAll('.link-flow').each(function () {
+                var sel = d3.select(this);
+                var speed = +sel.attr('data-speed') || 0;
+                if (speed === 0) return;
+                var dir = +sel.attr('data-dir') || 1;
+                sel.attr('stroke-dashoffset', -dir * (elapsed / 1000) * speed * 38);
+            });
+        });
+    }
+
+    function renderMap(mode, windGW) {
+        mapState.mode = mode;
+        mapState.wind = windGW;
+
+        var copper = (mode === 'copper');
+        var showLinks = (mode !== 'intro');
+        var showFlows = (mode === 'copper' || mode === 'zonal');
+        var sol = solve(windGW, copper);
+        var flows = linkFlows(sol);
+        var dur = REDUCE ? 0 : 650;
+
+        // ---- node colours + price labels ----
+        Object.keys(ZONES).forEach(function (name) {
+            var g = mapNodeLayer.select('[data-zone="' + name + '"]');
+            var price = (name === 'West') ? sol.westPrice : sol.restPrice;
+            var fill = showFlows ? priceColor(price) : '#64748B';
+            g.select('.zone-disc').transition().duration(dur).attr('fill', fill);
+            g.select('.zone-price')
+                .text(showFlows ? '$' + price.toFixed(0) : '');
+        });
+
+        // ---- links ----
+        LINKS.forEach(function (l) {
+            var key = linkKey(l);
+            var g = mapLinkLayer.select('[data-key="' + key + '"]');
+            var f = flows[key];
+            var mag = Math.abs(f.gw);
+            var binding = !copper && mag >= l.ttc / 1000 - 0.05 &&
+                          (key.indexOf('West') >= 0);
+
+            g.select('.ttc-label')
+                .transition().duration(dur)
+                .attr('opacity', showLinks ? 1 : 0);
+
+            g.select('.link-base')
+                .transition().duration(dur)
+                .attr('opacity', showLinks ? 1 : 0)
+                .attr('stroke', binding ? '#FCA5A5' : '#CBD5E1');
+
+            var flow = g.select('.link-flow');
+            if (!showFlows || mag < 0.05) {
+                flow.transition().duration(dur).attr('opacity', 0);
+                flow.attr('data-speed', 0);
+            } else {
+                var za = ZONES[f.from], zb = ZONES[f.to];
+                flow.attr('x1', za.x).attr('y1', za.y)
+                    .attr('x2', zb.x).attr('y2', zb.y)
+                    .attr('marker-end', 'url(#flow-arrow)')
+                    .attr('stroke', binding ? '#E5484D' : '#0EA5E9')
+                    .attr('stroke-width', binding ? 7 : 4 + mag)
+                    .attr('data-speed', Math.max(0.6, mag))
+                    .attr('data-dir', 1)
+                    .transition().duration(dur).attr('opacity', binding ? 1 : 0.9);
+            }
+        });
+
+        startFlowAnim();
+        updateMapReadouts(mode, sol);
+    }
+
+    function updateMapReadouts(mode, sol) {
+        var live = (mode === 'copper' || mode === 'zonal');
+        d3.select('#rd-west').text(live ? '$' + sol.westPrice.toFixed(0) : '—');
+        d3.select('#rd-rest').text(live ? '$' + sol.restPrice.toFixed(0) : '—');
+        d3.select('#rd-spread').text(live ? '$' + sol.spread.toFixed(0) : '—');
+        d3.select('#rd-west-box').classed('hot', live && sol.congested);
+        d3.select('#rd-spread-box').classed('hot', live && sol.spread > 0.5);
+
+        d3.select('#wind-slider').property('value', mapState.wind);
+        d3.select('#wind-val').text(mapState.wind.toFixed(1) + ' GW');
+    }
+
+    // ========================================================================
+    // CHART 2 — COPPER-PLATE vs ZONAL PRICE BARS
+    // ========================================================================
+    var BAR = { w: 760, h: 430, m: { t: 70, r: 28, b: 64, l: 58 } };
+    var barSvg = d3.select('#bars-svg');
+
+    function drawBars(windGW) {
+        barSvg.selectAll('*').remove();
+        var dur = REDUCE ? 0 : 800;
+
+        var copper = solve(windGW, true);
+        var zonal  = solve(windGW, false);
+        var copperPrice = copper.restPrice;     // single uniform price
+        var zoneList = ['North', 'South', 'Houston', 'West'];
+        var zonalPrice = function (z) {
+            return z === 'West' ? zonal.westPrice : zonal.restPrice;
+        };
+
+        var yMax = Math.ceil(Math.max(copperPrice, zonal.restPrice) / 5) * 5 + 5;
+        var x0 = d3.scaleBand()
+            .domain(zoneList)
+            .range([BAR.m.l, BAR.w - BAR.m.r])
+            .padding(0.34);
+        var x1 = d3.scaleBand()
+            .domain(['copper', 'zonal'])
+            .range([0, x0.bandwidth()])
+            .padding(0.12);
+        var y = d3.scaleLinear()
+            .domain([0, yMax])
+            .range([BAR.h - BAR.m.b, BAR.m.t]);
+
+        // gridlines
+        var g = barSvg.append('g');
+        y.ticks(5).forEach(function (t) {
+            g.append('line').attr('class', t === 0 ? 'axis-line' : 'grid-line')
+                .attr('x1', BAR.m.l).attr('x2', BAR.w - BAR.m.r)
+                .attr('y1', y(t)).attr('y2', y(t));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', BAR.m.l - 9).attr('y', y(t) + 4)
+                .attr('text-anchor', 'end').text('$' + t);
+        });
+        g.append('text').attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(BAR.m.t + (BAR.h - BAR.m.b - BAR.m.t) / 2))
+            .attr('y', 15).attr('text-anchor', 'middle')
+            .text('Price ($/MWh)');
+
+        // copper-plate reference line
+        g.append('line')
+            .attr('x1', BAR.m.l).attr('x2', BAR.w - BAR.m.r)
+            .attr('y1', y(copperPrice)).attr('y2', y(copperPrice))
+            .attr('stroke', '#0369A1').attr('stroke-width', 1.6)
+            .attr('stroke-dasharray', '5 4');
+        g.append('text').attr('class', 'bar-cap')
+            .attr('x', BAR.w - BAR.m.r).attr('y', y(copperPrice) - 8)
+            .attr('text-anchor', 'end').attr('fill', '#0369A1')
+            .style('font-weight', '700')
+            .text('copper-plate  $' + copperPrice.toFixed(0));
+
+        // grouped bars
+        zoneList.forEach(function (z) {
+            var gx = x0(z);
+            var data = [
+                { kind: 'copper', val: copperPrice, fill: '#94A3B8' },
+                { kind: 'zonal',  val: zonalPrice(z), fill: priceColor(zonalPrice(z)) }
+            ];
+            data.forEach(function (d) {
+                var bx = gx + x1(d.kind);
+                barSvg.append('rect')
+                    .attr('x', bx).attr('width', x1.bandwidth())
+                    .attr('y', y(0)).attr('height', 0)
+                    .attr('rx', 3).attr('fill', d.fill)
+                  .transition().duration(dur)
+                    .attr('y', y(d.val))
+                    .attr('height', y(0) - y(d.val));
+                barSvg.append('text')
+                    .attr('class', 'bar-cap')
+                    .attr('x', bx + x1.bandwidth() / 2)
+                    .attr('y', y(d.val) - 7)
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', d.kind === 'zonal' ? NAVY : '#64748B')
+                    .attr('opacity', 0)
+                    .text('$' + d.val.toFixed(0))
+                  .transition().delay(dur).duration(280).attr('opacity', 1);
+            });
+            barSvg.append('text').attr('class', 'ax-label')
+                .attr('x', gx + x0.bandwidth() / 2)
+                .attr('y', BAR.h - BAR.m.b + 22)
+                .attr('text-anchor', 'middle')
+                .style('font-weight', '700').style('fill', NAVY)
+                .text(z);
+        });
+
+        // legend
+        var lg = barSvg.append('g').attr('transform', 'translate(' + BAR.m.l + ',34)');
+        [['#94A3B8', 'Copper-plate (one price)'],
+         ['#0EA5E9', 'Zonal (per-zone price)']].forEach(function (it, i) {
+            var gi = lg.append('g').attr('transform', 'translate(' + (i * 230) + ',0)');
+            gi.append('rect').attr('width', 13).attr('height', 13).attr('rx', 3)
+                .attr('fill', it[0]);
+            gi.append('text').attr('class', 'ax-tick')
+                .attr('x', 19).attr('y', 11)
+                .style('font-size', '12px').text(it[1]);
+        });
+    }
+
+    // ========================================================================
+    // INITIALISE + WIRE TO THE SCROLLYTELL ENGINE
+    // ========================================================================
+    drawMapBase();
+    renderMap('intro', 6);
+
+    var KICKER = {
+        intro:    ['The ERCOT zones',   'Four load zones, sized by demand'],
+        topology: ['The transfer links', 'Six links — each with a TTC limit'],
+        copper:   ['Copper-plate',       'Infinite wires — one uniform price'],
+        zonal:    ['Zonal dispatch',     'TTC limits enforced — prices separate']
+    };
+
+    function showChart(name) {
+        document.getElementById('chart-map')
+            .classList.toggle('is-visible', name === 'map');
+        document.getElementById('chart-bars')
+            .classList.toggle('is-visible', name === 'bars');
+    }
+
+    function enterStep(chart, mode, wind) {
+        showChart(chart);
+        if (chart === 'map') {
+            if (KICKER[mode]) {
+                d3.select('#map-kicker').text(KICKER[mode][0]);
+                d3.select('#map-title').text(KICKER[mode][1]);
+            }
+            renderMap(mode, wind);
+        } else {
+            drawBars(wind);
+        }
+    }
+
+    var story = new Scrollytell({
+        container: '.scrolly',
+        step: '.scrolly-step',
+        offset: 0.55
+    });
+    story.on('step-enter', function (e) {
+        var d = e.element.dataset;
+        enterStep(d.chart, d.mode, +d.wind);
+    });
+
+    // The wind slider is always live so the reader can explore congestion.
+    document.getElementById('wind-slider').addEventListener('input', function () {
+        var w = +this.value;
+        d3.select('#wind-val').text(w.toFixed(1) + ' GW');
+        // Switching the slider always implies the limit-enforced (zonal) model.
+        var mode = (mapState.mode === 'intro' || mapState.mode === 'topology')
+            ? mapState.mode : 'zonal';
+        if (mode === 'intro' || mode === 'topology') {
+            mapState.wind = w;
+            return;
+        }
+        d3.select('#map-kicker').text(KICKER.zonal[0]);
+        d3.select('#map-title').text(KICKER.zonal[1]);
+        renderMap('zonal', w);
+    });
+
+    // Render whatever step is already on screen at load.
+    enterStep('map', 'intro', 6);
+})();
+</script>
+
+</body>
+</html>
