@@ -106,3 +106,37 @@ def generators_to_fleet_arrays(
         availability=availability,
         unit_ids=[g.unit_id for g in generators],
     )
+
+
+def assemble_mc(
+    fleet: FleetArrays,
+    fuel_prices: np.ndarray,
+    carbon_price: np.ndarray | float,
+    nox_price: np.ndarray | float = 0.0,
+    **adders: tuple[np.ndarray, np.ndarray],
+) -> np.ndarray:
+    """Return the ``(n_gen, T)`` marginal cost array for the fleet.
+
+    The marginal cost of each generator in each hour is::
+
+        mc = heat_rate * fuel_price + vom
+             + emission_rate * carbon_price
+             + nox_rate * nox_price
+             + sum(rate * price for each adder)
+
+    ``fuel_prices`` is ``(n_gen, T)`` or broadcastable to it. ``carbon_price``
+    and ``nox_price`` may be scalars or ``(T,)`` hourly arrays. Each ``adders``
+    keyword value is a ``(generator_rate_array, hourly_price_array)`` pair,
+    allowing extra cost terms (e.g. SO2) without changing the signature.
+    """
+    heat_rate = fleet.heat_rate[:, np.newaxis]
+    mc = heat_rate * np.asarray(fuel_prices, dtype=float)
+    mc = mc + fleet.vom[:, np.newaxis]
+    mc = mc + fleet.emission_rate[:, np.newaxis] * np.asarray(carbon_price, dtype=float)
+    mc = mc + fleet.nox_rate[:, np.newaxis] * np.asarray(nox_price, dtype=float)
+
+    for rate_array, price_array in adders.values():
+        rate = np.asarray(rate_array, dtype=float)[:, np.newaxis]
+        mc = mc + rate * np.asarray(price_array, dtype=float)
+
+    return mc
