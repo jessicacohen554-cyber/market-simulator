@@ -1,10 +1,14 @@
 """Tests for the dispatch variable layout and cost-vector assembly."""
 
+import time
 import unittest
 
+import highspy
 import numpy as np
+import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import (
     VariableLayout,
@@ -14,6 +18,8 @@ from market_sim.model.dispatch import (
     build_variable_bounds,
     solve_dispatch,
 )
+from market_sim.model.storage import StorageUnit, storage_units_to_arrays
+from market_sim.model.transmission import build_incidence_matrix, get_ttc_array
 
 
 def _make_fleet(zones_of_gens, zone_names, hours, pmax=100.0, pmin=10.0, eford=0.05):
@@ -677,6 +683,297 @@ class TestRPSConstraint(unittest.TestCase):
                 fleet, demand, mc=mc, T=self.T, rps_target=1.0,
                 **self._no_renewables(1),
             )
+
+
+def _solve_with_highs_options(
+    highs_options,
+    *,
+    fleet,
+    demand,
+    wind_cf,
+    wind_cap,
+    solar_cf,
+    solar_cap,
+    mc,
+    T,
+    voll=5000.0,
+    incidence=None,
+    ttc=None,
+    storage_power_cap=None,
+    storage_energy_cap=None,
+    storage_zone_idx=None,
+    eta_chg=None,
+    eta_dis=None,
+):
+    """Build and solve the dispatch LP inline, applying extra HiGHS options.
+
+    This duplicates the HiGHS setup/solve portion of ``solve_dispatch`` so the
+    benchmark can vary solver options without changing the production API.
+    ``highs_options`` is a dict of option name -> value applied *after* the
+    standard options (``output_flag`` off, ``presolve`` off).
+
+    Returns ``(build_time, solve_time, objective_value)``.
+    """
+    build_start = time.perf_counter()
+
+    demand = np.asarray(demand, dtype=float)
+    n_zones = demand.shape[0]
+    n_gen = fleet.n_gen
+    n_storage = 0 if storage_power_cap is None else len(storage_power_cap)
+    n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
+
+    layout = VariableLayout(
+        n_gen=n_gen, n_zones=n_zones, n_storage=n_storage, n_links=n_links, T=T
+    )
+
+    cost = build_cost_vector(layout, np.asarray(mc, dtype=float), voll)
+    A, row_lower, row_upper = build_constraints(
+        layout,
+        fleet,
+        demand,
+        incidence=incidence,
+        storage_zone_idx=storage_zone_idx,
+        eta_chg=eta_chg,
+        eta_dis=eta_dis,
+    )
+    col_lower, col_upper = build_variable_bounds(
+        layout,
+        fleet,
+        wind_cf,
+        wind_cap,
+        solar_cf,
+        solar_cap,
+        storage_power_cap=storage_power_cap,
+        storage_energy_cap=storage_energy_cap,
+        ttc=ttc,
+    )
+
+    starts = A.indptr[:-1].astype(np.int32)
+    indices = A.indices.astype(np.int32)
+    values = A.data.astype(np.float64)
+
+    inf = highspy.kHighsInf
+    col_upper = np.where(np.isinf(col_upper), inf, col_upper)
+    col_lower = np.where(np.isinf(col_lower), -inf, col_lower)
+    row_upper = np.where(np.isinf(row_upper), inf, row_upper)
+    row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
+
+    h = highspy.Highs()
+    h.setOptionValue("output_flag", False)
+    # Match the production default: presolve adds pure overhead on these LPs.
+    h.setOptionValue("presolve", "off")
+    for key, val in highs_options.items():
+        h.setOptionValue(key, val)
+    h.addCols(
+        layout.total_columns,
+        cost,
+        col_lower,
+        col_upper,
+        0,
+        np.zeros(layout.total_columns, dtype=np.int32),
+        np.array([], dtype=np.int32),
+        np.array([], dtype=np.float64),
+    )
+    h.addRows(
+        A.shape[0], row_lower, row_upper, A.nnz, starts, indices, values
+    )
+    build_time = time.perf_counter() - build_start
+
+    solve_start = time.perf_counter()
+    h.run()
+    solve_time = time.perf_counter() - solve_start
+
+    _, primal_status = h.getInfoValue("primal_solution_status")
+    if primal_status != 2:
+        status = h.modelStatusToString(h.getModelStatus())
+        raise RuntimeError(f"benchmark LP infeasible (status: {status})")
+
+    return build_time, solve_time, float(h.getObjectiveValue())
+
+
+def _make_200gen_1zone_problem():
+    """200-gen, 1-zone, 8760h problem from ``test_full_year_200_generator_fleet``."""
+    T = HOURS_PER_YEAR  # 8760 hours
+    n_gen = 200
+    pmax = 100.0
+    total_cap = n_gen * pmax
+
+    fleet = _make_fleet(
+        ["Z0"] * n_gen, ["Z0"], hours=T, pmax=pmax, pmin=0.0, eford=0.0
+    )
+    mc = np.tile(np.linspace(20.0, 80.0, n_gen)[:, np.newaxis], (1, T))
+
+    peak = 0.8 * total_cap
+    hours = np.arange(T)
+    demand = (0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T)).reshape(
+        1, T
+    )
+
+    wind_cf = np.full((1, T), 0.35)
+    hour_of_day = hours % 24
+    solar_shape = np.clip(np.sin(np.pi * (hour_of_day - 6) / 12), 0.0, None)
+    solar_cf = (0.6 * solar_shape).reshape(1, T)
+    wind_cap = np.array([0.10 * total_cap])
+    solar_cap = np.array([0.10 * total_cap])
+
+    return dict(
+        fleet=fleet,
+        demand=demand,
+        wind_cf=wind_cf,
+        wind_cap=wind_cap,
+        solar_cf=solar_cf,
+        solar_cap=solar_cap,
+        mc=mc,
+        T=T,
+    )
+
+
+def _make_4zone_storage_problem():
+    """4-zone + storage + transmission 8760h problem from the integration suite.
+
+    Mirrors ``test_integration.TestFullYearPerformance.test_full_year``.
+    """
+    T = 8760
+    iso = get_iso_config("ERCOT")
+    zone_names = iso.zone_names
+
+    zones_cycle = zone_names * 50
+    gens = [
+        Generator(
+            unit_id=f"G{i}",
+            name=f"G{i}",
+            zone=zones_cycle[i],
+            fuel_type="gas_cc",
+            pmax_mw=100.0,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=15 + 75 * i / 200,
+            eford=0.0,
+        )
+        for i in range(200)
+    ]
+    fleet = generators_to_fleet_arrays(gens, zone_names, hours=T)
+    mc = np.array([[g.vom] * T for g in gens], dtype=float)
+
+    eta = 0.85**0.5
+    units = [
+        StorageUnit(
+            unit_id=f"STO{i}",
+            zone=zone_names[i % 4],
+            power_cap_mw=100.0,
+            energy_cap_mwh=400.0,
+            eta_charge=eta,
+            eta_discharge=eta,
+        )
+        for i in range(5)
+    ]
+    sa = storage_units_to_arrays(units, zone_names)
+
+    incidence = build_incidence_matrix(iso.links, zone_names)
+    ttc = get_ttc_array(iso.links)
+
+    hours = np.arange(T)
+    hod = hours % 24
+    daily = 0.6 + 0.4 * np.sin(np.pi * (hod - 6) / 12)
+    total = 12000 * daily
+    demand = np.array([z.load_share for z in iso.zones])[:, None] * total[None, :]
+
+    wind_cf = np.zeros((4, T))
+    wind_cf[2] = 0.35
+    wind_cap = np.array([0, 0, 2000, 0])
+
+    solar_cf = np.zeros((4, T))
+    solar_cf[1] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
+    solar_cap = np.array([0, 1500, 0, 0])
+
+    return dict(
+        fleet=fleet,
+        demand=demand,
+        wind_cf=wind_cf,
+        wind_cap=wind_cap,
+        solar_cf=solar_cf,
+        solar_cap=solar_cap,
+        mc=mc,
+        T=T,
+        incidence=incidence,
+        ttc=ttc,
+        storage_power_cap=sa.power_cap,
+        storage_energy_cap=sa.energy_cap,
+        storage_zone_idx=sa.zone_idx,
+        eta_chg=sa.eta_chg,
+        eta_dis=sa.eta_dis,
+    )
+
+
+class TestSolverBenchmark(unittest.TestCase):
+    """Benchmarks HiGHS solver configurations on the full-year dispatch LP.
+
+    This is a benchmark only -- ``dispatch.py`` is intentionally left
+    unchanged. The test compares three HiGHS configurations (all keep the
+    production ``presolve=off`` setting):
+
+      * ``default``  -- current production setup, no solver method set
+      * ``ipm``      -- interior-point method (``solver=ipm``)
+      * ``parallel`` -- simplex with parallelism (``parallel=on``)
+
+    on both the simple 200-gen/1-zone model and the more complex
+    4-zone + storage + transmission model.
+
+    FOLLOW-UP: no single configuration wins across both models, so
+    ``dispatch.py`` should be left on the ``default`` dual simplex. Measured
+    on this machine:
+
+      * 1-zone model:  parallel ~4.3s < ipm ~5.3s < default ~5.9s
+      * 4-zone model:  default ~17.2s < parallel ~20.7s < ipm ~23.0s
+
+    ``parallel=on`` is fastest on the simple 1-zone LP but ~20% slower than
+    the default on the 4-zone storage/transmission model, where the SOC
+    dynamics rows make the dual simplex's warm-started pivoting pay off.
+    ``ipm`` is never the fastest. Since the production model is the complex
+    multi-zone one, the current ``default`` remains the right choice -- no
+    change to ``dispatch.py`` is warranted from this benchmark.
+    """
+
+    # Solver methods are at most this much slower/different in objective.
+    OBJECTIVE_REL_TOL = 1e-4  # 0.01%
+
+    def _run_benchmark(self, problem):
+        configs = {
+            "default": {},
+            "ipm": {"solver": "ipm"},
+            "parallel": {"parallel": "on"},
+        }
+        results = {}
+        for name, opts in configs.items():
+            results[name] = _solve_with_highs_options(opts, **problem)
+
+        ref_obj = results["default"][2]
+        for name, (build_time, solve_time, obj) in results.items():
+            print(
+                f"[solver bench] {name + ':':<10}"
+                f" build={build_time:.2f}s solve={solve_time:.2f}s"
+                f" total={build_time + solve_time:.2f}s obj={obj:.0f}"
+            )
+
+        # Every solver method must reach the same optimum within 0.01%.
+        for name, (_, _, obj) in results.items():
+            self.assertAlmostEqual(
+                obj,
+                ref_obj,
+                delta=abs(ref_obj) * self.OBJECTIVE_REL_TOL,
+                msg=f"{name} objective diverged from default",
+            )
+
+    def test_solver_method_benchmark(self):
+        print(
+            "\n[solver bench] 200 gens x 8760h -- 1 zone, no storage/transmission"
+        )
+        self._run_benchmark(_make_200gen_1zone_problem())
+
+        print(
+            "[solver bench] 200 gens x 8760h -- 4 zones + storage + transmission"
+        )
+        self._run_benchmark(_make_4zone_storage_problem())
 
 
 if __name__ == "__main__":
