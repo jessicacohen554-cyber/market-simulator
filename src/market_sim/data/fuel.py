@@ -1,8 +1,9 @@
-"""Fuel price and carbon price resolution.
+"""Fuel price and NOx price resolution.
 
 Resolves per-generator delivered fuel prices ($/MMBtu) and the scenario
-carbon and NOx prices into the forms consumed by marginal-cost assembly
-(see :func:`market_sim.data.fleet.assemble_mc`).
+NOx price into the forms consumed by marginal-cost assembly
+(see :func:`market_sim.data.fleet.assemble_mc`). Carbon-price resolution
+lives in :mod:`market_sim.policy.carbon`.
 """
 
 from __future__ import annotations
@@ -69,23 +70,6 @@ def resolve_fuel_prices(
     return np.broadcast_to(
         per_gen_price[:, np.newaxis], (fleet.n_gen, config.hours)
     ).copy()
-
-
-def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
-    """Return the carbon price ($/tCO2) for the given scenario and year.
-
-    The carbon price is currently a flat scalar carried on the config; the
-    ``year`` argument is accepted so callers can later resolve a year-varying
-    trajectory without changing the signature.
-
-    Args:
-        config: Scenario configuration supplying ``carbon_price``.
-        year: Calendar year for which to resolve the price.
-
-    Returns:
-        The carbon price in $/tCO2.
-    """
-    return config.carbon_price
 
 
 def resolve_nox_price(config: ScenarioConfig) -> float:
