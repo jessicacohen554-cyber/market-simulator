@@ -20,9 +20,11 @@ from market_sim.config.constants import (
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
+    WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.model.capacity import CumulativeDeployment
 
 
 class StorageUnit(BaseModel):
@@ -227,15 +229,27 @@ def estimate_storage_revenue(
 
 def compute_storage_annual_cost(
     tech_name: str, year: int, config: ScenarioConfig,
+    cumulative_gw: float | None = None,
 ) -> float:
     """Annualized storage cost per MW-yr.
 
     cost = capex_per_kw * CRF + fom_per_kw_yr, converted to $/MW-yr.
-    Applies IRA ITC to capex if year <= config.ira_expiry_year.
-    Uses a 20-year economic life for CRF.
+    Capex is first discounted along a Wright's-Law learning curve when
+    ``cumulative_gw`` is supplied, then the IRA ITC is applied if
+    year <= config.ira_expiry_year. Uses a 20-year economic life for CRF.
     """
     tech = STORAGE_TECHS[tech_name]
     capex_per_kw = float(tech["capex_per_kw"])
+
+    # Wright's Law learning curve. Both li-ion durations share the "li_ion"
+    # manufacturing learning curve; iron-air maps to its own reference.
+    if cumulative_gw is not None:
+        ref_key = "li_ion" if "li_ion" in tech_name else tech_name
+        reference_gw = WRIGHT_REFERENCE_GW.get(ref_key)
+        if reference_gw is not None and cumulative_gw > 0:
+            lr = float(tech["learning_rate"])
+            capex_per_kw = capex_per_kw * (cumulative_gw / reference_gw) ** (-lr)
+
     if year <= config.ira_expiry_year:
         capex_per_kw *= 1.0 - config.ira_itc_storage
     crf = _capital_recovery_factor(
@@ -287,6 +301,7 @@ def apply_storage_new_entry(
     year: int,
     config: ScenarioConfig,
     iso: str,
+    cumulative: CumulativeDeployment | None = None,
 ) -> list[StorageUnit]:
     """Add storage if arbitrage revenue > annualized cost.
 
@@ -297,7 +312,9 @@ def apply_storage_new_entry(
 
     New units distributed across load zones by load_share. Uses
     config.storage_rte_4hr / storage_rte_8hr overrides when applicable.
-    Returns the full storage fleet (existing + new).
+    When ``cumulative`` is supplied, each tech's capex follows a
+    Wright's-Law learning curve. Returns the full storage fleet
+    (existing + new).
     """
     iso = iso.upper()
     iso_config = get_iso_config(iso)
@@ -315,7 +332,11 @@ def apply_storage_new_entry(
         revenue = estimate_storage_revenue(
             prices, int(tech["duration_hr"]), _storage_rte(tech_name, config)
         )
-        cost = compute_storage_annual_cost(tech_name, year, config)
+        ref_key = "li_ion" if "li_ion" in tech_name else tech_name
+        cum_gw = cumulative.get(ref_key) if cumulative else None
+        cost = compute_storage_annual_cost(
+            tech_name, year, config, cumulative_gw=cum_gw
+        )
         margin = revenue - cost
         if margin > 0.0:
             margins.append((margin, tech_name))

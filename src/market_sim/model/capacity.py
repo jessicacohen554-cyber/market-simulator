@@ -32,10 +32,14 @@ clean builds through the economic new-entry screen above.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 
 from market_sim.config.constants import (
     CO2_RATES,
+    EFORD,
+    GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
@@ -49,7 +53,6 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
-from market_sim.policy.ira import apply_ira_credits_to_lcoe
 
 # Fuel classes treated as dispatchable thermal capacity for economic
 # retirement, mapped to their ScenarioConfig fixed-O&M field ($/kW-yr).
@@ -239,12 +242,48 @@ def apply_economic_retirements(
 # --- Part 2: capacity additions -------------------------------------------
 
 # Candidate technologies considered for economic new entry.
-_NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc")
+_NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc", "nuclear")
 
 # Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
 # the W[z,t]/S[z,t] dispatch variables) rather than entering as thermal
 # Generator objects. Variable-output renewables must follow a CF profile.
 _RENEWABLE_NEW_FUELS: frozenset[str] = frozenset({"wind", "solar"})
+
+
+@dataclass
+class CumulativeDeployment:
+    """Tracks global cumulative installed capacity (GW) per technology.
+
+    Initialized from WRIGHT_REFERENCE_GW (the base-year global stock),
+    then incremented each year by GLOBAL_ANNUAL_DEPLOYMENT_GW plus
+    any local ISO builds. The local ISO contribution is small relative
+    to global deployment but included for consistency.
+    """
+
+    capacities: dict[str, float]
+
+    @classmethod
+    def initial(cls) -> "CumulativeDeployment":
+        """Start from the reference year global installed base."""
+        return cls(capacities=dict(WRIGHT_REFERENCE_GW))
+
+    def advance_year(self, local_builds_gw: dict[str, float] | None = None) -> None:
+        """Increment cumulative capacities by one year of global deployment.
+
+        Args:
+            local_builds_gw: Additional GW built locally this year, by tech.
+                Merged into the global total. Keys should match
+                WRIGHT_REFERENCE_GW keys.
+        """
+        for tech, annual_gw in GLOBAL_ANNUAL_DEPLOYMENT_GW.items():
+            self.capacities[tech] = self.capacities.get(tech, 0.0) + annual_gw
+        if local_builds_gw:
+            for tech, gw in local_builds_gw.items():
+                self.capacities[tech] = self.capacities.get(tech, 0.0) + gw
+
+    def get(self, tech: str) -> float | None:
+        """Return cumulative GW for a technology, or None if not tracked."""
+        return self.capacities.get(tech)
 
 
 def _merge_renewable_additions(
@@ -311,8 +350,13 @@ def compute_lcoe(
     Capital cost is annualized with a capital recovery factor derived from
     ``config.discount_rate`` and the technology lifetime, optionally
     discounted by a Wright's-Law learning curve when ``cumulative_gw`` is
-    supplied. Fixed O&M is added, the total is spread over expected annual
-    generation, and IRA investment credits are applied.
+    supplied. Fixed O&M is added and the total is spread over expected
+    annual generation.
+
+    IRA credits enter at the right layer: the solar investment tax credit
+    discounts ``capex_per_kw`` before annualization, so it never touches
+    fixed O&M; the wind production tax credit is subtracted from the final
+    $/MWh, as a per-MWh credit should be.
 
     Args:
         tech_type: Technology key into :data:`NEW_ENTRY_COSTS`.
@@ -333,13 +377,22 @@ def compute_lcoe(
             capex_per_kw, cumulative_gw, reference_gw, costs["learning_rate"]
         )
 
+    # IRA ITC: reduce capex before annualization, so the credit applies only
+    # to the capital component and never discounts fixed O&M.
+    if year <= config.ira_expiry_year and tech_type == "solar":
+        capex_per_kw *= 1.0 - config.ira_itc_solar
+
     crf = _capital_recovery_factor(config.discount_rate, costs["lifetime_yr"])
     annual_cost_per_kw = capex_per_kw * crf + costs["fom_per_kw_yr"]
     # Annual generation per kW of capacity, expressed in MWh.
     annual_mwh_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
     lcoe = annual_cost_per_kw / annual_mwh_per_kw
 
-    return apply_ira_credits_to_lcoe(tech_type, lcoe, year, config)
+    # Wind PTC: a per-MWh production credit, correctly subtracted post-hoc.
+    if tech_type == "wind" and year <= config.ira_expiry_year:
+        lcoe -= config.ira_ptc_wind
+
+    return lcoe
 
 
 def estimate_expected_revenue(
@@ -400,6 +453,13 @@ def _make_new_generator(
         kwargs["emission_rate_co2"] = CO2_RATES[tech_type][best_bin]
         kwargs["vom"] = VOM.get(tech_type, 0.0)
 
+    # Nuclear carries no fuel cost (fuel is embedded in FOM) and runs as a
+    # must-run baseload unit; it has no heat-rate bin to assign above.
+    if tech_type == "nuclear":
+        kwargs["is_must_run"] = True
+        kwargs["vom"] = VOM.get("nuclear", 2.5)
+        kwargs["eford"] = EFORD.get("nuclear", 0.03)
+
     return Generator(**kwargs)
 
 
@@ -410,6 +470,9 @@ def apply_economic_new_entry(
     config: ScenarioConfig,
     iso: str,
     rec_price: float = 0.0,
+    cumulative: CumulativeDeployment | None = None,
+    gas_price_per_mmbtu: float = 0.0,
+    carbon_price: float = 0.0,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -429,12 +492,12 @@ def apply_economic_new_entry(
     The highest-margin technology draws on the shared ISO budget first;
     once that budget is exhausted no further technologies are built.
 
-    Thermal new entry (``gas_cc``) is appended to the returned fleet as a
-    :class:`Generator`. Wind and solar are *not*: variable-output
-    renewables must follow a capacity-factor profile, so their build MW is
-    routed to the zonal ``wind_cap`` / ``solar_cap`` pools (the bounds of
-    the ``W[z,t]`` and ``S[z,t]`` dispatch variables) rather than entering
-    as flat-availability thermal units.
+    Thermal new entry (``gas_cc`` and ``nuclear``) is appended to the
+    returned fleet as a :class:`Generator`. Wind and solar are *not*:
+    variable-output renewables must follow a capacity-factor profile, so
+    their build MW is routed to the zonal ``wind_cap`` / ``solar_cap``
+    pools (the bounds of the ``W[z,t]`` and ``S[z,t]`` dispatch variables)
+    rather than entering as flat-availability thermal units.
 
     Args:
         fleet: The current generator fleet.
@@ -444,6 +507,12 @@ def apply_economic_new_entry(
         iso: ISO identifier, supplying the queue caps and build zone.
         rec_price: Prior year's RPS shadow price in $/MWh, added to the
             expected revenue of wind and solar candidates.
+        cumulative: Global cumulative deployment, used to discount each
+            candidate's capex along its Wright's-Law learning curve.
+        gas_price_per_mmbtu: Delivered gas price, used to charge gas CC
+            new entry its expected variable fuel cost.
+        carbon_price: Carbon price in $/tCO2, used to charge thermal new
+            entry its expected carbon cost.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -458,13 +527,31 @@ def apply_economic_new_entry(
     margins: list[tuple[float, str]] = []
     for tech in _NEW_ENTRY_TECHS:
         base_cf = NEW_ENTRY_COSTS[tech]["base_cf"]
-        lcoe = compute_lcoe(tech, year, config)
+        cum_gw = cumulative.get(tech) if cumulative else None
+        lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
         effective_revenue = estimate_expected_revenue(prices, base_cf)
         # A binding RPS pays clean technologies a REC premium on every MWh
         # generated, raising their expected revenue.
         if tech in _RENEWABLE_NEW_FUELS:
             effective_revenue += rec_price * base_cf * HOURS_PER_YEAR
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
+
+        # Thermal candidates also burn fuel: a gas CC earns margin only
+        # when the clearing price clears its marginal cost, so charge it
+        # the expected variable cost (fuel, VOM, carbon) of a best-in-class
+        # new unit. Without this, gas CC builds regardless of fuel price.
+        if tech in _THERMAL_FOM:
+            heat_rate_bins = HEAT_RATE_BINS.get(tech, {})
+            best_hr = min(heat_rate_bins.values()) if heat_rate_bins else 0.0
+            co2_bins = CO2_RATES.get(tech, {})
+            best_co2 = min(co2_bins.values()) if co2_bins else 0.0
+            var_cost = (
+                best_hr * gas_price_per_mmbtu
+                + VOM.get(tech, 0.0)
+                + best_co2 * carbon_price
+            )
+            annual_cost += var_cost * base_cf * HOURS_PER_YEAR
+
         margin = effective_revenue - annual_cost
         if margin > 0.0:
             margins.append((margin, tech))
@@ -510,6 +597,9 @@ def evolve_fleet(
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
     rec_price: float = 0.0,
+    cumulative: CumulativeDeployment | None = None,
+    gas_price_per_mmbtu: float = 0.0,
+    carbon_price: float = 0.0,
 ) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]]]:
     """Advance the fleet by one simulation year.
 
@@ -541,6 +631,12 @@ def evolve_fleet(
             place.
         rec_price: Prior year's RPS shadow price in $/MWh, passed to the
             economic new-entry screen as additional clean-energy revenue.
+        cumulative: Global cumulative deployment, passed to the new-entry
+            screen so candidate capex follows a Wright's-Law learning curve.
+        gas_price_per_mmbtu: Delivered gas price for the year, passed to
+            the new-entry screen to cost gas CC variable fuel.
+        carbon_price: Carbon price in $/tCO2 for the year, passed to the
+            new-entry screen to cost thermal carbon emissions.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions)`` after all
@@ -580,7 +676,11 @@ def evolve_fleet(
     # the prior year's REC price as additional expected revenue.
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
-            fleet, prices, year, config, config.iso, rec_price=rec_price
+            fleet, prices, year, config, config.iso,
+            rec_price=rec_price,
+            cumulative=cumulative,
+            gas_price_per_mmbtu=gas_price_per_mmbtu,
+            carbon_price=carbon_price,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
