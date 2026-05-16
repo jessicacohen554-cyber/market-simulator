@@ -461,6 +461,8 @@ class DispatchResult:
         status: HiGHS model-status string.
         build_time: Seconds spent assembling and loading the model.
         solve_time: Seconds spent inside the solver.
+        emissions: CO2 emissions per generator, shape ``(n_gen, T)``;
+            ``None`` until populated by downstream emissions accounting.
     """
 
     dispatch: np.ndarray
@@ -476,6 +478,7 @@ class DispatchResult:
     status: str
     build_time: float
     solve_time: float
+    emissions: np.ndarray | None = None
 
 
 def solve_dispatch(

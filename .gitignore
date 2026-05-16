@@ -10,5 +10,8 @@ build/
 # Generated CSV outputs — raw source files (parquet/json) are committed
 inputs/raw-data/eia-860/*.csv
 
+# Cached simulation results
+/results/
+
 # OS
 .DS_Store
