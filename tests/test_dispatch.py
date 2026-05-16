@@ -232,9 +232,12 @@ class TestBuildConstraints(unittest.TestCase):
         self.assertEqual(dense[r, layout.chg_col(0, 2)], -0.9)
         self.assertAlmostEqual(dense[r, layout.dis_col(0, 2)], 1.0 / 0.8)
 
-        # Cyclic boundary row links the first and last hour.
+        # Hour-0 row is a full dynamics row that wraps around from hour T-1,
+        # so it also carries hour 0's own charge and discharge terms.
         self.assertEqual(dense[4, layout.soc_col(0, 0)], 1.0)
         self.assertEqual(dense[4, layout.soc_col(0, 3)], -1.0)
+        self.assertEqual(dense[4, layout.chg_col(0, 0)], -0.9)
+        self.assertAlmostEqual(dense[4, layout.dis_col(0, 0)], 1.0 / 0.8)
 
         # SOC rows are equalities with a zero RHS.
         np.testing.assert_array_equal(row_lower[4:8], np.zeros(4))
