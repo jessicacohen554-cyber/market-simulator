@@ -1,0 +1,1 @@
+"""Economic dispatch optimization model."""
