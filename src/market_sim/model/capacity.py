@@ -53,6 +53,10 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
+from market_sim.policy.rec import (
+    compute_rec_revenue_per_mw,
+    get_rec_price_for_new_entry,
+)
 
 # Fuel classes treated as dispatchable thermal capacity for economic
 # retirement, mapped to their ScenarioConfig fixed-O&M field ($/kW-yr).
@@ -190,6 +194,16 @@ def apply_economic_retirements(
 
         zone = int(fleet_arrays.zone_idx[i])
         net_revenue = float(np.dot(prices[zone], dispatch[i]))
+
+        # Exogenous RECs (e.g. a nuclear Zero Emission Credit) add revenue
+        # beyond the energy market, keeping units that energy prices alone
+        # would not -- this is what stops a ZEC-backed nuclear plant from
+        # retiring when energy revenue falls short of fixed O&M.
+        annual_gen_mwh = float(np.sum(dispatch[i]))
+        rec_revenue = compute_rec_revenue_per_mw(
+            g.fuel_type, annual_gen_mwh, g.pmax_mw, config
+        )
+        net_revenue += rec_revenue
 
         threshold = getattr(
             config,
@@ -534,6 +548,12 @@ def apply_economic_new_entry(
         # generated, raising their expected revenue.
         if tech in _RENEWABLE_NEW_FUELS:
             effective_revenue += rec_price * base_cf * HOURS_PER_YEAR
+        # Exogenous RECs apply to every eligible technology (including
+        # gas_cc for CCS credits) and stack with the endogenous RPS dual
+        # above -- both premiums are paid independently per MWh generated.
+        exogenous_rec = get_rec_price_for_new_entry(tech, config)
+        if exogenous_rec > 0.0:
+            effective_revenue += exogenous_rec * base_cf * HOURS_PER_YEAR
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
 
         # Thermal candidates also burn fuel: a gas CC earns margin only
