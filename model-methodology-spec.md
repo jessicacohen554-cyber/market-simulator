@@ -477,13 +477,7 @@ Screen by technology: if `expected_revenue > LCOE`, the technology is economic f
 
 EIA-860 provides: units under construction (with expected online date), announced retirements (with expected date). These are deterministic — they happen regardless of economics. Transition point from known to modeled: ~2030 for near-term pipeline, model takes over for years beyond the data horizon.
 
-### 5.5 Storage Growth
-
-Storage capacity grows annually from a base-year deployment level at a pace-dependent compound growth rate. The base capacity and growth rate are both scenario parameters (Tier 1). Storage technology mix shares are held fixed; only total deployed MW evolves. Total storage is capped at 50% of peak demand to prevent runaway growth in high-price scenarios.
-
-The storage fleet for each year is rebuilt from the growth trajectory — it does not go through the economic new entry screen. This is a deliberate simplification: battery storage deployment is driven by policy mandates, utility procurement, and developer pipelines that don’t respond to a single year’s price signal the way thermal entry does.
-
-### 5.6 Storage New Entry
+### 5.5 Storage New Entry
 
 Storage enters via economics-based screening. For each technology,
 expected arbitrage revenue from the prior year's price profile is
