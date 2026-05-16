@@ -105,6 +105,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, config.weather_year, iso_config, config
     )
+    # Trim profiles to config.hours when running a sub-annual horizon.
+    if config.hours < base_demand.shape[1]:
+        base_demand = base_demand[:, :config.hours]
+        wind_cf = wind_cf[:, :config.hours]
+        solar_cf = solar_cf[:, :config.hours]
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = get_ttc_array(iso_config.links)
     # CAISO models the rest of the WECC as import pseudo-generators that
