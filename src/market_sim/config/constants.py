@@ -222,8 +222,8 @@ QUEUE_CAP_GW: dict[str, float] = {
 # Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
-    "ERCOT": {"wind": 5.0, "solar": 5.0, "gas_cc": 3.0},
-    "CAISO": {"wind": 3.0, "solar": 4.0, "gas_cc": 2.0},
+    "ERCOT": {"wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "nuclear": 2.0},
+    "CAISO": {"wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0},
 }
 
 # New entry technology cost and performance parameters.
@@ -250,14 +250,37 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "base_cf": 0.55,
         "lifetime_yr": 30,
     },
+    "nuclear": {  # NREL ATB 2024 — advanced nuclear (SMR/Gen III+)
+        "capex_per_kw": 6800.0,
+        "fom_per_kw_yr": 120.0,
+        "learning_rate": 0.05,
+        "base_cf": 0.90,
+        "lifetime_yr": 40,
+    },
 }
 
 # Wright's Law reference cumulative installed capacity (GW global).
-# Source: IRENA 2024.
+# Source: IRENA 2024, IEA WEO 2024, IAEA PRIS 2024, DOE LDES Liftoff.
 WRIGHT_REFERENCE_GW: dict[str, float] = {
-    "wind": 1020.0,   # IRENA 2024 — global installed onshore + offshore wind
-    "solar": 1420.0,  # IRENA 2024 — global installed solar PV
-    "li_ion": 90.0,   # IRENA 2024 — global installed li-ion grid storage
+    "wind": 1020.0,    # IRENA 2024 — global installed onshore + offshore wind
+    "solar": 1420.0,   # IRENA 2024 — global installed solar PV
+    "li_ion": 90.0,    # IRENA 2024 — global installed li-ion grid storage
+    "gas_cc": 1200.0,  # IEA WEO 2024 — global installed gas combined-cycle
+    "nuclear": 440.0,  # IAEA PRIS 2024 — global installed nuclear
+    "iron_air": 0.5,   # DOE LDES Liftoff — global installed iron-air (nascent)
+}
+
+# Annual global deployment (GW/yr) by technology, used to project cumulative
+# installed capacity for Wright's Law learning curves. These represent the
+# worldwide market, not just the modeled ISO.
+# Source: IRENA 2024, IEA WEO 2024.
+GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
+    "wind": 120.0,     # IRENA 2024 — ~120 GW/yr global wind additions
+    "solar": 350.0,    # IRENA 2024 — ~350 GW/yr global solar additions
+    "li_ion": 30.0,    # BloombergNEF 2024 — ~30 GW/yr grid storage
+    "gas_cc": 25.0,    # IEA WEO 2024 — ~25 GW/yr global gas CC additions
+    "nuclear": 8.0,    # IAEA 2024 — ~8 GW/yr global nuclear additions
+    "iron_air": 0.5,   # DOE estimate — nascent, <1 GW/yr
 }
 
 # Annual-average renewable capacity factors (fraction) by ISO and technology.
