@@ -27,6 +27,7 @@ def _make_result(*, with_storage=True, with_flows=True, with_emissions=True):
         wind_dispatched=rng.random((n_zones, T)) * 50.0,
         solar_dispatched=rng.random((n_zones, T)) * 40.0,
         slack=rng.random((n_zones, T)),
+        dump=rng.random((n_zones, T)) * 0.01,  # small overgeneration
         prices=rng.random((n_zones, T)) * 80.0 - 10.0,
         storage_charge=storage_kwargs["storage_charge"] if with_storage else None,
         storage_discharge=(
@@ -49,6 +50,7 @@ def _assert_results_match(test, expected, actual):
         "wind_dispatched",
         "solar_dispatched",
         "slack",
+        "dump",
         "prices",
         "storage_charge",
         "storage_discharge",
