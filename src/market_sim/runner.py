@@ -119,7 +119,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             fleet = load_fleet_from_csv(iso, iso_config)
         else:
             fleet, loss_tracker, renewable_additions = evolve_fleet(
-                fleet, prior_results, year, config, loss_tracker
+                fleet, prior_results, year, config, loss_tracker,
+                renewable_cap_mw=float(wind_cap.sum() + solar_cap.sum()),
             )
             # New wind/solar grow the zonal capacity pools that bound the
             # W[z,t] and S[z,t] dispatch variables -- they are not added as
