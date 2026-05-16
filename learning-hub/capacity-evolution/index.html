@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacity Evolution · 2026 → 2050 — The 8,760 Problem</title>
+<meta name="description" content="A scrollytelling explainer: how an electricity fleet retires and rebuilds itself from 2026 to 2050 — fleet waterfalls, sigmoid retirement triggers, and Wright's Law cost curves.">
+
+<!-- Fonts: Plus Jakarta Sans (headings) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Shared scrollytell engine styles + design tokens -->
+<link rel="stylesheet" href="../shared/scrollytell.css">
+
+<!-- D3.js — the only external dependency -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+    /* Theme this story green to match the "Capacity" card in the hub */
+    :root {
+        --sc-accent:        #22C55E;
+        --sc-accent-deep:   #15803D;
+        --sc-accent-soft:   rgba(34, 197, 94, 0.12);
+        --sc-accent-border: rgba(34, 197, 94, 0.45);
+
+        /* Fuel colour tokens — shared across the hub charts */
+        --fuel-gas-cc:  #4A90D9;
+        --fuel-gas-ct:  #7BB3E0;
+        --fuel-coal:    #8B4513;
+        --fuel-nuclear: #9B59B6;
+        --fuel-wind:    #2ECC71;
+        --fuel-solar:   #F1C40F;
+        --fuel-storage: #E67E22;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-body);
+        background: var(--sc-bg);
+        color: var(--sc-text);
+        line-height: 1.7;
+        min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    /* ---------- Top bar ---------- */
+    .hub-nav {
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hub-nav span {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .hub-nav span b { color: var(--sc-accent); font-weight: 800; }
+    .hub-nav a.back {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.76rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+    }
+    .hub-nav a.back:hover { color: var(--sc-accent); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        background: linear-gradient(160deg, var(--sc-navy) 0%, var(--sc-navy-dark) 100%);
+        color: #fff;
+        padding: 64px 24px 72px;
+    }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero .eyebrow {
+        font-family: var(--font-heading);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sc-accent);
+        margin-bottom: 14px;
+    }
+    .hero h1 {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        line-height: 1.12;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        max-width: 640px;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .hero p .accent { color: var(--sc-accent); font-weight: 600; }
+    .scroll-cue {
+        margin-top: 30px;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+    }
+    .scroll-cue::after { content: " ↓"; }
+
+    /* ---------- Scrolly section ---------- */
+    .story-wrap { padding: 56px 0 40px; }
+
+    /* The sticky panel hosts three charts; only one is visible at a time */
+    .chart { display: none; }
+    .chart.is-visible { display: block; }
+
+    .chart-head {
+        font-family: var(--font-heading);
+        margin-bottom: 6px;
+    }
+    .chart-head .kicker {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sc-accent-deep);
+        margin-bottom: 4px;
+    }
+    .chart-head .title {
+        font-size: 1.12rem;
+        font-weight: 700;
+        color: var(--sc-navy);
+    }
+
+    /* SVG text defaults */
+    .chart svg text { font-family: var(--font-body); }
+    .ax-label  { fill: var(--sc-text-muted); font-size: 12px; }
+    .ax-tick   { fill: #94A3B8; font-size: 11px; }
+    .grid-line { stroke: var(--sc-border-soft); stroke-width: 1; }
+    .axis-line { stroke: var(--sc-border); stroke-width: 1.5; }
+    .bar-cap   { font-size: 10px; font-weight: 600; }
+    .bar-name  { fill: var(--sc-text-muted); font-size: 10px; }
+
+    /* ---------- Sigmoid controls ---------- */
+    .sigmoid-controls {
+        margin-top: 10px;
+        padding-top: 14px;
+        border-top: 1px solid var(--sc-border-soft);
+    }
+    .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .slider-row label {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.86rem;
+        color: var(--sc-navy);
+        white-space: nowrap;
+    }
+    .slider-row input[type=range] {
+        flex: 1;
+        accent-color: var(--sc-accent);
+        height: 6px;
+    }
+    .slider-val {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--sc-accent-deep);
+        min-width: 46px;
+        text-align: right;
+    }
+    .readout-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+    .readout {
+        flex: 1;
+        background: var(--sc-bg);
+        border: 1px solid var(--sc-border-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 8px 10px;
+        text-align: center;
+    }
+    .readout .r-num {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--sc-navy);
+        display: block;
+    }
+    .readout .r-lab {
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--sc-text-muted);
+    }
+
+    /* Plant chips */
+    .plant-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        margin-top: 12px;
+    }
+    .chip {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 6px 9px;
+        border: 1px solid var(--sc-border-soft);
+        border-left: 4px solid var(--chip-color, #999);
+        border-radius: var(--sc-radius-sm);
+        background: var(--sc-card);
+        transition: opacity 0.35s ease, background 0.35s ease;
+    }
+    .chip .dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: var(--chip-color, #999);
+        flex: none;
+    }
+    .chip .chip-name { flex: 1; color: var(--sc-text); }
+    .chip .chip-tag {
+        font-family: var(--font-heading);
+        font-size: 0.6rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: var(--sc-accent-deep);
+    }
+    .chip.retired {
+        opacity: 0.5;
+        background: #F3F4F6;
+    }
+    .chip.retired .chip-name { text-decoration: line-through; }
+    .chip.retired .chip-tag { color: #B91C1C; }
+    .chip:not(.retired) .chip-tag { color: #94A3B8; }
+
+    /* Wright legend / caption */
+    .mini-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        font-size: 0.78rem;
+        color: var(--sc-text-muted);
+    }
+    .mini-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .mini-legend i {
+        width: 14px; height: 3px; border-radius: 2px; display: inline-block;
+    }
+    .chart-note {
+        margin-top: 10px;
+        font-size: 0.82rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-accent-soft);
+        border-radius: var(--sc-radius-sm);
+        padding: 9px 12px;
+        line-height: 1.55;
+    }
+    .chart-note b { color: var(--sc-accent-deep); }
+
+    /* ---------- Footer ---------- */
+    .hub-footer {
+        border-top: 1px solid var(--sc-border);
+        padding: 28px 24px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: var(--sc-text-muted);
+        background: var(--sc-card);
+    }
+    .hub-footer a { color: var(--sc-accent-deep); font-weight: 600; }
+
+    @media (max-width: 820px) {
+        .plant-grid { grid-template-columns: 1fr; }
+        .readout-row { flex-wrap: wrap; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="hub-nav">
+    <a class="back" href="../index.html">&larr; Hub</a>
+    <span>Capacity Evolution · <b>02</b></span>
+</nav>
+
+<header class="hero">
+    <div class="hero-inner">
+        <div class="eyebrow">The 8,760 Problem · Story 02</div>
+        <h1>A grid rebuilds itself,<br>one year at a time</h1>
+        <p>
+            Between <span class="accent">2026 and 2050</span> almost every fossil
+            plant on the system retires, and a wave of wind, solar and storage
+            takes its place. This is <span class="accent">capacity expansion</span> —
+            the slow churn underneath the fast hourly dispatch. Scroll to watch the
+            fleet turn over.
+        </p>
+        <div class="scroll-cue">Scroll to begin</div>
+    </div>
+</header>
+
+<div class="story-wrap">
+<div class="scrolly">
+
+    <!-- ============ STICKY CHART PANEL ============ -->
+    <div class="scrolly-graphic">
+        <div class="scrolly-graphic-inner">
+
+            <!-- Chart 1: fleet waterfall -->
+            <div class="chart is-visible" id="chart-waterfall">
+                <div class="chart-head">
+                    <span class="kicker">Fleet waterfall</span>
+                    <span class="title">Installed capacity · 2026 &rarr; 2050 (GW)</span>
+                </div>
+                <svg id="wf-svg" viewBox="0 0 760 480" role="img"
+                     aria-label="Waterfall chart of capacity retiring and being added between 2026 and 2050"></svg>
+            </div>
+
+            <!-- Chart 2: sigmoid retirement trigger -->
+            <div class="chart" id="chart-sigmoid">
+                <div class="chart-head">
+                    <span class="kicker">Retirement trigger</span>
+                    <span class="title">Retirement pressure vs. clean-energy share</span>
+                </div>
+                <svg id="sg-svg" viewBox="0 0 760 360" role="img"
+                     aria-label="Sigmoid curve relating clean energy share to retirement pressure"></svg>
+                <div class="sigmoid-controls">
+                    <div class="slider-row">
+                        <label for="cs-slider">Clean share</label>
+                        <input type="range" id="cs-slider" min="0" max="100" value="30">
+                        <span class="slider-val" id="cs-val">30%</span>
+                    </div>
+                    <div class="readout-row">
+                        <div class="readout">
+                            <span class="r-num" id="rd-pressure">&mdash;</span>
+                            <span class="r-lab">Retirement pressure</span>
+                        </div>
+                        <div class="readout">
+                            <span class="r-num" id="rd-count">&mdash;</span>
+                            <span class="r-lab">Plants retired</span>
+                        </div>
+                        <div class="readout">
+                            <span class="r-num" id="rd-gw">&mdash;</span>
+                            <span class="r-lab">Fossil GW gone</span>
+                        </div>
+                    </div>
+                    <div class="plant-grid" id="plant-grid"></div>
+                </div>
+            </div>
+
+            <!-- Chart 3: Wright's Law cost curve -->
+            <div class="chart" id="chart-wright">
+                <div class="chart-head">
+                    <span class="kicker">Wright's Law</span>
+                    <span class="title">Unit cost vs. cumulative capacity ($/W)</span>
+                </div>
+                <svg id="wr-svg" viewBox="0 0 760 470" role="img"
+                     aria-label="Log-scale learning curves of cost falling as cumulative capacity grows"></svg>
+                <div class="mini-legend">
+                    <span><i style="background:#F1C40F"></i> Solar PV &middot; 24% learning</span>
+                    <span><i style="background:#2ECC71"></i> Onshore wind &middot; 10%</span>
+                    <span><i style="background:#E67E22"></i> Battery storage &middot; 19%</span>
+                </div>
+                <div class="chart-note" id="wr-note">
+                    Every <b>doubling</b> of cumulative capacity knocks a fixed
+                    percentage off the unit cost.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============ SCROLLING NARRATIVE ============ -->
+    <div class="scrolly-narrative">
+
+        <section class="scrolly-step" data-chart="waterfall" data-view="intro">
+            <span class="scrolly-step-label">Capacity expansion</span>
+            <h2>The fleet you start with</h2>
+            <p>
+                In 2026 the model opens with roughly <span class="sc-mark">750&nbsp;GW</span>
+                of installed capacity — a balanced mix of gas, coal, nuclear and a
+                first wave of renewables.
+            </p>
+            <p>
+                Hourly dispatch decides which of these plants <em>run</em>. Capacity
+                expansion decides which ones <em>exist</em> — and that set is never
+                fixed. Each year some plants leave and others arrive.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="waterfall" data-view="retire">
+            <span class="scrolly-step-label">What leaves</span>
+            <h2>Retirements pull the fleet down</h2>
+            <p>
+                By 2050 nearly all the <span class="sc-mark">coal</span> is gone,
+                along with aging gas peakers, an early combined-cycle plant and a
+                nuclear unit reaching its licence end.
+            </p>
+            <p>
+                That is about <strong>200&nbsp;GW</strong> stepping off the system —
+                each red block a category of capacity that stopped being worth
+                keeping online.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="waterfall" data-view="add">
+            <span class="scrolly-step-label">What arrives</span>
+            <h2>New build pushes it back up</h2>
+            <p>
+                Then the additions stack on top: a little flexible gas, but
+                overwhelmingly <span class="sc-mark">wind, solar and storage</span> —
+                roughly <strong>740&nbsp;GW</strong> of new capacity.
+            </p>
+            <p>
+                Renewables are built oversized because their capacity factor is
+                low: you need a lot of nameplate to deliver firm energy.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="waterfall" data-view="full">
+            <span class="scrolly-step-label">The 2050 fleet</span>
+            <h2>Same grid, different machine</h2>
+            <p>
+                The total lands near <span class="sc-mark">1,290&nbsp;GW</span> — a
+                net gain of about 540&nbsp;GW. But the headline number hides the real
+                story: the <em>composition</em> has been completely rebuilt.
+            </p>
+            <p>
+                Two questions drive every block in this chart. <strong>Why</strong>
+                does a plant retire? And <strong>why</strong> does new build get so
+                cheap? The next two charts answer them.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="sigmoid" data-view="intro">
+            <span class="scrolly-step-label">Why plants retire</span>
+            <h2>Retirement is economic, not scheduled</h2>
+            <p>
+                A plant rarely closes on a fixed date. It closes when it stops
+                earning enough to cover its costs.
+            </p>
+            <p>
+                As the <span class="sc-mark">clean-energy share</span> of the grid
+                rises, cheap zero-fuel generation runs first. Fossil plants get
+                pushed to the back of the stack, run fewer hours, and watch their
+                margins collapse.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="sigmoid" data-view="interactive">
+            <span class="scrolly-step-label">The trigger</span>
+            <h2>Drag the clean share</h2>
+            <p>
+                The model encodes this as a <span class="sc-mark">sigmoid</span>:
+                retirement pressure stays low, then climbs steeply through a tipping
+                band, then saturates near certainty.
+            </p>
+            <p>
+                Use the <strong>slider</strong> to move the clean share. Each plant
+                has its own threshold — old coal goes first, efficient combined-cycle
+                gas holds on the longest. Watch the chips switch off as you cross
+                their tipping points.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="wright" data-view="intro">
+            <span class="scrolly-step-label">Why new build is cheap</span>
+            <h2>Wright's Law</h2>
+            <p>
+                In 1936 Theodore Wright noticed aircraft got cheaper by a fixed
+                percentage every time cumulative production <em>doubled</em>. The
+                same law governs solar panels, wind turbines and batteries.
+            </p>
+            <p>
+                Plotted on a log axis it is a straight line down: the
+                <span class="sc-mark">learning rate</span> is the cost drop per
+                doubling — 24% for solar, 19% for storage, a gentler 10% for wind.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="wright" data-view="animate">
+            <span class="scrolly-step-label">Riding the curve</span>
+            <h2>Twenty-five years of doublings</h2>
+            <p>
+                Follow the solar marker. As cumulative installed capacity grows
+                from 2026 to 2050, the unit cost slides down the learning curve —
+                from over <strong>$1.00/W</strong> toward <strong>$0.30/W</strong>.
+            </p>
+            <p>
+                Each doubling is a fixed discount; the early doublings come fast,
+                because doubling a small number is easy.
+            </p>
+        </section>
+
+        <section class="scrolly-step" data-chart="wright" data-view="flywheel">
+            <span class="scrolly-step-label">The flywheel</span>
+            <h2>Cheap builds cheaper</h2>
+            <p>
+                The loop is self-reinforcing: cheaper modules get deployed more,
+                deployment grows cumulative capacity, and that growth triggers the
+                next cost-cutting doubling.
+            </p>
+            <p>
+                That flywheel is the engine behind the <em>additions</em> in the
+                very first chart. Retirement economics empty the fleet; Wright's Law
+                decides what fills it back up.
+            </p>
+        </section>
+
+    </div>
+</div>
+</div>
+
+<footer class="hub-footer">
+    Story 02 of the <a href="../index.html">Learning Hub</a> &middot;
+    Synthetic, illustrative data &middot; Built on the LP dispatch simulator
+</footer>
+
+<!-- Shared scrollytell engine -->
+<script src="../shared/scrollytell.js"></script>
+
+<script>
+// ============================================================================
+// Capacity Evolution — three D3 visualisations driven by the scrollytell engine.
+//   1. Fleet waterfall      2026 -> 2050 retirements & additions
+//   2. Sigmoid retirement   interactive clean-share trigger
+//   3. Wright's Law         learning-curve cost decline
+// All data below is synthetic and illustrative.
+// ============================================================================
+(function () {
+    'use strict';
+
+    var REDUCE = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Fuel colour tokens (kept in sync with the CSS :root block).
+    var FUEL = {
+        'gas-cc':  '#4A90D9',
+        'gas-ct':  '#7BB3E0',
+        'coal':    '#8B4513',
+        'nuclear': '#9B59B6',
+        'wind':    '#2ECC71',
+        'solar':   '#F1C40F',
+        'storage': '#E67E22'
+    };
+    var NAVY = '#1A2744';
+    var ACCENT = '#22C55E', ACCENT_DEEP = '#15803D',
+        ACCENT_SOFT = 'rgba(34, 197, 94, 0.12)';
+
+    // ========================================================================
+    // CHART 1 — FLEET WATERFALL
+    // ========================================================================
+    var bars = [
+        { key: 'start', label: '2026 Fleet', type: 'total',  value: 750 },
+        { key: 'r-coal', label: 'Coal',     type: 'retire', fuel: 'coal',    delta: -110 },
+        { key: 'r-gct',  label: 'Gas CT',   type: 'retire', fuel: 'gas-ct',  delta: -45 },
+        { key: 'r-gcc',  label: 'Gas CC',   type: 'retire', fuel: 'gas-cc',  delta: -30 },
+        { key: 'r-nuc',  label: 'Nuclear',  type: 'retire', fuel: 'nuclear', delta: -15 },
+        { key: 'a-gcc',  label: 'Gas CC',   type: 'add',    fuel: 'gas-cc',  delta: 20 },
+        { key: 'a-wind', label: 'Wind',     type: 'add',    fuel: 'wind',    delta: 210 },
+        { key: 'a-sol',  label: 'Solar',    type: 'add',    fuel: 'solar',   delta: 330 },
+        { key: 'a-sto',  label: 'Storage',  type: 'add',    fuel: 'storage', delta: 180 },
+        { key: 'end',    label: '2050 Fleet', type: 'total', value: 1290 }
+    ];
+    // Resolve running totals so each floating bar knows its before/after level.
+    (function () {
+        var run = 0;
+        bars.forEach(function (b) {
+            if (b.type === 'total') { b.before = 0; b.after = b.value; run = b.value; }
+            else { b.before = run; b.after = run + b.delta; run = b.after; }
+        });
+    })();
+
+    var WF = { w: 760, h: 480, m: { t: 48, r: 28, b: 96, l: 64 } };
+    var wfSvg = d3.select('#wf-svg');
+    var wfX = d3.scaleBand()
+        .domain(bars.map(function (d) { return d.key; }))
+        .range([WF.m.l, WF.w - WF.m.r])
+        .padding(0.34);
+    var wfY = d3.scaleLinear()
+        .domain([0, 1400])
+        .range([WF.h - WF.m.b, WF.m.t]);
+
+    var wfGrid, wfBars, wfConn;
+
+    function wfFill(d) {
+        if (d.type === 'total') return NAVY;
+        return FUEL[d.fuel];
+    }
+
+    function drawWaterfallBase() {
+        wfSvg.selectAll('*').remove();
+
+        // Gridlines + y tick labels.
+        wfGrid = wfSvg.append('g');
+        [0, 350, 700, 1050, 1400].forEach(function (t) {
+            wfGrid.append('line')
+                .attr('class', t === 0 ? 'axis-line' : 'grid-line')
+                .attr('x1', WF.m.l).attr('x2', WF.w - WF.m.r)
+                .attr('y1', wfY(t)).attr('y2', wfY(t));
+            wfGrid.append('text')
+                .attr('class', 'ax-tick')
+                .attr('x', WF.m.l - 9).attr('y', wfY(t) + 4)
+                .attr('text-anchor', 'end')
+                .text(t);
+        });
+        wfGrid.append('text')
+            .attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(WF.m.t + (WF.h - WF.m.b - WF.m.t) / 2))
+            .attr('y', 16)
+            .attr('text-anchor', 'middle')
+            .text('Installed capacity (GW)');
+
+        // Per-bar category labels under the axis.
+        var labels = wfSvg.append('g');
+        bars.forEach(function (d) {
+            var cx = wfX(d.key) + wfX.bandwidth() / 2;
+            labels.append('text')
+                .attr('class', 'bar-name')
+                .attr('transform', 'translate(' + cx + ',' + (WF.h - WF.m.b + 14) +
+                                   ') rotate(-34)')
+                .attr('text-anchor', 'end')
+                .style('font-weight', d.type === 'total' ? '700' : '500')
+                .style('fill', d.type === 'total' ? NAVY : '#566370')
+                .text(d.label);
+        });
+
+        // Legend.
+        var lg = wfSvg.append('g')
+            .attr('transform', 'translate(' + (WF.w - WF.m.r - 196) + ',' +
+                               (WF.m.t - 30) + ')');
+        var items = [
+            { c: NAVY, t: 'Fleet total', o: 1 },
+            { c: '#C0392B', t: 'Retiring', o: 0.6 },
+            { c: FUEL.wind, t: 'New build', o: 1 }
+        ];
+        items.forEach(function (it, i) {
+            var g = lg.append('g').attr('transform', 'translate(' + (i * 70) + ',0)');
+            g.append('rect').attr('width', 11).attr('height', 11).attr('rx', 2)
+                .attr('fill', it.c).attr('fill-opacity', it.o);
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', 15).attr('y', 10).text(it.t);
+        });
+
+        wfConn = wfSvg.append('g');
+        wfBars = wfSvg.append('g');
+    }
+
+    // reveal = how many bars (1..10) are shown.
+    function drawWaterfall(reveal) {
+        var dur = REDUCE ? 0 : 720;
+        var shown = bars.slice(0, reveal);
+
+        // ---- connectors between consecutive revealed bars ----
+        var conn = wfConn.selectAll('line').data(shown.slice(0, -1));
+        conn.exit().remove();
+        conn.enter().append('line')
+            .attr('stroke', '#94A3B8')
+            .attr('stroke-width', 1.4)
+            .attr('stroke-dasharray', '3 3')
+          .merge(conn)
+            .attr('x1', function (d) { return wfX(d.key) + wfX.bandwidth(); })
+            .attr('x2', function (d, i) { return wfX(shown[i + 1].key); })
+            .attr('y1', function (d) { return wfY(d.after); })
+            .attr('y2', function (d) { return wfY(d.after); });
+
+        // ---- bars (keyed group join) ----
+        var sel = wfBars.selectAll('g.wf-bar')
+            .data(shown, function (d) { return d.key; });
+        sel.exit().remove();
+
+        var ent = sel.enter().append('g').attr('class', 'wf-bar');
+        ent.append('rect').attr('rx', 2);
+        ent.append('text').attr('class', 'bar-cap').attr('text-anchor', 'middle');
+
+        var all = ent.merge(sel);
+        all.attr('transform', function (d) {
+            return 'translate(' + wfX(d.key) + ',0)';
+        });
+
+        all.each(function (d) {
+            var g = d3.select(this);
+            var hi, lo, finalY, finalH, capText, capColor;
+
+            if (d.type === 'total') {
+                hi = d.after; lo = 0;
+                capText = d.after + ' GW';
+                capColor = NAVY;
+            } else {
+                hi = Math.max(d.before, d.after);
+                lo = Math.min(d.before, d.after);
+                capText = (d.delta < 0 ? '−' : '+') + Math.abs(d.delta);
+                capColor = d.delta < 0 ? '#C0392B' : '#15803D';
+            }
+            finalY = wfY(hi);
+            finalH = wfY(lo) - wfY(hi);
+
+            var rect = g.select('rect');
+            // New bars grow out of their baseline level.
+            if (rect.attr('data-init') !== '1') {
+                var base = d.type === 'total' ? wfY(0) : wfY(d.before);
+                rect.attr('y', base).attr('height', 0).attr('data-init', '1');
+            }
+            rect.attr('width', wfX.bandwidth())
+                .attr('fill', wfFill(d))
+                .attr('fill-opacity', d.type === 'retire' ? 0.62 : 1)
+                .attr('stroke', d.type === 'retire' ? '#C0392B' : 'none')
+                .attr('stroke-width', d.type === 'retire' ? 1 : 0)
+                .attr('stroke-dasharray', d.type === 'retire' ? '3 2' : null)
+                .transition().duration(dur)
+                .attr('y', finalY)
+                .attr('height', Math.max(0, finalH));
+
+            g.select('text.bar-cap')
+                .attr('x', wfX.bandwidth() / 2)
+                .attr('fill', capColor)
+                .text(capText)
+                .transition().duration(dur)
+                .attr('y', finalY - 6);
+        });
+    }
+
+    // ========================================================================
+    // CHART 2 — SIGMOID RETIREMENT TRIGGER
+    // ========================================================================
+    // Retirement pressure P(cs) = 1 / (1 + e^-k(cs - x0))
+    var SIG_K = 11, SIG_X0 = 0.52;
+    function pressure(cs) { return 1 / (1 + Math.exp(-SIG_K * (cs - SIG_X0))); }
+
+    var plants = [
+        { name: 'Coal — Unit 1',   fuel: 'coal',    gw: 55, threshold: 0.16 },
+        { name: 'Coal — Unit 2',   fuel: 'coal',    gw: 40, threshold: 0.33 },
+        { name: 'Gas CT — Peaker A', fuel: 'gas-ct', gw: 25, threshold: 0.45 },
+        { name: 'Coal — Unit 3',   fuel: 'coal',    gw: 30, threshold: 0.57 },
+        { name: 'Gas CT — Peaker B', fuel: 'gas-ct', gw: 20, threshold: 0.69 },
+        { name: 'Gas CC — Legacy', fuel: 'gas-cc',  gw: 30, threshold: 0.82 },
+        { name: 'Nuclear — Licence end', fuel: 'nuclear', gw: 15, threshold: 0.94 }
+    ];
+
+    var SG = { w: 760, h: 360, m: { t: 26, r: 32, b: 48, l: 60 } };
+    var sgSvg = d3.select('#sg-svg');
+    var sgX = d3.scaleLinear().domain([0, 1]).range([SG.m.l, SG.w - SG.m.r]);
+    var sgY = d3.scaleLinear().domain([0, 1]).range([SG.h - SG.m.b, SG.m.t]);
+    var sgMarker, sgGuideX, sgGuideY, sgFill, sgCurrent = 0.30;
+
+    function drawSigmoidBase() {
+        sgSvg.selectAll('*').remove();
+
+        // Gridlines + axes.
+        var g = sgSvg.append('g');
+        [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
+            g.append('line').attr('class', 'grid-line')
+                .attr('x1', SG.m.l).attr('x2', SG.w - SG.m.r)
+                .attr('y1', sgY(t)).attr('y2', sgY(t));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', SG.m.l - 8).attr('y', sgY(t) + 4)
+                .attr('text-anchor', 'end')
+                .text(Math.round(t * 100) + '%');
+            g.append('line').attr('class', 'grid-line')
+                .attr('y1', SG.m.t).attr('y2', SG.h - SG.m.b)
+                .attr('x1', sgX(t)).attr('x2', sgX(t));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', sgX(t)).attr('y', SG.h - SG.m.b + 18)
+                .attr('text-anchor', 'middle')
+                .text(Math.round(t * 100) + '%');
+        });
+        g.append('text').attr('class', 'ax-label')
+            .attr('x', (SG.m.l + SG.w - SG.m.r) / 2)
+            .attr('y', SG.h - 10).attr('text-anchor', 'middle')
+            .text('Clean-energy share of the grid');
+        g.append('text').attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(SG.m.t + (SG.h - SG.m.b - SG.m.t) / 2))
+            .attr('y', 15).attr('text-anchor', 'middle')
+            .text('Retirement pressure');
+
+        // Sampled sigmoid path data.
+        var pts = d3.range(0, 1.0001, 0.02).map(function (cs) {
+            return { cs: cs, p: pressure(cs) };
+        });
+        var line = d3.line()
+            .x(function (d) { return sgX(d.cs); })
+            .y(function (d) { return sgY(d.p); })
+            .curve(d3.curveMonotoneX);
+        var area = d3.area()
+            .x(function (d) { return sgX(d.cs); })
+            .y0(sgY(0))
+            .y1(function (d) { return sgY(d.p); })
+            .curve(d3.curveMonotoneX);
+
+        // Shaded fill clipped to the current clean-share.
+        sgFill = sgSvg.append('path')
+            .datum(pts)
+            .attr('fill', ACCENT_SOFT)
+            .attr('d', area);
+
+        sgSvg.append('path')
+            .datum(pts)
+            .attr('fill', 'none')
+            .attr('stroke', ACCENT)
+            .attr('stroke-width', 3)
+            .attr('d', line);
+
+        // Crosshair guides + marker.
+        sgGuideX = sgSvg.append('line')
+            .attr('stroke', ACCENT_DEEP)
+            .attr('stroke-width', 1.2)
+            .attr('stroke-dasharray', '4 3');
+        sgGuideY = sgSvg.append('line')
+            .attr('stroke', ACCENT_DEEP)
+            .attr('stroke-width', 1.2)
+            .attr('stroke-dasharray', '4 3');
+        sgMarker = sgSvg.append('circle')
+            .attr('r', 7)
+            .attr('fill', '#fff')
+            .attr('stroke', ACCENT_DEEP)
+            .attr('stroke-width', 3);
+    }
+
+    function updateSigmoid(cs) {
+        sgCurrent = cs;
+        var p = pressure(cs);
+        var mx = sgX(cs), my = sgY(p);
+
+        sgMarker.attr('cx', mx).attr('cy', my);
+        sgGuideX.attr('x1', SG.m.l).attr('x2', mx).attr('y1', my).attr('y2', my);
+        sgGuideY.attr('x1', mx).attr('x2', mx)
+            .attr('y1', SG.h - SG.m.b).attr('y2', my);
+
+        // Clip the shaded area to x <= cs.
+        sgFill.attr('clip-path', null);
+        sgFill.attr('d', d3.area()
+            .x(function (d) { return sgX(d.cs); })
+            .y0(sgY(0))
+            .y1(function (d) { return sgY(d.p); })
+            .curve(d3.curveMonotoneX)(
+                d3.range(0, cs + 0.0001, 0.02).map(function (v) {
+                    return { cs: v, p: pressure(v) };
+                })
+            ));
+
+        // Readouts.
+        var retired = plants.filter(function (pl) { return cs >= pl.threshold; });
+        var gwGone = retired.reduce(function (s, pl) { return s + pl.gw; }, 0);
+        document.getElementById('rd-pressure').textContent = Math.round(p * 100) + '%';
+        document.getElementById('rd-count').textContent =
+            retired.length + ' / ' + plants.length;
+        document.getElementById('rd-gw').textContent = gwGone + ' GW';
+
+        // Slider mirror.
+        document.getElementById('cs-slider').value = Math.round(cs * 100);
+        document.getElementById('cs-val').textContent = Math.round(cs * 100) + '%';
+
+        // Plant chips.
+        d3.selectAll('#plant-grid .chip').classed('retired', function () {
+            return cs >= +this.getAttribute('data-threshold');
+        });
+        d3.selectAll('#plant-grid .chip .chip-tag').text(function () {
+            return cs >= +this.parentNode.getAttribute('data-threshold')
+                ? 'RETIRED' : 'ONLINE';
+        });
+    }
+
+    function buildPlantChips() {
+        var grid = d3.select('#plant-grid');
+        var chip = grid.selectAll('div.chip').data(plants).enter()
+            .append('div')
+            .attr('class', 'chip')
+            .attr('data-threshold', function (d) { return d.threshold; })
+            .style('--chip-color', function (d) { return FUEL[d.fuel]; });
+        chip.append('span').attr('class', 'dot');
+        chip.append('span').attr('class', 'chip-name')
+            .text(function (d) { return d.name; });
+        chip.append('span').attr('class', 'chip-tag').text('ONLINE');
+    }
+
+    // Animate the clean-share from a to b, then hand control to the slider.
+    var sigTimer = null;
+    function sweepSigmoid(a, b) {
+        if (sigTimer) sigTimer.stop();
+        if (REDUCE) { updateSigmoid(b); return; }
+        var t0 = null, DURMS = 1600;
+        sigTimer = d3.timer(function (elapsed) {
+            if (t0 === null) t0 = elapsed;
+            var k = Math.min(1, (elapsed) / DURMS);
+            var e = d3.easeCubicInOut(k);
+            updateSigmoid(a + (b - a) * e);
+            if (k >= 1) sigTimer.stop();
+        });
+    }
+
+    // ========================================================================
+    // CHART 3 — WRIGHT'S LAW LEARNING CURVE
+    // ========================================================================
+    // cost(Q) = costRef * (Q / Qref)^(-b)
+    var TECH = [
+        { key: 'solar',   label: 'Solar PV',  color: FUEL.solar,
+          Qref: 200, costRef: 1.10, b: 0.396, q0: 200, q1: 6000 },
+        { key: 'wind',    label: 'Onshore wind', color: FUEL.wind,
+          Qref: 300, costRef: 1.45, b: 0.152, q0: 300, q1: 2400 },
+        { key: 'storage', label: 'Battery storage', color: FUEL.storage,
+          Qref: 60,  costRef: 1.30, b: 0.304, q0: 60,  q1: 1400 }
+    ];
+    function techCost(t, Q) { return t.costRef * Math.pow(Q / t.Qref, -t.b); }
+
+    var WR = { w: 760, h: 470, m: { t: 38, r: 34, b: 58, l: 66 } };
+    var wrSvg = d3.select('#wr-svg');
+    var wrX = d3.scaleLog().domain([50, 9000]).range([WR.m.l, WR.w - WR.m.r]);
+    var wrY = d3.scaleLinear().domain([0, 1.7]).range([WR.h - WR.m.b, WR.m.t]);
+    var wrTraced, wrDot, wrDotLabel, wrEndDots, wrTimer = null;
+
+    function drawWrightBase() {
+        wrSvg.selectAll('*').remove();
+
+        var g = wrSvg.append('g');
+        // Y gridlines.
+        [0, 0.4, 0.8, 1.2, 1.6].forEach(function (c) {
+            g.append('line').attr('class', c === 0 ? 'axis-line' : 'grid-line')
+                .attr('x1', WR.m.l).attr('x2', WR.w - WR.m.r)
+                .attr('y1', wrY(c)).attr('y2', wrY(c));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', WR.m.l - 9).attr('y', wrY(c) + 4)
+                .attr('text-anchor', 'end')
+                .text('$' + c.toFixed(2));
+        });
+        // X gridlines (log decades).
+        [100, 300, 1000, 3000, 9000].forEach(function (q) {
+            g.append('line').attr('class', 'grid-line')
+                .attr('y1', WR.m.t).attr('y2', WR.h - WR.m.b)
+                .attr('x1', wrX(q)).attr('x2', wrX(q));
+            g.append('text').attr('class', 'ax-tick')
+                .attr('x', wrX(q)).attr('y', WR.h - WR.m.b + 18)
+                .attr('text-anchor', 'middle')
+                .text(q >= 1000 ? (q / 1000) + ',000' : q);
+        });
+        g.append('text').attr('class', 'ax-label')
+            .attr('x', (WR.m.l + WR.w - WR.m.r) / 2)
+            .attr('y', WR.h - 12).attr('text-anchor', 'middle')
+            .text('Cumulative installed capacity (GW, log scale)');
+        g.append('text').attr('class', 'ax-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -(WR.m.t + (WR.h - WR.m.b - WR.m.t) / 2))
+            .attr('y', 16).attr('text-anchor', 'middle')
+            .text('Unit cost ($/W)');
+
+        var line = d3.line()
+            .x(function (d) { return wrX(d.q); })
+            .y(function (d) { return wrY(d.c); });
+
+        // Full faint learning curve per technology.
+        TECH.forEach(function (t) {
+            var pts = d3.range(0, 1.0001, 0.02).map(function (k) {
+                var q = t.q0 * Math.pow(t.q1 / t.q0, k);
+                return { q: q, c: techCost(t, q) };
+            });
+            t._pts = pts;
+            wrSvg.append('path')
+                .datum(pts)
+                .attr('fill', 'none')
+                .attr('stroke', t.color)
+                .attr('stroke-width', t.key === 'solar' ? 2 : 2.4)
+                .attr('stroke-opacity', t.key === 'solar' ? 0.3 : 0.85)
+                .attr('d', line);
+            // End-of-period cost label for wind & storage.
+            if (t.key !== 'solar') {
+                var last = pts[pts.length - 1];
+                wrSvg.append('text')
+                    .attr('class', 'bar-cap')
+                    .attr('x', wrX(last.q) - 6)
+                    .attr('y', wrY(last.c) - 8)
+                    .attr('text-anchor', 'end')
+                    .attr('fill', t.color)
+                    .text('$' + last.c.toFixed(2));
+            }
+        });
+
+        // Solar: brighter "traced" path that the marker draws as it descends.
+        var solar = TECH[0];
+        wrTraced = wrSvg.append('path')
+            .attr('fill', 'none')
+            .attr('stroke', solar.color)
+            .attr('stroke-width', 4)
+            .attr('stroke-linecap', 'round');
+
+        // End dots (revealed on the flywheel step).
+        wrEndDots = wrSvg.append('g').attr('opacity', 0);
+        TECH.forEach(function (t) {
+            var last = t._pts[t._pts.length - 1];
+            wrEndDots.append('circle')
+                .attr('cx', wrX(last.q)).attr('cy', wrY(last.c))
+                .attr('r', 6).attr('fill', t.color)
+                .attr('stroke', '#fff').attr('stroke-width', 2);
+        });
+
+        // The travelling solar marker + readout label.
+        wrDot = wrSvg.append('circle')
+            .attr('r', 8).attr('fill', '#fff')
+            .attr('stroke', solar.color).attr('stroke-width', 4);
+        wrDotLabel = wrSvg.append('text')
+            .attr('class', 'bar-cap')
+            .attr('fill', NAVY)
+            .attr('text-anchor', 'start');
+    }
+
+    var wrLine = d3.line()
+        .x(function (d) { return wrX(d.q); })
+        .y(function (d) { return wrY(d.c); });
+
+    function wrPlace(k) {
+        // k in [0,1]: position along the solar deployment trajectory.
+        var solar = TECH[0];
+        var q = solar.q0 * Math.pow(solar.q1 / solar.q0, k);
+        var c = techCost(solar, q);
+        var x = wrX(q), y = wrY(c);
+        var year = Math.round(2026 + k * 24);
+
+        wrDot.attr('cx', x).attr('cy', y);
+        wrDotLabel
+            .attr('x', Math.min(x + 14, WR.w - WR.m.r - 130))
+            .attr('y', y - 14)
+            .text(year + '  ·  ' + Math.round(q).toLocaleString() +
+                  ' GW  ·  $' + c.toFixed(2) + '/W');
+
+        var traced = solar._pts.filter(function (p) { return p.q <= q; });
+        traced.push({ q: q, c: c });
+        wrTraced.attr('d', wrLine(traced));
+    }
+
+    function animateWright() {
+        if (wrTimer) wrTimer.stop();
+        wrEndDots.transition().duration(300).attr('opacity', 0);
+        if (REDUCE) { wrPlace(1); return; }
+        var DURMS = 3200;
+        wrPlace(0);
+        wrTimer = d3.timer(function (elapsed) {
+            var k = Math.min(1, elapsed / DURMS);
+            wrPlace(d3.easeCubicInOut(k));
+            if (k >= 1) wrTimer.stop();
+        });
+    }
+
+    function flywheelWright() {
+        if (wrTimer) wrTimer.stop();
+        wrPlace(1);
+        wrEndDots.transition().duration(REDUCE ? 0 : 500).attr('opacity', 1);
+    }
+
+    // ========================================================================
+    // INITIALISE + WIRE TO THE SCROLLYTELL ENGINE
+    // ========================================================================
+    drawWaterfallBase();
+    drawWaterfall(1);
+    drawSigmoidBase();
+    buildPlantChips();
+    updateSigmoid(0.30);
+    drawWrightBase();
+    wrPlace(0);
+
+    var charts = ['waterfall', 'sigmoid', 'wright'];
+    function showChart(name) {
+        charts.forEach(function (n) {
+            document.getElementById('chart-' + n)
+                .classList.toggle('is-visible', n === name);
+        });
+    }
+
+    var WF_REVEAL = { intro: 1, retire: 5, add: 9, full: 10 };
+
+    function enterStep(view, chart) {
+        showChart(chart);
+        if (chart === 'waterfall') {
+            drawWaterfall(WF_REVEAL[view]);
+        } else if (chart === 'sigmoid') {
+            if (view === 'intro') { sweepSigmoid(sgCurrent, 0.30); }
+            else { sweepSigmoid(sgCurrent, 0.60); }
+        } else if (chart === 'wright') {
+            if (view === 'intro') { wrPlace(0); }
+            else if (view === 'animate') { animateWright(); }
+            else { flywheelWright(); }
+        }
+    }
+
+    var story = new Scrollytell({
+        container: '.scrolly',
+        step: '.scrolly-step',
+        offset: 0.55
+    });
+    story.on('step-enter', function (e) {
+        var d = e.element.dataset;
+        enterStep(d.view, d.chart);
+    });
+
+    // The sigmoid slider is always live so the reader can explore.
+    document.getElementById('cs-slider').addEventListener('input', function () {
+        if (sigTimer) sigTimer.stop();
+        updateSigmoid(+this.value / 100);
+    });
+
+    // Render whatever step is already on screen at load.
+    enterStep('intro', 'waterfall');
+})();
+</script>
+
+</body>
+</html>
