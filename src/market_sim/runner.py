@@ -31,7 +31,7 @@ from market_sim.data.fuel import resolve_fuel_prices
 from market_sim.data.renewables import load_renewable_profiles
 from market_sim.model.capacity import evolve_fleet
 from market_sim.model.dispatch import solve_dispatch
-from market_sim.model.storage import build_default_storage, storage_units_to_arrays
+from market_sim.model.storage import build_storage_for_year, storage_units_to_arrays
 from market_sim.model.transmission import (
     build_incidence_matrix,
     build_wecc_import_generators,
@@ -96,9 +96,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     )
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = get_ttc_array(iso_config.links)
-    storage = storage_units_to_arrays(
-        build_default_storage(iso_config, config), zone_names
-    )
     # CAISO models the rest of the WECC as import pseudo-generators that
     # ride along with the dispatch fleet but never evolve.
     wecc_generators = build_wecc_import_generators() if iso == "CAISO" else []
@@ -109,6 +106,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     for year in range(START_YEAR, END_YEAR + 1):
         year_start = time.perf_counter()
+
+        # Storage grows year over year, so the fleet is rebuilt each year
+        # sized for that year's deployment.
+        storage = storage_units_to_arrays(
+            build_storage_for_year(iso_config, config, year), zone_names
+        )
 
         if fleet is None:
             # First year: no EIA-860 vintage yet, so the base fleet falls

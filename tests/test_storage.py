@@ -8,11 +8,13 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import solve_dispatch
+from market_sim.config.constants import START_YEAR, STORAGE_DEPLOYMENT_CEILING_MW
 from market_sim.model.storage import (
     STORAGE_DEPLOYMENT_MW,
     StorageArrays,
     StorageUnit,
     build_default_storage,
+    build_storage_for_year,
     storage_units_to_arrays,
 )
 
@@ -139,6 +141,65 @@ class TestBuildDefaultStorage(unittest.TestCase):
         iso = get_iso_config("ERCOT")
         with self.assertRaises(ValueError):
             build_default_storage(iso, ScenarioConfig(storage_deployment="huge"))
+
+
+class TestBuildStorageForYear(unittest.TestCase):
+    """Tests for ``build_storage_for_year`` year-over-year growth."""
+
+    @staticmethod
+    def _total_mw(units):
+        return sum(u.power_cap_mw for u in units)
+
+    def test_base_year_matches_build_default_storage(self):
+        # In the base year (START_YEAR) no growth has compounded yet, so the
+        # year-aware fleet is identical to the static default fleet.
+        iso = get_iso_config("ERCOT")
+        config = ScenarioConfig(storage_deployment="mid")
+        grown = build_storage_for_year(iso, config, START_YEAR)
+        default = build_default_storage(iso, config)
+        self.assertEqual(len(grown), len(default))
+        for g, d in zip(grown, default):
+            self.assertEqual(g.unit_id, d.unit_id)
+            self.assertAlmostEqual(g.power_cap_mw, d.power_cap_mw)
+            self.assertAlmostEqual(g.energy_cap_mwh, d.energy_cap_mwh)
+
+    def test_later_year_has_more_capacity(self):
+        iso = get_iso_config("ERCOT")
+        config = ScenarioConfig(storage_deployment="mid")
+        base = build_storage_for_year(iso, config, START_YEAR)
+        later = build_storage_for_year(iso, config, 2035)
+        self.assertGreater(self._total_mw(later), self._total_mw(base))
+
+    def test_high_growth_exceeds_mid_growth(self):
+        # In a year where neither pace has hit the ceiling, the faster growth
+        # rate yields strictly more deployed power.
+        iso = get_iso_config("ERCOT")
+        year = 2030
+        mid = build_storage_for_year(
+            iso, ScenarioConfig(storage_deployment="mid"), year
+        )
+        high = build_storage_for_year(
+            iso, ScenarioConfig(storage_deployment="high"), year
+        )
+        self.assertGreater(self._total_mw(high), self._total_mw(mid))
+
+    def test_capacity_capped_at_ceiling(self):
+        # High pace compounding for decades would blow past any realistic
+        # share of peak demand; the ceiling clamps it.
+        iso = get_iso_config("ERCOT")
+        config = ScenarioConfig(storage_deployment="high")
+        units = build_storage_for_year(iso, config, 2050)
+        # ERCOT has no zero-load zones, so all power is allocated.
+        self.assertAlmostEqual(
+            self._total_mw(units), STORAGE_DEPLOYMENT_CEILING_MW
+        )
+
+    def test_unknown_pace_raises(self):
+        iso = get_iso_config("ERCOT")
+        with self.assertRaises(ValueError):
+            build_storage_for_year(
+                iso, ScenarioConfig(storage_deployment="huge"), 2030
+            )
 
 
 class TestStorageRTEOverride(unittest.TestCase):
