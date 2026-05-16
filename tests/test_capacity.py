@@ -555,7 +555,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
     """Boundary conditions of the year-step orchestration."""
 
     def test_first_year_with_no_prior_results(self):
-        # Year 2026, prior_results=None: only known retirements, sigmoid,
+        # Year 2026, prior_results=None: only known retirements,
         # known additions and RPS run -- the price-driven steps are skipped.
         config = ScenarioConfig(iso="CAISO")
         coal = [
@@ -592,7 +592,8 @@ class TestCapacityIntegration(unittest.TestCase):
 
     def test_three_year_trajectory_changes_each_year(self):
         # A small fleet evolved 2026-2028: composition shifts every year as
-        # retirements and new entry reshape it.
+        # retirements and new entry reshape it. C_RET retires on schedule in
+        # the first year, guaranteeing the year-one fleet differs.
         config = ScenarioConfig(iso="ERCOT")
         fleet = [
             _gen("C0", "coal", pmax=100.0, zone="North", heat_rate=10.0,
@@ -601,6 +602,8 @@ class TestCapacityIntegration(unittest.TestCase):
             _gen("G0", "gas_cc", pmax=100.0, zone="North", heat_rate=7.0),
             _gen("W0", "wind", pmax=100.0, zone="North"),
             _gen("W1", "wind", pmax=100.0, zone="North"),
+            _gen("C_RET", "coal", pmax=100.0, zone="North", heat_rate=9.0,
+                 retirement_year=2026),
         ]
         snapshots = [frozenset(g.unit_id for g in fleet)]
         tracker: dict[str, int] = {}
@@ -620,8 +623,10 @@ class TestCapacityIntegration(unittest.TestCase):
         # depress gas-plant revenue, so gas units retire economically and
         # the fleets diverge.
         def _fleet():
+            # gas_ct peakers run at a thin, marginally profitable margin --
+            # depressed revenue tips them into economic retirement.
             gas = [
-                _gen(f"G{i}", "gas_cc", pmax=100.0, zone="North",
+                _gen(f"G{i}", "gas_ct", pmax=100.0, zone="North",
                      heat_rate=6.5 + 0.05 * i)
                 for i in range(20)
             ]
@@ -654,7 +659,7 @@ class TestCapacityIntegration(unittest.TestCase):
         high = _run("high")
 
         def _gas(fleet):
-            return sum(1 for g in fleet if g.fuel_type == "gas_cc")
+            return sum(1 for g in fleet if g.fuel_type == "gas_ct")
 
         # Year 1 (2026, no prior results): the fleets are identical.
         self.assertEqual(
