@@ -18,7 +18,6 @@ from market_sim.model.capacity import (
     apply_economic_retirements,
     apply_known_retirements,
     apply_rps_mandate,
-    apply_sigmoid_retirement,
     compute_clean_share,
     compute_lcoe,
     estimate_expected_revenue,
@@ -70,7 +69,12 @@ class TestKnownRetirements(unittest.TestCase):
 
 
 class TestEconomicRetirements(unittest.TestCase):
-    """Revenue-driven retirement of persistently unprofitable thermal units."""
+    """Revenue-driven retirement of persistently unprofitable thermal units.
+
+    Economic retirement is now the sole retirement mechanism, with
+    fuel-type-aware loss-year thresholds and fixed-cost multipliers, and a
+    system-wide reliability floor.
+    """
 
     T = 10
 
@@ -78,40 +82,160 @@ class TestEconomicRetirements(unittest.TestCase):
         """A dispatch stand-in with every generator producing ``level`` MW."""
         return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
 
-    def test_unprofitable_unit_retires_after_two_loss_years(self):
-        config = ScenarioConfig()  # retirement_consecutive_years = 2
+    def test_coal_retires_after_one_unprofitable_year(self):
+        # retirement_years_coal = 1, retirement_fom_multiplier_coal = 1.3.
+        config = ScenarioConfig()
         fleet = [_gen("C0", "coal", pmax=100.0)]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
-        # going_forward_cost = 40 $/kW-yr * 100 MW * 1000 = 4_000_000.
+        # going_forward_cost = 40 * 1.3 * 100 * 1000 = 5_200_000.
         # net_revenue = 10 $/MWh * 10 MW * 10 h = 1_000 << cost.
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
-        # First loss year: counter at 1, below the threshold -- still online.
-        self.assertEqual([g.unit_id for g in fleet1], ["C0"])
-        self.assertEqual(losses1["C0"], 1)
+        # A single unprofitable year is enough for coal.
+        self.assertEqual(fleet1, [])
+        self.assertNotIn("C0", losses1)
+
+    def test_gas_cc_survives_two_unprofitable_years(self):
+        # retirement_years_gas_cc = 3: two loss years are not enough.
+        config = ScenarioConfig()
+        fleet = [_gen("G0", "gas_cc", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # going_forward_cost = 12 * 1.0 * 100 * 1000 = 1_200_000.
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(1, 10.0)
+
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        self.assertEqual([g.unit_id for g in fleet1], ["G0"])
+        self.assertEqual(losses1["G0"], 1)
 
         fleet2, losses2 = apply_economic_retirements(
-            fleet1, arrays, dispatch, prices, config, losses1
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
         )
-        # Second consecutive loss year: counter hits 2 -- retired.
-        self.assertEqual(fleet2, [])
-        self.assertNotIn("C0", losses2)
+        # Two consecutive loss years -- still online (needs three).
+        self.assertEqual([g.unit_id for g in fleet2], ["G0"])
+        self.assertEqual(losses2["G0"], 2)
 
-    def test_profitable_unit_resets_counter(self):
+        fleet3, losses3 = apply_economic_retirements(
+            fleet2, arrays, dispatch, prices, config, losses2, peak_demand=0.0
+        )
+        # Third consecutive loss year -- retired.
+        self.assertEqual(fleet3, [])
+        self.assertNotIn("G0", losses3)
+
+    def test_gas_ct_retires_after_two_unprofitable_years(self):
+        # retirement_years_gas_ct = 2.
+        config = ScenarioConfig()
+        fleet = [_gen("T0", "gas_ct", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # going_forward_cost = 8 * 1.0 * 100 * 1000 = 800_000.
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(1, 10.0)
+
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        # First loss year: still online.
+        self.assertEqual([g.unit_id for g in fleet1], ["T0"])
+        self.assertEqual(losses1["T0"], 1)
+
+        fleet2, losses2 = apply_economic_retirements(
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
+        )
+        # Second consecutive loss year -- retired.
+        self.assertEqual(fleet2, [])
+        self.assertNotIn("T0", losses2)
+
+    def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
+        # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
+        # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).
+        # With the 1.3 multiplier = 5_200_000 (revenue falls short).
+        config = ScenarioConfig()
+        prices = np.full((1, self.T), 4500.0)
+        dispatch = self._dispatch_result(1, 100.0)
+
+        coal = [_gen("C0", "coal", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(coal, ["Z0"], hours=self.T)
+        fleet1, _ = apply_economic_retirements(
+            coal, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        # The multiplier tips marginal coal into a loss -- retired in one year.
+        self.assertEqual(fleet1, [])
+
+        # The same revenue against a gas_cc (multiplier 1.0) stays profitable.
+        gas = [_gen("G0", "gas_cc", pmax=100.0)]
+        arrays_gas = generators_to_fleet_arrays(gas, ["Z0"], hours=self.T)
+        fleet2, losses2 = apply_economic_retirements(
+            gas, arrays_gas, dispatch, prices, config, {"G0": 2},
+            peak_demand=0.0,
+        )
+        self.assertEqual([g.unit_id for g in fleet2], ["G0"])
+        self.assertEqual(losses2["G0"], 0)
+
+    def test_reliability_floor_prevents_over_retirement(self):
+        # Peak demand 10000 MW, firm clean 2000 MW.
+        # floor = (10000 - 2000) * 1.15 = 9200 MW of thermal must remain.
+        config = ScenarioConfig()
+        nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
+        # 12 coal units of 1000 MW, strictly increasing heat rate.
+        coal = [
+            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
+            for i in range(12)
+        ]
+        fleet = nuclear + coal
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # Prices far too low: every coal unit is unprofitable.
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(13, 10.0)
+
+        survivors, _ = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=10000.0
+        )
+        coal_survivors = [g for g in survivors if g.fuel_type == "coal"]
+        # 10 coal units (10000 MW) kept to clear the 9200 MW floor.
+        self.assertEqual(len(coal_survivors), 10)
+        # The most efficient (lowest heat-rate) units are the ones kept.
+        retired_hr = {
+            g.heat_rate for g in coal
+        } - {g.heat_rate for g in coal_survivors}
+        survivor_hr = {g.heat_rate for g in coal_survivors}
+        self.assertTrue(min(retired_hr) > max(survivor_hr))
+
+    def test_highest_heat_rate_retires_first(self):
+        # Reliability floor keeps the floor met; the least efficient units
+        # are the ones actually retired.
+        config = ScenarioConfig()
+        coal = [
+            _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
+            _gen("C1", "coal", pmax=1000.0, heat_rate=10.0),
+            _gen("C2", "coal", pmax=1000.0, heat_rate=11.0),
+        ]
+        arrays = generators_to_fleet_arrays(coal, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(3, 10.0)
+        # floor = peak * 1.15; peak ~1739 -> floor ~2000, keeps 2 units.
+        survivors, _ = apply_economic_retirements(
+            coal, arrays, dispatch, prices, config, {}, peak_demand=1739.13
+        )
+        # The single highest-heat-rate unit is the one retired.
+        self.assertEqual({g.unit_id for g in survivors}, {"C0", "C1"})
+
+    def test_profitable_gen_resets_counter(self):
         config = ScenarioConfig()
         fleet = [_gen("C0", "coal", pmax=100.0)]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
-        # net_revenue = 1e6 * 10 * 10 = 1e8, far above the 4e6 fixed cost.
+        # net_revenue = 1e6 * 10 * 10 = 1e8, far above any fixed cost.
         prices = np.full((1, self.T), 1.0e6)
         dispatch = self._dispatch_result(1, 10.0)
 
         # Enter with one prior loss year on the books.
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {"C0": 1}
+            fleet, arrays, dispatch, prices, config, {"C0": 1}, peak_demand=0.0
         )
         self.assertEqual([g.unit_id for g in fleet1], ["C0"])
         self.assertEqual(losses1["C0"], 0)
@@ -124,65 +248,10 @@ class TestEconomicRetirements(unittest.TestCase):
         dispatch = self._dispatch_result(1, 0.0)
 
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
         self.assertEqual(losses1, {})
-
-
-class TestSigmoidRetirement(unittest.TestCase):
-    """Clean-share-driven logistic attrition of the fossil fleet."""
-
-    def _coal_fleet(self, n=10):
-        """``n`` coal units, each 100 MW, with strictly increasing heat rate."""
-        return [
-            _gen(f"C{i}", "coal", pmax=100.0, heat_rate=8.0 + 0.1 * i)
-            for i in range(n)
-        ]
-
-    def test_high_clean_share_retires_substantial_coal(self):
-        # clean_share 0.6, midpoint 0.5: fraction ~= 0.77 of coal capacity.
-        config = ScenarioConfig()
-        fleet = self._coal_fleet(10)
-        survivors = apply_sigmoid_retirement(fleet, 0.6, config)
-        coal = [g for g in survivors if g.fuel_type == "coal"]
-        self.assertGreater(len(coal), 0)
-        self.assertLess(len(coal), 10)
-
-    def test_low_clean_share_retires_minimal_coal(self):
-        # clean_share 0.3, midpoint 0.5: fraction ~= 0.08 -- minimal attrition.
-        config = ScenarioConfig()
-        fleet = self._coal_fleet(10)
-        survivors = apply_sigmoid_retirement(fleet, 0.3, config)
-        coal = [g for g in survivors if g.fuel_type == "coal"]
-        self.assertGreaterEqual(len(coal), 8)
-
-    def test_least_efficient_units_retire_first(self):
-        config = ScenarioConfig()
-        fleet = self._coal_fleet(10)
-        survivors = apply_sigmoid_retirement(fleet, 0.6, config)
-        retired_hr = {
-            g.heat_rate for g in fleet
-        } - {g.heat_rate for g in survivors}
-        survivor_hr = {g.heat_rate for g in survivors}
-        # Every retired unit is less efficient than every survivor.
-        self.assertTrue(min(retired_hr) > max(survivor_hr))
-
-    def test_retirement_order_is_coal_then_gas(self):
-        # Both classes face the same fraction; both should shed capacity.
-        config = ScenarioConfig()
-        fleet = [
-            _gen(f"C{i}", "coal", heat_rate=10.0 + i) for i in range(6)
-        ] + [
-            _gen(f"G{i}", "gas_cc", heat_rate=7.0 + i) for i in range(6)
-        ]
-        survivors = apply_sigmoid_retirement(fleet, 0.7, config)
-        self.assertLess(
-            len([g for g in survivors if g.fuel_type == "coal"]), 6
-        )
-        self.assertLess(
-            len([g for g in survivors if g.fuel_type == "gas_cc"]), 6
-        )
 
 
 class TestComputeCleanShare(unittest.TestCase):
