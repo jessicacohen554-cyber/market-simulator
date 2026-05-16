@@ -4,6 +4,7 @@ import unittest
 
 import numpy as np
 
+from market_sim.config.constants import WECC_IMPORT_EFORD
 from market_sim.config.iso_configs import TransferLink
 from market_sim.data.fleet import (
     Generator,
@@ -241,8 +242,8 @@ class TestTransmissionDispatch(unittest.TestCase):
         self.assertTrue(np.all(np.abs(result.flows) <= ttc[:, None] + 1e-6))
 
 
-# Availability factor of the WECC import tranches (1 - eford, eford=0.02).
-_IMPORT_AVAIL = 0.98
+# Availability factor of the WECC import tranches (1 - eford).
+_IMPORT_AVAIL = 1.0 - WECC_IMPORT_EFORD
 
 
 class TestWeccImportModel(unittest.TestCase):
