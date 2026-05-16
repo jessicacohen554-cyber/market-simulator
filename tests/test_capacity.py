@@ -767,24 +767,44 @@ class TestResolveCarbonPrice(unittest.TestCase):
         self.assertEqual(resolve_carbon_price(config, 2050), 42.0)
 
     def test_zero_price_interpolates_named_path(self):
-        # carbon_price 0 + gas_price_path "mid" -> CARBON_PRICE_PATHS["mid"].
-        config = ScenarioConfig(carbon_price=0.0, gas_price_path="mid")
+        # carbon_price 0 + carbon_price_path "mid" -> CARBON_PRICE_PATHS["mid"].
+        config = ScenarioConfig(carbon_price=0.0, carbon_price_path="mid")
         # 2030 is a knot year of the mid path.
         self.assertAlmostEqual(resolve_carbon_price(config, 2030), 15.0)
         # 2028 sits midway between 2026 (0) and 2030 (15).
         self.assertAlmostEqual(resolve_carbon_price(config, 2028), 7.5)
+        # mid path interpolates to $50/tCO2 by 2050.
+        self.assertAlmostEqual(resolve_carbon_price(config, 2050), 50.0)
 
     def test_zero_price_path_yields_zero(self):
-        config = ScenarioConfig(carbon_price=0.0, gas_price_path="zero")
+        config = ScenarioConfig(carbon_price=0.0, carbon_price_path="zero")
         self.assertEqual(resolve_carbon_price(config, 2040), 0.0)
 
+    def test_default_config_yields_zero_for_all_years(self):
+        # Default config has carbon_price_path="zero": no carbon price.
+        config = ScenarioConfig()
+        for year in (2026, 2030, 2040, 2050):
+            self.assertEqual(resolve_carbon_price(config, year), 0.0)
+
+    def test_carbon_price_decoupled_from_gas_price_path(self):
+        # gas_price_path no longer drives carbon price; only carbon_price_path does.
+        config = ScenarioConfig(carbon_price=0.0, gas_price_path="mid")
+        for year in (2026, 2030, 2040, 2050):
+            self.assertEqual(resolve_carbon_price(config, year), 0.0)
+
+    def test_explicit_price_overrides_path(self):
+        # An explicit carbon_price is returned regardless of carbon_price_path.
+        config = ScenarioConfig(carbon_price=25.0, carbon_price_path="mid")
+        self.assertEqual(resolve_carbon_price(config, 2026), 25.0)
+        self.assertEqual(resolve_carbon_price(config, 2050), 25.0)
+
     def test_unrecognized_path_yields_zero(self):
-        # A gas_price_path that is not a named carbon path -> 0.0.
-        config = ScenarioConfig(carbon_price=0.0, gas_price_path="inputs/gas.csv")
+        # A carbon_price_path that is not a named carbon path -> 0.0.
+        config = ScenarioConfig(carbon_price=0.0, carbon_price_path="bogus")
         self.assertEqual(resolve_carbon_price(config, 2030), 0.0)
 
     def test_years_outside_knot_range_clamp(self):
-        config = ScenarioConfig(carbon_price=0.0, gas_price_path="high")
+        config = ScenarioConfig(carbon_price=0.0, carbon_price_path="high")
         # Before the first knot takes the first value, after the last the last.
         self.assertAlmostEqual(resolve_carbon_price(config, 2000), 0.0)
         self.assertAlmostEqual(resolve_carbon_price(config, 2100), 110.0)
