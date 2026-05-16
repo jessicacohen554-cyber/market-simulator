@@ -40,6 +40,7 @@ from market_sim.model.transmission import (
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.results.cache import is_cached, load_result, save_result
+from market_sim.results.outputs import FleetContext
 
 logger = logging.getLogger(__name__)
 
@@ -156,7 +157,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solar_mc=solar_mc,
                 T=config.hours,
             )
-            save_result(result, config, iso, year)
+            context = FleetContext.from_arrays(
+                fleet_arrays, wind_cf, wind_cap, solar_cf, solar_cap,
+                storage.energy_cap,
+            )
+            save_result(result, config, iso, year, context=context)
             logger.info(
                 "year %d: solved and cached (%.3fs)",
                 year, time.perf_counter() - year_start,

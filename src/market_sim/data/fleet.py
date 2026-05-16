@@ -56,6 +56,11 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "import": 7,
 }
 
+# Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
+FUEL_TYPE_NAMES: list[str] = [
+    name for name, _ in sorted(FUEL_TYPE_MAP.items(), key=lambda item: item[1])
+]
+
 
 class Generator(BaseModel):
     """Attributes of a single generating unit."""

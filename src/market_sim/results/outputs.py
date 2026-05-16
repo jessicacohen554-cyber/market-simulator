@@ -9,15 +9,93 @@ saved result reconstructs exactly.
 """
 
 import json
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from market_sim.data.fleet import FUEL_TYPE_NAMES
 from market_sim.model.dispatch import DispatchResult
 
+# Schema-metadata key for the dispatch result's scalars and dimensions.
 _METADATA_KEY = b"market_sim"
+# Schema-metadata key for the fleet context (see :class:`FleetContext`).
+_FLEET_METADATA_KEY = b"market_sim_fleet"
+
+
+@dataclass(frozen=True)
+class FleetContext:
+    """Fleet and resource attributes that produced a dispatch result.
+
+    Stored in the Parquet schema metadata so an aggregated export can
+    attribute dispatch to fuels and compute emissions and curtailment
+    without re-deriving the fleet. The three per-generator lists are
+    aligned with the generator axis of :attr:`DispatchResult.dispatch`.
+
+    Attributes:
+        fuel_types: Fuel type of each generator.
+        pmax_mw: Nameplate capacity of each generator, in MW.
+        emission_rate: CO2 rate of each generator, in tCO2/MWh.
+        wind_cap_mw: Total installed wind capacity, in MW.
+        solar_cap_mw: Total installed solar capacity, in MW.
+        wind_potential_mwh: Annual available wind energy (capacity factor
+            times capacity, summed over zones and hours), in MWh.
+        solar_potential_mwh: Annual available solar energy, in MWh.
+        storage_energy_cap_mwh: Total storage energy capacity, in MWh.
+    """
+
+    fuel_types: list[str]
+    pmax_mw: list[float]
+    emission_rate: list[float]
+    wind_cap_mw: float
+    solar_cap_mw: float
+    wind_potential_mwh: float
+    solar_potential_mwh: float
+    storage_energy_cap_mwh: float
+
+    @classmethod
+    def from_arrays(
+        cls,
+        fleet,
+        wind_cf,
+        wind_cap,
+        solar_cf,
+        solar_cap,
+        storage_energy_cap,
+    ) -> "FleetContext":
+        """Build a context from a run's vectorized fleet and resource inputs.
+
+        Args:
+            fleet: The :class:`~market_sim.data.fleet.FleetArrays` dispatched.
+            wind_cf: Hourly wind capacity factor, shape ``(n_zones, T)``.
+            wind_cap: Installed wind capacity per zone, shape ``(n_zones,)``.
+            solar_cf: Hourly solar capacity factor, shape ``(n_zones, T)``.
+            solar_cap: Installed solar capacity per zone, shape ``(n_zones,)``.
+            storage_energy_cap: Storage energy capacity per unit.
+
+        Returns:
+            The assembled :class:`FleetContext`.
+        """
+        wind_cap = np.asarray(wind_cap, dtype=float)
+        solar_cap = np.asarray(solar_cap, dtype=float)
+        return cls(
+            fuel_types=[FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx],
+            pmax_mw=[float(p) for p in fleet.pmax],
+            emission_rate=[float(r) for r in fleet.emission_rate],
+            wind_cap_mw=float(wind_cap.sum()),
+            solar_cap_mw=float(solar_cap.sum()),
+            wind_potential_mwh=float(
+                (np.asarray(wind_cf, dtype=float) * wind_cap[:, None]).sum()
+            ),
+            solar_potential_mwh=float(
+                (np.asarray(solar_cf, dtype=float) * solar_cap[:, None]).sum()
+            ),
+            storage_energy_cap_mwh=float(
+                np.asarray(storage_energy_cap, dtype=float).sum()
+            ),
+        )
 
 # Per-hour list-valued columns and whether each is optional. Optional
 # columns are omitted entirely when their source array is ``None``.
@@ -46,11 +124,15 @@ def _list_column(array: np.ndarray) -> pa.Array:
     return pa.array(by_hour.tolist(), type=pa.list_(pa.float64()))
 
 
-def to_parquet(self: DispatchResult, path) -> Path:
+def to_parquet(
+    self: DispatchResult, path, context: FleetContext | None = None
+) -> Path:
     """Write this dispatch result to a Parquet file at ``path``.
 
     Args:
         path: Destination ``.parquet`` path; parent directories are created.
+        context: Optional fleet context written to the schema metadata so
+            an aggregated export can interpret the dispatch arrays.
 
     Returns:
         The path written, as a :class:`~pathlib.Path`.
@@ -80,11 +162,39 @@ def to_parquet(self: DispatchResult, path) -> Path:
         "has_emissions": self.emissions is not None,
     }
 
-    table = pa.table(columns).replace_schema_metadata(
-        {_METADATA_KEY: json.dumps(metadata).encode()}
-    )
+    schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
+    if context is not None:
+        schema_metadata[_FLEET_METADATA_KEY] = json.dumps(
+            asdict(context)
+        ).encode()
+
+    table = pa.table(columns).replace_schema_metadata(schema_metadata)
     pq.write_table(table, path)
     return path
+
+
+def read_fleet_context(path) -> FleetContext:
+    """Read the :class:`FleetContext` stored in a Parquet file's metadata.
+
+    Args:
+        path: Path to a ``.parquet`` file written by :func:`to_parquet`
+            with a ``context``.
+
+    Returns:
+        The stored :class:`FleetContext`.
+
+    Raises:
+        FileNotFoundError: When ``path`` does not exist.
+        ValueError: When the file carries no fleet context metadata.
+    """
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"no cached dispatch result at {path}")
+
+    raw_meta = (pq.read_schema(path).metadata or {}).get(_FLEET_METADATA_KEY)
+    if raw_meta is None:
+        raise ValueError(f"{path} carries no fleet context metadata")
+    return FleetContext(**json.loads(raw_meta))
 
 
 def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
