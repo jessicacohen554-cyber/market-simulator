@@ -431,6 +431,22 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "base_cf": 0.92,
         "lifetime_yr": 60,
     },
+    "gas_cc_ccs": {
+        "capex_per_kw": 2300.0,    # $/kW total plant cost (host CCGT + capture island).
+                                    # Source: NETL Cost & Performance Baseline Rev 4, 2021.
+                                    # Reflects 90% capture, amine-based post-combustion.
+        "fom_per_kw_yr": 45.0,     # $/kW-yr. Source: NETL Rev 4.
+        "learning_rate": 0.10,     # 10% cost reduction per doubling of cumulative deployment.
+                                    # Source: Rubin et al. (2015) "The cost of CO2 capture
+                                    # and storage", Int J Greenhouse Gas Control.
+                                    # Range in literature: 0.08–0.12 for first-of-a-kind
+                                    # industrial process technologies.
+                                    # CCS is early on its deployment curve (~2 GW base),
+                                    # so each doubling comes quickly and has large effect.
+        "base_cf": 0.80,           # Lower than unabated CC (0.85) due to higher MC
+                                    # pushing it later in merit order at low carbon prices.
+        "lifetime_yr": 30,         # Same as gas CC host plant.
+    },
 }
 
 # --- Emerging generation technologies -------------------------------------
@@ -563,6 +579,10 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
     "nuclear_smr": 445.0,    # shares global nuclear fleet
     "nuclear_large": 445.0,
     "iron_air": 1.0,   # was 0.5. DOE LDES.
+    "gas_cc_ccs": 2.0,   # GW global installed power-sector CCS as of 2024.
+                          # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
+                          # Petra Nova mothballed 2020, excluded.
+                          # Source: Global CCS Institute Global Status Report 2024.
 }
 
 # Annual global deployment (GW/yr) by technology, used to project cumulative
@@ -578,6 +598,11 @@ GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
     "nuclear_smr": 5.0,
     "nuclear_large": 5.0,
     "iron_air": 1.0,   # was 0.5.
+    "gas_cc_ccs": 1.5,   # GW/yr global CCS additions on power plants.
+                          # Based on announced project pipeline (DOE OCED awards,
+                          # UK cluster sequencing, EU Innovation Fund).
+                          # Optimistic but reflects policy momentum.
+                          # Source: Global CCS Institute project database 2024.
 }
 
 # Annual-average renewable capacity factors (fraction) by ISO and technology.

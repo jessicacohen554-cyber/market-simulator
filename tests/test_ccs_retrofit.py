@@ -17,7 +17,13 @@ from market_sim.data.fleet import (
     assemble_mc,
     generators_to_fleet_arrays,
 )
-from market_sim.model.capacity import apply_ccs_retrofit, evolve_fleet
+from market_sim.model.capacity import (
+    CumulativeDeployment,
+    _adjust_retrofit_capex,
+    apply_ccs_retrofit,
+    compute_lcoe,
+    evolve_fleet,
+)
 
 
 def _gas_cc(
@@ -311,6 +317,99 @@ class TestRetrofitOrderingInEvolveFleet(unittest.TestCase):
 
         survivor_in_fleet = next(g for g in fleet if g.unit_id == "SURVIVOR")
         self.assertEqual(survivor_in_fleet.fuel_type, "gas_cc_ccs")
+
+
+class TestCcsLearningCurve(unittest.TestCase):
+    """CCS new-build LCOE follows a Wright's-Law learning curve."""
+
+    def test_ccs_learning_curve(self):
+        config = ScenarioConfig()
+        lcoe_2026 = compute_lcoe("gas_cc_ccs", 2026, config, cumulative_gw=2.0)
+        lcoe_2035 = compute_lcoe("gas_cc_ccs", 2035, config, cumulative_gw=15.0)
+        lcoe_2050 = compute_lcoe("gas_cc_ccs", 2050, config, cumulative_gw=41.0)
+        self.assertTrue(
+            lcoe_2026 > lcoe_2035 > lcoe_2050,
+            "CCS LCOE should decline with deployment",
+        )
+        # LCOE decline tracks the capex decline; assert at least 15%.
+        self.assertLess(
+            lcoe_2050, lcoe_2026 * 0.85,
+            "CCS LCOE should decline at least 15%",
+        )
+
+    def test_ccs_learning_independent_of_gas_cc(self):
+        config = ScenarioConfig()
+        # CCS at low cumulative, gas_cc at high cumulative.
+        lcoe_ccs = compute_lcoe("gas_cc_ccs", 2030, config, cumulative_gw=5.0)
+        lcoe_gas = compute_lcoe("gas_cc", 2030, config, cumulative_gw=1300.0)
+        # CCS should be more expensive (higher capex and FOM).
+        self.assertGreater(lcoe_ccs, lcoe_gas)
+
+    def test_ccs_no_cumulative_returns_base(self):
+        config = ScenarioConfig()
+        lcoe_base = compute_lcoe("gas_cc_ccs", 2030, config, cumulative_gw=None)
+        lcoe_ref = compute_lcoe("gas_cc_ccs", 2030, config, cumulative_gw=2.0)
+        # 2.0 GW is the reference point, so both equal the base cost.
+        self.assertLess(abs(lcoe_base - lcoe_ref) / lcoe_ref, 0.01)
+
+
+class TestRetrofitCapexLearning(unittest.TestCase):
+    """CCS retrofit capex declines along the shared learning curve."""
+
+    def test_retrofit_capex_learning(self):
+        base = 900.0  # $/kW
+        adjusted_early = _adjust_retrofit_capex(base, cumulative_gw=4.0)
+        adjusted_late = _adjust_retrofit_capex(base, cumulative_gw=32.0)
+        self.assertLess(
+            adjusted_early, base,
+            "Retrofit capex should decline after 1 doubling",
+        )
+        self.assertLess(
+            adjusted_late, adjusted_early,
+            "More deployment = lower capex",
+        )
+        self.assertGreater(
+            adjusted_late, base * 0.5,
+            "Decline shouldn't exceed 50% at 4 doublings with lr=0.10",
+        )
+
+    def test_retrofit_capex_base_when_no_cumulative(self):
+        base = 900.0
+        self.assertEqual(_adjust_retrofit_capex(base, None), base)
+        # At or below the reference deployment, capex is unchanged.
+        self.assertEqual(_adjust_retrofit_capex(base, 2.0), base)
+
+
+class TestRetrofitsAddToCumulative(unittest.TestCase):
+    """Retrofits expand the global CCS experience base."""
+
+    def test_retrofits_increment_cumulative_tracker(self):
+        config = ScenarioConfig(iso="ERCOT")
+        cumulative = CumulativeDeployment.initial()
+        before = cumulative.get("gas_cc_ccs")
+
+        # Four 500 MW gas CC units => 2.0 GW retrofitted at $100/ton.
+        fleet = [
+            _gas_cc(f"G{i}", heat_rate=6.9, online_year=2020, pmax=500.0)
+            for i in range(4)
+        ]
+        fleet, _tracker, _additions, retrofit_log = evolve_fleet(
+            fleet, None, 2030, config, {},
+            carbon_price=100.0, gas_price_per_mmbtu=4.0,
+            cumulative=cumulative,
+        )
+        self.assertEqual(len(retrofit_log), 4)
+        after = cumulative.get("gas_cc_ccs")
+        self.assertAlmostEqual(after - before, 2.0, places=6)
+
+        # The updated cumulative lowers next year's new-build CCS LCOE.
+        lcoe_before = compute_lcoe(
+            "gas_cc_ccs", 2031, config, cumulative_gw=before
+        )
+        lcoe_after = compute_lcoe(
+            "gas_cc_ccs", 2031, config, cumulative_gw=after
+        )
+        self.assertLess(lcoe_after, lcoe_before)
 
 
 if __name__ == "__main__":

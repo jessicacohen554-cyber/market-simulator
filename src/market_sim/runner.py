@@ -212,7 +212,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             for fuel, mw in zone_adds.items():
                 local_builds[fuel] = local_builds.get(fuel, 0.0) + mw / 1000.0
         for g in fleet:
-            if g.online_year == year and g.fuel_type in ("gas_cc", "nuclear"):
+            if g.online_year == year and g.fuel_type in (
+                "gas_cc", "nuclear", "gas_cc_ccs"
+            ):
                 local_builds[g.fuel_type] = (
                     local_builds.get(g.fuel_type, 0.0) + g.pmax_mw / 1000.0
                 )
