@@ -554,10 +554,19 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "CAISO": {"wind": 7000.0, "solar": 20000.0},
 }
 
-# CAISO WECC import supply curve tranches: (name, capacity MW, marginal cost $/MWh).
-# Ordered cheapest first. Represents the aggregate WECC supply available to CAISO.
-# TODO: fit from EIA-930 interchange data. Current values are hand-set placeholders.
-# Source: placeholder pending EIA-930 calibration.
+# CAISO WECC import supply curve tranches: (name, capacity MW, VOM $/MWh).
+# These represent the aggregate WECC supply merit order available to CAISO.
+#
+# CALIBRATION TODO (high priority before running CAISO scenarios):
+# 1. Pull CAISO net interchange from EIA-930 hourly data (2022-2024).
+# 2. Correlate hourly import MW vs. CAISO day-ahead price.
+# 3. Fit a 3-4 step supply curve to the import-vs-price scatter.
+# 4. Validate aggregate import capacity against CAISO OASIS path ratings
+#    (Path 15, Path 26, Path 46, PDCI — sum ~12-15 GW).
+# 5. Validate export capability against CAISO curtailment + export data.
+#
+# Current values are engineering estimates, not empirically fitted.
+# Source: engineering judgment from EIA-930 visual inspection, CAISO OASIS.
 WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = [
     ("PNW_hydro", 3000.0, 15.0),      # Pacific NW hydro — cheap but limited
     ("DSW_CCGT", 5000.0, 35.0),        # Desert SW combined-cycle gas
