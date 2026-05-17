@@ -6,12 +6,12 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 
 ## How `param_id` is derived
 
-- A module-level constant in `constants.py` becomes its lower-cased name (e.g. `GAS_PRICE_ESCALATION` -> `gas_price_escalation`).
+- A module-level constant in `constants.py` becomes its lower-cased name (e.g. `HOURS_PER_YEAR` -> `hours_per_year`).
 - Nested dicts with string keys are flattened with dots (e.g. `HEAT_RATE_BINS["gas_cc"]["h_class"]` -> `heat_rate_bins.gas_cc.h_class`).
 - A dict whose keys are all years (e.g. a carbon-price trajectory) is treated as a single leaf; its value is the full trajectory.
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.` (e.g. `scenario.discount_rate`).
 
-**Totals:** 125 parameters | 33 model-sourced | 13 flagged stale (source older than 3 years).
+**Totals:** 125 parameters | 29 model-sourced | 13 flagged stale (source older than 3 years).
 
 ## Structural
 
@@ -95,14 +95,14 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 
 | param_id | value | unit | tier | source | date | page / table | old repo location | notes |
 |---|---|---|---|---|---|---|---|---|
-| `gas_price_base.ERCOT.low` | 2.5 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | low delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_base.ERCOT.mid` | 3.5 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | mid delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_base.ERCOT.high` | 5.5 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | high delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_base.CAISO.low` | 3.0 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | low delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_base.CAISO.mid` | 4.25 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | mid delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_base.CAISO.high` | 6.5 | $/MMBtu | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | high delivered gas price path; AEO is a projection model, not observed price. **[MODELED]** |
-| `gas_price_escalation` | 0.02 | fraction/yr | 1 | EIA Annual Energy Outlook 2024 | 2024-03 | AEO2024 natural gas price projections (Reference and side cases) | — | Annual real escalation applied to base gas prices; AEO projection. **[MODELED]** |
-| `scenario.gas_price_path` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default lever selecting which GAS_PRICE_BASE path to use. |
+| `henry_hub_trajectories.low` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | High Oil and Gas Supply case; maps to model "low" gas path. Real 2024 dollars. **[MODELED]** |
+| `henry_hub_trajectories.mid` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Reference case; maps to model "mid" gas path. Real 2024 dollars. **[MODELED]** |
+| `henry_hub_trajectories.high` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Low Oil and Gas Supply case; maps to model "high" gas path. Real 2024 dollars. **[MODELED]** |
+| `gas_basis_differential.ERCOT` | -0.5 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | Waha discount to Henry Hub. |
+| `gas_basis_differential.CAISO` | 1.2 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | SoCal Citygate premium to Henry Hub. |
+| `gas_monthly_seasonality` | see table | factor | 2 | EIA Henry Hub monthly spot prices | 2024 | EIA Henry Hub monthly averages, 2019-2024 | — | Multiplicative monthly factors; budget-neutral over the year. |
+| `scenario.gas_price_path` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default lever selecting which Henry Hub trajectory case to use. |
+| `scenario.gas_seasonality` | True | - | 2 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Toggle for applying the monthly Henry Hub seasonality shape. |
 
 ## Storage
 
@@ -200,13 +200,9 @@ These values come from another model's assumptions or projections (forecasts, sc
 | `demand_growth_rates.CAISO.low` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | low annual demand growth path; planning forecast, not observed history. |
 | `demand_growth_rates.CAISO.mid` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | mid annual demand growth path; planning forecast, not observed history. |
 | `demand_growth_rates.CAISO.high` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | high annual demand growth path; planning forecast, not observed history. |
-| `gas_price_base.ERCOT.low` | EIA Annual Energy Outlook 2024 | low delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_base.ERCOT.mid` | EIA Annual Energy Outlook 2024 | mid delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_base.ERCOT.high` | EIA Annual Energy Outlook 2024 | high delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_base.CAISO.low` | EIA Annual Energy Outlook 2024 | low delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_base.CAISO.mid` | EIA Annual Energy Outlook 2024 | mid delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_base.CAISO.high` | EIA Annual Energy Outlook 2024 | high delivered gas price path; AEO is a projection model, not observed price. |
-| `gas_price_escalation` | EIA Annual Energy Outlook 2024 | Annual real escalation applied to base gas prices; AEO projection. |
+| `henry_hub_trajectories.low` | EIA Annual Energy Outlook 2025 | High Oil and Gas Supply case Henry Hub trajectory; AEO is a projection model, not observed price. |
+| `henry_hub_trajectories.mid` | EIA Annual Energy Outlook 2025 | Reference case Henry Hub trajectory; AEO is a projection model, not observed price. |
+| `henry_hub_trajectories.high` | EIA Annual Energy Outlook 2025 | Low Oil and Gas Supply case Henry Hub trajectory; AEO is a projection model, not observed price. |
 | `carbon_price_paths.zero` | Resources for the Future (RFF) carbon price scenario set | zero carbon price trajectory; scenario assumption from another model, not an observed price. |
 | `carbon_price_paths.low` | Resources for the Future (RFF) carbon price scenario set | low carbon price trajectory; scenario assumption from another model, not an observed price. |
 | `carbon_price_paths.mid` | Resources for the Future (RFF) carbon price scenario set | mid carbon price trajectory; scenario assumption from another model, not an observed price. |
