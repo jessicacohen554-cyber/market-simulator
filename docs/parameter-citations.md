@@ -11,7 +11,7 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 - A dict whose keys are all years (e.g. a carbon-price trajectory) is treated as a single leaf; its value is the full trajectory.
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.` (e.g. `scenario.discount_rate`).
 
-**Totals:** 125 parameters | 29 model-sourced | 10 flagged stale (source older than 3 years).
+**Totals:** 136 parameters | 38 model-sourced | 19 flagged stale (source older than 3 years).
 
 ## Structural
 
@@ -95,9 +95,9 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 
 | param_id | value | unit | tier | source | date | page / table | old repo location | notes |
 |---|---|---|---|---|---|---|---|---|
-| `henry_hub_trajectories.low` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | High Oil and Gas Supply case; maps to model "low" gas path. Real 2024 dollars. **[MODELED]** |
-| `henry_hub_trajectories.mid` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Reference case; maps to model "mid" gas path. Real 2024 dollars. **[MODELED]** |
-| `henry_hub_trajectories.high` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Low Oil and Gas Supply case; maps to model "high" gas path. Real 2024 dollars. **[MODELED]** |
+| `henry_hub_trajectories.low` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | High Oil and Gas Supply case; maps to model "low" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
+| `henry_hub_trajectories.mid` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Reference case; maps to model "mid" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
+| `henry_hub_trajectories.high` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Low Oil and Gas Supply case; maps to model "high" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
 | `gas_basis_differential.ERCOT` | -0.5 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | Waha discount to Henry Hub. |
 | `gas_basis_differential.CAISO` | 1.2 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | SoCal Citygate premium to Henry Hub. |
 | `gas_monthly_seasonality` | see table | factor | 2 | EIA Henry Hub monthly spot prices | 2024 | EIA Henry Hub monthly averages, 2019-2024 | — | Multiplicative monthly factors; budget-neutral over the year. |
@@ -187,6 +187,26 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 |---|---|---|---|---|---|---|---|---|
 | `scenario.renewable_cf_adjustment` | 1.0 | multiplier | 3 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Tier-3 calibration knob; neutral default of 1.0. **[MODELED]** |
 | `scenario.basis_differential_factor` | 1.0 | multiplier | 3 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Tier-3 calibration knob; neutral default of 1.0. **[MODELED]** |
+| `scenario.td_loss_factor` | 0.058 | fraction | 3 | EPA eGRID 2023 / EIA-930 ERCOT system load | 2024-01 | eGRID 2023 net generation (472.9 TWh) vs EIA-930 ERCOT load (446.8 TWh) | — | Transmission & distribution losses as a fraction of metered load. Empirical ratio = 5.8%. Demand is grossed up by (1 + factor). Cross-check: ERCOT CDR uses ~4-5% for adequacy; 5.8% includes distribution losses. |
+| `scenario.vintage_capacity_ramp` | True | - | 3 | EIA-860 2024 (Generator_Operable) | 2024-06 | Generator_Operable — Operating Month / Operating Year | — | When True, renewable capacity for a calibration year ramps month-by-month from each plant's commercial-operation date; when False, flat year-end capacity is used. |
+| `scenario.cc_cycling_adder_h_class` | 3.92 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for H-class gas CC (HR<6500): $63.8/MW-start, 22hr cycle, 10hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.cc_cycling_adder_f_class` | 3.66 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for F-class gas CC (HR 6500-7500): $48.6/MW-start, 17hr cycle, 7.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.cc_cycling_adder_older` | 2.91 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for legacy gas CC (HR>7500): $24.1/MW-start, 10hr cycle, 4.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.coal_cycling_adder_supercritical` | 2.66 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for supercritical coal (HR<9500): $147/MW-start, 96hr cycle, 36hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.coal_cycling_adder_subcritical` | 2.55 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for subcritical coal (HR 9500-10500): $119/MW-start, 72hr cycle, 24hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.coal_cycling_adder_older` | 2.58 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for legacy coal (HR>10500): $97/MW-start, 60hr cycle, 24hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.ct_cycling_adder_aero` | 3.14 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for aeroderivative gas CT (HR<10000): $12.3/MW-start, 4hr cycle, 0.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.ct_cycling_adder_frame` | 5.02 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for heavy-frame gas CT (HR 10000-11000): $24.5/MW-start, 5hr cycle, 1hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| `scenario.ct_cycling_adder_older` | 4.85 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for legacy gas CT (HR>11000): $19.0/MW-start, 4hr cycle, 1hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+
+## Transmission
+
+ERCOT zonal transfer capabilities live in `config/iso_configs.py` (not the constant registry). They are recorded here for traceability.
+
+| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
+|---|---|---|---|---|---|---|---|---|
+| `iso_configs.ERCOT.ttc.north_west` | 5500 | MW | 3 | ERCOT 2021 Regional Transmission Plan | 2021-09 | Long-Term West Texas Export Study Update (ROS Jul 2020, RPG Sep 2021) | `iso_configs.py` (`_ercot_config`) | North→West TTC raised from 3000. West Texas export stability limit = 11,016 MW. Stability-limited value; ERCOT applies a ~90% reliability margin operationally. A future calibration sweep will tune the exact value. |
+| `iso_configs.ERCOT.ttc.west_houston` | 3500 | MW | 3 | ERCOT 2021 Regional Transmission Plan | 2021-09 | Long-Term West Texas Export Study Update (ROS Jul 2020, RPG Sep 2021) | `iso_configs.py` (`_ercot_config`) | West→Houston TTC raised from 2500. Stability-limited value; ERCOT applies a ~90% reliability margin operationally. A future calibration sweep will tune the exact value. |
 
 ## Flagged: model-sourced parameters (not empirical data)
 
@@ -223,6 +243,15 @@ These values come from another model's assumptions or projections (forecasts, sc
 | `scenario.ira_expiry_year` | CBO scoring of Inflation Reduction Act energy provisions | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. |
 | `scenario.renewable_cf_adjustment` | Market simulator model design decision | Tier-3 calibration knob; neutral default of 1.0. |
 | `scenario.basis_differential_factor` | Market simulator model design decision | Tier-3 calibration knob; neutral default of 1.0. |
+| `scenario.cc_cycling_adder_h_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.cc_cycling_adder_f_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.cc_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.coal_cycling_adder_supercritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.coal_cycling_adder_subcritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.coal_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.ct_cycling_adder_aero` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.ct_cycling_adder_frame` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
+| `scenario.ct_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
 
 ## Flagged: stale parameters (source older than 3 years)
 
@@ -240,6 +269,15 @@ Source publication date is before 2023-05 (more than 3 years before the 2026-05-
 | `state_rps_floors.CAISO` | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | California SB 100 statutory clean-energy trajectory (60% by 2030, 100% by 2045). |
 | `scenario.voll` | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2025-12 | ERCOT DA SWCAP $5,000/MWh unchanged post-RTC+B (Dec 2025). RT SWCAP reduced to $2,000/MWh. Model uses DA cap as single-settlement proxy. |
 | `scenario.ira_expiry_year` | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. |
+| `scenario.cc_cycling_adder_h_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.cc_cycling_adder_f_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.cc_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.coal_cycling_adder_supercritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.coal_cycling_adder_subcritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.coal_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.ct_cycling_adder_aero` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.ct_cycling_adder_frame` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
+| `scenario.ct_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
 
 ## Source reference
 
@@ -263,6 +301,11 @@ Source publication date is before 2023-05 (more than 3 years before the 2026-05-
 | CBO_IRA | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | https://www.cbo.gov/ |
 | ERCOT_VOLL | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | https://www.ercot.com/mktrules/nprotocols |
 | MODEL_DESIGN | Market simulator model design decision | 2026-05 | — |
+| EIA_HH_SPOT | EIA Henry Hub Natural Gas Spot Price, annual averages | 2025-01 | https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm |
+| NREL_CYCLING | NREL/SR-5500-55433 (Kumar et al. 2012), Power Plant Cycling Costs | 2012-04 | https://www.nrel.gov/docs/fy12osti/55433.pdf |
+| ERCOT_RTP | ERCOT 2021 Regional Transmission Plan, Long-Term West Texas Export Study Update | 2021-09 | https://www.ercot.com/files/docs/2021/09/15/RPG-09-2021-Long-Term_West_Texas_Export_Study_Update.pdf |
+| EGRID23 | EPA eGRID 2023 (rev 2) | 2024-01 | https://www.epa.gov/egrid |
+| EIA860 | EIA Form 860 — 2024 (Generator_Operable, wind and solar schedules) | 2024-06 | https://www.eia.gov/electricity/data/eia860/ |
 
 ---
 

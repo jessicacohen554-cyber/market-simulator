@@ -131,6 +131,33 @@ class ScenarioConfig:
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
+    td_loss_factor: float = 0.058  # T&D losses as fraction of metered load.
+    # Source: empirical ratio, EPA eGRID 2023 net generation (472.9 TWh)
+    # vs EIA-930 ERCOT system load (446.8 TWh) = 5.8% losses.
+    # Cross-check: ERCOT CDR uses ~4-5% for adequacy; 5.8% includes
+    # distribution losses. Applied as: demand = raw_demand × (1 + factor).
+    vintage_capacity_ramp: bool = True  # When True, renewable capacity for a
+    # calibration year ramps month-by-month from each plant's commercial
+    # operation date (EIA-860 Operating Month/Year). When False, flat
+    # year-end capacity is used (pre-calibration behavior).
+
+    # Tier 3 (calibration) — Thermal cycling cost adders ($/MWh)
+    # Source: NREL/SR-5500-55433 (Kumar et al. 2012) "Power Plant Cycling Costs"
+    # Derivation: startup cost ($/MW × starts/yr ÷ op hours) + min-run drag.
+    # Plant profiles from EPA eGRID 2023, cycling patterns from Potomac
+    # Economics SOM.
+    # Gas CC — higher adder for efficient units (heavier rotors, longer min runtime)
+    cc_cycling_adder_h_class: float = 3.92   # HR<6500. $63.8/MW-start, 22hr cycle, 10hr min-run.
+    cc_cycling_adder_f_class: float = 3.66   # HR 6500-7500. $48.6/MW-start, 17hr cycle, 7.5hr min-run.
+    cc_cycling_adder_older: float = 2.91     # HR>7500. $24.1/MW-start, 10hr cycle, 4.5hr min-run.
+    # Coal — lowest per-MWh adder despite highest per-start cost (long 60-96hr cycles)
+    coal_cycling_adder_supercritical: float = 2.66  # HR<9500. $147/MW-start, 96hr cycle, 36hr min-run.
+    coal_cycling_adder_subcritical: float = 2.55    # HR 9500-10500. $119/MW-start, 72hr cycle, 24hr min-run.
+    coal_cycling_adder_older: float = 2.58          # HR>10500. $97/MW-start, 60hr cycle, 24hr min-run.
+    # Gas CT — highest per-MWh adder (short 4-5hr runs concentrate start cost)
+    ct_cycling_adder_aero: float = 3.14      # HR<10000. $12.3/MW-start, 4hr cycle, 0.5hr min-run.
+    ct_cycling_adder_frame: float = 5.02     # HR 10000-11000. $24.5/MW-start, 5hr cycle, 1hr min-run.
+    ct_cycling_adder_older: float = 4.85     # HR>11000. $19.0/MW-start, 4hr cycle, 1hr min-run.
 
     @property
     def real_discount_rate(self) -> float:
@@ -244,6 +271,17 @@ TIER_TAGS: dict[str, int] = {
     "heat_rate_bin_count": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
+    "td_loss_factor": 3,
+    "vintage_capacity_ramp": 3,
+    "cc_cycling_adder_h_class": 3,
+    "cc_cycling_adder_f_class": 3,
+    "cc_cycling_adder_older": 3,
+    "coal_cycling_adder_supercritical": 3,
+    "coal_cycling_adder_subcritical": 3,
+    "coal_cycling_adder_older": 3,
+    "ct_cycling_adder_aero": 3,
+    "ct_cycling_adder_frame": 3,
+    "ct_cycling_adder_older": 3,
 }
 
 

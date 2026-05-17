@@ -723,6 +723,8 @@
       "param_id": "henry_hub_trajectories.low",
       "display_name": "Henry Hub Trajectory — High Oil & Gas Supply (low price)",
       "value": {
+        "2023": 2.54,
+        "2024": 2.19,
         "2025": 2.88,
         "2026": 2.7,
         "2027": 2.55,
@@ -757,7 +759,7 @@
       "source_date": "2025-04",
       "page_or_table": "AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices)",
       "url": "https://www.eia.gov/outlooks/aeo/",
-      "notes": "High Oil and Gas Supply case Henry Hub trajectory; maps to model \"low\" gas path. Real 2024 dollars. AEO is a projection model, not observed price.",
+      "notes": "High Oil and Gas Supply case Henry Hub trajectory; maps to model \"low\" gas path. Real 2024 dollars. AEO is a projection model, not observed price. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals), identical across all paths.",
       "old_repo_location": "",
       "last_verified": "2026-05-17",
       "flags": [
@@ -768,6 +770,8 @@
       "param_id": "henry_hub_trajectories.mid",
       "display_name": "Henry Hub Trajectory — Reference case",
       "value": {
+        "2023": 2.54,
+        "2024": 2.19,
         "2025": 2.88,
         "2026": 3.4,
         "2027": 3.2,
@@ -802,7 +806,7 @@
       "source_date": "2025-04",
       "page_or_table": "AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices)",
       "url": "https://www.eia.gov/outlooks/aeo/",
-      "notes": "Reference case Henry Hub trajectory; maps to model \"mid\" gas path. Real 2024 dollars. AEO is a projection model, not observed price.",
+      "notes": "Reference case Henry Hub trajectory; maps to model \"mid\" gas path. Real 2024 dollars. AEO is a projection model, not observed price. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals), identical across all paths.",
       "old_repo_location": "",
       "last_verified": "2026-05-17",
       "flags": [
@@ -813,6 +817,8 @@
       "param_id": "henry_hub_trajectories.high",
       "display_name": "Henry Hub Trajectory — Low Oil & Gas Supply (high price)",
       "value": {
+        "2023": 2.54,
+        "2024": 2.19,
         "2025": 2.88,
         "2026": 3.6,
         "2027": 3.8,
@@ -847,7 +853,7 @@
       "source_date": "2025-04",
       "page_or_table": "AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices)",
       "url": "https://www.eia.gov/outlooks/aeo/",
-      "notes": "Low Oil and Gas Supply case Henry Hub trajectory; maps to model \"high\" gas path. Real 2024 dollars. AEO is a projection model, not observed price.",
+      "notes": "Low Oil and Gas Supply case Henry Hub trajectory; maps to model \"high\" gas path. Real 2024 dollars. AEO is a projection model, not observed price. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals), identical across all paths.",
       "old_repo_location": "",
       "last_verified": "2026-05-17",
       "flags": [
@@ -2247,6 +2253,200 @@
       "notes": "Tier-3 calibration knob; neutral default of 1.0.",
       "old_repo_location": "",
       "last_verified": "2026-05-16",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.td_loss_factor",
+      "display_name": "ScenarioConfig.td_loss_factor",
+      "value": 0.058,
+      "unit": "fraction",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "EPA eGRID 2023 / EIA-930 ERCOT system load",
+      "source_date": "2024-01",
+      "page_or_table": "eGRID 2023 net generation (472.9 TWh) vs EIA-930 ERCOT load (446.8 TWh)",
+      "url": "https://www.epa.gov/egrid",
+      "notes": "T&D losses as a fraction of metered load (5.8%). Demand grossed up by (1 + factor).",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.vintage_capacity_ramp",
+      "display_name": "ScenarioConfig.vintage_capacity_ramp",
+      "value": true,
+      "unit": "-",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "EIA Form 860 — 2024",
+      "source_date": "2024-06",
+      "page_or_table": "Generator_Operable — Operating Month / Operating Year",
+      "url": "https://www.eia.gov/electricity/data/eia860/",
+      "notes": "When True, renewable capacity for a calibration year ramps month-by-month from each plant's COD; when False, flat year-end capacity.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.cc_cycling_adder_h_class",
+      "display_name": "ScenarioConfig.cc_cycling_adder_h_class",
+      "value": 3.92,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for H-class gas CC (HR<6500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.cc_cycling_adder_f_class",
+      "display_name": "ScenarioConfig.cc_cycling_adder_f_class",
+      "value": 3.66,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for F-class gas CC (HR 6500-7500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.cc_cycling_adder_older",
+      "display_name": "ScenarioConfig.cc_cycling_adder_older",
+      "value": 2.91,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for legacy gas CC (HR>7500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_cycling_adder_supercritical",
+      "display_name": "ScenarioConfig.coal_cycling_adder_supercritical",
+      "value": 2.66,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for supercritical coal (HR<9500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_cycling_adder_subcritical",
+      "display_name": "ScenarioConfig.coal_cycling_adder_subcritical",
+      "value": 2.55,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for subcritical coal (HR 9500-10500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_cycling_adder_older",
+      "display_name": "ScenarioConfig.coal_cycling_adder_older",
+      "value": 2.58,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for legacy coal (HR>10500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.ct_cycling_adder_aero",
+      "display_name": "ScenarioConfig.ct_cycling_adder_aero",
+      "value": 3.14,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for aeroderivative gas CT (HR<10000); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.ct_cycling_adder_frame",
+      "display_name": "ScenarioConfig.ct_cycling_adder_frame",
+      "value": 5.02,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for heavy-frame gas CT (HR 10000-11000); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.ct_cycling_adder_older",
+      "display_name": "ScenarioConfig.ct_cycling_adder_older",
+      "value": 4.85,
+      "unit": "$/MWh",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
+      "source_date": "2012-04",
+      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
+      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
+      "notes": "Tier-3 thermal cycling cost adder for legacy gas CT (HR>11000); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
+      "old_repo_location": "",
+      "last_verified": "2026-05-17",
       "flags": [
         "modeled"
       ]
