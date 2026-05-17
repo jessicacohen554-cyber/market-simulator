@@ -31,13 +31,18 @@ class FleetContext:
 
     Stored in the Parquet schema metadata so an aggregated export can
     attribute dispatch to fuels and compute emissions and curtailment
-    without re-deriving the fleet. The three per-generator lists are
-    aligned with the generator axis of :attr:`DispatchResult.dispatch`.
+    without re-deriving the fleet. The per-generator lists are aligned
+    with the generator axis of :attr:`DispatchResult.dispatch`.
 
     Attributes:
         fuel_types: Fuel type of each generator.
         pmax_mw: Nameplate capacity of each generator, in MW.
         emission_rate: CO2 rate of each generator, in tCO2/MWh.
+        efficiency_bins: Efficiency bin of each generator (e.g. ``h_class``,
+            ``older``).
+        heat_rates: Heat rate of each generator, in MMBtu/MWh.
+        zones: Zone name of each generator (e.g. ``North``, ``Houston``).
+        unit_ids: Generator unit identifier of each generator.
         wind_cap_mw: Total installed wind capacity, in MW.
         solar_cap_mw: Total installed solar capacity, in MW.
         wind_potential_mwh: Annual available wind energy (capacity factor
@@ -49,6 +54,10 @@ class FleetContext:
     fuel_types: list[str]
     pmax_mw: list[float]
     emission_rate: list[float]
+    efficiency_bins: list[str]
+    heat_rates: list[float]
+    zones: list[str]
+    unit_ids: list[str]
     wind_cap_mw: float
     solar_cap_mw: float
     wind_potential_mwh: float
@@ -59,6 +68,7 @@ class FleetContext:
     def from_arrays(
         cls,
         fleet,
+        iso_config,
         wind_cf,
         wind_cap,
         solar_cf,
@@ -69,6 +79,8 @@ class FleetContext:
 
         Args:
             fleet: The :class:`~market_sim.data.fleet.FleetArrays` dispatched.
+            iso_config: The :class:`~market_sim.config.iso_configs.ISOConfig`
+                whose zone ordering maps ``fleet.zone_idx`` back to zone names.
             wind_cf: Hourly wind capacity factor, shape ``(n_zones, T)``.
             wind_cap: Installed wind capacity per zone, shape ``(n_zones,)``.
             solar_cf: Hourly solar capacity factor, shape ``(n_zones, T)``.
@@ -80,10 +92,15 @@ class FleetContext:
         """
         wind_cap = np.asarray(wind_cap, dtype=float)
         solar_cap = np.asarray(solar_cap, dtype=float)
+        zone_names = iso_config.zone_names
         return cls(
             fuel_types=[FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx],
             pmax_mw=[float(p) for p in fleet.pmax],
             emission_rate=[float(r) for r in fleet.emission_rate],
+            efficiency_bins=list(fleet.efficiency_bin),
+            heat_rates=[float(h) for h in fleet.heat_rate],
+            zones=[zone_names[i] for i in fleet.zone_idx],
+            unit_ids=list(fleet.unit_ids),
             wind_cap_mw=float(wind_cap.sum()),
             solar_cap_mw=float(solar_cap.sum()),
             wind_potential_mwh=float(
