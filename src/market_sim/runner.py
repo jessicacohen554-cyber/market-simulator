@@ -34,7 +34,10 @@ from market_sim.data.fleet import (
     load_fleet_from_csv,
 )
 from market_sim.data.fuel import resolve_fuel_prices
-from market_sim.data.renewables import load_renewable_profiles
+from market_sim.data.renewables import (
+    inject_offshore_wind_availability,
+    load_renewable_profiles,
+)
 from market_sim.model.capacity import CumulativeDeployment, evolve_fleet
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.storage import (
@@ -204,6 +207,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours
         )
+        # Replace flat offshore-wind availability with a derived hourly
+        # profile; must run after fleet-array build and before dispatch.
+        inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
         year_demand = _scale_demand(base_demand, config, year)
         peak_demand = float(year_demand.sum(axis=0).max())
