@@ -354,15 +354,20 @@ class TestComputeLCOE(unittest.TestCase):
         # so the learning curve must work for it too.
         config = ScenarioConfig()
         at_ref = compute_lcoe(
-            "nuclear", 2030, config,
-            cumulative_gw=WRIGHT_REFERENCE_GW["nuclear"],
+            "nuclear_smr", 2030, config,
+            cumulative_gw=WRIGHT_REFERENCE_GW["nuclear_smr"],
         )
         grown = compute_lcoe(
-            "nuclear", 2030, config,
-            cumulative_gw=2 * WRIGHT_REFERENCE_GW["nuclear"],
+            "nuclear_smr", 2030, config,
+            cumulative_gw=2 * WRIGHT_REFERENCE_GW["nuclear_smr"],
         )
         self.assertGreater(at_ref, 0.0)
         self.assertLess(grown, at_ref)
+
+    def test_nuclear_smr_cheaper_than_large(self):
+        smr = compute_lcoe("nuclear_smr", 2030, ScenarioConfig())
+        large = compute_lcoe("nuclear_large", 2030, ScenarioConfig())
+        self.assertLess(smr, large)
 
     def test_solar_itc_discounts_only_the_capital_component(self):
         # The IRA ITC reduces capex before annualization, so the credit

@@ -417,12 +417,19 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "base_cf": 0.55,
         "lifetime_yr": 30,
     },
-    "nuclear": {  # NREL ATB 2024 — advanced nuclear (SMR/Gen III+)
+    "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates
         "capex_per_kw": 6800.0,
-        "fom_per_kw_yr": 120.0,
-        "learning_rate": 0.05,
+        "fom_per_kw_yr": 100.0,
+        "learning_rate": 0.08,
         "base_cf": 0.90,
         "lifetime_yr": 40,
+    },
+    "nuclear_large": {  # NREL ATB 2024 mid-case, Lazard LCOE v17
+        "capex_per_kw": 8500.0,
+        "fom_per_kw_yr": 130.0,
+        "learning_rate": 0.03,
+        "base_cf": 0.92,
+        "lifetime_yr": 60,
     },
 }
 
@@ -553,6 +560,8 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
     "li_ion": 130.0,   # was 90. BNEF 2025.
     "gas_cc": 1220.0,  # was 1200. IEA WEO 2025.
     "nuclear": 445.0,  # was 440. IAEA PRIS 2025.
+    "nuclear_smr": 445.0,    # shares global nuclear fleet
+    "nuclear_large": 445.0,
     "iron_air": 1.0,   # was 0.5. DOE LDES.
 }
 
@@ -566,6 +575,8 @@ GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
     "li_ion": 50.0,    # was 30. BNEF 2025.
     "gas_cc": 20.0,    # was 25. IEA WEO 2025.
     "nuclear": 10.0,   # was 8. IAEA 2025.
+    "nuclear_smr": 5.0,
+    "nuclear_large": 5.0,
     "iron_air": 1.0,   # was 0.5.
 }
 
