@@ -50,7 +50,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.fleet import FleetArrays, Generator
+from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
 from market_sim.policy.rec import (
@@ -630,6 +630,9 @@ def evolve_fleet(
     3. known additions (planned units with ``online_year == year``),
     4. economic new entry (generation).
 
+    The reshaped fleet is then re-aggregated into efficiency-bin
+    representative units, keeping the next LP solve at ~36 thermal columns.
+
     The renewable portfolio standard is not applied here -- it is enforced
     as an LP constraint in dispatch, and its shadow price (``rec_price``)
     feeds the economic new-entry screen so clean builds are economics-
@@ -703,5 +706,10 @@ def evolve_fleet(
             carbon_price=carbon_price,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
+
+    # Retirements and new entry have reshaped the fleet; re-collapse it into
+    # efficiency-bin representatives so the next LP solve gets ~36 thermal
+    # columns rather than one per physical unit.
+    fleet = aggregate_fleet(fleet)
 
     return fleet, loss_tracker, renewable_additions
