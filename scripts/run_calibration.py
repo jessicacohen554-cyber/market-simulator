@@ -23,6 +23,7 @@ Options:
                    value such as 168 for a quick smoke test.
     --ttc-wn       Override the West<->North transfer capability (MW).
     --ttc-wsc      Override the West<->South_Central transfer capability (MW).
+    --ttc-pn       Override the Panhandle<->North transfer capability (MW).
 """
 
 from __future__ import annotations
@@ -89,10 +90,12 @@ _MWH_PER_TWH: float = 1.0e6
 _TONNES_PER_MT: float = 1.0e6
 
 # Zone-pair identifying each transfer link whose TTC the CLI can override.
-# Both legs of the West Texas Export interface are exposed for tuning.
+# Both legs of the West Texas Export interface and the Panhandle GTC are
+# exposed for tuning — these are ERCOT's primary wind-export constraints.
 _TTC_LINK_ZONES: dict[str, frozenset[str]] = {
     "ttc_wn": frozenset({"West", "North"}),
     "ttc_wsc": frozenset({"West", "South_Central"}),
+    "ttc_pn": frozenset({"Panhandle", "North"}),
 }
 
 
@@ -166,7 +169,8 @@ def _apply_ttc_overrides(
     Args:
         iso_config: The ISO topology, used to map links to zone pairs.
         ttc: The base ``(n_links,)`` transfer-capability array.
-        overrides: ``{"ttc_wn": MW | None, "ttc_wsc": MW | None}``.
+        overrides: ``{"ttc_wn": MW | None, "ttc_wsc": MW | None,
+            "ttc_pn": MW | None}``.
 
     Returns:
         A copy of ``ttc`` with each non-``None`` override applied.
@@ -419,6 +423,10 @@ def _build_parser() -> argparse.ArgumentParser:
         "--ttc-wsc", type=float, default=None,
         help="Override the West<->South_Central transfer capability (MW).",
     )
+    parser.add_argument(
+        "--ttc-pn", type=float, default=None,
+        help="Override the Panhandle<->North transfer capability (MW).",
+    )
     return parser
 
 
@@ -431,7 +439,11 @@ def main(argv: list[str] | None = None) -> None:
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
     reference = _load_reference()
-    ttc_overrides = {"ttc_wn": args.ttc_wn, "ttc_wsc": args.ttc_wsc}
+    ttc_overrides = {
+        "ttc_wn": args.ttc_wn,
+        "ttc_wsc": args.ttc_wsc,
+        "ttc_pn": args.ttc_pn,
+    }
 
     for year in args.year:
         gas_price = _henry_hub_actual(reference, year)
