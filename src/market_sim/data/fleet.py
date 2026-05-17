@@ -8,7 +8,6 @@ CSV extracts.
 from __future__ import annotations
 
 import logging
-import random
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -638,7 +637,69 @@ def _zone_for_index(
 def _assign_zones(
     records: list[dict], iso: str, iso_config: ISOConfig | None
 ) -> list[str]:
-    """Assign each generator record a zone.
+    """Assign each generator record a zone using eGRID plant geography.
+
+    Uses lat/lon and FIPS county from eGRID 2023 to place each plant in
+    the correct model zone. Falls back to proportional allocation if the
+    eGRID data is unavailable.
+    """
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        logger.warning(
+            "eGRID zone lookup failed for %s — using proportional fallback",
+            iso,
+        )
+        return _assign_zones_proportional(records, iso, iso_config)
+
+    if not zone_lookup:
+        return _assign_zones_proportional(records, iso, iso_config)
+
+    # Defensive fallback for plants whose ORIS code is absent from eGRID
+    # (e.g. units commissioned after the eGRID 2023 vintage): the ISO's
+    # largest-load-share zone.
+    if iso_config is not None and iso_config.zones:
+        fallback_zone = max(
+            iso_config.zones, key=lambda z: z.load_share
+        ).name
+    else:
+        fallback_zone = iso
+
+    zones: list[str] = []
+    missing = 0
+    for rec in records:
+        oris = _record_oris(rec)
+        zone = zone_lookup.get(oris) if oris is not None else None
+        if zone is None:
+            zone = fallback_zone
+            missing += 1
+        zones.append(zone)
+
+    if missing:
+        logger.warning(
+            "%d of %d %s generators not in eGRID lookup — assigned fallback zone",
+            missing,
+            len(records),
+            iso,
+        )
+    return zones
+
+
+def _record_oris(rec: dict) -> int | None:
+    """Return the integer ORIS plant code carried by a generator record."""
+    raw = rec.get("plant_id", rec.get("oris"))
+    try:
+        return int(raw)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+
+
+def _assign_zones_proportional(
+    records: list[dict], iso: str, iso_config: ISOConfig | None
+) -> list[str]:
+    """Assign each generator record a zone by proportional allocation.
 
     Non-nuclear units are spread across the ISO's load zones in proportion
     to each zone's ``load_share``; zones with zero load share (such as
@@ -646,6 +707,8 @@ def _assign_zones(
     Nuclear units use an explicit zone where the plant is known, otherwise
     the largest-load-share zone. If no ``iso_config`` is available, every
     generator is placed in a single zone named after the ISO.
+
+    This is the fallback used when eGRID geographic data is unavailable.
     """
     if iso_config is None:
         return [iso] * len(records)
@@ -729,6 +792,7 @@ def _rows_to_generators(
 
         records.append(
             {
+                "plant_id": plant_id,
                 "unit_id": f"{plant_id}_{generator_id}",
                 "name": plant_name,
                 "fuel_type": fuel_type,
@@ -748,7 +812,11 @@ def _rows_to_generators(
 
     zones = _assign_zones(records, iso, iso_config)
     return [
-        Generator(zone=zone, **rec) for rec, zone in zip(records, zones)
+        Generator(
+            zone=zone,
+            **{k: v for k, v in rec.items() if k != "plant_id"},
+        )
+        for rec, zone in zip(records, zones)
     ]
 
 
