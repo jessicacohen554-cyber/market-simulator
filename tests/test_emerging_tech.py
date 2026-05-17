@@ -15,12 +15,18 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     HYDROGEN_TURBINE_PARAMS,
     MMBTU_PER_MWH,
+    OFFSHORE_WIND_MIN_CF,
+    OFFSHORE_WIND_PARAMS,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     Generator,
     assemble_mc,
     generators_to_fleet_arrays,
+)
+from market_sim.data.renewables import (
+    derive_offshore_wind_profile,
+    inject_offshore_wind_availability,
 )
 from market_sim.data.hydrogen import (
     compute_h2_fuel_cost,
@@ -203,14 +209,100 @@ class TestGeothermalDispatch(unittest.TestCase):
         self.assertAlmostEqual(result.prices[0, 0], 40.0, places=3)
 
 
-class TestOffshoreWindDispatch(unittest.TestCase):
-    """Offshore wind is a zero-MC generator bounded by its capacity factor."""
+class TestDeriveOffshoreProfile(unittest.TestCase):
+    """Pure derivation of the offshore CF profile from the onshore profile."""
 
-    def _solve(self, demand_mw):
-        # Offshore wind: availability = 1 - eford = 0.45 capacity factor.
-        ow = _gen("OW", "offshore_wind", 500.0, eford=0.55)
+    def test_derive_offshore_profile_mean_matches_target(self):
+        # The smoothed/floored profile is rescaled to the target average CF.
+        rng = np.random.RandomState(0)
+        onshore = rng.rand(8760)
+        onshore *= 0.35 / onshore.mean()
+        derived = derive_offshore_wind_profile(onshore, target_avg_cf=0.45)
+        self.assertLess(abs(derived.mean() - 0.45), 0.001)
+
+    def test_derive_offshore_profile_clips_to_unit_interval(self):
+        # An extreme onshore profile plus a high target stays within [0, 1].
+        onshore = np.full(8760, 0.98)
+        onshore[::2] = 0.99
+        derived = derive_offshore_wind_profile(onshore, target_avg_cf=0.95)
+        self.assertTrue(np.all(derived >= 0.0))
+        self.assertTrue(np.all(derived <= 1.0))
+
+
+class TestOffshoreWindProfileShape(unittest.TestCase):
+    """Smoothing and the minimum floor of the derived offshore profile."""
+
+    def test_offshore_profile_smoother_than_onshore(self):
+        rng = np.random.RandomState(1)
+        onshore = rng.rand(8760)  # high variance, uniform noise
+        derived = derive_offshore_wind_profile(onshore, target_avg_cf=0.45)
+        self.assertLess(derived.std(), onshore.std())
+
+    def test_offshore_profile_has_minimum_floor(self):
+        onshore = np.linspace(0.0, 0.6, 8760)  # includes zero hours
+        derived = derive_offshore_wind_profile(onshore, target_avg_cf=0.45)
+        self.assertTrue(np.all(derived >= OFFSHORE_WIND_MIN_CF))
+
+
+class TestOffshoreWindDispatch(unittest.TestCase):
+    """Offshore wind dispatches against an hourly availability profile."""
+
+    @staticmethod
+    def _onshore(hours):
+        """Return a (1, hours) sinusoidal onshore wind profile."""
+        t = np.arange(hours)
+        profile = 0.35 + 0.25 * np.sin(2 * np.pi * t / 24.0)
+        return profile.reshape(1, hours)
+
+    def test_offshore_has_hourly_varying_availability(self):
+        # After injection the offshore availability row varies hour-to-hour
+        # and averages the target offshore CF.
+        hours = 48
+        ow = _gen("OW", "offshore_wind", 500.0)
+        gas = _gen("GAS", "gas_ct", 300.0)
+        fleet = generators_to_fleet_arrays([ow, gas], ["Z0"], hours=hours)
+        config = ScenarioConfig(iso="ERCOT")
+        inject_offshore_wind_availability(
+            fleet, self._onshore(hours), config, "ERCOT"
+        )
+        avail = fleet.availability[0]
+        self.assertGreater(avail.std(), 0.0)
+        target = OFFSHORE_WIND_PARAMS["fixed_bottom"]["base_cf"]
+        self.assertLess(abs(avail.mean() - target), 0.001)
+        # The gas row keeps its flat availability.
+        self.assertAlmostEqual(fleet.availability[1].std(), 0.0, places=9)
+
+    def test_offshore_dispatch_varies_with_profile(self):
+        # 500 MW offshore + 300 MW gas, constant 300 MW demand: offshore
+        # output tracks its hourly profile and gas fills the residual.
+        hours = 24
+        ow = _gen("OW", "offshore_wind", 500.0)
+        gas = _gen("GAS", "gas_ct", 300.0)
+        fleet = generators_to_fleet_arrays([ow, gas], ["Z0"], hours=hours)
+        config = ScenarioConfig(iso="ERCOT")
+        inject_offshore_wind_availability(
+            fleet, self._onshore(hours), config, "ERCOT"
+        )
+        mc = np.tile(np.array([[0.0], [70.0]]), (1, hours))
+        demand = np.full((1, hours), 300.0)
+        zeros = np.zeros((1, hours))
+        result = solve_dispatch(
+            fleet, demand, zeros, np.zeros(1), zeros, np.zeros(1), mc=mc
+        )
+        offshore = result.dispatch[0]
+        self.assertGreater(offshore.std(), 0.0)
+        for t in range(hours):
+            self.assertAlmostEqual(
+                result.dispatch[0, t] + result.dispatch[1, t], 300.0, places=3
+            )
+
+    def _solve_flat(self, demand_mw):
+        # A controlled, constant 0.45 offshore availability — the state the
+        # injected profile collapses to when the input has no variation.
+        ow = _gen("OW", "offshore_wind", 500.0)
         gas = _gen("GAS", "gas_ct", 300.0)
         fleet = generators_to_fleet_arrays([ow, gas], ["Z0"], hours=1)
+        fleet.availability[0, :] = 0.45
         mc = np.array([[0.0], [70.0]])
         demand = np.array([[demand_mw]])
         zeros = np.zeros((1, 1))
@@ -220,14 +312,14 @@ class TestOffshoreWindDispatch(unittest.TestCase):
 
     def test_offshore_capped_by_capacity_factor(self):
         # Demand 400 > 225 MW available offshore: gas fills the rest.
-        result = self._solve(400.0)
+        result = self._solve_flat(400.0)
         self.assertAlmostEqual(result.dispatch[0, 0], 225.0, places=3)
         self.assertAlmostEqual(result.dispatch[1, 0], 175.0, places=3)
         self.assertAlmostEqual(result.prices[0, 0], 70.0, places=3)
 
     def test_offshore_alone_serves_low_demand(self):
         # Demand 150 < 225 MW available: offshore covers it, gas idle.
-        result = self._solve(150.0)
+        result = self._solve_flat(150.0)
         self.assertAlmostEqual(result.dispatch[0, 0], 150.0, places=3)
         self.assertAlmostEqual(result.dispatch[1, 0], 0.0, places=3)
         self.assertLess(result.prices[0, 0], 1.0)

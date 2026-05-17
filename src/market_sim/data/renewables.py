@@ -24,12 +24,16 @@ import pandas as pd
 
 from market_sim.config.constants import (
     HOURS_PER_YEAR,
+    OFFSHORE_WIND_MIN_CF,
+    OFFSHORE_WIND_PARAMS,
+    OFFSHORE_WIND_SMOOTHING_HOURS,
     RENEWABLE_AVG_CF,
     RENEWABLE_INSTALLED_MW,
 )
 from market_sim.config.iso_configs import ISOConfig
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import DATA_DIR, load_generation_profiles
+from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 
 # Capacity factors are physically bounded to the closed interval [0, 1].
 _CF_MIN: float = 0.0
@@ -47,8 +51,12 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # Source: ERCOT CDR Dec 2024 (West wind belt, South solar corridor),
 # CAISO annual report 2024 (single in-footprint load zone).
 RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
-    "ERCOT": {"wind": "West", "solar": "South"},
-    "CAISO": {"wind": "CAISO_main", "solar": "CAISO_main"},
+    "ERCOT": {"wind": "West", "solar": "South", "offshore_wind": "Houston"},
+    "CAISO": {
+        "wind": "CAISO_main",
+        "solar": "CAISO_main",
+        "offshore_wind": "CAISO_main",
+    },
 }
 
 
@@ -220,3 +228,85 @@ def load_renewable_profiles(
     wind_cf, wind_cap = allocated["wind"]
     solar_cf, solar_cap = allocated["solar"]
     return wind_cf, wind_cap, solar_cf, solar_cap
+
+
+def derive_offshore_wind_profile(
+    onshore_wind_cf: np.ndarray,
+    target_avg_cf: float,
+    smoothing_hours: int = OFFSHORE_WIND_SMOOTHING_HOURS,
+    min_cf: float = OFFSHORE_WIND_MIN_CF,
+) -> np.ndarray:
+    """Derive an hourly offshore wind CF profile from the onshore wind profile.
+
+    Offshore wind differs from onshore in three physical ways captured here:
+    1. Less gusty — ocean fetch smooths out rapid variations. Applied as a
+       centered rolling-mean window of ``smoothing_hours`` (default 6h).
+    2. Rarely zero — there is almost always some wind offshore. Applied as
+       a floor of ``min_cf`` (default 0.08).
+    3. Higher average CF — stronger, more consistent resource. The smoothed
+       and floored profile is rescaled so its mean matches ``target_avg_cf``.
+
+    The onshore profile encodes real temporal patterns (diurnal, synoptic,
+    seasonal) from EIA-930 data. Smoothing preserves these patterns while
+    reducing the variance, which is physically correct for offshore.
+
+    Args:
+        onshore_wind_cf: (T,) hourly onshore wind CF profile for the ISO.
+            This is the single-zone profile from the zone that holds wind
+            (e.g. ERCOT West).
+        target_avg_cf: Desired annual-average CF for offshore wind.
+        smoothing_hours: Rolling-mean window width in hours. Larger values
+            produce a smoother (less variable) profile. Default 6.
+        min_cf: Minimum hourly CF floor — offshore rarely drops to zero.
+            Default 0.08 (~8% of rated). Source: NREL offshore wind studies.
+
+    Returns:
+        (T,) hourly offshore wind CF profile, clipped to [0, 1].
+    """
+    kernel = np.ones(smoothing_hours, dtype=float) / smoothing_hours
+    smoothed = np.convolve(onshore_wind_cf, kernel, mode="same")
+    floored = np.maximum(smoothed, min_cf)
+    rescaled = floored * (target_avg_cf / floored.mean())
+    return np.clip(rescaled, _CF_MIN, _CF_MAX)
+
+
+def inject_offshore_wind_availability(
+    fleet_arrays: FleetArrays,
+    onshore_wind_cf: np.ndarray,
+    config: ScenarioConfig,
+    iso: str,
+) -> None:
+    """Overwrite availability for offshore wind generators with hourly profiles.
+
+    After :func:`generators_to_fleet_arrays` builds the fleet with flat
+    availability, this function replaces the availability rows for any
+    ``offshore_wind`` generators with a derived hourly profile.
+
+    Modifies ``fleet_arrays.availability`` IN PLACE. If no offshore wind
+    generators exist in the fleet, this is a no-op.
+
+    Args:
+        fleet_arrays: The vectorized fleet — availability is (n_gen, T).
+        onshore_wind_cf: (n_zones, T) onshore wind CF array. The profile
+            from the wind-holding zone is used as the basis.
+        config: Scenario config for offshore CF override.
+        iso: ISO identifier for zone allocation lookup.
+    """
+    offshore_code = FUEL_TYPE_MAP["offshore_wind"]
+    offshore_idx = np.flatnonzero(fleet_arrays.fuel_type_idx == offshore_code)
+    if offshore_idx.size == 0:
+        return
+
+    # Wind is allocated to a single zone (see RENEWABLE_ZONE_ALLOCATION), so
+    # the wind-holding zone is the only non-zero row of onshore_wind_cf.
+    wind_zone_idx = int(np.argmax(onshore_wind_cf.sum(axis=1)))
+    onshore_profile = onshore_wind_cf[wind_zone_idx]
+
+    key = "floating" if iso == "CAISO" else "fixed_bottom"
+    target_cf = OFFSHORE_WIND_PARAMS[key]["base_cf"]
+    if config.offshore_wind_cf_override is not None:
+        target_cf = config.offshore_wind_cf_override
+
+    offshore_profile = derive_offshore_wind_profile(onshore_profile, target_cf)
+    for g_idx in offshore_idx:
+        fleet_arrays.availability[g_idx, :] = offshore_profile

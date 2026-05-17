@@ -415,6 +415,13 @@ OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
     },
 }
 
+# Offshore wind hourly-profile derivation parameters. The offshore CF profile
+# is derived from the onshore wind profile by a centered rolling-mean smoothing
+# window plus a minimum CF floor (see :mod:`market_sim.data.renewables`).
+# Source: NREL offshore wind variability studies, Musial et al. 2022.
+OFFSHORE_WIND_SMOOTHING_HOURS: int = 6  # rolling-mean window — ocean fetch reduces gustiness
+OFFSHORE_WIND_MIN_CF: float = 0.08      # minimum hourly CF — offshore rarely drops to zero
+
 # Wright's Law reference cumulative installed capacity (GW global).
 # Source: IRENA 2024, IEA WEO 2024, IAEA PRIS 2024, DOE LDES Liftoff.
 WRIGHT_REFERENCE_GW: dict[str, float] = {
