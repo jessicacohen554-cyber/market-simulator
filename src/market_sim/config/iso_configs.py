@@ -86,16 +86,24 @@ def _ercot_config() -> ISOConfig:
     The topology is defined by ERCOT's real congestion interfaces rather
     than by settlement pricing areas, so the West and Panhandle wind
     exporters sit behind explicit stability limits and can congest. Load
-    shares are approximated from each zone's thermal generation as a proxy
-    for demand; ERCOT weather-zone load data (NP6-345-CD) would refine them.
+    shares are derived from ERCOT NP6-345-CD actual load by weather zone
+    (19 sample days spanning 2023, at least one per month) by aggregating
+    the 8 weather zones onto the 6 transmission zones; see
+    scripts/derive_load_shares.py. Panhandle
+    carries no modeled load: ERCOT has no Panhandle weather zone, and the
+    small Lubbock load it would hold is reported inside the West weather
+    zone and therefore currently lands in the West transmission zone.
     """
+    # Weather zone -> transmission zone: West <- FAR_WEST + WEST;
+    # North <- NORTH_C + EAST + NORTH; Houston <- COAST;
+    # South_Central <- SOUTH_C; South <- SOUTHERN.
     zones = [
-        Zone(name="West", iso="ERCOT", load_share=0.04),
-        Zone(name="Panhandle", iso="ERCOT", load_share=0.04),
-        Zone(name="North", iso="ERCOT", load_share=0.30),
-        Zone(name="Houston", iso="ERCOT", load_share=0.28),
-        Zone(name="South_Central", iso="ERCOT", load_share=0.20),
-        Zone(name="South", iso="ERCOT", load_share=0.14),
+        Zone(name="West", iso="ERCOT", load_share=0.1494),
+        Zone(name="Panhandle", iso="ERCOT", load_share=0.0),
+        Zone(name="North", iso="ERCOT", load_share=0.3416),
+        Zone(name="Houston", iso="ERCOT", load_share=0.2649),
+        Zone(name="South_Central", iso="ERCOT", load_share=0.1642),
+        Zone(name="South", iso="ERCOT", load_share=0.0799),
     ]
     # ERCOT zonal transfer capabilities, defined at the major congestion
     # interfaces. The West export links (West->North + West->South_Central)
