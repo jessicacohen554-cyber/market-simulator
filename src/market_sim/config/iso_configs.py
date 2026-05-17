@@ -127,9 +127,78 @@ def _caiso_config() -> ISOConfig:
     return ISOConfig(name="CAISO", zones=zones, links=links, voll=2000.0)
 
 
+def _pjm_config() -> ISOConfig:
+    """Build the PJM topology configuration."""
+    # PJM load shares by state group — approximate, derived from PJM
+    # 2024 State of the Market Report zonal load data.
+    # West (IL+IN+OH+MI): ~37% of PJM peak
+    # Central (PA+WV+KY): ~28%
+    # East (NJ+DE+MD+DC): ~20%
+    # South (VA+NC+TN): ~15%
+    # Source: Monitoring Analytics, 2024 State of the Market Report,
+    # Table 7-2: PJM Zonal Peak Loads.
+    # Tier: 3 (calibration)
+    # TODO: verify from PJM load data download
+    zones = [
+        Zone(name="PJM_West", iso="PJM", load_share=0.37),
+        Zone(name="PJM_Central", iso="PJM", load_share=0.28),
+        Zone(name="PJM_East", iso="PJM", load_share=0.20),
+        Zone(name="PJM_South", iso="PJM", load_share=0.15),
+    ]
+    # Major transmission interfaces in PJM:
+    # West→Central: AEP-DOM, AP South interfaces (~8-10 GW)
+    # Central→East: Western/Central PA to NJ/DE/MD (~7-8 GW)
+    # South→Central: Dominion to PJM Classic (~5 GW)
+    # West→South: AEP to Dominion (~4 GW)
+    # Source: PJM Regional Transmission Expansion Plan (RTEP) 2024.
+    # TODO: verify TTCs from PJM OASIS — values below are placeholders
+    # based on published flowgate ratings.
+    links = [
+        TransferLink(from_zone="PJM_West", to_zone="PJM_Central", ttc_mw=10000.0),
+        TransferLink(from_zone="PJM_Central", to_zone="PJM_East", ttc_mw=8000.0),
+        TransferLink(from_zone="PJM_South", to_zone="PJM_Central", ttc_mw=5000.0),
+        TransferLink(from_zone="PJM_West", to_zone="PJM_South", ttc_mw=4000.0),
+        TransferLink(from_zone="PJM_South", to_zone="PJM_East", ttc_mw=3000.0),
+    ]
+    # PJM cost-based energy offer cap is $2,000/MWh. PJM's Reliability
+    # Pricing Model (RPM) capacity market provides revenue outside energy,
+    # so the energy-only VOLL is lower than ERCOT's.
+    # Source: PJM Manual 11 §2.3.1, FERC Order 831.
+    return ISOConfig(name="PJM", zones=zones, links=links, voll=2000.0)
+
+
+def _nyiso_config() -> ISOConfig:
+    """Build the NYISO topology configuration."""
+    zones = [
+        Zone(name="NYISO_main", iso="NYISO", load_share=1.0),
+    ]
+    links: list[TransferLink] = []
+    # NYISO bid cap is $2,000/MWh for energy. NYISO has an installed
+    # capacity market (ICAP) that provides capacity revenue outside
+    # the energy market, similar to PJM's RPM.
+    # Source: NYISO Tariff §23.3.1.4, Market Administration and Control
+    # Area Services Tariff (MST).
+    return ISOConfig(name="NYISO", zones=zones, links=links, voll=2000.0)
+
+
+def _neiso_config() -> ISOConfig:
+    """Build the ISO New England topology configuration."""
+    zones = [
+        Zone(name="NEISO_main", iso="NEISO", load_share=1.0),
+    ]
+    links: list[TransferLink] = []
+    # ISO-NE energy offer cap is $2,000/MWh. ISO-NE has a Forward
+    # Capacity Market (FCM) providing capacity revenue.
+    # Source: ISO-NE Tariff §III.1.10.1A.
+    return ISOConfig(name="NEISO", zones=zones, links=links, voll=2000.0)
+
+
 _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
+    "PJM": _pjm_config,
+    "NYISO": _nyiso_config,
+    "NEISO": _neiso_config,
 }
 
 
