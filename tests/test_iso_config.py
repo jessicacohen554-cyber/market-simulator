@@ -36,7 +36,7 @@ class TestISOConfig(unittest.TestCase):
     def test_unknown_iso_raises_value_error(self):
         """Requesting an unsupported ISO raises ValueError."""
         with self.assertRaises(ValueError):
-            get_iso_config("PJM")
+            get_iso_config("WECC")
 
     def test_caiso_voll_is_2000(self):
         """CAISO uses a VOLL of $2,000/MWh."""
