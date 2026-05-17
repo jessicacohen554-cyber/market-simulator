@@ -722,7 +722,7 @@ class TestEvolveFleet(unittest.TestCase):
             fleet_arrays=None, dispatch_result=None, prices=None,
             planned_additions=[new],
         )
-        fleet, tracker, _ = evolve_fleet(
+        fleet, tracker, _, _ = evolve_fleet(
             [old], prior, 2030, config, {}
         )
         # OLD retires this year; NEW comes online this year.
@@ -741,7 +741,7 @@ class TestEvolveFleet(unittest.TestCase):
             planned_additions=[],
         )
         # Counter already at 1; a second loss year this step triggers retirement.
-        fleet, tracker, _ = evolve_fleet(
+        fleet, tracker, _, _ = evolve_fleet(
             [coal], prior, 2031, config, {"C0": 1}
         )
         self.assertEqual(fleet, [])
@@ -753,11 +753,13 @@ class TestEvolveFleet(unittest.TestCase):
             [_gen("G0", "gas_cc")], None, 2030, config, {}
         )
         self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 4)
         self.assertIsInstance(result[0], list)
         self.assertIsInstance(result[1], dict)
         # The third element is the {zone: {fuel: mw}} renewable additions.
         self.assertIsInstance(result[2], dict)
+        # The fourth element is the CCS retrofit log.
+        self.assertIsInstance(result[3], list)
 
 
 class TestResolveCarbonPrice(unittest.TestCase):
@@ -864,7 +866,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         ]
         retiring = _gen("C_RET", "coal", pmax=1000.0, heat_rate=8.0,
                         retirement_year=2026)
-        fleet, tracker, additions = evolve_fleet(
+        fleet, tracker, additions, _ = evolve_fleet(
             coal + [retiring], None, 2026, config, {}
         )
 
@@ -885,7 +887,7 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         coal = _gen("C0", "coal", pmax=100.0, zone="North",
                     retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
-        fleet, tracker, _ = evolve_fleet(
+        fleet, tracker, _, _ = evolve_fleet(
             [coal], prior, 2027, config, {}
         )
 
@@ -916,7 +918,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in (2026, 2027, 2028):
-            fleet, tracker, _ = evolve_fleet(
+            fleet, tracker, _, _ = evolve_fleet(
                 fleet, prior, year, config, tracker
             )
             snapshots.append(frozenset(g.unit_id for g in fleet))
@@ -955,7 +957,7 @@ class TestCapacityIntegration(unittest.TestCase):
             prior = None
             yearly = {}
             for year in (2026, 2027, 2028):
-                fleet, tracker, _ = evolve_fleet(
+                fleet, tracker, _, _ = evolve_fleet(
                     fleet, prior, year, config, tracker
                 )
                 yearly[year] = fleet
@@ -996,12 +998,12 @@ class TestCapacityIntegration(unittest.TestCase):
         ]
         tracker: dict[str, int] = {}
 
-        fleet, tracker, _ = evolve_fleet(
+        fleet, tracker, _, _ = evolve_fleet(
             fleet, None, 2026, config, tracker
         )
         self.assertIn("C_RET", {g.unit_id for g in fleet})
 
-        fleet, tracker, _ = evolve_fleet(
+        fleet, tracker, _, _ = evolve_fleet(
             fleet, None, 2027, config, tracker
         )
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
@@ -1018,7 +1020,7 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in range(2026, 2031):
-            fleet, tracker, _ = evolve_fleet(
+            fleet, tracker, _, _ = evolve_fleet(
                 fleet, prior, year, config, tracker
             )
             self.assertGreater(
@@ -1071,7 +1073,7 @@ class TestCapacityIntegration(unittest.TestCase):
         cumulative_renewable_mw = 0.0
         yearly_cap: dict[int, float] = {}
         for year in range(2026, 2031):
-            fleet, tracker, additions = evolve_fleet(
+            fleet, tracker, additions, _ = evolve_fleet(
                 fleet, prior, year, config, tracker
             )
             for by_fuel in additions.values():
