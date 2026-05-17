@@ -7,7 +7,7 @@ venv/
 dist/
 build/
 
-# Generated CSV outputs — raw source files (parquet/json) are committed
+# Per-ISO EIA-860 override CSVs — raw source files (parquet/json) are committed
 inputs/raw-data/eia-860/*.csv
 
 # Derived binned-fleet cache (side output of the fleet loader)
