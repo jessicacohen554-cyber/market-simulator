@@ -60,7 +60,7 @@ def test_zone_distribution_from_eia860():
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         "ERCOT", _CAL_YEAR, iso_config, config
     )
-    assert wind_cf.shape == (4, HOURS_PER_YEAR)
+    assert wind_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
 
     # The full ISO fleet is spread across every zone, not parked in one.
     np.testing.assert_allclose(
@@ -96,7 +96,7 @@ def test_vintage_monthly_ramp():
     zone_names = get_iso_config("ERCOT").zone_names
     monthly = _eia860_monthly_capacity("ERCOT", "solar", zone_names, _CAL_YEAR)
     assert monthly is not None
-    assert monthly.shape == (4, 12)
+    assert monthly.shape == (len(zone_names), 12)
 
     # ERCOT added solar through 2023, so year-end capacity exceeds January.
     jan_total = monthly[:, 0].sum()
