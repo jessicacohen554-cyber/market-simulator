@@ -189,11 +189,19 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # running scripts/fetch_eia_aeo.py with an EIA API key, or against the AEO
 # Data Browser at https://www.eia.gov/outlooks/aeo/data/browser/ (Table 13).
 # AEO2026 was released April 8, 2026 and may carry updated trajectories.
+#
+# The 2023 and 2024 entries are historical actuals, not AEO projections:
+# they are the EIA Henry Hub spot price annual averages ($2.54 in 2023,
+# $2.19 in 2024) and are identical across all three paths because a
+# realized price has no scenario branching.
+# Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
+# URL: https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm
 
 HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     # AEO High Oil and Gas Supply case -> model "low" gas price path.
     # Higher resource recovery + faster tech improvement = lower prices.
     "low": {
+        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
         2025: 2.88, 2026: 2.70, 2027: 2.55, 2028: 2.50, 2029: 2.48,
         2030: 2.45, 2031: 2.43, 2032: 2.42, 2033: 2.41, 2034: 2.40,
         2035: 2.40, 2036: 2.42, 2037: 2.45, 2038: 2.48, 2039: 2.52,
@@ -203,6 +211,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     },
     # AEO Reference case -> model "mid" gas price path.
     "mid": {
+        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
         2025: 2.88, 2026: 3.40, 2027: 3.20, 2028: 3.30, 2029: 3.40,
         2030: 3.50, 2031: 3.55, 2032: 3.60, 2033: 3.65, 2034: 3.70,
         2035: 3.80, 2036: 3.90, 2037: 4.00, 2038: 4.05, 2039: 4.10,
@@ -213,6 +222,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     # AEO Low Oil and Gas Supply case -> model "high" gas price path.
     # Lower resource recovery + slower tech = higher prices.
     "high": {
+        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
         2025: 2.88, 2026: 3.60, 2027: 3.80, 2028: 4.10, 2029: 4.40,
         2030: 4.70, 2031: 4.90, 2032: 5.10, 2033: 5.30, 2034: 5.50,
         2035: 5.70, 2036: 5.90, 2037: 6.10, 2038: 6.30, 2039: 6.50,
