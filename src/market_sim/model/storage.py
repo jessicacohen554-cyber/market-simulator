@@ -37,6 +37,7 @@ class StorageUnit(BaseModel):
 
     unit_id: str
     zone: str
+    tech_name: str
     power_cap_mw: float
     energy_cap_mwh: float
     eta_charge: float = 1.0
@@ -57,6 +58,7 @@ class StorageArrays:
     eta_chg: np.ndarray
     eta_dis: np.ndarray
     zone_idx: np.ndarray
+    tech_names: np.ndarray
 
     @property
     def n_storage(self) -> int:
@@ -80,6 +82,7 @@ def storage_units_to_arrays(
         eta_chg=np.array([u.eta_charge for u in units], dtype=float),
         eta_dis=np.array([u.eta_discharge for u in units], dtype=float),
         zone_idx=np.array([zone_to_idx[u.zone] for u in units], dtype=int),
+        tech_names=np.array([u.tech_name for u in units], dtype=str),
     )
 
 
@@ -119,6 +122,7 @@ def _distribute_storage(
                 StorageUnit(
                     unit_id=f"{zone.name}_{tech_name}",
                     zone=zone.name,
+                    tech_name=tech_name,
                     power_cap_mw=power_mw,
                     energy_cap_mwh=power_mw * float(tech["duration_hr"]),
                     eta_charge=eta,
@@ -292,6 +296,7 @@ def _build_new_storage_units(
             StorageUnit(
                 unit_id=f"{zone.name}_{tech_name}_new_{year}_{seq}",
                 zone=zone.name,
+                tech_name=tech_name,
                 power_cap_mw=power_mw,
                 energy_cap_mwh=power_mw * duration_hr,
                 eta_charge=eta,
