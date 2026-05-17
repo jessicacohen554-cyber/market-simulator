@@ -186,14 +186,150 @@ def generators_to_fleet_arrays(
 _AGGREGATABLE_FUELS: frozenset[str] = frozenset({"gas_cc", "gas_ct", "coal"})
 
 
-def aggregate_fleet(generators: list[Generator]) -> list[Generator]:
+def _capacity_weighted(units: list[Generator], attr: str) -> float:
+    """Return the capacity-weighted average of ``attr`` over ``units``.
+
+    Falls back to a plain mean when the group has no positive capacity.
+    """
+    total_cap = sum(u.pmax_mw for u in units)
+    if total_cap > 0.0:
+        return sum(getattr(u, attr) * u.pmax_mw for u in units) / total_cap
+    return sum(getattr(u, attr) for u in units) / len(units)
+
+
+def _aggregate_with_predefined_bins(
+    generators: list[Generator], fuel_type: str
+) -> list[Generator]:
+    """Aggregate one fuel type's generators by their predefined efficiency bins.
+
+    Generators are grouped by ``(efficiency_bin, zone)`` -- the loader-assigned
+    vintage bins from :data:`HEAT_RATE_BINS` -- and each group collapses into a
+    single capacity-weighted representative. This is the backward-compatible
+    aggregation used when no explicit bin count is requested.
+    """
+    groups: dict[tuple[str, str], list[Generator]] = {}
+    for g in generators:
+        groups.setdefault((g.efficiency_bin, g.zone), []).append(g)
+
+    result: list[Generator] = []
+    for efficiency_bin, zone in sorted(groups):
+        units = groups[(efficiency_bin, zone)]
+        unit_id = f"{fuel_type}_{efficiency_bin}_{zone}"
+        result.append(
+            Generator(
+                unit_id=unit_id,
+                name=unit_id,
+                zone=zone,
+                fuel_type=fuel_type,
+                efficiency_bin=efficiency_bin,
+                pmax_mw=sum(u.pmax_mw for u in units),
+                pmin_mw=sum(u.pmin_mw for u in units),
+                heat_rate=_capacity_weighted(units, "heat_rate"),
+                vom=_capacity_weighted(units, "vom"),
+                emission_rate_co2=_capacity_weighted(units, "emission_rate_co2"),
+                nox_rate=_capacity_weighted(units, "nox_rate"),
+                eford=_capacity_weighted(units, "eford"),
+            )
+        )
+    return result
+
+
+def aggregate_fleet_by_efficiency(
+    generators: list[Generator],
+    fuel_type: str,
+    n_bins: int | None = None,
+) -> list[Generator]:
+    """Aggregate generators of one fuel type into efficiency bins.
+
+    If ``n_bins`` is ``None``, use the predefined :data:`HEAT_RATE_BINS`
+    vintage bins for this fuel type (backward-compatible default behavior).
+
+    If ``n_bins`` is an integer, ignore :data:`HEAT_RATE_BINS` and instead
+    create ``n_bins`` equal-width bins spanning the heat rate range of the
+    input generators. Each bin gets:
+
+    * ``heat_rate`` -- capacity-weighted average of generators in the bin,
+    * ``pmax_mw`` -- sum of generator capacities in the bin,
+    * ``emission_rate_co2`` / ``vom`` / ``nox_rate`` / ``eford`` --
+      capacity-weighted averages,
+    * ``efficiency_bin`` -- ``f"bin_{i+1}_of_{n_bins}"``.
+
+    This allows fine-grained sensitivity analysis without changing any
+    constants -- just set ``config.heat_rate_bin_count``. Note that 10+ bins
+    add LP columns and may increase solve time; profile if using 20+ bins.
+
+    Args:
+        generators: All generators of this fuel type (assumed one zone).
+        fuel_type: Fuel type string (e.g. ``"gas_cc"``).
+        n_bins: Number of efficiency bins. ``None`` uses the defaults.
+
+    Returns:
+        List of aggregated :class:`Generator` objects, one per non-empty bin.
+    """
+    if n_bins is None:
+        return _aggregate_with_predefined_bins(generators, fuel_type)
+
+    if len(generators) == 0:
+        return []
+
+    sorted_gens = sorted(generators, key=lambda g: g.heat_rate)
+    hr_min = sorted_gens[0].heat_rate
+    hr_max = sorted_gens[-1].heat_rate
+
+    # All generators essentially the same heat rate -- collapse to one bin.
+    if hr_max - hr_min < 0.01:
+        n_bins = 1
+
+    bin_width = (hr_max - hr_min) / n_bins if n_bins > 1 else 1.0
+    bins: list[list[Generator]] = [[] for _ in range(n_bins)]
+    for g in sorted_gens:
+        if n_bins == 1:
+            idx = 0
+        else:
+            idx = min(int((g.heat_rate - hr_min) / bin_width), n_bins - 1)
+        bins[idx].append(g)
+
+    result: list[Generator] = []
+    for i, bin_gens in enumerate(bins):
+        if not bin_gens:
+            continue
+        unit_id = f"{fuel_type}_bin{i + 1}of{n_bins}"
+        result.append(
+            Generator(
+                unit_id=unit_id,
+                name=unit_id,
+                zone=bin_gens[0].zone,
+                fuel_type=fuel_type,
+                efficiency_bin=f"bin_{i + 1}_of_{n_bins}",
+                pmax_mw=sum(g.pmax_mw for g in bin_gens),
+                pmin_mw=sum(g.pmin_mw for g in bin_gens),
+                heat_rate=_capacity_weighted(bin_gens, "heat_rate"),
+                vom=_capacity_weighted(bin_gens, "vom"),
+                emission_rate_co2=_capacity_weighted(bin_gens, "emission_rate_co2"),
+                nox_rate=_capacity_weighted(bin_gens, "nox_rate"),
+                eford=_capacity_weighted(bin_gens, "eford"),
+            )
+        )
+    return result
+
+
+def aggregate_fleet(
+    generators: list[Generator], n_bins: int | None = None
+) -> list[Generator]:
     """Collapse individual generators into representative units.
 
-    Thermal generators are grouped by ``(fuel_type, efficiency_bin, zone)``;
-    each group becomes a single :class:`Generator` whose capacity is the
-    group total and whose per-MWh attributes are capacity-weighted averages
-    of the group. This shrinks the LP from one column per physical unit
-    (200+) to one column per thermal bin (~36), the dominant solve-time win.
+    With ``n_bins=None`` thermal generators are grouped by
+    ``(fuel_type, efficiency_bin, zone)``; each group becomes a single
+    :class:`Generator` whose capacity is the group total and whose per-MWh
+    attributes are capacity-weighted averages of the group. This shrinks the
+    LP from one column per physical unit (200+) to one column per thermal bin
+    (~36), the dominant solve-time win.
+
+    With an integer ``n_bins`` the thermal generators of each
+    ``(fuel_type, zone)`` group are instead split into ``n_bins`` equal-width
+    heat-rate bins (see :func:`aggregate_fleet_by_efficiency`), giving finer
+    resolution for carbon-pricing and CCS sensitivity analysis at the cost of
+    more LP columns.
 
     Nuclear, hydro and import units pass through unchanged -- they are few
     in number and have distinct characteristics. Wind and solar are not part
@@ -203,52 +339,59 @@ def aggregate_fleet(generators: list[Generator]) -> list[Generator]:
 
     Args:
         generators: The individual-unit fleet.
+        n_bins: Number of equal-width efficiency bins per ``(fuel_type, zone)``
+            group. ``None`` uses the predefined vintage bins.
 
     Returns:
         A new fleet list: pass-through units in their original order,
-        followed by one representative unit per thermal group, ordered by
-        ``(fuel_type, efficiency_bin, zone)``.
+        followed by one representative unit per thermal group.
     """
     passthrough: list[Generator] = []
-    groups: dict[tuple[str, str, str], list[Generator]] = {}
+    groups: dict[tuple, list[Generator]] = {}
     for g in generators:
         if g.fuel_type not in _AGGREGATABLE_FUELS or g.retirement_year is not None:
             passthrough.append(g)
             continue
-        key = (g.fuel_type, g.efficiency_bin, g.zone)
+        key = (
+            (g.fuel_type, g.zone)
+            if n_bins is not None
+            else (g.fuel_type, g.efficiency_bin, g.zone)
+        )
         groups.setdefault(key, []).append(g)
 
     representatives: list[Generator] = []
-    for key in sorted(groups):
-        fuel_type, efficiency_bin, zone = key
-        units = groups[key]
-        total_cap = sum(u.pmax_mw for u in units)
-
-        def _weighted(attr: str) -> float:
-            """Return the capacity-weighted average of ``attr`` over the group."""
-            if total_cap > 0.0:
-                return (
-                    sum(getattr(u, attr) * u.pmax_mw for u in units) / total_cap
+    if n_bins is None:
+        for key in sorted(groups):
+            fuel_type, efficiency_bin, zone = key
+            units = groups[key]
+            unit_id = f"{fuel_type}_{efficiency_bin}_{zone}"
+            representatives.append(
+                Generator(
+                    unit_id=unit_id,
+                    name=unit_id,
+                    zone=zone,
+                    fuel_type=fuel_type,
+                    efficiency_bin=efficiency_bin,
+                    pmax_mw=sum(u.pmax_mw for u in units),
+                    pmin_mw=sum(u.pmin_mw for u in units),
+                    heat_rate=_capacity_weighted(units, "heat_rate"),
+                    vom=_capacity_weighted(units, "vom"),
+                    emission_rate_co2=_capacity_weighted(units, "emission_rate_co2"),
+                    nox_rate=_capacity_weighted(units, "nox_rate"),
+                    eford=_capacity_weighted(units, "eford"),
                 )
-            return sum(getattr(u, attr) for u in units) / len(units)
-
-        unit_id = f"{fuel_type}_{efficiency_bin}_{zone}"
-        representatives.append(
-            Generator(
-                unit_id=unit_id,
-                name=unit_id,
-                zone=zone,
-                fuel_type=fuel_type,
-                efficiency_bin=efficiency_bin,
-                pmax_mw=total_cap,
-                pmin_mw=sum(u.pmin_mw for u in units),
-                heat_rate=_weighted("heat_rate"),
-                vom=_weighted("vom"),
-                emission_rate_co2=_weighted("emission_rate_co2"),
-                nox_rate=_weighted("nox_rate"),
-                eford=_weighted("eford"),
             )
-        )
+    else:
+        for key in sorted(groups):
+            fuel_type, zone = key
+            for rep in aggregate_fleet_by_efficiency(
+                groups[key], fuel_type, n_bins
+            ):
+                # The per-efficiency aggregator names bins within one zone;
+                # qualify the id with the zone so cross-zone bins stay unique.
+                rep.unit_id = f"{rep.unit_id}_{zone}"
+                rep.name = rep.unit_id
+                representatives.append(rep)
 
     return passthrough + representatives
 
