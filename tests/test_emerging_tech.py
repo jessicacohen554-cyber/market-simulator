@@ -352,20 +352,23 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         self.assertFalse(any(g.fuel_type == "gas_cc" for g in fleet))
 
     def test_ccus_needs_high_carbon_price(self):
-        # Hydrogen and geothermal disabled so CCUS competes for the gas_cc
-        # queue against unabated gas alone, with queue budget to spare.
+        # Hydrogen and geothermal disabled so CCUS competes for the shared
+        # gas_cc queue group against unabated gas alone. The $67.5/MWh
+        # screening price sits below new-entry nuclear's LCOE, keeping
+        # nuclear out of the ISO queue so the gas_cc group has budget to
+        # spare for CCUS once high carbon prices retire unabated gas.
         config = ScenarioConfig(
             iso="ERCOT", h2_available_year=2099, egs_available_year=2099
         )
         cheap_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 80.0), 2035, config, "ERCOT",
+            [], np.full(8760, 67.5), 2035, config, "ERCOT",
             gas_price_per_mmbtu=4.0, carbon_price=0.0,
         )
         self.assertFalse(
             any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon)
         )
         dear_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 80.0), 2035, config, "ERCOT",
+            [], np.full(8760, 67.5), 2035, config, "ERCOT",
             gas_price_per_mmbtu=4.0, carbon_price=200.0,
         )
         self.assertTrue(

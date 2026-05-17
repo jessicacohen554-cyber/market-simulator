@@ -20,7 +20,12 @@ from pathlib import Path
 
 import numpy as np
 
-from market_sim.config.constants import END_YEAR, START_YEAR
+from market_sim.config.constants import (
+    END_YEAR,
+    INFLATION_RATE,
+    REAL_DOLLAR_BASE_YEAR,
+    START_YEAR,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results import cache
 from market_sim.results.emissions import compute_emissions
@@ -33,6 +38,28 @@ MAX_FILE_BYTES: int = 2 * 1024 * 1024
 # MWh -> TWh and MW -> GW conversion divisors.
 _MWH_PER_TWH: float = 1e6
 _MW_PER_GW: float = 1e3
+
+
+def real_to_nominal(
+    values: np.ndarray,
+    years: np.ndarray,
+    inflation_rate: float = INFLATION_RATE,
+    base_year: int = REAL_DOLLAR_BASE_YEAR,
+) -> np.ndarray:
+    """Convert real-dollar values to nominal using compound inflation.
+
+    Anchor date is January 1 of base_year. Year 2026 values pass through
+    unchanged. Year 2027+ values are inflated by (1 + r)^(year - base_year).
+
+    values: array of prices/costs in real base-year dollars
+    years: array of calendar years corresponding to values
+    inflation_rate: annual inflation rate (e.g., 0.022 for 2.2%)
+    base_year: year in which real = nominal (from constants.py)
+
+    Returns nominal-dollar values: real * (1 + r)^(year - base_year)
+    """
+    deflator = (1.0 + inflation_rate) ** (years - base_year)
+    return values * deflator
 
 
 def compute_curtailment(potential, dispatched):
