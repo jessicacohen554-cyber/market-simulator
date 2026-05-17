@@ -88,6 +88,9 @@ VOM: dict[str, float] = {
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
     "ERCOT": 0.85,  # was 0.83. NERC GADS 2019-2023, ERCOT fleet.
     "CAISO": 0.89,  # was 0.88. NERC GADS 2019-2023, CAISO fleet.
+    "PJM": 0.87,    # NERC GADS 2019-2023, PJM fleet. TODO: verify
+    "NYISO": 0.86,  # NERC GADS 2019-2023, NYISO fleet. TODO: verify
+    "NEISO": 0.85,  # NERC GADS 2019-2023, ISO-NE fleet. TODO: verify
 }
 
 # Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO.
@@ -120,6 +123,27 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
         "high": {"near": 0.08, "long": 0.04},
     },
     "CAISO": {
+        "low":  {"near": 0.005, "long": 0.005},
+        "mid":  {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
+    },
+    # PJM Fleet Parameters — Source: PJM Load Forecast Report 2024, Table B-1.
+    # Tier: 2. TODO: verify
+    "PJM": {
+        "low":  {"near": 0.020, "long": 0.010},
+        "mid":  {"near": 0.035, "long": 0.018},
+        "high": {"near": 0.060, "long": 0.030},
+    },
+    # NYISO Fleet Parameters — Source: NYISO Gold Book 2024, Table I-3.
+    # Tier: 2. TODO: verify
+    "NYISO": {
+        "low":  {"near": 0.005, "long": 0.005},
+        "mid":  {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
+    },
+    # NEISO Fleet Parameters — Source: ISO-NE CELT Report 2024.
+    # Tier: 2. TODO: verify
+    "NEISO": {
         "low":  {"near": 0.005, "long": 0.005},
         "mid":  {"near": 0.015, "long": 0.010},
         "high": {"near": 0.025, "long": 0.018},
@@ -332,6 +356,24 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 8_000.0,
         "high": 12_000.0,
     },
+    # PJM/NYISO/NEISO base storage — approximate operational + queued
+    # battery capacity. TODO: verify (PJM Load Forecast Report 2024,
+    # NYISO Gold Book 2024, ISO-NE CELT Report 2024).
+    "PJM": {
+        "low": 3_000.0,
+        "mid": 5_000.0,
+        "high": 9_000.0,
+    },
+    "NYISO": {
+        "low": 1_000.0,
+        "mid": 1_500.0,
+        "high": 3_000.0,
+    },
+    "NEISO": {
+        "low": 500.0,
+        "mid": 1_000.0,
+        "high": 2_000.0,
+    },
 }
 
 # Ceiling on total deployed storage power (MW) per ISO, capping cumulative
@@ -365,6 +407,20 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         2040: 0.80,
         2045: 1.00,
     },
+    "NYISO": {  # NY CLCPA — 70% renewable by 2030, 100% zero-emission by 2040
+        2026: 0.40,
+        2030: 0.70,
+        2040: 1.00,
+        2045: 1.00,
+    },
+    "NEISO": {  # MA Clean Energy Standard + regional state CES blend
+        2026: 0.30,
+        2030: 0.45,
+        2040: 0.70,
+        2045: 0.80,
+    },
+    # PJM spans many states with differing RPS rules and no single
+    # ISO-wide clean-energy floor, so no PJM entry is defined here.
 }
 
 # Annual interconnection queue caps (GW/yr) by ISO.
