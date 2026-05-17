@@ -599,21 +599,25 @@ WECC_EXPORT_CAP_MW: float = 5000.0
 # Source: NERC GADS — representative availability for out-of-state imports.
 WECC_IMPORT_EFORD: float = 0.02
 
-# Exogenous REC price reference ranges ($/MWh) by resource type, as
+# Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
-# (every ScenarioConfig.rec_price_* defaults to 0.0); they give plausible
-# ranges for scenario authors setting REC prices by hand.
-REC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
-    "nuclear_zec": {"low": 10.0, "mid": 17.0, "high": 25.0},
+# (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
+# ranges for scenario authors setting EAC prices by hand.
+EAC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
+    "eac_nuclear_zec": {"low": 10.0, "mid": 17.0, "high": 25.0},
     # Source: NY PSC Order, Case 15-E-0302; IL FEJA
-    "wind_rec": {"low": 2.0, "mid": 8.0, "high": 15.0},
+    "eac_wind": {"low": 2.0, "mid": 8.0, "high": 15.0},
     # Source: PJM GATS, S&P Global Platts
-    "solar_rec": {"low": 2.0, "mid": 10.0, "high": 20.0},
+    "eac_solar": {"low": 2.0, "mid": 10.0, "high": 20.0},
     # Source: PJM GATS, S&P Global Platts
-    "gas_cc_ccs": {"low": 0.0, "mid": 15.0, "high": 30.0},
-    # Source: 45Q credit ranges
-    "storage": {"low": 0.0, "mid": 5.0, "high": 15.0},
-    # Source: emerging state programs
+    "eac_offshore_wind": {"low": 20.0, "mid": 30.0, "high": 40.0},
+    # Source: NJ BPU OREC orders, NYSERDA
+    "eac_geothermal": {"low": 5.0, "mid": 10.0, "high": 15.0},
+    # Source: CA CES program, analogy to nuclear ZEC
+    "eac_gas_cc_ccs": {"low": 10.0, "mid": 15.0, "high": 25.0},
+    # Source: 45Q market + state CES analogy
+    "eac_storage": {"low": 0.0, "mid": 5.0, "high": 10.0},
+    # Source: limited precedent, modeling assumption
 }
 
 # Model-wide constants.
