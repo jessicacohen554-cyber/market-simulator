@@ -646,9 +646,9 @@ def _make_new_generator(
       carbon price through standard marginal-cost assembly.
     * **Geothermal** is a zero-fuel dispatchable unit with a turn-down
       floor at ``config.egs_pmin_fraction`` of rated capacity.
-    * **Offshore wind** enters as a zero-MC Generator whose flat
-      availability equals the offshore capacity factor (Option A): a
-      forced-outage rate of ``1 - cf`` makes ``1 - eford`` equal the CF.
+    * **Offshore wind** enters as a zero-MC Generator with only a
+      mechanical forced-outage rate; its hourly availability profile is
+      injected later by ``inject_offshore_wind_availability`` in the runner.
     """
     unit_id = f"{tech_type}_new_{year}_{seq}"
     kwargs: dict = {
@@ -712,12 +712,12 @@ def _make_new_generator(
         kwargs["pmin_mw"] = pmax_mw * config.egs_pmin_fraction
 
     elif tech_type == "offshore_wind":
-        cf = _offshore_wind_params(iso, config)["base_cf"]
         kwargs["heat_rate"] = 0.0
         kwargs["vom"] = 0.0
         kwargs["emission_rate_co2"] = 0.0
-        # Flat-CF approximation: availability = 1 - eford = base_cf.
-        kwargs["eford"] = 1.0 - cf
+        # Hourly availability set by inject_offshore_wind_availability in the
+        # runner; eford here is only the mechanical forced outage rate.
+        kwargs["eford"] = 0.05
 
     return Generator(**kwargs)
 

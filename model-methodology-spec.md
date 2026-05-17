@@ -175,7 +175,9 @@ Enhanced geothermal systems (`geothermal`, EGS) enter as zero-fuel dispatchable 
 
 #### 1.5.4 Offshore Wind
 
-Offshore wind (`offshore_wind`) is a **separate renewable category** from onshore wind: higher and less variable capacity factors, higher costs, and distinct zone eligibility. By default it is a candidate only in CAISO (Pacific-coast floating); the Gulf-coast ERCOT potential is left as a future sensitivity. It is modeled as a **zero-marginal-cost `Generator`** (Option A) whose availability profile equals the offshore CF, rather than as a new LP variable class — the LP dispatches it like any other generator and curtailment falls out of the capacity bound. This keeps the LP structure unchanged.
+Offshore wind (`offshore_wind`) is a **separate renewable category** from onshore wind: higher and less variable capacity factors, higher costs, and distinct zone eligibility. By default it is a candidate only in CAISO (Pacific-coast floating); the Gulf-coast ERCOT potential is left as a future sensitivity. It is modeled as a **zero-marginal-cost `Generator`** (Option A), rather than as a new LP variable class — the LP dispatches it like any other generator and curtailment falls out of the capacity bound. This keeps the LP structure unchanged.
+
+Offshore wind capacity factors are derived from the onshore wind profile for the same ISO by applying a physical smoothing window (default 6 hours, reflecting reduced ocean gustiness), a minimum CF floor (default 8%, reflecting persistent offshore resource), and rescaling to the target annual-average CF. This preserves the real temporal patterns (diurnal, synoptic, seasonal) from the EIA-930 data while producing a less variable, higher-average profile that matches offshore wind's physical characteristics. The derived profile is injected into the generator's hourly availability array, so dispatch varies realistically across hours.
 
 #### 1.5.5 Additional Storage Durations
 
