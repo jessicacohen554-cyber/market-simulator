@@ -34,7 +34,8 @@ class ScenarioConfig:
     carbon_price: float = 0.0  # $/ton CO2
     carbon_price_path: str = "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
     nox_price: float = 0.0  # $/ton NOx
-    demand_growth_rate: float = 0.01  # annual
+    demand_growth_rate: float = 0.01  # flat override used only when no structured rates exist
+    demand_growth_path: str = "mid"  # "low", "mid", "high" — selects from DEMAND_GROWTH_RATES
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
@@ -47,7 +48,11 @@ class ScenarioConfig:
     eac_price_geothermal: float = 0.0  # $/MWh, clean firm generation credit
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
-    h2_available_year: int = 2032  # year H2 turbines enter the candidate pool
+    h2_available_year: int = 2035  # was 2032.
+    # Source: engineering judgment. §45V credit terminates for construction
+    # after Dec 31, 2027 (OBBBA). Without $3/kg credit, green H2 fuel cost
+    # ~2x higher. Deployment delayed to mid-2030s when electrolyzer costs
+    # and renewable LCOE decline enough to compensate.
     ccs_available_year: int = 2030  # year CCUS enters the candidate pool
     egs_available_year: int = 2030  # year EGS enters the candidate pool
     offshore_wind_available_year: int = 2030
@@ -183,6 +188,7 @@ TIER_TAGS: dict[str, int] = {
     "carbon_price_path": 1,
     "nox_price": 1,
     "demand_growth_rate": 1,
+    "demand_growth_path": 1,
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "retirement_aggressiveness": 1,

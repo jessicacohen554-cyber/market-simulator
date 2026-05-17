@@ -19,6 +19,8 @@ from multiprocessing import cpu_count
 import numpy as np
 
 from market_sim.config.constants import (
+    DEMAND_GROWTH_RATES,
+    DEMAND_GROWTH_TRANSITION_YEAR,
     END_YEAR,
     START_YEAR,
 )
@@ -58,14 +60,25 @@ from market_sim.results.outputs import FleetContext
 logger = logging.getLogger(__name__)
 
 
-def _scale_demand(base_demand: np.ndarray, config: ScenarioConfig, year: int) -> np.ndarray:
-    """Scale weather-year demand to a simulation year by demand growth.
+def _get_growth_rate(config: ScenarioConfig, year: int) -> float:
+    """Return the demand growth rate for a given year."""
+    iso_rates = DEMAND_GROWTH_RATES.get(config.iso, {})
+    path_rates = iso_rates.get(config.demand_growth_path, None)
+    if path_rates is None or not isinstance(path_rates, dict):
+        return config.demand_growth_rate
+    if year <= DEMAND_GROWTH_TRANSITION_YEAR:
+        return path_rates["near"]
+    return path_rates["long"]
 
-    The weather-year shape from EIA-930 is compounded at
-    ``config.demand_growth_rate`` for every year past :data:`START_YEAR`.
-    """
-    growth = (1.0 + config.demand_growth_rate) ** (year - START_YEAR)
-    return base_demand * growth
+
+def _scale_demand(
+    base_demand: np.ndarray, config: ScenarioConfig, year: int
+) -> np.ndarray:
+    """Scale base-year demand to the target year using compound growth."""
+    factor = 1.0
+    for y in range(START_YEAR, year):
+        factor *= 1.0 + _get_growth_rate(config, y)
+    return base_demand * factor
 
 
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:

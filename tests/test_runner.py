@@ -150,5 +150,50 @@ class TestMainCLI(RunnerTestBase):
         self.assertEqual(called_iso, "CAISO")
 
 
+class TestDemandGrowth(unittest.TestCase):
+    """Piecewise demand growth: near-term vs long-term rates by era."""
+
+    def test_near_term_year_uses_near_rate(self):
+        config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2028), 0.05)
+
+    def test_long_term_year_uses_long_rate(self):
+        config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2035), 0.025)
+
+    def test_transition_boundary(self):
+        # 2030 is the last near-term year; 2031 is the first long-term year.
+        config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2030), 0.05)
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2031), 0.025)
+
+    def test_flat_override_when_no_structured_path(self):
+        # An ISO/path with no structured rates falls back to the scalar.
+        config = ScenarioConfig(
+            iso="ERCOT", demand_growth_path="nonexistent",
+            demand_growth_rate=0.07,
+        )
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2028), 0.07)
+        self.assertAlmostEqual(runner._get_growth_rate(config, 2040), 0.07)
+
+    def test_scale_demand_compounds_year_by_year(self):
+        config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
+        base = np.full((1, 8), 100.0)
+        # 2026 is the base year: no growth applied.
+        np.testing.assert_allclose(
+            runner._scale_demand(base, config, 2026), base
+        )
+        # 2028: two years of the near rate (0.05).
+        np.testing.assert_allclose(
+            runner._scale_demand(base, config, 2028), base * 1.05 ** 2
+        )
+        # 2032: growth applied for 2026-2031 — five near years
+        # (2026-2030) then one long year (2031).
+        expected = base * 1.05 ** 5 * 1.025 ** 1
+        np.testing.assert_allclose(
+            runner._scale_demand(base, config, 2032), expected
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
