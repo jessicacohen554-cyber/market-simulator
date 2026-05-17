@@ -27,7 +27,9 @@ The renewable portfolio standard is no longer a force-build here: it is
 enforced as an LP constraint in dispatch, and its shadow price drives
 clean builds through the economic new-entry screen above.
 
-:func:`evolve_fleet` chains all four mechanisms into one year-step.
+A CCS retrofit step also runs each year, converting existing gas CC units
+to ``gas_cc_ccs`` when the economics clear. :func:`evolve_fleet` chains all
+the mechanisms into one year-step.
 """
 
 from __future__ import annotations
@@ -96,6 +98,18 @@ _FOM_MULTIPLIER: dict[str, str] = {
     "gas_ct": "retirement_fom_multiplier_gas_ct",
     "gas_cc": "retirement_fom_multiplier_gas_cc",
 }
+
+# Assumed total thermal-plant operating life (years), used to estimate a
+# unit's remaining useful life when screening CCS retrofit candidates.
+# Source: NREL ATB 2024 -- typical gas combined-cycle book life.
+_THERMAL_PLANT_LIFE_YEARS: int = 40
+
+# Placeholder capacity factor for screening CCS retrofit economics -- a
+# representative mid-merit combined-cycle duty cycle.
+# TODO: use each unit's actual prior-year capacity factor once per-generator
+# dispatch is threaded through (it is available in the prior-year result).
+# Source: engineering judgment -- mid-merit gas CC.
+_RETROFIT_SCREEN_CF: float = 0.55
 
 
 def apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator]:
@@ -878,6 +892,137 @@ def apply_economic_new_entry(
     return new_fleet, renewable_additions
 
 
+def apply_ccs_retrofit(
+    fleet: list[Generator],
+    prices: np.ndarray,
+    year: int,
+    config: ScenarioConfig,
+    iso: str,
+    gas_price_per_mmbtu: float,
+    carbon_price: float,
+    eac_price_ccs: float = 0.0,
+) -> tuple[list[Generator], list[dict]]:
+    """Screen existing gas CC units for CCS retrofit economics.
+
+    A retrofit converts a ``gas_cc`` generator to ``gas_cc_ccs`` in place.
+    The unit keeps its zone, capacity and ``unit_id`` but gets:
+
+    * ``heat_rate *= (1 + config.ccs_retrofit_hr_penalty)`` -- the retrofit
+      heat rate is *derived* from the source unit's heat rate, never a fixed
+      bin, so an efficient host stays efficient after capture,
+    * ``vom += config.ccs_retrofit_vom_adder``,
+    * ``emission_rate_co2 *= (1 - config.ccs_retrofit_capture_rate)``,
+    * ``fuel_type`` changes to ``"gas_cc_ccs"``.
+
+    A unit retrofits when the simple payback of the retrofit capex is shorter
+    than its remaining useful life. Annual net savings per MW are::
+
+        carbon_avoided = (old_er - new_er) * carbon_price * cf * 8760
+        eac_revenue    = eac_price_ccs * cf * 8760
+        margin_loss    = (new_hr - old_hr) * gas_price * cf * 8760
+        vom_increase   = vom_adder * cf * 8760
+        annual_net_savings = carbon_avoided + eac_revenue
+                             - margin_loss - vom_increase
+
+    Units younger than ``config.ccs_retrofit_min_remaining_life`` years from
+    end of life are skipped, candidates are ranked shortest-payback first
+    (efficient hosts win), and retrofits are applied up to the annual
+    throughput cap ``config.ccs_retrofit_max_gw_per_year``.
+
+    Args:
+        fleet: Current generator fleet.
+        prices: ``(n_zones, T)`` zonal price array from the prior year.
+            Reserved for a future per-unit capacity-factor estimate; the
+            current screen uses a representative capacity factor.
+        year: Current simulation year.
+        config: Scenario configuration.
+        iso: ISO identifier (reserved for future per-ISO calibration).
+        gas_price_per_mmbtu: Resolved gas price for this year.
+        carbon_price: Resolved carbon price for this year ($/ton CO2).
+        eac_price_ccs: EAC price for CCS resources ($/MWh).
+
+    Returns:
+        Tuple ``(updated_fleet, retrofit_log)`` where ``retrofit_log`` is a
+        list of dicts recording each retrofit decision for diagnostics.
+    """
+    if year < config.ccs_retrofit_available_year:
+        return fleet, []
+
+    hours = float(HOURS_PER_YEAR)
+    cf = _RETROFIT_SCREEN_CF
+    retrofit_capex_per_mw = config.ccs_retrofit_capex_kw * 1000.0
+
+    candidates: list[tuple[float, Generator, dict]] = []
+    for gen in fleet:
+        if gen.fuel_type != "gas_cc":
+            continue
+        # Skip units near end of life -- a short remaining life cannot pay
+        # back the retrofit capex.
+        age = year - gen.online_year
+        remaining_life = max(0, _THERMAL_PLANT_LIFE_YEARS - age)
+        if remaining_life < config.ccs_retrofit_min_remaining_life:
+            continue
+
+        old_hr = gen.heat_rate
+        new_hr = old_hr * (1.0 + config.ccs_retrofit_hr_penalty)
+        old_er = gen.emission_rate_co2
+        new_er = old_er * (1.0 - config.ccs_retrofit_capture_rate)
+
+        # Annual economics per MW of capacity.
+        carbon_avoided = (old_er - new_er) * carbon_price * cf * hours
+        eac_revenue = eac_price_ccs * cf * hours
+        margin_loss = (new_hr - old_hr) * gas_price_per_mmbtu * cf * hours
+        vom_increase = config.ccs_retrofit_vom_adder * cf * hours
+        annual_net_savings = (
+            carbon_avoided + eac_revenue - margin_loss - vom_increase
+        )
+        if annual_net_savings <= 0.0:
+            continue
+
+        payback_years = retrofit_capex_per_mw / annual_net_savings
+        if payback_years >= remaining_life:
+            continue
+
+        candidates.append(
+            (
+                payback_years,
+                gen,
+                {
+                    "unit_id": gen.unit_id,
+                    "zone": gen.zone,
+                    "old_hr": old_hr,
+                    "new_hr": new_hr,
+                    "old_emission_rate": old_er,
+                    "new_emission_rate": new_er,
+                    "annual_net_savings_per_mw": annual_net_savings,
+                    "payback_years": payback_years,
+                    "carbon_price": carbon_price,
+                },
+            )
+        )
+
+    # Shortest payback first -- the best-economics (most efficient) hosts win.
+    candidates.sort(key=lambda item: item[0])
+
+    cap_mw = config.ccs_retrofit_max_gw_per_year * 1000.0
+    retrofitted_mw = 0.0
+    retrofit_log: list[dict] = []
+    for _payback, gen, log_entry in candidates:
+        if retrofitted_mw + gen.pmax_mw > cap_mw:
+            continue
+        # Convert the generator in place -- a retrofit is irreversible.
+        gen.heat_rate = gen.heat_rate * (1.0 + config.ccs_retrofit_hr_penalty)
+        gen.vom = gen.vom + config.ccs_retrofit_vom_adder
+        gen.emission_rate_co2 = gen.emission_rate_co2 * (
+            1.0 - config.ccs_retrofit_capture_rate
+        )
+        gen.fuel_type = "gas_cc_ccs"
+        retrofitted_mw += gen.pmax_mw
+        retrofit_log.append(log_entry)
+
+    return fleet, retrofit_log
+
+
 def _prior_attr(prior_results: object, name: str, default: object = None) -> object:
     """Read ``name`` from ``prior_results``, which may be a dict or object."""
     if prior_results is None:
@@ -897,18 +1042,27 @@ def evolve_fleet(
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
-) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]]]:
+    eac_price_ccs: float = 0.0,
+) -> tuple[
+    list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]
+]:
     """Advance the fleet by one simulation year.
 
-    The four capacity mechanisms are applied in a fixed order:
+    The five capacity mechanisms are applied in a fixed order:
 
     1. known retirements,
     2. economic retirements,
     3. known additions (planned units with ``online_year == year``),
-    4. economic new entry (generation).
+    4. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
+    5. economic new entry (generation).
+
+    Retrofits run before new entry so a retrofitted CC displaces some of the
+    need for new-build CCS: the new-entry screen then sees the updated fleet.
 
     The reshaped fleet is then re-aggregated into efficiency-bin
     representative units, keeping the next LP solve at ~36 thermal columns.
+    When ``config.heat_rate_bin_count`` is set, the re-aggregation uses that
+    many equal-width heat-rate bins instead of the predefined vintage bins.
 
     The renewable portfolio standard is not applied here -- it is enforced
     as an LP constraint in dispatch, and its shadow price (``rec_price``)
@@ -936,15 +1090,19 @@ def evolve_fleet(
         gas_price_per_mmbtu: Delivered gas price for the year, passed to
             the new-entry screen to cost gas CC variable fuel.
         carbon_price: Carbon price in $/tCO2 for the year, passed to the
-            new-entry screen to cost thermal carbon emissions.
+            new-entry screen to cost thermal carbon emissions and to the
+            CCS retrofit screen.
+        eac_price_ccs: EAC price for CCS resources in $/MWh, passed to the
+            CCS retrofit screen as additional per-MWh revenue.
 
     Returns:
-        Tuple ``(fleet, loss_tracker, renewable_additions)`` after all
-        mechanisms are applied. ``renewable_additions`` is a ``{zone:
-        {"wind": mw, "solar": mw}}`` dict of new wind/solar capacity built
-        this year; the caller folds it into the zonal ``wind_cap`` /
+        Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log)``
+        after all mechanisms are applied. ``renewable_additions`` is a
+        ``{zone: {"wind": mw, "solar": mw}}`` dict of new wind/solar capacity
+        built this year; the caller folds it into the zonal ``wind_cap`` /
         ``solar_cap`` pools that bound the ``W[z,t]`` / ``S[z,t]`` dispatch
-        variables.
+        variables. ``retrofit_log`` is the list of CCS retrofit decision
+        dicts recorded this year.
     """
     loss_tracker = dict(loss_tracker)
     renewable_additions: dict[str, dict[str, float]] = {}
@@ -972,7 +1130,16 @@ def evolve_fleet(
     # 3. Known additions: planned units coming online this year.
     fleet = fleet + [g for g in planned if g.online_year == year]
 
-    # 4. Economic new entry (needs a price signal). Clean technologies see
+    # 4. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
+    # before new entry so retrofits displace some new-build CCS demand.
+    fleet, retrofit_log = apply_ccs_retrofit(
+        fleet, prices, year, config, config.iso,
+        gas_price_per_mmbtu=gas_price_per_mmbtu,
+        carbon_price=carbon_price,
+        eac_price_ccs=eac_price_ccs,
+    )
+
+    # 5. Economic new entry (needs a price signal). Clean technologies see
     # the prior year's REC price as additional expected revenue.
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
@@ -984,9 +1151,9 @@ def evolve_fleet(
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
-    # Retirements and new entry have reshaped the fleet; re-collapse it into
-    # efficiency-bin representatives so the next LP solve gets ~36 thermal
-    # columns rather than one per physical unit.
-    fleet = aggregate_fleet(fleet)
+    # Retirements, retrofits and new entry have reshaped the fleet;
+    # re-collapse it into efficiency-bin representatives so the next LP solve
+    # gets ~36 thermal columns rather than one per physical unit.
+    fleet = aggregate_fleet(fleet, n_bins=config.heat_rate_bin_count)
 
-    return fleet, loss_tracker, renewable_additions
+    return fleet, loss_tracker, renewable_additions, retrofit_log

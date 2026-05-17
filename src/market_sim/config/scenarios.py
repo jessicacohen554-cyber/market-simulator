@@ -81,6 +81,32 @@ class ScenarioConfig:
     egs_pmin_fraction: float = 0.20  # EGS turn-down floor (fraction of rated)
     offshore_wind_cf_override: float | None = None  # overrides OFFSHORE_WIND_PARAMS
 
+    # Tier 2 (expert/sensitivity) — CCS retrofit parameters
+    ccs_retrofit_hr_penalty: float = 0.12     # Fractional heat rate increase from capture parasitic load.
+                                               # Applied as: retrofit_hr = base_hr × (1 + penalty).
+                                               # 0.12 = 12% penalty. Source: NETL Cost & Performance
+                                               # Baseline Rev 4, 2021. Range in literature: 0.10–0.18.
+    ccs_retrofit_capex_kw: float = 900.0      # $/kW for post-combustion capture retrofit.
+                                               # Source: NETL 2021, Sargent & Lundy 2022.
+                                               # Lower than greenfield (~$1400/kW) because host plant exists.
+    ccs_retrofit_vom_adder: float = 8.0       # $/MWh additional VOM for capture O&M, solvent, compression.
+                                               # Source: NETL Cost & Performance Baseline Rev 4.
+    ccs_retrofit_capture_rate: float = 0.90   # Fraction of CO2 captured. 0.90 = 90%.
+                                               # Source: NETL design basis for amine scrubbing.
+    ccs_retrofit_available_year: int = 2028   # Earliest year retrofits can occur.
+    ccs_retrofit_max_gw_per_year: float = 3.0 # GW/yr retrofit throughput cap per ISO.
+                                               # Source: engineering judgment — EPC capacity constraint.
+    ccs_retrofit_min_remaining_life: int = 15 # Only retrofit units with ≥ N years remaining useful life.
+                                               # Avoids retrofitting units near retirement.
+
+    # Tier 2 (expert/sensitivity) — Fleet aggregation control
+    heat_rate_bin_count: int | None = None    # Override default bin count per fuel type.
+                                               # None = use HEAT_RATE_BINS defaults (3 bins).
+                                               # Set to 5, 10, etc. for finer granularity.
+                                               # More bins = more LP variables = slower solve.
+                                               # Recommended: 3 (default) for production runs,
+                                               # 5-10 for CCS/carbon sensitivity analysis.
+
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
@@ -180,6 +206,14 @@ TIER_TAGS: dict[str, int] = {
     "co2_transport_storage_cost": 2,
     "egs_pmin_fraction": 2,
     "offshore_wind_cf_override": 2,
+    "ccs_retrofit_hr_penalty": 2,
+    "ccs_retrofit_capex_kw": 2,
+    "ccs_retrofit_vom_adder": 2,
+    "ccs_retrofit_capture_rate": 2,
+    "ccs_retrofit_available_year": 2,
+    "ccs_retrofit_max_gw_per_year": 2,
+    "ccs_retrofit_min_remaining_life": 2,
+    "heat_rate_bin_count": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
 }
