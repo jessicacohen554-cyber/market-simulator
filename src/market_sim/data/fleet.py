@@ -63,6 +63,7 @@ BA_CODE_TO_ISO: dict[str, str] = {
 ISO_TO_BA_CODE: dict[str, str] = {iso: ba for ba, iso in BA_CODE_TO_ISO.items()}
 
 # Integer codes for fuel types, used to index into fuel-keyed arrays.
+# Code 11 is intentionally reserved (left as a gap) for a future fuel type.
 FUEL_TYPE_MAP: dict[str, int] = {
     "gas_cc": 0,
     "gas_ct": 1,
@@ -72,12 +73,19 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "solar": 5,
     "hydro": 6,
     "import": 7,
+    "hydrogen_ct": 8,     # simple-cycle H2 turbine (peaker)
+    "hydrogen_ccgt": 9,   # combined-cycle H2 turbine (mid-merit/baseload)
+    "gas_cc_ccs": 10,     # gas CCGT with 90% post-combustion carbon capture
+    "geothermal": 12,     # enhanced geothermal systems (EGS)
+    "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
-FUEL_TYPE_NAMES: list[str] = [
-    name for name, _ in sorted(FUEL_TYPE_MAP.items(), key=lambda item: item[1])
-]
+# Sized to the largest code so a gap in the code space (e.g. the reserved
+# code 11) yields an empty string rather than a misaligned name.
+FUEL_TYPE_NAMES: list[str] = [""] * (max(FUEL_TYPE_MAP.values()) + 1)
+for _name, _code in FUEL_TYPE_MAP.items():
+    FUEL_TYPE_NAMES[_code] = _name
 
 
 class Generator(BaseModel):

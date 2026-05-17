@@ -18,13 +18,26 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
+from market_sim.data.hydrogen import compute_h2_fuel_cost
 
 # Fuel-type integer codes (from FUEL_TYPE_MAP) that burn natural gas and
-# therefore pay the escalated gas price.
-_GAS_FUEL_IDX: tuple[int, int] = (FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"])
+# therefore pay the escalated gas price. CCUS (``gas_cc_ccs``) burns the
+# same natural gas as an unabated gas CC.
+_GAS_FUEL_IDX: tuple[int, int, int] = (
+    FUEL_TYPE_MAP["gas_cc"],
+    FUEL_TYPE_MAP["gas_ct"],
+    FUEL_TYPE_MAP["gas_cc_ccs"],
+)
 
 # Fuel-type integer code for coal-fired units, which pay the coal price.
 _COAL_FUEL_IDX: int = FUEL_TYPE_MAP["coal"]
+
+# Fuel-type integer codes for hydrogen turbines, whose fuel price is the
+# derived hydrogen fuel cost (see :mod:`market_sim.data.hydrogen`).
+_HYDROGEN_FUEL_IDX: tuple[int, int] = (
+    FUEL_TYPE_MAP["hydrogen_ct"],
+    FUEL_TYPE_MAP["hydrogen_ccgt"],
+)
 
 # Fuel price ($/MMBtu) for non-fuel-burning units (e.g. wind, solar, nuclear,
 # hydro, imports), which carry no commodity fuel cost in this model.
@@ -42,9 +55,11 @@ def resolve_fuel_prices(
 
         price = base * (1 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
 
-    Coal units pay the flat :data:`COAL_PRICE_BASE` price for the ISO. All
-    other generators carry a zero fuel price. Generator types are identified
-    via ``fleet.fuel_type_idx``.
+    Coal units pay the flat :data:`COAL_PRICE_BASE` price for the ISO.
+    Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the derived
+    hydrogen fuel cost from :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`.
+    All other generators carry a zero fuel price. Generator types are
+    identified via ``fleet.fuel_type_idx``.
 
     Args:
         config: Scenario configuration supplying ``iso``, ``gas_price_path``
@@ -66,6 +81,12 @@ def resolve_fuel_prices(
     per_gen_price = np.full(fleet.n_gen, _ZERO_FUEL_PRICE, dtype=float)
     per_gen_price[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price
     per_gen_price[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
+
+    # Hydrogen turbines burn green H2 whose cost is derived from renewable
+    # LCOE and electrolyzer efficiency rather than a commodity market.
+    if np.any(np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)):
+        h2_price = compute_h2_fuel_cost(year, config, config.iso)
+        per_gen_price[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
 
     # Broadcast view is safe: assemble_mc creates a new array via
     # multiplication and never mutates fuel_prices in place.
