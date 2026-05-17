@@ -106,22 +106,20 @@ def _ercot_config() -> ISOConfig:
         Zone(name="South", iso="ERCOT", load_share=0.0799),
     ]
     # ERCOT zonal transfer capabilities, defined at the major congestion
-    # interfaces. The West export links (West->North + West->South_Central)
-    # total ~11,000 MW, matching the ERCOT 2021 Regional Transmission Plan
-    # "West Texas Export Stability Assessment" limit of 11,016 MW. The
-    # Panhandle->North link (~4,000 MW) matches the WSCR-based GTC limits
-    # from the ERCOT 2019 Panhandle Regional Stability Study (~3,600-4,200 MW
-    # with Stage 1+2 upgrades). Remaining TTCs are estimates from the ERCOT
-    # 2022 Report on Existing and Potential Electric System Constraints and
-    # Needs (top-10 congestion interfaces with $ congestion rent). These are
-    # Tier 3 calibration parameters and will be tuned during calibration.
-    # Sources: ERCOT 2021 RTP Long-Term West Texas Export Study Update;
-    # ERCOT 2019 Panhandle Regional Stability Study; ERCOT 2022 Constraints
-    # and Needs Report; ERCOT Power Operations Bulletin 1138.
+    # interfaces. The West and Panhandle export limits are the mean observed
+    # limits of the WESTEX and PNHNDL generic transmission constraints in
+    # ERCOT NP6-86 SCED binding-constraint data (Oct 2023, 8,709 intervals;
+    # see scripts/derive_ttc_limits.py). WESTEX averaged 8,895 MW, split
+    # West->North + West->South_Central in the prior ~8:3 ratio; PNHNDL
+    # averaged 2,673 MW. Both bind in 43-59% of intervals. Remaining TTCs
+    # are estimates from the ERCOT 2022 Report on Existing and Potential
+    # Electric System Constraints and Needs (top-10 congestion interfaces).
+    # Sources: ERCOT NP6-86-CD SCED Shadow Prices and Binding Transmission
+    # Constraints; ERCOT 2022 Constraints and Needs Report.
     links = [
-        TransferLink(from_zone="West", to_zone="North", ttc_mw=8000.0),
-        TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=3000.0),
-        TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=4000.0),
+        TransferLink(from_zone="West", to_zone="North", ttc_mw=6500.0),
+        TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2400.0),
+        TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2700.0),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
         TransferLink(from_zone="North", to_zone="South_Central", ttc_mw=5000.0),
         TransferLink(
