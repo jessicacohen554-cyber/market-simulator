@@ -150,6 +150,79 @@ def generators_to_fleet_arrays(
     )
 
 
+# Fuel types collapsed into efficiency-bin representative units. Everything
+# else -- nuclear, hydro, import (few in number, distinct characteristics)
+# and wind/solar (not part of the thermal fleet) -- passes through unchanged.
+_AGGREGATABLE_FUELS: frozenset[str] = frozenset({"gas_cc", "gas_ct", "coal"})
+
+
+def aggregate_fleet(generators: list[Generator]) -> list[Generator]:
+    """Collapse individual generators into representative units.
+
+    Thermal generators are grouped by ``(fuel_type, efficiency_bin, zone)``;
+    each group becomes a single :class:`Generator` whose capacity is the
+    group total and whose per-MWh attributes are capacity-weighted averages
+    of the group. This shrinks the LP from one column per physical unit
+    (200+) to one column per thermal bin (~36), the dominant solve-time win.
+
+    Nuclear, hydro and import units pass through unchanged -- they are few
+    in number and have distinct characteristics. Wind and solar are not part
+    of the thermal fleet handled here, so they are unaffected. A thermal unit
+    carrying a scheduled ``retirement_year`` also passes through, so the
+    known-retirement mechanism keeps its per-unit retirement dates.
+
+    Args:
+        generators: The individual-unit fleet.
+
+    Returns:
+        A new fleet list: pass-through units in their original order,
+        followed by one representative unit per thermal group, ordered by
+        ``(fuel_type, efficiency_bin, zone)``.
+    """
+    passthrough: list[Generator] = []
+    groups: dict[tuple[str, str, str], list[Generator]] = {}
+    for g in generators:
+        if g.fuel_type not in _AGGREGATABLE_FUELS or g.retirement_year is not None:
+            passthrough.append(g)
+            continue
+        key = (g.fuel_type, g.efficiency_bin, g.zone)
+        groups.setdefault(key, []).append(g)
+
+    representatives: list[Generator] = []
+    for key in sorted(groups):
+        fuel_type, efficiency_bin, zone = key
+        units = groups[key]
+        total_cap = sum(u.pmax_mw for u in units)
+
+        def _weighted(attr: str) -> float:
+            """Return the capacity-weighted average of ``attr`` over the group."""
+            if total_cap > 0.0:
+                return (
+                    sum(getattr(u, attr) * u.pmax_mw for u in units) / total_cap
+                )
+            return sum(getattr(u, attr) for u in units) / len(units)
+
+        unit_id = f"{fuel_type}_{efficiency_bin}_{zone}"
+        representatives.append(
+            Generator(
+                unit_id=unit_id,
+                name=unit_id,
+                zone=zone,
+                fuel_type=fuel_type,
+                efficiency_bin=efficiency_bin,
+                pmax_mw=total_cap,
+                pmin_mw=sum(u.pmin_mw for u in units),
+                heat_rate=_weighted("heat_rate"),
+                vom=_weighted("vom"),
+                emission_rate_co2=_weighted("emission_rate_co2"),
+                nox_rate=_weighted("nox_rate"),
+                eford=_weighted("eford"),
+            )
+        )
+
+    return passthrough + representatives
+
+
 def assemble_mc(
     fleet: FleetArrays,
     fuel_prices: np.ndarray,
