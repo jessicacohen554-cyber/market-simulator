@@ -97,6 +97,11 @@ def _ercot_config() -> ISOConfig:
         TransferLink(from_zone="South", to_zone="West", ttc_mw=2000.0),
         TransferLink(from_zone="West", to_zone="Houston", ttc_mw=2500.0),
     ]
+    # ERCOT VOLL: $5,000/MWh — matches the day-ahead system-wide offer cap.
+    # Post-RTC+B (Dec 5, 2025): DA SWCAP remains $5,000; RT SWCAP is $2,000.
+    # PUCT also set an administrative VOLL of $35,000 for planning (Aug 2024).
+    # This LP uses a single VOLL representing the DA energy-only cap.
+    # Source: PUCT §25.505, ERCOT Nodal Protocols §4.4.11 (post-RTC+B).
     return ISOConfig(name="ERCOT", zones=zones, links=links, voll=5000.0)
 
 
@@ -112,6 +117,13 @@ def _caiso_config() -> ISOConfig:
             from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=15000.0
         ),
     ]
+    # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
+    # for real-time energy. CAISO's bid cap is lower than ERCOT's because
+    # CAISO has capacity-market-like mechanisms (RA program) that provide
+    # revenue outside the energy market, so scarcity pricing carries less
+    # of the reliability investment signal.
+    # ERCOT's $5,000 DA SWCAP is higher because ERCOT is energy-only.
+    # Source: CAISO Tariff §39.6.1; ERCOT Protocols §4.4.11.
     return ISOConfig(name="CAISO", zones=zones, links=links, voll=2000.0)
 
 

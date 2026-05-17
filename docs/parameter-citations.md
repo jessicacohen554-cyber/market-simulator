@@ -77,7 +77,7 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 | `eford.gas_ct` | 0.06 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
 | `eford.coal` | 0.08 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
 | `eford.nuclear` | 0.03 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
-| `scenario.voll` | 5000.0 | $/MWh | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | Value of Lost Load (system-wide offer cap basis) | — | ERCOT value of lost load (system-wide offer cap basis); CAISO ISOConfig uses 2000. **[STALE]** |
+| `scenario.voll` | 5000.0 | $/MWh | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2025-12 | Value of Lost Load (system-wide offer cap basis) | — | ERCOT DA SWCAP $5,000/MWh unchanged post-RTC+B (Dec 2025). RT SWCAP reduced to $2,000/MWh. Model uses DA cap as single-settlement proxy. |
 
 ## Demand
 
@@ -241,7 +241,7 @@ Source publication date is before 2023-05 (more than 3 years before the 2026-05-
 | `storage_techs.iron_air.fom_per_kw_yr` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | fom_per_kw_yr for the iron_air storage technology. |
 | `storage_techs.iron_air.learning_rate` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | learning_rate for the iron_air storage technology. Learning rate is a modeling assumption. |
 | `state_rps_floors.CAISO` | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | California SB 100 statutory clean-energy trajectory (60% by 2030, 100% by 2045). |
-| `scenario.voll` | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | ERCOT value of lost load (system-wide offer cap basis); CAISO ISOConfig uses 2000. |
+| `scenario.voll` | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2025-12 | ERCOT DA SWCAP $5,000/MWh unchanged post-RTC+B (Dec 2025). RT SWCAP reduced to $2,000/MWh. Model uses DA cap as single-settlement proxy. |
 | `scenario.ira_expiry_year` | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. |
 
 ## Source reference
