@@ -54,6 +54,7 @@ class ScenarioConfig:
     )
 
     # Tier 2 (expert/sensitivity)
+    gas_seasonality: bool = True  # Apply monthly Henry Hub seasonality shape
     storage_rte_4hr: float = 0.85
     storage_rte_8hr: float = 0.80
     nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
@@ -155,6 +156,7 @@ TIER_TAGS: dict[str, int] = {
     "egs_available_year": 1,
     "offshore_wind_available_year": 1,
     "offshore_wind_eligible_isos": 1,
+    "gas_seasonality": 2,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
     "nominal_discount_rate": 2,
