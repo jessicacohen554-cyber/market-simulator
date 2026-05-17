@@ -167,6 +167,39 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
         "fom_per_kw_yr": 20.0,
         "learning_rate": 0.10,
     },
+    # Additional long-duration storage technologies. ``capex_per_kw`` is the
+    # total capital per kW of power (energy capex × duration + power capex),
+    # matching the convention of the li-ion / iron-air entries above.
+    "li_ion_12hr": {  # NREL ATB 2024 — 12-hour lithium-ion battery
+        "duration_hr": 12,
+        "rte": 0.78,            # lower RTE at longer duration. NREL ATB 2024
+        "cycles": 4000,
+        "capex_per_kw": 3560.0,  # 280 $/kWh × 12 h + 200 $/kW. NREL ATB 2024
+        "capex_per_kwh": 280.0,
+        "fom_per_kw_yr": 12.0,
+        "learning_rate": 0.15,   # BNEF lithium-ion learning curve 2024
+        "lifetime_yr": 20,
+    },
+    "flow_battery": {  # PNNL 2023 — vanadium redox flow battery
+        "duration_hr": 10,
+        "rte": 0.70,             # vanadium redox. PNNL 2023 flow battery review
+        "cycles": 15000,         # long cycle life — major advantage. PNNL 2023
+        "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW. PNNL 2023
+        "capex_per_kwh": 350.0,
+        "fom_per_kw_yr": 15.0,
+        "learning_rate": 0.10,
+        "lifetime_yr": 25,
+    },
+    "compressed_air": {  # NREL ATB 2024 — adiabatic compressed-air storage
+        "duration_hr": 8,
+        "rte": 0.55,             # adiabatic CAES. NREL ATB 2024
+        "cycles": 10000,
+        "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW. NREL ATB 2024
+        "capex_per_kwh": 150.0,
+        "fom_per_kw_yr": 10.0,
+        "learning_rate": 0.05,   # mature concept, limited recent deployment
+        "lifetime_yr": 40,       # Huntorf plant operating since 1978
+    },
 }
 
 # Storage power capacity (MW) by deployment pace, for the base year (2026).
@@ -222,9 +255,20 @@ QUEUE_CAP_GW: dict[str, float] = {
 # Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
-    "ERCOT": {"wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "nuclear": 2.0},
-    "CAISO": {"wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0},
+    "ERCOT": {
+        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "nuclear": 2.0,
+        "geothermal": 2.0,      # engineering judgment, EGS resource potential
+        "offshore_wind": 0.0,   # Gulf coast not yet leased. Source: BOEM
+    },
+    "CAISO": {
+        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0,
+        "geothermal": 3.0,      # CA geothermal resource assessment
+        "offshore_wind": 3.0,   # BOEM Pacific lease areas, CAISO TPP
+    },
 }
+# Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not
+# get their own per-tech queue cap: they share the ``gas_cc`` interconnection
+# cap above, since they reuse the same gas-turbine supply chain and queue.
 
 # New entry technology cost and performance parameters.
 # Source: NREL ATB 2024.
@@ -256,6 +300,118 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "learning_rate": 0.05,
         "base_cf": 0.90,
         "lifetime_yr": 40,
+    },
+}
+
+# --- Emerging generation technologies -------------------------------------
+# Hydrogen turbines, post-combustion CCUS, enhanced geothermal and offshore
+# wind. Each enters the model as a Generator (thermal dispatch) reusing the
+# existing LP variable structure — no LP formulation change.
+
+# Hydrogen-fired turbine parameters. H2 turbines are thermal generators whose
+# fuel cost is DERIVED from renewable LCOE / electrolyzer efficiency (see
+# :mod:`market_sim.data.hydrogen`) rather than an exogenous price path.
+HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
+    "h2_ct": {  # simple-cycle H2 turbine (peaker)
+        "heat_rate": 9.5,          # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
+        "vom": 4.0,                # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
+        "emission_rate_co2": 0.0,  # tCO2/MWh — zero direct CO2 (green H2)
+        "nox_rate": 0.00015,       # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
+        "eford": 0.06,             # above gas CT — immature fleet. Engineering judgment
+        "capex_kw": 1400.0,        # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
+        "fom_kw_yr": 12.0,         # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,     # analogy to gas CT maturation
+    },
+    "h2_ccgt": {  # combined-cycle H2 turbine (mid-merit/baseload)
+        "heat_rate": 6.9,          # MMBtu/MWh. DOE H2 Turbine Program 2023
+        "vom": 3.5,                # $/MWh. NREL ATB 2024
+        "emission_rate_co2": 0.0,
+        "nox_rate": 0.00012,       # DOE/NETL 2023
+        "eford": 0.06,
+        "capex_kw": 1800.0,        # $/kW — premium over gas CCGT. NREL ATB 2024
+        "fom_kw_yr": 15.0,         # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,
+    },
+}
+
+# Electrolyzer parameters used to derive the hydrogen fuel cost. Not an LP
+# variable. Efficiency is MWh_H2 / MWh_electricity (LHV basis) and improves
+# linearly between the 2026 base, 2035 and 2045 milestone years.
+ELECTROLYZER_PARAMS: dict[str, dict[str, float]] = {
+    "pem": {
+        "efficiency": 0.65,        # base year. Source: IRENA Green H2 2023
+        "efficiency_2035": 0.72,   # DOE Hydrogen Shot targets
+        "efficiency_2045": 0.76,   # DOE long-term targets
+        "capex_kw": 1200.0,        # $/kW — for LCOH if needed. BNEF 2024
+        "learning_rate": 0.18,     # aggressive — early on curve. IRENA 2023
+    },
+    "alkaline": {
+        "efficiency": 0.63,        # Source: IRENA Green H2 2023
+        "efficiency_2035": 0.68,
+        "efficiency_2045": 0.72,
+        "capex_kw": 800.0,
+        "learning_rate": 0.12,     # more mature technology. IRENA 2023
+    },
+}
+
+# MMBtu per MWh — thermodynamic identity, used to convert the derived
+# hydrogen electricity cost ($/MWh) into a fuel cost ($/MMBtu).
+MMBTU_PER_MWH: float = 3.412
+
+# Carbon capture, utilization and storage parameters. CCUS is a variant of
+# the base gas CC plant: higher heat rate (parasitic capture load), higher
+# VOM (solvent costs), reduced emission rate, plus a transport+storage cost
+# for the captured CO2.
+CCUS_PARAMS: dict[str, dict[str, float]] = {
+    "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
+        "heat_rate_penalty": 1.16,      # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
+        "vom_adder": 8.0,               # $/MWh — amine solvent, maintenance. NETL 2022
+        "capture_rate": 0.90,           # fraction of CO2 captured. NETL 2022 Case B31B
+        "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
+        "capex_kw": 2500.0,             # $/kW installed. NREL ATB 2024
+        "fom_kw_yr": 22.0,              # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.05,          # slow — limited deployment. Global CCS Institute 2024
+    },
+}
+
+# Enhanced geothermal (EGS) parameters. EGS enters as a thermal generator
+# with zero fuel cost and high capacity factor, dispatchable down to
+# ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
+GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
+    "egs": {
+        "capacity_factor": 0.90,   # high availability. DOE GeoVision 2019
+        "vom": 1.0,                # $/MWh — minimal, no fuel. NREL ATB 2024
+        "emission_rate_co2": 0.0,  # zero direct emissions
+        "nox_rate": 0.0,
+        "eford": 0.05,             # comparable to nuclear. DOE GeoVision 2019
+        "pmin_fraction": 0.20,     # turn down to 20% for flexibility. Fervo 2024
+        "capex_kw": 5000.0,        # $/kW — high upfront, early-stage. NREL ATB 2024
+        "fom_kw_yr": 0.0,          # $/kW-yr — captured in VOM. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.15,     # steep — analogous to early solar. Fervo, ARPA-E
+        "heat_rate": 0.0,          # no fuel
+    },
+}
+
+# Offshore wind parameters. A separate renewable category from onshore wind:
+# higher and less variable capacity factors, higher costs, distinct zones.
+OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
+    "fixed_bottom": {
+        "base_cf": 0.45,           # annual average. NREL ATB 2024
+        "capex_kw": 4200.0,        # $/kW. NREL ATB 2024
+        "fom_kw_yr": 80.0,         # $/kW-yr — marine access premium. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.08,     # NREL ATB 2024, IRENA 2024
+    },
+    "floating": {
+        "base_cf": 0.48,           # deeper water, better resource. NREL ATB 2024
+        "capex_kw": 5500.0,        # $/kW — early stage. NREL ATB 2024
+        "fom_kw_yr": 95.0,
+        "lifetime_yr": 30,
+        "learning_rate": 0.12,     # steeper — less mature. NREL ATB 2024
     },
 }
 

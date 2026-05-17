@@ -136,6 +136,51 @@ The constraint creates a shadow price that raises clean revenue and compresses t
 
 Other constraint-type policies (NOx caps, etc.) are not yet defined; the extension point in the builder keeps the door open for them.
 
+### 1.5 Emerging Technologies
+
+Emerging generation and storage technologies are a **parameter and data-layer extension**, not an LP formulation change. Every new technology enters as either a `Generator` (thermal dispatch) or a `StorageUnit` (charge/discharge/SOC) reusing the existing LP variable structure. Each technology becomes a new-entry candidate only once the simulation reaches its configured availability year.
+
+#### 1.5.1 Hydrogen Dispatch Model
+
+Hydrogen is **not modeled as storage**. H2 turbines (`hydrogen_ct`, `hydrogen_ccgt`) are thermal generators whose fuel cost is *derived* from renewable electricity economics rather than an exogenous price path:
+
+```
+h2_fuel_cost_$/MMBtu = min(wind_LCOE, solar_LCOE) / η_electrolyzer / 3.412
+```
+
+where 3.412 MMBtu = 1 MWh. The `min()` picks whichever renewable is cheapest in that ISO-year; dividing by the electrolyzer efficiency converts electricity to hydrogen; dividing by 3.412 converts $/MWh to $/MMBtu. Electrolyzer efficiency is a Tier 2 parameter that improves over time (linear interpolation between the 2026, 2035 and 2045 milestone years). This formulation:
+
+- tracks Wright's-Law cost declines in renewables automatically — cheaper renewables mean cheaper hydrogen;
+- needs no exogenous hydrogen price path;
+- avoids circularity — the model never prices its own fuel.
+
+H2 turbines then dispatch on `heat_rate × h2_fuel_cost` like any thermal unit. Direct CO2 emissions are zero (green hydrogen); NOx is non-zero because hydrogen burns hot. The IRA §45V clean hydrogen production tax credit ($3/kg ≈ $26/MMBtu) is applied as a fuel-cost reduction in the new-entry LCOE screen and expires after `ira_expiry_year`.
+
+#### 1.5.2 CCUS Dispatch Model
+
+Carbon capture (`gas_cc_ccs`) is a **variant of the base gas CC plant**: it burns the same natural gas but carries a higher heat rate (parasitic capture load), a higher VOM (solvent costs), a reduced emission rate (capture rate applied), and a transport+storage cost for captured CO2. The marginal cost is:
+
+```
+mc = base_heat_rate × heat_rate_penalty × gas_price
+   + base_vom + vom_adder
+   + base_co2_rate × (1 − capture_rate) × carbon_price     # residual emissions
+   + base_co2_rate × capture_rate × co2_transport_storage   # captured CO2 disposal
+```
+
+The captured-CO2 disposal term is a constant $/MWh and folds into the unit's VOM; the residual-emissions term is ordinary `emission_rate × carbon_price`, so standard marginal-cost assembly reproduces the formula with no special-casing. CCUS becomes **more competitive as carbon prices rise** — the residual term shrinks relative to the full carbon cost an unabated plant pays — and the model finds the carbon-price crossover endogenously. The IRA §45Q credit ($85/tCO2 stored) enters the new-entry LCOE screen as a variable-cost offset and expires after `ira_expiry_year`.
+
+#### 1.5.3 Enhanced Geothermal
+
+Enhanced geothermal systems (`geothermal`, EGS) enter as zero-fuel dispatchable baseload generators with a high capacity factor (~90%). They are **not intermittent** — they do not follow wind/solar CF profiles. They can provide flexibility, turning down to a `pmin` of ~20% of rated capacity. A steep learning curve is assumed (analogous to early solar). Geothermal earns the same zero-emission production tax credit as wind.
+
+#### 1.5.4 Offshore Wind
+
+Offshore wind (`offshore_wind`) is a **separate renewable category** from onshore wind: higher and less variable capacity factors, higher costs, and distinct zone eligibility. By default it is a candidate only in CAISO (Pacific-coast floating); the Gulf-coast ERCOT potential is left as a future sensitivity. It is modeled as a **zero-marginal-cost `Generator`** (Option A) whose availability profile equals the offshore CF, rather than as a new LP variable class — the LP dispatches it like any other generator and curtailment falls out of the capacity bound. This keeps the LP structure unchanged.
+
+#### 1.5.5 Additional Storage Durations
+
+Three long-duration storage technologies — 12-hour lithium-ion, vanadium-redox flow batteries and adiabatic compressed-air — are added to the storage technology menu. They use the **same LP formulation** as the existing storage units (`power_cap`, `energy_cap`, `eta_chg`, `eta_dis`); only their economics differ, which drives different dispatch patterns.
+
 -----
 
 ## 2. LP Construction Pattern — Block-Diagonal with Vectorized Assembly
@@ -472,6 +517,8 @@ Screen by technology: if `expected_revenue > LCOE`, the technology is economic f
 - Annual build rate capped per technology (e.g., ERCOT ~12 GW/yr queue throughput)
 - Clean technologies (wind, solar) earn the prior year's REC price — the RPS constraint's shadow price — as additional expected revenue, so a binding RPS pulls more of them across the LCOE hurdle
 - Technology priority: ranked by revenue-minus-LCOE margin, highest first
+
+**Technology availability gating.** The candidate set is not fixed. The classic four technologies (wind, solar, gas CC, nuclear) are always eligible, but each emerging technology (hydrogen turbines, CCUS, enhanced geothermal, offshore wind — see §1.5) joins the candidate pool only once the simulation year reaches its configured availability year (`h2_available_year`, `ccs_available_year`, `egs_available_year`, `offshore_wind_available_year`). Offshore wind additionally enters only in ISOs listed in `offshore_wind_eligible_isos`. The screening order is therefore: (1) build the year's eligible candidate set, (2) compute each candidate's LCOE and margin, (3) rank and build subject to queue caps. Hydrogen turbines and CCUS share the `gas_cc` per-tech queue cap (shared gas-turbine supply chain); geothermal and offshore wind have their own per-tech caps.
 
 ### 5.4 Known Pipeline
 
