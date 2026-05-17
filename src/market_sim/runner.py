@@ -33,6 +33,7 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     load_fleet_from_csv,
 )
+from market_sim.data.cycling import apply_cycling_adders
 from market_sim.data.fuel import resolve_annual_gas_price, resolve_fuel_prices
 from market_sim.data.renewables import (
     inject_offshore_wind_availability,
@@ -116,7 +117,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # profiles (wind_cf, solar_cf) are resource-driven and stay fixed, but
     # wind_cap and solar_cap are mutable: capacity evolution grows them each
     # year as new renewables are built.
-    base_demand = load_demand(iso, config.weather_year, iso_config)
+    base_demand = load_demand(
+        iso, config.weather_year, iso_config,
+        td_loss_factor=config.td_loss_factor,
+    )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, config.weather_year, iso_config, config
     )
@@ -250,6 +254,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             mc = assemble_mc(
                 fleet_arrays, fuel_prices, carbon_price, config.nox_price
             )
+            # Fold per-bin thermal cycling cost adders into the merit order
+            # before any EAC adjustment (both are additive $/MWh shifts).
+            mc = apply_cycling_adders(mc, dispatch_fleet, fleet_arrays, config)
             # Exogenous EACs shift the cost vector: per-generator EACs
             # lower per-generator MC, wind/solar EACs lower their dispatch
             # adders, and the storage EAC credits discharge. The EAC is real

@@ -88,14 +88,22 @@ def _ercot_config() -> ISOConfig:
         Zone(name="West", iso="ERCOT", load_share=0.08),
         Zone(name="Houston", iso="ERCOT", load_share=0.34),
     ]
-    # TODO: verify TTCs from ERCOT CDR — values below are placeholders.
+    # ERCOT zonal transfer capabilities. The North-West and West-Houston
+    # links are set to the ERCOT 2021 Regional Transmission Plan "West Texas
+    # Export Stability Assessment" (ROS July 2020, RPG Sep 2021), which puts
+    # the West Texas export stability limit at 11,016 MW. These are
+    # stability-limited values; ERCOT applies a ~90% reliability margin
+    # operationally. A future calibration sweep will tune the exact values.
+    # Source: ERCOT 2021 RTP, Long-Term West Texas Export Study Update.
+    # URL: https://www.ercot.com/files/docs/2021/09/15/RPG-09-2021-Long-Term_West_Texas_Export_Study_Update.pdf
+    # TODO: verify the remaining TTCs (N-S, N-H, S-H, S-W) from ERCOT CDR.
     links = [
         TransferLink(from_zone="North", to_zone="South", ttc_mw=5000.0),
-        TransferLink(from_zone="North", to_zone="West", ttc_mw=3000.0),
+        TransferLink(from_zone="North", to_zone="West", ttc_mw=5500.0),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
         TransferLink(from_zone="South", to_zone="Houston", ttc_mw=4000.0),
         TransferLink(from_zone="South", to_zone="West", ttc_mw=2000.0),
-        TransferLink(from_zone="West", to_zone="Houston", ttc_mw=2500.0),
+        TransferLink(from_zone="West", to_zone="Houston", ttc_mw=3500.0),
     ]
     # ERCOT VOLL: $5,000/MWh — matches the day-ahead system-wide offer cap.
     # Post-RTC+B (Dec 5, 2025): DA SWCAP remains $5,000; RT SWCAP is $2,000.

@@ -52,6 +52,7 @@ def load_demand(
     iso: str,
     year: int,
     iso_config: ISOConfig | None = None,
+    td_loss_factor: float = 0.0,
     data_dir: Path = DATA_DIR,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
@@ -61,11 +62,19 @@ def load_demand(
     ``load_share``. A zone with ``load_share == 0.0`` (such as CAISO's
     ``WECC_import`` import node) therefore receives an all-zero row.
 
+    The EIA-930 series reports metered system load. When ``td_loss_factor``
+    is positive, demand is grossed up to the generation level the fleet must
+    actually serve (``demand × (1 + factor)``), since transmission and
+    distribution losses sit between generation and the meter.
+
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
         year: Calendar year to load.
         iso_config: Topology configuration supplying zone load shares. If
             ``None``, it is fetched via :func:`get_iso_config`.
+        td_loss_factor: T&D losses as a fraction of metered load. The
+            allocated demand is scaled by ``1 + td_loss_factor``. Defaults
+            to ``0.0`` (no gross-up).
         data_dir: Directory containing the EIA-930 parquet extracts.
 
     Returns:
@@ -93,7 +102,10 @@ def load_demand(
     load_shares = np.array(
         [zone.load_share for zone in iso_config.zones], dtype=float
     )
-    return load_shares[:, None] * raw_mw[None, :]
+    demand = load_shares[:, None] * raw_mw[None, :]
+    if td_loss_factor > 0.0:
+        demand *= 1.0 + td_loss_factor
+    return demand
 
 
 def load_demand_meta(

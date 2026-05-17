@@ -30,10 +30,15 @@ from market_sim.config.constants import (
     RENEWABLE_AVG_CF,
     RENEWABLE_INSTALLED_MW,
 )
-from market_sim.config.iso_configs import ISOConfig
+from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import DATA_DIR, load_generation_profiles
-from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
+from market_sim.data.fleet import (
+    EIA_860_DIR,
+    FUEL_TYPE_MAP,
+    FleetArrays,
+    _hour_to_month_index,
+)
 
 # Capacity factors are physically bounded to the closed interval [0, 1].
 _CF_MIN: float = 0.0
@@ -43,11 +48,11 @@ _CF_MAX: float = 1.0
 # values in the EIA-930 generation-profiles parquet.
 _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 
-# Zone that absorbs the entire ISO wind/solar fleet, by ISO and fuel. Each
-# technology is assigned to the zone holding the bulk of its installed
+# Fallback single-zone allocation, by ISO and fuel. Used only when EIA-860
+# plant-location data is unavailable for the ISO; otherwise capacity is
+# distributed across zones from EIA-860 (see :func:`_eia860_zone_shares`).
+# Each technology is assigned to the zone holding the bulk of its installed
 # capacity; every other zone receives an all-zero profile.
-# TODO: distribute CF and capacity across zones when sub-zonal generation
-# data becomes available.
 # Source: ERCOT CDR Dec 2024 (West wind belt, South solar corridor),
 # CAISO annual report 2024 (single in-footprint load zone).
 RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
@@ -58,6 +63,147 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
         "offshore_wind": "CAISO_main",
     },
 }
+
+# EIA-860 operable wind/solar generator parquets, used to distribute
+# renewable capacity across ISO zones and to build the vintage monthly
+# capacity ramp from each plant's commercial-operation date.
+# Source: EIA-860 2024 (Generator_Operable, wind and solar schedules).
+_EIA860_OPERABLE_FILES: dict[str, str] = {
+    "wind": "eia860_wind_operable.parquet",
+    "solar": "eia860_solar_operable.parquet",
+}
+
+_MONTHS_PER_YEAR: int = 12
+
+
+def _as_float(value: object) -> float | None:
+    """Coerce ``value`` to a float, returning ``None`` for blanks or NaN."""
+    try:
+        result = float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+    return None if result != result else result
+
+
+def _as_int(value: object) -> int | None:
+    """Coerce ``value`` to an int, returning ``None`` for blanks or NaN."""
+    result = _as_float(value)
+    return None if result is None else int(result)
+
+
+def _eia860_monthly_capacity(
+    iso: str,
+    fuel: str,
+    zone_names: list[str],
+    cal_year: int | None,
+    data_dir: Path = EIA_860_DIR,
+) -> np.ndarray | None:
+    """Return an ``(n_zones, 12)`` array of operable capacity (MW) by month.
+
+    Each EIA-860 operable wind/solar plant is placed in a model zone via the
+    eGRID ORIS->zone lookup (see :mod:`market_sim.data.zone_assignment`) and
+    contributes its nameplate capacity to the months it was online:
+
+    * ``operating_year < cal_year`` -- online all twelve months;
+    * ``operating_year == cal_year`` -- online from ``operating_month`` on;
+    * ``operating_year > cal_year`` -- not yet online (zero).
+
+    When ``cal_year`` is ``None`` every operable plant is treated as online
+    in all twelve months (no vintage ramp).
+
+    Source: EIA-860 2024, Generator_Operable sheet, ``Operating Month`` /
+    ``Operating Year`` columns.
+
+    Returns ``None`` when the EIA-860 parquet is missing or the ISO has no
+    eGRID geographic zone rules, signaling the caller to fall back to the
+    hardcoded single-zone allocation.
+    """
+    file_name = _EIA860_OPERABLE_FILES.get(fuel)
+    if file_name is None:
+        return None
+    path = Path(data_dir) / file_name
+    if not path.exists():
+        return None
+
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return None
+    if not zone_lookup:
+        return None
+
+    df = pd.read_parquet(path)
+    status = df["Status"].astype(str).str.strip().str.upper()
+    df = df[status == "OP"]
+
+    zone_to_idx = {name: i for i, name in enumerate(zone_names)}
+    monthly = np.zeros((len(zone_names), _MONTHS_PER_YEAR), dtype=float)
+
+    plant_code = df["Plant Code"].to_numpy()
+    capacity = pd.to_numeric(
+        df["Nameplate Capacity (MW)"], errors="coerce"
+    ).to_numpy()
+    op_year = pd.to_numeric(df["Operating Year"], errors="coerce").to_numpy()
+    op_month = pd.to_numeric(df["Operating Month"], errors="coerce").to_numpy()
+
+    for code, cap, oy, om in zip(plant_code, capacity, op_year, op_month):
+        oris = _as_int(code)
+        zone = zone_lookup.get(oris) if oris is not None else None
+        z_idx = zone_to_idx.get(zone) if zone is not None else None
+        if z_idx is None:
+            continue
+        if cap is None or cap != cap or cap <= 0.0:  # None / NaN / non-positive
+            continue
+        operating_year = _as_int(oy)
+        if (
+            cal_year is not None
+            and operating_year is not None
+            and operating_year > cal_year
+        ):
+            continue
+        if cal_year is not None and operating_year == cal_year:
+            month = _as_int(om) or 1
+            start = min(max(month, 1), _MONTHS_PER_YEAR)
+            monthly[z_idx, start - 1:] += cap
+        else:
+            monthly[z_idx, :] += cap
+
+    if monthly.sum() <= 0.0:
+        return None
+    return monthly
+
+
+def _eia860_zone_shares(
+    iso: str, fuel_code: str, cal_year: int | None = None
+) -> dict[str, float]:
+    """Return ``{zone_name: fraction}`` of renewable capacity from EIA-860.
+
+    Shares are the December (year-end) capacity of each model zone, derived
+    from EIA-860 operable wind/solar plant locations. When ``cal_year`` is
+    given, only plants online by the end of that year are counted; a plant
+    commissioned during ``cal_year`` still contributes its full capacity to
+    the December total, so late-year additions are reflected in the share.
+
+    Source: EIA-860 2024 (``eia860_wind_operable`` / ``eia860_solar_operable``),
+    zone assigned via :mod:`market_sim.data.zone_assignment` using the
+    eGRID PLNT23 lat/lon/FIPS geography.
+
+    Returns an empty dict when EIA-860 data is unavailable for the ISO.
+    """
+    zone_names = get_iso_config(iso).zone_names
+    monthly = _eia860_monthly_capacity(iso, fuel_code, zone_names, cal_year)
+    if monthly is None:
+        return {}
+    december = monthly[:, -1]
+    total = december.sum()
+    if total <= 0.0:
+        return {}
+    return {
+        zone_names[i]: float(december[i] / total)
+        for i in range(len(zone_names))
+    }
 
 
 def get_renewable_zone(iso: str, fuel: str) -> str:
@@ -166,6 +312,59 @@ def _allocate_to_zones(
     return cf, cap
 
 
+def _distribute_by_eia860(
+    cf_profile: np.ndarray,
+    installed_mw: float,
+    monthly_capacity: np.ndarray,
+    vintage_capacity_ramp: bool,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Spread one ISO-wide CF profile across zones using EIA-860 capacity.
+
+    The total ISO ``installed_mw`` is split across zones in proportion to
+    each zone's December (year-end) capacity from ``monthly_capacity`` (see
+    :func:`_eia860_monthly_capacity`); that December split is returned as the
+    static per-zone capacity array.
+
+    When ``vintage_capacity_ramp`` is ``True`` the shared CF profile is
+    scaled, per zone and per month, by the fraction of year-end capacity
+    that was online that month::
+
+        effective_cf[z, t] = cf_profile[t] * monthly_cap[z, month(t)]
+                                            / december_cap[z]
+
+    so a zone's modeled output ramps up as its plants reach commercial
+    operation. When ``False`` every zone with capacity uses the flat profile.
+
+    Args:
+        cf_profile: A ``(HOURS_PER_YEAR,)`` ISO-wide hourly CF series.
+        installed_mw: Total ISO installed nameplate capacity (MW).
+        monthly_capacity: ``(n_zones, 12)`` operable capacity by month.
+        vintage_capacity_ramp: Whether to apply the monthly capacity ramp.
+
+    Returns:
+        A tuple ``(cf, cap)`` where ``cf`` is ``(n_zones, HOURS_PER_YEAR)``
+        and ``cap`` is ``(n_zones,)`` December capacity in MW.
+    """
+    n_zones = monthly_capacity.shape[0]
+    hours = cf_profile.shape[0]
+    december = monthly_capacity[:, -1]
+    cap = installed_mw * december / december.sum()
+
+    cf = np.zeros((n_zones, hours), dtype=float)
+    if vintage_capacity_ramp:
+        month_idx = _hour_to_month_index(hours)
+        for z in range(n_zones):
+            if december[z] <= 0.0:
+                continue
+            ramp = monthly_capacity[z] / december[z]
+            cf[z] = cf_profile * ramp[month_idx]
+    else:
+        for z in range(n_zones):
+            if december[z] > 0.0:
+                cf[z] = cf_profile
+    return cf, cap
+
+
 def load_renewable_profiles(
     iso: str,
     year: int,
@@ -183,18 +382,25 @@ def load_renewable_profiles(
     curtailment as a built-in conservatism — modeled renewable energy is
     slightly below the unconstrained resource potential.
 
-    Each technology's full ISO fleet is assigned to a single zone (see
-    :data:`RENEWABLE_ZONE_ALLOCATION`): all wind to the zone with the most
-    wind and all solar to the zone with the most solar. Every other zone —
-    including CAISO's ``WECC_import`` node — receives zero CF and zero
+    Each technology's installed capacity is distributed across the ISO's
+    zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
+    with the same ISO-wide CF profile applied to every zone holding
+    capacity. When ``config.vintage_capacity_ramp`` is enabled, that profile
+    is additionally scaled month-by-month so a zone's output ramps up as its
+    plants reach their EIA-860 commercial-operation dates. For ISOs without
+    EIA-860 geographic data the loader falls back to the single-zone
+    :data:`RENEWABLE_ZONE_ALLOCATION` mapping. Zones with no capacity —
+    including CAISO's ``WECC_import`` node — receive zero CF and zero
     capacity.
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
-        year: Calendar year to load.
+        year: Calendar year to load; also the calibration year for the
+            EIA-860 vintage capacity ramp.
         iso_config: Topology configuration supplying the ordered zones.
         config: Scenario configuration; ``renewable_cf_adjustment`` scales
-            every derived CF.
+            every derived CF and ``vintage_capacity_ramp`` toggles the
+            month-varying capacity ramp.
         data_dir: Directory containing the EIA-930 parquet extracts.
 
     Returns:
@@ -218,12 +424,21 @@ def load_renewable_profiles(
         cf_profile = np.clip(
             cf_profile * config.renewable_cf_adjustment, _CF_MIN, _CF_MAX
         )
-        allocated[fuel] = _allocate_to_zones(
-            cf_profile,
-            RENEWABLE_INSTALLED_MW[iso][fuel],
-            zone_names,
-            RENEWABLE_ZONE_ALLOCATION[iso][fuel],
-        )
+        monthly = _eia860_monthly_capacity(iso, fuel, zone_names, year)
+        if monthly is not None:
+            allocated[fuel] = _distribute_by_eia860(
+                cf_profile,
+                RENEWABLE_INSTALLED_MW[iso][fuel],
+                monthly,
+                config.vintage_capacity_ramp,
+            )
+        else:
+            allocated[fuel] = _allocate_to_zones(
+                cf_profile,
+                RENEWABLE_INSTALLED_MW[iso][fuel],
+                zone_names,
+                RENEWABLE_ZONE_ALLOCATION[iso][fuel],
+            )
 
     wind_cf, wind_cap = allocated["wind"]
     solar_cf, solar_cap = allocated["solar"]
