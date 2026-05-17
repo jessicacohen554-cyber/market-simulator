@@ -315,7 +315,7 @@ class TestPhysicsConservation(unittest.TestCase):
 
         eta = 0.85 ** 0.5
         units = [StorageUnit(
-            unit_id="STO", zone="Z0",
+            unit_id="STO", zone="Z0", tech_name="li_ion_4hr",
             power_cap_mw=100, energy_cap_mwh=400,
             eta_charge=eta, eta_discharge=eta,
         )]
@@ -476,7 +476,7 @@ class TestEconomicLogic(unittest.TestCase):
 
         eta = 0.9
         units = [StorageUnit(
-            unit_id="S0", zone="Z0", power_cap_mw=50,
+            unit_id="S0", zone="Z0", tech_name="li_ion_8hr", power_cap_mw=50,
             energy_cap_mwh=200, eta_charge=eta, eta_discharge=eta,
         )]
         sa = storage_units_to_arrays(units, zone_names)
@@ -634,6 +634,7 @@ class TestPerformance(unittest.TestCase):
         units = [
             StorageUnit(
                 unit_id=f"STO{i}", zone=zone_names[i % 4],
+                tech_name="li_ion_4hr",
                 power_cap_mw=100, energy_cap_mwh=400,
                 eta_charge=eta, eta_discharge=eta,
             )
