@@ -97,10 +97,16 @@ GAS_AVAILABILITY_FACTOR: dict[str, float] = {
 # Spring and fall dips reflect scheduled refueling outages.
 # Source: NRC PRIS 2019-2023.
 NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
-    # NRC PRIS 2019-2023 — ERCOT nuclear monthly capacity factors
-    "ERCOT": [0.93, 0.93, 0.90, 0.90, 0.92, 0.93, 0.93, 0.93, 0.91, 0.90, 0.92, 0.93],
-    # NRC PRIS 2019-2023 — CAISO nuclear monthly capacity factors
-    "CAISO": [0.93, 0.92, 0.91, 0.90, 0.91, 0.93, 0.93, 0.93, 0.92, 0.90, 0.91, 0.93],
+    # NRC PRIS 2019-2023 — scaled to target 95% annual CF with EFORD=0.03.
+    # Spring (Mar-Apr) and fall (Oct) dips reflect typical refueling outage
+    # windows. Shape preserved from NRC data; level adjusted.
+    # Effective availability = (1 - 0.03) × ~0.979 ≈ 0.950
+    # Tier: 3 (calibration)
+    "ERCOT": [1.00, 1.00, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "CAISO": [1.00, 0.99, 0.96, 0.95, 0.97, 1.00, 1.00, 1.00, 0.98, 0.95, 0.97, 1.00],
+    "PJM":   [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "NYISO": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
 }
 
 # Equivalent forced outage rate (demand) by technology class.

@@ -7,6 +7,7 @@ CSV extracts.
 
 from __future__ import annotations
 
+import calendar
 import logging
 import re
 from dataclasses import dataclass
@@ -21,6 +22,7 @@ from market_sim.config.constants import (
     EFORD,
     HEAT_RATE_BINS,
     NOX_RATES,
+    NUCLEAR_MONTHLY_CF,
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
@@ -142,15 +144,31 @@ class FleetArrays:
         return len(self.unit_ids)
 
 
+def _hour_to_month_index(hours: int) -> np.ndarray:
+    """Return an ``(hours,)`` array mapping each hour to a 0-based month.
+
+    Uses a representative non-leap year (2023) so the 8760-hour horizon
+    maps cleanly onto the twelve calendar months.
+    """
+    month_hours: list[int] = []
+    for month in range(1, 13):
+        days = calendar.monthrange(2023, month)[1]
+        month_hours.extend([month - 1] * (days * 24))
+    return np.array(month_hours[:hours], dtype=int)
+
+
 def generators_to_fleet_arrays(
     generators: list[Generator],
     zone_names: list[str],
     hours: int = 8760,
+    iso: str | None = None,
 ) -> FleetArrays:
     """Convert a list of generators into vectorized ``FleetArrays``.
 
-    Availability is set to ``1 - eford`` for every hour; seasonal and
-    maintenance derate factors are applied later in the pipeline.
+    Availability is set to ``1 - eford`` for every hour. When ``iso`` is
+    given and has :data:`NUCLEAR_MONTHLY_CF` factors, nuclear generators get
+    a month-varying availability instead, capturing refueling outages and
+    planned maintenance. Other seasonal derates are applied later.
     """
     zone_to_idx = {name: i for i, name in enumerate(zone_names)}
 
@@ -170,6 +188,20 @@ def generators_to_fleet_arrays(
     availability = np.broadcast_to(
         (1.0 - eford)[:, np.newaxis], (n_gen, hours)
     ).copy()
+
+    # Apply nuclear monthly availability factors (refueling outages, planned
+    # maintenance). NUCLEAR_MONTHLY_CF holds 12 monthly capacity-factor caps
+    # from NRC PRIS data; they multiply the EFORD derate to give the final
+    # hourly availability. Non-nuclear units keep the flat 1 - eford derate.
+    monthly_cf = NUCLEAR_MONTHLY_CF.get(iso.upper()) if iso else None
+    if monthly_cf is not None:
+        monthly_factors = np.array(monthly_cf, dtype=float)
+        month_idx = _hour_to_month_index(hours)
+        for g_idx, gen in enumerate(generators):
+            if gen.fuel_type == "nuclear":
+                availability[g_idx, :] = (
+                    (1.0 - gen.eford) * monthly_factors[month_idx]
+                )
 
     return FleetArrays(
         pmax=pmax,
