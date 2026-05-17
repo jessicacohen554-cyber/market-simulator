@@ -32,6 +32,10 @@ logger = logging.getLogger(__name__)
 # repository root (this file lives at src/market_sim/data/fleet.py).
 EIA_860_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860"
 
+# Committed parquet of real EIA-860 generators for the seven wholesale
+# markets, produced by ``scripts/process_eia860.py`` from the raw release.
+EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
+
 # EIA-930 balancing-authority code → ISO name, for the seven wholesale
 # markets that have EIA-930 demand data.
 BA_CODE_TO_ISO: dict[str, str] = {
@@ -43,6 +47,9 @@ BA_CODE_TO_ISO: dict[str, str] = {
     "ISNE": "NEISO",
     "SWPP": "SPP",
 }
+
+# Inverse of BA_CODE_TO_ISO: EIA balancing-authority code keyed by ISO name.
+ISO_TO_BA_CODE: dict[str, str] = {iso: ba for ba, iso in BA_CODE_TO_ISO.items()}
 
 # Integer codes for fuel types, used to index into fuel-keyed arrays.
 FUEL_TYPE_MAP: dict[str, int] = {
@@ -570,6 +577,38 @@ def _rows_to_generators(
     ]
 
 
+def _load_fleet_from_parquet(
+    parquet_path: Path, iso: str, iso_config: ISOConfig | None
+) -> list[Generator] | None:
+    """Load an ISO's fleet from the committed EIA-860 generator parquet.
+
+    The parquet holds real generators for all seven wholesale markets; rows
+    are filtered to the ISO via their ``balancing_authority_code``. Returns
+    ``None`` when the parquet is missing or yields no thermal generators,
+    so the caller can fall through to the synthetic fleet.
+    """
+    if not parquet_path.exists():
+        return None
+
+    df = _normalize_columns(pd.read_parquet(parquet_path))
+    ba_code = ISO_TO_BA_CODE.get(iso)
+    if ba_code is not None and "balancing_authority_code" in df.columns:
+        ba = df["balancing_authority_code"].astype(str).str.strip()
+        df = df[ba == ba_code]
+
+    generators = _rows_to_generators(df, iso, iso_config)
+    if not generators:
+        logger.warning("EIA-860 parquet has no generators for %s", iso)
+        return None
+
+    logger.info(
+        "Loaded %s fleet from EIA-860 parquet (%d generators)",
+        iso,
+        len(generators),
+    )
+    return generators
+
+
 def load_fleet_from_csv(
     iso: str,
     iso_config: ISOConfig | None = None,
@@ -577,16 +616,21 @@ def load_fleet_from_csv(
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
-    Reads ``generators_{iso}.csv`` from the EIA-860 directory if present,
-    otherwise falls back to a deterministic synthetic fleet. Wind, solar and
-    hydro are skipped (handled by ``renewables.py``).
+    Resolves the fleet from the first available source:
+
+    1. ``generators_{iso}.csv`` in the EIA-860 directory (per-ISO override);
+    2. the committed real EIA-860 generator parquet
+       (:data:`EIA_860_PARQUET_NAME`), filtered to the ISO;
+    3. a deterministic synthetic fleet, as a last-resort fallback.
+
+    Wind, solar and hydro are skipped (handled by ``renewables.py``).
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
         iso_config: Topology configuration supplying zone load shares. If
             ``None``, it is fetched via :func:`get_iso_config` when the ISO
             is known; ISOs without a config get a single ISO-named zone.
-        data_dir: Directory holding the EIA-860 CSVs. Defaults to
+        data_dir: Directory holding the EIA-860 data. Defaults to
             ``inputs/raw-data/eia-860``.
 
     Returns:
@@ -595,23 +639,32 @@ def load_fleet_from_csv(
     iso = iso.upper()
     if data_dir is None:
         data_dir = EIA_860_DIR
+    data_dir = Path(data_dir)
     if iso_config is None:
         try:
             iso_config = get_iso_config(iso)
         except ValueError:
             iso_config = None
 
-    csv_path = Path(data_dir) / f"generators_{iso.lower()}.csv"
-    if not csv_path.exists():
-        logger.warning("EIA-860 not found — using synthetic fleet for %s", iso)
-        return build_synthetic_fleet(iso, iso_config)
+    csv_path = data_dir / f"generators_{iso.lower()}.csv"
+    if csv_path.exists():
+        df = _normalize_columns(pd.read_csv(csv_path))
+        generators = _rows_to_generators(df, iso, iso_config)
+        logger.info(
+            "Loaded %s fleet from EIA-860 CSV (%d generators)",
+            iso,
+            len(generators),
+        )
+        return generators
 
-    df = _normalize_columns(pd.read_csv(csv_path))
-    generators = _rows_to_generators(df, iso, iso_config)
-    logger.info(
-        "Loaded %s fleet from EIA-860 CSV (%d generators)", iso, len(generators)
+    from_parquet = _load_fleet_from_parquet(
+        data_dir / EIA_860_PARQUET_NAME, iso, iso_config
     )
-    return generators
+    if from_parquet is not None:
+        return from_parquet
+
+    logger.warning("EIA-860 not found — using synthetic fleet for %s", iso)
+    return build_synthetic_fleet(iso, iso_config)
 
 
 # ---------------------------------------------------------------------------
