@@ -151,10 +151,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         retrofit_log: list[dict] = []
 
         if fleet is None:
-            # First year: no EIA-860 vintage yet, so the base fleet falls
-            # back to the deterministic synthetic fleet inside the loader.
-            # Collapse individual units into efficiency-bin representatives
-            # before they ever reach the LP -- the dominant solve-time win.
+            # First year: load the base fleet from EIA-860 and collapse
+            # individual units into efficiency-bin representatives before
+            # they ever reach the LP -- the dominant solve-time win.
             fleet = aggregate_fleet(
                 load_fleet_from_csv(iso, iso_config),
                 n_bins=config.heat_rate_bin_count,
