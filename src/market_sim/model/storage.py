@@ -138,11 +138,18 @@ def _resolve_pace(config: ScenarioConfig) -> str:
     """Return the validated ``storage_deployment`` pace from ``config``.
 
     Raises:
-        ValueError: if ``config.storage_deployment`` is not a known pace.
+        ValueError: if ``config.iso`` or ``config.storage_deployment`` is not
+            a known key of :data:`STORAGE_BASE_FLEET_MW`.
     """
-    pace = config.storage_deployment
-    if pace not in STORAGE_BASE_FLEET_MW:
+    if config.iso not in STORAGE_BASE_FLEET_MW:
         supported = ", ".join(sorted(STORAGE_BASE_FLEET_MW))
+        raise ValueError(
+            f"Unknown iso '{config.iso}'. Supported: {supported}"
+        )
+    paces = STORAGE_BASE_FLEET_MW[config.iso]
+    pace = config.storage_deployment
+    if pace not in paces:
+        supported = ", ".join(sorted(paces))
         raise ValueError(
             f"Unknown storage_deployment '{pace}'. Supported: {supported}"
         )
@@ -172,7 +179,9 @@ def build_default_storage(
         ValueError: if ``config.storage_deployment`` is not a known pace.
     """
     pace = _resolve_pace(config)
-    return _distribute_storage(iso, config, STORAGE_BASE_FLEET_MW[pace])
+    return _distribute_storage(
+        iso, config, STORAGE_BASE_FLEET_MW[config.iso][pace]
+    )
 
 
 # Economic life (years) over which storage capital cost is annualized.

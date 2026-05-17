@@ -17,10 +17,12 @@ import numpy as np
 
 from market_sim.config.constants import (
     COAL_PRICE_BASE,
+    COAL_PRICE_ESCALATION,
     GAS_BASIS_DIFFERENTIAL,
     GAS_MONTHLY_SEASONALITY,
     HENRY_HUB_TRAJECTORIES,
     HOURS_PER_YEAR,
+    START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
@@ -117,7 +119,8 @@ def resolve_fuel_prices(
     seasonality factors :data:`GAS_MONTHLY_SEASONALITY` when
     ``config.gas_seasonality`` is set.
 
-    Coal units pay the flat :data:`COAL_PRICE_BASE` price for the ISO.
+    Coal units pay the ISO's :data:`COAL_PRICE_BASE` price escalated from
+    :data:`START_YEAR` at :data:`COAL_PRICE_ESCALATION` per year.
     Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the derived
     hydrogen fuel cost from :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`.
     All other generators carry a zero fuel price. Generator types are
@@ -141,7 +144,9 @@ def resolve_fuel_prices(
     else:
         gas_price_hourly = np.full(T, delivered_annual)
 
-    coal_price = COAL_PRICE_BASE[config.iso]
+    coal_price = COAL_PRICE_BASE[config.iso] * (
+        1.0 + COAL_PRICE_ESCALATION
+    ) ** (year - START_YEAR)
 
     fuel_type_idx = fleet.fuel_type_idx
     fuel_prices = np.zeros((fleet.n_gen, T), dtype=float)
