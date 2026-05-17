@@ -42,6 +42,57 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-05-17 — ERCOT — calibration parameterization
+
+- **Benchmark:** EPA eGRID 2023 ERCOT actuals; EIA-930 ERCOT system load
+  2023; EIA Henry Hub spot 2023-2024; EIA-860 2024 plant inventory.
+- **Calibration year:** 2023
+- **Tolerance:** ±5% (input parity)
+- **Overall:** Parameterized — calibration knobs derived in ad-hoc
+  scripts and committed to the codebase. Six parameter groups updated.
+
+| Diagnostic | Status | Notes |
+|---|---|---|
+| 1. Generation mix | Inputs updated | Gas price 2023/2024 historical anchors; thermal cycling adders shift the merit order; ERCOT TTC updates relax West-Texas export. |
+| 2. Price duration curve | Inputs updated | Cycling adders raise marginal cost of cycling coal/gas units, sharpening the price shape. |
+| 3. Average price | Inputs updated | Gas price historical entries align fuel cost with the 2023 actual ($2.54/MMBtu). |
+| 4. Capacity factors | Inputs updated | Renewable zone distribution + vintage monthly ramp align modeled wind/solar siting and ramp-in with EIA-860 plant locations and COD dates. |
+
+**Findings:**
+
+- The gas price trajectory lacked historical 2023/2024 entries, so a
+  2023 calibration run could not anchor fuel cost to the realized
+  Henry Hub spot price.
+- Renewable capacity was parked in a single zone per technology, which
+  mis-distributed wind/solar siting relative to EIA-860 plant locations.
+- Modeled renewable capacity was static year-end; it ignored the
+  intra-year ramp-in from commercial-operation dates (ERCOT 2023 solar
+  grew 11.4 GW → 14.9 GW, 45% of additions in Q4).
+- The merit order omitted thermal cycling costs; coal and gas units
+  that cycle were dispatched as if cycling were free.
+- ERCOT West-Texas transfer limits used placeholder TTCs below the
+  2021 RTP stability assessment.
+- EIA-930 metered load was used directly as generation-side demand,
+  omitting the ~5.8% T&D loss gross-up.
+
+**Actions taken:**
+
+- Added EIA Henry Hub spot 2023 ($2.54) and 2024 ($2.19) historical
+  entries to all three `HENRY_HUB_TRAJECTORIES` paths.
+- Added `ScenarioConfig.td_loss_factor` (0.058, Tier 3); `load_demand`
+  grosses metered load up by `(1 + factor)`.
+- Replaced the single-zone renewable allocation with an EIA-860
+  plant-location distribution; added `ScenarioConfig.vintage_capacity_ramp`
+  (Tier 3) for the month-varying capacity ramp from COD dates.
+- Added nine Tier-3 thermal cycling cost adders (gas CC / coal / gas CT
+  by efficiency bin) and `apply_cycling_adders`, called after
+  `assemble_mc` in the dispatch pipeline.
+- Updated ERCOT North→West (3000→5500 MW) and West→Houston
+  (2500→3500 MW) TTCs to the 2021 RTP West Texas Export stability
+  assessment.
+
+---
+
 ### YYYY-MM-DD — &lt;ISO&gt; — &lt;scenario cache_key&gt;
 
 - **Benchmark:** &lt;source, year&gt;
