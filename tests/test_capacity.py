@@ -378,7 +378,7 @@ class TestComputeLCOE(unittest.TestCase):
         # Verify the exact split: only capex * (1 - itc) is annualized.
         costs = NEW_ENTRY_COSTS["solar"]
         crf = _capital_recovery_factor(
-            config.discount_rate, costs["lifetime_yr"]
+            config.real_discount_rate, costs["lifetime_yr"]
         )
         gen_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
         expected = (

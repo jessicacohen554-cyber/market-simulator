@@ -155,7 +155,7 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=REPO / "reports")
     parser.add_argument("--years", default="2026-2050")
     parser.add_argument("--discount-rate", type=float, default=None,
-                        help="Overrides ScenarioConfig.discount_rate.")
+                        help="Overrides ScenarioConfig.real_discount_rate.")
     parser.add_argument("--include-hourly", action="store_true",
                         help="Also write the (large) per-year hourly parquet.")
     args = parser.parse_args()
@@ -176,7 +176,7 @@ def main() -> None:
         config = ScenarioConfig.from_yaml(args.results_dir / "config.yaml")
     else:
         raise SystemExit(f"no config.yaml found for scenario {scenario_hash}")
-    discount_rate = args.discount_rate or config.discount_rate
+    discount_rate = args.discount_rate or config.real_discount_rate
     base_year = START_YEAR
 
     iso_config = get_iso_config(args.iso)

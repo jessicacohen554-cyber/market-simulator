@@ -17,6 +17,10 @@ class ScenarioConfig:
 
     Fields are organized into tiers (see ``TIER_TAGS``): structural
     settings, scenario levers, expert sensitivities, and calibration knobs.
+
+    All monetary parameters (fuel prices, carbon prices, VOLL, VOM, LCOE)
+    are in 2026 real USD anchored to January 1, 2026. See
+    constants.REAL_DOLLAR_BASE_YEAR.
     """
 
     # Tier 0 (structural)
@@ -52,7 +56,7 @@ class ScenarioConfig:
     # Tier 2 (expert/sensitivity)
     storage_rte_4hr: float = 0.85
     storage_rte_8hr: float = 0.80
-    discount_rate: float = 0.08
+    nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
@@ -80,8 +84,19 @@ class ScenarioConfig:
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
 
+    @property
+    def real_discount_rate(self) -> float:
+        """Real discount rate via Fisher equation: (1+nominal)/(1+inflation) - 1."""
+        from market_sim.config.constants import INFLATION_RATE
+        return (1.0 + self.nominal_discount_rate) / (1.0 + INFLATION_RATE) - 1.0
+
     def cache_key(self) -> str:
-        """Return a deterministic 16-char hash of the full config."""
+        """Return a deterministic 16-char hash of the full config.
+
+        Hashes the stored ``nominal_discount_rate`` field (``asdict`` covers
+        it). ``real_discount_rate`` is a derived property, deterministic given
+        ``INFLATION_RATE``, so it is not part of the hash.
+        """
         payload = json.dumps(asdict(self), sort_keys=True)
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
@@ -142,7 +157,7 @@ TIER_TAGS: dict[str, int] = {
     "offshore_wind_eligible_isos": 1,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
-    "discount_rate": 2,
+    "nominal_discount_rate": 2,
     "retirement_consecutive_years": 2,
     "retirement_years_coal": 2,
     "retirement_years_gas_ct": 2,
