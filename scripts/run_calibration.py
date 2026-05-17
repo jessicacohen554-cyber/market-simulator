@@ -14,15 +14,15 @@ Usage:
     python scripts/run_calibration.py --year 2023
     python scripts/run_calibration.py --year 2021 2022 2023 2024
     python scripts/run_calibration.py --year 2023 --hours 168
-    python scripts/run_calibration.py --year 2023 --ttc-nw 9000 --ttc-wh 3000
+    python scripts/run_calibration.py --year 2023 --ttc-wn 9000 --ttc-wsc 3000
 
 Options:
     --year         One or more calibration years to run.
     --iso          ISO to calibrate (default ERCOT).
     --hours        Dispatch horizon in hours (default 8760); use a small
                    value such as 168 for a quick smoke test.
-    --ttc-nw       Override the North<->West transfer capability (MW).
-    --ttc-wh       Override the West<->Houston transfer capability (MW).
+    --ttc-wn       Override the West<->North transfer capability (MW).
+    --ttc-wsc      Override the West<->South_Central transfer capability (MW).
 """
 
 from __future__ import annotations
@@ -89,9 +89,10 @@ _MWH_PER_TWH: float = 1.0e6
 _TONNES_PER_MT: float = 1.0e6
 
 # Zone-pair identifying each transfer link whose TTC the CLI can override.
+# Both legs of the West Texas Export interface are exposed for tuning.
 _TTC_LINK_ZONES: dict[str, frozenset[str]] = {
-    "ttc_nw": frozenset({"North", "West"}),
-    "ttc_wh": frozenset({"West", "Houston"}),
+    "ttc_wn": frozenset({"West", "North"}),
+    "ttc_wsc": frozenset({"West", "South_Central"}),
 }
 
 
@@ -165,7 +166,7 @@ def _apply_ttc_overrides(
     Args:
         iso_config: The ISO topology, used to map links to zone pairs.
         ttc: The base ``(n_links,)`` transfer-capability array.
-        overrides: ``{"ttc_nw": MW | None, "ttc_wh": MW | None}``.
+        overrides: ``{"ttc_wn": MW | None, "ttc_wsc": MW | None}``.
 
     Returns:
         A copy of ``ttc`` with each non-``None`` override applied.
@@ -411,12 +412,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Dispatch horizon in hours (default 8760; 168 for a quick test).",
     )
     parser.add_argument(
-        "--ttc-nw", type=float, default=None,
-        help="Override the North<->West transfer capability (MW).",
+        "--ttc-wn", type=float, default=None,
+        help="Override the West<->North transfer capability (MW).",
     )
     parser.add_argument(
-        "--ttc-wh", type=float, default=None,
-        help="Override the West<->Houston transfer capability (MW).",
+        "--ttc-wsc", type=float, default=None,
+        help="Override the West<->South_Central transfer capability (MW).",
     )
     return parser
 
@@ -430,7 +431,7 @@ def main(argv: list[str] | None = None) -> None:
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
     reference = _load_reference()
-    ttc_overrides = {"ttc_nw": args.ttc_nw, "ttc_wh": args.ttc_wh}
+    ttc_overrides = {"ttc_wn": args.ttc_wn, "ttc_wsc": args.ttc_wsc}
 
     for year in args.year:
         gas_price = _henry_hub_actual(reference, year)

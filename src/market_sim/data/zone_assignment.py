@@ -171,23 +171,39 @@ def _ercot_zone(
 ) -> str:
     """Return the ERCOT model zone for a plant location.
 
-    Houston-metro counties are checked first; the remaining zones follow
-    lat/lon boundaries (West, Houston, South, then North as the catch-all).
+    Zones are bounded by ERCOT's real congestion interfaces. Houston-metro
+    counties are checked first; the remaining zones follow lat/lon
+    boundaries — Panhandle and West behind the West Texas Export interface,
+    North and Houston as the load centers, South_Central (Austin/San
+    Antonio) and South (the coast and Rio Grande Valley) — with North as the
+    catch-all.
     """
     if fips_state == _TEXAS_FIPS and fips_county in HOUSTON_COUNTIES:
         return "Houston"
-    if lon is not None and lon < -100.5:
+    if lon is not None and lon < -99.5:
+        # West Texas Export interface: the Panhandle wind belt sits north of
+        # the CREZ belt / Permian behind its own stability-limited GTC.
+        if lat is not None and lat >= 33.5:
+            return "Panhandle"
         return "West"
-    if lon is not None and lat is not None and lon >= -96.0 and lat < 30.5:
-        return "Houston"
-    if lat is not None and lat < 30.5:
-        return "South"
     if (
         lat is not None
         and lon is not None
-        and 29.0 < lat < 31.0
-        and -99.5 < lon < -97.0
+        and lat >= 31.0
+        and -99.5 <= lon < -95.5
     ):
+        return "North"
+    # Houston-area fallback for east-coast plants without a FIPS county match.
+    if lat is not None and lon is not None and lon >= -96.0 and lat < 31.0:
+        return "Houston"
+    if (
+        lat is not None
+        and lon is not None
+        and 29.0 <= lat < 31.0
+        and -99.0 <= lon < -95.5
+    ):
+        return "South_Central"
+    if lat is not None and lat < 29.0:
         return "South"
     return "North"
 

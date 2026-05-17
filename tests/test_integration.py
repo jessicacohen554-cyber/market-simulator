@@ -96,13 +96,21 @@ class TestErcotIntegration(unittest.TestCase):
         total_demand = 10000 * daily_shape
         demand = np.array([z.load_share for z in iso.zones])[:, None] * total_demand[None, :]
 
-        wind_cf = np.zeros((4, T))
-        wind_cf[2] = 0.3 + 0.2 * np.sin(2 * np.pi * hours / (24 * 7))
-        wind_cap = np.array([0, 0, 3000, 0])
+        n_zones = len(zone_names)
+        west = zone_names.index("West")
+        south_central = zone_names.index("South_Central")
 
-        solar_cf = np.zeros((4, T))
-        solar_cf[1] = np.clip(0.7 * np.sin(np.pi * (hour_of_day - 6) / 12), 0, 1)
-        solar_cap = np.array([0, 2000, 0, 0])
+        wind_cf = np.zeros((n_zones, T))
+        wind_cf[west] = 0.3 + 0.2 * np.sin(2 * np.pi * hours / (24 * 7))
+        wind_cap = np.zeros(n_zones)
+        wind_cap[west] = 3000.0
+
+        solar_cf = np.zeros((n_zones, T))
+        solar_cf[south_central] = np.clip(
+            0.7 * np.sin(np.pi * (hour_of_day - 6) / 12), 0, 1
+        )
+        solar_cap = np.zeros(n_zones)
+        solar_cap[south_central] = 2000.0
 
         result = solve_dispatch(
             fleet,
@@ -177,7 +185,7 @@ class TestFullYearPerformance(unittest.TestCase):
         units = [
             StorageUnit(
                 unit_id=f"STO{i}",
-                zone=zone_names[i % 4],
+                zone=zone_names[i % len(zone_names)],
                 tech_name="li_ion_4hr",
                 power_cap_mw=100.0,
                 energy_cap_mwh=400.0,
@@ -197,13 +205,21 @@ class TestFullYearPerformance(unittest.TestCase):
         total = 12000 * daily
         demand = np.array([z.load_share for z in iso.zones])[:, None] * total[None, :]
 
-        wind_cf = np.zeros((4, T))
-        wind_cf[2] = 0.35
-        wind_cap = np.array([0, 0, 2000, 0])
+        n_zones = len(zone_names)
+        west = zone_names.index("West")
+        south_central = zone_names.index("South_Central")
 
-        solar_cf = np.zeros((4, T))
-        solar_cf[1] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
-        solar_cap = np.array([0, 1500, 0, 0])
+        wind_cf = np.zeros((n_zones, T))
+        wind_cf[west] = 0.35
+        wind_cap = np.zeros(n_zones)
+        wind_cap[west] = 2000.0
+
+        solar_cf = np.zeros((n_zones, T))
+        solar_cf[south_central] = np.clip(
+            0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1
+        )
+        solar_cap = np.zeros(n_zones)
+        solar_cap[south_central] = 1500.0
 
         result = solve_dispatch(
             fleet,

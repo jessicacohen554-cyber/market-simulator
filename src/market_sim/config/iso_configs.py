@@ -81,29 +81,48 @@ class ISOConfig(BaseModel):
 
 
 def _ercot_config() -> ISOConfig:
-    """Build the ERCOT topology configuration."""
+    """Build the ERCOT topology configuration.
+
+    The topology is defined by ERCOT's real congestion interfaces rather
+    than by settlement pricing areas, so the West and Panhandle wind
+    exporters sit behind explicit stability limits and can congest. Load
+    shares are approximated from each zone's thermal generation as a proxy
+    for demand; ERCOT weather-zone load data (NP6-345-CD) would refine them.
+    """
     zones = [
-        Zone(name="North", iso="ERCOT", load_share=0.38),
-        Zone(name="South", iso="ERCOT", load_share=0.20),
-        Zone(name="West", iso="ERCOT", load_share=0.08),
-        Zone(name="Houston", iso="ERCOT", load_share=0.34),
+        Zone(name="West", iso="ERCOT", load_share=0.04),
+        Zone(name="Panhandle", iso="ERCOT", load_share=0.04),
+        Zone(name="North", iso="ERCOT", load_share=0.30),
+        Zone(name="Houston", iso="ERCOT", load_share=0.28),
+        Zone(name="South_Central", iso="ERCOT", load_share=0.20),
+        Zone(name="South", iso="ERCOT", load_share=0.14),
     ]
-    # ERCOT zonal transfer capabilities. The North-West and West-Houston
-    # links are set to the ERCOT 2021 Regional Transmission Plan "West Texas
-    # Export Stability Assessment" (ROS July 2020, RPG Sep 2021), which puts
-    # the West Texas export stability limit at 11,016 MW. These are
-    # stability-limited values; ERCOT applies a ~90% reliability margin
-    # operationally. A future calibration sweep will tune the exact values.
-    # Source: ERCOT 2021 RTP, Long-Term West Texas Export Study Update.
-    # URL: https://www.ercot.com/files/docs/2021/09/15/RPG-09-2021-Long-Term_West_Texas_Export_Study_Update.pdf
-    # TODO: verify the remaining TTCs (N-S, N-H, S-H, S-W) from ERCOT CDR.
+    # ERCOT zonal transfer capabilities, defined at the major congestion
+    # interfaces. The West export links (West->North + West->South_Central)
+    # total ~11,000 MW, matching the ERCOT 2021 Regional Transmission Plan
+    # "West Texas Export Stability Assessment" limit of 11,016 MW. The
+    # Panhandle->North link (~4,000 MW) matches the WSCR-based GTC limits
+    # from the ERCOT 2019 Panhandle Regional Stability Study (~3,600-4,200 MW
+    # with Stage 1+2 upgrades). Remaining TTCs are estimates from the ERCOT
+    # 2022 Report on Existing and Potential Electric System Constraints and
+    # Needs (top-10 congestion interfaces with $ congestion rent). These are
+    # Tier 3 calibration parameters and will be tuned during calibration.
+    # Sources: ERCOT 2021 RTP Long-Term West Texas Export Study Update;
+    # ERCOT 2019 Panhandle Regional Stability Study; ERCOT 2022 Constraints
+    # and Needs Report; ERCOT Power Operations Bulletin 1138.
     links = [
-        TransferLink(from_zone="North", to_zone="South", ttc_mw=5000.0),
-        TransferLink(from_zone="North", to_zone="West", ttc_mw=5500.0),
+        TransferLink(from_zone="West", to_zone="North", ttc_mw=8000.0),
+        TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=3000.0),
+        TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=4000.0),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
-        TransferLink(from_zone="South", to_zone="Houston", ttc_mw=4000.0),
-        TransferLink(from_zone="South", to_zone="West", ttc_mw=2000.0),
-        TransferLink(from_zone="West", to_zone="Houston", ttc_mw=3500.0),
+        TransferLink(from_zone="North", to_zone="South_Central", ttc_mw=5000.0),
+        TransferLink(
+            from_zone="South_Central", to_zone="South", ttc_mw=3000.0
+        ),
+        TransferLink(
+            from_zone="South_Central", to_zone="Houston", ttc_mw=4000.0
+        ),
+        TransferLink(from_zone="South", to_zone="Houston", ttc_mw=2000.0),
     ]
     # ERCOT VOLL: $5,000/MWh — matches the day-ahead system-wide offer cap.
     # Post-RTC+B (Dec 5, 2025): DA SWCAP remains $5,000; RT SWCAP is $2,000.
