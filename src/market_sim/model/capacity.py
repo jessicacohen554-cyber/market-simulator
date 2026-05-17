@@ -34,6 +34,7 @@ the mechanisms into one year-step.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -527,6 +528,15 @@ class CumulativeDeployment:
         """Return cumulative GW for a technology, or None if not tracked."""
         return self.capacities.get(tech)
 
+    def add(self, tech: str, gw: float) -> None:
+        """Add deployed GW to a technology's cumulative total.
+
+        Used for off-cycle deployment that does not flow through
+        :meth:`advance_year` -- notably CCS retrofits, which expand the
+        global capture-equipment experience base just like a new build.
+        """
+        self.capacities[tech] = self.capacities.get(tech, 0.0) + gw
+
 
 def _merge_renewable_additions(
     target: dict[str, dict[str, float]],
@@ -945,6 +955,36 @@ def apply_economic_new_entry(
     return new_fleet, renewable_additions
 
 
+def _adjust_retrofit_capex(
+    base_capex_kw: float, cumulative_gw: float | None
+) -> float:
+    """Apply Wright's Law to CCS retrofit capex.
+
+    Uses the same learning rate and reference GW as new-build CCS --
+    the capture equipment manufacturing base is shared.
+
+    Args:
+        base_capex_kw: Base retrofit capex in $/kW (from config).
+        cumulative_gw: Current cumulative global CCS deployment in GW.
+
+    Returns:
+        Adjusted retrofit capex in $/kW.
+    """
+    if cumulative_gw is None or cumulative_gw <= 0:
+        return base_capex_kw
+
+    ccs_params = NEW_ENTRY_COSTS.get("gas_cc_ccs", {})
+    lr = ccs_params.get("learning_rate", 0.10)
+    ref_gw = WRIGHT_REFERENCE_GW.get("gas_cc_ccs", 2.0)
+
+    if cumulative_gw <= ref_gw:
+        return base_capex_kw
+
+    exponent = -math.log2(1.0 - lr)
+    ratio = cumulative_gw / ref_gw
+    return base_capex_kw * (ratio ** (-exponent))
+
+
 def apply_ccs_retrofit(
     fleet: list[Generator],
     prices: np.ndarray,
@@ -954,6 +994,7 @@ def apply_ccs_retrofit(
     gas_price_per_mmbtu: float,
     carbon_price: float,
     eac_price_ccs: float = 0.0,
+    cumulative: CumulativeDeployment | None = None,
 ) -> tuple[list[Generator], list[dict]]:
     """Screen existing gas CC units for CCS retrofit economics.
 
@@ -993,6 +1034,10 @@ def apply_ccs_retrofit(
         gas_price_per_mmbtu: Resolved gas price for this year.
         carbon_price: Resolved carbon price for this year ($/ton CO2).
         eac_price_ccs: EAC price for CCS resources ($/MWh).
+        cumulative: Global cumulative deployment tracker. When supplied,
+            the retrofit capex follows the shared CCS Wright's-Law learning
+            curve, and the retrofitted GW is added back to the tracker --
+            a retrofit grows the capture-equipment experience base.
 
     Returns:
         Tuple ``(updated_fleet, retrofit_log)`` where ``retrofit_log`` is a
@@ -1003,7 +1048,14 @@ def apply_ccs_retrofit(
 
     hours = float(HOURS_PER_YEAR)
     cf = _RETROFIT_SCREEN_CF
-    retrofit_capex_per_mw = config.ccs_retrofit_capex_kw * 1000.0
+    # The capture island is the same equipment whether bolted onto an
+    # existing plant or built new, so retrofit capex shares the new-build
+    # CCS learning curve.
+    adjusted_capex_kw = _adjust_retrofit_capex(
+        config.ccs_retrofit_capex_kw,
+        cumulative.get("gas_cc_ccs") if cumulative else None,
+    )
+    retrofit_capex_per_mw = adjusted_capex_kw * 1000.0
 
     candidates: list[tuple[float, Generator, dict]] = []
     for gen in fleet:
@@ -1072,6 +1124,11 @@ def apply_ccs_retrofit(
         gen.fuel_type = "gas_cc_ccs"
         retrofitted_mw += gen.pmax_mw
         retrofit_log.append(log_entry)
+
+    # A retrofit adds to the global CCS manufacturing experience base just
+    # like a new build, so feed the retrofitted GW back into the tracker.
+    if retrofitted_mw > 0.0 and cumulative is not None:
+        cumulative.add("gas_cc_ccs", retrofitted_mw / 1000.0)
 
     return fleet, retrofit_log
 
@@ -1193,6 +1250,7 @@ def evolve_fleet(
         gas_price_per_mmbtu=gas_price_per_mmbtu,
         carbon_price=carbon_price,
         eac_price_ccs=eac_price_ccs,
+        cumulative=cumulative,
     )
 
     # 5. Economic new entry (needs a price signal). Clean technologies see
