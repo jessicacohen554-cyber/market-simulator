@@ -231,6 +231,12 @@ COAL_PRICE_BASE: dict[str, float] = {
     "CAISO": 2.5,  # EIA AEO 2024 — delivered coal price
 }
 
+# Annual real escalation rate for coal prices.
+# Reflects mine closures, rising rail transport costs, and declining
+# domestic demand reducing economies of scale.
+# Source: EIA AEO 2024 coal supply module — ~1% real escalation.
+COAL_PRICE_ESCALATION: float = 0.01
+
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
@@ -305,13 +311,21 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     },
 }
 
-# Storage power capacity (MW) by deployment pace, for the base year (2026).
+# Storage power capacity (MW) for the base year (2026).
 # Subsequent years grow via economics-based new entry, not this constant.
-# Source: NREL ATB 2024 mid-case projections for ERCOT-scale grids.
-STORAGE_BASE_FLEET_MW: dict[str, float] = {
-    "low": 3_000.0,
-    "mid": 8_000.0,
-    "high": 20_000.0,
+# Source: ERCOT Monthly Dec 2025 — battery capacity ~17 GW.
+# CAISO TPP 2024 — ~8 GW operational + under construction.
+STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "low": 12_000.0,
+        "mid": 17_000.0,
+        "high": 25_000.0,
+    },
+    "CAISO": {
+        "low": 6_000.0,
+        "mid": 8_000.0,
+        "high": 12_000.0,
+    },
 }
 
 # Ceiling on total deployed storage power (MW) per ISO, capping cumulative
