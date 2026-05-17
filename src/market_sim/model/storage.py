@@ -264,7 +264,7 @@ def compute_storage_annual_cost(
     if year <= config.ira_expiry_year:
         capex_per_kw *= 1.0 - config.ira_itc_storage
     crf = _capital_recovery_factor(
-        config.discount_rate, _STORAGE_ECONOMIC_LIFE_YR
+        config.real_discount_rate, _STORAGE_ECONOMIC_LIFE_YR
     )
     annual_cost_per_kw = capex_per_kw * crf + float(tech["fom_per_kw_yr"])
     return annual_cost_per_kw * 1000.0

@@ -367,7 +367,7 @@ def _emerging_lcoe(
     """Return the levelized cost of energy for an emerging technology.
 
     Capital is annualized with a capital recovery factor from
-    ``config.discount_rate`` and the technology lifetime, spread over
+    ``config.real_discount_rate`` and the technology lifetime, spread over
     annual generation at the screening capacity factor. Variable cost is
     technology-specific:
 
@@ -398,7 +398,7 @@ def _emerging_lcoe(
         key = "h2_ct" if tech == "hydrogen_ct" else "h2_ccgt"
         params = HYDROGEN_TURBINE_PARAMS[key]
         crf = _capital_recovery_factor(
-            config.discount_rate, params["lifetime_yr"]
+            config.real_discount_rate, params["lifetime_yr"]
         )
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         h2_cost = compute_h2_fuel_cost(year, config, iso)
@@ -409,7 +409,7 @@ def _emerging_lcoe(
     if tech == "gas_cc_ccs":
         ccs = CCUS_PARAMS["gas_cc_ccs_90"]
         crf = _capital_recovery_factor(
-            config.discount_rate, ccs["lifetime_yr"]
+            config.real_discount_rate, ccs["lifetime_yr"]
         )
         fixed = ccs["capex_kw"] * crf + ccs["fom_kw_yr"]
         base_hr = min(HEAT_RATE_BINS["gas_cc"].values())
@@ -428,7 +428,7 @@ def _emerging_lcoe(
     if tech == "geothermal":
         egs = GEOTHERMAL_PARAMS["egs"]
         crf = _capital_recovery_factor(
-            config.discount_rate, egs["lifetime_yr"]
+            config.real_discount_rate, egs["lifetime_yr"]
         )
         fixed = egs["capex_kw"] * crf + egs["fom_kw_yr"]
         lcoe = fixed / annual_mwh_per_kw + egs["vom"]
@@ -437,7 +437,7 @@ def _emerging_lcoe(
     if tech == "offshore_wind":
         params = _offshore_wind_params(iso, config)
         crf = _capital_recovery_factor(
-            config.discount_rate, params["lifetime_yr"]
+            config.real_discount_rate, params["lifetime_yr"]
         )
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         return fixed / annual_mwh_per_kw
@@ -543,7 +543,7 @@ def compute_lcoe(
     """Return the levelized cost of energy for a candidate technology.
 
     Capital cost is annualized with a capital recovery factor derived from
-    ``config.discount_rate`` and the technology lifetime, optionally
+    ``config.real_discount_rate`` and the technology lifetime, optionally
     discounted by a Wright's-Law learning curve when ``cumulative_gw`` is
     supplied. Fixed O&M is added and the total is spread over expected
     annual generation.
@@ -577,7 +577,7 @@ def compute_lcoe(
     if year <= config.ira_expiry_year and tech_type == "solar":
         capex_per_kw *= 1.0 - config.ira_itc_solar
 
-    crf = _capital_recovery_factor(config.discount_rate, costs["lifetime_yr"])
+    crf = _capital_recovery_factor(config.real_discount_rate, costs["lifetime_yr"])
     annual_cost_per_kw = capex_per_kw * crf + costs["fom_per_kw_yr"]
     # Annual generation per kW of capacity, expressed in MWh.
     annual_mwh_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
