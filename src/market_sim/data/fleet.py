@@ -36,6 +36,17 @@ EIA_860_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860
 # markets, produced by ``scripts/process_eia860.py`` from the raw release.
 EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
 
+# Directory for derived, inspectable fleet outputs (the binned-fleet cache).
+PROCESSED_DIR: Path = Path(__file__).parents[3] / "inputs" / "processed"
+
+# Columns of the cached plant-level binned-fleet parquet, one row per
+# physical generator with its loader-assigned efficiency bin and attributes.
+BINNED_FLEET_COLUMNS: list[str] = [
+    "plant_id", "plant_name", "fuel_type", "efficiency_bin", "zone",
+    "pmax_mw", "pmin_mw", "heat_rate", "vom", "emission_rate_co2",
+    "nox_rate", "eford", "online_year", "retirement_year",
+]
+
 # EIA-930 balancing-authority code → ISO name, for the seven wholesale
 # markets that have EIA-930 demand data.
 BA_CODE_TO_ISO: dict[str, str] = {
@@ -609,6 +620,99 @@ def _load_fleet_from_parquet(
     return generators
 
 
+def _binned_fleet_frame(generators: list[Generator]) -> pd.DataFrame:
+    """Return the plant-level binned fleet as a DataFrame.
+
+    One row per physical generator, exposing the efficiency bin and the
+    cost/outage attributes the loader assigned from its fuel and vintage.
+    The ``plant_id`` is recovered from each unit's ``plant_id_generatorid``
+    identifier.
+    """
+    rows = [
+        {
+            "plant_id": g.unit_id.split("_", 1)[0],
+            "plant_name": g.name,
+            "fuel_type": g.fuel_type,
+            "efficiency_bin": g.efficiency_bin,
+            "zone": g.zone,
+            "pmax_mw": g.pmax_mw,
+            "pmin_mw": g.pmin_mw,
+            "heat_rate": g.heat_rate,
+            "vom": g.vom,
+            "emission_rate_co2": g.emission_rate_co2,
+            "nox_rate": g.nox_rate,
+            "eford": g.eford,
+            "online_year": g.online_year,
+            "retirement_year": g.retirement_year,
+        }
+        for g in generators
+    ]
+    df = pd.DataFrame(rows, columns=BINNED_FLEET_COLUMNS)
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce").astype(
+        "Int64"
+    )
+    df["retirement_year"] = df["retirement_year"].astype("Int64")
+    return df
+
+
+def _cache_binned_fleet(
+    iso: str, generators: list[Generator], source: Path | None
+) -> None:
+    """Write the binned-fleet parquet for ``iso``, skipping a current cache.
+
+    The parquet is regenerated only when no cache exists or its source file
+    is newer than the cached copy. It is a side output for inspection and
+    traceability -- never an input to dispatch.
+    """
+    cache_path = PROCESSED_DIR / f"{iso.lower()}_fleet_binned.parquet"
+    if (
+        cache_path.exists()
+        and source is not None
+        and cache_path.stat().st_mtime >= source.stat().st_mtime
+    ):
+        logger.info(
+            "Binned fleet cache for %s is up to date — loaded from %s",
+            iso,
+            cache_path.name,
+        )
+        return
+
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    _binned_fleet_frame(generators).to_parquet(cache_path, index=False)
+    logger.info(
+        "Rebuilt binned fleet cache for %s — %d plants → %s",
+        iso,
+        len(generators),
+        cache_path.name,
+    )
+
+
+def load_binned_fleet(iso: str) -> pd.DataFrame:
+    """Return the cached plant-level binned fleet for an ISO.
+
+    Reads ``inputs/processed/{iso}_fleet_binned.parquet`` written by
+    :func:`load_fleet_from_csv`, exposing the efficiency-bin assignment of
+    every physical generator for analysis without re-parsing the raw
+    EIA-860 data.
+
+    Args:
+        iso: ISO identifier, e.g. ``"ERCOT"``.
+
+    Returns:
+        The binned fleet as a DataFrame with :data:`BINNED_FLEET_COLUMNS`.
+
+    Raises:
+        FileNotFoundError: If the cache has not been built yet (call
+            :func:`load_fleet_from_csv` for the ISO first).
+    """
+    cache_path = PROCESSED_DIR / f"{iso.lower()}_fleet_binned.parquet"
+    if not cache_path.exists():
+        raise FileNotFoundError(
+            f"No binned fleet cache for {iso}; run load_fleet_from_csv first"
+        )
+    return pd.read_parquet(cache_path)
+
+
 def load_fleet_from_csv(
     iso: str,
     iso_config: ISOConfig | None = None,
@@ -624,6 +728,10 @@ def load_fleet_from_csv(
     3. a deterministic synthetic fleet, as a last-resort fallback.
 
     Wind, solar and hydro are skipped (handled by ``renewables.py``).
+
+    As a side output, the plant-level binned fleet is cached to
+    ``inputs/processed/{iso}_fleet_binned.parquet`` for later inspection
+    (see :func:`load_binned_fleet`); it is not consumed by dispatch.
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
@@ -647,24 +755,32 @@ def load_fleet_from_csv(
             iso_config = None
 
     csv_path = data_dir / f"generators_{iso.lower()}.csv"
+    source: Path | None
     if csv_path.exists():
         df = _normalize_columns(pd.read_csv(csv_path))
         generators = _rows_to_generators(df, iso, iso_config)
+        source = csv_path
         logger.info(
             "Loaded %s fleet from EIA-860 CSV (%d generators)",
             iso,
             len(generators),
         )
-        return generators
+    else:
+        from_parquet = _load_fleet_from_parquet(
+            data_dir / EIA_860_PARQUET_NAME, iso, iso_config
+        )
+        if from_parquet is not None:
+            generators = from_parquet
+            source = data_dir / EIA_860_PARQUET_NAME
+        else:
+            logger.warning(
+                "EIA-860 not found — using synthetic fleet for %s", iso
+            )
+            generators = build_synthetic_fleet(iso, iso_config)
+            source = None
 
-    from_parquet = _load_fleet_from_parquet(
-        data_dir / EIA_860_PARQUET_NAME, iso, iso_config
-    )
-    if from_parquet is not None:
-        return from_parquet
-
-    logger.warning("EIA-860 not found — using synthetic fleet for %s", iso)
-    return build_synthetic_fleet(iso, iso_config)
+    _cache_binned_fleet(iso, generators, source)
+    return generators
 
 
 # ---------------------------------------------------------------------------
