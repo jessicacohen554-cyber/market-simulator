@@ -162,6 +162,40 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df["status"] = df["status"].astype("string").str.strip()
 
+    # Join plant-level heat rates from eGRID PLNT23 (BTU/kWh). The EIA-860
+    # Generator_Y Operable sheet carries no heat-rate column, so eGRID
+    # PLHTRT -- derived from CEMS fuel consumption -- is the source. It is
+    # plant-level, so every generator at a plant inherits the same value.
+    egrid_path = (
+        Path(__file__).parents[1] / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
+    )
+    if egrid_path.exists():
+        egrid = pd.read_excel(
+            egrid_path, sheet_name="PLNT23", skiprows=1, usecols=["ORISPL", "PLHTRT"]
+        )
+        hr = pd.to_numeric(egrid["PLHTRT"], errors="coerce")
+        # Drop physically implausible plant heat rates -- negative or
+        # absurdly large values appear for plants with near-zero net
+        # generation. Where heat rate is missing the loader falls back to
+        # the vintage bin centers in HEAT_RATE_BINS.
+        egrid["PLHTRT"] = hr.where((hr >= 3_000) & (hr <= 30_000))
+        egrid_hr = (
+            egrid.dropna(subset=["ORISPL", "PLHTRT"])
+            .drop_duplicates("ORISPL")
+            .set_index("ORISPL")["PLHTRT"]
+        )
+        # Convert BTU/kWh -> MMBtu/MWh (divide by 1000).
+        df["heat_rate"] = df["plant_id"].map(egrid_hr) / 1000.0
+        matched = int(df["heat_rate"].notna().sum())
+        logger.info(
+            "  joined eGRID heat rates: %d of %d generators matched",
+            matched,
+            len(df),
+        )
+    else:
+        logger.warning("eGRID workbook not found at %s; heat_rate left blank", egrid_path)
+        df["heat_rate"] = pd.NA
+
     return df[EIA_860_CSV_COLUMNS].reset_index(drop=True)
 
 
