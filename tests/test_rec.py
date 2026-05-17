@@ -73,7 +73,7 @@ class TestWindSolarStacking(unittest.TestCase):
     def test_wind_rec_stacks_with_ira_ptc(self):
         # IRA PTC $26 + exogenous wind REC $8 -> total wind_mc = -$34.
         config = ScenarioConfig(ira_ptc_wind=26.0, rec_price_wind=8.0)
-        wind_mc, solar_mc = compute_dispatch_credits(config, 2030)
+        wind_mc, solar_mc = compute_dispatch_credits(config, 2027)
         wind_rec, solar_rec, _ = compute_rec_dispatch_credits(config)
         wind_mc -= wind_rec
         solar_mc -= solar_rec
