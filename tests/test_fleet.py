@@ -91,6 +91,60 @@ class TestFleetArrays(unittest.TestCase):
         self.assertEqual(self.fleet.unit_ids, ["G1", "G2", "G3"])
 
 
+class TestNuclearAvailability(unittest.TestCase):
+    """Tests for nuclear seasonal availability shaping."""
+
+    def _nuclear_gen(self) -> Generator:
+        return Generator(
+            unit_id="nuc1", name="Test Nuclear", zone="North",
+            fuel_type="nuclear", pmax_mw=1000.0, pmin_mw=900.0,
+            heat_rate=0.0, vom=2.5, emission_rate_co2=0.0,
+            nox_rate=0.0, eford=0.03,
+        )
+
+    def test_nuclear_availability_seasonal(self):
+        """Nuclear availability reflects monthly CF factors, not flat EFORD."""
+        fa = generators_to_fleet_arrays(
+            [self._nuclear_gen()], ["North"], iso="ERCOT"
+        )
+
+        # Availability should NOT be flat 0.97.
+        self.assertGreater(
+            fa.availability[0].std(), 0.001,
+            "Nuclear availability should vary by month",
+        )
+
+        # Annual average should be ~0.95.
+        annual_avg = fa.availability[0].mean()
+        self.assertTrue(
+            0.94 < annual_avg < 0.96,
+            f"Nuclear avg availability {annual_avg:.3f} outside 0.94-0.96",
+        )
+
+        # Spring months should have lower availability than summer.
+        mar_hours = fa.availability[0, 1416:2160]
+        jul_hours = fa.availability[0, 4344:5088]
+        self.assertLess(
+            mar_hours.mean(), jul_hours.mean(),
+            "Spring should have lower availability than summer",
+        )
+
+    def test_no_iso_keeps_flat_availability(self):
+        """Without an ISO, nuclear availability stays flat 1 - eford."""
+        gen = self._nuclear_gen()
+        fa = generators_to_fleet_arrays([gen], ["North"])
+        np.testing.assert_allclose(fa.availability[0], 1.0 - gen.eford)
+
+    def test_non_nuclear_unaffected_by_iso(self):
+        """Non-nuclear units keep flat availability even with an ISO."""
+        coal = Generator(
+            unit_id="c1", name="Coal", zone="North", fuel_type="coal",
+            pmax_mw=500.0, heat_rate=10.0, eford=0.08,
+        )
+        fa = generators_to_fleet_arrays([coal], ["North"], iso="ERCOT")
+        np.testing.assert_allclose(fa.availability[0], 1.0 - coal.eford)
+
+
 class TestAssembleMC(unittest.TestCase):
     """Tests for the vectorized marginal cost assembly."""
 
