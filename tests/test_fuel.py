@@ -6,6 +6,7 @@ from market_sim.config.constants import (
     COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
+    START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, Generator, generators_to_fleet_arrays
@@ -56,6 +57,20 @@ def _sample_fleet(hours: int = _HOURS):
             zone="south",
             fuel_type="wind",
             pmax_mw=300.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
+
+
+def _coal_fleet(hours: int = _HOURS):
+    """Return a coal-only fleet (one coal steam generator)."""
+    generators = [
+        Generator(
+            unit_id="COAL",
+            name="Coal Steam",
+            zone="north",
+            fuel_type="coal",
+            pmax_mw=600.0,
         ),
     ]
     return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
@@ -156,12 +171,24 @@ def test_non_gas_zero_fuel():
     assert np.all(prices[wind_mask] == 0.0)
 
 
-def test_coal_price_flat():
-    """Coal generators get COAL_PRICE_BASE, no trajectory."""
+def test_coal_price_escalated_to_year():
+    """Coal generators get COAL_PRICE_BASE escalated to the resolved year."""
     fleet = _sample_fleet()
     prices = resolve_fuel_prices(_config(), fleet, 2030)
     coal_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["coal"]
-    np.testing.assert_allclose(prices[coal_mask], COAL_PRICE_BASE["ERCOT"])
+    expected = COAL_PRICE_BASE["ERCOT"] * 1.01 ** (2030 - START_YEAR)
+    np.testing.assert_allclose(prices[coal_mask], expected)
+
+
+def test_coal_price_escalates():
+    """Coal price escalates 1%/yr, compounding from the start year."""
+    config = _config()
+    fleet = _coal_fleet()
+    prices_2026 = resolve_fuel_prices(config, fleet, 2026)
+    prices_2036 = resolve_fuel_prices(config, fleet, 2036)
+    expected_ratio = (1.01) ** 10
+    actual_ratio = prices_2036[0, 0] / prices_2026[0, 0]
+    assert abs(actual_ratio - expected_ratio) < 1e-4
 
 
 def test_fuel_price_shape_is_n_gen_by_hours():
