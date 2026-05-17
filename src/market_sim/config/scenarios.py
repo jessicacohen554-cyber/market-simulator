@@ -40,6 +40,14 @@ class ScenarioConfig:
     rec_price_gas_cc: float = 0.0  # $/MWh, for CCS-equipped or clean H2 CC
     rec_price_storage: float = 0.0  # $/MWh on discharge
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
+    electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
+    h2_available_year: int = 2032  # year H2 turbines enter the candidate pool
+    ccs_available_year: int = 2030  # year CCUS enters the candidate pool
+    egs_available_year: int = 2030  # year EGS enters the candidate pool
+    offshore_wind_available_year: int = 2030
+    offshore_wind_eligible_isos: list[str] = field(
+        default_factory=lambda: ["CAISO"]
+    )
 
     # Tier 2 (expert/sensitivity)
     storage_rte_4hr: float = 0.85
@@ -62,6 +70,11 @@ class ScenarioConfig:
     ira_itc_solar: float = 0.30  # 30%
     ira_itc_storage: float = 0.30
     ira_expiry_year: int = 2035
+    electrolyzer_efficiency_override: float | None = None  # overrides lookup
+    ccs_capture_rate: float = 0.90  # fraction of CO2 captured by CCUS
+    co2_transport_storage_cost: float = 15.0  # $/tCO2 for captured CO2
+    egs_pmin_fraction: float = 0.20  # EGS turn-down floor (fraction of rated)
+    offshore_wind_cf_override: float | None = None  # overrides OFFSHORE_WIND_PARAMS
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -121,6 +134,12 @@ TIER_TAGS: dict[str, int] = {
     "rec_price_gas_cc": 1,
     "rec_price_storage": 1,
     "rps_enabled": 1,
+    "electrolyzer_type": 1,
+    "h2_available_year": 1,
+    "ccs_available_year": 1,
+    "egs_available_year": 1,
+    "offshore_wind_available_year": 1,
+    "offshore_wind_eligible_isos": 1,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
     "discount_rate": 2,
@@ -139,6 +158,11 @@ TIER_TAGS: dict[str, int] = {
     "ira_itc_solar": 2,
     "ira_itc_storage": 2,
     "ira_expiry_year": 2,
+    "electrolyzer_efficiency_override": 2,
+    "ccs_capture_rate": 2,
+    "co2_transport_storage_cost": 2,
+    "egs_pmin_fraction": 2,
+    "offshore_wind_cf_override": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
 }
