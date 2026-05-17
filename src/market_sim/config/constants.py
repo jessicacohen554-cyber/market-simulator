@@ -54,11 +54,11 @@ CO2_RATES: dict[str, dict[str, float]] = {
 }
 
 # NOx emission rates (tons NOx/MWh) by fuel class.
-# Source: EPA CEMS 2022.
+# Source: EPA CAMPD (CEMS) 2023 annual rollup.
 NOX_RATES: dict[str, float] = {
-    "gas_cc": 0.0001,  # EPA CEMS 2022 — combined-cycle gas units
-    "gas_ct": 0.0003,  # EPA CEMS 2022 — combustion turbine gas units
-    "coal": 0.0015,    # EPA CEMS 2022 — coal steam units
+    "gas_cc": 0.00008,  # was 0.0001. EPA CEMS 2023 — SCR-equipped fleet average.
+    "gas_ct": 0.00025,  # was 0.0003. EPA CEMS 2023 — mix of SCR/non-SCR CTs.
+    "coal": 0.0012,     # was 0.0015. EPA CEMS 2023 — post-CSAPR compliance.
 }
 
 # All monetary values in this model are in constant 2026 real USD.
@@ -84,10 +84,10 @@ VOM: dict[str, float] = {
 }
 
 # Gas-fired generation availability factors by ISO.
-# Source: NERC GADS.
+# Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
-    "ERCOT": 0.83,  # NERC GADS — ERCOT gas fleet availability
-    "CAISO": 0.88,  # NERC GADS — CAISO gas fleet availability
+    "ERCOT": 0.85,  # was 0.83. NERC GADS 2019-2023, ERCOT fleet.
+    "CAISO": 0.89,  # was 0.88. NERC GADS 2019-2023, CAISO fleet.
 }
 
 # Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO.
@@ -247,18 +247,18 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
         "duration_hr": 4,
         "rte": 0.86,
         "cycles": 5000,
-        "capex_per_kw": 1380.0,
-        "capex_per_kwh": 345.0,
-        "fom_per_kw_yr": 34.5,
+        "capex_per_kw": 1140.0,    # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
+        "capex_per_kwh": 285.0,    # was 345. LFP pack costs ~$100/kWh + BOS.
+        "fom_per_kw_yr": 30.0,     # was 34.5.
         "learning_rate": 0.18,
     },
     "li_ion_8hr": {  # NREL ATB 2024 — 8-hour lithium-ion battery
         "duration_hr": 8,
         "rte": 0.86,
         "cycles": 5000,
-        "capex_per_kw": 2760.0,
-        "capex_per_kwh": 345.0,
-        "fom_per_kw_yr": 55.2,
+        "capex_per_kw": 2280.0,    # was 2760. $285/kWh × 8hr.
+        "capex_per_kwh": 285.0,    # was 345.
+        "fom_per_kw_yr": 48.0,     # was 55.2.
         "learning_rate": 0.18,
     },
     "iron_air": {  # DOE LDES Liftoff — 100-hour iron-air battery
@@ -277,9 +277,9 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
         "duration_hr": 12,
         "rte": 0.78,            # lower RTE at longer duration. NREL ATB 2024
         "cycles": 4000,
-        "capex_per_kw": 3560.0,  # 280 $/kWh × 12 h + 200 $/kW. NREL ATB 2024
-        "capex_per_kwh": 280.0,
-        "fom_per_kw_yr": 12.0,
+        "capex_per_kw": 3100.0,  # was 3560. $240/kWh × 12hr + $220/kW.
+        "capex_per_kwh": 240.0,  # was 280.
+        "fom_per_kw_yr": 10.0,   # was 12.0.
         "learning_rate": 0.15,   # BNEF lithium-ion learning curve 2024
         "lifetime_yr": 20,
     },
@@ -526,27 +526,27 @@ OFFSHORE_WIND_SMOOTHING_HOURS: int = 6  # rolling-mean window — ocean fetch re
 OFFSHORE_WIND_MIN_CF: float = 0.08      # minimum hourly CF — offshore rarely drops to zero
 
 # Wright's Law reference cumulative installed capacity (GW global).
-# Source: IRENA 2024, IEA WEO 2024, IAEA PRIS 2024, DOE LDES Liftoff.
+# Source: IRENA 2025, IEA WEO 2025, IAEA PRIS 2025, BNEF 2025, DOE LDES.
 WRIGHT_REFERENCE_GW: dict[str, float] = {
-    "wind": 1020.0,    # IRENA 2024 — global installed onshore + offshore wind
-    "solar": 1420.0,   # IRENA 2024 — global installed solar PV
-    "li_ion": 90.0,    # IRENA 2024 — global installed li-ion grid storage
-    "gas_cc": 1200.0,  # IEA WEO 2024 — global installed gas combined-cycle
-    "nuclear": 440.0,  # IAEA PRIS 2024 — global installed nuclear
-    "iron_air": 0.5,   # DOE LDES Liftoff — global installed iron-air (nascent)
+    "wind": 1150.0,    # was 1020. IRENA 2025.
+    "solar": 1800.0,   # was 1420. IRENA 2025.
+    "li_ion": 130.0,   # was 90. BNEF 2025.
+    "gas_cc": 1220.0,  # was 1200. IEA WEO 2025.
+    "nuclear": 445.0,  # was 440. IAEA PRIS 2025.
+    "iron_air": 1.0,   # was 0.5. DOE LDES.
 }
 
 # Annual global deployment (GW/yr) by technology, used to project cumulative
 # installed capacity for Wright's Law learning curves. These represent the
 # worldwide market, not just the modeled ISO.
-# Source: IRENA 2024, IEA WEO 2024.
+# Source: IRENA 2025, IEA WEO 2025, BNEF 2025, IAEA 2025.
 GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
-    "wind": 120.0,     # IRENA 2024 — ~120 GW/yr global wind additions
-    "solar": 350.0,    # IRENA 2024 — ~350 GW/yr global solar additions
-    "li_ion": 30.0,    # BloombergNEF 2024 — ~30 GW/yr grid storage
-    "gas_cc": 25.0,    # IEA WEO 2024 — ~25 GW/yr global gas CC additions
-    "nuclear": 8.0,    # IAEA 2024 — ~8 GW/yr global nuclear additions
-    "iron_air": 0.5,   # DOE estimate — nascent, <1 GW/yr
+    "wind": 130.0,     # was 120. IRENA 2025.
+    "solar": 400.0,    # was 350. IRENA 2025.
+    "li_ion": 50.0,    # was 30. BNEF 2025.
+    "gas_cc": 20.0,    # was 25. IEA WEO 2025.
+    "nuclear": 10.0,   # was 8. IAEA 2025.
+    "iron_air": 1.0,   # was 0.5.
 }
 
 # Annual-average renewable capacity factors (fraction) by ISO and technology.
@@ -561,8 +561,14 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
 # Installed renewable nameplate capacity (MW) by ISO and technology.
 # Source: ERCOT CDR Dec 2024, CAISO annual report 2024.
 RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
-    "ERCOT": {"wind": 40000.0, "solar": 25000.0},
-    "CAISO": {"wind": 7000.0, "solar": 20000.0},
+    "ERCOT": {
+        "wind": 42000.0,   # was 40000. Source: ERCOT CDR Dec 2024.
+        "solar": 38000.0,  # was 25000. Source: EIA Hourly Grid Monitor Oct 2025.
+    },
+    "CAISO": {
+        "wind": 7000.0,    # unchanged. Source: CAISO annual report 2024.
+        "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
+    },
 }
 
 # CAISO WECC import supply curve tranches: (name, capacity MW, VOM $/MWh).

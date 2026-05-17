@@ -11,7 +11,7 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 - A dict whose keys are all years (e.g. a carbon-price trajectory) is treated as a single leaf; its value is the full trajectory.
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.` (e.g. `scenario.discount_rate`).
 
-**Totals:** 125 parameters | 29 model-sourced | 13 flagged stale (source older than 3 years).
+**Totals:** 125 parameters | 29 model-sourced | 10 flagged stale (source older than 3 years).
 
 ## Structural
 
@@ -61,16 +61,16 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 | `co2_rates.coal.supercritical` | 0.88 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
 | `co2_rates.coal.subcritical` | 1.0 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
 | `co2_rates.coal.older` | 1.08 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `nox_rates.gas_cc` | 0.0001 | tNOx/MWh | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Hourly emissions, 2022 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring. **[STALE]** |
-| `nox_rates.gas_ct` | 0.0003 | tNOx/MWh | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Hourly emissions, 2022 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring. **[STALE]** |
-| `nox_rates.coal` | 0.0015 | tNOx/MWh | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Hourly emissions, 2022 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring. **[STALE]** |
+| `nox_rates.gas_cc` | 0.00008 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; SCR-equipped fleet average. |
+| `nox_rates.gas_ct` | 0.00025 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; mix of SCR/non-SCR CTs. |
+| `nox_rates.coal` | 0.0012 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; post-CSAPR compliance. |
 
 ## Reliability
 
 | param_id | value | unit | tier | source | date | page / table | old repo location | notes |
 |---|---|---|---|---|---|---|---|---|
-| `gas_availability_factor.ERCOT` | 0.83 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | ERCOT gas fleet deterministic availability derate (Pmax multiplier). |
-| `gas_availability_factor.CAISO` | 0.88 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | CAISO gas fleet deterministic availability derate (Pmax multiplier). |
+| `gas_availability_factor.ERCOT` | 0.85 | fraction | 2 | NERC Generating Availability Data System (GADS), 2019-2023 | 2024-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | ERCOT gas fleet deterministic availability derate (Pmax multiplier). |
+| `gas_availability_factor.CAISO` | 0.89 | fraction | 2 | NERC Generating Availability Data System (GADS), 2019-2023 | 2024-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | CAISO gas fleet deterministic availability derate (Pmax multiplier). |
 | `nuclear_monthly_cf.ERCOT` | [0.93, 0.93, 0.9, 0.9, 0.92, 0.93, 0.93, 0.93, 0.91, 0.9, 0.92, 0.93] | fraction (Jan-Dec) | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 | U.S. reactor monthly capacity factors, 2019-2023 | `pipeline_config.py` | Twelve monthly capacity factors; spring/fall dips reflect scheduled refueling outages. |
 | `nuclear_monthly_cf.CAISO` | [0.93, 0.92, 0.91, 0.9, 0.91, 0.93, 0.93, 0.93, 0.92, 0.9, 0.91, 0.93] | fraction (Jan-Dec) | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 | U.S. reactor monthly capacity factors, 2019-2023 | `pipeline_config.py` | Twelve monthly capacity factors; spring/fall dips reflect scheduled refueling outages. |
 | `eford.gas_cc` | 0.05 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
@@ -111,16 +111,16 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 | `storage_techs.li_ion_4hr.duration_hr` | 4 | hours | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | duration_hr for the li_ion_4hr storage technology. |
 | `storage_techs.li_ion_4hr.rte` | 0.86 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | rte for the li_ion_4hr storage technology. |
 | `storage_techs.li_ion_4hr.cycles` | 5000 | cycles | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | cycles for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.capex_per_kw` | 1380.0 | $/kW | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.capex_per_kwh` | 345.0 | $/kWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.fom_per_kw_yr` | 34.5 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_4hr storage technology. |
+| `storage_techs.li_ion_4hr.capex_per_kw` | 1140.0 | $/kW | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_4hr storage technology. |
+| `storage_techs.li_ion_4hr.capex_per_kwh` | 285.0 | $/kWh | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_4hr storage technology. |
+| `storage_techs.li_ion_4hr.fom_per_kw_yr` | 30.0 | $/kW-yr | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_4hr storage technology. |
 | `storage_techs.li_ion_4hr.learning_rate` | 0.18 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | learning_rate for the li_ion_4hr storage technology. Learning rate is a modeling assumption. **[MODELED]** |
 | `storage_techs.li_ion_8hr.duration_hr` | 8 | hours | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | duration_hr for the li_ion_8hr storage technology. |
 | `storage_techs.li_ion_8hr.rte` | 0.86 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | rte for the li_ion_8hr storage technology. |
 | `storage_techs.li_ion_8hr.cycles` | 5000 | cycles | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | cycles for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.capex_per_kw` | 2760.0 | $/kW | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.capex_per_kwh` | 345.0 | $/kWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.fom_per_kw_yr` | 55.2 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_8hr storage technology. |
+| `storage_techs.li_ion_8hr.capex_per_kw` | 2280.0 | $/kW | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_8hr storage technology. |
+| `storage_techs.li_ion_8hr.capex_per_kwh` | 285.0 | $/kWh | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_8hr storage technology. |
+| `storage_techs.li_ion_8hr.fom_per_kw_yr` | 48.0 | $/kW-yr | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_8hr storage technology. |
 | `storage_techs.li_ion_8hr.learning_rate` | 0.18 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | learning_rate for the li_ion_8hr storage technology. Learning rate is a modeling assumption. **[MODELED]** |
 | `storage_techs.iron_air.duration_hr` | 100 | hours | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | duration_hr for the iron_air storage technology. **[STALE]** |
 | `storage_techs.iron_air.rte` | 0.5 | fraction | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | rte for the iron_air storage technology. **[STALE]** |
@@ -154,9 +154,9 @@ This document is the human-readable companion to `frontend/data/parameters.json`
 | `new_entry_costs.gas_cc.learning_rate` | 0.02 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | learning_rate for new gas_cc build. Modeling assumption, not a directly observed value. **[MODELED]** |
 | `new_entry_costs.gas_cc.base_cf` | 0.55 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | base_cf for new gas_cc build. Modeling assumption, not a directly observed value. **[MODELED]** |
 | `new_entry_costs.gas_cc.lifetime_yr` | 30 | years | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | lifetime_yr for new gas_cc build. |
-| `wright_reference_gw.wind` | 1020.0 | GW | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed onshore + offshore wind for learning-curve cost projection. |
-| `wright_reference_gw.solar` | 1420.0 | GW | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed solar PV for learning-curve cost projection. |
-| `wright_reference_gw.li_ion` | 90.0 | GW | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed li-ion grid storage for learning-curve cost projection. |
+| `wright_reference_gw.wind` | 1150.0 | GW | 2 | IRENA Renewable Capacity Statistics 2025 | 2025-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed onshore + offshore wind for learning-curve cost projection. |
+| `wright_reference_gw.solar` | 1800.0 | GW | 2 | IRENA Renewable Capacity Statistics 2025 | 2025-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed solar PV for learning-curve cost projection. |
+| `wright_reference_gw.li_ion` | 130.0 | GW | 2 | BloombergNEF Energy Storage Market Outlook 2025 | 2025-01 | Global cumulative installed grid storage by technology | `step6_1:540-573` | Reference global cumulative installed li-ion grid storage for learning-curve cost projection. |
 | `scenario.renewable_buildout_pace` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default renewable buildout pace lever. |
 | `scenario.retirement_aggressiveness` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default thermal retirement pace lever. |
 | `scenario.discount_rate` | 0.08 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Real discount rate / WACC for annualized capital cost. |
@@ -230,9 +230,6 @@ Source publication date is before 2023-05 (more than 3 years before the 2026-05-
 
 | param_id | source | source_date | notes |
 |---|---|---|---|
-| `nox_rates.gas_cc` | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Fleet-average NOx emission rate from continuous emissions monitoring. |
-| `nox_rates.gas_ct` | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Fleet-average NOx emission rate from continuous emissions monitoring. |
-| `nox_rates.coal` | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | Fleet-average NOx emission rate from continuous emissions monitoring. |
 | `storage_techs.iron_air.duration_hr` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | duration_hr for the iron_air storage technology. |
 | `storage_techs.iron_air.rte` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | rte for the iron_air storage technology. |
 | `storage_techs.iron_air.cycles` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | cycles for the iron_air storage technology. |
