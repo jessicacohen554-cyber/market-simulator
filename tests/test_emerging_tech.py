@@ -339,11 +339,13 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         )
 
     def test_h2_builds_after_available_year_when_economic(self):
-        # Year 2035: gas is expensive and carbon is high, so unabated gas
-        # CC is uneconomic, leaving the shared queue cap for hydrogen.
-        config = ScenarioConfig(iso="ERCOT")
+        # Year 2027: gas is expensive and carbon is high, so unabated gas
+        # CC is uneconomic, leaving the shared queue cap for hydrogen. The
+        # §45V credit ends after 2027 (OBBBA), so the test sits inside the
+        # credit window with H2 turbines made available a year earlier.
+        config = ScenarioConfig(iso="ERCOT", h2_available_year=2026)
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 100.0), 2035, config, "ERCOT",
+            [], np.full(8760, 100.0), 2027, config, "ERCOT",
             gas_price_per_mmbtu=12.0, carbon_price=150.0,
         )
         self.assertTrue(
@@ -360,15 +362,16 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         config = ScenarioConfig(
             iso="ERCOT", h2_available_year=2099, egs_available_year=2099
         )
+        # Year 2032 is the last year the §45Q credit is available (OBBBA).
         cheap_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 67.5), 2035, config, "ERCOT",
+            [], np.full(8760, 67.5), 2032, config, "ERCOT",
             gas_price_per_mmbtu=4.0, carbon_price=0.0,
         )
         self.assertFalse(
             any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon)
         )
         dear_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 67.5), 2035, config, "ERCOT",
+            [], np.full(8760, 67.5), 2032, config, "ERCOT",
             gas_price_per_mmbtu=4.0, carbon_price=200.0,
         )
         self.assertTrue(
@@ -445,14 +448,14 @@ class TestEmergingIRACredits(unittest.TestCase):
     """IRA 45V (hydrogen), 45Q (CCUS) and the geothermal PTC."""
 
     def test_45v_credit_active_then_expires(self):
-        config = ScenarioConfig()  # ira_expiry_year = 2035
-        self.assertGreater(h2_45v_credit_per_mmbtu(2030, config), 0.0)
+        config = ScenarioConfig()  # ira_h2_45v_last_year = 2027
+        self.assertGreater(h2_45v_credit_per_mmbtu(2027, config), 0.0)
         self.assertEqual(h2_45v_credit_per_mmbtu(2040, config), 0.0)
 
     def test_45v_credit_reduces_effective_h2_fuel_cost(self):
         config = ScenarioConfig(iso="ERCOT")
-        gross = compute_h2_fuel_cost(2030, config, "ERCOT")
-        credit = h2_45v_credit_per_mmbtu(2030, config)
+        gross = compute_h2_fuel_cost(2027, config, "ERCOT")
+        credit = h2_45v_credit_per_mmbtu(2027, config)
         effective = max(0.0, gross - credit)
         self.assertLess(effective, gross)
 
@@ -472,9 +475,10 @@ class TestEmergingIRACredits(unittest.TestCase):
         self.assertLess(with_credit, after_expiry)
 
     def test_geothermal_ptc_matches_wind_ptc(self):
+        # Within the full-credit window both earn the same flat PTC.
         config = ScenarioConfig()  # ira_ptc_wind = 26.0
-        geo = apply_ira_credits_to_lcoe("geothermal", 50.0, 2030, config)
-        wind = apply_ira_credits_to_lcoe("wind", 50.0, 2030, config)
+        geo = apply_ira_credits_to_lcoe("geothermal", 50.0, 2027, config)
+        wind = apply_ira_credits_to_lcoe("wind", 50.0, 2027, config)
         self.assertAlmostEqual(geo, wind)
         self.assertAlmostEqual(geo, 50.0 - config.ira_ptc_wind)
 

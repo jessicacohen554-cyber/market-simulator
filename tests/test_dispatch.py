@@ -519,12 +519,22 @@ class TestNegativePricing(unittest.TestCase):
         """After IRA expiry, wind reverts to MC=0."""
         from market_sim.policy.ira import compute_dispatch_credits
         from market_sim.config.scenarios import ScenarioConfig
-        config = ScenarioConfig(ira_ptc_wind=26.0, ira_expiry_year=2035)
+        config = ScenarioConfig(ira_ptc_wind=26.0, ira_wind_solar_last_year=2035)
         w_mc, s_mc = compute_dispatch_credits(config, year=2036)
         self.assertEqual(w_mc, 0.0)
         self.assertEqual(s_mc, 0.0)
         w_mc, s_mc = compute_dispatch_credits(config, year=2030)
         self.assertEqual(w_mc, -26.0)
+
+    def test_wind_solar_cliff_2027(self):
+        """Wind/solar dispatch credits vanish after the OBBBA 2027 cliff."""
+        from market_sim.policy.ira import compute_dispatch_credits
+        from market_sim.config.scenarios import ScenarioConfig
+        config = ScenarioConfig()
+        w_mc, _ = compute_dispatch_credits(config, 2027)
+        self.assertEqual(w_mc, -26.0)
+        w_mc, _ = compute_dispatch_credits(config, 2028)
+        self.assertEqual(w_mc, 0.0)
 
 
 class TestOvergeneration(unittest.TestCase):
