@@ -47,6 +47,7 @@ class TestStorageUnit(unittest.TestCase):
         unit = StorageUnit(
             unit_id="B0",
             zone="North",
+            tech_name="li_ion_4hr",
             power_cap_mw=100.0,
             energy_cap_mwh=400.0,
             eta_charge=0.95,
@@ -63,7 +64,8 @@ class TestStorageUnit(unittest.TestCase):
 
     def test_efficiencies_default_to_lossless(self):
         unit = StorageUnit(
-            unit_id="B1", zone="Z0", power_cap_mw=50.0, energy_cap_mwh=200.0
+            unit_id="B1", zone="Z0", tech_name="li_ion_4hr",
+            power_cap_mw=50.0, energy_cap_mwh=200.0,
         )
         self.assertEqual(unit.eta_charge, 1.0)
         self.assertEqual(unit.eta_discharge, 1.0)
@@ -78,6 +80,7 @@ class TestStorageUnitsToArrays(unittest.TestCase):
             StorageUnit(
                 unit_id="B0",
                 zone="Z1",
+                tech_name="li_ion_4hr",
                 power_cap_mw=100.0,
                 energy_cap_mwh=400.0,
                 eta_charge=0.92,
@@ -86,6 +89,7 @@ class TestStorageUnitsToArrays(unittest.TestCase):
             StorageUnit(
                 unit_id="B1",
                 zone="Z0",
+                tech_name="li_ion_8hr",
                 power_cap_mw=50.0,
                 energy_cap_mwh=150.0,
                 eta_charge=0.80,
@@ -241,6 +245,7 @@ class TestApplyStorageNewEntry(unittest.TestCase):
             StorageUnit(
                 unit_id="incumbent",
                 zone=iso.zones[0].name,
+                tech_name="li_ion_4hr",
                 power_cap_mw=ceiling,
                 energy_cap_mwh=ceiling * 4.0,
                 eta_charge=0.92,
@@ -315,6 +320,7 @@ class TestStorageArbitrageDispatch(unittest.TestCase):
             StorageUnit(
                 unit_id="B0",
                 zone="Z0",
+                tech_name="li_ion_4hr",
                 power_cap_mw=100.0,
                 energy_cap_mwh=400.0,
                 eta_charge=eta,

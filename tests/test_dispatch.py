@@ -860,6 +860,7 @@ def _make_4zone_storage_problem():
         StorageUnit(
             unit_id=f"STO{i}",
             zone=zone_names[i % 4],
+            tech_name="li_ion_4hr",
             power_cap_mw=100.0,
             energy_cap_mwh=400.0,
             eta_charge=eta,
