@@ -38,11 +38,13 @@ class ScenarioConfig:
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
-    rec_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
-    rec_price_wind: float = 0.0  # $/MWh, stacks with IRA PTC
-    rec_price_solar: float = 0.0  # $/MWh
-    rec_price_gas_cc: float = 0.0  # $/MWh, for CCS-equipped or clean H2 CC
-    rec_price_storage: float = 0.0  # $/MWh on discharge
+    eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
+    eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
+    eac_price_solar: float = 0.0  # $/MWh
+    eac_price_gas_cc_ccs: float = 0.0  # $/MWh, CCS-equipped gas CC only (45Q-linked)
+    eac_price_storage: float = 0.0  # $/MWh on discharge
+    eac_price_offshore_wind: float = 0.0  # $/MWh, offshore-specific EAC (may differ from onshore)
+    eac_price_geothermal: float = 0.0  # $/MWh, clean firm generation credit
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
     h2_available_year: int = 2032  # year H2 turbines enter the candidate pool
@@ -184,11 +186,13 @@ TIER_TAGS: dict[str, int] = {
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
     "retirement_aggressiveness": 1,
-    "rec_price_nuclear": 1,
-    "rec_price_wind": 1,
-    "rec_price_solar": 1,
-    "rec_price_gas_cc": 1,
-    "rec_price_storage": 1,
+    "eac_price_nuclear": 1,
+    "eac_price_wind": 1,
+    "eac_price_solar": 1,
+    "eac_price_gas_cc_ccs": 1,
+    "eac_price_storage": 1,
+    "eac_price_offshore_wind": 1,
+    "eac_price_geothermal": 1,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,

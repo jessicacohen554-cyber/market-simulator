@@ -66,10 +66,7 @@ from market_sim.policy.ira import (
     ccus_45q_credit_per_mwh,
     h2_45v_credit_per_mmbtu,
 )
-from market_sim.policy.rec import (
-    compute_rec_revenue_per_mw,
-    get_rec_price_for_new_entry,
-)
+from market_sim.policy.eac import get_eac_price_for_new_entry
 
 # Fuel classes treated as dispatchable thermal capacity for economic
 # retirement, mapped to their ScenarioConfig fixed-O&M field ($/kW-yr).
@@ -110,6 +107,32 @@ _THERMAL_PLANT_LIFE_YEARS: int = 40
 # dispatch is threaded through (it is available in the prior-year result).
 # Source: engineering judgment -- mid-merit gas CC.
 _RETROFIT_SCREEN_CF: float = 0.55
+
+
+def compute_attribute_revenue(
+    fuel_type: str,
+    generation_mwh: float,
+    eac_price: float,
+    rps_shadow_price: float = 0.0,
+) -> float:
+    """Return annual attribute revenue for a single unit.
+
+    The resource earns ONE attribute payment per MWh -- the higher of the
+    exogenous EAC price or the endogenous RPS shadow price. These do NOT
+    stack. The attribute certificate is sold to whichever market clears
+    higher.
+
+    Args:
+        fuel_type: Generator fuel type string.
+        generation_mwh: Annual generation in MWh.
+        eac_price: Exogenous EAC price for this resource type ($/MWh).
+        rps_shadow_price: Endogenous RPS constraint dual from prior year ($/MWh).
+
+    Returns:
+        Annual attribute revenue in $.
+    """
+    effective_attribute_price = max(eac_price, rps_shadow_price)
+    return effective_attribute_price * generation_mwh
 
 
 def apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator]:
@@ -158,6 +181,7 @@ def apply_economic_retirements(
     config: ScenarioConfig,
     consecutive_loss_years: dict[str, int],
     peak_demand: float,
+    rps_shadow_price: float = 0.0,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -198,6 +222,9 @@ def apply_economic_retirements(
             ``unit_id``; not mutated in place.
         peak_demand: Peak net demand in MW, used to size the reliability
             floor below which thermal capacity is not retired.
+        rps_shadow_price: Prior year's RPS constraint dual in $/MWh. Only
+            credited to RPS-eligible (clean) fuels, and never stacked with
+            an exogenous EAC -- the higher of the two is taken.
 
     Returns:
         Tuple ``(survivors, loss_years)`` -- the fleet with retired units
@@ -220,15 +247,19 @@ def apply_economic_retirements(
         zone = int(fleet_arrays.zone_idx[i])
         net_revenue = float(np.dot(prices[zone], dispatch[i]))
 
-        # Exogenous RECs (e.g. a nuclear Zero Emission Credit) add revenue
+        # The attribute payment -- the higher of the exogenous EAC and the
+        # endogenous RPS shadow price, never their sum -- adds revenue
         # beyond the energy market, keeping units that energy prices alone
-        # would not -- this is what stops a ZEC-backed nuclear plant from
-        # retiring when energy revenue falls short of fixed O&M.
+        # would not. The RPS shadow price is credited only to RPS-eligible
+        # clean fuels.
         annual_gen_mwh = float(np.sum(dispatch[i]))
-        rec_revenue = compute_rec_revenue_per_mw(
-            g.fuel_type, annual_gen_mwh, g.pmax_mw, config
+        eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
+        rps_for_unit = (
+            rps_shadow_price if g.fuel_type in _CLEAN_FUELS else 0.0
         )
-        net_revenue += rec_revenue
+        net_revenue += compute_attribute_revenue(
+            g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
+        )
 
         threshold = getattr(
             config,
@@ -744,7 +775,7 @@ def apply_economic_new_entry(
     year: int,
     config: ScenarioConfig,
     iso: str,
-    rec_price: float = 0.0,
+    rps_shadow_price: float = 0.0,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -752,9 +783,10 @@ def apply_economic_new_entry(
     """Build new capacity for technologies that clear their LCOE.
 
     For each candidate technology the expected annual revenue per MW is
-    compared with its annualized levelized cost. Clean technologies (wind
-    and solar) additionally earn ``rec_price`` per MWh generated -- the
-    prior year's RPS shadow price -- so a binding RPS lifts their expected
+    compared with its annualized levelized cost. Clean technologies
+    additionally earn an attribute payment per MWh generated -- the higher
+    of the exogenous EAC and the prior year's RPS shadow price, never
+    their sum -- so either a binding RPS or an EAC lifts their expected
     revenue and pulls more of them across the LCOE hurdle. Profitable
     technologies are ranked by margin and built in priority order, highest
     margin first. Two caps bind independently:
@@ -787,8 +819,9 @@ def apply_economic_new_entry(
         year: Simulation year.
         config: Scenario config.
         iso: ISO identifier, supplying the queue caps and build zone.
-        rec_price: Prior year's RPS shadow price in $/MWh, added to the
-            expected revenue of wind and solar candidates.
+        rps_shadow_price: Prior year's RPS shadow price in $/MWh. Credited
+            to RPS-eligible renewables as an attribute payment, taken as
+            the max of it and the exogenous EAC (the two do not stack).
         cumulative: Global cumulative deployment, used to discount each
             candidate's capex along its Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price, used to charge gas CC
@@ -815,10 +848,18 @@ def apply_economic_new_entry(
                 tech, year, config, iso_config.name, cf,
                 gas_price_per_mmbtu, carbon_price,
             )
-            margin = (
-                estimate_expected_revenue(prices, cf)
-                - lcoe * HOURS_PER_YEAR * cf
+            revenue = estimate_expected_revenue(prices, cf)
+            # Emerging clean resources also earn an attribute payment: the
+            # higher of their exogenous EAC and the RPS shadow price.
+            rps_for_tech = (
+                rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
             )
+            effective_attribute_price = max(
+                get_eac_price_for_new_entry(tech, config), rps_for_tech
+            )
+            if effective_attribute_price > 0.0:
+                revenue += effective_attribute_price * cf * HOURS_PER_YEAR
+            margin = revenue - lcoe * HOURS_PER_YEAR * cf
             if margin > 0.0:
                 margins.append((margin, tech))
             continue
@@ -827,16 +868,20 @@ def apply_economic_new_entry(
         cum_gw = cumulative.get(tech) if cumulative else None
         lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
         effective_revenue = estimate_expected_revenue(prices, base_cf)
-        # A binding RPS pays clean technologies a REC premium on every MWh
-        # generated, raising their expected revenue.
-        if tech in _RENEWABLE_NEW_FUELS:
-            effective_revenue += rec_price * base_cf * HOURS_PER_YEAR
-        # Exogenous RECs apply to every eligible technology (including
-        # gas_cc for CCS credits) and stack with the endogenous RPS dual
-        # above -- both premiums are paid independently per MWh generated.
-        exogenous_rec = get_rec_price_for_new_entry(tech, config)
-        if exogenous_rec > 0.0:
-            effective_revenue += exogenous_rec * base_cf * HOURS_PER_YEAR
+        # Each MWh of clean generation produces one attribute certificate,
+        # sold once to the higher-value buyer: the exogenous EAC or the
+        # endogenous RPS shadow price. They do not stack -- take the max.
+        # The RPS shadow price is credited only to RPS-eligible renewables.
+        rps_for_tech = (
+            rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
+        )
+        effective_attribute_price = max(
+            get_eac_price_for_new_entry(tech, config), rps_for_tech
+        )
+        if effective_attribute_price > 0.0:
+            effective_revenue += (
+                effective_attribute_price * base_cf * HOURS_PER_YEAR
+            )
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
 
         # Thermal candidates also burn fuel: a gas CC earns margin only
@@ -1040,7 +1085,7 @@ def evolve_fleet(
     year: int,
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
-    rec_price: float = 0.0,
+    rps_shadow_price: float = 0.0,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -1067,9 +1112,10 @@ def evolve_fleet(
     many equal-width heat-rate bins instead of the predefined vintage bins.
 
     The renewable portfolio standard is not applied here -- it is enforced
-    as an LP constraint in dispatch, and its shadow price (``rec_price``)
-    feeds the economic new-entry screen so clean builds are economics-
-    driven. Storage new entry is handled separately in the runner.
+    as an LP constraint in dispatch, and its shadow price
+    (``rps_shadow_price``) feeds the economic retirement and new-entry
+    screens so clean builds are economics-driven. Storage new entry is
+    handled separately in the runner.
 
     Steps that depend on a price signal -- economic retirements and
     economic new entry -- are skipped when ``prior_results`` carries no
@@ -1085,8 +1131,9 @@ def evolve_fleet(
         config: Scenario config.
         loss_tracker: Per-unit consecutive-loss counters; not mutated in
             place.
-        rec_price: Prior year's RPS shadow price in $/MWh, passed to the
-            economic new-entry screen as additional clean-energy revenue.
+        rps_shadow_price: Prior year's RPS shadow price in $/MWh, passed to
+            the economic retirement and new-entry screens as the endogenous
+            attribute payment (taken as max with the exogenous EAC).
         cumulative: Global cumulative deployment, passed to the new-entry
             screen so candidate capex follows a Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price for the year, passed to
@@ -1127,6 +1174,7 @@ def evolve_fleet(
         fleet, loss_tracker = apply_economic_retirements(
             fleet, fleet_arrays, dispatch_result, prices, config,
             loss_tracker, peak_demand,
+            rps_shadow_price=rps_shadow_price,
         )
 
     # 3. Known additions: planned units coming online this year.
@@ -1142,11 +1190,11 @@ def evolve_fleet(
     )
 
     # 5. Economic new entry (needs a price signal). Clean technologies see
-    # the prior year's REC price as additional expected revenue.
+    # the prior year's RPS shadow price as additional expected revenue.
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
             fleet, prices, year, config, config.iso,
-            rec_price=rec_price,
+            rps_shadow_price=rps_shadow_price,
             cumulative=cumulative,
             gas_price_per_mmbtu=gas_price_per_mmbtu,
             carbon_price=carbon_price,
