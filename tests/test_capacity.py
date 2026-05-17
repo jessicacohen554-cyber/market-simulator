@@ -511,7 +511,11 @@ class TestEconomicNewEntry(unittest.TestCase):
     def test_queue_cap_limits_annual_additions(self):
         # With every technology profitable, the ISO-level cap binds the
         # total while the per-tech caps bind each technology individually.
-        config = ScenarioConfig(iso="ERCOT")
+        # Emerging techs are pushed out so this exercises the classic four.
+        config = ScenarioConfig(
+            iso="ERCOT", h2_available_year=2099, ccs_available_year=2099,
+            egs_available_year=2099, offshore_wind_available_year=2099,
+        )
         prices = np.full(8760, 250.0)  # high prices make entry profitable
         new_fleet, additions = apply_economic_new_entry(
             [], prices, 2030, config, "ERCOT"
@@ -1026,8 +1030,12 @@ class TestCapacityIntegration(unittest.TestCase):
     def test_per_tech_queue_cap_builds_both_wind_and_solar(self):
         # With wind and solar both profitable, both are built and neither
         # exceeds its per-technology queue cap. Wind and solar are routed
-        # to the renewable pools rather than the thermal fleet.
-        config = ScenarioConfig(iso="ERCOT")
+        # to the renewable pools rather than the thermal fleet. Emerging
+        # techs are pushed out so this exercises the classic four.
+        config = ScenarioConfig(
+            iso="ERCOT", h2_available_year=2099, ccs_available_year=2099,
+            egs_available_year=2099, offshore_wind_available_year=2099,
+        )
         prices = np.full(8760, 250.0)
         new_fleet, additions = apply_economic_new_entry(
             [], prices, 2030, config, "ERCOT"

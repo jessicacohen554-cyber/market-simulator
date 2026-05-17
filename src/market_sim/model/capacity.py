@@ -37,12 +37,17 @@ from dataclasses import dataclass
 import numpy as np
 
 from market_sim.config.constants import (
+    CCUS_PARAMS,
     CO2_RATES,
     EFORD,
+    GEOTHERMAL_PARAMS,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
+    HYDROGEN_TURBINE_PARAMS,
     NEW_ENTRY_COSTS,
+    NOX_RATES,
+    OFFSHORE_WIND_PARAMS,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     VOM,
@@ -51,8 +56,14 @@ from market_sim.config.constants import (
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
+from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
+from market_sim.policy.ira import (
+    apply_ira_credits_to_lcoe,
+    ccus_45q_credit_per_mwh,
+    h2_45v_credit_per_mmbtu,
+)
 from market_sim.policy.rec import (
     compute_rec_revenue_per_mw,
     get_rec_price_for_new_entry,
@@ -255,13 +266,183 @@ def apply_economic_retirements(
 
 # --- Part 2: capacity additions -------------------------------------------
 
-# Candidate technologies considered for economic new entry.
+# Classic candidate technologies considered for economic new entry. These
+# are costed from NEW_ENTRY_COSTS; emerging technologies are handled
+# separately (see _EMERGING_AVAILABLE_YEAR below).
 _NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc", "nuclear")
 
 # Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
 # the W[z,t]/S[z,t] dispatch variables) rather than entering as thermal
 # Generator objects. Variable-output renewables must follow a CF profile.
+# Offshore wind is NOT here: it enters as a zero-MC Generator (Option A).
 _RENEWABLE_NEW_FUELS: frozenset[str] = frozenset({"wind", "solar"})
+
+# Emerging-technology candidates, mapped to the ScenarioConfig field that
+# names the calendar year each first becomes available for new entry.
+_EMERGING_AVAILABLE_YEAR: dict[str, str] = {
+    "hydrogen_ct": "h2_available_year",
+    "hydrogen_ccgt": "h2_available_year",
+    "gas_cc_ccs": "ccs_available_year",
+    "geothermal": "egs_available_year",
+    "offshore_wind": "offshore_wind_available_year",
+}
+
+# Technologies that share another technology's per-tech interconnection
+# queue cap. Hydrogen turbines and CCUS reuse the gas-turbine supply chain
+# and queue, so they draw on the shared ``gas_cc`` per-tech cap.
+_QUEUE_CAP_GROUP: dict[str, str] = {
+    "hydrogen_ct": "gas_cc",
+    "hydrogen_ccgt": "gas_cc",
+    "gas_cc_ccs": "gas_cc",
+}
+
+# Assumed capacity factor for screening each emerging technology in the
+# economic new-entry LCOE comparison. Hydrogen turbines run as peakers /
+# mid-merit units; geothermal and offshore wind use their resource CFs.
+_EMERGING_SCREEN_CF: dict[str, float] = {
+    "hydrogen_ct": 0.10,    # simple-cycle H2 peaker duty cycle
+    "hydrogen_ccgt": 0.45,  # combined-cycle H2 mid-merit duty cycle
+}
+
+
+def _offshore_wind_params(iso: str, config: ScenarioConfig) -> dict:
+    """Return the offshore-wind cost/performance parameters for an ISO.
+
+    CAISO is served by deep-water floating turbines; other ISOs default to
+    fixed-bottom. ``config.offshore_wind_cf_override`` replaces the base
+    capacity factor when set.
+    """
+    key = "floating" if iso == "CAISO" else "fixed_bottom"
+    params = dict(OFFSHORE_WIND_PARAMS[key])
+    if config.offshore_wind_cf_override is not None:
+        params["base_cf"] = config.offshore_wind_cf_override
+    return params
+
+
+def _emerging_screen_cf(tech: str, iso: str, config: ScenarioConfig) -> float:
+    """Return the capacity factor used to screen an emerging technology."""
+    if tech in _EMERGING_SCREEN_CF:
+        return _EMERGING_SCREEN_CF[tech]
+    if tech == "gas_cc_ccs":
+        return NEW_ENTRY_COSTS["gas_cc"]["base_cf"]
+    if tech == "geothermal":
+        return GEOTHERMAL_PARAMS["egs"]["capacity_factor"]
+    if tech == "offshore_wind":
+        return _offshore_wind_params(iso, config)["base_cf"]
+    raise KeyError(f"no screen capacity factor for emerging tech {tech!r}")
+
+
+def _new_entry_candidates(
+    year: int, config: ScenarioConfig, iso: str
+) -> list[str]:
+    """Return the technologies eligible for economic new entry this year.
+
+    The four classic technologies are always eligible. Each emerging
+    technology joins the pool only once the simulation year reaches its
+    configured availability year; offshore wind additionally enters only
+    in ISOs listed in ``config.offshore_wind_eligible_isos``.
+    """
+    candidates = list(_NEW_ENTRY_TECHS)
+    for tech, year_field in _EMERGING_AVAILABLE_YEAR.items():
+        if year < getattr(config, year_field):
+            continue
+        if (
+            tech == "offshore_wind"
+            and iso not in config.offshore_wind_eligible_isos
+        ):
+            continue
+        candidates.append(tech)
+    return candidates
+
+
+def _emerging_lcoe(
+    tech: str,
+    year: int,
+    config: ScenarioConfig,
+    iso: str,
+    cf: float,
+    gas_price_per_mmbtu: float,
+    carbon_price: float,
+) -> float:
+    """Return the levelized cost of energy for an emerging technology.
+
+    Capital is annualized with a capital recovery factor from
+    ``config.discount_rate`` and the technology lifetime, spread over
+    annual generation at the screening capacity factor. Variable cost is
+    technology-specific:
+
+    * **Hydrogen turbines** burn derived hydrogen fuel; the IRA §45V credit
+      lowers the effective fuel cost.
+    * **CCUS** burns natural gas at a penalized heat rate, pays a VOM
+      adder, a captured-CO2 transport cost and a residual-emissions carbon
+      cost, and earns the IRA §45Q credit as a variable-cost offset.
+    * **Geothermal** has zero fuel cost and earns the zero-emission
+      production tax credit (treated like wind).
+    * **Offshore wind** has zero fuel cost.
+
+    Args:
+        tech: Emerging technology key.
+        year: Simulation year (IRA credit expiry).
+        config: Scenario config.
+        iso: ISO identifier (selects the offshore-wind resource class).
+        cf: Screening capacity factor.
+        gas_price_per_mmbtu: Delivered gas price, used by CCUS.
+        carbon_price: Carbon price in $/tCO2, used by CCUS residual cost.
+
+    Returns:
+        The IRA-adjusted LCOE in $/MWh.
+    """
+    annual_mwh_per_kw = HOURS_PER_YEAR * cf / 1000.0
+
+    if tech in ("hydrogen_ct", "hydrogen_ccgt"):
+        key = "h2_ct" if tech == "hydrogen_ct" else "h2_ccgt"
+        params = HYDROGEN_TURBINE_PARAMS[key]
+        crf = _capital_recovery_factor(
+            config.discount_rate, params["lifetime_yr"]
+        )
+        fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
+        h2_cost = compute_h2_fuel_cost(year, config, iso)
+        h2_cost = max(0.0, h2_cost - h2_45v_credit_per_mmbtu(year, config))
+        variable = params["heat_rate"] * h2_cost + params["vom"]
+        return fixed / annual_mwh_per_kw + variable
+
+    if tech == "gas_cc_ccs":
+        ccs = CCUS_PARAMS["gas_cc_ccs_90"]
+        crf = _capital_recovery_factor(
+            config.discount_rate, ccs["lifetime_yr"]
+        )
+        fixed = ccs["capex_kw"] * crf + ccs["fom_kw_yr"]
+        base_hr = min(HEAT_RATE_BINS["gas_cc"].values())
+        base_co2 = min(CO2_RATES["gas_cc"].values())
+        captured = base_co2 * config.ccs_capture_rate
+        residual = base_co2 * (1.0 - config.ccs_capture_rate)
+        variable = (
+            base_hr * ccs["heat_rate_penalty"] * gas_price_per_mmbtu
+            + VOM.get("gas_cc", 0.0) + ccs["vom_adder"]
+            + captured * config.co2_transport_storage_cost
+            + residual * carbon_price
+            - ccus_45q_credit_per_mwh(captured, year, config)
+        )
+        return fixed / annual_mwh_per_kw + variable
+
+    if tech == "geothermal":
+        egs = GEOTHERMAL_PARAMS["egs"]
+        crf = _capital_recovery_factor(
+            config.discount_rate, egs["lifetime_yr"]
+        )
+        fixed = egs["capex_kw"] * crf + egs["fom_kw_yr"]
+        lcoe = fixed / annual_mwh_per_kw + egs["vom"]
+        return apply_ira_credits_to_lcoe("geothermal", lcoe, year, config)
+
+    if tech == "offshore_wind":
+        params = _offshore_wind_params(iso, config)
+        crf = _capital_recovery_factor(
+            config.discount_rate, params["lifetime_yr"]
+        )
+        fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
+        return fixed / annual_mwh_per_kw
+
+    raise KeyError(f"unknown emerging technology {tech!r}")
 
 
 @dataclass
@@ -441,13 +622,33 @@ def estimate_expected_revenue(
 
 
 def _make_new_generator(
-    tech_type: str, pmax_mw: float, zone: str, year: int, seq: int
+    tech_type: str,
+    pmax_mw: float,
+    zone: str,
+    year: int,
+    seq: int,
+    config: ScenarioConfig,
+    iso: str,
 ) -> Generator:
     """Build a new ``Generator`` for an entering block of capacity.
 
-    Thermal technologies are assigned the most efficient heat-rate bin --
-    a freshly built unit is best-in-class -- along with the matching CO2
-    rate and variable O&M.
+    Classic thermal technologies are assigned the most efficient heat-rate
+    bin -- a freshly built unit is best-in-class -- along with the matching
+    CO2 rate and variable O&M. Emerging technologies enter as Generators
+    using the existing LP variable structure:
+
+    * **Hydrogen turbines** carry their heat rate, VOM and NOx rate from
+      :data:`HYDROGEN_TURBINE_PARAMS`; the fuel price is resolved at
+      dispatch time from the derived hydrogen cost.
+    * **CCUS** is a gas CC variant: a penalized heat rate, a VOM that folds
+      in the (constant) captured-CO2 transport cost, and a reduced emission
+      rate reflecting the capture rate. Its residual CO2 then pays the
+      carbon price through standard marginal-cost assembly.
+    * **Geothermal** is a zero-fuel dispatchable unit with a turn-down
+      floor at ``config.egs_pmin_fraction`` of rated capacity.
+    * **Offshore wind** enters as a zero-MC Generator whose flat
+      availability equals the offshore capacity factor (Option A): a
+      forced-outage rate of ``1 - cf`` makes ``1 - eford`` equal the CF.
     """
     unit_id = f"{tech_type}_new_{year}_{seq}"
     kwargs: dict = {
@@ -473,6 +674,50 @@ def _make_new_generator(
         kwargs["is_must_run"] = True
         kwargs["vom"] = VOM.get("nuclear", 2.5)
         kwargs["eford"] = EFORD.get("nuclear", 0.03)
+
+    if tech_type in ("hydrogen_ct", "hydrogen_ccgt"):
+        key = "h2_ct" if tech_type == "hydrogen_ct" else "h2_ccgt"
+        params = HYDROGEN_TURBINE_PARAMS[key]
+        kwargs["heat_rate"] = params["heat_rate"]
+        kwargs["vom"] = params["vom"]
+        kwargs["emission_rate_co2"] = params["emission_rate_co2"]
+        kwargs["nox_rate"] = params["nox_rate"]
+        kwargs["eford"] = params["eford"]
+
+    elif tech_type == "gas_cc_ccs":
+        ccs = CCUS_PARAMS["gas_cc_ccs_90"]
+        base_hr = min(HEAT_RATE_BINS["gas_cc"].values())
+        base_co2 = min(CO2_RATES["gas_cc"].values())
+        captured = base_co2 * config.ccs_capture_rate
+        kwargs["efficiency_bin"] = "h_class"
+        kwargs["heat_rate"] = base_hr * ccs["heat_rate_penalty"]
+        kwargs["emission_rate_co2"] = base_co2 * (1.0 - config.ccs_capture_rate)
+        # The captured-CO2 transport+storage cost is a constant $/MWh, so it
+        # folds into VOM; the residual emissions still pay the carbon price.
+        kwargs["vom"] = (
+            VOM.get("gas_cc", 0.0)
+            + ccs["vom_adder"]
+            + captured * config.co2_transport_storage_cost
+        )
+        kwargs["nox_rate"] = NOX_RATES.get("gas_cc", 0.0)
+        kwargs["eford"] = EFORD.get("gas_cc", 0.05)
+
+    elif tech_type == "geothermal":
+        egs = GEOTHERMAL_PARAMS["egs"]
+        kwargs["heat_rate"] = egs["heat_rate"]
+        kwargs["vom"] = egs["vom"]
+        kwargs["emission_rate_co2"] = egs["emission_rate_co2"]
+        kwargs["nox_rate"] = egs["nox_rate"]
+        kwargs["eford"] = egs["eford"]
+        kwargs["pmin_mw"] = pmax_mw * config.egs_pmin_fraction
+
+    elif tech_type == "offshore_wind":
+        cf = _offshore_wind_params(iso, config)["base_cf"]
+        kwargs["heat_rate"] = 0.0
+        kwargs["vom"] = 0.0
+        kwargs["emission_rate_co2"] = 0.0
+        # Flat-CF approximation: availability = 1 - eford = base_cf.
+        kwargs["eford"] = 1.0 - cf
 
     return Generator(**kwargs)
 
@@ -506,12 +751,19 @@ def apply_economic_new_entry(
     The highest-margin technology draws on the shared ISO budget first;
     once that budget is exhausted no further technologies are built.
 
-    Thermal new entry (``gas_cc`` and ``nuclear``) is appended to the
-    returned fleet as a :class:`Generator`. Wind and solar are *not*:
-    variable-output renewables must follow a capacity-factor profile, so
-    their build MW is routed to the zonal ``wind_cap`` / ``solar_cap``
-    pools (the bounds of the ``W[z,t]`` and ``S[z,t]`` dispatch variables)
-    rather than entering as flat-availability thermal units.
+    Emerging technologies (hydrogen turbines, CCUS, enhanced geothermal,
+    offshore wind) join the candidate pool once the simulation year
+    reaches their configured availability year. Hydrogen turbines and CCUS
+    share the ``gas_cc`` per-tech queue cap; geothermal and offshore wind
+    have their own. Offshore wind enters only in eligible ISOs.
+
+    Thermal new entry (``gas_cc``, ``nuclear``, the hydrogen turbines,
+    CCUS, geothermal and offshore wind) is appended to the returned fleet
+    as a :class:`Generator`. Wind and solar are *not*: variable-output
+    renewables must follow a capacity-factor profile, so their build MW is
+    routed to the zonal ``wind_cap`` / ``solar_cap`` pools (the bounds of
+    the ``W[z,t]`` and ``S[z,t]`` dispatch variables) rather than entering
+    as flat-availability thermal units.
 
     Args:
         fleet: The current generator fleet.
@@ -539,7 +791,22 @@ def apply_economic_new_entry(
     zone = max(iso_config.zones, key=lambda z: z.load_share).name
 
     margins: list[tuple[float, str]] = []
-    for tech in _NEW_ENTRY_TECHS:
+    for tech in _new_entry_candidates(year, config, iso_config.name):
+        # Emerging technologies are costed through their own LCOE path.
+        if tech in _EMERGING_AVAILABLE_YEAR:
+            cf = _emerging_screen_cf(tech, iso_config.name, config)
+            lcoe = _emerging_lcoe(
+                tech, year, config, iso_config.name, cf,
+                gas_price_per_mmbtu, carbon_price,
+            )
+            margin = (
+                estimate_expected_revenue(prices, cf)
+                - lcoe * HOURS_PER_YEAR * cf
+            )
+            if margin > 0.0:
+                margins.append((margin, tech))
+            continue
+
         base_cf = NEW_ENTRY_COSTS[tech]["base_cf"]
         cum_gw = cumulative.get(tech) if cumulative else None
         lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
@@ -581,22 +848,32 @@ def apply_economic_new_entry(
     new_fleet = list(fleet)
     renewable_additions: dict[str, dict[str, float]] = {}
     remaining = queue_budget_mw
+    # Per-tech queue caps are tracked per cap group: hydrogen turbines and
+    # CCUS share the ``gas_cc`` group, so their builds compete for one cap.
+    group_remaining: dict[str, float] = {}
     for seq, (_, tech) in enumerate(margins):
         if remaining <= 0.0:
             break
-        # Each tech is capped by its own queue limit and by what is left
-        # of the shared ISO budget; both caps bind independently.
-        tech_cap_mw = per_tech_cap_gw.get(tech, 0.0) * 1000.0
-        build_mw = min(tech_cap_mw, remaining)
+        # Each tech is capped by its (possibly shared) per-tech queue limit
+        # and by what is left of the shared ISO budget; both bind.
+        group = _QUEUE_CAP_GROUP.get(tech, tech)
+        if group not in group_remaining:
+            group_remaining[group] = per_tech_cap_gw.get(group, 0.0) * 1000.0
+        build_mw = min(group_remaining[group], remaining)
         if build_mw <= 0.0:
             continue
         remaining -= build_mw
+        group_remaining[group] -= build_mw
         if tech in _RENEWABLE_NEW_FUELS:
             target_zone = get_renewable_zone(iso_config.name, tech)
             zone_acc = renewable_additions.setdefault(target_zone, {})
             zone_acc[tech] = zone_acc.get(tech, 0.0) + build_mw
         else:
-            new_fleet.append(_make_new_generator(tech, build_mw, zone, year, seq))
+            new_fleet.append(
+                _make_new_generator(
+                    tech, build_mw, zone, year, seq, config, iso_config.name
+                )
+            )
 
     return new_fleet, renewable_additions
 
