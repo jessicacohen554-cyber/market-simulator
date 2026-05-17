@@ -255,12 +255,27 @@ class TestFleetLoader(unittest.TestCase):
         self.assertTrue(nuclear)
         self.assertTrue(all(g.is_must_run for g in nuclear))
 
-    def test_heat_rates_match_constants(self):
+    def test_heat_rates_use_actual_egrid_values(self):
+        # With eGRID PLHTRT joined into the parquet, gas_cc units span a
+        # real heat-rate gradient instead of collapsing onto the three
+        # HEAT_RATE_BINS vintage centers.
         fleet = load_fleet_from_csv("ERCOT")
-        for gen in fleet:
-            if gen.fuel_type in HEAT_RATE_BINS:
-                expected = HEAT_RATE_BINS[gen.fuel_type][gen.efficiency_bin]
-                self.assertEqual(gen.heat_rate, expected)
+        cc_hrs = {
+            round(g.heat_rate, 3) for g in fleet if g.fuel_type == "gas_cc"
+        }
+        bin_centers = set(HEAT_RATE_BINS["gas_cc"].values())
+        self.assertGreater(len(cc_hrs), len(bin_centers))
+        self.assertTrue(
+            cc_hrs - bin_centers, "no actual (non-bin-center) heat rates loaded"
+        )
+
+    def test_missing_heat_rate_falls_back_to_bin_centers(self):
+        # Units with no eGRID match keep the vintage bin-center fallback,
+        # so every loaded generator still has a positive heat rate.
+        fleet = load_fleet_from_csv("ERCOT")
+        self.assertTrue(
+            all(g.heat_rate > 0.0 for g in fleet if g.fuel_type in HEAT_RATE_BINS)
+        )
 
     def test_some_coal_units_have_retirement_year(self):
         fleet = load_fleet_from_csv("ERCOT")
@@ -405,6 +420,22 @@ class TestAggregateFleet(unittest.TestCase):
         ids = {g.unit_id for g in result}
         self.assertIn("C_RET", ids)
         self.assertIn("coal_older_north", ids)
+
+    def test_more_bins_produce_more_cc_groups(self):
+        # With actual per-plant heat rates, n_bins=10 yields a finer merit
+        # order -- more distinct gas_cc bins than n_bins=3.
+        fleet = load_fleet_from_csv("ERCOT")
+        cc_3 = [g for g in aggregate_fleet(fleet, n_bins=3) if g.fuel_type == "gas_cc"]
+        cc_10 = [g for g in aggregate_fleet(fleet, n_bins=10) if g.fuel_type == "gas_cc"]
+        self.assertGreater(len(cc_10), len(cc_3))
+        hrs_3 = {round(g.heat_rate, 2) for g in cc_3}
+        hrs_10 = {round(g.heat_rate, 2) for g in cc_10}
+        self.assertGreater(len(hrs_10), len(hrs_3))
+
+    def test_n_bins_zero_disables_aggregation(self):
+        gens = self._gas_cc_fleet()
+        self.assertEqual(aggregate_fleet(gens, n_bins=0), gens)
+        self.assertEqual(aggregate_fleet(gens, n_bins="unit"), gens)
 
     def test_round_trip_to_fleet_arrays(self):
         aggregated = aggregate_fleet(self._gas_cc_fleet())

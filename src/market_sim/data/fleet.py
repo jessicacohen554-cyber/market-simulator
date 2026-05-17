@@ -54,7 +54,7 @@ EIA_860_CSV_COLUMNS: list[str] = [
     "plant_id", "generator_id", "plant_name", "state",
     "balancing_authority_code", "technology", "energy_source", "prime_mover",
     "nameplate_capacity_mw", "net_summer_capacity_mw", "operating_year",
-    "planned_retirement_year", "status",
+    "planned_retirement_year", "status", "heat_rate",
 ]
 
 # EIA-930 balancing-authority code → ISO name, for the seven wholesale
@@ -354,7 +354,7 @@ def aggregate_fleet_by_efficiency(
 
 
 def aggregate_fleet(
-    generators: list[Generator], n_bins: int | None = None
+    generators: list[Generator], n_bins: int | str | None = None
 ) -> list[Generator]:
     """Collapse individual generators into representative units.
 
@@ -371,6 +371,10 @@ def aggregate_fleet(
     resolution for carbon-pricing and CCS sensitivity analysis at the cost of
     more LP columns.
 
+    With ``n_bins=0`` or ``n_bins="unit"`` no aggregation is performed: the
+    fleet is returned unchanged, one LP column per physical unit. This gives
+    full plant-level granularity for calibration and financial analysis.
+
     Nuclear, hydro and import units pass through unchanged -- they are few
     in number and have distinct characteristics. Wind and solar are not part
     of the thermal fleet handled here, so they are unaffected. A thermal unit
@@ -380,12 +384,17 @@ def aggregate_fleet(
     Args:
         generators: The individual-unit fleet.
         n_bins: Number of equal-width efficiency bins per ``(fuel_type, zone)``
-            group. ``None`` uses the predefined vintage bins.
+            group. ``None`` uses the predefined vintage bins; ``0`` or
+            ``"unit"`` disables aggregation entirely.
 
     Returns:
         A new fleet list: pass-through units in their original order,
         followed by one representative unit per thermal group.
     """
+    # n_bins == 0 / "unit": full unit granularity, no aggregation.
+    if n_bins == 0 or n_bins == "unit":
+        return list(generators)
+
     passthrough: list[Generator] = []
     groups: dict[tuple, list[Generator]] = {}
     for g in generators:
