@@ -25,6 +25,7 @@ from market_sim.config.constants import (
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.capacity import CumulativeDeployment
+from market_sim.policy.ira import ira_phaseout_fraction
 
 
 class StorageUnit(BaseModel):
@@ -246,8 +247,9 @@ def compute_storage_annual_cost(
 
     cost = capex_per_kw * CRF + fom_per_kw_yr, converted to $/MW-yr.
     Capex is first discounted along a Wright's-Law learning curve when
-    ``cumulative_gw`` is supplied, then the IRA ITC is applied if
-    year <= config.ira_expiry_year. Uses a 20-year economic life for CRF.
+    ``cumulative_gw`` is supplied, then the IRA ITC is applied along the
+    graduated phaseout schedule for non-wind/solar clean tech. Uses a
+    20-year economic life for CRF.
     """
     tech = STORAGE_TECHS[tech_name]
     capex_per_kw = float(tech["capex_per_kw"])
@@ -261,8 +263,9 @@ def compute_storage_annual_cost(
             lr = float(tech["learning_rate"])
             capex_per_kw = capex_per_kw * (cumulative_gw / reference_gw) ** (-lr)
 
-    if year <= config.ira_expiry_year:
-        capex_per_kw *= 1.0 - config.ira_itc_storage
+    frac = ira_phaseout_fraction(year, config)
+    if frac > 0.0:
+        capex_per_kw *= 1.0 - config.ira_itc_storage * frac
     crf = _capital_recovery_factor(
         config.real_discount_rate, _STORAGE_ECONOMIC_LIFE_YR
     )
