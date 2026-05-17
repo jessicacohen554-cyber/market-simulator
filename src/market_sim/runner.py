@@ -271,13 +271,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             rps_target = None
             if config.rps_enabled:
                 rps_target = get_rps_target(iso, year)
-            result = solve_dispatch(
-                fleet_arrays,
-                year_demand,
-                wind_cf,
-                wind_cap,
-                solar_cf,
-                solar_cap,
+            dispatch_kwargs = dict(
+                wind_cf=wind_cf,
+                wind_cap=wind_cap,
+                solar_cf=solar_cf,
+                solar_cap=solar_cap,
                 mc=mc,
                 voll=config.voll,
                 incidence=incidence,
@@ -293,6 +291,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 rps_target=rps_target,
                 T=config.hours,
             )
+            result = solve_dispatch(fleet_arrays, year_demand, **dispatch_kwargs)
+
+            # Optional 2-pass commitment: screen Pass-1 prices to decommit
+            # gas CC hours that cannot cover startup cost, then re-solve so
+            # CTs and coal fill the gaps. Pass 2 replaces Pass 1 for caching.
+            if config.commitment_enabled:
+                from market_sim.model.commitment import (
+                    apply_commitment,
+                    compute_commitment,
+                )
+
+                committed = compute_commitment(
+                    result.prices, mc, dispatch_fleet, fleet_arrays, config
+                )
+                fleet_arrays_p2 = apply_commitment(fleet_arrays, committed)
+                result = solve_dispatch(
+                    fleet_arrays_p2, year_demand, **dispatch_kwargs
+                )
             context = FleetContext.from_arrays(
                 fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf,
                 solar_cap, storage.energy_cap,

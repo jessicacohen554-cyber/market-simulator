@@ -128,6 +128,12 @@ class ScenarioConfig:
                                                # Recommended: 3 (default) for production runs,
                                                # 5-10 for CCS/carbon sensitivity analysis.
 
+    # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
+    commitment_enabled: bool = False  # default off — opt-in for calibration.
+                                       # When True, a price-based commitment
+                                       # filter runs between two LP solves to
+                                       # approximate integer unit commitment.
+
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
@@ -275,6 +281,7 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_max_gw_per_year": 2,
     "ccs_retrofit_min_remaining_life": 2,
     "heat_rate_bin_count": 2,
+    "commitment_enabled": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
