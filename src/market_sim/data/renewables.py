@@ -53,10 +53,11 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # distributed across zones from EIA-860 (see :func:`_eia860_zone_shares`).
 # Each technology is assigned to the zone holding the bulk of its installed
 # capacity; every other zone receives an all-zero profile.
-# Source: ERCOT CDR Dec 2024 (West wind belt, South solar corridor),
-# CAISO annual report 2024 (single in-footprint load zone).
+# Source: ERCOT CDR Dec 2024 (West Texas wind/solar belt; offshore wind off
+# the Houston/Galveston coast), CAISO annual report 2024 (single
+# in-footprint load zone).
 RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
-    "ERCOT": {"wind": "West", "solar": "South", "offshore_wind": "Houston"},
+    "ERCOT": {"wind": "West", "solar": "West", "offshore_wind": "Houston"},
     "CAISO": {
         "wind": "CAISO_main",
         "solar": "CAISO_main",
