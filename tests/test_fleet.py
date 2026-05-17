@@ -11,6 +11,7 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     Generator,
+    aggregate_fleet,
     assemble_mc,
     build_synthetic_fleet,
     generators_to_fleet_arrays,
@@ -242,6 +243,134 @@ class TestFleetLoader(unittest.TestCase):
             )
         direct = build_synthetic_fleet("SPP")
         self.assertEqual(len(from_fallback), len(direct))
+
+
+class TestAggregateFleet(unittest.TestCase):
+    """Tests for collapsing individual units into representative units."""
+
+    def _gas_cc_fleet(self) -> list[Generator]:
+        """Ten gas_cc units across two zones and two efficiency bins.
+
+        Five units per zone, alternating efficiency bins, so the fleet
+        spans all four ``(fuel_type, efficiency_bin, zone)`` groups.
+        """
+        gens: list[Generator] = []
+        for i in range(10):
+            zone = "north" if i < 5 else "south"
+            ebin = "h_class" if i % 2 == 0 else "f_class"
+            gens.append(
+                Generator(
+                    unit_id=f"CC{i}",
+                    name=f"CC{i}",
+                    zone=zone,
+                    fuel_type="gas_cc",
+                    efficiency_bin=ebin,
+                    pmax_mw=100.0 + 10.0 * i,
+                    pmin_mw=20.0 + i,
+                    heat_rate=6.5 + 0.1 * i,
+                    vom=3.0,
+                    emission_rate_co2=0.36,
+                    nox_rate=0.02,
+                    eford=0.05,
+                )
+            )
+        return gens
+
+    def test_groups_collapse_to_representative_units(self):
+        # 2 zones x 2 efficiency bins -> 4 representative units.
+        result = aggregate_fleet(self._gas_cc_fleet())
+        self.assertEqual(len(result), 4)
+        keys = {(g.fuel_type, g.efficiency_bin, g.zone) for g in result}
+        self.assertEqual(
+            keys,
+            {
+                ("gas_cc", "h_class", "north"),
+                ("gas_cc", "f_class", "north"),
+                ("gas_cc", "h_class", "south"),
+                ("gas_cc", "f_class", "south"),
+            },
+        )
+
+    def test_representative_unit_id_and_name(self):
+        result = aggregate_fleet(self._gas_cc_fleet())
+        for g in result:
+            expected = f"{g.fuel_type}_{g.efficiency_bin}_{g.zone}"
+            self.assertEqual(g.unit_id, expected)
+            self.assertEqual(g.name, expected)
+
+    def test_aggregated_pmax_is_group_sum(self):
+        gens = self._gas_cc_fleet()
+        result = aggregate_fleet(gens)
+        for rep in result:
+            group = [
+                g for g in gens
+                if g.fuel_type == rep.fuel_type
+                and g.efficiency_bin == rep.efficiency_bin
+                and g.zone == rep.zone
+            ]
+            self.assertAlmostEqual(rep.pmax_mw, sum(g.pmax_mw for g in group))
+            self.assertAlmostEqual(rep.pmin_mw, sum(g.pmin_mw for g in group))
+
+    def test_aggregated_heat_rate_is_capacity_weighted(self):
+        gens = self._gas_cc_fleet()
+        result = aggregate_fleet(gens)
+        for rep in result:
+            group = [
+                g for g in gens
+                if g.fuel_type == rep.fuel_type
+                and g.efficiency_bin == rep.efficiency_bin
+                and g.zone == rep.zone
+            ]
+            total_cap = sum(g.pmax_mw for g in group)
+            expected = (
+                sum(g.heat_rate * g.pmax_mw for g in group) / total_cap
+            )
+            self.assertAlmostEqual(rep.heat_rate, expected)
+
+    def test_nuclear_units_pass_through_unchanged(self):
+        nuclear = [
+            Generator(
+                unit_id="NUKE1", name="Nuke 1", zone="north",
+                fuel_type="nuclear", pmax_mw=1200.0, pmin_mw=1080.0,
+                heat_rate=10.4, is_must_run=True,
+            ),
+            Generator(
+                unit_id="NUKE2", name="Nuke 2", zone="south",
+                fuel_type="nuclear", pmax_mw=1350.0, pmin_mw=1215.0,
+                heat_rate=10.4, is_must_run=True,
+            ),
+        ]
+        result = aggregate_fleet(nuclear)
+        self.assertEqual(result, nuclear)
+
+    def test_scheduled_retirement_units_pass_through(self):
+        # A thermal unit with a retirement_year keeps its identity so the
+        # known-retirement mechanism can still apply its scheduled exit.
+        gens = [
+            Generator(
+                unit_id="C_RET", name="C_RET", zone="north", fuel_type="coal",
+                efficiency_bin="older", pmax_mw=300.0, retirement_year=2030,
+            ),
+            Generator(
+                unit_id="C0", name="C0", zone="north", fuel_type="coal",
+                efficiency_bin="older", pmax_mw=400.0,
+            ),
+        ]
+        result = aggregate_fleet(gens)
+        self.assertEqual(len(result), 2)
+        ids = {g.unit_id for g in result}
+        self.assertIn("C_RET", ids)
+        self.assertIn("coal_older_north", ids)
+
+    def test_round_trip_to_fleet_arrays(self):
+        aggregated = aggregate_fleet(self._gas_cc_fleet())
+        arrays = generators_to_fleet_arrays(
+            aggregated, ["north", "south"], hours=24
+        )
+        self.assertEqual(arrays.n_gen, 4)
+        self.assertEqual(arrays.pmax.shape, (4,))
+        self.assertEqual(arrays.availability.shape, (4, 24))
+        self.assertEqual(len(arrays.unit_ids), 4)
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
+    aggregate_fleet,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
@@ -137,7 +138,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         if fleet is None:
             # First year: no EIA-860 vintage yet, so the base fleet falls
             # back to the deterministic synthetic fleet inside the loader.
-            fleet = load_fleet_from_csv(iso, iso_config)
+            # Collapse individual units into efficiency-bin representatives
+            # before they ever reach the LP -- the dominant solve-time win.
+            fleet = aggregate_fleet(load_fleet_from_csv(iso, iso_config))
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
