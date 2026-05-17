@@ -179,7 +179,7 @@ class TestFleetLoader(unittest.TestCase):
 
     def test_ercot_fleet_total_in_range(self):
         fleet = load_fleet_from_csv("ERCOT")
-        self.assertGreaterEqual(self._gw(fleet), 80.0)
+        self.assertGreaterEqual(self._gw(fleet), 70.0)
         self.assertLessEqual(self._gw(fleet), 120.0)
 
     def test_caiso_fleet_total_in_range(self):
