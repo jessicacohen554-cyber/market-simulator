@@ -869,9 +869,10 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
         self.assertIsInstance(tracker, dict)
         # The scheduled retirement is gone; the rest of the fleet remains.
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
-        self.assertEqual(
-            {g.unit_id for g in fleet}, {f"C{i}" for i in range(5)}
-        )
+        # The five surviving coal units share a bin and zone, so they
+        # collapse into one representative unit carrying the group capacity.
+        self.assertEqual({g.unit_id for g in fleet}, {"coal_default_Z0"})
+        self.assertEqual(sum(g.pmax_mw for g in fleet), 5000.0)
         # No price signal yet, so economic new entry does not run.
         self.assertEqual(additions, {})
 
