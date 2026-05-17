@@ -126,7 +126,7 @@ class FleetArrays:
     fuel_type_idx: np.ndarray
     availability: np.ndarray
     unit_ids: list[str]
-    efficiency_bin: list[str]
+    efficiency_bin: np.ndarray
 
     @property
     def n_gen(self) -> int:
@@ -174,7 +174,9 @@ def generators_to_fleet_arrays(
         fuel_type_idx=fuel_type_idx,
         availability=availability,
         unit_ids=[g.unit_id for g in generators],
-        efficiency_bin=[g.efficiency_bin for g in generators],
+        efficiency_bin=np.array(
+            [g.efficiency_bin for g in generators], dtype=str
+        ),
     )
 
 
