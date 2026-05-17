@@ -283,7 +283,7 @@ def apply_economic_retirements(
 # Classic candidate technologies considered for economic new entry. These
 # are costed from NEW_ENTRY_COSTS; emerging technologies are handled
 # separately (see _EMERGING_AVAILABLE_YEAR below).
-_NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc", "nuclear")
+_NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc", "nuclear_smr")
 
 # Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
 # the W[z,t]/S[z,t] dispatch variables) rather than entering as thermal
@@ -308,6 +308,8 @@ _QUEUE_CAP_GROUP: dict[str, str] = {
     "hydrogen_ct": "gas_cc",
     "hydrogen_ccgt": "gas_cc",
     "gas_cc_ccs": "gas_cc",
+    "nuclear_smr": "nuclear",
+    "nuclear_large": "nuclear",
 }
 
 # Assumed capacity factor for screening each emerging technology in the
@@ -685,8 +687,12 @@ def _make_new_generator(
         kwargs["vom"] = VOM.get(tech_type, 0.0)
 
     # Nuclear carries no fuel cost (fuel is embedded in FOM) and runs as a
-    # must-run baseload unit; it has no heat-rate bin to assign above.
-    if tech_type == "nuclear":
+    # must-run baseload unit; it has no heat-rate bin to assign above. The
+    # cost-tier key (nuclear_smr/nuclear_large) is kept in the unit_id for
+    # tracking, but fuel_type collapses to "nuclear" so dispatch, emissions
+    # and retirement logic treat all reactors identically.
+    if tech_type in ("nuclear_smr", "nuclear_large"):
+        kwargs["fuel_type"] = "nuclear"
         kwargs["is_must_run"] = True
         kwargs["vom"] = VOM.get("nuclear", 2.5)
         kwargs["eford"] = EFORD.get("nuclear", 0.03)
@@ -773,7 +779,7 @@ def apply_economic_new_entry(
     share the ``gas_cc`` per-tech queue cap; geothermal and offshore wind
     have their own. Offshore wind enters only in eligible ISOs.
 
-    Thermal new entry (``gas_cc``, ``nuclear``, the hydrogen turbines,
+    Thermal new entry (``gas_cc``, ``nuclear_smr``, the hydrogen turbines,
     CCUS, geothermal and offshore wind) is appended to the returned fleet
     as a :class:`Generator`. Wind and solar are *not*: variable-output
     renewables must follow a capacity-factor profile, so their build MW is
