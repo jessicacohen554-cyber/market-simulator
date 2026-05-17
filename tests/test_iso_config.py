@@ -8,10 +8,19 @@ from market_sim.config.iso_configs import get_iso_config
 class TestISOConfig(unittest.TestCase):
     """Tests for ISO topology configurations."""
 
-    def test_ercot_has_four_zones(self):
-        """ERCOT defines exactly four load zones."""
+    def test_ercot_has_six_zones(self):
+        """ERCOT defines six congestion-interface load zones."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_zones, 4)
+        self.assertEqual(ercot.n_zones, 6)
+        self.assertEqual(
+            set(ercot.zone_names),
+            {"West", "Panhandle", "North", "Houston", "South_Central", "South"},
+        )
+
+    def test_ercot_has_eight_links(self):
+        """ERCOT defines eight inter-zone congestion interfaces."""
+        ercot = get_iso_config("ERCOT")
+        self.assertEqual(ercot.n_links, 8)
 
     def test_ercot_load_shares_sum_to_one(self):
         """ERCOT zone load shares sum to 1.0."""

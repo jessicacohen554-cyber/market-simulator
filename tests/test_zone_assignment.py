@@ -13,10 +13,18 @@ from market_sim.data.zone_assignment import (
 
 
 def test_ercot_west_zone():
-    """A plant in far west Texas should be assigned to West zone."""
-    # Odessa, TX area: lat ~31.8, lon ~-102.3
-    zone = assign_zone_by_coords(31.8, -102.3, "ERCOT")
+    """A plant in the Permian / CREZ belt should be assigned to West zone."""
+    # Midland, TX area: lat ~32.0, lon ~-102.1
+    zone = assign_zone_by_coords(32.0, -102.1, "ERCOT")
     assert zone == "West"
+
+
+def test_ercot_panhandle_zone():
+    """A plant in the Texas Panhandle should be assigned to Panhandle zone."""
+    # Amarillo, TX: lat ~35.2, lon ~-101.8 — north of the West Texas belt.
+    assert assign_zone_by_coords(35.2, -101.8, "ERCOT") == "Panhandle"
+    # Lubbock, TX: lat ~33.6, lon ~-101.9 — just above the 33.5 boundary.
+    assert assign_zone_by_coords(33.6, -101.9, "ERCOT") == "Panhandle"
 
 
 def test_ercot_houston_zone():
@@ -32,9 +40,18 @@ def test_ercot_north_zone():
     assert zone == "North"
 
 
+def test_ercot_south_central_zone():
+    """Austin and San Antonio plants should be assigned to South_Central."""
+    # Austin, TX: lat ~30.3, lon ~-97.7
+    assert assign_zone_by_coords(30.3, -97.7, "ERCOT") == "South_Central"
+    # San Antonio, TX: lat ~29.4, lon ~-98.5
+    assert assign_zone_by_coords(29.4, -98.5, "ERCOT") == "South_Central"
+
+
 def test_ercot_south_zone():
-    """A plant near San Antonio should be assigned to South zone."""
-    zone = assign_zone_by_coords(29.4, -98.5, "ERCOT")
+    """A plant near Corpus Christi should be assigned to South zone."""
+    # Corpus Christi, TX: lat ~27.8, lon ~-97.4 — south of the 29.0 boundary.
+    zone = assign_zone_by_coords(27.8, -97.4, "ERCOT")
     assert zone == "South"
 
 
@@ -60,20 +77,27 @@ def test_egrid_lookup_loads():
 
 
 def test_ercot_zone_capacity_balance():
-    """After geographic assignment, every zone holds a non-trivial share.
+    """Geographic assignment spreads thermal capacity across the load zones.
 
-    The threshold is 3%, not 5%: the ERCOT West weather zone is genuinely
-    thermal-light (its capacity is dominated by wind, which is not part of
-    the thermal fleet), so geographic assignment correctly leaves it the
-    smallest zone at roughly 4% of thermal capacity.
+    The Panhandle zone is a pure wind exporter: its in-ERCOT fleet is
+    entirely wind and solar (the Amarillo thermal stations sit in SPP, not
+    ERCOT), so geographic assignment correctly leaves it with no thermal
+    capacity. Every other zone holds a non-trivial share; the 3% (not 5%)
+    threshold accommodates the West zone, which is genuinely thermal-light
+    behind the West Texas Export interface.
     """
-    fleet = load_fleet_from_csv("ERCOT", get_iso_config("ERCOT"))
+    config = get_iso_config("ERCOT")
+    fleet = load_fleet_from_csv("ERCOT", config)
     cap_by_zone: dict[str, float] = defaultdict(float)
     for g in fleet:
         cap_by_zone[g.zone] += g.pmax_mw
     total = sum(cap_by_zone.values())
-    for zone, cap in cap_by_zone.items():
-        assert cap / total > 0.03, f"{zone} has only {cap / total:.1%} of capacity"
+    assert cap_by_zone["Panhandle"] == 0.0
+    for zone in config.zone_names:
+        if zone == "Panhandle":
+            continue
+        share = cap_by_zone[zone] / total
+        assert share > 0.03, f"{zone} has only {share:.1%} of capacity"
 
 
 def test_pjm_fleet_loads():
