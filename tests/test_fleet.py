@@ -13,7 +13,6 @@ from market_sim.data.fleet import (
     Generator,
     aggregate_fleet,
     assemble_mc,
-    build_synthetic_fleet,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
 )
@@ -169,7 +168,7 @@ class TestAssembleMC(unittest.TestCase):
 
 
 class TestFleetLoader(unittest.TestCase):
-    """Tests for ``load_fleet_from_csv`` and the synthetic fleet fallback."""
+    """Tests for ``load_fleet_from_csv``."""
 
     ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]
 
@@ -230,19 +229,10 @@ class TestFleetLoader(unittest.TestCase):
             arrays = generators_to_fleet_arrays(fleet, zone_names, hours=4)
             self.assertEqual(arrays.n_gen, len(fleet))
 
-    def test_synthetic_fallback_when_no_csv(self):
+    def test_raises_when_no_eia860_data(self):
         with tempfile.TemporaryDirectory() as empty_dir:
-            fleet = load_fleet_from_csv("ERCOT", data_dir=Path(empty_dir))
-        self.assertGreaterEqual(self._gw(fleet), 80.0)
-        self.assertLessEqual(self._gw(fleet), 120.0)
-
-    def test_synthetic_matches_csv_load(self):
-        with tempfile.TemporaryDirectory() as empty_dir:
-            from_fallback = load_fleet_from_csv(
-                "SPP", data_dir=Path(empty_dir)
-            )
-        direct = build_synthetic_fleet("SPP")
-        self.assertEqual(len(from_fallback), len(direct))
+            with self.assertRaises(FileNotFoundError):
+                load_fleet_from_csv("ERCOT", data_dir=Path(empty_dir))
 
 
 class TestAggregateFleet(unittest.TestCase):

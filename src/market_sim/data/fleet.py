@@ -1,8 +1,8 @@
 """Generation fleet inventory and attributes.
 
 Provides the :class:`Generator` model, its vectorized :class:`FleetArrays`
-form, and loaders that build a per-ISO thermal fleet either from EIA-860 /
-eGRID CSV extracts or from a deterministic synthetic fleet fallback.
+form, and loaders that build a per-ISO thermal fleet from EIA-860 / eGRID
+CSV extracts.
 """
 
 from __future__ import annotations
@@ -45,6 +45,15 @@ BINNED_FLEET_COLUMNS: list[str] = [
     "plant_id", "plant_name", "fuel_type", "efficiency_bin", "zone",
     "pmax_mw", "pmin_mw", "heat_rate", "vom", "emission_rate_co2",
     "nox_rate", "eford", "online_year", "retirement_year",
+]
+
+# Canonical column order of the EIA-860 generator extract consumed by the
+# fleet loader, produced by ``scripts/process_eia860.py``.
+EIA_860_CSV_COLUMNS: list[str] = [
+    "plant_id", "generator_id", "plant_name", "state",
+    "balancing_authority_code", "technology", "energy_source", "prime_mover",
+    "nameplate_capacity_mw", "net_summer_capacity_mw", "operating_year",
+    "planned_retirement_year", "status",
 ]
 
 # EIA-930 balancing-authority code → ISO name, for the seven wholesale
@@ -431,12 +440,12 @@ def assemble_mc(
 
 
 # ---------------------------------------------------------------------------
-# Fleet loading from EIA-860 / eGRID CSVs (with synthetic fallback)
+# Fleet loading from EIA-860 / eGRID CSVs
 # ---------------------------------------------------------------------------
 
 # Maps many possible source column names (lower-cased, spaces → underscores)
-# to the canonical names the loader works with. Covers the EIA-860 API,
-# eGRID plant/unit files, and the synthetic fleet CSV.
+# to the canonical names the loader works with. Covers the EIA-860 API and
+# eGRID plant/unit files.
 _COLUMN_ALIASES: dict[str, set[str]] = {
     "plant_id": {
         "plant_id", "plantid", "plant_code", "plantcode", "oris", "orispl",
@@ -504,9 +513,9 @@ _CC_PRIME_MOVERS = {"CC", "CA", "CT", "CS"}
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename a generator DataFrame's columns to canonical loader names.
 
-    Handles the differing column names of the EIA-860 API, eGRID extracts
-    and the synthetic fleet CSV. Unknown columns are left untouched;
-    duplicate canonical columns keep the first occurrence.
+    Handles the differing column names of the EIA-860 API and eGRID
+    extracts. Unknown columns are left untouched; duplicate canonical
+    columns keep the first occurrence.
 
     Args:
         df: A raw generator DataFrame.
@@ -750,8 +759,7 @@ def _load_fleet_from_parquet(
 
     The parquet holds real generators for all seven wholesale markets; rows
     are filtered to the ISO via their ``balancing_authority_code``. Returns
-    ``None`` when the parquet is missing or yields no thermal generators,
-    so the caller can fall through to the synthetic fleet.
+    ``None`` when the parquet is missing or yields no thermal generators.
     """
     if not parquet_path.exists():
         return None
@@ -879,8 +887,7 @@ def load_fleet_from_csv(
 
     1. ``generators_{iso}.csv`` in the EIA-860 directory (per-ISO override);
     2. the committed real EIA-860 generator parquet
-       (:data:`EIA_860_PARQUET_NAME`), filtered to the ISO;
-    3. a deterministic synthetic fleet, as a last-resort fallback.
+       (:data:`EIA_860_PARQUET_NAME`), filtered to the ISO.
 
     Wind, solar and hydro are skipped (handled by ``renewables.py``).
 
@@ -898,6 +905,10 @@ def load_fleet_from_csv(
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
+
+    Raises:
+        FileNotFoundError: If neither the per-ISO CSV override nor the
+            EIA-860 generator parquet yields a fleet for the ISO.
     """
     iso = iso.upper()
     if data_dir is None:
@@ -921,345 +932,16 @@ def load_fleet_from_csv(
             len(generators),
         )
     else:
-        from_parquet = _load_fleet_from_parquet(
-            data_dir / EIA_860_PARQUET_NAME, iso, iso_config
-        )
-        if from_parquet is not None:
-            generators = from_parquet
-            source = data_dir / EIA_860_PARQUET_NAME
-        else:
-            logger.warning(
-                "EIA-860 not found — using synthetic fleet for %s", iso
+        parquet_path = data_dir / EIA_860_PARQUET_NAME
+        from_parquet = _load_fleet_from_parquet(parquet_path, iso, iso_config)
+        if from_parquet is None:
+            raise FileNotFoundError(
+                f"No EIA-860 data for {iso}: expected a per-ISO override "
+                f"CSV at {csv_path} or the generator parquet at "
+                f"{parquet_path}"
             )
-            generators = build_synthetic_fleet(iso, iso_config)
-            source = None
+        generators = from_parquet
+        source = parquet_path
 
     _cache_binned_fleet(iso, generators, source)
-    return generators
-
-
-# ---------------------------------------------------------------------------
-# Synthetic fleet generation (guaranteed fallback)
-# ---------------------------------------------------------------------------
-
-# Fixed RNG seed so the synthetic fleet is identical on every run.
-_SYNTHETIC_SEED = 20260516
-
-# ISO ordering used to derive a per-ISO RNG seed offset.
-_ISO_ORDER = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]
-
-# Per-ISO plant_id base, spaced 1000 apart to avoid cross-ISO collisions.
-_PLANT_ID_BASE: dict[str, int] = {
-    "ERCOT": 60000,
-    "CAISO": 61000,
-    "PJM": 62000,
-    "MISO": 63000,
-    "NYISO": 64000,
-    "NEISO": 65000,
-    "SPP": 66000,
-}
-
-# Operating-year ranges per (vintage kind, vintage label), chosen so the
-# fleet loader bins each unit into the intended efficiency class.
-_VINTAGE_YEARS: dict[tuple[str, str], tuple[int, int]] = {
-    ("gas_cc", "new"): (2015, 2024),
-    ("gas_cc", "mid"): (2005, 2014),
-    ("gas_cc", "old"): (1990, 2004),
-    ("gas_ct", "new"): (2010, 2023),
-    ("gas_ct", "mid"): (2000, 2009),
-    ("gas_ct", "old"): (1975, 1999),
-    ("coal", "new"): (2000, 2012),
-    ("coal", "mid"): (1985, 1999),
-    ("coal", "old"): (1965, 1984),
-}
-
-# Category → (vintage kind, technology, energy source, prime mover).
-_CATEGORY_DEFAULTS: dict[str, tuple[str, str, str, str]] = {
-    "gas_cc": ("gas_cc", "Natural Gas Fired Combined Cycle", "NG", "CC"),
-    "gas_ct": ("gas_ct", "Natural Gas Fired Combustion Turbine", "NG", "GT"),
-    "coal": ("coal", "Conventional Steam Coal", "SUB", "ST"),
-    "oil_ct": ("gas_ct", "Petroleum Liquids", "DFO", "GT"),
-}
-
-# Default vintage splits when a block does not specify its own.
-_GAS_CC_SPLIT = {"new": 0.35, "mid": 0.45, "old": 0.20}
-_GAS_CT_SPLIT = {"new": 0.25, "mid": 0.45, "old": 0.30}
-_COAL_SPLIT = {"new": 0.25, "mid": 0.50, "old": 0.25}
-_OIL_SPLIT = {"old": 1.0}
-_DEFAULT_SPLITS = {
-    "gas_cc": _GAS_CC_SPLIT,
-    "gas_ct": _GAS_CT_SPLIT,
-    "coal": _COAL_SPLIT,
-    "oil_ct": _OIL_SPLIT,
-}
-
-# Real-world fleet composition per ISO. Capacities are approximate; non-LP
-# ISOs (PJM/MISO/NYISO/NEISO/SPP) only need the fuel mix roughly right.
-_FLEET_SPECS: dict[str, dict] = {
-    "ERCOT": {
-        "ba": "ERCO",
-        "states": ["TX"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 58000, "n": 30,
-             "splits": {"new": 0.40, "mid": 0.40, "old": 0.20}},
-            {"category": "gas_ct", "total_mw": 22000, "n": 30,
-             "splits": {"new": 0.30, "mid": 0.40, "old": 0.30}},
-            {"category": "coal", "total_mw": 14000, "n": 10,
-             "splits": {"new": 0.20, "mid": 0.50, "old": 0.30},
-             "retire": (2028, 2035)},
-        ],
-        "nuclear": [
-            {"name": "Comanche Peak", "states": ["TX"], "units": 2,
-             "unit_mw": 1200, "online": 1990},
-            {"name": "South Texas Project", "states": ["TX"], "units": 2,
-             "unit_mw": 1350, "online": 1988},
-        ],
-    },
-    "CAISO": {
-        "ba": "CISO",
-        "states": ["CA"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 24000, "n": 20},
-            {"category": "gas_ct", "total_mw": 11000, "n": 15},
-        ],
-        "nuclear": [
-            {"name": "Diablo Canyon", "states": ["CA"], "units": 2,
-             "unit_mw": 1150, "online": 1985},
-        ],
-    },
-    "PJM": {
-        "ba": "PJM",
-        "states": ["PA", "NJ", "MD", "VA", "OH", "WV", "IL", "IN", "DE"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 75000, "n": 40},
-            {"category": "gas_ct", "total_mw": 35000, "n": 40},
-            {"category": "coal", "total_mw": 40000, "n": 25,
-             "retire": (2028, 2038)},
-        ],
-        "nuclear": [
-            {"name": "PJM Nuclear", "states": ["PA", "NJ", "IL", "MD", "VA"],
-             "units": 18, "unit_mw": 1833, "online": 1980},
-        ],
-    },
-    "MISO": {
-        "ba": "MISO",
-        "states": ["IL", "MN", "MI", "WI", "IN", "MO", "IA", "AR", "LA",
-                   "MS", "ND", "SD"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 55000, "n": 30},
-            {"category": "gas_ct", "total_mw": 30000, "n": 35},
-            {"category": "coal", "total_mw": 45000, "n": 30,
-             "retire": (2028, 2040)},
-        ],
-        "nuclear": [
-            {"name": "MISO Nuclear", "states": ["IL", "MN", "MI", "WI"],
-             "units": 10, "unit_mw": 1300, "online": 1980},
-        ],
-    },
-    "NYISO": {
-        "ba": "NYIS",
-        "states": ["NY"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 15000, "n": 12},
-            {"category": "gas_ct", "total_mw": 10000, "n": 15},
-            {"category": "coal", "total_mw": 800, "n": 2,
-             "splits": {"old": 1.0}, "retire": (2028, 2030)},
-        ],
-        "nuclear": [
-            {"name": "NYISO Nuclear", "states": ["NY"], "units": 3,
-             "unit_mw": 1800, "online": 1985},
-        ],
-    },
-    "NEISO": {
-        "ba": "ISNE",
-        "states": ["CT", "MA", "ME", "NH", "RI", "VT"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 14000, "n": 10},
-            {"category": "gas_ct", "total_mw": 5000, "n": 10},
-            {"category": "oil_ct", "total_mw": 5000, "n": 10},
-            {"category": "coal", "total_mw": 1000, "n": 2,
-             "splits": {"old": 1.0}, "retire": (2028, 2030)},
-        ],
-        "nuclear": [
-            {"name": "Millstone", "states": ["CT"], "units": 2,
-             "unit_mw": 1100, "online": 1986},
-            {"name": "Seabrook", "states": ["NH"], "units": 1,
-             "unit_mw": 1200, "online": 1990},
-        ],
-    },
-    "SPP": {
-        "ba": "SWPP",
-        "states": ["KS", "OK", "NE", "SD", "ND", "MO", "AR", "NM", "MN"],
-        "thermal": [
-            {"category": "gas_cc", "total_mw": 30000, "n": 20},
-            {"category": "gas_ct", "total_mw": 20000, "n": 25},
-            {"category": "coal", "total_mw": 20000, "n": 15,
-             "retire": (2030, 2040)},
-        ],
-        "nuclear": [
-            {"name": "Wolf Creek", "states": ["KS"], "units": 1,
-             "unit_mw": 1200, "online": 1985},
-            {"name": "Grand Gulf", "states": ["MS"], "units": 1,
-             "unit_mw": 1200, "online": 1985},
-        ],
-    },
-}
-
-# Canonical CSV column order for synthetic fleet files.
-SYNTHETIC_CSV_COLUMNS = [
-    "plant_id", "generator_id", "plant_name", "state",
-    "balancing_authority_code", "technology", "energy_source", "prime_mover",
-    "nameplate_capacity_mw", "net_summer_capacity_mw", "operating_year",
-    "planned_retirement_year", "status",
-]
-
-
-def _expand_vintages(splits: dict[str, float], n: int) -> list[str]:
-    """Return a list of ``n`` vintage labels matching the given fractions."""
-    labels: list[str] = []
-    for label, fraction in splits.items():
-        labels.extend([label] * round(fraction * n))
-    dominant = max(splits, key=splits.get)
-    while len(labels) < n:
-        labels.append(dominant)
-    return labels[:n]
-
-
-def _gen_thermal_block(
-    block: dict, ba: str, states: list[str], plant_id: int, rng: random.Random
-) -> tuple[list[dict], int]:
-    """Generate the raw CSV rows for one thermal block.
-
-    Returns the rows and the next free plant_id.
-    """
-    kind, technology, energy_source, prime_mover = _CATEGORY_DEFAULTS[
-        block["category"]
-    ]
-    n = block["n"]
-    total_mw = block["total_mw"]
-    splits = block.get("splits", _DEFAULT_SPLITS[block["category"]])
-    retire = block.get("retire")
-
-    # Vary unit sizes, then rescale so the block hits its total capacity.
-    weights = [rng.uniform(0.65, 1.35) for _ in range(n)]
-    weight_sum = sum(weights)
-    caps = [total_mw * w / weight_sum for w in weights]
-
-    labels = _expand_vintages(splits, n)
-    rng.shuffle(labels)
-    old_positions = [i for i, label in enumerate(labels) if label == "old"]
-
-    rows: list[dict] = []
-    for i in range(n):
-        label = labels[i]
-        year_lo, year_hi = _VINTAGE_YEARS[(kind, label)]
-        operating_year = rng.randint(year_lo, year_hi)
-
-        retirement = ""
-        if retire is not None and label == "old":
-            r_lo, r_hi = retire
-            k = old_positions.index(i)
-            span = max(len(old_positions) - 1, 1)
-            retirement = round(r_lo + (r_hi - r_lo) * k / span)
-
-        nameplate = round(caps[i], 1)
-        rows.append(
-            {
-                "plant_id": plant_id,
-                "generator_id": "1",
-                "plant_name": f"{ba} {block['category']} {i + 1}",
-                "state": rng.choice(states),
-                "balancing_authority_code": ba,
-                "technology": technology,
-                "energy_source": energy_source,
-                "prime_mover": prime_mover,
-                "nameplate_capacity_mw": nameplate,
-                "net_summer_capacity_mw": round(nameplate * 0.95, 1),
-                "operating_year": operating_year,
-                "planned_retirement_year": retirement,
-                "status": "OP",
-            }
-        )
-        plant_id += 1
-    return rows, plant_id
-
-
-def build_synthetic_fleet_rows(iso: str) -> list[dict]:
-    """Return deterministic raw CSV rows for an ISO's synthetic fleet.
-
-    The rows use the same column schema as a real EIA-860 extract, so they
-    can be written to a CSV or passed straight to the fleet loader.
-
-    Args:
-        iso: ISO identifier, e.g. ``"ERCOT"``.
-
-    Returns:
-        A list of row dicts with the columns in :data:`SYNTHETIC_CSV_COLUMNS`.
-    """
-    iso = iso.upper()
-    spec = _FLEET_SPECS[iso]
-    rng = random.Random(_SYNTHETIC_SEED + _ISO_ORDER.index(iso))
-
-    ba = spec["ba"]
-    states = spec["states"]
-    plant_id = _PLANT_ID_BASE[iso]
-
-    rows: list[dict] = []
-    for block in spec["thermal"]:
-        block_rows, plant_id = _gen_thermal_block(
-            block, ba, states, plant_id, rng
-        )
-        rows.extend(block_rows)
-
-    for plant in spec.get("nuclear", []):
-        for unit in range(plant["units"]):
-            rows.append(
-                {
-                    "plant_id": plant_id,
-                    "generator_id": str(unit + 1),
-                    "plant_name": plant["name"],
-                    "state": rng.choice(plant["states"]),
-                    "balancing_authority_code": ba,
-                    "technology": "Nuclear",
-                    "energy_source": "NUC",
-                    "prime_mover": "ST",
-                    "nameplate_capacity_mw": plant["unit_mw"],
-                    "net_summer_capacity_mw": round(plant["unit_mw"] * 0.98, 1),
-                    "operating_year": plant["online"],
-                    "planned_retirement_year": "",
-                    "status": "OP",
-                }
-            )
-        plant_id += 1
-
-    return rows
-
-
-def build_synthetic_fleet(
-    iso: str, iso_config: ISOConfig | None = None
-) -> list[Generator]:
-    """Build an ISO's thermal fleet from the deterministic synthetic spec.
-
-    Used as the fallback when no EIA-860 CSV is available.
-
-    Args:
-        iso: ISO identifier, e.g. ``"ERCOT"``.
-        iso_config: Topology configuration for zone assignment. If ``None``,
-            it is fetched via :func:`get_iso_config` when the ISO is known.
-
-    Returns:
-        The synthetic thermal fleet as a list of :class:`Generator` objects.
-    """
-    iso = iso.upper()
-    if iso_config is None:
-        try:
-            iso_config = get_iso_config(iso)
-        except ValueError:
-            iso_config = None
-
-    df = _normalize_columns(pd.DataFrame(build_synthetic_fleet_rows(iso)))
-    generators = _rows_to_generators(df, iso, iso_config)
-    logger.warning(
-        "Using synthetic fleet for %s (%d generators)", iso, len(generators)
-    )
     return generators
