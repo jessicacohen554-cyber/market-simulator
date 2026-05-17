@@ -20,8 +20,6 @@ import numpy as np
 
 from market_sim.config.constants import (
     END_YEAR,
-    GAS_PRICE_BASE,
-    GAS_PRICE_ESCALATION,
     START_YEAR,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -33,7 +31,7 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     load_fleet_from_csv,
 )
-from market_sim.data.fuel import resolve_fuel_prices
+from market_sim.data.fuel import resolve_annual_gas_price, resolve_fuel_prices
 from market_sim.data.renewables import (
     inject_offshore_wind_availability,
     load_renewable_profiles,
@@ -152,11 +150,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 rec_price = prior_results["rec_price"]
             # Gas price and carbon price for the year feed the new-entry
             # screen so gas CC is charged its expected variable fuel cost.
-            gas_base_price = GAS_PRICE_BASE[iso][config.gas_price_path]
-            gas_price_year = (
-                gas_base_price
-                * (1.0 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
-            )
+            # The annual (seasonality-free) delivered gas price keeps
+            # capacity evolution aligned with hourly dispatch fuel costs.
+            gas_price_year = resolve_annual_gas_price(config, year)
             carbon_price_year = resolve_carbon_price(config, year)
             fleet, loss_tracker, renewable_additions = evolve_fleet(
                 fleet, prior_results, year, config, loss_tracker,

@@ -39,11 +39,10 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
     COAL_PRICE_BASE,
-    GAS_PRICE_BASE,
-    GAS_PRICE_ESCALATION,
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.data.fuel import resolve_annual_gas_price  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     PROCESSED_DIR,
     load_fleet_from_csv,
@@ -124,12 +123,11 @@ def _bin_dispatch_frame(
 def _fuel_price_frame(config: ScenarioConfig, year: int, hours: int) -> pd.DataFrame:
     """Return a ``fuel_type × hour`` delivered fuel price frame ($/MMBtu).
 
-    Gas-burning fuels pay the ISO gas price escalated from the base year;
-    coal pays the flat ISO coal price; all other fuels carry zero cost.
+    Gas-burning fuels pay the delivered Henry Hub price for the year (AEO
+    trajectory + regional basis); coal pays the flat ISO coal price; all
+    other fuels carry zero cost.
     """
-    gas_price = GAS_PRICE_BASE[config.iso][config.gas_price_path] * (
-        (1.0 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
-    )
+    gas_price = resolve_annual_gas_price(config, year)
     coal_price = COAL_PRICE_BASE[config.iso]
     per_fuel = {f: gas_price for f in _GAS_FUELS}
     per_fuel["coal"] = coal_price

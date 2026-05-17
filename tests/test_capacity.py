@@ -6,7 +6,6 @@ from types import SimpleNamespace
 import numpy as np
 
 from market_sim.config.constants import (
-    GAS_PRICE_BASE,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
@@ -948,8 +947,9 @@ class TestCapacityIntegration(unittest.TestCase):
 
         def _run(gas_price_path):
             config = ScenarioConfig(iso="ERCOT", gas_price_path=gas_price_path)
-            gas_price = GAS_PRICE_BASE["ERCOT"][gas_price_path]
-            gas_cf = max(0.02, 0.6 - 0.1 * gas_price)
+            # A higher gas price path depresses gas-plant utilization: model
+            # the prior-year gas CF the path implies so revenue tracks it.
+            gas_cf = {"low": 0.35, "mid": 0.20, "high": 0.05}[gas_price_path]
             fleet = _fleet()
             tracker: dict[str, int] = {}
             prior = None

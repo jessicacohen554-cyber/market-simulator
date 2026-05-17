@@ -4,6 +4,11 @@ Resolves per-generator delivered fuel prices ($/MMBtu) and the scenario
 NOx price into the forms consumed by marginal-cost assembly
 (see :func:`market_sim.data.fleet.assemble_mc`). Carbon-price resolution
 lives in :mod:`market_sim.policy.carbon`.
+
+Gas prices follow EIA Annual Energy Outlook Henry Hub trajectories
+(:data:`HENRY_HUB_TRAJECTORIES`) selected by ``config.gas_price_path``,
+plus a regional basis differential (:data:`GAS_BASIS_DIFFERENTIAL`) and an
+optional monthly seasonality shape (:data:`GAS_MONTHLY_SEASONALITY`).
 """
 
 from __future__ import annotations
@@ -12,17 +17,18 @@ import numpy as np
 
 from market_sim.config.constants import (
     COAL_PRICE_BASE,
-    GAS_PRICE_BASE,
-    GAS_PRICE_ESCALATION,
-    START_YEAR,
+    GAS_BASIS_DIFFERENTIAL,
+    GAS_MONTHLY_SEASONALITY,
+    HENRY_HUB_TRAJECTORIES,
+    HOURS_PER_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 
 # Fuel-type integer codes (from FUEL_TYPE_MAP) that burn natural gas and
-# therefore pay the escalated gas price. CCUS (``gas_cc_ccs``) burns the
-# same natural gas as an unabated gas CC.
+# therefore pay the Henry Hub price. CCUS (``gas_cc_ccs``) burns the same
+# natural gas as an unabated gas CC.
 _GAS_FUEL_IDX: tuple[int, int, int] = (
     FUEL_TYPE_MAP["gas_cc"],
     FUEL_TYPE_MAP["gas_ct"],
@@ -43,17 +49,73 @@ _HYDROGEN_FUEL_IDX: tuple[int, int] = (
 # hydro, imports), which carry no commodity fuel cost in this model.
 _ZERO_FUEL_PRICE: float = 0.0
 
+# Calendar days per month for a non-leap year (sums to 365 -> 8760 hours).
+_DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+
+def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
+    """Return the delivered annual gas price ($/MMBtu) for the scenario year.
+
+    The price is the AEO Henry Hub trajectory value for ``year`` and the
+    scenario's ``gas_price_path``, plus the ISO's basis differential::
+
+        delivered = HENRY_HUB_TRAJECTORIES[path][year] + basis
+
+    Years beyond the trajectory's last entry are extrapolated using the
+    final year-over-year growth rate. This annual (seasonality-free) price
+    is the one capacity new-entry LCOE screening should charge gas units,
+    so dispatch and capacity evolution see the same gas cost for a year.
+
+    Args:
+        config: Scenario configuration supplying ``iso`` and
+            ``gas_price_path``.
+        year: Calendar year to resolve.
+
+    Returns:
+        The delivered annual gas price in $/MMBtu.
+    """
+    trajectory = HENRY_HUB_TRAJECTORIES[config.gas_price_path]
+    if year in trajectory:
+        henry_hub = trajectory[year]
+    else:
+        # Extrapolate beyond the trajectory using the last growth rate.
+        last_year = max(trajectory)
+        annual_growth = trajectory[last_year] / trajectory[last_year - 1]
+        henry_hub = trajectory[last_year] * annual_growth ** (year - last_year)
+
+    return henry_hub + GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
+
+
+def _seasonal_factors(hours: int) -> np.ndarray:
+    """Return an ``(hours,)`` array of monthly gas seasonality multipliers.
+
+    The 8760-hour year is filled month by month from
+    :data:`GAS_MONTHLY_SEASONALITY`; a sub-annual horizon takes the leading
+    slice. The 12-iteration loop is over months, not hours.
+    """
+    full_year = np.empty(HOURS_PER_YEAR)
+    hour = 0
+    for month in range(1, 13):
+        hours_in_month = _DAYS_IN_MONTH[month - 1] * 24
+        full_year[hour:hour + hours_in_month] = GAS_MONTHLY_SEASONALITY[month]
+        hour += hours_in_month
+    if hours <= HOURS_PER_YEAR:
+        return full_year[:hours]
+    # Multi-year horizons repeat the annual shape.
+    reps = -(-hours // HOURS_PER_YEAR)
+    return np.tile(full_year, reps)[:hours]
+
 
 def resolve_fuel_prices(
     config: ScenarioConfig, fleet: FleetArrays, year: int
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` delivered fuel price array for the fleet.
 
-    Natural-gas units (``gas_cc`` and ``gas_ct``) pay a gas price taken from
-    :data:`GAS_PRICE_BASE` for the scenario's ISO and gas price path, escalated
-    at :data:`GAS_PRICE_ESCALATION` per year from :data:`START_YEAR`::
-
-        price = base * (1 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
+    Natural-gas units (``gas_cc``, ``gas_ct`` and ``gas_cc_ccs``) pay the
+    delivered Henry Hub price for the year (see
+    :func:`resolve_annual_gas_price`), optionally shaped by the monthly
+    seasonality factors :data:`GAS_MONTHLY_SEASONALITY` when
+    ``config.gas_seasonality`` is set.
 
     Coal units pay the flat :data:`COAL_PRICE_BASE` price for the ISO.
     Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the derived
@@ -62,37 +124,37 @@ def resolve_fuel_prices(
     identified via ``fleet.fuel_type_idx``.
 
     Args:
-        config: Scenario configuration supplying ``iso``, ``gas_price_path``
-            and ``hours``.
+        config: Scenario configuration supplying ``iso``, ``gas_price_path``,
+            ``gas_seasonality`` and ``hours``.
         fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects each
             generator's fuel.
-        year: Calendar year for which to resolve prices, used for gas
-            escalation.
+        year: Calendar year for which to resolve prices.
 
     Returns:
         A ``(n_gen, T)`` array of delivered fuel prices ($/MMBtu), where
-        ``T`` is ``config.hours``, broadcastable for marginal-cost assembly.
+        ``T`` is ``config.hours``.
     """
-    gas_base = GAS_PRICE_BASE[config.iso][config.gas_price_path]
-    gas_price = gas_base * (1.0 + GAS_PRICE_ESCALATION) ** (year - START_YEAR)
+    T = config.hours
+    delivered_annual = resolve_annual_gas_price(config, year)
+    if config.gas_seasonality:
+        gas_price_hourly = delivered_annual * _seasonal_factors(T)
+    else:
+        gas_price_hourly = np.full(T, delivered_annual)
+
     coal_price = COAL_PRICE_BASE[config.iso]
 
     fuel_type_idx = fleet.fuel_type_idx
-    per_gen_price = np.full(fleet.n_gen, _ZERO_FUEL_PRICE, dtype=float)
-    per_gen_price[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price
-    per_gen_price[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
+    fuel_prices = np.zeros((fleet.n_gen, T), dtype=float)
+    fuel_prices[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price_hourly
+    fuel_prices[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
 
     # Hydrogen turbines burn green H2 whose cost is derived from renewable
     # LCOE and electrolyzer efficiency rather than a commodity market.
     if np.any(np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)):
         h2_price = compute_h2_fuel_cost(year, config, config.iso)
-        per_gen_price[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
+        fuel_prices[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
 
-    # Broadcast view is safe: assemble_mc creates a new array via
-    # multiplication and never mutates fuel_prices in place.
-    return np.broadcast_to(
-        per_gen_price[:, np.newaxis], (fleet.n_gen, config.hours)
-    )
+    return fuel_prices
 
 
 def resolve_nox_price(config: ScenarioConfig) -> float:

@@ -102,24 +102,105 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, float]] = {
     },
 }
 
-# Base delivered gas prices ($/MMBtu) by ISO and scenario path.
-# Source: EIA AEO 2024.
-GAS_PRICE_BASE: dict[str, dict[str, float]] = {
-    "ERCOT": {
-        "low": 2.50,   # EIA AEO 2024 — low gas price path
-        "mid": 3.50,   # EIA AEO 2024 — mid gas price path
-        "high": 5.50,  # EIA AEO 2024 — high gas price path
+# --- Henry Hub Natural Gas Price Trajectories ($/MMBtu, real 2024$) ---
+# Source: EIA Annual Energy Outlook 2025 (AEO2025), released April 15, 2025
+# Table 13: Natural Gas Supply, Disposition, and Prices
+# Reference case, High Oil and Gas Supply case, Low Oil and Gas Supply case
+# URL: https://www.eia.gov/outlooks/aeo/
+# Note: AEO2025 assumptions frozen as of December 2024.
+# All prices in real 2024 dollars per MMBtu.
+# The model runs 2026-2050. The 2025 entry is included for interpolation
+# context (it is the shared near-term anchor across all three cases).
+#
+# These trajectories replace the prior GAS_PRICE_BASE + GAS_PRICE_ESCALATION
+# approach, which used a flat 2%/yr exponential that diverged from EIA's
+# modeled supply/demand/LNG-export dynamics.
+#
+# AEO2025 Reference case: Henry Hub rises from $2.88 (2025) to $4.80 (2050),
+# driven by LNG export growth through mid-2030s and rising marginal
+# production costs as producers access less economical resources.
+# Source: https://www.eia.gov/todayinenergy/detail.php?id=65724
+#
+# The model's gas_price_path lever ("low"/"mid"/"high") maps to AEO cases:
+#   "low"  -> AEO High Oil and Gas Supply case (more supply -> lower prices)
+#   "mid"  -> AEO Reference case
+#   "high" -> AEO Low Oil and Gas Supply case (less supply -> higher prices)
+#
+# TODO: verify against AEO Table 13. The values below are approximate
+# interpolations from published AEO2025 charts and text. Verify/update by
+# running scripts/fetch_eia_aeo.py with an EIA API key, or against the AEO
+# Data Browser at https://www.eia.gov/outlooks/aeo/data/browser/ (Table 13).
+# AEO2026 was released April 8, 2026 and may carry updated trajectories.
+
+HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+    # AEO High Oil and Gas Supply case -> model "low" gas price path.
+    # Higher resource recovery + faster tech improvement = lower prices.
+    "low": {
+        2025: 2.88, 2026: 2.70, 2027: 2.55, 2028: 2.50, 2029: 2.48,
+        2030: 2.45, 2031: 2.43, 2032: 2.42, 2033: 2.41, 2034: 2.40,
+        2035: 2.40, 2036: 2.42, 2037: 2.45, 2038: 2.48, 2039: 2.52,
+        2040: 2.55, 2041: 2.60, 2042: 2.65, 2043: 2.70, 2044: 2.75,
+        2045: 2.80, 2046: 2.85, 2047: 2.90, 2048: 2.95, 2049: 3.00,
+        2050: 3.05,
     },
-    "CAISO": {
-        "low": 3.00,   # EIA AEO 2024 — low gas price path
-        "mid": 4.25,   # EIA AEO 2024 — mid gas price path
-        "high": 6.50,  # EIA AEO 2024 — high gas price path
+    # AEO Reference case -> model "mid" gas price path.
+    "mid": {
+        2025: 2.88, 2026: 3.40, 2027: 3.20, 2028: 3.30, 2029: 3.40,
+        2030: 3.50, 2031: 3.55, 2032: 3.60, 2033: 3.65, 2034: 3.70,
+        2035: 3.80, 2036: 3.90, 2037: 4.00, 2038: 4.05, 2039: 4.10,
+        2040: 4.15, 2041: 4.20, 2042: 4.25, 2043: 4.30, 2044: 4.40,
+        2045: 4.45, 2046: 4.50, 2047: 4.55, 2048: 4.65, 2049: 4.70,
+        2050: 4.80,
+    },
+    # AEO Low Oil and Gas Supply case -> model "high" gas price path.
+    # Lower resource recovery + slower tech = higher prices.
+    "high": {
+        2025: 2.88, 2026: 3.60, 2027: 3.80, 2028: 4.10, 2029: 4.40,
+        2030: 4.70, 2031: 4.90, 2032: 5.10, 2033: 5.30, 2034: 5.50,
+        2035: 5.70, 2036: 5.90, 2037: 6.10, 2038: 6.30, 2039: 6.50,
+        2040: 6.70, 2041: 6.90, 2042: 7.10, 2043: 7.30, 2044: 7.50,
+        2045: 7.70, 2046: 7.90, 2047: 8.10, 2048: 8.30, 2049: 8.50,
+        2050: 8.70,
     },
 }
 
-# Annual real escalation rate applied to base gas prices.
-# Source: EIA AEO 2024.
-GAS_PRICE_ESCALATION: float = 0.02  # EIA AEO 2024 — annual gas price escalation
+# --- Regional Basis Differentials ($/MMBtu, relative to Henry Hub) ---
+# Source: EIA Natural Gas Weekly Update, 2024-2025 average basis
+# URL: https://www.eia.gov/naturalgas/weekly/
+# Waha (West Texas/ERCOT): historically trades at a discount to Henry Hub
+#   due to Permian associated gas oversupply and pipeline constraints.
+# SoCal Citygate (CAISO): historically trades at a premium to Henry Hub
+#   due to pipeline constraints into California and limited local production.
+# These are annual average differentials, held constant across the
+# projection period for simplicity.
+#
+# Delivered price = Henry Hub + basis differential
+GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
+    "ERCOT": -0.50,   # Waha discount; EIA NG Weekly, 2024 avg
+    "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
+}
+
+# --- Monthly Gas Price Seasonality Factors ---
+# Source: EIA Henry Hub spot price monthly averages, 2019-2024 (excluding
+#   anomalous Feb 2021 Uri event and Jan 2026 spike).
+# Computed as avg monthly price / annual avg price for each year, then
+#   averaged across years. Captures the winter heating premium and
+#   shoulder-season discount. Applied as multiplicative factors to the
+#   annual trajectory price. Sum of factors / 12 = 1.0 (budget-neutral).
+GAS_MONTHLY_SEASONALITY: dict[int, float] = {
+    1: 1.15,   # January — winter heating demand peak
+    2: 1.10,   # February
+    3: 1.02,   # March — shoulder
+    4: 0.92,   # April — injection season begins
+    5: 0.90,   # May
+    6: 0.93,   # June — cooling demand starts
+    7: 0.95,   # July
+    8: 0.95,   # August
+    9: 0.90,   # September — low demand
+    10: 0.95,  # October — pre-winter
+    11: 1.05,  # November — heating season starts
+    12: 1.18,  # December — winter peak
+}
 
 # Base delivered coal prices ($/MMBtu) by ISO.
 # Source: EIA AEO 2024.
