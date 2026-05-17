@@ -329,7 +329,7 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
     """Availability-year gating and queue caps for emerging new entry."""
 
     def test_h2_absent_before_available_year(self):
-        config = ScenarioConfig(iso="ERCOT")  # h2_available_year = 2032
+        config = ScenarioConfig(iso="ERCOT")  # h2_available_year = 2035
         fleet, _ = apply_economic_new_entry(
             [], np.full(8760, 250.0), 2030, config, "ERCOT",
             gas_price_per_mmbtu=3.5,
