@@ -143,7 +143,7 @@ class TestBuildDefaultStorage(unittest.TestCase):
         self.assertGreater(high_mw, low_mw)
         # The deployed total matches the configured pace (zero-load zones aside;
         # ERCOT has none, so all power is allocated).
-        self.assertAlmostEqual(high_mw, STORAGE_BASE_FLEET_MW["high"])
+        self.assertAlmostEqual(high_mw, STORAGE_BASE_FLEET_MW["ERCOT"]["high"])
 
     def test_unknown_pace_raises(self):
         iso = get_iso_config("ERCOT")
