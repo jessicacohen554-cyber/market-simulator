@@ -109,20 +109,26 @@ EFORD: dict[str, float] = {
     "nuclear": 0.03,  # NERC GADS — nuclear
 }
 
-# Annual demand growth rates by ISO and scenario path.
-# Source: ERCOT CDR, CAISO IEPR.
-DEMAND_GROWTH_RATES: dict[str, dict[str, float]] = {
+# Annual demand growth rates by ISO, scenario path, and era.
+# Near-term (2026-2030): elevated by data center and industrial load.
+# Long-term (2031-2050): decelerates as pipeline matures.
+# Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.
+DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
     "ERCOT": {
-        "low": 0.010,   # ERCOT CDR — low demand growth path
-        "mid": 0.020,   # ERCOT CDR — mid demand growth path
-        "high": 0.035,  # ERCOT CDR — high demand growth path
+        "low":  {"near": 0.03, "long": 0.015},
+        "mid":  {"near": 0.05, "long": 0.025},
+        "high": {"near": 0.08, "long": 0.04},
     },
     "CAISO": {
-        "low": 0.005,   # CAISO IEPR — low demand growth path
-        "mid": 0.012,   # CAISO IEPR — mid demand growth path
-        "high": 0.022,  # CAISO IEPR — high demand growth path
+        "low":  {"near": 0.005, "long": 0.005},
+        "mid":  {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
     },
 }
+
+# Year at which demand growth transitions from near-term to long-term rate.
+# Source: engineering judgment — data center pipeline matures ~2030.
+DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
 # --- Henry Hub Natural Gas Price Trajectories ($/MMBtu, real 2024$) ---
 # Source: EIA Annual Energy Outlook 2025 (AEO2025), released April 15, 2025
