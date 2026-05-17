@@ -32,6 +32,17 @@ CCS_RETROFIT_HR_PENALTY_REFERENCE: dict[str, object] = {
     "source": "NETL Cost & Performance Baseline for Fossil Energy Plants, Rev 4, 2021",
 }
 
+# Startup costs and operational constraints by CC class.
+# Used by the 2-pass commitment heuristic to decide which hours a CC
+# would commit (start up) vs stay offline.
+# Source: NREL/SR-5500-55433 (Kumar et al. 2012), OEM specs.
+# Keyed by heat rate cutoff: units with HR below the cutoff get these params.
+CC_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
+    (6.5, {"startup_per_mw": 63.8, "min_run_hours": 10, "min_down_hours": 8}),  # h-class
+    (7.5, {"startup_per_mw": 48.6, "min_run_hours": 8,  "min_down_hours": 6}),  # f-class
+    (99., {"startup_per_mw": 24.1, "min_run_hours": 5,  "min_down_hours": 4}),  # older
+]
+
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
 # Source: EPA eGRID 2022.
