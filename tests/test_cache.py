@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pyarrow as pa
 
+from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import DispatchResult
@@ -155,6 +156,12 @@ def _make_context(n_gen=5):
         fuel_types=["gas_cc", "gas_ct", "coal", "nuclear", "wind"][:n_gen],
         pmax_mw=[400.0, 150.0, 600.0, 1200.0, 300.0][:n_gen],
         emission_rate=[0.38, 0.6, 1.0, 0.0, 0.0][:n_gen],
+        efficiency_bins=["h_class", "aero", "older", "default", "default"][
+            :n_gen
+        ],
+        heat_rates=[6.4, 9.8, 10.2, 10.4, 0.0][:n_gen],
+        zones=["North", "South", "West", "Houston", "North"][:n_gen],
+        unit_ids=["G0", "G1", "G2", "G3", "G4"][:n_gen],
         wind_cap_mw=40000.0,
         solar_cap_mw=25000.0,
         wind_potential_mwh=1.2e8,
@@ -201,17 +208,23 @@ class TestFleetContextFromArrays(unittest.TestCase):
         generators = [
             Generator(
                 unit_id="G0", name="G0", zone="North", fuel_type="coal",
-                pmax_mw=600.0, emission_rate_co2=1.0,
+                efficiency_bin="older", pmax_mw=600.0, heat_rate=10.2,
+                emission_rate_co2=1.0,
             ),
             Generator(
-                unit_id="G1", name="G1", zone="North", fuel_type="gas_cc",
-                pmax_mw=400.0, emission_rate_co2=0.38,
+                unit_id="G1", name="G1", zone="Houston", fuel_type="gas_cc",
+                efficiency_bin="h_class", pmax_mw=400.0, heat_rate=6.4,
+                emission_rate_co2=0.38,
             ),
         ]
-        fleet = generators_to_fleet_arrays(generators, ["North"], hours=4)
+        iso_config = get_iso_config("ERCOT")
+        fleet = generators_to_fleet_arrays(
+            generators, iso_config.zone_names, hours=4
+        )
 
         context = FleetContext.from_arrays(
             fleet,
+            iso_config,
             wind_cf=np.full((1, 4), 0.5),
             wind_cap=np.array([1000.0]),
             solar_cf=np.full((1, 4), 0.25),
@@ -222,6 +235,10 @@ class TestFleetContextFromArrays(unittest.TestCase):
         self.assertEqual(context.fuel_types, ["coal", "gas_cc"])
         self.assertEqual(context.pmax_mw, [600.0, 400.0])
         self.assertEqual(context.emission_rate, [1.0, 0.38])
+        self.assertEqual(context.efficiency_bins, ["older", "h_class"])
+        self.assertEqual(context.heat_rates, [10.2, 6.4])
+        self.assertEqual(context.zones, ["North", "Houston"])
+        self.assertEqual(context.unit_ids, ["G0", "G1"])
         self.assertEqual(context.wind_cap_mw, 1000.0)
         # 0.5 capacity factor x 1000 MW x 4 hours.
         self.assertEqual(context.wind_potential_mwh, 2000.0)

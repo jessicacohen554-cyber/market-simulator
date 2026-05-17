@@ -257,8 +257,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 T=config.hours,
             )
             context = FleetContext.from_arrays(
-                fleet_arrays, wind_cf, wind_cap, solar_cf, solar_cap,
-                storage.energy_cap,
+                fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf,
+                solar_cap, storage.energy_cap,
             )
             save_result(result, config, iso, year, context=context)
             logger.info(
