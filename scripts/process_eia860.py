@@ -9,8 +9,7 @@ Two outputs are produced from the official EIA-860 annual zip:
 2. ``eia860_generators.parquet`` -- operable generators for the seven
    wholesale markets, joined to their plant's balancing authority and
    reduced to the loader's canonical schema. This is the file consumed by
-   :func:`market_sim.data.fleet.load_fleet_from_csv`; it replaces the
-   synthetic fleet that was previously the only data source.
+   :func:`market_sim.data.fleet.load_fleet_from_csv`.
 
 Usage:
     python scripts/process_eia860.py --zip PATH [--out-dir DIR]
@@ -31,7 +30,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from market_sim.data.fleet import BA_CODE_TO_ISO, EIA_860_DIR, SYNTHETIC_CSV_COLUMNS
+from market_sim.data.fleet import BA_CODE_TO_ISO, EIA_860_CSV_COLUMNS, EIA_860_DIR
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("process_eia860")
@@ -163,7 +162,7 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df["status"] = df["status"].astype("string").str.strip()
 
-    return df[SYNTHETIC_CSV_COLUMNS].reset_index(drop=True)
+    return df[EIA_860_CSV_COLUMNS].reset_index(drop=True)
 
 
 def main() -> None:

@@ -123,8 +123,8 @@ class TestExportScenarioJson(unittest.TestCase):
         _, path = self._run_and_export()
 
         summary = json.loads(path.read_text())["years"]["2026"]
-        # The ERCOT synthetic fleet carries every thermal fuel type, and
-        # the export folds in zonal wind and solar.
+        # The ERCOT fleet carries every thermal fuel type, and the export
+        # folds in zonal wind and solar.
         for fuel in ("gas_cc", "gas_ct", "coal", "nuclear", "wind", "solar"):
             self.assertIn(fuel, summary["generation_twh"])
             self.assertIn(fuel, summary["capacity_gw"])

@@ -257,7 +257,7 @@ class TestConfigurableBinCount(unittest.TestCase):
         result = aggregate_fleet_by_efficiency(
             _uniform_gas_cc_fleet(), "gas_cc", n_bins=None
         )
-        # The synthetic fleet spans all three predefined vintage bins.
+        # The test fleet spans all three predefined vintage bins.
         self.assertEqual(len(result), 3)
         self.assertEqual(
             {g.efficiency_bin for g in result},
