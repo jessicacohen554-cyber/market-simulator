@@ -586,10 +586,11 @@ def compute_lcoe(
             capex_per_kw, cumulative_gw, reference_gw, costs["learning_rate"]
         )
 
-    # IRA ITC: reduce capex before annualization, so the credit applies only
-    # to the capital component and never discounts fixed O&M.
-    if year <= config.ira_expiry_year and tech_type == "solar":
-        capex_per_kw *= 1.0 - config.ira_itc_solar
+    # IRA ITC: reduce capex before annualization.
+    # Wind/solar: cliff cutoff. Other clean: graduated phaseout.
+    if tech_type == "solar":
+        if year <= config.ira_wind_solar_last_year:
+            capex_per_kw *= 1.0 - config.ira_itc_solar
 
     crf = _capital_recovery_factor(config.real_discount_rate, costs["lifetime_yr"])
     annual_cost_per_kw = capex_per_kw * crf + costs["fom_per_kw_yr"]
@@ -598,8 +599,9 @@ def compute_lcoe(
     lcoe = annual_cost_per_kw / annual_mwh_per_kw
 
     # Wind PTC: a per-MWh production credit, correctly subtracted post-hoc.
-    if tech_type == "wind" and year <= config.ira_expiry_year:
-        lcoe -= config.ira_ptc_wind
+    if tech_type == "wind":
+        if year <= config.ira_wind_solar_last_year:
+            lcoe -= config.ira_ptc_wind
 
     return lcoe
 

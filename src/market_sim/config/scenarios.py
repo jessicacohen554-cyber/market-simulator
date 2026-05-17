@@ -74,7 +74,21 @@ class ScenarioConfig:
     ira_ptc_wind: float = 26.0  # $/MWh
     ira_itc_solar: float = 0.30  # 30%
     ira_itc_storage: float = 0.30
-    ira_expiry_year: int = 2035
+    # IRA credit schedule per OBBBA (One Big Beautiful Bill Act),
+    # enacted July 4, 2025.
+    # Wind/solar: §45Y/§48E BOC before July 4, 2026 + in-service by Dec 31,
+    # 2027. For an annual model, treat 2027 as the last year wind/solar
+    # credits are available.
+    ira_wind_solar_last_year: int = 2027
+    # Other clean (storage, nuclear, geothermal, hydro): §48E graduated
+    # phaseout 2029-2033. 100% through 2028, 80% in 2029, 60% in 2030,
+    # 40% in 2031, 20% in 2032, 0% after.
+    ira_other_clean_last_full_year: int = 2028
+    ira_other_clean_phaseout_end: int = 2033
+    # §45V hydrogen production credit: construction start by Dec 31, 2027.
+    ira_h2_45v_last_year: int = 2027
+    # §45Q CCUS credit: extended but phasing out post-2032.
+    ira_ccus_45q_last_year: int = 2032
     electrolyzer_efficiency_override: float | None = None  # overrides lookup
     ccs_capture_rate: float = 0.90  # fraction of CO2 captured by CCUS
     co2_transport_storage_cost: float = 15.0  # $/tCO2 for captured CO2
@@ -200,7 +214,11 @@ TIER_TAGS: dict[str, int] = {
     "ira_ptc_wind": 2,
     "ira_itc_solar": 2,
     "ira_itc_storage": 2,
-    "ira_expiry_year": 2,
+    "ira_wind_solar_last_year": 2,
+    "ira_other_clean_last_full_year": 2,
+    "ira_other_clean_phaseout_end": 2,
+    "ira_h2_45v_last_year": 2,
+    "ira_ccus_45q_last_year": 2,
     "electrolyzer_efficiency_override": 2,
     "ccs_capture_rate": 2,
     "co2_transport_storage_cost": 2,

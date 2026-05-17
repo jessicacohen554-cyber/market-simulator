@@ -31,7 +31,7 @@ from market_sim.model.capacity import (
 from market_sim.model.storage import compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
-from market_sim.policy.ira import apply_ira_credits_to_lcoe
+from market_sim.policy.ira import apply_ira_credits_to_lcoe, ira_phaseout_fraction
 from market_sim.policy.rps import get_rps_target
 
 
@@ -332,8 +332,8 @@ class TestComputeLCOE(unittest.TestCase):
         self.assertLess(late, early)
 
     def test_ira_credit_lowers_lcoe_until_expiry(self):
-        config = ScenarioConfig()  # ira_expiry_year = 2035
-        with_credit = compute_lcoe("wind", 2030, config)
+        config = ScenarioConfig()  # ira_wind_solar_last_year = 2027
+        with_credit = compute_lcoe("wind", 2027, config)
         after_expiry = compute_lcoe("wind", 2040, config)
         self.assertLess(with_credit, after_expiry)
 
@@ -369,7 +369,7 @@ class TestComputeLCOE(unittest.TestCase):
         # never discounts fixed O&M. The ITC-adjusted LCOE is therefore
         # higher than naively scaling the raw LCOE by (1 - itc).
         config = ScenarioConfig()  # ira_itc_solar = 0.30
-        with_itc = compute_lcoe("solar", 2030, config)   # ITC active
+        with_itc = compute_lcoe("solar", 2027, config)   # ITC active
         raw = compute_lcoe("solar", 2040, config)        # ITC expired
         self.assertLess(with_itc, raw)
         self.assertGreater(with_itc, raw * 0.70)
@@ -446,7 +446,7 @@ class TestIRACreditsToLCOE(unittest.TestCase):
 
     def test_wind_ptc_subtracts_flat_amount(self):
         config = ScenarioConfig()  # ira_ptc_wind = 26.0
-        adjusted = apply_ira_credits_to_lcoe("wind", 50.0, 2030, config)
+        adjusted = apply_ira_credits_to_lcoe("wind", 50.0, 2027, config)
         self.assertAlmostEqual(adjusted, 50.0 - 26.0)
 
     def test_solar_itc_not_applied_post_hoc(self):
@@ -458,15 +458,24 @@ class TestIRACreditsToLCOE(unittest.TestCase):
         self.assertEqual(adjusted, 50.0)
 
     def test_credit_expires_after_expiry_year(self):
-        config = ScenarioConfig()  # ira_expiry_year = 2035
-        # The expiry year itself still carries the credit.
+        config = ScenarioConfig()  # ira_wind_solar_last_year = 2027
+        # The last eligible year itself still carries the credit.
         self.assertAlmostEqual(
-            apply_ira_credits_to_lcoe("wind", 50.0, 2035, config), 24.0
+            apply_ira_credits_to_lcoe("wind", 50.0, 2027, config), 24.0
         )
-        # The year after expiry leaves LCOE untouched.
+        # The year after the cliff leaves LCOE untouched.
         self.assertEqual(
-            apply_ira_credits_to_lcoe("wind", 50.0, 2036, config), 50.0
+            apply_ira_credits_to_lcoe("wind", 50.0, 2028, config), 50.0
         )
+
+    def test_ira_phaseout_fraction(self):
+        config = ScenarioConfig()  # defaults: last_full=2028, end=2033
+        self.assertEqual(ira_phaseout_fraction(2028, config), 1.0)
+        self.assertAlmostEqual(ira_phaseout_fraction(2029, config), 0.8)
+        self.assertAlmostEqual(ira_phaseout_fraction(2030, config), 0.6)
+        self.assertAlmostEqual(ira_phaseout_fraction(2031, config), 0.4)
+        self.assertEqual(ira_phaseout_fraction(2033, config), 0.0)
+        self.assertEqual(ira_phaseout_fraction(2040, config), 0.0)
 
 
 class TestGetRPSTarget(unittest.TestCase):
