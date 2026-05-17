@@ -426,9 +426,18 @@ def load_renewable_profiles(
         )
         monthly = _eia860_monthly_capacity(iso, fuel, zone_names, year)
         if monthly is not None:
+            # A calibration backcast (signaled by an explicit
+            # gas_price_override) is pinned to a historical year, so the
+            # installed capacity is that year's EIA-860 year-end total
+            # rather than RENEWABLE_INSTALLED_MW — the current-fleet base
+            # used as the starting point for forward projections.
+            if config.gas_price_override is not None:
+                installed_mw = float(monthly[:, -1].sum())
+            else:
+                installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
             allocated[fuel] = _distribute_by_eia860(
                 cf_profile,
-                RENEWABLE_INSTALLED_MW[iso][fuel],
+                installed_mw,
                 monthly,
                 config.vintage_capacity_ramp,
             )

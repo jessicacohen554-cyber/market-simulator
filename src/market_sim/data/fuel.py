@@ -68,14 +68,23 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     is the one capacity new-entry LCOE screening should charge gas units,
     so dispatch and capacity evolution see the same gas cost for a year.
 
+    When ``config.gas_price_override`` is set the trajectory lookup is
+    bypassed entirely: the override is treated as the measured Henry Hub
+    price and the ISO basis differential is added to it, so a calibration
+    backcast charges the year's actual delivered gas cost.
+
     Args:
-        config: Scenario configuration supplying ``iso`` and
-            ``gas_price_path``.
+        config: Scenario configuration supplying ``iso``,
+            ``gas_price_path`` and an optional ``gas_price_override``.
         year: Calendar year to resolve.
 
     Returns:
         The delivered annual gas price in $/MMBtu.
     """
+    basis = GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
+    if config.gas_price_override is not None:
+        return config.gas_price_override + basis
+
     trajectory = HENRY_HUB_TRAJECTORIES[config.gas_price_path]
     if year in trajectory:
         henry_hub = trajectory[year]
@@ -85,7 +94,7 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
         annual_growth = trajectory[last_year] / trajectory[last_year - 1]
         henry_hub = trajectory[last_year] * annual_growth ** (year - last_year)
 
-    return henry_hub + GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
+    return henry_hub + basis
 
 
 def _seasonal_factors(hours: int) -> np.ndarray:
