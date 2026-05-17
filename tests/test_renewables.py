@@ -125,6 +125,48 @@ def test_vintage_monthly_ramp():
     )
 
 
+def test_calibration_backcast_uses_eia860_actual_capacity():
+    """A calibration backcast resolves capacity to the EIA-860 year-end actual.
+
+    With ``gas_price_override`` set the run is a historical backcast, so 2023
+    solar must resolve to the EIA-860 year-end total (~14.9 GW) rather than
+    the 38 GW forward-projection ``RENEWABLE_INSTALLED_MW`` constant.
+    """
+    iso_config = get_iso_config("ERCOT")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="ERCOT", gas_price_override=2.54
+    )
+    _, wind_cap, _, solar_cap = load_renewable_profiles(
+        "ERCOT", _CAL_YEAR, iso_config, config
+    )
+    # EIA-860 ERCOT year-end 2023: ~14.9 GW solar, ~36.7 GW wind.
+    assert 13_000.0 < solar_cap.sum() < 17_000.0
+    assert solar_cap.sum() < RENEWABLE_INSTALLED_MW["ERCOT"]["solar"]
+    assert 34_000.0 < wind_cap.sum() < 39_000.0
+
+
+def test_forward_run_uses_renewable_installed_mw():
+    """A forward run keeps the RENEWABLE_INSTALLED_MW projection base.
+
+    Without ``gas_price_override`` the run is a forward projection (the path a
+    2026+ simulation year takes), so capacity stays anchored to the
+    current-fleet ``RENEWABLE_INSTALLED_MW`` constants regardless of which
+    weather year supplies the CF shape.
+    """
+    iso_config = get_iso_config("ERCOT")
+    config = ScenarioConfig(weather_year=_CAL_YEAR, iso="ERCOT")
+    assert config.gas_price_override is None
+    _, wind_cap, _, solar_cap = load_renewable_profiles(
+        "ERCOT", _CAL_YEAR, iso_config, config
+    )
+    np.testing.assert_allclose(
+        solar_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["solar"]
+    )
+    np.testing.assert_allclose(
+        wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"]
+    )
+
+
 def test_caiso_solar_allocated_to_main_zone_not_import():
     """CAISO solar CF fills CAISO_main and leaves WECC_import at zero."""
     iso_config = get_iso_config("CAISO")
