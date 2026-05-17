@@ -227,6 +227,25 @@ def test_capacity_gas_lcoe_uses_trajectory():
     np.testing.assert_allclose(prices[0], expected_gas)
 
 
+def test_gas_price_override_bypasses_trajectory():
+    """A gas_price_override pins the delivered price, ignoring the trajectory.
+
+    The override is the measured Henry Hub price; ``resolve_annual_gas_price``
+    adds only the ISO basis differential and never consults the AEO
+    trajectory, so every year resolves to the same delivered price.
+    """
+    config = _config(gas_price_path="mid", gas_price_override=2.54)
+    expected = 2.54 + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    for year in (2023, 2030, 2050):
+        assert resolve_annual_gas_price(config, year) == expected
+
+    # The override differs from the trajectory it replaces for the same year.
+    trajectory_config = _config(gas_price_path="mid")
+    assert resolve_annual_gas_price(
+        trajectory_config, 2030
+    ) != resolve_annual_gas_price(config, 2030)
+
+
 def test_nox_price_passes_through_from_config():
     """The NOx price is the scalar carried on the config."""
     config = _config(nox_price=7.5)

@@ -140,6 +140,12 @@ class ScenarioConfig:
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
     # year-end capacity is used (pre-calibration behavior).
+    gas_price_override: float | None = None  # When set, pins the annual
+    # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
+    # trajectory — used to backcast a calibration year against EIA actuals.
+    # Its presence also marks the run as a historical calibration backcast,
+    # so renewable capacity resolves to that year's EIA-860 year-end actual
+    # rather than the forward-projection RENEWABLE_INSTALLED_MW base.
 
     # Tier 3 (calibration) — Thermal cycling cost adders ($/MWh)
     # Source: NREL/SR-5500-55433 (Kumar et al. 2012) "Power Plant Cycling Costs"
@@ -273,6 +279,7 @@ TIER_TAGS: dict[str, int] = {
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
+    "gas_price_override": 3,
     "cc_cycling_adder_h_class": 3,
     "cc_cycling_adder_f_class": 3,
     "cc_cycling_adder_older": 3,
