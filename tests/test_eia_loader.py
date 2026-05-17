@@ -24,9 +24,10 @@ class TestEIALoader(unittest.TestCase):
     """Tests for the EIA-930 demand and generation loaders."""
 
     def test_load_demand_ercot_shape(self):
-        """ERCOT demand spans its four zones over a full year."""
+        """ERCOT demand spans its six zones over a full year."""
+        n_zones = get_iso_config("ERCOT").n_zones
         demand = load_demand("ERCOT", _TEST_YEAR)
-        self.assertEqual(demand.shape, (4, HOURS_PER_YEAR))
+        self.assertEqual(demand.shape, (n_zones, HOURS_PER_YEAR))
 
     def test_load_demand_caiso_shape_and_import_zone(self):
         """CAISO has two zones; the WECC_import node carries no load."""

@@ -160,9 +160,9 @@ class TestSpecCompliance(unittest.TestCase):
         self.assertNotIn("BaseModel", mro)
 
     def test_topology_matches_spec(self):
-        """ERCOT=4 zones, CAISO=2 zones. WECC_import load_share=0."""
+        """ERCOT=6 zones, CAISO=2 zones. WECC_import load_share=0."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(len(ercot.zones), 4)
+        self.assertEqual(len(ercot.zones), 6)
         shares = [z.load_share for z in ercot.zones]
         self.assertAlmostEqual(sum(shares), 1.0, places=6)
 
@@ -381,9 +381,10 @@ class TestPhysicsConservation(unittest.TestCase):
         incidence = build_incidence_matrix(iso.links, zone_names)
         ttc = get_ttc_array(iso.links)
 
+        n_zones = len(zone_names)
         result = solve_dispatch(
-            fleet, demand, np.zeros((4, T)), np.zeros(4),
-            np.zeros((4, T)), np.zeros(4), mc=mc,
+            fleet, demand, np.zeros((n_zones, T)), np.zeros(n_zones),
+            np.zeros((n_zones, T)), np.zeros(n_zones), mc=mc,
             incidence=incidence, ttc=ttc, T=T,
         )
         self.assertTrue(
@@ -650,12 +651,19 @@ class TestPerformance(unittest.TestCase):
         total = 12000 * daily
         demand = np.array([z.load_share for z in iso.zones])[:, None] * total[None, :]
 
-        wind_cf = np.zeros((4, T))
-        wind_cf[2] = 0.35
-        wind_cap = np.array([0, 0, 2000, 0])
-        solar_cf = np.zeros((4, T))
-        solar_cf[1] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
-        solar_cap = np.array([0, 1500, 0, 0])
+        n_zones = len(zone_names)
+        west = zone_names.index("West")
+        south_central = zone_names.index("South_Central")
+        wind_cf = np.zeros((n_zones, T))
+        wind_cf[west] = 0.35
+        wind_cap = np.zeros(n_zones)
+        wind_cap[west] = 2000.0
+        solar_cf = np.zeros((n_zones, T))
+        solar_cf[south_central] = np.clip(
+            0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1
+        )
+        solar_cap = np.zeros(n_zones)
+        solar_cap[south_central] = 1500.0
 
         result = solve_dispatch(
             fleet, demand, wind_cf, wind_cap, solar_cf, solar_cap, mc=mc,
