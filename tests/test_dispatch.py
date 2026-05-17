@@ -613,7 +613,7 @@ class TestRPSConstraint(unittest.TestCase):
 
     def test_rps_none_matches_unconstrained_dispatch(self):
         # rps_target=None adds no constraint row: the solve is identical to
-        # one that never mentions an RPS, and rec_price stays None.
+        # one that never mentions an RPS, and rps_shadow_price stays None.
         fleet = _make_fleet(
             ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
         )
@@ -629,13 +629,13 @@ class TestRPSConstraint(unittest.TestCase):
         )
         np.testing.assert_allclose(with_none.prices, baseline.prices)
         np.testing.assert_allclose(with_none.dispatch, baseline.dispatch)
-        self.assertIsNone(baseline.rec_price)
-        self.assertIsNone(with_none.rec_price)
+        self.assertIsNone(baseline.rps_shadow_price)
+        self.assertIsNone(with_none.rps_shadow_price)
 
     def test_rps_binds_with_thermal_only_fleet(self):
         # A nuclear + gas fleet with cheap gas and expensive nuclear: the
         # RPS forces expensive nuclear up to cover half of demand, so the
-        # constraint binds and its dual (the REC price) is positive.
+        # constraint binds and its dual (the RPS shadow price) is positive.
         fleet = self._nuclear_gas_fleet()
         # Row 0 is nuclear (expensive), row 1 is gas (cheap).
         mc = np.vstack(
@@ -648,11 +648,11 @@ class TestRPSConstraint(unittest.TestCase):
             **self._no_renewables(1),
         )
         self.assertEqual(result.status, "Optimal")
-        self.assertIsNotNone(result.rec_price)
-        self.assertGreater(result.rec_price, 0.0)
-        # The REC price equals the cost premium of nuclear over gas: an
-        # extra MWh of clean swaps 1 MWh gas (20) for nuclear (100).
-        self.assertAlmostEqual(result.rec_price, 80.0, delta=0.5)
+        self.assertIsNotNone(result.rps_shadow_price)
+        self.assertGreater(result.rps_shadow_price, 0.0)
+        # The RPS shadow price equals the cost premium of nuclear over gas:
+        # an extra MWh of clean swaps 1 MWh gas (20) for nuclear (100).
+        self.assertAlmostEqual(result.rps_shadow_price, 80.0, delta=0.5)
         # Nuclear is pushed up to supply at least half of total demand.
         self.assertGreaterEqual(
             result.dispatch[0].sum(), 0.5 * demand.sum() - 1.0
@@ -675,9 +675,9 @@ class TestRPSConstraint(unittest.TestCase):
             solar_cap=np.zeros(1),
         )
         self.assertEqual(result.status, "Optimal")
-        self.assertIsNotNone(result.rec_price)
+        self.assertIsNotNone(result.rps_shadow_price)
         # Wind covers 62.5% of demand, comfortably above the 50% floor.
-        self.assertAlmostEqual(result.rec_price, 0.0, places=3)
+        self.assertAlmostEqual(result.rps_shadow_price, 0.0, places=3)
 
     def test_rps_infeasible_with_no_clean_capacity(self):
         # A gas-only fleet can produce no clean energy at all, so a 100%

@@ -674,41 +674,42 @@ class TestEstimateExpectedRevenue(unittest.TestCase):
         self.assertEqual(estimate_expected_revenue(np.array([]), 0.5), 0.0)
 
 
-class TestRECPriceInNewEntry(unittest.TestCase):
+class TestRPSShadowPriceInNewEntry(unittest.TestCase):
     """The RPS shadow price raises clean-tech revenue in the entry screen."""
 
-    def test_rec_price_makes_renewables_economic(self):
+    def test_rps_shadow_price_makes_renewables_economic(self):
         # Prices too low for any technology to clear its LCOE on energy
-        # revenue alone: with no REC price, nothing is built.
+        # revenue alone: with no RPS shadow price, nothing is built.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 1.0)
 
-        _, no_rec = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT", rec_price=0.0
+        _, no_rps = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", rps_shadow_price=0.0
         )
         without = sum(
-            mw for by_fuel in no_rec.values() for mw in by_fuel.values()
+            mw for by_fuel in no_rps.values() for mw in by_fuel.values()
         )
         self.assertEqual(without, 0.0)
 
-        # A REC price lifts wind and solar over the LCOE hurdle: the RPS
-        # shadow price is added to their effective renewable revenue.
-        _, with_rec = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT", rec_price=500.0
+        # An RPS shadow price lifts wind and solar over the LCOE hurdle:
+        # it is credited as an attribute payment on renewable revenue.
+        _, with_rps = apply_economic_new_entry(
+            [], prices, 2030, config, "ERCOT", rps_shadow_price=500.0
         )
-        with_rec_mw = sum(
-            mw for by_fuel in with_rec.values() for mw in by_fuel.values()
+        with_rps_mw = sum(
+            mw for by_fuel in with_rps.values() for mw in by_fuel.values()
         )
-        self.assertGreater(with_rec_mw, without)
+        self.assertGreater(with_rps_mw, without)
 
-    def test_rec_price_lifts_renewable_margin_monotonically(self):
-        # A higher REC price never builds less renewable capacity.
+    def test_rps_shadow_price_lifts_renewable_margin_monotonically(self):
+        # A higher RPS shadow price never builds less renewable capacity.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 1.0)
         builds = []
-        for rec_price in (0.0, 100.0, 300.0):
+        for rps_shadow_price in (0.0, 100.0, 300.0):
             _, additions = apply_economic_new_entry(
-                [], prices, 2030, config, "ERCOT", rec_price=rec_price
+                [], prices, 2030, config, "ERCOT",
+                rps_shadow_price=rps_shadow_price,
             )
             builds.append(
                 sum(mw for by in additions.values() for mw in by.values())
