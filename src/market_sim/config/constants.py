@@ -50,6 +50,17 @@ NOX_RATES: dict[str, float] = {
     "coal": 0.0015,    # EPA CEMS 2022 — coal steam units
 }
 
+# All monetary values in this model are in constant 2026 real USD.
+# Anchor date: January 1, 2026. No inflation adjustment is applied
+# within the model. Nominal conversions are post-processing only
+# (see results/export.py).
+REAL_DOLLAR_BASE_YEAR = 2026  # Source: model convention, matches simulation start year
+
+# Assumed long-run inflation rate for nominal-to-real conversion.
+# Used to derive real discount rate from nominal WACC for LCOE calculations.
+# Source: Federal Reserve 2% target + historical overshoot buffer.
+INFLATION_RATE = 0.022
+
 # Variable O&M ($/MWh) by fuel type.
 # Source: NREL ATB 2024.
 VOM: dict[str, float] = {

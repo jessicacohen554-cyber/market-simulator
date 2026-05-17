@@ -4,7 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import numpy as np
+
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
+from market_sim.results.export import real_to_nominal
 
 
 class TestScenarioConfig(unittest.TestCase):
@@ -35,7 +38,9 @@ class TestScenarioConfig(unittest.TestCase):
         defaults = ScenarioConfig()
         self.assertEqual(loaded.carbon_price, 99.0)
         self.assertEqual(loaded.iso, defaults.iso)
-        self.assertEqual(loaded.discount_rate, defaults.discount_rate)
+        self.assertEqual(
+            loaded.nominal_discount_rate, defaults.nominal_discount_rate
+        )
 
     def test_to_yaml_only_writes_non_defaults(self):
         config = ScenarioConfig(carbon_price=33.0)
@@ -44,7 +49,7 @@ class TestScenarioConfig(unittest.TestCase):
             config.to_yaml(path)
             text = path.read_text()
         self.assertIn("carbon_price", text)
-        self.assertNotIn("discount_rate", text)
+        self.assertNotIn("nominal_discount_rate", text)
         self.assertNotIn("iso", text)
 
     def test_with_overrides_does_not_mutate_original(self):
@@ -52,6 +57,35 @@ class TestScenarioConfig(unittest.TestCase):
         original_price = base.carbon_price
         base.with_overrides(carbon_price=75.0)
         self.assertEqual(base.carbon_price, original_price)
+
+    def test_real_discount_rate(self):
+        config = ScenarioConfig()
+        expected = (1.08 / 1.022) - 1.0  # ~0.0568
+        assert abs(config.real_discount_rate - expected) < 1e-6
+
+    def test_real_discount_rate_custom(self):
+        config = ScenarioConfig(nominal_discount_rate=0.10)
+        expected = (1.10 / 1.022) - 1.0
+        assert abs(config.real_discount_rate - expected) < 1e-6
+
+
+class TestRealToNominal(unittest.TestCase):
+    """Tests for the real-to-nominal dollar conversion utility."""
+
+    def test_real_to_nominal_base_year_passthrough(self):
+        """Values in the base year should be unchanged."""
+        values = np.array([50.0])
+        years = np.array([2026])
+        result = real_to_nominal(values, years)
+        assert abs(result[0] - 50.0) < 1e-10
+
+    def test_real_to_nominal_future_year(self):
+        """2036 is 10 years out, deflator = 1.022^10."""
+        values = np.array([50.0])
+        years = np.array([2036])
+        expected = 50.0 * (1.022 ** 10)
+        result = real_to_nominal(values, years)
+        assert abs(result[0] - expected) < 1e-6
 
 
 class TestSweepDefinition(unittest.TestCase):
