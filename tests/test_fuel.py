@@ -1,22 +1,25 @@
-"""Tests for fuel price and carbon price resolution."""
+"""Tests for fuel price resolution against AEO Henry Hub trajectories."""
 
 import numpy as np
 
 from market_sim.config.constants import (
     COAL_PRICE_BASE,
-    GAS_PRICE_BASE,
-    GAS_PRICE_ESCALATION,
-    START_YEAR,
+    GAS_BASIS_DIFFERENTIAL,
+    HENRY_HUB_TRAJECTORIES,
 )
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.fleet import Generator, generators_to_fleet_arrays
-from market_sim.data.fuel import resolve_fuel_prices, resolve_nox_price
+from market_sim.data.fleet import FUEL_TYPE_MAP, Generator, generators_to_fleet_arrays
+from market_sim.data.fuel import (
+    resolve_annual_gas_price,
+    resolve_fuel_prices,
+    resolve_nox_price,
+)
 
-_TEST_HOURS = 12
+_HOURS = 8760
 _ZONE_NAMES = ["north", "south"]
 
 
-def _sample_fleet():
+def _sample_fleet(hours: int = _HOURS):
     """Return a fleet spanning gas, coal and non-fuel-burning generators."""
     generators = [
         Generator(
@@ -55,74 +58,146 @@ def _sample_fleet():
             pmax_mw=300.0,
         ),
     ]
-    return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=_TEST_HOURS)
+    return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
 
 
 def _config(**overrides) -> ScenarioConfig:
-    """Return an ERCOT scenario config with the test hour count."""
-    base = ScenarioConfig(iso="ERCOT", gas_price_path="mid", hours=_TEST_HOURS)
+    """Return an ERCOT scenario config spanning a full weather year."""
+    base = ScenarioConfig(iso="ERCOT", gas_price_path="mid", hours=_HOURS)
     return base.with_overrides(**overrides) if overrides else base
 
 
-def test_mid_gas_start_year_equals_base():
-    """ERCOT 'mid' gas in the start year carries no escalation."""
+def test_mid_gas_price_2026():
+    """Mid-path gas price for 2026 averages the AEO reference delivered price."""
     fleet = _sample_fleet()
-    prices = resolve_fuel_prices(_config(), fleet, START_YEAR)
+    prices = resolve_fuel_prices(_config(), fleet, year=2026)
+    gas_idx = fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"]
+    expected_annual = (
+        HENRY_HUB_TRAJECTORIES["mid"][2026] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    )
+    # With seasonality on, the annual average is budget-neutral.
+    actual_avg = prices[gas_idx].mean()
+    assert abs(actual_avg - expected_annual) < 0.05, (
+        f"Average gas price {actual_avg:.2f} != expected {expected_annual:.2f}"
+    )
 
-    expected = GAS_PRICE_BASE["ERCOT"]["mid"]
-    # Generator 0 is the gas_cc unit.
+
+def test_gas_price_trajectory_increases():
+    """Mid-path gas price increases from 2026 to 2050."""
+    config = _config(gas_seasonality=False)
+    fleet = _sample_fleet()
+    p2026 = resolve_fuel_prices(config, fleet, 2026)
+    p2050 = resolve_fuel_prices(config, fleet, 2050)
+    gas_idx = fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"]
+    assert p2050[gas_idx].mean() > p2026[gas_idx].mean()
+
+
+def test_low_path_below_mid():
+    """Low gas price path < mid path for all years."""
+    config_low = _config(gas_price_path="low", gas_seasonality=False)
+    config_mid = _config(gas_price_path="mid", gas_seasonality=False)
+    fleet = _sample_fleet()
+    for year in (2026, 2035, 2050):
+        p_low = resolve_fuel_prices(config_low, fleet, year)
+        p_mid = resolve_fuel_prices(config_mid, fleet, year)
+        gas_idx = fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"]
+        assert p_low[gas_idx].mean() < p_mid[gas_idx].mean(), f"low >= mid in {year}"
+
+
+def test_caiso_basis_premium():
+    """CAISO delivered gas price > ERCOT delivered gas price (same path/year)."""
+    fleet = _sample_fleet()
+    config_e = ScenarioConfig(
+        iso="ERCOT", gas_price_path="mid", gas_seasonality=False, hours=_HOURS
+    )
+    config_c = ScenarioConfig(
+        iso="CAISO", gas_price_path="mid", gas_seasonality=False, hours=_HOURS
+    )
+    pe = resolve_fuel_prices(config_e, fleet, 2030)
+    pc = resolve_fuel_prices(config_c, fleet, 2030)
+    gas_idx = fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"]
+    assert pc[gas_idx].mean() > pe[gas_idx].mean()
+
+
+def test_seasonality_winter_premium():
+    """With seasonality on, January gas price > May gas price."""
+    fleet = _sample_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=True), fleet, 2030)
+    gas_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"])[0][0]
+    jan_avg = prices[gas_idx, 0:744].mean()       # hours 0-743 = January
+    may_avg = prices[gas_idx, 2880:3624].mean()   # hours 2880-3623 = May
+    assert jan_avg > may_avg
+
+
+def test_seasonality_off_flat():
+    """With seasonality off, all hours have the same gas price."""
+    fleet = _sample_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    gas_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"])[0][0]
+    assert np.all(prices[gas_idx] == prices[gas_idx, 0])
+
+
+def test_both_gas_types_get_gas_price():
+    """gas_cc and gas_ct units both receive the delivered gas price."""
+    fleet = _sample_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    expected = resolve_annual_gas_price(_config(), 2030)
     np.testing.assert_allclose(prices[0], expected)
+    np.testing.assert_allclose(prices[1], expected)
 
 
-def test_gas_price_escalates_over_time():
-    """A later year yields a higher gas price than the start year."""
+def test_non_gas_zero_fuel():
+    """Nuclear and wind generators get zero fuel price."""
     fleet = _sample_fleet()
-    config = _config()
-    price_2026 = resolve_fuel_prices(config, fleet, 2026)[0, 0]
-    price_2030 = resolve_fuel_prices(config, fleet, 2030)[0, 0]
-
-    assert price_2030 > price_2026
-    expected_2030 = GAS_PRICE_BASE["ERCOT"]["mid"] * (
-        1.0 + GAS_PRICE_ESCALATION
-    ) ** (2030 - START_YEAR)
-    assert price_2030 == expected_2030
+    prices = resolve_fuel_prices(_config(), fleet, 2030)
+    nuclear_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["nuclear"]
+    wind_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["wind"]
+    assert np.all(prices[nuclear_mask] == 0.0)
+    assert np.all(prices[wind_mask] == 0.0)
 
 
-def test_non_fuel_generators_get_zero_price():
-    """Nuclear and wind generators carry no commodity fuel price."""
+def test_coal_price_flat():
+    """Coal generators get COAL_PRICE_BASE, no trajectory."""
     fleet = _sample_fleet()
-    prices = resolve_fuel_prices(_config(), fleet, START_YEAR)
-
-    # Generators 3 and 4 are nuclear and wind.
-    np.testing.assert_array_equal(prices[3], np.zeros(_TEST_HOURS))
-    np.testing.assert_array_equal(prices[4], np.zeros(_TEST_HOURS))
-
-
-def test_coal_generators_get_coal_price():
-    """Coal generators are priced at the ISO's COAL_PRICE_BASE."""
-    fleet = _sample_fleet()
-    prices = resolve_fuel_prices(_config(), fleet, 2040)
-
-    # Generator 2 is the coal unit; coal price does not escalate.
-    np.testing.assert_allclose(prices[2], COAL_PRICE_BASE["ERCOT"])
+    prices = resolve_fuel_prices(_config(), fleet, 2030)
+    coal_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["coal"]
+    np.testing.assert_allclose(prices[coal_mask], COAL_PRICE_BASE["ERCOT"])
 
 
 def test_fuel_price_shape_is_n_gen_by_hours():
     """The resolved fuel price array is shaped ``(n_gen, T)``."""
+    fleet = _sample_fleet(hours=24)
+    prices = resolve_fuel_prices(_config(hours=24), fleet, 2030)
+    assert prices.shape == (fleet.n_gen, 24)
+
+
+def test_annual_gas_price_extrapolates_beyond_trajectory():
+    """Years past the trajectory extrapolate from the final growth rate."""
+    config = _config(gas_price_path="mid")
+    traj = HENRY_HUB_TRAJECTORIES["mid"]
+    growth = traj[2050] / traj[2049]
+    expected = traj[2050] * growth + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    assert abs(resolve_annual_gas_price(config, 2051) - expected) < 1e-9
+
+
+def test_capacity_gas_lcoe_uses_trajectory():
+    """The annual gas price feeding capacity LCOE matches the dispatch trajectory.
+
+    The runner passes ``resolve_annual_gas_price`` into ``evolve_fleet`` so
+    capacity new-entry LCOE screening charges gas units the same delivered
+    price that hourly dispatch sees (seasonality aside).
+    """
+    config = _config(gas_price_path="mid")
+    year = 2035
+    expected_gas = (
+        HENRY_HUB_TRAJECTORIES["mid"][year] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    )
+    assert resolve_annual_gas_price(config, year) == expected_gas
+
+    # Dispatch with seasonality off resolves to the same annual price.
     fleet = _sample_fleet()
-    prices = resolve_fuel_prices(_config(), fleet, START_YEAR)
-
-    assert prices.shape == (fleet.n_gen, _TEST_HOURS)
-
-
-def test_both_gas_types_get_gas_price():
-    """gas_cc and gas_ct units both receive the escalated gas price."""
-    fleet = _sample_fleet()
-    prices = resolve_fuel_prices(_config(), fleet, START_YEAR)
-
-    expected = GAS_PRICE_BASE["ERCOT"]["mid"]
-    np.testing.assert_allclose(prices[0], expected)
-    np.testing.assert_allclose(prices[1], expected)
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, year)
+    np.testing.assert_allclose(prices[0], expected_gas)
 
 
 def test_nox_price_passes_through_from_config():
