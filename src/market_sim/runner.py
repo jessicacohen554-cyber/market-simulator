@@ -50,7 +50,7 @@ from market_sim.model.transmission import (
 )
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.ira import compute_dispatch_credits
-from market_sim.policy.rec import apply_rec_to_mc, compute_rec_dispatch_credits
+from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.outputs import FleetContext
@@ -149,9 +149,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
-            rec_price = 0.0
-            if prior_results is not None and prior_results.get("rec_price"):
-                rec_price = prior_results["rec_price"]
+            prior_rps_shadow = 0.0
+            if prior_results is not None and prior_results.get("rps_shadow_price"):
+                prior_rps_shadow = prior_results["rps_shadow_price"]
             # Gas price and carbon price for the year feed the new-entry
             # screen so gas CC is charged its expected variable fuel cost.
             # The annual (seasonality-free) delivered gas price keeps
@@ -160,11 +160,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             carbon_price_year = resolve_carbon_price(config, year)
             fleet, loss_tracker, renewable_additions, retrofit_log = evolve_fleet(
                 fleet, prior_results, year, config, loss_tracker,
-                rec_price=rec_price,
+                rps_shadow_price=prior_rps_shadow,
                 cumulative=cumulative,
                 gas_price_per_mmbtu=gas_price_year,
                 carbon_price=carbon_price_year,
-                eac_price_ccs=config.rec_price_gas_cc,
+                eac_price_ccs=config.eac_price_gas_cc_ccs,
             )
             if retrofit_log:
                 avg_savings = sum(
@@ -236,16 +236,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             mc = assemble_mc(
                 fleet_arrays, fuel_prices, carbon_price, config.nox_price
             )
-            # Exogenous RECs shift the cost vector: thermal-resource RECs
-            # lower per-generator MC, wind/solar RECs lower their dispatch
-            # adders, and the storage REC credits discharge. These stack
-            # with IRA credits and the endogenous RPS shadow price.
-            apply_rec_to_mc(mc, fleet_arrays, config)
-            wind_rec, solar_rec, storage_rec = compute_rec_dispatch_credits(config)
-            wind_mc -= wind_rec
-            solar_mc -= solar_rec
+            # Exogenous EACs shift the cost vector: per-generator EACs
+            # lower per-generator MC, wind/solar EACs lower their dispatch
+            # adders, and the storage EAC credits discharge. The EAC is real
+            # bidding behavior; it does not stack with the RPS shadow price
+            # in capacity economics (each MWh sells one attribute, once).
+            apply_eac_to_mc(mc, fleet_arrays, config)
+            wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
+            wind_mc -= wind_eac
+            solar_mc -= solar_eac
             # The RPS is enforced as an LP constraint when enabled; its dual
-            # is the implicit REC price returned in the dispatch result.
+            # is the RPS shadow price returned in the dispatch result.
             rps_target = None
             if config.rps_enabled:
                 rps_target = get_rps_target(iso, year)
@@ -267,7 +268,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 eta_dis=storage.eta_dis,
                 wind_mc=wind_mc,
                 solar_mc=solar_mc,
-                storage_discharge_credit=storage_rec,
+                storage_discharge_eac=storage_eac,
                 rps_target=rps_target,
                 T=config.hours,
             )
@@ -287,7 +288,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "prices": result.prices,
             "peak_demand": peak_demand,
             "planned_additions": [],
-            "rec_price": result.rec_price or 0.0,
+            "rps_shadow_price": result.rps_shadow_price or 0.0,
             "retrofit_log": retrofit_log,
         }
 
