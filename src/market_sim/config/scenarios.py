@@ -161,7 +161,7 @@ class ScenarioConfig:
     coal_tranche_1_frac: float = 0.30        # Take-or-pay capacity fraction
     coal_tranche_1_fuel_passthrough: float = 0.00  # VOM only — fuel sunk
     coal_tranche_2_frac: float = 0.25        # Partially contracted
-    coal_tranche_2_fuel_passthrough: float = 0.50
+    coal_tranche_2_fuel_passthrough: float = 0.35
     coal_tranche_3_frac: float = 0.45        # Economic dispatch
     coal_tranche_3_fuel_passthrough: float = 1.00  # Full fuel cost
 
