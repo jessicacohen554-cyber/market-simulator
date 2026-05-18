@@ -49,15 +49,36 @@ CT_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
     (11., {"startup_per_mw": 24.5, "min_run_hours": 1, "min_down_hours": 1}),  # frame
     (99., {"startup_per_mw": 19.0, "min_run_hours": 1, "min_down_hours": 1}),  # older
 ]
+# Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
+# hours, cycling output level rather than starting and stopping.
 
-COAL_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
-    (9.5,  {"startup_per_mw": 147.0, "min_run_hours": 12, "min_down_hours": 8}),  # supercritical
-    (10.5, {"startup_per_mw": 119.0, "min_run_hours": 12, "min_down_hours": 8}),  # subcritical
-    (99.,  {"startup_per_mw":  97.0, "min_run_hours": 12, "min_down_hours": 8}),  # older
+# CC/CT startup costs ($/MW per start) keyed by ascending heat-rate cutoff.
+# Used to amortize startup cost into the monthly bid markup: a generator bids
+# above marginal cost to recover startup_cost / expected_run_length.
+# Source: NREL/SR-5500-55433 (Kumar et al. 2012).
+CC_STARTUP_PARAMS: list[tuple[float, float]] = [
+    (6.5, 63.8),   # h-class
+    (7.5, 48.6),   # f-class
+    (99., 24.1),   # older
 ]
-# Coal min_run is the thermal startup sequence (12 hrs), not the economic
-# preference (36+ hrs). The economic decision is captured by the rolling-average
-# margin evaluation over a longer window (coal_eval_window_hours in config).
+CT_STARTUP_PARAMS: list[tuple[float, float]] = [
+    (10., 12.3),   # aero
+    (11., 24.5),   # frame
+    (99., 19.0),   # older
+]
+
+# Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_passthrough).
+# Coal plants hold take-or-pay fuel contracts, so the contracted volume bids at
+# VOM only (fuel sunk) while volume above the contract bids at progressively
+# more of full fuel cost. This stepped supply curve replaces a flat coal MC.
+# These are the defaults for the coal_tranche_* ScenarioConfig fields.
+# Source: calibrated to EIA-930 2023-2024 hourly ERCOT coal dispatch and
+# eGRID 2023/2024 annual coal generation.
+COAL_TRANCHES: list[tuple[float, float]] = [
+    (0.30, 0.00),  # T1: take-or-pay floor — VOM only (~$4.5/MWh)
+    (0.25, 0.35),  # T2: partially contracted — 35% fuel passthrough (~$11.5/MWh)
+    (0.45, 1.00),  # T3: economic dispatch — full fuel cost (~$24-27/MWh)
+]
 
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
