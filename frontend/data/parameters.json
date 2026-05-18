@@ -2344,60 +2344,6 @@
       ]
     },
     {
-      "param_id": "scenario.coal_cycling_adder_supercritical",
-      "display_name": "ScenarioConfig.coal_cycling_adder_supercritical",
-      "value": 2.66,
-      "unit": "$/MWh",
-      "domain": "Calibration",
-      "tier": 3,
-      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
-      "source_date": "2012-04",
-      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
-      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
-      "notes": "Tier-3 thermal cycling cost adder for supercritical coal (HR<9500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
-      "old_repo_location": "",
-      "last_verified": "2026-05-17",
-      "flags": [
-        "modeled"
-      ]
-    },
-    {
-      "param_id": "scenario.coal_cycling_adder_subcritical",
-      "display_name": "ScenarioConfig.coal_cycling_adder_subcritical",
-      "value": 2.55,
-      "unit": "$/MWh",
-      "domain": "Calibration",
-      "tier": 3,
-      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
-      "source_date": "2012-04",
-      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
-      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
-      "notes": "Tier-3 thermal cycling cost adder for subcritical coal (HR 9500-10500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
-      "old_repo_location": "",
-      "last_verified": "2026-05-17",
-      "flags": [
-        "modeled"
-      ]
-    },
-    {
-      "param_id": "scenario.coal_cycling_adder_older",
-      "display_name": "ScenarioConfig.coal_cycling_adder_older",
-      "value": 2.58,
-      "unit": "$/MWh",
-      "domain": "Calibration",
-      "tier": 3,
-      "source": "NREL/SR-5500-55433 (Kumar et al. 2012)",
-      "source_date": "2012-04",
-      "page_or_table": "Power Plant Cycling Costs — startup cost & min-run analysis",
-      "url": "https://www.nrel.gov/docs/fy12osti/55433.pdf",
-      "notes": "Tier-3 thermal cycling cost adder for legacy coal (HR>10500); derived from startup cost and cycling pattern, plant profiles from EPA eGRID 2023.",
-      "old_repo_location": "",
-      "last_verified": "2026-05-17",
-      "flags": [
-        "modeled"
-      ]
-    },
-    {
       "param_id": "scenario.ct_cycling_adder_aero",
       "display_name": "ScenarioConfig.ct_cycling_adder_aero",
       "value": 3.14,

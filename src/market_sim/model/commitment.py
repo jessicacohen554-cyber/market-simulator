@@ -58,12 +58,21 @@ def find_runs(mask: np.ndarray) -> list[tuple[int, int]]:
     return [(int(s), int(e)) for s, e in zip(starts, ends)]
 
 
-def _commitment_params(fuel_type: str, heat_rate: float) -> dict[str, float] | None:
-    """Return startup/min-run params for a generator, or ``None`` if non-thermal.
+def _commitment_params(
+    fuel_type: str, heat_rate: float, config: ScenarioConfig
+) -> dict[str, float] | None:
+    """Return startup/min-run params for a generator, or ``None`` to skip.
+
+    ``None`` means the generator is never commitment-screened (always
+    committed): non-thermal fuels, and coal unless
+    ``config.coal_commitment_enabled`` is set. EIA-930 confirms ERCOT coal
+    runs continuously, cycling output level rather than starting/stopping.
 
     The fuel's parameter table is keyed by ascending heat-rate cutoff; the
     first row whose cutoff exceeds ``heat_rate`` applies.
     """
+    if fuel_type == "coal" and not config.coal_commitment_enabled:
+        return None
     table = COMMITMENT_PARAMS_BY_FUEL.get(fuel_type)
     if table is None:
         return None
@@ -163,10 +172,10 @@ def compute_commitment(
 
     for g, gen in enumerate(generators):
         params = _commitment_params(
-            gen.fuel_type, float(fleet_arrays.heat_rate[g])
+            gen.fuel_type, float(fleet_arrays.heat_rate[g]), config
         )
         if params is None:
-            continue  # non-thermal: always committed
+            continue  # non-thermal or coal: always committed
 
         zone = int(fleet_arrays.zone_idx[g])
         margin = prices[zone, :] + ordc[zone, :] - mc[g, :]
@@ -198,22 +207,40 @@ def compute_commitment(
 
 def apply_commitment(
     fleet_arrays: FleetArrays,
-    committed: np.ndarray,         # (n_gen, T) boolean
+    committed: np.ndarray,            # (n_gen, T) boolean
+    generators: list[Generator],      # fleet list aligned with committed rows
+    p1_dispatch: np.ndarray | None = None,  # (n_gen, T) from Pass 1
 ) -> FleetArrays:
-    """Return new FleetArrays with availability zeroed in decommitted hours.
+    """Return new FleetArrays with commitment applied.
 
-    Also zeros pmin for any generator with decommitted hours, so coal's
-    40% minimum generation constraint doesn't conflict with zero availability.
+    For gas CC/CT: availability is zeroed in decommitted hours.
+
+    For coal: when ``p1_dispatch`` is given, coal availability is pinned to
+    reproduce the Pass-1 coal dispatch (availability = P1 dispatch / Pmax)
+    and coal Pmin is zeroed. Coal is not re-optimized in Pass 2 — the
+    commitment heuristic only tunes CC/CT around a fixed coal schedule,
+    because ERCOT coal runs continuously and is not commitment-screened.
+
+    Nuclear, wind, solar and other fuels pass through unchanged.
     """
     avail = fleet_arrays.availability.copy()
-    pmin = fleet_arrays.pmin.copy()
-    avail[~committed] = 0.0
-    for g in range(fleet_arrays.n_gen):
-        if (~committed[g]).any() and pmin[g] > 0:
-            pmin[g] = 0.0
+    pmin_new = fleet_arrays.pmin.copy()
+
+    for g, gen in enumerate(generators):
+        if gen.fuel_type == "coal" and p1_dispatch is not None:
+            # Pin coal: availability ceiling = P1 dispatch, so P2 coal
+            # reproduces P1 coal. A tiny floor avoids a numerical zero.
+            p1_frac = np.clip(
+                p1_dispatch[g, :] / max(float(fleet_arrays.pmax[g]), 1.0),
+                0.0, 1.0,
+            )
+            avail[g, :] = np.maximum(p1_frac, 1e-6)
+            pmin_new[g] = 0.0  # pmin handled via the availability pin
+        elif gen.fuel_type in ("gas_cc", "gas_ct"):
+            avail[g, ~committed[g]] = 0.0
 
     return FleetArrays(
-        pmax=fleet_arrays.pmax, pmin=pmin,
+        pmax=fleet_arrays.pmax, pmin=pmin_new,
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
         emission_rate=fleet_arrays.emission_rate, nox_rate=fleet_arrays.nox_rate,
         zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,
