@@ -57,6 +57,10 @@ from market_sim.data.renewables import (  # noqa: E402
     load_renewable_profiles,
 )
 from market_sim.model.dispatch import solve_dispatch  # noqa: E402
+from market_sim.model.storage import (  # noqa: E402
+    load_eia860_storage,
+    storage_units_to_arrays,
+)
 from market_sim.model.transmission import (  # noqa: E402
     build_incidence_matrix,
     get_ttc_array,
@@ -199,11 +203,11 @@ def run_year(
 ) -> tuple[object, FleetContext]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
-    Builds the calibration configuration, loads the EIA-860 fleet and the
-    year's EIA-930 demand and renewable profiles, assembles the marginal-cost
-    array (fuel cost, cycling adders, EAC and IRA dispatch credits) and solves
-    the hourly economic dispatch. No capacity evolution is performed — the
-    fleet is dispatched as observed.
+    Builds the calibration configuration, loads the EIA-860 generator and
+    storage fleets and the year's EIA-930 demand and renewable profiles,
+    assembles the marginal-cost array (fuel cost, cycling adders, EAC and
+    IRA dispatch credits) and solves the hourly economic dispatch. No
+    capacity evolution is performed — the fleet is dispatched as observed.
 
     Args:
         year: Calibration year.
@@ -254,6 +258,10 @@ def run_year(
     wind_mc -= wind_eac
     solar_mc -= solar_eac
 
+    storage = storage_units_to_arrays(
+        load_eia860_storage(iso, year), zone_names
+    )
+
     result = solve_dispatch(
         fleet_arrays,
         demand,
@@ -265,6 +273,11 @@ def run_year(
         voll=config.voll,
         incidence=incidence,
         ttc=ttc,
+        storage_power_cap=storage.power_cap,
+        storage_energy_cap=storage.energy_cap,
+        storage_zone_idx=storage.zone_idx,
+        eta_chg=storage.eta_chg,
+        eta_dis=storage.eta_dis,
         wind_mc=wind_mc,
         solar_mc=solar_mc,
         storage_discharge_eac=storage_eac,
@@ -273,7 +286,7 @@ def run_year(
     )
     context = FleetContext.from_arrays(
         fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
-        np.zeros(0),
+        storage.energy_cap,
     )
     return result, context
 
