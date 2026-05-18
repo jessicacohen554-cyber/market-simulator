@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+import pandas as pd
 from pydantic import BaseModel
 
 from market_sim.config.constants import (
@@ -182,6 +183,91 @@ def build_default_storage(
     return _distribute_storage(
         iso, config, STORAGE_BASE_FLEET_MW[config.iso][pace]
     )
+
+
+# Duration (hours) assumed for an EIA-860 storage unit whose energy
+# capacity is blank — a rare gap; ERCOT's 2023 fleet reports it in full.
+_EIA860_STORAGE_FALLBACK_DURATION_HR: float = 2.0
+
+
+def load_eia860_storage(iso: str, year: int) -> list[StorageUnit]:
+    """Build a storage fleet from EIA-860 operable energy-storage data.
+
+    Reads the EIA-860 operable energy-storage schedule, keeps units online
+    by the end of ``year``, assigns each to a model zone via the eGRID
+    ORIS->zone lookup, and aggregates power and energy capacity per zone
+    into one ``StorageUnit`` each. This grounds a calibration backcast in
+    the historical battery fleet rather than the forward-looking
+    ``STORAGE_BASE_FLEET_MW`` scenario constant.
+
+    EIA-860 does not report round-trip efficiency, so the lithium-ion RTE
+    from :data:`STORAGE_TECHS` is applied uniformly.
+
+    Args:
+        iso: ISO identifier; zones come from its topology config.
+        year: Backcast year; units commissioned after it are excluded.
+
+    Returns:
+        One aggregated ``StorageUnit`` per zone with nonzero storage
+        capacity. Empty when the EIA-860 file is missing or no operable
+        units fall inside the ISO.
+    """
+    from market_sim.data.fleet import EIA_860_DIR
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+    if not path.exists():
+        return []
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return []
+    if not zone_lookup:
+        return []
+
+    df = pd.read_parquet(path)
+    df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+    energy = pd.to_numeric(
+        df["Nameplate Energy Capacity (MWh)"], errors="coerce"
+    )
+    op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+
+    per_zone_power: dict[str, float] = {}
+    per_zone_energy: dict[str, float] = {}
+    for code, p_mw, e_mwh, oy in zip(
+        df["Plant Code"], power, energy, op_year
+    ):
+        if p_mw != p_mw or p_mw <= 0.0:  # NaN or non-positive
+            continue
+        if oy == oy and oy > year:  # commissioned after the backcast year
+            continue
+        try:
+            zone = zone_lookup.get(int(code))
+        except (TypeError, ValueError):
+            zone = None
+        if zone is None:
+            continue
+        if e_mwh != e_mwh or e_mwh <= 0.0:  # blank energy capacity
+            e_mwh = p_mw * _EIA860_STORAGE_FALLBACK_DURATION_HR
+        per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
+        per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
+
+    eta = float(STORAGE_TECHS["li_ion_4hr"]["rte"]) ** 0.5
+    return [
+        StorageUnit(
+            unit_id=f"{zone}_eia860_storage",
+            zone=zone,
+            tech_name="li_ion",
+            power_cap_mw=per_zone_power[zone],
+            energy_cap_mwh=per_zone_energy[zone],
+            eta_charge=eta,
+            eta_discharge=eta,
+            zone_idx=z_idx,
+        )
+        for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
+        if per_zone_power.get(zone, 0.0) > 0.0
+    ]
 
 
 # Economic life (years) over which storage capital cost is annualized.
