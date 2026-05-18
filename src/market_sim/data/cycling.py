@@ -1,10 +1,11 @@
 """Thermal cycling cost adders for the marginal-cost array.
 
-Coal and gas units that ramp, start and stop incur real costs beyond their
+Gas units that ramp, start and stop incur real costs beyond their
 fuel and VOM: thermal fatigue, startup fuel and auxiliary power, and the
 opportunity cost of running at minimum load. :func:`apply_cycling_adders`
 folds a per-bin ``$/MWh`` adder into the dispatch marginal-cost array so the
-merit order reflects those cycling costs.
+merit order reflects those cycling costs. Coal is excluded — ERCOT coal runs
+continuously and cycles output level rather than starting and stopping.
 
 Source: NREL/SR-5500-55433 (Kumar et al. 2012) "Power Plant Cycling Costs".
 Per-bin adders are derived in :mod:`market_sim.config.scenarios` from
@@ -42,20 +43,21 @@ def apply_cycling_adders(
 ) -> np.ndarray:
     """Add bin-specific cycling cost adders to the marginal cost array.
 
-    Matches each generator's fuel type and efficiency bin to the
+    Matches each gas generator's fuel type and efficiency bin to the
     corresponding cycling adder from ``config`` and adds it to that
     generator's ``$/MWh`` marginal cost in every hour. Pass-through units
-    (individual nuclear units, units carrying a ``retirement_year``) that do
-    not carry a standard bin name in their ``unit_id`` get the ``older``
-    adder for their fuel type. Renewables, nuclear, hydro and imports get no
-    adder.
+    (units carrying a ``retirement_year``) that do not carry a standard bin
+    name in their ``unit_id`` get the ``older`` adder for their fuel type.
+    Coal gets no adder: EIA-930 confirms ERCOT coal runs continuously and
+    cycles output level, not on/off. Renewables, nuclear, hydro and imports
+    also get no adder.
 
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array from
             :func:`~market_sim.data.fleet.assemble_mc`.
         generators: The generator list aligned row-for-row with ``mc``.
         fleet: The vectorized fleet ``mc`` was assembled from.
-        config: Scenario configuration supplying the nine cycling adders.
+        config: Scenario configuration supplying the six gas cycling adders.
 
     Returns:
         A new ``(n_gen, T)`` marginal-cost array with the adders applied.
@@ -68,10 +70,6 @@ def apply_cycling_adders(
         "h_class": config.cc_cycling_adder_h_class,
         "f_class": config.cc_cycling_adder_f_class,
     }
-    coal_map = {
-        "supercritical": config.coal_cycling_adder_supercritical,
-        "subcritical": config.coal_cycling_adder_subcritical,
-    }
     ct_map = {
         "aero": config.ct_cycling_adder_aero,
         "frame": config.ct_cycling_adder_frame,
@@ -81,10 +79,6 @@ def apply_cycling_adders(
         adder = 0.0
         if g.fuel_type == "gas_cc":
             adder = _match_bin(g.unit_id, cc_map, config.cc_cycling_adder_older)
-        elif g.fuel_type == "coal":
-            adder = _match_bin(
-                g.unit_id, coal_map, config.coal_cycling_adder_older
-            )
         elif g.fuel_type == "gas_ct":
             adder = _match_bin(g.unit_id, ct_map, config.ct_cycling_adder_older)
         if adder > 0.0:

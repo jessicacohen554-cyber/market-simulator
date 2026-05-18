@@ -8,14 +8,12 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 
 _T = 4
 
-# All nine cycling adders, set to 0.0 — used to disable the feature.
+# The six gas cycling adders, set to 0.0 -- used to disable the feature.
+# Coal has no cycling adder: ERCOT coal runs continuously.
 _ZERO_ADDERS = {
     "cc_cycling_adder_h_class": 0.0,
     "cc_cycling_adder_f_class": 0.0,
     "cc_cycling_adder_older": 0.0,
-    "coal_cycling_adder_supercritical": 0.0,
-    "coal_cycling_adder_subcritical": 0.0,
-    "coal_cycling_adder_older": 0.0,
     "ct_cycling_adder_aero": 0.0,
     "ct_cycling_adder_frame": 0.0,
     "ct_cycling_adder_older": 0.0,
@@ -42,14 +40,11 @@ def _apply(generators: list[Generator], config: ScenarioConfig) -> np.ndarray:
 
 
 def test_cycling_adders_applied():
-    """Each fuel type's bins get the correct adder from config."""
+    """Each gas fuel type's bins get the correct adder from config."""
     generators = [
         _gen("gas_cc_h_class_North", "gas_cc"),
         _gen("gas_cc_f_class_North", "gas_cc"),
         _gen("gas_cc_older_North", "gas_cc"),
-        _gen("coal_supercritical_North", "coal"),
-        _gen("coal_subcritical_North", "coal"),
-        _gen("coal_older_North", "coal"),
         _gen("gas_ct_aero_North", "gas_ct"),
         _gen("gas_ct_frame_North", "gas_ct"),
         _gen("gas_ct_older_North", "gas_ct"),
@@ -61,9 +56,6 @@ def test_cycling_adders_applied():
         config.cc_cycling_adder_h_class,
         config.cc_cycling_adder_f_class,
         config.cc_cycling_adder_older,
-        config.coal_cycling_adder_supercritical,
-        config.coal_cycling_adder_subcritical,
-        config.coal_cycling_adder_older,
         config.ct_cycling_adder_aero,
         config.ct_cycling_adder_frame,
         config.ct_cycling_adder_older,
@@ -78,14 +70,24 @@ def test_passthrough_units_get_default():
     # Pass-through units keep a plantid_generatorid unit_id with no bin name.
     generators = [
         _gen("3470_1", "gas_cc", retirement_year=2030),
-        _gen("6648_2", "coal", retirement_year=2028),
         _gen("55097_GT1", "gas_ct", retirement_year=2032),
     ]
     mc = _apply(generators, config)
 
     np.testing.assert_allclose(mc[0], config.cc_cycling_adder_older)
-    np.testing.assert_allclose(mc[1], config.coal_cycling_adder_older)
-    np.testing.assert_allclose(mc[2], config.ct_cycling_adder_older)
+    np.testing.assert_allclose(mc[1], config.ct_cycling_adder_older)
+
+
+def test_coal_gets_no_cycling_adder():
+    """Coal never cycles on/off, so it is never charged a cycling adder."""
+    config = ScenarioConfig()
+    generators = [
+        _gen("coal_supercritical_North", "coal"),
+        _gen("coal_subcritical_North", "coal"),
+        _gen("6648_2", "coal", retirement_year=2028),
+    ]
+    mc = _apply(generators, config)
+    np.testing.assert_allclose(mc, 0.0)
 
 
 def test_non_thermal_units_get_no_adder():
@@ -101,11 +103,10 @@ def test_non_thermal_units_get_no_adder():
 
 
 def test_cycling_adders_zero_when_disabled():
-    """Setting all adders to 0.0 in config produces unchanged MC."""
+    """Setting all gas adders to 0.0 in config produces unchanged MC."""
     config = ScenarioConfig().with_overrides(**_ZERO_ADDERS)
     generators = [
         _gen("gas_cc_h_class_North", "gas_cc"),
-        _gen("coal_supercritical_North", "coal"),
         _gen("gas_ct_frame_North", "gas_ct"),
     ]
     fleet = generators_to_fleet_arrays(generators, ["North"], hours=_T)
