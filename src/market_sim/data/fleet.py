@@ -496,23 +496,27 @@ def apply_coal_sunk_cost(
     mc: np.ndarray,
     fleet_arrays: FleetArrays,
     generators: list[Generator],
+    fuel_prices: np.ndarray,
     config: ScenarioConfig,
 ) -> np.ndarray:
     """Reduce coal MC to reflect take-or-pay fuel contract economics.
 
-    Coal plants with contracted fuel supply bid below full fuel+VOM because
-    the fuel cost is partially committed regardless of dispatch. The sunk
-    fraction is subtracted from the fuel component of MC::
+    Coal plants with contracted fuel supply bid below full fuel cost because
+    the contracted fuel is committed regardless of dispatch. Only the
+    physical fuel cost (``heat_rate × fuel_price``) is partially sunk::
 
-        mc[g, t] = VOM + (mc[g, t] - VOM) × (1 - sunk_fraction)
+        mc[g, t] -= sunk_fraction × heat_rate[g] × fuel_price[g, t]
 
-    This does NOT change the emission rate or heat rate — those are physical
-    properties used for emissions accounting. Only the bid price changes.
+    VOM, carbon and NOx costs are NOT discounted — they are not part of the
+    fuel supply contract and are incurred per MWh dispatched. Heat rate and
+    emission rate are likewise unchanged: only the bid price moves.
 
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array.
-        fleet_arrays: The vectorized fleet, for per-generator VOM.
+        fleet_arrays: The vectorized fleet, for per-generator heat rate.
         generators: The generator list aligned row-for-row with ``mc``.
+        fuel_prices: The ``(n_gen, T)`` delivered fuel price array used to
+            assemble ``mc``.
         config: Scenario configuration supplying ``coal_fuel_sunk_fraction``.
 
     Returns:
@@ -521,14 +525,14 @@ def apply_coal_sunk_cost(
     if config.coal_fuel_sunk_fraction <= 0:
         return mc
 
+    fuel_prices = np.asarray(fuel_prices, dtype=float)
+    sunk = config.coal_fuel_sunk_fraction
     mc_adjusted = mc.copy()
-    keep = 1.0 - config.coal_fuel_sunk_fraction
     for g, gen in enumerate(generators):
         if gen.fuel_type != "coal":
             continue
-        vom = fleet_arrays.vom[g]
-        fuel_component = mc[g, :] - vom
-        mc_adjusted[g, :] = vom + fuel_component * keep
+        fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+        mc_adjusted[g, :] = mc[g, :] - sunk * fuel_cost
     return mc_adjusted
 
 
