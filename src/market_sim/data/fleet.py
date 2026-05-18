@@ -172,10 +172,10 @@ def generators_to_fleet_arrays(
     a month-varying availability instead, capturing refueling outages and
     planned maintenance. Other seasonal derates are applied later.
 
-    When ``config`` is given, coal Pmin is overridden to
-    ``config.coal_pmin_fraction × Pmax`` (18% by default). EIA-930 shows
-    ERCOT coal cycles output level down to ~18% of installed capacity rather
-    than shutting off, so the loader's 40% Pmin overstates the floor.
+    Coal carries no Pmin floor: each coal bin is split into take-or-pay
+    tranches (see :func:`split_coal_tranches`), each with ``pmin_mw = 0``,
+    so coal's baseload behavior emerges from tranche economics rather than a
+    hard minimum.
     """
     zone_to_idx = {name: i for i, name in enumerate(zone_names)}
 
@@ -190,12 +190,6 @@ def generators_to_fleet_arrays(
     fuel_type_idx = np.array(
         [FUEL_TYPE_MAP[g.fuel_type] for g in generators], dtype=int
     )
-
-    # Coal cycles output level, not on/off. Override the loader's 40% Pmin
-    # with the observed EIA-930 minimum (18% of Pmax by default).
-    if config is not None:
-        coal_mask = fuel_type_idx == FUEL_TYPE_MAP["coal"]
-        pmin[coal_mask] = pmax[coal_mask] * config.coal_pmin_fraction
 
     eford = np.array([g.eford for g in generators], dtype=float)
     availability = np.broadcast_to(
@@ -492,48 +486,109 @@ def assemble_mc(
     return mc
 
 
-def apply_coal_sunk_cost(
-    mc: np.ndarray,
-    fleet_arrays: FleetArrays,
-    generators: list[Generator],
-    fuel_prices: np.ndarray,
-    config: ScenarioConfig,
-) -> np.ndarray:
-    """Reduce coal MC to reflect take-or-pay fuel contract economics.
+def _coal_tranches(config: ScenarioConfig) -> list[tuple[float, float]]:
+    """Return the coal take-or-pay tranches as ``(cap_frac, fuel_frac)`` pairs.
 
-    Coal plants with contracted fuel supply bid below full fuel cost because
-    the contracted fuel is committed regardless of dispatch. Only the
-    physical fuel cost (``heat_rate × fuel_price``) is partially sunk::
+    Mirrors :data:`~market_sim.config.constants.COAL_TRANCHES`, reading the
+    per-tranche capacity fraction and fuel-cost passthrough from the scenario
+    config so calibration can override the defaults.
+    """
+    return [
+        (config.coal_tranche_1_frac, config.coal_tranche_1_fuel_passthrough),
+        (config.coal_tranche_2_frac, config.coal_tranche_2_fuel_passthrough),
+        (config.coal_tranche_3_frac, config.coal_tranche_3_fuel_passthrough),
+    ]
 
-        mc[g, t] -= sunk_fraction × heat_rate[g] × fuel_price[g, t]
 
-    VOM, carbon and NOx costs are NOT discounted — they are not part of the
-    fuel supply contract and are incurred per MWh dispatched. Heat rate and
-    emission rate are likewise unchanged: only the bid price moves.
+def split_coal_tranches(
+    generators: list[Generator], config: ScenarioConfig
+) -> tuple[list[Generator], list[float]]:
+    """Split each coal generator into take-or-pay supply-curve tranches.
+
+    Coal plants hold take-or-pay fuel contracts: the contracted volume bids
+    at VOM only (its fuel is sunk) while volume above the contract bids at
+    progressively more of full fuel cost. Each coal :class:`Generator` is
+    therefore replaced by three sub-generators — one per tranche — that
+    together reproduce its capacity but expose a stepped supply curve to the
+    dispatch LP. Tranches carry ``pmin_mw = 0``: coal's baseload behavior
+    emerges from tranche 1's near-zero (VOM-only) bid, not a hard minimum.
+
+    Non-coal generators pass through unchanged.
 
     Args:
-        mc: The ``(n_gen, T)`` marginal-cost array.
-        fleet_arrays: The vectorized fleet, for per-generator heat rate.
-        generators: The generator list aligned row-for-row with ``mc``.
-        fuel_prices: The ``(n_gen, T)`` delivered fuel price array used to
-            assemble ``mc``.
-        config: Scenario configuration supplying ``coal_fuel_sunk_fraction``.
+        generators: The fleet to expand.
+        config: Scenario configuration supplying the ``coal_tranche_*`` fields.
 
     Returns:
-        A new ``(n_gen, T)`` marginal-cost array with coal bids reduced.
+        A tuple ``(expanded_fleet, fuel_fracs)`` where ``fuel_fracs[g]`` is the
+        fraction of fuel cost passed through to generator ``g``'s marginal
+        cost. Non-coal generators have ``fuel_frac = 1.0``.
     """
-    if config.coal_fuel_sunk_fraction <= 0:
-        return mc
-
-    fuel_prices = np.asarray(fuel_prices, dtype=float)
-    sunk = config.coal_fuel_sunk_fraction
-    mc_adjusted = mc.copy()
-    for g, gen in enumerate(generators):
+    tranches = _coal_tranches(config)
+    expanded: list[Generator] = []
+    fuel_fracs: list[float] = []
+    for gen in generators:
         if gen.fuel_type != "coal":
+            expanded.append(gen)
+            fuel_fracs.append(1.0)
             continue
-        fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
-        mc_adjusted[g, :] = mc[g, :] - sunk * fuel_cost
-    return mc_adjusted
+        for ti, (cap_frac, fuel_frac) in enumerate(tranches):
+            expanded.append(
+                Generator(
+                    unit_id=f"{gen.unit_id}_t{ti + 1}",
+                    name=gen.name,
+                    zone=gen.zone,
+                    fuel_type="coal",
+                    efficiency_bin=gen.efficiency_bin,
+                    pmax_mw=gen.pmax_mw * cap_frac,
+                    pmin_mw=0.0,
+                    heat_rate=gen.heat_rate,
+                    vom=gen.vom,
+                    emission_rate_co2=gen.emission_rate_co2,
+                    nox_rate=gen.nox_rate,
+                    eford=gen.eford,
+                    online_year=gen.online_year,
+                    retirement_year=gen.retirement_year,
+                )
+            )
+            fuel_fracs.append(fuel_frac)
+    return expanded, fuel_fracs
+
+
+def apply_coal_tranches(
+    mc: np.ndarray,
+    generators: list[Generator],
+    fleet_arrays: FleetArrays,
+    fuel_fracs: list[float],
+    fuel_prices: np.ndarray,
+) -> None:
+    """Reduce coal-tranche marginal cost by the sunk (unpassed) fuel fraction.
+
+    For each coal tranche ``g``, the take-or-pay contract makes
+    ``1 - fuel_fracs[g]`` of the physical fuel cost (``heat_rate ×
+    fuel_price``) sunk, so it is removed from the bid::
+
+        mc[g, t] -= (1 - fuel_fracs[g]) × heat_rate[g] × fuel_price[g, t]
+
+    Tranche 1 (``fuel_frac = 0``) is left bidding at VOM (plus carbon/NOx);
+    tranche 3 (``fuel_frac = 1``) is unchanged. VOM, carbon and NOx are never
+    discounted — they are incurred per MWh dispatched regardless of the fuel
+    contract. ``mc`` is modified in place.
+
+    Args:
+        mc: The ``(n_gen, T)`` marginal-cost array, modified in place.
+        generators: The generator list aligned row-for-row with ``mc``.
+        fleet_arrays: The vectorized fleet, for per-generator heat rate.
+        fuel_fracs: Per-generator fuel-cost passthrough from
+            :func:`split_coal_tranches`.
+        fuel_prices: The ``(n_gen, T)`` delivered fuel price array used to
+            assemble ``mc``.
+    """
+    fuel_prices = np.asarray(fuel_prices, dtype=float)
+    for g, gen in enumerate(generators):
+        if gen.fuel_type == "coal" and fuel_fracs[g] < 1.0:
+            fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+            mc[g, :] -= (1.0 - fuel_fracs[g]) * fuel_cost
 
 
 # ---------------------------------------------------------------------------
