@@ -133,6 +133,15 @@ class ScenarioConfig:
                                        # When True, a price-based commitment
                                        # filter runs between two LP solves to
                                        # approximate integer unit commitment.
+    commitment_irr_hurdle: float = 0.07  # 7% return required on startup cost.
+    # A run must generate margin >= startup_per_mw × (1 + irr) to justify
+    # the wear and capital risk of a start. Source: operator interviews,
+    # 7-10% typical for merchant thermal assets.
+    commitment_ordc_sigma: float = 8000.0  # ORDC uncertainty parameter (MW).
+    # Controls how early the ORDC scarcity adder ramps up as reserves
+    # tighten. Higher sigma = ORDC starts earlier = more scarcity revenue
+    # visible to commitment decisions. ~8000 MW for ERCOT calibration.
+    # ORDC formula: VOLL × Φ(-reserves_mw / sigma_mw).
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -146,6 +155,10 @@ class ScenarioConfig:
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
     # year-end capacity is used (pre-calibration behavior).
+    coal_eval_window_hours: int = 72  # Rolling-average window for coal
+    # commitment evaluation. Coal operators make multi-day commitment
+    # decisions, tolerating overnight price dips if the surrounding days
+    # are profitable. 72 hrs = 3-day forward look.
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -282,10 +295,13 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_min_remaining_life": 2,
     "heat_rate_bin_count": 2,
     "commitment_enabled": 2,
+    "commitment_irr_hurdle": 2,
+    "commitment_ordc_sigma": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
+    "coal_eval_window_hours": 3,
     "gas_price_override": 3,
     "cc_cycling_adder_h_class": 3,
     "cc_cycling_adder_f_class": 3,
