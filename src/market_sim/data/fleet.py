@@ -26,6 +26,7 @@ from market_sim.config.constants import (
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.scenarios import ScenarioConfig
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +163,7 @@ def generators_to_fleet_arrays(
     zone_names: list[str],
     hours: int = 8760,
     iso: str | None = None,
+    config: ScenarioConfig | None = None,
 ) -> FleetArrays:
     """Convert a list of generators into vectorized ``FleetArrays``.
 
@@ -169,6 +171,11 @@ def generators_to_fleet_arrays(
     given and has :data:`NUCLEAR_MONTHLY_CF` factors, nuclear generators get
     a month-varying availability instead, capturing refueling outages and
     planned maintenance. Other seasonal derates are applied later.
+
+    When ``config`` is given, coal Pmin is overridden to
+    ``config.coal_pmin_fraction × Pmax`` (18% by default). EIA-930 shows
+    ERCOT coal cycles output level down to ~18% of installed capacity rather
+    than shutting off, so the loader's 40% Pmin overstates the floor.
     """
     zone_to_idx = {name: i for i, name in enumerate(zone_names)}
 
@@ -183,6 +190,12 @@ def generators_to_fleet_arrays(
     fuel_type_idx = np.array(
         [FUEL_TYPE_MAP[g.fuel_type] for g in generators], dtype=int
     )
+
+    # Coal cycles output level, not on/off. Override the loader's 40% Pmin
+    # with the observed EIA-930 minimum (18% of Pmax by default).
+    if config is not None:
+        coal_mask = fuel_type_idx == FUEL_TYPE_MAP["coal"]
+        pmin[coal_mask] = pmax[coal_mask] * config.coal_pmin_fraction
 
     eford = np.array([g.eford for g in generators], dtype=float)
     availability = np.broadcast_to(
@@ -477,6 +490,46 @@ def assemble_mc(
         mc = mc + rate * np.asarray(price_array, dtype=float)
 
     return mc
+
+
+def apply_coal_sunk_cost(
+    mc: np.ndarray,
+    fleet_arrays: FleetArrays,
+    generators: list[Generator],
+    config: ScenarioConfig,
+) -> np.ndarray:
+    """Reduce coal MC to reflect take-or-pay fuel contract economics.
+
+    Coal plants with contracted fuel supply bid below full fuel+VOM because
+    the fuel cost is partially committed regardless of dispatch. The sunk
+    fraction is subtracted from the fuel component of MC::
+
+        mc[g, t] = VOM + (mc[g, t] - VOM) × (1 - sunk_fraction)
+
+    This does NOT change the emission rate or heat rate — those are physical
+    properties used for emissions accounting. Only the bid price changes.
+
+    Args:
+        mc: The ``(n_gen, T)`` marginal-cost array.
+        fleet_arrays: The vectorized fleet, for per-generator VOM.
+        generators: The generator list aligned row-for-row with ``mc``.
+        config: Scenario configuration supplying ``coal_fuel_sunk_fraction``.
+
+    Returns:
+        A new ``(n_gen, T)`` marginal-cost array with coal bids reduced.
+    """
+    if config.coal_fuel_sunk_fraction <= 0:
+        return mc
+
+    mc_adjusted = mc.copy()
+    keep = 1.0 - config.coal_fuel_sunk_fraction
+    for g, gen in enumerate(generators):
+        if gen.fuel_type != "coal":
+            continue
+        vom = fleet_arrays.vom[g]
+        fuel_component = mc[g, :] - vom
+        mc_adjusted[g, :] = vom + fuel_component * keep
+    return mc_adjusted
 
 
 # ---------------------------------------------------------------------------
