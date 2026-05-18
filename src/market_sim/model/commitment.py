@@ -1,20 +1,44 @@
 """Heuristic unit commitment via post-LP price-based screening.
 
-Analyzes dispatch prices from a first-pass LP solve to decide which hours
-each gas CC generator would commit (start up), based on whether the run's
-net revenue covers the startup cost. A second LP pass then enforces those
-commitment decisions by zeroing availability in decommitted hours.
+Extends commitment screening from CC-only to all thermal generators
+(CC, CT, coal). Each fuel type has class-specific startup costs,
+minimum run times, and minimum down times from NREL cycling cost data.
 
-This approximates integer commitment without MIP or commercial solvers.
+The commitment price signal includes a reserve-based ORDC scarcity
+adder that represents ancillary service and ORDC revenue the
+energy-only LP duals do not capture. Without this, LP prices
+understate the revenue CCs/CTs earn during tight hours, causing
+over-decommitment.
+
+A startup run must clear an IRR hurdle: total margin over the run
+must exceed startup_cost × (1 + irr). Operators won't commit wear
+and tear on a start without adequate return.
+
+Coal uses a rolling-average margin over a multi-day evaluation
+window (config.coal_eval_window_hours) because coal operators make
+multi-day commitment decisions, tolerating overnight price dips
+within a profitable week.
 """
 
 from __future__ import annotations
 
 import numpy as np
+from scipy.stats import norm
 
-from market_sim.config.constants import CC_COMMITMENT_PARAMS
+from market_sim.config.constants import (
+    CC_COMMITMENT_PARAMS,
+    COAL_COMMITMENT_PARAMS,
+    CT_COMMITMENT_PARAMS,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
+
+
+COMMITMENT_PARAMS_BY_FUEL: dict[str, list] = {
+    "gas_cc": CC_COMMITMENT_PARAMS,
+    "gas_ct": CT_COMMITMENT_PARAMS,
+    "coal": COAL_COMMITMENT_PARAMS,
+}
 
 
 def find_runs(mask: np.ndarray) -> list[tuple[int, int]]:
@@ -34,16 +58,19 @@ def find_runs(mask: np.ndarray) -> list[tuple[int, int]]:
     return [(int(s), int(e)) for s, e in zip(starts, ends)]
 
 
-def _commitment_params(heat_rate: float) -> dict[str, float]:
-    """Return the startup/min-run params for a CC of the given heat rate.
+def _commitment_params(fuel_type: str, heat_rate: float) -> dict[str, float] | None:
+    """Return startup/min-run params for a generator, or ``None`` if non-thermal.
 
-    :data:`CC_COMMITMENT_PARAMS` is keyed by ascending heat-rate cutoff;
-    the first row whose cutoff exceeds ``heat_rate`` applies.
+    The fuel's parameter table is keyed by ascending heat-rate cutoff; the
+    first row whose cutoff exceeds ``heat_rate`` applies.
     """
-    for cutoff, params in CC_COMMITMENT_PARAMS:
+    table = COMMITMENT_PARAMS_BY_FUEL.get(fuel_type)
+    if table is None:
+        return None
+    for cutoff, params in table:
         if heat_rate < cutoff:
             return params
-    return CC_COMMITMENT_PARAMS[-1][1]
+    return table[-1][1]
 
 
 def _merge_runs(
@@ -67,43 +94,98 @@ def _merge_runs(
     return merged
 
 
-def compute_commitment(
-    prices: np.ndarray,          # (n_zones, T) from Pass 1
-    mc: np.ndarray,              # (n_gen, T) marginal cost array
-    generators: list[Generator],  # fleet list aligned with mc rows
-    fleet_arrays: FleetArrays,   # for zone_idx
-    config: ScenarioConfig,      # for commitment parameters
+def compute_ordc(
+    fleet_arrays: FleetArrays,
+    demand: np.ndarray,           # (n_zones, T)
+    wind_dispatched: np.ndarray,  # (n_zones, T)
+    solar_dispatched: np.ndarray,  # (n_zones, T)
+    voll: float,
+    sigma_mw: float,
 ) -> np.ndarray:
-    """Return ``(n_gen, T)`` boolean mask: ``True`` = committed, ``False`` = off.
+    """Compute hourly ORDC scarcity adder from dispatch reserves.
 
-    For each gas CC generator:
-    1. Compute hourly margin = price[zone] - MC
-    2. Find runs of consecutive positive-margin hours
-    3. Filter: run must be >= min_run hours
-    4. Filter: total run margin must cover startup cost ($/MW)
-    5. Merge runs separated by < min_down hours (cheaper to stay on)
-    6. All other fuel types return True for all hours (always committed)
+    Uses a simplified ERCOT-style ORDC: adder = VOLL × Φ(-reserves/sigma)
+    where Φ is the normal CDF and sigma represents net-load forecast error.
+
+    Returns ``(n_zones, T)`` array — same system-wide ORDC broadcast to all
+    zones.
     """
-    del config  # commitment parameters come from CC_COMMITMENT_PARAMS
-    mc = np.asarray(mc, dtype=float)
-    prices = np.asarray(prices, dtype=float)
+    thermal_avail = (
+        fleet_arrays.pmax[:, None] * fleet_arrays.availability
+    ).sum(axis=0)
+    sys_demand = demand.sum(axis=0)
+    renewable_gen = wind_dispatched.sum(axis=0) + solar_dispatched.sum(axis=0)
+    reserves_mw = thermal_avail - (sys_demand - renewable_gen)
+
+    lolp = norm.cdf(-reserves_mw / sigma_mw)
+    ordc_system = np.minimum(voll * lolp, voll)
+
+    n_zones = demand.shape[0]
+    return np.broadcast_to(
+        ordc_system[None, :], (n_zones, demand.shape[1])
+    ).copy()
+
+
+def compute_commitment(
+    prices: np.ndarray,            # (n_zones, T) from Pass 1
+    mc: np.ndarray,                # (n_gen, T) marginal cost array
+    generators: list[Generator],   # fleet list aligned with mc rows
+    fleet_arrays: FleetArrays,     # for zone_idx, pmax, availability
+    config: ScenarioConfig,
+    demand: np.ndarray,            # (n_zones, T) — needed for ORDC
+    wind_dispatched: np.ndarray,   # (n_zones, T) — from Pass 1
+    solar_dispatched: np.ndarray,  # (n_zones, T) — from Pass 1
+) -> np.ndarray:
+    """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
+
+    For each thermal generator (CC, CT, coal):
+    1. Compute hourly margin = (price + ORDC)[zone] - MC
+    2. Find runs of positive-margin hours
+       (coal: rolling-average positive margin over eval window)
+    3. Filter: run length >= min_run_hours
+    4. Filter: total run margin >= startup_cost × (1 + IRR)
+    5. Merge runs separated by < min_down_hours
+    6. Non-thermal generators (nuclear, hydro, wind, solar) always committed.
+    """
     n_gen, T = mc.shape
+    irr = config.commitment_irr_hurdle
+    # Clamp the coal evaluation window to the horizon so the rolling-average
+    # convolution stays well-defined on short test horizons.
+    coal_window = min(config.coal_eval_window_hours, T)
+
+    # Compute ORDC from Pass 1 reserves
+    ordc = compute_ordc(
+        fleet_arrays, demand, wind_dispatched, solar_dispatched,
+        config.voll, config.commitment_ordc_sigma,
+    )
 
     committed = np.ones((n_gen, T), dtype=bool)
-    for g, gen in enumerate(generators):
-        if gen.fuel_type != "gas_cc":
-            continue  # coal (must-run) and CTs (peakers) are always committed
 
-        params = _commitment_params(float(fleet_arrays.heat_rate[g]))
+    for g, gen in enumerate(generators):
+        params = _commitment_params(
+            gen.fuel_type, float(fleet_arrays.heat_rate[g])
+        )
+        if params is None:
+            continue  # non-thermal: always committed
+
         zone = int(fleet_arrays.zone_idx[g])
-        margin = prices[zone, :] - mc[g, :]
+        margin = prices[zone, :] + ordc[zone, :] - mc[g, :]
+        hurdle = params["startup_per_mw"] * (1.0 + irr)
+
+        if gen.fuel_type == "coal":
+            # Coal: rolling-average margin over evaluation window.
+            # Tolerates overnight dips if surrounding days are profitable.
+            kernel = np.ones(coal_window) / coal_window
+            effective_margin = np.convolve(margin, kernel, mode="same")
+        else:
+            effective_margin = margin
 
         accepted: list[tuple[int, int]] = []
-        for start, end in find_runs(margin > 0.0):
+        for start, end in find_runs(effective_margin > 0.0):
             if (end - start) < params["min_run_hours"]:
-                continue  # too short to justify a startup
-            if margin[start:end].sum() < params["startup_per_mw"]:
-                continue  # run revenue does not cover the startup cost
+                continue
+            if float(margin[start:end].sum()) < hurdle:
+                continue
             accepted.append((start, end))
 
         mask = np.zeros(T, dtype=bool)
@@ -116,14 +198,22 @@ def compute_commitment(
 
 def apply_commitment(
     fleet_arrays: FleetArrays,
-    committed: np.ndarray,       # (n_gen, T) boolean
+    committed: np.ndarray,         # (n_gen, T) boolean
 ) -> FleetArrays:
-    """Return a new FleetArrays with availability zeroed in decommitted hours."""
+    """Return new FleetArrays with availability zeroed in decommitted hours.
+
+    Also zeros pmin for any generator with decommitted hours, so coal's
+    40% minimum generation constraint doesn't conflict with zero availability.
+    """
     avail = fleet_arrays.availability.copy()
+    pmin = fleet_arrays.pmin.copy()
+    avail[~committed] = 0.0
     for g in range(fleet_arrays.n_gen):
-        avail[g, ~committed[g, :]] = 0.0
+        if (~committed[g]).any() and pmin[g] > 0:
+            pmin[g] = 0.0
+
     return FleetArrays(
-        pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin,
+        pmax=fleet_arrays.pmax, pmin=pmin,
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
         emission_rate=fleet_arrays.emission_rate, nox_rate=fleet_arrays.nox_rate,
         zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,
