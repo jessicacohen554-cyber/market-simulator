@@ -332,7 +332,7 @@ class TestCoalStructural(unittest.TestCase):
         arrays = generators_to_fleet_arrays([coal], ["z"], hours=4, config=cfg)
         self.assertAlmostEqual(arrays.pmin[0], 90.0)  # 0.18 x 500
 
-    def test_coal_sunk_cost_reduces_bid(self):
+    def test_coal_sunk_cost_discounts_only_fuel_not_carbon(self):
         config = ScenarioConfig(coal_fuel_sunk_fraction=0.40)
         gens = [
             Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
@@ -341,14 +341,18 @@ class TestCoalStructural(unittest.TestCase):
                       pmax_mw=300.0, vom=2.0, heat_rate=7.0, eford=0.0),
         ]
         arrays = generators_to_fleet_arrays(gens, ["z"], hours=4)
-        mc = np.array([np.full(4, 30.0), np.full(4, 25.0)])
+        fuel_prices = np.array([np.full(4, 2.0), np.full(4, 3.0)])
+        # Coal MC = fuel (10 x 2.0 = 20) + VOM (4.5) + carbon (30) = 54.5.
+        mc = np.array([np.full(4, 54.5), np.full(4, 25.0)])
 
-        out = apply_coal_sunk_cost(mc, arrays, gens, config)
+        out = apply_coal_sunk_cost(mc, arrays, gens, fuel_prices, config)
 
-        # coal: VOM + (MC - VOM) x (1 - 0.40) = 4.5 + 25.5 x 0.6 = 19.8
-        np.testing.assert_allclose(out[0], 19.8)
+        # Only the 20 $/MWh fuel cost is discounted: 54.5 - 0.40 x 20 = 46.5.
+        # The 30 $/MWh carbon component is preserved (a naive MC-VOM
+        # discount would wrongly yield 34.5).
+        np.testing.assert_allclose(out[0], 46.5)
         np.testing.assert_allclose(out[1], 25.0)   # CC unchanged
-        np.testing.assert_allclose(mc[0], 30.0)    # input not mutated
+        np.testing.assert_allclose(mc[0], 54.5)    # input not mutated
 
     def test_sunk_cost_does_not_change_emission_rate(self):
         # The sunk fraction reduces the bid price only. Emission accounting
@@ -360,8 +364,9 @@ class TestCoalStructural(unittest.TestCase):
         arrays = generators_to_fleet_arrays([coal], ["z"], hours=4)
         before = arrays.emission_rate.copy()
         mc = np.full((1, 4), 30.0)
+        fuel_prices = np.full((1, 4), 2.0)
 
-        apply_coal_sunk_cost(mc, arrays, [coal], config)
+        apply_coal_sunk_cost(mc, arrays, [coal], fuel_prices, config)
 
         np.testing.assert_array_equal(arrays.emission_rate, before)
         self.assertEqual(arrays.emission_rate[0], 1.0)

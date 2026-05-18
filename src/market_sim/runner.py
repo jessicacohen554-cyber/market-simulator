@@ -265,9 +265,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # bidding behavior; it does not stack with the RPS shadow price
             # in capacity economics (each MWh sells one attribute, once).
             apply_eac_to_mc(mc, fleet_arrays, config)
-            # Coal bids below full fuel+VOM: take-or-pay fuel contracts make
-            # part of the fuel cost sunk regardless of dispatch.
-            mc = apply_coal_sunk_cost(mc, fleet_arrays, dispatch_fleet, config)
+            # Coal bids below full fuel cost: take-or-pay fuel contracts
+            # make the contracted fuel sunk regardless of dispatch.
+            mc = apply_coal_sunk_cost(
+                mc, fleet_arrays, dispatch_fleet, fuel_prices, config
+            )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
