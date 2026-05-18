@@ -174,6 +174,25 @@ def compute_clean_share(
     return clean / total
 
 
+def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
+    """Return the fleet-array row indices for a generator.
+
+    Most generators occupy a single dispatch row. Coal bins are split into
+    take-or-pay tranches (``{unit_id}_t1``..``_t3``) before dispatch, so a
+    coal generator maps to all its tranche rows; revenue is summed over them.
+    """
+    direct = idx_of.get(gen.unit_id)
+    if direct is not None:
+        return [direct]
+    if gen.fuel_type == "coal":
+        return [
+            idx_of[key]
+            for t in (1, 2, 3)
+            if (key := f"{gen.unit_id}_t{t}") in idx_of
+        ]
+    return []
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -241,19 +260,21 @@ def apply_economic_retirements(
         fom_field = _THERMAL_FOM.get(g.fuel_type)
         if fom_field is None:
             continue
-        i = idx_of.get(g.unit_id)
-        if i is None:
+        rows = _dispatch_rows(g, idx_of)
+        if not rows:
             continue
 
-        zone = int(fleet_arrays.zone_idx[i])
-        net_revenue = float(np.dot(prices[zone], dispatch[i]))
+        zone = int(fleet_arrays.zone_idx[rows[0]])
+        net_revenue = float(
+            sum(np.dot(prices[zone], dispatch[i]) for i in rows)
+        )
 
         # The attribute payment -- the higher of the exogenous EAC and the
         # endogenous RPS shadow price, never their sum -- adds revenue
         # beyond the energy market, keeping units that energy prices alone
         # would not. The RPS shadow price is credited only to RPS-eligible
         # clean fuels.
-        annual_gen_mwh = float(np.sum(dispatch[i]))
+        annual_gen_mwh = float(sum(np.sum(dispatch[i]) for i in rows))
         eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
         rps_for_unit = (
             rps_shadow_price if g.fuel_type in _CLEAN_FUELS else 0.0

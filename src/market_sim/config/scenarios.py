@@ -137,11 +137,6 @@ class ScenarioConfig:
     # A run must generate margin >= startup_per_mw × (1 + irr) to justify
     # the wear and capital risk of a start. Source: operator interviews,
     # 7-10% typical for merchant thermal assets.
-    commitment_ordc_sigma: float = 8000.0  # ORDC uncertainty parameter (MW).
-    # Controls how early the ORDC scarcity adder ramps up as reserves
-    # tighten. Higher sigma = ORDC starts earlier = more scarcity revenue
-    # visible to commitment decisions. ~8000 MW for ERCOT calibration.
-    # ORDC formula: VOLL × Φ(-reserves_mw / sigma_mw).
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -155,26 +150,20 @@ class ScenarioConfig:
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
     # year-end capacity is used (pre-calibration behavior).
-    coal_eval_window_hours: int = 72  # Rolling-average window for coal
-    # commitment evaluation. Coal operators make multi-day commitment
-    # decisions, tolerating overnight price dips if the surrounding days
-    # are profitable. 72 hrs = 3-day forward look.
 
-    # Tier 3 (calibration) — Coal structural parameters
-    coal_pmin_fraction: float = 0.18  # Minimum generation as fraction of Pmax.
-    # EIA-930 2023 shows ERCOT coal minimum output = 2,429 MW out of ~13,500 MW
-    # installed = 18%. Coal plants cycle output level, not on/off.
-    # Source: EIA Hourly Grid Monitor 2023, ERCO BA, NG: COL column.
-    coal_fuel_sunk_fraction: float = 0.40  # Fraction of coal fuel cost sunk.
-    # Coal plants with take-or-pay fuel contracts bid below full fuel+VOM
-    # because the contracted fuel cost is committed regardless of dispatch.
-    # 40% sunk produces coal dispatch matching eGRID 2023 actuals.
-    # Source: calibrated to eGRID 2023 ERCOT coal generation (62.5 TWh).
-    # Cross-check: typical PRB coal supply contracts have ~30-50% fixed
-    # components (mine-mouth price, minimum take, rail capacity reservations).
-    coal_commitment_enabled: bool = False  # Coal is NEVER commitment-screened.
-    # EIA-930 confirms coal runs all 8,760 hours in ERCOT. Coal operators make
-    # seasonal/annual commitment decisions, not hourly.
+    # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
+    # Each coal bin is split into three tranches modeling its take-or-pay
+    # fuel contract: a fraction of capacity at a fraction of fuel passthrough.
+    # Tranche 1 (contracted volume) bids at VOM only — its fuel is sunk;
+    # higher tranches bid progressively more of full fuel cost. The fractions
+    # need not sum to 1.0 but normally do. Source: calibrated to EIA-930
+    # 2023-2024 hourly ERCOT coal dispatch and eGRID 2023/2024 actuals.
+    coal_tranche_1_frac: float = 0.30        # Take-or-pay capacity fraction
+    coal_tranche_1_fuel_passthrough: float = 0.00  # VOM only — fuel sunk
+    coal_tranche_2_frac: float = 0.25        # Partially contracted
+    coal_tranche_2_fuel_passthrough: float = 0.35
+    coal_tranche_3_frac: float = 0.45        # Economic dispatch
+    coal_tranche_3_fuel_passthrough: float = 1.00  # Full fuel cost
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
@@ -182,23 +171,6 @@ class ScenarioConfig:
     # Its presence also marks the run as a historical calibration backcast,
     # so renewable capacity resolves to that year's EIA-860 year-end actual
     # rather than the forward-projection RENEWABLE_INSTALLED_MW base.
-
-    # Tier 3 (calibration) — Thermal cycling cost adders ($/MWh)
-    # Source: NREL/SR-5500-55433 (Kumar et al. 2012) "Power Plant Cycling Costs"
-    # Derivation: startup cost ($/MW × starts/yr ÷ op hours) + min-run drag.
-    # Plant profiles from EPA eGRID 2023, cycling patterns from Potomac
-    # Economics SOM.
-    # Coal cycling adders are intentionally absent: EIA-930 2023 confirms
-    # ERCOT coal runs all 8,760 hours (minimum output 2,429 MW). Coal cycles
-    # output level, not on/off, so the start/stop cycling adder does not apply.
-    # Gas CC — higher adder for efficient units (heavier rotors, longer min runtime)
-    cc_cycling_adder_h_class: float = 3.92   # HR<6500. $63.8/MW-start, 22hr cycle, 10hr min-run.
-    cc_cycling_adder_f_class: float = 3.66   # HR 6500-7500. $48.6/MW-start, 17hr cycle, 7.5hr min-run.
-    cc_cycling_adder_older: float = 2.91     # HR>7500. $24.1/MW-start, 10hr cycle, 4.5hr min-run.
-    # Gas CT — highest per-MWh adder (short 4-5hr runs concentrate start cost)
-    ct_cycling_adder_aero: float = 3.14      # HR<10000. $12.3/MW-start, 4hr cycle, 0.5hr min-run.
-    ct_cycling_adder_frame: float = 5.02     # HR 10000-11000. $24.5/MW-start, 5hr cycle, 1hr min-run.
-    ct_cycling_adder_older: float = 4.85     # HR>11000. $19.0/MW-start, 4hr cycle, 1hr min-run.
 
     @property
     def real_discount_rate(self) -> float:
@@ -312,22 +284,17 @@ TIER_TAGS: dict[str, int] = {
     "heat_rate_bin_count": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,
-    "commitment_ordc_sigma": 2,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
-    "coal_eval_window_hours": 3,
-    "coal_pmin_fraction": 3,
-    "coal_fuel_sunk_fraction": 3,
-    "coal_commitment_enabled": 3,
+    "coal_tranche_1_frac": 3,
+    "coal_tranche_1_fuel_passthrough": 3,
+    "coal_tranche_2_frac": 3,
+    "coal_tranche_2_fuel_passthrough": 3,
+    "coal_tranche_3_frac": 3,
+    "coal_tranche_3_fuel_passthrough": 3,
     "gas_price_override": 3,
-    "cc_cycling_adder_h_class": 3,
-    "cc_cycling_adder_f_class": 3,
-    "cc_cycling_adder_older": 3,
-    "ct_cycling_adder_aero": 3,
-    "ct_cycling_adder_frame": 3,
-    "ct_cycling_adder_older": 3,
 }
 
 
