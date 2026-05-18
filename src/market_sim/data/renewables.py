@@ -36,7 +36,11 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.eia_loader import DATA_DIR, load_generation_profiles
+from market_sim.data.eia_loader import (
+    DATA_DIR,
+    load_ercot_renewable_gen,
+    load_generation_profiles,
+)
 from market_sim.data.fleet import (
     EIA_860_DIR,
     FUEL_TYPE_MAP,
@@ -266,32 +270,39 @@ def derive_cf_profile(
     return np.clip(cf, _CF_MIN, _CF_MAX)
 
 
+def _mw_to_cf(
+    hourly_mw: np.ndarray, monthly_capacity: np.ndarray
+) -> np.ndarray:
+    """Convert an hourly system-wide MW series into a CF profile.
+
+    Each hour's MW is divided by the capacity online in that hour's month
+    (summed across zones in ``monthly_capacity``), giving a capacity factor
+    per MW of online capacity. Passed to :func:`_distribute_by_eia860` with
+    the vintage ramp, this reproduces the system MW total exactly while
+    distributing it across zones by each zone's month-by-month capacity.
+    """
+    online_cap = monthly_capacity.sum(axis=0)[
+        _hour_to_month_index(HOURS_PER_YEAR)
+    ]
+    cf = np.divide(
+        hourly_mw, online_cap, out=np.zeros_like(hourly_mw),
+        where=online_cap > 0.0,
+    )
+    return np.clip(cf, _CF_MIN, _CF_MAX)
+
+
 def _hsl_cf_profile(
     iso: str, year: int, fuel: str, monthly_capacity: np.ndarray
 ) -> np.ndarray | None:
     """Return an hourly uncurtailed-potential CF profile, or ``None``.
 
     For ERCOT 2023 the NP6 HSL dataset records the hourly High Sustained
-    Limit — the wind/solar output available *before* curtailment. The
-    system-wide HSL is divided by the capacity online in that hour's month
-    (from ``monthly_capacity``), giving a capacity factor per MW of online
-    capacity. Passed to :func:`_distribute_by_eia860` with the vintage ramp,
-    this reproduces the HSL system total exactly while distributing it
-    across zones by each zone's month-by-month capacity. The dispatch then
-    re-curtails this uncurtailed potential under the modeled transmission
-    limits, rather than inheriting curtailment baked into delivered-
-    generation data.
+    Limit — the wind/solar output available *before* curtailment. Feeding
+    that to the dispatch (rather than delivered generation) lets it
+    re-curtail under the modeled transmission limits. The series is
+    chronological by ERCOT-local time, matching the ``ERCO hourly`` demand.
 
-    Args:
-        iso: ISO identifier; HSL data exists only for ``"ERCOT"``.
-        year: Calendar year; HSL data exists only for ``2023``.
-        fuel: Renewable fuel, ``"wind"`` or ``"solar"``.
-        monthly_capacity: ``(n_zones, 12)`` operable capacity by month,
-            used to normalize the HSL by the capacity online each month.
-
-    Returns:
-        A ``(HOURS_PER_YEAR,)`` array of hourly capacity factors in
-        ``[0, 1]``, or ``None`` when no HSL data covers ``(iso, year, fuel)``.
+    Returns ``None`` when no HSL data covers ``(iso, year, fuel)``.
     """
     if iso != "ERCOT" or year != 2023 or not _ERCOT_HSL_FILE.exists():
         return None
@@ -300,13 +311,29 @@ def _hsl_cf_profile(
     if column not in df.columns or len(df) != HOURS_PER_YEAR:
         return None
     hsl_mw = df.sort_values("hour")[column].to_numpy(dtype=float)
-    online_cap = monthly_capacity.sum(axis=0)[
-        _hour_to_month_index(HOURS_PER_YEAR)
-    ]
-    cf = np.divide(
-        hsl_mw, online_cap, out=np.zeros_like(hsl_mw), where=online_cap > 0.0
-    )
-    return np.clip(cf, _CF_MIN, _CF_MAX)
+    return _mw_to_cf(hsl_mw, monthly_capacity)
+
+
+def _erco_cf_profile(
+    iso: str, year: int, fuel: str, monthly_capacity: np.ndarray
+) -> np.ndarray | None:
+    """Return a delivered-generation CF profile from the ERCO hourly extract.
+
+    For ERCOT backcast years without an HSL series, the EIA-930 ``ERCO
+    hourly`` net generation supplies a wind/solar profile on the same
+    chronological clock as the demand and interchange. It is delivered
+    (already curtailed) output, so — like the EIA-930 generation profiles —
+    the dispatch does not separately re-curtail it.
+
+    Returns ``None`` when ``iso`` is not ERCOT or no ERCO data covers the
+    ``(year, fuel)`` pair.
+    """
+    if iso != "ERCOT":
+        return None
+    gen = load_ercot_renewable_gen(year)
+    if gen is None or fuel not in gen:
+        return None
+    return _mw_to_cf(gen[fuel], monthly_capacity)
 
 
 def _extract_fuel_values(profiles: pd.DataFrame, fuel: str) -> np.ndarray:
@@ -435,11 +462,11 @@ def load_renewable_profiles(
     Hourly CF profiles are derived from the EIA-930 generation
     distributions (see :func:`derive_cf_profile` and the module docstring),
     scaled by the calibration knob ``config.renewable_cf_adjustment`` and
-    re-clipped to ``[0, 1]``. Because the EIA series reflect delivered
-    output, those profiles embed roughly 5% of real-world curtailment. The
-    ERCOT 2023 backcast instead builds its profiles from the uncurtailed
-    HSL series (see :func:`_hsl_cf_profile`), so the dispatch re-curtails
-    under the modeled transmission limits.
+    re-clipped to ``[0, 1]``. ERCOT backcasts instead use measured hourly
+    profiles on the calibration's chronological clock: the uncurtailed HSL
+    series for 2023 (so the dispatch re-curtails — see
+    :func:`_hsl_cf_profile`), and the delivered ``ERCO hourly`` net
+    generation for other years (see :func:`_erco_cf_profile`).
 
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
@@ -473,11 +500,14 @@ def load_renewable_profiles(
         ValueError: if no EIA data matches ``(iso, year)`` or if a zone
             allocation target is unknown for the ISO.
     """
-    profiles = load_generation_profiles(iso, year, data_dir)
     zone_names = iso_config.zone_names
+    profiles: pd.DataFrame | None = None
 
     def _eia930_cf(fuel: str) -> np.ndarray:
         """Build the EIA-930 delivered-generation CF profile for one fuel."""
+        nonlocal profiles
+        if profiles is None:
+            profiles = load_generation_profiles(iso, year, data_dir)
         values = _extract_fuel_values(profiles, fuel)
         cf = derive_cf_profile(values, RENEWABLE_AVG_CF[iso][fuel])
         return np.clip(cf * config.renewable_cf_adjustment, _CF_MIN, _CF_MAX)
@@ -496,20 +526,19 @@ def load_renewable_profiles(
                 installed_mw = float(monthly[:, -1].sum())
             else:
                 installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
-            # HSL is a historical series, so it applies only to the backcast
-            # that reconstructs its year with that year's actual fleet.
-            hsl_cf = (
-                _hsl_cf_profile(iso, year, fuel, monthly)
-                if is_backcast
-                else None
-            )
-            if hsl_cf is not None:
-                # The HSL CF is normalized per MW of online capacity, so the
-                # vintage ramp distributes it across zones by month and
-                # reproduces the HSL system total. The CF calibration knob,
-                # tuned to delivered EIA-930 data, is not applied to this
-                # measured series.
-                cf_profile = hsl_cf
+            # A backcast prefers a measured hourly profile on the
+            # calibration's chronological clock: ERCOT 2023 uses the
+            # uncurtailed HSL series; other ERCOT years use the delivered
+            # ERCO hourly net generation. Both are normalized per MW of
+            # online capacity, so the vintage ramp distributes them across
+            # zones, and neither takes the CF knob tuned to EIA-930 data.
+            measured_cf = None
+            if is_backcast:
+                measured_cf = _hsl_cf_profile(iso, year, fuel, monthly)
+                if measured_cf is None:
+                    measured_cf = _erco_cf_profile(iso, year, fuel, monthly)
+            if measured_cf is not None:
+                cf_profile = measured_cf
                 vintage_ramp = True
             else:
                 cf_profile = _eia930_cf(fuel)
