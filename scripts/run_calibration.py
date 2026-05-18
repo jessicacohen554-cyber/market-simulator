@@ -47,6 +47,7 @@ from market_sim.data.cycling import apply_cycling_adders  # noqa: E402
 from market_sim.data.eia_loader import load_demand  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     aggregate_fleet,
+    apply_coal_sunk_cost,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
@@ -245,7 +246,7 @@ def run_year(
         load_fleet_from_csv(iso, iso_config), n_bins=config.heat_rate_bin_count
     )
     fleet_arrays = generators_to_fleet_arrays(
-        fleet, zone_names, hours=config.hours, iso=iso
+        fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
@@ -255,6 +256,9 @@ def run_year(
     mc = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     mc = apply_cycling_adders(mc, fleet, fleet_arrays, config)
     apply_eac_to_mc(mc, fleet_arrays, config)
+    # Coal bids below full fuel+VOM: take-or-pay fuel contracts make part
+    # of the fuel cost sunk regardless of dispatch.
+    mc = apply_coal_sunk_cost(mc, fleet_arrays, fleet, config)
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
     solar_mc -= solar_eac
@@ -303,7 +307,9 @@ def run_year(
             wind_dispatched=result.wind_dispatched,
             solar_dispatched=result.solar_dispatched,
         )
-        fleet_arrays_p2 = apply_commitment(fleet_arrays, committed)
+        fleet_arrays_p2 = apply_commitment(
+            fleet_arrays, committed, fleet, p1_dispatch=result.dispatch
+        )
         result = solve_dispatch(fleet_arrays_p2, demand, **dispatch_kwargs)
 
     context = FleetContext.from_arrays(

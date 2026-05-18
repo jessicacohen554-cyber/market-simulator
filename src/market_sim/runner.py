@@ -29,6 +29,7 @@ from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     aggregate_fleet,
+    apply_coal_sunk_cost,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
@@ -232,7 +233,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         dispatch_fleet = fleet + wecc_generators
         fleet_arrays = generators_to_fleet_arrays(
-            dispatch_fleet, zone_names, hours=config.hours, iso=iso
+            dispatch_fleet, zone_names, hours=config.hours, iso=iso,
+            config=config,
         )
         # Replace flat offshore-wind availability with a derived hourly
         # profile; must run after fleet-array build and before dispatch.
@@ -263,6 +265,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # bidding behavior; it does not stack with the RPS shadow price
             # in capacity economics (each MWh sells one attribute, once).
             apply_eac_to_mc(mc, fleet_arrays, config)
+            # Coal bids below full fuel+VOM: take-or-pay fuel contracts make
+            # part of the fuel cost sunk regardless of dispatch.
+            mc = apply_coal_sunk_cost(mc, fleet_arrays, dispatch_fleet, config)
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
             solar_mc -= solar_eac
@@ -312,7 +317,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     wind_dispatched=result.wind_dispatched,
                     solar_dispatched=result.solar_dispatched,
                 )
-                fleet_arrays_p2 = apply_commitment(fleet_arrays, committed)
+                fleet_arrays_p2 = apply_commitment(
+                    fleet_arrays, committed, dispatch_fleet,
+                    p1_dispatch=result.dispatch,
+                )
                 result = solve_dispatch(
                     fleet_arrays_p2, year_demand, **dispatch_kwargs
                 )

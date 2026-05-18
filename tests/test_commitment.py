@@ -5,7 +5,11 @@ import unittest
 import numpy as np
 
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+from market_sim.data.fleet import (
+    Generator,
+    apply_coal_sunk_cost,
+    generators_to_fleet_arrays,
+)
 from market_sim.model.commitment import (
     apply_commitment,
     compute_commitment,
@@ -141,9 +145,9 @@ class TestComputeCommitment(unittest.TestCase):
 
 
 class TestAllThermalScreening(unittest.TestCase):
-    """CC, CT and coal are all screened; non-thermal stays committed."""
+    """CC and CT are screened; coal and non-thermal stay committed."""
 
-    def test_each_thermal_fuel_can_be_decommitted(self):
+    def test_cc_ct_screened_coal_and_nuclear_always_committed(self):
         gens = [
             Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
                       pmax_mw=300.0, heat_rate=7.0, eford=0.0),
@@ -155,8 +159,8 @@ class TestAllThermalScreening(unittest.TestCase):
                       pmax_mw=1000.0, heat_rate=10.0, eford=0.0),
         ]
         arrays = generators_to_fleet_arrays(gens, ["z"], hours=24)
-        # Price far below every thermal MC -> the three thermal units all
-        # decommit; nuclear (non-thermal) is never screened.
+        # Price far below every thermal MC -> CC and CT decommit. Coal
+        # (commitment disabled by default) and nuclear stay committed.
         mc = np.array([
             np.full(24, 60.0),
             np.full(24, 90.0),
@@ -168,7 +172,7 @@ class TestAllThermalScreening(unittest.TestCase):
 
         self.assertFalse(committed[0].any())  # CC screened off
         self.assertFalse(committed[1].any())  # CT screened off
-        self.assertFalse(committed[2].any())  # coal screened off
+        self.assertTrue(committed[2].all())   # coal always committed
         self.assertTrue(committed[3].all())   # nuclear always committed
 
     def test_irr_hurdle_rejects_run_below_startup_cost_plus_irr(self):
@@ -197,8 +201,10 @@ class TestAllThermalScreening(unittest.TestCase):
         prices = np.full((1, 24), 35.0)  # margin +10
         prices[0, 11:13] = 20.0          # two hours at margin -5
 
+        # coal_commitment_enabled exercises the coal screen (off by default).
         config = ScenarioConfig(
-            commitment_ordc_sigma=1.0, coal_eval_window_hours=6
+            commitment_ordc_sigma=1.0, coal_eval_window_hours=6,
+            coal_commitment_enabled=True,
         )
         committed = _commit(prices, mc, gens, arrays, config=config)
         self.assertTrue(committed.all())
@@ -207,7 +213,8 @@ class TestAllThermalScreening(unittest.TestCase):
         # positive-margin screen: the dip splits the run into two 11-hour
         # segments, both below the 12h coal min-run, so coal decommits.
         strict = ScenarioConfig(
-            commitment_ordc_sigma=1.0, coal_eval_window_hours=1
+            commitment_ordc_sigma=1.0, coal_eval_window_hours=1,
+            coal_commitment_enabled=True,
         )
         committed_strict = _commit(prices, mc, gens, arrays, config=strict)
         self.assertFalse(committed_strict.any())
@@ -224,7 +231,7 @@ class TestAllThermalScreening(unittest.TestCase):
 
 
 class TestApplyCommitment(unittest.TestCase):
-    """Tests for zeroing availability and pmin in decommitted hours."""
+    """Tests for applying commitment to the fleet arrays."""
 
     def test_availability_zeroed_only_where_decommitted(self):
         gens = [
@@ -241,7 +248,7 @@ class TestApplyCommitment(unittest.TestCase):
         committed = np.ones((2, 10), dtype=bool)
         committed[0, 3:6] = False
 
-        out = apply_commitment(arrays, committed)
+        out = apply_commitment(arrays, committed, gens)
 
         self.assertTrue((out.availability[0, 3:6] == 0.0).all())
         np.testing.assert_array_equal(
@@ -256,28 +263,26 @@ class TestApplyCommitment(unittest.TestCase):
         # The input arrays must not be mutated in place.
         self.assertTrue((arrays.availability[0, 3:6] != 0.0).all())
 
-    def test_pmin_zeroed_for_generators_with_decommitted_hours(self):
-        # Coal carries a positive pmin. apply_commitment must zero pmin for
-        # any unit with decommitted hours, else the LP is infeasible
-        # (P <= 0 availability but P >= pmin > 0).
-        gens = [
-            Generator(unit_id="A", name="A", zone="z", fuel_type="coal",
-                      pmax_mw=500.0, pmin_mw=200.0, heat_rate=10.0,
-                      eford=0.0),
-            Generator(unit_id="B", name="B", zone="z", fuel_type="coal",
-                      pmax_mw=400.0, pmin_mw=100.0, heat_rate=10.0,
-                      eford=0.0),
-        ]
-        arrays = generators_to_fleet_arrays(gens, ["z"], hours=10)
-        committed = np.ones((2, 10), dtype=bool)
-        committed[0, 4:7] = False  # unit A partially decommitted
+    def test_coal_availability_pinned_to_pass1_dispatch(self):
+        # When p1_dispatch is given, coal availability is pinned to the
+        # Pass-1 dispatch fraction and coal Pmin is zeroed.
+        coal = Generator(unit_id="COAL", name="COAL", zone="z",
+                         fuel_type="coal", pmax_mw=400.0, pmin_mw=160.0,
+                         heat_rate=10.0, eford=0.0)
+        arrays = generators_to_fleet_arrays([coal], ["z"], hours=4)
+        committed = np.ones((1, 4), dtype=bool)
+        p1_dispatch = np.array([[400.0, 200.0, 0.0, 100.0]])
 
-        out = apply_commitment(arrays, committed)
+        out = apply_commitment(arrays, committed, [coal],
+                               p1_dispatch=p1_dispatch)
 
-        self.assertEqual(out.pmin[0], 0.0)    # decommitted -> pmin zeroed
-        self.assertEqual(out.pmin[1], 100.0)  # fully committed -> unchanged
+        # availability = clip(P1 / Pmax), with a tiny floor for the zero hour.
+        np.testing.assert_allclose(
+            out.availability[0], [1.0, 0.5, 1e-6, 0.25]
+        )
+        self.assertEqual(out.pmin[0], 0.0)
         # The input arrays must not be mutated in place.
-        self.assertEqual(arrays.pmin[0], 200.0)
+        self.assertEqual(arrays.pmin[0], 160.0)
 
 
 class TestComputeOrdc(unittest.TestCase):
@@ -300,6 +305,99 @@ class TestComputeOrdc(unittest.TestCase):
         self.assertLess(ordc[0, 0], 1.0)
         self.assertGreater(ordc[0, 1], 1000.0)
         self.assertLessEqual(ordc[0, 1], 5000.0)  # capped at VOLL
+
+
+class TestCoalStructural(unittest.TestCase):
+    """Tests for coal Pmin, sunk fuel cost, and never-decommit behavior."""
+
+    def test_coal_always_committed_when_screening_disabled(self):
+        # coal_commitment_enabled defaults to False: coal is never screened,
+        # even when its margin is deeply negative.
+        gens, arrays = _single_coal(heat_rate=10.0, hours=24)
+        mc = np.full((1, 24), 50.0)
+        prices = np.full((1, 24), 5.0)  # far below coal MC
+        committed = _commit(prices, mc, gens, arrays)
+        self.assertTrue(committed.all())
+
+    def test_coal_pmin_overridden_to_18_percent(self):
+        # The loader assigns coal Pmin = 40% of Pmax. With a config, the
+        # array builder overrides it to coal_pmin_fraction (18%).
+        coal = Generator(unit_id="COAL", name="COAL", zone="z",
+                         fuel_type="coal", pmax_mw=500.0, pmin_mw=200.0,
+                         heat_rate=10.0, eford=0.0)
+        plain = generators_to_fleet_arrays([coal], ["z"], hours=4)
+        self.assertEqual(plain.pmin[0], 200.0)  # loader value kept
+
+        cfg = ScenarioConfig(coal_pmin_fraction=0.18)
+        arrays = generators_to_fleet_arrays([coal], ["z"], hours=4, config=cfg)
+        self.assertAlmostEqual(arrays.pmin[0], 90.0)  # 0.18 x 500
+
+    def test_coal_sunk_cost_reduces_bid(self):
+        config = ScenarioConfig(coal_fuel_sunk_fraction=0.40)
+        gens = [
+            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
+                      pmax_mw=500.0, vom=4.5, heat_rate=10.0, eford=0.0),
+            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
+                      pmax_mw=300.0, vom=2.0, heat_rate=7.0, eford=0.0),
+        ]
+        arrays = generators_to_fleet_arrays(gens, ["z"], hours=4)
+        mc = np.array([np.full(4, 30.0), np.full(4, 25.0)])
+
+        out = apply_coal_sunk_cost(mc, arrays, gens, config)
+
+        # coal: VOM + (MC - VOM) x (1 - 0.40) = 4.5 + 25.5 x 0.6 = 19.8
+        np.testing.assert_allclose(out[0], 19.8)
+        np.testing.assert_allclose(out[1], 25.0)   # CC unchanged
+        np.testing.assert_allclose(mc[0], 30.0)    # input not mutated
+
+    def test_sunk_cost_does_not_change_emission_rate(self):
+        # The sunk fraction reduces the bid price only. Emission accounting
+        # uses the physical emission rate, untouched by apply_coal_sunk_cost.
+        config = ScenarioConfig(coal_fuel_sunk_fraction=0.40)
+        coal = Generator(unit_id="COAL", name="COAL", zone="z",
+                         fuel_type="coal", pmax_mw=500.0, vom=4.5,
+                         heat_rate=10.0, emission_rate_co2=1.0, eford=0.0)
+        arrays = generators_to_fleet_arrays([coal], ["z"], hours=4)
+        before = arrays.emission_rate.copy()
+        mc = np.full((1, 4), 30.0)
+
+        apply_coal_sunk_cost(mc, arrays, [coal], config)
+
+        np.testing.assert_array_equal(arrays.emission_rate, before)
+        self.assertEqual(arrays.emission_rate[0], 1.0)
+
+    def test_coal_dispatch_pinned_to_pass1_levels(self):
+        hours = 12
+        gens = [
+            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
+                      pmax_mw=300.0, pmin_mw=0.0, heat_rate=10.0, eford=0.0),
+            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
+                      pmax_mw=1000.0, pmin_mw=0.0, heat_rate=7.0, eford=0.0),
+        ]
+        arrays = generators_to_fleet_arrays(gens, ["z"], hours=hours)
+        # coal cheap (20) < CC (50). Demand swings above and below coal Pmax.
+        mc = np.array([np.full(hours, 20.0), np.full(hours, 50.0)])
+        demand = np.full((1, hours), 250.0)
+        demand[0, 3:6] = 500.0  # spikes pull in CC
+        demand[0, 8] = 150.0    # dip below coal Pmax
+
+        kwargs = dict(
+            wind_cf=np.zeros((1, hours)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, hours)), solar_cap=np.zeros(1),
+            mc=mc, T=hours,
+        )
+        pass1 = solve_dispatch(arrays, demand, **kwargs)
+
+        committed = np.ones((2, hours), dtype=bool)
+        fleet_p2 = apply_commitment(
+            arrays, committed, gens, p1_dispatch=pass1.dispatch
+        )
+        pass2 = solve_dispatch(fleet_p2, demand, **kwargs)
+
+        coal_p1 = pass1.dispatch[0].sum()
+        coal_p2 = pass2.dispatch[0].sum()
+        self.assertGreater(coal_p1, 0.0)
+        self.assertAlmostEqual(coal_p2, coal_p1, delta=0.01 * coal_p1)
 
 
 class TestTwoPassDispatch(unittest.TestCase):
@@ -354,9 +452,10 @@ class TestTwoPassDispatch(unittest.TestCase):
             wind_dispatched=pass1.wind_dispatched,
             solar_dispatched=pass1.solar_dispatched,
         )
-        pass2 = solve_dispatch(
-            apply_commitment(arrays, committed), demand, **kwargs
+        fleet_p2 = apply_commitment(
+            arrays, committed, gens, p1_dispatch=pass1.dispatch
         )
+        pass2 = solve_dispatch(fleet_p2, demand, **kwargs)
 
         cc_p1, cc_p2 = pass1.dispatch[1].sum(), pass2.dispatch[1].sum()
         ct_p1, ct_p2 = pass1.dispatch[2].sum(), pass2.dispatch[2].sum()
