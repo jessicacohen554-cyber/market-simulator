@@ -153,6 +153,7 @@ def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
         gas_seasonality=True,
         carbon_price=0.0,
         rps_enabled=False,
+        commitment_enabled=True,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -262,13 +263,11 @@ def run_year(
         load_eia860_storage(iso, year), zone_names
     )
 
-    result = solve_dispatch(
-        fleet_arrays,
-        demand,
-        wind_cf,
-        wind_cap,
-        solar_cf,
-        solar_cap,
+    dispatch_kwargs = dict(
+        wind_cf=wind_cf,
+        wind_cap=wind_cap,
+        solar_cf=solar_cf,
+        solar_cap=solar_cap,
         mc=mc,
         voll=config.voll,
         incidence=incidence,
@@ -284,6 +283,29 @@ def run_year(
         rps_target=None,
         T=config.hours,
     )
+    result = solve_dispatch(fleet_arrays, demand, **dispatch_kwargs)
+
+    # Optional 2-pass commitment: screen Pass-1 prices to decommit thermal
+    # hours that cannot clear the startup IRR hurdle, then re-solve.
+    if config.commitment_enabled:
+        from market_sim.model.commitment import (
+            apply_commitment,
+            compute_commitment,
+        )
+
+        committed = compute_commitment(
+            result.prices,
+            mc,
+            fleet,
+            fleet_arrays,
+            config,
+            demand=demand,
+            wind_dispatched=result.wind_dispatched,
+            solar_dispatched=result.solar_dispatched,
+        )
+        fleet_arrays_p2 = apply_commitment(fleet_arrays, committed)
+        result = solve_dispatch(fleet_arrays_p2, demand, **dispatch_kwargs)
+
     context = FleetContext.from_arrays(
         fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
         storage.energy_cap,
