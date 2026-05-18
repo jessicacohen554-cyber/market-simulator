@@ -480,8 +480,8 @@ class TestCoalTranches(unittest.TestCase):
         )
         # Tranches carry no Pmin floor.
         self.assertTrue(all(g.pmin_mw == 0.0 for g in coal))
-        # Fuel passthrough: T1 none, T2 half, T3 full; CC always full.
-        np.testing.assert_allclose(fuel_fracs, [0.0, 0.5, 1.0, 1.0])
+        # Fuel passthrough: T1 none, T2 partial, T3 full; CC always full.
+        np.testing.assert_allclose(fuel_fracs, [0.0, 0.35, 1.0, 1.0])
 
     def test_non_coal_passes_through_unchanged(self):
         fleet, fuel_fracs = split_coal_tranches(
@@ -498,7 +498,7 @@ class TestCoalTranches(unittest.TestCase):
         self.assertAlmostEqual(coal_total, 1000.0)
 
     def test_apply_coal_tranches_discounts_only_fuel(self):
-        # T1 bids at VOM only; T2 keeps half its fuel cost; T3 unchanged.
+        # T1 bids at VOM only; T2 keeps 35% of its fuel cost; T3 unchanged.
         # Fuel cost = heat_rate (10) x fuel_price (2) = 20 $/MWh.
         # Coal MC before tranching = fuel 20 + VOM 4.5 + carbon 30 = 54.5.
         fleet, fuel_fracs = split_coal_tranches(
@@ -517,8 +517,8 @@ class TestCoalTranches(unittest.TestCase):
 
         # T1: full 20 fuel removed -> 34.5 (VOM + carbon survive).
         np.testing.assert_allclose(mc[0], 34.5)
-        # T2: half the 20 fuel removed -> 44.5.
-        np.testing.assert_allclose(mc[1], 44.5)
+        # T2: 65% of the 20 fuel removed (13) -> 41.5.
+        np.testing.assert_allclose(mc[1], 41.5)
         # T3: unchanged. CC: unchanged.
         np.testing.assert_allclose(mc[2], 54.5)
         np.testing.assert_allclose(mc[3], 25.0)

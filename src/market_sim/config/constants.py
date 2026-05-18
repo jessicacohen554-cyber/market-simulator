@@ -75,8 +75,8 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
 # Source: calibrated to EIA-930 2023-2024 hourly ERCOT coal dispatch and
 # eGRID 2023/2024 annual coal generation.
 COAL_TRANCHES: list[tuple[float, float]] = [
-    (0.30, 0.00),  # T1: take-or-pay floor — VOM only (~$4-5/MWh)
-    (0.25, 0.50),  # T2: partially contracted — 50% fuel passthrough (~$15/MWh)
+    (0.30, 0.00),  # T1: take-or-pay floor — VOM only (~$4.5/MWh)
+    (0.25, 0.35),  # T2: partially contracted — 35% fuel passthrough (~$11.5/MWh)
     (0.45, 1.00),  # T3: economic dispatch — full fuel cost (~$24-27/MWh)
 ]
 
