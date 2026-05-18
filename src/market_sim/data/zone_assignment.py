@@ -27,6 +27,13 @@ _EGRID_PATH: Path = (
     Path(__file__).parents[3] / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
 )
 
+# EIA-860 plant file — current plant coordinates and balancing-authority
+# codes. Used to zone plants too new for the eGRID 2023 vintage.
+_EIA860_PLANT_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860"
+    / "eia860_plant.parquet"
+)
+
 # Model ISO name → eGRID balancing-authority code (BACODE column).
 _ISO_TO_BA_CODE: dict[str, str] = {
     "ERCOT": "ERCO",
@@ -276,8 +283,43 @@ def assign_zone(oris_code: int, iso: str) -> str:
     return _zone_from_location(iso, lat, lon, fips_state, fips_county)
 
 
+def _eia860_ercot_zones() -> dict[int, str]:
+    """Return ``{oris: zone}`` for ERCOT plants from the EIA-860 plant file.
+
+    The EIA-860 plant file carries current latitude/longitude and
+    balancing-authority codes, so it covers plants too new for the eGRID
+    2023 vintage (notably 2024+ wind, solar and storage). Plants in the
+    ERCO balancing authority are zoned from their coordinates.
+
+    Returns an empty dict when the EIA-860 plant file is unavailable.
+    """
+    if not _EIA860_PLANT_PATH.exists():
+        return {}
+    df = pd.read_parquet(_EIA860_PLANT_PATH)
+    ba = df["Balancing Authority Code"].astype(str).str.strip()
+    df = df[ba == _ISO_TO_BA_CODE["ERCOT"]]
+
+    codes = df["Plant Code"].to_numpy()
+    lats = pd.to_numeric(df["Latitude"], errors="coerce").to_numpy()
+    lons = pd.to_numeric(df["Longitude"], errors="coerce").to_numpy()
+
+    out: dict[int, str] = {}
+    for code, lat, lon in zip(codes, lats, lons):
+        oris = _to_int(code)
+        if oris is None or lat != lat or lon != lon:  # None / NaN coords
+            continue
+        out[oris] = _ercot_zone(float(lat), float(lon), None, None)
+    return out
+
+
 def build_zone_lookup(iso: str) -> dict[int, str]:
-    """Return ``{oris: zone_name}`` for every eGRID plant in the ISO.
+    """Return ``{oris: zone_name}`` for every plant in the ISO.
+
+    Zones come from eGRID 2023 plant coordinates. For ERCOT the lookup is
+    then supplemented from the current EIA-860 plant file, which covers
+    plants too new for the eGRID vintage; eGRID stays authoritative where
+    it has the plant, as it also carries the FIPS county the Houston-zone
+    rule needs.
 
     Returns an empty dict for ISOs without geographic zone rules, letting
     callers fall back to a non-geographic assignment.
@@ -303,4 +345,8 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
             _to_int(row.FIPSST),
             _to_int(row.FIPSCNTY),
         )
+
+    if iso == "ERCOT":
+        for oris, zone in _eia860_ercot_zones().items():
+            lookup.setdefault(oris, zone)
     return lookup
