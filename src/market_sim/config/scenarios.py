@@ -159,6 +159,23 @@ class ScenarioConfig:
     # commitment evaluation. Coal operators make multi-day commitment
     # decisions, tolerating overnight price dips if the surrounding days
     # are profitable. 72 hrs = 3-day forward look.
+
+    # Tier 3 (calibration) — Coal structural parameters
+    coal_pmin_fraction: float = 0.18  # Minimum generation as fraction of Pmax.
+    # EIA-930 2023 shows ERCOT coal minimum output = 2,429 MW out of ~13,500 MW
+    # installed = 18%. Coal plants cycle output level, not on/off.
+    # Source: EIA Hourly Grid Monitor 2023, ERCO BA, NG: COL column.
+    coal_fuel_sunk_fraction: float = 0.40  # Fraction of coal fuel cost sunk.
+    # Coal plants with take-or-pay fuel contracts bid below full fuel+VOM
+    # because the contracted fuel cost is committed regardless of dispatch.
+    # 40% sunk produces coal dispatch matching eGRID 2023 actuals.
+    # Source: calibrated to eGRID 2023 ERCOT coal generation (62.5 TWh).
+    # Cross-check: typical PRB coal supply contracts have ~30-50% fixed
+    # components (mine-mouth price, minimum take, rail capacity reservations).
+    coal_commitment_enabled: bool = False  # Coal is NEVER commitment-screened.
+    # EIA-930 confirms coal runs all 8,760 hours in ERCOT. Coal operators make
+    # seasonal/annual commitment decisions, not hourly.
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -171,14 +188,13 @@ class ScenarioConfig:
     # Derivation: startup cost ($/MW × starts/yr ÷ op hours) + min-run drag.
     # Plant profiles from EPA eGRID 2023, cycling patterns from Potomac
     # Economics SOM.
+    # Coal cycling adders are intentionally absent: EIA-930 2023 confirms
+    # ERCOT coal runs all 8,760 hours (minimum output 2,429 MW). Coal cycles
+    # output level, not on/off, so the start/stop cycling adder does not apply.
     # Gas CC — higher adder for efficient units (heavier rotors, longer min runtime)
     cc_cycling_adder_h_class: float = 3.92   # HR<6500. $63.8/MW-start, 22hr cycle, 10hr min-run.
     cc_cycling_adder_f_class: float = 3.66   # HR 6500-7500. $48.6/MW-start, 17hr cycle, 7.5hr min-run.
     cc_cycling_adder_older: float = 2.91     # HR>7500. $24.1/MW-start, 10hr cycle, 4.5hr min-run.
-    # Coal — lowest per-MWh adder despite highest per-start cost (long 60-96hr cycles)
-    coal_cycling_adder_supercritical: float = 2.66  # HR<9500. $147/MW-start, 96hr cycle, 36hr min-run.
-    coal_cycling_adder_subcritical: float = 2.55    # HR 9500-10500. $119/MW-start, 72hr cycle, 24hr min-run.
-    coal_cycling_adder_older: float = 2.58          # HR>10500. $97/MW-start, 60hr cycle, 24hr min-run.
     # Gas CT — highest per-MWh adder (short 4-5hr runs concentrate start cost)
     ct_cycling_adder_aero: float = 3.14      # HR<10000. $12.3/MW-start, 4hr cycle, 0.5hr min-run.
     ct_cycling_adder_frame: float = 5.02     # HR 10000-11000. $24.5/MW-start, 5hr cycle, 1hr min-run.
@@ -302,13 +318,13 @@ TIER_TAGS: dict[str, int] = {
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "coal_eval_window_hours": 3,
+    "coal_pmin_fraction": 3,
+    "coal_fuel_sunk_fraction": 3,
+    "coal_commitment_enabled": 3,
     "gas_price_override": 3,
     "cc_cycling_adder_h_class": 3,
     "cc_cycling_adder_f_class": 3,
     "cc_cycling_adder_older": 3,
-    "coal_cycling_adder_supercritical": 3,
-    "coal_cycling_adder_subcritical": 3,
-    "coal_cycling_adder_older": 3,
     "ct_cycling_adder_aero": 3,
     "ct_cycling_adder_frame": 3,
     "ct_cycling_adder_older": 3,
