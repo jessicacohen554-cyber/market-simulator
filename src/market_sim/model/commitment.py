@@ -1,34 +1,39 @@
-"""Heuristic unit commitment via post-LP price-based screening.
+"""Startup-cost bid markup and heuristic CC/CT unit commitment.
 
-Extends commitment screening from CC-only to all thermal generators
-(CC, CT, coal). Each fuel type has class-specific startup costs,
-minimum run times, and minimum down times from NREL cycling cost data.
+This module supports the three-solve dispatch calibration architecture:
 
-The commitment price signal includes a reserve-based ORDC scarcity
-adder that represents ancillary service and ORDC revenue the
-energy-only LP duals do not capture. Without this, LP prices
-understate the revenue CCs/CTs earn during tight hours, causing
-over-decommitment.
+* :func:`compute_monthly_markup` measures average run lengths per month from
+  a base-cost (P0) dispatch and turns them into a monthly startup
+  amortization markup (``startup_cost / run_length``). The markup is added to
+  base marginal cost to form the *bid* marginal cost used in the P1 solve, so
+  clearing prices reflect cycling costs.
 
-A startup run must clear an IRR hurdle: total margin over the run
-must exceed startup_cost × (1 + irr). Operators won't commit wear
-and tear on a start without adequate return.
+* :func:`compute_commitment` screens CC/CT commitment using P1 clearing
+  prices against *base* marginal cost (fuel + VOM, no markup). Generators
+  earn the clearing price but their actual cost is the base MC, so the margin
+  is ``P1_price - base_MC``. A run must clear an IRR hurdle on its startup
+  cost to justify a physical start.
 
-Coal uses a rolling-average margin over a multi-day evaluation
-window (config.coal_eval_window_hours) because coal operators make
-multi-day commitment decisions, tolerating overnight price dips
-within a profitable week.
+* :func:`apply_commitment_with_coal_pin` zeros CC/CT availability in
+  decommitted hours while pinning coal dispatch to its P1 levels — the
+  commitment screen only tunes the CC vs CT split, never coal.
+
+Coal is never commitment-screened: EIA-930 confirms ERCOT coal runs all
+8,760 hours, cycling output level via its take-or-pay tranches rather than
+starting and stopping.
 """
 
 from __future__ import annotations
 
+import calendar
+
 import numpy as np
-from scipy.stats import norm
 
 from market_sim.config.constants import (
     CC_COMMITMENT_PARAMS,
-    COAL_COMMITMENT_PARAMS,
+    CC_STARTUP_PARAMS,
     CT_COMMITMENT_PARAMS,
+    CT_STARTUP_PARAMS,
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays, Generator
@@ -37,7 +42,11 @@ from market_sim.data.fleet import FleetArrays, Generator
 COMMITMENT_PARAMS_BY_FUEL: dict[str, list] = {
     "gas_cc": CC_COMMITMENT_PARAMS,
     "gas_ct": CT_COMMITMENT_PARAMS,
-    "coal": COAL_COMMITMENT_PARAMS,
+}
+
+STARTUP_PARAMS_BY_FUEL: dict[str, list] = {
+    "gas_cc": CC_STARTUP_PARAMS,
+    "gas_ct": CT_STARTUP_PARAMS,
 }
 
 
@@ -56,30 +65,6 @@ def find_runs(mask: np.ndarray) -> list[tuple[int, int]]:
     starts = np.flatnonzero(edges == 1)
     ends = np.flatnonzero(edges == -1)
     return [(int(s), int(e)) for s, e in zip(starts, ends)]
-
-
-def _commitment_params(
-    fuel_type: str, heat_rate: float, config: ScenarioConfig
-) -> dict[str, float] | None:
-    """Return startup/min-run params for a generator, or ``None`` to skip.
-
-    ``None`` means the generator is never commitment-screened (always
-    committed): non-thermal fuels, and coal unless
-    ``config.coal_commitment_enabled`` is set. EIA-930 confirms ERCOT coal
-    runs continuously, cycling output level rather than starting/stopping.
-
-    The fuel's parameter table is keyed by ascending heat-rate cutoff; the
-    first row whose cutoff exceeds ``heat_rate`` applies.
-    """
-    if fuel_type == "coal" and not config.coal_commitment_enabled:
-        return None
-    table = COMMITMENT_PARAMS_BY_FUEL.get(fuel_type)
-    if table is None:
-        return None
-    for cutoff, params in table:
-        if heat_rate < cutoff:
-            return params
-    return table[-1][1]
 
 
 def _merge_runs(
@@ -103,94 +88,150 @@ def _merge_runs(
     return merged
 
 
-def compute_ordc(
-    fleet_arrays: FleetArrays,
-    demand: np.ndarray,           # (n_zones, T)
-    wind_dispatched: np.ndarray,  # (n_zones, T)
-    solar_dispatched: np.ndarray,  # (n_zones, T)
-    voll: float,
-    sigma_mw: float,
-) -> np.ndarray:
-    """Compute hourly ORDC scarcity adder from dispatch reserves.
+def _commitment_params(
+    fuel_type: str, heat_rate: float
+) -> dict[str, float] | None:
+    """Return startup/min-run params for a generator, or ``None`` to skip.
 
-    Uses a simplified ERCOT-style ORDC: adder = VOLL × Φ(-reserves/sigma)
-    where Φ is the normal CDF and sigma represents net-load forecast error.
-
-    Returns ``(n_zones, T)`` array — same system-wide ORDC broadcast to all
-    zones.
+    ``None`` means the generator is never commitment-screened (always
+    committed): coal, nuclear and every non-thermal fuel. The fuel's
+    parameter table is keyed by ascending heat-rate cutoff; the first row
+    whose cutoff exceeds ``heat_rate`` applies.
     """
-    thermal_avail = (
-        fleet_arrays.pmax[:, None] * fleet_arrays.availability
-    ).sum(axis=0)
-    sys_demand = demand.sum(axis=0)
-    renewable_gen = wind_dispatched.sum(axis=0) + solar_dispatched.sum(axis=0)
-    reserves_mw = thermal_avail - (sys_demand - renewable_gen)
+    table = COMMITMENT_PARAMS_BY_FUEL.get(fuel_type)
+    if table is None:
+        return None
+    for cutoff, params in table:
+        if heat_rate < cutoff:
+            return params
+    return table[-1][1]
 
-    lolp = norm.cdf(-reserves_mw / sigma_mw)
-    ordc_system = np.minimum(voll * lolp, voll)
 
-    n_zones = demand.shape[0]
-    return np.broadcast_to(
-        ordc_system[None, :], (n_zones, demand.shape[1])
-    ).copy()
+def _startup_cost(fuel_type: str, heat_rate: float) -> float:
+    """Return the ``$/MW`` startup cost for a generator, or ``0`` if none.
+
+    Coal, nuclear and non-thermal fuels get no startup markup. The CC/CT
+    tables are keyed by ascending heat-rate cutoff.
+    """
+    table = STARTUP_PARAMS_BY_FUEL.get(fuel_type)
+    if table is None:
+        return 0.0
+    for cutoff, cost in table:
+        if heat_rate < cutoff:
+            return cost
+    return table[-1][1]
+
+
+def _month_bounds(T: int) -> list[tuple[int, int]]:
+    """Return ``(start, end)`` hour bounds for each calendar month within ``T``.
+
+    Uses a representative non-leap year (2023) so an 8760-hour horizon maps
+    cleanly onto twelve months; a shorter horizon yields fewer bounds.
+    """
+    bounds: list[tuple[int, int]] = []
+    hour = 0
+    for month in range(1, 13):
+        start = hour
+        hour += calendar.monthrange(2023, month)[1] * 24
+        if start >= T:
+            break
+        bounds.append((start, min(hour, T)))
+    return bounds
+
+
+def compute_monthly_markup(
+    generators: list[Generator],
+    fleet_arrays: FleetArrays,
+    dispatch: np.ndarray,
+    T: int,
+) -> np.ndarray:
+    """Compute the ``(n_gen, T)`` monthly startup-amortization markup.
+
+    For each CC/CT generator, measure the average run length per calendar
+    month from the base-cost (P0) ``dispatch`` and amortize the startup cost
+    over it: ``markup = startup_cost / avg_run_length``. Longer summer runs
+    give a lower per-MWh markup; shorter shoulder-month runs give a higher
+    one. A generator counts as running in an hour when its dispatch exceeds
+    5% of Pmax. Coal, nuclear and non-thermal fuels get zero markup.
+
+    Args:
+        generators: The dispatch fleet, aligned row-for-row with ``dispatch``.
+        fleet_arrays: The vectorized fleet, for per-generator heat rate/Pmax.
+        dispatch: The P0 dispatch result, shape ``(n_gen, T)``.
+        T: Number of hours in the horizon.
+
+    Returns:
+        The markup array, shape ``(n_gen, T)``, in ``$/MWh``.
+    """
+    markup = np.zeros((len(generators), T))
+    month_bounds = _month_bounds(T)
+
+    for g, gen in enumerate(generators):
+        startup = _startup_cost(gen.fuel_type, float(fleet_arrays.heat_rate[g]))
+        if startup == 0.0:
+            continue
+        threshold = float(fleet_arrays.pmax[g]) * 0.05
+        for h_start, h_end in month_bounds:
+            runs = find_runs(dispatch[g, h_start:h_end] > threshold)
+            avg_run = (
+                float(np.mean([end - start for start, end in runs]))
+                if runs
+                else 0.0
+            )
+            markup[g, h_start:h_end] = startup / max(avg_run, 1.0)
+    return markup
 
 
 def compute_commitment(
-    prices: np.ndarray,            # (n_zones, T) from Pass 1
-    mc: np.ndarray,                # (n_gen, T) marginal cost array
-    generators: list[Generator],   # fleet list aligned with mc rows
-    fleet_arrays: FleetArrays,     # for zone_idx, pmax, availability
+    p1_prices: np.ndarray,         # (n_zones, T) — from the P1 solve
+    base_mc: np.ndarray,           # (n_gen, T) — fuel + VOM, NO markup
+    generators: list[Generator],   # fleet list aligned with base_mc rows
+    fleet_arrays: FleetArrays,     # for zone_idx, heat_rate
     config: ScenarioConfig,
-    demand: np.ndarray,            # (n_zones, T) — needed for ORDC
-    wind_dispatched: np.ndarray,   # (n_zones, T) — from Pass 1
-    solar_dispatched: np.ndarray,  # (n_zones, T) — from Pass 1
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
-    For each thermal generator (CC, CT, coal):
-    1. Compute hourly margin = (price + ORDC)[zone] - MC
-    2. Find runs of positive-margin hours
-       (coal: rolling-average positive margin over eval window)
-    3. Filter: run length >= min_run_hours
-    4. Filter: total run margin >= startup_cost × (1 + IRR)
-    5. Merge runs separated by < min_down_hours
-    6. Non-thermal generators (nuclear, hydro, wind, solar) always committed.
+    For each CC/CT generator:
+
+    1. Compute hourly margin = ``p1_price[zone] - base_mc``. The margin uses
+       *base* MC, not bid MC: a generator earns the clearing price but its
+       actual cost is fuel + VOM. Using bid MC would double-count the startup
+       markup baked into clearing prices and over-decommit.
+    2. Find runs of positive-margin hours.
+    3. Drop runs shorter than ``min_run_hours``.
+    4. Drop runs whose total margin is below ``startup_per_mw × (1 + IRR)``.
+    5. Merge surviving runs separated by less than ``min_down_hours``.
+
+    Coal, nuclear and non-thermal generators are never screened — they stay
+    committed in every hour.
+
+    Args:
+        p1_prices: Zonal clearing prices from the P1 solve, ``(n_zones, T)``.
+        base_mc: Base marginal cost (fuel + VOM, no markup), ``(n_gen, T)``.
+        generators: The dispatch fleet, aligned with ``base_mc`` rows.
+        fleet_arrays: The vectorized fleet, for ``zone_idx`` and heat rate.
+        config: Scenario configuration supplying ``commitment_irr_hurdle``.
+
+    Returns:
+        The commitment mask, shape ``(n_gen, T)``.
     """
-    n_gen, T = mc.shape
+    n_gen, T = base_mc.shape
     irr = config.commitment_irr_hurdle
-    # Clamp the coal evaluation window to the horizon so the rolling-average
-    # convolution stays well-defined on short test horizons.
-    coal_window = min(config.coal_eval_window_hours, T)
-
-    # Compute ORDC from Pass 1 reserves
-    ordc = compute_ordc(
-        fleet_arrays, demand, wind_dispatched, solar_dispatched,
-        config.voll, config.commitment_ordc_sigma,
-    )
-
     committed = np.ones((n_gen, T), dtype=bool)
 
     for g, gen in enumerate(generators):
         params = _commitment_params(
-            gen.fuel_type, float(fleet_arrays.heat_rate[g]), config
+            gen.fuel_type, float(fleet_arrays.heat_rate[g])
         )
         if params is None:
-            continue  # non-thermal or coal: always committed
+            continue  # coal, nuclear, non-thermal: always committed
 
         zone = int(fleet_arrays.zone_idx[g])
-        margin = prices[zone, :] + ordc[zone, :] - mc[g, :]
+        margin = p1_prices[zone, :] - base_mc[g, :]
         hurdle = params["startup_per_mw"] * (1.0 + irr)
 
-        if gen.fuel_type == "coal":
-            # Coal: rolling-average margin over evaluation window.
-            # Tolerates overnight dips if surrounding days are profitable.
-            kernel = np.ones(coal_window) / coal_window
-            effective_margin = np.convolve(margin, kernel, mode="same")
-        else:
-            effective_margin = margin
-
         accepted: list[tuple[int, int]] = []
-        for start, end in find_runs(effective_margin > 0.0):
+        for start, end in find_runs(margin > 0.0):
             if (end - start) < params["min_run_hours"]:
                 continue
             if float(margin[start:end].sum()) < hurdle:
@@ -205,42 +246,46 @@ def compute_commitment(
     return committed
 
 
-def apply_commitment(
+def apply_commitment_with_coal_pin(
     fleet_arrays: FleetArrays,
-    committed: np.ndarray,            # (n_gen, T) boolean
-    generators: list[Generator],      # fleet list aligned with committed rows
-    p1_dispatch: np.ndarray | None = None,  # (n_gen, T) from Pass 1
+    committed: np.ndarray,          # (n_gen, T) boolean
+    p1_dispatch: np.ndarray,        # (n_gen, T) from the P1 solve
+    generators: list[Generator],    # fleet list aligned with committed rows
 ) -> FleetArrays:
-    """Return new FleetArrays with commitment applied.
+    """Return new ``FleetArrays`` with the commitment screen applied.
 
-    For gas CC/CT: availability is zeroed in decommitted hours.
+    * Gas CC/CT: availability is zeroed in decommitted hours.
+    * Coal: availability is pinned to reproduce the P1 coal dispatch
+      (availability = P1 dispatch / Pmax, with a tiny floor), so coal never
+      decommits and the P2 solve only tunes the CC vs CT split.
+    * Nuclear, hydro and other fuels pass through unchanged, keeping their
+      Pmin (nuclear stays must-run).
 
-    For coal: when ``p1_dispatch`` is given, coal availability is pinned to
-    reproduce the Pass-1 coal dispatch (availability = P1 dispatch / Pmax)
-    and coal Pmin is zeroed. Coal is not re-optimized in Pass 2 — the
-    commitment heuristic only tunes CC/CT around a fixed coal schedule,
-    because ERCOT coal runs continuously and is not commitment-screened.
+    Args:
+        fleet_arrays: The P1 vectorized fleet.
+        committed: The commitment mask from :func:`compute_commitment`.
+        p1_dispatch: The P1 dispatch result, ``(n_gen, T)``.
+        generators: The dispatch fleet, aligned with ``committed`` rows.
 
-    Nuclear, wind, solar and other fuels pass through unchanged.
+    Returns:
+        A new ``FleetArrays`` with availability adjusted for P2.
     """
     avail = fleet_arrays.availability.copy()
-    pmin_new = fleet_arrays.pmin.copy()
 
     for g, gen in enumerate(generators):
-        if gen.fuel_type == "coal" and p1_dispatch is not None:
-            # Pin coal: availability ceiling = P1 dispatch, so P2 coal
-            # reproduces P1 coal. A tiny floor avoids a numerical zero.
+        if gen.fuel_type == "coal":
+            # Pin coal: availability ceiling = P1 dispatch fraction, so P2
+            # coal reproduces P1 coal. A tiny floor avoids a numerical zero.
             p1_frac = np.clip(
                 p1_dispatch[g, :] / max(float(fleet_arrays.pmax[g]), 1.0),
                 0.0, 1.0,
             )
             avail[g, :] = np.maximum(p1_frac, 1e-6)
-            pmin_new[g] = 0.0  # pmin handled via the availability pin
         elif gen.fuel_type in ("gas_cc", "gas_ct"):
             avail[g, ~committed[g]] = 0.0
 
     return FleetArrays(
-        pmax=fleet_arrays.pmax, pmin=pmin_new,
+        pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
         emission_rate=fleet_arrays.emission_rate, nox_rate=fleet_arrays.nox_rate,
         zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,

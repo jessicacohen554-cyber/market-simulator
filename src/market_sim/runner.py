@@ -29,18 +29,23 @@ from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     aggregate_fleet,
-    apply_coal_sunk_cost,
+    apply_coal_tranches,
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
+    split_coal_tranches,
 )
-from market_sim.data.cycling import apply_cycling_adders
 from market_sim.data.fuel import resolve_annual_gas_price, resolve_fuel_prices
 from market_sim.data.renewables import (
     inject_offshore_wind_availability,
     load_renewable_profiles,
 )
 from market_sim.model.capacity import CumulativeDeployment, evolve_fleet
+from market_sim.model.commitment import (
+    apply_commitment_with_coal_pin,
+    compute_commitment,
+    compute_monthly_markup,
+)
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.storage import (
     apply_storage_new_entry,
@@ -231,7 +236,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         cumulative.advance_year(local_builds)
 
-        dispatch_fleet = fleet + wecc_generators
+        # Split coal bins into take-or-pay tranches before the fleet-array
+        # build so each tranche is its own dispatch column. dispatch_fleet is
+        # transient; the persistent ``fleet`` (un-split) carries to next year.
+        dispatch_fleet, fuel_fracs = split_coal_tranches(
+            fleet + wecc_generators, config
+        )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours, iso=iso,
             config=config,
@@ -253,22 +263,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
             carbon_price = resolve_carbon_price(config, year)
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
-            mc = assemble_mc(
+            # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous
+            # EACs, then the coal take-or-pay tranche discount. This is the
+            # generators' actual cost — it carries no startup-cost markup.
+            mc_base = assemble_mc(
                 fleet_arrays, fuel_prices, carbon_price, config.nox_price
             )
-            # Fold per-bin thermal cycling cost adders into the merit order
-            # before any EAC adjustment (both are additive $/MWh shifts).
-            mc = apply_cycling_adders(mc, dispatch_fleet, fleet_arrays, config)
             # Exogenous EACs shift the cost vector: per-generator EACs
             # lower per-generator MC, wind/solar EACs lower their dispatch
             # adders, and the storage EAC credits discharge. The EAC is real
             # bidding behavior; it does not stack with the RPS shadow price
             # in capacity economics (each MWh sells one attribute, once).
-            apply_eac_to_mc(mc, fleet_arrays, config)
-            # Coal bids below full fuel cost: take-or-pay fuel contracts
-            # make the contracted fuel sunk regardless of dispatch.
-            mc = apply_coal_sunk_cost(
-                mc, fleet_arrays, dispatch_fleet, fuel_prices, config
+            apply_eac_to_mc(mc_base, fleet_arrays, config)
+            # Coal tranche 1 bids at VOM only (its fuel is sunk under the
+            # take-or-pay contract); higher tranches pass through more fuel.
+            apply_coal_tranches(
+                mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices
             )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
             wind_mc -= wind_eac
@@ -283,7 +293,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_cap=wind_cap,
                 solar_cf=solar_cf,
                 solar_cap=solar_cap,
-                mc=mc,
                 voll=config.voll,
                 incidence=incidence,
                 ttc=ttc,
@@ -298,33 +307,33 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 rps_target=rps_target,
                 T=config.hours,
             )
-            result = solve_dispatch(fleet_arrays, year_demand, **dispatch_kwargs)
+            # P0: solve with base MC to extract per-month run lengths.
+            r0 = solve_dispatch(
+                fleet_arrays, year_demand, mc=mc_base, **dispatch_kwargs
+            )
+            # P1: solve with bid MC = base MC + monthly startup amortization,
+            # so clearing prices reflect CC/CT cycling costs.
+            markup = compute_monthly_markup(
+                dispatch_fleet, fleet_arrays, r0.dispatch, config.hours
+            )
+            mc_bid = mc_base + markup
+            result = solve_dispatch(
+                fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
+            )
 
-            # Optional 2-pass commitment: screen Pass-1 prices to decommit
-            # gas CC hours that cannot cover startup cost, then re-solve so
-            # CTs and coal fill the gaps. Pass 2 replaces Pass 1 for caching.
+            # P2 (optional): screen CC/CT commitment on P1 clearing prices
+            # against base MC, pin coal to its P1 dispatch, and re-solve.
+            # Pass 2 replaces Pass 1 for caching.
             if config.commitment_enabled:
-                from market_sim.model.commitment import (
-                    apply_commitment,
-                    compute_commitment,
-                )
-
                 committed = compute_commitment(
-                    result.prices,
-                    mc,
-                    dispatch_fleet,
-                    fleet_arrays,
+                    result.prices, mc_base, dispatch_fleet, fleet_arrays,
                     config,
-                    demand=year_demand,
-                    wind_dispatched=result.wind_dispatched,
-                    solar_dispatched=result.solar_dispatched,
                 )
-                fleet_arrays_p2 = apply_commitment(
-                    fleet_arrays, committed, dispatch_fleet,
-                    p1_dispatch=result.dispatch,
+                fleet_arrays_p2 = apply_commitment_with_coal_pin(
+                    fleet_arrays, committed, result.dispatch, dispatch_fleet,
                 )
                 result = solve_dispatch(
-                    fleet_arrays_p2, year_demand, **dispatch_kwargs
+                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
                 )
             context = FleetContext.from_arrays(
                 fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf,
