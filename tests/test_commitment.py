@@ -1,4 +1,4 @@
-"""Tests for the 2-pass heuristic unit commitment filter."""
+"""Tests for the all-thermal heuristic unit commitment filter."""
 
 import unittest
 
@@ -9,13 +9,18 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.commitment import (
     apply_commitment,
     compute_commitment,
+    compute_ordc,
     find_runs,
 )
 from market_sim.model.dispatch import solve_dispatch
 
+# Unit tests pin commitment_ordc_sigma tiny so the ORDC adder collapses to
+# ~0 (reserves greatly exceed sigma), leaving margin = price - MC. The
+# ORDC adder itself is exercised separately in TestComputeOrdc.
+_CONFIG = ScenarioConfig(commitment_ordc_sigma=1.0)
+
 # f-class commitment params (heat rate 6.5-7.5): min_run 8h, min_down 6h,
 # startup 48.6 $/MW -- the regime exercised by the single-CC tests below.
-_CONFIG = ScenarioConfig()
 
 
 def _single_cc(heat_rate: float = 7.0, hours: int = 24):
@@ -26,6 +31,36 @@ def _single_cc(heat_rate: float = 7.0, hours: int = 24):
     )
     arrays = generators_to_fleet_arrays([gen], ["z"], hours=hours)
     return [gen], arrays
+
+
+def _single_ct(heat_rate: float = 10.5, hours: int = 24):
+    """Return a one-generator gas_ct fleet (list + FleetArrays)."""
+    gen = Generator(
+        unit_id="CT", name="CT", zone="z", fuel_type="gas_ct",
+        pmax_mw=200.0, pmin_mw=0.0, heat_rate=heat_rate, eford=0.0,
+    )
+    arrays = generators_to_fleet_arrays([gen], ["z"], hours=hours)
+    return [gen], arrays
+
+
+def _single_coal(heat_rate: float = 10.0, hours: int = 24):
+    """Return a one-generator coal fleet (list + FleetArrays)."""
+    gen = Generator(
+        unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
+        pmax_mw=500.0, pmin_mw=0.0, heat_rate=heat_rate, eford=0.0,
+    )
+    arrays = generators_to_fleet_arrays([gen], ["z"], hours=hours)
+    return [gen], arrays
+
+
+def _commit(prices, mc, gens, arrays, config=_CONFIG):
+    """Run compute_commitment with zero demand/renewables (ORDC ~ 0)."""
+    n_zones, T = prices.shape
+    zeros = np.zeros((n_zones, T))
+    return compute_commitment(
+        prices, mc, gens, arrays, config,
+        demand=zeros, wind_dispatched=zeros, solar_dispatched=zeros,
+    )
 
 
 class TestFindRuns(unittest.TestCase):
@@ -50,7 +85,7 @@ class TestComputeCommitment(unittest.TestCase):
         gens, arrays = _single_cc(hours=24)
         mc = np.full((1, 24), 30.0)
         prices = np.full((1, 24), 50.0)
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertEqual(committed.shape, (1, 24))
         self.assertTrue(committed.all())
 
@@ -58,7 +93,7 @@ class TestComputeCommitment(unittest.TestCase):
         gens, arrays = _single_cc(hours=24)
         mc = np.full((1, 24), 30.0)
         prices = np.full((1, 24), 20.0)
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertFalse(committed.any())
 
     def test_long_spike_commits_those_hours(self):
@@ -68,7 +103,7 @@ class TestComputeCommitment(unittest.TestCase):
         mc = np.full((1, 24), 30.0)
         prices = np.full((1, 24), 20.0)
         prices[0, 6:18] = 50.0
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertTrue(committed[0, 6:18].all())
         self.assertFalse(committed[0, :6].any())
         self.assertFalse(committed[0, 18:].any())
@@ -79,7 +114,7 @@ class TestComputeCommitment(unittest.TestCase):
         mc = np.full((1, 24), 30.0)
         prices = np.full((1, 24), 20.0)
         prices[0, 10:13] = 50.0
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertFalse(committed.any())
 
     def test_spike_revenue_below_startup_cost_rejected(self):
@@ -89,7 +124,7 @@ class TestComputeCommitment(unittest.TestCase):
         mc = np.full((1, 24), 30.0)
         prices = np.full((1, 24), 20.0)
         prices[0, 5:15] = 34.0
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertFalse(committed.any())
 
     def test_runs_within_min_down_are_merged(self):
@@ -100,35 +135,96 @@ class TestComputeCommitment(unittest.TestCase):
         prices = np.full((1, 30), 20.0)
         prices[0, 0:8] = 40.0
         prices[0, 11:19] = 40.0
-        committed = compute_commitment(prices, mc, gens, arrays, _CONFIG)
+        committed = _commit(prices, mc, gens, arrays)
         self.assertTrue(committed[0, :19].all())
         self.assertFalse(committed[0, 19:].any())
 
-    def test_coal_always_committed(self):
-        coal = Generator(
-            unit_id="C", name="C", zone="z", fuel_type="coal",
-            pmax_mw=500.0, pmin_mw=0.0, heat_rate=9.5, eford=0.0,
-        )
-        arrays = generators_to_fleet_arrays([coal], ["z"], hours=24)
+
+class TestAllThermalScreening(unittest.TestCase):
+    """CC, CT and coal are all screened; non-thermal stays committed."""
+
+    def test_each_thermal_fuel_can_be_decommitted(self):
+        gens = [
+            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
+                      pmax_mw=300.0, heat_rate=7.0, eford=0.0),
+            Generator(unit_id="CT", name="CT", zone="z", fuel_type="gas_ct",
+                      pmax_mw=200.0, heat_rate=10.5, eford=0.0),
+            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
+                      pmax_mw=500.0, heat_rate=10.0, eford=0.0),
+            Generator(unit_id="NUC", name="NUC", zone="z", fuel_type="nuclear",
+                      pmax_mw=1000.0, heat_rate=10.0, eford=0.0),
+        ]
+        arrays = generators_to_fleet_arrays(gens, ["z"], hours=24)
+        # Price far below every thermal MC -> the three thermal units all
+        # decommit; nuclear (non-thermal) is never screened.
+        mc = np.array([
+            np.full(24, 60.0),
+            np.full(24, 90.0),
+            np.full(24, 55.0),
+            np.full(24, 10.0),
+        ])
+        prices = np.full((1, 24), 5.0)
+        committed = _commit(prices, mc, gens, arrays)
+
+        self.assertFalse(committed[0].any())  # CC screened off
+        self.assertFalse(committed[1].any())  # CT screened off
+        self.assertFalse(committed[2].any())  # coal screened off
+        self.assertTrue(committed[3].all())   # nuclear always committed
+
+    def test_irr_hurdle_rejects_run_below_startup_cost_plus_irr(self):
+        # f-class CC: startup 48.6 $/MW, IRR 7% -> hurdle 52.0 $/MW.
+        # A 10-hour run at 5 $/MWh margin totals 50 -- above breakeven
+        # (48.6) but below the IRR hurdle, so it is rejected.
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 35.0  # margin 5 x 10h = 50 total
+        committed = _commit(prices, mc, gens, arrays)
+        self.assertFalse(committed.any())
+
+        # Lift the margin to 6 $/MWh (total 60 > 52) and the run commits.
+        prices[0, 5:15] = 36.0
+        committed = _commit(prices, mc, gens, arrays)
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_coal_rolling_average_tolerates_overnight_dips(self):
+        # 24-hour coal run with two negative-margin hours. Under a strict
+        # positive-margin screen the run splits into two 11-hour segments,
+        # both below the 12h min-run. The rolling average bridges the dip,
+        # so the whole run is accepted.
+        gens, arrays = _single_coal(heat_rate=10.0, hours=24)
         mc = np.full((1, 24), 25.0)
-        prices = np.full((1, 24), 5.0)  # far below MC
-        committed = compute_commitment(prices, mc, [coal], arrays, _CONFIG)
+        prices = np.full((1, 24), 35.0)  # margin +10
+        prices[0, 11:13] = 20.0          # two hours at margin -5
+
+        config = ScenarioConfig(
+            commitment_ordc_sigma=1.0, coal_eval_window_hours=6
+        )
+        committed = _commit(prices, mc, gens, arrays, config=config)
         self.assertTrue(committed.all())
 
-    def test_ct_always_committed(self):
-        ct = Generator(
-            unit_id="CT", name="CT", zone="z", fuel_type="gas_ct",
-            pmax_mw=200.0, pmin_mw=0.0, heat_rate=10.5, eford=0.0,
+        # A 1-hour window collapses the rolling average to a strict
+        # positive-margin screen: the dip splits the run into two 11-hour
+        # segments, both below the 12h coal min-run, so coal decommits.
+        strict = ScenarioConfig(
+            commitment_ordc_sigma=1.0, coal_eval_window_hours=1
         )
-        arrays = generators_to_fleet_arrays([ct], ["z"], hours=24)
+        committed_strict = _commit(prices, mc, gens, arrays, config=strict)
+        self.assertFalse(committed_strict.any())
+
+    def test_ct_commits_for_a_single_profitable_hour(self):
+        # CTs have min_run 1h: one high-margin hour justifies a start.
+        gens, arrays = _single_ct(heat_rate=10.5, hours=24)
         mc = np.full((1, 24), 80.0)
-        prices = np.full((1, 24), 10.0)  # far below MC
-        committed = compute_commitment(prices, mc, [ct], arrays, _CONFIG)
-        self.assertTrue(committed.all())
+        prices = np.full((1, 24), 20.0)
+        prices[0, 12] = 180.0  # margin 100 for one hour
+        committed = _commit(prices, mc, gens, arrays)
+        self.assertTrue(committed[0, 12])
+        self.assertEqual(int(committed.sum()), 1)
 
 
 class TestApplyCommitment(unittest.TestCase):
-    """Tests for zeroing availability in decommitted hours."""
+    """Tests for zeroing availability and pmin in decommitted hours."""
 
     def test_availability_zeroed_only_where_decommitted(self):
         gens = [
@@ -159,6 +255,51 @@ class TestApplyCommitment(unittest.TestCase):
         )
         # The input arrays must not be mutated in place.
         self.assertTrue((arrays.availability[0, 3:6] != 0.0).all())
+
+    def test_pmin_zeroed_for_generators_with_decommitted_hours(self):
+        # Coal carries a positive pmin. apply_commitment must zero pmin for
+        # any unit with decommitted hours, else the LP is infeasible
+        # (P <= 0 availability but P >= pmin > 0).
+        gens = [
+            Generator(unit_id="A", name="A", zone="z", fuel_type="coal",
+                      pmax_mw=500.0, pmin_mw=200.0, heat_rate=10.0,
+                      eford=0.0),
+            Generator(unit_id="B", name="B", zone="z", fuel_type="coal",
+                      pmax_mw=400.0, pmin_mw=100.0, heat_rate=10.0,
+                      eford=0.0),
+        ]
+        arrays = generators_to_fleet_arrays(gens, ["z"], hours=10)
+        committed = np.ones((2, 10), dtype=bool)
+        committed[0, 4:7] = False  # unit A partially decommitted
+
+        out = apply_commitment(arrays, committed)
+
+        self.assertEqual(out.pmin[0], 0.0)    # decommitted -> pmin zeroed
+        self.assertEqual(out.pmin[1], 100.0)  # fully committed -> unchanged
+        # The input arrays must not be mutated in place.
+        self.assertEqual(arrays.pmin[0], 200.0)
+
+
+class TestComputeOrdc(unittest.TestCase):
+    """Tests for the reserve-based ORDC scarcity adder."""
+
+    def test_ordc_near_zero_high_reserve_spikes_low_reserve(self):
+        gen = Generator(
+            unit_id="G", name="G", zone="z", fuel_type="gas_cc",
+            pmax_mw=10_000.0, heat_rate=7.0, eford=0.0,
+        )
+        arrays = generators_to_fleet_arrays([gen], ["z"], hours=2)
+        # Hour 0: demand 1000 -> reserves 9000 (>> sigma) -> ORDC ~ 0.
+        # Hour 1: demand 11000 -> reserves -1000 -> ORDC spikes.
+        demand = np.array([[1000.0, 11_000.0]])
+        zeros = np.zeros((1, 2))
+        ordc = compute_ordc(
+            arrays, demand, zeros, zeros, voll=5000.0, sigma_mw=1000.0
+        )
+        self.assertEqual(ordc.shape, (1, 2))
+        self.assertLess(ordc[0, 0], 1.0)
+        self.assertGreater(ordc[0, 1], 1000.0)
+        self.assertLessEqual(ordc[0, 1], 5000.0)  # capped at VOLL
 
 
 class TestTwoPassDispatch(unittest.TestCase):
@@ -203,8 +344,15 @@ class TestTwoPassDispatch(unittest.TestCase):
         )
         pass1 = solve_dispatch(arrays, demand, **kwargs)
 
+        # ORDC sigma 200 MW: during the 700 MW spikes (400 MW reserve) the
+        # adder makes the marginal CT's run profitable enough to commit,
+        # while off-spike (850 MW reserve) it stays negligible.
+        config = ScenarioConfig(commitment_ordc_sigma=200.0)
         committed = compute_commitment(
-            pass1.prices, mc, gens, arrays, ScenarioConfig()
+            pass1.prices, mc, gens, arrays, config,
+            demand=demand,
+            wind_dispatched=pass1.wind_dispatched,
+            solar_dispatched=pass1.solar_dispatched,
         )
         pass2 = solve_dispatch(
             apply_commitment(arrays, committed), demand, **kwargs

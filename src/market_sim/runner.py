@@ -303,7 +303,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
 
                 committed = compute_commitment(
-                    result.prices, mc, dispatch_fleet, fleet_arrays, config
+                    result.prices,
+                    mc,
+                    dispatch_fleet,
+                    fleet_arrays,
+                    config,
+                    demand=year_demand,
+                    wind_dispatched=result.wind_dispatched,
+                    solar_dispatched=result.solar_dispatched,
                 )
                 fleet_arrays_p2 = apply_commitment(fleet_arrays, committed)
                 result = solve_dispatch(
