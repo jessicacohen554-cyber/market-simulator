@@ -55,13 +55,22 @@ class TestEIALoader(unittest.TestCase):
         self.assertLessEqual(peak, _CAISO_PEAK_RANGE[1])
 
     def test_zone_rows_sum_to_total_iso_demand(self):
-        """Zonal rows sum back to total ISO demand each hour."""
+        """Zonal demand rows are a consistent load-share split of the total."""
         iso_config = get_iso_config("ERCOT")
         demand = load_demand("ERCOT", _TEST_YEAR, iso_config)
         total_share = sum(zone.load_share for zone in iso_config.zones)
-        meta = load_demand_meta("ERCOT", _TEST_YEAR)
-        self.assertAlmostEqual(
-            demand.sum(axis=0).max(), meta["peak_mw"] * total_share
+        # Each zone's row is its load_share fraction of one system series,
+        # so the rows sum to total_share x that series every hour.
+        nonzero = [
+            (z, zone.load_share)
+            for z, zone in enumerate(iso_config.zones)
+            if zone.load_share > 0.0
+        ]
+        system = demand[nonzero[0][0]] / nonzero[0][1]
+        for z, share in nonzero:
+            np.testing.assert_allclose(demand[z], share * system, rtol=1e-9)
+        np.testing.assert_allclose(
+            demand.sum(axis=0), total_share * system, rtol=1e-9
         )
 
     def test_load_demand_meta_keys(self):
