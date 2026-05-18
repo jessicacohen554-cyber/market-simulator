@@ -65,8 +65,9 @@ class TestRunScenarioIso(RunnerTestBase):
         ) as solve:
             key = runner.run_scenario_iso(config, "ERCOT")
 
-        # One solve per simulated year, 2026-2028.
-        self.assertEqual(solve.call_count, 3)
+        # Two solves per simulated year (P0 base-cost, P1 bid-cost),
+        # 2026-2028. P2 commitment is off by default.
+        self.assertEqual(solve.call_count, 6)
         for year in (2026, 2027, 2028):
             self.assertTrue(cache.is_cached("ERCOT", key, year))
 
@@ -81,12 +82,13 @@ class TestRunScenarioIso(RunnerTestBase):
             runner, "solve_dispatch", side_effect=_fake_solve
         ) as solve:
             runner.run_scenario_iso(config, "ERCOT")
-            self.assertEqual(solve.call_count, 3)
+            # Two solves (P0, P1) per year, 2026-2028.
+            self.assertEqual(solve.call_count, 6)
 
             # Re-running the identical scenario solves nothing new: every
             # year is loaded from the cache instead.
             runner.run_scenario_iso(config, "ERCOT")
-            self.assertEqual(solve.call_count, 3)
+            self.assertEqual(solve.call_count, 6)
 
     def test_iso_argument_overrides_config_iso(self):
         config = ScenarioConfig(iso="CAISO")
