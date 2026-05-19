@@ -102,8 +102,9 @@ def _commitment_params(
     (``min_run_hours`` / ``min_down_hours`` / ``startup_cost_per_mw``).
     CAMPD coal IS screened — it carries a 36-hour minimum run, so it
     rarely decommits, but an extended low-price spell can still shut it
-    down. The ``_peak`` slice of every bin carries ``min_run_hours = 0``
-    and is never screened. For a legacy generator the fuel's parameter
+    down. Only the ``_mc`` tranche of a bin carries the min-run window;
+    the ``_econ`` and ``_peak`` tranches carry ``min_run_hours = 0`` and
+    are never screened. For a legacy generator the fuel's parameter
     table is keyed by ascending heat-rate cutoff; the first row whose
     cutoff exceeds ``heat_rate`` applies (legacy coal has no table entry,
     so it stays committed).
