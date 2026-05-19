@@ -6,7 +6,7 @@
     2024,
     2025
   ],
-  "description": "Multi-year calibration reference: EIA-860 renewable capacity, measured Henry Hub prices, EIA-930 demand totals, and the eGRID 2023 generation/emissions benchmark.",
+  "description": "Multi-year calibration reference: EIA-860 renewable capacity, measured Henry Hub prices, EIA-930 demand totals, EIA-923 by-fuel net generation (the per-year generation_twh benchmark, 2023-2025), and the eGRID 2023 generation/emissions benchmark.",
   "egrid_benchmark": {
     "ERCOT": {
       "benchmark_year": 2023,
@@ -57,6 +57,7 @@
           "total_mwh": 392666016.0,
           "total_twh": 392.666
         },
+        "generation_twh": {},
         "henry_hub_actual": 3.72,
         "renewables": {
           "solar": {
@@ -291,6 +292,7 @@
           "total_mwh": 430675869.0,
           "total_twh": 430.6759
         },
+        "generation_twh": {},
         "henry_hub_actual": 6.45,
         "renewables": {
           "solar": {
@@ -524,6 +526,15 @@
           "peak_mw": 85432.0,
           "total_mwh": 446775033.0,
           "total_twh": 446.775
+        },
+        "generation_twh": {
+          "coal": 60.4201,
+          "gas_cc": 196.7016,
+          "gas_ct": 19.2626,
+          "gas_st": 17.3502,
+          "nuclear": 40.6799,
+          "solar": 28.0377,
+          "wind": 108.3376
         },
         "henry_hub_actual": 2.54,
         "renewables": {
@@ -759,6 +770,15 @@
           "total_mwh": 463879206.0,
           "total_twh": 463.8792
         },
+        "generation_twh": {
+          "coal": 57.6169,
+          "gas_cc": 200.4565,
+          "gas_ct": 20.2934,
+          "gas_st": 18.6605,
+          "nuclear": 38.6131,
+          "solar": 40.0795,
+          "wind": 111.8789
+        },
         "henry_hub_actual": 2.19,
         "renewables": {
           "solar": {
@@ -992,6 +1012,15 @@
           "peak_mw": 83597.0,
           "total_mwh": 488019834.0,
           "total_twh": 488.0198
+        },
+        "generation_twh": {
+          "coal": 62.2143,
+          "gas_cc": 186.4126,
+          "gas_ct": 11.4573,
+          "gas_st": 6.4578,
+          "nuclear": 41.6317,
+          "solar": 55.7945,
+          "wind": 90.7484
         },
         "henry_hub_actual": 3.52,
         "renewables": {
