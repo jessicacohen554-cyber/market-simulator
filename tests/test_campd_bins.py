@@ -44,7 +44,7 @@ def _synthetic_bin(**overrides) -> pd.DataFrame:
         "min_run": 10,
         "min_down": 4,
         "plant_count": 1,
-        "plant_codes": [[1]],
+        "plant_codes": [1],  # flat list of plant codes, as load_campd_bins emits
         "fuel": "gas_cc",
     }
     row.update(overrides)
@@ -157,6 +157,17 @@ class TestBinsToFleet(unittest.TestCase):
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         for g in fleet:
             self.assertEqual(g.zone, self.config.unknown_zone_default)
+
+    def test_coal_bins_tagged_with_fuel_supply(self):
+        # Every coal tranche carries a fuel-supply tag (mine-mouth lignite
+        # or PRB by rail) resolved from its plant code.
+        coal = [g for g in self.fleet if g.plant_group == "COAL"]
+        self.assertGreater(len(coal), 0)
+        for g in coal:
+            self.assertIn(g.coal_supply, ("lignite", "prb"))
+        # Non-coal generators carry no supply tag.
+        gas = [g for g in self.fleet if g.plant_group != "COAL"]
+        self.assertTrue(all(g.coal_supply == "" for g in gas))
 
     def test_gas_steam_maps_to_gas_st(self):
         gs = [g for g in self.fleet if g.plant_group == "GAS_STEAM"]
