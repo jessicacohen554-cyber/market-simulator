@@ -48,14 +48,20 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_fossil_gen,
 )
 from market_sim.data.fleet import (  # noqa: E402
+    _AGGREGATABLE_FUELS,
     aggregate_fleet,
     apply_coal_tranches,
     assemble_mc,
+    bins_to_fleet,
     generators_to_fleet_arrays,
+    load_campd_bins,
     load_fleet_from_csv,
     split_coal_tranches,
 )
-from market_sim.data.fuel import resolve_fuel_prices  # noqa: E402
+from market_sim.data.fuel import (  # noqa: E402
+    apply_coal_supply_pricing,
+    resolve_fuel_prices,
+)
 from market_sim.data.renewables import (  # noqa: E402
     inject_offshore_wind_availability,
     load_renewable_profiles,
@@ -170,7 +176,8 @@ def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
         gas_seasonality=True,
         carbon_price=0.0,
         rps_enabled=False,
-        commitment_enabled=True,
+        commitment_enabled=False,  # P1-only: the 3-tranche, no-Pmin bin
+        #   structure dispatches correctly without the P2 screen.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -258,17 +265,37 @@ def run_year(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
     )
 
-    fleet_base = aggregate_fleet(
-        load_fleet_from_csv(iso, iso_config), n_bins=config.heat_rate_bin_count
+    # Build the dispatch fleet the same way the runner does: CAMPD
+    # operational bins for ERCOT (three stepped tranches per bin, nuclear
+    # and other non-aggregatable units from EIA-860), the legacy
+    # equal-width heat-rate binning otherwise.
+    campd_bins = (
+        load_campd_bins(config.campd_bins_path)
+        if config.use_campd_bins and iso == "ERCOT"
+        else None
     )
-    # Split coal bins into take-or-pay tranches before the fleet-array build.
-    fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
+    if campd_bins is not None:
+        campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
+        non_thermal = [
+            g for g in load_fleet_from_csv(iso, iso_config)
+            if g.fuel_type not in _AGGREGATABLE_FUELS
+        ]
+        fleet = non_thermal + campd_fleet
+        fuel_fracs = [1.0] * len(fleet)
+    else:
+        fleet_base = aggregate_fleet(
+            load_fleet_from_csv(iso, iso_config),
+            n_bins=config.heat_rate_bin_count,
+        )
+        fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
     fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
+    # Reprice CAMPD coal bins by plant fuel supply (lignite vs PRB).
+    apply_coal_supply_pricing(fuel_prices, fleet, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
