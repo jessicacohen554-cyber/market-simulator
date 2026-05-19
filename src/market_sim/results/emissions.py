@@ -55,11 +55,15 @@ def compute_must_run_emissions(
 
     The Must-Run tranche of each CHP bin (the always-on capacity serving a
     steam contract) is removed from the dispatch LP, so its grid generation
-    never appears in the dispatch result. This adds it back: for every bin
-    with ``pct_mr > 0`` the must-run MW runs ``8760 × must_run_cf`` hours and
-    its CO2 is the must-run generation times the bin's emission rate. This
-    covers both CC_CHP and CT_CHP and is used for fleet-specific emissions
-    trajectories on an asset basis.
+    never appears in the dispatch result. This adds it back: for every
+    non-coal bin with ``pct_mr > 0`` the must-run MW runs ``8760 ×
+    must_run_cf`` hours and its CO2 is the must-run generation times the
+    bin's emission rate. This covers CC_CHP, CT_CHP and ST_CHP and is
+    used for fleet-specific emissions trajectories on an asset basis.
+
+    Coal bins are excluded: their must-run share stays in the LP as a
+    ``_mustrun`` tranche, so its generation already appears in the
+    dispatch result.
 
     Args:
         bins: The aggregated bin frame from
@@ -69,12 +73,12 @@ def compute_must_run_emissions(
         must_run_cf: Assumed capacity factor for must-run generation.
 
     Returns:
-        One row per must-run bin with ``mr_mw``, ``mr_gen_mwh`` and
-        ``mr_co2_tons``; empty when no bin has a must-run tranche.
+        One row per non-coal must-run bin with ``mr_mw``, ``mr_gen_mwh``
+        and ``mr_co2_tons``; empty when no such bin exists.
     """
     from market_sim.data.fleet import get_emission_rate
 
-    mr = bins[bins["pct_mr"] > 0].copy()
+    mr = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")].copy()
     if mr.empty:
         return mr.assign(mr_mw=[], mr_gen_mwh=[], mr_co2_tons=[], year=[])
 
