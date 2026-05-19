@@ -177,27 +177,46 @@ class TestCCShoulderMaintenanceDerate(unittest.TestCase):
         fa = generators_to_fleet_arrays([self._cc()], ["North"], config=config)
         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.05)
 
-    def test_coal_derated_in_shoulder_months(self):
+    def test_coal_age_based_availability(self):
+        # A 47-year-old coal unit (online 1977, run year 2024) lands in the
+        # 45-55 bracket: POF 8%, WEFOR 16%, derate 4.5% — all additive.
         coal = Generator(
             unit_id="c1", name="Coal", zone="North", fuel_type="coal",
-            pmax_mw=500.0, heat_rate=10.0, eford=0.08,
+            pmax_mw=500.0, heat_rate=10.0, online_year=1977,
         )
-        config = ScenarioConfig(coal_shoulder_maintenance_derate=0.24)
+        config = ScenarioConfig(weather_year=2024)
         fa = generators_to_fleet_arrays([coal], ["North"], config=config)
-        base = 1.0 - 0.08
-        # April (shoulder) cut by 24%; July (peak) at the EFORD level.
-        self.assertAlmostEqual(fa.availability[0, self._APRIL_H], base * 0.76)
-        self.assertAlmostEqual(fa.availability[0, self._JULY_H], base)
+        # WEFOR + derate apply flat year-round; July (peak) carries no POF.
+        self.assertAlmostEqual(
+            fa.availability[0, self._JULY_H], 1.0 - 0.16 - 0.045
+        )
+        # April (shoulder) additionally carries the planned-outage factor.
+        self.assertAlmostEqual(
+            fa.availability[0, self._APRIL_H], 1.0 - 0.16 - 0.045 - 0.08
+        )
+
+    def test_coal_age_bracket_varies(self):
+        # A young coal unit (online 2013, run year 2024 -> age 11) lands in
+        # the 0-20 bracket: POF 7%, WEFOR 9%, derate 2%.
+        coal = Generator(
+            unit_id="c2", name="Coal", zone="North", fuel_type="coal",
+            pmax_mw=500.0, heat_rate=10.0, online_year=2013,
+        )
+        config = ScenarioConfig(weather_year=2024)
+        fa = generators_to_fleet_arrays([coal], ["North"], config=config)
+        self.assertAlmostEqual(
+            fa.availability[0, self._JULY_H], 1.0 - 0.09 - 0.02
+        )
+        self.assertAlmostEqual(
+            fa.availability[0, self._APRIL_H], 1.0 - 0.09 - 0.02 - 0.07
+        )
 
     def test_gas_ct_not_derated(self):
         ct = Generator(
             unit_id="ct1", name="CT", zone="North", fuel_type="gas_ct",
             pmax_mw=100.0, heat_rate=11.0, eford=0.06,
         )
-        config = ScenarioConfig(
-            cc_shoulder_maintenance_derate=0.15,
-            coal_shoulder_maintenance_derate=0.24,
-        )
+        config = ScenarioConfig(cc_shoulder_maintenance_derate=0.15)
         fa = generators_to_fleet_arrays([ct], ["North"], config=config)
         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.06)
 
