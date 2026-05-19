@@ -162,6 +162,13 @@ class ScenarioConfig:
     # net-charging, so a cycling unit is not committed purely to serve
     # speculative battery-charging load. Storage net-discharge hours keep
     # full weight — storage and thermal are complements at the peak.
+    commitment_storage_in_merit_floor: float = 0.0  # 0 disables. When > 0,
+    # an hour whose storage-charge weight falls below this floor is dropped
+    # from the in-merit runs the commitment screen detects: a deep
+    # battery-charging trough breaks a cycling unit's run, so the shorter
+    # pieces face the min-run filter on their own. Stronger than the
+    # hurdle-only discount above, which never changes which hours run.
+    # 1.0 drops every net-charging hour; 0.85 drops only deep troughs.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -314,6 +321,7 @@ TIER_TAGS: dict[str, int] = {
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,
     "commitment_storage_weight": 2,
+    "commitment_storage_in_merit_floor": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,

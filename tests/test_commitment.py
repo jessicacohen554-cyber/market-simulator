@@ -234,6 +234,47 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
         self.assertTrue(committed[0, 5:15].all())
 
+    def _trough_scenario(self):
+        # A 12-hour positive-margin run (hours 5-16) with a 4-hour storage
+        # net-charging trough in its middle (hours 9-12). Net charge there
+        # is 60% of zone demand, so the storage weight is 0.4.
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:17] = 50.0
+        demand = np.full((1, 24), 1000.0)
+        charge = np.zeros((1, 24))
+        charge[0, 9:13] = 600.0
+        kwargs = dict(
+            storage_charge=charge, storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]), demand=demand,
+        )
+        return gens, arrays, base_mc, prices, kwargs
+
+    def test_in_merit_floor_breaks_a_run_through_a_charging_trough(self):
+        # Floor off: the 12-hour run commits whole. Floor on: the trough
+        # drops out and the two 4-hour pieces each fall short of the
+        # 8-hour min run, so nothing commits.
+        gens, arrays, base_mc, prices, kwargs = self._trough_scenario()
+        off = compute_commitment(prices, base_mc, gens, arrays, _CONFIG,
+                                 **kwargs)
+        self.assertTrue(off[0, 5:17].all())
+
+        cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
+        on = compute_commitment(prices, base_mc, gens, arrays, cfg, **kwargs)
+        self.assertFalse(on.any())
+
+    def test_in_merit_floor_leaves_shallow_charging_untouched(self):
+        # A shallow trough (net charge 20% of demand -> weight 0.8) stays
+        # above the 0.5 floor, so the run is not broken and still commits.
+        gens, arrays, base_mc, prices, kwargs = self._trough_scenario()
+        kwargs["storage_charge"] = kwargs["storage_charge"].copy()
+        kwargs["storage_charge"][0, 9:13] = 200.0
+        cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
+        committed = compute_commitment(prices, base_mc, gens, arrays, cfg,
+                                       **kwargs)
+        self.assertTrue(committed[0, 5:17].all())
+
 
 class TestCoalAndNuclearAlwaysCommitted(unittest.TestCase):
     """Coal, nuclear and non-thermal fuels are never commitment-screened."""
