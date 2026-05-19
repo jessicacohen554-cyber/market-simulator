@@ -19,14 +19,12 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CO2_RATES,
-    COAL_DERATE_BY_AGE,
-    COAL_POF_BY_AGE,
-    COAL_WEFOR_BY_AGE,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
     NOX_RATES,
     NUCLEAR_MONTHLY_CF,
+    THERMAL_AVAILABILITY,
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
@@ -184,25 +182,21 @@ def _hour_to_month_index(hours: int) -> np.ndarray:
 _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
 
 
-def _coal_age_outage(age: float) -> tuple[float, float, float]:
-    """Return ``(POF, WEFOR, derate)`` for a coal unit of the given age.
+def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
+    """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
 
-    Looks the three components up from the age-bracketed NERC GADS tables.
-    They are additive: total unavailability is ``WEFOR + derate`` flat
-    year-round plus ``POF`` in the shoulder months.
+    ``category`` is the plant group (e.g. ``CC_REGULAR``, ``GAS_STEAM``,
+    ``COAL``). POF is flat; WEFOR and the weather/performance derate are a
+    base plus a linear escalation per year of age past an onset year. The
+    three are additive — availability is ``1 - WEFOR - derate`` flat
+    year-round, less ``POF`` in the shoulder months.
     """
-
-    def _lookup(table: list[tuple[float, float]]) -> float:
-        for age_below, value in table:
-            if age < age_below:
-                return value
-        return table[-1][1]
-
-    return (
-        _lookup(COAL_POF_BY_AGE),
-        _lookup(COAL_WEFOR_BY_AGE),
-        _lookup(COAL_DERATE_BY_AGE),
+    pof, w_base, w_rate, w_onset, d_base, d_rate, d_onset = (
+        THERMAL_AVAILABILITY[category]
     )
+    wefor = w_base + max(0.0, age - w_onset) * w_rate
+    derate = d_base + max(0.0, age - d_onset) * d_rate
+    return pof, wefor, derate
 
 
 def generators_to_fleet_arrays(
@@ -263,26 +257,22 @@ def generators_to_fleet_arrays(
         _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
     )
 
-    # Combined-cycle shoulder-month planned maintenance, on top of the
-    # EFORD forced-outage rate already in `availability`.
-    cc_derate = config.cc_shoulder_maintenance_derate if config else 0.0
-    if cc_derate > 0.0:
-        for g_idx, gen in enumerate(generators):
-            if gen.fuel_type == "gas_cc":
-                availability[g_idx, shoulder] *= 1.0 - cc_derate
-
-    # Coal steam: age-based availability replaces the flat EFORD derate.
-    # Three additive NERC GADS components keyed to the unit's age — the
-    # weighted forced-outage rate (WEFOR) and the weather/performance
-    # derate apply flat year-round; the planned-outage factor (POF)
-    # applies only in the shoulder months. Age is the run year minus the
-    # coal unit's commission year.
+    # Thermal availability: an age-based model keyed to the plant-group
+    # category (THERMAL_AVAILABILITY). The weighted forced-outage rate
+    # (WEFOR) and the weather/performance derate apply flat year-round and
+    # escalate with plant age; the planned-outage factor (POF) applies
+    # only in the shoulder months. This replaces the flat EFORD derate for
+    # every thermal generator carrying a plant-group category. Non-thermal
+    # units (nuclear, hydro, ...) keep the 1 - EFORD derate. Age is the run
+    # year minus the unit's commission year.
     if config is not None:
         run_year = config.weather_year
         for g_idx, gen in enumerate(generators):
-            if gen.fuel_type != "coal":
+            if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
-            pof, wefor, derate = _coal_age_outage(run_year - gen.online_year)
+            pof, wefor, derate = _thermal_outage(
+                gen.plant_group, run_year - gen.online_year
+            )
             base_avail = 1.0 - wefor - derate
             availability[g_idx, :] = base_avail
             availability[g_idx, shoulder] = base_avail - pof
@@ -1503,6 +1493,25 @@ def bins_to_fleet(
     valid_zones = set(zone_names)
     fleet: list[Generator] = []
 
+    # Plant commission years drive the age-based thermal availability model.
+    # Coal uses the curated COAL_PLANT_COMMISSION_YEAR (accurate coal-unit
+    # years); other thermal bins take a capacity-weighted average of their
+    # constituent plants' EIA-860 year_built from the plant registry.
+    registry = load_plant_registry(config.plant_registry_path)
+    _reg_year = dict(zip(registry["plantid"], registry["year_built"]))
+    _reg_mw = dict(zip(registry["plantid"], registry["nameplate_capacity_mw"]))
+
+    def _commission_year(plant_codes: list) -> int:
+        """Capacity-weighted average commission year over a bin's plants."""
+        num = den = 0.0
+        for pc in plant_codes:
+            year = _reg_year.get(int(pc))
+            mw = _reg_mw.get(int(pc))
+            if year and mw and not pd.isna(year) and not pd.isna(mw):
+                num += float(year) * float(mw)
+                den += float(mw)
+        return int(round(num / den)) if den > 0.0 else 2010
+
     for _, b in bins.iterrows():
         pct_mr = float(b["pct_mr"])
         grid_cap = float(b["capacity_mw"]) * (1.0 - pct_mr / 100.0)
@@ -1525,19 +1534,19 @@ def bins_to_fleet(
         hr = float(b["hr_weighted"])
         label = str(b["Bin_Label"])
         bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
-        # Each coal bin is a single plant, so its fuel-supply type (mine-mouth
-        # lignite vs PRB by rail) and coal-unit commission year resolve from
-        # the one plant code. The commission year drives the age-based coal
-        # availability model.
+        # Commission year drives the age-based thermal availability model.
+        # Each coal bin is a single plant, so its fuel-supply type and
+        # coal-unit commission year resolve from the one plant code; other
+        # bins take a capacity-weighted average over their plants.
+        codes = list(b["plant_codes"])
         coal_supply = ""
-        commission_year = 2000
-        if fuel == "coal":
-            codes = list(b["plant_codes"])
-            if len(codes) == 1:
-                coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
-                commission_year = COAL_PLANT_COMMISSION_YEAR.get(
-                    int(codes[0]), 2000
-                )
+        if fuel == "coal" and len(codes) == 1:
+            coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
+            commission_year = COAL_PLANT_COMMISSION_YEAR.get(
+                int(codes[0]), _commission_year(codes)
+            )
+        else:
+            commission_year = _commission_year(codes)
         peak_penalty = {
             "gas_cc": config.cc_peak_hr_penalty,
             "gas_ct": config.ct_peak_hr_penalty,
