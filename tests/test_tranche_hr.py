@@ -42,6 +42,7 @@ def _bin_row(**overrides) -> dict:
         "pct_peak": 0,
         "min_run": 8,
         "min_down": 4,
+        "plant_codes": [1],
     }
     row.update(overrides)
     return row
