@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from market_sim.config.constants import (
     CO2_RATES,
     EFORD,
+    FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
     NOX_RATES,
     NUCLEAR_MONTHLY_CF,
@@ -89,6 +90,7 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "gas_cc_ccs": 10,     # gas CCGT with 90% post-combustion carbon capture
     "geothermal": 12,     # enhanced geothermal systems (EGS)
     "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
+    "gas_st": 14,         # legacy natural-gas steam boiler (conventional ST)
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
@@ -117,6 +119,19 @@ class Generator(BaseModel):
     online_year: int = 2000
     retirement_year: int | None = None
     is_must_run: bool = False
+
+    # CAMPD operational-bin attributes. Set only for generators built by
+    # :func:`bins_to_fleet`; left at defaults for the legacy fleet. These
+    # carry the per-bin commitment parameters and must-run accounting that
+    # used to live in lookup-table constants.
+    is_campd_bin: bool = False
+    plant_group: str = ""           # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, GAS_STEAM
+    bin_label: str = ""             # human-readable bin id, e.g. H_CC1
+    min_run_hours: int = 0          # minimum committed run length
+    min_down_hours: int = 0         # minimum downtime between runs
+    startup_cost_per_mw: float = 0.0  # $/MW per start, for the bid markup
+    must_run_pct: float = 0.0       # MR% of the bin's nameplate (CHP steam)
+    bin_nameplate_mw: float = 0.0   # bin total nameplate, for MR reconstruction
 
 
 @dataclass
@@ -1166,3 +1181,294 @@ def load_fleet_from_csv(
 
     _cache_binned_fleet(iso, generators, source)
     return generators
+
+
+# ---------------------------------------------------------------------------
+# CAMPD operational binning
+#
+# A unified, data-derived replacement for equal-width heat-rate binning. Each
+# plant in custom-bin-assignments.csv is assigned to an operational bin; bins
+# carry a 4-tranche capacity structure (Must Run / Committed / Economic /
+# Peaking) that maps directly to LP dispatch behavior. See
+# docs/binning-methodology.md.
+# ---------------------------------------------------------------------------
+
+# CAMPD plant-group → model fuel type. GAS_STEAM maps to the dedicated
+# ``gas_st`` fuel (legacy natural-gas steam boilers).
+BIN_GROUP_TO_FUEL: dict[str, str] = {
+    "CC_CHP": "gas_cc",
+    "CC_REGULAR": "gas_cc",
+    "CT_CHP": "gas_ct",
+    "CT_PEAKER": "gas_ct",
+    "GAS_STEAM": "gas_st",
+    "COAL": "coal",
+}
+
+# Startup cost ($/MW per start) by CAMPD plant group, used to amortize
+# cycling cost into the monthly bid markup and to set the commitment IRR
+# hurdle. Coal is never commitment-screened, so it carries no startup cost.
+# Source: NREL/SR-5500-55433 (Kumar et al. 2012), consistent with the legacy
+# CC_STARTUP_PARAMS / CT_STARTUP_PARAMS midpoints.
+BIN_STARTUP_COST_PER_MW: dict[str, float] = {
+    "CC_CHP": 50.0,
+    "CC_REGULAR": 50.0,
+    "CT_CHP": 20.0,
+    "CT_PEAKER": 20.0,
+    "GAS_STEAM": 35.0,
+    "COAL": 0.0,
+}
+
+# Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
+# Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
+BIN_GROUP_HR_DEFAULT: dict[str, float] = {
+    "CC_CHP": 7.5,
+    "CC_REGULAR": 7.0,
+    "CT_CHP": 9.0,
+    "CT_PEAKER": 13.0,
+    "GAS_STEAM": 11.0,
+    "COAL": 9.5,
+}
+
+# The composite key that uniquely identifies one CAMPD bin. Bin_Label alone
+# is NOT unique — labels such as "S_CC1" or "CT1 (8-9)" recur across zones —
+# so the group, zone and bin number are all part of the key.
+_BIN_KEY_COLUMNS: list[str] = [
+    "Plant_Group", "ERCOT_Zone", "Bin_Number", "Bin_Label",
+]
+
+
+def get_vom(fuel: str) -> float:
+    """Return the variable O&M ($/MWh) for a model fuel type."""
+    return VOM.get(fuel, 0.0)
+
+
+def get_emission_rate(fuel: str, heat_rate: float) -> float:
+    """Return the CO2 emission rate (tCO2/MWh) for a fuel at a heat rate.
+
+    Derived as ``heat_rate × FUEL_CO2_FACTOR_PER_MMBTU[fuel]`` so a
+    CAMPD bin's CEMS-measured heat rate yields its emission rate directly,
+    without a vintage-bin lookup.
+    """
+    return float(heat_rate) * FUEL_CO2_FACTOR_PER_MMBTU.get(fuel, 0.0)
+
+
+def get_nox_rate(fuel: str) -> float:
+    """Return the NOx emission rate (tons NOx/MWh) for a model fuel type."""
+    return NOX_RATES.get(fuel, 0.0)
+
+
+def get_eford(fuel: str) -> float:
+    """Return the equivalent forced outage rate for a model fuel type."""
+    return EFORD.get(fuel, 0.05)
+
+
+def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
+    """Load the master plant registry CSV.
+
+    The registry has one row per ERCOT thermal plant with EIA-860 / CAMPD
+    attributes. It is not consumed by dispatch directly — the dispatch fleet
+    comes from :func:`load_campd_bins` — but it is the reference for plant
+    metadata and the "OTHER" (non-dispatchable) plant set.
+
+    Args:
+        csv_path: Path to ``master-plant-registry.csv``.
+
+    Returns:
+        The registry as a DataFrame.
+    """
+    return pd.read_csv(csv_path)
+
+
+def _fill_bin_hr(row: pd.Series) -> float:
+    """Return a bin's heat rate, filling a blank weighted HR.
+
+    Falls back to the mean plant-level heat rate of the bin, then to the
+    plant-group default, so a bin never carries a NaN heat rate into the LP.
+    """
+    hr = row.get("hr_weighted")
+    if hr is not None and hr == hr and hr > 0.0:
+        return float(hr)
+    plant_hr = row.get("plant_hr_mean")
+    if plant_hr is not None and plant_hr == plant_hr and plant_hr > 0.0:
+        return float(plant_hr)
+    return BIN_GROUP_HR_DEFAULT.get(row["Plant_Group"], 10.0)
+
+
+def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
+    """Load the CAMPD bin assignments and aggregate to one row per bin.
+
+    The detail CSV has one row per plant; this collapses it to one row per
+    unique operational bin (keyed by group, zone, bin number and label),
+    summing nameplate capacity and taking the shared per-bin tranche
+    percentages, commitment hours and weighted heat rate.
+
+    Args:
+        csv_path: Path to ``custom-bin-assignments.csv``.
+
+    Returns:
+        One row per bin with columns: the four key columns, ``capacity_mw``,
+        ``hr_weighted``, ``pct_mr`` / ``pct_mc`` / ``pct_econ`` / ``pct_peak``,
+        ``min_run``, ``min_down``, ``plant_count``, ``plant_codes``, ``fuel``.
+    """
+    detail = pd.read_csv(csv_path)
+    bins = (
+        detail.groupby(_BIN_KEY_COLUMNS, sort=False)
+        .agg(
+            capacity_mw=("Nameplate_MW", "sum"),
+            hr_weighted=("Bin_Zone_Weighted_Avg_HR", "first"),
+            plant_hr_mean=("Plant_Avg_HR_MMBtu_MWh", "mean"),
+            pct_mr=("Pct_Must_Run", "first"),
+            pct_mc=("Pct_Committed", "first"),
+            pct_econ=("Pct_Economic", "first"),
+            pct_peak=("Pct_Peaking", "first"),
+            min_run=("Min_Run_Hours", "first"),
+            min_down=("Min_Down_Hours", "first"),
+            plant_count=("Plant_Code", "count"),
+            plant_codes=("Plant_Code", lambda x: list(x)),
+        )
+        .reset_index()
+    )
+    bins["hr_weighted"] = bins.apply(_fill_bin_hr, axis=1)
+    bins = bins.drop(columns=["plant_hr_mean"])
+    bins["fuel"] = bins["Plant_Group"].map(BIN_GROUP_TO_FUEL)
+
+    unmapped = bins[bins["fuel"].isna()]
+    if not unmapped.empty:
+        groups = sorted(unmapped["Plant_Group"].unique())
+        raise ValueError(
+            f"CAMPD bins reference unknown plant groups: {groups}. "
+            f"Add them to BIN_GROUP_TO_FUEL."
+        )
+
+    bad = bins["pct_mr"] + bins["pct_mc"] + bins["pct_econ"] + bins["pct_peak"]
+    if not (bad == 100).all():
+        offending = bins.loc[bad != 100, "Bin_Label"].tolist()
+        raise ValueError(
+            f"CAMPD bin tranches must sum to 100%; offending bins: {offending}"
+        )
+
+    logger.info(
+        "Loaded %d CAMPD bins from %s (%d plants, %.1f GW)",
+        len(bins), csv_path, int(bins["plant_count"].sum()),
+        bins["capacity_mw"].sum() / 1000.0,
+    )
+    return bins
+
+
+def bins_to_fleet(
+    bins: pd.DataFrame,
+    zone_names: list[str],
+    config: ScenarioConfig,
+) -> tuple[list[Generator], FleetArrays]:
+    """Convert CAMPD bins into LP generators, splitting each into base + peak.
+
+    For every bin:
+
+    * The Must-Run tranche (CHP steam) is removed from LP capacity —
+      ``grid_cap = nameplate × (1 - MR%)``. Its generation is added back in
+      post-processing (see ``results.emissions.compute_must_run_emissions``).
+    * The Peaking tranche becomes a separate ``_peak`` generator with
+      ``pmin = 0`` and a heat rate scaled by the duct-firing penalty, so
+      scarcity output bids above the economic tranche.
+    * The remaining (Committed + Economic) capacity is the ``_base``
+      generator, with ``pmin`` set from the Committed tranche.
+
+    Args:
+        bins: The aggregated bin frame from :func:`load_campd_bins`.
+        zone_names: The ISO's ordered zone names.
+        config: Scenario configuration (peaking penalties, unknown-zone
+            default, horizon length).
+
+    Returns:
+        A tuple ``(generators, fleet_arrays)``: the bin-derived generator
+        list and its vectorized form.
+    """
+    valid_zones = set(zone_names)
+    fleet: list[Generator] = []
+
+    for _, b in bins.iterrows():
+        pct_mr = float(b["pct_mr"])
+        grid_cap = float(b["capacity_mw"]) * (1.0 - pct_mr / 100.0)
+        if grid_cap <= 0.0:
+            continue
+
+        denom = 100.0 - pct_mr
+        peak_frac = float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
+        mc_frac = float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        base_cap = grid_cap * (1.0 - peak_frac)
+        peak_cap = grid_cap * peak_frac
+        pmin = grid_cap * mc_frac
+
+        zone = str(b["ERCOT_Zone"])
+        if zone == "Unknown" or zone not in valid_zones:
+            zone = config.unknown_zone_default
+
+        fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
+        group = str(b["Plant_Group"])
+        hr = float(b["hr_weighted"])
+        label = str(b["Bin_Label"])
+        bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
+
+        fleet.append(
+            Generator(
+                unit_id=f"{bin_id}_base",
+                name=f"{label} base",
+                zone=zone,
+                fuel_type=fuel,
+                efficiency_bin=group,
+                pmax_mw=base_cap,
+                pmin_mw=min(pmin, base_cap),
+                heat_rate=hr,
+                vom=get_vom(fuel),
+                emission_rate_co2=get_emission_rate(fuel, hr),
+                nox_rate=get_nox_rate(fuel),
+                eford=get_eford(fuel),
+                is_campd_bin=True,
+                plant_group=group,
+                bin_label=label,
+                min_run_hours=int(b["min_run"]),
+                min_down_hours=int(b["min_down"]),
+                startup_cost_per_mw=BIN_STARTUP_COST_PER_MW.get(group, 0.0),
+                must_run_pct=pct_mr,
+                bin_nameplate_mw=float(b["capacity_mw"]),
+            )
+        )
+
+        if peak_cap > 0.5:
+            penalty = {
+                "gas_cc": config.cc_peak_hr_penalty,
+                "gas_ct": config.ct_peak_hr_penalty,
+                "gas_st": config.ct_peak_hr_penalty,
+                "coal": config.coal_peak_hr_penalty,
+            }.get(fuel, 1.10)
+            peak_hr = hr * penalty
+            fleet.append(
+                Generator(
+                    unit_id=f"{bin_id}_peak",
+                    name=f"{label} peak",
+                    zone=zone,
+                    fuel_type=fuel,
+                    efficiency_bin=group,
+                    pmax_mw=peak_cap,
+                    pmin_mw=0.0,
+                    heat_rate=peak_hr,
+                    vom=get_vom(fuel) * 1.5,
+                    emission_rate_co2=get_emission_rate(fuel, peak_hr),
+                    nox_rate=get_nox_rate(fuel),
+                    eford=get_eford(fuel),
+                    is_campd_bin=True,
+                    plant_group=group,
+                    bin_label=label,
+                    # Peak generators carry pmin = 0 and dispatch purely on
+                    # economics; min_run_hours = 0 keeps them out of the
+                    # commitment screen (only the base generator is screened).
+                    min_run_hours=0,
+                    min_down_hours=0,
+                    startup_cost_per_mw=0.0,
+                )
+            )
+
+    fleet_arrays = generators_to_fleet_arrays(
+        fleet, zone_names, hours=config.hours, iso=config.iso, config=config
+    )
+    return fleet, fleet_arrays

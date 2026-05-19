@@ -106,7 +106,23 @@ CO2_RATES: dict[str, dict[str, float]] = {
 NOX_RATES: dict[str, float] = {
     "gas_cc": 0.00008,  # was 0.0001. EPA CEMS 2023 — SCR-equipped fleet average.
     "gas_ct": 0.00025,  # was 0.0003. EPA CEMS 2023 — mix of SCR/non-SCR CTs.
+    "gas_st": 0.00025,  # EPA CEMS 2023 — legacy gas steam boilers, mostly non-SCR.
     "coal": 0.0012,     # was 0.0015. EPA CEMS 2023 — post-CSAPR compliance.
+}
+
+# CO2 emission factor (tCO2 per MMBtu of fuel burned) used to derive a
+# generator's per-MWh CO2 rate directly from its heat rate:
+#   emission_rate = heat_rate × FUEL_CO2_FACTOR_PER_MMBTU[fuel].
+# Values are back-solved from the CO2_RATES / HEAT_RATE_BINS pairs above so
+# the CAMPD-bin fleet stays consistent with the vintage-bin fleet: every
+# gas CO2_RATES ÷ HEAT_RATE_BINS entry ≈ 0.057, every coal entry ≈ 0.100.
+# The CAMPD bins carry CEMS-measured heat rates, so this lets them get an
+# emission rate without a vintage lookup.
+FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
+    "gas_cc": 0.057,  # natural gas — implied by EPA eGRID 2022 gas CC rates
+    "gas_ct": 0.057,  # natural gas — same fuel as gas CC
+    "gas_st": 0.057,  # natural gas — legacy gas steam boilers
+    "coal": 0.100,    # coal — implied by EPA eGRID 2022 coal steam rates
 }
 
 # All monetary values in this model are in constant 2026 real USD.
@@ -125,6 +141,7 @@ INFLATION_RATE = 0.022
 VOM: dict[str, float] = {
     "gas_cc": 2.0,   # NREL ATB 2024 — combined-cycle gas
     "gas_ct": 3.5,   # NREL ATB 2024 — combustion turbine gas
+    "gas_st": 4.0,   # NREL ATB 2024 — legacy gas steam (higher O&M than CC)
     "coal": 4.5,     # NREL ATB 2024 — coal steam
     "nuclear": 2.5,  # NREL ATB 2024 — nuclear
     "wind": 0.0,     # NREL ATB 2024 — onshore wind
@@ -162,6 +179,7 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
 EFORD: dict[str, float] = {
     "gas_cc": 0.05,   # NERC GADS — combined-cycle gas
     "gas_ct": 0.06,   # NERC GADS — combustion turbine gas
+    "gas_st": 0.07,   # NERC GADS — legacy gas steam (older, higher outage rate)
     "coal": 0.08,     # NERC GADS — coal steam
     "nuclear": 0.03,  # NERC GADS — nuclear
 }
