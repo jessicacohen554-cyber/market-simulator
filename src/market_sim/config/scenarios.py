@@ -146,11 +146,24 @@ class ScenarioConfig:
     cc_peak_hr_penalty: float = 1.15    # CC duct-firing increment
     ct_peak_hr_penalty: float = 1.10    # CT / gas-steam peaking increment
     coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
-    mc_tranche_hr_factor: float = 0.92  # Heat-rate factor for the
-    # must-run-if-committed tranche, the most efficient slice of a bin.
-    # Each bin is three stepped LP generators: the Committed tranche bids
-    # at hr × this factor (cheapest), Economic at the bin heat rate, and
-    # Peaking at hr × the duct-firing penalty above.
+
+    # Tier 3 (calibration) — Two-tranche HR multipliers for the committed
+    # vs economic dispatch range. Real units have convex input-output
+    # curves: less efficient at minimum load (the committed / must-run
+    # block) and more efficient in the upper dispatch range (the economic
+    # increment above Pmin). Each bin's base capacity therefore splits into
+    # a Committed tranche (part-load, Pmin block): HR × multiplier > 1.0,
+    # and an Economic tranche (incremental dispatch above Pmin): HR ×
+    # multiplier < 1.0. Source: GE/Siemens OEM IO curves; CEMS
+    # input-output curve analysis.
+    cc_committed_hr_mult: float = 1.23    # CC part-load penalty ~23%
+    cc_econ_hr_mult: float = 0.96         # CC incremental HR ~4% below avg
+    ct_committed_hr_mult: float = 1.28    # CT part-load penalty ~28%
+    ct_econ_hr_mult: float = 0.97         # CT incremental HR ~3% below avg
+    gas_st_committed_hr_mult: float = 1.32  # Gas steam part-load penalty ~32%
+    gas_st_econ_hr_mult: float = 0.97     # Gas steam incremental HR
+    coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
+    coal_econ_hr_mult: float = 0.97       # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
     cc_shoulder_maintenance_derate: float = 0.15  # multiplicative cut to
     # combined-cycle availability in the spring/autumn shoulder months
@@ -345,7 +358,14 @@ TIER_TAGS: dict[str, int] = {
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
-    "mc_tranche_hr_factor": 3,
+    "cc_committed_hr_mult": 3,
+    "cc_econ_hr_mult": 3,
+    "ct_committed_hr_mult": 3,
+    "ct_econ_hr_mult": 3,
+    "gas_st_committed_hr_mult": 3,
+    "gas_st_econ_hr_mult": 3,
+    "coal_committed_hr_mult": 3,
+    "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
     "cc_shoulder_maintenance_derate": 3,
     "renewable_cf_adjustment": 3,

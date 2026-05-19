@@ -102,9 +102,11 @@ def _commitment_params(
     (``min_run_hours`` / ``min_down_hours`` / ``startup_cost_per_mw``).
     CAMPD coal IS screened — it carries a 36-hour minimum run, so it
     rarely decommits, but an extended low-price spell can still shut it
-    down. Only the ``_mc`` tranche of a bin carries the min-run window;
-    the ``_econ`` and ``_peak`` tranches carry ``min_run_hours = 0`` and
-    are never screened. For a legacy generator the fuel's parameter
+    down. Only the ``_committed`` tranche of a bin carries the min-run
+    window; the ``_econ`` and ``_peak`` tranches carry ``min_run_hours = 0``
+    and are never screened directly — the ``_econ`` tranche instead shuts
+    down whenever its paired ``_committed`` tranche does (see
+    :func:`apply_commitment_with_coal_pin`). For a legacy generator the fuel's parameter
     table is keyed by ascending heat-rate cutoff; the first row whose
     cutoff exceeds ``heat_rate`` applies (legacy coal has no table entry,
     so it stays committed).
@@ -361,9 +363,14 @@ def apply_commitment_with_coal_pin(
 ) -> FleetArrays:
     """Return new ``FleetArrays`` with the commitment screen applied.
 
-    * Screened generators (all CAMPD bins — including coal — and legacy
-      gas CC/CT): availability is zeroed in their decommitted hours, so
-      the P2 solve re-optimizes them within the commitment mask.
+    * Screened generators (the ``_committed`` tranche of every CAMPD bin —
+      including coal — and legacy gas CC/CT): availability is zeroed in
+      their decommitted hours, so the P2 solve re-optimizes them within
+      the commitment mask.
+    * The ``_econ`` tranche of a CAMPD bin is the same physical unit as
+      that bin's ``_committed`` tranche, so its availability is zeroed in
+      every hour the ``_committed`` tranche is decommitted — the two
+      tranches start and stop together.
     * Legacy coal (``fuel_type == "coal"`` outside the CAMPD path): it is
       never screened, so its availability is pinned to reproduce the P1
       coal dispatch (availability = P1 dispatch / Pmax, with a tiny floor).
@@ -394,6 +401,25 @@ def apply_commitment_with_coal_pin(
             avail[g, :] = np.maximum(p1_frac, 1e-6)
         else:
             avail[g, ~committed[g]] = 0.0
+
+    # Couple each bin's econ tranche to its committed tranche: they are the
+    # same physical unit, so the econ tranche shuts down in every hour the
+    # committed tranche is decommitted. The commitment screen only ran on
+    # the committed tranche (the econ tranche carries min_run_hours = 0).
+    bin_tranches: dict[str, dict[str, int]] = {}
+    for g, gen in enumerate(generators):
+        if not gen.is_campd_bin:
+            continue
+        bin_id, _, suffix = gen.unit_id.rpartition("_")
+        if suffix in ("committed", "econ"):
+            bin_tranches.setdefault(bin_id, {})[suffix] = g
+
+    for pair in bin_tranches.values():
+        c_idx = pair.get("committed")
+        e_idx = pair.get("econ")
+        if c_idx is None or e_idx is None:
+            continue
+        avail[e_idx, ~committed[c_idx]] = 0.0
 
     return FleetArrays(
         pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),

@@ -1408,22 +1408,28 @@ def bins_to_fleet(
     * The Must-Run tranche (CHP steam) is removed from LP capacity —
       ``grid_cap = nameplate × (1 - MR%)``. Its generation is added back in
       post-processing (see ``results.emissions.compute_must_run_emissions``).
-    * The remaining capacity becomes three separate LP generators, each
-      with ``pmin = 0``, stepped by heat rate so a bin's bid curve rises
-      with output:
+    * The remaining capacity becomes three separate LP generators, stepped
+      by heat rate so a bin's bid curve traces a unit's convex
+      input-output curve:
 
-      - ``_mc`` — the Committed (must-run-if-committed) tranche, the most
-        efficient slice, heat rate ``hr × mc_tranche_hr_factor``. It carries
-        the bin's start cost and min-run window: starting this tranche is
-        starting the plant.
-      - ``_econ`` — the Economic tranche at the bin's average heat rate.
+      - ``_committed`` — the Committed tranche: the must-run block run at
+        part load. Its heat rate is ``hr × committed_hr_mult`` (above the
+        bin average — units are less efficient at minimum load) and it
+        carries ``pmin = pmax``, so committing the bin forces this block
+        on. It also carries the bin's start cost and min-run window:
+        starting this tranche is starting the plant.
+      - ``_econ`` — the Economic tranche: incremental dispatch above Pmin,
+        heat rate ``hr × econ_hr_mult`` (below the bin average — the upper
+        load range is the unit's most efficient). ``pmin = 0``.
       - ``_peak`` — the Peaking tranche, heat rate scaled by the duct-firing
-        penalty, so scarcity output bids highest.
+        penalty, so scarcity output bids highest. ``pmin = 0``.
 
-    No tranche carries a Pmin floor; the must-run-if-committed behavior
-    emerges from the ``_mc`` tranche being the cheapest, not from a forced
-    minimum. Economic and Peaking are incremental loading of a running
-    unit, so they carry neither a start cost nor a min-run window.
+    Only the Committed tranche carries a Pmin floor and the start cost;
+    the Committed and Economic tranches are the same physical unit, so the
+    P2 commitment screen starts and stops them together (see
+    :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
+    Economic and Peaking are incremental loading of a running unit, so
+    they carry neither a start cost nor a min-run window.
 
     Args:
         bins: The aggregated bin frame from :func:`load_campd_bins`.
@@ -1445,9 +1451,11 @@ def bins_to_fleet(
             continue
 
         denom = 100.0 - pct_mr
-        mc_cap = grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        committed_cap = (
+            grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        )
         peak_cap = grid_cap * float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
-        econ_cap = max(grid_cap - mc_cap - peak_cap, 0.0)
+        econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
 
         zone = str(b["ERCOT_Zone"])
         if zone == "Unknown" or zone not in valid_zones:
@@ -1473,19 +1481,35 @@ def bins_to_fleet(
         }.get(fuel, 1.10)
         startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
-        # Three stepped tranches: (suffix, capacity, heat rate, VOM
+        # Two-tranche HR split for the base capacity: the committed
+        # (part-load) block bids above the bin average, the economic
+        # increment bids below it.
+        committed_mult, econ_mult = {
+            "gas_cc": (config.cc_committed_hr_mult, config.cc_econ_hr_mult),
+            "gas_ct": (config.ct_committed_hr_mult, config.ct_econ_hr_mult),
+            "gas_st": (
+                config.gas_st_committed_hr_mult, config.gas_st_econ_hr_mult
+            ),
+            "coal": (config.coal_committed_hr_mult, config.coal_econ_hr_mult),
+        }.get(fuel, (1.0, 1.0))
+        committed_hr = hr * committed_mult
+        econ_hr = hr * econ_mult
+
+        # Three stepped tranches: (suffix, capacity, heat rate, Pmin, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
-        # tranche is screened and carries the start cost — Economic and
-        # Peaking are incremental output of an already-running plant.
+        # tranche is screened, carries the start cost and a ``pmin = pmax``
+        # must-run floor — Economic and Peaking are incremental output of
+        # an already-running plant.
         tranches = (
-            ("mc", mc_cap, hr * config.mc_tranche_hr_factor, 1.0,
+            ("committed", committed_cap, committed_hr, committed_cap, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
-            ("econ", econ_cap, hr, 1.0, 0, 0, 0.0),
-            ("peak", peak_cap, hr * peak_penalty, 1.5, 0, 0, 0.0),
+            ("econ", econ_cap, econ_hr, 0.0, 1.0, 0, 0, 0.0),
+            ("peak", peak_cap, hr * peak_penalty, 0.0, 1.5, 0, 0, 0.0),
         )
-        for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
-            tranches
-        ):
+        for (
+            suffix, cap, tr_hr, tr_pmin, vom_mult, min_run, min_down,
+            tr_startup,
+        ) in tranches:
             if cap <= 0.5:
                 continue
             fleet.append(
@@ -1496,7 +1520,7 @@ def bins_to_fleet(
                     fuel_type=fuel,
                     efficiency_bin=group,
                     pmax_mw=cap,
-                    pmin_mw=0.0,
+                    pmin_mw=min(tr_pmin, cap),
                     heat_rate=tr_hr,
                     vom=get_vom(fuel) * vom_mult,
                     emission_rate_co2=get_emission_rate(fuel, tr_hr),
@@ -1508,9 +1532,10 @@ def bins_to_fleet(
                     min_run_hours=min_run,
                     min_down_hours=min_down,
                     startup_cost_per_mw=tr_startup,
-                    must_run_pct=pct_mr if suffix == "mc" else 0.0,
+                    must_run_pct=pct_mr if suffix == "committed" else 0.0,
                     bin_nameplate_mw=(
-                        float(b["capacity_mw"]) if suffix == "mc" else 0.0
+                        float(b["capacity_mw"])
+                        if suffix == "committed" else 0.0
                     ),
                     coal_supply=coal_supply,
                 )
