@@ -1380,23 +1380,34 @@ def bins_to_fleet(
     zone_names: list[str],
     config: ScenarioConfig,
 ) -> tuple[list[Generator], FleetArrays]:
-    """Convert CAMPD bins into LP generators, splitting each into base + peak.
+    """Convert CAMPD bins into LP generators — three stepped tranches per bin.
 
     For every bin:
 
     * The Must-Run tranche (CHP steam) is removed from LP capacity —
       ``grid_cap = nameplate × (1 - MR%)``. Its generation is added back in
       post-processing (see ``results.emissions.compute_must_run_emissions``).
-    * The Peaking tranche becomes a separate ``_peak`` generator with
-      ``pmin = 0`` and a heat rate scaled by the duct-firing penalty, so
-      scarcity output bids above the economic tranche.
-    * The remaining (Committed + Economic) capacity is the ``_base``
-      generator, with ``pmin`` set from the Committed tranche.
+    * The remaining capacity becomes three separate LP generators, each
+      with ``pmin = 0``, stepped by heat rate so a bin's bid curve rises
+      with output:
+
+      - ``_mc`` — the Committed (must-run-if-committed) tranche, the most
+        efficient slice, heat rate ``hr × mc_tranche_hr_factor``. It carries
+        the bin's start cost and min-run window: starting this tranche is
+        starting the plant.
+      - ``_econ`` — the Economic tranche at the bin's average heat rate.
+      - ``_peak`` — the Peaking tranche, heat rate scaled by the duct-firing
+        penalty, so scarcity output bids highest.
+
+    No tranche carries a Pmin floor; the must-run-if-committed behavior
+    emerges from the ``_mc`` tranche being the cheapest, not from a forced
+    minimum. Economic and Peaking are incremental loading of a running
+    unit, so they carry neither a start cost nor a min-run window.
 
     Args:
         bins: The aggregated bin frame from :func:`load_campd_bins`.
         zone_names: The ISO's ordered zone names.
-        config: Scenario configuration (peaking penalties, unknown-zone
+        config: Scenario configuration (heat-rate factors, unknown-zone
             default, horizon length).
 
     Returns:
@@ -1413,11 +1424,9 @@ def bins_to_fleet(
             continue
 
         denom = 100.0 - pct_mr
-        peak_frac = float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
-        mc_frac = float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
-        base_cap = grid_cap * (1.0 - peak_frac)
-        peak_cap = grid_cap * peak_frac
-        pmin = grid_cap * mc_frac
+        mc_cap = grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        peak_cap = grid_cap * float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
+        econ_cap = max(grid_cap - mc_cap - peak_cap, 0.0)
 
         zone = str(b["ERCOT_Zone"])
         if zone == "Unknown" or zone not in valid_zones:
@@ -1428,63 +1437,53 @@ def bins_to_fleet(
         hr = float(b["hr_weighted"])
         label = str(b["Bin_Label"])
         bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
+        peak_penalty = {
+            "gas_cc": config.cc_peak_hr_penalty,
+            "gas_ct": config.ct_peak_hr_penalty,
+            "gas_st": config.ct_peak_hr_penalty,
+            "coal": config.coal_peak_hr_penalty,
+        }.get(fuel, 1.10)
+        startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
-        fleet.append(
-            Generator(
-                unit_id=f"{bin_id}_base",
-                name=f"{label} base",
-                zone=zone,
-                fuel_type=fuel,
-                efficiency_bin=group,
-                pmax_mw=base_cap,
-                pmin_mw=min(pmin, base_cap),
-                heat_rate=hr,
-                vom=get_vom(fuel),
-                emission_rate_co2=get_emission_rate(fuel, hr),
-                nox_rate=get_nox_rate(fuel),
-                eford=get_eford(fuel),
-                is_campd_bin=True,
-                plant_group=group,
-                bin_label=label,
-                min_run_hours=int(b["min_run"]),
-                min_down_hours=int(b["min_down"]),
-                startup_cost_per_mw=BIN_STARTUP_COST_PER_MW.get(group, 0.0),
-                must_run_pct=pct_mr,
-                bin_nameplate_mw=float(b["capacity_mw"]),
-            )
+        # Three stepped tranches: (suffix, capacity, heat rate, VOM
+        # multiplier, min-run, min-down, start cost). Only the Committed
+        # tranche is screened and carries the start cost — Economic and
+        # Peaking are incremental output of an already-running plant.
+        tranches = (
+            ("mc", mc_cap, hr * config.mc_tranche_hr_factor, 1.0,
+             int(b["min_run"]), int(b["min_down"]), startup),
+            ("econ", econ_cap, hr, 1.0, 0, 0, 0.0),
+            ("peak", peak_cap, hr * peak_penalty, 1.5, 0, 0, 0.0),
         )
-
-        if peak_cap > 0.5:
-            penalty = {
-                "gas_cc": config.cc_peak_hr_penalty,
-                "gas_ct": config.ct_peak_hr_penalty,
-                "gas_st": config.ct_peak_hr_penalty,
-                "coal": config.coal_peak_hr_penalty,
-            }.get(fuel, 1.10)
-            peak_hr = hr * penalty
+        for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
+            tranches
+        ):
+            if cap <= 0.5:
+                continue
             fleet.append(
                 Generator(
-                    unit_id=f"{bin_id}_peak",
-                    name=f"{label} peak",
+                    unit_id=f"{bin_id}_{suffix}",
+                    name=f"{label} {suffix}",
                     zone=zone,
                     fuel_type=fuel,
                     efficiency_bin=group,
-                    pmax_mw=peak_cap,
+                    pmax_mw=cap,
                     pmin_mw=0.0,
-                    heat_rate=peak_hr,
-                    vom=get_vom(fuel) * 1.5,
-                    emission_rate_co2=get_emission_rate(fuel, peak_hr),
+                    heat_rate=tr_hr,
+                    vom=get_vom(fuel) * vom_mult,
+                    emission_rate_co2=get_emission_rate(fuel, tr_hr),
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
                     is_campd_bin=True,
                     plant_group=group,
                     bin_label=label,
-                    # Peak generators carry pmin = 0 and dispatch purely on
-                    # economics; min_run_hours = 0 keeps them out of the
-                    # commitment screen (only the base generator is screened).
-                    min_run_hours=0,
-                    min_down_hours=0,
-                    startup_cost_per_mw=0.0,
+                    min_run_hours=min_run,
+                    min_down_hours=min_down,
+                    startup_cost_per_mw=tr_startup,
+                    must_run_pct=pct_mr if suffix == "mc" else 0.0,
+                    bin_nameplate_mw=(
+                        float(b["capacity_mw"]) if suffix == "mc" else 0.0
+                    ),
                 )
             )
 
