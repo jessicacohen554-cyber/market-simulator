@@ -146,7 +146,10 @@ def _henry_hub_actual(reference: dict, year: int) -> float:
     return _HENRY_HUB_FALLBACK[year]
 
 
-def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
+def _calibration_config(
+    year: int, iso: str, hours: int, gas_price: float,
+    coal_passthrough: float | None = None,
+):
     """Build the ScenarioConfig for one calibration year.
 
     The calibration configuration fixes the structural and policy levers to
@@ -187,6 +190,10 @@ def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
             "year %d falls back to the '%s' gas-price trajectory",
             year, config.gas_price_path,
         )
+    if coal_passthrough is not None:
+        config = config.with_overrides(
+            coal_prb_contract_passthrough=coal_passthrough
+        )
     return config
 
 
@@ -225,6 +232,7 @@ def run_year(
     hours: int,
     gas_price: float,
     ttc_overrides: dict[str, float | None],
+    coal_passthrough: float | None = None,
 ) -> tuple[object, FleetContext]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -245,7 +253,9 @@ def run_year(
         A tuple ``(result, context)`` of the dispatch result and the fleet
         context describing the dispatched fleet.
     """
-    config = _calibration_config(year, iso, hours, gas_price)
+    config = _calibration_config(
+        year, iso, hours, gas_price, coal_passthrough
+    )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
@@ -281,7 +291,14 @@ def run_year(
             if g.fuel_type not in _AGGREGATABLE_FUELS
         ]
         fleet = non_thermal + campd_fleet
-        fuel_fracs = [1.0] * len(fleet)
+        # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
+        # under take-or-pay coal contracts, CHP host steam obligations or
+        # ERCOT RUC. apply_coal_tranches discounts coal must-run; the
+        # gas/steam must-run fuel-cost discount is applied below.
+        fuel_fracs = [
+            0.0 if g.unit_id.endswith("_mustrun") else 1.0
+            for g in fleet
+        ]
     else:
         fleet_base = aggregate_fleet(
             load_fleet_from_csv(iso, iso_config),
@@ -404,7 +421,7 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     print(f"{'=' * 64}")
 
     model_twh = _generation_twh(result, context)
-    # The benchmark is EIA-923 by-fuel net generation for the run year —
+    # The benchmark is EIA-923 by-fuel net generation for the run year --
     # unlike the eGRID plant snapshot, its totals sum to the balancing
     # authority's actual net generation. Compared only for a full 8760-hour
     # run; a sub-annual horizon (--hours) is a smoke test, not a backcast.
@@ -415,8 +432,23 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     bench_twh = year_ref.get("generation_twh", {}) if full_year else {}
     if not full_year:
         print(
-            f"\n  NOTE: {result.dispatch.shape[1]}-hour run — EIA-923 "
+            f"\n  NOTE: {result.dispatch.shape[1]}-hour run -- EIA-923 "
             "benchmark comparison suppressed (full 8760h required)."
+        )
+    # The EIA-923 monthly file for the current year is preliminary until
+    # the annual revision (typically Sep of the following year): it
+    # under-reports renewable generation by ~30 TWh because small / new
+    # wind and solar plants are slow to submit Form 923. Flag that here
+    # so the "+13.6% total" gap is read as a benchmark gap, not a model
+    # error. The EIA-930 hourly extract is the more complete reference
+    # for the current year (see the calibration_reference.json
+    # ``eia930_total_twh`` block).
+    if full_year and iso == "ERCOT" and year >= 2025:
+        print(
+            "\n  NOTE: ERCOT 2025 EIA-923 monthly file is preliminary "
+            "(released Feb 2026). It under-reports renewable generation "
+            "by ~30 TWh vs EIA-930 hourly metered output; expect "
+            "+10-15% model-vs-EIA-923 gaps until the annual revision."
         )
 
     fuels = sorted(set(model_twh) | set(bench_twh))
@@ -547,6 +579,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--ttc-pn", type=float, default=None,
         help="Override the Panhandle<->North transfer capability (MW).",
     )
+    parser.add_argument(
+        "--coal-passthrough", type=float, default=None,
+        help="Override coal_prb_contract_passthrough (PRB take-or-pay "
+             "fuel-cost fraction); 1.0 disables the discount.",
+    )
     return parser
 
 
@@ -572,7 +609,8 @@ def main(argv: list[str] | None = None) -> None:
             iso, year, args.hours, gas_price,
         )
         result, context = run_year(
-            year, iso, args.hours, gas_price, ttc_overrides
+            year, iso, args.hours, gas_price, ttc_overrides,
+            args.coal_passthrough,
         )
         _report_year(year, iso, result, context, reference)
 

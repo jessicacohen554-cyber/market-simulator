@@ -217,12 +217,13 @@ class ScenarioConfig:
 
     # Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal
     # delivered fuel cost is a per-year trajectory built in fuel.py
-    # (COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR). PRB plants hold
-    # take-or-pay rail/coal contracts: much of the delivered tonnage is
-    # sunk, so the marginal dispatch bid is the delivered cost scaled by
-    # this passthrough fraction.
-    coal_prb_contract_passthrough: float = 0.72  # take-or-pay sunk-cost
-    #                                              discount on the PRB bid
+    # (COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR). PRB plants
+    # have rail/coal take-or-pay contracts; that sunk-cost share now flows
+    # through the per-bin _mustrun tranche (which bids at VOM only), so
+    # the default delivered-cost passthrough on the remaining tranches is
+    # 1.0. Override below 1.0 only to study a flat PRB delivered-cost
+    # discount on top of the must-run staircase.
+    coal_prb_contract_passthrough: float = 1.00
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
