@@ -82,6 +82,39 @@ _EIA860_OPERABLE_FILES: dict[str, str] = {
     "solar": "eia860_solar_operable.parquet",
 }
 
+# Proposed-plant file with planned commercial-operation dates. Used to
+# include future-year wind/solar additions that are not yet in the
+# operable schedule (e.g. 2025 plants not present in the Sep-2024
+# operable snapshot). Filtered to high-confidence statuses below.
+_EIA860_PROPOSED_FILE: str = "eia860_generator_proposed.parquet"
+
+# EIA-860 status codes treated as high-confidence (likely to come online
+# by the planned effective date). ``U`` / ``V`` are under construction
+# (<50% / >50% complete), ``TS`` is test-mode pre-commercial, ``P`` is
+# planned-with-permits. ``L`` (regulatory approvals only) and ``T``
+# (regulatory pending) are excluded as paper-only proposals.
+_PROPOSED_HIGH_CONFIDENCE: frozenset[str] = frozenset({"U", "V", "TS", "P"})
+
+# Year the operable EIA-860 snapshot was last refreshed; proposed plants
+# with an ``Effective Year`` strictly greater than this are pulled in as
+# augmentations to the operable schedule.
+_EIA860_OPERABLE_VINTAGE: int = 2024
+
+_TECHNOLOGY_TO_FUEL: dict[str, str] = {
+    "Solar Photovoltaic": "solar",
+    "Onshore Wind Turbine": "wind",
+}
+
+# Home-state filter for proposed-plant augmentation. The lat/lon zone
+# rules in :mod:`market_sim.data.zone_assignment` will happily assign
+# any point in the country to one of the ISO's zones; the state
+# allowlist is what actually bounds the proposed-plant pool to the
+# ISO's geographic footprint. Only ISOs listed here support the
+# augmentation; others fall back to the operable schedule only.
+_ISO_HOME_STATES: dict[str, frozenset[str]] = {
+    "ERCOT": frozenset({"TX"}),
+}
+
 _MONTHS_PER_YEAR: int = 12
 
 # ERCOT 2023 uncurtailed renewable potential (High Sustained Limit). When
@@ -189,9 +222,95 @@ def _eia860_monthly_capacity(
         else:
             monthly[z_idx, :] += cap
 
+    # Augment with high-confidence EIA-860 proposed plants when the
+    # calibration year is past the operable snapshot vintage (Sep 2024).
+    # These are 2025-and-later commercial-operation dates not yet
+    # reflected in the operable file. We use plant lat/lon (rather than
+    # the eGRID ORIS lookup, which doesn't cover newly-assigned plant
+    # codes) to assign each plant to a model zone.
+    if cal_year is not None and cal_year > _EIA860_OPERABLE_VINTAGE:
+        _add_proposed_capacity(
+            monthly, iso, fuel, zone_to_idx, cal_year, data_dir
+        )
+
     if monthly.sum() <= 0.0:
         return None
     return monthly
+
+
+def _add_proposed_capacity(
+    monthly: np.ndarray,
+    iso: str,
+    fuel: str,
+    zone_to_idx: dict[str, int],
+    cal_year: int,
+    data_dir: Path,
+) -> None:
+    """Add EIA-860 proposed wind/solar plants to the monthly capacity tally.
+
+    Each proposed plant (status ``U``/``V``/``TS``/``P``, the high-
+    confidence subset) located in the ISO's home state(s), with an
+    ``Effective Year`` strictly after the operable snapshot vintage and
+    at-or-before ``cal_year``, contributes its nameplate capacity from
+    its ``Effective Month`` onward (or all twelve months when the
+    effective year is earlier than ``cal_year``). Plants are placed in
+    a model zone from their lat/lon in ``eia860_plant.parquet`` via
+    :func:`market_sim.data.zone_assignment.assign_zone_by_coords`.
+
+    Only ISOs whose home state(s) are known here are augmented. State
+    filtering is what bounds the proposed-plant pool to the ISO's
+    geographic footprint; without it the lat/lon zone rule would
+    incorrectly drag in projects from other regions of the country.
+    """
+    iso_states = _ISO_HOME_STATES.get(iso)
+    if iso_states is None:
+        return
+
+    proposed_path = Path(data_dir) / _EIA860_PROPOSED_FILE
+    if not proposed_path.exists():
+        return
+    from market_sim.data.zone_assignment import assign_zone_by_coords
+
+    df = pd.read_parquet(proposed_path)
+    df = df[df["State"].isin(iso_states)]
+    df = df[df["Technology"].map(_TECHNOLOGY_TO_FUEL) == fuel]
+    status = df["Status"].astype(str).str.strip().str.upper()
+    df = df[status.isin(_PROPOSED_HIGH_CONFIDENCE)]
+    eff_year = pd.to_numeric(df["Effective Year"], errors="coerce")
+    df = df[(eff_year > _EIA860_OPERABLE_VINTAGE) & (eff_year <= cal_year)]
+    if df.empty:
+        return
+
+    plant_path = Path(data_dir) / "eia860_plant.parquet"
+    if not plant_path.exists():
+        return
+    plants = pd.read_parquet(plant_path)[
+        ["Plant Code", "Latitude", "Longitude"]
+    ].drop_duplicates("Plant Code")
+    df = df.merge(plants, on="Plant Code", how="left")
+
+    for _, row in df.iterrows():
+        cap = _as_float(row["Nameplate Capacity (MW)"])
+        if cap is None or cap <= 0.0:
+            continue
+        lat = _as_float(row["Latitude"])
+        lon = _as_float(row["Longitude"])
+        if lat is None or lon is None:
+            continue
+        zone = assign_zone_by_coords(lat, lon, "ERCOT")
+        z_idx = zone_to_idx.get(zone)
+        if z_idx is None:
+            continue
+        # Effective Year already filtered to (vintage, cal_year]. For an
+        # earlier year, the plant is online all 12 months of cal_year;
+        # for ``cal_year`` itself, online from Effective Month onward.
+        e_year = _as_int(row["Effective Year"])
+        if e_year is not None and e_year < cal_year:
+            monthly[z_idx, :] += cap
+            continue
+        month = _as_int(row["Effective Month"]) or 1
+        start = min(max(month, 1), _MONTHS_PER_YEAR)
+        monthly[z_idx, start - 1:] += cap
 
 
 def _eia860_zone_shares(
