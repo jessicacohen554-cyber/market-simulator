@@ -271,23 +271,19 @@ def test_coal_supply_pricing_base_year():
         fuel_prices, gens, config, COAL_DIESEL_INDEX_BASE_YEAR
     )
     assert np.allclose(fuel_prices[0], config.coal_price_lignite)
-    assert np.allclose(
-        fuel_prices[1],
-        (config.coal_price_prb_mine + config.coal_price_prb_rail)
-        * config.coal_prb_contract_passthrough,
-    )
+    assert np.allclose(fuel_prices[1], config.coal_price_prb)
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
 
 
 def test_coal_supply_pricing_diesel_indexed():
-    """Higher 2023 diesel lifts both prices; lignite swings more than PRB."""
+    """Lignite scales with the diesel index; PRB is held flat."""
     config = ScenarioConfig()
     gens = [_coal_gen("lignite"), _coal_gen("prb")]
     fp_2023, fp_2024 = np.zeros((2, 4)), np.zeros((2, 4))
     apply_coal_supply_pricing(fp_2023, gens, config, 2023)
     apply_coal_supply_pricing(fp_2024, gens, config, 2024)
+    # 2023 diesel was higher, so lignite is pricier in 2023 than 2024.
     assert fp_2023[0, 0] > fp_2024[0, 0]
-    assert fp_2023[1, 0] > fp_2024[1, 0]
-    # The PRB mine-gate cost is diesel-invariant, so PRB swings less.
-    assert fp_2023[0, 0] / fp_2024[0, 0] > fp_2023[1, 0] / fp_2024[1, 0]
+    # PRB is the measured delivered cost, not diesel-indexed — flat.
+    assert fp_2023[1, 0] == fp_2024[1, 0] == config.coal_price_prb
