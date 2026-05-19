@@ -44,10 +44,13 @@ from market_sim.data.renewables import (  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("build_calibration_reference")
 
-# Calibration years are the historical years with both EIA-930 hourly
-# profiles and an EIA-860 fleet snapshot. ERCOT is the first ISO calibrated;
-# the structure generalizes to other ISOs as their topology is validated.
-CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024)
+# Calibration years are the historical years with EIA-930 hourly profiles.
+# 2021-2024 each have their own EIA-860 fleet snapshot; 2025 reuses the
+# latest available EIA-860 vintage (2024), which carries no 2025 builds, so
+# its renewable capacity equals the 2024 year-end totals held flat. ERCOT is
+# the first ISO calibrated; the structure generalizes to other ISOs as their
+# topology is validated.
+CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
 CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT",)
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -58,6 +61,7 @@ HENRY_HUB_ACTUAL: dict[int, float] = {
     2022: 6.45,
     2023: 2.54,
     2024: 2.19,
+    2025: 3.52,
 }
 
 # eGRID benchmark workbook (EPA Emissions & Generation Resource Integrated
