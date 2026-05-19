@@ -146,11 +146,24 @@ class ScenarioConfig:
     cc_peak_hr_penalty: float = 1.15    # CC duct-firing increment
     ct_peak_hr_penalty: float = 1.10    # CT / gas-steam peaking increment
     coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
-    mc_tranche_hr_factor: float = 0.92  # Heat-rate factor for the
-    # must-run-if-committed tranche, the most efficient slice of a bin.
-    # Each bin is three stepped LP generators: the Committed tranche bids
-    # at hr × this factor (cheapest), Economic at the bin heat rate, and
-    # Peaking at hr × the duct-firing penalty above.
+
+    # Tier 3 (calibration) — Two-tranche HR multipliers for the committed
+    # vs economic dispatch range. Real units have convex input-output
+    # curves: less efficient at part load (the committed tranche) and
+    # more efficient in the upper load range (the economic tranche).
+    # Each bin's base capacity therefore splits into a Committed tranche
+    # (part-load range): HR × multiplier > 1.0, and an Economic tranche
+    # (upper load range): HR × multiplier < 1.0. Neither tranche carries
+    # a Pmin floor. Source: GE/Siemens OEM IO curves; CEMS input-output
+    # curve analysis.
+    cc_committed_hr_mult: float = 1.23    # CC part-load penalty ~23%
+    cc_econ_hr_mult: float = 0.96         # CC incremental HR ~4% below avg
+    ct_committed_hr_mult: float = 1.28    # CT part-load penalty ~28%
+    ct_econ_hr_mult: float = 0.97         # CT incremental HR ~3% below avg
+    gas_st_committed_hr_mult: float = 1.32  # Gas steam part-load penalty ~32%
+    gas_st_econ_hr_mult: float = 0.97     # Gas steam incremental HR
+    coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
+    coal_econ_hr_mult: float = 0.97       # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
     cc_shoulder_maintenance_derate: float = 0.15  # multiplicative cut to
     # combined-cycle availability in the spring/autumn shoulder months
@@ -207,15 +220,14 @@ class ScenarioConfig:
     coal_tranche_3_frac: float = 0.45        # Economic dispatch
     coal_tranche_3_fuel_passthrough: float = 1.00  # Full fuel cost
 
-    # Tier 3 (calibration) — plant-specific coal fuel pricing. CAMPD coal
-    # bins are priced by fuel supply (see fleet.COAL_PLANT_SUPPLY): mine-mouth
-    # lignite at its marginal extraction cost, PRB at the delivered (mine-gate
-    # + rail) cost. All three are base-year values ($/MMBtu) anchored to
-    # COAL_DIESEL_INDEX_BASE_YEAR; the diesel index scales the diesel-driven
-    # components year by year (see fuel.apply_coal_supply_pricing).
-    coal_price_lignite: float = 0.75       # mine-mouth lignite extraction cost
-    coal_price_prb_mine: float = 0.85      # PRB mine-gate cost (~$15/short ton)
-    coal_price_prb_rail: float = 1.25      # PRB rail freight, diesel-indexed
+    # Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal
+    # delivered fuel cost is a per-year trajectory built in fuel.py
+    # (COAL_PRICE_LIGNITE_BY_YEAR / COAL_PRICE_PRB_BY_YEAR). PRB plants hold
+    # take-or-pay rail/coal contracts: much of the delivered tonnage is
+    # sunk, so the marginal dispatch bid is the delivered cost scaled by
+    # this passthrough fraction.
+    coal_prb_contract_passthrough: float = 0.72  # take-or-pay sunk-cost
+    #                                              discount on the PRB bid
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
@@ -345,7 +357,14 @@ TIER_TAGS: dict[str, int] = {
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
-    "mc_tranche_hr_factor": 3,
+    "cc_committed_hr_mult": 3,
+    "cc_econ_hr_mult": 3,
+    "ct_committed_hr_mult": 3,
+    "ct_econ_hr_mult": 3,
+    "gas_st_committed_hr_mult": 3,
+    "gas_st_econ_hr_mult": 3,
+    "coal_committed_hr_mult": 3,
+    "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
     "cc_shoulder_maintenance_derate": 3,
     "renewable_cf_adjustment": 3,
@@ -358,9 +377,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_tranche_2_fuel_passthrough": 3,
     "coal_tranche_3_frac": 3,
     "coal_tranche_3_fuel_passthrough": 3,
-    "coal_price_lignite": 3,
-    "coal_price_prb_mine": 3,
-    "coal_price_prb_rail": 3,
+    "coal_prb_contract_passthrough": 3,
     "gas_price_override": 3,
 }
 
