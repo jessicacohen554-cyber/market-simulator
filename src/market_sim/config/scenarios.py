@@ -171,18 +171,6 @@ class ScenarioConfig:
     # maintenance concentrates between the winter and summer demand peaks.
     # 0.0 disables.
 
-    # Tier 3 (calibration) — ancillary-services / reliability dispatch
-    # adjustments. The dispatch LP is energy-only; these two knobs proxy
-    # the effect of ERCOT's ancillary-services and reliability commitment.
-    cc_reserve_headroom: float = 0.08  # fraction of gas-CC available
-    # capacity held off the energy market for reserves — CC dispatch is
-    # capped at (1 - this) x available capacity, so combined-cycle units
-    # back down rather than run flat out. 0.0 disables.
-    ct_st_ruc_floor: float = 0.05  # minimum-dispatch floor for gas CT and
-    # gas-steam units, as a fraction of available capacity — a proxy for
-    # ERCOT's reliability-unit-commitment (RUC) of those units for local
-    # reliability. Peaking tranches are exempt. 0.0 disables.
-
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
                                        # When True, a price-based commitment
@@ -384,8 +372,6 @@ TIER_TAGS: dict[str, int] = {
     "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
     "cc_shoulder_maintenance_derate": 3,
-    "cc_reserve_headroom": 3,
-    "ct_st_ruc_floor": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
