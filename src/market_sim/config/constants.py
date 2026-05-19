@@ -349,25 +349,25 @@ COAL_PRICE_BASE: dict[str, float] = {
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
 
-# Coal-steam availability by plant age (years), from NERC GADS coal-steam
-# statistics. Three components, all ADDITIVE (summed, not compounded):
-#  * POF   — planned outage factor; concentrated in the shoulder months.
-#  * WEFOR — weighted equivalent forced outage rate; a flat effective derate.
-#  * DERATE — weather + performance-decline capacity loss; a flat derate.
-# Each table is ``(age_below, value)`` sorted ascending; the first row whose
-# ``age_below`` exceeds the unit's age applies. Total unavailability for a
-# coal unit is POF (shoulder months only) + WEFOR + DERATE.
-_INF_AGE: float = float("inf")
-COAL_POF_BY_AGE: list[tuple[float, float]] = [
-    (35.0, 0.07), (55.0, 0.08), (_INF_AGE, 0.075),
-]
-COAL_WEFOR_BY_AGE: list[tuple[float, float]] = [
-    (20.0, 0.09), (35.0, 0.11), (45.0, 0.13), (55.0, 0.16), (_INF_AGE, 0.215),
-]
-COAL_DERATE_BY_AGE: list[tuple[float, float]] = [
-    (20.0, 0.02), (35.0, 0.025), (45.0, 0.035), (55.0, 0.045),
-    (_INF_AGE, 0.065),
-]
+# Thermal-fleet availability model by plant-group category. Three additive
+# components (summed, not compounded):
+#  * POF   — planned outage factor; applied only in the shoulder months.
+#  * WEFOR — weighted equivalent forced outage rate; flat year-round, and
+#            escalates linearly with plant age past an onset year.
+#  * DERATE — weather + performance-decline capacity loss; flat year-round,
+#            and likewise escalates with age past an onset year.
+# A unit's availability is 1 - WEFOR(age) - DERATE(age) - POF(shoulder only),
+# where WEFOR(age) = base + max(0, age - onset) * rate (and likewise DERATE).
+# Each entry is (POF, WEFOR_base, WEFOR_rate, WEFOR_onset, DERATE_base,
+# DERATE_rate, DERATE_onset). Source: NERC GADS by unit type and age.
+THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
+    "CC_CHP":     (0.05, 0.04, 0.002, 20, 0.02, 0.001, 25),
+    "CC_REGULAR": (0.05, 0.05, 0.002, 20, 0.02, 0.001, 25),
+    "CT_CHP":     (0.03, 0.05, 0.002, 20, 0.03, 0.001, 20),
+    "CT_PEAKER":  (0.03, 0.07, 0.003, 20, 0.05, 0.002, 20),
+    "GAS_STEAM":  (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
+    "COAL":       (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+}
 
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
