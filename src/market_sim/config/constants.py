@@ -349,6 +349,26 @@ COAL_PRICE_BASE: dict[str, float] = {
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
 
+# Coal-steam availability by plant age (years), from NERC GADS coal-steam
+# statistics. Three components, all ADDITIVE (summed, not compounded):
+#  * POF   — planned outage factor; concentrated in the shoulder months.
+#  * WEFOR — weighted equivalent forced outage rate; a flat effective derate.
+#  * DERATE — weather + performance-decline capacity loss; a flat derate.
+# Each table is ``(age_below, value)`` sorted ascending; the first row whose
+# ``age_below`` exceeds the unit's age applies. Total unavailability for a
+# coal unit is POF (shoulder months only) + WEFOR + DERATE.
+_INF_AGE: float = float("inf")
+COAL_POF_BY_AGE: list[tuple[float, float]] = [
+    (35.0, 0.07), (55.0, 0.08), (_INF_AGE, 0.075),
+]
+COAL_WEFOR_BY_AGE: list[tuple[float, float]] = [
+    (20.0, 0.09), (35.0, 0.11), (45.0, 0.13), (55.0, 0.16), (_INF_AGE, 0.215),
+]
+COAL_DERATE_BY_AGE: list[tuple[float, float]] = [
+    (20.0, 0.02), (35.0, 0.025), (45.0, 0.035), (55.0, 0.045),
+    (_INF_AGE, 0.065),
+]
+
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
