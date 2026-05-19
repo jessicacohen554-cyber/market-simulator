@@ -1206,7 +1206,8 @@ BIN_GROUP_TO_FUEL: dict[str, str] = {
 
 # Startup cost ($/MW per start) by CAMPD plant group, used to amortize
 # cycling cost into the monthly bid markup and to set the commitment IRR
-# hurdle. Coal is never commitment-screened, so it carries no startup cost.
+# hurdle. Coal carries the highest cost: a coal start is a slow, fuel- and
+# wear-intensive boiler warm-up, so its 36-hour minimum run rarely pays off.
 # Source: NREL/SR-5500-55433 (Kumar et al. 2012), consistent with the legacy
 # CC_STARTUP_PARAMS / CT_STARTUP_PARAMS midpoints.
 BIN_STARTUP_COST_PER_MW: dict[str, float] = {
@@ -1215,7 +1216,7 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
     "CT_CHP": 20.0,
     "CT_PEAKER": 20.0,
     "GAS_STEAM": 35.0,
-    "COAL": 0.0,
+    "COAL": 100.0,
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
