@@ -14,7 +14,8 @@ This module supports the three-solve dispatch calibration architecture:
   is ``P1_price - base_MC``. A run must clear an IRR hurdle on its startup
   cost to justify a physical start. Margin earned in hours when P1 storage is
   net-charging the zone is discounted, so a cycling unit is not committed
-  purely to serve speculative battery-charging load.
+  purely to serve speculative battery-charging load; with the in-merit floor
+  active, a deep charging trough also breaks the run outright.
 
 * :func:`apply_commitment_with_coal_pin` zeros the availability of every
   screened generator in its decommitted hours. CAMPD coal is screened
@@ -270,7 +271,12 @@ def compute_commitment(
        *base* MC, not bid MC: a generator earns the clearing price but its
        actual cost is fuel + VOM. Using bid MC would double-count the startup
        markup baked into clearing prices and over-decommit.
-    2. Find runs of positive-margin hours.
+    2. Find runs of in-merit hours. An hour is in merit when its margin is
+       positive *and*, when ``config.commitment_storage_in_merit_floor`` is
+       above zero, its storage-charge weight clears that floor. A deep
+       battery-charging trough therefore breaks a run in two, so the pieces
+       face step 3's min-run filter on their own — a cycling unit is not
+       carried through the night purely to charge batteries.
     3. Drop runs shorter than ``min_run_hours``.
     4. Drop runs whose total *storage-weighted* margin is below
        ``startup_per_mw × (1 + IRR)``. The weight discounts margin earned in
@@ -289,8 +295,9 @@ def compute_commitment(
         base_mc: Base marginal cost (fuel + VOM, no markup), ``(n_gen, T)``.
         generators: The dispatch fleet, aligned with ``base_mc`` rows.
         fleet_arrays: The vectorized fleet, for ``zone_idx`` and heat rate.
-        config: Scenario configuration supplying ``commitment_irr_hurdle``
-            and ``commitment_storage_weight``.
+        config: Scenario configuration supplying ``commitment_irr_hurdle``,
+            ``commitment_storage_weight`` and
+            ``commitment_storage_in_merit_floor``.
         storage_charge: P1 storage charging power, ``(n_storage, T)``.
         storage_discharge: P1 storage discharging power, ``(n_storage, T)``.
         storage_zone_idx: Zone index of each storage unit, ``(n_storage,)``.
@@ -302,6 +309,7 @@ def compute_commitment(
     n_gen, T = base_mc.shape
     n_zones = p1_prices.shape[0]
     irr = config.commitment_irr_hurdle
+    in_merit_floor = config.commitment_storage_in_merit_floor
     committed = np.ones((n_gen, T), dtype=bool)
 
     storage_weight = _storage_commitment_weight(
@@ -321,8 +329,15 @@ def compute_commitment(
         weighted_margin = margin * storage_weight[zone, :]
         hurdle = params["startup_per_mw"] * (1.0 + irr)
 
+        # An hour is in merit when its margin is positive; with the floor
+        # active, a deep storage-charging trough (weight below the floor)
+        # also drops out, breaking the run there.
+        in_merit = margin > 0.0
+        if in_merit_floor > 0.0:
+            in_merit = in_merit & (storage_weight[zone, :] >= in_merit_floor)
+
         accepted: list[tuple[int, int]] = []
-        for start, end in find_runs(margin > 0.0):
+        for start, end in find_runs(in_merit):
             if (end - start) < params["min_run_hours"]:
                 continue
             if float(weighted_margin[start:end].sum()) < hurdle:
