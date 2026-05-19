@@ -488,12 +488,19 @@ def build_variable_bounds(
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
     ttc: np.ndarray | None = None,
+    cc_reserve_headroom: float = 0.0,
+    ct_st_ruc_floor: float = 0.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
     Bounds, by variable block:
 
-    * Thermal generation: ``pmin <= P <= pmax * availability``.
+    * Thermal generation: ``pmin <= P <= pmax * availability``, with two
+      ancillary-services adjustments — gas-CC capacity is capped at
+      ``(1 - cc_reserve_headroom)`` of its ceiling (headroom held off the
+      energy market for reserves), and non-peaking gas-CT / gas-steam
+      units carry a ``ct_st_ruc_floor`` minimum-dispatch floor (a proxy
+      for ERCOT reliability-unit commitment).
     * Wind: ``0 <= W <= wind_cf * wind_cap``.
     * Solar: ``0 <= S <= solar_cf * solar_cap``.
     * Storage: ``0 <= Chg, Dis <= power_cap``; ``0 <= SOC <= energy_cap``.
@@ -512,6 +519,12 @@ def build_variable_bounds(
         storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``.
         storage_energy_cap: SOC energy cap, shape ``(n_storage,)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``.
+        cc_reserve_headroom: Fraction of gas-CC available capacity held off
+            the energy market for reserves; CC dispatch is capped at
+            ``(1 - cc_reserve_headroom)`` of its ceiling. ``0.0`` disables.
+        ct_st_ruc_floor: Minimum-dispatch floor for non-peaking gas-CT and
+            gas-steam units, as a fraction of available capacity. ``0.0``
+            disables.
 
     Returns:
         Tuple ``(col_lower, col_upper)`` of length ``layout.total_columns``.
@@ -522,11 +535,32 @@ def build_variable_bounds(
     col_lower = np.zeros((T, vph), dtype=float)
     col_upper = np.zeros((T, vph), dtype=float)
 
-    # Thermal generation: pmin <= P <= pmax * availability.
-    col_lower[:, layout._p_off : layout._w_off] = fleet.pmin[np.newaxis, :]
-    col_upper[:, layout._p_off : layout._w_off] = (
-        fleet.pmax[:, np.newaxis] * fleet.availability
-    ).T
+    # Thermal generation: pmin <= P <= pmax * availability, with the
+    # ancillary-services adjustments. cap is the (n_gen, T) capacity
+    # ceiling; gas CC is derated for held reserve headroom, and non-peaking
+    # gas CT / gas steam carry a RUC minimum-dispatch floor.
+    fuel_idx = np.asarray(fleet.fuel_type_idx)
+    is_cc = fuel_idx == FUEL_TYPE_MAP["gas_cc"]
+    is_peak = np.array(
+        [str(u).endswith("_peak") for u in fleet.unit_ids], dtype=bool
+    )
+    is_ct_st = np.isin(
+        fuel_idx, [FUEL_TYPE_MAP["gas_ct"], FUEL_TYPE_MAP["gas_st"]]
+    ) & ~is_peak
+
+    cap = fleet.pmax[:, np.newaxis] * fleet.availability  # (n_gen, T)
+
+    ceiling = cap.copy()
+    ceiling[is_cc] *= 1.0 - cc_reserve_headroom
+    col_upper[:, layout._p_off : layout._w_off] = ceiling.T
+
+    floor = np.broadcast_to(
+        fleet.pmin[:, np.newaxis], cap.shape
+    ).astype(float, copy=True)
+    floor[is_ct_st] = np.maximum(
+        floor[is_ct_st], ct_st_ruc_floor * cap[is_ct_st]
+    )
+    col_lower[:, layout._p_off : layout._w_off] = floor.T
 
     # Wind: 0 <= W <= wind_cf * wind_cap.
     col_upper[:, layout._w_off : layout._s_off] = (
@@ -640,6 +674,8 @@ def solve_dispatch(
     solar_mc: np.ndarray | float = 0.0,
     storage_discharge_eac: float = 0.0,
     rps_target: float | None = None,
+    cc_reserve_headroom: float = 0.0,
+    ct_st_ruc_floor: float = 0.0,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -679,6 +715,10 @@ def solve_dispatch(
         rps_target: Required clean-energy share. When not ``None`` and
             positive, an annual RPS constraint is enforced and its dual is
             returned as ``DispatchResult.rps_shadow_price``.
+        cc_reserve_headroom: Gas-CC reserve-headroom derate; see
+            :func:`build_variable_bounds`. ``0.0`` disables.
+        ct_st_ruc_floor: Gas-CT / gas-steam RUC minimum-dispatch floor;
+            see :func:`build_variable_bounds`. ``0.0`` disables.
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -729,6 +769,8 @@ def solve_dispatch(
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
         ttc=ttc,
+        cc_reserve_headroom=cc_reserve_headroom,
+        ct_st_ruc_floor=ct_st_ruc_floor,
     )
 
     # build_constraints returns CSR -- the row-wise layout HiGHS addRows
