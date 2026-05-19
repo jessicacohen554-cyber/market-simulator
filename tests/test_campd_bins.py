@@ -103,50 +103,68 @@ class TestBinsToFleet(unittest.TestCase):
         )
         self.assertAlmostEqual(grid, nameplate * 0.40, places=3)
 
-    def test_cc_regular_mc_tranche_is_half_grid_cap(self):
-        # CC_REGULAR: MR 0, MC 50 -> the _mc tranche is 50% of grid
-        # capacity, and no tranche carries a Pmin floor.
+    def test_cc_regular_committed_tranche_is_half_grid_cap(self):
+        # CC_REGULAR: MR 0, MC 50 -> the _committed tranche is 50% of grid
+        # capacity and carries a pmin = pmax must-run floor.
         b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         grid_cap = sum(g.pmax_mw for g in fleet)
-        mc = next(g for g in fleet if g.unit_id.endswith("_mc"))
-        self.assertAlmostEqual(mc.pmax_mw, grid_cap * 0.50, places=6)
-        self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
+        committed = next(
+            g for g in fleet if g.unit_id.endswith("_committed")
+        )
+        self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.50, places=6)
+        self.assertEqual(committed.pmin_mw, committed.pmax_mw)
+        for g in fleet:
+            if not g.unit_id.endswith("_committed"):
+                self.assertEqual(g.pmin_mw, 0.0)
 
-    def test_coal_mc_tranche_is_40pct_grid_cap(self):
-        # CAMPD coal MC% is 40: the _mc tranche is 40% of grid capacity.
+    def test_coal_committed_tranche_is_40pct_grid_cap(self):
+        # CAMPD coal MC% is 40: the _committed tranche is 40% of grid cap.
         b = _synthetic_bin(
             Plant_Group="COAL", pct_mc=40, pct_econ=45, pct_peak=15,
         )
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         grid_cap = sum(g.pmax_mw for g in fleet)
-        mc = next(g for g in fleet if g.unit_id.endswith("_mc"))
-        self.assertAlmostEqual(mc.pmax_mw, grid_cap * 0.40, places=6)
-        self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
+        committed = next(
+            g for g in fleet if g.unit_id.endswith("_committed")
+        )
+        self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.40, places=6)
+        self.assertEqual(committed.pmin_mw, committed.pmax_mw)
 
     def test_each_bin_splits_into_three_stepped_tranches(self):
-        mc = [g for g in self.fleet if g.unit_id.endswith("_mc")]
+        committed = [
+            g for g in self.fleet if g.unit_id.endswith("_committed")
+        ]
         econ = [g for g in self.fleet if g.unit_id.endswith("_econ")]
         peak = [g for g in self.fleet if g.unit_id.endswith("_peak")]
-        self.assertGreater(len(mc), 100)
-        self.assertLessEqual(len(mc), len(self.bins))
+        self.assertGreater(len(committed), 100)
+        self.assertLessEqual(len(committed), len(self.bins))
         self.assertGreater(len(econ), 0)
         self.assertGreater(len(peak), 0)
-        # No tranche carries a Pmin floor.
-        self.assertTrue(all(g.pmin_mw == 0.0 for g in self.fleet))
+        # Only the committed tranche carries a Pmin floor (pmin = pmax).
+        for g in committed:
+            self.assertEqual(g.pmin_mw, g.pmax_mw)
+        for g in econ + peak:
+            self.assertEqual(g.pmin_mw, 0.0)
 
-    def test_tranche_heat_rates_are_stepped(self):
+    def test_committed_and_econ_tranches_split_the_heat_rate(self):
         b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
-        mc = next(g for g in fleet if g.unit_id.endswith("_mc"))
+        committed = next(
+            g for g in fleet if g.unit_id.endswith("_committed")
+        )
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
         peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
-        # Bid curve rises with output: MC cheapest, ECON mid, PEAK highest.
-        self.assertLess(mc.heat_rate, econ.heat_rate)
-        self.assertLess(econ.heat_rate, peak.heat_rate)
-        self.assertAlmostEqual(econ.heat_rate, 6.6, places=6)
+        # The econ increment bids below the bin average; the committed
+        # part-load block bids above it.
+        self.assertLess(econ.heat_rate, committed.heat_rate)
         self.assertAlmostEqual(
-            mc.heat_rate, 6.6 * self.config.mc_tranche_hr_factor, places=6
+            committed.heat_rate,
+            6.6 * self.config.cc_committed_hr_mult,
+            places=6,
+        )
+        self.assertAlmostEqual(
+            econ.heat_rate, 6.6 * self.config.cc_econ_hr_mult, places=6
         )
         self.assertAlmostEqual(
             peak.heat_rate, 6.6 * self.config.cc_peak_hr_penalty, places=6
@@ -193,33 +211,35 @@ class TestCommitmentParams(unittest.TestCase):
         self.fleet, _ = bins_to_fleet(
             _synthetic_bin(min_run=12, min_down=6), ZONE_NAMES, self.config
         )
-        self.mc = next(g for g in self.fleet if g.unit_id.endswith("_mc"))
+        self.committed = next(
+            g for g in self.fleet if g.unit_id.endswith("_committed")
+        )
         self.econ = next(g for g in self.fleet if g.unit_id.endswith("_econ"))
         self.peak = next(g for g in self.fleet if g.unit_id.endswith("_peak"))
 
-    def test_mc_tranche_uses_bin_commitment_params(self):
-        params = _commitment_params(self.mc, self.mc.heat_rate)
+    def test_committed_tranche_uses_bin_commitment_params(self):
+        params = _commitment_params(self.committed, self.committed.heat_rate)
         self.assertIsNotNone(params)
         self.assertEqual(params["min_run_hours"], 12)
         self.assertEqual(params["min_down_hours"], 6)
 
     def test_econ_and_peak_tranches_not_screened(self):
-        # Only the MC tranche carries a min run; ECON and PEAK are
+        # Only the committed tranche carries a min run; ECON and PEAK are
         # incremental output and stay out of the commitment screen.
         self.assertIsNone(_commitment_params(self.econ, self.econ.heat_rate))
         self.assertIsNone(_commitment_params(self.peak, self.peak.heat_rate))
 
-    def test_coal_mc_tranche_is_commitment_screened(self):
-        # CAMPD coal participates in the P2 commitment screen: the _mc
-        # tranche carries the bin's 36h minimum run and a startup cost,
-        # while ECON and PEAK stay out of the screen.
+    def test_coal_committed_tranche_is_commitment_screened(self):
+        # CAMPD coal participates in the P2 commitment screen: the
+        # _committed tranche carries the bin's 36h minimum run and a
+        # startup cost, while ECON and PEAK stay out of the screen.
         bins = load_campd_bins(BINS_CSV)
         coal = bins[bins["Plant_Group"] == "COAL"]
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
-        mc = [g for g in fleet if g.unit_id.endswith("_mc")]
-        others = [g for g in fleet if not g.unit_id.endswith("_mc")]
-        self.assertGreater(len(mc), 0)
-        for g in mc:
+        committed = [g for g in fleet if g.unit_id.endswith("_committed")]
+        others = [g for g in fleet if not g.unit_id.endswith("_committed")]
+        self.assertGreater(len(committed), 0)
+        for g in committed:
             params = _commitment_params(g, g.heat_rate)
             self.assertIsNotNone(params)
             self.assertEqual(params["min_run_hours"], 36)
@@ -227,8 +247,10 @@ class TestCommitmentParams(unittest.TestCase):
         for g in others:
             self.assertIsNone(_commitment_params(g, g.heat_rate))
 
-    def test_startup_cost_only_on_mc_tranche(self):
-        self.assertGreater(_startup_cost(self.mc, self.mc.heat_rate), 0.0)
+    def test_startup_cost_only_on_committed_tranche(self):
+        self.assertGreater(
+            _startup_cost(self.committed, self.committed.heat_rate), 0.0
+        )
         self.assertEqual(_startup_cost(self.econ, self.econ.heat_rate), 0.0)
         self.assertEqual(_startup_cost(self.peak, self.peak.heat_rate), 0.0)
 
@@ -238,7 +260,7 @@ class TestCommitmentParams(unittest.TestCase):
         bins = load_campd_bins(BINS_CSV)
         coal = bins[bins["Plant_Group"] == "COAL"].head(1)
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
-        base = next(g for g in fleet if g.unit_id.endswith("_mc"))
+        base = next(g for g in fleet if g.unit_id.endswith("_committed"))
         arrays = generators_to_fleet_arrays([base], ZONE_NAMES, hours=8)
         committed = np.ones((1, 8), dtype=bool)
         committed[0, 2:5] = False  # a 3-hour decommit window
