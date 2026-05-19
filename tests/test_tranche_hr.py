@@ -1,9 +1,10 @@
 """Tests for the committed/economic two-tranche heat-rate split.
 
 A CAMPD bin's base capacity is split into a Committed tranche (the
-part-load must-run block, heat rate above the bin average) and an
-Economic tranche (the incremental dispatch range, heat rate below the
-bin average). See :func:`market_sim.data.fleet.bins_to_fleet`.
+part-load range, heat rate above the bin average) and an Economic
+tranche (the upper load range, heat rate below the bin average). No
+tranche carries a Pmin floor. See
+:func:`market_sim.data.fleet.bins_to_fleet`.
 """
 
 import unittest
@@ -80,13 +81,13 @@ class TestWeightedAverageHeatRate(unittest.TestCase):
 
 
 class TestTrancheMeritOrder(unittest.TestCase):
-    """Cheaper econ capacity is dispatched ahead of pricier econ capacity."""
+    """The LP fills tranches strictly by heat-rate merit order."""
 
-    def test_cheap_econ_dispatched_before_expensive_econ(self):
-        # Bin A is a low-HR bin, bin B a high-HR bin. Both bins' committed
-        # tranches are must-run (pmin = pmax) so they run regardless of
-        # merit order; the dispatchable comparison is between the econ
-        # tranches, and bin A's cheaper econ tranche must fill first.
+    def test_cheap_econ_dispatched_before_expensive_committed(self):
+        # Bin A is a low-HR bin, bin B a high-HR bin. With no Pmin floor
+        # every tranche is freely dispatchable, so the LP fills strictly
+        # by merit order: bin A's cheap econ tranche before bin B's pricey
+        # committed tranche.
         config = ScenarioConfig()
         bins = _bins(
             _bin_row(Bin_Number=1, Bin_Label="A", hr_weighted=6.0),
@@ -99,25 +100,18 @@ class TestTrancheMeritOrder(unittest.TestCase):
         fuel_prices = np.full((1, T), 3.5)
         mc = assemble_mc(arrays, fuel_prices, carbon_price=0.0)
 
-        committed_idx = [
-            i for i, u in enumerate(arrays.unit_ids)
-            if u.endswith("_committed")
-        ]
-        econ_idx = [
-            i for i, u in enumerate(arrays.unit_ids) if u.endswith("_econ")
-        ]
-        # The cheaper econ tranche (bin A) has the lower heat rate.
-        a_econ, b_econ = sorted(econ_idx, key=lambda i: arrays.heat_rate[i])
+        # Bin A's econ tranche is the globally cheapest (lowest HR); bin
+        # B's committed tranche is the globally priciest (highest HR).
+        a_econ = int(np.argmin(arrays.heat_rate))
+        b_committed = int(np.argmax(arrays.heat_rate))
+        self.assertTrue(arrays.unit_ids[a_econ].endswith("_econ"))
+        self.assertTrue(arrays.unit_ids[b_committed].endswith("_committed"))
 
-        # Demand: every committed tranche at its availability ceiling, plus
-        # a slice that only the cheapest econ tranche need serve.
-        forced = sum(
-            arrays.pmax[i] * arrays.availability[i, 0]
-            for i in committed_idx
-        )
+        # Demand small enough that the pricey committed tranche is not
+        # needed -- only cheaper tranches clear it.
         zone = ZONE_NAMES.index("Houston")
         demand = np.zeros((len(ZONE_NAMES), T))
-        demand[zone, :] = forced + 150.0
+        demand[zone, :] = 800.0
 
         result = solve_dispatch(
             arrays, demand, mc=mc, T=T,
@@ -127,13 +121,12 @@ class TestTrancheMeritOrder(unittest.TestCase):
             solar_cap=np.zeros(len(ZONE_NAMES)),
         )
 
-        # Committed tranches are must-run: dispatched in every hour.
-        for i in committed_idx:
-            self.assertTrue(np.all(result.dispatch[i] > 0.0))
-        # Merit order: bin A's cheap econ tranche serves the incremental
-        # load; bin B's pricier econ tranche stays idle.
+        # The cheap econ tranche serves load; the pricey committed tranche
+        # stays idle -- A_econ is dispatched before B_committed.
         self.assertTrue(np.all(result.dispatch[a_econ] > 1.0))
-        self.assertTrue(np.allclose(result.dispatch[b_econ], 0.0, atol=1e-6))
+        self.assertTrue(
+            np.allclose(result.dispatch[b_committed], 0.0, atol=1e-6)
+        )
 
 
 class TestCommitmentCoupling(unittest.TestCase):
@@ -218,7 +211,7 @@ class TestCoalPaths(unittest.TestCase):
         self.assertAlmostEqual(
             econ.heat_rate, 9.5 * config.coal_econ_hr_mult, places=6
         )
-        self.assertEqual(committed.pmin_mw, committed.pmax_mw)
+        self.assertEqual(committed.pmin_mw, 0.0)
         self.assertEqual(econ.pmin_mw, 0.0)
 
     def test_legacy_coal_tranches_unchanged(self):

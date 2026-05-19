@@ -1412,21 +1412,22 @@ def bins_to_fleet(
       by heat rate so a bin's bid curve traces a unit's convex
       input-output curve:
 
-      - ``_committed`` — the Committed tranche: the must-run block run at
-        part load. Its heat rate is ``hr × committed_hr_mult`` (above the
-        bin average — units are less efficient at minimum load) and it
-        carries ``pmin = pmax``, so committing the bin forces this block
-        on. It also carries the bin's start cost and min-run window:
-        starting this tranche is starting the plant.
-      - ``_econ`` — the Economic tranche: incremental dispatch above Pmin,
-        heat rate ``hr × econ_hr_mult`` (below the bin average — the upper
-        load range is the unit's most efficient). ``pmin = 0``.
+      - ``_committed`` — the Committed tranche: the unit's part-load
+        range. Its heat rate is ``hr × committed_hr_mult`` (above the bin
+        average — units are less efficient at minimum load), so it bids
+        higher than the economic increment. It carries the bin's start
+        cost and min-run window: starting this tranche is starting the
+        plant.
+      - ``_econ`` — the Economic tranche: incremental dispatch above the
+        part-load range, heat rate ``hr × econ_hr_mult`` (below the bin
+        average — the upper load range is the unit's most efficient).
       - ``_peak`` — the Peaking tranche, heat rate scaled by the duct-firing
-        penalty, so scarcity output bids highest. ``pmin = 0``.
+        penalty, so scarcity output bids highest.
 
-    Only the Committed tranche carries a Pmin floor and the start cost;
-    the Committed and Economic tranches are the same physical unit, so the
-    P2 commitment screen starts and stops them together (see
+    No tranche carries a Pmin floor. Only the Committed tranche carries
+    the start cost and min-run window; the Committed and Economic
+    tranches are the same physical unit, so the P2 commitment screen
+    starts and stops them together (see
     :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
     Economic and Peaking are incremental loading of a running unit, so
     they carry neither a start cost nor a min-run window.
@@ -1495,21 +1496,20 @@ def bins_to_fleet(
         committed_hr = hr * committed_mult
         econ_hr = hr * econ_mult
 
-        # Three stepped tranches: (suffix, capacity, heat rate, Pmin, VOM
+        # Three stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
-        # tranche is screened, carries the start cost and a ``pmin = pmax``
-        # must-run floor — Economic and Peaking are incremental output of
-        # an already-running plant.
+        # tranche is screened and carries the start cost — Economic and
+        # Peaking are incremental output of an already-running plant. No
+        # tranche carries a Pmin floor.
         tranches = (
-            ("committed", committed_cap, committed_hr, committed_cap, 1.0,
+            ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
-            ("econ", econ_cap, econ_hr, 0.0, 1.0, 0, 0, 0.0),
-            ("peak", peak_cap, hr * peak_penalty, 0.0, 1.5, 0, 0, 0.0),
+            ("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0),
+            ("peak", peak_cap, hr * peak_penalty, 1.5, 0, 0, 0.0),
         )
-        for (
-            suffix, cap, tr_hr, tr_pmin, vom_mult, min_run, min_down,
-            tr_startup,
-        ) in tranches:
+        for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
+            tranches
+        ):
             if cap <= 0.5:
                 continue
             fleet.append(
@@ -1520,7 +1520,7 @@ def bins_to_fleet(
                     fuel_type=fuel,
                     efficiency_bin=group,
                     pmax_mw=cap,
-                    pmin_mw=min(tr_pmin, cap),
+                    pmin_mw=0.0,
                     heat_rate=tr_hr,
                     vom=get_vom(fuel) * vom_mult,
                     emission_rate_co2=get_emission_rate(fuel, tr_hr),
