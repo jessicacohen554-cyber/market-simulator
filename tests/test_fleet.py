@@ -177,14 +177,29 @@ class TestCCShoulderMaintenanceDerate(unittest.TestCase):
         fa = generators_to_fleet_arrays([self._cc()], ["North"], config=config)
         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.05)
 
-    def test_non_cc_not_derated(self):
+    def test_coal_derated_in_shoulder_months(self):
         coal = Generator(
             unit_id="c1", name="Coal", zone="North", fuel_type="coal",
             pmax_mw=500.0, heat_rate=10.0, eford=0.08,
         )
-        config = ScenarioConfig(cc_shoulder_maintenance_derate=0.15)
+        config = ScenarioConfig(coal_shoulder_maintenance_derate=0.24)
         fa = generators_to_fleet_arrays([coal], ["North"], config=config)
-        np.testing.assert_allclose(fa.availability[0], 1.0 - 0.08)
+        base = 1.0 - 0.08
+        # April (shoulder) cut by 24%; July (peak) at the EFORD level.
+        self.assertAlmostEqual(fa.availability[0, self._APRIL_H], base * 0.76)
+        self.assertAlmostEqual(fa.availability[0, self._JULY_H], base)
+
+    def test_gas_ct_not_derated(self):
+        ct = Generator(
+            unit_id="ct1", name="CT", zone="North", fuel_type="gas_ct",
+            pmax_mw=100.0, heat_rate=11.0, eford=0.06,
+        )
+        config = ScenarioConfig(
+            cc_shoulder_maintenance_derate=0.15,
+            coal_shoulder_maintenance_derate=0.24,
+        )
+        fa = generators_to_fleet_arrays([ct], ["North"], config=config)
+        np.testing.assert_allclose(fa.availability[0], 1.0 - 0.06)
 
 
 class TestAssembleMC(unittest.TestCase):
