@@ -3,7 +3,6 @@
 import numpy as np
 
 from market_sim.config.constants import (
-    COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
@@ -12,6 +11,8 @@ from market_sim.config.constants import (
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, Generator, generators_to_fleet_arrays
 from market_sim.data.fuel import (
+    COAL_PRICE_LIGNITE_BY_YEAR,
+    COAL_PRICE_PRB_BY_YEAR,
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
     resolve_fuel_prices,
@@ -262,31 +263,48 @@ def _coal_gen(supply: str) -> Generator:
     )
 
 
-def test_coal_supply_pricing_base_year():
-    """At the diesel base year, lignite and PRB get their base prices."""
+def test_coal_supply_pricing_uses_year_trajectory():
+    """Lignite and PRB take their per-year delivered cost from the curve."""
     config = ScenarioConfig()
     gens = [_coal_gen("lignite"), _coal_gen("prb"), _coal_gen("")]
     fuel_prices = np.full((3, 24), 2.0)
-    apply_coal_supply_pricing(
-        fuel_prices, gens, config, COAL_DIESEL_INDEX_BASE_YEAR
-    )
-    assert np.allclose(fuel_prices[0], config.coal_price_lignite)
+    apply_coal_supply_pricing(fuel_prices, gens, config, 2024)
+    assert np.allclose(fuel_prices[0], COAL_PRICE_LIGNITE_BY_YEAR[2024])
+    # PRB is the year's delivered cost, take-or-pay discounted.
     assert np.allclose(
         fuel_prices[1],
-        config.coal_price_prb_mine + config.coal_price_prb_rail,
+        COAL_PRICE_PRB_BY_YEAR[2024] * config.coal_prb_contract_passthrough,
     )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
 
 
-def test_coal_supply_pricing_diesel_indexed():
-    """Higher 2023 diesel lifts both prices; lignite swings more than PRB."""
+def test_lignite_flat_then_escalates():
+    """Lignite is $1.45 flat 2023-2025, then escalates at inflation."""
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2023] == 1.45
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2025] == 1.45
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2026] > 1.45
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2050] > COAL_PRICE_LIGNITE_BY_YEAR[2030]
+
+
+def test_prb_forward_commodity_decline_after_2030():
+    """PRB forward: the curve rises to 2030, then commodity decline bends it."""
+    # Calibration anchors.
+    assert COAL_PRICE_PRB_BY_YEAR[2023] == 2.15
+    assert COAL_PRICE_PRB_BY_YEAR[2024] == 2.00
+    # Commodity holds flat through 2030, so the curve climbs on rail inflation.
+    assert COAL_PRICE_PRB_BY_YEAR[2030] > COAL_PRICE_PRB_BY_YEAR[2026]
+    # From 2031 the commodity component declines 1.5%/yr — the year-over-year
+    # rise slows versus the pre-2031 (rail-inflation-only) step.
+    pre = COAL_PRICE_PRB_BY_YEAR[2030] - COAL_PRICE_PRB_BY_YEAR[2029]
+    post = COAL_PRICE_PRB_BY_YEAR[2032] - COAL_PRICE_PRB_BY_YEAR[2031]
+    assert post < pre
+
+
+def test_coal_supply_pricing_year_outside_trajectory():
+    """A run year before the coal trajectory leaves the generic price."""
     config = ScenarioConfig()
-    gens = [_coal_gen("lignite"), _coal_gen("prb")]
-    fp_2023, fp_2024 = np.zeros((2, 4)), np.zeros((2, 4))
-    apply_coal_supply_pricing(fp_2023, gens, config, 2023)
-    apply_coal_supply_pricing(fp_2024, gens, config, 2024)
-    assert fp_2023[0, 0] > fp_2024[0, 0]
-    assert fp_2023[1, 0] > fp_2024[1, 0]
-    # The PRB mine-gate cost is diesel-invariant, so PRB swings less.
-    assert fp_2023[0, 0] / fp_2024[0, 0] > fp_2023[1, 0] / fp_2024[1, 0]
+    gens = [_coal_gen("prb")]
+    fp = np.full((1, 4), 2.0)
+    apply_coal_supply_pricing(fp, gens, config, 2010)
+    assert np.allclose(fp[0], 2.0)
