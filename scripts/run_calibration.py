@@ -307,7 +307,11 @@ def run_year(
     # coal to its P1 dispatch, and re-solve.
     if config.commitment_enabled:
         committed = compute_commitment(
-            result.prices, mc_base, fleet, fleet_arrays, config
+            result.prices, mc_base, fleet, fleet_arrays, config,
+            storage_charge=result.storage_charge,
+            storage_discharge=result.storage_discharge,
+            storage_zone_idx=storage.zone_idx,
+            demand=demand,
         )
         fleet_arrays_p2 = apply_commitment_with_coal_pin(
             fleet_arrays, committed, result.dispatch, fleet
