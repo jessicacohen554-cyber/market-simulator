@@ -93,8 +93,10 @@ class TestBinsToFleet(unittest.TestCase):
             cls.bins, ZONE_NAMES, cls.config
         )
 
-    def test_mr_derate_removes_must_run_capacity(self):
-        # CC_CHP must-run is 60%, so grid capacity is 40% of nameplate.
+    def test_chp_mr_derate_removes_must_run_capacity(self):
+        # CC_CHP must-run is 60% (host steam obligation, served off-grid),
+        # so its LP grid capacity is 40% of nameplate and no ``_mustrun``
+        # tranche appears in the LP.
         cc_chp = self.bins[self.bins["Plant_Group"] == "CC_CHP"]
         nameplate = cc_chp["capacity_mw"].sum()
         grid = sum(
@@ -102,6 +104,28 @@ class TestBinsToFleet(unittest.TestCase):
             if g.plant_group == "CC_CHP"
         )
         self.assertAlmostEqual(grid, nameplate * 0.40, places=3)
+        mustrun = [
+            g for g in self.fleet
+            if g.plant_group == "CC_CHP" and g.unit_id.endswith("_mustrun")
+        ]
+        self.assertEqual(mustrun, [])
+
+    def test_coal_mustrun_stays_in_lp(self):
+        # Coal must-run (mine-mouth take-or-pay, cycling avoidance, ERCOT
+        # RUC) is an LP tranche, so the bin's total LP capacity equals
+        # its full nameplate.
+        coal = self.bins[self.bins["Plant_Group"] == "COAL"]
+        nameplate = coal["capacity_mw"].sum()
+        lp_total = sum(
+            g.pmax_mw for g in self.fleet
+            if g.plant_group == "COAL"
+        )
+        self.assertAlmostEqual(lp_total, nameplate, places=3)
+        mustrun = [
+            g for g in self.fleet
+            if g.plant_group == "COAL" and g.unit_id.endswith("_mustrun")
+        ]
+        self.assertGreater(len(mustrun), 0)
 
     def test_cc_regular_committed_tranche_is_half_grid_cap(self):
         # CC_REGULAR: MR 0, MC 50 -> the _committed tranche is 50% of grid
@@ -134,35 +158,37 @@ class TestBinsToFleet(unittest.TestCase):
         ]
         econ = [g for g in self.fleet if g.unit_id.endswith("_econ")]
         peak = [g for g in self.fleet if g.unit_id.endswith("_peak")]
-        self.assertGreater(len(committed), 100)
+        self.assertGreater(len(committed), 80)
         self.assertLessEqual(len(committed), len(self.bins))
         self.assertGreater(len(econ), 0)
         self.assertGreater(len(peak), 0)
         # No tranche carries a Pmin floor.
         self.assertTrue(all(g.pmin_mw == 0.0 for g in self.fleet))
 
-    def test_committed_and_econ_tranches_split_the_heat_rate(self):
-        b = _synthetic_bin()
+    def test_per_tranche_heat_rates_come_from_csv(self):
+        # bins_to_fleet reads ``hr_mc``, ``hr_econ`` and ``hr_peak`` from
+        # the aggregated bins frame (capacity-weighted CSV HR columns),
+        # falling back to ``hr_weighted`` if a column is blank.
+        b = _synthetic_bin(hr_mc=7.5, hr_econ=6.4, hr_peak=10.2)
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         committed = next(
             g for g in fleet if g.unit_id.endswith("_committed")
         )
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
         peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
-        # The econ increment bids below the bin average; the committed
-        # part-load block bids above it.
-        self.assertLess(econ.heat_rate, committed.heat_rate)
-        self.assertAlmostEqual(
-            committed.heat_rate,
-            6.6 * self.config.cc_committed_hr_mult,
-            places=6,
+        self.assertAlmostEqual(committed.heat_rate, 7.5, places=6)
+        self.assertAlmostEqual(econ.heat_rate, 6.4, places=6)
+        self.assertAlmostEqual(peak.heat_rate, 10.2, places=6)
+
+    def test_tranche_hr_falls_back_to_bin_average(self):
+        # When a CSV HR_<tranche> column is blank for every plant in a
+        # bin, the tranche inherits the bin's weighted-average HR.
+        b = _synthetic_bin()  # no hr_mc/hr_econ/hr_peak overrides
+        fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
+        committed = next(
+            g for g in fleet if g.unit_id.endswith("_committed")
         )
-        self.assertAlmostEqual(
-            econ.heat_rate, 6.6 * self.config.cc_econ_hr_mult, places=6
-        )
-        self.assertAlmostEqual(
-            peak.heat_rate, 6.6 * self.config.cc_peak_hr_penalty, places=6
-        )
+        self.assertAlmostEqual(committed.heat_rate, 6.6, places=6)
 
     def test_unknown_zone_defaults(self):
         b = _synthetic_bin(ERCOT_Zone="Unknown")
@@ -182,7 +208,7 @@ class TestBinsToFleet(unittest.TestCase):
         self.assertTrue(all(g.coal_supply == "" for g in gas))
 
     def test_gas_steam_maps_to_gas_st(self):
-        gs = [g for g in self.fleet if g.plant_group == "GAS_STEAM"]
+        gs = [g for g in self.fleet if g.plant_group in ("ST_GAS", "ST_CHP")]
         self.assertGreater(len(gs), 0)
         for g in gs:
             self.assertEqual(g.fuel_type, "gas_st")
@@ -272,13 +298,16 @@ class TestMustRunEmissions(unittest.TestCase):
         bins = load_campd_bins(BINS_CSV)
         mr = compute_must_run_emissions(bins, year=2026, must_run_cf=0.85)
         self.assertFalse(mr.empty)
-        # Only CHP bins (MR% > 0) appear.
+        # Only non-coal CHP bins (MR% > 0) appear -- coal must-run is in
+        # the LP, so post-processing excludes it.
         self.assertTrue((mr["pct_mr"] > 0).all())
+        self.assertTrue((mr["fuel"] != "coal").all())
         self.assertTrue((mr["mr_gen_mwh"] > 0).all())
         self.assertTrue((mr["mr_co2_tons"] > 0).all())
-        # Must-run MW is the must-run share of nameplate.
-        expected = bins.loc[bins["pct_mr"] > 0, "capacity_mw"] \
-            * bins.loc[bins["pct_mr"] > 0, "pct_mr"] / 100.0
+        # Must-run MW is the must-run share of nameplate, over non-coal
+        # bins.
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        expected = chp["capacity_mw"] * chp["pct_mr"] / 100.0
         self.assertAlmostEqual(
             mr["mr_mw"].sum(), expected.sum(), places=3
         )

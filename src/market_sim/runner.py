@@ -274,7 +274,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # split, so take-or-pay tranching applies only to the legacy fleet.
         if campd_bins is not None:
             dispatch_fleet = fleet + wecc_generators
-            fuel_fracs = [1.0] * len(dispatch_fleet)
+            # Must-run tranches bid at VOM + carbon + NOx only — the fuel
+            # is sunk under take-or-pay coal contracts, CHP host steam
+            # obligations or ERCOT RUC. apply_coal_tranches subtracts the
+            # full fuel term for any generator with fuel_frac < 1. (Note
+            # the function name still says "coal" but it gates on
+            # fuel_type == "coal" only; non-coal must-run discounting is
+            # handled via assemble_mc using fuel_fracs directly.)
+            fuel_fracs = [
+                0.0 if g.unit_id.endswith("_mustrun") else 1.0
+                for g in dispatch_fleet
+            ]
         else:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
                 fleet + wecc_generators, config
@@ -398,16 +408,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 year, time.perf_counter() - year_start,
             )
 
-        # CHP must-run post-processing: the must-run (steam) tranche was
-        # removed from the LP, so add its generation and emissions back for
-        # asset-level emissions trajectories.
+        # CHP must-run post-processing: non-coal must-run capacity is
+        # removed from the LP (the CHP units serve host industrial steam,
+        # not the grid), so add its generation and emissions back here
+        # for asset-level emissions trajectories.
         if campd_bins is not None:
             mr = compute_must_run_emissions(
                 campd_bins, year, config.must_run_cf
             )
             if not mr.empty:
                 logger.info(
-                    "year %d: CHP must-run post-processing — %d bins, "
+                    "year %d: CHP must-run post-processing -- %d bins, "
                     "%.0f GWh, %.0f kt CO2 (asset-level, outside the LP)",
                     year, len(mr), mr["mr_gen_mwh"].sum() / 1000.0,
                     mr["mr_co2_tons"].sum() / 1000.0,
