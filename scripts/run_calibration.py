@@ -104,6 +104,7 @@ _HENRY_HUB_FALLBACK: dict[int, float] = {
     2022: 6.45,
     2023: 2.54,
     2024: 2.19,
+    2025: 3.52,
 }
 
 _MWH_PER_TWH: float = 1.0e6
