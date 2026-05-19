@@ -165,11 +165,6 @@ class ScenarioConfig:
     coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
     coal_econ_hr_mult: float = 0.97       # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
-    cc_shoulder_maintenance_derate: float = 0.15  # multiplicative cut to
-    # combined-cycle availability in the spring/autumn shoulder months
-    # (Mar-May, Oct-Nov), on top of the EFORD outage rate — planned
-    # maintenance concentrates between the winter and summer demand peaks.
-    # 0.0 disables.
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
@@ -366,7 +361,6 @@ TIER_TAGS: dict[str, int] = {
     "coal_committed_hr_mult": 3,
     "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
-    "cc_shoulder_maintenance_derate": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
