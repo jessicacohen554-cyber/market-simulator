@@ -271,7 +271,10 @@ def test_coal_supply_pricing_base_year():
         fuel_prices, gens, config, COAL_DIESEL_INDEX_BASE_YEAR
     )
     assert np.allclose(fuel_prices[0], config.coal_price_lignite)
-    assert np.allclose(fuel_prices[1], config.coal_price_prb)
+    assert np.allclose(
+        fuel_prices[1],
+        config.coal_price_prb * config.coal_prb_contract_passthrough,
+    )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
 
@@ -285,5 +288,8 @@ def test_coal_supply_pricing_diesel_indexed():
     apply_coal_supply_pricing(fp_2024, gens, config, 2024)
     # 2023 diesel was higher, so lignite is pricier in 2023 than 2024.
     assert fp_2023[0, 0] > fp_2024[0, 0]
-    # PRB is the measured delivered cost, not diesel-indexed — flat.
-    assert fp_2023[1, 0] == fp_2024[1, 0] == config.coal_price_prb
+    # PRB is the measured delivered cost (take-or-pay discounted), not
+    # diesel-indexed — flat across years.
+    assert fp_2023[1, 0] == fp_2024[1, 0] == (
+        config.coal_price_prb * config.coal_prb_contract_passthrough
+    )
