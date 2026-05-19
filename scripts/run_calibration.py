@@ -43,7 +43,10 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.constants import HOURS_PER_YEAR  # noqa: E402
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
-from market_sim.data.eia_loader import load_demand  # noqa: E402
+from market_sim.data.eia_loader import (  # noqa: E402
+    load_demand,
+    load_ercot_fossil_gen,
+)
 from market_sim.data.fleet import (  # noqa: E402
     aggregate_fleet,
     apply_coal_tranches,
@@ -77,8 +80,15 @@ from market_sim.policy.eac import (  # noqa: E402
     compute_eac_dispatch_credits,
 )
 from market_sim.policy.ira import compute_dispatch_credits  # noqa: E402
+from market_sim.results.calibration import (  # noqa: E402
+    check_hourly_dispatch_correlation,
+)
 from market_sim.results.emissions import compute_emissions  # noqa: E402
 from market_sim.results.outputs import FleetContext  # noqa: E402
+
+# Model fuel types that make up the EIA-930 "natural gas" telemetry series:
+# combined cycle, combustion turbine and gas steam are reported as one fuel.
+_GAS_FUEL_TYPES: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("run_calibration")
@@ -445,6 +455,49 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
         ("wind", f"{context.wind_cap_mw / 1e3:.2f}", f"{wind_curt:.1f}"),
         ("solar", f"{context.solar_cap_mw / 1e3:.2f}", f"{solar_curt:.1f}"),
     ])
+
+    _report_hourly_correlation(year, iso, result, context, full_year)
+
+
+def _report_hourly_correlation(
+    year: int, iso: str, result, context: FleetContext, full_year: bool
+) -> None:
+    """Print the modeled-vs-EIA-930 hourly dispatch correlation for coal/gas.
+
+    Compares the shape of the hourly dispatch — not just annual totals — so
+    a model that hits the right yearly TWh by running flat when the real
+    fleet cycled is still visible. ERCOT only, and only for a full 8760-hour
+    run (the EIA-930 fossil series is a whole-year extract).
+    """
+    if iso != "ERCOT" or not full_year:
+        return
+    eia_hourly = load_ercot_fossil_gen(year)
+    if eia_hourly is None:
+        print("\n  Hourly dispatch correlation\n    (no EIA-930 fossil "
+              f"series for {year})")
+        return
+
+    coal = np.zeros(result.dispatch.shape[1])
+    gas = np.zeros(result.dispatch.shape[1])
+    for g, fuel in enumerate(context.fuel_types):
+        if fuel == "coal":
+            coal += result.dispatch[g]
+        elif fuel in _GAS_FUEL_TYPES:
+            gas += result.dispatch[g]
+
+    stats = check_hourly_dispatch_correlation(
+        {"coal": coal, "gas": gas}, eia_hourly
+    )
+    rows: list[tuple] = [
+        ("fuel", "pearson r", "nrmse", "model TWh", "EIA TWh")
+    ]
+    for fuel in ("coal", "gas"):
+        s = stats[fuel]
+        rows.append((
+            fuel, f"{s['pearson_r']:.3f}", f"{s['nrmse']:.3f}",
+            f"{s['model_twh']:.2f}", f"{s['eia_twh']:.2f}",
+        ))
+    _print_table("Hourly dispatch correlation (vs EIA-930)", rows)
 
 
 def _build_parser() -> argparse.ArgumentParser:

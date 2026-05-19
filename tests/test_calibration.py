@@ -21,6 +21,7 @@ from market_sim.results.calibration import (
     SKIPPED,
     CalibrationReport,
     check_generation_mix,
+    check_hourly_dispatch_correlation,
     check_price_duration_curve,
     run_calibration_check,
 )
@@ -156,6 +157,68 @@ def _dispatch_result(dispatch, prices) -> DispatchResult:
         build_time=0.0,
         solve_time=0.0,
     )
+
+
+class TestCheckHourlyDispatchCorrelation(unittest.TestCase):
+    """``check_hourly_dispatch_correlation`` compares hourly dispatch shape."""
+
+    def test_perfect_match_scores_r_one_and_zero_error(self):
+        """Identical hourly series correlate perfectly with no error."""
+        series = np.array([100.0, 200.0, 50.0, 300.0, 150.0])
+        stats = check_hourly_dispatch_correlation(
+            {"coal": series}, {"coal": series}
+        )
+        self.assertAlmostEqual(stats["coal"]["pearson_r"], 1.0)
+        self.assertAlmostEqual(stats["coal"]["nrmse"], 0.0)
+
+    def test_level_offset_keeps_r_one_but_raises_nrmse(self):
+        """A pure level offset leaves the shape intact; only nrmse rises."""
+        actual = np.array([100.0, 200.0, 50.0, 300.0])
+        stats = check_hourly_dispatch_correlation(
+            {"gas": actual + 50.0}, {"gas": actual}
+        )
+        self.assertAlmostEqual(stats["gas"]["pearson_r"], 1.0)
+        self.assertGreater(stats["gas"]["nrmse"], 0.0)
+
+    def test_anticorrelated_series_scores_negative_r(self):
+        """A model that ramps opposite the actual fleet scores r = -1."""
+        stats = check_hourly_dispatch_correlation(
+            {"coal": np.array([40.0, 30.0, 20.0, 10.0])},
+            {"coal": np.array([10.0, 20.0, 30.0, 40.0])},
+        )
+        self.assertAlmostEqual(stats["coal"]["pearson_r"], -1.0)
+
+    def test_flat_model_over_cycling_fleet_yields_nan_r(self):
+        """A baseload-flat model over a cycling fleet has undefined r."""
+        stats = check_hourly_dispatch_correlation(
+            {"coal": np.full(8, 100.0)},
+            {"coal": np.array([1.0, 9.0, 2.0, 8.0, 3.0, 7.0, 4.0, 6.0])},
+        )
+        self.assertTrue(np.isnan(stats["coal"]["pearson_r"]))
+
+    def test_annual_totals_reported_in_twh(self):
+        """1000 MW across 8760 h is reported as 8.76 TWh."""
+        stats = check_hourly_dispatch_correlation(
+            {"gas": np.full(8760, 1000.0)}, {"gas": np.full(8760, 2000.0)}
+        )
+        self.assertAlmostEqual(stats["gas"]["model_twh"], 8.76)
+        self.assertAlmostEqual(stats["gas"]["eia_twh"], 17.52)
+
+    def test_length_mismatch_raises(self):
+        """Two series of different length cannot be correlated."""
+        with self.assertRaises(ValueError):
+            check_hourly_dispatch_correlation(
+                {"coal": np.zeros(10)}, {"coal": np.zeros(12)}
+            )
+
+    def test_only_fuels_in_both_mappings_are_compared(self):
+        """A fuel missing from either side is silently dropped."""
+        stats = check_hourly_dispatch_correlation(
+            {"coal": np.array([1.0, 2.0, 3.0]),
+             "gas": np.array([1.0, 2.0, 3.0])},
+            {"coal": np.array([3.0, 1.0, 2.0])},
+        )
+        self.assertEqual(set(stats), {"coal"})
 
 
 class TestRunCalibrationCheck(unittest.TestCase):
