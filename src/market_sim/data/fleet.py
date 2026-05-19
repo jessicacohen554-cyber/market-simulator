@@ -126,7 +126,7 @@ class Generator(BaseModel):
     # carry the per-bin commitment parameters and must-run accounting that
     # used to live in lookup-table constants.
     is_campd_bin: bool = False
-    plant_group: str = ""           # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, GAS_STEAM
+    plant_group: str = ""           # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP
     bin_label: str = ""             # human-readable bin id, e.g. H_CC1
     min_run_hours: int = 0          # minimum committed run length
     min_down_hours: int = 0         # minimum downtime between runs
@@ -185,7 +185,7 @@ _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
 
-    ``category`` is the plant group (e.g. ``CC_REGULAR``, ``GAS_STEAM``,
+    ``category`` is the plant group (e.g. ``CC_REGULAR``, ``ST_GAS``,
     ``COAL``). POF is flat; WEFOR and the weather/performance derate are a
     base plus a linear escalation per year of age past an onset year. The
     three are additive — availability is ``1 - WEFOR - derate`` flat
@@ -1245,14 +1245,17 @@ def load_fleet_from_csv(
 # docs/binning-methodology.md.
 # ---------------------------------------------------------------------------
 
-# CAMPD plant-group → model fuel type. GAS_STEAM maps to the dedicated
-# ``gas_st`` fuel (legacy natural-gas steam boilers).
+# CAMPD plant-group → model fuel type. The two steam groups both map to
+# the dedicated ``gas_st`` fuel: ST_GAS is the legacy utility natural-gas
+# steam boiler fleet; ST_CHP is industrial steam cogeneration (a host steam
+# load makes part of its capacity must-run).
 BIN_GROUP_TO_FUEL: dict[str, str] = {
     "CC_CHP": "gas_cc",
     "CC_REGULAR": "gas_cc",
     "CT_CHP": "gas_ct",
     "CT_PEAKER": "gas_ct",
-    "GAS_STEAM": "gas_st",
+    "ST_GAS": "gas_st",
+    "ST_CHP": "gas_st",
     "COAL": "coal",
 }
 
@@ -1267,7 +1270,8 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
     "CC_REGULAR": 50.0,
     "CT_CHP": 20.0,
     "CT_PEAKER": 20.0,
-    "GAS_STEAM": 35.0,
+    "ST_GAS": 35.0,
+    "ST_CHP": 35.0,
     "COAL": 100.0,
 }
 
@@ -1286,7 +1290,7 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     6178: "prb",       # Coleto Creek — PRB by rail
     6179: "prb",       # Fayette / Sam Seymour — PRB by rail
     7097: "prb",       # J K Spruce — PRB by rail
-    56611: "prb",      # Sandy Creek — PRB by rail
+    56257: "prb",      # Sandy Creek — PRB by rail
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
@@ -1304,7 +1308,7 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
     6183: 1982,   # San Miguel
     7030: 1990,   # Major Oak Power
     7097: 1992,   # J K Spruce
-    56611: 2013,  # Sandy Creek
+    56257: 2013,  # Sandy Creek
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
@@ -1314,7 +1318,8 @@ BIN_GROUP_HR_DEFAULT: dict[str, float] = {
     "CC_REGULAR": 7.0,
     "CT_CHP": 9.0,
     "CT_PEAKER": 13.0,
-    "GAS_STEAM": 11.0,
+    "ST_GAS": 11.0,
+    "ST_CHP": 7.0,
     "COAL": 9.5,
 }
 
