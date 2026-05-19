@@ -12,7 +12,10 @@ This module supports the three-solve dispatch calibration architecture:
   prices against *base* marginal cost (fuel + VOM, no markup). Generators
   earn the clearing price but their actual cost is the base MC, so the margin
   is ``P1_price - base_MC``. A run must clear an IRR hurdle on its startup
-  cost to justify a physical start.
+  cost to justify a physical start. Margin earned in hours when P1 storage is
+  net-charging the zone is discounted, so a cycling unit is not committed
+  purely to serve speculative battery-charging load; with the in-merit floor
+  active, a deep charging trough also breaks the run outright.
 
 * :func:`apply_commitment_with_coal_pin` zeros the availability of every
   screened generator in its decommitted hours. CAMPD coal is screened
@@ -200,12 +203,65 @@ def compute_monthly_markup(
     return markup
 
 
+def _storage_commitment_weight(
+    n_zones: int,
+    T: int,
+    storage_charge: np.ndarray | None,
+    storage_discharge: np.ndarray | None,
+    storage_zone_idx: np.ndarray | None,
+    demand: np.ndarray | None,
+    weight: float,
+) -> np.ndarray:
+    """Return the ``(n_zones, T)`` storage discount on the startup hurdle.
+
+    In an hour when storage is *net-charging* a zone, that charging is
+    discretionary load that props up the clearing price. A cycling unit
+    should not earn full startup-hurdle credit for margin generated in
+    such an hour — it would be committing largely to feed a battery. The
+    discount is ``1 - weight × net_charge / demand``, clipped to ``[0, 1]``;
+    net-*discharge* hours keep weight ``1.0`` because storage and thermal
+    are complements at the peak, not substitutes.
+
+    Returns an all-ones array (a no-op) when ``weight`` is zero or any
+    storage / demand input is missing.
+    """
+    ones = np.ones((n_zones, T), dtype=float)
+    if (
+        weight == 0.0
+        or storage_charge is None
+        or storage_discharge is None
+        or storage_zone_idx is None
+        or demand is None
+        or len(storage_zone_idx) == 0
+    ):
+        return ones
+
+    # Aggregate every storage unit's net charge into its zone row.
+    net_charge_unit = (
+        np.asarray(storage_charge, dtype=float)
+        - np.asarray(storage_discharge, dtype=float)
+    )
+    zone_net_charge = np.zeros((n_zones, T), dtype=float)
+    np.add.at(
+        zone_net_charge, np.asarray(storage_zone_idx, dtype=int), net_charge_unit
+    )
+
+    # Only net-charging hours discount; net-discharge hours keep weight 1.
+    net_charge = np.maximum(zone_net_charge, 0.0)
+    denom = np.maximum(np.asarray(demand, dtype=float), 1.0)
+    return np.clip(1.0 - weight * net_charge / denom, 0.0, 1.0)
+
+
 def compute_commitment(
     p1_prices: np.ndarray,         # (n_zones, T) — from the P1 solve
     base_mc: np.ndarray,           # (n_gen, T) — fuel + VOM, NO markup
     generators: list[Generator],   # fleet list aligned with base_mc rows
     fleet_arrays: FleetArrays,     # for zone_idx, heat_rate
     config: ScenarioConfig,
+    storage_charge: np.ndarray | None = None,     # (n_storage, T), P1 solve
+    storage_discharge: np.ndarray | None = None,  # (n_storage, T), P1 solve
+    storage_zone_idx: np.ndarray | None = None,   # (n_storage,)
+    demand: np.ndarray | None = None,             # (n_zones, T)
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
@@ -215,9 +271,20 @@ def compute_commitment(
        *base* MC, not bid MC: a generator earns the clearing price but its
        actual cost is fuel + VOM. Using bid MC would double-count the startup
        markup baked into clearing prices and over-decommit.
-    2. Find runs of positive-margin hours.
+    2. Find runs of in-merit hours. An hour is in merit when its margin is
+       positive *and*, when ``config.commitment_storage_in_merit_floor`` is
+       above zero, its storage-charge weight clears that floor. A deep
+       battery-charging trough therefore breaks a run in two, so the pieces
+       face step 3's min-run filter on their own — a cycling unit is not
+       carried through the night purely to charge batteries.
     3. Drop runs shorter than ``min_run_hours``.
-    4. Drop runs whose total margin is below ``startup_per_mw × (1 + IRR)``.
+    4. Drop runs whose total *storage-weighted* margin is below
+       ``startup_per_mw × (1 + IRR)``. The weight discounts margin earned in
+       hours when storage is net-charging the zone, so a cycling unit is not
+       committed purely to serve speculative battery-charging load (see
+       :func:`_storage_commitment_weight`). When the storage inputs are
+       omitted, or ``config.commitment_storage_weight`` is zero, the weight
+       is ``1.0`` everywhere and step 4 reduces to a plain margin sum.
     5. Merge surviving runs separated by less than ``min_down_hours``.
 
     Coal, nuclear and non-thermal generators are never screened — they stay
@@ -228,14 +295,27 @@ def compute_commitment(
         base_mc: Base marginal cost (fuel + VOM, no markup), ``(n_gen, T)``.
         generators: The dispatch fleet, aligned with ``base_mc`` rows.
         fleet_arrays: The vectorized fleet, for ``zone_idx`` and heat rate.
-        config: Scenario configuration supplying ``commitment_irr_hurdle``.
+        config: Scenario configuration supplying ``commitment_irr_hurdle``,
+            ``commitment_storage_weight`` and
+            ``commitment_storage_in_merit_floor``.
+        storage_charge: P1 storage charging power, ``(n_storage, T)``.
+        storage_discharge: P1 storage discharging power, ``(n_storage, T)``.
+        storage_zone_idx: Zone index of each storage unit, ``(n_storage,)``.
+        demand: Zonal demand, ``(n_zones, T)``, the storage-weight denominator.
 
     Returns:
         The commitment mask, shape ``(n_gen, T)``.
     """
     n_gen, T = base_mc.shape
+    n_zones = p1_prices.shape[0]
     irr = config.commitment_irr_hurdle
+    in_merit_floor = config.commitment_storage_in_merit_floor
     committed = np.ones((n_gen, T), dtype=bool)
+
+    storage_weight = _storage_commitment_weight(
+        n_zones, T, storage_charge, storage_discharge, storage_zone_idx,
+        demand, config.commitment_storage_weight,
+    )
 
     for g, gen in enumerate(generators):
         params = _commitment_params(
@@ -246,13 +326,21 @@ def compute_commitment(
 
         zone = int(fleet_arrays.zone_idx[g])
         margin = p1_prices[zone, :] - base_mc[g, :]
+        weighted_margin = margin * storage_weight[zone, :]
         hurdle = params["startup_per_mw"] * (1.0 + irr)
 
+        # An hour is in merit when its margin is positive; with the floor
+        # active, a deep storage-charging trough (weight below the floor)
+        # also drops out, breaking the run there.
+        in_merit = margin > 0.0
+        if in_merit_floor > 0.0:
+            in_merit = in_merit & (storage_weight[zone, :] >= in_merit_floor)
+
         accepted: list[tuple[int, int]] = []
-        for start, end in find_runs(margin > 0.0):
+        for start, end in find_runs(in_merit):
             if (end - start) < params["min_run_hours"]:
                 continue
-            if float(margin[start:end].sum()) < hurdle:
+            if float(weighted_margin[start:end].sum()) < hurdle:
                 continue
             accepted.append((start, end))
 
