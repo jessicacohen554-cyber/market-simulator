@@ -224,11 +224,15 @@ class ScenarioConfig:
     # bins are priced by fuel supply (see fleet.COAL_PLANT_SUPPLY). Mine-mouth
     # lignite bids at its marginal extraction cost, diesel-indexed off
     # COAL_DIESEL_INDEX_BASE_YEAR (see fuel.apply_coal_supply_pricing). PRB
-    # bids at its measured EIA-923 delivered cost: ERCOT's reporting PRB
-    # plants (Fayette, J K Spruce) show $1.75-1.82/MMBtu across 2023-2024 —
-    # flat enough year to year and month to month to model as a constant.
+    # bids at its measured EIA-923 delivered cost — ERCOT's reporting PRB
+    # plants (Fayette, J K Spruce) show $1.75-1.82/MMBtu across 2023-2024,
+    # flat enough to model as a constant — scaled down by a take-or-pay
+    # passthrough: contracted rail/coal tonnage is largely sunk, so the
+    # marginal dispatch bid sits below delivered cost.
     coal_price_lignite: float = 1.25  # mine-mouth lignite extraction cost
     coal_price_prb: float = 1.78      # PRB delivered cost, EIA-923 measured
+    coal_prb_contract_passthrough: float = 0.72  # take-or-pay sunk-cost
+    #                                              discount on the PRB bid
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
@@ -380,6 +384,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_tranche_3_fuel_passthrough": 3,
     "coal_price_lignite": 3,
     "coal_price_prb": 3,
+    "coal_prb_contract_passthrough": 3,
     "gas_price_override": 3,
 }
 
