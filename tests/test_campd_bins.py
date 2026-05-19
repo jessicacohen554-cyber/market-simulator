@@ -2,6 +2,7 @@
 
 import unittest
 
+import numpy as np
 import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
@@ -9,13 +10,18 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     bins_to_fleet,
+    generators_to_fleet_arrays,
     get_emission_rate,
     get_eford,
     get_nox_rate,
     get_vom,
     load_campd_bins,
 )
-from market_sim.model.commitment import _commitment_params, _startup_cost
+from market_sim.model.commitment import (
+    _commitment_params,
+    _startup_cost,
+    apply_commitment_with_coal_pin,
+)
 from market_sim.results.emissions import compute_must_run_emissions
 
 BINS_CSV = "inputs/custom-bin-assignments.csv"
@@ -185,16 +191,43 @@ class TestCommitmentParams(unittest.TestCase):
         # Peak generators carry min_run = 0 and stay out of the screen.
         self.assertIsNone(_commitment_params(self.peak, self.peak.heat_rate))
 
-    def test_coal_never_screened(self):
+    def test_coal_base_is_commitment_screened(self):
+        # CAMPD coal participates in the P2 commitment screen: the base
+        # generator carries the bin's 36h minimum run and a startup cost,
+        # while the peak slice stays out of the screen.
         bins = load_campd_bins(BINS_CSV)
         coal = bins[bins["Plant_Group"] == "COAL"]
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
-        for g in fleet:
+        base = [g for g in fleet if g.unit_id.endswith("_base")]
+        peak = [g for g in fleet if g.unit_id.endswith("_peak")]
+        self.assertGreater(len(base), 0)
+        for g in base:
+            params = _commitment_params(g, g.heat_rate)
+            self.assertIsNotNone(params)
+            self.assertEqual(params["min_run_hours"], 36)
+            self.assertGreater(params["startup_per_mw"], 0.0)
+        for g in peak:
             self.assertIsNone(_commitment_params(g, g.heat_rate))
 
     def test_startup_cost_from_bin(self):
         self.assertGreater(_startup_cost(self.base, self.base.heat_rate), 0.0)
         self.assertEqual(_startup_cost(self.peak, self.peak.heat_rate), 0.0)
+
+    def test_campd_coal_decommits_in_pass2(self):
+        # CAMPD coal is screened, so apply_commitment_with_coal_pin zeros
+        # its availability in decommitted hours rather than pinning it.
+        bins = load_campd_bins(BINS_CSV)
+        coal = bins[bins["Plant_Group"] == "COAL"].head(1)
+        fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
+        base = next(g for g in fleet if g.unit_id.endswith("_base"))
+        arrays = generators_to_fleet_arrays([base], ZONE_NAMES, hours=8)
+        committed = np.ones((1, 8), dtype=bool)
+        committed[0, 2:5] = False  # a 3-hour decommit window
+        p1 = np.full((1, 8), base.pmax_mw * 0.6)
+        out = apply_commitment_with_coal_pin(arrays, committed, p1, [base])
+        self.assertTrue(np.all(out.availability[0, 2:5] == 0.0))
+        self.assertTrue(np.all(out.availability[0, :2] > 0.0))
+        self.assertTrue(np.all(out.availability[0, 5:] > 0.0))
 
 
 class TestMustRunEmissions(unittest.TestCase):

@@ -95,11 +95,14 @@ plant-level heat rate, then to a per-group default.
 Commitment parameters (`min_run_hours`, `min_down_hours`,
 `startup_cost_per_mw`) come straight from the bin — no lookup tables.
 
-- **Coal** is never commitment-screened: its 36-hour minimum run confirms
-  ERCOT coal does not decommit in practice. It dispatches at its 40%
-  committed floor and ramps with economics.
+- **Coal** is commitment-screened in pass 2 alongside CC/CT. Its 36-hour
+  minimum run and high startup cost ($100/MW) keep it on through all but
+  the longest low-price spells, but it can decommit. When committed it
+  dispatches at its 40% committed floor and ramps with economics.
 - **Peak generators** carry `min_run_hours = 0` and stay out of the
   screen; only the base generator is screened.
+- The legacy (`use_campd_bins=False`) fleet keeps the old behavior: its
+  take-or-pay coal is never screened and is pinned to the P1 dispatch.
 - Tranche profiles by group (representative values):
 
   | Group       | MR% | MC%   | ECON% | PEAK% | Min run | Min down |
