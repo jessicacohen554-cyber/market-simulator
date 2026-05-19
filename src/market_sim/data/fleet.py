@@ -173,6 +173,13 @@ def _hour_to_month_index(hours: int) -> np.ndarray:
     return np.array(month_hours[:hours], dtype=int)
 
 
+# Spring/autumn shoulder months (1-based) when combined-cycle plants
+# concentrate planned maintenance — the lull between the winter and summer
+# demand peaks. CC availability is derated here; see
+# ScenarioConfig.cc_shoulder_maintenance_derate.
+_CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
+
+
 def generators_to_fleet_arrays(
     generators: list[Generator],
     zone_names: list[str],
@@ -224,6 +231,18 @@ def generators_to_fleet_arrays(
                 availability[g_idx, :] = (
                     (1.0 - gen.eford) * monthly_factors[month_idx]
                 )
+
+    # Combined-cycle shoulder-month maintenance: derate CC availability in
+    # the spring/autumn months when planned outages concentrate, on top of
+    # the EFORD outage rate already in `availability`.
+    cc_derate = config.cc_shoulder_maintenance_derate if config else 0.0
+    if cc_derate > 0.0:
+        shoulder = np.isin(
+            _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
+        )
+        for g_idx, gen in enumerate(generators):
+            if gen.fuel_type == "gas_cc":
+                availability[g_idx, shoulder] *= 1.0 - cc_derate
 
     return FleetArrays(
         pmax=pmax,
