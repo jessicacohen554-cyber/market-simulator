@@ -226,9 +226,13 @@ class ScenarioConfig:
     # + rail) cost. All three are base-year values ($/MMBtu) anchored to
     # COAL_DIESEL_INDEX_BASE_YEAR; the diesel index scales the diesel-driven
     # components year by year (see fuel.apply_coal_supply_pricing).
-    coal_price_lignite: float = 0.75       # mine-mouth lignite extraction cost
+    coal_price_lignite: float = 1.25       # mine-mouth lignite extraction cost
     coal_price_prb_mine: float = 0.85      # PRB mine-gate cost (~$15/short ton)
     coal_price_prb_rail: float = 1.25      # PRB rail freight, diesel-indexed
+    # PRB plants hold take-or-pay rail contracts: much of the delivered
+    # tonnage is sunk, so they bid below full delivered cost. The effective
+    # PRB bid is delivered cost × this passthrough fraction.
+    coal_prb_contract_passthrough: float = 0.55
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
@@ -381,6 +385,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_price_lignite": 3,
     "coal_price_prb_mine": 3,
     "coal_price_prb_rail": 3,
+    "coal_prb_contract_passthrough": 3,
     "gas_price_override": 3,
 }
 
