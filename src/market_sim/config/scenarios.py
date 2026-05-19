@@ -149,13 +149,13 @@ class ScenarioConfig:
 
     # Tier 3 (calibration) — Two-tranche HR multipliers for the committed
     # vs economic dispatch range. Real units have convex input-output
-    # curves: less efficient at minimum load (the committed / must-run
-    # block) and more efficient in the upper dispatch range (the economic
-    # increment above Pmin). Each bin's base capacity therefore splits into
-    # a Committed tranche (part-load, Pmin block): HR × multiplier > 1.0,
-    # and an Economic tranche (incremental dispatch above Pmin): HR ×
-    # multiplier < 1.0. Source: GE/Siemens OEM IO curves; CEMS
-    # input-output curve analysis.
+    # curves: less efficient at part load (the committed tranche) and
+    # more efficient in the upper load range (the economic tranche).
+    # Each bin's base capacity therefore splits into a Committed tranche
+    # (part-load range): HR × multiplier > 1.0, and an Economic tranche
+    # (upper load range): HR × multiplier < 1.0. Neither tranche carries
+    # a Pmin floor. Source: GE/Siemens OEM IO curves; CEMS input-output
+    # curve analysis.
     cc_committed_hr_mult: float = 1.23    # CC part-load penalty ~23%
     cc_econ_hr_mult: float = 0.96         # CC incremental HR ~4% below avg
     ct_committed_hr_mult: float = 1.28    # CT part-load penalty ~28%

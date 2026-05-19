@@ -105,7 +105,7 @@ class TestBinsToFleet(unittest.TestCase):
 
     def test_cc_regular_committed_tranche_is_half_grid_cap(self):
         # CC_REGULAR: MR 0, MC 50 -> the _committed tranche is 50% of grid
-        # capacity and carries a pmin = pmax must-run floor.
+        # capacity, and no tranche carries a Pmin floor.
         b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         grid_cap = sum(g.pmax_mw for g in fleet)
@@ -113,10 +113,7 @@ class TestBinsToFleet(unittest.TestCase):
             g for g in fleet if g.unit_id.endswith("_committed")
         )
         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.50, places=6)
-        self.assertEqual(committed.pmin_mw, committed.pmax_mw)
-        for g in fleet:
-            if not g.unit_id.endswith("_committed"):
-                self.assertEqual(g.pmin_mw, 0.0)
+        self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
 
     def test_coal_committed_tranche_is_40pct_grid_cap(self):
         # CAMPD coal MC% is 40: the _committed tranche is 40% of grid cap.
@@ -129,7 +126,7 @@ class TestBinsToFleet(unittest.TestCase):
             g for g in fleet if g.unit_id.endswith("_committed")
         )
         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.40, places=6)
-        self.assertEqual(committed.pmin_mw, committed.pmax_mw)
+        self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
 
     def test_each_bin_splits_into_three_stepped_tranches(self):
         committed = [
@@ -141,11 +138,8 @@ class TestBinsToFleet(unittest.TestCase):
         self.assertLessEqual(len(committed), len(self.bins))
         self.assertGreater(len(econ), 0)
         self.assertGreater(len(peak), 0)
-        # Only the committed tranche carries a Pmin floor (pmin = pmax).
-        for g in committed:
-            self.assertEqual(g.pmin_mw, g.pmax_mw)
-        for g in econ + peak:
-            self.assertEqual(g.pmin_mw, 0.0)
+        # No tranche carries a Pmin floor.
+        self.assertTrue(all(g.pmin_mw == 0.0 for g in self.fleet))
 
     def test_committed_and_econ_tranches_split_the_heat_rate(self):
         b = _synthetic_bin()
