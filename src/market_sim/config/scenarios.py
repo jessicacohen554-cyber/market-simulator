@@ -157,6 +157,11 @@ class ScenarioConfig:
     # A run must generate margin >= startup_per_mw × (1 + irr) to justify
     # the wear and capital risk of a start. Source: operator interviews,
     # 7-10% typical for merchant thermal assets.
+    commitment_storage_weight: float = 1.0  # 0 disables. The P2 commitment
+    # screen discounts a run's startup-hurdle margin in hours when storage is
+    # net-charging, so a cycling unit is not committed purely to serve
+    # speculative battery-charging load. Storage net-discharge hours keep
+    # full weight — storage and thermal are complements at the peak.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -308,6 +313,7 @@ TIER_TAGS: dict[str, int] = {
     "unknown_zone_default": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,
+    "commitment_storage_weight": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,

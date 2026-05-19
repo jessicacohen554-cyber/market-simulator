@@ -361,6 +361,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 committed = compute_commitment(
                     result.prices, mc_base, dispatch_fleet, fleet_arrays,
                     config,
+                    storage_charge=result.storage_charge,
+                    storage_discharge=result.storage_discharge,
+                    storage_zone_idx=storage.zone_idx,
+                    demand=year_demand,
                 )
                 fleet_arrays_p2 = apply_commitment_with_coal_pin(
                     fleet_arrays, committed, result.dispatch, dispatch_fleet,
