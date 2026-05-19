@@ -19,6 +19,9 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CO2_RATES,
+    COAL_DERATE_BY_AGE,
+    COAL_POF_BY_AGE,
+    COAL_WEFOR_BY_AGE,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -175,11 +178,31 @@ def _hour_to_month_index(hours: int) -> np.ndarray:
     return np.array(month_hours[:hours], dtype=int)
 
 
-# Spring/autumn shoulder months (1-based) when combined-cycle plants
-# concentrate planned maintenance — the lull between the winter and summer
-# demand peaks. CC availability is derated here; see
-# ScenarioConfig.cc_shoulder_maintenance_derate.
+# Spring/autumn shoulder months (1-based) when thermal plants concentrate
+# planned maintenance — the lull between the winter and summer demand peaks.
+# CC availability and coal planned-outage (POF) are derated here.
 _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
+
+
+def _coal_age_outage(age: float) -> tuple[float, float, float]:
+    """Return ``(POF, WEFOR, derate)`` for a coal unit of the given age.
+
+    Looks the three components up from the age-bracketed NERC GADS tables.
+    They are additive: total unavailability is ``WEFOR + derate`` flat
+    year-round plus ``POF`` in the shoulder months.
+    """
+
+    def _lookup(table: list[tuple[float, float]]) -> float:
+        for age_below, value in table:
+            if age < age_below:
+                return value
+        return table[-1][1]
+
+    return (
+        _lookup(COAL_POF_BY_AGE),
+        _lookup(COAL_WEFOR_BY_AGE),
+        _lookup(COAL_DERATE_BY_AGE),
+    )
 
 
 def generators_to_fleet_arrays(
@@ -234,24 +257,35 @@ def generators_to_fleet_arrays(
                     (1.0 - gen.eford) * monthly_factors[month_idx]
                 )
 
-    # Shoulder-month planned maintenance: derate availability in the
-    # spring/autumn months when planned outages concentrate, on top of the
-    # EFORD forced-outage rate already in `availability`. Combined cycle and
-    # coal steam both schedule major maintenance between the demand peaks;
-    # EFORD covers only forced outages, so coal needs this to reach its
-    # NERC GADS equivalent availability.
-    shoulder_derate = {
-        "gas_cc": config.cc_shoulder_maintenance_derate if config else 0.0,
-        "coal": config.coal_shoulder_maintenance_derate if config else 0.0,
-    }
-    if any(d > 0.0 for d in shoulder_derate.values()):
-        shoulder = np.isin(
-            _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
-        )
+    # Spring/autumn shoulder months — when thermal planned maintenance
+    # concentrates, between the winter and summer demand peaks.
+    shoulder = np.isin(
+        _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
+    )
+
+    # Combined-cycle shoulder-month planned maintenance, on top of the
+    # EFORD forced-outage rate already in `availability`.
+    cc_derate = config.cc_shoulder_maintenance_derate if config else 0.0
+    if cc_derate > 0.0:
         for g_idx, gen in enumerate(generators):
-            derate = shoulder_derate.get(gen.fuel_type, 0.0)
-            if derate > 0.0:
-                availability[g_idx, shoulder] *= 1.0 - derate
+            if gen.fuel_type == "gas_cc":
+                availability[g_idx, shoulder] *= 1.0 - cc_derate
+
+    # Coal steam: age-based availability replaces the flat EFORD derate.
+    # Three additive NERC GADS components keyed to the unit's age — the
+    # weighted forced-outage rate (WEFOR) and the weather/performance
+    # derate apply flat year-round; the planned-outage factor (POF)
+    # applies only in the shoulder months. Age is the run year minus the
+    # coal unit's commission year.
+    if config is not None:
+        run_year = config.weather_year
+        for g_idx, gen in enumerate(generators):
+            if gen.fuel_type != "coal":
+                continue
+            pof, wefor, derate = _coal_age_outage(run_year - gen.online_year)
+            base_avail = 1.0 - wefor - derate
+            availability[g_idx, :] = base_avail
+            availability[g_idx, shoulder] = base_avail - pof
 
     return FleetArrays(
         pmax=pmax,
@@ -1266,6 +1300,23 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
+# ERCOT coal-unit commission year by EIA plant code — the in-service year
+# of the plant's coal units (not its older gas-era units, which differ at
+# mixed plants like W A Parish). Drives the age-based coal availability
+# model in :func:`generators_to_fleet_arrays`.
+COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
+    298: 1985,    # Limestone
+    3470: 1977,   # W A Parish (coal units 5-8)
+    6146: 1977,   # Martin Lake
+    6178: 1980,   # Coleto Creek
+    6179: 1979,   # Fayette / Sam Seymour
+    6180: 2010,   # Oak Grove
+    6183: 1982,   # San Miguel
+    7030: 1990,   # Major Oak Power
+    7097: 1992,   # J K Spruce
+    56611: 2013,  # Sandy Creek
+}
+
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
 # Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
 BIN_GROUP_HR_DEFAULT: dict[str, float] = {
@@ -1475,12 +1526,18 @@ def bins_to_fleet(
         label = str(b["Bin_Label"])
         bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
         # Each coal bin is a single plant, so its fuel-supply type (mine-mouth
-        # lignite vs PRB by rail) resolves from the one plant code.
+        # lignite vs PRB by rail) and coal-unit commission year resolve from
+        # the one plant code. The commission year drives the age-based coal
+        # availability model.
         coal_supply = ""
+        commission_year = 2000
         if fuel == "coal":
             codes = list(b["plant_codes"])
             if len(codes) == 1:
                 coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
+                commission_year = COAL_PLANT_COMMISSION_YEAR.get(
+                    int(codes[0]), 2000
+                )
         peak_penalty = {
             "gas_cc": config.cc_peak_hr_penalty,
             "gas_ct": config.ct_peak_hr_penalty,
@@ -1533,6 +1590,7 @@ def bins_to_fleet(
                     emission_rate_co2=get_emission_rate(fuel, tr_hr),
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
+                    online_year=commission_year,
                     is_campd_bin=True,
                     plant_group=group,
                     bin_label=label,
