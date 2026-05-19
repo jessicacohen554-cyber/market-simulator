@@ -128,6 +128,26 @@ class ScenarioConfig:
                                                # Recommended: 3 (default) for production runs,
                                                # 5-10 for CCS/carbon sensitivity analysis.
 
+    # Tier 2 (expert/sensitivity) — CAMPD operational binning
+    # When True the thermal fleet is built from the CAMPD-derived bin
+    # assignments (one row per plant, aggregated to ~120 operational bins
+    # with a 4-tranche Must-Run / Committed / Economic / Peaking capacity
+    # structure). When False the legacy equal-width heat-rate binning of
+    # aggregate_fleet() is used. See docs/binning-methodology.md.
+    use_campd_bins: bool = True
+    campd_bins_path: str = "inputs/custom-bin-assignments.csv"
+    plant_registry_path: str = "inputs/master-plant-registry.csv"
+    unknown_zone_default: str = "South_Central"  # zone for bins tagged "Unknown"
+
+    # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
+    # The top (Peaking) slice of a bin is a separate LP generator whose
+    # heat rate is the bin HR scaled by these duct-firing / peaking-increment
+    # multipliers, so scarcity output bids above the economic tranche.
+    cc_peak_hr_penalty: float = 1.15    # CC duct-firing increment
+    ct_peak_hr_penalty: float = 1.10    # CT / gas-steam peaking increment
+    coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
+    must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
+
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
                                        # When True, a price-based commitment
@@ -282,8 +302,16 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_max_gw_per_year": 2,
     "ccs_retrofit_min_remaining_life": 2,
     "heat_rate_bin_count": 2,
+    "use_campd_bins": 2,
+    "campd_bins_path": 2,
+    "plant_registry_path": 2,
+    "unknown_zone_default": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,
+    "cc_peak_hr_penalty": 3,
+    "ct_peak_hr_penalty": 3,
+    "coal_peak_hr_penalty": 3,
+    "must_run_cf": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
