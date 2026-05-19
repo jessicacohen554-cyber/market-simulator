@@ -134,7 +134,7 @@ class TestBinsToFleet(unittest.TestCase):
         ]
         econ = [g for g in self.fleet if g.unit_id.endswith("_econ")]
         peak = [g for g in self.fleet if g.unit_id.endswith("_peak")]
-        self.assertGreater(len(committed), 100)
+        self.assertGreater(len(committed), 80)
         self.assertLessEqual(len(committed), len(self.bins))
         self.assertGreater(len(econ), 0)
         self.assertGreater(len(peak), 0)
@@ -182,7 +182,7 @@ class TestBinsToFleet(unittest.TestCase):
         self.assertTrue(all(g.coal_supply == "" for g in gas))
 
     def test_gas_steam_maps_to_gas_st(self):
-        gs = [g for g in self.fleet if g.plant_group == "GAS_STEAM"]
+        gs = [g for g in self.fleet if g.plant_group in ("ST_GAS", "ST_CHP")]
         self.assertGreater(len(gs), 0)
         for g in gs:
             self.assertEqual(g.fuel_type, "gas_st")

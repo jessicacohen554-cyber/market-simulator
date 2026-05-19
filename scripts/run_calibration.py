@@ -146,7 +146,10 @@ def _henry_hub_actual(reference: dict, year: int) -> float:
     return _HENRY_HUB_FALLBACK[year]
 
 
-def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
+def _calibration_config(
+    year: int, iso: str, hours: int, gas_price: float,
+    coal_passthrough: float | None = None,
+):
     """Build the ScenarioConfig for one calibration year.
 
     The calibration configuration fixes the structural and policy levers to
@@ -187,6 +190,10 @@ def _calibration_config(year: int, iso: str, hours: int, gas_price: float):
             "year %d falls back to the '%s' gas-price trajectory",
             year, config.gas_price_path,
         )
+    if coal_passthrough is not None:
+        config = config.with_overrides(
+            coal_prb_contract_passthrough=coal_passthrough
+        )
     return config
 
 
@@ -225,6 +232,7 @@ def run_year(
     hours: int,
     gas_price: float,
     ttc_overrides: dict[str, float | None],
+    coal_passthrough: float | None = None,
 ) -> tuple[object, FleetContext]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -245,7 +253,9 @@ def run_year(
         A tuple ``(result, context)`` of the dispatch result and the fleet
         context describing the dispatched fleet.
     """
-    config = _calibration_config(year, iso, hours, gas_price)
+    config = _calibration_config(
+        year, iso, hours, gas_price, coal_passthrough
+    )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
@@ -547,6 +557,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--ttc-pn", type=float, default=None,
         help="Override the Panhandle<->North transfer capability (MW).",
     )
+    parser.add_argument(
+        "--coal-passthrough", type=float, default=None,
+        help="Override coal_prb_contract_passthrough (PRB take-or-pay "
+             "fuel-cost fraction); 1.0 disables the discount.",
+    )
     return parser
 
 
@@ -572,7 +587,8 @@ def main(argv: list[str] | None = None) -> None:
             iso, year, args.hours, gas_price,
         )
         result, context = run_year(
-            year, iso, args.hours, gas_price, ttc_overrides
+            year, iso, args.hours, gas_price, ttc_overrides,
+            args.coal_passthrough,
         )
         _report_year(year, iso, result, context, reference)
 
