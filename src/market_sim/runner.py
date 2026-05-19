@@ -350,32 +350,39 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 dispatch_fleet, fleet_arrays, r0.dispatch, config.hours
             )
             mc_bid = mc_base + markup
-            result = solve_dispatch(
+            p1_result = solve_dispatch(
                 fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
             )
-
-            # P2 (optional): screen CC/CT commitment on P1 clearing prices
-            # against base MC, pin coal to its P1 dispatch, and re-solve.
-            # Pass 2 replaces Pass 1 for caching.
-            if config.commitment_enabled:
-                committed = compute_commitment(
-                    result.prices, mc_base, dispatch_fleet, fleet_arrays,
-                    config,
-                    storage_charge=result.storage_charge,
-                    storage_discharge=result.storage_discharge,
-                    storage_zone_idx=storage.zone_idx,
-                    demand=year_demand,
-                )
-                fleet_arrays_p2 = apply_commitment_with_coal_pin(
-                    fleet_arrays, committed, result.dispatch, dispatch_fleet,
-                )
-                result = solve_dispatch(
-                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
-                )
             context = FleetContext.from_arrays(
                 fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf,
                 solar_cap, storage.energy_cap,
             )
+            result = p1_result
+
+            # P2 (optional): screen CC/CT commitment on P1 clearing prices
+            # against base MC, pin coal to its P1 dispatch, and re-solve.
+            # Both datasets are kept: the P1 dispatch as year_{year}_p1, the
+            # final result (P2 here) as the primary year_{year}. With
+            # commitment disabled only P1 is solved and it is the primary.
+            if config.commitment_enabled:
+                save_result(
+                    p1_result, config, iso, year, context=context,
+                    pass_label="p1",
+                )
+                committed = compute_commitment(
+                    p1_result.prices, mc_base, dispatch_fleet, fleet_arrays,
+                    config,
+                    storage_charge=p1_result.storage_charge,
+                    storage_discharge=p1_result.storage_discharge,
+                    storage_zone_idx=storage.zone_idx,
+                    demand=year_demand,
+                )
+                fleet_arrays_p2 = apply_commitment_with_coal_pin(
+                    fleet_arrays, committed, p1_result.dispatch, dispatch_fleet,
+                )
+                result = solve_dispatch(
+                    fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
+                )
             save_result(result, config, iso, year, context=context)
             logger.info(
                 "year %d: solved and cached (%.3fs)",
