@@ -29,14 +29,25 @@ ZONE_NAMES = get_iso_config("ERCOT").zone_names
 
 
 def _bin_row(**overrides) -> dict:
-    """Return one aggregated-bin row, with no peaking tranche by default."""
+    """Return one aggregated-bin row, with no peaking tranche by default.
+
+    The per-tranche heat rates default to the legacy CC config multipliers
+    applied to ``hr_weighted`` so the tranche-merit assertions below have
+    distinct values for committed vs econ. Override ``hr_mc`` / ``hr_econ``
+    / ``hr_peak`` directly for non-CC bins.
+    """
+    hr = float(overrides.get("hr_weighted", 7.0))
     row = {
         "Plant_Group": "CC_REGULAR",
         "ERCOT_Zone": "Houston",
         "Bin_Number": 1,
         "Bin_Label": "T1",
         "capacity_mw": 1000.0,
-        "hr_weighted": 7.0,
+        "hr_weighted": hr,
+        "hr_mr": hr,
+        "hr_mc": hr * 1.23,
+        "hr_econ": hr * 0.96,
+        "hr_peak": hr * 1.15,
         "pct_mr": 0,
         "pct_mc": 40,
         "pct_econ": 60,
@@ -199,18 +210,19 @@ class TestCoalPaths(unittest.TestCase):
 
     def test_campd_coal_gets_committed_econ_split(self):
         config = ScenarioConfig()
+        # CSV-driven HRs: COAL HR_Mult_Committed=1.15, HR_Mult_Economic=1.0
+        # for the latest bin file.
         fleet, _ = bins_to_fleet(
-            _bins(_bin_row(Plant_Group="COAL", hr_weighted=9.5)),
+            _bins(_bin_row(
+                Plant_Group="COAL", hr_weighted=9.5,
+                hr_mc=9.5 * 1.15, hr_econ=9.5, hr_peak=9.5 * 1.05,
+            )),
             ZONE_NAMES, config,
         )
         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
-        self.assertAlmostEqual(
-            committed.heat_rate, 9.5 * config.coal_committed_hr_mult, places=6
-        )
-        self.assertAlmostEqual(
-            econ.heat_rate, 9.5 * config.coal_econ_hr_mult, places=6
-        )
+        self.assertAlmostEqual(committed.heat_rate, 9.5 * 1.15, places=6)
+        self.assertAlmostEqual(econ.heat_rate, 9.5, places=6)
         self.assertEqual(committed.pmin_mw, 0.0)
         self.assertEqual(econ.pmin_mw, 0.0)
 
