@@ -93,25 +93,39 @@ class TestBinsToFleet(unittest.TestCase):
             cls.bins, ZONE_NAMES, cls.config
         )
 
-    def test_mustrun_capacity_is_an_lp_tranche(self):
-        # CC_CHP must-run is 60% of nameplate; the must-run tranche is in
-        # the LP (it bids at VOM only via fuel_fracs) so the bin's total
-        # LP capacity equals its full nameplate.
+    def test_chp_mr_derate_removes_must_run_capacity(self):
+        # CC_CHP must-run is 60% (host steam obligation, served off-grid),
+        # so its LP grid capacity is 40% of nameplate and no ``_mustrun``
+        # tranche appears in the LP.
         cc_chp = self.bins[self.bins["Plant_Group"] == "CC_CHP"]
         nameplate = cc_chp["capacity_mw"].sum()
-        lp_total = sum(
+        grid = sum(
             g.pmax_mw for g in self.fleet
             if g.plant_group == "CC_CHP"
         )
-        self.assertAlmostEqual(lp_total, nameplate, places=3)
+        self.assertAlmostEqual(grid, nameplate * 0.40, places=3)
         mustrun = [
             g for g in self.fleet
             if g.plant_group == "CC_CHP" and g.unit_id.endswith("_mustrun")
         ]
-        self.assertGreater(len(mustrun), 0)
-        self.assertAlmostEqual(
-            sum(g.pmax_mw for g in mustrun), nameplate * 0.60, places=3
+        self.assertEqual(mustrun, [])
+
+    def test_coal_mustrun_stays_in_lp(self):
+        # Coal must-run (mine-mouth take-or-pay, cycling avoidance, ERCOT
+        # RUC) is an LP tranche, so the bin's total LP capacity equals
+        # its full nameplate.
+        coal = self.bins[self.bins["Plant_Group"] == "COAL"]
+        nameplate = coal["capacity_mw"].sum()
+        lp_total = sum(
+            g.pmax_mw for g in self.fleet
+            if g.plant_group == "COAL"
         )
+        self.assertAlmostEqual(lp_total, nameplate, places=3)
+        mustrun = [
+            g for g in self.fleet
+            if g.plant_group == "COAL" and g.unit_id.endswith("_mustrun")
+        ]
+        self.assertGreater(len(mustrun), 0)
 
     def test_cc_regular_committed_tranche_is_half_grid_cap(self):
         # CC_REGULAR: MR 0, MC 50 -> the _committed tranche is 50% of grid
@@ -284,13 +298,16 @@ class TestMustRunEmissions(unittest.TestCase):
         bins = load_campd_bins(BINS_CSV)
         mr = compute_must_run_emissions(bins, year=2026, must_run_cf=0.85)
         self.assertFalse(mr.empty)
-        # Only CHP bins (MR% > 0) appear.
+        # Only non-coal CHP bins (MR% > 0) appear -- coal must-run is in
+        # the LP, so post-processing excludes it.
         self.assertTrue((mr["pct_mr"] > 0).all())
+        self.assertTrue((mr["fuel"] != "coal").all())
         self.assertTrue((mr["mr_gen_mwh"] > 0).all())
         self.assertTrue((mr["mr_co2_tons"] > 0).all())
-        # Must-run MW is the must-run share of nameplate.
-        expected = bins.loc[bins["pct_mr"] > 0, "capacity_mw"] \
-            * bins.loc[bins["pct_mr"] > 0, "pct_mr"] / 100.0
+        # Must-run MW is the must-run share of nameplate, over non-coal
+        # bins.
+        chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
+        expected = chp["capacity_mw"] * chp["pct_mr"] / 100.0
         self.assertAlmostEqual(
             mr["mr_mw"].sum(), expected.sum(), places=3
         )

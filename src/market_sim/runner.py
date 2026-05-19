@@ -69,6 +69,7 @@ from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
+from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 
 logger = logging.getLogger(__name__)
@@ -406,6 +407,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 "year %d: solved and cached (%.3fs)",
                 year, time.perf_counter() - year_start,
             )
+
+        # CHP must-run post-processing: non-coal must-run capacity is
+        # removed from the LP (the CHP units serve host industrial steam,
+        # not the grid), so add its generation and emissions back here
+        # for asset-level emissions trajectories.
+        if campd_bins is not None:
+            mr = compute_must_run_emissions(
+                campd_bins, year, config.must_run_cf
+            )
+            if not mr.empty:
+                logger.info(
+                    "year %d: CHP must-run post-processing -- %d bins, "
+                    "%.0f GWh, %.0f kt CO2 (asset-level, outside the LP)",
+                    year, len(mr), mr["mr_gen_mwh"].sum() / 1000.0,
+                    mr["mr_co2_tons"].sum() / 1000.0,
+                )
 
         prior_results = {
             "fleet_arrays": fleet_arrays,

@@ -1503,27 +1503,29 @@ def bins_to_fleet(
     zone_names: list[str],
     config: ScenarioConfig,
 ) -> tuple[list[Generator], FleetArrays]:
-    """Convert CAMPD bins into LP generators — four stepped tranches per bin.
+    """Convert CAMPD bins into LP generators -- stepped tranches per bin.
 
-    Every bin's capacity is split into four LP-dispatchable tranches keyed
-    to the CSV percentages and per-tranche heat rates. A bin only gets
-    tranches whose capacity is non-zero:
+    Every bin's grid-facing capacity is split into LP-dispatchable
+    tranches keyed to the CSV percentages and per-tranche heat rates. A
+    bin only gets tranches whose capacity is non-zero:
 
-      - ``_mustrun`` — the Must-Run tranche: capacity that runs regardless
-        of grid economics (coal mine-mouth take-or-pay, CHP host steam
-        obligation, ERCOT RUC, environmental minimum-gen / CEMS compliance,
-        cycling avoidance). It bids at VOM + carbon + NOx only — the fuel
-        is sunk from the dispatch decision's perspective — via fuel_fracs
-        in the runner, so it is always in merit without needing a Pmin
-        floor.
-      - ``_committed`` — the Committed tranche: the unit's part-load range
-        when started. Carries the bin's start cost and min-run window —
-        starting this tranche is starting the plant.
-      - ``_econ`` — the Economic tranche: incremental dispatch above the
-        part-load range, the most efficient slice of the unit.
-      - ``_peak`` — the Peaking tranche, heat rate scaled by the
-        duct-firing / overfire penalty in the CSV, so scarcity output
-        bids highest.
+      - ``_mustrun`` -- COAL ONLY. The unit's minimum operating floor:
+        mine-mouth take-or-pay, start/stop and cycling damage avoidance,
+        environmental minimum-gen / CEMS compliance and ERCOT RUC. Bids
+        at VOM + carbon + NOx only (the fuel cost is sunk) via fuel_fracs
+        in the runner, so it is always in merit without a Pmin floor.
+        Non-coal bins' must-run share is host-steam (CHP) cogen and is
+        removed from LP capacity -- it serves industrial process steam,
+        not the grid; its generation and emissions are added back by
+        post-processing (see
+        :func:`market_sim.results.emissions.compute_must_run_emissions`).
+      - ``_committed`` -- the part-load range when started. Carries the
+        bin's start cost and min-run window -- starting this tranche is
+        starting the plant.
+      - ``_econ`` -- incremental dispatch above the part-load range, the
+        most efficient slice of the unit.
+      - ``_peak`` -- duct-firing / overfire tranche, heat rate scaled by
+        the CSV's ``HR_Mult_Peaking`` so scarcity output bids highest.
 
     Per-tranche heat rates come directly from the CSV's ``HR_<tranche>``
     columns (capacity-weighted across plants in a bin); a blank cell
@@ -1581,14 +1583,23 @@ def bins_to_fleet(
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
-        # Every bin's tranches sit in the LP, including the must-run share.
-        # The must-run tranche bids at VOM + carbon + NOx only (fuel sunk
-        # under take-or-pay coal contracts, host steam obligations for CHP,
-        # or ERCOT RUC) via fuel_fracs in the runner, so it is always in
-        # merit and effectively forced on without needing a Pmin floor.
-        mustrun_cap = nameplate * pct_mr / 100.0
-        grid_cap = nameplate - mustrun_cap
-        if nameplate <= 0.0:
+        # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche:
+        # it is the unit's minimum operating floor for mine-mouth
+        # take-or-pay, start/stop and cycling damage avoidance,
+        # environmental minimum-gen / CEMS compliance and ERCOT RUC. The
+        # tranche bids at VOM + carbon + NOx only (fuel sunk) via
+        # fuel_fracs in the runner. Non-coal bins (CHP steam cogen) hold
+        # an off-grid host steam obligation: their must-run share serves
+        # industrial process steam, not the grid, so it is removed from LP
+        # capacity and its generation / emissions are added back by
+        # post-processing.
+        if fuel == "coal":
+            mustrun_cap = nameplate * pct_mr / 100.0
+            grid_cap = nameplate - mustrun_cap
+        else:
+            mustrun_cap = 0.0
+            grid_cap = nameplate * (1.0 - pct_mr / 100.0)
+        if grid_cap + mustrun_cap <= 0.0:
             continue
 
         denom = 100.0 - pct_mr
