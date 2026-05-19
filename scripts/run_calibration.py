@@ -330,8 +330,6 @@ def run_year(
         solar_mc=solar_mc,
         storage_discharge_eac=storage_eac,
         rps_target=None,
-        cc_reserve_headroom=config.cc_reserve_headroom,
-        ct_st_ruc_floor=config.ct_st_ruc_floor,
         T=config.hours,
     )
     # P0: solve with base MC to extract per-month run lengths.
