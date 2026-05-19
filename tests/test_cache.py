@@ -112,6 +112,28 @@ class TestRoundTrip(CacheTestBase):
         loaded = cache.load_result("CAISO", config.cache_key(), 2031)
         _assert_results_match(self, result, loaded)
 
+    def test_pass_label_keeps_p1_and_final_as_separate_files(self):
+        # The P1 dataset and the final (primary) dataset coexist as
+        # distinct files and load back independently.
+        p1, final = _make_result(), _make_result()
+        config = ScenarioConfig(iso="ERCOT")
+        cache.save_result(p1, config, iso="ERCOT", year=2030, pass_label="p1")
+        cache.save_result(final, config, iso="ERCOT", year=2030)
+
+        key = config.cache_key()
+        self.assertTrue(cache.is_cached("ERCOT", key, 2030))
+        self.assertTrue(cache.is_cached("ERCOT", key, 2030, pass_label="p1"))
+        self.assertNotEqual(
+            cache.get_cache_path("ERCOT", key, 2030),
+            cache.get_cache_path("ERCOT", key, 2030, pass_label="p1"),
+        )
+        _assert_results_match(
+            self, p1, cache.load_result("ERCOT", key, 2030, pass_label="p1")
+        )
+        _assert_results_match(
+            self, final, cache.load_result("ERCOT", key, 2030)
+        )
+
 
 class TestIsCached(CacheTestBase):
     """``is_cached`` tracks the presence of the Parquet file."""

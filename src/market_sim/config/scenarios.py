@@ -146,7 +146,17 @@ class ScenarioConfig:
     cc_peak_hr_penalty: float = 1.15    # CC duct-firing increment
     ct_peak_hr_penalty: float = 1.10    # CT / gas-steam peaking increment
     coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
+    mc_tranche_hr_factor: float = 0.92  # Heat-rate factor for the
+    # must-run-if-committed tranche, the most efficient slice of a bin.
+    # Each bin is three stepped LP generators: the Committed tranche bids
+    # at hr × this factor (cheapest), Economic at the bin heat rate, and
+    # Peaking at hr × the duct-firing penalty above.
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
+    cc_shoulder_maintenance_derate: float = 0.15  # multiplicative cut to
+    # combined-cycle availability in the spring/autumn shoulder months
+    # (Mar-May, Oct-Nov), on top of the EFORD outage rate — planned
+    # maintenance concentrates between the winter and summer demand peaks.
+    # 0.0 disables.
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
@@ -325,7 +335,9 @@ TIER_TAGS: dict[str, int] = {
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
+    "mc_tranche_hr_factor": 3,
     "must_run_cf": 3,
+    "cc_shoulder_maintenance_derate": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
