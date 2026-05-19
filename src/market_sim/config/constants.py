@@ -349,20 +349,25 @@ COAL_PRICE_BASE: dict[str, float] = {
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
 
-# US on-highway No. 2 diesel retail price, annual average ($/gallon).
-# Diesel is the dominant variable input to mine-mouth lignite extraction
-# (dragline, haul-truck and dozer fuel) and to PRB rail freight, so it
-# indexes the plant-specific coal prices (see fuel.apply_coal_supply_pricing).
-# Source: EIA Gasoline and Diesel Fuel Update, annual averages.
-DIESEL_PRICE_BY_YEAR: dict[int, float] = {
-    2021: 3.29,
-    2022: 5.01,
-    2023: 4.21,
-    2024: 3.76,
-    2025: 3.66,
-}
-# Reference year whose diesel price anchors the coal-price diesel index.
-COAL_DIESEL_INDEX_BASE_YEAR: int = 2024
+# Coal-steam availability by plant age (years), from NERC GADS coal-steam
+# statistics. Three components, all ADDITIVE (summed, not compounded):
+#  * POF   — planned outage factor; concentrated in the shoulder months.
+#  * WEFOR — weighted equivalent forced outage rate; a flat effective derate.
+#  * DERATE — weather + performance-decline capacity loss; a flat derate.
+# Each table is ``(age_below, value)`` sorted ascending; the first row whose
+# ``age_below`` exceeds the unit's age applies. Total unavailability for a
+# coal unit is POF (shoulder months only) + WEFOR + DERATE.
+_INF_AGE: float = float("inf")
+COAL_POF_BY_AGE: list[tuple[float, float]] = [
+    (35.0, 0.07), (55.0, 0.08), (_INF_AGE, 0.075),
+]
+COAL_WEFOR_BY_AGE: list[tuple[float, float]] = [
+    (20.0, 0.09), (35.0, 0.11), (45.0, 0.13), (55.0, 0.16), (_INF_AGE, 0.215),
+]
+COAL_DERATE_BY_AGE: list[tuple[float, float]] = [
+    (20.0, 0.02), (35.0, 0.025), (45.0, 0.035), (55.0, 0.045),
+    (_INF_AGE, 0.065),
+]
 
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
