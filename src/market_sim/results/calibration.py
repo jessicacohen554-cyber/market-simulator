@@ -191,6 +191,75 @@ def check_price_duration_curve(prices, benchmark_prices) -> dict:
     return metrics
 
 
+def _pearson_r(model: np.ndarray, actual: np.ndarray) -> float:
+    """Return the Pearson correlation of two equal-length series.
+
+    Returns ``nan`` when either series is constant (zero variance), as the
+    correlation is then undefined.
+    """
+    m = np.asarray(model, dtype=float)
+    a = np.asarray(actual, dtype=float)
+    if m.std() < _ZERO_TOL or a.std() < _ZERO_TOL:
+        return float("nan")
+    return float(np.corrcoef(m, a)[0, 1])
+
+
+def check_hourly_dispatch_correlation(
+    model_hourly: Mapping[str, np.ndarray],
+    eia_hourly: Mapping[str, np.ndarray],
+) -> dict:
+    """Compare modeled against EIA-930 hourly dispatch shape, per fuel.
+
+    Annual-total checks confirm a fuel produces the right *amount* of
+    energy but say nothing about *when*. This check compares the two
+    hourly series directly, so a model that hits the annual total by
+    running flat when the real fleet cycled is still caught. Three
+    statistics are reported per fuel:
+
+    * ``pearson_r`` -- correlation of the modeled and EIA-930 hourly
+      series; how well the model reproduces the timing of ramps, peaks and
+      troughs. Scale-free, so a pure level offset does not depress it.
+    * ``nrmse`` -- root-mean-square error normalized by mean EIA
+      generation; magnitude error, including any level bias ``pearson_r``
+      ignores.
+    * ``model_twh`` / ``eia_twh`` -- annual totals, for context.
+
+    Args:
+        model_hourly: ``{fuel: (T,) array}`` of modeled hourly generation,
+            in MW -- e.g. ``"coal"`` and ``"gas"`` (the whole gas fleet).
+        eia_hourly: ``{fuel: (T,) array}`` of EIA-930 hourly generation, MW.
+
+    Returns:
+        ``{fuel: {pearson_r, nrmse, model_twh, eia_twh}}`` for every fuel
+        present in both mappings.
+
+    Raises:
+        ValueError: when a fuel's two series differ in length.
+    """
+    out: dict[str, dict] = {}
+    for fuel in sorted(set(model_hourly) & set(eia_hourly)):
+        m = np.asarray(model_hourly[fuel], dtype=float).ravel()
+        a = np.asarray(eia_hourly[fuel], dtype=float).ravel()
+        if m.shape != a.shape:
+            raise ValueError(
+                f"{fuel}: model series length {m.size} does not match "
+                f"EIA series length {a.size}"
+            )
+        mean_a = float(a.mean())
+        rmse = float(np.sqrt(np.mean((m - a) ** 2)))
+        out[fuel] = {
+            "pearson_r": round(_pearson_r(m, a), 4),
+            "nrmse": (
+                round(rmse / mean_a, 4)
+                if abs(mean_a) > _ZERO_TOL
+                else float("inf")
+            ),
+            "model_twh": round(float(m.sum()) / 1e6, 2),
+            "eia_twh": round(float(a.sum()) / 1e6, 2),
+        }
+    return out
+
+
 @dataclass(frozen=True)
 class DiagnosticResult:
     """The outcome of one calibration diagnostic.
