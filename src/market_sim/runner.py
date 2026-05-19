@@ -28,10 +28,13 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
+    _AGGREGATABLE_FUELS,
     aggregate_fleet,
     apply_coal_tranches,
     assemble_mc,
+    bins_to_fleet,
     generators_to_fleet_arrays,
+    load_campd_bins,
     load_fleet_from_csv,
     split_coal_tranches,
 )
@@ -62,6 +65,7 @@ from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
+from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 
 logger = logging.getLogger(__name__)
@@ -145,6 +149,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     loss_tracker: dict[str, int] = {}
     prior_results = None
 
+    # Load the CAMPD operational bins once when enabled. The same bin frame
+    # builds the dispatch fleet and drives the CHP must-run post-processing.
+    # The bin assignments are ERCOT-specific, so other ISOs always use the
+    # legacy aggregate_fleet path regardless of ``use_campd_bins``.
+    campd_bins = (
+        load_campd_bins(config.campd_bins_path)
+        if config.use_campd_bins and iso == "ERCOT"
+        else None
+    )
+
     # Storage is managed across years like the generation fleet: the base
     # year starts from the deployment-pace fleet, later years grow via the
     # economic new-entry screen.
@@ -161,13 +175,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         retrofit_log: list[dict] = []
 
         if fleet is None:
-            # First year: load the base fleet from EIA-860 and collapse
-            # individual units into efficiency-bin representatives before
-            # they ever reach the LP -- the dominant solve-time win.
-            fleet = aggregate_fleet(
-                load_fleet_from_csv(iso, iso_config),
-                n_bins=config.heat_rate_bin_count,
-            )
+            # First year: build the base fleet. With CAMPD binning the fleet
+            # comes from the operational bin assignments (base + peak
+            # generators per bin); otherwise the EIA-860 fleet is collapsed
+            # into equal-width efficiency-bin representatives. Either way the
+            # collapse happens before the LP -- the dominant solve-time win.
+            if campd_bins is not None:
+                campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
+                # The CAMPD bins cover only the gas/coal thermal fleet;
+                # nuclear (and any other non-aggregatable unit) still comes
+                # from EIA-860 so it stays in the dispatch LP.
+                non_thermal = [
+                    g for g in load_fleet_from_csv(iso, iso_config)
+                    if g.fuel_type not in _AGGREGATABLE_FUELS
+                ]
+                fleet = non_thermal + campd_fleet
+            else:
+                fleet = aggregate_fleet(
+                    load_fleet_from_csv(iso, iso_config),
+                    n_bins=config.heat_rate_bin_count,
+                )
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
@@ -239,9 +266,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # Split coal bins into take-or-pay tranches before the fleet-array
         # build so each tranche is its own dispatch column. dispatch_fleet is
         # transient; the persistent ``fleet`` (un-split) carries to next year.
-        dispatch_fleet, fuel_fracs = split_coal_tranches(
-            fleet + wecc_generators, config
-        )
+        # CAMPD bins already embed the coal supply curve as a base + peak
+        # split, so take-or-pay tranching applies only to the legacy fleet.
+        if campd_bins is not None:
+            dispatch_fleet = fleet + wecc_generators
+            fuel_fracs = [1.0] * len(dispatch_fleet)
+        else:
+            dispatch_fleet, fuel_fracs = split_coal_tranches(
+                fleet + wecc_generators, config
+            )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours, iso=iso,
             config=config,
@@ -344,6 +377,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 "year %d: solved and cached (%.3fs)",
                 year, time.perf_counter() - year_start,
             )
+
+        # CHP must-run post-processing: the must-run (steam) tranche was
+        # removed from the LP, so add its generation and emissions back for
+        # asset-level emissions trajectories.
+        if campd_bins is not None:
+            mr = compute_must_run_emissions(
+                campd_bins, year, config.must_run_cf
+            )
+            if not mr.empty:
+                logger.info(
+                    "year %d: CHP must-run post-processing — %d bins, "
+                    "%.0f GWh, %.0f kt CO2 (asset-level, outside the LP)",
+                    year, len(mr), mr["mr_gen_mwh"].sum() / 1000.0,
+                    mr["mr_co2_tons"].sum() / 1000.0,
+                )
 
         prior_results = {
             "fleet_arrays": fleet_arrays,
