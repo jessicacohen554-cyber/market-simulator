@@ -1327,9 +1327,17 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
 # fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
 # value is a flat multiplier on the bin's availability for the whole year.
 BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
-    # Martin Lake — turbine fire and boiler explosion took unit 1 out of
+    # Martin Lake -- turbine fire and boiler explosion took unit 1 out of
     # commission for 2025 (1 of 3 units, ~33% nameplate loss).
     "N_COAL4": {2025: 0.67},
+    # V H Braunig -- CPS Energy retired ST units 1 (225 MW) and 2 (252 MW)
+    # in early 2025 (March), leaving ST unit 3 (417 MW) and four 61 MW
+    # CTs (units 5-8) in the bin. The retiring 477 MW is 42% of the bin's
+    # 1138 MW nameplate; the annual-average derate for 2025 is
+    # (3/12 * 1.0) + (9/12 * 661/1138) = 0.686. 2026+ would be 0.581
+    # (units 1+2 retired full year); add when those calibration years
+    # come into scope.
+    "SC_STGAS3": {2025: 0.686},
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
