@@ -234,17 +234,24 @@ def generators_to_fleet_arrays(
                     (1.0 - gen.eford) * monthly_factors[month_idx]
                 )
 
-    # Combined-cycle shoulder-month maintenance: derate CC availability in
-    # the spring/autumn months when planned outages concentrate, on top of
-    # the EFORD outage rate already in `availability`.
-    cc_derate = config.cc_shoulder_maintenance_derate if config else 0.0
-    if cc_derate > 0.0:
+    # Shoulder-month planned maintenance: derate availability in the
+    # spring/autumn months when planned outages concentrate, on top of the
+    # EFORD forced-outage rate already in `availability`. Combined cycle and
+    # coal steam both schedule major maintenance between the demand peaks;
+    # EFORD covers only forced outages, so coal needs this to reach its
+    # NERC GADS equivalent availability.
+    shoulder_derate = {
+        "gas_cc": config.cc_shoulder_maintenance_derate if config else 0.0,
+        "coal": config.coal_shoulder_maintenance_derate if config else 0.0,
+    }
+    if any(d > 0.0 for d in shoulder_derate.values()):
         shoulder = np.isin(
             _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
         )
         for g_idx, gen in enumerate(generators):
-            if gen.fuel_type == "gas_cc":
-                availability[g_idx, shoulder] *= 1.0 - cc_derate
+            derate = shoulder_derate.get(gen.fuel_type, 0.0)
+            if derate > 0.0:
+                availability[g_idx, shoulder] *= 1.0 - derate
 
     return FleetArrays(
         pmax=pmax,

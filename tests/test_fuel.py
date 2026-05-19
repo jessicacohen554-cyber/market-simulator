@@ -5,6 +5,7 @@ import numpy as np
 from market_sim.config.constants import (
     COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
+    COAL_PRICE_PRB_BY_YEAR,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
     START_YEAR,
@@ -271,16 +272,18 @@ def test_coal_supply_pricing_base_year():
         fuel_prices, gens, config, COAL_DIESEL_INDEX_BASE_YEAR
     )
     assert np.allclose(fuel_prices[0], config.coal_price_lignite)
+    # PRB uses the year's measured delivered cost, take-or-pay discounted.
     assert np.allclose(
         fuel_prices[1],
-        config.coal_price_prb * config.coal_prb_contract_passthrough,
+        COAL_PRICE_PRB_BY_YEAR[COAL_DIESEL_INDEX_BASE_YEAR]
+        * config.coal_prb_contract_passthrough,
     )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
 
 
-def test_coal_supply_pricing_diesel_indexed():
-    """Lignite scales with the diesel index; PRB is held flat."""
+def test_coal_supply_pricing_year_specific():
+    """Lignite scales with diesel; PRB uses the year's measured cost."""
     config = ScenarioConfig()
     gens = [_coal_gen("lignite"), _coal_gen("prb")]
     fp_2023, fp_2024 = np.zeros((2, 4)), np.zeros((2, 4))
@@ -288,8 +291,18 @@ def test_coal_supply_pricing_diesel_indexed():
     apply_coal_supply_pricing(fp_2024, gens, config, 2024)
     # 2023 diesel was higher, so lignite is pricier in 2023 than 2024.
     assert fp_2023[0, 0] > fp_2024[0, 0]
-    # PRB is the measured delivered cost (take-or-pay discounted), not
-    # diesel-indexed — flat across years.
-    assert fp_2023[1, 0] == fp_2024[1, 0] == (
-        config.coal_price_prb * config.coal_prb_contract_passthrough
+    # PRB is the measured per-year delivered cost, take-or-pay discounted.
+    pt = config.coal_prb_contract_passthrough
+    assert np.isclose(fp_2023[1, 0], COAL_PRICE_PRB_BY_YEAR[2023] * pt)
+    assert np.isclose(fp_2024[1, 0], COAL_PRICE_PRB_BY_YEAR[2024] * pt)
+
+
+def test_coal_supply_pricing_unmeasured_year_falls_back():
+    """A year without an EIA-923 extract uses the config PRB default."""
+    config = ScenarioConfig()
+    gens = [_coal_gen("prb")]
+    fp = np.zeros((1, 4))
+    apply_coal_supply_pricing(fp, gens, config, 2021)  # no 2021 extract
+    assert np.isclose(
+        fp[0, 0], config.coal_price_prb * config.coal_prb_contract_passthrough
     )
