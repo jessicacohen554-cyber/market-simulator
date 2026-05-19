@@ -421,7 +421,7 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     print(f"{'=' * 64}")
 
     model_twh = _generation_twh(result, context)
-    # The benchmark is EIA-923 by-fuel net generation for the run year —
+    # The benchmark is EIA-923 by-fuel net generation for the run year --
     # unlike the eGRID plant snapshot, its totals sum to the balancing
     # authority's actual net generation. Compared only for a full 8760-hour
     # run; a sub-annual horizon (--hours) is a smoke test, not a backcast.
@@ -432,8 +432,23 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     bench_twh = year_ref.get("generation_twh", {}) if full_year else {}
     if not full_year:
         print(
-            f"\n  NOTE: {result.dispatch.shape[1]}-hour run — EIA-923 "
+            f"\n  NOTE: {result.dispatch.shape[1]}-hour run -- EIA-923 "
             "benchmark comparison suppressed (full 8760h required)."
+        )
+    # The EIA-923 monthly file for the current year is preliminary until
+    # the annual revision (typically Sep of the following year): it
+    # under-reports renewable generation by ~30 TWh because small / new
+    # wind and solar plants are slow to submit Form 923. Flag that here
+    # so the "+13.6% total" gap is read as a benchmark gap, not a model
+    # error. The EIA-930 hourly extract is the more complete reference
+    # for the current year (see the calibration_reference.json
+    # ``eia930_total_twh`` block).
+    if full_year and iso == "ERCOT" and year >= 2025:
+        print(
+            "\n  NOTE: ERCOT 2025 EIA-923 monthly file is preliminary "
+            "(released Feb 2026). It under-reports renewable generation "
+            "by ~30 TWh vs EIA-930 hourly metered output; expect "
+            "+10-15% model-vs-EIA-923 gaps until the annual revision."
         )
 
     fuels = sorted(set(model_twh) | set(bench_twh))
