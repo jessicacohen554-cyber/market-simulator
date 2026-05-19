@@ -38,7 +38,11 @@ from market_sim.data.fleet import (
     load_fleet_from_csv,
     split_coal_tranches,
 )
-from market_sim.data.fuel import resolve_annual_gas_price, resolve_fuel_prices
+from market_sim.data.fuel import (
+    apply_coal_supply_pricing,
+    resolve_annual_gas_price,
+    resolve_fuel_prices,
+)
 from market_sim.data.renewables import (
     inject_offshore_wind_availability,
     load_renewable_profiles,
@@ -294,6 +298,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         else:
             fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
+            # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
+            # lignite vs PRB by rail); no-op for the legacy fleet.
+            apply_coal_supply_pricing(
+                fuel_prices, dispatch_fleet, config, year
+            )
             carbon_price = resolve_carbon_price(config, year)
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
             # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous
