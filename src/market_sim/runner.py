@@ -69,7 +69,6 @@ from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
-from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 
 logger = logging.getLogger(__name__)
@@ -274,7 +273,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # split, so take-or-pay tranching applies only to the legacy fleet.
         if campd_bins is not None:
             dispatch_fleet = fleet + wecc_generators
-            fuel_fracs = [1.0] * len(dispatch_fleet)
+            # Must-run tranches bid at VOM + carbon + NOx only — the fuel
+            # is sunk under take-or-pay coal contracts, CHP host steam
+            # obligations or ERCOT RUC. apply_coal_tranches subtracts the
+            # full fuel term for any generator with fuel_frac < 1. (Note
+            # the function name still says "coal" but it gates on
+            # fuel_type == "coal" only; non-coal must-run discounting is
+            # handled via assemble_mc using fuel_fracs directly.)
+            fuel_fracs = [
+                0.0 if g.unit_id.endswith("_mustrun") else 1.0
+                for g in dispatch_fleet
+            ]
         else:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
                 fleet + wecc_generators, config
@@ -397,21 +406,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 "year %d: solved and cached (%.3fs)",
                 year, time.perf_counter() - year_start,
             )
-
-        # CHP must-run post-processing: the must-run (steam) tranche was
-        # removed from the LP, so add its generation and emissions back for
-        # asset-level emissions trajectories.
-        if campd_bins is not None:
-            mr = compute_must_run_emissions(
-                campd_bins, year, config.must_run_cf
-            )
-            if not mr.empty:
-                logger.info(
-                    "year %d: CHP must-run post-processing — %d bins, "
-                    "%.0f GWh, %.0f kt CO2 (asset-level, outside the LP)",
-                    year, len(mr), mr["mr_gen_mwh"].sum() / 1000.0,
-                    mr["mr_co2_tons"].sum() / 1000.0,
-                )
 
         prior_results = {
             "fleet_arrays": fleet_arrays,

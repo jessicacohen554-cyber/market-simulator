@@ -276,6 +276,14 @@ def generators_to_fleet_arrays(
             base_avail = 1.0 - wefor - derate
             availability[g_idx, :] = base_avail
             availability[g_idx, shoulder] = base_avail - pof
+            # Per-bin forced derates for confirmed unit losses (e.g. a
+            # multi-unit plant losing one boiler to a fire). Applied as a
+            # flat multiplier on top of the age-based availability.
+            forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(
+                run_year
+            )
+            if forced is not None:
+                availability[g_idx, :] *= forced
 
     return FleetArrays(
         pmax=pmax,
@@ -653,7 +661,10 @@ def apply_coal_tranches(
     """
     fuel_prices = np.asarray(fuel_prices, dtype=float)
     for g, gen in enumerate(generators):
-        if gen.fuel_type == "coal" and fuel_fracs[g] < 1.0:
+        # Discount the fuel term for any generator with a take-or-pay
+        # contract or host-steam obligation that sinks part of its fuel
+        # cost (coal tranches; CAMPD must-run tranches across all fuels).
+        if fuel_fracs[g] < 1.0:
             fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
             mc[g, :] -= (1.0 - fuel_fracs[g]) * fuel_cost
 
@@ -1311,6 +1322,16 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
     56257: 2013,  # Sandy Creek
 }
 
+# Per-bin forced availability derates by year, for confirmed unit losses
+# that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
+# fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
+# value is a flat multiplier on the bin's availability for the whole year.
+BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
+    # Martin Lake — turbine fire and boiler explosion took unit 1 out of
+    # commission for 2025 (1 of 3 units, ~33% nameplate loss).
+    "N_COAL4": {2025: 0.67},
+}
+
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
 # Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
 BIN_GROUP_HR_DEFAULT: dict[str, float] = {
@@ -1405,6 +1426,16 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
         ``min_run``, ``min_down``, ``plant_count``, ``plant_codes``, ``fuel``.
     """
     detail = pd.read_csv(csv_path)
+    # Capacity-weighted contributions for the per-tranche heat-rate columns
+    # so that aggregating multi-plant bins gives the correct bin HR. Blank
+    # cells (a tranche with pct = 0) are excluded from both numerator and
+    # denominator via the per-column mask.
+    for col in ("HR_Must_Run", "HR_Committed", "HR_Economic", "HR_Peaking"):
+        mask = detail[col].notna() & (detail["Nameplate_MW"] > 0.0)
+        detail[f"_num_{col}"] = (
+            detail[col].where(mask, 0.0) * detail["Nameplate_MW"].where(mask, 0.0)
+        )
+        detail[f"_den_{col}"] = detail["Nameplate_MW"].where(mask, 0.0)
     bins = (
         detail.groupby(_BIN_KEY_COLUMNS, sort=False)
         .agg(
@@ -1419,11 +1450,29 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
             min_down=("Min_Down_Hours", "first"),
             plant_count=("Plant_Code", "count"),
             plant_codes=("Plant_Code", lambda x: list(x)),
+            _num_mr=("_num_HR_Must_Run", "sum"),
+            _den_mr=("_den_HR_Must_Run", "sum"),
+            _num_mc=("_num_HR_Committed", "sum"),
+            _den_mc=("_den_HR_Committed", "sum"),
+            _num_econ=("_num_HR_Economic", "sum"),
+            _den_econ=("_den_HR_Economic", "sum"),
+            _num_peak=("_num_HR_Peaking", "sum"),
+            _den_peak=("_den_HR_Peaking", "sum"),
         )
         .reset_index()
     )
     bins["hr_weighted"] = bins.apply(_fill_bin_hr, axis=1)
-    bins = bins.drop(columns=["plant_hr_mean"])
+    for short in ("mr", "mc", "econ", "peak"):
+        bins[f"hr_{short}"] = np.where(
+            bins[f"_den_{short}"] > 0.0,
+            bins[f"_num_{short}"] / bins[f"_den_{short}"].replace(0, np.nan),
+            np.nan,
+        )
+    bins = bins.drop(columns=[
+        "plant_hr_mean",
+        *[f"_num_{s}" for s in ("mr", "mc", "econ", "peak")],
+        *[f"_den_{s}" for s in ("mr", "mc", "econ", "peak")],
+    ])
     bins["fuel"] = bins["Plant_Group"].map(BIN_GROUP_TO_FUEL)
 
     unmapped = bins[bins["fuel"].isna()]
@@ -1454,34 +1503,34 @@ def bins_to_fleet(
     zone_names: list[str],
     config: ScenarioConfig,
 ) -> tuple[list[Generator], FleetArrays]:
-    """Convert CAMPD bins into LP generators — three stepped tranches per bin.
+    """Convert CAMPD bins into LP generators — four stepped tranches per bin.
 
-    For every bin:
+    Every bin's capacity is split into four LP-dispatchable tranches keyed
+    to the CSV percentages and per-tranche heat rates. A bin only gets
+    tranches whose capacity is non-zero:
 
-    * The Must-Run tranche (CHP steam) is removed from LP capacity —
-      ``grid_cap = nameplate × (1 - MR%)``. Its generation is added back in
-      post-processing (see ``results.emissions.compute_must_run_emissions``).
-    * The remaining capacity becomes three separate LP generators, stepped
-      by heat rate so a bin's bid curve traces a unit's convex
-      input-output curve:
-
-      - ``_committed`` — the Committed tranche: the unit's part-load
-        range. Its heat rate is ``hr × committed_hr_mult`` (above the bin
-        average — units are less efficient at minimum load), so it bids
-        higher than the economic increment. It carries the bin's start
-        cost and min-run window: starting this tranche is starting the
-        plant.
+      - ``_mustrun`` — the Must-Run tranche: capacity that runs regardless
+        of grid economics (coal mine-mouth take-or-pay, CHP host steam
+        obligation, ERCOT RUC, environmental minimum-gen / CEMS compliance,
+        cycling avoidance). It bids at VOM + carbon + NOx only — the fuel
+        is sunk from the dispatch decision's perspective — via fuel_fracs
+        in the runner, so it is always in merit without needing a Pmin
+        floor.
+      - ``_committed`` — the Committed tranche: the unit's part-load range
+        when started. Carries the bin's start cost and min-run window —
+        starting this tranche is starting the plant.
       - ``_econ`` — the Economic tranche: incremental dispatch above the
-        part-load range, heat rate ``hr × econ_hr_mult`` (below the bin
-        average — the upper load range is the unit's most efficient).
-      - ``_peak`` — the Peaking tranche, heat rate scaled by the duct-firing
-        penalty, so scarcity output bids highest.
+        part-load range, the most efficient slice of the unit.
+      - ``_peak`` — the Peaking tranche, heat rate scaled by the
+        duct-firing / overfire penalty in the CSV, so scarcity output
+        bids highest.
 
-    No tranche carries a Pmin floor. Only the Committed tranche carries
-    the start cost and min-run window; the Committed and Economic
-    tranches are the same physical unit, so the P2 commitment screen
-    starts and stops them together (see
-    :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
+    Per-tranche heat rates come directly from the CSV's ``HR_<tranche>``
+    columns (capacity-weighted across plants in a bin); a blank cell
+    falls back to the bin's weighted-average HR. No tranche carries a
+    Pmin floor; the Committed and Economic tranches are the same physical
+    unit, so the P2 commitment screen starts and stops them together
+    (see :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
     Economic and Peaking are incremental loading of a running unit, so
     they carry neither a start cost nor a min-run window.
 
@@ -1517,10 +1566,29 @@ def bins_to_fleet(
                 den += float(mw)
         return int(round(num / den)) if den > 0.0 else 2010
 
+    def _tranche_hr(b, short: str, base: float) -> float:
+        """Return the bin's CSV-supplied heat rate for ``short`` tranche.
+
+        Falls back to ``base`` (the bin's weighted-average HR) if the CSV
+        column was blank for every plant in the bin.
+        """
+        val = b.get(f"hr_{short}")
+        if val is not None and val == val and val > 0.0:
+            return float(val)
+        return base
+
     for _, b in bins.iterrows():
         pct_mr = float(b["pct_mr"])
-        grid_cap = float(b["capacity_mw"]) * (1.0 - pct_mr / 100.0)
-        if grid_cap <= 0.0:
+        nameplate = float(b["capacity_mw"])
+        fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
+        # Every bin's tranches sit in the LP, including the must-run share.
+        # The must-run tranche bids at VOM + carbon + NOx only (fuel sunk
+        # under take-or-pay coal contracts, host steam obligations for CHP,
+        # or ERCOT RUC) via fuel_fracs in the runner, so it is always in
+        # merit and effectively forced on without needing a Pmin floor.
+        mustrun_cap = nameplate * pct_mr / 100.0
+        grid_cap = nameplate - mustrun_cap
+        if nameplate <= 0.0:
             continue
 
         denom = 100.0 - pct_mr
@@ -1534,7 +1602,6 @@ def bins_to_fleet(
         if zone == "Unknown" or zone not in valid_zones:
             zone = config.unknown_zone_default
 
-        fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
         group = str(b["Plant_Group"])
         hr = float(b["hr_weighted"])
         label = str(b["Bin_Label"])
@@ -1552,38 +1619,29 @@ def bins_to_fleet(
             )
         else:
             commission_year = _commission_year(codes)
-        peak_penalty = {
-            "gas_cc": config.cc_peak_hr_penalty,
-            "gas_ct": config.ct_peak_hr_penalty,
-            "gas_st": config.ct_peak_hr_penalty,
-            "coal": config.coal_peak_hr_penalty,
-        }.get(fuel, 1.10)
         startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
-        # Two-tranche HR split for the base capacity: the committed
-        # (part-load) block bids above the bin average, the economic
-        # increment bids below it.
-        committed_mult, econ_mult = {
-            "gas_cc": (config.cc_committed_hr_mult, config.cc_econ_hr_mult),
-            "gas_ct": (config.ct_committed_hr_mult, config.ct_econ_hr_mult),
-            "gas_st": (
-                config.gas_st_committed_hr_mult, config.gas_st_econ_hr_mult
-            ),
-            "coal": (config.coal_committed_hr_mult, config.coal_econ_hr_mult),
-        }.get(fuel, (1.0, 1.0))
-        committed_hr = hr * committed_mult
-        econ_hr = hr * econ_mult
+        # Per-tranche heat rates come straight from the CSV's HR_<tranche>
+        # columns (capacity-weighted across plants in the bin), falling
+        # back to the bin's weighted-average HR when a column is blank
+        # (e.g. coal HR_Must_Run, currently uncomputed in the input file).
+        mustrun_hr = _tranche_hr(b, "mr", hr)
+        committed_hr = _tranche_hr(b, "mc", hr)
+        econ_hr = _tranche_hr(b, "econ", hr)
+        peak_hr = _tranche_hr(b, "peak", hr)
 
-        # Three stepped tranches: (suffix, capacity, heat rate, VOM
+        # Four stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
-        # tranche is screened and carries the start cost — Economic and
-        # Peaking are incremental output of an already-running plant. No
-        # tranche carries a Pmin floor.
+        # tranche is screened and carries the start cost; Must-Run,
+        # Economic and Peaking are incremental output of an already-running
+        # plant. No tranche carries a Pmin floor — the Must-Run tranche is
+        # forced on by bidding at VOM only (fuel_fracs in the runner).
         tranches = (
+            ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
             ("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0),
-            ("peak", peak_cap, hr * peak_penalty, 1.5, 0, 0, 0.0),
+            ("peak", peak_cap, peak_hr, 1.5, 0, 0, 0.0),
         )
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
             tranches
