@@ -364,6 +364,19 @@ DIESEL_PRICE_BY_YEAR: dict[int, float] = {
 # Reference year whose diesel price anchors the coal-price diesel index.
 COAL_DIESEL_INDEX_BASE_YEAR: int = 2024
 
+# PRB delivered fuel cost ($/MMBtu) by year — the measured quantity-weighted
+# delivered cost reported by ERCOT's PRB-burning plants (Fayette, J K Spruce)
+# in EIA-923 Schedule 5. Coal delivered cost is a per-year input, not a
+# constant: it moves with rail freight and contract terms independently of
+# the gas price. Years without an EIA-923 extract fall back to the
+# ScenarioConfig.coal_price_prb default.
+# Source: EIA-923 Schedule 5 (Fuel Receipts and Costs), 2023-2025.
+COAL_PRICE_PRB_BY_YEAR: dict[int, float] = {
+    2023: 1.82,
+    2024: 1.76,
+    2025: 1.61,
+}
+
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
