@@ -168,6 +168,73 @@ class TestComputeCommitment(unittest.TestCase):
         self.assertFalse(committed_bid.any())
 
 
+class TestStorageWeightedCommitment(unittest.TestCase):
+    """The commitment hurdle discounts margin in storage net-charging hours."""
+
+    def _scenario(self):
+        # f-class CC, hurdle 52.0. A 10-hour run at 6 $/MWh margin totals 60,
+        # which clears the hurdle when unweighted (see the IRR-hurdle test).
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 36.0
+        demand = np.full((1, 24), 1000.0)
+        return gens, arrays, base_mc, prices, demand
+
+    def test_net_charging_discounts_hurdle_and_rejects_run(self):
+        # Storage charges 200 MW into a 1000 MW zone during the run, so the
+        # weight is 0.8: weighted margin 60 x 0.8 = 48 < 52 -> rejected.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        charge = np.zeros((1, 24))
+        charge[0, 5:15] = 200.0
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG,
+            storage_charge=charge,
+            storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertFalse(committed.any())
+
+    def test_net_discharging_keeps_full_weight_and_commits(self):
+        # Storage discharging keeps weight 1.0 (storage and thermal are
+        # complements at the peak): the 60-total run still clears 52.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        discharge = np.zeros((1, 24))
+        discharge[0, 5:15] = 200.0
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG,
+            storage_charge=np.zeros((1, 24)),
+            storage_discharge=discharge,
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_zero_weight_disables_storage_discount(self):
+        # commitment_storage_weight = 0 recovers the plain margin sum even
+        # with heavy net charging: the run commits.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        charge = np.zeros((1, 24))
+        charge[0, 5:15] = 200.0
+        config = ScenarioConfig(commitment_storage_weight=0.0)
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, config,
+            storage_charge=charge,
+            storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_omitted_storage_inputs_are_a_noop(self):
+        # Without the storage arguments the screen is unchanged: the run
+        # clears the hurdle exactly as in the non-storage IRR-hurdle test.
+        gens, arrays, base_mc, prices, _ = self._scenario()
+        committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertTrue(committed[0, 5:15].all())
+
+
 class TestCoalAndNuclearAlwaysCommitted(unittest.TestCase):
     """Coal, nuclear and non-thermal fuels are never commitment-screened."""
 
