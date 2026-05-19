@@ -170,13 +170,6 @@ class ScenarioConfig:
     # (Mar-May, Oct-Nov), on top of the EFORD outage rate — planned
     # maintenance concentrates between the winter and summer demand peaks.
     # 0.0 disables.
-    coal_shoulder_maintenance_derate: float = 0.24  # multiplicative cut to
-    # coal-steam availability in the spring/autumn shoulder months, on top
-    # of the EFORD forced-outage rate. EFORD captures only forced outages;
-    # coal steam also takes long planned maintenance outages. This derate
-    # adds the NERC GADS planned-outage factor (~10% of the year, here
-    # concentrated in the 5 shoulder months) so coal's equivalent
-    # availability lands near the GADS coal-steam EAF of ~82%. 0.0 disables.
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
@@ -374,7 +367,6 @@ TIER_TAGS: dict[str, int] = {
     "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
     "cc_shoulder_maintenance_derate": 3,
-    "coal_shoulder_maintenance_derate": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "td_loss_factor": 3,
