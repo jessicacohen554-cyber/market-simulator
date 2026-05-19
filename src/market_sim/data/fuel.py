@@ -184,7 +184,9 @@ def apply_coal_supply_pricing(
 
     Mine-mouth lignite generators (``coal_supply == "lignite"``) bid at the
     marginal extraction cost; PRB-by-rail generators (``coal_supply ==
-    "prb"``) bid at the delivered mine-gate-plus-rail cost. The
+    "prb"``) bid at the delivered mine-gate-plus-rail cost scaled by
+    ``coal_prb_contract_passthrough`` — take-or-pay rail contracts leave
+    much of the tonnage sunk, so PRB bids below full delivered cost. The
     diesel-driven components — the whole lignite extraction cost and the
     PRB rail freight — scale with the on-highway diesel price relative to
     :data:`COAL_DIESEL_INDEX_BASE_YEAR`; the stable PRB mine-gate cost does
@@ -206,8 +208,10 @@ def apply_coal_supply_pricing(
 
     price_by_supply = {
         "lignite": config.coal_price_lignite * diesel_index,
-        "prb": config.coal_price_prb_mine
-        + config.coal_price_prb_rail * diesel_index,
+        "prb": (
+            config.coal_price_prb_mine
+            + config.coal_price_prb_rail * diesel_index
+        ) * config.coal_prb_contract_passthrough,
     }
     for g_idx, gen in enumerate(generators):
         price = price_by_supply.get(getattr(gen, "coal_supply", ""))

@@ -273,7 +273,8 @@ def test_coal_supply_pricing_base_year():
     assert np.allclose(fuel_prices[0], config.coal_price_lignite)
     assert np.allclose(
         fuel_prices[1],
-        config.coal_price_prb_mine + config.coal_price_prb_rail,
+        (config.coal_price_prb_mine + config.coal_price_prb_rail)
+        * config.coal_prb_contract_passthrough,
     )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
