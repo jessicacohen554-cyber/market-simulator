@@ -291,7 +291,14 @@ def run_year(
             if g.fuel_type not in _AGGREGATABLE_FUELS
         ]
         fleet = non_thermal + campd_fleet
-        fuel_fracs = [1.0] * len(fleet)
+        # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
+        # under take-or-pay coal contracts, CHP host steam obligations or
+        # ERCOT RUC. apply_coal_tranches discounts coal must-run; the
+        # gas/steam must-run fuel-cost discount is applied below.
+        fuel_fracs = [
+            0.0 if g.unit_id.endswith("_mustrun") else 1.0
+            for g in fleet
+        ]
     else:
         fleet_base = aggregate_fleet(
             load_fleet_from_csv(iso, iso_config),

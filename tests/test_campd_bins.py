@@ -93,15 +93,25 @@ class TestBinsToFleet(unittest.TestCase):
             cls.bins, ZONE_NAMES, cls.config
         )
 
-    def test_mr_derate_removes_must_run_capacity(self):
-        # CC_CHP must-run is 60%, so grid capacity is 40% of nameplate.
+    def test_mustrun_capacity_is_an_lp_tranche(self):
+        # CC_CHP must-run is 60% of nameplate; the must-run tranche is in
+        # the LP (it bids at VOM only via fuel_fracs) so the bin's total
+        # LP capacity equals its full nameplate.
         cc_chp = self.bins[self.bins["Plant_Group"] == "CC_CHP"]
         nameplate = cc_chp["capacity_mw"].sum()
-        grid = sum(
+        lp_total = sum(
             g.pmax_mw for g in self.fleet
             if g.plant_group == "CC_CHP"
         )
-        self.assertAlmostEqual(grid, nameplate * 0.40, places=3)
+        self.assertAlmostEqual(lp_total, nameplate, places=3)
+        mustrun = [
+            g for g in self.fleet
+            if g.plant_group == "CC_CHP" and g.unit_id.endswith("_mustrun")
+        ]
+        self.assertGreater(len(mustrun), 0)
+        self.assertAlmostEqual(
+            sum(g.pmax_mw for g in mustrun), nameplate * 0.60, places=3
+        )
 
     def test_cc_regular_committed_tranche_is_half_grid_cap(self):
         # CC_REGULAR: MR 0, MC 50 -> the _committed tranche is 50% of grid
@@ -141,28 +151,30 @@ class TestBinsToFleet(unittest.TestCase):
         # No tranche carries a Pmin floor.
         self.assertTrue(all(g.pmin_mw == 0.0 for g in self.fleet))
 
-    def test_committed_and_econ_tranches_split_the_heat_rate(self):
-        b = _synthetic_bin()
+    def test_per_tranche_heat_rates_come_from_csv(self):
+        # bins_to_fleet reads ``hr_mc``, ``hr_econ`` and ``hr_peak`` from
+        # the aggregated bins frame (capacity-weighted CSV HR columns),
+        # falling back to ``hr_weighted`` if a column is blank.
+        b = _synthetic_bin(hr_mc=7.5, hr_econ=6.4, hr_peak=10.2)
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         committed = next(
             g for g in fleet if g.unit_id.endswith("_committed")
         )
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
         peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
-        # The econ increment bids below the bin average; the committed
-        # part-load block bids above it.
-        self.assertLess(econ.heat_rate, committed.heat_rate)
-        self.assertAlmostEqual(
-            committed.heat_rate,
-            6.6 * self.config.cc_committed_hr_mult,
-            places=6,
+        self.assertAlmostEqual(committed.heat_rate, 7.5, places=6)
+        self.assertAlmostEqual(econ.heat_rate, 6.4, places=6)
+        self.assertAlmostEqual(peak.heat_rate, 10.2, places=6)
+
+    def test_tranche_hr_falls_back_to_bin_average(self):
+        # When a CSV HR_<tranche> column is blank for every plant in a
+        # bin, the tranche inherits the bin's weighted-average HR.
+        b = _synthetic_bin()  # no hr_mc/hr_econ/hr_peak overrides
+        fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
+        committed = next(
+            g for g in fleet if g.unit_id.endswith("_committed")
         )
-        self.assertAlmostEqual(
-            econ.heat_rate, 6.6 * self.config.cc_econ_hr_mult, places=6
-        )
-        self.assertAlmostEqual(
-            peak.heat_rate, 6.6 * self.config.cc_peak_hr_penalty, places=6
-        )
+        self.assertAlmostEqual(committed.heat_rate, 6.6, places=6)
 
     def test_unknown_zone_defaults(self):
         b = _synthetic_bin(ERCOT_Zone="Unknown")
