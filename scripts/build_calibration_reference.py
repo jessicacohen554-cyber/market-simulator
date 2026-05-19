@@ -27,6 +27,7 @@ import datetime as dt
 import json
 import logging
 import sys
+import zipfile
 from pathlib import Path
 
 import pandas as pd
@@ -250,6 +251,67 @@ def _write_year_csv(iso: str, year: int, renewables: dict) -> Path:
     return path
 
 
+# EIA-923 reported fuel-type codes that count as coal.
+_EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"})
+# ISO identifier -> EIA balancing-authority code.
+_ISO_BA_CODE: dict[str, str] = {"ERCOT": "ERCO", "CAISO": "CISO"}
+
+
+def _eia923_generation(iso: str, year: int) -> dict[str, float]:
+    """Return EIA-923 net generation by model fuel (TWh) for an ISO-year.
+
+    Reads the EIA-923 Schedule 2/3/4/5/M workbook from the ``f923_{year}``
+    zip under ``inputs/raw-data``, keeps the rows in the ISO's balancing
+    authority, and classifies each by reported fuel code and prime mover.
+    Gas is split into combined cycle (prime movers CA/CT/CC/CS), combustion
+    turbine (GT) and gas steam (ST). Unlike the eGRID plant snapshot, these
+    totals sum to the balancing authority's actual net generation, so they
+    are a self-consistent calibration benchmark.
+
+    Returns an empty dict when no EIA-923 zip exists for the year (2021 and
+    2022 have none) or the ISO has no balancing-authority mapping.
+    """
+    ba = _ISO_BA_CODE.get(iso)
+    if ba is None:
+        return {}
+    matches = sorted(
+        (REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip")
+    )
+    if not matches:
+        return {}
+    with zipfile.ZipFile(matches[0]) as zf:
+        inner = [n for n in zf.namelist() if "Schedules_2_3_4_5_M" in n]
+        if not inner:
+            return {}
+        with zf.open(inner[0]) as handle:
+            df = pd.read_excel(
+                handle,
+                sheet_name="Page 1 Generation and Fuel Data",
+                skiprows=5,
+            )
+    df.columns = [str(c).replace("\n", " ").strip() for c in df.columns]
+    df = df[df["Balancing Authority Code"].astype(str).str.strip() == ba]
+    net_gen = pd.to_numeric(
+        df["Net Generation (Megawatthours)"], errors="coerce"
+    ).fillna(0.0)
+    pm = df["Reported Prime Mover"].astype(str).str.strip()
+    fc = df["Reported Fuel Type Code"].astype(str).str.strip()
+    is_gas = fc == "NG"
+    masks = {
+        "coal": fc.isin(_EIA923_COAL_FUELS),
+        "gas_cc": is_gas & pm.isin(["CA", "CT", "CC", "CS"]),
+        "gas_ct": is_gas & pm.isin(["GT"]),
+        "gas_st": is_gas & pm.isin(["ST"]),
+        "nuclear": fc == "NUC",
+        "wind": fc == "WND",
+        "solar": fc == "SUN",
+    }
+    return {
+        fuel: round(float(net_gen[mask].sum()) / _MWH_PER_TWH, 4)
+        for fuel, mask in masks.items()
+    }
+
+
 def build_reference() -> Path:
     """Build the calibration reference JSON and per-year CSVs.
 
@@ -267,6 +329,7 @@ def build_reference() -> Path:
                 "henry_hub_actual": HENRY_HUB_ACTUAL[year],
                 "demand": _demand_totals(iso, year),
                 "renewables": renewables,
+                "generation_twh": _eia923_generation(iso, year),
             }
             csv_path = _write_year_csv(iso, year, renewables)
             logger.info("wrote %s", csv_path.relative_to(REPO))
@@ -276,8 +339,9 @@ def build_reference() -> Path:
         "generated": dt.date.today().isoformat(),
         "description": (
             "Multi-year calibration reference: EIA-860 renewable capacity, "
-            "measured Henry Hub prices, EIA-930 demand totals, and the "
-            "eGRID 2023 generation/emissions benchmark."
+            "measured Henry Hub prices, EIA-930 demand totals, EIA-923 "
+            "by-fuel net generation (the per-year generation_twh benchmark, "
+            "2023-2025), and the eGRID 2023 generation/emissions benchmark."
         ),
         "calibration_years": list(CALIBRATION_YEARS),
         "henry_hub_actual": {str(y): p for y, p in HENRY_HUB_ACTUAL.items()},
