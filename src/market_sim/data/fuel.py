@@ -30,11 +30,12 @@ from market_sim.data.hydrogen import compute_h2_fuel_cost
 
 # Fuel-type integer codes (from FUEL_TYPE_MAP) that burn natural gas and
 # therefore pay the Henry Hub price. CCUS (``gas_cc_ccs``) burns the same
-# natural gas as an unabated gas CC.
-_GAS_FUEL_IDX: tuple[int, int, int] = (
+# natural gas as an unabated gas CC; ``gas_st`` is legacy gas steam.
+_GAS_FUEL_IDX: tuple[int, ...] = (
     FUEL_TYPE_MAP["gas_cc"],
     FUEL_TYPE_MAP["gas_ct"],
     FUEL_TYPE_MAP["gas_cc_ccs"],
+    FUEL_TYPE_MAP["gas_st"],
 )
 
 # Fuel-type integer code for coal-fired units, which pay the coal price.

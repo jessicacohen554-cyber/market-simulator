@@ -560,6 +560,13 @@ def build_variable_bounds(
     # Overgeneration dump: 0 <= Dump <= inf.
     col_upper[:, layout._dump_off :] = np.inf
 
+    # Clip the lower bound to never exceed the upper bound. A committed
+    # thermal generator carries a positive Pmin, but the commitment screen
+    # (and hour-varying availability) can drive its upper bound to zero in
+    # decommitted hours. Without this clip pmin > 0 = upper would make the
+    # LP infeasible; the clip forces such a generator off (0 <= P <= 0).
+    col_lower = np.minimum(col_lower, col_upper)
+
     return col_lower.ravel(), col_upper.ravel()
 
 
