@@ -14,13 +14,12 @@ This module supports the three-solve dispatch calibration architecture:
   is ``P1_price - base_MC``. A run must clear an IRR hurdle on its startup
   cost to justify a physical start.
 
-* :func:`apply_commitment_with_coal_pin` zeros CC/CT availability in
-  decommitted hours while pinning coal dispatch to its P1 levels — the
-  commitment screen only tunes the CC vs CT split, never coal.
-
-Coal is never commitment-screened: EIA-930 confirms ERCOT coal runs all
-8,760 hours, cycling output level via its take-or-pay tranches rather than
-starting and stopping.
+* :func:`apply_commitment_with_coal_pin` zeros the availability of every
+  screened generator in its decommitted hours. CAMPD coal is screened
+  like CC/CT (its 36-hour minimum run keeps it on through all but the
+  longest low-price spells). Legacy coal — the take-or-pay-tranche fleet
+  used when ``use_campd_bins=False`` — is never screened: its dispatch is
+  pinned to the P1 levels instead.
 """
 
 from __future__ import annotations
@@ -94,17 +93,20 @@ def _commitment_params(
     """Return startup/min-run params for a generator, or ``None`` to skip.
 
     ``None`` means the generator is never commitment-screened (always
-    committed): coal, nuclear and every non-thermal fuel.
+    committed): nuclear and every non-thermal fuel.
 
     For a CAMPD-bin generator the parameters come straight from the bin
     (``min_run_hours`` / ``min_down_hours`` / ``startup_cost_per_mw``).
-    Coal bins and bins with no minimum run length (the ``_peak`` slice of
-    every bin) are never screened. For a legacy generator the fuel's
-    parameter table is keyed by ascending heat-rate cutoff; the first row
-    whose cutoff exceeds ``heat_rate`` applies.
+    CAMPD coal IS screened — it carries a 36-hour minimum run, so it
+    rarely decommits, but an extended low-price spell can still shut it
+    down. The ``_peak`` slice of every bin carries ``min_run_hours = 0``
+    and is never screened. For a legacy generator the fuel's parameter
+    table is keyed by ascending heat-rate cutoff; the first row whose
+    cutoff exceeds ``heat_rate`` applies (legacy coal has no table entry,
+    so it stays committed).
     """
     if gen.is_campd_bin:
-        if gen.plant_group == "COAL" or gen.min_run_hours <= 0:
+        if gen.min_run_hours <= 0:
             return None
         return {
             "startup_per_mw": gen.startup_cost_per_mw,
@@ -270,12 +272,15 @@ def apply_commitment_with_coal_pin(
 ) -> FleetArrays:
     """Return new ``FleetArrays`` with the commitment screen applied.
 
-    * Gas CC/CT: availability is zeroed in decommitted hours.
-    * Coal: availability is pinned to reproduce the P1 coal dispatch
-      (availability = P1 dispatch / Pmax, with a tiny floor), so coal never
-      decommits and the P2 solve only tunes the CC vs CT split.
-    * Nuclear, hydro and other fuels pass through unchanged, keeping their
-      Pmin (nuclear stays must-run).
+    * Screened generators (all CAMPD bins — including coal — and legacy
+      gas CC/CT): availability is zeroed in their decommitted hours, so
+      the P2 solve re-optimizes them within the commitment mask.
+    * Legacy coal (``fuel_type == "coal"`` outside the CAMPD path): it is
+      never screened, so its availability is pinned to reproduce the P1
+      coal dispatch (availability = P1 dispatch / Pmax, with a tiny floor).
+    * Nuclear, hydro and other unscreened fuels carry an all-committed
+      mask, so zeroing decommitted hours is a no-op — they pass through
+      unchanged and keep their Pmin (nuclear stays must-run).
 
     Args:
         fleet_arrays: The P1 vectorized fleet.
@@ -289,15 +294,16 @@ def apply_commitment_with_coal_pin(
     avail = fleet_arrays.availability.copy()
 
     for g, gen in enumerate(generators):
-        if gen.fuel_type == "coal":
-            # Pin coal: availability ceiling = P1 dispatch fraction, so P2
-            # coal reproduces P1 coal. A tiny floor avoids a numerical zero.
+        if gen.fuel_type == "coal" and not gen.is_campd_bin:
+            # Legacy coal is never screened: pin its availability ceiling to
+            # the P1 dispatch fraction so P2 reproduces P1 coal. A tiny floor
+            # avoids a numerical zero. CAMPD coal is screened like CC/CT.
             p1_frac = np.clip(
                 p1_dispatch[g, :] / max(float(fleet_arrays.pmax[g]), 1.0),
                 0.0, 1.0,
             )
             avail[g, :] = np.maximum(p1_frac, 1e-6)
-        elif gen.fuel_type in ("gas_cc", "gas_ct"):
+        else:
             avail[g, ~committed[g]] = 0.0
 
     return FleetArrays(
