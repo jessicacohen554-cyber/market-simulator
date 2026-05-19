@@ -89,16 +89,29 @@ def _merge_runs(
 
 
 def _commitment_params(
-    fuel_type: str, heat_rate: float
+    gen: Generator, heat_rate: float
 ) -> dict[str, float] | None:
     """Return startup/min-run params for a generator, or ``None`` to skip.
 
     ``None`` means the generator is never commitment-screened (always
-    committed): coal, nuclear and every non-thermal fuel. The fuel's
+    committed): coal, nuclear and every non-thermal fuel.
+
+    For a CAMPD-bin generator the parameters come straight from the bin
+    (``min_run_hours`` / ``min_down_hours`` / ``startup_cost_per_mw``).
+    Coal bins and bins with no minimum run length (the ``_peak`` slice of
+    every bin) are never screened. For a legacy generator the fuel's
     parameter table is keyed by ascending heat-rate cutoff; the first row
     whose cutoff exceeds ``heat_rate`` applies.
     """
-    table = COMMITMENT_PARAMS_BY_FUEL.get(fuel_type)
+    if gen.is_campd_bin:
+        if gen.plant_group == "COAL" or gen.min_run_hours <= 0:
+            return None
+        return {
+            "startup_per_mw": gen.startup_cost_per_mw,
+            "min_run_hours": gen.min_run_hours,
+            "min_down_hours": gen.min_down_hours,
+        }
+    table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
     if table is None:
         return None
     for cutoff, params in table:
@@ -107,13 +120,16 @@ def _commitment_params(
     return table[-1][1]
 
 
-def _startup_cost(fuel_type: str, heat_rate: float) -> float:
+def _startup_cost(gen: Generator, heat_rate: float) -> float:
     """Return the ``$/MW`` startup cost for a generator, or ``0`` if none.
 
-    Coal, nuclear and non-thermal fuels get no startup markup. The CC/CT
-    tables are keyed by ascending heat-rate cutoff.
+    Coal, nuclear and non-thermal fuels get no startup markup. A CAMPD-bin
+    generator carries its startup cost on the bin; legacy CC/CT generators
+    look it up in a heat-rate-keyed table.
     """
-    table = STARTUP_PARAMS_BY_FUEL.get(fuel_type)
+    if gen.is_campd_bin:
+        return gen.startup_cost_per_mw
+    table = STARTUP_PARAMS_BY_FUEL.get(gen.fuel_type)
     if table is None:
         return 0.0
     for cutoff, cost in table:
@@ -167,7 +183,7 @@ def compute_monthly_markup(
     month_bounds = _month_bounds(T)
 
     for g, gen in enumerate(generators):
-        startup = _startup_cost(gen.fuel_type, float(fleet_arrays.heat_rate[g]))
+        startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:
             continue
         threshold = float(fleet_arrays.pmax[g]) * 0.05
@@ -221,7 +237,7 @@ def compute_commitment(
 
     for g, gen in enumerate(generators):
         params = _commitment_params(
-            gen.fuel_type, float(fleet_arrays.heat_rate[g])
+            gen, float(fleet_arrays.heat_rate[g])
         )
         if params is None:
             continue  # coal, nuclear, non-thermal: always committed
