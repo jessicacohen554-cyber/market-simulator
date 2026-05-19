@@ -377,25 +377,23 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     print(f"{'=' * 64}")
 
     model_twh = _generation_twh(result, context)
-    # The eGRID benchmark is a full-year snapshot; compare only the
-    # calibration year it describes, and only for a full 8760-hour run —
-    # a sub-annual horizon (--hours) is a smoke test, not a backcast.
+    # The benchmark is EIA-923 by-fuel net generation for the run year —
+    # unlike the eGRID plant snapshot, its totals sum to the balancing
+    # authority's actual net generation. Compared only for a full 8760-hour
+    # run; a sub-annual horizon (--hours) is a smoke test, not a backcast.
     full_year = result.dispatch.shape[1] >= HOURS_PER_YEAR
-    iso_benchmark = reference.get("egrid_benchmark", {}).get(iso, {})
-    benchmark = (
-        iso_benchmark
-        if full_year and iso_benchmark.get("benchmark_year") == year
-        else {}
+    year_ref = (
+        reference.get("isos", {}).get(iso, {}).get(str(year), {})
     )
+    bench_twh = year_ref.get("generation_twh", {}) if full_year else {}
     if not full_year:
         print(
-            f"\n  NOTE: {result.dispatch.shape[1]}-hour run — eGRID "
+            f"\n  NOTE: {result.dispatch.shape[1]}-hour run — EIA-923 "
             "benchmark comparison suppressed (full 8760h required)."
         )
-    bench_twh = benchmark.get("generation_twh", {})
 
     fuels = sorted(set(model_twh) | set(bench_twh))
-    gen_rows: list[tuple] = [("fuel", "model TWh", "eGRID TWh", "diff %")]
+    gen_rows: list[tuple] = [("fuel", "model TWh", "EIA-923 TWh", "diff %")]
     for fuel in fuels:
         m = model_twh.get(fuel, 0.0)
         b = bench_twh.get(fuel)
@@ -417,16 +415,8 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
         compute_emissions(result.dispatch, np.asarray(context.emission_rate)).sum()
     )
     model_co2 = emissions_t / _TONNES_PER_MT
-    bench_co2 = benchmark.get("co2_mt")
-    if bench_co2 is not None:
-        total_bench_co2 = sum(bench_co2.values())
-        co2_line = (
-            f"model {model_co2:.2f} Mt   eGRID {total_bench_co2:.2f} Mt   "
-            f"diff {100.0 * (model_co2 - total_bench_co2) / total_bench_co2:+.1f}%"
-        )
-    else:
-        co2_line = f"model {model_co2:.2f} Mt   (no benchmark for {year})"
-    print(f"\n  CO2 emissions\n    {co2_line}")
+    # The EIA-923 Page 1 benchmark carries no CO2; report modeled CO2 alone.
+    print(f"\n  CO2 emissions\n    model {model_co2:.2f} Mt")
 
     price_rows: list[tuple] = [("zone", "avg $/MWh", "neg-price hrs")]
     iso_config = get_iso_config(iso)
