@@ -168,6 +168,114 @@ class TestComputeCommitment(unittest.TestCase):
         self.assertFalse(committed_bid.any())
 
 
+class TestStorageWeightedCommitment(unittest.TestCase):
+    """The commitment hurdle discounts margin in storage net-charging hours."""
+
+    def _scenario(self):
+        # f-class CC, hurdle 52.0. A 10-hour run at 6 $/MWh margin totals 60,
+        # which clears the hurdle when unweighted (see the IRR-hurdle test).
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:15] = 36.0
+        demand = np.full((1, 24), 1000.0)
+        return gens, arrays, base_mc, prices, demand
+
+    def test_net_charging_discounts_hurdle_and_rejects_run(self):
+        # Storage charges 200 MW into a 1000 MW zone during the run, so the
+        # weight is 0.8: weighted margin 60 x 0.8 = 48 < 52 -> rejected.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        charge = np.zeros((1, 24))
+        charge[0, 5:15] = 200.0
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG,
+            storage_charge=charge,
+            storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertFalse(committed.any())
+
+    def test_net_discharging_keeps_full_weight_and_commits(self):
+        # Storage discharging keeps weight 1.0 (storage and thermal are
+        # complements at the peak): the 60-total run still clears 52.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        discharge = np.zeros((1, 24))
+        discharge[0, 5:15] = 200.0
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, _CONFIG,
+            storage_charge=np.zeros((1, 24)),
+            storage_discharge=discharge,
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_zero_weight_disables_storage_discount(self):
+        # commitment_storage_weight = 0 recovers the plain margin sum even
+        # with heavy net charging: the run commits.
+        gens, arrays, base_mc, prices, demand = self._scenario()
+        charge = np.zeros((1, 24))
+        charge[0, 5:15] = 200.0
+        config = ScenarioConfig(commitment_storage_weight=0.0)
+        committed = compute_commitment(
+            prices, base_mc, gens, arrays, config,
+            storage_charge=charge,
+            storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]),
+            demand=demand,
+        )
+        self.assertTrue(committed[0, 5:15].all())
+
+    def test_omitted_storage_inputs_are_a_noop(self):
+        # Without the storage arguments the screen is unchanged: the run
+        # clears the hurdle exactly as in the non-storage IRR-hurdle test.
+        gens, arrays, base_mc, prices, _ = self._scenario()
+        committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        self.assertTrue(committed[0, 5:15].all())
+
+    def _trough_scenario(self):
+        # A 12-hour positive-margin run (hours 5-16) with a 4-hour storage
+        # net-charging trough in its middle (hours 9-12). Net charge there
+        # is 60% of zone demand, so the storage weight is 0.4.
+        gens, arrays = _single_cc(heat_rate=7.0, hours=24)
+        base_mc = np.full((1, 24), 30.0)
+        prices = np.full((1, 24), 20.0)
+        prices[0, 5:17] = 50.0
+        demand = np.full((1, 24), 1000.0)
+        charge = np.zeros((1, 24))
+        charge[0, 9:13] = 600.0
+        kwargs = dict(
+            storage_charge=charge, storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]), demand=demand,
+        )
+        return gens, arrays, base_mc, prices, kwargs
+
+    def test_in_merit_floor_breaks_a_run_through_a_charging_trough(self):
+        # Floor off: the 12-hour run commits whole. Floor on: the trough
+        # drops out and the two 4-hour pieces each fall short of the
+        # 8-hour min run, so nothing commits.
+        gens, arrays, base_mc, prices, kwargs = self._trough_scenario()
+        off = compute_commitment(prices, base_mc, gens, arrays, _CONFIG,
+                                 **kwargs)
+        self.assertTrue(off[0, 5:17].all())
+
+        cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
+        on = compute_commitment(prices, base_mc, gens, arrays, cfg, **kwargs)
+        self.assertFalse(on.any())
+
+    def test_in_merit_floor_leaves_shallow_charging_untouched(self):
+        # A shallow trough (net charge 20% of demand -> weight 0.8) stays
+        # above the 0.5 floor, so the run is not broken and still commits.
+        gens, arrays, base_mc, prices, kwargs = self._trough_scenario()
+        kwargs["storage_charge"] = kwargs["storage_charge"].copy()
+        kwargs["storage_charge"][0, 9:13] = 200.0
+        cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
+        committed = compute_commitment(prices, base_mc, gens, arrays, cfg,
+                                       **kwargs)
+        self.assertTrue(committed[0, 5:17].all())
+
+
 class TestCoalAndNuclearAlwaysCommitted(unittest.TestCase):
     """Coal, nuclear and non-thermal fuels are never commitment-screened."""
 

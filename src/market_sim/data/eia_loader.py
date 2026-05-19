@@ -106,6 +106,32 @@ def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
     return out
 
 
+def load_ercot_fossil_gen(year: int) -> dict[str, np.ndarray] | None:
+    """Return ERCOT hourly coal and natural-gas net generation (MW) for a year.
+
+    Reads the EIA-930 ``ERCO hourly`` extract — the same chronological
+    source as the demand and renewable series — so the fossil profiles
+    share the calibration's time index. ``"gas"`` is the balancing
+    authority's whole gas fleet (combined cycle, combustion turbine and
+    steam together), the counterpart to the model's summed gas dispatch.
+    Returns ``{"coal": ..., "gas": ...}`` of ``(HOURS_PER_YEAR,)`` arrays,
+    or ``None`` when the file, the year, or the per-source columns are
+    unavailable.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None:
+        return None
+    out: dict[str, np.ndarray] = {}
+    for fuel, column in (("coal", "NG: COL"), ("gas", "NG: NG")):
+        if column not in frame.columns:
+            return None
+        series = frame[column].interpolate().bfill().ffill()
+        if series.isna().any():
+            return None
+        out[fuel] = series.to_numpy(dtype=float)
+    return out
+
+
 def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     """Return the rows of ``df`` matching the given ISO and year.
 
