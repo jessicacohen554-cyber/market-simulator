@@ -19,6 +19,7 @@ from market_sim.config.constants import (
     COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
+    COAL_PRICE_PRB_BY_YEAR,
     DIESEL_PRICE_BY_YEAR,
     GAS_BASIS_DIFFERENTIAL,
     GAS_MONTHLY_SEASONALITY,
@@ -185,13 +186,14 @@ def apply_coal_supply_pricing(
     Mine-mouth lignite generators (``coal_supply == "lignite"``) bid at the
     marginal extraction cost, which scales with the on-highway diesel price
     relative to :data:`COAL_DIESEL_INDEX_BASE_YEAR`. PRB generators
-    (``coal_supply == "prb"``) bid at ``coal_price_prb`` — the measured
-    EIA-923 delivered cost, near-constant year to year and month to month —
-    scaled by ``coal_prb_contract_passthrough``: take-or-pay rail/coal
-    contracts leave much of the delivered tonnage sunk, so the marginal
-    dispatch bid sits below delivered cost. Coal generators with no
-    ``coal_supply`` tag (the legacy fleet, or an unmapped plant) keep the
-    generic price already in ``fuel_prices``.
+    (``coal_supply == "prb"``) bid at the year's measured EIA-923 delivered
+    cost (:data:`COAL_PRICE_PRB_BY_YEAR`, with ``coal_price_prb`` as the
+    fallback for years without an extract), scaled by
+    ``coal_prb_contract_passthrough``: take-or-pay rail/coal contracts leave
+    much of the delivered tonnage sunk, so the marginal dispatch bid sits
+    below delivered cost. Coal generators with no ``coal_supply`` tag (the
+    legacy fleet, or an unmapped plant) keep the generic price already in
+    ``fuel_prices``.
 
     Mutates ``fuel_prices`` in place.
 
@@ -206,9 +208,10 @@ def apply_coal_supply_pricing(
     current = DIESEL_PRICE_BY_YEAR.get(year, base)
     diesel_index = current / base if base else 1.0
 
+    prb_delivered = COAL_PRICE_PRB_BY_YEAR.get(year, config.coal_price_prb)
     price_by_supply = {
         "lignite": config.coal_price_lignite * diesel_index,
-        "prb": config.coal_price_prb * config.coal_prb_contract_passthrough,
+        "prb": prb_delivered * config.coal_prb_contract_passthrough,
     }
     for g_idx, gen in enumerate(generators):
         price = price_by_supply.get(getattr(gen, "coal_supply", ""))
