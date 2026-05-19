@@ -19,6 +19,9 @@ from pydantic import BaseModel
 
 from market_sim.config.constants import (
     CO2_RATES,
+    COAL_DERATE_BY_AGE,
+    COAL_POF_BY_AGE,
+    COAL_WEFOR_BY_AGE,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -175,11 +178,31 @@ def _hour_to_month_index(hours: int) -> np.ndarray:
     return np.array(month_hours[:hours], dtype=int)
 
 
-# Spring/autumn shoulder months (1-based) when combined-cycle plants
-# concentrate planned maintenance — the lull between the winter and summer
-# demand peaks. CC availability is derated here; see
-# ScenarioConfig.cc_shoulder_maintenance_derate.
+# Spring/autumn shoulder months (1-based) when thermal plants concentrate
+# planned maintenance — the lull between the winter and summer demand peaks.
+# CC availability and coal planned-outage (POF) are derated here.
 _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
+
+
+def _coal_age_outage(age: float) -> tuple[float, float, float]:
+    """Return ``(POF, WEFOR, derate)`` for a coal unit of the given age.
+
+    Looks the three components up from the age-bracketed NERC GADS tables.
+    They are additive: total unavailability is ``WEFOR + derate`` flat
+    year-round plus ``POF`` in the shoulder months.
+    """
+
+    def _lookup(table: list[tuple[float, float]]) -> float:
+        for age_below, value in table:
+            if age < age_below:
+                return value
+        return table[-1][1]
+
+    return (
+        _lookup(COAL_POF_BY_AGE),
+        _lookup(COAL_WEFOR_BY_AGE),
+        _lookup(COAL_DERATE_BY_AGE),
+    )
 
 
 def generators_to_fleet_arrays(
@@ -234,17 +257,35 @@ def generators_to_fleet_arrays(
                     (1.0 - gen.eford) * monthly_factors[month_idx]
                 )
 
-    # Combined-cycle shoulder-month maintenance: derate CC availability in
-    # the spring/autumn months when planned outages concentrate, on top of
-    # the EFORD outage rate already in `availability`.
+    # Spring/autumn shoulder months — when thermal planned maintenance
+    # concentrates, between the winter and summer demand peaks.
+    shoulder = np.isin(
+        _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
+    )
+
+    # Combined-cycle shoulder-month planned maintenance, on top of the
+    # EFORD forced-outage rate already in `availability`.
     cc_derate = config.cc_shoulder_maintenance_derate if config else 0.0
     if cc_derate > 0.0:
-        shoulder = np.isin(
-            _hour_to_month_index(hours) + 1, list(_CC_SHOULDER_MONTHS)
-        )
         for g_idx, gen in enumerate(generators):
             if gen.fuel_type == "gas_cc":
                 availability[g_idx, shoulder] *= 1.0 - cc_derate
+
+    # Coal steam: age-based availability replaces the flat EFORD derate.
+    # Three additive NERC GADS components keyed to the unit's age — the
+    # weighted forced-outage rate (WEFOR) and the weather/performance
+    # derate apply flat year-round; the planned-outage factor (POF)
+    # applies only in the shoulder months. Age is the run year minus the
+    # coal unit's commission year.
+    if config is not None:
+        run_year = config.weather_year
+        for g_idx, gen in enumerate(generators):
+            if gen.fuel_type != "coal":
+                continue
+            pof, wefor, derate = _coal_age_outage(run_year - gen.online_year)
+            base_avail = 1.0 - wefor - derate
+            availability[g_idx, :] = base_avail
+            availability[g_idx, shoulder] = base_avail - pof
 
     return FleetArrays(
         pmax=pmax,
@@ -1259,6 +1300,23 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
+# ERCOT coal-unit commission year by EIA plant code — the in-service year
+# of the plant's coal units (not its older gas-era units, which differ at
+# mixed plants like W A Parish). Drives the age-based coal availability
+# model in :func:`generators_to_fleet_arrays`.
+COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
+    298: 1985,    # Limestone
+    3470: 1977,   # W A Parish (coal units 5-8)
+    6146: 1977,   # Martin Lake
+    6178: 1980,   # Coleto Creek
+    6179: 1979,   # Fayette / Sam Seymour
+    6180: 2010,   # Oak Grove
+    6183: 1982,   # San Miguel
+    7030: 1990,   # Major Oak Power
+    7097: 1992,   # J K Spruce
+    56611: 2013,  # Sandy Creek
+}
+
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
 # Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
 BIN_GROUP_HR_DEFAULT: dict[str, float] = {
@@ -1408,22 +1466,29 @@ def bins_to_fleet(
     * The Must-Run tranche (CHP steam) is removed from LP capacity —
       ``grid_cap = nameplate × (1 - MR%)``. Its generation is added back in
       post-processing (see ``results.emissions.compute_must_run_emissions``).
-    * The remaining capacity becomes three separate LP generators, each
-      with ``pmin = 0``, stepped by heat rate so a bin's bid curve rises
-      with output:
+    * The remaining capacity becomes three separate LP generators, stepped
+      by heat rate so a bin's bid curve traces a unit's convex
+      input-output curve:
 
-      - ``_mc`` — the Committed (must-run-if-committed) tranche, the most
-        efficient slice, heat rate ``hr × mc_tranche_hr_factor``. It carries
-        the bin's start cost and min-run window: starting this tranche is
-        starting the plant.
-      - ``_econ`` — the Economic tranche at the bin's average heat rate.
+      - ``_committed`` — the Committed tranche: the unit's part-load
+        range. Its heat rate is ``hr × committed_hr_mult`` (above the bin
+        average — units are less efficient at minimum load), so it bids
+        higher than the economic increment. It carries the bin's start
+        cost and min-run window: starting this tranche is starting the
+        plant.
+      - ``_econ`` — the Economic tranche: incremental dispatch above the
+        part-load range, heat rate ``hr × econ_hr_mult`` (below the bin
+        average — the upper load range is the unit's most efficient).
       - ``_peak`` — the Peaking tranche, heat rate scaled by the duct-firing
         penalty, so scarcity output bids highest.
 
-    No tranche carries a Pmin floor; the must-run-if-committed behavior
-    emerges from the ``_mc`` tranche being the cheapest, not from a forced
-    minimum. Economic and Peaking are incremental loading of a running
-    unit, so they carry neither a start cost nor a min-run window.
+    No tranche carries a Pmin floor. Only the Committed tranche carries
+    the start cost and min-run window; the Committed and Economic
+    tranches are the same physical unit, so the P2 commitment screen
+    starts and stops them together (see
+    :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
+    Economic and Peaking are incremental loading of a running unit, so
+    they carry neither a start cost nor a min-run window.
 
     Args:
         bins: The aggregated bin frame from :func:`load_campd_bins`.
@@ -1445,9 +1510,11 @@ def bins_to_fleet(
             continue
 
         denom = 100.0 - pct_mr
-        mc_cap = grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        committed_cap = (
+            grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+        )
         peak_cap = grid_cap * float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
-        econ_cap = max(grid_cap - mc_cap - peak_cap, 0.0)
+        econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
 
         zone = str(b["ERCOT_Zone"])
         if zone == "Unknown" or zone not in valid_zones:
@@ -1459,12 +1526,18 @@ def bins_to_fleet(
         label = str(b["Bin_Label"])
         bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
         # Each coal bin is a single plant, so its fuel-supply type (mine-mouth
-        # lignite vs PRB by rail) resolves from the one plant code.
+        # lignite vs PRB by rail) and coal-unit commission year resolve from
+        # the one plant code. The commission year drives the age-based coal
+        # availability model.
         coal_supply = ""
+        commission_year = 2000
         if fuel == "coal":
             codes = list(b["plant_codes"])
             if len(codes) == 1:
                 coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
+                commission_year = COAL_PLANT_COMMISSION_YEAR.get(
+                    int(codes[0]), 2000
+                )
         peak_penalty = {
             "gas_cc": config.cc_peak_hr_penalty,
             "gas_ct": config.ct_peak_hr_penalty,
@@ -1473,14 +1546,29 @@ def bins_to_fleet(
         }.get(fuel, 1.10)
         startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
+        # Two-tranche HR split for the base capacity: the committed
+        # (part-load) block bids above the bin average, the economic
+        # increment bids below it.
+        committed_mult, econ_mult = {
+            "gas_cc": (config.cc_committed_hr_mult, config.cc_econ_hr_mult),
+            "gas_ct": (config.ct_committed_hr_mult, config.ct_econ_hr_mult),
+            "gas_st": (
+                config.gas_st_committed_hr_mult, config.gas_st_econ_hr_mult
+            ),
+            "coal": (config.coal_committed_hr_mult, config.coal_econ_hr_mult),
+        }.get(fuel, (1.0, 1.0))
+        committed_hr = hr * committed_mult
+        econ_hr = hr * econ_mult
+
         # Three stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
         # tranche is screened and carries the start cost — Economic and
-        # Peaking are incremental output of an already-running plant.
+        # Peaking are incremental output of an already-running plant. No
+        # tranche carries a Pmin floor.
         tranches = (
-            ("mc", mc_cap, hr * config.mc_tranche_hr_factor, 1.0,
+            ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
-            ("econ", econ_cap, hr, 1.0, 0, 0, 0.0),
+            ("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0),
             ("peak", peak_cap, hr * peak_penalty, 1.5, 0, 0, 0.0),
         )
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
@@ -1502,15 +1590,17 @@ def bins_to_fleet(
                     emission_rate_co2=get_emission_rate(fuel, tr_hr),
                     nox_rate=get_nox_rate(fuel),
                     eford=get_eford(fuel),
+                    online_year=commission_year,
                     is_campd_bin=True,
                     plant_group=group,
                     bin_label=label,
                     min_run_hours=min_run,
                     min_down_hours=min_down,
                     startup_cost_per_mw=tr_startup,
-                    must_run_pct=pct_mr if suffix == "mc" else 0.0,
+                    must_run_pct=pct_mr if suffix == "committed" else 0.0,
                     bin_nameplate_mw=(
-                        float(b["capacity_mw"]) if suffix == "mc" else 0.0
+                        float(b["capacity_mw"])
+                        if suffix == "committed" else 0.0
                     ),
                     coal_supply=coal_supply,
                 )
