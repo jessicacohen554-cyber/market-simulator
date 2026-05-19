@@ -16,8 +16,10 @@ from __future__ import annotations
 import numpy as np
 
 from market_sim.config.constants import (
+    COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
+    DIESEL_PRICE_BY_YEAR,
     GAS_BASIS_DIFFERENTIAL,
     GAS_MONTHLY_SEASONALITY,
     HENRY_HUB_TRAJECTORIES,
@@ -170,6 +172,47 @@ def resolve_fuel_prices(
         fuel_prices[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
 
     return fuel_prices
+
+
+def apply_coal_supply_pricing(
+    fuel_prices: np.ndarray,
+    generators: list,
+    config: ScenarioConfig,
+    year: int,
+) -> None:
+    """Reprice CAMPD coal generators by their plant fuel-supply type.
+
+    Mine-mouth lignite generators (``coal_supply == "lignite"``) bid at the
+    marginal extraction cost; PRB-by-rail generators (``coal_supply ==
+    "prb"``) bid at the delivered mine-gate-plus-rail cost. The
+    diesel-driven components — the whole lignite extraction cost and the
+    PRB rail freight — scale with the on-highway diesel price relative to
+    :data:`COAL_DIESEL_INDEX_BASE_YEAR`; the stable PRB mine-gate cost does
+    not. Coal generators with no ``coal_supply`` tag (the legacy fleet, or
+    an unmapped plant) keep the generic price already in ``fuel_prices``.
+
+    Mutates ``fuel_prices`` in place.
+
+    Args:
+        fuel_prices: The ``(n_gen, T)`` delivered fuel-price array to update,
+            aligned row-for-row with ``generators``.
+        generators: The dispatch fleet.
+        config: Scenario configuration supplying the base coal prices.
+        year: Calendar year, selecting the diesel index.
+    """
+    base = DIESEL_PRICE_BY_YEAR.get(COAL_DIESEL_INDEX_BASE_YEAR)
+    current = DIESEL_PRICE_BY_YEAR.get(year, base)
+    diesel_index = current / base if base else 1.0
+
+    price_by_supply = {
+        "lignite": config.coal_price_lignite * diesel_index,
+        "prb": config.coal_price_prb_mine
+        + config.coal_price_prb_rail * diesel_index,
+    }
+    for g_idx, gen in enumerate(generators):
+        price = price_by_supply.get(getattr(gen, "coal_supply", ""))
+        if price is not None:
+            fuel_prices[g_idx, :] = price
 
 
 def resolve_nox_price(config: ScenarioConfig) -> float:

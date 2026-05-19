@@ -3,6 +3,7 @@
 import numpy as np
 
 from market_sim.config.constants import (
+    COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
@@ -11,6 +12,7 @@ from market_sim.config.constants import (
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, Generator, generators_to_fleet_arrays
 from market_sim.data.fuel import (
+    apply_coal_supply_pricing,
     resolve_annual_gas_price,
     resolve_fuel_prices,
     resolve_nox_price,
@@ -250,3 +252,41 @@ def test_nox_price_passes_through_from_config():
     """The NOx price is the scalar carried on the config."""
     config = _config(nox_price=7.5)
     assert resolve_nox_price(config) == 7.5
+
+
+def _coal_gen(supply: str) -> Generator:
+    """Return a coal generator tagged with a fuel-supply type."""
+    return Generator(
+        unit_id=f"COAL_{supply or 'none'}", name="Coal", zone="north",
+        fuel_type="coal", pmax_mw=500.0, heat_rate=10.0, coal_supply=supply,
+    )
+
+
+def test_coal_supply_pricing_base_year():
+    """At the diesel base year, lignite and PRB get their base prices."""
+    config = ScenarioConfig()
+    gens = [_coal_gen("lignite"), _coal_gen("prb"), _coal_gen("")]
+    fuel_prices = np.full((3, 24), 2.0)
+    apply_coal_supply_pricing(
+        fuel_prices, gens, config, COAL_DIESEL_INDEX_BASE_YEAR
+    )
+    assert np.allclose(fuel_prices[0], config.coal_price_lignite)
+    assert np.allclose(
+        fuel_prices[1],
+        config.coal_price_prb_mine + config.coal_price_prb_rail,
+    )
+    # Untagged coal keeps the generic price already in the array.
+    assert np.allclose(fuel_prices[2], 2.0)
+
+
+def test_coal_supply_pricing_diesel_indexed():
+    """Higher 2023 diesel lifts both prices; lignite swings more than PRB."""
+    config = ScenarioConfig()
+    gens = [_coal_gen("lignite"), _coal_gen("prb")]
+    fp_2023, fp_2024 = np.zeros((2, 4)), np.zeros((2, 4))
+    apply_coal_supply_pricing(fp_2023, gens, config, 2023)
+    apply_coal_supply_pricing(fp_2024, gens, config, 2024)
+    assert fp_2023[0, 0] > fp_2024[0, 0]
+    assert fp_2023[1, 0] > fp_2024[1, 0]
+    # The PRB mine-gate cost is diesel-invariant, so PRB swings less.
+    assert fp_2023[0, 0] / fp_2024[0, 0] > fp_2023[1, 0] / fp_2024[1, 0]
