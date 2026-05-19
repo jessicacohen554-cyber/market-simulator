@@ -132,6 +132,8 @@ class Generator(BaseModel):
     startup_cost_per_mw: float = 0.0  # $/MW per start, for the bid markup
     must_run_pct: float = 0.0       # MR% of the bin's nameplate (CHP steam)
     bin_nameplate_mw: float = 0.0   # bin total nameplate, for MR reconstruction
+    coal_supply: str = ""           # "lignite" (mine-mouth) or "prb" (rail);
+    #                                 drives plant-specific coal fuel pricing
 
 
 @dataclass
@@ -1238,6 +1240,24 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
     "COAL": 100.0,
 }
 
+# ERCOT coal fuel-supply type by EIA plant code. Mine-mouth lignite plants
+# ("lignite") bid into SCED at the marginal extraction cost — fixed mine
+# costs are sunk on a dispatch-hour basis. PRB-by-rail plants ("prb") bid
+# at the delivered contract price (mine-gate plus rail freight). The two
+# differ by ~$13/MWh in fuel cost, enough to swing merit order against gas
+# CC when gas is cheap. Drives fuel.apply_coal_supply_pricing.
+COAL_PLANT_SUPPLY: dict[int, str] = {
+    6180: "lignite",   # Oak Grove — Kosse mine
+    298: "lignite",    # Limestone — adjacent lignite mine
+    6146: "lignite",   # Martin Lake — East Texas lignite (hybrid, mostly mine-mouth)
+    6183: "lignite",   # San Miguel — adjacent lignite mine
+    7030: "lignite",   # Major Oak Power
+    6178: "prb",       # Coleto Creek — PRB by rail
+    6179: "prb",       # Fayette / Sam Seymour — PRB by rail
+    7097: "prb",       # J K Spruce — PRB by rail
+    56611: "prb",      # Sandy Creek — PRB by rail
+}
+
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
 # Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
 BIN_GROUP_HR_DEFAULT: dict[str, float] = {
@@ -1437,6 +1457,13 @@ def bins_to_fleet(
         hr = float(b["hr_weighted"])
         label = str(b["Bin_Label"])
         bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
+        # Each coal bin is a single plant, so its fuel-supply type (mine-mouth
+        # lignite vs PRB by rail) resolves from the one plant code.
+        coal_supply = ""
+        if fuel == "coal":
+            codes = list(b["plant_codes"])
+            if len(codes) == 1:
+                coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
         peak_penalty = {
             "gas_cc": config.cc_peak_hr_penalty,
             "gas_ct": config.ct_peak_hr_penalty,
@@ -1484,6 +1511,7 @@ def bins_to_fleet(
                     bin_nameplate_mw=(
                         float(b["capacity_mw"]) if suffix == "mc" else 0.0
                     ),
+                    coal_supply=coal_supply,
                 )
             )
 
