@@ -16,15 +16,14 @@ from __future__ import annotations
 import numpy as np
 
 from market_sim.config.constants import (
-    COAL_DIESEL_INDEX_BASE_YEAR,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
-    COAL_PRICE_PRB_BY_YEAR,
-    DIESEL_PRICE_BY_YEAR,
+    END_YEAR,
     GAS_BASIS_DIFFERENTIAL,
     GAS_MONTHLY_SEASONALITY,
     HENRY_HUB_TRAJECTORIES,
     HOURS_PER_YEAR,
+    INFLATION_RATE,
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
@@ -175,6 +174,58 @@ def resolve_fuel_prices(
     return fuel_prices
 
 
+# --- CAMPD coal delivered fuel cost ($/MMBtu), by year and supply type ------
+# Mine-mouth lignite: $1.45 flat across 2023-2025, then escalates at general
+# inflation through the modeling window. PRB-by-rail: measured delivered cost
+# for 2023-2025; from 2026 a forward curve decomposes the 2023-2025 average
+# into commodity (42%), diesel-driven rail freight (12%) and non-diesel rail
+# freight (46%). The commodity component holds flat through 2030 then declines
+# 1.5%/yr as coal demand falls; non-diesel rail escalates at inflation; the
+# diesel-rail component is held at its 2025 level (the model carries no
+# forward diesel price curve). Source: operator/EIA cost data, user calibration.
+_LIGNITE_PRICE_2023_25: float = 1.45
+_PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
+_PRB_COMMODITY_SHARE: float = 0.42
+_PRB_RAIL_DIESEL_SHARE: float = 0.12
+_PRB_RAIL_NONDIESEL_SHARE: float = 0.46
+_PRB_COMMODITY_DECLINE: float = 0.015      # annual, from 2031 as demand falls
+_PRB_COMMODITY_FLAT_THROUGH: int = 2030
+
+
+def _build_coal_price_trajectories() -> tuple[dict[int, float], dict[int, float]]:
+    """Return ``(lignite, prb)`` delivered-cost dicts spanning 2023-END_YEAR."""
+    lignite: dict[int, float] = {}
+    prb: dict[int, float] = {}
+    for y in (2023, 2024, 2025):
+        lignite[y] = _LIGNITE_PRICE_2023_25
+        prb[y] = _PRB_PRICE_CALIBRATION[y]
+
+    avg_prb = sum(_PRB_PRICE_CALIBRATION.values()) / 3.0
+    commodity_base = _PRB_COMMODITY_SHARE * avg_prb
+    rail_diesel = _PRB_RAIL_DIESEL_SHARE * avg_prb        # held flat forward
+    rail_nondiesel_base = _PRB_RAIL_NONDIESEL_SHARE * avg_prb
+    for y in range(2026, END_YEAR + 1):
+        lignite[y] = (
+            _LIGNITE_PRICE_2023_25 * (1.0 + INFLATION_RATE) ** (y - 2025)
+        )
+        if y <= _PRB_COMMODITY_FLAT_THROUGH:
+            commodity = commodity_base
+        else:
+            commodity = commodity_base * (1.0 - _PRB_COMMODITY_DECLINE) ** (
+                y - _PRB_COMMODITY_FLAT_THROUGH
+            )
+        rail_nondiesel = (
+            rail_nondiesel_base * (1.0 + INFLATION_RATE) ** (y - 2026)
+        )
+        prb[y] = commodity + rail_diesel + rail_nondiesel
+    return lignite, prb
+
+
+COAL_PRICE_LIGNITE_BY_YEAR, COAL_PRICE_PRB_BY_YEAR = (
+    _build_coal_price_trajectories()
+)
+
+
 def apply_coal_supply_pricing(
     fuel_prices: np.ndarray,
     generators: list,
@@ -183,16 +234,14 @@ def apply_coal_supply_pricing(
 ) -> None:
     """Reprice CAMPD coal generators by their plant fuel-supply type.
 
-    Mine-mouth lignite generators (``coal_supply == "lignite"``) bid at the
-    marginal extraction cost, which scales with the on-highway diesel price
-    relative to :data:`COAL_DIESEL_INDEX_BASE_YEAR`. PRB generators
-    (``coal_supply == "prb"``) bid at the year's measured EIA-923 delivered
-    cost (:data:`COAL_PRICE_PRB_BY_YEAR`, with ``coal_price_prb`` as the
-    fallback for years without an extract), scaled by
-    ``coal_prb_contract_passthrough``: take-or-pay rail/coal contracts leave
-    much of the delivered tonnage sunk, so the marginal dispatch bid sits
-    below delivered cost. Coal generators with no ``coal_supply`` tag (the
-    legacy fleet, or an unmapped plant) keep the generic price already in
+    Mine-mouth lignite and PRB-by-rail generators bid at their per-year
+    delivered fuel cost — :data:`COAL_PRICE_LIGNITE_BY_YEAR` and
+    :data:`COAL_PRICE_PRB_BY_YEAR`. The PRB delivered cost is scaled by
+    ``coal_prb_contract_passthrough``: take-or-pay rail/coal contracts
+    leave much of the delivered tonnage sunk, so the marginal dispatch bid
+    sits below delivered cost. Coal generators with no ``coal_supply`` tag
+    (the legacy fleet, or an unmapped plant), or a run year outside the
+    coal price trajectory, keep the generic price already in
     ``fuel_prices``.
 
     Mutates ``fuel_prices`` in place.
@@ -201,16 +250,16 @@ def apply_coal_supply_pricing(
         fuel_prices: The ``(n_gen, T)`` delivered fuel-price array to update,
             aligned row-for-row with ``generators``.
         generators: The dispatch fleet.
-        config: Scenario configuration supplying the base coal prices.
-        year: Calendar year, selecting the diesel index.
+        config: Scenario configuration supplying ``coal_prb_contract_passthrough``.
+        year: Calendar year, selecting the coal price trajectory entry.
     """
-    base = DIESEL_PRICE_BY_YEAR.get(COAL_DIESEL_INDEX_BASE_YEAR)
-    current = DIESEL_PRICE_BY_YEAR.get(year, base)
-    diesel_index = current / base if base else 1.0
+    lignite = COAL_PRICE_LIGNITE_BY_YEAR.get(year)
+    prb_delivered = COAL_PRICE_PRB_BY_YEAR.get(year)
+    if lignite is None or prb_delivered is None:
+        return  # year outside the coal trajectory — keep the generic price
 
-    prb_delivered = COAL_PRICE_PRB_BY_YEAR.get(year, config.coal_price_prb)
     price_by_supply = {
-        "lignite": config.coal_price_lignite * diesel_index,
+        "lignite": lignite,
         "prb": prb_delivered * config.coal_prb_contract_passthrough,
     }
     for g_idx, gen in enumerate(generators):
