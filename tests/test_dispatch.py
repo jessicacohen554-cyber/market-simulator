@@ -324,6 +324,71 @@ class TestBuildVariableBounds(unittest.TestCase):
                 self.assertEqual(col_lower[layout.slack_col(z, t)], 0.0)
                 self.assertTrue(np.isinf(col_upper[layout.slack_col(z, t)]))
 
+    def test_cc_reserve_headroom_caps_cc_dispatch(self):
+        # Gas-CC capacity is capped at (1 - headroom) of its ceiling.
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=4)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=4, pmax=100.0,
+                            pmin=0.0, eford=0.0)
+        _, col_upper = build_variable_bounds(
+            layout, fleet,
+            wind_cf=np.zeros((1, 4)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, 4)), solar_cap=np.zeros(1),
+            cc_reserve_headroom=0.10,
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertAlmostEqual(col_upper[layout.p_col(0, t)], 90.0)
+
+    def test_ruc_floor_lifts_ct_and_st_lower_bound(self):
+        # Non-peaking gas-CT / gas-steam units carry a RUC dispatch floor.
+        gens = [
+            Generator(unit_id="CT_econ", name="CT", zone="Z0",
+                      fuel_type="gas_ct", pmax_mw=100.0, eford=0.0),
+            Generator(unit_id="ST_econ", name="ST", zone="Z0",
+                      fuel_type="gas_st", pmax_mw=200.0, eford=0.0),
+        ]
+        fleet = generators_to_fleet_arrays(gens, ["Z0"], hours=4)
+        layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=4)
+        col_lower, _ = build_variable_bounds(
+            layout, fleet,
+            wind_cf=np.zeros((1, 4)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, 4)), solar_cap=np.zeros(1),
+            ct_st_ruc_floor=0.05,
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertAlmostEqual(col_lower[layout.p_col(0, t)], 5.0)
+            self.assertAlmostEqual(col_lower[layout.p_col(1, t)], 10.0)
+
+    def test_ruc_floor_exempts_peak_tranche(self):
+        # A peaking tranche (unit id ends in _peak) gets no RUC floor.
+        gens = [
+            Generator(unit_id="CT_peak", name="CT", zone="Z0",
+                      fuel_type="gas_ct", pmax_mw=100.0, eford=0.0),
+        ]
+        fleet = generators_to_fleet_arrays(gens, ["Z0"], hours=4)
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=4)
+        col_lower, _ = build_variable_bounds(
+            layout, fleet,
+            wind_cf=np.zeros((1, 4)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, 4)), solar_cap=np.zeros(1),
+            ct_st_ruc_floor=0.05,
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertEqual(col_lower[layout.p_col(0, t)], 0.0)
+
+    def test_as_adjustments_default_off(self):
+        # With the default 0.0 knobs the bounds are pmin / pmax*avail.
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=4)
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=4, pmax=100.0,
+                            pmin=10.0, eford=0.0)
+        col_lower, col_upper = build_variable_bounds(
+            layout, fleet,
+            wind_cf=np.zeros((1, 4)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, 4)), solar_cap=np.zeros(1),
+        )
+        for t in range(layout.T):  # t: hour index
+            self.assertAlmostEqual(col_upper[layout.p_col(0, t)], 100.0)
+            self.assertAlmostEqual(col_lower[layout.p_col(0, t)], 10.0)
+
 
 class TestSolveDispatch(unittest.TestCase):
     """End-to-end tests for ``solve_dispatch`` (all use T=24)."""
