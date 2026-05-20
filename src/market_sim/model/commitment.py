@@ -321,6 +321,8 @@ def compute_commitment(
     )
 
     for g, gen in enumerate(generators):
+        if gen.fuel_type == "coal" and not config.commitment_screen_coal:
+            continue  # coal exempt from the screen — stays committed everywhere
         params = _commitment_params(
             gen, float(fleet_arrays.heat_rate[g])
         )

@@ -187,6 +187,10 @@ class ScenarioConfig:
     # pieces face the min-run filter on their own. Stronger than the
     # hurdle-only discount above, which never changes which hours run.
     # 1.0 drops every net-charging hour; 0.85 drops only deep troughs.
+    commitment_screen_coal: bool = True  # When False, CAMPD coal is exempt
+    # from the P2 commitment screen and stays committed in every hour (like
+    # nuclear), so coal never decommits on a long low-price spell. Lets a
+    # calibration isolate the gas commitment effect without disturbing coal.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -355,6 +359,7 @@ TIER_TAGS: dict[str, int] = {
     "commitment_irr_hurdle": 2,
     "commitment_storage_weight": 2,
     "commitment_storage_in_merit_floor": 2,
+    "commitment_screen_coal": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
