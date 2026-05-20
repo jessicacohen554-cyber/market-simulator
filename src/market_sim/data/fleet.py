@@ -302,6 +302,9 @@ def generators_to_fleet_arrays(
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, run_year - gen.online_year
             )
+            # Lighten (or raise) the forced-outage magnitude while keeping the
+            # seasonal shape — applied before the summer/shoulder/winter split.
+            wefor *= config.wefor_multiplier
             summer_wefor = _SUMMER_WEFOR_SHARE * wefor
             shoulder_wefor = (
                 wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
@@ -669,6 +672,26 @@ def split_coal_tranches(
             )
             fuel_fracs.append(fuel_frac)
     return expanded, fuel_fracs
+
+
+def campd_tranche_fuel_frac(
+    gen: Generator, coal_prb_passthrough: float = 1.0
+) -> float:
+    """Return the fuel-cost passthrough for one CAMPD tranche generator.
+
+    Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
+    take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
+    they bid VOM + carbon + NOx only. Every PRB coal tranche *above* must-run
+    (committed, economic and peaking) passes ``coal_prb_passthrough`` < 1.0
+    to price-take: an already-online PRB unit (rail take-or-pay) bids to
+    clear rather than on full marginal cost. Mine-mouth lignite and all
+    other tranches pass full fuel cost (``1.0``).
+    """
+    if gen.unit_id.endswith("_mustrun"):
+        return 0.0
+    if gen.fuel_type == "coal" and getattr(gen, "coal_supply", "") == "prb":
+        return coal_prb_passthrough
+    return 1.0
 
 
 def apply_coal_tranches(
@@ -1335,14 +1358,14 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
 # CC when gas is cheap. Drives fuel.apply_coal_supply_pricing.
 COAL_PLANT_SUPPLY: dict[int, str] = {
     6180: "lignite",   # Oak Grove — Kosse mine
-    298: "lignite",    # Limestone — adjacent lignite mine
-    6146: "lignite",   # Martin Lake — East Texas lignite (hybrid, mostly mine-mouth)
+    298: "prb",        # Limestone — now PRB by rail (switched off local lignite)
+    6146: "prb",       # Martin Lake — now PRB by rail (was East Texas lignite)
     6183: "lignite",   # San Miguel — adjacent lignite mine
     7030: "lignite",   # Major Oak Power
     6178: "prb",       # Coleto Creek — PRB by rail
     6179: "prb",       # Fayette / Sam Seymour — PRB by rail
     7097: "prb",       # J K Spruce — PRB by rail
-    56257: "prb",      # Sandy Creek — PRB by rail
+    56611: "prb",      # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
@@ -1379,6 +1402,9 @@ BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
     # (units 1+2 retired full year); add when those calibration years
     # come into scope.
     "SC_STGAS3": {2025: 0.686},
+    # Sandy Creek -- removed from availability in 2025 (mostly offline; EIA-923
+    # shows 0.72 TWh vs ~3.0-3.3 TWh in 2023-2024).
+    "SC_COAL3": {2025: 0.0},
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
@@ -1657,6 +1683,16 @@ def bins_to_fleet(
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
+        # Coal must-run override (calibration sweep): replace the CSV must-run
+        # for coal of the given supply; the grid tranches rescale via `denom`.
+        if fuel == "coal":
+            _supply = COAL_PLANT_SUPPLY.get(int(b["Plant_Code"]), "")
+            if (_supply == "lignite"
+                    and config.coal_lignite_mustrun_override is not None):
+                pct_mr = config.coal_lignite_mustrun_override
+            elif (_supply == "prb"
+                    and config.coal_prb_mustrun_override is not None):
+                pct_mr = config.coal_prb_mustrun_override
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
         # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
         # only via the runner). Non-coal bins' must-run share is host
