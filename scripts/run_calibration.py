@@ -190,6 +190,9 @@ def _calibration_config(
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
         commitment_screen_coal=commitment_screen_coal,
+        wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
+        #   (shape preserved) so coal can hold its shoulder-month output
+        #   rather than being availability-capped in spring/autumn.
         coal_committed_fuel_passthrough=0.5,  # committed PRB price-takes:
         #   it bids VOM + half its fuel cost so baseloaded PRB clears the
         #   merit order rather than being priced out by cheap gas. Lignite is

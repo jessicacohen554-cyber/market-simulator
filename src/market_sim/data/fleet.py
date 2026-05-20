@@ -302,6 +302,9 @@ def generators_to_fleet_arrays(
             pof, wefor, derate = _thermal_outage(
                 gen.plant_group, run_year - gen.online_year
             )
+            # Lighten (or raise) the forced-outage magnitude while keeping the
+            # seasonal shape — applied before the summer/shoulder/winter split.
+            wefor *= config.wefor_multiplier
             summer_wefor = _SUMMER_WEFOR_SHARE * wefor
             shoulder_wefor = (
                 wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
