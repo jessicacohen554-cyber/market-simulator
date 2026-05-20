@@ -309,7 +309,7 @@ def _run_and_report(
     year: int, iso: str, hours: int, gas_price: float,
 ) -> None:
     """Run one calibration year and print the EIA-930 comparison report."""
-    result, context, _ = run_year(
+    result, context, _, _ = run_year(
         year, iso, hours, gas_price, ttc_overrides={}
     )
 
