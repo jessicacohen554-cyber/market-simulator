@@ -190,9 +190,10 @@ def _calibration_config(
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
         commitment_screen_coal=commitment_screen_coal,
-        coal_committed_fuel_passthrough=0.5,  # committed coal price-takes:
-        #   it bids VOM + half its fuel cost so baseloaded coal clears the
-        #   merit order rather than being priced out by cheap gas.
+        coal_committed_fuel_passthrough=0.5,  # committed PRB price-takes:
+        #   it bids VOM + half its fuel cost so baseloaded PRB clears the
+        #   merit order rather than being priced out by cheap gas. Lignite is
+        #   left at full cost (already cheap enough — it over-runs otherwise).
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)

@@ -236,13 +236,14 @@ class ScenarioConfig:
     coal_prb_contract_passthrough: float = 1.00
 
     # Tier 3 (calibration) — CAMPD coal committed-tranche price-taking.
-    # A committed coal unit is already online and cannot cycle on the short
-    # horizon, so it price-takes: it bids to clear rather than on full
+    # A committed PRB coal unit is already online and cannot cycle on the
+    # short horizon, so it price-takes: it bids to clear rather than on full
     # marginal cost. This passes only ``coal_committed_fuel_passthrough`` of
     # the committed tranche's fuel cost into its bid (VOM + carbon + NOx are
-    # always charged), so committed coal clears the merit order the way a
+    # always charged), so committed PRB clears the merit order the way a
     # baseloaded unit does instead of being priced out by cheap gas. Applies
-    # to both lignite and PRB committed tranches. 1.0 = full fuel cost (off).
+    # to the PRB committed tranche only — mine-mouth lignite is left at full
+    # cost (already cheap enough to clear). 1.0 = full fuel cost (off).
     coal_committed_fuel_passthrough: float = 1.00
 
     gas_price_override: float | None = None  # When set, pins the annual
