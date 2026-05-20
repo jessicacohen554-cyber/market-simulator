@@ -19,8 +19,5 @@ inputs/processed/*.parquet
 !inputs/processed/eia923_monthly_fuel_costs.parquet
 !inputs/processed/eia923_monthly_generation.parquet
 
-# Cached simulation results
-/results/
-
 # OS
 .DS_Store
