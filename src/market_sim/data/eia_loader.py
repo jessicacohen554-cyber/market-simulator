@@ -25,32 +25,53 @@ _DEMAND_PROFILES_FILE = "eia_demand_profiles.parquet"
 _DEMAND_META_FILE = "eia_demand_meta.parquet"
 _GENERATION_PROFILES_FILE = "eia_generation_profiles.parquet"
 
-# EIA-930 hourly extract for the ERCOT balancing authority. Unlike the
-# per-ISO demand-profiles parquet, it carries the Total Interchange series
-# (DC-tie imports/exports), used to net out interchange in load_demand.
-_ERCO_HOURLY_FILE: Path = (
-    Path(__file__).parents[3] / "data" / "eia_hourly" / "ERCO hourly.parquet"
-)
+# Per-BA wide EIA-930 hourly extracts live here, one ``<BA> hourly.parquet``
+# per balancing authority (built from the long uploads by
+# scripts/convert_eia930.py). Unlike the per-ISO demand-profiles parquet,
+# they carry the Total Interchange series (DC-tie imports/exports), used to
+# net out interchange in load_demand.
+EIA_HOURLY_DIR: Path = Path(__file__).parents[3] / "data" / "eia_hourly"
+
+# Model ISO -> EIA-930 BA code for the per-BA wide hourly extract. ISO-NE
+# (ISNE) and SPP (SWPP) are intentionally left unmapped until their extracts
+# are converted; an unmapped ISO falls back to the demand-profiles parquet.
+_ISO_TO_HOURLY_BA: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "PJM": "PJM",
+    "NYISO": "NYIS",
+    "MISO": "MISO",
+}
+
+# ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.
+_ERCO_HOURLY_FILE: Path = EIA_HOURLY_DIR / "ERCO hourly.parquet"
 
 # Column names in the demand-meta parquet that make up the returned metadata.
 _META_FIELDS = ("peak_mw", "min_mw", "avg_mw", "total_annual_mwh")
 
 
-@lru_cache(maxsize=8)
-def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
-    """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
+def _eia_hourly_path(ba_code: str) -> Path:
+    """Return the path to the wide hourly extract for an EIA-930 BA code."""
+    return EIA_HOURLY_DIR / f"{ba_code} hourly.parquet"
 
-    The rows are restricted to ``year`` (by ERCOT-local date), sorted
+
+@lru_cache(maxsize=32)
+def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
+    """Return the EIA-930 ``<BA> hourly`` rows for one calendar year.
+
+    The rows are restricted to ``year`` (by the BA's local date), sorted
     chronologically by UTC time, and reduced to a clean 8760-hour series —
-    in a leap year Feb 29 is dropped. Row 0 is the first ERCOT-local hour
-    of the year, matching the HSL parquet's index, so demand, interchange
-    and renewable generation drawn from this frame all share one clock.
+    in a leap year Feb 29 is dropped. Row 0 is the first local hour of the
+    year, matching the HSL parquet's index, so demand, interchange and
+    renewable generation drawn from this frame all share one clock.
 
-    Returns ``None`` when the file is missing or the year is not covered.
+    Returns ``None`` when the file is missing or the year is not covered by a
+    full 8760-hour series.
     """
-    if not _ERCO_HOURLY_FILE.exists():
+    path = _eia_hourly_path(ba_code)
+    if not path.exists():
         return None
-    df = pd.read_parquet(_ERCO_HOURLY_FILE)
+    df = pd.read_parquet(path)
     local = df["Local date"]
     df = df[
         (local.dt.year == year)
@@ -59,6 +80,16 @@ def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     if len(df) != HOURS_PER_YEAR:
         return None
     return df.reset_index(drop=True)
+
+
+@lru_cache(maxsize=8)
+def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
+    """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
+
+    Thin ERCOT-specific wrapper over :func:`_eia_hourly_frame` for the
+    demand/interchange, fossil and nuclear paths that are ERCOT-only today.
+    """
+    return _eia_hourly_frame("ERCO", year)
 
 
 def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
@@ -104,6 +135,39 @@ def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
             return None
         out[fuel] = series.to_numpy(dtype=float)
     return out
+
+
+def load_eia_hourly_renewable_gen(
+    iso: str, year: int
+) -> dict[str, np.ndarray] | None:
+    """Return hourly wind/solar net generation (MW) for an ISO's EIA-930 BA.
+
+    Resolves the ISO to its EIA-930 BA code (see :data:`_ISO_TO_HOURLY_BA`)
+    and reads the per-BA wide ``<BA> hourly`` extract — the same chronological
+    source as the demand and interchange series — so renewable profiles share
+    the calibration's time index. Each present series is gap-filled (linear
+    interpolation, then back/forward fill) like the ERCOT renewable path.
+
+    Returns ``{"wind": ..., "solar": ...}`` of ``(HOURS_PER_YEAR,)`` arrays for
+    whichever of the two fuels the BA reports with a usable full-year series,
+    or ``None`` when the ISO is unmapped, the file/year is unavailable, or
+    neither fuel is usable.
+    """
+    ba_code = _ISO_TO_HOURLY_BA.get(iso)
+    if ba_code is None:
+        return None
+    frame = _eia_hourly_frame(ba_code, year)
+    if frame is None:
+        return None
+    out: dict[str, np.ndarray] = {}
+    for fuel, column in (("wind", "NG: WND"), ("solar", "NG: SUN")):
+        if column not in frame.columns:
+            continue
+        series = frame[column].interpolate().bfill().ffill()
+        if series.isna().any():
+            continue
+        out[fuel] = series.to_numpy(dtype=float)
+    return out or None
 
 
 def load_ercot_fossil_gen(year: int) -> dict[str, np.ndarray] | None:
