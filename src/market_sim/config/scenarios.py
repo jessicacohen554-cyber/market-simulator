@@ -34,6 +34,7 @@ class ScenarioConfig:
     carbon_price: float = 0.0  # $/ton CO2
     carbon_price_path: str = "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
     nox_price: float = 0.0  # $/ton NOx
+    so2_price: float = 0.0  # $/ton SO2
     demand_growth_rate: float = 0.01  # flat override used only when no structured rates exist
     demand_growth_path: str = "mid"  # "low", "mid", "high" — selects from DEMAND_GROWTH_RATES
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
@@ -138,6 +139,11 @@ class ScenarioConfig:
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
     unknown_zone_default: str = "South_Central"  # zone for bins tagged "Unknown"
+    # When True, generators pinned to a single plant take that plant's
+    # CAMPD-measured CO2/NOx/SO2 rates per MWh net (plant_emission_rates_path)
+    # in place of the fuel-class defaults, so emission prices bite per plant.
+    use_plant_emission_rates: bool = True
+    plant_emission_rates_path: str = "inputs/processed/plant_emission_rates.parquet"
 
     # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
     # The top (Peaking) slice of a bin is a separate LP generator whose
@@ -329,6 +335,7 @@ TIER_TAGS: dict[str, int] = {
     "carbon_price": 1,
     "carbon_price_path": 1,
     "nox_price": 1,
+    "so2_price": 1,
     "demand_growth_rate": 1,
     "demand_growth_path": 1,
     "renewable_buildout_pace": 1,
@@ -387,6 +394,8 @@ TIER_TAGS: dict[str, int] = {
     "use_campd_bins": 2,
     "campd_bins_path": 2,
     "plant_registry_path": 2,
+    "use_plant_emission_rates": 2,
+    "plant_emission_rates_path": 2,
     "unknown_zone_default": 2,
     "commitment_enabled": 2,
     "commitment_irr_hurdle": 2,
