@@ -120,11 +120,12 @@ class TestNuclearAvailability(unittest.TestCase):
             "Nuclear availability should vary by month",
         )
 
-        # Annual average should be ~0.95.
+        # Annual average reflects the ERCOT monthly CF series (deep Apr/Oct
+        # refueling troughs) scaled by 1 - EFORD: ~0.87.
         annual_avg = fa.availability[0].mean()
         self.assertTrue(
-            0.94 < annual_avg < 0.96,
-            f"Nuclear avg availability {annual_avg:.3f} outside 0.94-0.96",
+            0.85 < annual_avg < 0.89,
+            f"Nuclear avg availability {annual_avg:.3f} outside 0.85-0.89",
         )
 
         # Spring months should have lower availability than summer.
