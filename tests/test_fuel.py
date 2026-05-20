@@ -3,13 +3,20 @@
 import numpy as np
 
 from market_sim.config.constants import (
+    BIOMASS_PRICE_PER_MMBTU,
     COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
+    OIL_PRICE_PER_MMBTU,
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.data.fleet import FUEL_TYPE_MAP, Generator, generators_to_fleet_arrays
+from market_sim.data.fleet import (
+    FUEL_TYPE_MAP,
+    Generator,
+    assemble_mc,
+    generators_to_fleet_arrays,
+)
 from market_sim.data.fuel import (
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
@@ -18,6 +25,7 @@ from market_sim.data.fuel import (
     resolve_fuel_prices,
     resolve_nox_price,
 )
+from market_sim.model.dispatch import solve_dispatch
 
 _HOURS = 8760
 _ZONE_NAMES = ["north", "south"]
@@ -308,3 +316,92 @@ def test_coal_supply_pricing_year_outside_trajectory():
     fp = np.full((1, 4), 2.0)
     apply_coal_supply_pricing(fp, gens, config, 2010)
     assert np.allclose(fp[0], 2.0)
+
+
+# --- Oil and biomass fuel pricing & dispatch ------------------------------
+
+def _oil_biomass_fleet(hours: int = 24):
+    """Return a fleet with gas CC, an oil peaker and a biomass unit."""
+    generators = [
+        Generator(
+            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
+            pmax_mw=300.0, heat_rate=7.0, vom=2.0, eford=0.0,
+        ),
+        Generator(
+            unit_id="OIL", name="Oil Peaker", zone="north", fuel_type="oil",
+            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            eford=0.0,
+        ),
+        Generator(
+            unit_id="BIO", name="Biomass", zone="south", fuel_type="biomass",
+            pmax_mw=80.0, heat_rate=13.5, vom=5.0, emission_rate_co2=0.0,
+            eford=0.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
+
+
+def test_oil_units_get_oil_price():
+    """Oil generators are priced at the flat delivered oil cost."""
+    fleet = _oil_biomass_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    oil_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"]
+    np.testing.assert_allclose(prices[oil_mask], OIL_PRICE_PER_MMBTU)
+
+
+def test_biomass_units_get_biomass_price():
+    """Biomass generators are priced at the delivered biomass fuel cost."""
+    fleet = _oil_biomass_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    bio_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["biomass"]
+    np.testing.assert_allclose(prices[bio_mask], BIOMASS_PRICE_PER_MMBTU)
+
+
+def test_oil_priced_above_gas_and_biomass():
+    """Oil is the dearest fuel; biomass sits near cheap fuel parity."""
+    fleet = _oil_biomass_fleet()
+    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    gas_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"])[0][0]
+    oil_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"])[0][0]
+    bio_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["biomass"])[0][0]
+    assert prices[oil_idx, 0] > prices[gas_idx, 0]
+    assert prices[oil_idx, 0] > prices[bio_idx, 0]
+
+
+def test_oil_peaker_dispatches_only_at_high_prices():
+    """An oil peaker stays idle until demand exceeds cheaper capacity.
+
+    With a 300 MW gas CC (MC ~$23/MWh) and a 100 MW oil unit (MC ~$248/MWh)
+    in one zone, an 80 MW hour is served entirely by gas (oil idle, low
+    price), while a 350 MW hour exhausts gas and forces the oil peaker on,
+    setting a much higher clearing price.
+    """
+    hours = 2
+    generators = [
+        Generator(
+            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
+            pmax_mw=300.0, heat_rate=7.0, vom=2.0, eford=0.0,
+        ),
+        Generator(
+            unit_id="OIL", name="Oil Peaker", zone="north", fuel_type="oil",
+            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            eford=0.0,
+        ),
+    ]
+    fleet = generators_to_fleet_arrays(generators, ["north"], hours=hours)
+    config = _config(gas_seasonality=False, hours=hours)
+    fuel_prices = resolve_fuel_prices(config, fleet, 2030)
+    mc = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+
+    demand = np.array([[80.0, 350.0]])  # low-demand then high-demand hour
+    result = solve_dispatch(
+        fleet, demand, mc=mc, T=hours,
+        wind_cf=np.zeros((1, hours)), wind_cap=np.zeros(1),
+        solar_cf=np.zeros((1, hours)), solar_cap=np.zeros(1),
+    )
+    oil_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"])[0][0]
+    # Idle in the cheap hour, dispatched in the scarce hour.
+    assert result.dispatch[oil_idx, 0] < 1e-6
+    assert result.dispatch[oil_idx, 1] > 1.0
+    # The clearing price is far higher when the oil peaker is marginal.
+    assert result.prices[0, 1] > result.prices[0, 0]
