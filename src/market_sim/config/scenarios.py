@@ -243,15 +243,14 @@ class ScenarioConfig:
     coal_prb_contract_passthrough: float = 1.00
 
     # Tier 3 (calibration) — CAMPD coal committed-tranche price-taking.
-    # A committed PRB coal unit is already online and cannot cycle on the
-    # short horizon, so it price-takes: it bids to clear rather than on full
-    # marginal cost. This passes only ``coal_committed_fuel_passthrough`` of
-    # the committed tranche's fuel cost into its bid (VOM + carbon + NOx are
-    # always charged), so committed PRB clears the merit order the way a
-    # baseloaded unit does instead of being priced out by cheap gas. Applies
-    # to the PRB committed tranche only — mine-mouth lignite is left at full
-    # cost (already cheap enough to clear). 1.0 = full fuel cost (off).
-    coal_committed_fuel_passthrough: float = 1.00
+    # A PRB coal unit that is online price-takes across all the capacity it
+    # is running, not just its committed slice: it bids to clear rather than
+    # on full marginal cost. This passes only ``coal_prb_passthrough`` of the
+    # fuel cost into the bid (VOM + carbon + NOx are always charged) for every
+    # PRB tranche above must-run (committed, economic, peaking), so baseloaded
+    # PRB clears the merit order instead of being priced out by cheap gas.
+    # Mine-mouth lignite is left at full cost. 1.0 = full fuel cost (off).
+    coal_prb_passthrough: float = 1.00
 
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
@@ -403,7 +402,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_tranche_3_frac": 3,
     "coal_tranche_3_fuel_passthrough": 3,
     "coal_prb_contract_passthrough": 3,
-    "coal_committed_fuel_passthrough": 3,
+    "coal_prb_passthrough": 3,
     "gas_price_override": 3,
 }
 
