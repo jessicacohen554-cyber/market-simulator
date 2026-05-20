@@ -133,6 +133,64 @@ def test_caiso_every_plant_resolves():
     assert "CAISO_main" not in lookup.values()
 
 
+def test_miso_state_mapping():
+    """MISO regions follow state boundaries (FIPS state is authoritative)."""
+    assert assign_zone_by_fips("27", None, "MISO") == "MISO-North"    # MN
+    assert assign_zone_by_fips("19", None, "MISO") == "MISO-North"    # IA
+    assert assign_zone_by_fips("46", None, "MISO") == "MISO-North"    # SD
+    assert assign_zone_by_fips("26", None, "MISO") == "MISO-Central"  # MI
+    assert assign_zone_by_fips("18", None, "MISO") == "MISO-Central"  # IN
+    assert assign_zone_by_fips("17", None, "MISO") == "MISO-Central"  # IL
+    assert assign_zone_by_fips("22", None, "MISO") == "MISO-South"    # LA
+    assert assign_zone_by_fips("5", None, "MISO") == "MISO-South"     # AR
+    assert assign_zone_by_fips("48", None, "MISO") == "MISO-South"    # TX (Entergy)
+
+
+def test_miso_unmapped_state_falls_back_to_central():
+    """A plant outside the MISO state map falls back to the largest zone."""
+    # No FIPS state and no coordinates -> largest-load-share zone (Central).
+    assert assign_zone_by_fips(None, None, "MISO") == "MISO-Central"
+
+
+def test_miso_coords_fallback_latitude_bands():
+    """Coords-only callers (no FIPS state) get the coarse latitude fallback."""
+    # Deep South (Gulf Coast) -> South.
+    assert assign_zone_by_coords(30.0, -91.0, "MISO") == "MISO-South"
+    # Upper Midwest -> North.
+    assert assign_zone_by_coords(46.0, -94.0, "MISO") == "MISO-North"
+    # Mid-latitude lower Midwest -> Central.
+    assert assign_zone_by_coords(40.0, -89.0, "MISO") == "MISO-Central"
+
+
+def test_miso_known_plants_resolve_to_expected_zones():
+    """Named MISO plants land in their real sub-regions."""
+    # ORIS codes from eGRID 2023 PLNT23 (BACODE == MISO).
+    cases = {
+        6090: "MISO-North",     # Sherburne County / Sherco (Minnesota)
+        1925: "MISO-North",     # Prairie Island nuclear (Minnesota)
+        6098: "MISO-North",     # Big Stone (South Dakota)
+        6254: "MISO-North",     # Ottumwa (Iowa)
+        1733: "MISO-Central",   # Monroe (Michigan)
+        6034: "MISO-Central",   # Belle River (Michigan)
+        6113: "MISO-Central",   # Gibson (Indiana)
+        4270: "MISO-South",     # Waterford 3 nuclear (Louisiana)
+        8055: "MISO-South",     # Arkansas Nuclear One (Arkansas)
+        6072: "MISO-South",     # Grand Gulf nuclear (Mississippi)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "MISO") == expected, f"ORIS {oris}"
+
+
+def test_miso_every_plant_resolves():
+    """Every MISO plant resolves to a real region; none are dropped."""
+    lookup = build_zone_lookup("MISO")
+    assert len(lookup) > 2000  # MISO has ~2,100 plants in eGRID
+    valid = {"MISO-North", "MISO-Central", "MISO-South"}
+    assert set(lookup.values()) <= valid
+    # All three regions are populated.
+    assert valid <= set(lookup.values())
+
+
 def test_egrid_lookup_loads():
     """eGRID PLNT23 lookup table loads without error."""
     lookup = build_zone_lookup("ERCOT")
