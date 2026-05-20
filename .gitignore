@@ -23,8 +23,5 @@ inputs/processed/*.parquet
 !inputs/processed/parasitic_load_factors.parquet
 !inputs/processed/plant_emission_rates.parquet
 
-# Cached simulation results
-/results/
-
 # OS
 .DS_Store

@@ -309,6 +309,12 @@ def apply_plant_monthly_fuel_prices(
         if plant_code <= 0:
             continue
         fuel_name = _fuel_name(fleet.fuel_type_idx[g])
+        # Coal monthly pricing can be switched off (config) to hold all coal
+        # on the flat annual lignite/PRB average; gas always keeps monthly.
+        if fuel_name == "coal" and not getattr(
+            config, "coal_plant_monthly_pricing", True
+        ):
+            continue
         fuel_group = _F923_FUEL_GROUP_BY_FUEL.get(fuel_name)
         if fuel_group is None:
             continue
