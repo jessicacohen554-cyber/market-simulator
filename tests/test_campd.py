@@ -129,6 +129,19 @@ class TestEia923CombustionNet(unittest.TestCase):
         self.assertEqual(out[out.plant_id == 2]["net_mwh"].iloc[0], 200.0)
 
 
+class TestCoalShare(unittest.TestCase):
+    def test_flags_blended_plant(self):
+        gen = pd.DataFrame({
+            "plant_id": [1, 1, 2],
+            "year": [2023, 2023, 2023],
+            "fuel_type": ["SUB", "NG", "SUB"],
+            "netgen_annual_mwh": [850.0, 150.0, 1000.0],
+        })
+        shares = campd.coal_share_by_plant(gen, [2023])
+        self.assertAlmostEqual(shares[1], 0.85)  # blended -> mixed band
+        self.assertAlmostEqual(shares[2], 1.0)   # pure coal
+
+
 class TestPlantEmissionRates(unittest.TestCase):
     def test_rates_per_mwh_net_and_starts(self):
         with tempfile.TemporaryDirectory() as d:
@@ -216,6 +229,22 @@ class TestApplyPlantEmissionRates(unittest.TestCase):
         self.assertAlmostEqual(gens[0].nox_rate, 0.0008)
         self.assertAlmostEqual(gens[0].so2_rate, 0.0005)
         self.assertAlmostEqual(gens[1].emission_rate_co2, 0.4)   # untouched
+
+    def test_mixed_plant_is_skipped(self):
+        rates = pd.DataFrame({
+            "plant_id": [3470], "year": [0],
+            "co2_kg_per_mwh_net": [898.0], "nox_kg_per_mwh_net": [0.48],
+            "so2_kg_per_mwh_net": [2.08], "mixed": [True],
+        })
+        gens = [Generator(unit_id="c_p3470", name="c", zone="Z",
+                          fuel_type="coal", pmax_mw=100.0,
+                          emission_rate_co2=1.076, plant_code=3470)]
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "rates.parquet"
+            rates.to_parquet(p)
+            n = apply_plant_emission_rates(gens, p)
+        self.assertEqual(n, 0)
+        self.assertAlmostEqual(gens[0].emission_rate_co2, 1.076)  # fuel default kept
 
     def test_missing_artifact_is_noop(self):
         gens = [Generator(unit_id="a_p1", name="a", zone="Z", fuel_type="coal",

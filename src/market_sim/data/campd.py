@@ -71,6 +71,11 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     "SPP": (),
 }
 
+# EIA-923 ``fuel_type`` codes burned by coal-class units.
+_COAL_EIA_FUELS: frozenset[str] = frozenset(
+    {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
+)
+
 # EIA-923 ``fuel_type`` codes that are NOT stack-monitored combustion fuels,
 # excluded when summing the net generation that CAMPD's gross output should
 # reconcile against (renewables, nuclear, hydro, storage, purchases).
@@ -565,6 +570,36 @@ def plant_hourly_net(
         np.add.at(series, hoy[valid], gross[valid])
         out[int(plant_id)] = series * float(factors.get(int(plant_id), 1.0))
     return out
+
+
+def coal_share_by_plant(
+    generation: pd.DataFrame, years: list[int] | None = None
+) -> dict[int, float]:
+    """Return ``{plant_id: coal share of net generation}`` from EIA-923.
+
+    The share flags plants whose facility-level CEMS gross blends coal and gas
+    units: a plant with ``0.1 < coal_share < 0.9`` cannot have a single
+    facility emission rate cleanly assigned to its (separate) coal and gas
+    dispatch bins. Plants near 0 or 1 burn effectively one fuel.
+
+    Args:
+        generation: The EIA-923 Page-1 frame.
+        years: Optional subset of years to pool; ``None`` uses all.
+
+    Returns:
+        ``{plant_id: coal_share}`` for every plant with positive generation.
+    """
+    g = generation if years is None else generation[generation["year"].isin(years)]
+    is_coal = g["fuel_type"].astype(str).str.upper().isin(_COAL_EIA_FUELS)
+    total = g.groupby("plant_id")["netgen_annual_mwh"].sum()
+    coal = (
+        g[is_coal].groupby("plant_id")["netgen_annual_mwh"].sum()
+        .reindex(total.index).fillna(0.0)
+    )
+    return {
+        int(p): float(coal[p] / total[p])
+        for p in total.index if total[p] > 0
+    }
 
 
 def eia923_combustion_net(generation: pd.DataFrame) -> pd.DataFrame:
