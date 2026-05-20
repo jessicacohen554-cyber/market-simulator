@@ -53,6 +53,7 @@ from market_sim.data.fleet import (  # noqa: E402
     apply_coal_tranches,
     assemble_mc,
     bins_to_fleet,
+    campd_tranche_fuel_frac,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
@@ -189,6 +190,9 @@ def _calibration_config(
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
         commitment_screen_coal=commitment_screen_coal,
+        coal_committed_fuel_passthrough=0.5,  # committed coal price-takes:
+        #   it bids VOM + half its fuel cost so baseloaded coal clears the
+        #   merit order rather than being priced out by cheap gas.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -309,10 +313,12 @@ def run_year(
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
         # under take-or-pay coal contracts, CHP host steam obligations or
-        # ERCOT RUC. apply_coal_tranches discounts coal must-run; the
-        # gas/steam must-run fuel-cost discount is applied below.
+        # ERCOT RUC. Committed coal tranches price-take: they pass only
+        # coal_committed_fuel_passthrough of their fuel cost into the bid so
+        # baseloaded coal clears the merit order instead of being priced out
+        # by cheap gas. apply_coal_tranches applies both discounts.
         fuel_fracs = [
-            0.0 if g.unit_id.endswith("_mustrun") else 1.0
+            campd_tranche_fuel_frac(g, config.coal_committed_fuel_passthrough)
             for g in fleet
         ]
     else:

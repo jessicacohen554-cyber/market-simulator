@@ -33,6 +33,7 @@ from market_sim.data.fleet import (
     apply_coal_tranches,
     assemble_mc,
     bins_to_fleet,
+    campd_tranche_fuel_frac,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
@@ -282,7 +283,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # fuel_type == "coal" only; non-coal must-run discounting is
             # handled via assemble_mc using fuel_fracs directly.)
             fuel_fracs = [
-                0.0 if g.unit_id.endswith("_mustrun") else 1.0
+                campd_tranche_fuel_frac(
+                    g, config.coal_committed_fuel_passthrough
+                )
                 for g in dispatch_fleet
             ]
         else:
