@@ -260,6 +260,13 @@ class ScenarioConfig:
     coal_lignite_mustrun_override: float | None = None
     coal_prb_mustrun_override: float | None = None
 
+    # When True (default), coal generators are repriced to the flat annual
+    # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
+    # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
+    # actual EIA-923 monthly delivered cost for matched coal plants (the rest
+    # fall back to the generic COAL_PRICE_BASE annual).
+    coal_supply_repricing: bool = True
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -413,6 +420,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_passthrough": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
+    "coal_supply_repricing": 3,
     "gas_price_override": 3,
 }
 
