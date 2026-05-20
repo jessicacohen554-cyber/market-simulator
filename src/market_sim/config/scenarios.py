@@ -273,6 +273,23 @@ class ScenarioConfig:
     # fall back to the generic COAL_PRICE_BASE annual).
     coal_supply_repricing: bool = True
 
+    # When True (default), coal generators that report EIA-923 monthly fuel
+    # receipts (currently Fayette, San Miguel, J K Spruce) have their delivered
+    # cost overwritten by that measured plant-specific monthly price. Set False
+    # to keep all coal on the flat annual lignite/PRB trajectory (the "average"
+    # baseline), reverting those few plants to the supply-type average. Only
+    # coal is affected; gas keeps its plant-specific monthly cost regardless.
+    coal_plant_monthly_pricing: bool = True
+
+    # Tier 3 (calibration) — thermal availability source. "statistical"
+    # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
+    # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
+    # > 10-day spans) for the weather year as a hard zero, pinning units that
+    # were physically out for sustained maintenance. Backcasts set "historic"
+    # to cut calibration noise; forecasts keep "statistical". See
+    # market_sim.data.outages and generators_to_fleet_arrays.
+    outage_source: str = "statistical"
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -430,6 +447,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_supply_repricing": 3,
+    "coal_plant_monthly_pricing": 3,
+    "outage_source": 3,
     "gas_price_override": 3,
 }
 
