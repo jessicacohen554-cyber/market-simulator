@@ -1402,6 +1402,9 @@ BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
     # (units 1+2 retired full year); add when those calibration years
     # come into scope.
     "SC_STGAS3": {2025: 0.686},
+    # Sandy Creek -- removed from availability in 2025 (mostly offline; EIA-923
+    # shows 0.72 TWh vs ~3.0-3.3 TWh in 2023-2024).
+    "SC_COAL3": {2025: 0.0},
 }
 
 # Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
