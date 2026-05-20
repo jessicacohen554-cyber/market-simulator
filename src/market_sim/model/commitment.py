@@ -431,6 +431,29 @@ def apply_commitment_with_coal_pin(
             continue
         avail[e_idx, ~committed[c_idx]] = 0.0
 
+    # Adequacy backstop: the screen and the coal pin must never leave a
+    # zone-hour unable to reproduce its P1 thermal output — that would force
+    # the P2 solve onto load slack (unserved energy at VOLL), i.e. P2 would
+    # create unmet demand. In any zone-hour where the committed available
+    # capacity has dropped below the P1 thermal dispatch, restore every
+    # decommitted unit in that zone to its P1 availability, so the P1
+    # solution stays feasible and P2 can never invent new unmet demand.
+    pmax = fleet_arrays.pmax
+    zone_idx = fleet_arrays.zone_idx
+    p1_frac = np.clip(
+        p1_dispatch / np.maximum(pmax[:, None], 1.0), 0.0, 1.0
+    )
+    cap = avail * pmax[:, None]
+    for z in np.unique(zone_idx):
+        rows = zone_idx == z
+        short = cap[rows].sum(axis=0) < p1_dispatch[rows].sum(axis=0) - 1e-6
+        if not short.any():
+            continue
+        sub = avail[rows]
+        restore = (sub == 0.0) & (p1_dispatch[rows] > 0.0) & short[None, :]
+        sub[restore] = np.maximum(sub[restore], p1_frac[rows][restore])
+        avail[rows] = sub
+
     return FleetArrays(
         pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,

@@ -263,6 +263,7 @@ def _print_reconciliation(
     model_grid_twh: float,
     btm_total_twh: float,
     td_loss_factor: float,
+    unserved_twh: float = 0.0,
 ) -> None:
     """Print the grid surplus headline: model grid vs EIA-930 net generation.
 
@@ -297,6 +298,8 @@ def _print_reconciliation(
         ("Gap (model grid − EIA-930 net gen)", f"{gap:+7.2f} TWh"),
         ("  = true T&D losses + any BTM CHP host load left in the target",
          ""),
+        ("Unserved energy / load slack (should be 0)",
+         f"{unserved_twh:7.4f} TWh"),
         ("Behind-meter CHP must-run (off-grid; table [1] only)",
          f"{btm_total_twh:7.2f} TWh"),
     ]
@@ -700,8 +703,9 @@ def _report_sections(
         + float(model_hourly["solar"].sum())
     ) / _MWH_PER_TWH
     btm_total_twh = sum(btm_by_class_twh.values())
+    unserved_twh = float(np.asarray(result.slack).sum()) / _MWH_PER_TWH
     _print_reconciliation(
-        year, iso, model_grid_twh, btm_total_twh, td_loss,
+        year, iso, model_grid_twh, btm_total_twh, td_loss, unserved_twh,
     )
 
     # [3] Non-CHP grid generation vs EIA-930.
