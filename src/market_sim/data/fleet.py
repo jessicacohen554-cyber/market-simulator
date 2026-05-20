@@ -867,7 +867,7 @@ _COLUMN_ALIASES: dict[str, set[str]] = {
 _NUCLEAR_ZONE_OVERRIDES: dict[str, str] = {
     "comanche peak": "North",
     "south texas": "South",
-    "diablo canyon": "CAISO_main",
+    "diablo canyon": "NP15",  # San Luis Obispo, NP15 coast (north of Path 26)
 }
 
 # Energy-source codes (EIA-860 / eGRID PLPRMFL) that indicate coal steam.
