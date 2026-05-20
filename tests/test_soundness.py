@@ -160,14 +160,17 @@ class TestSpecCompliance(unittest.TestCase):
         self.assertNotIn("BaseModel", mro)
 
     def test_topology_matches_spec(self):
-        """ERCOT=6 zones, CAISO=2 zones. WECC_import load_share=0."""
+        """ERCOT=6 zones, CAISO=4 zones (3 trading + import). Import share=0."""
         ercot = get_iso_config("ERCOT")
         self.assertEqual(len(ercot.zones), 6)
         shares = [z.load_share for z in ercot.zones]
         self.assertAlmostEqual(sum(shares), 1.0, places=6)
 
         caiso = get_iso_config("CAISO")
-        self.assertEqual(len(caiso.zones), 2)
+        self.assertEqual(len(caiso.zones), 4)
+        self.assertAlmostEqual(
+            sum(z.load_share for z in caiso.zones), 1.0, places=6
+        )
         wecc = [z for z in caiso.zones if "WECC" in z.name][0]
         self.assertEqual(wecc.load_share, 0.0)
 
