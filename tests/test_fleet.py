@@ -12,8 +12,11 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     _CC_SHOULDER_MONTHS,
     _SUMMER_WEFOR_SHARE,
+    _AGGREGATABLE_FUELS,
     _hour_to_month_index,
+    _map_fuel_type,
     FUEL_TYPE_MAP,
+    FUEL_TYPE_NAMES,
     Generator,
     aggregate_fleet,
     apply_coal_tranches,
@@ -694,6 +697,90 @@ class HistoricOutageOverlayTest(unittest.TestCase):
         out_h = self._outage_hour()
         # The default statistical model leaves WEFOR/POF availability (>0).
         self.assertGreater(arrays.availability[0, out_h], 0.0)
+
+
+class TestOilBiomassFuelTypes(unittest.TestCase):
+    """Registration, classification, MC and emissions for oil and biomass."""
+
+    def test_fuel_codes_and_names(self):
+        # Oil takes the previously-reserved code 11; biomass the next free
+        # integer after gas_st (14). FUEL_TYPE_NAMES is sized to the max code
+        # and round-trips both names.
+        self.assertEqual(FUEL_TYPE_MAP["oil"], 11)
+        self.assertEqual(FUEL_TYPE_MAP["biomass"], 15)
+        self.assertEqual(len(FUEL_TYPE_NAMES), max(FUEL_TYPE_MAP.values()) + 1)
+        self.assertEqual(FUEL_TYPE_NAMES[11], "oil")
+        self.assertEqual(FUEL_TYPE_NAMES[15], "biomass")
+
+    def test_eia_classifier_maps_oil_sources(self):
+        # Distillate, residual and petroleum coke classify as oil.
+        for src in ("DFO", "RFO", "PC"):
+            self.assertEqual(
+                _map_fuel_type("Petroleum Liquids", src, "GT"), "oil",
+                f"{src} should classify as oil",
+            )
+
+    def test_eia_classifier_maps_biomass_sources(self):
+        # Wood solids, ag byproducts, municipal solid waste and landfill gas
+        # all classify as biomass.
+        for src in ("WDS", "AB", "MSW", "LFG"):
+            self.assertEqual(
+                _map_fuel_type("Wood/Wood Waste Biomass", src, "ST"), "biomass",
+                f"{src} should classify as biomass",
+            )
+
+    def test_oil_and_biomass_are_aggregatable(self):
+        # Both are thermal blocks that aggregate; this also makes ERCOT's
+        # CAMPD path exclude them from the EIA non-aggregatable carve-out.
+        self.assertIn("oil", _AGGREGATABLE_FUELS)
+        self.assertIn("biomass", _AGGREGATABLE_FUELS)
+
+    def test_oil_marginal_cost_and_emissions(self):
+        # Oil burns at a high heat rate and emits CO2, so a carbon price lifts
+        # its MC. MC = heat_rate*fuel + vom + emission_rate*carbon.
+        gen = Generator(
+            unit_id="OIL", name="Oil", zone="z", fuel_type="oil",
+            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            nox_rate=0.0004,
+        )
+        fleet = generators_to_fleet_arrays([gen], ["z"], hours=2)
+        fuel_prices = np.full((1, 2), 18.0)
+        mc = assemble_mc(fleet, fuel_prices, carbon_price=50.0)
+        np.testing.assert_allclose(mc[0], 13.5 * 18.0 + 4.5 + 1.0 * 50.0)
+        # Carbon price moves oil MC (it emits).
+        base = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+        np.testing.assert_allclose(mc[0] - base[0], 50.0)
+
+    def test_biomass_marginal_cost_and_carbon_neutral(self):
+        # Biomass burns cheap fuel; its biogenic CO2 is carbon-neutral, so a
+        # carbon price leaves its MC unchanged.
+        gen = Generator(
+            unit_id="BIO", name="Biomass", zone="z", fuel_type="biomass",
+            pmax_mw=100.0, heat_rate=13.5, vom=5.0, emission_rate_co2=0.0,
+            nox_rate=0.001,
+        )
+        fleet = generators_to_fleet_arrays([gen], ["z"], hours=2)
+        fuel_prices = np.full((1, 2), 2.5)
+        no_carbon = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+        with_carbon = assemble_mc(fleet, fuel_prices, carbon_price=100.0)
+        np.testing.assert_allclose(no_carbon[0], 13.5 * 2.5 + 5.0)
+        np.testing.assert_allclose(with_carbon[0], no_carbon[0])
+
+    def test_oil_is_more_expensive_than_gas_cc(self):
+        # An oil unit's MC sits well above a gas CC's, putting it at the
+        # peaking end of the merit order.
+        oil = Generator(
+            unit_id="OIL", name="Oil", zone="z", fuel_type="oil",
+            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+        )
+        cc = Generator(
+            unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
+            pmax_mw=100.0, heat_rate=7.0, vom=2.0,
+        )
+        fleet = generators_to_fleet_arrays([oil, cc], ["z"], hours=1)
+        fuel_prices = np.array([[18.0], [3.0]])
+        mc = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+        self.assertGreater(mc[0, 0], mc[1, 0])
 
 
 if __name__ == "__main__":
