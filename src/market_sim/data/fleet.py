@@ -1464,6 +1464,27 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
     56257: 2013,  # Sandy Creek
 }
 
+# Per-plant coal must-run percentage, keyed by EIA plant code. Derived from
+# EPA CAMPD/CEMS TX 2023-2025 minimum-load behaviour and observed seasonal
+# outage structure (an outage = plant gross < 2% of nameplate for >= 2
+# consecutive days). Replaces the uniform lignite/PRB must-run overrides when
+# config.coal_mustrun_per_plant is set; the historic outage overlay still
+# zeros these plants during their actual maintenance windows. Lignite mine-
+# mouth units carry high floors (take-or-pay, baseload); PRB rail units that
+# cycle hard (J K Spruce, W A Parish) carry low floors.
+COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
+    6180: 45.0,   # Oak Grove (lignite) — 12d planned block, otherwise baseload
+    7030: 45.0,   # Major Oak (lignite) — 99.2% online, EAF only
+    6183: 55.0,   # San Miguel (lignite) — large spring + fall blocks, ~38% off
+    298: 20.0,    # Limestone (PRB) — recurring Feb winter + variable spring
+    6146: 20.0,   # Martin Lake (PRB) — no systematic pattern, EAF
+    6178: 30.0,   # Coleto Creek (PRB) — large spring block (shortening)
+    6179: 30.0,   # Fayette (PRB) — zero outage events across 3 years
+    7097: 12.0,   # J K Spruce (PRB) — scattered short shoulder events
+    3470: 15.0,   # W A Parish (PRB) — mixed facility, coal outages undetectable
+    56611: 40.0,  # Sandy Creek (PRB) — annual spring block, length varies
+}
+
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
 # fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
@@ -1843,11 +1864,17 @@ def bins_to_fleet(
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
-        # Coal must-run override (calibration sweep): replace the CSV must-run
-        # for coal of the given supply; the grid tranches rescale via `denom`.
+        # Coal must-run override (calibration): per-plant CAMPD-derived floor
+        # (config.coal_mustrun_per_plant) takes precedence; otherwise the
+        # uniform lignite/PRB supply override (sweep). The grid tranches
+        # rescale via `denom`.
         if fuel == "coal":
-            _supply = COAL_PLANT_SUPPLY.get(int(b["Plant_Code"]), "")
-            if (_supply == "lignite"
+            _pc = int(b["Plant_Code"])
+            _supply = COAL_PLANT_SUPPLY.get(_pc, "")
+            if (config.coal_mustrun_per_plant
+                    and _pc in COAL_MUSTRUN_BY_PLANT):
+                pct_mr = COAL_MUSTRUN_BY_PLANT[_pc]
+            elif (_supply == "lignite"
                     and config.coal_lignite_mustrun_override is not None):
                 pct_mr = config.coal_lignite_mustrun_override
             elif (_supply == "prb"
