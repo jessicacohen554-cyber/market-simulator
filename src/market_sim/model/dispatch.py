@@ -628,6 +628,7 @@ def solve_dispatch(
     fuel_prices: np.ndarray | None = None,
     carbon_price: np.ndarray | float = 0,
     nox_price: np.ndarray | float = 0,
+    so2_price: np.ndarray | float = 0,
     voll: float = 5000,  # default matches ScenarioConfig.voll for ERCOT
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
@@ -662,6 +663,7 @@ def solve_dispatch(
             ``None``.
         carbon_price: Carbon price used when ``mc`` is ``None``.
         nox_price: NOx price used when ``mc`` is ``None``.
+        so2_price: SO2 price used when ``mc`` is ``None``.
         voll: Value of lost load applied to load-slack variables.
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``.
@@ -702,7 +704,10 @@ def solve_dispatch(
     )
 
     if mc is None:
-        mc = assemble_mc(fleet, fuel_prices, carbon_price, nox_price)
+        mc = assemble_mc(
+            fleet, fuel_prices, carbon_price, nox_price,
+            so2=(fleet.so2_rate, so2_price),
+        )
     mc = np.asarray(mc, dtype=float)
 
     cost = build_cost_vector(
