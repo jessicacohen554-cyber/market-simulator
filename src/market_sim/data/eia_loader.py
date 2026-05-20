@@ -32,15 +32,16 @@ _GENERATION_PROFILES_FILE = "eia_generation_profiles.parquet"
 # net out interchange in load_demand.
 EIA_HOURLY_DIR: Path = Path(__file__).parents[3] / "data" / "eia_hourly"
 
-# Model ISO -> EIA-930 BA code for the per-BA wide hourly extract. ISO-NE
-# (ISNE) and SPP (SWPP) are intentionally left unmapped until their extracts
-# are converted; an unmapped ISO falls back to the demand-profiles parquet.
+# Model ISO -> EIA-930 BA code for the per-BA wide hourly extract. An ISO
+# with no entry here falls back to the demand-profiles parquet.
 _ISO_TO_HOURLY_BA: dict[str, str] = {
     "ERCOT": "ERCO",
     "CAISO": "CISO",
     "PJM": "PJM",
     "NYISO": "NYIS",
     "MISO": "MISO",
+    "NEISO": "ISNE",
+    "SPP": "SWPP",
 }
 
 # ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.
