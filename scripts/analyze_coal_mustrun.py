@@ -41,7 +41,18 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.data import campd  # noqa: E402
+from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
+
+# EIA-923 fuel codes burned by coal-class units.
+_COAL_FUELS: frozenset[str] = frozenset(
+    {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
+)
+# A plant below this coal share of net generation, or with a non-steam prime
+# mover (a co-located gas turbine / CC), is "mixed": facility-level CEMS sums
+# its non-coal units into the gross load, so its coal must-run floor cannot be
+# isolated from this extract and is excluded from the headline stats.
+_MIN_COAL_SHARE: float = 0.90
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("analyze_coal_mustrun")
@@ -127,12 +138,39 @@ def _must_run_stats(
     }
 
 
+def _coal_mix(generation: pd.DataFrame, years: list[int]) -> dict[int, dict]:
+    """Return ``{plant_id: {coal_share, prime_movers, mixed}}`` from EIA-923.
+
+    Flags plants whose CAMPD facility gross blends non-coal units — a low coal
+    share of net generation or a non-steam prime mover (co-located GT/CC) — so
+    their facility-level must-run floor can be set aside.
+    """
+    sub = generation[generation["year"].isin(years)]
+    out: dict[int, dict] = {}
+    for code, grp in sub.groupby("plant_id"):
+        total = float(grp["netgen_annual_mwh"].sum())
+        if total <= 0:
+            continue
+        is_coal = grp["fuel_type"].astype(str).str.upper().isin(_COAL_FUELS)
+        coal_gen = float(grp[is_coal]["netgen_annual_mwh"].sum())
+        pms = sorted(grp.loc[grp["netgen_annual_mwh"] != 0, "prime_mover"]
+                     .astype(str).str.upper().unique())
+        share = coal_gen / total
+        out[int(code)] = {
+            "coal_share": round(share, 3),
+            "prime_movers": "+".join(pms),
+            "mixed": bool(share < _MIN_COAL_SHARE or pms != ["ST"]),
+        }
+    return out
+
+
 def _analyze(
     df: pd.DataFrame, years: list[int], supply_types: list[str],
     online_frac: float, min_days: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return ``(floors, events)`` frames for the requested coal supply types."""
     reg = pd.read_csv(REGISTRY_PATH).set_index("plantid")
+    mix = _coal_mix(load_monthly_generation(), years)
     floors_rows: list[dict] = []
     event_rows: list[dict] = []
 
@@ -171,11 +209,15 @@ def _analyze(
         np_used = pooled_grids[0][1]
         online_mw = pooled_grids[0][2]
         stats = _must_run_stats(combined, np_used, online_mw)
+        m = mix.get(code, {"coal_share": float("nan"), "prime_movers": "?",
+                           "mixed": False})
         floors_rows.append({
             "plant_code": code, "name": name, "supply": supply,
             "nameplate_mw": round(nameplate, 1),
             "cap_mw_used": round(np_used, 1),
             "nameplate_source": "registry" if nameplate > 0 else "p99_observed",
+            "coal_share": m["coal_share"], "prime_movers": m["prime_movers"],
+            "mixed": m["mixed"],
             **stats,
         })
 
@@ -193,13 +235,16 @@ def _print_report(
         label = "MINE-MOUTH LIGNITE" if supply == "lignite" else "PRB (railed)"
         print(f"\n{'=' * 78}\n  {label} COAL — must-run floor "
               f"({', '.join(map(str, years))})\n{'=' * 78}")
-        rows = [("plant", "code", "MW", "online%", "CF P5", "CF P10",
-                 "CF P50", "minLoad%max")]
-        for _, r in fl.sort_values("cap_mw_used", ascending=False).iterrows():
+        rows = [("plant", "code", "MW", "coal%", "pm", "online%", "CF P5",
+                 "CF P10", "CF P50", "minLoad%max")]
+        for _, r in fl.sort_values(["mixed", "cap_mw_used"],
+                                   ascending=[True, False]).iterrows():
             cap = (f"{r['nameplate_mw']:.0f}" if r["nameplate_source"] == "registry"
                    else f"~{r['cap_mw_used']:.0f}")
+            name = r["name"][:24] + (" *" if r["mixed"] else "")
             rows.append((
-                r["name"][:26], str(r["plant_code"]), cap,
+                name, str(r["plant_code"]), cap,
+                f"{r['coal_share'] * 100:.0f}", r["prime_movers"],
                 f"{r.get('online_share', 0) * 100:.0f}",
                 f"{r.get('cf_p5', float('nan')):.2f}",
                 f"{r.get('cf_p10', float('nan')):.2f}",
@@ -207,8 +252,14 @@ def _print_report(
                 f"{r.get('minload_pct_of_max', float('nan')):.2f}",
             ))
         _print_table(rows)
-        print("    (CF P10 of committed hours = candidate true must-run %; "
-              "minLoad%max = P10/P95 of committed output.)")
+        reliable = fl[~fl["mixed"]]
+        if len(reliable):
+            print(f"    coal-only median: CF P10={reliable['cf_p10'].median():.2f}, "
+                  f"minLoad%max={reliable['minload_pct_of_max'].median():.2f}  "
+                  f"(CF P10 of committed hours = candidate true must-run %)")
+        if fl["mixed"].any():
+            print("    * mixed plant (co-located gas units in facility CEMS) — "
+                  "coal floor not isolable from this extract; excluded from median.")
 
     if events.empty:
         print("\n  No multi-day outage events detected.")
