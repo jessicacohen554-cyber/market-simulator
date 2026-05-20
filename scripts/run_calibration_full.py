@@ -34,8 +34,10 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import logging
+import pickle
 import subprocess
 import sys
 from datetime import datetime
@@ -62,6 +64,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
 from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
 from scripts.run_calibration import (  # noqa: E402
     _calibration_config,
+    _commitment_pass,
     _henry_hub_actual,
     _load_reference,
     run_year,
@@ -416,6 +419,7 @@ def solve_and_persist(
     coal_lignite_mustrun: float | None = None,
     coal_prb_mustrun: float | None = None,
     coal_prb_passthrough: float = 1.0,
+    persist_p2_state: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -438,13 +442,15 @@ def solve_and_persist(
             "solving %s %d (hours=%d, Henry Hub=$%.2f/MMBtu, commitment=%s)",
             iso, year, hours, gas_price, commitment,
         )
-        result, context, result_p1 = run_year(
+        result, context, result_p1, p2_state = run_year(
             year, iso, hours, gas_price, ttc_overrides={},
             commitment_enabled=commitment, commitment_screen_coal=screen_coal,
             coal_lignite_mustrun=coal_lignite_mustrun,
             coal_prb_mustrun=coal_prb_mustrun,
             coal_prb_passthrough=coal_prb_passthrough,
         )
+        if persist_p2_state:
+            _save_p2_state(run_dir, year, p2_state)
         labelled = [("P2" if result_p1 is not None else "P1", result)]
         if result_p1 is not None:
             labelled.insert(0, ("P1", result_p1))
@@ -710,6 +716,68 @@ def _print_plant_level(year, dispatch, e923) -> None:
     _print_table(rows)
 
 
+def _save_p2_state(run_dir: Path, year: int, p2_state: dict) -> None:
+    """Pickle the cached P1 inputs so P2 can be re-run as a post-process."""
+    d = run_dir / "p2_state"
+    d.mkdir(parents=True, exist_ok=True)
+    with gzip.open(d / f"{year}.pkl.gz", "wb") as fh:
+        pickle.dump(p2_state, fh, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
+    """Run the P2 commitment pass from a bundle's cached P1 state, then report.
+
+    Loads each year's pickled P1 inputs from ``<bundle>/p2_state/``, runs the
+    single P2 LP solve (no P0/P1 re-solve), writes the P2 dispatch / system /
+    btm into the bundle, marks P2 in ``meta.json`` and prints the full report.
+    The bundle must have been produced with ``--persist-p2-state``.
+    """
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso_config = get_iso_config(meta["iso"])
+    zone_names = iso_config.zone_names
+    generation = load_monthly_generation()
+    states = sorted((bundle / "p2_state").glob("*.pkl.gz"))
+    if not states:
+        logger.error(
+            "no p2_state pickles in %s — re-run the bundle with "
+            "--persist-p2-state first", bundle / "p2_state",
+        )
+        return
+
+    system_p2, btm_p2 = [], []
+    for sp in states:
+        with gzip.open(sp, "rb") as fh:
+            state = pickle.load(fh)
+        year = int(state["year"])
+        cfg = state["config"].with_overrides(
+            commitment_enabled=True, commitment_screen_coal=screen_coal,
+        )
+        logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
+        result = _commitment_pass(state, cfg)
+        ctx = state["context"]
+        _dispatch_frame(year, "P2", result, ctx, zone_names).to_parquet(
+            bundle / "dispatch" / f"{year}_P2.parquet", index=False
+        )
+        system_p2.append(
+            _system_frame(year, "P2", result, state["demand"], zone_names)
+        )
+        btm_p2.append(_btm_frame(year, "P2", result, ctx, generation))
+
+    for name, frames in (("system", system_p2), ("btm", btm_p2)):
+        path = bundle / f"{name}.parquet"
+        new = pd.concat(frames, ignore_index=True)
+        if path.exists():
+            old = pd.read_parquet(path)
+            old = old[old["pass"] != "P2"]  # replace any prior P2
+            new = pd.concat([old, new], ignore_index=True)
+        new.to_parquet(path, index=False)
+
+    meta["passes"] = sorted(set(meta.get("passes", [])) | {"P2"})
+    meta["p2_screen_coal"] = screen_coal
+    (bundle / "meta.json").write_text(json.dumps(meta, indent=2))
+    report_run(bundle)
+
+
 def report_run(run_dir: Path) -> None:
     """Print the full calibration report from a persisted bundle."""
     meta = json.loads((run_dir / "meta.json").read_text())
@@ -814,6 +882,16 @@ def main() -> None:
         help="Skip solving; print the report from an existing bundle directory.",
     )
     parser.add_argument(
+        "--persist-p2-state", action="store_true",
+        help="Pickle each year's P1 inputs (large) so P2 can be re-run via "
+             "--run-p2 without re-solving P0/P1.",
+    )
+    parser.add_argument(
+        "--run-p2", metavar="DIR", default=None,
+        help="Run the P2 commitment pass from a bundle's cached P1 state "
+             "(one LP solve, no re-solve). Honours --no-coal-p2.",
+    )
+    parser.add_argument(
         "--out-dir", default=None,
         help="Bundle root (default results/calibration/<timestamp>).",
     )
@@ -821,6 +899,10 @@ def main() -> None:
 
     if args.report:
         report_run(Path(args.report))
+        return
+
+    if args.run_p2:
+        run_p2_layer(Path(args.run_p2), screen_coal=not args.no_coal_p2)
         return
 
     iso = args.iso.upper()
@@ -837,6 +919,7 @@ def main() -> None:
         coal_lignite_mustrun=args.coal_lignite_mustrun,
         coal_prb_mustrun=args.coal_prb_mustrun,
         coal_prb_passthrough=args.coal_prb_passthrough,
+        persist_p2_state=args.persist_p2_state,
     )
     report_run(run_dir)
 
