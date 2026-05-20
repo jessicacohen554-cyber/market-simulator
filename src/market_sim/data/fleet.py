@@ -11,6 +11,7 @@ import calendar
 import logging
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -116,6 +117,7 @@ class Generator(BaseModel):
     vom: float = 0.0
     emission_rate_co2: float = 0.0
     nox_rate: float = 0.0
+    so2_rate: float = 0.0
     eford: float = 0.05
     online_year: int = 2000
     retirement_year: int | None = None
@@ -154,6 +156,7 @@ class FleetArrays:
     vom: np.ndarray
     emission_rate: np.ndarray
     nox_rate: np.ndarray
+    so2_rate: np.ndarray
     zone_idx: np.ndarray
     fuel_type_idx: np.ndarray
     availability: np.ndarray
@@ -248,6 +251,7 @@ def generators_to_fleet_arrays(
     vom = np.array([g.vom for g in generators], dtype=float)
     emission_rate = np.array([g.emission_rate_co2 for g in generators], dtype=float)
     nox_rate = np.array([g.nox_rate for g in generators], dtype=float)
+    so2_rate = np.array([g.so2_rate for g in generators], dtype=float)
     zone_idx = np.array([zone_to_idx[g.zone] for g in generators], dtype=int)
     fuel_type_idx = np.array(
         [FUEL_TYPE_MAP[g.fuel_type] for g in generators], dtype=int
@@ -333,6 +337,7 @@ def generators_to_fleet_arrays(
         vom=vom,
         emission_rate=emission_rate,
         nox_rate=nox_rate,
+        so2_rate=so2_rate,
         zone_idx=zone_idx,
         fuel_type_idx=fuel_type_idx,
         availability=availability,
@@ -665,9 +670,11 @@ def split_coal_tranches(
                     vom=gen.vom,
                     emission_rate_co2=gen.emission_rate_co2,
                     nox_rate=gen.nox_rate,
+                    so2_rate=gen.so2_rate,
                     eford=gen.eford,
                     online_year=gen.online_year,
                     retirement_year=gen.retirement_year,
+                    plant_code=gen.plant_code,
                 )
             )
             fuel_fracs.append(fuel_frac)
@@ -1467,6 +1474,83 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
         The registry as a DataFrame.
     """
     return pd.read_csv(csv_path)
+
+
+# Default location of the CAMPD-derived per-plant emission-rate artifact
+# (scripts/derive_plant_emissions.py), resolved relative to the repo root.
+PLANT_EMISSION_RATES_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "processed"
+    / "plant_emission_rates.parquet"
+)
+
+# kg -> metric tonnes, the model's internal emission-rate mass unit.
+_KG_PER_TONNE: float = 1000.0
+
+
+@lru_cache(maxsize=4)
+def _plant_emission_rate_map(
+    path: str,
+) -> dict[int, tuple[float, float, float]]:
+    """Return ``{plant_id: (co2, nox, so2)}`` rates in tonnes/MWh net.
+
+    Reads the pooled (``year == 0``) rows of the CAMPD emission-rate
+    artifact and converts the per-MWh-net kg figures to the model's
+    tonnes/MWh unit. Cached by path so repeated yearly fleet builds in one
+    run parse the parquet once.
+    """
+    df = pd.read_parquet(path)
+    pooled = df[df["year"] == 0]
+    out: dict[int, tuple[float, float, float]] = {}
+    for _, r in pooled.iterrows():
+        out[int(r["plant_id"])] = (
+            float(r["co2_kg_per_mwh_net"]) / _KG_PER_TONNE,
+            float(r["nox_kg_per_mwh_net"]) / _KG_PER_TONNE,
+            float(r["so2_kg_per_mwh_net"]) / _KG_PER_TONNE,
+        )
+    return out
+
+
+def apply_plant_emission_rates(
+    generators: list[Generator],
+    path: str | Path | None = None,
+) -> int:
+    """Override per-generator CO2/NOx/SO2 rates with CAMPD plant-specific ones.
+
+    Each generator pinned to a single physical plant (``plant_code > 0``)
+    that the CAMPD emission-rate artifact covers takes that plant's measured
+    intensity per MWh **net** generation, so carbon / NOx / SO2 prices in the
+    dispatch LP bite at the real plant rather than a fuel-class average.
+    Generators without a plant code, or whose plant is absent from the
+    artifact (multi-plant peaker bins, the legacy aggregated fleet), keep
+    their fuel-default rates. CO2 and NOx are overridden only when the
+    measured rate is positive; SO2 is always set (zero is a valid value for
+    gas units, and the default is zero anyway).
+
+    Args:
+        generators: The fleet to mutate in place.
+        path: Override for the artifact location; ``None`` uses
+            :data:`PLANT_EMISSION_RATES_PATH`.
+
+    Returns:
+        The number of generators whose rates were overridden.
+    """
+    resolved = Path(path) if path is not None else PLANT_EMISSION_RATES_PATH
+    if not resolved.exists():
+        return 0
+    rates = _plant_emission_rate_map(str(resolved))
+    n = 0
+    for gen in generators:
+        plant_rate = rates.get(int(gen.plant_code))
+        if plant_rate is None:
+            continue
+        co2, nox, so2 = plant_rate
+        if co2 > 0.0:
+            gen.emission_rate_co2 = co2
+        if nox > 0.0:
+            gen.nox_rate = nox
+        gen.so2_rate = so2
+        n += 1
+    return n
 
 
 def _fill_plant_hr(hr: float | None, plant_group: str) -> float:
