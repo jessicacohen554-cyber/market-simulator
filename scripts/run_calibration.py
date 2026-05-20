@@ -53,6 +53,7 @@ from market_sim.data.fleet import (  # noqa: E402
     apply_coal_tranches,
     assemble_mc,
     bins_to_fleet,
+    campd_tranche_fuel_frac,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
@@ -151,6 +152,9 @@ def _calibration_config(
     coal_passthrough: float | None = None,
     commitment_enabled: bool = False,
     commitment_screen_coal: bool = True,
+    coal_lignite_mustrun: float | None = None,
+    coal_prb_mustrun: float | None = None,
+    coal_prb_passthrough: float = 1.0,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -189,6 +193,14 @@ def _calibration_config(
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
         commitment_screen_coal=commitment_screen_coal,
+        wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
+        #   (shape preserved) so coal can hold its shoulder-month output
+        #   rather than being availability-capped in spring/autumn.
+        coal_prb_passthrough=coal_prb_passthrough,  # default 1.0 = OFF (it is
+        #   gas-price fragile; coal level set by the must-run floor). Set via
+        #   --coal-prb-passthrough to re-test the price-taking discount.
+        coal_lignite_mustrun_override=coal_lignite_mustrun,
+        coal_prb_mustrun_override=coal_prb_mustrun,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -243,6 +255,9 @@ def run_year(
     coal_passthrough: float | None = None,
     commitment_enabled: bool = False,
     commitment_screen_coal: bool = True,
+    coal_lignite_mustrun: float | None = None,
+    coal_prb_mustrun: float | None = None,
+    coal_prb_passthrough: float = 1.0,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -271,6 +286,8 @@ def run_year(
     config = _calibration_config(
         year, iso, hours, gas_price, coal_passthrough,
         commitment_enabled, commitment_screen_coal,
+        coal_lignite_mustrun, coal_prb_mustrun,
+        coal_prb_passthrough,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
@@ -309,10 +326,12 @@ def run_year(
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
         # under take-or-pay coal contracts, CHP host steam obligations or
-        # ERCOT RUC. apply_coal_tranches discounts coal must-run; the
-        # gas/steam must-run fuel-cost discount is applied below.
+        # ERCOT RUC. PRB coal tranches above must-run price-take: they pass
+        # only coal_prb_passthrough of their fuel cost into the bid so
+        # baseloaded PRB clears the merit order instead of being priced out
+        # by cheap gas. apply_coal_tranches applies both discounts.
         fuel_fracs = [
-            0.0 if g.unit_id.endswith("_mustrun") else 1.0
+            campd_tranche_fuel_frac(g, config.coal_prb_passthrough)
             for g in fleet
         ]
     else:
