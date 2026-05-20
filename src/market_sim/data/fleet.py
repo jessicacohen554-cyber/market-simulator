@@ -81,7 +81,8 @@ BA_CODE_TO_ISO: dict[str, str] = {
 ISO_TO_BA_CODE: dict[str, str] = {iso: ba for ba, iso in BA_CODE_TO_ISO.items()}
 
 # Integer codes for fuel types, used to index into fuel-keyed arrays.
-# Code 11 is intentionally reserved (left as a gap) for a future fuel type.
+# Code 11 (previously reserved as a gap) is now oil; biomass takes the next
+# free integer (15) after the prior maximum (gas_st = 14).
 FUEL_TYPE_MAP: dict[str, int] = {
     "gas_cc": 0,
     "gas_ct": 1,
@@ -94,14 +95,16 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "hydrogen_ct": 8,     # simple-cycle H2 turbine (peaker)
     "hydrogen_ccgt": 9,   # combined-cycle H2 turbine (mid-merit/baseload)
     "gas_cc_ccs": 10,     # gas CCGT with 90% post-combustion carbon capture
+    "oil": 11,            # oil-fired peaker/steam (distillate + residual fuel oil)
     "geothermal": 12,     # enhanced geothermal systems (EGS)
     "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
     "gas_st": 14,         # legacy natural-gas steam boiler (conventional ST)
+    "biomass": 15,        # biomass / wood / MSW / landfill-gas thermal steam
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
-# Sized to the largest code so a gap in the code space (e.g. the reserved
-# code 11) yields an empty string rather than a misaligned name.
+# Sized to the largest code so any gap in the code space yields an empty
+# string rather than a misaligned name.
 FUEL_TYPE_NAMES: list[str] = [""] * (max(FUEL_TYPE_MAP.values()) + 1)
 for _name, _code in FUEL_TYPE_MAP.items():
     FUEL_TYPE_NAMES[_code] = _name
@@ -391,7 +394,14 @@ def generators_to_fleet_arrays(
 # Fuel types collapsed into efficiency-bin representative units. Everything
 # else -- nuclear, hydro, import (few in number, distinct characteristics)
 # and wind/solar (not part of the thermal fleet) -- passes through unchanged.
-_AGGREGATABLE_FUELS: frozenset[str] = frozenset({"gas_cc", "gas_ct", "coal"})
+# Oil and biomass are aggregatable thermal blocks too; including them here
+# also means ERCOT's CAMPD-bin path (which sources non-aggregatable fuels
+# from EIA-860) excludes the handful of ERCOT oil/biomass units exactly as it
+# already excluded their gas_ct-classified predecessors, keeping ERCOT
+# dispatch unchanged.
+_AGGREGATABLE_FUELS: frozenset[str] = frozenset(
+    {"gas_cc", "gas_ct", "coal", "oil", "biomass"}
+)
 
 
 def _capacity_weighted(units: list[Generator], attr: str) -> float:
@@ -851,8 +861,14 @@ _NUCLEAR_ZONE_OVERRIDES: dict[str, str] = {
 
 # Energy-source codes (EIA-860 / eGRID PLPRMFL) that indicate coal steam.
 _COAL_ENERGY_SOURCES = {"SUB", "BIT", "LIG", "ANT", "RC", "WC"}
-# Energy-source codes that indicate oil / distillate fuel (dual-fuel CTs).
-_OIL_ENERGY_SOURCES = {"DFO", "RFO", "JF", "KER", "WO"}
+# Energy-source codes that indicate oil-based fuel: distillate (DFO), residual
+# (RFO), petroleum coke (PC), jet fuel (JF), kerosene (KER) and waste oil (WO).
+# These map to the dedicated ``oil`` fuel type (oil peakers/steam).
+_OIL_ENERGY_SOURCES = {"DFO", "RFO", "PC", "JF", "KER", "WO"}
+# Energy-source codes that indicate biomass/refuse fuel: wood & wood waste
+# solids (WDS), agricultural byproducts (AB), municipal solid waste (MSW),
+# landfill gas (LFG), and other common biogenic streams. Map to ``biomass``.
+_BIOMASS_ENERGY_SOURCES = {"WDS", "AB", "MSW", "LFG", "BLQ", "OBG", "OBL", "OBS", "WDL", "SLW", "DG"}
 # Prime-mover codes that indicate a combined-cycle configuration.
 _CC_PRIME_MOVERS = {"CC", "CA", "CT", "CS"}
 
@@ -915,9 +931,9 @@ def _map_fuel_type(
 ) -> str | None:
     """Map raw technology / fuel / prime-mover codes to a model fuel type.
 
-    Returns one of ``gas_cc``, ``gas_ct``, ``coal`` or ``nuclear``, or
-    ``None`` for wind, solar, hydro and other non-thermal resources, which
-    are handled elsewhere.
+    Returns one of ``gas_cc``, ``gas_ct``, ``coal``, ``nuclear``, ``oil`` or
+    ``biomass``, or ``None`` for wind, solar, hydro and other non-thermal
+    resources, which are handled elsewhere.
     """
     tech = str(technology or "").strip().lower()
     source = str(energy_source or "").strip().upper()
@@ -932,8 +948,17 @@ def _map_fuel_type(
             return "gas_cc"
         return "gas_ct"
     if source in _OIL_ENERGY_SOURCES or "petroleum" in tech:
-        # Oil / dual-fuel units (mainly NEISO) are modeled as gas CTs.
-        return "gas_ct"
+        # Oil / distillate / residual units — peakers (mainly NYISO/ISO-NE)
+        # and legacy oil steam — priced off the distillate/residual curve.
+        return "oil"
+    if (
+        source in _BIOMASS_ENERGY_SOURCES
+        or "biomass" in tech
+        or "wood" in tech
+        or "landfill" in tech
+        or "municipal" in tech
+    ):
+        return "biomass"
     return None
 
 
