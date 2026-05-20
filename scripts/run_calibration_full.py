@@ -33,12 +33,15 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
     load_monthly_generation,
     monthly_netgen_columns,
 )
 from market_sim.data.eia_loader import (  # noqa: E402
+    load_demand,
     load_ercot_fossil_gen,
+    load_ercot_nuclear_gen,
     load_ercot_renewable_gen,
 )
 from scripts.run_calibration import (  # noqa: E402
@@ -267,35 +270,99 @@ def _nrmse(model: np.ndarray, observed: np.ndarray) -> float:
     return rmse / denom if denom > 0.0 else float("nan")
 
 
+def _print_reconciliation(
+    year: int, iso: str,
+    model_grid_twh: float,
+    eia930_total_twh: float,
+    btm_total_twh: float,
+) -> None:
+    """Print the supply/demand reconciliation that explains the total gap.
+
+    The model dispatches to a demand target = EIA-930 metered load grossed
+    up by the T&D loss factor. That gross-up was calibrated to eGRID net
+    generation, which *includes* behind-the-meter CHP — so the model's
+    grid generation runs above EIA-930's by-fuel net generation by roughly
+    (T&D losses + behind-the-meter CHP host load). This block makes that
+    structural gap explicit so the per-fuel table below is read as
+    merit-order misalignment, not a demand error.
+    """
+    iso_config = get_iso_config(iso)
+    raw_load = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum() / _MWH_PER_TWH
+    model_demand = load_demand(iso, year, iso_config, td_loss_factor=0.058).sum() / _MWH_PER_TWH
+    gap = model_grid_twh - eia930_total_twh
+    print(f"\n  Generation reconciliation — {year}")
+    rows = [
+        ("EIA-930 metered load", f"{raw_load:7.2f} TWh"),
+        ("Model demand target (load x1.058 T&D)", f"{model_demand:7.2f} TWh"),
+        ("Model grid generation (LP)", f"{model_grid_twh:7.2f} TWh"),
+        ("EIA-930 net generation (all fuels)", f"{eia930_total_twh:7.2f} TWh"),
+        ("Gap (model grid - EIA-930)", f"{gap:+7.2f} TWh"),
+        ("  = T&D losses + behind-meter CHP host load in the gross-up", ""),
+        ("Behind-meter CHP must-run (off-LP, for emissions)",
+         f"{btm_total_twh:7.2f} TWh"),
+    ]
+    width = max(len(r[0]) for r in rows)
+    for label, val in rows:
+        print(f"    {label.ljust(width)}  {val}")
+
+
 def _print_grid_vs_930(
     year: int,
     model_class_hourly: dict[str, np.ndarray],
     model_hourly: dict[str, np.ndarray],
     fossil: dict[str, np.ndarray],
     renewables: dict[str, np.ndarray],
-) -> None:
-    """Print grid-delivered dispatch vs EIA-930 (the clean grid-vs-grid check).
+    nuclear_930: np.ndarray | None,
+) -> float:
+    """Print grid-delivered generation MIX vs EIA-930 and return model total.
 
     EIA-930 is grid-delivered, so the LP's grid dispatch is the right
-    thing to compare here. Behind-the-meter CHP is invisible to EIA-930
-    and is reported separately in the total-vs-EIA-923 table.
+    thing to compare. Because the model's total runs above EIA-930 by the
+    T&D + behind-meter gross-up, the absolute TWh diff conflates that
+    structural gap with merit-order error. The share (% of grid total) and
+    its delta in percentage points isolate the merit-order misalignment —
+    that is "what's actually not aligning". Behind-the-meter CHP is
+    excluded from both sides here (it is invisible to EIA-930 and off-LP
+    in the model); it appears only in the total-vs-EIA-923 table.
     """
-    print(f"\n  Grid-delivered dispatch — {year} (model LP vs EIA-930 grid)")
     gas_grid = float(sum(model_class_hourly[c] for c in _GAS_CLASSES).sum()) / _MWH_PER_TWH
     coal_grid = float(model_class_hourly["COAL"].sum()) / _MWH_PER_TWH
-    rows: list[tuple] = [("fuel", "model TWh", "EIA-930 TWh", "diff %")]
-    pairs = [
+    nuc_grid = float(model_class_hourly["nuclear"].sum()) / _MWH_PER_TWH
+    wind_grid = float(model_hourly["wind"].sum()) / _MWH_PER_TWH
+    solar_grid = float(model_hourly["solar"].sum()) / _MWH_PER_TWH
+
+    nuc_930_twh = (
+        float(nuclear_930.sum()) / _MWH_PER_TWH if nuclear_930 is not None else 0.0
+    )
+    series = [
         ("gas (all)", gas_grid, fossil["gas"].sum() / _MWH_PER_TWH),
         ("coal", coal_grid, fossil["coal"].sum() / _MWH_PER_TWH),
-        ("wind", float(model_hourly["wind"].sum()) / _MWH_PER_TWH,
-         renewables["wind"].sum() / _MWH_PER_TWH),
-        ("solar", float(model_hourly["solar"].sum()) / _MWH_PER_TWH,
-         renewables["solar"].sum() / _MWH_PER_TWH),
+        ("nuclear", nuc_grid, nuc_930_twh),
+        ("wind", wind_grid, renewables["wind"].sum() / _MWH_PER_TWH),
+        ("solar", solar_grid, renewables["solar"].sum() / _MWH_PER_TWH),
     ]
-    for fuel, m, b in pairs:
-        diff = 100.0 * (m - b) / b if b else float("nan")
-        rows.append((fuel, f"{m:7.2f}", f"{b:7.2f}", f"{diff:+6.1f}"))
+    model_total = sum(m for _, m, _ in series)
+    eia_total = sum(b for _, _, b in series)
+
+    print(f"\n  Grid-delivered generation MIX — {year} (model LP vs EIA-930)")
+    rows: list[tuple] = [
+        ("fuel", "model TWh", "model %", "EIA-930 TWh", "EIA-930 %", "share Δpp"),
+    ]
+    for fuel, m, b in series:
+        m_pct = 100.0 * m / model_total if model_total else 0.0
+        b_pct = 100.0 * b / eia_total if eia_total else 0.0
+        rows.append((
+            fuel, f"{m:7.2f}", f"{m_pct:6.1f}", f"{b:7.2f}",
+            f"{b_pct:6.1f}", f"{m_pct - b_pct:+6.1f}",
+        ))
+    rows.append((
+        "TOTAL", f"{model_total:7.2f}", " 100.0", f"{eia_total:7.2f}",
+        " 100.0", "      ",
+    ))
     _print_table(rows)
+    print("    (share Δpp = model share − EIA-930 share; the merit-order "
+          "misalignment, free of the total-level T&D/BTM gross-up)")
+    return model_total
 
 
 def _print_annual_breakdown(
@@ -423,6 +490,7 @@ def _print_hourly_fit(
     model_hourly: dict[str, np.ndarray],
     fossil: dict[str, np.ndarray],
     renewables: dict[str, np.ndarray],
+    nuclear_930: np.ndarray | None,
 ) -> None:
     """Print hourly Pearson r and NRMSE vs EIA-930."""
     print(f"\n  Hourly dispatch fit — {year} (model vs EIA-930)")
@@ -433,17 +501,16 @@ def _print_hourly_fit(
     nuc_m = model_class_hourly["nuclear"]
     wind_m = model_hourly["wind"]
     solar_m = model_hourly["solar"]
-    nuc_obs = np.full(_HOURS_PER_YEAR, fossil.get("nuclear_mean", np.nan))
     pairs = [
         ("gas", gas_m, fossil["gas"]),
         ("coal", coal_m, fossil["coal"]),
+        ("nuclear", nuc_m, nuclear_930),
         ("solar", solar_m, renewables["solar"]),
         ("wind", wind_m, renewables["wind"]),
     ]
-    # If EIA-930 has a nuclear series, include it. The ERCO file has NG: NUC.
-    if "nuclear" in fossil and fossil["nuclear"] is not None:
-        pairs.append(("nuclear", nuc_m, fossil["nuclear"]))
     for fuel, m, o in pairs:
+        if o is None:
+            continue
         rows.append((
             fuel,
             f"{_pearson_r(m, o):.3f}",
@@ -558,8 +625,20 @@ def _run_and_report(
         year, dispatch, plant_codes, context, generation_f923,
     )
 
-    _print_grid_vs_930(
+    nuclear_930 = load_ercot_nuclear_gen(year)
+    model_grid_twh = _print_grid_vs_930(
         year, model_class_hourly, model_hourly, fossil, renewables,
+        nuclear_930,
+    )
+    # EIA-930 total net generation (all fuels) for the reconciliation.
+    eia930_total_twh = (
+        fossil["gas"].sum() + fossil["coal"].sum()
+        + renewables["wind"].sum() + renewables["solar"].sum()
+        + (nuclear_930.sum() if nuclear_930 is not None else 0.0)
+    ) / _MWH_PER_TWH
+    btm_total_twh = sum(btm_by_class_twh.values())
+    _print_reconciliation(
+        year, iso, model_grid_twh, eia930_total_twh, btm_total_twh,
     )
     _print_annual_breakdown(
         year, model_hourly, model_total_class_twh, btm_by_class_twh,
@@ -573,7 +652,9 @@ def _run_and_report(
         f923_monthly_class, f923_monthly_re, eia930_solar_monthly,
     )
 
-    _print_hourly_fit(year, model_class_hourly, model_hourly, fossil, renewables)
+    _print_hourly_fit(
+        year, model_class_hourly, model_hourly, fossil, renewables, nuclear_930,
+    )
     _print_plant_level(
         year, dispatch, context, plant_codes, generation_f923,
     )
