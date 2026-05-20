@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-05-20T18:49:18",
+  "iso": "ERCOT",
+  "years": [
+    2023,
+    2024
+  ],
+  "hours": 8760,
+  "passes": [
+    "P1"
+  ],
+  "commitment": false,
+  "commitment_screen_coal": true,
+  "gas_prices": {
+    "2023": 2.54,
+    "2024": 2.19
+  },
+  "coal_lignite_mustrun": null,
+  "coal_prb_mustrun": null,
+  "coal_prb_passthrough": 1.0,
+  "outage_source": "historic",
+  "td_loss_factor": 0.0,
+  "git_sha": "704d817"
+}
