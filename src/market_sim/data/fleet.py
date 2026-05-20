@@ -675,27 +675,22 @@ def split_coal_tranches(
 
 
 def campd_tranche_fuel_frac(
-    gen: Generator, coal_committed_passthrough: float = 1.0
+    gen: Generator, coal_prb_passthrough: float = 1.0
 ) -> float:
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
-    they bid VOM + carbon + NOx only. The *committed* tranche of a PRB coal
-    unit passes ``coal_committed_passthrough`` < 1.0 to price-take: an
-    already-online PRB unit (rail take-or-pay) bids to clear rather than on
-    full marginal cost. Mine-mouth lignite is left at full cost — its
-    delivered fuel is already cheap enough to clear. Every other tranche
-    passes full fuel cost (``1.0``).
+    they bid VOM + carbon + NOx only. Every PRB coal tranche *above* must-run
+    (committed, economic and peaking) passes ``coal_prb_passthrough`` < 1.0
+    to price-take: an already-online PRB unit (rail take-or-pay) bids to
+    clear rather than on full marginal cost. Mine-mouth lignite and all
+    other tranches pass full fuel cost (``1.0``).
     """
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
-    if (
-        gen.fuel_type == "coal"
-        and gen.unit_id.endswith("_committed")
-        and getattr(gen, "coal_supply", "") == "prb"
-    ):
-        return coal_committed_passthrough
+    if gen.fuel_type == "coal" and getattr(gen, "coal_supply", "") == "prb":
+        return coal_prb_passthrough
     return 1.0
 
 
@@ -1363,8 +1358,8 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
 # CC when gas is cheap. Drives fuel.apply_coal_supply_pricing.
 COAL_PLANT_SUPPLY: dict[int, str] = {
     6180: "lignite",   # Oak Grove — Kosse mine
-    298: "lignite",    # Limestone — adjacent lignite mine
-    6146: "lignite",   # Martin Lake — East Texas lignite (hybrid, mostly mine-mouth)
+    298: "prb",        # Limestone — now PRB by rail (switched off local lignite)
+    6146: "prb",       # Martin Lake — now PRB by rail (was East Texas lignite)
     6183: "lignite",   # San Miguel — adjacent lignite mine
     7030: "lignite",   # Major Oak Power
     6178: "prb",       # Coleto Creek — PRB by rail

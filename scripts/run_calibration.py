@@ -193,10 +193,11 @@ def _calibration_config(
         wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
         #   (shape preserved) so coal can hold its shoulder-month output
         #   rather than being availability-capped in spring/autumn.
-        coal_committed_fuel_passthrough=0.5,  # committed PRB price-takes:
-        #   it bids VOM + half its fuel cost so baseloaded PRB clears the
+        coal_prb_passthrough=0.9,  # PRB price-takes across all capacity it
+        #   runs (committed + economic + peaking tranches, not just
+        #   committed): each bids VOM + 90% of fuel so online PRB clears the
         #   merit order rather than being priced out by cheap gas. Lignite is
-        #   left at full cost (already cheap enough — it over-runs otherwise).
+        #   left at full cost.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -317,12 +318,12 @@ def run_year(
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
         # under take-or-pay coal contracts, CHP host steam obligations or
-        # ERCOT RUC. Committed coal tranches price-take: they pass only
-        # coal_committed_fuel_passthrough of their fuel cost into the bid so
-        # baseloaded coal clears the merit order instead of being priced out
+        # ERCOT RUC. PRB coal tranches above must-run price-take: they pass
+        # only coal_prb_passthrough of their fuel cost into the bid so
+        # baseloaded PRB clears the merit order instead of being priced out
         # by cheap gas. apply_coal_tranches applies both discounts.
         fuel_fracs = [
-            campd_tranche_fuel_frac(g, config.coal_committed_fuel_passthrough)
+            campd_tranche_fuel_frac(g, config.coal_prb_passthrough)
             for g in fleet
         ]
     else:
