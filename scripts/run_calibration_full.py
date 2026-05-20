@@ -109,7 +109,7 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
     (55545, "Hidalgo Energy Center"),
     (298,   "Limestone (coal)"),
     (3470,  "W A Parish (coal units 5-8)"),
-    (3504,  "Stryker Creek (CT peaker)"),
+    (3504,  "Stryker Creek (gas steam)"),
     (3492,  "Morgan Creek (CT peaker)"),
     (63688, "Topaz Generating (CT peaker)"),
 )
