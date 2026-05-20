@@ -136,6 +136,40 @@ def _seasonal_factors(hours: int) -> np.ndarray:
     return np.tile(full_year, reps)[:hours]
 
 
+def prb_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray":
+    """Return the PRB above-must-run fuel passthrough — flat or gas-keyed.
+
+    When ``config.coal_prb_passthrough_sigmoid`` is False, returns the flat
+    ``config.coal_prb_passthrough`` scalar (current behaviour). When True,
+    returns an ``(hours,)`` logistic of the monthly delivered gas price
+    ($/MMBtu): the passthrough rises from ``coal_prb_passthrough_floor``
+    (cheap gas — PRB needs a deep fuel discount to clear against cheap gas CC)
+    to ``coal_prb_passthrough_ceil`` (dear gas — little or no discount, and a
+    value > 1.0 marks the PRB bid *up* to suppress over-dispatch), centred at
+    ``coal_prb_passthrough_gas_mid`` with slope
+    ``coal_prb_passthrough_gas_slope`` per $/MMBtu.
+
+    Keying off the monthly gas price tracks the merit-order crossover: PRB is
+    infra-marginal under gas CC, so the gap it must close scales with gas.
+    """
+    if not getattr(config, "coal_prb_passthrough_sigmoid", False):
+        return config.coal_prb_passthrough
+    gas = resolve_annual_gas_price(config, year)
+    if config.gas_seasonality:
+        gas_series = gas * _seasonal_factors(hours)
+    else:
+        gas_series = np.full(hours, gas, dtype=float)
+    floor = config.coal_prb_passthrough_floor
+    ceil = config.coal_prb_passthrough_ceil
+    mid = config.coal_prb_passthrough_gas_mid
+    slope = config.coal_prb_passthrough_gas_slope
+    return floor + (ceil - floor) / (
+        1.0 + np.exp(-slope * (gas_series - mid))
+    )
+
+
 _F923_FUEL_GROUP_BY_FUEL: dict[str, str] = {
     "gas_cc": "Natural Gas",
     "gas_ct": "Natural Gas",
