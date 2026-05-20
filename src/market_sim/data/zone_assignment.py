@@ -45,16 +45,19 @@ _ISO_TO_BA_CODE: dict[str, str] = {
 
 # ISOs modeled as a single zone, with that zone's name.
 _SINGLE_ZONE: dict[str, str] = {
-    "CAISO": "CAISO_main",
     "NYISO": "NYISO_main",
     "NEISO": "NEISO_main",
 }
 
 # Largest-load-share zone per multi-zone ISO, used as the defensive
 # fallback when a plant's ORIS code is not present in the eGRID lookup.
+# CAISO falls back to SP15: the SCE+SDG&E south is the largest-load-share
+# zone (0.50) and is where unlocated imports physically land via the
+# West-of-River / Palo Verde ties.
 _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_West",
+    "CAISO": "SP15",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -77,6 +80,39 @@ HOUSTON_COUNTIES: frozenset[int] = frozenset(
         473,  # Waller
         321,  # Matagorda
         481,  # Wharton
+    }
+)
+
+# CAISO north–south zone boundaries by latitude. The dominant axis of
+# CAISO congestion is the Path 15 / Path 26 north–south split, so latitude
+# carries the assignment; FIPS county handles the coastal cases where
+# latitude alone would misplace a plant. Path 15 (Los Banos–Gates) sits at
+# ~lat 36.5; Path 26 (Midway–Vincent) at ~lat 35.0.
+_CAISO_PATH15_LAT: float = 36.5
+_CAISO_PATH26_LAT: float = 35.0
+
+# FIPS state codes for the out-of-state CISO resources. Arizona and Nevada
+# plants sit in the CAISO balancing authority but outside California's
+# Path 15 / Path 26 geography, so they are routed by the intertie their
+# output lands on rather than by latitude band.
+_CALIFORNIA_FIPS: int = 6
+_ARIZONA_FIPS: int = 4
+_NEVADA_FIPS: int = 32
+
+# Latitude above which a Nevada CISO plant ties to the north (NP15) rather
+# than the southern Eldorado/Marketplace hub (SP15).
+_NEVADA_NORTH_LAT: float = 38.0
+
+# Central-coast California counties (FIPS state 6) that fall in the ZP26
+# latitude band but belong to NP15: they sit on PG&E's coastal system north
+# of Path 26, not in the inland San Joaquin Valley that defines ZP26.
+# (Diablo Canyon in San Luis Obispo is the canonical case.) This mirrors the
+# Houston-county FIPS rule: county codes give precision lat/lon alone can't.
+CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
+    {
+        79,  # San Luis Obispo (Diablo Canyon)
+        53,  # Monterey (Moss Landing)
+        69,  # San Benito
     }
 )
 
@@ -215,6 +251,42 @@ def _ercot_zone(
     return "North"
 
 
+def _caiso_zone(
+    lat: float | None,
+    lon: float | None,
+    fips_state: int | None,
+    fips_county: int | None,
+) -> str:
+    """Return the CAISO model zone for a plant location.
+
+    Zones follow CAISO's north–south split: NP15 (north of Path 15), ZP26
+    (between Path 15 and Path 26), SP15 (south of Path 26). Out-of-state CISO
+    resources are routed first — Arizona (Palo Verde / West-of-River) lands
+    in SP15, Nevada ties to NP15 in the far north and SP15 otherwise. Coastal
+    PG&E counties that fall in the ZP26 latitude band are lifted to NP15.
+    Latitude then carries the remaining (inland California) plants; with no
+    latitude the largest-load-share zone (SP15) is the fallback.
+    """
+    if fips_state == _ARIZONA_FIPS:
+        return "SP15"
+    if fips_state == _NEVADA_FIPS:
+        if lat is not None and lat >= _NEVADA_NORTH_LAT:
+            return "NP15"
+        return "SP15"
+    if (
+        fips_state == _CALIFORNIA_FIPS
+        and fips_county in CAISO_CENTRAL_COAST_NP15_COUNTIES
+    ):
+        return "NP15"
+    if lat is not None:
+        if lat >= _CAISO_PATH15_LAT:
+            return "NP15"
+        if lat >= _CAISO_PATH26_LAT:
+            return "ZP26"
+        return "SP15"
+    return _LARGEST_ZONE["CAISO"]
+
+
 def _pjm_zone(fips_state: int | None) -> str:
     """Return the PJM model zone for a plant's FIPS state code."""
     return _PJM_STATE_ZONES.get(fips_state, _LARGEST_ZONE["PJM"])
@@ -232,6 +304,8 @@ def _zone_from_location(
         return _SINGLE_ZONE[iso]
     if iso == "ERCOT":
         return _ercot_zone(lat, lon, fips_state, fips_county)
+    if iso == "CAISO":
+        return _caiso_zone(lat, lon, fips_state, fips_county)
     if iso == "PJM":
         return _pjm_zone(fips_state)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
@@ -256,9 +330,9 @@ def assign_zone_by_fips(
 def assign_zone(oris_code: int, iso: str) -> str:
     """Return the model zone for a plant's ORIS code.
 
-    For single-zone ISOs (CAISO, NYISO, NEISO) the main zone is returned
-    without a lookup. For multi-zone ISOs the plant is located via the
-    eGRID ORIS→location table; an ORIS code missing from eGRID falls back
+    For single-zone ISOs (NYISO, NEISO) the main zone is returned without a
+    lookup. For multi-zone ISOs (ERCOT, CAISO, PJM) the plant is located via
+    the eGRID ORIS→location table; an ORIS code missing from eGRID falls back
     to the ISO's largest-load-share zone with a warning.
     """
     iso = iso.upper()
