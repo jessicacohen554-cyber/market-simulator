@@ -34,6 +34,13 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.data import campd  # noqa: E402
+from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
+
+# A plant burning between these coal shares blends coal and gas units that
+# CAMPD reports as one facility, so no single rate fits its separate dispatch
+# bins; its emission-rate override is skipped (bins keep fuel defaults).
+_MIXED_COAL_SHARE_LO: float = 0.10
+_MIXED_COAL_SHARE_HI: float = 0.90
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_plant_emissions")
@@ -96,6 +103,20 @@ def main() -> None:
         return
 
     rates = campd.plant_emission_rates(df, factors)
+
+    # Flag coal/gas-blended plants whose single facility rate must not be
+    # applied to their separate coal and gas dispatch bins.
+    shares = campd.coal_share_by_plant(load_monthly_generation(), args.years)
+    rates["coal_share"] = rates["plant_id"].map(shares).round(3)
+    rates["mixed"] = rates["coal_share"].between(
+        _MIXED_COAL_SHARE_LO, _MIXED_COAL_SHARE_HI, inclusive="neither"
+    ).fillna(False)
+    n_mixed = rates[rates["year"] == 0]["mixed"].sum()
+    if n_mixed:
+        logger.info(
+            "flagged %d mixed coal/gas plant(s) — rate override will skip them",
+            int(n_mixed),
+        )
 
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     pq_path = PROCESSED_DIR / "plant_emission_rates.parquet"

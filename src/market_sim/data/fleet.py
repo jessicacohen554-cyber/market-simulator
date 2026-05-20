@@ -1532,11 +1532,16 @@ def _plant_emission_rate_map(
 
     Reads the pooled (``year == 0``) rows of the CAMPD emission-rate
     artifact and converts the per-MWh-net kg figures to the model's
-    tonnes/MWh unit. Cached by path so repeated yearly fleet builds in one
+    tonnes/MWh unit. Plants flagged ``mixed`` (coal and gas units sharing one
+    facility CEMS record) are omitted — a single facility rate cannot be
+    assigned to their separate coal and gas dispatch bins, so those bins keep
+    fuel-class defaults. Cached by path so repeated yearly fleet builds in one
     run parse the parquet once.
     """
     df = pd.read_parquet(path)
     pooled = df[df["year"] == 0]
+    if "mixed" in pooled.columns:
+        pooled = pooled[~pooled["mixed"].astype(bool)]
     out: dict[int, tuple[float, float, float]] = {}
     for _, r in pooled.iterrows():
         out[int(r["plant_id"])] = (
