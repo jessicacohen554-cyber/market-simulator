@@ -326,16 +326,67 @@ def _pjm_config() -> ISOConfig:
 
 
 def _nyiso_config() -> ISOConfig:
-    """Build the NYISO topology configuration."""
+    """Build the NYISO topology configuration.
+
+    Five zones aggregate NYISO's eleven load zones (A–K) along the cutsets
+    that bound the state's recurring west-to-east and downstate-import
+    congestion: **Upstate-West** (A–E), **Capital/Hudson** (F–G),
+    **Lower-Hudson** (H–I), **NYC** (J) and **Long Island** (K). This
+    preserves the critical downstate import constraints — zones J and K sit
+    behind progressively tighter interfaces — while collapsing the eleven
+    settlement zones the way ERCOT collapses its real GTCs onto six
+    transmission zones.
+
+    Load shares aggregate NYISO zonal load: Upstate-West ≈ A+B+C+D+E,
+    Capital/Hudson ≈ F+G, Lower-Hudson ≈ H+I, NYC = J, Long Island = K. New
+    York load is heavily downstate — zone J alone is ≈ 28% — so the link
+    structure has to carry that load behind the import interfaces. Source:
+    NYISO Load & Capacity Data ("Gold Book"), zonal energy/peak by load
+    zone. Tier 3 (calibration) — verify against metered zonal load.
+    """
     zones = [
-        Zone(name="NYISO_main", iso="NYISO", load_share=1.0),
+        Zone(name="Upstate_West", iso="NYISO", load_share=0.365),
+        Zone(name="Capital_Hudson", iso="NYISO", load_share=0.175),
+        Zone(name="Lower_Hudson", iso="NYISO", load_share=0.06),
+        Zone(name="NYC", iso="NYISO", load_share=0.28),
+        Zone(name="Long_Island", iso="NYISO", load_share=0.12),
     ]
-    links: list[TransferLink] = []
+    # NYISO interface transfer limits, seeded from NYISO's published normal
+    # transfer limits (Load & Capacity Data "Gold Book" / operating-limit
+    # postings). The links trace the north-to-south path the binding
+    # interfaces sit on, tightening toward the downstate load pockets:
+    #   - Central-East / Total East (Upstate-West -> Capital/Hudson): the
+    #     major west-to-east constraint that limits upstate generation —
+    #     including the Niagara and St. Lawrence hydro and upstate wind —
+    #     from reaching the east. Central-East normal limit ~2,850 MW (the
+    #     tighter binding cut within the broader Total East envelope).
+    #   - UPNY-SENY (Capital/Hudson -> Lower-Hudson): the Upstate-NY to
+    #     Southeast-NY interface, ~5,150 MW.
+    #   - Dunwoodie-South (Lower-Hudson -> NYC): the binding import limit
+    #     into zone J from the Westchester (Dunwoodie) 345 kV system,
+    #     ~3,900 MW.
+    #   - Long Island import (NYC -> Long Island): the cable-limited import
+    #     into zone K, ~1,650 MW.
+    # Source: NYISO Load & Capacity Data ("Gold Book"), interface transfer
+    # limits; NYISO Reliability Needs Assessment / locational ICAP studies.
+    # Tier 3 (calibration) — verify against NYISO operating-limit postings
+    # and binding-frequency from NYISO congestion data.
+    links = [
+        TransferLink(
+            from_zone="Upstate_West", to_zone="Capital_Hudson", ttc_mw=2850.0
+        ),
+        TransferLink(
+            from_zone="Capital_Hudson", to_zone="Lower_Hudson", ttc_mw=5150.0
+        ),
+        TransferLink(from_zone="Lower_Hudson", to_zone="NYC", ttc_mw=3900.0),
+        TransferLink(from_zone="NYC", to_zone="Long_Island", ttc_mw=1650.0),
+    ]
     # NYISO bid cap is $2,000/MWh for energy. NYISO has an installed
-    # capacity market (ICAP) that provides capacity revenue outside
-    # the energy market, similar to PJM's RPM.
+    # capacity market (ICAP) that provides capacity revenue outside the
+    # energy market, similar to PJM's RPM and CAISO's RA, so the energy-only
+    # VOLL is lower than ERCOT's energy-only $5,000 cap.
     # Source: NYISO Tariff §23.3.1.4, Market Administration and Control
-    # Area Services Tariff (MST).
+    # Area Services Tariff (MST); FERC Order 831.
     return ISOConfig(name="NYISO", zones=zones, links=links, voll=2000.0)
 
 
