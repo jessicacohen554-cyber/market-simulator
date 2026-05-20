@@ -61,6 +61,7 @@ from market_sim.data.fleet import (  # noqa: E402
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
+    apply_plant_monthly_fuel_prices,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -347,9 +348,16 @@ def run_year(
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
-    fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
-    # Reprice CAMPD coal bins by plant fuel supply (lignite vs PRB).
-    apply_coal_supply_pricing(fuel_prices, fleet, config, year)
+    # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
+    # (our costs), then the actual EIA-923 monthly per-plant delivered cost
+    # on top — so measured monthly cost takes precedence and the supply
+    # trajectory is only the base/fallback for plant-months without data.
+    fuel_prices = resolve_fuel_prices(
+        config, fleet_arrays, year, apply_monthly=False
+    )
+    if config.coal_supply_repricing:
+        apply_coal_supply_pricing(fuel_prices, fleet, config, year)
+    apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
