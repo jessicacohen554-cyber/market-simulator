@@ -719,9 +719,13 @@ def split_coal_tranches(
 
 
 def campd_tranche_fuel_frac(
-    gen: Generator, coal_prb_passthrough: float = 1.0
-) -> float:
+    gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0
+) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
+
+    ``coal_prb_passthrough`` may be a scalar (flat) or an ``(T,)`` array (the
+    gas-keyed sigmoid); whichever is given is returned for PRB above-must-run
+    tranches and applied by :func:`apply_coal_tranches`.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
@@ -772,9 +776,14 @@ def apply_coal_tranches(
         # Discount the fuel term for any generator with a take-or-pay
         # contract or host-steam obligation that sinks part of its fuel
         # cost (coal tranches; CAMPD must-run tranches across all fuels).
-        if fuel_fracs[g] < 1.0:
-            fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
-            mc[g, :] -= (1.0 - fuel_fracs[g]) * fuel_cost
+        # fuel_fracs[g] is a scalar, or an (T,) array for a gas-keyed PRB
+        # passthrough — an hourly-varying frac applies elementwise (and a
+        # value > 1.0 marks the bid up).
+        ff = fuel_fracs[g]
+        if np.isscalar(ff) and ff >= 1.0:
+            continue
+        fuel_cost = fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+        mc[g, :] -= (1.0 - np.asarray(ff, dtype=float)) * fuel_cost
 
 
 # ---------------------------------------------------------------------------
