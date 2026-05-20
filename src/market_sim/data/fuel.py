@@ -5,15 +5,23 @@ NOx price into the forms consumed by marginal-cost assembly
 (see :func:`market_sim.data.fleet.assemble_mc`). Carbon-price resolution
 lives in :mod:`market_sim.policy.carbon`.
 
-Gas prices follow EIA Annual Energy Outlook Henry Hub trajectories
-(:data:`HENRY_HUB_TRAJECTORIES`) selected by ``config.gas_price_path``,
-plus a regional basis differential (:data:`GAS_BASIS_DIFFERENTIAL`) and an
-optional monthly seasonality shape (:data:`GAS_MONTHLY_SEASONALITY`).
+For historical calibration years (2023-2025 in the current data window)
+each plant pays its own measured EIA-923 Schedule 5 monthly delivered
+fuel cost (see :mod:`market_sim.data.eia923`). For forward years and for
+plants outside the F923 sample, the resolver falls back to the AEO Henry
+Hub trajectory (:data:`HENRY_HUB_TRAJECTORIES`) plus the ISO basis
+differential (:data:`GAS_BASIS_DIFFERENTIAL`), or the per-year coal
+trajectories built in this module. The same resolver path serves both
+backcast and forward, so calibration and projection share one model.
 """
 
 from __future__ import annotations
 
+import logging
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import (
     COAL_PRICE_BASE,
@@ -27,8 +35,16 @@ from market_sim.config.constants import (
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.eia923 import (
+    EIA923_MONTHLY_COSTS_PATH,
+    available_years,
+    load_monthly_fuel_costs,
+    plant_month_price_grid,
+)
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.data.hydrogen import compute_h2_fuel_cost
+
+logger = logging.getLogger(__name__)
 
 # Fuel-type integer codes (from FUEL_TYPE_MAP) that burn natural gas and
 # therefore pay the Henry Hub price. CCUS (``gas_cc_ccs``) burns the same
@@ -120,29 +136,90 @@ def _seasonal_factors(hours: int) -> np.ndarray:
     return np.tile(full_year, reps)[:hours]
 
 
+_F923_FUEL_GROUP_BY_FUEL: dict[str, str] = {
+    "gas_cc": "Natural Gas",
+    "gas_ct": "Natural Gas",
+    "gas_cc_ccs": "Natural Gas",
+    "gas_st": "Natural Gas",
+    "coal": "Coal",
+}
+
+
+def _month_index(hours: int) -> np.ndarray:
+    """Return an ``(hours,)`` array mapping each hour to a 0-based month."""
+    full = np.empty(HOURS_PER_YEAR, dtype=int)
+    hour = 0
+    for month_idx, days in enumerate(_DAYS_IN_MONTH):
+        hours_in_month = days * 24
+        full[hour:hour + hours_in_month] = month_idx
+        hour += hours_in_month
+    if hours <= HOURS_PER_YEAR:
+        return full[:hours]
+    reps = -(-hours // HOURS_PER_YEAR)
+    return np.tile(full, reps)[:hours]
+
+
+_PLANT_MONTHLY_CACHE: dict[Path, pd.DataFrame] = {}
+
+
+def _load_monthly_cache(path: Path | None) -> pd.DataFrame | None:
+    """Return the F923 monthly cost frame, or ``None`` if the parquet is absent.
+
+    Cached on first call so a multi-year run pays the parquet read cost
+    only once. A missing parquet (no historical data shipped) is benign;
+    callers fall back to the AEO trajectory in that case.
+    """
+    resolved = path or EIA923_MONTHLY_COSTS_PATH
+    if resolved in _PLANT_MONTHLY_CACHE:
+        return _PLANT_MONTHLY_CACHE[resolved]
+    if not Path(resolved).exists():
+        return None
+    frame = load_monthly_fuel_costs(resolved)
+    _PLANT_MONTHLY_CACHE[resolved] = frame
+    return frame
+
+
+def _expand_monthly_to_hourly(
+    monthly: np.ndarray, hours: int
+) -> np.ndarray:
+    """Broadcast a length-12 monthly price array onto the hourly horizon."""
+    return monthly[_month_index(hours)]
+
+
 def resolve_fuel_prices(
     config: ScenarioConfig, fleet: FleetArrays, year: int
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` delivered fuel price array for the fleet.
 
-    Natural-gas units (``gas_cc``, ``gas_ct`` and ``gas_cc_ccs``) pay the
-    delivered Henry Hub price for the year (see
-    :func:`resolve_annual_gas_price`), optionally shaped by the monthly
-    seasonality factors :data:`GAS_MONTHLY_SEASONALITY` when
-    ``config.gas_seasonality`` is set.
+    Per-plant pricing model:
 
-    Coal units pay the ISO's :data:`COAL_PRICE_BASE` price escalated from
-    :data:`START_YEAR` at :data:`COAL_PRICE_ESCALATION` per year.
-    Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the derived
-    hydrogen fuel cost from :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`.
-    All other generators carry a zero fuel price. Generator types are
-    identified via ``fleet.fuel_type_idx``.
+      1. **Historical years (F923 available).** Each thermal generator
+         whose ``plant_code`` appears in the EIA-923 monthly cost table
+         for ``year`` pays that plant's own monthly delivered fuel cost,
+         broadcast to the hourly horizon. Months with no reported cost
+         (EIA suppression) fall back to the per-fuel default below.
+      2. **Forward years (or plants outside the F923 sample).** Gas units
+         pay the AEO Henry Hub trajectory plus the ISO basis differential
+         (:func:`resolve_annual_gas_price`), optionally shaped by the
+         monthly seasonality factors :data:`GAS_MONTHLY_SEASONALITY`
+         when ``config.gas_seasonality`` is set. Coal units pay
+         :data:`COAL_PRICE_BASE` escalated from :data:`START_YEAR` at
+         :data:`COAL_PRICE_ESCALATION` per year.
+
+    Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the
+    derived hydrogen fuel cost from
+    :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`. All other
+    generators carry a zero fuel price.
+
+    The same code path runs both backcasts and forward projections — the
+    F923 lookup simply finds nothing in a forward year and every plant
+    falls through to the trajectory-based default.
 
     Args:
         config: Scenario configuration supplying ``iso``, ``gas_price_path``,
             ``gas_seasonality`` and ``hours``.
         fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects each
-            generator's fuel.
+            generator's fuel and ``plant_code`` keys the F923 lookup.
         year: Calendar year for which to resolve prices.
 
     Returns:
@@ -171,7 +248,95 @@ def resolve_fuel_prices(
         h2_price = compute_h2_fuel_cost(year, config, config.iso)
         fuel_prices[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
 
+    apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
+
     return fuel_prices
+
+
+def apply_plant_monthly_fuel_prices(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    monthly_costs_path: str | Path | None = None,
+) -> None:
+    """Overwrite per-generator fuel prices with F923 monthly plant costs.
+
+    For each gas / coal generator whose ``plant_code`` matches a
+    plant-month in the EIA-923 monthly cost table for ``year``, the
+    generator's hourly fuel price is set to the plant's measured
+    monthly delivered cost (broadcast to hours by the calendar month
+    map). Months with no reported price preserve the per-fuel default
+    already in ``fuel_prices``, so a coal plant whose January cost is
+    suppressed keeps the COAL_PRICE_BASE trajectory for January and the
+    F923 measured cost for the other 11 months.
+
+    A missing parquet (forward years or untracked ISO) is a no-op: every
+    generator keeps the per-fuel default. The same is true for plants
+    outside the F923 sample (small CHP, peaker fleets that don't report
+    fuel receipts), per the project's "forward = plant-class/zone
+    average" requirement.
+
+    Mutates ``fuel_prices`` in place.
+
+    Args:
+        fuel_prices: The ``(n_gen, T)`` per-fuel default fuel-price array,
+            updated in place with plant-specific monthly prices.
+        fleet: Vectorized fleet attributes carrying ``plant_code`` and
+            ``fuel_type_idx``.
+        config: Scenario configuration; only ``hours`` is consulted.
+        year: Calendar year keying the F923 monthly lookup.
+        monthly_costs_path: Optional override for the F923 parquet path.
+    """
+    costs = _load_monthly_cache(
+        Path(monthly_costs_path) if monthly_costs_path else None
+    )
+    if costs is None or year not in available_years(costs):
+        return
+
+    T = config.hours
+    month_idx = _month_index(T)
+    grids: dict[str, dict[int, np.ndarray]] = {}
+    n_overwrites = 0
+    for g in range(fleet.n_gen):
+        plant_code = int(fleet.plant_code[g])
+        if plant_code <= 0:
+            continue
+        fuel_name = _fuel_name(fleet.fuel_type_idx[g])
+        fuel_group = _F923_FUEL_GROUP_BY_FUEL.get(fuel_name)
+        if fuel_group is None:
+            continue
+        grid = grids.get(fuel_group)
+        if grid is None:
+            grid = plant_month_price_grid(costs, year, fuel_group)
+            grids[fuel_group] = grid
+        prices = grid.get(plant_code)
+        if prices is None:
+            continue
+        # Only overwrite months with a reported price; suppressed months
+        # keep the per-fuel default already in ``fuel_prices``.
+        reported = ~np.isnan(prices)
+        if not reported.any():
+            continue
+        for m in np.nonzero(reported)[0]:
+            mask = month_idx == m
+            if mask.any():
+                fuel_prices[g, mask] = prices[m]
+        n_overwrites += 1
+    if n_overwrites > 0:
+        logger.info(
+            "F923 monthly fuel costs applied to %d of %d generators for %d",
+            n_overwrites, fleet.n_gen, year,
+        )
+
+
+def _fuel_name(fuel_idx: int) -> str:
+    """Return the fuel-type name for a fuel-type index, or ``""``."""
+    from market_sim.data.fleet import FUEL_TYPE_NAMES
+    idx = int(fuel_idx)
+    if 0 <= idx < len(FUEL_TYPE_NAMES):
+        return FUEL_TYPE_NAMES[idx]
+    return ""
 
 
 # --- CAMPD coal delivered fuel cost ($/MMBtu), by year and supply type ------

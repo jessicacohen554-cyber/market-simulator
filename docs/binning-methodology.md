@@ -8,8 +8,16 @@ binning of `aggregate_fleet()`.
 
 Bins are derived from EPA CAMPD gross generation for 2023-2024,
 cross-referenced with eGRID net generation and EIA-860 plant
-characteristics. Each plant in `inputs/custom-bin-assignments.csv` is
-assigned to one operational bin. Bins never span zones or plant groups.
+characteristics. Each row in `inputs/custom-bin-assignments.csv` is one
+EIA plant and one operational bin in the LP — **every plant gets its
+own discrete bin**, with a unique LP unit id keyed on its plant code.
+The zone-and-bin-number grouping in the CSV (e.g. `H_CC1`, `N_CT2
+(8-9)`) is retained only as a human-readable label; it does not collapse
+multiple plants into a shared LP generator.
+
+A single plant whose coal and gas-steam units coexist (e.g. W A Parish,
+plant code 3470) appears as two rows — one per `Plant_Group` — and
+therefore as two LP bins with the correct fuel type each.
 
 Each bin carries a **4-tranche capacity structure** that maps directly to
 LP dispatch behavior:
@@ -61,34 +69,68 @@ too small) and never enter the LP.
 
 ## From bins to LP generators
 
-`load_campd_bins()` aggregates the per-plant detail CSV to one row per
-unique bin, keyed by `(Plant_Group, ERCOT_Zone, Bin_Number, Bin_Label)`.
-`Bin_Label` alone is not unique — labels such as `S_CC1` or `CT1 (8-9)`
-recur across zones — so the full composite key identifies a bin.
-
-`bins_to_fleet()` converts each bin into 1-2 LP generators:
+`load_campd_bins()` normalises the per-plant detail CSV into the
+one-bin-per-plant LP schema: one DataFrame row per CSV row, with a
+`Plant_Code`, the plant's own `Plant_Avg_HR_MMBtu_MWh`, and four
+tranche heat rates derived from the CSV's `HR_Mult_<tranche>` columns:
 
 ```
-grid_cap = nameplate * (1 - MR% / 100)        # must-run removed
-peak_frac = PEAK% / (100 - MR%)
-base_cap  = grid_cap * (1 - peak_frac)
-peak_cap  = grid_cap * peak_frac
-pmin      = grid_cap * MC% / (100 - MR%)      # base generator floor
+hr_mr   = Plant_Avg_HR × HR_Mult_Must_Run
+hr_mc   = Plant_Avg_HR × HR_Mult_Committed
+hr_econ = Plant_Avg_HR × HR_Mult_Economic
+hr_peak = Plant_Avg_HR × HR_Mult_Peaking
 ```
 
-- **Base generator** (`{bin}_base`): capacity `base_cap`, `pmin` from the
-  committed tranche, the bin's weighted heat rate.
-- **Peak generator** (`{bin}_peak`, only when `peak_cap > 0.5 MW`):
-  capacity `peak_cap`, `pmin = 0`, heat rate scaled by a duct-firing
-  penalty (`cc_peak_hr_penalty` 1.15, `ct_peak_hr_penalty` 1.10,
-  `coal_peak_hr_penalty` 1.08), and 1.5x VOM for peaking operation.
+A blank `HR_Mult_<tranche>` cell (for a tranche that has zero capacity
+on that plant) inherits a per-group default so the arithmetic is
+well-defined even if a sensitivity run later activates that tranche.
+
+`bins_to_fleet()` converts each plant into up to four LP tranches
+keyed to the CSV percentages and per-tranche heat rates:
+
+```
+mustrun_cap   = nameplate * MR% / 100            # coal only — sunk fuel
+grid_cap      = nameplate - mustrun_cap          # for coal
+                nameplate * (1 - MR% / 100)       # for non-coal (steam
+                                                  # cogen off-grid)
+committed_cap = grid_cap * MC%   / (100 - MR%)
+peak_cap      = grid_cap * PEAK% / (100 - MR%)
+econ_cap      = grid_cap - committed_cap - peak_cap
+```
+
+Every tranche carries `pmin_mw = 0`; coal's baseload behavior emerges
+from the mustrun tranche bidding at VOM only (its fuel is sunk under
+take-or-pay).
 
 Emission rates are derived directly from the heat rate:
 `emission_rate = heat_rate * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`.
 
-Bins whose `Bin_Zone_Weighted_Avg_HR` is blank in the CSV (a handful of
-tiny unmetered CTs and two combined cycles) fall back to the mean
-plant-level heat rate, then to a per-group default.
+Plants whose `Plant_Avg_HR_MMBtu_MWh` is blank in the CSV (a handful of
+tiny unmetered CTs in CT_unassigned) fall back to a per-group default
+heat rate before the tranche multipliers are applied.
+
+## Per-plant fuel pricing
+
+Each tranche carries its plant code, which routes a per-plant monthly
+delivered fuel cost from EIA-923 Schedule 5 into the LP marginal cost.
+`scripts/process_f923_fuel_costs.py` processes the F923 zips into
+`inputs/processed/eia923_monthly_fuel_costs.parquet`, and
+`market_sim.data.fuel.resolve_fuel_prices` applies one of two paths to
+each gas / coal generator:
+
+1. **Historical years (F923 available)** — the generator pays its plant's
+   own measured monthly delivered cost, broadcast to the hourly
+   horizon. Months with no reported cost (EIA suppression) keep the
+   per-fuel default.
+2. **Forward years (or plants outside the F923 sample)** — gas units
+   pay the AEO Henry Hub trajectory plus the ISO basis differential;
+   coal units pay the per-year coal trajectory. An entire plant class
+   / zone shares the same forward price, per the project's stated
+   model design.
+
+The same resolver runs both backcasts and forward projections; the
+F923 lookup simply finds nothing in a forward year and every plant
+falls through to the trajectory-based default.
 
 ## Commitment
 
@@ -131,15 +173,18 @@ This applies to both `CC_CHP` and `CT_CHP`.
 
 ## What this replaces
 
-| Old                              | New                                            |
-|----------------------------------|-------------------------------------------------|
-| `aggregate_fleet(n_bins=...)`     | `load_campd_bins()` -> bins from CSV            |
-| Equal-width heat-rate binning     | CAMPD-derived bins by HR + CF + zone            |
-| Uniform CHP grid derate           | Per-bin MR% from the CSV                        |
-| Uniform CC min-gen fraction       | Per-bin MC% from the CSV                        |
-| CC max-CF cap                     | Per-bin ECON + PEAK split                       |
-| Coal take-or-pay supply curve     | Coal 40% MC / 45% ECON / 15% PEAK in the bins   |
-| `CC/CT_COMMITMENT_PARAMS` tables  | Per-bin `min_run` / `min_down` from the CSV     |
+| Old                                                    | New                                                                              |
+|--------------------------------------------------------|----------------------------------------------------------------------------------|
+| `aggregate_fleet(n_bins=...)`                          | `load_campd_bins()` → one LP bin per EIA plant                                   |
+| Equal-width heat-rate binning                          | Per-plant Plant_Avg_HR with HR_Mult tranche multipliers                          |
+| Multi-plant aggregated bins (~129 LP bins)             | ~302 LP bins, one per plant (W A Parish coal + gas-steam = 2 bins)               |
+| Bin-weighted heat rate                                 | Plant-specific Plant_Avg_HR × CSV HR_Mult per tranche                            |
+| Uniform CHP grid derate                                | Per-plant MR% from the CSV                                                       |
+| Uniform CC min-gen fraction                            | Per-plant MC% from the CSV                                                       |
+| CC max-CF cap                                          | Per-plant ECON + PEAK split                                                      |
+| Coal take-or-pay supply curve                          | Coal 40% MC / 45% ECON / 15% PEAK per plant in the bins                          |
+| `CC/CT_COMMITMENT_PARAMS` tables                       | Per-plant `min_run` / `min_down` from the CSV                                    |
+| Single AEO Henry Hub gas price for every gas generator | Per-plant monthly EIA-923 delivered cost (historical), AEO trajectory (forward)  |
 
 The legacy path is still available via `use_campd_bins=False`, which
 restores `aggregate_fleet()` and the take-or-pay coal tranches.

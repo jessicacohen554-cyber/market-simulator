@@ -135,6 +135,9 @@ class Generator(BaseModel):
     bin_nameplate_mw: float = 0.0   # bin total nameplate, for MR reconstruction
     coal_supply: str = ""           # "lignite" (mine-mouth) or "prb" (rail);
     #                                 drives plant-specific coal fuel pricing
+    plant_code: int = 0             # EIA plant code, when the tranche maps
+    #                                 to a single physical plant; drives the
+    #                                 F923 monthly fuel-cost lookup.
 
 
 @dataclass
@@ -156,6 +159,11 @@ class FleetArrays:
     availability: np.ndarray
     unit_ids: list[str]
     efficiency_bin: np.ndarray
+    # EIA plant code per generator (0 when the tranche is not pinned to
+    # a single physical plant — e.g. the legacy aggregated fleet, WECC
+    # imports, or a multi-plant CT_PEAKER bin). Used by the F923 monthly
+    # fuel-cost resolver to look up plant-specific delivered prices.
+    plant_code: np.ndarray
 
     @property
     def n_gen(self) -> int:
@@ -298,6 +306,9 @@ def generators_to_fleet_arrays(
         unit_ids=[g.unit_id for g in generators],
         efficiency_bin=np.array(
             [g.efficiency_bin for g in generators], dtype=str
+        ),
+        plant_code=np.array(
+            [int(g.plant_code) for g in generators], dtype=int
         ),
     )
 
@@ -1402,88 +1413,77 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
     return pd.read_csv(csv_path)
 
 
-def _fill_bin_hr(row: pd.Series) -> float:
-    """Return a bin's heat rate, filling a blank weighted HR.
+def _fill_plant_hr(hr: float | None, plant_group: str) -> float:
+    """Return a plant's heat rate, falling back to the plant-group default.
 
-    Falls back to the mean plant-level heat rate of the bin, then to the
-    plant-group default, so a bin never carries a NaN heat rate into the LP.
+    Plants without a measured ``Plant_Avg_HR_MMBtu_MWh`` (typically tiny
+    unmetered backup CTs in CT_unassigned) inherit the per-group default
+    so the LP never sees a NaN heat rate.
     """
-    hr = row.get("hr_weighted")
     if hr is not None and hr == hr and hr > 0.0:
         return float(hr)
-    plant_hr = row.get("plant_hr_mean")
-    if plant_hr is not None and plant_hr == plant_hr and plant_hr > 0.0:
-        return float(plant_hr)
-    return BIN_GROUP_HR_DEFAULT.get(row["Plant_Group"], 10.0)
+    return BIN_GROUP_HR_DEFAULT.get(plant_group, 10.0)
+
+
+def _fill_hr_multiplier(value: float | None, default: float) -> float:
+    """Return a tranche HR multiplier, falling back to ``default`` if blank.
+
+    Plants whose tranche capacity is zero leave the corresponding
+    ``HR_Mult_<tranche>`` column blank; the per-fuel default keeps the
+    arithmetic well-defined even when the resulting tranche is skipped.
+    """
+    if value is not None and value == value and value > 0.0:
+        return float(value)
+    return float(default)
+
+
+# Per-plant-group default tranche HR multipliers, used when the CSV's
+# ``HR_Mult_<tranche>`` cell is blank (a tranche with zero capacity for
+# that plant). The values match the typical multipliers seen in the CSV
+# for each group so a sensitivity run that turns on a zero-share tranche
+# still produces a reasonable heat rate.
+_DEFAULT_HR_MULT_BY_GROUP: dict[str, dict[str, float]] = {
+    "CC_CHP":     {"mr": 1.05, "mc": 1.05, "econ": 1.00, "peak": 1.45},
+    "CC_REGULAR": {"mr": 1.10, "mc": 1.08, "econ": 1.00, "peak": 1.55},
+    "CT_CHP":     {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.15},
+    "CT_PEAKER":  {"mr": 1.05, "mc": 1.12, "econ": 1.00, "peak": 1.10},
+    "ST_GAS":     {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10},
+    "ST_CHP":     {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.10},
+    "COAL":       {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+}
 
 
 def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
-    """Load the CAMPD bin assignments and aggregate to one row per bin.
+    """Load the CAMPD bin assignments, one row per plant.
 
-    The detail CSV has one row per plant; this collapses it to one row per
-    unique operational bin (keyed by group, zone, bin number and label),
-    summing nameplate capacity and taking the shared per-bin tranche
-    percentages, commitment hours and weighted heat rate.
+    The detail CSV has one row per plant; this normalises it into the
+    one-bin-per-plant LP fleet schema. Every plant becomes its own
+    operational bin: tranche percentages, commitment hours and the
+    per-tranche HR multipliers come directly from the plant's CSV row,
+    and per-tranche heat rates are derived from the plant's own
+    ``Plant_Avg_HR_MMBtu_MWh`` rather than a zone-weighted average.
+
+    Per-plant binning is the model spine for plant-specific monthly
+    EIA-923 fuel costs and asset-level financial reporting — each LP bin
+    is one EIA plant code, so dispatch and downstream P&L disaggregation
+    share the same row identity.
 
     Args:
         csv_path: Path to ``custom-bin-assignments.csv``.
 
     Returns:
-        One row per bin with columns: the four key columns, ``capacity_mw``,
-        ``hr_weighted``, ``pct_mr`` / ``pct_mc`` / ``pct_econ`` / ``pct_peak``,
-        ``min_run``, ``min_down``, ``plant_count``, ``plant_codes``, ``fuel``.
+        One row per plant with columns: the original bin key columns,
+        ``Plant_Code``, ``Plant_Name``, ``capacity_mw``, ``hr_weighted``
+        (the plant's own HR), ``hr_mr`` / ``hr_mc`` / ``hr_econ`` /
+        ``hr_peak`` (= ``Plant_Avg_HR × HR_Mult_<tranche>``),
+        ``pct_mr`` / ``pct_mc`` / ``pct_econ`` / ``pct_peak``,
+        ``min_run``, ``min_down``, ``plant_count`` (always 1),
+        ``plant_codes`` (a one-element list with the plant code),
+        ``fuel``.
     """
     detail = pd.read_csv(csv_path)
-    # Capacity-weighted contributions for the per-tranche heat-rate columns
-    # so that aggregating multi-plant bins gives the correct bin HR. Blank
-    # cells (a tranche with pct = 0) are excluded from both numerator and
-    # denominator via the per-column mask.
-    for col in ("HR_Must_Run", "HR_Committed", "HR_Economic", "HR_Peaking"):
-        mask = detail[col].notna() & (detail["Nameplate_MW"] > 0.0)
-        detail[f"_num_{col}"] = (
-            detail[col].where(mask, 0.0) * detail["Nameplate_MW"].where(mask, 0.0)
-        )
-        detail[f"_den_{col}"] = detail["Nameplate_MW"].where(mask, 0.0)
-    bins = (
-        detail.groupby(_BIN_KEY_COLUMNS, sort=False)
-        .agg(
-            capacity_mw=("Nameplate_MW", "sum"),
-            hr_weighted=("Bin_Zone_Weighted_Avg_HR", "first"),
-            plant_hr_mean=("Plant_Avg_HR_MMBtu_MWh", "mean"),
-            pct_mr=("Pct_Must_Run", "first"),
-            pct_mc=("Pct_Committed", "first"),
-            pct_econ=("Pct_Economic", "first"),
-            pct_peak=("Pct_Peaking", "first"),
-            min_run=("Min_Run_Hours", "first"),
-            min_down=("Min_Down_Hours", "first"),
-            plant_count=("Plant_Code", "count"),
-            plant_codes=("Plant_Code", lambda x: list(x)),
-            _num_mr=("_num_HR_Must_Run", "sum"),
-            _den_mr=("_den_HR_Must_Run", "sum"),
-            _num_mc=("_num_HR_Committed", "sum"),
-            _den_mc=("_den_HR_Committed", "sum"),
-            _num_econ=("_num_HR_Economic", "sum"),
-            _den_econ=("_den_HR_Economic", "sum"),
-            _num_peak=("_num_HR_Peaking", "sum"),
-            _den_peak=("_den_HR_Peaking", "sum"),
-        )
-        .reset_index()
-    )
-    bins["hr_weighted"] = bins.apply(_fill_bin_hr, axis=1)
-    for short in ("mr", "mc", "econ", "peak"):
-        bins[f"hr_{short}"] = np.where(
-            bins[f"_den_{short}"] > 0.0,
-            bins[f"_num_{short}"] / bins[f"_den_{short}"].replace(0, np.nan),
-            np.nan,
-        )
-    bins = bins.drop(columns=[
-        "plant_hr_mean",
-        *[f"_num_{s}" for s in ("mr", "mc", "econ", "peak")],
-        *[f"_den_{s}" for s in ("mr", "mc", "econ", "peak")],
-    ])
-    bins["fuel"] = bins["Plant_Group"].map(BIN_GROUP_TO_FUEL)
-
-    unmapped = bins[bins["fuel"].isna()]
+    fuel_series = detail["Plant_Group"].map(BIN_GROUP_TO_FUEL)
+    unmapped = detail[fuel_series.isna()]
     if not unmapped.empty:
         groups = sorted(unmapped["Plant_Group"].unique())
         raise ValueError(
@@ -1491,17 +1491,64 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
             f"Add them to BIN_GROUP_TO_FUEL."
         )
 
+    # Each plant's tranche HR = Plant_Avg_HR × HR_Mult_<tranche>. We fill
+    # missing plant heat rates with the per-group default and missing
+    # multipliers with the group-typical value so the tranche arithmetic
+    # is well-defined; tranches whose capacity is zero are skipped by
+    # ``bins_to_fleet`` regardless of the resulting HR.
+    plant_hr = [
+        _fill_plant_hr(hr, grp)
+        for hr, grp in zip(
+            detail["Plant_Avg_HR_MMBtu_MWh"], detail["Plant_Group"]
+        )
+    ]
+    defaults_by_idx = [
+        _DEFAULT_HR_MULT_BY_GROUP.get(grp, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"])
+        for grp in detail["Plant_Group"]
+    ]
+    mult_columns = {
+        "mr": "HR_Mult_Must_Run",
+        "mc": "HR_Mult_Committed",
+        "econ": "HR_Mult_Economic",
+        "peak": "HR_Mult_Peaking",
+    }
+    bins = pd.DataFrame({
+        "Plant_Group": detail["Plant_Group"].astype(str),
+        "ERCOT_Zone": detail["ERCOT_Zone"].astype(str),
+        "Bin_Number": detail["Bin_Number"].astype(int),
+        "Bin_Label": detail["Bin_Label"].astype(str),
+        "Plant_Code": detail["Plant_Code"].astype(int),
+        "Plant_Name": detail["Plant_Name"].astype(str),
+        "capacity_mw": detail["Nameplate_MW"].astype(float),
+        "hr_weighted": plant_hr,
+        "pct_mr": detail["Pct_Must_Run"].astype(float),
+        "pct_mc": detail["Pct_Committed"].astype(float),
+        "pct_econ": detail["Pct_Economic"].astype(float),
+        "pct_peak": detail["Pct_Peaking"].astype(float),
+        "min_run": detail["Min_Run_Hours"].astype(int),
+        "min_down": detail["Min_Down_Hours"].astype(int),
+    })
+    for short, col in mult_columns.items():
+        bins[f"hr_{short}"] = [
+            hr * _fill_hr_multiplier(mult, defaults[short])
+            for hr, mult, defaults in zip(
+                plant_hr, detail[col], defaults_by_idx
+            )
+        ]
+    bins["plant_count"] = 1
+    bins["plant_codes"] = [[int(c)] for c in detail["Plant_Code"]]
+    bins["fuel"] = fuel_series.values
+
     bad = bins["pct_mr"] + bins["pct_mc"] + bins["pct_econ"] + bins["pct_peak"]
     if not (bad == 100).all():
-        offending = bins.loc[bad != 100, "Bin_Label"].tolist()
+        offending = bins.loc[bad != 100, "Plant_Name"].tolist()
         raise ValueError(
-            f"CAMPD bin tranches must sum to 100%; offending bins: {offending}"
+            f"CAMPD bin tranches must sum to 100%; offending plants: {offending}"
         )
 
     logger.info(
-        "Loaded %d CAMPD bins from %s (%d plants, %.1f GW)",
-        len(bins), csv_path, int(bins["plant_count"].sum()),
-        bins["capacity_mw"].sum() / 1000.0,
+        "Loaded %d per-plant CAMPD bins from %s (%.1f GW)",
+        len(bins), csv_path, bins["capacity_mw"].sum() / 1000.0,
     )
     return bins
 
@@ -1511,11 +1558,12 @@ def bins_to_fleet(
     zone_names: list[str],
     config: ScenarioConfig,
 ) -> tuple[list[Generator], FleetArrays]:
-    """Convert CAMPD bins into LP generators -- stepped tranches per bin.
+    """Convert per-plant CAMPD bins into LP generators -- stepped tranches.
 
-    Every bin's grid-facing capacity is split into LP-dispatchable
-    tranches keyed to the CSV percentages and per-tranche heat rates. A
-    bin only gets tranches whose capacity is non-zero:
+    Each input row is one EIA plant ("one bin per plant"); its
+    grid-facing capacity is split into LP-dispatchable tranches keyed to
+    the CSV percentages and per-tranche heat rates. A bin only gets
+    tranches whose capacity is non-zero:
 
       - ``_mustrun`` -- COAL ONLY. The unit's minimum operating floor:
         mine-mouth take-or-pay, start/stop and cycling damage avoidance,
@@ -1535,20 +1583,23 @@ def bins_to_fleet(
       - ``_peak`` -- duct-firing / overfire tranche, heat rate scaled by
         the CSV's ``HR_Mult_Peaking`` so scarcity output bids highest.
 
-    Per-tranche heat rates come directly from the CSV's ``HR_<tranche>``
-    columns (capacity-weighted across plants in a bin); a blank cell
-    falls back to the bin's weighted-average HR. No tranche carries a
-    Pmin floor; the Committed and Economic tranches are the same physical
-    unit, so the P2 commitment screen starts and stops them together
-    (see :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
+    Per-tranche heat rates are the plant's own ``Plant_Avg_HR`` scaled by
+    the CSV ``HR_Mult_<tranche>`` columns — assembled in
+    :func:`load_campd_bins` — so each plant brings its measured heat rate
+    and OEM-typical part-load / peaking penalties into the LP. No tranche
+    carries a Pmin floor; the Committed and Economic tranches are the
+    same physical unit, so the P2 commitment screen starts and stops them
+    together (see
+    :func:`market_sim.model.commitment.apply_commitment_with_coal_pin`).
     Economic and Peaking are incremental loading of a running unit, so
     they carry neither a start cost nor a min-run window.
 
     Args:
-        bins: The aggregated bin frame from :func:`load_campd_bins`.
+        bins: The per-plant frame from :func:`load_campd_bins` (one row
+            per plant).
         zone_names: The ISO's ordered zone names.
-        config: Scenario configuration (heat-rate factors, unknown-zone
-            default, horizon length).
+        config: Scenario configuration (unknown-zone default, registry
+            path, horizon length).
 
     Returns:
         A tuple ``(generators, fleet_arrays)``: the bin-derived generator
@@ -1557,50 +1608,30 @@ def bins_to_fleet(
     valid_zones = set(zone_names)
     fleet: list[Generator] = []
 
-    # Plant commission years drive the age-based thermal availability model.
-    # Coal uses the curated COAL_PLANT_COMMISSION_YEAR (accurate coal-unit
-    # years); other thermal bins take a capacity-weighted average of their
-    # constituent plants' EIA-860 year_built from the plant registry.
+    # Per-plant commission years drive the age-based thermal availability
+    # model. Coal uses the curated COAL_PLANT_COMMISSION_YEAR (accurate
+    # coal-unit years); every other plant takes its EIA-860 ``year_built``
+    # from the master plant registry. Plants absent from the registry fall
+    # back to 2010 — a recent-but-not-modern vintage.
     registry = load_plant_registry(config.plant_registry_path)
     _reg_year = dict(zip(registry["plantid"], registry["year_built"]))
-    _reg_mw = dict(zip(registry["plantid"], registry["nameplate_capacity_mw"]))
 
-    def _commission_year(plant_codes: list) -> int:
-        """Capacity-weighted average commission year over a bin's plants."""
-        num = den = 0.0
-        for pc in plant_codes:
-            year = _reg_year.get(int(pc))
-            mw = _reg_mw.get(int(pc))
-            if year and mw and not pd.isna(year) and not pd.isna(mw):
-                num += float(year) * float(mw)
-                den += float(mw)
-        return int(round(num / den)) if den > 0.0 else 2010
-
-    def _tranche_hr(b, short: str, base: float) -> float:
-        """Return the bin's CSV-supplied heat rate for ``short`` tranche.
-
-        Falls back to ``base`` (the bin's weighted-average HR) if the CSV
-        column was blank for every plant in the bin.
-        """
-        val = b.get(f"hr_{short}")
-        if val is not None and val == val and val > 0.0:
-            return float(val)
-        return base
+    def _commission_year(plant_code: int) -> int:
+        """Return the EIA-860 commission year for ``plant_code``."""
+        year = _reg_year.get(plant_code)
+        if year and not pd.isna(year):
+            return int(year)
+        return 2010
 
     for _, b in bins.iterrows():
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
-        # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche:
-        # it is the unit's minimum operating floor for mine-mouth
-        # take-or-pay, start/stop and cycling damage avoidance,
-        # environmental minimum-gen / CEMS compliance and ERCOT RUC. The
-        # tranche bids at VOM + carbon + NOx only (fuel sunk) via
-        # fuel_fracs in the runner. Non-coal bins (CHP steam cogen) hold
-        # an off-grid host steam obligation: their must-run share serves
-        # industrial process steam, not the grid, so it is removed from LP
-        # capacity and its generation / emissions are added back by
-        # post-processing.
+        # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
+        # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
+        # only via the runner). Non-coal bins' must-run share is host
+        # steam cogen and is removed from LP capacity; its generation and
+        # emissions are added back by post-processing.
         if fuel == "coal":
             mustrun_cap = nameplate * pct_mr / 100.0
             grid_cap = nameplate - mustrun_cap
@@ -1622,32 +1653,27 @@ def bins_to_fleet(
             zone = config.unknown_zone_default
 
         group = str(b["Plant_Group"])
-        hr = float(b["hr_weighted"])
         label = str(b["Bin_Label"])
-        bin_id = f"{group}_{zone}_b{int(b['Bin_Number'])}"
-        # Commission year drives the age-based thermal availability model.
-        # Each coal bin is a single plant, so its fuel-supply type and
-        # coal-unit commission year resolve from the one plant code; other
-        # bins take a capacity-weighted average over their plants.
-        codes = list(b["plant_codes"])
+        plant_code = int(b["Plant_Code"])
+        plant_name = str(b.get("Plant_Name") or label)
+        # One bin = one plant, so the unit id is anchored on the plant
+        # code; the tranche suffix keeps the four sub-generators distinct.
+        bin_id = f"{group}_{zone}_p{plant_code}"
+
         coal_supply = ""
-        if fuel == "coal" and len(codes) == 1:
-            coal_supply = COAL_PLANT_SUPPLY.get(int(codes[0]), "")
+        if fuel == "coal":
+            coal_supply = COAL_PLANT_SUPPLY.get(plant_code, "")
             commission_year = COAL_PLANT_COMMISSION_YEAR.get(
-                int(codes[0]), _commission_year(codes)
+                plant_code, _commission_year(plant_code)
             )
         else:
-            commission_year = _commission_year(codes)
+            commission_year = _commission_year(plant_code)
         startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
-        # Per-tranche heat rates come straight from the CSV's HR_<tranche>
-        # columns (capacity-weighted across plants in the bin), falling
-        # back to the bin's weighted-average HR when a column is blank
-        # (e.g. coal HR_Must_Run, currently uncomputed in the input file).
-        mustrun_hr = _tranche_hr(b, "mr", hr)
-        committed_hr = _tranche_hr(b, "mc", hr)
-        econ_hr = _tranche_hr(b, "econ", hr)
-        peak_hr = _tranche_hr(b, "peak", hr)
+        mustrun_hr = float(b["hr_mr"])
+        committed_hr = float(b["hr_mc"])
+        econ_hr = float(b["hr_econ"])
+        peak_hr = float(b["hr_peak"])
 
         # Four stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
@@ -1670,7 +1696,7 @@ def bins_to_fleet(
             fleet.append(
                 Generator(
                     unit_id=f"{bin_id}_{suffix}",
-                    name=f"{label} {suffix}",
+                    name=f"{plant_name} {suffix}",
                     zone=zone,
                     fuel_type=fuel,
                     efficiency_bin=group,
@@ -1690,10 +1716,10 @@ def bins_to_fleet(
                     startup_cost_per_mw=tr_startup,
                     must_run_pct=pct_mr if suffix == "committed" else 0.0,
                     bin_nameplate_mw=(
-                        float(b["capacity_mw"])
-                        if suffix == "committed" else 0.0
+                        nameplate if suffix == "committed" else 0.0
                     ),
                     coal_supply=coal_supply,
+                    plant_code=plant_code,
                 )
             )
 
