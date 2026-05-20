@@ -354,6 +354,30 @@ def _full_hourly_grid(sub: pd.DataFrame) -> pd.DataFrame:
     return by_hour.reindex(full, fill_value=0.0)
 
 
+def plant_hourly_grid(
+    df: pd.DataFrame, plant_id: int, year: int
+) -> pd.DataFrame:
+    """Return one plant-year's unit-summed hourly series on a gap-free clock.
+
+    Off-hours that CAMPD omits are reconstructed as zeros over the contiguous
+    span the plant reported in, indexed by actual timestamps — the input to
+    capacity-factor and outage analyses that need real calendar dates.
+
+    Args:
+        df: A frame from :func:`load_campd_hourly`.
+        plant_id: EIA plant code to extract.
+        year: Calendar year to extract.
+
+    Returns:
+        A ``DatetimeIndex``-ed frame with ``gross_mw``, ``co2_kg``, ``nox_kg``,
+        ``so2_kg`` and ``heat_mmbtu``; empty when the plant-year is absent.
+    """
+    sub = df[(df["plant_id"] == int(plant_id)) & (df["year"] == int(year))]
+    if sub.empty:
+        return pd.DataFrame()
+    return _full_hourly_grid(sub)
+
+
 def _startup_factors(grid: pd.DataFrame) -> dict[str, float]:
     """Return start counts and per-start incremental emission adders.
 
