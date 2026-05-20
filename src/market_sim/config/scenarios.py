@@ -267,7 +267,7 @@ class ScenarioConfig:
     # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
     # fuel.prb_passthrough_series.
     coal_prb_passthrough_sigmoid: bool = False
-    coal_prb_passthrough_floor: float = 0.72    # cheap-gas asymptote
+    coal_prb_passthrough_floor: float = 0.68    # cheap-gas asymptote
     coal_prb_passthrough_ceil: float = 1.35     # dear-gas asymptote (>1 = markup)
     coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
     coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
@@ -279,6 +279,13 @@ class ScenarioConfig:
     # coal level that holds across calibration years. None = use the CSV value.
     coal_lignite_mustrun_override: float | None = None
     coal_prb_mustrun_override: float | None = None
+
+    # When True, coal must-run % comes from the per-plant CAMPD-derived table
+    # (fleet.COAL_MUSTRUN_BY_PLANT) instead of the uniform lignite/PRB
+    # overrides above — each coal plant gets its own observed minimum-load
+    # floor. Plants absent from the table fall back to the uniform override or
+    # the CSV value. The historic outage overlay still applies on top.
+    coal_mustrun_per_plant: bool = False
 
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
@@ -465,6 +472,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_passthrough_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
+    "coal_mustrun_per_plant": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
