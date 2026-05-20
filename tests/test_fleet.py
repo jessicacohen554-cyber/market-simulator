@@ -10,6 +10,9 @@ from market_sim.config.constants import HEAT_RATE_BINS
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
+    _CC_SHOULDER_MONTHS,
+    _SUMMER_WEFOR_SHARE,
+    _hour_to_month_index,
     FUEL_TYPE_MAP,
     Generator,
     aggregate_fleet,
@@ -165,26 +168,46 @@ class TestThermalAvailability(unittest.TestCase):
             [gen], ["North"], config=ScenarioConfig(weather_year=weather_year)
         )
 
-    def test_old_coal_unit(self):
+    @staticmethod
+    def _old_annual_avail(pof, wefor, derate, hours=8760):
+        # Annual-average availability of the prior flat-WEFOR + shoulder-POF
+        # model, which the summer-shifting model conserves.
+        month = _hour_to_month_index(hours) + 1
+        shoulder = np.isin(month, list(_CC_SHOULDER_MONTHS))
+        return (1.0 - wefor - derate) - pof * (int(shoulder.sum()) / hours)
+
+    def test_old_coal_unit_summer_drops_pof_and_cuts_wefor(self):
         # Coal, age 47 (online 1977, run 2024): POF 7%, WEFOR 12 + 7*0.5 =
-        # 15.5%, derate 3 + 12*0.2 = 5.4% — all additive.
+        # 15.5%, derate 3 + 12*0.2 = 5.4%. In the summer peak POF is removed
+        # and only 30% of WEFOR applies; the annual average is conserved.
         fa = self._arrays("COAL", 1977, "coal")
         self.assertAlmostEqual(
-            fa.availability[0, self._JULY_H], 1.0 - 0.155 - 0.054
+            fa.availability[0, self._JULY_H],
+            1.0 - _SUMMER_WEFOR_SHARE * 0.155 - 0.054,
+        )
+        self.assertGreater(
+            fa.availability[0, self._JULY_H],
+            fa.availability[0, self._APRIL_H],
         )
         self.assertAlmostEqual(
-            fa.availability[0, self._APRIL_H], 1.0 - 0.155 - 0.054 - 0.07
+            fa.availability[0].mean(),
+            self._old_annual_avail(0.07, 0.155, 0.054),
+            places=4,
         )
 
     def test_modern_cc_no_escalation(self):
         # CC regular, age 14 (online 2010): below both onsets, so WEFOR 5%
-        # and derate 2% stay at base; POF 5% in shoulder months only.
+        # and derate 2% stay at base; POF 5%. Summer applies only 30% of WEFOR
+        # and no POF; annual average is conserved.
         fa = self._arrays("CC_REGULAR", 2010, "gas_cc")
         self.assertAlmostEqual(
-            fa.availability[0, self._JULY_H], 1.0 - 0.05 - 0.02
+            fa.availability[0, self._JULY_H],
+            1.0 - _SUMMER_WEFOR_SHARE * 0.05 - 0.02,
         )
         self.assertAlmostEqual(
-            fa.availability[0, self._APRIL_H], 1.0 - 0.05 - 0.02 - 0.05
+            fa.availability[0].mean(),
+            self._old_annual_avail(0.05, 0.05, 0.02),
+            places=4,
         )
 
     def test_wefor_escalates_with_age(self):
@@ -192,7 +215,8 @@ class TestThermalAvailability(unittest.TestCase):
         # 5 + 6*0.2 = 6.2%; derate past onset 25 -> 2 + 1*0.1 = 2.1%.
         fa = self._arrays("CC_REGULAR", 1998, "gas_cc")
         self.assertAlmostEqual(
-            fa.availability[0, self._JULY_H], 1.0 - 0.062 - 0.021
+            fa.availability[0, self._JULY_H],
+            1.0 - _SUMMER_WEFOR_SHARE * 0.062 - 0.021,
         )
 
     def test_non_thermal_keeps_eford(self):
