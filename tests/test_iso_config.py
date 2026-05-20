@@ -172,9 +172,59 @@ class TestISOConfig(unittest.TestCase):
         """PJM uses a VOLL of $2,000/MWh (RPM provides capacity revenue)."""
         self.assertEqual(get_iso_config("PJM").voll, 2000.0)
 
+    def test_nyiso_has_five_zones(self):
+        """NYISO aggregates its eleven load zones (A–K) onto five model zones."""
+        nyiso = get_iso_config("NYISO")
+        self.assertEqual(nyiso.n_zones, 5)
+        self.assertEqual(
+            set(nyiso.zone_names),
+            {
+                "Upstate_West",
+                "Capital_Hudson",
+                "Lower_Hudson",
+                "NYC",
+                "Long_Island",
+            },
+        )
+
+    def test_nyiso_has_four_links(self):
+        """NYISO chains the four binding interfaces west-to-south."""
+        nyiso = get_iso_config("NYISO")
+        self.assertEqual(nyiso.n_links, 4)
+
+    def test_nyiso_validates(self):
+        """NYISO topology passes the consistency check."""
+        get_iso_config("NYISO").validate_topology()
+
+    def test_nyiso_load_shares_sum_to_one(self):
+        """NYISO zone load shares sum to 1.0."""
+        nyiso = get_iso_config("NYISO")
+        total = sum(zone.load_share for zone in nyiso.zones)
+        self.assertAlmostEqual(total, 1.0)
+
+    def test_nyiso_downstate_import_chain_tightens(self):
+        """The import path tightens toward the downstate load pockets.
+
+        The defining feature of NYISO topology is that the NYC (J) and Long
+        Island (K) pockets sit behind progressively tighter interfaces, so
+        the link into NYC must be no wider than the one feeding it, and the
+        Long Island import must be the tightest of all.
+        """
+        nyiso = get_iso_config("NYISO")
+        ttc = {(lk.from_zone, lk.to_zone): lk.ttc_mw for lk in nyiso.links}
+        dunwoodie_south = ttc[("Lower_Hudson", "NYC")]
+        upny_seny = ttc[("Capital_Hudson", "Lower_Hudson")]
+        li_import = ttc[("NYC", "Long_Island")]
+        self.assertLessEqual(dunwoodie_south, upny_seny)
+        self.assertLess(li_import, dunwoodie_south)
+
+    def test_nyiso_voll_is_2000(self):
+        """NYISO uses a VOLL of $2,000/MWh (ICAP provides capacity revenue)."""
+        self.assertEqual(get_iso_config("NYISO").voll, 2000.0)
+
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
-        for iso_name in ("ERCOT", "CAISO", "MISO", "PJM"):
+        for iso_name in ("ERCOT", "CAISO", "MISO", "NYISO", "PJM"):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
             for link in config.links:
