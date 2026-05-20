@@ -362,20 +362,22 @@ def apply_commitment_with_coal_pin(
     committed: np.ndarray,          # (n_gen, T) boolean
     p1_dispatch: np.ndarray,        # (n_gen, T) from the P1 solve
     generators: list[Generator],    # fleet list aligned with committed rows
+    screen_coal: bool = True,
 ) -> FleetArrays:
     """Return new ``FleetArrays`` with the commitment screen applied.
 
-    * Screened generators (the ``_committed`` tranche of every CAMPD bin —
-      including coal — and legacy gas CC/CT): availability is zeroed in
-      their decommitted hours, so the P2 solve re-optimizes them within
-      the commitment mask.
+    * Screened generators (the ``_committed`` tranche of every CAMPD bin and
+      legacy gas CC/CT): availability is zeroed in their decommitted hours,
+      so the P2 solve re-optimizes them within the commitment mask.
     * The ``_econ`` tranche of a CAMPD bin is the same physical unit as
       that bin's ``_committed`` tranche, so its availability is zeroed in
       every hour the ``_committed`` tranche is decommitted — the two
       tranches start and stop together.
-    * Legacy coal (``fuel_type == "coal"`` outside the CAMPD path): it is
-      never screened, so its availability is pinned to reproduce the P1
-      coal dispatch (availability = P1 dispatch / Pmax, with a tiny floor).
+    * Coal is pinned to reproduce its P1 dispatch (availability ceiling =
+      P1 dispatch / Pmax, with a tiny floor) so it gains no new generation
+      in P2 — P1 locks coal. This applies to legacy coal always, and to
+      CAMPD coal when ``screen_coal`` is False. When ``screen_coal`` is True
+      (the default), CAMPD coal is instead commitment-screened like CC/CT.
     * Nuclear, hydro and other unscreened fuels carry an all-committed
       mask, so zeroing decommitted hours is a no-op — they pass through
       unchanged and keep their Pmin (nuclear stays must-run).
@@ -385,6 +387,8 @@ def apply_commitment_with_coal_pin(
         committed: The commitment mask from :func:`compute_commitment`.
         p1_dispatch: The P1 dispatch result, ``(n_gen, T)``.
         generators: The dispatch fleet, aligned with ``committed`` rows.
+        screen_coal: When False, CAMPD coal is pinned to its P1 dispatch
+            instead of being commitment-screened (it gains no new P2 gen).
 
     Returns:
         A new ``FleetArrays`` with availability adjusted for P2.
@@ -392,10 +396,14 @@ def apply_commitment_with_coal_pin(
     avail = fleet_arrays.availability.copy()
 
     for g, gen in enumerate(generators):
-        if gen.fuel_type == "coal" and not gen.is_campd_bin:
-            # Legacy coal is never screened: pin its availability ceiling to
-            # the P1 dispatch fraction so P2 reproduces P1 coal. A tiny floor
-            # avoids a numerical zero. CAMPD coal is screened like CC/CT.
+        # Pin coal to its P1 dispatch — reproducing P1, never gaining new
+        # generation in P2 — when it is not commitment-screened: always for
+        # legacy coal, and for CAMPD coal when screen_coal is False. The tiny
+        # floor avoids a numerical zero.
+        pin_to_p1 = gen.fuel_type == "coal" and (
+            not gen.is_campd_bin or not screen_coal
+        )
+        if pin_to_p1:
             p1_frac = np.clip(
                 p1_dispatch[g, :] / max(float(fleet_arrays.pmax[g]), 1.0),
                 0.0, 1.0,

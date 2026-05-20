@@ -808,8 +808,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--no-coal-p2", action="store_true",
-        help="Exempt coal from the P2 commitment screen (coal stays "
-             "committed in every hour). Only meaningful with --commitment.",
+        help="Pin coal to its P1 dispatch in P2 instead of screening it: "
+             "coal gains no new generation in P2 (P1 locks it). Only "
+             "meaningful with --commitment.",
     )
     args = parser.parse_args()
 
