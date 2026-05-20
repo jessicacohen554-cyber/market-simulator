@@ -496,6 +496,9 @@ def solve_and_persist(
         "coal_prb_mustrun": coal_prb_mustrun,
         "coal_prb_passthrough": coal_prb_passthrough,
         "outage_source": outage_source,
+        "coal_plant_monthly_pricing": _calibration_config(
+            years[0], iso, hours, gas_prices[years[0]]
+        ).coal_plant_monthly_pricing,
         "td_loss_factor": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
