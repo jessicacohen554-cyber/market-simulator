@@ -607,10 +607,19 @@ def _print_plant_level(
 def _run_and_report(
     year: int, iso: str, hours: int, gas_price: float,
     generation_f923: pd.DataFrame,
+    commitment_enabled: bool = False,
+    commitment_screen_coal: bool = True,
 ) -> None:
-    """Run one calibration year and print every comparison block."""
-    result, context = run_year(
-        year, iso, hours, gas_price, ttc_overrides={}
+    """Run one calibration year and print every comparison block.
+
+    With ``commitment_enabled`` the P2 unit-commitment pass runs after P1;
+    both the P1 (pre-commitment) and P2 (committed) results are reported so
+    the commitment effect on the merit order is visible.
+    """
+    result, context, result_p1 = run_year(
+        year, iso, hours, gas_price, ttc_overrides={},
+        commitment_enabled=commitment_enabled,
+        commitment_screen_coal=commitment_screen_coal,
     )
 
     print(f"\n{'=' * 80}")
@@ -622,6 +631,30 @@ def _run_and_report(
     if fossil is None or renewables is None:
         logger.error("EIA-930 ERCO hourly data missing for %d", year)
         return
+    nuclear_930 = load_ercot_nuclear_gen(year)
+    td_loss = _calibration_config(year, iso, hours, gas_price).td_loss_factor
+
+    if result_p1 is not None:
+        _report_sections(
+            year, iso, result_p1, context, generation_f923,
+            fossil, renewables, nuclear_930, td_loss, label="P1 (pre-commitment)",
+        )
+    _report_sections(
+        year, iso, result, context, generation_f923,
+        fossil, renewables, nuclear_930, td_loss,
+        label="P2 (committed)" if result_p1 is not None else "",
+    )
+
+
+def _report_sections(
+    year: int, iso: str, result, context,
+    generation_f923: pd.DataFrame,
+    fossil: dict, renewables: dict, nuclear_930, td_loss: float,
+    label: str = "",
+) -> None:
+    """Print comparison tables [1]-[6] for one solved dispatch result."""
+    if label:
+        print(f"\n  ----- {label} -----")
 
     # Pull plant_codes from the unit ids — they encode ``..._p{code}_<suffix>``.
     plant_codes = _plant_codes_from_unit_ids(context.unit_ids)
@@ -655,8 +688,6 @@ def _run_and_report(
         year, dispatch, plant_codes, context, generation_f923,
     )
 
-    nuclear_930 = load_ercot_nuclear_gen(year)
-
     # [1] CHP — the one table where CHP appears; returns CHP grid-delivered.
     chp_grid_twh = _print_chp_table(
         year, model_total_class_twh, btm_by_class_twh, f923_class_twh,
@@ -670,8 +701,7 @@ def _run_and_report(
     ) / _MWH_PER_TWH
     btm_total_twh = sum(btm_by_class_twh.values())
     _print_reconciliation(
-        year, iso, model_grid_twh, btm_total_twh,
-        _calibration_config(year, iso, hours, gas_price).td_loss_factor,
+        year, iso, model_grid_twh, btm_total_twh, td_loss,
     )
 
     # [3] Non-CHP grid generation vs EIA-930.
@@ -772,6 +802,15 @@ def main() -> None:
     )
     parser.add_argument("--iso", default="ERCOT")
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
+    parser.add_argument(
+        "--commitment", action="store_true",
+        help="Run the P2 unit-commitment pass after P1; both are reported.",
+    )
+    parser.add_argument(
+        "--no-coal-p2", action="store_true",
+        help="Exempt coal from the P2 commitment screen (coal stays "
+             "committed in every hour). Only meaningful with --commitment.",
+    )
     args = parser.parse_args()
 
     reference = _load_reference()
@@ -782,7 +821,11 @@ def main() -> None:
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
             args.iso, year, args.hours, gas_price,
         )
-        _run_and_report(year, args.iso, args.hours, gas_price, generation)
+        _run_and_report(
+            year, args.iso, args.hours, gas_price, generation,
+            commitment_enabled=args.commitment,
+            commitment_screen_coal=not args.no_coal_p2,
+        )
 
 
 if __name__ == "__main__":
