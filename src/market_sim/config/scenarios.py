@@ -196,6 +196,13 @@ class ScenarioConfig:
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
+    wefor_multiplier: float = 1.0  # Global scale on every thermal class's
+    # forced-outage rate (WEFOR) before the seasonal summer/shoulder/winter
+    # split, so the seasonal *shape* is preserved while the outage magnitude
+    # is lightened (or raised). < 1.0 raises availability everywhere — most
+    # in the shoulder months, where WEFOR is heaviest after the summer-peak
+    # redistribution. Does not touch the planned-outage (POF) or
+    # weather/performance derate terms.
     td_loss_factor: float = 0.0  # Gross-up of EIA-930 demand, as a fraction.
     # EIA-930 "Demand" is generation-side: Demand + Total Interchange = Net
     # Generation (verified to <0.01 TWh for ERCOT 2023/2024), so the demand
@@ -386,6 +393,7 @@ TIER_TAGS: dict[str, int] = {
     "must_run_cf": 3,
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
+    "wefor_multiplier": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "coal_tranche_1_frac": 3,
