@@ -166,15 +166,47 @@ def prb_passthrough_series(
     """
     if not getattr(config, "coal_prb_passthrough_sigmoid", False):
         return config.coal_prb_passthrough
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_prb_passthrough_floor,
+        config.coal_prb_passthrough_ceil,
+        config.coal_prb_passthrough_gas_mid,
+        config.coal_prb_passthrough_gas_slope,
+    )
+
+
+def prb_passthrough_series_follower(
+    config: ScenarioConfig, year: int, hours: int
+) -> np.ndarray:
+    """Return the load-follower-tier PRB passthrough series (gas-keyed).
+
+    Used only when ``config.coal_prb_passthrough_tiered`` is set, for PRB
+    plants whose per-plant must-run floor is at or below
+    ``coal_prb_follower_mustrun_max`` — the low-floor units that cycle as
+    load-followers rather than baseload price-takers. Same logistic form as
+    the baseload tier but its own ``coal_prb_follower_*`` parameters.
+    """
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_prb_follower_floor,
+        config.coal_prb_follower_ceil,
+        config.coal_prb_follower_gas_mid,
+        config.coal_prb_follower_gas_slope,
+    )
+
+
+def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
+    """Return the ``(hours,)`` delivered gas price ($/MMBtu), seasonal if on."""
     gas = resolve_annual_gas_price(config, year)
     if config.gas_seasonality:
-        gas_series = gas * _seasonal_factors(hours)
-    else:
-        gas_series = np.full(hours, gas, dtype=float)
-    floor = config.coal_prb_passthrough_floor
-    ceil = config.coal_prb_passthrough_ceil
-    mid = config.coal_prb_passthrough_gas_mid
-    slope = config.coal_prb_passthrough_gas_slope
+        return gas * _seasonal_factors(hours)
+    return np.full(hours, gas, dtype=float)
+
+
+def _sigmoid_passthrough(
+    gas_series: np.ndarray, floor: float, ceil: float, mid: float, slope: float
+) -> np.ndarray:
+    """Logistic passthrough rising from ``floor`` to ``ceil`` in gas price."""
     return floor + (ceil - floor) / (
         1.0 + np.exp(-slope * (gas_series - mid))
     )
