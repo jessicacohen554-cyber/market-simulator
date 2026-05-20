@@ -14,7 +14,12 @@ import numpy as np
 import scipy.sparse as sp
 
 from market_sim.config.constants import HOURS_PER_YEAR, STORAGE_TIEBREAKER_EPSILON
-from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays, assemble_mc
+from market_sim.data.fleet import (
+    FUEL_TYPE_MAP,
+    FleetArrays,
+    _hour_to_month_index,
+    assemble_mc,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -295,6 +300,74 @@ def _build_rps_row(
     return row, rhs
 
 
+def _build_hydro_rows(
+    layout: VariableLayout,
+    hydro_gen_idx: np.ndarray,
+    hydro_monthly_energy: np.ndarray,
+    hydro_month_index: np.ndarray,
+    hydro_monthly_min: np.ndarray | None,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Return the hydro monthly energy-budget rows and their bound vectors.
+
+    Builds one row per ``(hydro generator, month)`` enforcing the
+    inter-temporal energy budget::
+
+        hydro_monthly_min[g, m] <= sum_{t in month m} P[g, t]
+                                <= hydro_monthly_energy[g, m]
+
+    so a reservoir picks *when* within a month to generate but not *how
+    much* in total. The row's ``+1`` coefficients sit on the thermal-block
+    columns of the hydro generators; the lower bound applies the run-of-river
+    min-flow floor (zero when ``hydro_monthly_min`` is ``None``).
+
+    The whole block is assembled in one ``coo_matrix`` from the
+    ``(months x T)`` hour-to-month incidence -- each ``(g, t)`` pair drops a
+    ``1`` into row ``g * n_months + month[t]`` -- so there is no Python loop
+    over hours.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        hydro_gen_idx: Thermal-block indices of the hydro generators, shape
+            ``(n_hydro,)``.
+        hydro_monthly_energy: Monthly energy cap in MWh, shape
+            ``(n_hydro, n_months)``.
+        hydro_month_index: Month index (``0 <= m < n_months``) of each hour,
+            shape ``(T,)``.
+        hydro_monthly_min: Monthly minimum energy in MWh, shape
+            ``(n_hydro, n_months)``, or ``None`` for a zero floor.
+
+    Returns:
+        Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix
+        of shape ``(n_hydro * n_months, layout.total_columns)``.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    gen_idx = np.asarray(hydro_gen_idx, dtype=int)  # (n_hydro,)
+    month_index = np.asarray(hydro_month_index, dtype=int)  # (T,)
+    energy = np.asarray(hydro_monthly_energy, dtype=float)
+    n_hydro = gen_idx.size
+    n_months = energy.shape[1]
+
+    hours = np.arange(T)  # t: hour index
+    g = np.arange(n_hydro)  # local hydro index
+
+    # Row r = g * n_months + month[t]; column = hydro gen g's P slot in hour t.
+    rows = (g[:, None] * n_months + month_index[None, :]).ravel()
+    cols = (hours[None, :] * vph + layout._p_off + gen_idx[:, None]).ravel()
+    data = np.ones(n_hydro * T, dtype=float)
+    block = sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_hydro * n_months, layout.total_columns),
+    ).tocsr()
+
+    row_upper = energy.ravel()
+    if hydro_monthly_min is None:
+        row_lower = np.zeros(n_hydro * n_months, dtype=float)
+    else:
+        row_lower = np.asarray(hydro_monthly_min, dtype=float).ravel()
+    return block, row_lower, row_upper
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -304,6 +377,10 @@ def build_constraints(
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
     rps_target: float | None = None,
+    hydro_monthly_energy: np.ndarray | None = None,
+    hydro_month_index: np.ndarray | None = None,
+    hydro_gen_idx: np.ndarray | None = None,
+    hydro_monthly_min: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -326,6 +403,13 @@ def build_constraints(
     must reach ``rps_target`` times total annual demand. Its dual is the
     implicit REC price.
 
+    A fourth, optional family adds **hydro monthly energy budgets** when
+    ``hydro_monthly_energy`` is set: for each hydro generator and month the
+    summed dispatch is bounded by the month's energy budget (and above by an
+    optional run-of-river min-flow floor), giving energy-limited hydro that
+    chooses *when* within a month to generate. When ``hydro_monthly_energy``
+    is ``None`` no rows are added and the LP is identical to today's.
+
     Args:
         layout: Variable layout describing the column structure.
         fleet: Vectorized fleet arrays; supplies generator zone membership.
@@ -341,6 +425,20 @@ def build_constraints(
             to ``1.0`` (lossless).
         rps_target: Required clean-energy share. When not ``None`` and
             positive, one annual RPS constraint row is appended.
+        hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
+            ``(n_hydro, n_months)``. When ``None`` the hydro family is
+            omitted (identical LP); otherwise one budget row per hydro
+            generator and month is appended.
+        hydro_month_index: Month index of each hour, shape ``(T,)``. When
+            ``None`` it is derived from the standard calendar.
+        hydro_gen_idx: Thermal-block indices of the hydro generators, shape
+            ``(n_hydro,)``. When ``None`` they are derived from the fleet's
+            hydro fuel type. Must align row-for-row with
+            ``hydro_monthly_energy``.
+        hydro_monthly_min: Monthly minimum hydro energy in MWh (the
+            run-of-river min-flow floor), shape ``(n_hydro, n_months)``.
+            When ``None`` the floor is zero. Ignored unless
+            ``hydro_monthly_energy`` is set.
 
     Returns:
         Tuple ``(A, row_lower, row_upper)`` where ``A`` is a CSR matrix --
@@ -466,6 +564,30 @@ def build_constraints(
         A = sp.vstack([energy_balance, soc_block], format="csr")
         row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
         row_upper = row_lower.copy()
+
+    # Optional hydro monthly energy budgets: one two-sided row per hydro
+    # generator and month. Appended before the RPS row so the RPS dual stays
+    # the final constraint. An empty hydro subset adds zero rows.
+    if hydro_monthly_energy is not None:
+        if hydro_gen_idx is None:
+            hydro_gen_idx = np.flatnonzero(
+                np.asarray(fleet.fuel_type_idx) == FUEL_TYPE_MAP["hydro"]
+            )
+        else:
+            hydro_gen_idx = np.asarray(hydro_gen_idx, dtype=int)
+        if hydro_month_index is None:
+            hydro_month_index = _hour_to_month_index(T)
+        if hydro_gen_idx.size:
+            hydro_block, hydro_lower, hydro_upper = _build_hydro_rows(
+                layout,
+                hydro_gen_idx,
+                hydro_monthly_energy,
+                hydro_month_index,
+                hydro_monthly_min,
+            )
+            A = sp.vstack([A, hydro_block], format="csr")
+            row_lower = np.concatenate([row_lower, hydro_lower])
+            row_upper = np.concatenate([row_upper, hydro_upper])
 
     # Optional RPS inequality: one annual row, clean generation must reach
     # rps_target * total demand, with an infinite upper bound.
@@ -641,6 +763,10 @@ def solve_dispatch(
     solar_mc: np.ndarray | float = 0.0,
     storage_discharge_eac: float = 0.0,
     rps_target: float | None = None,
+    hydro_monthly_energy: np.ndarray | None = None,
+    hydro_month_index: np.ndarray | None = None,
+    hydro_gen_idx: np.ndarray | None = None,
+    hydro_monthly_min: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -681,6 +807,16 @@ def solve_dispatch(
         rps_target: Required clean-energy share. When not ``None`` and
             positive, an annual RPS constraint is enforced and its dual is
             returned as ``DispatchResult.rps_shadow_price``.
+        hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
+            ``(n_hydro, n_months)``. When ``None`` the hydro constraint
+            family is omitted and the LP is identical to today's.
+        hydro_month_index: Month index of each hour, shape ``(T,)``.
+            Defaults to the standard calendar when ``None``.
+        hydro_gen_idx: Thermal-block indices of the hydro generators that
+            ``hydro_monthly_energy`` is keyed to. Derived from the fleet's
+            hydro fuel type when ``None``.
+        hydro_monthly_min: Monthly minimum hydro energy (min-flow floor) in
+            MWh, shape ``(n_hydro, n_months)``. Zero floor when ``None``.
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -723,6 +859,10 @@ def solve_dispatch(
         eta_chg=eta_chg,
         eta_dis=eta_dis,
         rps_target=rps_target,
+        hydro_monthly_energy=hydro_monthly_energy,
+        hydro_month_index=hydro_month_index,
+        hydro_gen_idx=hydro_gen_idx,
+        hydro_monthly_min=hydro_monthly_min,
     )
     col_lower, col_upper = build_variable_bounds(
         layout,
