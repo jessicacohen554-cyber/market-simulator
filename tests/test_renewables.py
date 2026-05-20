@@ -194,31 +194,45 @@ def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
     With ``gas_price_override`` set the run is a historical backcast, so the
     profile is built from the EIA-930 ``CISO hourly`` net generation (the new
     per-BA file-resolution path generalized from the ERCOT-only loader), not
-    the EIA-930 distribution. For the single-zone CAISO the resulting hourly
-    CF mean equals the realized annual-average CF — delivered generation
-    divided by EIA-860 year-end capacity. For solar that realized value
-    (~0.21) is far from the 0.28 EIA-930 distribution anchor, so matching it
-    confirms the measured path is taken rather than the distribution path.
+    the EIA-930 distribution. CAISO is multi-zone, so the measured profile is
+    distributed across the NP15/ZP26/SP15 trading zones by EIA-860 capacity:
+    the capacity-weighted sum across zones reconstructs the delivered hourly
+    generation (only the measured path does this — the distribution path would
+    produce a different shape), and the implied profile mean equals the
+    realized annual-average CF (delivered generation / year-end capacity).
     """
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(
         weather_year=_CAL_YEAR, iso="CAISO", gas_price_override=3.0
     )
-    wind_cf, _, solar_cf, _ = load_renewable_profiles(
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         "CAISO", _CAL_YEAR, iso_config, config
     )
-    main = iso_config.zone_names.index("CAISO_main")
+    wecc = iso_config.zone_names.index("WECC_import")
     gen = load_eia_hourly_renewable_gen("CAISO", _CAL_YEAR)
 
-    for fuel, cf in (("wind", wind_cf), ("solar", solar_cf)):
-        monthly = _eia860_monthly_capacity(
-            "CAISO", fuel, iso_config.zone_names, _CAL_YEAR
+    for fuel, cf, cap in (
+        ("wind", wind_cf, wind_cap),
+        ("solar", solar_cf, solar_cap),
+    ):
+        # The WECC import node carries no in-footprint generation.
+        assert cap[wecc] == 0.0
+        assert np.all(cf[wecc] == 0.0)
+
+        # Capacity-weighted CF across zones reconstructs the delivered hourly
+        # MW: same annual energy and same chronological shape.
+        reconstructed = (cap[:, None] * cf).sum(axis=0)
+        np.testing.assert_allclose(
+            reconstructed.sum(), gen[fuel].sum(), rtol=0.01
         )
-        realized_cf = gen[fuel].mean() / monthly[:, -1].sum()
-        profile_mean = cf[main].mean()
-        assert 0.0 < profile_mean < 1.0
-        # Single-zone identity: CF mean = delivered gen / year-end capacity.
-        np.testing.assert_allclose(profile_mean, realized_cf, atol=0.01)
+        assert np.corrcoef(reconstructed, gen[fuel])[0, 1] > 0.999
+
+        # Hence the capacity-weighted profile mean equals the realized
+        # annual-average CF = delivered generation / year-end capacity.
+        realized_cf = gen[fuel].mean() / cap.sum()
+        weighted_cf = reconstructed.mean() / cap.sum()
+        assert 0.0 < weighted_cf < 1.0
+        np.testing.assert_allclose(weighted_cf, realized_cf, atol=0.01)
 
 
 def test_miso_cf_profile_mean_matches_annual_average_cf():
@@ -239,6 +253,30 @@ def test_miso_cf_profile_mean_matches_annual_average_cf():
     for fuel, avg_cf in (("wind", 0.40), ("solar", 0.20)):
         mw = gen[fuel]
         assert len(mw) == HOURS_PER_YEAR
+        cf = derive_cf_profile(mw / mw.sum(), avg_cf)
+        assert cf.min() >= 0.0 and cf.max() <= 1.0
+        np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
+
+
+def test_spp_and_neiso_cf_profiles_match_annual_average_cf():
+    """SPP and ISO-NE wind/solar resolve to their converted hourly extracts.
+
+    Like MISO, neither has a full ``ISOConfig`` yet, so the generalized loader
+    is exercised directly: it must resolve SPP→SWPP and NEISO→ISNE and return
+    a full 8760-hour wind and solar series. Rescaling a series into an hourly
+    CF profile yields a mean equal to the chosen annual-average CF for
+    representative CFs below the clip ceiling.
+    """
+    for iso in ("SPP", "NEISO"):
+        gen = load_eia_hourly_renewable_gen(iso, _CAL_YEAR)
+        assert gen is not None
+        assert {"wind", "solar"} <= set(gen)
+        assert all(len(gen[fuel]) == HOURS_PER_YEAR for fuel in ("wind", "solar"))
+
+    # Clip-free (iso, fuel, representative annual CF) cases for an exact mean.
+    # SPP wind carries a known EIA outlier hour, so its solar series is used.
+    for iso, fuel, avg_cf in (("SPP", "solar", 0.15), ("NEISO", "wind", 0.30)):
+        mw = load_eia_hourly_renewable_gen(iso, _CAL_YEAR)[fuel]
         cf = derive_cf_profile(mw / mw.sum(), avg_cf)
         assert cf.min() >= 0.0 and cf.max() <= 1.0
         np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
