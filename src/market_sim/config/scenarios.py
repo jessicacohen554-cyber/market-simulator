@@ -252,6 +252,14 @@ class ScenarioConfig:
     # Mine-mouth lignite is left at full cost. 1.0 = full fuel cost (off).
     coal_prb_passthrough: float = 1.00
 
+    # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
+    # the per-plant CSV must-run percentage for coal of the given supply with
+    # this value; the committed/economic/peaking grid tranches rescale to fill
+    # the remaining capacity. A gas-price-independent floor, swept to find the
+    # coal level that holds across calibration years. None = use the CSV value.
+    coal_lignite_mustrun_override: float | None = None
+    coal_prb_mustrun_override: float | None = None
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -403,6 +411,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_tranche_3_fuel_passthrough": 3,
     "coal_prb_contract_passthrough": 3,
     "coal_prb_passthrough": 3,
+    "coal_lignite_mustrun_override": 3,
+    "coal_prb_mustrun_override": 3,
     "gas_price_override": 3,
 }
 
