@@ -49,32 +49,52 @@ def compute_nox(dispatch: np.ndarray, nox_rates: np.ndarray) -> np.ndarray:
 
 
 def compute_must_run_emissions(
-    bins: pd.DataFrame, year: int, must_run_cf: float = 0.85
+    bins: pd.DataFrame,
+    year: int,
+    must_run_cf: float = 0.85,
+    total_gen_by_plant: dict[int, float] | None = None,
+    grid_gen_by_plant: dict[int, float] | None = None,
 ) -> pd.DataFrame:
-    """Reconstruct CHP must-run generation and emissions for asset reporting.
+    """Reconstruct CHP must-run (behind-the-meter) generation and emissions.
 
-    The Must-Run tranche of each CHP bin (the always-on capacity serving a
-    steam contract) is removed from the dispatch LP, so its grid generation
-    never appears in the dispatch result. This adds it back: for every
-    non-coal bin with ``pct_mr > 0`` the must-run MW runs ``8760 ×
-    must_run_cf`` hours and its CO2 is the must-run generation times the
-    bin's emission rate. This covers CC_CHP, CT_CHP and ST_CHP and is
-    used for fleet-specific emissions trajectories on an asset basis.
+    The Must-Run tranche of each CHP plant (capacity serving a steam
+    contract) is removed from the dispatch LP, so its behind-the-meter
+    grid-invisible generation never appears in the dispatch result. This
+    adds it back for asset-level emissions and total-generation reporting.
+    Covers CC_CHP, CT_CHP and ST_CHP; coal is excluded (its must-run share
+    stays in the LP as a ``_mustrun`` tranche).
 
-    Coal bins are excluded: their must-run share stays in the LP as a
-    ``_mustrun`` tranche, so its generation already appears in the
-    dispatch result.
+    Two sizing modes:
+
+    * **Data-driven (preferred for backcasts).** When ``total_gen_by_plant``
+      is given — the plant's measured total net generation, e.g. EIA-923
+      Page 1 — the behind-the-meter generation is that total minus the
+      grid-delivered portion the LP already dispatched
+      (``grid_gen_by_plant``, summed by plant code). This reconciles
+      reported total CHP generation to the measured figure: EIA-923 is
+      gross-minus-station-service and so *includes* the host's on-site
+      electricity, while the LP only dispatches the grid-delivered slice
+      (which EIA-930 sees). The difference is the behind-the-meter must-run.
+    * **Flat-CF fallback (forecasts).** Without measured totals, the
+      legacy estimate ``nameplate × pct_mr × 8760 × must_run_cf`` is used.
 
     Args:
-        bins: The aggregated bin frame from
+        bins: The per-plant bin frame from
             :func:`market_sim.data.fleet.load_campd_bins`, carrying
-            ``pct_mr``, ``capacity_mw``, ``hr_weighted`` and ``fuel``.
+            ``Plant_Code``, ``pct_mr``, ``capacity_mw``, ``hr_weighted``
+            and ``fuel``.
         year: Simulation year, recorded on each output row.
-        must_run_cf: Assumed capacity factor for must-run generation.
+        must_run_cf: Capacity factor for the flat-CF fallback.
+        total_gen_by_plant: Optional ``{plant_code: annual MWh}`` of measured
+            total net generation (e.g. EIA-923). Triggers the data-driven mode.
+        grid_gen_by_plant: Optional ``{plant_code: annual MWh}`` of the LP's
+            grid-delivered dispatch per plant, subtracted from the total to
+            isolate the behind-the-meter portion. Treated as zero for any
+            plant absent from the mapping.
 
     Returns:
-        One row per non-coal must-run bin with ``mr_mw``, ``mr_gen_mwh``
-        and ``mr_co2_tons``; empty when no such bin exists.
+        One row per non-coal must-run plant with ``mr_mw``, ``mr_gen_mwh``
+        and ``mr_co2_tons``; empty when no such plant exists.
     """
     from market_sim.data.fleet import get_emission_rate
 
@@ -83,8 +103,15 @@ def compute_must_run_emissions(
         return mr.assign(mr_mw=[], mr_gen_mwh=[], mr_co2_tons=[], year=[])
 
     mr["year"] = year
-    mr["mr_mw"] = mr["capacity_mw"] * mr["pct_mr"] / 100.0
-    mr["mr_gen_mwh"] = mr["mr_mw"] * 8760.0 * must_run_cf
+    if total_gen_by_plant is not None:
+        grid = grid_gen_by_plant or {}
+        total = mr["Plant_Code"].map(total_gen_by_plant).fillna(0.0)
+        grid_gen = mr["Plant_Code"].map(grid).fillna(0.0)
+        mr["mr_gen_mwh"] = (total - grid_gen).clip(lower=0.0)
+        mr["mr_mw"] = mr["mr_gen_mwh"] / 8760.0
+    else:
+        mr["mr_mw"] = mr["capacity_mw"] * mr["pct_mr"] / 100.0
+        mr["mr_gen_mwh"] = mr["mr_mw"] * 8760.0 * must_run_cf
     mr["mr_co2_tons"] = mr.apply(
         lambda r: r["mr_gen_mwh"]
         * get_emission_rate(r["fuel"], r["hr_weighted"]),
