@@ -18,6 +18,10 @@ inputs/processed/*.parquet
 # the calibration diagnostic read them at runtime.
 !inputs/processed/eia923_monthly_fuel_costs.parquet
 !inputs/processed/eia923_monthly_generation.parquet
+# Derived CAMPD reference artifacts — per-plant parasitic-load factors and
+# emission rates, read at runtime by the dispatch LP and calibration report.
+!inputs/processed/parasitic_load_factors.parquet
+!inputs/processed/plant_emission_rates.parquet
 
 # Cached simulation results
 /results/
