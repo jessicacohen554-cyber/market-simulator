@@ -400,19 +400,19 @@ def _print_gas_class_annual(
     btm_by_class_twh: dict[str, float],
     f923_class_twh: dict[str, float],
 ) -> None:
-    """[3b] Every gas class — annual model (grid LP + behind-meter) vs EIA-923.
+    """[3b] Every thermal class — annual model (grid LP + behind-meter) vs EIA-923.
 
-    The complete gas picture in one table: CC_CHP, CC_REGULAR, CT_CHP,
-    CT_PEAKER, ST_GAS, ST_CHP. CHP classes carry behind-the-meter
-    must-run (off-LP); non-CHP classes are grid LP only. EIA-923 is the
-    total-generation benchmark for every gas class.
+    The complete thermal picture in one table: CC_CHP, CC_REGULAR,
+    CT_CHP, CT_PEAKER, ST_GAS, ST_CHP and COAL. CHP classes carry
+    behind-the-meter must-run (off-LP); the rest are grid LP only.
+    EIA-923 is the total-generation benchmark for every class.
     """
-    print(f"\n  [3b] Gas by class — {year}  (model grid LP + behind-meter must-run vs EIA-923 total)")
+    print(f"\n  [3b] Thermal by class — {year}  (model grid LP + behind-meter must-run vs EIA-923 total)")
     rows: list[tuple] = [
         ("class", "grid LP", "BTM-MR", "model tot", "EIA-923", "diff %"),
     ]
     tg = tbtm = tm = tb = 0.0
-    for cls in _GAS_CLASSES:
+    for cls in (*_GAS_CLASSES, "COAL"):
         grid = model_total_class_twh.get(cls, 0.0)
         btm = btm_by_class_twh.get(cls, 0.0)
         m = grid + btm
@@ -427,7 +427,7 @@ def _print_gas_class_annual(
         tm += m
         tb += b
     rows.append((
-        "TOTAL gas", f"{tg:7.2f}", f"{tbtm:6.2f}", f"{tm:8.2f}", f"{tb:7.2f}",
+        "TOTAL", f"{tg:7.2f}", f"{tbtm:6.2f}", f"{tm:8.2f}", f"{tb:7.2f}",
         f"{100.0 * (tm - tb) / tb:+6.1f}" if tb else "    —",
     ))
     _print_table(rows)
