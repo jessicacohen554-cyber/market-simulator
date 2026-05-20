@@ -287,6 +287,14 @@ class ScenarioConfig:
     # the CSV value. The historic outage overlay still applies on top.
     coal_mustrun_per_plant: bool = False
 
+    # When True, drop the statistical planned-outage (POF) derate on coal —
+    # planned maintenance is now captured by the historic outage overlay, so
+    # the POF would double-count. Keep WEFOR (forced outages) in the non-summer
+    # months and the weather/performance derate all year; no POF and no
+    # summer->shoulder WEFOR redistribution. Coal only; other thermal classes
+    # keep the full POF/WEFOR seasonal model.
+    coal_drop_pof: bool = False
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -473,6 +481,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
+    "coal_drop_pof": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,

@@ -304,6 +304,7 @@ def generators_to_fleet_arrays(
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
+        drop_coal_pof = getattr(config, "coal_drop_pof", False)
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -313,17 +314,27 @@ def generators_to_fleet_arrays(
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
             wefor *= config.wefor_multiplier
-            summer_wefor = _SUMMER_WEFOR_SHARE * wefor
-            shoulder_wefor = (
-                wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
-            )
-            # Default (winter): flat WEFOR, no POF. Then override summer and
-            # shoulder.
-            availability[g_idx, :] = 1.0 - wefor - derate
-            availability[g_idx, summer] = 1.0 - summer_wefor - derate
-            availability[g_idx, shoulder] = (
-                1.0 - shoulder_wefor - derate - pof
-            )
+            if drop_coal_pof and gen.fuel_type == "coal":
+                # Planned maintenance now comes from the historic outage
+                # overlay, so drop the statistical POF (and its summer->shoulder
+                # WEFOR redistribution) to avoid double-counting. Keep WEFOR in
+                # the non-summer months and the derate all year; summer runs at
+                # 1 - derate (WEFOR off for the peak).
+                availability[g_idx, :] = 1.0 - wefor - derate
+                availability[g_idx, summer] = 1.0 - derate
+            else:
+                summer_wefor = _SUMMER_WEFOR_SHARE * wefor
+                shoulder_wefor = (
+                    wefor
+                    + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
+                )
+                # Default (winter): flat WEFOR, no POF. Then override summer
+                # and shoulder.
+                availability[g_idx, :] = 1.0 - wefor - derate
+                availability[g_idx, summer] = 1.0 - summer_wefor - derate
+                availability[g_idx, shoulder] = (
+                    1.0 - shoulder_wefor - derate - pof
+                )
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
             # flat multiplier on top of the age-based availability.
