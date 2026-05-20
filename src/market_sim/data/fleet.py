@@ -678,14 +678,20 @@ def campd_tranche_fuel_frac(
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
-    they bid VOM + carbon + NOx only. Coal *committed* tranches pass
-    ``coal_committed_passthrough`` < 1.0 to price-take: an already-online
-    coal unit bids to clear rather than on full marginal cost. Every other
-    tranche passes full fuel cost (``1.0``).
+    they bid VOM + carbon + NOx only. The *committed* tranche of a PRB coal
+    unit passes ``coal_committed_passthrough`` < 1.0 to price-take: an
+    already-online PRB unit (rail take-or-pay) bids to clear rather than on
+    full marginal cost. Mine-mouth lignite is left at full cost — its
+    delivered fuel is already cheap enough to clear. Every other tranche
+    passes full fuel cost (``1.0``).
     """
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
-    if gen.fuel_type == "coal" and gen.unit_id.endswith("_committed"):
+    if (
+        gen.fuel_type == "coal"
+        and gen.unit_id.endswith("_committed")
+        and getattr(gen, "coal_supply", "") == "prb"
+    ):
         return coal_committed_passthrough
     return 1.0
 
