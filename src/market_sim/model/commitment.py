@@ -458,6 +458,7 @@ def apply_commitment_with_coal_pin(
         pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
         emission_rate=fleet_arrays.emission_rate, nox_rate=fleet_arrays.nox_rate,
+        so2_rate=fleet_arrays.so2_rate,
         zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,
         availability=avail, unit_ids=fleet_arrays.unit_ids,
         efficiency_bin=fleet_arrays.efficiency_bin,

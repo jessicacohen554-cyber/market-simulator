@@ -31,6 +31,7 @@ from market_sim.data.fleet import (
     _AGGREGATABLE_FUELS,
     aggregate_fleet,
     apply_coal_tranches,
+    apply_plant_emission_rates,
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
@@ -292,6 +293,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
                 fleet + wecc_generators, config
             )
+        # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific
+        # ones for generators pinned to a single plant, so emission prices
+        # bite at each plant's measured per-MWh-net intensity.
+        if config.use_plant_emission_rates:
+            apply_plant_emission_rates(
+                dispatch_fleet, config.plant_emission_rates_path
+            )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours, iso=iso,
             config=config,
@@ -322,7 +330,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # EACs, then the coal take-or-pay tranche discount. This is the
             # generators' actual cost — it carries no startup-cost markup.
             mc_base = assemble_mc(
-                fleet_arrays, fuel_prices, carbon_price, config.nox_price
+                fleet_arrays, fuel_prices, carbon_price, config.nox_price,
+                so2=(fleet_arrays.so2_rate, config.so2_price),
             )
             # Exogenous EACs shift the cost vector: per-generator EACs
             # lower per-generator MC, wind/solar EACs lower their dispatch
