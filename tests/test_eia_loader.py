@@ -30,10 +30,12 @@ class TestEIALoader(unittest.TestCase):
         self.assertEqual(demand.shape, (n_zones, HOURS_PER_YEAR))
 
     def test_load_demand_caiso_shape_and_import_zone(self):
-        """CAISO has two zones; the WECC_import node carries no load."""
+        """CAISO spans its four zones; the WECC_import node carries no load."""
+        caiso = get_iso_config("CAISO")
         demand = load_demand("CAISO", _TEST_YEAR)
-        self.assertEqual(demand.shape, (2, HOURS_PER_YEAR))
-        self.assertTrue(np.all(demand[1] == 0.0))
+        self.assertEqual(demand.shape, (caiso.n_zones, HOURS_PER_YEAR))
+        wecc = caiso.zone_names.index("WECC_import")
+        self.assertTrue(np.all(demand[wecc] == 0.0))
 
     def test_load_demand_no_nan(self):
         """Allocated zonal demand contains no NaN values."""
