@@ -9,6 +9,7 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
+    Generator,
     bins_to_fleet,
     generators_to_fleet_arrays,
     get_emission_rate,
@@ -295,20 +296,45 @@ class TestCommitmentParams(unittest.TestCase):
         self.assertEqual(_startup_cost(self.peak, self.peak.heat_rate), 0.0)
 
     def test_campd_coal_decommits_in_pass2(self):
-        # CAMPD coal is screened, so apply_commitment_with_coal_pin zeros
-        # its availability in decommitted hours rather than pinning it.
+        # CAMPD coal is screened, so apply_commitment_with_coal_pin zeros its
+        # availability in decommitted hours rather than pinning it — as long
+        # as other capacity in the zone covers the P1 load, so the adequacy
+        # backstop does not need to restore it.
+        bins = load_campd_bins(BINS_CSV)
+        coal = bins[bins["Plant_Group"] == "COAL"].head(1)
+        fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
+        base = next(g for g in fleet if g.unit_id.endswith("_committed"))
+        # A large gas unit in the same zone, committed every hour, covers the
+        # zone's P1 thermal load so decommitting coal creates no shortfall.
+        gas = Generator(
+            unit_id="GAS", name="GAS", zone=base.zone, fuel_type="gas_cc",
+            pmax_mw=base.pmax_mw * 5.0, pmin_mw=0.0, heat_rate=7.0, eford=0.0,
+        )
+        gens = [base, gas]
+        arrays = generators_to_fleet_arrays(gens, ZONE_NAMES, hours=8)
+        committed = np.ones((2, 8), dtype=bool)
+        committed[0, 2:5] = False  # a 3-hour coal decommit window
+        p1 = np.zeros((2, 8))
+        p1[0] = base.pmax_mw * 0.6  # coal ran in P1; gas idle
+        out = apply_commitment_with_coal_pin(arrays, committed, p1, gens)
+        self.assertTrue(np.all(out.availability[0, 2:5] == 0.0))
+        self.assertTrue(np.all(out.availability[0, :2] > 0.0))
+        self.assertTrue(np.all(out.availability[0, 5:] > 0.0))
+
+    def test_backstop_prevents_coal_decommit_when_zone_would_be_short(self):
+        # If decommitting screened coal would drop zone capacity below the P1
+        # thermal level, the adequacy backstop restores coal to its P1
+        # availability so P2 cannot create unmet demand.
         bins = load_campd_bins(BINS_CSV)
         coal = bins[bins["Plant_Group"] == "COAL"].head(1)
         fleet, _ = bins_to_fleet(coal, ZONE_NAMES, self.config)
         base = next(g for g in fleet if g.unit_id.endswith("_committed"))
         arrays = generators_to_fleet_arrays([base], ZONE_NAMES, hours=8)
         committed = np.ones((1, 8), dtype=bool)
-        committed[0, 2:5] = False  # a 3-hour decommit window
-        p1 = np.full((1, 8), base.pmax_mw * 0.6)
+        committed[0, 2:5] = False
+        p1 = np.full((1, 8), base.pmax_mw * 0.6)  # only unit in the zone
         out = apply_commitment_with_coal_pin(arrays, committed, p1, [base])
-        self.assertTrue(np.all(out.availability[0, 2:5] == 0.0))
-        self.assertTrue(np.all(out.availability[0, :2] > 0.0))
-        self.assertTrue(np.all(out.availability[0, 5:] > 0.0))
+        np.testing.assert_allclose(out.availability[0, 2:5], 0.6)
 
 
 class TestMustRunEmissions(unittest.TestCase):
