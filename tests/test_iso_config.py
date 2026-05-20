@@ -109,9 +109,72 @@ class TestISOConfig(unittest.TestCase):
         miso = get_iso_config("MISO")
         self.assertEqual(miso.voll, 2000.0)
 
+    def test_pjm_has_four_zones(self):
+        """PJM defines four aggregated west-to-east zones."""
+        pjm = get_iso_config("PJM")
+        self.assertEqual(pjm.n_zones, 4)
+        self.assertEqual(
+            set(pjm.zone_names),
+            {"PJM_West", "PJM_East", "PJM_Central", "PJM_South"},
+        )
+
+    def test_pjm_has_three_corridor_links(self):
+        """PJM models its three binding congestion corridors as links.
+
+        West→East (AP South / 5004-5005), Central→East (Eastern/ChesPenn),
+        and West→South (AEP-Dominion) — a connected three-link spanning tree.
+        """
+        pjm = get_iso_config("PJM")
+        self.assertEqual(pjm.n_links, 3)
+        corridors = {(link.from_zone, link.to_zone) for link in pjm.links}
+        self.assertEqual(
+            corridors,
+            {
+                ("PJM_West", "PJM_East"),
+                ("PJM_Central", "PJM_East"),
+                ("PJM_West", "PJM_South"),
+            },
+        )
+
+    def test_pjm_topology_connected(self):
+        """Every PJM zone is reachable, so no zone is islanded."""
+        pjm = get_iso_config("PJM")
+        adjacency: dict[str, set[str]] = {z: set() for z in pjm.zone_names}
+        for link in pjm.links:
+            adjacency[link.from_zone].add(link.to_zone)
+            adjacency[link.to_zone].add(link.from_zone)
+        seen = {pjm.zone_names[0]}
+        stack = [pjm.zone_names[0]]
+        while stack:
+            for neighbor in adjacency[stack.pop()]:
+                if neighbor not in seen:
+                    seen.add(neighbor)
+                    stack.append(neighbor)
+        self.assertEqual(seen, set(pjm.zone_names))
+
+    def test_pjm_load_shares_sum_to_one(self):
+        """PJM zonal-peak load shares sum to 1.0."""
+        pjm = get_iso_config("PJM")
+        total = sum(zone.load_share for zone in pjm.zones)
+        self.assertAlmostEqual(total, 1.0)
+
+    def test_pjm_west_is_largest_zone(self):
+        """The western AEP/ComEd belt carries the largest load share."""
+        pjm = get_iso_config("PJM")
+        largest = max(pjm.zones, key=lambda z: z.load_share)
+        self.assertEqual(largest.name, "PJM_West")
+
+    def test_pjm_validates(self):
+        """PJM topology passes the consistency check."""
+        get_iso_config("PJM").validate_topology()
+
+    def test_pjm_voll_is_2000(self):
+        """PJM uses a VOLL of $2,000/MWh (RPM provides capacity revenue)."""
+        self.assertEqual(get_iso_config("PJM").voll, 2000.0)
+
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
-        for iso_name in ("ERCOT", "CAISO", "MISO"):
+        for iso_name in ("ERCOT", "CAISO", "MISO", "PJM"):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
             for link in config.links:
