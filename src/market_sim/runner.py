@@ -284,7 +284,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # handled via assemble_mc using fuel_fracs directly.)
             fuel_fracs = [
                 campd_tranche_fuel_frac(
-                    g, config.coal_committed_fuel_passthrough
+                    g, config.coal_prb_passthrough
                 )
                 for g in dispatch_fleet
             ]
