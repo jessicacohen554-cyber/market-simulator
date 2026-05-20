@@ -272,6 +272,21 @@ class ScenarioConfig:
     coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
     coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
 
+    # Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plants
+    # whose per-plant must-run floor is <= coal_prb_follower_mustrun_max use a
+    # SEPARATE follower-tier sigmoid (coal_prb_follower_*); the rest use the
+    # baseload sigmoid above. The low-floor units are load-followers (they
+    # cycle), not baseload price-takers, so they can want a different curve.
+    # Follower params default to the baseload values, so the toggle is a no-op
+    # until tuned. Requires coal_prb_passthrough_sigmoid and
+    # coal_mustrun_per_plant.
+    coal_prb_passthrough_tiered: bool = False
+    coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
+    coal_prb_follower_floor: float = 0.68
+    coal_prb_follower_ceil: float = 1.35
+    coal_prb_follower_gas_mid: float = 2.85
+    coal_prb_follower_gas_slope: float = 2.5
+
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
     # this value; the committed/economic/peaking grid tranches rescale to fill
@@ -286,6 +301,14 @@ class ScenarioConfig:
     # floor. Plants absent from the table fall back to the uniform override or
     # the CSV value. The historic outage overlay still applies on top.
     coal_mustrun_per_plant: bool = False
+
+    # When True, drop the statistical planned-outage (POF) derate on coal —
+    # planned maintenance is now captured by the historic outage overlay, so
+    # the POF would double-count. Keep WEFOR (forced outages) in the non-summer
+    # months and the weather/performance derate all year; no POF and no
+    # summer->shoulder WEFOR redistribution. Coal only; other thermal classes
+    # keep the full POF/WEFOR seasonal model.
+    coal_drop_pof: bool = False
 
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
@@ -470,9 +493,16 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_passthrough_ceil": 3,
     "coal_prb_passthrough_gas_mid": 3,
     "coal_prb_passthrough_gas_slope": 3,
+    "coal_prb_passthrough_tiered": 3,
+    "coal_prb_follower_mustrun_max": 3,
+    "coal_prb_follower_floor": 3,
+    "coal_prb_follower_ceil": 3,
+    "coal_prb_follower_gas_mid": 3,
+    "coal_prb_follower_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
+    "coal_drop_pof": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
