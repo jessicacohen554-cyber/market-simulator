@@ -272,6 +272,14 @@ def _dispatch_frame(
             supply.append("")
         klass.append(k)
 
+    # Zonal LMP (the dispatch LP's energy-balance dual) carried per
+    # generator-hour, so unit revenue (mw x lmp) and commitment economics are
+    # queryable straight from this frame. zone_idx maps each generator to its
+    # zone's price row.
+    prices = np.asarray(result.prices, dtype=np.float32)
+    zone_to_idx = {z: i for i, z in enumerate(zone_names)}
+    gen_zidx = np.array([zone_to_idx[z] for z in zones], dtype=int)
+
     rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
     hours = np.tile(np.arange(T, dtype=np.int32), n_gen)
     frames = [pd.DataFrame({
@@ -283,6 +291,7 @@ def _dispatch_frame(
         "zone": rep(zones),
         "hour": hours,
         "mw": disp.reshape(-1),
+        "lmp": prices[gen_zidx, :].reshape(-1),
     })]
 
     for name, arr in (
@@ -296,6 +305,7 @@ def _dispatch_frame(
                 "plant_code": np.int32(0),
                 "klass": name, "fuel": name, "supply": "",
                 "zone": zone, "hour": np.arange(T, dtype=np.int32), "mw": a[z],
+                "lmp": prices[z],
             }))
 
     df = pd.concat(frames, ignore_index=True)
@@ -304,6 +314,7 @@ def _dispatch_frame(
     for col in ("pass", "unit_id", "klass", "fuel", "supply", "zone"):
         df[col] = df[col].astype("category")
     df["mw"] = df["mw"].astype(np.float32)
+    df["lmp"] = df["lmp"].astype(np.float32)
     return df
 
 
