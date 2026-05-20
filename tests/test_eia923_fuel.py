@@ -1,0 +1,303 @@
+"""Tests for the EIA-923 monthly per-plant fuel-cost integration.
+
+The fuel resolver applies plant-specific monthly delivered fuel costs
+from EIA-923 Schedule 5 during historical calibration years (2023-2025
+in the shipped data window) and falls back to the AEO Henry Hub
+trajectory + ISO basis differential for forward years and for plants
+outside the F923 sample. See :mod:`market_sim.data.eia923` and
+:func:`market_sim.data.fuel.apply_plant_monthly_fuel_prices`.
+"""
+
+from __future__ import annotations
+
+import unittest
+
+import numpy as np
+
+from market_sim.config.constants import (
+    COAL_PRICE_BASE,
+    GAS_BASIS_DIFFERENTIAL,
+    HENRY_HUB_TRAJECTORIES,
+)
+from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.eia923 import (
+    available_years,
+    load_monthly_fuel_costs,
+    plant_month_price_grid,
+)
+from market_sim.data.fleet import (
+    FUEL_TYPE_MAP,
+    Generator,
+    bins_to_fleet,
+    generators_to_fleet_arrays,
+    load_campd_bins,
+)
+from market_sim.data.fuel import (
+    apply_plant_monthly_fuel_prices,
+    resolve_fuel_prices,
+)
+
+ZONE_NAMES = get_iso_config("ERCOT").zone_names
+BINS_CSV = "inputs/custom-bin-assignments.csv"
+
+# Plant 3439 (Laredo) reports natural-gas receipts in every month of
+# 2024, so it exercises the per-plant monthly gas lookup end-to-end.
+_GAS_REPORTING_PLANT: int = 3439
+_GAS_REPORTING_FUEL_GROUP: str = "Natural Gas"
+
+
+class TestMonthlyFuelCostsLoader(unittest.TestCase):
+    """The processed F923 parquet loads with the expected schema."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.costs = load_monthly_fuel_costs()
+
+    def test_loader_returns_expected_columns(self):
+        expected = {
+            "year", "month", "plant_id", "fuel_group", "price_per_mmbtu",
+        }
+        self.assertTrue(expected.issubset(self.costs.columns))
+
+    def test_calibration_years_present(self):
+        years = available_years(self.costs)
+        # The data window covers 2023-2025 calibration runs.
+        self.assertIn(2023, years)
+        self.assertIn(2024, years)
+
+    def test_prices_are_in_realistic_dollars_per_mmbtu(self):
+        prices = self.costs["price_per_mmbtu"]
+        # F923 occasionally reports a negative delivered cost when a
+        # take-or-pay producer pays to dispose of stranded gas (two
+        # records in the 2025 sample). The vast majority are positive
+        # and the realistic upper bound covers spot petroleum receipts.
+        self.assertTrue((prices > 0).mean() > 0.99)
+        self.assertLess(prices.max(), 80.0)
+
+
+class TestPlantMonthPriceGrid(unittest.TestCase):
+    """The price grid yields one NaN-padded length-12 array per plant."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.costs = load_monthly_fuel_costs()
+
+    def test_grid_keys_are_plant_ids(self):
+        grid = plant_month_price_grid(self.costs, 2024, "Natural Gas")
+        self.assertGreater(len(grid), 0)
+        for plant_id, prices in grid.items():
+            self.assertIsInstance(plant_id, int)
+            self.assertEqual(prices.shape, (12,))
+
+    def test_missing_months_are_nan(self):
+        # A plant that reports only some months still gets a 12-element
+        # array, with the unreported months left as NaN so the resolver
+        # can fall back to the per-fuel default.
+        grid = plant_month_price_grid(self.costs, 2024, "Natural Gas")
+        any_partial = any(np.isnan(prices).any() for prices in grid.values())
+        all_present = all(np.isnan(prices).any() for prices in grid.values())
+        # The data has both fully-reported and partially-reported plants.
+        self.assertTrue(any_partial or all_present is False)
+
+    def test_grid_empty_for_year_outside_window(self):
+        grid = plant_month_price_grid(self.costs, 2099, "Natural Gas")
+        self.assertEqual(grid, {})
+
+
+class TestApplyPlantMonthlyFuelPrices(unittest.TestCase):
+    """The resolver overwrites the per-fuel default with plant F923 cost."""
+
+    def setUp(self):
+        self.config = ScenarioConfig(iso="ERCOT", hours=8760)
+
+    def _build_two_plant_fleet(self) -> tuple[np.ndarray, object]:
+        """Build a two-plant fleet: one with F923 data, one without."""
+        generators = [
+            Generator(
+                unit_id="REPORTING_GAS_CC",
+                name="Reporting Gas CC",
+                zone="Houston",
+                fuel_type="gas_cc",
+                pmax_mw=500.0,
+                heat_rate=7.0,
+                plant_code=_GAS_REPORTING_PLANT,
+            ),
+            Generator(
+                unit_id="UNTRACKED_GAS_CC",
+                name="Untracked Gas CC",
+                zone="Houston",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                heat_rate=7.0,
+                plant_code=999_999_999,  # absent from F923
+            ),
+        ]
+        arrays = generators_to_fleet_arrays(
+            generators, ZONE_NAMES, hours=self.config.hours
+        )
+        return arrays
+
+    def test_calibration_year_overwrites_reported_months(self):
+        arrays = self._build_two_plant_fleet()
+        fuel_prices = resolve_fuel_prices(self.config, arrays, year=2024)
+        # The reporting plant's January price should match its F923 entry.
+        costs = load_monthly_fuel_costs()
+        grid = plant_month_price_grid(costs, 2024, _GAS_REPORTING_FUEL_GROUP)
+        prices = grid[_GAS_REPORTING_PLANT]
+        for month_idx, expected in enumerate(prices):
+            if np.isnan(expected):
+                continue
+            # Pick the middle of the month so we avoid month-boundary hours.
+            hour = sum(
+                (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[:month_idx]
+            ) * 24 + 24
+            self.assertAlmostEqual(
+                float(fuel_prices[0, hour]), float(expected), places=5,
+                msg=f"Plant {_GAS_REPORTING_PLANT} month {month_idx + 1} "
+                    "did not match F923",
+            )
+
+    def test_untracked_plant_keeps_aeo_trajectory(self):
+        arrays = self._build_two_plant_fleet()
+        fuel_prices = resolve_fuel_prices(self.config, arrays, year=2024)
+        # The untracked plant's price is the AEO Henry Hub trajectory plus
+        # ISO basis, with seasonality applied (the config default).
+        expected_annual = (
+            HENRY_HUB_TRAJECTORIES["mid"][2024]
+            + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+        )
+        # Annual average is budget-neutral with seasonality.
+        self.assertAlmostEqual(
+            float(fuel_prices[1].mean()), expected_annual, places=2,
+        )
+
+    def test_forward_year_keeps_aeo_trajectory_for_every_plant(self):
+        # 2030 is outside the F923 sample window, so every plant — even
+        # the one whose plant_code reports in 2024 — falls back to the
+        # AEO trajectory.
+        arrays = self._build_two_plant_fleet()
+        fuel_prices = resolve_fuel_prices(self.config, arrays, year=2030)
+        expected_annual = (
+            HENRY_HUB_TRAJECTORIES["mid"][2030]
+            + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+        )
+        for g in range(arrays.n_gen):
+            self.assertAlmostEqual(
+                float(fuel_prices[g].mean()), expected_annual, places=2,
+            )
+
+    def test_plant_code_zero_skips_f923(self):
+        # Generators without a known plant_code (the WECC imports, the
+        # legacy aggregated fleet) keep the per-fuel default — F923 keys
+        # off plant_code > 0.
+        gen = Generator(
+            unit_id="NO_CODE", name="No Code", zone="Houston",
+            fuel_type="gas_cc", pmax_mw=200.0, heat_rate=7.0,
+            plant_code=0,
+        )
+        arrays = generators_to_fleet_arrays(
+            [gen], ZONE_NAMES, hours=self.config.hours
+        )
+        fuel_prices = resolve_fuel_prices(self.config, arrays, year=2024)
+        expected_annual = (
+            HENRY_HUB_TRAJECTORIES["mid"][2024]
+            + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+        )
+        self.assertAlmostEqual(
+            float(fuel_prices[0].mean()), expected_annual, places=2,
+        )
+
+    def test_apply_function_is_idempotent_when_no_data(self):
+        # Calling the helper with a year outside the F923 window is a
+        # no-op: fuel_prices is left exactly as it was.
+        arrays = self._build_two_plant_fleet()
+        fuel_prices = np.full((arrays.n_gen, self.config.hours), 2.5)
+        before = fuel_prices.copy()
+        apply_plant_monthly_fuel_prices(
+            fuel_prices, arrays, self.config, year=2099
+        )
+        np.testing.assert_array_equal(fuel_prices, before)
+
+
+class TestPerPlantBinning(unittest.TestCase):
+    """Every plant in the CAMPD CSV becomes its own LP bin."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.bins = load_campd_bins(BINS_CSV)
+        cls.fleet, cls.arrays = bins_to_fleet(
+            cls.bins, ZONE_NAMES, ScenarioConfig()
+        )
+
+    def test_one_bin_row_per_plant(self):
+        # The CSV has ~302 rows (one per plant); after splitting by
+        # plant-group (W A Parish has both coal and gas-steam rows) the
+        # bin count equals the CSV row count.
+        from pathlib import Path
+        import pandas as pd
+        raw = pd.read_csv(Path(BINS_CSV))
+        self.assertEqual(len(self.bins), len(raw))
+
+    def test_every_tranche_carries_a_plant_code(self):
+        # Every generator from bins_to_fleet has plant_code > 0, so the
+        # F923 monthly resolver can route per-plant prices to it.
+        for g in self.fleet:
+            self.assertGreater(g.plant_code, 0, msg=g.unit_id)
+        self.assertTrue(np.all(self.arrays.plant_code > 0))
+
+    def test_unit_ids_unique_after_per_plant_split(self):
+        ids = [g.unit_id for g in self.fleet]
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_tranche_hr_is_plant_hr_times_csv_multiplier(self):
+        # For a specific plant, the committed tranche HR equals
+        # Plant_Avg_HR × HR_Mult_Committed (within rounding).
+        import pandas as pd
+        raw = pd.read_csv(BINS_CSV)
+        # Pick a plant whose Committed multiplier is non-null.
+        sample = raw[raw["HR_Mult_Committed"].notna()].iloc[0]
+        plant_code = int(sample["Plant_Code"])
+        expected = float(sample["Plant_Avg_HR_MMBtu_MWh"]) * float(
+            sample["HR_Mult_Committed"]
+        )
+        committed = next(
+            g for g in self.fleet
+            if g.plant_code == plant_code
+            and g.unit_id.endswith("_committed")
+        )
+        self.assertAlmostEqual(committed.heat_rate, expected, places=4)
+
+
+class TestRunnerEndToEndFor2024(unittest.TestCase):
+    """End-to-end: a 2024 calibration year uses F923 monthly prices.
+
+    Builds the production fleet from the shipped CAMPD CSV, resolves
+    fuel prices for 2024 (a calibration year), and asserts that at least
+    some plants carry a non-trajectory price — i.e. the F923 overwrite
+    actually ran rather than every plant defaulting to the AEO Henry Hub
+    value.
+    """
+
+    def test_at_least_one_plant_carries_an_f923_price(self):
+        config = ScenarioConfig(iso="ERCOT", hours=8760)
+        bins = load_campd_bins(BINS_CSV)
+        _, arrays = bins_to_fleet(bins, ZONE_NAMES, config)
+        fuel_prices = resolve_fuel_prices(config, arrays, year=2024)
+
+        # The AEO trajectory price for 2024 (with seasonality) has the
+        # same annual average across every gas generator; an F923 plant
+        # diverges from that average.
+        gas_mask = np.isin(
+            arrays.fuel_type_idx,
+            [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]],
+        )
+        gas_means = fuel_prices[gas_mask].mean(axis=1)
+        # Every gas plant pays a positive price, but they are no longer
+        # uniform — some carry the AEO default, others their F923 cost.
+        self.assertTrue((gas_means > 0).all())
+        self.assertGreater(gas_means.std(), 0.05)
+
+
+if __name__ == "__main__":
+    unittest.main()

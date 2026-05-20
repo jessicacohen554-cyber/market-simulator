@@ -29,7 +29,7 @@ ZONE_NAMES = get_iso_config("ERCOT").zone_names
 
 
 def _bin_row(**overrides) -> dict:
-    """Return one aggregated-bin row, with no peaking tranche by default.
+    """Return one per-plant bin row, with no peaking tranche by default.
 
     The per-tranche heat rates default to the legacy CC config multipliers
     applied to ``hr_weighted`` so the tranche-merit assertions below have
@@ -42,6 +42,8 @@ def _bin_row(**overrides) -> dict:
         "ERCOT_Zone": "Houston",
         "Bin_Number": 1,
         "Bin_Label": "T1",
+        "Plant_Code": 1,
+        "Plant_Name": "Test Plant",
         "capacity_mw": 1000.0,
         "hr_weighted": hr,
         "hr_mr": hr,
@@ -101,8 +103,14 @@ class TestTrancheMeritOrder(unittest.TestCase):
         # committed tranche.
         config = ScenarioConfig()
         bins = _bins(
-            _bin_row(Bin_Number=1, Bin_Label="A", hr_weighted=6.0),
-            _bin_row(Bin_Number=2, Bin_Label="B", hr_weighted=10.0),
+            _bin_row(
+                Bin_Number=1, Bin_Label="A", Plant_Code=1001,
+                hr_weighted=6.0,
+            ),
+            _bin_row(
+                Bin_Number=2, Bin_Label="B", Plant_Code=1002,
+                hr_weighted=10.0,
+            ),
         )
         fleet, _ = bins_to_fleet(bins, ZONE_NAMES, config)
 
