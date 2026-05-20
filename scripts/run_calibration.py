@@ -193,9 +193,9 @@ def _calibration_config(
         wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
         #   (shape preserved) so coal can hold its shoulder-month output
         #   rather than being availability-capped in spring/autumn.
-        coal_prb_passthrough=0.85,  # PRB price-takes across all capacity it
+        coal_prb_passthrough=0.83,  # PRB price-takes across all capacity it
         #   runs (committed + economic + peaking tranches, not just
-        #   committed): each bids VOM + 85% of fuel so online PRB clears the
+        #   committed): each bids VOM + 83% of fuel so online PRB clears the
         #   merit order rather than being priced out by cheap gas. Lignite is
         #   left at full cost.
     )
