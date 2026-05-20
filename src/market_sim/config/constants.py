@@ -162,12 +162,11 @@ GAS_AVAILABILITY_FACTOR: dict[str, float] = {
 # Spring and fall dips reflect scheduled refueling outages.
 # Source: NRC PRIS 2019-2023.
 NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
-    # NRC PRIS 2019-2023 — scaled to target 95% annual CF with EFORD=0.03.
-    # Spring (Mar-Apr) and fall (Oct) dips reflect typical refueling outage
-    # windows. Shape preserved from NRC data; level adjusted.
-    # Effective availability = (1 - 0.03) × ~0.979 ≈ 0.950
+    # Spring (Mar-May) and fall (Oct) dips reflect ERCOT refueling-outage
+    # windows; the deep April / October troughs match the observed EIA-930
+    # nuclear monthly shape for Comanche Peak and South Texas.
     # Tier: 3 (calibration)
-    "ERCOT": [1.00, 1.00, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "ERCOT": [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, 0.95, 0.96, 0.95, 0.72, 0.83, 0.99],
     "CAISO": [1.00, 0.99, 0.96, 0.95, 0.97, 1.00, 1.00, 1.00, 0.98, 0.95, 0.97, 1.00],
     "PJM":   [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
     "NYISO": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],

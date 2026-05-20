@@ -671,6 +671,25 @@ def split_coal_tranches(
     return expanded, fuel_fracs
 
 
+def campd_tranche_fuel_frac(
+    gen: Generator, coal_committed_passthrough: float = 1.0
+) -> float:
+    """Return the fuel-cost passthrough for one CAMPD tranche generator.
+
+    Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
+    take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
+    they bid VOM + carbon + NOx only. Coal *committed* tranches pass
+    ``coal_committed_passthrough`` < 1.0 to price-take: an already-online
+    coal unit bids to clear rather than on full marginal cost. Every other
+    tranche passes full fuel cost (``1.0``).
+    """
+    if gen.unit_id.endswith("_mustrun"):
+        return 0.0
+    if gen.fuel_type == "coal" and gen.unit_id.endswith("_committed"):
+        return coal_committed_passthrough
+    return 1.0
+
+
 def apply_coal_tranches(
     mc: np.ndarray,
     generators: list[Generator],
