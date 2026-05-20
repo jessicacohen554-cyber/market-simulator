@@ -1365,7 +1365,7 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     6178: "prb",       # Coleto Creek — PRB by rail
     6179: "prb",       # Fayette / Sam Seymour — PRB by rail
     7097: "prb",       # J K Spruce — PRB by rail
-    56257: "prb",      # Sandy Creek — PRB by rail
+    56611: "prb",      # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
