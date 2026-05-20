@@ -152,6 +152,8 @@ def _calibration_config(
     coal_passthrough: float | None = None,
     commitment_enabled: bool = False,
     commitment_screen_coal: bool = True,
+    coal_lignite_mustrun: float | None = None,
+    coal_prb_mustrun: float | None = None,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -193,11 +195,11 @@ def _calibration_config(
         wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
         #   (shape preserved) so coal can hold its shoulder-month output
         #   rather than being availability-capped in spring/autumn.
-        coal_prb_passthrough=0.75,  # PRB price-takes across all capacity it
-        #   runs (committed + economic + peaking tranches, not just
-        #   committed): each bids VOM + 75% of fuel so online PRB clears the
-        #   merit order rather than being priced out by cheap gas. Lignite is
-        #   left at full cost.
+        coal_prb_passthrough=1.0,  # passthrough OFF — it is gas-price
+        #   fragile (over-runs coal at high gas). Coal level is set by the
+        #   gas-independent must-run floor below instead.
+        coal_lignite_mustrun_override=coal_lignite_mustrun,
+        coal_prb_mustrun_override=coal_prb_mustrun,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -252,6 +254,8 @@ def run_year(
     coal_passthrough: float | None = None,
     commitment_enabled: bool = False,
     commitment_screen_coal: bool = True,
+    coal_lignite_mustrun: float | None = None,
+    coal_prb_mustrun: float | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -280,6 +284,7 @@ def run_year(
     config = _calibration_config(
         year, iso, hours, gas_price, coal_passthrough,
         commitment_enabled, commitment_screen_coal,
+        coal_lignite_mustrun, coal_prb_mustrun,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
