@@ -154,6 +154,7 @@ def _calibration_config(
     commitment_screen_coal: bool = True,
     coal_lignite_mustrun: float | None = None,
     coal_prb_mustrun: float | None = None,
+    coal_prb_passthrough: float = 1.0,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -195,9 +196,9 @@ def _calibration_config(
         wefor_multiplier=0.7,  # lighten thermal forced-outage rates ~30%
         #   (shape preserved) so coal can hold its shoulder-month output
         #   rather than being availability-capped in spring/autumn.
-        coal_prb_passthrough=1.0,  # passthrough OFF — it is gas-price
-        #   fragile (over-runs coal at high gas). Coal level is set by the
-        #   gas-independent must-run floor below instead.
+        coal_prb_passthrough=coal_prb_passthrough,  # default 1.0 = OFF (it is
+        #   gas-price fragile; coal level set by the must-run floor). Set via
+        #   --coal-prb-passthrough to re-test the price-taking discount.
         coal_lignite_mustrun_override=coal_lignite_mustrun,
         coal_prb_mustrun_override=coal_prb_mustrun,
     )
@@ -256,6 +257,7 @@ def run_year(
     commitment_screen_coal: bool = True,
     coal_lignite_mustrun: float | None = None,
     coal_prb_mustrun: float | None = None,
+    coal_prb_passthrough: float = 1.0,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -285,6 +287,7 @@ def run_year(
         year, iso, hours, gas_price, coal_passthrough,
         commitment_enabled, commitment_screen_coal,
         coal_lignite_mustrun, coal_prb_mustrun,
+        coal_prb_passthrough,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names

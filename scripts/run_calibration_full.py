@@ -415,6 +415,7 @@ def solve_and_persist(
     commitment: bool, screen_coal: bool, run_dir: Path,
     coal_lignite_mustrun: float | None = None,
     coal_prb_mustrun: float | None = None,
+    coal_prb_passthrough: float = 1.0,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -442,6 +443,7 @@ def solve_and_persist(
             commitment_enabled=commitment, commitment_screen_coal=screen_coal,
             coal_lignite_mustrun=coal_lignite_mustrun,
             coal_prb_mustrun=coal_prb_mustrun,
+            coal_prb_passthrough=coal_prb_passthrough,
         )
         labelled = [("P2" if result_p1 is not None else "P1", result)]
         if result_p1 is not None:
@@ -484,6 +486,7 @@ def solve_and_persist(
         "commitment_screen_coal": screen_coal, "gas_prices": gas_prices,
         "coal_lignite_mustrun": coal_lignite_mustrun,
         "coal_prb_mustrun": coal_prb_mustrun,
+        "coal_prb_passthrough": coal_prb_passthrough,
         "td_loss_factor": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
@@ -803,6 +806,10 @@ def main() -> None:
         help="Override PRB coal must-run %% (sweep knob).",
     )
     parser.add_argument(
+        "--coal-prb-passthrough", type=float, default=1.0,
+        help="PRB above-must-run fuel passthrough (1.0 = off).",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -829,6 +836,7 @@ def main() -> None:
         run_dir=run_dir,
         coal_lignite_mustrun=args.coal_lignite_mustrun,
         coal_prb_mustrun=args.coal_prb_mustrun,
+        coal_prb_passthrough=args.coal_prb_passthrough,
     )
     report_run(run_dir)
 
