@@ -1,0 +1,213 @@
+# New-ISO Addition Protocol & Checklist
+
+Status: **planning** (no code changes yet). This is the master document for
+expanding the simulator from ERCOT (+ partial CAISO/PJM/NYISO/NEISO) to a
+faithful multi-ISO backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, SPP,
+and NYISO**.
+
+Companion documents in this directory:
+
+- `01-data-needs-and-upload-manifest.md` — every data file each ISO needs,
+  its source, and exactly what must be uploaded to the repo.
+- `02-market-design-modules.md` — catalogue of market-design features that
+  must become on/off modules (capacity/RA, reserves, scarcity/VOLL, hydro,
+  state RPS, imports) and a modularity assessment of the dispatch LP.
+- `03-prompt-pack-plan.md` — sequenced, self-contained build prompts for the
+  modules, new fuel types (oil, biomass), and new fuel classes.
+- `04-transmission-zones-and-congestion.md` — per-ISO zone topology,
+  congestion corridors, TTC sourcing, and renewable HSL sourcing.
+
+---
+
+## 0. Where we are today (baseline)
+
+| ISO   | Config in `iso_configs.py`            | BA map | Zone assign | Calib. ref | EIA-930 hourly | Backcast |
+|-------|----------------------------------------|--------|-------------|------------|----------------|----------|
+| ERCOT | Full: 6 zones, cited TTCs, real CF/HSL | ERCO   | lat/lon+FIPS| 2021–2025  | `ERCO hourly`  | **Yes**  |
+| CAISO | Stub: 1 zone + WECC import node        | CISO   | single-zone | none       | none           | No       |
+| PJM   | Stub: 4 zones, **placeholder** TTC/share| PJM    | largest-zone fallback only | none | none | No       |
+| NYISO | Stub: 1 zone                           | NYIS   | single-zone | none       | none           | No       |
+| NEISO | Stub: 1 zone                           | ISNE   | single-zone | none       | none           | No       |
+| MISO  | **absent**                             | absent | absent      | none       | none           | No       |
+| SPP   | **absent**                             | absent | absent      | none       | none           | No       |
+
+**The dispatch LP itself is ISO-agnostic and well-parameterized** on
+`n_zones`, `n_storage`, `n_links`, the node-link `incidence` matrix, and per-
+link `ttc`. Topology scaling needs no LP changes. The gaps are (a) per-ISO
+*data and topology*, and (b) *market-design fidelity* (energy-only LP today;
+see doc 02).
+
+The reference implementation to mirror is ERCOT. Every step below has a known
+ERCOT analogue — cite it in the per-ISO work so we stay faithful to the
+existing, calibrated pattern.
+
+---
+
+## 1. The eight-stage addition protocol
+
+Each ISO moves through these stages in order. A stage is "done" only when its
+checklist (Section 2) is green and the regression tests still pass.
+
+### Stage A — Topology definition
+Define zones, load shares, transfer links, and TTCs in
+`src/market_sim/config/iso_configs.py` (`_<iso>_config()` builder + entry in
+`_ISO_BUILDERS`). For single-zone ISOs (start here) this is trivial; for
+zonal ISOs (PJM, MISO, SPP) this is the largest topology task — see doc 04.
+- ERCOT analogue: `_ercot_config()` with WESTEX/PNHNDL-derived TTCs.
+- Validation: `ISOConfig.validate_topology()` (load shares sum to 1.0; links
+  reference real zones). Add a case to `tests/test_iso_config.py`.
+
+### Stage B — Plant-to-zone assignment
+Map every generator's ORIS plant code to a model zone in
+`src/market_sim/data/zone_assignment.py`:
+- Add the ISO to `_ISO_TO_BA_CODE` (MISO→`MISO`, SPP→`SWPP`).
+- Single-zone ISOs: add to `_SINGLE_ZONE`.
+- Multi-zone ISOs: add a geographic splitter (lat/lon + FIPS → zone) and a
+  `_LARGEST_ZONE` fallback. ERCOT's Houston-county FIPS logic is the template.
+- Validation: extend `tests/test_zone_assignment.py`; every plant in the BA
+  must resolve to a real zone, none silently dropped.
+
+### Stage C — Fleet ingestion
+Confirm the fleet loader (`data/fleet.py`, `data/eia923.py`, `data/campd.py`,
+`data/eia_loader.py`) picks up the ISO's plants. Most of this is automatic
+once the BA filter and zone map exist, **but** new fuel types in the fleet
+(oil, biomass, MSW, pumped storage) must be added to `FUEL_TYPE_MAP` and given
+heat-rate/VOM/emission parameters — see doc 03, Pack F.
+
+### Stage D — Demand & renewable profiles
+Per backcast year, build the EIA-930 demand series and the wind/solar CF
+profiles (`data/renewables.py`). Multi-zone ISOs need demand disaggregated to
+zones via load shares; renewable CF needs zone-level shaping. Best case is an
+HSL-style uncurtailed profile (ERCOT 2023 pattern); fallback is the EIA-930
+delivered-generation distribution. See doc 01 §3 and doc 04 §4.
+
+### Stage E — Calibration reference
+Extend `scripts/build_calibration_reference.py` to emit, per ISO-year:
+EIA-860 renewable capacity (year-end totals, zone shares, monthly ramp),
+measured Henry Hub (or basis-adjusted regional gas) price, EIA-930 demand
+totals, and an eGRID generation/emissions benchmark. Output lands in
+`inputs/calibration/{ISO}_{year}_renewable_capacity.csv` and
+`calibration_reference.json`.
+
+### Stage F — Market-design module wiring
+Turn on the modules this ISO needs (capacity/RA accounting, reserves, hydro
+energy budgets, state RPS, import/export nodes, scarcity/ORDC). Each is an
+on/off feature controlled by `ScenarioConfig` + `ISOConfig`; see doc 02 for
+the catalogue and doc 03 for the build prompts. **Faithfulness rule:** an ISO
+runs with exactly the mechanisms that ISO actually has — no more, no less.
+
+### Stage G — Backcast run & calibration
+Run `scripts/run_calibration_full.py` (the ERCOT harness) for the ISO across
+2021–2025. Compare modeled vs EIA actuals on: zonal/system price duration,
+fuel-mix generation shares, emissions, curtailment, and net interchange.
+Tune within the documented parameter system (no magic numbers).
+
+### Stage H — Documentation & sign-off
+Record per-ISO calibration results, parameter citations (append to
+`docs/parameter-citations.md`), and any market-design caveats. Update this
+directory's per-ISO status table.
+
+---
+
+## 2. Per-ISO checklist (copy one block per ISO)
+
+```
+ISO: __________   Owner: __________   Target backcast years: __________
+
+STAGE A — Topology
+[ ] Zones enumerated with load shares (sum = 1.0)            src ref: ______
+[ ] Transfer links + TTC values with citations
+[ ] _<iso>_config() added to _ISO_BUILDERS
+[ ] validate_topology() passes; test added
+
+STAGE B — Zone assignment
+[ ] ISO added to _ISO_TO_BA_CODE (BA code: ______)
+[ ] Single-zone: in _SINGLE_ZONE  /  Multi-zone: geo splitter + fallback
+[ ] All BA plants resolve to a zone (no silent drops); test added
+
+STAGE C — Fleet ingestion
+[ ] Fleet loads from EIA-860/923 + CAMPD for this BA
+[ ] New fuel types registered in FUEL_TYPE_MAP with params
+[ ] Plant count & capacity sanity-checked vs ISO published totals
+
+STAGE D — Demand & renewables
+[ ] EIA-930 hourly demand uploaded & loads per backcast year
+[ ] Demand disaggregated to zones (multi-zone)
+[ ] Wind/solar CF profiles built (HSL if available, else EIA-930 dist.)
+[ ] Hydro profile / energy budget sourced (if material)
+
+STAGE E — Calibration reference
+[ ] build_calibration_reference.py extended for ISO
+[ ] {ISO}_{year}_renewable_capacity.csv emitted
+[ ] Regional gas price / basis sourced
+[ ] eGRID emissions benchmark extracted
+
+STAGE F — Market-design modules
+[ ] Capacity/RA mechanism decision (model? exogenous? off?)
+[ ] Reserves/ancillary decision
+[ ] Hydro energy-budget module (if material)
+[ ] State/zonal RPS or CES configured
+[ ] Import/export nodes + interchange handling
+[ ] VOLL / scarcity mechanism set with citation
+
+STAGE G — Backcast & calibration
+[ ] run_calibration_full.py runs clean for all years
+[ ] Price duration curve within tolerance vs actuals
+[ ] Fuel-mix shares within tolerance
+[ ] Emissions within tolerance
+[ ] Net interchange sign/magnitude sane
+
+STAGE H — Docs
+[ ] Parameter citations appended
+[ ] Calibration results logged
+[ ] Market-design caveats documented
+[ ] Status table updated
+```
+
+---
+
+## 3. Suggested sequencing across ISOs
+
+Order by *incremental difficulty* so each ISO reuses the last one's new
+machinery:
+
+1. **CAISO** — already a stub; single main zone + WECC import node already
+   exists. Exercises the import-node and hydro/RA modules first. Highest data
+   availability (OASIS, CAISO renewables).
+2. **NYISO** — single zone today, but real NYISO is 11 zones with major hydro
+   (Niagara/St. Lawrence) and heavy oil/dual-fuel. Good second case for hydro
+   energy budgets + the oil fuel type, before tackling many-zone ISOs.
+3. **ISO-NE (NEISO)** — single zone today; real ISO-NE is load-zone based with
+   large oil/dual-fuel peakers, FCM capacity market, and HQ/NYISO imports.
+4. **PJM** — 4-zone stub with placeholder TTC/shares; the first *large* zonal
+   build (real PJM is 20+ transmission zones; we aggregate). RPM capacity,
+   13-state RPS patchwork.
+5. **MISO** — built from scratch; very large, seasonal capacity construct
+   (PRA), north/central/south sub-regions + the MISO-South contract-path
+   constraint, big wind + coal fleet.
+6. **SPP** — built from scratch; wind-dominated, large geography, RA construct
+   (no centralized capacity market), strong interchange with MISO/ERCOT.
+
+Single-zone first proves the data/calibration pipeline per ISO; multi-zone
+later proves topology + congestion. Capacity/hydro/oil modules are introduced
+exactly when the first ISO that needs them arrives, then reused.
+
+---
+
+## 4. Non-negotiables carried over from `claude.md`
+
+These constrain every ISO addition; do not regress them:
+
+- No Python loops over hours in LP construction — vectorize with
+  `kron`/`tile`/`repeat`/`block_diag`.
+- Renewables stay decision variables on the LHS of energy balance (MC=0,
+  UB = CF×capacity), never netted from demand.
+- Prices remain LP duals on energy-balance rows. No separate pricing model.
+- No magic numbers — every per-ISO parameter cites a source (append to
+  `docs/parameter-citations.md`) and lives in `ScenarioConfig`/`ISOConfig`/
+  `constants.py`.
+- Struct-of-arrays before LP construction; full 8760 hours always.
+- Raw data in `data/` is never modified in place.
+- New market-design modules must be **toggleable** and **default to off** so
+  ERCOT's calibrated behaviour is unchanged when its modules aren't selected.
+```
