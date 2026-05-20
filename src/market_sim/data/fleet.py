@@ -30,6 +30,10 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.outages import (
+    QUALIFYING_PLANT_GROUPS,
+    outage_masks_for_year,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -329,6 +333,39 @@ def generators_to_fleet_arrays(
             if forced is not None:
                 availability[g_idx, :] *= forced
         np.clip(availability, 0.0, 1.0, out=availability)
+
+    # Historic-outage overlay (backcast only). When config.outage_source is
+    # "historic", zero availability for coal/CC plants during their actual
+    # sustained (> 10-day) outage windows, a hard override of the statistical
+    # WEFOR/POF model in those hours. Forward/forecast runs leave outages
+    # statistical (outage_source == "statistical", the default). The per-bin
+    # group filter restricts zeroing to the plant's coal/CC bins, so a plant
+    # carrying both a CC and a non-CC bin only has its CC bin outaged.
+    if config is not None and getattr(
+        config, "outage_source", "statistical"
+    ) == "historic":
+        masks = outage_masks_for_year(
+            config.weather_year,
+            hours,
+            bins_path=getattr(
+                config, "campd_bins_path", "inputs/custom-bin-assignments.csv"
+            ),
+        )
+        if masks:
+            applied = 0
+            for g_idx, gen in enumerate(generators):
+                if gen.plant_group not in QUALIFYING_PLANT_GROUPS:
+                    continue
+                mask = masks.get(int(gen.plant_code))
+                if mask is None:
+                    continue
+                availability[g_idx, mask] = 0.0
+                applied += 1
+            logger.info(
+                "historic outage overlay (%d): zeroed %d coal/CC bin-tranches "
+                "across %d plant(s)",
+                config.weather_year, applied, len(masks),
+            )
 
     return FleetArrays(
         pmax=pmax,

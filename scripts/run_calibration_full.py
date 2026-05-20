@@ -464,6 +464,7 @@ def solve_and_persist(
     coal_prb_mustrun: float | None = None,
     coal_prb_passthrough: float = 1.0,
     persist_p2_state: bool = False,
+    outage_source: str = "historic",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -494,6 +495,7 @@ def solve_and_persist(
             coal_lignite_mustrun=coal_lignite_mustrun,
             coal_prb_mustrun=coal_prb_mustrun,
             coal_prb_passthrough=coal_prb_passthrough,
+            outage_source=outage_source,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -546,6 +548,10 @@ def solve_and_persist(
         "coal_lignite_mustrun": coal_lignite_mustrun,
         "coal_prb_mustrun": coal_prb_mustrun,
         "coal_prb_passthrough": coal_prb_passthrough,
+        "outage_source": outage_source,
+        "coal_plant_monthly_pricing": _calibration_config(
+            years[0], iso, hours, gas_prices[years[0]]
+        ).coal_plant_monthly_pricing,
         "td_loss_factor": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
@@ -1014,6 +1020,12 @@ def main() -> None:
         help="PRB above-must-run fuel passthrough (1.0 = off).",
     )
     parser.add_argument(
+        "--outage-source", choices=["historic", "statistical"],
+        default="historic",
+        help="Coal/CC availability: 'historic' overlays actual >10-day ERCOT "
+             "outages (default backcast); 'statistical' uses WEFOR/POF only.",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -1056,6 +1068,7 @@ def main() -> None:
         coal_prb_mustrun=args.coal_prb_mustrun,
         coal_prb_passthrough=args.coal_prb_passthrough,
         persist_p2_state=args.persist_p2_state,
+        outage_source=args.outage_source,
     )
     report_run(run_dir)
 
