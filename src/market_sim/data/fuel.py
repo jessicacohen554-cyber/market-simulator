@@ -187,7 +187,8 @@ def _expand_monthly_to_hourly(
 
 
 def resolve_fuel_prices(
-    config: ScenarioConfig, fleet: FleetArrays, year: int
+    config: ScenarioConfig, fleet: FleetArrays, year: int,
+    apply_monthly: bool = True,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` delivered fuel price array for the fleet.
 
@@ -248,7 +249,12 @@ def resolve_fuel_prices(
         h2_price = compute_h2_fuel_cost(year, config, config.iso)
         fuel_prices[np.isin(fuel_type_idx, _HYDROGEN_FUEL_IDX)] = h2_price
 
-    apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
+    # Callers that set a coal-supply base (lignite/PRB) before the monthly
+    # overwrite pass apply_monthly=False and call
+    # apply_plant_monthly_fuel_prices themselves afterwards, so the actual
+    # EIA-923 monthly cost takes precedence over the supply-class base.
+    if apply_monthly:
+        apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
 
     return fuel_prices
 
