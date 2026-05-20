@@ -1,13 +1,18 @@
-"""Process EIA-923 Schedule 5 monthly fuel receipts into a per-plant cost table.
+"""Process EIA-923 Schedules 1 and 5 into per-plant generation and cost tables.
 
-The official EIA-923 release ships one Excel workbook per year. Sheet
-"Page 5 Fuel Receipts and Costs" contains one row per fuel receipt, with
-the delivered ``FUEL_COST`` in cents/MMBtu (0.1-cent precision). This
-script aggregates receipts to one row per ``(year, month, plant_id,
-fuel_group)`` weighted by ``QUANTITY``, converts cents/MMBtu to dollars,
-filters to the ERCOT balancing authority and writes the result to
-``inputs/processed/eia923_monthly_fuel_costs.parquet`` for the dispatch
-fuel-price resolver to consume.
+The official EIA-923 release ships one Excel workbook per year covering
+both Page 1 ("Generation and Fuel Data" — one row per
+plant/prime-mover/fuel with monthly net generation, fuel consumption
+and the CHP flag) and Page 5 ("Fuel Receipts and Costs" — one row per
+fuel receipt with delivered cost). This script produces two parquets:
+
+  * ``inputs/processed/eia923_monthly_fuel_costs.parquet`` — per-plant
+    delivered fuel cost from Page 5 (``$/MMBtu`` after the cents→dollars
+    conversion). Consumed by the dispatch fuel-price resolver.
+  * ``inputs/processed/eia923_monthly_generation.parquet`` — per-plant
+    net generation from Page 1 (MWh), keeping the prime-mover, fuel and
+    CHP flag for downstream fossil-class breakdowns. Consumed by the
+    calibration diagnostic.
 
 EIA suppresses delivered cost for many records (``FUEL_COST = '.'``);
 those receipts are dropped before the quantity-weighted aggregation, so
@@ -19,7 +24,7 @@ Usage:
     python scripts/process_f923_fuel_costs.py [--out-dir DIR] [--ba ERCO]
 
 Defaults to processing every ``f923_*.zip`` in
-``inputs/raw-data/`` and writing the ERCO-only parquet.
+``inputs/raw-data/`` and writing the ERCO-only parquets.
 """
 
 from __future__ import annotations
@@ -42,6 +47,14 @@ logger = logging.getLogger("process_f923")
 # first eight rows for the YEAR header rather than hard-coding it.
 _PAGE_5_HEADER_SCAN_ROWS: int = 8
 _PAGE_5_SHEET: str = "Page 5 Fuel Receipts and Costs"
+# Page 1 ("Generation and Fuel Data") sits a few rows further down — the
+# EIA boilerplate is longer. Same scan-for-Plant-Id approach.
+_PAGE_1_SHEET: str = "Page 1 Generation and Fuel Data"
+
+_MONTH_NAMES: tuple[str, ...] = (
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+)
 
 # Columns we keep from the raw receipts sheet, normalised to short names.
 # A column may appear under several spellings across release vintages
@@ -96,27 +109,35 @@ def _extract_schedules_xlsx(zip_path: Path) -> bytes:
         return zf.read(members[0])
 
 
-def _find_header_row(xlsx_bytes: bytes) -> int:
-    """Return the zero-based header row for Page 5 in the given workbook."""
+def _find_header_row(xlsx_bytes: bytes, sheet_name: str, key: str) -> int:
+    """Return the zero-based header row for ``sheet_name`` in the workbook.
+
+    Args:
+        xlsx_bytes: Workbook contents.
+        sheet_name: Sheet to scan.
+        key: First-column header text identifying the data header row
+            (e.g. ``"YEAR"`` for Page 5, ``"Plant Id"`` for Page 1).
+    """
     probe = pd.read_excel(
         io.BytesIO(xlsx_bytes),
-        sheet_name=_PAGE_5_SHEET,
+        sheet_name=sheet_name,
         header=None,
-        nrows=_PAGE_5_HEADER_SCAN_ROWS,
+        nrows=12,
     )
+    target = key.strip().upper()
     for idx, value in enumerate(probe.iloc[:, 0]):
-        if isinstance(value, str) and value.strip().upper() == "YEAR":
+        if isinstance(value, str) and value.strip().upper() == target:
             return idx
     raise ValueError(
-        "Could not locate YEAR header row on Page 5 of the workbook"
+        f"Could not locate {key!r} header row on {sheet_name!r}"
     )
 
 
 def _load_receipts(zip_path: Path) -> pd.DataFrame:
     """Read Page 5 from ``zip_path``'s schedules workbook, renaming columns."""
-    logger.info("reading %s", zip_path.name)
+    logger.info("reading Page 5 of %s", zip_path.name)
     xlsx_bytes = _extract_schedules_xlsx(zip_path)
-    header = _find_header_row(xlsx_bytes)
+    header = _find_header_row(xlsx_bytes, _PAGE_5_SHEET, "YEAR")
     raw = pd.read_excel(
         io.BytesIO(xlsx_bytes),
         sheet_name=_PAGE_5_SHEET,
@@ -124,6 +145,48 @@ def _load_receipts(zip_path: Path) -> pd.DataFrame:
     )
     keep = [c for c in _RENAME if c in raw.columns]
     return raw[keep].rename(columns=_RENAME)
+
+
+def _load_generation(zip_path: Path, year: int) -> pd.DataFrame:
+    """Read Page 1 from ``zip_path``, returning per-plant-row generation.
+
+    Page 1 has one row per ``(plant, prime mover, fuel)`` triple with 12
+    ``Netgen <Month>`` columns and an annual ``Net Generation`` total.
+    Rows are kept in their original granularity so a downstream consumer
+    can classify a CC plant's CA-vs-CT components separately.
+    """
+    logger.info("reading Page 1 of %s", zip_path.name)
+    xlsx_bytes = _extract_schedules_xlsx(zip_path)
+    header = _find_header_row(xlsx_bytes, _PAGE_1_SHEET, "Plant Id")
+    raw = pd.read_excel(
+        io.BytesIO(xlsx_bytes),
+        sheet_name=_PAGE_1_SHEET,
+        header=header,
+    )
+    rename = {
+        "Plant Id": "plant_id",
+        "Plant Name": "plant_name",
+        "Reported\nPrime Mover": "prime_mover",
+        "Reported\nFuel Type Code": "fuel_type",
+        "Combined Heat And\nPower Plant": "chp",
+        "Net Generation\n(Megawatthours)": "netgen_annual_mwh",
+        "Balancing\nAuthority Code": "ba_code",
+        "BA_CODE": "ba_code",
+    }
+    columns = [c for c in rename if c in raw.columns]
+    df = raw[columns + [f"Netgen\n{m}" for m in _MONTH_NAMES]].rename(
+        columns=rename,
+    )
+    for m in _MONTH_NAMES:
+        df[f"netgen_{m.lower()}_mwh"] = pd.to_numeric(
+            df[f"Netgen\n{m}"], errors="coerce"
+        )
+        df = df.drop(columns=[f"Netgen\n{m}"])
+    df["netgen_annual_mwh"] = pd.to_numeric(
+        df["netgen_annual_mwh"], errors="coerce"
+    )
+    df["year"] = year
+    return df
 
 
 def aggregate_monthly_fuel_costs(
@@ -179,6 +242,40 @@ def aggregate_monthly_fuel_costs(
     ]]
 
 
+def aggregate_monthly_generation(
+    zip_paths: list[Path], ba_code: str | None = None
+) -> pd.DataFrame:
+    """Return per-plant monthly net generation from EIA-923 Page 1.
+
+    One row per ``(year, plant_id, prime_mover, fuel_type, chp)`` tuple,
+    with twelve ``netgen_<month>_mwh`` columns and an
+    ``netgen_annual_mwh`` total. The CHP flag and prime mover are kept
+    so a downstream consumer can bucket gas plants into the model's
+    CC_CHP / CC_REGULAR / CT_CHP / CT_PEAKER / ST_GAS / ST_CHP classes.
+
+    Args:
+        zip_paths: One ``f923_*.zip`` per calendar year.
+        ba_code: When given, keep only plants in this balancing authority
+            (e.g. ``"ERCO"``).
+    """
+    years = []
+    for path in zip_paths:
+        # F923 zip names look like ``f923_2024 (1).zip`` — the year is
+        # the four-digit token after the ``f923_`` prefix.
+        match = re.search(r"f923[_-]?(\d{4})", path.stem)
+        year = int(match.group(1)) if match else 0
+        years.append((path, year))
+
+    frames = [_load_generation(path, year) for path, year in years]
+    df = pd.concat(frames, ignore_index=True)
+    if ba_code is not None:
+        df = df[df["ba_code"] == ba_code]
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce")
+    df = df.dropna(subset=["plant_id"])
+    df["plant_id"] = df["plant_id"].astype(int)
+    return df.reset_index(drop=True)
+
+
 def main() -> None:
     """Process every ``f923_*.zip`` under inputs/raw-data and write parquet."""
     parser = argparse.ArgumentParser(
@@ -206,13 +303,20 @@ def main() -> None:
 
     zips = _find_zips(raw_dir)
     ba = args.ba or None
-    table = aggregate_monthly_fuel_costs(zips, ba_code=ba)
-
-    out_path = out_dir / "eia923_monthly_fuel_costs.parquet"
-    table.to_parquet(out_path, index=False)
+    costs = aggregate_monthly_fuel_costs(zips, ba_code=ba)
+    cost_path = out_dir / "eia923_monthly_fuel_costs.parquet"
+    costs.to_parquet(cost_path, index=False)
     logger.info(
         "wrote %s (%d plant-months across %d years, BA filter=%s)",
-        out_path, len(table), table["year"].nunique(), ba or "ALL",
+        cost_path, len(costs), costs["year"].nunique(), ba or "ALL",
+    )
+
+    generation = aggregate_monthly_generation(zips, ba_code=ba)
+    gen_path = out_dir / "eia923_monthly_generation.parquet"
+    generation.to_parquet(gen_path, index=False)
+    logger.info(
+        "wrote %s (%d plant-rows across %d years, BA filter=%s)",
+        gen_path, len(generation), generation["year"].nunique(), ba or "ALL",
     )
 
 

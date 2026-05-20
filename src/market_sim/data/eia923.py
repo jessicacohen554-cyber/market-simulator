@@ -29,6 +29,18 @@ EIA923_MONTHLY_COSTS_PATH: Path = (
     / "eia923_monthly_fuel_costs.parquet"
 )
 
+# Default location of the processed F923 Page-1 generation parquet, with
+# one row per ``(year, plant_id, prime_mover, fuel_type, chp)``.
+EIA923_MONTHLY_GENERATION_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "processed"
+    / "eia923_monthly_generation.parquet"
+)
+
+_MONTHS_SHORT: tuple[str, ...] = (
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december",
+)
+
 # Number of calendar months in a year — the price grid is always 12 entries
 # wide so a missing month falls back to a per-fuel default at lookup time.
 _MONTHS_PER_YEAR: int = 12
@@ -98,3 +110,37 @@ def plant_month_price_grid(
 def available_years(costs: pd.DataFrame) -> set[int]:
     """Return the set of calendar years covered by the cost table."""
     return {int(y) for y in costs["year"].unique()}
+
+
+def load_monthly_generation(
+    path: str | Path | None = None,
+) -> pd.DataFrame:
+    """Return the per-plant monthly net-generation table from F923 Page 1.
+
+    One row per ``(year, plant_id, prime_mover, fuel_type, chp)``, with
+    annual ``netgen_annual_mwh`` and twelve ``netgen_<month>_mwh``
+    columns. Multi-fuel plants (e.g. a coal + gas-steam co-located unit)
+    keep their rows separate so a downstream consumer can bucket them
+    into the model's fossil classes by fuel and prime mover.
+
+    Args:
+        path: Optional override for the parquet location. ``None`` uses
+            :data:`EIA923_MONTHLY_GENERATION_PATH`.
+
+    Raises:
+        FileNotFoundError: When the parquet has not yet been generated.
+    """
+    resolved = (
+        Path(path) if path is not None else EIA923_MONTHLY_GENERATION_PATH
+    )
+    if not resolved.exists():
+        raise FileNotFoundError(
+            f"F923 monthly-generation parquet not found at {resolved!s}; "
+            f"run scripts/process_f923_fuel_costs.py to generate it."
+        )
+    return pd.read_parquet(resolved)
+
+
+def monthly_netgen_columns() -> list[str]:
+    """Return the twelve monthly netgen column names, in calendar order."""
+    return [f"netgen_{m}_mwh" for m in _MONTHS_SHORT]
