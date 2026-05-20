@@ -258,6 +258,20 @@ class ScenarioConfig:
     # Mine-mouth lignite is left at full cost. 1.0 = full fuel cost (off).
     coal_prb_passthrough: float = 1.00
 
+    # Tier 3 (calibration) — gas-keyed PRB passthrough sigmoid. When True, the
+    # flat coal_prb_passthrough is replaced by a logistic of the monthly
+    # delivered gas price: PRB economic tranches get a deep fuel discount when
+    # gas is cheap (so they clear against cheap gas CC) and little/none — or a
+    # markup > 1.0 — when gas is dear (so they don't over-run). Off (default)
+    # keeps the flat coal_prb_passthrough. Defaults grounded in the per-month
+    # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
+    # fuel.prb_passthrough_series.
+    coal_prb_passthrough_sigmoid: bool = False
+    coal_prb_passthrough_floor: float = 0.45    # cheap-gas asymptote
+    coal_prb_passthrough_ceil: float = 1.10     # dear-gas asymptote (>1 = markup)
+    coal_prb_passthrough_gas_mid: float = 3.0   # $/MMBtu logistic midpoint
+    coal_prb_passthrough_gas_slope: float = 1.8  # logistic slope per $/MMBtu
+
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
     # this value; the committed/economic/peaking grid tranches rescale to fill
@@ -444,6 +458,11 @@ TIER_TAGS: dict[str, int] = {
     "coal_tranche_3_fuel_passthrough": 3,
     "coal_prb_contract_passthrough": 3,
     "coal_prb_passthrough": 3,
+    "coal_prb_passthrough_sigmoid": 3,
+    "coal_prb_passthrough_floor": 3,
+    "coal_prb_passthrough_ceil": 3,
+    "coal_prb_passthrough_gas_mid": 3,
+    "coal_prb_passthrough_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_supply_repricing": 3,

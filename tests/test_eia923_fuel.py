@@ -299,5 +299,68 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
         self.assertGreater(gas_means.std(), 0.05)
 
 
+class PrbPassthroughSigmoidTest(unittest.TestCase):
+    """The gas-keyed PRB passthrough sigmoid and its on/off toggle."""
+
+    def test_off_returns_flat_scalar(self):
+        from market_sim.data.fuel import prb_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=2.19, coal_prb_passthrough=0.9,
+            coal_prb_passthrough_sigmoid=False,
+        )
+        self.assertEqual(prb_passthrough_series(cfg, 2024, 8760), 0.9)
+
+    def test_on_rises_with_gas_between_floor_and_ceil(self):
+        from market_sim.data.fuel import prb_passthrough_series
+        def mean_pt(gas):
+            cfg = ScenarioConfig(
+                gas_price_override=gas, coal_prb_passthrough_sigmoid=True,
+                coal_prb_passthrough_floor=0.45, coal_prb_passthrough_ceil=1.10,
+                coal_prb_passthrough_gas_mid=3.0,
+                coal_prb_passthrough_gas_slope=1.8,
+            )
+            return float(np.mean(prb_passthrough_series(cfg, 2024, 8760)))
+        low, mid, high = mean_pt(2.0), mean_pt(3.0), mean_pt(6.0)
+        self.assertLess(low, mid)
+        self.assertLess(mid, high)
+        self.assertGreaterEqual(low, 0.45)      # floor
+        self.assertLessEqual(high, 1.10 + 1e-9)  # ceil
+        self.assertGreater(high, 1.0)            # dear gas -> markup
+
+    def test_seasonal_variation_when_on(self):
+        from market_sim.data.fuel import prb_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=3.52, coal_prb_passthrough_sigmoid=True,
+            gas_seasonality=True,
+        )
+        series = prb_passthrough_series(cfg, 2025, 8760)
+        self.assertEqual(series.shape, (8760,))
+        self.assertGreater(series.max() - series.min(), 0.05)  # months differ
+
+    def test_array_passthrough_discounts_hourly(self):
+        # apply_coal_tranches accepts an (T,) PRB passthrough and discounts
+        # the fuel term hour-by-hour.
+        from market_sim.data.fleet import (
+            apply_coal_tranches, assemble_mc, campd_tranche_fuel_frac,
+        )
+        gen = Generator(
+            unit_id="COAL_z_p298_econ", name="x", zone="z", fuel_type="coal",
+            pmax_mw=100.0, heat_rate=10.0, coal_supply="prb", plant_group="COAL",
+        )
+        arrays = generators_to_fleet_arrays([gen], ["z"], hours=4)
+        fuel_prices = np.full((1, 4), 2.0)  # fuel cost = 10 * 2 = 20 $/MWh
+        mc = assemble_mc(arrays, fuel_prices, 0.0, 0.0)
+        full = mc[0, 0]
+        pt = np.array([0.0, 0.5, 1.0, 1.5])  # incl. a >1 markup hour
+        ff = campd_tranche_fuel_frac(gen, pt)  # array passes through for PRB
+        np.testing.assert_array_equal(ff, pt)
+        apply_coal_tranches(mc, [gen], arrays, [ff], fuel_prices)
+        # hour 0: full fuel (20) removed; hour 2: none; hour 3: +50% markup.
+        self.assertAlmostEqual(mc[0, 0], full - 20.0)
+        self.assertAlmostEqual(mc[0, 1], full - 10.0)
+        self.assertAlmostEqual(mc[0, 2], full)
+        self.assertAlmostEqual(mc[0, 3], full + 10.0)
+
+
 if __name__ == "__main__":
     unittest.main()
