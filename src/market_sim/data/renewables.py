@@ -62,14 +62,17 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # Each technology is assigned to the zone holding the bulk of its installed
 # capacity; every other zone receives an all-zero profile.
 # Source: ERCOT CDR Dec 2024 (West Texas wind/solar belt; offshore wind off
-# the Houston/Galveston coast), CAISO annual report 2024 (single
-# in-footprint load zone).
+# the Houston/Galveston coast). CAISO zones follow the EIA-860 capacity
+# distribution: onshore wind concentrates in ZP26 (the Tehachapi/Kern belt,
+# ~52% of CISO wind), solar in SP15 (the southern desert, ~63% of CISO
+# solar), and the BOEM offshore-wind lease areas (Morro Bay / Humboldt) sit
+# on the NP15 coast.
 RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     "ERCOT": {"wind": "West", "solar": "West", "offshore_wind": "Houston"},
     "CAISO": {
-        "wind": "CAISO_main",
-        "solar": "CAISO_main",
-        "offshore_wind": "CAISO_main",
+        "wind": "ZP26",
+        "solar": "SP15",
+        "offshore_wind": "NP15",
     },
 }
 

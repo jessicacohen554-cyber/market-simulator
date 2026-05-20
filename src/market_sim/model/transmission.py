@@ -11,7 +11,8 @@ The CAISO WECC import node is also modeled here: rather than a bespoke LP
 formulation, the rest of the WECC is represented as a handful of synthetic
 :class:`~market_sim.data.fleet.Generator` objects in the ``WECC_import``
 zone. Appended to the fleet, they participate in dispatch purely through
-the ordinary energy balance and the WECC_import -> CAISO_main link.
+the ordinary energy balance and the WECC_import links into the CAISO
+trading zones (NP15 / SP15).
 """
 
 import numpy as np
@@ -76,8 +77,8 @@ def build_wecc_import_generators() -> list[Generator]:
     The marginal cost of a tranche is set directly through the ``vom``
     field; ``heat_rate`` is zero, so no fuel price enters the cost. Appended
     to the fleet, the tranches compete in merit order through the ordinary
-    energy balance and the WECC_import -> CAISO_main link -- no special LP
-    formulation is needed.
+    energy balance and the WECC_import links into the CAISO trading zones --
+    no special LP formulation is needed.
 
     Returns:
         Four import tranches ordered cheapest first, spanning 15000 MW.
@@ -103,8 +104,8 @@ def build_wecc_export_sink() -> Generator:
     """Return the CAISO export "sink" as a single pseudo-generator.
 
     CAISO surplus -- typically midday solar that exceeds in-state demand --
-    is exported across the WECC_import -> CAISO_main link into the
-    ``WECC_import`` zone, where this sink absorbs it. Absorption is modeled
+    is exported across the WECC_import links into the ``WECC_import`` zone,
+    where this sink absorbs it. Absorption is modeled
     as *negative* generation: the unit's output is bounded in ``[-5000, 0]``
     MW, so a dispatch of ``-x`` withdraws ``x`` MW from the WECC_import
     node. The 5000 MW export capability is therefore carried by ``pmin_mw``,
