@@ -1680,6 +1680,16 @@ def bins_to_fleet(
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
+        # Coal must-run override (calibration sweep): replace the CSV must-run
+        # for coal of the given supply; the grid tranches rescale via `denom`.
+        if fuel == "coal":
+            _supply = COAL_PLANT_SUPPLY.get(int(b["Plant_Code"]), "")
+            if (_supply == "lignite"
+                    and config.coal_lignite_mustrun_override is not None):
+                pct_mr = config.coal_lignite_mustrun_override
+            elif (_supply == "prb"
+                    and config.coal_prb_mustrun_override is not None):
+                pct_mr = config.coal_prb_mustrun_override
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
         # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
         # only via the runner). Non-coal bins' must-run share is host
