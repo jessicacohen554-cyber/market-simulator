@@ -24,6 +24,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import (
+    BIOMASS_PRICE_PER_MMBTU,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
     END_YEAR,
@@ -32,6 +33,7 @@ from market_sim.config.constants import (
     HENRY_HUB_TRAJECTORIES,
     HOURS_PER_YEAR,
     INFLATION_RATE,
+    OIL_PRICE_PER_MMBTU,
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
@@ -58,6 +60,14 @@ _GAS_FUEL_IDX: tuple[int, ...] = (
 
 # Fuel-type integer code for coal-fired units, which pay the coal price.
 _COAL_FUEL_IDX: int = FUEL_TYPE_MAP["coal"]
+
+# Fuel-type integer code for oil-fired units (distillate/residual peakers and
+# steam), which pay the delivered oil price.
+_OIL_FUEL_IDX: int = FUEL_TYPE_MAP["oil"]
+
+# Fuel-type integer code for biomass units, which pay the delivered biomass
+# fuel cost.
+_BIOMASS_FUEL_IDX: int = FUEL_TYPE_MAP["biomass"]
 
 # Fuel-type integer codes for hydrogen turbines, whose fuel price is the
 # derived hydrogen fuel cost (see :mod:`market_sim.data.hydrogen`).
@@ -243,7 +253,11 @@ def resolve_fuel_prices(
 
     Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the
     derived hydrogen fuel cost from
-    :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`. All other
+    :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`. Oil units
+    (``oil``) pay the flat delivered distillate/residual price
+    (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) and biomass
+    units (``biomass``) the delivered biomass fuel cost
+    (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`). All other
     generators carry a zero fuel price.
 
     The same code path runs both backcasts and forward projections — the
@@ -276,6 +290,12 @@ def resolve_fuel_prices(
     fuel_prices = np.zeros((fleet.n_gen, T), dtype=float)
     fuel_prices[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price_hourly
     fuel_prices[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
+
+    # Oil (distillate/residual) and biomass burn at a flat delivered cost: oil
+    # sits far above gas (peaker economics), biomass near cheap-coal parity.
+    # Neither has a commodity trajectory or F923 plant-monthly override here.
+    fuel_prices[fuel_type_idx == _OIL_FUEL_IDX] = OIL_PRICE_PER_MMBTU
+    fuel_prices[fuel_type_idx == _BIOMASS_FUEL_IDX] = BIOMASS_PRICE_PER_MMBTU
 
     # Hydrogen turbines burn green H2 whose cost is derived from renewable
     # LCOE and electrolyzer efficiency rather than a commodity market.
