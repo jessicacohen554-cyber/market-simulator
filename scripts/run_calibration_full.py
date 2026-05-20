@@ -71,6 +71,11 @@ _COAL_FUELS: frozenset[str] = frozenset(
 _GAS_CLASSES: tuple[str, ...] = (
     "CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP",
 )
+# CHP classes — reported in their own dedicated table and excluded from
+# every other comparison. The remaining (non-CHP) gas classes are the
+# only gas that the grid / hourly comparisons against EIA-930 use.
+_CHP_CLASSES: tuple[str, ...] = ("CC_CHP", "CT_CHP", "ST_CHP")
+_NONCHP_GAS: tuple[str, ...] = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
 
 # Representative plants for the plant-level report. The user picks these
 # because they span every operational class the per-plant binning now
@@ -142,24 +147,6 @@ def _f923_annual_by_class(generation: pd.DataFrame, year: int) -> dict[str, floa
         out[cls] = float(twh.get(cls, 0.0))
     out["wind"] = float(twh.get("OTHER", 0.0))  # filled below
     return out
-
-
-def _f923_annual_renewable_and_nuclear(
-    generation: pd.DataFrame, year: int,
-) -> dict[str, float]:
-    """Return EIA-923 annual wind, solar and nuclear (TWh)."""
-    df = generation[generation["year"] == year]
-    fuel = df["fuel_type"].astype(str).str.upper()
-    pm = df["prime_mover"].astype(str).str.upper()
-
-    def _twh(mask: np.ndarray) -> float:
-        return float(df.loc[mask, "netgen_annual_mwh"].sum()) / _MWH_PER_TWH
-
-    return {
-        "wind": _twh((fuel == "WND") | (pm == "WT")),
-        "solar": _twh((fuel == "SUN") | (pm == "PV") | (pm == "CP")),
-        "nuclear": _twh(fuel == "NUC"),
-    }
 
 
 def _f923_monthly_by_class(
@@ -290,7 +277,7 @@ def _print_reconciliation(
     raw_load = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum() / _MWH_PER_TWH
     model_demand = load_demand(iso, year, iso_config, td_loss_factor=0.058).sum() / _MWH_PER_TWH
     gap = model_grid_twh - eia930_total_twh
-    print(f"\n  Generation reconciliation — {year}")
+    print(f"\n  [2] Generation reconciliation — {year}")
     rows = [
         ("EIA-930 metered load", f"{raw_load:7.2f} TWh"),
         ("Model demand target (load x1.058 T&D)", f"{model_demand:7.2f} TWh"),
@@ -306,90 +293,26 @@ def _print_reconciliation(
         print(f"    {label.ljust(width)}  {val}")
 
 
-def _print_grid_vs_930(
+def _print_chp_table(
     year: int,
-    model_class_hourly: dict[str, np.ndarray],
-    model_hourly: dict[str, np.ndarray],
-    fossil: dict[str, np.ndarray],
-    renewables: dict[str, np.ndarray],
-    nuclear_930: np.ndarray | None,
-) -> float:
-    """Print grid-delivered generation MIX vs EIA-930 and return model total.
-
-    EIA-930 is grid-delivered, so the LP's grid dispatch is the right
-    thing to compare. Because the model's total runs above EIA-930 by the
-    T&D + behind-meter gross-up, the absolute TWh diff conflates that
-    structural gap with merit-order error. The share (% of grid total) and
-    its delta in percentage points isolate the merit-order misalignment —
-    that is "what's actually not aligning". Behind-the-meter CHP is
-    excluded from both sides here (it is invisible to EIA-930 and off-LP
-    in the model); it appears only in the total-vs-EIA-923 table.
-    """
-    gas_grid = float(sum(model_class_hourly[c] for c in _GAS_CLASSES).sum()) / _MWH_PER_TWH
-    coal_grid = float(model_class_hourly["COAL"].sum()) / _MWH_PER_TWH
-    nuc_grid = float(model_class_hourly["nuclear"].sum()) / _MWH_PER_TWH
-    wind_grid = float(model_hourly["wind"].sum()) / _MWH_PER_TWH
-    solar_grid = float(model_hourly["solar"].sum()) / _MWH_PER_TWH
-
-    nuc_930_twh = (
-        float(nuclear_930.sum()) / _MWH_PER_TWH if nuclear_930 is not None else 0.0
-    )
-    series = [
-        ("gas (all)", gas_grid, fossil["gas"].sum() / _MWH_PER_TWH),
-        ("coal", coal_grid, fossil["coal"].sum() / _MWH_PER_TWH),
-        ("nuclear", nuc_grid, nuc_930_twh),
-        ("wind", wind_grid, renewables["wind"].sum() / _MWH_PER_TWH),
-        ("solar", solar_grid, renewables["solar"].sum() / _MWH_PER_TWH),
-    ]
-    model_total = sum(m for _, m, _ in series)
-    eia_total = sum(b for _, _, b in series)
-
-    print(f"\n  Grid-delivered generation MIX — {year} (model LP vs EIA-930)")
-    rows: list[tuple] = [
-        ("fuel", "model TWh", "model %", "EIA-930 TWh", "EIA-930 %", "share Δpp"),
-    ]
-    for fuel, m, b in series:
-        m_pct = 100.0 * m / model_total if model_total else 0.0
-        b_pct = 100.0 * b / eia_total if eia_total else 0.0
-        rows.append((
-            fuel, f"{m:7.2f}", f"{m_pct:6.1f}", f"{b:7.2f}",
-            f"{b_pct:6.1f}", f"{m_pct - b_pct:+6.1f}",
-        ))
-    rows.append((
-        "TOTAL", f"{model_total:7.2f}", " 100.0", f"{eia_total:7.2f}",
-        " 100.0", "      ",
-    ))
-    _print_table(rows)
-    print("    (share Δpp = model share − EIA-930 share; the merit-order "
-          "misalignment, free of the total-level T&D/BTM gross-up)")
-    return model_total
-
-
-def _print_annual_breakdown(
-    year: int,
-    model_hourly: dict[str, np.ndarray],
     model_total_class_twh: dict[str, float],
     btm_by_class_twh: dict[str, float],
     f923_class_twh: dict[str, float],
-    f923_re_nuc_twh: dict[str, float],
-    eia930_solar_twh: float,
-) -> None:
-    """Print the annual class table: grid LP + behind-meter must-run vs EIA-923.
+) -> float:
+    """[1] The ONE table where CHP appears. Returns total CHP grid-delivered.
 
-    For CHP classes the model total is the LP grid dispatch plus the
-    behind-the-meter must-run (sized from EIA-923 by the resized
-    :func:`compute_must_run_emissions`), so total reconciles to the
-    measured EIA-923 figure and the BTM amount is visible for the
-    downstream fleet-emissions step. Non-CHP classes carry no BTM, so
-    their model total is the LP grid dispatch. Solar uses EIA-930.
+    Each CHP class shows the LP grid-delivered dispatch, the
+    behind-the-meter must-run (off-LP, sized from EIA-923 by the resized
+    :func:`compute_must_run_emissions`), the model total (grid + BTM) and
+    the measured EIA-923 total. CHP is excluded from every other table so
+    the grid comparisons stay apples-to-apples against EIA-930.
     """
-    print(f"\n  Total generation by class — {year}   "
-          "(grid LP + behind-meter must-run vs EIA-923; solar vs EIA-930)")
+    print(f"\n  [1] CHP — {year}  (model grid LP + behind-meter must-run vs EIA-923 total)")
     rows: list[tuple] = [
-        ("class", "grid LP", "BTM-MR", "model tot", "EIA TWh", "diff %"),
+        ("class", "grid LP", "BTM-MR", "model tot", "EIA-923", "diff %"),
     ]
-    total_m = total_b = total_btm = 0.0
-    for cls in (*_GAS_CLASSES, "COAL"):
+    tot_grid = tot_btm = tot_b = 0.0
+    for cls in _CHP_CLASSES:
         grid = model_total_class_twh.get(cls, 0.0)
         btm = btm_by_class_twh.get(cls, 0.0)
         m = grid + btm
@@ -399,38 +322,76 @@ def _print_annual_breakdown(
             cls, f"{grid:7.2f}", f"{btm:6.2f}", f"{m:8.2f}", f"{b:7.2f}",
             f"{diff:+6.1f}" if not np.isnan(diff) else "    —",
         ))
-        total_m += m
-        total_b += b
-        total_btm += btm
-    # Renewables and nuclear (no behind-meter component).
-    wind_m = float(model_hourly["wind"].sum()) / _MWH_PER_TWH
-    wind_b = f923_re_nuc_twh["wind"]
+        tot_grid += grid
+        tot_btm += btm
+        tot_b += b
+    tot_m = tot_grid + tot_btm
     rows.append((
-        "wind", f"{wind_m:7.2f}", "  0.00", f"{wind_m:8.2f}", f"{wind_b:7.2f}",
-        f"{100.0 * (wind_m - wind_b) / wind_b:+6.1f}" if wind_b else "    —",
-    ))
-    solar_m = float(model_hourly["solar"].sum()) / _MWH_PER_TWH
-    rows.append((
-        "solar (930)", f"{solar_m:7.2f}", "  0.00", f"{solar_m:8.2f}",
-        f"{eia930_solar_twh:7.2f}",
-        f"{100.0 * (solar_m - eia930_solar_twh) / eia930_solar_twh:+6.1f}"
-        if eia930_solar_twh else "    —",
-    ))
-    nuc_m = model_total_class_twh.get("nuclear", 0.0)
-    nuc_b = f923_re_nuc_twh["nuclear"]
-    rows.append((
-        "nuclear", f"{nuc_m:7.2f}", "  0.00", f"{nuc_m:8.2f}", f"{nuc_b:7.2f}",
-        f"{100.0 * (nuc_m - nuc_b) / nuc_b:+6.1f}" if nuc_b else "    —",
-    ))
-    grand_m = total_m + wind_m + solar_m + nuc_m
-    grand_b = total_b + wind_b + eia930_solar_twh + nuc_b
-    rows.append((
-        "TOTAL", "", f"{total_btm:6.2f}", f"{grand_m:8.2f}", f"{grand_b:7.2f}",
-        f"{100.0 * (grand_m - grand_b) / grand_b:+6.1f}",
+        "TOTAL", f"{tot_grid:7.2f}", f"{tot_btm:6.2f}", f"{tot_m:8.2f}",
+        f"{tot_b:7.2f}", f"{100.0 * (tot_m - tot_b) / tot_b:+6.1f}" if tot_b else "    —",
     ))
     _print_table(rows)
-    print(f"    (behind-the-meter CHP must-run total: {total_btm:.2f} TWh — "
-          "carried for the fleet-emissions post-process)")
+    print("    (BTM-MR = behind-the-meter must-run, off-LP — carried for the "
+          "fleet-emissions post-process. CHP is excluded from every table below.)")
+    return tot_grid
+
+
+def _print_nonchp_grid(
+    year: int,
+    model_class_hourly: dict[str, np.ndarray],
+    model_hourly: dict[str, np.ndarray],
+    fossil: dict[str, np.ndarray],
+    renewables: dict[str, np.ndarray],
+    nuclear_930: np.ndarray | None,
+    chp_grid_twh: float,
+) -> None:
+    """[3] Non-CHP grid generation vs EIA-930 — CHP excluded from BOTH sides.
+
+    Model gas here is non-CHP only (CC_REGULAR + CT_PEAKER + ST_GAS). To
+    keep the benchmark non-CHP too, the CHP grid-delivered estimate
+    (``chp_grid_twh``, the model's grid-facing CHP) is subtracted from
+    EIA-930's all-gas series — EIA-930 does not separately report CHP.
+    The share-Δpp column is the merit-order misalignment, free of the
+    T&D loss gross-up that still inflates the absolute TWh on both gas
+    and the total.
+    """
+    gas_m = float(sum(model_class_hourly[c] for c in _NONCHP_GAS).sum()) / _MWH_PER_TWH
+    coal_m = float(model_class_hourly["COAL"].sum()) / _MWH_PER_TWH
+    nuc_m = float(model_class_hourly["nuclear"].sum()) / _MWH_PER_TWH
+    wind_m = float(model_hourly["wind"].sum()) / _MWH_PER_TWH
+    solar_m = float(model_hourly["solar"].sum()) / _MWH_PER_TWH
+
+    nuc_930 = float(nuclear_930.sum()) / _MWH_PER_TWH if nuclear_930 is not None else 0.0
+    gas_930_nonchp = fossil["gas"].sum() / _MWH_PER_TWH - chp_grid_twh
+    series = [
+        ("gas (non-CHP)", gas_m, gas_930_nonchp),
+        ("coal", coal_m, fossil["coal"].sum() / _MWH_PER_TWH),
+        ("nuclear", nuc_m, nuc_930),
+        ("wind", wind_m, renewables["wind"].sum() / _MWH_PER_TWH),
+        ("solar", solar_m, renewables["solar"].sum() / _MWH_PER_TWH),
+    ]
+    model_total = sum(m for _, m, _ in series)
+    eia_total = sum(b for _, _, b in series)
+
+    print(f"\n  [3] Non-CHP grid generation — {year}  (model LP vs EIA-930, CHP excluded)")
+    rows: list[tuple] = [
+        ("fuel", "model TWh", "model %", "EIA-930 TWh", "EIA-930 %", "Δpp"),
+    ]
+    for fuel, m, b in series:
+        m_pct = 100.0 * m / model_total if model_total else 0.0
+        b_pct = 100.0 * b / eia_total if eia_total else 0.0
+        rows.append((
+            fuel, f"{m:8.2f}", f"{m_pct:6.1f}", f"{b:8.2f}",
+            f"{b_pct:6.1f}", f"{m_pct - b_pct:+6.1f}",
+        ))
+    rows.append((
+        "TOTAL", f"{model_total:8.2f}", " 100.0", f"{eia_total:8.2f}",
+        " 100.0", "      ",
+    ))
+    _print_table(rows)
+    print(f"    (EIA-930 non-CHP gas = EIA-930 all-gas − {chp_grid_twh:.1f} TWh CHP "
+          "grid-delivered estimate. Δpp = model share − EIA-930 share, the")
+    print("     merit-order misalignment free of the T&D-loss gross-up in the totals.)")
 
 
 def _print_monthly_breakdown(
@@ -441,12 +402,13 @@ def _print_monthly_breakdown(
     f923_monthly_re: dict[str, np.ndarray],
     eia930_solar_monthly: np.ndarray,
 ) -> None:
-    """Print the monthly +/- % table by class.
+    """[4] Monthly +/- % bias by non-CHP class.
 
     Bias = (model − benchmark) / benchmark * 100.  Each fuel uses
-    EIA-923 except solar (EIA-930).
+    EIA-923 except solar (EIA-930). CHP classes are excluded (they are
+    in table [1]).
     """
-    print(f"\n  Monthly bias — {year}   (% of benchmark per month)")
+    print(f"\n  [4] Monthly bias — {year}   (% of benchmark per month, non-CHP)")
     header = ("class",) + _MONTH_NAMES
     rows: list[tuple] = [header]
 
@@ -460,7 +422,7 @@ def _print_monthly_breakdown(
                 cells.append("    ·")
         rows.append((label,) + tuple(cells))
 
-    for cls in (*_GAS_CLASSES, "COAL"):
+    for cls in (*_NONCHP_GAS, "COAL"):
         _row(
             cls,
             _hourly_to_monthly(model_class_hourly[cls]),
@@ -491,18 +453,28 @@ def _print_hourly_fit(
     fossil: dict[str, np.ndarray],
     renewables: dict[str, np.ndarray],
     nuclear_930: np.ndarray | None,
+    chp_grid_twh: float,
 ) -> None:
-    """Print hourly Pearson r and NRMSE vs EIA-930."""
-    print(f"\n  Hourly dispatch fit — {year} (model vs EIA-930)")
+    """[5] Hourly Pearson r and NRMSE vs EIA-930 — non-CHP gas.
+
+    Gas is non-CHP only (CC_REGULAR + CT_PEAKER + ST_GAS). The EIA-930
+    benchmark subtracts a flat CHP grid-delivered baseload
+    (``chp_grid_twh`` spread evenly over the year — CHP steam load is
+    near-constant), so both sides are non-CHP and the shape correlation
+    is not diluted by the CHP baseload.
+    """
+    print(f"\n  [5] Hourly dispatch fit — {year} (model vs EIA-930, non-CHP gas)")
     rows: list[tuple] = [("fuel", "Pearson r", " NRMSE", "model TWh", "EIA-930 TWh")]
-    # Aggregate gas across all model gas classes.
-    gas_m = sum(model_class_hourly[c] for c in _GAS_CLASSES)
+    gas_m = sum(model_class_hourly[c] for c in _NONCHP_GAS)
     coal_m = model_class_hourly["COAL"]
     nuc_m = model_class_hourly["nuclear"]
     wind_m = model_hourly["wind"]
     solar_m = model_hourly["solar"]
+    # EIA-930 non-CHP gas = all-gas minus a flat CHP grid-delivered baseload.
+    flat_chp = chp_grid_twh * _MWH_PER_TWH / _HOURS_PER_YEAR
+    gas_930_nonchp = fossil["gas"] - flat_chp
     pairs = [
-        ("gas", gas_m, fossil["gas"]),
+        ("gas (non-CHP)", gas_m, gas_930_nonchp),
         ("coal", coal_m, fossil["coal"]),
         ("nuclear", nuc_m, nuclear_930),
         ("solar", solar_m, renewables["solar"]),
@@ -545,7 +517,7 @@ def _print_plant_level(
             model_by_plant.get(pc, 0.0) + float(dispatch[g].sum())
         )
 
-    print(f"\n  Plant-level annual generation — {year} (EIA-923)")
+    print(f"\n  [6] Plant-level annual generation — {year} (EIA-923)")
     rows: list[tuple] = [
         ("plant", "EIA code", "model GWh", "EIA-923 GWh", "diff %", "class"),
     ]
@@ -602,18 +574,16 @@ def _run_and_report(
         "solar": np.asarray(result.solar_dispatched).sum(axis=0),
     }
 
-    # Annual EIA-923 by class and renewables.
+    # Annual EIA-923 net generation by class (for the CHP table).
     f923_class_twh = _f923_annual_by_class(generation_f923, year)
-    f923_re_nuc_twh = _f923_annual_renewable_and_nuclear(generation_f923, year)
 
-    # Model TWh by class, for the annual table.
+    # Model grid-delivered (LP) TWh by class.
     model_total_class_twh = {
         cls: float(model_class_hourly[cls].sum()) / _MWH_PER_TWH
         for cls in (*_GAS_CLASSES, "COAL", "nuclear")
     }
 
-    # EIA-930 solar for the year (annual + monthly).
-    eia930_solar_twh = float(renewables["solar"].sum()) / _MWH_PER_TWH
+    # EIA-930 solar monthly (for the non-CHP monthly table; solar uses 930).
     eia930_solar_monthly = _hourly_to_monthly(renewables["solar"])
 
     # Behind-the-meter CHP must-run, sized from EIA-923 net generation minus
@@ -626,11 +596,18 @@ def _run_and_report(
     )
 
     nuclear_930 = load_ercot_nuclear_gen(year)
-    model_grid_twh = _print_grid_vs_930(
-        year, model_class_hourly, model_hourly, fossil, renewables,
-        nuclear_930,
+
+    # [1] CHP — the one table where CHP appears; returns CHP grid-delivered.
+    chp_grid_twh = _print_chp_table(
+        year, model_total_class_twh, btm_by_class_twh, f923_class_twh,
     )
-    # EIA-930 total net generation (all fuels) for the reconciliation.
+
+    # [2] Reconciliation — why the model total runs over EIA-930.
+    model_grid_twh = (
+        float(dispatch.sum())
+        + float(model_hourly["wind"].sum())
+        + float(model_hourly["solar"].sum())
+    ) / _MWH_PER_TWH
     eia930_total_twh = (
         fossil["gas"].sum() + fossil["coal"].sum()
         + renewables["wind"].sum() + renewables["solar"].sum()
@@ -640,11 +617,14 @@ def _run_and_report(
     _print_reconciliation(
         year, iso, model_grid_twh, eia930_total_twh, btm_total_twh,
     )
-    _print_annual_breakdown(
-        year, model_hourly, model_total_class_twh, btm_by_class_twh,
-        f923_class_twh, f923_re_nuc_twh, eia930_solar_twh,
+
+    # [3] Non-CHP grid generation vs EIA-930.
+    _print_nonchp_grid(
+        year, model_class_hourly, model_hourly, fossil, renewables,
+        nuclear_930, chp_grid_twh,
     )
 
+    # [4] Monthly bias (non-CHP).
     f923_monthly_class = _f923_monthly_by_class(generation_f923, year)
     f923_monthly_re = _f923_monthly_renewable(generation_f923, year)
     _print_monthly_breakdown(
@@ -652,9 +632,13 @@ def _run_and_report(
         f923_monthly_class, f923_monthly_re, eia930_solar_monthly,
     )
 
+    # [5] Hourly fit (non-CHP gas).
     _print_hourly_fit(
-        year, model_class_hourly, model_hourly, fossil, renewables, nuclear_930,
+        year, model_class_hourly, model_hourly, fossil, renewables,
+        nuclear_930, chp_grid_twh,
     )
+
+    # [6] Plant-level (EIA-923).
     _print_plant_level(
         year, dispatch, context, plant_codes, generation_f923,
     )
