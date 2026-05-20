@@ -394,6 +394,45 @@ def _print_nonchp_grid(
     print("     merit-order misalignment free of the T&D-loss gross-up in the totals.)")
 
 
+def _print_gas_class_annual(
+    year: int,
+    model_total_class_twh: dict[str, float],
+    btm_by_class_twh: dict[str, float],
+    f923_class_twh: dict[str, float],
+) -> None:
+    """[3b] Every gas class — annual model (grid LP + behind-meter) vs EIA-923.
+
+    The complete gas picture in one table: CC_CHP, CC_REGULAR, CT_CHP,
+    CT_PEAKER, ST_GAS, ST_CHP. CHP classes carry behind-the-meter
+    must-run (off-LP); non-CHP classes are grid LP only. EIA-923 is the
+    total-generation benchmark for every gas class.
+    """
+    print(f"\n  [3b] Gas by class — {year}  (model grid LP + behind-meter must-run vs EIA-923 total)")
+    rows: list[tuple] = [
+        ("class", "grid LP", "BTM-MR", "model tot", "EIA-923", "diff %"),
+    ]
+    tg = tbtm = tm = tb = 0.0
+    for cls in _GAS_CLASSES:
+        grid = model_total_class_twh.get(cls, 0.0)
+        btm = btm_by_class_twh.get(cls, 0.0)
+        m = grid + btm
+        b = f923_class_twh.get(cls, 0.0)
+        diff = 100.0 * (m - b) / b if b else float("nan")
+        rows.append((
+            cls, f"{grid:7.2f}", f"{btm:6.2f}", f"{m:8.2f}", f"{b:7.2f}",
+            f"{diff:+6.1f}" if not np.isnan(diff) else "    —",
+        ))
+        tg += grid
+        tbtm += btm
+        tm += m
+        tb += b
+    rows.append((
+        "TOTAL gas", f"{tg:7.2f}", f"{tbtm:6.2f}", f"{tm:8.2f}", f"{tb:7.2f}",
+        f"{100.0 * (tm - tb) / tb:+6.1f}" if tb else "    —",
+    ))
+    _print_table(rows)
+
+
 def _print_monthly_breakdown(
     year: int,
     model_class_hourly: dict[str, np.ndarray],
@@ -401,14 +440,18 @@ def _print_monthly_breakdown(
     f923_monthly_class: dict[str, np.ndarray],
     f923_monthly_re: dict[str, np.ndarray],
     eia930_solar_monthly: np.ndarray,
+    btm_by_class_twh: dict[str, float],
+    f923_class_twh: dict[str, float],
 ) -> None:
-    """[4] Monthly +/- % bias by non-CHP class.
+    """[4] Monthly +/- % bias vs EIA-923 (all gas classes; solar vs EIA-930).
 
-    Bias = (model − benchmark) / benchmark * 100.  Each fuel uses
-    EIA-923 except solar (EIA-930). CHP classes are excluded (they are
-    in table [1]).
+    Bias = (model − benchmark) / benchmark * 100. For CHP classes the
+    model is grid LP + behind-meter must-run, with the annual BTM
+    distributed across months in proportion to the class's EIA-923
+    monthly net generation (steam load roughly tracks output). Non-CHP
+    classes are LP grid only.
     """
-    print(f"\n  [4] Monthly bias — {year}   (% of benchmark per month, non-CHP)")
+    print(f"\n  [4] Monthly bias — {year}   (% of EIA-923 per month; CHP incl. behind-meter)")
     header = ("class",) + _MONTH_NAMES
     rows: list[tuple] = [header]
 
@@ -422,12 +465,17 @@ def _print_monthly_breakdown(
                 cells.append("    ·")
         rows.append((label,) + tuple(cells))
 
-    for cls in (*_NONCHP_GAS, "COAL"):
-        _row(
-            cls,
-            _hourly_to_monthly(model_class_hourly[cls]),
-            f923_monthly_class[cls],
-        )
+    for cls in (*_GAS_CLASSES, "COAL"):
+        grid_monthly = _hourly_to_monthly(model_class_hourly[cls])
+        bench = f923_monthly_class[cls]
+        # Distribute the class's annual behind-meter must-run across months
+        # in proportion to its EIA-923 monthly shape (CHP classes only).
+        btm_annual = btm_by_class_twh.get(cls, 0.0) * _MWH_PER_TWH
+        if btm_annual > 0 and bench.sum() > 0:
+            model_monthly = grid_monthly + btm_annual * (bench / bench.sum())
+        else:
+            model_monthly = grid_monthly
+        _row(cls, model_monthly, bench)
     _row(
         "wind",
         _hourly_to_monthly(model_hourly["wind"]),
@@ -624,12 +672,18 @@ def _run_and_report(
         nuclear_930, chp_grid_twh,
     )
 
-    # [4] Monthly bias (non-CHP).
+    # [3b] Every gas class — annual model (grid + behind-meter) vs EIA-923.
+    _print_gas_class_annual(
+        year, model_total_class_twh, btm_by_class_twh, f923_class_twh,
+    )
+
+    # [4] Monthly bias (all gas classes; CHP incl. behind-meter).
     f923_monthly_class = _f923_monthly_by_class(generation_f923, year)
     f923_monthly_re = _f923_monthly_renewable(generation_f923, year)
     _print_monthly_breakdown(
         year, model_class_hourly, model_hourly,
         f923_monthly_class, f923_monthly_re, eia930_solar_monthly,
+        btm_by_class_twh, f923_class_twh,
     )
 
     # [5] Hourly fit (non-CHP gas).
