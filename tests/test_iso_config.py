@@ -55,9 +55,63 @@ class TestISOConfig(unittest.TestCase):
         wecc = next(z for z in caiso.zones if z.name == "WECC_import")
         self.assertEqual(wecc.load_share, 0.0)
 
+    def test_miso_has_three_zones(self):
+        """MISO defines three sub-regional load zones."""
+        miso = get_iso_config("MISO")
+        self.assertEqual(miso.n_zones, 3)
+        self.assertEqual(
+            set(miso.zone_names),
+            {"MISO-North", "MISO-Central", "MISO-South"},
+        )
+
+    def test_miso_validates(self):
+        """MISO topology passes the consistency check."""
+        # get_iso_config already calls validate_topology(); an explicit call
+        # documents the Stage-A requirement and fails loudly on regression.
+        get_iso_config("MISO").validate_topology()
+
+    def test_miso_load_shares_sum_to_one(self):
+        """MISO zone load shares sum to 1.0."""
+        miso = get_iso_config("MISO")
+        total = sum(zone.load_share for zone in miso.zones)
+        self.assertAlmostEqual(total, 1.0)
+
+    def test_miso_rdt_contract_path_present(self):
+        """The defining MISO-Central <-> MISO-South RDT link is present.
+
+        MISO's Midwest and South footprints connect only through the
+        Regional Directional Transfer contract path; the topology must carry
+        it as a link, seeded at the ~3,000 MW north->south RDT limit.
+        """
+        miso = get_iso_config("MISO")
+        rdt = [
+            link
+            for link in miso.links
+            if {link.from_zone, link.to_zone}
+            == {"MISO-Central", "MISO-South"}
+        ]
+        self.assertEqual(len(rdt), 1)
+        self.assertEqual(rdt[0].ttc_mw, 3000.0)
+
+    def test_miso_wind_export_corridor_present(self):
+        """The MISO-North <-> MISO-Central wind-export corridor is present."""
+        miso = get_iso_config("MISO")
+        corridor = [
+            link
+            for link in miso.links
+            if {link.from_zone, link.to_zone}
+            == {"MISO-North", "MISO-Central"}
+        ]
+        self.assertEqual(len(corridor), 1)
+
+    def test_miso_voll_is_2000(self):
+        """MISO uses a VOLL of $2,000/MWh (FERC Order 831 offer cap)."""
+        miso = get_iso_config("MISO")
+        self.assertEqual(miso.voll, 2000.0)
+
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
-        for iso_name in ("ERCOT", "CAISO"):
+        for iso_name in ("ERCOT", "CAISO", "MISO"):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
             for link in config.links:

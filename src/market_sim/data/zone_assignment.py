@@ -38,6 +38,7 @@ _EIA860_PLANT_PATH: Path = (
 _ISO_TO_BA_CODE: dict[str, str] = {
     "ERCOT": "ERCO",
     "CAISO": "CISO",
+    "MISO": "MISO",
     "PJM": "PJM",
     "NYISO": "NYIS",
     "NEISO": "ISNE",
@@ -58,6 +59,9 @@ _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_West",
     "CAISO": "SP15",
+    # MISO-Central is the largest-load-share zone (0.46) and holds the
+    # lower-Midwest load centers, so unlocated MISO plants land there.
+    "MISO": "MISO-Central",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -134,6 +138,37 @@ _PJM_STATE_ZONES: dict[int, str] = {
     37: "PJM_South",     # NC
     47: "PJM_South",     # TN
 }
+
+# MISO model region by FIPS state code. MISO's defining split is the three
+# sub-regions, which follow state lines: the wind-rich upper-Midwest North,
+# the lower-Midwest Central load centers, and the Entergy South. eGRID
+# carries a FIPS state for every MISO plant, so the state map is authoritative;
+# the latitude fallback below only handles the rare coords-only caller.
+_MISO_STATE_ZONES: dict[int, str] = {
+    27: "MISO-North",     # MN
+    19: "MISO-North",     # IA
+    55: "MISO-North",     # WI
+    38: "MISO-North",     # ND
+    46: "MISO-North",     # SD
+    30: "MISO-North",     # MT
+    17: "MISO-Central",   # IL
+    18: "MISO-Central",   # IN
+    26: "MISO-Central",   # MI
+    29: "MISO-Central",   # MO
+    21: "MISO-Central",   # KY
+    5: "MISO-South",      # AR
+    22: "MISO-South",     # LA
+    28: "MISO-South",     # MS
+    48: "MISO-South",     # TX (MISO East Texas / Entergy, not ERCOT)
+}
+
+# Latitude bands for the coords-only MISO fallback (no FIPS state). The
+# Entergy South footprint sits below ~lat 36 (AR/LA/MS/East TX); the upper-
+# Midwest North sits above ~lat 43 (MN/ND/SD/WI); the lower-Midwest Central
+# load centers fall between. This is coarse — FIPS state is preferred — and
+# only triggers when a caller supplies coordinates without a state code.
+_MISO_SOUTH_LAT: float = 36.0
+_MISO_NORTH_LAT: float = 43.0
 
 # Cached parsed eGRID DataFrame and derived ORIS→location lookup, so the
 # 21 MB workbook is read at most once per process.
@@ -292,6 +327,27 @@ def _pjm_zone(fips_state: int | None) -> str:
     return _PJM_STATE_ZONES.get(fips_state, _LARGEST_ZONE["PJM"])
 
 
+def _miso_zone(lat: float | None, fips_state: int | None) -> str:
+    """Return the MISO model region for a plant location.
+
+    FIPS state carries the assignment — North (upper Midwest), Central
+    (lower-Midwest load centers), South (Entergy) — since MISO's three
+    sub-regions follow state lines and eGRID has a state for every plant.
+    A plant whose state is outside the MISO map (a stray cross-seam
+    attribution) falls back to a coarse latitude band when coordinates are
+    available, and otherwise to the largest-load-share zone (Central).
+    """
+    if fips_state in _MISO_STATE_ZONES:
+        return _MISO_STATE_ZONES[fips_state]
+    if lat is not None:
+        if lat < _MISO_SOUTH_LAT:
+            return "MISO-South"
+        if lat >= _MISO_NORTH_LAT:
+            return "MISO-North"
+        return "MISO-Central"
+    return _LARGEST_ZONE["MISO"]
+
+
 def _zone_from_location(
     iso: str,
     lat: float | None,
@@ -306,6 +362,8 @@ def _zone_from_location(
         return _ercot_zone(lat, lon, fips_state, fips_county)
     if iso == "CAISO":
         return _caiso_zone(lat, lon, fips_state, fips_county)
+    if iso == "MISO":
+        return _miso_zone(lat, fips_state)
     if iso == "PJM":
         return _pjm_zone(fips_state)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
