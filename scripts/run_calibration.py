@@ -154,8 +154,9 @@ def _calibration_config(
 
     The calibration configuration fixes the structural and policy levers to
     their backcast values: the weather year is the calibration year, the
-    EIA-860 vintage capacity ramp is on, T&D losses are grossed up, gas
-    seasonality is on, and the carbon price and RPS constraint are off.
+    EIA-860 vintage capacity ramp is on, the EIA-930 generation-side demand
+    is used without a T&D gross-up, gas seasonality is on, and the carbon
+    price and RPS constraint are off.
 
     The measured Henry Hub price is applied through ``gas_price_override``
     when that field exists on :class:`ScenarioConfig`; otherwise the run
@@ -175,7 +176,10 @@ def _calibration_config(
         iso=iso,
         hours=hours,
         vintage_capacity_ramp=True,
-        td_loss_factor=0.058,
+        td_loss_factor=0.0,  # EIA-930 demand is generation-side
+        #   (Demand + Interchange = Net Generation); no gross-up so the grid
+        #   demand target equals actual grid net generation and BTM CHP
+        #   self-supply stays off-grid. See ScenarioConfig.td_loss_factor.
         gas_seasonality=True,
         carbon_price=0.0,
         rps_enabled=False,
