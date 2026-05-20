@@ -38,7 +38,7 @@ from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import (
     DATA_DIR,
-    load_ercot_renewable_gen,
+    load_eia_hourly_renewable_gen,
     load_generation_profiles,
 )
 from market_sim.data.fleet import (
@@ -433,23 +433,22 @@ def _hsl_cf_profile(
     return _mw_to_cf(hsl_mw, monthly_capacity)
 
 
-def _erco_cf_profile(
+def _eia_hourly_cf_profile(
     iso: str, year: int, fuel: str, monthly_capacity: np.ndarray
 ) -> np.ndarray | None:
-    """Return a delivered-generation CF profile from the ERCO hourly extract.
+    """Return a delivered-generation CF profile from the BA's hourly extract.
 
-    For ERCOT backcast years without an HSL series, the EIA-930 ``ERCO
-    hourly`` net generation supplies a wind/solar profile on the same
-    chronological clock as the demand and interchange. It is delivered
-    (already curtailed) output, so — like the EIA-930 generation profiles —
-    the dispatch does not separately re-curtail it.
+    For a backcast year the EIA-930 ``<BA> hourly`` net generation — resolved
+    from the ISO to its balancing-authority extract by
+    :func:`load_eia_hourly_renewable_gen` — supplies a wind/solar profile on
+    the same chronological clock as the demand and interchange. It is
+    delivered (already curtailed) output, so — like the EIA-930 generation
+    distributions — the dispatch does not separately re-curtail it.
 
-    Returns ``None`` when ``iso`` is not ERCOT or no ERCO data covers the
-    ``(year, fuel)`` pair.
+    Returns ``None`` when the ISO has no mapped hourly extract or no data
+    covers the ``(year, fuel)`` pair.
     """
-    if iso != "ERCOT":
-        return None
-    gen = load_ercot_renewable_gen(year)
+    gen = load_eia_hourly_renewable_gen(iso, year)
     if gen is None or fuel not in gen:
         return None
     return _mw_to_cf(gen[fuel], monthly_capacity)
@@ -581,11 +580,11 @@ def load_renewable_profiles(
     Hourly CF profiles are derived from the EIA-930 generation
     distributions (see :func:`derive_cf_profile` and the module docstring),
     scaled by the calibration knob ``config.renewable_cf_adjustment`` and
-    re-clipped to ``[0, 1]``. ERCOT backcasts instead use measured hourly
-    profiles on the calibration's chronological clock: the uncurtailed HSL
-    series for 2023 (so the dispatch re-curtails — see
-    :func:`_hsl_cf_profile`), and the delivered ``ERCO hourly`` net
-    generation for other years (see :func:`_erco_cf_profile`).
+    re-clipped to ``[0, 1]``. Backcasts instead use measured hourly profiles
+    on the calibration's chronological clock: ERCOT's uncurtailed HSL series
+    for 2023 (so the dispatch re-curtails — see :func:`_hsl_cf_profile`), and
+    otherwise the delivered ``<BA> hourly`` net generation for the ISO's
+    balancing authority (see :func:`_eia_hourly_cf_profile`).
 
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
@@ -647,15 +646,17 @@ def load_renewable_profiles(
                 installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
             # A backcast prefers a measured hourly profile on the
             # calibration's chronological clock: ERCOT 2023 uses the
-            # uncurtailed HSL series; other ERCOT years use the delivered
-            # ERCO hourly net generation. Both are normalized per MW of
-            # online capacity, so the vintage ramp distributes them across
-            # zones, and neither takes the CF knob tuned to EIA-930 data.
+            # uncurtailed HSL series; otherwise the ISO's delivered
+            # ``<BA> hourly`` net generation is used. Both are normalized per
+            # MW of online capacity, so the vintage ramp distributes them
+            # across zones, and neither takes the CF knob tuned to EIA-930 data.
             measured_cf = None
             if is_backcast:
                 measured_cf = _hsl_cf_profile(iso, year, fuel, monthly)
                 if measured_cf is None:
-                    measured_cf = _erco_cf_profile(iso, year, fuel, monthly)
+                    measured_cf = _eia_hourly_cf_profile(
+                        iso, year, fuel, monthly
+                    )
             if measured_cf is not None:
                 cf_profile = measured_cf
                 vintage_ramp = True
