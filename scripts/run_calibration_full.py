@@ -413,6 +413,8 @@ def _git_sha() -> str:
 def solve_and_persist(
     years: list[int], iso: str, hours: int, reference: dict,
     commitment: bool, screen_coal: bool, run_dir: Path,
+    coal_lignite_mustrun: float | None = None,
+    coal_prb_mustrun: float | None = None,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -438,6 +440,8 @@ def solve_and_persist(
         result, context, result_p1 = run_year(
             year, iso, hours, gas_price, ttc_overrides={},
             commitment_enabled=commitment, commitment_screen_coal=screen_coal,
+            coal_lignite_mustrun=coal_lignite_mustrun,
+            coal_prb_mustrun=coal_prb_mustrun,
         )
         labelled = [("P2" if result_p1 is not None else "P1", result)]
         if result_p1 is not None:
@@ -478,6 +482,8 @@ def solve_and_persist(
         "iso": iso, "years": years, "hours": hours,
         "passes": sorted(passes_seen), "commitment": commitment,
         "commitment_screen_coal": screen_coal, "gas_prices": gas_prices,
+        "coal_lignite_mustrun": coal_lignite_mustrun,
+        "coal_prb_mustrun": coal_prb_mustrun,
         "td_loss_factor": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
@@ -789,6 +795,14 @@ def main() -> None:
         help="Pin coal to its P1 dispatch in P2 (coal gains no new P2 gen).",
     )
     parser.add_argument(
+        "--coal-lignite-mustrun", type=float, default=None,
+        help="Override mine-mouth lignite coal must-run %% (sweep knob).",
+    )
+    parser.add_argument(
+        "--coal-prb-mustrun", type=float, default=None,
+        help="Override PRB coal must-run %% (sweep knob).",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -813,6 +827,8 @@ def main() -> None:
         args.year, iso, args.hours, reference,
         commitment=args.commitment, screen_coal=not args.no_coal_p2,
         run_dir=run_dir,
+        coal_lignite_mustrun=args.coal_lignite_mustrun,
+        coal_prb_mustrun=args.coal_prb_mustrun,
     )
     report_run(run_dir)
 
