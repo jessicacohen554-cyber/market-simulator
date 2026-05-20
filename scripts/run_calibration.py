@@ -49,6 +49,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
 )
 from market_sim.data.fleet import (  # noqa: E402
     _AGGREGATABLE_FUELS,
+    COAL_MUSTRUN_BY_PLANT,
     aggregate_fleet,
     apply_coal_tranches,
     assemble_mc,
@@ -63,6 +64,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_plant_monthly_fuel_prices,
     prb_passthrough_series,
+    prb_passthrough_series_follower,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -160,6 +162,8 @@ def _calibration_config(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    coal_drop_pof: bool = False,
+    coal_prb_passthrough_tiered: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -215,6 +219,10 @@ def _calibration_config(
         #   PRB passthrough when set; else the flat coal_prb_passthrough.
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
         #   must-run floors when set; else the uniform lignite/PRB overrides.
+        coal_drop_pof=coal_drop_pof,  # drop statistical POF on coal (planned
+        #   maintenance now comes from the historic outage overlay).
+        coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
+        #   follower-tier PRB sigmoid for low-must-run load-followers.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -275,6 +283,8 @@ def run_year(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    coal_drop_pof: bool = False,
+    coal_prb_passthrough_tiered: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -308,6 +318,7 @@ def run_year(
         coal_lignite_mustrun, coal_prb_mustrun,
         coal_prb_passthrough, outage_source,
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
+        coal_drop_pof, coal_prb_passthrough_tiered,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
@@ -351,9 +362,26 @@ def run_year(
         # baseloaded PRB clears the merit order instead of being priced out
         # by cheap gas. apply_coal_tranches applies both discounts.
         # PRB above-must-run passthrough: flat scalar, or an (T,) gas-keyed
-        # sigmoid when config.coal_prb_passthrough_sigmoid is set.
+        # sigmoid when config.coal_prb_passthrough_sigmoid is set. When tiered,
+        # low-floor load-follower PRB plants get the follower-tier sigmoid.
         prb_pt = prb_passthrough_series(config, year, config.hours)
-        fuel_fracs = [campd_tranche_fuel_frac(g, prb_pt) for g in fleet]
+        if (config.coal_prb_passthrough_sigmoid
+                and config.coal_prb_passthrough_tiered):
+            foll_pt = prb_passthrough_series_follower(
+                config, year, config.hours
+            )
+            thr = config.coal_prb_follower_mustrun_max
+
+            def _pt_for(g):
+                if (g.fuel_type == "coal"
+                        and getattr(g, "coal_supply", "") == "prb"
+                        and COAL_MUSTRUN_BY_PLANT.get(
+                            g.plant_code, 100.0) <= thr):
+                    return foll_pt
+                return prb_pt
+            fuel_fracs = [campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet]
+        else:
+            fuel_fracs = [campd_tranche_fuel_frac(g, prb_pt) for g in fleet]
     else:
         fleet_base = aggregate_fleet(
             load_fleet_from_csv(iso, iso_config),
