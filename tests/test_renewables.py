@@ -5,6 +5,7 @@ import numpy as np
 from market_sim.config.constants import HOURS_PER_YEAR, RENEWABLE_INSTALLED_MW
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.eia_loader import load_eia_hourly_renewable_gen
 from market_sim.data.renewables import (
     _eia860_monthly_capacity,
     _eia860_zone_shares,
@@ -181,3 +182,59 @@ def test_caiso_solar_allocated_to_main_zone_not_import():
     assert solar_cap[main] > 0.0
     assert np.all(solar_cf[wecc] == 0.0)
     assert solar_cap[wecc] == 0.0
+
+
+def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
+    """A CAISO backcast builds its CF profile from the CISO hourly extract.
+
+    With ``gas_price_override`` set the run is a historical backcast, so the
+    profile is built from the EIA-930 ``CISO hourly`` net generation (the new
+    per-BA file-resolution path generalized from the ERCOT-only loader), not
+    the EIA-930 distribution. For the single-zone CAISO the resulting hourly
+    CF mean equals the realized annual-average CF — delivered generation
+    divided by EIA-860 year-end capacity. For solar that realized value
+    (~0.21) is far from the 0.28 EIA-930 distribution anchor, so matching it
+    confirms the measured path is taken rather than the distribution path.
+    """
+    iso_config = get_iso_config("CAISO")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="CAISO", gas_price_override=3.0
+    )
+    wind_cf, _, solar_cf, _ = load_renewable_profiles(
+        "CAISO", _CAL_YEAR, iso_config, config
+    )
+    main = iso_config.zone_names.index("CAISO_main")
+    gen = load_eia_hourly_renewable_gen("CAISO", _CAL_YEAR)
+
+    for fuel, cf in (("wind", wind_cf), ("solar", solar_cf)):
+        monthly = _eia860_monthly_capacity(
+            "CAISO", fuel, iso_config.zone_names, _CAL_YEAR
+        )
+        realized_cf = gen[fuel].mean() / monthly[:, -1].sum()
+        profile_mean = cf[main].mean()
+        assert 0.0 < profile_mean < 1.0
+        # Single-zone identity: CF mean = delivered gen / year-end capacity.
+        np.testing.assert_allclose(profile_mean, realized_cf, atol=0.01)
+
+
+def test_miso_cf_profile_mean_matches_annual_average_cf():
+    """MISO wind/solar resolve to the converted MISO hourly extract.
+
+    MISO is mapped only for hourly file resolution (it has no full ``ISOConfig``
+    yet), so the generalized loader is exercised directly: it must resolve
+    MISO→MISO and return a full 8760-hour wind and solar series. Rescaling
+    each into an hourly CF profile yields a mean equal to the chosen
+    annual-average CF — the profile is a normalized distribution times that CF
+    — for representative CFs that sit below the clip ceiling.
+    """
+    gen = load_eia_hourly_renewable_gen("MISO", _CAL_YEAR)
+    assert gen is not None
+    assert {"wind", "solar"} <= set(gen)
+    # Representative MISO annual-average CFs (EIA Electric Power Monthly 2023:
+    # MISO wind ~0.40, utility-scale solar ~0.20); both below the clip ceiling.
+    for fuel, avg_cf in (("wind", 0.40), ("solar", 0.20)):
+        mw = gen[fuel]
+        assert len(mw) == HOURS_PER_YEAR
+        cf = derive_cf_profile(mw / mw.sum(), avg_cf)
+        assert cf.min() >= 0.0 and cf.max() <= 1.0
+        np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
