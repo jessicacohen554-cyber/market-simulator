@@ -160,6 +160,7 @@ def _calibration_config(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    coal_drop_pof: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -215,6 +216,8 @@ def _calibration_config(
         #   PRB passthrough when set; else the flat coal_prb_passthrough.
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
         #   must-run floors when set; else the uniform lignite/PRB overrides.
+        coal_drop_pof=coal_drop_pof,  # drop statistical POF on coal (planned
+        #   maintenance now comes from the historic outage overlay).
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -275,6 +278,7 @@ def run_year(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    coal_drop_pof: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -308,6 +312,7 @@ def run_year(
         coal_lignite_mustrun, coal_prb_mustrun,
         coal_prb_passthrough, outage_source,
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
+        coal_drop_pof,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
