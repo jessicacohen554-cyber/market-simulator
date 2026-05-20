@@ -1,0 +1,51 @@
+plant_code,name,supply,year,start,end,days,season
+6180,Oak Grove (TX),lignite,2023,2023-03-05,2023-03-15,9.1,shoulder
+6180,Oak Grove (TX),lignite,2024,2024-03-04,2024-03-19,15.2,shoulder
+6183,San Miguel,lignite,2023,2023-01-11,2023-01-16,5.5,winter
+6183,San Miguel,lignite,2023,2023-01-18,2023-01-23,5.2,winter
+6183,San Miguel,lignite,2023,2023-03-01,2023-05-06,66.3,shoulder
+6183,San Miguel,lignite,2023,2023-06-22,2023-06-26,4.0,summer
+6183,San Miguel,lignite,2023,2023-10-16,2023-10-18,2.9,shoulder
+6183,San Miguel,lignite,2023,2023-10-22,2023-12-09,48.5,shoulder
+6183,San Miguel,lignite,2023,2023-12-15,2023-12-18,3.1,winter
+6183,San Miguel,lignite,2024,2024-01-07,2024-01-11,4.2,winter
+6183,San Miguel,lignite,2024,2024-03-01,2024-05-01,61.7,shoulder
+6183,San Miguel,lignite,2024,2024-05-10,2024-05-15,5.0,shoulder
+6183,San Miguel,lignite,2024,2024-05-25,2024-05-27,2.4,shoulder
+6183,San Miguel,lignite,2024,2024-06-08,2024-06-10,2.2,summer
+6183,San Miguel,lignite,2024,2024-08-30,2024-09-02,3.0,summer
+6183,San Miguel,lignite,2024,2024-09-16,2024-09-20,4.0,summer
+6183,San Miguel,lignite,2024,2024-10-24,2024-12-15,53.0,shoulder
+7030,Major Oak Power,lignite,2024,2024-04-01,2024-04-05,5.0,shoulder
+298,Limestone,prb,2023,2023-02-06,2023-02-28,21.9,winter
+298,Limestone,prb,2023,2023-03-21,2023-04-04,13.9,shoulder
+298,Limestone,prb,2023,2023-04-17,2023-04-23,6.9,shoulder
+298,Limestone,prb,2023,2023-04-30,2023-05-02,2.0,shoulder
+298,Limestone,prb,2024,2024-02-17,2024-03-04,16.0,winter
+298,Limestone,prb,2024,2024-04-20,2024-06-18,59.8,shoulder
+3470,W A Parish,prb,2024,2024-02-20,2024-03-04,12.2,winter
+6146,Martin Lake,prb,2024,2024-11-27,2024-12-14,17.4,winter
+6178,Coleto Creek,prb,2023,2023-01-04,2023-01-24,20.2,winter
+6178,Coleto Creek,prb,2023,2023-02-12,2023-04-20,67.1,shoulder
+6178,Coleto Creek,prb,2023,2023-04-20,2023-04-25,5.0,shoulder
+6178,Coleto Creek,prb,2023,2023-04-26,2023-05-01,5.6,shoulder
+6178,Coleto Creek,prb,2023,2023-07-07,2023-07-09,2.2,summer
+6178,Coleto Creek,prb,2023,2023-11-13,2023-11-17,4.5,shoulder
+6178,Coleto Creek,prb,2024,2024-01-15,2024-01-20,4.7,winter
+6178,Coleto Creek,prb,2024,2024-02-14,2024-04-16,63.0,shoulder
+6178,Coleto Creek,prb,2024,2024-08-07,2024-08-15,8.1,summer
+6178,Coleto Creek,prb,2024,2024-10-30,2024-11-09,10.0,shoulder
+6178,Coleto Creek,prb,2024,2024-11-15,2024-11-19,4.1,shoulder
+6178,Coleto Creek,prb,2024,2024-12-23,2024-12-27,3.7,winter
+7097,J K Spruce,prb,2023,2023-03-23,2023-03-29,6.4,shoulder
+7097,J K Spruce,prb,2023,2023-05-08,2023-05-17,8.6,shoulder
+7097,J K Spruce,prb,2023,2023-11-07,2023-11-11,4.0,shoulder
+7097,J K Spruce,prb,2023,2023-11-17,2023-11-27,10.3,shoulder
+7097,J K Spruce,prb,2024,2024-10-12,2024-10-23,10.9,shoulder
+56611,plant 56611,prb,2023,2023-02-08,2023-02-12,5.0,winter
+56611,plant 56611,prb,2023,2023-03-17,2023-04-03,17.1,shoulder
+56611,plant 56611,prb,2023,2023-05-09,2023-05-12,2.9,shoulder
+56611,plant 56611,prb,2023,2023-09-11,2023-09-23,12.3,summer
+56611,plant 56611,prb,2023,2023-12-02,2023-12-10,8.3,winter
+56611,plant 56611,prb,2024,2024-02-12,2024-04-18,65.8,shoulder
+56611,plant 56611,prb,2024,2024-10-02,2024-10-20,18.5,shoulder

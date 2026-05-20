@@ -169,6 +169,26 @@ class TestPlantHourlyNet(unittest.TestCase):
         self.assertAlmostEqual(series.sum(), 42 * 100.0 * 0.9)
 
 
+class TestPlantHourlyGrid(unittest.TestCase):
+    """``plant_hourly_grid`` gap-fills offline hours on a contiguous clock."""
+
+    def test_gap_filled_and_contiguous(self):
+        with tempfile.TemporaryDirectory() as d:
+            _raw_extract().to_parquet(Path(d) / "TX_2023.parquet")
+            df = campd.load_campd_hourly(["TX"], [2023], raw_dir=d)
+        grid = campd.plant_hourly_grid(df, 1001, 2023)
+        # Two full days reported -> 48 contiguous hours, no gaps.
+        self.assertEqual(len(grid), 48)
+        self.assertEqual(int((grid["gross_mw"] == 0).sum()), 6)  # day-1 off hours
+        self.assertEqual(int((grid["gross_mw"] > 0).sum()), 42)
+
+    def test_absent_plant_year_is_empty(self):
+        with tempfile.TemporaryDirectory() as d:
+            _raw_extract().to_parquet(Path(d) / "TX_2023.parquet")
+            df = campd.load_campd_hourly(["TX"], [2023], raw_dir=d)
+        self.assertTrue(campd.plant_hourly_grid(df, 9999, 2023).empty)
+
+
 class TestApplyPlantEmissionRates(unittest.TestCase):
     """The LP override swaps fuel-class rates for plant-specific ones (tonnes)."""
 
