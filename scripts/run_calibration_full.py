@@ -51,6 +51,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
     load_monthly_generation,
     monthly_netgen_columns,
@@ -349,6 +350,49 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     return pd.concat(out, ignore_index=True)
 
 
+def _parasitic_factor_map() -> dict[int, float]:
+    """Return ``{plant_id: net/gross factor}`` from the derived artifact.
+
+    Empty when the artifact is missing — the per-plant hourly fit then
+    falls back to scaling CAMPD gross by 1.0 (treating gross as net), which
+    only shifts the level, not the timing the correlation cares about.
+    """
+    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    if not path.exists():
+        return {}
+    return campd.pooled_factor_map(pd.read_parquet(path))
+
+
+def _campd_hourly_frame(
+    year: int, iso: str, factors: dict[int, float], hours: int,
+) -> pd.DataFrame | None:
+    """Return the per-plant 8760-hour CAMPD **net** generation frame.
+
+    One row per ``(plant_id, hour)`` carrying net MW (CAMPD gross scaled by
+    the plant's parasitic factor). ``None`` when no CAMPD extract covers the
+    ISO's states for the year.
+    """
+    states = campd.states_for_iso(iso)
+    if not states:
+        return None
+    df = campd.load_campd_hourly(states, [year])
+    if df.empty:
+        return None
+    net = campd.plant_hourly_net(df, factors, year, hours=hours)
+    if not net:
+        return None
+    frames = [
+        pd.DataFrame({
+            "year": np.int16(year),
+            "plant_id": np.int32(plant_id),
+            "hour": np.arange(series.shape[0], dtype=np.int32),
+            "net_mw": series.astype(np.float32),
+        })
+        for plant_id, series in net.items()
+    ]
+    return pd.concat(frames, ignore_index=True)
+
+
 def _eia923_frame(year: int, generation: pd.DataFrame) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly."""
     df = generation[generation["year"] == year].copy()
@@ -427,7 +471,9 @@ def solve_and_persist(
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
     generation = load_monthly_generation()
+    parasitic_factors = _parasitic_factor_map()
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
+    campd_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
     passes_seen: set[str] = set()
 
@@ -471,6 +517,9 @@ def solve_and_persist(
         if e930 is not None:
             eia930_frames.append(e930)
         eia923_frames.append(_eia923_frame(year, generation))
+        campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        if campd_year is not None:
+            campd_frames.append(campd_year)
 
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
@@ -485,6 +534,10 @@ def solve_and_persist(
     pd.concat(btm_frames, ignore_index=True).to_parquet(
         run_dir / "btm.parquet", index=False
     )
+    if campd_frames:
+        pd.concat(campd_frames, ignore_index=True).to_parquet(
+            run_dir / "campd.parquet", index=False
+        )
     meta = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "iso": iso, "years": years, "hours": hours,
@@ -716,6 +769,69 @@ def _print_plant_level(year, dispatch, e923) -> None:
     _print_table(rows)
 
 
+def _plant_hourly_fit(
+    year: int, dispatch: pd.DataFrame, campd_year: pd.DataFrame, hours: int,
+) -> pd.DataFrame:
+    """Return per-plant hourly model-vs-CAMPD fit for every resolved plant.
+
+    The model dispatch is summed by ``plant_code`` to an hourly MW series and
+    compared against the plant's CAMPD **net** generation. Plants the model
+    aggregates into multi-plant bins (``plant_code == 0``) and plants without
+    CAMPD coverage are absent. One row per plant with Pearson r, NRMSE and
+    annual model / CAMPD GWh, sorted worst-fit first.
+    """
+    model = dispatch[dispatch["plant_code"] > 0]
+    piv = (
+        model.groupby(["plant_code", "hour"], observed=True)["mw"].sum()
+        .unstack("plant_code", fill_value=0.0).sort_index()
+    )
+    obs = {
+        int(pid): g.sort_values("hour")["net_mw"].to_numpy(dtype=float)
+        for pid, g in campd_year.groupby("plant_id", observed=True)
+    }
+    rows = []
+    for plant_code in piv.columns:
+        observed = obs.get(int(plant_code))
+        if observed is None:
+            continue
+        m = piv[plant_code].to_numpy(dtype=float)
+        T = min(m.shape[0], observed.shape[0], hours)
+        m, o = m[:T], observed[:T]
+        rows.append({
+            "year": np.int16(year),
+            "plant_code": int(plant_code),
+            "pearson_r": round(_pearson_r(m, o), 4),
+            "nrmse": round(_nrmse(m, o), 4),
+            "model_gwh": round(float(m.sum()) / 1e3, 1),
+            "campd_gwh": round(float(o.sum()) / 1e3, 1),
+            "campd_op_hours": int((o > 0).sum()),
+        })
+    fit = pd.DataFrame(rows)
+    return fit.sort_values("pearson_r").reset_index(drop=True) if len(fit) else fit
+
+
+def _print_plant_hourly_fit(year: int, fit: pd.DataFrame) -> None:
+    """[7] Per-plant hourly dispatch fit vs CAMPD net — representative panel."""
+    by_code = fit.set_index("plant_code") if len(fit) else fit
+    print(f"\n  [7] Per-plant hourly dispatch fit — {year} "
+          "(model vs CAMPD net; representative panel)")
+    rows = [("plant", "EIA code", "Pearson r", " NRMSE", "model GWh",
+             "CAMPD GWh", "op hrs")]
+    for code, label in _PLANT_PANEL:
+        if len(by_code) and code in by_code.index:
+            r = by_code.loc[code]
+            rows.append((label, str(code), f"{r['pearson_r']:.3f}",
+                         f"{r['nrmse']:.3f}", f"{r['model_gwh']:9.0f}",
+                         f"{r['campd_gwh']:9.0f}", str(int(r['campd_op_hours']))))
+        else:
+            rows.append((label, str(code), "    —", "    —", "    —",
+                         "    —", "  —"))
+    _print_table(rows)
+    if len(fit):
+        print(f"    (full per-plant fit for all {len(fit)} resolved plants "
+              "written to plant_hourly_fit.parquet)")
+
+
 def _save_p2_state(run_dir: Path, year: int, p2_state: dict) -> None:
     """Pickle the cached P1 inputs so P2 can be re-run as a post-process."""
     d = run_dir / "p2_state"
@@ -789,6 +905,11 @@ def report_run(run_dir: Path) -> None:
     )
     e923_all = pd.read_parquet(run_dir / "eia923.parquet")
     btm_all = pd.read_parquet(run_dir / "btm.parquet")
+    campd_all = (
+        pd.read_parquet(run_dir / "campd.parquet")
+        if (run_dir / "campd.parquet").exists() else None
+    )
+    plant_fit_frames: list[pd.DataFrame] = []
 
     print(f"\n{'=' * 80}")
     print(f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
@@ -847,6 +968,21 @@ def report_run(run_dir: Path) -> None:
             if e930 is not None:
                 _print_hourly_fit(year, model_hourly, e930, chp_grid_twh)
             _print_plant_level(year, dispatch, e923)
+            if campd_all is not None:
+                campd_year = campd_all[campd_all["year"] == year]
+                if not campd_year.empty:
+                    hours = int(dispatch["hour"].max()) + 1
+                    fit = _plant_hourly_fit(year, dispatch, campd_year, hours)
+                    _print_plant_hourly_fit(year, fit)
+                    if len(fit):
+                        fit = fit.copy()
+                        fit["pass"] = pass_label
+                        plant_fit_frames.append(fit)
+
+    if plant_fit_frames:
+        pd.concat(plant_fit_frames, ignore_index=True).to_parquet(
+            run_dir / "plant_hourly_fit.parquet", index=False
+        )
 
 
 def main() -> None:
