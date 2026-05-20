@@ -428,4 +428,5 @@ def apply_commitment_with_coal_pin(
         zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,
         availability=avail, unit_ids=fleet_arrays.unit_ids,
         efficiency_bin=fleet_arrays.efficiency_bin,
+        plant_code=fleet_arrays.plant_code,
     )
