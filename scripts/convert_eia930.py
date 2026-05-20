@@ -43,7 +43,7 @@ OUTPUT_DIR = REPO_ROOT / "data" / "eia_hourly"
 
 # EIA-930 balancing-authority local timezone. The Hourly Grid Monitor reports
 # each BA on its own local clock; these are the IANA/Olson zones EIA uses for
-# the BAs uploaded so far (SWPP included for the next batch).
+# the BAs uploaded so far.
 # Source: EIA Hourly Electric Grid Monitor, BA reference table.
 BA_TIMEZONES: dict[str, str] = {
     "ERCO": "US/Central",   # ERCOT (Texas)
@@ -52,6 +52,7 @@ BA_TIMEZONES: dict[str, str] = {
     "NYIS": "US/Eastern",   # NYISO (New York)
     "MISO": "US/Central",   # Midcontinent ISO
     "SWPP": "US/Central",   # Southwest Power Pool
+    "ISNE": "US/Eastern",   # ISO New England
     "FLA": "US/Eastern",    # Florida (FPL)
     "SOCO": "US/Central",   # Southern Company
 }
