@@ -12,6 +12,10 @@ inputs/raw-data/eia-860/*.csv
 
 # Derived binned-fleet cache (side output of the fleet loader)
 inputs/processed/*.parquet
+# The EIA-923 monthly fuel-cost extract IS committed: it is small
+# (~16 KB) and produced once by scripts/process_f923_fuel_costs.py;
+# the dispatch fuel resolver reads it at runtime.
+!inputs/processed/eia923_monthly_fuel_costs.parquet
 
 # Cached simulation results
 /results/

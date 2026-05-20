@@ -29,14 +29,27 @@ ZONE_NAMES = get_iso_config("ERCOT").zone_names
 
 
 def _synthetic_bin(**overrides) -> pd.DataFrame:
-    """Return a one-row aggregated bin frame, for targeted unit tests."""
+    """Return a one-row per-plant bin frame, for targeted unit tests.
+
+    Each bin in the new schema is one EIA plant, so every row carries a
+    ``Plant_Code`` and ``Plant_Name`` and the per-tranche heat rates
+    (``hr_mr`` / ``hr_mc`` / ``hr_econ`` / ``hr_peak``) default to the
+    plant's own ``hr_weighted``.
+    """
+    hr = float(overrides.get("hr_weighted", 6.6))
     row = {
         "Plant_Group": "CC_REGULAR",
         "ERCOT_Zone": "Houston",
         "Bin_Number": 1,
         "Bin_Label": "TEST1",
+        "Plant_Code": 1,
+        "Plant_Name": "Test Plant",
         "capacity_mw": 1000.0,
-        "hr_weighted": 6.6,
+        "hr_weighted": hr,
+        "hr_mr": hr,
+        "hr_mc": hr,
+        "hr_econ": hr,
+        "hr_peak": hr,
         "pct_mr": 0,
         "pct_mc": 50,
         "pct_econ": 35,
@@ -59,11 +72,15 @@ class TestLoadCampdBins(unittest.TestCase):
         cls.bins = load_campd_bins(BINS_CSV)
 
     def test_bins_load(self):
-        # One row per unique (group, zone, bin number, label).
-        self.assertGreater(len(self.bins), 100)
-        self.assertEqual(len(self.bins), self.bins.drop_duplicates(
-            ["Plant_Group", "ERCOT_Zone", "Bin_Number", "Bin_Label"]
-        ).shape[0])
+        # One row per (plant, plant-group): the per-plant bin schema means
+        # every plant gets its own dispatch generator. A plant whose coal
+        # and gas-steam units coexist (e.g. W A Parish 3470) splits across
+        # two rows, one per fuel/group.
+        self.assertGreater(len(self.bins), 250)
+        self.assertEqual(
+            len(self.bins),
+            self.bins.drop_duplicates(["Plant_Code", "Plant_Group"]).shape[0],
+        )
 
     def test_tranches_sum_to_100(self):
         total = (
@@ -167,8 +184,8 @@ class TestBinsToFleet(unittest.TestCase):
 
     def test_per_tranche_heat_rates_come_from_csv(self):
         # bins_to_fleet reads ``hr_mc``, ``hr_econ`` and ``hr_peak`` from
-        # the aggregated bins frame (capacity-weighted CSV HR columns),
-        # falling back to ``hr_weighted`` if a column is blank.
+        # the per-plant bins frame: each is ``Plant_Avg_HR ×
+        # HR_Mult_<tranche>`` assembled in ``load_campd_bins``.
         b = _synthetic_bin(hr_mc=7.5, hr_econ=6.4, hr_peak=10.2)
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         committed = next(
@@ -180,10 +197,13 @@ class TestBinsToFleet(unittest.TestCase):
         self.assertAlmostEqual(econ.heat_rate, 6.4, places=6)
         self.assertAlmostEqual(peak.heat_rate, 10.2, places=6)
 
-    def test_tranche_hr_falls_back_to_bin_average(self):
-        # When a CSV HR_<tranche> column is blank for every plant in a
-        # bin, the tranche inherits the bin's weighted-average HR.
-        b = _synthetic_bin()  # no hr_mc/hr_econ/hr_peak overrides
+    def test_tranche_hr_defaults_to_plant_hr_when_mult_blank(self):
+        # When a CSV HR_Mult_<tranche> column is blank (a zero-capacity
+        # tranche), the per-plant HR loader applies the group-default
+        # multiplier; in this synthetic bin every tranche shares the
+        # plant's own HR (1.0× multiplier), so each tranche carries the
+        # plant's measured heat rate.
+        b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         committed = next(
             g for g in fleet if g.unit_id.endswith("_committed")
