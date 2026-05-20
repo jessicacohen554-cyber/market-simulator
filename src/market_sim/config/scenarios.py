@@ -191,11 +191,16 @@ class ScenarioConfig:
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
-    td_loss_factor: float = 0.058  # T&D losses as fraction of metered load.
-    # Source: empirical ratio, EPA eGRID 2023 net generation (472.9 TWh)
-    # vs EIA-930 ERCOT system load (446.8 TWh) = 5.8% losses.
-    # Cross-check: ERCOT CDR uses ~4-5% for adequacy; 5.8% includes
-    # distribution losses. Applied as: demand = raw_demand × (1 + factor).
+    td_loss_factor: float = 0.0  # Gross-up of EIA-930 demand, as a fraction.
+    # EIA-930 "Demand" is generation-side: Demand + Total Interchange = Net
+    # Generation (verified to <0.01 TWh for ERCOT 2023/2024), so the demand
+    # target already equals net generation and needs no gross-up to match the
+    # fleet's actual output. The former 0.058 came from eGRID net generation
+    # (472.9 TWh) / EIA-930 demand (446.8 TWh) − 1, but eGRID's total includes
+    # ~28 TWh of behind-the-meter CHP self-supply that EIA-930 grid demand
+    # excludes — so that ratio was mostly mislabeled BTM CHP, not T&D losses,
+    # and inflated grid generation by the BTM amount. Applied as:
+    # demand = raw_demand × (1 + factor).
     vintage_capacity_ramp: bool = True  # When True, renewable capacity for a
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
