@@ -192,13 +192,14 @@ _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
 # ERCOT summer peak months (1-based). Thermal units carry reduced outage
 # here — planned outages are removed entirely and only a fraction of the
 # forced-outage rate applies — so firm capacity is available for the load
-# peak. The displaced outage energy is redistributed to the non-summer hours
-# (see generators_to_fleet_arrays), leaving each unit's annual-average
-# availability unchanged.
+# peak. The displaced outage energy is redistributed into the shoulder months
+# only (not winter, which has its own peak), leaving each unit's
+# annual-average availability unchanged. See generators_to_fleet_arrays.
 _SUMMER_MONTHS: frozenset[int] = frozenset({6, 7, 8, 9})
 
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
-# summer peak; the remaining (1 - share) is redistributed to non-summer.
+# summer peak; the remaining (1 - share) is redistributed into the shoulder
+# months. Winter keeps the flat WEFOR.
 _SUMMER_WEFOR_SHARE: float = 0.30
 
 
@@ -271,31 +272,30 @@ def generators_to_fleet_arrays(
                     (1.0 - gen.eford) * monthly_factors[month_idx]
                 )
 
-    # Summer peak vs the rest of the year, and the shoulder window that sizes
-    # the planned-outage budget.
+    # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
+    # the year. The shoulder absorbs the outage shifted out of summer; winter
+    # is left at base availability so the winter peak is not derated.
     month = _hour_to_month_index(hours) + 1
     summer = np.isin(month, list(_SUMMER_MONTHS))
     shoulder = np.isin(month, list(_CC_SHOULDER_MONTHS))
     summer_hours = int(summer.sum())
-    nonsummer_hours = hours - summer_hours
     shoulder_hours = int(shoulder.sum())
 
     # Thermal availability: an age-based model keyed to the plant-group
     # category (THERMAL_AVAILABILITY). Each unit's annual outage energy is
-    # conserved but shifted out of the summer peak so firm capacity is
-    # available when load is highest:
+    # conserved but concentrated away from the summer and winter demand peaks:
     #   * WEFOR (forced outages): only _SUMMER_WEFOR_SHARE applies in summer;
-    #     the remaining (1 - share) is redistributed evenly over non-summer.
-    #   * POF (planned outages): none in summer; the prior shoulder-month
-    #     planned-outage budget is spread evenly over the non-summer hours.
+    #     the remaining (1 - share) is redistributed into the shoulder months
+    #     only. Winter keeps the flat WEFOR.
+    #   * POF (planned outages): applies in the shoulder months only — none in
+    #     summer or winter, where load peaks.
     #   * The weather/performance derate stays flat year-round.
     # The annual-average availability of each unit is unchanged — only the
     # seasonal shape moves. Non-thermal units (nuclear, hydro, ...) keep the
     # 1 - EFORD derate. Age is the run year minus the unit's commission year.
-    if config is not None and nonsummer_hours > 0:
+    if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
-        summer_frac = summer_hours / nonsummer_hours
-        pof_ns_scale = shoulder_hours / nonsummer_hours
+        summer_to_shoulder = summer_hours / shoulder_hours
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -303,12 +303,16 @@ def generators_to_fleet_arrays(
                 gen.plant_group, run_year - gen.online_year
             )
             summer_wefor = _SUMMER_WEFOR_SHARE * wefor
-            ns_wefor = (
-                wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_frac
+            shoulder_wefor = (
+                wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
             )
-            ns_pof = pof * pof_ns_scale
+            # Default (winter): flat WEFOR, no POF. Then override summer and
+            # shoulder.
+            availability[g_idx, :] = 1.0 - wefor - derate
             availability[g_idx, summer] = 1.0 - summer_wefor - derate
-            availability[g_idx, ~summer] = 1.0 - ns_wefor - derate - ns_pof
+            availability[g_idx, shoulder] = (
+                1.0 - shoulder_wefor - derate - pof
+            )
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
             # flat multiplier on top of the age-based availability.
