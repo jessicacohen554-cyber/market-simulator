@@ -45,6 +45,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_renewable_gen,
 )
 from scripts.run_calibration import (  # noqa: E402
+    _calibration_config,
     _henry_hub_actual,
     _load_reference,
     run_year,
@@ -260,32 +261,46 @@ def _nrmse(model: np.ndarray, observed: np.ndarray) -> float:
 def _print_reconciliation(
     year: int, iso: str,
     model_grid_twh: float,
-    eia930_total_twh: float,
     btm_total_twh: float,
+    td_loss_factor: float,
+    unserved_twh: float = 0.0,
 ) -> None:
-    """Print the supply/demand reconciliation that explains the total gap.
+    """Print the grid surplus headline: model grid vs EIA-930 net generation.
 
-    The model dispatches to a demand target = EIA-930 metered load grossed
-    up by the T&D loss factor. That gross-up was calibrated to eGRID net
-    generation, which *includes* behind-the-meter CHP — so the model's
-    grid generation runs above EIA-930's by-fuel net generation by roughly
-    (T&D losses + behind-the-meter CHP host load). This block makes that
-    structural gap explicit so the per-fuel table below is read as
-    merit-order misalignment, not a demand error.
+    EIA-930 "Demand" is generation-side — Demand + Total Interchange = Net
+    Generation — so the dispatch demand target (``load_demand`` with the
+    calibration gross-up) equals EIA-930 net generation when the gross-up is
+    zero. The headline gap is model grid generation minus EIA-930 net
+    generation; it is (true T&D losses) + (any behind-the-meter CHP host
+    load still left in the demand target by the gross-up). With the gross-up
+    removed and BTM CHP held off-grid, the gap collapses toward zero. The
+    BTM CHP must-run is shown last for context only — it never enters this
+    grid comparison (it lives in table [1]).
     """
     iso_config = get_iso_config(iso)
-    raw_load = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum() / _MWH_PER_TWH
-    model_demand = load_demand(iso, year, iso_config, td_loss_factor=0.058).sum() / _MWH_PER_TWH
-    gap = model_grid_twh - eia930_total_twh
-    print(f"\n  [2] Generation reconciliation — {year}")
+    # load_demand(td=0) returns Demand + Interchange = EIA-930 net generation.
+    net_gen = (
+        load_demand(iso, year, iso_config, td_loss_factor=0.0).sum()
+        / _MWH_PER_TWH
+    )
+    model_target = (
+        load_demand(iso, year, iso_config, td_loss_factor=td_loss_factor).sum()
+        / _MWH_PER_TWH
+    )
+    gap = model_grid_twh - net_gen
+    print(f"\n  [2] Grid generation reconciliation — {year}")
     rows = [
-        ("EIA-930 metered load", f"{raw_load:7.2f} TWh"),
-        ("Model demand target (load x1.058 T&D)", f"{model_demand:7.2f} TWh"),
+        ("EIA-930 net generation (Demand + Interchange)",
+         f"{net_gen:7.2f} TWh"),
+        (f"Model demand target (gross-up {td_loss_factor:+.1%})",
+         f"{model_target:7.2f} TWh"),
         ("Model grid generation (LP)", f"{model_grid_twh:7.2f} TWh"),
-        ("EIA-930 net generation (all fuels)", f"{eia930_total_twh:7.2f} TWh"),
-        ("Gap (model grid - EIA-930)", f"{gap:+7.2f} TWh"),
-        ("  = T&D losses + behind-meter CHP host load in the gross-up", ""),
-        ("Behind-meter CHP must-run (off-LP, for emissions)",
+        ("Gap (model grid − EIA-930 net gen)", f"{gap:+7.2f} TWh"),
+        ("  = true T&D losses + any BTM CHP host load left in the target",
+         ""),
+        ("Unserved energy / load slack (should be 0)",
+         f"{unserved_twh:7.4f} TWh"),
+        ("Behind-meter CHP must-run (off-grid; table [1] only)",
          f"{btm_total_twh:7.2f} TWh"),
     ]
     width = max(len(r[0]) for r in rows)
@@ -595,10 +610,19 @@ def _print_plant_level(
 def _run_and_report(
     year: int, iso: str, hours: int, gas_price: float,
     generation_f923: pd.DataFrame,
+    commitment_enabled: bool = False,
+    commitment_screen_coal: bool = True,
 ) -> None:
-    """Run one calibration year and print every comparison block."""
-    result, context = run_year(
-        year, iso, hours, gas_price, ttc_overrides={}
+    """Run one calibration year and print every comparison block.
+
+    With ``commitment_enabled`` the P2 unit-commitment pass runs after P1;
+    both the P1 (pre-commitment) and P2 (committed) results are reported so
+    the commitment effect on the merit order is visible.
+    """
+    result, context, result_p1 = run_year(
+        year, iso, hours, gas_price, ttc_overrides={},
+        commitment_enabled=commitment_enabled,
+        commitment_screen_coal=commitment_screen_coal,
     )
 
     print(f"\n{'=' * 80}")
@@ -610,6 +634,30 @@ def _run_and_report(
     if fossil is None or renewables is None:
         logger.error("EIA-930 ERCO hourly data missing for %d", year)
         return
+    nuclear_930 = load_ercot_nuclear_gen(year)
+    td_loss = _calibration_config(year, iso, hours, gas_price).td_loss_factor
+
+    if result_p1 is not None:
+        _report_sections(
+            year, iso, result_p1, context, generation_f923,
+            fossil, renewables, nuclear_930, td_loss, label="P1 (pre-commitment)",
+        )
+    _report_sections(
+        year, iso, result, context, generation_f923,
+        fossil, renewables, nuclear_930, td_loss,
+        label="P2 (committed)" if result_p1 is not None else "",
+    )
+
+
+def _report_sections(
+    year: int, iso: str, result, context,
+    generation_f923: pd.DataFrame,
+    fossil: dict, renewables: dict, nuclear_930, td_loss: float,
+    label: str = "",
+) -> None:
+    """Print comparison tables [1]-[6] for one solved dispatch result."""
+    if label:
+        print(f"\n  ----- {label} -----")
 
     # Pull plant_codes from the unit ids — they encode ``..._p{code}_<suffix>``.
     plant_codes = _plant_codes_from_unit_ids(context.unit_ids)
@@ -643,27 +691,21 @@ def _run_and_report(
         year, dispatch, plant_codes, context, generation_f923,
     )
 
-    nuclear_930 = load_ercot_nuclear_gen(year)
-
     # [1] CHP — the one table where CHP appears; returns CHP grid-delivered.
     chp_grid_twh = _print_chp_table(
         year, model_total_class_twh, btm_by_class_twh, f923_class_twh,
     )
 
-    # [2] Reconciliation — why the model total runs over EIA-930.
+    # [2] Reconciliation — model grid generation vs EIA-930 net generation.
     model_grid_twh = (
         float(dispatch.sum())
         + float(model_hourly["wind"].sum())
         + float(model_hourly["solar"].sum())
     ) / _MWH_PER_TWH
-    eia930_total_twh = (
-        fossil["gas"].sum() + fossil["coal"].sum()
-        + renewables["wind"].sum() + renewables["solar"].sum()
-        + (nuclear_930.sum() if nuclear_930 is not None else 0.0)
-    ) / _MWH_PER_TWH
     btm_total_twh = sum(btm_by_class_twh.values())
+    unserved_twh = float(np.asarray(result.slack).sum()) / _MWH_PER_TWH
     _print_reconciliation(
-        year, iso, model_grid_twh, eia930_total_twh, btm_total_twh,
+        year, iso, model_grid_twh, btm_total_twh, td_loss, unserved_twh,
     )
 
     # [3] Non-CHP grid generation vs EIA-930.
@@ -764,6 +806,16 @@ def main() -> None:
     )
     parser.add_argument("--iso", default="ERCOT")
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
+    parser.add_argument(
+        "--commitment", action="store_true",
+        help="Run the P2 unit-commitment pass after P1; both are reported.",
+    )
+    parser.add_argument(
+        "--no-coal-p2", action="store_true",
+        help="Pin coal to its P1 dispatch in P2 instead of screening it: "
+             "coal gains no new generation in P2 (P1 locks it). Only "
+             "meaningful with --commitment.",
+    )
     args = parser.parse_args()
 
     reference = _load_reference()
@@ -774,7 +826,11 @@ def main() -> None:
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
             args.iso, year, args.hours, gas_price,
         )
-        _run_and_report(year, args.iso, args.hours, gas_price, generation)
+        _run_and_report(
+            year, args.iso, args.hours, gas_price, generation,
+            commitment_enabled=args.commitment,
+            commitment_screen_coal=not args.no_coal_p2,
+        )
 
 
 if __name__ == "__main__":

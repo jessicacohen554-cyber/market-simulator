@@ -398,6 +398,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
                 fleet_arrays_p2 = apply_commitment_with_coal_pin(
                     fleet_arrays, committed, p1_result.dispatch, dispatch_fleet,
+                    screen_coal=config.commitment_screen_coal,
                 )
                 result = solve_dispatch(
                     fleet_arrays_p2, year_demand, mc=mc_bid, **dispatch_kwargs
