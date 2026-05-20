@@ -132,6 +132,23 @@ def load_ercot_fossil_gen(year: int) -> dict[str, np.ndarray] | None:
     return out
 
 
+def load_ercot_nuclear_gen(year: int) -> np.ndarray | None:
+    """Return ERCOT hourly nuclear net generation (MW) for a year.
+
+    Reads the EIA-930 ``ERCO hourly`` ``NG: NUC`` series on the same
+    chronological clock as the demand, renewable and fossil series.
+    Returns a ``(HOURS_PER_YEAR,)`` array, or ``None`` when the file,
+    the year, or the column is unavailable.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None or "NG: NUC" not in frame.columns:
+        return None
+    series = frame["NG: NUC"].interpolate().bfill().ffill()
+    if series.isna().any():
+        return None
+    return series.to_numpy(dtype=float)
+
+
 def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     """Return the rows of ``df`` matching the given ISO and year.
 
