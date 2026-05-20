@@ -54,7 +54,9 @@ _SINGLE_ZONE: dict[str, str] = {
 # fallback when a plant's ORIS code is not present in the eGRID lookup.
 # CAISO falls back to SP15: the SCE+SDG&E south is the largest-load-share
 # zone (0.50) and is where unlocated imports physically land via the
-# West-of-River / Palo Verde ties.
+# West-of-River / Palo Verde ties. PJM falls back to PJM_West: the western
+# AEP/ComEd belt is the largest-load-share zone (0.504) and is where the
+# unlocated MISO/PJM-seam plants geographically sit.
 _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_West",
@@ -120,24 +122,51 @@ CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
     }
 )
 
-# PJM model zone by FIPS state code. Captures the major transmission
-# interfaces (West→East, AP South→Mid-Atlantic) without LDA granularity.
+# PJM model zone by FIPS state code, for the states that fall cleanly inside
+# one zone. Pennsylvania and Maryland straddle zones and are split by
+# longitude/county in ``_pjm_zone`` below, so they are deliberately absent
+# here. West rolls up the AEP/ComEd/APS/DAY/ATSI belt (+ DEOK/DUQ/EKPC); East
+# is the PSEG/JCPL/PECO/BGE/PEPCO Mid-Atlantic pocket (+ DPL/AECO/RECO); South
+# is Dominion (DOM).
 _PJM_STATE_ZONES: dict[int, str] = {
-    17: "PJM_West",      # IL
-    18: "PJM_West",      # IN
-    39: "PJM_West",      # OH
-    26: "PJM_West",      # MI
-    42: "PJM_Central",   # PA
-    54: "PJM_Central",   # WV
-    21: "PJM_Central",   # KY
-    34: "PJM_East",      # NJ
-    10: "PJM_East",      # DE
-    24: "PJM_East",      # MD
-    11: "PJM_East",      # DC
-    51: "PJM_South",     # VA
-    37: "PJM_South",     # NC
-    47: "PJM_South",     # TN
+    17: "PJM_West",      # IL  (ComEd)
+    18: "PJM_West",      # IN  (AEP)
+    39: "PJM_West",      # OH  (AEP / ATSI / DAY / DEOK / Duke OH)
+    26: "PJM_West",      # MI  (AEP)
+    21: "PJM_West",      # KY  (EKPC / Duke KY / AEP KY)
+    54: "PJM_West",      # WV  (AEP / APS)
+    34: "PJM_East",      # NJ  (PSEG / JCPL / AECO / RECO)
+    10: "PJM_East",      # DE  (DPL)
+    11: "PJM_East",      # DC  (PEPCO)
+    51: "PJM_South",     # VA  (DOM)
+    37: "PJM_South",     # NC  (DOM)
+    47: "PJM_South",     # TN  (edge of EKPC)
 }
+
+# FIPS state codes for the two PJM states that straddle model zones.
+_PENNSYLVANIA_FIPS: int = 42
+_MARYLAND_FIPS: int = 24
+
+# Pennsylvania splits three ways. The Philadelphia metro (PECO) is the East
+# load pocket; the rest divides by longitude — SW/NW PA (APS / Penn Power /
+# Duquesne / West Penn, west of ~-78.0) ties West, and the central/north-
+# eastern PPL/METED/PENELEC corridor is Central. The Philadelphia-metro county
+# codes give the precision longitude alone can't, mirroring the Houston rule.
+PJM_PHILLY_COUNTIES: frozenset[int] = frozenset(
+    {
+        101,  # Philadelphia
+        45,   # Delaware
+        91,   # Montgomery
+        17,   # Bucks
+        29,   # Chester
+    }
+)
+_PJM_PA_WEST_LON: float = -78.0
+
+# Maryland: the western panhandle (Garrett / Allegany — APS / Potomac Edison,
+# west of ~-78.5) ties West; the rest of the state (BGE / PEPCO / DPL eastern
+# shore) is the Mid-Atlantic East.
+_PJM_MD_WEST_LON: float = -78.5
 
 # MISO model region by FIPS state code. MISO's defining split is the three
 # sub-regions, which follow state lines: the wind-rich upper-Midwest North,
@@ -322,8 +351,32 @@ def _caiso_zone(
     return _LARGEST_ZONE["CAISO"]
 
 
-def _pjm_zone(fips_state: int | None) -> str:
-    """Return the PJM model zone for a plant's FIPS state code."""
+def _pjm_zone(
+    lat: float | None,
+    lon: float | None,
+    fips_state: int | None,
+    fips_county: int | None,
+) -> str:
+    """Return the PJM model zone for a plant location.
+
+    Most states map cleanly to one zone via ``_PJM_STATE_ZONES``. Pennsylvania
+    and Maryland straddle zones: the Philadelphia metro (PECO counties) is
+    East, western PA/MD ties West by longitude, and the rest of PA is the
+    Central PPL/METED/PENELEC corridor. A plant whose state is unknown (or a PA
+    plant with no longitude to place it west) falls back to the Central PA
+    default; a plant with no usable location at all falls back to the
+    largest-load-share zone (PJM_West).
+    """
+    if fips_state == _PENNSYLVANIA_FIPS:
+        if fips_county in PJM_PHILLY_COUNTIES:
+            return "PJM_East"
+        if lon is not None and lon <= _PJM_PA_WEST_LON:
+            return "PJM_West"
+        return "PJM_Central"
+    if fips_state == _MARYLAND_FIPS:
+        if lon is not None and lon <= _PJM_MD_WEST_LON:
+            return "PJM_West"
+        return "PJM_East"
     return _PJM_STATE_ZONES.get(fips_state, _LARGEST_ZONE["PJM"])
 
 
@@ -365,7 +418,7 @@ def _zone_from_location(
     if iso == "MISO":
         return _miso_zone(lat, fips_state)
     if iso == "PJM":
-        return _pjm_zone(fips_state)
+        return _pjm_zone(lat, lon, fips_state, fips_county)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 
