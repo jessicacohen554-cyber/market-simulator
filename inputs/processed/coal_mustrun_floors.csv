@@ -1,11 +1,11 @@
-plant_code,name,supply,nameplate_mw,cap_mw_used,nameplate_source,online_hours,online_share,cf_p5,cf_p10,cf_p50,cf_p95,minload_pct_of_max
-6180,Oak Grove (TX),lignite,1795.4,1795.4,registry,16924,0.965,0.458,0.486,0.932,1.005,0.484
-6183,San Miguel,lignite,410.0,410.0,registry,10905,0.622,0.5,0.605,0.62,1.027,0.589
-7030,Major Oak Power,lignite,349.2,349.2,registry,17400,0.992,0.421,0.495,0.979,0.994,0.499
-298,Limestone,prb,1849.8,1849.8,registry,14600,0.832,0.165,0.218,0.442,0.843,0.259
-3470,W A Parish,prb,4008.4,4008.4,registry,17206,0.981,0.09,0.114,0.313,0.711,0.16
-6146,Martin Lake,prb,2379.6,2379.6,registry,17102,0.975,0.238,0.274,0.485,1.056,0.26
-6178,Coleto Creek,prb,622.4,622.4,registry,12461,0.714,0.323,0.329,0.824,1.062,0.31
-6179,Fayette Power Project,prb,1690.0,1690.0,registry,17520,0.999,0.23,0.307,0.507,0.782,0.392
-7097,J K Spruce,prb,1488.5,1488.5,registry,16464,0.938,0.097,0.117,0.397,0.943,0.124
-56611,plant 56611,prb,0.0,983.4,p99_observed,13829,0.811,0.403,0.404,0.41,0.936,0.432
+plant_code,name,supply,nameplate_mw,cap_mw_used,nameplate_source,coal_share,prime_movers,mixed,online_hours,online_share,cf_p5,cf_p10,cf_p50,cf_p95,minload_pct_of_max
+6180,Oak Grove (TX),lignite,1795.4,1795.4,registry,0.968,ST,False,16924,0.965,0.458,0.486,0.932,1.005,0.484
+6183,San Miguel,lignite,410.0,410.0,registry,0.998,ST,False,10905,0.622,0.5,0.605,0.62,1.027,0.589
+7030,Major Oak Power,lignite,349.2,349.2,registry,0.998,ST,False,17400,0.992,0.421,0.495,0.979,0.994,0.499
+298,Limestone,prb,1849.8,1849.8,registry,0.991,ST,False,14600,0.832,0.165,0.218,0.442,0.843,0.259
+3470,W A Parish,prb,4008.4,4008.4,registry,0.824,GT+ST,True,17206,0.981,0.09,0.114,0.313,0.711,0.16
+6146,Martin Lake,prb,2379.6,2379.6,registry,0.998,ST,False,17102,0.975,0.238,0.274,0.485,1.056,0.26
+6178,Coleto Creek,prb,622.4,622.4,registry,0.998,ST,False,12461,0.714,0.323,0.329,0.824,1.062,0.31
+6179,Fayette Power Project,prb,1690.0,1690.0,registry,0.998,ST,False,17520,0.999,0.23,0.307,0.507,0.782,0.392
+7097,J K Spruce,prb,1488.5,1488.5,registry,0.998,ST,False,16464,0.938,0.097,0.117,0.397,0.943,0.124
+56611,plant 56611,prb,0.0,983.4,p99_observed,1.0,ST,False,13829,0.811,0.403,0.404,0.41,0.936,0.432
