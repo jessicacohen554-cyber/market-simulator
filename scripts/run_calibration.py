@@ -388,7 +388,8 @@ def run_year(
             demand=demand,
         )
         fleet_arrays_p2 = apply_commitment_with_coal_pin(
-            fleet_arrays, committed, result.dispatch, fleet
+            fleet_arrays, committed, result.dispatch, fleet,
+            screen_coal=config.commitment_screen_coal,
         )
         result = solve_dispatch(
             fleet_arrays_p2, demand, mc=mc_bid, **dispatch_kwargs
@@ -610,8 +611,9 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--no-coal-p2", action="store_true",
-        help="Exempt coal from the P2 commitment screen (coal stays "
-             "committed in every hour). Only meaningful with --commitment.",
+        help="Pin coal to its P1 dispatch in P2 instead of screening it: "
+             "coal gains no new generation in P2 (P1 locks it). Only "
+             "meaningful with --commitment.",
     )
     return parser
 
