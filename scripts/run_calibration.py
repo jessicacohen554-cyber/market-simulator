@@ -205,10 +205,9 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
-        coal_plant_monthly_pricing=False,  # baseline: hold all coal on the
-        #   flat annual lignite/PRB average instead of EIA-923 monthly per-plant
-        #   cost (which only Fayette/San Miguel/J K Spruce report). Gas keeps
-        #   its plant-specific monthly cost.
+        coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
+        #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
+        #   back to the flat lignite/PRB average.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
