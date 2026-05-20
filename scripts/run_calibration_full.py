@@ -465,6 +465,7 @@ def solve_and_persist(
     coal_prb_passthrough: float = 1.0,
     persist_p2_state: bool = False,
     outage_source: str = "historic",
+    coal_prb_passthrough_sigmoid: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -496,6 +497,7 @@ def solve_and_persist(
             coal_prb_mustrun=coal_prb_mustrun,
             coal_prb_passthrough=coal_prb_passthrough,
             outage_source=outage_source,
+            coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -549,6 +551,7 @@ def solve_and_persist(
         "coal_prb_mustrun": coal_prb_mustrun,
         "coal_prb_passthrough": coal_prb_passthrough,
         "outage_source": outage_source,
+        "coal_prb_passthrough_sigmoid": coal_prb_passthrough_sigmoid,
         "coal_plant_monthly_pricing": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
@@ -1026,6 +1029,12 @@ def main() -> None:
              "outages (default backcast); 'statistical' uses WEFOR/POF only.",
     )
     parser.add_argument(
+        "--prb-passthrough-sigmoid", action="store_true",
+        help="Gas-key the PRB passthrough: a logistic of the monthly gas "
+             "price replaces the flat --coal-prb-passthrough (deep discount "
+             "when gas is cheap, none/markup when dear).",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -1069,6 +1078,7 @@ def main() -> None:
         coal_prb_passthrough=args.coal_prb_passthrough,
         persist_p2_state=args.persist_p2_state,
         outage_source=args.outage_source,
+        coal_prb_passthrough_sigmoid=args.prb_passthrough_sigmoid,
     )
     report_run(run_dir)
 
