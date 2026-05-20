@@ -267,10 +267,10 @@ class ScenarioConfig:
     # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
     # fuel.prb_passthrough_series.
     coal_prb_passthrough_sigmoid: bool = False
-    coal_prb_passthrough_floor: float = 0.45    # cheap-gas asymptote
-    coal_prb_passthrough_ceil: float = 1.10     # dear-gas asymptote (>1 = markup)
-    coal_prb_passthrough_gas_mid: float = 3.0   # $/MMBtu logistic midpoint
-    coal_prb_passthrough_gas_slope: float = 1.8  # logistic slope per $/MMBtu
+    coal_prb_passthrough_floor: float = 0.65    # cheap-gas asymptote
+    coal_prb_passthrough_ceil: float = 1.20     # dear-gas asymptote (>1 = markup)
+    coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
+    coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
 
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
