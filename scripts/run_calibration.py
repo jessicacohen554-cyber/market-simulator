@@ -62,6 +62,7 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_plant_monthly_fuel_prices,
+    prb_passthrough_series,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -157,6 +158,7 @@ def _calibration_config(
     coal_prb_mustrun: float | None = None,
     coal_prb_passthrough: float = 1.0,
     outage_source: str = "historic",
+    coal_prb_passthrough_sigmoid: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -208,6 +210,8 @@ def _calibration_config(
         coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
         #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
         #   back to the flat lignite/PRB average.
+        coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,  # gas-keyed
+        #   PRB passthrough when set; else the flat coal_prb_passthrough.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -266,6 +270,7 @@ def run_year(
     coal_prb_mustrun: float | None = None,
     coal_prb_passthrough: float = 1.0,
     outage_source: str = "historic",
+    coal_prb_passthrough_sigmoid: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -298,6 +303,7 @@ def run_year(
         commitment_enabled, commitment_screen_coal,
         coal_lignite_mustrun, coal_prb_mustrun,
         coal_prb_passthrough, outage_source,
+        coal_prb_passthrough_sigmoid,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
@@ -340,10 +346,10 @@ def run_year(
         # only coal_prb_passthrough of their fuel cost into the bid so
         # baseloaded PRB clears the merit order instead of being priced out
         # by cheap gas. apply_coal_tranches applies both discounts.
-        fuel_fracs = [
-            campd_tranche_fuel_frac(g, config.coal_prb_passthrough)
-            for g in fleet
-        ]
+        # PRB above-must-run passthrough: flat scalar, or an (T,) gas-keyed
+        # sigmoid when config.coal_prb_passthrough_sigmoid is set.
+        prb_pt = prb_passthrough_series(config, year, config.hours)
+        fuel_fracs = [campd_tranche_fuel_frac(g, prb_pt) for g in fleet]
     else:
         fleet_base = aggregate_fleet(
             load_fleet_from_csv(iso, iso_config),
