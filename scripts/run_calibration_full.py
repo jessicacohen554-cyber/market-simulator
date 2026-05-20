@@ -272,6 +272,14 @@ def _dispatch_frame(
             supply.append("")
         klass.append(k)
 
+    # Zonal LMP (the dispatch LP's energy-balance dual) carried per
+    # generator-hour, so unit revenue (mw x lmp) and commitment economics are
+    # queryable straight from this frame. zone_idx maps each generator to its
+    # zone's price row.
+    prices = np.asarray(result.prices, dtype=np.float32)
+    zone_to_idx = {z: i for i, z in enumerate(zone_names)}
+    gen_zidx = np.array([zone_to_idx[z] for z in zones], dtype=int)
+
     rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
     hours = np.tile(np.arange(T, dtype=np.int32), n_gen)
     frames = [pd.DataFrame({
@@ -283,6 +291,7 @@ def _dispatch_frame(
         "zone": rep(zones),
         "hour": hours,
         "mw": disp.reshape(-1),
+        "lmp": prices[gen_zidx, :].reshape(-1),
     })]
 
     for name, arr in (
@@ -296,6 +305,7 @@ def _dispatch_frame(
                 "plant_code": np.int32(0),
                 "klass": name, "fuel": name, "supply": "",
                 "zone": zone, "hour": np.arange(T, dtype=np.int32), "mw": a[z],
+                "lmp": prices[z],
             }))
 
     df = pd.concat(frames, ignore_index=True)
@@ -304,6 +314,7 @@ def _dispatch_frame(
     for col in ("pass", "unit_id", "klass", "fuel", "supply", "zone"):
         df[col] = df[col].astype("category")
     df["mw"] = df["mw"].astype(np.float32)
+    df["lmp"] = df["lmp"].astype(np.float32)
     return df
 
 
@@ -465,6 +476,7 @@ def solve_and_persist(
     coal_prb_passthrough: float = 1.0,
     persist_p2_state: bool = False,
     outage_source: str = "historic",
+    coal_prb_passthrough_sigmoid: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -496,6 +508,7 @@ def solve_and_persist(
             coal_prb_mustrun=coal_prb_mustrun,
             coal_prb_passthrough=coal_prb_passthrough,
             outage_source=outage_source,
+            coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -549,6 +562,7 @@ def solve_and_persist(
         "coal_prb_mustrun": coal_prb_mustrun,
         "coal_prb_passthrough": coal_prb_passthrough,
         "outage_source": outage_source,
+        "coal_prb_passthrough_sigmoid": coal_prb_passthrough_sigmoid,
         "coal_plant_monthly_pricing": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
@@ -1026,6 +1040,12 @@ def main() -> None:
              "outages (default backcast); 'statistical' uses WEFOR/POF only.",
     )
     parser.add_argument(
+        "--prb-passthrough-sigmoid", action="store_true",
+        help="Gas-key the PRB passthrough: a logistic of the monthly gas "
+             "price replaces the flat --coal-prb-passthrough (deep discount "
+             "when gas is cheap, none/markup when dear).",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -1069,6 +1089,7 @@ def main() -> None:
         coal_prb_passthrough=args.coal_prb_passthrough,
         persist_p2_state=args.persist_p2_state,
         outage_source=args.outage_source,
+        coal_prb_passthrough_sigmoid=args.prb_passthrough_sigmoid,
     )
     report_run(run_dir)
 
