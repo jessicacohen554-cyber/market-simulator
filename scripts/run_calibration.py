@@ -149,6 +149,8 @@ def _henry_hub_actual(reference: dict, year: int) -> float:
 def _calibration_config(
     year: int, iso: str, hours: int, gas_price: float,
     coal_passthrough: float | None = None,
+    commitment_enabled: bool = False,
+    commitment_screen_coal: bool = True,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -183,8 +185,10 @@ def _calibration_config(
         gas_seasonality=True,
         carbon_price=0.0,
         rps_enabled=False,
-        commitment_enabled=False,  # P1-only: the 3-tranche, no-Pmin bin
-        #   structure dispatches correctly without the P2 screen.
+        commitment_enabled=commitment_enabled,  # P1-only by default: the
+        #   3-tranche, no-Pmin bin structure dispatches correctly without the
+        #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
+        commitment_screen_coal=commitment_screen_coal,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -237,7 +241,9 @@ def run_year(
     gas_price: float,
     ttc_overrides: dict[str, float | None],
     coal_passthrough: float | None = None,
-) -> tuple[object, FleetContext]:
+    commitment_enabled: bool = False,
+    commitment_screen_coal: bool = True,
+) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
     Builds the calibration configuration, loads the EIA-860 generator and
@@ -252,13 +258,19 @@ def run_year(
         hours: Dispatch horizon in hours.
         gas_price: Measured Henry Hub annual price ($/MMBtu).
         ttc_overrides: Optional per-link TTC overrides for a sweep.
+        coal_passthrough: Optional PRB coal contract-passthrough override.
+        commitment_enabled: When True, run the P2 unit-commitment pass after
+            P1 and return the P1 result for comparison.
+        commitment_screen_coal: When False, coal is exempt from the P2 screen.
 
     Returns:
-        A tuple ``(result, context)`` of the dispatch result and the fleet
-        context describing the dispatched fleet.
+        A tuple ``(result, context, result_p1)``. ``result`` is the final
+        dispatch (P2 when commitment is enabled, otherwise P1); ``result_p1``
+        is the pre-commitment P1 result when commitment ran, else ``None``.
     """
     config = _calibration_config(
-        year, iso, hours, gas_price, coal_passthrough
+        year, iso, hours, gas_price, coal_passthrough,
+        commitment_enabled, commitment_screen_coal,
     )
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
@@ -363,8 +375,11 @@ def run_year(
     result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
-    # coal to its P1 dispatch, and re-solve.
+    # coal to its P1 dispatch, and re-solve. The P1 result is kept so the
+    # caller can report it alongside P2.
+    result_p1 = None
     if config.commitment_enabled:
+        result_p1 = result
         committed = compute_commitment(
             result.prices, mc_base, fleet, fleet_arrays, config,
             storage_charge=result.storage_charge,
@@ -383,7 +398,7 @@ def run_year(
         fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
         storage.energy_cap,
     )
-    return result, context
+    return result, context, result_p1
 
 
 def _generation_twh(result, context: FleetContext) -> dict[str, float]:
@@ -418,10 +433,11 @@ def _print_table(title: str, rows: list[tuple]) -> None:
 
 
 def _report_year(year: int, iso: str, result, context: FleetContext,
-                  reference: dict) -> None:
+                  reference: dict, label: str = "") -> None:
     """Print the calibration diagnostics for one solved ISO-year."""
+    tag = f"  [{label}]" if label else ""
     print(f"\n{'=' * 64}")
-    print(f"  Calibration: {iso} {year}   (status: {result.status})")
+    print(f"  Calibration: {iso} {year}   (status: {result.status}){tag}")
     print(f"{'=' * 64}")
 
     model_twh = _generation_twh(result, context)
@@ -588,6 +604,15 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Override coal_prb_contract_passthrough (PRB take-or-pay "
              "fuel-cost fraction); 1.0 disables the discount.",
     )
+    parser.add_argument(
+        "--commitment", action="store_true",
+        help="Run the P2 unit-commitment pass after P1; both are reported.",
+    )
+    parser.add_argument(
+        "--no-coal-p2", action="store_true",
+        help="Exempt coal from the P2 commitment screen (coal stays "
+             "committed in every hour). Only meaningful with --commitment.",
+    )
     return parser
 
 
@@ -612,11 +637,17 @@ def main(argv: list[str] | None = None) -> None:
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
             iso, year, args.hours, gas_price,
         )
-        result, context = run_year(
+        result, context, result_p1 = run_year(
             year, iso, args.hours, gas_price, ttc_overrides,
             args.coal_passthrough,
+            commitment_enabled=args.commitment,
+            commitment_screen_coal=not args.no_coal_p2,
         )
-        _report_year(year, iso, result, context, reference)
+        if result_p1 is not None:
+            _report_year(year, iso, result_p1, context, reference, label="P1")
+            _report_year(year, iso, result, context, reference, label="P2")
+        else:
+            _report_year(year, iso, result, context, reference)
 
 
 if __name__ == "__main__":
