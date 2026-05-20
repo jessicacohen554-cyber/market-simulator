@@ -28,10 +28,32 @@ class TestISOConfig(unittest.TestCase):
         total = sum(zone.load_share for zone in ercot.zones)
         self.assertAlmostEqual(total, 1.0)
 
-    def test_caiso_has_two_zones(self):
-        """CAISO defines one real load zone plus one import node."""
+    def test_caiso_has_four_zones(self):
+        """CAISO defines three trading zones plus the WECC import node."""
         caiso = get_iso_config("CAISO")
-        self.assertEqual(caiso.n_zones, 2)
+        self.assertEqual(caiso.n_zones, 4)
+        self.assertEqual(
+            set(caiso.zone_names), {"NP15", "ZP26", "SP15", "WECC_import"}
+        )
+
+    def test_caiso_validates(self):
+        """CAISO topology passes the consistency check."""
+        # get_iso_config already calls validate_topology(); an explicit
+        # call documents the Stage-A requirement and fails loudly if the
+        # links or load shares regress.
+        get_iso_config("CAISO").validate_topology()
+
+    def test_caiso_load_shares_sum_to_one(self):
+        """CAISO zone load shares (incl. the zero-load import node) sum to 1.0."""
+        caiso = get_iso_config("CAISO")
+        total = sum(zone.load_share for zone in caiso.zones)
+        self.assertAlmostEqual(total, 1.0)
+
+    def test_caiso_import_node_carries_no_load(self):
+        """The WECC import node is not a load zone, so its share is zero."""
+        caiso = get_iso_config("CAISO")
+        wecc = next(z for z in caiso.zones if z.name == "WECC_import")
+        self.assertEqual(wecc.load_share, 0.0)
 
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
