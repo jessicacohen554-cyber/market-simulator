@@ -19,6 +19,14 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
         "subcritical": 10.0,    # EIA Table 8 — subcritical steam units
         "older": 10.8,          # EIA Table 8 — legacy subcritical steam units
     },
+    # Oil and biomass classify into a single "default" bin (the EIA-source
+    # classifier carries no vintage sub-bins for them, see fleet._efficiency_bin).
+    "oil": {
+        "default": 13.5,        # EIA Table 8 — petroleum-fired GT/steam (oil peaker)
+    },
+    "biomass": {
+        "default": 13.5,        # EIA Table 8 — wood/biomass steam (low-efficiency)
+    },
 }
 
 # CCS retrofit heat rate penalty: parasitic load from amine scrubbing + CO2 compression.
@@ -99,6 +107,15 @@ CO2_RATES: dict[str, dict[str, float]] = {
         "subcritical": 1.00,    # EPA eGRID 2022 — subcritical steam units
         "older": 1.08,          # EPA eGRID 2022 — legacy subcritical steam units
     },
+    # Oil ≈ heat_rate(13.5) × distillate/residual factor(0.074) ≈ 1.0 tCO2/MWh.
+    "oil": {
+        "default": 1.00,        # EPA eGRID 2022 — petroleum-fired units
+    },
+    # Biomass biogenic CO2 is treated as carbon-neutral (not counted under
+    # EPA/RGGI accounting), so its modeled CO2 rate is zero.
+    "biomass": {
+        "default": 0.0,         # EPA/RGGI — biogenic CO2 carbon-neutral
+    },
 }
 
 # NOx emission rates (tons NOx/MWh) by fuel class.
@@ -108,6 +125,8 @@ NOX_RATES: dict[str, float] = {
     "gas_ct": 0.00025,  # was 0.0003. EPA CEMS 2023 — mix of SCR/non-SCR CTs.
     "gas_st": 0.00025,  # EPA CEMS 2023 — legacy gas steam boilers, mostly non-SCR.
     "coal": 0.0012,     # was 0.0015. EPA CEMS 2023 — post-CSAPR compliance.
+    "oil": 0.0004,      # EPA CEMS 2023 — oil-fired peakers/steam, mostly non-SCR.
+    "biomass": 0.0010,  # EPA CEMS 2023 — biomass combustion, high NOx per MWh.
 }
 
 # CO2 emission factor (tCO2 per MMBtu of fuel burned) used to derive a
@@ -123,6 +142,8 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
     "gas_ct": 0.057,  # natural gas — same fuel as gas CC
     "gas_st": 0.057,  # natural gas — legacy gas steam boilers
     "coal": 0.100,    # coal — implied by EPA eGRID 2022 coal steam rates
+    "oil": 0.074,     # distillate/residual fuel oil — EPA emission factors
+    "biomass": 0.0,   # biogenic CO2 carbon-neutral under EPA/RGGI accounting
 }
 
 # All monetary values in this model are in constant 2026 real USD.
@@ -146,6 +167,8 @@ VOM: dict[str, float] = {
     "nuclear": 2.5,  # NREL ATB 2024 — nuclear
     "wind": 0.0,     # NREL ATB 2024 — onshore wind
     "solar": 0.0,    # NREL ATB 2024 — utility-scale solar PV
+    "oil": 4.5,      # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
+    "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
 }
 
 # Gas-fired generation availability factors by ISO.
@@ -181,6 +204,8 @@ EFORD: dict[str, float] = {
     "gas_st": 0.07,   # NERC GADS — legacy gas steam (older, higher outage rate)
     "coal": 0.08,     # NERC GADS — coal steam
     "nuclear": 0.03,  # NERC GADS — nuclear
+    "oil": 0.10,      # NERC GADS — oil peakers (infrequent run, higher EFOR)
+    "biomass": 0.08,  # NERC GADS — biomass steam
 }
 
 # Annual demand growth rates by ISO, scenario path, and era.
@@ -348,6 +373,23 @@ COAL_PRICE_BASE: dict[str, float] = {
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
 
+# Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam units.
+# Distillate (No. 2) fuel oil dominates the NYISO/ISO-NE oil peaker fleet;
+# residual (No. 6) is the legacy oil-steam fuel. The blended delivered cost
+# sits far above gas, so oil clears only in scarcity (peaker behaviour) —
+# critical to Northeast winter price formation. Held flat (no commodity
+# trajectory) since oil rarely runs and is not a price-setting baseload fuel.
+# Source: EIA distillate (~$20/MMBtu) and residual (~$14/MMBtu) fuel oil
+# delivered to the electric power sector, 2023-2024 average.
+OIL_PRICE_PER_MMBTU: float = 18.0
+
+# Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas units.
+# Biomass fuel is largely a low-cost waste/byproduct stream (mill residue,
+# refuse, landfill gas), so its delivered cost is well below oil and roughly
+# at parity with cheap coal on a $/MMBtu basis.
+# Source: EIA wood & waste biomass delivered fuel cost, AEO 2024 (~$2.5/MMBtu).
+BIOMASS_PRICE_PER_MMBTU: float = 2.5
+
 # Thermal-fleet availability model by plant-group category. Three additive
 # components (summed, not compounded):
 #  * POF   — planned outage factor; applied only in the shoulder months.
@@ -367,6 +409,11 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
     "ST_GAS":     (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
     "ST_CHP":     (0.05, 0.08, 0.002, 25, 0.03, 0.0015, 25),
     "COAL":       (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    # Oil and biomass entries apply when a unit carries a matching plant-group
+    # tag; EIA-classified oil/biomass units (no plant_group) fall back to the
+    # flat 1 - EFORD derate. Source: NERC GADS by unit type and age.
+    "OIL":        (0.06, 0.10, 0.003, 30, 0.04, 0.002, 30),
+    "BIOMASS":    (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
 }
 
 # Carbon price trajectories ($/tCO2) by scenario path and year.
