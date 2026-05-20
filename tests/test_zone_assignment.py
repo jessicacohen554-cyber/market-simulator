@@ -64,10 +64,73 @@ def test_pjm_state_mapping():
 
 
 def test_single_zone_isos():
-    """CAISO, NYISO, NEISO always return their single zone."""
-    assert assign_zone(12345, "CAISO") == "CAISO_main"
+    """NYISO, NEISO always return their single zone."""
     assert assign_zone(12345, "NYISO") == "NYISO_main"
     assert assign_zone(12345, "NEISO") == "NEISO_main"
+
+
+def test_caiso_np15_zone():
+    """A Northern California plant (north of Path 15) lands in NP15."""
+    # San Francisco Bay area: lat ~37.8 — north of the ~36.5 Path 15 line.
+    assert assign_zone_by_coords(37.8, -122.4, "CAISO") == "NP15"
+
+
+def test_caiso_zp26_zone():
+    """A southern San Joaquin Valley plant lands in ZP26."""
+    # Bakersfield / Kern: lat ~35.3 — between Path 26 (~35.0) and Path 15.
+    assert assign_zone_by_coords(35.3, -119.0, "CAISO") == "ZP26"
+
+
+def test_caiso_sp15_zone():
+    """A Southern California plant (south of Path 26) lands in SP15."""
+    # Los Angeles: lat ~34.0 — south of the ~35.0 Path 26 line.
+    assert assign_zone_by_coords(34.0, -118.2, "CAISO") == "SP15"
+
+
+def test_caiso_central_coast_fips_rule():
+    """Central-coast PG&E counties are lifted to NP15 despite ZP26 latitude.
+
+    San Luis Obispo (FIPS 6/79, Diablo Canyon) sits at lat ~35.2 — inside
+    the ZP26 latitude band — but is coastal PG&E north of Path 26, so the
+    county rule places it in NP15.
+    """
+    assert assign_zone_by_fips("6", "79", "CAISO") == "NP15"
+
+
+def test_caiso_out_of_state_arizona():
+    """Arizona CISO resources (Palo Verde / West-of-River) land in SP15."""
+    assert assign_zone_by_fips("4", "27", "CAISO") == "SP15"
+
+
+def test_caiso_known_plants_resolve_to_expected_zones():
+    """Named California plants land in their real CAISO trading zones."""
+    # ORIS codes from eGRID 2023 PLNT23 (BACODE == CISO).
+    cases = {
+        260: "NP15",     # Moss Landing (Monterey)
+        286: "NP15",     # Geysers geothermal (Sonoma)
+        52169: "ZP26",   # Midway Sunset Cogen (Kern)
+        55151: "ZP26",   # La Paloma Generating Plant (Kern)
+        302: "SP15",     # Encina / Cabrillo (San Diego)
+        350: "SP15",     # Ormond Beach (Ventura)
+        6099: "NP15",    # Diablo Canyon (San Luis Obispo, central-coast rule)
+        57373: "SP15",   # Agua Caliente Solar (Arizona)
+        52015: "NP15",   # Dixie Valley geothermal (northern Nevada)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "CAISO") == expected, f"ORIS {oris}"
+
+
+def test_caiso_every_plant_resolves():
+    """Every CISO plant resolves to a real trading zone; none are dropped."""
+    lookup = build_zone_lookup("CAISO")
+    assert len(lookup) > 1000  # CAISO has ~1,500 plants in eGRID
+    valid = {"NP15", "ZP26", "SP15"}
+    assert set(lookup.values()) <= valid
+    # All three trading zones are populated.
+    assert valid <= set(lookup.values())
+    # The import node is never a plant zone.
+    assert "WECC_import" not in lookup.values()
+    assert "CAISO_main" not in lookup.values()
 
 
 def test_egrid_lookup_loads():
