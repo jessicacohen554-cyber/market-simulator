@@ -61,6 +61,7 @@ from market_sim.data.fleet import (  # noqa: E402
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
+    apply_plant_monthly_fuel_prices,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -279,9 +280,11 @@ def run_year(
         commitment_screen_coal: When False, coal is exempt from the P2 screen.
 
     Returns:
-        A tuple ``(result, context, result_p1)``. ``result`` is the final
-        dispatch (P2 when commitment is enabled, otherwise P1); ``result_p1``
-        is the pre-commitment P1 result when commitment ran, else ``None``.
+        A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
+        final dispatch (P2 when commitment is enabled, otherwise P1);
+        ``result_p1`` is the pre-commitment P1 result when commitment ran,
+        else ``None``; ``p2_state`` is the cached P1 input bundle that
+        :func:`_commitment_pass` (the P2 post-process) consumes.
     """
     config = _calibration_config(
         year, iso, hours, gas_price, coal_passthrough,
@@ -345,9 +348,16 @@ def run_year(
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
-    fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
-    # Reprice CAMPD coal bins by plant fuel supply (lignite vs PRB).
-    apply_coal_supply_pricing(fuel_prices, fleet, config, year)
+    # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
+    # (our costs), then the actual EIA-923 monthly per-plant delivered cost
+    # on top — so measured monthly cost takes precedence and the supply
+    # trajectory is only the base/fallback for plant-months without data.
+    fuel_prices = resolve_fuel_prices(
+        config, fleet_arrays, year, apply_monthly=False
+    )
+    if config.coal_supply_repricing:
+        apply_coal_supply_pricing(fuel_prices, fleet, config, year)
+    apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
@@ -393,32 +403,54 @@ def run_year(
     mc_bid = mc_base + markup
     result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
 
-    # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
-    # coal to its P1 dispatch, and re-solve. The P1 result is kept so the
-    # caller can report it alongside P2.
-    result_p1 = None
-    if config.commitment_enabled:
-        result_p1 = result
-        committed = compute_commitment(
-            result.prices, mc_base, fleet, fleet_arrays, config,
-            storage_charge=result.storage_charge,
-            storage_discharge=result.storage_discharge,
-            storage_zone_idx=storage.zone_idx,
-            demand=demand,
-        )
-        fleet_arrays_p2 = apply_commitment_with_coal_pin(
-            fleet_arrays, committed, result.dispatch, fleet,
-            screen_coal=config.commitment_screen_coal,
-        )
-        result = solve_dispatch(
-            fleet_arrays_p2, demand, mc=mc_bid, **dispatch_kwargs
-        )
-
     context = FleetContext.from_arrays(
         fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
         storage.energy_cap,
     )
-    return result, context, result_p1
+    # Everything the P2 commitment pass needs, kept so P2 can be re-run as a
+    # post-process (see _commitment_pass / run_p2) without re-solving P0/P1.
+    p2_state = {
+        "year": year, "iso": iso, "fleet": fleet,
+        "fleet_arrays": fleet_arrays, "mc_base": mc_base, "mc_bid": mc_bid,
+        "p1_result": result, "demand": demand,
+        "dispatch_kwargs": dispatch_kwargs, "config": config,
+        "context": context,
+    }
+
+    # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
+    # coal to its P1 dispatch, and re-solve (a single LP solve).
+    result_p1 = None
+    if config.commitment_enabled:
+        result_p1 = result
+        result = _commitment_pass(p2_state)
+
+    return result, context, result_p1, p2_state
+
+
+def _commitment_pass(state: dict, config=None):
+    """Run the P2 commitment pass from a P1 ``state`` dict; return the result.
+
+    Re-uses the cached P1 marginal cost, demand and dispatch inputs, so only
+    the single P2 LP solve runs — no P0/P1 re-solve. ``config`` overrides the
+    state's config (to iterate commitment params); defaults to the state's.
+    This is the seam the P2 post-processing layer uses.
+    """
+    cfg = config if config is not None else state["config"]
+    fleet = state["fleet"]
+    fa = state["fleet_arrays"]
+    p1 = state["p1_result"]
+    dk = state["dispatch_kwargs"]
+    committed = compute_commitment(
+        p1.prices, state["mc_base"], fleet, fa, cfg,
+        storage_charge=p1.storage_charge,
+        storage_discharge=p1.storage_discharge,
+        storage_zone_idx=dk["storage_zone_idx"], demand=state["demand"],
+    )
+    fa_p2 = apply_commitment_with_coal_pin(
+        fa, committed, p1.dispatch, fleet,
+        screen_coal=cfg.commitment_screen_coal,
+    )
+    return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
 
 
 def _generation_twh(result, context: FleetContext) -> dict[str, float]:
@@ -658,7 +690,7 @@ def main(argv: list[str] | None = None) -> None:
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
             iso, year, args.hours, gas_price,
         )
-        result, context, result_p1 = run_year(
+        result, context, result_p1, _ = run_year(
             year, iso, args.hours, gas_price, ttc_overrides,
             args.coal_passthrough,
             commitment_enabled=args.commitment,
