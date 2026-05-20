@@ -194,6 +194,69 @@ def _caiso_config() -> ISOConfig:
     return ISOConfig(name="CAISO", zones=zones, links=links, voll=2000.0)
 
 
+def _miso_config() -> ISOConfig:
+    """Build the MISO topology configuration.
+
+    Three regions along MISO's real sub-regional structure — **MISO-North**
+    (the wind-rich upper Midwest: MN/IA/WI/ND/SD), **MISO-Central** (the
+    lower-Midwest load centers IL/IN/MI plus MO), and **MISO-South** (the
+    Entergy footprint AR/LA/MS and East Texas). MISO Midwest (North+Central)
+    and MISO South are two electrically separate footprints that connect only
+    through a contract path across SPP, so the Central↔South link is the
+    defining MISO constraint.
+
+    Load shares apportion MISO coincident peak demand across the three
+    regions: MISO South is roughly a quarter of the footprint (Entergy
+    operating-company peak ≈ 30 GW of MISO's ≈ 127 GW system peak), and the
+    Midwest splits with the populous lower-Midwest Central region carrying
+    more load than the rural North. Source: MISO Planning Year resource-
+    adequacy filings / OMS-MISO Survey Local Resource Zone coincident peak
+    demand. Tier 3 (calibration) — verify against metered LRZ peak load.
+    """
+    zones = [
+        Zone(name="MISO-North", iso="MISO", load_share=0.28),
+        Zone(name="MISO-Central", iso="MISO", load_share=0.46),
+        Zone(name="MISO-South", iso="MISO", load_share=0.26),
+    ]
+    # MISO transfer links seeded from the MISO/SPP seams agreement and MTEP.
+    #
+    # The MISO-Central ↔ MISO-South link is the Regional Directional Transfer
+    # (RDT) contract path: MISO's northern (Midwest) and southern footprints
+    # are not directly interconnected and exchange power only over a contract
+    # path that wheels across SPP, governed by the RDT limits in the MISO/SPP
+    # Joint Operating Agreement — roughly 3,000 MW north→south and 2,500 MW
+    # south→north. The pipe-and-bubble LP carries a single symmetric TTC per
+    # link (build_variable_bounds bounds flow in [-ttc, +ttc]), so this seeds
+    # the link at the 3,000 MW north→south figure; the ~2,500 MW south→north
+    # asymmetry awaits per-direction limits.
+    #
+    # The MISO-North ↔ MISO-Central link is the internal Midwest wind-export
+    # corridor that moves the wind-rich north's output to the Central load
+    # centers; seeded at an order-of-magnitude internal-interface value
+    # pending an MTEP/OASIS interface limit.
+    #
+    # Source: MISO/SPP Joint Operating Agreement (Regional Directional
+    # Transfer); MISO Transmission Expansion Plan (MTEP). Tier 3
+    # (calibration) — verify against MISO OASIS transfer capabilities and
+    # binding-frequency from MISO market/congestion data.
+    links = [
+        TransferLink(
+            from_zone="MISO-North", to_zone="MISO-Central", ttc_mw=12000.0
+        ),
+        TransferLink(
+            from_zone="MISO-Central", to_zone="MISO-South", ttc_mw=3000.0
+        ),
+    ]
+    # MISO energy offer cap is $2,000/MWh: FERC Order 831 sets a $2,000/MWh
+    # hard cap on incremental energy offers across all RTOs/ISOs (offers above
+    # $1,000/MWh must be cost-verified). MISO also runs a seasonal Planning
+    # Resource Auction (PRA) capacity construct that provides revenue outside
+    # the energy market, so the energy-only VOLL sits below ERCOT's $5,000.
+    # No distinct cited MISO VOLL is used here.
+    # Source: FERC Order 831; MISO Tariff (energy offer cap).
+    return ISOConfig(name="MISO", zones=zones, links=links, voll=2000.0)
+
+
 def _pjm_config() -> ISOConfig:
     """Build the PJM topology configuration."""
     # PJM load shares by state group — approximate, derived from PJM
@@ -263,6 +326,7 @@ def _neiso_config() -> ISOConfig:
 _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
+    "MISO": _miso_config,
     "PJM": _pjm_config,
     "NYISO": _nyiso_config,
     "NEISO": _neiso_config,
