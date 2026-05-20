@@ -479,6 +479,7 @@ def solve_and_persist(
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
     coal_drop_pof: bool = False,
+    coal_prb_passthrough_tiered: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -513,6 +514,7 @@ def solve_and_persist(
             coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
             coal_mustrun_per_plant=coal_mustrun_per_plant,
             coal_drop_pof=coal_drop_pof,
+            coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -569,6 +571,7 @@ def solve_and_persist(
         "coal_prb_passthrough_sigmoid": coal_prb_passthrough_sigmoid,
         "coal_mustrun_per_plant": coal_mustrun_per_plant,
         "coal_drop_pof": coal_drop_pof,
+        "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
         "coal_plant_monthly_pricing": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
@@ -1064,6 +1067,11 @@ def main() -> None:
              "keep WEFOR in non-summer months and the derate all year.",
     )
     parser.add_argument(
+        "--prb-sigmoid-tiered", action="store_true",
+        help="Use a separate follower-tier PRB passthrough sigmoid for "
+             "low-must-run load-follower plants (coal_prb_follower_*).",
+    )
+    parser.add_argument(
         "--report", metavar="DIR", default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
@@ -1110,6 +1118,7 @@ def main() -> None:
         coal_prb_passthrough_sigmoid=args.prb_passthrough_sigmoid,
         coal_mustrun_per_plant=args.coal_mustrun_per_plant,
         coal_drop_pof=args.coal_drop_pof,
+        coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
     )
     report_run(run_dir)
 
