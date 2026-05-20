@@ -267,65 +267,103 @@ def _nrmse(model: np.ndarray, observed: np.ndarray) -> float:
     return rmse / denom if denom > 0.0 else float("nan")
 
 
+def _print_grid_vs_930(
+    year: int,
+    model_class_hourly: dict[str, np.ndarray],
+    model_hourly: dict[str, np.ndarray],
+    fossil: dict[str, np.ndarray],
+    renewables: dict[str, np.ndarray],
+) -> None:
+    """Print grid-delivered dispatch vs EIA-930 (the clean grid-vs-grid check).
+
+    EIA-930 is grid-delivered, so the LP's grid dispatch is the right
+    thing to compare here. Behind-the-meter CHP is invisible to EIA-930
+    and is reported separately in the total-vs-EIA-923 table.
+    """
+    print(f"\n  Grid-delivered dispatch — {year} (model LP vs EIA-930 grid)")
+    gas_grid = float(sum(model_class_hourly[c] for c in _GAS_CLASSES).sum()) / _MWH_PER_TWH
+    coal_grid = float(model_class_hourly["COAL"].sum()) / _MWH_PER_TWH
+    rows: list[tuple] = [("fuel", "model TWh", "EIA-930 TWh", "diff %")]
+    pairs = [
+        ("gas (all)", gas_grid, fossil["gas"].sum() / _MWH_PER_TWH),
+        ("coal", coal_grid, fossil["coal"].sum() / _MWH_PER_TWH),
+        ("wind", float(model_hourly["wind"].sum()) / _MWH_PER_TWH,
+         renewables["wind"].sum() / _MWH_PER_TWH),
+        ("solar", float(model_hourly["solar"].sum()) / _MWH_PER_TWH,
+         renewables["solar"].sum() / _MWH_PER_TWH),
+    ]
+    for fuel, m, b in pairs:
+        diff = 100.0 * (m - b) / b if b else float("nan")
+        rows.append((fuel, f"{m:7.2f}", f"{b:7.2f}", f"{diff:+6.1f}"))
+    _print_table(rows)
+
+
 def _print_annual_breakdown(
     year: int,
     model_hourly: dict[str, np.ndarray],
     model_total_class_twh: dict[str, float],
+    btm_by_class_twh: dict[str, float],
     f923_class_twh: dict[str, float],
     f923_re_nuc_twh: dict[str, float],
     eia930_solar_twh: float,
 ) -> None:
-    """Print the annual class table.
+    """Print the annual class table: grid LP + behind-meter must-run vs EIA-923.
 
-    Gas/coal/wind/nuclear use EIA-923; solar uses EIA-930.
+    For CHP classes the model total is the LP grid dispatch plus the
+    behind-the-meter must-run (sized from EIA-923 by the resized
+    :func:`compute_must_run_emissions`), so total reconciles to the
+    measured EIA-923 figure and the BTM amount is visible for the
+    downstream fleet-emissions step. Non-CHP classes carry no BTM, so
+    their model total is the LP grid dispatch. Solar uses EIA-930.
     """
-    print(f"\n  Annual generation — {year}   "
-          "(EIA-923, except solar which is EIA-930)")
-    rows: list[tuple] = [("class", "model TWh", "EIA TWh", "diff %")]
-    total_m = total_b = 0.0
-    for cls in _GAS_CLASSES:
-        m = model_total_class_twh.get(cls, 0.0)
+    print(f"\n  Total generation by class — {year}   "
+          "(grid LP + behind-meter must-run vs EIA-923; solar vs EIA-930)")
+    rows: list[tuple] = [
+        ("class", "grid LP", "BTM-MR", "model tot", "EIA TWh", "diff %"),
+    ]
+    total_m = total_b = total_btm = 0.0
+    for cls in (*_GAS_CLASSES, "COAL"):
+        grid = model_total_class_twh.get(cls, 0.0)
+        btm = btm_by_class_twh.get(cls, 0.0)
+        m = grid + btm
         b = f923_class_twh.get(cls, 0.0)
         diff = 100.0 * (m - b) / b if b else float("nan")
         rows.append((
-            cls, f"{m:7.2f}", f"{b:7.2f}",
+            cls, f"{grid:7.2f}", f"{btm:6.2f}", f"{m:8.2f}", f"{b:7.2f}",
             f"{diff:+6.1f}" if not np.isnan(diff) else "    —",
         ))
         total_m += m
         total_b += b
-    coal_m = model_total_class_twh.get("COAL", 0.0)
-    coal_b = f923_class_twh.get("COAL", 0.0)
-    rows.append((
-        "COAL", f"{coal_m:7.2f}", f"{coal_b:7.2f}",
-        f"{100.0 * (coal_m - coal_b) / coal_b:+6.1f}" if coal_b else "    —",
-    ))
-    total_m += coal_m
-    total_b += coal_b
-    # Renewables and nuclear.
+        total_btm += btm
+    # Renewables and nuclear (no behind-meter component).
     wind_m = float(model_hourly["wind"].sum()) / _MWH_PER_TWH
     wind_b = f923_re_nuc_twh["wind"]
     rows.append((
-        "wind (EIA-923)", f"{wind_m:7.2f}", f"{wind_b:7.2f}",
+        "wind", f"{wind_m:7.2f}", "  0.00", f"{wind_m:8.2f}", f"{wind_b:7.2f}",
         f"{100.0 * (wind_m - wind_b) / wind_b:+6.1f}" if wind_b else "    —",
     ))
     solar_m = float(model_hourly["solar"].sum()) / _MWH_PER_TWH
     rows.append((
-        "solar (EIA-930)", f"{solar_m:7.2f}", f"{eia930_solar_twh:7.2f}",
+        "solar (930)", f"{solar_m:7.2f}", "  0.00", f"{solar_m:8.2f}",
+        f"{eia930_solar_twh:7.2f}",
         f"{100.0 * (solar_m - eia930_solar_twh) / eia930_solar_twh:+6.1f}"
         if eia930_solar_twh else "    —",
     ))
     nuc_m = model_total_class_twh.get("nuclear", 0.0)
     nuc_b = f923_re_nuc_twh["nuclear"]
     rows.append((
-        "nuclear (EIA-923)", f"{nuc_m:7.2f}", f"{nuc_b:7.2f}",
+        "nuclear", f"{nuc_m:7.2f}", "  0.00", f"{nuc_m:8.2f}", f"{nuc_b:7.2f}",
         f"{100.0 * (nuc_m - nuc_b) / nuc_b:+6.1f}" if nuc_b else "    —",
     ))
+    grand_m = total_m + wind_m + solar_m + nuc_m
+    grand_b = total_b + wind_b + eia930_solar_twh + nuc_b
     rows.append((
-        "TOTAL", f"{total_m + wind_m + solar_m + nuc_m:7.2f}",
-        f"{total_b + wind_b + eia930_solar_twh + nuc_b:7.2f}",
-        "    —",
+        "TOTAL", "", f"{total_btm:6.2f}", f"{grand_m:8.2f}", f"{grand_b:7.2f}",
+        f"{100.0 * (grand_m - grand_b) / grand_b:+6.1f}",
     ))
     _print_table(rows)
+    print(f"    (behind-the-meter CHP must-run total: {total_btm:.2f} TWh — "
+          "carried for the fleet-emissions post-process)")
 
 
 def _print_monthly_breakdown(
@@ -428,13 +466,6 @@ def _print_plant_level(
     f923_by_plant = (
         f923.groupby("plant_id")["netgen_annual_mwh"].sum().to_dict()
     )
-    f923_by_plant_chp = (
-        f923.assign(
-            is_chp=f923["chp"].astype(str).str.upper().str.startswith("Y")
-        )
-        .groupby(["plant_id"])
-        .agg(annual_gwh=("netgen_annual_mwh", "sum"))
-    )
 
     # Sum model dispatch by plant code.
     model_by_plant: dict[int, float] = {}
@@ -518,8 +549,20 @@ def _run_and_report(
     eia930_solar_twh = float(renewables["solar"].sum()) / _MWH_PER_TWH
     eia930_solar_monthly = _hourly_to_monthly(renewables["solar"])
 
+    # Behind-the-meter CHP must-run, sized from EIA-923 net generation minus
+    # the LP's grid-delivered dispatch per plant. This is what the resized
+    # compute_must_run_emissions produces; we aggregate it by class so the
+    # CHP totals reconcile to EIA-923 and the BTM is visible for the
+    # downstream fleet-emissions step.
+    btm_by_class_twh = _btm_must_run_by_class(
+        year, dispatch, plant_codes, context, generation_f923,
+    )
+
+    _print_grid_vs_930(
+        year, model_class_hourly, model_hourly, fossil, renewables,
+    )
     _print_annual_breakdown(
-        year, model_hourly, model_total_class_twh,
+        year, model_hourly, model_total_class_twh, btm_by_class_twh,
         f923_class_twh, f923_re_nuc_twh, eia930_solar_twh,
     )
 
@@ -534,6 +577,47 @@ def _run_and_report(
     _print_plant_level(
         year, dispatch, context, plant_codes, generation_f923,
     )
+
+
+def _btm_must_run_by_class(
+    year: int,
+    dispatch: np.ndarray,
+    plant_codes: np.ndarray,
+    context,
+    generation_f923: pd.DataFrame,
+) -> dict[str, float]:
+    """Return ``{CHP class: behind-meter must-run TWh}`` via the resized helper.
+
+    Builds the per-plant grid-delivered dispatch (LP) and the per-plant
+    EIA-923 total net generation, hands both to
+    :func:`compute_must_run_emissions`, and aggregates the resulting
+    behind-the-meter generation by plant group.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import load_campd_bins
+    from market_sim.results.emissions import compute_must_run_emissions
+
+    # Per-plant grid dispatch from the LP (sum tranches by plant code).
+    grid_by_plant: dict[int, float] = {}
+    for g in range(dispatch.shape[0]):
+        pc = int(plant_codes[g])
+        if pc > 0:
+            grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(dispatch[g].sum())
+
+    # Per-plant EIA-923 total net generation.
+    f923 = generation_f923[generation_f923["year"] == year]
+    total_by_plant = f923.groupby("plant_id")["netgen_annual_mwh"].sum().to_dict()
+
+    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+    mr = compute_must_run_emissions(
+        bins, year,
+        total_gen_by_plant=total_by_plant,
+        grid_gen_by_plant=grid_by_plant,
+    )
+    if mr.empty:
+        return {}
+    by_class = mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
+    return {cls: float(v) for cls, v in by_class.items()}
 
 
 def _plant_codes_from_unit_ids(unit_ids: list[str]) -> np.ndarray:
