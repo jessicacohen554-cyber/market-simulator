@@ -167,17 +167,21 @@ def test_forward_run_uses_renewable_installed_mw():
     )
 
 
-def test_caiso_solar_allocated_to_main_zone_not_import():
-    """CAISO solar CF fills CAISO_main and leaves WECC_import at zero."""
+def test_caiso_solar_allocated_to_trading_zones_not_import():
+    """CAISO solar fills the NP15/ZP26/SP15 trading zones, never WECC_import."""
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(weather_year=_TEST_YEAR, iso="CAISO")
     _, _, solar_cf, solar_cap = load_renewable_profiles(
         "CAISO", _TEST_YEAR, iso_config, config
     )
-    main = iso_config.zone_names.index("CAISO_main")
+    trading = [
+        iso_config.zone_names.index(z) for z in ("NP15", "ZP26", "SP15")
+    ]
     wecc = iso_config.zone_names.index("WECC_import")
 
-    assert solar_cf[main].sum() > 0.0
-    assert solar_cap[main] > 0.0
+    # Solar capacity spreads across the trading zones (eGRID geography puts
+    # the bulk in SP15's desert), and the import node stays empty.
+    assert solar_cap[trading].sum() > 0.0
+    assert solar_cf[trading].sum() > 0.0
     assert np.all(solar_cf[wecc] == 0.0)
     assert solar_cap[wecc] == 0.0

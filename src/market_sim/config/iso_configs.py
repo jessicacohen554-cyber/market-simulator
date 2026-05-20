@@ -139,16 +139,50 @@ def _ercot_config() -> ISOConfig:
 
 
 def _caiso_config() -> ISOConfig:
-    """Build the CAISO topology configuration."""
+    """Build the CAISO topology configuration.
+
+    Three trading zones along CAISO's real north–south split — **NP15**
+    (north of Path 15), **ZP26** (between Path 15 and Path 26), **SP15**
+    (south of Path 26) — plus the ``WECC_import`` node for the rest of the
+    WECC. These mirror CAISO's congestion-revenue-rights trading hubs and
+    the Path 15 / Path 26 interties that bound the state's recurring
+    north–south congestion.
+
+    Load shares apportion CAISO TAC-area demand (PG&E / SCE / SDG&E) onto the
+    three hubs: NP15 ≈ PG&E north of Path 15; ZP26 ≈ the PG&E central San
+    Joaquin Valley between Path 15 and Path 26; SP15 ≈ SCE + SDG&E south of
+    Path 26. Source: CAISO demand by TAC area (CAISO OASIS / Annual Report on
+    Market Issues & Performance). Tier 3 (calibration) — verify against
+    metered TAC-area load.
+    """
     zones = [
-        Zone(name="CAISO_main", iso="CAISO", load_share=1.0),
+        Zone(name="NP15", iso="CAISO", load_share=0.43),
+        Zone(name="ZP26", iso="CAISO", load_share=0.07),
+        Zone(name="SP15", iso="CAISO", load_share=0.50),
         # WECC_import is an import node, not a load zone, so it carries no load.
         Zone(name="WECC_import", iso="CAISO", load_share=0.0),
     ]
+    # CAISO intertie TTCs seeded from the WECC Path Rating Catalog. Path 15
+    # (Los Banos–Gates) is rated 5,400 MW N→S after the 2004 third-line
+    # upgrade; Path 26 (Midway–Vincent) is rated 4,000 MW N→S. The WECC
+    # import splits across the two major intertie groups: Path 66 / COI
+    # (California–Oregon Intertie) ~4,800 MW into NP15 to the north, and
+    # Path 46 / West of the River ~10,623 MW E→W into SP15 to the south
+    # (the Palo Verde / WOR corridor). The two import links sum to ~15,400
+    # MW, consistent with the 15,000 MW WECC import supply curve.
+    # Source: WECC Path Rating Catalog (Path 15, Path 26, Path 46, Path 66).
+    # Tier 3 (calibration) — verify against CAISO OASIS transfer capabilities
+    # and binding-frequency from CAISO congestion/shadow-price data.
     links = [
-        TransferLink(
-            from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=15000.0
-        ),
+        # Path 15: NP15 ↔ ZP26 (Los Banos–Gates).
+        TransferLink(from_zone="NP15", to_zone="ZP26", ttc_mw=5400.0),
+        # Path 26: ZP26 ↔ SP15 (Midway–Vincent) — the dominant N–S intertie,
+        # completing the NP15 ↔ SP15 corridor through ZP26.
+        TransferLink(from_zone="ZP26", to_zone="SP15", ttc_mw=4000.0),
+        # Path 66 / COI: WECC import into NP15 (north).
+        TransferLink(from_zone="WECC_import", to_zone="NP15", ttc_mw=4800.0),
+        # Path 46 / West of the River: WECC import into SP15 (south).
+        TransferLink(from_zone="WECC_import", to_zone="SP15", ttc_mw=10623.0),
     ]
     # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
     # for real-time energy. CAISO's bid cap is lower than ERCOT's because
