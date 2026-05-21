@@ -644,8 +644,13 @@ def build_variable_bounds(
     col_lower = np.zeros((T, vph), dtype=float)
     col_upper = np.zeros((T, vph), dtype=float)
 
-    # Thermal generation: pmin <= P <= pmax * availability.
-    col_lower[:, layout._p_off : layout._w_off] = fleet.pmin[np.newaxis, :]
+    # Thermal generation: pmin <= P <= pmax * availability. A per-hour
+    # min_gen (e.g. the seasonal ST_GAS reliability floor) overrides the
+    # scalar pmin lower bound when present.
+    if getattr(fleet, "min_gen", None) is not None:
+        col_lower[:, layout._p_off : layout._w_off] = fleet.min_gen.T
+    else:
+        col_lower[:, layout._p_off : layout._w_off] = fleet.pmin[np.newaxis, :]
     col_upper[:, layout._p_off : layout._w_off] = (
         fleet.pmax[:, np.newaxis] * fleet.availability
     ).T
