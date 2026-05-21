@@ -35,9 +35,11 @@ from market_sim.data.fleet import (  # noqa: E402
     load_campd_bins,
 )
 
-# A sustained CF above this is a "real run"; below it (off, or 2-10% testing)
-# is treated as not running.
-REAL_RUN_CF: float = 0.10
+# A sustained CF above this is a "real run"; below it (off, or low-output
+# idling) is treated as not running. Set to 5%: a plant idling at 5-10% CF is
+# still running (so low-output baseload like J K Spruce is not mislabeled as
+# out), while genuine full-outage gaps (CF < 5%) are still caught.
+REAL_RUN_CF: float = 0.05
 # A real run must hold above REAL_RUN_CF for at least this many hours; shorter
 # spikes are false starts and stay folded into the surrounding outage.
 MIN_REAL_RUN_HOURS: int = 24
