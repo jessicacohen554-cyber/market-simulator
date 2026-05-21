@@ -282,7 +282,7 @@ class ScenarioConfig:
     # coal_mustrun_per_plant.
     coal_prb_passthrough_tiered: bool = False
     coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
-    coal_prb_follower_floor: float = 0.66
+    coal_prb_follower_floor: float = 0.58
     coal_prb_follower_ceil: float = 1.35
     coal_prb_follower_gas_mid: float = 2.85
     coal_prb_follower_gas_slope: float = 2.5
