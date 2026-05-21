@@ -57,7 +57,7 @@ BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 # coal/CC bins (e.g. Barney M Davis carries both a CC and an ST_GAS bin —
 # only the CC bin is outaged).
 QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"}
+    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
 )
 
 # Peaker-class ST_GAS plants: patchy / spiky run rate (run only when called),

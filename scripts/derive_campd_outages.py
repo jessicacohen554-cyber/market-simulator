@@ -56,7 +56,9 @@ ST_GAS_MIN_OUTAGE_HOURS: int = 120
 # Plant groups whose outages we derive (coal + combined cycle + gas steam).
 # Peaker-class ST_GAS plants are emitted here but excluded at overlay time
 # (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
-GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"})
+GROUPS = frozenset(
+    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
+)
 
 
 def _runs(mask: np.ndarray):
