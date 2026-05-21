@@ -349,14 +349,23 @@ class ScenarioConfig:
     gas_st_econ_hr_override: float | None = None
     gas_st_peak_hr_override: float | None = None
 
-    # CHP cogeneration treatment. When chp_steam_following is True, each CC_CHP
-    # bin is modeled as a steam host's cogen rather than a merchant CC:
+    # CT_CHP tranche heat-rate overrides (relative to base HR), applied to the
+    # grid-facing tranches above the must-run BTM + steam-following floor. None
+    # leaves the CSV HR_Mult columns in place.
+    ct_committed_hr_override: float | None = None
+    ct_econ_hr_override: float | None = None
+    ct_peak_hr_override: float | None = None
+
+    # CHP cogeneration treatment. When chp_steam_following is True, each
+    # CC_CHP / CT_CHP / ST_CHP bin is modeled as a steam host's cogen rather
+    # than a merchant unit:
     #   * the behind-the-meter host self-supply removed from the grid LP (and
-    #     added back in the calibration report) is chp_btm_floor_pct of
-    #     nameplate, not the CSV Pct_Must_Run;
-    #   * a grid-delivered steam-following floor (CHP_GRID_PMIN_BY_PLANT, % of
-    #     nameplate) is forced on flat via FleetArrays.min_gen — the steady
-    #     export base that always reaches the grid.
+    #     added back in the report) is fleet.chp_btm_pct() — a per-plant share
+    #     keyed to the EIA-923 sector (merchant / industrial / commercial),
+    #     not the flat chp_btm_floor_pct or the CSV Pct_Must_Run;
+    #   * a grid-delivered steam-following floor (fleet.CHP_PMIN_CF_BY_PLANT
+    #     minus the BTM share) is forced on flat via FleetArrays.min_gen — the
+    #     steady export base that always reaches the grid.
     # Off by default (merchant behavior); the calibration backcast turns it on.
     chp_steam_following: bool = False
     chp_btm_floor_pct: float = 40.0
@@ -563,6 +572,9 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_committed_hr_override": 3,
     "gas_st_econ_hr_override": 3,
     "gas_st_peak_hr_override": 3,
+    "ct_committed_hr_override": 3,
+    "ct_econ_hr_override": 3,
+    "ct_peak_hr_override": 3,
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
     "coal_supply_repricing": 3,
