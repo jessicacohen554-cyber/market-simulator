@@ -32,6 +32,7 @@ from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
+    ST_GAS_PEAKER_PLANTS,
     outage_masks_for_year,
 )
 
@@ -405,18 +406,26 @@ def generators_to_fleet_arrays(
         getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None
         else 0.0
     )
+    st_off_frac = (
+        getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None
+        else 0.0
+    )
     chp_pmin_any = any(
         getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
     )
-    if st_mr_frac > 0.0 or chp_pmin_any:
+    if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any:
         min_gen = np.zeros((n_gen, hours), dtype=float)
-        if st_mr_frac > 0.0:
+        if st_mr_frac > 0.0 or st_off_frac > 0.0:
             summer_mask = np.isin(_hour_to_month_index(hours) + 1,
                                   list(_GAS_ST_SUMMER_MONTHS))
+            # Reliability (non-peaker) ST_GAS held at the summer / off-summer
+            # floor; peaker-class ST_GAS run purely economically (no floor).
             for g_idx, gen in enumerate(generators):
                 if (gen.plant_group == "ST_GAS"
-                        and not gen.unit_id.endswith("_peak")):
+                        and not gen.unit_id.endswith("_peak")
+                        and gen.plant_code not in ST_GAS_PEAKER_PLANTS):
                     min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
+                    min_gen[g_idx, ~summer_mask] = st_off_frac * pmax[g_idx]
         # CHP grid-delivered steam-following floor: the cogen's steady export
         # is forced on flat all year (the dispatchable surplus rides above it
         # via the load-following tranches).
@@ -2013,15 +2022,20 @@ def bins_to_fleet(
         committed_hr = float(b["hr_mc"])
         econ_hr = float(b["hr_econ"])
         peak_hr = float(b["hr_peak"])
-        # Cogen load-following: make the dispatchable (econ + peak) tranches
-        # expensive so the LP follows price modestly above the steam floor
-        # rather than running the whole grid slice flat-out as a merchant CC;
-        # and pin the steam-following grid floor onto the econ tranche.
+        # Combined-cycle supply-curve override: committed / economic / peaking
+        # = base HR x {1.0, 1.2, 1.8}, so the unit fills its committed slice at
+        # full efficiency, ramps the economic tranche at a modest part-load
+        # penalty, and only reaches peaking at high prices (replaces the per-
+        # plant CSV multipliers, which had economic cheaper than committed).
+        cc_mc = getattr(config, "cc_committed_hr_override", None)
+        if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
+            base = float(b["hr_weighted"])
+            committed_hr = base * cc_mc
+            econ_hr = base * float(getattr(config, "cc_econ_hr_override", 1.2))
+            peak_hr = base * float(getattr(config, "cc_peak_hr_override", 1.8))
+        # CHP steam-following grid floor pinned onto the econ tranche.
         chp_pmin_mw = 0.0
         if chp_following:
-            lf_mult = float(getattr(config, "chp_loadfollow_hr_mult", 2.0))
-            econ_hr *= lf_mult
-            peak_hr *= lf_mult
             chp_pmin_mw = min(
                 CHP_GRID_PMIN_BY_PLANT.get(plant_code, 0.0) / 100.0 * nameplate,
                 econ_cap,
