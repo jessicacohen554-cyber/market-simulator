@@ -320,6 +320,22 @@ class ScenarioConfig:
     gas_st_summer_mustrun: float = 0.0
     gas_st_startup_spread: bool = False
 
+    # CHP cogeneration treatment. When chp_steam_following is True, each CC_CHP
+    # bin is modeled as a steam host's cogen rather than a merchant CC:
+    #   * the behind-the-meter host self-supply removed from the grid LP (and
+    #     added back in the calibration report) is chp_btm_floor_pct of
+    #     nameplate, not the CSV Pct_Must_Run;
+    #   * a grid-delivered steam-following floor (CHP_GRID_PMIN_BY_PLANT, % of
+    #     nameplate) is forced on flat via FleetArrays.min_gen — the steady
+    #     export base that always reaches the grid;
+    #   * the remaining grid capacity (the dispatchable unit[s]) has its heat
+    #     rate scaled by chp_loadfollow_hr_mult so the LP load-follows it
+    #     expensively instead of running the whole econ slice flat-out.
+    # Off by default (merchant behavior); the calibration backcast turns it on.
+    chp_steam_following: bool = False
+    chp_btm_floor_pct: float = 40.0
+    chp_loadfollow_hr_mult: float = 2.0
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -515,6 +531,9 @@ TIER_TAGS: dict[str, int] = {
     "coal_drop_pof": 3,
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
+    "chp_steam_following": 3,
+    "chp_btm_floor_pct": 3,
+    "chp_loadfollow_hr_mult": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
