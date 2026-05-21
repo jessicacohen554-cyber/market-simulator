@@ -339,7 +339,7 @@ canvas.heat,svg{cursor:crosshair}
   <div class=tabs id=periodSel></div>
   <div class=legend>
     <span><i class=swatch style="border-top-color:var(--campd)"></i><b>CAMPD actual</b></span>
-    <span><i class=swatch style="border-top-color:var(--model);border-top-style:dashed"></i><b>Model result</b></span>
+    <span><i class=swatch style="border-top-color:var(--model);border-top-style:solid"></i><b>Model result</b></span>
     <span><i class=swatch style="border-top-color:var(--mr);border-top-style:dotted"></i><b>must-run floor</b></span></div>
   <svg id=profile viewBox="0 0 720 360"></svg><div class=stats id=profStats></div></div>
 <div class=card><h2>Annual total (TWh)</h2>
@@ -351,7 +351,7 @@ canvas.heat,svg{cursor:crosshair}
 <div class=card><h2>Monthly generation (GWh)</h2>
   <div class=legend>
     <span><i class=swatch style="border-top-color:var(--campd)"></i><b>CAMPD</b></span>
-    <span><i class=swatch style="border-top-color:var(--model);border-top-style:dashed"></i><b>Model</b></span>
+    <span><i class=swatch style="border-top-color:var(--model);border-top-style:solid"></i><b>Model</b></span>
     <span><i class=swatch style="border-top-color:var(--e923);border-top-style:dotted"></i><b>EIA-923</b></span></div>
   <svg id=monthly viewBox="0 0 720 360"></svg></div></div>
 
@@ -361,7 +361,9 @@ canvas.heat,svg{cursor:crosshair}
 const D=__DATA__;const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
 const C={model:"#ef7d2b",campd:"#2f9bd6",e923:"#2e9e5b",e930:"#8b5cf6",mr:"#7b8794"};
-const DASH={solid:"",dashed:'stroke-dasharray="7 4"',dotted:'stroke-dasharray="2 4"'};
+// Model series render solid (color distinguishes them from CAMPD); SVG
+// stroke-dasharray did not render reliably across viewers.
+const DASH={solid:"",dashed:"",dotted:'stroke-dasharray="2 4"'};
 let st={year:D.years[0],group:D.groups[0],plant:"agg",mode:"cf",period:"annual"};
 function dec(b){const s=atob(b),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
 function cur(){return D.series[st.plant==="agg"?st.year+"|"+st.group:st.year+"|plant:"+st.plant];}

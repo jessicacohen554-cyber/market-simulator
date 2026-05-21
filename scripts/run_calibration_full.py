@@ -533,6 +533,78 @@ def _git_sha() -> str:
         return ""
 
 
+def _git(*args: str) -> str:
+    """Run a git command in REPO and return stripped stdout (or '')."""
+    try:
+        return subprocess.check_output(
+            ["git", *args], cwd=REPO, text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return ""
+
+
+# Paths excluded from the manifest's git state: a run's own outputs (and other
+# bundles) are not "model changes" and would just be noise.
+_GIT_STATE_EXCLUDE = (":(exclude)results", ":(exclude)outputs")
+
+
+def _git_state() -> dict:
+    """Capture git provenance so a bundle records exactly which code ran.
+
+    Returns the short SHA, branch, a ``dirty`` flag, the list of changed model
+    files, and a diffstat. ``results/`` and ``outputs/`` are excluded so the
+    state reflects model/source edits, not the run's own artifacts. When dirty
+    the run included uncommitted model changes; the caller snapshots the diff.
+    """
+    porcelain = _git("status", "--porcelain", "--", *_GIT_STATE_EXCLUDE)
+    changed = [ln[3:] for ln in porcelain.splitlines()] if porcelain else []
+    return {
+        "sha": _git("rev-parse", "--short", "HEAD"),
+        "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        "dirty": bool(porcelain),
+        "changed_files": changed,
+        "diffstat": _git("diff", "--stat", "HEAD", "--", *_GIT_STATE_EXCLUDE),
+    }
+
+
+def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
+    """Write ``run_config.json`` (and ``model_changes.diff`` if dirty).
+
+    A discrete, self-contained record of what was run: the full resolved
+    ``ScenarioConfig`` (every knob), the calibration flags, git provenance,
+    and any free-text note describing pre-run model changes. The companion
+    ``model_changes.diff`` snapshots uncommitted edits so the exact code is
+    reproducible from the bundle alone.
+    """
+    import dataclasses
+
+    git = _git_state()
+    payload = {
+        "timestamp": meta.get("timestamp"),
+        "git": git,
+        "model_changes_note": note,
+        "calibration_flags": {
+            k: meta.get(k) for k in (
+                "iso", "years", "hours", "passes", "commitment",
+                "commitment_screen_coal", "gas_prices", "outage_source",
+                "coal_lignite_mustrun", "coal_prb_mustrun",
+                "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
+                "coal_mustrun_per_plant", "coal_drop_pof",
+                "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
+                "td_loss_factor", "git_sha",
+            )
+        },
+        "scenario_config": dataclasses.asdict(cfg),
+    }
+    (run_dir / "run_config.json").write_text(
+        json.dumps(payload, indent=2, default=str)
+    )
+    if git["dirty"]:
+        diff = _git("diff", "HEAD", "--", *_GIT_STATE_EXCLUDE)
+        if diff:
+            (run_dir / "model_changes.diff").write_text(diff)
+
+
 def solve_and_persist(
     years: list[int], iso: str, hours: int, reference: dict,
     commitment: bool, screen_coal: bool, run_dir: Path,
@@ -545,6 +617,7 @@ def solve_and_persist(
     coal_mustrun_per_plant: bool = False,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
+    note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
@@ -657,6 +730,11 @@ def solve_and_persist(
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+    write_run_config(
+        run_dir,
+        _calibration_config(years[0], iso, hours, gas_prices[years[0]]),
+        meta, note,
+    )
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
 
@@ -1231,6 +1309,12 @@ def main() -> None:
         "--out-dir", default=None,
         help="Bundle root (default results/calibration/<timestamp>).",
     )
+    parser.add_argument(
+        "--note", default="",
+        help="Free-text note describing pre-run model changes; recorded in "
+             "the bundle's run_config.json alongside the full config and git "
+             "provenance.",
+    )
     args = parser.parse_args()
 
     if args.report:
@@ -1265,6 +1349,7 @@ def main() -> None:
         coal_mustrun_per_plant=args.coal_mustrun_per_plant,
         coal_drop_pof=args.coal_drop_pof,
         coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
+        note=args.note,
     )
     report_run(run_dir)
 
