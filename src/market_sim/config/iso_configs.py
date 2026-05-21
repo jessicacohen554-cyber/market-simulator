@@ -391,14 +391,72 @@ def _nyiso_config() -> ISOConfig:
 
 
 def _neiso_config() -> ISOConfig:
-    """Build the ISO New England topology configuration."""
+    """Build the ISO New England topology configuration.
+
+    Four trading zones aggregating ISO-NE's eight load zones along the
+    interfaces that bound its recurring congestion — **North** (ME/NH/VT),
+    **Central** (WCMA/SEMA/RI), **Boston** (the NEMA load pocket), and
+    **Connecticut** (CT) — plus the zero-load ``HQ_import`` node for the
+    Hydro-Québec Phase II HVDC tie. This preserves ISO-NE's two structural
+    import pockets (Boston and Connecticut) and the North–South interface
+    that bounds Maine wind/hydro deliveries to the southern load, mirroring
+    the CAISO load-zones-plus-import-node pattern.
+
+    Load shares apportion ISO-NE zonal metered load onto the four zones:
+    North ≈ ME+NH+VT, Central ≈ WCMA+SEMA+RI, Boston ≈ the NEMA/Boston zone,
+    Connecticut ≈ CT. Source: ISO-NE zonal metered load / net energy for load
+    by load zone (ISO-NE CELT Report and zonal load data). Tier 3
+    (calibration) — verify against metered load-zone net energy for load.
+    """
     zones = [
-        Zone(name="NEISO_main", iso="NEISO", load_share=1.0),
+        Zone(name="North", iso="NEISO", load_share=0.20),
+        Zone(name="Central", iso="NEISO", load_share=0.30),
+        Zone(name="Boston", iso="NEISO", load_share=0.21),
+        Zone(name="Connecticut", iso="NEISO", load_share=0.29),
+        # HQ_import is a priced-import node (Hydro-Québec Phase II HVDC), not a
+        # load zone, so it carries no load. Priced-import behaviour (the import
+        # supply curve) is deferred to module M4; today it only seeds the tie.
+        Zone(name="HQ_import", iso="NEISO", load_share=0.0),
     ]
-    links: list[TransferLink] = []
+    # ISO-NE interface TTCs seeded from the ISO-NE Regional System Plan (RSP)
+    # published interface transfer limits:
+    #   - North–South ≈ 2,800 MW: the limit on power moving from the northern
+    #     (Maine wind/hydro) area into southern New England — the North → Central
+    #     link.
+    #   - Boston Import ≈ 4,900 MW: the Greater Boston / NEMA import interface
+    #     into the Boston load pocket — the Central → Boston link.
+    #   - Connecticut Import ≈ 3,500 MW: the import interface into the CT load
+    #     pocket — the Central → Connecticut link.
+    #   - SEMA/RI Export ≈ 3,150 MW: the limit on surplus generation leaving the
+    #     SE-Mass/RI coastal pocket. In this four-load-zone aggregation SEMA/RI
+    #     is folded into Central, and SE-Mass/RI sits physically between the
+    #     Boston (NEMA) and Connecticut load pockets, so the export interface is
+    #     represented as the meshed south-coast corridor it feeds — the
+    #     Boston → Connecticut link.
+    #   - HQ Phase II ≈ 2,000 MW: the Hydro-Québec Phase II HVDC tie into NEMA
+    #     (Sandy Pond) — the HQ_import → Boston link.
+    # The pipe-and-bubble LP carries a single symmetric TTC per link
+    # (build_variable_bounds bounds flow in [-ttc, +ttc]).
+    # Source: ISO-NE Regional System Plan (RSP) interface transfer limits;
+    # ISO-NE CELT / operating-limit postings. Tier 3 (calibration) — verify
+    # against ISO-NE interface limits and binding-frequency from ISO-NE
+    # congestion/shadow-price data.
+    links = [
+        # North–South interface: Maine wind/hydro → southern load.
+        TransferLink(from_zone="North", to_zone="Central", ttc_mw=2800.0),
+        # Boston/NEMA import pocket.
+        TransferLink(from_zone="Central", to_zone="Boston", ttc_mw=4900.0),
+        # Connecticut import pocket.
+        TransferLink(from_zone="Central", to_zone="Connecticut", ttc_mw=3500.0),
+        # SEMA/RI export corridor (south-coast path between the load pockets).
+        TransferLink(from_zone="Boston", to_zone="Connecticut", ttc_mw=3150.0),
+        # Hydro-Québec Phase II HVDC into NEMA/Boston.
+        TransferLink(from_zone="HQ_import", to_zone="Boston", ttc_mw=2000.0),
+    ]
     # ISO-NE energy offer cap is $2,000/MWh. ISO-NE has a Forward
-    # Capacity Market (FCM) providing capacity revenue.
-    # Source: ISO-NE Tariff §III.1.10.1A.
+    # Capacity Market (FCM) providing capacity revenue outside the energy
+    # market, so the energy-only VOLL sits below ERCOT's $5,000.
+    # Source: ISO-NE Tariff §III.1.10.1A; FERC Order 831.
     return ISOConfig(name="NEISO", zones=zones, links=links, voll=2000.0)
 
 

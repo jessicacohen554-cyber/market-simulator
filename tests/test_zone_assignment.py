@@ -137,11 +137,6 @@ def test_pjm_every_plant_resolves():
     assert valid <= set(lookup.values())
 
 
-def test_single_zone_isos():
-    """NEISO always returns its single zone."""
-    assert assign_zone(12345, "NEISO") == "NEISO_main"
-
-
 def test_caiso_np15_zone():
     """A Northern California plant (north of Path 15) lands in NP15."""
     # San Francisco Bay area: lat ~37.8 — north of the ~36.5 Path 15 line.
@@ -349,6 +344,86 @@ def test_nyiso_every_plant_resolves():
     assert valid <= set(lookup.values())
     # The old single-zone stub name never appears.
     assert "NYISO_main" not in lookup.values()
+
+
+def test_neiso_state_mapping():
+    """NEISO zones follow state boundaries (FIPS state is authoritative)."""
+    assert assign_zone_by_fips("23", None, "NEISO") == "North"        # ME
+    assert assign_zone_by_fips("33", None, "NEISO") == "North"        # NH
+    assert assign_zone_by_fips("50", None, "NEISO") == "North"        # VT
+    assert assign_zone_by_fips("9", None, "NEISO") == "Connecticut"   # CT
+    assert assign_zone_by_fips("44", None, "NEISO") == "Central"      # RI
+
+
+def test_neiso_massachusetts_county_split():
+    """Massachusetts splits the NEMA/Boston pocket from WCMA/SEMA by county.
+
+    The Boston-metro counties (Suffolk, Middlesex, Essex, Norfolk) land in
+    Boston; every other MA county folds into the Central (WCMA/SEMA/RI)
+    aggregate. This mirrors ERCOT's Houston-county FIPS rule.
+    """
+    # NEMA/Boston metro counties -> Boston.
+    assert assign_zone_by_fips("25", "25", "NEISO") == "Boston"  # Suffolk
+    assert assign_zone_by_fips("25", "17", "NEISO") == "Boston"  # Middlesex
+    assert assign_zone_by_fips("25", "9", "NEISO") == "Boston"   # Essex
+    assert assign_zone_by_fips("25", "21", "NEISO") == "Boston"  # Norfolk
+    # WCMA / SEMA counties -> Central.
+    assert assign_zone_by_fips("25", "27", "NEISO") == "Central"  # Worcester (WCMA)
+    assert assign_zone_by_fips("25", "13", "NEISO") == "Central"  # Hampden (WCMA)
+    assert assign_zone_by_fips("25", "1", "NEISO") == "Central"   # Barnstable (SEMA)
+    assert assign_zone_by_fips("25", "5", "NEISO") == "Central"   # Bristol (SEMA)
+
+
+def test_neiso_unmapped_state_falls_back_to_central():
+    """A plant outside the ISO-NE state map (no coords) falls back to Central."""
+    # No FIPS state and no coordinates -> largest-load-share zone (Central).
+    assert assign_zone_by_fips(None, None, "NEISO") == "Central"
+
+
+def test_neiso_coords_fallback_bands():
+    """Coords-only callers (no FIPS state) get the coarse lat/lon fallback."""
+    # Northern New England (Maine coast) -> North.
+    assert assign_zone_by_coords(43.75, -70.3, "NEISO") == "North"
+    # Southwest corner (Connecticut coast) -> Connecticut.
+    assert assign_zone_by_coords(41.31, -72.17, "NEISO") == "Connecticut"
+    # Eastern Massachusetts coast (Boston metro) -> Boston.
+    assert assign_zone_by_coords(42.4, -71.07, "NEISO") == "Boston"
+    # SE Mass / Rhode Island -> Central.
+    assert assign_zone_by_coords(41.77, -70.5, "NEISO") == "Central"   # Cape Cod
+    assert assign_zone_by_coords(41.82, -71.39, "NEISO") == "Central"  # Providence RI
+
+
+def test_neiso_known_plants_resolve_to_expected_zones():
+    """Named ISO-NE plants land in their real aggregated zones."""
+    # ORIS codes from eGRID 2023 PLNT23 (BACODE == ISNE).
+    cases = {
+        1507: "North",         # William F Wyman (Maine)
+        6115: "North",         # Seabrook nuclear (New Hampshire)
+        589: "North",          # J C McNeil (Vermont)
+        566: "Connecticut",    # Millstone nuclear (CT, New London)
+        562: "Connecticut",    # Middletown (CT)
+        3236: "Central",       # Manchester Street Station (Rhode Island)
+        1588: "Boston",        # Mystic (MA, Middlesex — NEMA)
+        55317: "Boston",       # Fore River Energy Center (MA, Norfolk — NEMA)
+        60903: "Boston",       # Salem Harbor NGCC (MA, Essex — NEMA)
+        1599: "Central",       # Canal Station (MA, Barnstable — SEMA)
+        547: "Central",        # Northfield Mountain (MA, Franklin — WCMA)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "NEISO") == expected, f"ORIS {oris}"
+
+
+def test_neiso_every_plant_resolves():
+    """Every ISNE plant resolves to a real load zone; none are dropped."""
+    lookup = build_zone_lookup("NEISO")
+    assert len(lookup) > 1000  # ISO-NE has ~1,250 plants in eGRID
+    valid = {"North", "Central", "Boston", "Connecticut"}
+    assert set(lookup.values()) <= valid
+    # All four load zones are populated.
+    assert valid <= set(lookup.values())
+    # The import node is never a plant zone.
+    assert "HQ_import" not in lookup.values()
+    assert "NEISO_main" not in lookup.values()
 
 
 def test_egrid_lookup_loads():
