@@ -222,9 +222,82 @@ class TestISOConfig(unittest.TestCase):
         """NYISO uses a VOLL of $2,000/MWh (ICAP provides capacity revenue)."""
         self.assertEqual(get_iso_config("NYISO").voll, 2000.0)
 
+    def test_neiso_has_five_zones(self):
+        """NEISO defines four load zones plus the HQ import node."""
+        neiso = get_iso_config("NEISO")
+        self.assertEqual(neiso.n_zones, 5)
+        self.assertEqual(
+            set(neiso.zone_names),
+            {"North", "Central", "Boston", "Connecticut", "HQ_import"},
+        )
+
+    def test_neiso_validates(self):
+        """NEISO topology passes the consistency check."""
+        # get_iso_config already calls validate_topology(); an explicit call
+        # documents the Stage-A requirement and fails loudly on regression.
+        get_iso_config("NEISO").validate_topology()
+
+    def test_neiso_load_shares_sum_to_one(self):
+        """NEISO zone load shares (incl. the zero-load import node) sum to 1.0."""
+        neiso = get_iso_config("NEISO")
+        total = sum(zone.load_share for zone in neiso.zones)
+        self.assertAlmostEqual(total, 1.0)
+
+    def test_neiso_import_node_carries_no_load(self):
+        """The HQ import node is not a load zone, so its share is zero."""
+        neiso = get_iso_config("NEISO")
+        hq = next(z for z in neiso.zones if z.name == "HQ_import")
+        self.assertEqual(hq.load_share, 0.0)
+
+    def test_neiso_import_pockets_present(self):
+        """The Boston and Connecticut import-pocket links are present.
+
+        Preserving the two structural ISO-NE import pockets is the whole point
+        of the zone split, so the topology must carry a link feeding each from
+        the Central zone.
+        """
+        neiso = get_iso_config("NEISO")
+        boston = [
+            link
+            for link in neiso.links
+            if {link.from_zone, link.to_zone} == {"Central", "Boston"}
+        ]
+        connecticut = [
+            link
+            for link in neiso.links
+            if {link.from_zone, link.to_zone} == {"Central", "Connecticut"}
+        ]
+        self.assertEqual(len(boston), 1)
+        self.assertEqual(len(connecticut), 1)
+
+    def test_neiso_north_south_interface_present(self):
+        """The North <-> Central (North–South) interface link is present."""
+        neiso = get_iso_config("NEISO")
+        north_south = [
+            link
+            for link in neiso.links
+            if {link.from_zone, link.to_zone} == {"North", "Central"}
+        ]
+        self.assertEqual(len(north_south), 1)
+
+    def test_neiso_hq_import_tie_present(self):
+        """The Hydro-Québec import node ties into the Boston/NEMA pocket."""
+        neiso = get_iso_config("NEISO")
+        hq_tie = [
+            link
+            for link in neiso.links
+            if {link.from_zone, link.to_zone} == {"HQ_import", "Boston"}
+        ]
+        self.assertEqual(len(hq_tie), 1)
+
+    def test_neiso_voll_is_2000(self):
+        """NEISO uses a VOLL of $2,000/MWh (ISO-NE energy offer cap)."""
+        neiso = get_iso_config("NEISO")
+        self.assertEqual(neiso.voll, 2000.0)
+
     def test_all_links_reference_valid_zones(self):
         """Every link endpoint references a defined zone in each ISO."""
-        for iso_name in ("ERCOT", "CAISO", "MISO", "NYISO", "PJM"):
+        for iso_name in ("ERCOT", "CAISO", "MISO", "PJM", "NYISO", "NEISO"):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
             for link in config.links:
