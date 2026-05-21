@@ -1090,6 +1090,60 @@ def report_run(run_dir: Path) -> None:
         )
 
 
+def rebuild_benchmark(bundle: Path) -> None:
+    """Rebuild a bundle's benchmark parquets off its meta, then re-report.
+
+    The benchmark frames — EIA-923 (with CAMPD backfill), EIA-930 and CAMPD
+    net — are pure functions of ``(year, iso)`` and the reference data;
+    they do not depend on the model dispatch. So refreshing them after a
+    benchmark-logic change (e.g. the CAMPD backfill) is a post-processing
+    step over the persisted dispatch parquets — no LP re-solve needed.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import load_campd_bins
+
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso = meta["iso"]
+    years = meta["years"]
+    hours = int(meta.get("hours", _HOURS_PER_YEAR))
+    iso_config = get_iso_config(iso)
+    generation = load_monthly_generation()
+    parasitic_factors = _parasitic_factor_map()
+    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+    group_by_code = dict(
+        zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
+    )
+
+    e923f, e930f, campdf = [], [], []
+    for year in years:
+        campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        e923f.append(
+            _backfill_eia923_with_campd(
+                _eia923_frame(year, generation), campd_year,
+                group_by_code, year,
+            )
+        )
+        e930 = _eia930_frame(year, iso, iso_config)
+        if e930 is not None:
+            e930f.append(e930)
+        if campd_year is not None:
+            campdf.append(campd_year)
+
+    pd.concat(e923f, ignore_index=True).to_parquet(
+        bundle / "eia923.parquet", index=False
+    )
+    if e930f:
+        pd.concat(e930f, ignore_index=True).to_parquet(
+            bundle / "eia930.parquet", index=False
+        )
+    if campdf:
+        pd.concat(campdf, ignore_index=True).to_parquet(
+            bundle / "campd.parquet", index=False
+        )
+    logger.info("rebuilt benchmark parquets in %s (no re-solve)", bundle)
+    report_run(bundle)
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -1158,6 +1212,12 @@ def main() -> None:
         help="Skip solving; print the report from an existing bundle directory.",
     )
     parser.add_argument(
+        "--rebuild-benchmark", metavar="DIR", default=None,
+        help="Rebuild a bundle's benchmark parquets (EIA-923 w/ CAMPD "
+             "backfill, EIA-930, CAMPD) off its meta and re-report — no "
+             "dispatch re-solve.",
+    )
+    parser.add_argument(
         "--persist-p2-state", action="store_true",
         help="Pickle each year's P1 inputs (large) so P2 can be re-run via "
              "--run-p2 without re-solving P0/P1.",
@@ -1175,6 +1235,10 @@ def main() -> None:
 
     if args.report:
         report_run(Path(args.report))
+        return
+
+    if args.rebuild_benchmark:
+        rebuild_benchmark(Path(args.rebuild_benchmark))
         return
 
     if args.run_p2:
