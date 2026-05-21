@@ -47,6 +47,12 @@ GROUP_LABEL = {
 HEAT_GROUPS = list(GROUP_LABEL)
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 
+# CHP behind-the-meter host self-supply removed from the grid LP and added back
+# flat in the report. Matches ScenarioConfig.chp_btm_floor_pct used by the
+# steam-following cogen model (the grid-delivered steam base is already in the
+# dispatch parquet, so only the host floor is re-added here).
+CHP_BTM_FLOOR_PCT = 40.0
+
 
 def _b64(cf: np.ndarray) -> str:
     a = np.clip(np.nan_to_num(cf), 0, 100).round().astype(np.uint8)
@@ -82,6 +88,8 @@ def build_payload(bundles: dict[int, Path]):
     def mrpct(code, group):
         if group == "COAL":
             return COAL_MUSTRUN_BY_PLANT.get(int(code), float(pmr.get(code, 0)))
+        if "CHP" in str(group):
+            return CHP_BTM_FLOOR_PCT  # host BTM removed from grid = report add-back
         return float(pmr.get(code, 0.0))
 
     series, group_plants = {}, {}
