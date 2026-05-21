@@ -267,8 +267,8 @@ class ScenarioConfig:
     # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
     # fuel.prb_passthrough_series.
     coal_prb_passthrough_sigmoid: bool = False
-    coal_prb_passthrough_floor: float = 0.80    # cheap-gas asymptote
-    coal_prb_passthrough_ceil: float = 1.35     # dear-gas asymptote (>1 = markup)
+    coal_prb_passthrough_floor: float = 0.82    # cheap-gas asymptote
+    coal_prb_passthrough_ceil: float = 1.50     # dear-gas asymptote (>1 = markup)
     coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
     coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
 
@@ -282,7 +282,7 @@ class ScenarioConfig:
     # coal_mustrun_per_plant.
     coal_prb_passthrough_tiered: bool = False
     coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
-    coal_prb_follower_floor: float = 0.66
+    coal_prb_follower_floor: float = 0.71
     coal_prb_follower_ceil: float = 1.35
     coal_prb_follower_gas_mid: float = 2.85
     coal_prb_follower_gas_slope: float = 2.5
@@ -309,6 +309,16 @@ class ScenarioConfig:
     # summer->shoulder WEFOR redistribution. Coal only; other thermal classes
     # keep the full POF/WEFOR seasonal model.
     coal_drop_pof: bool = False
+
+    # Legacy gas-steam (ST_GAS) summer reliability treatment. When
+    # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
+    # hard minimum-generation floor of that fraction of capacity in May-Sep
+    # (units "dragged" online at min load for reliability). When
+    # gas_st_startup_spread is True, ST_GAS amortizes its startup cost over the
+    # whole May-Sep season (one seasonal start) rather than per calendar month,
+    # so its summer bid markup is near zero.
+    gas_st_summer_mustrun: float = 0.0
+    gas_st_startup_spread: bool = False
 
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
@@ -503,6 +513,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
     "coal_drop_pof": 3,
+    "gas_st_summer_mustrun": 3,
+    "gas_st_startup_spread": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
