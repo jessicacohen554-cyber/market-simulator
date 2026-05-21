@@ -223,6 +223,10 @@ def _calibration_config(
         #   maintenance now comes from the historic outage overlay).
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
         #   follower-tier PRB sigmoid for low-must-run load-followers.
+        gas_st_summer_mustrun=0.10,  # ST_GAS dragged online at >=10% of base
+        #   capacity May-Sep for reliability.
+        gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
+        #   May-Sep season (one seasonal start), not per calendar month.
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -443,7 +447,8 @@ def run_year(
     r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
     # P1: solve with bid MC = base MC + monthly startup amortization.
     markup = compute_monthly_markup(
-        fleet, fleet_arrays, r0.dispatch, config.hours
+        fleet, fleet_arrays, r0.dispatch, config.hours,
+        gas_st_season_spread=config.gas_st_startup_spread,
     )
     mc_bid = mc_base + markup
     result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
