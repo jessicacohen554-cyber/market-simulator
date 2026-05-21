@@ -232,10 +232,13 @@ def _calibration_config(
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
         cc_econ_hr_override=1.15,      # efficiency, economic a modest part-
         cc_peak_hr_override=1.85,      # load penalty, peaking expensive.
-        chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
-        #   BTM host floor (not the 60% CSV merchant split) plus a grid-
-        #   delivered steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT).
-        chp_btm_floor_pct=40.0,
+        ct_committed_hr_override=1.0,  # CT_CHP supply curve above its must-run
+        ct_econ_hr_override=1.1,       # BTM + steam-following floor: committed
+        ct_peak_hr_override=1.3,       # 1.0x, economic 1.1x, peaking 1.3x.
+        chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
+        #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
+        #   grid-delivered steam-following min-gen (CHP_PMIN_CF_BY_PLANT - BTM).
+        chp_btm_floor_pct=40.0,  # flat fallback only (sector BTM supersedes it).
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
