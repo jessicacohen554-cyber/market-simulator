@@ -188,8 +188,9 @@ def per_plant_fit_table(payload):
             continue
         year = int(key.split("|", 1)[0]); code = int(key.split("plant:")[1])
         rows.setdefault(code, {"name": d["name"], "grp": d["group"], "yr": {}})
-        rows[code]["yr"][year] = (d["r"], d["nrmse"])
-    head = ["plant", "group"] + [f"{y} r" for y in yrs] + [f"{y} NRMSE" for y in yrs]
+        rows[code]["yr"][year] = (d["r"], d["nrmse"], d.get("m_ann"), d.get("e_ann"))
+    head = (["plant", "group"] + [f"{y} r" for y in yrs]
+            + [f"{y} NRMSE" for y in yrs] + [f"{y} Δ923%" for y in yrs])
     body = ""
     for code in sorted(rows, key=lambda c: (rows[c]["grp"], rows[c]["name"])):
         rec = rows[code]; cells = [rec["name"], rec["grp"]]
@@ -197,9 +198,17 @@ def per_plant_fit_table(payload):
                   else "—" for y in yrs]
         cells += [f"{rec['yr'][y][1]:.3f}" if y in rec["yr"] and rec["yr"][y][1] is not None
                   else "—" for y in yrs]
-        body += "<tr>" + "".join(
-            f'<td class="{"lbl" if i < 2 else "num"}">{html.escape(str(c))}</td>'
-            for i, c in enumerate(cells)) + "</tr>"
+        tds = [f'<td class="{"lbl" if i < 2 else "num"}">{html.escape(str(c))}</td>'
+               for i, c in enumerate(cells)]
+        # Per-year model-vs-EIA-923 annual delta (signed %), color-coded.
+        for y in yrs:
+            v = rec["yr"].get(y)
+            if v and v[2] is not None and v[3]:
+                dpct = 100.0 * (v[2] - v[3]) / v[3]
+                tds.append(f'<td class="num {_diffcls(dpct)}">{dpct:+.1f}</td>')
+            else:
+                tds.append('<td class="num">—</td>')
+        body += "<tr>" + "".join(tds) + "</tr>"
     th = "".join(f"<th>{html.escape(x)}</th>" for x in head)
     return f"<table><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table>"
 
