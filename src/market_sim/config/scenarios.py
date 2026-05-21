@@ -310,6 +310,16 @@ class ScenarioConfig:
     # keep the full POF/WEFOR seasonal model.
     coal_drop_pof: bool = False
 
+    # Legacy gas-steam (ST_GAS) summer reliability treatment. When
+    # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
+    # hard minimum-generation floor of that fraction of capacity in May-Sep
+    # (units "dragged" online at min load for reliability). When
+    # gas_st_startup_spread is True, ST_GAS amortizes its startup cost over the
+    # whole May-Sep season (one seasonal start) rather than per calendar month,
+    # so its summer bid markup is near zero.
+    gas_st_summer_mustrun: float = 0.0
+    gas_st_startup_spread: bool = False
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -503,6 +513,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
     "coal_drop_pof": 3,
+    "gas_st_summer_mustrun": 3,
+    "gas_st_startup_spread": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
