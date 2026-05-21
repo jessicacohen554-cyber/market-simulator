@@ -1048,26 +1048,32 @@ def main() -> None:
         help="Coal/CC availability: 'historic' overlays actual >10-day ERCOT "
              "outages (default backcast); 'statistical' uses WEFOR/POF only.",
     )
+    # Locked calibration config ("tier pass 2"): per-plant CAMPD coal must-run,
+    # gas-keyed PRB passthrough sigmoid (tiered baseload/follower), POF dropped
+    # on coal. All on by default; use the --no-* form to disable.
     parser.add_argument(
-        "--prb-passthrough-sigmoid", action="store_true",
+        "--prb-passthrough-sigmoid", action=argparse.BooleanOptionalAction,
+        default=True,
         help="Gas-key the PRB passthrough: a logistic of the monthly gas "
              "price replaces the flat --coal-prb-passthrough (deep discount "
              "when gas is cheap, none/markup when dear).",
     )
     parser.add_argument(
-        "--coal-mustrun-per-plant", action="store_true",
+        "--coal-mustrun-per-plant", action=argparse.BooleanOptionalAction,
+        default=True,
         help="Use per-plant CAMPD-derived coal must-run floors "
              "(fleet.COAL_MUSTRUN_BY_PLANT) instead of uniform lignite/PRB "
              "must-run overrides.",
     )
     parser.add_argument(
-        "--coal-drop-pof", action="store_true",
+        "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
         help="Drop the statistical planned-outage (POF) derate on coal "
              "(planned maintenance comes from the historic outage overlay); "
              "keep WEFOR in non-summer months and the derate all year.",
     )
     parser.add_argument(
-        "--prb-sigmoid-tiered", action="store_true",
+        "--prb-sigmoid-tiered", action=argparse.BooleanOptionalAction,
+        default=True,
         help="Use a separate follower-tier PRB passthrough sigmoid for "
              "low-must-run load-follower plants (coal_prb_follower_*).",
     )
