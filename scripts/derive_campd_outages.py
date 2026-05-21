@@ -35,15 +35,28 @@ from market_sim.data.fleet import (  # noqa: E402
     load_campd_bins,
 )
 
-# A sustained CF above this is a "real run"; below it (off, or 2-10% testing)
-# is treated as not running.
-REAL_RUN_CF: float = 0.10
+# A sustained CF above this is a "real run"; below it (off, or low-output
+# idling) is treated as not running. Set to 5%: a plant idling at 5-10% CF is
+# still running (so low-output baseload like J K Spruce is not mislabeled as
+# out), while genuine full-outage gaps (CF < 5%) are still caught.
+REAL_RUN_CF: float = 0.05
 # A real run must hold above REAL_RUN_CF for at least this many hours; shorter
 # spikes are false starts and stay folded into the surrounding outage.
 MIN_REAL_RUN_HOURS: int = 24
 
-# Plant groups whose outages we derive (coal + combined cycle).
-GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP"})
+# ST_GAS reliability units idle/cycle at very low CF for much of the year, so
+# the 5%/2-day rule would mislabel routine idling as outage. For them an outage
+# is only a genuine extended shutdown/mothball: CF below 2% sustained for at
+# least 10 days (a true shutdown produces ~0). The 2-5% idle hours are
+# preserved and held at the off-summer reliability floor (3%) instead. Coal/CC
+# keep the 5%/2-day rule.
+ST_GAS_REAL_RUN_CF: float = 0.02
+ST_GAS_MIN_OUTAGE_DAYS: float = 10.0
+
+# Plant groups whose outages we derive (coal + combined cycle + gas steam).
+# Peaker-class ST_GAS plants are emitted here but excluded at overlay time
+# (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
+GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"})
 
 
 def _runs(mask: np.ndarray):
@@ -56,15 +69,18 @@ def _runs(mask: np.ndarray):
 
 
 def detect_outages(
-    gross: np.ndarray, nameplate: float, min_outage_hours: int
+    gross: np.ndarray,
+    nameplate: float,
+    min_outage_hours: int,
+    real_run_cf: float = REAL_RUN_CF,
 ) -> list[tuple[int, int]]:
     """Return outage windows ``[(start, stop_exclusive), ...]`` (hour indices).
 
-    A real run is a CF>REAL_RUN_CF spell of >= MIN_REAL_RUN_HOURS; outages are
-    the complement, kept when >= ``min_outage_hours``.
+    A real run is a CF>``real_run_cf`` spell of >= MIN_REAL_RUN_HOURS; outages
+    are the complement, kept when >= ``min_outage_hours``.
     """
     cf = gross / nameplate if nameplate > 0 else np.zeros_like(gross)
-    running = cf > REAL_RUN_CF
+    running = cf > real_run_cf
     real = np.zeros_like(running)
     for s, e in _runs(running):
         if e - s >= MIN_REAL_RUN_HOURS:
@@ -107,7 +123,14 @@ def main() -> None:
                 continue
             gross = grid["gross_mw"].to_numpy(dtype=float)
             ts = grid.index
-            windows = detect_outages(gross, npl, min_outage_hours)
+            if grp[code] == "ST_GAS":
+                windows = detect_outages(
+                    gross, npl,
+                    int(round(ST_GAS_MIN_OUTAGE_DAYS * 24)),
+                    real_run_cf=ST_GAS_REAL_RUN_CF,
+                )
+            else:
+                windows = detect_outages(gross, npl, min_outage_hours)
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:
                 summary.append((code, pname[code], grp[code], yr,
