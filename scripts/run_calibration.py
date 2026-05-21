@@ -223,16 +223,15 @@ def _calibration_config(
         #   maintenance now comes from the historic outage overlay).
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
         #   follower-tier PRB sigmoid for low-must-run load-followers.
-        gas_st_summer_mustrun=0.10,  # reliability ST_GAS dragged online at
-        #   >=10% of base capacity May-Sep (peaker-class ST_GAS excluded).
-        gas_st_offsummer_mustrun=0.03,  # and >=3% Oct-Apr (matches the 3% ST_GAS
-        #   outage threshold, so the only sub-3% periods are true >=10-day
-        #   shutdowns; the 3-5% idle hours are kept at the floor).
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
+        gas_st_committed_hr_override=0.5,  # reliability ST_GAS supply curve:
+        gas_st_econ_hr_override=1.0,       # cheap committed bid commits the
+        gas_st_peak_hr_override=1.5,       # unit (no flat must-run floor),
+        #   economic at base HR, peaking at 1.5x. Peakers keep CSV HRs.
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
-        cc_econ_hr_override=1.2,       # efficiency, economic a modest part-
-        cc_peak_hr_override=1.8,       # load penalty, peaking expensive.
+        cc_econ_hr_override=1.3,       # efficiency, economic a modest part-
+        cc_peak_hr_override=2.0,       # load penalty, peaking expensive.
         chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
         #   BTM host floor (not the 60% CSV merchant split) plus a grid-
         #   delivered steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT).
