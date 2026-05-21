@@ -319,6 +319,23 @@ class ScenarioConfig:
     # so its summer bid markup is near zero.
     gas_st_summer_mustrun: float = 0.0
     gas_st_startup_spread: bool = False
+    # Off-summer (Oct-Apr) ST_GAS reliability min-gen floor, as a fraction of
+    # capacity, applied to the same reliability (non-peaker) ST_GAS units as
+    # gas_st_summer_mustrun. Peaker-class ST_GAS (fleet.ST_GAS_PEAKER_PLANTS)
+    # get neither floor and run purely economically.
+    gas_st_offsummer_mustrun: float = 0.0
+
+    # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
+    # HR). When set, every CC bin's committed / economic / peaking tranche heat
+    # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
+    # cc_peak_hr_override}, giving a rising part-load supply curve (committed at
+    # full efficiency, economic a modest penalty, peaking expensive) instead of
+    # the per-plant CSV HR_Mult columns. None leaves the CSV multipliers in
+    # place. (Distinct from the cc_committed_hr_mult / cc_econ_hr_mult oracles
+    # above, which document the CSV's expected multipliers but are not applied.)
+    cc_committed_hr_override: float | None = None
+    cc_econ_hr_override: float | None = None
+    cc_peak_hr_override: float | None = None
 
     # CHP cogeneration treatment. When chp_steam_following is True, each CC_CHP
     # bin is modeled as a steam host's cogen rather than a merchant CC:
@@ -327,14 +344,10 @@ class ScenarioConfig:
     #     nameplate, not the CSV Pct_Must_Run;
     #   * a grid-delivered steam-following floor (CHP_GRID_PMIN_BY_PLANT, % of
     #     nameplate) is forced on flat via FleetArrays.min_gen — the steady
-    #     export base that always reaches the grid;
-    #   * the remaining grid capacity (the dispatchable unit[s]) has its heat
-    #     rate scaled by chp_loadfollow_hr_mult so the LP load-follows it
-    #     expensively instead of running the whole econ slice flat-out.
+    #     export base that always reaches the grid.
     # Off by default (merchant behavior); the calibration backcast turns it on.
     chp_steam_following: bool = False
     chp_btm_floor_pct: float = 40.0
-    chp_loadfollow_hr_mult: float = 2.0
 
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
@@ -531,9 +544,12 @@ TIER_TAGS: dict[str, int] = {
     "coal_drop_pof": 3,
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
+    "gas_st_offsummer_mustrun": 3,
+    "cc_committed_hr_override": 3,
+    "cc_econ_hr_override": 3,
+    "cc_peak_hr_override": 3,
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
-    "chp_loadfollow_hr_mult": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "outage_source": 3,
