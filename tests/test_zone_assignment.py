@@ -138,8 +138,7 @@ def test_pjm_every_plant_resolves():
 
 
 def test_single_zone_isos():
-    """NYISO, NEISO always return their single zone."""
-    assert assign_zone(12345, "NYISO") == "NYISO_main"
+    """NEISO always returns its single zone."""
     assert assign_zone(12345, "NEISO") == "NEISO_main"
 
 
@@ -263,6 +262,93 @@ def test_miso_every_plant_resolves():
     assert set(lookup.values()) <= valid
     # All three regions are populated.
     assert valid <= set(lookup.values())
+
+
+def test_nyiso_nyc_zone():
+    """A Manhattan plant lands in NYC by coordinates."""
+    # Midtown Manhattan: lat ~40.76, lon ~-73.95.
+    assert assign_zone_by_coords(40.76, -73.95, "NYISO") == "NYC"
+
+
+def test_nyiso_long_island_zone():
+    """A Long Island plant (east of NYC) lands in Long_Island."""
+    # Northport, Suffolk County: lat ~40.92, lon ~-73.34.
+    assert assign_zone_by_coords(40.92, -73.34, "NYISO") == "Long_Island"
+
+
+def test_nyiso_upstate_west_by_coords():
+    """Western and far-north NY plants land in Upstate_West.
+
+    Niagara (west of the Hudson corridor) and the St. Lawrence North Country
+    (north of the Capital region) both resolve upstate, where the Niagara and
+    St. Lawrence hydro belong.
+    """
+    # Niagara Falls: lat ~43.14, lon ~-79.04 (west of the -75.0 line).
+    assert assign_zone_by_coords(43.14, -79.04, "NYISO") == "Upstate_West"
+    # Massena / St. Lawrence: lat ~45.0, lon ~-74.8 (north of the 43.3 line).
+    assert assign_zone_by_coords(45.0, -74.8, "NYISO") == "Upstate_West"
+
+
+def test_nyiso_county_fips_mapping():
+    """NY county FIPS codes map to the aggregated NYISO zones."""
+    assert assign_zone_by_fips("36", "61", "NYISO") == "NYC"          # Manhattan
+    assert assign_zone_by_fips("36", "103", "NYISO") == "Long_Island"  # Suffolk
+    assert assign_zone_by_fips("36", "119", "NYISO") == "Lower_Hudson"  # Westchester
+    assert assign_zone_by_fips("36", "1", "NYISO") == "Capital_Hudson"  # Albany
+    assert assign_zone_by_fips("36", "63", "NYISO") == "Upstate_West"  # Niagara
+    assert assign_zone_by_fips("36", "89", "NYISO") == "Upstate_West"  # St. Lawrence
+
+
+def test_nyiso_nj_merchant_plant_lands_downstate():
+    """NJ merchant-cable plants (no NY county) route downstate by lat/lon.
+
+    Bayonne Energy Center (Hudson County, NJ) injects into NYC through the
+    Gowanus cable; it carries a NJ FIPS state so the county path is skipped
+    and lat/lon places it in the NYC pocket it feeds.
+    """
+    # Bayonne, NJ: lat ~40.65, lon ~-74.09 — FIPS state 34, not New York.
+    assert assign_zone(8012, "NYISO") == "NYC"
+
+
+def test_nyiso_known_plants_resolve_to_expected_zones():
+    """Named NYISO plants land in their real aggregated zones.
+
+    ORIS codes from eGRID 2023 PLNT23 (BACODE == NYIS). The two NYPA hydro
+    giants (Robert Moses Niagara, Robert Moses St. Lawrence) must land
+    upstate; the downstate fleet (Ravenswood, Northport, Barrett) must land
+    in the J/K pockets behind the import interfaces.
+    """
+    cases = {
+        2693: "Upstate_West",    # Robert Moses Niagara hydro (Niagara, zone A)
+        2694: "Upstate_West",    # Robert Moses St. Lawrence hydro (zone D)
+        2500: "NYC",             # Ravenswood (Queens, zone J)
+        2516: "Long_Island",     # Northport (Suffolk, zone K)
+        2511: "Long_Island",     # E F Barrett (Nassau, zone K)
+        55405: "Capital_Hudson",  # Athens Generating (Greene, zone F)
+        2539: "Capital_Hudson",  # Bethlehem Energy Center (Albany, zone F)
+        8006: "Capital_Hudson",  # Roseton (Orange, zone G)
+        50882: "Lower_Hudson",   # Wheelabrator Westchester (zone H/I)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "NYISO") == expected, f"ORIS {oris}"
+
+
+def test_nyiso_every_plant_resolves():
+    """Every NYIS plant resolves to a real model zone; none are dropped."""
+    lookup = build_zone_lookup("NYISO")
+    assert len(lookup) > 800  # NYISO has ~860 plants in eGRID
+    valid = {
+        "Upstate_West",
+        "Capital_Hudson",
+        "Lower_Hudson",
+        "NYC",
+        "Long_Island",
+    }
+    assert set(lookup.values()) <= valid
+    # All five aggregated zones are populated.
+    assert valid <= set(lookup.values())
+    # The old single-zone stub name never appears.
+    assert "NYISO_main" not in lookup.values()
 
 
 def test_egrid_lookup_loads():
