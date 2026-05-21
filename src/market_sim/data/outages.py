@@ -8,11 +8,13 @@ backcast config sets ``outage_source == "historic"``; forward/forecast runs
 keep the statistical WEFOR/POF availability model.
 
 Filter (user directive): only outages at COAL or COMBINED-CYCLE plants
-(``Plant_Group`` in :data:`QUALIFYING_PLANT_GROUPS`) whose start->stop span
-exceeds :data:`MIN_OUTAGE_SPAN_HOURS` (10 days) are overlaid. Everything else
-— peaker trips, short forced outages, gas-steam, sub-10-day events — is noise
-and is ignored. The CSV's ``duration_hours`` column is unreliable and is NOT
-used to measure outage length; the span is ``outage_stop - outage_start``.
+(``Plant_Group`` in :data:`QUALIFYING_PLANT_GROUPS`) whose start->stop span is
+at least :data:`MIN_OUTAGE_SPAN_HOURS` (2 days) are overlaid. The detector
+(scripts/derive_campd_outages.py) defines an outage as a sustained CF < 5%
+gap of >= 2 days, so a unit idling at low output (5-10% CF, e.g. J K Spruce)
+is *not* outaged, while genuine multi-day full-off gaps are. The CSV's
+``duration_hours`` column is unreliable and is NOT used to measure outage
+length; the span is ``outage_stop - outage_start``.
 """
 
 from __future__ import annotations
@@ -58,15 +60,11 @@ QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
     {"COAL", "CC_REGULAR", "CC_CHP"}
 )
 
-# Minimum outage span to overlay, in hours. Combined-cycle plants cycle
-# economically for days at a time, so only sustained (> 10-day) CC events are
-# treated as real maintenance; shorter ones are calibration noise. Coal is
-# baseload and does not idle economically, so a sustained > 7-day coal outage
-# (CF < 10%) is genuine maintenance and uses the lower coal threshold — this
-# catches real coal blocks like Oak Grove's 9-day March outage that fall just
-# under the 10-day cutoff.
-MIN_OUTAGE_SPAN_HOURS: int = 240
-MIN_OUTAGE_SPAN_HOURS_COAL: int = 168
+# Minimum outage span to overlay, in hours (>= 2 days). The CAMPD detector
+# (scripts/derive_campd_outages.py) already defines an outage as a sustained
+# CF < 5% gap of at least this length, so the overlay applies every window it
+# emits; this guards against any shorter stray windows.
+MIN_OUTAGE_SPAN_HOURS: int = 48
 
 # Days before each 1-based month in a NON-leap year, so _DAYS_BEFORE_MONTH[m]
 # is the 0-based day-of-year of month m's first day ([1]=0 for Jan 1, [2]=31
@@ -141,14 +139,6 @@ def _qualifying_plant_codes(bins_path: str) -> frozenset[int]:
 
 
 @lru_cache(maxsize=4)
-def _coal_plant_codes(bins_path: str) -> frozenset[int]:
-    """Return EIA plant codes that have a COAL bin (use the lower coal span)."""
-    detail = pd.read_csv(bins_path)
-    coal = detail[detail["Plant_Group"] == "COAL"]
-    return frozenset(int(c) for c in coal["Plant_Code"].unique())
-
-
-@lru_cache(maxsize=4)
 def _build_outage_masks(
     outages_path: str, bins_path: str, hours: int
 ) -> dict[int, dict[int, np.ndarray]]:
@@ -160,7 +150,6 @@ def _build_outage_masks(
     paths and horizon; the returned arrays are shared (read-only callers).
     """
     codes = _qualifying_plant_codes(bins_path)
-    coal_codes = _coal_plant_codes(bins_path)
     df = pd.read_csv(
         outages_path, parse_dates=["outage_start", "outage_stop"]
     )
@@ -171,13 +160,9 @@ def _build_outage_masks(
         start = pd.Timestamp(row.outage_start)
         stop = pd.Timestamp(row.outage_stop)
         span_hours = (stop - start).total_seconds() / 3600.0
-        code = int(row.oris_code)
-        min_span = (
-            MIN_OUTAGE_SPAN_HOURS_COAL if code in coal_codes
-            else MIN_OUTAGE_SPAN_HOURS
-        )
-        if span_hours <= min_span:
+        if span_hours < MIN_OUTAGE_SPAN_HOURS:
             continue
+        code = int(row.oris_code)
         for year in range(start.year, stop.year + 1):
             window = outage_hour_mask(start, stop, year, hours)
             if not window.any():
