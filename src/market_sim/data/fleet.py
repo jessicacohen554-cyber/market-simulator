@@ -227,6 +227,15 @@ _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 # months. Winter keeps the flat WEFOR.
 _SUMMER_WEFOR_SHARE: float = 0.30
 
+# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
+# ambient-temperature output loss gas turbines suffer in the heat (worse for
+# simple-cycle CTs than combined-cycle). Applied on top of the age-based
+# availability for these classes only; coal and gas steam are unaffected.
+_SUMMER_CLASS_DERATE: dict[str, float] = {
+    "CC_REGULAR": 0.10, "CC_CHP": 0.10,
+    "CT_PEAKER": 0.125, "CT_CHP": 0.125,
+}
+
 
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
@@ -361,6 +370,10 @@ def generators_to_fleet_arrays(
             )
             if forced is not None:
                 availability[g_idx, :] *= forced
+            # Summer ambient-temperature derate for CC / CT classes.
+            summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
+            if summer_derate:
+                availability[g_idx, summer] *= 1.0 - summer_derate
         np.clip(availability, 0.0, 1.0, out=availability)
 
     # Historic-outage overlay (backcast only). When config.outage_source is
@@ -1579,7 +1592,7 @@ CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
     66992: "merchant",
 }
 CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
-    "merchant": 10.0, "industrial": 60.0, "commercial": 60.0,
+    "merchant": 40.0, "industrial": 60.0, "commercial": 60.0,
 }
 CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
 
