@@ -289,15 +289,18 @@ def _fossil_table(disp, e923, campd):
         g = mh.get(c, np.zeros(T))
         gtwh = g.sum() / 1e6
         bench = ann.get(c, 0.0) - btmc.get(c, 0.0)
-        d = 100 * (gtwh - bench) / bench if bench else float("nan")
+        # Guard the % against a near-zero grid-deliverable benchmark (e.g. a CHP
+        # class that is ~fully behind-the-meter, or an EIA-923 reporting gap).
+        ok = bench > 0.02
+        d = 100 * (gtwh - bench) / bench if ok else float("nan")
         obs = ch.get(c)
         rr = nn = "—"
         if obs is not None and obs.sum() > 0:
             rr, nn = f"{rcf._pearson_r(g, obs):.3f}", f"{rcf._nrmse(g, obs):.3f}"
-        ds = f"{d:+.1f}%" if bench else "—"
+        ds = f"{d:+.1f}%" if ok else "—"
         body += (f"<tr><td class=lbl>{c}</td><td class=num>{gtwh:.2f}</td>"
                  f"<td class=num>{bench:.2f}</td>"
-                 f"<td class='num {_diffcls(d) if bench else ''}'>{ds}</td>"
+                 f"<td class='num {_diffcls(d) if ok else ''}'>{ds}</td>"
                  f"<td class=num>{rr}</td><td class=num>{nn}</td></tr>")
     return ("<table><thead><tr><th>fossil class</th><th>model grid TWh</th>"
             "<th>923 − BTM TWh</th><th>Δ</th><th>r vs CAMPD</th><th>NRMSE</th>"
