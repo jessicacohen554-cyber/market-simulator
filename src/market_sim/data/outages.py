@@ -33,8 +33,16 @@ logger = logging.getLogger(__name__)
 # root (this file lives at src/market_sim/data/outages.py). One row per
 # outage event: oris_code, plant_name, unit, outage_start, outage_stop,
 # duration_hours.
+#
+# Default source is the CAMPD-derived window set (scripts/derive_campd_outages.py):
+# every coal/CC plant the CEMS extract covers, with a "real run" = sustained
+# CF > 10% so brief test blips don't end an outage. This replaces the sparse
+# hand-maintained ercot-outages.csv (kept in the repo for reference), which
+# only covered a handful of plants and missed e.g. San Miguel's spring/fall
+# blocks. The > 10-day span filter (MIN_OUTAGE_SPAN_HOURS) still selects only
+# sustained maintenance from these windows.
 OUTAGES_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "ercot-outages.csv"
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-outages.csv"
 )
 
 # Default CAMPD bin-assignment CSV, the plant_code -> Plant_Group source used
