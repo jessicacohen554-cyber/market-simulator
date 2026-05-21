@@ -337,6 +337,18 @@ class ScenarioConfig:
     cc_econ_hr_override: float | None = None
     cc_peak_hr_override: float | None = None
 
+    # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
+    # the plant's base HR). When set, each reliability ST_GAS bin's committed /
+    # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
+    # gas_st_econ_hr_override, gas_st_peak_hr_override}. The cheap committed
+    # tranche (e.g. 0.5x) replaces the old flat must-run floor: a low committed
+    # bid commits the unit economically instead of forcing it on. Peaker-class
+    # ST_GAS (fleet.ST_GAS_PEAKER_PLANTS) keep their CSV HR_Mult columns and run
+    # purely economically. None leaves the CSV multipliers in place.
+    gas_st_committed_hr_override: float | None = None
+    gas_st_econ_hr_override: float | None = None
+    gas_st_peak_hr_override: float | None = None
+
     # CHP cogeneration treatment. When chp_steam_following is True, each CC_CHP
     # bin is modeled as a steam host's cogen rather than a merchant CC:
     #   * the behind-the-meter host self-supply removed from the grid LP (and
@@ -548,6 +560,9 @@ TIER_TAGS: dict[str, int] = {
     "cc_committed_hr_override": 3,
     "cc_econ_hr_override": 3,
     "cc_peak_hr_override": 3,
+    "gas_st_committed_hr_override": 3,
+    "gas_st_econ_hr_override": 3,
+    "gas_st_peak_hr_override": 3,
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
     "coal_supply_repricing": 3,

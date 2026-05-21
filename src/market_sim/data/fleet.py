@@ -2033,6 +2033,21 @@ def bins_to_fleet(
             committed_hr = base * cc_mc
             econ_hr = base * float(getattr(config, "cc_econ_hr_override", 1.2))
             peak_hr = base * float(getattr(config, "cc_peak_hr_override", 1.8))
+        # Reliability gas-steam supply-curve override: committed / economic /
+        # peaking = base HR x {0.5, 1.0, 1.5}. The cheap committed tranche
+        # commits the unit economically in place of the old flat must-run
+        # floor; peaker-class ST_GAS keep their CSV heat rates.
+        st_mc = getattr(config, "gas_st_committed_hr_override", None)
+        if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
+                and st_mc is not None):
+            base = float(b["hr_weighted"])
+            committed_hr = base * st_mc
+            econ_hr = base * float(
+                getattr(config, "gas_st_econ_hr_override", 1.0)
+            )
+            peak_hr = base * float(
+                getattr(config, "gas_st_peak_hr_override", 1.5)
+            )
         # CHP steam-following grid floor pinned onto the econ tranche.
         chp_pmin_mw = 0.0
         if chp_following:
