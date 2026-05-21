@@ -223,17 +223,20 @@ def _calibration_config(
         #   maintenance now comes from the historic outage overlay).
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
         #   follower-tier PRB sigmoid for low-must-run load-followers.
-        gas_st_summer_mustrun=0.10,  # ST_GAS dragged online at >=10% of base
-        #   capacity May-Sep for reliability.
+        gas_st_summer_mustrun=0.10,  # reliability ST_GAS dragged online at
+        #   >=10% of base capacity May-Sep (peaker-class ST_GAS excluded).
+        gas_st_offsummer_mustrun=0.03,  # and >=3% Oct-Apr (matches the 3% ST_GAS
+        #   outage threshold, so the only sub-3% periods are true >=10-day
+        #   shutdowns; the 3-5% idle hours are kept at the floor).
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
+        cc_committed_hr_override=1.0,  # CC supply curve: committed at full
+        cc_econ_hr_override=1.2,       # efficiency, economic a modest part-
+        cc_peak_hr_override=1.8,       # load penalty, peaking expensive.
         chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
-        #   BTM host floor (not the 60% CSV merchant split), a grid-delivered
-        #   steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT), and a 2x heat
-        #   rate on the dispatchable tranches so they load-follow expensively
-        #   instead of running the econ slice flat-out like a merchant CC.
+        #   BTM host floor (not the 60% CSV merchant split) plus a grid-
+        #   delivered steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT).
         chp_btm_floor_pct=40.0,
-        chp_loadfollow_hr_mult=2.0,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)

@@ -57,8 +57,22 @@ BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 # coal/CC bins (e.g. Barney M Davis carries both a CC and an ST_GAS bin —
 # only the CC bin is outaged).
 QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP"}
+    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"}
 )
+
+# Peaker-class ST_GAS plants: patchy / spiky run rate (run only when called),
+# so they get NO outage overlay (and no reliability min-gen floor in
+# fleet.generators_to_fleet_arrays) — they dispatch purely economically. The
+# remaining ST_GAS units run sustained idling / drag patterns and DO get the
+# outage + reliability treatment. Excluded from the overlay below.
+ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset({
+    3504,   # Stryker Creek
+    3453,   # Mountain Creek
+    3490,   # Graham
+    3507,   # Trinidad (TX)
+    3576,   # Ray Olinger
+    4266,   # Spencer
+})
 
 # Minimum outage span to overlay, in hours (>= 2 days). The CAMPD detector
 # (scripts/derive_campd_outages.py) already defines an outage as a sustained
@@ -135,7 +149,8 @@ def _qualifying_plant_codes(bins_path: str) -> frozenset[int]:
     """
     detail = pd.read_csv(bins_path)
     coal_cc = detail[detail["Plant_Group"].isin(QUALIFYING_PLANT_GROUPS)]
-    return frozenset(int(c) for c in coal_cc["Plant_Code"].unique())
+    codes = {int(c) for c in coal_cc["Plant_Code"].unique()}
+    return frozenset(codes - ST_GAS_PEAKER_PLANTS)
 
 
 @lru_cache(maxsize=4)
