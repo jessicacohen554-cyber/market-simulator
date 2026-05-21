@@ -58,9 +58,15 @@ QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
     {"COAL", "CC_REGULAR", "CC_CHP"}
 )
 
-# Minimum outage span to overlay, in hours (> 10 days). Only sustained
-# maintenance is applied; shorter forced outages are calibration noise.
+# Minimum outage span to overlay, in hours. Combined-cycle plants cycle
+# economically for days at a time, so only sustained (> 10-day) CC events are
+# treated as real maintenance; shorter ones are calibration noise. Coal is
+# baseload and does not idle economically, so a sustained > 7-day coal outage
+# (CF < 10%) is genuine maintenance and uses the lower coal threshold — this
+# catches real coal blocks like Oak Grove's 9-day March outage that fall just
+# under the 10-day cutoff.
 MIN_OUTAGE_SPAN_HOURS: int = 240
+MIN_OUTAGE_SPAN_HOURS_COAL: int = 168
 
 # Days before each 1-based month in a NON-leap year, so _DAYS_BEFORE_MONTH[m]
 # is the 0-based day-of-year of month m's first day ([1]=0 for Jan 1, [2]=31
@@ -135,6 +141,14 @@ def _qualifying_plant_codes(bins_path: str) -> frozenset[int]:
 
 
 @lru_cache(maxsize=4)
+def _coal_plant_codes(bins_path: str) -> frozenset[int]:
+    """Return EIA plant codes that have a COAL bin (use the lower coal span)."""
+    detail = pd.read_csv(bins_path)
+    coal = detail[detail["Plant_Group"] == "COAL"]
+    return frozenset(int(c) for c in coal["Plant_Code"].unique())
+
+
+@lru_cache(maxsize=4)
 def _build_outage_masks(
     outages_path: str, bins_path: str, hours: int
 ) -> dict[int, dict[int, np.ndarray]]:
@@ -146,6 +160,7 @@ def _build_outage_masks(
     paths and horizon; the returned arrays are shared (read-only callers).
     """
     codes = _qualifying_plant_codes(bins_path)
+    coal_codes = _coal_plant_codes(bins_path)
     df = pd.read_csv(
         outages_path, parse_dates=["outage_start", "outage_stop"]
     )
@@ -156,9 +171,13 @@ def _build_outage_masks(
         start = pd.Timestamp(row.outage_start)
         stop = pd.Timestamp(row.outage_stop)
         span_hours = (stop - start).total_seconds() / 3600.0
-        if span_hours <= MIN_OUTAGE_SPAN_HOURS:
-            continue
         code = int(row.oris_code)
+        min_span = (
+            MIN_OUTAGE_SPAN_HOURS_COAL if code in coal_codes
+            else MIN_OUTAGE_SPAN_HOURS
+        )
+        if span_hours <= min_span:
+            continue
         for year in range(start.year, stop.year + 1):
             window = outage_hour_mask(start, stop, year, hours)
             if not window.any():
