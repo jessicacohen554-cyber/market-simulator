@@ -1,13 +1,16 @@
 {
-  "timestamp": "2026-05-21T20:37:17",
+  "timestamp": "2026-05-21T23:00:22",
   "git": {
-    "sha": "5c05326",
+    "sha": "dbe39dc",
     "branch": "claude/wire-historic-outages-SIRI8",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "dirty": true,
+    "changed_files": [
+      "cripts/run_calibration.py",
+      "src/market_sim/data/fleet.py"
+    ],
+    "diffstat": "scripts/run_calibration.py   |  4 ++--\n src/market_sim/data/fleet.py | 15 ++++++++++++++-\n 2 files changed, 16 insertions(+), 3 deletions(-)"
   },
-  "model_changes_note": "Sector-based CHP BTM (merchant 10/industrial 60/commercial 60/ST_CHP 90%); CC/CT/ST_CHP steam-following; per-plant grid floor = p2 CAMPD gross CF - BTM; CT_CHP tranches 1.0/1.1/1.3; CC_CHP 1.15/1.85; CT_CHP+ST_CHP added to outage overlay.",
+  "model_changes_note": "Merchant CHP BTM 10->40%; ST_GAS committed 0.8->0.65; summer (Jun-Sep) ambient derate CC 10% / CT 12.5%.",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +35,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "5c05326"
+    "git_sha": "dbe39dc"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -158,7 +161,7 @@
     "cc_committed_hr_override": 1.0,
     "cc_econ_hr_override": 1.15,
     "cc_peak_hr_override": 1.85,
-    "gas_st_committed_hr_override": 0.8,
+    "gas_st_committed_hr_override": 0.65,
     "gas_st_econ_hr_override": 1.1,
     "gas_st_peak_hr_override": 1.5,
     "ct_committed_hr_override": 1.0,

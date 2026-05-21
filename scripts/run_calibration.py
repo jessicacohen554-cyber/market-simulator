@@ -225,8 +225,8 @@ def _calibration_config(
         #   follower-tier PRB sigmoid for low-must-run load-followers.
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
-        gas_st_committed_hr_override=0.8,  # reliability ST_GAS supply curve:
-        gas_st_econ_hr_override=1.1,       # must-run-if-committed bid at 0.8x,
+        gas_st_committed_hr_override=0.65,  # reliability ST_GAS supply curve:
+        gas_st_econ_hr_override=1.1,       # must-run-if-committed bid at 0.65x,
         gas_st_peak_hr_override=1.5,       # economic 1.1x, peaking 1.5x (no
         #   flat must-run floor). Peakers keep CSV HRs and run economically.
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
