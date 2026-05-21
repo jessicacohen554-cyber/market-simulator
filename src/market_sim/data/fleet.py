@@ -147,6 +147,9 @@ class Generator(BaseModel):
     plant_code: int = 0             # EIA plant code, when the tranche maps
     #                                 to a single physical plant; drives the
     #                                 F923 monthly fuel-cost lookup.
+    chp_grid_pmin_mw: float = 0.0   # grid-delivered steam-following floor (MW)
+    #                                 forced on flat via FleetArrays.min_gen for
+    #                                 CC_CHP cogens (config.chp_steam_following).
 
 
 @dataclass
@@ -402,14 +405,25 @@ def generators_to_fleet_arrays(
         getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None
         else 0.0
     )
-    if st_mr_frac > 0.0:
-        summer_mask = np.isin(_hour_to_month_index(hours) + 1,
-                              list(_GAS_ST_SUMMER_MONTHS))
+    chp_pmin_any = any(
+        getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
+    )
+    if st_mr_frac > 0.0 or chp_pmin_any:
         min_gen = np.zeros((n_gen, hours), dtype=float)
+        if st_mr_frac > 0.0:
+            summer_mask = np.isin(_hour_to_month_index(hours) + 1,
+                                  list(_GAS_ST_SUMMER_MONTHS))
+            for g_idx, gen in enumerate(generators):
+                if (gen.plant_group == "ST_GAS"
+                        and not gen.unit_id.endswith("_peak")):
+                    min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
+        # CHP grid-delivered steam-following floor: the cogen's steady export
+        # is forced on flat all year (the dispatchable surplus rides above it
+        # via the load-following tranches).
         for g_idx, gen in enumerate(generators):
-            if (gen.plant_group == "ST_GAS"
-                    and not gen.unit_id.endswith("_peak")):
-                min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
+            pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
+            if pmin_mw > 0.0:
+                min_gen[g_idx, :] = pmin_mw
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
@@ -1529,6 +1543,22 @@ COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
     56611: 40.0,  # Sandy Creek (PRB) — annual spring block, length varies
 }
 
+# Per-plant CHP grid-delivered steam-following floor (% of nameplate), applied
+# as a hard min-gen on the CC_CHP econ tranche when config.chp_steam_following
+# is set. It is the steady export the cogen always delivers to the grid above
+# its behind-the-meter host self-supply (chp_btm_floor_pct). Derived as the
+# plant's ~20th-percentile CAMPD net CF minus the BTM floor, pooled 2023-2025;
+# most cogens sit at/below the host load at their floor (0 here) and export
+# only the dispatchable surplus, which the load-following HR multiplier prices.
+CHP_GRID_PMIN_BY_PLANT: dict[int, float] = {
+    50815: 7.0,   # Odyssey Energy Altura Cogen
+    55047: 13.0,  # Pasadena Cogeneration
+    55187: 47.0,  # Channelview Cogeneration (high steady base)
+    55299: 15.0,  # Channel Energy Center
+    55464: 11.0,  # Deer Park Energy Center
+    # all other CC_CHP plants: 0 (floor at/below host load — export is surplus)
+}
+
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
 # fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
@@ -1924,6 +1954,18 @@ def bins_to_fleet(
             elif (_supply == "prb"
                     and config.coal_prb_mustrun_override is not None):
                 pct_mr = config.coal_prb_mustrun_override
+        # Steam-following cogen treatment: a CC_CHP bin's behind-the-meter host
+        # self-supply (removed from the grid, added back in the report) is
+        # chp_btm_floor_pct of nameplate, not the CSV Pct_Must_Run merchant
+        # split. Overriding pct_mr here shrinks the removed share and grows the
+        # grid-facing capacity, which the steam floor + expensive load-following
+        # below then shape into base + dispatchable rather than a flat slab.
+        chp_following = (
+            str(b["Plant_Group"]) == "CC_CHP"
+            and getattr(config, "chp_steam_following", False)
+        )
+        if chp_following:
+            pct_mr = float(getattr(config, "chp_btm_floor_pct", 40.0))
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
         # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
         # only via the runner). Non-coal bins' must-run share is host
@@ -1971,6 +2013,19 @@ def bins_to_fleet(
         committed_hr = float(b["hr_mc"])
         econ_hr = float(b["hr_econ"])
         peak_hr = float(b["hr_peak"])
+        # Cogen load-following: make the dispatchable (econ + peak) tranches
+        # expensive so the LP follows price modestly above the steam floor
+        # rather than running the whole grid slice flat-out as a merchant CC;
+        # and pin the steam-following grid floor onto the econ tranche.
+        chp_pmin_mw = 0.0
+        if chp_following:
+            lf_mult = float(getattr(config, "chp_loadfollow_hr_mult", 2.0))
+            econ_hr *= lf_mult
+            peak_hr *= lf_mult
+            chp_pmin_mw = min(
+                CHP_GRID_PMIN_BY_PLANT.get(plant_code, 0.0) / 100.0 * nameplate,
+                econ_cap,
+            )
 
         # Four stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
@@ -2017,6 +2072,9 @@ def bins_to_fleet(
                     ),
                     coal_supply=coal_supply,
                     plant_code=plant_code,
+                    chp_grid_pmin_mw=(
+                        chp_pmin_mw if suffix == "econ" else 0.0
+                    ),
                 )
             )
 
