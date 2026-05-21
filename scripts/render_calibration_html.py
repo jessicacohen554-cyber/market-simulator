@@ -241,8 +241,9 @@ def _hourly(disp, e930):
 
 
 def tabular_html(bundles, payload):
-    out = ["<h3>Per-plant hourly fit vs CAMPD net (r / NRMSE, after parasitic correction)</h3>",
-           per_plant_fit_table(payload)]
+    def wrap(t):
+        return f'<div class=tablewrap>{t}</div>'
+    out = []
     for year, bdir in bundles.items():
         disp = pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet")
         e923 = pd.read_parquet(bdir / "eia923.parquet"); e923 = e923[e923["year"] == year]
@@ -250,8 +251,12 @@ def tabular_html(bundles, payload):
         btm = pd.read_parquet(bdir / "btm.parquet")
         btm = btm[(btm["year"] == year) & (btm["pass"] == "P1")]
         out += [f"<h3>ERCOT {year} — thermal by class vs EIA-923 (TWh)</h3>",
-                _thermal(disp, e923, btm),
-                f"<h4>ERCOT {year} — hourly fit vs EIA-930</h4>", _hourly(disp, e930)]
+                wrap(_thermal(disp, e923, btm)),
+                f"<h4>ERCOT {year} — hourly fit vs EIA-930</h4>", wrap(_hourly(disp, e930))]
+    # Per-plant fit table last (longest, most detailed).
+    out += ["<h3>Per-plant hourly fit vs CAMPD net "
+            "(r / NRMSE, after parasitic correction)</h3>",
+            wrap(per_plant_fit_table(payload))]
     return "".join(out)
 
 
@@ -277,34 +282,39 @@ def main():
 TEMPLATE = r"""<!doctype html><html><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>CAMPD vs Model — Dispatch Comparison</title><style>
-:root{--bg:#f6f7f9;--card:#fff;--bd:#e3e7ec;--ink:#1a1f29;--mut:#6b7480;--blue:#2f9bd6;--orange:#ef7d2b;--green:#7aa884;}
+:root{--bg:#f6f7f9;--card:#fff;--bd:#e3e7ec;--ink:#1a1f29;--mut:#6b7480;
+  --model:#ef7d2b;--campd:#2f9bd6;--e923:#2e9e5b;--e930:#8b5cf6;--mr:#7b8794;}
 *{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:18px}
-.wrap{max-width:1000px;margin:0 auto}h1{font-size:22px;margin:0 0 2px}.sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+.wrap{max-width:1040px;margin:0 auto}h1{font-size:23px;margin:0 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 14px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.row{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
-.lab{font-size:11px;letter-spacing:.06em;color:var(--mut);font-weight:600;text-transform:uppercase;margin-right:6px}
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.lab{font-size:12px;letter-spacing:.06em;color:var(--mut);font-weight:600;text-transform:uppercase;margin-right:6px}
 .seg{display:inline-flex;background:#eef1f4;border-radius:9px;padding:3px}
-.seg button{border:0;background:transparent;padding:6px 13px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--mut);font-weight:600}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:7px;font-size:14px;cursor:pointer;color:var(--mut);font-weight:600}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
-select{font-size:14px;padding:7px 10px;border:1px solid var(--bd);border-radius:8px;background:#fff}
-h2{font-size:18px;margin:2px 0}h3{font-size:15px;margin:18px 0 8px}h4{font-size:13px;margin:14px 0 6px;color:#3a4250}
-.hsub{color:var(--mut);font-size:12px;margin:0 0 10px}
-canvas.heat{width:100%;height:140px;image-rendering:pixelated;border:1px solid var(--bd);border-radius:6px;background:#eef3f7;display:block}
-.ax{display:flex;justify-content:space-between;color:var(--mut);font-size:11px;margin:3px 2px 0}
-.legend{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--mut);margin:8px 0;flex-wrap:wrap}
-.ramp{height:10px;width:150px;border-radius:3px;background:linear-gradient(90deg,#e8f3f7,#7fc4e6,#86c98f,#f2d65c,#ef8f3c,#c0392b)}
+select{font-size:15px;padding:8px 11px;border:1px solid var(--bd);border-radius:8px;background:#fff;max-width:100%}
+h2{font-size:19px;margin:2px 0}h3{font-size:16px;margin:18px 0 8px}h4{font-size:14px;margin:14px 0 6px;color:#3a4250}
+.hsub{color:var(--mut);font-size:13px;margin:0 0 10px}
+canvas.heat{width:100%;height:200px;image-rendering:pixelated;border:1px solid var(--bd);border-radius:6px;background:#eef3f7;display:block}
+.ax{display:flex;justify-content:space-between;color:var(--mut);font-size:12px;margin:3px 2px 0}
+.legend{display:flex;align-items:center;gap:16px;font-size:13px;color:var(--mut);margin:10px 0;flex-wrap:wrap}
+.legend b{font-weight:600}
+.swatch{display:inline-block;width:22px;height:0;border-top-width:3px;border-top-style:solid;vertical-align:middle;margin-right:5px}
+.ramp{height:11px;width:170px;border-radius:3px;background:linear-gradient(90deg,#e8f3f7,#7fc4e6,#86c98f,#f2d65c,#ef8f3c,#c0392b)}
 .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-.stat{flex:1;min-width:115px;background:#f8fafc;border:1px solid var(--bd);border-radius:9px;padding:9px 12px}
-.stat .k{font-size:11px;color:var(--mut);text-transform:uppercase}.stat .v{font-size:20px;font-weight:700;margin-top:2px}
-table{border-collapse:collapse;width:100%;background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden;font-size:13px;margin:6px 0 14px}
-th,td{padding:6px 10px;border-bottom:1px solid #eef1f4;text-align:left}th{background:#f0f3f6;font-size:11px;text-transform:uppercase;color:#46505f}
+.stat{flex:1;min-width:130px;background:#f8fafc;border:1px solid var(--bd);border-radius:9px;padding:10px 13px}
+.stat .k{font-size:12px;color:var(--mut);text-transform:uppercase}.stat .v{font-size:22px;font-weight:700;margin-top:2px}
+.tablewrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 14px;border:1px solid var(--bd);border-radius:8px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:14px}
+th,td{padding:8px 11px;border-bottom:1px solid #eef1f4;text-align:left;white-space:nowrap}th{background:#f0f3f6;font-size:12px;text-transform:uppercase;color:#46505f;position:sticky;top:0}
 td.num{text-align:right;font-variant-numeric:tabular-nums}.good{color:#0f7d3d}.ok{color:#9a6700}.bad{color:#c01c28;font-weight:600}
-.hide{display:none}.tabs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
-.tabs button{border:1px solid var(--bd);background:#fff;border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--mut)}
-.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-svg{width:100%;height:230px;display:block}
-#tip{position:fixed;display:none;pointer-events:none;background:#1a1f29;color:#fff;font-size:12px;line-height:1.55;padding:7px 10px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.28);z-index:99;max-width:240px;white-space:nowrap}
+.hide{display:none}.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.tabs button{border:1px solid var(--bd);background:#fff;border-radius:7px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--mut)}
+.tabs button.on{background:var(--campd);color:#fff;border-color:var(--campd)}
+svg{width:100%;height:auto;display:block}
+#tip{position:fixed;display:none;pointer-events:none;background:#1a1f29;color:#fff;font-size:13px;line-height:1.55;padding:8px 11px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.28);z-index:99;max-width:260px;white-space:nowrap}
 canvas.heat,svg{cursor:crosshair}
+@media(max-width:640px){body{padding:10px}.card{padding:12px 12px}h1{font-size:20px}th,td{padding:7px 8px;font-size:13px}canvas.heat{height:150px}.stat{min-width:46%}}
 </style></head><body><div class=wrap>
 <div id=tip></div>
 <h1>CAMPD vs Model — Dispatch Comparison</h1>
@@ -327,20 +337,31 @@ canvas.heat,svg{cursor:crosshair}
   <div class=row><span class=lab>Mode</span><span class=seg id=modeSel>
     <button data-m=cf class=on>CF %</button><button data-m=mw>MW</button></span></div>
   <div class=tabs id=periodSel></div>
-  <div class=legend><span style="color:var(--blue)">— CAMPD actual</span>
-    <span style="color:var(--orange)">— Model result</span><span style="color:#9aa">- - must-run floor</span></div>
-  <svg id=profile viewBox="0 0 720 230"></svg><div class=stats id=profStats></div></div>
-<div class=card><h2>Annual total — model vs CAMPD vs EIA-923 (TWh)</h2><svg id=annual viewBox="0 0 720 230"></svg></div>
+  <div class=legend>
+    <span><i class=swatch style="border-top-color:var(--campd)"></i><b>CAMPD actual</b></span>
+    <span><i class=swatch style="border-top-color:var(--model);border-top-style:dashed"></i><b>Model result</b></span>
+    <span><i class=swatch style="border-top-color:var(--mr);border-top-style:dotted"></i><b>must-run floor</b></span></div>
+  <svg id=profile viewBox="0 0 720 360"></svg><div class=stats id=profStats></div></div>
+<div class=card><h2>Annual total (TWh)</h2>
+  <div class=legend>
+    <span><i class=swatch style="border-top-color:var(--model)"></i><b>Model</b></span>
+    <span><i class=swatch style="border-top-color:var(--campd)"></i><b>CAMPD</b></span>
+    <span><i class=swatch style="border-top-color:var(--e923)"></i><b>EIA-923</b></span></div>
+  <svg id=annual viewBox="0 0 720 360"></svg></div>
 <div class=card><h2>Monthly generation (GWh)</h2>
-  <div class=legend><span style="color:var(--blue)">— CAMPD</span>
-    <span style="color:var(--orange)">— Model</span><span style="color:var(--green)">— EIA-923</span></div>
-  <svg id=monthly viewBox="0 0 720 230"></svg></div></div>
+  <div class=legend>
+    <span><i class=swatch style="border-top-color:var(--campd)"></i><b>CAMPD</b></span>
+    <span><i class=swatch style="border-top-color:var(--model);border-top-style:dashed"></i><b>Model</b></span>
+    <span><i class=swatch style="border-top-color:var(--e923);border-top-style:dotted"></i><b>EIA-923</b></span></div>
+  <svg id=monthly viewBox="0 0 720 360"></svg></div></div>
 
 <div id=tables-view class=hide><div class=card>__TABULAR__</div></div>
 
 <script>
 const D=__DATA__;const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
+const C={model:"#ef7d2b",campd:"#2f9bd6",e923:"#2e9e5b",e930:"#8b5cf6",mr:"#7b8794"};
+const DASH={solid:"",dashed:'stroke-dasharray="7 4"',dotted:'stroke-dasharray="2 4"'};
 let st={year:D.years[0],group:D.groups[0],plant:"agg",mode:"cf",period:"annual"};
 function dec(b){const s=atob(b),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
 function cur(){return D.series[st.plant==="agg"?st.year+"|"+st.group:st.year+"|plant:"+st.plant];}
@@ -368,23 +389,24 @@ function axMonths(el){el.innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");}
 function profile(cf,p){const o=Array(24).fill(0),n=Array(24).fill(0);let lo=0,hi=8760;
  if(p!=="annual"){let s=0;for(let i=0;i<+p;i++)s+=DIM[i]*24;lo=s;hi=s+DIM[+p]*24;}
  for(let h=lo;h<hi;h++){o[h%24]+=cf[h];n[h%24]++;}return o.map((v,i)=>n[i]?v/n[i]:0);}
-function line(svg,sets,ymax,xl,unit,labels,tunit){const W=720,H=230,L=48,R=12,T=12,B=34,pw=W-L-R,ph=H-T-B,n=sets[0].pts.length;tunit=tunit||unit;
- let s='<g font-size=11 fill="#9aa2ad">';
- for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-6} y=${y+3} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}${unit}</text>`;}
- xl.forEach((lb,i)=>{if(lb){const x=L+(n>1?pw*i/(n-1):0);s+=`<text x=${x} y=${H-12} text-anchor=middle>${lb}</text>`;}});s+="</g>";
- for(const set of sets){const d=set.pts.map((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);return`${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
-  s+=`<path d="${d}" fill=none stroke="${set.color}" stroke-width=2 ${set.dash?'stroke-dasharray="5 4"':""}/>`;
-  if(!set.dash)set.pts.forEach((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);s+=`<circle cx=${x.toFixed(1)} cy=${y.toFixed(1)} r=2.4 fill=#fff stroke="${set.color}" stroke-width=1.5/>`;});}
+function line(svg,sets,ymax,xl,unit,labels,tunit){const W=720,H=360,L=58,R=16,T=16,B=44,pw=W-L-R,ph=H-T-B,n=sets[0].pts.length;tunit=tunit||unit;
+ let s='<g font-size=14 fill="#8a93a0">';
+ for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-9} y=${y+5} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}${unit}</text>`;}
+ xl.forEach((lb,i)=>{if(lb){const x=L+(n>1?pw*i/(n-1):0);s+=`<text x=${x} y=${H-16} text-anchor=middle>${lb}</text>`;}});s+="</g>";
+ for(const set of sets){const dash=DASH[set.style||"solid"];
+  const d=set.pts.map((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);return`${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
+  s+=`<path d="${d}" fill=none stroke="${set.color}" stroke-width=${set.floor?2:2.8} ${dash}/>`;
+  if(!set.floor)set.pts.forEach((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);s+=`<circle cx=${x.toFixed(1)} cy=${y.toFixed(1)} r=3.2 fill=#fff stroke="${set.color}" stroke-width=2/>`;});}
  svg.innerHTML=s;
  const xs=[],rows=[];for(let i=0;i<n;i++){const x=L+(n>1?pw*i/(n-1):0);xs.push(x);
   let r=`<b>${(labels&&labels[i])||xl[i]||i}</b>`;
-  for(const set of sets)if(!set.dash)r+=`<br><span style="color:${set.color}">●</span> ${set.name||""}: ${set.pts[i].toFixed(1)}${tunit}`;
+  for(const set of sets)if(!set.floor)r+=`<br><span style="color:${set.color}">●</span> ${set.name||""}: ${set.pts[i].toFixed(1)}${tunit}`;
   rows.push(r);}
  hoverX(svg,xs,rows);}
-function bars(svg,bs,ymax,tunit){const W=720,H=230,L=48,R=12,T=12,B=42,pw=W-L-R,ph=H-T-B;
- let s='<g font-size=11 fill="#9aa2ad">';for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-6} y=${y+3} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}</text>`;}s+="</g>";
- const bw=pw/bs.length*0.5;bs.forEach((b,i)=>{const cx=L+pw*(i+.5)/bs.length,h=ph*Math.min(b.v,ymax)/ymax,y=T+ph-h;
-  s+=`<rect x=${cx-bw/2} y=${y} width=${bw} height=${h} rx=3 fill="${b.color}"/><text x=${cx} y=${H-22} text-anchor=middle font-size=12 fill=#46505f>${b.label}</text><text x=${cx} y=${y-5} text-anchor=middle font-size=12 fill=#46505f font-weight=600>${b.v.toFixed(1)}</text>`;});
+function bars(svg,bs,ymax,tunit){const W=720,H=360,L=58,R=16,T=16,B=52,pw=W-L-R,ph=H-T-B;
+ let s='<g font-size=14 fill="#8a93a0">';for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-9} y=${y+5} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}</text>`;}s+="</g>";
+ const bw=pw/bs.length*0.46;bs.forEach((b,i)=>{const cx=L+pw*(i+.5)/bs.length,h=ph*Math.min(b.v,ymax)/ymax,y=T+ph-h;
+  s+=`<rect x=${cx-bw/2} y=${y} width=${bw} height=${h} rx=3 fill="${b.color}"/><text x=${cx} y=${H-28} text-anchor=middle font-size=15 fill=#46505f>${b.label}</text><text x=${cx} y=${y-8} text-anchor=middle font-size=15 fill=#46505f font-weight=700>${b.v.toFixed(1)}</text>`;});
  svg.innerHTML=s;
  hoverX(svg,bs.map((b,i)=>L+pw*(i+.5)/bs.length),bs.map(b=>`<b>${b.label}</b><br>${b.v.toFixed(2)}${tunit||""}`));}
 function render(){const d=cur();if(!d)return;const mc=dec(d.model),cc=dec(d.campd),npl=d.npl;
@@ -395,19 +417,19 @@ function render(){const d=cur();if(!d)return;const mc=dec(d.model),cc=dec(d.camp
  const pc=profile(cc,st.period),pm=profile(mc,st.period);const xl=Array(24).fill("");[0,6,12,18,23].forEach(h=>xl[h]=("0"+h).slice(-2)+":00");
  const hrs=Array.from({length:24},(_,h)=>("0"+h).slice(-2)+":00");
  let sets,ymax,unit,tunit;
- if(st.mode==="cf"){sets=[{pts:pc,color:"#2f9bd6",name:"CAMPD actual"},{pts:pm,color:"#ef7d2b",name:"Model result"},{pts:Array(24).fill(d.mrpct),color:"#aab",dash:1}];
+ if(st.mode==="cf"){sets=[{pts:pc,color:C.campd,name:"CAMPD actual"},{pts:pm,color:C.model,name:"Model result",style:"dashed"},{pts:Array(24).fill(d.mrpct),color:C.mr,style:"dotted",floor:1}];
   ymax=Math.max(50,Math.ceil(Math.max(...pc,...pm,d.mrpct)/10)*10+10);unit="%";tunit="%";}
- else{const a=pc.map(v=>v*npl/100),b=pm.map(v=>v*npl/100);sets=[{pts:a,color:"#2f9bd6",name:"CAMPD actual"},{pts:b,color:"#ef7d2b",name:"Model result"},{pts:Array(24).fill(npl*d.mrpct/100),color:"#aab",dash:1}];
+ else{const a=pc.map(v=>v*npl/100),b=pm.map(v=>v*npl/100);sets=[{pts:a,color:C.campd,name:"CAMPD actual"},{pts:b,color:C.model,name:"Model result",style:"dashed"},{pts:Array(24).fill(npl*d.mrpct/100),color:C.mr,style:"dotted",floor:1}];
   ymax=Math.ceil(Math.max(...a,...b,1)/100)*100+100;unit="";tunit=" MW";}
  line(profile_,sets,ymax,xl,unit,hrs,tunit);
  const aA=pc.reduce((a,b)=>a+b)/24,aM=pm.reduce((a,b)=>a+b)/24,pk=pc.indexOf(Math.max(...pc)),bias=aM-aA;
- profStats.innerHTML=`<div class=stat><div class=k>Avg actual</div><div class=v style=color:#2f9bd6>${aA.toFixed(1)}%</div></div>`
-  +`<div class=stat><div class=k>Avg model</div><div class=v style=color:#ef7d2b>${aM.toFixed(1)}%</div></div>`
+ profStats.innerHTML=`<div class=stat><div class=k>Avg actual</div><div class=v style=color:${C.campd}>${aA.toFixed(1)}%</div></div>`
+  +`<div class=stat><div class=k>Avg model</div><div class=v style=color:${C.model}>${aM.toFixed(1)}%</div></div>`
   +`<div class=stat><div class=k>Bias</div><div class=v class=${Math.abs(bias)<5?"good":"bad"} style=color:${Math.abs(bias)<5?"#0f7d3d":"#c01c28"}>${(bias>=0?"+":"")+bias.toFixed(1)} pp</div></div>`
   +`<div class=stat><div class=k>Actual peak hr</div><div class=v>${("0"+pk).slice(-2)}:00</div></div>`
   +(d.r!=null?`<div class=stat><div class=k>Hourly r / NRMSE</div><div class=v>${d.r} / ${d.nrmse}</div></div>`:"");
- bars(annual,[{label:"Model",v:d.m_ann,color:"#ef7d2b"},{label:"CAMPD",v:d.c_ann,color:"#2f9bd6"},{label:"EIA-923",v:d.e_ann,color:"#7aa884"}],Math.max(d.m_ann,d.c_ann,d.e_ann,.1)*1.25," TWh");
- const ms=[{pts:d.c_mon,color:"#2f9bd6",name:"CAMPD"},{pts:d.m_mon,color:"#ef7d2b",name:"Model"}];if(d.e_mon)ms.push({pts:d.e_mon,color:"#7aa884",name:"EIA-923"});
+ bars(annual,[{label:"Model",v:d.m_ann,color:C.model},{label:"CAMPD",v:d.c_ann,color:C.campd},{label:"EIA-923",v:d.e_ann,color:C.e923}],Math.max(d.m_ann,d.c_ann,d.e_ann,.1)*1.25," TWh");
+ const ms=[{pts:d.c_mon,color:C.campd,name:"CAMPD"},{pts:d.m_mon,color:C.model,name:"Model",style:"dashed"}];if(d.e_mon)ms.push({pts:d.e_mon,color:C.e923,name:"EIA-923",style:"dotted"});
  line(monthly,ms,Math.max(...d.c_mon,...d.m_mon,...(d.e_mon||[0]),1)*1.15,MONTHS,"",MONTHS," GWh");}
 const profile_=document.getElementById("profile");
 function fillPlants(){const list=(D.groupPlants[st.year+"|"+st.group]||[]).slice().sort((a,b)=>a.name.localeCompare(b.name));
