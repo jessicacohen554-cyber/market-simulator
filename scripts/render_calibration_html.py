@@ -127,19 +127,24 @@ def build_payload(bundles: dict[int, Path]):
             # only, no grid contribution) plants from the report entirely.
             if float(grid.sum()) <= 0 or float(cn.sum()) <= 0:
                 continue
-            # CHP host-steam must-run is behind-the-meter: it's removed from the
-            # LP grid dispatch, but CAMPD reports the full plant. For the hourly
-            # *shape* views (heatmap, dispatch profile) and the hourly r/NRMSE
-            # fit we add it back flat so CHP doesn't read as ~0 against CAMPD.
-            # The annual/monthly totals stay grid-only (true model output), and
-            # non-CHP must-run is already in the grid LP so nothing is added.
-            btm = cap * mrp / 100.0 if "CHP" in (grp or "") else 0.0
+            # CHP host-steam self-supply is behind-the-meter: the model grid LP
+            # produces only the cogen's *export*, while CAMPD reports the full
+            # plant. For the hourly *shape* views (heatmap, dispatch profile)
+            # and the hourly r/NRMSE fit we add the host back flat so the export
+            # shape can be compared against the full plant at a matched level;
+            # the host is inferred per-plant as (CAMPD mean - grid export mean),
+            # since it is unmetered. Annual/monthly totals stay grid-only (the
+            # true modeled export); non-CHP must-run is already in the grid LP.
+            is_chp = "CHP" in (grp or "")
+            btm = max(0.0, float(cn.mean() - grid.mean())) if is_chp else 0.0
+            mr_mw = btm if is_chp else cap * mrp / 100.0
+            mr_disp = 100.0 * btm / cap if is_chp else mrp
             mt = grid + btm  # heatmap / dispatch profile / hourly fit only
             r, nr = _rfit(mt, cn)
             emon_p = eia_pmon.get(c, np.zeros(12))
             series[f"{year}|plant:{c}"] = {
                 "name": str(pname.get(c, c)), "group": hg, "npl": round(cap),
-                "mrpct": round(mrp, 1),
+                "mrpct": round(mr_disp, 1),
                 "model": _b64(100 * mt / cap), "campd": _b64(100 * cn / cap),
                 "m_ann": round(float(grid.sum()) / 1e6, 3), "c_ann": round(float(cn.sum()) / 1e6, 3),
                 "e_ann": round(float(eia_ann.get(c, 0.0)) / 1e6, 3),
@@ -150,7 +155,7 @@ def build_payload(bundles: dict[int, Path]):
             group_plants.setdefault(f"{year}|{hg}", []).append(
                 {"code": int(c), "name": str(pname.get(c, c))})
             a = agg[hg]; a["m"] += mt; a["g"] += grid; a["c"] += cn; a["npl"] += cap
-            a["mr"] += cap * mrp / 100.0; a["e"] += emon_p
+            a["mr"] += mr_mw; a["e"] += emon_p
             a["ea"] += float(eia_ann.get(c, 0.0)) / 1e6; a["n"] += 1
         for hg, a in agg.items():
             cap = a["npl"] or 1.0
