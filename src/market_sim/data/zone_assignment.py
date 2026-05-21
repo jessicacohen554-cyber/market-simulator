@@ -46,7 +46,6 @@ _ISO_TO_BA_CODE: dict[str, str] = {
 
 # ISOs modeled as a single zone, with that zone's name.
 _SINGLE_ZONE: dict[str, str] = {
-    "NYISO": "NYISO_main",
     "NEISO": "NEISO_main",
 }
 
@@ -56,7 +55,8 @@ _SINGLE_ZONE: dict[str, str] = {
 # zone (0.50) and is where unlocated imports physically land via the
 # West-of-River / Palo Verde ties. PJM falls back to PJM_West: the western
 # AEP/ComEd belt is the largest-load-share zone (0.504) and is where the
-# unlocated MISO/PJM-seam plants geographically sit.
+# unlocated MISO/PJM-seam plants geographically sit. NYISO falls back to
+# Upstate-West, its largest-load-share zone (0.365).
 _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_West",
@@ -64,6 +64,7 @@ _LARGEST_ZONE: dict[str, str] = {
     # MISO-Central is the largest-load-share zone (0.46) and holds the
     # lower-Midwest load centers, so unlocated MISO plants land there.
     "MISO": "MISO-Central",
+    "NYISO": "Upstate_West",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -198,6 +199,77 @@ _MISO_STATE_ZONES: dict[int, str] = {
 # only triggers when a caller supplies coordinates without a state code.
 _MISO_SOUTH_LAT: float = 36.0
 _MISO_NORTH_LAT: float = 43.0
+
+# FIPS state code for New York. NYISO's eleven load zones (A–K) follow
+# county lines closely enough that county FIPS carries the assignment, with
+# a lat/lon fallback for out-of-state merchant resources (the NJ HVDC/VFT
+# cables that inject downstate) and any plant lacking a NY county code.
+_NEW_YORK_FIPS: int = 36
+
+# NYC (zone J) — the five boroughs.
+NYISO_NYC_COUNTIES: frozenset[int] = frozenset(
+    {
+        5,    # Bronx
+        47,   # Kings (Brooklyn)
+        61,   # New York (Manhattan)
+        81,   # Queens
+        85,   # Richmond (Staten Island)
+    }
+)
+
+# Long Island (zone K).
+NYISO_LONG_ISLAND_COUNTIES: frozenset[int] = frozenset(
+    {
+        59,   # Nassau
+        103,  # Suffolk
+    }
+)
+
+# Lower-Hudson (zones H Millwood + I Dunwoodie) — the Westchester/Putnam
+# pocket north of NYC and south of the UPNY-SENY interface.
+NYISO_LOWER_HUDSON_COUNTIES: frozenset[int] = frozenset(
+    {
+        119,  # Westchester (Con Ed — zones H and I)
+        79,   # Putnam
+    }
+)
+
+# Capital/Hudson (zones F Capital + G Hudson Valley) — the eastern-NY
+# corridor between the Central-East and UPNY-SENY interfaces. Every other
+# NY county falls through to Upstate-West (zones A–E), which keeps the
+# Niagara (zone A) and St. Lawrence (zone D) hydro upstate.
+NYISO_CAPITAL_HUDSON_COUNTIES: frozenset[int] = frozenset(
+    {
+        1,    # Albany (F)
+        21,   # Columbia (F)
+        39,   # Greene (F)
+        83,   # Rensselaer (F)
+        91,   # Saratoga (F)
+        93,   # Schenectady (F)
+        95,   # Schoharie (F)
+        113,  # Warren (F)
+        115,  # Washington (F)
+        27,   # Dutchess (G)
+        71,   # Orange (G)
+        87,   # Rockland (G)
+        105,  # Sullivan (G)
+        111,  # Ulster (G)
+    }
+)
+
+# NYISO downstate lat/lon fallback boundaries, used only when a plant carries
+# no NY county code (the NJ merchant-cable resources) or for the coordinate
+# API. The precise assignment is county-based; these bands are the backstop.
+# West of the Hudson corridor, or north of the Capital region (the North
+# Country, zone D), is upstate; the eastern band splits by latitude into
+# Capital/Hudson then Lower-Hudson, then by longitude into NYC and Long
+# Island. Albany sits at ~lat 42.6; Westchester at ~lat 41.0–41.3; NYC at
+# ~lat 40.7; Long Island runs east of NYC past ~lon -73.5.
+_NYISO_UPSTATE_LON: float = -75.0
+_NYISO_NORTH_LAT: float = 43.3
+_NYISO_CAPITAL_LAT: float = 41.4
+_NYISO_LOWER_HUDSON_LAT: float = 41.0
+_NYISO_LONG_ISLAND_LON: float = -73.5
 
 # Cached parsed eGRID DataFrame and derived ORIS→location lookup, so the
 # 21 MB workbook is read at most once per process.
@@ -351,6 +423,59 @@ def _caiso_zone(
     return _LARGEST_ZONE["CAISO"]
 
 
+def _nyiso_zone(
+    lat: float | None,
+    lon: float | None,
+    fips_state: int | None,
+    fips_county: int | None,
+) -> str:
+    """Return the NYISO model zone for a plant location.
+
+    NYISO's eleven load zones (A–K) follow New York county lines closely, so
+    county FIPS carries the assignment: the five boroughs -> NYC (J),
+    Nassau/Suffolk -> Long Island (K), Westchester/Putnam -> Lower-Hudson
+    (H–I), the Capital and Hudson-Valley counties -> Capital/Hudson (F–G),
+    and every other NY county -> Upstate-West (A–E) — which keeps the Niagara
+    (zone A) and St. Lawrence (zone D) hydro upstate. Out-of-state merchant
+    resources that inject through the downstate HVDC/VFT cables (the NJ
+    plants) carry no NY county code and are routed by lat/lon onto the
+    downstate pocket they feed.
+    """
+    if fips_state == _NEW_YORK_FIPS and fips_county is not None:
+        if fips_county in NYISO_NYC_COUNTIES:
+            return "NYC"
+        if fips_county in NYISO_LONG_ISLAND_COUNTIES:
+            return "Long_Island"
+        if fips_county in NYISO_LOWER_HUDSON_COUNTIES:
+            return "Lower_Hudson"
+        if fips_county in NYISO_CAPITAL_HUDSON_COUNTIES:
+            return "Capital_Hudson"
+        return "Upstate_West"
+    return _nyiso_zone_from_latlon(lat, lon)
+
+
+def _nyiso_zone_from_latlon(lat: float | None, lon: float | None) -> str:
+    """Return the NYISO zone for a plant with no NY county code, by lat/lon.
+
+    Coarse backstop for out-of-state merchant resources and missing FIPS:
+    west of the Hudson corridor or north of the Capital region is
+    Upstate-West; the eastern band splits by latitude into Capital/Hudson and
+    Lower-Hudson, then by longitude into NYC and Long Island downstate. With
+    no coordinates the largest-load-share zone (Upstate-West) is the fallback.
+    """
+    if lat is None or lon is None:
+        return _LARGEST_ZONE["NYISO"]
+    if lon < _NYISO_UPSTATE_LON or lat >= _NYISO_NORTH_LAT:
+        return "Upstate_West"
+    if lat >= _NYISO_CAPITAL_LAT:
+        return "Capital_Hudson"
+    if lat >= _NYISO_LOWER_HUDSON_LAT:
+        return "Lower_Hudson"
+    if lon >= _NYISO_LONG_ISLAND_LON:
+        return "Long_Island"
+    return "NYC"
+
+
 def _pjm_zone(
     lat: float | None,
     lon: float | None,
@@ -417,6 +542,8 @@ def _zone_from_location(
         return _caiso_zone(lat, lon, fips_state, fips_county)
     if iso == "MISO":
         return _miso_zone(lat, fips_state)
+    if iso == "NYISO":
+        return _nyiso_zone(lat, lon, fips_state, fips_county)
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
@@ -441,8 +568,8 @@ def assign_zone_by_fips(
 def assign_zone(oris_code: int, iso: str) -> str:
     """Return the model zone for a plant's ORIS code.
 
-    For single-zone ISOs (NYISO, NEISO) the main zone is returned without a
-    lookup. For multi-zone ISOs (ERCOT, CAISO, PJM) the plant is located via
+    For single-zone ISOs (NEISO) the main zone is returned without a lookup.
+    For multi-zone ISOs (ERCOT, CAISO, MISO, NYISO, PJM) the plant is located via
     the eGRID ORIS→location table; an ORIS code missing from eGRID falls back
     to the ISO's largest-load-share zone with a warning.
     """
