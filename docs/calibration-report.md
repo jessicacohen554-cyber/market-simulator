@@ -43,6 +43,9 @@ plant). Groups: `COAL_LIGNITE`, `COAL_PRB`, `CC_REGULAR`, `CC_CHP`,
 - **Annual total** — bar chart, model vs CAMPD vs EIA-923 (TWh).
 - **Monthly generation** — line chart, model vs CAMPD vs EIA-923 (GWh).
 
+All charts and both heatmaps have hover tooltips (heatmap → date · hour · CF%;
+line/bar → the series values at that point).
+
 ### Tables
 Per-plant hourly r / NRMSE vs CAMPD net (after parasitic correction), plus the
 per-year thermal-by-class (vs EIA-923) and fuel hourly-fit (vs EIA-930) tables.
