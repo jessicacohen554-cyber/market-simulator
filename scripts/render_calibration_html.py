@@ -290,7 +290,10 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}.good{color:#0f7d3d}.o
 .tabs button{border:1px solid var(--bd);background:#fff;border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--mut)}
 .tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 svg{width:100%;height:230px;display:block}
+#tip{position:fixed;display:none;pointer-events:none;background:#1a1f29;color:#fff;font-size:12px;line-height:1.55;padding:7px 10px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.28);z-index:99;max-width:240px;white-space:nowrap}
+canvas.heat,svg{cursor:crosshair}
 </style></head><body><div class=wrap>
+<div id=tip></div>
 <h1>CAMPD vs Model — Dispatch Comparison</h1>
 <p class=sub>Hourly generation vs EPA CAMPD actuals · generated __GEN__</p>
 <noscript><div class=card style="border-color:#c01c28;color:#c01c28">This report is interactive and needs JavaScript. Your viewer has it disabled (in-chat previews often sandbox scripts) — <b>download the file and open it in a web browser</b>.</div></noscript>
@@ -328,6 +331,19 @@ const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
 let st={year:D.years[0],group:D.groups[0],plant:"agg",mode:"cf",period:"annual"};
 function dec(b){const s=atob(b),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
 function cur(){return D.series[st.plant==="agg"?st.year+"|"+st.group:st.year+"|plant:"+st.plant];}
+const tip=document.getElementById("tip");
+function showTip(h,e){tip.innerHTML=h;tip.style.display="block";const p=14,w=tip.offsetWidth,ht=tip.offsetHeight;
+ let x=e.clientX+p,y=e.clientY+p;if(x+w>innerWidth)x=e.clientX-w-p;if(y+ht>innerHeight)y=e.clientY-ht-p;
+ tip.style.left=x+"px";tip.style.top=y+"px";}
+function hideTip(){tip.style.display="none";}
+function hoverX(svg,xs,rows){svg.onmousemove=e=>{const r=svg.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*720;
+ let bi=0,bd=1e9;for(let i=0;i<xs.length;i++){const dd=Math.abs(xs[i]-vx);if(dd<bd){bd=dd;bi=i;}}showTip(rows[bi],e);};
+ svg.onmouseleave=hideTip;}
+function heatTip(cv,cf,which){cv.onmousemove=e=>{const r=cv.getBoundingClientRect();
+ const day=Math.floor((e.clientX-r.left)/r.width*365),hod=Math.floor((e.clientY-r.top)/r.height*24);
+ if(day<0||day>364||hod<0||hod>23){hideTip();return;}const dt=new Date(2023,0,1);dt.setDate(day+1);
+ showTip(`<b>${which}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${("0"+hod).slice(-2)}:00 &middot; CF ${cf[day*24+hod]}%`,e);};
+ cv.onmouseleave=hideTip;}
 function cfColor(v){if(v<=1)return[232,243,247];const t=Math.min(v,100)/100,
  S=[[0,232,243,247],[.04,127,196,230],[.30,134,201,143],[.55,242,214,92],[.78,239,143,60],[1,192,57,43]];
  for(let i=1;i<S.length;i++)if(t<=S[i][0]){const a=S[i-1],b=S[i],f=(t-a[0])/(b[0]-a[0]);
@@ -339,39 +355,47 @@ function axMonths(el){el.innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");}
 function profile(cf,p){const o=Array(24).fill(0),n=Array(24).fill(0);let lo=0,hi=8760;
  if(p!=="annual"){let s=0;for(let i=0;i<+p;i++)s+=DIM[i]*24;lo=s;hi=s+DIM[+p]*24;}
  for(let h=lo;h<hi;h++){o[h%24]+=cf[h];n[h%24]++;}return o.map((v,i)=>n[i]?v/n[i]:0);}
-function line(svg,sets,ymax,xl,unit){const W=720,H=230,L=48,R=12,T=12,B=34,pw=W-L-R,ph=H-T-B,n=sets[0].pts.length;
+function line(svg,sets,ymax,xl,unit,labels,tunit){const W=720,H=230,L=48,R=12,T=12,B=34,pw=W-L-R,ph=H-T-B,n=sets[0].pts.length;tunit=tunit||unit;
  let s='<g font-size=11 fill="#9aa2ad">';
  for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-6} y=${y+3} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}${unit}</text>`;}
  xl.forEach((lb,i)=>{if(lb){const x=L+(n>1?pw*i/(n-1):0);s+=`<text x=${x} y=${H-12} text-anchor=middle>${lb}</text>`;}});s+="</g>";
  for(const set of sets){const d=set.pts.map((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);return`${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
   s+=`<path d="${d}" fill=none stroke="${set.color}" stroke-width=2 ${set.dash?'stroke-dasharray="5 4"':""}/>`;
   if(!set.dash)set.pts.forEach((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);s+=`<circle cx=${x.toFixed(1)} cy=${y.toFixed(1)} r=2.4 fill=#fff stroke="${set.color}" stroke-width=1.5/>`;});}
- svg.innerHTML=s;}
-function bars(svg,bs,ymax){const W=720,H=230,L=48,R=12,T=12,B=42,pw=W-L-R,ph=H-T-B;
+ svg.innerHTML=s;
+ const xs=[],rows=[];for(let i=0;i<n;i++){const x=L+(n>1?pw*i/(n-1):0);xs.push(x);
+  let r=`<b>${(labels&&labels[i])||xl[i]||i}</b>`;
+  for(const set of sets)if(!set.dash)r+=`<br><span style="color:${set.color}">●</span> ${set.name||""}: ${set.pts[i].toFixed(1)}${tunit}`;
+  rows.push(r);}
+ hoverX(svg,xs,rows);}
+function bars(svg,bs,ymax,tunit){const W=720,H=230,L=48,R=12,T=12,B=42,pw=W-L-R,ph=H-T-B;
  let s='<g font-size=11 fill="#9aa2ad">';for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-6} y=${y+3} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}</text>`;}s+="</g>";
  const bw=pw/bs.length*0.5;bs.forEach((b,i)=>{const cx=L+pw*(i+.5)/bs.length,h=ph*Math.min(b.v,ymax)/ymax,y=T+ph-h;
   s+=`<rect x=${cx-bw/2} y=${y} width=${bw} height=${h} rx=3 fill="${b.color}"/><text x=${cx} y=${H-22} text-anchor=middle font-size=12 fill=#46505f>${b.label}</text><text x=${cx} y=${y-5} text-anchor=middle font-size=12 fill=#46505f font-weight=600>${b.v.toFixed(1)}</text>`;});
- svg.innerHTML=s;}
+ svg.innerHTML=s;
+ hoverX(svg,bs.map((b,i)=>L+pw*(i+.5)/bs.length),bs.map(b=>`<b>${b.label}</b><br>${b.v.toFixed(2)}${tunit||""}`));}
 function render(){const d=cur();if(!d)return;const mc=dec(d.model),cc=dec(d.campd),npl=d.npl;
  heatSub.textContent=`24h × 365d — ${d.name} — ${st.year} — ${npl.toLocaleString()} MW nameplate · ${Math.round(npl*d.mrpct/100).toLocaleString()} MW must-run (${d.mrpct}%)`;
  drawHeat(heatC,cc);drawHeat(heatM,mc);axMonths(axC);axMonths(axM);
+ heatTip(heatC,cc,"CAMPD actual");heatTip(heatM,mc,"Model result");
  dispSub.textContent=`Average hourly profile — ${d.name} — ${st.period==="annual"?"annual":MONTHS[+st.period]}`;
  const pc=profile(cc,st.period),pm=profile(mc,st.period);const xl=Array(24).fill("");[0,6,12,18,23].forEach(h=>xl[h]=("0"+h).slice(-2)+":00");
- let sets,ymax,unit;
- if(st.mode==="cf"){sets=[{pts:pc,color:"#2f9bd6"},{pts:pm,color:"#ef7d2b"},{pts:Array(24).fill(d.mrpct),color:"#aab",dash:1}];
-  ymax=Math.max(50,Math.ceil(Math.max(...pc,...pm,d.mrpct)/10)*10+10);unit="%";}
- else{const a=pc.map(v=>v*npl/100),b=pm.map(v=>v*npl/100);sets=[{pts:a,color:"#2f9bd6"},{pts:b,color:"#ef7d2b"},{pts:Array(24).fill(npl*d.mrpct/100),color:"#aab",dash:1}];
-  ymax=Math.ceil(Math.max(...a,...b,1)/100)*100+100;unit="";}
- line(profile_,sets,ymax,xl,unit);
+ const hrs=Array.from({length:24},(_,h)=>("0"+h).slice(-2)+":00");
+ let sets,ymax,unit,tunit;
+ if(st.mode==="cf"){sets=[{pts:pc,color:"#2f9bd6",name:"CAMPD actual"},{pts:pm,color:"#ef7d2b",name:"Model result"},{pts:Array(24).fill(d.mrpct),color:"#aab",dash:1}];
+  ymax=Math.max(50,Math.ceil(Math.max(...pc,...pm,d.mrpct)/10)*10+10);unit="%";tunit="%";}
+ else{const a=pc.map(v=>v*npl/100),b=pm.map(v=>v*npl/100);sets=[{pts:a,color:"#2f9bd6",name:"CAMPD actual"},{pts:b,color:"#ef7d2b",name:"Model result"},{pts:Array(24).fill(npl*d.mrpct/100),color:"#aab",dash:1}];
+  ymax=Math.ceil(Math.max(...a,...b,1)/100)*100+100;unit="";tunit=" MW";}
+ line(profile_,sets,ymax,xl,unit,hrs,tunit);
  const aA=pc.reduce((a,b)=>a+b)/24,aM=pm.reduce((a,b)=>a+b)/24,pk=pc.indexOf(Math.max(...pc)),bias=aM-aA;
  profStats.innerHTML=`<div class=stat><div class=k>Avg actual</div><div class=v style=color:#2f9bd6>${aA.toFixed(1)}%</div></div>`
   +`<div class=stat><div class=k>Avg model</div><div class=v style=color:#ef7d2b>${aM.toFixed(1)}%</div></div>`
   +`<div class=stat><div class=k>Bias</div><div class=v class=${Math.abs(bias)<5?"good":"bad"} style=color:${Math.abs(bias)<5?"#0f7d3d":"#c01c28"}>${(bias>=0?"+":"")+bias.toFixed(1)} pp</div></div>`
   +`<div class=stat><div class=k>Actual peak hr</div><div class=v>${("0"+pk).slice(-2)}:00</div></div>`
   +(d.r!=null?`<div class=stat><div class=k>Hourly r / NRMSE</div><div class=v>${d.r} / ${d.nrmse}</div></div>`:"");
- bars(annual,[{label:"Model",v:d.m_ann,color:"#ef7d2b"},{label:"CAMPD",v:d.c_ann,color:"#2f9bd6"},{label:"EIA-923",v:d.e_ann,color:"#7aa884"}],Math.max(d.m_ann,d.c_ann,d.e_ann,.1)*1.25);
- const ms=[{pts:d.c_mon,color:"#2f9bd6"},{pts:d.m_mon,color:"#ef7d2b"}];if(d.e_mon)ms.push({pts:d.e_mon,color:"#7aa884"});
- line(monthly,ms,Math.max(...d.c_mon,...d.m_mon,...(d.e_mon||[0]),1)*1.15,MONTHS,"");}
+ bars(annual,[{label:"Model",v:d.m_ann,color:"#ef7d2b"},{label:"CAMPD",v:d.c_ann,color:"#2f9bd6"},{label:"EIA-923",v:d.e_ann,color:"#7aa884"}],Math.max(d.m_ann,d.c_ann,d.e_ann,.1)*1.25," TWh");
+ const ms=[{pts:d.c_mon,color:"#2f9bd6",name:"CAMPD"},{pts:d.m_mon,color:"#ef7d2b",name:"Model"}];if(d.e_mon)ms.push({pts:d.e_mon,color:"#7aa884",name:"EIA-923"});
+ line(monthly,ms,Math.max(...d.c_mon,...d.m_mon,...(d.e_mon||[0]),1)*1.15,MONTHS,"",MONTHS," GWh");}
 const profile_=document.getElementById("profile");
 function fillPlants(){const list=(D.groupPlants[st.year+"|"+st.group]||[]).slice().sort((a,b)=>a.name.localeCompare(b.name));
  plantSel.innerHTML=`<option value=agg>Aggregate (${list.length} plants)</option>`+list.map(p=>`<option value=${p.code}>${p.name}</option>`).join("");
