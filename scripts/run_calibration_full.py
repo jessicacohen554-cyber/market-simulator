@@ -422,6 +422,71 @@ def _eia923_frame(year: int, generation: pd.DataFrame) -> pd.DataFrame:
     return grouped.rename(columns=rename)
 
 
+# EIA-923 lags for recent years (2025): plants that ran can report ~0 net gen.
+# Below this annual threshold, if CAMPD net is above it, the plant is treated
+# as under-reported and the benchmark is backfilled with CAMPD net.
+_CAMPD_BACKFILL_MIN_MWH: float = 50_000.0  # 50 GWh
+# Non-CHP grid groups eligible for CAMPD backfill (CHP kept on EIA-923 — the
+# host-steam split is absent from CAMPD net).
+_BACKFILL_GROUPS: frozenset[str] = frozenset(
+    {"COAL", "CC_REGULAR", "ST_GAS", "CT_PEAKER"}
+)
+
+
+def _backfill_eia923_with_campd(
+    e923: pd.DataFrame, campd_year: pd.DataFrame | None,
+    group_by_code: dict[int, str], year: int,
+) -> pd.DataFrame:
+    """Backfill EIA-923 with CAMPD net for model plants it under-reports.
+
+    For each non-CHP grid plant (coal / CC_REGULAR / ST_GAS / CT_PEAKER) whose
+    EIA-923 annual is below :data:`_CAMPD_BACKFILL_MIN_MWH` while CAMPD net is
+    above it, set the benchmark annual + monthly to CAMPD net (gross x
+    parasitic factor), keyed to the plant's class. Plants EIA-923 already
+    reports (e.g. V H Braunig, R W Miller) are untouched.
+    """
+    if campd_year is None or campd_year.empty:
+        return e923
+    e923 = e923.copy()
+    mcols = [f"m{i:02d}" for i in range(1, 13)]
+    month1 = _hour_to_month(int(campd_year["hour"].max()) + 1)  # 1-based
+    add, n_repl = [], 0
+    for pid, sub in campd_year.groupby("plant_id"):
+        group = group_by_code.get(int(pid))
+        if group not in _BACKFILL_GROUPS:
+            continue
+        net = sub.sort_values("hour")["net_mw"].to_numpy(dtype=float)
+        if net.sum() < _CAMPD_BACKFILL_MIN_MWH:
+            continue
+        klass = _coal_supply_class(int(pid)) if group == "COAL" else group
+        cur = e923[(e923["plant_id"] == int(pid)) & (e923["klass"] == klass)]
+        if float(cur["annual_mwh"].sum()) >= _CAMPD_BACKFILL_MIN_MWH:
+            continue  # EIA-923 reports it adequately
+        monthly = {
+            mcols[m]: float(net[month1[:len(net)] == m + 1].sum())
+            for m in range(12)
+        }
+        if len(cur):
+            i = cur.index[0]
+            e923.at[i, "annual_mwh"] = float(net.sum())
+            for k, v in monthly.items():
+                e923.at[i, k] = v
+            n_repl += 1
+        else:
+            add.append({
+                "year": np.int16(year), "plant_id": int(pid), "klass": klass,
+                "annual_mwh": float(net.sum()), **monthly,
+            })
+    if add or n_repl:
+        logger.info(
+            "EIA-923 %d: CAMPD-backfilled %d under-reported plants "
+            "(%d replaced, %d added)", year, n_repl + len(add), n_repl, len(add),
+        )
+    if add:
+        e923 = pd.concat([e923, pd.DataFrame(add)], ignore_index=True)
+    return e923
+
+
 def _btm_frame(
     year: int, pass_label: str, result, context, generation: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -488,6 +553,12 @@ def solve_and_persist(
 
     generation = load_monthly_generation()
     parasitic_factors = _parasitic_factor_map()
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import load_campd_bins
+    _bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+    group_by_code = dict(
+        zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
+    )
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
@@ -537,8 +608,13 @@ def solve_and_persist(
         e930 = _eia930_frame(year, iso, iso_config)
         if e930 is not None:
             eia930_frames.append(e930)
-        eia923_frames.append(_eia923_frame(year, generation))
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        eia923_frames.append(
+            _backfill_eia923_with_campd(
+                _eia923_frame(year, generation), campd_year,
+                group_by_code, year,
+            )
+        )
         if campd_year is not None:
             campd_frames.append(campd_year)
 
@@ -1014,6 +1090,60 @@ def report_run(run_dir: Path) -> None:
         )
 
 
+def rebuild_benchmark(bundle: Path) -> None:
+    """Rebuild a bundle's benchmark parquets off its meta, then re-report.
+
+    The benchmark frames — EIA-923 (with CAMPD backfill), EIA-930 and CAMPD
+    net — are pure functions of ``(year, iso)`` and the reference data;
+    they do not depend on the model dispatch. So refreshing them after a
+    benchmark-logic change (e.g. the CAMPD backfill) is a post-processing
+    step over the persisted dispatch parquets — no LP re-solve needed.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import load_campd_bins
+
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso = meta["iso"]
+    years = meta["years"]
+    hours = int(meta.get("hours", _HOURS_PER_YEAR))
+    iso_config = get_iso_config(iso)
+    generation = load_monthly_generation()
+    parasitic_factors = _parasitic_factor_map()
+    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+    group_by_code = dict(
+        zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
+    )
+
+    e923f, e930f, campdf = [], [], []
+    for year in years:
+        campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        e923f.append(
+            _backfill_eia923_with_campd(
+                _eia923_frame(year, generation), campd_year,
+                group_by_code, year,
+            )
+        )
+        e930 = _eia930_frame(year, iso, iso_config)
+        if e930 is not None:
+            e930f.append(e930)
+        if campd_year is not None:
+            campdf.append(campd_year)
+
+    pd.concat(e923f, ignore_index=True).to_parquet(
+        bundle / "eia923.parquet", index=False
+    )
+    if e930f:
+        pd.concat(e930f, ignore_index=True).to_parquet(
+            bundle / "eia930.parquet", index=False
+        )
+    if campdf:
+        pd.concat(campdf, ignore_index=True).to_parquet(
+            bundle / "campd.parquet", index=False
+        )
+    logger.info("rebuilt benchmark parquets in %s (no re-solve)", bundle)
+    report_run(bundle)
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -1082,6 +1212,12 @@ def main() -> None:
         help="Skip solving; print the report from an existing bundle directory.",
     )
     parser.add_argument(
+        "--rebuild-benchmark", metavar="DIR", default=None,
+        help="Rebuild a bundle's benchmark parquets (EIA-923 w/ CAMPD "
+             "backfill, EIA-930, CAMPD) off its meta and re-report — no "
+             "dispatch re-solve.",
+    )
+    parser.add_argument(
         "--persist-p2-state", action="store_true",
         help="Pickle each year's P1 inputs (large) so P2 can be re-run via "
              "--run-p2 without re-solving P0/P1.",
@@ -1099,6 +1235,10 @@ def main() -> None:
 
     if args.report:
         report_run(Path(args.report))
+        return
+
+    if args.rebuild_benchmark:
+        rebuild_benchmark(Path(args.rebuild_benchmark))
         return
 
     if args.run_p2:
