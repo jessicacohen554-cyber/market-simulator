@@ -1,13 +1,23 @@
 # Multi-ISO Data Acquisition Report
 
-Status: **automation blocked by network policy** — no upstream data fetched.
-Run date: 2026-05-20. Branch: `claude/data-scout-ez0qn`.
+Status: **direct data hosts blocked; one item recovered via a public GitHub
+mirror.** Run date: 2026-05-20. Branch: `claude/data-scout-ez0qn`.
 
 Role: data-acquisition scout for the multi-ISO backcast (doc 01 families 1, 4,
 6 and doc 04 zonal load). This run attempted to programmatically gather regional
 gas basis (Step 1) and directly-downloadable zonal hourly load (Step 2). Below
-is exactly what was retrieved (nothing, this run) and, per item, the source URL
-+ the manual steps + why automation failed.
+is exactly what was retrieved and, per item, the source URL + the manual steps
++ why automation failed.
+
+**Net result this run:** the EIA/ISO data hosts are all blocked by an outbound
+host allowlist (Step 0). However, `github.com` / `raw.githubusercontent.com`
+*are* reachable and the harness's web-search runs server-side, so the
+**Henry Hub spot series was recovered from a public-domain, EIA-sourced GitHub
+mirror** (Step 1a — GOT). The regional **basis** still cannot be computed (the
+state-citygate leg needs the blocked EIA host; the exact pipeline hubs are
+paywalled), and **zonal load** remains blocked (the public GitHub options are
+*client tools* that fetch live from the blocked ISO hosts, plus one PJM dataset
+that is out of the 2021–2025 window). No data values were fabricated.
 
 ---
 
@@ -31,10 +41,20 @@ Probed 2026-05-20:
 | `github.com` / `raw.githubusercontent.com` | 200 / 301 (reachable) |
 | `api.anthropic.com` | 404 (reachable) |
 
-So `pip install` works, but **no data source is reachable**. Per the task's
-Step 0 ("if blocked, skip fetching and write the report listing every source URL
-and the exact manual steps"), nothing was downloaded and no data values were
-computed or invented.
+So `pip install` works and **GitHub is reachable**, but **no first-party data
+provider (EIA / any ISO) is reachable**. Two consequences:
+
+- The harness web-search tool runs **server-side** (it returned results for
+  EIA/ISO queries even though direct `curl`/WebFetch to those hosts 403s), so it
+  works as a *discovery* tool — but `WebFetch` itself goes through the same
+  allowlist and 403s on blocked hosts, so it cannot pull provider data.
+- Because `github.com` / `raw.githubusercontent.com` are reachable, any data
+  that a public GitHub repo has **mirrored** can still be pulled. That path
+  recovered Henry Hub (Step 1a). It does **not** help where the only GitHub
+  options are live-fetch client libraries (Step 2) or paywalled feeds (Step 1c).
+
+No data values were computed from blocked sources or invented; the only data
+written is the EIA-sourced Henry Hub mirror and the empty basis template.
 
 **An EIA API key IS present** (`.env` → `EIA_API_KEY=…`, also readable as
 `EIA_API_KEY`). It was validated only insofar as the host is blocked; the key
@@ -61,30 +81,51 @@ permissive policy or add allowlist entries.
 
 ## Step 1 — Regional gas basis  →  `inputs/raw-data/gas_basis_by_iso_month.csv`
 
-**GOT:** nothing this run. The target CSV was created as a **header-only
-template** (schema locked, zero data rows) so a manual/automated fill-in drops
-straight in:
+The basis CSV needs two legs: **Henry Hub** (the subtrahend) and a **hub price**
+(the minuend). The Henry Hub leg was recovered; the hub-price leg was not.
+
+`gas_basis_by_iso_month.csv` is the **header-only template** (schema locked,
+zero rows) so an automated/manual fill-in drops straight in:
 
 ```
 iso,year,month,hub,basis_usd_mmbtu,source
 ```
-
 `basis_usd_mmbtu` = (monthly hub price) − (monthly Henry Hub), in $/MMBtu.
 
-**MISSING — sources & manual steps.**
+### 1a. Henry Hub (the subtrahend) — **GOT** (via public-domain GitHub mirror)
 
-### 1a. Henry Hub (the subtrahend) — EIA, free
+Files written:
 
-- dnav (daily, HTML→download CSV): https://www.eia.gov/dnav/ng/hist/rngwhhdD.htm
-- EIA API v2 (daily spot, series `RNGWHHD`):
+| File | Rows | Span | Columns |
+|------|------|------|---------|
+| `inputs/raw-data/gas-prices/henry_hub_daily.csv` | 7368 | 1997-01-07 … 2026-05-11 | `date,price_usd_mmbtu` |
+| `inputs/raw-data/gas-prices/henry_hub_monthly.csv` | 352 | 1997-01 … 2026-04 | `year,month,price_usd_mmbtu` |
+
+- **Source:** `datasets/natural-gas` (datahub.io "core/natural-gas"),
+  `https://raw.githubusercontent.com/datasets/natural-gas/main/data/{daily,monthly}.csv`.
+- **Provenance (from its `datapackage.json`):** mirrors EIA
+  `RNGWHHDd.xls` (daily) and `RNGWHHDm.xls` (monthly) — the exact EIA dnav Henry
+  Hub spot files this task references. **License: ODC-PDDL-1.0 (public domain).**
+- **Cross-check vs `calibration_reference.json` `henry_hub_actual`:** monthly→annual
+  means match the repo exactly for **2023 (2.54)** and **2024 (2.19)**, and ≈ for
+  2025 (3.53 vs 3.52) and 2022 (6.42 vs 6.45) — confirming the mirror is true EIA
+  Henry Hub spot. **2021 computes to 3.91** (the published EIA annual-average HH
+  spot) **vs the repo's 3.72** — worth a look, but I did not modify
+  `calibration_reference.json` (out of the data-scout write scope).
+- **Why a mirror and not EIA directly:** `api.eia.gov` / `www.eia.gov` are
+  blocked (Step 0). Once allowlisted, refresh from EIA API v2 (daily spot, series
+  `RNGWHHD`):
   `https://api.eia.gov/v2/natural-gas/pri/fut/data/?api_key=$EIA_API_KEY&frequency=daily&data[0]=value&facets[series][]=RNGWHHD&start=2021-01-01`
-- Aggregate the daily series to a **monthly mean** to subtract from each hub.
-  (EIA does not publish a Henry Hub monthly *spot* directly; derive it from the
-  daily series, or use the Henry Hub citygate `N3050US3` as a cross-check.)
-- *Verify the exact route/series facet against the live API once unblocked — the
-  daily Henry Hub spot has historically lived under both `pri/fut` and `pri/spt`.*
+  (the in-repo `EIA_API_KEY` is ready; *verify the exact route — the daily HH
+  spot has lived under both `pri/fut` and `pri/spt`*). The mirror lags the live
+  EIA series by only a few days, so it is a faithful stand-in.
 
-### 1b. Citygate by state (monthly) — EIA, free
+### 1b. Citygate by state (monthly) — EIA, free — **MISSING**
+
+No public GitHub mirror of EIA's state-citygate series was found (the
+`datasets/natural-gas` mirror carries Henry Hub only; the other repos that
+surfaced are analysis projects that call the live EIA API). So the citygate
+leg requires the blocked EIA host.
 
 - dnav: https://www.eia.gov/dnav/ng/ng_pri_sum_dcu_nus_m.htm
 - EIA API v2 route: `https://api.eia.gov/v2/natural-gas/pri/sum/data/?api_key=$EIA_API_KEY&frequency=monthly&data[0]=value&facets[process][]=PG2&start=2021-01`
@@ -127,10 +168,13 @@ citygate average).
   Set `source` = `"ICE"` or `"Platts Inside FERC"`. These cannot be automated
   from a free endpoint and require account/credentials the repo does not hold.
 
-**Why automation failed this run:** `api.eia.gov` and `www.eia.gov` are both
-blocked by the host allowlist (Step 0). The free EIA proxy path is otherwise
-fully scriptable with the in-repo `EIA_API_KEY`; the exact-hub path is
-paywalled regardless of network access.
+**Why the basis is still MISSING this run:** the Henry Hub leg is now in hand
+(1a, GOT), but the hub-price leg is not — `api.eia.gov`/`www.eia.gov` (citygate)
+are blocked with no GitHub mirror, and the exact pipeline hubs are paywalled
+(ICE/Platts) regardless of network. The free EIA proxy path is fully scriptable
+with the in-repo `EIA_API_KEY` the moment the EIA host is allowlisted; the
+exact-hub path needs a license the repo does not hold. No basis values were
+estimated or invented.
 
 ---
 
@@ -139,6 +183,20 @@ paywalled regardless of network access.
 **GOT:** nothing this run. The `zonal-load/<ISO>/` directories were not created
 because there is no content to put in them (git does not track empty dirs);
 create them at fill-in time.
+
+**On GitHub-hosted alternatives (checked, none usable this run):** the reachable
+GitHub options are **live-fetch client libraries**, not data dumps — they call
+the same blocked ISO endpoints at runtime, so they cannot help from inside this
+allowlist:
+- `gridstatus/gridstatus`, `llnl/ISO-DART`, `WattTime/pyiso` — multi-ISO clients
+  (CAISO/PJM/MISO/NYISO/etc.); all hit the live ISO/OASIS/Data-Miner APIs.
+- `m4rz910/NYISOToolkit`, `reconbot/nyiso-data` — NYISO clients; fetch from
+  `mis.nyiso.com` (blocked). No bundled CSV/parquet in the repos.
+- `panambY/Hourly_Energy_Consumption` — bundles real PJM hourly load CSVs, but
+  the span is **~2002–2018**, outside the 2021–2025 backcast window → not usable.
+
+These libraries are nonetheless the right **automation path** once the ISO hosts
+below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
 
 ### NYISO — fully public, no auth  **MISSING (host blocked)**
 
@@ -230,8 +288,10 @@ create them at fill-in time.
 
 | Item | Status | Path / Source | Blocker |
 |------|--------|---------------|---------|
-| Gas basis CSV (schema) | **template only** | `inputs/raw-data/gas_basis_by_iso_month.csv` | created header, 0 rows |
-| Gas basis — EIA proxy | MISSING | api.eia.gov / dnav | host allowlist (key present) |
+| **Henry Hub daily** | **GOT (7368 rows, 1997-01-07…2026-05-11)** | `inputs/raw-data/gas-prices/henry_hub_daily.csv` ← datasets/natural-gas (EIA, PDDL) | — |
+| **Henry Hub monthly** | **GOT (352 rows, 1997-01…2026-04)** | `inputs/raw-data/gas-prices/henry_hub_monthly.csv` ← same | — |
+| Gas basis CSV (schema) | **template only** | `inputs/raw-data/gas_basis_by_iso_month.csv` | header, 0 rows (needs hub leg) |
+| Gas basis — citygate proxy leg | MISSING | api.eia.gov / dnav citygate | host allowlist (key present, no mirror) |
 | Gas basis — exact hubs | MISSING | ICE / Platts | paywalled (no license) |
 | NYISO zonal load | MISSING | mis.nyiso.com/public/csv/pal/ | host allowlist (no auth needed) |
 | CAISO zonal load | MISSING | oasis.caiso.com OASIS API | host allowlist (no auth needed) |
@@ -240,9 +300,13 @@ create them at fill-in time.
 | MISO regional load | MISSING | misoenergy.org market reports | host allowlist (+ confirm URL) |
 | SPP area load | MISSING | marketplace.spp.org | login + host |
 
-**Bottom line:** with `api.eia.gov`, `mis.nyiso.com`, and `oasis.caiso.com`
-added to the allowlist, Step 1 (EIA proxy basis) and the NYISO + CAISO halves of
-Step 2 are immediately and fully automatable from this repo (EIA key already
-present, no other credentials needed). ISO-NE/PJM/MISO/SPP additionally need
-free-account credentials and/or a live URL confirmation, so they were recorded
-as exact manual steps rather than guessed. No data values were fabricated.
+**Bottom line:** the only first-party data reachable from inside the allowlist
+was via a public GitHub mirror — that recovered the full **Henry Hub** spot
+series (cross-validated against the repo's own `henry_hub_actual`). To finish
+the rest: add `api.eia.gov` to the allowlist and the **basis** completes
+immediately (citygate proxy, EIA key already present) — the exact NE/NY hubs
+still need an ICE/Platts license. Add `mis.nyiso.com` + `oasis.caiso.com` and
+**NYISO + CAISO zonal load** become fully automatable with no credentials (via
+`gridstatus` or direct CSV/OASIS pulls). ISO-NE/PJM/MISO/SPP additionally need
+free-account credentials and/or a live URL confirmation, recorded as exact
+manual steps rather than guessed. No data values were fabricated.
