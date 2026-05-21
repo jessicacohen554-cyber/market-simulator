@@ -227,6 +227,13 @@ def _calibration_config(
         #   capacity May-Sep for reliability.
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
+        chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
+        #   BTM host floor (not the 60% CSV merchant split), a grid-delivered
+        #   steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT), and a 2x heat
+        #   rate on the dispatchable tranches so they load-follow expensively
+        #   instead of running the econ slice flat-out like a merchant CC.
+        chp_btm_floor_pct=40.0,
+        chp_loadfollow_hr_mult=2.0,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
