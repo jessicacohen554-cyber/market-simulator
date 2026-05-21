@@ -172,6 +172,12 @@ class FleetArrays:
     # fuel-cost resolver to look up plant-specific delivered prices.
     plant_code: np.ndarray
 
+    # Optional ``(n_gen, T)`` hour-varying minimum generation (a hard dispatch
+    # floor). When set, it replaces the scalar ``pmin`` lower bound in the
+    # dispatch LP — used for the seasonal ST_GAS reliability must-run. ``None``
+    # falls back to ``pmin`` broadcast across all hours.
+    min_gen: np.ndarray | None = None
+
     @property
     def n_gen(self) -> int:
         """Return the number of generators in the fleet."""
@@ -203,6 +209,11 @@ _CC_SHOULDER_MONTHS: frozenset[int] = frozenset({3, 4, 5, 10, 11})
 # only (not winter, which has its own peak), leaving each unit's
 # annual-average availability unchanged. See generators_to_fleet_arrays.
 _SUMMER_MONTHS: frozenset[int] = frozenset({6, 7, 8, 9})
+
+# Months (1-based) over which the legacy gas-steam (ST_GAS) reliability
+# must-run floor and its seasonal startup-cost amortization apply: May through
+# September, ERCOT's high-load season when these old units are dragged online.
+_GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
@@ -378,6 +389,27 @@ def generators_to_fleet_arrays(
                 config.weather_year, applied, len(masks),
             )
 
+    # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
+    # bound on the legacy gas-steam fleet in the summer months, modeling units
+    # held online at min load for grid reliability ("reliability dragging").
+    # Applied to the base (non-peak) ST_GAS tranches so the peak slice stays
+    # economic; capped by availability.
+    min_gen = None
+    st_mr_frac = (
+        getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None
+        else 0.0
+    )
+    if st_mr_frac > 0.0:
+        summer_mask = np.isin(_hour_to_month_index(hours) + 1,
+                              list(_GAS_ST_SUMMER_MONTHS))
+        min_gen = np.zeros((n_gen, hours), dtype=float)
+        for g_idx, gen in enumerate(generators):
+            if (gen.plant_group == "ST_GAS"
+                    and not gen.unit_id.endswith("_peak")):
+                min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
+        # Never demand more than the (outage/derate-adjusted) availability.
+        np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
+
     return FleetArrays(
         pmax=pmax,
         pmin=pmin,
@@ -396,6 +428,7 @@ def generators_to_fleet_arrays(
         plant_code=np.array(
             [int(g.plant_code) for g in generators], dtype=int
         ),
+        min_gen=min_gen,
     )
 
 

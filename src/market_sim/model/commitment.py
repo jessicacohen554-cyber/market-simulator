@@ -163,11 +163,17 @@ def _month_bounds(T: int) -> list[tuple[int, int]]:
     return bounds
 
 
+# May-Sep span on the representative non-leap clock (hour indices), for the
+# ST_GAS seasonal startup amortization: May starts at 2880h, Oct at 6552h.
+_GAS_ST_SEASON: tuple[int, int] = (2880, 6552)
+
+
 def compute_monthly_markup(
     generators: list[Generator],
     fleet_arrays: FleetArrays,
     dispatch: np.ndarray,
     T: int,
+    gas_st_season_spread: bool = False,
 ) -> np.ndarray:
     """Compute the ``(n_gen, T)`` monthly startup-amortization markup.
 
@@ -189,20 +195,35 @@ def compute_monthly_markup(
     """
     markup = np.zeros((len(generators), T))
     month_bounds = _month_bounds(T)
+    s_lo, s_hi = _GAS_ST_SEASON
+    s_lo, s_hi = max(0, s_lo), min(T, s_hi)
+
+    def _amortized(g, h_start, h_end, startup, threshold):
+        """Startup / mean run length over ``[h_start, h_end)`` for gen ``g``."""
+        runs = find_runs(dispatch[g, h_start:h_end] > threshold)
+        avg_run = (
+            float(np.mean([end - start for start, end in runs])) if runs
+            else 0.0
+        )
+        return startup / max(avg_run, 1.0)
 
     for g, gen in enumerate(generators):
         startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:
             continue
         threshold = float(fleet_arrays.pmax[g]) * 0.05
+        # ST_GAS amortizes its startup over the whole May-Sep season (one
+        # seasonal start), so the per-month markup is replaced by a single
+        # season-long run length there; other months stay per-month.
+        st_spread = gas_st_season_spread and gen.plant_group == "ST_GAS"
+        if st_spread and s_hi > s_lo:
+            markup[g, s_lo:s_hi] = _amortized(g, s_lo, s_hi, startup, threshold)
         for h_start, h_end in month_bounds:
-            runs = find_runs(dispatch[g, h_start:h_end] > threshold)
-            avg_run = (
-                float(np.mean([end - start for start, end in runs]))
-                if runs
-                else 0.0
+            if st_spread and h_start >= s_lo and h_end <= s_hi:
+                continue  # inside the season window, already handled
+            markup[g, h_start:h_end] = _amortized(
+                g, h_start, h_end, startup, threshold
             )
-            markup[g, h_start:h_end] = startup / max(avg_run, 1.0)
     return markup
 
 
