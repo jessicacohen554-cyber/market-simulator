@@ -8,11 +8,13 @@ backcast config sets ``outage_source == "historic"``; forward/forecast runs
 keep the statistical WEFOR/POF availability model.
 
 Filter (user directive): only outages at COAL or COMBINED-CYCLE plants
-(``Plant_Group`` in :data:`QUALIFYING_PLANT_GROUPS`) whose start->stop span
-exceeds :data:`MIN_OUTAGE_SPAN_HOURS` (10 days) are overlaid. Everything else
-— peaker trips, short forced outages, gas-steam, sub-10-day events — is noise
-and is ignored. The CSV's ``duration_hours`` column is unreliable and is NOT
-used to measure outage length; the span is ``outage_stop - outage_start``.
+(``Plant_Group`` in :data:`QUALIFYING_PLANT_GROUPS`) whose start->stop span is
+at least :data:`MIN_OUTAGE_SPAN_HOURS` (2 days) are overlaid. The detector
+(scripts/derive_campd_outages.py) defines an outage as a sustained CF < 5%
+gap of >= 2 days, so a unit idling at low output (5-10% CF, e.g. J K Spruce)
+is *not* outaged, while genuine multi-day full-off gaps are. The CSV's
+``duration_hours`` column is unreliable and is NOT used to measure outage
+length; the span is ``outage_stop - outage_start``.
 """
 
 from __future__ import annotations
@@ -55,12 +57,28 @@ BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 # coal/CC bins (e.g. Barney M Davis carries both a CC and an ST_GAS bin —
 # only the CC bin is outaged).
 QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP"}
+    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"}
 )
 
-# Minimum outage span to overlay, in hours (> 10 days). Only sustained
-# maintenance is applied; shorter forced outages are calibration noise.
-MIN_OUTAGE_SPAN_HOURS: int = 240
+# Peaker-class ST_GAS plants: patchy / spiky run rate (run only when called),
+# so they get NO outage overlay (and no reliability min-gen floor in
+# fleet.generators_to_fleet_arrays) — they dispatch purely economically. The
+# remaining ST_GAS units run sustained idling / drag patterns and DO get the
+# outage + reliability treatment. Excluded from the overlay below.
+ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset({
+    3504,   # Stryker Creek
+    3453,   # Mountain Creek
+    3490,   # Graham
+    3507,   # Trinidad (TX)
+    3576,   # Ray Olinger
+    4266,   # Spencer
+})
+
+# Minimum outage span to overlay, in hours (>= 2 days). The CAMPD detector
+# (scripts/derive_campd_outages.py) already defines an outage as a sustained
+# CF < 5% gap of at least this length, so the overlay applies every window it
+# emits; this guards against any shorter stray windows.
+MIN_OUTAGE_SPAN_HOURS: int = 48
 
 # Days before each 1-based month in a NON-leap year, so _DAYS_BEFORE_MONTH[m]
 # is the 0-based day-of-year of month m's first day ([1]=0 for Jan 1, [2]=31
@@ -131,7 +149,8 @@ def _qualifying_plant_codes(bins_path: str) -> frozenset[int]:
     """
     detail = pd.read_csv(bins_path)
     coal_cc = detail[detail["Plant_Group"].isin(QUALIFYING_PLANT_GROUPS)]
-    return frozenset(int(c) for c in coal_cc["Plant_Code"].unique())
+    codes = {int(c) for c in coal_cc["Plant_Code"].unique()}
+    return frozenset(codes - ST_GAS_PEAKER_PLANTS)
 
 
 @lru_cache(maxsize=4)
@@ -156,7 +175,7 @@ def _build_outage_masks(
         start = pd.Timestamp(row.outage_start)
         stop = pd.Timestamp(row.outage_stop)
         span_hours = (stop - start).total_seconds() / 3600.0
-        if span_hours <= MIN_OUTAGE_SPAN_HOURS:
+        if span_hours < MIN_OUTAGE_SPAN_HOURS:
             continue
         code = int(row.oris_code)
         for year in range(start.year, stop.year + 1):
