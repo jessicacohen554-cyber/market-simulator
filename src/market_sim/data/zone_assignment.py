@@ -44,10 +44,10 @@ _ISO_TO_BA_CODE: dict[str, str] = {
     "NEISO": "ISNE",
 }
 
-# ISOs modeled as a single zone, with that zone's name.
-_SINGLE_ZONE: dict[str, str] = {
-    "NEISO": "NEISO_main",
-}
+# ISOs modeled as a single zone, with that zone's name. Every current ISO now
+# has a multi-zone topology, so this is empty; the mechanism stays in place for
+# any future single-zone ISO.
+_SINGLE_ZONE: dict[str, str] = {}
 
 # Largest-load-share zone per multi-zone ISO, used as the defensive
 # fallback when a plant's ORIS code is not present in the eGRID lookup.
@@ -65,6 +65,9 @@ _LARGEST_ZONE: dict[str, str] = {
     # lower-Midwest load centers, so unlocated MISO plants land there.
     "MISO": "MISO-Central",
     "NYISO": "Upstate_West",
+    # Central (WCMA/SEMA/RI) is ISO-NE's largest-load-share zone (0.30) and
+    # holds central/coastal Massachusetts, so unlocated NEISO plants land there.
+    "NEISO": "Central",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -270,6 +273,51 @@ _NYISO_NORTH_LAT: float = 43.3
 _NYISO_CAPITAL_LAT: float = 41.4
 _NYISO_LOWER_HUDSON_LAT: float = 41.0
 _NYISO_LONG_ISLAND_LON: float = -73.5
+
+# NEISO model zone by FIPS state code. ISO-NE's aggregated zones follow state
+# lines except Massachusetts, which splits across three load zones and is
+# handled by county below: ME/NH/VT → North, CT → Connecticut, RI → Central
+# (the WCMA/SEMA/RI aggregate). eGRID carries a FIPS state for every ISNE
+# plant, so the state map is authoritative; the lat/lon fallback only handles
+# the rare coords-only caller and out-of-footprint (e.g. NY-FIPS) attributions.
+_NEISO_STATE_ZONES: dict[int, str] = {
+    23: "North",        # ME
+    33: "North",        # NH
+    50: "North",        # VT
+    9: "Connecticut",   # CT
+    44: "Central",      # RI (part of the WCMA/SEMA/RI aggregate)
+}
+
+# FIPS state code for Massachusetts; its three ISO-NE load zones (NEMA/Boston,
+# WCMA, SEMA) are split by county below.
+_MASSACHUSETTS_FIPS: int = 25
+
+# Massachusetts counties (FIPS within state 25) in the NEMA/Boston load zone.
+# The NEMA/Boston pocket is the Boston-metro counties; every other MA county
+# belongs to the WCMA (western/central) or SEMA (southeast) load zones, both
+# of which fold into the Central aggregate. This mirrors the ERCOT/CAISO rule
+# where county codes give the precision lat/lon alone can't.
+NEMA_BOSTON_COUNTIES: frozenset[int] = frozenset(
+    {
+        25,  # Suffolk (Boston)
+        17,  # Middlesex (Mystic / Lowell)
+        9,   # Essex (Salem Harbor)
+        21,  # Norfolk (Fore River / Boston south suburbs)
+    }
+)
+
+# Latitude/longitude bands for the coords-only NEISO fallback (no FIPS state).
+# Northern New England (ME/NH/VT) sits above ~lat 42.8; Connecticut is the
+# southwest corner (below ~lat 42.05 and west of ~lon -71.8); the Boston/NEMA
+# coast is eastern Massachusetts (east of ~lon -71.3, at/above ~lat 42.1);
+# everything else (western/central MA, SE Mass, RI) is Central. This is coarse
+# — FIPS state+county is preferred — and only triggers for a coords-only caller
+# or an out-of-footprint attribution that misses the state map.
+_NEISO_NORTH_LAT: float = 42.8
+_NEISO_CT_LAT: float = 42.05
+_NEISO_CT_LON: float = -71.8
+_NEISO_BOSTON_LAT: float = 42.1
+_NEISO_BOSTON_LON: float = -71.3
 
 # Cached parsed eGRID DataFrame and derived ORIS→location lookup, so the
 # 21 MB workbook is read at most once per process.
@@ -526,6 +574,39 @@ def _miso_zone(lat: float | None, fips_state: int | None) -> str:
     return _LARGEST_ZONE["MISO"]
 
 
+def _neiso_zone(
+    lat: float | None,
+    lon: float | None,
+    fips_state: int | None,
+    fips_county: int | None,
+) -> str:
+    """Return the NEISO model zone for a plant location.
+
+    FIPS state carries the assignment — North (ME/NH/VT), Connecticut (CT),
+    Central (RI) — except Massachusetts, which is split by county: the
+    NEMA/Boston metro counties land in Boston and every other MA county folds
+    into the Central (WCMA/SEMA/RI) aggregate. A plant outside the ISO-NE state
+    map (e.g. a NY-FIPS cross-seam attribution) or a coords-only caller falls
+    back to a coarse lat/lon band, and otherwise to the largest-load-share zone
+    (Central).
+    """
+    if fips_state == _MASSACHUSETTS_FIPS:
+        if fips_county in NEMA_BOSTON_COUNTIES:
+            return "Boston"
+        return "Central"
+    if fips_state in _NEISO_STATE_ZONES:
+        return _NEISO_STATE_ZONES[fips_state]
+    if lat is not None and lon is not None:
+        if lat >= _NEISO_NORTH_LAT:
+            return "North"
+        if lat < _NEISO_CT_LAT and lon < _NEISO_CT_LON:
+            return "Connecticut"
+        if lat >= _NEISO_BOSTON_LAT and lon >= _NEISO_BOSTON_LON:
+            return "Boston"
+        return "Central"
+    return _LARGEST_ZONE["NEISO"]
+
+
 def _zone_from_location(
     iso: str,
     lat: float | None,
@@ -544,6 +625,8 @@ def _zone_from_location(
         return _miso_zone(lat, fips_state)
     if iso == "NYISO":
         return _nyiso_zone(lat, lon, fips_state, fips_county)
+    if iso == "NEISO":
+        return _neiso_zone(lat, lon, fips_state, fips_county)
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
@@ -568,10 +651,10 @@ def assign_zone_by_fips(
 def assign_zone(oris_code: int, iso: str) -> str:
     """Return the model zone for a plant's ORIS code.
 
-    For single-zone ISOs (NEISO) the main zone is returned without a lookup.
-    For multi-zone ISOs (ERCOT, CAISO, MISO, NYISO, PJM) the plant is located via
-    the eGRID ORIS→location table; an ORIS code missing from eGRID falls back
-    to the ISO's largest-load-share zone with a warning.
+    Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM) has a multi-zone
+    topology, so the plant is located via the eGRID ORIS→location table; an
+    ORIS code missing from eGRID falls back to the ISO's largest-load-share
+    zone with a warning.
     """
     iso = iso.upper()
     if iso in _SINGLE_ZONE:
