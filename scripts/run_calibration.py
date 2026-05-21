@@ -225,13 +225,13 @@ def _calibration_config(
         #   follower-tier PRB sigmoid for low-must-run load-followers.
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
-        gas_st_committed_hr_override=0.5,  # reliability ST_GAS supply curve:
-        gas_st_econ_hr_override=1.0,       # cheap committed bid commits the
-        gas_st_peak_hr_override=1.5,       # unit (no flat must-run floor),
-        #   economic at base HR, peaking at 1.5x. Peakers keep CSV HRs.
+        gas_st_committed_hr_override=0.8,  # reliability ST_GAS supply curve:
+        gas_st_econ_hr_override=1.1,       # must-run-if-committed bid at 0.8x,
+        gas_st_peak_hr_override=1.5,       # economic 1.1x, peaking 1.5x (no
+        #   flat must-run floor). Peakers keep CSV HRs and run economically.
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
-        cc_econ_hr_override=1.3,       # efficiency, economic a modest part-
-        cc_peak_hr_override=2.0,       # load penalty, peaking expensive.
+        cc_econ_hr_override=1.15,      # efficiency, economic a modest part-
+        cc_peak_hr_override=1.85,      # load penalty, peaking expensive.
         chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
         #   BTM host floor (not the 60% CSV merchant split) plus a grid-
         #   delivered steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT).
