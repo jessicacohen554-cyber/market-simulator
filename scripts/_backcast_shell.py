@@ -35,6 +35,8 @@ body{background:var(--bg-page)}
 .seg button{border:0;background:transparent;padding:7px 14px;border-radius:7px;font-size:var(--fs-sm);cursor:pointer;color:var(--ink-muted);font-weight:600}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
 .lab{font-size:var(--fs-xs);letter-spacing:.06em;color:var(--ink-muted);font-weight:600;text-transform:uppercase;margin-right:6px}
+.ctl{display:flex;align-items:center;gap:8px}.ctlwide{flex:1 1 auto;min-width:240px}
+.bc-top select{font-size:var(--fs-sm);padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-surface);color:var(--ink);max-width:100%}
 .panel{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:var(--space-lg);margin-bottom:var(--space-md)}
 .panel h2{font-size:var(--fs-lg);margin:0 0 var(--space-sm)}
 .psub{color:var(--ink-muted);font-size:var(--fs-sm);margin:0 0 var(--space-md)}
@@ -63,8 +65,13 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 #bctip{position:fixed;display:none;z-index:99;max-width:320px;background:#1a2233;color:#fff;font-size:var(--fs-sm);line-height:1.5;padding:10px 13px;border-radius:8px;box-shadow:var(--shadow-md)}
 #diag{margin:var(--space-md) 0;padding:var(--space-md);border:1px solid var(--warning);border-radius:var(--radius-md);color:#8a6d00;background:#fffaf0}
 .hide{display:none}
-@media(max-width:820px){.bc-wrap{flex-direction:column;padding:var(--space-sm)}.bc-side{position:static;width:100%;flex-basis:auto}.bc-main{width:100%}}
-@media(max-width:640px){th,td{padding:6px 7px;font-size:var(--fs-xs)}.seg{width:100%}.seg button{flex:1}}
+@media(max-width:820px){.bc-wrap{flex-direction:column;padding:var(--space-sm)}.bc-side{position:static;width:100%;flex-basis:auto}.bc-main{width:100%}
+ .modebtns{flex-direction:row}.modebtns button{flex:1}}
+@media(max-width:640px){th,td{padding:6px 7px;font-size:var(--fs-xs)}
+ .bc-top{flex-direction:column;align-items:stretch;gap:var(--space-sm)}
+ .ctl{justify-content:space-between;flex-wrap:wrap}.ctlwide{min-width:0}
+ .seg{flex:1}.bc-top select{flex:1}
+ .kpigrid{grid-template-columns:1fr}.svgbox{margin:0 -4px}}
 </style></head><body>
 <nav class=nav><a class="nav-brand" href="index.html"><span class="nav-brand-mark">&#9650;</span> Market Simulator</a></nav>
 <div id=bctip></div>
@@ -74,17 +81,17 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
    <button data-m=compare class=on>Comparison</button>
    <button data-m=single>Single deep-dive</button></div>
   <h3 id=runHdr>Runs (max 5)</h3><div class=runlist id=runList></div>
-  <h3>Zones</h3><div class=chips id=zoneSel></div>
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
   <p class=psub>Model vs EPA CAMPD / EIA actuals · generated __GEN__</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
-   <div><span class=lab>View</span><span class=seg id=pageSel>
+   <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
     <button data-p=charts class=on>Charts</button><button data-p=tables>Tables</button></span></div>
-   <div><span class=lab>Year</span><span class=seg id=yearSel></span></div>
-   <div id=classWrap><span class=lab>Class</span><span class=seg id=classSel></span></div>
+   <div class=ctl><span class=lab>Year</span><span class=seg id=yearSel></span></div>
+   <div class=ctl><span class=lab>Class</span><select id=classSel></select></div>
+   <div class="ctl ctlwide"><span class=lab>Zones</span><span class=chips id=zoneSel></span></div>
   </div>
   <div id=content></div>
  </main>
@@ -215,7 +222,7 @@ function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
    +ids.map(id=>`<th>${ridSpan(id)} Δ923%</th>`).join("")+'</tr></thead><tbody>';
   const B=BENCH[yr];const codes=Object.keys(B.plants).filter(c=>st.zones.has(B.plants[c].zone)&&B.plants[c].e_ann>0.001)
     .sort((a,b)=>B.plants[a].group.localeCompare(B.plants[b].group));
-  for(const c of codes){const b=B.plants[c];let row=`<tr><td>${c}</td><td>${META.groupLabel[b.group]||b.group}</td>`;
+  for(const c of codes){const b=B.plants[c];let row=`<tr><td>${b.name}</td><td>${META.groupLabel[b.group]||b.group}</td>`;
    for(const id of ids){const mp=MODEL[id].years[yr]?.plants[c];if(!mp){row+="<td class=num>—</td>";continue;}const d=100*(mp.m_ann-b.e_ann)/b.e_ann;row+=`<td class="num ${dcls(d)}">${d.toFixed(0)}</td>`;}
    h+=row+"</tr>";}
   h+='</tbody></table></div></div>';}
@@ -224,7 +231,7 @@ function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
 // ---- render: SINGLE deep-dive ----
 function singleSeries(id,yr,grp,plant){const B=BENCH[yr],M=MODEL[id].years[yr];
  if(plant&&plant!=="agg"&&M.plants[plant]){const b=B.plants[plant],mp=M.plants[plant];
-  return {mcf:dec(mp.m),ccf:dec(b.campd),npl:b.npl,name:plant+" · "+b.zone,m_ann:mp.m_ann,c_ann:b.c_ann,e_ann:b.e_ann,r:mp.r,nr:mp.nrmse,cap:mp.cap,m_mon:mp.m_mon,c_mon:b.c_mon,e_mon:b.e_mon};}
+  return {mcf:dec(mp.m),ccf:dec(b.campd),npl:b.npl,name:b.name+" · "+b.zone,m_ann:mp.m_ann,c_ann:b.c_ann,e_ann:b.e_ann,r:mp.r,nr:mp.nrmse,cap:mp.cap,m_mon:mp.m_mon,c_mon:b.c_mon,e_mon:b.e_mon};}
  const a=aggMW(id,yr,grp);const ps=plantsOf(id,yr,grp);let npl=0;ps.forEach(c=>npl+=B.plants[c].npl);
  const mcf=new Float32Array(T),ccf=new Float32Array(T);for(let i=0;i<T;i++){mcf[i]=npl>0?100*a.mm[i]/npl:0;ccf[i]=npl>0?100*a.cc[i]/npl:0;}
  const m_mon=Array(12).fill(0),c_mon=Array(12).fill(0),e_mon=Array(12).fill(0);
@@ -253,7 +260,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  h+='<div class=panel><h2>Monthly (GWh)</h2><div class=svgbox id=sMon></div></div>';
  document.getElementById("content").innerHTML=h;
  const psel=document.getElementById("plantSel");
- psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${c} · ${BENCH[yr].plants[c].zone}</option>`).join("");
+ psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${BENCH[yr].plants[c].name} · ${BENCH[yr].plants[c].zone}</option>`).join("");
  psel.value=st.plant;psel.onchange=()=>{st.plant=psel.value;renderSingleCharts();};
  drawHeat(document.getElementById("hC"),d.ccf);drawHeat(document.getElementById("hM"),d.mcf);
  document.getElementById("axC").innerHTML=document.getElementById("axM").innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");
@@ -266,7 +273,7 @@ function renderSingleTables(){const id=st.single,yr=st.year;let h='<div class=pa
  const B=BENCH[yr],M=MODEL[id].years[yr];
  const codes=Object.keys(M.plants).filter(c=>B.plants[c]&&st.zones.has(B.plants[c].zone)).sort((a,b)=>B.plants[a].group.localeCompare(B.plants[b].group)||B.plants[b].npl-B.plants[a].npl);
  for(const c of codes){const b=B.plants[c],mp=M.plants[c];const d=b.e_ann>0.001?100*(mp.m_ann-b.e_ann)/b.e_ann:null;
-  h+=`<tr><td>${c}</td><td>${META.groupLabel[b.group]||b.group}</td><td>${b.zone}</td><td class=num>${mp.r??"—"}</td><td class=num>${mp.nrmse??"—"}</td><td class=num>${mp.cap==null?"—":mp.cap.toFixed(0)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":d.toFixed(0)}</td></tr>`;}
+  h+=`<tr><td>${b.name}</td><td>${META.groupLabel[b.group]||b.group}</td><td>${b.zone}</td><td class=num>${mp.r??"—"}</td><td class=num>${mp.nrmse??"—"}</td><td class=num>${mp.cap==null?"—":mp.cap.toFixed(0)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":d.toFixed(0)}</td></tr>`;}
  h+='</tbody></table></div>'+narrative([id])+'</div>';
  document.getElementById("content").innerHTML=h;wireTips(document.getElementById("content"));}
 // ---- shell render ----
@@ -292,8 +299,8 @@ function build(){
   [...e.currentTarget.children].forEach(b=>b.classList.toggle("on",b.dataset.p===p));render();};
  const ysel=document.getElementById("yearSel");ysel.innerHTML=META.years.map(y=>`<button data-y=${y} class=${y==st.year?"on":""}>${y}</button>`).join("");
  ysel.onclick=e=>{if(!e.target.dataset.y)return;st.year=+e.target.dataset.y;[...ysel.children].forEach(b=>b.classList.toggle("on",+b.dataset.y===st.year));render();};
- const csel=document.getElementById("classSel");csel.innerHTML=META.groups.map((g,i)=>`<button data-g=${g} class=${i===0?"on":""}>${META.groupLabel[g]}</button>`).join("");
- csel.onclick=e=>{if(!e.target.dataset.g)return;st.klass=e.target.dataset.g;[...csel.children].forEach(b=>b.classList.toggle("on",b.dataset.g===st.klass));render();};
+ const csel=document.getElementById("classSel");csel.innerHTML=META.groups.map(g=>`<option value="${g}">${META.groupLabel[g]}</option>`).join("");
+ csel.value=st.klass;csel.onchange=()=>{st.klass=csel.value;render();};
  const zsel=document.getElementById("zoneSel");zsel.innerHTML=`<span class="chip on" data-z=__all>All</span>`+META.zones.map(z=>`<span class="chip on" data-z="${z}">${z}</span>`).join("");
  zsel.onclick=e=>{const z=e.target.dataset.z;if(!z)return;
   if(z==="__all")st.zones=new Set(META.zones);else{if(st.zones.has(z))st.zones.delete(z);else st.zones.add(z);if(!st.zones.size)st.zones=new Set(META.zones);}
