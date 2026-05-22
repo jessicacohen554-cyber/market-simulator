@@ -122,19 +122,28 @@ def generate(runs: list[tuple[str, Path]], out: Path,
     (DATA_DIR / "manifest.js").write_text(manifest_js)
 
     gen = datetime.now().strftime("%Y-%m-%d %H:%M")
-    # Deployable shell: load data via <script src> (Pages auto-pickup).
+    link_css = '<link rel=stylesheet href="frontend/css/style.css">'
+    # Deployable shell: load data via <script src> (Pages auto-pickup); the
+    # repo stylesheet is linked (it sits at frontend/css/style.css).
     src_tags = ('<script src="frontend/data/backcast/manifest.js"></script>'
                 '<script src="frontend/data/backcast/benchmark.js"></script>')
-    out.write_text(SHELL.replace("__DATASCRIPTS__", src_tags)
+    out.write_text(SHELL.replace("__SITECSS__", link_css)
+                   .replace("__DATASCRIPTS__", src_tags)
                    .replace("__GEN__", gen))
     sz = sum(f.stat().st_size for f in DATA_DIR.rglob("*.js")) / 1e6
     print(f"wrote {out} + {len(manifest)} run data files "
           f"({sz:.1f} MB data, ids: {[m['id'] for m in manifest]})")
 
     if standalone is not None:
+        # Self-contained: inline the repo stylesheet (so the design tokens
+        # resolve with no external file) and the data.
+        css_path = REPO / "frontend" / "css" / "style.css"
+        site_css = ("<style>" + css_path.read_text() + "</style>"
+                    if css_path.exists() else link_css)
         inline = "".join(f"<script>{s}</script>"
                          for s in [manifest_js, bench_js, *run_js])
-        standalone.write_text(SHELL.replace("__DATASCRIPTS__", inline)
+        standalone.write_text(SHELL.replace("__SITECSS__", site_css)
+                              .replace("__DATASCRIPTS__", inline)
                               .replace("__GEN__", gen))
         print(f"wrote standalone {standalone} "
               f"({standalone.stat().st_size / 1e6:.1f} MB)")
