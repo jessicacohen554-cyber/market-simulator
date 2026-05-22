@@ -1712,6 +1712,56 @@ CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
 }
 
 
+# Per-plant CC_REGULAR committed-tranche % (minimum stable load once started),
+# keyed by EIA plant code. Derived from EPA CAMPD/CEMS TX 2023 hourly gross
+# output over Jan-July (the window inputs/tx-jan-aug23-unit-outages.csv covers,
+# so available capacity is known): the P5 of each plant's net capacity factor
+# over its committed (online) hours, normalized by the unit-outage-adjusted
+# available capacity. See scripts/derive_cc_committed_pct.py and
+# inputs/processed/cc_committed_pct.csv for the full percentile distribution.
+# Replaces the coarse assumed CSV Pct_Committed (clustered at 20/25/45/55) when
+# config.cc_committed_per_plant is set; the economic tranche absorbs the
+# difference so each plant's tranche split still sums to 100%. Plants without
+# CAMPD coverage (7512, 50127, 55545, 56233) keep the CSV value.
+CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
+    3441: 11.5,   # Nueces Bay (online 0.41)
+    3443: 44.7,   # Victoria (online 0.28)
+    3469: 8.4,    # T H Wharton (online 0.22)
+    3631: 8.1,    # Sam Rayburn (online 0.39)
+    4937: 33.3,   # Thomas C Ferguson (online 0.89)
+    4939: 7.7,    # Barney M Davis [CC] (online 0.46)
+    7900: 17.9,   # Sand Hill (online 0.87)
+    50109: 28.8,  # Paris Energy Center (online 0.47)
+    54817: 36.7,  # Johnson County (online 0.54)
+    55062: 25.7,  # Tenaska Frontier (online 0.86)
+    55086: 21.0,  # Gregory Power Plant (online 0.15)
+    55091: 12.1,  # Midlothian Energy Facility (online 0.59)
+    55097: 31.2,  # Lamar Power Project (online 0.80)
+    55098: 40.3,  # Frontera Energy Center (online 0.32)
+    55123: 27.9,  # Magic Valley (online 0.61)
+    55132: 15.2,  # Tenaska Gateway (online 0.45)
+    55137: 37.8,  # Rio Nogales Power Project (online 0.68)
+    55139: 38.6,  # Wolf Hollow I LP (online 0.60)
+    55144: 23.3,  # Hays Energy Project (online 0.75)
+    55153: 44.1,  # Guadalupe Generating Station (online 0.95)
+    55168: 32.4,  # Bastrop Energy Center (online 0.73)
+    55172: 37.3,  # Thad Hill Energy Center (online 0.89)
+    55215: 26.4,  # Odessa-Ector Power Plant (online 0.89)
+    55223: 42.5,  # Ennis Power Company LLC (online 0.54)
+    55226: 40.9,  # Freestone Energy Center (online 1.00)
+    55230: 18.1,  # Jack County (online 0.89)
+    55320: 25.3,  # Wise County Power LLC (online 0.61)
+    55480: 30.2,  # Forney Energy Center (online 0.85)
+    56349: 22.7,  # Quail Run Energy Center (online 0.64)
+    56350: 27.3,  # Colorado Bend Energy Center (online 0.75)
+    56806: 20.9,  # Cedar Bayou 4 (online 0.63)
+    58001: 30.5,  # Temple Power Station (online 0.96)
+    58005: 36.2,  # Rayburn Energy Station LLC (online 0.62)
+    59812: 32.3,  # Wolf Hollow II (online 0.85)
+    60122: 36.6,  # Colorado Bend II (online 0.91)
+}
+
+
 def chp_btm_pct(plant_code: int, group: str) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
     if group == "ST_CHP":
@@ -1991,6 +2041,7 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
         "Bin_Label": detail["Bin_Label"].astype(str),
         "Plant_Code": detail["Plant_Code"].astype(int),
         "Plant_Name": detail["Plant_Name"].astype(str),
+        "Turbine_Class": detail["Turbine_Class"].astype(str),
         "capacity_mw": detail["Nameplate_MW"].astype(float),
         "hr_weighted": plant_hr,
         "pct_mr": detail["Pct_Must_Run"].astype(float),
@@ -2023,6 +2074,77 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
         len(bins), csv_path, bins["capacity_mw"].sum() / 1000.0,
     )
     return bins
+
+
+# Combined-cycle duct-burner (peaking) heat-rate multiplier by turbine class,
+# on (AHR x fuel_price). Operator ranges: advanced G/H-class 2.3-2.5, F-class
+# 2.0-2.3, older E-class / legacy 1.8-2.0 — a lower base AHR makes the
+# duct-fire/base ratio steeper, so the most efficient classes carry the highest
+# multiplier. Set 0.1 below the range midpoints per the operator's CC peaking
+# tune.
+CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
+    "advanced": 2.30,  # G/H-class
+    "f": 2.05,         # F-class incl. E/F
+    "older": 1.80,     # E-class, legacy
+}
+
+
+def cc_duct_burner_peak_mult(turbine_class: object) -> float:
+    """Return the CC duct-burner peaking HR multiplier for a turbine class.
+
+    Maps the CSV ``Turbine_Class`` string onto the operator's three duct-burner
+    buckets (see :data:`CC_DUCT_BURNER_PEAK_MULT`). Unknown / blank classes
+    fall back to the F-class midpoint (the modal CC class).
+    """
+    s = str(turbine_class)
+    if "G-class" in s or "H-class" in s:
+        return CC_DUCT_BURNER_PEAK_MULT["advanced"]
+    if "F-class" in s:  # also catches "E/F-class"
+        return CC_DUCT_BURNER_PEAK_MULT["f"]
+    if "E-class" in s or "Legacy" in s:
+        return CC_DUCT_BURNER_PEAK_MULT["older"]
+    return CC_DUCT_BURNER_PEAK_MULT["f"]
+
+
+def _offer_curve_for_group(
+    group: str, plant_code: int, config: ScenarioConfig
+) -> dict[str, float] | None:
+    """Return the offer-curve band multipliers for a group, or ``None``.
+
+    Reads ``config.offer_curve_by_group[group]`` (see :class:`ScenarioConfig`).
+    Returns ``None`` — the legacy override / CSV path — when no curve is
+    configured for the group or for an ST_GAS peaker plant (those keep their
+    CSV heat rates, matching the ``gas_st_*_hr_override`` scope).
+    """
+    curves = getattr(config, "offer_curve_by_group", None) or {}
+    curve = curves.get(group)
+    if not curve:
+        return None
+    if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
+        return None
+    return curve
+
+
+def _econ_split_for_group(
+    group: str, plant_code: int, config: ScenarioConfig
+) -> tuple[float, float, float] | None:
+    """Return ``(split_frac, lo_hr_mult, hi_hr_mult)`` for the econ split, or ``None``.
+
+    Reads ``config.econ_split_by_group[group] = [split_frac, lo_hr_mult,
+    hi_hr_mult]`` (see :class:`ScenarioConfig`). Returns ``None`` — a single
+    economic tranche, the default behavior — when no split is configured for
+    the group or for an ST_GAS peaker plant (those dispatch on CSV heat rates,
+    matching the ``gas_st_*_hr_override`` scope). ``split_frac`` is clamped to
+    ``[0, 1]``.
+    """
+    spec_map = getattr(config, "econ_split_by_group", None) or {}
+    spec = spec_map.get(group)
+    if not spec:
+        return None
+    if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
+        return None
+    frac, lo_mult, hi_mult = float(spec[0]), float(spec[1]), float(spec[2])
+    return max(0.0, min(1.0, frac)), lo_mult, hi_mult
 
 
 def bins_to_fleet(
@@ -2141,20 +2263,36 @@ def bins_to_fleet(
         if grid_cap + mustrun_cap <= 0.0:
             continue
 
+        group = str(b["Plant_Group"])
+        plant_code = int(b["Plant_Code"])
+        offer = _offer_curve_for_group(group, plant_code, config)
+        # Committed-tranche % (minimum stable load once started). The CSV
+        # Pct_Committed is a coarse assumed value; for CC_REGULAR plants with
+        # CAMPD-observed minimum stable load it is replaced by the per-plant
+        # grounded value (CC_REGULAR_COMMITTED_PCT_BY_PLANT) — the economic
+        # tranche below absorbs the difference. Off unless the calibration
+        # config sets cc_committed_per_plant.
+        pct_mc = float(b["pct_mc"])
+        if (group == "CC_REGULAR"
+                and getattr(config, "cc_committed_per_plant", False)
+                and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
+            pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[plant_code]
+        # Peaking %: the offer curve may override the CSV value before the
+        # residual is split into the two economic steps (residual = 100 -
+        # must_run - committed - peaking).
+        pct_peak = float(b["pct_peak"])
+        if offer is not None and "pct_peaking" in offer:
+            pct_peak = float(offer["pct_peaking"])
         denom = 100.0 - pct_mr
-        committed_cap = (
-            grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
-        )
-        peak_cap = grid_cap * float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
+        committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
+        peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
         econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
 
         zone = str(b["ERCOT_Zone"])
         if zone == "Unknown" or zone not in valid_zones:
             zone = config.unknown_zone_default
 
-        group = str(b["Plant_Group"])
         label = str(b["Bin_Label"])
-        plant_code = int(b["Plant_Code"])
         plant_name = str(b.get("Plant_Name") or label)
         # One bin = one plant, so the unit id is anchored on the plant
         # code; the tranche suffix keeps the four sub-generators distinct.
@@ -2170,44 +2308,56 @@ def bins_to_fleet(
             commission_year = _commission_year(plant_code)
         startup = BIN_STARTUP_COST_PER_MW.get(group, 0.0)
 
+        base_hr = float(b["hr_weighted"])
         mustrun_hr = float(b["hr_mr"])
         committed_hr = float(b["hr_mc"])
         econ_hr = float(b["hr_econ"])
         peak_hr = float(b["hr_peak"])
-        # Combined-cycle supply-curve override: committed / economic / peaking
-        # = base HR x {1.0, 1.2, 1.8}, so the unit fills its committed slice at
-        # full efficiency, ramps the economic tranche at a modest part-load
-        # penalty, and only reaches peaking at high prices (replaces the per-
-        # plant CSV multipliers, which had economic cheaper than committed).
-        cc_mc = getattr(config, "cc_committed_hr_override", None)
-        if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
-            base = float(b["hr_weighted"])
-            committed_hr = base * cc_mc
-            econ_hr = base * float(getattr(config, "cc_econ_hr_override", 1.2))
-            peak_hr = base * float(getattr(config, "cc_peak_hr_override", 1.8))
-        # Reliability gas-steam supply-curve override: committed / economic /
-        # peaking = base HR x {0.5, 1.0, 1.5}. The cheap committed tranche
-        # commits the unit economically in place of the old flat must-run
-        # floor; peaker-class ST_GAS keep their CSV heat rates.
-        st_mc = getattr(config, "gas_st_committed_hr_override", None)
-        if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
-                and st_mc is not None):
-            base = float(b["hr_weighted"])
-            committed_hr = base * st_mc
-            econ_hr = base * float(
-                getattr(config, "gas_st_econ_hr_override", 1.0)
-            )
-            peak_hr = base * float(
-                getattr(config, "gas_st_peak_hr_override", 1.5)
-            )
-        # CT_CHP supply curve: committed / economic / peaking = base HR x
-        # {1.0, 1.1, 1.3}, tranched above the must-run BTM + steam-following.
-        ct_mc = getattr(config, "ct_committed_hr_override", None)
-        if group == "CT_CHP" and ct_mc is not None:
-            base = float(b["hr_weighted"])
-            committed_hr = base * ct_mc
-            econ_hr = base * float(getattr(config, "ct_econ_hr_override", 1.1))
-            peak_hr = base * float(getattr(config, "ct_peak_hr_override", 1.3))
+        if offer is not None:
+            # Unified offer curve: committed and peaking band heat rates from
+            # the multipliers (econ_low / econ_high are set in the econ split
+            # below). CC peaking uses the per-plant duct-burner multiplier
+            # (turbine class); other groups use the curve's "peak". VOM is held
+            # constant across bands (the peak band's VOM markup is dropped).
+            committed_hr = base_hr * float(offer["committed"])
+            if group in ("CC_REGULAR", "CC_CHP"):
+                peak_hr = base_hr * cc_duct_burner_peak_mult(
+                    b.get("Turbine_Class")
+                )
+            else:
+                peak_hr = base_hr * float(offer["peak"])
+        else:
+            # Legacy per-class supply-curve overrides (relative to base HR),
+            # used when no offer curve covers the group: CC committed/econ/peak,
+            # reliability ST_GAS (peakers keep CSV heat rates), and CT_CHP.
+            cc_mc = getattr(config, "cc_committed_hr_override", None)
+            if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
+                committed_hr = base_hr * cc_mc
+                econ_hr = base_hr * float(
+                    getattr(config, "cc_econ_hr_override", 1.2)
+                )
+                peak_hr = base_hr * float(
+                    getattr(config, "cc_peak_hr_override", 1.8)
+                )
+            st_mc = getattr(config, "gas_st_committed_hr_override", None)
+            if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
+                    and st_mc is not None):
+                committed_hr = base_hr * st_mc
+                econ_hr = base_hr * float(
+                    getattr(config, "gas_st_econ_hr_override", 1.0)
+                )
+                peak_hr = base_hr * float(
+                    getattr(config, "gas_st_peak_hr_override", 1.5)
+                )
+            ct_mc = getattr(config, "ct_committed_hr_override", None)
+            if group == "CT_CHP" and ct_mc is not None:
+                committed_hr = base_hr * ct_mc
+                econ_hr = base_hr * float(
+                    getattr(config, "ct_econ_hr_override", 1.1)
+                )
+                peak_hr = base_hr * float(
+                    getattr(config, "ct_peak_hr_override", 1.3)
+                )
         # CHP steam-following grid floor pinned onto the econ tranche: the
         # plant's total must-run (p2 CAMPD gross CF) minus its BTM share, i.e.
         # the steady export delivered to the grid above host self-supply. Only
@@ -2219,19 +2369,49 @@ def bins_to_fleet(
                 grid_mr_cf = max(0.0, pmin_cf - pct_mr)
                 chp_pmin_mw = min(grid_mr_cf / 100.0 * nameplate, econ_cap)
 
-        # Four stepped tranches: (suffix, capacity, heat rate, VOM
-        # multiplier, min-run, min-down, start cost). Only the Committed
-        # tranche is screened and carries the start cost; Must-Run,
-        # Economic and Peaking are incremental output of an already-running
-        # plant. No tranche carries a Pmin floor — the Must-Run tranche is
-        # forced on by bidding at VOM only (fuel_fracs in the runner).
-        tranches = (
+        # Economic tranche(s). One tranche at econ_hr by default; the offer
+        # curve (or the standalone econ split) replaces it with two stepped
+        # tranches — a rising heat rate (base_HR x lo/hi multiplier) across the
+        # economic block, the lower step holding the configured share of the
+        # economic capacity. The first econ step carries any CHP
+        # steam-following floor.
+        if offer is not None:
+            share = float(offer["econ_low_share"])
+            econ_steps = [
+                ("econlo", econ_cap * share, base_hr * float(offer["econ_low"]),
+                 1.0, 0, 0, 0.0),
+                ("econhi", econ_cap * (1.0 - share),
+                 base_hr * float(offer["econ_high"]), 1.0, 0, 0, 0.0),
+            ]
+        elif (split := _econ_split_for_group(group, plant_code, config)) is not None:
+            split_frac, lo_mult, hi_mult = split
+            econ_steps = [
+                ("econlo", econ_cap * split_frac, base_hr * lo_mult,
+                 1.0, 0, 0, 0.0),
+                ("econhi", econ_cap * (1.0 - split_frac), base_hr * hi_mult,
+                 1.0, 0, 0, 0.0),
+            ]
+        else:
+            econ_steps = [("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0)]
+        first_econ_suffix = econ_steps[0][0]
+
+        # Stepped tranches: (suffix, capacity, heat rate, VOM multiplier,
+        # min-run, min-down, start cost). Only the Committed tranche is
+        # screened and carries the start cost; Must-Run, Economic and Peaking
+        # are incremental output of an already-running plant. No tranche
+        # carries a Pmin floor — the Must-Run tranche is forced on by bidding
+        # at VOM only (fuel_fracs in the runner).
+        # Peak-band VOM multiplier: the offer curve holds VOM constant across
+        # bands (band MC = VOM + (AHR x fuel) x mult); the legacy path keeps
+        # the 1.5x peak VOM markup.
+        peak_vom_mult = 1.0 if offer is not None else 1.5
+        tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
-            ("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0),
-            ("peak", peak_cap, peak_hr, 1.5, 0, 0, 0.0),
-        )
+            *econ_steps,
+            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
+        ]
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
             tranches
         ):
@@ -2265,7 +2445,7 @@ def bins_to_fleet(
                     coal_supply=coal_supply,
                     plant_code=plant_code,
                     chp_grid_pmin_mw=(
-                        chp_pmin_mw if suffix == "econ" else 0.0
+                        chp_pmin_mw if suffix == first_econ_suffix else 0.0
                     ),
                 )
             )

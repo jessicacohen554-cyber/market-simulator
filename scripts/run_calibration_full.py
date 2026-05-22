@@ -646,6 +646,7 @@ def solve_and_persist(
     coal_mustrun_per_plant: bool = False,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
+    prb_overrides: dict | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -698,6 +699,7 @@ def solve_and_persist(
             coal_mustrun_per_plant=coal_mustrun_per_plant,
             coal_drop_pof=coal_drop_pof,
             coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
+            prb_overrides=prb_overrides,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1496,6 +1498,16 @@ def main() -> None:
              "the bundle's run_config.json alongside the full config and git "
              "provenance.",
     )
+    # PRB passthrough sigmoid floor/ceiling tune (baseload + follower tiers).
+    # None leaves the ScenarioConfig default in place.
+    parser.add_argument("--prb-floor", type=float, default=None,
+                        help="Baseload PRB sigmoid cheap-gas floor.")
+    parser.add_argument("--prb-ceil", type=float, default=None,
+                        help="Baseload PRB sigmoid dear-gas ceiling.")
+    parser.add_argument("--prb-follower-floor", type=float, default=None,
+                        help="Follower-tier PRB sigmoid floor.")
+    parser.add_argument("--prb-follower-ceil", type=float, default=None,
+                        help="Follower-tier PRB sigmoid ceiling.")
     args = parser.parse_args()
 
     if args.report:
@@ -1536,6 +1548,12 @@ def main() -> None:
         coal_mustrun_per_plant=args.coal_mustrun_per_plant,
         coal_drop_pof=args.coal_drop_pof,
         coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
+        prb_overrides={
+            "coal_prb_passthrough_floor": args.prb_floor,
+            "coal_prb_passthrough_ceil": args.prb_ceil,
+            "coal_prb_follower_floor": args.prb_follower_floor,
+            "coal_prb_follower_ceil": args.prb_follower_ceil,
+        },
         note=args.note,
     )
     report_run(run_dir)
