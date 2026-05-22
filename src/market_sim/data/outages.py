@@ -57,7 +57,7 @@ BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 # coal/CC bins (e.g. Barney M Davis carries both a CC and an ST_GAS bin —
 # only the CC bin is outaged).
 QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"}
+    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
 )
 
 # Peaker-class ST_GAS plants: patchy / spiky run rate (run only when called),
@@ -218,3 +218,87 @@ def outage_masks_for_year(
         for code, by_year in all_masks.items()
         if year in by_year
     }
+
+
+# Unit-level outage derate (inputs/tx-jan-aug23-unit-outages.csv, Jan-Aug 2023).
+# Each unit outage of at least this many days derates its model bin's
+# availability by the unit's share of that bin's capacity over the window.
+UNIT_OUTAGE_CSV: Path = (
+    Path(__file__).parents[3] / "inputs" / "tx-jan-aug23-unit-outages.csv"
+)
+UNIT_OUTAGE_MIN_DAYS: int = 5
+# W A Parish (3470) coal units; the rest of its units are gas steam, modeled
+# under the split code 34702. Combustion turbines (CT_PEAKER / CT_CHP) are
+# excluded from the derate entirely, per the unit-availability convention.
+_WAP_COAL_UNITS: frozenset[str] = frozenset({"WAP5", "WAP6", "WAP7", "WAP8"})
+
+
+def _unit_outage_target(
+    facility_id: int, unit_id: object, group: object
+) -> tuple[int, str] | None:
+    """Map a unit-outage row to a model ``(plant_code, plant_group)`` bin.
+
+    Returns ``None`` to skip the row: combustion turbines are excluded, and
+    the split plants (W A Parish, Barney M Davis) route each unit to the right
+    asset-class bin (coal vs the gas-steam split code 34702 / 49392). A blank
+    or ``OTHER`` group is treated as gas steam.
+    """
+    g = "" if group is None or (isinstance(group, float) and np.isnan(group)) else str(group)
+    if g in ("CT_PEAKER", "CT_CHP"):
+        return None
+    if facility_id == 3470:  # W A Parish: coal units vs gas-steam (code 34702)
+        return (3470, "COAL") if str(unit_id) in _WAP_COAL_UNITS else (34702, "ST_GAS")
+    if facility_id == 4939:  # Barney M Davis: steam unit 1 (49392) vs CC
+        return (49392, "ST_GAS") if str(unit_id) == "1" else (4939, "CC_REGULAR")
+    if g in ("CC_REGULAR", "CC_CHP", "COAL"):
+        return (facility_id, g)
+    return (facility_id, "ST_GAS")
+
+
+@lru_cache(maxsize=None)
+def unit_outage_derate_factors(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    bins_path: str | Path = BINS_CSV_DEFAULT,
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
+
+    Built from the unit-level outage extract: every unit outage of at least
+    :data:`UNIT_OUTAGE_MIN_DAYS` days derates its model bin's availability by
+    ``unit_capacity_mw / bin_capacity_mw`` over the outage window (concurrent
+    units sum, clipped at full derate). Combustion turbines are excluded and
+    rows without a matching model bin or capacity are skipped. Years the file
+    does not cover get an empty dict (every window misses the clock).
+    """
+    if not UNIT_OUTAGE_CSV.exists():
+        return {}
+    from market_sim.data.fleet import load_campd_bins
+
+    bins = load_campd_bins(str(bins_path))
+    cap = {
+        (int(c), str(g)): float(m)
+        for c, g, m in zip(
+            bins["Plant_Code"], bins["Plant_Group"], bins["capacity_mw"]
+        )
+        if m and m > 0
+    }
+    df = pd.read_csv(UNIT_OUTAGE_CSV)
+    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    sums: dict[tuple[int, str], np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        tgt = _unit_outage_target(int(r.facility_id), r.unit_id, r.plant_group)
+        if tgt is None or tgt not in cap:
+            continue
+        ucap = r.unit_capacity_mw
+        if pd.isna(ucap) or float(ucap) <= 0.0:
+            continue
+        mask = outage_hour_mask(
+            r.outage_start,
+            pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
+            year, hours,
+        )
+        if not mask.any():
+            continue
+        arr = sums.setdefault(tgt, np.zeros(hours))
+        arr[mask] += float(ucap) / cap[tgt]
+    return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}

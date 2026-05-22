@@ -37,7 +37,9 @@ _spec = importlib.util.spec_from_file_location(
     "rcf", str(REPO / "scripts" / "run_calibration_full.py"))
 rcf = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rcf)
 
-from market_sim.data.fleet import COAL_MUSTRUN_BY_PLANT  # noqa: E402
+from market_sim.data.fleet import (  # noqa: E402
+    COAL_MUSTRUN_BY_PLANT, chp_btm_pct,
+)
 
 GROUP_LABEL = {
     "COAL_LIGNITE": "Coal Lignite", "COAL_PRB": "Coal PRB",
@@ -111,7 +113,8 @@ def build_payload(bundles: dict[int, Path]):
                     for i, row in e923.groupby("plant_id")[mcols].sum().iterrows()}
 
         agg = {g: {"m": np.zeros(8760), "g": np.zeros(8760), "c": np.zeros(8760),
-                   "e": np.zeros(12), "npl": 0.0, "mr": 0.0, "ea": 0.0, "n": 0}
+                   "e": np.zeros(12), "npl": 0.0, "mr": 0.0, "ea": 0.0,
+                   "btm": 0.0, "n": 0}
                for g in HEAT_GROUPS}
         for c in sorted(set(mwp) | set(cnp)):
             grp = pgroup.get(c)
@@ -141,9 +144,14 @@ def build_payload(bundles: dict[int, Path]):
             mr_disp = 100.0 * btm / cap if is_chp else mrp
             mt = grid + btm  # heatmap / dispatch profile / hourly fit only
             r, nr = _rfit(mt, cn)
+            e_ann_twh = float(eia_ann.get(c, 0.0)) / 1e6
+            # Sector behind-the-meter share of net gen (TWh), so the KPI annual
+            # total = grid + BTM reconciles to EIA-923 the same way the tables do.
+            btm_ann = chp_btm_pct(c, grp) / 100.0 * e_ann_twh if is_chp else 0.0
             emon_p = eia_pmon.get(c, np.zeros(12))
             series[f"{year}|plant:{c}"] = {
                 "name": str(pname.get(c, c)), "group": hg, "npl": round(cap),
+                "btm_ann": round(btm_ann, 3),
                 "mrpct": round(mr_disp, 1),
                 "model": _b64(100 * mt / cap), "campd": _b64(100 * cn / cap),
                 "m_ann": round(float(grid.sum()) / 1e6, 3), "c_ann": round(float(cn.sum()) / 1e6, 3),
@@ -155,13 +163,14 @@ def build_payload(bundles: dict[int, Path]):
             group_plants.setdefault(f"{year}|{hg}", []).append(
                 {"code": int(c), "name": str(pname.get(c, c))})
             a = agg[hg]; a["m"] += mt; a["g"] += grid; a["c"] += cn; a["npl"] += cap
-            a["mr"] += mr_mw; a["e"] += emon_p
+            a["mr"] += mr_mw; a["e"] += emon_p; a["btm"] += btm_ann
             a["ea"] += float(eia_ann.get(c, 0.0)) / 1e6; a["n"] += 1
         for hg, a in agg.items():
             cap = a["npl"] or 1.0
             r, nr = _rfit(a["m"], a["c"])
             series[f"{year}|{hg}"] = {
                 "name": f"{GROUP_LABEL[hg]} (aggregate)", "group": hg,
+                "btm_ann": round(float(a["btm"]), 3),
                 "npl": round(cap), "mrpct": round(100 * a["mr"] / cap, 1), "n": a["n"],
                 "model": _b64(100 * a["m"] / cap), "campd": _b64(100 * a["c"] / cap),
                 "m_ann": round(float(a["g"].sum()) / 1e6, 3), "c_ann": round(float(a["c"].sum()) / 1e6, 3),
@@ -178,86 +187,201 @@ def _diffcls(d):
     a = abs(d); return "good" if a < 5 else "ok" if a < 15 else "bad"
 
 
-def per_plant_fit_table(payload):
-    """Per-plant hourly r/NRMSE from the same payload as the charts, so the
-    figures match (CHP rows are BTM-aware, after parasitic correction)."""
-    yrs = payload["years"]
-    rows = {}
-    for key, d in payload["series"].items():
-        if "|plant:" not in key:
+_GAS_CLASSES = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
+_FOSSIL_CLASSES = (*_GAS_CLASSES, "COAL_LIGNITE", "COAL_PRB")
+
+
+def _btm_by_class(e923):
+    """BTM TWh per CHP class = EIA-923 sector share x net generation."""
+    from market_sim.data.fleet import (
+        CHP_SECTOR_CLASS_BY_PLANT as _SC, CHP_BTM_PCT_BY_SECTOR as _BP,
+        CHP_ST_BTM_PCT as _STB,
+    )
+    out: dict[str, float] = {}
+    for _, r in e923.iterrows():
+        cls = r["klass"]
+        if cls not in ("CC_CHP", "CT_CHP", "ST_CHP"):
             continue
-        year = int(key.split("|", 1)[0]); code = int(key.split("plant:")[1])
-        rows.setdefault(code, {"name": d["name"], "grp": d["group"], "yr": {}})
-        rows[code]["yr"][year] = (d["r"], d["nrmse"])
-    head = ["plant", "group"] + [f"{y} r" for y in yrs] + [f"{y} NRMSE" for y in yrs]
-    body = ""
-    for code in sorted(rows, key=lambda c: (rows[c]["grp"], rows[c]["name"])):
-        rec = rows[code]; cells = [rec["name"], rec["grp"]]
-        cells += [f"{rec['yr'][y][0]:.3f}" if rec["yr"].get(y, (None,))[0] is not None
-                  else "—" for y in yrs]
-        cells += [f"{rec['yr'][y][1]:.3f}" if y in rec["yr"] and rec["yr"][y][1] is not None
-                  else "—" for y in yrs]
-        body += "<tr>" + "".join(
-            f'<td class="{"lbl" if i < 2 else "num"}">{html.escape(str(c))}</td>'
-            for i, c in enumerate(cells)) + "</tr>"
-    th = "".join(f"<th>{html.escape(x)}</th>" for x in head)
-    return f"<table><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table>"
+        pct = _STB if cls == "ST_CHP" else _BP.get(
+            _SC.get(int(r["plant_id"]), "merchant"), 40.0)
+        out[cls] = out.get(cls, 0.0) + pct / 100.0 * float(r["annual_mwh"]) / 1e6
+    return out
 
 
-def _thermal(disp, e923, btm):
-    mh = rcf._class_hourly(disp); ann = rcf._e923_annual(e923)
-    bt = dict(zip(btm["klass"], btm["btm_twh"]))
-    rows = ""
-    for c in ["CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP",
-              "COAL_LIGNITE", "COAL_PRB"]:
-        grid = mh.get(c, np.zeros(1)).sum() / 1e6; b = bt.get(c, 0.0)
-        m = grid + b; e = ann.get(c, 0.0); d = 100 * (m - e) / e if e else float("nan")
-        ds = f"{d:+.1f}%" if e else "—"
-        rows += (f"<tr><td class=lbl>{c}</td><td class=num>{grid:.2f}</td>"
-                 f"<td class=num>{b:.2f}</td><td class=num>{m:.2f}</td>"
-                 f"<td class=num>{e:.2f}</td><td class='num {_diffcls(d) if e else ''}'>{ds}</td></tr>")
-    return ("<table><thead><tr><th>class</th><th>grid</th><th>BTM</th><th>model</th>"
-            f"<th>EIA-923</th><th>Δ%</th></tr></thead><tbody>{rows}</tbody></table>")
+def _campd_class_hourly(campd, e923, T):
+    """{class: (T,) MW} of CAMPD net summed by class (plant->class via e923)."""
+    pcls = dict(zip(e923["plant_id"].astype(int), e923["klass"]))
+    out: dict[str, np.ndarray] = {}
+    for pid, g in campd.groupby("plant_id"):
+        cls = pcls.get(int(pid))
+        if cls is None:
+            continue
+        a = np.nan_to_num(g.sort_values("hour")["net_mw"].to_numpy(dtype=float))
+        a = np.concatenate([a, np.zeros(max(0, T - a.shape[0]))])[:T]
+        out[cls] = out.get(cls, np.zeros(T)) + a
+    return out
 
 
-def _hourly(disp, e930):
+def _fuel_table(disp, e923, e930, year):
+    """[1] Annual TWh model vs benchmark by fuel, with a SUM row and the hourly
+    r / NRMSE vs EIA-930. Benchmark is EIA-923 (930 for solar) — except 2025,
+    where 923 is materially incomplete (wind, solar), so the whole table uses
+    EIA-930 and the model is shown grid-only (930 is grid-delivered, no BTM)."""
     mh = rcf._class_hourly(disp)
+    T = next(iter(mh.values())).shape[0] if mh else 8760
+    ann = rcf._e923_annual(e923)
+    btmc = _btm_by_class(e923)
     e = {s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy()
          for s in e930["series"].unique()}
-    T = e["coal"].shape[0]
     flat = sum(mh.get(c, np.zeros(T)).sum() for c in ("CC_CHP", "CT_CHP", "ST_CHP")) / T
-    rows = ""
-    for n, m, o in [("gas (non-CHP)", sum(mh.get(c, np.zeros(T)) for c in rcf._NONCHP_GAS), e["gas"] - flat),
-                    ("coal", sum(mh.get(c, np.zeros(T)) for c in rcf._COAL_CLASSES), e["coal"]),
-                    ("nuclear", mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
-                    ("solar", mh.get("solar", np.zeros(T)), e["solar"]),
-                    ("wind", mh.get("wind", np.zeros(T)), e["wind"])]:
-        if o is None:
-            continue
-        rows += (f"<tr><td class=lbl>{n}</td><td class=num>{rcf._pearson_r(m, o):.3f}</td>"
-                 f"<td class=num>{rcf._nrmse(m, o):.3f}</td></tr>")
-    return ("<table><thead><tr><th>fuel</th><th>Pearson r</th><th>NRMSE</th>"
-            f"</tr></thead><tbody>{rows}</tbody></table>")
+    use_930 = year >= 2025
+
+    def grid(classes):
+        return sum((mh.get(c, np.zeros(T)) for c in classes), np.zeros(T))
+
+    def gtwh(classes):
+        return grid(classes).sum() / 1e6
+
+    if use_930:
+        rows_def = [
+            ("gas", gtwh(_GAS_CLASSES), e["gas"].sum() / 1e6,
+             grid(rcf._NONCHP_GAS), e["gas"] - flat),
+            ("coal", gtwh(rcf._COAL_CLASSES), e["coal"].sum() / 1e6,
+             grid(rcf._COAL_CLASSES), e["coal"]),
+            ("nuclear", gtwh(("nuclear",)), e["nuclear"].sum() / 1e6,
+             mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
+            ("wind", gtwh(("wind",)), e["wind"].sum() / 1e6,
+             mh.get("wind", np.zeros(T)), e["wind"]),
+            ("solar", gtwh(("solar",)), e["solar"].sum() / 1e6,
+             mh.get("solar", np.zeros(T)), e["solar"]),
+        ]
+    else:
+        rows_def = [
+            ("gas", gtwh(_GAS_CLASSES) + sum(btmc.values()),
+             sum(ann.get(c, 0.0) for c in _GAS_CLASSES),
+             grid(rcf._NONCHP_GAS), e["gas"] - flat),
+            ("coal", gtwh(rcf._COAL_CLASSES),
+             sum(ann.get(c, 0.0) for c in rcf._COAL_CLASSES),
+             grid(rcf._COAL_CLASSES), e["coal"]),
+            ("nuclear", gtwh(("nuclear",)),
+             ann.get("nuclear", e.get("nuclear", np.zeros(T)).sum() / 1e6),
+             mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
+            ("wind", gtwh(("wind",)),
+             ann.get("wind", e["wind"].sum() / 1e6),
+             mh.get("wind", np.zeros(T)), e["wind"]),
+            ("solar", gtwh(("solar",)),
+             e["solar"].sum() / 1e6, mh.get("solar", np.zeros(T)), e["solar"]),
+        ]
+    body = ""
+    sm = sb = 0.0
+    for name, m, b, mo, ob in rows_def:
+        sm += m
+        sb += b
+        d = 100 * (m - b) / b if b else float("nan")
+        rr = nn = "—"
+        if ob is not None:
+            rr, nn = f"{rcf._pearson_r(mo, ob):.3f}", f"{rcf._nrmse(mo, ob):.3f}"
+        ds = f"{d:+.1f}%" if b else "—"
+        body += (f"<tr><td class=lbl>{name}</td><td class=num>{m:.1f}</td>"
+                 f"<td class=num>{b:.1f}</td>"
+                 f"<td class='num {_diffcls(d) if b else ''}'>{ds}</td>"
+                 f"<td class=num>{rr}</td><td class=num>{nn}</td></tr>")
+    dsum = 100 * (sm - sb) / sb if sb else 0.0
+    body += (f"<tr class=sumrow><td class=lbl>ALL FUELS</td>"
+             f"<td class=num>{sm:.1f}</td><td class=num>{sb:.1f}</td>"
+             f"<td class='num {_diffcls(dsum)}'>{dsum:+.1f}%</td>"
+             f"<td class=num></td><td class=num></td></tr>")
+    bench_lbl = "EIA-930 TWh" if use_930 else "EIA-923 TWh"
+    return ("<table><thead><tr><th>fuel</th><th>model TWh</th>"
+            f"<th>{bench_lbl}</th><th>Δ</th><th>r vs 930</th><th>NRMSE</th>"
+            f"</tr></thead><tbody>{body}</tbody></table>")
+
+
+def _fossil_table(disp, e923, campd):
+    """[2] Fossil classes: model GRID TWh vs (EIA-923 net − BTM), with hourly
+    r / NRMSE vs CAMPD on absolute MW sums (not capacity factor)."""
+    mh = rcf._class_hourly(disp)
+    T = next(iter(mh.values())).shape[0] if mh else 8760
+    ann = rcf._e923_annual(e923)
+    btmc = _btm_by_class(e923)
+    ch = _campd_class_hourly(campd, e923, T)
+    body = ""
+    for c in _FOSSIL_CLASSES:
+        g = mh.get(c, np.zeros(T))
+        gtwh = g.sum() / 1e6
+        bench = ann.get(c, 0.0) - btmc.get(c, 0.0)
+        # Guard the % against a near-zero grid-deliverable benchmark (e.g. a CHP
+        # class that is ~fully behind-the-meter, or an EIA-923 reporting gap).
+        ok = bench > 0.02
+        d = 100 * (gtwh - bench) / bench if ok else float("nan")
+        obs = ch.get(c)
+        rr = nn = "—"
+        if obs is not None and obs.sum() > 0:
+            rr, nn = f"{rcf._pearson_r(g, obs):.3f}", f"{rcf._nrmse(g, obs):.3f}"
+        ds = f"{d:+.1f}%" if ok else "—"
+        body += (f"<tr><td class=lbl>{c}</td><td class=num>{gtwh:.2f}</td>"
+                 f"<td class=num>{bench:.2f}</td>"
+                 f"<td class='num {_diffcls(d) if ok else ''}'>{ds}</td>"
+                 f"<td class=num>{rr}</td><td class=num>{nn}</td></tr>")
+    return ("<table><thead><tr><th>fossil class</th><th>model grid TWh</th>"
+            "<th>923 − BTM TWh</th><th>Δ</th><th>r vs CAMPD</th><th>NRMSE</th>"
+            f"</tr></thead><tbody>{body}</tbody></table>")
+
+
+def _plant_table(payload, year):
+    """[3] One year: per-plant hourly r / NRMSE vs CAMPD and Δ vs EIA-923."""
+    rows = {int(k.split("plant:")[1]): d for k, d in payload["series"].items()
+            if "|plant:" in k and int(k.split("|", 1)[0]) == year}
+    body = ""
+    for code in sorted(rows, key=lambda c: (rows[c]["group"], rows[c]["name"])):
+        d = rows[code]
+        r = "—" if d.get("r") is None else f"{d['r']:.3f}"
+        nr = "—" if d.get("nrmse") is None else f"{d['nrmse']:.3f}"
+        m, e = d.get("m_ann"), d.get("e_ann")
+        if e:
+            dp = 100.0 * (m - e) / e
+            dcell = f'<td class="num {_diffcls(dp)}">{dp:+.1f}</td>'
+        else:
+            dcell = "<td class=num>—</td>"
+        body += (f"<tr><td class=lbl>{html.escape(d['name'])}</td>"
+                 f"<td class=lbl>{d['group']}</td><td class=num>{r}</td>"
+                 f"<td class=num>{nr}</td>{dcell}</tr>")
+    return ("<table><thead><tr><th>plant</th><th>group</th><th>r vs CAMPD</th>"
+            "<th>NRMSE</th><th>Δ923%</th></tr></thead>"
+            f"<tbody>{body}</tbody></table>")
+
 
 
 def tabular_html(bundles, payload):
-    def wrap(t):
-        return f'<div class=tablewrap>{t}</div>'
-    out = []
-    for year, bdir in bundles.items():
+    """Tables page: one year shown at a time (toggle), three tables each —
+    fuel totals, fossil classes (grid vs 923-BTM), and plant-level."""
+    years = sorted(bundles)
+    btns = "".join(
+        f'<button data-ty={y} class="{"on" if i == 0 else ""}">{y}</button>'
+        for i, y in enumerate(years)
+    )
+    secs = ""
+    for i, year in enumerate(years):
+        bdir = bundles[year]
         disp = pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet")
-        e923 = pd.read_parquet(bdir / "eia923.parquet"); e923 = e923[e923["year"] == year]
-        e930 = pd.read_parquet(bdir / "eia930.parquet"); e930 = e930[e930["year"] == year]
-        btm = pd.read_parquet(bdir / "btm.parquet")
-        btm = btm[(btm["year"] == year) & (btm["pass"] == "P1")]
-        out += [f"<h3>ERCOT {year} — thermal by class vs EIA-923 (TWh)</h3>",
-                wrap(_thermal(disp, e923, btm)),
-                f"<h4>ERCOT {year} — hourly fit vs EIA-930</h4>", wrap(_hourly(disp, e930))]
-    # Per-plant fit table last (longest, most detailed).
-    out += ["<h3>Per-plant hourly fit vs CAMPD net "
-            "(r / NRMSE, after parasitic correction)</h3>",
-            wrap(per_plant_fit_table(payload))]
-    return "".join(out)
+        e923 = pd.read_parquet(bdir / "eia923.parquet")
+        e923 = e923[e923["year"] == year]
+        e930 = pd.read_parquet(bdir / "eia930.parquet")
+        e930 = e930[e930["year"] == year]
+        campd = pd.read_parquet(bdir / "campd.parquet")
+        campd = campd[campd["year"] == year]
+        secs += (
+            f'<div class="tyear{"" if i == 0 else " hide"}" data-ty={year}>'
+            f"<h3>Fuel totals — model vs {'EIA-930 (923 incomplete)' if year >= 2025 else 'EIA-923 (EIA-930 for solar)'}, "
+            f"hourly fit vs EIA-930</h3>"
+            f'<div class=tablewrap>{_fuel_table(disp, e923, e930, year)}</div>'
+            f"<h3>Fossil classes — model grid vs EIA-923 − BTM "
+            f"(hourly r / NRMSE vs CAMPD, absolute MW)</h3>"
+            f'<div class=tablewrap>{_fossil_table(disp, e923, campd)}</div>'
+            f"<h3>Plant-level — hourly r / NRMSE vs CAMPD, Δ vs EIA-923</h3>"
+            f'<div class=tablewrap>{_plant_table(payload, year)}</div></div>'
+        )
+    return f'<div class=tabs id=tyearSel>{btns}</div>{secs}'
 
 
 def main():
@@ -308,6 +432,10 @@ canvas.heat{width:100%;height:200px;image-rendering:pixelated;border:1px solid v
 table{border-collapse:collapse;width:100%;background:#fff;font-size:14px}
 th,td{padding:8px 11px;border-bottom:1px solid #eef1f4;text-align:left;white-space:nowrap}th{background:#f0f3f6;font-size:12px;text-transform:uppercase;color:#46505f;position:sticky;top:0}
 td.num{text-align:right;font-variant-numeric:tabular-nums}.good{color:#0f7d3d}.ok{color:#9a6700}.bad{color:#c01c28;font-weight:600}
+tr.sumrow td{border-top:2px solid #cfd6dd;font-weight:700;background:#f8fafc}
+.kpis{display:flex;flex-wrap:wrap;gap:10px}
+.kpi{flex:1;min-width:140px;background:#f8fafc;border:1px solid var(--bd);border-radius:9px;padding:11px 14px}
+.kpik{font-size:12px;color:var(--mut);text-transform:uppercase}.kpiv{font-size:23px;font-weight:700;margin-top:3px}
 .hide{display:none}.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 .tabs button{border:1px solid var(--bd);background:#fff;border-radius:7px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--mut)}
 .tabs button.on{background:var(--campd);color:#fff;border-color:var(--campd)}
@@ -329,6 +457,7 @@ canvas.heat,svg{cursor:crosshair}
   <div><span class=lab>Year</span><span class=seg id=yearSel></span></div>
   <div><span class=lab>Group</span><select id=groupSel></select></div>
   <div><span class=lab>Plant</span><select id=plantSel></select></div></div></div>
+<div class=card><div class=kpis id=kpi></div></div>
 <div class=card><h2>Commitment heatmap</h2><p class=hsub id=heatSub></p>
   <div class=legend><span>0%</span><span class=ramp></span><span>100% CF</span></div>
   <h4>CAMPD actual</h4><canvas class=heat id=heatC width=365 height=24></canvas><div class=ax id=axC></div>
@@ -391,28 +520,34 @@ function axMonths(el){el.innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");}
 function profile(cf,p){const o=Array(24).fill(0),n=Array(24).fill(0);let lo=0,hi=8760;
  if(p!=="annual"){let s=0;for(let i=0;i<+p;i++)s+=DIM[i]*24;lo=s;hi=s+DIM[+p]*24;}
  for(let h=lo;h<hi;h++){o[h%24]+=cf[h];n[h%24]++;}return o.map((v,i)=>n[i]?v/n[i]:0);}
+const NS="http://www.w3.org/2000/svg";
+function mk(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+function clear(svg){while(svg.firstChild)svg.removeChild(svg.firstChild);}
 function line(svg,sets,ymax,xl,unit,labels,tunit){const W=720,H=360,L=58,R=16,T=16,B=44,pw=W-L-R,ph=H-T-B,n=sets[0].pts.length;tunit=tunit||unit;
- let s='<g font-size=14 fill="#8a93a0">';
- for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-9} y=${y+5} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}${unit}</text>`;}
- xl.forEach((lb,i)=>{if(lb){const x=L+(n>1?pw*i/(n-1):0);s+=`<text x=${x} y=${H-16} text-anchor=middle>${lb}</text>`;}});s+="</g>";
- for(const set of sets){const dash=DASH[set.style||"solid"];
-  const d=set.pts.map((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);return`${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
-  s+=`<path d="${d}" fill=none stroke="${set.color}" stroke-width=${set.floor?2:2.8} ${dash}/>`;
-  if(!set.floor)set.pts.forEach((v,i)=>{const x=L+(n>1?pw*i/(n-1):0),y=T+ph*(1-Math.min(v,ymax)/ymax);s+=`<circle cx=${x.toFixed(1)} cy=${y.toFixed(1)} r=3.2 fill=#fff stroke="${set.color}" stroke-width=2/>`;});}
- svg.innerHTML=s;
- const xs=[],rows=[];for(let i=0;i<n;i++){const x=L+(n>1?pw*i/(n-1):0);xs.push(x);
-  let r=`<b>${(labels&&labels[i])||xl[i]||i}</b>`;
-  for(const set of sets)if(!set.floor)r+=`<br><span style="color:${set.color}">●</span> ${set.name||""}: ${set.pts[i].toFixed(1)}${tunit}`;
-  rows.push(r);}
+ clear(svg);const g=mk("g",{"font-size":14,fill:"#8a93a0"});
+ for(let i=0;i<=4;i++){const y=T+ph*i/4;g.appendChild(mk("line",{x1:L,y1:y,x2:W-R,y2:y,stroke:"#eef1f4"}));g.appendChild(mk("text",{x:L-9,y:y+5,"text-anchor":"end"},(ymax*(1-i/4)).toFixed(0)+unit));}
+ xl.forEach((lb,i)=>{if(lb)g.appendChild(mk("text",{x:L+(n>1?pw*i/(n-1):0),y:H-16,"text-anchor":"middle"},lb));});svg.appendChild(g);
+ const X=i=>L+(n>1?pw*i/(n-1):0),Y=v=>T+ph*(1-Math.min(Number(v)||0,ymax)/ymax);
+ for(const set of sets){const dd=set.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join(" ");
+  const at={d:dd,fill:"none",stroke:set.color,"stroke-width":set.floor?2:2.8};if(set.style==="dotted")at["stroke-dasharray"]="2 4";
+  svg.appendChild(mk("path",at));
+  if(!set.floor)set.pts.forEach((v,i)=>svg.appendChild(mk("circle",{cx:X(i).toFixed(1),cy:Y(v).toFixed(1),r:3.2,fill:"#fff",stroke:set.color,"stroke-width":2})));}
+ const xs=[],rows=[];for(let i=0;i<n;i++){xs.push(X(i));let r=`<b>${(labels&&labels[i])||xl[i]||i}</b>`;
+  for(const set of sets)if(!set.floor)r+=`<br><span style="color:${set.color}">●</span> ${set.name||""}: ${(Number(set.pts[i])||0).toFixed(1)}${tunit}`;rows.push(r);}
  hoverX(svg,xs,rows);}
 function bars(svg,bs,ymax,tunit){const W=720,H=360,L=58,R=16,T=16,B=52,pw=W-L-R,ph=H-T-B;
- let s='<g font-size=14 fill="#8a93a0">';for(let g=0;g<=4;g++){const y=T+ph*g/4;s+=`<line x1=${L} y1=${y} x2=${W-R} y2=${y} stroke="#eef1f4"/><text x=${L-9} y=${y+5} text-anchor=end>${(ymax*(1-g/4)).toFixed(0)}</text>`;}s+="</g>";
+ clear(svg);const g=mk("g",{"font-size":14,fill:"#8a93a0"});
+ for(let i=0;i<=4;i++){const y=T+ph*i/4;g.appendChild(mk("line",{x1:L,y1:y,x2:W-R,y2:y,stroke:"#eef1f4"}));g.appendChild(mk("text",{x:L-9,y:y+5,"text-anchor":"end"},(ymax*(1-i/4)).toFixed(0)));}svg.appendChild(g);
  const bw=pw/bs.length*0.46;bs.forEach((b,i)=>{const cx=L+pw*(i+.5)/bs.length,h=ph*Math.min(b.v,ymax)/ymax,y=T+ph-h;
-  s+=`<rect x=${cx-bw/2} y=${y} width=${bw} height=${h} rx=3 fill="${b.color}"/><text x=${cx} y=${H-28} text-anchor=middle font-size=15 fill=#46505f>${b.label}</text><text x=${cx} y=${y-8} text-anchor=middle font-size=15 fill=#46505f font-weight=700>${b.v.toFixed(1)}</text>`;});
- svg.innerHTML=s;
+  svg.appendChild(mk("rect",{x:cx-bw/2,y:y,width:bw,height:h,rx:3,fill:b.color}));
+  svg.appendChild(mk("text",{x:cx,y:H-28,"text-anchor":"middle","font-size":15,fill:"#46505f"},b.label));
+  svg.appendChild(mk("text",{x:cx,y:y-8,"text-anchor":"middle","font-size":15,fill:"#46505f","font-weight":700},b.v.toFixed(1)));});
  hoverX(svg,bs.map((b,i)=>L+pw*(i+.5)/bs.length),bs.map(b=>`<b>${b.label}</b><br>${b.v.toFixed(2)}${tunit||""}`));}
 function render(){const d=cur();if(!d)return;const mc=dec(d.model),cc=dec(d.campd),npl=d.npl;
- heatSub.textContent=`24h × 365d — ${d.name} — ${st.year} — ${npl.toLocaleString()} MW nameplate · ${Math.round(npl*d.mrpct/100).toLocaleString()} MW must-run (${d.mrpct}%)`;
+ const mtot=(d.m_ann||0)+(d.btm_ann||0),e923=d.e_ann||0,dl=e923?100*(mtot-e923)/e923:null;
+ const dcl=dl==null?"":Math.abs(dl)<5?"good":Math.abs(dl)<15?"ok":"bad";
+ kpi.innerHTML=[["Model total (grid+BTM)",mtot.toFixed(1)+" TWh",""],["EIA-923 total",e923.toFixed(1)+" TWh",""],["Δ model vs 923",dl==null?"—":(dl>=0?"+":"")+dl.toFixed(1)+"%",dcl],["Hourly r vs CAMPD",d.r!=null?d.r:"—",""],["NRMSE",d.nrmse!=null?d.nrmse:"—",""]].map(k=>`<div class=kpi><div class=kpik>${k[0]}</div><div class="kpiv ${k[2]}">${k[1]}</div></div>`).join("");
+ heatSub.textContent=`24h × 365d — ${d.name} — ${st.year} — model ${mtot.toFixed(1)} TWh vs EIA-923 ${e923.toFixed(1)} TWh · ${npl.toLocaleString()} MW nameplate`;
  drawHeat(heatC,cc);drawHeat(heatM,mc);axMonths(axC);axMonths(axM);
  heatTip(heatC,cc,"CAMPD actual");heatTip(heatM,mc,"Model result");
  dispSub.textContent=`Average hourly profile — ${d.name} — ${st.period==="annual"?"annual":MONTHS[+st.period]}`;
@@ -446,7 +581,10 @@ function build(){yearSel.innerHTML=D.years.map(y=>`<button data-y=${y} class=${y
  periodSel.innerHTML='<button data-p=annual class=on>Annual</button>'+MONTHS.map((m,i)=>`<button data-p=${i}>${m}</button>`).join("");
  periodSel.onclick=e=>{const p=e.target.dataset.p;if(p!==undefined){st.period=p;[...periodSel.children].forEach(b=>b.classList.toggle("on",b.dataset.p===st.period));render();}};
  view.onclick=e=>{const v=e.target.dataset.v;if(v){[...view.children].forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  document.getElementById("charts-view").classList.toggle("hide",v!=="charts");document.getElementById("tables-view").classList.toggle("hide",v!=="tables");}};}
+  document.getElementById("charts-view").classList.toggle("hide",v!=="charts");document.getElementById("tables-view").classList.toggle("hide",v!=="tables");}};
+ const ty=document.getElementById("tyearSel");
+ if(ty)ty.onclick=e=>{const y=e.target.dataset.ty;if(y){[...ty.children].forEach(b=>b.classList.toggle("on",b.dataset.ty===y));
+  document.querySelectorAll(".tyear").forEach(s=>s.classList.toggle("hide",s.dataset.ty!==y));}};}
 try{build();render();diag.style.display="none";}
 catch(e){diag.style.color="#c01c28";diag.style.borderColor="#c01c28";
  diag.textContent="Render error: "+((e&&e.message)||e);}

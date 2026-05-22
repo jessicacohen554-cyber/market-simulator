@@ -196,6 +196,20 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
 }
 
+# Per-year nuclear monthly capacity factor derived from EIA-923 net generation
+# (the actual staggered refueling cadence each year, not a fixed seasonal
+# average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
+# backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal
+# refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2).
+# Tier: 3 (calibration)
+NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
+    "ERCOT": {
+        2023: [1.00, 1.00, 0.89, 0.75, 0.78, 0.95, 0.99, 0.99, 0.99, 0.87, 0.91, 1.00],
+        2024: [0.93, 1.00, 0.82, 0.74, 0.78, 0.98, 0.92, 0.97, 0.99, 0.68, 0.75, 1.00],
+        2025: [0.97, 1.00, 1.00, 0.92, 0.89, 1.00, 1.00, 0.99, 0.94, 0.76, 0.91, 1.00],
+    },
+}
+
 # Equivalent forced outage rate (demand) by technology class.
 # Source: NERC GADS.
 EFORD: dict[str, float] = {
