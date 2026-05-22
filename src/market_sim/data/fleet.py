@@ -237,6 +237,16 @@ _SUMMER_CLASS_DERATE: dict[str, float] = {
     "CT_PEAKER": 0.125, "CT_CHP": 0.125,
 }
 
+# Non-coal thermal classes whose statistical planned-outage factor (POF) is
+# dropped in the historic backcast (gated on config.coal_drop_pof): their
+# planned outages now come from the CAMPD overlay + the unit-level derate, so
+# the shoulder-month POF would double-count. Combustion turbines (CT_PEAKER /
+# CT_CHP) keep POF — they have no historic overlay coverage and are excluded
+# from the unit derate.
+_POF_DROP_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+)
+
 
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
@@ -356,12 +366,19 @@ def generators_to_fleet_arrays(
                     wefor
                     + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
                 )
+                # Drop the shoulder POF for the historic-overlay classes (CC /
+                # ST + their CHP) so it does not double-count the actual planned
+                # outages from the overlay + unit derate; CTs keep POF.
+                pof_eff = (
+                    0.0 if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
+                    else pof
+                )
                 # Default (winter): flat WEFOR, no POF. Then override summer
                 # and shoulder.
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - summer_wefor - derate
                 availability[g_idx, shoulder] = (
-                    1.0 - shoulder_wefor - derate - pof
+                    1.0 - shoulder_wefor - derate - pof_eff
                 )
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
