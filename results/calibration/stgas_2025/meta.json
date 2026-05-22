@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-21T17:26:40",
+  "timestamp": "2026-05-22T01:08:36",
   "iso": "ERCOT",
   "years": [
     2025
@@ -23,5 +23,5 @@
   "coal_prb_passthrough_tiered": true,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
-  "git_sha": "f36e359"
+  "git_sha": "34dd0b8"
 }
