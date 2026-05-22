@@ -396,8 +396,14 @@ def main():
     ap.add_argument("--out", default=str(REPO / "results" / "calibration" / "calibration-report.html"))
     args = ap.parse_args()
     if args.bundles:
-        bundles = {int(json.loads((Path(b) / "meta.json").read_text())["years"][0]): Path(b)
-                   for b in args.bundles}
+        # Each bundle may hold one year or several (a `--year 2023 2024 2025`
+        # run writes all three into one bundle); expand it across every year in
+        # its meta so a single multi-year bundle renders all its years.
+        bundles = {}
+        for b in args.bundles:
+            path = Path(b)
+            for y in json.loads((path / "meta.json").read_text())["years"]:
+                bundles[int(y)] = path
     else:
         bundles = {y: REPO / "results" / "calibration" / f"stgas_{y}" for y in (2023, 2024, 2025)}
     payload = build_payload(bundles)
