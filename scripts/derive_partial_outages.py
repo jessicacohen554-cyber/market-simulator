@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+"""Derive partial (unit-level) outage derates from CAMPD capacity-factor ceilings.
+
+For plants without unit-level data, a partial outage shows up as a sustained
+*ceiling plateau*: the plant keeps running but its daily-max CF drops to a level
+well below its normal capability (e.g. ~half capacity = half the units out),
+then recovers. This detects those plateaus and emits a multiplicative
+availability derate (ceiling / normal-ceiling) over the window, approximating
+the lost capacity until unit-level data confirms it.
+
+Restricted to plants where the signal is reliable: baseload units (annual mean
+CF above :data:`_BASELOAD_CF`) that are COAL — all-or-nothing, so a depressed
+ceiling is an outage, not economic part-load — plus a confirmed combined-cycle
+allowlist. Economic single-train CC operation looks identical to a partial
+outage from CF alone, so other CC plants are excluded until confirmed.
+
+Writes ``inputs/raw-data/campd-partial-outages.csv``.
+"""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+REPO = Path(__file__).resolve().parent.parent
+import sys
+sys.path.insert(0, str(REPO / "src"))
+
+from market_sim.data import campd  # noqa: E402
+from market_sim.data.fleet import load_campd_bins  # noqa: E402
+
+# Confirmed combined-cycle plants with real partial outages (others excluded —
+# CC part-loading is often economic). Expand as unit data confirms more.
+_CC_ALLOWLIST: frozenset[int] = frozenset({
+    60122,  # Colorado Bend II
+    59812,  # Wolf Hollow II
+})
+_BASELOAD_CF = 0.55      # only plants that normally run near their ceiling
+_MIN_DAYS = 5            # sustained plateau length
+_CEILING_FRAC = 0.65     # daily max below this fraction of the normal ceiling
+_RUN_FLOOR_CF = 0.06     # daily mean above this = running (not a full outage)
+
+
+def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
+    """Return ``[(start_day, end_day_excl, derate_factor), ...]`` plateaus."""
+    nd = cf.shape[0] // 24
+    if nd == 0:
+        return []
+    day = cf[:nd * 24].reshape(nd, 24)
+    dmax, dmean = day.max(1), day.mean(1)
+    running = dmean > _RUN_FLOOR_CF
+    ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
+    if ref <= 0.0:
+        return []
+    partial = running & (dmax < _CEILING_FRAC * ref) & (dmax > 0.12)
+    out, i = [], 0
+    while i < nd:
+        if partial[i]:
+            j = i
+            while j < nd and partial[j]:
+                j += 1
+            if j - i >= _MIN_DAYS:
+                ceiling = float(dmax[i:j].max())
+                out.append((i, j, round(min(1.0, ceiling / ref), 3)))
+            i = j
+        else:
+            i += 1
+    return out
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    ap.add_argument("--iso", default="ERCOT")
+    ap.add_argument("--out", default=str(
+        REPO / "inputs" / "raw-data" / "campd-partial-outages.csv"))
+    args = ap.parse_args()
+
+    bins = load_campd_bins("inputs/custom-bin-assignments.csv")
+    cap = dict(zip(bins["Plant_Code"].astype(int), bins["capacity_mw"]))
+    name = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"]))
+    group = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))
+    candidates = [c for c in cap if group.get(c) == "COAL" or c in _CC_ALLOWLIST]
+
+    rows = []
+    for yr in args.years:
+        df = campd.load_campd_hourly(campd.states_for_iso(args.iso), [yr])
+        full = pd.date_range(f"{yr}-01-01", f"{yr}-12-31 23:00", freq="h")
+        for code in candidates:
+            g = campd.plant_hourly_grid(df, code, yr)
+            if g.empty or cap[code] <= 0:
+                continue
+            cf = (g["gross_mw"].reindex(full).fillna(0.0)
+                  / cap[code]).to_numpy(dtype=float)
+            if cf.mean() < _BASELOAD_CF:
+                continue
+            for s, e, factor in _detect(cf):
+                rows.append({
+                    "oris_code": code,
+                    "plant_name": name.get(code, code),
+                    "plant_group": group.get(code, ""),
+                    "year": yr,
+                    "outage_start": full[s * 24].strftime("%Y-%m-%d %H:00:00"),
+                    "outage_stop": (full[min(e * 24, len(full) - 1)]
+                                    ).strftime("%Y-%m-%d %H:00:00"),
+                    "derate_factor": factor,
+                })
+    out = pd.DataFrame(rows, columns=[
+        "oris_code", "plant_name", "plant_group", "year",
+        "outage_start", "outage_stop", "derate_factor",
+    ]).sort_values(["year", "oris_code", "outage_start"])
+    out.to_csv(args.out, index=False)
+    print(f"wrote {len(out)} partial-outage windows to {args.out}")
+    for yr in args.years:
+        print(f"  {yr}: {(out['year'] == yr).sum()} windows, "
+              f"{out[out['year'] == yr]['oris_code'].nunique()} plants")
+
+
+if __name__ == "__main__":
+    main()
