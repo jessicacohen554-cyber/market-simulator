@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T03:24:24",
+  "timestamp": "2026-05-22T04:17:20",
   "git": {
-    "sha": "08dc118",
+    "sha": "5d53349",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "HSL curtailment offset (wind 110/solar 32.0 -> deliver 108/31.9); nuclear uses 923 CF directly (no EFORD double-count).",
+  "model_changes_note": "Per-plant coal max-CF caps; full-year outage detection for coal/CC (San Miguel 2025 Oct-Dec captured).",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "08dc118"
+    "git_sha": "5d53349"
   },
   "scenario_config": {
     "weather_year": 2024,
