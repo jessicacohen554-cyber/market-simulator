@@ -314,6 +314,11 @@ def generators_to_fleet_arrays(
     _iso = iso.upper() if iso else None
     _yr = getattr(config, "weather_year", None) if config is not None else None
     monthly_cf = NUCLEAR_MONTHLY_CF_BY_YEAR.get(_iso, {}).get(_yr) if _iso else None
+    # The 923-derived per-year CF is realized availability (it already embeds
+    # refueling + forced outages + derate), so it is used directly. The static
+    # forecast pattern is a planned-outage cap, so the EFORD forced-outage
+    # derate is layered on top of it.
+    from_actual = monthly_cf is not None
     if monthly_cf is None and _iso:
         monthly_cf = NUCLEAR_MONTHLY_CF.get(_iso)
     if monthly_cf is not None:
@@ -321,8 +326,9 @@ def generators_to_fleet_arrays(
         month_idx = _hour_to_month_index(hours)
         for g_idx, gen in enumerate(generators):
             if gen.fuel_type == "nuclear":
+                base = monthly_factors[month_idx]
                 availability[g_idx, :] = (
-                    (1.0 - gen.eford) * monthly_factors[month_idx]
+                    base if from_actual else (1.0 - gen.eford) * base
                 )
 
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
