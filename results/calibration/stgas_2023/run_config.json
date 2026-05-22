@@ -1,16 +1,13 @@
 {
-  "timestamp": "2026-05-21T23:00:22",
+  "timestamp": "2026-05-22T00:40:21",
   "git": {
-    "sha": "dbe39dc",
+    "sha": "5e96c45",
     "branch": "claude/wire-historic-outages-SIRI8",
-    "dirty": true,
-    "changed_files": [
-      "cripts/run_calibration.py",
-      "src/market_sim/data/fleet.py"
-    ],
-    "diffstat": "scripts/run_calibration.py   |  4 ++--\n src/market_sim/data/fleet.py | 15 ++++++++++++++-\n 2 files changed, 16 insertions(+), 3 deletions(-)"
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "Merchant CHP BTM 10->40%; ST_GAS committed 0.8->0.65; summer (Jun-Sep) ambient derate CC 10% / CT 12.5%.",
+  "model_changes_note": "Unit-level outage derate from tx-jan-aug23-unit-outages.csv (>=5 day unit outages, CTs excluded, split plants routed by class), applied on top of historic overlay.",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -35,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "dbe39dc"
+    "git_sha": "5e96c45"
   },
   "scenario_config": {
     "weather_year": 2023,
