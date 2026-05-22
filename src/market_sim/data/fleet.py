@@ -1712,6 +1712,56 @@ CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
 }
 
 
+# Per-plant CC_REGULAR committed-tranche % (minimum stable load once started),
+# keyed by EIA plant code. Derived from EPA CAMPD/CEMS TX 2023 hourly gross
+# output over Jan-July (the window inputs/tx-jan-aug23-unit-outages.csv covers,
+# so available capacity is known): the P5 of each plant's net capacity factor
+# over its committed (online) hours, normalized by the unit-outage-adjusted
+# available capacity. See scripts/derive_cc_committed_pct.py and
+# inputs/processed/cc_committed_pct.csv for the full percentile distribution.
+# Replaces the coarse assumed CSV Pct_Committed (clustered at 20/25/45/55) when
+# config.cc_committed_per_plant is set; the economic tranche absorbs the
+# difference so each plant's tranche split still sums to 100%. Plants without
+# CAMPD coverage (7512, 50127, 55545, 56233) keep the CSV value.
+CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
+    3441: 11.5,   # Nueces Bay (online 0.41)
+    3443: 44.7,   # Victoria (online 0.28)
+    3469: 8.4,    # T H Wharton (online 0.22)
+    3631: 8.1,    # Sam Rayburn (online 0.39)
+    4937: 33.3,   # Thomas C Ferguson (online 0.89)
+    4939: 7.7,    # Barney M Davis [CC] (online 0.46)
+    7900: 17.9,   # Sand Hill (online 0.87)
+    50109: 28.8,  # Paris Energy Center (online 0.47)
+    54817: 36.7,  # Johnson County (online 0.54)
+    55062: 25.7,  # Tenaska Frontier (online 0.86)
+    55086: 21.0,  # Gregory Power Plant (online 0.15)
+    55091: 12.1,  # Midlothian Energy Facility (online 0.59)
+    55097: 31.2,  # Lamar Power Project (online 0.80)
+    55098: 40.3,  # Frontera Energy Center (online 0.32)
+    55123: 27.9,  # Magic Valley (online 0.61)
+    55132: 15.2,  # Tenaska Gateway (online 0.45)
+    55137: 37.8,  # Rio Nogales Power Project (online 0.68)
+    55139: 38.6,  # Wolf Hollow I LP (online 0.60)
+    55144: 23.3,  # Hays Energy Project (online 0.75)
+    55153: 44.1,  # Guadalupe Generating Station (online 0.95)
+    55168: 32.4,  # Bastrop Energy Center (online 0.73)
+    55172: 37.3,  # Thad Hill Energy Center (online 0.89)
+    55215: 26.4,  # Odessa-Ector Power Plant (online 0.89)
+    55223: 42.5,  # Ennis Power Company LLC (online 0.54)
+    55226: 40.9,  # Freestone Energy Center (online 1.00)
+    55230: 18.1,  # Jack County (online 0.89)
+    55320: 25.3,  # Wise County Power LLC (online 0.61)
+    55480: 30.2,  # Forney Energy Center (online 0.85)
+    56349: 22.7,  # Quail Run Energy Center (online 0.64)
+    56350: 27.3,  # Colorado Bend Energy Center (online 0.75)
+    56806: 20.9,  # Cedar Bayou 4 (online 0.63)
+    58001: 30.5,  # Temple Power Station (online 0.96)
+    58005: 36.2,  # Rayburn Energy Station LLC (online 0.62)
+    59812: 32.3,  # Wolf Hollow II (online 0.85)
+    60122: 36.6,  # Colorado Bend II (online 0.91)
+}
+
+
 def chp_btm_pct(plant_code: int, group: str) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
     if group == "ST_CHP":
@@ -2025,6 +2075,28 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
     return bins
 
 
+def _econ_split_for_group(
+    group: str, plant_code: int, config: ScenarioConfig
+) -> tuple[float, float, float] | None:
+    """Return ``(split_frac, lo_hr_mult, hi_hr_mult)`` for the econ split, or ``None``.
+
+    Reads ``config.econ_split_by_group[group] = [split_frac, lo_hr_mult,
+    hi_hr_mult]`` (see :class:`ScenarioConfig`). Returns ``None`` — a single
+    economic tranche, the default behavior — when no split is configured for
+    the group or for an ST_GAS peaker plant (those dispatch on CSV heat rates,
+    matching the ``gas_st_*_hr_override`` scope). ``split_frac`` is clamped to
+    ``[0, 1]``.
+    """
+    spec_map = getattr(config, "econ_split_by_group", None) or {}
+    spec = spec_map.get(group)
+    if not spec:
+        return None
+    if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
+        return None
+    frac, lo_mult, hi_mult = float(spec[0]), float(spec[1]), float(spec[2])
+    return max(0.0, min(1.0, frac)), lo_mult, hi_mult
+
+
 def bins_to_fleet(
     bins: pd.DataFrame,
     zone_names: list[str],
@@ -2141,9 +2213,20 @@ def bins_to_fleet(
         if grid_cap + mustrun_cap <= 0.0:
             continue
 
+        # Committed-tranche % (minimum stable load once started). The CSV
+        # Pct_Committed is a coarse assumed value; for CC_REGULAR plants with
+        # CAMPD-observed minimum stable load it is replaced by the per-plant
+        # grounded value (CC_REGULAR_COMMITTED_PCT_BY_PLANT) — the economic
+        # tranche below absorbs the difference. Off unless the calibration
+        # config sets cc_committed_per_plant.
+        pct_mc = float(b["pct_mc"])
+        if (str(b["Plant_Group"]) == "CC_REGULAR"
+                and getattr(config, "cc_committed_per_plant", False)
+                and int(b["Plant_Code"]) in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
+            pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[int(b["Plant_Code"])]
         denom = 100.0 - pct_mr
         committed_cap = (
-            grid_cap * float(b["pct_mc"]) / denom if denom > 0.0 else 0.0
+            grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         )
         peak_cap = grid_cap * float(b["pct_peak"]) / denom if denom > 0.0 else 0.0
         econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
@@ -2219,19 +2302,39 @@ def bins_to_fleet(
                 grid_mr_cf = max(0.0, pmin_cf - pct_mr)
                 chp_pmin_mw = min(grid_mr_cf / 100.0 * nameplate, econ_cap)
 
-        # Four stepped tranches: (suffix, capacity, heat rate, VOM
-        # multiplier, min-run, min-down, start cost). Only the Committed
-        # tranche is screened and carries the start cost; Must-Run,
-        # Economic and Peaking are incremental output of an already-running
-        # plant. No tranche carries a Pmin floor — the Must-Run tranche is
-        # forced on by bidding at VOM only (fuel_fracs in the runner).
-        tranches = (
+        # Economic tranche(s). By default one tranche at econ_hr; when an
+        # econ split is configured for the group, two stepped tranches with a
+        # rising heat rate (base_HR x lo/hi multiplier) across the economic
+        # block, the lower step holding ``split_frac`` of the economic
+        # capacity. The split's multipliers supersede the single econ_hr for
+        # that group. The first econ step carries any CHP steam-following floor.
+        base_hr = float(b["hr_weighted"])
+        split = _econ_split_for_group(group, plant_code, config)
+        if split is not None:
+            split_frac, lo_mult, hi_mult = split
+            econ_steps = [
+                ("econlo", econ_cap * split_frac, base_hr * lo_mult,
+                 1.0, 0, 0, 0.0),
+                ("econhi", econ_cap * (1.0 - split_frac), base_hr * hi_mult,
+                 1.0, 0, 0, 0.0),
+            ]
+        else:
+            econ_steps = [("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0)]
+        first_econ_suffix = econ_steps[0][0]
+
+        # Stepped tranches: (suffix, capacity, heat rate, VOM multiplier,
+        # min-run, min-down, start cost). Only the Committed tranche is
+        # screened and carries the start cost; Must-Run, Economic and Peaking
+        # are incremental output of an already-running plant. No tranche
+        # carries a Pmin floor — the Must-Run tranche is forced on by bidding
+        # at VOM only (fuel_fracs in the runner).
+        tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
-            ("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0),
+            *econ_steps,
             ("peak", peak_cap, peak_hr, 1.5, 0, 0, 0.0),
-        )
+        ]
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
             tranches
         ):
@@ -2265,7 +2368,7 @@ def bins_to_fleet(
                     coal_supply=coal_supply,
                     plant_code=plant_code,
                     chp_grid_pmin_mw=(
-                        chp_pmin_mw if suffix == "econ" else 0.0
+                        chp_pmin_mw if suffix == first_econ_suffix else 0.0
                     ),
                 )
             )
