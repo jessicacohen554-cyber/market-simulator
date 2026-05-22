@@ -259,7 +259,7 @@ def _calibration_config(
                              "econ_high": 1.12, "peak": 1.23,
                              "econ_low_share": 0.556},
             "COAL_PRB": {"committed": 0.90, "econ_low": 0.95,
-                         "econ_high": 1.02, "peak": 1.08,
+                         "econ_high": 1.07, "peak": 1.18,
                          "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
