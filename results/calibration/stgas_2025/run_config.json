@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T04:20:00",
+  "timestamp": "2026-05-22T05:18:17",
   "git": {
-    "sha": "5d53349",
+    "sha": "7b91538",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "Per-plant coal max-CF caps; full-year outage detection for coal/CC (San Miguel 2025 Oct-Dec captured).",
+  "model_changes_note": "CAMPD partial-outage derate (CF-ceiling plateaus) for baseload coal + CC allowlist (Colorado Bend II, Wolf Hollow II).",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "5d53349"
+    "git_sha": "7b91538"
   },
   "scenario_config": {
     "weather_year": 2025,
