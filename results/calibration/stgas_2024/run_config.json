@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T05:50:45",
+  "timestamp": "2026-05-22T13:34:48",
   "git": {
-    "sha": "a29e0ee",
+    "sha": "c3665bd",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "Partial-outage detector with rolling-median smoothing (catches blip-interrupted outages e.g. Major Oak late June).",
+  "model_changes_note": "PRB passthrough floors lowered: baseload 0.78, follower 0.68.",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "a29e0ee"
+    "git_sha": "c3665bd"
   },
   "scenario_config": {
     "weather_year": 2024,
@@ -138,13 +138,13 @@
     "coal_prb_contract_passthrough": 1.0,
     "coal_prb_passthrough": 1.0,
     "coal_prb_passthrough_sigmoid": false,
-    "coal_prb_passthrough_floor": 0.82,
+    "coal_prb_passthrough_floor": 0.78,
     "coal_prb_passthrough_ceil": 1.5,
     "coal_prb_passthrough_gas_mid": 2.85,
     "coal_prb_passthrough_gas_slope": 2.5,
     "coal_prb_passthrough_tiered": false,
     "coal_prb_follower_mustrun_max": 25.0,
-    "coal_prb_follower_floor": 0.71,
+    "coal_prb_follower_floor": 0.68,
     "coal_prb_follower_ceil": 1.35,
     "coal_prb_follower_gas_mid": 2.85,
     "coal_prb_follower_gas_slope": 2.5,
