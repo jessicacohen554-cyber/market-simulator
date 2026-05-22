@@ -24,6 +24,9 @@ body{background:var(--bg-page)}
 .modebtns button{text-align:left;border:1px solid var(--border);background:var(--bg-surface);border-radius:var(--radius-md);padding:9px 12px;font-size:var(--fs-sm);cursor:pointer;color:var(--ink);font-weight:600}
 .modebtns button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .runlist{display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto}
+.runsel{position:relative}
+.runbtn{width:100%;text-align:left;border:1px solid var(--border);background:var(--bg-surface);border-radius:var(--radius-md);padding:9px 12px;font-size:var(--fs-sm);cursor:pointer;color:var(--ink);font-weight:600}
+.runpop{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:40;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-md);padding:6px;max-height:320px;overflow:auto}
 .runopt{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);padding:6px 8px;border-radius:var(--radius-sm);cursor:pointer}
 .runopt:hover{background:#eef3f9}.runopt input{margin:0}
 .runopt .rid{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--accent-deep);cursor:pointer;text-decoration:underline dotted}
@@ -80,7 +83,9 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <h3>Mode</h3><div class=modebtns id=modeSel>
    <button data-m=compare class=on>Comparison</button>
    <button data-m=single>Single deep-dive</button></div>
-  <h3 id=runHdr>Runs (max 5)</h3><div class=runlist id=runList></div>
+  <h3 id=runHdr>Runs (max 5)</h3>
+  <div class=runsel><button id=runBtn class=runbtn type=button>Pick runs</button>
+   <div id=runPop class="runpop hide"></div></div>
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
@@ -282,16 +287,20 @@ function render(){const ids=selectedRuns().filter(Boolean);if(!ids.length){docum
   if(st.mode==="single"){st.classWrap=true;if(st.page==="charts")renderSingleCharts();else renderSingleTables();}
   else{if(st.page==="charts")renderCompareCharts();else renderCompareTables();}
  }).catch(e=>{document.getElementById("diag").style.display="block";document.getElementById("diag").textContent="Load error: "+(e.message||e);});}
-function buildRunList(){const el=document.getElementById("runList");const single=st.mode==="single";
+function runSummary(){if(st.mode==="single"){const m=META_RUN(st.single);return m?m.label:"Pick a run";}
+ const n=st.runs.length;return n?n+" run"+(n>1?"s":"")+" selected":"Pick runs";}
+function buildRunList(){const single=st.mode==="single";
+ const runBtn=document.getElementById("runBtn"),runPop=document.getElementById("runPop");
  document.getElementById("runHdr").textContent=single?"Run":"Runs (max 5)";
- el.innerHTML=BC.manifest.map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
+ runBtn.textContent=runSummary()+"  ▾";
+ runPop.innerHTML=BC.manifest.map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
   return `<label class=runopt><input type=${single?"radio":"checkbox"} name=run value="${m.id}" ${checked?"checked":""}>
-   <span>${m.label}<br>${ridSpan(m.id)}</span></label>`;}).join("");
- el.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
-  if(single){st.single=inp.value;}
+   <span>${m.label} <span class=rid data-rid="${m.id}">${m.shorthand}</span></span></label>`;}).join("");
+ runPop.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
+  if(single){st.single=inp.value;runPop.classList.add("hide");}
   else{const set=new Set(st.runs);if(inp.checked){if(set.size>=5){inp.checked=false;return;}set.add(inp.value);}else set.delete(inp.value);st.runs=[...set];}
-  render();});
- wireTips(el);}
+  runBtn.textContent=runSummary()+"  ▾";render();});
+ wireTips(runPop);}
 function build(){
  document.getElementById("modeSel").onclick=e=>{const m=e.target.dataset.m;if(!m)return;st.mode=m;
   [...e.currentTarget.children].forEach(b=>b.classList.toggle("on",b.dataset.m===m));buildRunList();render();};
@@ -306,6 +315,9 @@ function build(){
   if(z==="__all")st.zones=new Set(META.zones);else{if(st.zones.has(z))st.zones.delete(z);else st.zones.add(z);if(!st.zones.size)st.zones=new Set(META.zones);}
   [...zsel.children].forEach(c=>{const zz=c.dataset.z;c.classList.toggle("on",zz==="__all"?st.zones.size===META.zones.length:st.zones.has(zz));});
   Object.keys(_aggC).forEach(k=>delete _aggC[k]);render();};
+ const runBtn=document.getElementById("runBtn"),runPop=document.getElementById("runPop");
+ runBtn.onclick=e=>{e.stopPropagation();runPop.classList.toggle("hide");};
+ document.addEventListener("click",e=>{if(!e.target.closest("#runPop")&&e.target!==runBtn)runPop.classList.add("hide");});
  buildRunList();render();}
 async function boot(){try{
   META=window.BC.meta;
