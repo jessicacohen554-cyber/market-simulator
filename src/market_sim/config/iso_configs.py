@@ -257,6 +257,62 @@ def _miso_config() -> ISOConfig:
     return ISOConfig(name="MISO", zones=zones, links=links, voll=2000.0)
 
 
+def _spp_config() -> ISOConfig:
+    """Build the SPP topology configuration.
+
+    Two zones split SPP along its north–south axis — **SPP-North** (the
+    Kansas/Nebraska core plus the upper-Plains states: the Dakotas, Minnesota,
+    Iowa, eastern Colorado and the far-eastern-Montana load served through
+    Basin Electric / WAPA Upper Great Plains, and the Kansas-City-metro
+    Missouri load) and **SPP-South** (the Oklahoma core plus the Xcel SPS
+    Texas-panhandle / eastern-New-Mexico footprint, the SWEPCO northwest-
+    Louisiana / Arkansas footprint, and the Empire District southwest-Missouri
+    load). The single North↔South link bounds SPP's defining recurring
+    congestion: moving the wind-rich north's and west's output to load. SPP is
+    the closest of all the ISOs to ERCOT in market design — an energy market
+    plus a resource-adequacy obligation, with no centralized capacity market.
+
+    Load shares apportion SPP coincident-peak demand North/South. SPP runs a
+    single market footprint (it is not zonally divided), so the split is built
+    up from member/state peak load: the North carries Evergy-Kansas, the
+    Nebraska publics (OPPD/NPPD/LES) and the Kansas-City metro; the South
+    carries Oklahoma (OG&E/PSO/GRDA/WFEC), Xcel SPS and SWEPCO. The two are
+    near-even, with the North marginally larger. Source: SPP balancing-
+    authority / member peak load (SPP State of the Market & Performance Report;
+    EIA state electricity profiles). Tier 3 (calibration) — verify against
+    metered member load.
+    """
+    zones = [
+        Zone(name="SPP-North", iso="SPP", load_share=0.52),
+        Zone(name="SPP-South", iso="SPP", load_share=0.48),
+    ]
+    # SPP North↔South wind-export corridor seeded from SPP OASIS / Integrated
+    # Transmission Planning (ITP) flowgate ratings. SPP is wind-dominated and
+    # its recurring congestion is the north-to-load (and west-to-load) transfer
+    # of wind across the center of the footprint; the model collapses SPP's
+    # many north–south 345 kV flowgates into a single aggregated interface.
+    # The pipe-and-bubble LP carries one symmetric TTC per link
+    # (build_variable_bounds bounds flow in [-ttc, +ttc]).
+    # Source: SPP OASIS Total Transfer Capability; SPP Integrated Transmission
+    # Planning (ITP) assessment; SPP flowgate/binding-constraint postings.
+    # Tier 3 (calibration) — verify against SPP OASIS transfer capabilities and
+    # binding-frequency from SPP flowgate/shadow-price data.
+    links = [
+        TransferLink(from_zone="SPP-North", to_zone="SPP-South", ttc_mw=6000.0),
+    ]
+    # SPP energy offer cap is $2,000/MWh: FERC Order 831 sets a $2,000/MWh hard
+    # cap on incremental energy offers across all RTOs/ISOs (offers above
+    # $1,000/MWh must be cost-verified). SPP has no centralized capacity market;
+    # reliability investment is signaled through a resource-adequacy obligation
+    # (a forward planning-reserve-margin requirement on load-responsible
+    # entities), making SPP the closest of the RTOs to ERCOT in design. Being
+    # RA-backed rather than fully energy-only, its energy cap sits at the
+    # Order 831 $2,000 level rather than ERCOT's $5,000.
+    # Source: FERC Order 831; SPP Markets Protocols (Maximum Energy Offer);
+    # SPP Planning Criteria (resource-adequacy / planning-reserve-margin).
+    return ISOConfig(name="SPP", zones=zones, links=links, voll=2000.0)
+
+
 def _pjm_config() -> ISOConfig:
     """Build the PJM topology configuration.
 
@@ -464,6 +520,7 @@ _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
     "MISO": _miso_config,
+    "SPP": _spp_config,
     "PJM": _pjm_config,
     "NYISO": _nyiso_config,
     "NEISO": _neiso_config,
