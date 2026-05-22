@@ -117,6 +117,12 @@ def _nameplates() -> dict[int, float]:
                     bins["Nameplate_MW"].astype(float)))
 
 
+def _plant_names() -> dict[int, str]:
+    bins = pd.read_csv(ScenarioConfig().campd_bins_path)
+    return dict(zip(bins["Plant_Code"].astype(int),
+                    bins["Plant_Name"].astype(str)))
+
+
 def _coal_group(klass: str) -> str:
     return klass
 
@@ -131,6 +137,7 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
     non-fossil model annual, and the system fuel-vs-930 table rows).
     """
     npl = _nameplates()
+    pnames = _plant_names()
     labels = [lab for lab, _ in runs]
     years_set: set[int] = set()
     zones_set: set[str] = set()
@@ -188,6 +195,7 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
                     cap = float(npl.get(code, 0.0)) or 1.0
                     e_ann = float(e923_ann.get(code, 0.0)) / 1e6
                     bplants[str(code)] = {
+                        "name": pnames.get(code, str(code)),
                         "zone": zone_p.get(code, "?"),
                         "group": grp, "npl": round(cap),
                         "campd": _b64(100.0 * cn / cap),
