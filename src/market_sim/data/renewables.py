@@ -130,6 +130,15 @@ _ERCOT_HSL_FILE: Path = (
     / "inputs" / "raw-data" / "ercot-hsl" / "ercot_2023_hsl_hourly.parquet"
 )
 
+# The raw ERCOT 2023 wind HSL series sums below the EIA-930 delivered total
+# (~104 vs 108 TWh) — impossible, since HSL is the uncurtailed potential and
+# must be at least the delivered. Rescale the series (preserving its hourly
+# shape) up to the delivered EIA-930 annual total so the dispatch starts from a
+# physically consistent potential. Keyed by (iso, year, fuel) -> annual TWh.
+_HSL_RESCALE_TWH: dict[tuple[str, int, str], float] = {
+    ("ERCOT", 2023, "wind"): 108.0,
+}
+
 
 def _as_float(value: object) -> float | None:
     """Coerce ``value`` to a float, returning ``None`` for blanks or NaN."""
@@ -433,6 +442,10 @@ def _hsl_cf_profile(
     if column not in df.columns or len(df) != HOURS_PER_YEAR:
         return None
     hsl_mw = df.sort_values("hour")[column].to_numpy(dtype=float)
+    target_twh = _HSL_RESCALE_TWH.get((iso, year, fuel))
+    if target_twh is not None and hsl_mw.sum() > 0:
+        # Scale the series to the delivered annual total, preserving its shape.
+        hsl_mw = hsl_mw * (target_twh * 1.0e6 / hsl_mw.sum())
     return _mw_to_cf(hsl_mw, monthly_capacity)
 
 
