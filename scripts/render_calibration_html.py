@@ -234,7 +234,10 @@ def _fuel_table(disp, e923, e930, year):
     e = {s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy()
          for s in e930["series"].unique()}
     flat = sum(mh.get(c, np.zeros(T)).sum() for c in ("CC_CHP", "CT_CHP", "ST_CHP")) / T
-    use_930 = year >= 2025
+    # EIA-930 is the demand benchmark we scale to, and 923 is materially
+    # incomplete (solar every year, wind in 2025), so compare every year to 930
+    # (grid-delivered) with the model shown grid-only.
+    use_930 = True
 
     def grid(classes):
         return sum((mh.get(c, np.zeros(T)) for c in classes), np.zeros(T))
@@ -306,7 +309,10 @@ def _fossil_table(disp, e923, campd):
     btmc = _btm_by_class(e923)
     ch = _campd_class_hourly(campd, e923, T)
     body = ""
-    for c in _FOSSIL_CLASSES:
+    # ST_CHP (3 tiny ~fully-behind-the-meter industrial steam cogens, 249 MW)
+    # is irrelevant on the grid stack and its near-zero grid benchmark blows up
+    # the percentage, so it is omitted from the fossil-class comparison.
+    for c in (cls for cls in _FOSSIL_CLASSES if cls != "ST_CHP"):
         g = mh.get(c, np.zeros(T))
         gtwh = g.sum() / 1e6
         bench = ann.get(c, 0.0) - btmc.get(c, 0.0)
@@ -372,8 +378,8 @@ def tabular_html(bundles, payload):
         campd = campd[campd["year"] == year]
         secs += (
             f'<div class="tyear{"" if i == 0 else " hide"}" data-ty={year}>'
-            f"<h3>Fuel totals — model vs {'EIA-930 (923 incomplete)' if year >= 2025 else 'EIA-923 (EIA-930 for solar)'}, "
-            f"hourly fit vs EIA-930</h3>"
+            f"<h3>Fuel totals — model vs EIA-930 (the demand benchmark; 923 is "
+            f"incomplete), hourly fit vs EIA-930</h3>"
             f'<div class=tablewrap>{_fuel_table(disp, e923, e930, year)}</div>'
             f"<h3>Fossil classes — model grid vs EIA-923 − BTM "
             f"(hourly r / NRMSE vs CAMPD, absolute MW)</h3>"
