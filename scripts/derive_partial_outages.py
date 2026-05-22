@@ -37,6 +37,7 @@ from market_sim.data.fleet import load_campd_bins  # noqa: E402
 _DETECT_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR"})
 _BASELOAD_CF = 0.55      # only plants that normally run near their ceiling
 _MIN_DAYS = 5            # sustained plateau length
+_SMOOTH_DAYS = 7         # rolling-median window to ride through recovery blips
 _CEILING_FRAC = 0.65     # daily max below this fraction of the normal ceiling
 _RUN_FLOOR_CF = 0.06     # daily mean above this = running (not a full outage)
 
@@ -52,7 +53,12 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
     ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
     if ref <= 0.0:
         return []
-    partial = running & (dmax < _CEILING_FRAC * ref) & (dmax > 0.12)
+    # Smooth the daily-max ceiling with a centered rolling median so brief
+    # recovery blips (a unit cycling back for a day or two) don't break an
+    # otherwise sustained partial outage.
+    sm = pd.Series(dmax).rolling(
+        _SMOOTH_DAYS, center=True, min_periods=4).median().to_numpy()
+    partial = running & (sm < _CEILING_FRAC * ref)
     out, i = [], 0
     while i < nd:
         if partial[i]:
@@ -60,7 +66,9 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
             while j < nd and partial[j]:
                 j += 1
             if j - i >= _MIN_DAYS:
-                ceiling = float(dmax[i:j].max())
+                # Typical depressed ceiling over the window (median ignores the
+                # blips, so the derate reflects the sustained reduced capacity).
+                ceiling = float(np.median(dmax[i:j]))
                 out.append((i, j, round(min(1.0, ceiling / ref), 3)))
             i = j
         else:
