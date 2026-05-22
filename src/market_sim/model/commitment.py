@@ -433,24 +433,32 @@ def apply_commitment_with_coal_pin(
         else:
             avail[g, ~committed[g]] = 0.0
 
-    # Couple each bin's econ tranche to its committed tranche: they are the
+    # Couple each bin's econ tranche(s) to its committed tranche: they are the
     # same physical unit, so the econ tranche shuts down in every hour the
     # committed tranche is decommitted. The commitment screen only ran on
-    # the committed tranche (the econ tranche carries min_run_hours = 0).
-    bin_tranches: dict[str, dict[str, int]] = {}
+    # the committed tranche (the econ tranche carries min_run_hours = 0). A
+    # split economic block emits two econ tranches (``econlo`` / ``econhi``);
+    # both couple to the committed tranche, so any suffix starting ``econ``
+    # is collected.
+    bin_tranches: dict[str, dict[str, object]] = {}
     for g, gen in enumerate(generators):
         if not gen.is_campd_bin:
             continue
         bin_id, _, suffix = gen.unit_id.rpartition("_")
-        if suffix in ("committed", "econ"):
-            bin_tranches.setdefault(bin_id, {})[suffix] = g
+        if suffix == "committed":
+            bin_tranches.setdefault(bin_id, {})["committed"] = g
+        elif suffix.startswith("econ"):
+            bin_tranches.setdefault(bin_id, {}).setdefault(
+                "econ", []
+            ).append(g)
 
     for pair in bin_tranches.values():
         c_idx = pair.get("committed")
-        e_idx = pair.get("econ")
-        if c_idx is None or e_idx is None:
+        e_idxs = pair.get("econ")
+        if c_idx is None or not e_idxs:
             continue
-        avail[e_idx, ~committed[c_idx]] = 0.0
+        for e_idx in e_idxs:
+            avail[e_idx, ~committed[c_idx]] = 0.0
 
     # Adequacy backstop: the screen and the coal pin must never leave a
     # zone-hour unable to reproduce its P1 thermal output — that would force
