@@ -242,15 +242,15 @@ def _calibration_config(
         # value (per operator); CC and Coal keep their CSV peaking %, while
         # Gas CT -> 7% and Gas Steam -> 15%.
         offer_curve_by_group={
-            "CC_REGULAR": {"committed": 0.85, "econ_low": 1.06,
+            "CC_REGULAR": {"committed": 0.75, "econ_low": 1.01,
                            "econ_high": 1.32, "econ_low_share": 0.556},
-            "CC_CHP": {"committed": 0.85, "econ_low": 1.06,
+            "CC_CHP": {"committed": 0.75, "econ_low": 1.01,
                        "econ_high": 1.32, "econ_low_share": 0.556},
-            "CT_PEAKER": {"committed": 0.90, "econ_low": 0.97,
-                          "econ_high": 1.08, "peak": 8.00,
+            "CT_PEAKER": {"committed": 1.10, "econ_low": 1.17,
+                          "econ_high": 1.48, "peak": 10.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.65, "econ_low": 0.95,
-                       "econ_high": 1.05, "peak": 4.00,
+            "ST_GAS": {"committed": 0.65, "econ_low": 0.90,
+                       "econ_high": 1.00, "peak": 3.5,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             "COAL": {"committed": 0.90, "econ_low": 0.95,
                      "econ_high": 1.02, "peak": 1.08,
@@ -322,6 +322,7 @@ def run_year(
     coal_mustrun_per_plant: bool = False,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
+    prb_overrides: dict | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -357,6 +358,11 @@ def run_year(
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
         coal_drop_pof, coal_prb_passthrough_tiered,
     )
+    # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
+    # --prb-* flags); None entries leave the ScenarioConfig default in place.
+    if prb_overrides:
+        config = config.with_overrides(
+            **{k: v for k, v in prb_overrides.items() if v is not None})
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
