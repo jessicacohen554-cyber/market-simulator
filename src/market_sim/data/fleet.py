@@ -25,6 +25,7 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     NOX_RATES,
     NUCLEAR_MONTHLY_CF,
+    NUCLEAR_MONTHLY_CF_BY_YEAR,
     THERMAL_AVAILABILITY,
     VOM,
 )
@@ -308,7 +309,13 @@ def generators_to_fleet_arrays(
     # maintenance). NUCLEAR_MONTHLY_CF holds 12 monthly capacity-factor caps
     # from NRC PRIS data; they multiply the EFORD derate to give the final
     # hourly availability. Non-nuclear units keep the flat 1 - eford derate.
-    monthly_cf = NUCLEAR_MONTHLY_CF.get(iso.upper()) if iso else None
+    # Prefer the per-year 923-derived refueling pattern for the backcast;
+    # fall back to the fixed seasonal average for forecast years.
+    _iso = iso.upper() if iso else None
+    _yr = getattr(config, "weather_year", None) if config is not None else None
+    monthly_cf = NUCLEAR_MONTHLY_CF_BY_YEAR.get(_iso, {}).get(_yr) if _iso else None
+    if monthly_cf is None and _iso:
+        monthly_cf = NUCLEAR_MONTHLY_CF.get(_iso)
     if monthly_cf is not None:
         monthly_factors = np.array(monthly_cf, dtype=float)
         month_idx = _hour_to_month_index(hours)
