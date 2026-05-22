@@ -267,7 +267,7 @@ class ScenarioConfig:
     # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
     # fuel.prb_passthrough_series.
     coal_prb_passthrough_sigmoid: bool = False
-    coal_prb_passthrough_floor: float = 0.82    # cheap-gas asymptote
+    coal_prb_passthrough_floor: float = 0.78    # cheap-gas asymptote
     coal_prb_passthrough_ceil: float = 1.50     # dear-gas asymptote (>1 = markup)
     coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
     coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
@@ -282,7 +282,7 @@ class ScenarioConfig:
     # coal_mustrun_per_plant.
     coal_prb_passthrough_tiered: bool = False
     coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
-    coal_prb_follower_floor: float = 0.71
+    coal_prb_follower_floor: float = 0.68
     coal_prb_follower_ceil: float = 1.35
     coal_prb_follower_gas_mid: float = 2.85
     coal_prb_follower_gas_slope: float = 2.5
