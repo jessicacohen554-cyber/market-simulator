@@ -35,6 +35,7 @@ from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
     outage_masks_for_year,
+    partial_outage_derate_factors,
     unit_outage_derate_factors,
 )
 
@@ -495,6 +496,21 @@ def generators_to_fleet_arrays(
             logger.info(
                 "unit-outage derate (%d): %d bin-tranches derated",
                 config.weather_year, applied_u,
+            )
+        # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
+        # half-units-out events for baseload coal + a confirmed CC allowlist
+        # where no unit data exists. Multiplies availability over the window.
+        pfac = partial_outage_derate_factors(config.weather_year, hours)
+        if pfac:
+            applied_p = 0
+            for g_idx, gen in enumerate(generators):
+                f = pfac.get(int(gen.plant_code))
+                if f is not None:
+                    availability[g_idx, :] *= f
+                    applied_p += 1
+            logger.info(
+                "partial-outage derate (%d): %d bin-tranches derated",
+                config.weather_year, applied_p,
             )
 
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
