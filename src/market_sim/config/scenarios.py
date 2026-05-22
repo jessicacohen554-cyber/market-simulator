@@ -337,6 +337,13 @@ class ScenarioConfig:
     cc_econ_hr_override: float | None = None
     cc_peak_hr_override: float | None = None
 
+    # When True, each CC_REGULAR bin's committed-tranche % (minimum stable load
+    # once started) is replaced by the per-plant CAMPD-observed value
+    # (fleet.CC_REGULAR_COMMITTED_PCT_BY_PLANT) instead of the coarse assumed
+    # CSV Pct_Committed; the economic tranche absorbs the difference. Plants
+    # without CAMPD coverage keep the CSV value. Off by default (CSV split).
+    cc_committed_per_plant: bool = False
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
@@ -355,6 +362,50 @@ class ScenarioConfig:
     ct_committed_hr_override: float | None = None
     ct_econ_hr_override: float | None = None
     ct_peak_hr_override: float | None = None
+
+    # Economic-tranche split. Maps a CAMPD bin's Plant_Group to a 3-element
+    # list ``[split_frac, lo_hr_mult, hi_hr_mult]``: the single economic tranche
+    # is replaced by two stepped tranches — a lower step holding ``split_frac``
+    # of the economic capacity at ``base_HR x lo_hr_mult`` (the plant's weighted
+    # heat rate ``hr_weighted`` x the multiplier), and an upper step holding the
+    # remainder at ``base_HR x hi_hr_mult`` — giving a rising heat rate across
+    # the economic block (lo_hr_mult < hi_hr_mult). The mechanism is generic and
+    # available for EVERY group (CC_REGULAR, CC_CHP, ST_GAS, CT_CHP, CT_PEAKER,
+    # COAL, ST_CHP); only groups present in the map are split, and ST_GAS peaker
+    # plants (fleet.ST_GAS_PEAKER_PLANTS) are excluded (they dispatch on CSV heat
+    # rates). When a group is split, its two steps' heat rates come from
+    # lo/hi_hr_mult and SUPERSEDE that group's single cc_/gas_st_/ct_econ_hr_
+    # override for the economic tranche.
+    #
+    # The split location and multipliers are NOT defaulted — they are supplied by
+    # the operator from their own research. Empty map (the default) leaves every
+    # group with a single economic tranche (current behavior). Example (values
+    # illustrative, not endorsed):
+    #     econ_split_by_group={"ST_GAS": [0.5, 0.9, 1.3],
+    #                          "CC_REGULAR": [0.5, 1.05, 1.30]}
+    econ_split_by_group: dict[str, list[float]] = field(default_factory=dict)
+
+    # Unified thermal offer-curve parameterization (supersedes the legacy
+    # cc_/gas_st_/ct_*_hr_override triples + econ_split_by_group for any group
+    # present here). Maps a Plant_Group to its band price multipliers on the
+    # heat-rate term — band MC = VOM + (AHR x fuel_price) x multiplier, with VOM
+    # held CONSTANT across bands (no peak VOM markup). Inner keys:
+    #   committed      — committed-band HR multiplier
+    #   econ_low       — lower economic-step HR multiplier
+    #   econ_high      — upper economic-step HR multiplier
+    #   econ_low_share — fraction of the economic block in the lower step
+    #   peak           — peaking-band HR multiplier (OMITTED for CC_REGULAR /
+    #                    CC_CHP, whose duct-burner peak multiplier is set per
+    #                    plant by turbine class, fleet.cc_duct_burner_peak_mult)
+    #   pct_peaking    — OPTIONAL peaking capacity %; when present it overrides
+    #                    the CSV Pct_Peaking before the residual split
+    #                    (residual = 100 - must_run - committed - peaking, then
+    #                    econ_low/econ_high = residual x econ_low_share/(1-share))
+    # ST_GAS peaker plants (fleet.ST_GAS_PEAKER_PLANTS) are excluded (CSV heat
+    # rates). Empty (the default) leaves the legacy override / CSV path intact.
+    offer_curve_by_group: dict[str, dict[str, float]] = field(
+        default_factory=dict
+    )
 
     # CHP cogeneration treatment. When chp_steam_following is True, each
     # CC_CHP / CT_CHP / ST_CHP bin is modeled as a steam host's cogen rather
