@@ -11,7 +11,7 @@ DecompressionStream. Styled to match the repo design system
 SHELL = r"""<!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>Backcast Results — Calibration Comparison</title>
-<link rel=stylesheet href="frontend/css/style.css">
+__SITECSS__
 <style>
 :root{--mr:#7b8794;}
 body{background:var(--bg-page)}
