@@ -2114,15 +2114,20 @@ def _offer_curve_for_group(
     Reads ``config.offer_curve_by_group[group]`` (see :class:`ScenarioConfig`).
     Returns ``None`` — the legacy override / CSV path — when no curve is
     configured for the group or for an ST_GAS peaker plant (those keep their
-    CSV heat rates, matching the ``gas_st_*_hr_override`` scope).
+    CSV heat rates, matching the ``gas_st_*_hr_override`` scope). COAL plants
+    resolve to a supply-specific ``COAL_LIGNITE`` / ``COAL_PRB`` entry when
+    present, else the generic ``COAL`` entry.
     """
     curves = getattr(config, "offer_curve_by_group", None) or {}
-    curve = curves.get(group)
-    if not curve:
-        return None
+    if group == "COAL":
+        supply = COAL_PLANT_SUPPLY.get(int(plant_code), "")
+        key = ("COAL_LIGNITE" if supply == "lignite"
+               else "COAL_PRB" if supply == "prb" else None)
+        return (curves.get(key) if key and curves.get(key)
+                else curves.get("COAL")) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
         return None
-    return curve
+    return curves.get(group) or None
 
 
 def _econ_split_for_group(
