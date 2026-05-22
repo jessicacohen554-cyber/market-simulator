@@ -134,7 +134,7 @@ function classMetrics(id,year,grp){const ps=plantsOf(id,year,grp);if(!ps.length)
  const a=aggMW(id,year,grp);const r=pearson(a.mm,a.cc),nr=nrmse(a.mm,a.cc),dev=a.cA>0?(a.mA-a.cA)/a.cA:0;
  const m1=a.cc.reduce((s,v)=>s+v,0)>0?capScore(r,nr,dev):null;
  const M=MODEL[id].years[year];let ws=0,cs=0;for(const c of ps){const w=BENCH[year].plants[c].npl,cp=M.plants[c].cap;if(cp!=null){ws+=w;cs+=w*cp;}}
- return {m1,m2:ws>0?cs/ws:null,r,nr,dev,mA:a.mA,cA:a.cA,eA:a.eA,bench923:a.eA-a.bA,n:ps.length};}
+ return {m1,m2:ws>0?cs/ws:null,r,nr,dev,mA:a.mA,cA:a.cA,eA:a.eA,bench923:a.eA,n:ps.length};}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 // ---- tooltip + run-id ----
