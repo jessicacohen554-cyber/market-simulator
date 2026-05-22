@@ -89,8 +89,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div id=content></div>
  </main>
 </div>
-<script src="frontend/data/backcast/manifest.js"></script>
-<script src="frontend/data/backcast/benchmark.js"></script>
+__DATASCRIPTS__
 <script>
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const RC=["#4A90D9","#2ECC71","#9B59B6","#E67E22","#E74C3C"];

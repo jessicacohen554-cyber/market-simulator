@@ -81,8 +81,16 @@ def _run_meta(bundle: Path, fallback_id: str) -> dict:
     }
 
 
-def generate(runs: list[tuple[str, Path]], out: Path) -> None:
-    """Write the data files + the static shell for the given runs."""
+def generate(runs: list[tuple[str, Path]], out: Path,
+             standalone: Path | None = None) -> None:
+    """Write the data files + the static shell for the given runs.
+
+    Always writes the deployable split files (data under
+    ``frontend/data/backcast/``) and the Pages shell at ``out``. When
+    ``standalone`` is given, also writes a single self-contained HTML there
+    with the manifest / benchmark / every run inlined (no separate files,
+    no fetch) — suitable for sending or opening anywhere.
+    """
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     # Reuse the payload builder, then split into shared benchmark + per-run.
     D = rch.build_payload(runs)
@@ -90,42 +98,55 @@ def generate(runs: list[tuple[str, Path]], out: Path) -> None:
         "groups": D["groups"], "groupLabel": D["groupLabel"],
         "zones": D["zones"], "years": D["years"],
     }
-    # Benchmark (shared) -> benchmark.js
-    (DATA_DIR / "benchmark.js").write_text(
-        "window.BC=window.BC||{};window.BC.benchGz="
-        + json.dumps(_gzb64(D["bench"])) + ";")
+    bench_js = ("window.BC=window.BC||{};window.BC.benchGz="
+                + json.dumps(_gzb64(D["bench"])) + ";")
+    (DATA_DIR / "benchmark.js").write_text(bench_js)
 
-    manifest = []
+    manifest, run_js = [], []
     for i, (rid_hint, bundle) in enumerate(runs):
-        rm = _run_meta(bundle, rid_hint if "=" in f"{rid_hint}=" else "")
-        # rid_hint is the LABEL passed on the CLI; use it as the shorthand seed
-        rm = _run_meta(bundle, _slug(rid_hint))
+        rm = _run_meta(bundle, _slug(rid_hint))  # rid_hint is the CLI label
         rid = rm["id"]
         model = D["model"][i]
         model["label"] = rm["label"]
-        (RUNS_DIR / f"{rid}.js").write_text(
-            "window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
-            f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model))
-            + ";")
+        js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
+              f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model))
+              + ";")
+        (RUNS_DIR / f"{rid}.js").write_text(js)
+        run_js.append(js)
         rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
         manifest.append(rm)
 
-    (DATA_DIR / "manifest.js").write_text(
-        "window.BC=window.BC||{};window.BC.meta="
-        + json.dumps(meta_block) + ";window.BC.manifest="
-        + json.dumps(manifest) + ";")
+    manifest_js = ("window.BC=window.BC||{};window.BC.meta="
+                   + json.dumps(meta_block) + ";window.BC.manifest="
+                   + json.dumps(manifest) + ";")
+    (DATA_DIR / "manifest.js").write_text(manifest_js)
 
-    out.write_text(SHELL.replace("__GEN__",
-                   datetime.now().strftime("%Y-%m-%d %H:%M")))
+    gen = datetime.now().strftime("%Y-%m-%d %H:%M")
+    # Deployable shell: load data via <script src> (Pages auto-pickup).
+    src_tags = ('<script src="frontend/data/backcast/manifest.js"></script>'
+                '<script src="frontend/data/backcast/benchmark.js"></script>')
+    out.write_text(SHELL.replace("__DATASCRIPTS__", src_tags)
+                   .replace("__GEN__", gen))
     sz = sum(f.stat().st_size for f in DATA_DIR.rglob("*.js")) / 1e6
     print(f"wrote {out} + {len(manifest)} run data files "
           f"({sz:.1f} MB data, ids: {[m['id'] for m in manifest]})")
+
+    if standalone is not None:
+        inline = "".join(f"<script>{s}</script>"
+                         for s in [manifest_js, bench_js, *run_js])
+        standalone.write_text(SHELL.replace("__DATASCRIPTS__", inline)
+                              .replace("__GEN__", gen))
+        print(f"wrote standalone {standalone} "
+              f"({standalone.stat().st_size / 1e6:.1f} MB)")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundles", nargs="+", help="[LABEL=]BUNDLE_DIR per run")
     ap.add_argument("--out", default=str(REPO / "backcast-results.html"))
+    ap.add_argument("--standalone", default=None,
+                    help="Also write a single self-contained HTML (data "
+                         "inlined) at this path, for sending/offline viewing.")
     args = ap.parse_args()
     runs = []
     for spec in args.bundles:
@@ -134,7 +155,8 @@ def main() -> None:
         else:
             d = spec; lab = Path(spec).name
         runs.append((lab, Path(d)))
-    generate(runs, Path(args.out))
+    generate(runs, Path(args.out),
+             Path(args.standalone) if args.standalone else None)
 
 
 # The static shell HTML/JS is defined in the companion module to keep this file
