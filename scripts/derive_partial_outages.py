@@ -92,7 +92,11 @@ def main() -> None:
                 continue
             cf = (g["gross_mw"].reindex(full).fillna(0.0)
                   / cap[code]).to_numpy(dtype=float)
-            if cf.mean() < _BASELOAD_CF:
+            # Coal is all-or-nothing per unit, and a derate cap only binds when
+            # the model wants to run above the observed ceiling, so it is safe
+            # to detect even on cyclic coal. CC part-loads economically, so its
+            # depressed ceilings are only trustworthy on baseload units.
+            if group.get(code) == "CC_REGULAR" and cf.mean() < _BASELOAD_CF:
                 continue
             for s, e, factor in _detect(cf):
                 rows.append({
