@@ -31,12 +31,10 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
 
-# Confirmed combined-cycle plants with real partial outages (others excluded —
-# CC part-loading is often economic). Expand as unit data confirms more.
-_CC_ALLOWLIST: frozenset[int] = frozenset({
-    60122,  # Colorado Bend II
-    59812,  # Wolf Hollow II
-})
+# Plant groups eligible for partial-outage detection: baseload COAL (all-or-
+# nothing) and CC_REGULAR. The baseload-CF filter below excludes cyclic units
+# where a depressed CF ceiling is economic part-load rather than an outage.
+_DETECT_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR"})
 _BASELOAD_CF = 0.55      # only plants that normally run near their ceiling
 _MIN_DAYS = 5            # sustained plateau length
 _CEILING_FRAC = 0.65     # daily max below this fraction of the normal ceiling
@@ -82,7 +80,7 @@ def main() -> None:
     cap = dict(zip(bins["Plant_Code"].astype(int), bins["capacity_mw"]))
     name = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"]))
     group = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))
-    candidates = [c for c in cap if group.get(c) == "COAL" or c in _CC_ALLOWLIST]
+    candidates = [c for c in cap if group.get(c) in _DETECT_GROUPS]
 
     rows = []
     for yr in args.years:
