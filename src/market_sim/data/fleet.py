@@ -248,6 +248,28 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
 )
 
+# Per-plant coal maximum capacity-factor ceilings (fraction of capacity_mw):
+# the sustained output each unit cannot exceed even running hard (derates,
+# heat-rate / boiler limits), capping the dispatch so coal does not over-run.
+# Applied as an availability ceiling year-round.
+COAL_MAX_CF_BY_PLANT: dict[int, float] = {
+    6180: 0.90,  # Oak Grove
+    298:  0.80,  # Limestone
+    6178: 0.99,  # Coleto Creek
+    6183: 0.90,  # San Miguel
+    6179: 0.89,  # Fayette (Sam Seymour)
+    7097: 0.80,  # J K Spruce
+}
+# Year-specific ceiling overrides (e.g. confirmed unit-outage years).
+COAL_MAX_CF_OVERRIDE: dict[tuple[int, int], float] = {
+    (6179, 2025): 0.78,  # Fayette unit issues held it to ~78% in 2025
+}
+# Summer-only (Jun-Sep) ceilings: an ambient/derate cap that only binds in the
+# heat (the unit runs higher the rest of the year).
+COAL_SUMMER_MAX_CF: dict[int, float] = {
+    7030: 0.87,  # Major Oak — ~13% summer derate
+}
+
 
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
@@ -405,6 +427,21 @@ def generators_to_fleet_arrays(
             summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
             if summer_derate:
                 availability[g_idx, summer] *= 1.0 - summer_derate
+            # Per-plant coal max-CF ceilings: cap availability so the unit
+            # cannot dispatch above its sustained operating limit.
+            if gen.plant_group == "COAL":
+                _pc = int(gen.plant_code)
+                cap = COAL_MAX_CF_OVERRIDE.get(
+                    (_pc, run_year), COAL_MAX_CF_BY_PLANT.get(_pc)
+                )
+                if cap is not None:
+                    np.minimum(availability[g_idx, :], cap,
+                               out=availability[g_idx, :])
+                scap = COAL_SUMMER_MAX_CF.get(_pc)
+                if scap is not None:
+                    availability[g_idx, summer] = np.minimum(
+                        availability[g_idx, summer], scap
+                    )
         np.clip(availability, 0.0, 1.0, out=availability)
 
     # Historic-outage overlay (backcast only). When config.outage_source is
