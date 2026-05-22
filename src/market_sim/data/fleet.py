@@ -2080,11 +2080,12 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
 # on (AHR x fuel_price). Operator ranges: advanced G/H-class 2.3-2.5, F-class
 # 2.0-2.3, older E-class / legacy 1.8-2.0 — a lower base AHR makes the
 # duct-fire/base ratio steeper, so the most efficient classes carry the highest
-# multiplier. These are the range midpoints; refine per class if needed.
+# multiplier. Set 0.1 below the range midpoints per the operator's CC peaking
+# tune.
 CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
-    "advanced": 2.40,  # G/H-class (midpoint of 2.3-2.5)
-    "f": 2.15,         # F-class incl. E/F (midpoint of 2.0-2.3)
-    "older": 1.90,     # E-class, legacy (midpoint of 1.8-2.0)
+    "advanced": 2.30,  # G/H-class
+    "f": 2.05,         # F-class incl. E/F
+    "older": 1.80,     # E-class, legacy
 }
 
 
