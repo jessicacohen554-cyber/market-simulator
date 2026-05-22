@@ -225,19 +225,37 @@ def _calibration_config(
         #   follower-tier PRB sigmoid for low-must-run load-followers.
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
-        gas_st_committed_hr_override=0.65,  # reliability ST_GAS supply curve:
-        gas_st_econ_hr_override=1.1,       # must-run-if-committed bid at 0.65x,
-        gas_st_peak_hr_override=1.5,       # economic 1.1x, peaking 1.5x (no
-        #   flat must-run floor). Peakers keep CSV HRs and run economically.
-        cc_committed_hr_override=1.0,  # CC supply curve: committed at full
-        cc_econ_hr_override=1.15,      # efficiency, economic a modest part-
-        cc_peak_hr_override=1.85,      # load penalty, peaking expensive.
+        # CC and ST_GAS supply curves now come from the unified offer curve
+        # below (offer_curve_by_group), so their legacy override triples are
+        # left unset. CT_CHP keeps its legacy override (not in the offer curve).
         cc_committed_per_plant=True,   # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
         ct_committed_hr_override=1.0,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.1,       # BTM + steam-following floor: committed
         ct_peak_hr_override=1.3,       # 1.0x, economic 1.1x, peaking 1.3x.
+        # Unified thermal offer curve (operator-supplied band multipliers on
+        # AHR x fuel_price; VOM constant across bands). Economic block split
+        # into two steps (econ_low / econ_high) by econ_low_share. CC peaking
+        # uses the per-plant duct-burner multiplier (turbine class), so no
+        # "peak" key. Gas Steam committed kept at the current 0.65x reliability
+        # value (per operator); CC and Coal keep their CSV peaking %, while
+        # Gas CT -> 7% and Gas Steam -> 15%.
+        offer_curve_by_group={
+            "CC_REGULAR": {"committed": 0.85, "econ_low": 1.06,
+                           "econ_high": 1.32, "econ_low_share": 0.556},
+            "CC_CHP": {"committed": 0.85, "econ_low": 1.06,
+                       "econ_high": 1.32, "econ_low_share": 0.556},
+            "CT_PEAKER": {"committed": 0.90, "econ_low": 0.97,
+                          "econ_high": 1.08, "peak": 8.00,
+                          "econ_low_share": 0.526, "pct_peaking": 7.0},
+            "ST_GAS": {"committed": 0.65, "econ_low": 0.95,
+                       "econ_high": 1.05, "peak": 4.00,
+                       "econ_low_share": 0.500, "pct_peaking": 15.0},
+            "COAL": {"committed": 0.90, "econ_low": 0.95,
+                     "econ_high": 1.02, "peak": 1.08,
+                     "econ_low_share": 0.556},
+        },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
         #   grid-delivered steam-following min-gen (CHP_PMIN_CF_BY_PLANT - BTM).
