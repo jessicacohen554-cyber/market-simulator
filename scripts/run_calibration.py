@@ -232,6 +232,9 @@ def _calibration_config(
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
         cc_econ_hr_override=1.15,      # efficiency, economic a modest part-
         cc_peak_hr_override=1.85,      # load penalty, peaking expensive.
+        cc_committed_per_plant=True,   # ground each CC_REGULAR committed % in
+        #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
+        #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
         ct_committed_hr_override=1.0,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.1,       # BTM + steam-following floor: committed
         ct_peak_hr_override=1.3,       # 1.0x, economic 1.1x, peaking 1.3x.
