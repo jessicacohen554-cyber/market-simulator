@@ -137,6 +137,7 @@ _ERCOT_HSL_FILE: Path = (
 # physically consistent potential. Keyed by (iso, year, fuel) -> annual TWh.
 _HSL_RESCALE_TWH: dict[tuple[str, int, str], float] = {
     ("ERCOT", 2023, "wind"): 108.0,
+    ("ERCOT", 2023, "solar"): 31.9,
 }
 
 
