@@ -220,6 +220,18 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
             mplants: dict[str, dict] = {}
             for code, mw in mw_p.items():
                 cap = float(npl.get(code, 0.0)) or 1.0
+                grp = grp_p.get(code, "")
+                # CHP add-back (report only, NOT in the LP): the host
+                # behind-the-meter self-supply was held out of the grid solve,
+                # but CAMPD measures the full plant. Add it back flat so the
+                # plant heatmap and the plant/class r / NRMSE / capture compare
+                # the full plant to the full CAMPD plant. A flat add is
+                # correlation-invariant (it corrects the level, not the shape).
+                if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
+                    btm_mwh = float(e923_ann.get(code, 0.0)) * _btm_share(
+                        code, grp)
+                    if btm_mwh > 0.0:
+                        mw = mw + btm_mwh / float(_T)
                 cn = cn_p.get(code)
                 r = nr = None
                 cap_pct = None
