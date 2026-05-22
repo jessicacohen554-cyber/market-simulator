@@ -135,6 +135,9 @@ function classMetrics(id,year,grp){const ps=plantsOf(id,year,grp);if(!ps.length)
  const m1=a.cc.reduce((s,v)=>s+v,0)>0?capScore(r,nr,dev):null;
  const M=MODEL[id].years[year];let ws=0,cs=0;for(const c of ps){const w=BENCH[year].plants[c].npl,cp=M.plants[c].cap;if(cp!=null){ws+=w;cs+=w*cp;}}
  return {m1,m2:ws>0?cs/ws:null,r,nr,dev,mA:a.mA,cA:a.cA,eA:a.eA,bench923:a.eA,n:ps.length};}
+function avgLMP(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};let pd=0,d=0;
+ for(const z in L){if(!st.zones.has(z))continue;pd+=L[z].p*L[z].d;d+=L[z].d;}
+ return d>0?pd/d:null;}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 // ---- tooltip + run-id ----
@@ -185,7 +188,8 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
    <div class=kpirow><span class=k>Class capture</span><span class=v>${m.m1==null?"—":m.m1.toFixed(0)}%</span></div>
    <div class=kpirow><span class=k>Plant capture</span><span class=v>${m.m2==null?"—":m.m2.toFixed(0)}%</span></div>
    <div class=kpirow><span class=k>Δ vs 923</span><span class="v ${d923==null?'':dcls(d923)}">${d923==null?"—":fmtPct(d923)}</span></div>
-   <div class=kpirow><span class=k>Hourly r</span><span class=v>${m.r.toFixed(3)}</span></div></div>`;}
+   <div class=kpirow><span class=k>Hourly r</span><span class=v>${m.r.toFixed(3)}</span></div>
+   <div class=kpirow><span class=k>Avg LMP</span><span class=v>${(()=>{const v=avgLMP(id,yr);return v==null?"—":"$"+v.toFixed(1);})()}</span></div></div>`;}
  h+="</div></div>";
  // monthly line: each run + CAMPD
  h+='<div class=panel><h2>Monthly generation (GWh)</h2><div class=legend id=legMon></div><div class=svgbox id=cMon></div></div>';
@@ -257,7 +261,8 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
   +`<div class=kpicard><div class=lbl>Fit</div>
     <div class=kpirow><span class=k>Δ vs 923</span><span class="v ${d923==null?'':dcls(d923)}">${d923==null?"—":fmtPct(d923)}</span></div>
     <div class=kpirow><span class=k>Hourly r</span><span class=v>${d.r??"—"}</span></div>
-    <div class=kpirow><span class=k>NRMSE</span><span class=v>${d.nr??"—"}</span></div></div></div></div>`;
+    <div class=kpirow><span class=k>NRMSE</span><span class=v>${d.nr??"—"}</span></div>
+    <div class=kpirow><span class=k>Avg LMP (zones)</span><span class=v>${avgLMP(id,yr)==null?"—":"$"+avgLMP(id,yr).toFixed(1)+"/MWh"}</span></div></div></div></div>`;
  h+='<div class=panel><h2>Commitment heatmap</h2><div class=legend><span>0%</span><span class=ramp></span><span>100% CF</span></div>'
   +'<h4>CAMPD actual</h4><canvas class=heat id=hC width=365 height=24></canvas><div class=ax id=axC></div>'
   +'<h4>Model</h4><canvas class=heat id=hM width=365 height=24></canvas><div class=ax id=axM></div></div>';
