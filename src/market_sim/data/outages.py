@@ -302,3 +302,32 @@ def unit_outage_derate_factors(
         arr = sums.setdefault(tgt, np.zeros(hours))
         arr[mask] += float(ucap) / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
+
+
+# Partial (unit-level) outage derates approximated from CAMPD CF-ceiling
+# plateaus (scripts/derive_partial_outages.py). A multiplicative availability
+# factor per plant: 1.0 outside detected windows, derate_factor within.
+PARTIAL_OUTAGE_CSV: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-partial-outages.csv"
+)
+
+
+@lru_cache(maxsize=None)
+def partial_outage_derate_factors(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) availability multiplier}`` from the
+    CAMPD-derived partial-outage windows. 1.0 outside detected ceiling plateaus,
+    the window's derate factor within (deepest wins where they overlap)."""
+    if not PARTIAL_OUTAGE_CSV.exists():
+        return {}
+    df = pd.read_csv(PARTIAL_OUTAGE_CSV)
+    df = df[df["year"] == year]
+    out: dict[int, np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
+        if not mask.any():
+            continue
+        arr = out.setdefault(int(r.oris_code), np.ones(hours))
+        arr[mask] = np.minimum(arr[mask], float(r.derate_factor))
+    return out

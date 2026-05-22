@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T01:08:36",
+  "timestamp": "2026-05-22T05:53:31",
   "git": {
-    "sha": "34dd0b8",
+    "sha": "a29e0ee",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "Drop statistical POF for CC/ST + their CHP in historic backcast (planned outages from overlay+unit derate); CTs keep POF.",
+  "model_changes_note": "Partial-outage detector with rolling-median smoothing (catches blip-interrupted outages e.g. Major Oak late June).",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "34dd0b8"
+    "git_sha": "a29e0ee"
   },
   "scenario_config": {
     "weather_year": 2025,
