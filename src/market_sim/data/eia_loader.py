@@ -138,6 +138,89 @@ def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
     return out
 
 
+# EIA-930 ``<BA> hourly`` per-fuel net-generation columns, mapped to the
+# model's benchmark series names. Gas is the whole gas fleet (CC + CT + ST),
+# the counterpart to the model's summed gas dispatch.
+_EIA930_BENCHMARK_COLUMNS: tuple[tuple[str, str], ...] = (
+    ("coal", "NG: COL"),
+    ("gas", "NG: NG"),
+    ("nuclear", "NG: NUC"),
+    ("wind", "NG: WND"),
+    ("solar", "NG: SUN"),
+    ("oil", "NG: OIL"),
+    ("hydro", "NG: WAT"),
+)
+
+
+def _pad_to_year(series: np.ndarray) -> np.ndarray:
+    """Return ``series`` coerced to exactly ``HOURS_PER_YEAR`` samples.
+
+    Longer series are truncated; shorter ones (an EIA-930 BA-year with a few
+    missing hours, e.g. PJM 2023) are edge-padded with the series mean so the
+    annual total scales to a full year rather than carrying a gap.
+    """
+    series = np.asarray(series, dtype=float)
+    if series.shape[0] >= HOURS_PER_YEAR:
+        return series[:HOURS_PER_YEAR]
+    pad = np.full(HOURS_PER_YEAR - series.shape[0], float(series.mean()))
+    return np.concatenate([series, pad])
+
+
+def load_eia_hourly_benchmark(
+    iso: str, year: int
+) -> dict[str, np.ndarray] | None:
+    """Return the EIA-930 hourly benchmark series for any ISO's BA, full year.
+
+    Generalizes the ERCOT-only :func:`load_ercot_fossil_gen` /
+    :func:`load_ercot_nuclear_gen` / :func:`load_ercot_renewable_gen` trio to
+    every ISO with a per-BA ``<BA> hourly`` extract (see
+    :data:`_ISO_TO_HOURLY_BA`). Returns the per-fuel net generation plus the
+    actual net generation and net interchange, each as a ``(HOURS_PER_YEAR,)``
+    array. Unlike the strict :func:`_eia_hourly_frame`, a BA-year a few hours
+    short of 8760 (e.g. PJM 2023) is padded to a full year rather than
+    rejected, so the delivered fuel-mix and interchange benchmark is still
+    available for the calibration report.
+
+    EIA's interchange sign convention is positive = net export.
+
+    Returns ``None`` when the ISO is unmapped, the file is missing, or the
+    year has no rows.
+    """
+    ba_code = _ISO_TO_HOURLY_BA.get(iso)
+    if ba_code is None:
+        return None
+    path = _eia_hourly_path(ba_code)
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    local = df["Local date"]
+    df = df[
+        (local.dt.year == year)
+        & ~((local.dt.month == 2) & (local.dt.day == 29))
+    ].sort_values("UTC time")
+    if df.empty:
+        return None
+
+    out: dict[str, np.ndarray] = {}
+    for name, column in _EIA930_BENCHMARK_COLUMNS:
+        if column not in df.columns:
+            continue
+        series = df[column].interpolate().bfill().ffill()
+        if series.isna().any():
+            continue
+        out[name] = _pad_to_year(series.to_numpy(dtype=float))
+
+    if "Net generation" in df.columns:
+        net_gen = df["Net generation"].interpolate().bfill().ffill()
+        if not net_gen.isna().any():
+            out["net_gen"] = _pad_to_year(net_gen.to_numpy(dtype=float))
+    if "Total interchange" in df.columns:
+        interchange = df["Total interchange"].interpolate().bfill().ffill()
+        if not interchange.isna().any():
+            out["interchange"] = _pad_to_year(interchange.to_numpy(dtype=float))
+    return out or None
+
+
 def load_eia_hourly_renewable_gen(
     iso: str, year: int
 ) -> dict[str, np.ndarray] | None:
