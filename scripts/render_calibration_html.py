@@ -151,6 +151,7 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
         e923_all = pd.read_parquet(bdir / "eia923.parquet")
         e930_all = pd.read_parquet(bdir / "eia930.parquet")
         campd_all = pd.read_parquet(bdir / "campd.parquet")
+        sys_all = pd.read_parquet(bdir / "system.parquet")
         for year in meta["years"]:
             years_set.add(int(year))
             disp = pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet")
@@ -283,8 +284,22 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
                     "fuel": fuel, "m": round(m_twh, 2),
                     "b": round(b_twh, 2) if b_twh is not None else None,
                     "r": r2, "nrmse": n2})
+            # Per-zone average LMP (load-weighted) from the system duals, for
+            # the dashboard's average-LMP KPI. P1 pass; the shell averages over
+            # the selected zones, weighting by demand.
+            sy = sys_all[sys_all["year"] == year]
+            if "pass" in sy.columns and (sy["pass"] == "P1").any():
+                sy = sy[sy["pass"] == "P1"]
+            lmp = {}
+            for zone, zg in sy.groupby("zone", observed=True):
+                dem = float(zg["demand"].sum())
+                p = (float((zg["price"] * zg["demand"]).sum()) / dem
+                     if dem > 0 else float(zg["price"].mean()))
+                lmp[str(zone)] = {"p": round(p, 2),
+                                  "d": round(dem / 1e6, 4)}
             run_years[int(year)] = {
-                "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows}
+                "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
+                "lmp": lmp}
         model_runs.append({"label": label, "years": run_years})
 
     return {
