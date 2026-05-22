@@ -58,6 +58,7 @@ from market_sim.data.eia923 import (  # noqa: E402
 )
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
+    load_eia_hourly_benchmark,
     load_ercot_fossil_gen,
     load_ercot_nuclear_gen,
     load_ercot_renewable_gen,
@@ -337,7 +338,16 @@ def _system_frame(
 
 
 def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
-    """Return the EIA-930 hourly benchmark series for a year, long format."""
+    """Return the EIA-930 hourly benchmark series for a year, long format.
+
+    ERCOT keeps its dedicated full-year fossil/nuclear/renewable loaders (so
+    its bundle is unchanged). Every other ISO is served by the generic per-BA
+    benchmark loader, which also carries the BA's net generation and net
+    interchange and tolerates a BA-year a few hours short of 8760.
+    """
+    if iso != "ERCOT":
+        return _eia930_frame_generic(year, iso)
+
     fossil = load_ercot_fossil_gen(year)
     renew = load_ercot_renewable_gen(year)
     if fossil is None or renew is None:
@@ -353,6 +363,25 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
         series["nuclear"] = nuclear
     out = []
     for name, arr in series.items():
+        a = np.asarray(arr, dtype=float)
+        out.append(pd.DataFrame({
+            "year": np.int16(year), "series": name,
+            "hour": np.arange(a.shape[0], dtype=np.int32), "mw": a,
+        }))
+    return pd.concat(out, ignore_index=True)
+
+
+def _eia930_frame_generic(year: int, iso: str) -> pd.DataFrame | None:
+    """Return the EIA-930 hourly benchmark for a non-ERCOT ISO, long format.
+
+    Carries each delivered per-fuel series plus the BA's net generation and
+    net interchange, read straight from the per-BA ``<BA> hourly`` extract.
+    """
+    bench = load_eia_hourly_benchmark(iso, year)
+    if bench is None:
+        return None
+    out = []
+    for name, arr in bench.items():
         a = np.asarray(arr, dtype=float)
         out.append(pd.DataFrame({
             "year": np.int16(year), "series": name,
@@ -624,14 +653,24 @@ def solve_and_persist(
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
-    generation = load_monthly_generation()
-    parasitic_factors = _parasitic_factor_map()
-    from market_sim.config.scenarios import ScenarioConfig
-    from market_sim.data.fleet import load_campd_bins
-    _bins = load_campd_bins(ScenarioConfig().campd_bins_path)
-    group_by_code = dict(
-        zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
-    )
+    # The EIA-923 monthly net-generation, CHP behind-the-meter and CAMPD
+    # per-plant benchmarks are ERCOT-only artifacts today: the EIA-923 monthly
+    # parquet is filtered to ba_code=ERCO, BTM CHP uses the ERCOT host-steam
+    # split, and the per-plant CAMPD fit keys off the ERCOT plant panel. For
+    # other ISOs (PJM energy-only) those benchmark frames are skipped — the
+    # bundle keeps the dispatch, system prices and EIA-930 hourly benchmark,
+    # which is all the generic report consumes. This is the Stage G "stub the
+    # ERCOT-only steps" boundary; nothing here changes the ERCOT path.
+    is_ercot = iso == "ERCOT"
+    if is_ercot:
+        generation = load_monthly_generation()
+        parasitic_factors = _parasitic_factor_map()
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import load_campd_bins
+        _bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+        group_by_code = dict(
+            zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
+        )
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
@@ -674,22 +713,26 @@ def solve_and_persist(
             system_frames.append(
                 _system_frame(year, label, res, demand, zone_names)
             )
-            btm_frames.append(
-                _btm_frame(year, label, res, context, generation)
-            )
+            if is_ercot:
+                btm_frames.append(
+                    _btm_frame(year, label, res, context, generation)
+                )
 
         e930 = _eia930_frame(year, iso, iso_config)
         if e930 is not None:
             eia930_frames.append(e930)
-        campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
-        eia923_frames.append(
-            _backfill_eia923_with_campd(
-                _eia923_frame(year, generation), campd_year,
-                group_by_code, year,
+        if is_ercot:
+            campd_year = _campd_hourly_frame(
+                year, iso, parasitic_factors, hours
             )
-        )
-        if campd_year is not None:
-            campd_frames.append(campd_year)
+            eia923_frames.append(
+                _backfill_eia923_with_campd(
+                    _eia923_frame(year, generation), campd_year,
+                    group_by_code, year,
+                )
+            )
+            if campd_year is not None:
+                campd_frames.append(campd_year)
 
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
@@ -698,12 +741,14 @@ def solve_and_persist(
         pd.concat(eia930_frames, ignore_index=True).to_parquet(
             run_dir / "eia930.parquet", index=False
         )
-    pd.concat(eia923_frames, ignore_index=True).to_parquet(
-        run_dir / "eia923.parquet", index=False
-    )
-    pd.concat(btm_frames, ignore_index=True).to_parquet(
-        run_dir / "btm.parquet", index=False
-    )
+    if eia923_frames:
+        pd.concat(eia923_frames, ignore_index=True).to_parquet(
+            run_dir / "eia923.parquet", index=False
+        )
+    if btm_frames:
+        pd.concat(btm_frames, ignore_index=True).to_parquet(
+            run_dir / "btm.parquet", index=False
+        )
     if campd_frames:
         pd.concat(campd_frames, ignore_index=True).to_parquet(
             run_dir / "campd.parquet", index=False
@@ -1077,8 +1122,133 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
     report_run(bundle)
 
 
+# Model fuel labels that aggregate into the EIA-930 / EIA-923 "gas" series.
+_MODEL_GAS_FUELS: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
+# Canonical fuel order for the generic fuel-mix table.
+_GENERIC_FUEL_ORDER: tuple[str, ...] = (
+    "coal", "gas", "nuclear", "wind", "solar", "hydro", "oil", "biomass",
+    "other",
+)
+
+
+def _canon_fuel(fuel: str) -> str:
+    """Collapse a model fuel label to its benchmark fuel (gas_* -> gas)."""
+    return "gas" if fuel in _MODEL_GAS_FUELS else fuel
+
+
+def _aggregate_twh(by_fuel: dict[str, float]) -> dict[str, float]:
+    """Sum a per-fuel TWh mapping into canonical benchmark fuels."""
+    out: dict[str, float] = {}
+    for fuel, twh in by_fuel.items():
+        out[_canon_fuel(fuel)] = out.get(_canon_fuel(fuel), 0.0) + twh
+    return out
+
+
+def _report_generic(
+    run_dir: Path, iso: str, meta: dict, system: pd.DataFrame,
+    e930_all: pd.DataFrame | None,
+) -> None:
+    """Print the generic energy-only calibration report for a non-ERCOT ISO.
+
+    Compares modeled annual generation by fuel against the EIA-930 hourly
+    delivered mix and the EIA-923 reference benchmark, summarizes the zonal
+    and system price level and duration, and contrasts the (zero) modeled net
+    interchange against the EIA-930 actual. This is the Stage G comparison the
+    energy-only PJM backcast supports today; the ERCOT-specific plant-level,
+    CHP and CAMPD diagnostics are skipped.
+    """
+    reference = _load_reference()
+    for year in meta["years"]:
+        ref_year = reference.get("isos", {}).get(iso, {}).get(str(year), {})
+        ref_gen = _aggregate_twh(ref_year.get("generation_twh", {}))
+
+        e930 = None
+        if e930_all is not None:
+            ey = e930_all[e930_all["year"] == year]
+            e930 = {
+                s: ey[ey["series"] == s].sort_values("hour")["mw"].to_numpy()
+                for s in ey["series"].unique()
+            }
+
+        pass_label = meta["passes"][-1]
+        disp_path = run_dir / "dispatch" / f"{year}_{pass_label}.parquet"
+        if not disp_path.exists():
+            continue
+        dispatch = pd.read_parquet(disp_path)
+        sysd = system[
+            (system["year"] == year) & (system["pass"] == pass_label)
+        ]
+
+        print(f"\n{'=' * 80}\n  {iso} {year} BACKCAST  (energy-only)\n{'=' * 80}")
+
+        # --- [1] Generation by fuel: model vs EIA-930 vs EIA-923 reference ---
+        model = _aggregate_twh(
+            (dispatch.groupby("fuel")["mw"].sum() / _MWH_PER_TWH).to_dict()
+        )
+        e930_twh = {
+            f: float(e930[f].sum()) / _MWH_PER_TWH
+            for f in _GENERIC_FUEL_ORDER
+            if e930 is not None and f in e930
+        } if e930 is not None else {}
+        model_total = sum(model.values())
+        e930_total = sum(e930_twh.values()) if e930_twh else None
+        ref_total = sum(ref_gen.values()) if ref_gen else None
+
+        def _twh(v: float | None) -> str:
+            return "      —" if v is None else f"{v:7.2f}"
+
+        def _pct(v: float | None, total: float | None) -> str:
+            return "    —" if not v or not total else f"{100 * v / total:5.1f}"
+
+        print("\n  [1] Generation by fuel (TWh; share of own total)")
+        print(f"    {'fuel':<9} {'model':>7} {'mdl%':>5} "
+              f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}")
+        for fuel in _GENERIC_FUEL_ORDER:
+            m, g, r = model.get(fuel), e930_twh.get(fuel), ref_gen.get(fuel)
+            if m is None and g is None and r is None:
+                continue
+            print(f"    {fuel:<9} {_twh(m)} {_pct(m, model_total)} "
+                  f"{_twh(g)} {_pct(g, e930_total)} "
+                  f"{_twh(r)} {_pct(r, ref_total)}")
+        print(f"    {'TOTAL':<9} {_twh(model_total)} {'100.0':>5} "
+              f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
+              f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}")
+
+        # --- [2] Net interchange: model (energy-only = 0) vs EIA-930 ---
+        if e930 is not None and "interchange" in e930:
+            ix = e930["interchange"]
+            ix_twh = float(ix.sum()) / _MWH_PER_TWH
+            print("\n  [2] Net interchange (EIA sign: + = net export)")
+            print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
+                  f"({ix.mean():+.0f} MW avg)")
+            print("    model            :    0.00 TWh "
+                  "(energy-only; no external interchange node)")
+
+        # --- [3] Price level + duration ---
+        zones = sorted(sysd["zone"].unique())
+        print("\n  [3] Zonal price level ($/MWh)")
+        print(f"    {'zone':<14} {'avg':>8} {'neg-hrs':>8}")
+        for zone in zones:
+            zp = sysd[sysd["zone"] == zone]["price"].to_numpy()
+            print(f"    {zone:<14} {zp.mean():8.2f} {int((zp < 0).sum()):>8}")
+        sysprice = (
+            sysd.groupby("hour")["price"].mean().sort_index().to_numpy()
+        )
+        pct = np.percentile(sysprice, [100, 90, 50, 10, 0])
+        print("\n  [3] System price duration ($/MWh)")
+        print(f"    avg {sysprice.mean():8.2f}   max {pct[0]:8.2f}   "
+              f"p90 {pct[1]:7.2f}   p50 {pct[2]:7.2f}   "
+              f"p10 {pct[3]:7.2f}   min {pct[4]:8.2f}")
+        print(f"    negative-price hours: {int((sysprice < 0).sum())}")
+
+
 def report_run(run_dir: Path) -> None:
-    """Print the full calibration report from a persisted bundle."""
+    """Print the full calibration report from a persisted bundle.
+
+    ERCOT prints the full plant-level / CHP / CAMPD diagnostic. Other ISOs
+    (PJM energy-only) print the generic fuel-mix / price / interchange report,
+    which is all their bundle carries (see :func:`solve_and_persist`).
+    """
     meta = json.loads((run_dir / "meta.json").read_text())
     iso = meta["iso"]
     system = pd.read_parquet(run_dir / "system.parquet")
@@ -1086,6 +1256,17 @@ def report_run(run_dir: Path) -> None:
         pd.read_parquet(run_dir / "eia930.parquet")
         if (run_dir / "eia930.parquet").exists() else None
     )
+
+    print(f"\n{'=' * 80}")
+    print(f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
+          f"git {meta.get('git_sha', '?')})")
+    print(f"  bundle: {run_dir}")
+    print(f"{'=' * 80}")
+
+    if iso != "ERCOT":
+        _report_generic(run_dir, iso, meta, system, e930_all)
+        return
+
     e923_all = pd.read_parquet(run_dir / "eia923.parquet")
     btm_all = pd.read_parquet(run_dir / "btm.parquet")
     campd_all = (
@@ -1093,12 +1274,6 @@ def report_run(run_dir: Path) -> None:
         if (run_dir / "campd.parquet").exists() else None
     )
     plant_fit_frames: list[pd.DataFrame] = []
-
-    print(f"\n{'=' * 80}")
-    print(f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
-          f"git {meta.get('git_sha', '?')})")
-    print(f"  bundle: {run_dir}")
-    print(f"{'=' * 80}")
 
     for year in meta["years"]:
         e923 = e923_all[e923_all["year"] == year]
@@ -1114,7 +1289,7 @@ def report_run(run_dir: Path) -> None:
             }
             e930_solar_monthly = _hourly_to_monthly(e930["solar"])
 
-        print(f"\n{'=' * 80}\n  ERCOT {year} BACKCAST\n{'=' * 80}")
+        print(f"\n{'=' * 80}\n  {iso} {year} BACKCAST\n{'=' * 80}")
         for pass_label in meta["passes"]:
             disp_path = run_dir / "dispatch" / f"{year}_{pass_label}.parquet"
             if not disp_path.exists():
@@ -1225,10 +1400,16 @@ def rebuild_benchmark(bundle: Path) -> None:
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
-        description="ERCOT calibration backcast: solve, persist, report."
+        description="Calibration backcast (ERCOT full; other ISOs energy-only): "
+                    "solve, persist, report."
     )
     parser.add_argument("--year", nargs="+", type=int, default=[2023, 2024])
-    parser.add_argument("--iso", default="ERCOT")
+    parser.add_argument(
+        "--iso", default="ERCOT",
+        help="ISO to backcast. ERCOT runs the full plant-level diagnostic; "
+             "other ISOs (e.g. PJM) run energy-only (generic fuel-mix / price "
+             "/ interchange report; ERCOT-only steps skipped).",
+    )
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
     parser.add_argument(
         "--commitment", action="store_true",
@@ -1330,6 +1511,12 @@ def main() -> None:
         return
 
     iso = args.iso.upper()
+    if iso != "ERCOT":
+        logger.info(
+            "%s energy-only backcast: NP6 HSL, coal must-run tuning, and the "
+            "plant-level / CHP / CAMPD diagnostics are ERCOT-only and skipped; "
+            "the report compares fuel mix, prices and net interchange.", iso,
+        )
     reference = _load_reference()
     if args.out_dir:
         run_dir = Path(args.out_dir)

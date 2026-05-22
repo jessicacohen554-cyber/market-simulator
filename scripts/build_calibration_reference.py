@@ -13,7 +13,7 @@ consumer) can read pre-computed values rather than re-deriving them:
 * ``calibration_reference.json`` — the full reference: per ISO and year, the
   EIA-860 renewable capacity (December year-end totals, zone shares, monthly
   ramp factors, per-zone monthly capacity), the measured Henry Hub price, and
-  the EIA-930 demand totals; plus the eGRID 2023 ERCOT generation/emissions
+  the EIA-930 demand totals; plus the per-ISO eGRID 2023 generation/emissions
   benchmark shared across consumers.
 * ``{ISO}_{year}_renewable_capacity.csv`` — one tidy CSV per ISO-year with
   the per-zone, per-month EIA-860 operable wind and solar capacity (MW).
@@ -48,11 +48,12 @@ logger = logging.getLogger("build_calibration_reference")
 # Calibration years are the historical years with EIA-930 hourly profiles.
 # 2021-2024 each have their own EIA-860 fleet snapshot; 2025 reuses the
 # latest available EIA-860 vintage (2024), which carries no 2025 builds, so
-# its renewable capacity equals the 2024 year-end totals held flat. ERCOT is
-# the first ISO calibrated; the structure generalizes to other ISOs as their
-# topology is validated.
+# its renewable capacity equals the 2024 year-end totals held flat. ERCOT was
+# the first ISO calibrated; PJM is the second. The per-ISO-year derivation is
+# fully generic on the ISO's zone topology (zone_names) and balancing-authority
+# code, so adding an ISO is a CALIBRATION_ISOS + BA-code-map change only.
 CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
-CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT",)
+CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM")
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
 # Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
@@ -186,8 +187,9 @@ def _egrid_benchmark(iso: str) -> dict:
     Returns:
         A benchmark dict with ``generation_twh`` and ``co2_mt`` mappings.
     """
-    # eGRID balancing-authority code for the ISO footprint.
-    ba_code = {"ERCOT": "ERCO"}[iso]
+    # eGRID balancing-authority code for the ISO footprint. eGRID's BACODE
+    # uses the same EIA-930 codes as :data:`_ISO_BA_CODE` (ERCO, PJM, ...).
+    ba_code = {"ERCOT": "ERCO", "PJM": "PJM"}[iso]
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
     plants = df[df["BACODE"] == ba_code].copy()
 
@@ -254,7 +256,7 @@ def _write_year_csv(iso: str, year: int, renewables: dict) -> Path:
 # EIA-923 reported fuel-type codes that count as coal.
 _EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"})
 # ISO identifier -> EIA balancing-authority code.
-_ISO_BA_CODE: dict[str, str] = {"ERCOT": "ERCO", "CAISO": "CISO"}
+_ISO_BA_CODE: dict[str, str] = {"ERCOT": "ERCO", "CAISO": "CISO", "PJM": "PJM"}
 
 
 def _eia923_generation(iso: str, year: int) -> dict[str, float]:
