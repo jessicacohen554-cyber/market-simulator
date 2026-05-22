@@ -222,9 +222,11 @@ def _campd_class_hourly(campd, e923, T):
     return out
 
 
-def _fuel_table(disp, e923, e930):
-    """[1] Annual TWh model vs EIA-923 (930 for solar) by fuel, with a SUM row
-    and the hourly r / NRMSE vs EIA-930."""
+def _fuel_table(disp, e923, e930, year):
+    """[1] Annual TWh model vs benchmark by fuel, with a SUM row and the hourly
+    r / NRMSE vs EIA-930. Benchmark is EIA-923 (930 for solar) — except 2025,
+    where 923 is materially incomplete (wind, solar), so the whole table uses
+    EIA-930 and the model is shown grid-only (930 is grid-delivered, no BTM)."""
     mh = rcf._class_hourly(disp)
     T = next(iter(mh.values())).shape[0] if mh else 8760
     ann = rcf._e923_annual(e923)
@@ -232,26 +234,44 @@ def _fuel_table(disp, e923, e930):
     e = {s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy()
          for s in e930["series"].unique()}
     flat = sum(mh.get(c, np.zeros(T)).sum() for c in ("CC_CHP", "CT_CHP", "ST_CHP")) / T
+    use_930 = year >= 2025
 
     def grid(classes):
         return sum((mh.get(c, np.zeros(T)) for c in classes), np.zeros(T))
 
-    rows_def = [
-        ("gas", grid(_GAS_CLASSES).sum() / 1e6 + sum(btmc.values()),
-         sum(ann.get(c, 0.0) for c in _GAS_CLASSES),
-         grid(rcf._NONCHP_GAS), e["gas"] - flat),
-        ("coal", grid(rcf._COAL_CLASSES).sum() / 1e6,
-         sum(ann.get(c, 0.0) for c in rcf._COAL_CLASSES),
-         grid(rcf._COAL_CLASSES), e["coal"]),
-        ("nuclear", mh.get("nuclear", np.zeros(T)).sum() / 1e6,
-         ann.get("nuclear", e.get("nuclear", np.zeros(T)).sum() / 1e6),
-         mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
-        ("wind", mh.get("wind", np.zeros(T)).sum() / 1e6,
-         ann.get("wind", e["wind"].sum() / 1e6),
-         mh.get("wind", np.zeros(T)), e["wind"]),
-        ("solar", mh.get("solar", np.zeros(T)).sum() / 1e6,
-         e["solar"].sum() / 1e6, mh.get("solar", np.zeros(T)), e["solar"]),
-    ]
+    def gtwh(classes):
+        return grid(classes).sum() / 1e6
+
+    if use_930:
+        rows_def = [
+            ("gas", gtwh(_GAS_CLASSES), e["gas"].sum() / 1e6,
+             grid(rcf._NONCHP_GAS), e["gas"] - flat),
+            ("coal", gtwh(rcf._COAL_CLASSES), e["coal"].sum() / 1e6,
+             grid(rcf._COAL_CLASSES), e["coal"]),
+            ("nuclear", gtwh(("nuclear",)), e["nuclear"].sum() / 1e6,
+             mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
+            ("wind", gtwh(("wind",)), e["wind"].sum() / 1e6,
+             mh.get("wind", np.zeros(T)), e["wind"]),
+            ("solar", gtwh(("solar",)), e["solar"].sum() / 1e6,
+             mh.get("solar", np.zeros(T)), e["solar"]),
+        ]
+    else:
+        rows_def = [
+            ("gas", gtwh(_GAS_CLASSES) + sum(btmc.values()),
+             sum(ann.get(c, 0.0) for c in _GAS_CLASSES),
+             grid(rcf._NONCHP_GAS), e["gas"] - flat),
+            ("coal", gtwh(rcf._COAL_CLASSES),
+             sum(ann.get(c, 0.0) for c in rcf._COAL_CLASSES),
+             grid(rcf._COAL_CLASSES), e["coal"]),
+            ("nuclear", gtwh(("nuclear",)),
+             ann.get("nuclear", e.get("nuclear", np.zeros(T)).sum() / 1e6),
+             mh.get("nuclear", np.zeros(T)), e.get("nuclear")),
+            ("wind", gtwh(("wind",)),
+             ann.get("wind", e["wind"].sum() / 1e6),
+             mh.get("wind", np.zeros(T)), e["wind"]),
+            ("solar", gtwh(("solar",)),
+             e["solar"].sum() / 1e6, mh.get("solar", np.zeros(T)), e["solar"]),
+        ]
     body = ""
     sm = sb = 0.0
     for name, m, b, mo, ob in rows_def:
@@ -271,8 +291,9 @@ def _fuel_table(disp, e923, e930):
              f"<td class=num>{sm:.1f}</td><td class=num>{sb:.1f}</td>"
              f"<td class='num {_diffcls(dsum)}'>{dsum:+.1f}%</td>"
              f"<td class=num></td><td class=num></td></tr>")
+    bench_lbl = "EIA-930 TWh" if use_930 else "EIA-923 TWh"
     return ("<table><thead><tr><th>fuel</th><th>model TWh</th>"
-            "<th>923/930 TWh</th><th>Δ</th><th>r vs 930</th><th>NRMSE</th>"
+            f"<th>{bench_lbl}</th><th>Δ</th><th>r vs 930</th><th>NRMSE</th>"
             f"</tr></thead><tbody>{body}</tbody></table>")
 
 
@@ -351,9 +372,9 @@ def tabular_html(bundles, payload):
         campd = campd[campd["year"] == year]
         secs += (
             f'<div class="tyear{"" if i == 0 else " hide"}" data-ty={year}>'
-            f"<h3>Fuel totals — model vs EIA-923 (EIA-930 for solar), "
+            f"<h3>Fuel totals — model vs {'EIA-930 (923 incomplete)' if year >= 2025 else 'EIA-923 (EIA-930 for solar)'}, "
             f"hourly fit vs EIA-930</h3>"
-            f'<div class=tablewrap>{_fuel_table(disp, e923, e930)}</div>'
+            f'<div class=tablewrap>{_fuel_table(disp, e923, e930, year)}</div>'
             f"<h3>Fossil classes — model grid vs EIA-923 − BTM "
             f"(hourly r / NRMSE vs CAMPD, absolute MW)</h3>"
             f'<div class=tablewrap>{_fossil_table(disp, e923, campd)}</div>'

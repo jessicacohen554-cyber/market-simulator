@@ -34,6 +34,7 @@ from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
     outage_masks_for_year,
+    unit_outage_derate_factors,
 )
 
 logger = logging.getLogger(__name__)
@@ -407,6 +408,26 @@ def generators_to_fleet_arrays(
                 "historic outage overlay (%d): zeroed %d coal/CC bin-tranches "
                 "across %d plant(s)",
                 config.weather_year, applied, len(masks),
+            )
+        # Unit-level outage derate (backcast): partial availability cut per
+        # unit outage >= 5 days, sized by the unit's share of its model bin
+        # capacity (CTs excluded; split plants routed to the right asset
+        # class). Multiplies the availability already set above.
+        ufac = unit_outage_derate_factors(
+            config.weather_year, hours,
+            getattr(config, "campd_bins_path",
+                    "inputs/custom-bin-assignments.csv"),
+        )
+        if ufac:
+            applied_u = 0
+            for g_idx, gen in enumerate(generators):
+                f = ufac.get((int(gen.plant_code), gen.plant_group))
+                if f is not None:
+                    availability[g_idx, :] *= f
+                    applied_u += 1
+            logger.info(
+                "unit-outage derate (%d): %d bin-tranches derated",
+                config.weather_year, applied_u,
             )
 
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
