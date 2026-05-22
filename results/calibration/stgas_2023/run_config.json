@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T01:04:00",
+  "timestamp": "2026-05-22T03:21:41",
   "git": {
-    "sha": "34dd0b8",
+    "sha": "08dc118",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "Drop statistical POF for CC/ST + their CHP in historic backcast (planned outages from overlay+unit derate); CTs keep POF.",
+  "model_changes_note": "HSL curtailment offset (wind 110/solar 32.0 -> deliver 108/31.9); nuclear uses 923 CF directly (no EFORD double-count).",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "34dd0b8"
+    "git_sha": "08dc118"
   },
   "scenario_config": {
     "weather_year": 2023,
