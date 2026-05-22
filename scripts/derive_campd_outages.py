@@ -140,25 +140,21 @@ def main() -> None:
             grid = campd.plant_hourly_grid(df, code, yr)
             if grid.empty:
                 continue
+            # Full calendar-year clock: CAMPD only zero-fills within a plant's
+            # reported span, so a unit that stops reporting when it goes offline
+            # (e.g. San Miguel Sep-Dec 2025) leaves those months missing rather
+            # than zero. Reindex to the whole year and zero-fill — missing = no
+            # activity = offline — so the shutdown is caught for every group.
+            full = pd.date_range(
+                f"{yr}-01-01", f"{yr}-12-31 23:00:00", freq="h", tz=grid.index.tz,
+            )
+            gross = grid["gross_mw"].reindex(full).fillna(0.0).to_numpy(dtype=float)
+            ts = full
             if grp[code] == "ST_GAS":
-                # Full calendar-year clock: CAMPD only zero-fills within a
-                # plant's reported span, so months entirely outside it (a
-                # non-reporting shutdown) are missing. Reindex to the whole
-                # year and zero-fill — missing = no activity = offline.
-                full = pd.date_range(
-                    f"{yr}-01-01", f"{yr}-12-31 23:00:00",
-                    freq="h", tz=grid.index.tz,
-                )
-                gross = grid["gross_mw"].reindex(full).fillna(0.0).to_numpy(
-                    dtype=float
-                )
-                ts = full
                 windows = detect_outages_eventbased(
                     gross, npl, ST_GAS_MIN_OUTAGE_HOURS, ST_GAS_CF_PEAK,
                 )
             else:
-                gross = grid["gross_mw"].to_numpy(dtype=float)
-                ts = grid.index
                 windows = detect_outages(gross, npl, min_outage_hours)
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:
