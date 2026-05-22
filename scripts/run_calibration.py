@@ -243,18 +243,24 @@ def _calibration_config(
         # Gas CT -> 7% and Gas Steam -> 15%.
         offer_curve_by_group={
             "CC_REGULAR": {"committed": 0.75, "econ_low": 1.01,
-                           "econ_high": 1.32, "econ_low_share": 0.556},
+                           "econ_high": 1.42, "econ_low_share": 0.45},
             "CC_CHP": {"committed": 0.75, "econ_low": 1.01,
-                       "econ_high": 1.32, "econ_low_share": 0.556},
-            "CT_PEAKER": {"committed": 1.10, "econ_low": 1.17,
-                          "econ_high": 1.48, "peak": 10.0,
+                       "econ_high": 1.42, "econ_low_share": 0.45},
+            "CT_PEAKER": {"committed": 1.15, "econ_low": 1.27,
+                          "econ_high": 1.63, "peak": 11.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.65, "econ_low": 0.90,
-                       "econ_high": 1.00, "peak": 3.5,
+                       "econ_high": 1.10, "peak": 3.75,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
-            "COAL": {"committed": 0.90, "econ_low": 0.95,
-                     "econ_high": 1.02, "peak": 1.08,
-                     "econ_low_share": 0.556},
+            # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
+            # carries the raised multipliers; PRB keeps the run2 values and is
+            # shaped by the passthrough sigmoid.
+            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.05,
+                             "econ_high": 1.12, "peak": 1.23,
+                             "econ_low_share": 0.556},
+            "COAL_PRB": {"committed": 0.90, "econ_low": 0.95,
+                         "econ_high": 1.02, "peak": 1.08,
+                         "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
