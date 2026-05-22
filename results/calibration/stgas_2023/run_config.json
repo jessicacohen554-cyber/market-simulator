@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-22T05:13:03",
+  "timestamp": "2026-05-22T05:24:57",
   "git": {
-    "sha": "7b91538",
+    "sha": "19795a2",
     "branch": "claude/wire-historic-outages-SIRI8",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "CAMPD partial-outage derate (CF-ceiling plateaus) for baseload coal + CC allowlist (Colorado Bend II, Wolf Hollow II).",
+  "model_changes_note": "Partial-outage detection extended to baseload CC_REGULAR (+ coal).",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "7b91538"
+    "git_sha": "19795a2"
   },
   "scenario_config": {
     "weather_year": 2023,
