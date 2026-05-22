@@ -135,9 +135,12 @@ _ERCOT_HSL_FILE: Path = (
 # must be at least the delivered. Rescale the series (preserving its hourly
 # shape) up to the delivered EIA-930 annual total so the dispatch starts from a
 # physically consistent potential. Keyed by (iso, year, fuel) -> annual TWh.
+# Targets are set above the EIA-930 delivered totals (wind 108, solar 31.9) to
+# offset the dispatch's economic re-curtailment, so the *delivered* output lands
+# on the actuals: wind ~1.8% curtailed -> 110, solar ~0.5% -> 32.0.
 _HSL_RESCALE_TWH: dict[tuple[str, int, str], float] = {
-    ("ERCOT", 2023, "wind"): 108.0,
-    ("ERCOT", 2023, "solar"): 31.9,
+    ("ERCOT", 2023, "wind"): 110.0,
+    ("ERCOT", 2023, "solar"): 32.0,
 }
 
 
