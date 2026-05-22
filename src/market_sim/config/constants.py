@@ -343,6 +343,21 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   due to Permian associated gas oversupply and pipeline constraints.
 # SoCal Citygate (CAISO): historically trades at a premium to Henry Hub
 #   due to pipeline constraints into California and limited local production.
+# PJM: no single hub. PJM gas burn spans the Appalachian supply basin
+#   (Dominion South / TETCO M2, a structural Marcellus *discount* to Henry
+#   Hub from takeaway-constrained oversupply) and the Mid-Atlantic load
+#   pocket (TETCO M3 and Transco Zone 6 non-NY, a modest annual *premium*
+#   with large winter spikes). The blended scalar below leans slightly
+#   positive because the eastern premium hubs set price in the binding
+#   hours, while the western discount applies to inframarginal price-taking
+#   CCs. Source: EIA Natural Gas Weekly Update basis tables; ICE TETCO M3 /
+#   Transco Z6 / Dominion South 2023-2024 annual averages.
+#   Tier 3 (calibration) — VERIFY: the precise generation-weighted PJM basis
+#   is a known data gap; this single annual scalar collapses three hubs with
+#   opposite signs and strong winter seasonality. Refine with a per-hub,
+#   generation-weighted monthly basis series before relying on PJM gas-unit
+#   marginal cost (the single biggest PJM price-formation lever after
+#   interchange).
 # These are annual average differentials, held constant across the
 # projection period for simplicity.
 #
@@ -350,6 +365,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "ERCOT": -0.50,   # Waha discount; EIA NG Weekly, 2024 avg
     "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
+    "PJM": 0.30,      # TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify
 }
 
 # --- Monthly Gas Price Seasonality Factors ---
@@ -379,6 +395,9 @@ GAS_MONTHLY_SEASONALITY: dict[int, float] = {
 COAL_PRICE_BASE: dict[str, float] = {
     "ERCOT": 2.0,  # EIA AEO 2024 — delivered coal price
     "CAISO": 2.5,  # EIA AEO 2024 — delivered coal price
+    "PJM": 2.3,    # Central/Northern Appalachian bituminous + PRB-by-rail
+    #   delivered blend. Source: EIA AEO 2024 delivered coal price; refined
+    #   per-plant by the EIA-923 monthly fuel-cost overlay where reported.
 }
 
 # Annual real escalation rate for coal prices.
@@ -828,9 +847,18 @@ GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
 # Used to rescale the normalized EIA-930 generation distributions into hourly
 # capacity-factor profiles.
 # Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report.
+# PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly
+#   extract — mean wind/solar net generation over the EIA-860 average-online
+#   capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the
+#   measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set
+#   to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh)
+#   rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports
+#   PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour
+#   shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.
 RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     "ERCOT": {"wind": 0.35, "solar": 0.27},
     "CAISO": {"wind": 0.30, "solar": 0.28},
+    "PJM": {"wind": 0.31, "solar": 0.19},
 }
 
 # Installed renewable nameplate capacity (MW) by ISO and technology.
