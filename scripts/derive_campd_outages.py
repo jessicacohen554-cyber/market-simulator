@@ -44,19 +44,21 @@ REAL_RUN_CF: float = 0.05
 # spikes are false starts and stay folded into the surrounding outage.
 MIN_REAL_RUN_HOURS: int = 24
 
-# ST_GAS reliability units idle/cycle at very low CF for much of the year, so
-# the 5%/2-day rule would mislabel routine idling as outage. For them an outage
-# is only a genuine extended shutdown/mothball: CF below 2% sustained for at
-# least 10 days (a true shutdown produces ~0). The 2-5% idle hours are
-# preserved and held at the off-summer reliability floor (3%) instead. Coal/CC
-# keep the 5%/2-day rule.
-ST_GAS_REAL_RUN_CF: float = 0.02
-ST_GAS_MIN_OUTAGE_DAYS: float = 10.0
+# ST_GAS outages are detected event-based on the full calendar-year clock
+# (CAMPD-omitted hours zero-filled = no activity = offline): an outage is a
+# maximal run of consecutive hours whose CF never reaches ST_GAS_CF_PEAK,
+# lasting at least ST_GAS_MIN_OUTAGE_HOURS. Any single hour at/above the peak
+# breaks the window, so intermittent generation (sporadic starts) is never
+# mislabeled as outage. Coal/CC keep the averaged 5%/2-day real-run rule.
+ST_GAS_CF_PEAK: float = 0.02
+ST_GAS_MIN_OUTAGE_HOURS: int = 120
 
 # Plant groups whose outages we derive (coal + combined cycle + gas steam).
 # Peaker-class ST_GAS plants are emitted here but excluded at overlay time
 # (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
-GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "ST_GAS"})
+GROUPS = frozenset(
+    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
+)
 
 
 def _runs(mask: np.ndarray):
@@ -90,6 +92,23 @@ def detect_outages(
     ]
 
 
+def detect_outages_eventbased(
+    gross: np.ndarray, nameplate: float, min_outage_hours: int,
+    cf_peak: float = ST_GAS_CF_PEAK,
+) -> list[tuple[int, int]]:
+    """Event-based outage windows ``[(start, stop_exclusive), ...]``.
+
+    An outage is a maximal run of consecutive hours whose CF stays strictly
+    below ``cf_peak`` for *every* hour, kept when >= ``min_outage_hours``. A
+    single hour at/above ``cf_peak`` breaks the window, so a plant with
+    intermittent generation is not mislabeled as out. ``gross`` must already be
+    on the full-year clock with omitted hours zero-filled.
+    """
+    cf = gross / nameplate if nameplate > 0 else np.zeros_like(gross)
+    below = cf < cf_peak
+    return [(s, e) for s, e in _runs(below) if e - s >= min_outage_hours]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -121,15 +140,25 @@ def main() -> None:
             grid = campd.plant_hourly_grid(df, code, yr)
             if grid.empty:
                 continue
-            gross = grid["gross_mw"].to_numpy(dtype=float)
-            ts = grid.index
             if grp[code] == "ST_GAS":
-                windows = detect_outages(
-                    gross, npl,
-                    int(round(ST_GAS_MIN_OUTAGE_DAYS * 24)),
-                    real_run_cf=ST_GAS_REAL_RUN_CF,
+                # Full calendar-year clock: CAMPD only zero-fills within a
+                # plant's reported span, so months entirely outside it (a
+                # non-reporting shutdown) are missing. Reindex to the whole
+                # year and zero-fill — missing = no activity = offline.
+                full = pd.date_range(
+                    f"{yr}-01-01", f"{yr}-12-31 23:00:00",
+                    freq="h", tz=grid.index.tz,
+                )
+                gross = grid["gross_mw"].reindex(full).fillna(0.0).to_numpy(
+                    dtype=float
+                )
+                ts = full
+                windows = detect_outages_eventbased(
+                    gross, npl, ST_GAS_MIN_OUTAGE_HOURS, ST_GAS_CF_PEAK,
                 )
             else:
+                gross = grid["gross_mw"].to_numpy(dtype=float)
+                ts = grid.index
                 windows = detect_outages(gross, npl, min_outage_hours)
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:

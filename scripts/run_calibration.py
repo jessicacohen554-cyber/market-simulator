@@ -223,20 +223,22 @@ def _calibration_config(
         #   maintenance now comes from the historic outage overlay).
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
         #   follower-tier PRB sigmoid for low-must-run load-followers.
-        gas_st_summer_mustrun=0.10,  # reliability ST_GAS dragged online at
-        #   >=10% of base capacity May-Sep (peaker-class ST_GAS excluded).
-        gas_st_offsummer_mustrun=0.03,  # and >=3% Oct-Apr (matches the 3% ST_GAS
-        #   outage threshold, so the only sub-3% periods are true >=10-day
-        #   shutdowns; the 3-5% idle hours are kept at the floor).
         gas_st_startup_spread=True,  # amortize ST_GAS startup over the whole
         #   May-Sep season (one seasonal start), not per calendar month.
+        gas_st_committed_hr_override=0.65,  # reliability ST_GAS supply curve:
+        gas_st_econ_hr_override=1.1,       # must-run-if-committed bid at 0.65x,
+        gas_st_peak_hr_override=1.5,       # economic 1.1x, peaking 1.5x (no
+        #   flat must-run floor). Peakers keep CSV HRs and run economically.
         cc_committed_hr_override=1.0,  # CC supply curve: committed at full
-        cc_econ_hr_override=1.2,       # efficiency, economic a modest part-
-        cc_peak_hr_override=1.8,       # load penalty, peaking expensive.
-        chp_steam_following=True,  # model CC_CHP as steam-host cogens: a 40%
-        #   BTM host floor (not the 60% CSV merchant split) plus a grid-
-        #   delivered steam-following min-gen base (CHP_GRID_PMIN_BY_PLANT).
-        chp_btm_floor_pct=40.0,
+        cc_econ_hr_override=1.15,      # efficiency, economic a modest part-
+        cc_peak_hr_override=1.85,      # load penalty, peaking expensive.
+        ct_committed_hr_override=1.0,  # CT_CHP supply curve above its must-run
+        ct_econ_hr_override=1.1,       # BTM + steam-following floor: committed
+        ct_peak_hr_override=1.3,       # 1.0x, economic 1.1x, peaking 1.3x.
+        chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
+        #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
+        #   grid-delivered steam-following min-gen (CHP_PMIN_CF_BY_PLANT - BTM).
+        chp_btm_floor_pct=40.0,  # flat fallback only (sector BTM supersedes it).
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
