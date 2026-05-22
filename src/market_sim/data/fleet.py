@@ -25,6 +25,7 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     NOX_RATES,
     NUCLEAR_MONTHLY_CF,
+    NUCLEAR_MONTHLY_CF_BY_YEAR,
     THERMAL_AVAILABILITY,
     VOM,
 )
@@ -34,6 +35,7 @@ from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
     outage_masks_for_year,
+    unit_outage_derate_factors,
 )
 
 logger = logging.getLogger(__name__)
@@ -227,6 +229,25 @@ _GAS_ST_SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9})
 # months. Winter keeps the flat WEFOR.
 _SUMMER_WEFOR_SHARE: float = 0.30
 
+# Additional summer (Jun-Sep) capacity derate by plant group, modeling the
+# ambient-temperature output loss gas turbines suffer in the heat (worse for
+# simple-cycle CTs than combined-cycle). Applied on top of the age-based
+# availability for these classes only; coal and gas steam are unaffected.
+_SUMMER_CLASS_DERATE: dict[str, float] = {
+    "CC_REGULAR": 0.10, "CC_CHP": 0.10,
+    "CT_PEAKER": 0.125, "CT_CHP": 0.125,
+}
+
+# Non-coal thermal classes whose statistical planned-outage factor (POF) is
+# dropped in the historic backcast (gated on config.coal_drop_pof): their
+# planned outages now come from the CAMPD overlay + the unit-level derate, so
+# the shoulder-month POF would double-count. Combustion turbines (CT_PEAKER /
+# CT_CHP) keep POF — they have no historic overlay coverage and are excluded
+# from the unit derate.
+_POF_DROP_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+)
+
 
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
@@ -288,14 +309,26 @@ def generators_to_fleet_arrays(
     # maintenance). NUCLEAR_MONTHLY_CF holds 12 monthly capacity-factor caps
     # from NRC PRIS data; they multiply the EFORD derate to give the final
     # hourly availability. Non-nuclear units keep the flat 1 - eford derate.
-    monthly_cf = NUCLEAR_MONTHLY_CF.get(iso.upper()) if iso else None
+    # Prefer the per-year 923-derived refueling pattern for the backcast;
+    # fall back to the fixed seasonal average for forecast years.
+    _iso = iso.upper() if iso else None
+    _yr = getattr(config, "weather_year", None) if config is not None else None
+    monthly_cf = NUCLEAR_MONTHLY_CF_BY_YEAR.get(_iso, {}).get(_yr) if _iso else None
+    # The 923-derived per-year CF is realized availability (it already embeds
+    # refueling + forced outages + derate), so it is used directly. The static
+    # forecast pattern is a planned-outage cap, so the EFORD forced-outage
+    # derate is layered on top of it.
+    from_actual = monthly_cf is not None
+    if monthly_cf is None and _iso:
+        monthly_cf = NUCLEAR_MONTHLY_CF.get(_iso)
     if monthly_cf is not None:
         monthly_factors = np.array(monthly_cf, dtype=float)
         month_idx = _hour_to_month_index(hours)
         for g_idx, gen in enumerate(generators):
             if gen.fuel_type == "nuclear":
+                base = monthly_factors[month_idx]
                 availability[g_idx, :] = (
-                    (1.0 - gen.eford) * monthly_factors[month_idx]
+                    base if from_actual else (1.0 - gen.eford) * base
                 )
 
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
@@ -346,12 +379,19 @@ def generators_to_fleet_arrays(
                     wefor
                     + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
                 )
+                # Drop the shoulder POF for the historic-overlay classes (CC /
+                # ST + their CHP) so it does not double-count the actual planned
+                # outages from the overlay + unit derate; CTs keep POF.
+                pof_eff = (
+                    0.0 if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
+                    else pof
+                )
                 # Default (winter): flat WEFOR, no POF. Then override summer
                 # and shoulder.
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - summer_wefor - derate
                 availability[g_idx, shoulder] = (
-                    1.0 - shoulder_wefor - derate - pof
+                    1.0 - shoulder_wefor - derate - pof_eff
                 )
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
@@ -361,6 +401,10 @@ def generators_to_fleet_arrays(
             )
             if forced is not None:
                 availability[g_idx, :] *= forced
+            # Summer ambient-temperature derate for CC / CT classes.
+            summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
+            if summer_derate:
+                availability[g_idx, summer] *= 1.0 - summer_derate
         np.clip(availability, 0.0, 1.0, out=availability)
 
     # Historic-outage overlay (backcast only). When config.outage_source is
@@ -394,6 +438,26 @@ def generators_to_fleet_arrays(
                 "historic outage overlay (%d): zeroed %d coal/CC bin-tranches "
                 "across %d plant(s)",
                 config.weather_year, applied, len(masks),
+            )
+        # Unit-level outage derate (backcast): partial availability cut per
+        # unit outage >= 5 days, sized by the unit's share of its model bin
+        # capacity (CTs excluded; split plants routed to the right asset
+        # class). Multiplies the availability already set above.
+        ufac = unit_outage_derate_factors(
+            config.weather_year, hours,
+            getattr(config, "campd_bins_path",
+                    "inputs/custom-bin-assignments.csv"),
+        )
+        if ufac:
+            applied_u = 0
+            for g_idx, gen in enumerate(generators):
+                f = ufac.get((int(gen.plant_code), gen.plant_group))
+                if f is not None:
+                    availability[g_idx, :] *= f
+                    applied_u += 1
+            logger.info(
+                "unit-outage derate (%d): %d bin-tranches derated",
+                config.weather_year, applied_u,
             )
 
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
@@ -1552,21 +1616,56 @@ COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
     56611: 40.0,  # Sandy Creek (PRB) — annual spring block, length varies
 }
 
-# Per-plant CHP grid-delivered steam-following floor (% of nameplate), applied
-# as a hard min-gen on the CC_CHP econ tranche when config.chp_steam_following
-# is set. It is the steady export the cogen always delivers to the grid above
-# its behind-the-meter host self-supply (chp_btm_floor_pct). Derived as the
-# plant's ~20th-percentile CAMPD net CF minus the BTM floor, pooled 2023-2025;
-# most cogens sit at/below the host load at their floor (0 here) and export
-# only the dispatchable surplus, which the load-following HR multiplier prices.
-CHP_GRID_PMIN_BY_PLANT: dict[int, float] = {
-    50815: 7.0,   # Odyssey Energy Altura Cogen
-    55047: 13.0,  # Pasadena Cogeneration
-    55187: 47.0,  # Channelview Cogeneration (high steady base)
-    55299: 15.0,  # Channel Energy Center
-    55464: 11.0,  # Deer Park Energy Center
-    # all other CC_CHP plants: 0 (floor at/below host load — export is surplus)
+# Sector-based behind-the-meter (BTM) treatment for CHP cogens. EIA-923 Page 1
+# classifies each plant by sector: industrial / commercial cogens serve a host
+# behind the meter and export only surplus, while merchant (IPP / NAICS-22)
+# cogens sell to the grid. CHP_SECTOR_CLASS_BY_PLANT maps plant code to
+# {"merchant","industrial","commercial"}; CHP_BTM_PCT_BY_SECTOR is the share of
+# nameplate pulled out of the grid LP as host self-supply. The pulled-out BTM
+# is added back in the report data-driven (EIA-923 net minus grid dispatch), so
+# this only sizes how much grid-facing capacity the LP can dispatch.
+CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
+    7325: "merchant", 10154: "industrial", 10243: "industrial",
+    10261: "industrial", 10298: "industrial", 10418: "industrial",
+    10436: "industrial", 10554: "industrial", 10692: "industrial",
+    10790: "industrial", 50026: "industrial", 50043: "industrial",
+    50054: "commercial", 50118: "commercial", 50150: "industrial",
+    50229: "industrial", 50475: "industrial", 50815: "merchant",
+    52088: "merchant", 52120: "industrial", 52132: "industrial",
+    52176: "merchant", 54330: "industrial", 54520: "commercial",
+    54676: "merchant", 55015: "merchant", 55047: "merchant",
+    55154: "merchant", 55187: "merchant", 55206: "merchant",
+    55299: "merchant", 55311: "industrial", 55313: "industrial",
+    55327: "merchant", 55464: "merchant", 55470: "industrial",
+    56152: "industrial", 56374: "merchant", 57322: "industrial",
+    57504: "commercial", 58151: "commercial", 58378: "merchant",
+    59145: "industrial", 59381: "commercial", 62762: "merchant",
+    66992: "merchant",
 }
+CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
+    "merchant": 40.0, "industrial": 60.0, "commercial": 60.0,
+}
+CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
+
+# Per-plant total must-run floor: the p2 CAMPD gross CF (non-outage, pooled
+# 2023-2025). The grid-delivered steam-following floor applied as min-gen is
+# this minus the plant's BTM share (computed at build time). Only plants with
+# CAMPD coverage have a value (Baytown ~28%, ~the 27% target); absent => no
+# floor, dispatched purely economically.
+CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
+    7325: 34.6, 10298: 65.3, 50815: 36.7, 52088: 26.0, 52176: 0.0,
+    55015: 49.7, 55047: 25.0, 55154: 0.0, 55187: 64.2, 55206: 25.8,
+    55299: 33.1, 55327: 28.2, 55464: 33.8, 55470: 20.9, 58378: 88.8,
+}
+
+
+def chp_btm_pct(plant_code: int, group: str) -> float:
+    """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
+    if group == "ST_CHP":
+        return CHP_ST_BTM_PCT
+    return CHP_BTM_PCT_BY_SECTOR[
+        CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code), "merchant")
+    ]
 
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
@@ -1970,11 +2069,11 @@ def bins_to_fleet(
         # grid-facing capacity, which the steam floor + expensive load-following
         # below then shape into base + dispatchable rather than a flat slab.
         chp_following = (
-            str(b["Plant_Group"]) == "CC_CHP"
+            str(b["Plant_Group"]) in ("CC_CHP", "CT_CHP", "ST_CHP")
             and getattr(config, "chp_steam_following", False)
         )
         if chp_following:
-            pct_mr = float(getattr(config, "chp_btm_floor_pct", 40.0))
+            pct_mr = chp_btm_pct(int(b["Plant_Code"]), str(b["Plant_Group"]))
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
         # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
         # only via the runner). Non-coal bins' must-run share is host
@@ -2033,13 +2132,39 @@ def bins_to_fleet(
             committed_hr = base * cc_mc
             econ_hr = base * float(getattr(config, "cc_econ_hr_override", 1.2))
             peak_hr = base * float(getattr(config, "cc_peak_hr_override", 1.8))
-        # CHP steam-following grid floor pinned onto the econ tranche.
+        # Reliability gas-steam supply-curve override: committed / economic /
+        # peaking = base HR x {0.5, 1.0, 1.5}. The cheap committed tranche
+        # commits the unit economically in place of the old flat must-run
+        # floor; peaker-class ST_GAS keep their CSV heat rates.
+        st_mc = getattr(config, "gas_st_committed_hr_override", None)
+        if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
+                and st_mc is not None):
+            base = float(b["hr_weighted"])
+            committed_hr = base * st_mc
+            econ_hr = base * float(
+                getattr(config, "gas_st_econ_hr_override", 1.0)
+            )
+            peak_hr = base * float(
+                getattr(config, "gas_st_peak_hr_override", 1.5)
+            )
+        # CT_CHP supply curve: committed / economic / peaking = base HR x
+        # {1.0, 1.1, 1.3}, tranched above the must-run BTM + steam-following.
+        ct_mc = getattr(config, "ct_committed_hr_override", None)
+        if group == "CT_CHP" and ct_mc is not None:
+            base = float(b["hr_weighted"])
+            committed_hr = base * ct_mc
+            econ_hr = base * float(getattr(config, "ct_econ_hr_override", 1.1))
+            peak_hr = base * float(getattr(config, "ct_peak_hr_override", 1.3))
+        # CHP steam-following grid floor pinned onto the econ tranche: the
+        # plant's total must-run (p2 CAMPD gross CF) minus its BTM share, i.e.
+        # the steady export delivered to the grid above host self-supply. Only
+        # CAMPD-covered plants have a floor; the rest export surplus only.
         chp_pmin_mw = 0.0
         if chp_following:
-            chp_pmin_mw = min(
-                CHP_GRID_PMIN_BY_PLANT.get(plant_code, 0.0) / 100.0 * nameplate,
-                econ_cap,
-            )
+            pmin_cf = CHP_PMIN_CF_BY_PLANT.get(plant_code)
+            if pmin_cf is not None:
+                grid_mr_cf = max(0.0, pmin_cf - pct_mr)
+                chp_pmin_mw = min(grid_mr_cf / 100.0 * nameplate, econ_cap)
 
         # Four stepped tranches: (suffix, capacity, heat rate, VOM
         # multiplier, min-run, min-down, start cost). Only the Committed
