@@ -79,7 +79,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
-  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-05-23 05:39</p>
+  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-05-23 17:51</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -132,13 +132,13 @@ function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 // ---- tooltip + run-id ----
 const tip=document.getElementById("bctip");
+function posTip(h,e){tip.innerHTML=h;tip.style.display="block";const p=12,w=tip.offsetWidth,ht=tip.offsetHeight;
+ let x=e.clientX+p,y=e.clientY+p;if(x+w>innerWidth)x=e.clientX-w-p;if(y+ht>innerHeight)y=e.clientY-ht-p;tip.style.left=x+"px";tip.style.top=y+"px";}
+function hideTip(){tip.style.display="none";}
 function ridSpan(id){return `<span class=rid data-rid="${id}">${id}</span>`;}
 function wireTips(root){root.querySelectorAll("[data-rid]").forEach(el=>{el.onclick=e=>{
- const m=META_RUN(el.dataset.rid);if(!m)return;e.stopPropagation();
- tip.innerHTML=`<b>${m.id}</b><br>${m.definition}`;tip.style.display="block";
- const p=12,w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+p,y=e.clientY+p;
- if(x+w>innerWidth)x=e.clientX-w-p;if(y+h>innerHeight)y=e.clientY-h-p;tip.style.left=x+"px";tip.style.top=y+"px";};});}
-document.addEventListener("click",e=>{if(!e.target.closest("[data-rid]"))tip.style.display="none";});
+ const m=META_RUN(el.dataset.rid);if(!m)return;e.stopPropagation();posTip(`<b>${m.id}</b><br>${m.definition}`,e);};});}
+document.addEventListener("click",e=>{if(!e.target.closest("[data-rid]")&&!e.target.closest("svg.chart"))hideTip();});
 // ---- svg helpers ----
 function mk(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
 function svgEl(vw,vh){const s=mk("svg",{viewBox:`0 0 ${vw} ${vh}`,class:"chart"});return s;}
@@ -149,6 +149,15 @@ function lineChart(sets,ymax,xl,unit,vw,vh){const L=52,R=14,B=40,TTv=14,pw=vw-L-
  const X=i=>L+(n>1?pw*i/(n-1):0),Y=v=>TTv+ph*(1-Math.min(Math.max(Number(v)||0,0),ymax)/ymax);
  for(const s of sets){const d=s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join(" ");
   svg.appendChild(mk("path",{d,fill:"none",stroke:s.color,"stroke-width":s.w||2.4,"stroke-dasharray":s.dash||""}));}
+ // hover: show every series' value at the nearest x
+ const guide=mk("line",{y1:TTv,y2:TTv+ph,stroke:"#c3ccd6","stroke-width":1,opacity:0});svg.appendChild(guide);
+ svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*vw;
+  let bi=0,bd=1e9;for(let i=0;i<n;i++){const dd=Math.abs(X(i)-vx);if(dd<bd){bd=dd;bi=i;}}
+  guide.setAttribute("x1",X(bi));guide.setAttribute("x2",X(bi));guide.setAttribute("opacity",0.6);
+  let h=`<b>${(xl[bi]!=null&&xl[bi]!==""?xl[bi]:bi)}</b>`;
+  for(const s of sets)h+=`<br><span style="color:${s.color}">●</span> ${s.name}: ${(Number(s.pts[bi])||0).toFixed(1)}${unit}`;
+  posTip(h,e);});
+ svg.addEventListener("mouseleave",()=>{hideTip();guide.setAttribute("opacity",0);});
  return svg;}
 function barChart(bs,ymax,vw,vh){const L=52,R=14,TTv=14,B=46,pw=vw-L-R,ph=vh-TTv-B;
  const svg=svgEl(vw,vh);const g=mk("g",{"font-size":12,fill:"#8a93a0"});
@@ -157,6 +166,10 @@ function barChart(bs,ymax,vw,vh){const L=52,R=14,TTv=14,B=46,pw=vw-L-R,ph=vh-TTv
   svg.appendChild(mk("rect",{x:cx-bw/2,y,width:bw,height:h,rx:3,fill:b.color}));
   svg.appendChild(mk("text",{x:cx,y:vh-26,"text-anchor":"middle","font-size":11,fill:"#46505f"},b.label));
   svg.appendChild(mk("text",{x:cx,y:y-6,"text-anchor":"middle","font-size":12,fill:"#46505f","font-weight":700},b.v.toFixed(1)));});
+ svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*vw;
+  let bi=0,bd=1e9;for(let i=0;i<bs.length;i++){const cx=L+pw*(i+.5)/bs.length;const dd=Math.abs(cx-vx);if(dd<bd){bd=dd;bi=i;}}
+  posTip(`<b>${bs[bi].label}</b><br>${bs[bi].v.toFixed(2)}`,e);});
+ svg.addEventListener("mouseleave",hideTip);
  return svg;}
 function cfColor(v){if(v<=1)return[232,243,247];const t=Math.min(v,100)/100,S=[[0,232,243,247],[.04,127,196,230],[.30,134,201,143],[.55,242,214,92],[.78,239,143,60],[1,192,57,43]];
  for(let i=1;i<S.length;i++)if(t<=S[i][0]){const a=S[i-1],b=S[i],f=(t-a[0])/(b[0]-a[0]);return[a[1]+f*(b[1]-a[1]),a[2]+f*(b[2]-a[2]),a[3]+f*(b[3]-a[3])];}return[192,57,43];}
