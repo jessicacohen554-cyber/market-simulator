@@ -242,10 +242,18 @@ def _calibration_config(
         # value (per operator); CC and Coal keep their CSV peaking %, while
         # Gas CT -> 7% and Gas Steam -> 15%.
         offer_curve_by_group={
-            "CC_REGULAR": {"committed": 0.75, "econ_low": 1.01,
-                           "econ_high": 1.52, "econ_low_share": 0.45},
-            "CC_CHP": {"committed": 0.75, "econ_low": 1.01,
-                       "econ_high": 1.52, "econ_low_share": 0.45},
+            # CC offer curve fit to Colorado Bend II / Wolf Hollow II observed
+            # CAMPD heat-rate curves: marginal HR ~0.95x avg and flat across
+            # the operating range, negligible duct-firing. committed/econ are a
+            # flat cheap band; peak stays the duct-burner class multiplier;
+            # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
+            # grounded (cc_committed_per_plant).
+            "CC_REGULAR": {"committed": 0.92, "econ_low": 0.96,
+                           "econ_high": 1.02, "econ_low_share": 0.50,
+                           "pct_peaking": 8.0},
+            "CC_CHP": {"committed": 0.92, "econ_low": 0.96,
+                       "econ_high": 1.02, "econ_low_share": 0.50,
+                       "pct_peaking": 8.0},
             "CT_PEAKER": {"committed": 1.30, "econ_low": 1.42,
                           "econ_high": 1.78, "peak": 11.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
