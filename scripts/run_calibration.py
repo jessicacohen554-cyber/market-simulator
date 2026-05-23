@@ -248,26 +248,26 @@ def _calibration_config(
             # flat cheap band; peak stays the duct-burner class multiplier;
             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
             # grounded (cc_committed_per_plant).
-            "CC_REGULAR": {"committed": 0.92, "econ_low": 0.96,
-                           "econ_high": 1.02, "econ_low_share": 0.50,
+            "CC_REGULAR": {"committed": 0.92, "econ_low": 1.01,
+                           "econ_high": 1.12, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
-            "CC_CHP": {"committed": 0.92, "econ_low": 0.96,
-                       "econ_high": 1.02, "econ_low_share": 0.50,
+            "CC_CHP": {"committed": 0.92, "econ_low": 1.01,
+                       "econ_high": 1.12, "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
-            "CT_PEAKER": {"committed": 1.30, "econ_low": 1.42,
-                          "econ_high": 1.78, "peak": 11.0,
+            "CT_PEAKER": {"committed": 1.20, "econ_low": 1.32,
+                          "econ_high": 1.98, "peak": 12.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.65, "econ_low": 0.90,
-                       "econ_high": 1.25, "peak": 3.25,
+                       "econ_high": 1.35, "peak": 3.75,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
             # carries the raised multipliers; PRB keeps the run2 values and is
             # shaped by the passthrough sigmoid.
             "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.05,
-                             "econ_high": 1.12, "peak": 1.23,
+                             "econ_high": 1.12, "peak": 1.43,
                              "econ_low_share": 0.556},
             "COAL_PRB": {"committed": 0.90, "econ_low": 0.95,
-                         "econ_high": 1.07, "peak": 1.18,
+                         "econ_high": 1.07, "peak": 1.38,
                          "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
