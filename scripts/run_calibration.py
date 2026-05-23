@@ -243,14 +243,14 @@ def _calibration_config(
         # Gas CT -> 7% and Gas Steam -> 15%.
         offer_curve_by_group={
             "CC_REGULAR": {"committed": 0.75, "econ_low": 1.01,
-                           "econ_high": 1.42, "econ_low_share": 0.45},
+                           "econ_high": 1.52, "econ_low_share": 0.45},
             "CC_CHP": {"committed": 0.75, "econ_low": 1.01,
-                       "econ_high": 1.42, "econ_low_share": 0.45},
-            "CT_PEAKER": {"committed": 1.15, "econ_low": 1.27,
-                          "econ_high": 1.63, "peak": 11.0,
+                       "econ_high": 1.52, "econ_low_share": 0.45},
+            "CT_PEAKER": {"committed": 1.30, "econ_low": 1.42,
+                          "econ_high": 1.78, "peak": 11.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.65, "econ_low": 0.90,
-                       "econ_high": 1.10, "peak": 3.75,
+                       "econ_high": 1.25, "peak": 3.25,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
             # carries the raised multipliers; PRB keeps the run2 values and is
