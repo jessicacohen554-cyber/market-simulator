@@ -231,9 +231,9 @@ def _calibration_config(
         cc_committed_per_plant=True,   # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
-        ct_committed_hr_override=1.0,  # CT_CHP supply curve above its must-run
-        ct_econ_hr_override=1.1,       # BTM + steam-following floor: committed
-        ct_peak_hr_override=1.3,       # 1.0x, economic 1.1x, peaking 1.3x.
+        ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
+        ct_econ_hr_override=1.2,        # BTM + steam-following floor; raised in
+        ct_peak_hr_override=1.4,        # run9 (CT_CHP was running too much).
         # Unified thermal offer curve (operator-supplied band multipliers on
         # AHR x fuel_price; VOM constant across bands). Economic block split
         # into two steps (econ_low / econ_high) by econ_low_share. CC peaking
@@ -249,25 +249,25 @@ def _calibration_config(
             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
             # grounded (cc_committed_per_plant).
             "CC_REGULAR": {"committed": 0.92, "econ_low": 1.01,
-                           "econ_high": 1.16, "econ_low_share": 0.50,
+                           "econ_high": 1.22, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
             "CC_CHP": {"committed": 0.92, "econ_low": 1.01,
-                       "econ_high": 1.16, "econ_low_share": 0.50,
+                       "econ_high": 1.22, "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
-            "CT_PEAKER": {"committed": 1.20, "econ_low": 1.32,
-                          "econ_high": 1.98, "peak": 12.0,
+            "CT_PEAKER": {"committed": 1.10, "econ_low": 1.32,
+                          "econ_high": 1.98, "peak": 13.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.72, "econ_low": 0.90,
-                       "econ_high": 1.45, "peak": 3.75,
+            "ST_GAS": {"committed": 0.66, "econ_low": 0.90,
+                       "econ_high": 1.45, "peak": 4.25,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
             # carries the raised multipliers; PRB keeps the run2 values and is
             # shaped by the passthrough sigmoid.
-            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.05,
-                             "econ_high": 1.12, "peak": 1.43,
+            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.09,
+                             "econ_high": 1.10, "peak": 1.50,
                              "econ_low_share": 0.556},
-            "COAL_PRB": {"committed": 0.90, "econ_low": 0.95,
-                         "econ_high": 1.07, "peak": 1.38,
+            "COAL_PRB": {"committed": 0.90, "econ_low": 0.92,
+                         "econ_high": 1.12, "peak": 1.48,
                          "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
