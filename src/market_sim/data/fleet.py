@@ -2083,9 +2083,9 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
 # multiplier. Set 0.1 below the range midpoints per the operator's CC peaking
 # tune.
 CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
-    "advanced": 2.20,  # G/H-class
-    "f": 1.95,         # F-class incl. E/F
-    "older": 1.70,     # E-class, legacy
+    "advanced": 2.35,  # G/H-class
+    "f": 2.10,         # F-class incl. E/F
+    "older": 1.85,     # E-class, legacy
 }
 
 
