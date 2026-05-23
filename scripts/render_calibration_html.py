@@ -127,7 +127,8 @@ def _coal_group(klass: str) -> str:
     return klass
 
 
-def build_payload(runs: list[tuple[str, Path]]) -> dict:
+def build_payload(runs: list[tuple[str, Path]],
+                  years: set[int] | None = None) -> dict:
     """Assemble the embedded data for every run, with a shared CAMPD benchmark.
 
     Returns a dict with: groups / labels / zones / years; ``bench`` (per year:
@@ -153,6 +154,8 @@ def build_payload(runs: list[tuple[str, Path]]) -> dict:
         campd_all = pd.read_parquet(bdir / "campd.parquet")
         sys_all = pd.read_parquet(bdir / "system.parquet")
         for year in meta["years"]:
+            if years is not None and int(year) not in years:
+                continue
             years_set.add(int(year))
             disp = pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet")
             e923 = e923_all[e923_all["year"] == year]
