@@ -82,7 +82,8 @@ def _run_meta(bundle: Path, fallback_id: str) -> dict:
 
 
 def generate(runs: list[tuple[str, Path]], out: Path,
-             standalone: Path | None = None) -> None:
+             standalone: Path | None = None,
+             years: set[int] | None = None) -> None:
     """Write the data files + the static shell for the given runs.
 
     Always writes the deployable split files (data under
@@ -93,7 +94,7 @@ def generate(runs: list[tuple[str, Path]], out: Path,
     """
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     # Reuse the payload builder, then split into shared benchmark + per-run.
-    D = rch.build_payload(runs)
+    D = rch.build_payload(runs, years=years)
     meta_block = {
         "groups": D["groups"], "groupLabel": D["groupLabel"],
         "zones": D["zones"], "years": D["years"],
@@ -105,6 +106,8 @@ def generate(runs: list[tuple[str, Path]], out: Path,
     manifest, run_js = [], []
     for i, (rid_hint, bundle) in enumerate(runs):
         rm = _run_meta(bundle, _slug(rid_hint))  # rid_hint is the CLI label
+        if years is not None:
+            rm["years"] = [y for y in rm["years"] if int(y) in years]
         rid = rm["id"]
         model = D["model"][i]
         model["label"] = rm["label"]
@@ -156,6 +159,9 @@ def main() -> None:
     ap.add_argument("--standalone", default=None,
                     help="Also write a single self-contained HTML (data "
                          "inlined) at this path, for sending/offline viewing.")
+    ap.add_argument("--years", nargs="+", type=int, default=None,
+                    help="Restrict to these calendar years (e.g. 2023 2024); "
+                         "default = all years in each bundle.")
     args = ap.parse_args()
     runs = []
     for spec in args.bundles:
@@ -165,7 +171,8 @@ def main() -> None:
             d = spec; lab = Path(spec).name
         runs.append((lab, Path(d)))
     generate(runs, Path(args.out),
-             Path(args.standalone) if args.standalone else None)
+             Path(args.standalone) if args.standalone else None,
+             years=set(args.years) if args.years else None)
 
 
 # The static shell HTML/JS is defined in the companion module to keep this file
