@@ -215,8 +215,18 @@ def _calibration_config(
         coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
         #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
         #   back to the flat lignite/PRB average.
-        coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,  # gas-keyed
-        #   PRB passthrough when set; else the flat coal_prb_passthrough.
+        # PRB passthrough as a gas-keyed sigmoid that MARKS THE BID UP slightly
+        # (run12): floor 1.0 (never discount below full marginal cost) rising to
+        # ceil 1.12, centred at gas_mid 2.0 (below the ~$1.7-2.4 calibration
+        # delivered-gas range) so the markup is active across the year — ~4-9%
+        # above full PRB marginal cost, larger in higher-gas summer hours. Nudges
+        # the over-running PRB units (Limestone, Fayette, Sandy Creek) down toward
+        # CAMPD, concentrated in the cheap overnight hours. (Forces sigmoid on,
+        # superseding the CLI coal_prb_passthrough_sigmoid sweep flag.)
+        coal_prb_passthrough_sigmoid=True,
+        coal_prb_passthrough_floor=1.00,
+        coal_prb_passthrough_ceil=1.12,
+        coal_prb_passthrough_gas_mid=2.00,
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
         #   must-run floors when set; else the uniform lignite/PRB overrides.
         coal_drop_pof=coal_drop_pof,  # drop statistical POF on coal (planned
@@ -266,9 +276,13 @@ def _calibration_config(
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
             # carries the raised multipliers; PRB keeps the run2 values and is
-            # shaped by the passthrough sigmoid.
-            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.09,
-                             "econ_high": 1.10, "peak": 1.50,
+            # shaped by the passthrough sigmoid. Lignite econ bands raised in
+            # run11 (1.09/1.10 -> 1.20/1.30) so Oak Grove's economic slice bids
+            # ~$21-23/MWh — into the model's overnight North LMP band — and
+            # cycles down overnight toward its committed floor (~50% CF) instead
+            # of running flat baseload; midday ($270+) is unaffected.
+            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.20,
+                             "econ_high": 1.30, "peak": 1.50,
                              "econ_low_share": 0.556},
             "COAL_PRB": {"committed": 0.90, "econ_low": 0.92,
                          "econ_high": 1.12, "peak": 1.48,
