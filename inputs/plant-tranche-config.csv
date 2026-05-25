@@ -19,55 +19,55 @@ Plant_Code,Plant_Name,Plant_Group,Coal_Supply,Config,Turbine_Class,ERCOT_Zone,Na
 55047,Pasadena Cogeneration,CC_CHP,,,F-class (CHP),Houston,815.0,6.63,40.0,0.0,26.0,26.0,8.0,1.0,1.0,1.01,1.22,2.25
 52132,Power Station 4,CC_CHP,,,F-class (CHP),Houston,156.4,5.73,60.0,0.0,16.0,16.0,8.0,1.0,1.0,1.01,1.22,2.25
 52088,Texas City Power Plant,CC_CHP,,,F-class (CHP),Houston,450.0,7.3,40.0,0.0,26.0,26.0,8.0,1.0,1.0,1.01,1.22,2.25
-7512,Arthur Von Rosenberg,CC_REGULAR,,,E-class,Unknown,575.0,7.0,0.0,55.0,18.5,18.5,8.0,1.0,0.92,1.01,1.22,2.0
-4939,Barney M Davis [CC],CC_REGULAR,,,,South,730.0,8.0,0.0,7.7,42.15,42.15,8.0,1.0,0.92,1.01,1.22,2.25
-55168,Bastrop Energy Center,CC_REGULAR,,,F-class,South_Central,618.7,6.94,0.0,32.4,29.8,29.8,8.0,1.0,0.92,1.01,1.22,2.25
-56806,Cedar Bayou 4,CC_REGULAR,,,E-class,Houston,535.5,9.94,0.0,20.9,35.55,35.55,8.0,1.0,0.92,1.01,1.22,2.0
-56350,Colorado Bend Energy Center,CC_REGULAR,,,F-class,Houston,654.1,8.02,0.0,27.3,32.35,32.35,8.0,1.0,0.92,1.01,1.22,2.25
-60122,Colorado Bend II,CC_REGULAR,,,F-class (late),Houston,1230.3,6.57,0.0,55.0,20.0,10.0,15.0,1.0,1.0,1.1,1.3,2.3
-56233,EG178 Facility,CC_REGULAR,,,E-class,West,153.9,8.21,0.0,55.0,18.5,18.5,8.0,1.0,0.92,1.01,1.22,2.0
-55223,Ennis Power Company LLC,CC_REGULAR,,,F-class,North,418.0,7.27,0.0,42.5,24.75,24.75,8.0,1.0,0.92,1.01,1.22,2.25
-55480,Forney Energy Center,CC_REGULAR,,,F-class,North,1894.2,7.11,0.0,30.2,30.9,30.9,8.0,1.0,0.92,1.01,1.22,2.25
-55226,Freestone Energy Center,CC_REGULAR,,,F-class,North,1036.0,6.79,0.0,40.9,25.55,25.55,8.0,1.0,0.92,1.01,1.22,2.25
-55098,Frontera Energy Center,CC_REGULAR,,,F-class,Unknown,529.0,6.87,0.0,40.3,25.85,25.85,8.0,1.0,0.92,1.01,1.22,2.25
-55086,Gregory Power Plant,CC_REGULAR,,,E-class,South,469.8,11.68,0.0,21.0,35.5,35.5,8.0,1.0,0.92,1.01,1.22,2.0
-55153,Guadalupe Generating Station,CC_REGULAR,,,F-class,South_Central,1088.2,7.39,0.0,44.1,23.95,23.95,8.0,1.0,0.92,1.01,1.22,2.25
-55144,Hays Energy Project,CC_REGULAR,,,F-class,South_Central,989.0,7.3,0.0,23.3,34.35,34.35,8.0,1.0,0.92,1.01,1.22,2.25
-55545,Hidalgo Energy Center,CC_REGULAR,,,F-class,Unknown,551.3,7.0,0.0,45.0,23.5,23.5,8.0,1.0,0.92,1.01,1.22,2.25
-55230,Jack County,CC_REGULAR,,,G-class (Mitsubishi),North,1280.0,7.04,0.0,18.1,36.95,36.95,8.0,1.0,0.92,1.01,1.22,2.5
-54817,Johnson County,CC_REGULAR,,,E-class,North,282.6,7.41,0.0,36.7,27.65,27.65,8.0,1.0,0.92,1.01,1.22,2.0
-55097,Lamar Power Project,CC_REGULAR,,,F-class,North,1112.6,6.9,0.0,31.2,30.4,30.4,8.0,1.0,0.92,1.01,1.22,2.25
-55123,Magic Valley Generating Station,CC_REGULAR,,,F-class,South,801.0,6.62,0.0,27.9,32.05,32.05,8.0,1.0,0.92,1.01,1.22,2.25
-55091,Midlothian Energy Facility,CC_REGULAR,,,F-class,North,1734.0,7.41,0.0,12.1,39.95,39.95,8.0,1.0,0.92,1.01,1.22,2.25
-3441,Nueces Bay,CC_REGULAR,,,E-class,South,730.2,7.31,0.0,11.5,40.25,40.25,8.0,1.0,0.92,1.01,1.22,2.0
-55215,Odessa-Ector Power Plant,CC_REGULAR,,,F-class,West,1152.8,6.72,0.0,26.4,32.8,32.8,8.0,1.0,0.92,1.01,1.22,2.25
-50109,Paris Energy Center,CC_REGULAR,,,E-class,North,265.6,8.66,0.0,28.8,31.6,31.6,8.0,1.0,0.92,1.01,1.22,2.0
-56349,Quail Run Energy Center,CC_REGULAR,,,F-class,West,550.4,8.53,0.0,22.7,34.65,34.65,8.0,1.0,0.92,1.01,1.22,2.25
-58005,Rayburn Energy Station LLC,CC_REGULAR,,,F-class (late),North,803.2,7.11,0.0,55.0,20.0,10.0,15.0,1.0,1.0,1.1,1.3,2.3
-55137,Rio Nogales Power Project,CC_REGULAR,,,F-class,South_Central,940.2,6.52,0.0,37.8,27.1,27.1,8.0,1.0,0.92,1.01,1.22,2.25
-3631,Sam Rayburn,CC_REGULAR,,,E-class,South,192.8,9.78,0.0,8.1,41.95,41.95,8.0,1.0,0.92,1.01,1.22,2.0
-7900,Sand Hill,CC_REGULAR,,,F-class,South_Central,696.4,7.37,0.0,17.9,37.05,37.05,8.0,1.0,0.92,1.01,1.22,2.25
-50127,Signal Hill Generating LLC,CC_REGULAR,,,E-class,North,80.0,15.4,0.0,55.0,18.5,18.5,8.0,1.0,0.92,1.01,1.22,2.0
-3469,T H Wharton,CC_REGULAR,,,E-class,Houston,1189.9,12.99,0.0,8.4,41.8,41.8,8.0,1.0,0.92,1.01,1.22,2.0
-58001,Temple Power Station,CC_REGULAR,,,F-class (late),North,1606.4,7.7,0.0,55.0,20.0,10.0,15.0,1.0,1.0,1.1,1.3,2.3
-55062,Tenaska Frontier Generation Station,CC_REGULAR,,,F-class,Houston,939.7,7.15,0.0,25.7,33.15,33.15,8.0,1.0,0.92,1.01,1.22,2.25
-55132,Tenaska Gateway Generating Station,CC_REGULAR,,,F-class,North,939.6,8.38,0.0,15.2,38.4,38.4,8.0,1.0,0.92,1.01,1.22,2.25
-55172,Thad Hill Energy Center,CC_REGULAR,,,F-class,North,807.0,7.64,0.0,37.3,27.35,27.35,8.0,1.0,0.92,1.01,1.22,2.25
-4937,Thomas C Ferguson,CC_REGULAR,,,E-class,South_Central,574.6,10.12,0.0,33.3,29.35,29.35,8.0,1.0,0.92,1.01,1.22,2.0
-3443,Victoria,CC_REGULAR,,,E-class,South,376.9,7.77,0.0,44.7,23.65,23.65,8.0,1.0,0.92,1.01,1.22,2.0
-55320,Wise County Power LLC,CC_REGULAR,,,F-class,North,821.7,6.72,0.0,25.3,33.35,33.35,8.0,1.0,0.92,1.01,1.22,2.25
-55139,Wolf Hollow I LP,CC_REGULAR,,,F-class,North,788.4,7.11,0.0,38.6,26.7,26.7,8.0,1.0,0.92,1.01,1.22,2.25
-59812,Wolf Hollow II,CC_REGULAR,,,F-class (late),North,1231.2,6.65,0.0,55.0,20.0,10.0,15.0,1.0,1.0,1.1,1.3,2.3
-6178,Coleto Creek,COAL,prb,,,South,622.4,10.24,25.0,20.0,27.8,22.2,5.0,1.0,0.9,1.02,1.28,1.48
-6179,Fayette Power Project,COAL,prb,,,South_Central,1690.0,10.67,25.0,20.0,27.8,22.2,5.0,1.0,0.9,1.02,1.28,1.48
-7097,J K Spruce,COAL,prb,,,South_Central,1488.5,10.98,25.0,20.0,27.8,22.2,5.0,1.0,0.9,1.02,1.28,1.48
-298,Limestone,COAL,prb,,,North,1849.8,10.17,25.0,25.0,25.02,19.98,5.0,1.0,0.9,1.02,1.28,1.48
+7512,Arthur Von Rosenberg,CC_REGULAR,,,E-class,Unknown,575.0,7.0,0.0,55.0,18.5,18.5,8.0,1.0,0.81,0.889,1.074,2.0
+4939,Barney M Davis [CC],CC_REGULAR,,,,South,730.0,8.0,0.0,7.7,42.15,42.15,8.0,1.0,0.884,0.97,1.172,2.25
+55168,Bastrop Energy Center,CC_REGULAR,,,F-class,South_Central,618.7,6.94,0.0,32.4,29.8,29.8,8.0,1.0,0.963,1.058,1.278,2.25
+56806,Cedar Bayou 4,CC_REGULAR,,,E-class,Houston,535.5,9.94,0.0,20.9,35.55,35.55,8.0,1.0,0.856,0.939,1.135,2.0
+56350,Colorado Bend Energy Center,CC_REGULAR,,,F-class,Houston,654.1,8.02,0.0,27.3,32.35,32.35,8.0,1.0,1.03,1.131,1.366,2.25
+60122,Colorado Bend II,CC_REGULAR,,,F-class (late),Houston,1230.3,6.57,0.0,55.0,20.0,10.0,15.0,1.0,1.008,1.109,1.311,2.3
+56233,EG178 Facility,CC_REGULAR,,,E-class,West,153.9,8.21,0.0,55.0,18.5,18.5,8.0,1.0,1.03,1.131,1.366,2.0
+55223,Ennis Power Company LLC,CC_REGULAR,,,F-class,North,418.0,7.27,0.0,42.5,24.75,24.75,8.0,1.0,0.96,1.053,1.272,2.25
+55480,Forney Energy Center,CC_REGULAR,,,F-class,North,1894.2,7.11,0.0,30.2,30.9,30.9,8.0,1.0,0.94,1.031,1.246,2.25
+55226,Freestone Energy Center,CC_REGULAR,,,F-class,North,1036.0,6.79,0.0,40.9,25.55,25.55,8.0,1.0,0.907,0.995,1.202,2.25
+55098,Frontera Energy Center,CC_REGULAR,,,F-class,Unknown,529.0,6.87,0.0,40.3,25.85,25.85,8.0,1.0,1.015,1.114,1.346,2.25
+55086,Gregory Power Plant,CC_REGULAR,,,E-class,South,469.8,11.68,0.0,21.0,35.5,35.5,8.0,1.0,0.882,0.968,1.17,2.0
+55153,Guadalupe Generating Station,CC_REGULAR,,,F-class,South_Central,1088.2,7.39,0.0,44.1,23.95,23.95,8.0,1.0,0.915,1.005,1.213,2.25
+55144,Hays Energy Project,CC_REGULAR,,,F-class,South_Central,989.0,7.3,0.0,23.3,34.35,34.35,8.0,1.0,0.951,1.044,1.261,2.25
+55545,Hidalgo Energy Center,CC_REGULAR,,,F-class,Unknown,551.3,7.0,0.0,45.0,23.5,23.5,8.0,1.0,1.03,1.131,1.366,2.25
+55230,Jack County,CC_REGULAR,,,G-class (Mitsubishi),North,1280.0,7.04,0.0,18.1,36.95,36.95,8.0,1.0,0.86,0.944,1.14,2.5
+54817,Johnson County,CC_REGULAR,,,E-class,North,282.6,7.41,0.0,36.7,27.65,27.65,8.0,1.0,0.893,0.98,1.184,2.0
+55097,Lamar Power Project,CC_REGULAR,,,F-class,North,1112.6,6.9,0.0,31.2,30.4,30.4,8.0,1.0,0.893,0.981,1.185,2.25
+55123,Magic Valley Generating Station,CC_REGULAR,,,F-class,South,801.0,6.62,0.0,27.9,32.05,32.05,8.0,1.0,1.03,1.131,1.366,2.25
+55091,Midlothian Energy Facility,CC_REGULAR,,,F-class,North,1734.0,7.41,0.0,12.1,39.95,39.95,8.0,1.0,1.03,1.131,1.366,2.25
+3441,Nueces Bay,CC_REGULAR,,,E-class,South,730.2,7.31,0.0,11.5,40.25,40.25,8.0,1.0,0.966,1.06,1.28,2.0
+55215,Odessa-Ector Power Plant,CC_REGULAR,,,F-class,West,1152.8,6.72,0.0,26.4,32.8,32.8,8.0,1.0,0.933,1.024,1.237,2.25
+50109,Paris Energy Center,CC_REGULAR,,,E-class,North,265.6,8.66,0.0,28.8,31.6,31.6,8.0,1.0,0.81,0.889,1.074,2.0
+56349,Quail Run Energy Center,CC_REGULAR,,,F-class,West,550.4,8.53,0.0,22.7,34.65,34.65,8.0,1.0,0.941,1.033,1.248,2.25
+58005,Rayburn Energy Station LLC,CC_REGULAR,,,F-class (late),North,803.2,7.11,0.0,55.0,20.0,10.0,15.0,1.0,1.03,1.131,1.366,2.3
+55137,Rio Nogales Power Project,CC_REGULAR,,,F-class,South_Central,940.2,6.52,0.0,37.8,27.1,27.1,8.0,1.0,0.916,1.006,1.215,2.25
+3631,Sam Rayburn,CC_REGULAR,,,E-class,South,192.8,9.78,0.0,8.1,41.95,41.95,8.0,1.0,0.81,0.889,1.074,2.0
+7900,Sand Hill,CC_REGULAR,,,F-class,South_Central,696.4,7.37,0.0,17.9,37.05,37.05,8.0,1.0,0.838,0.92,1.111,2.25
+50127,Signal Hill Generating LLC,CC_REGULAR,,,E-class,North,80.0,15.4,0.0,55.0,18.5,18.5,8.0,1.0,1.03,1.131,1.366,2.0
+3469,T H Wharton,CC_REGULAR,,,E-class,Houston,1189.9,12.99,0.0,8.4,41.8,41.8,8.0,1.0,0.81,0.889,1.074,2.0
+58001,Temple Power Station,CC_REGULAR,,,F-class (late),North,1606.4,7.7,0.0,55.0,20.0,10.0,15.0,1.0,1.03,1.131,1.366,2.3
+55062,Tenaska Frontier Generation Station,CC_REGULAR,,,F-class,Houston,939.7,7.15,0.0,25.7,33.15,33.15,8.0,1.0,1.03,1.131,1.366,2.25
+55132,Tenaska Gateway Generating Station,CC_REGULAR,,,F-class,North,939.6,8.38,0.0,15.2,38.4,38.4,8.0,1.0,1.03,1.131,1.366,2.25
+55172,Thad Hill Energy Center,CC_REGULAR,,,F-class,North,807.0,7.64,0.0,37.3,27.35,27.35,8.0,1.0,0.964,1.058,1.278,2.25
+4937,Thomas C Ferguson,CC_REGULAR,,,E-class,South_Central,574.6,10.12,0.0,33.3,29.35,29.35,8.0,1.0,0.81,0.889,1.074,2.0
+3443,Victoria,CC_REGULAR,,,E-class,South,376.9,7.77,0.0,44.7,23.65,23.65,8.0,1.0,1.014,1.113,1.345,2.0
+55320,Wise County Power LLC,CC_REGULAR,,,F-class,North,821.7,6.72,0.0,25.3,33.35,33.35,8.0,1.0,0.953,1.046,1.264,2.25
+55139,Wolf Hollow I LP,CC_REGULAR,,,F-class,North,788.4,7.11,0.0,38.6,26.7,26.7,8.0,1.0,0.983,1.079,1.304,2.25
+59812,Wolf Hollow II,CC_REGULAR,,,F-class (late),North,1231.2,6.65,0.0,55.0,20.0,10.0,15.0,1.0,1.03,1.131,1.352,2.3
+6178,Coleto Creek,COAL,prb,,,South,622.4,10.24,25.0,20.0,27.8,18.2,9.0,1.0,0.9,1.06,1.28,1.48
+6179,Fayette Power Project,COAL,prb,,,South_Central,1690.0,10.67,25.0,20.0,27.8,18.2,9.0,1.0,0.9,1.06,1.28,1.48
+7097,J K Spruce,COAL,prb,,,South_Central,1488.5,10.98,25.0,20.0,27.8,18.2,9.0,1.0,0.9,1.06,1.28,1.48
+298,Limestone,COAL,prb,,,North,1849.8,10.17,25.0,25.0,25.02,15.98,9.0,1.0,0.9,1.06,1.28,1.48
 7030,Major Oak Power,COAL,lignite,,,North,349.2,10.16,40.0,10.0,25.02,19.98,5.0,1.0,0.9,1.09,1.1,1.5
-6146,Martin Lake,COAL,prb,,,North,2379.6,10.28,25.0,25.0,25.02,19.98,5.0,1.0,0.9,1.02,1.28,1.48
+6146,Martin Lake,COAL,prb,,,North,2379.6,10.28,25.0,25.0,25.02,15.98,9.0,1.0,0.9,1.06,1.28,1.48
 6180,Oak Grove (TX),COAL,lignite,,,North,1795.4,9.49,40.0,10.0,25.02,19.98,5.0,1.0,0.9,1.09,1.1,1.5
 6183,San Miguel,COAL,lignite,,,South,410.0,11.25,40.0,10.0,25.02,19.98,5.0,1.0,0.9,1.09,1.1,1.5
-56611,Sandy Creek Energy Station,COAL,prb,,,South_Central,936.0,9.5,25.0,20.0,27.8,22.2,5.0,1.0,0.9,1.02,1.28,1.48
-3470,W A Parish [COAL],COAL,prb,,,Houston,2443.0,10.76,25.0,20.0,27.8,22.2,5.0,1.0,0.9,1.02,1.28,1.48
+56611,Sandy Creek Energy Station,COAL,prb,,,South_Central,936.0,9.5,25.0,20.0,27.8,18.2,9.0,1.0,0.9,1.06,1.28,1.48
+3470,W A Parish [COAL],COAL,prb,,,Houston,2443.0,10.76,25.0,20.0,27.8,18.2,9.0,1.0,0.9,1.06,1.28,1.48
 55311,BASF Freeport Works,CT_CHP,,,,Houston,92.7,5.37,60.0,0.0,35.0,0.0,5.0,1.0,1.0,1.2,1.0,1.4
 10298,Bayou Cogen Plant,CT_CHP,,,,Houston,318.4,13.81,60.0,0.0,35.0,0.0,5.0,1.0,1.0,1.2,1.0,1.4
 66992,"CG PS Victoria WWTP, LLC",CT_CHP,,,,South,1.3,10.89,40.0,0.0,60.0,0.0,0.0,1.0,1.0,1.2,1.0,1.0
@@ -93,79 +93,79 @@ Plant_Code,Plant_Name,Plant_Group,Coal_Supply,Config,Turbine_Class,ERCOT_Zone,Na
 54330,Westhollow Technology Center,CT_CHP,,,,Houston,3.7,9.55,60.0,0.0,40.0,0.0,0.0,1.0,1.0,1.2,1.0,1.0
 67308,AbbVie Waco,CT_PEAKER,,,,North,5.6,13.0,7.0,30.0,33.138,29.862,0.0,1.0,1.1,1.32,1.98,1.0
 66561,BUC00040,CT_PEAKER,,,,Houston,1.6,16.67,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
-60264,Bacliff,CT_PEAKER,,,,Houston,427.2,13.0,0.0,26.0,34.19,30.81,9.0,1.0,1.088,1.285,1.922,13.0
-65535,Bakke,CT_PEAKER,,,,West,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.334,1.575,2.357,13.0
-64383,Braes Bayou Plant,CT_PEAKER,,,,Houston,484.0,10.01,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
-55053,Bridgeport Gas Processing Plant,CT_PEAKER,,,,North,10.4,10.2,0.0,41.0,26.3,23.7,9.0,1.0,0.986,1.165,1.742,13.0
-65373,Brotman Power Station,CT_PEAKER,,,,Houston,484.0,9.89,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
-3561,Bryan (TX),CT_PEAKER,,,,South_Central,22.0,16.24,0.0,26.0,34.19,30.81,9.0,1.0,1.329,1.57,2.349,13.0
-60460,Chamon Power LLC,CT_PEAKER,,,,Houston,121.0,10.16,0.0,41.0,26.3,23.7,9.0,1.0,1.305,1.542,2.307,13.0
+60264,Bacliff,CT_PEAKER,,,,Houston,427.2,13.0,0.0,26.0,34.19,30.81,9.0,1.0,1.238,1.462,2.188,13.0
+65535,Bakke,CT_PEAKER,,,,West,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.276,1.507,2.255,13.0
+64383,Braes Bayou Plant,CT_PEAKER,,,,Houston,484.0,10.01,0.0,41.0,26.3,23.7,9.0,1.0,1.2,1.417,2.12,13.0
+55053,Bridgeport Gas Processing Plant,CT_PEAKER,,,,North,10.4,10.2,0.0,41.0,26.3,23.7,9.0,1.0,1.044,1.233,1.845,13.0
+65373,Brotman Power Station,CT_PEAKER,,,,Houston,484.0,9.89,0.0,41.0,26.3,23.7,9.0,1.0,1.276,1.507,2.255,13.0
+3561,Bryan (TX),CT_PEAKER,,,,South_Central,22.0,16.24,0.0,26.0,34.19,30.81,9.0,1.0,1.15,1.358,2.032,13.0
+60460,Chamon Power LLC,CT_PEAKER,,,,Houston,121.0,10.16,0.0,41.0,26.3,23.7,9.0,1.0,1.082,1.278,1.912,13.0
 65536,Citrus City,CT_PEAKER,,,,South,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
 65537,Clara,CT_PEAKER,,,,Houston,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
 65538,Cutten,CT_PEAKER,,,,Houston,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-3548,Decker Creek,CT_PEAKER,,,,South_Central,206.0,13.44,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
-61643,Denton Energy Center,CT_PEAKER,,,,North,225.6,8.59,0.0,31.0,31.56,28.44,9.0,1.0,0.986,1.165,1.742,13.0
+3548,Decker Creek,CT_PEAKER,,,,South_Central,206.0,13.44,0.0,26.0,34.19,30.81,9.0,1.0,1.276,1.507,2.255,13.0
+61643,Denton Energy Center,CT_PEAKER,,,,North,225.6,8.59,0.0,31.0,31.56,28.44,9.0,1.0,1.045,1.234,1.846,13.0
 65539,E. Porte Ct.,CT_PEAKER,,,,South,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-58471,Ector County Energy Center,CT_PEAKER,,,,West,358.8,11.1,0.0,46.0,23.67,21.33,9.0,1.0,0.986,1.165,1.742,13.0
-55365,Exelon LaPorte Generating Station,CT_PEAKER,,,,Houston,236.0,12.74,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
-66595,FTBLID2,CT_PEAKER,,,,Houston,11.2,14.12,0.0,26.0,34.19,30.81,9.0,1.0,1.334,1.575,2.357,13.0
+58471,Ector County Energy Center,CT_PEAKER,,,,West,358.8,11.1,0.0,46.0,23.67,21.33,9.0,1.0,1.276,1.507,2.255,13.0
+55365,Exelon LaPorte Generating Station,CT_PEAKER,,,,Houston,236.0,12.74,0.0,26.0,34.19,30.81,9.0,1.0,1.276,1.507,2.255,13.0
+66595,FTBLID2,CT_PEAKER,,,,Houston,11.2,14.12,0.0,26.0,34.19,30.81,9.0,1.0,1.276,1.507,2.255,13.0
 65540,Frankel,CT_PEAKER,,,,West,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-60468,Friendswood Energy,CT_PEAKER,,,,Houston,121.5,12.39,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
+60468,Friendswood Energy,CT_PEAKER,,,,Houston,121.5,12.39,0.0,26.0,34.19,30.81,9.0,1.0,1.276,1.507,2.255,13.0
 65541,GCWA,CT_PEAKER,,,,Houston,7.2,9.31,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
 65542,Goldsmith,CT_PEAKER,,,,West,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-3464,Greens Bayou,CT_PEAKER,,,,Houston,432.0,14.36,0.0,26.0,34.19,30.81,9.0,1.0,1.334,1.575,2.357,13.0
+3464,Greens Bayou,CT_PEAKER,,,,Houston,432.0,14.36,0.0,26.0,34.19,30.81,9.0,1.0,1.225,1.446,2.164,13.0
 66549,HEB00063,CT_PEAKER,,,,Houston,1.6,14.41,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
 66550,HEB00069,CT_PEAKER,,,,South,1.6,14.11,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
 66563,HEB00092,CT_PEAKER,,,,South,1.6,14.15,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
 66564,HEB00095,CT_PEAKER,,,,South,1.6,14.15,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
 66562,HEB00591,CT_PEAKER,,,,South_Central,1.6,14.16,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
-66565,HEBCCBakery,CT_PEAKER,,,,South,3.2,14.81,7.0,30.0,33.138,29.862,0.0,1.0,1.142,1.349,2.019,1.0
-66567,HEBHoustonDistributionCenter,CT_PEAKER,,,,Houston,12.8,16.02,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
-66566,HEBSnackPlant,CT_PEAKER,,,,Houston,1.6,15.16,66.862,0.0,33.138,0.0,0.0,1.0,0.986,1.165,1.742,1.0
+66565,HEBCCBakery,CT_PEAKER,,,,South,3.2,14.81,7.0,30.0,33.138,29.862,0.0,1.0,1.093,1.29,1.931,1.0
+66567,HEBHoustonDistributionCenter,CT_PEAKER,,,,Houston,12.8,16.02,0.0,26.0,34.19,30.81,9.0,1.0,1.044,1.233,1.845,13.0
+66566,HEBSnackPlant,CT_PEAKER,,,,Houston,1.6,15.16,66.862,0.0,33.138,0.0,0.0,1.0,1.044,1.233,1.845,1.0
 67317,HEBTEMDistCenter,CT_PEAKER,,,,North,4.8,13.0,7.0,30.0,33.138,29.862,0.0,1.0,1.1,1.32,1.98,1.0
 68735,HEBTEMDistCenter1B,CT_PEAKER,,,,Unknown,1.6,13.0,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
 68736,HEBTEMDistCenter2A,CT_PEAKER,,,,Unknown,3.2,13.0,7.0,30.0,33.138,29.862,0.0,1.0,1.1,1.32,1.98,1.0
 66612,HEB_CPS00085,CT_PEAKER,,,,South_Central,1.6,14.56,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
-66613,HEB_CPSSADC,CT_PEAKER,,,,South_Central,6.4,14.36,7.0,30.0,33.138,29.862,0.0,1.0,1.334,1.575,2.357,1.0
-63335,HO Clarke Generating,CT_PEAKER,,,,Houston,484.0,10.01,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
-55052,Jameson Gas Processing Plant,CT_PEAKER,,,,West,1.8,7.87,34.492,35.0,30.508,0.0,0.0,1.0,1.046,1.236,1.849,1.0
-3439,Laredo,CT_PEAKER,,,,West,263.6,9.16,0.0,36.0,28.93,26.07,9.0,1.0,1.334,1.575,2.357,13.0
-3609,Leon Creek,CT_PEAKER,,,,South_Central,229.6,9.56,0.0,41.0,26.3,23.7,9.0,1.0,0.986,1.165,1.742,13.0
-65372,Mark One Power Station,CT_PEAKER,,,,Houston,484.0,9.96,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
+66613,HEB_CPSSADC,CT_PEAKER,,,,South_Central,6.4,14.36,7.0,30.0,33.138,29.862,0.0,1.0,1.23,1.452,2.173,1.0
+63335,HO Clarke Generating,CT_PEAKER,,,,Houston,484.0,10.01,0.0,41.0,26.3,23.7,9.0,1.0,1.049,1.239,1.853,13.0
+55052,Jameson Gas Processing Plant,CT_PEAKER,,,,West,1.8,7.87,34.492,35.0,30.508,0.0,0.0,1.0,1.114,1.316,1.969,1.0
+3439,Laredo,CT_PEAKER,,,,West,263.6,9.16,0.0,36.0,28.93,26.07,9.0,1.0,1.276,1.507,2.255,13.0
+3609,Leon Creek,CT_PEAKER,,,,South_Central,229.6,9.56,0.0,41.0,26.3,23.7,9.0,1.0,1.044,1.233,1.845,13.0
+65372,Mark One Power Station,CT_PEAKER,,,,Houston,484.0,9.96,0.0,41.0,26.3,23.7,9.0,1.0,1.276,1.507,2.255,13.0
 65543,Mckeever,CT_PEAKER,,,,Houston,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-3492,Morgan Creek,CT_PEAKER,,,,West,536.4,11.8,0.0,46.0,23.67,21.33,9.0,1.0,1.334,1.575,2.357,13.0
+3492,Morgan Creek,CT_PEAKER,,,,West,536.4,11.8,0.0,46.0,23.67,21.33,9.0,1.0,1.276,1.507,2.255,13.0
 65544,N. Mary Francis,CT_PEAKER,,,,West,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-50137,Newgulf Cogen,CT_PEAKER,,,,Unknown,101.9,12.4,0.0,26.0,34.19,30.81,9.0,1.0,1.334,1.575,2.357,13.0
+50137,Newgulf Cogen,CT_PEAKER,,,,Unknown,101.9,12.4,0.0,26.0,34.19,30.81,9.0,1.0,1.209,1.428,2.136,13.0
 67309,OTHERBenEKDallas,CT_PEAKER,,,,North,1.6,17.18,66.862,0.0,33.138,0.0,0.0,1.0,1.0,1.32,1.0,1.0
-66614,OTHERCitizensHospital,CT_PEAKER,,,,South,2.8,14.13,7.0,30.0,33.138,29.862,0.0,1.0,1.287,1.52,2.274,1.0
+66614,OTHERCitizensHospital,CT_PEAKER,,,,South,2.8,14.13,7.0,30.0,33.138,29.862,0.0,1.0,1.052,1.243,1.859,1.0
 67316,OTHERNFBWA,CT_PEAKER,,,,Houston,2.4,14.42,7.0,30.0,33.138,29.862,0.0,1.0,1.1,1.32,1.98,1.0
-67318,OTHERTexasA&M,CT_PEAKER,,,,South_Central,9.6,14.37,0.0,26.0,34.19,30.81,9.0,1.0,1.334,1.575,2.357,13.0
-3630,Pearsall,CT_PEAKER,,,,South,201.6,9.16,0.0,36.0,28.93,26.07,9.0,1.0,0.986,1.165,1.742,13.0
-3494,Permian Basin,CT_PEAKER,,,,West,447.0,12.43,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
-60459,Port Comfort Power LLC,CT_PEAKER,,,,South,121.0,9.98,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
-4195,Powerlane Plant,CT_PEAKER,,,,North,112.2,11.63,0.0,46.0,23.67,21.33,9.0,1.0,1.334,1.575,2.357,13.0
+67318,OTHERTexasA&M,CT_PEAKER,,,,South_Central,9.6,14.37,0.0,26.0,34.19,30.81,9.0,1.0,1.161,1.372,2.053,13.0
+3630,Pearsall,CT_PEAKER,,,,South,201.6,9.16,0.0,36.0,28.93,26.07,9.0,1.0,1.044,1.233,1.845,13.0
+3494,Permian Basin,CT_PEAKER,,,,West,447.0,12.43,0.0,26.0,34.19,30.81,9.0,1.0,1.228,1.45,2.169,13.0
+60459,Port Comfort Power LLC,CT_PEAKER,,,,South,121.0,9.98,0.0,41.0,26.3,23.7,9.0,1.0,1.276,1.507,2.255,13.0
+4195,Powerlane Plant,CT_PEAKER,,,,North,112.2,11.63,0.0,46.0,23.67,21.33,9.0,1.0,1.044,1.233,1.845,13.0
 66597,RavenChem,CT_PEAKER,,,,Houston,3.2,16.56,7.0,30.0,33.138,29.862,0.0,1.0,1.1,1.32,1.98,1.0
-59391,Red Gate Power Plant,CT_PEAKER,,,,South,224.4,8.72,0.0,31.0,31.56,28.44,9.0,1.0,0.986,1.165,1.742,13.0
-66604,Remy Jade Power Station,CT_PEAKER,,,,Unknown,484.0,10.08,0.0,41.0,26.3,23.7,9.0,1.0,1.334,1.575,2.357,13.0
+59391,Red Gate Power Plant,CT_PEAKER,,,,South,224.4,8.72,0.0,31.0,31.56,28.44,9.0,1.0,1.044,1.233,1.845,13.0
+66604,Remy Jade Power Station,CT_PEAKER,,,,Unknown,484.0,10.08,0.0,41.0,26.3,23.7,9.0,1.0,1.276,1.507,2.255,13.0
 65573,Ridge Rd,CT_PEAKER,,,,South,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-62548,SJRR Power LLC,CT_PEAKER,,,,Houston,100.0,10.25,0.0,41.0,26.3,23.7,9.0,1.0,1.025,1.211,1.812,13.0
+62548,SJRR Power LLC,CT_PEAKER,,,,Houston,100.0,10.25,0.0,41.0,26.3,23.7,9.0,1.0,1.276,1.507,2.255,13.0
 65574,Santa Rosa,CT_PEAKER,,,,South,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-3559,Silas Ray,CT_PEAKER,,,,South,136.0,13.04,0.0,26.0,34.19,30.81,9.0,1.0,0.986,1.165,1.742,13.0
-59938,Sky Global Power One,CT_PEAKER,,,,South_Central,51.0,9.58,0.0,41.0,26.3,23.7,9.0,1.0,1.188,1.403,2.099,13.0
+3559,Silas Ray,CT_PEAKER,,,,South,136.0,13.04,0.0,26.0,34.19,30.81,9.0,1.0,1.044,1.233,1.845,13.0
+59938,Sky Global Power One,CT_PEAKER,,,,South_Central,51.0,9.58,0.0,41.0,26.3,23.7,9.0,1.0,1.174,1.386,2.074,13.0
 65575,Southwick,CT_PEAKER,,,,Houston,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
 65576,Stonegate,CT_PEAKER,,,,Houston,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-63688,Topaz Generating,CT_PEAKER,,,,Houston,605.0,9.93,0.0,41.0,26.3,23.7,9.0,1.0,1.288,1.521,2.275,13.0
-61241,Tres City Power LLC,CT_PEAKER,,,,South,100.0,9.03,0.0,36.0,28.93,26.07,9.0,1.0,1.334,1.575,2.357,13.0
-61242,"Tres Port Power, LLC",CT_PEAKER,,,,South,100.0,8.79,0.0,31.0,31.56,28.44,9.0,1.0,1.334,1.575,2.357,13.0
-65578,Tumbleweed,CT_PEAKER,,,,West,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.334,1.575,2.357,13.0
+63688,Topaz Generating,CT_PEAKER,,,,Houston,605.0,9.93,0.0,41.0,26.3,23.7,9.0,1.0,1.087,1.284,1.921,13.0
+61241,Tres City Power LLC,CT_PEAKER,,,,South,100.0,9.03,0.0,36.0,28.93,26.07,9.0,1.0,1.276,1.507,2.255,13.0
+61242,"Tres Port Power, LLC",CT_PEAKER,,,,South,100.0,8.79,0.0,31.0,31.56,28.44,9.0,1.0,1.276,1.507,2.255,13.0
+65578,Tumbleweed,CT_PEAKER,,,,West,9.0,9.29,0.0,36.0,28.93,26.07,9.0,1.0,1.276,1.507,2.255,13.0
 65579,Vaquero,CT_PEAKER,,,,South,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-61966,Victoria Port Power II LLC,CT_PEAKER,,,,South,100.0,10.61,0.0,46.0,23.67,21.33,9.0,1.0,0.986,1.165,1.742,13.0
+61966,Victoria Port Power II LLC,CT_PEAKER,,,,South,100.0,10.61,0.0,46.0,23.67,21.33,9.0,1.0,1.276,1.507,2.255,13.0
 65580,Villa Cavasos,CT_PEAKER,,,,South,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
 64938,WAL3777,CT_PEAKER,,,,North,1.3,10.0,55.0,45.0,0.0,0.0,0.0,1.0,1.1,1.0,1.0,1.0
 64952,WAL5211,CT_PEAKER,,,,North,1.3,9.43,60.0,40.0,0.0,0.0,0.0,1.0,1.1,1.0,1.0,1.0
 64954,WAL5311,CT_PEAKER,,,,North,1.3,10.0,55.0,45.0,0.0,0.0,0.0,1.0,1.1,1.0,1.0,1.0
 65581,Westover,CT_PEAKER,,,,West,9.0,9.3,0.0,36.0,28.93,26.07,9.0,1.0,1.16,1.37,2.05,13.0
-56674,Winchester Power Park,CT_PEAKER,,,,South_Central,242.0,8.65,0.0,31.0,31.56,28.44,9.0,1.0,1.334,1.575,2.357,13.0
+56674,Winchester Power Park,CT_PEAKER,,,,South_Central,242.0,8.65,0.0,31.0,31.56,28.44,9.0,1.0,1.276,1.507,2.255,13.0
 10418,Ascend Performance Materials Texas Inc.,ST_CHP,,,,Houston,52.1,5.33,90.0,0.0,10.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0
 50229,Texas Petrochemicals,ST_CHP,,,,Houston,35.0,5.53,90.0,0.0,10.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0
 50150,Union Carbide Seadrift Cogen,ST_CHP,,,,South,162.0,6.87,90.0,0.0,10.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0
