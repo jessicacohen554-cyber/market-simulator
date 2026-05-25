@@ -11,6 +11,8 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     _CC_SHOULDER_MONTHS,
+    _SUMMER_CLASS_DERATE,
+    _SUMMER_MONTHS,
     _SUMMER_WEFOR_SHARE,
     _AGGREGATABLE_FUELS,
     _hour_to_month_index,
@@ -202,25 +204,33 @@ class TestThermalAvailability(unittest.TestCase):
     def test_modern_cc_no_escalation(self):
         # CC regular, age 14 (online 2010): below both onsets, so WEFOR 5%
         # and derate 2% stay at base; POF 5%. Summer applies only 30% of WEFOR
-        # and no POF; annual average is conserved.
+        # and no POF, then a CC summer ambient-temperature derate (heat cuts
+        # gas-turbine output). The WEFOR redistribution conserves the annual
+        # average; the summer ambient derate is an additional real loss.
+        sd = _SUMMER_CLASS_DERATE["CC_REGULAR"]
+        summer_pre = 1.0 - _SUMMER_WEFOR_SHARE * 0.05 - 0.02
         fa = self._arrays("CC_REGULAR", 2010, "gas_cc")
         self.assertAlmostEqual(
-            fa.availability[0, self._JULY_H],
-            1.0 - _SUMMER_WEFOR_SHARE * 0.05 - 0.02,
+            fa.availability[0, self._JULY_H], summer_pre * (1.0 - sd)
         )
+        summer = np.isin(_hour_to_month_index(8760) + 1, list(_SUMMER_MONTHS))
+        summer_frac = int(summer.sum()) / 8760
         self.assertAlmostEqual(
             fa.availability[0].mean(),
-            self._old_annual_avail(0.05, 0.05, 0.02),
+            self._old_annual_avail(0.05, 0.05, 0.02)
+            - sd * summer_pre * summer_frac,
             places=4,
         )
 
     def test_wefor_escalates_with_age(self):
         # CC regular, age 26 (online 1998): WEFOR escalates past onset 20 ->
-        # 5 + 6*0.2 = 6.2%; derate past onset 25 -> 2 + 1*0.1 = 2.1%.
+        # 5 + 6*0.2 = 6.2%; derate past onset 25 -> 2 + 1*0.1 = 2.1%. Summer
+        # also carries the CC ambient-temperature derate.
+        sd = _SUMMER_CLASS_DERATE["CC_REGULAR"]
         fa = self._arrays("CC_REGULAR", 1998, "gas_cc")
         self.assertAlmostEqual(
             fa.availability[0, self._JULY_H],
-            1.0 - _SUMMER_WEFOR_SHARE * 0.062 - 0.021,
+            (1.0 - _SUMMER_WEFOR_SHARE * 0.062 - 0.021) * (1.0 - sd),
         )
 
     def test_non_thermal_keeps_eford(self):
@@ -631,10 +641,11 @@ class HistoricOutageOverlayTest(unittest.TestCase):
     _BINS = str(_REPO / "inputs" / "custom-bin-assignments.csv")
 
     def _fleet(self):
-        # Coleto Creek (6178) is a coal plant with a real >10-day 2023
+        # Coleto Creek (6178) is a coal plant with a real >2-day 2023
         # outage. Here it appears once as a COAL bin and once (synthetically)
-        # as an ST_GAS bin to verify the per-bin group filter. Plant 99999 is
-        # a coal plant with no outage.
+        # as a CT_PEAKER bin to verify the per-bin group filter: CT_PEAKER is
+        # not a qualifying overlay group, so its bin must be spared even though
+        # the plant code is outaged. Plant 99999 is a coal plant with no outage.
         return [
             Generator(
                 unit_id="coleto_coal", name="Coleto coal", zone="z",
@@ -642,9 +653,9 @@ class HistoricOutageOverlayTest(unittest.TestCase):
                 plant_group="COAL", plant_code=6178,
             ),
             Generator(
-                unit_id="coleto_stgas", name="Coleto stgas", zone="z",
-                fuel_type="gas_st", pmax_mw=100.0, online_year=1980,
-                plant_group="ST_GAS", plant_code=6178,
+                unit_id="coleto_ctpeaker", name="Coleto peaker", zone="z",
+                fuel_type="gas_ct", pmax_mw=100.0, online_year=1980,
+                plant_group="CT_PEAKER", plant_code=6178,
             ),
             Generator(
                 unit_id="other_coal", name="Other coal", zone="z",
@@ -684,7 +695,7 @@ class HistoricOutageOverlayTest(unittest.TestCase):
             config=self._config("historic"),
         )
         out_h = self._outage_hour()
-        # Same plant_code (6178) but an ST_GAS bin -> not outaged.
+        # Same plant_code (6178) but a CT_PEAKER bin (non-qualifying) -> spared.
         self.assertGreater(arrays.availability[1, out_h], 0.0)
         # A coal plant with no historic outage is untouched.
         self.assertGreater(arrays.availability[2, out_h], 0.0)
