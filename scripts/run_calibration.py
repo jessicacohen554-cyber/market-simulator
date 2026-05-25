@@ -231,6 +231,10 @@ def _calibration_config(
         cc_committed_per_plant=True,   # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
+        cc_peaking_per_plant=True,     # the four F-class(late) 2x1 CCs (CBII,
+        #   WH2, Rayburn, Temple) move the duct-burner peak band start to 85%
+        #   (pct_peaking 15) so the expensive band bites earlier and they back
+        #   down out of the 80-90% CF range (fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT).
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.2,        # BTM + steam-following floor; raised in
         ct_peak_hr_override=1.4,        # run9 (CT_CHP was running too much).
