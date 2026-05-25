@@ -647,6 +647,7 @@ def solve_and_persist(
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
+    plant_tranche_config: str | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -700,6 +701,7 @@ def solve_and_persist(
             coal_drop_pof=coal_drop_pof,
             coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
             prb_overrides=prb_overrides,
+            plant_tranche_config=plant_tranche_config,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -777,11 +779,11 @@ def solve_and_persist(
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
-    write_run_config(
-        run_dir,
-        _calibration_config(years[0], iso, hours, gas_prices[years[0]]),
-        meta, note,
-    )
+    recorded_cfg = _calibration_config(years[0], iso, hours, gas_prices[years[0]])
+    if plant_tranche_config:
+        recorded_cfg = recorded_cfg.with_overrides(
+            plant_tranche_config_path=plant_tranche_config)
+    write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
 
@@ -1508,6 +1510,12 @@ def main() -> None:
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
                         help="Follower-tier PRB sigmoid ceiling.")
+    parser.add_argument("--plant-tranche-config", default=None,
+                        help="Per-plant tranche-config CSV (one row per plant "
+                             "with its tranche shares + per-band HR mults). "
+                             "Each listed plant's offer comes from the sheet, "
+                             "bypassing offer_curve_by_group. Generate/edit "
+                             "with scripts/export_tranche_config.py.")
     args = parser.parse_args()
 
     if args.report:
@@ -1554,6 +1562,7 @@ def main() -> None:
             "coal_prb_follower_floor": args.prb_follower_floor,
             "coal_prb_follower_ceil": args.prb_follower_ceil,
         },
+        plant_tranche_config=args.plant_tranche_config,
         note=args.note,
     )
     report_run(run_dir)
