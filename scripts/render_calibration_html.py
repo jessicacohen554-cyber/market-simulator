@@ -53,6 +53,7 @@ rcf = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rcf)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     CHP_BTM_PCT_BY_SECTOR, CHP_SECTOR_CLASS_BY_PLANT, CHP_ST_BTM_PCT,
+    load_campd_bins, plant_tranche_bands,
 )
 
 # Model classes shown in the report, in stack order, with display labels.
@@ -127,6 +128,40 @@ def _coal_group(klass: str) -> str:
     return klass
 
 
+_BINS_CACHE: dict[str, dict] = {}
+
+
+def _tranche_bands_for_bundle(bdir: Path) -> dict[int, list]:
+    """Return ``{plant_code: tranche bands}`` for a bundle's stored config.
+
+    Reads the bundle's ``run_config.json`` (the serialized scenario config the
+    run was generated with) and computes each plant's offer-curve tranche bands
+    via :func:`market_sim.data.fleet.plant_tranche_bands`, so the dashboard's
+    CF chart can mark where each band engages and the multiplier priced there.
+    Returns ``{}`` for bundles without a stored config.
+    """
+    cfg_path = bdir / "run_config.json"
+    if not cfg_path.exists():
+        return {}
+    try:
+        sc = json.loads(cfg_path.read_text())["scenario_config"]
+        config = ScenarioConfig(**sc)
+    except Exception:
+        return {}
+    bins_path = config.campd_bins_path
+    rows = _BINS_CACHE.get(bins_path)
+    if rows is None:
+        bins = load_campd_bins(bins_path)
+        rows = {int(r["Plant_Code"]): r for _, r in bins.iterrows()}
+        _BINS_CACHE[bins_path] = rows
+    out: dict[int, list] = {}
+    for code, row in rows.items():
+        bands = plant_tranche_bands(row, config)
+        if bands:
+            out[code] = bands
+    return out
+
+
 def build_payload(runs: list[tuple[str, Path]],
                   years: set[int] | None = None) -> dict:
     """Assemble the embedded data for every run, with a shared CAMPD benchmark.
@@ -148,6 +183,7 @@ def build_payload(runs: list[tuple[str, Path]],
 
     for ri, (label, bdir) in enumerate(runs):
         meta = json.loads((bdir / "meta.json").read_text())
+        tr_bands = _tranche_bands_for_bundle(bdir)
         run_years: dict[int, dict] = {}
         e923_all = pd.read_parquet(bdir / "eia923.parquet")
         e930_all = pd.read_parquet(bdir / "eia930.parquet")
@@ -250,6 +286,8 @@ def build_payload(runs: list[tuple[str, Path]],
                     "m_mon": _monthly_gwh(mw),
                     "r": r, "nrmse": nr, "cap": cap_pct,
                 }
+                if code in tr_bands:
+                    mplants[str(code)]["tr"] = tr_bands[code]
             # Non-fossil model annual (nuclear / wind / solar) for fuel table.
             nf = {}
             for f in ("nuclear", "wind", "solar"):
