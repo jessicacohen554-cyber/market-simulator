@@ -266,9 +266,13 @@ def _calibration_config(
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
             # carries the raised multipliers; PRB keeps the run2 values and is
-            # shaped by the passthrough sigmoid.
-            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.09,
-                             "econ_high": 1.10, "peak": 1.50,
+            # shaped by the passthrough sigmoid. Lignite econ bands raised in
+            # run11 (1.09/1.10 -> 1.20/1.30) so Oak Grove's economic slice bids
+            # ~$21-23/MWh — into the model's overnight North LMP band — and
+            # cycles down overnight toward its committed floor (~50% CF) instead
+            # of running flat baseload; midday ($270+) is unaffected.
+            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.20,
+                             "econ_high": 1.30, "peak": 1.50,
                              "econ_low_share": 0.556},
             "COAL_PRB": {"committed": 0.90, "econ_low": 0.92,
                          "econ_high": 1.12, "peak": 1.48,
