@@ -1762,6 +1762,20 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
+# Per-plant CC_REGULAR peaking-tranche % (top slice of nameplate priced at the
+# duct-burner peak multiplier), keyed by EIA plant code. Used in place of the
+# offer curve's ``pct_peaking`` when config.cc_peaking_per_plant is set, so the
+# expensive peak band starts earlier on the CF axis (15% => peaking starts at
+# 85% of nameplate). Applies to the four F-class(late) 2x1 CCs the model
+# over-runs in the 80-90% CF range; the economic tranche absorbs the change.
+CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
+    58001: 15.0,  # Temple Power Station
+    58005: 15.0,  # Rayburn Energy Station LLC
+    59812: 15.0,  # Wolf Hollow II
+    60122: 15.0,  # Colorado Bend II
+}
+
+
 def chp_btm_pct(plant_code: int, group: str) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
     if group == "ST_CHP":
@@ -2288,6 +2302,10 @@ def bins_to_fleet(
         pct_peak = float(b["pct_peak"])
         if offer is not None and "pct_peaking" in offer:
             pct_peak = float(offer["pct_peaking"])
+        if (group == "CC_REGULAR"
+                and getattr(config, "cc_peaking_per_plant", False)
+                and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+            pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
         denom = 100.0 - pct_mr
         committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
@@ -2459,3 +2477,150 @@ def bins_to_fleet(
         fleet, zone_names, hours=config.hours, iso=config.iso, config=config
     )
     return fleet, fleet_arrays
+
+
+def plant_tranche_bands(
+    b: "pd.Series | dict", config: ScenarioConfig
+) -> list[dict]:
+    """Return one plant's offer-curve tranche bands on the capacity-factor axis.
+
+    Mirrors the tranche capacity and per-band heat-rate resolution in
+    :func:`bins_to_fleet` (same offer-curve lookup, per-plant committed %,
+    peaking override, econ split and CC duct-burner peak) and converts the
+    cumulative tranche capacities into capacity-factor edges (percent of
+    nameplate). The bands stack in dispatch fill order — must-run, committed,
+    econ-lo, econ-hi, peak — so the dashboard can mark where each band engages
+    on the CF axis and label the heat-rate multiplier priced there.
+
+    Args:
+        b: One row of the :func:`load_campd_bins` frame (or an equivalent
+            mapping) for a single plant.
+        config: The run's scenario configuration (offer curves, per-plant
+            committed flag, mustrun overrides).
+
+    Returns:
+        A list of ``{"name", "cf_lo", "cf_hi", "mult", "vom"}`` dicts — one per
+        non-empty band, in increasing CF order. ``mult`` is the band heat rate
+        over the plant's base HR; ``vom`` flags the must-run band, which bids
+        VOM-only (its fuel is sunk) rather than at a heat-rate multiplier.
+        Empty when the plant has no nameplate.
+    """
+    group = str(b["Plant_Group"])
+    plant_code = int(b["Plant_Code"])
+    nameplate = float(b["capacity_mw"])
+    if nameplate <= 0.0:
+        return []
+    fuel = BIN_GROUP_TO_FUEL[group]
+    offer = _offer_curve_for_group(group, plant_code, config)
+
+    # Resolve must-run / committed / peaking percentages exactly as
+    # bins_to_fleet does (coal overrides, CHP host-steam, per-plant committed,
+    # offer peaking override).
+    pct_mr = float(b["pct_mr"])
+    if fuel == "coal":
+        _supply = COAL_PLANT_SUPPLY.get(plant_code, "")
+        if config.coal_mustrun_per_plant and plant_code in COAL_MUSTRUN_BY_PLANT:
+            pct_mr = COAL_MUSTRUN_BY_PLANT[plant_code]
+        elif (_supply == "lignite"
+                and config.coal_lignite_mustrun_override is not None):
+            pct_mr = config.coal_lignite_mustrun_override
+        elif (_supply == "prb"
+                and config.coal_prb_mustrun_override is not None):
+            pct_mr = config.coal_prb_mustrun_override
+    if (group in ("CC_CHP", "CT_CHP", "ST_CHP")
+            and getattr(config, "chp_steam_following", False)):
+        pct_mr = chp_btm_pct(plant_code, group)
+    pct_mc = float(b["pct_mc"])
+    if (group == "CC_REGULAR"
+            and getattr(config, "cc_committed_per_plant", False)
+            and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
+        pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[plant_code]
+    pct_peak = float(b["pct_peak"])
+    if offer is not None and "pct_peaking" in offer:
+        pct_peak = float(offer["pct_peaking"])
+    if (group == "CC_REGULAR"
+            and getattr(config, "cc_peaking_per_plant", False)
+            and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+        pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
+
+    if fuel == "coal":
+        mustrun_cap = nameplate * pct_mr / 100.0
+        grid_cap = nameplate - mustrun_cap
+    else:
+        mustrun_cap = 0.0
+        grid_cap = nameplate * (1.0 - pct_mr / 100.0)
+    denom = 100.0 - pct_mr
+    committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
+    peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
+    econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
+
+    # Per-band heat rates, mirroring bins_to_fleet (offer-curve multipliers,
+    # CC duct-burner peak, or the legacy per-class overrides / CSV columns).
+    base_hr = float(b["hr_weighted"])
+    mustrun_hr = float(b["hr_mr"])
+    committed_hr = float(b["hr_mc"])
+    econ_hr = float(b["hr_econ"])
+    peak_hr = float(b["hr_peak"])
+    if offer is not None:
+        committed_hr = base_hr * float(offer["committed"])
+        if group in ("CC_REGULAR", "CC_CHP"):
+            peak_hr = base_hr * cc_duct_burner_peak_mult(b.get("Turbine_Class"))
+        else:
+            peak_hr = base_hr * float(offer["peak"])
+    else:
+        cc_mc = getattr(config, "cc_committed_hr_override", None)
+        if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
+            committed_hr = base_hr * cc_mc
+            econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
+            peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
+        st_mc = getattr(config, "gas_st_committed_hr_override", None)
+        if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
+                and st_mc is not None):
+            committed_hr = base_hr * st_mc
+            econ_hr = base_hr * float(
+                getattr(config, "gas_st_econ_hr_override", 1.0))
+            peak_hr = base_hr * float(
+                getattr(config, "gas_st_peak_hr_override", 1.5))
+        ct_mc = getattr(config, "ct_committed_hr_override", None)
+        if group == "CT_CHP" and ct_mc is not None:
+            committed_hr = base_hr * ct_mc
+            econ_hr = base_hr * float(getattr(config, "ct_econ_hr_override", 1.1))
+            peak_hr = base_hr * float(getattr(config, "ct_peak_hr_override", 1.3))
+
+    if offer is not None:
+        share = float(offer["econ_low_share"])
+        econ_steps = [
+            ("econ-lo", econ_cap * share, base_hr * float(offer["econ_low"])),
+            ("econ-hi", econ_cap * (1.0 - share),
+             base_hr * float(offer["econ_high"])),
+        ]
+    elif (split := _econ_split_for_group(group, plant_code, config)) is not None:
+        split_frac, lo_mult, hi_mult = split
+        econ_steps = [
+            ("econ-lo", econ_cap * split_frac, base_hr * lo_mult),
+            ("econ-hi", econ_cap * (1.0 - split_frac), base_hr * hi_mult),
+        ]
+    else:
+        econ_steps = [("econ", econ_cap, econ_hr)]
+
+    raw = [
+        ("must-run", mustrun_cap, mustrun_hr, True),
+        ("committed", committed_cap, committed_hr, False),
+        *[(name, cap, hr, False) for name, cap, hr in econ_steps],
+        ("peak", peak_cap, peak_hr, False),
+    ]
+    bands: list[dict] = []
+    cursor = 0.0
+    for name, cap, hr, vom_only in raw:
+        lo, hi = cursor, cursor + cap
+        cursor = hi
+        if cap <= 0.5:  # dropped from the LP in bins_to_fleet
+            continue
+        bands.append({
+            "name": name,
+            "cf_lo": round(lo / nameplate * 100.0, 1),
+            "cf_hi": round(hi / nameplate * 100.0, 1),
+            "mult": round(hr / base_hr, 3) if base_hr > 0.0 else None,
+            "vom": vom_only,
+        })
+    return bands
