@@ -79,7 +79,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
-  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-05-24 21:25</p>
+  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-05-25 03:27</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -132,13 +132,24 @@ function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 // ---- tooltip + run-id ----
 const tip=document.getElementById("bctip");
-function posTip(h,e){tip.innerHTML=h;tip.style.display="block";const p=12,w=tip.offsetWidth,ht=tip.offsetHeight;
- let x=e.clientX+p,y=e.clientY+p;if(x+w>innerWidth)x=e.clientX-w-p;if(y+ht>innerHeight)y=e.clientY-ht-p;tip.style.left=x+"px";tip.style.top=y+"px";}
+function posTipXY(h,cx,cy){tip.innerHTML=h;tip.style.display="block";const p=14,w=tip.offsetWidth,ht=tip.offsetHeight;
+ let x=cx+p,y=cy+p;if(x+w>innerWidth)x=cx-w-p;if(y+ht>innerHeight)y=cy-ht-p;if(x<2)x=2;if(y<2)y=2;tip.style.left=x+"px";tip.style.top=y+"px";}
+function posTip(h,e){posTipXY(h,e.clientX,e.clientY);}
 function hideTip(){tip.style.display="none";}
+// Make a chart/canvas respond to touch as a tap-to-pin tooltip (mobile has no
+// hover): tapping shows the value and it persists until the next tap elsewhere
+// (handled by the document tap-away below). stopPropagation keeps the opening
+// tap from immediately closing it; preventDefault on move lets a finger drag
+// scrub values without scrolling the page off the element.
+function bindTouchTip(el,at){
+ el.addEventListener("touchstart",e=>{e.stopPropagation();const t=e.touches[0];if(t)at(t.clientX,t.clientY);},{passive:true});
+ el.addEventListener("touchmove",e=>{const t=e.touches[0];if(t){at(t.clientX,t.clientY);e.preventDefault();}},{passive:false});}
 function ridSpan(id){return `<span class=rid data-rid="${id}">${id}</span>`;}
 function wireTips(root){root.querySelectorAll("[data-rid]").forEach(el=>{el.onclick=e=>{
  const m=META_RUN(el.dataset.rid);if(!m)return;e.stopPropagation();posTip(`<b>${m.id}</b><br>${m.definition}`,e);};});}
-document.addEventListener("click",e=>{if(!e.target.closest("[data-rid]")&&!e.target.closest("svg.chart"))hideTip();});
+function awayFromTip(t){return !t.closest("[data-rid]")&&!t.closest("svg.chart")&&!t.closest("canvas.heat");}
+document.addEventListener("click",e=>{if(awayFromTip(e.target))hideTip();});
+document.addEventListener("touchstart",e=>{if(awayFromTip(e.target))hideTip();},{passive:true});
 // ---- svg helpers ----
 function mk(t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
 function svgEl(vw,vh){const s=mk("svg",{viewBox:`0 0 ${vw} ${vh}`,class:"chart"});return s;}
@@ -151,13 +162,15 @@ function lineChart(sets,ymax,xl,unit,vw,vh){const L=52,R=14,B=40,TTv=14,pw=vw-L-
   svg.appendChild(mk("path",{d,fill:"none",stroke:s.color,"stroke-width":s.w||2.4,"stroke-dasharray":s.dash||""}));}
  // hover: show every series' value at the nearest x
  const guide=mk("line",{y1:TTv,y2:TTv+ph,stroke:"#c3ccd6","stroke-width":1,opacity:0});svg.appendChild(guide);
- svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*vw;
+ const at=(cx,cy)=>{const r=svg.getBoundingClientRect();const vx=(cx-r.left)/r.width*vw;
   let bi=0,bd=1e9;for(let i=0;i<n;i++){const dd=Math.abs(X(i)-vx);if(dd<bd){bd=dd;bi=i;}}
   guide.setAttribute("x1",X(bi));guide.setAttribute("x2",X(bi));guide.setAttribute("opacity",0.6);
   let h=`<b>${(xl[bi]!=null&&xl[bi]!==""?xl[bi]:bi)}</b>`;
   for(const s of sets)h+=`<br><span style="color:${s.color}">●</span> ${s.name}: ${(Number(s.pts[bi])||0).toFixed(1)}${unit}`;
-  posTip(h,e);});
+  posTipXY(h,cx,cy);};
+ svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));
  svg.addEventListener("mouseleave",()=>{hideTip();guide.setAttribute("opacity",0);});
+ bindTouchTip(svg,at);
  return svg;}
 function barChart(bs,ymax,vw,vh){const L=52,R=14,TTv=14,B=46,pw=vw-L-R,ph=vh-TTv-B;
  const svg=svgEl(vw,vh);const g=mk("g",{"font-size":12,fill:"#8a93a0"});
@@ -166,36 +179,55 @@ function barChart(bs,ymax,vw,vh){const L=52,R=14,TTv=14,B=46,pw=vw-L-R,ph=vh-TTv
   svg.appendChild(mk("rect",{x:cx-bw/2,y,width:bw,height:h,rx:3,fill:b.color}));
   svg.appendChild(mk("text",{x:cx,y:vh-26,"text-anchor":"middle","font-size":11,fill:"#46505f"},b.label));
   svg.appendChild(mk("text",{x:cx,y:y-6,"text-anchor":"middle","font-size":12,fill:"#46505f","font-weight":700},b.v.toFixed(1)));});
- svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*vw;
-  let bi=0,bd=1e9;for(let i=0;i<bs.length;i++){const cx=L+pw*(i+.5)/bs.length;const dd=Math.abs(cx-vx);if(dd<bd){bd=dd;bi=i;}}
-  posTip(`<b>${bs[bi].label}</b><br>${bs[bi].v.toFixed(2)}`,e);});
+ const at=(cx,cy)=>{const r=svg.getBoundingClientRect();const vx=(cx-r.left)/r.width*vw;
+  let bi=0,bd=1e9;for(let i=0;i<bs.length;i++){const bx=L+pw*(i+.5)/bs.length;const dd=Math.abs(bx-vx);if(dd<bd){bd=dd;bi=i;}}
+  posTipXY(`<b>${bs[bi].label}</b><br>${bs[bi].v.toFixed(2)}`,cx,cy);};
+ svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));
  svg.addEventListener("mouseleave",hideTip);
+ bindTouchTip(svg,at);
  return svg;}
 function cfColor(v){if(v<=1)return[232,243,247];const t=Math.min(v,100)/100,S=[[0,232,243,247],[.04,127,196,230],[.30,134,201,143],[.55,242,214,92],[.78,239,143,60],[1,192,57,43]];
  for(let i=1;i<S.length;i++)if(t<=S[i][0]){const a=S[i-1],b=S[i],f=(t-a[0])/(b[0]-a[0]);return[a[1]+f*(b[1]-a[1]),a[2]+f*(b[2]-a[2]),a[3]+f*(b[3]-a[3])];}return[192,57,43];}
 function drawHeat(cv,cf){const x=cv.getContext("2d"),im=x.createImageData(365,24);for(let h=0;h<8760;h++){const day=h/24|0,hod=h%24;if(day>364)break;const c=cfColor(cf[h]),i=(hod*365+day)*4;im.data[i]=c[0];im.data[i+1]=c[1];im.data[i+2]=c[2];im.data[i+3]=255;}x.putImageData(im,0,0);}
 function profileArr(cf){const o=Array(24).fill(0),n=Array(24).fill(0);for(let h=0;h<8760;h++){o[h%24]+=cf[h];n[h%24]++;}return o.map((v,i)=>n[i]?v/n[i]:0);}
-function heatTip(cv,cf,label){cv.onmousemove=e=>{const r=cv.getBoundingClientRect();
- const day=Math.floor((e.clientX-r.left)/r.width*365),hod=Math.floor((e.clientY-r.top)/r.height*24);
+function heatTip(cv,cf,label){const at=(cx,cy)=>{const r=cv.getBoundingClientRect();
+ const day=Math.floor((cx-r.left)/r.width*365),hod=Math.floor((cy-r.top)/r.height*24);
  if(day<0||day>364||hod<0||hod>23){hideTip();return;}const dt=new Date(2023,0,1);dt.setDate(day+1);
- posTip(`<b>${label}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${("0"+hod).slice(-2)}:00 &middot; CF ${Math.round(cf[day*24+hod])}%`,e);};
- cv.onmouseleave=hideTip;}
-const CF_BINS=["0–10","10–20","20–30","30–40","40–50","50–60","60–70","70–80","80–90","90–100","100+"];
-function cfHist(cf){const b=new Array(11).fill(0);for(let i=0;i<cf.length;i++){let k=Math.floor(cf[i]/10);if(k>10)k=10;if(k<0)k=0;b[k]++;}return b;}
-function histBars(model,campd,vw,vh){const L=52,R=14,TTv=14,B=44,pw=vw-L-R,ph=vh-TTv-B,n=CF_BINS.length;
- const svg=svgEl(vw,vh);const ymax=Math.max(1,...model,...campd)*1.1;
+ posTipXY(`<b>${label}</b><br>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${("0"+hod).slice(-2)}:00 &middot; CF ${Math.round(cf[day*24+hod])}%`,cx,cy);};
+ cv.onmousemove=e=>at(e.clientX,e.clientY);cv.onmouseleave=hideTip;bindTouchTip(cv,at);}
+// hours-by-CF distribution as a fine line: integer CF bins 0..100 (101 pts).
+function cfLine(cf){const b=new Array(101).fill(0);for(let i=0;i<cf.length;i++){let k=Math.round(cf[i]);if(k<0)k=0;if(k>100)k=100;b[k]++;}return b;}
+// CF distribution line chart (model vs CAMPD, hours per CF point) with the
+// offer-curve tranche boundaries drawn as labelled vertical markers.
+function cfLineChart(model,campd,bands,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw-L-R,ph=vh-TTv-B;
+ const svg=svgEl(vw,vh);const ymax=Math.max(1,...model,...campd)*1.12;
+ const X=c=>L+pw*Math.min(Math.max(c,0),100)/100,Y=v=>TTv+ph*(1-Math.min(Math.max(v,0),ymax)/ymax);
  const g=mk("g",{"font-size":12,fill:"#8a93a0"});
- for(let i=0;i<=4;i++){const y=TTv+ph*i/4;g.appendChild(mk("line",{x1:L,y1:y,x2:vw-R,y2:y,stroke:"#eef1f4"}));g.appendChild(mk("text",{x:L-7,y:y+4,"text-anchor":"end"},Math.round(ymax*(1-i/4))));}svg.appendChild(g);
- const gw=pw/n,bw=gw*0.36;
- for(let i=0;i<n;i++){const cx=L+gw*(i+.5);
-  const hc=ph*Math.min(campd[i],ymax)/ymax,hm=ph*Math.min(model[i],ymax)/ymax;
-  svg.appendChild(mk("rect",{x:cx-bw-1,y:TTv+ph-hc,width:bw,height:hc,fill:"#647184",rx:2}));
-  svg.appendChild(mk("rect",{x:cx+1,y:TTv+ph-hm,width:bw,height:hm,fill:"#4A90D9",rx:2}));
-  svg.appendChild(mk("text",{x:cx,y:vh-14,"text-anchor":"middle","font-size":9,fill:"#46505f"},CF_BINS[i]));}
- svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*vw;
-  let bi=0,bd=1e9;for(let i=0;i<n;i++){const cx=L+gw*(i+.5);const dd=Math.abs(cx-vx);if(dd<bd){bd=dd;bi=i;}}
-  posTip(`<b>CF ${CF_BINS[bi]}%</b><br><span style=color:#4A90D9>●</span> Model: ${model[bi]} h<br><span style=color:#647184>●</span> CAMPD: ${campd[bi]} h`,e);});
- svg.addEventListener("mouseleave",hideTip);return svg;}
+ for(let i=0;i<=4;i++){const y=TTv+ph*i/4;g.appendChild(mk("line",{x1:L,y1:y,x2:vw-R,y2:y,stroke:"#eef1f4"}));g.appendChild(mk("text",{x:L-7,y:y+4,"text-anchor":"end"},Math.round(ymax*(1-i/4))));}
+ for(let c=0;c<=100;c+=10){g.appendChild(mk("text",{x:X(c),y:vh-14,"text-anchor":"middle"},c));}
+ g.appendChild(mk("text",{x:L+pw/2,y:vh-1,"text-anchor":"middle","font-size":11,fill:"#6b7480"},"capacity factor (%)"));
+ svg.appendChild(g);
+ // tranche markers (drawn under the lines): a dashed vertical at each band's
+ // lower CF edge with a price tag for the heat-rate multiplier priced there.
+ (bands||[]).forEach((bd,i)=>{const x=X(bd.cf_lo);
+  svg.appendChild(mk("line",{x1:x,y1:TTv,x2:x,y2:TTv+ph,stroke:"#aab2bd","stroke-width":1,"stroke-dasharray":"3 3"}));
+  const tag=bd.vom?"VOM":(bd.mult!=null?bd.mult.toFixed(2)+"×":"");
+  const txt=bd.name+(tag?" "+tag:""),tw=txt.length*5.6+8,ty=TTv+4+(i%3)*15;
+  let tx=x+3;if(tx+tw>vw-R)tx=x-tw-3;if(tx<L)tx=L+1;
+  svg.appendChild(mk("rect",{x:tx,y:ty,width:tw,height:13,rx:3,fill:"#1a2233",opacity:0.85}));
+  svg.appendChild(mk("text",{x:tx+4,y:ty+10,"font-size":9.5,fill:"#fff"},txt));});
+ const path=arr=>arr.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join(" ");
+ svg.appendChild(mk("path",{d:path(campd),fill:"none",stroke:"#647184","stroke-width":2.6}));
+ svg.appendChild(mk("path",{d:path(model),fill:"none",stroke:"#4A90D9","stroke-width":2.2,"stroke-dasharray":"4 3"}));
+ const guide=mk("line",{y1:TTv,y2:TTv+ph,stroke:"#c3ccd6","stroke-width":1,opacity:0});svg.appendChild(guide);
+ const at=(cx,cy)=>{const r=svg.getBoundingClientRect();let c=Math.round((cx-r.left)/r.width*vw-L)/pw*100;
+  c=Math.min(Math.max(Math.round(c),0),100);guide.setAttribute("x1",X(c));guide.setAttribute("x2",X(c));guide.setAttribute("opacity",0.6);
+  const bd=(bands||[]).slice().reverse().find(b=>c>=b.cf_lo);
+  const band=bd?`<br><span style=color:#aab2bd>▮</span> ${bd.name} ${bd.vom?"(VOM)":(bd.mult!=null?bd.mult.toFixed(2)+"×":"")}`:"";
+  posTipXY(`<b>CF ${c}%</b><br><span style=color:#4A90D9>●</span> Model: ${model[c]} h<br><span style=color:#647184>●</span> CAMPD: ${campd[c]} h${band}`,cx,cy);};
+ svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));
+ svg.addEventListener("mouseleave",()=>{hideTip();guide.setAttribute("opacity",0);});
+ bindTouchTip(svg,at);return svg;}
 // single-run versions of the comparison fuel/923 tables (this run only)
 function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
  let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
@@ -303,7 +335,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
   +'<h4>CAMPD actual</h4><canvas class=heat id=hC width=365 height=24></canvas><div class=ax id=axC></div>'
   +'<h4>Model</h4><canvas class=heat id=hM width=365 height=24></canvas><div class=ax id=axM></div></div>';
  h+='<div class=panel><h2>Average daily profile (CF%)</h2><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sProf></div></div>';
- h+='<div class=panel><h2>Hours by capacity-factor range</h2><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
+ h+='<div class=panel><h2>Hours at each capacity factor</h2><p class=psub>Vertical markers are this plant\'s offer-curve tranche boundaries; the tag is the heat-rate multiplier priced from that CF up. Pick a single plant for markers.</p><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
  h+='<div class=panel><h2>Monthly (GWh)</h2><div class=svgbox id=sMon></div></div>';
  document.getElementById("content").innerHTML=h;
  const psel=document.getElementById("plantSel");
@@ -311,7 +343,8 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  psel.value=st.plant;psel.onchange=()=>{st.plant=psel.value;renderSingleCharts();};
  const hC=document.getElementById("hC"),hM=document.getElementById("hM");
  drawHeat(hC,d.ccf);drawHeat(hM,d.mcf);heatTip(hC,d.ccf,"CAMPD actual");heatTip(hM,d.mcf,"Model");
- document.getElementById("sHist").appendChild(histBars(cfHist(d.mcf),cfHist(d.ccf),760,300));
+ const trp=(st.plant&&st.plant!=="agg")?(MODEL[id].years[yr].plants[st.plant]||{}).tr||null:null;
+ document.getElementById("sHist").appendChild(cfLineChart(cfLine(d.mcf),cfLine(d.ccf),trp,760,300));
  document.getElementById("axC").innerHTML=document.getElementById("axM").innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");
  const pc=profileArr(d.ccf),pm=profileArr(d.mcf),xl=Array(24).fill("");[0,6,12,18,23].forEach(hh=>xl[hh]=("0"+hh).slice(-2));
  document.getElementById("sProf").appendChild(lineChart([{pts:pc,color:"#647184",name:"CAMPD",w:3},{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}],Math.max(40,...pc,...pm)*1.1,xl,"%",760,300));
