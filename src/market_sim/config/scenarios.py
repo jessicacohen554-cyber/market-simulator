@@ -344,6 +344,14 @@ class ScenarioConfig:
     # without CAMPD coverage keep the CSV value. Off by default (CSV split).
     cc_committed_per_plant: bool = False
 
+    # When True, the CC_REGULAR plants in fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT
+    # use that per-plant peaking-tranche % instead of the offer curve's
+    # ``pct_peaking`` — moving where the expensive duct-burner peak band starts
+    # on the CF axis (e.g. 15% => peaking starts at 85% of nameplate). The
+    # economic tranche absorbs the difference. Other CC_REGULAR plants keep the
+    # offer-curve value. Off by default.
+    cc_peaking_per_plant: bool = False
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
