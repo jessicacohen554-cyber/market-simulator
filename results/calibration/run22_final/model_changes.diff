@@ -1,0 +1,49 @@
+diff --git a/inputs/plant-tranche-config.csv b/inputs/plant-tranche-config.csv
+index 025a076..1fa3ab5 100644
+--- a/inputs/plant-tranche-config.csv
++++ b/inputs/plant-tranche-config.csv
+@@ -33,11 +33,11 @@ Plant_Code,Plant_Name,Plant_Group,Coal_Supply,Config,Turbine_Class,ERCOT_Zone,Na
+ 55086,Gregory Power Plant,CC_REGULAR,,,E-class,South,469.8,11.68,0.0,21.0,35.5,35.5,8.0,1.0,0.882,0.968,1.17,2.0
+ 55153,Guadalupe Generating Station,CC_REGULAR,,,F-class,South_Central,1088.2,7.39,0.0,44.1,23.95,23.95,8.0,1.0,0.915,1.005,1.213,2.25
+ 55144,Hays Energy Project,CC_REGULAR,,,F-class,South_Central,989.0,7.3,0.0,23.3,34.35,34.35,8.0,1.0,0.951,1.044,1.261,2.25
+-55545,Hidalgo Energy Center,CC_REGULAR,,,F-class,Unknown,551.3,7.0,0.0,45.0,23.5,23.5,8.0,1.0,1.03,1.131,1.366,2.25
++55545,Hidalgo Energy Center,CC_REGULAR,,,F-class,Unknown,551.3,7.0,0.0,45.0,16.45,16.45,22.1,1.0,1.03,1.131,1.366,2.25
+ 55230,Jack County,CC_REGULAR,,,G-class (Mitsubishi),North,1280.0,7.04,0.0,18.1,36.95,36.95,8.0,1.0,0.86,0.944,1.14,2.5
+ 54817,Johnson County,CC_REGULAR,,,E-class,North,282.6,7.41,0.0,36.7,27.65,27.65,8.0,1.0,0.893,0.98,1.184,2.0
+ 55097,Lamar Power Project,CC_REGULAR,,,F-class,North,1112.6,6.9,0.0,31.2,30.4,30.4,8.0,1.0,0.893,0.981,1.185,2.25
+-55123,Magic Valley Generating Station,CC_REGULAR,,,F-class,South,801.0,6.62,0.0,27.9,32.05,32.05,8.0,1.0,1.03,1.131,1.366,2.25
++55123,Magic Valley Generating Station,CC_REGULAR,,,F-class,South,801.0,6.62,0.0,27.9,22.435,22.435,27.23,1.0,1.03,1.131,1.366,2.25
+ 55091,Midlothian Energy Facility,CC_REGULAR,,,F-class,North,1734.0,7.41,0.0,12.1,39.95,39.95,8.0,1.0,1.03,1.131,1.366,2.25
+ 3441,Nueces Bay,CC_REGULAR,,,E-class,South,730.2,7.31,0.0,11.5,40.25,40.25,8.0,1.0,0.966,1.06,1.28,2.0
+ 55215,Odessa-Ector Power Plant,CC_REGULAR,,,F-class,West,1152.8,6.72,0.0,26.4,32.8,32.8,8.0,1.0,0.933,1.024,1.237,2.25
+@@ -47,7 +47,7 @@ Plant_Code,Plant_Name,Plant_Group,Coal_Supply,Config,Turbine_Class,ERCOT_Zone,Na
+ 55137,Rio Nogales Power Project,CC_REGULAR,,,F-class,South_Central,940.2,6.52,0.0,37.8,27.1,27.1,8.0,1.0,0.916,1.006,1.215,2.25
+ 3631,Sam Rayburn,CC_REGULAR,,,E-class,South,192.8,9.78,0.0,8.1,41.95,41.95,8.0,1.0,0.81,0.889,1.074,2.0
+ 7900,Sand Hill,CC_REGULAR,,,F-class,South_Central,696.4,7.37,0.0,17.9,37.05,37.05,8.0,1.0,0.838,0.92,1.111,2.25
+-50127,Signal Hill Generating LLC,CC_REGULAR,,,E-class,North,80.0,15.4,0.0,55.0,18.5,18.5,8.0,1.0,1.03,1.131,1.366,2.0
++50127,Signal Hill Generating LLC,CC_REGULAR,,,E-class,North,80.0,15.4,0.0,55.0,12.95,12.95,19.1,1.0,1.03,1.131,1.366,2.0
+ 3469,T H Wharton,CC_REGULAR,,,E-class,Houston,1189.9,12.99,0.0,8.4,41.8,41.8,8.0,1.0,0.81,0.889,1.074,2.0
+ 58001,Temple Power Station,CC_REGULAR,,,F-class (late),North,1606.4,7.7,0.0,55.0,20.0,10.0,15.0,1.0,1.03,1.131,1.366,2.3
+ 55062,Tenaska Frontier Generation Station,CC_REGULAR,,,F-class,Houston,939.7,7.15,0.0,25.7,33.15,33.15,8.0,1.0,1.03,1.131,1.366,2.25
+@@ -173,16 +173,16 @@ Plant_Code,Plant_Name,Plant_Group,Coal_Supply,Config,Turbine_Class,ERCOT_Zone,Na
+ 56708,CFB Power Plant,ST_GAS,,,,South_Central,310.0,15.83,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 3460,Cedar Bayou,ST_GAS,,,,Houston,1530.0,10.71,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 6243,Dansby,ST_GAS,,,,South_Central,203.2,9.96,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+-3490,Graham,ST_GAS,,,,North,634.7,10.17,0.0,10.629,36.611,0.0,52.76,1.0,1.12,1.0,1.0,1.06
+-3491,Handley,ST_GAS,,,,North,1314.8,12.58,0.0,13.3,16.256,22.167,48.277,1.0,0.66,0.9,1.45,4.25
++3490,Graham,ST_GAS,,,,North,634.7,10.17,0.0,11.7,40.3,0.0,48.0,1.0,1.12,1.0,1.0,1.06
++3491,Handley,ST_GAS,,,,North,1314.8,12.58,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 3452,Lake Hubbard,ST_GAS,,,,North,927.5,11.45,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+-3453,Mountain Creek,ST_GAS,,,,North,852.2,11.97,0.0,9.9,34.1,0.0,56.0,1.0,1.12,1.0,1.0,1.06
++3453,Mountain Creek,ST_GAS,,,,North,852.2,11.97,0.0,11.7,40.3,0.0,48.0,1.0,1.12,1.0,1.0,1.06
+ 3611,O W Sommers,ST_GAS,,,,South_Central,892.0,10.97,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 3628,R W Miller,ST_GAS,,,,South_Central,537.6,13.02,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 3576,Ray Olinger,ST_GAS,,,,North,427.7,11.83,0.0,18.0,62.0,0.0,20.0,1.0,1.12,1.0,1.0,1.06
+ 3601,Sim Gideon,ST_GAS,,,,South_Central,623.0,10.9,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+-4266,Spencer,ST_GAS,,,,North,126.5,13.65,0.0,9.9,34.1,0.0,56.0,1.0,1.12,1.0,1.0,1.06
+-3504,Stryker Creek,ST_GAS,,,,North,713.4,10.73,0.0,10.061,34.656,0.0,55.283,1.0,1.12,1.0,1.0,1.06
++4266,Spencer,ST_GAS,,,,North,126.5,13.65,0.0,11.7,40.3,0.0,48.0,1.0,1.12,1.0,1.0,1.06
++3504,Stryker Creek,ST_GAS,,,,North,713.4,10.73,0.0,11.7,40.3,0.0,48.0,1.0,1.12,1.0,1.0,1.06
+ 3507,Trinidad (TX),ST_GAS,,,,North,243.3,12.8,0.0,18.0,62.0,0.0,20.0,1.0,1.12,1.0,1.0,1.06
+ 3612,V H Braunig,ST_GAS,,,,South_Central,1138.0,8.49,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
+ 34702,W A Parish [ST],ST_GAS,,,,Houston,1565.0,10.76,0.0,18.0,22.0,30.0,30.0,1.0,0.66,0.9,1.45,4.25
