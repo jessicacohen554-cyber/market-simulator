@@ -1762,6 +1762,20 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
+# Per-plant CC_REGULAR peaking-tranche % (top slice of nameplate priced at the
+# duct-burner peak multiplier), keyed by EIA plant code. Used in place of the
+# offer curve's ``pct_peaking`` when config.cc_peaking_per_plant is set, so the
+# expensive peak band starts earlier on the CF axis (15% => peaking starts at
+# 85% of nameplate). Applies to the four F-class(late) 2x1 CCs the model
+# over-runs in the 80-90% CF range; the economic tranche absorbs the change.
+CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
+    58001: 15.0,  # Temple Power Station
+    58005: 15.0,  # Rayburn Energy Station LLC
+    59812: 15.0,  # Wolf Hollow II
+    60122: 15.0,  # Colorado Bend II
+}
+
+
 def chp_btm_pct(plant_code: int, group: str) -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
     if group == "ST_CHP":
@@ -2288,6 +2302,10 @@ def bins_to_fleet(
         pct_peak = float(b["pct_peak"])
         if offer is not None and "pct_peaking" in offer:
             pct_peak = float(offer["pct_peaking"])
+        if (group == "CC_REGULAR"
+                and getattr(config, "cc_peaking_per_plant", False)
+                and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+            pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
         denom = 100.0 - pct_mr
         committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
@@ -2520,6 +2538,10 @@ def plant_tranche_bands(
     pct_peak = float(b["pct_peak"])
     if offer is not None and "pct_peaking" in offer:
         pct_peak = float(offer["pct_peaking"])
+    if (group == "CC_REGULAR"
+            and getattr(config, "cc_peaking_per_plant", False)
+            and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+        pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
 
     if fuel == "coal":
         mustrun_cap = nameplate * pct_mr / 100.0
