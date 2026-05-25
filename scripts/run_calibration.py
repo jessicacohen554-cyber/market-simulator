@@ -341,6 +341,7 @@ def run_year(
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
+    plant_tranche_config: str | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -381,6 +382,12 @@ def run_year(
     if prb_overrides:
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None})
+    # Per-plant tranche-config override sheet (run_calibration_full
+    # --plant-tranche-config): each listed plant's tranche shares + band HR
+    # multipliers come straight from the CSV, bypassing the offer curve.
+    if plant_tranche_config:
+        config = config.with_overrides(
+            plant_tranche_config_path=plant_tranche_config)
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
