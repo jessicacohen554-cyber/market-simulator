@@ -138,6 +138,15 @@ class ScenarioConfig:
     use_campd_bins: bool = True
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
+    # Optional per-plant tranche-config override CSV (one row per plant with its
+    # five tranche shares of nameplate — must-run / committed / econ-low /
+    # econ-high / peaking — and the five per-tranche heat-rate multipliers on
+    # the plant's base HR). When set, each listed plant's tranche split and band
+    # heat rates come straight from the sheet, bypassing offer_curve_by_group
+    # and the per-plant committed/peaking dicts; plants absent from the sheet
+    # keep the configured defaults. Produced/round-tripped by
+    # scripts/export_tranche_config.py and edited via the desktop launcher.
+    plant_tranche_config_path: str | None = None
     unknown_zone_default: str = "South_Central"  # zone for bins tagged "Unknown"
     # When True, generators pinned to a single plant take that plant's
     # CAMPD-measured CO2/NOx/SO2 rates per MWh net (plant_emission_rates_path)
