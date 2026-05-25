@@ -2182,6 +2182,7 @@ PLANT_TRANCHE_OVERRIDE_FIELDS: dict[str, str] = {
 }
 
 
+@lru_cache(maxsize=8)
 def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
     """Load the per-plant tranche-config override sheet, keyed by plant code.
 
@@ -2556,6 +2557,31 @@ def bins_to_fleet(
     return fleet, fleet_arrays
 
 
+def _bands_from_shares(
+    raw: list[tuple[str, float, float, bool]], is_coal: bool
+) -> list[dict]:
+    """Stack ``(name, pct_of_nameplate, hr_mult, vom)`` tranches into CF bands.
+
+    Bands accumulate from CF 0 in dispatch fill order, dropping empty ones. The
+    non-coal must-run share is host steam removed from the grid, so it is not
+    shown and does not shift the grid bands (committed still starts at CF 0);
+    the coal must-run band is the in-LP VOM-only floor and is shown from 0.
+    """
+    bands: list[dict] = []
+    cursor = 0.0
+    for name, pct, mult, vom in raw:
+        if name == "must-run" and not is_coal:
+            continue
+        lo, hi = cursor, cursor + pct
+        cursor = hi
+        if pct <= 0.5:
+            continue
+        bands.append({"name": name, "cf_lo": round(lo, 1),
+                      "cf_hi": round(hi, 1), "mult": round(mult, 3),
+                      "vom": vom})
+    return bands
+
+
 def plant_tranche_bands(
     b: "pd.Series | dict", config: ScenarioConfig
 ) -> list[dict]:
@@ -2588,6 +2614,23 @@ def plant_tranche_bands(
     if nameplate <= 0.0:
         return []
     fuel = BIN_GROUP_TO_FUEL[group]
+
+    # Per-plant tranche-config sheet wins (same precedence as bins_to_fleet):
+    # build the bands straight from the sheet's shares + multipliers so the
+    # dashboard markers track what the user edited.
+    _ov_path = getattr(config, "plant_tranche_config_path", None)
+    if _ov_path:
+        ov = load_plant_tranche_config(_ov_path).get(plant_code)
+        if ov is not None:
+            return _bands_from_shares(
+                [("must-run", ov["pct_mr"], ov["hr_mr"], True),
+                 ("committed", ov["pct_mc"], ov["hr_mc"], False),
+                 ("econ-lo", ov["pct_lo"], ov["hr_lo"], False),
+                 ("econ-hi", ov["pct_hi"], ov["hr_hi"], False),
+                 ("peak", ov["pct_pk"], ov["hr_pk"], False)],
+                is_coal=(fuel == "coal"),
+            )
+
     offer = _offer_curve_for_group(group, plant_code, config)
 
     # Resolve must-run / committed / peaking percentages exactly as
