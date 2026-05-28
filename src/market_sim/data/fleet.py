@@ -2467,29 +2467,38 @@ def bins_to_fleet(
         # economic capacity. The first econ step carries any CHP
         # steam-following floor.
         if ov is not None:
-            # Per-plant sheet. CC and coal collapse econ-low / econ-high /
-            # peaking into a smooth N-slice rising marginal-cost curve
-            # ``mult(t) = lo + (pk - lo) * t**p`` (t = midpoint fraction of the
-            # curve region) so the LP fills it gradually as the hourly price
-            # crosses MC, rather than parking at the top of the cheap block.
-            # Other groups keep the 2-step econ split + separate peak tranche.
+            # Per-plant sheet. The economic region is collapsed into a smooth
+            # N-slice rising marginal-cost curve ``mult(t) = lo + (pk - lo) *
+            # t**p`` so the LP fills it gradually as hourly price crosses MC,
+            # rather than parking at the top of a flat block. CC + coal fold
+            # peaking into the curve (peak is part of the smooth ramp); CT_PEAKER
+            # and ST_GAS span only econ-low to econ-high and keep the peak band
+            # as a separate flat scarcity tranche (their peak mults are
+            # price-wall scarcity floors, not real ramp endpoints).
             _CURVE_N, _CURVE_P = 12, 3.0
-            if group in ("CC_REGULAR", "CC_CHP", "COAL"):
-                curve_cap = nameplate * (
-                    ov["pct_lo"] + ov["pct_hi"] + ov["pct_pk"]) / 100.0
-                if curve_cap > 0.0:
-                    lo_m, pk_m = ov["hr_lo"], ov["hr_pk"]
-                    slice_cap = curve_cap / _CURVE_N
-                    econ_steps = []
-                    for k in range(_CURVE_N):
-                        t = (k + 0.5) / _CURVE_N
-                        mult = lo_m + (pk_m - lo_m) * (t ** _CURVE_P)
-                        econ_steps.append((
-                            f"curve{k:02d}", slice_cap, base_hr * mult,
-                            1.0, 0, 0, 0.0,
-                        ))
-                else:
-                    econ_steps = []
+            _CURVE_FOLD_PEAK = ("CC_REGULAR", "CC_CHP", "COAL")
+            _CURVE_ECON_ONLY = ("CT_PEAKER", "ST_GAS")
+            if group in _CURVE_FOLD_PEAK:
+                curve_pct = ov["pct_lo"] + ov["pct_hi"] + ov["pct_pk"]
+                lo_m, pk_m = ov["hr_lo"], ov["hr_pk"]
+                use_curve = curve_pct > 0.0 and pk_m > lo_m
+            elif group in _CURVE_ECON_ONLY:
+                curve_pct = ov["pct_lo"] + ov["pct_hi"]
+                lo_m, pk_m = ov["hr_lo"], ov["hr_hi"]
+                use_curve = curve_pct > 0.0 and pk_m > lo_m
+            else:
+                use_curve = False
+            if use_curve:
+                curve_cap = nameplate * curve_pct / 100.0
+                slice_cap = curve_cap / _CURVE_N
+                econ_steps = []
+                for k in range(_CURVE_N):
+                    t = (k + 0.5) / _CURVE_N
+                    mult = lo_m + (pk_m - lo_m) * (t ** _CURVE_P)
+                    econ_steps.append((
+                        f"curve{k:02d}", slice_cap, base_hr * mult,
+                        1.0, 0, 0, 0.0,
+                    ))
             else:
                 econ_steps = [
                     ("econlo", nameplate * ov["pct_lo"] / 100.0,
@@ -2530,7 +2539,8 @@ def bins_to_fleet(
         # CC / coal under the per-plant sheet fold peaking into the rising econ
         # curve above; other groups still carry a separate flat peak tranche.
         peak_in_curve = (
-            ov is not None and group in ("CC_REGULAR", "CC_CHP", "COAL")
+            ov is not None and use_curve
+            and group in ("CC_REGULAR", "CC_CHP", "COAL")
         )
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
