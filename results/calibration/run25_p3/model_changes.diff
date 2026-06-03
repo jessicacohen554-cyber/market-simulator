@@ -1,0 +1,13 @@
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 827865f..faebe6a 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -2473,7 +2473,7 @@ def bins_to_fleet(
+             # curve region) so the LP fills it gradually as the hourly price
+             # crosses MC, rather than parking at the top of the cheap block.
+             # Other groups keep the 2-step econ split + separate peak tranche.
+-            _CURVE_N, _CURVE_P = 12, 2.0
++            _CURVE_N, _CURVE_P = 12, 3.0
+             if group in ("CC_REGULAR", "CC_CHP", "COAL"):
+                 curve_cap = nameplate * (
+                     ov["pct_lo"] + ov["pct_hi"] + ov["pct_pk"]) / 100.0
