@@ -16,8 +16,12 @@ from market_sim.model.storage import (
     STORAGE_BASE_FLEET_MW,
     StorageArrays,
     StorageUnit,
+    _arbitrage_block_days,
+    _degradation_cost_per_mwh,
+    _elcc_for_duration,
     apply_storage_new_entry,
     build_default_storage,
+    estimate_capacity_value,
     estimate_storage_revenue,
     storage_units_to_arrays,
 )
@@ -187,6 +191,98 @@ class TestEstimateStorageRevenue(unittest.TestCase):
         self.assertGreater(high_rte, low_rte)
 
 
+class TestLongDurationArbitrage(unittest.TestCase):
+    """Long-duration storage must capture multi-day, not just daily, value."""
+
+    @staticmethod
+    def _spread_prices():
+        # 12 cheap hours then 12 expensive hours, repeated every day.
+        day = np.concatenate([np.full(12, 10.0), np.full(12, 300.0)])
+        return np.tile(day, 365)
+
+    def test_block_window_widens_with_duration(self):
+        # Short duration cycles daily; long duration uses a multi-day window
+        # sized so a full charge and discharge never overlap.
+        self.assertEqual(_arbitrage_block_days(4), 1)
+        self.assertEqual(_arbitrage_block_days(8), 1)
+        self.assertEqual(_arbitrage_block_days(12), 1)
+        self.assertGreaterEqual(_arbitrage_block_days(100) * 24, 2 * 100)
+
+    def test_iron_air_100hr_revenue_is_positive(self):
+        # The old fixed-24h window collapsed any duration >= a day to zero
+        # spread, so iron-air (100h) screened as worthless and could never
+        # build. With a duration-sized window it captures the spread.
+        revenue = estimate_storage_revenue(self._spread_prices(), 100, 0.50)
+        self.assertGreater(revenue, 0.0)
+
+    def test_degradation_cost_reduces_revenue(self):
+        prices = self._spread_prices()
+        clean = estimate_storage_revenue(prices, 4, 0.85)
+        degraded = estimate_storage_revenue(
+            prices, 4, 0.85, degradation_cost_per_mwh=10.0
+        )
+        self.assertLess(degraded, clean)
+
+    def test_degradation_cost_orders_by_cycle_life(self):
+        # Long-cycle-life chemistries pay far less per MWh than li-ion.
+        cfg = ScenarioConfig()
+        li = _degradation_cost_per_mwh("li_ion_4hr", cfg)
+        flow = _degradation_cost_per_mwh("flow_battery", cfg)
+        self.assertGreater(li, 0.0)
+        self.assertLess(flow, li)
+
+    def test_degradation_toggle_off(self):
+        cfg = ScenarioConfig(storage_degradation=False)
+        self.assertEqual(_degradation_cost_per_mwh("li_ion_4hr", cfg), 0.0)
+
+
+class TestCapacityValue(unittest.TestCase):
+    """Resource-adequacy value is gated by market design and penetration."""
+
+    def test_elcc_rises_with_duration(self):
+        self.assertLess(_elcc_for_duration(4.0), _elcc_for_duration(12.0))
+        self.assertLessEqual(_elcc_for_duration(100.0), 1.0)
+
+    def test_energy_only_market_pays_no_capacity(self):
+        # ERCOT is energy-only -- scarcity flows through the energy price.
+        val = estimate_capacity_value(
+            "li_ion_4hr", 0.0, ScenarioConfig(), "ERCOT"
+        )
+        self.assertEqual(val, 0.0)
+
+    def test_capacity_market_pays_capacity(self):
+        val = estimate_capacity_value(
+            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
+        )
+        self.assertGreater(val, 0.0)
+
+    def test_capacity_value_declines_with_penetration(self):
+        # As storage saturates the peak, marginal capacity value falls.
+        low_pen = estimate_capacity_value(
+            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
+        )
+        high_pen = estimate_capacity_value(
+            "li_ion_4hr", 60_000.0, ScenarioConfig(), "PJM"
+        )
+        self.assertLess(high_pen, low_pen)
+
+    def test_longer_duration_earns_more_capacity_value(self):
+        short = estimate_capacity_value(
+            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
+        )
+        long = estimate_capacity_value(
+            "li_ion_12hr", 0.0, ScenarioConfig(), "PJM"
+        )
+        self.assertGreater(long, short)
+
+    def test_config_toggle_disables_capacity_value(self):
+        val = estimate_capacity_value(
+            "li_ion_4hr", 0.0,
+            ScenarioConfig(storage_capacity_value=False), "PJM",
+        )
+        self.assertEqual(val, 0.0)
+
+
 class TestApplyStorageNewEntry(unittest.TestCase):
     """Tests for ``apply_storage_new_entry`` economics-based entry."""
 
@@ -258,6 +354,44 @@ class TestApplyStorageNewEntry(unittest.TestCase):
             "ERCOT",
         )
         self.assertLessEqual(self._total_mw(result), ceiling + 1.0)
+
+    def test_no_single_tech_exceeds_share_cap(self):
+        # With extreme spread many techs are profitable, but the year's build
+        # diversifies -- no single tech takes the whole budget.
+        from market_sim.config.constants import (
+            STORAGE_ANNUAL_BUILD_CAP_MW,
+            STORAGE_TECH_BUILD_SHARE_CAP,
+        )
+        iso = get_iso_config("ERCOT")
+        existing = build_default_storage(iso, ScenarioConfig())
+        result = apply_storage_new_entry(
+            existing, self._high_spread_prices(), 2030, ScenarioConfig(),
+            "ERCOT",
+        )
+        new_by_tech: dict[str, float] = {}
+        existing_ids = {u.unit_id for u in existing}
+        for u in result:
+            if u.unit_id not in existing_ids:
+                new_by_tech[u.tech_name] = (
+                    new_by_tech.get(u.tech_name, 0.0) + u.power_cap_mw
+                )
+        budget = STORAGE_ANNUAL_BUILD_CAP_MW["ERCOT"]
+        self.assertGreater(len(new_by_tech), 1)  # diversified
+        for mw in new_by_tech.values():
+            self.assertLessEqual(mw, budget * STORAGE_TECH_BUILD_SHARE_CAP + 1.0)
+
+    def test_eastern_iso_can_grow(self):
+        # PJM previously had no ceiling/annual-cap, so storage could never
+        # grow there. It now has both, so high spreads trigger entry.
+        iso = get_iso_config("PJM")
+        existing = build_default_storage(iso, ScenarioConfig())
+        result = apply_storage_new_entry(
+            existing, self._high_spread_prices(), 2030, ScenarioConfig(),
+            "PJM",
+        )
+        self.assertGreater(
+            self._total_mw(result), self._total_mw(existing)
+        )
 
     def test_base_fleet_preserved_without_prior_prices(self):
         # With no price spread (the base-year case before any solve) the
