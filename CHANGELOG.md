@@ -10,10 +10,15 @@
   `claude.md`, the multi-ISO market-design catalogue (`MARKET_DESIGN` registry
   note), and `docs/binning-methodology.md` (smooth N-slice offer curve now
   spanning CC/coal/CT/ST, exponent p=3 — runs 25–26).
-- **Flagged (not yet fixed):** the parameter-citation registry
-  (`frontend/data/parameters.json` / `docs/parameter-citations.md`) is 401
-  entries behind the code (133 of 518) and `validate_parameters.py` exits
-  non-zero. Needs a regeneration/back-fill pass — see session notes.
+- **Parameter-citation registry back-filled — CI green.** Added
+  `scripts/generate_parameter_registry.py`, which reuses the validator's exact
+  `expected_param_ids()` derivation, preserves the 133 curated entries, and
+  registers the 401 missing parameters with values plus citations harvested
+  from each constant's inline comment. `validate_parameters.py` now exits 0.
+  534 entries total; 232 auto-entries are flagged `needs-citation` (no dated
+  primary source in the comment) for later human review. The human view
+  `docs/parameter-citations.md` is now rendered from the registry by the same
+  generator, so the two stay consistent — re-run after adding constants.
 
 ## 2026-06-03
 
