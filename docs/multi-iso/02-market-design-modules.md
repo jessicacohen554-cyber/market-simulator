@@ -1,8 +1,18 @@
 # Market-Design Modules & LP Modularity Assessment
 
-Status: **planning**. This catalogues the market-design features that must
-become toggleable modules so each ISO runs with *exactly* the mechanisms it
-actually has, and assesses how modular the dispatch LP already is for that.
+Status: **planning** (catalogue), with the first module now landed in code.
+This catalogues the market-design features that must become toggleable modules
+so each ISO runs with *exactly* the mechanisms it actually has, and assesses
+how modular the dispatch LP already is for that.
+
+> **Landed:** a per-ISO `MARKET_DESIGN` registry (`config/constants.py`,
+> `MarketDesign(capacity_market=...)`, `DEFAULT_MARKET_DESIGN` = energy-only)
+> is the first concrete realization of this catalogue. Its initial consumer is
+> the **storage new-entry capacity value** (methodology spec §5.5): ERCOT
+> energy-only pays no capacity stream, while PJM/NYISO/ISO-NE/CAISO pay
+> `net_cone × ELCC(duration) × saturation derate`. ISOs absent from the
+> registry fall back to energy-only, preserving the defaults-off principle.
+> Future capacity/RA modules (M1 below) should read this same registry.
 
 Guiding principle (from `claude.md`): every module **defaults to off** so
 ERCOT's calibrated, energy-only behaviour is untouched unless its modules are
