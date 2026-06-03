@@ -1,9 +1,13 @@
 # New-ISO Addition Protocol & Checklist
 
-Status: **planning** (no code changes yet). This is the master document for
-expanding the simulator from ERCOT (+ partial CAISO/PJM/NYISO/NEISO) to a
-faithful multi-ISO backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, SPP,
-and NYISO**.
+Status: **topology landed; calibration pending.** All seven ISOs are now
+registered in `config/iso_configs.py` with real (cited, Tier-3) zone load
+shares and inter-zone TTCs, and each has a plant-to-zone splitter in
+`data/zone_assignment.py` (Stages A–B done for every ISO). What remains per
+non-ERCOT ISO is the *data and calibration* spine — Stages C–H: EIA-930 demand,
+renewable CF profiles, calibration references, market-design module wiring, and
+a validated backcast. ERCOT stays the reference for **CAISO, PJM, ISO-NE
+(NEISO), MISO, SPP, and NYISO**.
 
 Companion documents in this directory:
 
@@ -21,15 +25,18 @@ Companion documents in this directory:
 
 ## 0. Where we are today (baseline)
 
-| ISO   | Config in `iso_configs.py`            | BA map | Zone assign | Calib. ref | EIA-930 hourly | Backcast |
-|-------|----------------------------------------|--------|-------------|------------|----------------|----------|
-| ERCOT | Full: 6 zones, cited TTCs, real CF/HSL | ERCO   | lat/lon+FIPS| 2021–2025  | `ERCO hourly`  | **Yes**  |
-| CAISO | Stub: 1 zone + WECC import node        | CISO   | single-zone | none       | none           | No       |
-| PJM   | Stub: 4 zones, **placeholder** TTC/share| PJM    | largest-zone fallback only | none | none | No       |
-| NYISO | Stub: 1 zone                           | NYIS   | single-zone | none       | none           | No       |
-| NEISO | Stub: 1 zone                           | ISNE   | single-zone | none       | none           | No       |
-| MISO  | **absent**                             | absent | absent      | none       | none           | No       |
-| SPP   | **absent**                             | absent | absent      | none       | none           | No       |
+| ISO   | Config in `iso_configs.py`               | BA map | Zone assign         | Calib. ref | EIA-930 hourly | Backcast |
+|-------|------------------------------------------|--------|---------------------|------------|----------------|----------|
+| ERCOT | Full: 6 zones, cited TTCs, real CF/HSL    | ERCO   | lat/lon+FIPS        | 2021–2025  | `ERCO hourly`  | **Yes**  |
+| CAISO | 3 zones (NP15/ZP26/SP15) + WECC import    | CISO   | Path 15/26 + FIPS   | none       | none           | No       |
+| PJM   | 4 zones, cited zonal-peak shares + TTCs    | PJM    | FIPS state→zone     | none       | none           | No       |
+| MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
+| SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
+| NYISO | 1 zone (real NYISO is 11 — future)         | NYIS   | largest-zone        | none       | none           | No       |
+| NEISO | 1 zone (real ISO-NE is zonal — future)     | ISNE   | largest-zone        | none       | none           | No       |
+
+All ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE`. The remaining
+gaps are **data + market-design fidelity** (Stages C–H), not topology.
 
 **The dispatch LP itself is ISO-agnostic and well-parameterized** on
 `n_zones`, `n_storage`, `n_links`, the node-link `incidence` matrix, and per-
