@@ -14,6 +14,13 @@
   reconciler (deliberately not a hook) with a code→doc map.
 - Roadmap noted: derive forecast-mode spring/autumn maintenance shaping from
   historic outage data (replacing the flat shoulder-POF heuristic).
+- Documented the per-plant tranche-config system added across the run5–run24
+  calibration series (`inputs/plant-tranche-config.csv`,
+  `plant_tranche_config_path`, `cc_peaking_per_plant`,
+  `fleet.load_plant_tranche_config`/`plant_tranche_bands`): an optional
+  per-plant **five-slice rising offer curve** (Econ split into Low/High) that
+  overrides the per-group tranche defaults for flagship-plant calibration.
+  See `docs/binning-methodology.md` and methodology spec §3.3.
 
 ## 2026-05-16
 
