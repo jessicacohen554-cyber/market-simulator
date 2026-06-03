@@ -1,5 +1,14 @@
 # Calibration Session Log — ERCOT 2023
 
+> **Historical snapshot (2026-05-17).** This is the *first* ERCOT calibration
+> session and is preserved as-is for the record. Several conclusions here have
+> since been overtaken — notably the "Gas CT gap cannot be resolved without
+> unit commitment": the opt-in commitment layer (methodology spec §1.6) and
+> CAMPD per-plant binning (§3.3) were subsequently built to address exactly
+> this. For current calibration state see the "run14"–"run24" bundles in
+> `results/calibration/` (render with `/calibration-report`). Do not read the
+> forward-looking statements below as current methodology.
+
 **Date:** 2026-05-17
 **Target:** eGRID 2023 actuals for ERCOT (BA code ERCO)
 **Primary goal:** Accurate emissions trajectories
