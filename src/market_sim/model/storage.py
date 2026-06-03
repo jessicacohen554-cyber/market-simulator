@@ -197,7 +197,9 @@ def build_default_storage(
 _EIA860_STORAGE_FALLBACK_DURATION_HR: float = 2.0
 
 
-def load_eia860_storage(iso: str, year: int) -> list[StorageUnit]:
+def load_eia860_storage(
+    iso: str, year: int, config: ScenarioConfig
+) -> list[StorageUnit]:
     """Build a storage fleet from EIA-860 operable energy-storage data.
 
     Reads the EIA-860 operable energy-storage schedule, keeps units online
@@ -207,12 +209,16 @@ def load_eia860_storage(iso: str, year: int) -> list[StorageUnit]:
     the historical battery fleet rather than the forward-looking
     ``STORAGE_BASE_FLEET_MW`` scenario constant.
 
-    EIA-860 does not report round-trip efficiency, so the lithium-ion RTE
-    from :data:`STORAGE_TECHS` is applied uniformly.
+    EIA-860 does not report round-trip efficiency, so the 4-hour lithium-ion
+    RTE is applied uniformly. It is read through :func:`_storage_rte`, so a
+    calibration sweep of ``config.storage_rte_4hr`` reaches the backcast
+    fleet exactly as it reaches the forward-entry path -- rather than being
+    silently pinned to the :data:`STORAGE_TECHS` constant.
 
     Args:
         iso: ISO identifier; zones come from its topology config.
         year: Backcast year; units commissioned after it are excluded.
+        config: Scenario config; supplies the ``storage_rte_4hr`` override.
 
     Returns:
         One aggregated ``StorageUnit`` per zone with nonzero storage
@@ -260,7 +266,7 @@ def load_eia860_storage(iso: str, year: int) -> list[StorageUnit]:
         per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
         per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
 
-    eta = float(STORAGE_TECHS["li_ion_4hr"]["rte"]) ** 0.5
+    eta = _storage_rte("li_ion_4hr", config) ** 0.5
     return [
         StorageUnit(
             unit_id=f"{zone}_eia860_storage",
