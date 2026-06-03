@@ -2,7 +2,9 @@
 
 ## What This Is
 
-LP-based electricity market dispatch simulator. Two ISOs (ERCOT 4-zone, CAISO 1-zone + WECC import node), hourly dispatch 2026–2050, parameterized scenario system.
+LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: seven ISOs registered in `config/iso_configs.py` — ERCOT (6 zones, the calibrated reference), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO, NEISO — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
+
+**Forecast vs backcast:** the model forecasts by default. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology.
 
 ## Stack
 
@@ -13,12 +15,12 @@ LP-based electricity market dispatch simulator. Two ISOs (ERCOT 4-zone, CAISO 1-
 
 ```
 src/market_sim/
-  config/    → scenarios.py (ScenarioConfig dataclass), constants.py, iso_configs.py
-  data/      → eia_loader.py, fleet.py, renewables.py, fuel.py
-  model/     → dispatch.py (LP core), transmission.py, storage.py, capacity.py
-  policy/    → ira.py, rps.py, carbon.py
-  results/   → cache.py, outputs.py, emissions.py, export.py
-  runner.py  → main orchestrator
+  config/    → scenarios.py (ScenarioConfig dataclass), constants.py, iso_configs.py (7-ISO topology)
+  data/      → eia_loader.py, fleet.py (CAMPD binning), renewables.py, fuel.py, outages.py, hydro.py, ownership.py
+  model/     → dispatch.py (LP core), commitment.py (3-solve UC screen), transmission.py, storage.py, capacity.py
+  policy/    → ira.py, rps.py, carbon.py, eac.py, constraints.py
+  results/   → cache.py, outputs.py, emissions.py, export.py, calibration.py, plant_financials.py
+  runner.py  → main orchestrator (P0→P1→P2 solve loop, year evolution)
 tests/       → pytest, one file per module
 ```
 
@@ -56,11 +58,21 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 
 ## Capacity Evolution (per year, one-pass)
 
-1. Known retirements → 2. Economic retirements (fuel-type-aware thresholds + reliability floor) → 3. Known additions → 4. Economic new entry → 5. RPS mandates
+1. Known retirements → 2. Economic retirements (fuel-type-aware thresholds + reliability floor) → 3. Known additions → 4. CCS retrofit screen (existing gas-CC) → 5. Economic new entry → 6. dispatch with RPS as an LP constraint (shadow price feeds next year's entry screen)
 
-Economic retirement uses per-fuel thresholds: coal=1yr, gas_ct=2yr, gas_cc=3yr. Coal FOM multiplier 1.3× for regulatory/ESG risk. Reliability floor prevents thermal below (peak - firm_clean) × 1.15.
+Economic retirement uses per-fuel thresholds, now `ScenarioConfig` fields (not hardcoded): coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3× for regulatory/ESG risk; reliability floor prevents thermal below (peak - firm_clean) × 1.15. RPS is **not** a force-build step — it's an annual LP constraint whose dual is the REC price (see methodology spec §1.4, §5).
 
-Storage grows via compound growth rate (Tier 1 param), not economic entry screen. Capped at 50% peak demand.
+CCS retrofit (§5.6): gas-CC units with ≥15 yr life left retrofit when simple payback beats remaining life; capped at 3 GW/yr/ISO, gated on `ccs_retrofit_available_year`.
+
+Storage grows via an economics-based **value stack** (not compound growth): duration-sized arbitrage windows (net of cycling degradation) **plus** resource-adequacy capacity value, paid only in capacity markets via the per-ISO `MARKET_DESIGN` registry (energy-only ERCOT pays none; PJM/NYISO/ISO-NE/CAISO pay net-CONE × ELCC × saturation derate). ELCC rises with duration → tilts entry toward long-duration at high penetration. Build budget diversifies across techs (`STORAGE_TECH_BUILD_SHARE_CAP`); base-year fleet from `storage_deployment`, all later growth endogenous, capped per ISO. Toggles: `storage_capacity_value`, `storage_degradation`. (Methodology spec §5.5.)
+
+## Dispatch & Commitment (per year)
+
+Three LP solves (`runner.py`, `model/commitment.py`): **P0** base-cost (discover run lengths) → **P1** bid-cost (base + amortized startup markup, sets clearing prices) → **P2** optional commitment screen (`commitment_enabled`, default off) that decommits unprofitable CC/CT runs via an IRR hurdle + min-run/min-down + storage-weighted margin discount, with an adequacy backstop. Still pure LP — no MIP.
+
+## Fleet Representation
+
+ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP unit per plant, each split into must-run / committed / economic / peaking tranches forming a rising offer curve (coal take-or-pay + PRB sigmoid passthrough). See `docs/binning-methodology.md`. Other ISOs / `use_campd_bins=False` use legacy equal-width heat-rate bins.
 
 ## Naming Conventions
 
@@ -74,6 +86,10 @@ Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
 
 ## Reference Docs (in repo)
 
-- `market-sim-methodology.md` — LP formulation, matrix construction, scenario architecture (THE SPEC)
-- `build-plan.md` — phase plan, extraction manifest, directory structure
-- When in doubt, methodology spec wins.
+- `model-methodology-spec.md` — LP formulation, commitment, fleet/offer curves, capacity evolution, outage modelling, scenario architecture (THE SPEC)
+- `market-sim-build-plan.md` — phase plan, extraction manifest, directory structure
+- `docs/binning-methodology.md` — CAMPD per-plant binning & tranche offer curves (ERCOT default)
+- `docs/parameter-citations.md` — every numeric input traced to a primary source
+- `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
+- `docs/calibration-log.md`, `docs/calibration-session-log.md` — calibration history
+- **Code is the source of truth.** When docs and code disagree, fix the docs (run `/sync-docs`). When the methodology is genuinely ambiguous, the spec wins.
