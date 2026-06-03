@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-03 (storage + offer-curve docs)
+
+- Documented the storage new-entry overhaul (PR #180): the value stack
+  (duration-sized arbitrage net of cycling degradation **+** resource-adequacy
+  capacity value via the per-ISO `MARKET_DESIGN` registry, net-CONE × ELCC ×
+  saturation derate), tech-diversified build budget, and per-tech learning
+  curves. Methodology spec §5.5 was updated in that PR; this pass aligns
+  `claude.md`, the multi-ISO market-design catalogue (`MARKET_DESIGN` registry
+  note), and `docs/binning-methodology.md` (smooth N-slice offer curve now
+  spanning CC/coal/CT/ST, exponent p=3 — runs 25–26).
+- **Flagged (not yet fixed):** the parameter-citation registry
+  (`frontend/data/parameters.json` / `docs/parameter-citations.md`) is 401
+  entries behind the code (133 of 518) and `validate_parameters.py` exits
+  non-zero. Needs a regeneration/back-fill pass — see session notes.
+
 ## 2026-06-03
 
 - **Documentation reconciliation.** Realigned the prose docs with the as-built
