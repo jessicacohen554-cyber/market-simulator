@@ -485,7 +485,7 @@ def run_year(
     solar_mc -= solar_eac
 
     storage = storage_units_to_arrays(
-        load_eia860_storage(iso, year), zone_names
+        load_eia860_storage(iso, year, config), zone_names
     )
 
     dispatch_kwargs = dict(
