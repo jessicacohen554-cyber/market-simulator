@@ -1,5 +1,7 @@
 """Physical and economic constants with citation comments."""
 
+from dataclasses import dataclass
+
 # Heat rate efficiency bins (MMBtu/MWh) by fuel class and technology vintage.
 # Lower heat rate means higher thermal efficiency.
 # Source: EIA Table 8 (Average Tested Heat Rates by Prime Mover and Fuel Type).
@@ -559,17 +561,34 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
 }
 
 # Ceiling on total deployed storage power (MW) per ISO, capping cumulative
-# new entry at a realistic share of system peak demand.
+# new entry at a realistic share of system peak demand. Each value is roughly
+# half of the ISO's coincident peak — the share studies put at the point where
+# incremental storage capacity value falls off sharply.
 STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     "ERCOT": 45_000.0,  # ~53% of ~85 GW peak. Source: ERCOT CDR
     "CAISO": 25_000.0,  # ~52% of ~48 GW peak. Source: CAISO IEPR
+    "PJM": 75_000.0,    # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
+    "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
+    "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
 }
 
-# Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data.
+# Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
+# eastern-ISO interconnection-queue throughput.
 STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     "ERCOT": 5_000.0,
     "CAISO": 3_000.0,
+    "PJM": 4_000.0,    # large queue but slower interconnection. Source: PJM queue 2024
+    "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
+    "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
 }
+
+# Cap on the share of one year's storage build budget that any single
+# technology may take. Below 1.0 the annual build diversifies across the
+# profitable technologies in merit order rather than the top-margin tech
+# monopolizing the whole budget (the "winner-take-all" failure mode).
+# Source: modeling assumption — interconnection queues and supply chains
+# spread build across durations even when one tech leads on margin.
+STORAGE_TECH_BUILD_SHARE_CAP: float = 0.6
 
 # Share of deployed storage power by technology type.
 # Source: NREL ATB 2024 technology mix assumptions.
@@ -578,6 +597,88 @@ STORAGE_TECH_POWER_SHARE: dict[str, float] = {
     "li_ion_8hr": 0.25,
     "iron_air": 0.05,
 }
+
+
+# --- Storage capacity / resource-adequacy value, by market design ---------
+#
+# The storage new-entry screen stacks two value streams: energy arbitrage
+# (every market) and resource-adequacy capacity value (only markets that pay
+# for capacity). ERCOT is energy-only — scarcity value already flows through
+# the energy price via ORDC/VOLL — so its capacity stream is OFF. The capacity
+# markets (PJM/NYISO/ISO-NE) and CAISO's RA program pay a separate capacity
+# price, so theirs is ON. Toggling ``capacity_market`` per ISO keeps the screen
+# modular as market designs diverge.
+
+
+@dataclass(frozen=True)
+class MarketDesign:
+    """Storage revenue-stack switches and parameters for one ISO/market.
+
+    ``capacity_market`` gates the resource-adequacy value stream entirely.
+    ``net_cone_per_kw_yr`` is the marginal cost of new entry of the capacity
+    resource the market prices against (the clearing-price anchor), in
+    $/kW-yr. A storage unit earns ``net_cone × ELCC(duration) × derate`` of it,
+    where the ELCC (effective load-carrying capability) credit rises with
+    duration and the derate falls as storage saturates the peak.
+    """
+
+    capacity_market: bool
+    net_cone_per_kw_yr: float = 0.0
+
+
+# Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
+# (energy-only) so a new ISO is conservative until its capacity rules are added.
+MARKET_DESIGN: dict[str, MarketDesign] = {
+    # Energy-only: scarcity is monetized through the energy price, not a
+    # separate capacity payment. Source: ERCOT market design (ORDC).
+    "ERCOT": MarketDesign(capacity_market=False),
+    # RA program with a soft capacity price. Source: CAISO RA, CPUC net-CONE.
+    "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
+    # Capacity markets. Net-CONE anchors near the CT reference resource.
+    # Source: PJM 2025/26 BRA planning parameters (net-CONE ~$100/kW-yr).
+    "PJM": MarketDesign(capacity_market=True, net_cone_per_kw_yr=100.0),
+    # Source: NYISO ICAP demand-curve reset net-CONE.
+    "NYISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=110.0),
+    # Source: ISO-NE FCM net-CONE.
+    "NEISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=95.0),
+}
+
+DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
+
+# Effective load-carrying capability (ELCC) of storage as a function of
+# duration (hours), as (duration_hr, credit) breakpoints; linearly
+# interpolated, clamped at the ends. Short-duration storage covers only the
+# sharpest peak hours so its firm-capacity credit is well below 1; the credit
+# saturates toward 1.0 as duration lengthens enough to ride through a
+# multi-hour net-peak. Source: NREL/E3 ELCC studies, PJM ELCC class ratings.
+STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
+    (2.0, 0.40),
+    (4.0, 0.60),
+    (6.0, 0.75),
+    (8.0, 0.87),
+    (10.0, 0.93),
+    (12.0, 0.97),
+    (24.0, 1.00),
+]
+
+# Marginal ELCC saturation. As cumulative storage power approaches the
+# deployment ceiling (≈ half the system peak), each additional MW of storage
+# adds less firm capacity — the well-documented decline in marginal storage
+# ELCC at high penetration, which is what tilts the economics from short-
+# toward long-duration storage. The marginal credit is multiplied by
+# ``(1 - penetration)^STORAGE_ELCC_SATURATION_EXPONENT`` where ``penetration``
+# is existing storage power / ceiling. Source: NREL ELCC saturation studies.
+STORAGE_ELCC_SATURATION_EXPONENT: float = 1.5
+
+# Cycling-degradation cost. Each MWh discharged consumes a slice of the
+# battery's cycle life; replacing it costs a fraction of the energy-capacity
+# capex (only the cell stack degrades, not the power electronics / BOS, and
+# warranties run to ~80% retention, so the full energy capex over rated cycles
+# overstates the true marginal cost). Degradation $/MWh discharged =
+# capex_per_kwh × 1000 / cycles × STORAGE_DEGRADATION_REPLACEMENT_FRACTION.
+# Source: modeling simplification grounded in NREL ATB augmentation costs and
+# LFP warranty cycle life; tunable.
+STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 
 # State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
 # Source: CA SB 100.
@@ -817,6 +918,10 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
     "nuclear_smr": 445.0,    # shares global nuclear fleet
     "nuclear_large": 445.0,
     "iron_air": 1.0,   # was 0.5. DOE LDES.
+    "flow_battery": 3.0,    # GW global installed vanadium-redox flow. Source: PNNL 2023,
+                            # BNEF LDES tracker 2024 (China VRFB buildout dominates).
+    "compressed_air": 1.5,  # GW global adiabatic/diabatic CAES — Huntorf, McIntosh,
+                            # Zhangjiakou, Jintan. Source: NREL ATB 2024, IEA 2024.
     "gas_cc_ccs": 2.0,   # GW global installed power-sector CCS as of 2024.
                           # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
                           # Petra Nova mothballed 2020, excluded.
@@ -836,6 +941,8 @@ GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
     "nuclear_smr": 5.0,
     "nuclear_large": 5.0,
     "iron_air": 1.0,   # was 0.5.
+    "flow_battery": 0.8,    # GW/yr global VRFB additions. Source: BNEF LDES tracker 2024.
+    "compressed_air": 0.3,  # GW/yr global CAES additions. Source: IEA 2024 pipeline.
     "gas_cc_ccs": 1.5,   # GW/yr global CCS additions on power plants.
                           # Based on announced project pipeline (DOE OCED awards,
                           # UK cluster sequencing, EU Innovation Fund).
