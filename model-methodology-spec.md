@@ -401,7 +401,9 @@ The thermal fleet can be built two ways; the LP and `FleetArrays` structure are 
 
 Two further refinements wired into marginal-cost assembly:
 - **Coal take-or-pay tranches** — three slices at different fuel passthroughs (e.g. VOM-only / partial / full fuel cost), so a coal unit's offer rises with quantity.
-- **PRB sigmoid passthrough** — Powder-River-Basin coal discounts its bid as a smooth (sigmoid) function of the gas price, with a tiered variant for load-following plants; a smooth N-slice rising offer curve renders the same behaviour for CC/coal under the per-plant sheet.
+- **PRB sigmoid passthrough** — Powder-River-Basin coal discounts its bid as a smooth (sigmoid) function of the gas price, with a tiered variant for load-following plants.
+
+**Per-plant offer curves.** The tranche split and band heat rates default to per-*group* values, but an optional per-plant override sheet (`inputs/plant-tranche-config.csv`, `ScenarioConfig.plant_tranche_config_path`, off by default) lets each listed plant carry its own **five-slice rising offer curve** — Must-Run / Committed / Econ-Low / Econ-High / Peaking shares plus per-slice heat-rate multipliers — bypassing the group defaults. This is the calibration lever for shaping an individual flagship plant's dispatch without disturbing its class total (`docs/binning-methodology.md`). A companion flag `cc_peaking_per_plant` moves the duct-burner peak band's CF onset for selected F-class CCs.
 
 When a bin maps to a single physical plant, its CO2/NOx can be overridden with **CAMPD CEMS plant-specific emission rates** (backcast accuracy) instead of the fuel-class default.
 
