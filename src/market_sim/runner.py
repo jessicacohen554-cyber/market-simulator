@@ -239,7 +239,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         # Storage grows endogenously: year 2026 uses the base fleet, and
         # 2027+ screens arbitrage revenue against cost on prior-year prices.
-        prior_storage_mw = sum(u.power_cap_mw for u in storage_units)
+        prior_storage_ids = {u.unit_id for u in storage_units}
         if prior_results is not None:
             storage_units = apply_storage_new_entry(
                 storage_units, prior_results["prices"], year, config, iso,
@@ -260,12 +260,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 local_builds[g.fuel_type] = (
                     local_builds.get(g.fuel_type, 0.0) + g.pmax_mw / 1000.0
                 )
-        new_storage_mw = (
-            sum(u.power_cap_mw for u in storage_units) - prior_storage_mw
-        )
-        if new_storage_mw > 0:
-            local_builds["li_ion"] = (
-                local_builds.get("li_ion", 0.0) + new_storage_mw / 1000.0
+        # Attribute new storage builds to each tech's own learning curve
+        # (li-ion durations share the "li_ion" curve; iron-air / flow / CAES
+        # each have their own) so non-li-ion durations actually learn.
+        for u in storage_units:
+            if u.unit_id in prior_storage_ids:
+                continue
+            ref_key = "li_ion" if "li_ion" in u.tech_name else u.tech_name
+            local_builds[ref_key] = (
+                local_builds.get(ref_key, 0.0) + u.power_cap_mw / 1000.0
             )
         cumulative.advance_year(local_builds)
 

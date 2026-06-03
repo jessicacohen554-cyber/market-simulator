@@ -9,6 +9,7 @@ struct-of-arrays form, and a default fleet builder.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -16,9 +17,15 @@ import pandas as pd
 from pydantic import BaseModel
 
 from market_sim.config.constants import (
+    DEFAULT_MARKET_DESIGN,
+    MARKET_DESIGN,
     STORAGE_ANNUAL_BUILD_CAP_MW,
     STORAGE_BASE_FLEET_MW,
+    STORAGE_DEGRADATION_REPLACEMENT_FRACTION,
     STORAGE_DEPLOYMENT_CEILING_MW,
+    STORAGE_ELCC_BY_DURATION,
+    STORAGE_ELCC_SATURATION_EXPONENT,
+    STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
     STORAGE_TECHS,
     WRIGHT_REFERENCE_GW,
@@ -291,47 +298,147 @@ def _storage_rte(tech_name: str, config: ScenarioConfig) -> float:
     return float(STORAGE_TECHS[tech_name]["rte"])
 
 
+def _arbitrage_block_days(duration_hr: int) -> int:
+    """Length (days) of the arbitrage cycle window for a given duration.
+
+    Storage completes one charge/discharge cycle per window. Short-duration
+    storage cycles daily; long-duration storage shifts energy across multiple
+    days, so its window widens with duration. The window is sized so a full
+    ``duration_hr`` charge and a full ``duration_hr`` discharge never overlap
+    (``2 × duration_hr <= 24 × block_days``), which both prevents
+    double-counting and lets a 100-hour asset realize the multi-day value a
+    fixed 24-hour window structurally hides.
+    """
+    return max(1, math.ceil(duration_hr / 12.0))
+
+
 def estimate_storage_revenue(
-    prices: np.ndarray, duration_hr: int, rte: float,
+    prices: np.ndarray,
+    duration_hr: int,
+    rte: float,
+    degradation_cost_per_mwh: float = 0.0,
 ) -> float:
     """Annual arbitrage revenue per MW from prior year's price profile.
 
-    For each day: sort 24 prices, charge during cheapest ``duration_hr``
-    hours, discharge during most expensive ``duration_hr`` hours.
-    Margin = avg_discharge_price - avg_charge_price / rte.
-    Sum positive margins × duration across 365 days.
+    The year is split into windows of :func:`_arbitrage_block_days` days. For
+    each window: sort its prices, charge during the cheapest ``duration_hr``
+    hours, discharge during the most expensive ``duration_hr`` hours, for one
+    cycle per window. Margin per MWh discharged =
+    ``avg_discharge_price - avg_charge_price / rte - degradation_cost_per_mwh``.
+    Positive margins are summed × duration across all windows.
 
-    prices: (n_zones, T) or (T,). If multi-zone, uses zone with
-    highest daily spread. Returns $/MW-yr.
+    Sizing the window to duration is what lets long-duration storage capture
+    multi-day arbitrage: a fixed 24-hour window collapses the spread to zero
+    for any duration at or beyond a day (the cheap and expensive hour-sets
+    overlap), so iron-air and other LDES would screen as worthless.
 
-    Fully vectorized — no Python loop over days.
+    prices: (n_zones, T) or (T,). If multi-zone, uses the zone with the
+    highest spread in each window. Returns $/MW-yr.
+
+    Fully vectorized — no Python loop over windows.
     """
     price_arr = np.asarray(prices, dtype=float)
     if price_arr.ndim == 1:
         price_arr = price_arr[None, :]
-    _, total_hours = price_arr.shape
-    n_days = total_hours // 24
+    n_zones, total_hours = price_arr.shape
     d = int(duration_hr)
-    if n_days == 0 or d <= 0:
+    if d <= 0:
         return 0.0
 
-    # Reshape to (n_zones, n_days, 24) and sort each day's 24 prices.
-    daily = price_arr[:, :n_days * 24].reshape(price_arr.shape[0], n_days, 24)
-    ordered = np.sort(daily, axis=2)
+    block_hours = _arbitrage_block_days(d) * 24
+    n_blocks = total_hours // block_hours
+    if n_blocks == 0:
+        return 0.0
+
+    # Reshape to (n_zones, n_blocks, block_hours) and sort each window.
+    block = price_arr[:, :n_blocks * block_hours].reshape(
+        n_zones, n_blocks, block_hours
+    )
+    ordered = np.sort(block, axis=2)
 
     # Cheapest d hours (charge) and most expensive d hours (discharge).
-    charge_avg = ordered[:, :, :d].mean(axis=2)       # (n_zones, n_days)
-    discharge_avg = ordered[:, :, -d:].mean(axis=2)   # (n_zones, n_days)
+    charge_avg = ordered[:, :, :d].mean(axis=2)       # (n_zones, n_blocks)
+    discharge_avg = ordered[:, :, -d:].mean(axis=2)   # (n_zones, n_blocks)
 
-    # For each day, pick the zone with the widest spread.
-    spread = discharge_avg - charge_avg               # (n_zones, n_days)
-    best_zone = np.argmax(spread, axis=0)             # (n_days,)
-    days_idx = np.arange(n_days)
+    # For each window, pick the zone with the widest spread.
+    spread = discharge_avg - charge_avg               # (n_zones, n_blocks)
+    best_zone = np.argmax(spread, axis=0)             # (n_blocks,)
+    blocks_idx = np.arange(n_blocks)
 
-    margin = (discharge_avg[best_zone, days_idx]
-              - charge_avg[best_zone, days_idx] / rte)
+    margin = (
+        discharge_avg[best_zone, blocks_idx]
+        - charge_avg[best_zone, blocks_idx] / rte
+        - degradation_cost_per_mwh
+    )
     margin = np.maximum(margin, 0.0)
     return float(margin.sum() * d)
+
+
+def _elcc_for_duration(duration_hr: float) -> float:
+    """Interpolate the storage capacity credit (ELCC) for a duration.
+
+    Linear interpolation over :data:`STORAGE_ELCC_BY_DURATION`, clamped at the
+    table's endpoints.
+    """
+    durations = [d for d, _ in STORAGE_ELCC_BY_DURATION]
+    credits = [c for _, c in STORAGE_ELCC_BY_DURATION]
+    return float(np.interp(duration_hr, durations, credits))
+
+
+def _degradation_cost_per_mwh(tech_name: str, config: ScenarioConfig) -> float:
+    """Per-MWh-discharged cycling-degradation cost for a storage tech.
+
+    Returns ``0.0`` when ``config.storage_degradation`` is off. Otherwise a
+    slice of the energy-capacity capex amortized over the tech's rated cycle
+    life (see :data:`STORAGE_DEGRADATION_REPLACEMENT_FRACTION`). High-cycling
+    short-duration storage pays this on every arbitraged MWh; long-life flow /
+    CAES / iron-air pay far less, reflecting their cycle-life advantage.
+    """
+    if not config.storage_degradation:
+        return 0.0
+    tech = STORAGE_TECHS[tech_name]
+    cycles = float(tech.get("cycles", 0.0))
+    if cycles <= 0.0:
+        return 0.0
+    capex_per_mwh = float(tech["capex_per_kwh"]) * 1000.0
+    return (
+        capex_per_mwh / cycles * STORAGE_DEGRADATION_REPLACEMENT_FRACTION
+    )
+
+
+def estimate_capacity_value(
+    tech_name: str,
+    existing_mw: float,
+    config: ScenarioConfig,
+    iso: str,
+) -> float:
+    """Resource-adequacy capacity value per MW-yr for the next unit built.
+
+    Zero unless the ISO's :data:`MARKET_DESIGN` has a capacity market and
+    ``config.storage_capacity_value`` is on. Otherwise:
+
+        net_cone × 1000 × ELCC(duration) × (1 - penetration)^exponent
+
+    The ELCC credit rises with duration; the saturation derate falls as
+    existing storage approaches the deployment ceiling. Together they make
+    short-duration capacity value collapse at high penetration while
+    long-duration storage retains its firm-capacity credit — the mechanism
+    that tilts new entry toward longer durations as storage saturates.
+    """
+    if not config.storage_capacity_value:
+        return 0.0
+    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+    if not design.capacity_market or design.net_cone_per_kw_yr <= 0.0:
+        return 0.0
+
+    duration_hr = float(STORAGE_TECHS[tech_name]["duration_hr"])
+    elcc = _elcc_for_duration(duration_hr)
+
+    ceiling = STORAGE_DEPLOYMENT_CEILING_MW.get(iso, 0.0)
+    penetration = 0.0 if ceiling <= 0.0 else min(1.0, existing_mw / ceiling)
+    derate = (1.0 - penetration) ** STORAGE_ELCC_SATURATION_EXPONENT
+
+    return design.net_cone_per_kw_yr * 1000.0 * elcc * derate
 
 
 def compute_storage_annual_cost(
@@ -413,10 +520,21 @@ def apply_storage_new_entry(
     iso: str,
     cumulative: CumulativeDeployment | None = None,
 ) -> list[StorageUnit]:
-    """Add storage if arbitrage revenue > annualized cost.
+    """Add storage whose stacked value beats its annualized cost.
 
-    Screens each tech in STORAGE_TECHS. Ranks profitable techs by
-    margin, builds highest-margin first. Two caps bind independently:
+    Each tech in STORAGE_TECHS is screened on a value stack:
+    - **Energy arbitrage** over duration-sized windows (so long-duration
+      storage captures multi-day value), net of cycling degradation.
+    - **Capacity value** — resource-adequacy revenue, paid only in ISOs whose
+      MARKET_DESIGN has a capacity market and when
+      ``config.storage_capacity_value`` is on. Its duration-rising ELCC credit
+      and penetration-falling saturation derate tilt entry toward longer
+      durations as storage saturates the peak.
+
+    Profitable techs are ranked by margin and built in merit order, but no
+    single tech may take more than ``STORAGE_TECH_BUILD_SHARE_CAP`` of one
+    year's budget, so the build diversifies across durations rather than the
+    top-margin tech monopolizing it. Two caps bind independently:
     - STORAGE_ANNUAL_BUILD_CAP_MW per ISO per year
     - STORAGE_DEPLOYMENT_CEILING_MW cumulative per ISO
 
@@ -440,24 +558,35 @@ def apply_storage_new_entry(
     margins: list[tuple[float, str]] = []
     for tech_name, tech in STORAGE_TECHS.items():
         revenue = estimate_storage_revenue(
-            prices, int(tech["duration_hr"]), _storage_rte(tech_name, config)
+            prices,
+            int(tech["duration_hr"]),
+            _storage_rte(tech_name, config),
+            degradation_cost_per_mwh=_degradation_cost_per_mwh(
+                tech_name, config
+            ),
+        )
+        capacity_value = estimate_capacity_value(
+            tech_name, existing_mw, config, iso
         )
         ref_key = "li_ion" if "li_ion" in tech_name else tech_name
         cum_gw = cumulative.get(ref_key) if cumulative else None
         cost = compute_storage_annual_cost(
             tech_name, year, config, cumulative_gw=cum_gw
         )
-        margin = revenue - cost
+        margin = revenue + capacity_value - cost
         if margin > 0.0:
             margins.append((margin, tech_name))
 
     margins.sort(key=lambda m: m[0], reverse=True)
 
+    # No single tech may take more than the share cap of the year's budget, so
+    # a diverse build spreads across the profitable durations.
+    per_tech_cap = budget * STORAGE_TECH_BUILD_SHARE_CAP
     remaining = budget
     for seq, (_, tech_name) in enumerate(margins):
         if remaining <= 0.0:
             break
-        build_mw = remaining
+        build_mw = min(remaining, per_tech_cap)
         remaining -= build_mw
         fleet.extend(
             _build_new_storage_units(
