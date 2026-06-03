@@ -1,10 +1,14 @@
 # Market Simulation Model — Methodology & Build Specification
 
-**Purpose:** Explicit design specification for building an LP-based electricity market dispatch model. This document governs the model’s mathematical formulation, computational patterns, scenario architecture, and performance requirements. It is the primary instruction set for the build agent — follow it literally.
+**Purpose:** Methodology specification for the LP-based electricity market dispatch model. This document governs the model’s mathematical formulation, computational patterns, scenario architecture, and performance requirements. It is the primary reference for how the model works; where this document and the code disagree, the **code is the source of truth** — open a `/sync-docs` pass to reconcile.
 
-**Scope:** Two independent ISOs (ERCOT 4-zone, CAISO 1-zone + WECC import node). Hourly dispatch over a 2026–2050 trajectory. Parameterized scenario system supporting batch sweeps and single custom runs.
+**Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Seven ISOs are registered in `config/iso_configs.py` — ERCOT (6 zones), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO and NEISO — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
+
+**Forecast vs. backcast.** The model is fundamentally a **forecasting** tool (2026→2050). A *backcast* mode reruns a historical weather year against actuals (EIA-930, CAMPD, eGRID, EIA-923) to calibrate parameters. Several mechanisms — historic outage overlays, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration devices only**; forecast runs use the statistical/parametric models. This distinction is called out throughout; do not conflate the two.
 
 **Runtime:** Python 3.11+. Solver: HiGHS via `highspy`. No Pyomo, no PuLP, no scipy.optimize.
+
+> **As-built note (reconciled with code).** This spec was originally written at Phase 0 as a pure-LP, two-ISO design. The model has since grown: an opt-in three-solve **unit-commitment** layer (still LP, not MIP — see §1.6), a **CAMPD per-plant binning** fleet representation with tranche-based rising offer curves (now the ERCOT default — see §3.3), config-driven retirement plus a **CCS-retrofit** pathway (§5), forecast/backcast **outage modelling** (§1.7), endogenous **EAC/REC** attribute credits, hydro monthly energy budgets, and five additional ISO topologies. The sections below reflect the as-built methodology.
 
 -----
 
@@ -37,10 +41,12 @@ Minimize total system cost:
 ```
 min  Σ_g Σ_t  mc[g,t] × P[g,t]
    + Σ_z Σ_t  0 × W[z,t]  +  0 × S[z,t]        # zero marginal cost
-   + Σ_s Σ_t  ε × (Chg[s,t] + Dis[s,t])          # small tiebreaker to avoid degeneracy
+   + Σ_s Σ_t  ε × Chg[s,t] + (ε − eac_storage) × Dis[s,t]   # tiebreaker, less any storage attribute credit
    + Σ_z Σ_t  VOLL[z] × Slack[z,t]
    + Σ_z Σ_t  dump_cost × Dump[z,t]
 ```
+
+The wind/solar terms are written as zero-MC here for clarity, but in code each renewable carries its own `mc` (often *negative* once IRA production credits apply — see §1.5/§1.4). Storage discharge carries the tiebreaker `ε` less any exogenous storage attribute credit (`eac_storage`), so a credited storage technology is nudged to deliver rather than sit idle.
 
 Where `mc[g,t] = heat_rate[g] × fuel_price[g,t] + vom[g] + emission_rate[g] × carbon_price[t] + nox_rate[g] × nox_price[t] + <other adders>`
 
@@ -98,9 +104,16 @@ No cycling limit constraint in the initial build. The LP with perfect foresight 
 -TTC[l] ≤ Flow[l,t] ≤ TTC[l]    # bidirectional; or use two non-negative variables
 ```
 
-ERCOT: 6 bidirectional links across 4 zones (North↔South, North↔West, North↔Houston, South↔Houston, South↔West, West↔Houston).
+The topology (zones, load shares, links, TTCs) is per-ISO data in `config/iso_configs.py`; the LP itself is ISO-agnostic and reads `n_zones`, `n_links`, the node–link `incidence` matrix, and per-link `ttc`. Current topologies:
 
-CAISO: single zone + WECC import/export node modeled as **pseudo-generators on a stepped supply curve**:
+- **ERCOT** — 6 zones (West, Panhandle, North, Houston, South_Central, South) with cited inter-zone TTCs. The reference calibration.
+- **CAISO** — 3 in-state zones (NP15, ZP26, SP15) split on Path 15 / Path 26, **plus** a WECC import/export node (see below).
+- **PJM** — 4 aggregated zones (West, East, Central, South) rolling up PJM's 20+ transmission zones onto the chronic west→Mid-Atlantic congestion corridors.
+- **MISO** — 3 zones (North, Central, South) with the MISO-South contract-path constraint.
+- **SPP** — 2 zones (North, South).
+- **NYISO, NEISO** — registered single-zone today; real multi-zone topology is future work (`docs/multi-iso/`).
+
+CAISO's WECC import/export node is modeled as **pseudo-generators on a stepped supply curve**:
 
 - Import tranches: 3–4 blocks with increasing marginal cost and MW limits (e.g., PNW hydro cheap/limited, Desert SW CCGT mid, Desert SW CT expensive). These are `P[g,t]` variables assigned to the WECC “zone” with their own cost and capacity.
 - Export: allow CAISO to push power to the import node at a cost of zero or small negative (represents dumping surplus solar).
@@ -182,6 +195,35 @@ Offshore wind capacity factors are derived from the onshore wind profile for the
 #### 1.5.5 Additional Storage Durations
 
 Three long-duration storage technologies — 12-hour lithium-ion, vanadium-redox flow batteries and adiabatic compressed-air — are added to the storage technology menu. They use the **same LP formulation** as the existing storage units (`power_cap`, `energy_cap`, `eta_chg`, `eta_dis`); only their economics differ, which drives different dispatch patterns.
+
+### 1.6 Unit Commitment — Three-Solve LP Heuristic
+
+The original spec said "no unit commitment." That changed: pure merit-order LP left fast-cycling units (notably ERCOT gas CT) badly under-dispatched because a single LP solve has no notion of start-up cost or minimum run length. The model now has an **opt-in commitment layer** (`model/commitment.py`, enabled by `ScenarioConfig.commitment_enabled`, default `False`). It stays **pure LP — there is no MIP and no binary variables**; commitment is a heuristic screen applied *between* LP solves by zeroing a unit's availability in hours it is decommitted, then re-solving. Three solves per year:
+
+- **P0 (base):** solve with base marginal cost `mc_base = fuel + VOM + carbon + NOx` (no start-up markup). Measure each unit's realized run lengths by month.
+- **P1 (bid):** solve with `mc_bid = mc_base + start-up markup`, where the per-unit monthly markup amortizes `start_up_cost / avg_run_length` (ST_GAS spreads its start-ups across May–Sep). Clearing prices now embed cycling cost.
+- **P2 (commitment, when enabled):** screen CC/CT units for profitable *runs* of in-merit hours (`P1_price[zone] − mc_base > 0`), then keep a run committed only if it clears all of:
+  - a **start-up IRR hurdle** — the run's weighted margin exceeds `start_up_per_MW × (1 + commitment_irr_hurdle)` (default 7%);
+  - **min-run / min-down** filters (drop runs shorter than the minimum; merge runs separated by less than the minimum down-time);
+  - a **storage-weighted margin discount** — in hours when storage is net-charging the zone, the margin is discounted so a unit is not kept on merely to feed speculative battery charging, with a deep charging trough breaking the run.
+
+  Coal is either pinned to its P1 dispatch (legacy/unscreened bins) or screened with a long (≈36 h) minimum run. An **adequacy backstop** restores decommitted units to their P1 fractions in any zone-hour where the screen would otherwise make P2 unable to reproduce P1 thermal output — commitment can never introduce unserved energy.
+
+Commitment is off by default and used primarily for ERCOT calibration; the screen reads *base* MC (not bid MC) so start-up cost is not double-counted in the retirement/new-entry economics that consume these prices.
+
+### 1.7 Outage & Availability Modelling — Forecast vs. Backcast
+
+A unit's hourly `availability[g,t]` multiplies its `Pmax`. Two regimes:
+
+**Forecast (statistical — the default).** Availability `= 1 − WEFOR(age) − DERATE(age) − POF(shoulder only)`, from the per-plant-group `THERMAL_AVAILABILITY` table (`config/constants.py`):
+- **WEFOR** (forced-outage rate) is flat year-round and escalates with age past an onset year.
+- **Planned outages (POF)** are concentrated into the spring/autumn **shoulder months** (`_CC_SHOULDER_MONTHS = {3,4,5,10,11}`) — the maintenance lull between winter and summer peaks. In the **summer peak** (`{6,7,8,9}`) planned outages are removed and only a fraction (`_SUMMER_WEFOR_SHARE = 0.30`) of the forced-outage rate applies, with the displaced outage energy redistributed into the shoulder, so firm capacity is available for the load peak.
+- **Seasonal capacity derate** (ambient): gas turbines lose ~10–12.5% of capacity in summer.
+- Nuclear uses a monthly capacity-factor shape (NRC PRIS refuelling pattern), refuelling concentrated in spring/autumn.
+
+> **Roadmap (not yet built — do not document as current):** replace the flat shoulder-POF heuristic with a **historically-derived monthly maintenance profile** — the *shape and magnitude* of spring/autumn maintenance learned from historic outage data (CAMPD/GADS) and applied in **forecast** mode, rather than a single flat POF smeared across the five shoulder months. This is forecast-mode shaping (not pinned to any one backcast year) and distinct from the backcast overlay below.
+
+**Backcast (historic overlay — calibration only).** When a backcast config sets `outage_source == "historic"`, `data/outages.py` overlays *actual* sustained outage windows (CAMPD-derived, coal/CC plants, ≥48 h CF<5% gaps) onto the model's fixed 8760-hour clock, plus a unit-level derate from the ERCOT unit-outage extract and CAMPD partial-outage (CF-ceiling) plateaus. The statistical POF for overlaid groups is dropped (`coal_drop_pof`) to avoid double-counting. **Forecast runs never use this overlay** — it exists to reproduce a specific historical year for calibration, and degrades gracefully to the statistical model when the extract is absent.
 
 -----
 
@@ -344,6 +386,25 @@ def assemble_mc(fleet: FleetArrays, fuel_prices: np.ndarray,
 
 This is fully vectorized — no loops. Adding a new cost adder means adding a rate array to FleetArrays and a price trajectory to the scenario config.
 
+### 3.3 Fleet Representation & Offer Curves
+
+The thermal fleet can be built two ways; the LP and `FleetArrays` structure are identical either way (each tranche/bin is just another row `g`).
+
+**Legacy equal-width heat-rate bins.** EIA-860 generators aggregated into a small number of representative heat-rate bins per fuel — the original method, still used for non-ERCOT ISOs and when `use_campd_bins=False`.
+
+**CAMPD per-plant binning (ERCOT default, `use_campd_bins=True`).** Documented in full in `docs/binning-methodology.md`. Built from EPA CAMPD gross generation (2023–24) cross-referenced with eGRID net generation and EIA-860 characteristics. Each plant gets **its own LP unit** (`inputs/custom-bin-assignments.csv`), classified into one of six dispatched groups (CC_CHP, CC_REGULAR, CT_CHP, CT_PEAKER, GAS_STEAM, COAL) plus non-dispatchable OTHER. Each bin is split into **tranches** that form a *rising offer curve* rather than a single flat marginal cost:
+
+- **Must-Run (MR%)** — sunk-fuel coal floor or CHP behind-the-meter steam (the latter is removed from the LP and reconstructed post-dispatch by `compute_must_run_emissions()`).
+- **Committed (MC%)** — minimum stable load; the tranche the commitment screen (§1.6) acts on.
+- **Economic (ECON%)** — normal in-merit dispatch.
+- **Peaking (PEAK%)** — duct-firing / steep cost, `pmin=0`, never screened out.
+
+Two further refinements wired into marginal-cost assembly:
+- **Coal take-or-pay tranches** — three slices at different fuel passthroughs (e.g. VOM-only / partial / full fuel cost), so a coal unit's offer rises with quantity.
+- **PRB sigmoid passthrough** — Powder-River-Basin coal discounts its bid as a smooth (sigmoid) function of the gas price, with a tiered variant for load-following plants; a smooth N-slice rising offer curve renders the same behaviour for CC/coal under the per-plant sheet.
+
+When a bin maps to a single physical plant, its CO2/NOx can be overridden with **CAMPD CEMS plant-specific emission rates** (backcast accuracy) instead of the fuel-class default.
+
 -----
 
 ## 4. Scenario Architecture
@@ -482,13 +543,14 @@ For year in 2026..2050:
     1. Start with fleet from prior year (or base fleet for 2026)
     2. Apply known retirements (EIA-860 announced)
     3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results)
-    4. Apply known additions (EIA-860 under construction, signed PPAs)
-    5. Apply economic new entry screen (LCOE vs expected revenue, including
+    4. Apply CCS retrofit screen to existing gas-CC units (§5.6)
+    5. Apply known additions (EIA-860 under construction, signed PPAs)
+    6. Apply economic new entry screen (LCOE vs expected revenue, including
        the prior year's REC price as clean-energy revenue)
-    6. Assemble updated fleet → run dispatch LP (with RPS constraint) → cache results
+    7. Assemble updated fleet → run dispatch LP (with RPS constraint) → cache results
 ```
 
-The four capacity-evolution mechanisms are steps 2–5. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 6), and its shadow price feeds back into the economic new-entry screen the following year. Known retirements and known additions (the EIA-860 near-term pipeline) remain deterministic — these are committed projects, not modeled decisions. After the data horizon (~2030), the model is fully economics-driven.
+The capacity-evolution mechanisms are steps 2–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year. Known retirements and known additions (the EIA-860 near-term pipeline) remain deterministic — these are committed projects, not modeled decisions. After the data horizon (~2030), the model is fully economics-driven.
 
 ### 5.2 Economic Retirement
 
@@ -500,10 +562,12 @@ A unit retires if its **net revenue < going-forward cost** for N consecutive yea
 
 Revenue and cost definitions:
 
-- Net revenue = `Σ_t price[z,t] × dispatch[g,t]` (from prior year’s LP results)
+- Net revenue = `Σ_t price[z,t] × dispatch[g,t]` plus attribute payments (`max(exogenous EAC, prior-year RPS/REC shadow price) × annual_gen`), from the prior year’s LP results. A profitable year resets the unit's consecutive-loss counter to zero.
 - Going-forward cost = fixed O&M × FOM multiplier (not capital — sunk cost)
 - FOM multipliers: coal = 1.3× (captures regulatory risk, carbon liability, ESG pressure), gas = 1.0×
 - Retirement ordering: within each fuel class, least efficient (highest heat rate) retires first
+
+These thresholds and multipliers are no longer hardcoded — they are `ScenarioConfig` fields (`retirement_years_{coal,gas_ct,gas_cc}` = 1/2/3, `retirement_fom_multiplier_{coal,gas_ct,gas_cc}` = 1.3/1.0/1.0, `retirement_reserve_margin` = 0.15), so retirement aggressiveness is a Tier-1 sensitivity lever. The defaults above are the as-built values.
 
 **Reliability floor:** Thermal capacity cannot fall below `(peak_demand - firm_clean) × (1 + reserve_margin)`, where `reserve_margin` defaults to 15% (Tier 2 parameter) and `firm_clean = nuclear + hydro capacity`. If economic retirements would breach the floor, the most efficient units are retained.
 
@@ -571,6 +635,14 @@ curve; iron-air/flow/CAES each have their own). Subject to annual build cap
 and cumulative ceiling per ISO (both now defined for ERCOT, CAISO, PJM,
 NYISO, ISO-NE). Base-year fleet set by `storage_deployment`; all subsequent
 growth is endogenous.
+
+### 5.6 CCS Retrofit Screen
+
+Beyond *new* `gas_cc_ccs` entry (§1.5.2), existing gas-CC units can be **retrofitted** with post-combustion capture (`model/capacity.py`, gated on `ccs_retrofit_available_year`, default 2028). Each year, every gas-CC unit with at least `ccs_retrofit_min_remaining_life` (15) years of useful life left is screened on **simple payback**: annual savings = carbon avoided + EAC/45Q revenue − margin loss from the higher heat rate (`ccs_retrofit_hr_penalty` = 12%) − the capture VOM adder (`ccs_retrofit_vom_adder` = $8/MWh). A unit retrofits when payback is shorter than its remaining life. Retrofit capex (`ccs_retrofit_capex_kw` ≈ $900/kW) follows the same Wright's-Law learning curve as new CCS, the emission rate drops by `ccs_retrofit_capture_rate` (90%), and total retrofits are capped at `ccs_retrofit_max_gw_per_year` (3 GW/yr) per ISO. This is a distinct capacity-evolution mechanism from retirement and new entry — an existing asset changes its characteristics in place.
+
+### 5.7 Hydro Energy Budgets
+
+Hydro is not a free-running thermal unit. When `hydro_monthly_energy` is supplied, the dispatch LP adds, per hydro generator per month, a two-sided **energy-budget** constraint `hydro_min ≤ Σ_{t∈month} P[g,t] ≤ hydro_max` (plus an optional run-of-river minimum-flow floor). The unit chooses *when* within the month to generate, not *how much* in total — an inter-temporal coupling like storage SOC, but on a monthly horizon.
 
 -----
 
@@ -642,11 +714,17 @@ Each worker builds and discards the LP per year. Do not accumulate LP objects ac
 
 ### 7.2 What NOT to Build
 
-- No unit commitment (MIP). Pure LP. Fractional dispatch is acceptable.
-- No ramp constraints in initial build. Flag as future enhancement.
-- No stochastic outages. Deterministic derate only.
+These remain firm:
+
+- **No MIP.** Still pure LP — no binary variables. The commitment layer (§1.6) is a *heuristic screen between LP solves*, not a mixed-integer program; fractional dispatch within a committed unit is acceptable.
+- No ramp constraints. Flag as future enhancement.
 - No ORDC / operating reserve demand curve. Scarcity shows up via VOLL.
 - No separate pricing model. Prices are LP duals. Period.
 - No representative weeks or days. Full 8760 always.
 - No convergence iteration in capacity evolution. One pass per year.
 - No web framework or API server. CLI + YAML + Parquet files.
+
+Originally listed here but **since built** (kept as LP, no MIP):
+
+- ~~No unit commitment~~ → opt-in three-solve commitment heuristic, §1.6 (default off).
+- ~~No stochastic outages, deterministic derate only~~ → forecast still uses statistical/deterministic derate; backcast adds a *historic* CAMPD outage overlay for calibration, §1.7 (forecast runs do not use it).
