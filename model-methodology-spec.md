@@ -528,14 +528,49 @@ EIA-860 provides: units under construction (with expected online date), announce
 
 ### 5.5 Storage New Entry
 
-Storage enters via economics-based screening. For each technology,
-expected arbitrage revenue from the prior year's price profile is
-compared against annualized cost (capex × CRF + FOM, with IRA ITC).
-Revenue = Σ_days max(0, discharge_avg - charge_avg/RTE) × duration.
-Profitable techs ranked by margin, built highest-margin first,
-subject to annual build cap and cumulative ceiling per ISO. Base-year
-fleet set by storage_deployment parameter; all subsequent growth
-is endogenous.
+Storage enters via economics-based screening on a **value stack**, compared
+against annualized cost (capex × CRF + FOM, with IRA ITC and a Wright's-Law
+learning curve):
+
+**1. Energy arbitrage** over **duration-sized windows**, net of cycling
+degradation. The year is split into windows of `block_days = max(1,
+ceil(duration_hr / 12))` days; in each window the unit charges its cheapest
+`duration_hr` hours and discharges its dearest, for one cycle per window:
+
+```
+Revenue_energy = Σ_windows max(0, discharge_avg - charge_avg/RTE - degr) × duration
+```
+
+The window is sized so a full charge and full discharge never overlap
+(`2 × duration ≤ 24 × block_days`). This matters: a **fixed 24-hour window
+collapses the spread to zero for any duration at or beyond a day**, so
+long-duration storage (iron-air, flow, CAES) would screen as worthless and
+could never build. The duration-sized window lets multi-day assets realize
+multi-day arbitrage. `degr` is a per-MWh cycling-degradation cost
+(energy-capex slice over rated cycle life), which penalizes high-cycling
+short-duration storage more than long-life chemistries.
+
+**2. Capacity (resource-adequacy) value**, paid **only in capacity markets**.
+Governed by a per-ISO `MarketDesign` switch (`MARKET_DESIGN`): energy-only
+ERCOT pays nothing here (scarcity already flows through the ORDC/VOLL energy
+price), while PJM/NYISO/ISO-NE and CAISO's RA pay
+`net_cone × ELCC(duration) × (1 − penetration)^k`. The ELCC capacity credit
+**rises with duration**; the saturation derate **falls as storage approaches
+the deployment ceiling**. Together they make short-duration capacity value
+collapse at high penetration while long-duration retains its firm credit —
+the mechanism that tilts new entry toward longer durations as storage
+saturates. The stack is toggleable via `config.storage_capacity_value` and
+`config.storage_degradation`.
+
+Profitable techs are ranked by total margin (energy + capacity − cost) and
+built in merit order, but no single tech may take more than
+`STORAGE_TECH_BUILD_SHARE_CAP` of one year's budget, so the build diversifies
+across durations rather than the top-margin tech monopolizing it. Builds are
+attributed to each tech's own learning curve (li-ion durations share one
+curve; iron-air/flow/CAES each have their own). Subject to annual build cap
+and cumulative ceiling per ISO (both now defined for ERCOT, CAISO, PJM,
+NYISO, ISO-NE). Base-year fleet set by `storage_deployment`; all subsequent
+growth is endogenous.
 
 -----
 
