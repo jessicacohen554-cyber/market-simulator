@@ -10,7 +10,7 @@
 
 ## 1. Architecture Overview
 
-The model simulates hourly electricity dispatch across two independent ISOs (ERCOT 4-zone, CAISO 1-zone + WECC import node) for every year from 2026–2050 under a parameterized scenario system. The core loop is:
+The model simulates hourly electricity dispatch across U.S. ISOs (ERCOT 6-zone is the calibrated reference; CAISO, PJM, MISO, SPP, NYISO and NEISO topologies are also registered — see `model-methodology-spec.md`) for every year from 2026–2050 under a parameterized scenario system. (The phase steps below were written against the original two-ISO target; treat them as the build history.) The core loop is:
 
 ```
 For each scenario config:
@@ -452,6 +452,17 @@ Non-negotiable architectural decisions. See `model-methodology-spec.md` for full
 |CAISO import supply curve tranches|Need empirical fit from EIA-930       |Use 3-step approximation            |
 |P10/P50/P90 methodology           |Define methodology during calibration |Percentiles across scenario ensemble|
 
+### Roadmap — forecast-mode maintenance shaping
+
+Today's **forecast** availability concentrates planned outages into the five
+spring/autumn shoulder months via a flat per-plant-group POF heuristic
+(`fleet.py` `_CC_SHOULDER_MONTHS`, `_SUMMER_WEFOR_SHARE`). Planned enhancement:
+derive the *monthly maintenance shape and magnitude* from **historic outage
+data** (CAMPD/GADS spring–fall maintenance timing) and apply it in forecast
+mode — a learned seasonal profile rather than a flat shoulder smear, and
+distinct from the backcast historic-overlay (`data/outages.py`, calibration
+only). Not yet built; document as current only once implemented and settled.
+
 -----
 
 ## 6. Quality Gates
@@ -555,22 +566,29 @@ Delegated workstreams with distinct personas and deliverables. Run as separate s
 
 -----
 
-### SA-1: Documentation Agent
+### SA-1: Documentation Agent → the `/sync-docs` skill
+
+**Realized as:** the `/sync-docs` skill (`.claude/skills/sync-docs/SKILL.md`).
 
 **Persona:** Technical writer with energy modeling background.
 
-**Trigger:** After each phase merge to `main`.
+**Trigger (revised):** **Manually invoked at end of session, once an approach
+has settled** — deliberately *not* a hook and *not* "after each phase merge."
+Auto-triggering on every change taxes routine work and fights with mid-session
+experimentation; the skill is run on demand when the code is final.
 
 **Responsibilities:**
 
-- Update `docs/architecture.md` to reflect current system state
-- Update `docs/data-dictionary.md` with new fields, types, ranges
-- Update `docs/lp-formulation.md` if dispatch/storage/transmission constraints change
-- Maintain `docs/decision-log.md` — append new decisions with date and rationale
-- Maintain `CHANGELOG.md` with dated entries per phase
-- Ensure every public function has a docstring; flag any that don’t
+- Reconcile the prose docs with the as-built code using the skill's code→doc
+  map (methodology spec, `claude.md`, binning/calibration/multi-ISO docs,
+  `docs/data-dictionary.md`, `docs/parameter-citations.md`).
+- Verify each claim against source before editing (code is the source of truth).
+- Maintain `CHANGELOG.md` with dated entries; park unbuilt ideas as roadmap
+  notes, not as current methodology.
+- Flag (don't fix) code/doc mismatches that are actually code bugs.
 
-**Quality gate:** All public functions documented. No undefined terms in data dictionary. Architecture diagram matches actual module structure.
+**Quality gate:** Docs make no claim the code contradicts; reviewable surgical
+diffs; CHANGELOG updated.
 
 -----
 
