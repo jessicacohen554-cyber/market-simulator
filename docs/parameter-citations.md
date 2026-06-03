@@ -1,312 +1,637 @@
 # Parameter Citation Registry
 
-_Generated 2026-05-16. Every numeric input to the model traces to a primary source here._
+_Generated 2026-06-03. Every numeric input to the model traces to a primary source
+here. This file is rendered from `frontend/data/parameters.json` by
+`scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
+constant's comment, then re-run the generator), not here._
 
-This document is the human-readable companion to `frontend/data/parameters.json` (the machine-readable registry, consumed by the parameter-citation browser). Both are produced from one source so they stay consistent. `scripts/validate_parameters.py` fails CI if any constant in `src/market_sim/config/constants.py` or any `ScenarioConfig` default lacks an entry.
+This document is the human-readable companion to `frontend/data/parameters.json`
+(the machine-readable registry). `scripts/validate_parameters.py` fails CI if any
+constant in `src/market_sim/config/constants.py` or any `ScenarioConfig` default
+lacks an entry.
+
+Entries flagged **needs-citation** were auto-registered from the constant's
+inline comment and still need a dated primary source — search the table for
+`needs-citation`.
 
 ## How `param_id` is derived
 
-- A module-level constant in `constants.py` becomes its lower-cased name (e.g. `HOURS_PER_YEAR` -> `hours_per_year`).
-- Nested dicts with string keys are flattened with dots (e.g. `HEAT_RATE_BINS["gas_cc"]["h_class"]` -> `heat_rate_bins.gas_cc.h_class`).
-- A dict whose keys are all years (e.g. a carbon-price trajectory) is treated as a single leaf; its value is the full trajectory.
-- `ScenarioConfig` dataclass defaults are prefixed with `scenario.` (e.g. `scenario.discount_rate`).
+- A module-level constant in `constants.py` becomes its lower-cased name (e.g.
+  `HOURS_PER_YEAR` -> `hours_per_year`).
+- Nested dicts with string keys are flattened with dots (e.g.
+  `HEAT_RATE_BINS["gas_cc"]["h_class"]` -> `heat_rate_bins.gas_cc.h_class`).
+- A dict whose keys are all years is treated as a single leaf.
+- `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
-**Totals:** 136 parameters | 38 model-sourced | 19 flagged stale (source older than 3 years).
 
-## Structural
+**534 parameters registered** (232 flagged `needs-citation`).
 
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `storage_tiebreaker_epsilon` | 0.001 | $/MWh | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Small cost on charge+discharge to prevent degenerate simultaneous cycling in the LP. |
-| `hours_per_year` | 8760 | hours | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Full annual hourly resolution; no representative days. |
-| `start_year` | 2026 | year | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | First simulated year. |
-| `end_year` | 2050 | year | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Last simulated year. |
-| `scenario.weather_year` | 2024 | year | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default weather/profile year; aligns with EIA-930 hourly data availability. |
-| `scenario.iso` | ERCOT | - | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default ISO for a single-scenario run. |
-| `scenario.hours` | 8760 | hours | 0 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Hours simulated per year. |
-
-## Supply Stack
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `heat_rate_bins.gas_cc.h_class` | 6.3 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for newest H-class combined-cycle units; lower means higher thermal efficiency. |
-| `heat_rate_bins.gas_cc.f_class` | 6.7 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for F-class combined-cycle units; lower means higher thermal efficiency. |
-| `heat_rate_bins.gas_cc.older` | 7.5 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for legacy combined-cycle units; lower means higher thermal efficiency. |
-| `heat_rate_bins.gas_ct.aero` | 9.0 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for aeroderivative combustion turbines; lower means higher thermal efficiency. |
-| `heat_rate_bins.gas_ct.frame` | 10.5 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for heavy-frame combustion turbines; lower means higher thermal efficiency. |
-| `heat_rate_bins.gas_ct.older` | 11.5 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for legacy combustion turbines; lower means higher thermal efficiency. |
-| `heat_rate_bins.coal.supercritical` | 8.8 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for supercritical steam units; lower means higher thermal efficiency. |
-| `heat_rate_bins.coal.subcritical` | 10.0 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for subcritical steam units; lower means higher thermal efficiency. |
-| `heat_rate_bins.coal.older` | 10.8 | MMBtu/MWh | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | Table 8.2 — Average Tested Heat Rates by Prime Mover and Fuel Type | `lmp_engine.py:85-113 (EFFICIENCY_BINS)` | Average tested heat rate for legacy subcritical steam units; lower means higher thermal efficiency. |
-| `vom.gas_cc` | 2.0 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `vom.gas_ct` | 3.5 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `vom.coal` | 4.5 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `vom.nuclear` | 2.5 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `vom.wind` | 0.0 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `vom.solar` | 0.0 | $/MWh | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 — Variable operations & maintenance cost | — | Non-fuel variable operating cost by fuel type. |
-| `scenario.fixed_om_gas_cc` | 12.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Fixed O&M for combined-cycle gas. |
-| `scenario.fixed_om_gas_ct` | 8.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Fixed O&M for combustion-turbine gas. |
-| `scenario.fixed_om_coal` | 40.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Fixed O&M for coal steam. |
-
-## Emissions
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `co2_rates.gas_cc.h_class` | 0.36 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.gas_cc.f_class` | 0.38 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.gas_cc.older` | 0.43 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.gas_ct.aero` | 0.51 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.gas_ct.frame` | 0.6 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.gas_ct.older` | 0.65 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.coal.supercritical` | 0.88 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.coal.subcritical` | 1.0 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `co2_rates.coal.older` | 1.08 | tCO2/MWh | 2 | EPA eGRID2022 | 2024-01 | eGRID2022 unit-level emission rates | `lmp_engine.py (CO2_RATES)` | Derived from heat rate x fuel emission factor; bins mirror HEAT_RATE_BINS. |
-| `nox_rates.gas_cc` | 0.00008 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; SCR-equipped fleet average. |
-| `nox_rates.gas_ct` | 0.00025 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; mix of SCR/non-SCR CTs. |
-| `nox_rates.coal` | 0.0012 | tNOx/MWh | 2 | EPA CAMPD (CEMS) 2023 annual rollup | 2024-02 | Hourly emissions, 2023 annual rollup | `egrid_emission_rates.json` | Fleet-average NOx emission rate from continuous emissions monitoring; post-CSAPR compliance. |
-
-## Reliability
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `gas_availability_factor.ERCOT` | 0.85 | fraction | 2 | NERC Generating Availability Data System (GADS), 2019-2023 | 2024-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | ERCOT gas fleet deterministic availability derate (Pmax multiplier). |
-| `gas_availability_factor.CAISO` | 0.89 | fraction | 2 | NERC Generating Availability Data System (GADS), 2019-2023 | 2024-08 | GADS five-year fleet-average availability statistics | `lmp_engine.py` | CAISO gas fleet deterministic availability derate (Pmax multiplier). |
-| `nuclear_monthly_cf.ERCOT` | [0.93, 0.93, 0.9, 0.9, 0.92, 0.93, 0.93, 0.93, 0.91, 0.9, 0.92, 0.93] | fraction (Jan-Dec) | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 | U.S. reactor monthly capacity factors, 2019-2023 | `pipeline_config.py` | Twelve monthly capacity factors; spring/fall dips reflect scheduled refueling outages. |
-| `nuclear_monthly_cf.CAISO` | [0.93, 0.92, 0.91, 0.9, 0.91, 0.93, 0.93, 0.93, 0.92, 0.9, 0.91, 0.93] | fraction (Jan-Dec) | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 | U.S. reactor monthly capacity factors, 2019-2023 | `pipeline_config.py` | Twelve monthly capacity factors; spring/fall dips reflect scheduled refueling outages. |
-| `eford.gas_cc` | 0.05 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
-| `eford.gas_ct` | 0.06 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
-| `eford.coal` | 0.08 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
-| `eford.nuclear` | 0.03 | fraction | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | GADS five-year fleet-average availability statistics | — | Equivalent forced outage rate (demand) by technology class. |
-| `scenario.voll` | 5000.0 | $/MWh | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2025-12 | Value of Lost Load (system-wide offer cap basis) | — | ERCOT DA SWCAP $5,000/MWh unchanged post-RTC+B (Dec 2025). RT SWCAP reduced to $2,000/MWh. Model uses DA cap as single-settlement proxy. |
-
-## Demand
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `demand_growth_rates.ERCOT.low` | 0.01 | fraction/yr | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | May 2024 CDR — load forecast and interconnection data | `pipeline_config.py` | low annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `demand_growth_rates.ERCOT.mid` | 0.02 | fraction/yr | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | May 2024 CDR — load forecast and interconnection data | `pipeline_config.py` | mid annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `demand_growth_rates.ERCOT.high` | 0.035 | fraction/yr | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | May 2024 CDR — load forecast and interconnection data | `pipeline_config.py` | high annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `demand_growth_rates.CAISO.low` | 0.005 | fraction/yr | 1 | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | 2024-02 | 2023 IEPR California electricity demand forecast | `pipeline_config.py` | low annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `demand_growth_rates.CAISO.mid` | 0.012 | fraction/yr | 1 | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | 2024-02 | 2023 IEPR California electricity demand forecast | `pipeline_config.py` | mid annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `demand_growth_rates.CAISO.high` | 0.022 | fraction/yr | 1 | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | 2024-02 | 2023 IEPR California electricity demand forecast | `pipeline_config.py` | high annual demand growth path; planning forecast, not observed history. **[MODELED]** |
-| `scenario.demand_growth_rate` | 0.01 | fraction/yr | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Scalar default; per-ISO/path values live in DEMAND_GROWTH_RATES. **[MODELED]** |
-
-## Fuel Prices
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `henry_hub_trajectories.low` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | High Oil and Gas Supply case; maps to model "low" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
-| `henry_hub_trajectories.mid` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Reference case; maps to model "mid" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
-| `henry_hub_trajectories.high` | see table | $/MMBtu (2024$) | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | AEO2025 Table 13 (Natural Gas Supply, Disposition, and Prices) | — | Low Oil and Gas Supply case; maps to model "high" gas path. Real 2024 dollars. 2023 ($2.54) and 2024 ($2.19) entries are EIA Henry Hub spot annual averages (historical actuals, https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm), identical across all three paths. **[MODELED]** |
-| `gas_basis_differential.ERCOT` | -0.5 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | Waha discount to Henry Hub. |
-| `gas_basis_differential.CAISO` | 1.2 | $/MMBtu | 2 | EIA Natural Gas Weekly Update | 2024 | EIA NG Weekly, 2024 average basis | — | SoCal Citygate premium to Henry Hub. |
-| `gas_monthly_seasonality` | see table | factor | 2 | EIA Henry Hub monthly spot prices | 2024 | EIA Henry Hub monthly averages, 2019-2024 | — | Multiplicative monthly factors; budget-neutral over the year. |
-| `scenario.gas_price_path` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default lever selecting which Henry Hub trajectory case to use. |
-| `scenario.gas_seasonality` | True | - | 2 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Toggle for applying the monthly Henry Hub seasonality shape. |
-
-## Storage
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `storage_techs.li_ion_4hr.duration_hr` | 4 | hours | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | duration_hr for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.rte` | 0.86 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | rte for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.cycles` | 5000 | cycles | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | cycles for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.capex_per_kw` | 1140.0 | $/kW | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.capex_per_kwh` | 285.0 | $/kWh | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.fom_per_kw_yr` | 30.0 | $/kW-yr | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_4hr storage technology. |
-| `storage_techs.li_ion_4hr.learning_rate` | 0.18 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | learning_rate for the li_ion_4hr storage technology. Learning rate is a modeling assumption. **[MODELED]** |
-| `storage_techs.li_ion_8hr.duration_hr` | 8 | hours | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | duration_hr for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.rte` | 0.86 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | rte for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.cycles` | 5000 | cycles | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | cycles for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.capex_per_kw` | 2280.0 | $/kW | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kw for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.capex_per_kwh` | 285.0 | $/kWh | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | capex_per_kwh for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.fom_per_kw_yr` | 48.0 | $/kW-yr | 2 | NREL ATB 2024b mid-case, BloombergNEF 2025 | 2025-01 | ATB 2024b mid-case cost & performance; BNEF 2025 battery price survey | `pipeline_config.py:368-397` | fom_per_kw_yr for the li_ion_8hr storage technology. |
-| `storage_techs.li_ion_8hr.learning_rate` | 0.18 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `pipeline_config.py:368-397` | learning_rate for the li_ion_8hr storage technology. Learning rate is a modeling assumption. **[MODELED]** |
-| `storage_techs.iron_air.duration_hr` | 100 | hours | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | duration_hr for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.rte` | 0.5 | fraction | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | rte for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.cycles` | 3000 | cycles | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | cycles for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.capex_per_kw` | 2000.0 | $/kW | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | capex_per_kw for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.capex_per_kwh` | 20.0 | $/kWh | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | capex_per_kwh for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.fom_per_kw_yr` | 20.0 | $/kW-yr | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | fom_per_kw_yr for the iron_air storage technology. **[STALE]** |
-| `storage_techs.iron_air.learning_rate` | 0.1 | fraction | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | Iron-air / multi-day storage cost and performance | `pipeline_config.py:368-397` | learning_rate for the iron_air storage technology. Learning rate is a modeling assumption. **[MODELED] [STALE]** |
-| `scenario.storage_deployment` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default storage deployment pace lever. |
-| `scenario.storage_rte_4hr` | 0.85 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Round-trip efficiency sensitivity knob; STORAGE_TECHS li_ion_4hr rte is 0.86. |
-| `scenario.storage_rte_8hr` | 0.8 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Round-trip efficiency sensitivity knob; STORAGE_TECHS li_ion_8hr rte is 0.86. |
-
-## Capacity Expansion
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `queue_cap_gw.ERCOT` | 12 | GW/yr | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | May 2024 CDR — load forecast and interconnection data | `step6_1:94-103` | Annual interconnection queue throughput cap. |
-| `queue_cap_gw.CAISO` | 8 | GW/yr | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 | 2023-2024 TPP interconnection throughput | `step6_1:94-103` | Annual interconnection queue throughput cap. |
-| `new_entry_costs.wind.capex_per_kw` | 1300.0 | $/kW | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | capex_per_kw for new wind build. |
-| `new_entry_costs.wind.fom_per_kw_yr` | 28.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | fom_per_kw_yr for new wind build. |
-| `new_entry_costs.wind.learning_rate` | 0.12 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | learning_rate for new wind build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.wind.base_cf` | 0.38 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | base_cf for new wind build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.wind.lifetime_yr` | 30 | years | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | lifetime_yr for new wind build. |
-| `new_entry_costs.solar.capex_per_kw` | 1100.0 | $/kW | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | capex_per_kw for new solar build. |
-| `new_entry_costs.solar.fom_per_kw_yr` | 16.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | fom_per_kw_yr for new solar build. |
-| `new_entry_costs.solar.learning_rate` | 0.2 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | learning_rate for new solar build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.solar.base_cf` | 0.27 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | base_cf for new solar build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.solar.lifetime_yr` | 30 | years | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | lifetime_yr for new solar build. |
-| `new_entry_costs.gas_cc.capex_per_kw` | 1200.0 | $/kW | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | capex_per_kw for new gas_cc build. |
-| `new_entry_costs.gas_cc.fom_per_kw_yr` | 30.0 | $/kW-yr | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | fom_per_kw_yr for new gas_cc build. |
-| `new_entry_costs.gas_cc.learning_rate` | 0.02 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | learning_rate for new gas_cc build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.gas_cc.base_cf` | 0.55 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | base_cf for new gas_cc build. Modeling assumption, not a directly observed value. **[MODELED]** |
-| `new_entry_costs.gas_cc.lifetime_yr` | 30 | years | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | `step6_1:107-168` | lifetime_yr for new gas_cc build. |
-| `wright_reference_gw.wind` | 1150.0 | GW | 2 | IRENA Renewable Capacity Statistics 2025 | 2025-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed onshore + offshore wind for learning-curve cost projection. |
-| `wright_reference_gw.solar` | 1800.0 | GW | 2 | IRENA Renewable Capacity Statistics 2025 | 2025-03 | Global cumulative installed capacity by technology | `step6_1:540-573` | Reference global cumulative installed solar PV for learning-curve cost projection. |
-| `wright_reference_gw.li_ion` | 130.0 | GW | 2 | BloombergNEF Energy Storage Market Outlook 2025 | 2025-01 | Global cumulative installed grid storage by technology | `step6_1:540-573` | Reference global cumulative installed li-ion grid storage for learning-curve cost projection. |
-| `scenario.renewable_buildout_pace` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default renewable buildout pace lever. |
-| `scenario.retirement_aggressiveness` | mid | - | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default thermal retirement pace lever. |
-| `scenario.discount_rate` | 0.08 | fraction | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | ATB2024 cost & performance tables | — | Real discount rate / WACC for annualized capital cost. |
-| `scenario.retirement_consecutive_years` | 2 | years | 2 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | `step2_3_de_pathway_tf.py:1837-1890` | Consecutive unprofitable years before a unit retires; modeling assumption. **[MODELED]** |
-| `scenario.sigmoid_midpoint` | 0.5 | fraction | 2 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | `step2_3_de_pathway_tf.py:1837-1890` | Midpoint of the retirement sigmoid; modeling assumption. **[MODELED]** |
-| `scenario.sigmoid_steepness` | 12.0 | dimensionless | 2 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | `step2_3_de_pathway_tf.py:1837-1890` | Steepness of the retirement sigmoid; modeling assumption. **[MODELED]** |
-
-## Policy
-
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `carbon_price_paths.zero` | 2026: 0, 2030: 0, 2040: 0, 2050: 0 | $/tCO2 | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | RFF carbon pricing scenario trajectories | `pipeline_config.py (CO2_PRICES)` | zero carbon price trajectory; scenario assumption from another model, not an observed price. **[MODELED]** |
-| `carbon_price_paths.low` | 2026: 0, 2030: 8, 2040: 18, 2050: 25 | $/tCO2 | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | RFF carbon pricing scenario trajectories | `pipeline_config.py (CO2_PRICES)` | low carbon price trajectory; scenario assumption from another model, not an observed price. **[MODELED]** |
-| `carbon_price_paths.mid` | 2026: 0, 2030: 15, 2040: 35, 2050: 50 | $/tCO2 | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | RFF carbon pricing scenario trajectories | `pipeline_config.py (CO2_PRICES)` | mid carbon price trajectory; scenario assumption from another model, not an observed price. **[MODELED]** |
-| `carbon_price_paths.high` | 2026: 0, 2030: 30, 2040: 70, 2050: 110 | $/tCO2 | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | RFF carbon pricing scenario trajectories | `pipeline_config.py (CO2_PRICES)` | high carbon price trajectory; scenario assumption from another model, not an observed price. **[MODELED]** |
-| `state_rps_floors.ERCOT` | 2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0 | clean energy fraction | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | `pipeline_config.py` | Texas has no binding statewide clean-energy mandate; floor set to zero by design. |
-| `state_rps_floors.CAISO` | 2026: 0.5, 2030: 0.6, 2040: 0.8, 2045: 1.0 | clean energy fraction | 1 | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | SB 100 statutory clean-energy targets | `pipeline_config.py` | California SB 100 statutory clean-energy trajectory (60% by 2030, 100% by 2045). **[STALE]** |
-| `scenario.carbon_price` | 0.0 | $/tCO2 | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default explicit carbon price (none). |
-| `scenario.nox_price` | 0.0 | $/tNOx | 1 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Default explicit NOx price (none). |
-| `scenario.ira_ptc_wind` | 26.0 | $/MWh | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 | PTC/ITC credit values, 2024 inflation adjustment | — | IRA production tax credit for wind (IRC section 45), 2024 inflation-adjusted. |
-| `scenario.ira_itc_solar` | 0.3 | fraction | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 | PTC/ITC credit values, 2024 inflation adjustment | — | IRA investment tax credit for solar (30%). |
-| `scenario.ira_itc_storage` | 0.3 | fraction | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 | PTC/ITC credit values, 2024 inflation adjustment | — | IRA investment tax credit for standalone storage (30%). |
-| `scenario.ira_expiry_year` | 2035 | year | 2 | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | IRA energy tax credit duration / phase-out projections | — | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. **[MODELED] [STALE]** |
 
 ## Calibration
 
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `scenario.renewable_cf_adjustment` | 1.0 | multiplier | 3 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Tier-3 calibration knob; neutral default of 1.0. **[MODELED]** |
-| `scenario.basis_differential_factor` | 1.0 | multiplier | 3 | Market simulator model design decision | 2026-05 | model-methodology-spec.md / market-sim-build-plan.md | — | Tier-3 calibration knob; neutral default of 1.0. **[MODELED]** |
-| `scenario.td_loss_factor` | 0.0 | fraction | 3 | EIA-930 ERCOT hourly (Demand + Interchange = Net Generation) | 2026-05 | EIA-930 ERCOT 2023/2024: Demand + Total Interchange = Net Generation to <0.01 TWh | — | Gross-up of EIA-930 demand by (1 + factor). EIA-930 demand is generation-side (Demand + Interchange = Net Generation), so the demand target already equals net generation and needs no gross-up. The former 0.058 came from eGRID net gen (472.9 TWh) / EIA-930 demand (446.8 TWh) − 1, but eGRID's total includes ~28 TWh of behind-the-meter CHP self-supply that grid demand excludes — so that ratio was mostly mislabeled BTM CHP, not T&D losses. |
-| `scenario.vintage_capacity_ramp` | True | - | 3 | EIA-860 2024 (Generator_Operable) | 2024-06 | Generator_Operable — Operating Month / Operating Year | — | When True, renewable capacity for a calibration year ramps month-by-month from each plant's commercial-operation date; when False, flat year-end capacity is used. |
-| `scenario.cc_cycling_adder_h_class` | 3.92 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for H-class gas CC (HR<6500): $63.8/MW-start, 22hr cycle, 10hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.cc_cycling_adder_f_class` | 3.66 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for F-class gas CC (HR 6500-7500): $48.6/MW-start, 17hr cycle, 7.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.cc_cycling_adder_older` | 2.91 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CC startup cost & min-run analysis | — | Cycling cost adder for legacy gas CC (HR>7500): $24.1/MW-start, 10hr cycle, 4.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.coal_cycling_adder_supercritical` | 2.66 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for supercritical coal (HR<9500): $147/MW-start, 96hr cycle, 36hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.coal_cycling_adder_subcritical` | 2.55 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for subcritical coal (HR 9500-10500): $119/MW-start, 72hr cycle, 24hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.coal_cycling_adder_older` | 2.58 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — coal startup cost & min-run analysis | — | Cycling cost adder for legacy coal (HR>10500): $97/MW-start, 60hr cycle, 24hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.ct_cycling_adder_aero` | 3.14 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for aeroderivative gas CT (HR<10000): $12.3/MW-start, 4hr cycle, 0.5hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.ct_cycling_adder_frame` | 5.02 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for heavy-frame gas CT (HR 10000-11000): $24.5/MW-start, 5hr cycle, 1hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
-| `scenario.ct_cycling_adder_older` | 4.85 | $/MWh | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs — gas CT startup cost & min-run analysis | — | Cycling cost adder for legacy gas CT (HR>11000): $19.0/MW-start, 4hr cycle, 1hr min-run. Plant profiles from EPA eGRID 2023. **[MODELED]** |
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `scenario.basis_differential_factor` | 1.0 | 3 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.cc_cycling_adder_f_class` | 3.66 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.cc_cycling_adder_h_class` | 3.92 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.cc_cycling_adder_older` | 2.91 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.ct_cycling_adder_aero` | 3.14 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.ct_cycling_adder_frame` | 5.02 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.ct_cycling_adder_older` | 4.85 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
+| `scenario.renewable_cf_adjustment` | 1.0 | 3 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.td_loss_factor` | 0.0 | 3 | EIA-930 ERCOT hourly (Demand + Interchange = Net Generation) | 2026-05 |  |
+| `scenario.vintage_capacity_ramp` | True | 3 | EIA Form 860 — 2024 | 2024-06 |  |
+
+## Capacity Expansion
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `new_entry_costs.gas_cc.base_cf` | 0.55 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.gas_cc.capex_per_kw` | 1200.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.gas_cc.fom_per_kw_yr` | 30.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.gas_cc.learning_rate` | 0.02 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.gas_cc.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.solar.base_cf` | 0.27 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.solar.capex_per_kw` | 1100.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.solar.fom_per_kw_yr` | 16.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.solar.learning_rate` | 0.2 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.solar.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.wind.base_cf` | 0.38 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.wind.capex_per_kw` | 1300.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.wind.fom_per_kw_yr` | 28.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `new_entry_costs.wind.learning_rate` | 0.12 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `new_entry_costs.wind.lifetime_yr` | 30 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
+| `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
+| `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.renewable_buildout_pace` | mid | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.retirement_aggressiveness` | mid | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.retirement_consecutive_years` | 2 | 2 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.sigmoid_midpoint` | 0.5 | 2 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.sigmoid_steepness` | 12.0 | 2 | Market simulator model design decision | 2026-05 | modeled |
+| `wright_reference_gw.li_ion` | 130.0 | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 |  |
+| `wright_reference_gw.solar` | 1800.0 | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 |  |
+| `wright_reference_gw.wind` | 1150.0 | 2 | IRENA Renewable Capacity Statistics 2024 | 2024-03 |  |
+
+## Cost Trajectories
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `new_entry_costs.nuclear_large.capex_per_kw` | 8500.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.learning_rate` | 0.03 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.capex_per_kw` | 6800.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.learning_rate` | 0.08 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
+| `scenario.nominal_discount_rate` | 0.08 | 2 | Nominal WACC, $/MWh LCOE basis |  | auto-generated, needs-citation |
+
+## Demand
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `demand_growth_rates.CAISO.high` | 0.022 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
+| `demand_growth_rates.CAISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.low` | 0.005 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
+| `demand_growth_rates.CAISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.mid` | 0.012 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
+| `demand_growth_rates.CAISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.high` | 0.035 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
+| `demand_growth_rates.ERCOT.high.long` | 0.04 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.high.near` | 0.08 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.low` | 0.01 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
+| `demand_growth_rates.ERCOT.low.long` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.low.near` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.mid` | 0.02 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
+| `demand_growth_rates.ERCOT.mid.long` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.mid.near` | 0.05 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.high.long` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.high.near` | 0.06 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.low.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.low.near` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.mid.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.mid.near` | 0.035 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_transition_year` | 2030 | 2 | Year at which demand growth transitions from near-term to long-term… | 2030 | auto-generated |
+| `scenario.demand_growth_path` | mid | 1 | "low", "mid", "high" — selects from DEMAND_GROWTH_RATES |  | auto-generated, needs-citation |
+| `scenario.demand_growth_rate` | 0.01 | 1 | Market simulator model design decision | 2026-05 | modeled |
+
+## Emerging Tech
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `electrolyzer_params.alkaline.capex_kw` | 800.0 | 2 | $/kW — for LCOH if needed. BNEF 2024 | 2024 | auto-generated |
+| `electrolyzer_params.alkaline.efficiency` | 0.63 | 2 | base year. Source: IRENA Green H2 2023 | 2023 | auto-generated |
+| `electrolyzer_params.alkaline.efficiency_2035` | 0.68 | 2 | DOE Hydrogen Shot targets |  | auto-generated, needs-citation |
+| `electrolyzer_params.alkaline.efficiency_2045` | 0.72 | 2 | DOE long-term targets |  | auto-generated, needs-citation |
+| `electrolyzer_params.alkaline.learning_rate` | 0.12 | 2 | aggressive — early on curve. IRENA 2023 | 2023 | auto-generated |
+| `electrolyzer_params.pem.capex_kw` | 1200.0 | 2 | $/kW — for LCOH if needed. BNEF 2024 | 2024 | auto-generated |
+| `electrolyzer_params.pem.efficiency` | 0.65 | 2 | base year. Source: IRENA Green H2 2023 | 2023 | auto-generated |
+| `electrolyzer_params.pem.efficiency_2035` | 0.72 | 2 | DOE Hydrogen Shot targets |  | auto-generated, needs-citation |
+| `electrolyzer_params.pem.efficiency_2045` | 0.76 | 2 | DOE long-term targets |  | auto-generated, needs-citation |
+| `electrolyzer_params.pem.learning_rate` | 0.18 | 2 | aggressive — early on curve. IRENA 2023 | 2023 | auto-generated |
+| `geothermal_params.egs.capacity_factor` | 0.9 | 2 | high availability. DOE GeoVision 2019 | 2019 | auto-generated |
+| `geothermal_params.egs.capex_kw` | 5000.0 | 2 | $/kW — high upfront, early-stage. NREL ATB 2024 | 2024 | auto-generated |
+| `geothermal_params.egs.fom_kw_yr` | 0.0 | 2 | $/kW-yr — captured in VOM. NREL ATB 2024 | 2024 | auto-generated |
+| `geothermal_params.egs.learning_rate` | 0.15 | 2 | steep — analogous to early solar. Fervo, ARPA-E |  | auto-generated, needs-citation |
+| `geothermal_params.egs.lifetime_yr` | 30 | 2 | Enhanced geothermal (EGS) parameters. EGS enters as a thermal gener… |  | auto-generated, needs-citation |
+| `geothermal_params.egs.pmin_fraction` | 0.2 | 2 | turn down to 20% for flexibility. Fervo 2024 | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ccgt.capex_kw` | 1800.0 | 2 | $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024 | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ccgt.fom_kw_yr` | 15.0 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ccgt.learning_rate` | 0.1 | 2 | analogy to gas CT maturation |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ccgt.lifetime_yr` | 30 | 2 | Hydrogen-fired turbine parameters. H2 turbines are thermal generato… |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ct.capex_kw` | 1400.0 | 2 | $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024 | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ct.fom_kw_yr` | 12.0 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ct.learning_rate` | 0.1 | 2 | analogy to gas CT maturation |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ct.lifetime_yr` | 30 | 2 | Hydrogen-fired turbine parameters. H2 turbines are thermal generato… |  | auto-generated, needs-citation |
+| `offshore_wind_min_cf` | 0.08 | 2 | minimum hourly CF — offshore rarely drops to zero |  | auto-generated, needs-citation |
+| `offshore_wind_params.fixed_bottom.base_cf` | 0.45 | 2 | annual average. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.fixed_bottom.capex_kw` | 4200.0 | 2 | $/kW. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.fixed_bottom.fom_kw_yr` | 80.0 | 2 | $/kW-yr — marine access premium. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.fixed_bottom.learning_rate` | 0.08 | 2 | NREL ATB 2024, IRENA 2024 | 2024 | auto-generated |
+| `offshore_wind_params.fixed_bottom.lifetime_yr` | 30 | 2 | Offshore wind parameters. A separate renewable category from onshor… |  | auto-generated, needs-citation |
+| `offshore_wind_params.floating.base_cf` | 0.48 | 2 | annual average. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.floating.capex_kw` | 5500.0 | 2 | $/kW. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.floating.fom_kw_yr` | 95.0 | 2 | $/kW-yr — marine access premium. NREL ATB 2024 | 2024 | auto-generated |
+| `offshore_wind_params.floating.learning_rate` | 0.12 | 2 | NREL ATB 2024, IRENA 2024 | 2024 | auto-generated |
+| `offshore_wind_params.floating.lifetime_yr` | 30 | 2 | Offshore wind parameters. A separate renewable category from onshor… |  | auto-generated, needs-citation |
+| `offshore_wind_smoothing_hours` | 6 | 2 | rolling-mean window — ocean fetch reduces gustiness |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.CAISO.geothermal` | 3.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.CAISO.offshore_wind` | 3.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.geothermal` | 2.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.offshore_wind` | 0.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `scenario.electrolyzer_efficiency_override` | None | 2 | overrides lookup |  | auto-generated, needs-citation |
+| `scenario.electrolyzer_type` | pem | 1 | "pem" or "alkaline" — sets H2 fuel cost |  | auto-generated, needs-citation |
+| `scenario.h2_available_year` | 2035 | 1 | was 2032. | 2032 | auto-generated |
+| `scenario.ira_h2_45v_last_year` | 2027 | 2 | §45V hydrogen production credit: construction start by Dec 31, 2027. | 2027 | auto-generated |
+| `scenario.offshore_wind_available_year` | 2030 | 1 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.offshore_wind_cf_override` | None | 2 | overrides OFFSHORE_WIND_PARAMS |  | auto-generated, needs-citation |
+| `scenario.offshore_wind_eligible_isos` | ["CAISO"] | 1 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+
+## Emissions
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `co2_rates.biomass.default` | 0.0 | 2 | EPA eGRID 2022 — petroleum-fired units | 2022 | auto-generated |
+| `co2_rates.coal.older` | 1.08 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.coal.subcritical` | 1.0 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.coal.supercritical` | 0.88 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_cc.f_class` | 0.38 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_cc.h_class` | 0.36 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_cc.older` | 0.43 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_ct.aero` | 0.51 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_ct.frame` | 0.6 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.gas_ct.older` | 0.65 | 2 | EPA eGRID2022 | 2024-01 |  |
+| `co2_rates.oil.default` | 1.0 | 2 | EPA eGRID 2022 — petroleum-fired units | 2022 | auto-generated |
+| `fuel_co2_factor_per_mmbtu.biomass` | 0.0 | 2 | biogenic CO2 carbon-neutral under EPA/RGGI accounting |  | auto-generated, needs-citation |
+| `fuel_co2_factor_per_mmbtu.coal` | 0.1 | 2 | coal — implied by EPA eGRID 2022 coal steam rates | 2022 | auto-generated |
+| `fuel_co2_factor_per_mmbtu.gas_cc` | 0.057 | 2 | natural gas — implied by EPA eGRID 2022 gas CC rates | 2022 | auto-generated |
+| `fuel_co2_factor_per_mmbtu.gas_ct` | 0.057 | 2 | natural gas — same fuel as gas CC |  | auto-generated, needs-citation |
+| `fuel_co2_factor_per_mmbtu.gas_st` | 0.057 | 2 | natural gas — legacy gas steam boilers |  | auto-generated, needs-citation |
+| `fuel_co2_factor_per_mmbtu.oil` | 0.074 | 2 | distillate/residual fuel oil — EPA emission factors |  | auto-generated, needs-citation |
+| `geothermal_params.egs.emission_rate_co2` | 0.0 | 2 | zero direct emissions |  | auto-generated, needs-citation |
+| `geothermal_params.egs.nox_rate` | 0.0 | 2 | Enhanced geothermal (EGS) parameters. EGS enters as a thermal gener… |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ccgt.emission_rate_co2` | 0.0 | 2 | tCO2/MWh — zero direct CO2 (green H2) |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ccgt.nox_rate` | 0.00012 | 2 | tons NOx/MWh — H2 burns hot. DOE/NETL 2023 | 2023 | auto-generated |
+| `hydrogen_turbine_params.h2_ct.emission_rate_co2` | 0.0 | 2 | tCO2/MWh — zero direct CO2 (green H2) |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ct.nox_rate` | 0.00015 | 2 | tons NOx/MWh — H2 burns hot. DOE/NETL 2023 | 2023 | auto-generated |
+| `nox_rates.biomass` | 0.001 | 2 | EPA CEMS 2023 — biomass combustion, high NOx per MWh. | 2023 | auto-generated |
+| `nox_rates.coal` | 0.0012 | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | stale |
+| `nox_rates.gas_cc` | 8e-05 | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | stale |
+| `nox_rates.gas_ct` | 0.00025 | 2 | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | stale |
+| `nox_rates.gas_st` | 0.00025 | 2 | EPA CEMS 2023 — legacy gas steam boilers, mostly non-SCR. | 2023 | auto-generated |
+| `nox_rates.oil` | 0.0004 | 2 | EPA CEMS 2023 — oil-fired peakers/steam, mostly non-SCR. | 2023 | auto-generated |
+| `scenario.carbon_price_path` | zero | 1 | "zero", "low", "mid", "high"; used when carbon_price is 0.0 |  | auto-generated, needs-citation |
+| `scenario.plant_emission_rates_path` | inputs/processed/plant_emission_rates… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.so2_price` | 0.0 | 1 | $/ton SO2 |  | auto-generated, needs-citation |
+| `scenario.use_plant_emission_rates` | True | 2 | When True, generators pinned to a single plant take that plant's CA… |  | auto-generated, needs-citation |
+
+## Fuel Prices
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `biomass_price_per_mmbtu` | 2.5 | 2 | Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas un… | 2024 | auto-generated |
+| `coal_price_base.CAISO` | 2.5 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
+| `coal_price_base.ERCOT` | 2.0 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
+| `coal_price_base.PJM` | 2.3 | 2 | Central/Northern Appalachian bituminous + PRB-by-rail |  | auto-generated, needs-citation |
+| `coal_price_escalation` | 0.01 | 2 | Annual real escalation rate for coal prices. Reflects mine closures… | 2024 | auto-generated |
+| `eac_price_reference.eac_geothermal.high` | 15.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_geothermal.low` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_geothermal.mid` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_nuclear_zec.high` | 25.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_nuclear_zec.low` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_nuclear_zec.mid` | 17.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_offshore_wind.high` | 40.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_offshore_wind.low` | 20.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_offshore_wind.mid` | 30.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_solar.high` | 20.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_solar.low` | 2.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_solar.mid` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_wind.high` | 15.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_wind.low` | 2.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_wind.mid` | 8.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `gas_basis_differential.CAISO` | 1.2 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
+| `gas_basis_differential.ERCOT` | -0.5 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
+| `gas_basis_differential.PJM` | 0.3 | 2 | TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify |  | auto-generated, needs-citation |
+| `gas_monthly_seasonality` | {"1": 1.15, "2": 1.1, "3": 1.02, "4":… | 2 | EIA Henry Hub monthly spot prices | 2024 |  |
+| `global_annual_deployment_gw.gas_cc` | 20.0 | 2 | was 25. IEA WEO 2025. | 2025 | auto-generated |
+| `henry_hub_trajectories.high` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
+| `henry_hub_trajectories.low` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
+| `henry_hub_trajectories.mid` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
+| `oil_price_per_mmbtu` | 18.0 | 2 | Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam … | 2023 | auto-generated |
+| `queue_cap_per_tech_gw.CAISO.gas_cc` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.gas_cc` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
+| `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
+| `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_mustrun_override` | None | 3 | Tier 3 (calibration) — CAMPD coal must-run overrides. When set, rep… |  | auto-generated, needs-citation |
+| `scenario.coal_mustrun_per_plant` | False | 3 | When True, coal must-run % comes from the per-plant CAMPD-derived t… |  | auto-generated, needs-citation |
+| `scenario.coal_peak_hr_penalty` | 1.08 | 3 | Coal peaking increment |  | auto-generated, needs-citation |
+| `scenario.coal_plant_monthly_pricing` | True | 3 | When True (default), coal generators that report EIA-923 monthly fu… |  | auto-generated, needs-citation |
+| `scenario.coal_prb_contract_passthrough` | 1.0 | 3 | Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal deli… |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_ceil` | 1.35 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_floor` | 0.68 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_gas_mid` | 2.85 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_gas_slope` | 2.5 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_mustrun_max` | 25.0 | 3 | MR% <= this -> follower tier |  | auto-generated, needs-citation |
+| `scenario.coal_prb_mustrun_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough` | 1.0 | 3 | Tier 3 (calibration) — CAMPD coal committed-tranche price-taking. A… |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_ceil` | 1.5 | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_floor` | 0.78 | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_gas_mid` | 2.85 | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_gas_slope` | 2.5 | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed PRB passthrough sigmoid. When True… | 2023 | auto-generated |
+| `scenario.coal_prb_passthrough_tiered` | False | 3 | Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plant… |  | auto-generated, needs-citation |
+| `scenario.coal_supply_repricing` | True | 3 | When True (default), coal generators are repriced to the flat annua… |  | auto-generated, needs-citation |
+| `scenario.eac_price_geothermal` | 0.0 | 1 | $/MWh, clean firm generation credit |  | auto-generated, needs-citation |
+| `scenario.eac_price_nuclear` | 0.0 | 1 | $/MWh, e.g. NY/IL Zero Emission Credit ~$17 |  | auto-generated, needs-citation |
+| `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
+| `scenario.eac_price_solar` | 0.0 | 1 | $/MWh |  | auto-generated, needs-citation |
+| `scenario.eac_price_wind` | 0.0 | 1 | $/MWh, onshore wind REC |  | auto-generated, needs-citation |
+| `scenario.gas_price_override` | None | 3 | When set, pins the annual |  | auto-generated, needs-citation |
+| `scenario.gas_price_path` | mid | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.gas_seasonality` | True | 2 | Market simulator model design decision | 2026-05 |  |
+| `scenario.gas_st_committed_hr_mult` | 1.32 | 3 | Gas steam part-load penalty ~32% |  | auto-generated, needs-citation |
+| `scenario.gas_st_committed_hr_override` | None | 3 | Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relativ… |  | auto-generated, needs-citation |
+| `scenario.gas_st_econ_hr_mult` | 0.97 | 3 | Gas steam incremental HR |  | auto-generated, needs-citation |
+| `scenario.gas_st_econ_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.gas_st_offsummer_mustrun` | 0.0 | 3 | Off-summer (Oct-Apr) ST_GAS reliability min-gen floor, as a fractio… |  | auto-generated, needs-citation |
+| `scenario.gas_st_peak_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.gas_st_summer_mustrun` | 0.0 | 3 | Legacy gas-steam (ST_GAS) summer reliability treatment. When gas_st… |  | auto-generated, needs-citation |
+| `wright_reference_gw.gas_cc` | 1220.0 | 2 | was 1200. IEA WEO 2025. | 2025 | auto-generated |
+
+## Market Design
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `market_design.CAISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+| `market_design.ERCOT` | {"capacity_market": false, "net_cone_… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+| `market_design.NEISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+| `market_design.NYISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+| `market_design.PJM` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+
+## Policy
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `carbon_price_paths.high` | {"2026": 0, "2030": 30, "2040": 70, "… | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | modeled |
+| `carbon_price_paths.low` | {"2026": 0, "2030": 8, "2040": 18, "2… | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | modeled |
+| `carbon_price_paths.mid` | {"2026": 0, "2030": 15, "2040": 35, "… | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | modeled |
+| `carbon_price_paths.zero` | {"2026": 0, "2030": 0, "2040": 0, "20… | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | modeled |
+| `scenario.carbon_price` | 0.0 | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.ira_expiry_year` | 2035 | 2 | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | modeled, stale |
+| `scenario.ira_itc_solar` | 0.3 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
+| `scenario.ira_itc_storage` | 0.3 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
+| `scenario.ira_other_clean_last_full_year` | 2028 | 2 | Other clean (storage, nuclear, geothermal, hydro): §48E graduated p… | 2029 | auto-generated |
+| `scenario.ira_other_clean_phaseout_end` | 2033 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ira_ptc_wind` | 26.0 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
+| `scenario.ira_wind_solar_last_year` | 2027 | 2 | IRA credit schedule per OBBBA (One Big Beautiful Bill Act), enacted… | 2025 | auto-generated |
+| `scenario.nox_price` | 0.0 | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.rps_enabled` | True | 1 | whether to enforce RPS as LP constraint |  | auto-generated, needs-citation |
+| `state_rps_floors.CAISO` | {"2026": 0.5, "2030": 0.6, "2040": 0.… | 1 | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | stale |
+| `state_rps_floors.ERCOT` | {"2026": 0.0, "2030": 0.0, "2040": 0.… | 1 | Market simulator model design decision | 2026-05 |  |
+| `state_rps_floors.NEISO` | {"2026": 0.3, "2030": 0.45, "2040": 0… | 2 | MA Clean Energy Standard + regional state CES blend |  | auto-generated, needs-citation |
+| `state_rps_floors.NYISO` | {"2026": 0.4, "2030": 0.7, "2040": 1.… | 2 | NY CLCPA — 70% renewable by 2030, 100% zero-emission by 2040 | 2030 | auto-generated |
+
+## Reliability
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `eford.biomass` | 0.08 | 2 | NERC GADS — biomass steam |  | auto-generated, needs-citation |
+| `eford.coal` | 0.08 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `eford.gas_cc` | 0.05 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `eford.gas_ct` | 0.06 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `eford.gas_st` | 0.07 | 2 | NERC GADS — legacy gas steam (older, higher outage rate) |  | auto-generated, needs-citation |
+| `eford.nuclear` | 0.03 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `eford.oil` | 0.1 | 2 | NERC GADS — oil peakers (infrequent run, higher EFOR) |  | auto-generated, needs-citation |
+| `gas_availability_factor.CAISO` | 0.89 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `gas_availability_factor.ERCOT` | 0.85 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
+| `gas_availability_factor.NEISO` | 0.85 | 2 | NERC GADS 2019-2023, ISO-NE fleet. TODO: verify | 2019 | auto-generated |
+| `gas_availability_factor.NYISO` | 0.86 | 2 | NERC GADS 2019-2023, NYISO fleet. TODO: verify | 2019 | auto-generated |
+| `gas_availability_factor.PJM` | 0.87 | 2 | NERC GADS 2019-2023, PJM fleet. TODO: verify | 2019 | auto-generated |
+| `geothermal_params.egs.eford` | 0.05 | 2 | comparable to nuclear. DOE GeoVision 2019 | 2019 | auto-generated |
+| `hydrogen_turbine_params.h2_ccgt.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ct.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |
+| `nuclear_monthly_cf.CAISO` | [1.0, 0.99, 0.96, 0.95, 0.97, 1.0, 1.… | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
+| `nuclear_monthly_cf.ERCOT` | [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, … | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
+| `scenario.outage_source` | statistical | 3 | Tier 3 (calibration) — thermal availability source. "statistical" (… |  | auto-generated, needs-citation |
+| `scenario.retirement_fom_multiplier_coal` | 1.3 | 2 | coal faces higher effective FOM |  | auto-generated, needs-citation |
+| `scenario.retirement_fom_multiplier_gas_cc` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.retirement_fom_multiplier_gas_ct` | 1.0 | 2 | (regulatory risk, carbon liability, rising insurance). Source: Laza… | 2024 | auto-generated |
+| `scenario.retirement_reserve_margin` | 0.15 | 2 | 15% reserve margin over peak net demand |  | auto-generated, needs-citation |
+| `scenario.retirement_years_coal` | 1 | 2 | coal retires after 1 unprofitable year |  | auto-generated, needs-citation |
+| `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
+| `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |
+| `scenario.voll` | 5000.0 | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | stale |
+| `scenario.wefor_multiplier` | 1.0 | 3 | Global scale on every thermal class's |  | auto-generated, needs-citation |
+| `thermal_availability.BIOMASS` | [0.07, 0.1, 0.002, 25, 0.04, 0.0015, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.CC_CHP` | [0.05, 0.04, 0.002, 20, 0.02, 0.001, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.CC_REGULAR` | [0.05, 0.05, 0.002, 20, 0.02, 0.001, 25] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.COAL` | [0.07, 0.12, 0.005, 40, 0.03, 0.002, 35] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.CT_CHP` | [0.03, 0.05, 0.002, 20, 0.03, 0.001, 20] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.CT_PEAKER` | [0.03, 0.07, 0.003, 20, 0.05, 0.002, 20] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.OIL` | [0.06, 0.1, 0.003, 30, 0.04, 0.002, 30] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.ST_CHP` | [0.05, 0.08, 0.002, 25, 0.03, 0.0015,… | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `thermal_availability.ST_GAS` | [0.06, 0.21, 0.003, 30, 0.04, 0.002, 30] | 2 | Thermal-fleet availability model by plant-group category. Three add… |  | auto-generated, needs-citation |
+| `wecc_import_eford` | 0.02 | 2 | WECC import tranche forced outage rate. Source: NERC GADS — represe… |  | auto-generated, needs-citation |
+
+## Storage
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `eac_price_reference.eac_storage.high` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_storage.low` | 0.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_storage.mid` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
+| `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
+| `scenario.storage_capacity_value` | True | 2 | Storage new-entry value stack. ``storage_capacity_value`` globally … |  | auto-generated, needs-citation |
+| `scenario.storage_degradation` | True | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.storage_deployment` | mid | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.storage_rte_4hr` | 0.85 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.storage_rte_8hr` | 0.8 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_annual_build_cap_mw.CAISO` | 3000.0 | 2 | Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP q… |  | auto-generated, needs-citation |
+| `storage_annual_build_cap_mw.ERCOT` | 5000.0 | 2 | Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP q… |  | auto-generated, needs-citation |
+| `storage_annual_build_cap_mw.NEISO` | 1200.0 | 2 | Source: ISO-NE interconnection queue 2024 | 2024 | auto-generated |
+| `storage_annual_build_cap_mw.NYISO` | 1500.0 | 2 | Source: NYISO interconnection queue 2024 | 2024 | auto-generated |
+| `storage_annual_build_cap_mw.PJM` | 4000.0 | 2 | large queue but slower interconnection. Source: PJM queue 2024 | 2024 | auto-generated |
+| `storage_base_fleet_mw.CAISO.high` | 12000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.CAISO.low` | 6000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.CAISO.mid` | 8000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.ERCOT.high` | 25000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.ERCOT.low` | 12000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.ERCOT.mid` | 17000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NEISO.high` | 2000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NEISO.low` | 500.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NEISO.mid` | 1000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NYISO.high` | 3000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NYISO.low` | 1000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.NYISO.mid` | 1500.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.PJM.high` | 9000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.PJM.low` | 3000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.PJM.mid` | 5000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_degradation_replacement_fraction` | 0.25 | 2 | Cycling-degradation cost. Each MWh discharged consumes a slice of t… |  | auto-generated, needs-citation |
+| `storage_deployment_ceiling_mw.CAISO` | 25000.0 | 2 | ~52% of ~48 GW peak. Source: CAISO IEPR |  | auto-generated, needs-citation |
+| `storage_deployment_ceiling_mw.ERCOT` | 45000.0 | 2 | ~53% of ~85 GW peak. Source: ERCOT CDR |  | auto-generated, needs-citation |
+| `storage_deployment_ceiling_mw.NEISO` | 13000.0 | 2 | ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024 | 2024 | auto-generated |
+| `storage_deployment_ceiling_mw.NYISO` | 16000.0 | 2 | ~50% of ~32 GW peak. Source: NYISO Gold Book 2024 | 2024 | auto-generated |
+| `storage_deployment_ceiling_mw.PJM` | 75000.0 | 2 | ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024 | 2024 | auto-generated |
+| `storage_elcc_by_duration` | [[2.0, 0.4], [4.0, 0.6], [6.0, 0.75],… | 2 | Effective load-carrying capability (ELCC) of storage as a function … |  | auto-generated, needs-citation |
+| `storage_elcc_saturation_exponent` | 1.5 | 2 | Marginal ELCC saturation. As cumulative storage power approaches th… |  | auto-generated, needs-citation |
+| `storage_tech_build_share_cap` | 0.6 | 2 | Cap on the share of one year's storage build budget that any single… |  | auto-generated, needs-citation |
+| `storage_tech_power_share.iron_air` | 0.05 | 2 | Share of deployed storage power by technology type. Source: NREL AT… | 2024 | auto-generated |
+| `storage_tech_power_share.li_ion_4hr` | 0.7 | 2 | Share of deployed storage power by technology type. Source: NREL AT… | 2024 | auto-generated |
+| `storage_tech_power_share.li_ion_8hr` | 0.25 | 2 | Share of deployed storage power by technology type. Source: NREL AT… | 2024 | auto-generated |
+| `storage_techs.compressed_air.capex_per_kw` | 2700.0 | 2 | was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025. | 2025 | auto-generated |
+| `storage_techs.compressed_air.capex_per_kwh` | 150.0 | 2 | was 345. LFP pack costs ~$100/kWh + BOS. |  | auto-generated, needs-citation |
+| `storage_techs.compressed_air.cycles` | 10000 | 2 | long cycle life — major advantage. PNNL 2023 | 2023 | auto-generated |
+| `storage_techs.compressed_air.duration_hr` | 8 | 2 | Storage technology parameters. Source: NREL ATB 2024 (li-ion), DOE … | 2024 | auto-generated |
+| `storage_techs.compressed_air.fom_per_kw_yr` | 10.0 | 2 | was 34.5. |  | auto-generated, needs-citation |
+| `storage_techs.compressed_air.learning_rate` | 0.05 | 2 | BNEF lithium-ion learning curve 2024 | 2024 | auto-generated |
+| `storage_techs.compressed_air.lifetime_yr` | 40 | 2 | Huntorf plant operating since 1978 | 1978 | auto-generated |
+| `storage_techs.compressed_air.rte` | 0.55 | 2 | lower RTE at longer duration. NREL ATB 2024 | 2024 | auto-generated |
+| `storage_techs.flow_battery.capex_per_kw` | 4700.0 | 2 | was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025. | 2025 | auto-generated |
+| `storage_techs.flow_battery.capex_per_kwh` | 350.0 | 2 | was 345. LFP pack costs ~$100/kWh + BOS. |  | auto-generated, needs-citation |
+| `storage_techs.flow_battery.cycles` | 15000 | 2 | long cycle life — major advantage. PNNL 2023 | 2023 | auto-generated |
+| `storage_techs.flow_battery.duration_hr` | 10 | 2 | Storage technology parameters. Source: NREL ATB 2024 (li-ion), DOE … | 2024 | auto-generated |
+| `storage_techs.flow_battery.fom_per_kw_yr` | 15.0 | 2 | was 34.5. |  | auto-generated, needs-citation |
+| `storage_techs.flow_battery.learning_rate` | 0.1 | 2 | BNEF lithium-ion learning curve 2024 | 2024 | auto-generated |
+| `storage_techs.flow_battery.lifetime_yr` | 25 | 2 | Huntorf plant operating since 1978 | 1978 | auto-generated |
+| `storage_techs.flow_battery.rte` | 0.7 | 2 | lower RTE at longer duration. NREL ATB 2024 | 2024 | auto-generated |
+| `storage_techs.iron_air.capex_per_kw` | 2000.0 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.iron_air.capex_per_kwh` | 20.0 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.iron_air.cycles` | 3000 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.iron_air.duration_hr` | 100 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.iron_air.fom_per_kw_yr` | 20.0 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.iron_air.learning_rate` | 0.1 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | modeled, stale |
+| `storage_techs.iron_air.rte` | 0.5 | 2 | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | stale |
+| `storage_techs.li_ion_12hr.capex_per_kw` | 3100.0 | 2 | was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025. | 2025 | auto-generated |
+| `storage_techs.li_ion_12hr.capex_per_kwh` | 240.0 | 2 | was 345. LFP pack costs ~$100/kWh + BOS. |  | auto-generated, needs-citation |
+| `storage_techs.li_ion_12hr.cycles` | 4000 | 2 | long cycle life — major advantage. PNNL 2023 | 2023 | auto-generated |
+| `storage_techs.li_ion_12hr.duration_hr` | 12 | 2 | Storage technology parameters. Source: NREL ATB 2024 (li-ion), DOE … | 2024 | auto-generated |
+| `storage_techs.li_ion_12hr.fom_per_kw_yr` | 10.0 | 2 | was 34.5. |  | auto-generated, needs-citation |
+| `storage_techs.li_ion_12hr.learning_rate` | 0.15 | 2 | BNEF lithium-ion learning curve 2024 | 2024 | auto-generated |
+| `storage_techs.li_ion_12hr.lifetime_yr` | 20 | 2 | Huntorf plant operating since 1978 | 1978 | auto-generated |
+| `storage_techs.li_ion_12hr.rte` | 0.78 | 2 | lower RTE at longer duration. NREL ATB 2024 | 2024 | auto-generated |
+| `storage_techs.li_ion_4hr.capex_per_kw` | 1140.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_4hr.capex_per_kwh` | 285.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_4hr.cycles` | 5000 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_4hr.duration_hr` | 4 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_4hr.fom_per_kw_yr` | 30.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_4hr.learning_rate` | 0.18 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `storage_techs.li_ion_4hr.rte` | 0.86 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.capex_per_kw` | 2280.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.capex_per_kwh` | 285.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.cycles` | 5000 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.duration_hr` | 8 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.fom_per_kw_yr` | 48.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `storage_techs.li_ion_8hr.learning_rate` | 0.18 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
+| `storage_techs.li_ion_8hr.rte` | 0.86 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+
+## Structural
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `end_year` | 2050 | 0 | Market simulator model design decision | 2026-05 |  |
+| `hours_per_year` | 8760 | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.campd_bins_path` | inputs/custom-bin-assignments.csv | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.cc_committed_hr_mult` | 1.23 | 3 | CC part-load penalty ~23% |  | auto-generated, needs-citation |
+| `scenario.cc_committed_hr_override` | None | 3 | Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's… |  | auto-generated, needs-citation |
+| `scenario.cc_committed_per_plant` | False | 2 | When True, each CC_REGULAR bin's committed-tranche % (minimum stabl… |  | auto-generated, needs-citation |
+| `scenario.cc_econ_hr_mult` | 0.96 | 3 | CC incremental HR ~4% below avg |  | auto-generated, needs-citation |
+| `scenario.cc_econ_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.cc_peak_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.cc_peak_hr_penalty` | 1.15 | 3 | CC duct-firing increment |  | auto-generated, needs-citation |
+| `scenario.cc_peaking_per_plant` | False | 2 | When True, the CC_REGULAR plants in fleet.CC_REGULAR_PEAKING_PCT_BY… |  | auto-generated, needs-citation |
+| `scenario.chp_btm_floor_pct` | 40.0 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.chp_steam_following` | False | 3 | CHP cogeneration treatment. When chp_steam_following is True, each … |  | auto-generated, needs-citation |
+| `scenario.ct_committed_hr_mult` | 1.28 | 3 | CT part-load penalty ~28% |  | auto-generated, needs-citation |
+| `scenario.ct_committed_hr_override` | None | 3 | CT_CHP tranche heat-rate overrides (relative to base HR), applied t… |  | auto-generated, needs-citation |
+| `scenario.ct_econ_hr_mult` | 0.97 | 3 | CT incremental HR ~3% below avg |  | auto-generated, needs-citation |
+| `scenario.ct_econ_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ct_peak_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ct_peak_hr_penalty` | 1.1 | 3 | CT / gas-steam peaking increment |  | auto-generated, needs-citation |
+| `scenario.econ_split_by_group` | {} | 2 | Economic-tranche split. Maps a CAMPD bin's Plant_Group to a 3-eleme… |  | auto-generated, needs-citation |
+| `scenario.egs_available_year` | 2030 | 1 | year EGS enters the candidate pool |  | auto-generated, needs-citation |
+| `scenario.egs_pmin_fraction` | 0.2 | 2 | EGS turn-down floor (fraction of rated) |  | auto-generated, needs-citation |
+| `scenario.hours` | 8760 | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.iso` | ERCOT | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.must_run_cf` | 0.85 | 3 | assumed CF for CHP must-run emissions post-processing |  | auto-generated, needs-citation |
+| `scenario.plant_registry_path` | inputs/master-plant-registry.csv | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.use_campd_bins` | True | 2 | Tier 2 (expert/sensitivity) — CAMPD operational binning When True t… |  | auto-generated, needs-citation |
+| `scenario.weather_year` | 2024 | 0 | Market simulator model design decision | 2026-05 |  |
+| `start_year` | 2026 | 0 | Market simulator model design decision | 2026-05 |  |
+| `storage_tiebreaker_epsilon` | 0.001 | 0 | Market simulator model design decision | 2026-05 |  |
+
+## Supply Stack
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `cc_commitment_params` | [[6.5, {"startup_per_mw": 63.8, "min_… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `cc_startup_params` | [[6.5, 63.8], [7.5, 48.6], [99.0, 24.1]] | 2 | CC/CT startup costs ($/MW per start) keyed by ascending heat-rate c… | 2012 | auto-generated |
+| `ccs_retrofit_hr_penalty_reference.default` | 0.12 | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
+| `ccs_retrofit_hr_penalty_reference.netl_ngcc_range` | [0.1, 0.16] | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
+| `ccs_retrofit_hr_penalty_reference.source` | NETL Cost & Performance Baseline for … | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.capex_kw` | 2500.0 | 2 | $/kW installed. NREL ATB 2024 | 2024 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.capture_rate` | 0.9 | 2 | fraction of CO2 captured. NETL 2022 Case B31B | 2022 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.co2_transport_storage` | 15.0 | 2 | $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast | 2022 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.fom_kw_yr` | 22.0 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.heat_rate_penalty` | 1.16 | 2 | ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B | 2022 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.learning_rate` | 0.05 | 2 | slow — limited deployment. Global CCS Institute 2024 | 2024 | auto-generated |
+| `ccus_params.gas_cc_ccs_90.lifetime_yr` | 30 | 2 | Carbon capture, utilization and storage parameters. CCUS is a varia… |  | auto-generated, needs-citation |
+| `ccus_params.gas_cc_ccs_90.vom_adder` | 8.0 | 2 | $/MWh — amine solvent, maintenance. NETL 2022 | 2022 | auto-generated |
+| `coal_tranches` | [[0.3, 0.0], [0.25, 0.35], [0.45, 1.0]] | 2 | Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_pa… | 2023 | auto-generated |
+| `ct_commitment_params` | [[10.0, {"startup_per_mw": 12.3, "min… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ct_startup_params` | [[10.0, 12.3], [11.0, 24.5], [99.0, 1… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_gas_cc_ccs.high` | 25.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_gas_cc_ccs.low` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `eac_price_reference.eac_gas_cc_ccs.mid` | 15.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `geothermal_params.egs.heat_rate` | 0.0 | 2 | no fuel |  | auto-generated, needs-citation |
+| `geothermal_params.egs.vom` | 1.0 | 2 | $/MWh — minimal, no fuel. NREL ATB 2024 | 2024 | auto-generated |
+| `global_annual_deployment_gw.gas_cc_ccs` | 1.5 | 2 | GW/yr global CCS additions on power plants. |  | auto-generated, needs-citation |
+| `global_annual_deployment_gw.nuclear` | 10.0 | 2 | was 8. IAEA 2025. | 2025 | auto-generated |
+| `global_annual_deployment_gw.nuclear_large` | 5.0 | 2 | Annual global deployment (GW/yr) by technology, used to project cum… | 2025 | auto-generated |
+| `global_annual_deployment_gw.nuclear_smr` | 5.0 | 2 | Annual global deployment (GW/yr) by technology, used to project cum… | 2025 | auto-generated |
+| `heat_rate_bins.biomass.default` | 13.5 | 2 | EIA Table 8 — petroleum-fired GT/steam (oil peaker) |  | auto-generated, needs-citation |
+| `heat_rate_bins.coal.older` | 10.8 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.coal.subcritical` | 10.0 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.coal.supercritical` | 8.8 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_cc.f_class` | 6.7 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_cc.h_class` | 6.3 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_cc.older` | 7.5 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_ct.aero` | 9.0 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_ct.frame` | 10.5 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.gas_ct.older` | 11.5 | 2 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 |  |
+| `heat_rate_bins.oil.default` | 13.5 | 2 | EIA Table 8 — petroleum-fired GT/steam (oil peaker) |  | auto-generated, needs-citation |
+| `hydrogen_turbine_params.h2_ccgt.heat_rate` | 6.9 | 2 | MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023 | 2023 | auto-generated |
+| `hydrogen_turbine_params.h2_ccgt.vom` | 3.5 | 2 | $/MWh. NREL ATB 2024 (gas CT analog + H2 premium) | 2024 | auto-generated |
+| `hydrogen_turbine_params.h2_ct.heat_rate` | 9.5 | 2 | MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023 | 2023 | auto-generated |
+| `hydrogen_turbine_params.h2_ct.vom` | 4.0 | 2 | $/MWh. NREL ATB 2024 (gas CT analog + H2 premium) | 2024 | auto-generated |
+| `new_entry_costs.gas_cc_ccs.base_cf` | 0.8 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.capex_per_kw` | 2300.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.fom_per_kw_yr` | 45.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.learning_rate` | 0.1 | 2 | 10% cost reduction per doubling of cumulative deployment. |  | auto-generated, needs-citation |
+| `new_entry_costs.gas_cc_ccs.lifetime_yr` | 30 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.base_cf` | 0.92 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.fom_per_kw_yr` | 130.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_large.lifetime_yr` | 60 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.base_cf` | 0.9 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.fom_per_kw_yr` | 100.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
+| `new_entry_costs.nuclear_smr.lifetime_yr` | 40 | 2 | Same as gas CC host plant. |  | auto-generated, needs-citation |
+| `nuclear_monthly_cf.NEISO` | [1.0, 0.99, 0.95, 0.95, 0.98, 1.0, 1.… | 2 | Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO. Sprin… | 2019 | auto-generated |
+| `nuclear_monthly_cf.NYISO` | [1.0, 1.0, 0.95, 0.94, 0.97, 1.0, 1.0… | 2 | Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO. Sprin… | 2019 | auto-generated |
+| `nuclear_monthly_cf.PJM` | [1.0, 1.0, 0.95, 0.94, 0.97, 1.0, 1.0… | 2 | Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO. Sprin… | 2019 | auto-generated |
+| `nuclear_monthly_cf_by_year.ERCOT` | {"2023": [1.0, 1.0, 0.89, 0.75, 0.78,… | 2 | Per-year nuclear monthly capacity factor derived from EIA-923 net g… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.CAISO.nuclear` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.nuclear` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
+| `scenario.ccs_capture_rate` | 0.9 | 2 | fraction of CO2 captured by CCUS |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_capex_kw` | 900.0 | 2 | $/kW for post-combustion capture retrofit. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_capture_rate` | 0.9 | 2 | Fraction of CO2 captured. 0.90 = 90%. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_hr_penalty` | 0.12 | 2 | Fractional heat rate increase from capture parasitic load. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_max_gw_per_year` | 3.0 | 2 | GW/yr retrofit throughput cap per ISO. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_min_remaining_life` | 15 | 2 | Only retrofit units with ≥ N years remaining useful life. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_vom_adder` | 8.0 | 2 | $/MWh additional VOM for capture O&M, solvent, compression. |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_1_frac` | 0.3 | 3 | Take-or-pay capacity fraction |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_1_fuel_passthrough` | 0.0 | 3 | VOM only — fuel sunk |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_2_frac` | 0.25 | 3 | Partially contracted |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_2_fuel_passthrough` | 0.35 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_3_frac` | 0.45 | 3 | Economic dispatch |  | auto-generated, needs-citation |
+| `scenario.coal_tranche_3_fuel_passthrough` | 1.0 | 3 | Full fuel cost |  | auto-generated, needs-citation |
+| `scenario.commitment_enabled` | False | 2 | default off — opt-in for calibration. |  | auto-generated, needs-citation |
+| `scenario.commitment_irr_hurdle` | 0.07 | 2 | 7% return required on startup cost. |  | auto-generated, needs-citation |
+| `scenario.commitment_screen_coal` | True | 2 | When False, CAMPD coal is not |  | auto-generated, needs-citation |
+| `scenario.commitment_storage_in_merit_floor` | 0.0 | 2 | 0 disables. When > 0, |  | auto-generated, needs-citation |
+| `scenario.commitment_storage_weight` | 1.0 | 2 | 0 disables. The P2 commitment |  | auto-generated, needs-citation |
+| `scenario.eac_price_gas_cc_ccs` | 0.0 | 1 | $/MWh, CCS-equipped gas CC only (45Q-linked) |  | auto-generated, needs-citation |
+| `scenario.fixed_om_coal` | 40.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.fixed_om_gas_cc` | 12.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.fixed_om_gas_ct` | 8.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.gas_st_startup_spread` | False | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.heat_rate_bin_count` | None | 2 | Override default bin count per fuel type. |  | auto-generated, needs-citation |
+| `scenario.ira_ccus_45q_last_year` | 2032 | 2 | §45Q CCUS credit: extended but phasing out post-2032. | 2032 | auto-generated |
+| `scenario.offer_curve_by_group` | {} | 2 | Unified thermal offer-curve parameterization (supersedes the legacy… |  | auto-generated, needs-citation |
+| `scenario.plant_tranche_config_path` | None | 2 | Optional per-plant tranche-config override CSV (one row per plant w… |  | auto-generated, needs-citation |
+| `vom.biomass` | 5.0 | 2 | NREL ATB 2024 — biomass (fuel handling raises O&M) | 2024 | auto-generated |
+| `vom.coal` | 4.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `vom.gas_cc` | 2.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `vom.gas_ct` | 3.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `vom.gas_st` | 4.0 | 2 | NREL ATB 2024 — legacy gas steam (higher O&M than CC) | 2024 | auto-generated |
+| `vom.nuclear` | 2.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `vom.oil` | 4.5 | 2 | NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam) | 2024 | auto-generated |
+| `vom.solar` | 0.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `vom.wind` | 0.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `wecc_import_tranches` | [["PNW_hydro", 3000.0, 15.0], ["DSW_C… | 2 | CAISO WECC import supply curve tranches: (name, capacity MW, VOM $/… | 2022 | auto-generated |
+| `wright_reference_gw.gas_cc_ccs` | 2.0 | 2 | GW global installed power-sector CCS as of 2024. | 2024 | auto-generated |
+| `wright_reference_gw.nuclear` | 445.0 | 2 | was 440. IAEA PRIS 2025. | 2025 | auto-generated |
+| `wright_reference_gw.nuclear_large` | 445.0 | 2 | Wright's Law reference cumulative installed capacity (GW global). S… | 2025 | auto-generated |
+| `wright_reference_gw.nuclear_smr` | 445.0 | 2 | shares global nuclear fleet |  | auto-generated, needs-citation |
 
 ## Transmission
 
-ERCOT zonal transfer capabilities live in `config/iso_configs.py` (not the constant registry). They are recorded here for traceability.
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `scenario.unknown_zone_default` | South_Central | 2 | zone for bins tagged "Unknown" |  | auto-generated, needs-citation |
 
-| param_id | value | unit | tier | source | date | page / table | old repo location | notes |
-|---|---|---|---|---|---|---|---|---|
-| `iso_configs.ERCOT.ttc.north_west` | 5500 | MW | 3 | ERCOT 2021 Regional Transmission Plan | 2021-09 | Long-Term West Texas Export Study Update (ROS Jul 2020, RPG Sep 2021) | `iso_configs.py` (`_ercot_config`) | North→West TTC raised from 3000. West Texas export stability limit = 11,016 MW. Stability-limited value; ERCOT applies a ~90% reliability margin operationally. A future calibration sweep will tune the exact value. |
-| `iso_configs.ERCOT.ttc.west_houston` | 3500 | MW | 3 | ERCOT 2021 Regional Transmission Plan | 2021-09 | Long-Term West Texas Export Study Update (ROS Jul 2020, RPG Sep 2021) | `iso_configs.py` (`_ercot_config`) | West→Houston TTC raised from 2500. Stability-limited value; ERCOT applies a ~90% reliability margin operationally. A future calibration sweep will tune the exact value. |
+## Uncategorized
 
-## Flagged: model-sourced parameters (not empirical data)
-
-These values come from another model's assumptions or projections (forecasts, scenario trajectories, learning-rate assumptions, calibration knobs) rather than measured/observed data. Treat them as inputs to test, not as ground truth.
-
-| param_id | source | notes |
-|---|---|---|
-| `demand_growth_rates.ERCOT.low` | ERCOT Capacity, Demand and Reserves (CDR) Report | low annual demand growth path; planning forecast, not observed history. |
-| `demand_growth_rates.ERCOT.mid` | ERCOT Capacity, Demand and Reserves (CDR) Report | mid annual demand growth path; planning forecast, not observed history. |
-| `demand_growth_rates.ERCOT.high` | ERCOT Capacity, Demand and Reserves (CDR) Report | high annual demand growth path; planning forecast, not observed history. |
-| `demand_growth_rates.CAISO.low` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | low annual demand growth path; planning forecast, not observed history. |
-| `demand_growth_rates.CAISO.mid` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | mid annual demand growth path; planning forecast, not observed history. |
-| `demand_growth_rates.CAISO.high` | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | high annual demand growth path; planning forecast, not observed history. |
-| `henry_hub_trajectories.low` | EIA Annual Energy Outlook 2025 | High Oil and Gas Supply case Henry Hub trajectory; AEO is a projection model, not observed price. |
-| `henry_hub_trajectories.mid` | EIA Annual Energy Outlook 2025 | Reference case Henry Hub trajectory; AEO is a projection model, not observed price. |
-| `henry_hub_trajectories.high` | EIA Annual Energy Outlook 2025 | Low Oil and Gas Supply case Henry Hub trajectory; AEO is a projection model, not observed price. |
-| `carbon_price_paths.zero` | Resources for the Future (RFF) carbon price scenario set | zero carbon price trajectory; scenario assumption from another model, not an observed price. |
-| `carbon_price_paths.low` | Resources for the Future (RFF) carbon price scenario set | low carbon price trajectory; scenario assumption from another model, not an observed price. |
-| `carbon_price_paths.mid` | Resources for the Future (RFF) carbon price scenario set | mid carbon price trajectory; scenario assumption from another model, not an observed price. |
-| `carbon_price_paths.high` | Resources for the Future (RFF) carbon price scenario set | high carbon price trajectory; scenario assumption from another model, not an observed price. |
-| `storage_techs.li_ion_4hr.learning_rate` | NREL Annual Technology Baseline 2024 | learning_rate for the li_ion_4hr storage technology. Learning rate is a modeling assumption. |
-| `storage_techs.li_ion_8hr.learning_rate` | NREL Annual Technology Baseline 2024 | learning_rate for the li_ion_8hr storage technology. Learning rate is a modeling assumption. |
-| `storage_techs.iron_air.learning_rate` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | learning_rate for the iron_air storage technology. Learning rate is a modeling assumption. |
-| `new_entry_costs.wind.learning_rate` | NREL Annual Technology Baseline 2024 | learning_rate for new wind build. Modeling assumption, not a directly observed value. |
-| `new_entry_costs.wind.base_cf` | NREL Annual Technology Baseline 2024 | base_cf for new wind build. Modeling assumption, not a directly observed value. |
-| `new_entry_costs.solar.learning_rate` | NREL Annual Technology Baseline 2024 | learning_rate for new solar build. Modeling assumption, not a directly observed value. |
-| `new_entry_costs.solar.base_cf` | NREL Annual Technology Baseline 2024 | base_cf for new solar build. Modeling assumption, not a directly observed value. |
-| `new_entry_costs.gas_cc.learning_rate` | NREL Annual Technology Baseline 2024 | learning_rate for new gas_cc build. Modeling assumption, not a directly observed value. |
-| `new_entry_costs.gas_cc.base_cf` | NREL Annual Technology Baseline 2024 | base_cf for new gas_cc build. Modeling assumption, not a directly observed value. |
-| `scenario.demand_growth_rate` | Market simulator model design decision | Scalar default; per-ISO/path values live in DEMAND_GROWTH_RATES. |
-| `scenario.retirement_consecutive_years` | Market simulator model design decision | Consecutive unprofitable years before a unit retires; modeling assumption. |
-| `scenario.sigmoid_midpoint` | Market simulator model design decision | Midpoint of the retirement sigmoid; modeling assumption. |
-| `scenario.sigmoid_steepness` | Market simulator model design decision | Steepness of the retirement sigmoid; modeling assumption. |
-| `scenario.ira_expiry_year` | CBO scoring of Inflation Reduction Act energy provisions | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. |
-| `scenario.renewable_cf_adjustment` | Market simulator model design decision | Tier-3 calibration knob; neutral default of 1.0. |
-| `scenario.basis_differential_factor` | Market simulator model design decision | Tier-3 calibration knob; neutral default of 1.0. |
-| `scenario.cc_cycling_adder_h_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.cc_cycling_adder_f_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.cc_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.coal_cycling_adder_supercritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.coal_cycling_adder_subcritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.coal_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.ct_cycling_adder_aero` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.ct_cycling_adder_frame` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-| `scenario.ct_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | Tier-3 cycling cost adder; derived from startup cost and cycling pattern assumptions, not a directly observed $/MWh. |
-
-## Flagged: stale parameters (source older than 3 years)
-
-Source publication date is before 2023-05 (more than 3 years before the 2026-05-16 verification date). Schedule a refresh review to confirm a newer edition has not superseded these values.
-
-| param_id | source | source_date | notes |
-|---|---|---|---|
-| `storage_techs.iron_air.duration_hr` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | duration_hr for the iron_air storage technology. |
-| `storage_techs.iron_air.rte` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | rte for the iron_air storage technology. |
-| `storage_techs.iron_air.cycles` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | cycles for the iron_air storage technology. |
-| `storage_techs.iron_air.capex_per_kw` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | capex_per_kw for the iron_air storage technology. |
-| `storage_techs.iron_air.capex_per_kwh` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | capex_per_kwh for the iron_air storage technology. |
-| `storage_techs.iron_air.fom_per_kw_yr` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | fom_per_kw_yr for the iron_air storage technology. |
-| `storage_techs.iron_air.learning_rate` | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | learning_rate for the iron_air storage technology. Learning rate is a modeling assumption. |
-| `state_rps_floors.CAISO` | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | California SB 100 statutory clean-energy trajectory (60% by 2030, 100% by 2045). |
-| `scenario.voll` | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2025-12 | ERCOT DA SWCAP $5,000/MWh unchanged post-RTC+B (Dec 2025). RT SWCAP reduced to $2,000/MWh. Model uses DA cap as single-settlement proxy. |
-| `scenario.ira_expiry_year` | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | Assumed IRA credit phase-out year; projection/assumption, not a fixed statutory date. |
-| `scenario.cc_cycling_adder_h_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.cc_cycling_adder_f_class` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.cc_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.coal_cycling_adder_supercritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.coal_cycling_adder_subcritical` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.coal_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.ct_cycling_adder_aero` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.ct_cycling_adder_frame` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-| `scenario.ct_cycling_adder_older` | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | Power Plant Cycling Costs; consider refresh against newer cycling-cost literature. |
-
-## Source reference
-
-| key | source | date | url |
-|---|---|---|---|
-| EIA_T8 | EIA Electric Power Annual 2022, Table 8.2 | 2023-10 | https://www.eia.gov/electricity/annual/ |
-| EGRID | EPA eGRID2022 | 2024-01 | https://www.epa.gov/egrid |
-| CEMS | EPA Clean Air Markets Program Data (CEMS), 2022 | 2023-02 | https://campd.epa.gov/ |
-| ATB24 | NREL Annual Technology Baseline 2024 | 2024-07 | https://atb.nrel.gov/electricity/2024/ |
-| GADS | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 | https://www.nerc.com/pa/RAPA/gads/Pages/default.aspx |
-| PRIS | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 | https://www.nrc.gov/reading-rm/doc-collections/datasets/ |
-| ERCOT_CDR | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | https://www.ercot.com/gridinfo/resource |
-| CAISO_IEPR | California Energy Commission Integrated Energy Policy Report (IEPR) 2023 | 2024-02 | https://www.energy.ca.gov/data-reports/reports/integrated-energy-policy-report |
-| AEO24 | EIA Annual Energy Outlook 2024 | 2024-03 | https://www.eia.gov/outlooks/aeo/ |
-| RFF | Resources for the Future (RFF) carbon price scenario set | 2023-09 | https://www.rff.org/ |
-| LDES | DOE Pathways to Commercial Liftoff: Long Duration Energy Storage | 2023-03 | https://liftoff.energy.gov/long-duration-energy-storage/ |
-| IRENA24 | IRENA Renewable Capacity Statistics 2024 | 2024-03 | https://www.irena.org/Publications/2024/Mar/Renewable-capacity-statistics-2024 |
-| SB100 | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | https://www.energy.ca.gov/sb100 |
-| CAISO_TPP | CAISO Transmission Planning Process (TPP) | 2024-03 | https://www.caiso.com/planning/Pages/TransmissionPlanning/Default.aspx |
-| IRS_IRA | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 | https://www.irs.gov/inflation-reduction-act-of-2022 |
-| CBO_IRA | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | https://www.cbo.gov/ |
-| ERCOT_VOLL | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | https://www.ercot.com/mktrules/nprotocols |
-| MODEL_DESIGN | Market simulator model design decision | 2026-05 | — |
-| EIA_HH_SPOT | EIA Henry Hub Natural Gas Spot Price, annual averages | 2025-01 | https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm |
-| NREL_CYCLING | NREL/SR-5500-55433 (Kumar et al. 2012), Power Plant Cycling Costs | 2012-04 | https://www.nrel.gov/docs/fy12osti/55433.pdf |
-| ERCOT_RTP | ERCOT 2021 Regional Transmission Plan, Long-Term West Texas Export Study Update | 2021-09 | https://www.ercot.com/files/docs/2021/09/15/RPG-09-2021-Long-Term_West_Texas_Export_Study_Update.pdf |
-| EGRID23 | EPA eGRID 2023 (rev 2) | 2024-01 | https://www.epa.gov/egrid |
-| EIA860 | EIA Form 860 — 2024 (Generator_Operable, wind and solar schedules) | 2024-06 | https://www.eia.gov/electricity/data/eia860/ |
-
----
-
-_Maintenance: regenerate both artifacts whenever a constant or `ScenarioConfig` default changes, then run `python scripts/validate_parameters.py`._
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `global_annual_deployment_gw.compressed_air` | 0.3 | 2 | GW/yr global CAES additions. Source: IEA 2024 pipeline. | 2024 | auto-generated |
+| `global_annual_deployment_gw.flow_battery` | 0.8 | 2 | GW/yr global VRFB additions. Source: BNEF LDES tracker 2024. | 2024 | auto-generated |
+| `global_annual_deployment_gw.iron_air` | 1.0 | 2 | was 0.5. |  | auto-generated, needs-citation |
+| `global_annual_deployment_gw.li_ion` | 50.0 | 2 | was 30. BNEF 2025. | 2025 | auto-generated |
+| `global_annual_deployment_gw.solar` | 400.0 | 2 | was 350. IRENA 2025. | 2025 | auto-generated |
+| `global_annual_deployment_gw.wind` | 130.0 | 2 | was 120. IRENA 2025. | 2025 | auto-generated |
+| `inflation_rate` | 0.022 | 2 | Assumed long-run inflation rate for nominal-to-real conversion. Use… |  | auto-generated, needs-citation |
+| `mmbtu_per_mwh` | 3.412 | 2 | MMBtu per MWh — thermodynamic identity, used to convert the derived… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.CAISO.solar` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.CAISO.wind` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.solar` | 5.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.ERCOT.wind` | 5.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `real_dollar_base_year` | 2026 | 2 | Source: model convention, matches simulation start year |  | auto-generated, needs-citation |
+| `renewable_avg_cf.CAISO.solar` | 0.28 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.CAISO.wind` | 0.3 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.ERCOT.solar` | 0.27 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.ERCOT.wind` | 0.35 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.PJM.solar` | 0.19 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.PJM.wind` | 0.31 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_installed_mw.CAISO.solar` | 22000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.CAISO.wind` | 7000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.ERCOT.solar` | 38000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.ERCOT.wind` | 42000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `wecc_export_cap_mw` | 5000.0 | 2 | CAISO export capability to WECC (MW). Source: placeholder pending E… |  | auto-generated, needs-citation |
+| `wright_reference_gw.compressed_air` | 1.5 | 2 | GW global adiabatic/diabatic CAES — Huntorf, McIntosh, |  | auto-generated, needs-citation |
+| `wright_reference_gw.flow_battery` | 3.0 | 2 | GW global installed vanadium-redox flow. Source: PNNL 2023, | 2023 | auto-generated |
+| `wright_reference_gw.iron_air` | 1.0 | 2 | was 0.5. DOE LDES. |  | auto-generated, needs-citation |
