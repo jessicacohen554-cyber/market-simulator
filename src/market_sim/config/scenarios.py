@@ -65,6 +65,14 @@ class ScenarioConfig:
     gas_seasonality: bool = True  # Apply monthly Henry Hub seasonality shape
     storage_rte_4hr: float = 0.85
     storage_rte_8hr: float = 0.80
+    # Storage new-entry value stack. ``storage_capacity_value`` globally gates
+    # the resource-adequacy revenue stream; it is only paid where the ISO's
+    # MARKET_DESIGN has a capacity market (e.g. PJM/NYISO/ISO-NE/CAISO), so on
+    # energy-only ERCOT it has no effect. Set False to screen on arbitrage
+    # alone. ``storage_degradation`` charges a per-MWh cycling-degradation cost
+    # against arbitrage margin (penalizes high-cycling short-duration storage).
+    storage_capacity_value: bool = True
+    storage_degradation: bool = True
     nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
@@ -547,6 +555,8 @@ TIER_TAGS: dict[str, int] = {
     "gas_seasonality": 2,
     "storage_rte_4hr": 2,
     "storage_rte_8hr": 2,
+    "storage_capacity_value": 2,
+    "storage_degradation": 2,
     "nominal_discount_rate": 2,
     "retirement_consecutive_years": 2,
     "retirement_years_coal": 2,
