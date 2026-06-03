@@ -29,7 +29,10 @@ LP dispatch behavior:
 | **Economic (ECON%)**| Normal dispatch when price clears marginal cost.     | Standard LP dispatch range between `pmin` and the base ceiling. |
 | **Peaking (PEAK%)** | Duct-firing / steep incremental cost.                | A separate `_peak` generator with a heat-rate penalty.          |
 
-Tranche percentages sum to 100% per bin.
+Tranche percentages sum to 100% per bin. For calibration, a plant's
+Economic tranche can be split into Econ-Low / Econ-High to form a
+five-slice rising offer curve via the optional per-plant tranche-config
+sheet — see [Per-plant tranche-config override sheet](#per-plant-tranche-config-override-sheet-5-slice-rising-offer-curve).
 
 ## Plant groups
 
@@ -108,6 +111,54 @@ Emission rates are derived directly from the heat rate:
 Plants whose `Plant_Avg_HR_MMBtu_MWh` is blank in the CSV (a handful of
 tiny unmetered CTs in CT_unassigned) fall back to a per-group default
 heat rate before the tranche multipliers are applied.
+
+## Per-plant tranche-config override sheet (5-slice rising offer curve)
+
+The four-tranche structure above sets each plant's split and band heat
+rates from per-*group* defaults (the `offer_curve_by_group` config and the
+`HR_Mult_<tranche>` columns). For calibration we often need to shape an
+**individual** plant's offer curve without disturbing its class — so a
+plant can be steered to match its own observed CF behaviour while the class
+total stays on target. That is the job of the optional per-plant
+tranche-config sheet (`inputs/plant-tranche-config.csv`, pointed at by
+`ScenarioConfig.plant_tranche_config_path`; **off by default**).
+
+The sheet refines the four tranches into a **five-slice rising offer
+curve** by splitting Economic into a low and a high band, so each plant
+offers progressively pricier blocks as output climbs:
+
+| Slice | Share column | HR-multiplier column |
+|-------|--------------|----------------------|
+| Must-Run  | `Pct_Must_Run`  | `HR_Mult_Must_Run`  (VOM-only bid; fuel sunk) |
+| Committed | `Pct_Committed` | `HR_Mult_Committed` |
+| Econ-Low  | `Pct_Econ_Low`  | `HR_Mult_Econ_Low`  |
+| Econ-High | `Pct_Econ_High` | `HR_Mult_Econ_High` |
+| Peaking   | `Pct_Peaking`   | `HR_Mult_Peaking`   |
+
+The five `Pct_*` are shares of nameplate (sum to 100); the five
+`HR_Mult_*` multiply the plant's base HR for the block priced in that
+slice (e.g. `1.00 → 1.00 → 1.01 → 1.22 → 1.95` for an F-class CHP CC). The
+remaining sheet columns (name, group, config, turbine class, zone) are
+reference-only and ignored by the loader.
+
+`fleet.load_plant_tranche_config()` reads the sheet,
+`_bands_from_shares()` converts the cumulative shares into capacity-factor
+band edges, and `plant_tranche_bands()` builds the per-plant offer curve
+used by both the LP and the dashboard's tranche markers. **When a plant is
+listed in the sheet, its split and band heat rates come straight from the
+sheet, bypassing `offer_curve_by_group` and the per-plant committed/peaking
+dicts**; plants absent from the sheet keep the configured group defaults.
+The sheet is produced and round-tripped by
+`scripts/export_tranche_config.py` and edited via the desktop launcher
+(`tools/launcher.py`).
+
+A related opt-in, `cc_peaking_per_plant` (default `False`), overrides where
+the duct-burner peak band starts on the CF axis for the CC_REGULAR plants
+in `fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT` — moving the expensive peak
+slice earlier (e.g. 15% ⇒ peaking starts at 85% of nameplate) for the four
+F-class(late) 2×1 CCs the model otherwise over-runs in the 80–90% CF band;
+the economic tranche absorbs the difference. Other CC_REGULAR plants keep
+the offer-curve value.
 
 ## Per-plant fuel pricing
 
