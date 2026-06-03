@@ -64,7 +64,7 @@ Economic retirement uses per-fuel thresholds, now `ScenarioConfig` fields (not h
 
 CCS retrofit (§5.6): gas-CC units with ≥15 yr life left retrofit when simple payback beats remaining life; capped at 3 GW/yr/ISO, gated on `ccs_retrofit_available_year`.
 
-Storage grows via economic arbitrage screening (not compound growth); base-year fleet set by `storage_deployment`, all later growth endogenous, capped per ISO.
+Storage grows via an economics-based **value stack** (not compound growth): duration-sized arbitrage windows (net of cycling degradation) **plus** resource-adequacy capacity value, paid only in capacity markets via the per-ISO `MARKET_DESIGN` registry (energy-only ERCOT pays none; PJM/NYISO/ISO-NE/CAISO pay net-CONE × ELCC × saturation derate). ELCC rises with duration → tilts entry toward long-duration at high penetration. Build budget diversifies across techs (`STORAGE_TECH_BUILD_SHARE_CAP`); base-year fleet from `storage_deployment`, all later growth endogenous, capped per ISO. Toggles: `storage_capacity_value`, `storage_degradation`. (Methodology spec §5.5.)
 
 ## Dispatch & Commitment (per year)
 

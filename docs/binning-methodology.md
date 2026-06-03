@@ -141,6 +141,18 @@ slice (e.g. `1.00 → 1.00 → 1.01 → 1.22 → 1.95` for an F-class CHP CC). T
 remaining sheet columns (name, group, config, turbine class, zone) are
 reference-only and ignored by the loader.
 
+**Smooth N-slice rendering.** The five `Pct_*`/`HR_Mult_*` rows are the
+*configuration*; in the LP the economic region is rendered as a smooth
+`N=12`-step rising marginal-cost curve `mult(t) = lo + (pk − lo) × t^p`
+(exponent `p = 3`), so the unit fills gradually as the hourly price crosses
+its rising MC instead of parking at the top of a flat block. The curve's
+reach differs by group:
+- **CC_REGULAR / CC_CHP / COAL** — the peaking band is *folded into* the
+  rising curve (peak is the top of the smooth ramp, `lo → HR_Mult_Peaking`).
+- **CT_PEAKER / ST_GAS** — the curve spans only econ-low → econ-high; the
+  peak band stays a separate flat **scarcity** tranche (its high multiplier
+  is a price-wall floor, not a real ramp endpoint).
+
 `fleet.load_plant_tranche_config()` reads the sheet,
 `_bands_from_shares()` converts the cumulative shares into capacity-factor
 band edges, and `plant_tranche_bands()` builds the per-plant offer curve
