@@ -73,6 +73,12 @@ class ScenarioConfig:
     # against arbitrage margin (penalizes high-cycling short-duration storage).
     storage_capacity_value: bool = True
     storage_degradation: bool = True
+    storage_daily_cycling: bool = False  # When True, each storage unit's SOC
+    # must return to its start-of-day level every 24h, so it cannot bank cheap
+    # energy across days. Bounds the single-LP perfect-foresight advantage to
+    # within-day arbitrage (the realistic limit for short-duration storage; a
+    # day-ahead operator cannot shift across days either). Off = today's
+    # annual-cyclic behaviour. See model-methodology-spec.md (storage).
     nominal_discount_rate: float = 0.08  # Nominal WACC, $/MWh LCOE basis
     retirement_consecutive_years: int = 2  # fallback if no per-fuel override
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year

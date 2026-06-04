@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-04 (storage daily-cycling toggle)
+
+- **Added the `storage_daily_cycling` foresight toggle.** A new LP constraint
+  family (`dispatch._build_storage_daily_cycle_rows`) optionally pins each
+  storage unit's SOC back to its day-start level every 24 h, so storage cannot
+  arbitrage across days — bounding the single-LP perfect-foresight advantage to
+  within-day spreads (the realistic limit for short-duration storage). Off by
+  default (annual-cyclic, unchanged). Exposed as `ScenarioConfig.storage_daily_cycling`
+  and `run_calibration_full.py --storage-daily-cycling`; recorded in each run's
+  `meta.json`/`run_config.json`. Covered by `TestStorageDailyCycling`.
+
 ## 2026-06-03 (storage backcast RTE fix + perfect-foresight docs)
 
 - **Fixed: storage RTE override now reaches the backcast.** `load_eia860_storage`
