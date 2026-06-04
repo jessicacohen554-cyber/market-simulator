@@ -60,7 +60,7 @@ _SINGLE_ZONE: dict[str, str] = {}
 # Upstate-West, its largest-load-share zone (0.365).
 _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
-    "PJM": "PJM_West",
+    "PJM": "PJM_AEP_Ohio",
     "CAISO": "SP15",
     # MISO-Central is the largest-load-share zone (0.46) and holds the
     # lower-Midwest load centers, so unlocated MISO plants land there.
@@ -131,35 +131,46 @@ CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
 )
 
 # PJM model zone by FIPS state code, for the states that fall cleanly inside
-# one zone. Pennsylvania and Maryland straddle zones and are split by
-# longitude/county in ``_pjm_zone`` below, so they are deliberately absent
-# here. West rolls up the AEP/ComEd/APS/DAY/ATSI belt (+ DEOK/DUQ/EKPC); East
-# is the PSEG/JCPL/PECO/BGE/PEPCO Mid-Atlantic pocket (+ DPL/AECO/RECO); South
-# is Dominion (DOM).
+# one of the eight zones. Ohio, Pennsylvania, Maryland and West Virginia
+# straddle zones and are split by latitude/longitude/county in ``_pjm_zone``
+# below, so they are deliberately absent here.
+#   - IL is ComEd; IN/MI/KY are the AEP/Duke/EKPC western coal belt (AEP_Ohio);
+#   - NJ/DE are the EMAAC eastern load pocket; DC is SWMAAC (PEPCO);
+#   - VA/NC are Dominion; TN is the AEP/EKPC edge.
 _PJM_STATE_ZONES: dict[int, str] = {
-    17: "PJM_West",      # IL  (ComEd)
-    18: "PJM_West",      # IN  (AEP)
-    39: "PJM_West",      # OH  (AEP / ATSI / DAY / DEOK / Duke OH)
-    26: "PJM_West",      # MI  (AEP)
-    21: "PJM_West",      # KY  (EKPC / Duke KY / AEP KY)
-    54: "PJM_West",      # WV  (AEP / APS)
-    34: "PJM_East",      # NJ  (PSEG / JCPL / AECO / RECO)
-    10: "PJM_East",      # DE  (DPL)
-    11: "PJM_East",      # DC  (PEPCO)
-    51: "PJM_South",     # VA  (DOM)
-    37: "PJM_South",     # NC  (DOM)
-    47: "PJM_South",     # TN  (edge of EKPC)
+    17: "PJM_ComEd",       # IL  (ComEd)
+    18: "PJM_AEP_Ohio",    # IN  (AEP / Duke / OVEC Clifty Creek)
+    26: "PJM_AEP_Ohio",    # MI  (AEP)
+    21: "PJM_AEP_Ohio",    # KY  (EKPC / Duke KY / AEP KY)
+    34: "PJM_EMAAC",       # NJ  (PSEG / JCPL / AECO / RECO)
+    10: "PJM_EMAAC",       # DE  (DPL)
+    11: "PJM_SWMAAC",      # DC  (PEPCO)
+    51: "PJM_Dominion",    # VA  (DOM)
+    37: "PJM_Dominion",    # NC  (DOM)
+    47: "PJM_AEP_Ohio",    # TN  (AEP / EKPC edge)
 }
 
-# FIPS state codes for the two PJM states that straddle model zones.
+# FIPS state codes for the PJM states that straddle model zones.
 _PENNSYLVANIA_FIPS: int = 42
 _MARYLAND_FIPS: int = 24
+_OHIO_FIPS: int = 39
+_WEST_VIRGINIA_FIPS: int = 54
 
-# Pennsylvania splits three ways. The Philadelphia metro (PECO) is the East
-# load pocket; the rest divides by longitude — SW/NW PA (APS / Penn Power /
-# Duquesne / West Penn, west of ~-78.0) ties West, and the central/north-
-# eastern PPL/METED/PENELEC corridor is Central. The Philadelphia-metro county
-# codes give the precision longitude alone can't, mirroring the Houston rule.
+# Ohio: FirstEnergy's northern-Ohio territory (ATSI — Cleveland / Akron /
+# Toledo / Youngstown) sits above ~lat 40.9; the rest of the state (AEP
+# Columbus, Dayton, Duke/DEOK Cincinnati) is the AEP_Ohio coal belt.
+_PJM_OH_ATSI_LAT: float = 40.9
+
+# West Virginia: the northern half (Mon Power / Potomac Edison — APS:
+# Harrison, Fort Martin, Pleasants) ties West_APS; the southern half (AEP
+# Appalachian Power — Mountaineer, John Amos, Mitchell) is the AEP_Ohio belt.
+_PJM_WV_NORTH_LAT: float = 39.0
+
+# Pennsylvania splits four ways. The Philadelphia metro (PECO) is the EMAAC
+# load pocket; western PA (Duquesne / West Penn / APS, west of ~-79.0) is
+# West_APS; the remaining central/north-eastern PPL/METED/PENELEC corridor is
+# Central_PA. The Philadelphia-metro county codes give the precision longitude
+# alone can't, mirroring the Houston rule.
 PJM_PHILLY_COUNTIES: frozenset[int] = frozenset(
     {
         101,  # Philadelphia
@@ -169,11 +180,11 @@ PJM_PHILLY_COUNTIES: frozenset[int] = frozenset(
         29,   # Chester
     }
 )
-_PJM_PA_WEST_LON: float = -78.0
+_PJM_PA_WEST_LON: float = -79.0
 
 # Maryland: the western panhandle (Garrett / Allegany — APS / Potomac Edison,
-# west of ~-78.5) ties West; the rest of the state (BGE / PEPCO / DPL eastern
-# shore) is the Mid-Atlantic East.
+# west of ~-78.5) ties West_APS; the rest of the state (BGE / PEPCO Baltimore-
+# DC, plus the eastern-shore DPL) is SWMAAC.
 _PJM_MD_WEST_LON: float = -78.5
 
 # MISO model region by FIPS state code. MISO's defining split is the three
@@ -573,26 +584,44 @@ def _pjm_zone(
     fips_state: int | None,
     fips_county: int | None,
 ) -> str:
-    """Return the PJM model zone for a plant location.
+    """Return the PJM model zone (one of eight) for a plant location.
 
-    Most states map cleanly to one zone via ``_PJM_STATE_ZONES``. Pennsylvania
-    and Maryland straddle zones: the Philadelphia metro (PECO counties) is
-    East, western PA/MD ties West by longitude, and the rest of PA is the
-    Central PPL/METED/PENELEC corridor. A plant whose state is unknown (or a PA
-    plant with no longitude to place it west) falls back to the Central PA
-    default; a plant with no usable location at all falls back to the
-    largest-load-share zone (PJM_West).
+    Most states map cleanly via ``_PJM_STATE_ZONES``. Four states straddle
+    zones and split by latitude/longitude/county:
+
+    - **Ohio** — northern OH (FirstEnergy ATSI) above ~lat 40.9 is ``PJM_ATSI``;
+      the rest (AEP/Dayton/Duke) is ``PJM_AEP_Ohio``.
+    - **West Virginia** — northern WV (APS) at/above ~lat 39.0 is
+      ``PJM_West_APS``; southern WV (AEP) is ``PJM_AEP_Ohio``.
+    - **Pennsylvania** — Philadelphia metro (PECO counties) is ``PJM_EMAAC``;
+      western PA (west of ~-79.0) is ``PJM_West_APS``; the rest (PPL/METED/
+      PENELEC) is ``PJM_Central_PA``.
+    - **Maryland** — the western panhandle (west of ~-78.5, APS) is
+      ``PJM_West_APS``; the rest (BGE/PEPCO) is ``PJM_SWMAAC``.
+
+    These lat/lon/county cuts approximate the real utility-territory
+    boundaries (Tier 3 — verify against a PJM zone-county crosswalk). A plant
+    with no usable location falls back to the largest-load-share zone
+    (``PJM_AEP_Ohio``).
     """
+    if fips_state == _OHIO_FIPS:
+        if lat is not None and lat >= _PJM_OH_ATSI_LAT:
+            return "PJM_ATSI"
+        return "PJM_AEP_Ohio"
+    if fips_state == _WEST_VIRGINIA_FIPS:
+        if lat is not None and lat >= _PJM_WV_NORTH_LAT:
+            return "PJM_West_APS"
+        return "PJM_AEP_Ohio"
     if fips_state == _PENNSYLVANIA_FIPS:
         if fips_county in PJM_PHILLY_COUNTIES:
-            return "PJM_East"
+            return "PJM_EMAAC"
         if lon is not None and lon <= _PJM_PA_WEST_LON:
-            return "PJM_West"
-        return "PJM_Central"
+            return "PJM_West_APS"
+        return "PJM_Central_PA"
     if fips_state == _MARYLAND_FIPS:
         if lon is not None and lon <= _PJM_MD_WEST_LON:
-            return "PJM_West"
-        return "PJM_East"
+            return "PJM_West_APS"
+        return "PJM_SWMAAC"
     return _PJM_STATE_ZONES.get(fips_state, _LARGEST_ZONE["PJM"])
 
 
