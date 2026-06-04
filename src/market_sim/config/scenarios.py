@@ -467,6 +467,30 @@ class ScenarioConfig:
     # coal is affected; gas keeps its plant-specific monthly cost regardless.
     coal_plant_monthly_pricing: bool = True
 
+    # Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True, a
+    # gas/coal/oil generator with no EIA-923 delivered cost of its own for a
+    # month is priced at the quantity-weighted average of the *other* plants
+    # that did report — its own state first (when at least
+    # ``nearby_fuel_price_min_state_plants`` plants reported there), else its
+    # model zone — before dropping to the Henry Hub / coal / oil trajectory.
+    # Off by default so ERCOT (whose plants overwhelmingly report) is
+    # unchanged; backcasts of merchant-heavy ISOs like PJM, where many plants
+    # file no Schedule-5 cost, switch it on. See
+    # market_sim.data.fuel.apply_plant_monthly_fuel_prices.
+    nearby_fuel_price_fallback: bool = False
+    nearby_fuel_price_min_state_plants: int = 2  # state-mean sample floor;
+    #   below it the broader model-zone mean is used instead.
+
+    # Tier 3 (calibration) — keep the non-ERCOT fleet at full per-plant
+    # granularity (no efficiency-bin aggregation) so each generator retains
+    # its EIA plant code, plant group and state. Required for the per-plant
+    # EIA-923 fuel cost and the historic CAMPD outage overlay to bind to real
+    # plants; without it the fleet collapses to ~100 representative bins with
+    # no plant identity. Off by default (forward runs keep the aggregated,
+    # faster fleet); the calibration harness turns it on for non-ERCOT ISOs.
+    # ERCOT is unaffected — it builds its fleet from CAMPD bins, not this path.
+    plant_level_fleet: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -663,6 +687,9 @@ TIER_TAGS: dict[str, int] = {
     "chp_btm_floor_pct": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
+    "nearby_fuel_price_fallback": 3,
+    "nearby_fuel_price_min_state_plants": 3,
+    "plant_level_fleet": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }
