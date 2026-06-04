@@ -398,6 +398,19 @@ def build_constraints(
       trajectory is a closed cycle and hour ``0``'s charge/discharge are
       bound by the same dynamics as every other hour.
 
+      **Perfect-foresight assumption.** Because the whole horizon (``T`` =
+      8760 in a backcast) is solved as a single LP, storage is co-optimized
+      against the entire year's prices at once -- it charges in the
+      globally-cheapest hours and discharges in the globally-dearest hours
+      the energy cap allows. A real operator has only ~day-ahead foresight,
+      so this is an upper bound on realized arbitrage and systematically
+      over-flattens net load. The per-unit ``SOC <= energy_cap`` bound keeps
+      the distortion small for short-duration storage (a 4-hour battery
+      cannot shift across days or seasons), so it is left in for now; it
+      grows with long-duration storage. Standard mitigations are noted in
+      ``model-methodology-spec.md`` (rolling-horizon dispatch, daily SOC
+      cycling caps, or a price-taker arbitrage pass).
+
     A third, optional family adds one **RPS** inequality row when
     ``rps_target`` is set: total annual wind, solar and nuclear generation
     must reach ``rps_target`` times total annual demand. Its dual is the
