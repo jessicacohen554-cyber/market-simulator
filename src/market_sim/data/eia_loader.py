@@ -32,6 +32,14 @@ _PJM_ZONAL_LOAD_DIR: Path = (
     Path(__file__).parents[3] / "inputs" / "raw-data" / "zone-specific-demand"
 )
 
+# PJM's hourly actual tie-line interchange (import/export) lives here, one file
+# per year. Used to add PJM's net export to the demand the internal fleet must
+# serve, closing the energy-only model's largest structural gap (PJM is a large
+# net exporter, ~40 TWh in 2023).
+_PJM_INTERCHANGE_DIR: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "iso-specific-transmission"
+)
+
 # Real PJM transmission zone -> model zone (the eight-zone aggregation in
 # iso_configs._pjm_config). ``RTO`` is the system total and is dropped.
 _PJM_LOAD_ZONE_GROUPS: dict[str, str] = {
@@ -414,6 +422,55 @@ def pjm_zonal_load_shares(
     return mw / col_tot[None, :]
 
 
+def pjm_net_interchange(year: int) -> np.ndarray | None:
+    """Return PJM's hourly net export (MW, export-positive), or ``None``.
+
+    Reads PJM's actual tie-line interchange file for ``year``, sums
+    ``actual_flow`` across all 22 ties each hour, and flips the sign so a net
+    **export** is positive — the convention :func:`load_demand` expects for an
+    interchange schedule (a net export raises the generation the internal fleet
+    must serve; a net import lowers it). This is PJM's import/export "node",
+    modeled as the *measured* schedule rather than a price-responsive offer,
+    so a backcast reproduces the ~40 TWh (2023) the fleet actually exported
+    instead of serving internal load alone.
+
+    Returns ``None`` when the file is absent (e.g. forward years), so PJM falls
+    back to zero interchange. The series is placed on the model's fixed non-leap
+    8760-hour clock (Feb 29 dropped); the lone DST gap is back-filled.
+    """
+    path = (
+        _PJM_INTERCHANGE_DIR
+        / f"PJM_{year}_import_export_act_sch_interchange.csv"
+    )
+    if not path.exists():
+        return None
+    df = pd.read_csv(
+        path, usecols=["datetime_beginning_ept", "actual_flow"]
+    )
+    ts = pd.to_datetime(
+        df["datetime_beginning_ept"], format="mixed", errors="coerce"
+    )
+    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
+    # Sum actual flow across ties per hour-of-year; negate to export-positive.
+    net = np.zeros(HOURS_PER_YEAR, dtype=float)
+    counted = np.zeros(HOURS_PER_YEAR, dtype=bool)
+    flow = df["actual_flow"].to_numpy(dtype=float)
+    valid = (hoy >= 0) & (hoy < HOURS_PER_YEAR) & ~np.isnan(flow)
+    np.add.at(net, hoy[valid], flow[valid])
+    counted[hoy[valid]] = True
+    export = -net
+    # Back-fill any hour with no rows (the DST gap) from the previous hour.
+    for h in np.nonzero(~counted)[0]:
+        export[h] = export[h - 1] if h > 0 else 0.0
+    return export
+
+
 def load_demand(
     iso: str,
     year: int,
@@ -435,8 +492,11 @@ def load_demand(
 
     For ERCOT, demand and DC-tie interchange are read together from the
     EIA-930 ``ERCO hourly`` extract: a net import lowers what the internal
-    fleet must serve, a net export raises it. Other ISOs use the per-ISO
-    demand-profiles parquet, which carries no interchange.
+    fleet must serve, a net export raises it. For PJM, the internal-load
+    demand-profiles series is combined with the measured tie-line net export
+    from :func:`pjm_net_interchange` (PJM's import/export node), so the fleet
+    generates internal load *plus* the ~40 TWh PJM actually exported. Other
+    ISOs use the demand-profiles parquet alone, with no interchange.
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
@@ -475,6 +535,20 @@ def load_demand(
 
     assert not np.isnan(raw_mw).any(), f"NaN demand for {iso} {year}"
     assert raw_mw.max() > 0.0, f"Non-positive peak demand for {iso} {year}"
+
+    # PJM's import/export "node": add its measured net export to the demand the
+    # internal fleet must serve (the demand-profiles ``raw_mw`` is internal
+    # load; PJM is a large net exporter, so without this the fleet under-
+    # generates by the export and mis-attributes the missing gas to coal). The
+    # ERCOT path already carries interchange from its EIA-930 extract.
+    if iso == "PJM":
+        pjm_ix = pjm_net_interchange(year)
+        if pjm_ix is not None:
+            interchange = pjm_ix
+            logger.info(
+                "PJM net interchange applied for %d: %+.0f MW avg "
+                "(export-positive)", year, float(pjm_ix.mean()),
+            )
 
     # PJM allocates demand by each zone's own measured hourly shape (from the
     # PJM metered-load file) when available, so zones peak at different times;
