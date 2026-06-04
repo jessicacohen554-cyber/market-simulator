@@ -518,5 +518,105 @@ class TestStorageArbitrageDispatch(unittest.TestCase):
         self.assertLess(self.discharge.sum(), self.charge.sum())
 
 
+class TestStorageDailyCycling(unittest.TestCase):
+    """The daily SOC-cycling cap bounds storage to within-day arbitrage.
+
+    Two days (T=48): day 0 is uniformly cheap and day 1 uniformly expensive,
+    so an unconstrained battery wants to bank energy across the day boundary.
+    The cap forces each day to be energy-neutral, killing that cross-day play.
+    """
+
+    T = 48
+    RTE = 0.81
+
+    def _solve(self, cycle_hours):
+        eta = self.RTE**0.5
+        # gen0 is a small cheap baseload (pmax 200, MC 20); gen1 (pmax 400) is
+        # always on the margin since flat demand 350 > 200. gen1's MC is low on
+        # day 0 (25) and high on day 1 (80), so the spread is *across* days,
+        # not within them. Storage (100 MW) never zeroes gen1, so gen1 stays
+        # marginal through charge/discharge.
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=400.0)
+        fleet.pmax[0] = 200.0
+        mc = np.vstack([np.full(self.T, 20.0), np.empty(self.T)])
+        mc[1, :24] = 25.0
+        mc[1, 24:] = 80.0
+        demand = np.full((1, self.T), 350.0)
+        units = [
+            StorageUnit(
+                unit_id="B0", zone="Z0", tech_name="li_ion_4hr",
+                power_cap_mw=100.0, energy_cap_mwh=400.0,
+                eta_charge=eta, eta_discharge=eta, zone_idx=0,
+            )
+        ]
+        arrays = storage_units_to_arrays(units, ["Z0"])
+        return solve_dispatch(
+            fleet, demand,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
+            mc=mc, T=self.T,
+            storage_power_cap=arrays.power_cap,
+            storage_energy_cap=arrays.energy_cap,
+            storage_zone_idx=arrays.zone_idx,
+            eta_chg=arrays.eta_chg, eta_dis=arrays.eta_dis,
+            storage_daily_cycle_hours=cycle_hours,
+        )
+
+    def test_unconstrained_banks_energy_across_days(self):
+        # With no daily cap, the battery charges on the cheap day and the SOC
+        # at the day boundary is well above its hour-0 level: cross-day banking.
+        r = self._solve(None)
+        soc = r.storage_soc[0]
+        self.assertGreater(soc[24] - soc[0], 50.0)
+        # It charges far more on day 0 than day 1 (banking for the dear day).
+        self.assertGreater(r.storage_charge[0][:24].sum(),
+                           r.storage_charge[0][24:].sum() + 50.0)
+
+    def test_daily_cap_makes_each_day_energy_neutral(self):
+        # With the 24h cap, the day-start SOC is pinned, so the boundary SOC
+        # returns to the hour-0 level: no energy crosses midnight.
+        r = self._solve(24)
+        soc = r.storage_soc[0]
+        self.assertAlmostEqual(soc[24], soc[0], places=3)
+
+    def test_daily_cap_still_allows_within_day_arbitrage(self):
+        # The cap bounds cross-day shifting, not in-day cycling: with an
+        # in-day price spread the battery still charges and discharges.
+        eta = self.RTE**0.5
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=300.0)
+        mc = np.vstack([np.full(self.T, 20.0), np.empty(self.T)])
+        # Each day: cheap first half, dear second half.
+        for d in range(2):
+            mc[1, d * 24: d * 24 + 12] = 20.0
+            mc[1, d * 24 + 12: d * 24 + 24] = 80.0
+        demand = np.empty((1, self.T))
+        for d in range(2):
+            demand[0, d * 24: d * 24 + 12] = 200.0
+            demand[0, d * 24 + 12: d * 24 + 24] = 400.0
+        units = [
+            StorageUnit(
+                unit_id="B0", zone="Z0", tech_name="li_ion_4hr",
+                power_cap_mw=100.0, energy_cap_mwh=400.0,
+                eta_charge=eta, eta_discharge=eta, zone_idx=0,
+            )
+        ]
+        arrays = storage_units_to_arrays(units, ["Z0"])
+        r = solve_dispatch(
+            fleet, demand,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
+            mc=mc, T=self.T,
+            storage_power_cap=arrays.power_cap,
+            storage_energy_cap=arrays.energy_cap,
+            storage_zone_idx=arrays.zone_idx,
+            eta_chg=arrays.eta_chg, eta_dis=arrays.eta_dis,
+            storage_daily_cycle_hours=24,
+        )
+        self.assertGreater(r.storage_discharge[0].sum(), 0.0)
+        # Each day energy-neutral despite active cycling.
+        soc = r.storage_soc[0]
+        self.assertAlmostEqual(soc[24], soc[0], places=3)
+
+
 if __name__ == "__main__":
     unittest.main()
