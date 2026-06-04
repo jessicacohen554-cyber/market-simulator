@@ -244,11 +244,24 @@ def outage_masks_for_year(
     }
 
 
-# Unit-level outage derate (inputs/tx-jan-aug23-unit-outages.csv, Jan-Aug 2023).
-# Each unit outage of at least this many days derates its model bin's
-# availability by the unit's share of that bin's capacity over the window.
+# Unit-level outage derate. Each unit outage of at least this many days
+# derates its model bin's availability by the unit's share of that bin's
+# capacity over the window.
+#
+# Default source is the CAMPD-derived unit-outage extract
+# (scripts/derive_campd_unit_outages.py): outages detected on each *unit's*
+# own CAMPD gross output for the full year, both 2023 and 2024. This replaces
+# the hand-maintained inputs/tx-jan-aug23-unit-outages.csv (kept in the repo
+# for reference), which covered only Jan-Aug 2023. The unit-level layer's
+# unique job is to catch single-unit outages the facility-summed overlay
+# hides: a coal-unit outage at a mixed coal/gas facility (W A Parish 5-8), or
+# one unit out at a multi-unit baseload plant. The derivation flags coal
+# (baseload) units when their output gaps below ~5% CF, and load-following
+# CC/gas-steam units only when they go genuinely dead (event-based), so an
+# economically idle CC turbine is not mistaken for an outage. Rows carry full
+# (year, start, end) windows; outage_hour_mask clips each to the run year.
 UNIT_OUTAGE_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "tx-jan-aug23-unit-outages.csv"
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-unit-outages.csv"
 )
 UNIT_OUTAGE_MIN_DAYS: int = 5
 # W A Parish (3470) coal units; the rest of its units are gas steam, modeled
@@ -287,12 +300,17 @@ def unit_outage_derate_factors(
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
-    Built from the unit-level outage extract: every unit outage of at least
-    :data:`UNIT_OUTAGE_MIN_DAYS` days derates its model bin's availability by
+    Built from the unit-level outage extract (:data:`UNIT_OUTAGE_CSV`, the
+    CAMPD-derived ``campd-unit-outages.csv`` covering full 2023 and 2024):
+    every unit outage of at least :data:`UNIT_OUTAGE_MIN_DAYS` days whose
+    window overlaps ``year`` derates its model bin's availability by
     ``unit_capacity_mw / bin_capacity_mw`` over the outage window (concurrent
-    units sum, clipped at full derate). Combustion turbines are excluded and
-    rows without a matching model bin or capacity are skipped. Years the file
-    does not cover get an empty dict (every window misses the clock).
+    units sum, clipped at full derate). Each row's ``(outage_start,
+    outage_end)`` is clipped to ``year`` on the model clock, so a single
+    multi-year file feeds every backcast year. Combustion turbines are
+    excluded and rows without a matching model bin or capacity are skipped.
+    Years the file does not cover get an empty dict (every window misses the
+    clock).
     """
     if not UNIT_OUTAGE_CSV.exists():
         return {}
