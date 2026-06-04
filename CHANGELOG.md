@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-04 (Unit-level ERCOT outage backcast from CAMPD)
+
+Replaces the hand-maintained, Jan–Aug-2023-only unit-outage extract with a
+CAMPD-derived one covering **full 2023 and 2024**, so the ERCOT backcast's
+unit-level derate layer now removes each generating unit's capacity during its
+*own* observed outages — including the coal-unit outages the facility-summed
+overlay structurally cannot see. ERCOT-only; no other ISO has unit-level CAMPD
+extracts, so their plant codes never match and behaviour is unchanged.
+
+- **`scripts/derive_campd_unit_outages.py` (new).** Detects an outage on each
+  *unit's* own CAMPD hourly gross (`inputs/raw-data/campd-unit-level/
+  {STATE}_{YEAR}.parquet`) and writes `inputs/raw-data/campd-unit-outages.csv`
+  in the schema `unit_outage_derate_factors` consumes. Each unit's capacity is
+  the EIA-860 generator nameplate (matched on plant code + normalised unit id —
+  CAMPD `WAP5`↔EIA `5`, CAMPD `1`↔EIA `OG1`), falling back to the unit's
+  observed CAMPD peak when no generator matches. The detector is chosen by the
+  unit's own fuel: **coal** (baseload) uses the averaged real-run rule, so a
+  sustained sub-5%-CF gap is an outage; **CC / gas-steam** (load-following) use
+  the event-based rule (any hour above ~2% CF breaks the window), so a unit is
+  flagged only when it goes genuinely dead and an economically idle CC turbine
+  is *not* mistaken for an outage. CT peakers and the ST_GAS peaker plants are
+  excluded, matching the overlay's convention.
+- **`data/outages.py`.** `UNIT_OUTAGE_CSV` now points at
+  `campd-unit-outages.csv`; the per-row `(outage_start, outage_end)` windows
+  carry the calendar year and are clipped to the run year, so one file feeds
+  every backcast year (2024 previously had *no* unit-level coverage). The
+  hand-curated `inputs/tx-jan-aug23-unit-outages.csv` stays in the repo for
+  reference (and is still read by `scripts/derive_cc_committed_pct.py`) but is
+  no longer the model's source.
+- **W A Parish coal units now resolve.** The facility-summed overlay misses a
+  WAP coal-unit outage because the gas units keep the CEMS series running; the
+  unit layer detects WAP5–8 directly (e.g. WAP8 offline Jan–Aug 2023, matching
+  the old hand entry, plus the previously uncovered 2024 windows).
+- **Backcast effect (apples-to-apples, untuned `run_calibration.py`,
+  unit-outage source the only change).** Coal and gas-steam move toward
+  EIA-923 in both years: 2023 coal −13.7%→−11.9% and gas-steam +27.7%→+18.0%;
+  2024 coal −24.4%→−22.2% and gas-steam +29.0%→+9.6%. Total energy balance and
+  the full test suite are unchanged.
+
 ## 2026-06-04 (PJM backcast: per-plant fuel costs, CAMPD outages, capacity payments)
 
 Makes the PJM 2023/2024 backcast bind to real per-plant data instead of the
