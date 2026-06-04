@@ -42,6 +42,7 @@ from market_sim.data.eia923 import (
     available_years,
     load_monthly_fuel_costs,
     plant_month_price_grid,
+    state_month_price_grid,
 )
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.data.hydrogen import compute_h2_fuel_cost
@@ -218,6 +219,10 @@ _F923_FUEL_GROUP_BY_FUEL: dict[str, str] = {
     "gas_cc_ccs": "Natural Gas",
     "gas_st": "Natural Gas",
     "coal": "Coal",
+    # Oil-fired steam/peakers pay their own EIA-923 delivered distillate /
+    # residual cost where reported; plants outside the F923 sample keep the
+    # flat OIL_PRICE_PER_MMBTU default (or the nearby-plant fallback).
+    "oil": "Petroleum",
 }
 
 
@@ -354,7 +359,7 @@ def apply_plant_monthly_fuel_prices(
 ) -> None:
     """Overwrite per-generator fuel prices with F923 monthly plant costs.
 
-    For each gas / coal generator whose ``plant_code`` matches a
+    For each gas / coal / oil generator whose ``plant_code`` matches a
     plant-month in the EIA-923 monthly cost table for ``year``, the
     generator's hourly fuel price is set to the plant's measured
     monthly delivered cost (broadcast to hours by the calendar month
@@ -363,20 +368,30 @@ def apply_plant_monthly_fuel_prices(
     suppressed keeps the COAL_PRICE_BASE trajectory for January and the
     F923 measured cost for the other 11 months.
 
+    **Nearby-plant fallback.** When ``config.nearby_fuel_price_fallback``
+    is set, a month with no reported cost for the plant is filled — before
+    the per-fuel trajectory default — from the quantity-weighted average of
+    the *other* generators that did report: the plant's own state first
+    (when at least ``config.nearby_fuel_price_min_state_plants`` plants
+    reported in that state-month), otherwise the plant's model zone. The
+    averages are restricted to the current ISO's fleet, so a PJM backcast
+    never inherits an ERCOT or MISO delivered cost. This is off by default,
+    so ERCOT — whose plants overwhelmingly report — is unchanged.
+
     A missing parquet (forward years or untracked ISO) is a no-op: every
     generator keeps the per-fuel default. The same is true for plants
-    outside the F923 sample (small CHP, peaker fleets that don't report
-    fuel receipts), per the project's "forward = plant-class/zone
-    average" requirement.
+    outside the F923 sample when the fallback is off, per the project's
+    "forward = plant-class/zone average" requirement.
 
     Mutates ``fuel_prices`` in place.
 
     Args:
         fuel_prices: The ``(n_gen, T)`` per-fuel default fuel-price array,
             updated in place with plant-specific monthly prices.
-        fleet: Vectorized fleet attributes carrying ``plant_code`` and
-            ``fuel_type_idx``.
-        config: Scenario configuration; only ``hours`` is consulted.
+        fleet: Vectorized fleet attributes carrying ``plant_code``,
+            ``fuel_type_idx`` and (for the fallback) ``state`` / ``zone_idx``.
+        config: Scenario configuration supplying ``hours``,
+            ``coal_plant_monthly_pricing`` and the nearby-fallback knobs.
         year: Calendar year keying the F923 monthly lookup.
         monthly_costs_path: Optional override for the F923 parquet path.
     """
@@ -388,44 +403,146 @@ def apply_plant_monthly_fuel_prices(
 
     T = config.hours
     month_idx = _month_index(T)
+    use_nearby = bool(getattr(config, "nearby_fuel_price_fallback", False))
+    nearby = _NearbyFuelPrices(costs, year, fleet, config) if use_nearby else None
+    states = fleet.state
+
     grids: dict[str, dict[int, np.ndarray]] = {}
     n_overwrites = 0
+    n_nearby = 0
     for g in range(fleet.n_gen):
-        plant_code = int(fleet.plant_code[g])
-        if plant_code <= 0:
-            continue
         fuel_name = _fuel_name(fleet.fuel_type_idx[g])
+        fuel_group = _F923_FUEL_GROUP_BY_FUEL.get(fuel_name)
+        if fuel_group is None:
+            continue
         # Coal monthly pricing can be switched off (config) to hold all coal
-        # on the flat annual lignite/PRB average; gas always keeps monthly.
+        # on the flat annual lignite/PRB average; gas/oil always keep monthly.
         if fuel_name == "coal" and not getattr(
             config, "coal_plant_monthly_pricing", True
         ):
-            continue
-        fuel_group = _F923_FUEL_GROUP_BY_FUEL.get(fuel_name)
-        if fuel_group is None:
             continue
         grid = grids.get(fuel_group)
         if grid is None:
             grid = plant_month_price_grid(costs, year, fuel_group)
             grids[fuel_group] = grid
-        prices = grid.get(plant_code)
-        if prices is None:
-            continue
-        # Only overwrite months with a reported price; suppressed months
-        # keep the per-fuel default already in ``fuel_prices``.
-        reported = ~np.isnan(prices)
-        if not reported.any():
-            continue
-        for m in np.nonzero(reported)[0]:
-            mask = month_idx == m
-            if mask.any():
-                fuel_prices[g, mask] = prices[m]
-        n_overwrites += 1
-    if n_overwrites > 0:
+
+        plant_code = int(fleet.plant_code[g])
+        own = grid.get(plant_code) if plant_code > 0 else None
+        reported = ~np.isnan(own) if own is not None else np.zeros(12, dtype=bool)
+
+        # 1) The plant's own measured months win outright.
+        if own is not None and reported.any():
+            for m in np.nonzero(reported)[0]:
+                mask = month_idx == m
+                if mask.any():
+                    fuel_prices[g, mask] = own[m]
+            n_overwrites += 1
+
+        # 2) Nearby-plant fallback fills the still-unreported months.
+        if nearby is not None and not reported.all():
+            st = str(states[g]) if states is not None else ""
+            fill = nearby.month_prices(fuel_group, st, int(fleet.zone_idx[g]))
+            applied = False
+            for m in np.nonzero(~reported)[0]:
+                v = fill[m]
+                if np.isnan(v):
+                    continue
+                mask = month_idx == m
+                if mask.any():
+                    fuel_prices[g, mask] = v
+                    applied = True
+            if applied:
+                n_nearby += 1
+
+    if n_overwrites or n_nearby:
         logger.info(
-            "F923 monthly fuel costs applied to %d of %d generators for %d",
-            n_overwrites, fleet.n_gen, year,
+            "F923 fuel costs for %d: %d generators priced from their own "
+            "plant, %d gap-filled from nearby (state/zone) plants",
+            year, n_overwrites, n_nearby,
         )
+
+
+class _NearbyFuelPrices:
+    """ISO-restricted state/zone "nearby plant" fuel-cost fallback grids.
+
+    Lazily builds, per EIA-923 ``fuel_group``, the quantity-weighted monthly
+    delivered cost of the current ISO's reporting plants aggregated two ways:
+    by USPS state (with a reporter count) and by model zone index. A plant
+    missing its own cost in a month is filled from its state mean when the
+    state cleared the sample floor, otherwise from its zone mean. Both are
+    drawn only from the ISO's own fleet, so no cross-ISO price leaks in.
+    """
+
+    def __init__(
+        self,
+        costs: pd.DataFrame,
+        year: int,
+        fleet: FleetArrays,
+        config: ScenarioConfig,
+    ) -> None:
+        self._year = year
+        self._min_state = int(
+            getattr(config, "nearby_fuel_price_min_state_plants", 2)
+        )
+        iso_plants = {int(p) for p in fleet.plant_code if int(p) > 0}
+        self._plant_to_zone = {
+            int(p): int(z)
+            for p, z in zip(fleet.plant_code, fleet.zone_idx)
+            if int(p) > 0
+        }
+        self._iso_costs = costs[
+            (costs["year"] == year) & (costs["plant_id"].isin(iso_plants))
+        ]
+        # Per fuel group: (state_price, state_count, zone_price) grids.
+        self._cache: dict[str, tuple[dict, dict, dict]] = {}
+
+    def _grids(self, fuel_group: str) -> tuple[dict, dict, dict]:
+        cached = self._cache.get(fuel_group)
+        if cached is not None:
+            return cached
+        sub = self._iso_costs[self._iso_costs["fuel_group"] == fuel_group]
+        state_price, state_count = state_month_price_grid(
+            sub, self._year, fuel_group
+        )
+        zone_price: dict[int, np.ndarray] = {}
+        if not sub.empty:
+            z = sub.assign(
+                zone=sub["plant_id"].map(self._plant_to_zone),
+                weighted=sub["price_per_mmbtu"] * sub["quantity"],
+            ).dropna(subset=["zone"])
+            for zone, grp in z.groupby("zone", sort=False):
+                wsum = np.zeros(12, dtype=float)
+                qsum = np.zeros(12, dtype=float)
+                for _, row in grp.iterrows():
+                    m = int(row["month"]) - 1
+                    if 0 <= m < 12:
+                        wsum[m] += float(row["weighted"])
+                        qsum[m] += float(row["quantity"])
+                with np.errstate(invalid="ignore", divide="ignore"):
+                    zone_price[int(zone)] = np.where(
+                        qsum > 0.0, wsum / qsum, np.nan
+                    )
+        result = (state_price, state_count, zone_price)
+        self._cache[fuel_group] = result
+        return result
+
+    def month_prices(
+        self, fuel_group: str, state: str, zone_idx: int
+    ) -> np.ndarray:
+        """Return a length-12 fill price array (NaN where no nearby data)."""
+        state_price, state_count, zone_price = self._grids(fuel_group)
+        out = np.full(12, np.nan, dtype=float)
+        sp = state_price.get(state)
+        if sp is not None:
+            sc = state_count.get(state)
+            ok = (sc >= self._min_state) & ~np.isnan(sp) if sc is not None \
+                else ~np.isnan(sp)
+            out[ok] = sp[ok]
+        zp = zone_price.get(int(zone_idx))
+        if zp is not None:
+            need = np.isnan(out) & ~np.isnan(zp)
+            out[need] = zp[need]
+        return out
 
 
 def _fuel_name(fuel_idx: int) -> str:
