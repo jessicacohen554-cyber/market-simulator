@@ -34,6 +34,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
+    default_outages_path,
     outage_masks_for_year,
     partial_outage_derate_factors,
     unit_outage_derate_factors,
@@ -151,6 +152,10 @@ class Generator(BaseModel):
     plant_code: int = 0             # EIA plant code, when the tranche maps
     #                                 to a single physical plant; drives the
     #                                 F923 monthly fuel-cost lookup.
+    state: str = ""                 # USPS state code (EIA-860). Drives the
+    #                                 fuel-cost resolver's state-level
+    #                                 "nearby plant" fallback; "" for fleets
+    #                                 (e.g. ERCOT bins) that do not set it.
     chp_grid_pmin_mw: float = 0.0   # grid-delivered steam-following floor (MW)
     #                                 forced on flat via FleetArrays.min_gen for
     #                                 CC_CHP cogens (config.chp_steam_following).
@@ -187,6 +192,12 @@ class FleetArrays:
     # dispatch LP — used for the seasonal ST_GAS reliability must-run. ``None``
     # falls back to ``pmin`` broadcast across all hours.
     min_gen: np.ndarray | None = None
+
+    # Optional ``(n_gen,)`` object array of USPS state codes per generator,
+    # for the fuel-cost resolver's state-level "nearby plant" fallback.
+    # ``None`` (or empty strings) disables the state tier, leaving the zonal
+    # fallback and per-fuel trajectory.
+    state: np.ndarray | None = None
 
     @property
     def n_gen(self) -> int:
@@ -455,11 +466,21 @@ def generators_to_fleet_arrays(
     if config is not None and getattr(
         config, "outage_source", "statistical"
     ) == "historic":
+        # ERCOT reads the legacy campd-outages.csv intersected with its bin
+        # CSV; every other ISO reads its own campd-outages-{ISO}.csv (already
+        # coal/CC only, so no bin intersection). The per-bin gen.plant_group
+        # filter below still restricts zeroing to coal/CC tranches.
+        is_ercot = _iso == "ERCOT" or _iso is None
         masks = outage_masks_for_year(
             config.weather_year,
             hours,
-            bins_path=getattr(
-                config, "campd_bins_path", "inputs/custom-bin-assignments.csv"
+            outages_path=default_outages_path(_iso),
+            bins_path=(
+                getattr(
+                    config, "campd_bins_path",
+                    "inputs/custom-bin-assignments.csv",
+                )
+                if is_ercot else None
             ),
         )
         if masks:
@@ -473,45 +494,51 @@ def generators_to_fleet_arrays(
                 availability[g_idx, mask] = 0.0
                 applied += 1
             logger.info(
-                "historic outage overlay (%d): zeroed %d coal/CC bin-tranches "
-                "across %d plant(s)",
-                config.weather_year, applied, len(masks),
+                "historic outage overlay (%s %d): zeroed %d coal/CC "
+                "bin-tranches across %d plant(s)",
+                _iso or "ERCOT", config.weather_year, applied, len(masks),
             )
-        # Unit-level outage derate (backcast): partial availability cut per
-        # unit outage >= 5 days, sized by the unit's share of its model bin
-        # capacity (CTs excluded; split plants routed to the right asset
-        # class). Multiplies the availability already set above.
-        ufac = unit_outage_derate_factors(
-            config.weather_year, hours,
-            getattr(config, "campd_bins_path",
-                    "inputs/custom-bin-assignments.csv"),
-        )
-        if ufac:
-            applied_u = 0
-            for g_idx, gen in enumerate(generators):
-                f = ufac.get((int(gen.plant_code), gen.plant_group))
-                if f is not None:
-                    availability[g_idx, :] *= f
-                    applied_u += 1
-            logger.info(
-                "unit-outage derate (%d): %d bin-tranches derated",
-                config.weather_year, applied_u,
+        # The unit-level and partial-outage derates below are ERCOT-only
+        # extracts (the Texas unit-outage CSV and CAMPD CF-ceiling plateaus,
+        # both keyed to ERCOT plant codes); other ISOs carry no such files and
+        # their plant codes never match, so the blocks are scoped to ERCOT.
+        if is_ercot:
+            # Unit-level outage derate (backcast): partial availability cut per
+            # unit outage >= 5 days, sized by the unit's share of its model bin
+            # capacity (CTs excluded; split plants routed to the right asset
+            # class). Multiplies the availability already set above.
+            ufac = unit_outage_derate_factors(
+                config.weather_year, hours,
+                getattr(config, "campd_bins_path",
+                        "inputs/custom-bin-assignments.csv"),
             )
-        # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
-        # half-units-out events for baseload coal + a confirmed CC allowlist
-        # where no unit data exists. Multiplies availability over the window.
-        pfac = partial_outage_derate_factors(config.weather_year, hours)
-        if pfac:
-            applied_p = 0
-            for g_idx, gen in enumerate(generators):
-                f = pfac.get(int(gen.plant_code))
-                if f is not None:
-                    availability[g_idx, :] *= f
-                    applied_p += 1
-            logger.info(
-                "partial-outage derate (%d): %d bin-tranches derated",
-                config.weather_year, applied_p,
-            )
+            if ufac:
+                applied_u = 0
+                for g_idx, gen in enumerate(generators):
+                    f = ufac.get((int(gen.plant_code), gen.plant_group))
+                    if f is not None:
+                        availability[g_idx, :] *= f
+                        applied_u += 1
+                logger.info(
+                    "unit-outage derate (%d): %d bin-tranches derated",
+                    config.weather_year, applied_u,
+                )
+            # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
+            # half-units-out events for baseload coal + a confirmed CC
+            # allowlist where no unit data exists. Multiplies availability
+            # over the window.
+            pfac = partial_outage_derate_factors(config.weather_year, hours)
+            if pfac:
+                applied_p = 0
+                for g_idx, gen in enumerate(generators):
+                    f = pfac.get(int(gen.plant_code))
+                    if f is not None:
+                        availability[g_idx, :] *= f
+                        applied_p += 1
+                logger.info(
+                    "partial-outage derate (%d): %d bin-tranches derated",
+                    config.weather_year, applied_p,
+                )
 
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
     # bound on the legacy gas-steam fleet in the summer months, modeling units
@@ -571,6 +598,7 @@ def generators_to_fleet_arrays(
         plant_code=np.array(
             [int(g.plant_code) for g in generators], dtype=int
         ),
+        state=np.array([g.state for g in generators], dtype=object),
         min_gen=min_gen,
     )
 
@@ -906,6 +934,9 @@ def split_coal_tranches(
                     online_year=gen.online_year,
                     retirement_year=gen.retirement_year,
                     plant_code=gen.plant_code,
+                    plant_group=gen.plant_group,
+                    state=gen.state,
+                    coal_supply=gen.coal_supply,
                 )
             )
             fuel_fracs.append(fuel_frac)
@@ -1108,6 +1139,22 @@ def _to_year(value: object) -> int | None:
     text = str(value).strip()
     match = re.search(r"(?:19|20)\d{2}", text)
     return int(match.group(0)) if match else None
+
+
+# Model fuel type -> historic-outage plant group, for EIA-860 fleets (every
+# non-ERCOT ISO). Mirrors the coal/CC/gas-steam classes the overlay's
+# QUALIFYING_PLANT_GROUPS filters on; gas CTs map to CT_PEAKER, which the
+# overlay deliberately excludes (peakers run economically, not on a
+# sustained-outage schedule), and oil/biomass/nuclear carry no group so they
+# keep the statistical availability model. ERCOT is unaffected: its fleet
+# comes from bins_to_fleet, which sets plant_group directly.
+_EIA860_PLANT_GROUP_BY_FUEL: dict[str, str] = {
+    "coal": "COAL",
+    "gas_cc": "CC_REGULAR",
+    "gas_cc_ccs": "CC_REGULAR",
+    "gas_ct": "CT_PEAKER",
+    "gas_st": "ST_GAS",
+}
 
 
 def _map_fuel_type(
@@ -1347,12 +1394,24 @@ def _rows_to_generators(
         generator_id = data.get("generator_id")
         plant_name = str(data.get("plant_name") or f"{iso} unit")
 
+        # plant_code keys the EIA-923 monthly fuel-cost lookup, and
+        # plant_group keys the historic-outage overlay's coal/CC filter;
+        # both are unset on the EIA-860 fleet until here, so an ISO loaded
+        # this way (every non-ERCOT ISO) saw neither its plant-specific
+        # fuel cost nor its measured outages. state feeds the resolver's
+        # state-level "nearby plant" fuel-cost fallback.
+        plant_code = int(_to_float(plant_id) or 0)
+        state = str(data.get("state") or "").strip().upper()
+
         records.append(
             {
                 "plant_id": plant_id,
+                "plant_code": plant_code,
                 "unit_id": f"{plant_id}_{generator_id}",
                 "name": plant_name,
                 "fuel_type": fuel_type,
+                "plant_group": _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type, ""),
+                "state": state,
                 "efficiency_bin": ebin,
                 "pmax_mw": pmax,
                 "pmin_mw": pmin,

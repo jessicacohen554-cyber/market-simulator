@@ -112,6 +112,75 @@ def available_years(costs: pd.DataFrame) -> set[int]:
     return {int(y) for y in costs["year"].unique()}
 
 
+def plant_state_map(costs: pd.DataFrame) -> dict[int, str]:
+    """Return ``{plant_id: state}`` from the cost table's ``state`` column.
+
+    Empty when the table predates the ``state`` column (older parquets
+    built before :mod:`scripts.process_f923_fuel_costs` carried it), so the
+    state-level fallback simply degrades to the zonal one.
+    """
+    if "state" not in costs.columns:
+        return {}
+    sub = costs[["plant_id", "state"]].dropna()
+    return {
+        int(p): str(s)
+        for p, s in zip(sub["plant_id"], sub["state"])
+        if str(s)
+    }
+
+
+def state_month_price_grid(
+    costs: pd.DataFrame, year: int, fuel_group: str,
+) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+    """Return per-state quantity-weighted monthly price and reporter counts.
+
+    For one year and fuel group, aggregates every reporting plant in a
+    state into a single delivered-cost series, weighting each plant-month
+    by its reported ``quantity`` (MMBtu received). The companion count grid
+    gives the number of distinct plants reporting in each state-month, so
+    the caller can require a minimum sample before trusting the state mean
+    and otherwise fall back to a broader (zonal) average.
+
+    Args:
+        costs: The monthly cost frame from :func:`load_monthly_fuel_costs`.
+        year: Calendar year to extract.
+        fuel_group: EIA-923 ``FUEL_GROUP`` value to filter on.
+
+    Returns:
+        ``(price, count)`` where ``price[state]`` is a length-12 array of
+        quantity-weighted $/MMBtu (NaN for months no plant reported) and
+        ``count[state]`` is a length-12 array of distinct-reporter counts.
+    """
+    price: dict[str, np.ndarray] = {}
+    count: dict[str, np.ndarray] = {}
+    if "state" not in costs.columns:
+        return price, count
+    subset = costs[
+        (costs["year"] == year)
+        & (costs["fuel_group"] == fuel_group)
+        & (costs["state"].astype(bool))
+    ]
+    if subset.empty:
+        return price, count
+    for state, grp in subset.groupby("state", sort=False):
+        wsum = np.zeros(_MONTHS_PER_YEAR, dtype=float)
+        qsum = np.zeros(_MONTHS_PER_YEAR, dtype=float)
+        cnt = np.zeros(_MONTHS_PER_YEAR, dtype=float)
+        for _, row in grp.iterrows():
+            m = int(row["month"]) - 1
+            if not 0 <= m < _MONTHS_PER_YEAR:
+                continue
+            q = float(row["quantity"])
+            wsum[m] += float(row["price_per_mmbtu"]) * q
+            qsum[m] += q
+            cnt[m] += 1.0
+        with np.errstate(invalid="ignore", divide="ignore"):
+            avg = np.where(qsum > 0.0, wsum / qsum, np.nan)
+        price[str(state)] = avg
+        count[str(state)] = cnt
+    return price, count
+
+
 def load_monthly_generation(
     path: str | Path | None = None,
 ) -> pd.DataFrame:

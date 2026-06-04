@@ -15,7 +15,6 @@ import unittest
 import numpy as np
 
 from market_sim.config.constants import (
-    COAL_PRICE_BASE,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
 )
@@ -56,7 +55,8 @@ class TestMonthlyFuelCostsLoader(unittest.TestCase):
 
     def test_loader_returns_expected_columns(self):
         expected = {
-            "year", "month", "plant_id", "fuel_group", "price_per_mmbtu",
+            "year", "month", "plant_id", "state", "fuel_group",
+            "price_per_mmbtu",
         }
         self.assertTrue(expected.issubset(self.costs.columns))
 
@@ -69,11 +69,13 @@ class TestMonthlyFuelCostsLoader(unittest.TestCase):
     def test_prices_are_in_realistic_dollars_per_mmbtu(self):
         prices = self.costs["price_per_mmbtu"]
         # F923 occasionally reports a negative delivered cost when a
-        # take-or-pay producer pays to dispose of stranded gas (two
-        # records in the 2025 sample). The vast majority are positive
-        # and the realistic upper bound covers spot petroleum receipts.
+        # take-or-pay producer pays to dispose of stranded gas. The vast
+        # majority are positive. The national table keeps real constrained-
+        # region winter gas spikes (up to ~$118/MMBtu in this window), so the
+        # realistic ceiling is the processor's anomaly cutoff; order-of-
+        # magnitude data-entry errors above it are dropped at build time.
         self.assertTrue((prices > 0).mean() > 0.99)
-        self.assertLess(prices.max(), 80.0)
+        self.assertLessEqual(prices.max(), 200.0)
 
 
 class TestPlantMonthPriceGrid(unittest.TestCase):
