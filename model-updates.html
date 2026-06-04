@@ -59,6 +59,108 @@
 
     <div class="upd-list">
 
+        <!-- ============ 2026-06-04: unit-level outages ============ -->
+        <article class="upd" style="--card-accent: var(--coal);">
+            <div class="upd-date">2026-06-04</div>
+            <h2>Outages: per-unit, from CAMPD &mdash; coal units stop hiding<span class="upd-tag">Outages</span></h2>
+
+            <div class="upd-block">
+                <h3>What changed</h3>
+                <p>
+                    The backcast's outage overlay used to work on each
+                    <em>plant's</em> total metered output. That has a structural
+                    blind spot: when one unit at a multi-unit plant trips, the
+                    other units keep the plant's combined CEMS signal alive, so
+                    the outage is invisible. The worst case is a mixed coal/gas
+                    plant like <strong>W&nbsp;A&nbsp;Parish</strong> &mdash; a
+                    coal unit can be down for months while the gas units mask it
+                    completely. A patch existed (a hand-built unit list) but it
+                    only covered <strong>January&ndash;August 2023</strong>.
+                </p>
+                <p>
+                    A new step (<code>scripts/derive_campd_unit_outages.py</code>)
+                    now detects outages on <strong>each generating unit's own</strong>
+                    hourly EPA&nbsp;CAMPD output, for the <strong>full 2023 and
+                    2024</strong>, and removes that unit's capacity (its EIA-860
+                    nameplate) from dispatch during the gap. Coal units &mdash;
+                    which run as baseload &mdash; are flagged whenever output
+                    sags below ~5% for a sustained stretch; load-following gas
+                    and combined-cycle units are flagged only when they go
+                    <em>fully</em> dead, so a CC turbine that is simply idle for
+                    economic reasons is never mistaken for a forced outage.
+                </p>
+            </div>
+
+            <div class="upd-block">
+                <h3>Why it matters</h3>
+                <p>
+                    Real units come offline for maintenance and forced outages;
+                    if the model keeps that capacity available, it dispatches
+                    coal and gas-steam the grid did not actually have, distorting
+                    the merit order and prices. Resolving outages at the unit
+                    level lets the backcast remove exactly the megawatts that
+                    were out &mdash; including the coal-unit outages the
+                    plant-level method could never see &mdash; and extends real
+                    outage coverage to 2024, which previously had <strong>none</strong>
+                    at the unit level (0 derated tranches &rarr; 263).
+                </p>
+            </div>
+
+            <div class="upd-block">
+                <h3>Measured impact &mdash; hand list vs. CAMPD unit-level</h3>
+                <p>
+                    Two matched backcasts on the tuned calibration config,
+                    identical except for the outage source:
+                    <strong>run&nbsp;31</strong> (hand list, Jan&ndash;Aug 2023
+                    only) and <strong>run&nbsp;32</strong> (CAMPD unit-level, full
+                    2023&nbsp;&amp;&nbsp;2024). Figures are each class's annual
+                    generation vs. EIA-923.
+                </p>
+                <table class="impact-table">
+                    <thead><tr>
+                        <th>Class &mdash; vs EIA-923</th>
+                        <th>Hand list<br>(run 31)</th>
+                        <th>CAMPD unit<br>(run 32)</th>
+                        <th>Move</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr><td>Gas-steam (ST_GAS), 2023</td><td class="num">+10.2%</td><td class="num">+2.6%</td><td class="num">&minus;7.6&nbsp;pp &#10003;</td></tr>
+                        <tr><td>Coal lignite, 2024</td><td class="num">&minus;7.2%</td><td class="num">&minus;5.3%</td><td class="num">+1.9&nbsp;pp &#10003;</td></tr>
+                        <tr><td>Coal total, 2023</td><td class="num">+5.3%</td><td class="num">+6.2%</td><td class="num">+0.9&nbsp;pp</td></tr>
+                        <tr><td>Coal total, 2024</td><td class="num">+1.1%</td><td class="num">+1.8%</td><td class="num">+0.7&nbsp;pp</td></tr>
+                        <tr><td>CT peakers, 2023</td><td class="num">+18.6%</td><td class="num">+42.5%</td><td class="num">+23.9&nbsp;pp</td></tr>
+                        <tr><td>Unit-outage derates, 2024</td><td class="num">0</td><td class="num">263</td><td class="num">&mdash;</td></tr>
+                    </tbody>
+                </table>
+                <div class="verdict">
+                    <strong>Verdict: the right input, with a re-tune to follow.</strong>
+                    Sourcing outages per-unit fixes the largest gas-steam bias
+                    outright (2023 ST_GAS goes from <strong>+10.2%</strong> to
+                    <strong>+2.6%</strong>) and improves 2024 lignite, because the
+                    model now sheds capacity that was genuinely out rather than
+                    leaving it to run. The energy that capacity was carrying has
+                    to go somewhere, and in this no-commitment config it lands on
+                    <strong>CT peakers</strong> &mdash; a class the config already
+                    over-runs because peaker start-up limits aren't modeled until
+                    the commitment pass. So the unit-level extract is the more
+                    accurate input, but it un-centers the peaker/gas-steam tuning
+                    that was fit around the sparser hand list; the natural
+                    follow-up is a light peaker re-tune (or turning on the
+                    unit-commitment pass for CTs). Coal totals stay close
+                    (2023&nbsp;+6.2%, 2024&nbsp;+1.8%) and the grid energy balance
+                    holds at about&nbsp;+1%.
+                </div>
+            </div>
+
+            <div class="upd-meta">
+                Runs: <code>run31_foresightoff</code> (hand list),
+                <code>run32_unitoutage</code> (CAMPD unit-level) &middot; new data
+                <code>inputs/raw-data/campd-unit-outages.csv</code> &middot; see
+                them side by side on the
+                <a href="backcast-results.html">Backcast Results</a> dashboard.
+            </div>
+        </article>
+
         <!-- ============ 2026-06-04: storage foresight ============ -->
         <article class="upd" style="--card-accent: var(--storage);">
             <div class="upd-date">2026-06-04</div>
