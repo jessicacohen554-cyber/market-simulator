@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-03 (storage backcast RTE fix + perfect-foresight docs)
+
+- **Fixed: storage RTE override now reaches the backcast.** `load_eia860_storage`
+  hard-coded round-trip efficiency from the `STORAGE_TECHS["li_ion_4hr"]`
+  constant (0.86), so a calibration sweep of `config.storage_rte_4hr` (e.g. the
+  0.85 in the run configs) never changed the backcast battery fleet — the lever
+  was silently decoupled from the model. It now reads RTE through `_storage_rte`,
+  matching the forward new-entry path; the function takes `config` and the
+  calibration call site passes it. Magnitude is small (√0.86→√0.85) but the
+  knob now actually binds.
+- **Documented the storage perfect-foresight assumption.** The full 8760-hour
+  horizon is solved as one LP, so storage is co-optimized against the whole
+  year's prices (an upper bound on realized arbitrage that over-flattens net
+  load). Added the limitation and the standard mitigations (daily SOC cycling
+  caps, rolling/receding horizon, day-ahead+real-time, price-taker pass,
+  stochastic, empirical haircut) to `model-methodology-spec.md` §storage and a
+  note in `dispatch.build_constraints`. Bounded for the short-duration 2023
+  fleet by the `SOC ≤ energy_cap` constraint; grows with long-duration storage.
+
 ## 2026-06-03 (storage + offer-curve docs)
 
 - Documented the storage new-entry overhaul (PR #180): the value stack

@@ -98,6 +98,19 @@ SOC[s,0] = SOC[s,8759]          # cyclic boundary
 
 No cycling limit constraint in the initial build. The LP with perfect foresight will optimize dispatch; cycling emerges from economics. Flag for future sensitivity if unrealistic cycling appears.
 
+**Perfect-foresight limitation (known, accepted for now).** The full horizon is solved as one LP, so storage sees the entire year's prices at once and charges/discharges at the globally optimal hours its energy cap permits. A real operator has only ~day-ahead foresight and an imperfect price forecast, so the model is an *upper bound* on realized arbitrage and tends to over-flatten net load — which, in a backcast, can be absorbed into the thermal offer-curve parameters being calibrated against CAMPD. The `SOC ≤ energy_cap` bound keeps this small for the short-duration (≈4 h) li-ion fleet that dominates the 2023 backcast — such a battery physically cannot shift energy across days or seasons, so its only foresight advantage is picking the best in-day hours. The error grows with long-duration storage (12 h+, flow, CAES, iron-air).
+
+Standard ways production-cost models bound storage foresight, cheapest-to-most-faithful:
+
+1. **Daily/weekly SOC cycling caps** — force SOC back to an anchor each day (or cap daily energy throughput). Cheapest: keeps the single-LP structure, just adds rows. Kills cross-day arbitrage but leaves in-day foresight perfect. Good enough while the fleet is short-duration.
+2. **Rolling (receding) horizon** — the PLEXOS/GridView/PROMOD default. Solve overlapping windows (e.g. 24–48 h with a look-ahead tail), fix the first day's decisions, carry end-of-window SOC into the next window. Caps foresight at the window length; the look-ahead tail stops the battery draining to zero at the artificial boundary. This is the most realistic option that stays deterministic, and the natural upgrade if/when LDES enters the fleet (the annual cyclic boundary becomes a per-window carried SOC).
+3. **Day-ahead + real-time two-settlement** — commit on a forecast over ~24–36 h, then re-dispatch against actuals with limited foresight; captures forecast *error* explicitly. More faithful, more machinery.
+4. **Price-taker arbitrage pass** — decouple storage: solve dispatch without storage → take the resulting prices → dispatch storage against them with a realistic foresight window → subtract from net load → re-solve (iterate). This is exactly the heuristic the *forward* new-entry screen already uses (`estimate_storage_revenue`), so the building block exists.
+5. **Stochastic/robust optimization** — optimize over multiple price/load scenarios so no single known future can be exploited. The textbook-correct answer to foresight, rarely used in large PCMs because of cost.
+6. **Empirical haircut** — accept perfect foresight, then derate storage output/efficiency to a fraction (≈80–90 %) of the theoretical-optimal spread. A pure calibration fudge, but common and cheap.
+
+For this model, the pragmatic path is (1) as a guard once durations lengthen, escalating to (2) if a backcast shows storage materially mis-shaping net load.
+
 **Transmission:**
 
 ```
