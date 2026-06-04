@@ -499,14 +499,18 @@ def generators_to_fleet_arrays(
                 _iso or "ERCOT", config.weather_year, applied, len(masks),
             )
         # The unit-level and partial-outage derates below are ERCOT-only
-        # extracts (the Texas unit-outage CSV and CAMPD CF-ceiling plateaus,
+        # extracts (the CAMPD unit-outage CSV and CAMPD CF-ceiling plateaus,
         # both keyed to ERCOT plant codes); other ISOs carry no such files and
         # their plant codes never match, so the blocks are scoped to ERCOT.
         if is_ercot:
             # Unit-level outage derate (backcast): partial availability cut per
             # unit outage >= 5 days, sized by the unit's share of its model bin
             # capacity (CTs excluded; split plants routed to the right asset
-            # class). Multiplies the availability already set above.
+            # class). Catches single-unit outages the facility-summed overlay
+            # above hides — most importantly the W A Parish coal units, masked
+            # in CEMS by the gas units that keep running. Built for full 2023
+            # and 2024 by scripts/derive_campd_unit_outages.py. Multiplies the
+            # availability already set above.
             ufac = unit_outage_derate_factors(
                 config.weather_year, hours,
                 getattr(config, "campd_bins_path",
