@@ -79,6 +79,35 @@ _RENAME: dict[str, str] = {
 # this converts the column to delivered $/MMBtu.
 _CENTS_PER_DOLLAR: float = 100.0
 
+# Per-fuel plausible delivered-cost band ($/MMBtu) for a single fuel receipt.
+# The national EIA-923 file carries a handful of order-of-magnitude data-entry
+# errors — gas reported at $99,241/MMBtu (in May), $8,781/MMBtu (in July),
+# etc. (wrong units or a near-zero quantity divisor) — that, left in, would
+# dominate a plant's quantity-weighted monthly cost and any state/zone
+# "nearby plant" average built from it. Receipts outside their fuel's band
+# are dropped before aggregation.
+#
+# A *percentage of the annual average* is the wrong test here: legitimate
+# constrained-region winter gas runs +155% to +5,000% of its average (a
+# Virginia plant hit $118/MMBtu in Jan 2023; California/Nevada plants cleared
+# $35-47/MMBtu on million-MMBtu volumes in the 2022-23 West-coast gas crisis),
+# so any percentage band wide enough to keep that real spread catches nothing.
+# Instead each fuel gets an absolute physical-plausibility ceiling set well
+# above its observed real maximum in this 2023-25 window (gas ~$118, petroleum
+# ~$59, coal ~$27), generous enough to admit a worse winter while still
+# removing the separate error cluster. The shared small negative floor keeps
+# legitimate take-or-pay disposal receipts (a producer paying to offload
+# stranded gas). ERCOT receipts sit far inside every band, so the ERCOT table
+# is unchanged.
+_MIN_DOLLARS_PER_MMBTU: float = -10.0
+_MAX_DOLLARS_PER_MMBTU_DEFAULT: float = 200.0
+_MAX_DOLLARS_PER_MMBTU_BY_FUEL: dict[str, float] = {
+    "Natural Gas": 200.0,    # real max ~$118 (constrained winter)
+    "Petroleum": 120.0,      # real max ~$59 (spike-priced distillate)
+    "Petroleum Coke": 60.0,  # a cheap residual; real max well under $30
+    "Coal": 60.0,            # real max ~$27
+}
+
 # Fuel-group strings we keep. Everything else (waste fuels, biomass) is
 # outside the gas/coal/oil cost trajectories the dispatch model uses.
 _FUEL_GROUP_KEEP: frozenset[str] = frozenset(
@@ -205,8 +234,12 @@ def aggregate_monthly_fuel_costs(
             balancing authority (e.g. ``"ERCO"``); ``None`` keeps every BA.
 
     Returns:
-        ``(year, month, plant_id, fuel_group, price_per_mmbtu, quantity)``
-        with one row per plant-month-fuel.
+        ``(year, month, plant_id, state, fuel_group, price_per_mmbtu,
+        quantity)`` with one row per plant-month-fuel. ``state`` is the
+        plant's USPS state code, carried so the dispatch resolver can build
+        a state-level "nearby plant" fallback price for plants that do not
+        report their own delivered cost (see
+        :func:`market_sim.data.fuel.apply_plant_monthly_fuel_prices`).
     """
     frames = [_load_receipts(path) for path in zip_paths]
     df = pd.concat(frames, ignore_index=True)
@@ -219,8 +252,40 @@ def aggregate_monthly_fuel_costs(
     df = df[df["quantity"] > 0]
     df = df[df["fuel_group"].isin(_FUEL_GROUP_KEEP)]
 
+    # Drop anomalous receipts (EIA data-entry errors) outside the plausible
+    # per-fuel delivered-cost band so a single bad record cannot skew a
+    # plant's quantity-weighted monthly cost or a nearby-plant average.
+    dollars = df["fuel_cost_cents_per_mmbtu"] / _CENTS_PER_DOLLAR
+    ceiling = df["fuel_group"].map(_MAX_DOLLARS_PER_MMBTU_BY_FUEL).fillna(
+        _MAX_DOLLARS_PER_MMBTU_DEFAULT
+    )
+    n_before = len(df)
+    df = df[(dollars >= _MIN_DOLLARS_PER_MMBTU) & (dollars <= ceiling)]
+    n_dropped = n_before - len(df)
+    if n_dropped:
+        logger.info(
+            "dropped %d anomalous fuel receipts outside the per-fuel "
+            "plausibility band (floor $%.0f/MMBtu)",
+            n_dropped, _MIN_DOLLARS_PER_MMBTU,
+        )
+
     if ba_code is not None:
         df = df[df["ba_code"] == ba_code]
+
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce")
+    df = df.dropna(subset=["plant_id"])
+    df["plant_id"] = df["plant_id"].astype(int)
+
+    # A plant sits in one state; take its modal reported state code so the
+    # state column survives the (year, month, fuel) aggregation below.
+    if "state" in df.columns:
+        plant_state = (
+            df.dropna(subset=["state"])
+            .groupby("plant_id")["state"]
+            .agg(lambda s: s.astype(str).str.strip().mode().iat[0])
+        )
+    else:
+        plant_state = pd.Series(dtype=str)
 
     df["weighted"] = df["fuel_cost_cents_per_mmbtu"] * df["quantity"]
 
@@ -236,8 +301,9 @@ def aggregate_monthly_fuel_costs(
     grouped["plant_id"] = grouped["plant_id"].astype(int)
     grouped["year"] = grouped["year"].astype(int)
     grouped["month"] = grouped["month"].astype(int)
+    grouped["state"] = grouped["plant_id"].map(plant_state).fillna("")
     return grouped[[
-        "year", "month", "plant_id", "fuel_group",
+        "year", "month", "plant_id", "state", "fuel_group",
         "price_per_mmbtu", "quantity",
     ]]
 
@@ -292,8 +358,11 @@ def main() -> None:
         help="Directory for the output parquet.",
     )
     parser.add_argument(
-        "--ba", default="ERCO",
-        help="Balancing-authority filter (default ERCO); blank to keep all.",
+        "--ba", default="",
+        help="Balancing-authority filter (e.g. ERCO); blank (the default) "
+             "keeps every BA so multi-ISO runs (PJM, etc.) find their "
+             "plants. Pass --ba ERCO to reproduce the legacy ERCOT-only "
+             "table.",
     )
     args = parser.parse_args()
 
