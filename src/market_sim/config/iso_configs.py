@@ -316,63 +316,79 @@ def _spp_config() -> ISOConfig:
 def _pjm_config() -> ISOConfig:
     """Build the PJM topology configuration.
 
-    Four aggregated zones spanning PJM's real west-to-east geography, each
-    a roll-up of PJM transmission zones (the BAs/utilities in parentheses):
+    **Eight zones** aligned to PJM's real LDA structure and the locational
+    price clusters in the 2024 hub LMPs (cross-hub LMP std ≈ $6.4/MWh), each a
+    roll-up of PJM transmission zones (real zone codes in parentheses):
 
-    - **PJM_West** — the western generation belt (AEP, ComEd, APS, DAY,
-      ATSI; plus DEOK, DUQ, EKPC). IL/IN/OH/MI/KY/WV and western PA/MD.
-    - **PJM_East** — the Mid-Atlantic load pocket (PSEG, JCPL, PECO, BGE,
-      PEPCO; plus DPL, AECO, RECO). NJ/DE/DC, most of MD, Philadelphia metro.
-    - **PJM_Central** — central/north-eastern Pennsylvania (PPL, METED,
-      PENELEC).
-    - **PJM_South** — Dominion (DOM). Virginia and northern North Carolina.
+    - **PJM_ComEd** (CE) — northern Illinois. The cheap, *export*-congested
+      west (~$24/MWh, congestion −$5).
+    - **PJM_AEP_Ohio** (AEP, DAY, DEOK, OVEC) — the central coal belt
+      (OH/IN/MI/KY), ~$30/MWh, congestion ≈ 0.
+    - **PJM_ATSI** (ATSI) — FirstEnergy northern Ohio / NW Pennsylvania.
+    - **PJM_West_APS** (AP, DUQ) — Allegheny Power + Duquesne, western
+      PA/WV/western MD. The *import*-congested west (Western Hub ~$33,
+      congestion +$1.6); the AP-South / Bedington-BlackOak interfaces bind here.
+    - **PJM_Central_PA** (PPL, PENELEC, METED, EKPC) — central/NE Pennsylvania.
+    - **PJM_Dominion** (DOM) — Virginia + northern NC. Most import-constrained
+      ($34, congestion +$2.5).
+    - **PJM_EMAAC** (PSEG, JCPL, PECO, DPL, AECO, RECO) — the eastern
+      Mid-Atlantic load pocket (NJ / DE / Philadelphia), electrically islanded
+      behind import constraints (Eastern Hub correlates 0.5-0.66 with the rest).
+    - **PJM_SWMAAC** (BGE, PEPCO) — Baltimore / DC.
 
-    PJM has 20+ real transmission zones; this aggregation captures the
-    chronic west/central → Mid-Atlantic congestion (the AP South / 5004-5005
-    interfaces) plus the western export to Dominion, without LDA granularity.
+    This replaces the earlier four-zone West/East/Central/South aggregation,
+    which collapsed ComEd ($24), AEP ($30) and the import-constrained western
+    PA ($33) into one PJM_West holding half the load — washing out the very
+    price gradient (across AP-South / Bedington-BlackOak) that binds most.
 
-    Load shares are the four zones' aggregated zonal peak loads. Per-zone
-    summer non-coincident peaks (MW), grouped as above:
-      West   = ComEd 23,250 + AEP 24,061 + ATSI 12,829 + DAY 3,322
-               + DEOK 5,138 + DUQ 2,798 + EKPC 3,109 + APS 8,839 = 83,346
-      East   = PSEG 10,409 + JCPL 6,375 + PECO 9,191 + BGE 7,022
-               + PEPCO 6,725 + DPL 4,373 + AECO 3,007 + RECO 415 = 47,517
-      Central= PPL 7,565 + METED 3,084 + PENELEC 3,070           = 13,719
-      South  = DOM                                               = 20,747
-      total                                                      = 165,329
-    giving shares 0.504 / 0.287 / 0.083 / 0.126 (South carries the rounding
-    residual so the four sum to 1.0). Source: Monitoring Analytics, State of
-    the Market Report for PJM, zonal peak-load tables (cross-checked against
-    the PJM Load Forecast Report zonal summer peaks). Tier 3 (calibration) —
-    verify against metered PJM zonal peak load.
+    Load shares are the eight groups' shares of metered net energy for load
+    from the PJM hourly metered-load file (``inputs/raw-data/
+    zone-specific-demand/PJM2023_hrl_load_metered.csv``, the 20 real zones
+    summed over their load areas). Backcasts use that file's *hourly* per-zone
+    shape directly (see ``eia_loader``); these annual shares are the fallback /
+    topology-sum check. Source: PJM Data Miner hourly metered load.
     """
     zones = [
-        Zone(name="PJM_West", iso="PJM", load_share=0.504),
-        Zone(name="PJM_East", iso="PJM", load_share=0.287),
-        Zone(name="PJM_Central", iso="PJM", load_share=0.083),
-        Zone(name="PJM_South", iso="PJM", load_share=0.126),
+        Zone(name="PJM_ComEd", iso="PJM", load_share=0.1185),
+        Zone(name="PJM_AEP_Ohio", iso="PJM", load_share=0.2178),
+        Zone(name="PJM_ATSI", iso="PJM", load_share=0.0844),
+        Zone(name="PJM_West_APS", iso="PJM", load_share=0.0785),
+        Zone(name="PJM_Central_PA", iso="PJM", load_share=0.1101),
+        Zone(name="PJM_Dominion", iso="PJM", load_share=0.1499),
+        Zone(name="PJM_EMAAC", iso="PJM", load_share=0.1672),
+        # SWMAAC carries the rounding residual so the eight sum to 1.0.
+        Zone(name="PJM_SWMAAC", iso="PJM", load_share=0.0736),
     ]
-    # PJM inter-zone TTCs seeded from PJM's published interface/transfer-limit
-    # postings, at the three corridors that bound PJM's recurring congestion.
-    # The Mid-Atlantic East is the import-dependent load pocket, fed from both
-    # the West (AP South) and Central (Eastern/ChesPenn); the West also exports
-    # south into Dominion (AEP-Dominion). This three-link spanning tree keeps
-    # every zone connected while modeling only the real binding corridors.
-    #   - West -> East:    AP South / 5004-5005 "West interface" — the classic
-    #                      PJM binding interface controlling bulk west-to-east
-    #                      transfer into the Mid-Atlantic.
-    #   - Central -> East: Eastern / ChesPenn interface, into the Mid-Atlantic
-    #                      load pocket (central/eastern PA into NJ/PECO).
-    #   - West -> South:   AEP-Dominion interface (western export to Dominion).
-    # Source: PJM Regional Transmission Expansion Plan (RTEP); PJM interface-
-    # and transfer-limit postings (PJM Manual 3A interface definitions).
-    # Tier 3 (calibration) — verify against PJM OASIS transfer capabilities and
-    # binding frequency from PJM Data Miner congestion data, exactly as ERCOT's
-    # WESTEX/PNHNDL limits were derived from SCED binding-constraint data.
+    # Inter-zone TTCs and the link topology trace PJM's real binding interfaces,
+    # seeded from the 2024 transfer-limits/flows postings
+    # (``inputs/raw-data/iso-specific-transmission/
+    # PJM_2024_transfer_limits_and_flows.csv``): the most-binding interfaces
+    # are AP-South (~3,870-4,453 MW), Bedington-BlackOak (~1,714-1,947 MW) and
+    # AEP/DOM (~4,069 MW), all carrying the west/central → east and west →
+    # Dominion congestion. The graph is a connected mesh over the west→east
+    # gradient; limits not tied to a published interface are order-of-magnitude
+    # estimates from the "Average Western/Central/Eastern" envelopes (~5,029 /
+    # 3,336 / 8,168 MW). Tier 3 (calibration) — verify/refine against PJM Data
+    # Miner interface binding frequency, exactly as ERCOT's WESTEX/PNHNDL
+    # limits were derived from SCED binding-constraint data.
     links = [
-        TransferLink(from_zone="PJM_West", to_zone="PJM_East", ttc_mw=8500.0),
-        TransferLink(from_zone="PJM_Central", to_zone="PJM_East", ttc_mw=7000.0),
-        TransferLink(from_zone="PJM_West", to_zone="PJM_South", ttc_mw=5000.0),
+        # West gradient: ComEd exports east into AEP; the 5004/5005 interface.
+        TransferLink(from_zone="PJM_ComEd", to_zone="PJM_AEP_Ohio", ttc_mw=6000.0),
+        # AEP coal belt out to ATSI (north), Dominion (south, AEP/DOM) and the
+        # western-PA import area.
+        TransferLink(from_zone="PJM_AEP_Ohio", to_zone="PJM_ATSI", ttc_mw=4500.0),
+        TransferLink(from_zone="PJM_AEP_Ohio", to_zone="PJM_Dominion", ttc_mw=4069.0),
+        TransferLink(from_zone="PJM_AEP_Ohio", to_zone="PJM_West_APS", ttc_mw=5029.0),
+        # ATSI / West-APS feed central PA.
+        TransferLink(from_zone="PJM_ATSI", to_zone="PJM_Central_PA", ttc_mw=3336.0),
+        TransferLink(from_zone="PJM_West_APS", to_zone="PJM_Central_PA", ttc_mw=1947.0),
+        # AP-South: the western (APS) → eastern Mid-Atlantic 500 kV interface.
+        TransferLink(from_zone="PJM_West_APS", to_zone="PJM_SWMAAC", ttc_mw=4453.0),
+        TransferLink(from_zone="PJM_West_APS", to_zone="PJM_Dominion", ttc_mw=3000.0),
+        # Eastern load pocket: central PA and SWMAAC feed EMAAC; SWMAAC↔Dominion.
+        TransferLink(from_zone="PJM_Central_PA", to_zone="PJM_EMAAC", ttc_mw=8168.0),
+        TransferLink(from_zone="PJM_SWMAAC", to_zone="PJM_EMAAC", ttc_mw=5000.0),
+        TransferLink(from_zone="PJM_SWMAAC", to_zone="PJM_Dominion", ttc_mw=3500.0),
     ]
     # PJM cost-based energy offer cap is $2,000/MWh. PJM's Reliability
     # Pricing Model (RPM) capacity market provides revenue outside energy,
