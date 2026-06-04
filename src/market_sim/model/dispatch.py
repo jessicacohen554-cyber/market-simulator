@@ -368,6 +368,46 @@ def _build_hydro_rows(
     return block, row_lower, row_upper
 
 
+def _build_storage_daily_cycle_rows(
+    layout: VariableLayout, cycle_hours: int
+) -> sp.csr_matrix:
+    """Daily SOC-anchor equality rows: ``SOC[s, d*H] - SOC[s, 0] = 0``.
+
+    One row per storage unit and per interior day boundary ``d = 1 ..
+    n_days-1`` (where ``H = cycle_hours`` and ``n_days = T // H``). Pinning
+    every day-start SOC to the unit's hour-0 level forces each day to be
+    energy-neutral, so storage cannot bank cheap energy across days -- the
+    standard daily-cycling cap that bounds perfect-foresight arbitrage to
+    within-day spreads. Returns a zero-row matrix when fewer than two whole
+    days fit in the horizon.
+    """
+    n_storage = layout.n_storage
+    T = layout.T
+    vph = layout.vars_per_hour
+    n_days = T // cycle_hours
+    if n_storage == 0 or n_days < 2:
+        return sp.csr_matrix((0, layout.total_columns))
+
+    units = np.arange(n_storage)
+    boundaries = np.arange(1, n_days) * cycle_hours  # interior day starts
+    n_b = boundaries.size
+
+    # Row r = s*n_b + j couples SOC[s, boundaries[j]] (+1) to SOC[s, 0] (-1).
+    rows = np.repeat(np.arange(n_storage * n_b), 2)
+    soc0 = layout._soc_off + units  # (n_storage,): each unit's SOC[s, 0] column
+    bcols = (
+        boundaries[None, :] * vph + layout._soc_off + units[:, None]
+    )  # (n_storage, n_b): SOC[s, d*H] columns
+    cols = np.empty(n_storage * n_b * 2, dtype=int)
+    cols[0::2] = bcols.ravel()
+    cols[1::2] = np.repeat(soc0, n_b)
+    data = np.tile([1.0, -1.0], n_storage * n_b)
+    return sp.coo_matrix(
+        (data, (rows, cols)),
+        shape=(n_storage * n_b, layout.total_columns),
+    ).tocsr()
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -381,6 +421,7 @@ def build_constraints(
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
+    storage_daily_cycle_hours: int | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -577,6 +618,21 @@ def build_constraints(
         A = sp.vstack([energy_balance, soc_block], format="csr")
         row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
         row_upper = row_lower.copy()
+
+    # Optional daily SOC cycling cap: pin each storage unit's day-start SOC to
+    # its hour-0 level so every day is energy-neutral, bounding the single-LP
+    # perfect-foresight advantage to within-day arbitrage. Appended after the
+    # SOC dynamics, before hydro/RPS, so the energy-balance and RPS duals keep
+    # their positions.
+    if storage_daily_cycle_hours and n_storage:
+        cycle_block = _build_storage_daily_cycle_rows(
+            layout, int(storage_daily_cycle_hours)
+        )
+        if cycle_block.shape[0]:
+            A = sp.vstack([A, cycle_block], format="csr")
+            zeros = np.zeros(cycle_block.shape[0])
+            row_lower = np.concatenate([row_lower, zeros])
+            row_upper = np.concatenate([row_upper, zeros])
 
     # Optional hydro monthly energy budgets: one two-sided row per hydro
     # generator and month. Appended before the RPS row so the RPS dual stays
@@ -785,6 +841,7 @@ def solve_dispatch(
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
+    storage_daily_cycle_hours: int | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -835,6 +892,10 @@ def solve_dispatch(
             hydro fuel type when ``None``.
         hydro_monthly_min: Monthly minimum hydro energy (min-flow floor) in
             MWh, shape ``(n_hydro, n_months)``. Zero floor when ``None``.
+        storage_daily_cycle_hours: When set (e.g. ``24``), forces each storage
+            unit's SOC back to its day-start level every this-many hours, so
+            storage cannot arbitrage across days. ``None`` leaves the annual
+            cyclic boundary as the only SOC anchor (full perfect foresight).
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -881,6 +942,7 @@ def solve_dispatch(
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,
         hydro_monthly_min=hydro_monthly_min,
+        storage_daily_cycle_hours=storage_daily_cycle_hours,
     )
     col_lower, col_upper = build_variable_bounds(
         layout,
