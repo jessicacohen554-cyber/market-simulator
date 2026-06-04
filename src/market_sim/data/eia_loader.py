@@ -24,13 +24,30 @@ logger = logging.getLogger(__name__)
 # repository root (this file lives at src/market_sim/data/eia_loader.py).
 DATA_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-930"
 
-# PJM publishes hourly metered load for its 20 real transmission zones; the
-# file lives here, one per year. Used to give each model zone its *own* hourly
-# load shape (zones peak at different times) instead of a single system shape
-# scaled by a static share.
-_PJM_ZONAL_LOAD_DIR: Path = (
+# PJM (metered, 20 transmission zones) and ERCOT (NP3-565-CD native load, 8
+# weather zones) both publish per-zone hourly load here, one file per year.
+# Used to give each model zone its *own* hourly load shape (zones peak at
+# different times) instead of a single system shape scaled by a static share.
+_ZONAL_LOAD_DIR: Path = (
     Path(__file__).parents[3] / "inputs" / "raw-data" / "zone-specific-demand"
 )
+# Back-compat alias (PJM-specific name) for any external importer.
+_PJM_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR
+
+# ERCOT weather-zone column (in ERCOT_Native_Load_<year>.xlsx) -> model
+# transmission zone (the six-zone topology in iso_configs._ercot_config). ERCOT
+# has no Panhandle weather zone, so the Panhandle model zone receives no load
+# here (its share stays 0.0, matching the static config); the small Lubbock load
+# it would hold sits inside the WEST weather zone and lands in the West model
+# zone. The ERCOT system-total column is dropped. Mirrors the aggregation in
+# scripts/derive_load_shares.py that seeded the static load_share values.
+_ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
+    "COAST": "Houston",
+    "EAST": "North", "NORTH": "North", "NCENT": "North",
+    "SCENT": "South_Central",
+    "SOUTH": "South",
+    "FWEST": "West", "WEST": "West",
+}
 
 # PJM's hourly actual tie-line interchange (import/export) lives here, one file
 # per year. Used to add PJM's net export to the demand the internal fleet must
@@ -359,6 +376,46 @@ def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     return subset
 
 
+def _hours_of_year(ts: pd.Series) -> np.ndarray:
+    """Map naive timestamps to an hour-of-year index on the non-leap clock.
+
+    Feb 29 must already be removed by the caller; this returns indices into
+    ``[0, HOURS_PER_YEAR)`` using the fixed non-leap month lengths.
+    """
+    return (
+        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
+
+
+def _hourly_shares_from_groups(
+    mzone: pd.Series, hoy: np.ndarray, mw: pd.Series, zone_names: list[str]
+) -> np.ndarray:
+    """Build a ``(n_zones, HOURS_PER_YEAR)`` hourly load-share matrix.
+
+    Sums ``mw`` into a (model zone, hour-of-year) grid, back-fills any all-zero
+    hour (e.g. a DST spring-forward gap) from the previous hour, and normalizes
+    each hour to fractions summing to 1.0 across zones. Zones absent from the
+    data (such as ERCOT's Panhandle) keep an all-zero row.
+    """
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    grid = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    grp = (
+        pd.DataFrame({"mzone": mzone.to_numpy(), "hoy": hoy, "mw": mw.to_numpy()})
+        .groupby(["mzone", "hoy"], observed=True)["mw"]
+        .sum()
+    )
+    for (mz, h), v in grp.items():
+        if mz in zone_idx and 0 <= h < HOURS_PER_YEAR:
+            grid[zone_idx[mz], int(h)] = v
+    col_tot = grid.sum(axis=0)
+    for h in np.nonzero(col_tot == 0.0)[0]:
+        grid[:, h] = grid[:, h - 1] if h > 0 else grid[:, h + 1]
+        col_tot[h] = grid[:, h].sum()
+    return grid / col_tot[None, :]
+
+
 def pjm_zonal_load_shares(
     year: int, zone_names: list[str]
 ) -> np.ndarray | None:
@@ -376,7 +433,7 @@ def pjm_zonal_load_shares(
     non-leap 8760-hour clock (Feb 29 dropped); the lone DST spring-forward gap
     is back-filled from the previous hour.
     """
-    path = _PJM_ZONAL_LOAD_DIR / f"PJM{year}_hrl_load_metered.csv"
+    path = _ZONAL_LOAD_DIR / f"PJM{year}_hrl_load_metered.csv"
     if not path.exists():
         logger.warning(
             "PJM zonal metered-load file not found (%s); using static "
@@ -402,24 +459,73 @@ def pjm_zonal_load_shares(
         )
     keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
     df, ts = df[keep], ts[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
+    return _hourly_shares_from_groups(
+        df["mzone"], _hours_of_year(ts), df["mw"], zone_names
     )
-    df["hoy"] = hoy
-    zone_idx = {z: i for i, z in enumerate(zone_names)}
-    mw = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
-    grp = df.groupby(["mzone", "hoy"], observed=True)["mw"].sum()
-    for (mzone, h), v in grp.items():
-        if mzone in zone_idx and 0 <= h < HOURS_PER_YEAR:
-            mw[zone_idx[mzone], int(h)] = v
-    # Back-fill any all-zero hour (the DST gap) from the previous hour.
-    col_tot = mw.sum(axis=0)
-    for h in np.nonzero(col_tot == 0.0)[0]:
-        mw[:, h] = mw[:, h - 1] if h > 0 else mw[:, h + 1]
-        col_tot[h] = mw[:, h].sum()
-    return mw / col_tot[None, :]
+
+
+def ercot_zonal_load_shares(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly ERCOT load shares, or ``None``.
+
+    Reads ERCOT's hourly *Actual System Load by Weather Zone* (NP3-565-CD;
+    ``ERCOT_Native_Load_<year>.xlsx``) and aggregates the eight weather zones
+    onto the six model transmission zones (:data:`_ERCOT_LOAD_ZONE_GROUPS`),
+    returning each model zone's hour-by-hour fraction of system load. The caller
+    multiplies these time-varying shares by the EIA-930 system demand total, so
+    each zone gets its own measured shape — the hot, wind-rich West and the
+    coastal Houston load peak at different hours than North Central — while the
+    system level stays tied to the existing EIA-930 demand series.
+
+    This replaces the single ERCOT-wide demand curve (one shape scaled by a
+    fixed per-zone ``load_share``) that previously fed every zone's demand.
+
+    Returns ``None`` when the file is absent so the caller falls back to the
+    static per-zone ``load_share``. The native-load file stamps each hour as
+    "Hour Ending HH:00" (01..24 within the day, no DST gaps); the series is
+    placed on the model's fixed non-leap 8760-hour clock (Feb 29 dropped).
+    """
+    path = _ZONAL_LOAD_DIR / f"ERCOT_Native_Load_{year}.xlsx"
+    if not path.exists():
+        logger.warning(
+            "ERCOT native-load file not found (%s); using static load_share "
+            "split", path,
+        )
+        return None
+    df = pd.read_excel(path)
+    # "Hour Ending" is "MM/DD/YYYY HH:00" with HH in 01..24; hour-ending HH is
+    # hour-of-day HH-1 (01:00 -> 0, 24:00 -> 23, same calendar date).
+    he = df["Hour Ending"].astype(str).str.split(" ", n=1, expand=True)
+    date = pd.to_datetime(he[0], format="%m/%d/%Y")
+    hour_of_day = he[1].str.slice(0, 2).astype(int) - 1
+    month = date.dt.month.to_numpy()
+    day = date.dt.day.to_numpy()
+    keep = ~((month == 2) & (day == 29))
+    df = df[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[month[keep] - 1]
+        + (day[keep] - 1) * 24
+        + hour_of_day.to_numpy()[keep]
+    )
+    # Melt the weather-zone columns into long form, mapping each to its model
+    # zone; the ERCOT system-total column and any spare columns are dropped.
+    wz_cols = [c for c in _ERCOT_LOAD_ZONE_GROUPS if c in df.columns]
+    missing_cols = sorted(set(_ERCOT_LOAD_ZONE_GROUPS) - set(df.columns))
+    if missing_cols:
+        logger.warning(
+            "ERCOT native-load weather zones absent from %s: %s",
+            path.name, missing_cols,
+        )
+    mzone = pd.concat(
+        [pd.Series([_ERCOT_LOAD_ZONE_GROUPS[c]] * len(df)) for c in wz_cols],
+        ignore_index=True,
+    )
+    hoy_long = np.tile(hoy, len(wz_cols))
+    mw = pd.concat(
+        [df[c].reset_index(drop=True) for c in wz_cols], ignore_index=True
+    )
+    return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
 
 
 def pjm_net_interchange(year: int) -> np.ndarray | None:
@@ -550,15 +656,18 @@ def load_demand(
                 "(export-positive)", year, float(pjm_ix.mean()),
             )
 
-    # PJM allocates demand by each zone's own measured hourly shape (from the
-    # PJM metered-load file) when available, so zones peak at different times;
-    # every other ISO (and PJM without the file) uses the static per-zone share
-    # broadcast across hours. Both are (n_zones, T) weight matrices summing to
-    # 1.0 down each hour, so the rest of the math is identical.
-    zonal_shares = (
-        pjm_zonal_load_shares(year, iso_config.zone_names)
-        if iso == "PJM" else None
-    )
+    # PJM and ERCOT allocate demand by each zone's own measured hourly shape
+    # (from the PJM metered-load / ERCOT native-load files) when available, so
+    # zones peak at different times; every other ISO (and these two without the
+    # file) uses the static per-zone share broadcast across hours. Both are
+    # (n_zones, T) weight matrices summing to 1.0 down each hour, so the rest of
+    # the math is identical.
+    if iso == "PJM":
+        zonal_shares = pjm_zonal_load_shares(year, iso_config.zone_names)
+    elif iso == "ERCOT":
+        zonal_shares = ercot_zonal_load_shares(year, iso_config.zone_names)
+    else:
+        zonal_shares = None
     if zonal_shares is not None:
         weights = zonal_shares
     else:
