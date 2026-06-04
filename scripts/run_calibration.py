@@ -342,6 +342,7 @@ def run_year(
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
+    storage_daily_cycling: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -388,6 +389,10 @@ def run_year(
     if plant_tranche_config:
         config = config.with_overrides(
             plant_tranche_config_path=plant_tranche_config)
+    # Daily SOC-cycling cap (run_calibration_full --storage-daily-cycling):
+    # bounds storage perfect foresight to within-day arbitrage.
+    if storage_daily_cycling:
+        config = config.with_overrides(storage_daily_cycling=True)
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
@@ -505,6 +510,7 @@ def run_year(
         solar_mc=solar_mc,
         storage_discharge_eac=storage_eac,
         rps_target=None,
+        storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
         T=config.hours,
     )
     # P0: solve with base MC to extract per-month run lengths.
