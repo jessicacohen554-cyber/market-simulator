@@ -2,9 +2,46 @@
 
 import numpy as np
 
-from market_sim.data.eia_loader import load_demand
+from market_sim.config.iso_configs import get_iso_config
+from market_sim.data.eia_loader import (
+    load_demand,
+    pjm_net_interchange,
+    pjm_zonal_load_shares,
+)
 
 _TEST_YEAR = 2023
+
+
+def test_pjm_net_interchange_is_export_positive():
+    """PJM's measured interchange loads as a large positive net export."""
+    ix = pjm_net_interchange(_TEST_YEAR)
+    assert ix is not None
+    assert ix.shape == (8760,)
+    assert not np.isnan(ix).any()
+    # PJM exported ~40 TWh (≈ +4,564 MW avg) in 2023 — export-positive.
+    assert 3000.0 < ix.mean() < 6000.0
+
+
+def test_pjm_demand_includes_net_export():
+    """PJM demand carries internal load *plus* the measured net export.
+
+    The fleet must generate the ~40 TWh PJM actually exported, so total demand
+    exceeds the internal-load-only allocation by the net interchange.
+    """
+    pjm = get_iso_config("PJM")
+    demand = load_demand("PJM", _TEST_YEAR, pjm).sum(axis=0)
+    ix = pjm_net_interchange(_TEST_YEAR)
+    # Total served ≈ internal load + net export; the export is a real uplift.
+    assert demand.mean() > 90_000.0  # ~94 GW incl. export vs ~89 GW load-only
+    np.testing.assert_allclose(demand.mean(), 89_400 + ix.mean(), rtol=0.03)
+
+
+def test_pjm_zonal_shares_sum_to_one_each_hour():
+    """The per-zone hourly load shares partition system load every hour."""
+    pjm = get_iso_config("PJM")
+    shares = pjm_zonal_load_shares(_TEST_YEAR, pjm.zone_names)
+    assert shares.shape == (pjm.n_zones, 8760)
+    np.testing.assert_allclose(shares.sum(axis=0), 1.0, atol=1e-9)
 
 
 def test_loss_factor_applied():
