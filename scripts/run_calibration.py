@@ -212,6 +212,14 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
+        nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
+        #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
+        #   fill those months from state/zone neighbours before the Henry Hub
+        #   curve. Off for ERCOT, whose plants overwhelmingly report.
+        plant_level_fleet=(iso.upper() != "ERCOT"),  # non-ERCOT ISOs run the
+        #   per-plant EIA-860 fleet (no efficiency-bin aggregation) so the
+        #   per-plant fuel cost and CAMPD outage overlay bind to real plants.
+        #   ERCOT builds its fleet from CAMPD bins, so this path is unused.
         coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
         #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
         #   back to the flat lignite/PRB average.
@@ -456,9 +464,15 @@ def run_year(
         else:
             fuel_fracs = [campd_tranche_fuel_frac(g, prb_pt) for g in fleet]
     else:
+        # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
+        # unit as its own LP column so plant_code / plant_group / state carry
+        # into dispatch — required for per-plant EIA-923 fuel costs and the
+        # CAMPD outage overlay to bind. Otherwise use the legacy efficiency-
+        # bin aggregation (faster, but identity-free).
+        n_bins = 0 if getattr(config, "plant_level_fleet", False) \
+            else config.heat_rate_bin_count
         fleet_base = aggregate_fleet(
-            load_fleet_from_csv(iso, iso_config),
-            n_bins=config.heat_rate_bin_count,
+            load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
         )
         fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
     fleet_arrays = generators_to_fleet_arrays(
