@@ -59,6 +59,7 @@ from market_sim.data.eia923 import (  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_eia_hourly_benchmark,
+    pjm_net_interchange,
     load_ercot_fossil_gen,
     load_ercot_nuclear_gen,
     load_ercot_renewable_gen,
@@ -1223,15 +1224,25 @@ def _report_generic(
               f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
               f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}")
 
-        # --- [2] Net interchange: model (energy-only = 0) vs EIA-930 ---
+        # --- [2] Net interchange: model vs EIA-930 ---
         if e930 is not None and "interchange" in e930:
             ix = e930["interchange"]
             ix_twh = float(ix.sum()) / _MWH_PER_TWH
             print("\n  [2] Net interchange (EIA sign: + = net export)")
             print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
                   f"({ix.mean():+.0f} MW avg)")
-            print("    model            :    0.00 TWh "
-                  "(energy-only; no external interchange node)")
+            # PJM adds its measured tie-line net export to demand (the
+            # import/export node), so the fleet serves it; other ISOs are
+            # energy-only with no interchange node.
+            model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+            if model_ix is not None:
+                m_twh = float(model_ix.sum()) / _MWH_PER_TWH
+                print(f"    model            : {m_twh:+.2f} TWh "
+                      f"({model_ix.mean():+.0f} MW avg; served as a scheduled "
+                      "interchange added to demand)")
+            else:
+                print("    model            :    0.00 TWh "
+                      "(energy-only; no external interchange node)")
 
         # --- [3] Price level + duration ---
         zones = sorted(sysd["zone"].unique())
