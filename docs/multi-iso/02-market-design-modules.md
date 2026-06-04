@@ -88,6 +88,14 @@ The module ("Capacity/RA revenue") adds a `capacity_revenue` term to
 a per-ISO capacity price ($/MW-day or $/kW-yr) times the unit's qualifying
 (derated/UCAP) capacity. This mirrors how EAC revenue is already added.
 
+> **Landed (2026-06-04).** `capacity.capacity_revenue_per_mw_yr(iso, eford)`
+> implements M1 as a first cut: `net_cone_per_kw_yr × 1000 × (1 − EFORd)`
+> (UCAP proxy), gated on `MARKET_DESIGN[iso].capacity_market`, added to both
+> the retirement `net_revenue` and the new-entry thermal revenue. The price
+> anchor is the per-ISO net-CONE already in the registry (PJM ~$100/kW-yr);
+> BRA/auction clearing prices can refine it later. Energy-only ERCOT earns
+> zero (registry flag off), so its retirement/entry economics are unchanged.
+
 | ISO | RA mechanism | Construct | Capacity-price source |
 |-----|--------------|-----------|-----------------------|
 | ERCOT | none (energy-only + ORDC) | — | n/a (module **off**) |
