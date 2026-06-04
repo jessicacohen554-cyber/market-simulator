@@ -7,6 +7,21 @@ machinery and stubbing the ERCOT-only steps (NP6 HSL, coal must-run tuning,
 plant-level/CHP/CAMPD diagnostics). The point is to locate the largest gaps and
 their causes before any PJM-specific tuning — not to declare PJM calibrated.
 
+> **Update (2026-06-04).** The fuel-mix and price tables below are the
+> *original energy-only stub* run (aggregated fleet, single gas-basis scalar,
+> no PJM outages). Since then the PJM backcast binds to real per-plant data —
+> a per-plant EIA-860 fleet (`plant_level_fleet`), per-plant EIA-923 monthly
+> gas/coal/oil costs with a state→zone "nearby plant" fallback
+> (`nearby_fuel_price_fallback`), and a CAMPD historic-outage overlay
+> (`campd-outages-PJM.csv`). This directly attacks gaps #2a (gas basis) and
+> #2b (coal availability) below: in a 2024 re-run the outage overlay zeroes
+> 233 coal/CC tranches and modeled coal falls toward the actuals. Numbers here
+> will be refreshed once the missing PJM coal-state CAMPD extracts (OH, WV, IN,
+> KY, VA) are loaded — today those states keep statistical availability, so the
+> overlay covers only PA/NJ/MD/DE/IL. Capacity-payment economics (Module M1)
+> are also now wired for multi-year runs (net-CONE × UCAP), though they do not
+> affect this single-year dispatch.
+
 ## How it was produced
 
 ```
