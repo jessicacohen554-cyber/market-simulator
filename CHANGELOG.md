@@ -38,6 +38,14 @@ extracts, so their plant codes never match and behaviour is unchanged.
   EIA-923 in both years: 2023 coal −13.7%→−11.9% and gas-steam +27.7%→+18.0%;
   2024 coal −24.4%→−22.2% and gas-steam +29.0%→+9.6%. Total energy balance and
   the full test suite are unchanged.
+- **Tuned-config validation (`run32_unitoutage` = run 31's tuned config +
+  CAMPD unit outages; both on the dashboard).** In the calibrated config the
+  largest-biased gas-steam class drops sharply (2023 ST_GAS +10.2%→+2.6%) and
+  2024 lignite improves (−7.2%→−5.3%); the freed energy flows to CT peakers,
+  which the no-commitment config already over-runs (2023 CT_PEAKER
+  +18.6%→+42.5%), so a light CT-peaker / ST_GAS re-tune is the natural
+  follow-up. Coal totals stay close (2023 +6.2%, 2024 +1.8% combined) and the
+  grid energy balance holds at ~+1%.
 
 ## 2026-06-04 (PJM backcast: per-plant fuel costs, CAMPD outages, capacity payments)
 
