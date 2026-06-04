@@ -109,7 +109,7 @@ Standard ways production-cost models bound storage foresight, cheapest-to-most-f
 5. **Stochastic/robust optimization** — optimize over multiple price/load scenarios so no single known future can be exploited. The textbook-correct answer to foresight, rarely used in large PCMs because of cost.
 6. **Empirical haircut** — accept perfect foresight, then derate storage output/efficiency to a fraction (≈80–90 %) of the theoretical-optimal spread. A pure calibration fudge, but common and cheap.
 
-For this model, the pragmatic path is (1) as a guard once durations lengthen, escalating to (2) if a backcast shows storage materially mis-shaping net load.
+For this model, the pragmatic path is (1) as a guard once durations lengthen, escalating to (2) if a backcast shows storage materially mis-shaping net load. Option (1) is implemented today as the `storage_daily_cycling` config flag (CLI: `run_calibration_full.py --storage-daily-cycling`): when on, each storage unit's SOC must return to its day-start level every 24 h, so storage cannot bank energy across days and its arbitrage is bounded to within-day spreads. Off by default (annual-cyclic, full foresight).
 
 **Transmission:**
 
