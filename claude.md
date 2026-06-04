@@ -1,5 +1,11 @@
 # Market Simulation Model — Claude Code Instructions
 
+## Response Style
+
+Default to concise answers: lead with the result/answer, keep prose tight, and
+expand only when asked. Prefer short paragraphs and small lists over long
+blocks of text. Don't restate the question or pad with preamble.
+
 ## What This Is
 
 LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: seven ISOs registered in `config/iso_configs.py` — ERCOT (6 zones, the calibrated reference), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO, NEISO — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
