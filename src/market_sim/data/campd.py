@@ -66,7 +66,16 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     "CAISO": ("CA",),
     "NYISO": ("NY",),
     "ISONE": ("ME", "NH", "MA", "CT", "RI", "VT"),
-    "PJM": ("PA", "NJ", "MD", "DE", "IL"),
+    # Full PJM footprint. ``load_campd_hourly`` warns and skips any state
+    # whose ``{STATE}_{YEAR}.parquet`` is not present, so listing the whole
+    # footprint lets the outage derivation widen automatically as more CAMPD
+    # extracts land. Uploaded so far: PA, NJ, MD, DE, IL. NOT yet present
+    # (and they hold most of PJM's coal): OH, IN, KY, WV, VA, NC, MI, DC —
+    # plants there keep the statistical availability model until added.
+    "PJM": (
+        "PA", "NJ", "MD", "DE", "IL", "OH", "IN", "KY", "WV", "VA", "NC",
+        "MI", "DC",
+    ),
     "MISO": ("IL",),
     "SPP": (),
 }
@@ -139,10 +148,31 @@ def _hour_index_8760(month: np.ndarray, day: np.ndarray, hour: np.ndarray) -> np
 
 
 def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
-    """Load and normalize one ``{STATE}_{YEAR}.parquet`` extract, or ``None``."""
-    path = raw_dir / f"{state}_{year}.parquet"
-    if not path.exists():
-        logger.warning("CAMPD extract not found: %s", path)
+    """Load and normalize one ``{STATE}_{YEAR}.parquet`` extract, or ``None``.
+
+    Resolves the file from the flat ``raw_dir`` first, then the unit-level
+    subdirectory (``campd-unit-level/``) — so the older facility-level
+    extracts already in ``raw_dir`` (e.g. the ERCOT TX file and the PJM
+    PA/NJ/MD/DE/IL files) are used unchanged, while states present *only* as
+    newer unit-level uploads (one row per unit-hour, with a ``unitId``
+    column; e.g. IN, DC) load from the subdirectory. Flat-first deliberately
+    keeps ERCOT and the existing PJM states bit-for-bit, even where a state
+    (TX) appears in both. Unit-level rows are summed to the facility per hour
+    downstream (:func:`plant_hourly_grid`, :func:`plant_hourly_net`), so the
+    extra granularity is transparent here.
+    """
+    fname = f"{state}_{year}.parquet"
+    path = next(
+        (p for p in (raw_dir / fname, raw_dir / "campd-unit-level" / fname)
+         if p.exists()),
+        None,
+    )
+    if path is None:
+        logger.warning(
+            "CAMPD extract not found for %s %d (looked in %s and "
+            "%s/campd-unit-level)",
+            state, year, raw_dir, raw_dir,
+        )
         return None
     raw = pd.read_parquet(path)
     out = pd.DataFrame({

@@ -30,10 +30,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import (  # noqa: E402
-    BIN_GROUP_TO_FUEL,
-    load_campd_bins,
-)
+from market_sim.data.fleet import load_campd_bins  # noqa: E402
 
 # A sustained CF above this is a "real run"; below it (off, or low-output
 # idling) is treated as not running. Set to 5%: a plant idling at 5-10% CF is
@@ -109,6 +106,55 @@ def detect_outages_eventbased(
     return [(s, e) for s, e in _runs(below) if e - s >= min_outage_hours]
 
 
+def _nameplate_groups(
+    iso: str, bins_path: str
+) -> tuple[dict[int, float], dict[int, str], dict[int, str]]:
+    """Return ``(nameplate, name, group)`` per coal/CC/gas-steam plant code.
+
+    ERCOT reads the curated ``custom-bin-assignments.csv`` (one row per
+    plant, with a measured bin nameplate). Every other ISO is built from the
+    EIA-860 fleet: generators are summed per plant code over the GROUPS
+    classes, the plant's dominant class (by capacity) is its group, and the
+    summed capacity is its nameplate — the denominator for the capacity
+    factor the outage detector thresholds on.
+    """
+    if iso.upper() == "ERCOT":
+        bins = load_campd_bins(bins_path)
+        coalcc = bins[bins["Plant_Group"].isin(GROUPS)]
+        nameplate = dict(
+            zip(coalcc["Plant_Code"].astype(int), coalcc["capacity_mw"])
+        )
+        name = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Name"]))
+        group = dict(
+            zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Group"])
+        )
+        return nameplate, name, group
+
+    from collections import defaultdict
+
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    cap_by_group: dict[int, dict[str, float]] = defaultdict(
+        lambda: defaultdict(float)
+    )
+    names: dict[int, str] = {}
+    for g in load_fleet_from_csv(iso):
+        if g.plant_group not in GROUPS:
+            continue
+        code = int(g.plant_code)
+        if code <= 0:
+            continue
+        cap_by_group[code][g.plant_group] += float(g.pmax_mw)
+        names.setdefault(code, g.name)
+
+    nameplate, name, group = {}, {}, {}
+    for code, groups in cap_by_group.items():
+        nameplate[code] = sum(groups.values())
+        group[code] = max(groups, key=groups.get)
+        name[code] = names[code]
+    return nameplate, name, group
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -118,18 +164,23 @@ def main() -> None:
         "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
     )
     ap.add_argument(
-        "--out", default=str(REPO / "inputs" / "raw-data" / "campd-outages.csv")
+        "--out", default=None,
+        help="Output CSV. Defaults to inputs/raw-data/campd-outages.csv for "
+             "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
     )
     args = ap.parse_args()
     min_outage_hours = int(round(args.min_outage_days * 24))
+    iso = args.iso.upper()
+    if args.out is None:
+        fname = (
+            "campd-outages.csv" if iso == "ERCOT"
+            else f"campd-outages-{iso}.csv"
+        )
+        args.out = str(REPO / "inputs" / "raw-data" / fname)
 
-    bins = load_campd_bins(args.bins)
-    coalcc = bins[bins["Plant_Group"].isin(GROUPS)]
-    nameplate = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["capacity_mw"]))
-    pname = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Name"]))
-    grp = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Group"]))
+    nameplate, pname, grp = _nameplate_groups(iso, args.bins)
 
-    states = campd.states_for_iso(args.iso)
+    states = campd.states_for_iso(iso)
     df = campd.load_campd_hourly(states, args.years)
 
     rows = []
