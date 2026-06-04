@@ -51,6 +51,21 @@ OUTAGES_CSV: Path = (
 # to decide which plants are coal/CC. Matches ScenarioConfig.campd_bins_path.
 BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 
+# Per-ISO historic-outage extract. ERCOT keeps the original file name (so the
+# ERCOT backcast is unchanged); other ISOs use ``campd-outages-{ISO}.csv``,
+# written by ``scripts/derive_campd_outages.py --iso <ISO>`` from that ISO's
+# CAMPD CEMS state extracts. Those per-ISO files already contain only coal/CC/
+# gas-steam plants (the derivation's GROUPS filter), so the overlay trusts
+# them without re-intersecting against an ISO-specific bin CSV.
+_OUTAGES_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data"
+
+
+def default_outages_path(iso: str | None) -> Path:
+    """Return the historic-outage CSV path for an ISO (ERCOT = the legacy file)."""
+    if iso is None or iso.upper() == "ERCOT":
+        return OUTAGES_CSV
+    return _OUTAGES_DIR / f"campd-outages-{iso.upper()}.csv"
+
 # Plant groups whose sustained outages are overlaid: coal and combined cycle
 # (regular and CHP). A plant qualifies if it has any bin in this set; the
 # per-bin group filter at overlay time then restricts the zeroing to those
@@ -163,12 +178,16 @@ def _build_outage_masks(
     start->stop span exceeds :data:`MIN_OUTAGE_SPAN_HOURS`, then ORs each
     window's per-year clipped mask into the result. Cached on the input
     paths and horizon; the returned arrays are shared (read-only callers).
+
+    An empty ``bins_path`` skips the coal/CC intersection entirely — used for
+    the per-ISO ``campd-outages-{ISO}.csv`` extracts, which are already
+    coal/CC/gas-steam only by construction (the derivation's GROUPS filter).
     """
-    codes = _qualifying_plant_codes(bins_path)
     df = pd.read_csv(
         outages_path, parse_dates=["outage_start", "outage_stop"]
     )
-    df = df[df["oris_code"].isin(codes)]
+    if bins_path:
+        df = df[df["oris_code"].isin(_qualifying_plant_codes(bins_path))]
 
     masks: dict[int, dict[int, np.ndarray]] = {}
     for row in df.itertuples(index=False):
@@ -194,7 +213,7 @@ def outage_masks_for_year(
     year: int,
     hours: int = HOURS_PER_YEAR,
     outages_path: str | Path = OUTAGES_CSV,
-    bins_path: str | Path = BINS_CSV_DEFAULT,
+    bins_path: str | Path | None = BINS_CSV_DEFAULT,
 ) -> dict[int, np.ndarray]:
     """Return ``{plant_code: bool mask}`` of qualifying outage hours in ``year``.
 
@@ -203,6 +222,9 @@ def outage_masks_for_year(
     8760-hour ERCOT-local clock. Returns an empty dict when the outage
     extract is missing, so a backcast degrades gracefully to the statistical
     availability model.
+
+    ``bins_path`` is the coal/CC bin CSV used to restrict the extract (ERCOT).
+    Pass ``None``/empty for a per-ISO extract that is already coal/CC only.
     """
     outages_path = Path(outages_path)
     if not outages_path.exists():
@@ -212,7 +234,9 @@ def outage_masks_for_year(
             outages_path,
         )
         return {}
-    all_masks = _build_outage_masks(str(outages_path), str(bins_path), hours)
+    all_masks = _build_outage_masks(
+        str(outages_path), str(bins_path) if bins_path else "", hours
+    )
     return {
         code: by_year[year]
         for code, by_year in all_masks.items()
