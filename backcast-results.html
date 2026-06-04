@@ -79,7 +79,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
-  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-04 13:46</p>
+  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-04 16:57</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -112,7 +112,26 @@ function nrmse(m,o){let s=0,om=0,n=m.length;for(let i=0;i<n;i++){s+=(m[i]-o[i])*
 function capScore(r,nr,dev){return 100*Math.cbrt(Math.max(0,r)*Math.max(0,1-nr)*Math.max(0,1-Math.abs(dev)));}
 function plantsOf(id,year,grp){const M=MODEL[id].years[year],B=BENCH[year];if(!M||!B)return [];
  return Object.keys(M.plants).filter(c=>{const b=B.plants[c];return b&&b.group===grp&&st.zones.has(b.zone);});}
-const _aggC={};
+const _aggC={},_eAllC={};
+// Full EIA-923 class total (all 923 plants of the class), allocated to the
+// selected zones by the matched plants' EIA-923 distribution: the matched set
+// understates the class (e.g. CC_REGULAR ~138 of 145 TWh), so the zonal Δ-vs-
+// 923 is scaled to the full class total rather than the matched subtotal.
+function matchedEAnnAll(year,grp){const k=year+"|"+grp;if(_eAllC[k]!=null)return _eAllC[k];
+ const B=BENCH[year];let s=0;for(const c in B.plants){if(B.plants[c].group===grp)s+=B.plants[c].e_ann;}return _eAllC[k]=s;}
+function classBench923(year,grp,eAzones){const B=BENCH[year];
+ const cf=B.classFull?B.classFull[grp]:null,eAll=matchedEAnnAll(year,grp);
+ return (cf!=null&&eAll>0)?cf*(eAzones/eAll):eAzones;}
+// Model class total scaled the same way: the full grid-LP+BTM class total
+// (gmModel) allocated to the selected zones by the matched plants' model
+// distribution — so the Δ-vs-923 compares full class to full class (matched
+// model vs full 923 would understate the model and exaggerate the shortfall).
+const _mAllC={};
+function matchedMAnnAll(id,year,grp){const k=id+"|"+year+"|"+grp;if(_mAllC[k]!=null)return _mAllC[k];
+ const M=MODEL[id].years[year],B=BENCH[year];let s=0;
+ for(const c in M.plants){if(B.plants[c]&&B.plants[c].group===grp)s+=M.plants[c].m_ann;}return _mAllC[k]=s;}
+function classModelFull(id,year,grp,mAzones){const gm=(MODEL[id].years[year].gmModel||{})[grp],mAll=matchedMAnnAll(id,year,grp);
+ return (gm!=null&&mAll>0)?gm*(mAzones/mAll):mAzones;}
 function aggMW(id,year,grp){const key=id+"|"+year+"|"+grp+"|"+[...st.zones].sort().join(",");
  if(_aggC[key])return _aggC[key];const M=MODEL[id].years[year],B=BENCH[year];
  const mm=new Float32Array(T),cc=new Float32Array(T);let mA=0,cA=0,eA=0,bA=0;
@@ -124,12 +143,66 @@ function classMetrics(id,year,grp){const ps=plantsOf(id,year,grp);if(!ps.length)
  const a=aggMW(id,year,grp);const r=pearson(a.mm,a.cc),nr=nrmse(a.mm,a.cc),dev=a.cA>0?(a.mA-a.cA)/a.cA:0;
  const m1=a.cc.reduce((s,v)=>s+v,0)>0?capScore(r,nr,dev):null;
  const M=MODEL[id].years[year];let ws=0,cs=0;for(const c of ps){const w=BENCH[year].plants[c].npl,cp=M.plants[c].cap;if(cp!=null){ws+=w;cs+=w*cp;}}
- return {m1,m2:ws>0?cs/ws:null,r,nr,dev,mA:a.mA,cA:a.cA,eA:a.eA,bench923:a.eA,n:ps.length};}
+ return {m1,m2:ws>0?cs/ws:null,r,nr,dev,mA:a.mA,mFull:classModelFull(id,year,grp,a.mA),cA:a.cA,eA:a.eA,bench923:classBench923(year,grp,a.eA),n:ps.length};}
 function avgLMP(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};let pd=0,d=0;
  for(const z in L){if(!st.zones.has(z))continue;pd+=L[z].p*L[z].d;d+=L[z].d;}
  return d>0?pd/d:null;}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
+function ppcls(d){const a=Math.abs(d);return a<1?"good":a<3?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
+function fmtpp(d){return (d>=0?"+":"")+d.toFixed(1);}
+// ---- generation mix (system-wide; matches the calibration [3b] analysis) ----
+// Model total per fossil class = grid LP + behind-the-meter must-run (gmModel);
+// actual = full EIA-923 (classFull). Shows each class's share of TOTAL
+// generation and of FOSSIL generation, plus the model's pp deviation from the
+// actual fossil share. Non-fossil rows (nuclear/wind/solar) give the share of
+// total generation only. Zone-independent: 923/930 totals are system-wide.
+function mixLabel(g){return META.groupLabel[g]||({ST_CHP:"Steam Gas CHP"}[g])||g;}
+function genMixData(id,yr){const B=BENCH[yr];const gm=(MODEL[id].years[yr]||{}).gmModel||{};
+ const nf=(MODEL[id].years[yr]||{}).nonfossil||{};
+ const mFos=Object.keys(B.classFull).reduce((s,g)=>s+(gm[g]||0),0);
+ const mGen=mFos+(nf.nuclear||0)+(nf.wind||0)+(nf.solar||0);
+ return {gm,nf,mFos,mGen};}
+function genMixPanel(ids,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
+ const cf=B.classFull,e930=B.e930||{},FG=Object.keys(cf);
+ const aFos=FG.reduce((s,g)=>s+(cf[g]||0),0);
+ const aGen=aFos+(e930.nuclear||0)+(e930.wind||0)+(e930.solar||0);
+ const D={};ids.forEach(id=>D[id]=genMixData(id,yr));
+ const single=ids.length===1;
+ let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total &amp; of fossil generation vs full EIA-923)</span></h2>';
+ h+=`<p class=psub>Actual fossil ${aFos.toFixed(1)} TWh of ${aGen.toFixed(1)} TWh total`
+   +ids.map(id=>` · ${MODEL[id].label} fossil ${D[id].mFos.toFixed(1)} TWh`).join("")+`</p>`;
+ h+='<div class=tablewrap><table><thead><tr><th>class</th>';
+ if(single){const id=ids[0];
+  h+='<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
+   +'<th>model %fos</th><th>actual %fos</th><th>Δpp</th></tr></thead><tbody>';
+  for(const g of FG){const a_f=100*(cf[g]||0)/aFos,a_g=100*(cf[g]||0)/aGen;
+   const m=D[id].gm[g]||0,m_f=D[id].mFos>0?100*m/D[id].mFos:0,m_g=D[id].mGen>0?100*m/D[id].mGen:0,dpp=m_f-a_f;
+   h+=`<tr><td>${mixLabel(g)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${(cf[g]||0).toFixed(2)}</td>`
+     +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td>`
+     +`<td class=num>${m_f.toFixed(1)}</td><td class=num>${a_f.toFixed(1)}</td>`
+     +`<td class="num ${ppcls(dpp)}">${fmtpp(dpp)}</td></tr>`;}
+  h+=`<tr class=sub><td>Fossil total</td><td class=num>${D[id].mFos.toFixed(2)}</td><td class=num>${aFos.toFixed(2)}</td>`
+    +`<td class=num>${(100*D[id].mFos/D[id].mGen).toFixed(1)}</td><td class=num>${(100*aFos/aGen).toFixed(1)}</td>`
+    +`<td class=num>100.0</td><td class=num>100.0</td><td class=num></td></tr>`;
+  for(const f of ["nuclear","wind","solar"]){const a_g=100*(e930[f]||0)/aGen,m=D[id].nf[f]||0,m_g=D[id].mGen>0?100*m/D[id].mGen:0;
+   h+=`<tr><td>${f}</td><td class=num>${m.toFixed(2)}</td><td class=num>${(e930[f]||0).toFixed(2)}</td>`
+     +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td><td class=num>—</td><td class=num>—</td><td class=num>—</td></tr>`;}
+ }else{
+  h+='<th>actual %gen</th><th>actual %fos</th>'+ids.map(id=>`<th>${ridSpan(id)} %fos</th><th>Δpp</th>`).join("")+'</tr></thead><tbody>';
+  for(const g of FG){const a_f=100*(cf[g]||0)/aFos,a_g=100*(cf[g]||0)/aGen;
+   let row=`<tr><td>${mixLabel(g)}</td><td class=num>${a_g.toFixed(1)}</td><td class=num>${a_f.toFixed(1)}</td>`;
+   for(const id of ids){const m_f=D[id].mFos>0?100*(D[id].gm[g]||0)/D[id].mFos:0,dpp=m_f-a_f;
+    row+=`<td class=num>${m_f.toFixed(1)}</td><td class="num ${ppcls(dpp)}">${fmtpp(dpp)}</td>`;}
+   h+=row+'</tr>';}
+  h+=`<tr class=sub><td>Fossil total</td><td class=num>${(100*aFos/aGen).toFixed(1)}</td><td class=num>100.0</td>`
+    +ids.map(()=>'<td class=num>100.0</td><td class=num></td>').join("")+'</tr>';
+  for(const f of ["nuclear","wind","solar"]){const a_g=100*(e930[f]||0)/aGen;
+   let row=`<tr><td>${f}</td><td class=num>${a_g.toFixed(1)}</td><td class=num>—</td>`;
+   for(const id of ids){const m_g=D[id].mGen>0?100*((D[id].nf[f]||0))/D[id].mGen:0;row+=`<td class=num>${m_g.toFixed(1)}</td><td class=num>—</td>`;}
+   h+=row+'</tr>';}
+ }
+ return h+'</tbody></table></div></div>';}
 // ---- tooltip + run-id ----
 const tip=document.getElementById("bctip");
 function posTipXY(h,cx,cy){tip.innerHTML=h;tip.style.display="block";const p=14,w=tip.offsetWidth,ht=tip.offsetHeight;
@@ -237,8 +310,8 @@ function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
  return h+'</tbody></table></div></div>';}
 function singleFossilTable(id,yr){let h='<div class=panel><h2>Fossil classes — model vs EIA-923, r/NRMSE vs CAMPD</h2><div class=tablewrap><table><thead><tr><th>class</th><th>model TWh</th><th>EIA-923</th><th>Δ923</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
  for(const grp of META.groups){const m=classMetrics(id,yr,grp);if(!m)continue;
-  const dd=m.bench923>0.02?100*(m.mA-m.bench923)/m.bench923:null;
-  h+=`<tr><td>${META.groupLabel[grp]}</td><td class=num>${m.mA.toFixed(2)}</td><td class=num>${m.bench923.toFixed(2)}</td><td class="num ${dd==null?'':dcls(dd)}">${dd==null?"—":fmtPct(dd)}</td><td class=num>${m.r.toFixed(3)}</td><td class=num>${m.nr.toFixed(3)}</td></tr>`;}
+  const dd=m.bench923>0.02?100*(m.mFull-m.bench923)/m.bench923:null;
+  h+=`<tr><td>${META.groupLabel[grp]}</td><td class=num>${m.mFull.toFixed(2)}</td><td class=num>${m.bench923.toFixed(2)}</td><td class="num ${dd==null?'':dcls(dd)}">${dd==null?"—":fmtPct(dd)}</td><td class=num>${m.r.toFixed(3)}</td><td class=num>${m.nr.toFixed(3)}</td></tr>`;}
  return h+'</tbody></table></div></div>';}
 // ---- narrative ----
 function narrative(ids){let h='<div class=narr><h3 style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted)">Run definitions</h3>';
@@ -251,7 +324,7 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
    +'<p class=psub>Class capture% = aggregate shape &amp; level vs CAMPD. Plant capture% = capacity-weighted per-plant (merit order). Click a run id for its definition.</p><div class=kpigrid>';
  for(const id of ids){const m=classMetrics(id,yr,grp);const lbl=MODEL[id].label;
   if(!m){h+=`<div class=kpicard>${ridSpan(id)}<div class=lbl>${lbl}</div><div class=psub>no plants in zones</div></div>`;continue;}
-  const d923=m.bench923>0.02?100*(m.mA-m.bench923)/m.bench923:null;
+  const d923=m.bench923>0.02?100*(m.mFull-m.bench923)/m.bench923:null;
   h+=`<div class=kpicard>${ridSpan(id)}<div class=lbl>${lbl}</div>
    <div class=kpirow><span class=k>Class capture</span><span class=v>${m.m1==null?"—":m.m1.toFixed(0)}%</span></div>
    <div class=kpirow><span class=k>Plant capture</span><span class=v>${m.m2==null?"—":m.m2.toFixed(0)}%</span></div>
@@ -277,6 +350,8 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
  document.getElementById("cAnn").appendChild(barChart(bs,Math.max(0.1,...bs.map(b=>b.v))*1.25,760,300));
  wireTips(document.getElementById("content"));}
 function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
+ // generation mix (system-wide; full EIA-923)
+ h+=genMixPanel(ids,yr);
  // fuel vs 930
  h+='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th>'
    +ids.map(id=>`<th>${ridSpan(id)} Δ</th>`).join("")+'<th>EIA-930</th></tr></thead><tbody>';
@@ -286,11 +361,11 @@ function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
   row+=`<td class=num>${b==null?"—":b.toFixed(1)}</td>`;h+=row+"</tr>";}
  h+='</tbody></table></div></div>';
  // fossil classes
- h+='<div class=panel><h2>Fossil classes — Δ vs 923−BTM, r/NRMSE vs CAMPD</h2><div class=tablewrap><table><thead><tr><th>class</th>'
+ h+='<div class=panel><h2>Fossil classes — Δ vs full EIA-923, r/NRMSE vs CAMPD</h2><div class=tablewrap><table><thead><tr><th>class</th>'
    +ids.map(id=>`<th>${ridSpan(id)} Δ923</th><th>r</th><th>NRMSE</th>`).join("")+'</tr></thead><tbody>';
  for(const grp of META.groups){let any=false,row=`<tr><td>${META.groupLabel[grp]}</td>`;
   for(const id of ids){const m=classMetrics(id,yr,grp);if(!m){row+="<td class=num>—</td><td class=num>—</td><td class=num>—</td>";continue;}any=true;
-   const dd=m.bench923>0.02?100*(m.mA-m.bench923)/m.bench923:null;
+   const dd=m.bench923>0.02?100*(m.mFull-m.bench923)/m.bench923:null;
    row+=`<td class="num ${dd==null?'':dcls(dd)}">${dd==null?"—":dd.toFixed(1)}</td><td class=num>${m.r.toFixed(3)}</td><td class=num>${m.nr.toFixed(3)}</td>`;}
   if(any)h+=row+"</tr>";}
  h+='</tbody></table></div></div>';
@@ -352,7 +427,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  document.getElementById("sMon").appendChild(lineChart(ms,Math.max(1,...d.c_mon,...d.m_mon)*1.15,MONTHS,"",760,300));
  wireTips(document.getElementById("content"));}
 function renderSingleTables(){const id=st.single,yr=st.year;
- let h=singleFuelTable(id,yr)+singleFossilTable(id,yr);
+ let h=genMixPanel([id],yr)+singleFuelTable(id,yr)+singleFossilTable(id,yr);
  h+='<div class=panel><h2>Per-plant fit vs CAMPD / EIA-923 — '+yr+'</h2><div class=tablewrap><table><thead><tr><th>plant</th><th>class</th><th>zone</th><th>r</th><th>NRMSE</th><th>capture%</th><th>Δ923%</th></tr></thead><tbody>';
  const B=BENCH[yr],M=MODEL[id].years[yr];
  const codes=Object.keys(M.plants).filter(c=>B.plants[c]&&st.zones.has(B.plants[c].zone)).sort((a,b)=>B.plants[a].group.localeCompare(B.plants[b].group)||B.plants[b].npl-B.plants[a].npl);

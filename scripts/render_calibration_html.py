@@ -63,6 +63,10 @@ GROUP_LABEL = {
     "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP", "ST_GAS": "Steam Gas",
 }
 FOSSIL_GROUPS = list(GROUP_LABEL)
+# Generation-mix fossil set: the 7 dashboard classes plus ST_CHP (gas-steam
+# CHP), so the system-wide fossil total matches the calibration report's [3b]
+# table (which carries all 8 thermal classes, e.g. 298.2 TWh in 2024).
+MIX_GROUPS = FOSSIL_GROUPS + ["ST_CHP"]
 _GAS_GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
 _COAL_GROUPS = ("COAL_LIGNITE", "COAL_PRB")
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
@@ -189,6 +193,11 @@ def build_payload(runs: list[tuple[str, Path]],
         e930_all = pd.read_parquet(bdir / "eia930.parquet")
         campd_all = pd.read_parquet(bdir / "campd.parquet")
         sys_all = pd.read_parquet(bdir / "system.parquet")
+        # Behind-the-meter must-run per (year, pass, class) — the same off-grid
+        # CHP host self-supply the LP held out, as the calibration report uses
+        # it (run_calibration_full). Drives the system-wide generation mix.
+        btm_all = (pd.read_parquet(bdir / "btm.parquet")
+                   if (bdir / "btm.parquet").exists() else None)
         for year in meta["years"]:
             if years is not None and int(year) not in years:
                 continue
@@ -248,12 +257,20 @@ def build_payload(runs: list[tuple[str, Path]],
                     }
                 e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
                      .to_numpy(float) for s in e930["series"].unique()}
+                # Full EIA-923 net generation per fossil class (TWh) — every
+                # 923 plant of the class, NOT just the ones the model matches.
+                # This is the true class total the generation-mix benchmark and
+                # the zonal Δ-vs-923 are scaled to (matched plants understate
+                # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
+                e923_cls = e923.groupby("klass")["annual_mwh"].sum()
                 bench[int(year)] = {
                     "plants": bplants,
                     "e930": {f: round(float(e.get(f, np.zeros(1)).sum())
                                       / 1e6, 3)
                              for f in ("gas", "coal", "nuclear", "wind",
                                        "solar")},
+                    "classFull": {g: round(float(e923_cls.get(g, 0.0)) / 1e6, 4)
+                                  for g in MIX_GROUPS},
                 }
 
             # ---- model payload (per run) ----
@@ -338,9 +355,25 @@ def build_payload(runs: list[tuple[str, Path]],
                      if dem > 0 else float(zg["price"].mean()))
                 lmp[str(zone)] = {"p": round(p, 2),
                                   "d": round(dem / 1e6, 4)}
+            # System-wide generation mix per fossil class (TWh): model grid LP
+            # (``_class_hourly`` sum) + behind-the-meter must-run, exactly as
+            # run_calibration_full's [3b] thermal table builds the model total.
+            # Compared against ``bench.classFull`` (full EIA-923) it yields the
+            # share-of-fossil and the pp deviation shown in the mix table.
+            btm_y = {}
+            if btm_all is not None:
+                by = btm_all[(btm_all["year"] == year)
+                             & (btm_all["pass"] == "P1")]
+                btm_y = dict(zip(by["klass"], by["btm_twh"]))
+            gm_model = {
+                g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6
+                         + (float(btm_y.get(g, 0.0))
+                            if g in ("CC_CHP", "CT_CHP", "ST_CHP") else 0.0), 4)
+                for g in MIX_GROUPS
+            }
             run_years[int(year)] = {
                 "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
-                "lmp": lmp}
+                "gmModel": gm_model, "lmp": lmp}
         model_runs.append({"label": label, "years": run_years})
 
     return {
