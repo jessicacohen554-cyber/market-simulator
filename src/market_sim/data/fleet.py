@@ -2450,14 +2450,21 @@ def bins_to_fleet(
             committed_hr = base_hr * ov["hr_mc"]
             peak_hr = base_hr * ov["hr_pk"]
         # CHP steam-following grid floor pinned onto the econ tranche: the
-        # plant's total must-run (p2 CAMPD gross CF) minus its BTM share, i.e.
-        # the steady export delivered to the grid above host self-supply. Only
-        # CAMPD-covered plants have a floor; the rest export surplus only.
+        # plant's total must-run (p2 CAMPD gross CF) net of its BTM share, i.e.
+        # the steady export delivered to the grid above host self-supply. The
+        # BTM share is a fraction of the plant's *generation* (host self-supply
+        # scales with output, same basis the report add-back uses), so the
+        # grid-delivered floor is pmin_cf * (1 - btm). Subtracting the BTM as
+        # raw nameplate-percentage points zeroed the floor whenever a plant's
+        # observed must-run ran below its BTM share (e.g. San Jacinto: pmin
+        # 34.6 < BTM 40), leaving inefficient CT_CHP cogens to idle instead of
+        # delivering their steady steam-following export. Only CAMPD-covered
+        # plants have a floor; the rest export surplus only.
         chp_pmin_mw = 0.0
         if chp_following:
             pmin_cf = CHP_PMIN_CF_BY_PLANT.get(plant_code)
             if pmin_cf is not None:
-                grid_mr_cf = max(0.0, pmin_cf - pct_mr)
+                grid_mr_cf = max(0.0, pmin_cf * (1.0 - pct_mr / 100.0))
                 chp_pmin_mw = min(grid_mr_cf / 100.0 * nameplate, econ_cap)
 
         # Economic tranche(s). One tranche at econ_hr by default; the offer
