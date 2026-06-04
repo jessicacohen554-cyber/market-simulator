@@ -42,12 +42,14 @@ import numpy as np
 from market_sim.config.constants import (
     CCUS_PARAMS,
     CO2_RATES,
+    DEFAULT_MARKET_DESIGN,
     EFORD,
     GEOTHERMAL_PARAMS,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     HYDROGEN_TURBINE_PARAMS,
+    MARKET_DESIGN,
     NEW_ENTRY_COSTS,
     NOX_RATES,
     OFFSHORE_WIND_PARAMS,
@@ -193,6 +195,31 @@ def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
     return []
 
 
+def capacity_revenue_per_mw_yr(iso: str, eford: float) -> float:
+    """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
+
+    In a capacity-market ISO a thermal unit earns a payment on its
+    qualifying (UCAP) capacity *outside* the energy market, which can keep
+    it solvent even on a negative energy margin. This monetizes the per-ISO
+    net-CONE from :data:`MARKET_DESIGN` against the unit's UCAP, approximated
+    as ``1 - EFORd`` (PJM/NYISO/ISO-NE accredit roughly on unforced
+    capacity)::
+
+        $/MW-yr = net_cone_per_kw_yr * 1000 * (1 - eford)
+
+    Energy-only ISOs (ERCOT, and any ISO absent from the registry) have
+    ``capacity_market = False`` and earn zero here, so their retirement and
+    new-entry economics are unchanged. The capacity price is exogenous and
+    citable (the net-CONE anchor), mirroring how EAC revenue already enters;
+    BRA/auction clearing prices can refine it later.
+    """
+    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+    if not design.capacity_market or design.net_cone_per_kw_yr <= 0.0:
+        return 0.0
+    ucap = max(0.0, 1.0 - float(eford))
+    return design.net_cone_per_kw_yr * 1000.0 * ucap
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -281,6 +308,14 @@ def apply_economic_retirements(
         )
         net_revenue += compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
+        )
+
+        # Resource-adequacy capacity payment (Module M1): in PJM/NYISO/
+        # ISO-NE/CAISO a unit earns a capacity revenue stream that can cover
+        # fixed cost even when energy margin is negative, so omitting it
+        # over-retires thermal capacity there. Zero in energy-only ERCOT.
+        net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
+            config.iso, g.eford
         )
 
         threshold = getattr(
@@ -936,6 +971,13 @@ def apply_economic_new_entry(
                 + best_co2 * carbon_price
             )
             annual_cost += var_cost * base_cf * HOURS_PER_YEAR
+
+            # Module M1: a new thermal unit in a capacity-market ISO also
+            # earns the resource-adequacy payment on its UCAP, the same
+            # stream credited in the retirement screen above.
+            effective_revenue += capacity_revenue_per_mw_yr(
+                iso_config.name, EFORD.get(tech, 0.05)
+            )
 
         margin = effective_revenue - annual_cost
         if margin > 0.0:
