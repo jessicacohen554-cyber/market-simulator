@@ -57,70 +57,70 @@ def test_ercot_south_zone():
 
 def test_pjm_state_mapping():
     """States that fall cleanly inside one PJM zone map by FIPS state code."""
-    # West — the AEP/ComEd/APS/DAY/ATSI belt.
-    assert assign_zone_by_fips("17", None, "PJM") == "PJM_West"   # IL (ComEd)
-    assert assign_zone_by_fips("18", None, "PJM") == "PJM_West"   # IN (AEP)
-    assert assign_zone_by_fips("39", None, "PJM") == "PJM_West"   # OH (AEP/ATSI)
-    assert assign_zone_by_fips("26", None, "PJM") == "PJM_West"   # MI (AEP)
-    assert assign_zone_by_fips("21", None, "PJM") == "PJM_West"   # KY (EKPC)
-    assert assign_zone_by_fips("54", None, "PJM") == "PJM_West"   # WV (AEP/APS)
-    # East — the Mid-Atlantic PSEG/JCPL/PECO/BGE/PEPCO pocket.
-    assert assign_zone_by_fips("34", None, "PJM") == "PJM_East"   # NJ (PSEG)
-    assert assign_zone_by_fips("10", None, "PJM") == "PJM_East"   # DE (DPL)
-    assert assign_zone_by_fips("11", None, "PJM") == "PJM_East"   # DC (PEPCO)
-    # South — Dominion (DOM).
-    assert assign_zone_by_fips("51", None, "PJM") == "PJM_South"  # VA (DOM)
-    assert assign_zone_by_fips("37", None, "PJM") == "PJM_South"  # NC (DOM)
+    assert assign_zone_by_fips("17", None, "PJM") == "PJM_ComEd"     # IL ComEd
+    assert assign_zone_by_fips("18", None, "PJM") == "PJM_AEP_Ohio"  # IN AEP
+    assert assign_zone_by_fips("26", None, "PJM") == "PJM_AEP_Ohio"  # MI AEP
+    assert assign_zone_by_fips("21", None, "PJM") == "PJM_AEP_Ohio"  # KY EKPC
+    # OH / WV with no coordinates default to the southern AEP_Ohio belt.
+    assert assign_zone_by_fips("39", None, "PJM") == "PJM_AEP_Ohio"  # OH
+    assert assign_zone_by_fips("54", None, "PJM") == "PJM_AEP_Ohio"  # WV
+    # EMAAC — the eastern NJ/DE/Philadelphia load pocket.
+    assert assign_zone_by_fips("34", None, "PJM") == "PJM_EMAAC"     # NJ PSEG
+    assert assign_zone_by_fips("10", None, "PJM") == "PJM_EMAAC"     # DE DPL
+    # SWMAAC — Baltimore/DC.
+    assert assign_zone_by_fips("11", None, "PJM") == "PJM_SWMAAC"    # DC PEPCO
+    # Dominion (DOM).
+    assert assign_zone_by_fips("51", None, "PJM") == "PJM_Dominion"  # VA DOM
+    assert assign_zone_by_fips("37", None, "PJM") == "PJM_Dominion"  # NC DOM
 
 
-def test_pjm_unknown_state_falls_back_to_west():
-    """A PJM-BA plant whose state lacks a rule falls back to PJM_West.
+def test_pjm_unknown_state_falls_back_to_largest():
+    """A PJM-BA plant whose state lacks a rule falls back to the largest zone.
 
     PJM has a lone seam plant in Minnesota (FIPS 27); with no zone rule it
-    lands in the largest-load-share zone rather than being dropped.
+    lands in the largest-load-share zone (PJM_AEP_Ohio) rather than dropped.
     """
-    assert assign_zone_by_fips("27", None, "PJM") == "PJM_West"
+    assert assign_zone_by_fips("27", None, "PJM") == "PJM_AEP_Ohio"
 
 
-def test_pjm_pennsylvania_three_way_split():
-    """Pennsylvania straddles all three eastern PJM zones.
+def test_pjm_pennsylvania_split():
+    """Pennsylvania straddles EMAAC, West_APS and Central_PA.
 
-    The Philadelphia metro (PECO counties) is East, SW/NW PA (APS / Penn
-    Power / Duquesne) is West by longitude, and the central PPL/METED/PENELEC
-    corridor is the Central default when no western longitude places it.
+    The Philadelphia metro (PECO counties) is EMAAC; western PA (west of
+    ~-79.0) is West_APS; the central PPL/METED/PENELEC corridor is the
+    Central_PA default when no western longitude places it.
     """
-    # Philadelphia county (FIPS 42/101) — the East load pocket, via the
-    # county rule even with no coordinates.
-    assert assign_zone_by_fips("42", "101", "PJM") == "PJM_East"
-    # Montgomery county (42/091, Limerick) is also Philadelphia metro → East.
-    assert assign_zone_by_fips("42", "91", "PJM") == "PJM_East"
+    # Philadelphia county (FIPS 42/101) — EMAAC via the county rule.
+    assert assign_zone_by_fips("42", "101", "PJM") == "PJM_EMAAC"
+    # Montgomery county (42/091, Limerick) is also Philadelphia metro → EMAAC.
+    assert assign_zone_by_fips("42", "91", "PJM") == "PJM_EMAAC"
     # A PA plant with no coordinates falls back to the Central PA corridor.
-    assert assign_zone_by_fips("42", "63", "PJM") == "PJM_Central"
+    assert assign_zone_by_fips("42", "63", "PJM") == "PJM_Central_PA"
 
 
 def test_pjm_maryland_split():
-    """Maryland is East except the APS western panhandle, which ties West."""
-    # Most of MD (BGE/PEPCO) with no coordinates → East.
-    assert assign_zone_by_fips("24", None, "PJM") == "PJM_East"
+    """Maryland is SWMAAC except the APS western panhandle (West_APS)."""
+    # Most of MD (BGE/PEPCO) with no coordinates → SWMAAC.
+    assert assign_zone_by_fips("24", None, "PJM") == "PJM_SWMAAC"
 
 
 def test_pjm_known_plants_resolve_to_expected_zones():
-    """Named PJM plants land in their real aggregated zones.
+    """Named PJM plants land in their real eight-zone LDAs.
 
-    Exercises every zone and every PA/MD boundary rule. ORIS codes from
+    Exercises every zone and the OH/WV/PA/MD boundary rules. ORIS codes from
     eGRID 2023 PLNT23 (BACODE == PJM).
     """
     cases = {
-        6023: "PJM_West",     # Byron nuclear (IL, ComEd)
-        6149: "PJM_West",     # Davis-Besse nuclear (OH, FirstEnergy/ATSI)
-        6040: "PJM_West",     # Beaver Valley nuclear (western PA, lon -80.4)
-        3118: "PJM_West",     # Conemaugh coal (Indiana County PA, lon -79.1)
-        6103: "PJM_Central",  # Susquehanna nuclear (central PA, PPL)
-        6105: "PJM_East",     # Limerick nuclear (Montgomery County, Philly metro)
-        2410: "PJM_East",     # Salem nuclear (NJ, PSEG)
-        602:  "PJM_East",     # Brandon Shores (Anne Arundel County MD, BGE)
-        6168: "PJM_South",    # North Anna nuclear (VA, Dominion)
-        3806: "PJM_South",    # Surry nuclear (VA, Dominion)
+        6023: "PJM_ComEd",       # Byron nuclear (IL, ComEd)
+        6149: "PJM_ATSI",        # Davis-Besse nuclear (northern OH, FirstEnergy)
+        6040: "PJM_West_APS",    # Beaver Valley nuclear (western PA, lon -80.4)
+        3118: "PJM_West_APS",    # Conemaugh coal (Indiana County PA, lon -79.1)
+        6103: "PJM_Central_PA",  # Susquehanna nuclear (central PA, PPL)
+        6105: "PJM_EMAAC",       # Limerick nuclear (Montgomery County, Philly)
+        2410: "PJM_EMAAC",       # Salem nuclear (NJ, PSEG)
+        602:  "PJM_SWMAAC",      # Brandon Shores (Anne Arundel County MD, BGE)
+        6168: "PJM_Dominion",    # North Anna nuclear (VA, Dominion)
+        3806: "PJM_Dominion",    # Surry nuclear (VA, Dominion)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "PJM") == expected, f"ORIS {oris}"

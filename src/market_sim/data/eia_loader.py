@@ -8,6 +8,7 @@ normalized per-fuel distributions.
 
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 from pathlib import Path
 
@@ -17,9 +18,42 @@ import pandas as pd
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 
+logger = logging.getLogger(__name__)
+
 # Default location of the EIA-930 parquet extracts, resolved relative to the
 # repository root (this file lives at src/market_sim/data/eia_loader.py).
 DATA_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-930"
+
+# PJM publishes hourly metered load for its 20 real transmission zones; the
+# file lives here, one per year. Used to give each model zone its *own* hourly
+# load shape (zones peak at different times) instead of a single system shape
+# scaled by a static share.
+_PJM_ZONAL_LOAD_DIR: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "zone-specific-demand"
+)
+
+# Real PJM transmission zone -> model zone (the eight-zone aggregation in
+# iso_configs._pjm_config). ``RTO`` is the system total and is dropped.
+_PJM_LOAD_ZONE_GROUPS: dict[str, str] = {
+    "CE": "PJM_ComEd",
+    "AEP": "PJM_AEP_Ohio", "DAY": "PJM_AEP_Ohio", "DEOK": "PJM_AEP_Ohio",
+    "OVEC": "PJM_AEP_Ohio",
+    "ATSI": "PJM_ATSI",
+    "AP": "PJM_West_APS", "DUQ": "PJM_West_APS",
+    "PL": "PJM_Central_PA", "PN": "PJM_Central_PA", "ME": "PJM_Central_PA",
+    "EKPC": "PJM_Central_PA",
+    "DOM": "PJM_Dominion",
+    "PS": "PJM_EMAAC", "JC": "PJM_EMAAC", "PE": "PJM_EMAAC",
+    "DPL": "PJM_EMAAC", "AE": "PJM_EMAAC", "RECO": "PJM_EMAAC",
+    "BC": "PJM_SWMAAC", "PEP": "PJM_SWMAAC",
+}
+
+# Cumulative hours before the first of each 1-based month, non-leap calendar,
+# for mapping a (month, day, hour) to an hour-of-year index in [0, 8760).
+_MONTH_START_HOUR: tuple[int, ...] = tuple(
+    int(sum((31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[:m]) * 24)
+    for m in range(12)
+)
 
 _DEMAND_PROFILES_FILE = "eia_demand_profiles.parquet"
 _DEMAND_META_FILE = "eia_demand_meta.parquet"
@@ -317,6 +351,69 @@ def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     return subset
 
 
+def pjm_zonal_load_shares(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly PJM load shares, or ``None``.
+
+    Reads PJM's hourly metered-load file for ``year``, aggregates the 20 real
+    transmission zones into the eight model zones (:data:`_PJM_LOAD_ZONE_GROUPS`)
+    and, for each hour, returns each model zone's fraction of system load. The
+    caller multiplies these time-varying shares by the system demand total, so
+    each zone gets its own measured shape (zones peak at different times) while
+    the system level stays tied to the existing demand series.
+
+    Returns ``None`` when the file is absent so the caller falls back to the
+    static per-zone ``load_share``. The series is placed on the model's fixed
+    non-leap 8760-hour clock (Feb 29 dropped); the lone DST spring-forward gap
+    is back-filled from the previous hour.
+    """
+    path = _PJM_ZONAL_LOAD_DIR / f"PJM{year}_hrl_load_metered.csv"
+    if not path.exists():
+        logger.warning(
+            "PJM zonal metered-load file not found (%s); using static "
+            "load_share split", path,
+        )
+        return None
+    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "zone", "mw"])
+    df = df[df["zone"] != "RTO"].copy()
+    df["mzone"] = df["zone"].map(_PJM_LOAD_ZONE_GROUPS)
+    if df["mzone"].isna().any():
+        missing = sorted(df.loc[df["mzone"].isna(), "zone"].unique())
+        logger.warning("PJM load zones not mapped to a model zone: %s", missing)
+        df = df.dropna(subset=["mzone"])
+    ts = pd.to_datetime(
+        df["datetime_beginning_ept"], format="mixed", errors="coerce"
+    )
+    file_year = int(ts.dt.year.mode().iat[0])
+    if file_year != year:
+        logger.warning(
+            "PJM%d_hrl_load_metered.csv actually contains %d data; using its "
+            "zonal *shape* (stable year-to-year) against %d system demand",
+            year, file_year, year,
+        )
+    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
+    df["hoy"] = hoy
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    mw = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    grp = df.groupby(["mzone", "hoy"], observed=True)["mw"].sum()
+    for (mzone, h), v in grp.items():
+        if mzone in zone_idx and 0 <= h < HOURS_PER_YEAR:
+            mw[zone_idx[mzone], int(h)] = v
+    # Back-fill any all-zero hour (the DST gap) from the previous hour.
+    col_tot = mw.sum(axis=0)
+    for h in np.nonzero(col_tot == 0.0)[0]:
+        mw[:, h] = mw[:, h - 1] if h > 0 else mw[:, h + 1]
+        col_tot[h] = mw[:, h].sum()
+    return mw / col_tot[None, :]
+
+
 def load_demand(
     iso: str,
     year: int,
@@ -379,16 +476,31 @@ def load_demand(
     assert not np.isnan(raw_mw).any(), f"NaN demand for {iso} {year}"
     assert raw_mw.max() > 0.0, f"Non-positive peak demand for {iso} {year}"
 
-    load_shares = np.array(
-        [zone.load_share for zone in iso_config.zones], dtype=float
+    # PJM allocates demand by each zone's own measured hourly shape (from the
+    # PJM metered-load file) when available, so zones peak at different times;
+    # every other ISO (and PJM without the file) uses the static per-zone share
+    # broadcast across hours. Both are (n_zones, T) weight matrices summing to
+    # 1.0 down each hour, so the rest of the math is identical.
+    zonal_shares = (
+        pjm_zonal_load_shares(year, iso_config.zone_names)
+        if iso == "PJM" else None
     )
-    demand = load_shares[:, None] * raw_mw[None, :]
+    if zonal_shares is not None:
+        weights = zonal_shares
+    else:
+        load_shares = np.array(
+            [zone.load_share for zone in iso_config.zones], dtype=float
+        )
+        weights = np.broadcast_to(
+            load_shares[:, None], (len(load_shares), HOURS_PER_YEAR)
+        )
+    demand = weights * raw_mw[None, :]
     if td_loss_factor > 0.0:
         demand *= 1.0 + td_loss_factor
     # Net DC-tie interchange displaces internal generation: a net import
     # (negative) lowers what the fleet must serve, a net export raises it.
     # Interchange is a transmission-level flow, so it is not loss-grossed.
-    demand += load_shares[:, None] * interchange[None, :]
+    demand += weights * interchange[None, :]
     return demand
 
 

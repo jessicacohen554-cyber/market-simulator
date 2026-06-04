@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-06-05 (PJM 8-zone topology + per-zone hourly load shapes)
+
+Replaces PJM's 4-zone pipe-and-bubble with an 8-zone, LDA-aligned topology
+derived from the uploaded PJM transmission/LMP/load data, and gives each zone
+its own measured hourly load shape. ERCOT and every other ISO are untouched
+(full suite green, 699 tests).
+
+- **Eight zones** (`config/iso_configs._pjm_config`): ComEd · AEP-Ohio · ATSI ·
+  West-APS · Central-PA · Dominion · EMAAC · SWMAAC. The old `PJM_West` (half
+  the load) blended ComEd ($24/MWh, export-congested), the AEP coal belt ($30)
+  and import-constrained western PA ($33) — a ~$9/MWh spread across the
+  AP-South / Bedington-BlackOak interfaces (the most-binding ones in the 2024
+  transfer-limits data) that the 4-zone model erased. Cross-hub LMP std is
+  ~$6.4/MWh, so the locational signal is real. Load shares and the inter-zone
+  TTC/link mesh are seeded from the PJM metered-load and transfer-limits files
+  (AEP/DOM ~4,069 MW, AP-South ~4,453 MW, Bedington-BlackOak ~1,947 MW).
+- **Plant→zone crosswalk** (`data/zone_assignment._pjm_zone`): rewritten for the
+  eight zones, splitting OH (ATSI north of ~40.9°), WV (APS north of ~39.0°), PA
+  (Philadelphia metro → EMAAC, west of ~-79° → West-APS, else Central-PA) and MD
+  (western panhandle → West-APS, else SWMAAC) by eGRID lat/lon/county. 29 of
+  PJM's ~36 GW of coal correctly lands in AEP-Ohio (17 GW) + West-APS (12 GW).
+  Tier 3 — approximates utility territories; verify against a PJM zone-county
+  crosswalk.
+- **Per-zone hourly load** (`data/eia_loader.pjm_zonal_load_shares`): reads
+  PJM's hourly metered-load file, aggregates the 20 real transmission zones to
+  the 8 model zones, and gives each its own hourly *share* of system load (zones
+  peak at different times — EMAAC summer-peaking, West/ATSI flat). The shares
+  multiply the existing system-demand total, so zonal *shape* comes from real
+  data while the demand *level* stays tied to the existing series. Falls back to
+  the static per-zone share when the file is absent. **Data note:** the uploaded
+  `PJM2024_hrl_load_metered.csv` currently contains 2023 data — its (stable)
+  zonal shape is used against 2024 demand and a warning is logged; a real 2024
+  re-upload will refine the shapes.
+
 ## 2026-06-04 (Unit-level ERCOT outage backcast from CAMPD)
 
 Replaces the hand-maintained, Jan–Aug-2023-only unit-outage extract with a
