@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-06-05 (ERCOT Northeast zone — NE_LOB trapped-generation lobe)
+
+Splits a seventh ERCOT zone, **Northeast**, out of North to model the NE_LOB
+generic transmission constraint — the single biggest piece of ERCOT congestion
+the 6-zone topology was missing (binds 17.4% of 2023–24 SCED intervals).
+
+- **Why.** NE Texas (the EAST weather zone) is a generation-rich lobe: ~4.2 GW
+  of coal (Martin Lake, Welsh, Pirkey) + ~3.9 GW of gas (Tenaska Gateway CC,
+  Wilkes, …) serving only ~3.4% of system load, behind a ~1,300 MW export limit.
+  The six-zone model let all ~8 GW pour into North as if unconstrained, over-
+  running Martin Lake (PRB) and mis-dispatching the NE combined-cycles. This is
+  the carve-out the data-first rule calls out — real congestion the aggregation
+  couldn't represent.
+- **`config/iso_configs._ercot_config`.** New `Northeast` zone (load_share
+  0.0335 = the EAST weather zone; North drops to 0.3081) and a
+  `Northeast→North` link at **1,300 MW** (the NE_LOB limit). 7 zones, 9 links.
+- **`data/eia_loader._ERCOT_LOAD_ZONE_GROUPS`.** EAST weather zone → Northeast,
+  so the zone gets its own measured hourly load shape.
+- **`data/zone_assignment._ercot_zone`.** NE-Texas box (lat 31.3–34.0,
+  lon −95.55…−93.0) routes the lobe's plants to Northeast before the North
+  catch-all; DFW / central-Texas (Limestone) stay in North.
+- Tests updated to the 7-zone / 9-link topology, plus NE plant-assignment
+  coverage. Baselined with the smooth offer curve (PRB sigmoid off) before any
+  economic re-tuning.
+
 ## 2026-06-05 (ERCOT export TTCs from full-year SCED; data-first rule)
 
 Sets the ERCOT West/Panhandle export TTCs to the **measured** GTC limits from
@@ -20,13 +45,22 @@ codifies the principle behind it.
   single N_TO_H GTC (~4,810, binds 0.21%) is one of several parallel 345 kV
   paths the six-zone reduction collapses into one link, so using it literally
   would understate the real interface.
-- **Known issue exposed, not masked.** With the accurate West limit the backcast
-  over-produces coal (~+13% vs EIA-930, vs +3% at the old 8,900 MW estimate).
-  Diagnosed (run33 vs run37): the +6 TWh is almost all PRB (+5.7) not lignite
-  (+0.6), spread across every eastern zone — freeing West export lowers marginal
-  gas in the east, the gas-keyed PRB passthrough sigmoid deepens its discount,
-  and PRB undercuts CC system-wide. Tracked as a PRB-passthrough calibration fix
-  (`coal_prb_passthrough_*`) — the TTC is no longer used to hide it.
+- **West TTC effect is negligible (correction).** An earlier revision of this
+  entry blamed the accurate West limit for a coal overshoot — that was a
+  confounded comparison (`run33` predates the n=6 econ-curve smoothing). Clean
+  isolation from existing bundles: `run34` (old TTC, smoothing on) and `run37`
+  (new TTC, smoothing on) give an **identical** coal mix (70.4 TWh, +13% vs
+  EIA-930), while `run33` (old TTC, **smoothing off**) is +3%. So the West TTC
+  has ~zero effect on dispatch; the +13% coal overshoot is the **n=6 offer-curve
+  smoothing** (`offer_curve_smoothing_n`, introduced run34), whose rising econ
+  ramp cheapens the bottom of PRB's curve and pulls in ~+5.7 TWh of baseload
+  PRB. The accurate West/Panhandle TTCs are kept as data-first hygiene.
+- **PRB offer-curve experiment (run38).** Dropping the gas-keyed PRB passthrough
+  sigmoid and relying on the static `offer_curve_by_group` COAL_PRB bands (with
+  smoothing on) gives coal **−4.4%** vs EIA — closer than the sigmoid+smoothing
+  default's +13%, and removes the eight sigmoid magic numbers. A small downward
+  nudge to the PRB bands would close the remaining gap. Candidate replacement
+  for the sigmoid, pending sign-off.
 - **`scripts/derive_ttc_limits.py`** rewritten to scan the full multi-year
   NP6-86 set, report every GTC's binding frequency and mean limit, and print the
   derived `ttc_mw`; hardened against off-schema / latin-1 daily files.
