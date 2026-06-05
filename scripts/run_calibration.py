@@ -352,6 +352,7 @@ def run_year(
     prb_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    gas_offer_curve: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -402,6 +403,8 @@ def run_year(
     # bounds storage perfect foresight to within-day arbitrage.
     if storage_daily_cycling:
         config = config.with_overrides(storage_daily_cycling=True)
+    if gas_offer_curve:
+        config = config.with_overrides(gas_offer_curve=True)
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
