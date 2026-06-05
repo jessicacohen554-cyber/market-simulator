@@ -70,6 +70,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 <div id=bctip></div>
 <div class=bc-wrap>
  <aside class=bc-side>
+  <h3>ISO</h3><div class=modebtns id=isoSel></div>
   <h3>Mode</h3><div class=modebtns id=modeSel>
    <button data-m=compare class=on>Comparison</button>
    <button data-m=single>Single deep-dive</button></div>
@@ -79,7 +80,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
-  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-04 19:00</p>
+  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-05 03:56</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -443,11 +444,12 @@ function render(){const ids=selectedRuns().filter(Boolean);if(!ids.length){docum
  }).catch(e=>{document.getElementById("diag").style.display="block";document.getElementById("diag").textContent="Load error: "+(e.message||e);});}
 function runSummary(){if(st.mode==="single"){const m=META_RUN(st.single);return m?m.label:"Pick a run";}
  const n=st.runs.length;return n?n+" run"+(n>1?"s":"")+" selected":"Pick runs";}
+function isoRuns(){return BC.manifest.filter(m=>(m.iso||"ERCOT")===st.iso);}
 function buildRunList(){const single=st.mode==="single";
  const runBtn=document.getElementById("runBtn"),runPop=document.getElementById("runPop");
  document.getElementById("runHdr").textContent=single?"Run":"Runs (max 5)";
  runBtn.textContent=runSummary()+"  ▾";
- runPop.innerHTML=BC.manifest.map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
+ runPop.innerHTML=isoRuns().map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
   return `<label class=runopt><input type=${single?"radio":"checkbox"} name=run value="${m.id}" ${checked?"checked":""}>
    <span>${m.label} <span class=rid data-rid="${m.id}">${m.shorthand}</span></span></label>`;}).join("");
  runPop.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
@@ -473,13 +475,28 @@ function build(){
  runBtn.onclick=e=>{e.stopPropagation();runPop.classList.toggle("hide");};
  document.addEventListener("click",e=>{if(!e.target.closest("#runPop")&&e.target!==runBtn)runPop.classList.add("hide");});
  buildRunList();render();}
-async function boot(){try{
-  META=window.BC.meta;
-  BENCH=await inflate(window.BC.benchGz);
-  const first=BC.manifest[0];
-  st={mode:"compare",runs:[first.id],single:first.id,year:META.years[0],zones:new Set(META.zones),page:"charts",klass:META.groups[0],plant:"agg"};
-  document.getElementById("diag").style.display="none";
+async function selectIso(iso){
+  st.iso=iso;
+  META=window.BC.meta[iso];
+  BENCH=await inflate(window.BC.benchGz[iso]);
+  const runs=isoRuns(),first=runs[0];
+  st.runs=first?[first.id]:[];st.single=first?first.id:null;
+  st.year=META.years[0];st.zones=new Set(META.zones);
+  st.klass=META.groups[0];st.plant="agg";
+  Object.keys(_aggC).forEach(k=>delete _aggC[k]);
+  Object.keys(_eAllC).forEach(k=>delete _eAllC[k]);
+  Object.keys(_mAllC).forEach(k=>delete _mAllC[k]);
+  [...document.getElementById("isoSel").children].forEach(b=>b.classList.toggle("on",b.dataset.iso===iso));
   build();
+}
+async function boot(){try{
+  const isos=Object.keys(window.BC.meta);
+  const isoSel=document.getElementById("isoSel");
+  isoSel.innerHTML=isos.map(i=>`<button data-iso="${i}">${i}</button>`).join("");
+  isoSel.onclick=e=>{if(e.target.dataset.iso&&e.target.dataset.iso!==st.iso)selectIso(e.target.dataset.iso);};
+  st={mode:"compare",runs:[],single:null,year:0,zones:new Set(),page:"charts",klass:"",plant:"agg",iso:null};
+  document.getElementById("diag").style.display="none";
+  await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);
  }catch(e){const d=document.getElementById("diag");d.style.display="block";d.style.color="#c01c28";d.textContent="Init error: "+((e&&e.message)||e)+" "+((e&&e.stack)||"");}}
 boot();
 </script></body></html>
