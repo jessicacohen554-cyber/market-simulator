@@ -1,0 +1,208 @@
+diff --git a/claude.md b/claude.md
+index 0dce580..40db8bd 100644
+--- a/claude.md
++++ b/claude.md
+@@ -42,6 +42,7 @@ tests/       → pytest, one file per module
+ 1. **Storage tiebreaker ε = 0.001 $/MWh** on charge+discharge to prevent degeneracy.
+ 1. **One-pass capacity evolution.** No within-year convergence iteration.
+ 1. **Every public function gets a docstring.** Every module gets a module-level docstring.
++1. **Run independent calibration solves in parallel, never consecutively.** Each `run_calibration_full.py` LP solve is minutes long; when launching multiple (different years, ISOs, or configs) with no dependency between them, start them as concurrent background jobs writing to **separate `--out-dir`s** — don't wait for one to finish before starting the next. e.g. launch `--iso PJM --year 2023 --out-dir …/pjm_2023` and `--year 2024 --out-dir …/pjm_2024` at the same time.
+ 
+ ## LP Variable Layout (per ISO-year)
+ 
+diff --git a/scripts/_backcast_shell.py b/scripts/_backcast_shell.py
+index 7fe0c65..bd563a3 100644
+--- a/scripts/_backcast_shell.py
++++ b/scripts/_backcast_shell.py
+@@ -80,6 +80,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
+ <div id=bctip></div>
+ <div class=bc-wrap>
+  <aside class=bc-side>
++  <h3>ISO</h3><div class=modebtns id=isoSel></div>
+   <h3>Mode</h3><div class=modebtns id=modeSel>
+    <button data-m=compare class=on>Comparison</button>
+    <button data-m=single>Single deep-dive</button></div>
+@@ -453,11 +454,12 @@ function render(){const ids=selectedRuns().filter(Boolean);if(!ids.length){docum
+  }).catch(e=>{document.getElementById("diag").style.display="block";document.getElementById("diag").textContent="Load error: "+(e.message||e);});}
+ function runSummary(){if(st.mode==="single"){const m=META_RUN(st.single);return m?m.label:"Pick a run";}
+  const n=st.runs.length;return n?n+" run"+(n>1?"s":"")+" selected":"Pick runs";}
++function isoRuns(){return BC.manifest.filter(m=>(m.iso||"ERCOT")===st.iso);}
+ function buildRunList(){const single=st.mode==="single";
+  const runBtn=document.getElementById("runBtn"),runPop=document.getElementById("runPop");
+  document.getElementById("runHdr").textContent=single?"Run":"Runs (max 5)";
+  runBtn.textContent=runSummary()+"  ▾";
+- runPop.innerHTML=BC.manifest.map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
++ runPop.innerHTML=isoRuns().map(m=>{const checked=single?(st.single===m.id):st.runs.includes(m.id);
+   return `<label class=runopt><input type=${single?"radio":"checkbox"} name=run value="${m.id}" ${checked?"checked":""}>
+    <span>${m.label} <span class=rid data-rid="${m.id}">${m.shorthand}</span></span></label>`;}).join("");
+  runPop.querySelectorAll("input").forEach(inp=>inp.onchange=()=>{
+@@ -483,13 +485,28 @@ function build(){
+  runBtn.onclick=e=>{e.stopPropagation();runPop.classList.toggle("hide");};
+  document.addEventListener("click",e=>{if(!e.target.closest("#runPop")&&e.target!==runBtn)runPop.classList.add("hide");});
+  buildRunList();render();}
++async function selectIso(iso){
++  st.iso=iso;
++  META=window.BC.meta[iso];
++  BENCH=await inflate(window.BC.benchGz[iso]);
++  const runs=isoRuns(),first=runs[0];
++  st.runs=first?[first.id]:[];st.single=first?first.id:null;
++  st.year=META.years[0];st.zones=new Set(META.zones);
++  st.klass=META.groups[0];st.plant="agg";
++  Object.keys(_aggC).forEach(k=>delete _aggC[k]);
++  Object.keys(_eAllC).forEach(k=>delete _eAllC[k]);
++  Object.keys(_mAllC).forEach(k=>delete _mAllC[k]);
++  [...document.getElementById("isoSel").children].forEach(b=>b.classList.toggle("on",b.dataset.iso===iso));
++  build();
++}
+ async function boot(){try{
+-  META=window.BC.meta;
+-  BENCH=await inflate(window.BC.benchGz);
+-  const first=BC.manifest[0];
+-  st={mode:"compare",runs:[first.id],single:first.id,year:META.years[0],zones:new Set(META.zones),page:"charts",klass:META.groups[0],plant:"agg"};
++  const isos=Object.keys(window.BC.meta);
++  const isoSel=document.getElementById("isoSel");
++  isoSel.innerHTML=isos.map(i=>`<button data-iso="${i}">${i}</button>`).join("");
++  isoSel.onclick=e=>{if(e.target.dataset.iso&&e.target.dataset.iso!==st.iso)selectIso(e.target.dataset.iso);};
++  st={mode:"compare",runs:[],single:null,year:0,zones:new Set(),page:"charts",klass:"",plant:"agg",iso:null};
+   document.getElementById("diag").style.display="none";
+-  build();
++  await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);
+  }catch(e){const d=document.getElementById("diag");d.style.display="block";d.style.color="#c01c28";d.textContent="Init error: "+((e&&e.message)||e)+" "+((e&&e.stack)||"");}}
+ boot();
+ </script></body></html>"""
+diff --git a/scripts/render_backcast.py b/scripts/render_backcast.py
+index 149da92..496a58d 100644
+--- a/scripts/render_backcast.py
++++ b/scripts/render_backcast.py
+@@ -93,34 +93,46 @@ def generate(runs: list[tuple[str, Path]], out: Path,
+     no fetch) — suitable for sending or opening anywhere.
+     """
+     RUNS_DIR.mkdir(parents=True, exist_ok=True)
+-    # Reuse the payload builder, then split into shared benchmark + per-run.
+-    D = rch.build_payload(runs, years=years)
+-    meta_block = {
+-        "groups": D["groups"], "groupLabel": D["groupLabel"],
+-        "zones": D["zones"], "years": D["years"],
+-    }
++    # Group runs by ISO (from each bundle's meta.json) so the dashboard's ISO
++    # toggle can switch between ERCOT, PJM, ... each with its own benchmark,
++    # zones and run set. The per-plant payload shape is identical across ISOs.
++    by_iso: dict[str, list[tuple[str, Path]]] = {}
++    for rid_hint, bundle in runs:
++        iso = json.loads((bundle / "meta.json").read_text()).get("iso", "ERCOT")
++        by_iso.setdefault(iso, []).append((rid_hint, bundle))
++
++    meta_by_iso: dict[str, dict] = {}
++    bench_by_iso: dict[str, str] = {}      # iso -> gzip+base64 benchmark
++    manifest, run_js = [], []
++    for iso, iso_runs in by_iso.items():
++        D = rch.build_payload(iso_runs, years=years)
++        meta_by_iso[iso] = {
++            "groups": D["groups"], "groupLabel": D["groupLabel"],
++            "zones": D["zones"], "years": D["years"],
++        }
++        bench_by_iso[iso] = _gzb64(D["bench"])
++        for i, (rid_hint, bundle) in enumerate(iso_runs):
++            rm = _run_meta(bundle, _slug(rid_hint))
++            if years is not None:
++                rm["years"] = [y for y in rm["years"] if int(y) in years]
++            rm["iso"] = iso
++            rid = rm["id"]
++            model = D["model"][i]
++            model["label"] = rm["label"]
++            js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
++                  f"window.BC.runGz[{json.dumps(rid)}]="
++                  + json.dumps(_gzb64(model)) + ";")
++            (RUNS_DIR / f"{rid}.js").write_text(js)
++            run_js.append(js)
++            rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
++            manifest.append(rm)
++
+     bench_js = ("window.BC=window.BC||{};window.BC.benchGz="
+-                + json.dumps(_gzb64(D["bench"])) + ";")
++                + json.dumps(bench_by_iso) + ";")
+     (DATA_DIR / "benchmark.js").write_text(bench_js)
+ 
+-    manifest, run_js = [], []
+-    for i, (rid_hint, bundle) in enumerate(runs):
+-        rm = _run_meta(bundle, _slug(rid_hint))  # rid_hint is the CLI label
+-        if years is not None:
+-            rm["years"] = [y for y in rm["years"] if int(y) in years]
+-        rid = rm["id"]
+-        model = D["model"][i]
+-        model["label"] = rm["label"]
+-        js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
+-              f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model))
+-              + ";")
+-        (RUNS_DIR / f"{rid}.js").write_text(js)
+-        run_js.append(js)
+-        rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
+-        manifest.append(rm)
+-
+     manifest_js = ("window.BC=window.BC||{};window.BC.meta="
+-                   + json.dumps(meta_block) + ";window.BC.manifest="
++                   + json.dumps(meta_by_iso) + ";window.BC.manifest="
+                    + json.dumps(manifest) + ";")
+     (DATA_DIR / "manifest.js").write_text(manifest_js)
+ 
+diff --git a/scripts/render_calibration_html.py b/scripts/render_calibration_html.py
+index 3a1f421..ed6f4ca 100644
+--- a/scripts/render_calibration_html.py
++++ b/scripts/render_calibration_html.py
+@@ -39,6 +39,7 @@ import importlib.util
+ import json
+ import sys
+ from datetime import datetime
++from functools import lru_cache
+ from pathlib import Path
+ 
+ import numpy as np
+@@ -116,16 +117,44 @@ def _btm_share(plant_id: int, group: str) -> float:
+     return CHP_BTM_PCT_BY_SECTOR.get(sector, 40.0) / 100.0
+ 
+ 
++@lru_cache(maxsize=1)
++def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
++    """Return ``({plant_id: nameplate MW}, {plant_id: name})`` from EIA-860.
++
++    The national per-plant nameplate (summed over units) and plant name, so
++    non-ERCOT bundles (PJM, etc.) — whose plants are absent from the ERCOT
++    CAMPD bin sheet — still get a real capacity and label in the dashboard.
++    """
++    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
++    path = EIA_860_DIR / EIA_860_PARQUET_NAME
++    if not path.exists():
++        return {}, {}
++    df = pd.read_parquet(
++        path, columns=["plant_id", "plant_name", "nameplate_capacity_mw"]
++    )
++    df["plant_id"] = df["plant_id"].astype(int)
++    npl = df.groupby("plant_id")["nameplate_capacity_mw"].sum().to_dict()
++    nm = df.groupby("plant_id")["plant_name"].first().to_dict()
++    return ({int(k): float(v) for k, v in npl.items()},
++            {int(k): str(v) for k, v in nm.items()})
++
++
+ def _nameplates() -> dict[int, float]:
++    """Plant nameplate MW: ERCOT bin sheet first, EIA-860 fleet for the rest."""
+     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
+-    return dict(zip(bins["Plant_Code"].astype(int),
+-                    bins["Nameplate_MW"].astype(float)))
++    out = dict(_eia860_plant_info()[0])
++    out.update(zip(bins["Plant_Code"].astype(int),
++                   bins["Nameplate_MW"].astype(float)))
++    return out
+ 
+ 
+ def _plant_names() -> dict[int, str]:
++    """Plant names: ERCOT bin sheet first, EIA-860 fleet for the rest."""
+     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
+-    return dict(zip(bins["Plant_Code"].astype(int),
+-                    bins["Plant_Name"].astype(str)))
++    out = dict(_eia860_plant_info()[1])
++    out.update(zip(bins["Plant_Code"].astype(int),
++                   bins["Plant_Name"].astype(str)))
++    return out
+ 
+ 
+ def _coal_group(klass: str) -> str:
