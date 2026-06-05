@@ -1,16 +1,17 @@
 {
-  "timestamp": "2026-06-05T18:36:11",
+  "timestamp": "2026-06-05T19:19:06",
   "git": {
-    "sha": "d10d158",
+    "sha": "c9fcd3a",
     "branch": "claude/pjm-backcast-testing-YvGJB",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "",
+  "model_changes_note": "plant_group dispatch classes; n=6 offer curve; no PRB sigmoid",
   "calibration_flags": {
     "iso": "PJM",
     "years": [
+      2023,
       2024
     ],
     "hours": 8760,
@@ -20,22 +21,23 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
+      "2023": 2.54,
       "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
     "coal_prb_mustrun": null,
     "coal_prb_passthrough": 1.0,
-    "coal_prb_passthrough_sigmoid": true,
+    "coal_prb_passthrough_sigmoid": false,
     "coal_mustrun_per_plant": true,
     "coal_drop_pof": true,
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "d10d158"
+    "git_sha": "c9fcd3a"
   },
   "scenario_config": {
-    "weather_year": 2024,
+    "weather_year": 2023,
     "iso": "PJM",
     "voll": 5000.0,
     "hours": 8760,
@@ -228,6 +230,6 @@
     "plant_level_fleet": true,
     "gas_offer_curve": false,
     "outage_source": "historic",
-    "gas_price_override": 2.19
+    "gas_price_override": 2.54
   }
 }
