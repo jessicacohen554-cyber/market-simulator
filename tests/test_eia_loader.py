@@ -7,6 +7,7 @@ import numpy as np
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
+    ercot_zonal_load_shares,
     load_demand,
     load_demand_meta,
     load_generation_profiles,
@@ -56,13 +57,12 @@ class TestEIALoader(unittest.TestCase):
         self.assertGreaterEqual(peak, _CAISO_PEAK_RANGE[0])
         self.assertLessEqual(peak, _CAISO_PEAK_RANGE[1])
 
-    def test_zone_rows_sum_to_total_iso_demand(self):
-        """Zonal demand rows are a consistent load-share split of the total."""
-        iso_config = get_iso_config("ERCOT")
-        demand = load_demand("ERCOT", _TEST_YEAR, iso_config)
-        total_share = sum(zone.load_share for zone in iso_config.zones)
+    def test_caiso_zone_rows_are_static_share_split(self):
+        """CAISO (no per-zone file) splits one series by constant load shares."""
+        iso_config = get_iso_config("CAISO")
+        demand = load_demand("CAISO", _TEST_YEAR, iso_config)
         # Each zone's row is its load_share fraction of one system series,
-        # so the rows sum to total_share x that series every hour.
+        # so the rows are constant multiples of each other every hour.
         nonzero = [
             (z, zone.load_share)
             for z, zone in enumerate(iso_config.zones)
@@ -71,9 +71,35 @@ class TestEIALoader(unittest.TestCase):
         system = demand[nonzero[0][0]] / nonzero[0][1]
         for z, share in nonzero:
             np.testing.assert_allclose(demand[z], share * system, rtol=1e-9)
-        np.testing.assert_allclose(
-            demand.sum(axis=0), total_share * system, rtol=1e-9
-        )
+
+    def test_ercot_zonal_shares_sum_to_one(self):
+        """ERCOT per-zone hourly shares are fractions summing to 1.0 each hour."""
+        zone_names = get_iso_config("ERCOT").zone_names
+        shares = ercot_zonal_load_shares(_TEST_YEAR, zone_names)
+        self.assertIsNotNone(shares)
+        self.assertEqual(shares.shape, (len(zone_names), HOURS_PER_YEAR))
+        np.testing.assert_allclose(shares.sum(axis=0), 1.0, rtol=1e-9)
+        # ERCOT has no Panhandle weather zone, so that model zone gets no load.
+        self.assertTrue(np.all(shares[zone_names.index("Panhandle")] == 0.0))
+
+    def test_ercot_zones_have_distinct_hourly_shapes(self):
+        """Each ERCOT zone gets its own measured shape, not one scaled curve.
+
+        The single-curve allocation made every zone a constant multiple of the
+        system series (identical normalized shape); the native-load split gives
+        zones distinct shapes, so their hourly fractions actually move.
+        """
+        iso_config = get_iso_config("ERCOT")
+        demand = load_demand("ERCOT", _TEST_YEAR, iso_config)
+        total = demand.sum(axis=0)
+        # The rows still sum to the system series every hour (shares sum to 1).
+        self.assertGreater(total.min(), 0.0)
+        # West (hot, wind-belt) and Houston (coastal) no longer track a single
+        # shape: their share of system load varies hour to hour.
+        west = demand[iso_config.zone_names.index("West")] / total
+        houston = demand[iso_config.zone_names.index("Houston")] / total
+        self.assertGreater(west.std(), 1e-3)
+        self.assertGreater(houston.std(), 1e-3)
 
     def test_load_demand_meta_keys(self):
         """Demand metadata exposes the expected summary statistics."""
