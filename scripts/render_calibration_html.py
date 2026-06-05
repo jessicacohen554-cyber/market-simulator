@@ -39,6 +39,7 @@ import importlib.util
 import json
 import sys
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -116,16 +117,44 @@ def _btm_share(plant_id: int, group: str) -> float:
     return CHP_BTM_PCT_BY_SECTOR.get(sector, 40.0) / 100.0
 
 
+@lru_cache(maxsize=1)
+def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
+    """Return ``({plant_id: nameplate MW}, {plant_id: name})`` from EIA-860.
+
+    The national per-plant nameplate (summed over units) and plant name, so
+    non-ERCOT bundles (PJM, etc.) — whose plants are absent from the ERCOT
+    CAMPD bin sheet — still get a real capacity and label in the dashboard.
+    """
+    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+    path = EIA_860_DIR / EIA_860_PARQUET_NAME
+    if not path.exists():
+        return {}, {}
+    df = pd.read_parquet(
+        path, columns=["plant_id", "plant_name", "nameplate_capacity_mw"]
+    )
+    df["plant_id"] = df["plant_id"].astype(int)
+    npl = df.groupby("plant_id")["nameplate_capacity_mw"].sum().to_dict()
+    nm = df.groupby("plant_id")["plant_name"].first().to_dict()
+    return ({int(k): float(v) for k, v in npl.items()},
+            {int(k): str(v) for k, v in nm.items()})
+
+
 def _nameplates() -> dict[int, float]:
+    """Plant nameplate MW: ERCOT bin sheet first, EIA-860 fleet for the rest."""
     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
-    return dict(zip(bins["Plant_Code"].astype(int),
-                    bins["Nameplate_MW"].astype(float)))
+    out = dict(_eia860_plant_info()[0])
+    out.update(zip(bins["Plant_Code"].astype(int),
+                   bins["Nameplate_MW"].astype(float)))
+    return out
 
 
 def _plant_names() -> dict[int, str]:
+    """Plant names: ERCOT bin sheet first, EIA-860 fleet for the rest."""
     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
-    return dict(zip(bins["Plant_Code"].astype(int),
-                    bins["Plant_Name"].astype(str)))
+    out = dict(_eia860_plant_info()[1])
+    out.update(zip(bins["Plant_Code"].astype(int),
+                   bins["Plant_Name"].astype(str)))
+    return out
 
 
 def _coal_group(klass: str) -> str:
