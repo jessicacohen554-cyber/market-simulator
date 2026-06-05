@@ -947,6 +947,81 @@ def split_coal_tranches(
     return expanded, fuel_fracs
 
 
+# Gas fuel types eligible for the generic offer-curve tranche split.
+_GAS_OFFER_FUELS: frozenset[str] = frozenset(
+    {"gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"}
+)
+
+# Gas offer-curve tranche shares (committed / economic / peaking) of nameplate
+# by group, for the generic (non-CAMPD) offer curve. CTs are peakers with no
+# part-load committed band; CC/ST split a part-load committed band off the
+# efficient economic band, plus a small duct-fired peaking top slice. Mirrors
+# the bands ERCOT's CAMPD sheet encodes, as class defaults. Tier 3 — tune per
+# ISO against the CEMS load-duration shape.
+_GAS_TRANCHE_SHARES: dict[str, tuple[float, float, float]] = {
+    "CC_REGULAR": (0.30, 0.60, 0.10),
+    "CC_CHP": (0.30, 0.60, 0.10),
+    "ST_GAS": (0.40, 0.50, 0.10),
+    "ST_CHP": (0.40, 0.50, 0.10),
+    "CT_PEAKER": (0.0, 0.88, 0.12),
+    "CT_CHP": (0.0, 0.88, 0.12),
+}
+
+
+def split_gas_tranches(
+    generators: list[Generator], fuel_fracs: list[float], config: ScenarioConfig
+) -> tuple[list[Generator], list[float]]:
+    """Split each gas generator into committed / economic / peaking tranches.
+
+    Gives the generic (non-CAMPD) gas fleet a stepped offer curve instead of a
+    single flat block: a part-load **committed** band priced at the unit's heat
+    rate × the per-class committed multiplier (``cc_/ct_/gas_st_committed_hr_mult``,
+    >1, less efficient), an efficient **economic** band at the base heat rate,
+    and a small **peaking** top slice at × ``ct_peak_hr_penalty`` (duct firing).
+    CTs carry no committed band (peakers). Capacity is conserved; every gas
+    tranche bids full fuel cost (gas is not take-or-pay), so ``fuel_frac = 1.0``.
+
+    Runs after :func:`split_coal_tranches`, so it takes that pass's
+    ``fuel_fracs`` and carries each non-gas generator (incl. coal tranches with
+    their take-or-pay passthrough) through unchanged. Used for non-ERCOT
+    calibration when ``config.gas_offer_curve`` is set; ERCOT's offer curve
+    comes from its CAMPD bins, not this path.
+    """
+    committed_mult = {
+        "CC_REGULAR": config.cc_committed_hr_mult,
+        "CC_CHP": config.cc_committed_hr_mult,
+        "ST_GAS": config.gas_st_committed_hr_mult,
+        "ST_CHP": config.gas_st_committed_hr_mult,
+        "CT_PEAKER": config.ct_committed_hr_mult,
+        "CT_CHP": config.ct_committed_hr_mult,
+    }
+    expanded: list[Generator] = []
+    out_fracs: list[float] = []
+    for gen, ff in zip(generators, fuel_fracs):
+        shares = _GAS_TRANCHE_SHARES.get(gen.plant_group)
+        if gen.fuel_type not in _GAS_OFFER_FUELS or shares is None:
+            expanded.append(gen)
+            out_fracs.append(ff)
+            continue
+        c_share, e_share, p_share = shares
+        bands = (
+            ("committed", c_share, committed_mult[gen.plant_group]),
+            ("economic", e_share, 1.0),
+            ("peaking", p_share, config.ct_peak_hr_penalty),
+        )
+        for suffix, share, hr_mult in bands:
+            if share <= 0.0:
+                continue
+            expanded.append(gen.model_copy(update={
+                "unit_id": f"{gen.unit_id}_{suffix}",
+                "pmax_mw": gen.pmax_mw * share,
+                "pmin_mw": 0.0,
+                "heat_rate": gen.heat_rate * hr_mult,
+            }))
+            out_fracs.append(1.0)
+    return expanded, out_fracs
+
+
 def campd_tranche_fuel_frac(
     gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0
 ) -> "float | np.ndarray":
@@ -1158,6 +1233,15 @@ _EIA860_PLANT_GROUP_BY_FUEL: dict[str, str] = {
     "gas_cc_ccs": "CC_REGULAR",
     "gas_ct": "CT_PEAKER",
     "gas_st": "ST_GAS",
+}
+
+# Gas group -> its combined-heat-and-power variant, applied when EIA-860 flags
+# the plant as CHP. CHP cogens run must-run on host steam, so they bid/dispatch
+# differently than the merchant variants.
+_CHP_GROUP_FOR: dict[str, str] = {
+    "CC_REGULAR": "CC_CHP",
+    "CT_PEAKER": "CT_CHP",
+    "ST_GAS": "ST_CHP",
 }
 
 
@@ -1407,6 +1491,15 @@ def _rows_to_generators(
         plant_code = int(_to_float(plant_id) or 0)
         state = str(data.get("state") or "").strip().upper()
 
+        # Combined-heat-and-power units run must-run on host steam, so map the
+        # gas classes to their CHP variant when EIA-860 flags the plant as CHP
+        # (Associated with Combined Heat and Power System = Y). Coal/nuclear
+        # are unaffected. CHP is a plant-level trait joined in
+        # :func:`_load_fleet_from_parquet`.
+        group = _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type, "")
+        if str(data.get("chp") or "").strip().upper().startswith("Y"):
+            group = _CHP_GROUP_FOR.get(group, group)
+
         records.append(
             {
                 "plant_id": plant_id,
@@ -1414,7 +1507,7 @@ def _rows_to_generators(
                 "unit_id": f"{plant_id}_{generator_id}",
                 "name": plant_name,
                 "fuel_type": fuel_type,
-                "plant_group": _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type, ""),
+                "plant_group": group,
                 "state": state,
                 "efficiency_bin": ebin,
                 "pmax_mw": pmax,
@@ -1440,6 +1533,27 @@ def _rows_to_generators(
     ]
 
 
+@lru_cache(maxsize=2)
+def _chp_by_plant(eia860_dir: Path) -> "pd.Series":
+    """Return ``{plant_id: "Y"/"N"}`` plant-level CHP flag from EIA-860.
+
+    Reads the raw operable-generator sheet (which carries ``Associated with
+    Combined Heat and Power System``, dropped from the processed generators
+    parquet) and marks a plant CHP if *any* of its units is flagged. Empty
+    series when the sheet is absent, so callers default every plant to non-CHP.
+    """
+    path = eia860_dir / "eia860_generator_operable.parquet"
+    col = "Associated with Combined Heat and Power System"
+    if not path.exists():
+        return pd.Series(dtype="object")
+    raw = pd.read_parquet(path, columns=["Plant Code", col])
+    is_y = raw[col].astype(str).str.strip().str.upper().str.startswith("Y")
+    return (
+        is_y.groupby(raw["Plant Code"]).any()
+        .map({True: "Y", False: "N"})
+    )
+
+
 def _load_fleet_from_parquet(
     parquet_path: Path, iso: str, iso_config: ISOConfig | None
 ) -> list[Generator] | None:
@@ -1457,6 +1571,12 @@ def _load_fleet_from_parquet(
     if ba_code is not None and "balancing_authority_code" in df.columns:
         ba = df["balancing_authority_code"].astype(str).str.strip()
         df = df[ba == ba_code]
+
+    # Join the plant-level CHP flag (dropped from the processed generators
+    # parquet) from the raw EIA-860 operable sheet, so gas cogens are grouped
+    # CC_CHP / CT_CHP / ST_CHP. A plant is CHP if any of its units is flagged.
+    df = df.copy()
+    df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent)).fillna("N")
 
     generators = _rows_to_generators(df, iso, iso_config)
     if not generators:

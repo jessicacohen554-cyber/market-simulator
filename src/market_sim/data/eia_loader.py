@@ -577,6 +577,75 @@ def pjm_net_interchange(year: int) -> np.ndarray | None:
     return export
 
 
+# PJM tie line -> the model border zone it interconnects, so the net export is
+# drawn out of the zone that physically carries it (vs. spread system-wide).
+# NYISO/NYC cables sit on the EMAAC border; the MISO-west/upper-Midwest ties on
+# ComEd; the Indiana/Ohio/Kentucky ties on AEP-Ohio; Michigan on ATSI; the
+# Carolinas/Duke/TVA ties on Dominion. Tier 3 (calibration) — approximate
+# pending PJM's authoritative tie-to-zone assignment.
+_PJM_TIE_ZONE: dict[str, str] = {
+    "NYIS": "PJM_EMAAC", "NEPT": "PJM_EMAAC", "HUDS": "PJM_EMAAC",
+    "LIND": "PJM_EMAAC",
+    "AMIL": "PJM_ComEd", "ALTE": "PJM_ComEd", "ALTW": "PJM_ComEd",
+    "CWLP": "PJM_ComEd", "MEC": "PJM_ComEd", "WEC": "PJM_ComEd",
+    "MDU": "PJM_ComEd", "LAGN": "PJM_ComEd",
+    "CIN": "PJM_AEP_Ohio", "IPL": "PJM_AEP_Ohio", "NIPS": "PJM_AEP_Ohio",
+    "SIGE": "PJM_AEP_Ohio", "LGEE": "PJM_AEP_Ohio", "OVEC": "PJM_AEP_Ohio",
+    "MECS": "PJM_ATSI",
+    "CPLE": "PJM_Dominion", "CPLW": "PJM_Dominion", "DUK": "PJM_Dominion",
+    "TVA": "PJM_Dominion",
+}
+# Border zone that absorbs any tie not in the map above (keeps total export
+# conserved). ComEd is the largest western export interface.
+_PJM_TIE_ZONE_DEFAULT: str = "PJM_ComEd"
+
+
+def pjm_zonal_interchange(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return PJM's hourly net export by model zone (``(n_zones, T)``, MW).
+
+    Like :func:`pjm_net_interchange`, but attributes each tie's net export to
+    the border zone it interconnects (:data:`_PJM_TIE_ZONE`) instead of
+    spreading the system total across all zones by load share. So the export
+    is drawn out of the zones that physically carry it (ComEd/AEP to the
+    Midwest, EMAAC to NYISO, Dominion to the Carolinas), sharpening the
+    inter-zone congestion. Row order matches ``zone_names``; the column sum
+    equals :func:`pjm_net_interchange`. ``None`` when the file is absent.
+    """
+    path = (
+        _PJM_INTERCHANGE_DIR
+        / f"PJM_{year}_import_export_act_sch_interchange.csv"
+    )
+    if not path.exists():
+        return None
+    df = pd.read_csv(
+        path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
+    )
+    ts = pd.to_datetime(
+        df["datetime_beginning_ept"], format="mixed", errors="coerce"
+    )
+    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    out = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    flow = df["actual_flow"].to_numpy(dtype=float)
+    tie_zone = df["tie_line"].map(
+        lambda t: _PJM_TIE_ZONE.get(str(t), _PJM_TIE_ZONE_DEFAULT)
+    ).to_numpy()
+    valid = (hoy >= 0) & (hoy < HOURS_PER_YEAR) & ~np.isnan(flow)
+    for z, i in zone_idx.items():
+        sel = valid & (tie_zone == z)
+        if sel.any():
+            np.add.at(out[i], hoy[sel], -flow[sel])  # export-positive
+    return out
+
+
 def load_demand(
     iso: str,
     year: int,
@@ -647,14 +716,21 @@ def load_demand(
     # load; PJM is a large net exporter, so without this the fleet under-
     # generates by the export and mis-attributes the missing gas to coal). The
     # ERCOT path already carries interchange from its EIA-930 extract.
+    # Prefer the per-border-zone attribution (export drawn from the zone that
+    # carries the tie) over a system-wide spread; fall back to the scalar.
+    zone_interchange = None
     if iso == "PJM":
-        pjm_ix = pjm_net_interchange(year)
-        if pjm_ix is not None:
-            interchange = pjm_ix
+        zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
+        if zone_interchange is not None:
             logger.info(
                 "PJM net interchange applied for %d: %+.0f MW avg "
-                "(export-positive)", year, float(pjm_ix.mean()),
+                "(export-positive, per border zone)",
+                year, float(zone_interchange.sum(axis=0).mean()),
             )
+        else:
+            pjm_ix = pjm_net_interchange(year)
+            if pjm_ix is not None:
+                interchange = pjm_ix
 
     # PJM and ERCOT allocate demand by each zone's own measured hourly shape
     # (from the PJM metered-load / ERCOT native-load files) when available, so
@@ -680,10 +756,15 @@ def load_demand(
     demand = weights * raw_mw[None, :]
     if td_loss_factor > 0.0:
         demand *= 1.0 + td_loss_factor
-    # Net DC-tie interchange displaces internal generation: a net import
-    # (negative) lowers what the fleet must serve, a net export raises it.
-    # Interchange is a transmission-level flow, so it is not loss-grossed.
-    demand += weights * interchange[None, :]
+    # Net interchange displaces internal generation: a net import (negative)
+    # lowers what the fleet must serve, a net export raises it. Interchange is
+    # a transmission-level flow, so it is not loss-grossed. PJM uses per-zone
+    # attribution (export at its border zone); everything else spreads the
+    # scalar by the same weights as demand.
+    if zone_interchange is not None:
+        demand += zone_interchange
+    else:
+        demand += weights * interchange[None, :]
     return demand
 
 
