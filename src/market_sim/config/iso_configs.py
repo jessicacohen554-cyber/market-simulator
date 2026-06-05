@@ -124,11 +124,13 @@ def _ercot_config() -> ISOConfig:
     #   PNHNDL  ~2,680 MW (binds 10.2%) -> Panhandle->North.
     # KNOWN ISSUE (root cause, not the TTC): with the accurate West limit the
     # backcast over-produces coal (~+13% vs EIA-930, up from +3% at the old
-    # 8,900 MW estimate) -- freeing more West export changes the eastern gas-on-
-    # margin hours, and the coal/gas merit order (likely the gas-keyed PRB
-    # passthrough) then lets coal undercut CC. The fix belongs in that coal/gas
-    # economics calibration, NOT in re-tightening the TTC to mask it; the
-    # estimate is no longer used to hide the error.
+    # 8,900 MW estimate). Diagnosed (run33 vs run37): the extra +6 TWh is almost
+    # all PRB (+5.7) not lignite (+0.6), spread across all eastern zones -- the
+    # signature of the gas-keyed PRB passthrough sigmoid. Freeing West export
+    # lowers marginal gas in the east, which deepens the PRB fuel-cost discount,
+    # so PRB undercuts CC system-wide. The fix belongs in the PRB-passthrough
+    # calibration (coal_prb_passthrough_* sigmoid), NOT in re-tightening the TTC
+    # to mask it; the estimate is no longer used to hide the error.
     #
     # North->Houston is the one carve-out: the single N_TO_H GTC (~4,810 MW,
     # binds 0.21%) is *one of several* parallel 345 kV paths this six-zone
