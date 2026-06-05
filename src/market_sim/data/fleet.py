@@ -199,6 +199,13 @@ class FleetArrays:
     # fallback and per-fuel trajectory.
     state: np.ndarray | None = None
 
+    # Optional ``(n_gen,)`` object array of model plant groups (COAL, CC_REGULAR,
+    # CC_CHP, CT_PEAKER, CT_CHP, ST_GAS, ST_CHP). Set for the EIA-860 per-plant
+    # fleets (non-ERCOT) so the dispatch frame can class each unit by its real
+    # group (CHP vs merchant) rather than collapsing by fuel. ``None`` for
+    # fleets that don't set it.
+    plant_group: np.ndarray | None = None
+
     @property
     def n_gen(self) -> int:
         """Return the number of generators in the fleet."""
@@ -603,6 +610,9 @@ def generators_to_fleet_arrays(
             [int(g.plant_code) for g in generators], dtype=int
         ),
         state=np.array([g.state for g in generators], dtype=object),
+        plant_group=np.array(
+            [g.plant_group for g in generators], dtype=object
+        ),
         min_gen=min_gen,
     )
 
