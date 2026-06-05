@@ -93,6 +93,15 @@ def _ercot_config() -> ISOConfig:
     carries no modeled load: ERCOT has no Panhandle weather zone, and the
     small Lubbock load it would hold is reported inside the West weather
     zone and therefore currently lands in the West transmission zone.
+
+    These static ``load_share`` values are now only a fallback: when the
+    ERCOT native-load file is present (``inputs/raw-data/zone-specific-demand/
+    ERCOT_Native_Load_<year>.xlsx``), :func:`eia_loader.load_demand` gives each
+    zone its *own* measured hourly demand shape via
+    :func:`eia_loader.ercot_zonal_load_shares` (zones peak at different hours),
+    keyed by the same weather-zone → transmission-zone aggregation. The
+    annual-average of those hourly shares reproduces the static shares below to
+    within ~1 pt, so the levels are unchanged.
     """
     # Weather zone -> transmission zone: West <- FAR_WEST + WEST;
     # North <- NORTH_C + EAST + NORTH; Houston <- COAST;

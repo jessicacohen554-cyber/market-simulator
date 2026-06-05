@@ -19,6 +19,36 @@ missing marginal gas to coal. ERCOT and other ISOs are unaffected.
   file (forward years) PJM falls back to zero interchange. Border-zone
   attribution of the export (vs the current system-net allocation) is the
   natural next refinement now that the 8-zone topology exists.
+## 2026-06-05 (ERCOT per-zone hourly load shapes)
+
+Gives each of ERCOT's six model transmission zones its **own measured hourly
+demand shape** instead of a single ERCOT-wide demand curve scaled by a fixed
+per-zone `load_share`. Mirrors the PJM per-zone-load change. Every other ISO is
+untouched (full suite green, 701 tests).
+
+- **Per-zone shapes** (`data/eia_loader.ercot_zonal_load_shares` + the
+  `load_demand` hook): reads ERCOT's hourly *Actual System Load by Weather Zone*
+  (NP3-565-CD, `inputs/raw-data/zone-specific-demand/ERCOT_Native_Load_<year>.xlsx`,
+  2022–2025) and aggregates the eight weather zones onto the six model zones —
+  West ← FAR_WEST+WEST, North ← EAST+NORTH+NORTH_C, Houston ← COAST,
+  South_Central ← SOUTH_C, South ← SOUTHERN; Panhandle keeps no load (ERCOT has
+  no Panhandle weather zone). For each hour, each zone gets its fraction of
+  system load, and those time-varying shares multiply the existing EIA-930
+  system demand total — so the **system level is unchanged** but zones now peak
+  at different hours (the hot, wind-belt West and coastal Houston no longer track
+  North Central's shape). This removes the single shared demand curve that was
+  driving the previously-observed zonal-price artifacts.
+- The eight-weather-zone → six-transmission-zone map matches
+  `scripts/derive_load_shares.py`, which seeded the static `load_share` values;
+  the full-year native-load annual averages reproduce those static shares to
+  within ~1 pt, so only the *intra-year shape* changes, not the levels.
+- Falls back to the static `load_share` split when the native-load file is
+  absent, so non-ERCOT ISOs and missing-year ERCOT runs are unaffected.
+- Refactored the shared normalize/back-fill tail (`_hourly_shares_from_groups`)
+  out of `pjm_zonal_load_shares`; updated `tests/test_eia_loader.py` (CAISO now
+  guards the static-share split; ERCOT gains per-zone-shape coverage).
+- Re-ran the run32 configuration with the new per-zone demand
+  (`results/calibration/run33_ercot_zonal_load`).
 
 ## 2026-06-05 (PJM 8-zone topology + per-zone hourly load shapes)
 
