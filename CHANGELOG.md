@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-06-05 (ERCOT export TTCs from full-year SCED; data-first rule)
+
+Sets the ERCOT West/Panhandle export TTCs to the **measured** GTC limits from
+the full 2023–2024 NP6-86 SCED binding-constraint archive
+(`inputs/raw-data/iso-specific-transmission/`, 202,512 SCED intervals), and
+codifies the principle behind it.
+
+- **New non-negotiable rule (`claude.md`): prefer accurate/measured data over
+  estimates; never revert to an estimate because it fits the backcast better.**
+  If real data makes the backcast worse, that's a *discovered bug* elsewhere in
+  the model (the estimate was masking it) — keep the real input and fix the root
+  cause. The only exception is genuine misalignment to our representation
+  (different boundary/aggregation/units than our zones), which must be
+  documented and reconciled rather than guessed.
+- **`config/iso_configs._ercot_config` links.** West→North 7,300 + West→SC 2,700
+  (WESTEX ~10,000 MW, binds 9.3%); Panhandle→North 2,680 (PNHNDL, 10.2%) — both
+  measured. North→Houston **kept at 8,000** as the documented carve-out: the
+  single N_TO_H GTC (~4,810, binds 0.21%) is one of several parallel 345 kV
+  paths the six-zone reduction collapses into one link, so using it literally
+  would understate the real interface.
+- **Known issue exposed, not masked.** With the accurate West limit the backcast
+  over-produces coal (~+13% vs EIA-930, vs +3% at the old 8,900 MW estimate).
+  Diagnosed (run33 vs run37): the +6 TWh is almost all PRB (+5.7) not lignite
+  (+0.6), spread across every eastern zone — freeing West export lowers marginal
+  gas in the east, the gas-keyed PRB passthrough sigmoid deepens its discount,
+  and PRB undercuts CC system-wide. Tracked as a PRB-passthrough calibration fix
+  (`coal_prb_passthrough_*`) — the TTC is no longer used to hide it.
+- **`scripts/derive_ttc_limits.py`** rewritten to scan the full multi-year
+  NP6-86 set, report every GTC's binding frequency and mean limit, and print the
+  derived `ttc_mw`; hardened against off-schema / latin-1 daily files.
+- **Caveat (in the config comment).** ERCOT's *most*-binding GTCs are intra-zone
+  pockets the six-zone topology cannot represent — NE_LOB (NE-Texas export,
+  ~1,300 MW, 17.4%), VALEXP (5.9%), EASTEX (0.5%), TRDWEL — so intra-ERCOT
+  dispatch is near copper-plate, faithful to ERCOT; a zone split (e.g. a NE lobe
+  out of North) is the only way to capture that pocket congestion.
+
 ## 2026-06-05 (PJM refinements: CHP classification, border-zone exports, gas offer curves)
 
 Three PJM fidelity refinements on top of the 8-zone topology + import/export
