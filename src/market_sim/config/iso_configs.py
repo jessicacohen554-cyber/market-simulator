@@ -114,21 +114,42 @@ def _ercot_config() -> ISOConfig:
         Zone(name="South_Central", iso="ERCOT", load_share=0.1642),
         Zone(name="South", iso="ERCOT", load_share=0.0799),
     ]
-    # ERCOT zonal transfer capabilities, defined at the major congestion
-    # interfaces. The West and Panhandle export limits are the mean observed
-    # limits of the WESTEX and PNHNDL generic transmission constraints in
-    # ERCOT NP6-86 SCED binding-constraint data (Oct 2023, 8,709 intervals;
-    # see scripts/derive_ttc_limits.py). WESTEX averaged 8,895 MW, split
-    # West->North + West->South_Central in the prior ~8:3 ratio; PNHNDL
-    # averaged 2,673 MW. Both bind in 43-59% of intervals. Remaining TTCs
-    # are estimates from the ERCOT 2022 Report on Existing and Potential
-    # Electric System Constraints and Needs (top-10 congestion interfaces).
+    # ERCOT zonal transfer capabilities at the major congestion interfaces.
+    # Data-first (see claude.md): use the measured GTC limits from the full
+    # 2023-2024 NP6-86 SCED binding-constraint archive (202,512 intervals;
+    # scripts/derive_ttc_limits.py) wherever the GTC maps cleanly to a model
+    # interface.
+    #   WESTEX ~10,000 MW (binds 9.3%) -> West export, split West->North +
+    #          West->South_Central in the ~8:3 ratio (7,300 / 2,700).
+    #   PNHNDL  ~2,680 MW (binds 10.2%) -> Panhandle->North.
+    # KNOWN ISSUE (root cause, not the TTC): with the accurate West limit the
+    # backcast over-produces coal (~+13% vs EIA-930, up from +3% at the old
+    # 8,900 MW estimate) -- freeing more West export changes the eastern gas-on-
+    # margin hours, and the coal/gas merit order (likely the gas-keyed PRB
+    # passthrough) then lets coal undercut CC. The fix belongs in that coal/gas
+    # economics calibration, NOT in re-tightening the TTC to mask it; the
+    # estimate is no longer used to hide the error.
+    #
+    # North->Houston is the one carve-out: the single N_TO_H GTC (~4,810 MW,
+    # binds 0.21%) is *one of several* parallel 345 kV paths this six-zone
+    # reduction collapses into a single link, so using it literally would
+    # understate the real interface and is less reflective of reality than the
+    # aggregate estimate -- it stays at 8,000 MW. The remaining interior links
+    # have no clean zonal-GTC match (ERCOT 2022 Constraints and Needs Report).
+    #
+    # Caveat: ERCOT's MOST-binding GTCs are intra-zone pockets this 6-zone
+    # topology cannot represent -- NE_LOB (northeast TX export, ~1,300 MW, binds
+    # 17.4%), VALEXP (Rio Grande Valley, 5.9%), EASTEX (0.5%), TRDWEL (a line).
+    # Their congestion lives inside a model zone, so the zonal interfaces below
+    # bind seldom and intra-ERCOT dispatch is near copper-plate -- faithful to
+    # ERCOT. Splitting a zone (e.g. a Northeast lobe out of North) is the only
+    # way to capture them.
     # Sources: ERCOT NP6-86-CD SCED Shadow Prices and Binding Transmission
-    # Constraints; ERCOT 2022 Constraints and Needs Report.
+    # Constraints (2023-2024); ERCOT 2022 Constraints and Needs Report.
     links = [
-        TransferLink(from_zone="West", to_zone="North", ttc_mw=6500.0),
-        TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2400.0),
-        TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2700.0),
+        TransferLink(from_zone="West", to_zone="North", ttc_mw=7300.0),
+        TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2700.0),
+        TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2680.0),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
         TransferLink(from_zone="North", to_zone="South_Central", ttc_mw=5000.0),
         TransferLink(
