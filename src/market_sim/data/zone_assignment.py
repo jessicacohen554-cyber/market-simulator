@@ -461,6 +461,19 @@ def _ercot_zone(
     """
     if fips_state == _TEXAS_FIPS and fips_county in HOUSTON_COUNTIES:
         return "Houston"
+    # Northeast Texas (the EAST weather zone): the generation-rich NE_LOB lobe
+    # -- Martin Lake / Welsh / Tenaska Gateway / Wilkes etc. -- east of the North
+    # zone behind the ~1,300 MW NE_LOB export limit (Tyler / Longview / Texarkana
+    # / Paris / Lufkin). Checked before the North band/catch-all; the North
+    # band's eastern edge is lon -95.5, so this -95.55..-93.0 window does not
+    # overlap the DFW / central-Texas North plants.
+    if (
+        lat is not None
+        and lon is not None
+        and 31.3 <= lat <= 34.0
+        and -95.55 <= lon <= -93.0
+    ):
+        return "Northeast"
     if lon is not None and lon < -99.5:
         # West Texas Export interface: the Panhandle wind belt sits north of
         # the CREZ belt / Permian behind its own stability-limited GTC.
