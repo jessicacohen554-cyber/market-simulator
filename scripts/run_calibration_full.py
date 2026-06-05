@@ -1612,10 +1612,14 @@ def main() -> None:
 
     iso = args.iso.upper()
     if iso != "ERCOT":
+        has_campd = bool(campd.states_for_iso(iso))
         logger.info(
-            "%s energy-only backcast: NP6 HSL, coal must-run tuning, and the "
-            "plant-level / CHP / CAMPD diagnostics are ERCOT-only and skipped; "
-            "the report compares fuel mix, prices and net interchange.", iso,
+            "%s backcast: NP6 HSL and coal must-run tuning are ERCOT-only and "
+            "skipped; per-plant CAMPD + EIA-923 benchmark %s; the report "
+            "compares fuel mix, prices and net interchange.",
+            iso,
+            "built for the covered states" if has_campd
+            else "skipped (no CAMPD coverage)",
         )
     reference = _load_reference()
     if args.out_dir:
