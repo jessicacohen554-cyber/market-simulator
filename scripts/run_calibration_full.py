@@ -438,6 +438,24 @@ def _parasitic_factor_map() -> dict[int, float]:
     return campd.pooled_factor_map(pd.read_parquet(path))
 
 
+def _fleet_group_by_code(iso: str, iso_config) -> dict[int, str]:
+    """Return ``{plant_code: plant_group}`` from the EIA-860 per-plant fleet.
+
+    The non-ERCOT analogue of the ERCOT CAMPD bin sheet's plant->group map,
+    used to bucket the CAMPD/EIA-923 benchmark backfill. Built from the fleet's
+    ``plant_group`` (COAL / CC_REGULAR / CT_PEAKER / ST_GAS / their CHP
+    variants), so it matches the dispatch frame's classes.
+    """
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    out: dict[int, str] = {}
+    for g in load_fleet_from_csv(iso, iso_config):
+        code = int(g.plant_code)
+        if code > 0 and g.plant_group:
+            out[code] = g.plant_group
+    return out
+
+
 def _campd_hourly_frame(
     year: int, iso: str, factors: dict[int, float], hours: int,
 ) -> pd.DataFrame | None:
@@ -691,24 +709,26 @@ def solve_and_persist(
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
-    # The EIA-923 monthly net-generation, CHP behind-the-meter and CAMPD
-    # per-plant benchmarks are ERCOT-only artifacts today: the EIA-923 monthly
-    # parquet is filtered to ba_code=ERCO, BTM CHP uses the ERCOT host-steam
-    # split, and the per-plant CAMPD fit keys off the ERCOT plant panel. For
-    # other ISOs (PJM energy-only) those benchmark frames are skipped — the
-    # bundle keeps the dispatch, system prices and EIA-930 hourly benchmark,
-    # which is all the generic report consumes. This is the Stage G "stub the
-    # ERCOT-only steps" boundary; nothing here changes the ERCOT path.
+    # Per-plant CAMPD net + EIA-923 benchmarks are built for any ISO whose
+    # CAMPD CEMS state extracts are present (ERCOT = TX; PJM = PA/NJ/MD/DE/IL/IN
+    # ...). The class map keying the CAMPD/EIA-923 backfill comes from the
+    # curated ERCOT bin sheet for ERCOT and from the per-plant EIA-860 fleet's
+    # plant_group for every other ISO. BTM CHP (host-steam split) stays
+    # ERCOT-only. ISOs with no CAMPD coverage keep the energy-only bundle
+    # (dispatch + system prices + EIA-930). ERCOT is unchanged.
     is_ercot = iso == "ERCOT"
+    has_campd = bool(campd.states_for_iso(iso))
+    generation = load_monthly_generation()
+    parasitic_factors = _parasitic_factor_map()
     if is_ercot:
-        generation = load_monthly_generation()
-        parasitic_factors = _parasitic_factor_map()
         from market_sim.config.scenarios import ScenarioConfig
         from market_sim.data.fleet import load_campd_bins
         _bins = load_campd_bins(ScenarioConfig().campd_bins_path)
         group_by_code = dict(
             zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
         )
+    else:
+        group_by_code = _fleet_group_by_code(iso, iso_config)
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
@@ -764,7 +784,7 @@ def solve_and_persist(
         e930 = _eia930_frame(year, iso, iso_config)
         if e930 is not None:
             eia930_frames.append(e930)
-        if is_ercot:
+        if has_campd:
             campd_year = _campd_hourly_frame(
                 year, iso, parasitic_factors, hours
             )
