@@ -1,11 +1,13 @@
 {
-  "timestamp": "2026-06-05T02:47:37",
+  "timestamp": "2026-06-05T03:00:39",
   "git": {
-    "sha": "911b990",
+    "sha": "068ba54",
     "branch": "claude/pjm-backcast-testing-YvGJB",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "dirty": true,
+    "changed_files": [
+      "rc/market_sim/data/fleet.py"
+    ],
+    "diffstat": "src/market_sim/data/fleet.py | 47 +++++++++++++++++++++++++++++++++++++++++++-\n 1 file changed, 46 insertions(+), 1 deletion(-)"
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -32,7 +34,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "911b990"
+    "git_sha": "068ba54"
   },
   "scenario_config": {
     "weather_year": 2023,
