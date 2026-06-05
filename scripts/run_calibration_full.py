@@ -150,12 +150,29 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     """
     if eff_bin in {*_GAS_CLASSES, "COAL"}:
         return eff_bin
+    # Non-CAMPD fleets (every non-ERCOT ISO, e.g. PJM's per-plant EIA-860
+    # fleet) carry no Plant_Group in ``eff_bin``, so derive the class from the
+    # model fuel type — giving each plant its proper class (one plant per bin)
+    # instead of collapsing the thermal fleet into OTHER. ERCOT is unaffected:
+    # its CAMPD units return at the ``eff_bin`` branch above.
+    if fuel == "coal":
+        return "COAL"
+    if fuel in {"gas_cc", "gas_cc_ccs"}:
+        return "CC_REGULAR"
+    if fuel == "gas_ct":
+        return "CT_PEAKER"
+    if fuel == "gas_st":
+        return "ST_GAS"
     if fuel == "nuclear":
         return "nuclear"
     if fuel in {"wind", "offshore_wind"}:
         return "wind"
     if fuel == "solar":
         return "solar"
+    if fuel == "oil":
+        return "oil"
+    if fuel == "biomass":
+        return "biomass"
     return "OTHER"
 
 
