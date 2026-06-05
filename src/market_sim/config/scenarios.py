@@ -438,6 +438,22 @@ class ScenarioConfig:
         default_factory=dict
     )
 
+    # N-slice smoothing of the economic offer curve. When
+    # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
+    # econ-high, plus the folded duct-firing peak for CC/coal) are replaced by
+    # N equal-capacity sub-tranches whose heat-rate multiplier rises from the
+    # econ-low multiplier to the band top along
+    # ``mult(t) = lo + (pk - lo) * t**exp``, ``t = (k + 0.5)/N``. exp = 1.0 is a
+    # straight (linear) ramp, matching the gently-rising incremental heat rate
+    # of a thermal unit; exp > 1 is convex (cheap-bottom). Finer steps let a
+    # unit fill gradually as price crosses its rising MC instead of snapping
+    # between two wide flat blocks, so dispatch spreads across the CF range the
+    # way CAMPD shows rather than parking at a few band edges. Only engages on
+    # the offer-curve / econ-split path (real calibration runs); set to 0 to
+    # recover the flat two-block econ curve.
+    offer_curve_smoothing_n: int = 6
+    offer_curve_smoothing_exp: float = 1.0
+
     # CHP cogeneration treatment. When chp_steam_following is True, each
     # CC_CHP / CT_CHP / ST_CHP bin is modeled as a steam host's cogen rather
     # than a merchant unit:
