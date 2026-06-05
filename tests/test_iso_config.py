@@ -8,19 +8,30 @@ from market_sim.config.iso_configs import get_iso_config
 class TestISOConfig(unittest.TestCase):
     """Tests for ISO topology configurations."""
 
-    def test_ercot_has_six_zones(self):
-        """ERCOT defines six congestion-interface load zones."""
+    def test_ercot_has_seven_zones(self):
+        """ERCOT defines seven congestion-interface load zones."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_zones, 6)
+        self.assertEqual(ercot.n_zones, 7)
         self.assertEqual(
             set(ercot.zone_names),
-            {"West", "Panhandle", "North", "Houston", "South_Central", "South"},
+            {"West", "Panhandle", "North", "Northeast", "Houston",
+             "South_Central", "South"},
         )
 
-    def test_ercot_has_eight_links(self):
-        """ERCOT defines eight inter-zone congestion interfaces."""
+    def test_ercot_has_nine_links(self):
+        """ERCOT defines nine inter-zone congestion interfaces."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_links, 8)
+        self.assertEqual(ercot.n_links, 9)
+
+    def test_ercot_ne_lob_link_present(self):
+        """The NE_LOB Northeast<->North export link is present at ~1,300 MW."""
+        ercot = get_iso_config("ERCOT")
+        ne = [
+            link for link in ercot.links
+            if {link.from_zone, link.to_zone} == {"Northeast", "North"}
+        ]
+        self.assertEqual(len(ne), 1)
+        self.assertEqual(ne[0].ttc_mw, 1300.0)
 
     def test_ercot_load_shares_sum_to_one(self):
         """ERCOT zone load shares sum to 1.0."""
