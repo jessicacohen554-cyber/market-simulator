@@ -42,6 +42,7 @@ tests/       → pytest, one file per module
 1. **Storage tiebreaker ε = 0.001 $/MWh** on charge+discharge to prevent degeneracy.
 1. **One-pass capacity evolution.** No within-year convergence iteration.
 1. **Every public function gets a docstring.** Every module gets a module-level docstring.
+1. **Run independent calibration solves in parallel, never consecutively.** Each `run_calibration_full.py` LP solve is minutes long; when launching multiple (different years, ISOs, or configs) with no dependency between them, start them as concurrent background jobs writing to **separate `--out-dir`s** — don't wait for one to finish before starting the next. e.g. launch `--iso PJM --year 2023 --out-dir …/pjm_2023` and `--year 2024 --out-dir …/pjm_2024` at the same time. Caveat: a per-plant (`plant_level_fleet`) multi-zone LP is memory-heavy (several GB each), so cap concurrency at ~2 of those at once to avoid an OOM kill mid-solve.
 
 ## LP Variable Layout (per ISO-year)
 

@@ -93,34 +93,46 @@ def generate(runs: list[tuple[str, Path]], out: Path,
     no fetch) — suitable for sending or opening anywhere.
     """
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
-    # Reuse the payload builder, then split into shared benchmark + per-run.
-    D = rch.build_payload(runs, years=years)
-    meta_block = {
-        "groups": D["groups"], "groupLabel": D["groupLabel"],
-        "zones": D["zones"], "years": D["years"],
-    }
+    # Group runs by ISO (from each bundle's meta.json) so the dashboard's ISO
+    # toggle can switch between ERCOT, PJM, ... each with its own benchmark,
+    # zones and run set. The per-plant payload shape is identical across ISOs.
+    by_iso: dict[str, list[tuple[str, Path]]] = {}
+    for rid_hint, bundle in runs:
+        iso = json.loads((bundle / "meta.json").read_text()).get("iso", "ERCOT")
+        by_iso.setdefault(iso, []).append((rid_hint, bundle))
+
+    meta_by_iso: dict[str, dict] = {}
+    bench_by_iso: dict[str, str] = {}      # iso -> gzip+base64 benchmark
+    manifest, run_js = [], []
+    for iso, iso_runs in by_iso.items():
+        D = rch.build_payload(iso_runs, years=years)
+        meta_by_iso[iso] = {
+            "groups": D["groups"], "groupLabel": D["groupLabel"],
+            "zones": D["zones"], "years": D["years"],
+        }
+        bench_by_iso[iso] = _gzb64(D["bench"])
+        for i, (rid_hint, bundle) in enumerate(iso_runs):
+            rm = _run_meta(bundle, _slug(rid_hint))
+            if years is not None:
+                rm["years"] = [y for y in rm["years"] if int(y) in years]
+            rm["iso"] = iso
+            rid = rm["id"]
+            model = D["model"][i]
+            model["label"] = rm["label"]
+            js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
+                  f"window.BC.runGz[{json.dumps(rid)}]="
+                  + json.dumps(_gzb64(model)) + ";")
+            (RUNS_DIR / f"{rid}.js").write_text(js)
+            run_js.append(js)
+            rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
+            manifest.append(rm)
+
     bench_js = ("window.BC=window.BC||{};window.BC.benchGz="
-                + json.dumps(_gzb64(D["bench"])) + ";")
+                + json.dumps(bench_by_iso) + ";")
     (DATA_DIR / "benchmark.js").write_text(bench_js)
 
-    manifest, run_js = [], []
-    for i, (rid_hint, bundle) in enumerate(runs):
-        rm = _run_meta(bundle, _slug(rid_hint))  # rid_hint is the CLI label
-        if years is not None:
-            rm["years"] = [y for y in rm["years"] if int(y) in years]
-        rid = rm["id"]
-        model = D["model"][i]
-        model["label"] = rm["label"]
-        js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
-              f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model))
-              + ";")
-        (RUNS_DIR / f"{rid}.js").write_text(js)
-        run_js.append(js)
-        rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
-        manifest.append(rm)
-
     manifest_js = ("window.BC=window.BC||{};window.BC.meta="
-                   + json.dumps(meta_block) + ";window.BC.manifest="
+                   + json.dumps(meta_by_iso) + ";window.BC.manifest="
                    + json.dumps(manifest) + ";")
     (DATA_DIR / "manifest.js").write_text(manifest_js)
 
