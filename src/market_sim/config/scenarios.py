@@ -491,6 +491,14 @@ class ScenarioConfig:
     # ERCOT is unaffected — it builds its fleet from CAMPD bins, not this path.
     plant_level_fleet: bool = False
 
+    # Tier 3 (calibration) — give the non-ERCOT per-plant gas fleet a stepped
+    # offer curve (committed/economic/peaking heat-rate bands) instead of a
+    # single flat block, via split_gas_tranches. Off by default so the present
+    # calibration is unchanged; enabling it shifts the gas merit order (part-
+    # load units bid up, efficient units down) and wants a tuning pass on the
+    # _GAS_TRANCHE_SHARES. ERCOT's offer curve comes from its CAMPD bins.
+    gas_offer_curve: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -690,6 +698,7 @@ TIER_TAGS: dict[str, int] = {
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
     "plant_level_fleet": 3,
+    "gas_offer_curve": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }
