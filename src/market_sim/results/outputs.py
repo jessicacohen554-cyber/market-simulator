@@ -9,7 +9,7 @@ saved result reconstructs exactly.
 """
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -63,6 +63,10 @@ class FleetContext:
     wind_potential_mwh: float
     solar_potential_mwh: float
     storage_energy_cap_mwh: float
+    # Model plant group per generator (CC_CHP, CC_REGULAR, COAL, CT_PEAKER,
+    # CT_CHP, ST_GAS, ST_CHP), for ISOs whose dispatch classes come from the
+    # group rather than the efficiency bin. Defaults empty for older contexts.
+    plant_groups: list[str] = field(default_factory=list)
 
     @classmethod
     def from_arrays(
@@ -101,6 +105,11 @@ class FleetContext:
             heat_rates=[float(h) for h in fleet.heat_rate],
             zones=[zone_names[i] for i in fleet.zone_idx],
             unit_ids=list(fleet.unit_ids),
+            plant_groups=(
+                list(fleet.plant_group)
+                if getattr(fleet, "plant_group", None) is not None
+                else [""] * len(fleet.unit_ids)
+            ),
             wind_cap_mw=float(wind_cap.sum()),
             solar_cap_mw=float(solar_cap.sum()),
             wind_potential_mwh=float(
