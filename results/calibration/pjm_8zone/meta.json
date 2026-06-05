@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-05T14:14:19",
+  "timestamp": "2026-06-05T18:36:11",
   "iso": "PJM",
   "years": [
     2023,
@@ -27,5 +27,5 @@
   "td_loss_factor": 0.0,
   "storage_daily_cycling": false,
   "gas_offer_curve": false,
-  "git_sha": "25305b4"
+  "git_sha": "d10d158"
 }

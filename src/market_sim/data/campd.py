@@ -150,28 +150,31 @@ def _hour_index_8760(month: np.ndarray, day: np.ndarray, hour: np.ndarray) -> np
 def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
     """Load and normalize one ``{STATE}_{YEAR}.parquet`` extract, or ``None``.
 
-    Resolves the file from the flat ``raw_dir`` first, then the unit-level
-    subdirectory (``campd-unit-level/``) — so the older facility-level
-    extracts already in ``raw_dir`` (e.g. the ERCOT TX file and the PJM
-    PA/NJ/MD/DE/IL files) are used unchanged, while states present *only* as
-    newer unit-level uploads (one row per unit-hour, with a ``unitId``
-    column; e.g. IN, DC) load from the subdirectory. Flat-first deliberately
-    keeps ERCOT and the existing PJM states bit-for-bit, even where a state
-    (TX) appears in both. Unit-level rows are summed to the facility per hour
-    downstream (:func:`plant_hourly_grid`, :func:`plant_hourly_net`), so the
-    extra granularity is transparent here.
+    Resolves the file from the facility-level subdirectory
+    (``campd-facility-level/``) first, then the unit-level one
+    (``campd-unit-level/``) — so the older facility-summed extracts (e.g. the
+    ERCOT TX file and the PJM PA/NJ/MD/DE/IL files) are used unchanged, while a
+    state present *only* as a newer unit-level upload (one row per unit-hour,
+    with a ``unitId`` column; e.g. OH/WV/KY/VA/IN/DC) loads from the unit
+    directory. Facility-first deliberately keeps ERCOT and the existing PJM
+    states bit-for-bit, even where a state appears in both. Unit-level rows are
+    summed to the facility per hour downstream (:func:`plant_hourly_grid`,
+    :func:`plant_hourly_net`), so the extra granularity is transparent here.
     """
     fname = f"{state}_{year}.parquet"
     path = next(
-        (p for p in (raw_dir / fname, raw_dir / "campd-unit-level" / fname)
-         if p.exists()),
+        (p for p in (
+            raw_dir / "campd-facility-level" / fname,
+            raw_dir / "campd-unit-level" / fname,
+            raw_dir / fname,  # legacy flat layout (tests / old data)
+        ) if p.exists()),
         None,
     )
     if path is None:
         logger.warning(
-            "CAMPD extract not found for %s %d (looked in %s and "
-            "%s/campd-unit-level)",
-            state, year, raw_dir, raw_dir,
+            "CAMPD extract not found for %s %d (looked in %s/"
+            "campd-facility-level, /campd-unit-level, and the flat dir)",
+            state, year, raw_dir,
         )
         return None
     raw = pd.read_parquet(path)
