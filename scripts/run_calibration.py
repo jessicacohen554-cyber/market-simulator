@@ -59,6 +59,7 @@ from market_sim.data.fleet import (  # noqa: E402
     load_campd_bins,
     load_fleet_from_csv,
     split_coal_tranches,
+    split_gas_tranches,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
@@ -475,6 +476,10 @@ def run_year(
             load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
         )
         fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
+        # Optional stepped gas offer curve (committed/economic/peaking heat-rate
+        # bands) for the per-plant fleet; off by default.
+        if getattr(config, "gas_offer_curve", False):
+            fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
