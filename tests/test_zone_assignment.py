@@ -40,6 +40,14 @@ def test_ercot_north_zone():
     assert zone == "North"
 
 
+def test_ercot_northeast_zone():
+    """NE-Texas plants (Martin Lake) sit in the NE_LOB lobe -> Northeast."""
+    assert assign_zone_by_coords(32.26, -94.57, "ERCOT") == "Northeast"  # Martin Lake
+    assert assign_zone_by_coords(33.06, -94.86, "ERCOT") == "Northeast"  # Welsh
+    # Central-Texas coal (Limestone) stays in North, not the NE lobe.
+    assert assign_zone_by_coords(31.4, -96.3, "ERCOT") == "North"
+
+
 def test_ercot_south_central_zone():
     """Austin and San Antonio plants should be assigned to South_Central."""
     # Austin, TX: lat ~30.3, lon ~-97.7

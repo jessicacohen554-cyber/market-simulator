@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-06-05 (ERCOT Northeast zone — NE_LOB trapped-generation lobe)
+
+Splits a seventh ERCOT zone, **Northeast**, out of North to model the NE_LOB
+generic transmission constraint — the single biggest piece of ERCOT congestion
+the 6-zone topology was missing (binds 17.4% of 2023–24 SCED intervals).
+
+- **Why.** NE Texas (the EAST weather zone) is a generation-rich lobe: ~4.2 GW
+  of coal (Martin Lake, Welsh, Pirkey) + ~3.9 GW of gas (Tenaska Gateway CC,
+  Wilkes, …) serving only ~3.4% of system load, behind a ~1,300 MW export limit.
+  The six-zone model let all ~8 GW pour into North as if unconstrained, over-
+  running Martin Lake (PRB) and mis-dispatching the NE combined-cycles. This is
+  the carve-out the data-first rule calls out — real congestion the aggregation
+  couldn't represent.
+- **`config/iso_configs._ercot_config`.** New `Northeast` zone (load_share
+  0.0335 = the EAST weather zone; North drops to 0.3081) and a
+  `Northeast→North` link at **1,300 MW** (the NE_LOB limit). 7 zones, 9 links.
+- **`data/eia_loader._ERCOT_LOAD_ZONE_GROUPS`.** EAST weather zone → Northeast,
+  so the zone gets its own measured hourly load shape.
+- **`data/zone_assignment._ercot_zone`.** NE-Texas box (lat 31.3–34.0,
+  lon −95.55…−93.0) routes the lobe's plants to Northeast before the North
+  catch-all; DFW / central-Texas (Limestone) stay in North.
+- Tests updated to the 7-zone / 9-link topology, plus NE plant-assignment
+  coverage. Baselined with the smooth offer curve (PRB sigmoid off) before any
+  economic re-tuning.
+
 ## 2026-06-05 (ERCOT export TTCs from full-year SCED; data-first rule)
 
 Sets the ERCOT West/Panhandle export TTCs to the **measured** GTC limits from
