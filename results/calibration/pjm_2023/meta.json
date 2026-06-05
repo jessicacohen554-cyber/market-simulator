@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-05T03:58:06",
+  "timestamp": "2026-06-05T18:44:11",
   "iso": "PJM",
   "years": [
     2023
@@ -24,5 +24,6 @@
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
   "storage_daily_cycling": false,
-  "git_sha": "5f6277e"
+  "gas_offer_curve": false,
+  "git_sha": "d10d158"
 }
