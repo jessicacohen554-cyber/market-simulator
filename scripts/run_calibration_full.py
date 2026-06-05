@@ -150,12 +150,29 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     """
     if eff_bin in {*_GAS_CLASSES, "COAL"}:
         return eff_bin
+    # Non-CAMPD fleets (every non-ERCOT ISO, e.g. PJM's per-plant EIA-860
+    # fleet) carry no Plant_Group in ``eff_bin``, so derive the class from the
+    # model fuel type — giving each plant its proper class (one plant per bin)
+    # instead of collapsing the thermal fleet into OTHER. ERCOT is unaffected:
+    # its CAMPD units return at the ``eff_bin`` branch above.
+    if fuel == "coal":
+        return "COAL"
+    if fuel in {"gas_cc", "gas_cc_ccs"}:
+        return "CC_REGULAR"
+    if fuel == "gas_ct":
+        return "CT_PEAKER"
+    if fuel == "gas_st":
+        return "ST_GAS"
     if fuel == "nuclear":
         return "nuclear"
     if fuel in {"wind", "offshore_wind"}:
         return "wind"
     if fuel == "solar":
         return "solar"
+    if fuel == "oil":
+        return "oil"
+    if fuel == "biomass":
+        return "biomass"
     return "OTHER"
 
 
@@ -187,14 +204,28 @@ def _classify_f923(fuel: str, pm: str, chp: bool, plant_id: int) -> str:
     return "OTHER"
 
 
-def _plant_codes_from_unit_ids(unit_ids: list[str]) -> np.ndarray:
-    """Return ``(n_gen,)`` plant codes parsed from ``..._p{code}_<suffix>``."""
+def _plant_codes_from_unit_ids(
+    unit_ids: list[str], numeric_head: bool = False
+) -> np.ndarray:
+    """Return ``(n_gen,)`` plant codes parsed from the unit id.
+
+    ERCOT CAMPD ids carry the code as a ``..._p{code}_<suffix>`` token. The
+    EIA-860 per-plant fleet (every non-ERCOT ISO, e.g. PJM) instead names units
+    ``{plant_code}_{generator_id}`` (e.g. ``54_GT1``); with ``numeric_head`` the
+    leading all-digit token is used when no ``p{code}`` token is present.
+    ``numeric_head`` is off for ERCOT, so its dispatch frame is unchanged (ERCOT
+    nuclear shares the ``{code}_{gen}`` shape but is not matched by plant code).
+    """
     out = np.zeros(len(unit_ids), dtype=int)
     for i, uid in enumerate(unit_ids):
         for token in uid.split("_"):
             if token.startswith("p") and token[1:].isdigit():
                 out[i] = int(token[1:])
                 break
+        else:
+            head = uid.split("_", 1)[0]
+            if numeric_head and head.isdigit():
+                out[i] = int(head)
     return out
 
 
@@ -248,6 +279,7 @@ def _print_table(rows: list[tuple]) -> None:
 
 def _dispatch_frame(
     year: int, pass_label: str, result, context, zone_names: list[str],
+    iso: str = "ERCOT",
 ) -> pd.DataFrame:
     """Return the long per-generator-hour dispatch frame for one year-pass.
 
@@ -261,7 +293,9 @@ def _dispatch_frame(
     fuels = list(context.fuel_types)
     bins = list(context.efficiency_bins)
     zones = list(context.zones)
-    plant_codes = _plant_codes_from_unit_ids(unit_ids)
+    plant_codes = _plant_codes_from_unit_ids(
+        unit_ids, numeric_head=(iso != "ERCOT")
+    )
 
     klass = []
     supply = []
@@ -714,7 +748,9 @@ def solve_and_persist(
 
         for label, res in labelled:
             passes_seen.add(label)
-            _dispatch_frame(year, label, res, context, zone_names).to_parquet(
+            _dispatch_frame(
+                year, label, res, context, zone_names, iso=iso
+            ).to_parquet(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
             system_frames.append(
@@ -1109,7 +1145,9 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
         logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
         result = _commitment_pass(state, cfg)
         ctx = state["context"]
-        _dispatch_frame(year, "P2", result, ctx, zone_names).to_parquet(
+        _dispatch_frame(
+            year, "P2", result, ctx, zone_names, iso=meta["iso"]
+        ).to_parquet(
             bundle / "dispatch" / f"{year}_P2.parquet", index=False
         )
         system_p2.append(

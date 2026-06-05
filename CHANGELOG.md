@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-06-05 (PJM refinements: CHP classification, border-zone exports, gas offer curves)
+
+Three PJM fidelity refinements on top of the 8-zone topology + import/export
+node. ERCOT untouched (full suite green).
+
+- **CHP classification.** EIA-860's "Associated with Combined Heat and Power
+  System" flag (joined plant-level from the operable sheet, dropped from the
+  processed parquet) now maps gas cogens to CC_CHP / CT_CHP / ST_CHP instead of
+  the merchant variants — 202 PJM CHP units (47 CC, 155 CT). CHP CC/CT/ST are in
+  the outage-overlay QUALIFYING set, so they now get the historic overlay too.
+  ERCOT is unaffected (its thermal comes from CAMPD bins; CHP grouping only
+  reaches the filtered-out non-thermal subset of `load_fleet_from_csv`).
+- **Border-zone export attribution.** `pjm_zonal_interchange` attributes each
+  tie's measured net flow to the border zone it interconnects (NYISO→EMAAC,
+  MISO-west→ComEd, Indiana/Ohio→AEP-Ohio, Michigan→ATSI, Carolinas/TVA→
+  Dominion) instead of spreading the system total by load share. Total is
+  conserved (40 TWh) but now realistic per zone: ComEd +17, AEP-Ohio +16,
+  EMAAC +18.5 TWh export; Dominion −11.6 (net import from the Carolinas) —
+  sharpening inter-zone congestion. `load_demand` adds the per-zone matrix for
+  PJM, falling back to the system-net scalar when the tie file is absent.
+- **Gas offer curves (`gas_offer_curve`, default off).** `split_gas_tranches`
+  gives the per-plant gas fleet a stepped offer curve — a part-load committed
+  band (heat rate × `cc_/ct_/gas_st_committed_hr_mult`), an efficient economic
+  band, and a small duct-fired peaking top slice (× `ct_peak_hr_penalty`) —
+  instead of a single flat block. Capacity-conserving; runs after the coal
+  tranche split and preserves its passthrough fracs. Off by default so the
+  current calibration is unchanged; enabling it shifts the gas merit order and
+  wants a tuning pass on `_GAS_TRANCHE_SHARES`.
+
 ## 2026-06-05 (PJM import/export node — measured net interchange)
 
 Closes the PJM backcast's largest structural gap (Module M4). PJM is a large
