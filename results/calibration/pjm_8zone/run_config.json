@@ -1,16 +1,11 @@
 {
-  "timestamp": "2026-06-05T03:49:12",
+  "timestamp": "2026-06-05T14:14:19",
   "git": {
-    "sha": "e13b856",
+    "sha": "25305b4",
     "branch": "claude/pjm-backcast-testing-YvGJB",
-    "dirty": true,
-    "changed_files": [
-      "laude.md",
-      "scripts/_backcast_shell.py",
-      "scripts/render_backcast.py",
-      "scripts/render_calibration_html.py"
-    ],
-    "diffstat": "claude.md                          |  1 +\n scripts/_backcast_shell.py         | 29 ++++++++++++++----\n scripts/render_backcast.py         | 60 +++++++++++++++++++++++---------------\n scripts/render_calibration_html.py | 37 ++++++++++++++++++++---\n 4 files changed, 93 insertions(+), 34 deletions(-)"
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -37,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "e13b856"
+    "git_sha": "25305b4"
   },
   "scenario_config": {
     "weather_year": 2024,
@@ -222,6 +217,8 @@
         "econ_low_share": 0.556
       }
     },
+    "offer_curve_smoothing_n": 6,
+    "offer_curve_smoothing_exp": 1.0,
     "chp_steam_following": true,
     "chp_btm_floor_pct": 40.0,
     "coal_supply_repricing": true,
