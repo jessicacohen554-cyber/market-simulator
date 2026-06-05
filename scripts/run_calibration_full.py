@@ -702,6 +702,7 @@ def solve_and_persist(
     prb_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    gas_offer_curve: bool = False,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -759,6 +760,7 @@ def solve_and_persist(
             prb_overrides=prb_overrides,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
+            gas_offer_curve=gas_offer_curve,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -836,6 +838,7 @@ def solve_and_persist(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
+        "gas_offer_curve": gas_offer_curve,
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
@@ -845,6 +848,8 @@ def solve_and_persist(
             plant_tranche_config_path=plant_tranche_config)
     if storage_daily_cycling:
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
+    if gas_offer_curve:
+        recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -1590,6 +1595,13 @@ def main() -> None:
              "return to its day-start level every 24h (bounds the single-LP "
              "perfect-foresight advantage). Off = annual-cyclic (default).",
     )
+    parser.add_argument(
+        "--gas-offer-curve", action="store_true",
+        help="Give the non-ERCOT per-plant gas fleet a stepped offer curve "
+             "(committed/economic/peaking heat-rate bands) via "
+             "split_gas_tranches, instead of a single flat block. Off by "
+             "default.",
+    )
     parser.add_argument("--plant-tranche-config", default=None,
                         help="Per-plant tranche-config CSV (one row per plant "
                              "with its tranche shares + per-band HR mults). "
@@ -1648,6 +1660,7 @@ def main() -> None:
         },
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
+        gas_offer_curve=args.gas_offer_curve,
         note=args.note,
     )
     report_run(run_dir)
