@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-06-04T18:44:39",
+  "timestamp": "2026-06-05T02:47:37",
   "git": {
-    "sha": "897281f",
+    "sha": "911b990",
     "branch": "claude/pjm-backcast-testing-YvGJB",
     "dirty": false,
     "changed_files": [],
@@ -32,7 +32,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "897281f"
+    "git_sha": "911b990"
   },
   "scenario_config": {
     "weather_year": 2023,
