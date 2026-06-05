@@ -210,6 +210,7 @@ def build_payload(runs: list[tuple[str, Path]],
     labels = [lab for lab, _ in runs]
     years_set: set[int] = set()
     zones_set: set[str] = set()
+    groups_set: set[str] = set()
 
     bench: dict[int, dict] = {}          # year -> benchmark payload
     model_runs: list[dict] = []          # per run -> {year -> payload}
@@ -248,6 +249,7 @@ def build_payload(runs: list[tuple[str, Path]],
                 zone_p[int(code)] = str(g["zone"].iloc[0])
                 grp_p[int(code)] = str(klass)
                 zones_set.add(zone_p[int(code)])
+                groups_set.add(str(klass))
 
             # CAMPD net hourly per plant (benchmark — built once on run 0).
             cn_p: dict[int, np.ndarray] = {}
@@ -405,8 +407,13 @@ def build_payload(runs: list[tuple[str, Path]],
                 "gmModel": gm_model, "lmp": lmp}
         model_runs.append({"label": label, "years": run_years})
 
+    # Only the fossil classes actually present in this ISO's dispatch, in the
+    # canonical order — so the class selector and its default land on a
+    # populated class (PJM has no COAL_LIGNITE, so it must not default there and
+    # render an empty view). ERCOT keeps all classes (all present).
+    groups = [g for g in FOSSIL_GROUPS if g in groups_set] or FOSSIL_GROUPS
     return {
-        "groups": FOSSIL_GROUPS, "groupLabel": GROUP_LABEL,
+        "groups": groups, "groupLabel": GROUP_LABEL,
         "zones": sorted(zones_set), "years": sorted(years_set),
         "runLabels": labels, "bench": bench, "model": model_runs,
     }
