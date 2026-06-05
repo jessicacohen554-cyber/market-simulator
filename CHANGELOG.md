@@ -21,11 +21,12 @@ codifies the principle behind it.
   paths the six-zone reduction collapses into one link, so using it literally
   would understate the real interface.
 - **Known issue exposed, not masked.** With the accurate West limit the backcast
-  over-produces coal (~+13% vs EIA-930, vs +3% at the old 8,900 MW estimate):
-  freeing more West export changes the eastern gas-on-margin hours and the
-  coal/gas merit order (likely the gas-keyed PRB passthrough) then lets coal
-  undercut CC. This is now a tracked coal/gas merit-order calibration fix — the
-  TTC is no longer used to hide it.
+  over-produces coal (~+13% vs EIA-930, vs +3% at the old 8,900 MW estimate).
+  Diagnosed (run33 vs run37): the +6 TWh is almost all PRB (+5.7) not lignite
+  (+0.6), spread across every eastern zone — freeing West export lowers marginal
+  gas in the east, the gas-keyed PRB passthrough sigmoid deepens its discount,
+  and PRB undercuts CC system-wide. Tracked as a PRB-passthrough calibration fix
+  (`coal_prb_passthrough_*`) — the TTC is no longer used to hide it.
 - **`scripts/derive_ttc_limits.py`** rewritten to scan the full multi-year
   NP6-86 set, report every GTC's binding frequency and mean limit, and print the
   derived `ttc_mw`; hardened against off-schema / latin-1 daily files.
