@@ -1,0 +1,69 @@
+name: Deploy site to GitHub Pages
+
+# Publishes the static site (landing page + backcast dashboard + learning hub)
+# to GitHub Pages on every push to main — i.e. automatically on each PR merge —
+# and on manual dispatch. Only the committed web assets are deployed; the
+# dashboard reads its run data from the committed frontend/data/backcast/*.js
+# files, so no model solve or data regeneration happens here.
+on:
+  push:
+    branches: [main]
+    # Skip deploys when a merge changes nothing the site serves.
+    paths:
+      - "*.html"
+      - "frontend/**"
+      - "learning-hub/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch: {}
+
+# Least-privilege token scoped for the official Pages deployment flow.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One in-flight deploy at a time; let a newer merge supersede an older run.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stage the web assets
+        # The repo also tracks ~1.6 GB of model bundles/inputs that the site
+        # never serves; copy only the referenced web roots into _site so the
+        # Pages artifact stays small and fast.
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp ./*.html _site/
+          cp -r frontend _site/
+          [ -d learning-hub ] && cp -r learning-hub _site/
+          # Serve files verbatim (no Jekyll processing of the data JS).
+          touch _site/.nojekyll
+          echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+
+      - name: Configure Pages
+        # enablement:true turns Pages on (source = GitHub Actions) if it isn't
+        # already, so the first run on main brings the site live with no manual
+        # repo-settings step.
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
