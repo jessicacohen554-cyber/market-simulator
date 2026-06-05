@@ -20,13 +20,22 @@ codifies the principle behind it.
   single N_TO_H GTC (~4,810, binds 0.21%) is one of several parallel 345 kV
   paths the six-zone reduction collapses into one link, so using it literally
   would understate the real interface.
-- **Known issue exposed, not masked.** With the accurate West limit the backcast
-  over-produces coal (~+13% vs EIA-930, vs +3% at the old 8,900 MW estimate).
-  Diagnosed (run33 vs run37): the +6 TWh is almost all PRB (+5.7) not lignite
-  (+0.6), spread across every eastern zone — freeing West export lowers marginal
-  gas in the east, the gas-keyed PRB passthrough sigmoid deepens its discount,
-  and PRB undercuts CC system-wide. Tracked as a PRB-passthrough calibration fix
-  (`coal_prb_passthrough_*`) — the TTC is no longer used to hide it.
+- **West TTC effect is negligible (correction).** An earlier revision of this
+  entry blamed the accurate West limit for a coal overshoot — that was a
+  confounded comparison (`run33` predates the n=6 econ-curve smoothing). Clean
+  isolation from existing bundles: `run34` (old TTC, smoothing on) and `run37`
+  (new TTC, smoothing on) give an **identical** coal mix (70.4 TWh, +13% vs
+  EIA-930), while `run33` (old TTC, **smoothing off**) is +3%. So the West TTC
+  has ~zero effect on dispatch; the +13% coal overshoot is the **n=6 offer-curve
+  smoothing** (`offer_curve_smoothing_n`, introduced run34), whose rising econ
+  ramp cheapens the bottom of PRB's curve and pulls in ~+5.7 TWh of baseload
+  PRB. The accurate West/Panhandle TTCs are kept as data-first hygiene.
+- **PRB offer-curve experiment (run38).** Dropping the gas-keyed PRB passthrough
+  sigmoid and relying on the static `offer_curve_by_group` COAL_PRB bands (with
+  smoothing on) gives coal **−4.4%** vs EIA — closer than the sigmoid+smoothing
+  default's +13%, and removes the eight sigmoid magic numbers. A small downward
+  nudge to the PRB bands would close the remaining gap. Candidate replacement
+  for the sigmoid, pending sign-off.
 - **`scripts/derive_ttc_limits.py`** rewritten to scan the full multi-year
   NP6-86 set, report every GTC's binding frequency and mean limit, and print the
   derived `ttc_mw`; hardened against off-schema / latin-1 daily files.
