@@ -320,6 +320,12 @@ def _calibration_config(
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
         #   grid-delivered steam-following min-gen (CHP_PMIN_CF_BY_PLANT - BTM).
         chp_btm_floor_pct=40.0,  # flat fallback only (sector BTM supersedes it).
+        # ERCOT's unit-level derate only supplements the facility overlay, so it
+        # keeps both. Other ISOs (PJM) derive their unit-level file from ALL
+        # CAMPD unit data — the complete outage source — so they drop the
+        # redundant facility overlay to avoid double-counting (which crushed
+        # coal availability and spiked prices).
+        historic_outage_overlay=(iso == "ERCOT"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
