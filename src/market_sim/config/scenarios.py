@@ -432,12 +432,20 @@ class ScenarioConfig:
     # heat-rate term — band MC = VOM + (AHR x fuel_price) x multiplier, with VOM
     # held CONSTANT across bands (no peak VOM markup). Inner keys:
     #   committed      — committed-band HR multiplier
-    #   econ_low       — lower economic-step HR multiplier
-    #   econ_high      — upper economic-step HR multiplier
+    #   econ_low       — economic ramp START HR multiplier (CF-low end)
+    #   econ_high      — economic ramp END HR multiplier (CF-high end). The
+    #                    n-slice ramp spans econ_low -> econ_high; these two
+    #                    endpoints set its slope.
     #   econ_low_share — fraction of the economic block in the lower step
-    #   peak           — peaking-band HR multiplier (OMITTED for CC_REGULAR /
-    #                    CC_CHP, whose duct-burner peak multiplier is set per
-    #                    plant by turbine class, fleet.cc_duct_burner_peak_mult)
+    #                    (only used when smoothing is off; two flat econ steps)
+    #   peak           — OPTIONAL peaking-band HR multiplier. The peak is a
+    #                    SEPARATE flat tranche that jumps up above the ramp. When
+    #                    omitted for CC_REGULAR / CC_CHP it defaults to the
+    #                    per-plant duct-burner multiplier by turbine class
+    #                    (fleet.cc_duct_burner_peak_mult); set it to override
+    #                    with a single flat value. Required for non-CC groups.
+    #   pct_committed  — OPTIONAL committed capacity %; when present it overrides
+    #                    the CSV Pct_Committed (per-plant CC grounding still wins)
     #   pct_peaking    — OPTIONAL peaking capacity %; when present it overrides
     #                    the CSV Pct_Peaking before the residual split
     #                    (residual = 100 - must_run - committed - peaking, then
@@ -450,9 +458,9 @@ class ScenarioConfig:
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
-    # econ-high, plus the folded duct-firing peak for CC/coal) are replaced by
-    # N equal-capacity sub-tranches whose heat-rate multiplier rises from the
-    # econ-low multiplier to the band top along
+    # econ-high) are replaced by N equal-capacity sub-tranches whose heat-rate
+    # multiplier rises from the econ-low multiplier to the econ-high multiplier
+    # along
     # ``mult(t) = lo + (pk - lo) * t**exp``, ``t = (k + 0.5)/N``. exp = 1.0 is a
     # straight (linear) ramp, matching the gently-rising incremental heat rate
     # of a thermal unit; exp > 1 is convex (cheap-bottom). Finer steps let a
