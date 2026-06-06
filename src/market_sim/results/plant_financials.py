@@ -168,7 +168,16 @@ def disaggregate_dispatch(
     plant_map: list[PlantBinAssignment],
     method: str = "pro_rata_capacity",
 ) -> pd.DataFrame:
-    """Allocate bin-level hourly dispatch to individual plants.
+    """Allocate multi-plant bin dispatch to individual plants (legacy path).
+
+    NOTE: the ERCOT CAMPD fleet dispatches one LP generator *per plant*
+    (see ``fleet.bins_to_fleet`` — "one bin per plant"), so each
+    ``(bin_label, zone)`` group already contains a single plant and this
+    split is an identity (``cap_share == 1``). This disaggregation only does
+    real work for the legacy multi-plant aggregation path
+    (``use_campd_bins=False`` / ``aggregate_fleet``); it is NOT how the
+    per-plant model maps dispatch to plants. Do not read a pro-rata bin
+    split into the per-plant calibration/heatmap results.
 
     Methods:
 
