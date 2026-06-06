@@ -248,28 +248,35 @@ F-class(late) 2×1 CCs the model otherwise over-runs in the 80–90% CF band;
 the economic tranche absorbs the difference. Other CC_REGULAR plants keep
 the offer-curve value.
 
-## Per-plant fuel pricing
+## Fuel pricing
 
-Each tranche carries its plant code, which routes a per-plant monthly
-delivered fuel cost from EIA-923 Schedule 5 into the LP marginal cost.
-`scripts/process_f923_fuel_costs.py` processes the F923 zips into
-`inputs/processed/eia923_monthly_fuel_costs.parquet`, and
-`market_sim.data.fuel.resolve_fuel_prices` applies one of two paths to
-each gas / coal generator:
+`market_sim.data.fuel.resolve_fuel_prices` prices fuel differently for gas
+and coal.
 
-1. **Historical years (F923 available)** — the generator pays its plant's
-   own measured monthly delivered cost, broadcast to the hourly
-   horizon. Months with no reported cost (EIA suppression) keep the
-   per-fuel default.
-2. **Forward years (or plants outside the F923 sample)** — gas units
-   pay the AEO Henry Hub trajectory plus the ISO basis differential;
-   coal units pay the per-year coal trajectory. An entire plant class
-   / zone shares the same forward price, per the project's stated
-   model design.
+**Gas — uniform price.** Every gas generator in the ISO pays the *same*
+delivered price for a year: the AEO Henry Hub trajectory plus the ISO basis
+differential, optionally seasonally shaped. Per-plant gas costs are **off
+by default** (`ScenarioConfig.gas_plant_monthly_fuel_pricing`). EIA-923
+Schedule-5 gas reporting is sparse — only ~12% of ERCOT CC capacity reports
+a delivered cost — and merchant CCs in a hub all buy gas in the same
+market, so giving the few reporting plants their own (often higher,
+winter-spiking) cost while suppressed peers pay the smoothed trajectory
+created a spurious intra-zone price asymmetry (it penalised Jack County
+against its North-zone neighbours). Set the flag `True` to restore
+per-plant gas costs where EIA-923 reports them.
 
-The same resolver runs both backcasts and forward projections; the
-F923 lookup simply finds nothing in a forward year and every plant
-falls through to the trajectory-based default.
+**Coal — per-plant where reported.** Coal carries genuinely distinct
+delivered costs (lignite mine-mouth vs railed PRB), so each coal plant that
+reports EIA-923 monthly receipts pays its own measured monthly delivered
+cost (`coal_plant_monthly_pricing`, on by default), broadcast to the hourly
+horizon; months with no reported cost, and plants outside the sample, fall
+back to the per-year coal supply-class trajectory.
+`scripts/process_f923_fuel_costs.py` builds
+`inputs/processed/eia923_monthly_fuel_costs.parquet`.
+
+The same resolver runs both backcasts and forward projections; in a forward
+year the F923 lookup finds nothing and every plant falls through to the
+trajectory-based default.
 
 ## Commitment
 
@@ -327,7 +334,7 @@ This applies to both `CC_CHP` and `CT_CHP`.
 | CC max-CF cap                                          | Per-plant ECON + PEAK split                                                      |
 | Coal take-or-pay supply curve                          | Coal 40% MC / 45% ECON / 15% PEAK per plant in the bins                          |
 | `CC/CT_COMMITMENT_PARAMS` tables                       | Per-plant `min_run` / `min_down` from the CSV                                    |
-| Single AEO Henry Hub gas price for every gas generator | Per-plant monthly EIA-923 delivered cost (historical), AEO trajectory (forward)  |
+| Single coal trajectory for every coal plant | Per-plant monthly EIA-923 delivered cost for reporting coal plants (gas stays uniform AEO Henry Hub by default) |
 
 The legacy path is still available via `use_campd_bins=False`, which
 restores `aggregate_fleet()` and the take-or-pay coal tranches.
