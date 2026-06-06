@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -37,6 +38,7 @@ from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 from scripts.process_f923_fuel_costs import (  # noqa: E402
     _find_zips,
+    _load_generation,
     _load_receipts,
 )
 
@@ -60,12 +62,35 @@ _COAL_SOURCE_TO_SUPPLY: dict[str, str] = {
 }
 
 
-def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
-    """Return ``[plant_code, supply_class, dominant_source, tons, ranks]``.
+def _dominant_class(
+    grp: pd.DataFrame, code: int, weight: str, source: str
+) -> dict:
+    """Return one classification row: the weight-dominant supply class."""
+    by_class = grp.groupby("supply_class")[weight].sum()
+    total = by_class.sum()
+    return {
+        "plant_code": int(code),
+        "supply_class": by_class.idxmax(),
+        "source": source,
+        "weight": float(total),
+        "n_ranks": int((by_class > 0).sum()),
+        "ranks": ";".join(
+            f"{k}:{v / total:.0%}"
+            for k, v in by_class.sort_values(ascending=False).items()
+        ),
+    }
 
-    One row per coal plant in ``iso``'s EIA-860 fleet that has coal receipts
-    in the EIA-923 Schedule-5 releases; each plant's class is the supply class
-    of its tonnage-dominant ``ENERGY_SOURCE``.
+
+def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
+    """Return ``[plant_code, supply_class, source, weight, n_ranks, ranks]``.
+
+    One row per coal plant in ``iso``'s EIA-860 fleet, classified by its
+    dominant coal rank. Primary source is EIA-923 Schedule-5 fuel *receipts*
+    (by delivered tons); plants that file no coal receipts — common for large
+    units whose coal is reported off the receipts form (e.g. Conemaugh,
+    Keystone) — fall back to their dominant Page-1 *generation* fuel code (by
+    net MWh), so every generating coal plant is covered and the model matches
+    how the EIA-923 benchmark classifies the same plants.
     """
     iso_config = get_iso_config(iso)
     coal_codes = {
@@ -75,49 +100,61 @@ def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     }
     logger.info("%s EIA-860 fleet has %d coal plants", iso, len(coal_codes))
 
-    frames = []
+    rframes, gframes = [], []
     for zip_path in _find_zips(REPO / "inputs" / "raw-data"):
-        r = _load_receipts(zip_path)
-        if years is not None and "year" in r.columns:
-            r = r[pd.to_numeric(r["year"], errors="coerce").isin(years)]
-        frames.append(r)
-    receipts = pd.concat(frames, ignore_index=True)
+        m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
+        yr = int(m.group(1)) if m else 0
+        if years is not None and yr not in years:
+            continue
+        rframes.append(_load_receipts(zip_path))
+        gframes.append(_load_generation(zip_path, yr))
 
+    # Primary: fuel receipts, dominant rank by delivered tons.
+    receipts = pd.concat(rframes, ignore_index=True)
     receipts["plant_id"] = pd.to_numeric(receipts["plant_id"], errors="coerce")
     receipts["quantity"] = pd.to_numeric(
         receipts["quantity"], errors="coerce"
     ).fillna(0.0)
     receipts = receipts.dropna(subset=["plant_id"])
     receipts["plant_id"] = receipts["plant_id"].astype(int)
-
     coal = receipts[
         (receipts["fuel_group"] == "Coal")
         & (receipts["plant_id"].isin(coal_codes))
     ].copy()
     coal["supply_class"] = coal["energy_source"].map(_COAL_SOURCE_TO_SUPPLY)
     coal = coal.dropna(subset=["supply_class"])
+    rows = [
+        _dominant_class(grp, code, "quantity", "receipts")
+        for code, grp in coal.groupby("plant_id")
+    ]
+    classified = {r["plant_code"] for r in rows}
 
-    rows = []
-    for code, grp in coal.groupby("plant_id"):
-        by_class = grp.groupby("supply_class")["quantity"].sum()
-        dom = by_class.idxmax()
-        rows.append({
-            "plant_code": int(code),
-            "supply_class": dom,
-            "tons": float(by_class.sum()),
-            "n_ranks": int((by_class > 0).sum()),
-            "ranks": ";".join(
-                f"{k}:{v / by_class.sum():.0%}"
-                for k, v in by_class.sort_values(ascending=False).items()
-            ),
-        })
+    # Fallback: Page-1 generation fuel code, dominant rank by net MWh, for coal
+    # plants that filed no coal receipts.
+    gen = pd.concat(gframes, ignore_index=True)
+    gen["plant_id"] = pd.to_numeric(gen["plant_id"], errors="coerce")
+    gen["netgen_annual_mwh"] = pd.to_numeric(
+        gen["netgen_annual_mwh"], errors="coerce"
+    ).fillna(0.0)
+    gen = gen.dropna(subset=["plant_id"])
+    gen["plant_id"] = gen["plant_id"].astype(int)
+    gen["supply_class"] = gen["fuel_type"].map(_COAL_SOURCE_TO_SUPPLY)
+    gen = gen[
+        gen["supply_class"].notna()
+        & gen["plant_id"].isin(coal_codes - classified)
+        & (gen["netgen_annual_mwh"] > 0)
+    ]
+    rows += [
+        _dominant_class(grp, code, "netgen_annual_mwh", "generation")
+        for code, grp in gen.groupby("plant_id")
+    ]
+
     out = pd.DataFrame(rows).sort_values("plant_code").reset_index(drop=True)
-
     missing = sorted(coal_codes - set(out["plant_code"]))
     if missing:
         logger.info(
-            "%d %s coal plants had no EIA-923 coal receipts (kept generic "
-            "COAL): %s", len(missing), iso, missing,
+            "%d %s coal plants had no EIA-923 coal receipts or generation "
+            "(kept generic COAL): %s", len(missing), iso, missing,
         )
     return out
 
