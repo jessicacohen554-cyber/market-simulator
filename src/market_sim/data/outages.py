@@ -292,43 +292,110 @@ def _unit_outage_target(
     return (facility_id, "ST_GAS")
 
 
+def _generic_unit_outage_target(
+    facility_id: int, unit_id: object, group: object
+) -> tuple[int, str] | None:
+    """Map a non-ERCOT unit-outage row to its ``(plant_code, plant_group)``.
+
+    Non-ERCOT ISOs run a per-plant fleet with no split facilities, so each
+    unit routes straight to its plant's model group. Combustion turbines are
+    excluded from the derate (they dispatch economically), matching the
+    ERCOT convention.
+    """
+    g = "" if group is None or (isinstance(group, float) and np.isnan(group)) else str(group)
+    if g in ("CT_PEAKER", "CT_CHP"):
+        return None
+    if not g or g == "OTHER":
+        return None
+    return (facility_id, g)
+
+
+def unit_outage_csv_for_iso(iso: str | None) -> Path:
+    """Return the CAMPD unit-outage CSV path for an ISO.
+
+    ERCOT uses the canonical ``campd-unit-outages.csv``; every other ISO uses
+    ``campd-unit-outages-<ISO>.csv``, both written by
+    ``scripts/derive_campd_unit_outages.py --iso <ISO>``.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV
+    return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
+
+
+@lru_cache(maxsize=None)
+def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
+
+    Non-ERCOT ISOs run a per-plant EIA-860 fleet (no CAMPD bin sheet), so the
+    derate denominator — the plant's capacity in its model group — comes from
+    the fleet's nameplate summed per ``(plant_code, plant_group)``.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    cap: dict[tuple[int, str], float] = {}
+    for g in load_fleet_from_csv(iso, get_iso_config(iso)):
+        code = int(g.plant_code)
+        if code <= 0 or not g.plant_group:
+            continue
+        cap[(code, g.plant_group)] = cap.get((code, g.plant_group), 0.0) + float(
+            g.pmax_mw
+        )
+    return cap
+
+
 @lru_cache(maxsize=None)
 def unit_outage_derate_factors(
     year: int,
     hours: int = HOURS_PER_YEAR,
     bins_path: str | Path = BINS_CSV_DEFAULT,
+    iso: str = "ERCOT",
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
-    Built from the unit-level outage extract (:data:`UNIT_OUTAGE_CSV`, the
-    CAMPD-derived ``campd-unit-outages.csv`` covering full 2023 and 2024):
-    every unit outage of at least :data:`UNIT_OUTAGE_MIN_DAYS` days whose
-    window overlaps ``year`` derates its model bin's availability by
-    ``unit_capacity_mw / bin_capacity_mw`` over the outage window (concurrent
-    units sum, clipped at full derate). Each row's ``(outage_start,
-    outage_end)`` is clipped to ``year`` on the model clock, so a single
-    multi-year file feeds every backcast year. Combustion turbines are
-    excluded and rows without a matching model bin or capacity are skipped.
-    Years the file does not cover get an empty dict (every window misses the
-    clock).
-    """
-    if not UNIT_OUTAGE_CSV.exists():
-        return {}
-    from market_sim.data.fleet import load_campd_bins
+    Built from the ISO's unit-level outage extract (ERCOT's
+    :data:`UNIT_OUTAGE_CSV` ``campd-unit-outages.csv``, or
+    ``campd-unit-outages-<ISO>.csv`` for other ISOs — see
+    :func:`unit_outage_csv_for_iso`): every unit outage of at least
+    :data:`UNIT_OUTAGE_MIN_DAYS` days whose window overlaps ``year`` derates
+    its plant's availability by ``unit_capacity_mw / plant_capacity_mw`` over
+    the outage window (concurrent units sum, clipped at full derate). Each
+    row's ``(outage_start, outage_end)`` is clipped to ``year`` on the model
+    clock, so a single multi-year file feeds every backcast year. Combustion
+    turbines are excluded and rows without a matching plant or capacity are
+    skipped. Years the file does not cover get an empty dict.
 
-    bins = load_campd_bins(str(bins_path))
-    cap = {
-        (int(c), str(g)): float(m)
-        for c, g, m in zip(
-            bins["Plant_Code"], bins["Plant_Group"], bins["capacity_mw"]
-        )
-        if m and m > 0
-    }
-    df = pd.read_csv(UNIT_OUTAGE_CSV)
+    The plant-capacity denominator and the unit->plant routing differ by ISO:
+    ERCOT reads capacities from its CAMPD bin sheet and routes its split
+    facilities (W A Parish, Barney M Davis) to the right asset class; other
+    ISOs read per-plant nameplate from the EIA-860 fleet
+    (:func:`_iso_plant_capacity`) and route each unit straight to its
+    ``(plant_code, plant_group)`` (no split plants, CTs still excluded).
+    """
+    iso = (iso or "ERCOT").upper()
+    csv_path = unit_outage_csv_for_iso(iso)
+    if not csv_path.exists():
+        return {}
+    if iso == "ERCOT":
+        from market_sim.data.fleet import load_campd_bins
+
+        bins = load_campd_bins(str(bins_path))
+        cap = {
+            (int(c), str(g)): float(m)
+            for c, g, m in zip(
+                bins["Plant_Code"], bins["Plant_Group"], bins["capacity_mw"]
+            )
+            if m and m > 0
+        }
+        target_fn = _unit_outage_target
+    else:
+        cap = _iso_plant_capacity(iso)
+        target_fn = _generic_unit_outage_target
+    df = pd.read_csv(csv_path)
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
-        tgt = _unit_outage_target(int(r.facility_id), r.unit_id, r.plant_group)
+        tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
         if tgt is None or tgt not in cap:
             continue
         ucap = r.unit_capacity_mw
