@@ -671,6 +671,44 @@ def _git_state() -> dict:
     }
 
 
+def _parse_offer_curve_json(raw: str | None) -> dict | None:
+    """Parse the ``--offer-curve-json`` argument, failing fast on bad input.
+
+    Accepts an inline JSON object, a path to a ``.json`` file, or ``None``.
+    Returns the parsed ``{class: {band: multiplier}}`` mapping, or ``None``
+    when no overrides were given. Raises ``SystemExit`` with a clear message
+    on malformed JSON or the wrong top-level shape so a CI run fails loudly
+    rather than silently solving against the wrong curve.
+    """
+    if raw is None or not str(raw).strip():
+        return None
+    text = raw
+    candidate = Path(raw)
+    if not raw.lstrip().startswith("{") and candidate.exists():
+        text = candidate.read_text()
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise SystemExit(
+            f"--offer-curve-json: invalid JSON ({exc}). Expected an object "
+            'like {"CT_PEAKER":{"committed":1.40,"econ_low":1.27}}.')
+    if not isinstance(parsed, dict):
+        raise SystemExit(
+            "--offer-curve-json: top level must be a JSON object keyed by "
+            f"fleet class, got {type(parsed).__name__}.")
+    for cls, bands in parsed.items():
+        if not isinstance(bands, dict):
+            raise SystemExit(
+                f"--offer-curve-json: value for {cls!r} must be an object of "
+                f"band->multiplier, got {type(bands).__name__}.")
+        for band, val in bands.items():
+            if not isinstance(val, (int, float)) or isinstance(val, bool):
+                raise SystemExit(
+                    f"--offer-curve-json: {cls}.{band} must be a number, got "
+                    f"{val!r}.")
+    return parsed
+
+
 def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
     """Write ``run_config.json`` (and ``model_changes.diff`` if dirty).
 
@@ -695,7 +733,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
                 "coal_mustrun_per_plant", "coal_drop_pof",
                 "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
-                "td_loss_factor", "git_sha",
+                "td_loss_factor", "offer_curve_overrides", "git_sha",
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
@@ -725,6 +763,7 @@ def solve_and_persist(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
+    offer_curve_overrides: dict | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -783,6 +822,7 @@ def solve_and_persist(
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             gas_offer_curve=gas_offer_curve,
+            offer_curve_overrides=offer_curve_overrides,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -861,10 +901,17 @@ def solve_and_persist(
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
         "gas_offer_curve": gas_offer_curve,
+        "offer_curve_overrides": offer_curve_overrides or {},
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
-    recorded_cfg = _calibration_config(years[0], iso, hours, gas_prices[years[0]])
+    # Rebuild the recorded config WITH the same overrides applied, so
+    # run_config.json's scenario_config.offer_curve_by_group is the exact
+    # merged curve the LP solved against (not the bare defaults).
+    recorded_cfg = _calibration_config(
+        years[0], iso, hours, gas_prices[years[0]],
+        offer_curve_overrides=offer_curve_overrides,
+    )
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
             plant_tranche_config_path=plant_tranche_config)
@@ -1631,7 +1678,20 @@ def main() -> None:
                              "Each listed plant's offer comes from the sheet, "
                              "bypassing offer_curve_by_group. Generate/edit "
                              "with scripts/export_tranche_config.py.")
+    parser.add_argument(
+        "--offer-curve-json", default=None, metavar="JSON",
+        help="Per-class/per-band heat-rate multiplier overrides as a JSON "
+             "object, deep-merged onto the calibrated offer_curve_by_group "
+             "defaults. Each top-level key is a fleet class (CC_REGULAR, "
+             "CC_CHP, CT_PEAKER, ST_GAS, ST_CHP, COAL_LIGNITE, COAL_PRB); the "
+             "nested object overrides only the named bands (committed, "
+             "econ_low, econ_high, peak, econ_low_share, pct_peaking). "
+             'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
+             '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
+             ".json file. The merged curve is recorded in run_config.json.")
     args = parser.parse_args()
+
+    offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
 
     if args.report:
         report_run(Path(args.report))
@@ -1684,6 +1744,7 @@ def main() -> None:
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
         gas_offer_curve=args.gas_offer_curve,
+        offer_curve_overrides=offer_curve_overrides,
         note=args.note,
     )
     report_run(run_dir)
