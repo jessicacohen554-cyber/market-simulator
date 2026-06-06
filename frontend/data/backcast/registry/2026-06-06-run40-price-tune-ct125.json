@@ -1,0 +1,6 @@
+{
+  "id": "2026-06-06-run40-price-tune-ct125",
+  "label": "run40 price tune ct125",
+  "bundle": "results/calibration/run40_price_curve_tune",
+  "iso": "ERCOT"
+}
