@@ -66,13 +66,14 @@ GROUP_LABEL = {
     "COAL": "Coal",
     "COAL_LIGNITE": "Coal Lignite", "COAL_PRB": "Coal PRB",
     "CC_REGULAR": "CC Regular", "CC_CHP": "CC CHP",
-    "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP", "ST_GAS": "Steam Gas",
+    "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP",
+    "ST_GAS": "Steam Gas", "ST_CHP": "Steam CHP",
 }
 FOSSIL_GROUPS = list(GROUP_LABEL)
-# Generation-mix fossil set: the 7 dashboard classes plus ST_CHP (gas-steam
-# CHP), so the system-wide fossil total matches the calibration report's [3b]
-# table (which carries all 8 thermal classes, e.g. 298.2 TWh in 2024).
-MIX_GROUPS = FOSSIL_GROUPS + ["ST_CHP"]
+# Generation-mix fossil set == the dashboard classes (ST_CHP is now included
+# above), so the system-wide fossil total matches the calibration report's [3b]
+# table (which carries all thermal classes, e.g. 298.2 TWh in 2024).
+MIX_GROUPS = list(FOSSIL_GROUPS)
 _GAS_GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
 _COAL_GROUPS = ("COAL", "COAL_LIGNITE", "COAL_PRB")
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
