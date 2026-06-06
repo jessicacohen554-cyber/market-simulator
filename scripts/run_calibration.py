@@ -55,11 +55,13 @@ from market_sim.data.fleet import (  # noqa: E402
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
+    fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
     split_coal_tranches,
     split_gas_tranches,
+    thermal_tranche_overrides,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
@@ -324,16 +326,23 @@ def _calibration_config(
             "CC_REGULAR": {"committed": 0.92, "econ_low": 1.06,
                            "econ_high": 1.27, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
-            "CC_CHP": {"committed": 0.92, "econ_low": 0.96,
-                       "econ_high": 1.12, "econ_low_share": 0.50,
+            "CC_CHP": {"committed": 0.92,
+                       "econ_low": 1.01 if iso == "PJM" else 0.96,
+                       "econ_high": 1.22 if iso == "PJM" else 1.12,
+                       "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
             # CT/ST committed band raised as a P1 startup-cost proxy: the
             # part-load committed slice only clears when price is high, so
             # peakers stop parking at ~20% CF for hundreds of hours. CT hurdle
             # is committed 1.55 (peak HR mult 13.15); ST hurdle committed 0.81
-            # with a slightly lower econ-high / peak top.
-            "CT_PEAKER": {"committed": 1.55, "econ_low": 1.27,
-                          "econ_high": 1.98, "peak": 13.15,
+            # with a slightly lower econ-high / peak top. The CT committed
+            # hurdle / econ-low / peak are an ERCOT calibration tune; PJM keeps
+            # its own validated CT curve (committed 1.10, econ_low 1.32,
+            # peak 13.0).
+            "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else 1.55,
+                          "econ_low": 1.32 if iso == "PJM" else 1.27,
+                          "econ_high": 1.98,
+                          "peak": 13.0 if iso == "PJM" else 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.81, "econ_low": 1.05,
                        "econ_high": 1.40, "peak": 4.20,
@@ -347,11 +356,26 @@ def _calibration_config(
             "COAL_PRB": {"committed": 0.95, "econ_low": 0.77,
                          "econ_high": 1.19, "peak": 1.48,
                          "econ_low_share": 0.556},
+            # Generic bituminous coal (ISOs whose coal isn't ERCOT lignite/PRB,
+            # e.g. PURPA-era PJM units): all 10 ERCOT coal plants are supply-
+            # classified so this never fires for ERCOT. A flat baseload curve —
+            # cheap committed band (0.90) and econ near base HR — keeps coal in
+            # merit as baseload instead of the generic 1.15x default backing it
+            # out under cheap gas (which left PJM coal ~12 TWh light).
+            "COAL": {"committed": 0.90, "econ_low": 0.95,
+                     "econ_high": 1.10, "peak": 1.45,
+                     "econ_low_share": 0.55},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
         #   grid-delivered steam-following min-gen (CHP_PMIN_CF_BY_PLANT - BTM).
         chp_btm_floor_pct=40.0,  # flat fallback only (sector BTM supersedes it).
+        # ERCOT's unit-level derate only supplements the facility overlay, so it
+        # keeps both. Other ISOs (PJM) derive their unit-level file from ALL
+        # CAMPD unit data — the complete outage source — so they drop the
+        # redundant facility overlay to avoid double-counting (which crushed
+        # coal availability and spiked prices).
+        historic_outage_overlay=(iso == "ERCOT"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -562,16 +586,47 @@ def run_year(
         # into dispatch — required for per-plant EIA-923 fuel costs and the
         # CAMPD outage overlay to bind. Otherwise use the legacy efficiency-
         # bin aggregation (faster, but identity-free).
-        n_bins = 0 if getattr(config, "plant_level_fleet", False) \
-            else config.heat_rate_bin_count
-        fleet_base = aggregate_fleet(
-            load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
-        )
-        fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
-        # Optional stepped gas offer curve (committed/economic/peaking heat-rate
-        # bands) for the per-plant fleet; off by default.
-        if getattr(config, "gas_offer_curve", False):
-            fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
+        #
+        # When the ISO has a CAMPD-derived thermal-tranche artifact
+        # (thermal_tranches_<ISO>.csv), give its per-plant thermal fleet the
+        # SAME smoothed rising offer curve ERCOT gets: build a synthetic
+        # per-plant bins frame (committed / coal must-run from the artifact)
+        # and route it through bins_to_fleet, with every non-binned generator
+        # (nuclear, oil, biomass, hydro, ...) kept as its own raw LP unit. The
+        # binned-keys exclusion guarantees no double-count and no dropped unit.
+        if (getattr(config, "plant_level_fleet", False)
+                and thermal_tranche_overrides(iso)):
+            all_gens = load_fleet_from_csv(iso, iso_config)
+            synth = fleet_to_bins(all_gens, iso, config)
+            if not synth.empty:
+                binned = set(zip(
+                    synth["Plant_Code"].astype(int), synth["Plant_Group"]
+                ))
+                thermal_fleet, _ = bins_to_fleet(synth, zone_names, config)
+                non_binned = [
+                    g for g in all_gens
+                    if (int(g.plant_code), g.plant_group) not in binned
+                ]
+                fleet = non_binned + thermal_fleet
+                prb_pt = prb_passthrough_series(config, year, config.hours)
+                fuel_fracs = [
+                    campd_tranche_fuel_frac(g, prb_pt) for g in fleet
+                ]
+            else:
+                fleet, fuel_fracs = split_coal_tranches(
+                    aggregate_fleet(all_gens, n_bins=0), config
+                )
+        else:
+            n_bins = 0 if getattr(config, "plant_level_fleet", False) \
+                else config.heat_rate_bin_count
+            fleet_base = aggregate_fleet(
+                load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
+            )
+            fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
+            # Optional stepped gas offer curve (committed/economic/peaking
+            # heat-rate bands) for the per-plant fleet; off by default.
+            if getattr(config, "gas_offer_curve", False):
+                fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )

@@ -206,11 +206,29 @@ def main() -> None:
     # primary group here; the overlay's _unit_outage_target re-routes their
     # gas-steam units to the split code by unit id, so the group passed for
     # them is immaterial.
-    bins = pd.read_csv(args.bins)
-    group_by_code = {
-        int(c): str(g)
-        for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
-    }
+    #
+    # ERCOT sources the plant->group map from the CAMPD bin sheet
+    # (custom-bin-assignments.csv); other ISOs have no bin sheet and run a
+    # per-plant EIA-860 fleet, so their group map comes from the fleet's
+    # plant_group (the same source _fleet_group_by_code / the benchmark backfill
+    # use). Without this every non-ERCOT facility missed the bin sheet, fell
+    # through QUALIFYING_PLANT_GROUPS, and produced zero unit-outage windows.
+    if iso == "ERCOT":
+        bins = pd.read_csv(args.bins)
+        group_by_code = {
+            int(c): str(g)
+            for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
+        }
+    else:
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.fleet import load_fleet_from_csv
+        iso_config = get_iso_config(iso)
+        group_by_code = {
+            int(g.plant_code): g.plant_group
+            for g in load_fleet_from_csv(iso, iso_config)
+            if int(g.plant_code) > 0 and g.plant_group
+        }
+
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
 
