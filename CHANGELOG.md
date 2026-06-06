@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-06 (CC peak — tweakable flat band instead of per-class duct burner)
+
+Makes the CC_REGULAR / CC_CHP peak band a tunable offer-curve `peak` key
+(default **2.25**, the F-class duct-burner multiplier and modal CC class)
+instead of the hardcoded per-turbine-class table. So `CC_REGULAR.peak` /
+`CC_CHP.peak` can now be nudged from the calibration workflow like every other
+group's peak.
+
+- **`scripts/run_calibration`.** Added `"peak": 2.25` to the CC_REGULAR and
+  CC_CHP offer-curve entries. `fleet.bins_to_fleet` already honored an explicit
+  `peak` key over the duct-burner fallback, so no model-code change was needed.
+- **Behavior change at default:** all CC plants now peak at 2.25× regardless of
+  turbine class — G/H-class CCs drop 2.50→2.25 (cheaper peak) and E-class rise
+  2.00→2.25. The ERCOT fleet is overwhelmingly F-class, so the shift is small;
+  a recalibration captures it. The per-class `cc_duct_burner_peak_mult` stays as
+  the fallback when no `peak` key is set (e.g. other ISOs).
+
 ## 2026-06-06 (Uniform gas pricing — drop per-plant gas fuel cost by default)
 
 Gas generators now all pay the **same** delivered price for a year (AEO
