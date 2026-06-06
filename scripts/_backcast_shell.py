@@ -114,8 +114,10 @@ function inflate(b64){const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
   .then(ab=>JSON.parse(new TextDecoder().decode(ab)));}
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("failed to load "+src));document.head.appendChild(s);});}
 async function ensureRuns(ids){for(const id of ids){if(MODEL[id])continue;
-  if(!window.BC.runGz||!window.BC.runGz[id]){const m=META_RUN(id);await loadScript(m.file);}
-  MODEL[id]=await inflate(window.BC.runGz[id]);}}
+  try{
+    if(!window.BC.runGz||!window.BC.runGz[id]){const m=META_RUN(id);if(!m)continue;await loadScript(m.file);}
+    if(window.BC.runGz&&window.BC.runGz[id])MODEL[id]=await inflate(window.BC.runGz[id]);
+  }catch(e){console.warn("skipping run "+id+": "+(e&&e.message||e));}}}
 function META_RUN(id){return BC.manifest.find(r=>r.id===id);}
 function dec(b){const s=atob(b),a=new Float32Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a;}
 function pearson(m,o){let mm=0,oo=0,n=m.length;for(let i=0;i<n;i++){mm+=m[i];oo+=o[i];}mm/=n;oo/=n;let a=0,b=0,c=0;for(let i=0;i<n;i++){const x=m[i]-mm,y=o[i]-oo;a+=x*y;b+=x*x;c+=y*y;}const d=Math.sqrt(b*c);return d>0?a/d:0;}
