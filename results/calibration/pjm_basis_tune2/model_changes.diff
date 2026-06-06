@@ -1,0 +1,100 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 357062a..8eca5f3 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -324,19 +324,12 @@ def _calibration_config(
+             # flat cheap band; peak stays the duct-burner class multiplier;
+             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
+             # grounded (cc_committed_per_plant).
+-            # PJM econ bands raised (econ_low 1.06->1.26, econ_high 1.27->1.57)
+-            # to back CC_REGULAR down off a +25 TWh overrun under uniform gas:
+-            # the gap-filled (non-EIA-923-reporting) PJM CCs pay the cheap
+-            # Henry-Hub+basis price, so the offer curve carries the delivered-gas
+-            # premium the uniform price misses. ERCOT keeps the fitted values.
+-            "CC_REGULAR": {"committed": 0.92,
+-                           "econ_low": 1.26 if iso == "PJM" else 1.06,
+-                           "econ_high": 1.57 if iso == "PJM" else 1.27,
+-                           "econ_low_share": 0.50,
++            "CC_REGULAR": {"committed": 0.92, "econ_low": 1.06,
++                           "econ_high": 1.27, "econ_low_share": 0.50,
+                            "pct_peaking": 8.0},
+             "CC_CHP": {"committed": 0.92,
+-                       "econ_low": 0.95 if iso == "PJM" else 0.96,
+-                       "econ_high": 1.13 if iso == "PJM" else 1.12,
++                       "econ_low": 1.01 if iso == "PJM" else 0.96,
++                       "econ_high": 1.22 if iso == "PJM" else 1.12,
+                        "econ_low_share": 0.50,
+                        "pct_peaking": 8.0},
+             # CT_CHP cogens: previously driven by the legacy ct_*_hr_override
+@@ -347,8 +340,7 @@ def _calibration_config(
+             # pull them apart to create a slope. Peaking % stays the CSV value
+             # (no pct_peaking key). The ct_*_hr_override fields above are now
+             # inert for CT_CHP.
+-            "CT_CHP": {"committed": 1.22 if iso == "PJM" else 1.10,
+-                       "econ_low": 1.20,
++            "CT_CHP": {"committed": 1.10, "econ_low": 1.20,
+                        "econ_high": 1.20, "peak": 1.40,
+                        "econ_low_share": 0.50},
+             # CT/ST committed band raised as a P1 startup-cost proxy: the
+@@ -360,7 +352,7 @@ def _calibration_config(
+             # its own validated CT curve (committed 1.10, econ_low 1.32,
+             # peak 13.0).
+             "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else 1.55,
+-                          "econ_low": 1.22 if iso == "PJM" else 1.27,
++                          "econ_low": 1.32 if iso == "PJM" else 1.27,
+                           "econ_high": 1.98,
+                           "peak": 13.0 if iso == "PJM" else 13.15,
+                           "econ_low_share": 0.526, "pct_peaking": 7.0},
+@@ -386,8 +378,8 @@ def _calibration_config(
+             #    cheaper bands so it baseloads under bituminous.
+             #  - COAL_WC: waste coal/culm (subsidised remediation fluidised-bed)
+             #    — runs flat baseload, almost never peaks (low peak band).
+-            "COAL_BIT": {"committed": 0.90, "econ_low": 0.91,
+-                         "econ_high": 1.04, "peak": 1.45,
++            "COAL_BIT": {"committed": 0.90, "econ_low": 0.95,
++                         "econ_high": 1.10, "peak": 1.45,
+                          "econ_low_share": 0.55},
+             "COAL_SUB": {"committed": 0.88, "econ_low": 0.90,
+                          "econ_high": 1.05, "peak": 1.40,
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index 46879de..7c9dca5 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -349,17 +349,17 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+ #   (Dominion South / TETCO M2, a structural Marcellus *discount* to Henry
+ #   Hub from takeaway-constrained oversupply) and the Mid-Atlantic load
+ #   pocket (TETCO M3 and Transco Zone 6 non-NY, a modest annual *premium*
+-#   with large winter spikes). The blended scalar below leans slightly
+-#   positive because the eastern premium hubs set price in the binding
+-#   hours, while the western discount applies to inframarginal price-taking
+-#   CCs. Source: EIA Natural Gas Weekly Update basis tables; ICE TETCO M3 /
+-#   Transco Z6 / Dominion South 2023-2024 annual averages.
+-#   Tier 3 (calibration) — VERIFY: the precise generation-weighted PJM basis
+-#   is a known data gap; this single annual scalar collapses three hubs with
+-#   opposite signs and strong winter seasonality. Refine with a per-hub,
+-#   generation-weighted monthly basis series before relying on PJM gas-unit
+-#   marginal cost (the single biggest PJM price-formation lever after
+-#   interchange).
++#   with large winter spikes). Rather than blend hub quotes by hand, the
++#   +0.67 scalar is the empirical generation-weighted basis measured from
++#   EIA-923 itself: the quantity-weighted delivered gas cost to PJM gas
++#   plants (Schedule 5 fuel receipts) minus the Henry Hub annual average was
++#   +$0.67/MMBtu in BOTH 2023 ($3.21 vs $2.54) and 2024 ($2.86 vs $2.19).
++#   Source: scripts/derive_coal_supply.py-style EIA-923 receipt aggregation;
++#   same EIA family as the ERCOT/CAISO figures. Caveat: Schedule-5 gas
++#   reporting is sparse (~26 PJM plants), likely skewed toward the eastern
++#   premium hubs, so this may run slightly high for the western price-taking
++#   CCs — but it replaces the prior unvalidated +0.30 placeholder and lands
++#   PJM CC dispatch on EIA-923 actuals without distorting the offer curve.
+ # These are annual average differentials, held constant across the
+ # projection period for simplicity.
+ #
+@@ -367,7 +367,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
+     "ERCOT": -0.50,   # Waha discount; EIA NG Weekly, 2024 avg
+     "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
+-    "PJM": 0.30,      # TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify
++    "PJM": 0.67,      # EIA-923 delivered-gas basis (see below)
+ }
+ 
+ # --- Monthly Gas Price Seasonality Factors ---
