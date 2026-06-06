@@ -313,15 +313,17 @@ def _calibration_config(
         # AHR x fuel_price; VOM constant across bands). The economic block is a
         # rising ramp from econ_low to econ_high (its slope set by those two
         # endpoints); the duct-firing peak is a separate band above it. CC peak
-        # uses the per-plant duct-burner multiplier (turbine class), so no
-        # "peak" key. Gas Steam committed kept at the current 0.65x reliability
+        # is a tweakable "peak" key (2.25 = the F-class duct-burner multiplier,
+        # the modal CC class) instead of the per-turbine-class default, so it
+        # can be tuned like every other group's peak. Gas Steam committed kept
+        # at the current 0.65x reliability
         # value (per operator); CC and Coal keep their CSV peaking %, while
         # Gas CT -> 7% and Gas Steam -> 15%.
         offer_curve_by_group={
             # CC offer curve fit to Colorado Bend II / Wolf Hollow II observed
             # CAMPD heat-rate curves: marginal HR ~0.95x avg and flat across
             # the operating range, negligible duct-firing. committed/econ are a
-            # flat cheap band; peak stays the duct-burner class multiplier;
+            # flat cheap band; peak 2.25 = F-class duct-burner mult (tweakable);
             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
             # grounded (cc_committed_per_plant).
             # PJM CC econ raised moderately (econ_low 1.06->1.20, econ_high
@@ -334,11 +336,13 @@ def _calibration_config(
             "CC_REGULAR": {"committed": 0.92,
                            "econ_low": 1.20 if iso == "PJM" else 1.06,
                            "econ_high": 1.49 if iso == "PJM" else 1.27,
+                           "peak": 2.25,
                            "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
             "CC_CHP": {"committed": 0.92,
                        "econ_low": 0.95 if iso == "PJM" else 0.96,
                        "econ_high": 1.14 if iso == "PJM" else 1.12,
+                       "peak": 2.25,
                        "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
             # CT_CHP cogens: previously driven by the legacy ct_*_hr_override
