@@ -261,26 +261,31 @@ def _calibration_config(
             # flat cheap band; peak stays the duct-burner class multiplier;
             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
             # grounded (cc_committed_per_plant).
-            "CC_REGULAR": {"committed": 0.92, "econ_low": 1.01,
-                           "econ_high": 1.22, "econ_low_share": 0.50,
+            "CC_REGULAR": {"committed": 0.92, "econ_low": 1.06,
+                           "econ_high": 1.27, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
             "CC_CHP": {"committed": 0.92, "econ_low": 1.01,
                        "econ_high": 1.22, "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
-            "CT_PEAKER": {"committed": 1.10, "econ_low": 1.32,
+            # CT/ST committed band raised as a P1 startup-cost proxy: the
+            # part-load committed slice only clears when price is high, so
+            # peakers stop parking at ~20% CF for hundreds of hours. CT gets the
+            # bigger hurdle (+0.15) and a slightly cheaper econ-low so it runs
+            # economically once started; ST gets a smaller hurdle (+0.075).
+            "CT_PEAKER": {"committed": 1.25, "econ_low": 1.27,
                           "econ_high": 1.98, "peak": 13.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.66, "econ_low": 0.90,
+            "ST_GAS": {"committed": 0.735, "econ_low": 0.90,
                        "econ_high": 1.45, "peak": 4.25,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
-            # Coal split by supply: lignite (mine-mouth, no PRB passthrough)
-            # carries the raised multipliers; PRB keeps the run2 values and is
-            # shaped by the passthrough sigmoid.
-            "COAL_LIGNITE": {"committed": 0.90, "econ_low": 1.09,
-                             "econ_high": 1.10, "peak": 1.50,
+            # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
+            # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
+            # lower econ-low start, slightly higher econ-high.
+            "COAL_LIGNITE": {"committed": 0.95, "econ_low": 1.14,
+                             "econ_high": 1.15, "peak": 1.55,
                              "econ_low_share": 0.556},
-            "COAL_PRB": {"committed": 0.90, "econ_low": 0.92,
-                         "econ_high": 1.12, "peak": 1.48,
+            "COAL_PRB": {"committed": 0.95, "econ_low": 0.87,
+                         "econ_high": 1.14, "peak": 1.48,
                          "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
