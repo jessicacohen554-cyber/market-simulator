@@ -108,10 +108,16 @@ class TestPlantMonthPriceGrid(unittest.TestCase):
 
 
 class TestApplyPlantMonthlyFuelPrices(unittest.TestCase):
-    """The resolver overwrites the per-fuel default with plant F923 cost."""
+    """The resolver overwrites the per-fuel default with plant F923 cost.
+
+    Per-plant monthly *gas* pricing is opt-in (off by default), so these
+    tests of the gas overwrite mechanism enable it explicitly.
+    """
 
     def setUp(self):
-        self.config = ScenarioConfig(iso="ERCOT", hours=8760)
+        self.config = ScenarioConfig(
+            iso="ERCOT", hours=8760, gas_plant_monthly_fuel_pricing=True,
+        )
 
     def _build_two_plant_fleet(self) -> tuple[np.ndarray, object]:
         """Build a two-plant fleet: one with F923 data, one without."""
@@ -272,31 +278,37 @@ class TestPerPlantBinning(unittest.TestCase):
 
 
 class TestRunnerEndToEndFor2024(unittest.TestCase):
-    """End-to-end: a 2024 calibration year uses F923 monthly prices.
+    """End-to-end gas pricing for a 2024 calibration year.
 
-    Builds the production fleet from the shipped CAMPD CSV, resolves
-    fuel prices for 2024 (a calibration year), and asserts that at least
-    some plants carry a non-trajectory price — i.e. the F923 overwrite
-    actually ran rather than every plant defaulting to the AEO Henry Hub
-    value.
+    Builds the production fleet from the shipped CAMPD CSV and resolves
+    2024 fuel prices. By default every gas generator pays the *same*
+    uniform Henry Hub + basis price (per-plant gas pricing is off, so
+    patchy EIA-923 reporting cannot split same-zone units); turning
+    ``gas_plant_monthly_fuel_pricing`` on restores the per-plant spread.
     """
 
-    def test_at_least_one_plant_carries_an_f923_price(self):
-        config = ScenarioConfig(iso="ERCOT", hours=8760)
+    def _gas_means(self, config):
         bins = load_campd_bins(BINS_CSV)
         _, arrays = bins_to_fleet(bins, ZONE_NAMES, config)
         fuel_prices = resolve_fuel_prices(config, arrays, year=2024)
-
-        # The AEO trajectory price for 2024 (with seasonality) has the
-        # same annual average across every gas generator; an F923 plant
-        # diverges from that average.
         gas_mask = np.isin(
             arrays.fuel_type_idx,
             [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]],
         )
-        gas_means = fuel_prices[gas_mask].mean(axis=1)
-        # Every gas plant pays a positive price, but they are no longer
-        # uniform — some carry the AEO default, others their F923 cost.
+        return fuel_prices[gas_mask].mean(axis=1)
+
+    def test_gas_is_uniform_by_default(self):
+        gas_means = self._gas_means(ScenarioConfig(iso="ERCOT", hours=8760))
+        # Every gas plant pays a positive price, and they are all identical
+        # — the F923 per-plant overwrite is off, so nothing splits them.
+        self.assertTrue((gas_means > 0).all())
+        self.assertAlmostEqual(float(gas_means.std()), 0.0, places=9)
+
+    def test_flag_restores_per_plant_f923_spread(self):
+        gas_means = self._gas_means(ScenarioConfig(
+            iso="ERCOT", hours=8760, gas_plant_monthly_fuel_pricing=True,
+        ))
+        # With the opt-in flag, reporting plants diverge from the AEO default.
         self.assertTrue((gas_means > 0).all())
         self.assertGreater(gas_means.std(), 0.05)
 
