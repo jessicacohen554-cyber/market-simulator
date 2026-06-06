@@ -290,19 +290,19 @@ def _calibration_config(
             "CC_REGULAR": {"committed": 0.92, "econ_low": 1.06,
                            "econ_high": 1.27, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
-            "CC_CHP": {"committed": 0.92, "econ_low": 1.01,
-                       "econ_high": 1.22, "econ_low_share": 0.50,
+            "CC_CHP": {"committed": 0.92, "econ_low": 0.96,
+                       "econ_high": 1.12, "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
             # CT/ST committed band raised as a P1 startup-cost proxy: the
             # part-load committed slice only clears when price is high, so
-            # peakers stop parking at ~20% CF for hundreds of hours. CT gets the
-            # bigger hurdle (+0.15) and a slightly cheaper econ-low so it runs
-            # economically once started; ST gets a smaller hurdle (+0.075).
-            "CT_PEAKER": {"committed": 1.40, "econ_low": 1.27,
-                          "econ_high": 1.98, "peak": 13.0,
+            # peakers stop parking at ~20% CF for hundreds of hours. CT hurdle
+            # is committed 1.55 (peak HR mult 13.15); ST hurdle committed 0.81
+            # with a slightly lower econ-high / peak top.
+            "CT_PEAKER": {"committed": 1.55, "econ_low": 1.27,
+                          "econ_high": 1.98, "peak": 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.735, "econ_low": 0.90,
-                       "econ_high": 1.45, "peak": 4.25,
+            "ST_GAS": {"committed": 0.81, "econ_low": 0.90,
+                       "econ_high": 1.40, "peak": 4.20,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
             # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
@@ -310,8 +310,8 @@ def _calibration_config(
             "COAL_LIGNITE": {"committed": 0.95, "econ_low": 1.14,
                              "econ_high": 1.15, "peak": 1.55,
                              "econ_low_share": 0.556},
-            "COAL_PRB": {"committed": 0.95, "econ_low": 0.87,
-                         "econ_high": 1.14, "peak": 1.48,
+            "COAL_PRB": {"committed": 0.95, "econ_low": 0.77,
+                         "econ_high": 1.19, "peak": 1.48,
                          "econ_low_share": 0.556},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
