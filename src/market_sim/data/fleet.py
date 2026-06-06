@@ -1914,7 +1914,7 @@ COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
 # is added back in the report data-driven (EIA-923 net minus grid dispatch), so
 # this only sizes how much grid-facing capacity the LP can dispatch.
 CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
-    7325: "merchant", 10154: "industrial", 10243: "industrial",
+    10154: "industrial", 10243: "industrial",
     10261: "industrial", 10298: "industrial", 10418: "industrial",
     10436: "industrial", 10554: "industrial", 10692: "industrial",
     10790: "industrial", 50026: "industrial", 50043: "industrial",
@@ -1923,7 +1923,7 @@ CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
     52088: "merchant", 52120: "industrial", 52132: "industrial",
     52176: "merchant", 54330: "industrial", 54520: "commercial",
     54676: "merchant", 55015: "merchant", 55047: "merchant",
-    55154: "merchant", 55187: "merchant", 55206: "merchant",
+    55187: "merchant", 55206: "merchant",
     55299: "merchant", 55311: "industrial", 55313: "industrial",
     55327: "merchant", 55464: "merchant", 55470: "industrial",
     56152: "industrial", 56374: "merchant", 57322: "industrial",
@@ -1942,8 +1942,8 @@ CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-fu
 # CAMPD coverage have a value (Baytown ~28%, ~the 27% target); absent => no
 # floor, dispatched purely economically.
 CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
-    7325: 34.6, 10298: 65.3, 50815: 36.7, 52088: 26.0, 52176: 0.0,
-    55015: 49.7, 55047: 25.0, 55154: 0.0, 55187: 64.2, 55206: 25.8,
+    10298: 65.3, 50815: 36.7, 52088: 26.0, 52176: 0.0,
+    55015: 49.7, 55047: 25.0, 55187: 64.2, 55206: 25.8,
     55299: 33.1, 55327: 28.2, 55464: 33.8, 55470: 20.9, 58378: 88.8,
 }
 
