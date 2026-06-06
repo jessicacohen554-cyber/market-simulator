@@ -25,3 +25,6 @@ inputs/processed/*.parquet
 
 # OS
 .DS_Store
+
+# Stray root-level download archives (extract into inputs/raw-data/ instead)
+/*.zip
