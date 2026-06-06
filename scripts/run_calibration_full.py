@@ -1133,16 +1133,26 @@ def _print_hourly_fit(year, model_hourly, e930, chp_grid_twh) -> None:
     """[5] Hourly Pearson r and NRMSE vs EIA-930 — non-CHP gas, coal combined."""
     print(f"\n  [5] Hourly dispatch fit — {year} (model vs EIA-930, non-CHP gas)")
     rows = [("fuel", "Pearson r", " NRMSE", "model TWh", "EIA-930 TWh")]
-    T = e930["gas"].shape[0]
-    gas_m = sum(model_hourly.get(c, np.zeros(T)) for c in _NONCHP_GAS)
-    coal_m = sum(model_hourly.get(c, np.zeros(T)) for c in _COAL_CLASSES)
+    # The model series follow the solved horizon, which on a partial-hours run
+    # (``--hours`` below 8760) is shorter than the always-full-year EIA-930
+    # observed series. Compare over the overlapping leading window so such a run
+    # still reports a fit instead of crashing on a shape mismatch; for a full
+    # year model and observed lengths match and the slices are no-ops.
+    obs_T = e930["gas"].shape[0]
+    model_T = next((v.shape[0] for v in model_hourly.values()
+                    if hasattr(v, "shape")), obs_T)
+    T = min(model_T, obs_T)
+    gas_m = sum(model_hourly.get(c, np.zeros(T))[:T] for c in _NONCHP_GAS)
+    coal_m = sum(model_hourly.get(c, np.zeros(T))[:T] for c in _COAL_CLASSES)
     flat_chp = chp_grid_twh * _MWH_PER_TWH / T
+    nuclear_o = e930.get("nuclear")
     pairs = [
-        ("gas (non-CHP)", gas_m, e930["gas"] - flat_chp),
-        ("coal", coal_m, e930["coal"]),
-        ("nuclear", model_hourly.get("nuclear", np.zeros(T)), e930.get("nuclear")),
-        ("solar", model_hourly.get("solar", np.zeros(T)), e930["solar"]),
-        ("wind", model_hourly.get("wind", np.zeros(T)), e930["wind"]),
+        ("gas (non-CHP)", gas_m, e930["gas"][:T] - flat_chp),
+        ("coal", coal_m, e930["coal"][:T]),
+        ("nuclear", model_hourly.get("nuclear", np.zeros(T))[:T],
+         None if nuclear_o is None else nuclear_o[:T]),
+        ("solar", model_hourly.get("solar", np.zeros(T))[:T], e930["solar"][:T]),
+        ("wind", model_hourly.get("wind", np.zeros(T))[:T], e930["wind"][:T]),
     ]
     for fuel, m, o in pairs:
         if o is None:
