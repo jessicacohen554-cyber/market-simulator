@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-06-06T04:38:48",
+  "timestamp": "2026-06-06T05:18:41",
   "git": {
-    "sha": "6767c6b",
+    "sha": "439e675",
     "branch": "claude/pjm-backcast-testing-YvGJB",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "unit-only outages + grounded tranches + n=6 curve + generic COAL offer curve",
+  "model_changes_note": "unit-only outages + grounded tranches + n=6 curve + generic COAL offer curve (rebased on main)",
   "calibration_flags": {
     "iso": "PJM",
     "years": [
@@ -32,7 +32,8 @@
     "coal_prb_passthrough_tiered": true,
     "coal_plant_monthly_pricing": true,
     "td_loss_factor": 0.0,
-    "git_sha": "6767c6b"
+    "offer_curve_overrides": {},
+    "git_sha": "439e675"
   },
   "scenario_config": {
     "weather_year": 2024,
@@ -196,24 +197,24 @@
         "pct_peaking": 7.0
       },
       "ST_GAS": {
-        "committed": 0.66,
-        "econ_low": 0.9,
-        "econ_high": 1.45,
-        "peak": 4.25,
+        "committed": 0.81,
+        "econ_low": 1.05,
+        "econ_high": 1.4,
+        "peak": 4.2,
         "econ_low_share": 0.5,
         "pct_peaking": 15.0
       },
       "COAL_LIGNITE": {
-        "committed": 0.9,
-        "econ_low": 1.09,
-        "econ_high": 1.1,
-        "peak": 1.5,
+        "committed": 0.95,
+        "econ_low": 1.14,
+        "econ_high": 1.15,
+        "peak": 1.55,
         "econ_low_share": 0.556
       },
       "COAL_PRB": {
-        "committed": 0.9,
-        "econ_low": 0.92,
-        "econ_high": 1.12,
+        "committed": 0.95,
+        "econ_low": 0.77,
+        "econ_high": 1.19,
         "peak": 1.48,
         "econ_low_share": 0.556
       },
