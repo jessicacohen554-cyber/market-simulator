@@ -14,6 +14,23 @@ generator: `scripts/render_backcast.py` (data + shell) and
 (`scripts/render_calibration_html.py`) is retained only for one-off
 self-contained sends; the dashboard is the standard format.
 
+## Registry-driven regeneration (CI)
+
+The dashboard run set is now tracked by per-run **registry sidecars** at
+`frontend/data/backcast/registry/<id>.json` (`{id, label, bundle, iso}`). The
+GitHub Actions pipeline (`.github/workflows/calibration-run.yml`) drops a sidecar
+per run; `scripts/regen_dashboard.py` then rebuilds the shared manifest/benchmark/
+html deterministically from **all** sidecars (so concurrent runs never drop each
+other). To refresh the whole dashboard from the registered set, prefer:
+
+```bash
+python scripts/regen_dashboard.py
+```
+
+Add a run to the registry (writes its sidecar + `runs/<id>.js`, no shared-file
+edit) with `scripts/dashboard_add_run.py --label "<name>" --bundle <dir>`. The
+manual `render_backcast.py` flow below still works for one-off/ad-hoc sets.
+
 ## Run set
 
 Each run is one calibration bundle in `results/calibration/<dir>/`. The

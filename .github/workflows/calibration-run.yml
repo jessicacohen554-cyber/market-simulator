@@ -1,0 +1,248 @@
+name: Calibration run
+
+# Launch one calibration backcast (chosen ISO + year(s)) with per-class
+# offer-curve heat-rate multiplier overrides, persist the bundle, register it
+# on the dashboard and publish it to main — where the deterministic
+# "Regenerate backcast dashboard" workflow rebuilds the shared dashboard files
+# from every registered run and the existing Pages deploy takes it live.
+#
+# Job graph (data flows via artifacts, never re-computation):
+#   solve     -> set up deps, validate inputs, solve, write bundle, UPLOAD it.
+#   dashboard -> DOWNLOAD bundle, render this run's own runs/<id>.js + registry
+#                sidecar, commit them to auto/<run_name>-<sha>, publish to main.
+#   deploy    -> handled downstream by Regenerate dashboard -> Deploy Pages.
+# Re-running only `dashboard` never re-solves (it consumes the solve artifact).
+
+on:
+  workflow_dispatch:
+    inputs:
+      iso:
+        description: "ISO to backcast"
+        type: choice
+        default: ERCOT
+        options: [ERCOT, CAISO, PJM, MISO, SPP, NYISO, NEISO]
+      year:
+        description: "Year(s): one of 2023/2024/2025, or a comma/space list e.g. '2023,2024'"
+        type: string
+        default: "2024"
+      run_name:
+        description: "Run name — used as BOTH the dashboard label and the bundle dir (chars [A-Za-z0-9._-])"
+        type: string
+        required: true
+      offer_curve_overrides:
+        description: 'Per-class/band HR multipliers as JSON, e.g. {"CT_PEAKER":{"committed":1.40,"econ_low":1.27},"COAL_PRB":{"committed":0.95}}'
+        type: string
+        default: "{}"
+      prb_sigmoid:
+        description: "Gas-keyed PRB passthrough sigmoid (off = flat passthrough)"
+        type: boolean
+        default: false
+      storage_daily_cycling:
+        description: "Cap storage to within-day arbitrage (recommended)"
+        type: boolean
+        default: true
+      note:
+        description: "Optional free-text note (becomes the run's dashboard definition)"
+        type: string
+        default: ""
+      publish:
+        description: "Publish to main now (off = leave on auto/* branch for Bulk-merge)"
+        type: boolean
+        default: true
+
+# Per-run concurrency: different run names run fully in parallel; two dispatches
+# with the SAME run name serialize (queue, never cancel) so they can't clobber
+# each other's bundle dir. NOT a global group — concurrent distinct runs must
+# not cancel one another.
+concurrency:
+  group: calib-${{ github.event.inputs.run_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  solve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Validate inputs
+        env:
+          RUN_NAME: ${{ inputs.run_name }}
+          YEAR: ${{ inputs.year }}
+          ISO: ${{ inputs.iso }}
+          OVERRIDES: ${{ inputs.offer_curve_overrides }}
+        run: |
+          set -euo pipefail
+          # run_name doubles as a filesystem dir and a git branch component.
+          if ! [[ "$RUN_NAME" =~ ^[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::run_name '$RUN_NAME' must match [A-Za-z0-9._-]+ (it becomes a dir + branch name)."
+            exit 1
+          fi
+          # Normalize the year list (commas -> spaces) and bound each value.
+          YEARS="${YEAR//,/ }"
+          for y in $YEARS; do
+            case "$y" in
+              2023|2024|2025) ;;
+              *) echo "::error::year '$y' is not one of 2023/2024/2025."; exit 1 ;;
+            esac
+          done
+          echo "YEARS=$YEARS" >> "$GITHUB_ENV"
+          # Fail fast on malformed override JSON before the (long) solve.
+          python -c "import json,sys; json.loads(sys.argv[1])" "$OVERRIDES" \
+            || { echo "::error::offer_curve_overrides is not valid JSON."; exit 1; }
+          echo "Validated: iso=$ISO years='$YEARS' run_name='$RUN_NAME'"
+
+      - name: Cache binned-fleet parquet
+        # The per-ISO binned-fleet cache (inputs/processed/<iso>_fleet_binned.parquet)
+        # is a deterministic side output of the EIA-860 source, so key it on that
+        # source file — repeat runs reuse it instead of rebuilding the fleet.
+        uses: actions/cache@v4
+        with:
+          path: inputs/processed/*_fleet_binned.parquet
+          key: fleet-${{ hashFiles('inputs/raw-data/eia-860/eia860_generators.parquet') }}
+          restore-keys: |
+            fleet-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Solve calibration bundle
+        env:
+          ISO: ${{ inputs.iso }}
+          RUN_NAME: ${{ inputs.run_name }}
+          NOTE: ${{ inputs.note }}
+          OVERRIDES: ${{ inputs.offer_curve_overrides }}
+          PRB_SIGMOID: ${{ inputs.prb_sigmoid }}
+          STORAGE_DAILY: ${{ inputs.storage_daily_cycling }}
+        run: |
+          set -euo pipefail
+          ARGS=( --iso "$ISO" --year $YEARS \
+                 --out-dir "results/calibration/$RUN_NAME" \
+                 --note "$NOTE" --offer-curve-json "$OVERRIDES" )
+          # CLI default for the PRB sigmoid is ON; the dispatch input defaults
+          # it OFF, so disable it unless the operator asked for it.
+          if [ "$PRB_SIGMOID" != "true" ]; then
+            ARGS+=( --no-prb-passthrough-sigmoid )
+          fi
+          if [ "$STORAGE_DAILY" = "true" ]; then
+            ARGS+=( --storage-daily-cycling )
+          fi
+          echo "run_calibration_full.py ${ARGS[*]}"
+          python scripts/run_calibration_full.py "${ARGS[@]}"
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ inputs.run_name }}
+          path: results/calibration/${{ inputs.run_name }}
+          retention-days: 7
+          if-no-files-found: error
+
+  dashboard:
+    needs: solve
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for publish)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Download bundle artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bundle-${{ inputs.run_name }}
+          path: results/calibration/${{ inputs.run_name }}
+
+      - name: Commit to auto/* branch and publish
+        env:
+          RUN_NAME: ${{ inputs.run_name }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BRANCH="auto/${RUN_NAME}-${SHORT_SHA}"
+
+          # Base the run's branch on the freshest main so publishing is a clean
+          # fast-forward/rebase (each run only adds disjoint files). -f discards
+          # any tracked-file edits in the working tree while preserving the
+          # untracked downloaded bundle.
+          git fetch origin main
+          git checkout -fB "$BRANCH" origin/main
+
+          # Render this run onto the fresh base: writes its own runs/<id>.js +
+          # registry sidecar (and rewrites the shared files locally, which we do
+          # NOT commit). RUN_ID is captured for staging.
+          RUN_ID=$(python scripts/dashboard_add_run.py \
+                     --label "$RUN_NAME" \
+                     --bundle "results/calibration/$RUN_NAME" \
+                   | sed -n 's/^RUN_ID=//p')
+          test -n "$RUN_ID"
+          echo "run id = $RUN_ID"
+
+          # Stage ONLY this run's own files. The shared manifest/benchmark/html
+          # are regenerated deterministically on main — never hand-committed here.
+          git add "results/calibration/${RUN_NAME}" \
+                  "frontend/data/backcast/registry/${RUN_ID}.json" \
+                  "frontend/data/backcast/runs/${RUN_ID}.js"
+          git restore --staged --worktree \
+            frontend/data/backcast/manifest.js \
+            frontend/data/backcast/benchmark.js \
+            backcast-results.html 2>/dev/null || true
+
+          git commit -m "calibration: ${RUN_NAME} (${RUN_ID})"
+
+          push_with_retry() {  # $1=refspec
+            local n=0 delay=2
+            until git push -u origin "$1"; do
+              n=$((n+1)); [ $n -ge 4 ] && return 1
+              echo "push failed; retry $n in ${delay}s"; sleep $delay; delay=$((delay*2))
+            done
+          }
+
+          # Always push the auto/* branch — the durable record of the run.
+          push_with_retry "$BRANCH" || { echo "::error::could not push $BRANCH"; exit 1; }
+
+          if [ "$PUBLISH" != "true" ]; then
+            echo "publish=false — left on $BRANCH; use Bulk-merge auto runs to land it."
+            exit 0
+          fi
+
+          # Publish: push our single commit onto main. Concurrent runs add
+          # disjoint files, so on rejection we rebase onto the new main and retry
+          # (the loop serializes the contended ref update without losing runs).
+          for attempt in 1 2 3 4 5 6; do
+            if git push origin "HEAD:main"; then
+              echo "published to main."
+              exit 0
+            fi
+            echo "main moved; rebasing (attempt $attempt)"
+            git fetch origin main
+            git rebase origin/main
+          done
+          echo "::error::could not publish to main after retries; run remains on $BRANCH (use Bulk-merge)."
+          exit 1

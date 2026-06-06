@@ -15,6 +15,12 @@ on:
       - "learning-hub/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch: {}
+  # The dashboard regeneration commits with GITHUB_TOKEN, whose pushes do not
+  # fire the `push` trigger above (GitHub's recursion guard). Chain off that
+  # workflow's completion so a regenerated dashboard still deploys.
+  workflow_run:
+    workflows: ["Regenerate backcast dashboard"]
+    types: [completed]
 
 # Least-privilege token scoped for the official Pages deployment flow.
 permissions:
