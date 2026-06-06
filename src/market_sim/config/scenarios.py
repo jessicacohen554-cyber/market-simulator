@@ -497,19 +497,32 @@ class ScenarioConfig:
     # receipts (currently Fayette, San Miguel, J K Spruce) have their delivered
     # cost overwritten by that measured plant-specific monthly price. Set False
     # to keep all coal on the flat annual lignite/PRB trajectory (the "average"
-    # baseline), reverting those few plants to the supply-type average. Only
-    # coal is affected; gas keeps its plant-specific monthly cost regardless.
+    # baseline), reverting those few plants to the supply-type average. Coal
+    # supply classes (lignite mine-mouth vs railed PRB) are physically distinct
+    # costs, so per-plant coal pricing stays on by default.
     coal_plant_monthly_pricing: bool = True
 
+    # Per-plant monthly gas pricing. OFF by default: every gas generator pays
+    # the same Henry Hub trajectory + ISO basis (optionally seasonally shaped),
+    # so units in the same zone are not split by patchy EIA-923 Schedule-5
+    # reporting. EIA-923 gas-cost coverage in ERCOT is thin (~12% of CC MW),
+    # and because merchant CCs in a hub all buy gas in the same market, giving
+    # the few reporting plants their own (often higher, winter-spiking) cost
+    # while suppressed peers pay the smoothed trajectory creates a spurious
+    # intra-zone price asymmetry (e.g. it penalised Jack County against its
+    # North-zone neighbours). Set True to restore per-plant gas costs where
+    # EIA-923 reports them. Does not affect coal (see above) or oil.
+    gas_plant_monthly_fuel_pricing: bool = False
+
     # Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True, a
-    # gas/coal/oil generator with no EIA-923 delivered cost of its own for a
+    # coal/oil generator with no EIA-923 delivered cost of its own for a
     # month is priced at the quantity-weighted average of the *other* plants
     # that did report — its own state first (when at least
     # ``nearby_fuel_price_min_state_plants`` plants reported there), else its
-    # model zone — before dropping to the Henry Hub / coal / oil trajectory.
-    # Off by default so ERCOT (whose plants overwhelmingly report) is
-    # unchanged; backcasts of merchant-heavy ISOs like PJM, where many plants
-    # file no Schedule-5 cost, switch it on. See
+    # model zone — before dropping to the coal / oil trajectory. (Gas no longer
+    # uses per-plant monthly costs by default — see
+    # ``gas_plant_monthly_fuel_pricing`` — so this fallback only shapes gas when
+    # that flag is explicitly turned back on.) Off by default. See
     # market_sim.data.fuel.apply_plant_monthly_fuel_prices.
     nearby_fuel_price_fallback: bool = False
     nearby_fuel_price_min_state_plants: int = 2  # state-mean sample floor;
