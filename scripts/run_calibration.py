@@ -301,7 +301,7 @@ def _calibration_config(
             "CT_PEAKER": {"committed": 1.55, "econ_low": 1.27,
                           "econ_high": 1.98, "peak": 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.81, "econ_low": 0.90,
+            "ST_GAS": {"committed": 0.81, "econ_low": 1.05,
                        "econ_high": 1.40, "peak": 4.20,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
