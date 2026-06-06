@@ -292,16 +292,23 @@ def _calibration_config(
             "CC_REGULAR": {"committed": 0.92, "econ_low": 1.06,
                            "econ_high": 1.27, "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
-            "CC_CHP": {"committed": 0.92, "econ_low": 0.96,
-                       "econ_high": 1.12, "econ_low_share": 0.50,
+            "CC_CHP": {"committed": 0.92,
+                       "econ_low": 1.01 if iso == "PJM" else 0.96,
+                       "econ_high": 1.22 if iso == "PJM" else 1.12,
+                       "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
             # CT/ST committed band raised as a P1 startup-cost proxy: the
             # part-load committed slice only clears when price is high, so
             # peakers stop parking at ~20% CF for hundreds of hours. CT hurdle
             # is committed 1.55 (peak HR mult 13.15); ST hurdle committed 0.81
-            # with a slightly lower econ-high / peak top.
-            "CT_PEAKER": {"committed": 1.55, "econ_low": 1.27,
-                          "econ_high": 1.98, "peak": 13.15,
+            # with a slightly lower econ-high / peak top. The CT committed
+            # hurdle / econ-low / peak are an ERCOT calibration tune; PJM keeps
+            # its own validated CT curve (committed 1.10, econ_low 1.32,
+            # peak 13.0).
+            "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else 1.55,
+                          "econ_low": 1.32 if iso == "PJM" else 1.27,
+                          "econ_high": 1.98,
+                          "peak": 13.0 if iso == "PJM" else 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.81, "econ_low": 1.05,
                        "econ_high": 1.40, "peak": 4.20,
