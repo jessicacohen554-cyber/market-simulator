@@ -505,35 +505,36 @@ def generators_to_fleet_arrays(
                 "bin-tranches across %d plant(s)",
                 _iso or "ERCOT", config.weather_year, applied, len(masks),
             )
-        # The unit-level and partial-outage derates below are ERCOT-only
-        # extracts (the CAMPD unit-outage CSV and CAMPD CF-ceiling plateaus,
-        # both keyed to ERCOT plant codes); other ISOs carry no such files and
-        # their plant codes never match, so the blocks are scoped to ERCOT.
-        if is_ercot:
-            # Unit-level outage derate (backcast): partial availability cut per
-            # unit outage >= 5 days, sized by the unit's share of its model bin
-            # capacity (CTs excluded; split plants routed to the right asset
-            # class). Catches single-unit outages the facility-summed overlay
-            # above hides — most importantly the W A Parish coal units, masked
-            # in CEMS by the gas units that keep running. Built for full 2023
-            # and 2024 by scripts/derive_campd_unit_outages.py. Multiplies the
-            # availability already set above.
-            ufac = unit_outage_derate_factors(
-                config.weather_year, hours,
-                getattr(config, "campd_bins_path",
-                        "inputs/custom-bin-assignments.csv"),
+        # Unit-level outage derate (backcast): partial availability cut per
+        # unit outage >= 5 days, sized by the unit's share of its plant's
+        # capacity (CTs excluded; ERCOT split plants routed to the right asset
+        # class). Catches single-unit outages the facility-summed overlay above
+        # hides — e.g. the W A Parish coal units, masked in CEMS by the gas
+        # units that keep running. Built per ISO by
+        # scripts/derive_campd_unit_outages.py --iso <ISO>; ISOs with no
+        # unit-outage file get an empty derate (no effect). Multiplies the
+        # availability already set above.
+        ufac = unit_outage_derate_factors(
+            config.weather_year, hours,
+            getattr(config, "campd_bins_path",
+                    "inputs/custom-bin-assignments.csv"),
+            iso=_iso or "ERCOT",
+        )
+        if ufac:
+            applied_u = 0
+            for g_idx, gen in enumerate(generators):
+                f = ufac.get((int(gen.plant_code), gen.plant_group))
+                if f is not None:
+                    availability[g_idx, :] *= f
+                    applied_u += 1
+            logger.info(
+                "unit-outage derate (%s %d): %d plant-tranches derated",
+                _iso or "ERCOT", config.weather_year, applied_u,
             )
-            if ufac:
-                applied_u = 0
-                for g_idx, gen in enumerate(generators):
-                    f = ufac.get((int(gen.plant_code), gen.plant_group))
-                    if f is not None:
-                        availability[g_idx, :] *= f
-                        applied_u += 1
-                logger.info(
-                    "unit-outage derate (%d): %d bin-tranches derated",
-                    config.weather_year, applied_u,
-                )
+        # The partial-outage derate below is an ERCOT-only extract (CAMPD
+        # CF-ceiling plateaus keyed to ERCOT plant codes); other ISOs carry no
+        # such file, so it stays scoped to ERCOT.
+        if is_ercot:
             # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
             # half-units-out events for baseload coal + a confirmed CC
             # allowlist where no unit data exists. Multiplies availability
