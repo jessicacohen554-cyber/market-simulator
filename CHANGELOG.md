@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-06-06 (Uniform gas pricing — drop per-plant gas fuel cost by default)
+
+Gas generators now all pay the **same** delivered price for a year (AEO
+Henry Hub trajectory + ISO basis, optionally seasonal). Per-plant EIA-923
+monthly *gas* costs are now **off by default** behind a new flag
+`ScenarioConfig.gas_plant_monthly_fuel_pricing` (default `False`).
+
+- **Why.** EIA-923 Schedule-5 gas-cost reporting is sparse in ERCOT (~12%
+  of CC capacity), and merchant CCs in a hub all buy gas in the same
+  market. Giving the few reporting plants their own (often higher,
+  winter-spiking) cost while suppressed peers paid the smoothed trajectory
+  split same-zone units on a reporting artifact, not real economics — e.g.
+  Jack County (the only reporting CC among its North-zone neighbours) paid
+  ~$2.69/$2.46 in 2023/2024 vs the $2.54/$2.19 everyone else paid,
+  penalising it in 7/12 and 5/12 months and contributing to its under-run.
+- **What changed.** `apply_plant_monthly_fuel_prices` skips gas unless the
+  new flag is set; Jack now pays exactly the same uniform price as
+  Freestone, Colorado Bend II, etc. **Coal is unchanged** — lignite
+  mine-mouth vs railed PRB are physically distinct costs, so per-plant coal
+  pricing (`coal_plant_monthly_pricing`) stays on by default.
+- **Docstrings fixed.** Corrected the inaccurate "ERCOT — whose plants
+  overwhelmingly report — is unchanged" note on `nearby_fuel_price_fallback`
+  and updated `fuel.py` / `binning-methodology.md` to describe gas as
+  uniform-by-default.
+- Tests updated: the gas-overwrite mechanism tests now opt in via the flag;
+  added a test asserting gas is uniform by default. All fuel tests pass.
+
 ## 2026-06-06 (Docs/data cleanup — kill the "bin dispatch" confusion)
 
 Removes stale artifacts that misrepresented how the ERCOT CC fleet
