@@ -332,6 +332,17 @@ def _calibration_config(
                        "econ_high": 1.22 if iso == "PJM" else 1.12,
                        "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
+            # CT_CHP cogens: previously driven by the legacy ct_*_hr_override
+            # triple (committed 1.10 / econ 1.20 / peak 1.40). Now expressed as
+            # an offer curve so the econ ramp and peak are tweakable like every
+            # other group. econ_low == econ_high keeps the default a flat 1.20
+            # economic block (no dispatch change vs the old single econ value);
+            # pull them apart to create a slope. Peaking % stays the CSV value
+            # (no pct_peaking key). The ct_*_hr_override fields above are now
+            # inert for CT_CHP.
+            "CT_CHP": {"committed": 1.10, "econ_low": 1.20,
+                       "econ_high": 1.20, "peak": 1.40,
+                       "econ_low_share": 0.50},
             # CT/ST committed band raised as a P1 startup-cost proxy: the
             # part-load committed slice only clears when price is high, so
             # peakers stop parking at ~20% CF for hundreds of hours. CT hurdle

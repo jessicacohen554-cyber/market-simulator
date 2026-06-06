@@ -59,20 +59,38 @@ def _parse_tweaks(text: str, defaults: dict[str, dict[str, float]]) -> dict:
     """
     if not text or not text.strip():
         return {}
-    # Split into entries on newline / comma / semicolon.
-    entries = [e.strip() for e in re.split(r"[\n,;]+", text) if e.strip()]
-    deltas: dict[str, dict[str, float]] = {}
+    # Entries may be separated by commas, semicolons, newlines OR plain spaces.
+    # GitHub Actions workflow_dispatch string inputs are single-line, so a
+    # multi-line paste arrives space-flattened ("A.b -0.1 C.d +0.2 ..."); we
+    # scan for every CLASS.BAND <delta> triple anywhere in the text rather than
+    # pre-splitting, so all of those forms work.
     # CLASS [. or space] BAND [= : or space] DELTA(signed float). The delta is
-    # captured as the trailing number so the '.' in e.g. +0.05 is never mistaken
-    # for the class/band separator.
+    # the trailing number, so the '.' in e.g. +0.05 is never mistaken for the
+    # class/band separator, and a following CLASS token starts the next match.
     pat = re.compile(
-        r"^([A-Za-z_]+)[.\s]+([A-Za-z_]+)[\s=:]+([+-]?[0-9]*\.?[0-9]+)$")
-    for entry in entries:
-        m = pat.match(entry.strip())
-        if not m:
-            raise SystemExit(
-                f"offer-curve tweak {entry!r}: expected 'CLASS.BAND <delta>' "
-                "(e.g. 'CT_PEAKER.committed +0.05').")
+        r"([A-Za-z_]+)[.\s]+([A-Za-z_]+)[\s=:]+([+-]?[0-9]*\.?[0-9]+)")
+    matches = list(pat.finditer(text))
+    # Anything left over once the matches and separators are removed is a
+    # malformed token (a typo, a missing delta) — fail loudly rather than
+    # silently dropping it.
+    covered = bytearray(len(text))
+    for m in matches:
+        covered[m.start():m.end()] = b"\x01" * (m.end() - m.start())
+    leftover = "".join(
+        ch for i, ch in enumerate(text)
+        if not covered[i] and not ch.isspace() and ch not in ",;"
+    ).strip()
+    if leftover:
+        raise SystemExit(
+            f"offer-curve tweaks: could not parse near {leftover!r}; each entry "
+            "must be 'CLASS.BAND <delta>' (e.g. 'CT_PEAKER.committed +0.05').")
+    if not matches:
+        raise SystemExit(
+            "offer-curve tweaks: no 'CLASS.BAND <delta>' entries found "
+            "(e.g. 'CT_PEAKER.committed +0.05').")
+    deltas: dict[str, dict[str, float]] = {}
+    for m in matches:
+        entry = m.group(0).strip()
         cls, band, raw_delta = m.group(1), m.group(2), m.group(3)
         cls = cls.upper()
         if cls not in defaults:

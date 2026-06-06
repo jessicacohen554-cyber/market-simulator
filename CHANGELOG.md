@@ -87,6 +87,13 @@ tranche that jumps up above the ramp** — never folded into the ramp top.
   and, for CC, an explicit **`peak`** HR multiplier (overrides the per-turbine-
   class duct-burner default, which is retained when `peak` is omitted). The peak
   capacity % (`pct_peaking`) was already configurable.
+- **CT_CHP folded into the offer curve.** CT_CHP was the last group still on the
+  legacy single-value overrides (`ct_committed/econ/peak_hr_override`); it now has
+  an `offer_curve_by_group` entry (committed 1.10, econ_low = econ_high = 1.20,
+  peak 1.40) mapped from those values, so its econ ramp and peak are tweakable
+  like every other group. `econ_low == econ_high` makes the default a flat 1.20
+  block — no dispatch change until the endpoints are pulled apart. The
+  `ct_*_hr_override` config fields are now inert for CT_CHP.
 - **Calibration impact.** CC and coal dispatch shifts — the ramp top drops from
   ~2.0–2.5× (duct burner) to `econ_high`, with the peak re-added as a separate
   slab above it. A recalibration run is expected to re-settle the band values.
