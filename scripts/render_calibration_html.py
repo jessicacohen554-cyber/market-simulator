@@ -91,7 +91,10 @@ FOSSIL_GROUPS = list(GROUP_LABEL)
 # table (which carries all thermal classes, e.g. 298.2 TWh in 2024).
 MIX_GROUPS = list(FOSSIL_GROUPS)
 _GAS_GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
-_COAL_GROUPS = ("COAL", "COAL_LIGNITE", "COAL_PRB")
+# Every coal class the model can emit — ERCOT lignite/PRB and the EIA-923-derived
+# ranks (COAL_BIT/SUB/WC) — so the fuel-vs-EIA-930 'coal' total sums them all.
+_COAL_GROUPS = ("COAL", "COAL_LIGNITE", "COAL_PRB",
+                "COAL_BIT", "COAL_SUB", "COAL_WC")
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
 
