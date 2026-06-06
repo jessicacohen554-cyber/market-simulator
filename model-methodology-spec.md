@@ -408,15 +408,17 @@ The thermal fleet can be built two ways; the LP and `FleetArrays` structure are 
 **CAMPD per-plant binning (ERCOT default, `use_campd_bins=True`).** Documented in full in `docs/binning-methodology.md`. Built from EPA CAMPD gross generation (2023–24) cross-referenced with eGRID net generation and EIA-860 characteristics. Each plant gets **its own LP unit** (`inputs/custom-bin-assignments.csv`), classified into one of six dispatched groups (CC_CHP, CC_REGULAR, CT_CHP, CT_PEAKER, GAS_STEAM, COAL) plus non-dispatchable OTHER. Each bin is split into **tranches** that form a *rising offer curve* rather than a single flat marginal cost:
 
 - **Must-Run (MR%)** — sunk-fuel coal floor or CHP behind-the-meter steam (the latter is removed from the LP and reconstructed post-dispatch by `compute_must_run_emissions()`).
-- **Committed (MC%)** — minimum stable load; the tranche the commitment screen (§1.6) acts on.
-- **Economic (ECON%)** — normal in-merit dispatch.
-- **Peaking (PEAK%)** — duct-firing / steep cost, `pmin=0`, never screened out.
+- **Committed (MC%)** — minimum stable load; the only tranche the commitment screen (§1.6) acts on. Bids cheap (`base_hr × offer["committed"]`, no `pmin`). For CC the committed share is derived **per-plant from CAMPD** (P5 of online CF) when `cc_committed_per_plant` is set — the ERCOT default — not from the flat CSV share.
+- **Economic** — incremental in-merit dispatch, rendered **by default** as an `offer_curve_smoothing_n`-slice (default 6) rising heat-rate ramp anchored on the plant's own `base_hr`, *not* a single flat block. CC/coal fold the peak band into the ramp top.
+- **Peaking (PEAK%)** — duct-firing / steep cost, `pmin=0`, never screened out; for CC/coal it is the top of the economic ramp rather than a standalone tranche.
+
+No CC tranche carries a `pmin` floor and no bin-weighted heat rate is used — each plant dispatches on its own `Plant_Avg_HR_MMBtu_MWh`. See `docs/binning-methodology.md`.
 
 Two further refinements wired into marginal-cost assembly:
 - **Coal take-or-pay tranches** — three slices at different fuel passthroughs (e.g. VOM-only / partial / full fuel cost), so a coal unit's offer rises with quantity.
 - **PRB sigmoid passthrough** — Powder-River-Basin coal discounts its bid as a smooth (sigmoid) function of the gas price, with a tiered variant for load-following plants.
 
-**Per-plant offer curves.** The tranche split and band heat rates default to per-*group* values, but an optional per-plant override sheet (`inputs/plant-tranche-config.csv`, `ScenarioConfig.plant_tranche_config_path`, off by default) lets each listed plant carry its own **five-slice rising offer curve** — Must-Run / Committed / Econ-Low / Econ-High / Peaking shares plus per-slice heat-rate multipliers — bypassing the group defaults. This is the calibration lever for shaping an individual flagship plant's dispatch without disturbing its class total (`docs/binning-methodology.md`). A companion flag `cc_peaking_per_plant` moves the duct-burner peak band's CF onset for selected F-class CCs.
+**Per-plant offer curves.** By default the tranche shares and band heat-rate *multipliers* are per-*group* (`offer_curve_by_group`), but they are always applied to each plant's **own** `base_hr`, and the economic block is already a per-plant rising N-slice ramp (above) — so the default is plant-specific in level even where the curve *shape* is shared. An optional per-plant override sheet (`inputs/plant-tranche-config.csv`, `ScenarioConfig.plant_tranche_config_path`, off by default) additionally lets each listed plant carry its own **five-slice rising offer curve** — Must-Run / Committed / Econ-Low / Econ-High / Peaking shares plus per-slice heat-rate multipliers — bypassing the group shape too. This is the calibration lever for shaping an individual flagship plant's dispatch without disturbing its class total (`docs/binning-methodology.md`). A companion flag `cc_peaking_per_plant` moves the duct-burner peak band's CF onset for selected F-class CCs.
 
 When a bin maps to a single physical plant, its CO2/NOx can be overridden with **CAMPD CEMS plant-specific emission rates** (backcast accuracy) instead of the fuel-class default.
 
