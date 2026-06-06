@@ -1,0 +1,183 @@
+plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,p25_cf,median_cf
+10030,CC_CHP,Energy Center Dover,ok,59.0,2295,29.9,0.0,56.6,80.1
+10633,CC_CHP,Hopewell Cogeneration,ok,378.3,5373,49.0,0.0,66.9,69.2
+10805,CC_CHP,Kenilworth Energy Facility,ok,24.5,8132,55.4,0.0,63.3,67.3
+54832,CC_CHP,Brandywine Power Facility,ok,427.4,3302,14.1,0.0,36.6,42.4
+55216,CC_CHP,Morris Cogeneration LLC,ok,194.0,8760,29.5,0.0,38.5,41.9
+55801,CC_CHP,Marcus Hook Energy LP,ok,877.0,8327,66.2,0.0,93.1,95.5
+58933,CC_CHP,Shell Chemical Appalachia LLC,ok,256.7,8755,38.9,0.0,42.3,45.7
+2393,CC_REGULAR,Gilbert,ok,302.5,356,9.9,0.0,19.5,48.4
+2398,CC_REGULAR,Bergen Generating Station,ok,1255.0,5177,8.6,0.0,25.4,41.2
+2406,CC_REGULAR,PSEG Linden Generating Station,ok,1300.0,7723,15.3,0.0,29.7,47.1
+2411,CC_REGULAR,PSEG Sewaren Generating Station,ok,538.0,6689,42.9,0.0,57.3,75.2
+3096,CC_REGULAR,Brunot Island,ok,243.5,421,14.7,0.0,41.3,60.7
+3176,CC_REGULAR,Hunlock Power Station,ok,125.2,5942,45.7,0.0,92.2,94.5
+3797,CC_REGULAR,Chesterfield,ok,385.5,4672,65.7,0.0,74.3,90.5
+3804,CC_REGULAR,Possum Point,ok,573.0,4617,60.1,0.0,68.1,83.8
+7153,CC_REGULAR,Hay Road,ok,1128.0,4092,10.3,0.0,23.0,35.5
+10308,CC_REGULAR,Sayreville Cogeneration Facility,ok,292.0,2146,27.2,0.0,67.4,87.7
+10751,CC_REGULAR,Camden Plant Holding LLC,ok,222.7,1062,11.3,0.0,40.1,50.5
+50561,CC_REGULAR,Eagle Point Power Generation,ok,244.0,761,24.6,0.0,48.5,93.8
+52019,CC_REGULAR,Doswell Energy Center,ok,696.0,1109,70.0,0.0,138.9,146.1
+54844,CC_REGULAR,Gordonsville Energy LP,ok,218.0,5635,70.0,0.0,92.2,97.6
+55131,CC_REGULAR,Kendall County Generation Facility,ok,1140.0,6244,17.3,0.0,58.5,81.1
+55183,CC_REGULAR,Nelson Energy Center,ok,586.0,7017,42.3,0.0,72.7,87.7
+55188,CC_REGULAR,Cordova Energy,ok,521.2,2481,50.3,0.0,70.0,83.4
+55193,CC_REGULAR,Ontelaunee Energy Center,ok,539.0,7414,61.4,0.0,75.2,97.6
+55231,CC_REGULAR,Liberty Electric Power Plant,ok,562.0,7830,70.0,0.0,91.8,94.4
+55239,CC_REGULAR,Red Oak Power LLC,ok,775.9,5022,32.1,0.0,70.6,87.1
+55298,CC_REGULAR,Fairless Energy Center,ok,1280.0,8384,54.9,0.0,79.5,84.4
+55337,CC_REGULAR,Ironwood LLC,ok,760.0,7655,30.9,0.0,49.0,57.2
+55350,CC_REGULAR,Dresden Energy Facility,ok,540.0,8093,70.0,0.0,95.9,102.1
+55397,CC_REGULAR,Washington Energy Facility,ok,661.0,8306,70.0,0.0,91.0,96.5
+55439,CC_REGULAR,Tenaska Virginia Generating Station,ok,937.4,6290,48.3,0.0,79.3,85.4
+55502,CC_REGULAR,"Lawrenceburg Power, LLC",ok,1190.0,7580,62.5,0.0,85.1,89.5
+55503,CC_REGULAR,"Waterford Power, LLC",ok,866.0,8112,70.0,0.0,92.9,96.1
+55516,CC_REGULAR,Fayette Energy Facility,ok,667.6,8552,70.0,0.0,96.0,97.2
+55524,CC_REGULAR,York Energy Center,ok,1404.0,8259,66.5,0.0,76.2,80.4
+55667,CC_REGULAR,Lower Mount Bethel Energy,ok,601.6,7533,61.1,0.0,76.1,94.3
+55690,CC_REGULAR,Bethlehem Power Plant,ok,1136.0,8703,26.1,0.0,54.2,69.3
+55701,CC_REGULAR,Fremont Energy Center,ok,685.1,7039,37.4,0.0,55.9,84.8
+55710,CC_REGULAR,Allegheny Energy Units 3 4 & 5,ok,562.6,7989,46.1,0.0,61.6,63.8
+55736,CC_REGULAR,Hanging Rock Energy Facility,ok,1365.0,5738,70.0,0.0,86.1,90.1
+55939,CC_REGULAR,Warren County,ok,1370.0,7263,70.0,0.0,86.4,99.6
+55976,CC_REGULAR,Hunterstown Power Plant,ok,810.0,7164,40.3,0.0,59.4,61.6
+56807,CC_REGULAR,Bear Garden,ok,621.9,6512,59.3,0.0,73.0,83.6
+56846,CC_REGULAR,CPV St Charles Energy Center,ok,732.3,7018,23.3,0.0,48.3,75.2
+56963,CC_REGULAR,West Deptford Energy Station,ok,734.6,2932,15.1,0.0,52.0,64.7
+57349,CC_REGULAR,Garrison Energy Center LLC,ok,309.0,3733,9.6,0.0,52.3,75.9
+57794,CC_REGULAR,St Joseph Energy Center,ok,715.0,7738,70.0,0.0,95.1,98.6
+57839,CC_REGULAR,Woodbridge Energy Center,ok,726.8,6938,23.6,0.0,52.6,81.6
+58079,CC_REGULAR,Newark Energy Center,ok,705.0,6547,43.1,0.0,53.9,65.7
+58260,CC_REGULAR,Brunswick County Power Station,ok,1376.0,6811,70.0,0.0,99.1,102.1
+58420,CC_REGULAR,Hamilton Liberty,ok,765.0,8760,59.8,0.0,77.4,97.0
+58426,CC_REGULAR,Hamilton Patriot Generation Plant,ok,795.0,8566,70.0,0.0,98.3,101.8
+59004,CC_REGULAR,"Potomac Energy Center, LLC",ok,766.0,7260,47.3,0.0,87.8,90.9
+59220,CC_REGULAR,Wildcat Point Generation Facility,ok,991.3,4490,21.3,0.0,54.3,74.6
+59326,CC_REGULAR,Middletown Energy Center,ok,468.0,8021,70.0,0.0,92.6,98.8
+59764,CC_REGULAR,Oregon Clean Energy Center,ok,847.6,7977,70.0,0.0,90.8,94.3
+59773,CC_REGULAR,Carroll County Energy,ok,714.6,7754,70.0,0.0,95.6,97.4
+59906,CC_REGULAR,Moxie Freedom Generation Plant,ok,1045.0,8664,70.0,0.0,97.3,98.9
+59913,CC_REGULAR,Greensville County Power Station,ok,1588.0,7281,70.0,0.0,97.2,101.2
+60302,CC_REGULAR,Keys Energy Center,ok,1234.0,8407,23.9,0.0,36.3,49.1
+60356,CC_REGULAR,South Field Energy,ok,1210.4,7167,70.0,0.0,83.9,93.8
+60357,CC_REGULAR,Lackawanna Energy Center,ok,1362.0,8510,69.3,0.0,99.8,103.2
+60368,CC_REGULAR,Hummel Station LLC,ok,1083.8,7625,70.0,0.0,91.3,94.3
+60376,CC_REGULAR,"Clean Energy Future-Lordstown, LLC",ok,858.0,7506,54.3,0.0,97.7,100.8
+60464,CC_REGULAR,Tenaska Westmoreland Generating Station,ok,947.0,8088,67.2,0.0,91.5,94.2
+60589,CC_REGULAR,CPV Fairview Energy Center,ok,1071.7,8077,64.9,0.0,86.2,93.9
+61028,CC_REGULAR,Hickory Run Energy Station,ok,938.0,6549,53.3,0.0,85.3,95.6
+61035,CC_REGULAR,Birdsboro Power,ok,485.0,7966,70.0,0.0,96.9,98.3
+61322,CC_REGULAR,Long Ridge Energy Generation,ok,485.0,7786,70.0,0.0,100.3,100.3
+62565,CC_REGULAR,"Hill Top Energy Center, LLC",ok,621.6,8309,70.0,0.0,99.3,100.1
+62926,CC_REGULAR,"Jackson Generation, LLC",ok,1185.5,7479,46.6,0.0,83.3,97.9
+62949,CC_REGULAR,Guernsey Power Station,ok,1782.0,6065,70.0,0.0,87.5,93.0
+63931,CC_REGULAR,CPV Three Rivers Energy Center,ok,1220.3,7375,33.9,0.0,60.8,85.4
+594,COAL,Indian River Generating Station,ok,410.0,846,16.4,0.0,47.1,52.3
+602,COAL,Brandon Shores,ok,1273.0,4898,17.8,0.0,17.9,32.3
+876,COAL,Kincaid Generation LLC,ok,1112.0,4167,40.7,0.0,44.3,53.4
+879,COAL,Powerton,ok,1538.0,3263,44.2,44.1,48.5,51.3
+983,COAL,Clifty Creek,ok,1173.0,1527,46.5,46.5,55.0,83.4
+1040,COAL,Whitewater Valley,ok,99.7,632,45.7,45.7,53.2,77.1
+1384,COAL,Cooper,ok,341.0,1439,45.5,45.5,53.5,63.6
+2828,COAL,Cardinal,ok,1790.0,1660,63.8,60.0,71.9,83.7
+2876,COAL,Kyger Creek,ok,962.8,3734,48.3,48.3,56.9,67.7
+3118,COAL,Conemaugh,ok,1700.0,5082,58.3,58.3,67.9,68.3
+3136,COAL,Keystone,ok,1700.0,3588,70.0,60.0,82.3,82.8
+3149,COAL,TalenEnergy Montour,ok,752.0,4299,53.5,0.0,57.4,80.8
+3935,COAL,John E Amos,ok,2900.0,1593,38.0,38.0,38.8,45.0
+3943,COAL,FirstEnergy Fort Martin Power Station,ok,1098.0,2354,42.2,42.2,81.4,89.6
+3944,COAL,FirstEnergy Harrison Power Station,ok,1954.0,3649,70.0,60.0,77.7,82.3
+3948,COAL,Mitchell (WV),ok,1560.0,2356,37.4,37.4,37.8,39.6
+3954,COAL,Mt Storm,ok,1613.5,1764,44.2,44.2,55.3,71.8
+6004,COAL,Pleasants Power Station,ok,1278.0,910,41.3,41.3,58.9,64.8
+6018,COAL,East Bend,ok,600.0,5800,55.3,54.5,57.1,58.2
+6041,COAL,H L Spurlock,ok,1346.0,3797,56.8,56.8,80.6,92.6
+6166,COAL,Rockport,ok,2600.0,1046,39.0,39.0,39.2,40.1
+6264,COAL,Mountaineer,ok,1299.0,2304,54.2,54.2,54.6,55.4
+7213,COAL,Clover,ok,877.1,1545,31.0,31.0,32.4,39.5
+8102,COAL,"Gavin Power, LLC",ok,2722.0,909,55.4,55.4,79.8,93.2
+10143,COAL,Colver Green Energy,ok,110.0,8049,70.0,53.0,92.6,94.4
+10343,COAL,Foster Wheeler Mt Carmel Cogen,ok,43.0,1888,40.6,0.0,51.9,56.4
+10603,COAL,Ebensburg Power,ok,50.0,7898,70.0,60.0,100.9,102.8
+50611,COAL,Westwood Generation LLC,ok,30.0,6462,70.0,0.0,80.8,84.1
+50888,COAL,Northampton Generating Company LP,ok,112.0,5531,65.6,60.0,71.8,76.5
+56671,COAL,Longview Power Plant,ok,710.0,7178,67.8,60.0,86.9,98.2
+50463,CT_CHP,Procter & Gamble Mehoopany Mill,ok,104.9,3367,38.8,0.0,40.7,42.5
+52149,CT_CHP,West Point (PA),ok,66.0,8757,36.7,0.0,41.2,44.1
+54785,CT_CHP,Grays Ferry Cogeneration,ok,170.6,8213,53.1,0.0,54.7,56.8
+54,CT_PEAKER,J K Smith,ok,784.0,192,59.6,0.0,82.1,90.7
+593,CT_PEAKER,Edge Moor,ok,695.0,1822,10.0,0.0,13.5,21.6
+1353,CT_PEAKER,Big Sandy,ok,260.0,6470,24.6,0.0,28.7,65.1
+1556,CT_PEAKER,Perryman,ok,248.8,1419,12.3,0.0,20.7,41.0
+1571,CT_PEAKER,Chalk Point Power,ok,1570.3,1588,9.1,0.0,33.1,35.3
+1572,CT_PEAKER,Dickerson Power,ok,299.0,922,10.0,0.0,26.5,49.8
+2399,CT_PEAKER,PSEG Burlington Generating Station,ok,168.0,503,15.0,0.0,43.9,71.6
+2404,CT_PEAKER,PSEG Kearny Generating Station,ok,456.4,1939,6.6,0.0,10.6,13.0
+2434,CT_PEAKER,Howard Down,ok,55.0,1543,59.7,0.0,87.1,93.5
+2831,CT_PEAKER,Dick's Creek,ok,136.2,143,5.8,0.0,7.1,22.1
+2847,CT_PEAKER,Tait Electric Generating Station,ok,597.1,705,15.5,0.0,27.0,32.5
+2848,CT_PEAKER,O H Hutchings,ok,25.2,25,70.0,0.0,96.2,96.2
+2880,CT_PEAKER,Richland (OH),ok,358.0,764,37.2,0.0,62.7,66.4
+3131,CT_PEAKER,Shawville,ok,596.0,5132,11.4,0.0,26.3,44.6
+3132,CT_PEAKER,Warren,ok,62.0,325,17.5,0.0,72.0,86.0
+3138,CT_PEAKER,New Castle Plant,ok,326.3,4929,11.3,0.0,24.1,41.6
+3140,CT_PEAKER,Brunner Island,ok,1411.0,6611,9.4,0.0,18.7,28.9
+3148,CT_PEAKER,TalenEnergy Martins Creek,ok,1700.0,4242,11.1,0.0,20.4,30.3
+3161,CT_PEAKER,Eddystone Generating Station,ok,760.0,339,9.0,0.0,14.0,22.8
+3775,CT_PEAKER,Clinch River,ok,460.0,898,15.3,0.0,30.8,31.2
+5083,CT_PEAKER,Cumberland (NJ),ok,186.9,751,19.5,0.0,37.9,47.2
+7032,CT_PEAKER,Gravel Neck,ok,340.0,70,25.9,0.0,53.9,58.4
+7138,CT_PEAKER,Forked River,ok,65.0,176,25.0,0.0,44.8,52.2
+7158,CT_PEAKER,Woodsdale,ok,476.0,374,6.9,0.0,35.3,59.3
+7212,CT_PEAKER,Darbytown,ok,340.0,104,38.9,0.0,55.4,61.9
+7288,CT_PEAKER,Sherman Avenue,ok,86.9,400,27.9,0.0,75.9,81.5
+7318,CT_PEAKER,Van Sant Station,ok,42.0,46,30.0,0.0,64.7,73.9
+7335,CT_PEAKER,Richmond,ok,68.0,994,55.1,0.0,89.9,97.0
+7336,CT_PEAKER,Anderson,ok,140.0,837,57.9,0.0,93.5,97.7
+7782,CT_PEAKER,Hamilton Peaking,ok,29.0,134,12.5,0.0,65.0,78.7
+7783,CT_PEAKER,Bowling Green Peaking,ok,29.0,142,16.8,0.0,54.5,63.7
+7835,CT_PEAKER,Essential Power Rock Springs LLC,ok,666.7,562,16.0,0.0,24.3,46.8
+7836,CT_PEAKER,Marsh Run Generation Facility,ok,481.3,809,24.4,0.0,65.5,74.5
+7837,CT_PEAKER,Louisa Generation Facility,ok,466.0,967,40.4,0.0,67.1,76.6
+7838,CT_PEAKER,Remington,ok,603.7,695,56.1,0.0,80.1,92.6
+7839,CT_PEAKER,Ladysmith,ok,814.0,78,53.6,0.0,73.3,86.5
+7872,CT_PEAKER,Robert P Mone Plant,ok,441.0,742,33.7,0.0,62.8,73.5
+7962,CT_PEAKER,Warren F Sam Beasley Generation Station,ok,98.0,1064,21.9,0.0,42.9,78.3
+50279,CT_PEAKER,Archbald Power Station,ok,63.7,2086,33.5,0.0,57.9,67.0
+55109,CT_PEAKER,MRP Rocky Road LLC,ok,311.5,88,14.1,0.0,23.0,37.5
+55110,CT_PEAKER,Madison,ok,566.0,590,28.6,0.0,75.7,80.5
+55164,CT_PEAKER,Bluegrass Generating Station,ok,501.0,36,24.3,0.0,49.7,61.3
+55196,CT_PEAKER,Springdale 1 & 2,ok,96.8,1907,38.1,0.0,59.1,88.2
+55198,CT_PEAKER,Riverside Generating LLC,ok,825.0,503,51.7,0.0,75.0,87.3
+55199,CT_PEAKER,Elwood Energy LLC,ok,1350.0,502,7.7,0.0,13.4,21.6
+55222,CT_PEAKER,Lincoln Generating Facility,ok,622.9,72,7.2,0.0,12.9,20.9
+55228,CT_PEAKER,Greenville Electric Generating Station,ok,196.0,699,22.3,0.0,47.5,52.6
+55233,CT_PEAKER,Handsome Lake Energy LLC,ok,267.5,1220,8.0,0.0,16.0,28.3
+55236,CT_PEAKER,Lee Energy Facility,ok,676.8,468,9.8,0.0,22.4,38.5
+55238,CT_PEAKER,NRG Rockford I,ok,361.6,394,16.8,0.0,41.8,46.9
+55247,CT_PEAKER,"Darby Power, LLC",ok,480.0,791,33.3,0.0,72.5,86.8
+55250,CT_PEAKER,University Park South,ok,300.0,481,8.7,0.0,23.6,50.1
+55253,CT_PEAKER,Crete Energy Venture LLC,ok,300.0,371,14.9,0.0,22.0,46.6
+55262,CT_PEAKER,Bowling Green Generating Station,ok,38.0,110,12.8,0.0,34.5,58.7
+55263,CT_PEAKER,Galion Generating Station,ok,38.0,112,17.9,0.0,33.2,53.6
+55264,CT_PEAKER,Napoleon Peaking Station,ok,38.0,111,15.3,0.0,30.6,56.2
+55276,CT_PEAKER,Ceredo Generating Station,ok,450.0,627,31.5,0.0,81.0,95.7
+55279,CT_PEAKER,Aurora,ok,991.1,905,10.0,0.0,18.2,32.1
+55284,CT_PEAKER,Big Sandy Peaker Plant,ok,300.0,214,43.4,0.0,71.1,81.3
+55285,CT_PEAKER,Wolf Hills Energy,ok,250.0,222,40.3,0.0,77.2,82.2
+55296,CT_PEAKER,Calumet Energy Team LLC,ok,326.1,29,16.1,0.0,52.9,68.1
+55347,CT_PEAKER,Armstrong,ok,670.7,2447,18.5,0.0,44.9,67.9
+55348,CT_PEAKER,Troy Energy LLC,ok,707.0,1015,40.6,0.0,72.2,82.6
+55349,CT_PEAKER,Pleasants Energy LLC,ok,338.3,5756,70.0,0.0,96.4,99.0
+55377,CT_PEAKER,Gans,ok,96.8,2113,38.1,0.0,75.2,90.2
+55392,CT_PEAKER,Zion Energy Center,ok,478.0,1733,19.1,0.0,27.6,45.3
+55438,CT_PEAKER,MRP Elgin LLC,ok,485.5,284,12.0,0.0,21.6,40.5
+55640,CT_PEAKER,University Park North,ok,540.0,721,6.3,0.0,15.4,29.6
+55654,CT_PEAKER,Chambersburg,ok,100.0,2590,38.8,0.0,69.8,88.3
+55936,CT_PEAKER,NRG Rockford II Energy Center,ok,180.8,475,26.7,0.0,79.9,84.8
+55938,CT_PEAKER,NAEA Ocean Peaking Power LLC,ok,335.5,814,25.5,0.0,48.3,75.6
+56397,CT_PEAKER,Hunlock Unit 4,ok,44.8,697,70.0,0.0,95.3,99.6
+56668,CT_PEAKER,NIH Cogeneration Facility,ok,27.6,7062,70.0,0.0,78.9,78.9
+58235,CT_PEAKER,Clayville,ok,55.0,1246,65.7,0.0,97.0,100.5
+60387,CT_PEAKER,Invenergy Nelson Expansion LLC,ok,314.0,2813,34.5,0.0,55.0,98.5
