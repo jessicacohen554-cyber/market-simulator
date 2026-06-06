@@ -315,6 +315,15 @@ def _calibration_config(
             "COAL_PRB": {"committed": 0.95, "econ_low": 0.77,
                          "econ_high": 1.19, "peak": 1.48,
                          "econ_low_share": 0.556},
+            # Generic bituminous coal (ISOs whose coal isn't ERCOT lignite/PRB,
+            # e.g. PURPA-era PJM units): all 10 ERCOT coal plants are supply-
+            # classified so this never fires for ERCOT. A flat baseload curve —
+            # cheap committed band (0.90) and econ near base HR — keeps coal in
+            # merit as baseload instead of the generic 1.15x default backing it
+            # out under cheap gas (which left PJM coal ~12 TWh light).
+            "COAL": {"committed": 0.90, "econ_low": 0.95,
+                     "econ_high": 1.10, "peak": 1.45,
+                     "econ_low_share": 0.55},
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
