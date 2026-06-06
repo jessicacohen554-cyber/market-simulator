@@ -2007,8 +2007,8 @@ BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
     "SC_COAL3": {2025: 0.0},
 }
 
-# Fallback heat rate (MMBtu/MWh) by plant group, used when a bin's
-# Bin_Zone_Weighted_Avg_HR is blank in the CSV (e.g. tiny unmetered CTs).
+# Fallback heat rate (MMBtu/MWh) by plant group, used when a plant's
+# Plant_Avg_HR_MMBtu_MWh is blank in the CSV (e.g. tiny unmetered CTs).
 BIN_GROUP_HR_DEFAULT: dict[str, float] = {
     "CC_CHP": 7.5,
     "CC_REGULAR": 7.0,
@@ -2205,6 +2205,27 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
     EIA-923 fuel costs and asset-level financial reporting — each LP bin
     is one EIA plant code, so dispatch and downstream P&L disaggregation
     share the same row identity.
+
+    The ``Bin_Label`` / ``Bin_Number`` columns are a human-readable
+    grouping only — they do NOT collapse plants into a shared LP generator
+    and no bin-weighted heat rate is ever used in dispatch (each plant
+    dispatches on its own ``Plant_Avg_HR_MMBtu_MWh``). Two CSV columns are
+    read here but then commonly *overridden* downstream, so do not treat
+    them as the dispatched values:
+
+    * ``Pct_Committed`` / ``Pct_Peaking`` — replaced per-plant by the
+      CAMPD-derived ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` /
+      ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` when
+      ``config.cc_committed_per_plant`` / ``cc_peaking_per_plant`` is set
+      (the ERCOT calibration default).
+    * ``HR_Mult_Committed`` / ``HR_Mult_Economic`` / ``HR_Mult_Peaking`` —
+      used only when no ``offer_curve_by_group`` covers the group. With an
+      offer curve configured (the ERCOT default) the committed band uses
+      ``base_hr × offer["committed"]``, the economic band is rendered as an
+      N-slice rising ramp (``_econ_curve_steps``), and the CC peak band uses
+      the turbine-class duct-burner multiplier — so the CSV ``HR_Mult_*``
+      values are not the dispatched band heat rates. See ``bins_to_fleet``
+      and ``docs/binning-methodology.md``.
 
     Args:
         csv_path: Path to ``custom-bin-assignments.csv``.
