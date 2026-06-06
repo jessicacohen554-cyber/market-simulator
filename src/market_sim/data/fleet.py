@@ -478,17 +478,25 @@ def generators_to_fleet_arrays(
         # coal/CC only, so no bin intersection). The per-bin gen.plant_group
         # filter below still restricts zeroing to coal/CC tranches.
         is_ercot = _iso == "ERCOT" or _iso is None
-        masks = outage_masks_for_year(
-            config.weather_year,
-            hours,
-            outages_path=default_outages_path(_iso),
-            bins_path=(
-                getattr(
-                    config, "campd_bins_path",
-                    "inputs/custom-bin-assignments.csv",
-                )
-                if is_ercot else None
-            ),
+        # The facility-summed overlay is the primary outage layer only where the
+        # unit-level derate is supplemental (ERCOT). ISOs whose unit-level file
+        # is the complete CAMPD-derived source disable it (config flag) so the
+        # two layers don't double-count.
+        masks = (
+            outage_masks_for_year(
+                config.weather_year,
+                hours,
+                outages_path=default_outages_path(_iso),
+                bins_path=(
+                    getattr(
+                        config, "campd_bins_path",
+                        "inputs/custom-bin-assignments.csv",
+                    )
+                    if is_ercot else None
+                ),
+            )
+            if getattr(config, "historic_outage_overlay", True)
+            else {}
         )
         if masks:
             applied = 0
@@ -505,35 +513,36 @@ def generators_to_fleet_arrays(
                 "bin-tranches across %d plant(s)",
                 _iso or "ERCOT", config.weather_year, applied, len(masks),
             )
-        # The unit-level and partial-outage derates below are ERCOT-only
-        # extracts (the CAMPD unit-outage CSV and CAMPD CF-ceiling plateaus,
-        # both keyed to ERCOT plant codes); other ISOs carry no such files and
-        # their plant codes never match, so the blocks are scoped to ERCOT.
-        if is_ercot:
-            # Unit-level outage derate (backcast): partial availability cut per
-            # unit outage >= 5 days, sized by the unit's share of its model bin
-            # capacity (CTs excluded; split plants routed to the right asset
-            # class). Catches single-unit outages the facility-summed overlay
-            # above hides — most importantly the W A Parish coal units, masked
-            # in CEMS by the gas units that keep running. Built for full 2023
-            # and 2024 by scripts/derive_campd_unit_outages.py. Multiplies the
-            # availability already set above.
-            ufac = unit_outage_derate_factors(
-                config.weather_year, hours,
-                getattr(config, "campd_bins_path",
-                        "inputs/custom-bin-assignments.csv"),
+        # Unit-level outage derate (backcast): partial availability cut per
+        # unit outage >= 5 days, sized by the unit's share of its plant's
+        # capacity (CTs excluded; ERCOT split plants routed to the right asset
+        # class). Catches single-unit outages the facility-summed overlay above
+        # hides — e.g. the W A Parish coal units, masked in CEMS by the gas
+        # units that keep running. Built per ISO by
+        # scripts/derive_campd_unit_outages.py --iso <ISO>; ISOs with no
+        # unit-outage file get an empty derate (no effect). Multiplies the
+        # availability already set above.
+        ufac = unit_outage_derate_factors(
+            config.weather_year, hours,
+            getattr(config, "campd_bins_path",
+                    "inputs/custom-bin-assignments.csv"),
+            iso=_iso or "ERCOT",
+        )
+        if ufac:
+            applied_u = 0
+            for g_idx, gen in enumerate(generators):
+                f = ufac.get((int(gen.plant_code), gen.plant_group))
+                if f is not None:
+                    availability[g_idx, :] *= f
+                    applied_u += 1
+            logger.info(
+                "unit-outage derate (%s %d): %d plant-tranches derated",
+                _iso or "ERCOT", config.weather_year, applied_u,
             )
-            if ufac:
-                applied_u = 0
-                for g_idx, gen in enumerate(generators):
-                    f = ufac.get((int(gen.plant_code), gen.plant_group))
-                    if f is not None:
-                        availability[g_idx, :] *= f
-                        applied_u += 1
-                logger.info(
-                    "unit-outage derate (%d): %d bin-tranches derated",
-                    config.weather_year, applied_u,
-                )
+        # The partial-outage derate below is an ERCOT-only extract (CAMPD
+        # CF-ceiling plateaus keyed to ERCOT plant codes); other ISOs carry no
+        # such file, so it stays scoped to ERCOT.
+        if is_ercot:
             # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
             # half-units-out events for baseload coal + a confirmed CC
             # allowlist where no unit data exists. Multiplies availability
@@ -2281,6 +2290,141 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
         len(bins), csv_path, bins["capacity_mw"].sum() / 1000.0,
     )
     return bins
+
+
+# Default tranche split (% of nameplate) per group for the synthetic per-plant
+# bins an ISO builds when it has no CAMPD bin sheet (see
+# :func:`fleet_to_bins`): used only for plants absent from the CAMPD-derived
+# thermal-tranche artifact (rarely-online units with no reliable observed
+# floor). ``(must_run, committed, peaking)``; the economic band is the
+# residual. Peakers carry no committed band; coal carries a baseload floor.
+_DEFAULT_TRANCHE_PCT_BY_GROUP: dict[str, tuple[float, float, float]] = {
+    "CC_REGULAR": (0.0, 45.0, 8.0),
+    "CC_CHP":     (0.0, 45.0, 8.0),   # must-run set to host steam in bins_to_fleet
+    "CT_PEAKER":  (0.0, 0.0, 7.0),
+    "CT_CHP":     (0.0, 30.0, 7.0),
+    "ST_GAS":     (0.0, 30.0, 15.0),
+    "ST_CHP":     (0.0, 30.0, 15.0),
+    "COAL":       (45.0, 5.0, 2.0),
+}
+
+
+@lru_cache(maxsize=8)
+def thermal_tranche_overrides(
+    iso: str,
+) -> dict[tuple[int, str], tuple[float, float]]:
+    """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
+
+    Loads the per-plant CAMPD-derived committed and must-run tranche shares
+    from ``inputs/processed/thermal_tranches_<ISO>.csv`` (written by
+    ``scripts/derive_thermal_tranches.py``). Empty when the ISO has no
+    artifact, so the caller falls back to the group default. This is the
+    general, ISO-agnostic replacement for the hardcoded ERCOT
+    ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` / ``COAL_MUSTRUN_BY_PLANT`` maps.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    out: dict[tuple[int, str], tuple[float, float]] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = (
+            float(r.committed_pct), float(r.mustrun_pct),
+        )
+    return out
+
+
+def fleet_to_bins(
+    generators: list[Generator], iso: str, config: ScenarioConfig
+) -> pd.DataFrame:
+    """Build a per-plant CAMPD-style bins frame from an ISO's EIA-860 fleet.
+
+    The non-ERCOT analogue of the CAMPD bin sheet: each thermal
+    ``(plant_code, plant_group)`` becomes one bin row in the schema
+    :func:`bins_to_fleet` consumes, so a per-plant ISO (PJM, MISO, ...) gets
+    the *same* smoothed rising offer curve and per-plant committed / must-run
+    tranches ERCOT gets from its bins. Committed % and (coal) must-run % come
+    from the CAMPD-derived artifact (:func:`thermal_tranche_overrides`); plants
+    absent from it fall back to :data:`_DEFAULT_TRANCHE_PCT_BY_GROUP`. Per-band
+    heat rates are the plant's capacity-weighted heat rate times the group
+    default multipliers (the offer curve overrides these in ``bins_to_fleet``).
+    Non-thermal generators (nuclear, oil, biomass, ...) are not binned — the
+    caller keeps them as raw LP units.
+
+    Returns one row per thermal ``(plant_code, plant_group)``; empty frame when
+    the fleet has no thermal plants.
+    """
+    overrides = thermal_tranche_overrides(iso)
+    # Aggregate the per-generator fleet to one row per (plant, group): capacity
+    # sums, heat rate is capacity-weighted.
+    agg: dict[tuple[int, str], dict] = {}
+    for g in generators:
+        if g.plant_group not in BIN_GROUP_TO_FUEL:
+            continue  # non-thermal (nuclear / oil / biomass) stays a raw unit
+        code = int(g.plant_code)
+        if code <= 0:
+            continue
+        key = (code, g.plant_group)
+        a = agg.setdefault(key, {
+            "cap": 0.0, "hr_cap": 0.0, "name": g.name, "zone": g.zone,
+        })
+        a["cap"] += float(g.pmax_mw)
+        a["hr_cap"] += float(g.pmax_mw) * float(g.heat_rate)
+
+    rows: list[dict] = []
+    for (code, group), a in agg.items():
+        cap = a["cap"]
+        if cap <= 0.0:
+            continue
+        base_hr = a["hr_cap"] / cap if cap > 0 else _fill_plant_hr(None, group)
+        d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(
+            group, (0.0, 30.0, 8.0)
+        )
+        committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
+        pct_mc = committed
+        pct_mr = mustrun if group == "COAL" else d_mr
+        pct_peak = d_peak
+        # Keep the split feasible: clip committed + peaking to leave room for an
+        # economic band above the must-run floor.
+        room = max(0.0, 100.0 - pct_mr)
+        if pct_mc + pct_peak > room:
+            pct_mc = max(0.0, min(pct_mc, room - pct_peak))
+        pct_econ = max(0.0, 100.0 - pct_mr - pct_mc - pct_peak)
+        mults = _DEFAULT_HR_MULT_BY_GROUP.get(
+            group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
+        )
+        rows.append({
+            "Plant_Group": group,
+            "ERCOT_Zone": a["zone"],
+            "Bin_Number": 1,
+            "Bin_Label": a["name"],
+            "Plant_Code": code,
+            "Plant_Name": a["name"],
+            "Turbine_Class": "",
+            "capacity_mw": cap,
+            "hr_weighted": base_hr,
+            "pct_mr": pct_mr,
+            "pct_mc": pct_mc,
+            "pct_econ": pct_econ,
+            "pct_peak": pct_peak,
+            "min_run": 0,
+            "min_down": 0,
+            "hr_mr": base_hr * mults["mr"],
+            "hr_mc": base_hr * mults["mc"],
+            "hr_econ": base_hr * mults["econ"],
+            "hr_peak": base_hr * mults["peak"],
+            "plant_count": 1,
+            "plant_codes": [code],
+            "fuel": BIN_GROUP_TO_FUEL[group],
+        })
+    return pd.DataFrame(rows, columns=[
+        "Plant_Group", "ERCOT_Zone", "Bin_Number", "Bin_Label", "Plant_Code",
+        "Plant_Name", "Turbine_Class", "capacity_mw", "hr_weighted", "pct_mr",
+        "pct_mc", "pct_econ", "pct_peak", "min_run", "min_down", "hr_mr",
+        "hr_mc", "hr_econ", "hr_peak", "plant_count", "plant_codes", "fuel",
+    ])
 
 
 # Combined-cycle duct-burner (peaking) heat-rate multiplier by turbine class,

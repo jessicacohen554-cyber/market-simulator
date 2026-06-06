@@ -1331,6 +1331,14 @@ def _report_generic(
     for year in meta["years"]:
         ref_year = reference.get("isos", {}).get(iso, {}).get(str(year), {})
         ref_gen = _aggregate_twh(ref_year.get("generation_twh", {}))
+        # Renewables are judged against EIA-930 grid-delivered generation (the
+        # 930 column), not EIA-923 — the same basis the ERCOT report uses
+        # (_print_nonchp_grid compares solar/wind to e930). EIA-923's solar/wind
+        # totals fold in behind-the-meter / distributed output that never
+        # reaches the wholesale grid (PJM 2024: 20.6 TWh 923 solar vs ~16 on the
+        # grid), so the 923 cell is blanked for solar/wind in the print loop
+        # below. The value is kept in ref_gen here so the 923 system total (and
+        # thus the thermal 923% shares) still reflect the full reported mix.
 
         e930 = None
         if e930_all is not None:
@@ -1375,6 +1383,10 @@ def _report_generic(
               f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}")
         for fuel in _GENERIC_FUEL_ORDER:
             m, g, r = model.get(fuel), e930_twh.get(fuel), ref_gen.get(fuel)
+            # Solar/wind compared vs EIA-930 only (see note above); blank the
+            # BTM-inflated 923 cell while leaving it in the total.
+            if fuel in ("solar", "wind"):
+                r = None
             if m is None and g is None and r is None:
                 continue
             print(f"    {fuel:<9} {_twh(m)} {_pct(m, model_total)} "

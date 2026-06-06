@@ -152,6 +152,16 @@ class ScenarioConfig:
     use_campd_bins: bool = True
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
+    # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
+    # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
+    # primary outage layer and the unit-level derate only SUPPLEMENTS it
+    # (catching single-unit outages the facility sum hides). For an ISO whose
+    # unit-level outage file is derived fresh from ALL CAMPD unit data
+    # (e.g. PJM via derive_campd_unit_outages.py), the unit-level layer is the
+    # COMPLETE outage source and this facility overlay is redundant — stacking
+    # both double-counts and over-derates. Set False for those ISOs so the
+    # unit-level derate alone applies.
+    historic_outage_overlay: bool = True
     # Optional per-plant tranche-config override CSV (one row per plant with its
     # five tranche shares of nameplate — must-run / committed / econ-low /
     # econ-high / peaking — and the five per-tranche heat-rate multipliers on
