@@ -26,7 +26,7 @@ on:
         type: string
         default: "2024"
       run_name:
-        description: "Run name — used as BOTH the dashboard label and the bundle dir (chars [A-Za-z0-9._-])"
+        description: "Run name — used as BOTH the dashboard label and the bundle dir. Spaces/odd chars are auto-converted to dashes (e.g. 'run44 - ramp fix' -> 'run44-ramp-fix')."
         type: string
         required: true
       offer_curve_tweaks:
@@ -64,6 +64,10 @@ permissions:
 jobs:
   solve:
     runs-on: ubuntu-latest
+    outputs:
+      # Sanitized run_name, reused as the dashboard label, bundle dir and
+      # branch component by every downstream step in BOTH jobs.
+      run_name: ${{ steps.validate.outputs.run_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,17 +79,28 @@ jobs:
           cache: pip
 
       - name: Validate inputs
+        id: validate
         env:
           RUN_NAME: ${{ inputs.run_name }}
           YEAR: ${{ inputs.year }}
           ISO: ${{ inputs.iso }}
         run: |
           set -euo pipefail
-          # run_name doubles as a filesystem dir and a git branch component.
-          if ! [[ "$RUN_NAME" =~ ^[A-Za-z0-9._-]+$ ]]; then
-            echo "::error::run_name '$RUN_NAME' must match [A-Za-z0-9._-]+ (it becomes a dir + branch name)."
+          # run_name doubles as a filesystem dir and a git branch component, so
+          # it must match [A-Za-z0-9._-]+. Auto-sanitize instead of failing:
+          # collapse any run of disallowed characters (spaces, etc.) into a
+          # single dash and trim leading/trailing dashes. Only error if nothing
+          # usable remains.
+          CLEAN=$(printf '%s' "$RUN_NAME" \
+                    | sed -E 's/[^A-Za-z0-9._]+/-/g; s/^-+//; s/-+$//')
+          if [ -z "$CLEAN" ]; then
+            echo "::error::run_name '$RUN_NAME' has no usable [A-Za-z0-9._-] characters."
             exit 1
           fi
+          if [ "$CLEAN" != "$RUN_NAME" ]; then
+            echo "::notice::run_name sanitized: '$RUN_NAME' -> '$CLEAN'"
+          fi
+          echo "run_name=$CLEAN" >> "$GITHUB_OUTPUT"
           # Normalize the year list (commas -> spaces) and bound each value.
           YEARS="${YEAR//,/ }"
           for y in $YEARS; do
@@ -95,7 +110,7 @@ jobs:
             esac
           done
           echo "YEARS=$YEARS" >> "$GITHUB_ENV"
-          echo "Validated: iso=$ISO years='$YEARS' run_name='$RUN_NAME'"
+          echo "Validated: iso=$ISO years='$YEARS' run_name='$CLEAN'"
 
       - name: Cache binned-fleet parquet
         # The per-ISO binned-fleet cache (inputs/processed/<iso>_fleet_binned.parquet)
@@ -130,7 +145,7 @@ jobs:
       - name: Solve calibration bundle
         env:
           ISO: ${{ inputs.iso }}
-          RUN_NAME: ${{ inputs.run_name }}
+          RUN_NAME: ${{ steps.validate.outputs.run_name }}
           NOTE: ${{ inputs.note }}
           PRB_SIGMOID: ${{ inputs.prb_sigmoid }}
           STORAGE_DAILY: ${{ inputs.storage_daily_cycling }}
@@ -153,8 +168,8 @@ jobs:
       - name: Upload bundle artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bundle-${{ inputs.run_name }}
-          path: results/calibration/${{ inputs.run_name }}
+          name: bundle-${{ steps.validate.outputs.run_name }}
+          path: results/calibration/${{ steps.validate.outputs.run_name }}
           retention-days: 7
           if-no-files-found: error
 
@@ -181,12 +196,12 @@ jobs:
       - name: Download bundle artifact
         uses: actions/download-artifact@v4
         with:
-          name: bundle-${{ inputs.run_name }}
-          path: results/calibration/${{ inputs.run_name }}
+          name: bundle-${{ needs.solve.outputs.run_name }}
+          path: results/calibration/${{ needs.solve.outputs.run_name }}
 
       - name: Commit to auto/* branch and publish
         env:
-          RUN_NAME: ${{ inputs.run_name }}
+          RUN_NAME: ${{ needs.solve.outputs.run_name }}
           PUBLISH: ${{ inputs.publish }}
         run: |
           set -euo pipefail
