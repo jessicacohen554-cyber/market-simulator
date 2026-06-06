@@ -176,17 +176,20 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     return "OTHER"
 
 
-def _classify_f923(fuel: str, pm: str, chp: bool, plant_id: int) -> str:
+def _classify_f923(
+    fuel: str, pm: str, chp: bool, plant_id: int, is_ercot: bool = True
+) -> str:
     """Bucket one EIA-923 Page-1 row into a model class.
 
     Mirrors :func:`market_sim.data.fleet` classification. Coal is split into
-    its supply class; gas is split by prime mover and CHP flag; wind, solar
-    and nuclear are returned as their own classes; everything else is OTHER.
+    its ERCOT supply class (lignite vs PRB); other ISOs keep a single COAL
+    class (matching the dispatch frame). Gas is split by prime mover and CHP
+    flag; wind, solar and nuclear are their own classes; everything else OTHER.
     """
     fuel = str(fuel).strip().upper()
     pm = str(pm).strip().upper()
     if fuel in _COAL_FUELS:
-        return _coal_supply_class(plant_id, fuel)
+        return _coal_supply_class(plant_id, fuel) if is_ercot else "COAL"
     if fuel == "NG":
         if pm in {"CA", "CS", "CT", "CC"}:
             return "CC_CHP" if chp else "CC_REGULAR"
@@ -293,17 +296,31 @@ def _dispatch_frame(
     fuels = list(context.fuel_types)
     bins = list(context.efficiency_bins)
     zones = list(context.zones)
+    pgroups = list(getattr(context, "plant_groups", []) or [])
+    is_ercot = iso == "ERCOT"
     plant_codes = _plant_codes_from_unit_ids(
-        unit_ids, numeric_head=(iso != "ERCOT")
+        unit_ids, numeric_head=not is_ercot
     )
 
     klass = []
     supply = []
     for g in range(n_gen):
-        k = _model_class_for_unit(unit_ids[g], fuels[g], bins[g])
+        # Non-ERCOT fleets carry the real plant group (CC_CHP, CT_CHP, ST_GAS,
+        # ... distinct from the merchant variants), so class by it rather than
+        # collapsing by fuel. ERCOT keeps the efficiency-bin path. Nuclear /
+        # wind / solar carry no group and fall back to the fuel classifier.
+        if not is_ercot and g < len(pgroups) and pgroups[g]:
+            k = pgroups[g]
+        else:
+            k = _model_class_for_unit(unit_ids[g], fuels[g], bins[g])
         if k == "COAL":
-            k = _coal_supply_class(int(plant_codes[g]))
-            supply.append("lignite" if k == "COAL_LIGNITE" else "prb")
+            if is_ercot:
+                # ERCOT splits coal into its mine-mouth lignite vs PRB-by-rail
+                # supply classes; other ISOs keep a single COAL class.
+                k = _coal_supply_class(int(plant_codes[g]))
+                supply.append("lignite" if k == "COAL_LIGNITE" else "prb")
+            else:
+                supply.append("")
         else:
             supply.append("")
         klass.append(k)
@@ -486,11 +503,13 @@ def _campd_hourly_frame(
     return pd.concat(frames, ignore_index=True)
 
 
-def _eia923_frame(year: int, generation: pd.DataFrame) -> pd.DataFrame:
+def _eia923_frame(
+    year: int, generation: pd.DataFrame, is_ercot: bool = True
+) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly."""
     df = generation[generation["year"] == year].copy()
     df["klass"] = [
-        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
+        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid, is_ercot)
         for f, pm, c, pid in zip(
             df["fuel_type"], df["prime_mover"], df["chp"], df["plant_id"]
         )
@@ -517,7 +536,7 @@ _BACKFILL_GROUPS: frozenset[str] = frozenset(
 
 def _backfill_eia923_with_campd(
     e923: pd.DataFrame, campd_year: pd.DataFrame | None,
-    group_by_code: dict[int, str], year: int,
+    group_by_code: dict[int, str], year: int, is_ercot: bool = True,
 ) -> pd.DataFrame:
     """Backfill EIA-923 with CAMPD net for model plants it under-reports.
 
@@ -540,7 +559,10 @@ def _backfill_eia923_with_campd(
         net = sub.sort_values("hour")["net_mw"].to_numpy(dtype=float)
         if net.sum() < _CAMPD_BACKFILL_MIN_MWH:
             continue
-        klass = _coal_supply_class(int(pid)) if group == "COAL" else group
+        if group == "COAL":
+            klass = _coal_supply_class(int(pid)) if is_ercot else "COAL"
+        else:
+            klass = group
         cur = e923[(e923["plant_id"] == int(pid)) & (e923["klass"] == klass)]
         if float(cur["annual_mwh"].sum()) >= _CAMPD_BACKFILL_MIN_MWH:
             continue  # EIA-923 reports it adequately
@@ -792,8 +814,8 @@ def solve_and_persist(
             )
             eia923_frames.append(
                 _backfill_eia923_with_campd(
-                    _eia923_frame(year, generation), campd_year,
-                    group_by_code, year,
+                    _eia923_frame(year, generation, is_ercot), campd_year,
+                    group_by_code, year, is_ercot,
                 )
             )
             if campd_year is not None:
@@ -1440,6 +1462,7 @@ def rebuild_benchmark(bundle: Path) -> None:
 
     meta = json.loads((bundle / "meta.json").read_text())
     iso = meta["iso"]
+    is_ercot = iso == "ERCOT"
     years = meta["years"]
     hours = int(meta.get("hours", _HOURS_PER_YEAR))
     iso_config = get_iso_config(iso)
@@ -1455,8 +1478,8 @@ def rebuild_benchmark(bundle: Path) -> None:
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
         e923f.append(
             _backfill_eia923_with_campd(
-                _eia923_frame(year, generation), campd_year,
-                group_by_code, year,
+                _eia923_frame(year, generation, is_ercot), campd_year,
+                group_by_code, year, is_ercot,
             )
         )
         e930 = _eia930_frame(year, iso, iso_config)
