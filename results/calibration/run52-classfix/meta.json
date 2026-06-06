@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-06-06T17:23:27",
+  "iso": "ERCOT",
+  "years": [
+    2024
+  ],
+  "hours": 8760,
+  "passes": [
+    "P1"
+  ],
+  "commitment": false,
+  "commitment_screen_coal": true,
+  "gas_prices": {
+    "2024": 2.19
+  },
+  "coal_lignite_mustrun": null,
+  "coal_prb_mustrun": null,
+  "coal_prb_passthrough": 1.0,
+  "outage_source": "historic",
+  "coal_prb_passthrough_sigmoid": false,
+  "coal_mustrun_per_plant": true,
+  "coal_drop_pof": true,
+  "coal_prb_passthrough_tiered": true,
+  "coal_plant_monthly_pricing": true,
+  "td_loss_factor": 0.0,
+  "storage_daily_cycling": true,
+  "gas_offer_curve": false,
+  "offer_curve_overrides": {},
+  "offer_curve_deltas": {
+    "COAL_PRB": {
+      "econ_low": -0.45,
+      "econ_high": -0.25
+    },
+    "COAL_LIGNITE": {
+      "econ_low": -0.05
+    },
+    "ST_GAS": {
+      "committed": 0.05,
+      "econ_low": 0.05,
+      "econ_high": 0.1
+    },
+    "CC_REGULAR": {
+      "econ_low": 0.1,
+      "econ_high": 0.15
+    },
+    "CC_CHP": {
+      "committed": 0.25,
+      "econ_low": 0.1,
+      "econ_high": 0.1
+    },
+    "CT_PEAKER": {
+      "committed": -0.15,
+      "econ_low": -0.1,
+      "econ_high": 0.1
+    }
+  },
+  "git_sha": "fe6886b"
+}

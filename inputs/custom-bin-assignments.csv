@@ -17,7 +17,7 @@ CC_CHP,South,2,S_CHP2,10554,Formosa Utility Venture Ltd,933.4,5.65,2x1,F-class (
 CC_CHP,South,3,S_CHP3,55206,Corpus Christi Energy Center,593.3,7.54,1x1,E/F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,South_Central,1,SC_CHP1,50118,Hal C Weaver Power Plant,138.9,5.06,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,South_Central,2,SC_CHP2,58151,Central Utility Plant - Texas A&M,45.1,5.58,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,1x1,E-class (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
+CC_REGULAR,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,1x1,E-class (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
 CC_CHP,West,1,W_CHP1,52176,C R Wing Cogen Plant,230.0,12.38,1x1,E-class (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
 CC_REGULAR,Houston,1,H_CC1,60122,Colorado Bend II,1230.3,6.57,2x1,F-class (late),0,20,65,15,16,6,,1.08,1.0,1.55
 CC_REGULAR,Houston,2,H_CC2,55062,Tenaska Frontier Generation Station,939.7,7.15,2x1,F-class,0,25,60,15,16,6,,1.08,1.0,1.55
@@ -79,7 +79,7 @@ CT_CHP,Houston,3,H_CTCHP3,54330,Westhollow Technology Center,3.7,9.55,,,65,0,35,
 CT_CHP,Houston,4,H_CTCHP4,59145,Freeport LP Pretreatment Facility,87.0,10.03,,,65,0,30,5,24,2,1.05,,1.0,1.1
 CT_CHP,Houston,5,H_CTCHP5,62762,NASA Johnson Space Center CHP,11.2,10.84,,,65,0,35,0,24,2,1.05,,1.0,
 CT_CHP,Houston,6,H_CTCHP6,58378,Petra Nova Carbon Capture Cogen,82.2,12.47,,,0,50,30,20,8,2,,,1.0,1.1
-CT_CHP,Houston,7,H_CTCHP7,7325,San Jacinto Steam Electric Station,176.4,13.12,,,65,0,30,5,24,2,1.05,,1.0,1.1
+CT_PEAKER,Houston,7,H_CTCHP7,7325,San Jacinto Steam Electric Station,176.4,13.12,,,65,0,30,5,24,2,1.05,,1.0,1.1
 CT_CHP,Houston,8,H_CTCHP8,10298,Bayou Cogen Plant,318.4,13.81,,,65,0,30,5,24,2,1.05,,1.0,1.1
 CT_CHP,Houston,9,H_CTCHP9,10261,Enterprise Products Operating,20.7,14.36,,,65,0,35,0,24,2,1.05,,1.0,
 CT_CHP,Houston,10,H_CTCHP10,55015,Sweeny Cogen Facility,572.0,15.27,,,65,0,30,5,24,2,1.05,,1.0,1.1
@@ -284,7 +284,7 @@ CT_PEAKER,West,9,CT9 (15-18),64775,WAL447,1.2,15.34,,,0,30,25,45,1,1,,1.18,1.0,1
 CT_PEAKER,West,9,CT9 (15-18),64795,WAL536,1.2,15.22,,,0,30,25,45,1,1,,1.18,1.0,1.1
 ST_CHP,Houston,1,H_STCHP1,10418,Ascend Performance Materials Texas Inc.,52.1,5.33,,,50,0,50,0,24,8,1.08,,1.0,
 ST_CHP,Houston,2,H_STCHP2,50229,Texas Petrochemicals,35.0,5.53,,,50,0,50,0,24,8,1.08,,1.0,
-ST_CHP,South,1,S_STCHP1,50150,Union Carbide Seadrift Cogen,162.0,6.87,,,50,0,50,0,24,8,1.08,,1.0,
+CT_CHP,South,1,S_STCHP1,50150,Union Carbide Seadrift Cogen,162.0,6.87,,,50,0,50,0,24,8,1.08,,1.0,
 ST_GAS,Houston,1,H_STGAS1,34702,W A Parish [ST],1565.0,10.76,,,0,30,65,5,8,8,,1.12,1.0,1.06
 ST_GAS,Houston,2,H_STGAS2,3460,Cedar Bayou,1530.0,10.71,,,0,30,65,5,8,8,,1.12,1.0,1.06
 ST_GAS,North,1,N_STGAS1,3452,Lake Hubbard,927.5,11.45,,,0,30,65,5,8,8,,1.12,1.0,1.06
