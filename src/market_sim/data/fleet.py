@@ -2573,13 +2573,12 @@ def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
     return out
 
 
-# Groups whose duct-firing / scarcity peak is the *top* of the smooth economic
-# ramp (folded into the curve) versus those that keep a separate flat peak
-# tranche above the ramp. CC and coal fold their duct-firing band into the
-# rising curve; CT_PEAKER / ST_GAS keep peak as a standalone scarcity tranche
-# (its high multiplier is a price-wall floor, not a real ramp endpoint).
-_CURVE_FOLD_PEAK: tuple[str, ...] = ("CC_REGULAR", "CC_CHP", "COAL")
-_CURVE_ECON_ONLY: tuple[str, ...] = ("CT_PEAKER", "ST_GAS")
+# Every thermal group uses a uniform offer-curve shape: the smooth economic
+# ramp spans ``econ_low -> econ_high`` (its slope set by those two endpoints),
+# and the duct-firing / scarcity peak is kept as a SEPARATE flat tranche that
+# jumps up above the ramp top — its size set by ``pct_peaking`` and its height
+# by the ``peak`` HR multiplier (the per-turbine-class duct-burner multiplier
+# for CC when no explicit ``peak`` is given). Nothing is folded into the ramp.
 
 
 def _econ_curve_steps(
@@ -2748,6 +2747,8 @@ def bins_to_fleet(
         # tranche below absorbs the difference. Off unless the calibration
         # config sets cc_committed_per_plant.
         pct_mc = float(b["pct_mc"])
+        if offer is not None and "pct_committed" in offer:
+            pct_mc = float(offer["pct_committed"])
         if (group == "CC_REGULAR"
                 and getattr(config, "cc_committed_per_plant", False)
                 and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
@@ -2797,11 +2798,14 @@ def bins_to_fleet(
         if offer is not None:
             # Unified offer curve: committed and peaking band heat rates from
             # the multipliers (econ_low / econ_high are set in the econ split
-            # below). CC peaking uses the per-plant duct-burner multiplier
-            # (turbine class); other groups use the curve's "peak". VOM is held
+            # below). The peak band is a separate flat tranche; its height is
+            # the curve's "peak" multiplier when given, else (CC only) the
+            # per-plant duct-burner multiplier by turbine class. VOM is held
             # constant across bands (the peak band's VOM markup is dropped).
             committed_hr = base_hr * float(offer["committed"])
-            if group in ("CC_REGULAR", "CC_CHP"):
+            if "peak" in offer:
+                peak_hr = base_hr * float(offer["peak"])
+            elif group in ("CC_REGULAR", "CC_CHP"):
                 peak_hr = base_hr * cc_duct_burner_peak_mult(
                     b.get("Turbine_Class")
                 )
@@ -2865,35 +2869,27 @@ def bins_to_fleet(
 
         # Economic tranche(s). By default one tranche at econ_hr; the offer
         # curve (or the standalone econ split) replaces it with a rising
-        # marginal-cost curve across the economic block. When
+        # marginal-cost curve that spans ``econ_low -> econ_high`` only. When
         # ``offer_curve_smoothing_n`` is positive the curve is rendered as an
         # N-slice rising ramp (``_econ_curve_steps``) so the LP fills it
         # gradually as hourly price crosses MC, rather than snapping between two
         # wide flat blocks; when it is zero the curve stays two flat steps
-        # (econ-low / econ-high). CC + coal fold the duct-firing peak into the
-        # top of the ramp; CT_PEAKER / ST_GAS span econ-low to econ-high only
-        # and keep the peak band as a separate flat scarcity tranche. The first
-        # econ step carries any CHP steam-following floor.
+        # (econ-low / econ-high). Every group spans econ-low to econ-high and
+        # keeps the duct-firing / scarcity peak as a separate flat tranche
+        # above the ramp. The first econ step carries any CHP steam-following
+        # floor.
         n_curve = int(getattr(config, "offer_curve_smoothing_n", 0) or 0)
         curve_exp = float(getattr(config, "offer_curve_smoothing_exp", 1.0))
-        peak_in_curve = False
         if ov is not None:
-            # Per-plant sheet: shares and band multipliers come straight from
-            # the sheet. Fold peak (CC/coal) or econ-only (CT/ST) as above.
-            if group in _CURVE_FOLD_PEAK:
-                curve_pct = ov["pct_lo"] + ov["pct_hi"] + ov["pct_pk"]
-                lo_m, pk_m = ov["hr_lo"], ov["hr_pk"]
-            elif group in _CURVE_ECON_ONLY:
-                curve_pct = ov["pct_lo"] + ov["pct_hi"]
-                lo_m, pk_m = ov["hr_lo"], ov["hr_hi"]
-            else:
-                curve_pct, lo_m, pk_m = 0.0, 1.0, 1.0
+            # Per-plant sheet: the econ ramp spans econ-low to econ-high; the
+            # sheet's peaking band stays a separate tranche below.
+            lo_m, pk_m = ov["hr_lo"], ov["hr_hi"]
+            curve_pct = ov["pct_lo"] + ov["pct_hi"]
             if n_curve > 0 and curve_pct > 0.0 and pk_m > lo_m:
                 econ_steps = _econ_curve_steps(
                     base_hr, lo_m, pk_m,
                     nameplate * curve_pct / 100.0, n_curve, curve_exp,
                 )
-                peak_in_curve = group in _CURVE_FOLD_PEAK
             else:
                 econ_steps = [
                     ("econlo", nameplate * ov["pct_lo"] / 100.0,
@@ -2903,19 +2899,11 @@ def bins_to_fleet(
                 ]
         elif offer is not None:
             lo_m = float(offer["econ_low"])
-            if group in _CURVE_FOLD_PEAK:
-                # Fold the duct-firing / scarcity peak into the ramp top; its
-                # capacity joins the curve and the separate peak tranche drops.
-                curve_cap = econ_cap + peak_cap
-                pk_m = peak_hr / base_hr if base_hr > 0.0 else lo_m
-            else:
-                curve_cap = econ_cap
-                pk_m = float(offer["econ_high"])
-            if n_curve > 0 and curve_cap > 0.0 and pk_m > lo_m:
+            pk_m = float(offer["econ_high"])
+            if n_curve > 0 and econ_cap > 0.0 and pk_m > lo_m:
                 econ_steps = _econ_curve_steps(
-                    base_hr, lo_m, pk_m, curve_cap, n_curve, curve_exp,
+                    base_hr, lo_m, pk_m, econ_cap, n_curve, curve_exp,
                 )
-                peak_in_curve = group in _CURVE_FOLD_PEAK
             else:
                 share = float(offer["econ_low_share"])
                 econ_steps = [
@@ -2949,19 +2937,16 @@ def bins_to_fleet(
         # at VOM only (fuel_fracs in the runner).
         # Peak-band VOM multiplier: the offer curve holds VOM constant across
         # bands (band MC = VOM + (AHR x fuel) x mult); the legacy path keeps
-        # the 1.5x peak VOM markup. When the peak is folded into the rising
-        # curve (CC/coal smoothing) no separate peak tranche is emitted.
+        # the 1.5x peak VOM markup. The peak is always a separate flat tranche
+        # that jumps up above the econ-low -> econ-high ramp.
         peak_vom_mult = 1.0 if offer is not None else 1.5
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             ("committed", committed_cap, committed_hr, 1.0,
              int(b["min_run"]), int(b["min_down"]), startup),
             *econ_steps,
+            ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
         ]
-        if not peak_in_curve:
-            tranches.append(
-                ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0)
-            )
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
             tranches
         ):
@@ -3100,6 +3085,8 @@ def plant_tranche_bands(
             and getattr(config, "chp_steam_following", False)):
         pct_mr = chp_btm_pct(plant_code, group)
     pct_mc = float(b["pct_mc"])
+    if offer is not None and "pct_committed" in offer:
+        pct_mc = float(offer["pct_committed"])
     if (group == "CC_REGULAR"
             and getattr(config, "cc_committed_per_plant", False)
             and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
@@ -3132,7 +3119,9 @@ def plant_tranche_bands(
     peak_hr = float(b["hr_peak"])
     if offer is not None:
         committed_hr = base_hr * float(offer["committed"])
-        if group in ("CC_REGULAR", "CC_CHP"):
+        if "peak" in offer:
+            peak_hr = base_hr * float(offer["peak"])
+        elif group in ("CC_REGULAR", "CC_CHP"):
             peak_hr = base_hr * cc_duct_burner_peak_mult(b.get("Turbine_Class"))
         else:
             peak_hr = base_hr * float(offer["peak"])
