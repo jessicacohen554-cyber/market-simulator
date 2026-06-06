@@ -692,14 +692,16 @@ def _git_state() -> dict:
     }
 
 
-def _parse_offer_curve_json(raw: str | None) -> dict | None:
-    """Parse the ``--offer-curve-json`` argument, failing fast on bad input.
+def _parse_offer_curve_json(raw: str | None, flag: str = "--offer-curve-json") -> dict | None:
+    """Parse an offer-curve JSON argument, failing fast on bad input.
 
     Accepts an inline JSON object, a path to a ``.json`` file, or ``None``.
-    Returns the parsed ``{class: {band: multiplier}}`` mapping, or ``None``
-    when no overrides were given. Raises ``SystemExit`` with a clear message
-    on malformed JSON or the wrong top-level shape so a CI run fails loudly
-    rather than silently solving against the wrong curve.
+    Returns the parsed ``{class: {band: number}}`` mapping, or ``None`` when
+    nothing was given. Used for both the absolute ``--offer-curve-json`` and
+    the relative ``--offer-curve-delta-json`` (same shape: class -> band ->
+    number). Raises ``SystemExit`` with a clear, ``flag``-tagged message on
+    malformed JSON or the wrong shape so a CI run fails loudly rather than
+    silently solving against the wrong curve.
     """
     if raw is None or not str(raw).strip():
         return None
@@ -711,21 +713,21 @@ def _parse_offer_curve_json(raw: str | None) -> dict | None:
         parsed = json.loads(text)
     except json.JSONDecodeError as exc:
         raise SystemExit(
-            f"--offer-curve-json: invalid JSON ({exc}). Expected an object "
+            f"{flag}: invalid JSON ({exc}). Expected an object "
             'like {"CT_PEAKER":{"committed":1.40,"econ_low":1.27}}.')
     if not isinstance(parsed, dict):
         raise SystemExit(
-            "--offer-curve-json: top level must be a JSON object keyed by "
+            f"{flag}: top level must be a JSON object keyed by "
             f"fleet class, got {type(parsed).__name__}.")
     for cls, bands in parsed.items():
         if not isinstance(bands, dict):
             raise SystemExit(
-                f"--offer-curve-json: value for {cls!r} must be an object of "
-                f"band->multiplier, got {type(bands).__name__}.")
+                f"{flag}: value for {cls!r} must be an object of "
+                f"band->number, got {type(bands).__name__}.")
         for band, val in bands.items():
             if not isinstance(val, (int, float)) or isinstance(val, bool):
                 raise SystemExit(
-                    f"--offer-curve-json: {cls}.{band} must be a number, got "
+                    f"{flag}: {cls}.{band} must be a number, got "
                     f"{val!r}.")
     return parsed
 
@@ -754,7 +756,8 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
                 "coal_mustrun_per_plant", "coal_drop_pof",
                 "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
-                "td_loss_factor", "offer_curve_overrides", "git_sha",
+                "td_loss_factor", "offer_curve_overrides",
+                "offer_curve_deltas", "git_sha",
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
@@ -785,6 +788,7 @@ def solve_and_persist(
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
     offer_curve_overrides: dict | None = None,
+    offer_curve_deltas: dict | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -844,6 +848,7 @@ def solve_and_persist(
             storage_daily_cycling=storage_daily_cycling,
             gas_offer_curve=gas_offer_curve,
             offer_curve_overrides=offer_curve_overrides,
+            offer_curve_deltas=offer_curve_deltas,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -923,15 +928,17 @@ def solve_and_persist(
         "storage_daily_cycling": storage_daily_cycling,
         "gas_offer_curve": gas_offer_curve,
         "offer_curve_overrides": offer_curve_overrides or {},
+        "offer_curve_deltas": offer_curve_deltas or {},
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
-    # Rebuild the recorded config WITH the same overrides applied, so
+    # Rebuild the recorded config WITH the same overrides + deltas applied, so
     # run_config.json's scenario_config.offer_curve_by_group is the exact
     # merged curve the LP solved against (not the bare defaults).
     recorded_cfg = _calibration_config(
         years[0], iso, hours, gas_prices[years[0]],
         offer_curve_overrides=offer_curve_overrides,
+        offer_curve_deltas=offer_curve_deltas,
     )
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -1710,9 +1717,20 @@ def main() -> None:
              'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
              ".json file. The merged curve is recorded in run_config.json.")
+    parser.add_argument(
+        "--offer-curve-delta-json", default=None, metavar="JSON",
+        help="Like --offer-curve-json but each value is ADDED to the current "
+             "band rather than replacing it, so a re-tune need not restate the "
+             "prior absolute. Same shape (class -> band -> number); the number "
+             'is a signed delta. E.g. \'{"CT_PEAKER":{"committed":0.05},'
+             '"COAL_PRB":{"committed":-0.05}}\' nudges committed +0.05 / -0.05. '
+             "Applied on top of --offer-curve-json when both are given. The "
+             "resolved absolute curve is recorded in run_config.json.")
     args = parser.parse_args()
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
+    offer_curve_deltas = _parse_offer_curve_json(
+        args.offer_curve_delta_json, flag="--offer-curve-delta-json")
 
     if args.report:
         report_run(Path(args.report))
@@ -1766,6 +1784,7 @@ def main() -> None:
         storage_daily_cycling=args.storage_daily_cycling,
         gas_offer_curve=args.gas_offer_curve,
         offer_curve_overrides=offer_curve_overrides,
+        offer_curve_deltas=offer_curve_deltas,
         note=args.note,
     )
     report_run(run_dir)
