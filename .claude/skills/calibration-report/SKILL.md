@@ -49,6 +49,14 @@ Run id = `<bundle date>-<shorthand>`; shorthand + the 1-3 sentence definition
 are auto-derived from each bundle's `run_config.json` model-changes note. Edit
 `frontend/data/backcast/manifest.js` afterward to refine a label/definition.
 
+### PJM run naming convention
+
+From 2026-06 onward, label **PJM** runs sequentially as `pjm 1 <keyword>`,
+`pjm 2 <keyword>`, ... — a running integer plus a brief keyword descriptor of
+what changed (e.g. `pjm 1 gas-basis`, `pjm 2 ct-hurdle`). The next number is one
+more than the highest existing `pjm N ...` label in the registry. ERCOT keeps
+its `runNN` scheme.
+
 ## Steps
 
 1. **Confirm the bundles exist** (each needs `dispatch/<year>_P1.parquet`,
