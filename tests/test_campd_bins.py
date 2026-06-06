@@ -244,6 +244,60 @@ class TestBinsToFleet(unittest.TestCase):
             )
 
 
+class TestUnifiedOfferCurve(unittest.TestCase):
+    """The offer-curve ramp spans econ_low -> econ_high for every group, with
+    the duct-firing peak kept as a SEPARATE band that jumps up above the ramp
+    (no fold-peak); committed % and the CC peak HR are configurable."""
+
+    BASE_HR = 6.6  # _synthetic_bin default hr_weighted
+
+    def _build(self, group, offer, **cfg):
+        config = ScenarioConfig(
+            offer_curve_by_group={group: offer},
+            offer_curve_smoothing_n=6,
+            offer_curve_smoothing_exp=1.0,
+            **cfg,
+        )
+        b = _synthetic_bin(Plant_Group=group, pct_mr=0, pct_mc=50, pct_peak=15)
+        fleet, _ = bins_to_fleet(b, ZONE_NAMES, config)
+        return fleet
+
+    def test_ramp_tops_at_econ_high_with_separate_peak(self):
+        # CC ramps econ_low (1.0) -> econ_high (1.3); the duct-burner peak
+        # (F-class default 2.25x) is a separate band ABOVE the ramp, not its
+        # top. Pre-change, the ramp ran straight up to 2.25 and emitted no peak.
+        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
+                 "econ_low_share": 0.5, "pct_peaking": 10.0}
+        fleet = self._build("CC_REGULAR", offer)
+        econ = [g for g in fleet if "_econc" in g.unit_id]
+        peak = [g for g in fleet if g.unit_id.endswith("_peak")]
+        self.assertEqual(len(econ), 6)  # n=6 rising slices
+        self.assertEqual(len(peak), 1)  # separate peak band survives
+        # The whole ramp sits at or below econ_high; the peak jumps above it.
+        top_econ = max(g.heat_rate for g in econ)
+        self.assertLessEqual(top_econ, self.BASE_HR * 1.3 + 1e-6)
+        self.assertAlmostEqual(peak[0].heat_rate, self.BASE_HR * 2.25, places=6)
+        self.assertGreater(peak[0].heat_rate, top_econ)
+
+    def test_cc_peak_mult_is_configurable(self):
+        # An explicit "peak" key overrides the per-class duct-burner default.
+        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
+                 "peak": 1.8, "econ_low_share": 0.5, "pct_peaking": 10.0}
+        fleet = self._build("CC_CHP", offer)
+        peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
+        self.assertAlmostEqual(peak.heat_rate, self.BASE_HR * 1.8, places=6)
+
+    def test_pct_committed_is_configurable(self):
+        # "pct_committed" overrides the CSV Pct_Committed (here 50 -> 30).
+        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
+                 "pct_committed": 30.0, "econ_low_share": 0.5,
+                 "pct_peaking": 10.0}
+        fleet = self._build("CC_REGULAR", offer)
+        grid_cap = sum(g.pmax_mw for g in fleet)
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
+        self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.30, places=6)
+
+
 class TestCommitmentParams(unittest.TestCase):
     """Per-bin commitment parameters flow through to the screen."""
 
