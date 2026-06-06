@@ -303,14 +303,15 @@ function cfLineChart(model,campd,bands,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw-
   svg.appendChild(mk("rect",{x:tx,y:ty,width:tw,height:13,rx:3,fill:"#1a2233",opacity:0.85}));
   svg.appendChild(mk("text",{x:tx+4,y:ty+10,"font-size":9.5,fill:"#fff"},txt));});
  const path=arr=>arr.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join(" ");
- svg.appendChild(mk("path",{d:path(campd),fill:"none",stroke:"#647184","stroke-width":2.6}));
+ const hasC=campd&&campd.length;
+ if(hasC)svg.appendChild(mk("path",{d:path(campd),fill:"none",stroke:"#647184","stroke-width":2.6}));
  svg.appendChild(mk("path",{d:path(model),fill:"none",stroke:"#4A90D9","stroke-width":2.2,"stroke-dasharray":"4 3"}));
  const guide=mk("line",{y1:TTv,y2:TTv+ph,stroke:"#c3ccd6","stroke-width":1,opacity:0});svg.appendChild(guide);
  const at=(cx,cy)=>{const r=svg.getBoundingClientRect();let c=Math.round((cx-r.left)/r.width*vw-L)/pw*100;
   c=Math.min(Math.max(Math.round(c),0),100);guide.setAttribute("x1",X(c));guide.setAttribute("x2",X(c));guide.setAttribute("opacity",0.6);
   const bd=(bands||[]).slice().reverse().find(b=>c>=b.cf_lo);
   const band=bd?`<br><span style=color:#aab2bd>▮</span> ${bd.name} ${bd.vom?"(VOM)":(bd.mult!=null?bd.mult.toFixed(2)+"×":"")}`:"";
-  posTipXY(`<b>CF ${c}%</b><br><span style=color:#4A90D9>●</span> Model: ${model[c]} h<br><span style=color:#647184>●</span> CAMPD: ${campd[c]} h${band}`,cx,cy);};
+  posTipXY(`<b>CF ${c}%</b><br><span style=color:#4A90D9>●</span> Model: ${model[c]} h${hasC?`<br><span style=color:#647184>●</span> CAMPD: ${campd[c]} h`:""}${band}`,cx,cy);};
  svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));
  svg.addEventListener("mouseleave",()=>{hideTip();guide.setAttribute("opacity",0);});
  bindTouchTip(svg,at);return svg;}
@@ -396,12 +397,12 @@ function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
 // ---- render: SINGLE deep-dive ----
 function singleSeries(id,yr,grp,plant){const B=BENCH[yr],M=MODEL[id].years[yr];
  if(plant&&plant!=="agg"&&M.plants[plant]){const b=B.plants[plant],mp=M.plants[plant];
-  return {mcf:dec(mp.m),ccf:dec(b.campd),npl:b.npl,name:b.name+" · "+b.zone,m_ann:mp.m_ann,c_ann:b.c_ann,e_ann:b.e_ann,r:mp.r,nr:mp.nrmse,cap:mp.cap,m_mon:mp.m_mon,c_mon:b.c_mon,e_mon:b.e_mon};}
+  return {mcf:dec(mp.m),ccf:dec(b.campd),npl:b.npl,name:b.name+" · "+b.zone,nodata:!!b.nodata,m_ann:mp.m_ann,c_ann:b.c_ann,e_ann:b.e_ann,r:mp.r,nr:mp.nrmse,cap:mp.cap,m_mon:mp.m_mon,c_mon:b.c_mon,e_mon:b.e_mon};}
  const a=aggMW(id,yr,grp);const ps=plantsOf(id,yr,grp);let npl=0;ps.forEach(c=>npl+=B.plants[c].npl);
  const mcf=new Float32Array(T),ccf=new Float32Array(T);for(let i=0;i<T;i++){mcf[i]=npl>0?100*a.mm[i]/npl:0;ccf[i]=npl>0?100*a.cc[i]/npl:0;}
  const m_mon=Array(12).fill(0),c_mon=Array(12).fill(0),e_mon=Array(12).fill(0);
  ps.forEach(c=>{M.plants[c].m_mon.forEach((v,i)=>m_mon[i]+=v);B.plants[c].c_mon.forEach((v,i)=>c_mon[i]+=v);B.plants[c].e_mon.forEach((v,i)=>e_mon[i]+=v);});
- const mt=classMetrics(id,yr,grp);return {mcf,ccf,npl,name:META.groupLabel[grp]+" (aggregate)",m_ann:a.mA,c_ann:a.cA,e_ann:a.eA,r:mt?+mt.r.toFixed(3):null,nr:mt?+mt.nr.toFixed(3):null,cap:mt?mt.m1:null,m_mon,c_mon,e_mon};}
+ const mt=classMetrics(id,yr,grp);return {mcf,ccf,npl,name:META.groupLabel[grp]+" (aggregate)",nodata:a.cA<=0,m_ann:a.mA,c_ann:a.cA,e_ann:a.eA,r:mt?+mt.r.toFixed(3):null,nr:mt?+mt.nr.toFixed(3):null,cap:mt?mt.m1:null,m_mon,c_mon,e_mon};}
 function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  const ps=plantsOf(id,yr,grp);const mt=classMetrics(id,yr,grp);const d=singleSeries(id,yr,grp,st.plant);
  const d923=d.e_ann?100*(d.m_ann-d.e_ann)/d.e_ann:null;
@@ -427,16 +428,23 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  h+='<div class=panel><h2>Monthly (GWh)</h2><div class=svgbox id=sMon></div></div>';
  document.getElementById("content").innerHTML=h;
  const psel=document.getElementById("plantSel");
- psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${BENCH[yr].plants[c].name} · ${BENCH[yr].plants[c].zone}</option>`).join("");
+ psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${BENCH[yr].plants[c].name} · ${BENCH[yr].plants[c].zone}${BENCH[yr].plants[c].nodata?" · no CAMPD":""}</option>`).join("");
  psel.value=st.plant;psel.onchange=()=>{st.plant=psel.value;renderSingleCharts();};
+ // No usable CAMPD hourly data: show the model alone, not a flat-zero "actual".
+ if(d.nodata){const nd=document.createElement("div");nd.className="psub";nd.style.color="#9a6700";
+   nd.innerHTML="⚠ No CAMPD hourly data for this plant — model shown without an hourly comparison.";
+   document.getElementById("content").querySelector(".panel").appendChild(nd);}
+ const hasC=!d.nodata;
  const hC=document.getElementById("hC"),hM=document.getElementById("hM");
- drawHeat(hC,d.ccf);drawHeat(hM,d.mcf);heatTip(hC,d.ccf,"CAMPD actual");heatTip(hM,d.mcf,"Model");
+ if(hasC){drawHeat(hC,d.ccf);heatTip(hC,d.ccf,"CAMPD actual");}else{drawHeat(hC,d.ccf);hC.style.opacity=0.2;}
+ drawHeat(hM,d.mcf);heatTip(hM,d.mcf,"Model");
  const trp=(st.plant&&st.plant!=="agg")?(MODEL[id].years[yr].plants[st.plant]||{}).tr||null:null;
- document.getElementById("sHist").appendChild(cfLineChart(cfLine(d.mcf),cfLine(d.ccf),trp,760,300));
+ document.getElementById("sHist").appendChild(cfLineChart(cfLine(d.mcf),hasC?cfLine(d.ccf):[],trp,760,300));
  document.getElementById("axC").innerHTML=document.getElementById("axM").innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");
  const pc=profileArr(d.ccf),pm=profileArr(d.mcf),xl=Array(24).fill("");[0,6,12,18,23].forEach(hh=>xl[hh]=("0"+hh).slice(-2));
- document.getElementById("sProf").appendChild(lineChart([{pts:pc,color:"#647184",name:"CAMPD",w:3},{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}],Math.max(40,...pc,...pm)*1.1,xl,"%",760,300));
- const ms=[{pts:d.c_mon,color:"#647184",name:"CAMPD",w:3},{pts:d.m_mon,color:"#4A90D9",name:"Model",dash:"4 3"}];
+ const profSets=hasC?[{pts:pc,color:"#647184",name:"CAMPD",w:3},{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}]:[{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}];
+ document.getElementById("sProf").appendChild(lineChart(profSets,Math.max(40,...pc,...pm)*1.1,xl,"%",760,300));
+ const ms=hasC?[{pts:d.c_mon,color:"#647184",name:"CAMPD",w:3},{pts:d.m_mon,color:"#4A90D9",name:"Model",dash:"4 3"}]:[{pts:d.m_mon,color:"#4A90D9",name:"Model",dash:"4 3"}];
  document.getElementById("sMon").appendChild(lineChart(ms,Math.max(1,...d.c_mon,...d.m_mon)*1.15,MONTHS,"",760,300));
  wireTips(document.getElementById("content"));}
 function renderSingleTables(){const id=st.single,yr=st.year;
