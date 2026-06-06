@@ -177,6 +177,39 @@ def _deep_merge_offer_curve(
     return merged
 
 
+def _apply_offer_curve_deltas(
+    base: dict[str, dict[str, float]],
+    deltas: dict[str, dict[str, float]],
+) -> dict[str, dict[str, float]]:
+    """Return ``base`` with each ``deltas`` value ADDED to the current band.
+
+    Unlike :func:`_deep_merge_offer_curve` (absolute replacement), this nudges
+    a band relative to whatever it already is: ``{"CT_PEAKER":{"committed":0.05}}``
+    turns a 1.40 committed multiplier into 1.45, and ``-0.05`` into 1.35 — so a
+    re-tune does not have to restate the absolute value. The class/band must
+    already exist in ``base`` (you can only nudge a band the offer curve
+    actually has); an unknown one raises with the valid options listed.
+    """
+    merged = {cls: dict(bands) for cls, bands in base.items()}
+    for cls, bands in deltas.items():
+        if cls not in merged:
+            raise ValueError(
+                f"offer-curve delta for unknown class {cls!r}; valid classes: "
+                f"{', '.join(sorted(merged))}")
+        if not isinstance(bands, dict):
+            raise ValueError(
+                f"offer-curve delta for {cls!r} must be an object of "
+                f"band->delta, got {type(bands).__name__}")
+        for band, delta in bands.items():
+            if band not in merged[cls]:
+                raise ValueError(
+                    f"offer-curve delta for unknown band {cls}.{band!r}; "
+                    f"{cls} bands: {', '.join(sorted(merged[cls]))}")
+            merged[cls][band] = merged[cls][band] + delta
+    return merged
+
+
+
 def _calibration_config(
     year: int, iso: str, hours: int, gas_price: float,
     coal_passthrough: float | None = None,
@@ -191,6 +224,7 @@ def _calibration_config(
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
+    offer_curve_deltas: dict[str, dict[str, float]] | None = None,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -341,6 +375,16 @@ def _calibration_config(
                 config.offer_curve_by_group, offer_curve_overrides
             )
         )
+    # Relative nudges (run_calibration_full --offer-curve-delta-json): added on
+    # top of the (possibly absolute-overridden) curve, so the operator can tweak
+    # by +/-0.05 without restating the prior value. The resolved absolute curve
+    # is still recorded in run_config.json.
+    if offer_curve_deltas:
+        config = config.with_overrides(
+            offer_curve_by_group=_apply_offer_curve_deltas(
+                config.offer_curve_by_group, offer_curve_deltas
+            )
+        )
     return config
 
 
@@ -395,6 +439,7 @@ def run_year(
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
+    offer_curve_deltas: dict[str, dict[str, float]] | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -430,6 +475,7 @@ def run_year(
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
         coal_drop_pof, coal_prb_passthrough_tiered,
         offer_curve_overrides=offer_curve_overrides,
+        offer_curve_deltas=offer_curve_deltas,
     )
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
