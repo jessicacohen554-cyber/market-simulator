@@ -41,6 +41,7 @@ import pickle
 import subprocess
 import sys
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -64,6 +65,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_nuclear_gen,
     load_ercot_renewable_gen,
 )
+from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
 from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
 from scripts.run_calibration import (  # noqa: E402
     _calibration_config,
@@ -503,11 +505,30 @@ def _campd_hourly_frame(
     return pd.concat(frames, ignore_index=True)
 
 
+@lru_cache(maxsize=8)
+def _iso_plant_ids(iso: str) -> frozenset[int]:
+    """ORIS codes physically located in ``iso`` (eGRID/EIA-860 BA geography).
+
+    EIA-923's ``generation`` table is national; without restricting to the
+    ISO the per-class benchmark totals leak in every other US plant (e.g. PRB
+    coal shows the ~639 TWh national figure instead of ERCOT's ~47 TWh).
+    """
+    return frozenset(build_zone_lookup(iso))
+
+
 def _eia923_frame(
-    year: int, generation: pd.DataFrame, is_ercot: bool = True
+    year: int, generation: pd.DataFrame, is_ercot: bool = True,
+    iso: str = "ERCOT",
 ) -> pd.DataFrame:
-    """Return EIA-923 net generation per (plant, class), annual and monthly."""
+    """Return EIA-923 net generation per (plant, class), annual and monthly.
+
+    Restricted to plants in ``iso`` so the per-class totals are the ISO's
+    actual generation, not the national EIA-923 sum.
+    """
     df = generation[generation["year"] == year].copy()
+    iso_plants = _iso_plant_ids(iso)
+    if iso_plants:
+        df = df[df["plant_id"].isin(iso_plants)].copy()
     df["klass"] = [
         _classify_f923(f, pm, str(c).upper().startswith("Y"), pid, is_ercot)
         for f, pm, c, pid in zip(
@@ -854,7 +875,7 @@ def solve_and_persist(
             )
             eia923_frames.append(
                 _backfill_eia923_with_campd(
-                    _eia923_frame(year, generation, is_ercot), campd_year,
+                    _eia923_frame(year, generation, is_ercot, iso), campd_year,
                     group_by_code, year, is_ercot,
                 )
             )
@@ -1525,7 +1546,7 @@ def rebuild_benchmark(bundle: Path) -> None:
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
         e923f.append(
             _backfill_eia923_with_campd(
-                _eia923_frame(year, generation, is_ercot), campd_year,
+                _eia923_frame(year, generation, is_ercot, iso), campd_year,
                 group_by_code, year, is_ercot,
             )
         )
