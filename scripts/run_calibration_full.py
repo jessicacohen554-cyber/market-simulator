@@ -66,7 +66,10 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_renewable_gen,
 )
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
-from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
+from market_sim.data.fleet import (  # noqa: E402
+    _COAL_SUPPLY_TO_CURVE,
+    coal_supply_class,
+)
 from scripts.run_calibration import (  # noqa: E402
     _calibration_config,
     _commitment_pass,
@@ -127,19 +130,26 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
 # Classification helpers
 # ---------------------------------------------------------------------------
 
-def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
-    """Return ``COAL_LIGNITE`` or ``COAL_PRB`` for a coal plant.
+_F923_COAL_CODE_TO_CLASS: dict[str, str] = {
+    "LIG": "COAL_LIGNITE", "SUB": "COAL_SUB", "WC": "COAL_WC",
+    "BIT": "COAL_BIT", "RC": "COAL_BIT", "ANT": "COAL_BIT",
+}
 
-    Uses the authoritative model mapping (:data:`COAL_PLANT_SUPPLY`) so the
-    model and the EIA-923 benchmark split coal the same way. For a plant not
-    in the map, fall back to the EIA-923 fuel code (``LIG`` = lignite).
+
+def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
+    """Return the coal supply class (``COAL_BIT`` / ``COAL_SUB`` / ``COAL_WC``
+    / ``COAL_LIGNITE`` / ``COAL_PRB``) for a coal plant.
+
+    Uses the authoritative model mapping (:func:`coal_supply_class`, which
+    merges the curated ERCOT lignite/PRB map with the EIA-923-derived per-ISO
+    ranks) so the model and the EIA-923 benchmark split coal the same way. For
+    a plant not in either map, fall back to the EIA-923 receipt fuel code
+    (``LIG``/``SUB``/``WC``/``BIT``); unknown -> generic ``COAL``.
     """
-    supply = COAL_PLANT_SUPPLY.get(int(plant_code))
-    if supply == "lignite":
-        return "COAL_LIGNITE"
-    if supply == "prb":
-        return "COAL_PRB"
-    return "COAL_LIGNITE" if str(fuel_code).upper() == "LIG" else "COAL_PRB"
+    key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
+    if key:
+        return key
+    return _F923_COAL_CODE_TO_CLASS.get(str(fuel_code).upper(), "COAL")
 
 
 def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
@@ -179,19 +189,20 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
 
 
 def _classify_f923(
-    fuel: str, pm: str, chp: bool, plant_id: int, is_ercot: bool = True
+    fuel: str, pm: str, chp: bool, plant_id: int
 ) -> str:
     """Bucket one EIA-923 Page-1 row into a model class.
 
     Mirrors :func:`market_sim.data.fleet` classification. Coal is split into
-    its ERCOT supply class (lignite vs PRB); other ISOs keep a single COAL
-    class (matching the dispatch frame). Gas is split by prime mover and CHP
-    flag; wind, solar and nuclear are their own classes; everything else OTHER.
+    its supply class (ERCOT lignite/PRB; EIA-923-derived bituminous /
+    sub-bituminous / waste elsewhere), matching the dispatch frame. Gas is
+    split by prime mover and CHP flag; wind, solar and nuclear are their own
+    classes; everything else OTHER.
     """
     fuel = str(fuel).strip().upper()
     pm = str(pm).strip().upper()
     if fuel in _COAL_FUELS:
-        return _coal_supply_class(plant_id, fuel) if is_ercot else "COAL"
+        return _coal_supply_class(plant_id, fuel)
     if fuel == "NG":
         if pm in {"CA", "CS", "CT", "CC"}:
             return "CC_CHP" if chp else "CC_REGULAR"
@@ -316,13 +327,12 @@ def _dispatch_frame(
         else:
             k = _model_class_for_unit(unit_ids[g], fuels[g], bins[g])
         if k == "COAL":
-            if is_ercot:
-                # ERCOT splits coal into its mine-mouth lignite vs PRB-by-rail
-                # supply classes; other ISOs keep a single COAL class.
-                k = _coal_supply_class(int(plant_codes[g]))
-                supply.append("lignite" if k == "COAL_LIGNITE" else "prb")
-            else:
-                supply.append("")
+            # Split coal into its supply class — ERCOT mine-mouth lignite /
+            # PRB-by-rail, and the EIA-923-derived bituminous / sub-bituminous /
+            # waste ranks for other ISOs (a single COAL only for unclassified
+            # plants). The raw supply string rides along in ``supply``.
+            k = _coal_supply_class(int(plant_codes[g]))
+            supply.append(coal_supply_class(int(plant_codes[g])))
         else:
             supply.append("")
         klass.append(k)
@@ -530,7 +540,7 @@ def _eia923_frame(
     if iso_plants:
         df = df[df["plant_id"].isin(iso_plants)].copy()
     df["klass"] = [
-        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid, is_ercot)
+        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
         for f, pm, c, pid in zip(
             df["fuel_type"], df["prime_mover"], df["chp"], df["plant_id"]
         )
@@ -581,7 +591,7 @@ def _backfill_eia923_with_campd(
         if net.sum() < _CAMPD_BACKFILL_MIN_MWH:
             continue
         if group == "COAL":
-            klass = _coal_supply_class(int(pid)) if is_ercot else "COAL"
+            klass = _coal_supply_class(int(pid))
         else:
             klass = group
         cur = e923[(e923["plant_id"] == int(pid)) & (e923["klass"] == klass)]
