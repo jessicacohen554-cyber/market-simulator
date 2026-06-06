@@ -478,17 +478,25 @@ def generators_to_fleet_arrays(
         # coal/CC only, so no bin intersection). The per-bin gen.plant_group
         # filter below still restricts zeroing to coal/CC tranches.
         is_ercot = _iso == "ERCOT" or _iso is None
-        masks = outage_masks_for_year(
-            config.weather_year,
-            hours,
-            outages_path=default_outages_path(_iso),
-            bins_path=(
-                getattr(
-                    config, "campd_bins_path",
-                    "inputs/custom-bin-assignments.csv",
-                )
-                if is_ercot else None
-            ),
+        # The facility-summed overlay is the primary outage layer only where the
+        # unit-level derate is supplemental (ERCOT). ISOs whose unit-level file
+        # is the complete CAMPD-derived source disable it (config flag) so the
+        # two layers don't double-count.
+        masks = (
+            outage_masks_for_year(
+                config.weather_year,
+                hours,
+                outages_path=default_outages_path(_iso),
+                bins_path=(
+                    getattr(
+                        config, "campd_bins_path",
+                        "inputs/custom-bin-assignments.csv",
+                    )
+                    if is_ercot else None
+                ),
+            )
+            if getattr(config, "historic_outage_overlay", True)
+            else {}
         )
         if masks:
             applied = 0
