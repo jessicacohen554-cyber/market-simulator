@@ -1,8 +1,17 @@
-# CAMPD-Based Binning + 4-Tranche Dispatch
+# Per-Plant CAMPD Dispatch (offer-curve based)
 
-This document describes how the ERCOT thermal fleet is binned into
-operational dispatch units, replacing the earlier equal-width heat-rate
-binning of `aggregate_fleet()`.
+This document describes how the ERCOT thermal fleet is turned into LP
+dispatch units, replacing the earlier equal-width heat-rate binning of
+`aggregate_fleet()`.
+
+> **One plant = one LP generator.** Despite the file name
+> (`custom-bin-assignments.csv`) and the `Bin_Label` column, the model
+> does **not** aggregate plants into shared "bins" for dispatch, and it
+> never uses a bin-weighted heat rate. Every plant dispatches on its own
+> measured `Plant_Avg_HR_MMBtu_MWh`. "Binning" is a legacy label retained
+> only as a human-readable grouping. If you are reasoning about why a
+> single plant over/under-runs, reason about *that plant's* heat rate,
+> committed floor, and offer curve — not a bin.
 
 ## Overview
 
@@ -19,20 +28,25 @@ A single plant whose coal and gas-steam units coexist (e.g. W A Parish,
 plant code 3470) appears as two rows — one per `Plant_Group` — and
 therefore as two LP bins with the correct fuel type each.
 
-Each bin carries a **4-tranche capacity structure** that maps directly to
-LP dispatch behavior:
+Each plant's grid capacity is split into a small set of bid **tranches**
+that together form a rising offer curve. **No tranche carries a `pmin`
+floor** — a unit's minimum-load behaviour comes from the Committed
+tranche bidding cheaply, not from a hard `pmin`.
 
-| Tranche             | Meaning                                              | LP treatment                                                    |
-|---------------------|------------------------------------------------------|-----------------------------------------------------------------|
-| **Must Run (MR%)**  | Always dispatched (CHP steam). 0% for non-CHP.       | Removed from LP capacity; added back in post-processing.        |
-| **Committed (MC%)** | Minimum stable load once started.                    | Sets `pmin` on the base generator.                              |
-| **Economic (ECON%)**| Normal dispatch when price clears marginal cost.     | Standard LP dispatch range between `pmin` and the base ceiling. |
-| **Peaking (PEAK%)** | Duct-firing / steep incremental cost.                | A separate `_peak` generator with a heat-rate penalty.          |
+| Tranche             | Meaning                                              | LP treatment                                                                 |
+|---------------------|------------------------------------------------------|------------------------------------------------------------------------------|
+| **Must Run (MR%)**  | CHP host steam. 0% for non-CHP.                      | Removed from LP capacity; generation + CO₂ added back in post-processing.     |
+| **Committed (MC%)** | Minimum stable load once started.                    | Cheap block (`base_hr × offer["committed"]`, e.g. 0.92×); carries the start cost + min-run window and is the only screened tranche. |
+| **Economic**        | Normal incremental dispatch as price rises.          | Rendered as an **N-slice rising heat-rate ramp** (`_econ_curve_steps`), not one flat block — see [Economic ramp](#economic-ramp-the-default-dispatch-shape). |
+| **Peaking (PEAK%)** | Duct-firing / steep incremental cost.                | For CC/coal it is **folded into the top of the economic ramp**; for CT/ST it stays a separate flat scarcity tranche. |
 
-Tranche percentages sum to 100% per bin. For calibration, a plant's
-Economic tranche can be split into Econ-Low / Econ-High to form a
-five-slice rising offer curve via the optional per-plant tranche-config
-sheet — see [Per-plant tranche-config override sheet](#per-plant-tranche-config-override-sheet-5-slice-rising-offer-curve).
+The `Pct_*` shares sum to 100% per plant. The **committed share** is not a
+coarse class assumption: for CC it is derived per-plant from each unit's
+own CAMPD record (the P5 of its CF over its online hours — minimum stable
+load) and applied when `config.cc_committed_per_plant` is set (the ERCOT
+default), via `fleet.CC_REGULAR_COMMITTED_PCT_BY_PLANT`. The CSV
+`Pct_Committed` column is only the fallback for plants without CAMPD
+coverage.
 
 ## Plant groups
 
@@ -88,8 +102,8 @@ A blank `HR_Mult_<tranche>` cell (for a tranche that has zero capacity
 on that plant) inherits a per-group default so the arithmetic is
 well-defined even if a sensitivity run later activates that tranche.
 
-`bins_to_fleet()` converts each plant into up to four LP tranches
-keyed to the CSV percentages and per-tranche heat rates:
+`bins_to_fleet()` converts each plant into LP tranches. The capacity
+split is:
 
 ```
 mustrun_cap   = nameplate * MR% / 100            # coal only — sunk fuel
@@ -103,7 +117,23 @@ econ_cap      = grid_cap - committed_cap - peak_cap
 
 Every tranche carries `pmin_mw = 0`; coal's baseload behavior emerges
 from the mustrun tranche bidding at VOM only (its fuel is sunk under
-take-or-pay).
+take-or-pay), and a CC's minimum-load behaviour from its cheap Committed
+block — not a hard `pmin`.
+
+**Band heat rates come from the offer curve, not the CSV `HR_Mult_*`
+columns, whenever a curve is configured (the ERCOT default).** With
+`offer_curve_by_group[group]` set:
+
+```
+committed_hr = base_hr * offer["committed"]                 # e.g. 0.92×
+econ ramp    = base_hr * mult(t),  mult: econ_low → peak    # N-slice ramp
+peak (CC)    = base_hr * duct_burner_mult(turbine_class)    # 2.0–2.5×
+```
+
+Only when **no** offer curve covers the group do the CSV `HR_Mult_<tranche>`
+columns (`hr_mc = Plant_Avg_HR × HR_Mult_Committed`, etc.) set the band
+heat rates. Under the ERCOT calibration they are dormant — do not read the
+CSV `HR_Mult_*` values as the dispatched band heat rates.
 
 Emission rates are derived directly from the heat rate:
 `emission_rate = heat_rate * FUEL_CO2_FACTOR_PER_MMBTU[fuel]`.
@@ -112,11 +142,54 @@ Plants whose `Plant_Avg_HR_MMBtu_MWh` is blank in the CSV (a handful of
 tiny unmetered CTs in CT_unassigned) fall back to a per-group default
 heat rate before the tranche multipliers are applied.
 
+## Economic ramp (the default dispatch shape)
+
+This is how a CC/coal plant actually bids under the ERCOT calibration —
+**not** an optional add-on. Above its cheap Committed block, the plant's
+economic capacity (`econ_cap + peak_cap` for CC/coal, since the peak band
+is folded in) is sliced by `_econ_curve_steps` into
+`config.offer_curve_smoothing_n` equal-capacity steps whose heat-rate
+multiplier rises:
+
+```
+mult(t) = lo + (pk − lo) * t**exp        t = (k + 0.5) / n,  k = 0 … n−1
+```
+
+with the active ERCOT values:
+
+- `n   = config.offer_curve_smoothing_n`   (default **6**)
+- `exp = config.offer_curve_smoothing_exp` (default **1.0** → a straight,
+  linear ramp; `exp > 1` would be convex / cheap-bottomed)
+- `lo  = offer_curve_by_group[group]["econ_low"]`  (CC_REGULAR ≈ **1.06**)
+- `pk  = duct_burner_mult(turbine_class)` for CC (F-class **2.25**,
+  G/H-class **2.50**, older **2.00**); `offer_curve_by_group[...]["peak"]`
+  for non-folded groups.
+
+So each CC plant is a Committed block at `base_hr × 0.92` followed by six
+rising slices from `base_hr × ~1.06` up to `base_hr × 2.25–2.50`, scaled
+entirely by **its own** `base_hr`. The plant fills slice by slice as the
+hourly price clears each step, instead of snapping between two flat blocks.
+
+`_CURVE_FOLD_PEAK` (`CC_REGULAR`, `CC_CHP`, `COAL`) fold the duct-firing
+band into the ramp top; `_CURVE_ECON_ONLY` (`CT_PEAKER`, `ST_GAS`) ramp
+econ-low → econ-high and keep the peak band as a separate flat scarcity
+tranche.
+
+**Why a plant over/under-runs is set here.** The over/under of a single CC
+versus CAMPD is driven by (1) its `base_hr` anchor (it scales every slice)
+and (2) its per-plant committed share — both plant-specific — measured
+against ERCOT's real, partly non-economic commitment. Because the ramp
+anchors on annual-average `base_hr` and starts at `econ_low ≈ 1.06`, a
+flexible cycler whose true full-load incremental heat rate is better than
+its annual average (e.g. Jack County) has its economic slices priced too
+high and under-runs; the lever is `econ_low` / the ramp slope / the
+`base_hr` definition, not the bin structure.
+
 ## Per-plant tranche-config override sheet (5-slice rising offer curve)
 
-The four-tranche structure above sets each plant's split and band heat
-rates from per-*group* defaults (the `offer_curve_by_group` config and the
-`HR_Mult_<tranche>` columns). For calibration we often need to shape an
+The default above sets each plant's split and band heat rates from
+per-*group* values (`offer_curve_by_group`) and the per-plant
+committed/peaking dicts. For calibration we sometimes need to shape an
 **individual** plant's offer curve without disturbing its class — so a
 plant can be steered to match its own observed CF behaviour while the class
 total stays on target. That is the job of the optional per-plant
@@ -142,11 +215,14 @@ remaining sheet columns (name, group, config, turbine class, zone) are
 reference-only and ignored by the loader.
 
 **Smooth N-slice rendering.** The five `Pct_*`/`HR_Mult_*` rows are the
-*configuration*; in the LP the economic region is rendered as a smooth
-`N=12`-step rising marginal-cost curve `mult(t) = lo + (pk − lo) × t^p`
-(exponent `p = 3`), so the unit fills gradually as the hourly price crosses
-its rising MC instead of parking at the top of a flat block. The curve's
-reach differs by group:
+*configuration*; in the LP the economic region is rendered by the same
+`_econ_curve_steps` ramp described under
+[Economic ramp](#economic-ramp-the-default-dispatch-shape) —
+`config.offer_curve_smoothing_n` steps (default 6) of
+`mult(t) = lo + (pk − lo) × t**exp` with `exp = config.offer_curve_smoothing_exp`
+(default 1.0, linear) — so the unit fills gradually as the hourly price
+crosses its rising MC instead of parking at the top of a flat block. The
+curve's reach differs by group:
 - **CC_REGULAR / CC_CHP / COAL** — the peaking band is *folded into* the
   rising curve (peak is the top of the smooth ramp, `lo → HR_Mult_Peaking`).
 - **CT_PEAKER / ST_GAS** — the curve spans only econ-low → econ-high; the
@@ -208,7 +284,11 @@ Commitment parameters (`min_run_hours`, `min_down_hours`,
   screen; only the base generator is screened.
 - The legacy (`use_campd_bins=False`) fleet keeps the old behavior: its
   take-or-pay coal is never screened and is pinned to the P1 dispatch.
-- Tranche profiles by group (representative values):
+- Tranche profiles by group — **legacy/fallback shares only.** These are
+  the coarse CSV `Pct_*` defaults; under the ERCOT calibration the CC
+  committed and peaking shares are replaced per-plant from CAMPD
+  (`cc_committed_per_plant` / `cc_peaking_per_plant`), so do not read this
+  table as the dispatched split for a given CC plant:
 
   | Group       | MR% | MC%   | ECON% | PEAK% | Min run | Min down |
   |-------------|-----|-------|-------|-------|---------|----------|
