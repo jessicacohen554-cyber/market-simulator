@@ -52,6 +52,9 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.plant_taxonomy import (  # noqa: E402
+    COAL_CODE_TO_SUPPLY, classes_for_fuel930, coal_code_to_class,
+)
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
     load_monthly_generation,
@@ -92,19 +95,17 @@ _MONTH_NAMES: tuple[str, ...] = (
 )
 
 # Fuel codes that EIA-923 reports for coal-class units.
-_COAL_FUELS: frozenset[str] = frozenset(
-    {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
-)
-# Gas Plant_Group classes, in print order.
-_GAS_CLASSES: tuple[str, ...] = (
-    "CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP",
-)
-# Coal classes split by fuel supply (mine-mouth lignite vs PRB by rail).
-_COAL_CLASSES: tuple[str, ...] = ("COAL_LIGNITE", "COAL_PRB")
+# All class groupings derive from the canonical taxonomy
+# (market_sim.config.plant_taxonomy) — no hardcoded class lists.
+_COAL_FUELS: frozenset[str] = frozenset(COAL_CODE_TO_SUPPLY)  # EIA-923 coal codes
+_GAS_CLASSES: tuple[str, ...] = classes_for_fuel930("gas")
+_COAL_CLASSES: tuple[str, ...] = classes_for_fuel930("coal")
 # CHP classes — reported in their own dedicated table and excluded from every
 # other comparison.
-_CHP_CLASSES: tuple[str, ...] = ("CC_CHP", "CT_CHP", "ST_CHP")
-_NONCHP_GAS: tuple[str, ...] = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+_CHP_CLASSES: tuple[str, ...] = tuple(
+    c for c in _GAS_CLASSES if c.endswith("_CHP"))
+_NONCHP_GAS: tuple[str, ...] = tuple(
+    c for c in _GAS_CLASSES if not c.endswith("_CHP"))
 # All thermal classes the [3b] / [4] tables iterate over.
 _THERMAL_CLASSES: tuple[str, ...] = (*_GAS_CLASSES, *_COAL_CLASSES)
 
@@ -130,12 +131,6 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
 # Classification helpers
 # ---------------------------------------------------------------------------
 
-_F923_COAL_CODE_TO_CLASS: dict[str, str] = {
-    "LIG": "COAL_LIGNITE", "SUB": "COAL_SUB", "WC": "COAL_WC",
-    "BIT": "COAL_BIT", "RC": "COAL_BIT", "ANT": "COAL_BIT",
-}
-
-
 def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
     """Return the coal supply class (``COAL_BIT`` / ``COAL_SUB`` / ``COAL_WC``
     / ``COAL_LIGNITE`` / ``COAL_PRB``) for a coal plant.
@@ -147,9 +142,7 @@ def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
     (``LIG``/``SUB``/``WC``/``BIT``); unknown -> generic ``COAL``.
     """
     key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
-    if key:
-        return key
-    return _F923_COAL_CODE_TO_CLASS.get(str(fuel_code).upper(), "COAL")
+    return key or coal_code_to_class(fuel_code) or "COAL"
 
 
 def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:

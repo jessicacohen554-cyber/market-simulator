@@ -30,6 +30,7 @@ from market_sim.config.constants import (
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
@@ -2512,16 +2513,10 @@ def cc_duct_burner_peak_mult(turbine_class: object) -> float:
     return CC_DUCT_BURNER_PEAK_MULT["f"]
 
 
-# Coal supply class -> offer_curve_by_group key. ERCOT mine-mouth/rail ranks
-# (lignite/prb) and the EIA-923-derived ranks (bituminous/sub-bituminous/waste)
-# each route to their own offer curve; unclassified coal uses the generic COAL.
-_COAL_SUPPLY_TO_CURVE: dict[str, str] = {
-    "lignite": "COAL_LIGNITE",
-    "prb": "COAL_PRB",
-    "bituminous": "COAL_BIT",
-    "subbituminous": "COAL_SUB",
-    "waste": "COAL_WC",
-}
+# Coal supply class -> offer_curve_by_group key (COAL_LIGNITE / COAL_PRB /
+# COAL_BIT / COAL_SUB / COAL_WC), from the canonical taxonomy; unclassified coal
+# uses the generic COAL curve. Kept under the local name for back-compat.
+_COAL_SUPPLY_TO_CURVE = COAL_SUPPLY_TO_CLASS
 
 
 def _offer_curve_for_group(

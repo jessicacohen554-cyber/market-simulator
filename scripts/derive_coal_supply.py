@@ -35,6 +35,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.plant_taxonomy import COAL_CODE_TO_SUPPLY  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 from scripts.process_f923_fuel_costs import (  # noqa: E402
     _find_zips,
@@ -45,21 +46,10 @@ from scripts.process_f923_fuel_costs import (  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_coal_supply")
 
-# EIA-923 ``ENERGY_SOURCE`` coal rank codes -> model supply class. The model
-# distinguishes the ranks that dispatch differently: sub-bituminous (PRB, cheap
-# rail), bituminous (Appalachian/Illinois Basin), lignite (mine-mouth) and
-# waste coal (culm/gob, near-zero or subsidised fuel, baseloaded). Anthracite
-# and refined/synthetic coal are folded into the closest dispatch analogue.
-_COAL_SOURCE_TO_SUPPLY: dict[str, str] = {
-    "BIT": "bituminous",
-    "SUB": "subbituminous",
-    "LIG": "lignite",
-    "WC": "waste",          # waste coal: culm, gob, coal-mine refuse
-    "RC": "bituminous",     # refined coal (treated bituminous)
-    "ANT": "bituminous",    # anthracite -> bituminous dispatch analogue
-    "SC": "bituminous",     # coal-derived synfuel solids
-    "SGC": "bituminous",    # coal-derived synthesis gas (rare in receipts)
-}
+# EIA-923 ENERGY_SOURCE coal rank code -> model supply class, from the canonical
+# taxonomy (the single source of truth, shared with the dispatch/offer-curve
+# classification).
+_COAL_SOURCE_TO_SUPPLY = COAL_CODE_TO_SUPPLY
 
 
 def _dominant_class(
