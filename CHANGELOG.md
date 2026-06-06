@@ -38,6 +38,35 @@ model.
 
 No dispatch behaviour changes — this is documentation and dead-data only.
 
+## 2026-06-06 (Unified offer-curve ramp — econ_low → econ_high, separate peak)
+
+Makes every thermal group's offer curve behave identically: the n-slice
+economic ramp spans **`econ_low → econ_high`** (its slope set by those two
+endpoints), and the duct-firing / scarcity **peak is always a separate flat
+tranche that jumps up above the ramp** — never folded into the ramp top.
+
+- **Why.** Previously `_CURVE_FOLD_PEAK = (CC_REGULAR, CC_CHP, COAL)` ran the
+  ramp from `econ_low` straight up to the duct-burner peak and emitted **no**
+  separate peak tranche, so `econ_high` was **dead** for CC and coal — tuning
+  it did nothing — and the LP disagreed with the dashboard (which already drew
+  `econ_low → econ_high` + a separate peak). Only `CT_PEAKER` / `ST_GAS` did the
+  intended thing. Now all groups share the `CT/ST` structure.
+- **`data/fleet.bins_to_fleet`.** Removed the `_CURVE_FOLD_PEAK` /
+  `_CURVE_ECON_ONLY` split (and `peak_in_curve`): the ramp always spans
+  `econ_cap` from `econ_low` to `econ_high`, and the peak band is always
+  emitted. `econ_high` is now the live ramp endpoint for CC and coal.
+- **Configurable bands.** New optional offer-curve keys: **`pct_committed`**
+  (committed capacity %, overrides the CSV; per-plant CC grounding still wins)
+  and, for CC, an explicit **`peak`** HR multiplier (overrides the per-turbine-
+  class duct-burner default, which is retained when `peak` is omitted). The peak
+  capacity % (`pct_peaking`) was already configurable.
+- **Calibration impact.** CC and coal dispatch shifts — the ramp top drops from
+  ~2.0–2.5× (duct burner) to `econ_high`, with the peak re-added as a separate
+  slab above it. A recalibration run is expected to re-settle the band values.
+- Tests: `TestUnifiedOfferCurve` (ramp tops at `econ_high`, separate peak band,
+  `pct_committed` and CC `peak` configurable). Docstrings in
+  `config/scenarios` and `scripts/run_calibration` updated.
+
 ## 2026-06-05 (ERCOT Northeast zone — NE_LOB trapped-generation lobe)
 
 Splits a seventh ERCOT zone, **Northeast**, out of North to model the NE_LOB
