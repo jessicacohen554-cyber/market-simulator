@@ -65,10 +65,26 @@ from market_sim.data.fleet import (  # noqa: E402
 GROUP_LABEL = {
     "COAL": "Coal",
     "COAL_LIGNITE": "Coal Lignite", "COAL_PRB": "Coal PRB",
+    "COAL_BIT": "Coal Bituminous", "COAL_SUB": "Coal Sub-bit",
+    "COAL_WC": "Coal Waste",
     "CC_REGULAR": "CC Regular", "CC_CHP": "CC CHP",
     "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP",
     "ST_GAS": "Steam Gas", "ST_CHP": "Steam CHP",
 }
+# Non-fossil model/benchmark classes never shown in the fossil class tables.
+_NONFOSSIL_KLASS = frozenset({
+    "nuclear", "wind", "offshore_wind", "solar", "hydro", "oil", "biomass",
+    "storage", "geothermal", "OTHER", "other",
+})
+
+
+def _group_label(klass: str) -> str:
+    """Human label for a fossil class — known canonical name, else humanized.
+
+    Auto-wires new classes for any ISO (e.g. EIA-923-derived coal ranks): an
+    unmapped ``FOO_BAR`` becomes ``Foo Bar`` rather than being dropped.
+    """
+    return GROUP_LABEL.get(klass) or klass.replace("_", " ").title()
 FOSSIL_GROUPS = list(GROUP_LABEL)
 # Generation-mix fossil set == the dashboard classes (ST_CHP is now included
 # above), so the system-wide fossil total matches the calibration report's [3b]
@@ -300,14 +316,19 @@ def build_payload(runs: list[tuple[str, Path]],
                 # the zonal Δ-vs-923 are scaled to (matched plants understate
                 # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
                 e923_cls = e923.groupby("klass")["annual_mwh"].sum()
+                # Every actual class is kept (not just the hardcoded MIX_GROUPS)
+                # so the model's real plant classification — e.g. EIA-923-derived
+                # coal ranks COAL_BIT / COAL_SUB / COAL_WC — carries its actual
+                # into the table for every ISO. groups_set picks them up below.
+                groups_set.update(str(g) for g in e923_cls.index)
                 bench[int(year)] = {
                     "plants": bplants,
                     "e930": {f: round(float(e.get(f, np.zeros(1)).sum())
                                       / 1e6, 3)
                              for f in ("gas", "coal", "nuclear", "wind",
                                        "solar")},
-                    "classFull": {g: round(float(e923_cls.get(g, 0.0)) / 1e6, 4)
-                                  for g in MIX_GROUPS},
+                    "classFull": {str(g): round(float(v) / 1e6, 4)
+                                  for g, v in e923_cls.items()},
                 }
 
             # ---- model payload (per run) ----
@@ -406,7 +427,7 @@ def build_payload(runs: list[tuple[str, Path]],
                 g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6
                          + (float(btm_y.get(g, 0.0))
                             if g in ("CC_CHP", "CT_CHP", "ST_CHP") else 0.0), 4)
-                for g in MIX_GROUPS
+                for g in (set(MIX_GROUPS) | set(mh))
             }
             run_years[int(year)] = {
                 "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
@@ -417,9 +438,20 @@ def build_payload(runs: list[tuple[str, Path]],
     # canonical order — so the class selector and its default land on a
     # populated class (PJM has no COAL_LIGNITE, so it must not default there and
     # render an empty view). ERCOT keeps all classes (all present).
-    groups = [g for g in FOSSIL_GROUPS if g in groups_set] or FOSSIL_GROUPS
+    # Fossil classes actually present in this ISO's model or benchmark, in
+    # canonical order first then any extra (auto-wired) classes sorted — so a
+    # new classification like the EIA-923 coal ranks shows up for every ISO
+    # without being hardcoded here. Non-fossil classes are excluded.
+    fossil_present = {
+        g for g in groups_set if g not in _NONFOSSIL_KLASS
+    }
+    groups = [g for g in FOSSIL_GROUPS if g in fossil_present] + sorted(
+        fossil_present - set(FOSSIL_GROUPS)
+    )
+    groups = groups or FOSSIL_GROUPS
     return {
-        "groups": groups, "groupLabel": GROUP_LABEL,
+        "groups": groups,
+        "groupLabel": {g: _group_label(g) for g in groups},
         "zones": sorted(zones_set), "years": sorted(years_set),
         "runLabels": labels, "bench": bench, "model": model_runs,
     }
