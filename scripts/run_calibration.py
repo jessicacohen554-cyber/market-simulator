@@ -272,7 +272,7 @@ def _calibration_config(
             # peakers stop parking at ~20% CF for hundreds of hours. CT gets the
             # bigger hurdle (+0.15) and a slightly cheaper econ-low so it runs
             # economically once started; ST gets a smaller hurdle (+0.075).
-            "CT_PEAKER": {"committed": 1.25, "econ_low": 1.27,
+            "CT_PEAKER": {"committed": 1.40, "econ_low": 1.27,
                           "econ_high": 1.98, "peak": 13.0,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
             "ST_GAS": {"committed": 0.735, "econ_low": 0.90,
