@@ -324,19 +324,21 @@ def _calibration_config(
             # flat cheap band; peak stays the duct-burner class multiplier;
             # pct_peaking 8% = observed duct-fire headroom. committed % per-plant
             # grounded (cc_committed_per_plant).
-            # PJM econ bands raised (econ_low 1.06->1.26, econ_high 1.27->1.57)
-            # to back CC_REGULAR down off a +25 TWh overrun under uniform gas:
-            # the gap-filled (non-EIA-923-reporting) PJM CCs pay the cheap
-            # Henry-Hub+basis price, so the offer curve carries the delivered-gas
-            # premium the uniform price misses. ERCOT keeps the fitted values.
+            # PJM CC econ raised moderately (econ_low 1.06->1.20, econ_high
+            # 1.27->1.49) to trim a residual CC_REGULAR overrun. The bulk of
+            # the gas-level correction is done by the EIA-923-derived gas basis
+            # (+0.67, constants.GAS_BASIS_DIFFERENTIAL) + per-plant gas pricing,
+            # not the offer curve; this only rebalances the CC-vs-CT split that
+            # economic dispatch (no commitment) leaves CC-heavy. ERCOT keeps the
+            # fitted values.
             "CC_REGULAR": {"committed": 0.92,
-                           "econ_low": 1.26 if iso == "PJM" else 1.06,
-                           "econ_high": 1.57 if iso == "PJM" else 1.27,
+                           "econ_low": 1.20 if iso == "PJM" else 1.06,
+                           "econ_high": 1.49 if iso == "PJM" else 1.27,
                            "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
             "CC_CHP": {"committed": 0.92,
                        "econ_low": 0.95 if iso == "PJM" else 0.96,
-                       "econ_high": 1.13 if iso == "PJM" else 1.12,
+                       "econ_high": 1.14 if iso == "PJM" else 1.12,
                        "econ_low_share": 0.50,
                        "pct_peaking": 8.0},
             # CT_CHP cogens: previously driven by the legacy ct_*_hr_override
@@ -347,7 +349,7 @@ def _calibration_config(
             # pull them apart to create a slope. Peaking % stays the CSV value
             # (no pct_peaking key). The ct_*_hr_override fields above are now
             # inert for CT_CHP.
-            "CT_CHP": {"committed": 1.22 if iso == "PJM" else 1.10,
+            "CT_CHP": {"committed": 1.20 if iso == "PJM" else 1.10,
                        "econ_low": 1.20,
                        "econ_high": 1.20, "peak": 1.40,
                        "econ_low_share": 0.50},
@@ -360,7 +362,7 @@ def _calibration_config(
             # its own validated CT curve (committed 1.10, econ_low 1.32,
             # peak 13.0).
             "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else 1.55,
-                          "econ_low": 1.22 if iso == "PJM" else 1.27,
+                          "econ_low": 1.20 if iso == "PJM" else 1.27,
                           "econ_high": 1.98,
                           "peak": 13.0 if iso == "PJM" else 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
@@ -386,8 +388,8 @@ def _calibration_config(
             #    cheaper bands so it baseloads under bituminous.
             #  - COAL_WC: waste coal/culm (subsidised remediation fluidised-bed)
             #    — runs flat baseload, almost never peaks (low peak band).
-            "COAL_BIT": {"committed": 0.90, "econ_low": 0.91,
-                         "econ_high": 1.04, "peak": 1.45,
+            "COAL_BIT": {"committed": 0.90, "econ_low": 0.95,
+                         "econ_high": 1.10, "peak": 1.45,
                          "econ_low_share": 0.55},
             "COAL_SUB": {"committed": 0.88, "econ_low": 0.90,
                          "econ_high": 1.05, "peak": 1.40,
