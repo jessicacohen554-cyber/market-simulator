@@ -58,7 +58,12 @@ from market_sim.data.fleet import (  # noqa: E402
 )
 
 # Model classes shown in the report, in stack order, with display labels.
+# COAL is the single coal class for non-ERCOT ISOs (PJM coal is bituminous,
+# not split into ERCOT's lignite vs PRB-by-rail supply classes); ERCOT emits
+# COAL_LIGNITE / COAL_PRB and never plain COAL, so all three coexist here and
+# the line-414 filter keeps only the ones an ISO actually dispatches.
 GROUP_LABEL = {
+    "COAL": "Coal",
     "COAL_LIGNITE": "Coal Lignite", "COAL_PRB": "Coal PRB",
     "CC_REGULAR": "CC Regular", "CC_CHP": "CC CHP",
     "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP", "ST_GAS": "Steam Gas",
@@ -69,7 +74,7 @@ FOSSIL_GROUPS = list(GROUP_LABEL)
 # table (which carries all 8 thermal classes, e.g. 298.2 TWh in 2024).
 MIX_GROUPS = FOSSIL_GROUPS + ["ST_CHP"]
 _GAS_GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
-_COAL_GROUPS = ("COAL_LIGNITE", "COAL_PRB")
+_COAL_GROUPS = ("COAL", "COAL_LIGNITE", "COAL_PRB")
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
 
