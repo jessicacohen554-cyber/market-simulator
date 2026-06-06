@@ -310,8 +310,9 @@ def _calibration_config(
         ct_econ_hr_override=1.2,        # BTM + steam-following floor; raised in
         ct_peak_hr_override=1.4,        # run9 (CT_CHP was running too much).
         # Unified thermal offer curve (operator-supplied band multipliers on
-        # AHR x fuel_price; VOM constant across bands). Economic block split
-        # into two steps (econ_low / econ_high) by econ_low_share. CC peaking
+        # AHR x fuel_price; VOM constant across bands). The economic block is a
+        # rising ramp from econ_low to econ_high (its slope set by those two
+        # endpoints); the duct-firing peak is a separate band above it. CC peak
         # uses the per-plant duct-burner multiplier (turbine class), so no
         # "peak" key. Gas Steam committed kept at the current 0.65x reliability
         # value (per operator); CC and Coal keep their CSV peaking %, while
