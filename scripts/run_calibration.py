@@ -55,11 +55,13 @@ from market_sim.data.fleet import (  # noqa: E402
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
+    fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
     split_coal_tranches,
     split_gas_tranches,
+    thermal_tranche_overrides,
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
@@ -516,16 +518,47 @@ def run_year(
         # into dispatch — required for per-plant EIA-923 fuel costs and the
         # CAMPD outage overlay to bind. Otherwise use the legacy efficiency-
         # bin aggregation (faster, but identity-free).
-        n_bins = 0 if getattr(config, "plant_level_fleet", False) \
-            else config.heat_rate_bin_count
-        fleet_base = aggregate_fleet(
-            load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
-        )
-        fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
-        # Optional stepped gas offer curve (committed/economic/peaking heat-rate
-        # bands) for the per-plant fleet; off by default.
-        if getattr(config, "gas_offer_curve", False):
-            fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
+        #
+        # When the ISO has a CAMPD-derived thermal-tranche artifact
+        # (thermal_tranches_<ISO>.csv), give its per-plant thermal fleet the
+        # SAME smoothed rising offer curve ERCOT gets: build a synthetic
+        # per-plant bins frame (committed / coal must-run from the artifact)
+        # and route it through bins_to_fleet, with every non-binned generator
+        # (nuclear, oil, biomass, hydro, ...) kept as its own raw LP unit. The
+        # binned-keys exclusion guarantees no double-count and no dropped unit.
+        if (getattr(config, "plant_level_fleet", False)
+                and thermal_tranche_overrides(iso)):
+            all_gens = load_fleet_from_csv(iso, iso_config)
+            synth = fleet_to_bins(all_gens, iso, config)
+            if not synth.empty:
+                binned = set(zip(
+                    synth["Plant_Code"].astype(int), synth["Plant_Group"]
+                ))
+                thermal_fleet, _ = bins_to_fleet(synth, zone_names, config)
+                non_binned = [
+                    g for g in all_gens
+                    if (int(g.plant_code), g.plant_group) not in binned
+                ]
+                fleet = non_binned + thermal_fleet
+                prb_pt = prb_passthrough_series(config, year, config.hours)
+                fuel_fracs = [
+                    campd_tranche_fuel_frac(g, prb_pt) for g in fleet
+                ]
+            else:
+                fleet, fuel_fracs = split_coal_tranches(
+                    aggregate_fleet(all_gens, n_bins=0), config
+                )
+        else:
+            n_bins = 0 if getattr(config, "plant_level_fleet", False) \
+                else config.heat_rate_bin_count
+            fleet_base = aggregate_fleet(
+                load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
+            )
+            fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
+            # Optional stepped gas offer curve (committed/economic/peaking
+            # heat-rate bands) for the per-plant fleet; off by default.
+            if getattr(config, "gas_offer_curve", False):
+                fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
