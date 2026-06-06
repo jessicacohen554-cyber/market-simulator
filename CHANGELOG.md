@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026-06-06 (Docs/data cleanup — kill the "bin dispatch" confusion)
+
+Removes stale artifacts that misrepresented how the ERCOT CC fleet
+dispatches. The model has dispatched **one LP generator per plant** on each
+plant's **own** measured heat rate for some time, with the economic block
+rendered as a 6-slice rising offer-curve ramp (`offer_curve_smoothing_n=6`,
+linear) and the committed/min-load floor sized per-plant from CAMPD
+(`cc_committed_per_plant`). But several legacy columns and doc sections
+still described a multi-plant, bin-weighted-HR, flat-4-tranche, `pmin`-floor
+model — enough to mislead a fresh reader (and an LLM) into the wrong mental
+model.
+
+- **`inputs/custom-bin-assignments.csv`** — dropped 12 columns that the
+  loader never reads and that encoded the misleading picture:
+  `Bin_Zone_Weighted_Avg_HR` (implies a bin-weighted dispatch HR — never
+  used), `Dispatch_Mode`, `Must_Run`, the four absolute `HR_Must_Run/
+  Committed/Economic/Peaking` (the dispatched band HRs come from the offer
+  curve, not these), and `Plant_Age`/`POF_pct`/`WEFOR_pct`/`Derate_pct`/
+  `EAF_pct` (availability comes from the age model + CAMPD outage overlays,
+  not the CSV). `load_campd_bins` and all 117 bin/fleet/outage/fuel tests
+  pass unchanged.
+- **`docs/binning-methodology.md`** — retitled and rewritten to lead with
+  "one plant = one LP generator", correct the tranche table (no `pmin`
+  floors), add an **Economic ramp** section documenting the actual default
+  (`_econ_curve_steps`, `offer_curve_smoothing_n`/`_exp`, peak folded for
+  CC), fix the wrong `N=12`/`p=3` smoothing claim, and mark the flat
+  per-group tranche table as legacy fallback.
+- **`model-methodology-spec.md`** — corrected the §3.3 tranche bullets so
+  Economic is the default rising N-slice ramp and Committed is the
+  CAMPD-derived per-plant floor; flagged that no bin-weighted HR / `pmin`
+  is used.
+- **Docstrings** — `load_campd_bins` now states which CSV columns are
+  overridden downstream; `disaggregate_dispatch` now states it is an
+  identity no-op for the per-plant ERCOT fleet (a legacy multi-plant path),
+  so its pro-rata split is not read into per-plant results.
+
+No dispatch behaviour changes — this is documentation and dead-data only.
+
 ## 2026-06-05 (ERCOT Northeast zone — NE_LOB trapped-generation lobe)
 
 Splits a seventh ERCOT zone, **Northeast**, out of North to model the NE_LOB
