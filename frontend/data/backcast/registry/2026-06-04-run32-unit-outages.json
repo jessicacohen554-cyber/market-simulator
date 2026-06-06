@@ -1,0 +1,6 @@
+{
+  "id": "2026-06-04-run32-unit-outages",
+  "label": "run32 unit outages",
+  "bundle": "results/calibration/run32_unitoutage",
+  "iso": "ERCOT"
+}

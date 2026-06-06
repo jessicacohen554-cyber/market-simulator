@@ -152,6 +152,31 @@ def _henry_hub_actual(reference: dict, year: int) -> float:
     return _HENRY_HUB_FALLBACK[year]
 
 
+def _deep_merge_offer_curve(
+    base: dict[str, dict[str, float]],
+    overrides: dict[str, dict[str, float]],
+) -> dict[str, dict[str, float]]:
+    """Deep-merge ``overrides`` onto the default ``offer_curve_by_group``.
+
+    Each top-level key is a fleet class (CC_REGULAR, CT_PEAKER, ...); the
+    nested dict holds the band multipliers (committed, econ_low, econ_high,
+    peak, econ_low_share, pct_peaking). Only the bands named in ``overrides``
+    are replaced; every unspecified band keeps its calibrated default, so a
+    caller can tune one knob on one class without restating the whole curve.
+    Unknown classes/bands are passed through unchanged (the dispatch code
+    ignores keys it does not consume) so a typo fails loudly downstream
+    rather than being silently dropped here.
+    """
+    merged = {cls: dict(bands) for cls, bands in base.items()}
+    for cls, bands in overrides.items():
+        if not isinstance(bands, dict):
+            raise ValueError(
+                f"offer-curve override for {cls!r} must be an object of "
+                f"band->multiplier, got {type(bands).__name__}")
+        merged.setdefault(cls, {}).update(bands)
+    return merged
+
+
 def _calibration_config(
     year: int, iso: str, hours: int, gas_price: float,
     coal_passthrough: float | None = None,
@@ -165,6 +190,7 @@ def _calibration_config(
     coal_mustrun_per_plant: bool = False,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
+    offer_curve_overrides: dict[str, dict[str, float]] | None = None,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -305,6 +331,16 @@ def _calibration_config(
         config = config.with_overrides(
             coal_prb_contract_passthrough=coal_passthrough
         )
+    # Operator-supplied per-class/per-band heat-rate multiplier overrides
+    # (run_calibration_full --offer-curve-json) deep-merged onto the calibrated
+    # defaults above. Only the named bands change; the merged curve is recorded
+    # verbatim in the bundle's run_config.json (scenario_config.offer_curve_by_group).
+    if offer_curve_overrides:
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, offer_curve_overrides
+            )
+        )
     return config
 
 
@@ -358,6 +394,7 @@ def run_year(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
+    offer_curve_overrides: dict[str, dict[str, float]] | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -392,6 +429,7 @@ def run_year(
         coal_prb_passthrough, outage_source,
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
         coal_drop_pof, coal_prb_passthrough_tiered,
+        offer_curve_overrides=offer_curve_overrides,
     )
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
