@@ -357,12 +357,27 @@ def _calibration_config(
             "COAL_PRB": {"committed": 0.95, "econ_low": 0.77,
                          "econ_high": 1.19, "peak": 1.48,
                          "econ_low_share": 0.556},
-            # Generic bituminous coal (ISOs whose coal isn't ERCOT lignite/PRB,
-            # e.g. PURPA-era PJM units): all 10 ERCOT coal plants are supply-
-            # classified so this never fires for ERCOT. A flat baseload curve —
-            # cheap committed band (0.90) and econ near base HR — keeps coal in
-            # merit as baseload instead of the generic 1.15x default backing it
-            # out under cheap gas (which left PJM coal ~12 TWh light).
+            # Non-ERCOT coal by EIA-923 fuel rank (scripts/derive_coal_supply.py;
+            # routes via fleet._COAL_SUPPLY_TO_CURVE). PJM 2024: 25 bituminous,
+            # 8 waste, 2 sub-bituminous plants. Per-plant delivered fuel cost
+            # already comes from EIA-923, so these shape the dispatch curve:
+            #  - COAL_BIT: Appalachian/Illinois-Basin bituminous — the baseload
+            #    workhorse; keeps the validated generic-coal curve.
+            #  - COAL_SUB: Powder-River sub-bituminous (cheap, railed) — slightly
+            #    cheaper bands so it baseloads under bituminous.
+            #  - COAL_WC: waste coal/culm (subsidised remediation fluidised-bed)
+            #    — runs flat baseload, almost never peaks (low peak band).
+            "COAL_BIT": {"committed": 0.90, "econ_low": 0.95,
+                         "econ_high": 1.10, "peak": 1.45,
+                         "econ_low_share": 0.55},
+            "COAL_SUB": {"committed": 0.88, "econ_low": 0.90,
+                         "econ_high": 1.05, "peak": 1.40,
+                         "econ_low_share": 0.55},
+            "COAL_WC": {"committed": 0.85, "econ_low": 0.90,
+                        "econ_high": 1.02, "peak": 1.20,
+                        "econ_low_share": 0.55},
+            # Generic fallback for coal plants with no EIA-923 receipts / rank
+            # (and ISOs not yet derived). Flat baseload curve.
             "COAL": {"committed": 0.90, "econ_low": 0.95,
                      "econ_high": 1.10, "peak": 1.45,
                      "econ_low_share": 0.55},

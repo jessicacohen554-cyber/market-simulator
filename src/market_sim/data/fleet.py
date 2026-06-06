@@ -1833,6 +1833,40 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
     3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
+
+@lru_cache(maxsize=1)
+def _derived_coal_supply() -> dict[int, str]:
+    """Return ``{plant_code: supply_class}`` from derived per-ISO CSVs.
+
+    Loads every ``inputs/processed/coal_supply_<ISO>.csv`` written by
+    ``scripts/derive_coal_supply.py`` (EIA-923 fuel-receipt coal ranks:
+    ``bituminous`` / ``subbituminous`` / ``waste`` / ``lignite``). EIA plant
+    codes are national so the per-ISO files never collide. This generalises the
+    ERCOT-only :data:`COAL_PLANT_SUPPLY` to any ISO whose coal ranks have been
+    derived — see :func:`coal_supply_class`.
+    """
+    out: dict[int, str] = {}
+    for path in sorted(PROCESSED_DIR.glob("coal_supply_*.csv")):
+        df = pd.read_csv(path)
+        for code, cls in zip(df["plant_code"], df["supply_class"]):
+            out[int(code)] = str(cls)
+    return out
+
+
+def coal_supply_class(plant_code: int) -> str:
+    """Return a plant's coal supply class, or ``""`` if unclassified.
+
+    The hand-curated ERCOT :data:`COAL_PLANT_SUPPLY` takes precedence (it
+    encodes contract knowledge EIA-923 ranks miss, e.g. Limestone burning PRB
+    despite its lignite history); other ISOs fall back to the EIA-923-derived
+    map (:func:`_derived_coal_supply`).
+    """
+    base = COAL_PLANT_SUPPLY.get(int(plant_code))
+    if base:
+        return base
+    return _derived_coal_supply().get(int(plant_code), "")
+
+
 # ERCOT coal-unit commission year by EIA plant code — the in-service year
 # of the plant's coal units (not its older gas-era units, which differ at
 # mixed plants like W A Parish). Drives the age-based coal availability
@@ -2478,6 +2512,18 @@ def cc_duct_burner_peak_mult(turbine_class: object) -> float:
     return CC_DUCT_BURNER_PEAK_MULT["f"]
 
 
+# Coal supply class -> offer_curve_by_group key. ERCOT mine-mouth/rail ranks
+# (lignite/prb) and the EIA-923-derived ranks (bituminous/sub-bituminous/waste)
+# each route to their own offer curve; unclassified coal uses the generic COAL.
+_COAL_SUPPLY_TO_CURVE: dict[str, str] = {
+    "lignite": "COAL_LIGNITE",
+    "prb": "COAL_PRB",
+    "bituminous": "COAL_BIT",
+    "subbituminous": "COAL_SUB",
+    "waste": "COAL_WC",
+}
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
@@ -2487,14 +2533,14 @@ def _offer_curve_for_group(
     Returns ``None`` — the legacy override / CSV path — when no curve is
     configured for the group or for an ST_GAS peaker plant (those keep their
     CSV heat rates, matching the ``gas_st_*_hr_override`` scope). COAL plants
-    resolve to a supply-specific ``COAL_LIGNITE`` / ``COAL_PRB`` entry when
-    present, else the generic ``COAL`` entry.
+    resolve to a supply-specific entry by their fuel rank — ERCOT
+    ``COAL_LIGNITE`` / ``COAL_PRB`` and the EIA-923-derived ``COAL_BIT`` /
+    ``COAL_SUB`` / ``COAL_WC`` (bituminous / sub-bituminous / waste coal) —
+    falling back to the generic ``COAL`` entry.
     """
     curves = getattr(config, "offer_curve_by_group", None) or {}
     if group == "COAL":
-        supply = COAL_PLANT_SUPPLY.get(int(plant_code), "")
-        key = ("COAL_LIGNITE" if supply == "lignite"
-               else "COAL_PRB" if supply == "prb" else None)
+        key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
         return (curves.get(key) if key and curves.get(key)
                 else curves.get("COAL")) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
@@ -2782,7 +2828,7 @@ def bins_to_fleet(
 
         coal_supply = ""
         if fuel == "coal":
-            coal_supply = COAL_PLANT_SUPPLY.get(plant_code, "")
+            coal_supply = coal_supply_class(plant_code)
             commission_year = COAL_PLANT_COMMISSION_YEAR.get(
                 plant_code, _commission_year(plant_code)
             )
