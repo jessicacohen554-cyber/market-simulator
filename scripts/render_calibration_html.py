@@ -300,6 +300,11 @@ def build_payload(runs: list[tuple[str, Path]],
                         "name": pnames.get(code, str(code)),
                         "zone": zone_p.get(code, "?"),
                         "group": grp, "npl": round(cap),
+                        # No usable CAMPD hourly series (plant absent from CEMS
+                        # or all-NaN, e.g. some waste-coal units): flagged so the
+                        # charts show the model without a misleading flat-zero
+                        # 'actual' comparison.
+                        "nodata": bool(cn.sum() <= 0.0),
                         "campd": _b64(100.0 * cn / cap),
                         "c_ann": round(float(cn.sum()) / 1e6, 4),
                         "c_mon": _monthly_gwh(cn),
