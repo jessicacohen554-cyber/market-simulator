@@ -51,50 +51,27 @@ _spec = importlib.util.spec_from_file_location(
     "rcf", str(REPO / "scripts" / "run_calibration_full.py"))
 rcf = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rcf)
 
+from market_sim.config.plant_taxonomy import (  # noqa: E402
+    LABELS, class_label, classes_for_fuel930, fossil_classes, nonfossil_classes,
+)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     CHP_BTM_PCT_BY_SECTOR, CHP_SECTOR_CLASS_BY_PLANT, CHP_ST_BTM_PCT,
     load_campd_bins, plant_tranche_bands,
 )
 
-# Model classes shown in the report, in stack order, with display labels.
-# COAL is the single coal class for non-ERCOT ISOs (PJM coal is bituminous,
-# not split into ERCOT's lignite vs PRB-by-rail supply classes); ERCOT emits
-# COAL_LIGNITE / COAL_PRB and never plain COAL, so all three coexist here and
-# the line-414 filter keeps only the ones an ISO actually dispatches.
-GROUP_LABEL = {
-    "COAL": "Coal",
-    "COAL_LIGNITE": "Coal Lignite", "COAL_PRB": "Coal PRB",
-    "COAL_BIT": "Coal Bituminous", "COAL_SUB": "Coal Sub-bit",
-    "COAL_WC": "Coal Waste",
-    "CC_REGULAR": "CC Regular", "CC_CHP": "CC CHP",
-    "CT_PEAKER": "CT Peaker", "CT_CHP": "CT CHP",
-    "ST_GAS": "Steam Gas", "ST_CHP": "Steam CHP",
-}
-# Non-fossil model/benchmark classes never shown in the fossil class tables.
-_NONFOSSIL_KLASS = frozenset({
-    "nuclear", "wind", "offshore_wind", "solar", "hydro", "oil", "biomass",
-    "storage", "geothermal", "OTHER", "other",
-})
-
-
-def _group_label(klass: str) -> str:
-    """Human label for a fossil class — known canonical name, else humanized.
-
-    Auto-wires new classes for any ISO (e.g. EIA-923-derived coal ranks): an
-    unmapped ``FOO_BAR`` becomes ``Foo Bar`` rather than being dropped.
-    """
-    return GROUP_LABEL.get(klass) or klass.replace("_", " ").title()
-FOSSIL_GROUPS = list(GROUP_LABEL)
-# Generation-mix fossil set == the dashboard classes (ST_CHP is now included
-# above), so the system-wide fossil total matches the calibration report's [3b]
-# table (which carries all thermal classes, e.g. 298.2 TWh in 2024).
+# All class groupings derive from the canonical taxonomy
+# (market_sim.config.plant_taxonomy) — the single source of truth mapping model
+# plant classes to EIA-930 fuel buckets and labels. Adding a class there flows
+# through every table here automatically (no hardcoded class lists). The
+# per-ISO filter (in build_payload) keeps only the classes an ISO dispatches.
+_group_label = class_label                  # known canonical name, else humanized
+GROUP_LABEL = dict(LABELS)
+_NONFOSSIL_KLASS = nonfossil_classes()
+FOSSIL_GROUPS = list(fossil_classes())
 MIX_GROUPS = list(FOSSIL_GROUPS)
-_GAS_GROUPS = ("CC_CHP", "CC_REGULAR", "CT_CHP", "CT_PEAKER", "ST_GAS", "ST_CHP")
-# Every coal class the model can emit — ERCOT lignite/PRB and the EIA-923-derived
-# ranks (COAL_BIT/SUB/WC) — so the fuel-vs-EIA-930 'coal' total sums them all.
-_COAL_GROUPS = ("COAL", "COAL_LIGNITE", "COAL_PRB",
-                "COAL_BIT", "COAL_SUB", "COAL_WC")
+_GAS_GROUPS = classes_for_fuel930("gas")
+_COAL_GROUPS = classes_for_fuel930("coal")
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
 
@@ -380,15 +357,16 @@ def build_payload(runs: list[tuple[str, Path]],
             mh = rcf._class_hourly(disp)
             e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
                  .to_numpy(float) for s in e930["series"].unique()}
-            chp_flat = sum(mh.get(c, np.zeros(_T)).sum()
-                           for c in ("CC_CHP", "CT_CHP", "ST_CHP")) / _T
+            _CHP = tuple(c for c in classes_for_fuel930("gas")
+                         if c.endswith("_CHP"))
+            chp_flat = sum(mh.get(c, np.zeros(_T)).sum() for c in _CHP) / _T
             fuel_rows = []
+            # Each EIA-930 fuel row sums the model classes that roll up to it
+            # (market_sim.config.plant_taxonomy) — so any class is counted once,
+            # in the right bucket, with no hardcoded membership list.
             specs = [
-                ("gas", _GAS_GROUPS, e.get("gas"), True),
-                ("coal", _COAL_GROUPS, e.get("coal"), False),
-                ("nuclear", ("nuclear",), e.get("nuclear"), False),
-                ("wind", ("wind",), e.get("wind"), False),
-                ("solar", ("solar",), e.get("solar"), False),
+                (fuel, classes_for_fuel930(fuel), e.get(fuel), fuel == "gas")
+                for fuel in ("gas", "coal", "nuclear", "wind", "solar")
             ]
             for fuel, classes, ob, is_gas in specs:
                 ms = sum((mh.get(c, np.zeros(_T)) for c in classes),
