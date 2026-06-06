@@ -5,14 +5,21 @@ NOx price into the forms consumed by marginal-cost assembly
 (see :func:`market_sim.data.fleet.assemble_mc`). Carbon-price resolution
 lives in :mod:`market_sim.policy.carbon`.
 
-For historical calibration years (2023-2025 in the current data window)
-each plant pays its own measured EIA-923 Schedule 5 monthly delivered
-fuel cost (see :mod:`market_sim.data.eia923`). For forward years and for
-plants outside the F923 sample, the resolver falls back to the AEO Henry
-Hub trajectory (:data:`HENRY_HUB_TRAJECTORIES`) plus the ISO basis
-differential (:data:`GAS_BASIS_DIFFERENTIAL`), or the per-year coal
-trajectories built in this module. The same resolver path serves both
-backcast and forward, so calibration and projection share one model.
+**Gas** generators all pay the same delivered price for a year — the AEO
+Henry Hub trajectory (:data:`HENRY_HUB_TRAJECTORIES`) plus the ISO basis
+differential (:data:`GAS_BASIS_DIFFERENTIAL`), optionally seasonally
+shaped. Per-plant EIA-923 monthly gas costs are **off by default**
+(``gas_plant_monthly_fuel_pricing``): merchant CCs in a hub all buy gas in
+the same market, and EIA-923 Schedule-5 gas reporting is too sparse (~12%
+of ERCOT CC MW) to split same-zone units without introducing a spurious
+price asymmetry.
+
+**Coal** generators in historical years still pay their own measured
+EIA-923 Schedule 5 monthly delivered cost where reported (lignite
+mine-mouth vs railed PRB are genuinely different costs), falling back to
+the per-year coal supply-class trajectories otherwise. The same resolver
+path serves both backcast and forward, so calibration and projection share
+one model.
 """
 
 from __future__ import annotations
@@ -273,20 +280,19 @@ def resolve_fuel_prices(
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` delivered fuel price array for the fleet.
 
-    Per-plant pricing model:
+    Pricing model:
 
-      1. **Historical years (F923 available).** Each thermal generator
-         whose ``plant_code`` appears in the EIA-923 monthly cost table
-         for ``year`` pays that plant's own monthly delivered fuel cost,
-         broadcast to the hourly horizon. Months with no reported cost
-         (EIA suppression) fall back to the per-fuel default below.
-      2. **Forward years (or plants outside the F923 sample).** Gas units
-         pay the AEO Henry Hub trajectory plus the ISO basis differential
-         (:func:`resolve_annual_gas_price`), optionally shaped by the
-         monthly seasonality factors :data:`GAS_MONTHLY_SEASONALITY`
-         when ``config.gas_seasonality`` is set. Coal units pay
-         :data:`COAL_PRICE_BASE` escalated from :data:`START_YEAR` at
-         :data:`COAL_PRICE_ESCALATION` per year.
+      1. **Gas** units pay the AEO Henry Hub trajectory plus the ISO basis
+         differential (:func:`resolve_annual_gas_price`), optionally shaped
+         by the monthly seasonality factors when ``config.gas_seasonality``
+         is set — the *same* price for every gas unit in the ISO that year.
+         Per-plant EIA-923 monthly gas costs are applied only when
+         ``config.gas_plant_monthly_fuel_pricing`` is set (off by default).
+      2. **Coal** units pay :data:`COAL_PRICE_BASE` escalated from
+         :data:`START_YEAR` at :data:`COAL_PRICE_ESCALATION` per year, then
+         (historical years, ``coal_plant_monthly_pricing`` on) overwritten
+         by each plant's own measured EIA-923 monthly delivered cost where
+         reported. Months with no reported cost keep the trajectory.
 
     Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the
     derived hydrogen fuel cost from
@@ -359,7 +365,7 @@ def apply_plant_monthly_fuel_prices(
 ) -> None:
     """Overwrite per-generator fuel prices with F923 monthly plant costs.
 
-    For each gas / coal / oil generator whose ``plant_code`` matches a
+    For each eligible coal / oil generator whose ``plant_code`` matches a
     plant-month in the EIA-923 monthly cost table for ``year``, the
     generator's hourly fuel price is set to the plant's measured
     monthly delivered cost (broadcast to hours by the calendar month
@@ -367,6 +373,13 @@ def apply_plant_monthly_fuel_prices(
     already in ``fuel_prices``, so a coal plant whose January cost is
     suppressed keeps the COAL_PRICE_BASE trajectory for January and the
     F923 measured cost for the other 11 months.
+
+    **Gas is excluded by default.** Gas generators are skipped unless
+    ``config.gas_plant_monthly_fuel_pricing`` is set, so every gas unit
+    keeps the uniform Henry Hub + basis price from :func:`resolve_fuel_prices`
+    and same-zone units are not split by patchy EIA-923 reporting. Coal can
+    likewise be held on the flat lignite/PRB average via
+    ``config.coal_plant_monthly_pricing = False``.
 
     **Nearby-plant fallback.** When ``config.nearby_fuel_price_fallback``
     is set, a month with no reported cost for the plant is filled — before
@@ -416,9 +429,17 @@ def apply_plant_monthly_fuel_prices(
         if fuel_group is None:
             continue
         # Coal monthly pricing can be switched off (config) to hold all coal
-        # on the flat annual lignite/PRB average; gas/oil always keep monthly.
+        # on the flat annual lignite/PRB average.
         if fuel_name == "coal" and not getattr(
             config, "coal_plant_monthly_pricing", True
+        ):
+            continue
+        # Gas per-plant monthly pricing is OFF by default: every gas unit pays
+        # the uniform Henry Hub + basis price set upstream, so patchy EIA-923
+        # reporting does not split units in the same zone. Set
+        # ``gas_plant_monthly_fuel_pricing`` to restore per-plant gas costs.
+        if fuel_group == "Natural Gas" and not getattr(
+            config, "gas_plant_monthly_fuel_pricing", False
         ):
             continue
         grid = grids.get(fuel_group)
