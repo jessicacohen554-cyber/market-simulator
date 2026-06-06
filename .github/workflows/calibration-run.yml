@@ -29,10 +29,10 @@ on:
         description: "Run name — used as BOTH the dashboard label and the bundle dir (chars [A-Za-z0-9._-])"
         type: string
         required: true
-      offer_curve_overrides:
-        description: 'Per-class/band HR multipliers as JSON, e.g. {"CT_PEAKER":{"committed":1.40,"econ_low":1.27},"COAL_PRB":{"committed":0.95}}'
+      offer_curve_tweaks:
+        description: "HR multiplier nudges, up to ~10 'CLASS.BAND <delta>' entries (comma/newline sep). Delta is RELATIVE to the current config: +0.05 / -0.05. E.g. CT_PEAKER.committed +0.05, COAL_PRB.committed -0.05, ST_GAS.peak +0.5"
         type: string
-        default: "{}"
+        default: ""
       prb_sigmoid:
         description: "Gas-keyed PRB passthrough sigmoid (off = flat passthrough)"
         type: boolean
@@ -79,7 +79,6 @@ jobs:
           RUN_NAME: ${{ inputs.run_name }}
           YEAR: ${{ inputs.year }}
           ISO: ${{ inputs.iso }}
-          OVERRIDES: ${{ inputs.offer_curve_overrides }}
         run: |
           set -euo pipefail
           # run_name doubles as a filesystem dir and a git branch component.
@@ -96,9 +95,6 @@ jobs:
             esac
           done
           echo "YEARS=$YEARS" >> "$GITHUB_ENV"
-          # Fail fast on malformed override JSON before the (long) solve.
-          python -c "import json,sys; json.loads(sys.argv[1])" "$OVERRIDES" \
-            || { echo "::error::offer_curve_overrides is not valid JSON."; exit 1; }
           echo "Validated: iso=$ISO years='$YEARS' run_name='$RUN_NAME'"
 
       - name: Cache binned-fleet parquet
@@ -117,19 +113,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
 
+      - name: Build offer-curve deltas from tweaks
+        # Turn the friendly "CLASS.BAND <delta>" entries into the delta JSON the
+        # solver consumes (no hand-written JSON), validating class/band names and
+        # failing fast on a typo. Logs each nudge as default -> result.
+        env:
+          ISO: ${{ inputs.iso }}
+          TWEAKS: ${{ inputs.offer_curve_tweaks }}
+        run: |
+          set -euo pipefail
+          DELTAS=$(python scripts/build_offer_curve_overrides.py \
+                     --iso "$ISO" --tweaks "$TWEAKS")
+          echo "delta json: $DELTAS"
+          echo "OFFER_CURVE_DELTAS=$DELTAS" >> "$GITHUB_ENV"
+
       - name: Solve calibration bundle
         env:
           ISO: ${{ inputs.iso }}
           RUN_NAME: ${{ inputs.run_name }}
           NOTE: ${{ inputs.note }}
-          OVERRIDES: ${{ inputs.offer_curve_overrides }}
           PRB_SIGMOID: ${{ inputs.prb_sigmoid }}
           STORAGE_DAILY: ${{ inputs.storage_daily_cycling }}
         run: |
           set -euo pipefail
           ARGS=( --iso "$ISO" --year $YEARS \
                  --out-dir "results/calibration/$RUN_NAME" \
-                 --note "$NOTE" --offer-curve-json "$OVERRIDES" )
+                 --note "$NOTE" --offer-curve-delta-json "$OFFER_CURVE_DELTAS" )
           # CLI default for the PRB sigmoid is ON; the dispatch input defaults
           # it OFF, so disable it unless the operator asked for it.
           if [ "$PRB_SIGMOID" != "true" ]; then
