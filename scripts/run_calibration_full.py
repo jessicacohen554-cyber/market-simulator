@@ -53,7 +53,7 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
-    COAL_CODE_TO_SUPPLY, classes_for_fuel930, coal_code_to_class,
+    classes_for_fuel930, classify_plant, coal_code_to_class,
 )
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
@@ -97,7 +97,6 @@ _MONTH_NAMES: tuple[str, ...] = (
 # Fuel codes that EIA-923 reports for coal-class units.
 # All class groupings derive from the canonical taxonomy
 # (market_sim.config.plant_taxonomy) — no hardcoded class lists.
-_COAL_FUELS: frozenset[str] = frozenset(COAL_CODE_TO_SUPPLY)  # EIA-923 coal codes
 _GAS_CLASSES: tuple[str, ...] = classes_for_fuel930("gas")
 _COAL_CLASSES: tuple[str, ...] = classes_for_fuel930("coal")
 # CHP classes — reported in their own dedicated table and excluded from every
@@ -186,31 +185,16 @@ def _classify_f923(
 ) -> str:
     """Bucket one EIA-923 Page-1 row into a model class.
 
-    Mirrors :func:`market_sim.data.fleet` classification. Coal is split into
-    its supply class (ERCOT lignite/PRB; EIA-923-derived bituminous /
-    sub-bituminous / waste elsewhere), matching the dispatch frame. Gas is
-    split by prime mover and CHP flag; wind, solar and nuclear are their own
-    classes; everything else OTHER.
+    Thin wrapper over the canonical
+    :func:`market_sim.config.plant_taxonomy.classify_plant` — the single source
+    of truth the model fleet uses too, so the benchmark and the model bucket a
+    plant identically by construction. Coal is split into its supply class
+    (ERCOT lignite/PRB; EIA-923-derived bituminous / sub-bituminous / waste
+    elsewhere) via :func:`_coal_supply_class`.
     """
-    fuel = str(fuel).strip().upper()
-    pm = str(pm).strip().upper()
-    if fuel in _COAL_FUELS:
-        return _coal_supply_class(plant_id, fuel)
-    if fuel == "NG":
-        if pm in {"CA", "CS", "CT", "CC"}:
-            return "CC_CHP" if chp else "CC_REGULAR"
-        if pm in {"GT", "IC"}:
-            return "CT_CHP" if chp else "CT_PEAKER"
-        if pm == "ST":
-            return "ST_CHP" if chp else "ST_GAS"
-        return "OTHER"
-    if fuel == "WND" or pm == "WT":
-        return "wind"
-    if fuel == "SUN" or pm in {"PV", "CP"}:
-        return "solar"
-    if fuel == "NUC":
-        return "nuclear"
-    return "OTHER"
+    return classify_plant(
+        fuel, pm, chp, plant_id, coal_class_resolver=_coal_supply_class
+    )
 
 
 def _plant_codes_from_unit_ids(
@@ -632,11 +616,25 @@ def _btm_frame(
             grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(
                 dispatch[g].sum()
             )
-    f923 = generation[generation["year"] == year]
-    total_by_plant = (
-        f923.groupby("plant_id")["netgen_annual_mwh"].sum().to_dict()
-    )
-    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+    # The EIA-923 bins carry the 923-dominant class for the year, so the bin's
+    # class is what the plant actually burned (no curated drift).
+    bins = load_campd_bins(ScenarioConfig().campd_bins_path, year=year)
+    # Key BTM off the plant's PER-CLASS EIA-923 net generation — the 923 total
+    # of the bin's own class, not whole-plant netgen. A plant that splits across
+    # classes (e.g. a merchant CC block plus a CHP train) then can't lend one
+    # class's output to another, so a class total can't exceed its real EIA-923.
+    f923 = generation[generation["year"] == year].copy()
+    f923["klass"] = [
+        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
+        for f, pm, c, pid in zip(
+            f923["fuel_type"], f923["prime_mover"], f923["chp"], f923["plant_id"]
+        )
+    ]
+    class_total = f923.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
+    total_by_plant = {
+        int(code): float(class_total.get((int(code), str(grp)), 0.0))
+        for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
+    }
     mr = compute_must_run_emissions(
         bins, year, total_gen_by_plant=total_by_plant,
         grid_gen_by_plant=grid_by_plant,
