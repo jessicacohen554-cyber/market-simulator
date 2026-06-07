@@ -159,8 +159,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # builds the dispatch fleet and drives the CHP must-run post-processing.
     # The bin assignments are ERCOT-specific, so other ISOs always use the
     # legacy aggregate_fleet path regardless of ``use_campd_bins``.
+    # The base fleet is built once from the start year; its bins take the
+    # EIA-923 dominant class for that year (so a curated bin can't drift), then
+    # carry forward through the projection.
     campd_bins = (
-        load_campd_bins(config.campd_bins_path)
+        load_campd_bins(config.campd_bins_path, year=START_YEAR)
         if config.use_campd_bins and iso == "ERCOT"
         else None
     )
