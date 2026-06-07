@@ -146,3 +146,74 @@ COAL_SUPPLY_TO_CLASS: dict[str, str] = {
 def coal_code_to_class(code: str) -> str | None:
     """Map an EIA-923 coal ENERGY_SOURCE code straight to its model class."""
     return COAL_SUPPLY_TO_CLASS.get(COAL_CODE_TO_SUPPLY.get(str(code).upper()))
+
+
+# --- Per-plant model-class assignment (single source of truth) -------------
+# A natural-gas unit's model class is read off its prime mover: a combined-cycle
+# block reports CA/CS/CT/CC (the steam and combustion turbines of the train), a
+# simple-cycle peaker reports GT or IC (gas/internal-combustion turbine), and a
+# gas boiler reports ST (steam turbine). A CHP-flagged plant takes the cogen
+# variant of the same class. These are the EIA prime-mover codes; one table so
+# the ERCOT bin override, the non-ERCOT EIA-860 fleet and the EIA-923 benchmark
+# can never drift on how they bucket a plant.
+NG_CC_PRIME_MOVERS: frozenset[str] = frozenset({"CA", "CS", "CT", "CC"})
+NG_CT_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
+
+
+def classify_plant(
+    fuel: object,
+    prime_mover: object,
+    chp_flag: bool,
+    plant_id: int,
+    coal_class_resolver=None,
+) -> str:
+    """Return the model plant class for one generator / EIA-923 Page-1 row.
+
+    The single canonical classifier: given a plant's energy-source (fuel) code,
+    prime mover, CHP flag and plant code, return its model ``Plant_Group`` /
+    dispatch ``klass``. Every assignment path — the ERCOT bin override, the
+    non-ERCOT EIA-860 fleet, and the EIA-923 benchmark — calls this, so a plant
+    is bucketed identically by construction and the three can't drift.
+
+    * Coal is split into its supply rank (``COAL_LIGNITE`` / ``COAL_PRB`` /
+      ``COAL_BIT`` / ``COAL_WC``) via ``coal_class_resolver(plant_id, fuel)``
+      when given — the model's curated-plus-EIA-923 coal map — else straight
+      from the fuel code (:func:`coal_code_to_class`), falling back to the bare
+      ``COAL`` class.
+    * Natural gas (``NG``) is split by prime mover and CHP flag into the six
+      gas classes (CC / CT / ST, merchant vs CHP).
+    * Wind, solar and nuclear are their own classes; everything else ``OTHER``.
+
+    Args:
+        fuel: EIA energy-source code (``NG``, ``BIT``, ``WND`` …).
+        prime_mover: EIA prime-mover code (``CA``, ``GT``, ``ST`` …).
+        chp_flag: Whether the plant is a combined-heat-and-power cogen.
+        plant_id: EIA plant code, used by the coal-rank resolver.
+        coal_class_resolver: Optional ``(plant_id, fuel_code) -> class`` callable
+            that returns a plant's coal supply class; when it returns a falsy
+            value the fuel-code map is used.
+    """
+    fuel = str(fuel).strip().upper()
+    pm = str(prime_mover).strip().upper()
+    chp = bool(chp_flag)
+    if fuel in COAL_CODE_TO_SUPPLY:
+        if coal_class_resolver is not None:
+            resolved = coal_class_resolver(int(plant_id), fuel)
+            if resolved:
+                return resolved
+        return coal_code_to_class(fuel) or "COAL"
+    if fuel == "NG":
+        if pm in NG_CC_PRIME_MOVERS:
+            return "CC_CHP" if chp else "CC_REGULAR"
+        if pm in NG_CT_PRIME_MOVERS:
+            return "CT_CHP" if chp else "CT_PEAKER"
+        if pm == "ST":
+            return "ST_CHP" if chp else "ST_GAS"
+        return "OTHER"
+    if fuel == "WND" or pm == "WT":
+        return "wind"
+    if fuel == "SUN" or pm in {"PV", "CP"}:
+        return "solar"
+    if fuel == "NUC":
+        return "nuclear"
+    return "OTHER"

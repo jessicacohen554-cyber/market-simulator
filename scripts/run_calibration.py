@@ -590,7 +590,7 @@ def run_year(
     # and other non-aggregatable units from EIA-860), the legacy
     # equal-width heat-rate binning otherwise.
     campd_bins = (
-        load_campd_bins(config.campd_bins_path)
+        load_campd_bins(config.campd_bins_path, year=year)
         if config.use_campd_bins and iso == "ERCOT"
         else None
     )
