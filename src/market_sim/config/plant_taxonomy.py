@@ -51,7 +51,6 @@ PLANT_CLASSES: tuple[PlantClass, ...] = (
     PlantClass("COAL_LIGNITE",  "coal",    "Coal Lignite",    True),
     PlantClass("COAL_PRB",      "coal",    "Coal PRB",        True),
     PlantClass("COAL_BIT",      "coal",    "Coal Bituminous", True),
-    PlantClass("COAL_SUB",      "coal",    "Coal Sub-bit",    True),
     PlantClass("COAL_WC",       "coal",    "Coal Waste",      True),
     # Gas — combined cycle / combustion turbine / steam, merchant and CHP.
     PlantClass("CC_REGULAR",    "gas",     "CC Regular",      True),
@@ -119,9 +118,13 @@ def classes_for_fuel930(fuel: str) -> tuple[str, ...]:
 # --- EIA-923 coal-rank classification chain --------------------------------
 # Schedule-5 fuel-receipt ENERGY_SOURCE code -> model supply class. Anthracite,
 # refined and synthetic coal fold into the closest dispatch analogue.
+# Sub-bituminous coal is Powder River Basin in practice, so SUB maps to the
+# ``prb`` supply class (model class COAL_PRB) — one PRB name across all ISOs,
+# rather than a separate COAL_SUB. ERCOT names PRB-by-rail and PJM/MISO
+# sub-bituminous receipts now resolve to the same COAL_PRB class and offer curve.
 COAL_CODE_TO_SUPPLY: dict[str, str] = {
     "BIT": "bituminous",
-    "SUB": "subbituminous",
+    "SUB": "prb",
     "LIG": "lignite",
     "WC": "waste",       # waste coal: culm, gob, mine refuse
     "RC": "bituminous",  # refined coal
@@ -134,8 +137,8 @@ COAL_CODE_TO_SUPPLY: dict[str, str] = {
 COAL_SUPPLY_TO_CLASS: dict[str, str] = {
     "lignite": "COAL_LIGNITE",
     "prb": "COAL_PRB",
+    "subbituminous": "COAL_PRB",  # PRB == sub-bituminous; one name across ISOs
     "bituminous": "COAL_BIT",
-    "subbituminous": "COAL_SUB",
     "waste": "COAL_WC",
 }
 
