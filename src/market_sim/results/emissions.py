@@ -67,14 +67,18 @@ def compute_must_run_emissions(
     Two sizing modes:
 
     * **Data-driven (preferred for backcasts).** When ``total_gen_by_plant``
-      is given — the plant's measured total net generation, e.g. EIA-923
-      Page 1 — the behind-the-meter generation is that total minus the
-      grid-delivered portion the LP already dispatched
-      (``grid_gen_by_plant``, summed by plant code). This reconciles
+      is given — the plant's measured net generation *for the bin's class*,
+      e.g. EIA-923 Page 1 keyed per ``(plant, class)`` — the behind-the-meter
+      generation is that total minus the grid-delivered portion the LP already
+      dispatched (``grid_gen_by_plant``, summed by plant code). This reconciles
       reported total CHP generation to the measured figure: EIA-923 is
       gross-minus-station-service and so *includes* the host's on-site
       electricity, while the LP only dispatches the grid-delivered slice
       (which EIA-930 sees). The difference is the behind-the-meter must-run.
+      Keying off the per-class total (rather than whole-plant netgen) keeps a
+      plant that splits across classes from inflating one class with another's
+      output, and the floor at zero keeps an over-dispatched plant from
+      contributing a spurious negative.
     * **Flat-CF fallback (forecasts).** Without measured totals, the
       legacy estimate ``nameplate × pct_mr × 8760 × must_run_cf`` is used.
 
@@ -86,7 +90,8 @@ def compute_must_run_emissions(
         year: Simulation year, recorded on each output row.
         must_run_cf: Capacity factor for the flat-CF fallback.
         total_gen_by_plant: Optional ``{plant_code: annual MWh}`` of measured
-            total net generation (e.g. EIA-923). Triggers the data-driven mode.
+            net generation for the plant's bin class (e.g. EIA-923 keyed per
+            ``(plant, class)``). Triggers the data-driven mode.
         grid_gen_by_plant: Optional ``{plant_code: annual MWh}`` of the LP's
             grid-delivered dispatch per plant, subtracted from the total to
             isolate the behind-the-meter portion. Treated as zero for any

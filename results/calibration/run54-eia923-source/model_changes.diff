@@ -1,0 +1,467 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index ca32a26..b6aa843 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -590,7 +590,7 @@ def run_year(
+     # and other non-aggregatable units from EIA-860), the legacy
+     # equal-width heat-rate binning otherwise.
+     campd_bins = (
+-        load_campd_bins(config.campd_bins_path)
++        load_campd_bins(config.campd_bins_path, year=year)
+         if config.use_campd_bins and iso == "ERCOT"
+         else None
+     )
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 2470cf4..7482e39 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -53,7 +53,7 @@ sys.path.insert(0, str(REPO))
+ 
+ from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+ from market_sim.config.plant_taxonomy import (  # noqa: E402
+-    COAL_CODE_TO_SUPPLY, classes_for_fuel930, coal_code_to_class,
++    classes_for_fuel930, classify_plant, coal_code_to_class,
+ )
+ from market_sim.data import campd  # noqa: E402
+ from market_sim.data.eia923 import (  # noqa: E402
+@@ -97,7 +97,6 @@ _MONTH_NAMES: tuple[str, ...] = (
+ # Fuel codes that EIA-923 reports for coal-class units.
+ # All class groupings derive from the canonical taxonomy
+ # (market_sim.config.plant_taxonomy) — no hardcoded class lists.
+-_COAL_FUELS: frozenset[str] = frozenset(COAL_CODE_TO_SUPPLY)  # EIA-923 coal codes
+ _GAS_CLASSES: tuple[str, ...] = classes_for_fuel930("gas")
+ _COAL_CLASSES: tuple[str, ...] = classes_for_fuel930("coal")
+ # CHP classes — reported in their own dedicated table and excluded from every
+@@ -186,31 +185,16 @@ def _classify_f923(
+ ) -> str:
+     """Bucket one EIA-923 Page-1 row into a model class.
+ 
+-    Mirrors :func:`market_sim.data.fleet` classification. Coal is split into
+-    its supply class (ERCOT lignite/PRB; EIA-923-derived bituminous /
+-    sub-bituminous / waste elsewhere), matching the dispatch frame. Gas is
+-    split by prime mover and CHP flag; wind, solar and nuclear are their own
+-    classes; everything else OTHER.
++    Thin wrapper over the canonical
++    :func:`market_sim.config.plant_taxonomy.classify_plant` — the single source
++    of truth the model fleet uses too, so the benchmark and the model bucket a
++    plant identically by construction. Coal is split into its supply class
++    (ERCOT lignite/PRB; EIA-923-derived bituminous / sub-bituminous / waste
++    elsewhere) via :func:`_coal_supply_class`.
+     """
+-    fuel = str(fuel).strip().upper()
+-    pm = str(pm).strip().upper()
+-    if fuel in _COAL_FUELS:
+-        return _coal_supply_class(plant_id, fuel)
+-    if fuel == "NG":
+-        if pm in {"CA", "CS", "CT", "CC"}:
+-            return "CC_CHP" if chp else "CC_REGULAR"
+-        if pm in {"GT", "IC"}:
+-            return "CT_CHP" if chp else "CT_PEAKER"
+-        if pm == "ST":
+-            return "ST_CHP" if chp else "ST_GAS"
+-        return "OTHER"
+-    if fuel == "WND" or pm == "WT":
+-        return "wind"
+-    if fuel == "SUN" or pm in {"PV", "CP"}:
+-        return "solar"
+-    if fuel == "NUC":
+-        return "nuclear"
+-    return "OTHER"
++    return classify_plant(
++        fuel, pm, chp, plant_id, coal_class_resolver=_coal_supply_class
++    )
+ 
+ 
+ def _plant_codes_from_unit_ids(
+@@ -632,11 +616,25 @@ def _btm_frame(
+             grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(
+                 dispatch[g].sum()
+             )
+-    f923 = generation[generation["year"] == year]
+-    total_by_plant = (
+-        f923.groupby("plant_id")["netgen_annual_mwh"].sum().to_dict()
+-    )
+-    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
++    # The EIA-923 bins carry the 923-dominant class for the year, so the bin's
++    # class is what the plant actually burned (no curated drift).
++    bins = load_campd_bins(ScenarioConfig().campd_bins_path, year=year)
++    # Key BTM off the plant's PER-CLASS EIA-923 net generation — the 923 total
++    # of the bin's own class, not whole-plant netgen. A plant that splits across
++    # classes (e.g. a merchant CC block plus a CHP train) then can't lend one
++    # class's output to another, so a class total can't exceed its real EIA-923.
++    f923 = generation[generation["year"] == year].copy()
++    f923["klass"] = [
++        _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
++        for f, pm, c, pid in zip(
++            f923["fuel_type"], f923["prime_mover"], f923["chp"], f923["plant_id"]
++        )
++    ]
++    class_total = f923.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
++    total_by_plant = {
++        int(code): float(class_total.get((int(code), str(grp)), 0.0))
++        for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
++    }
+     mr = compute_must_run_emissions(
+         bins, year, total_gen_by_plant=total_by_plant,
+         grid_gen_by_plant=grid_by_plant,
+diff --git a/src/market_sim/config/plant_taxonomy.py b/src/market_sim/config/plant_taxonomy.py
+index d6c4163..166e39e 100644
+--- a/src/market_sim/config/plant_taxonomy.py
++++ b/src/market_sim/config/plant_taxonomy.py
+@@ -146,3 +146,74 @@ COAL_SUPPLY_TO_CLASS: dict[str, str] = {
+ def coal_code_to_class(code: str) -> str | None:
+     """Map an EIA-923 coal ENERGY_SOURCE code straight to its model class."""
+     return COAL_SUPPLY_TO_CLASS.get(COAL_CODE_TO_SUPPLY.get(str(code).upper()))
++
++
++# --- Per-plant model-class assignment (single source of truth) -------------
++# A natural-gas unit's model class is read off its prime mover: a combined-cycle
++# block reports CA/CS/CT/CC (the steam and combustion turbines of the train), a
++# simple-cycle peaker reports GT or IC (gas/internal-combustion turbine), and a
++# gas boiler reports ST (steam turbine). A CHP-flagged plant takes the cogen
++# variant of the same class. These are the EIA prime-mover codes; one table so
++# the ERCOT bin override, the non-ERCOT EIA-860 fleet and the EIA-923 benchmark
++# can never drift on how they bucket a plant.
++NG_CC_PRIME_MOVERS: frozenset[str] = frozenset({"CA", "CS", "CT", "CC"})
++NG_CT_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
++
++
++def classify_plant(
++    fuel: object,
++    prime_mover: object,
++    chp_flag: bool,
++    plant_id: int,
++    coal_class_resolver=None,
++) -> str:
++    """Return the model plant class for one generator / EIA-923 Page-1 row.
++
++    The single canonical classifier: given a plant's energy-source (fuel) code,
++    prime mover, CHP flag and plant code, return its model ``Plant_Group`` /
++    dispatch ``klass``. Every assignment path — the ERCOT bin override, the
++    non-ERCOT EIA-860 fleet, and the EIA-923 benchmark — calls this, so a plant
++    is bucketed identically by construction and the three can't drift.
++
++    * Coal is split into its supply rank (``COAL_LIGNITE`` / ``COAL_PRB`` /
++      ``COAL_BIT`` / ``COAL_WC``) via ``coal_class_resolver(plant_id, fuel)``
++      when given — the model's curated-plus-EIA-923 coal map — else straight
++      from the fuel code (:func:`coal_code_to_class`), falling back to the bare
++      ``COAL`` class.
++    * Natural gas (``NG``) is split by prime mover and CHP flag into the six
++      gas classes (CC / CT / ST, merchant vs CHP).
++    * Wind, solar and nuclear are their own classes; everything else ``OTHER``.
++
++    Args:
++        fuel: EIA energy-source code (``NG``, ``BIT``, ``WND`` …).
++        prime_mover: EIA prime-mover code (``CA``, ``GT``, ``ST`` …).
++        chp_flag: Whether the plant is a combined-heat-and-power cogen.
++        plant_id: EIA plant code, used by the coal-rank resolver.
++        coal_class_resolver: Optional ``(plant_id, fuel_code) -> class`` callable
++            that returns a plant's coal supply class; when it returns a falsy
++            value the fuel-code map is used.
++    """
++    fuel = str(fuel).strip().upper()
++    pm = str(prime_mover).strip().upper()
++    chp = bool(chp_flag)
++    if fuel in COAL_CODE_TO_SUPPLY:
++        if coal_class_resolver is not None:
++            resolved = coal_class_resolver(int(plant_id), fuel)
++            if resolved:
++                return resolved
++        return coal_code_to_class(fuel) or "COAL"
++    if fuel == "NG":
++        if pm in NG_CC_PRIME_MOVERS:
++            return "CC_CHP" if chp else "CC_REGULAR"
++        if pm in NG_CT_PRIME_MOVERS:
++            return "CT_CHP" if chp else "CT_PEAKER"
++        if pm == "ST":
++            return "ST_CHP" if chp else "ST_GAS"
++        return "OTHER"
++    if fuel == "WND" or pm == "WT":
++        return "wind"
++    if fuel == "SUN" or pm in {"PV", "CP"}:
++        return "solar"
++    if fuel == "NUC":
++        return "nuclear"
++    return "OTHER"
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index dc0f032..867ce35 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -30,7 +30,11 @@ from market_sim.config.constants import (
+     VOM,
+ )
+ from market_sim.config.iso_configs import ISOConfig, get_iso_config
+-from market_sim.config.plant_taxonomy import COAL_SUPPLY_TO_CLASS
++from market_sim.config.plant_taxonomy import (
++    COAL_SUPPLY_TO_CLASS,
++    classify_plant,
++    coal_code_to_class,
++)
+ from market_sim.config.scenarios import ScenarioConfig
+ from market_sim.data.outages import (
+     QUALIFYING_PLANT_GROUPS,
+@@ -1264,6 +1268,12 @@ _CHP_GROUP_FOR: dict[str, str] = {
+     "ST_GAS": "ST_CHP",
+ }
+ 
++# The six gas dispatch classes the canonical classifier may return for a gas
++# unit; a result outside this set (OTHER) falls back to the fuel-type group.
++_EIA860_GAS_GROUPS: frozenset[str] = frozenset(
++    {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP"}
++)
++
+ 
+ def _map_fuel_type(
+     technology: object, energy_source: object, prime_mover: object
+@@ -1511,14 +1521,34 @@ def _rows_to_generators(
+         plant_code = int(_to_float(plant_id) or 0)
+         state = str(data.get("state") or "").strip().upper()
+ 
+-        # Combined-heat-and-power units run must-run on host steam, so map the
+-        # gas classes to their CHP variant when EIA-860 flags the plant as CHP
+-        # (Associated with Combined Heat and Power System = Y). Coal/nuclear
+-        # are unaffected. CHP is a plant-level trait joined in
+-        # :func:`_load_fleet_from_parquet`.
+-        group = _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type, "")
+-        if str(data.get("chp") or "").strip().upper().startswith("Y"):
+-            group = _CHP_GROUP_FOR.get(group, group)
++        # Plant group (dispatch class). Gas units are classed by the SAME
++        # canonical classifier the EIA-923 benchmark uses
++        # (:func:`market_sim.config.plant_taxonomy.classify_plant`), so an NG
++        # unit's class — CC / CT / steam, merchant vs CHP — is identical by
++        # construction across the model fleet and the benchmark. Combined-heat-
++        # and-power cogens (EIA-860 "Associated with Combined Heat and Power
++        # System" = Y) take the cogen variant; gas steam boilers resolve to
++        # ST_GAS rather than being folded into CT_PEAKER. Coal keeps the bare
++        # ``COAL`` group (its supply rank is split downstream from
++        # :func:`coal_supply_class`); nuclear / oil / biomass carry no group and
++        # keep the statistical availability model.
++        chp_flag = str(data.get("chp") or "").strip().upper().startswith("Y")
++        if fuel_type == "coal":
++            group = "COAL"
++        elif fuel_type in ("gas_cc", "gas_cc_ccs", "gas_ct"):
++            group = classify_plant(
++                data.get("energy_source"), data.get("prime_mover"),
++                chp_flag, plant_code,
++            )
++            if group not in _EIA860_GAS_GROUPS:
++                # Non-NG gas code (e.g. blast-furnace / other gas) the canonical
++                # classifier returns OTHER for: fall back to the fuel-type group
++                # so the unit still classes as gas rather than dropping out.
++                group = _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type, "")
++                if chp_flag:
++                    group = _CHP_GROUP_FOR.get(group, group)
++        else:
++            group = ""
+ 
+         records.append(
+             {
+@@ -1868,6 +1898,73 @@ def coal_supply_class(plant_code: int) -> str:
+     return _derived_coal_supply().get(int(plant_code), "")
+ 
+ 
++def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
++    """Return the model coal class (``COAL_LIGNITE`` / ``COAL_PRB`` /
++    ``COAL_BIT`` / ``COAL_WC``) for a coal plant.
++
++    The coal-rank resolver :func:`classify_plant` uses: the authoritative model
++    supply map (:func:`coal_supply_class`, curated ERCOT lignite/PRB plus the
++    EIA-923-derived per-ISO ranks), falling back to the EIA-923 receipt fuel
++    code and finally the bare ``COAL`` class. Mirrors the calibration
++    benchmark's coal resolver so the model and benchmark split coal identically.
++    """
++    return (COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)))
++            or coal_code_to_class(fuel_code) or "COAL")
++
++
++# The gas dispatch classes the EIA-923 override may assign to an ERCOT bin.
++# Coal bins keep their bare ``COAL`` group (the supply rank is split downstream
++# from :func:`coal_supply_class`), so the override only ever moves a plant among
++# the gas classes — never into or out of coal.
++_GAS_BIN_GROUPS: frozenset[str] = frozenset(
++    {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP"}
++)
++
++
++@lru_cache(maxsize=8)
++def eia923_dominant_class_by_plant(year: int) -> dict[int, str]:
++    """Return ``{plant_code: dominant model class}`` from EIA-923 Page-1 netgen.
++
++    Classifies every ``(plant, prime_mover, fuel, chp)`` EIA-923 generation row
++    through the canonical :func:`classify_plant` and, per plant, picks the class
++    with the most net generation. This is the single source of truth for a
++    plant's class: the ERCOT bin override (:func:`load_campd_bins`) reads it so
++    a curated bin can't drift from what the plant actually burned.
++
++    Returns an empty mapping when EIA-923 has no data for ``year`` (forward /
++    scenario years, or a missing parquet), so callers fall back cleanly to the
++    curated (ERCOT) or EIA-860-derived class.
++    """
++    from market_sim.data.eia923 import load_monthly_generation
++
++    try:
++        gen = load_monthly_generation()
++    except FileNotFoundError:
++        return {}
++    df = gen[gen["year"] == year]
++    if df.empty:
++        return {}
++
++    totals: dict[tuple[int, str], float] = {}
++    for pid, pm, fuel, chp, mwh in zip(
++        df["plant_id"], df["prime_mover"], df["fuel_type"],
++        df["chp"], df["netgen_annual_mwh"],
++    ):
++        klass = classify_plant(
++            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
++            coal_class_resolver=_coal_class_for,
++        )
++        key = (int(pid), klass)
++        totals[key] = totals.get(key, 0.0) + float(mwh)
++
++    best: dict[int, tuple[str, float]] = {}
++    for (pid, klass), mwh in totals.items():
++        current = best.get(pid)
++        if current is None or mwh > current[1]:
++            best[pid] = (klass, mwh)
++    return {pid: klass for pid, (klass, _) in best.items()}
++
++
+ # ERCOT coal-unit commission year by EIA plant code — the in-service year
+ # of the plant's coal units (not its older gas-era units, which differ at
+ # mixed plants like W A Parish). Drives the age-based coal availability
+@@ -2226,7 +2323,51 @@ _DEFAULT_HR_MULT_BY_GROUP: dict[str, dict[str, float]] = {
+ }
+ 
+ 
+-def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
++def _override_bin_class_from_eia923(
++    bins: pd.DataFrame, year: int
++) -> pd.DataFrame:
++    """Override each gas bin's ``Plant_Group`` with its EIA-923 dominant class.
++
++    For every bin whose curated class is one of the gas classes, replace it with
++    the EIA-923 dominant class for that plant code when EIA-923 covers the year
++    and resolves to a (different) gas class. The bin's ``fuel`` is re-derived
++    from the new class; all other columns are preserved. Coal bins and plants
++    EIA-923 doesn't cover keep their curated class — the durable single source
++    of truth for ERCOT class assignment.
++    """
++    dominant = eia923_dominant_class_by_plant(year)
++    if not dominant:
++        return bins
++
++    new_groups = bins["Plant_Group"].astype(str).tolist()
++    changed: list[tuple[str, str, str]] = []
++    for i, (code, curated) in enumerate(
++        zip(bins["Plant_Code"], new_groups)
++    ):
++        if curated not in _GAS_BIN_GROUPS:
++            continue  # coal (and any non-gas bin) keeps its curated class
++        derived = dominant.get(int(code))
++        if derived and derived in _GAS_BIN_GROUPS and derived != curated:
++            new_groups[i] = derived
++            changed.append((str(bins["Plant_Name"].iloc[i]), curated, derived))
++
++    if not changed:
++        return bins
++
++    bins = bins.copy()
++    bins["Plant_Group"] = new_groups
++    bins["fuel"] = bins["Plant_Group"].map(BIN_GROUP_TO_FUEL)
++    for name, was, now in changed:
++        logger.info(
++            "EIA-923 %d: reclassified %s  %s -> %s (curated bin drifted)",
++            year, name, was, now,
++        )
++    return bins
++
++
++def load_campd_bins(
++    csv_path: str | Path, year: int | None = None
++) -> pd.DataFrame:
+     """Load the CAMPD bin assignments, one row per plant.
+ 
+     The detail CSV has one row per plant; this normalises it into the
+@@ -2236,6 +2377,17 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
+     and per-tranche heat rates are derived from the plant's own
+     ``Plant_Avg_HR_MMBtu_MWh`` rather than a zone-weighted average.
+ 
++    When ``year`` is given, each bin's gas class (``Plant_Group``) is
++    overridden with the EIA-923 dominant class for that plant code
++    (:func:`eia923_dominant_class_by_plant`), so the curated bin can't drift
++    from what the plant actually burned — e.g. a CC_CHP bin whose EIA-923
++    netgen is dominated by merchant CC output is corrected to CC_REGULAR. Only
++    the class (and the fuel it implies) changes; every other curated column
++    (tranche %, HR multipliers, turbine class, config) is preserved, and the
++    override only moves a plant among the gas classes. Plants EIA-923 doesn't
++    cover for the year (or coal bins) keep their curated class. ``year=None``
++    (the default, for tooling and forward scenarios) applies no override.
++
+     Per-plant binning is the model spine for plant-specific monthly
+     EIA-923 fuel costs and asset-level financial reporting — each LP bin
+     is one EIA plant code, so dispatch and downstream P&L disaggregation
+@@ -2334,6 +2486,9 @@ def load_campd_bins(csv_path: str | Path) -> pd.DataFrame:
+     bins["plant_codes"] = [[int(c)] for c in detail["Plant_Code"]]
+     bins["fuel"] = fuel_series.values
+ 
++    if year is not None:
++        bins = _override_bin_class_from_eia923(bins, year)
++
+     bad = bins["pct_mr"] + bins["pct_mc"] + bins["pct_econ"] + bins["pct_peak"]
+     if not (bad == 100).all():
+         offending = bins.loc[bad != 100, "Plant_Name"].tolist()
+diff --git a/src/market_sim/results/emissions.py b/src/market_sim/results/emissions.py
+index b7dc513..cd1ae7f 100644
+--- a/src/market_sim/results/emissions.py
++++ b/src/market_sim/results/emissions.py
+@@ -67,14 +67,18 @@ def compute_must_run_emissions(
+     Two sizing modes:
+ 
+     * **Data-driven (preferred for backcasts).** When ``total_gen_by_plant``
+-      is given — the plant's measured total net generation, e.g. EIA-923
+-      Page 1 — the behind-the-meter generation is that total minus the
+-      grid-delivered portion the LP already dispatched
+-      (``grid_gen_by_plant``, summed by plant code). This reconciles
++      is given — the plant's measured net generation *for the bin's class*,
++      e.g. EIA-923 Page 1 keyed per ``(plant, class)`` — the behind-the-meter
++      generation is that total minus the grid-delivered portion the LP already
++      dispatched (``grid_gen_by_plant``, summed by plant code). This reconciles
+       reported total CHP generation to the measured figure: EIA-923 is
+       gross-minus-station-service and so *includes* the host's on-site
+       electricity, while the LP only dispatches the grid-delivered slice
+       (which EIA-930 sees). The difference is the behind-the-meter must-run.
++      Keying off the per-class total (rather than whole-plant netgen) keeps a
++      plant that splits across classes from inflating one class with another's
++      output, and the floor at zero keeps an over-dispatched plant from
++      contributing a spurious negative.
+     * **Flat-CF fallback (forecasts).** Without measured totals, the
+       legacy estimate ``nameplate × pct_mr × 8760 × must_run_cf`` is used.
+ 
+@@ -86,7 +90,8 @@ def compute_must_run_emissions(
+         year: Simulation year, recorded on each output row.
+         must_run_cf: Capacity factor for the flat-CF fallback.
+         total_gen_by_plant: Optional ``{plant_code: annual MWh}`` of measured
+-            total net generation (e.g. EIA-923). Triggers the data-driven mode.
++            net generation for the plant's bin class (e.g. EIA-923 keyed per
++            ``(plant, class)``). Triggers the data-driven mode.
+         grid_gen_by_plant: Optional ``{plant_code: annual MWh}`` of the LP's
+             grid-delivered dispatch per plant, subtracted from the total to
+             isolate the behind-the-meter portion. Treated as zero for any
+diff --git a/src/market_sim/runner.py b/src/market_sim/runner.py
+index f590339..0c1ceb1 100644
+--- a/src/market_sim/runner.py
++++ b/src/market_sim/runner.py
+@@ -159,8 +159,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
+     # builds the dispatch fleet and drives the CHP must-run post-processing.
+     # The bin assignments are ERCOT-specific, so other ISOs always use the
+     # legacy aggregate_fleet path regardless of ``use_campd_bins``.
++    # The base fleet is built once from the start year; its bins take the
++    # EIA-923 dominant class for that year (so a curated bin can't drift), then
++    # carry forward through the projection.
+     campd_bins = (
+-        load_campd_bins(config.campd_bins_path)
++        load_campd_bins(config.campd_bins_path, year=START_YEAR)
+         if config.use_campd_bins and iso == "ERCOT"
+         else None
+     )
