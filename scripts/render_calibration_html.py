@@ -105,6 +105,28 @@ def _vol_err(model_twh: float, actual_twh: float) -> float | None:
     return round(e, 4) if np.isfinite(e) else None
 
 
+@lru_cache(maxsize=1)
+def _actual_lmp_table() -> dict:
+    """Load the derived actual-LMP reference (``scripts/derive_actual_lmp.py``).
+
+    Returns an empty dict when the reference is absent, so the dashboard renders
+    a model-only price card rather than failing.
+    """
+    p = REPO / "inputs" / "calibration" / "actual_lmp.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
+def _actual_avg_lmp(iso: str, year: int) -> dict | None:
+    """Return ``{da?, rt?}`` actual avg LMP ($/MWh) for an ISO-year, or None.
+
+    The ``src`` provenance string in the reference is dropped here; only the
+    numeric day-ahead / real-time means flow into the dashboard payload.
+    """
+    rec = _actual_lmp_table().get(str(iso), {}).get(str(int(year))) or {}
+    out = {k: rec[k] for k in ("da", "rt") if k in rec}
+    return out or None
+
+
 def _pearson(m: np.ndarray, o: np.ndarray) -> float:
     m = m - m.mean(); o = o - o.mean()
     d = float(np.sqrt((m * m).sum() * (o * o).sum()))
@@ -332,6 +354,12 @@ def build_payload(runs: list[tuple[str, Path]],
                     "classFull": {str(g): round(float(v) / 1e6, 4)
                                   for g, v in e923_cls.items()},
                 }
+                # Actual historical avg LMP ($/MWh), system hub-average, for the
+                # summary page's model-vs-actual price comparison. Absent for an
+                # ISO-year with no price file -> the card shows model only.
+                actual_lmp = _actual_avg_lmp(meta.get("iso", "ERCOT"), year)
+                if actual_lmp:
+                    bench[int(year)]["avgLMP"] = actual_lmp
 
             # ---- model payload (per run) ----
             mplants: dict[str, dict] = {}

@@ -548,8 +548,9 @@ function renderSingleTables(){const id=st.single,yr=st.year;
 // ---- render: SUMMARY ----
 // Reuses classMetrics (the same model-full vs full-EIA-923 Δ923 shown in the
 // detail tables and KPI cards) — no recompute of any LP/dispatch result. Signed
-// % error per fossil class = (model − actual)/actual; the tolerance band is the
-// shared TOLERANCE_PCT (zone-aware, since classMetrics honors st.zones).
+// % error per fossil class = (model − actual)/actual; a class is in tolerance
+// within ±SUM_TOL_PCT% OR SUM_TOL_TWH absolute (zone-aware, since classMetrics
+// honors st.zones). This is looser than the per-cell heatmap's TOLERANCE_PCT.
 const SUM_NOPLOT='<p class=psub>Plotly failed to load — this view needs network access to the Plotly CDN.</p>';
 function orderRuns(ids){const order=BC.manifest.map(m=>m.id);
  return ids.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b));}
@@ -557,20 +558,51 @@ function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
  if(!m||!(m.bench923>0.02))return null;
  return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923};}
 function classErrs(id,yr){const out=[];for(const g of META.groups){const e=classErr(id,yr,g);if(e)out.push(e);}return out;}
-function tolcls(v){const a=Math.abs(v),tol=TOLERANCE_PCT*100;return a<=tol?"good":a<=3*tol?"ok":"bad";}
-function summaryHeadline(id,yr){const es=classErrs(id,yr),tol=TOLERANCE_PCT*100;
+// Summary-page class tolerance (looser than the per-cell heatmap deadband): a
+// fossil class passes if its signed volume error is within ±SUM_TOL_PCT% OR the
+// absolute volume miss is within SUM_TOL_TWH. Small classes (a few TWh) can be
+// off by a larger % while still being within a TWh of the actual, so the dual
+// band keeps them from dominating the headline.
+const SUM_TOL_PCT=3,SUM_TOL_TWH=1.0;
+function classInTol(e){return Math.abs(e.err)<=SUM_TOL_PCT||Math.abs(e.mFull-e.bench923)<=SUM_TOL_TWH;}
+// Per-class status: good = in tolerance (either band); ok = within twice the %
+// band; bad otherwise. clsTol takes the class-error object (honors the TWh
+// band); tolcls takes a bare % (for the system-level error, where 1 TWh on a
+// multi-hundred-TWh total is never the binding band).
+function clsTol(e){return classInTol(e)?"good":Math.abs(e.err)<=2*SUM_TOL_PCT?"ok":"bad";}
+function tolcls(v){const a=Math.abs(v);return a<=SUM_TOL_PCT?"good":a<=2*SUM_TOL_PCT?"ok":"bad";}
+function summaryHeadline(id,yr){const es=classErrs(id,yr);
  let sm=0,sa=0,worst=null;
  es.forEach(e=>{sm+=e.mFull;sa+=e.bench923;if(!worst||Math.abs(e.err)>Math.abs(worst.err))worst=e;});
- return {n:es.length,inTol:es.filter(e=>Math.abs(e.err)<=tol).length,
+ return {n:es.length,inTol:es.filter(classInTol).length,
   sysErr:sa>0?100*(sm-sa)/sa:null,worst,price:avgLMP(id,yr)};}
+// Actual historical avg LMP ($/MWh) for the selected year (system hub-average),
+// from the benchmark payload; absent for an ISO-year with no price file.
+function actualLMP(yr){return (BENCH[yr]||{}).avgLMP||null;}
+// Model-vs-actual avg-LMP table for the summary. Model is load-weighted over the
+// selected zones; actual is the system day-ahead / real-time hub average. Δ is
+// (model − actual)/actual — diagnostic only, LMP is not a calibration target.
+function lmpPanel(id,yr){const aL=actualLMP(yr),m=avgLMP(id,yr);
+ let h='<div class=panel><h2>Average LMP — model vs actual historical '
+  +'<span class=psub>(model load-weighted over selected zones; actual = system hub average)</span></h2>';
+ if(m==null&&!aL)return h+'<p class=psub>No LMP data for this run/year.</p></div>';
+ h+='<div class=tablewrap><table><thead><tr><th>series</th><th>$/MWh</th><th>Δ vs actual</th></tr></thead><tbody>';
+ h+=`<tr><td>Model — ${MODEL[id].label} (zones)</td><td class=num>${m==null?"—":"$"+m.toFixed(2)}</td><td class=num>—</td></tr>`;
+ for(const [lab,k] of [["Actual day-ahead (system)","da"],["Actual real-time (system)","rt"]]){
+  const a=aL?aL[k]:null;if(a==null)continue;
+  const d=(m!=null&&a)?100*(m-a)/a:null;
+  h+=`<tr><td>${lab}</td><td class=num>$${a.toFixed(2)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td></tr>`;}
+ if(!aL)h+='<tr><td colspan=3 class=psub>No actual LMP benchmark for this ISO/year.</td></tr>';
+ return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target. '
+  +'The model is a day-ahead-style energy LP (no ORDC / ancillary / scarcity adders), so some positive Δ is expected.</p></div>';}
 // Tornado: classes sorted by signed % error, zero-centered, cool (--accent) for
-// under / warm (--danger) for over, with the ±TOLERANCE_PCT band shaded gray.
+// under / warm (--danger) for over, with the ±SUM_TOL_PCT band shaded gray.
 function mountTornado(id,yr){const div=document.getElementById("sumTornado");if(!div)return;
  if(typeof Plotly==="undefined"){div.innerHTML=SUM_NOPLOT;return;}
  const es=classErrs(id,yr).slice().sort((a,b)=>b.err-a.err);
  if(!es.length){div.innerHTML='<p class=psub>No class-level error data for this run/zone selection.</p>';return;}
  const cool=cssTok('--accent','#4A90D9'),warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
- const y=es.map(e=>mixLabel(e.grp)),x=es.map(e=>e.err),tol=TOLERANCE_PCT*100;
+ const y=es.map(e=>mixLabel(e.grp)),x=es.map(e=>e.err),tol=SUM_TOL_PCT;
  const trace={type:"bar",orientation:"h",x,y,marker:{color:es.map(e=>e.err<0?cool:warm)},
   text:x.map(v=>(v>=0?"+":"")+v.toFixed(1)+"%"),textposition:"outside",cliponaxis:false,
   hovertemplate:"<b>%{y}</b><br>signed error %{x:+.1f}%<extra></extra>"};
@@ -607,23 +639,32 @@ function mountSlope(ids,yr){const div=document.getElementById("sumSlope");if(!di
  Plotly.react(div,traces,layout,{displayModeBar:false,responsive:true});}
 function renderSummary(){const ids=selectedRuns().filter(Boolean),yr=st.year;
  if(!ids.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
- const ordered=orderRuns(ids),primary=ordered[0],multi=ids.length>1,tol=(TOLERANCE_PCT*100).toFixed(0);
+ const ordered=orderRuns(ids),primary=ordered[0],multi=ids.length>1,tol=SUM_TOL_PCT;
  const H=summaryHeadline(primary,yr);
+ // Avg-LMP KPI: model (zones) vs the actual day-ahead system hub average, with
+ // the signed Δ. Falls back to real-time, then to a model-only card.
+ const aL=actualLMP(yr),aP=aL?(aL.da!=null?aL.da:aL.rt):null,aLab=aL&&aL.da!=null?"actual DA":"actual RT";
+ const pdiff=(H.price!=null&&aP)?100*(H.price-aP)/aP:null;
+ const priceCard=`<div class=kpicard><div class=lbl>Avg LMP <span class=psub>(${aL?'model vs actual':'diagnostic'})</span></div>
+    <div class=kpirow><span class=k>model, zones</span><span class=v>${H.price==null?"—":"$"+H.price.toFixed(1)}</span></div>`
+   +(aL?`<div class=kpirow><span class=k>${aLab}, system</span><span class=v>$${aP.toFixed(1)}</span></div>
+    <div class=kpirow><span class=k>Δ vs actual</span><span class="v ${pdiff==null?'':dcls(pdiff)}">${pdiff==null?"—":fmtPct(pdiff)}</span></div>`
+    :`<div class=kpirow><span class=k>actual</span><span class=v>n/a</span></div>`)+`</div>`;
  let h='<div class=panel><h2>Summary — '+MODEL[primary].label+' · '+yr+'</h2>'
-  +'<p class=psub>Signed volume error = (model − full EIA-923)/actual, summed over the selected zones. Tolerance band ±'+tol+'%. Avg price is diagnostic only — not a calibration target.</p><div class=kpigrid>'
+  +'<p class=psub>Signed volume error = (model − full EIA-923)/actual, summed over the selected zones. A class passes within ±'+tol+'% <em>or</em> '+SUM_TOL_TWH+' TWh of actual (small classes may be off by a larger %). Avg LMP is diagnostic only — not a calibration target.</p><div class=kpigrid>'
   +`<div class=kpicard><div class=lbl>Classes in tolerance</div>
-    <div class=kpirow><span class=k>within ±${tol}%</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div></div>`
+    <div class=kpirow><span class=k>±${tol}% or ${SUM_TOL_TWH} TWh</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div></div>`
   +`<div class=kpicard><div class=lbl>System volume error</div>
     <div class=kpirow><span class=k>Σmodel vs Σ923</span><span class="v ${H.sysErr==null?'':tolcls(H.sysErr)}">${H.sysErr==null?"—":fmtPct(H.sysErr)}</span></div></div>`
   +`<div class=kpicard><div class=lbl>Worst-offending class</div>
-    <div class=kpirow><span class=k>${H.worst?mixLabel(H.worst.grp):"—"}</span><span class="v ${H.worst?tolcls(H.worst.err):''}">${H.worst?fmtPct(H.worst.err):"—"}</span></div></div>`
-  +`<div class=kpicard><div class=lbl>Avg price <span class=psub>(diagnostic)</span></div>
-    <div class=kpirow><span class=k>zones, ${yr}</span><span class=v>${H.price==null?"—":"$"+H.price.toFixed(1)+"/MWh"}</span></div></div>`
+    <div class=kpirow><span class=k>${H.worst?mixLabel(H.worst.grp):"—"}</span><span class="v ${H.worst?clsTol(H.worst):''}">${H.worst?fmtPct(H.worst.err):"—"}</span></div></div>`
+  +priceCard
   +'</div></div>';
+ h+=lmpPanel(primary,yr);
  h+='<div class=panel><h2>Volume error by class <span class=psub>(single run: '+MODEL[primary].label+'; sorted by signed % error)</span></h2><div id=sumTornado></div>'
   +'<p class=sumband><span><i style="background:'+cssTok('--accent','#4A90D9')+'"></i>under (model &lt; actual)</span>'
   +'<span><i style="background:'+cssTok('--danger','#E74C3C')+'"></i>over (model &gt; actual)</span>'
-  +'<span><i style="background:'+cssTok('--mr','#7b8794')+';opacity:.4"></i>±'+tol+'% tolerance band</span></p></div>';
+  +'<span><i style="background:'+cssTok('--mr','#7b8794')+';opacity:.4"></i>±'+tol+'% band (classes within '+SUM_TOL_TWH+' TWh also pass)</span></p></div>';
  if(multi)h+='<div class=panel><h2>Run-over-run error <span class=psub>(ordered '+ordered.map(id=>MODEL[id].label).join(' → ')+'; one line per class, bold = error grew)</span></h2><div id=sumSlope></div></div>';
  const detail=st.mode==="single"?singleTablesHTML(primary,yr):compareTablesHTML(ids,yr);
  h+='<div class=panel><button class=detailtog id=detailTog type=button>Show detail ▾</button><div id=detailBox class=hide style="margin-top:var(--space-md)">'+detail+'</div></div>';
