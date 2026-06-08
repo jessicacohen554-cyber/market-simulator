@@ -1,18 +1,19 @@
 {
-  "timestamp": "2026-06-08T02:49:25",
+  "timestamp": "2026-06-08T07:02:01",
   "git": {
-    "sha": "c67f6fd",
-    "branch": "main",
+    "sha": "9533f70",
+    "branch": "claude/tune-offer-curves-ercot-FrDoS",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "",
+  "model_changes_note": "Run58 tuning + OTHER breakout",
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
       2023,
-      2024
+      2024,
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +23,8 @@
     "commitment_screen_coal": true,
     "gas_prices": {
       "2023": 2.54,
-      "2024": 2.19
+      "2024": 2.19,
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -67,7 +69,7 @@
         "pct_peaking": -1.0
       }
     },
-    "git_sha": "c67f6fd"
+    "git_sha": "9533f70"
   },
   "scenario_config": {
     "weather_year": 2023,
