@@ -273,12 +273,14 @@ def _print_table(rows: list[tuple]) -> None:
 def _dispatch_frame(
     year: int, pass_label: str, result, context, zone_names: list[str],
     iso: str = "ERCOT",
+    must_run: dict[str, np.ndarray] | None = None,
 ) -> pd.DataFrame:
     """Return the long per-generator-hour dispatch frame for one year-pass.
 
     One row per (generator, hour) carrying the dispatched MW and the
-    generator's class / fuel / supply / zone, plus wind and solar as per-zone
-    pseudo-units so the frame reconciles to total grid generation.
+    generator's class / fuel / supply / zone, plus wind and solar (and any
+    injected must-run residual classes) as per-zone pseudo-units so the frame
+    reconciles to total grid generation.
     """
     disp = np.asarray(result.dispatch, dtype=np.float32)
     n_gen, T = disp.shape
@@ -336,10 +338,16 @@ def _dispatch_frame(
         "lmp": prices[gen_zidx, :].reshape(-1),
     })]
 
-    for name, arr in (
+    pseudo = [
         ("wind", result.wind_dispatched), ("solar", result.solar_dispatched),
-    ):
-        a = np.asarray(arr, dtype=np.float32)
+    ]
+    # Injected must-run residual classes (biomass / hydro / OTHER), re-added per
+    # zone so total model generation reconciles to load (they were netted out of
+    # the LP's demand). Carry klass == fuel == the class key.
+    for klass, arr in (must_run or {}).items():
+        pseudo.append((klass, arr))
+    for name, arr in pseudo:
+        a = np.asarray(arr, dtype=np.float32)[:, :T]
         for z in range(a.shape[0]):
             zone = zone_names[z]
             frames.append(pd.DataFrame({
@@ -529,6 +537,61 @@ def _eia923_frame(
     rename = {c: f"m{i + 1:02d}" for i, c in enumerate(cols)}
     rename["netgen_annual_mwh"] = "annual_mwh"
     return grouped.rename(columns=rename)
+
+
+# Residual / non-fossil classes injected into the ERCOT dispatch as must-run
+# resources: they serve load exogenously (run-of-river hydro, biomass/landfill,
+# refinery process gas, purchased steam, ...) rather than clearing the LP merit
+# order. Oil is NOT here — it is a price-responsive peaker dispatched in the LP.
+_INJECTED_MUSTRUN_CLASSES: tuple[str, ...] = ("biomass", "hydro", "OTHER")
+
+
+def _hour_months(year: int, hours: int) -> np.ndarray:
+    """``(hours,)`` array of 1-based calendar month for each hour-of-year."""
+    idx = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    return idx.month.to_numpy()
+
+
+def _must_run_profiles(
+    year: int, generation: pd.DataFrame, iso: str, demand: np.ndarray,
+) -> dict[str, np.ndarray]:
+    """Per-zone hourly must-run MW for each injected residual class.
+
+    Each class's EIA-923 annual generation is shaped by its monthly profile
+    (flat within a month, negatives clamped then rescaled to preserve the net
+    annual energy) and split across zones by their share of annual demand.
+    Returns ``{klass: (n_zones, hours) MW}`` for the classes with positive net
+    generation in ``iso`` and ``year``.
+    """
+    n_zones, hours = demand.shape
+    e923 = _eia923_frame(year, generation, iso=iso)
+    months = _hour_months(year, hours)
+    hours_per_month = np.array(
+        [(months == m).sum() for m in range(1, 13)], dtype=float)
+    zone_tot = demand.sum(axis=1)
+    grand = zone_tot.sum()
+    zone_share = (zone_tot / grand) if grand > 0 \
+        else np.full(n_zones, 1.0 / n_zones)
+    mcols = [f"m{i:02d}" for i in range(1, 13)]
+    out: dict[str, np.ndarray] = {}
+    for klass in _INJECTED_MUSTRUN_CLASSES:
+        rows = e923[e923["klass"] == klass]
+        annual = float(rows["annual_mwh"].sum())
+        if annual <= 0:
+            continue
+        monthly = np.clip(rows[mcols].sum().to_numpy(dtype=float), 0.0, None)
+        if monthly.sum() <= 0:
+            monthly = hours_per_month.copy()  # no monthly detail -> flat
+        with np.errstate(divide="ignore", invalid="ignore"):
+            mw_by_month = np.where(
+                hours_per_month > 0, monthly / hours_per_month, 0.0)
+        prof = mw_by_month[months - 1]
+        psum = float(prof.sum())
+        if psum <= 0:
+            continue
+        prof = prof * (annual / psum)  # preserve net annual energy
+        out[klass] = zone_share[:, None] * prof[None, :]
+    return out
 
 
 # EIA-923 lags for recent years (2025): plants that ran can report ~0 net gen.
@@ -829,6 +892,17 @@ def solve_and_persist(
         demand = load_demand(
             iso, year, iso_config, td_loss_factor=cfg.td_loss_factor
         )
+        # Must-run residual classes (biomass / hydro / other-gas / ...) are
+        # netted out of demand for the LP and re-added as pseudo-units in the
+        # dispatch frame, so they displace marginal gas and appear as their own
+        # classes instead of an invisible OTHER gap. ERCOT only.
+        must_run = (
+            _must_run_profiles(year, generation, iso, demand)
+            if is_ercot else {}
+        )
+        must_run_total = (
+            np.sum(list(must_run.values()), axis=0) if must_run else None
+        )
         logger.info(
             "solving %s %d (hours=%d, Henry Hub=$%.2f/MMBtu, commitment=%s)",
             iso, year, hours, gas_price, commitment,
@@ -850,6 +924,7 @@ def solve_and_persist(
             gas_offer_curve=gas_offer_curve,
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
+            must_run_mw=must_run_total,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -860,7 +935,8 @@ def solve_and_persist(
         for label, res in labelled:
             passes_seen.add(label)
             _dispatch_frame(
-                year, label, res, context, zone_names, iso=iso
+                year, label, res, context, zone_names, iso=iso,
+                must_run=must_run,
             ).to_parquet(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )
@@ -1084,6 +1160,30 @@ def _print_thermal_annual(year, model_twh, btm, e923_annual) -> None:
     _print_table(rows)
 
 
+# Non-fossil / residual classes surfaced in their own table: the dispatchable
+# oil peaker plus the must-run injected classes (biomass, hydro, OTHER).
+_NONFOSSIL_REPORT_CLASSES: tuple[str, ...] = ("oil", "biomass", "hydro", "OTHER")
+
+
+def _print_nonfossil_annual(year, model_twh, e923_annual) -> None:
+    """[3c] Oil / biomass / hydro / residual OTHER — model vs EIA-923."""
+    print(f"\n  [3c] Non-fossil & residual by class — {year}  (oil = LP peaker; "
+          "biomass / hydro / OTHER = must-run injected; vs EIA-923 total)")
+    rows = [("class", "model", "EIA-923", "diff %")]
+    tm = te = 0.0
+    for cls in _NONFOSSIL_REPORT_CLASSES:
+        m = model_twh.get(cls, 0.0)
+        e = e923_annual.get(cls, 0.0)
+        diff = 100.0 * (m - e) / e if e else float("nan")
+        rows.append((cls, f"{m:7.2f}", f"{e:7.2f}",
+                     f"{diff:+6.1f}" if e else "    —"))
+        tm += m
+        te += e
+    rows.append(("TOTAL", f"{tm:7.2f}", f"{te:7.2f}",
+                 f"{100.0 * (tm - te) / te:+6.1f}" if te else "—"))
+    _print_table(rows)
+
+
 def _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
                    btm, e923_annual) -> None:
     """[4] Monthly +/- % bias vs EIA-923 (coal split; solar vs EIA-930)."""
@@ -1278,8 +1378,13 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
         logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
         result = _commitment_pass(state, cfg)
         ctx = state["context"]
+        must_run = (
+            _must_run_profiles(year, generation, meta["iso"], state["demand"])
+            if meta["iso"] == "ERCOT" else {}
+        )
         _dispatch_frame(
-            year, "P2", result, ctx, zone_names, iso=meta["iso"]
+            year, "P2", result, ctx, zone_names, iso=meta["iso"],
+            must_run=must_run,
         ).to_parquet(
             bundle / "dispatch" / f"{year}_P2.parquet", index=False
         )
@@ -1524,6 +1629,7 @@ def report_run(run_dir: Path) -> None:
             if e930 is not None:
                 _print_nonchp_grid(year, model_hourly, e930, chp_grid_twh)
             _print_thermal_annual(year, model_twh, btm, e923_annual)
+            _print_nonfossil_annual(year, model_twh, e923_annual)
             _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
                            btm, e923_annual)
             if e930 is not None:
