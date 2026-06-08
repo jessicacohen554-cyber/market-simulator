@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-08 (Backcast summary — looser class tolerance + actual-LMP comparison)
+
+Loosens the backcast dashboard **Summary** page's per-class pass band and adds a
+model-vs-actual average-LMP comparison.
+
+- **Class tolerance.** A fossil class on the summary now passes within **±3%
+  _or_ 1 TWh** of the actual (`SUM_TOL_PCT` / `SUM_TOL_TWH` in
+  `scripts/_backcast_shell`), so small-volume classes that are off by a larger %
+  but within a TWh no longer count against the headline. This summary band is
+  separate from — and looser than — the per-cell heatmap deadband
+  (`TOLERANCE_PCT`, unchanged at 0.02). The "Classes in tolerance" KPI, the
+  worst-class color, the tornado band and its caption all reflect the dual band.
+- **Average LMP comparison.** New `scripts/derive_actual_lmp.py` reduces the raw
+  ERCOT settlement-point workbooks (`HB_HUBAVG`, DAM hourly / RTM 15-min) and the
+  PJM hub LMP export to a small committed reference,
+  `inputs/calibration/actual_lmp.json` (`{iso: {year: {da, rt}}}`, $/MWh).
+  `build_payload` attaches it to each benchmark year as `avgLMP`, and the summary
+  gains an "Avg LMP — model vs actual historical" KPI + panel showing the model
+  (load-weighted over the selected zones) against the actual day-ahead /
+  real-time system hub average with the signed Δ. Diagnostic only — LMP level is
+  not a calibration target. Absent for an ISO-year with no price file (card shows
+  model only).
+
 ## 2026-06-08 (Backcast — signed volume-error heatmap on the Charts view)
 
 Adds a Plotly heatmap to the backcast dashboard's Charts view showing each
