@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-08T02:54:20",
+  "timestamp": "2026-06-08T07:22:55",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -14,7 +14,8 @@
   "commitment_screen_coal": true,
   "gas_prices": {
     "2023": 2.54,
-    "2024": 2.19
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -42,5 +43,5 @@
       "econ_high": 0.03
     }
   },
-  "git_sha": "c67f6fd"
+  "git_sha": "9533f70"
 }
