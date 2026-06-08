@@ -83,6 +83,49 @@ def _compare(model: float, benchmark: float, tolerance: float) -> dict:
     }
 
 
+# --- Actuals source authority ----------------------------------------------
+# A volume comparison needs one authoritative "actual" per class. EIA-923
+# (Schedule-5 net generation) is authoritative for every dispatchable class,
+# EXCEPT solar: utility-scale plus distributed PV is under-reported in 923, so
+# solar volume is benchmarked against EIA-930 (hourly net generation by source)
+# instead. This is the single source-authority rule -- downstream consumers
+# (e.g. the backcast volume-error export) reuse it rather than re-deciding the
+# source per class, so the choice lives in one place.
+EIA923_SOURCE: str = "eia923"
+EIA930_SOURCE: str = "eia930"
+
+
+def actuals_source(klass: str) -> str:
+    """Return the authoritative actuals source for a class's volume check.
+
+    Args:
+        klass: Model plant-class key (e.g. ``"CC_REGULAR"``, ``"solar"``).
+
+    Returns:
+        :data:`EIA930_SOURCE` for solar, :data:`EIA923_SOURCE` for every other
+        class.
+    """
+    return EIA930_SOURCE if str(klass).lower() == "solar" else EIA923_SOURCE
+
+
+def signed_volume_error(model_twh: float, actual_twh: float) -> float:
+    """Signed fractional volume error ``(model - actual) / actual``.
+
+    A thin wrapper over :func:`_pct_diff` so callers compute the volume delta
+    with the same sign convention and zero-actual handling as every other
+    calibration diagnostic, instead of reimplementing the ratio.
+
+    Args:
+        model_twh: The modeled volume, in TWh.
+        actual_twh: The authoritative actual volume, in TWh.
+
+    Returns:
+        The signed fractional error; ``0.0`` when both are zero and ``inf`` for
+        a nonzero model against a zero actual (see :func:`_pct_diff`).
+    """
+    return _pct_diff(float(model_twh), float(actual_twh))
+
+
 def _as_generation_twh(result) -> dict[str, float]:
     """Coerce a calibration input into a ``{fuel: TWh}`` mapping.
 

@@ -59,6 +59,9 @@ from market_sim.data.fleet import (  # noqa: E402
     CHP_BTM_PCT_BY_SECTOR, CHP_SECTOR_CLASS_BY_PLANT, CHP_ST_BTM_PCT,
     load_campd_bins, plant_tranche_bands,
 )
+from market_sim.results.calibration import (  # noqa: E402
+    actuals_source, signed_volume_error,
+)
 
 # All class groupings derive from the canonical taxonomy
 # (market_sim.config.plant_taxonomy) — the single source of truth mapping model
@@ -88,6 +91,18 @@ def _monthly_gwh(mw: np.ndarray) -> list[float]:
     """Return 12 monthly GWh totals from an hourly MW series."""
     return [round(float(mw[_CUM[m]:_CUM[m + 1]].sum()) / 1e3, 2)
             for m in range(12)]
+
+
+def _vol_err(model_twh: float, actual_twh: float) -> float | None:
+    """Signed volume error, JSON-safe: ``None`` when it is not finite.
+
+    ``signed_volume_error`` returns ``inf`` for a nonzero model against a
+    zero actual; ``json.dumps`` would emit a bare ``Infinity`` token that the
+    browser's ``JSON.parse`` rejects (and would take the whole run payload
+    down with it), so a non-finite error is stored as ``null`` instead.
+    """
+    e = signed_volume_error(model_twh, actual_twh)
+    return round(e, 4) if np.isfinite(e) else None
 
 
 def _pearson(m: np.ndarray, o: np.ndarray) -> float:
@@ -205,7 +220,9 @@ def build_payload(runs: list[tuple[str, Path]],
     per-plant CAMPD CF + annual + monthly, EIA-923 per-plant annual + monthly,
     EIA-930 per-fuel annual + hourly); and ``model`` (per run, per year:
     per-plant model CF + annual + monthly + per-plant r / NRMSE / capture%, the
-    non-fossil model annual, and the system fuel-vs-930 table rows).
+    non-fossil model annual, the system fuel-vs-930 table rows, and
+    ``volErr`` -- the signed volume error (model vs the authoritative actuals
+    source per class) decomposed by zone and month for the heatmap).
     """
     npl = _nameplates()
     pnames = _plant_names()
@@ -415,9 +432,52 @@ def build_payload(runs: list[tuple[str, Path]],
                             if g in ("CC_CHP", "CT_CHP", "ST_CHP") else 0.0), 4)
                 for g in (set(MIX_GROUPS) | set(mh))
             }
+            # ---- signed volume error per (class, zone, month) ----
+            # Model monthly TWh vs the authoritative actuals source for each
+            # class (EIA-923 for every class except solar -> EIA-930; the rule
+            # lives in calibration.actuals_source, not here or in JS). Built
+            # from the matched fossil plants so it decomposes by zone and month
+            # -- the dashboard heatmap re-aggregates these to whatever axis it
+            # shows. Per-plant model (m_mon) and EIA-923 (e923_mon) are the full
+            # plant (CHP add-back included on both sides), matching the existing
+            # per-plant Δ-vs-923 table. Solar carries only a system annual
+            # because EIA-930 is neither zonal nor monthly here.
+            vol_err: dict[str, dict] = {}
+            for code in mw_p:
+                grp = grp_p.get(code)
+                zone = zone_p.get(code)
+                if grp is None or zone is None:
+                    continue
+                cell = vol_err.setdefault(
+                    grp, {"src": actuals_source(grp), "zoneMon": {}})
+                zc = cell["zoneMon"].setdefault(
+                    zone, {"m": [0.0] * 12, "a": [0.0] * 12})
+                m_mon = mplants[str(code)]["m_mon"]          # model GWh
+                a_mon = e923_mon.get(code, np.zeros(12))      # EIA-923 GWh
+                for mo in range(12):
+                    zc["m"][mo] += float(m_mon[mo]) / 1e3     # GWh -> TWh
+                    zc["a"][mo] += float(a_mon[mo]) / 1e3
+            for cell in vol_err.values():
+                for zc in cell["zoneMon"].values():
+                    zc["m"] = [round(x, 4) for x in zc["m"]]
+                    zc["a"] = [round(x, 4) for x in zc["a"]]
+                    zc["e"] = [_vol_err(m, a)
+                               for m, a in zip(zc["m"], zc["a"])]
+            # Solar: EIA-930 system annual baseline (no zone/month breakdown).
+            solar_m = float(nf.get("solar", 0.0))
+            solar_a = float(bench[int(year)]["e930"].get("solar", 0.0))
+            if solar_a > 0.0 or solar_m > 0.0:
+                vol_err["solar"] = {
+                    "src": actuals_source("solar"),
+                    "sys": {
+                        "m": round(solar_m, 4),
+                        "a": round(solar_a, 4),
+                        "e": _vol_err(solar_m, solar_a),
+                    },
+                }
             run_years[int(year)] = {
                 "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
-                "gmModel": gm_model, "lmp": lmp}
+                "gmModel": gm_model, "lmp": lmp, "volErr": vol_err}
         model_runs.append({"label": label, "years": run_years})
 
     # Only the fossil classes actually present in this ISO's dispatch, in the
