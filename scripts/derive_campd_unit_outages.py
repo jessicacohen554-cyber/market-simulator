@@ -174,7 +174,7 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024])
+    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
