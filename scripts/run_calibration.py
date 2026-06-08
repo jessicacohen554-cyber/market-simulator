@@ -527,6 +527,7 @@ def run_year(
     gas_offer_curve: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
+    must_run_mw: "np.ndarray | None" = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -595,6 +596,16 @@ def run_year(
         wind_cf = wind_cf[:, :config.hours]
         solar_cf = solar_cf[:, :config.hours]
 
+    # Must-run "other" resources (biomass, hydro, process gas, ...) serve load
+    # exogenously — they run for industrial/process reasons, not LP economics —
+    # so net them out of demand before the dispatch so they displace marginal
+    # gas instead of being double-counted on top of a fully-served balance.
+    if must_run_mw is not None:
+        mr = np.asarray(must_run_mw, dtype=float)
+        if mr.shape[1] > config.hours:
+            mr = mr[:, :config.hours]
+        demand = np.maximum(demand - mr, 0.0)
+
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = _apply_ttc_overrides(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
@@ -611,9 +622,14 @@ def run_year(
     )
     if campd_bins is not None:
         campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
+        # Gas/coal are dispatched via the CAMPD bins; biomass is injected as a
+        # must-run resource (run_calibration_full), so neither is added as a raw
+        # unit here. Oil is kept as its own raw LP unit so it dispatches as the
+        # scarcity peaker it is (its fuel price / heat rate come from constants).
+        _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
         non_thermal = [
             g for g in load_fleet_from_csv(iso, iso_config)
-            if g.fuel_type not in _AGGREGATABLE_FUELS
+            if g.fuel_type not in _campd_binned_or_injected
         ]
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
