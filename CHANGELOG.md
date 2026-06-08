@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-06-08 (Backcast — signed volume-error heatmap on the Charts view)
+
+Adds a Plotly heatmap to the backcast dashboard's Charts view showing each
+asset class's signed volume error — `(model_TWh − actual_TWh) / actual_TWh` —
+with a class-row × axis-toggle (Year / Month / Zone / Run) layout, a diverging
+cool→white→warm scale built from the dashboard color tokens, a neutral-gray
+deadband, and a ±20% color cap. Each cell is annotated with its absolute model
+TWh.
+
+- **`market_sim.results.calibration`.** New canonical source-authority rule:
+  `actuals_source(klass)` returns EIA-923 for every class except solar, which
+  uses EIA-930 (utility + distributed PV is under-reported in 923). Added
+  `signed_volume_error`, a thin wrapper over the existing `_pct_diff` so the
+  export computes the delta with the same sign/zero-actual convention as the
+  other diagnostics. The choice lives here, not in JS.
+- **`scripts/render_calibration_html.build_payload`.** Each run-year now emits a
+  `volErr` field: per fossil class, model vs EIA-923 TWh decomposed by zone and
+  month (so the heatmap re-aggregates to any axis); solar carries a system
+  annual vs EIA-930. Non-finite errors (nonzero model over a zero actual) are
+  stored as `null` so the browser's `JSON.parse` never sees a bare `Infinity`.
+- **`scripts/_backcast_shell`.** One `TOLERANCE_PCT` const at the top of the
+  script (default 0.02; spec target 0.05) drives the deadband. The heatmap is
+  Plotly-only and reuses the `--accent` / `--danger` / `--mr` design tokens —
+  no new palette. The LP/dispatch/capacity code, the calibration
+  source-authority logic, the Tables view and the existing run data are
+  untouched (run data files only gain `volErr`).
+
 ## 2026-06-06 (CC peak — tweakable flat band instead of per-class duct burner)
 
 Makes the CC_REGULAR / CC_CHP peak band a tunable offer-curve `peak` key
