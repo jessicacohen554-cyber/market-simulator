@@ -31,7 +31,9 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.plant_taxonomy import (
+    BIOMASS_ENERGY_SOURCES,
     COAL_SUPPLY_TO_CLASS,
+    OIL_ENERGY_SOURCES,
     classify_plant,
     coal_code_to_class,
 )
@@ -1179,14 +1181,11 @@ _NUCLEAR_ZONE_OVERRIDES: dict[str, str] = {
 
 # Energy-source codes (EIA-860 / eGRID PLPRMFL) that indicate coal steam.
 _COAL_ENERGY_SOURCES = {"SUB", "BIT", "LIG", "ANT", "RC", "WC"}
-# Energy-source codes that indicate oil-based fuel: distillate (DFO), residual
-# (RFO), petroleum coke (PC), jet fuel (JF), kerosene (KER) and waste oil (WO).
-# These map to the dedicated ``oil`` fuel type (oil peakers/steam).
-_OIL_ENERGY_SOURCES = {"DFO", "RFO", "PC", "JF", "KER", "WO"}
-# Energy-source codes that indicate biomass/refuse fuel: wood & wood waste
-# solids (WDS), agricultural byproducts (AB), municipal solid waste (MSW),
-# landfill gas (LFG), and other common biogenic streams. Map to ``biomass``.
-_BIOMASS_ENERGY_SOURCES = {"WDS", "AB", "MSW", "LFG", "BLQ", "OBG", "OBL", "OBS", "WDL", "SLW", "DG"}
+# Oil and biomass energy-source codes come from the canonical taxonomy so the
+# model fleet and the EIA-923 benchmark bucket a plant identically. Petroleum
+# coke (PC) is excluded from oil there (it falls to the residual OTHER bucket).
+_OIL_ENERGY_SOURCES = OIL_ENERGY_SOURCES
+_BIOMASS_ENERGY_SOURCES = BIOMASS_ENERGY_SOURCES
 # Prime-mover codes that indicate a combined-cycle configuration.
 _CC_PRIME_MOVERS = {"CC", "CA", "CT", "CS"}
 
