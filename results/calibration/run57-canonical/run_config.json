@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-06-07T21:00:58",
+  "timestamp": "2026-06-08T01:27:56",
   "git": {
-    "sha": "df4ddcc",
+    "sha": "e83b474",
     "branch": "claude/tune-offer-curves-ercot-FrDoS",
     "dirty": false,
     "changed_files": [],
@@ -11,7 +11,8 @@
   "calibration_flags": {
     "iso": "ERCOT",
     "years": [
-      2023
+      2023,
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -20,7 +21,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2023": 2.54,
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -51,7 +53,7 @@
         "committed": -0.07
       }
     },
-    "git_sha": "df4ddcc"
+    "git_sha": "e83b474"
   },
   "scenario_config": {
     "weather_year": 2023,
