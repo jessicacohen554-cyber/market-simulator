@@ -1,0 +1,35 @@
+{
+  "ERCOT": {
+    "2023": {
+      "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
+      "da": 55.94,
+      "rt": 48.36
+    },
+    "2024": {
+      "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
+      "da": 28.09,
+      "rt": 26.83
+    },
+    "2025": {
+      "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
+      "rt": 32.49
+    }
+  },
+  "PJM": {
+    "2023": {
+      "da": 29.33,
+      "rt": 28.44,
+      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
+    },
+    "2024": {
+      "da": 29.78,
+      "rt": 29.53,
+      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
+    },
+    "2025": {
+      "da": 43.71,
+      "rt": 42.89,
+      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
+    }
+  }
+}
