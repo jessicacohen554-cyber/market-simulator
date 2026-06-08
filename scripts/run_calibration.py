@@ -333,9 +333,14 @@ def _calibration_config(
             # not the offer curve; this only rebalances the CC-vs-CT split that
             # economic dispatch (no commitment) leaves CC-heavy. ERCOT keeps the
             # fitted values.
+            # ERCOT econ bands fold in the run57 baseline (econ_low 1.06->1.16,
+            # econ_high 1.27->1.41) so a no-tweak ERCOT run reproduces run57 and
+            # workflow tweaks are +/- relative to it. PJM / other ISOs unchanged.
             "CC_REGULAR": {"committed": 0.92,
-                           "econ_low": 1.20 if iso == "PJM" else 1.06,
-                           "econ_high": 1.49 if iso == "PJM" else 1.27,
+                           "econ_low": 1.20 if iso == "PJM" else (
+                               1.16 if iso == "ERCOT" else 1.06),
+                           "econ_high": 1.49 if iso == "PJM" else (
+                               1.41 if iso == "ERCOT" else 1.27),
                            "peak": 2.25,
                            "econ_low_share": 0.50,
                            "pct_peaking": 8.0},
@@ -365,13 +370,19 @@ def _calibration_config(
             # hurdle / econ-low / peak are an ERCOT calibration tune; PJM keeps
             # its own validated CT curve (committed 1.10, econ_low 1.32,
             # peak 13.0).
-            "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else 1.55,
+            # ERCOT committed folds in the run57 baseline (1.55 -> 1.48).
+            "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else (
+                              1.48 if iso == "ERCOT" else 1.55),
                           "econ_low": 1.20 if iso == "PJM" else 1.27,
                           "econ_high": 1.98,
                           "peak": 13.0 if iso == "PJM" else 13.15,
                           "econ_low_share": 0.526, "pct_peaking": 7.0},
-            "ST_GAS": {"committed": 0.81, "econ_low": 1.05,
-                       "econ_high": 1.40, "peak": 4.20,
+            # ERCOT bands fold in the run57 baseline (committed 0.81->0.91,
+            # econ_low 1.05->1.15, econ_high 1.40->1.55). Other ISOs unchanged.
+            "ST_GAS": {"committed": 0.91 if iso == "ERCOT" else 0.81,
+                       "econ_low": 1.15 if iso == "ERCOT" else 1.05,
+                       "econ_high": 1.55 if iso == "ERCOT" else 1.40,
+                       "peak": 4.20,
                        "econ_low_share": 0.500, "pct_peaking": 15.0},
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
             # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
@@ -379,8 +390,12 @@ def _calibration_config(
             "COAL_LIGNITE": {"committed": 0.95, "econ_low": 1.14,
                              "econ_high": 1.15, "peak": 1.55,
                              "econ_low_share": 0.556},
-            "COAL_PRB": {"committed": 0.95, "econ_low": 0.77,
-                         "econ_high": 1.19, "peak": 1.48,
+            # ERCOT econ bands fold in the run57 baseline (econ_low 0.77->0.70,
+            # econ_high 1.19->0.94). Other ISOs keep the prior PRB curve.
+            "COAL_PRB": {"committed": 0.95,
+                         "econ_low": 0.70 if iso == "ERCOT" else 0.77,
+                         "econ_high": 0.94 if iso == "ERCOT" else 1.19,
+                         "peak": 1.48,
                          "econ_low_share": 0.556},
             # Non-ERCOT coal by EIA-923 fuel rank (scripts/derive_coal_supply.py;
             # routes via fleet._COAL_SUPPLY_TO_CURVE). PJM 2024: 25 bituminous,
