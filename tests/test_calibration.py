@@ -16,14 +16,18 @@ from market_sim.model.dispatch import DispatchResult
 from market_sim.results import cache
 from market_sim.results.calibration import (
     DEFAULT_TOLERANCE,
+    EIA923_SOURCE,
+    EIA930_SOURCE,
     FAIL,
     PASS,
     SKIPPED,
     CalibrationReport,
+    actuals_source,
     check_generation_mix,
     check_hourly_dispatch_correlation,
     check_price_duration_curve,
     run_calibration_check,
+    signed_volume_error,
 )
 from market_sim.results.outputs import FleetContext
 
@@ -76,6 +80,34 @@ class TestCheckGenerationMix(unittest.TestCase):
         summary = {"generation_twh": {"coal": 50.0}, "avg_price": 30.0}
         result = check_generation_mix(summary, {"coal": 50.0})
         self.assertEqual(result["coal"]["pass_fail"], PASS)
+
+
+class TestActualsSourceAuthority(unittest.TestCase):
+    """``actuals_source`` picks EIA-923 for every class except solar."""
+
+    def test_solar_uses_eia930(self):
+        """Solar volume is benchmarked against EIA-930, case-insensitively."""
+        self.assertEqual(actuals_source("solar"), EIA930_SOURCE)
+        self.assertEqual(actuals_source("Solar"), EIA930_SOURCE)
+
+    def test_every_other_class_uses_eia923(self):
+        """Fossil and other non-solar classes use EIA-923 as the baseline."""
+        for klass in ("CC_REGULAR", "COAL_PRB", "CT_PEAKER", "wind", "nuclear"):
+            self.assertEqual(actuals_source(klass), EIA923_SOURCE, klass)
+
+
+class TestSignedVolumeError(unittest.TestCase):
+    """``signed_volume_error`` is the (model - actual)/actual fraction."""
+
+    def test_signed_fraction(self):
+        """A 10% over-build and a 20% short-fall keep their signs."""
+        self.assertAlmostEqual(signed_volume_error(110.0, 100.0), 0.1)
+        self.assertAlmostEqual(signed_volume_error(80.0, 100.0), -0.2)
+
+    def test_zero_actual_handling_matches_pct_diff(self):
+        """Zero actual gives 0.0 for a zero model and inf for a nonzero one."""
+        self.assertEqual(signed_volume_error(0.0, 0.0), 0.0)
+        self.assertEqual(signed_volume_error(5.0, 0.0), float("inf"))
 
 
 class TestCheckPriceDurationCurve(unittest.TestCase):
