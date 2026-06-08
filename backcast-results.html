@@ -58,6 +58,10 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 #bctip{position:fixed;display:none;z-index:99;max-width:320px;background:#1a2233;color:#fff;font-size:var(--fs-sm);line-height:1.5;padding:10px 13px;border-radius:8px;box-shadow:var(--shadow-md)}
 #diag{margin:var(--space-md) 0;padding:var(--space-md);border:1px solid var(--warning);border-radius:var(--radius-md);color:#8a6d00;background:#fffaf0}
 .hide{display:none}
+.detailtog{border:1px solid var(--border);background:var(--bg-surface);border-radius:var(--radius-md);padding:8px 14px;font-size:var(--fs-sm);font-weight:600;color:var(--ink);cursor:pointer}
+.detailtog:hover{background:#eef3f9}
+.sumband{color:var(--ink-muted);font-size:var(--fs-xs);margin:6px 0 0;display:flex;gap:16px;flex-wrap:wrap}
+.sumband i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 @media(max-width:820px){.bc-wrap{flex-direction:column;padding:var(--space-sm)}.bc-side{position:static;width:100%;flex-basis:auto}.bc-main{width:100%}
  .modebtns{flex-direction:row}.modebtns button{flex:1}}
 @media(max-width:640px){th,td{padding:6px 7px;font-size:var(--fs-xs)}
@@ -84,7 +88,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
-    <button data-p=charts class=on>Charts</button><button data-p=tables>Tables</button></span></div>
+    <button data-p=summary class=on>Summary</button><button data-p=charts>Charts</button><button data-p=tables>Tables</button></span></div>
    <div class=ctl><span class=lab>Year</span><span class=seg id=yearSel></span></div>
    <div class=ctl><span class=lab>Class</span><select id=classSel></select></div>
    <div class="ctl ctlwide"><span class=lab>Zones</span><span class=chips id=zoneSel></span></div>
@@ -432,7 +436,7 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
  document.getElementById("cAnn").appendChild(barChart(bs,Math.max(0.1,...bs.map(b=>b.v))*1.25,760,300));
  mountVolHeat(ids,yr);
  wireTips(document.getElementById("content"));}
-function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
+function compareTablesHTML(ids,yr){let h="";
  // generation mix (system-wide; full EIA-923)
  h+=genMixPanel(ids,yr);
  // fuel vs 930
@@ -462,7 +466,9 @@ function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
    h+=row+"</tr>";}
   h+='</tbody></table></div></div>';}
  h+='<div class=panel>'+narrative(ids)+'</div>';
- document.getElementById("content").innerHTML=h;wireTips(document.getElementById("content"));}
+ return h;}
+function renderCompareTables(){const ids=selectedRuns(),yr=st.year;
+ document.getElementById("content").innerHTML=compareTablesHTML(ids,yr);wireTips(document.getElementById("content"));}
 // ---- render: SINGLE deep-dive ----
 function singleSeries(id,yr,grp,plant){const B=BENCH[yr],M=MODEL[id].years[yr];
  if(plant&&plant!=="agg"&&M.plants[plant]){const b=B.plants[plant],mp=M.plants[plant];
@@ -518,7 +524,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  document.getElementById("sMon").appendChild(lineChart(ms,Math.max(1,...d.c_mon,...d.m_mon)*1.15,MONTHS,"",760,300));
  mountVolHeat([id],yr);
  wireTips(document.getElementById("content"));}
-function renderSingleTables(){const id=st.single,yr=st.year;
+function singleTablesHTML(id,yr){
  let h=genMixPanel([id],yr)+singleFuelTable(id,yr)+singleFossilTable(id,yr);
  h+='<div class=panel><h2>Per-plant fit vs CAMPD / EIA-923 — '+yr+'</h2><div class=tablewrap><table><thead><tr><th>plant</th><th>class</th><th>zone</th><th>r</th><th>NRMSE</th><th>capture%</th><th>Δ923%</th></tr></thead><tbody>';
  const B=BENCH[yr],M=MODEL[id].years[yr];
@@ -526,10 +532,101 @@ function renderSingleTables(){const id=st.single,yr=st.year;
  for(const c of codes){const b=B.plants[c],mp=M.plants[c];const d=b.e_ann>0.001?100*(mp.m_ann-b.e_ann)/b.e_ann:null;
   h+=`<tr><td>${b.name}</td><td>${META.groupLabel[b.group]||b.group}</td><td>${b.zone}</td><td class=num>${mp.r??"—"}</td><td class=num>${mp.nrmse??"—"}</td><td class=num>${mp.cap==null?"—":mp.cap.toFixed(0)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":d.toFixed(0)}</td></tr>`;}
  h+='</tbody></table></div>'+narrative([id])+'</div>';
- document.getElementById("content").innerHTML=h;wireTips(document.getElementById("content"));}
+ return h;}
+function renderSingleTables(){const id=st.single,yr=st.year;
+ document.getElementById("content").innerHTML=singleTablesHTML(id,yr);wireTips(document.getElementById("content"));}
+// ---- render: SUMMARY ----
+// Reuses classMetrics (the same model-full vs full-EIA-923 Δ923 shown in the
+// detail tables and KPI cards) — no recompute of any LP/dispatch result. Signed
+// % error per fossil class = (model − actual)/actual; the tolerance band is the
+// shared TOLERANCE_PCT (zone-aware, since classMetrics honors st.zones).
+const SUM_NOPLOT='<p class=psub>Plotly failed to load — this view needs network access to the Plotly CDN.</p>';
+function orderRuns(ids){const order=BC.manifest.map(m=>m.id);
+ return ids.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b));}
+function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
+ if(!m||!(m.bench923>0.02))return null;
+ return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923};}
+function classErrs(id,yr){const out=[];for(const g of META.groups){const e=classErr(id,yr,g);if(e)out.push(e);}return out;}
+function tolcls(v){const a=Math.abs(v),tol=TOLERANCE_PCT*100;return a<=tol?"good":a<=3*tol?"ok":"bad";}
+function summaryHeadline(id,yr){const es=classErrs(id,yr),tol=TOLERANCE_PCT*100;
+ let sm=0,sa=0,worst=null;
+ es.forEach(e=>{sm+=e.mFull;sa+=e.bench923;if(!worst||Math.abs(e.err)>Math.abs(worst.err))worst=e;});
+ return {n:es.length,inTol:es.filter(e=>Math.abs(e.err)<=tol).length,
+  sysErr:sa>0?100*(sm-sa)/sa:null,worst,price:avgLMP(id,yr)};}
+// Tornado: classes sorted by signed % error, zero-centered, cool (--accent) for
+// under / warm (--danger) for over, with the ±TOLERANCE_PCT band shaded gray.
+function mountTornado(id,yr){const div=document.getElementById("sumTornado");if(!div)return;
+ if(typeof Plotly==="undefined"){div.innerHTML=SUM_NOPLOT;return;}
+ const es=classErrs(id,yr).slice().sort((a,b)=>b.err-a.err);
+ if(!es.length){div.innerHTML='<p class=psub>No class-level error data for this run/zone selection.</p>';return;}
+ const cool=cssTok('--accent','#4A90D9'),warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
+ const y=es.map(e=>mixLabel(e.grp)),x=es.map(e=>e.err),tol=TOLERANCE_PCT*100;
+ const trace={type:"bar",orientation:"h",x,y,marker:{color:es.map(e=>e.err<0?cool:warm)},
+  text:x.map(v=>(v>=0?"+":"")+v.toFixed(1)+"%"),textposition:"outside",cliponaxis:false,
+  hovertemplate:"<b>%{y}</b><br>signed error %{x:+.1f}%<extra></extra>"};
+ const ext=Math.max(tol*2,...x.map(Math.abs))*1.22;
+ const layout={margin:{l:140,r:30,t:10,b:42},height:Math.max(180,es.length*44+72),bargap:0.38,
+  xaxis:{title:{text:"signed % error (model − actual)"},zeroline:true,zerolinewidth:2,zerolinecolor:"#46505f",
+   range:[-ext,ext],ticksuffix:"%",gridcolor:"#eef1f4"},
+  yaxis:{autorange:"reversed",automargin:true,tickfont:{size:12}},
+  shapes:[{type:"rect",xref:"x",yref:"paper",x0:-tol,x1:tol,y0:0,y1:1,fillcolor:gray,opacity:0.12,line:{width:0},layer:"below"}],
+  paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",font:{family:"inherit"}};
+ Plotly.react(div,[trace],layout,{displayModeBar:false,responsive:true});}
+// Slope chart: one line per fossil class across runs (manifest order), y =
+// signed % error, bold zero line. Classes whose |error| grew first→last run are
+// drawn warm (--danger) and bold; the rest stay muted gray (--mr).
+function mountSlope(ids,yr){const div=document.getElementById("sumSlope");if(!div)return;
+ if(typeof Plotly==="undefined"){div.innerHTML=SUM_NOPLOT;return;}
+ const ordered=orderRuns(ids),xl=ordered.map(id=>MODEL[id].label);
+ const warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
+ const traces=[],anns=[];
+ for(const g of META.groups){const ys=ordered.map(id=>{const e=classErr(id,yr,g);return e?e.err:null;});
+  const idxs=ys.map((v,i)=>v==null?-1:i).filter(i=>i>=0);if(idxs.length<2)continue;
+  const fi=idxs[0],li=idxs[idxs.length-1],didGrow=Math.abs(ys[li])>Math.abs(ys[fi])+1e-6;
+  const col=didGrow?warm:gray,lab=mixLabel(g);
+  traces.push({type:"scatter",mode:"lines+markers",x:xl,y:ys,connectgaps:true,
+   line:{color:col,width:didGrow?3:1.5},marker:{size:didGrow?7:5,color:col},opacity:didGrow?1:0.55,
+   hovertemplate:"<b>"+lab+"</b><br>%{x}: %{y:+.1f}%<extra></extra>"});
+  anns.push({x:xl[li],y:ys[li],text:didGrow?("<b>"+lab+" ▲</b>"):lab,xanchor:"left",xshift:7,
+   showarrow:false,font:{size:11,color:col}});}
+ if(!traces.length){div.innerHTML='<p class=psub>Need at least two runs with class-level error data to compare.</p>';return;}
+ const layout={margin:{l:56,r:150,t:10,b:42},height:Math.max(280,traces.length*8+280),showlegend:false,
+  annotations:anns,xaxis:{type:"category",automargin:true,tickfont:{size:12}},
+  yaxis:{title:{text:"signed % error"},ticksuffix:"%",zeroline:true,zerolinewidth:2.5,zerolinecolor:"#46505f",gridcolor:"#eef1f4"},
+  paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",font:{family:"inherit"}};
+ Plotly.react(div,traces,layout,{displayModeBar:false,responsive:true});}
+function renderSummary(){const ids=selectedRuns().filter(Boolean),yr=st.year;
+ if(!ids.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
+ const ordered=orderRuns(ids),primary=ordered[0],multi=ids.length>1,tol=(TOLERANCE_PCT*100).toFixed(0);
+ const H=summaryHeadline(primary,yr);
+ let h='<div class=panel><h2>Summary — '+MODEL[primary].label+' · '+yr+'</h2>'
+  +'<p class=psub>Signed volume error = (model − full EIA-923)/actual, summed over the selected zones. Tolerance band ±'+tol+'%. Avg price is diagnostic only — not a calibration target.</p><div class=kpigrid>'
+  +`<div class=kpicard><div class=lbl>Classes in tolerance</div>
+    <div class=kpirow><span class=k>within ±${tol}%</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div></div>`
+  +`<div class=kpicard><div class=lbl>System volume error</div>
+    <div class=kpirow><span class=k>Σmodel vs Σ923</span><span class="v ${H.sysErr==null?'':tolcls(H.sysErr)}">${H.sysErr==null?"—":fmtPct(H.sysErr)}</span></div></div>`
+  +`<div class=kpicard><div class=lbl>Worst-offending class</div>
+    <div class=kpirow><span class=k>${H.worst?mixLabel(H.worst.grp):"—"}</span><span class="v ${H.worst?tolcls(H.worst.err):''}">${H.worst?fmtPct(H.worst.err):"—"}</span></div></div>`
+  +`<div class=kpicard><div class=lbl>Avg price <span class=psub>(diagnostic)</span></div>
+    <div class=kpirow><span class=k>zones, ${yr}</span><span class=v>${H.price==null?"—":"$"+H.price.toFixed(1)+"/MWh"}</span></div></div>`
+  +'</div></div>';
+ h+='<div class=panel><h2>Volume error by class <span class=psub>(single run: '+MODEL[primary].label+'; sorted by signed % error)</span></h2><div id=sumTornado></div>'
+  +'<p class=sumband><span><i style="background:'+cssTok('--accent','#4A90D9')+'"></i>under (model &lt; actual)</span>'
+  +'<span><i style="background:'+cssTok('--danger','#E74C3C')+'"></i>over (model &gt; actual)</span>'
+  +'<span><i style="background:'+cssTok('--mr','#7b8794')+';opacity:.4"></i>±'+tol+'% tolerance band</span></p></div>';
+ if(multi)h+='<div class=panel><h2>Run-over-run error <span class=psub>(ordered '+ordered.map(id=>MODEL[id].label).join(' → ')+'; one line per class, bold = error grew)</span></h2><div id=sumSlope></div></div>';
+ const detail=st.mode==="single"?singleTablesHTML(primary,yr):compareTablesHTML(ids,yr);
+ h+='<div class=panel><button class=detailtog id=detailTog type=button>Show detail ▾</button><div id=detailBox class=hide style="margin-top:var(--space-md)">'+detail+'</div></div>';
+ document.getElementById("content").innerHTML=h;
+ mountTornado(primary,yr);
+ if(multi)mountSlope(ids,yr);
+ const tog=document.getElementById("detailTog"),box=document.getElementById("detailBox");
+ tog.onclick=()=>{const hidden=box.classList.toggle("hide");tog.textContent=hidden?"Show detail ▾":"Hide detail ▴";};
+ wireTips(document.getElementById("content"));}
 // ---- shell render ----
 function render(){const ids=selectedRuns().filter(Boolean);if(!ids.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
  ensureRuns(ids).then(()=>{
+  if(st.page==="summary"){renderSummary();return;}
   if(st.mode==="single"){st.classWrap=true;if(st.page==="charts")renderSingleCharts();else renderSingleTables();}
   else{if(st.page==="charts")renderCompareCharts();else renderCompareTables();}
  }).catch(e=>{document.getElementById("diag").style.display="block";document.getElementById("diag").textContent="Load error: "+(e.message||e);});}
@@ -585,7 +682,7 @@ async function boot(){try{
   const isoSel=document.getElementById("isoSel");
   isoSel.innerHTML=isos.map(i=>`<button data-iso="${i}">${i}</button>`).join("");
   isoSel.onclick=e=>{if(e.target.dataset.iso&&e.target.dataset.iso!==st.iso)selectIso(e.target.dataset.iso);};
-  st={mode:"compare",runs:[],single:null,year:0,zones:new Set(),page:"charts",klass:"",plant:"agg",iso:null};
+  st={mode:"compare",runs:[],single:null,year:0,zones:new Set(),page:"summary",klass:"",plant:"agg",iso:null};
   document.getElementById("diag").style.display="none";
   await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);
  }catch(e){const d=document.getElementById("diag");d.style.display="block";d.style.color="#c01c28";d.textContent="Init error: "+((e&&e.message)||e)+" "+((e&&e.stack)||"");}}
