@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-08 (Backcast — multi-ISO toggle + color-coded market chrome)
+
+Makes the ISO axis a real, prominent toggle and registers a PJM run alongside
+the ERCOT set so the dashboard ships with more than one market.
+
+- **PJM on the dashboard.** Registered `pjm_8zone` (2023+2024) as `pjm 1 8zone`
+  via `dashboard_add_run.py`, so the ISO toggle now switches between **ERCOT**
+  (Run-58 / Run-59 / run57-canonical) and **PJM**. Both markets carry the new
+  actual-LMP benchmark (PJM hub average, ERCOT `HB_HUBAVG`).
+- **Color-coded market toggle.** The sidebar "Market (ISO)" control is now a set
+  of prominent, color-coded buttons (canonical ISO colors from
+  `docs/DESIGN_SYSTEM.md` — ERCOT green, PJM sky) with a per-ISO run count and a
+  one-line hint listing the other loaded markets. The active market is echoed in
+  a colored header badge next to the title and in a dynamic subtitle
+  (`ERCOT · 3 runs · …`), so it is always clear which ISO is on screen.
+- **`scripts/_backcast_shell`.** Added the ISO color tokens, `.isobtn` /
+  `.isobadge` styles, and `isoColorVar` / `isoRunCount` / `updateIsoChrome`
+  helpers; `selectIso` now repaints the header chrome on every switch. No change
+  to the run data shape.
+
 ## 2026-06-08 (Backcast summary — looser class tolerance + actual-LMP comparison)
 
 Loosens the backcast dashboard **Summary** page's per-class pass band and adds a
