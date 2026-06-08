@@ -80,7 +80,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  </aside>
  <main class=bc-main>
   <h1 style="font-size:var(--fs-xl);margin:0 0 2px">Backcast Results</h1>
-  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-08 05:04</p>
+  <p class=psub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-08 06:31</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -92,11 +92,16 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div id=content></div>
  </main>
 </div>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 <script src="frontend/data/backcast/manifest.js"></script><script src="frontend/data/backcast/benchmark.js"></script>
 <script>
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const RC=["#4A90D9","#2ECC71","#9B59B6","#E67E22","#E74C3C"];
 const NS="http://www.w3.org/2000/svg",T=8760;
+// Neutral deadband half-width for the volume-error heatmap: a cell whose
+// |signed % error| <= TOLERANCE_PCT renders neutral gray. Default 0.02; the
+// spec target (model-methodology-spec.md) is 0.05.
+const TOLERANCE_PCT=0.02;
 let META,BENCH,MODEL={},st;
 function inflate(b64){const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
  if(typeof DecompressionStream==="undefined")return Promise.reject(new Error("browser lacks DecompressionStream — use a current browser"));
@@ -320,6 +325,78 @@ function singleFossilTable(id,yr){let h='<div class=panel><h2>Fossil classes —
 // ---- narrative ----
 function narrative(ids){let h='<div class=narr><h3 style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted)">Run definitions</h3>';
  for(const id of ids){const m=META_RUN(id);h+=`<div class=ndef>${ridSpan(id)} — ${m.definition}</div>`;}return h+"</div>";}
+// ---- signed volume-error heatmap (Plotly) ----
+// All model-vs-actual deltas and the 923-vs-930 source authority are computed
+// in Python (render_calibration_html.build_payload, reusing calibration.py);
+// each run-year carries volErr={class:{src, zoneMon|sys}} with model & actual
+// TWh per (zone, month). Here we only re-aggregate those to the chosen axis and
+// render — the source choice is never re-decided in JS.
+const HEATCOLS=["Year","Month","Zone","Run"];
+function cssTok(name,fb){const v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();return v||fb;}
+function volSrc(id,yr,cls){const ve=((MODEL[id].years[yr]||{}).volErr||{})[cls];return ve?ve.src:"";}
+// {m,a} model & actual TWh for one class, summed over a zone set & month list
+// (sys-only classes like solar carry no zonal/monthly split — flagged so the
+// caller can drop them from zone/month columns).
+function volMA(id,yr,cls,zoneSet,monList){const ve=((MODEL[id].years[yr]||{}).volErr||{})[cls];if(!ve)return null;
+ if(ve.zoneMon){let m=0,a=0,any=false;
+  for(const z in ve.zoneMon){if(zoneSet&&!zoneSet.has(z))continue;const zc=ve.zoneMon[z];
+   for(const mo of monList){m+=zc.m[mo];a+=zc.a[mo];any=true;}}
+  return any?{m,a}:null;}
+ if(ve.sys)return {m:ve.sys.m,a:ve.sys.a,sys:true};
+ return null;}
+function volHeatPanelHTML(){return '<div class=panel><h2>Signed volume error '
+ +'<span class=psub>(model − actual)/actual · EIA-923 baseline, solar vs EIA-930 · color capped ±20%, |Δ|≤'
+ +(TOLERANCE_PCT*100).toFixed(0)+'% neutral · cell = model TWh</span></h2>'
+ +'<p class=psub>Year / Month / Zone columns use the first selected run; Run columns compare every selected run. EIA-930 (solar) is system-wide, so solar shows only under Year and Run.</p>'
+ +'<div class="ctl" style="margin-bottom:var(--space-sm)"><span class=lab>Columns</span><span class=seg id=heatColSel></span></div>'
+ +'<div id=volHeat></div></div>';}
+function mountVolHeat(ids,yr){if(!st.heatCol)st.heatCol="Month";
+ const sel=document.getElementById("heatColSel");if(!sel)return;
+ sel.innerHTML=HEATCOLS.map(c=>`<button data-hc="${c}" class="${c===st.heatCol?'on':''}">${c}</button>`).join("");
+ sel.onclick=e=>{const c=e.target.dataset.hc;if(!c)return;st.heatCol=c;
+  [...sel.children].forEach(b=>b.classList.toggle("on",b.dataset.hc===c));renderVolHeat(ids,yr);};
+ renderVolHeat(ids,yr);}
+function renderVolHeat(ids,yr){const div=document.getElementById("volHeat");if(!div)return;
+ if(typeof Plotly==="undefined"){div.innerHTML='<p class=psub>Plotly failed to load — the heatmap needs network access to the Plotly CDN.</p>';return;}
+ // rows = fossil classes present in any selected run (canonical order) + solar
+ const present=new Set();
+ ids.forEach(id=>{const ys=MODEL[id].years||{};for(const y in ys){const ve=ys[y].volErr;if(ve)for(const k in ve)present.add(k);}});
+ const rows=META.groups.filter(g=>present.has(g)).concat(present.has("solar")?["solar"]:[]);
+ if(!rows.length){div.innerHTML='<p class=psub>No volume-error data in this payload — re-export with the updated build (scripts/regen_dashboard.py).</p>';return;}
+ const ALL=[0,1,2,3,4,5,6,7,8,9,10,11],zones=st.zones;
+ let cols,spec;
+ if(st.heatCol==="Year"){cols=META.years.map(String);
+  spec=i=>({id:ids[0],year:META.years[i],zoneSet:zones,monList:ALL,allDims:true});}
+ else if(st.heatCol==="Run"){cols=ids.map(id=>MODEL[id].label);
+  spec=i=>({id:ids[i],year:yr,zoneSet:zones,monList:ALL,allDims:true});}
+ else if(st.heatCol==="Zone"){cols=[...zones].filter(z=>META.zones.includes(z)).sort();
+  spec=i=>({id:ids[0],year:yr,zoneSet:new Set([cols[i]]),monList:ALL,allDims:false});}
+ else{cols=MONTHS.slice();spec=i=>({id:ids[0],year:yr,zoneSet:zones,monList:[i],allDims:false});}
+ const Z=[],TXT=[],CD=[];
+ for(const cls of rows){const zr=[],tr=[],cr=[];
+  for(let i=0;i<cols.length;i++){const s=spec(i);let cell=volMA(s.id,s.year,cls,s.zoneSet,s.monList);
+   if(cell&&cell.sys&&!s.allDims)cell=null;           // sys-only class can't be sliced by zone/month
+   if(cell&&Math.abs(cell.a)>1e-9){zr.push((cell.m-cell.a)/cell.a*100);
+    tr.push(cell.m>=10?cell.m.toFixed(1):cell.m.toFixed(2));cr.push([cell.m,cell.a,volSrc(s.id,s.year,cls)]);}
+   else{zr.push(null);tr.push("");cr.push([null,null,""]);}}
+  Z.push(zr);TXT.push(tr);CD.push(cr);}
+ // Diverging colorscale from the dashboard tokens: cool (under) → white →
+ // gray deadband → white → warm (over). zmin/zmax clamp the scale at ±20%.
+ const cool=cssTok('--accent','#4A90D9'),warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
+ const CAP=20,db=Math.min(Math.max(TOLERANCE_PCT*100,0),CAP-0.01);
+ const tlo=(CAP-db)/(2*CAP),thi=(CAP+db)/(2*CAP);
+ const SCALE=[[0,cool],[tlo,'#ffffff'],[tlo,gray],[thi,gray],[thi,'#ffffff'],[1,warm]];
+ const yLab=rows.map(g=>g==="solar"?"Solar":mixLabel(g));
+ const trace={type:"heatmap",x:cols,y:yLab,z:Z,text:TXT,texttemplate:"%{text}",
+  customdata:CD,zmin:-CAP,zmax:CAP,colorscale:SCALE,xgap:1,ygap:1,
+  hovertemplate:"<b>%{y}</b> · %{x}<br>model %{customdata[0]:.2f} TWh · actual %{customdata[1]:.2f} TWh (%{customdata[2]})<br>Δ %{z:+.1f}%<extra></extra>",
+  textfont:{size:11,color:"#1F2933"},
+  colorbar:{title:{text:"signed % error",side:"right"},ticksuffix:"%",thickness:12,len:0.92,outlinewidth:0}};
+ const layout={margin:{l:140,r:16,t:26,b:54},height:Math.max(190,rows.length*44+90),
+  xaxis:{type:"category",side:"top",tickfont:{size:11},automargin:true},
+  yaxis:{type:"category",autorange:"reversed",automargin:true,tickfont:{size:11}},
+  paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",font:{family:"inherit"}};
+ Plotly.react(div,[trace],layout,{displayModeBar:false,responsive:true});}
 // ---- render: COMPARISON ----
 function selectedRuns(){return st.mode==="single"?[st.single]:st.runs;}
 function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;let h="";
@@ -339,6 +416,7 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
  // monthly line: each run + CAMPD
  h+='<div class=panel><h2>Monthly generation (GWh)</h2><div class=legend id=legMon></div><div class=svgbox id=cMon></div></div>';
  h+='<div class=panel><h2>Annual total (TWh)</h2><div class=svgbox id=cAnn></div></div>';
+ h+=volHeatPanelHTML();
  document.getElementById("content").innerHTML=h;
  // monthly
  const B=BENCH[yr];const camp=new Array(12).fill(0);if(B)plantsOf(ids[0],yr,grp).forEach(c=>B.plants[c].c_mon.forEach((v,i)=>camp[i]+=v));
@@ -352,6 +430,7 @@ function renderCompareCharts(){const ids=selectedRuns(),grp=st.klass,yr=st.year;
  let cA=0,eA=0;if(B)plantsOf(ids[0],yr,grp).forEach(c=>{cA+=B.plants[c].c_ann;eA+=B.plants[c].e_ann;});
  bs.push({label:"CAMPD",v:cA,color:"#647184"});bs.push({label:"EIA-923",v:eA,color:"#2ECC71"});
  document.getElementById("cAnn").appendChild(barChart(bs,Math.max(0.1,...bs.map(b=>b.v))*1.25,760,300));
+ mountVolHeat(ids,yr);
  wireTips(document.getElementById("content"));}
 function renderCompareTables(){const ids=selectedRuns(),yr=st.year;let h="";
  // generation mix (system-wide; full EIA-923)
@@ -416,6 +495,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  h+='<div class=panel><h2>Average daily profile (CF%)</h2><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sProf></div></div>';
  h+='<div class=panel><h2>Hours at each capacity factor</h2><p class=psub>Vertical markers are this plant\'s offer-curve tranche boundaries; the tag is the heat-rate multiplier priced from that CF up. Pick a single plant for markers.</p><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
  h+='<div class=panel><h2>Monthly (GWh)</h2><div class=svgbox id=sMon></div></div>';
+ h+=volHeatPanelHTML();
  document.getElementById("content").innerHTML=h;
  const psel=document.getElementById("plantSel");
  psel.innerHTML=`<option value=agg>Aggregate (${ps.length} plants)</option>`+ps.map(c=>`<option value=${c}>${BENCH[yr].plants[c].name} · ${BENCH[yr].plants[c].zone}${BENCH[yr].plants[c].nodata?" · no CAMPD":""}</option>`).join("");
@@ -436,6 +516,7 @@ function renderSingleCharts(){const id=st.single,yr=st.year,grp=st.klass;
  document.getElementById("sProf").appendChild(lineChart(profSets,Math.max(40,...pc,...pm)*1.1,xl,"%",760,300));
  const ms=hasC?[{pts:d.c_mon,color:"#647184",name:"CAMPD",w:3},{pts:d.m_mon,color:"#4A90D9",name:"Model",dash:"4 3"}]:[{pts:d.m_mon,color:"#4A90D9",name:"Model",dash:"4 3"}];
  document.getElementById("sMon").appendChild(lineChart(ms,Math.max(1,...d.c_mon,...d.m_mon)*1.15,MONTHS,"",760,300));
+ mountVolHeat([id],yr);
  wireTips(document.getElementById("content"));}
 function renderSingleTables(){const id=st.single,yr=st.year;
  let h=genMixPanel([id],yr)+singleFuelTable(id,yr)+singleFossilTable(id,yr);
