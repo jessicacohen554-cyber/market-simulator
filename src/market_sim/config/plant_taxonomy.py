@@ -159,6 +159,21 @@ def coal_code_to_class(code: str) -> str | None:
 NG_CC_PRIME_MOVERS: frozenset[str] = frozenset({"CA", "CS", "CT", "CC"})
 NG_CT_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
 
+# EIA energy-source codes for the non-coal/non-gas thermal classes — the single
+# source of truth shared by the model fleet builder (``data.fleet``) and the
+# EIA-923 benchmark, so the model and benchmark bucket a plant identically.
+# Oil = distillate (DFO), residual (RFO), jet (JF), kerosene (KER), waste oil
+# (WO). Petroleum coke (PC) is deliberately excluded so it falls to the residual
+# OTHER must-run bucket rather than the dispatchable oil-peaker fleet.
+OIL_ENERGY_SOURCES: frozenset[str] = frozenset(
+    {"DFO", "RFO", "JF", "KER", "WO"})
+# Biomass = wood/refuse solids, landfill gas and the other biogenic streams.
+BIOMASS_ENERGY_SOURCES: frozenset[str] = frozenset(
+    {"WDS", "AB", "MSW", "LFG", "BLQ", "OBG", "OBL", "OBS", "WDL", "SLW", "DG"})
+# Hydro: fuel code WAT or a hydraulic-turbine prime mover (HY / HA). Pumped
+# storage (PS) is left to OTHER — it is a storage resource, not a generator.
+HYDRO_PRIME_MOVERS: frozenset[str] = frozenset({"HY", "HA"})
+
 
 def classify_plant(
     fuel: object,
@@ -182,7 +197,9 @@ def classify_plant(
       ``COAL`` class.
     * Natural gas (``NG``) is split by prime mover and CHP flag into the six
       gas classes (CC / CT / ST, merchant vs CHP).
-    * Wind, solar and nuclear are their own classes; everything else ``OTHER``.
+    * Wind, solar, nuclear, oil, biomass and hydro are their own classes;
+      everything else (other/process gas, purchased steam, waste heat, petcoke,
+      batteries, …) falls through to the residual ``OTHER`` bucket.
 
     Args:
         fuel: EIA energy-source code (``NG``, ``BIT``, ``WND`` …).
@@ -216,4 +233,10 @@ def classify_plant(
         return "solar"
     if fuel == "NUC":
         return "nuclear"
+    if fuel in OIL_ENERGY_SOURCES:
+        return "oil"
+    if fuel in BIOMASS_ENERGY_SOURCES:
+        return "biomass"
+    if fuel == "WAT" or pm in HYDRO_PRIME_MOVERS:
+        return "hydro"
     return "OTHER"
