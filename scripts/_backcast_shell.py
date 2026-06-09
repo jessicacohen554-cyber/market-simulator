@@ -397,7 +397,15 @@ function mountVolHeat(ids,yr){if(!st.heatCol)st.heatCol="Month";
  sel.onclick=e=>{const c=e.target.dataset.hc;if(!c)return;st.heatCol=c;
   [...sel.children].forEach(b=>b.classList.toggle("on",b.dataset.hc===c));renderVolHeat(ids,yr);};
  renderVolHeat(ids,yr);}
+// Re-render the mounted heatmap on resize/orientation change so the responsive
+// sizing in renderVolHeat (in-cell text on/off, margins) re-evaluates. One
+// debounced listener, bound once; it no-ops if the heat panel isn't on screen.
+let _heatArgs=null,_heatResizeBound=false,_heatRT;
+function bindHeatResize(){if(_heatResizeBound)return;_heatResizeBound=true;
+ addEventListener("resize",()=>{clearTimeout(_heatRT);_heatRT=setTimeout(()=>{
+  if(_heatArgs&&document.getElementById("volHeat"))renderVolHeat(_heatArgs.ids,_heatArgs.yr);},180);});}
 function renderVolHeat(ids,yr){const div=document.getElementById("volHeat");if(!div)return;
+ _heatArgs={ids,yr};bindHeatResize();
  if(typeof Plotly==="undefined"){div.innerHTML='<p class=psub>Plotly failed to load — the heatmap needs network access to the Plotly CDN.</p>';return;}
  // rows = fossil classes present in any selected run (canonical order) + solar
  const present=new Set();
@@ -428,14 +436,24 @@ function renderVolHeat(ids,yr){const div=document.getElementById("volHeat");if(!
  const tlo=(CAP-db)/(2*CAP),thi=(CAP+db)/(2*CAP);
  const SCALE=[[0,cool],[tlo,'#ffffff'],[tlo,gray],[thi,gray],[thi,'#ffffff'],[1,warm]];
  const yLab=rows.map(g=>g==="solar"?"Solar":mixLabel(g));
- const trace={type:"heatmap",x:cols,y:yLab,z:Z,text:TXT,texttemplate:"%{text}",
+ // Responsive sizing: on a phone the 12 month cells shrink to ~20px and the
+ // per-cell TWh value collides into an unreadable smear. Estimate the cell
+ // width from the container (minus the y-label margin + colorbar) and drop the
+ // in-cell text once cells are too small — the value stays available on tap via
+ // the hover tooltip. Also tighten margins, tick fonts and the colorbar so the
+ // grid itself gets the available width on narrow screens.
+ const availW=div.clientWidth||window.innerWidth||760,narrow=availW<560;
+ const labW=narrow?60:140,cbW=46,cellW=(availW-labW-cbW)/Math.max(1,cols.length);
+ const showText=cellW>=30;
+ const trace={type:"heatmap",x:cols,y:yLab,z:Z,text:TXT,texttemplate:showText?"%{text}":"",
   customdata:CD,zmin:-CAP,zmax:CAP,colorscale:SCALE,xgap:1,ygap:1,
   hovertemplate:"<b>%{y}</b> · %{x}<br>model %{customdata[0]:.2f} TWh · actual %{customdata[1]:.2f} TWh (%{customdata[2]})<br>Δ %{z:+.1f}%<extra></extra>",
-  textfont:{size:11,color:"#1F2933"},
-  colorbar:{title:{text:"signed % error",side:"right"},ticksuffix:"%",thickness:12,len:0.92,outlinewidth:0}};
- const layout={margin:{l:140,r:16,t:26,b:54},height:Math.max(190,rows.length*44+90),
-  xaxis:{type:"category",side:"top",tickfont:{size:11},automargin:true},
-  yaxis:{type:"category",autorange:"reversed",automargin:true,tickfont:{size:11}},
+  textfont:{size:narrow?10:11,color:"#1F2933"},
+  colorbar:{title:{text:"signed % error",side:"right"},ticksuffix:"%",thickness:narrow?9:12,len:narrow?0.86:0.92,outlinewidth:0,tickfont:{size:narrow?9:11}}};
+ const layout={margin:{l:labW,r:narrow?6:16,t:narrow?22:26,b:narrow?44:54},
+  height:Math.max(narrow?170:190,rows.length*(narrow?34:44)+(narrow?70:90)),
+  xaxis:{type:"category",side:"top",tickfont:{size:narrow?10:11},tickangle:narrow?-90:0,automargin:true},
+  yaxis:{type:"category",autorange:"reversed",automargin:true,tickfont:{size:narrow?10:11}},
   paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",font:{family:"inherit"}};
  Plotly.react(div,[trace],layout,{displayModeBar:false,responsive:true});}
 // ---- render: COMPARISON ----
