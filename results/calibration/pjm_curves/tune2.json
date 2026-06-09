@@ -1,0 +1,6 @@
+{
+  "CC_REGULAR": {"econ_low": 1.02, "econ_high": 1.24},
+  "CT_PEAKER":  {"committed": 1.28, "econ_low": 1.42},
+  "ST_GAS":     {"committed": 0.72, "econ_low": 0.96, "econ_high": 1.30},
+  "COAL_BIT":   {"committed": 0.90, "econ_low": 0.98, "econ_high": 1.12}
+}
