@@ -29,6 +29,7 @@ from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     _AGGREGATABLE_FUELS,
+    Generator,
     aggregate_fleet,
     apply_coal_tranches,
     apply_plant_emission_rates,
@@ -38,6 +39,7 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
+    load_planned_additions,
     split_coal_tranches,
 )
 from market_sim.data.fuel import (
@@ -91,9 +93,17 @@ def _get_growth_rate(config: ScenarioConfig, year: int) -> float:
 def _scale_demand(
     base_demand: np.ndarray, config: ScenarioConfig, year: int
 ) -> np.ndarray:
-    """Scale base-year demand to the target year using compound growth."""
+    """Scale weather-year demand to the target year using compound growth.
+
+    ``base_demand`` is the *weather year's* actual hourly load, so growth
+    compounds from ``config.weather_year`` -- not from the first simulated
+    year. Compounding from START_YEAR silently dropped the growth between
+    the weather year and the simulation start (e.g. 2024 actuals presented
+    as 2026 demand), an error that then propagated through every forecast
+    year. A backcast (``year == weather_year``) still gets a factor of 1.
+    """
     factor = 1.0
-    for y in range(START_YEAR, year):
+    for y in range(config.weather_year, year):
         factor *= 1.0 + _get_growth_rate(config, y)
     return base_demand * factor
 
@@ -173,6 +183,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # economic new-entry screen.
     storage_units = build_default_storage(iso_config, config)
 
+    # Known additions (methodology spec §5.4): EIA-860 planned /
+    # under-construction thermal units, deterministic through the data
+    # horizon. Loaded once; units come online in their EIA-860 effective
+    # year via evolve_fleet step 3 (or the first-year fleet below for units
+    # already due). Forecast-mode only: a backcast solves a historical year
+    # whose fleet snapshot already reflects what was actually built.
+    planned_additions: list[Generator] = []
+    if config.mode == "forecast":
+        planned_additions = load_planned_additions(iso, iso_config)
+        if planned_additions:
+            logger.info(
+                "loaded %d planned EIA-860 additions (%.0f MW, %d-%d)",
+                len(planned_additions),
+                sum(g.pmax_mw for g in planned_additions),
+                min(g.online_year for g in planned_additions),
+                max(g.online_year for g in planned_additions),
+            )
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
@@ -204,6 +232,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     load_fleet_from_csv(iso, iso_config),
                     n_bins=config.heat_rate_bin_count,
                 )
+            # Planned units already due by the first simulated year (their
+            # EIA-860 effective year falls after the operable snapshot but
+            # at or before START_YEAR) join the base fleet now; evolve_fleet
+            # only runs from the second year on.
+            due = [g for g in planned_additions if g.online_year <= year]
+            if due:
+                logger.info(
+                    "year %d: %d planned additions already due (%.0f MW)",
+                    year, len(due), sum(g.pmax_mw for g in due),
+                )
+                fleet = fleet + due
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
@@ -317,6 +356,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         year_demand = _scale_demand(base_demand, config, year)
         peak_demand = float(year_demand.sum(axis=0).max())
 
+        fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
+        # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
+        # lignite vs PRB by rail); no-op for the legacy fleet.
+        apply_coal_supply_pricing(
+            fuel_prices, dispatch_fleet, config, year
+        )
+        carbon_price = resolve_carbon_price(config, year)
+        # Full variable cost: fuel + VOM + carbon + NOx + SO2 -- computed
+        # even on cached years because next year's economic retirement
+        # screen nets it against price (inframarginal margin, not gross
+        # revenue). Deliberately excludes the EAC discount (attribute
+        # revenue is credited separately in the screen -- using both would
+        # double-count) and the take-or-pay tranche discount (sunk fuel is
+        # avoidable on a retirement horizon, where contracts lapse).
+        mc_cost = assemble_mc(
+            fleet_arrays, fuel_prices, carbon_price, config.nox_price,
+            so2=(fleet_arrays.so2_rate, config.so2_price),
+        )
+
         if is_cached(iso, cache_key, year):
             result = load_result(iso, cache_key, year)
             logger.info(
@@ -324,21 +382,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 year, time.perf_counter() - year_start,
             )
         else:
-            fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
-            # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
-            # lignite vs PRB by rail); no-op for the legacy fleet.
-            apply_coal_supply_pricing(
-                fuel_prices, dispatch_fleet, config, year
-            )
-            carbon_price = resolve_carbon_price(config, year)
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
-            # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous
-            # EACs, then the coal take-or-pay tranche discount. This is the
-            # generators' actual cost — it carries no startup-cost markup.
-            mc_base = assemble_mc(
-                fleet_arrays, fuel_prices, carbon_price, config.nox_price,
-                so2=(fleet_arrays.so2_rate, config.so2_price),
-            )
+            # Base marginal cost: the full variable cost above, then
+            # exogenous EACs, then the coal take-or-pay tranche discount.
+            # This is the generators' bid basis — no startup-cost markup.
+            mc_base = mc_cost.copy()
             # Exogenous EACs shift the cost vector: per-generator EACs
             # lower per-generator MC, wind/solar EACs lower their dispatch
             # adders, and the storage EAC credits discharge. The EAC is real
@@ -375,6 +423,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solar_mc=solar_mc,
                 storage_discharge_eac=storage_eac,
                 rps_target=rps_target,
+                # Bound storage foresight to within-day arbitrage when the
+                # config asks for it (methodology spec §1.3); previously
+                # only the backcast script honored this flag.
+                storage_daily_cycle_hours=(
+                    24 if config.storage_daily_cycling else None
+                ),
                 T=config.hours,
             )
             # P0: solve with base MC to extract per-month run lengths.
@@ -448,7 +502,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "dispatch_result": result,
             "prices": result.prices,
             "peak_demand": peak_demand,
-            "planned_additions": [],
+            "planned_additions": planned_additions,
+            "mc_cost": mc_cost,
             "rps_shadow_price": result.rps_shadow_price or 0.0,
             "retrofit_log": retrofit_log,
         }
