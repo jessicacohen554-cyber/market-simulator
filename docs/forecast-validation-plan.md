@@ -51,6 +51,13 @@ because the hindcast's early years are pipeline-dominated).
 **Exit criterion:** ERCOT and PJM 2026–2050 runs complete without error; a
 2026-vs-2024-actual demand check passes; unit tests cover each fix.
 
+> **Status (2026-06-09): ✅ complete.** All Phase-0 items (including B10)
+> landed — see `CHANGELOG.md` for the item-by-item record. 2-year ERCOT and
+> PJM forecast smoke runs complete; the full test suite covers each fix.
+> Prompts P0.1–P0.5 below are retained for the historical record and as
+> regression context; the program now starts at P1. Note for hindcast work:
+> `ScenarioConfig.mode` now exists and cache keys rotated with it.
+
 ## Phase 1 — Forecast smoke tests & invariants
 
 Build an automated invariant checker that runs after any forecast run and

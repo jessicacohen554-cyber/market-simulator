@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-06-03",
+  "generated": "2026-06-10",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -4273,9 +4273,28 @@
       ]
     },
     {
+      "param_id": "gas_basis_differential.NYISO",
+      "display_name": "Gas Basis Differential / Nyiso",
+      "value": 0.55,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "EIA-923 delivered-gas basis (see below)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "gas_basis_differential.PJM",
       "display_name": "Gas Basis Differential / Pjm",
-      "value": 0.3,
+      "value": 0.67,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 2,
@@ -5945,6 +5964,138 @@
       ]
     },
     {
+      "param_id": "pumped_storage_duration_hours",
+      "display_name": "Pumped Storage Duration Hours",
+      "value": 10.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage block alongside batteries; EIA-860 reports power but not energy or RTE). Duration: the US PSH fleet averages ~10 h of storage at nameplate (DOE \"Pumped Storage Hydropower\" 2023 fact sheet; Bath County ≈ 10.5 h).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "pumped_storage_rte",
+      "display_name": "Pumped Storage Rte",
+      "value": 0.8,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia Energy Storage Handbook; DOE PSH fact sheet cites ~80%).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_gw.MISO",
+      "display_name": "Queue Cap Gw / Miso",
+      "value": 10,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_gw.NEISO",
+      "display_name": "Queue Cap Gw / Neiso",
+      "value": 4,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_gw.NYISO",
+      "display_name": "Queue Cap Gw / Nyiso",
+      "value": 4,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_gw.PJM",
+      "display_name": "Queue Cap Gw / Pjm",
+      "value": 10,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_gw.SPP",
+      "display_name": "Queue Cap Gw / Spp",
+      "value": 6,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "queue_cap_per_tech_gw.CAISO.gas_cc",
       "display_name": "Queue Cap Per Tech Gw / Caiso / Gas Cc",
       "value": 2.0,
@@ -6173,6 +6324,576 @@
       ]
     },
     {
+      "param_id": "queue_cap_per_tech_gw.MISO.gas_cc",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Gas Cc",
+      "value": 3.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.MISO.geothermal",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Geothermal",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "engineering judgment, EGS resource potential",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.MISO.nuclear",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Nuclear",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.MISO.offshore_wind",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Offshore Wind",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "Gulf coast not yet leased. Source: BOEM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.MISO.solar",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Solar",
+      "value": 6.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.MISO.wind",
+      "display_name": "Queue Cap Per Tech Gw / Miso / Wind",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.gas_cc",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Gas Cc",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.geothermal",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Geothermal",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "engineering judgment, EGS resource potential",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.nuclear",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Nuclear",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.offshore_wind",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Offshore Wind",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "Gulf coast not yet leased. Source: BOEM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.solar",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Solar",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NEISO.wind",
+      "display_name": "Queue Cap Per Tech Gw / Neiso / Wind",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.gas_cc",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Gas Cc",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.geothermal",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Geothermal",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "engineering judgment, EGS resource potential",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.nuclear",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Nuclear",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.offshore_wind",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Offshore Wind",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "Gulf coast not yet leased. Source: BOEM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.solar",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Solar",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.NYISO.wind",
+      "display_name": "Queue Cap Per Tech Gw / Nyiso / Wind",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.gas_cc",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Gas Cc",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.geothermal",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Geothermal",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "engineering judgment, EGS resource potential",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.nuclear",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Nuclear",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.offshore_wind",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Offshore Wind",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "Gulf coast not yet leased. Source: BOEM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.solar",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Solar",
+      "value": 6.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.PJM.wind",
+      "display_name": "Queue Cap Per Tech Gw / Pjm / Wind",
+      "value": 1.5,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.gas_cc",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Gas Cc",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.geothermal",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Geothermal",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "engineering judgment, EGS resource potential",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.nuclear",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Nuclear",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.offshore_wind",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Offshore Wind",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Emerging Tech",
+      "tier": 2,
+      "source": "Gulf coast not yet leased. Source: BOEM",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.solar",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Solar",
+      "value": 3.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "queue_cap_per_tech_gw.SPP.wind",
+      "display_name": "Queue Cap Per Tech Gw / Spp / Wind",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Per-technology annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "real_dollar_base_year",
       "display_name": "Real Dollar Base Year",
       "value": 2026,
@@ -6264,6 +6985,114 @@
       ]
     },
     {
+      "param_id": "renewable_avg_cf.MISO.solar",
+      "display_name": "Renewable Avg Cf / Miso / Solar",
+      "value": 0.22,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.MISO.wind",
+      "display_name": "Renewable Avg Cf / Miso / Wind",
+      "value": 0.34,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.NEISO.solar",
+      "display_name": "Renewable Avg Cf / Neiso / Solar",
+      "value": 0.15,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.NEISO.wind",
+      "display_name": "Renewable Avg Cf / Neiso / Wind",
+      "value": 0.3,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.NYISO.solar",
+      "display_name": "Renewable Avg Cf / Nyiso / Solar",
+      "value": 0.15,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.NYISO.wind",
+      "display_name": "Renewable Avg Cf / Nyiso / Wind",
+      "value": 0.26,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "renewable_avg_cf.PJM.solar",
       "display_name": "Renewable Avg Cf / Pjm / Solar",
       "value": 0.19,
@@ -6285,6 +7114,42 @@
       "param_id": "renewable_avg_cf.PJM.wind",
       "display_name": "Renewable Avg Cf / Pjm / Wind",
       "value": 0.31,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.SPP.solar",
+      "display_name": "Renewable Avg Cf / Spp / Solar",
+      "value": 0.24,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Annual-average renewable capacity factors (fraction) by ISO and technology. Used to rescale the normalized EIA-930 generation distributions into hourly capacity-factor profiles. Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report. PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly extract — mean wind/solar net generation over the EIA-860 average-online capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh) rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_avg_cf.SPP.wind",
+      "display_name": "Renewable Avg Cf / Spp / Wind",
+      "value": 0.41,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -6357,6 +7222,186 @@
       "param_id": "renewable_installed_mw.ERCOT.wind",
       "display_name": "Renewable Installed Mw / Ercot / Wind",
       "value": 42000.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.MISO.solar",
+      "display_name": "Renewable Installed Mw / Miso / Solar",
+      "value": 7000.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 25000. Source: EIA Hourly Grid Monitor Oct 2025.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.MISO.wind",
+      "display_name": "Renewable Installed Mw / Miso / Wind",
+      "value": 32000.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.NEISO.solar",
+      "display_name": "Renewable Installed Mw / Neiso / Solar",
+      "value": 2700.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 25000. Source: EIA Hourly Grid Monitor Oct 2025.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.NEISO.wind",
+      "display_name": "Renewable Installed Mw / Neiso / Wind",
+      "value": 1400.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.NYISO.solar",
+      "display_name": "Renewable Installed Mw / Nyiso / Solar",
+      "value": 1500.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 25000. Source: EIA Hourly Grid Monitor Oct 2025.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.NYISO.wind",
+      "display_name": "Renewable Installed Mw / Nyiso / Wind",
+      "value": 2400.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.PJM.solar",
+      "display_name": "Renewable Installed Mw / Pjm / Solar",
+      "value": 14000.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 25000. Source: EIA Hourly Grid Monitor Oct 2025.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.PJM.wind",
+      "display_name": "Renewable Installed Mw / Pjm / Wind",
+      "value": 11000.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.SPP.solar",
+      "display_name": "Renewable Installed Mw / Spp / Solar",
+      "value": 600.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "was 25000. Source: EIA Hourly Grid Monitor Oct 2025.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "renewable_installed_mw.SPP.wind",
+      "display_name": "Renewable Installed Mw / Spp / Wind",
+      "value": 34000.0,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -7777,6 +8822,44 @@
       ]
     },
     {
+      "param_id": "scenario.gas_offer_curve",
+      "display_name": "Gas Offer Curve",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — give the non-ERCOT per-plant gas fleet a stepped offer curve (committed/economic/peaking heat-rate bands) instead of a single flat block, via split_gas_tranches. Off by default so the present calibration is unchanged; enabling it shifts the gas merit order (part- load units bid up, efficient units down) and wants a tuning pass on the _GAS_TRANCHE_SHARES. ERCOT's offer curve comes from its CAMPD bins.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gas_plant_monthly_fuel_pricing",
+      "display_name": "Gas Plant Monthly Fuel Pricing",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-plant monthly gas pricing. OFF by default: every gas generator pays the same Henry Hub trajectory + ISO basis (optionally seasonally shaped), so units in the same zone are not split by patchy EIA-923 Schedule-5 reporting. EIA-923 gas-cost coverage in ERCOT is thin (~12% of CC MW), and because merchant CCs in a hub all buy gas in the same market, giving the few reporting plants their own (often higher, winter-spiking) cost while suppressed peers pay the smoothed trajectory creates a spurious intra-zone price asymmetry (e.g. it penalised Jack County against its North-zone neighbours). Set True to restore per-plant gas costs where EIA-923 reports them. Does not affect coal (see above) or oil.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.gas_price_override",
       "display_name": "Gas Price Override",
       "value": null,
@@ -7985,6 +9068,25 @@
       ]
     },
     {
+      "param_id": "scenario.historic_outage_overlay",
+      "display_name": "Historic Outage Overlay",
+      "value": true,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC tranches when a plant's CEMS facility sum drops out. For ERCOT this is the primary outage layer and the unit-level derate only SUPPLEMENTS it (catching single-unit outages the facility sum hides). For an ISO whose unit-level outage file is derived fresh from ALL CAMPD unit data (e.g. PJM via derive_campd_unit_outages.py), the unit-level layer is the COMPLETE outage source and this facility overlay is redundant — stacking both double-counts and over-derates. Set False for those ISOs so the unit-level derate alone applies.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ira_ccus_45q_last_year",
       "display_name": "Ira Ccus 45Q Last Year",
       "value": 2032,
@@ -8076,6 +9178,25 @@
       ]
     },
     {
+      "param_id": "scenario.mode",
+      "display_name": "Mode",
+      "value": "forecast",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 0,
+      "source": "\"forecast\" | \"backcast\". Backcast pins the run",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.must_run_cf",
       "display_name": "Must Run Cf",
       "value": 0.85,
@@ -8083,6 +9204,44 @@
       "domain": "Structural",
       "tier": 3,
       "source": "assumed CF for CHP must-run emissions post-processing",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nearby_fuel_price_fallback",
+      "display_name": "Nearby Fuel Price Fallback",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — \"nearby plant\" fuel-cost fallback. When True, a coal/oil generator with no EIA-923 delivered cost of its own for a month is priced at the quantity-weighted average of the *other* plants that did report — its own state first (when at least ``nearby_fuel_price_min_state_plants`` plants reported there), else its model zone — before dropping to the coal / oil trajectory. (Gas no longer uses per-plant monthly costs by default — see ``gas_plant_monthly_fuel_pricing`` — so this fallback only shapes gas when that flag is explicitly turned back on.) Off by default. See market_sim.data.fuel.apply_plant_monthly_fuel_prices.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.nearby_fuel_price_min_state_plants",
+      "display_name": "Nearby Fuel Price Min State Plants",
+      "value": 2,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "state-mean sample floor;",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -8121,6 +9280,44 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Unified thermal offer-curve parameterization (supersedes the legacy cc_/gas_st_/ct_*_hr_override triples + econ_split_by_group for any group present here). Maps a Plant_Group to its band price multipliers on the heat-rate term — band MC = VOM + (AHR x fuel_price) x multiplier, with VOM held CONSTANT across bands (no peak VOM markup). Inner keys: committed      — committed-band HR multiplier econ_low       — lower economic-step HR multiplier econ_high      — upper economic-step HR multiplier econ_low_share — fraction of the economic block in the lower step peak           — peaking-band HR multiplier (OMITTED for CC_REGULAR / CC_CHP, whose duct-burner peak multiplier is set per plant by turbine class, fleet.cc_duct_burner_peak_mult) pct_peaking    — OPTIONAL peaking capacity %; when present it overrides the CSV Pct_Peaking before the residual split (residual = 100 - must_run - committed - peaking, then econ_low/econ_high = residual x econ_low_share/(1-share)) ST_GAS peaker plants (fleet.ST_GAS_PEAKER_PLANTS) are excluded (CSV heat rates). Empty (the default) leaves the legacy override / CSV path intact.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.offer_curve_smoothing_exp",
+      "display_name": "Offer Curve Smoothing Exp",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.offer_curve_smoothing_n",
+      "display_name": "Offer Curve Smoothing N",
+      "value": 6,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "N-slice smoothing of the economic offer curve. When offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low / econ-high) are replaced by N equal-capacity sub-tranches whose heat-rate multiplier rises from the econ-low multiplier to the econ-high multiplier along ``mult(t) = lo + (pk - lo) * t**exp``, ``t = (k + 0.5)/N``. exp = 1.0 is a straight (linear) ramp, matching the gently-rising incremental heat rate of a thermal unit; exp > 1 is convex (cheap-bottom). Finer steps let a unit fill gradually as price crosses its rising MC instead of snapping between two wide flat blocks, so dispatch spreads across the CF range the way CAMPD shows rather than parking at a few band edges. Only engages on the offer-curve / econ-split path (real calibration runs); set to 0 to recover the flat two-block econ curve.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -8218,6 +9415,25 @@
       "domain": "Emissions",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.plant_level_fleet",
+      "display_name": "Plant Level Fleet",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — keep the non-ERCOT fleet at full per-plant granularity (no efficiency-bin aggregation) so each generator retains its EIA plant code, plant group and state. Required for the per-plant EIA-923 fuel cost and the historic CAMPD outage overlay to bind to real plants; without it the fleet collapses to ~100 representative bins with no plant identity. Off by default (forward runs keep the aggregated, faster fleet); the calibration harness turns it on for non-ERCOT ISOs. ERCOT is unaffected — it builds its fleet from CAMPD bins, not this path.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -8445,6 +9661,25 @@
       "domain": "Storage",
       "tier": 2,
       "source": "Storage new-entry value stack. ``storage_capacity_value`` globally gates the resource-adequacy revenue stream; it is only paid where the ISO's MARKET_DESIGN has a capacity market (e.g. PJM/NYISO/ISO-NE/CAISO), so on energy-only ERCOT it has no effect. Set False to screen on arbitrage alone. ``storage_degradation`` charges a per-MWh cycling-degradation cost against arbitrage margin (penalizes high-cycling short-duration storage).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.storage_daily_cycling",
+      "display_name": "Storage Daily Cycling",
+      "value": false,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "When True, each storage unit's SOC",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -9918,6 +11153,24 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "NREL ATB 2024 — legacy gas steam (higher O&M than CC)",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "vom.hydro",
+      "display_name": "Vom / Hydro",
+      "value": 1.4,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "NREL ATB 2024 — conventional hydropower",
       "source_date": "2024",
       "page_or_table": "",
       "url": "",

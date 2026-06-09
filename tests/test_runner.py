@@ -178,22 +178,35 @@ class TestDemandGrowth(unittest.TestCase):
         self.assertAlmostEqual(runner._get_growth_rate(config, 2028), 0.07)
         self.assertAlmostEqual(runner._get_growth_rate(config, 2040), 0.07)
 
-    def test_scale_demand_compounds_year_by_year(self):
+    def test_scale_demand_compounds_from_weather_year(self):
+        # base_demand is the *weather year's* actual load (2024 default),
+        # so the first simulated year already carries two years of growth.
+        # Compounding from START_YEAR instead silently presented 2024
+        # actuals as 2026 demand (peer review C1).
         config = ScenarioConfig(iso="ERCOT", demand_growth_path="mid")
         base = np.full((1, 8), 100.0)
-        # 2026 is the base year: no growth applied.
+        # 2026: two near-rate years of growth (2024, 2025).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2026), base
+            runner._scale_demand(base, config, 2026), base * 1.05 ** 2
         )
-        # 2028: two years of the near rate (0.05).
+        # 2028: four years of the near rate (2024-2027).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2028), base * 1.05 ** 2
+            runner._scale_demand(base, config, 2028), base * 1.05 ** 4
         )
-        # 2032: growth applied for 2026-2031 — five near years
-        # (2026-2030) then one long year (2031).
-        expected = base * 1.05 ** 5 * 1.025 ** 1
+        # 2032: seven near years (2024-2030) then one long year (2031).
+        expected = base * 1.05 ** 7 * 1.025 ** 1
         np.testing.assert_allclose(
             runner._scale_demand(base, config, 2032), expected
+        )
+
+    def test_scale_demand_backcast_year_is_unscaled(self):
+        # A backcast solves the weather year itself: factor exactly 1.
+        config = ScenarioConfig(
+            iso="ERCOT", weather_year=2023, demand_growth_path="mid"
+        )
+        base = np.full((1, 8), 100.0)
+        np.testing.assert_allclose(
+            runner._scale_demand(base, config, 2023), base
         )
 
 
