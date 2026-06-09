@@ -259,6 +259,127 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(losses1, {})
 
 
+class TestRetirementMargin(unittest.TestCase):
+    """The retirement screen nets variable cost against price.
+
+    Gross revenue alone lets a unit "cover" fixed cost with money it spent
+    on fuel (peer review B1): a unit dispatching at a price equal to its
+    own marginal cost earns zero margin and must accumulate a loss year,
+    however large its gross revenue.
+    """
+
+    T = 10
+
+    def _setup(self, price, mc_value, level=100.0):
+        config = ScenarioConfig()
+        fleet = [_gen("G0", "gas_cc", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), price)
+        mc = np.full((1, self.T), mc_value)
+        dispatch = SimpleNamespace(dispatch=np.full((1, self.T), level))
+        return config, fleet, arrays, dispatch, prices, mc
+
+    def test_price_equal_to_mc_is_a_loss_year(self):
+        # Gross revenue = 50 * 100 MW * 10 h = 50_000 -- far above the
+        # 1_200_000/8760-scaled fixed cost would *not* be the issue here;
+        # the point is margin = 0 regardless of how large gross gets.
+        config, fleet, arrays, dispatch, prices, mc = self._setup(50.0, 50.0)
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+            mc=mc,
+        )
+        self.assertEqual(losses1["G0"], 1)
+
+    def test_margin_covering_fixed_cost_is_profitable(self):
+        # going_forward_cost = 12 $/kW-yr * 1.0 * 100 MW * 1000 = 1_200_000.
+        # margin/h = (1250 - 50) $/MWh * 100 MW = 120_000; over 10 h
+        # = 1_200_000 -- exactly the fixed cost, so not a loss year.
+        config, fleet, arrays, dispatch, prices, mc = self._setup(
+            1250.0, 50.0
+        )
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+            mc=mc,
+        )
+        self.assertEqual(losses1["G0"], 0)
+
+    def test_gross_fallback_when_mc_absent(self):
+        # Without an mc array the screen degrades to gross revenue (and
+        # warns): the same price-equals-mc unit now looks profitable.
+        # gross/h = 1250 * 100 = 125_000; over 10 h >> 1_200_000? No:
+        # 1_250_000 > 1_200_000, so no loss year -- the old (buggy)
+        # behavior, preserved only as an explicit fallback.
+        config, fleet, arrays, dispatch, prices, _ = self._setup(
+            1250.0, 1250.0
+        )
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+        )
+        self.assertEqual(losses1["G0"], 0)
+
+    def test_mc_flows_through_evolve_fleet(self):
+        # evolve_fleet reads prior_results["mc_cost"] and passes it to the
+        # retirement screen: price == mc for one full year retires coal
+        # (threshold 1) where the gross-revenue path would have kept it.
+        config = ScenarioConfig()
+        fleet = [_gen("C0", "coal", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prior = {
+            "fleet_arrays": arrays,
+            "dispatch_result": SimpleNamespace(
+                dispatch=np.full((1, self.T), 100.0)
+            ),
+            "prices": np.full((1, self.T), 100000.0),
+            "mc_cost": np.full((1, self.T), 100000.0),
+            "peak_demand": 0.0,
+        }
+        fleet1, tracker, _, _ = evolve_fleet(
+            fleet, prior, 2030, config, {},
+        )
+        self.assertNotIn("C0", [g.unit_id for g in fleet1])
+
+
+class TestQueueCapCoverage(unittest.TestCase):
+    """Every registered ISO must carry queue-cap data (peer review B2)."""
+
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "SPP", "NYISO", "NEISO")
+
+    def test_every_registered_iso_has_queue_caps(self):
+        for iso in self.ISOS:
+            name = get_iso_config(iso).name
+            self.assertIn(name, QUEUE_CAP_GW)
+            self.assertIn(name, QUEUE_CAP_PER_TECH_GW)
+            # The classic candidates must each have a per-tech entry so
+            # .get(tech, 0.0) can't silently zero out a whole technology.
+            for tech in ("wind", "solar", "gas_cc", "nuclear"):
+                self.assertIn(tech, QUEUE_CAP_PER_TECH_GW[name])
+
+    def test_missing_queue_cap_raises(self):
+        # A missing entry must fail loudly, not silently build nothing.
+        prices = np.full((1, 10), 60.0)
+        removed = QUEUE_CAP_GW.pop("PJM")
+        try:
+            with self.assertRaises(KeyError):
+                apply_economic_new_entry(
+                    [], prices, 2030, ScenarioConfig(iso="PJM"), "PJM",
+                )
+        finally:
+            QUEUE_CAP_GW["PJM"] = removed
+
+    def test_eastern_iso_entry_runs(self):
+        # A PJM forward year previously died on a KeyError before any
+        # screening happened; now it must at least screen and build.
+        prices = np.full((1, 10), 200.0)  # rich prices: something builds
+        fleet, additions = apply_economic_new_entry(
+            [], prices, 2030, ScenarioConfig(iso="PJM"), "PJM",
+            gas_price_per_mmbtu=3.5,
+        )
+        built_mw = sum(g.pmax_mw for g in fleet) + sum(
+            mw for zone in additions.values() for mw in zone.values()
+        )
+        self.assertGreater(built_mw, 0.0)
+
+
 class TestComputeCleanShare(unittest.TestCase):
     """Clean-capacity fraction accounting."""
 
@@ -309,14 +430,25 @@ class TestWrightCost(unittest.TestCase):
         self.assertAlmostEqual(wright_cost(100.0, 100.0, 100.0, 0.2), 100.0)
 
     def test_cost_falls_as_deployment_grows(self):
-        # Doubling cumulative capacity multiplies cost by 2 ** (-rate).
+        # A learning rate is "fractional cost reduction per doubling":
+        # doubling cumulative capacity multiplies cost by exactly
+        # (1 - rate). The old ratio**(-rate) form gave only 2**(-0.2)
+        # = 0.87 for a documented 20%/doubling rate (peer review B8).
         cost = wright_cost(100.0, 200.0, 100.0, 0.2)
         self.assertLess(cost, 100.0)
-        self.assertAlmostEqual(cost, 100.0 * 2.0 ** (-0.2))
+        self.assertAlmostEqual(cost, 80.0)
+
+    def test_two_doublings_compound(self):
+        self.assertAlmostEqual(
+            wright_cost(100.0, 400.0, 100.0, 0.2), 100.0 * 0.8 ** 2
+        )
 
     def test_non_positive_capacity_returns_base(self):
         self.assertEqual(wright_cost(100.0, 0.0, 100.0, 0.2), 100.0)
         self.assertEqual(wright_cost(100.0, 50.0, 0.0, 0.2), 100.0)
+
+    def test_zero_learning_rate_disables_learning(self):
+        self.assertEqual(wright_cost(100.0, 400.0, 100.0, 0.0), 100.0)
 
 
 class TestComputeLCOE(unittest.TestCase):

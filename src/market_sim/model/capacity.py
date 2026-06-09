@@ -34,6 +34,7 @@ the mechanisms into one year-step.
 
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass
 
@@ -70,6 +71,8 @@ from market_sim.policy.ira import (
     h2_45v_credit_per_mmbtu,
 )
 from market_sim.policy.eac import get_eac_price_for_new_entry
+
+logger = logging.getLogger(__name__)
 
 # Fuel classes treated as dispatchable thermal capacity for economic
 # retirement, mapped to their ScenarioConfig fixed-O&M field ($/kW-yr).
@@ -229,15 +232,24 @@ def apply_economic_retirements(
     consecutive_loss_years: dict[str, int],
     peak_demand: float,
     rps_shadow_price: float = 0.0,
+    mc: np.ndarray | None = None,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
-    For each thermal generator the annual energy revenue is compared with
-    its going-forward fixed cost::
+    For each thermal generator the annual inframarginal energy margin is
+    compared with its going-forward fixed cost::
 
-        net_revenue        = sum_t price[zone, t] * dispatch[g, t]
+        net_revenue        = sum_t (price[zone, t] - mc[g, t]) * dispatch[g, t]
         going_forward_cost = fixed_om_per_kw_yr * fom_multiplier
                              * pmax_mw * 1000
+
+    ``mc`` is the unit's *full* variable cost (fuel + VOM + emission
+    prices), not its bid: take-or-pay coal tranches bid below fuel cost in
+    dispatch because the fuel is sunk within the contract year, but on a
+    retirement horizon the contract lapses, so fuel is avoidable and counts
+    against the margin. When ``mc`` is ``None`` the screen degrades to
+    comparing gross energy revenue against fixed cost, which overstates
+    margins and under-retires -- callers should always supply ``mc``.
 
     A year in which ``net_revenue < going_forward_cost`` increments the
     unit's consecutive-loss counter; a profitable year resets it to zero.
@@ -272,6 +284,9 @@ def apply_economic_retirements(
         rps_shadow_price: Prior year's RPS constraint dual in $/MWh. Only
             credited to RPS-eligible (clean) fuels, and never stacked with
             an exogenous EAC -- the higher of the two is taken.
+        mc: Full variable cost aligned row-for-row with
+            ``dispatch_result.dispatch``, shape ``(n_gen, T)`` in $/MWh.
+            ``None`` falls back to gross-revenue screening (see above).
 
     Returns:
         Tuple ``(survivors, loss_years)`` -- the fleet with retired units
@@ -279,6 +294,13 @@ def apply_economic_retirements(
     """
     prices = np.asarray(prices, dtype=float)
     dispatch = np.asarray(dispatch_result.dispatch, dtype=float)
+    if mc is None:
+        logger.warning(
+            "apply_economic_retirements: no marginal-cost array supplied; "
+            "screening on gross energy revenue, which under-retires"
+        )
+    else:
+        mc = np.asarray(mc, dtype=float)
     idx_of = {uid: i for i, uid in enumerate(fleet_arrays.unit_ids)}
     loss_years = dict(consecutive_loss_years)
 
@@ -292,9 +314,17 @@ def apply_economic_retirements(
             continue
 
         zone = int(fleet_arrays.zone_idx[rows[0]])
-        net_revenue = float(
-            sum(np.dot(prices[zone], dispatch[i]) for i in rows)
-        )
+        # Inframarginal energy margin: (price - variable cost) x dispatch.
+        # Gross revenue alone would let a unit "cover" fixed cost with
+        # money it spent on fuel.
+        if mc is None:
+            net_revenue = float(
+                sum(np.dot(prices[zone], dispatch[i]) for i in rows)
+            )
+        else:
+            net_revenue = float(
+                sum(np.dot(prices[zone] - mc[i], dispatch[i]) for i in rows)
+            )
 
         # The attribute payment -- the higher of the exogenous EAC and the
         # endogenous RPS shadow price, never their sum -- adds revenue
@@ -619,24 +649,30 @@ def wright_cost(
 
     Cost falls as cumulative deployment grows relative to a reference::
 
-        cost = base_cost * (cumulative_gw / reference_gw) ** (-learning_rate)
+        exponent = -log2(1 - learning_rate)
+        cost = base_cost * (cumulative_gw / reference_gw) ** (-exponent)
 
     At the reference level the cost is unchanged; doubling cumulative
-    capacity multiplies cost by ``2 ** (-learning_rate)``.
+    capacity multiplies cost by exactly ``(1 - learning_rate)`` -- the
+    standard "X% cost reduction per doubling" convention the learning
+    rates in :data:`NEW_ENTRY_COSTS` are documented in, and the same
+    formula the CCS retrofit path uses.
 
     Args:
         base_cost: Cost at the reference deployment level.
         cumulative_gw: Cumulative installed capacity, GW.
         reference_gw: Reference cumulative capacity, GW.
-        learning_rate: Learning-curve exponent (``0`` disables learning).
+        learning_rate: Fractional cost reduction per doubling of
+            cumulative capacity (``0`` disables learning).
 
     Returns:
         The learning-adjusted cost. Returns ``base_cost`` unchanged when
         either capacity figure is non-positive.
     """
-    if cumulative_gw <= 0.0 or reference_gw <= 0.0:
+    if cumulative_gw <= 0.0 or reference_gw <= 0.0 or learning_rate <= 0.0:
         return base_cost
-    return base_cost * (cumulative_gw / reference_gw) ** (-learning_rate)
+    exponent = -math.log2(1.0 - learning_rate)
+    return base_cost * (cumulative_gw / reference_gw) ** (-exponent)
 
 
 def _capital_recovery_factor(rate: float, lifetime_yr: float) -> float:
@@ -907,8 +943,23 @@ def apply_economic_new_entry(
         wind/solar build MW to fold into the zonal renewable capacity.
     """
     iso_config = get_iso_config(iso)
+    # Fail loudly when an ISO lacks queue-cap data: a silent default of
+    # zero would suppress all new entry and quietly break every forecast.
+    if iso_config.name not in QUEUE_CAP_GW:
+        raise KeyError(
+            f"QUEUE_CAP_GW has no entry for {iso_config.name!r}; economic "
+            "new entry cannot run. Add the ISO's annual interconnection-"
+            "queue cap to config/constants.py."
+        )
+    if iso_config.name not in QUEUE_CAP_PER_TECH_GW:
+        raise KeyError(
+            f"QUEUE_CAP_PER_TECH_GW has no entry for {iso_config.name!r}; "
+            "every per-tech cap would default to zero and no capacity "
+            "would ever build. Add the ISO's per-technology queue caps to "
+            "config/constants.py."
+        )
     queue_budget_mw = QUEUE_CAP_GW[iso_config.name] * 1000.0
-    per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW.get(iso_config.name, {})
+    per_tech_cap_gw = QUEUE_CAP_PER_TECH_GW[iso_config.name]
     zone = max(iso_config.zones, key=lambda z: z.load_share).name
 
     margins: list[tuple[float, str]] = []
@@ -1043,9 +1094,7 @@ def _adjust_retrofit_capex(
     if cumulative_gw <= ref_gw:
         return base_capex_kw
 
-    exponent = -math.log2(1.0 - lr)
-    ratio = cumulative_gw / ref_gw
-    return base_capex_kw * (ratio ** (-exponent))
+    return wright_cost(base_capex_kw, cumulative_gw, ref_gw, lr)
 
 
 def apply_ccs_retrofit(
@@ -1287,6 +1336,7 @@ def evolve_fleet(
     prices = _prior_attr(prior_results, "prices")
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
     planned = _prior_attr(prior_results, "planned_additions", []) or []
+    mc_cost = _prior_attr(prior_results, "mc_cost")
 
     # 1. Known retirements.
     fleet = apply_known_retirements(fleet, year)
@@ -1301,6 +1351,7 @@ def evolve_fleet(
             fleet, fleet_arrays, dispatch_result, prices, config,
             loss_tracker, peak_demand,
             rps_shadow_price=rps_shadow_price,
+            mc=mc_cost,
         )
 
     # 3. Known additions: planned units coming online this year.
