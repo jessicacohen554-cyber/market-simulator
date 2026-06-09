@@ -4,7 +4,7 @@
 
 **Scope:** Multi-ISO hourly dispatch over a 2026–2050 forecast trajectory, with a historical-backcast mode for calibration. Seven ISOs are registered in `config/iso_configs.py` — ERCOT (6 zones), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO and NEISO — sharing one ISO-agnostic LP. ERCOT is the fully-calibrated reference; the others have topology and plant-to-zone assignment but varying data/backcast maturity (see `docs/multi-iso/`). Parameterized scenario system supporting batch sweeps and single custom runs.
 
-**Forecast vs. backcast.** The model is fundamentally a **forecasting** tool (2026→2050). A *backcast* mode reruns a historical weather year against actuals (EIA-930, CAMPD, eGRID, EIA-923) to calibrate parameters. Several mechanisms — historic outage overlays, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration devices only**; forecast runs use the statistical/parametric models. This distinction is called out throughout; do not conflate the two.
+**Forecast vs. backcast.** The model is fundamentally a **forecasting** tool (2026→2050). A *backcast* mode reruns a historical weather year against actuals (EIA-930, CAMPD, eGRID, EIA-923) to calibrate parameters. The switch is the explicit **`ScenarioConfig.mode`** field (`"forecast"` default / `"backcast"`, Tier 0) — never inferred from other parameters (it used to ride on `gas_price_override`, which wrongly flipped any pinned-gas forecast sensitivity into backcast behavior). Several mechanisms — historic outage overlays, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration devices only**; forecast runs use the statistical/parametric models. This distinction is called out throughout; do not conflate the two.
 
 **Runtime:** Python 3.11+. Solver: HiGHS via `highspy`. No Pyomo, no PuLP, no scipy.optimize.
 
@@ -109,7 +109,7 @@ Standard ways production-cost models bound storage foresight, cheapest-to-most-f
 5. **Stochastic/robust optimization** — optimize over multiple price/load scenarios so no single known future can be exploited. The textbook-correct answer to foresight, rarely used in large PCMs because of cost.
 6. **Empirical haircut** — accept perfect foresight, then derate storage output/efficiency to a fraction (≈80–90 %) of the theoretical-optimal spread. A pure calibration fudge, but common and cheap.
 
-For this model, the pragmatic path is (1) as a guard once durations lengthen, escalating to (2) if a backcast shows storage materially mis-shaping net load. Option (1) is implemented today as the `storage_daily_cycling` config flag (CLI: `run_calibration_full.py --storage-daily-cycling`): when on, each storage unit's SOC must return to its day-start level every 24 h, so storage cannot bank energy across days and its arbitrage is bounded to within-day spreads. Off by default (annual-cyclic, full foresight).
+For this model, the pragmatic path is (1) as a guard once durations lengthen, escalating to (2) if a backcast shows storage materially mis-shaping net load. Option (1) is implemented today as the `storage_daily_cycling` config flag, honored by **both** the backcast script (CLI: `run_calibration_full.py --storage-daily-cycling`) and the forecast runner (`runner.py` passes `storage_daily_cycle_hours=24` to every solve when the flag is set — earlier only the backcast path was wired, so forecast runs silently kept full-year foresight regardless of the flag): when on, each storage unit's SOC must return to its day-start level every 24 h, so storage cannot bank energy across days and its arbitrage is bounded to within-day spreads. Off by default (annual-cyclic, full foresight).
 
 **Transmission:**
 
@@ -579,7 +579,7 @@ A unit retires if its **net revenue < going-forward cost** for N consecutive yea
 
 Revenue and cost definitions:
 
-- Net revenue = `Σ_t price[z,t] × dispatch[g,t]` plus attribute payments (`max(exogenous EAC, prior-year RPS/REC shadow price) × annual_gen`), from the prior year’s LP results. A profitable year resets the unit's consecutive-loss counter to zero.
+- Net revenue = **inframarginal energy margin** `Σ_t (price[z,t] − mc[g,t]) × dispatch[g,t]` plus attribute payments (`max(exogenous EAC, prior-year RPS/REC shadow price) × annual_gen`) and any capacity-market revenue, from the prior year's LP results. `mc` is the unit's *full* variable cost (fuel + VOM + emission prices) — not its bid: take-or-pay coal bids below fuel cost in dispatch because the fuel is sunk within the contract year, but on a retirement horizon the contract lapses, so fuel is avoidable and counts against the margin. (An earlier formulation compared *gross* energy revenue against fixed cost, which let units "cover" FOM with money already spent on fuel and systematically under-retired the thermal fleet.) A profitable year resets the unit's consecutive-loss counter to zero.
 - Going-forward cost = fixed O&M × FOM multiplier (not capital — sunk cost)
 - FOM multipliers: coal = 1.3× (captures regulatory risk, carbon liability, ESG pressure), gas = 1.0×
 - Retirement ordering: within each fuel class, least efficient (highest heat rate) retires first
@@ -606,6 +606,8 @@ Screen by technology: if `expected_revenue > LCOE`, the technology is economic f
 ### 5.4 Known Pipeline
 
 EIA-860 provides: units under construction (with expected online date), announced retirements (with expected date). These are deterministic — they happen regardless of economics. Transition point from known to modeled: ~2030 for near-term pipeline, model takes over for years beyond the data horizon.
+
+**As built** (`data/fleet.py:load_planned_additions`, forecast mode only): proposed-generator rows with a construction-committed status (`U`/`V`/`TS` — `P` planned-with-permits is excluded as too speculative for a firm thermal unit, though the renewables capacity-ramp aggregation does count it), whose plant's balancing authority maps to the running ISO and whose `Effective Year` falls after the operable-snapshot vintage (`EIA860_OPERABLE_VINTAGE`, currently 2025 per the EIA-860 2025 Early Release), enter the fleet as `Generator`s (`unit_id` prefixed `planned_`) in their effective year. Wind/solar/storage rows are skipped — renewable growth lives in the zonal capacity pools and storage in its own screen, so adding them here would double-count. Zones come from the plant's EIA-860 lat/lon. Units already due by the first simulated year join the base fleet; later ones are injected by `evolve_fleet` step 3.
 
 ### 5.5 Storage New Entry
 
