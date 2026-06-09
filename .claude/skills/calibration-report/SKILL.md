@@ -1,11 +1,11 @@
 ---
 name: calibration-report
-description: Generate/refresh the deployable backcast comparison dashboard (backcast-results.html + per-run JSON data) from persisted calibration bundles, commit it for GitHub Pages, and report the headline. Use when the user asks for "the calibration report", "the backcast report", "the dashboard", to add a new run to the dashboard, or wants to see/share calibration results visually.
+description: Generate/refresh the deployable backcast results dashboard (backcast-results.html + per-run JSON data) from persisted calibration bundles, commit it for GitHub Pages, and report the headline. Use when the user asks for "the calibration report", "the backcast report", "the dashboard", to add a new run to the dashboard, or wants to see/share calibration results visually.
 ---
 
 # Backcast results dashboard
 
-Generate and deploy the JSON-driven backcast comparison dashboard. The page is
+Generate and deploy the JSON-driven backcast results dashboard. The page is
 a static shell (`backcast-results.html` at the repo root) that loads run data
 from `frontend/data/backcast/` and is served by GitHub Pages, so a new run is
 picked up automatically once its data file + manifest entry are written. Full
@@ -13,6 +13,15 @@ generator: `scripts/render_backcast.py` (data + shell) and
 `scripts/_backcast_shell.py` (the UI). The standalone embedded report
 (`scripts/render_calibration_html.py`) is retained only for one-off
 self-contained sends; the dashboard is the standard format.
+
+The shell shows **one run at a time** (the old multi-run comparison mode was
+retired) in three views: **Run report** (default — per-year scorecard, class-
+tolerance and dispatch-correlation heatmaps across all testing years, monthly
+LMP vs actuals, and auto-generated diagnostics that localize each miss by
+season/zone/plant), **Charts** (per-year deep-dive incl. commitment heatmaps
+and the month/zone volume-miss bars), and **Tables** (generation mix and
+reference tables). The diagnostics are computed client-side from the run
+payload, so they appear automatically for every newly pushed bundle.
 
 ## Registry-driven regeneration (CI)
 
@@ -90,8 +99,10 @@ its `runNN` scheme.
 
 4. **Deploy**: commit `backcast-results.html` + `frontend/data/backcast/` and
    push. The page is then live on the repo's GitHub Pages site at
-   `…/backcast-results.html`. Report the headline (per-class Class capture% and
-   Plant capture% across runs, and any class off by >10% vs EIA-923).
+   `…/backcast-results.html`. Report the headline as the run scorecard shows
+   it: classes in tolerance per year, system volume error, fleet dispatch r,
+   LMP Δ vs actual, and the worst-offending classes (with the dashboard's
+   diagnostics pointer for each, e.g. "summer-concentrated, peak tranche").
 
 ## Notes
 
