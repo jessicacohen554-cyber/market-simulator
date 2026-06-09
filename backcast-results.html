@@ -589,26 +589,66 @@ function renderSingleTables(){const id=st.single,yr=st.year;
 const SUM_NOPLOT='<p class=psub>Plotly failed to load — this view needs network access to the Plotly CDN.</p>';
 function orderRuns(ids){const order=BC.manifest.map(m=>m.id);
  return ids.slice().sort((a,b)=>order.indexOf(a)-order.indexOf(b));}
+// System-wide model & actual TOTAL generation (TWh): model = grid-LP + BTM
+// fossil + non-fossil; actual = full EIA-923 fossil + EIA-930 nuclear/wind/solar.
+// The share criterion is zone-independent — non-fossil totals carry no zonal
+// split, so "share of total generation" is necessarily system-wide.
+function totalGen(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return null;
+ const D=genMixData(id,yr),e930=B.e930||{};
+ const aFos=Object.keys(B.classFull).reduce((s,g)=>s+(B.classFull[g]||0),0);
+ const aGen=aFos+(e930.nuclear||0)+(e930.wind||0)+(e930.solar||0);
+ return (D.mGen>0&&aGen>0)?{mGen:D.mGen,aGen}:null;}
+// Signed share-of-total-generation deviation (pp): a class's share of total
+// MODEL generation minus its share of total ACTUAL generation. mCls/aCls are
+// the system-wide class totals (TWh). null when totals are unavailable (treated
+// as a pass by shareInTol so a class can't fail on missing data).
+function sharePP(id,yr,mCls,aCls){const T=totalGen(id,yr);if(!T)return null;
+ return 100*mCls/T.mGen-100*aCls/T.aGen;}
+// The generation-mix accuracy test spans every benchmarked class: the fossil
+// classes (zone-aware, model grid+BTM vs full EIA-923) plus the non-fossil
+// fuels (system-wide, model vs EIA-930). EIA-930 carries no separate geothermal
+// series (it folds into "other"), so only nuclear/wind/solar have an actual.
+const NONFOSSIL_FUELS=["nuclear","wind","solar"];
+function isNonFos(g){return NONFOSSIL_FUELS.includes(g);}
+function allClasses(){return META.groups.concat(NONFOSSIL_FUELS);}
+function classLabel(g){return isNonFos(g)?g[0].toUpperCase()+g.slice(1):mixLabel(g);}
+// Fossil class error: zone-aware volume (model-full vs full EIA-923) + the
+// system-wide generation-share deviation (full system class totals gmModel /
+// classFull, not the zone-allocated mFull/bench923).
 function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
  if(!m||!(m.bench923>0.02))return null;
- return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923};}
-function classErrs(id,yr){const out=[];for(const g of META.groups){const e=classErr(id,yr,g);if(e)out.push(e);}return out;}
-// Summary-page class tolerance (looser than the per-cell heatmap deadband): a
-// fossil class passes if its signed volume error is within ±SUM_TOL_PCT% OR the
-// absolute volume miss is within SUM_TOL_TWH. Small classes (a few TWh) can be
-// off by a larger % while still being within a TWh of the actual, so the dual
-// band keeps them from dominating the headline.
-const SUM_TOL_PCT=3,SUM_TOL_TWH=1.0;
-function classInTol(e){return Math.abs(e.err)<=SUM_TOL_PCT||Math.abs(e.mFull-e.bench923)<=SUM_TOL_TWH;}
-// Per-class status: good = in tolerance (either band); ok = within twice the %
-// band; bad otherwise. clsTol takes the class-error object (honors the TWh
-// band); tolcls takes a bare % (for the system-level error, where 1 TWh on a
-// multi-hundred-TWh total is never the binding band).
-function clsTol(e){return classInTol(e)?"good":Math.abs(e.err)<=2*SUM_TOL_PCT?"ok":"bad";}
+ const mSys=((MODEL[id].years[yr].gmModel||{})[grp])||0,aSys=((BENCH[yr].classFull||{})[grp])||0;
+ return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,sharePP:sharePP(id,yr,mSys,aSys)};}
+// Non-fossil class error (system-wide; EIA-930 actual). Same shape as a fossil
+// classErr so the tolerance test treats every class uniformly; nonfos flags it
+// so the system-error KPI stays fossil-only and labels can mark it system-wide.
+function nonFosErr(id,yr,fuel){const av=((BENCH[yr]||{}).e930||{})[fuel],mv=((MODEL[id].years[yr]||{}).nonfossil||{})[fuel];
+ const a=av||0,m=mv||0;if(!(a>0.02))return null;
+ return {grp:fuel,nonfos:true,err:100*(m-a)/a,mFull:m,bench923:a,sharePP:sharePP(id,yr,m,a)};}
+function anyErr(id,yr,g){return isNonFos(g)?nonFosErr(id,yr,g):classErr(id,yr,g);}
+function classErrs(id,yr){const out=[];for(const g of allClasses()){const e=anyErr(id,yr,g);if(e)out.push(e);}return out;}
+// Summary-page class tolerance. A fossil class passes only when BOTH hold:
+//  (1) volume: signed error within ±SUM_TOL_PCT% OR the absolute miss within
+//      SUM_TOL_TWH of actual (small classes can be off by a larger % while
+//      still within a TWh, so the dual band keeps them from dominating); and
+//  (2) share: its share of TOTAL generation is within SUM_TOL_SHARE_PP
+//      percentage points of the actual share — so a class can't pass on volume
+//      alone while still misrepresenting the generation mix.
+const SUM_TOL_PCT=5,SUM_TOL_TWH=1.0,SUM_TOL_SHARE_PP=1.5;
+function volInTol(e,k){return Math.abs(e.err)<=k*SUM_TOL_PCT||Math.abs(e.mFull-e.bench923)<=k*SUM_TOL_TWH;}
+function shareInTol(e,k){return e.sharePP==null||Math.abs(e.sharePP)<=k*SUM_TOL_SHARE_PP;}
+function classInTol(e){return volInTol(e,1)&&shareInTol(e,1);}
+// Per-class status: good = in tolerance (both bands); ok = within twice both
+// bands; bad otherwise. clsTol takes the class-error object; tolcls takes a
+// bare % (for the system-level error, where 1 TWh on a multi-hundred-TWh total
+// is never the binding band and there is no single class share to test).
+function clsTol(e){return classInTol(e)?"good":(volInTol(e,2)&&shareInTol(e,2))?"ok":"bad";}
 function tolcls(v){const a=Math.abs(v);return a<=SUM_TOL_PCT?"good":a<=2*SUM_TOL_PCT?"ok":"bad";}
 function summaryHeadline(id,yr){const es=classErrs(id,yr);
+ // System volume error stays fossil-only (Σ model vs Σ full EIA-923); the
+ // in-tolerance count and worst class span every class incl. non-fossil.
  let sm=0,sa=0,worst=null;
- es.forEach(e=>{sm+=e.mFull;sa+=e.bench923;if(!worst||Math.abs(e.err)>Math.abs(worst.err))worst=e;});
+ es.forEach(e=>{if(!e.nonfos){sm+=e.mFull;sa+=e.bench923;}if(!worst||Math.abs(e.err)>Math.abs(worst.err))worst=e;});
  return {n:es.length,inTol:es.filter(classInTol).length,
   sysErr:sa>0?100*(sm-sa)/sa:null,worst,price:avgLMP(id,yr)};}
 // Actual historical avg LMP ($/MWh) for the selected year (system hub-average),
@@ -637,10 +677,11 @@ function mountTornado(id,yr){const div=document.getElementById("sumTornado");if(
  const es=classErrs(id,yr).slice().sort((a,b)=>b.err-a.err);
  if(!es.length){div.innerHTML='<p class=psub>No class-level error data for this run/zone selection.</p>';return;}
  const cool=cssTok('--accent','#4A90D9'),warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
- const y=es.map(e=>mixLabel(e.grp)),x=es.map(e=>e.err),tol=SUM_TOL_PCT;
+ const y=es.map(e=>classLabel(e.grp)),x=es.map(e=>e.err),tol=SUM_TOL_PCT;
  const trace={type:"bar",orientation:"h",x,y,marker:{color:es.map(e=>e.err<0?cool:warm)},
   text:x.map(v=>(v>=0?"+":"")+v.toFixed(1)+"%"),textposition:"outside",cliponaxis:false,
-  hovertemplate:"<b>%{y}</b><br>signed error %{x:+.1f}%<extra></extra>"};
+  customdata:es.map(e=>e.sharePP==null?"n/a":(e.sharePP>=0?"+":"")+e.sharePP.toFixed(1)+"pp"),
+  hovertemplate:"<b>%{y}</b><br>signed error %{x:+.1f}%<br>gen-share Δ %{customdata}<extra></extra>"};
  const ext=Math.max(tol*2,...x.map(Math.abs))*1.22;
  const layout={margin:{l:140,r:30,t:10,b:42},height:Math.max(180,es.length*44+72),bargap:0.38,
   xaxis:{title:{text:"signed % error (model − actual)"},zeroline:true,zerolinewidth:2,zerolinecolor:"#46505f",
@@ -649,18 +690,18 @@ function mountTornado(id,yr){const div=document.getElementById("sumTornado");if(
   shapes:[{type:"rect",xref:"x",yref:"paper",x0:-tol,x1:tol,y0:0,y1:1,fillcolor:gray,opacity:0.12,line:{width:0},layer:"below"}],
   paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",font:{family:"inherit"}};
  Plotly.react(div,[trace],layout,{displayModeBar:false,responsive:true});}
-// Slope chart: one line per fossil class across runs (manifest order), y =
-// signed % error, bold zero line. Classes whose |error| grew first→last run are
-// drawn warm (--danger) and bold; the rest stay muted gray (--mr).
+// Slope chart: one line per class (fossil + non-fossil) across runs (manifest
+// order), y = signed % error, bold zero line. Classes whose |error| grew
+// first→last run are drawn warm (--danger) and bold; the rest stay gray (--mr).
 function mountSlope(ids,yr){const div=document.getElementById("sumSlope");if(!div)return;
  if(typeof Plotly==="undefined"){div.innerHTML=SUM_NOPLOT;return;}
  const ordered=orderRuns(ids),xl=ordered.map(id=>MODEL[id].label);
  const warm=cssTok('--danger','#E74C3C'),gray=cssTok('--mr','#7b8794');
  const traces=[],anns=[];
- for(const g of META.groups){const ys=ordered.map(id=>{const e=classErr(id,yr,g);return e?e.err:null;});
+ for(const g of allClasses()){const ys=ordered.map(id=>{const e=anyErr(id,yr,g);return e?e.err:null;});
   const idxs=ys.map((v,i)=>v==null?-1:i).filter(i=>i>=0);if(idxs.length<2)continue;
   const fi=idxs[0],li=idxs[idxs.length-1],didGrow=Math.abs(ys[li])>Math.abs(ys[fi])+1e-6;
-  const col=didGrow?warm:gray,lab=mixLabel(g);
+  const col=didGrow?warm:gray,lab=classLabel(g);
   traces.push({type:"scatter",mode:"lines+markers",x:xl,y:ys,connectgaps:true,
    line:{color:col,width:didGrow?3:1.5},marker:{size:didGrow?7:5,color:col},opacity:didGrow?1:0.55,
    hovertemplate:"<b>"+lab+"</b><br>%{x}: %{y:+.1f}%<extra></extra>"});
@@ -686,20 +727,20 @@ function renderSummary(){const ids=selectedRuns().filter(Boolean),yr=st.year;
     <div class=kpirow><span class=k>Δ vs actual</span><span class="v ${pdiff==null?'':dcls(pdiff)}">${pdiff==null?"—":fmtPct(pdiff)}</span></div>`
     :`<div class=kpirow><span class=k>actual</span><span class=v>n/a</span></div>`)+`</div>`;
  let h='<div class=panel><h2>Summary — '+MODEL[primary].label+' · '+yr+'</h2>'
-  +'<p class=psub>Signed volume error = (model − full EIA-923)/actual, summed over the selected zones. A class passes within ±'+tol+'% <em>or</em> '+SUM_TOL_TWH+' TWh of actual (small classes may be off by a larger %). Avg LMP is diagnostic only — not a calibration target.</p><div class=kpigrid>'
+  +'<p class=psub>Signed volume error = (model − full EIA-923)/actual, summed over the selected zones. A class passes when it is within ±'+tol+'% <em>or</em> '+SUM_TOL_TWH+' TWh of actual generation <em>and</em> within '+SUM_TOL_SHARE_PP+'pp of its share of total generation (system-wide). Avg LMP is diagnostic only — not a calibration target.</p><div class=kpigrid>'
   +`<div class=kpicard><div class=lbl>Classes in tolerance</div>
-    <div class=kpirow><span class=k>±${tol}% or ${SUM_TOL_TWH} TWh</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div></div>`
+    <div class=kpirow><span class=k>±${tol}%/${SUM_TOL_TWH} TWh &amp; ≤${SUM_TOL_SHARE_PP}pp share</span><span class="v ${H.n&&H.inTol===H.n?'good':H.inTol*2>=H.n?'ok':'bad'}">${H.inTol} / ${H.n}</span></div></div>`
   +`<div class=kpicard><div class=lbl>System volume error</div>
     <div class=kpirow><span class=k>Σmodel vs Σ923</span><span class="v ${H.sysErr==null?'':tolcls(H.sysErr)}">${H.sysErr==null?"—":fmtPct(H.sysErr)}</span></div></div>`
   +`<div class=kpicard><div class=lbl>Worst-offending class</div>
-    <div class=kpirow><span class=k>${H.worst?mixLabel(H.worst.grp):"—"}</span><span class="v ${H.worst?clsTol(H.worst):''}">${H.worst?fmtPct(H.worst.err):"—"}</span></div></div>`
+    <div class=kpirow><span class=k>${H.worst?classLabel(H.worst.grp):"—"}</span><span class="v ${H.worst?clsTol(H.worst):''}">${H.worst?fmtPct(H.worst.err):"—"}</span></div></div>`
   +priceCard
   +'</div></div>';
  h+=lmpPanel(primary,yr);
- h+='<div class=panel><h2>Volume error by class <span class=psub>(single run: '+MODEL[primary].label+'; sorted by signed % error)</span></h2><div id=sumTornado></div>'
+ h+='<div class=panel><h2>Volume error by class <span class=psub>(single run: '+MODEL[primary].label+'; fossil zone-aware vs EIA-923, non-fossil system-wide vs EIA-930; sorted by signed % error)</span></h2><div id=sumTornado></div>'
   +'<p class=sumband><span><i style="background:'+cssTok('--accent','#4A90D9')+'"></i>under (model &lt; actual)</span>'
   +'<span><i style="background:'+cssTok('--danger','#E74C3C')+'"></i>over (model &gt; actual)</span>'
-  +'<span><i style="background:'+cssTok('--mr','#7b8794')+';opacity:.4"></i>±'+tol+'% band (classes within '+SUM_TOL_TWH+' TWh also pass)</span></p></div>';
+  +'<span><i style="background:'+cssTok('--mr','#7b8794')+';opacity:.4"></i>±'+tol+'% band (pass also needs the '+SUM_TOL_TWH+' TWh band or ≤'+SUM_TOL_SHARE_PP+'pp generation-share)</span></p></div>';
  if(multi)h+='<div class=panel><h2>Run-over-run error <span class=psub>(ordered '+ordered.map(id=>MODEL[id].label).join(' → ')+'; one line per class, bold = error grew)</span></h2><div id=sumSlope></div></div>';
  const detail=st.mode==="single"?singleTablesHTML(primary,yr):compareTablesHTML(ids,yr);
  h+='<div class=panel><button class=detailtog id=detailTog type=button>Show detail ▾</button><div id=detailBox class=hide style="margin-top:var(--space-md)">'+detail+'</div></div>';
