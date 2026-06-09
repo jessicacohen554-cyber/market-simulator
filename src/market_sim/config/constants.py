@@ -360,6 +360,19 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   premium hubs, so this may run slightly high for the western price-taking
 #   CCs — but it replaces the prior unvalidated +0.30 placeholder and lands
 #   PJM CC dispatch on EIA-923 actuals without distorting the offer curve.
+# NYISO: gas burn spans Transco Zone 6 NY / Iroquois (a steep winter premium
+#   when downstate pipeline capacity is scarce) and the upstate path-priced
+#   CCs. As with PJM, the +0.55 scalar is the generation-weighted basis
+#   measured directly from EIA-923: the quantity-weighted delivered gas cost
+#   to New York gas plants (Schedule 5 fuel receipts) minus the Henry Hub
+#   annual average was +$0.53 (2023: 3.07 vs 2.54), +$0.44 (2024: 2.63 vs
+#   2.19) and +$0.55 (2025: 4.08 vs 3.53) — a stable +0.54 quantity-weighted
+#   over 2023-2025. Source: EIA-923 Schedule 5 receipt aggregation, same EIA
+#   family as the ERCOT/CAISO/PJM figures. Caveat: a single annual scalar
+#   flattens NY's pronounced winter blowout (the same Schedule-5 receipts show
+#   monthly basis reaching +$3-7 in Jan/Dec) — enable
+#   gas_plant_monthly_fuel_pricing for the monthly shape when winter price
+#   fidelity matters.
 # These are annual average differentials, held constant across the
 # projection period for simplicity.
 #
@@ -368,6 +381,7 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "ERCOT": -0.50,   # Waha discount; EIA NG Weekly, 2024 avg
     "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
     "PJM": 0.67,      # EIA-923 delivered-gas basis (see below)
+    "NYISO": 0.55,    # EIA-923 delivered-gas basis (see below)
 }
 
 # --- Monthly Gas Price Seasonality Factors ---
