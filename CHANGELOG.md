@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-06-09 (Backcast dashboard — single-run report redesign + diagnostics)
+
+Redesigns the backcast results page around interpreting **one run across all
+testing years at once**, replacing the comparison-centric layout. The run data
+schema and the registry/regen pipeline are untouched, so concurrently pushed
+ERCOT/PJM bundles render without any regeneration of their payloads.
+
+- **Run report view (new default).** A per-year scorecard (classes in
+  tolerance, system volume error, generation-weighted fleet dispatch r, model
+  vs actual avg LMP), a **class-tolerance heatmap** (class × year, signed
+  volume error with the ±5% deadband in gray) and a **dispatch-correlation
+  heatmap** (class × year, hourly r vs CAMPD in green/amber/red bands at
+  0.85/0.70), plus per-year monthly LMP model-vs-DA/RT charts — no more
+  clicking through years to remember how a run did.
+- **Auto-generated diagnostics.** The report decomposes every failing class by
+  month, zone and plant (from the existing `volErr` payload + per-plant Δ923)
+  and writes plain-language pointers: level shift vs seasonal concentration
+  (→ committed vs peak/econ tranche), zone concentration (→ zonal load/basis),
+  single-plant misses (→ outage overlay/capacity), weak-r classes split into
+  timing-vs-volume problems with hour-of-day bias (too flat / too peaky), and
+  LMP bias months tied to the coincident class volume miss. Computed
+  client-side, so diagnostics appear automatically for every pushed bundle.
+- **Comparison mode retired.** The Comparison/Single toggle, multi-run picker
+  and run-over-run slope chart are gone; the sidebar is a simple newest-first
+  run radio list. The old signed-volume-error matrix (Year/Month/Zone/Run
+  column selector) is replaced by per-class **month and zone miss bars**
+  ("Where the volume miss lives") on the Charts view.
+- **Charts/Tables kept.** All deep-dive charts (commitment heatmaps, daily
+  profile, hours-at-CF with tranche markers, monthly + annual generation)
+  remain on Charts; the generation-mix, fuel-vs-930, fossil-class, monthly-LMP
+  and per-plant tables remain on Tables. Year/class controls hide on the
+  report (it spans years); zone chips steer every zone-aware metric on all
+  views. Mobile: single-column cards/grids, tap-to-pin tooltips kept.
+
 ## 2026-06-08 (Backcast — multi-ISO toggle + color-coded market chrome)
 
 Makes the ISO axis a real, prominent toggle and registers a PJM run alongside
