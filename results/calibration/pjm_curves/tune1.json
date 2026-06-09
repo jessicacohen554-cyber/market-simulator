@@ -1,0 +1,5 @@
+{
+  "CT_PEAKER": {"committed": 1.45, "econ_low": 1.58},
+  "ST_GAS":    {"committed": 0.66, "econ_low": 0.90, "econ_high": 1.22},
+  "COAL_BIT":  {"committed": 0.95, "econ_low": 1.05, "econ_high": 1.20}
+}
