@@ -391,10 +391,11 @@ def _calibration_config(
                              "econ_high": 1.15, "peak": 1.55,
                              "econ_low_share": 0.556},
             # ERCOT econ bands fold in the run57 baseline (econ_low 0.77->0.70,
-            # econ_high 1.19->0.94). ERCOT committed-band HR multiplier lowered
-            # 0.95->0.80 so PRB commits cheaper and baseloads harder toward
-            # CAMPD. Other ISOs keep the prior PRB curve.
-            "COAL_PRB": {"committed": 0.80 if iso == "ERCOT" else 0.95,
+            # econ_high 1.19->0.94). Other ISOs keep the prior PRB curve.
+            # PRB committed-band tuning is applied per-run as an offer-curve
+            # delta (e.g. Run-60 -0.05, Run-61 -0.20), not baked in here, so the
+            # baseline stays at run57 and every run's tweak is delta-from-run57.
+            "COAL_PRB": {"committed": 0.95,
                          "econ_low": 0.70 if iso == "ERCOT" else 0.77,
                          "econ_high": 0.94 if iso == "ERCOT" else 1.19,
                          "peak": 1.48,
