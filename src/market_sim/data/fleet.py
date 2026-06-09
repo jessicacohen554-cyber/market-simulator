@@ -2673,8 +2673,9 @@ def cc_duct_burner_peak_mult(turbine_class: object) -> float:
 
 
 # Coal supply class -> offer_curve_by_group key (COAL_LIGNITE / COAL_PRB /
-# COAL_BIT / COAL_SUB / COAL_WC), from the canonical taxonomy; unclassified coal
-# uses the generic COAL curve. Kept under the local name for back-compat.
+# COAL_BIT / COAL_WC; sub-bituminous routes to COAL_PRB), from the canonical
+# taxonomy; unclassified coal uses the generic COAL curve. Kept under the
+# local name for back-compat.
 _COAL_SUPPLY_TO_CURVE = COAL_SUPPLY_TO_CLASS
 
 
@@ -2689,8 +2690,8 @@ def _offer_curve_for_group(
     CSV heat rates, matching the ``gas_st_*_hr_override`` scope). COAL plants
     resolve to a supply-specific entry by their fuel rank — ERCOT
     ``COAL_LIGNITE`` / ``COAL_PRB`` and the EIA-923-derived ``COAL_BIT`` /
-    ``COAL_SUB`` / ``COAL_WC`` (bituminous / sub-bituminous / waste coal) —
-    falling back to the generic ``COAL`` entry.
+    ``COAL_WC`` (bituminous / waste coal; sub-bituminous routes to
+    ``COAL_PRB``) — falling back to the generic ``COAL`` entry.
     """
     curves = getattr(config, "offer_curve_by_group", None) or {}
     if group == "COAL":
