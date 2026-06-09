@@ -123,7 +123,7 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
     numeric day-ahead / real-time means flow into the dashboard payload.
     """
     rec = _actual_lmp_table().get(str(iso), {}).get(str(int(year))) or {}
-    out = {k: rec[k] for k in ("da", "rt") if k in rec}
+    out = {k: rec[k] for k in ("da", "rt", "da_mon", "rt_mon") if k in rec}
     return out or None
 
 
@@ -433,17 +433,35 @@ def build_payload(runs: list[tuple[str, Path]],
                     "r": r2, "nrmse": n2})
             # Per-zone average LMP (load-weighted) from the system duals, for
             # the dashboard's average-LMP KPI. P1 pass; the shell averages over
-            # the selected zones, weighting by demand.
+            # the selected zones, weighting by demand. ``pMon``/``dMon`` carry
+            # the same load-weighted price + demand-weight per month (Jan-Dec)
+            # so the summary page can build a model-vs-actual monthly LMP table;
+            # the shell re-weights pMon across the selected zones by dMon.
             sy = sys_all[sys_all["year"] == year]
             if "pass" in sy.columns and (sy["pass"] == "P1").any():
                 sy = sy[sy["pass"] == "P1"]
             lmp = {}
             for zone, zg in sy.groupby("zone", observed=True):
-                dem = float(zg["demand"].sum())
-                p = (float((zg["price"] * zg["demand"]).sum()) / dem
-                     if dem > 0 else float(zg["price"].mean()))
-                lmp[str(zone)] = {"p": round(p, 2),
-                                  "d": round(dem / 1e6, 4)}
+                price = zg["price"].to_numpy(float)
+                dem = zg["demand"].to_numpy(float)
+                hr = zg["hour"].to_numpy()
+                d_tot = float(dem.sum())
+                p = (float((price * dem).sum()) / d_tot
+                     if d_tot > 0 else float(price.mean()))
+                # hour 0-8759 -> month 0-11 via the cumulative month-hour edges.
+                midx = np.clip(np.searchsorted(_CUM, hr, side="right") - 1, 0, 11)
+                p_mon: list = [None] * 12
+                d_mon = [0.0] * 12
+                for m in range(12):
+                    sel = midx == m
+                    if not sel.any():
+                        continue
+                    dd = float(dem[sel].sum())
+                    p_mon[m] = round(float((price[sel] * dem[sel]).sum()) / dd, 2) \
+                        if dd > 0 else round(float(price[sel].mean()), 2)
+                    d_mon[m] = round(dd / 1e6, 4)
+                lmp[str(zone)] = {"p": round(p, 2), "d": round(d_tot / 1e6, 4),
+                                  "pMon": p_mon, "dMon": d_mon}
             # System-wide generation mix per fossil class (TWh): model grid LP
             # (``_class_hourly`` sum) + behind-the-meter must-run, exactly as
             # run_calibration_full's [3b] thermal table builds the model total.
