@@ -211,6 +211,61 @@ def _apply_offer_curve_deltas(
     return merged
 
 
+# Calibrated PJM thermal offer curve (per-class band heat-rate multipliers on
+# AHR x delivered fuel price). Tuned against the 2023 & 2024 EIA-930 fuel mix
+# and PJM hub-average LMP (inputs/calibration). Built in two stages, mirroring
+# the operator workflow:
+#   1. SHAPE — relative band multipliers set the generation mix: coal vs gas,
+#      and the CC / CT / gas-steam split. With PJM delivered gas ~ $3.21/MMBtu
+#      (Henry Hub + the EIA-923 +0.67 basis), this lands gas_cc, gas_ct and the
+#      2023 gas-steam classes within tolerance and coal within ~4% of EIA-930.
+#   2. LEVEL — every band is then scaled by a single global factor (~0.72), so
+#      the *ratio* between classes (the mix) is held fixed while the absolute
+#      bid level — and therefore the cleared LMP — is pulled down from ~+50% to
+#      within ~+8-16% of the PJM hub average. The CT scarcity (`peak`) band is
+#      additionally capped at 4.0 (an ERCOT-style 13x wall is far too high for
+#      PJM's price formation; it was inflating the high-price tail). The scale
+#      is folded into the multipliers because there is no separate price-scale
+#      lever; read these as *price-calibrated* multipliers, not literal heat
+#      rates. COAL_LIGNITE / COAL_PRB are carried for completeness but unused by
+#      PJM (its coal is bituminous / sub-bituminous / waste -> BIT/SUB/WC).
+# Known residuals (a single static curve cannot remove them; see calibration
+# log): 2024 gas-steam runs ~20% light because the model's economic gas-steam
+# falls with cheaper 2024 gas while the EIA-923 actual rises, and grid solar
+# sits ~10% under EIA-930 because PJM's distributed/BTM solar never reaches the
+# wholesale grid the LP dispatches.
+_PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "CC_REGULAR": {"committed": 0.6624, "econ_low": 0.7344,
+                   "econ_high": 0.8928, "peak": 1.62,
+                   "econ_low_share": 0.50, "pct_peaking": 8.0},
+    "CC_CHP": {"committed": 0.6624, "econ_low": 0.684,
+               "econ_high": 0.8208, "peak": 1.62,
+               "econ_low_share": 0.50, "pct_peaking": 8.0},
+    "CT_CHP": {"committed": 0.864, "econ_low": 0.864,
+               "econ_high": 0.864, "peak": 1.008, "econ_low_share": 0.50},
+    "CT_PEAKER": {"committed": 0.8784, "econ_low": 0.9792,
+                  "econ_high": 1.4256, "peak": 4.0,
+                  "econ_low_share": 0.526, "pct_peaking": 7.0},
+    "ST_GAS": {"committed": 0.4752, "econ_low": 0.6552,
+               "econ_high": 0.90, "peak": 3.024,
+               "econ_low_share": 0.50, "pct_peaking": 15.0},
+    "COAL_LIGNITE": {"committed": 0.684, "econ_low": 0.8208,
+                     "econ_high": 0.828, "peak": 1.116,
+                     "econ_low_share": 0.556},
+    "COAL_PRB": {"committed": 0.684, "econ_low": 0.5544,
+                 "econ_high": 0.8568, "peak": 1.0656,
+                 "econ_low_share": 0.556},
+    "COAL_BIT": {"committed": 0.648, "econ_low": 0.7056,
+                 "econ_high": 0.8064, "peak": 1.044, "econ_low_share": 0.55},
+    "COAL_SUB": {"committed": 0.6336, "econ_low": 0.648,
+                 "econ_high": 0.756, "peak": 1.008, "econ_low_share": 0.55},
+    "COAL_WC": {"committed": 0.612, "econ_low": 0.648,
+                "econ_high": 0.7344, "peak": 0.864, "econ_low_share": 0.55},
+    "COAL": {"committed": 0.648, "econ_low": 0.684,
+             "econ_high": 0.792, "peak": 1.044, "econ_low_share": 0.55},
+}
+
+
 
 def _calibration_config(
     year: int, iso: str, hours: int, gas_price: float,
@@ -454,6 +509,18 @@ def _calibration_config(
     if coal_passthrough is not None:
         config = config.with_overrides(
             coal_prb_contract_passthrough=coal_passthrough
+        )
+    # PJM uses its own price-calibrated offer curve (the per-class block above
+    # carries ERCOT-fitted values for the shared classes). Replacing the whole
+    # dict keeps the calibrated PJM curve in one place (_PJM_OFFER_CURVE) and
+    # out of the per-band `if iso == "PJM"` ternaries. Operator --offer-curve
+    # overrides/deltas below still merge on top, so a sweep starts from the
+    # calibrated PJM curve.
+    if iso.upper() == "PJM":
+        config = config.with_overrides(
+            offer_curve_by_group={
+                k: dict(v) for k, v in _PJM_OFFER_CURVE.items()
+            }
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
     # (run_calibration_full --offer-curve-json) deep-merged onto the calibrated
