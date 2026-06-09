@@ -233,3 +233,59 @@ Gas CC: Demand increase absorbed by CCs (cheapest marginal) — CC adder calibra
 - **Purpose:** Replace EIA-930 generation profiles (pre-curtailed) with ERCOT HSL (uncurtailed potential)
 - **Source:** ERCOT 60-Day SCED Disclosure Reports or UMass nodal curtailment dataset
 - **Impact:** Will let LP endogenously curtail via TTC constraints — proper test of transmission model
+-----
+
+## PJM backcast tuning — 2023, 2024 (+2025 informational), n=6 smooth offer curve
+
+**Date:** 2026-06-09. **Scope:** Calibrate the PJM thermal offer curve (the
+per-class `offer_curve_by_group` heat-rate-multiplier bands rendered as the
+n=6 smooth economic ramp) against the 2023 & 2024 EIA-930 fuel mix and the PJM
+hub-average LMP, mirroring the ERCOT plant-classification workflow (per-plant
+EIA-860 fleet, supply-class coal BIT/SUB/WC, per-plant EIA-923 fuel cost, CAMPD
+unit-outage overlay). Result baked into `run_calibration._PJM_OFFER_CURVE`.
+
+**Unit outages:** regenerated `campd-unit-outages-PJM.csv` to cover 2023, 2024
+and 2025 (`derive_campd_unit_outages.py --iso PJM`). 2023 now derates 741
+plant-tranches (was 0 — 2023 had no unit-outage rows before). 2025 derates 337
+once the KY/OH/VA/WV/IN/DC 2025 unit-level CAMPD extracts are present; IL/NJ/PA
+2025 extracts are still missing from the repo, so 2025 outage coverage is
+partial.
+
+**Method (two stages, per the operator's framing):**
+1. SHAPE — relative band multipliers set the generation mix. Landed CC/CT/ST
+   split and coal-vs-gas: raised CT to cut a +25-30% CT overrun, lowered ST to
+   fix a −20-40% ST shortfall, trimmed CC econ to pull 2023 coal down.
+2. LEVEL — scaled every band by a single global factor (~0.72) to drop the
+   cleared LMP from ~+50% to within ~+8-16% of the PJM hub average while
+   holding the mix ratio fixed, and capped the CT scarcity (`peak`) band at 4.0
+   (the ERCOT-style 13x wall was inflating the high-price tail — operator hint).
+
+**Converged result (vs EIA-923 ref; dashboard tol ±3% OR ±1 TWh, "ok" ≤6%):**
+
+| class   | 2023 err | 2024 err |
+|---------|----------|----------|
+| coal    | +4.1% ok (≈0% vs EIA-930) | −3.9% ok |
+| gas_cc  | +3.0% ✓  | +5.4% ok |
+| gas_ct  | +2.0% ✓  | −2.0% ✓  |
+| gas_st  |  0.0% ✓  | −20.5% ⚠ |
+| nuclear/wind/solar | ✓/ok/✓ | ✓/✓/⚠(BTM) |
+| **LMP (load-wtd)** | $32.9 vs RT $28.4 (+16%) / DA $29.3 (+12%) | $31.8 vs RT $29.5 (+8%) / DA $29.8 (+7%) |
+
+2025 (informational; EIA-923 incomplete so mix not a valid test): gas_cc +4.9%,
+gas_ct +34.6%, nuclear +0.8%; coal/wind large vs the incomplete 923 benchmark;
+**load-weighted LMP $41.7 vs actual RT $42.9 (−3%)** — the meaningful 2025 check,
+and it lands once the 2025 unit outages are applied (coal 194→171 TWh, LMP
+−22%→−3%).
+
+**Known residuals a single static curve cannot remove (flagged):**
+- *2024 gas-steam −20%*: the model's economic gas-steam falls as 2024 gas
+  cheapens, but the EIA-923 actual rises — a gas-price-year effect (the same
+  reason 2023 coal sits high). 2023 gas-steam is exact; one committed band can't
+  satisfy both years. A gas-keyed gas-steam/coal passthrough (à la the ERCOT PRB
+  sigmoid) would be needed.
+- *Grid solar −10 to −15%*: PJM distributed/BTM solar never reaches the
+  wholesale grid the LP dispatches; the gap is a benchmark-scope issue, not an
+  offer-curve knob.
+- *LMP residual +8-16%*: floored by PJM delivered gas (~$3.21/MMBtu = Henry Hub
+  + the EIA-923 +0.67 basis) × realistic CC heat rates; closing it fully would
+  need an unphysical scale or a gas-cost change, neither warranted.
