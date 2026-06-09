@@ -196,6 +196,14 @@ function classMetrics(id,year,grp){const ps=plantsOf(id,year,grp);if(!ps.length)
 function avgLMP(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};let pd=0,d=0;
  for(const z in L){if(!st.zones.has(z))continue;pd+=L[z].p*L[z].d;d+=L[z].d;}
  return d>0?pd/d:null;}
+// Model monthly avg LMP load-weighted over the selected zones (12 values, or
+// null when no per-month price is in the payload — older runs carry only the
+// annual p/d). Mirrors avgLMP's demand-weighting, per month via pMon/dMon.
+function avgLMPMon(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};
+ const pd=Array(12).fill(0),d=Array(12).fill(0);let any=false;
+ for(const z in L){if(!st.zones.has(z))continue;const zl=L[z];if(!zl.pMon||!zl.dMon)continue;
+  for(let m=0;m<12;m++){if(zl.pMon[m]==null)continue;pd[m]+=zl.pMon[m]*zl.dMon[m];d[m]+=zl.dMon[m];any=true;}}
+ return any?pd.map((s,m)=>d[m]>0?s/d[m]:null):null;}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function ppcls(d){const a=Math.abs(d);return a<1?"good":a<3?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
@@ -680,6 +688,25 @@ function lmpPanel(id,yr){const aL=actualLMP(yr),m=avgLMP(id,yr);
  if(!aL)h+='<tr><td colspan=3 class=psub>No actual LMP benchmark for this ISO/year.</td></tr>';
  return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target. '
   +'The model is a day-ahead-style energy LP (no ORDC / ancillary / scarcity adders), so some positive Δ is expected.</p></div>';}
+// Monthly model-vs-actual LMP table. Model = load-weighted over the selected
+// zones per month (avgLMPMon); actual = the system DA / RT hub average per month
+// (avgLMP.{da,rt}_mon). Δ = (model − actual)/actual. DA / RT columns render only
+// when that monthly actual series is present (e.g. ERCOT 2025 has RT only).
+// Returns '' when the run carries no per-month model price (older payloads).
+function lmpMonthlyPanel(id,yr){const mm=avgLMPMon(id,yr);if(!mm)return "";
+ const aL=actualLMP(yr)||{},da=aL.da_mon,rt=aL.rt_mon;
+ const pair=(m,a)=>{const d=(m!=null&&a)?100*(m-a)/a:null;
+  return `<td class=num>${a==null?"—":"$"+a.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td>`;};
+ let h='<div class=panel><h2>Monthly LMP — model vs actual '
+  +'<span class=psub>(model load-weighted over selected zones; actual = system hub average; Δ = (model − actual)/actual)</span></h2>'
+  +'<div class=tablewrap><table><thead><tr><th>month</th><th>model $/MWh</th>'
+  +(da?'<th>actual DA</th><th>Δ DA</th>':'')+(rt?'<th>actual RT</th><th>Δ RT</th>':'')+'</tr></thead><tbody>';
+ for(let m=0;m<12;m++){h+=`<tr><td>${MONTHS[m]}</td><td class=num>${mm[m]==null?"—":"$"+mm[m].toFixed(1)}</td>`
+   +(da?pair(mm[m],da[m]):'')+(rt?pair(mm[m],rt[m]):'')+'</tr>';}
+ const ann=avgLMP(id,yr);
+ h+=`<tr class=sub><td>Annual</td><td class=num>${ann==null?"—":"$"+ann.toFixed(1)}</td>`
+   +(da?pair(ann,aL.da):'')+(rt?pair(ann,aL.rt):'')+'</tr>';
+ return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target.</p></div>';}
 // Tornado: classes sorted by signed % error, zero-centered, cool (--accent) for
 // under / warm (--danger) for over, with the ±SUM_TOL_PCT band shaded gray.
 function mountTornado(id,yr){const div=document.getElementById("sumTornado");if(!div)return;
@@ -747,6 +774,7 @@ function renderSummary(){const ids=selectedRuns().filter(Boolean),yr=st.year;
   +priceCard
   +'</div></div>';
  h+=lmpPanel(primary,yr);
+ h+=lmpMonthlyPanel(primary,yr);
  h+='<div class=panel><h2>Volume error by class <span class=psub>(single run: '+MODEL[primary].label+'; fossil zone-aware vs EIA-923, non-fossil system-wide vs EIA-930; sorted by signed % error)</span></h2><div id=sumTornado></div>'
   +'<p class=sumband><span><i style="background:'+cssTok('--accent','#4A90D9')+'"></i>under (model &lt; actual)</span>'
   +'<span><i style="background:'+cssTok('--danger','#E74C3C')+'"></i>over (model &gt; actual)</span>'
