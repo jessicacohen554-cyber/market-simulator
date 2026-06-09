@@ -17,6 +17,7 @@ from market_sim.data.fleet import (
     _AGGREGATABLE_FUELS,
     _hour_to_month_index,
     _map_fuel_type,
+    EIA860_OPERABLE_VINTAGE,
     FUEL_TYPE_MAP,
     FUEL_TYPE_NAMES,
     Generator,
@@ -25,6 +26,7 @@ from market_sim.data.fleet import (
     assemble_mc,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
+    load_planned_additions,
     split_coal_tranches,
 )
 
@@ -548,6 +550,68 @@ class TestAggregateFleet(unittest.TestCase):
         self.assertEqual(len(arrays.unit_ids), 4)
 
 
+class TestAggregationPreservesVintage(unittest.TestCase):
+    """Bin representatives carry a capacity-weighted ``online_year``.
+
+    Dropping the vintage to the Generator default (2000) made every
+    aggregated gas-CC bin look near end-of-life, permanently disqualifying
+    it from the CCS-retrofit screen and breaking new-build learning
+    attribution (peer review B3).
+    """
+
+    def _two_unit_fleet(self) -> list[Generator]:
+        common = dict(
+            zone="north", fuel_type="gas_cc", efficiency_bin="h_class",
+            heat_rate=6.5, vom=3.0, emission_rate_co2=0.36,
+            nox_rate=0.02, eford=0.05,
+        )
+        return [
+            Generator(
+                unit_id="CC_old", name="CC_old", pmax_mw=100.0,
+                pmin_mw=0.0, online_year=2010, **common,
+            ),
+            Generator(
+                unit_id="CC_new", name="CC_new", pmax_mw=300.0,
+                pmin_mw=0.0, online_year=2020, **common,
+            ),
+        ]
+
+    def test_vintage_bin_path(self):
+        (rep,) = aggregate_fleet(self._two_unit_fleet())
+        # (2010*100 + 2020*300) / 400 = 2017.5 -> 2018.
+        self.assertEqual(rep.online_year, 2018)
+
+    def test_equal_width_bin_path(self):
+        (rep,) = aggregate_fleet(self._two_unit_fleet(), n_bins=1)
+        self.assertEqual(rep.online_year, 2018)
+
+
+class TestLoadPlannedAdditions(unittest.TestCase):
+    """EIA-860 planned/under-construction thermal units (spec §5.4)."""
+
+    def test_ercot_planned_units(self):
+        gens = load_planned_additions("ERCOT")
+        self.assertTrue(gens, "expected planned units in the committed "
+                              "EIA-860 proposed parquet")
+        for g in gens:
+            # Construction-committed, post-snapshot, thermal-only.
+            self.assertGreater(g.online_year, EIA860_OPERABLE_VINTAGE)
+            self.assertIn(
+                g.fuel_type,
+                {"gas_cc", "gas_ct", "coal", "nuclear", "oil", "biomass"},
+            )
+            self.assertTrue(g.unit_id.startswith("planned_"))
+            self.assertGreater(g.pmax_mw, 0.0)
+        # Sorted by online year so the runner's year filter sees them in
+        # chronological order.
+        years = [g.online_year for g in gens]
+        self.assertEqual(years, sorted(years))
+
+    def test_unknown_data_dir_returns_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(load_planned_additions("ERCOT", data_dir=tmp), [])
+
+
 class TestCoalTranches(unittest.TestCase):
     """Tests for the coal take-or-pay supply-curve tranche split."""
 
@@ -796,3 +860,18 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLoadPlannedAdditionsNonThermal(unittest.TestCase):
+    """An ISO whose proposed pipeline is all non-thermal returns empty.
+
+    CAISO's proposed schedule is dominated by solar/batteries, which the
+    fuel mapper deliberately skips -- the loader must return [] rather
+    than crash on the empty post-mapping list.
+    """
+
+    def test_caiso_all_nonthermal_pipeline(self):
+        gens = load_planned_additions("CAISO")
+        self.assertIsInstance(gens, list)
+        for g in gens:
+            self.assertNotIn(g.fuel_type, {"wind", "solar"})

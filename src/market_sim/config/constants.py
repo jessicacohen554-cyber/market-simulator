@@ -735,6 +735,16 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
 QUEUE_CAP_GW: dict[str, float] = {
     "ERCOT": 12,  # ERCOT CDR — annual queue throughput cap
     "CAISO": 8,   # CAISO TPP — annual queue throughput cap
+    # Eastern-ISO caps are Tier 3 approximations of recent annual
+    # commercial-operation throughput (not queue *requests*, which run far
+    # higher). Source: LBNL "Queued Up" 2024 completion-rate analysis; ISO
+    # planning reports. needs-citation: verify against each ISO's latest
+    # planning report before quoting any eastern-ISO forecast.
+    "PJM": 10,
+    "MISO": 10,
+    "SPP": 6,
+    "NYISO": 4,
+    "NEISO": 4,
 }
 
 # Per-technology annual interconnection queue caps (GW/yr) by ISO.
@@ -750,6 +760,33 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0,
         "geothermal": 3.0,      # CA geothermal resource assessment
         "offshore_wind": 3.0,   # BOEM Pacific lease areas, CAISO TPP
+    },
+    # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
+    # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
+    "PJM": {
+        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "nuclear": 1.0,
+        "geothermal": 0.0,      # no utility-scale resource in footprint
+        "offshore_wind": 2.0,   # NJ/MD/DE BOEM lease areas
+    },
+    "MISO": {
+        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "nuclear": 1.0,
+        "geothermal": 0.0,
+        "offshore_wind": 0.0,   # Great Lakes not leased
+    },
+    "SPP": {
+        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 0.0,
+    },
+    "NYISO": {
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 1.5,   # NY Bight BOEM lease areas
+    },
+    "NEISO": {
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 2.0,   # MA/RI BOEM lease areas
     },
 }
 # Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not
@@ -990,6 +1027,15 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     "ERCOT": {"wind": 0.35, "solar": 0.27},
     "CAISO": {"wind": 0.30, "solar": 0.28},
     "PJM": {"wind": 0.31, "solar": 0.19},
+    # Tier 3 approximations for the remaining ISOs (forecast-mode inputs;
+    # backcasts use measured profiles). Wind from regional fleet averages
+    # (EIA EPM by-state utility-scale CFs); solar is the physical
+    # utility-PV value for the latitude band. needs-citation: verify
+    # against EIA-923 ISO totals before quoting a forecast.
+    "MISO": {"wind": 0.34, "solar": 0.22},
+    "SPP": {"wind": 0.41, "solar": 0.24},
+    "NYISO": {"wind": 0.26, "solar": 0.15},
+    "NEISO": {"wind": 0.30, "solar": 0.15},
 }
 
 # Installed renewable nameplate capacity (MW) by ISO and technology.
@@ -1003,6 +1049,14 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
         "wind": 7000.0,    # unchanged. Source: CAISO annual report 2024.
         "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
     },
+    # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
+    # Source: EIA-860 2024 / ISO planning reports, rounded. needs-citation:
+    # refresh from the processed EIA-860 parquet before quoting a forecast.
+    "PJM": {"wind": 11000.0, "solar": 14000.0},
+    "MISO": {"wind": 32000.0, "solar": 7000.0},
+    "SPP": {"wind": 34000.0, "solar": 600.0},
+    "NYISO": {"wind": 2400.0, "solar": 1500.0},
+    "NEISO": {"wind": 1400.0, "solar": 2700.0},
 }
 
 # CAISO WECC import supply curve tranches: (name, capacity MW, VOM $/MWh).
