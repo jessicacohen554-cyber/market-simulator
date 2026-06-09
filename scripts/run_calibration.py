@@ -710,7 +710,7 @@ def run_year(
         wind_cf = wind_cf[:, :config.hours]
         solar_cf = solar_cf[:, :config.hours]
 
-    # Must-run "other" resources (biomass, hydro, process gas, ...) serve load
+    # Must-run "other" resources (biomass, process gas, ...) serve load
     # exogenously — they run for industrial/process reasons, not LP economics —
     # so net them out of demand before the dispatch so they displace marginal
     # gas instead of being double-counted on top of a fully-served balance.
