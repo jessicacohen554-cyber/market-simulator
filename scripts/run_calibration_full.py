@@ -53,7 +53,7 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
-    classes_for_fuel930, classify_plant, coal_code_to_class,
+    classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
 )
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
@@ -131,8 +131,8 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
 # ---------------------------------------------------------------------------
 
 def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
-    """Return the coal supply class (``COAL_BIT`` / ``COAL_SUB`` / ``COAL_WC``
-    / ``COAL_LIGNITE`` / ``COAL_PRB``) for a coal plant.
+    """Return the coal supply class (``COAL_BIT`` / ``COAL_WC`` /
+    ``COAL_LIGNITE`` / ``COAL_PRB``) for a coal plant.
 
     Uses the authoritative model mapping (:func:`coal_supply_class`, which
     merges the curated ERCOT lignite/PRB map with the EIA-923-derived per-ISO
@@ -169,6 +169,8 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
         return "ST_GAS"
     if fuel == "nuclear":
         return "nuclear"
+    if fuel == "hydro":
+        return "hydro"
     if fuel in {"wind", "offshore_wind"}:
         return "wind"
     if fuel == "solar":
@@ -512,8 +514,7 @@ def _iso_plant_ids(iso: str) -> frozenset[int]:
 
 
 def _eia923_frame(
-    year: int, generation: pd.DataFrame, is_ercot: bool = True,
-    iso: str = "ERCOT",
+    year: int, generation: pd.DataFrame, iso: str = "ERCOT",
 ) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly.
 
@@ -539,11 +540,14 @@ def _eia923_frame(
     return grouped.rename(columns=rename)
 
 
-# Residual / non-fossil classes injected into the ERCOT dispatch as must-run
-# resources: they serve load exogenously (run-of-river hydro, biomass/landfill,
-# refinery process gas, purchased steam, ...) rather than clearing the LP merit
-# order. Oil is NOT here — it is a price-responsive peaker dispatched in the LP.
-_INJECTED_MUSTRUN_CLASSES: tuple[str, ...] = ("biomass", "hydro", "OTHER")
+# Residual / non-fossil classes injected into the dispatch as must-run
+# resources: they serve load exogenously (biomass/landfill, refinery process
+# gas, purchased steam, ...) rather than clearing the LP merit order. Oil is
+# NOT here — it is a price-responsive peaker dispatched in the LP. Hydro is
+# NOT here either: conventional hydro is an LP unit with a monthly energy
+# budget (run_calibration._hydro_fleet) and pumped storage is a storage
+# resource (load_eia860_pumped_storage), so injecting it would double-count.
+_INJECTED_MUSTRUN_CLASSES: tuple[str, ...] = ("biomass", "OTHER")
 
 
 def _hour_months(year: int, hours: int) -> np.ndarray:
@@ -552,16 +556,39 @@ def _hour_months(year: int, hours: int) -> np.ndarray:
     return idx.month.to_numpy()
 
 
+@lru_cache(maxsize=1)
+def _pumped_storage_plant_ids() -> frozenset[int]:
+    """EIA plant ids with pumped-storage (prime mover ``PS``) generators.
+
+    Used to hold PS plants out of the injected OTHER must-run profile —
+    ``classify_plant`` buckets PS into OTHER, but PS is dispatched as an LP
+    storage resource (``load_eia860_pumped_storage``), so leaving its EIA-923
+    net generation in the injection would double-count it.
+    """
+    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+
+    path = EIA_860_DIR / EIA_860_PARQUET_NAME
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path, columns=["plant_id", "prime_mover"])
+    ps = df[df["prime_mover"].astype(str).str.upper() == "PS"]
+    return frozenset(int(p) for p in ps["plant_id"].unique())
+
+
 def _must_run_profiles(
     year: int, generation: pd.DataFrame, iso: str, demand: np.ndarray,
+    skip_classes: frozenset[str] = frozenset(),
 ) -> dict[str, np.ndarray]:
     """Per-zone hourly must-run MW for each injected residual class.
 
     Each class's EIA-923 annual generation is shaped by its monthly profile
     (flat within a month, negatives clamped then rescaled to preserve the net
     annual energy) and split across zones by their share of annual demand.
-    Returns ``{klass: (n_zones, hours) MW}`` for the classes with positive net
-    generation in ``iso`` and ``year``.
+    ``skip_classes`` drops classes the LP fleet already represents as units
+    (e.g. biomass for the per-plant non-ERCOT fleets), so nothing is served
+    twice. Pumped-storage plants are held out of OTHER — they dispatch as LP
+    storage. Returns ``{klass: (n_zones, hours) MW}`` for the classes with
+    positive net generation in ``iso`` and ``year``.
     """
     n_zones, hours = demand.shape
     e923 = _eia923_frame(year, generation, iso=iso)
@@ -575,7 +602,11 @@ def _must_run_profiles(
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     out: dict[str, np.ndarray] = {}
     for klass in _INJECTED_MUSTRUN_CLASSES:
+        if klass in skip_classes:
+            continue
         rows = e923[e923["klass"] == klass]
+        if klass == "OTHER":
+            rows = rows[~rows["plant_id"].isin(_pumped_storage_plant_ids())]
         annual = float(rows["annual_mwh"].sum())
         if annual <= 0:
             continue
@@ -607,7 +638,7 @@ _BACKFILL_GROUPS: frozenset[str] = frozenset(
 
 def _backfill_eia923_with_campd(
     e923: pd.DataFrame, campd_year: pd.DataFrame | None,
-    group_by_code: dict[int, str], year: int, is_ercot: bool = True,
+    group_by_code: dict[int, str], year: int,
 ) -> pd.DataFrame:
     """Backfill EIA-923 with CAMPD net for model plants it under-reports.
 
@@ -783,7 +814,16 @@ def _parse_offer_curve_json(raw: str | None, flag: str = "--offer-curve-json") -
         raise SystemExit(
             f"{flag}: top level must be a JSON object keyed by "
             f"fleet class, got {type(parsed).__name__}.")
+    valid_classes = set(fossil_classes())
     for cls, bands in parsed.items():
+        # Fail loudly on a class key the offer-curve router will never read
+        # (e.g. COAL_SUB after the SUB -> COAL_PRB taxonomy rename): a dead
+        # knob silently tunes nothing, which is worse than an error.
+        if cls not in valid_classes:
+            raise SystemExit(
+                f"{flag}: unknown fleet class {cls!r} — the offer-curve "
+                f"router only reads {sorted(valid_classes)}. (Sub-bituminous "
+                "coal is COAL_PRB; COAL_SUB no longer exists.)")
         if not isinstance(bands, dict):
             raise SystemExit(
                 f"{flag}: value for {cls!r} must be an object of "
@@ -892,13 +932,18 @@ def solve_and_persist(
         demand = load_demand(
             iso, year, iso_config, td_loss_factor=cfg.td_loss_factor
         )
-        # Must-run residual classes (biomass / hydro / other-gas / ...) are
-        # netted out of demand for the LP and re-added as pseudo-units in the
-        # dispatch frame, so they displace marginal gas and appear as their own
-        # classes instead of an invisible OTHER gap. ERCOT only.
-        must_run = (
-            _must_run_profiles(year, generation, iso, demand)
-            if is_ercot else {}
+        # Must-run residual classes (biomass / other-gas / ...) are netted out
+        # of demand for the LP and re-added as pseudo-units in the dispatch
+        # frame, so they displace marginal gas and appear as their own classes
+        # instead of an invisible OTHER gap. Applies to every ISO; classes the
+        # LP fleet already carries as units are skipped — the ERCOT CAMPD-bin
+        # fleet deliberately drops biomass units in favor of this injection
+        # (run_calibration.run_year), while the per-plant fleet of every other
+        # ISO keeps biomass as raw LP units. Hydro is an LP resource for all
+        # ISOs (budget hydro + pumped storage), never injected.
+        must_run = _must_run_profiles(
+            year, generation, iso, demand,
+            skip_classes=frozenset() if is_ercot else frozenset({"biomass"}),
         )
         must_run_total = (
             np.sum(list(must_run.values()), axis=0) if must_run else None
@@ -957,8 +1002,8 @@ def solve_and_persist(
             )
             eia923_frames.append(
                 _backfill_eia923_with_campd(
-                    _eia923_frame(year, generation, is_ercot, iso), campd_year,
-                    group_by_code, year, is_ercot,
+                    _eia923_frame(year, generation, iso), campd_year,
+                    group_by_code, year,
                 )
             )
             if campd_year is not None:
@@ -1378,9 +1423,10 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
         logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
         result = _commitment_pass(state, cfg)
         ctx = state["context"]
-        must_run = (
-            _must_run_profiles(year, generation, meta["iso"], state["demand"])
-            if meta["iso"] == "ERCOT" else {}
+        must_run = _must_run_profiles(
+            year, generation, meta["iso"], state["demand"],
+            skip_classes=(frozenset() if meta["iso"] == "ERCOT"
+                          else frozenset({"biomass"})),
         )
         _dispatch_frame(
             year, "P2", result, ctx, zone_names, iso=meta["iso"],
@@ -1672,18 +1718,24 @@ def rebuild_benchmark(bundle: Path) -> None:
     iso_config = get_iso_config(iso)
     generation = load_monthly_generation()
     parasitic_factors = _parasitic_factor_map()
-    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
-    group_by_code = dict(
-        zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
-    )
+    # Plant -> group map for the CAMPD backfill: ERCOT's curated bin sheet,
+    # the per-plant EIA-860 fleet for every other ISO — the same sources the
+    # solve path uses, so a rebuilt benchmark groups plants identically.
+    if is_ercot:
+        bins = load_campd_bins(ScenarioConfig().campd_bins_path)
+        group_by_code = dict(
+            zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
+        )
+    else:
+        group_by_code = _fleet_group_by_code(iso, iso_config)
 
     e923f, e930f, campdf = [], [], []
     for year in years:
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
         e923f.append(
             _backfill_eia923_with_campd(
-                _eia923_frame(year, generation, is_ercot, iso), campd_year,
-                group_by_code, year, is_ercot,
+                _eia923_frame(year, generation, iso), campd_year,
+                group_by_code, year,
             )
         )
         e930 = _eia930_frame(year, iso, iso_config)
