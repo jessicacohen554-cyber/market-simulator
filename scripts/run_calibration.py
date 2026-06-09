@@ -40,16 +40,18 @@ import numpy as np
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.constants import HOURS_PER_YEAR  # noqa: E402
+from market_sim.config.constants import HOURS_PER_YEAR, VOM  # noqa: E402
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_ercot_fossil_gen,
 )
+from market_sim.data.hydro import load_hydro_budget  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _AGGREGATABLE_FUELS,
     COAL_MUSTRUN_BY_PLANT,
+    Generator,
     aggregate_fleet,
     apply_coal_tranches,
     assemble_mc,
@@ -257,8 +259,6 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
                  "econ_low_share": 0.556},
     "COAL_BIT": {"committed": 0.648, "econ_low": 0.7056,
                  "econ_high": 0.8064, "peak": 1.044, "econ_low_share": 0.55},
-    "COAL_SUB": {"committed": 0.6336, "econ_low": 0.648,
-                 "econ_high": 0.756, "peak": 1.008, "econ_low_share": 0.55},
     "COAL_WC": {"committed": 0.612, "econ_low": 0.648,
                 "econ_high": 0.7344, "peak": 0.864, "econ_low_share": 0.55},
     "COAL": {"committed": 0.648, "econ_low": 0.684,
@@ -461,15 +461,13 @@ def _calibration_config(
             # already comes from EIA-923, so these shape the dispatch curve:
             #  - COAL_BIT: Appalachian/Illinois-Basin bituminous — the baseload
             #    workhorse; keeps the validated generic-coal curve.
-            #  - COAL_SUB: Powder-River sub-bituminous (cheap, railed) — slightly
-            #    cheaper bands so it baseloads under bituminous.
+            #  - Sub-bituminous (Powder River by rail) routes to COAL_PRB —
+            #    one PRB name across ISOs (plant_taxonomy COAL_SUPPLY_TO_CLASS);
+            #    its non-ERCOT band variants live on the COAL_PRB entry above.
             #  - COAL_WC: waste coal/culm (subsidised remediation fluidised-bed)
             #    — runs flat baseload, almost never peaks (low peak band).
             "COAL_BIT": {"committed": 0.90, "econ_low": 0.95,
                          "econ_high": 1.10, "peak": 1.45,
-                         "econ_low_share": 0.55},
-            "COAL_SUB": {"committed": 0.88, "econ_low": 0.90,
-                         "econ_high": 1.05, "peak": 1.40,
                          "econ_low_share": 0.55},
             "COAL_WC": {"committed": 0.85, "econ_low": 0.90,
                         "econ_high": 1.02, "peak": 1.20,
@@ -572,6 +570,52 @@ def _apply_ttc_overrides(
                 )
                 ttc[i] = value
     return ttc
+
+
+def _hydro_fleet(
+    iso: str, year: int, zone_names: list[str]
+) -> tuple[list[Generator], np.ndarray | None]:
+    """Return the ISO's conventional-hydro LP units and their monthly budgets.
+
+    Each EIA-923-reporting conventional hydro plant (prime mover ``HY``;
+    pumped storage is a storage resource, not inflow hydro) becomes one LP
+    unit at its EIA-860 nameplate, paired row-for-row with its EIA-923
+    monthly net-generation energy budget. The dispatch LP's hydro budget
+    family then lets each plant choose *when* within a month to generate
+    (peak shaving) while its monthly energy stays pinned to the measured
+    inflow — strictly better than the flat-monthly must-run injection it
+    replaces, which couldn't shave peaks at all.
+
+    Plants that resolve to no model zone are dropped. Returns
+    ``([], None)`` when the ISO has no usable hydro for ``year``.
+    """
+    try:
+        budget = load_hydro_budget(iso, year)
+    except (FileNotFoundError, ValueError):
+        return [], None
+    units: list[Generator] = []
+    monthly: list[np.ndarray] = []
+    for i, pid in enumerate(budget.plant_ids):
+        zone = budget.zones[i]
+        cap = float(budget.max_mw[i])
+        energy = np.asarray(budget.monthly_energy[i], dtype=float)
+        if zone not in zone_names or cap <= 0.0 or energy.sum() <= 0.0:
+            continue
+        units.append(Generator(
+            unit_id=f"{int(pid)}_hydro",
+            name=budget.plant_names[i],
+            zone=zone,
+            fuel_type="hydro",
+            pmax_mw=cap,
+            vom=VOM["hydro"],
+            eford=0.0,  # availability is captured by the energy budget
+            plant_group="hydro",
+            plant_code=int(pid),
+        ))
+        monthly.append(energy)
+    if not units:
+        return [], None
+    return units, np.vstack(monthly)
 
 
 def run_year(
@@ -776,6 +820,25 @@ def run_year(
             # heat-rate bands) for the per-plant fleet; off by default.
             if getattr(config, "gas_offer_curve", False):
                 fleet, fuel_fracs = split_gas_tranches(fleet, fuel_fracs, config)
+    # Energy-limited conventional hydro (every ISO): one LP unit per
+    # EIA-923-reporting hydro plant, capped by its EIA-860 nameplate per hour
+    # and by its measured monthly net generation via the dispatch LP's hydro
+    # budget rows. Replaces the flat-monthly must-run injection (which could
+    # not peak-shave) and leaves ISOs without hydro data unchanged.
+    hydro_units, hydro_monthly_energy = _hydro_fleet(iso, year, zone_names)
+    hydro_gen_idx = None
+    if hydro_units:
+        hydro_gen_idx = np.arange(
+            len(fleet), len(fleet) + len(hydro_units), dtype=int
+        )
+        fleet = fleet + hydro_units
+        fuel_fracs = list(fuel_fracs) + [1.0] * len(hydro_units)
+        logger.info(
+            "%s %d: %d hydro plants in LP (%.0f MW, %.2f TWh monthly budget)",
+            iso, year, len(hydro_units),
+            sum(g.pmax_mw for g in hydro_units),
+            hydro_monthly_energy.sum() / 1e6,
+        )
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
@@ -826,6 +889,8 @@ def run_year(
         storage_discharge_eac=storage_eac,
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
+        hydro_monthly_energy=hydro_monthly_energy,
+        hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
     )
     # P0: solve with base MC to extract per-month run lengths.

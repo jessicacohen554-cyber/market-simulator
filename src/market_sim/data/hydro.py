@@ -180,7 +180,10 @@ def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
         {"plant_name": "first", **{c: "sum" for c in mcols}}
     )
     agg[mcols] = agg[mcols].clip(lower=0.0)
-    return agg
+    # Drop plants with no net generation in the year: they carry a zero
+    # budget (and, when also absent from EIA-860, a zero nameplate fallback),
+    # i.e. a degenerate all-zero unit.
+    return agg[agg[mcols].sum(axis=1) > 0.0].reset_index(drop=True)
 
 
 def _load_hydro_nameplate(iso: str) -> dict[int, float]:

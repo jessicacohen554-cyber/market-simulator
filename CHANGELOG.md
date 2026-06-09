@@ -34,6 +34,53 @@ ERCOT/PJM bundles render without any regeneration of their payloads.
   report (it spans years); zone chips steer every zone-aware metric on all
   views. Mobile: single-column cards/grids, tap-to-pin tooltips kept.
 
+## 2026-06-09 (PJM backcast diagnostics — hydro/pumped storage in the LP, fresh dashboard benchmark, EIA-860 2025 ER)
+
+Root-causes the "wildly off" PJM dashboard results: a stale shared benchmark
+in the report layer, and ~14 TWh of supply (hydro + residual OTHER) plus ~8 GW
+of peak capability (pumped storage + hydro) missing from the non-ERCOT LP,
+which drove July/August VOLL price spikes that never happened.
+
+- **Dashboard benchmark now comes from the newest bundle.**
+  `render_calibration_html.build_payload` rebuilt the shared per-ISO benchmark
+  only from registry run 0 — the *oldest* bundle — freezing plant→group
+  classification and EIA-923 class totals to pre-coal-split code (PJM coal as
+  one generic `COAL`, `COAL_SUB` before the SUB→`COAL_PRB` rename). Newer runs
+  then rendered "Coal: model 0.00 vs actual ~116 TWh (−100%)" while the split
+  coal classes had no benchmark plants and vanished from the heatmaps. The
+  benchmark is now rebuilt per run so the newest bundle covering each year
+  wins. The stale `pjm_8zone` bundle and its registry/run artifacts are
+  removed.
+- **Conventional hydro dispatches in the LP for every ISO.**
+  `run_calibration.run_year` now builds one LP unit per EIA-923-reporting
+  hydro plant (`_hydro_fleet`: EIA-860 nameplate power cap, EIA-923 monthly
+  net generation as the dispatch LP's hydro energy-budget rows), replacing
+  the flat-monthly ERCOT-only must-run injection — hydro can now peak-shave.
+  PJM: 76 plants, ~3.3 GW, ~8.9 TWh.
+- **Pumped storage joins the storage fleet.** New
+  `storage.load_eia860_pumped_storage` reads prime-mover `PS` units off the
+  EIA-860 generator schedule (the battery schedule does not carry them) into
+  per-zone `StorageUnit`s with cited duration/RTE constants
+  (`PUMPED_STORAGE_DURATION_HOURS` = 10 h, `PUMPED_STORAGE_RTE` = 0.80). PJM
+  gains its ~5.0 GW (Bath County, Muddy Run, Yards Creek, Seneca, Smith
+  Mountain).
+- **Must-run injection un-gated from ERCOT.** The biomass/OTHER residual
+  injection (`run_calibration_full._must_run_profiles`) now applies to every
+  ISO; classes the LP fleet already carries as units are skipped (biomass for
+  the per-plant non-ERCOT fleets), and pumped-storage plants are held out of
+  OTHER (they dispatch as LP storage). Hydro is no longer an injected class
+  anywhere. `--rebuild-benchmark` also stops using the ERCOT bin sheet for
+  non-ERCOT plant→group maps.
+- **Dead `COAL_SUB` knob removed and guarded.** Sub-bituminous routes to
+  `COAL_PRB` (one PRB name across ISOs), so `COAL_SUB` offer-curve entries
+  silently tuned nothing; the defaults are scrubbed and
+  `--offer-curve-json` / `--offer-curve-delta-json` now reject unknown class
+  keys loudly.
+- **EIA-860 2025 Early Release.** `process_eia860.py` locates the header row
+  by anchor columns (the ER adds a disclaimer preamble) and the committed
+  parquet extracts are regenerated from `eia8602025ER.zip` (operating years
+  through 2025).
+
 ## 2026-06-08 (Backcast — multi-ISO toggle + color-coded market chrome)
 
 Makes the ISO axis a real, prominent toggle and registers a PJM run alongside

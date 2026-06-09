@@ -171,7 +171,17 @@ VOM: dict[str, float] = {
     "solar": 0.0,    # NREL ATB 2024 — utility-scale solar PV
     "oil": 4.5,      # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
     "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
+    "hydro": 1.4,    # NREL ATB 2024 — conventional hydropower
 }
+
+# Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage
+# block alongside batteries; EIA-860 reports power but not energy or RTE).
+# Duration: the US PSH fleet averages ~10 h of storage at nameplate (DOE
+# "Pumped Storage Hydropower" 2023 fact sheet; Bath County ≈ 10.5 h).
+PUMPED_STORAGE_DURATION_HOURS: float = 10.0
+# Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia Energy
+# Storage Handbook; DOE PSH fact sheet cites ~80%).
+PUMPED_STORAGE_RTE: float = 0.80
 
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
