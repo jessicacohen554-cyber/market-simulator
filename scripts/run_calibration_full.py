@@ -891,6 +891,7 @@ def solve_and_persist(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
+    gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
     note: str = "",
@@ -967,6 +968,7 @@ def solve_and_persist(
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             gas_offer_curve=gas_offer_curve,
+            gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
             must_run_mw=must_run_total,
@@ -1049,6 +1051,7 @@ def solve_and_persist(
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
         "gas_offer_curve": gas_offer_curve,
+        "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
         "git_sha": _git_sha(),
@@ -1069,6 +1072,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if gas_offer_curve:
         recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
+    if gas_monthly_actuals:
+        recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -1881,6 +1886,13 @@ def main() -> None:
              "split_gas_tranches, instead of a single flat block. Off by "
              "default.",
     )
+    parser.add_argument(
+        "--gas-monthly-actuals", action="store_true",
+        help="Price gas at the ISO's measured EIA-923 monthly volume-weighted "
+             "delivered cost (one hub-level price per month) instead of the "
+             "annual Henry Hub + basis x generic seasonality shape, so real "
+             "winter gas events reach the merit order. Off by default.",
+    )
     parser.add_argument("--plant-tranche-config", default=None,
                         help="Per-plant tranche-config CSV (one row per plant "
                              "with its tranche shares + per-band HR mults). "
@@ -1964,6 +1976,7 @@ def main() -> None:
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
         gas_offer_curve=args.gas_offer_curve,
+        gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
         note=args.note,
