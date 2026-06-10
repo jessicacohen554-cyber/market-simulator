@@ -552,6 +552,26 @@ class ScenarioConfig:
     # _GAS_TRANCHE_SHARES. ERCOT's offer curve comes from its CAMPD bins.
     gas_offer_curve: bool = False
 
+    # Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure O&M
+    # is < $1/MWh, but the fleet (e.g. Bath County) reserves much of its duty
+    # for regulation/reserves and follows pumping schedules the energy-only LP
+    # does not see; with no adder the LP arbitrages PS every day the spread
+    # clears RTE losses and generates ~2-3x the observed PS energy, shaving
+    # exactly the peaks the CT fleet actually served. This is the reduced-form
+    # opportunity cost of that reserve duty, calibrated so PJM PS lands near
+    # its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).
+    pumped_storage_dispatch_adder: float = 10.0
+
+    # Tier 3 (calibration) — price gas at the ISO's measured EIA-923 monthly
+    # volume-weighted delivered cost instead of annual Henry Hub + basis ×
+    # the generic seasonality shape. One hub-level price per month (per-plant
+    # gas stays off — same-zone units never split on patchy reporting), so
+    # real winter events the fixed shape damps (PJM Jan-2024: $5.07 measured
+    # vs ~$2.5 shaped) reach the merit order. Off by default so the present
+    # ERCOT calibration is unchanged; backcast-only by construction (forward
+    # years have no F923 rows and keep the trajectory).
+    gas_monthly_actuals: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -760,6 +780,8 @@ TIER_TAGS: dict[str, int] = {
     "nearby_fuel_price_min_state_plants": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,
+    "pumped_storage_dispatch_adder": 3,
+    "gas_monthly_actuals": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }

@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-10-pjm-5-coal-commit",
+  "label": "pjm 5 coal commit",
+  "date": "2026-06-10",
+  "shorthand": "pjm-5-coal-commit",
+  "definition": "pjm 5 coal-commit: COAL_BIT committed -0.10 (self-scheduled tranche was priced out by CC ramp, 15% CF vs flat monthly -1.5 TWh deficit); CT econ deepening pulled back to -0.06/-0.18 (summer overage + summer LMP low); CC kept",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-10-pjm-5-coal-commit.js",
+  "bundle": "results/calibration/pjm_5_coalcommit"
+}
