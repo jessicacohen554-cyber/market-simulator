@@ -307,6 +307,9 @@ def _calibration_config(
     config = ScenarioConfig(
         weather_year=year,
         iso=iso,
+        mode="backcast",  # explicit mode signal: historical-actuals
+        #   renewable capacity and measured hourly profiles. Never inferred
+        #   from gas_price_override.
         hours=hours,
         vintage_capacity_ramp=True,
         td_loss_factor=0.0,  # EIA-930 demand is generation-side
