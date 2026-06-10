@@ -902,6 +902,7 @@ def solve_and_persist(
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
     curve_smoothing: dict | None = None,
+    cc_derate_from_top: bool = False,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -980,6 +981,7 @@ def solve_and_persist(
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
             curve_smoothing=curve_smoothing,
+            cc_derate_from_top=cc_derate_from_top,
             must_run_mw=must_run_total,
         )
         if persist_p2_state:
@@ -1064,6 +1066,7 @@ def solve_and_persist(
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
         "curve_smoothing": curve_smoothing or {},
+        "cc_derate_from_top": cc_derate_from_top,
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
@@ -1087,6 +1090,9 @@ def solve_and_persist(
     if curve_smoothing:
         recorded_cfg = recorded_cfg.with_overrides(
             **{k: v for k, v in curve_smoothing.items() if v is not None})
+    if cc_derate_from_top:
+        recorded_cfg = recorded_cfg.with_overrides(
+            cc_outage_derate_from_top=True)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -1992,6 +1998,12 @@ def main() -> None:
              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
              ".json file. The merged curve is recorded in run_config.json.")
     parser.add_argument(
+        "--cc-derate-from-top", action="store_true",
+        help="Reallocate CC_REGULAR outage derates top-of-stack: a partial "
+             "outage truncates the duct-fire/high-econ end of the plant's "
+             "offer curve instead of scaling every tranche (incl. the cheap "
+             "committed floor) pro-rata. Plant hourly available MW unchanged.")
+    parser.add_argument(
         "--curve-n", type=int, default=None,
         help="Override offer_curve_smoothing_n (default 6): the number of "
              "equal-capacity slices the econ ramp is rendered into. Sweep "
@@ -2074,6 +2086,7 @@ def main() -> None:
             "offer_curve_smoothing_n": args.curve_n,
             "offer_curve_smoothing_exp": args.curve_exp,
         },
+        cc_derate_from_top=args.cc_derate_from_top,
         note=args.note,
     )
     report_run(run_dir)

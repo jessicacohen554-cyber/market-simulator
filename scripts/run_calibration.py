@@ -646,6 +646,7 @@ def run_year(
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     curve_smoothing: dict[str, float | int | None] | None = None,
+    cc_derate_from_top: bool = False,
     must_run_mw: "np.ndarray | None" = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -710,6 +711,11 @@ def run_year(
     if curve_smoothing:
         config = config.with_overrides(
             **{k: v for k, v in curve_smoothing.items() if v is not None})
+    # Top-of-stack outage allocation for CC_REGULAR (run_calibration_full
+    # --cc-derate-from-top): partial outages truncate the expensive end of
+    # the offer curve instead of scaling every tranche pro-rata.
+    if cc_derate_from_top:
+        config = config.with_overrides(cc_outage_derate_from_top=True)
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 

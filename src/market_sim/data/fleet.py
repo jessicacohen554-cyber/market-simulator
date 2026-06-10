@@ -567,6 +567,42 @@ def generators_to_fleet_arrays(
                     config.weather_year, applied_p,
                 )
 
+    # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
+    # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
+    # available MW is unchanged, but it now fills the tranches bottom-up in
+    # heat-rate order, so a partial outage truncates the expensive duct-fire /
+    # high-econ end of the offer curve while the cheap committed floor keeps
+    # its level — matching how a multi-train CC sheds its least-efficient
+    # increments first and runs the surviving train near full load.
+    if config is not None and getattr(
+        config, "cc_outage_derate_from_top", False
+    ):
+        cc_by_plant: dict[int, list[int]] = {}
+        for g_idx, gen in enumerate(generators):
+            if gen.plant_group == "CC_REGULAR" and int(gen.plant_code) > 0:
+                cc_by_plant.setdefault(int(gen.plant_code), []).append(g_idx)
+        realloc_plants = 0
+        for idxs in cc_by_plant.values():
+            if len(idxs) < 2:
+                continue  # single-tranche plant: nothing to reallocate
+            # Merit order within the plant: tranches share one fuel price, so
+            # heat rate ranks them (committed < econ slices < peak).
+            order = sorted(idxs, key=lambda i: heat_rate[i])
+            caps = pmax[order]  # (n_tranches,)
+            avail_mw = availability[order, :].T @ caps  # (T,) plant total
+            cum_below = np.concatenate(([0.0], np.cumsum(caps[:-1])))
+            bounds = np.clip(
+                avail_mw[np.newaxis, :] - cum_below[:, np.newaxis],
+                0.0, caps[:, np.newaxis],
+            )
+            availability[order, :] = bounds / caps[:, np.newaxis]
+            realloc_plants += 1
+        if realloc_plants:
+            logger.info(
+                "CC_REGULAR outage derate reallocated top-of-stack for %d "
+                "plant(s)", realloc_plants,
+            )
+
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
     # bound on the legacy gas-steam fleet in the summer months, modeling units
     # held online at min load for grid reliability ("reliability dragging").
