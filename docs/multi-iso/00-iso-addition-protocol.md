@@ -1,5 +1,16 @@
 # New-ISO Addition Protocol & Checklist
 
+> **Update 2026-06-10:** the *process* description below predates the PJM
+> backcast and is superseded by `05-backcast-playbook.md` (v2 process:
+> per-plant CAMPD tranches, unit-level outage overlays, CHP
+> steam-following, measured monthly gas, hydro/PS wiring, dashboard
+> registration). The Stage A–H checklist in §1–2 remains current. Status
+> corrections to §0: **PJM is now an 8-zone topology with a 2023–2024
+> backcast under active calibration** (see `docs/calibration-log.md`,
+> runs pjm 1–8); EIA-930 hourly parquets now exist for **all seven ISOs**;
+> CAISO has CAMPD unit-level CA 2024–2025 + a derived outage CSV. CAISO
+> execution plan: `06-caiso-prompt-pack.md`.
+
 Status: **topology landed; calibration pending.** All seven ISOs are now
 registered in `config/iso_configs.py` with real (cited, Tier-3) zone load
 shares and inter-zone TTCs, and each has a plant-to-zone splitter in
@@ -217,4 +228,3 @@ These constrain every ISO addition; do not regress them:
 - Raw data in `data/` is never modified in place.
 - New market-design modules must be **toggleable** and **default to off** so
   ERCOT's calibrated behaviour is unchanged when its modules aren't selected.
-```
