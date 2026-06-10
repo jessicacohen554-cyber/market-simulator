@@ -1,0 +1,224 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 2c376ed..15ca786 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -646,6 +646,7 @@ def run_year(
+     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
+     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
+     curve_smoothing: dict[str, float | int | None] | None = None,
++    cc_derate_from_top: bool = False,
+     must_run_mw: "np.ndarray | None" = None,
+ ) -> tuple[object, FleetContext, object | None]:
+     """Solve the single-year calibration dispatch for one ISO-year.
+@@ -710,6 +711,11 @@ def run_year(
+     if curve_smoothing:
+         config = config.with_overrides(
+             **{k: v for k, v in curve_smoothing.items() if v is not None})
++    # Top-of-stack outage allocation for CC_REGULAR (run_calibration_full
++    # --cc-derate-from-top): partial outages truncate the expensive end of
++    # the offer curve instead of scaling every tranche pro-rata.
++    if cc_derate_from_top:
++        config = config.with_overrides(cc_outage_derate_from_top=True)
+     iso_config = get_iso_config(iso)
+     zone_names = iso_config.zone_names
+ 
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index e3e34a3..ddec573 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -902,6 +902,7 @@ def solve_and_persist(
+     offer_curve_overrides: dict | None = None,
+     offer_curve_deltas: dict | None = None,
+     curve_smoothing: dict | None = None,
++    cc_derate_from_top: bool = False,
+     note: str = "",
+ ) -> Path:
+     """Solve every year/pass, write the parquet bundle, return the run dir."""
+@@ -980,6 +981,7 @@ def solve_and_persist(
+             offer_curve_overrides=offer_curve_overrides,
+             offer_curve_deltas=offer_curve_deltas,
+             curve_smoothing=curve_smoothing,
++            cc_derate_from_top=cc_derate_from_top,
+             must_run_mw=must_run_total,
+         )
+         if persist_p2_state:
+@@ -1064,6 +1066,7 @@ def solve_and_persist(
+         "offer_curve_overrides": offer_curve_overrides or {},
+         "offer_curve_deltas": offer_curve_deltas or {},
+         "curve_smoothing": curve_smoothing or {},
++        "cc_derate_from_top": cc_derate_from_top,
+         "git_sha": _git_sha(),
+     }
+     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+@@ -1087,6 +1090,9 @@ def solve_and_persist(
+     if curve_smoothing:
+         recorded_cfg = recorded_cfg.with_overrides(
+             **{k: v for k, v in curve_smoothing.items() if v is not None})
++    if cc_derate_from_top:
++        recorded_cfg = recorded_cfg.with_overrides(
++            cc_outage_derate_from_top=True)
+     write_run_config(run_dir, recorded_cfg, meta, note)
+     logger.info("wrote calibration bundle to %s", run_dir)
+     return run_dir
+@@ -1991,6 +1997,12 @@ def main() -> None:
+              'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
+              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
+              ".json file. The merged curve is recorded in run_config.json.")
++    parser.add_argument(
++        "--cc-derate-from-top", action="store_true",
++        help="Reallocate CC_REGULAR outage derates top-of-stack: a partial "
++             "outage truncates the duct-fire/high-econ end of the plant's "
++             "offer curve instead of scaling every tranche (incl. the cheap "
++             "committed floor) pro-rata. Plant hourly available MW unchanged.")
+     parser.add_argument(
+         "--curve-n", type=int, default=None,
+         help="Override offer_curve_smoothing_n (default 6): the number of "
+@@ -2074,6 +2086,7 @@ def main() -> None:
+             "offer_curve_smoothing_n": args.curve_n,
+             "offer_curve_smoothing_exp": args.curve_exp,
+         },
++        cc_derate_from_top=args.cc_derate_from_top,
+         note=args.note,
+     )
+     report_run(run_dir)
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 4585a2c..5e8037d 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -478,6 +478,20 @@ class ScenarioConfig:
+     offer_curve_smoothing_n: int = 6
+     offer_curve_smoothing_exp: float = 1.0
+ 
++    # Outage capacity comes off the TOP of a CC_REGULAR plant's offer stack
++    # instead of pro-rata across its tranches. The default (False) scales
++    # every tranche by the same hourly availability factor, which drags the
++    # cheap committed block down with the plant — a 2x1 CC with one train out
++    # (availability ~0.67) sees its committed floor fall from ~37% to ~25% of
++    # nameplate and the LP parks there, while the real plant runs its
++    # remaining train near full load (CAMPD dwells at 36-43% CF). When True,
++    # each CC_REGULAR plant's hourly available MW (unchanged in total) fills
++    # its tranches bottom-up in heat-rate order — committed first, econ
++    # slices, duct-fire peak last — so a partial outage truncates the
++    # expensive end of the curve and the committed floor keeps its level,
++    # exactly as a real plant sheds its least-efficient increments first.
++    cc_outage_derate_from_top: bool = False
++
+     # CHP cogeneration treatment. When chp_steam_following is True, each
+     # CC_CHP / CT_CHP / ST_CHP bin is modeled as a steam host's cogen rather
+     # than a merchant unit:
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 9b273a7..89c3ea6 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -567,6 +567,42 @@ def generators_to_fleet_arrays(
+                     config.weather_year, applied_p,
+                 )
+ 
++    # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
++    # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
++    # available MW is unchanged, but it now fills the tranches bottom-up in
++    # heat-rate order, so a partial outage truncates the expensive duct-fire /
++    # high-econ end of the offer curve while the cheap committed floor keeps
++    # its level — matching how a multi-train CC sheds its least-efficient
++    # increments first and runs the surviving train near full load.
++    if config is not None and getattr(
++        config, "cc_outage_derate_from_top", False
++    ):
++        cc_by_plant: dict[int, list[int]] = {}
++        for g_idx, gen in enumerate(generators):
++            if gen.plant_group == "CC_REGULAR" and int(gen.plant_code) > 0:
++                cc_by_plant.setdefault(int(gen.plant_code), []).append(g_idx)
++        realloc_plants = 0
++        for idxs in cc_by_plant.values():
++            if len(idxs) < 2:
++                continue  # single-tranche plant: nothing to reallocate
++            # Merit order within the plant: tranches share one fuel price, so
++            # heat rate ranks them (committed < econ slices < peak).
++            order = sorted(idxs, key=lambda i: heat_rate[i])
++            caps = pmax[order]  # (n_tranches,)
++            avail_mw = availability[order, :].T @ caps  # (T,) plant total
++            cum_below = np.concatenate(([0.0], np.cumsum(caps[:-1])))
++            bounds = np.clip(
++                avail_mw[np.newaxis, :] - cum_below[:, np.newaxis],
++                0.0, caps[:, np.newaxis],
++            )
++            availability[order, :] = bounds / caps[:, np.newaxis]
++            realloc_plants += 1
++        if realloc_plants:
++            logger.info(
++                "CC_REGULAR outage derate reallocated top-of-stack for %d "
++                "plant(s)", realloc_plants,
++            )
++
+     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
+     # bound on the legacy gas-steam fleet in the summer months, modeling units
+     # held online at min load for grid reliability ("reliability dragging").
+diff --git a/tests/test_fleet.py b/tests/test_fleet.py
+index 2458406..55f3ac9 100644
+--- a/tests/test_fleet.py
++++ b/tests/test_fleet.py
+@@ -247,6 +247,65 @@ class TestThermalAvailability(unittest.TestCase):
+         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.03)
+ 
+ 
++class TestCcDerateFromTop(unittest.TestCase):
++    """Top-of-stack outage allocation for CC_REGULAR tranche stacks."""
++
++    @staticmethod
++    def _cc_tranches(eford=0.25):
++        """A 2-tranche CC_REGULAR plant: 400 MW committed + 600 MW econ."""
++        shared = dict(
++            name="CC", zone="North", fuel_type="gas_cc", online_year=2020,
++            plant_group="CC_REGULAR", plant_code=999, eford=eford,
++        )
++        return [
++            Generator(unit_id="p999_committed", pmax_mw=400.0,
++                      heat_rate=6.0, **shared),
++            Generator(unit_id="p999_econc00", pmax_mw=600.0,
++                      heat_rate=7.5, **shared),
++        ]
++
++    def test_derate_comes_off_the_top_tranche(self):
++        """With the flag on, the committed floor keeps its full level."""
++        fa = generators_to_fleet_arrays(
++            self._cc_tranches(), ["North"], hours=24,
++            config=ScenarioConfig(cc_outage_derate_from_top=True),
++        )
++        # 1000 MW * availability; committed (400 MW) fills first, the econ
++        # tranche absorbs the entire shortfall.
++        avail_mw = 400.0 * fa.availability[0] + 600.0 * fa.availability[1]
++        self.assertTrue(np.all(fa.availability[0] == 1.0))
++        self.assertTrue(np.all(fa.availability[1] < 1.0))
++        # Plant-total available MW must be unchanged by the reallocation.
++        fa_off = generators_to_fleet_arrays(
++            self._cc_tranches(), ["North"], hours=24,
++            config=ScenarioConfig(cc_outage_derate_from_top=False),
++        )
++        np.testing.assert_allclose(
++            avail_mw,
++            400.0 * fa_off.availability[0] + 600.0 * fa_off.availability[1],
++        )
++
++    def test_deep_outage_reaches_the_committed_tranche(self):
++        """When available MW falls below the committed cap, it derates too."""
++        fa = generators_to_fleet_arrays(
++            self._cc_tranches(eford=0.70), ["North"], hours=24,
++            config=ScenarioConfig(cc_outage_derate_from_top=True),
++        )
++        # 1000 * ~0.3 = ~300 MW available < 400 MW committed: econ zeroed,
++        # committed holds the whole remainder.
++        self.assertTrue(np.all(fa.availability[1] == 0.0))
++        self.assertTrue(np.all(fa.availability[0] < 1.0))
++        self.assertTrue(np.all(fa.availability[0] > 0.0))
++
++    def test_flag_off_keeps_pro_rata(self):
++        """Default behavior is unchanged: equal factors on every tranche."""
++        fa = generators_to_fleet_arrays(
++            self._cc_tranches(), ["North"], hours=24,
++            config=ScenarioConfig(),
++        )
++        np.testing.assert_allclose(fa.availability[0], fa.availability[1])
++
++
+ class TestAssembleMC(unittest.TestCase):
+     """Tests for the vectorized marginal cost assembly."""
