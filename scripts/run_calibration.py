@@ -645,6 +645,7 @@ def run_year(
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
+    curve_smoothing: dict[str, float | int | None] | None = None,
     must_run_mw: "np.ndarray | None" = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -703,6 +704,12 @@ def run_year(
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
     if gas_monthly_actuals:
         config = config.with_overrides(gas_monthly_actuals=True)
+    # Econ-ramp rendering sweep (run_calibration_full --curve-n / --curve-exp):
+    # offer_curve_smoothing_n / offer_curve_smoothing_exp; None entries keep
+    # the ScenarioConfig defaults.
+    if curve_smoothing:
+        config = config.with_overrides(
+            **{k: v for k, v in curve_smoothing.items() if v is not None})
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 

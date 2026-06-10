@@ -303,6 +303,98 @@ def check_hourly_dispatch_correlation(
     return out
 
 
+def check_cf_band_occupancy(
+    model_mw,
+    actual_mw,
+    capacity_mw: float | None = None,
+    band_width: float = 0.10,
+) -> dict:
+    """Compare hours spent in capacity-factor bands, model vs actual.
+
+    ``pearson_r`` rewards getting the *timing* of dispatch right and the
+    annual-GWh checks reward the *amount*, but a unit can score well on both
+    while operating at the wrong levels — e.g. parking 4,000 hours at the top
+    of its economic ramp where the real plant duct-fired to ~90% CF. This
+    check ignores timing entirely and compares the two **operating-level
+    distributions**: how many hours each series spends in each capacity-factor
+    band (default 10% wide). Three summary statistics:
+
+    * ``band_overlap`` -- ``sum(min(model_h, actual_h)) / T``: the fraction of
+      hours the two distributions agree on, band by band. 1.0 means the model
+      spends exactly the observed number of hours in every band (regardless
+      of *which* hours).
+    * ``band_r`` -- Pearson correlation of the two band-occupancy vectors;
+      ``nan`` when either is constant across bands.
+    * ``cf_emd`` -- earth-mover's distance between the two CF distributions,
+      in CF points (0-1): the mean absolute gap between the sorted model and
+      sorted actual CF series, i.e. the area between the two capacity-factor
+      duration curves. Unlike ``band_overlap`` it is band-free and penalizes
+      mass by *how far* it sits from the observed level, so moving 1,000
+      hours from 90% to 75% CF scores worse than moving them to 85%.
+
+    Args:
+        model_mw: The model's hourly MW series for one plant, shape ``(T,)``.
+        actual_mw: The observed (e.g. CAMPD net) hourly MW series, ``(T,)``.
+        capacity_mw: Normalizing capacity. Defaults to the larger of the two
+            series' maxima, so both series share one CF scale without an
+            external nameplate lookup; pass the nameplate explicitly when
+            bands must line up with nameplate-CF conventions.
+        band_width: CF band width as a fraction (0.10 -> ten 10% bands;
+            0.05 -> twenty 5% bands). Must evenly divide 1.0 within fp
+            tolerance.
+
+    Returns:
+        ``{capacity_mw, band_width, bands, band_overlap, band_r, cf_emd}``
+        where ``bands`` is a list of ``{lo, hi, model_hours, actual_hours}``
+        dicts covering [0, 1] (the top band includes CF == 1.0).
+
+    Raises:
+        ValueError: when the series differ in length, are empty, or both are
+            identically zero (no capacity scale to normalize against).
+    """
+    m = np.asarray(model_mw, dtype=float).ravel()
+    a = np.asarray(actual_mw, dtype=float).ravel()
+    if m.shape != a.shape:
+        raise ValueError(
+            f"model series length {m.size} does not match "
+            f"actual series length {a.size}"
+        )
+    if m.size == 0:
+        raise ValueError("series are empty")
+    cap = float(capacity_mw) if capacity_mw else float(max(m.max(), a.max()))
+    if cap <= _ZERO_TOL:
+        raise ValueError("capacity is zero -- cannot normalize to CF")
+
+    n_bands = int(round(1.0 / band_width))
+    edges = np.linspace(0.0, 1.0, n_bands + 1)
+    # Clip into [0, 1] so partial-outage normalization or capacity rounding
+    # cannot push an hour outside the histogram; the top band owns CF == 1.0.
+    m_cf = np.clip(m / cap, 0.0, 1.0)
+    a_cf = np.clip(a / cap, 0.0, 1.0)
+    m_hours, _ = np.histogram(np.minimum(m_cf, 1.0 - 1e-12), bins=edges)
+    a_hours, _ = np.histogram(np.minimum(a_cf, 1.0 - 1e-12), bins=edges)
+
+    bands = [
+        {
+            "lo": round(float(edges[i]), 4),
+            "hi": round(float(edges[i + 1]), 4),
+            "model_hours": int(m_hours[i]),
+            "actual_hours": int(a_hours[i]),
+        }
+        for i in range(n_bands)
+    ]
+    overlap = float(np.minimum(m_hours, a_hours).sum()) / float(m.size)
+    emd = float(np.mean(np.abs(np.sort(m_cf) - np.sort(a_cf))))
+    return {
+        "capacity_mw": round(cap, 1),
+        "band_width": band_width,
+        "bands": bands,
+        "band_overlap": round(overlap, 4),
+        "band_r": round(_pearson_r(m_hours, a_hours), 4),
+        "cf_emd": round(emd, 4),
+    }
+
+
 @dataclass(frozen=True)
 class DiagnosticResult:
     """The outcome of one calibration diagnostic.
