@@ -56,7 +56,6 @@ from market_sim.config.plant_taxonomy import (  # noqa: E402
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
-    CHP_BTM_PCT_BY_SECTOR, CHP_SECTOR_CLASS_BY_PLANT, CHP_ST_BTM_PCT,
     load_campd_bins, plant_tranche_bands,
 )
 from market_sim.results.calibration import (  # noqa: E402
@@ -146,14 +145,18 @@ def _capture(r: float, nrmse: float, dev: float) -> float:
     return round(100.0 * (rs * ns * ls) ** (1.0 / 3.0), 1)
 
 
-def _btm_share(plant_id: int, group: str) -> float:
-    """Behind-the-meter host self-supply share of net gen for a CHP plant."""
+def _btm_share(plant_id: int, group: str, iso: str = "ERCOT") -> float:
+    """Behind-the-meter host self-supply share of net gen for a CHP plant.
+
+    Mirrors :func:`market_sim.data.fleet.chp_btm_pct` — the ISO's derived
+    EIA-923 sector (thermal-tranches artifact) first, then the hardcoded
+    ERCOT sector map — so the report's add-back uses the same share the LP
+    pull-out used.
+    """
     if group not in ("CC_CHP", "CT_CHP", "ST_CHP"):
         return 0.0
-    if group == "ST_CHP":
-        return CHP_ST_BTM_PCT / 100.0
-    sector = CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_id), "merchant")
-    return CHP_BTM_PCT_BY_SECTOR.get(sector, 40.0) / 100.0
+    from market_sim.data.fleet import chp_btm_pct
+    return chp_btm_pct(int(plant_id), group, iso=iso) / 100.0
 
 
 @lru_cache(maxsize=1)
@@ -335,7 +338,9 @@ def build_payload(runs: list[tuple[str, Path]],
                     "c_ann": round(float(cn.sum()) / 1e6, 4),
                     "c_mon": _monthly_gwh(cn),
                     "e_ann": round(e_ann, 4),
-                    "btm": round(e_ann * _btm_share(code, grp), 4),
+                    "btm": round(
+                        e_ann * _btm_share(code, grp,
+                                           meta.get("iso", "ERCOT")), 4),
                     "e_mon": [round(x, 2) for x in e923_mon.get(code,
                               np.zeros(12))],
                 }
@@ -381,7 +386,7 @@ def build_payload(runs: list[tuple[str, Path]],
                 # correlation-invariant (it corrects the level, not the shape).
                 if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
                     btm_mwh = float(e923_ann.get(code, 0.0)) * _btm_share(
-                        code, grp)
+                        code, grp, meta.get("iso", "ERCOT"))
                     if btm_mwh > 0.0:
                         mw = mw + btm_mwh / float(_T)
                 cn = cn_p.get(code)

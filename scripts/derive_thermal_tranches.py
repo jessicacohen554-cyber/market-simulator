@@ -61,8 +61,115 @@ from market_sim.data.outages import unit_outage_derate_factors  # noqa: E402
 
 # Thermal groups that carry an offer-curve committed/must-run tranche.
 _THERMAL_GROUPS: frozenset[str] = frozenset(
-    {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "COAL"}
+    {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP", "COAL"}
 )
+
+# CHP cogen groups: these additionally get a steam-following floor
+# (``chp_pmin_cf``) and an EIA-923 sector class (``chp_sector``), the
+# ISO-generic analogue of the hardcoded ERCOT maps
+# ``fleet.CHP_PMIN_CF_BY_PLANT`` / ``fleet.CHP_SECTOR_CLASS_BY_PLANT``.
+_CHP_GROUPS: frozenset[str] = frozenset({"CC_CHP", "CT_CHP", "ST_CHP"})
+
+# Percentile of the all-hours available-CF distribution taken as a CHP cogen's
+# total must-run floor — the steady host-steam output it holds essentially
+# always. P2 matches how ERCOT's CHP_PMIN_CF_BY_PLANT values were derived
+# (p2 CAMPD gross CF, non-outage hours).
+_CHP_PMIN_PCTILE: int = 2
+
+# EIA-923 Page 1 "EIA Sector Number" -> the BTM sector class the model's
+# chp_btm_pct uses. Cogen sectors map directly (3 = NAICS-22 / merchant cogen,
+# 5 = commercial cogen, 7 = industrial cogen); non-cogen sectors land on the
+# nearest class so a plant whose 923 rows are mixed still classifies.
+_EIA_SECTOR_CLASS: dict[int, str] = {
+    1: "merchant", 2: "merchant", 3: "merchant",
+    4: "commercial", 5: "commercial",
+    6: "industrial", 7: "industrial",
+}
+
+
+def _chp_sector_map(years: list[int]) -> dict[int, str]:
+    """Return ``{plant_id: sector_class}`` from the EIA-923 Page 1 workbooks.
+
+    Reads "EIA Sector Number" for every plant from the raw
+    ``inputs/raw-data/f923_{year} (1).zip`` archives (the same source the
+    monthly-generation artifact is built from) and maps it through
+    :data:`_EIA_SECTOR_CLASS`. When a plant's sector differs across rows or
+    years (rare), the most frequent class wins.
+    """
+    import zipfile
+    from collections import Counter
+
+    votes: dict[int, Counter] = {}
+    for year in years:
+        zpath = REPO / "inputs" / "raw-data" / f"f923_{year} (1).zip"
+        if not zpath.exists():
+            print(f"  (no EIA-923 archive for {year}: {zpath.name})")
+            continue
+        z = zipfile.ZipFile(zpath)
+        sheet_file = next(
+            (n for n in z.namelist() if "Schedules_2_3_4_5" in n), None
+        )
+        if sheet_file is None:
+            continue
+        with z.open(sheet_file) as f:
+            df = pd.read_excel(
+                f, sheet_name="Page 1 Generation and Fuel Data", skiprows=5,
+                usecols=["Plant Id", "EIA Sector Number"],
+            )
+        df = df.dropna()
+        for pid, sector in df.itertuples(index=False):
+            klass = _EIA_SECTOR_CLASS.get(int(sector))
+            if klass is not None:
+                votes.setdefault(int(pid), Counter())[klass] += 1
+    return {pid: c.most_common(1)[0][0] for pid, c in votes.items()}
+
+
+# EIA-923-CF fallback floor for CHP plants without CAMPD coverage (small
+# cogens below the CEMS reporting threshold — e.g. every PJM ST_CHP). The
+# plant's pooled EIA-923 class net generation over nameplate approximates its
+# steady steam-following output; the mean-to-floor haircut converts that
+# average CF into a holdable floor (a steady cogen's P2 hourly CF runs a bit
+# under its mean), and the cap keeps a CEMS-invisible plant from being forced
+# on harder than any CAMPD-observed peer.
+_CHP_F923_FLOOR_FACTOR: float = 0.85
+_CHP_F923_FLOOR_CAP: float = 75.0
+
+
+def _chp_f923_floor_cf(
+    years: list[int], cap: dict[tuple[int, str], float],
+) -> dict[tuple[int, str], float]:
+    """Return ``{(code, group): pmin_cf %}`` from EIA-923 class net generation.
+
+    For each CHP ``(plant, group)`` in the fleet, the pooled EIA-923 net
+    generation of that class (canonical :func:`classify_plant` bucketing)
+    divided by ``nameplate x hours`` gives the average CF; scaled by
+    :data:`_CHP_F923_FLOOR_FACTOR` and capped it becomes the total must-run
+    floor for plants the CAMPD extracts cannot see.
+    """
+    from market_sim.config.plant_taxonomy import classify_plant
+    from market_sim.data.eia923 import load_monthly_generation
+
+    gen = load_monthly_generation()
+    gen = gen[gen["year"].isin(years)].copy()
+    gen["klass"] = [
+        classify_plant(f, pm, str(c).upper().startswith("Y"), int(pid))
+        for f, pm, c, pid in zip(
+            gen["fuel_type"], gen["prime_mover"], gen["chp"], gen["plant_id"]
+        )
+    ]
+    by_key = gen.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
+    out: dict[tuple[int, str], float] = {}
+    for (code, group), nameplate in cap.items():
+        if group not in _CHP_GROUPS or nameplate <= 0:
+            continue
+        mwh = float(by_key.get((code, group), 0.0))
+        if mwh <= 0.0:
+            continue
+        avg_cf = mwh / (nameplate * 8760.0 * len(years))
+        out[(code, group)] = min(
+            100.0 * avg_cf * _CHP_F923_FLOOR_FACTOR, _CHP_F923_FLOOR_CAP
+        )
+    return out
 
 # An hour counts as "online / committed" when net output clears this fraction
 # of the hour's available capacity — low enough to admit one unit of a
@@ -141,6 +248,7 @@ def main() -> None:
 
     cap, primary = _fleet_nameplate_and_group(iso)
     factors = _parasitic_factor_map()
+    chp_sectors = _chp_sector_map(args.years)
 
     # Pool the available-CF samples across the requested years, per (code, group).
     online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
@@ -211,7 +319,7 @@ def main() -> None:
                           _MUSTRUN_CAP)
         else:
             mustrun = 0.0
-        rows.append({
+        row = {
             "plant_code": code, "plant_group": group,
             "name": names.get(code, ""), "status": "ok",
             "nameplate_mw": round(nameplate, 1),
@@ -220,10 +328,44 @@ def main() -> None:
             "mustrun_pct": round(100.0 * mustrun, 1),
             "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
             "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
+        }
+        # CHP cogens additionally carry their steam-following total must-run
+        # floor (P2 of the all-hours available-CF, the ERCOT
+        # CHP_PMIN_CF_BY_PLANT convention) and the EIA-923 sector class that
+        # sizes the behind-the-meter host self-supply share.
+        if group in _CHP_GROUPS:
+            row["chp_pmin_cf"] = round(
+                100.0 * float(np.percentile(all_cat, _CHP_PMIN_PCTILE)), 1
+            )
+            row["chp_sector"] = chp_sectors.get(code, "")
+        rows.append(row)
+
+    # CHP plants the CAMPD extracts cannot see (no facility series, or too few
+    # online hours) get an EIA-923-derived steam-following floor instead, so
+    # the sub-CEMS cogen fleet (e.g. every PJM ST_CHP plant) still carries its
+    # measured host-steam obligation. status="eia923_cf" marks the source; the
+    # committed/must-run tranche columns stay blank (class defaults apply).
+    have_floor = {
+        (r["plant_code"], r["plant_group"]) for r in rows
+        if r["status"] == "ok" and r["plant_group"] in _CHP_GROUPS
+    }
+    f923_floors = _chp_f923_floor_cf(args.years, cap)
+    for (code, group), pmin in sorted(f923_floors.items()):
+        if (code, group) in have_floor or primary.get(code) != group:
+            continue
+        rows.append({
+            "plant_code": code, "plant_group": group,
+            "name": names.get(code, ""), "status": "eia923_cf",
+            "nameplate_mw": round(cap[(code, group)], 1),
+            "online_hours": 0,
+            "chp_pmin_cf": round(pmin, 1),
+            "chp_sector": chp_sectors.get(code, ""),
         })
 
     out = pd.DataFrame(rows)
-    ok = out[out["status"] == "ok"].sort_values(["plant_group", "plant_code"])
+    ok = out[out["status"].isin(["ok", "eia923_cf"])].sort_values(
+        ["plant_group", "plant_code"]
+    )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ok.to_csv(out_path, index=False)
 
@@ -233,9 +375,17 @@ def main() -> None:
           f"{args.years} (net vs available capacity)\n")
     cols = ["plant_code", "plant_group", "name", "nameplate_mw",
             "online_hours", "committed_pct", "mustrun_pct", "median_cf"]
-    print(ok[cols].to_string(index=False))
+    campd_ok = ok[ok["status"] == "ok"]
+    print(campd_ok[cols].to_string(index=False))
+    chp_rows = ok[ok["plant_group"].isin(_CHP_GROUPS)]
+    if not chp_rows.empty:
+        print("\nCHP steam-following floors (chp_pmin_cf % of nameplate; "
+              "source: CAMPD p2 where status=ok, EIA-923 CF otherwise):")
+        print(chp_rows[["plant_code", "plant_group", "name", "nameplate_mw",
+                        "status", "chp_pmin_cf", "chp_sector"]]
+              .to_string(index=False))
     print("\nby group (capacity-weighted committed%):")
-    for g, sub in ok.groupby("plant_group"):
+    for g, sub in campd_ok.groupby("plant_group"):
         w = sub["nameplate_mw"]
         cw = float((sub["committed_pct"] * w).sum() / w.sum()) if w.sum() else 0.0
         mw = float((sub["mustrun_pct"] * w).sum() / w.sum()) if w.sum() else 0.0
