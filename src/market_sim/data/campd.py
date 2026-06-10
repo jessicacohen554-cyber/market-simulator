@@ -65,13 +65,15 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     "ERCOT": ("TX",),
     "CAISO": ("CA",),
     "NYISO": ("NY",),
-    "ISONE": ("ME", "NH", "MA", "CT", "RI", "VT"),
+    # Keyed "NEISO" to match the iso_configs registry name (was "ISONE",
+    # which no fleet loader recognised, so the lookup always came back empty).
+    "NEISO": ("ME", "NH", "MA", "CT", "RI", "VT"),
     # Full PJM footprint. ``load_campd_hourly`` warns and skips any state
     # whose ``{STATE}_{YEAR}.parquet`` is not present, so listing the whole
     # footprint lets the outage derivation widen automatically as more CAMPD
-    # extracts land. Uploaded so far: PA, NJ, MD, DE, IL. NOT yet present
-    # (and they hold most of PJM's coal): OH, IN, KY, WV, VA, NC, MI, DC —
-    # plants there keep the statistical availability model until added.
+    # extracts land. Unit-level extracts present: PA, NJ, IL, OH, IN, KY, WV,
+    # VA, DC (2023-2025; NJ through 2024) and MI (2024). Still absent: MD, DE,
+    # NC — plants there keep the statistical availability model until added.
     "PJM": (
         "PA", "NJ", "MD", "DE", "IL", "OH", "IN", "KY", "WV", "VA", "NC",
         "MI", "DC",
