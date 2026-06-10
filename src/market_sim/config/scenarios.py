@@ -478,6 +478,20 @@ class ScenarioConfig:
     offer_curve_smoothing_n: int = 6
     offer_curve_smoothing_exp: float = 1.0
 
+    # Outage capacity comes off the TOP of a CC_REGULAR plant's offer stack
+    # instead of pro-rata across its tranches. The default (False) scales
+    # every tranche by the same hourly availability factor, which drags the
+    # cheap committed block down with the plant — a 2x1 CC with one train out
+    # (availability ~0.67) sees its committed floor fall from ~37% to ~25% of
+    # nameplate and the LP parks there, while the real plant runs its
+    # remaining train near full load (CAMPD dwells at 36-43% CF). When True,
+    # each CC_REGULAR plant's hourly available MW (unchanged in total) fills
+    # its tranches bottom-up in heat-rate order — committed first, econ
+    # slices, duct-fire peak last — so a partial outage truncates the
+    # expensive end of the curve and the committed floor keeps its level,
+    # exactly as a real plant sheds its least-efficient increments first.
+    cc_outage_derate_from_top: bool = False
+
     # CHP cogeneration treatment. When chp_steam_following is True, each
     # CC_CHP / CT_CHP / ST_CHP bin is modeled as a steam host's cogen rather
     # than a merchant unit:
