@@ -1,6 +1,15 @@
 {
   "id": "2026-06-08-60-prbfix",
-  "label": "Run-60-prbfix",
-  "bundle": "results/calibration/Run-60-prbfix",
-  "iso": "ERCOT"
+  "label": "60 prbfix",
+  "date": "2026-06-08",
+  "shorthand": "60-prbfix",
+  "definition": "Run60: PRB -0.05 across econ bands, ST_GAS +0.025, CC_REGULAR econ_low -0.025/econ_high +0.05 (on Run-59)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-08-60-prbfix.js",
+  "bundle": "results/calibration/Run-60-prbfix"
 }

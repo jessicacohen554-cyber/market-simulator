@@ -1,20 +1,17 @@
 """Deterministically regenerate the backcast dashboard from the run registry.
 
-The dashboard's shared files — ``frontend/data/backcast/manifest.js``,
-``benchmark.js`` and the ``backcast-results.html`` shell — are NOT hand-edited
-by any single calibration run (that would make concurrent runs race on a shared
-file and silently drop each other). Instead each run drops a tiny, per-run
-*registry sidecar* at ``frontend/data/backcast/registry/<id>.json`` recording
-just its display label and bundle path. This script is the single deterministic
-reducer: it globs every sidecar, renders the whole curated set in one pass via
-``render_backcast.generate`` and rewrites the shared files plus every
-``runs/<id>.js``. Because it consumes *all* sidecars present, the output is the
-same regardless of the order runs landed — so concurrent merges to main never
-lose a run.
+This is the heavy, LOCAL full rebuild: it globs every registry sidecar and
+re-renders the whole curated set in one pass via ``render_backcast.generate``
+— rewriting every ``runs/<id>.js``, every ``bench/<ISO>/<year>.json.gz`` part
+and the local (gitignored) ``manifest.js``/``benchmark.js``/
+``backcast-results.html`` preview. It needs every bundle present plus the
+model package, so it is for full refreshes after deleting/relabelling bundles
+or changing the payload schema.
 
-It is invoked in a post-merge step on ``main`` (the ``regenerate-dashboard``
-workflow) and at the end of the bulk-merge workflow. Run it locally to refresh
-the dashboard after adding/removing bundles.
+CI never runs it: the Pages deploy assembles the shared files from the
+committed sidecars + bench parts with the stdlib-only
+``scripts/build_manifest.py`` (seconds, no bundles needed). To register a
+single new run, use ``scripts/dashboard_add_run.py`` instead.
 
 Usage:
     python scripts/regen_dashboard.py [--registry-dir DIR] [--years 2023 2024]

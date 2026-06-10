@@ -1,6 +1,15 @@
 {
   "id": "2026-06-10-68",
-  "label": "Run-68",
-  "bundle": "results/calibration/Run-68",
-  "iso": "ERCOT"
+  "label": "68",
+  "date": "2026-06-10",
+  "shorthand": "68",
+  "definition": "Run68 (from Run-67): PRB fuel cost grounded in measured EIA-923 monthly reporter series (1.82/1.75/1.62 avg vs flat 2.15/2.00/2.00); PRB band multipliers scaled x1.18 (committed 0.89, econ_low 0.59, econ_high 1.39, peak 1.72) to hold 2023 band $-levels constant, so the run isolates the fuel-data change (2024/2025 relative moves + monthly shape).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-10-68.js",
+  "bundle": "results/calibration/Run-68"
 }
