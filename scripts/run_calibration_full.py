@@ -73,6 +73,7 @@ from market_sim.data.fleet import (  # noqa: E402
     _COAL_SUPPLY_TO_CURVE,
     coal_supply_class,
 )
+from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
 from scripts.run_calibration import (  # noqa: E402
     _calibration_config,
     _commitment_pass,
@@ -124,6 +125,12 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
     (3492,  "Morgan Creek (CT peaker)"),
     (63688, "Topaz Generating (CT peaker)"),
 )
+
+# CF-band width for the per-plant operating-level histogram ([7b] panel and
+# plant_cf_bands.parquet): 0.10 -> ten 10%-of-capacity bands. Coarse enough
+# to be robust to CAMPD net-vs-gross noise, fine enough to separate a CC's
+# committed floor / part-load / duct-fired modes.
+_CF_BAND_WIDTH: float = 0.10
 
 
 # ---------------------------------------------------------------------------
@@ -894,6 +901,7 @@ def solve_and_persist(
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
+    curve_smoothing: dict | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -971,6 +979,7 @@ def solve_and_persist(
             gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
+            curve_smoothing=curve_smoothing,
             must_run_mw=must_run_total,
         )
         if persist_p2_state:
@@ -1054,6 +1063,7 @@ def solve_and_persist(
         "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
+        "curve_smoothing": curve_smoothing or {},
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
@@ -1074,6 +1084,9 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
     if gas_monthly_actuals:
         recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
+    if curve_smoothing:
+        recorded_cfg = recorded_cfg.with_overrides(
+            **{k: v for k, v in curve_smoothing.items() if v is not None})
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -1328,14 +1341,21 @@ def _print_plant_level(year, dispatch, e923) -> None:
 
 def _plant_hourly_fit(
     year: int, dispatch: pd.DataFrame, campd_year: pd.DataFrame, hours: int,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return per-plant hourly model-vs-CAMPD fit for every resolved plant.
 
     The model dispatch is summed by ``plant_code`` to an hourly MW series and
     compared against the plant's CAMPD **net** generation. Plants the model
     aggregates into multi-plant bins (``plant_code == 0``) and plants without
-    CAMPD coverage are absent. One row per plant with Pearson r, NRMSE and
-    annual model / CAMPD GWh, sorted worst-fit first.
+    CAMPD coverage are absent.
+
+    Returns two frames: ``fit`` — one row per plant with Pearson r, NRMSE,
+    annual model / CAMPD GWh and the CF-band occupancy summary
+    (``cf_band_overlap`` / ``cf_emd``, see
+    :func:`market_sim.results.calibration.check_cf_band_occupancy`), sorted
+    worst-fit first — and ``bands`` — one row per plant per CF band with the
+    model and CAMPD hours spent in that band (the timing-free operating-level
+    histogram).
     """
     model = dispatch[dispatch["plant_code"] > 0]
     piv = (
@@ -1347,6 +1367,7 @@ def _plant_hourly_fit(
         for pid, g in campd_year.groupby("plant_id", observed=True)
     }
     rows = []
+    band_rows: list[dict] = []
     for plant_code in piv.columns:
         observed = obs.get(int(plant_code))
         if observed is None:
@@ -1354,6 +1375,10 @@ def _plant_hourly_fit(
         m = piv[plant_code].to_numpy(dtype=float)
         T = min(m.shape[0], observed.shape[0], hours)
         m, o = m[:T], observed[:T]
+        try:
+            occ = check_cf_band_occupancy(m, o, band_width=_CF_BAND_WIDTH)
+        except ValueError:  # both series identically zero
+            occ = None
         rows.append({
             "year": np.int16(year),
             "plant_code": int(plant_code),
@@ -1362,9 +1387,23 @@ def _plant_hourly_fit(
             "model_gwh": round(float(m.sum()) / 1e3, 1),
             "campd_gwh": round(float(o.sum()) / 1e3, 1),
             "campd_op_hours": int((o > 0).sum()),
+            "cf_band_overlap": occ["band_overlap"] if occ else float("nan"),
+            "cf_emd": occ["cf_emd"] if occ else float("nan"),
+            "cap_mw": occ["capacity_mw"] if occ else float("nan"),
         })
+        if occ:
+            for band in occ["bands"]:
+                band_rows.append({
+                    "year": np.int16(year),
+                    "plant_code": int(plant_code),
+                    "cf_lo": band["lo"],
+                    "cf_hi": band["hi"],
+                    "model_hours": np.int32(band["model_hours"]),
+                    "campd_hours": np.int32(band["actual_hours"]),
+                })
     fit = pd.DataFrame(rows)
-    return fit.sort_values("pearson_r").reset_index(drop=True) if len(fit) else fit
+    fit = fit.sort_values("pearson_r").reset_index(drop=True) if len(fit) else fit
+    return fit, pd.DataFrame(band_rows)
 
 
 def _print_plant_hourly_fit(year: int, fit: pd.DataFrame) -> None:
@@ -1373,20 +1412,50 @@ def _print_plant_hourly_fit(year: int, fit: pd.DataFrame) -> None:
     print(f"\n  [7] Per-plant hourly dispatch fit — {year} "
           "(model vs CAMPD net; representative panel)")
     rows = [("plant", "EIA code", "Pearson r", " NRMSE", "model GWh",
-             "CAMPD GWh", "op hrs")]
+             "CAMPD GWh", "op hrs", "band ovlp", "CF EMD")]
     for code, label in _PLANT_PANEL:
         if len(by_code) and code in by_code.index:
             r = by_code.loc[code]
             rows.append((label, str(code), f"{r['pearson_r']:.3f}",
                          f"{r['nrmse']:.3f}", f"{r['model_gwh']:9.0f}",
-                         f"{r['campd_gwh']:9.0f}", str(int(r['campd_op_hours']))))
+                         f"{r['campd_gwh']:9.0f}", str(int(r['campd_op_hours'])),
+                         f"{r['cf_band_overlap']:.3f}", f"{r['cf_emd']:.3f}"))
         else:
             rows.append((label, str(code), "    —", "    —", "    —",
-                         "    —", "  —"))
+                         "    —", "  —", "    —", "    —"))
     _print_table(rows)
     if len(fit):
         print(f"    (full per-plant fit for all {len(fit)} resolved plants "
               "written to plant_hourly_fit.parquet)")
+
+
+def _print_plant_cf_bands(year: int, bands: pd.DataFrame) -> None:
+    """[7b] Hours per CF band, model vs CAMPD — representative panel.
+
+    The timing-free companion to [7]: for each panel plant, how many hours
+    the model and the real plant spent in each capacity-factor band. A plant
+    can be hourly-correlated and hit its annual GWh while still parking at
+    the wrong operating levels (committed floor too low, ramp top in place
+    of duct firing); this is the table that shows it.
+    """
+    if not len(bands):
+        return
+    print(f"\n  [7b] Hours per {_CF_BAND_WIDTH:.0%} CF band — {year} "
+          "(model / CAMPD net; representative panel)")
+    grouped = bands.groupby("plant_code", observed=True)
+    edges = sorted(bands["cf_lo"].unique())
+    header = ("plant", "", *(f"{lo:.0%}-{lo + _CF_BAND_WIDTH:.0%}"
+                             for lo in edges))
+    rows = [header]
+    for code, label in _PLANT_PANEL:
+        if code not in grouped.groups:
+            continue
+        g = grouped.get_group(code).sort_values("cf_lo")
+        rows.append((label, "model",
+                     *(str(int(h)) for h in g["model_hours"])))
+        rows.append(("", "CAMPD",
+                     *(str(int(h)) for h in g["campd_hours"])))
+    _print_table(rows)
 
 
 def _save_p2_state(run_dir: Path, year: int, p2_state: dict) -> None:
@@ -1633,6 +1702,7 @@ def report_run(run_dir: Path) -> None:
         if (run_dir / "campd.parquet").exists() else None
     )
     plant_fit_frames: list[pd.DataFrame] = []
+    plant_band_frames: list[pd.DataFrame] = []
 
     for year in meta["years"]:
         e923 = e923_all[e923_all["year"] == year]
@@ -1690,16 +1760,27 @@ def report_run(run_dir: Path) -> None:
                 campd_year = campd_all[campd_all["year"] == year]
                 if not campd_year.empty:
                     hours = int(dispatch["hour"].max()) + 1
-                    fit = _plant_hourly_fit(year, dispatch, campd_year, hours)
+                    fit, cf_bands = _plant_hourly_fit(
+                        year, dispatch, campd_year, hours
+                    )
                     _print_plant_hourly_fit(year, fit)
+                    _print_plant_cf_bands(year, cf_bands)
                     if len(fit):
                         fit = fit.copy()
                         fit["pass"] = pass_label
                         plant_fit_frames.append(fit)
+                    if len(cf_bands):
+                        cf_bands = cf_bands.copy()
+                        cf_bands["pass"] = pass_label
+                        plant_band_frames.append(cf_bands)
 
     if plant_fit_frames:
         pd.concat(plant_fit_frames, ignore_index=True).to_parquet(
             run_dir / "plant_hourly_fit.parquet", index=False
+        )
+    if plant_band_frames:
+        pd.concat(plant_band_frames, ignore_index=True).to_parquet(
+            run_dir / "plant_cf_bands.parquet", index=False
         )
 
 
@@ -1911,6 +1992,16 @@ def main() -> None:
              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
              ".json file. The merged curve is recorded in run_config.json.")
     parser.add_argument(
+        "--curve-n", type=int, default=None,
+        help="Override offer_curve_smoothing_n (default 6): the number of "
+             "equal-capacity slices the econ ramp is rendered into. Sweep "
+             "knob for testing finer offer-curve granularity (e.g. 12).")
+    parser.add_argument(
+        "--curve-exp", type=float, default=None,
+        help="Override offer_curve_smoothing_exp (default 1.0 = linear "
+             "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
+             "(cheap-bottomed), <1 concave (cheap mid/top).")
+    parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
              "band rather than replacing it, so a re-tune need not restate the "
@@ -1979,6 +2070,10 @@ def main() -> None:
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
+        curve_smoothing={
+            "offer_curve_smoothing_n": args.curve_n,
+            "offer_curve_smoothing_exp": args.curve_exp,
+        },
         note=args.note,
     )
     report_run(run_dir)
