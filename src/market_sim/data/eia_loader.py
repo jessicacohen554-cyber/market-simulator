@@ -143,6 +143,72 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     return df.reset_index(drop=True)
 
 
+# Largest hole (hours) the gap-filling hourly frame will bridge. The PJM
+# extract is missing its first local hour and the 2023-11-05 fall-back day
+# (25 hours) plus a few scattered hours in 2024; anything bigger than a few
+# days signals a structurally incomplete extract that should stay rejected
+# rather than silently interpolated.
+_HOURLY_FRAME_MAX_GAP: int = 72
+
+
+@lru_cache(maxsize=32)
+def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
+    """Return the BA-year hourly frame, bridging small gaps with NaN rows.
+
+    Some extracts fall a few hours short of a clean local calendar year (PJM
+    is missing its first local hour and the 2023-11-05 fall-back day), which
+    the strict :func:`_eia_hourly_frame` rejects outright. This variant
+    reindexes the present rows onto the complete hourly UTC clock for the
+    local year — anchored from the first present row's ``Local time``, with a
+    leap year's local Feb 29 dropped — so the missing hours come back as NaN
+    rows for the caller to interpolate. Row k is local hour k of the year,
+    the same clock as the strict frame.
+
+    Returns ``None`` when the file is missing, the ``Local time`` anchor
+    column is absent, more than :data:`_HOURLY_FRAME_MAX_GAP` hours are
+    missing, or the reconstruction does not come out at exactly
+    ``HOURS_PER_YEAR`` rows.
+    """
+    strict = _eia_hourly_frame(ba_code, year)
+    if strict is not None:
+        return strict
+    path = _eia_hourly_path(ba_code)
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    if "Local time" not in df.columns:
+        return None
+    local = df["Local date"]
+    df = df[local.dt.year == year].sort_values("UTC time")
+    if len(df) < HOURS_PER_YEAR - _HOURLY_FRAME_MAX_GAP or df.empty:
+        return None
+    # Anchor the complete UTC clock on the local year boundaries: the first /
+    # last present rows fix the UTC<->local offset at each end (both ends are
+    # on standard time, so the offsets are exact even mid-DST).
+    utc = pd.DatetimeIndex(df["UTC time"])
+    loc = pd.DatetimeIndex(df["Local time"])
+    utc_start = utc[0] - (loc[0] - pd.Timestamp(year=year, month=1, day=1))
+    utc_end = utc[-1] + (
+        pd.Timestamp(year=year, month=12, day=31, hour=23) - loc[-1]
+    )
+    full = pd.date_range(utc_start, utc_end, freq="h")
+    # Drop the local Feb 29 of a leap year; February is on standard time, so
+    # the January 1st offset maps UTC to local exactly there.
+    winter_offset = pd.Timestamp(year=year, month=1, day=1) - utc_start
+    approx_local = full + winter_offset
+    full = full[~((approx_local.month == 2) & (approx_local.day == 29))]
+    if len(full) != HOURS_PER_YEAR:
+        return None
+    out = (
+        df.drop_duplicates(subset="UTC time")
+        .set_index("UTC time")
+        .reindex(full)
+        .reset_index()
+        .rename(columns={"index": "UTC time"})
+    )
+    return out
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
@@ -300,6 +366,10 @@ def load_eia_hourly_renewable_gen(
     source as the demand and interchange series — so renewable profiles share
     the calibration's time index. Each present series is gap-filled (linear
     interpolation, then back/forward fill) like the ERCOT renewable path.
+    Small calendar holes in the extract itself (PJM's missing first hour and
+    fall-back day) are bridged by :func:`_eia_hourly_frame_filled`, so a
+    BA-year a day short of 8760 still yields a measured profile instead of
+    silently falling back to the normalized EIA-930 distribution shape.
 
     Returns ``{"wind": ..., "solar": ...}`` of ``(HOURS_PER_YEAR,)`` arrays for
     whichever of the two fuels the BA reports with a usable full-year series,
@@ -309,7 +379,7 @@ def load_eia_hourly_renewable_gen(
     ba_code = _ISO_TO_HOURLY_BA.get(iso)
     if ba_code is None:
         return None
-    frame = _eia_hourly_frame(ba_code, year)
+    frame = _eia_hourly_frame_filled(ba_code, year)
     if frame is None:
         return None
     out: dict[str, np.ndarray] = {}
