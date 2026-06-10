@@ -247,6 +247,65 @@ class TestThermalAvailability(unittest.TestCase):
         np.testing.assert_allclose(fa.availability[0], 1.0 - 0.03)
 
 
+class TestCcDerateFromTop(unittest.TestCase):
+    """Top-of-stack outage allocation for CC_REGULAR tranche stacks."""
+
+    @staticmethod
+    def _cc_tranches(eford=0.25):
+        """A 2-tranche CC_REGULAR plant: 400 MW committed + 600 MW econ."""
+        shared = dict(
+            name="CC", zone="North", fuel_type="gas_cc", online_year=2020,
+            plant_group="CC_REGULAR", plant_code=999, eford=eford,
+        )
+        return [
+            Generator(unit_id="p999_committed", pmax_mw=400.0,
+                      heat_rate=6.0, **shared),
+            Generator(unit_id="p999_econc00", pmax_mw=600.0,
+                      heat_rate=7.5, **shared),
+        ]
+
+    def test_derate_comes_off_the_top_tranche(self):
+        """With the flag on, the committed floor keeps its full level."""
+        fa = generators_to_fleet_arrays(
+            self._cc_tranches(), ["North"], hours=24,
+            config=ScenarioConfig(cc_outage_derate_from_top=True),
+        )
+        # 1000 MW * availability; committed (400 MW) fills first, the econ
+        # tranche absorbs the entire shortfall.
+        avail_mw = 400.0 * fa.availability[0] + 600.0 * fa.availability[1]
+        self.assertTrue(np.all(fa.availability[0] == 1.0))
+        self.assertTrue(np.all(fa.availability[1] < 1.0))
+        # Plant-total available MW must be unchanged by the reallocation.
+        fa_off = generators_to_fleet_arrays(
+            self._cc_tranches(), ["North"], hours=24,
+            config=ScenarioConfig(cc_outage_derate_from_top=False),
+        )
+        np.testing.assert_allclose(
+            avail_mw,
+            400.0 * fa_off.availability[0] + 600.0 * fa_off.availability[1],
+        )
+
+    def test_deep_outage_reaches_the_committed_tranche(self):
+        """When available MW falls below the committed cap, it derates too."""
+        fa = generators_to_fleet_arrays(
+            self._cc_tranches(eford=0.70), ["North"], hours=24,
+            config=ScenarioConfig(cc_outage_derate_from_top=True),
+        )
+        # 1000 * ~0.3 = ~300 MW available < 400 MW committed: econ zeroed,
+        # committed holds the whole remainder.
+        self.assertTrue(np.all(fa.availability[1] == 0.0))
+        self.assertTrue(np.all(fa.availability[0] < 1.0))
+        self.assertTrue(np.all(fa.availability[0] > 0.0))
+
+    def test_flag_off_keeps_pro_rata(self):
+        """Default behavior is unchanged: equal factors on every tranche."""
+        fa = generators_to_fleet_arrays(
+            self._cc_tranches(), ["North"], hours=24,
+            config=ScenarioConfig(),
+        )
+        np.testing.assert_allclose(fa.availability[0], fa.availability[1])
+
+
 class TestAssembleMC(unittest.TestCase):
     """Tests for the vectorized marginal cost assembly."""
 
