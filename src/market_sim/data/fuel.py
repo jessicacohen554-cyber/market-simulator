@@ -25,6 +25,7 @@ one model.
 from __future__ import annotations
 
 import logging
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -627,6 +628,47 @@ COAL_PRICE_LIGNITE_BY_YEAR, COAL_PRICE_PRB_BY_YEAR = (
 )
 
 
+@lru_cache(maxsize=1)
+def _prb_monthly_actuals() -> dict[int, np.ndarray]:
+    """Return ``{year: (12,) $/MMBtu}`` measured PRB delivered cost by month.
+
+    Quantity-weighted across the EIA-923 coal-cost reporters whose plant is
+    tagged PRB-by-rail in :data:`market_sim.data.fleet.COAL_PLANT_SUPPLY`
+    (ERCOT: Fayette and J K Spruce — the merchant fleet's receipts are
+    confidential). The series proxies the delivered PRB cost for the
+    *non-reporting* PRB plants in :func:`apply_coal_supply_pricing`; the
+    reporters themselves are overwritten with their own plant-months by
+    :func:`apply_plant_monthly_fuel_prices` afterwards. Months without a
+    report carry the year's mean of the reported months. Lignite has no
+    usable monthly proxy (the only reporter, San Miguel, burns its own
+    high-cost mine) and stays on the flat annual trajectory. Returns an
+    empty dict when the F923 parquet is absent.
+    """
+    costs = _load_monthly_cache(None)
+    if costs is None:
+        return {}
+    from market_sim.data.fleet import COAL_PLANT_SUPPLY
+    prb_plants = {p for p, s in COAL_PLANT_SUPPLY.items() if s == "prb"}
+    sub = costs[
+        costs["plant_id"].isin(prb_plants)
+        & (costs["fuel_group"] == "Coal")
+        & costs["price_per_mmbtu"].notna()
+        & (costs["quantity"] > 0)
+    ]
+    out: dict[int, np.ndarray] = {}
+    for year, rows in sub.groupby("year"):
+        monthly = np.full(12, np.nan)
+        for month, mrows in rows.groupby("month"):
+            monthly[int(month) - 1] = float(np.average(
+                mrows["price_per_mmbtu"], weights=mrows["quantity"]
+            ))
+        if np.isnan(monthly).all():
+            continue
+        monthly[np.isnan(monthly)] = np.nanmean(monthly)
+        out[int(year)] = monthly
+    return out
+
+
 def apply_coal_supply_pricing(
     fuel_prices: np.ndarray,
     generators: list,
@@ -659,9 +701,19 @@ def apply_coal_supply_pricing(
     if lignite is None or prb_delivered is None:
         return  # year outside the coal trajectory — keep the generic price
 
+    # PRB base: the measured monthly reporter series for historical years
+    # (see _prb_monthly_actuals), expanded hour-by-hour; the flat annual
+    # trajectory where no reports exist (forward years). Reporting plants
+    # are overwritten with their own months downstream.
+    monthly = _prb_monthly_actuals().get(year)
+    if monthly is not None:
+        prb_price = monthly[_month_index(fuel_prices.shape[1])]
+    else:
+        prb_price = prb_delivered
+
     price_by_supply = {
         "lignite": lignite,
-        "prb": prb_delivered * config.coal_prb_contract_passthrough,
+        "prb": prb_price * config.coal_prb_contract_passthrough,
     }
     for g_idx, gen in enumerate(generators):
         price = price_by_supply.get(getattr(gen, "coal_supply", ""))
