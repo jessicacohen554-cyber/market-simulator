@@ -170,3 +170,41 @@ coal price verification against EIA-923 Texas fuel receipts.
   `gas_plant_monthly_fuel_pricing` for the Jan-2024 winter spike.
 
 ---
+
+### 2026-06-10 — PJM — tuning passes 3-7 (pjm 3 ps-adder … pjm 7 ct-depth)
+
+- **Benchmark:** EIA-930 / EIA-923 / CAMPD, 2023 + 2024; actual hub LMP
+- **Recommended baseline: `pjm 6 cc-peak`** (results/calibration/pjm_6_ccpeak)
+- **Model changes through the loop:** pumped-storage dispatch adder
+  ($10/MWh, reduced-form reserve duty — PS was arbitraging ~2.5x observed);
+  `gas_monthly_actuals` (measured EIA-923 ISO-monthly delivered gas — Jan-24
+  $5.07 vs ~$2.5 shaped); offer-curve deltas per pass (see run notes).
+
+| vs EIA-923 (2023 / 2024) | pjm 2 | pjm 6 |
+|---|---|---|
+| CC_REGULAR | +2.5% / +5.3% | **−1.9% / +1.6%** |
+| COAL_BIT | −6.1% / −13.1% | **+1.8% / −7.8%** |
+| CT_PEAKER | −38% / −44% | **−16% / −21%** |
+| Avg LMP (act ~29.3/29.8 DA) | 28.28 / 26.44 | 27.49 / 25.78 |
+| Jan LMP 2024 (act 38.0 RT) | 33.9 | **38.7** |
+
+**Findings:**
+
+- Coal's flat monthly deficit was the committed (self-scheduled) tranche
+  priced out by the CC econ ramp (15% CF); committed −0.10 fixed 2023 and
+  halved 2024.
+- CC's duct-firing peak band at 1.62× (~$28) was the summer price ceiling;
+  raising it to 2.17× landed CC both years and re-opened CT's window.
+- Summer LMP remains low (Jul/Aug 2024 ~30/25 vs ~38/31): the summer
+  marginal price sits inside the abundant CC econ ramp — an energy-only
+  residual (reserves/congestion/uplift), not an offer-band knob. Pass 7
+  (deeper CT, more committed coal) confirmed diminishing returns and a
+  2023 coal overshoot; pjm 6 is the keeper.
+
+**Open items:** CT winter/shoulder runtime (−5-6 TWh, commitment/dual-fuel
+behavior); ST_GAS 2024 winter (−15%); oil ~0 vs 0.9 TWh; nuclear +2.4%
+(EIA-860 2025 ER fleet revision; consider refuel-outage overlay); summer
+LMP scarcity component; stale `test_coal_supply_pricing_uses_year_trajectory`
+on main (asserts pre-measured-PRB constant).
+
+---
