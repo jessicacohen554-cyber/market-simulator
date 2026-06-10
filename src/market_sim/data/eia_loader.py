@@ -165,7 +165,16 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     frame = _ercot_hourly_frame(year)
     if frame is None:
         return None
-    demand = frame["Demand"].to_numpy(dtype=float)
+    # Interpolate isolated missing meter hours (e.g. 2025 has 48 NaN demand
+    # hours). Falling back to the demand-profiles parquet here is NOT
+    # equivalent: that series is hour-shifted relative to this frame, which
+    # desynchronizes demand from the wind/solar/benchmark series read off the
+    # same rows (the 2025 backcast served its evening demand peak ~2h after
+    # sunset, manufacturing scarcity).
+    demand = (
+        frame["Demand"].interpolate().bfill().ffill()
+        .to_numpy(dtype=float)
+    )
     interchange = (
         frame["Total interchange"].interpolate().bfill().ffill()
         .to_numpy(dtype=float)
