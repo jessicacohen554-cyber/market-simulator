@@ -23,6 +23,7 @@ from market_sim.results.calibration import (
     SKIPPED,
     CalibrationReport,
     actuals_source,
+    check_cf_band_occupancy,
     check_generation_mix,
     check_hourly_dispatch_correlation,
     check_price_duration_curve,
@@ -251,6 +252,83 @@ class TestCheckHourlyDispatchCorrelation(unittest.TestCase):
             {"coal": np.array([3.0, 1.0, 2.0])},
         )
         self.assertEqual(set(stats), {"coal"})
+
+
+class TestCheckCfBandOccupancy(unittest.TestCase):
+    """``check_cf_band_occupancy`` compares hours spent per CF band."""
+
+    def test_identical_series_score_perfect(self):
+        """Matching distributions give overlap 1, EMD 0 and band r 1."""
+        rng = np.random.default_rng(7)
+        mw = rng.uniform(0.0, 100.0, size=200)
+        occ = check_cf_band_occupancy(mw, mw.copy(), capacity_mw=100.0)
+        self.assertEqual(occ["band_overlap"], 1.0)
+        self.assertEqual(occ["cf_emd"], 0.0)
+        self.assertEqual(occ["band_r"], 1.0)
+
+    def test_shuffled_hours_still_score_perfect(self):
+        """The check is timing-free: permuting hours changes nothing."""
+        rng = np.random.default_rng(7)
+        mw = rng.uniform(0.0, 100.0, size=200)
+        occ = check_cf_band_occupancy(
+            rng.permutation(mw), mw, capacity_mw=100.0
+        )
+        self.assertEqual(occ["band_overlap"], 1.0)
+        self.assertEqual(occ["cf_emd"], 0.0)
+
+    def test_level_shift_is_caught(self):
+        """A model parked one band below the actual scores zero overlap."""
+        model = np.full(100, 75.0)   # 70-80% band
+        actual = np.full(100, 95.0)  # 90-100% band
+        occ = check_cf_band_occupancy(model, actual, capacity_mw=100.0)
+        self.assertEqual(occ["band_overlap"], 0.0)
+        self.assertAlmostEqual(occ["cf_emd"], 0.20, places=6)
+
+    def test_emd_scales_with_distance(self):
+        """Mass parked further from the observed level costs more EMD."""
+        actual = np.full(100, 95.0)
+        near = check_cf_band_occupancy(
+            np.full(100, 85.0), actual, capacity_mw=100.0
+        )["cf_emd"]
+        far = check_cf_band_occupancy(
+            np.full(100, 55.0), actual, capacity_mw=100.0
+        )["cf_emd"]
+        self.assertLess(near, far)
+
+    def test_band_layout_and_top_band_owns_full_cf(self):
+        """band_width 0.10 yields ten bands; CF == 1.0 lands in the top."""
+        occ = check_cf_band_occupancy(
+            np.array([100.0, 0.0]), np.array([100.0, 0.0]),
+            capacity_mw=100.0,
+        )
+        self.assertEqual(len(occ["bands"]), 10)
+        self.assertEqual(occ["bands"][-1]["model_hours"], 1)
+        self.assertEqual(occ["bands"][0]["model_hours"], 1)
+
+    def test_five_percent_bands(self):
+        """band_width 0.05 yields twenty bands."""
+        occ = check_cf_band_occupancy(
+            np.array([50.0]), np.array([50.0]),
+            capacity_mw=100.0, band_width=0.05,
+        )
+        self.assertEqual(len(occ["bands"]), 20)
+
+    def test_default_capacity_is_joint_max(self):
+        """Without a nameplate, the larger series maximum sets the CF scale."""
+        occ = check_cf_band_occupancy(
+            np.array([40.0, 80.0]), np.array([50.0, 100.0])
+        )
+        self.assertEqual(occ["capacity_mw"], 100.0)
+
+    def test_length_mismatch_raises(self):
+        """Two series of different length cannot be compared."""
+        with self.assertRaises(ValueError):
+            check_cf_band_occupancy(np.zeros(10), np.zeros(12))
+
+    def test_all_zero_series_raise(self):
+        """Two dead series have no capacity scale to normalize against."""
+        with self.assertRaises(ValueError):
+            check_cf_band_occupancy(np.zeros(10), np.zeros(10))
 
 
 class TestRunCalibrationCheck(unittest.TestCase):
