@@ -275,6 +275,49 @@ def _expand_monthly_to_hourly(
     return monthly[_month_index(hours)]
 
 
+def iso_monthly_gas_prices(
+    config: ScenarioConfig, year: int,
+    monthly_costs_path: Path | None = None,
+) -> np.ndarray | None:
+    """Measured ISO-month delivered gas price ($/MMBtu), or ``None``.
+
+    Volume-weights the EIA-923 monthly Natural Gas receipt costs across the
+    ISO's plants into one hub-level price per month — the measured analogue
+    of annual Henry Hub + basis × the generic seasonality shape, capturing
+    real winter events the fixed shape damps (PJM Jan-2024: $5.07 measured
+    vs ~$2.5 shaped). Staying at the ISO level keeps the hub-pricing
+    property per-plant gas pricing breaks (same-zone units never split on
+    patchy reporting). Months with no reported receipts are returned as
+    ``NaN`` for the caller to fill from the trajectory; returns ``None``
+    when the parquet, the year or the ISO's plants are absent entirely.
+    """
+    costs = _load_monthly_cache(monthly_costs_path)
+    if costs is None or year not in available_years(costs):
+        return None
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        iso_plants = frozenset(build_zone_lookup(config.iso))
+    except Exception:
+        return None
+    if not iso_plants:
+        return None
+    sub = costs[
+        (costs["year"] == year)
+        & (costs["fuel_group"] == "Natural Gas")
+        & costs["plant_id"].isin(iso_plants)
+    ]
+    if sub.empty:
+        return None
+    monthly = np.full(12, np.nan)
+    spend = sub["price_per_mmbtu"] * sub["quantity"]
+    by_month = sub.assign(spend=spend).groupby("month")[["spend", "quantity"]].sum()
+    for m, row in by_month.iterrows():
+        if row["quantity"] > 0:
+            monthly[int(m) - 1] = row["spend"] / row["quantity"]
+    return monthly
+
+
 def resolve_fuel_prices(
     config: ScenarioConfig, fleet: FleetArrays, year: int,
     apply_monthly: bool = True,
@@ -325,6 +368,19 @@ def resolve_fuel_prices(
         gas_price_hourly = delivered_annual * _seasonal_factors(T)
     else:
         gas_price_hourly = np.full(T, delivered_annual)
+    # Backcast: measured ISO-month delivered gas (EIA-923 volume-weighted)
+    # replaces the trajectory + generic seasonal shape month-by-month, so
+    # real winter events (PJM Jan-2024 at $5+/MMBtu) reach the merit order.
+    # Months with no receipts keep the shaped trajectory value.
+    if getattr(config, "gas_monthly_actuals", False):
+        measured = iso_monthly_gas_prices(config, year)
+        if measured is not None:
+            hourly_measured = _expand_monthly_to_hourly(
+                np.asarray(measured, dtype=float), T
+            )
+            gas_price_hourly = np.where(
+                np.isnan(hourly_measured), gas_price_hourly, hourly_measured
+            )
 
     coal_price = COAL_PRICE_BASE[config.iso] * (
         1.0 + COAL_PRICE_ESCALATION
