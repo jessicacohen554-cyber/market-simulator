@@ -1,5 +1,17 @@
 # Data Needs & Upload Manifest
 
+> **Update 2026-06-10:** partially stale. §2 is resolved — EIA-930 hourly
+> parquets now exist for all seven ISOs (`data/eia_hourly/`). §3's CEMS
+> table predates the unit-level extracts in
+> `inputs/raw-data/campd-unit-level/` (PJM coal states OH/WV/IN/KY/VA/DC
+> and CA 2024–2025 are now present; PJM still lacks MD/DE/NC/TN
+> unit-level). §4 gas basis is largely superseded for *backcasts* by
+> measured per-plant EIA-923 monthly costs (`gas_monthly_actuals`, PJM
+> 2026-06); hub-basis series remain relevant for NYISO/NEISO winter
+> spikes and forecasts. Current per-ISO upload lists live in the prompt
+> packs (CAISO: `06-caiso-prompt-pack.md` §2) per the v2 playbook
+> (`05-backcast-playbook.md` §2).
+
 Status: **planning**. This enumerates every data file each ISO needs to reach
 an ERCOT-equivalent backcast, its source, whether it already exists in the
 repo, and exactly what must be uploaded. Pairs with the Stage C/D/E checklist
