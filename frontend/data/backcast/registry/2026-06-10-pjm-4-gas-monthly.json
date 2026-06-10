@@ -1,6 +1,14 @@
 {
   "id": "2026-06-10-pjm-4-gas-monthly",
-  "label": "pjm 4 gas-monthly",
-  "bundle": "results/calibration/pjm_4_gasmonthly",
-  "iso": "PJM"
+  "label": "pjm 4 gas monthly",
+  "date": "2026-06-10",
+  "shorthand": "pjm-4-gas-monthly",
+  "definition": "pjm 4 gas-monthly: measured EIA-923 ISO-monthly delivered gas (Jan-24 $5.07 vs $2.5 shaped) so winter coal/CT displacement + LMP spike bind; pass-3 deltas kept, CT econ deepened to -0.12/-0.30",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-10-pjm-4-gas-monthly.js",
+  "bundle": "results/calibration/pjm_4_gasmonthly"
 }
