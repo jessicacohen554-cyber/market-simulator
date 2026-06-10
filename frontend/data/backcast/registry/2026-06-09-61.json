@@ -1,6 +1,15 @@
 {
   "id": "2026-06-09-61",
-  "label": "Run-61",
-  "bundle": "results/calibration/Run-61",
-  "iso": "ERCOT"
+  "label": "61",
+  "date": "2026-06-09",
+  "shorthand": "61",
+  "definition": "Run61 (from Run-60): CC_REG econ_low -0.025/econ_high +0.05; CC_CHP econ_low +0.05/econ_high -0.05; PRB committed -0.15/econ_high +0.05/peak -0.025; CT_PEAKER committed -0.25/econ_high +0.10; ST_GAS committed -0.25/econ_high +0.10",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-09-61.js",
+  "bundle": "results/calibration/Run-61"
 }

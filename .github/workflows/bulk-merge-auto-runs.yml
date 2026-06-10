@@ -2,12 +2,12 @@ name: Bulk-merge auto runs
 
 # Collapse every accumulated auto/* calibration branch into the target branch
 # (default main). Each auto/* branch only ADDS its own bundle dir + registry
-# sidecar + runs/<id>.js — disjoint files — so sequential squash-merges are
-# conflict-free. After the merges land, the "Regenerate backcast dashboard"
-# workflow (chained via workflow_run on this workflow's completion) rebuilds the
-# shared manifest/benchmark/html from the full set in one commit and the Pages
-# deploy fires. Stale/diverged branches are skipped with a clear log rather than
-# forcing a conflicted merge.
+# sidecar + runs/<id>.js (+ byte-deterministic bench parts) — disjoint files —
+# so sequential squash-merges are conflict-free. After the merges land, the
+# "Deploy site to GitHub Pages" workflow (chained via workflow_run on this
+# workflow's completion) assembles the shared manifest/benchmark/html from the
+# committed parts and takes the dashboard live. Stale/diverged branches are
+# skipped with a clear log rather than forcing a conflicted merge.
 
 on:
   workflow_dispatch:
@@ -109,4 +109,4 @@ jobs:
             done
           fi
 
-          echo "Done. Regenerate backcast dashboard will rebuild + deploy the dashboard."
+          echo "Done. Deploy site to GitHub Pages will assemble + publish the dashboard."

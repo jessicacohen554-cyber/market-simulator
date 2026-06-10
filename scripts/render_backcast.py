@@ -12,10 +12,23 @@ its data file + manifest entry are written:
     CAMPD per-plant + EIA-930 fuel benchmark, gzip+base64).
   * ``frontend/data/backcast/runs/<id>.js`` — ``window.BC.runGz['<id>']`` (one
     run's model payload, gzip+base64), loaded lazily on selection.
+  * ``frontend/data/backcast/bench/<ISO>/<year>.json.gz`` — the per-(ISO, year)
+    benchmark *part* (benchmark payload + that ISO's display meta). Parts are
+    the COMMITTED source for the shared benchmark: each run rewrites only the
+    parts for its own ISO/years ("newest bundle covering the year wins", the
+    same rule ``build_payload`` applies), and ``scripts/build_manifest.py``
+    assembles ``benchmark.js``/``manifest.js``/the shell from parts + registry
+    sidecars at deploy time. ``manifest.js``, ``benchmark.js`` and
+    ``backcast-results.html`` themselves are GENERATED files — gitignored,
+    never committed — so concurrent runs can never conflict on them.
 
 The shell loads the manifest + benchmark, then lazy-loads the selected runs via
 injected <script> tags and inflates them with DecompressionStream — which works
 both over http (Pages) and from a local file (no fetch/CORS trap).
+
+All gzip output uses ``mtime=0`` so re-rendering unchanged data is byte-stable
+(identical bytes -> no spurious git churn, and concurrent same-ISO runs that
+produce the same benchmark merge cleanly).
 
 Run id = ``<YYYY-MM-DD>-<shorthand>``; the shorthand and 1-3 sentence
 definition are auto-derived from the bundle's run_config note (editable in
@@ -45,12 +58,14 @@ rch = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rch)
 
 DATA_DIR = REPO / "frontend" / "data" / "backcast"
 RUNS_DIR = DATA_DIR / "runs"
+BENCH_DIR = DATA_DIR / "bench"
 
 
 def _gzb64(obj) -> str:
-    """Return gzip+base64 of a JSON-serializable object."""
+    """Return gzip+base64 of a JSON-serializable object (byte-deterministic)."""
     return base64.b64encode(
-        gzip.compress(json.dumps(obj).encode(), compresslevel=9)).decode()
+        gzip.compress(json.dumps(obj).encode(), compresslevel=9,
+                      mtime=0)).decode()
 
 
 def _slug(text: str) -> str:
@@ -79,6 +94,39 @@ def _run_meta(bundle: Path, fallback_id: str) -> dict:
         "date": date, "shorthand": shorthand,
         "definition": definition, "years": meta["years"],
     }
+
+
+def manifest_entry(label: str, bundle: Path) -> dict:
+    """Return the complete dashboard manifest entry for one bundle.
+
+    This is the record a registry sidecar stores in full, so the deploy-time
+    assembler (``scripts/build_manifest.py``) can build ``manifest.js`` from
+    sidecars alone — without bundle access, pandas, or the model package.
+    """
+    rm = _run_meta(bundle, _slug(label))
+    rm["iso"] = json.loads((bundle / "meta.json").read_text()).get("iso",
+                                                                   "ERCOT")
+    rm["file"] = f"frontend/data/backcast/runs/{rm['id']}.js"
+    return rm
+
+
+def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict
+                      ) -> Path:
+    """Write the per-(ISO, year) benchmark part file (deterministic gzip).
+
+    The part carries the year's benchmark payload plus the ISO display meta
+    contributed by this render (groups/labels/zones); the assembler unions the
+    metas and merges the year payloads across parts. Rewriting a part with
+    identical content produces identical bytes, so unchanged parts never show
+    up as a git diff.
+    """
+    part_dir = BENCH_DIR / iso
+    part_dir.mkdir(parents=True, exist_ok=True)
+    part = {"meta": {**meta, "years": [int(year)]}, "bench": bench_year}
+    path = part_dir / f"{year}.json.gz"
+    path.write_bytes(gzip.compress(json.dumps(part).encode(),
+                                   compresslevel=9, mtime=0))
+    return path
 
 
 def generate(runs: list[tuple[str, Path]], out: Path,
@@ -111,6 +159,8 @@ def generate(runs: list[tuple[str, Path]], out: Path,
             "zones": D["zones"], "years": D["years"],
         }
         bench_by_iso[iso] = _gzb64(D["bench"])
+        for year, bench_year in D["bench"].items():
+            _write_bench_part(iso, int(year), meta_by_iso[iso], bench_year)
         for i, (rid_hint, bundle) in enumerate(iso_runs):
             rm = _run_meta(bundle, _slug(rid_hint))
             if years is not None:

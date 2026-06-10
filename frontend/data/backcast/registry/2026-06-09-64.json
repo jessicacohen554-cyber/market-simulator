@@ -1,6 +1,15 @@
 {
   "id": "2026-06-09-64",
-  "label": "Run-64",
-  "bundle": "results/calibration/Run-64",
-  "iso": "ERCOT"
+  "label": "64",
+  "date": "2026-06-09",
+  "shorthand": "64",
+  "definition": "Run64 (from Run-63 + ER plant append; storage 13.7GW/21.3GWh in 2025): CC_CHP shape isolation \u2014 econ_low back to base 0.96, econ_high 1.12->1.35, peak 2.25->1.55, pct_peaking 8->4. Replaces the econ_high->peak cliff with a continuous gradient so the top of the CHP fleet load-follows in high-load months. All other classes unchanged from Run-61.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-09-64.js",
+  "bundle": "results/calibration/Run-64"
 }
