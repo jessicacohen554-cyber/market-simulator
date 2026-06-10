@@ -1,22 +1,26 @@
 """Register one calibration bundle on the dashboard, conflict-free.
 
-A single calibration run must add itself to the dashboard WITHOUT touching the
-shared ``manifest.js`` / ``benchmark.js`` (those are regenerated from the whole
-set by ``regen_dashboard.py``). So this script writes only two per-run files,
-both in a namespace unique to this run — hence two runs landing at once never
-collide:
+A single calibration run adds itself to the dashboard by writing only files in
+namespaces unique to this run (or byte-deterministic per-ISO parts) — hence
+any number of runs landing at once, across any mix of ISOs, never conflict:
 
-  * ``frontend/data/backcast/registry/<id>.json`` — the sidecar the deterministic
-    regen reads: ``{id, label, bundle, iso}``.
-  * ``frontend/data/backcast/runs/<id>.js`` — this run's own payload, so the run
-    is viewable the instant it is committed (the manifest entry that lists it
-    follows from the next ``regen_dashboard`` pass on main).
+  * ``frontend/data/backcast/registry/<id>.json`` — the sidecar: the COMPLETE
+    manifest entry (id, label, date, shorthand, definition, years, iso, file)
+    plus the bundle path. ``scripts/build_manifest.py`` assembles
+    ``manifest.js`` from sidecars alone, so edit the sidecar to refine a
+    label/definition.
+  * ``frontend/data/backcast/runs/<id>.js`` — this run's own payload.
+  * ``frontend/data/backcast/bench/<ISO>/<year>.json.gz`` — the per-(ISO, year)
+    benchmark parts for this run's years (newest run covering a year supplies
+    it; unchanged content re-renders to identical bytes, so these only appear
+    in the diff when the benchmark genuinely changed).
 
-It re-renders the single run via ``render_backcast.generate`` (which also rewrites
-the shared manifest/benchmark/html locally) but the caller is expected to stage
-ONLY the bundle dir, the sidecar and ``runs/<id>.js`` — never the shared files.
+The shared ``manifest.js`` / ``benchmark.js`` / ``backcast-results.html`` are
+GENERATED (gitignored) — rebuilt from sidecars + parts by
+``scripts/build_manifest.py`` locally and at deploy time. Never commit them.
 
-Prints ``RUN_ID=<id>`` on stdout so the workflow can locate the file to stage.
+Commit: the bundle dir, the sidecar, ``runs/<id>.js``, and anything changed
+under ``bench/``. Prints ``RUN_ID=<id>`` on stdout so callers can stage by id.
 
 Usage:
     python scripts/dashboard_add_run.py --label "ct sweep 1.5" \
@@ -51,11 +55,11 @@ def main() -> None:
     if not (bundle / "meta.json").exists():
         sys.exit(f"bundle {bundle} is missing meta.json; nothing to register.")
 
-    # Derive the run id exactly as render_backcast.generate does, so the sidecar
-    # id matches the runs/<id>.js it writes and the manifest entry regen builds.
-    rm = rb._run_meta(bundle, rb._slug(args.label))
-    rid = rm["id"]
-    iso = json.loads((bundle / "meta.json").read_text()).get("iso", "ERCOT")
+    # Derive the full manifest entry exactly as render_backcast.generate does,
+    # so the sidecar id matches the runs/<id>.js it writes and build_manifest
+    # can list the run without ever opening the bundle.
+    entry = rb.manifest_entry(args.label, bundle)
+    rid, iso = entry["id"], entry["iso"]
 
     # Store the bundle path relative to the repo root so the sidecar is portable
     # across checkouts (CI clones to a different absolute path).
@@ -66,14 +70,13 @@ def main() -> None:
 
     REGISTRY_DIR.mkdir(parents=True, exist_ok=True)
     sidecar = REGISTRY_DIR / f"{rid}.json"
-    sidecar.write_text(json.dumps(
-        {"id": rid, "label": args.label, "bundle": rel_bundle, "iso": iso},
-        indent=2) + "\n")
+    sidecar.write_text(json.dumps({**entry, "bundle": rel_bundle},
+                                  indent=2) + "\n")
 
-    # Render this single run so its runs/<id>.js exists immediately. This also
-    # rewrites the shared manifest/benchmark/html locally; the caller stages
-    # only the sidecar + runs/<id>.js + the bundle, leaving the shared files for
-    # the deterministic regen on main.
+    # Render this single run: writes its runs/<id>.js + the bench/<ISO>/<year>
+    # parts for its years, and refreshes the LOCAL (gitignored) preview shell +
+    # manifest/benchmark. Commit the bundle, the sidecar, runs/<id>.js and any
+    # changed bench parts — the gitignored files cannot be committed.
     rb.generate([(args.label, bundle)], REPO / "backcast-results.html")
 
     print(f"registered {rid!r} (iso={iso}, bundle={rel_bundle})")

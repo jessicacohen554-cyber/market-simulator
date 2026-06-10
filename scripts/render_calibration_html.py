@@ -483,7 +483,10 @@ def build_payload(runs: list[tuple[str, Path]],
                 g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6
                          + (float(btm_y.get(g, 0.0))
                             if g in ("CC_CHP", "CT_CHP", "ST_CHP") else 0.0), 4)
-                for g in (set(MIX_GROUPS) | set(mh))
+                # sorted: set iteration order is hash-randomized per process,
+                # and the payload must be byte-stable across re-renders (an
+                # unchanged run must not show up as a git diff).
+                for g in sorted(set(MIX_GROUPS) | set(mh))
             }
             # ---- signed volume error per (class, zone, month) ----
             # Model monthly TWh vs the authoritative actuals source for each
