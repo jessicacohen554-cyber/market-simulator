@@ -689,6 +689,12 @@ def _aggregate_with_predefined_bins(
                 emission_rate_co2=_capacity_weighted(units, "emission_rate_co2"),
                 nox_rate=_capacity_weighted(units, "nox_rate"),
                 eford=_capacity_weighted(units, "eford"),
+                # Preserve the bin's vintage (see aggregate_fleet) so the
+                # CCS-retrofit remaining-life screen and learning
+                # attribution survive re-aggregation.
+                online_year=int(
+                    round(_capacity_weighted(units, "online_year"))
+                ),
             )
         )
     return result
@@ -768,6 +774,13 @@ def aggregate_fleet_by_efficiency(
                 emission_rate_co2=_capacity_weighted(bin_gens, "emission_rate_co2"),
                 nox_rate=_capacity_weighted(bin_gens, "nox_rate"),
                 eford=_capacity_weighted(bin_gens, "eford"),
+                # Preserve the bin's vintage: dropping it to the Generator
+                # default (2000) makes every aggregated CC look near
+                # end-of-life, silently disqualifying the whole bin from
+                # the CCS-retrofit screen and from learning attribution.
+                online_year=int(
+                    round(_capacity_weighted(bin_gens, "online_year"))
+                ),
             )
         )
     return result
@@ -848,6 +861,12 @@ def aggregate_fleet(
                     emission_rate_co2=_capacity_weighted(units, "emission_rate_co2"),
                     nox_rate=_capacity_weighted(units, "nox_rate"),
                     eford=_capacity_weighted(units, "eford"),
+                    # Preserve the bin's vintage (see the per-efficiency
+                    # aggregator) so retrofit screens and learning
+                    # attribution survive re-aggregation.
+                    online_year=int(
+                        round(_capacity_weighted(units, "online_year"))
+                    ),
                 )
             )
     else:
@@ -1801,6 +1820,162 @@ def load_fleet_from_csv(
         source = parquet_path
 
     _cache_binned_fleet(iso, generators, source)
+    return generators
+
+
+# Vintage year of the operable EIA-860 snapshot behind the committed
+# generators parquet: units online through this year are in the operable
+# schedule. Proposed rows whose Effective Year is at or before it are
+# stale (slipped projects with a past-dated COD), so the planned-additions
+# loader and the renewables proposed-capacity augmentation both skip them
+# rather than trust an effective date the snapshot has already overtaken.
+# Bump this whenever process_eia860.py regenerates the parquets from a
+# newer release. Source: EIA-860 2025 Early Release (eia8602025ER.zip,
+# operating years through 2025).
+EIA860_OPERABLE_VINTAGE: int = 2025
+
+# EIA-860 proposed-generator statuses treated as construction-committed for
+# the deterministic known-additions pipeline: U / V are under construction
+# (<50% / >50% complete), TS is in test-mode pre-commercial. ``P``
+# (planned-with-permits) is deliberately excluded here — appropriate for
+# the renewables capacity-ramp aggregation, too speculative to enter the
+# dispatch fleet as a firm thermal unit.
+_PLANNED_FIRM_STATUSES: frozenset[str] = frozenset({"U", "V", "TS"})
+
+
+def load_planned_additions(
+    iso: str,
+    iso_config: ISOConfig | None = None,
+    data_dir: Path | None = None,
+) -> list[Generator]:
+    """Load EIA-860 planned/under-construction thermal units for an ISO.
+
+    The deterministic "known additions" pipeline (methodology spec §5.4):
+    proposed-generator rows with a construction-committed status (``U`` /
+    ``V`` / ``TS``) whose plant's balancing authority maps to ``iso`` and
+    whose ``Effective Year`` falls *after* the operable-snapshot vintage
+    become :class:`Generator` objects with ``online_year`` set to that
+    effective year. The runner injects each unit into the fleet when the
+    simulation reaches its online year; beyond the EIA-860 data horizon the
+    economic new-entry screen owns all additions.
+
+    Wind, solar, hydro and storage rows are skipped (``_map_fuel_type``
+    returns ``None`` for them): renewable capacity growth is handled by the
+    zonal ``wind_cap`` / ``solar_cap`` pools and storage by its own entry
+    screen, so adding them here would double-count. **Forecast-mode only**
+    -- a backcast solves a historical year whose fleet snapshot already
+    reflects what was actually built.
+
+    Zones are assigned from each plant's EIA-860 lat/lon (proposed plants
+    are usually absent from the eGRID vintage the operable loader keys on),
+    falling back to the standard eGRID/largest-zone path.
+
+    Args:
+        iso: ISO identifier, e.g. ``"ERCOT"``.
+        iso_config: Topology configuration; fetched via
+            :func:`get_iso_config` when ``None``.
+        data_dir: Directory holding the processed EIA-860 parquets.
+            Defaults to :data:`EIA_860_DIR`.
+
+    Returns:
+        Planned thermal :class:`Generator` objects (``unit_id`` prefixed
+        ``planned_``), sorted by online year. Empty when the proposed or
+        plant parquet is missing (logged), or nothing qualifies.
+    """
+    iso = iso.upper()
+    if data_dir is None:
+        data_dir = EIA_860_DIR
+    data_dir = Path(data_dir)
+    if iso_config is None:
+        try:
+            iso_config = get_iso_config(iso)
+        except ValueError:
+            iso_config = None
+
+    proposed_path = data_dir / "eia860_generator_proposed.parquet"
+    plant_path = data_dir / "eia860_plant.parquet"
+    if not proposed_path.exists() or not plant_path.exists():
+        logger.warning(
+            "planned additions unavailable for %s: missing %s",
+            iso,
+            proposed_path.name if not proposed_path.exists()
+            else plant_path.name,
+        )
+        return []
+
+    df = pd.read_parquet(proposed_path)
+    plants = pd.read_parquet(plant_path)[
+        ["Plant Code", "Balancing Authority Code", "Latitude", "Longitude"]
+    ].drop_duplicates("Plant Code")
+    df = df.merge(plants, on="Plant Code", how="left")
+
+    ba_iso = df["Balancing Authority Code"].map(BA_CODE_TO_ISO)
+    df = df[ba_iso == iso]
+    status = df["Status"].astype(str).str.strip().str.upper()
+    df = df[status.isin(_PLANNED_FIRM_STATUSES)]
+    eff_year = pd.to_numeric(df["Effective Year"], errors="coerce")
+    df = df[eff_year > EIA860_OPERABLE_VINTAGE]
+    if df.empty:
+        return []
+
+    norm = pd.DataFrame(
+        {
+            # Integer plant codes: the raw column arrives as float and
+            # would otherwise render as "66335.0" inside unit ids.
+            "plant_id": pd.to_numeric(
+                df["Plant Code"], errors="coerce"
+            ).astype("Int64"),
+            "generator_id": df["Generator ID"],
+            "plant_name": df["Plant Name"],
+            "state": df["State"],
+            "technology": df["Technology"],
+            "energy_source": df["Energy Source 1"],
+            "prime_mover": df["Prime Mover"],
+            "nameplate_capacity_mw": df["Nameplate Capacity (MW)"],
+            "net_summer_capacity_mw": df["Summer Capacity (MW)"],
+            "operating_year": pd.to_numeric(
+                df["Effective Year"], errors="coerce"
+            ),
+            "chp": df["Associated with Combined Heat and Power System"],
+        }
+    )
+    generators = _rows_to_generators(norm, iso, iso_config)
+
+    # Re-place each unit from its plant's EIA-860 coordinates: proposed
+    # plants mostly post-date the eGRID vintage behind _assign_zones, which
+    # would otherwise dump them all in the fallback zone.
+    from market_sim.data.zone_assignment import assign_zone_by_coords
+
+    coords: dict[int, tuple[float, float]] = {}
+    for row in df[["Plant Code", "Latitude", "Longitude"]].itertuples(
+        index=False
+    ):
+        code = _to_float(row[0])
+        lat = _to_float(row[1])
+        lon = _to_float(row[2])
+        if code is not None and lat is not None and lon is not None:
+            coords[int(code)] = (lat, lon)
+    for g in generators:
+        latlon = coords.get(g.plant_code)
+        if latlon is not None:
+            try:
+                g.zone = assign_zone_by_coords(latlon[0], latlon[1], iso)
+            except Exception:  # zone rules missing for the ISO: keep fallback
+                pass
+        g.unit_id = f"planned_{g.unit_id}"
+        g.name = f"planned {g.name}"
+
+    # The ISO's proposed rows may all be non-thermal (wind/solar/storage,
+    # handled elsewhere), leaving nothing after fuel mapping.
+    if not generators:
+        return []
+    generators.sort(key=lambda g: (g.online_year, g.unit_id))
+    logger.info(
+        "%s planned additions: %d units, %.0f MW, %d-%d",
+        iso, len(generators), sum(g.pmax_mw for g in generators),
+        min(g.online_year for g in generators),
+        max(g.online_year for g in generators),
+    )
     return generators
 
 

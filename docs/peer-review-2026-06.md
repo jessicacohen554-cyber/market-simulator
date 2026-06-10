@@ -425,20 +425,22 @@ do (±5 % vs ±2 % heatmap vs 5 %/1 TWh/1.5 pp summary).
 ## F. Prioritized remediation roadmap
 
 **P0 — before quoting any forward run (small, verified fixes):**
-1. B1 retirement margin (subtract `mc_base`) — also fix spec §5.2.
-2. B2 queue caps for the five eastern ISOs + fail-loud config check.
-3. C1 demand growth gap (compound from `weather_year`, or define base as
-   START_YEAR-level explicitly).
-4. B8 `wright_cost` exponent → `-log2(1−LR)`.
-5. A3 wire `storage_daily_cycling` through `runner.py`.
-6. B3 preserve vintage through aggregation.
-7. C8 PJM `RENEWABLE_INSTALLED_MW` entries; C9 explicit backcast flag.
+✅ **All P0 items below were fixed on 2026-06-09** (see `CHANGELOG.md` and
+the commit "fix: forecast-mode P0 defects from the peer review"). B10
+(known additions) was pulled forward from P1 and is also done.
+1. ~~B1 retirement margin (subtract `mc_base`) — also fix spec §5.2.~~ ✅
+2. ~~B2 queue caps for the five eastern ISOs + fail-loud config check.~~ ✅
+3. ~~C1 demand growth gap (compound from `weather_year`).~~ ✅
+4. ~~B8 `wright_cost` exponent → `-log2(1−LR)`.~~ ✅
+5. ~~A3 wire `storage_daily_cycling` through `runner.py`.~~ ✅
+6. ~~B3 preserve vintage through aggregation.~~ ✅
+7. ~~C8 PJM `RENEWABLE_INSTALLED_MW` entries; C9 explicit backcast flag.~~ ✅
 
 **P1 — structural price formation (medium effort, LP-compatible):**
 pseudo-ORDC slack ladder (A1); static zone-hour reserve constraint (A2);
 B5 PDC/margin-based entry revenue; B6 unified VRR-style capacity price;
-B10 wire known additions; one commitment iteration (A4) + min-run extension
-(A5); per-direction TTCs (A10).
+~~B10 wire known additions~~ (✅ done with P0); one commitment iteration
+(A4) + min-run extension (A5); per-direction TTCs (A10).
 
 **P2 — forecast-input credibility:**
 demand shape decomposition (data-center/electrification adders on the base
