@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-10-pjm-9-chp-solar",
+  "label": "pjm 9 chp solar",
+  "date": "2026-06-10",
+  "shorthand": "pjm-9-chp-solar",
+  "definition": "pjm 9 chp-solar: CHP steam-following floors + EIA-923 sector BTM for all 84 PJM cogens (ERCOT parity, floor spread across econ slices); solar/wind now use measured EIA-930 hourly delivered profiles (gap-filled extract) instead of the normalized-distribution fallback; CC econ_high +0.15 (model parked 4600h above 80% fleet CF vs 2100 actual); ST_GAS bands -0.05 for the 2024 gap; CT_PEAKER pct_peaking 7->5 to widen the econ ramp",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-10-pjm-9-chp-solar.js",
+  "bundle": "results/calibration/pjm_9_chp_solar"
+}
