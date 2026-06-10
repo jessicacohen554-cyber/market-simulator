@@ -157,6 +157,7 @@ def build_cost_vector(
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
     storage_discharge_eac: float = 0.0,
+    storage_discharge_cost: np.ndarray | float = 0.0,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -182,6 +183,10 @@ def build_cost_vector(
         storage_discharge_eac: Exogenous EAC paid per MWh discharged in
             $/MWh. Subtracted from the discharge slot cost; the discharge
             level stays bounded by SOC dynamics and the power cap.
+        storage_discharge_cost: Per-unit dispatch cost added to the
+            discharge slot in $/MWh; scalar (flat) or ``(n_storage,)``.
+            Carries the pumped-storage throughput adder so PS bids above
+            batteries instead of arbitraging every clearable spread.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -201,12 +206,18 @@ def build_cost_vector(
         np.asarray(solar_mc, dtype=float), (layout.n_zones, layout.T)
     ).T
 
-    # Storage charge: flat cycling penalty. Discharge: cycling penalty net
-    # of any exogenous discharge EAC credit, so the slot cost can go
+    # Storage charge: flat cycling penalty. Discharge: cycling penalty plus
+    # any per-unit dispatch cost (e.g. the pumped-storage throughput adder),
+    # net of any exogenous discharge EAC credit, so the slot cost can go
     # negative; SOC dynamics and the power cap still bound the discharge.
     block[:, layout._chg_off : layout._dis_off] = storage_epsilon
     block[:, layout._dis_off : layout._soc_off] = (
-        storage_epsilon - storage_discharge_eac
+        storage_epsilon
+        + np.broadcast_to(
+            np.asarray(storage_discharge_cost, dtype=float),
+            (layout.n_storage,),
+        )
+        - storage_discharge_eac
     )
 
     # Load slack: value of lost load.
@@ -836,6 +847,7 @@ def solve_dispatch(
     wind_mc: np.ndarray | float = 0.0,
     solar_mc: np.ndarray | float = 0.0,
     storage_discharge_eac: float = 0.0,
+    storage_discharge_cost: np.ndarray | float = 0.0,
     rps_target: float | None = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
@@ -928,6 +940,7 @@ def solve_dispatch(
     cost = build_cost_vector(
         layout, mc, voll, wind_mc=wind_mc, solar_mc=solar_mc,
         storage_discharge_eac=storage_discharge_eac,
+        storage_discharge_cost=storage_discharge_cost,
     )
     A, row_lower, row_upper = build_constraints(
         layout,
