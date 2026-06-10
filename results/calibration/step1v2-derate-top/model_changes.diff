@@ -1,0 +1,156 @@
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index ddec573..1e0f33d 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -2008,6 +2008,12 @@ def main() -> None:
+         help="Override offer_curve_smoothing_n (default 6): the number of "
+              "equal-capacity slices the econ ramp is rendered into. Sweep "
+              "knob for testing finer offer-curve granularity (e.g. 12).")
++    parser.add_argument(
++        "--curve-mid", type=float, default=None,
++        help="Override offer_curve_smoothing_mid: fraction of the econ "
++             "ramp's lo->pk rise reached at its capacity midpoint "
++             "(piecewise-linear shape anchor; <0.5 = cheap middle, steep "
++             "top). Unset keeps the t**exp power shape.")
+     parser.add_argument(
+         "--curve-exp", type=float, default=None,
+         help="Override offer_curve_smoothing_exp (default 1.0 = linear "
+@@ -2085,6 +2091,7 @@ def main() -> None:
+         curve_smoothing={
+             "offer_curve_smoothing_n": args.curve_n,
+             "offer_curve_smoothing_exp": args.curve_exp,
++            "offer_curve_smoothing_mid": args.curve_mid,
+         },
+         cc_derate_from_top=args.cc_derate_from_top,
+         note=args.note,
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 5e8037d..b1342fc 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -477,6 +477,15 @@ class ScenarioConfig:
+     # recover the flat two-block econ curve.
+     offer_curve_smoothing_n: int = 6
+     offer_curve_smoothing_exp: float = 1.0
++    # Optional midpoint anchor for the econ ramp shape: the fraction of the
++    # lo->pk heat-rate rise reached at the capacity midpoint (t = 0.5),
++    # rendered as a two-segment piecewise-linear ramp f(0)=0, f(0.5)=mid,
++    # f(1)=1. None (default) keeps the t**exp power shape. mid < 0.5 keeps
++    # the middle slices cheap and concentrates the rise in the top of the
++    # curve — e.g. 0.25 prices slice 4 of 6 like a linear ramp's slice 2 —
++    # which the single exp exponent cannot do without also distorting the
++    # bottom. Overrides offer_curve_smoothing_exp when set.
++    offer_curve_smoothing_mid: float | None = None
+ 
+     # Outage capacity comes off the TOP of a CC_REGULAR plant's offer stack
+     # instead of pro-rata across its tranches. The default (False) scales
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index 89c3ea6..b0ab477 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -3072,6 +3072,7 @@ def _econ_curve_steps(
+     curve_cap: float,
+     n: int,
+     exp: float,
++    mid: float | None = None,
+ ) -> list[tuple[str, float, float, float, int, int, float]]:
+     """Slice a rising economic ramp into ``n`` flat sub-tranches.
+ 
+@@ -3080,16 +3081,26 @@ def _econ_curve_steps(
+     ``lo_mult`` toward ``pk_mult`` along ``mult(t) = lo + (pk - lo) * t**exp``,
+     ``t = (k + 0.5)/n``. ``exp == 1`` is a straight (linear) ramp matching a
+     thermal unit's gently-rising incremental heat rate; ``exp > 1`` is convex
+-    (cheap-bottom). The slices carry no min-run or start cost — they are
+-    incremental output of an already-committed unit. Suffixes start with
+-    ``econ`` (``econc00`` …) so :func:`apply_commitment_with_coal_pin` couples
+-    them to the bin's committed tranche and shuts them down together.
++    (cheap-bottom). When ``mid`` is given it replaces the power shape with a
++    two-segment piecewise-linear ramp anchored at the capacity midpoint:
++    ``f(0) = 0``, ``f(0.5) = mid``, ``f(1) = 1`` (fraction of the lo->pk
++    rise), so ``mid < 0.5`` keeps the middle of the curve cheap and
++    concentrates the rise in the top slices — an independent shape control
++    the single ``exp`` exponent cannot express. The slices carry no min-run
++    or start cost — they are incremental output of an already-committed
++    unit. Suffixes start with ``econ`` (``econc00`` …) so
++    :func:`apply_commitment_with_coal_pin` couples them to the bin's
++    committed tranche and shuts them down together.
+     """
+     slice_cap = curve_cap / n
+     steps: list[tuple[str, float, float, float, int, int, float]] = []
+     for k in range(n):
+         t = (k + 0.5) / n
+-        mult = lo_mult + (pk_mult - lo_mult) * (t ** exp)
++        if mid is not None:
++            f = 2.0 * mid * t if t <= 0.5 else mid + (1.0 - mid) * (2.0 * t - 1.0)
++        else:
++            f = t ** exp
++        mult = lo_mult + (pk_mult - lo_mult) * f
+         steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
+     return steps
+ 
+@@ -3417,6 +3428,8 @@ def bins_to_fleet(
+         # floor.
+         n_curve = int(getattr(config, "offer_curve_smoothing_n", 0) or 0)
+         curve_exp = float(getattr(config, "offer_curve_smoothing_exp", 1.0))
++        _mid = getattr(config, "offer_curve_smoothing_mid", None)
++        curve_mid = float(_mid) if _mid is not None else None
+         if ov is not None:
+             # Per-plant sheet: the econ ramp spans econ-low to econ-high; the
+             # sheet's peaking band stays a separate tranche below.
+@@ -3426,6 +3439,7 @@ def bins_to_fleet(
+                 econ_steps = _econ_curve_steps(
+                     base_hr, lo_m, pk_m,
+                     nameplate * curve_pct / 100.0, n_curve, curve_exp,
++                    curve_mid,
+                 )
+             else:
+                 econ_steps = [
+@@ -3440,6 +3454,7 @@ def bins_to_fleet(
+             if n_curve > 0 and econ_cap > 0.0 and pk_m > lo_m:
+                 econ_steps = _econ_curve_steps(
+                     base_hr, lo_m, pk_m, econ_cap, n_curve, curve_exp,
++                    curve_mid,
+                 )
+             else:
+                 share = float(offer["econ_low_share"])
+@@ -3454,6 +3469,7 @@ def bins_to_fleet(
+             if n_curve > 0 and econ_cap > 0.0 and hi_mult > lo_mult:
+                 econ_steps = _econ_curve_steps(
+                     base_hr, lo_mult, hi_mult, econ_cap, n_curve, curve_exp,
++                    curve_mid,
+                 )
+             else:
+                 econ_steps = [
+diff --git a/tests/test_campd_bins.py b/tests/test_campd_bins.py
+index c1fc0b8..e18fdb4 100644
+--- a/tests/test_campd_bins.py
++++ b/tests/test_campd_bins.py
+@@ -297,6 +297,29 @@ class TestUnifiedOfferCurve(unittest.TestCase):
+         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
+         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.30, places=6)
+ 
++    def test_midpoint_anchor_reshapes_the_ramp(self):
++        # offer_curve_smoothing_mid = 0.25 sags the ramp below linear in the
++        # bottom half and concentrates the rise in the top slices, while the
++        # endpoints (econ_low / econ_high reach) are unchanged.
++        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
++                 "econ_low_share": 0.5, "pct_peaking": 10.0}
++        lin = sorted(g.heat_rate for g in self._build("CC_REGULAR", offer)
++                     if "_econc" in g.unit_id)
++        mid = sorted(
++            g.heat_rate
++            for g in self._build(
++                "CC_REGULAR", offer, offer_curve_smoothing_mid=0.25
++            )
++            if "_econc" in g.unit_id
++        )
++        self.assertEqual(len(mid), 6)
++        # Bottom half cheaper than the linear ramp, same lo->hi span overall.
++        for m, l in zip(mid[:3], lin[:3]):
++            self.assertLess(m, l)
++        self.assertLess(mid[-1], self.BASE_HR * 1.3 + 1e-6)
++        # Monotone rising slices (a valid offer curve).
++        self.assertEqual(mid, sorted(mid))
++
+ 
+ class TestCommitmentParams(unittest.TestCase):
+     """Per-bin commitment parameters flow through to the screen."""
