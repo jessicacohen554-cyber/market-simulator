@@ -1,6 +1,15 @@
 {
   "id": "2026-06-09-67",
-  "label": "Run-67",
-  "bundle": "results/calibration/Run-67",
-  "iso": "ERCOT"
+  "label": "67",
+  "date": "2026-06-09",
+  "shorthand": "67",
+  "definition": "Run67 (consolidation of Run-66): with the BTM trim adding ~1.6 GW of grid-facing CHP, the Run-65 tightenings overshoot \u2014 relax CT_PEAKER committed 1.48->1.38 and back PRB econ_high off 1.24->1.18, lignite 1.45->1.41, to re-balance 2023 volumes while keeping the CHP shape, coal intraday range, and 2025 scarcity gains.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-09-67.js",
+  "bundle": "results/calibration/Run-67"
 }
