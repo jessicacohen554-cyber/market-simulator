@@ -642,6 +642,7 @@ def run_year(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     gas_offer_curve: bool = False,
+    gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     must_run_mw: "np.ndarray | None" = None,
@@ -699,6 +700,9 @@ def run_year(
         config = config.with_overrides(storage_daily_cycling=True)
     if gas_offer_curve:
         config = config.with_overrides(gas_offer_curve=True)
+    # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
+    if gas_monthly_actuals:
+        config = config.with_overrides(gas_monthly_actuals=True)
     iso_config = get_iso_config(iso)
     zone_names = iso_config.zone_names
 
@@ -890,6 +894,7 @@ def run_year(
         wind_mc=wind_mc,
         solar_mc=solar_mc,
         storage_discharge_eac=storage_eac,
+        storage_discharge_cost=storage.vom,
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
         hydro_monthly_energy=hydro_monthly_energy,

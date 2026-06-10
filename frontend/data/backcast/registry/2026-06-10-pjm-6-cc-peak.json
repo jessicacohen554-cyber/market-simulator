@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-10-pjm-6-cc-peak",
+  "label": "pjm 6 cc peak",
+  "date": "2026-06-10",
+  "shorthand": "pjm-6-cc-peak",
+  "definition": "pjm 6 cc-peak: CC peak band +0.55 (1.62->2.17; duct firing was pricing summer at ~$28, capping Jul/Aug LMP and locking CT out); CT econ re-deepened -0.10/-0.26; coal kept at pass-5",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-10-pjm-6-cc-peak.js",
+  "bundle": "results/calibration/pjm_6_ccpeak"
+}

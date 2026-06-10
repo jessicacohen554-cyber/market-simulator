@@ -624,6 +624,40 @@ class TestStorageDailyCycling(unittest.TestCase):
         self.assertAlmostEqual(soc[24], soc[0], places=3)
 
 
+class TestStorageDischargeCost(unittest.TestCase):
+    """Per-unit discharge cost (the pumped-storage throughput adder)."""
+
+    T = 24
+
+    def _solve(self, discharge_cost):
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=300.0)
+        mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 40.0)])
+        demand = np.empty((1, self.T))
+        demand[0, :12] = 200.0
+        demand[0, 12:] = 400.0
+        eta = 0.85 ** 0.5
+        return solve_dispatch(
+            fleet, demand,
+            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
+            mc=mc, T=self.T,
+            storage_power_cap=np.array([100.0]),
+            storage_energy_cap=np.array([400.0]),
+            storage_zone_idx=np.array([0]),
+            eta_chg=np.array([eta]), eta_dis=np.array([eta]),
+            storage_discharge_cost=discharge_cost,
+        )
+
+    def test_high_discharge_cost_suppresses_arbitrage(self):
+        # Spread is 20 -> 40 ($20). With RTE 0.85 the cycle clears with no
+        # adder; a $30/MWh discharge cost makes it uneconomic and the unit
+        # sits idle instead of arbitraging.
+        free = self._solve(0.0)
+        priced = self._solve(np.array([30.0]))
+        self.assertGreater(free.storage_discharge[0].sum(), 0.0)
+        self.assertLess(priced.storage_discharge[0].sum(), 1.0)
+
+
 class TestEIA860PumpedStorage(unittest.TestCase):
     """Tests for the EIA-860 pumped-storage hydro fleet loader."""
 
