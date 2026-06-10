@@ -1,6 +1,15 @@
 {
   "id": "2026-06-10-70",
-  "label": "Run-70",
-  "bundle": "results/calibration/Run-70",
-  "iso": "ERCOT"
+  "label": "70",
+  "date": "2026-06-10",
+  "shorthand": "70",
+  "definition": "Run70 (from Run-69): with all CC_CHP on the uniform eGRID CHP-adjusted HR basis, the band multipliers take over the shaping the old inflated HRs were crudely doing: CC_CHP econ_high 1.25->1.55, peak 1.75. Displaced classes restored: ST_GAS committed 0.735, CT_PEAKER committed 1.30, CC_REG econ_high 1.41. PRB econ_high 1.33 (interpolated between Run-68 -5.6% and Run-69 +7.5% on measured fuel), lignite econ_high 1.35.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-10-70.js",
+  "bundle": "results/calibration/Run-70"
 }
