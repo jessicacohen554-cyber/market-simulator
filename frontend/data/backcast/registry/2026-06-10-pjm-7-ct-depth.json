@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-10-pjm-7-ct-depth",
+  "label": "pjm 7 ct depth",
+  "date": "2026-06-10",
+  "shorthand": "pjm-7-ct-depth",
+  "definition": "pjm 7 ct-depth: CT econ -0.12/-0.30 (re-deepened under the raised CC peak band); COAL_BIT committed -0.12 for the 2024 gap; CC kept at pass-6",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-10-pjm-7-ct-depth.js",
+  "bundle": "results/calibration/pjm_7_ct"
+}
