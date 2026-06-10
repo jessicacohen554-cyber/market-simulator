@@ -890,6 +890,7 @@ def run_year(
         wind_mc=wind_mc,
         solar_mc=solar_mc,
         storage_discharge_eac=storage_eac,
+        storage_discharge_cost=storage.vom,
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
         hydro_monthly_energy=hydro_monthly_energy,
