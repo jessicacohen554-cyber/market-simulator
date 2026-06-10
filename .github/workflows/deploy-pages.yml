@@ -1,25 +1,36 @@
 name: Deploy site to GitHub Pages
 
-# Publishes the static site (landing page + backcast dashboard + learning hub)
-# to GitHub Pages on every push to main — i.e. automatically on each PR merge —
-# and on manual dispatch. Only the committed web assets are deployed; the
-# dashboard reads its run data from the committed frontend/data/backcast/*.js
-# files, so no model solve or data regeneration happens here.
+# The ONE publish pipeline. Stages the static site (landing page + learning
+# hub + backcast dashboard) and deploys it to GitHub Pages. The dashboard's
+# shared files (manifest.js / benchmark.js / backcast-results.html) are NOT
+# tracked in git: they are assembled here, at deploy time, from the committed
+# per-run registry sidecars + per-(ISO, year) benchmark parts by the
+# stdlib-only scripts/build_manifest.py (seconds, no model deps, no bundles).
+# That is what lets any number of concurrent calibration sessions/runs land on
+# main with zero merge conflicts — each run only ever ADDS its own files, and
+# nothing ever commits a shared generated file.
+#
+# Speed: the checkout is sparse (web roots + scripts only) and blobless, so the
+# ~GBs of model bundles/inputs the repo tracks are never downloaded. End-to-end
+# the deploy takes well under a minute, vs ~8 min for the old
+# regen-commit -> chained-deploy pipeline (which this replaces — the
+# "Regenerate backcast dashboard" workflow is retired).
 on:
   push:
     branches: [main]
-    # Skip deploys when a merge changes nothing the site serves.
+    # Any merge that changes what the site serves, including new calibration
+    # runs (their sidecar/payload/bench parts live under frontend/).
     paths:
       - "*.html"
       - "frontend/**"
       - "learning-hub/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch: {}
-  # The dashboard regeneration commits with GITHUB_TOKEN, whose pushes do not
-  # fire the `push` trigger above (GitHub's recursion guard). Chain off that
-  # workflow's completion so a regenerated dashboard still deploys.
+  # Calibration run / Bulk-merge push to main with GITHUB_TOKEN, whose pushes
+  # do not fire the `push` trigger above (GitHub's recursion guard). Chain off
+  # their completion so a freshly published run still deploys.
   workflow_run:
-    workflows: ["Regenerate backcast dashboard"]
+    workflows: ["Calibration run", "Bulk-merge auto runs"]
     types: [completed]
 
 # Least-privilege token scoped for the official Pages deployment flow.
@@ -36,17 +47,28 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Skip the chained deploy when the upstream workflow failed (nothing new
+    # landed on main); push/dispatch-triggered deploys always run.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout (sparse + blobless — web assets only)
+        # The repo also tracks ~GBs of model bundles/inputs the site never
+        # serves; a sparse, blobless checkout of just the web roots (cone mode
+        # always includes root files like index.html) downloads only the few
+        # MB the site needs instead of the whole pack.
         uses: actions/checkout@v4
+        with:
+          ref: main
+          filter: blob:none
+          sparse-checkout: |
+            frontend
+            learning-hub
+            scripts
 
       - name: Stage the web assets
-        # The repo also tracks ~1.6 GB of model bundles/inputs that the site
-        # never serves; copy only the referenced web roots into _site so the
-        # Pages artifact stays small and fast.
         run: |
           set -euo pipefail
           mkdir -p _site
@@ -55,6 +77,14 @@ jobs:
           [ -d learning-hub ] && cp -r learning-hub _site/
           # Serve files verbatim (no Jekyll processing of the data JS).
           touch _site/.nojekyll
+
+      - name: Assemble the backcast dashboard
+        # Pure-stdlib reducer over the committed registry sidecars + bench
+        # parts -> writes _site/backcast-results.html and
+        # _site/frontend/data/backcast/{manifest,benchmark}.js.
+        run: |
+          set -euo pipefail
+          python3 scripts/build_manifest.py --site-dir _site
           echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
 
       - name: Configure Pages
