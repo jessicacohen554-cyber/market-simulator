@@ -477,6 +477,15 @@ class ScenarioConfig:
     # recover the flat two-block econ curve.
     offer_curve_smoothing_n: int = 6
     offer_curve_smoothing_exp: float = 1.0
+    # Optional midpoint anchor for the econ ramp shape: the fraction of the
+    # lo->pk heat-rate rise reached at the capacity midpoint (t = 0.5),
+    # rendered as a two-segment piecewise-linear ramp f(0)=0, f(0.5)=mid,
+    # f(1)=1. None (default) keeps the t**exp power shape. mid < 0.5 keeps
+    # the middle slices cheap and concentrates the rise in the top of the
+    # curve — e.g. 0.25 prices slice 4 of 6 like a linear ramp's slice 2 —
+    # which the single exp exponent cannot do without also distorting the
+    # bottom. Overrides offer_curve_smoothing_exp when set.
+    offer_curve_smoothing_mid: float | None = None
 
     # Outage capacity comes off the TOP of a CC_REGULAR plant's offer stack
     # instead of pro-rata across its tranches. The default (False) scales
