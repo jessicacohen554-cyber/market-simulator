@@ -2224,6 +2224,21 @@ CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
     55299: 33.1, 55327: 28.2, 55464: 33.8, 55470: 20.9, 58378: 88.8,
 }
 
+# Petra Nova carbon-capture cogen (EIA 58378): classified on its own, outside
+# the CT_CHP offer curve. The 45Q tax credit pays per ton captured, so the
+# plant runs flat-out whenever the capture train is up regardless of energy
+# price — CAMPD shows pure on/off behaviour (out Jan-Aug 2023, roughly half of
+# 2024/2025) at a ~95% when-on capacity factor, never price-following. Modeled
+# as a single tranche forced to PETRA_NOVA_MIN_CF of its net capacity whenever
+# available; the historic facility outage overlay (campd-outages.csv carries
+# its windows) supplies the on/off shape. PETRA_NOVA_PARASITIC_PCT is the
+# capture train's parasitic load — the gap between CAMPD generator output and
+# EIA-923 net delivered (2023: 1-109.0/181.2 = 39.8%; 2024: 1-200.8/339.5 =
+# 40.9%) — replacing the generic merchant-sector BTM share.
+PETRA_NOVA_PLANT_CODE: int = 58378
+PETRA_NOVA_PARASITIC_PCT: float = 40.0
+PETRA_NOVA_MIN_CF: float = 0.92
+
 
 # Per-plant CC_REGULAR committed-tranche % (minimum stable load once started),
 # keyed by EIA plant code. Derived from EPA CAMPD/CEMS TX 2023 hourly gross
@@ -3097,6 +3112,41 @@ def bins_to_fleet(
         )
         if chp_following:
             pct_mr = chp_btm_pct(int(b["Plant_Code"]), str(b["Plant_Group"]))
+        # Petra Nova runs on its own classification (see PETRA_NOVA_* above):
+        # one tranche at the capture train's net capacity, forced to
+        # PETRA_NOVA_MIN_CF whenever the outage overlay says it is up. No
+        # offer-curve bands — the 45Q credit makes it insensitive to price.
+        if chp_following and int(b["Plant_Code"]) == PETRA_NOVA_PLANT_CODE:
+            _pn_zone = str(b["ERCOT_Zone"])
+            if _pn_zone == "Unknown" or _pn_zone not in valid_zones:
+                _pn_zone = config.unknown_zone_default
+            _pn_cap = nameplate * (1.0 - PETRA_NOVA_PARASITIC_PCT / 100.0)
+            _pn_hr = float(b["hr_weighted"])
+            fleet.append(
+                Generator(
+                    unit_id=f"CT_CHP_{_pn_zone}_p{PETRA_NOVA_PLANT_CODE}_ccs",
+                    name=f"{b.get('Plant_Name', 'Petra Nova')} ccs",
+                    zone=_pn_zone,
+                    fuel_type=BIN_GROUP_TO_FUEL["CT_CHP"],
+                    efficiency_bin="CT_CHP",
+                    pmax_mw=_pn_cap,
+                    pmin_mw=0.0,
+                    heat_rate=_pn_hr,
+                    vom=get_vom(BIN_GROUP_TO_FUEL["CT_CHP"]),
+                    emission_rate_co2=get_emission_rate(
+                        BIN_GROUP_TO_FUEL["CT_CHP"], _pn_hr
+                    ),
+                    nox_rate=get_nox_rate(BIN_GROUP_TO_FUEL["CT_CHP"]),
+                    eford=get_eford(BIN_GROUP_TO_FUEL["CT_CHP"]),
+                    online_year=_commission_year(PETRA_NOVA_PLANT_CODE),
+                    is_campd_bin=True,
+                    plant_group="CT_CHP",
+                    bin_label=str(b["Bin_Label"]),
+                    plant_code=PETRA_NOVA_PLANT_CODE,
+                    chp_grid_pmin_mw=PETRA_NOVA_MIN_CF * _pn_cap,
+                )
+            )
+            continue
         if ov is not None:
             pct_mr = ov["pct_mr"]
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
@@ -3303,7 +3353,20 @@ def bins_to_fleet(
                 ]
         else:
             econ_steps = [("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0)]
-        first_econ_suffix = econ_steps[0][0]
+        # Spread the CHP steam-following grid floor across the econ slices in
+        # fill order. Pinning it all on the first slice clips the floor to
+        # that slice's capacity in generators_to_fleet_arrays (min_gen <=
+        # pmax x availability): with the n=6 smoothing ramp a 185 MW floor
+        # (Sweeny) collapsed to one ~57 MW slice, idling the steady steam-host
+        # export the floor exists to force.
+        chp_floor_by_suffix: dict[str, float] = {}
+        _floor_rem = chp_pmin_mw
+        for _suffix, _cap, *_rest in econ_steps:
+            if _floor_rem <= 0.0:
+                break
+            _take = min(_floor_rem, _cap)
+            chp_floor_by_suffix[_suffix] = _take
+            _floor_rem -= _take
 
         # Stepped tranches: (suffix, capacity, heat rate, VOM multiplier,
         # min-run, min-down, start cost). Only the Committed tranche is
@@ -3355,9 +3418,7 @@ def bins_to_fleet(
                     ),
                     coal_supply=coal_supply,
                     plant_code=plant_code,
-                    chp_grid_pmin_mw=(
-                        chp_pmin_mw if suffix == first_econ_suffix else 0.0
-                    ),
+                    chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
                 )
             )
 
@@ -3440,6 +3501,17 @@ def plant_tranche_bands(
                  ("peak", ov["pct_pk"], ov["hr_pk"], False)],
                 is_coal=(fuel == "coal"),
             )
+
+    # Petra Nova (own classification, see PETRA_NOVA_* constants): one band
+    # forced to PETRA_NOVA_MIN_CF of net capacity whenever available.
+    if (plant_code == PETRA_NOVA_PLANT_CODE
+            and group == "CT_CHP"
+            and getattr(config, "chp_steam_following", False)):
+        net_pct = 100.0 - PETRA_NOVA_PARASITIC_PCT
+        return [{
+            "name": "ccs must-run", "cf_lo": 0.0,
+            "cf_hi": round(net_pct, 1), "mult": 1.0, "vom": False,
+        }]
 
     offer = _offer_curve_for_group(group, plant_code, config)
 
