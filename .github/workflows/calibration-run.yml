@@ -2,15 +2,17 @@ name: Calibration run
 
 # Launch one calibration backcast (chosen ISO + year(s)) with per-class
 # offer-curve heat-rate multiplier overrides, persist the bundle, register it
-# on the dashboard and publish it to main — where the deterministic
-# "Regenerate backcast dashboard" workflow rebuilds the shared dashboard files
-# from every registered run and the existing Pages deploy takes it live.
+# on the dashboard and publish it to main. The shared dashboard files
+# (manifest/benchmark/html) are NOT committed by anyone — the "Deploy site to
+# GitHub Pages" workflow (chained off this one's completion) assembles them
+# from the committed registry sidecars + bench parts and takes the site live.
 #
 # Job graph (data flows via artifacts, never re-computation):
 #   solve     -> set up deps, validate inputs, solve, write bundle, UPLOAD it.
 #   dashboard -> DOWNLOAD bundle, render this run's own runs/<id>.js + registry
-#                sidecar, commit them to auto/<run_name>-<sha>, publish to main.
-#   deploy    -> handled downstream by Regenerate dashboard -> Deploy Pages.
+#                sidecar + bench/<ISO>/<year> parts, commit them to
+#                auto/<run_name>-<sha>, publish to main.
+#   deploy    -> handled downstream by Deploy site to GitHub Pages.
 # Re-running only `dashboard` never re-solves (it consumes the solve artifact).
 
 on:
@@ -218,9 +220,10 @@ jobs:
           git fetch origin main
           git checkout -fB "$BRANCH" origin/main
 
-          # Render this run onto the fresh base: writes its own runs/<id>.js +
-          # registry sidecar (and rewrites the shared files locally, which we do
-          # NOT commit). RUN_ID is captured for staging.
+          # Render this run onto the fresh base: writes its own runs/<id>.js,
+          # registry sidecar and bench/<ISO>/<year> parts (the shared
+          # manifest/benchmark/html are gitignored — assembled at deploy time).
+          # RUN_ID is captured for staging.
           RUN_ID=$(python scripts/dashboard_add_run.py \
                      --label "$RUN_NAME" \
                      --bundle "results/calibration/$RUN_NAME" \
@@ -228,15 +231,13 @@ jobs:
           test -n "$RUN_ID"
           echo "run id = $RUN_ID"
 
-          # Stage ONLY this run's own files. The shared manifest/benchmark/html
-          # are regenerated deterministically on main — never hand-committed here.
+          # Stage this run's own files plus any bench parts it changed. Parts
+          # are byte-deterministic, so an unchanged benchmark stages nothing
+          # and concurrent runs that agree on it merge cleanly.
           git add "results/calibration/${RUN_NAME}" \
                   "frontend/data/backcast/registry/${RUN_ID}.json" \
-                  "frontend/data/backcast/runs/${RUN_ID}.js"
-          git restore --staged --worktree \
-            frontend/data/backcast/manifest.js \
-            frontend/data/backcast/benchmark.js \
-            backcast-results.html 2>/dev/null || true
+                  "frontend/data/backcast/runs/${RUN_ID}.js" \
+                  frontend/data/backcast/bench
 
           git commit -m "calibration: ${RUN_NAME} (${RUN_ID})"
 

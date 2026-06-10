@@ -1,6 +1,15 @@
 {
   "id": "2026-06-10-69",
-  "label": "Run-69",
-  "bundle": "results/calibration/Run-69",
-  "iso": "ERCOT"
+  "label": "69",
+  "date": "2026-06-10",
+  "shorthand": "69",
+  "definition": "Run69 (from Run-68): keep measured EIA-923 monthly PRB fuel but revert PRB multipliers to Run-67 values (the x1.18 compensation mispriced the two reporting plants whose real fuel had not changed). Re-base 6 merchant CC_CHP heat rates to eGRID CHP-adjusted PLHTRT (Deer Park 9.51->5.94 etc). CT_CHP curve cheapened -0.08 across committed/econ (1.02/1.12) against its 2023/24 under-run.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-10-69.js",
+  "bundle": "results/calibration/Run-69"
 }

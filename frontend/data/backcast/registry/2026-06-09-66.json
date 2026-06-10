@@ -1,6 +1,15 @@
 {
   "id": "2026-06-09-66",
-  "label": "Run-66",
-  "bundle": "results/calibration/Run-66",
-  "iso": "ERCOT"
+  "label": "66",
+  "date": "2026-06-09",
+  "shorthand": "66",
+  "definition": "Run66 (from Run-65, same offer-curve deltas): CHP BTM pull-out trimmed (merchant 40->35, industrial/commercial 60->50) to raise the CC/CT_CHP dispatchable ceiling toward the observed CAMPD 90%+ CF excursions; also adds ~1 GW of evening-peak supply against the residual 2025 scarcity.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-09-66.js",
+  "bundle": "results/calibration/Run-66"
 }
