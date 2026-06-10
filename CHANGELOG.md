@@ -1,5 +1,73 @@
 # Changelog
 
+## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
+
+Implements the P0 "fix before quoting any forward run" items from
+`docs/peer-review-2026-06.md` (§F). Backcast behavior is unchanged (the
+full suite passes; backcasts solve the weather year itself, where every
+fix below is a no-op); forward runs change materially. **Cache keys
+rotate**: `ScenarioConfig` gained a `mode` field, so previously cached
+scenario-years re-solve on first touch.
+
+- **B1 — retirement screens margin, not gross revenue.** The economic
+  retirement screen now nets each unit's *full* variable cost (fuel + VOM +
+  emission prices; computed even on cached years and threaded as
+  `prior_results["mc_cost"]`) against price before comparing with
+  going-forward fixed cost. Gross revenue let units "cover" FOM with money
+  already spent on fuel — only units that barely ran could ever retire.
+  Take-or-pay coal is charged full fuel cost here (avoidable on a
+  retirement horizon) even though it bids below it in dispatch. The
+  `mc=None` fallback (gross + a warning) survives only for callers that
+  cannot supply costs. Spec §5.2 updated — it documented the same bug.
+  Measured magnitude (ERCOT 2027 screen on 2026 dispatch): 28.0 GW of
+  tranche capacity flags a loss year under the margin screen vs 10.3 GW
+  under gross — 17.7 GW was mis-assessed. PJM barely moves (~34 MW)
+  because its full-net-CONE capacity payment (finding B6, P1 scope)
+  dominates the screen there.
+- **B2/C8 — eastern-ISO forward runs no longer crash.** `QUEUE_CAP_GW` /
+  `QUEUE_CAP_PER_TECH_GW`, `RENEWABLE_INSTALLED_MW`, `RENEWABLE_AVG_CF`
+  and `RENEWABLE_ZONE_ALLOCATION` now carry PJM/MISO/SPP/NYISO/NEISO
+  entries (Tier 3, flagged needs-citation), and `apply_economic_new_entry`
+  raises a clear `KeyError` for any ISO missing queue caps instead of
+  silently building nothing. A 2-year PJM forecast smoke run completes.
+- **C1 — demand growth gap closed.** `_scale_demand` compounds from
+  `config.weather_year`, not `START_YEAR`: 2026 demand is now 2024 actuals
+  × two years of growth instead of 2024 actuals verbatim (an error that
+  compounded through 2050).
+- **B8 — Wright's-Law exponent.** `wright_cost` uses
+  `-log2(1 − learning_rate)`, so a documented "20%/doubling" rate now
+  yields exactly ×0.80 per doubling (was ×0.87); matches the CCS-retrofit
+  path, which already used the correct form and now delegates to it.
+- **B3 — vintage survives aggregation.** All three fleet aggregators carry
+  a capacity-weighted `online_year` into bin representatives (was: reset
+  to the 2000 default, which permanently disqualified every aggregated
+  gas-CC bin from the CCS-retrofit screen and broke local learning
+  attribution).
+- **A3 — storage daily-cycling flag wired in the runner.**
+  `storage_daily_cycling=True` now bounds forecast storage to within-day
+  arbitrage (the backcast script already honored it; the runner ignored
+  it, leaving full-year perfect foresight).
+- **C9 — explicit `ScenarioConfig.mode`.** `"forecast"` (default) /
+  `"backcast"`, validated in `__post_init__`; the renewables loader reads
+  it instead of inferring backcast from `gas_price_override`, so a
+  pinned-gas forecast sensitivity stays a forecast. The calibration
+  scripts set it explicitly.
+- **B10 — known-additions pipeline wired.** New
+  `fleet.load_planned_additions()`: EIA-860 proposed units with
+  construction-committed statuses (U/V/TS), BA-mapped to the ISO,
+  post-snapshot effective years (`EIA860_OPERABLE_VINTAGE`, bumped to
+  2025 with the 2025 Early Release parquets — older effective dates are
+  slipped projects the snapshot has overtaken), zoned by plant lat/lon,
+  injected in their online year (units already due join the first-year
+  fleet). Forecast mode only; an all-non-thermal pipeline (CAISO)
+  returns empty. `runner.py` no longer hard-codes
+  `planned_additions=[]`. ERCOT pipeline: 30 units / 3.95 GW, 2026-29.
+- **Registry**: `parameters.json` / `docs/parameter-citations.md`
+  regenerated for the new constants (and 10 pre-existing missing entries).
+  New tests: retirement margin semantics, queue-cap coverage + loud
+  failure, PJM entry smoke, wright doubling, vintage preservation,
+  planned-additions loader, mode validation, demand-scaling pins.
+
 ## 2026-06-09 (Backcast dashboard — single-run report redesign + diagnostics)
 
 Redesigns the backcast results page around interpreting **one run across all

@@ -26,6 +26,12 @@ class ScenarioConfig:
     # Tier 0 (structural)
     weather_year: int = 2024
     iso: str = "ERCOT"
+    mode: str = "forecast"  # "forecast" | "backcast". Backcast pins the run
+    # to a historical year: renewable capacity resolves to that year's
+    # EIA-860 actuals, measured hourly profiles replace the EIA-930-derived
+    # statistical ones, and planned additions are not injected. This flag —
+    # not the presence of gas_price_override — is the mode signal, so a
+    # forecast sensitivity that pins the gas price stays a forecast.
     voll: float = 5000.0  # $/MWh, ERCOT default
     hours: int = 8760
 
@@ -558,9 +564,16 @@ class ScenarioConfig:
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
-    # Its presence also marks the run as a historical calibration backcast,
-    # so renewable capacity resolves to that year's EIA-860 year-end actual
-    # rather than the forward-projection RENEWABLE_INSTALLED_MW base.
+    # NOTE: this no longer signals backcast mode; set ``mode="backcast"``
+    # explicitly. A forecast may pin gas as a sensitivity without flipping
+    # the renewables loader into historical-actuals mode.
+
+    def __post_init__(self) -> None:
+        if self.mode not in ("forecast", "backcast"):
+            raise ValueError(
+                f"ScenarioConfig.mode must be 'forecast' or 'backcast', "
+                f"got {self.mode!r}"
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -610,6 +623,7 @@ class ScenarioConfig:
 
 TIER_TAGS: dict[str, int] = {
     "weather_year": 0,
+    "mode": 0,
     "iso": 0,
     "voll": 0,
     "hours": 0,

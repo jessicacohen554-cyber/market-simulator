@@ -22,6 +22,24 @@ class TestScenarioConfig(unittest.TestCase):
         modified = base.with_overrides(carbon_price=50.0)
         self.assertNotEqual(base.cache_key(), modified.cache_key())
 
+    def test_mode_defaults_to_forecast(self):
+        self.assertEqual(ScenarioConfig().mode, "forecast")
+
+    def test_mode_backcast_accepted(self):
+        self.assertEqual(
+            ScenarioConfig(mode="backcast").mode, "backcast"
+        )
+
+    def test_invalid_mode_rejected(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(mode="hindcast")
+
+    def test_gas_override_does_not_imply_backcast(self):
+        # A forecast sensitivity may pin gas without flipping the
+        # renewables loader into historical-actuals mode (peer review C9).
+        config = ScenarioConfig(gas_price_override=3.50)
+        self.assertEqual(config.mode, "forecast")
+
     def test_yaml_round_trip(self):
         config = ScenarioConfig(carbon_price=42.0, iso="CAISO", hours=24)
         with tempfile.TemporaryDirectory() as tmp:

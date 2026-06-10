@@ -129,13 +129,14 @@ def test_vintage_monthly_ramp():
 def test_calibration_backcast_uses_eia860_actual_capacity():
     """A calibration backcast resolves capacity to the EIA-860 year-end actual.
 
-    With ``gas_price_override`` set the run is a historical backcast, so 2023
+    With ``mode="backcast"`` set the run is a historical backcast, so 2023
     solar must resolve to the EIA-860 year-end total (~14.9 GW) rather than
     the 38 GW forward-projection ``RENEWABLE_INSTALLED_MW`` constant.
     """
     iso_config = get_iso_config("ERCOT")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="ERCOT", gas_price_override=2.54
+        weather_year=_CAL_YEAR, iso="ERCOT", mode="backcast",
+        gas_price_override=2.54,
     )
     _, wind_cap, _, solar_cap = load_renewable_profiles(
         "ERCOT", _CAL_YEAR, iso_config, config
@@ -149,14 +150,18 @@ def test_calibration_backcast_uses_eia860_actual_capacity():
 def test_forward_run_uses_renewable_installed_mw():
     """A forward run keeps the RENEWABLE_INSTALLED_MW projection base.
 
-    Without ``gas_price_override`` the run is a forward projection (the path a
+    The default ``mode="forecast"`` is a forward projection (the path a
     2026+ simulation year takes), so capacity stays anchored to the
     current-fleet ``RENEWABLE_INSTALLED_MW`` constants regardless of which
-    weather year supplies the CF shape.
+    weather year supplies the CF shape -- even when a gas-price sensitivity
+    pins ``gas_price_override`` (which previously, and wrongly, flipped the
+    loader into backcast mode).
     """
     iso_config = get_iso_config("ERCOT")
-    config = ScenarioConfig(weather_year=_CAL_YEAR, iso="ERCOT")
-    assert config.gas_price_override is None
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="ERCOT", gas_price_override=2.54
+    )
+    assert config.mode == "forecast"
     _, wind_cap, _, solar_cap = load_renewable_profiles(
         "ERCOT", _CAL_YEAR, iso_config, config
     )
@@ -191,7 +196,7 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
 def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
     """A CAISO backcast builds its CF profile from the CISO hourly extract.
 
-    With ``gas_price_override`` set the run is a historical backcast, so the
+    With ``mode="backcast"`` set the run is a historical backcast, so the
     profile is built from the EIA-930 ``CISO hourly`` net generation (the new
     per-BA file-resolution path generalized from the ERCOT-only loader), not
     the EIA-930 distribution. CAISO is multi-zone, so the measured profile is
@@ -203,7 +208,8 @@ def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
     """
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="CAISO", gas_price_override=3.0
+        weather_year=_CAL_YEAR, iso="CAISO", mode="backcast",
+        gas_price_override=3.0,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         "CAISO", _CAL_YEAR, iso_config, config

@@ -10,7 +10,7 @@ blocks of text. Don't restate the question or pad with preamble.
 
 LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: seven ISOs registered in `config/iso_configs.py` — ERCOT (6 zones, the calibrated reference), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO, NEISO — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
 
-**Forecast vs backcast:** the model forecasts by default. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology.
+**Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, plant-specific CEMS emission rates, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology.
 
 ## Stack
 
@@ -68,7 +68,7 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 
 1. Known retirements → 2. Economic retirements (fuel-type-aware thresholds + reliability floor) → 3. Known additions → 4. CCS retrofit screen (existing gas-CC) → 5. Economic new entry → 6. dispatch with RPS as an LP constraint (shadow price feeds next year's entry screen)
 
-Economic retirement uses per-fuel thresholds, now `ScenarioConfig` fields (not hardcoded): coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3× for regulatory/ESG risk; reliability floor prevents thermal below (peak - firm_clean) × 1.15. RPS is **not** a force-build step — it's an annual LP constraint whose dual is the REC price (see methodology spec §1.4, §5).
+Economic retirement screens **inframarginal energy margin** — `Σ (price − full variable cost) × dispatch`, threaded as `prior_results["mc_cost"]`, never gross revenue — against FOM-only going-forward cost, with per-fuel thresholds, now `ScenarioConfig` fields (not hardcoded): coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3× for regulatory/ESG risk; reliability floor prevents thermal below (peak - firm_clean) × 1.15. Known additions are the EIA-860 proposed pipeline (`load_planned_additions`, construction-committed statuses, forecast mode only). RPS is **not** a force-build step — it's an annual LP constraint whose dual is the REC price (see methodology spec §1.4, §5).
 
 CCS retrofit (§5.6): gas-CC units with ≥15 yr life left retrofit when simple payback beats remaining life; capped at 3 GW/yr/ISO, gated on `ccs_retrofit_available_year`.
 
