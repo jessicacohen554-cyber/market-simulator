@@ -92,9 +92,28 @@ def _clean_sheet(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Column names that mark the real header row of an EIA-860 data sheet.
+_HEADER_ANCHORS: frozenset[str] = frozenset({"Utility ID", "Plant Code"})
+
+
 def _read_sheet(data: bytes, sheet: str) -> pd.DataFrame:
-    """Read one EIA-860 sheet (the workbook carries a one-line title)."""
-    return pd.read_excel(io.BytesIO(data), sheet_name=sheet, header=1)
+    """Read one EIA-860 sheet, locating the header row by its anchor columns.
+
+    The final annual release carries a one-line title above the header; the
+    Early Release adds a disclaimer paragraph as a second preamble row, so the
+    header row is found by scanning for the first row containing a known
+    anchor column ("Utility ID" / "Plant Code") rather than hardcoding it.
+    """
+    probe = pd.read_excel(
+        io.BytesIO(data), sheet_name=sheet, header=None, nrows=6
+    )
+    header_row = 1  # final-release default: one title line
+    for i in range(len(probe)):
+        cells = {str(c).strip() for c in probe.iloc[i].tolist()}
+        if cells & _HEADER_ANCHORS:
+            header_row = i
+            break
+    return pd.read_excel(io.BytesIO(data), sheet_name=sheet, header=header_row)
 
 
 def extract_all_workbooks(zip_path: Path, out_dir: Path) -> int:

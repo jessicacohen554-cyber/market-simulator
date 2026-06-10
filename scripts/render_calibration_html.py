@@ -256,7 +256,7 @@ def build_payload(runs: list[tuple[str, Path]],
     bench: dict[int, dict] = {}          # year -> benchmark payload
     model_runs: list[dict] = []          # per run -> {year -> payload}
 
-    for ri, (label, bdir) in enumerate(runs):
+    for label, bdir in runs:
         meta = json.loads((bdir / "meta.json").read_text())
         tr_bands = _tranche_bands_for_bundle(bdir)
         run_years: dict[int, dict] = {}
@@ -306,60 +306,67 @@ def build_payload(runs: list[tuple[str, Path]],
                         for i, row in e923.groupby("plant_id")[mcols]
                         .sum().iterrows()}
 
-            # ---- benchmark payload (build once, on the first run) ----
-            if ri == 0:
-                bplants: dict[str, dict] = {}
-                for code, cn in cn_p.items():
-                    grp = grp_p.get(code)
-                    if grp is None:
-                        continue
-                    cap = float(npl.get(code, 0.0)) or 1.0
-                    e_ann = float(e923_ann.get(code, 0.0)) / 1e6
-                    bplants[str(code)] = {
-                        "name": pnames.get(code, str(code)),
-                        "zone": zone_p.get(code, "?"),
-                        "group": grp, "npl": round(cap),
-                        # No usable CAMPD hourly series (plant absent from CEMS
-                        # or all-NaN, e.g. some waste-coal units): flagged so the
-                        # charts show the model without a misleading flat-zero
-                        # 'actual' comparison.
-                        "nodata": bool(cn.sum() <= 0.0),
-                        "campd": _b64(100.0 * cn / cap),
-                        "c_ann": round(float(cn.sum()) / 1e6, 4),
-                        "c_mon": _monthly_gwh(cn),
-                        "e_ann": round(e_ann, 4),
-                        "btm": round(e_ann * _btm_share(code, grp), 4),
-                        "e_mon": [round(x, 2) for x in e923_mon.get(code,
-                                  np.zeros(12))],
-                    }
-                e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
-                     .to_numpy(float) for s in e930["series"].unique()}
-                # Full EIA-923 net generation per fossil class (TWh) — every
-                # 923 plant of the class, NOT just the ones the model matches.
-                # This is the true class total the generation-mix benchmark and
-                # the zonal Δ-vs-923 are scaled to (matched plants understate
-                # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
-                e923_cls = e923.groupby("klass")["annual_mwh"].sum()
-                # Every actual class is kept (not just the hardcoded MIX_GROUPS)
-                # so the model's real plant classification — e.g. EIA-923-derived
-                # coal ranks COAL_BIT / COAL_SUB / COAL_WC — carries its actual
-                # into the table for every ISO. groups_set picks them up below.
-                groups_set.update(str(g) for g in e923_cls.index)
-                bench[int(year)] = {
-                    "plants": bplants,
-                    "e930": {f: round(float(e.get(f, np.zeros(1)).sum())
-                                      / 1e6, 3)
-                             for f in ("gas", "coal", "nuclear", "wind",
-                                       "solar")},
-                    "classFull": {str(g): round(float(v) / 1e6, 4)
-                                  for g, v in e923_cls.items()},
+            # ---- benchmark payload (newest bundle wins) ----
+            # Rebuilt for every run, so the LAST run in the id-sorted registry
+            # (the newest bundle covering each year) supplies the shared
+            # benchmark. Building it once from run 0 froze the benchmark to
+            # the OLDEST bundle: its plant -> group classification and EIA-923
+            # class totals could predate the current taxonomy (e.g. PJM coal
+            # as one generic COAL, COAL_SUB before the SUB -> COAL_PRB
+            # rename), making every newer run compare against incompatible
+            # groups (-100% "Coal" rows, vanished class heatmaps).
+            bplants: dict[str, dict] = {}
+            for code, cn in cn_p.items():
+                grp = grp_p.get(code)
+                if grp is None:
+                    continue
+                cap = float(npl.get(code, 0.0)) or 1.0
+                e_ann = float(e923_ann.get(code, 0.0)) / 1e6
+                bplants[str(code)] = {
+                    "name": pnames.get(code, str(code)),
+                    "zone": zone_p.get(code, "?"),
+                    "group": grp, "npl": round(cap),
+                    # No usable CAMPD hourly series (plant absent from CEMS
+                    # or all-NaN, e.g. some waste-coal units): flagged so the
+                    # charts show the model without a misleading flat-zero
+                    # 'actual' comparison.
+                    "nodata": bool(cn.sum() <= 0.0),
+                    "campd": _b64(100.0 * cn / cap),
+                    "c_ann": round(float(cn.sum()) / 1e6, 4),
+                    "c_mon": _monthly_gwh(cn),
+                    "e_ann": round(e_ann, 4),
+                    "btm": round(e_ann * _btm_share(code, grp), 4),
+                    "e_mon": [round(x, 2) for x in e923_mon.get(code,
+                              np.zeros(12))],
                 }
-                # Actual historical avg LMP ($/MWh), system hub-average, for the
-                # summary page's model-vs-actual price comparison. Absent for an
-                # ISO-year with no price file -> the card shows model only.
-                actual_lmp = _actual_avg_lmp(meta.get("iso", "ERCOT"), year)
-                if actual_lmp:
-                    bench[int(year)]["avgLMP"] = actual_lmp
+            e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
+                 .to_numpy(float) for s in e930["series"].unique()}
+            # Full EIA-923 net generation per fossil class (TWh) — every
+            # 923 plant of the class, NOT just the ones the model matches.
+            # This is the true class total the generation-mix benchmark and
+            # the zonal Δ-vs-923 are scaled to (matched plants understate
+            # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
+            e923_cls = e923.groupby("klass")["annual_mwh"].sum()
+            # Every actual class is kept (not just the hardcoded MIX_GROUPS)
+            # so the model's real plant classification — e.g. EIA-923-derived
+            # coal ranks COAL_BIT / COAL_PRB / COAL_WC — carries its actual
+            # into the table for every ISO. groups_set picks them up below.
+            groups_set.update(str(g) for g in e923_cls.index)
+            bench[int(year)] = {
+                "plants": bplants,
+                "e930": {f: round(float(e.get(f, np.zeros(1)).sum())
+                                  / 1e6, 3)
+                         for f in ("gas", "coal", "nuclear", "wind",
+                                   "solar")},
+                "classFull": {str(g): round(float(v) / 1e6, 4)
+                              for g, v in e923_cls.items()},
+            }
+            # Actual historical avg LMP ($/MWh), system hub-average, for the
+            # summary page's model-vs-actual price comparison. Absent for an
+            # ISO-year with no price file -> the card shows model only.
+            actual_lmp = _actual_avg_lmp(meta.get("iso", "ERCOT"), year)
+            if actual_lmp:
+                bench[int(year)]["avgLMP"] = actual_lmp
 
             # ---- model payload (per run) ----
             mplants: dict[str, dict] = {}
