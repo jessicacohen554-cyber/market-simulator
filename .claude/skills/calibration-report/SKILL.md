@@ -52,6 +52,13 @@ rebasing:
 Run id = `<bundle date>-<shorthand>`; shorthand + the 1-3 sentence definition
 are auto-derived from each bundle's `run_config.json` model-changes note.
 
+**Retention rule (2026-06-10, user-set): the dashboard keeps only the top 3
+runs per ISO** — for PJM and ERCOT, the 3 most recent (highest-numbered) runs.
+When registering a new run, delete the displaced oldest run's sidecar
+(`registry/<id>.json`) and payload (`runs/<id>.js`) in the same commit, then
+regen/rebuild the manifest. Bundles in `results/calibration/` are kept — only
+the dashboard registration is pruned.
+
 From 2026-06 onward, label **PJM** runs sequentially as `pjm 1 <keyword>`,
 `pjm 2 <keyword>`, ... — a running integer plus a brief keyword descriptor of
 what changed (e.g. `pjm 1 gas-basis`, `pjm 2 ct-hurdle`). The next number is
