@@ -23,6 +23,14 @@ inputs/processed/*.parquet
 !inputs/processed/parasitic_load_factors.parquet
 !inputs/processed/plant_emission_rates.parquet
 
+# Generated backcast dashboard files — assembled from the committed registry
+# sidecars + bench parts by scripts/build_manifest.py (locally for preview, in
+# the Pages deploy for the live site). Never commit them: keeping them out of
+# git is what lets concurrent calibration sessions merge without conflicts.
+/backcast-results.html
+/frontend/data/backcast/manifest.js
+/frontend/data/backcast/benchmark.js
+
 # OS
 .DS_Store
 
