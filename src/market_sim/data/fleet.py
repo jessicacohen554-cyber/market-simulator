@@ -2304,13 +2304,70 @@ CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-def chp_btm_pct(plant_code: int, group: str) -> float:
-    """Behind-the-meter pull-out share (% of nameplate) for a CHP plant."""
-    if group == "ST_CHP":
+@lru_cache(maxsize=8)
+def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
+    """Return ``{plant_code: (chp_pmin_cf, sector_class)}`` for an ISO.
+
+    The per-ISO CHP steam-following data from
+    ``inputs/processed/thermal_tranches_<ISO>.csv`` (written by
+    ``scripts/derive_thermal_tranches.py``): the plant's total must-run floor
+    (CAMPD p2 available-CF where CEMS covers the plant, EIA-923 class CF
+    otherwise — see the row's ``status``) and its EIA-923 sector class
+    (merchant / industrial / commercial) sizing the behind-the-meter share.
+    This is the ISO-generic analogue of the hardcoded ERCOT maps
+    :data:`CHP_PMIN_CF_BY_PLANT` / :data:`CHP_SECTOR_CLASS_BY_PLANT`; empty
+    when the ISO has no artifact or it predates the CHP columns.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "chp_pmin_cf" not in df.columns:
+        return {}
+    out: dict[int, tuple[float | None, str | None]] = {}
+    for r in df.itertuples(index=False):
+        pmin = getattr(r, "chp_pmin_cf", None)
+        sector = getattr(r, "chp_sector", None)
+        sector = str(sector) if isinstance(sector, str) and sector else None
+        if pd.isna(pmin) and sector is None:
+            continue
+        out[int(r.plant_code)] = (
+            None if pd.isna(pmin) else float(pmin), sector,
+        )
+    return out
+
+
+def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
+    """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
+
+    The sector class comes from the ISO's derived artifact
+    (:func:`chp_overrides`, EIA-923 Page 1) when present, else the hardcoded
+    ERCOT map. ST_CHP keeps the near-full-BTM default only when no measured
+    sector classifies it (the 90% was set for ERCOT's tiny chemical
+    host-steam plants, not as a universal cogen property).
+    """
+    _, sector = chp_overrides(iso).get(int(plant_code), (None, None))
+    if sector is None:
+        sector = CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code))
+    if sector is None:
+        return CHP_ST_BTM_PCT if group == "ST_CHP" else (
+            CHP_BTM_PCT_BY_SECTOR["merchant"]
+        )
+    if group == "ST_CHP" and iso.upper() == "ERCOT":
         return CHP_ST_BTM_PCT
-    return CHP_BTM_PCT_BY_SECTOR[
-        CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code), "merchant")
-    ]
+    return CHP_BTM_PCT_BY_SECTOR.get(sector, CHP_BTM_PCT_BY_SECTOR["merchant"])
+
+
+def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
+    """Total must-run CF floor (%) for a CHP plant, or ``None`` for no floor.
+
+    Per-ISO derived artifact first (:func:`chp_overrides`), then the hardcoded
+    ERCOT CAMPD map (:data:`CHP_PMIN_CF_BY_PLANT`).
+    """
+    pmin, _ = chp_overrides(iso).get(int(plant_code), (None, None))
+    if pmin is not None:
+        return pmin
+    return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))
 
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
@@ -3111,7 +3168,10 @@ def bins_to_fleet(
             and getattr(config, "chp_steam_following", False)
         )
         if chp_following:
-            pct_mr = chp_btm_pct(int(b["Plant_Code"]), str(b["Plant_Group"]))
+            pct_mr = chp_btm_pct(
+                int(b["Plant_Code"]), str(b["Plant_Group"]),
+                iso=getattr(config, "iso", "ERCOT"),
+            )
         # Petra Nova runs on its own classification (see PETRA_NOVA_* above):
         # one tranche at the capture train's net capacity, forced to
         # PETRA_NOVA_MIN_CF whenever the outage overlay says it is up. No
@@ -3284,14 +3344,29 @@ def bins_to_fleet(
         # raw nameplate-percentage points zeroed the floor whenever a plant's
         # observed must-run ran below its BTM share (e.g. San Jacinto: pmin
         # 34.6 < BTM 40), leaving inefficient CT_CHP cogens to idle instead of
-        # delivering their steady steam-following export. Only CAMPD-covered
-        # plants have a floor; the rest export surplus only.
+        # delivering their steady steam-following export. The floor comes from
+        # the ISO's derived artifact (CAMPD p2, EIA-923 CF fallback) with the
+        # hardcoded ERCOT CAMPD map behind it; plants with neither export
+        # surplus only.
         chp_pmin_mw = 0.0
         if chp_following:
-            pmin_cf = CHP_PMIN_CF_BY_PLANT.get(plant_code)
+            pmin_cf = chp_pmin_cf(
+                plant_code, iso=getattr(config, "iso", "ERCOT")
+            )
             if pmin_cf is not None:
                 grid_mr_cf = max(0.0, pmin_cf * (1.0 - pct_mr / 100.0))
-                chp_pmin_mw = min(grid_mr_cf / 100.0 * nameplate, econ_cap)
+                floor_mw = grid_mr_cf / 100.0 * nameplate
+                # The floor is carried by the econ slices, so it can be no
+                # larger than the econ band. When the committed tranche leaves
+                # too little econ room (CAMPD-grounded committed shares run
+                # 45-65% on cogens), shift the shortfall from committed into
+                # econ — total grid capacity is unchanged, and the always-on
+                # steam base takes priority over how the dispatchable
+                # remainder is banded.
+                shift = min(max(0.0, floor_mw - econ_cap), committed_cap)
+                committed_cap -= shift
+                econ_cap += shift
+                chp_pmin_mw = min(floor_mw, econ_cap)
 
         # Economic tranche(s). By default one tranche at econ_hr; the offer
         # curve (or the standalone econ split) replaces it with a rising
@@ -3531,7 +3606,9 @@ def plant_tranche_bands(
             pct_mr = config.coal_prb_mustrun_override
     if (group in ("CC_CHP", "CT_CHP", "ST_CHP")
             and getattr(config, "chp_steam_following", False)):
-        pct_mr = chp_btm_pct(plant_code, group)
+        pct_mr = chp_btm_pct(
+            plant_code, group, iso=getattr(config, "iso", "ERCOT")
+        )
     pct_mc = float(b["pct_mc"])
     if offer is not None and "pct_committed" in offer:
         pct_mc = float(offer["pct_committed"])
