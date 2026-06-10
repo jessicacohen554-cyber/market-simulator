@@ -129,3 +129,44 @@ coal price verification against EIA-923 Texas fuel receipts.
 -
 
 ---
+
+### 2026-06-09 — PJM — pjm 2 hydro-ps (results/calibration/pjm_2_hydro_ps)
+
+- **Benchmark:** EIA-930 / EIA-923 / CAMPD, 2023 + 2024; actual hub LMP
+- **Calibration years:** 2023, 2024
+- **Model changes:** LP budget hydro (76 plants, ~3.3 GW, EIA-923 monthly
+  budgets), EIA-860 pumped storage (~5.0 GW, 10 h, RTE 0.80), OTHER must-run
+  injection un-gated for non-ERCOT (PS held out), EIA-860 2025 ER fleet
+  basis, COAL_SUB dead knob removed (subbit → COAL_PRB). Offer curves carried
+  unchanged from `pjm_n6_tuned`.
+
+| Diagnostic | Status | Notes |
+|---|---|---|
+| 1. Generation mix | PARTIAL | gas +7% vs 930 (was +10%); coal −12/−16% vs 930 (was −2/−9%) — see findings |
+| 2. Price duration curve | PASS | hours >$500: 11 (2023) / 3 (2024), was ~48; slack 9.6 / 1.9 GWh, was 17.7 / 13.5 |
+| 3. Average price | PASS | 2023: 28.28 vs 29.33 DA / 28.44 RT actual (old 32.7); 2024: 26.44 vs 29.78 DA (old 31.8). Jul/Aug spike eliminated (29.5/30.1 vs old 45.5/54.5) |
+| 4. Capacity factors | PARTIAL | CT_PEAKER 16.5 vs 29.5 TWh actual; COAL_BIT 91.8 vs 105.7 (2024) |
+
+**Findings:**
+
+- The July/August VOLL price spikes were structural scarcity from the missing
+  hydro / pumped-storage / OTHER supply, not offer-curve error. With them in
+  the LP the price level and shape land on actuals with the *old* curves.
+- Coal and CT now under-dispatch because their tuned curves compensated for
+  the scarcity regime: peaks are now served by PS (model PS discharge ~9-10
+  TWh/yr vs ~3-4 actual — no cycling cost/outages on PS yet), and coal econ
+  bands clear less at the lower price level.
+- Nuclear +2.4% vs 930 after the EIA-860 2025 ER refresh (fleet revision).
+- Oil still ~0 vs 0.6-0.9 TWh actual — needs winter gas (measured monthly /
+  per-plant gas pricing) to bind.
+
+**Actions taken / next:**
+
+- Registered `pjm 2 hydro-ps`; dashboard benchmark now regenerates from the
+  newest bundle (stale `pjm_8zone` removed).
+- Next tuning run: re-tune CT_PEAKER / COAL_BIT bands for the corrected
+  system (knobs now route correctly); consider a PS throughput cost or
+  availability derate to pull PS toward its ~3-4 TWh actual; evaluate
+  `gas_plant_monthly_fuel_pricing` for the Jan-2024 winter spike.
+
+---
