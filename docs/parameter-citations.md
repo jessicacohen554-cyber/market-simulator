@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-06-03. Every numeric input to the model traces to a primary source
+_Generated 2026-06-10. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**534 parameters registered** (232 flagged `needs-citation`).
+**601 parameters registered** (279 flagged `needs-citation`).
 
 
 ## Calibration
@@ -171,6 +171,16 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_per_tech_gw.CAISO.offshore_wind` | 3.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.geothermal` | 2.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.offshore_wind` | 0.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.geothermal` | 0.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.offshore_wind` | 0.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.geothermal` | 0.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.offshore_wind` | 2.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.geothermal` | 0.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.offshore_wind` | 1.5 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.geothermal` | 0.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.offshore_wind` | 2.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.geothermal` | 0.0 | 2 | engineering judgment, EGS resource potential |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.offshore_wind` | 0.0 | 2 | Gulf coast not yet leased. Source: BOEM |  | auto-generated, needs-citation |
 | `scenario.electrolyzer_efficiency_override` | None | 2 | overrides lookup |  | auto-generated, needs-citation |
 | `scenario.electrolyzer_type` | pem | 1 | "pem" or "alkaline" — sets H2 fuel cost |  | auto-generated, needs-citation |
 | `scenario.h2_available_year` | 2035 | 1 | was 2032. | 2032 | auto-generated |
@@ -243,7 +253,8 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_wind.mid` | 8.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `gas_basis_differential.CAISO` | 1.2 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
 | `gas_basis_differential.ERCOT` | -0.5 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
-| `gas_basis_differential.PJM` | 0.3 | 2 | TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify |  | auto-generated, needs-citation |
+| `gas_basis_differential.NYISO` | 0.55 | 2 | EIA-923 delivered-gas basis (see below) |  | auto-generated, needs-citation |
+| `gas_basis_differential.PJM` | 0.67 | 2 | TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify |  | auto-generated, needs-citation |
 | `gas_monthly_seasonality` | {"1": 1.15, "2": 1.1, "3": 1.02, "4":… | 2 | EIA Henry Hub monthly spot prices | 2024 |  |
 | `global_annual_deployment_gw.gas_cc` | 20.0 | 2 | was 25. IEA WEO 2025. | 2025 | auto-generated |
 | `henry_hub_trajectories.high` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
@@ -252,6 +263,11 @@ inline comment and still need a dated primary source — search the table for
 | `oil_price_per_mmbtu` | 18.0 | 2 | Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam … | 2023 | auto-generated |
 | `queue_cap_per_tech_gw.CAISO.gas_cc` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.gas_cc` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.gas_cc` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.gas_cc` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.gas_cc` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.gas_cc` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.gas_cc` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
 | `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
 | `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
@@ -279,6 +295,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
 | `scenario.eac_price_solar` | 0.0 | 1 | $/MWh |  | auto-generated, needs-citation |
 | `scenario.eac_price_wind` | 0.0 | 1 | $/MWh, onshore wind REC |  | auto-generated, needs-citation |
+| `scenario.gas_plant_monthly_fuel_pricing` | False | 2 | Per-plant monthly gas pricing. OFF by default: every gas generator … |  | auto-generated, needs-citation |
 | `scenario.gas_price_override` | None | 3 | When set, pins the annual |  | auto-generated, needs-citation |
 | `scenario.gas_price_path` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.gas_seasonality` | True | 2 | Market simulator model design decision | 2026-05 |  |
@@ -289,6 +306,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.gas_st_offsummer_mustrun` | 0.0 | 3 | Off-summer (Oct-Apr) ST_GAS reliability min-gen floor, as a fractio… |  | auto-generated, needs-citation |
 | `scenario.gas_st_peak_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.gas_st_summer_mustrun` | 0.0 | 3 | Legacy gas-steam (ST_GAS) summer reliability treatment. When gas_st… |  | auto-generated, needs-citation |
+| `scenario.nearby_fuel_price_fallback` | False | 3 | Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True… |  | auto-generated, needs-citation |
+| `scenario.nearby_fuel_price_min_state_plants` | 2 | 3 | state-mean sample floor; |  | auto-generated, needs-citation |
 | `wright_reference_gw.gas_cc` | 1220.0 | 2 | was 1200. IEA WEO 2025. | 2025 | auto-generated |
 
 ## Market Design
@@ -345,6 +364,7 @@ inline comment and still need a dated primary source — search the table for
 | `hydrogen_turbine_params.h2_ct.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |
 | `nuclear_monthly_cf.CAISO` | [1.0, 0.99, 0.96, 0.95, 0.97, 1.0, 1.… | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
 | `nuclear_monthly_cf.ERCOT` | [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, … | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
+| `scenario.historic_outage_overlay` | True | 2 | Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC… |  | auto-generated, needs-citation |
 | `scenario.outage_source` | statistical | 3 | Tier 3 (calibration) — thermal availability source. "statistical" (… |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_coal` | 1.3 | 2 | coal faces higher effective FOM |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -373,9 +393,12 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_storage.high` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.low` | 0.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.mid` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `pumped_storage_duration_hours` | 10.0 | 2 | Pumped-storage hydro fleet parameters (EIA-860 PS units enter the s… | 2023 | auto-generated |
+| `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
 | `scenario.storage_capacity_value` | True | 2 | Storage new-entry value stack. ``storage_capacity_value`` globally … |  | auto-generated, needs-citation |
+| `scenario.storage_daily_cycling` | False | 2 | When True, each storage unit's SOC |  | auto-generated, needs-citation |
 | `scenario.storage_degradation` | True | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.storage_deployment` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.storage_rte_4hr` | 0.85 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
@@ -486,7 +509,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.egs_pmin_fraction` | 0.2 | 2 | EGS turn-down floor (fraction of rated) |  | auto-generated, needs-citation |
 | `scenario.hours` | 8760 | 0 | Market simulator model design decision | 2026-05 |  |
 | `scenario.iso` | ERCOT | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.mode` | forecast | 0 | "forecast" \| "backcast". Backcast pins the run |  | auto-generated, needs-citation |
 | `scenario.must_run_cf` | 0.85 | 3 | assumed CF for CHP must-run emissions post-processing |  | auto-generated, needs-citation |
+| `scenario.plant_level_fleet` | False | 3 | Tier 3 (calibration) — keep the non-ERCOT fleet at full per-plant g… |  | auto-generated, needs-citation |
 | `scenario.plant_registry_path` | inputs/master-plant-registry.csv | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.use_campd_bins` | True | 2 | Tier 2 (expert/sensitivity) — CAMPD operational binning When True t… |  | auto-generated, needs-citation |
 | `scenario.weather_year` | 2024 | 0 | Market simulator model design decision | 2026-05 |  |
@@ -554,6 +579,11 @@ inline comment and still need a dated primary source — search the table for
 | `nuclear_monthly_cf_by_year.ERCOT` | {"2023": [1.0, 1.0, 0.89, 0.75, 0.78,… | 2 | Per-year nuclear monthly capacity factor derived from EIA-923 net g… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.CAISO.nuclear` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.nuclear` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.nuclear` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.nuclear` | 0.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.nuclear` | 0.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.nuclear` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.nuclear` | 0.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.ccs_capture_rate` | 0.9 | 2 | fraction of CO2 captured by CCUS |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
@@ -578,16 +608,20 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.fixed_om_coal` | 40.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `scenario.fixed_om_gas_cc` | 12.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `scenario.fixed_om_gas_ct` | 8.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.gas_offer_curve` | False | 3 | Tier 3 (calibration) — give the non-ERCOT per-plant gas fleet a ste… |  | auto-generated, needs-citation |
 | `scenario.gas_st_startup_spread` | False | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.heat_rate_bin_count` | None | 2 | Override default bin count per fuel type. |  | auto-generated, needs-citation |
 | `scenario.ira_ccus_45q_last_year` | 2032 | 2 | §45Q CCUS credit: extended but phasing out post-2032. | 2032 | auto-generated |
 | `scenario.offer_curve_by_group` | {} | 2 | Unified thermal offer-curve parameterization (supersedes the legacy… |  | auto-generated, needs-citation |
+| `scenario.offer_curve_smoothing_exp` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.offer_curve_smoothing_n` | 6 | 2 | N-slice smoothing of the economic offer curve. When offer_curve_smo… |  | auto-generated, needs-citation |
 | `scenario.plant_tranche_config_path` | None | 2 | Optional per-plant tranche-config override CSV (one row per plant w… |  | auto-generated, needs-citation |
 | `vom.biomass` | 5.0 | 2 | NREL ATB 2024 — biomass (fuel handling raises O&M) | 2024 | auto-generated |
 | `vom.coal` | 4.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `vom.gas_cc` | 2.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `vom.gas_ct` | 3.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `vom.gas_st` | 4.0 | 2 | NREL ATB 2024 — legacy gas steam (higher O&M than CC) | 2024 | auto-generated |
+| `vom.hydro` | 1.4 | 2 | NREL ATB 2024 — conventional hydropower | 2024 | auto-generated |
 | `vom.nuclear` | 2.5 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `vom.oil` | 4.5 | 2 | NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam) | 2024 | auto-generated |
 | `vom.solar` | 0.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
@@ -616,21 +650,54 @@ inline comment and still need a dated primary source — search the table for
 | `global_annual_deployment_gw.wind` | 130.0 | 2 | was 120. IRENA 2025. | 2025 | auto-generated |
 | `inflation_rate` | 0.022 | 2 | Assumed long-run inflation rate for nominal-to-real conversion. Use… |  | auto-generated, needs-citation |
 | `mmbtu_per_mwh` | 3.412 | 2 | MMBtu per MWh — thermodynamic identity, used to convert the derived… |  | auto-generated, needs-citation |
+| `queue_cap_gw.MISO` | 10 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
+| `queue_cap_gw.NEISO` | 4 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
+| `queue_cap_gw.NYISO` | 4 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
+| `queue_cap_gw.PJM` | 10 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
+| `queue_cap_gw.SPP` | 6 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.CAISO.solar` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.CAISO.wind` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.solar` | 5.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.ERCOT.wind` | 5.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.solar` | 6.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.MISO.wind` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.solar` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NEISO.wind` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.solar` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.NYISO.wind` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.solar` | 6.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.PJM.wind` | 1.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.solar` | 3.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `queue_cap_per_tech_gw.SPP.wind` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `real_dollar_base_year` | 2026 | 2 | Source: model convention, matches simulation start year |  | auto-generated, needs-citation |
 | `renewable_avg_cf.CAISO.solar` | 0.28 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_avg_cf.CAISO.wind` | 0.3 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_avg_cf.ERCOT.solar` | 0.27 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_avg_cf.ERCOT.wind` | 0.35 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.MISO.solar` | 0.22 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.MISO.wind` | 0.34 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.NEISO.solar` | 0.15 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.NEISO.wind` | 0.3 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.NYISO.solar` | 0.15 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.NYISO.wind` | 0.26 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_avg_cf.PJM.solar` | 0.19 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_avg_cf.PJM.wind` | 0.31 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.SPP.solar` | 0.24 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
+| `renewable_avg_cf.SPP.wind` | 0.41 | 2 | Annual-average renewable capacity factors (fraction) by ISO and tec… | 2024 | auto-generated |
 | `renewable_installed_mw.CAISO.solar` | 22000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.CAISO.wind` | 7000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.ERCOT.solar` | 38000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.ERCOT.wind` | 42000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.MISO.solar` | 7000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.MISO.wind` | 32000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.NEISO.solar` | 2700.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.NEISO.wind` | 1400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.NYISO.solar` | 1500.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.SPP.solar` | 600.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.SPP.wind` | 34000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `wecc_export_cap_mw` | 5000.0 | 2 | CAISO export capability to WECC (MW). Source: placeholder pending E… |  | auto-generated, needs-citation |
 | `wright_reference_gw.compressed_air` | 1.5 | 2 | GW global adiabatic/diabatic CAES — Huntorf, McIntosh, |  | auto-generated, needs-citation |
 | `wright_reference_gw.flow_battery` | 3.0 | 2 | GW global installed vanadium-redox flow. Source: PNNL 2023, | 2023 | auto-generated |

@@ -74,6 +74,30 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
         "solar": "SP15",
         "offshore_wind": "NP15",
     },
+    # Eastern-ISO siting zones: Tier 3, the zone holding the bulk of each
+    # technology's current fleet / pipeline. PJM wind sits in the western
+    # (ComEd, IL/IN belt) zone, PJM solar in Dominion (the VA build wave),
+    # PJM offshore off the NJ coast (EMAAC). MISO wind is the IA/MN belt
+    # (North); SPP wind the OK/KS belt (South). NYISO utility wind/solar
+    # are upstate-west; offshore is the NY Bight off Long Island. NEISO
+    # wind is Maine (North), solar CT, offshore the MA/RI lease areas.
+    "PJM": {
+        "wind": "PJM_ComEd",
+        "solar": "PJM_Dominion",
+        "offshore_wind": "PJM_EMAAC",
+    },
+    "MISO": {"wind": "MISO-North", "solar": "MISO-Central"},
+    "SPP": {"wind": "SPP-South", "solar": "SPP-South"},
+    "NYISO": {
+        "wind": "Upstate_West",
+        "solar": "Upstate_West",
+        "offshore_wind": "Long_Island",
+    },
+    "NEISO": {
+        "wind": "North",
+        "solar": "Connecticut",
+        "offshore_wind": "Boston",
+    },
 }
 
 # EIA-860 operable wind/solar generator parquets, used to distribute
@@ -100,8 +124,9 @@ _PROPOSED_HIGH_CONFIDENCE: frozenset[str] = frozenset({"U", "V", "TS", "P"})
 
 # Year the operable EIA-860 snapshot was last refreshed; proposed plants
 # with an ``Effective Year`` strictly greater than this are pulled in as
-# augmentations to the operable schedule.
-_EIA860_OPERABLE_VINTAGE: int = 2024
+# augmentations to the operable schedule. Single source of truth lives in
+# data/fleet.py next to the thermal planned-additions loader.
+from market_sim.data.fleet import EIA860_OPERABLE_VINTAGE as _EIA860_OPERABLE_VINTAGE  # noqa: E501
 
 _TECHNOLOGY_TO_FUEL: dict[str, str] = {
     "Solar Photovoltaic": "solar",
@@ -654,12 +679,13 @@ def load_renewable_profiles(
     for fuel in _RENEWABLE_FUELS:
         monthly = _eia860_monthly_capacity(iso, fuel, zone_names, year)
         if monthly is not None:
-            # A calibration backcast (signaled by an explicit
-            # gas_price_override) is pinned to a historical year, so the
-            # installed capacity is that year's EIA-860 year-end total
-            # rather than RENEWABLE_INSTALLED_MW — the current-fleet base
-            # used as the starting point for forward projections.
-            is_backcast = config.gas_price_override is not None
+            # A calibration backcast (config.mode == "backcast", set
+            # explicitly — never inferred from gas_price_override) is
+            # pinned to a historical year, so the installed capacity is
+            # that year's EIA-860 year-end total rather than
+            # RENEWABLE_INSTALLED_MW — the current-fleet base used as the
+            # starting point for forward projections.
+            is_backcast = config.mode == "backcast"
             if is_backcast:
                 installed_mw = float(monthly[:, -1].sum())
             else:
