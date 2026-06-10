@@ -54,6 +54,10 @@ class StorageUnit(BaseModel):
     eta_charge: float = 1.0
     eta_discharge: float = 1.0
     zone_idx: int = 0
+    # Dispatch cost per MWh discharged (added to the LP discharge slot).
+    # Zero for batteries; pumped storage carries the calibrated throughput
+    # adder (see ScenarioConfig.pumped_storage_dispatch_adder).
+    vom: float = 0.0
 
 
 @dataclass
@@ -70,6 +74,7 @@ class StorageArrays:
     eta_dis: np.ndarray
     zone_idx: np.ndarray
     tech_names: np.ndarray
+    vom: np.ndarray
 
     @property
     def n_storage(self) -> int:
@@ -94,6 +99,7 @@ def storage_units_to_arrays(
         eta_dis=np.array([u.eta_discharge for u in units], dtype=float),
         zone_idx=np.array([zone_to_idx[u.zone] for u in units], dtype=int),
         tech_names=np.array([u.tech_name for u in units], dtype=str),
+        vom=np.array([u.vom for u in units], dtype=float),
     )
 
 
@@ -285,11 +291,13 @@ def load_eia860_storage(
         for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
         if per_zone_power.get(zone, 0.0) > 0.0
     ]
-    units.extend(load_eia860_pumped_storage(iso, year))
+    units.extend(load_eia860_pumped_storage(iso, year, config))
     return units
 
 
-def load_eia860_pumped_storage(iso: str, year: int) -> list[StorageUnit]:
+def load_eia860_pumped_storage(
+    iso: str, year: int, config: ScenarioConfig | None = None
+) -> list[StorageUnit]:
     """Build the pumped-storage hydro fleet from the EIA-860 generator data.
 
     Pumped storage is reported on the EIA-860 *generator* schedule (prime
@@ -342,6 +350,10 @@ def load_eia860_pumped_storage(iso: str, year: int) -> list[StorageUnit]:
         per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
 
     eta = PUMPED_STORAGE_RTE ** 0.5
+    adder = (
+        float(getattr(config, "pumped_storage_dispatch_adder", 0.0))
+        if config is not None else 0.0
+    )
     return [
         StorageUnit(
             unit_id=f"{zone}_eia860_pumped_storage",
@@ -354,6 +366,7 @@ def load_eia860_pumped_storage(iso: str, year: int) -> list[StorageUnit]:
             eta_charge=eta,
             eta_discharge=eta,
             zone_idx=z_idx,
+            vom=adder,
         )
         for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
         if per_zone_power.get(zone, 0.0) > 0.0
