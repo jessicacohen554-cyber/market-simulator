@@ -19,6 +19,8 @@ from pydantic import BaseModel
 from market_sim.config.constants import (
     DEFAULT_MARKET_DESIGN,
     MARKET_DESIGN,
+    PUMPED_STORAGE_DURATION_HOURS,
+    PUMPED_STORAGE_RTE,
     STORAGE_ANNUAL_BUILD_CAP_MW,
     STORAGE_BASE_FLEET_MW,
     STORAGE_DEGRADATION_REPLACEMENT_FRACTION,
@@ -205,8 +207,10 @@ def load_eia860_storage(
     Reads the EIA-860 operable energy-storage schedule, keeps units online
     by the end of ``year``, assigns each to a model zone via the eGRID
     ORIS->zone lookup, and aggregates power and energy capacity per zone
-    into one ``StorageUnit`` each. This grounds a calibration backcast in
-    the historical battery fleet rather than the forward-looking
+    into one ``StorageUnit`` each. Pumped-storage hydro (reported on the
+    generator schedule, not the energy-storage schedule) is appended via
+    :func:`load_eia860_pumped_storage`. This grounds a calibration backcast
+    in the historical storage fleet rather than the forward-looking
     ``STORAGE_BASE_FLEET_MW`` scenario constant.
 
     EIA-860 does not report round-trip efficiency, so the 4-hour lithium-ion
@@ -267,13 +271,86 @@ def load_eia860_storage(
         per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
-    return [
+    units = [
         StorageUnit(
             unit_id=f"{zone}_eia860_storage",
             zone=zone,
             tech_name="li_ion",
             power_cap_mw=per_zone_power[zone],
             energy_cap_mwh=per_zone_energy[zone],
+            eta_charge=eta,
+            eta_discharge=eta,
+            zone_idx=z_idx,
+        )
+        for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
+        if per_zone_power.get(zone, 0.0) > 0.0
+    ]
+    units.extend(load_eia860_pumped_storage(iso, year))
+    return units
+
+
+def load_eia860_pumped_storage(iso: str, year: int) -> list[StorageUnit]:
+    """Build the pumped-storage hydro fleet from the EIA-860 generator data.
+
+    Pumped storage is reported on the EIA-860 *generator* schedule (prime
+    mover ``PS``), not the battery energy-storage schedule, so the battery
+    loader alone misses it entirely — e.g. PJM's ~5 GW (Bath County, Muddy
+    Run, Yards Creek, Seneca, Smith Mountain), the fleet's largest
+    peak-shaving resource. Each operating PS unit online by the end of
+    ``year`` is aggregated per zone into one ``StorageUnit``. EIA-860 carries
+    no energy capacity or RTE for PS, so the cited fleet-average duration
+    (:data:`PUMPED_STORAGE_DURATION_HOURS`) and round-trip efficiency
+    (:data:`PUMPED_STORAGE_RTE`) constants are applied.
+
+    Returns one ``StorageUnit`` per zone with nonzero PS capacity; empty when
+    the generator parquet is missing or the ISO has no pumped storage.
+    """
+    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    path = EIA_860_DIR / EIA_860_PARQUET_NAME
+    if not path.exists():
+        return []
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return []
+    if not zone_lookup:
+        return []
+
+    df = pd.read_parquet(path)
+    df = df[
+        (df["prime_mover"].astype(str).str.strip().str.upper() == "PS")
+        & (df["status"].astype(str).str.strip().str.upper() == "OP")
+    ]
+    per_zone_power: dict[str, float] = {}
+    for code, p_mw, oy in zip(
+        df["plant_id"],
+        pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce"),
+        pd.to_numeric(df["operating_year"], errors="coerce"),
+    ):
+        if p_mw != p_mw or p_mw <= 0.0:  # NaN or non-positive
+            continue
+        if oy == oy and oy > year:  # commissioned after the backcast year
+            continue
+        try:
+            zone = zone_lookup.get(int(code))
+        except (TypeError, ValueError):
+            zone = None
+        if zone is None:
+            continue
+        per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
+
+    eta = PUMPED_STORAGE_RTE ** 0.5
+    return [
+        StorageUnit(
+            unit_id=f"{zone}_eia860_pumped_storage",
+            zone=zone,
+            tech_name="pumped_storage",
+            power_cap_mw=per_zone_power[zone],
+            energy_cap_mwh=(
+                per_zone_power[zone] * PUMPED_STORAGE_DURATION_HOURS
+            ),
             eta_charge=eta,
             eta_discharge=eta,
             zone_idx=z_idx,

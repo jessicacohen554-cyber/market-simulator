@@ -23,7 +23,13 @@ from market_sim.model.storage import (
     build_default_storage,
     estimate_capacity_value,
     estimate_storage_revenue,
+    load_eia860_pumped_storage,
+    load_eia860_storage,
     storage_units_to_arrays,
+)
+from market_sim.config.constants import (
+    PUMPED_STORAGE_DURATION_HOURS,
+    PUMPED_STORAGE_RTE,
 )
 
 
@@ -616,6 +622,38 @@ class TestStorageDailyCycling(unittest.TestCase):
         # Each day energy-neutral despite active cycling.
         soc = r.storage_soc[0]
         self.assertAlmostEqual(soc[24], soc[0], places=3)
+
+
+class TestEIA860PumpedStorage(unittest.TestCase):
+    """Tests for the EIA-860 pumped-storage hydro fleet loader."""
+
+    def test_pjm_pumped_storage_present(self):
+        # PJM's PS fleet (Bath County, Muddy Run, Yards Creek, Seneca,
+        # Smith Mountain) is ~5 GW; the loader must find it on the EIA-860
+        # generator schedule, which the battery schedule does not cover.
+        units = load_eia860_pumped_storage("PJM", 2024)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 4500.0)
+        self.assertLess(total_mw, 6500.0)
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            # One-way legs combine to the cited round-trip efficiency.
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+
+    def test_ercot_has_no_pumped_storage(self):
+        self.assertEqual(load_eia860_pumped_storage("ERCOT", 2024), [])
+
+    def test_backcast_battery_fleet_includes_pumped_storage(self):
+        units = load_eia860_storage("PJM", 2024, ScenarioConfig())
+        techs = {u.tech_name for u in units}
+        self.assertIn("pumped_storage", techs)
+        self.assertIn("li_ion", techs)
 
 
 if __name__ == "__main__":
