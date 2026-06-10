@@ -5,16 +5,16 @@ CC_CHP,Houston,2,H_CHP2,52120,Freeport Energy,419.3,5.86,1x1,F-class (CHP),60,0,
 CC_CHP,Houston,2,H_CHP2,52132,Power Station 4,156.4,5.73,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,Houston,3,H_CHP3,54676,Oyster Creek Unit VIII,497.9,6.07,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,Houston,4,H_CHP4,55047,Pasadena Cogeneration,815.0,6.63,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,Houston,5,H_CHP5,55327,Baytown Energy Center,932.9,7.04,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,Houston,5,H_CHP5,55299,Channel Energy Center LLC,923.8,6.78,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,Houston,5,H_CHP5,55187,Channelview Cogeneration Plant,918.3,6.94,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,Houston,6,H_CHP6,52088,Texas City Power Plant,450.0,7.3,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,Houston,7,H_CHP7,55464,Deer Park Energy Center,1176.0,9.51,2x1,E/F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,Houston,5,H_CHP5,55327,Baytown Energy Center,932.9,6.14,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,Houston,5,H_CHP5,55299,Channel Energy Center LLC,923.8,5.11,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,Houston,5,H_CHP5,55187,Channelview Cogeneration Plant,918.3,5.74,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,Houston,6,H_CHP6,52088,Texas City Power Plant,450.0,5.81,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,Houston,7,H_CHP7,55464,Deer Park Energy Center,1176.0,5.94,2x1,E/F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,Houston,8,H_CHP8,50815,"Odyssey Energy Altura Cogen, LLC",643.6,10.48,1x1,E-class (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
 CC_CHP,Houston,9,H_CHP9,55470,Green Power 2,611.0,34.75,1x1,Legacy (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
 CC_CHP,South,1,S_CHP1,55313,Ingleside Cogeneration,517.0,5.41,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,South,2,S_CHP2,10554,Formosa Utility Venture Ltd,933.4,5.65,2x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
-CC_CHP,South,3,S_CHP3,55206,Corpus Christi Energy Center,593.3,7.54,1x1,E/F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
+CC_CHP,South,3,S_CHP3,55206,Corpus Christi Energy Center,593.3,5.62,1x1,E/F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,South_Central,1,SC_CHP1,50118,Hal C Weaver Power Plant,138.9,5.06,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_CHP,South_Central,2,SC_CHP2,58151,Central Utility Plant - Texas A&M,45.1,5.58,1x1,F-class (CHP),60,0,30,10,24,4,1.05,,1.0,1.45
 CC_REGULAR,South_Central,3,SC_CHP3,55154,Lost Pines 1 Power Project,609.0,10.83,1x1,E-class (CHP),60,0,35,5,24,4,1.05,,1.0,1.45
