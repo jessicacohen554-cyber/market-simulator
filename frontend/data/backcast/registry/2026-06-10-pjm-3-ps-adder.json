@@ -1,0 +1,6 @@
+{
+  "id": "2026-06-10-pjm-3-ps-adder",
+  "label": "pjm 3 ps-adder",
+  "bundle": "results/calibration/pjm_3_tune",
+  "iso": "PJM"
+}
