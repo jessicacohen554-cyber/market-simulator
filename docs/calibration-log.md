@@ -497,23 +497,26 @@ ramp (finding 2) if the 2024 window becomes a target.
 
 ---
 
-## ERCOT Run 80 — coal tuning: lignite price sweep + PRB sigmoid probes (2026-06-11)
+## ERCOT Runs 80–81 — coal tuning: lignite price sweep + PRB sigmoid probes (2026-06-11)
 
 **Scope:** the run-79 lignite deficit (−12.8% / −23.8% / +0.7% vs EIA-923,
 2023/24/25) and PRB 2024 (−9.9%). Five bundles: `run80a_code_baseline`,
 `run80b_lignite_105`, `run80c_lignite_115`, `run80d_prb_floor_068`,
-`run80e_prb_shaped`. PRB sigmoid held at run-79 defaults in 80a–80c;
-lignite held at the measured $1.45 in 80a/80d/80e.
+`run80e_prb_shaped`. Dashboard: `run80 lignite 1.15` = bundle
+`run80c_lignite_115`; `run81 prb floor` = bundle `run80d_prb_floor_068`
+(both registered as rejected probes; the config of record stays run 79's).
+PRB sigmoid held at run-79 defaults in the lignite probes; lignite held at
+the measured $1.45 in the sigmoid probes.
 
-**Run 80a — rebaseline (keeper).** The exact run-79 config re-run on
+**Rebaseline (`run80a_code_baseline`).** The exact run-79 config re-run on
 current main reproduces run 79's class table to the reported precision in
 every class-year: the post-run-79 merges (E3 HSL loader unification,
 curtailment report unification, CAISO/PJM-gated loader work) do not move
 ERCOT P1 dispatch, and the solve reproduces under highspy 1.14.0 (the
-run-77 caveat does not bite here). Registered on the dashboard as
-`run80 coal tuning` — config unchanged from run 79.
+run-77 caveat does not bite here). Not dashboard-registered (numerically
+identical to run 79).
 
-**Lignite price sweep (80b/80c) — reverted.** Mine-mouth lignite repriced
+**Lignite price sweep (run 80, bundles 80b/80c) — reverted.** Mine-mouth lignite repriced
 $1.45 → $1.05/$1.15 (marginal-extraction-cost framing; mine fixed costs
 sunk under take-or-pay):
 
@@ -530,7 +533,7 @@ $1.45 — it is grounded in operator/EIA cost data. (Hourly coal NRMSE did
 improve under the reprice — 2024 0.229 → 0.202 — recorded for any future
 revisit.)
 
-**PRB sigmoid probes (80d/80e) — negative result, parameters stay.**
+**PRB sigmoid probes (run 81, bundles 80d/80e) — negative result, parameters stay.**
 80d cut the cheap-gas floors one step (baseload 0.78 → 0.68, follower
 0.68 → 0.58): the gradient is strong (~+4.4 TWh PRB per −0.10 floor in
 each cheap-gas year) and 2024/2025 land at +0.1%/0.0%, but 2023 overshoots
