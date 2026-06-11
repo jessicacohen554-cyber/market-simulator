@@ -1151,7 +1151,10 @@ def campd_tranche_fuel_frac(
         return 0.0
     if gen.fuel_type == "coal":
         supply = getattr(gen, "coal_supply", "")
-        if supply == "prb":
+        # PRB == sub-bituminous; one name across ISOs (plant_taxonomy
+        # COAL_SUPPLY_TO_CLASS routes both to COAL_PRB). The curated ERCOT
+        # map tags "prb"; the derived EIA-923 rank CSVs tag "subbituminous".
+        if supply in ("prb", "subbituminous"):
             return coal_prb_passthrough
         if supply == "bituminous":
             return coal_bit_passthrough

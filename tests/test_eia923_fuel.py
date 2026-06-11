@@ -414,6 +414,10 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
             campd_tranche_fuel_frac(gen("bituminous"), 0.7, bit_pt), bit_pt)
         self.assertEqual(
             campd_tranche_fuel_frac(gen("prb"), 0.7, bit_pt), 0.7)
+        # "subbituminous" (the derived EIA-923 rank tag) IS PRB — one name
+        # across ISOs — so it takes the PRB passthrough, not the bit one.
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, bit_pt), 0.7)
         self.assertEqual(
             campd_tranche_fuel_frac(gen("lignite"), 0.7, bit_pt), 1.0)
         self.assertEqual(
