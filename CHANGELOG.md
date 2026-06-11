@@ -173,6 +173,33 @@ untouched (no import node; full suite green minus the known-stale
   derivation still awaits MD/DE/NC/TN (+ MI 2023/2025) CAMPD unit-level
   extracts before `campd-unit-outages-PJM.csv` can be regenerated.
 
+## 2026-06-11 (ERCOT E3 — HSL coverage beyond 2023 + curtailment headline metric)
+
+- **`scripts/build_ercot_hsl.py` builds any backcast year.** 2023 keeps the
+  auto-downloaded UMass 60-Day-SCED path (regeneration verified
+  byte-identical); 2024+ ingests uploaded ERCOT MIS wind/solar
+  power-production reports (NP4-732/737-CD hourly actuals or NP4-733/738-CD
+  5-minute actuals; csv or zip under `inputs/raw-data/ercot-hsl/np6/`),
+  aggregating system-wide actual GEN and actual HSL onto the model's fixed
+  non-leap 8760-hour clock (Feb 29 dropped, fall-back hours averaged,
+  spring-forward gap interpolated). A year without uploads is skipped with
+  a data-needed message — curtailment is never fabricated from
+  delivered-generation data. The EIA cross-check now prefers the EIA-923
+  totals in `calibration_reference.json`.
+- **Per-year HSL profile path.** `renewables.py` resolves
+  `ercot_<year>_hsl_hourly.parquet` for any ERCOT backcast year (was
+  hardcoded to 2023), so 2024–2025 dispatch consumes uncurtailed potential
+  the moment its parquet is built. New public helpers
+  `load_ercot_hsl_hourly()` / `hsl_potential_mw()` expose the reported
+  series and the rescaled potential the dispatch consumed.
+- **Modeled-vs-reported curtailment is a headline ERCOT calibration
+  metric** (the CAISO P6 pattern): `run_calibration.py` and the
+  `run_calibration_full.py` bundle report (table [3e]) print wind/solar
+  potential and modeled curtailment (TWh and %) against ERCOT's reported
+  `HSL − GEN`, plus the monthly GWh shape. First 2023 reading: model
+  curtails wind 2.0% vs 4.7% reported and solar 0.4% vs 6.3% — the model
+  under-curtails.
+
 ## 2026-06-11 (PJM winter fidelity — dual-fuel switching, doc 03 Pack G)
 
 Implements oil/gas dual-fuel switching for the PJM backcast (J2 winter
