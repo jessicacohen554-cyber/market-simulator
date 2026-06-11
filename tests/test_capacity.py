@@ -972,6 +972,13 @@ class TestStateCarbonProgram(unittest.TestCase):
         self.assertAlmostEqual(resolve_carbon_price(config, 2024), 35.23)
         self.assertAlmostEqual(resolve_carbon_price(config, 2025), 28.06)
 
+    def test_nyiso_backcast_years_pay_rggi_allowance_price(self):
+        # RGGI quarterly-auction clearing-price averages (constants.py citation).
+        config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2024)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2023), 13.49)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2024), 20.71)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2025), 22.09)
+
     def test_off_for_isos_without_a_state_program(self):
         # ERCOT/PJM backcasts stay carbon-free: their MC is unchanged.
         for iso in ("ERCOT", "PJM"):
