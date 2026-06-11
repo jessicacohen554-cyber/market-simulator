@@ -192,9 +192,9 @@ is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.p
 | # | Item | Destination | Status |
 |---|---|---|---|
 | U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
-| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10; backcast runs level-only without it |
-| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **missing** (dir absent) — P6 falls back to EIA-930 delivered distribution; no re-curtailment fidelity |
-| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **missing** (dir absent) — P8 keeps static 0.43/0.07/0.50 shares, Tier 3 |
+| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10. OASIS gotcha found 2026-06-11: multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) |
+| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **mostly landed** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; **2025 file covers only Jan–May** — re-download the current 2025 workbook when convenient |
+| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending |
 | U5 | Path 15/26 hourly flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
 | U6 | CARB cap-and-trade auction prices 2023–2025 (optional) | cite into `constants.py` | **not yet in repo** — public auction results are web-searchable from this environment, so P7 can self-serve; no upload strictly required |
 | U7 | CA BTM PV + storage trajectory (optional, forecast P13) | `inputs/raw-data/caiso-btm/` | **missing** — backcast unaffected (net-load convention) |
