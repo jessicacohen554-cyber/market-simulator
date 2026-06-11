@@ -1185,6 +1185,13 @@ def solve_and_persist(
     if bit_overrides:
         recorded_cfg = recorded_cfg.with_overrides(
             **{k: v for k, v in bit_overrides.items() if v is not None})
+    if prb_overrides:
+        # Mirror the solve path: without this, a --prb-* / --chp-* override
+        # run records the ScenarioConfig defaults in run_config.json (the
+        # run80d/run80e bundles carry this gap — their notes/meta hold the
+        # actual values).
+        recorded_cfg = recorded_cfg.with_overrides(
+            **{k: v for k, v in prb_overrides.items() if v is not None})
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
             plant_tranche_config_path=plant_tranche_config)
@@ -2444,6 +2451,13 @@ def main() -> None:
     parser.add_argument("--prb-follower-gas-slope", type=float, default=None,
                         help="Follower-tier PRB sigmoid slope (per $/MMBtu).")
     parser.add_argument(
+        "--chp-startup-covered", action="store_true",
+        help="Exempt CHP classes (CC_CHP/CT_CHP/ST_CHP) from the P1 startup"
+             "-amortization markup: a steam-host-obligated cogen never pays "
+             "a cold start on its own account, so its energy bid carries no "
+             "startup component.",
+    )
+    parser.add_argument(
         "--storage-daily-cycling", action="store_true",
         help="Cap storage to within-day arbitrage: each unit's SOC must "
              "return to its day-start level every 24h (bounds the single-LP "
@@ -2584,6 +2598,10 @@ def main() -> None:
             "coal_prb_passthrough_gas_slope": args.prb_gas_slope,
             "coal_prb_follower_gas_mid": args.prb_follower_gas_mid,
             "coal_prb_follower_gas_slope": args.prb_follower_gas_slope,
+            # The dict is a generic ScenarioConfig override channel
+            # (None entries are dropped); non-PRB calibration toggles
+            # ride along here.
+            "chp_startup_covered": True if args.chp_startup_covered else None,
         },
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
