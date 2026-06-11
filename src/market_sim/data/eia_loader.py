@@ -486,6 +486,41 @@ def load_ercot_nuclear_gen(year: int) -> np.ndarray | None:
     return series.to_numpy(dtype=float)
 
 
+def load_ercot_battery_gen(year: int) -> dict[str, np.ndarray] | None:
+    """Return ERCOT hourly battery discharge and charge (MW) for a year.
+
+    Reads the EIA-930 ``ERCO hourly`` battery series on the same
+    chronological clock as the other benchmark series: ``NG: BAT`` carries
+    the fleet's net discharge and ``NG: UES`` (unspecified energy storage)
+    its net charge as negative MW. The two are folded into non-negative
+    ``{"battery_discharge": ..., "battery_charge": ...}`` arrays of
+    ``(HOURS_PER_YEAR,)``.
+
+    Unlike the fossil/nuclear loaders, hours the BA had not yet begun
+    reporting (ERCOT's battery series starts mid-2024) are kept as NaN
+    rather than gap-filled or rejected, so a partial-coverage year still
+    yields a benchmark over its reported window. Returns ``None`` when the
+    file, the year, or both battery columns are unavailable.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None:
+        return None
+    cols = [c for c in ("NG: BAT", "NG: UES") if c in frame.columns]
+    if not cols:
+        return None
+    # BAT (discharge) and UES (charge) can be nonzero in the same hour, so
+    # positive/negative MW are folded per column — never netted across them.
+    values = frame[cols].to_numpy(dtype=float)
+    if np.isnan(values).all():
+        return None
+    discharge = np.nansum(np.clip(values, 0.0, None), axis=1)
+    charge = np.nansum(np.clip(-values, 0.0, None), axis=1)
+    unreported = np.isnan(values).all(axis=1)
+    discharge[unreported] = np.nan
+    charge[unreported] = np.nan
+    return {"battery_discharge": discharge, "battery_charge": charge}
+
+
 def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     """Return the rows of ``df`` matching the given ISO and year.
 
@@ -874,6 +909,7 @@ def load_demand(
     iso_config: ISOConfig | None = None,
     td_loss_factor: float = 0.0,
     data_dir: Path = DATA_DIR,
+    include_interchange: bool = True,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -908,6 +944,12 @@ def load_demand(
             allocated demand is scaled by ``1 + td_loss_factor``. Defaults
             to ``0.0`` (no gross-up).
         data_dir: Directory containing the EIA-930 parquet extracts.
+        include_interchange: When ``False``, the measured net-interchange
+            schedule is left out of the returned demand (PJM tie-line
+            export; ERCOT DC ties). Callers serving interchange through the
+            priced import/export node instead
+            (:func:`market_sim.model.transmission.build_import_generators`)
+            must disable it here so the export is not counted twice.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -941,6 +983,9 @@ def load_demand(
     assert not np.isnan(raw_mw).any(), f"NaN demand for {iso} {year}"
     assert raw_mw.max() > 0.0, f"Non-positive peak demand for {iso} {year}"
 
+    if not include_interchange:
+        interchange = np.zeros(HOURS_PER_YEAR, dtype=float)
+
     # PJM's import/export "node": add its measured net export to the demand the
     # internal fleet must serve (the demand-profiles ``raw_mw`` is internal
     # load; PJM is a large net exporter, so without this the fleet under-
@@ -949,7 +994,7 @@ def load_demand(
     # Prefer the per-border-zone attribution (export drawn from the zone that
     # carries the tie) over a system-wide spread; fall back to the scalar.
     zone_interchange = None
-    if iso == "PJM":
+    if iso == "PJM" and include_interchange:
         zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
         if zone_interchange is not None:
             logger.info(
