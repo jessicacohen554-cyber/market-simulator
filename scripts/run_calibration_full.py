@@ -2492,6 +2492,27 @@ def main() -> None:
                         help="Bit sigmoid logistic midpoint ($/MMBtu).")
     parser.add_argument("--bit-gas-slope", type=float, default=None,
                         help="Bit sigmoid logistic slope (per $/MMBtu).")
+    # Gas-keyed lignite passthrough sigmoid (ERCOT mine-mouth fleet). Off by
+    # default — turning it on replaces full fuel cost on lignite
+    # above-must-run tranches with a logistic of the monthly delivered gas
+    # price (the bid discounts; the measured ~$1.45/MMBtu delivered price
+    # stays the full-cost anchor).
+    parser.add_argument(
+        "--coal-lignite-sigmoid", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Gas-key the lignite coal passthrough: above-must-run lignite "
+             "tranches get a fuel discount when gas is cheap (mine-mouth "
+             "take-or-pay fixed costs are sunk) rising to full cost when "
+             "dear (coal_lignite_passthrough_* params), tracking the "
+             "lignite-vs-gas-CC merit-order crossover. Off = full fuel cost.")
+    parser.add_argument("--lignite-floor", type=float, default=None,
+                        help="Lignite sigmoid cheap-gas floor.")
+    parser.add_argument("--lignite-ceil", type=float, default=None,
+                        help="Lignite sigmoid dear-gas ceiling.")
+    parser.add_argument("--lignite-gas-mid", type=float, default=None,
+                        help="Lignite sigmoid logistic midpoint ($/MMBtu).")
+    parser.add_argument("--lignite-gas-slope", type=float, default=None,
+                        help="Lignite sigmoid logistic slope (per $/MMBtu).")
     parser.add_argument("--prb-follower-floor", type=float, default=None,
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
@@ -2658,6 +2679,12 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "chp_startup_covered": True if args.chp_startup_covered else None,
+            "coal_lignite_passthrough_sigmoid":
+                True if args.coal_lignite_sigmoid else None,
+            "coal_lignite_passthrough_floor": args.lignite_floor,
+            "coal_lignite_passthrough_ceil": args.lignite_ceil,
+            "coal_lignite_passthrough_gas_mid": args.lignite_gas_mid,
+            "coal_lignite_passthrough_gas_slope": args.lignite_gas_slope,
         },
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
