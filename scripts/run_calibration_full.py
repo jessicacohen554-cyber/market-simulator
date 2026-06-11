@@ -64,11 +64,13 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_eia_hourly_benchmark,
     pjm_net_interchange,
+    load_ercot_battery_gen,
     load_ercot_fossil_gen,
     load_ercot_nuclear_gen,
     load_ercot_renewable_gen,
 )
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
+from market_sim.model.transmission import extend_with_import_node  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _COAL_SUPPLY_TO_CURVE,
     coal_supply_class,
@@ -168,6 +170,8 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     # its CAMPD units return at the ``eff_bin`` branch above.
     if fuel == "coal":
         return "COAL"
+    if fuel == "import":
+        return "import"
     if fuel in {"gas_cc", "gas_cc_ccs"}:
         return "CC_REGULAR"
     if fuel == "gas_ct":
@@ -395,6 +399,38 @@ def _system_frame(
     return pd.concat(rows, ignore_index=True)
 
 
+def _storage_frame(
+    year: int, pass_label: str, result, storage_units,
+) -> pd.DataFrame | None:
+    """Return the long per-storage-unit hourly charge/discharge frame.
+
+    One row per (storage unit, hour) carrying the unit's charge and
+    discharge MW plus its tech (li_ion / pumped_storage) and zone, so the
+    bundle exposes storage throughput the way ``dispatch/`` exposes
+    generator output. Returns ``None`` when the fleet is empty.
+    """
+    if not storage_units or result.storage_discharge is None:
+        return None
+    chg = np.asarray(result.storage_charge, dtype=np.float32)
+    dis = np.asarray(result.storage_discharge, dtype=np.float32)
+    n_storage, T = dis.shape
+    hours = np.tile(np.arange(T, dtype=np.int32), n_storage)
+    rep = lambda vals: np.repeat(np.asarray(vals, dtype=object), T)  # noqa: E731
+    df = pd.DataFrame({
+        "unit_id": rep([u.unit_id for u in storage_units]),
+        "tech": rep([u.tech_name for u in storage_units]),
+        "zone": rep([u.zone for u in storage_units]),
+        "hour": hours,
+        "charge_mw": chg.reshape(-1),
+        "discharge_mw": dis.reshape(-1),
+    })
+    df.insert(0, "pass", pass_label)
+    df.insert(0, "year", np.int16(year))
+    for col in ("pass", "unit_id", "tech", "zone"):
+        df[col] = df[col].astype("category")
+    return df
+
+
 def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     """Return the EIA-930 hourly benchmark series for a year, long format.
 
@@ -402,6 +438,10 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     its bundle is unchanged). Every other ISO is served by the generic per-BA
     benchmark loader, which also carries the BA's net generation and net
     interchange and tolerates a BA-year a few hours short of 8760.
+
+    The ERCOT battery series (``battery_discharge`` / ``battery_charge``)
+    keep NaN over hours the BA had not yet begun reporting them (the series
+    start mid-2024), so a partial year still benchmarks its reported window.
     """
     if iso != "ERCOT":
         return _eia930_frame_generic(year, iso)
@@ -411,6 +451,7 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     if fossil is None or renew is None:
         return None
     nuclear = load_ercot_nuclear_gen(year)
+    battery = load_ercot_battery_gen(year)
     # net generation = Demand + Interchange = load_demand with no gross-up.
     net_gen = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum(axis=0)
     series = {
@@ -419,6 +460,8 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     }
     if nuclear is not None:
         series["nuclear"] = nuclear
+    if battery is not None:
+        series.update(battery)
     out = []
     for name, arr in series.items():
         a = np.asarray(arr, dtype=float)
@@ -868,7 +911,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_mustrun_per_plant", "coal_drop_pof",
                 "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
                 "td_loss_factor", "offer_curve_overrides",
-                "offer_curve_deltas", "git_sha",
+                "offer_curve_deltas", "priced_interchange", "git_sha",
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
@@ -897,16 +940,24 @@ def solve_and_persist(
     prb_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    battery_dispatch_adder: float = 0.0,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
+    priced_interchange: bool = False,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
+    if priced_interchange:
+        # Interchange served by the priced import/export node (external zone
+        # + import tranches + export sinks) instead of the measured schedule;
+        # the bundle's zone set and demand frames follow the extended
+        # topology so they match run_year's solve.
+        iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
@@ -932,6 +983,7 @@ def solve_and_persist(
         group_by_code = _fleet_group_by_code(iso, iso_config)
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
+    storage_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
     passes_seen: set[str] = set()
 
@@ -940,7 +992,8 @@ def solve_and_persist(
         gas_prices[year] = gas_price
         cfg = _calibration_config(year, iso, hours, gas_price)
         demand = load_demand(
-            iso, year, iso_config, td_loss_factor=cfg.td_loss_factor
+            iso, year, iso_config, td_loss_factor=cfg.td_loss_factor,
+            include_interchange=not priced_interchange,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
@@ -976,6 +1029,7 @@ def solve_and_persist(
             prb_overrides=prb_overrides,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
+            battery_dispatch_adder=battery_dispatch_adder,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
@@ -983,6 +1037,7 @@ def solve_and_persist(
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
             must_run_mw=must_run_total,
+            priced_interchange=priced_interchange,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1001,6 +1056,11 @@ def solve_and_persist(
             system_frames.append(
                 _system_frame(year, label, res, demand, zone_names)
             )
+            storage_frame = _storage_frame(
+                year, label, res, p2_state["storage_units"]
+            )
+            if storage_frame is not None:
+                storage_frames.append(storage_frame)
             if is_ercot:
                 btm_frames.append(
                     _btm_frame(year, label, res, context, generation)
@@ -1041,6 +1101,10 @@ def solve_and_persist(
         pd.concat(campd_frames, ignore_index=True).to_parquet(
             run_dir / "campd.parquet", index=False
         )
+    if storage_frames:
+        pd.concat(storage_frames, ignore_index=True).to_parquet(
+            run_dir / "storage.parquet", index=False
+        )
     meta = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "iso": iso, "years": years, "hours": hours,
@@ -1061,12 +1125,14 @@ def solve_and_persist(
             years[0], iso, hours, gas_prices[years[0]]
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
+        "battery_dispatch_adder": battery_dispatch_adder,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
+        "priced_interchange": priced_interchange,
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
@@ -1083,6 +1149,9 @@ def solve_and_persist(
             plant_tranche_config_path=plant_tranche_config)
     if storage_daily_cycling:
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
+    if battery_dispatch_adder:
+        recorded_cfg = recorded_cfg.with_overrides(
+            battery_dispatch_adder=battery_dispatch_adder)
     if gas_offer_curve:
         recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
     if gas_monthly_actuals:
@@ -1251,6 +1320,52 @@ def _print_nonfossil_annual(year, model_twh, e923_annual) -> None:
     rows.append(("TOTAL", f"{tm:7.2f}", f"{te:7.2f}",
                  f"{100.0 * (tm - te) / te:+6.1f}" if te else "—"))
     _print_table(rows)
+
+
+def _print_storage(year, storage_df, e930) -> None:
+    """[3d] Storage throughput — model charge/discharge vs EIA-930 battery.
+
+    The EIA-930 battery benchmark (BAT discharge / UES charge) is NaN over
+    hours the BA had not begun reporting it (ERCOT: mid-2024 onward), so the
+    model is compared over the benchmark's reported window only and the
+    window's coverage is printed alongside.
+    """
+    if storage_df is None or storage_df.empty:
+        return
+    by_tech = storage_df.groupby("tech", observed=True)[
+        ["discharge_mw", "charge_mw"]
+    ].sum() / _MWH_PER_TWH
+    print(f"\n  [3d] Storage throughput — {year}  (model LP vs EIA-930 "
+          "battery series where reported)")
+    rows = [("tech", "dis TWh", "chg TWh")]
+    for tech, r in by_tech.iterrows():
+        rows.append((tech, f"{r['discharge_mw']:7.2f}", f"{r['charge_mw']:7.2f}"))
+    _print_table(rows)
+
+    bench_dis = (e930 or {}).get("battery_discharge")
+    if bench_dis is None:
+        print("    EIA-930 battery series: not reported this year")
+        return
+    bench_chg = e930.get("battery_charge")
+    reported = ~np.isnan(bench_dis)
+    coverage = 100.0 * reported.sum() / len(bench_dis)
+    # Model battery (non-PS) discharge summed over the benchmark's window.
+    batt = storage_df[storage_df["tech"] != "pumped_storage"]
+    hourly = batt.groupby("hour", observed=True)[
+        ["discharge_mw", "charge_mw"]
+    ].sum().reindex(np.arange(len(bench_dis)), fill_value=0.0)
+    m_dis = hourly["discharge_mw"].to_numpy()[reported].sum() / _MWH_PER_TWH
+    m_chg = hourly["charge_mw"].to_numpy()[reported].sum() / _MWH_PER_TWH
+    a_dis = np.nansum(bench_dis) / _MWH_PER_TWH
+    a_chg = (np.nansum(bench_chg) / _MWH_PER_TWH
+             if bench_chg is not None else float("nan"))
+    rows = [("battery (930 window)", "model", "EIA-930", "diff %"),
+            ("discharge TWh", f"{m_dis:7.2f}", f"{a_dis:7.2f}",
+             f"{100.0 * (m_dis - a_dis) / a_dis:+6.1f}" if a_dis else "—"),
+            ("charge TWh", f"{m_chg:7.2f}", f"{a_chg:7.2f}",
+             f"{100.0 * (m_chg - a_chg) / a_chg:+6.1f}" if a_chg else "—")]
+    _print_table(rows)
+    print(f"    benchmark coverage: {coverage:.0f}% of hours reported")
 
 
 def _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
@@ -1492,7 +1607,7 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
         )
         return
 
-    system_p2, btm_p2 = [], []
+    system_p2, btm_p2, storage_p2 = [], [], []
     for sp in states:
         with gzip.open(sp, "rb") as fh:
             state = pickle.load(fh)
@@ -1518,8 +1633,18 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             _system_frame(year, "P2", result, state["demand"], zone_names)
         )
         btm_p2.append(_btm_frame(year, "P2", result, ctx, generation))
+        # Older p2_state pickles predate the storage frame; skip them.
+        storage_frame = _storage_frame(
+            year, "P2", result, state.get("storage_units")
+        )
+        if storage_frame is not None:
+            storage_p2.append(storage_frame)
 
-    for name, frames in (("system", system_p2), ("btm", btm_p2)):
+    for name, frames in (
+        ("system", system_p2), ("btm", btm_p2), ("storage", storage_p2),
+    ):
+        if not frames:
+            continue
         path = bundle / f"{name}.parquet"
         new = pd.concat(frames, ignore_index=True)
         if path.exists():
@@ -1605,6 +1730,10 @@ def _report_generic(
         model = _aggregate_twh(
             (dispatch.groupby("fuel")["mw"].sum() / _MWH_PER_TWH).to_dict()
         )
+        # The priced import/export node's net position is interchange, not
+        # generation — it reports in [2], and excluding it keeps the model
+        # total (gross internal generation) comparable to the EIA-930 total.
+        model.pop("import", None)
         e930_twh = {
             f: float(e930[f].sum()) / _MWH_PER_TWH
             for f in _GENERIC_FUEL_ORDER
@@ -1645,15 +1774,41 @@ def _report_generic(
             print("\n  [2] Net interchange (EIA sign: + = net export)")
             print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
                   f"({ix.mean():+.0f} MW avg)")
-            # PJM adds its measured tie-line net export to demand (the
-            # import/export node), so the fleet serves it; other ISOs are
-            # energy-only with no interchange node.
-            model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+            # Three interchange representations, in order of preference:
+            # the priced import/export node when its units are in the
+            # dispatch (net export = -(import tranches + export sinks));
+            # PJM's measured tie-line schedule added to demand; else the
+            # energy-only zero.
+            node = dispatch[dispatch["fuel"] == "import"]
+            if len(node):
+                model_ix = -(
+                    node.groupby("hour", observed=True)["mw"].sum()
+                    .sort_index().to_numpy(dtype=float)
+                )
+                how = "priced import/export node"
+            else:
+                model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+                how = "served as a scheduled interchange added to demand"
             if model_ix is not None:
                 m_twh = float(model_ix.sum()) / _MWH_PER_TWH
                 print(f"    model            : {m_twh:+.2f} TWh "
-                      f"({model_ix.mean():+.0f} MW avg; served as a scheduled "
-                      "interchange added to demand)")
+                      f"({model_ix.mean():+.0f} MW avg; {how})")
+                n = min(model_ix.shape[0], ix.shape[0])
+                dur_m = np.sort(model_ix[:n])
+                dur_a = np.sort(np.asarray(ix, dtype=float)[:n])
+                rmse = float(np.sqrt(((dur_m - dur_a) ** 2).mean()))
+                pcts = [1, 10, 50, 90, 99]
+                qm = np.percentile(model_ix[:n], pcts)
+                qa = np.percentile(np.asarray(ix, dtype=float)[:n], pcts)
+                print(f"    duration curve   : RMSE {rmse:.0f} MW; "
+                      "p01/p10/p50/p90/p99 model "
+                      + "/".join(f"{v:+.0f}" for v in qm)
+                      + " vs actual "
+                      + "/".join(f"{v:+.0f}" for v in qa))
+                print(f"    import hours     : model "
+                      f"{100.0 * float((model_ix[:n] < 0).mean()):.1f}% vs "
+                      f"actual "
+                      f"{100.0 * float((np.asarray(ix)[:n] < 0).mean()):.1f}%")
             else:
                 print("    model            :    0.00 TWh "
                       "(energy-only; no external interchange node)")
@@ -1707,6 +1862,10 @@ def report_run(run_dir: Path) -> None:
         pd.read_parquet(run_dir / "campd.parquet")
         if (run_dir / "campd.parquet").exists() else None
     )
+    storage_all = (
+        pd.read_parquet(run_dir / "storage.parquet")
+        if (run_dir / "storage.parquet").exists() else None
+    )
     plant_fit_frames: list[pd.DataFrame] = []
     plant_band_frames: list[pd.DataFrame] = []
 
@@ -1757,6 +1916,13 @@ def report_run(run_dir: Path) -> None:
                 _print_nonchp_grid(year, model_hourly, e930, chp_grid_twh)
             _print_thermal_annual(year, model_twh, btm, e923_annual)
             _print_nonfossil_annual(year, model_twh, e923_annual)
+            if storage_all is not None:
+                _print_storage(
+                    year,
+                    storage_all[(storage_all["year"] == year)
+                                & (storage_all["pass"] == pass_label)],
+                    e930,
+                )
             _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
                            btm, e923_annual)
             if e930 is not None:
@@ -1967,6 +2133,14 @@ def main() -> None:
              "perfect-foresight advantage). Off = annual-cyclic (default).",
     )
     parser.add_argument(
+        "--battery-adder", type=float, default=0.0,
+        help="Grid-battery throughput/cycling cost in $/MWh discharged "
+             "(ScenarioConfig.battery_dispatch_adder): degradation + "
+             "ancillary-service opportunity cost the energy-only LP "
+             "otherwise ignores, taming BESS over-cycling. 0 = off "
+             "(default; pumped storage keeps its own adder).",
+    )
+    parser.add_argument(
         "--gas-offer-curve", action="store_true",
         help="Give the non-ERCOT per-plant gas fleet a stepped offer curve "
              "(committed/economic/peaking heat-rate bands) via "
@@ -2019,6 +2193,14 @@ def main() -> None:
         help="Override offer_curve_smoothing_exp (default 1.0 = linear "
              "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
              "(cheap-bottomed), <1 concave (cheap mid/top).")
+    parser.add_argument(
+        "--priced-interchange", action="store_true",
+        help="Serve interchange through the priced import/export node "
+             "(import tranches + export sinks in the ISO's external zone, "
+             "the forward-scenario mechanism) instead of the measured "
+             "schedule added to demand. Used to validate the node's tranche "
+             "calibration against the EIA-930 net-interchange duration "
+             "curve.")
     parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
@@ -2084,6 +2266,7 @@ def main() -> None:
         },
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
+        battery_dispatch_adder=args.battery_adder,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
@@ -2094,6 +2277,7 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
+        priced_interchange=args.priced_interchange,
         note=args.note,
     )
     report_run(run_dir)

@@ -30,15 +30,35 @@ CT_PEAKER, CT_CHP, ST_GAS, COAL):
      physical must-run of an economically-dispatched plant. The dispatch uses
      this floor only where it is structurally meaningful (coal), so gas values
      are recorded for transparency but generally land near zero.
+  5. **Peaking %** (combined cycles only) = the duct-firing / scarcity reach:
+     the share of the plant's demonstrated sustained maximum (P99.5 of online
+     net MW) that it clears in fewer than 5% of its online hours,
+     ``100 x (1 - P95/P99.5)``. Computed on raw net-MW ratios (not the
+     available-CF, whose top tail is distorted by outage-derate windows and
+     the gross-vs-nameplate basis), capped at :data:`_PEAKING_CAP`. A plant
+     that holds one flat full-load plateau derives ~0 (no duct band); a CC
+     whose top capacity only shows up in scarcity hours derives the size of
+     that rarely-used band. Applied per plant in ``bins_to_fleet`` via
+     ``fleet.thermal_tranche_peaking`` (supersedes the offer curve's class
+     ``pct_peaking``).
 
 Per ISO it writes ``inputs/processed/thermal_tranches_{ISO}.csv`` with one row
 per ``(plant_code, plant_group)``. Plants with too little run-time to set a
 reliable floor are written with ``status != ok`` and keep the model's CSV/class
 default.
 
+``--chp-floors-from PATH`` consumes the CHP steam-following floors
+(``chp_pmin_cf`` / ``chp_sector`` and the ``eia923_cf`` fallback rows) from a
+previously committed artifact instead of re-deriving them, so a re-derivation
+of the committed/peaking shares over a different year window (e.g. CAISO P2:
+shares from 2024-25, floors from P3's pooled 2023-25 run) does not silently
+move the must-run layer.
+
 Usage:
     python scripts/derive_thermal_tranches.py --iso PJM --years 2024
     python scripts/derive_thermal_tranches.py --iso ERCOT --years 2023 2024
+    python scripts/derive_thermal_tranches.py --iso CAISO --years 2024 2025 \
+        --chp-floors-from inputs/processed/thermal_tranches_CAISO.csv
 """
 
 from __future__ import annotations
@@ -125,29 +145,41 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
 
 
 # EIA-923-CF fallback floor for CHP plants without CAMPD coverage (small
-# cogens below the CEMS reporting threshold — e.g. every PJM ST_CHP). The
-# plant's pooled EIA-923 class net generation over nameplate approximates its
-# steady steam-following output; the mean-to-floor haircut converts that
-# average CF into a holdable floor (a steady cogen's P2 hourly CF runs a bit
-# under its mean), and the cap keeps a CEMS-invisible plant from being forced
-# on harder than any CAMPD-observed peer.
+# cogens below the CEMS reporting threshold — e.g. every PJM ST_CHP, and the
+# CAISO refinery / Kern EOR cogens, which are largely exempt from Part 75
+# CEMS). The floor is the plant's MINIMUM monthly EIA-923 class CF over the
+# pooled window — the monthly analogue of the CAMPD all-hours P2: a cogen that
+# idles (or stands down for an outage) for a whole month carries no hard steam
+# obligation at that level, while a steady steam host's worst month measures
+# the output it always holds. The month-to-hour haircut converts that monthly
+# average into an hourly holdable floor (within its floor month a plant's
+# hourly P2 runs a bit under the monthly mean), and the cap keeps a
+# CEMS-invisible plant from being forced on harder than any CAMPD-observed
+# peer.
 _CHP_F923_FLOOR_FACTOR: float = 0.85
 _CHP_F923_FLOOR_CAP: float = 75.0
+
+# Days per month (non-leap); February is overridden per year so a leap-year
+# CF is not understated by ~3.4%.
+_DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
 def _chp_f923_floor_cf(
     years: list[int], cap: dict[tuple[int, str], float],
 ) -> dict[tuple[int, str], float]:
-    """Return ``{(code, group): pmin_cf %}`` from EIA-923 class net generation.
+    """Return ``{(code, group): pmin_cf %}`` from EIA-923 monthly generation.
 
-    For each CHP ``(plant, group)`` in the fleet, the pooled EIA-923 net
+    For each CHP ``(plant, group)`` in the fleet, every reported month's net
     generation of that class (canonical :func:`classify_plant` bucketing)
-    divided by ``nameplate x hours`` gives the average CF; scaled by
-    :data:`_CHP_F923_FLOOR_FACTOR` and capped it becomes the total must-run
-    floor for plants the CAMPD extracts cannot see.
+    divided by ``nameplate x hours-in-month`` gives a monthly CF sample; the
+    minimum over the pooled window, scaled by :data:`_CHP_F923_FLOOR_FACTOR`
+    and capped, becomes the total must-run floor for plants the CAMPD
+    extracts cannot see. Plants with no class generation at all are absent
+    from the result (no row, no floor); a plant with a zero month keeps a row
+    with a zero floor — its EIA-923 sector still sizes the BTM share.
     """
     from market_sim.config.plant_taxonomy import classify_plant
-    from market_sim.data.eia923 import load_monthly_generation
+    from market_sim.data.eia923 import load_monthly_generation, monthly_netgen_columns
 
     gen = load_monthly_generation()
     gen = gen[gen["year"].isin(years)].copy()
@@ -157,17 +189,29 @@ def _chp_f923_floor_cf(
             gen["fuel_type"], gen["prime_mover"], gen["chp"], gen["plant_id"]
         )
     ]
-    by_key = gen.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
+    mcols = monthly_netgen_columns()
+    by_key = gen.groupby(["plant_id", "klass", "year"])[mcols].sum()
     out: dict[tuple[int, str], float] = {}
     for (code, group), nameplate in cap.items():
         if group not in _CHP_GROUPS or nameplate <= 0:
             continue
-        mwh = float(by_key.get((code, group), 0.0))
-        if mwh <= 0.0:
+        min_cf, total_mwh = np.inf, 0.0
+        for year in years:
+            try:
+                months = by_key.loc[(code, group, year)].to_numpy(dtype=float)
+            except KeyError:
+                continue
+            hours = np.array(_DAYS_IN_MONTH, dtype=float) * 24.0
+            if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
+                hours[1] = 29.0 * 24.0
+            cf = months / (nameplate * hours)
+            min_cf = min(min_cf, float(np.nanmin(cf)))
+            total_mwh += float(np.nansum(months))
+        if total_mwh <= 0.0 or not np.isfinite(min_cf):
             continue
-        avg_cf = mwh / (nameplate * 8760.0 * len(years))
         out[(code, group)] = min(
-            100.0 * avg_cf * _CHP_F923_FLOOR_FACTOR, _CHP_F923_FLOOR_CAP
+            100.0 * max(min_cf, 0.0) * _CHP_F923_FLOOR_FACTOR,
+            _CHP_F923_FLOOR_CAP,
         )
     return out
 
@@ -189,6 +233,19 @@ _MIN_ONLINE_HOURS: int = 24
 # exceed its EIA nameplate, which would otherwise push the floor above 100%).
 _COMMITTED_CAP: float = 0.70
 _MUSTRUN_CAP: float = 0.60
+
+# Combined-cycle groups that derive a duct-firing peaking share.
+_PEAKING_GROUPS: frozenset[str] = frozenset({"CC_REGULAR", "CC_CHP"})
+
+# Ceiling on the derived peaking share (% of capacity). Duct burners add at
+# most ~20-25% over a CC's unfired base rating; anything larger from the
+# estimator is distribution noise (a cycler with a thin top tail), not duct.
+_PEAKING_CAP: float = 25.0
+
+# The peaking band is the capacity reached in fewer than (100 - P) % of
+# online hours, against the P99.5 demonstrated sustained maximum.
+_PEAKING_BASE_PCTILE: float = 95.0
+_PEAKING_MAX_PCTILE: float = 99.5
 
 
 def _parasitic_factor_map() -> dict[int, float]:
@@ -231,11 +288,61 @@ def _fleet_nameplate_and_group(
     return cap, primary
 
 
+def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
+    """Override the freshly derived CHP floors with a prior artifact's values.
+
+    Every CHP ``(plant_code, plant_group)`` present in ``prior`` keeps its
+    committed ``chp_pmin_cf`` / ``chp_sector`` verbatim (the must-run layer is
+    consumed, not re-derived); prior CHP rows the new derivation no longer
+    emits are appended — verbatim for ``eia923_cf`` fallback rows, or as a
+    floor-only row (``status="chp_floor_only"``, no committed/must-run tranche
+    columns) when the plant was CAMPD-visible in the prior window but not in
+    the new one. CHP rows absent from ``prior`` keep their fresh values.
+    """
+    prior_chp = prior[prior["plant_group"].isin(_CHP_GROUPS)]
+    by_key: dict[tuple[int, str], dict] = {
+        (int(r["plant_code"]), str(r["plant_group"])): r.to_dict()
+        for _, r in prior_chp.iterrows()
+    }
+    seen: set[tuple[int, str]] = set()
+    for row in rows:
+        key = (row["plant_code"], row["plant_group"])
+        if row["plant_group"] not in _CHP_GROUPS:
+            continue
+        if row["status"] not in ("ok", "eia923_cf"):
+            continue  # filtered from the output (rarely_online), not a floor
+        seen.add(key)
+        p = by_key.get(key)
+        if p is not None:
+            row["chp_pmin_cf"] = p.get("chp_pmin_cf")
+            row["chp_sector"] = p.get("chp_sector")
+    for key, p in sorted(by_key.items()):
+        if key in seen:
+            continue
+        if str(p.get("status")) != "eia923_cf":
+            p = dict(
+                p,
+                status="chp_floor_only",
+                committed_pct=None, mustrun_pct=None,
+                p25_cf=None, median_cf=None, online_hours=0,
+            )
+            print(f"  (carrying forward CHP floor for {key[0]} {key[1]}: "
+                  f"CAMPD-visible in the prior window only)")
+        rows.append(p)
+    return rows
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--years", nargs="+", type=int, default=[2024])
     ap.add_argument("--out", default=None)
+    ap.add_argument(
+        "--chp-floors-from", default=None,
+        help="Existing artifact whose CHP steam-following floors "
+             "(chp_pmin_cf / chp_sector, incl. eia923_cf rows) are consumed "
+             "verbatim instead of re-derived.",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
     out_path = Path(args.out) if args.out else (
@@ -253,6 +360,7 @@ def main() -> None:
     # Pool the available-CF samples across the requested years, per (code, group).
     online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
     allhr_cf: dict[tuple[int, str], list[np.ndarray]] = {}
+    online_mw: dict[tuple[int, str], list[np.ndarray]] = {}
     for year in args.years:
         df = campd.load_campd_hourly(states, [year])
         if df.empty:
@@ -283,6 +391,11 @@ def main() -> None:
             allhr_cf.setdefault((code, group), []).append(acf[finite])
             if online.any():
                 online_cf.setdefault((code, group), []).append(acf[online])
+                # Raw net MW over online hours, for the peaking (duct-firing)
+                # estimator: percentile ratios of net MW are basis-free, so
+                # the gross-vs-nameplate mismatch and derate-window spikes
+                # that pollute the available-CF top tail cancel out.
+                online_mw.setdefault((code, group), []).append(series[online])
 
     names = {}
     if iso != "ERCOT":
@@ -329,6 +442,19 @@ def main() -> None:
             "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
             "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
         }
+        # Duct-firing / scarcity peaking share (combined cycles): the share
+        # of the demonstrated sustained maximum that only shows up in the
+        # rarest online hours. Net-MW percentile ratio, so the CF basis
+        # cancels (see module docstring, step 5).
+        if group in _PEAKING_GROUPS:
+            mw = np.concatenate(online_mw[(code, group)])
+            mw_max = float(np.percentile(mw, _PEAKING_MAX_PCTILE))
+            mw_base = float(np.percentile(mw, _PEAKING_BASE_PCTILE))
+            if mw_max > 0.0:
+                row["peaking_pct"] = round(
+                    min(100.0 * max(0.0, 1.0 - mw_base / mw_max),
+                        _PEAKING_CAP), 1,
+                )
         # CHP cogens additionally carry their steam-following total must-run
         # floor (P2 of the all-hours available-CF, the ERCOT
         # CHP_PMIN_CF_BY_PLANT convention) and the EIA-923 sector class that
@@ -362,10 +488,13 @@ def main() -> None:
             "chp_sector": chp_sectors.get(code, ""),
         })
 
+    if args.chp_floors_from:
+        rows = _consume_chp_floors(rows, pd.read_csv(args.chp_floors_from))
+
     out = pd.DataFrame(rows)
-    ok = out[out["status"].isin(["ok", "eia923_cf"])].sort_values(
-        ["plant_group", "plant_code"]
-    )
+    ok = out[
+        out["status"].isin(["ok", "eia923_cf", "chp_floor_only"])
+    ].sort_values(["plant_group", "plant_code"])
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ok.to_csv(out_path, index=False)
 

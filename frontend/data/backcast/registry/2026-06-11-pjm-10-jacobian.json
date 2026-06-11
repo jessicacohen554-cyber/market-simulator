@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-11-pjm-10-jacobian",
+  "label": "pjm 10 jacobian",
+  "date": "2026-06-11",
+  "shorthand": "pjm-10-jacobian",
+  "definition": "pjm 10 jacobian: adopt CC top-of-stack outage derate (probe A) + the jacobian joint-move recipe against its error vector \u2014 CC_REGULAR peak +0.145, CT_PEAKER econ_high -0.135 / econ_low -0.068, COAL_BIT committed -0.089 (probes 10a-10d, 5 pure pairs)",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-11-pjm-10-jacobian.js",
+  "bundle": "results/calibration/pjm_10_jacobian"
+}

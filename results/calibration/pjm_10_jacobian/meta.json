@@ -2,7 +2,8 @@
   "timestamp": "2026-06-11T14:23:08",
   "iso": "PJM",
   "years": [
-    2023
+    2023,
+    2024
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +12,8 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
