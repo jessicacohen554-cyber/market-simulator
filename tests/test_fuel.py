@@ -20,6 +20,7 @@ from market_sim.data.fleet import (
 from market_sim.data.fuel import (
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
+    _prb_monthly_actuals,
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
     resolve_fuel_prices,
@@ -272,19 +273,38 @@ def _coal_gen(supply: str) -> Generator:
 
 
 def test_coal_supply_pricing_uses_year_trajectory():
-    """Lignite and PRB take their per-year delivered cost from the curve."""
+    """Lignite stays on the per-year curve; PRB takes the measured monthly
+    reporter series in historical years (annual trajectory otherwise)."""
     config = ScenarioConfig()
     gens = [_coal_gen("lignite"), _coal_gen("prb"), _coal_gen("")]
     fuel_prices = np.full((3, 24), 2.0)
     apply_coal_supply_pricing(fuel_prices, gens, config, 2024)
     assert np.allclose(fuel_prices[0], COAL_PRICE_LIGNITE_BY_YEAR[2024])
-    # PRB is the year's delivered cost, take-or-pay discounted.
+    # 2024 is historical: PRB prices at the measured EIA-923 PRB reporter
+    # series (January, for a 24-hour horizon), take-or-pay discounted. With
+    # no F923 parquet shipped the flat annual trajectory is the fallback.
+    monthly = _prb_monthly_actuals().get(2024)
+    expected_prb = (
+        monthly[0] if monthly is not None else COAL_PRICE_PRB_BY_YEAR[2024]
+    )
     assert np.allclose(
         fuel_prices[1],
-        COAL_PRICE_PRB_BY_YEAR[2024] * config.coal_prb_contract_passthrough,
+        expected_prb * config.coal_prb_contract_passthrough,
     )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
+
+
+def test_coal_supply_pricing_forward_year_uses_trajectory():
+    """A forward year with no F923 reports prices PRB at the annual curve."""
+    config = ScenarioConfig()
+    gens = [_coal_gen("prb")]
+    fp = np.full((1, 24), 2.0)
+    apply_coal_supply_pricing(fp, gens, config, 2026)
+    assert np.allclose(
+        fp[0],
+        COAL_PRICE_PRB_BY_YEAR[2026] * config.coal_prb_contract_passthrough,
+    )
 
 
 def test_lignite_flat_then_escalates():
