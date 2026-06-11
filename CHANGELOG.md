@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
+
+- **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
+  also writes `inputs/calibration/actual_lmp_hourly_PJM.parquet` (hub-mean
+  hourly RT/DA LMP, 2023–2025, on the model's fixed 8760-hour local
+  calendar) and adds `da_pct`/`rt_pct` duration-curve percentiles to
+  `actual_lmp.json` (existing keys unchanged). The PJM `lmp-data/` exports
+  were already hourly — the `_monthly_` filename is a misnomer.
+- **New `scripts/analyze_lmp_residual.py`** compares a calibration bundle's
+  hourly system price against the actual hourly series: monthly residuals,
+  duration-curve overlay, and a Jul/Aug (configurable) localization by
+  hour-of-day and actual-price band. Findings for pjm-9/pjm-10d in
+  `docs/multi-iso/pjm-lmp-residual.md`: the Jul/Aug residual (−4.9 / −6.4
+  $/MWh in 2023/2024) is a missing afternoon $75–200 price regime
+  (16:00–17:00 −35/−39; actual-≥$75 hours carry 92% of the 2024 gap), not
+  a level bias (p50 matches) — quantified before any reserve/ORDC work, per
+  the J-series sequencing.
+- **J3b prep.** Added TN to `campd.ISO_STATES["PJM"]`; the unit-outage
+  derivation still awaits MD/DE/NC/TN (+ MI 2023/2025) CAMPD unit-level
+  extracts before `campd-unit-outages-PJM.csv` can be regenerated.
+
 ## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
 
 Implements the P0 "fix before quoting any forward run" items from
