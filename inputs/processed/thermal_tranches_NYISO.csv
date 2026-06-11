@@ -1,0 +1,79 @@
+plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,p25_cf,median_cf,chp_pmin_cf,chp_sector,peaking_pct
+10521,CC_CHP,Lederle Laboratories,eia923_cf,21.7,0,,,,,23.6,industrial,
+10617,CC_CHP,CH Resources Beaver Falls,ok,79.8,378,12.5,0.0,69.2,97.7,0.0,merchant,9.0
+10725,CC_CHP,Selkirk Cogen,ok,596.6,2690,16.6,0.0,37.8,50.6,0.0,merchant,12.5
+50006,CC_CHP,Linden Cogen Plant,eia923_cf,915.3,0,,,,,39.4,merchant,
+50368,CC_CHP,Cornell University Central Heat,eia923_cf,29.9,0,,,,,51.0,commercial,
+50449,CC_CHP,Indeck Silver Springs Energy Center,ok,52.3,4712,26.8,0.0,84.1,88.0,0.0,merchant,5.4
+50450,CC_CHP,Indeck Oswego Energy Center,ok,67.8,4305,26.5,0.0,72.3,76.7,0.0,merchant,3.3
+50451,CC_CHP,Indeck Yerkes Energy Center,ok,65.8,2762,25.8,0.0,65.3,68.4,0.0,merchant,3.5
+50458,CC_CHP,Indeck Corinth Energy Center,ok,125.5,11985,70.0,0.0,98.0,101.2,0.0,merchant,1.5
+52168,CC_CHP,Riverbay,ok,40.6,9962,29.6,0.0,29.6,39.9,0.0,commercial,3.8
+54041,CC_CHP,Lockport Energy Associates LP,ok,219.0,4857,20.5,0.0,39.8,52.5,0.0,merchant,6.8
+54076,CC_CHP,Indeck Olean Energy Center,ok,79.2,2319,34.0,0.0,82.1,85.9,0.0,merchant,11.9
+54114,CC_CHP,Kennedy International Airport Cogen,ok,123.2,21301,24.4,0.0,39.8,61.8,0.0,merchant,3.3
+54131,CC_CHP,World Generation X,ok,55.7,14636,57.5,0.0,64.6,68.2,0.0,merchant,6.5
+54547,CC_CHP,Sithe Independence Station,ok,996.4,22335,19.5,0.0,53.1,85.9,0.0,merchant,3.5
+54914,CC_CHP,Brooklyn Navy Yard Cogeneration,ok,260.0,25649,66.9,0.0,73.8,78.8,0.0,merchant,3.3
+56259,CC_CHP,Empire Generating Co LLC,ok,580.0,22199,35.9,0.0,59.5,81.9,0.0,merchant,6.2
+2539,CC_REGULAR,Bethlehem Energy Center,ok,812.7,24573,29.2,0.0,64.2,74.2,,,3.7
+7314,CC_REGULAR,Richard M Flynn,ok,199.5,10801,18.5,0.0,34.6,38.1,,,9.1
+10190,CC_REGULAR,Castleton Energy Center,ok,92.0,5855,18.5,0.0,60.9,64.1,,,5.5
+10620,CC_REGULAR,Carthage Energy LLC,ok,61.1,269,25.2,0.0,80.2,89.1,,,7.8
+10621,CC_REGULAR,CH Resources Syracuse,ok,86.2,1166,37.1,0.0,89.6,95.1,,,4.2
+50292,CC_REGULAR,Bethpage Power Plant,ok,129.0,22440,28.3,0.0,60.5,99.2,,,4.9
+50744,CC_REGULAR,Sterling Power Plant,ok,54.8,566,16.9,0.0,62.0,78.5,,,2.2
+50978,CC_REGULAR,Carr Street Generating Station,ok,58.0,8747,55.2,0.0,69.0,119.0,,,1.2
+54034,CC_REGULAR,Rensselaer Cogen,ok,79.4,1687,42.8,0.0,81.9,95.7,,,0.0
+54574,CC_REGULAR,Saranac Facility,ok,237.8,10805,21.4,0.0,29.4,70.2,,,25.0
+54592,CC_REGULAR,Massena Energy Facility,ok,81.0,1025,39.3,0.0,61.7,63.0,,,3.6
+54593,CC_REGULAR,Batavia Power Plant,ok,48.8,579,18.4,0.0,71.7,77.9,,,2.2
+55375,CC_REGULAR,Astoria Energy,ok,558.0,24366,70.0,0.0,150.0,150.0,,,2.8
+55405,CC_REGULAR,Athens Generating Plant,ok,984.4,15164,34.1,0.0,67.7,100.3,,,5.2
+56188,CC_REGULAR,Pinelawn Power LLC,ok,74.5,3984,51.2,0.0,71.1,79.2,,,2.5
+56196,CC_REGULAR,Zeltmann,ok,662.0,22795,29.8,0.0,61.2,77.3,,,0.4
+56234,CC_REGULAR,Caithness Long Island Energy Center,ok,317.3,22476,70.0,0.0,90.5,97.4,,,2.7
+56940,CC_REGULAR,CPV Valley Energy Center,ok,654.2,22925,52.7,0.0,93.6,98.0,,,2.1
+57185,CC_REGULAR,Cricket Valley Energy,ok,1016.1,23689,27.7,0.0,46.1,66.1,,,5.7
+50136,CT_CHP,South Oaks Hospital,eia923_cf,0.5,0,,,,,75.0,commercial,
+50203,CT_CHP,US Gypsum Oakfield,eia923_cf,4.9,0,,,,,1.9,industrial,
+50427,CT_CHP,Bronx Zoo,eia923_cf,2.6,0,,,,,55.3,commercial,
+54149,CT_CHP,Stony Brook Cogen Plant,ok,44.5,23466,70.0,0.0,134.8,146.1,0.0,merchant,
+57789,CT_CHP,Peak Power 1 Cogen,eia923_cf,6.0,0,,,,,25.1,commercial,
+58167,CT_CHP,William Floyd School District,eia923_cf,2.6,0,,,,,0.0,commercial,
+58186,CT_CHP,HVCC Cogen Plant,eia923_cf,5.4,0,,,,,18.7,commercial,
+58507,CT_CHP,Montefieor Medical Center Moses Division,eia923_cf,4.8,0,,,,,37.3,commercial,
+61238,CT_CHP,New York Presbyterian Hospital- 68th Street,eia923_cf,7.7,0,,,,,43.9,commercial,
+61488,CT_CHP,NYU LANGONE HEALTH,eia923_cf,7.5,0,,,,,40.1,commercial,
+63236,CT_CHP,Kings Plaza Total Energy Plant (TEP),eia923_cf,12.8,0,,,,,9.8,commercial,
+2494,CT_PEAKER,Gowanus Gas Turbines Generating,ok,282.0,1727,5.7,0.0,6.0,12.1,,,
+2499,CT_PEAKER,Narrows Gas Turbines Generating,ok,269.0,2723,6.3,0.0,12.6,25.3,,,
+2503,CT_PEAKER,59th Street,ok,14.5,77,70.0,0.0,96.6,96.6,,,
+2628,CT_PEAKER,Hillburn,ok,33.1,149,6.0,0.0,24.2,66.5,,,
+2632,CT_PEAKER,Shoemaker,ok,33.0,119,6.1,0.0,24.2,69.7,,,
+2679,CT_PEAKER,Plant No 2 Freeport,ok,49.0,2401,14.3,0.0,81.6,87.8,,,
+7869,CT_PEAKER,Glenwood Landing,ok,85.1,6845,10.6,0.0,55.2,102.2,,,
+7909,CT_PEAKER,Vernon Boulevard,ok,79.9,6936,25.0,0.0,51.3,91.4,,,
+7910,CT_PEAKER,Joseph J Seymour Power Project,ok,79.9,4901,23.8,0.0,51.3,87.6,,,
+7912,CT_PEAKER,Brentwood,ok,45.0,3357,26.7,0.0,88.9,102.2,,,
+7913,CT_PEAKER,Hell Gate,ok,79.5,6479,22.6,0.0,51.6,86.8,,,
+7914,CT_PEAKER,Harlem River Yard,ok,79.5,6639,16.4,0.0,51.6,54.1,,,
+7915,CT_PEAKER,North 1st,ok,46.0,5202,28.3,0.0,95.7,100.0,,,
+8053,CT_PEAKER,Pouch,ok,44.7,4838,55.9,0.0,98.4,102.9,,,
+55699,CT_PEAKER,Bayswater Peaking Facility LLC,ok,55.8,5742,32.3,0.0,48.4,80.6,,,
+55786,CT_PEAKER,Edgewood Energy LLC,ok,85.0,3153,13.6,0.0,50.6,83.5,,,
+56032,CT_PEAKER,Equus Freeport Power,ok,94.0,4576,11.7,0.0,43.6,50.0,,,
+2493,ST_CHP,East River,ok,309.5,26253,32.0,0.0,67.2,98.5,30.0,merchant,
+10025,ST_CHP,"RED-Rochester, LLC",eia923_cf,119.6,0,,,,,11.3,industrial,
+54099,ST_CHP,Ticonderoga Mill,eia923_cf,41.0,0,,,,,6.4,industrial,
+2480,ST_GAS,Danskammer Generating Station,ok,497.3,346,9.9,0.0,13.1,30.8,,,
+2490,ST_GAS,Arthur Kill Generating Station,ok,876.6,21104,11.0,0.0,24.0,30.6,,,
+2500,ST_GAS,Ravenswood,ok,1724.8,24685,10.7,0.0,14.4,15.4,,,
+2511,ST_GAS,E F Barrett,ok,372.2,21956,14.5,0.0,36.0,65.3,,,
+2516,ST_GAS,Northport,ok,1592.2,25264,10.7,0.0,26.8,40.5,,,
+2517,ST_GAS,Port Jefferson,ok,385.0,9829,10.4,0.0,11.9,22.6,,,
+2527,ST_GAS,Greenidge Generation LLC,ok,104.5,24817,65.1,0.0,69.9,72.7,,,
+2625,ST_GAS,Bowline Point,ok,1159.6,6993,16.5,0.0,46.4,86.5,,,
+2682,ST_GAS,S A Carlson,ok,45.0,3913,70.0,0.0,75.6,84.4,,,
+8006,ST_GAS,Roseton Generating Facility,ok,1222.0,3200,13.5,0.0,27.1,28.5,,,
+8906,ST_GAS,Astoria Generating Station,ok,923.2,11405,17.8,0.0,18.1,43.0,,,
