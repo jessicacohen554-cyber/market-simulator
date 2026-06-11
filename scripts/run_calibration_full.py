@@ -1766,6 +1766,38 @@ def _aggregate_twh(by_fuel: dict[str, float]) -> dict[str, float]:
     return out
 
 
+def _priced_node_fit_rmse(iso: str, net_export: np.ndarray) -> float | None:
+    """Return the offline priced-node duration-curve fit RMSE (MW), or None.
+
+    The lower-bound duration-curve RMSE of ``constants.IMPORT_TRANCHES`` /
+    ``EXPORT_TRANCHES[iso]`` against the measured net-export series, free of
+    any modeled price (scripts/derive_import_tranches.py measured-only mode).
+    The node's achievable net-export levels are the partial sums of the
+    blocks in price-merit order; each measured hour is placed on its nearest
+    level (the optimal price-orthogonal placement). ``None`` when the ISO has
+    no priced node configured.
+    """
+    from market_sim.config.constants import EXPORT_TRANCHES, IMPORT_TRANCHES
+
+    imports = IMPORT_TRANCHES.get(iso, [])
+    sinks = EXPORT_TRANCHES.get(iso, [])
+    if not imports and not sinks:
+        return None
+    total_imp = sum(c for _, c, _ in imports)
+    levels = [-total_imp]
+    running = -total_imp
+    for _, c, _ in sorted(imports, key=lambda t: -t[2]):
+        running += c
+        levels.append(running)
+    for _, c, _ in sorted(sinks, key=lambda t: -t[2]):
+        running += c
+        levels.append(running)
+    lv = np.array(sorted(levels), dtype=float)
+    mids = (lv[:-1] + lv[1:]) / 2.0
+    placed = lv[np.searchsorted(mids, net_export)]
+    return float(np.sqrt(((np.sort(placed) - np.sort(net_export)) ** 2).mean()))
+
+
 def _print_curtailment_vs_reported(
     year: int, iso: str, dispatch: pd.DataFrame, label: str = "1b"
 ) -> None:
@@ -2058,6 +2090,16 @@ def _report_generic(
             print("\n  [2] Net interchange (EIA sign: + = net export)")
             print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
                   f"({ix.mean():+.0f} MW avg)")
+            # Offline priced-node fit RMSE (the P9 deliverable): the lowest
+            # duration-curve RMSE the configured tranche capacities can reach
+            # against this measured series, free of the modeled price. The
+            # modeled line below should approach this once the price level is
+            # calibrated (P11/P12); a gap means the modeled price, not the
+            # tranche capacities, is off.
+            fit_rmse = _priced_node_fit_rmse(iso, np.asarray(ix, dtype=float))
+            if fit_rmse is not None:
+                print(f"    priced-node fit  : duration RMSE {fit_rmse:.0f} MW "
+                      "(offline tranche fit, optimal placement; P9)")
             # Three interchange representations, in order of preference:
             # the priced import/export node when its units are in the
             # dispatch (net export = -(import tranches + export sinks));
@@ -2093,6 +2135,20 @@ def _report_generic(
                       f"{100.0 * float((model_ix[:n] < 0).mean()):.1f}% vs "
                       f"actual "
                       f"{100.0 * float((np.asarray(ix)[:n] < 0).mean()):.1f}%")
+                # Diurnal shape: the average 24-hour net-interchange profile.
+                # The duration curve scores the magnitude distribution; the
+                # diurnal correlation scores whether the model imports/exports
+                # at the right hours of the day (neighbor demand is the driver,
+                # so the priced node tracks shape only loosely — see §8.2).
+                whole = n - n % 24
+                if whole >= 24:
+                    d24m = model_ix[:whole].reshape(-1, 24).mean(axis=0)
+                    d24a = (np.asarray(ix, dtype=float)[:whole]
+                            .reshape(-1, 24).mean(axis=0))
+                    corr = float(np.corrcoef(d24m, d24a)[0, 1])
+                    print(f"    diurnal shape    : corr {corr:+.2f}; "
+                          f"model peak->trough {d24m.max() - d24m.min():.0f} MW "
+                          f"vs actual {d24a.max() - d24a.min():.0f} MW")
             else:
                 print("    model            :    0.00 TWh "
                       "(energy-only; no external interchange node)")

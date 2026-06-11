@@ -554,9 +554,11 @@ def _neiso_config() -> ISOConfig:
         Zone(name="Central", iso="NEISO", load_share=0.30),
         Zone(name="Boston", iso="NEISO", load_share=0.21),
         Zone(name="Connecticut", iso="NEISO", load_share=0.29),
-        # HQ_import is a priced-import node (Hydro-Québec Phase II HVDC), not a
-        # load zone, so it carries no load. Priced-import behaviour (the import
-        # supply curve) is deferred to module M4; today it only seeds the tie.
+        # HQ_import is the priced-import node (Hydro-Québec Phase II HVDC plus
+        # the Highgate/NB and NYISO ties added below), not a load zone, so it
+        # carries no load. It holds NEISO's import tranches + export sinks
+        # (constants.IMPORT_TRANCHES/EXPORT_TRANCHES["NEISO"], P9); the priced
+        # supply curve is exercised under --priced-interchange / forward runs.
         Zone(name="HQ_import", iso="NEISO", load_share=0.0),
     ]
     # ISO-NE interface TTCs seeded from the ISO-NE Regional System Plan (RSP)
@@ -591,8 +593,20 @@ def _neiso_config() -> ISOConfig:
         TransferLink(from_zone="Central", to_zone="Connecticut", ttc_mw=3500.0),
         # SEMA/RI export corridor (south-coast path between the load pockets).
         TransferLink(from_zone="Boston", to_zone="Connecticut", ttc_mw=3150.0),
-        # Hydro-Québec Phase II HVDC into NEMA/Boston.
+        # External-import links out of the HQ_import bubble (the priced-node
+        # zone holds NEISO's import tranches + export sinks; P9). Each lands
+        # the neighbor blocks at the border zone they physically tie into.
+        # The sum (~4.4 GW) envelopes the ~4,386 MW deepest measured 2023
+        # import (EIA-930 ISNE). Source: ISO-NE RSP / external-interface
+        # ratings. Tier 3 — verify against ISO-NE interface postings.
+        #   - HQ Phase II HVDC (Sandy Pond) into NEMA/Boston, ~2,000 MW.
         TransferLink(from_zone="HQ_import", to_zone="Boston", ttc_mw=2000.0),
+        #   - Northern import corridor into North: Highgate VT–HQ HVDC
+        #     (~225 MW) + the New England–New Brunswick / Maine ties (~675).
+        TransferLink(from_zone="HQ_import", to_zone="North", ttc_mw=900.0),
+        #   - NYISO ties into Connecticut: Cross-Sound Cable (346 MW) +
+        #     Northport–Norwalk (200 MW) + the NY–NE AC interface (~950).
+        TransferLink(from_zone="HQ_import", to_zone="Connecticut", ttc_mw=1500.0),
     ]
     # ISO-NE energy offer cap is $2,000/MWh. ISO-NE has a Forward
     # Capacity Market (FCM) providing capacity revenue outside the energy

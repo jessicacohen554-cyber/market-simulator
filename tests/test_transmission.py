@@ -423,6 +423,52 @@ class TestGenericImportNode(unittest.TestCase):
         caiso = get_iso_config("CAISO")
         self.assertIs(extend_with_import_node(caiso), caiso)
 
+    def test_nyiso_neiso_blocks_cannot_arbitrage(self):
+        # Every import tranche must price above every export sink, or the LP
+        # would clear phantom import->export flow for free profit (P9).
+        for iso in ("NYISO", "NEISO"):
+            cheapest_import = min(p for _, _, p in IMPORT_TRANCHES[iso])
+            richest_sink = max(p for _, _, p in EXPORT_TRANCHES[iso])
+            self.assertGreater(cheapest_import, richest_sink, iso)
+
+    def test_nyiso_neiso_node_units_live_in_external_zone(self):
+        for iso, zone in (("NYISO", "NYISO_external"), ("NEISO", "HQ_import")):
+            units = build_import_generators(iso) + build_export_sinks(iso)
+            self.assertTrue(units, iso)
+            for g in units:
+                self.assertEqual(g.zone, zone, iso)
+                self.assertEqual(g.fuel_type, "import", iso)
+                self.assertEqual(g.heat_rate, 0.0, iso)
+
+    def test_nyiso_imports_are_priced_in_neighbor_merit_order(self):
+        # The tranche VOM carries the neighbor-hub proxy directly (no fuel
+        # cost), cheapest first: HQ hydro < Ontario < PJM < ISO-NE < scarcity.
+        prices = [g.vom for g in build_import_generators("NYISO")]
+        self.assertEqual(prices, sorted(prices))
+
+    def test_extend_with_import_node_appends_nyiso_external(self):
+        base = get_iso_config("NYISO")
+        extended = extend_with_import_node(base)
+        self.assertEqual(
+            extended.zone_names, [*base.zone_names, "NYISO_external"]
+        )
+        self.assertEqual(
+            extended.n_links, base.n_links + len(IMPORT_NODE_LINKS["NYISO"])
+        )
+        self.assertEqual(extended.zones[-1].load_share, 0.0)
+        extended.validate_topology()
+        # Idempotent, and the 5-zone backcast config is untouched.
+        self.assertIs(extend_with_import_node(extended), extended)
+        self.assertEqual(len(base.zones), 5)
+
+    def test_neiso_topology_already_carries_its_node(self):
+        # NEISO bakes HQ_import (plus the Highgate/NB and NY-tie links) into
+        # _neiso_config, like CAISO's WECC_import, so extend is a no-op.
+        neiso = get_iso_config("NEISO")
+        self.assertIn("HQ_import", neiso.zone_names)
+        self.assertIs(extend_with_import_node(neiso), neiso)
+        self.assertTrue(build_import_generators("NEISO"))
+
 
 class TestPjmImportNodeDispatch(unittest.TestCase):
     """End-to-end dispatch through the PJM priced import/export node."""
