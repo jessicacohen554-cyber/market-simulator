@@ -120,8 +120,62 @@ fan out to 79 LP generator-tranches). The run then stops at an **unrelated**
 gap owned by the fuel pack (P7), not P1; it fires after the outage overlay has
 already loaded.
 
-## 4. Upload manifest status (doc-07 U1–U7)
+## 4. Gas pricing, winter basis & RGGI (P7, verified 2026-06-11)
+
+### Measured monthly gas vs. the +0.55 basis seed
+
+`gas_monthly_actuals` is now **default-on for NYISO** (as CAISO), so backcasts
+price gas at the EIA-923 volume-weighted ISO-month delivered cost with the
+nearby-plant/state fallback rather than Henry Hub + the flat +0.55
+`GAS_BASIS_DIFFERENTIAL` seed. All 12 months report receipts in every year
+(2023–2025), so the measured series fully overrides the shaped trajectory.
+
+The measured ISO-average **monthly** basis (delivered − measured Henry Hub) and
+its delta to the +0.55 seed:
+
+| Year | Avg monthly basis | Δ vs +0.55 seed | Winter spike (delivered $/MMBtu) |
+|------|-------------------|------------------|-----------------------------------|
+| 2023 | +0.66             | **+0.11**        | Jan **$10.02** (HH $3.27), Feb $5.62 |
+| 2024 | +0.49             | **−0.07**        | Jan $5.91, Dec $5.28              |
+| 2025 | +0.89             | **+0.34**        | Jan **$8.54**, Dec **$8.20**      |
+
+The annual-average deltas are small (±0.1–0.3), confirming the +0.55 seed is a
+fair *annual* number (it matches the quantity-weighted +0.53/+0.44/+0.55 in
+`constants.py`, which leans toward the high-volume summer low-basis months). But
+the **monthly** series is the point: the implied winter basis reaches **+$2.7
+to +$6.8** in Jan/Feb/Dec — exactly the Transco Z6 NY blowout a single annual
+scalar flattens, and the gas-side input the dual-fuel switch (P13) keys off.
+
+### Winter basis (U4) — NOT landed; falls back to 923
+
+`inputs/raw-data/gas_basis_by_iso_month.csv` is still the **header-only
+template** (zero rows) — the named-hub (Transco Z6 NY / Iroquois) leg is a
+paywalled ICE/Platts product (see `data-acquisition-report.md` §1c), so **U4
+has not landed.** `data.fuel.load_winter_gas_basis()` is wired and tested to
+read it the moment rows appear (per-ISO monthly hub basis, downstate layer),
+but until then it returns `None` and the gas path **falls back to the measured
+EIA-923 ISO-month series** above. That series already carries a strong winter
+shape (Jan-2023 $10.02 vs HH $3.27), just not the full *downstate-only* spike
+that the hub-specific basis would add for NYC/Long-Island plants. Limitation
+recorded; activation path is "fill `gas_basis_by_iso_month.csv` (U4), then the
+loader layers it onto the downstate gas path for P13."
+
+### RGGI carbon — active (default-on)
+
+`STATE_CARBON_PRICE_BY_ISO["NYISO"]` = `{2023: 13.49, 2024: 20.71, 2025: 22.09}`
+($/tCO2), the annual simple mean of each year's four quarterly RGGI auction
+clearing prices (citations in `constants.py` and `parameter-citations.md`).
+Default-on for NYISO backcasts via the same `resolve_carbon_price` machinery
+CAISO uses (`carbon_price=0` → state program). At a ~0.40 tCO2/MWh gas-CC rate
+this adds ~$5.4/MWh (2023) → ~$8.8/MWh (2025) to in-state fossil MC — within
+doc-07 design-decision-4's ~$5–9/MWh band. RGGI carries **no border adjustment**
+on imports (contrast CARB), so the NYISO import node is unaffected. ERCOT/PJM
+stay carbon-free and CAISO keeps its CARB prices — all unchanged.
+
+## 5. Upload manifest status (doc-07 U1–U7)
 
 _P0 (Stage E) — to be written. P1-relevant: **U1 (`NY_2024.parquet`)** is the
 only blocker for the 2024 backcast year and its outage windows; 2023 + 2025
-are complete and current._
+are complete and current. **U4 (gas basis)** and **U6 (RGGI prices)** status:
+U6 satisfied by web-search (RGGI auction results, cited); U4 still absent —
+gas falls back to measured 923 (see §4)._

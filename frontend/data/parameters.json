@@ -2486,6 +2486,42 @@
       "flags": []
     },
     {
+      "param_id": "coal_price_base.NYISO",
+      "display_name": "Coal Price Base / Nyiso",
+      "value": 2.3,
+      "unit": "$/MMBtu",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NY grid coal fleet retired (Somerset/Cayuga, 2020); no 2023+ unit prices off this. Defensive Appalachian-delivered fallback (= PJM). Source: EIA AEO 2024 delivered coal price.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Defensive fallback for any residual/legacy NYISO coal unit; NY grid coal is retired.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
+      "param_id": "state_carbon_price_by_iso.NYISO",
+      "display_name": "State Carbon Price By Iso / Nyiso",
+      "value": {
+        "2023": 13.49,
+        "2024": 20.71,
+        "2025": 22.09
+      },
+      "unit": "$/tCO2",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI quarterly CO2-allowance auction clearing prices, annual simple average of the four current-control-period auctions (uniform clearing price, near-equal quarterly volumes, so the simple mean equals the volume-weighted mean to the cent). 2023: A59 (Mar) $12.50, A60 (Jun) $12.73, A61 (Sep) $13.85, A62 (Dec) $14.88 -> $13.49; 2024: A63 (Mar) $16.00, A64 (Jun) $21.03, A65 (Sep) $25.75, A66 (Dec) $20.05 -> $20.71; 2025: A67 (Mar) $19.76, A68 (Jun) $19.63, A69 (Sep) $22.25, A70 (Dec) $26.73 -> $22.09. RGGI, Inc. auction results press releases. Caveat: RGGI allowances are per short ton CO2 while the model emission rate is per metric tonne (~10.2% conservative understatement).",
+      "source_date": "2025-12",
+      "page_or_table": "",
+      "url": "https://www.rggi.org/auctions/auction-results/prices-volumes",
+      "notes": "RGGI in-state fossil MC for NYISO backcasts (default-on; doc-07 design decision 4). No border adjustment on imports.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -6124,6 +6160,68 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Per-year nuclear monthly capacity factor derived from EIA-923 net generation (the actual staggered refueling cadence each year, not a fixed seasonal average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2). Tier: 3 (calibration)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nuclear_monthly_cf_by_year.NYISO",
+      "display_name": "Nuclear Monthly Cf By Year / Nyiso",
+      "value": {
+        "2023": [
+          1.0,
+          0.98,
+          0.86,
+          0.74,
+          0.99,
+          0.99,
+          0.96,
+          0.97,
+          0.88,
+          0.97,
+          0.99,
+          0.99
+        ],
+        "2024": [
+          0.99,
+          0.99,
+          0.69,
+          1.0,
+          0.99,
+          0.98,
+          0.97,
+          0.89,
+          0.75,
+          0.9,
+          0.98,
+          0.98
+        ],
+        "2025": [
+          0.98,
+          0.98,
+          0.89,
+          0.96,
+          1.0,
+          0.99,
+          0.97,
+          0.98,
+          0.98,
+          0.99,
+          0.97,
+          1.0
+        ]
+      },
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-year nuclear monthly capacity factor derived from EIA-923 net generation (the actual staggered refueling cadence each year, not a fixed seasonal average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2). Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy); re-run with --check after an EIA-923 refresh. Tier: 3 (calibration)",
       "source_date": "",
       "page_or_table": "",
       "url": "",
