@@ -289,3 +289,53 @@ and it lands once the 2025 unit outages are applied (coal 194→171 TWh, LMP
 - *LMP residual +8-16%*: floored by PJM delivered gas (~$3.21/MMBtu = Henry Hub
   + the EIA-923 +0.67 basis) × realistic CC heat rates; closing it fully would
   need an unphysical scale or a gas-cost change, neither warranted.
+
+-----
+
+## ERCOT runs 73-76 — CHP steam floors, Petra Nova, CT/ST seesaw (2026-06-11)
+
+**Baseline Run-72; bundles in `results/calibration/Run-73..76`; dashboard keeps 74/75/76.**
+
+**Structural fixes (Run-73, in `src/market_sim/data/fleet.py`):**
+
+1. *CHP steam-floor clipping.* The steam-following grid floor (`chp_grid_pmin_mw`) was
+   pinned entirely on the FIRST n=6 econ smoothing slice, then clipped to that slice's
+   pmax x availability — Sweeny's intended 185 MW floor collapsed to ~48 MW, Bayou's
+   104 -> ~20 MW, Deer Park's 258 / Baytown's 171 MW similarly. Floors now spread across
+   econ slices in fill order. Sweeny grid LP 497 -> 1,451 GWh, Bayou 244 -> 827. This was
+   the "missing steam obligation component": the data was never missing — the floor was.
+   (The plants' EIA-923 "OTHER" rows are refinery off-gas burned in the same turbines,
+   already injected exogenously as OTHER must-run; no double count.)
+2. *Petra Nova (58378) classified on its own.* Outage windows WERE applied (the facility
+   overlay covers CT_CHP); the miss was price-following when on. Now a single tranche at
+   net-of-capture-parasitic capacity (40%, measured: 1 - 923net/CAMPD = 39.8%/40.9% in
+   2023/24) forced to 92% CF whenever available (45Q makes it price-insensitive).
+   Model 99/184/190 GWh vs 923's 109/201/(no 2025 data).
+
+**Curve walk (resolved multipliers, run57-base deltas in each run_config.json):**
+
+| run | move | outcome |
+|---|---|---|
+| 73 | user-directed: CT_PEAKER committed 1.30->1.10 econ_high 2.08->2.18; ST_GAS peak 4.2->3.2; COAL_PRB 0.65/0.40/1.38/1.505; CC_REGULAR -0.05 all bands; + structural fixes | PRB 2024 -15.5->-12.5; CT overshot +18/+10/+12; ST collapsed -8/-19/-18 (displaced by cheap CTs + 3.5 TWh forced CHP floor energy) |
+| 74 | CT committed walk-back 1.10->1.22; lignite 0.88/0.92 | CT lands +1.0/-12.5/-5.9; ST still -4.7/-15.6/-12.4 |
+| 75 | ST_GAS cheapened 0.60/1.02/1.50 | ST recovers +4.5/-6.7/-2.8; CT slides -4.0/-17.5/-11.0 — CT/ST committed-band seesaw confirmed (~1.5 TWh/unit, matches the Jacobian tool's coupling) |
+| 76 | seesaw split: CT committed 1.22->1.16, ST held | **both land**: CT +3.9/-7.7/-3.0, ST +2.8/-8.6/-5.3, CC_REGULAR +1.9% in 2024, PRB 2024 -13.1 |
+
+**Run-76 vs Run-72 baseline:** CT_PEAKER 2024 -15.5 -> -7.7, COAL_PRB 2024 -15.5 -> -13.1,
+CC_REGULAR 2024 +3.0 -> +1.9, CHP plant-level hourly shape massively better (Sweeny/Bayou/
+Deer Park/Baytown floors real, Petra Nova on its outage windows). Costs: CC_REGULAR 2023
+-3.7 -> -4.7 (the forced CHP grid energy squeezes the CC residual; the -0.05 band cut did
+not offset it in 2023).
+
+**Known residuals a static curve cannot remove:** (1) lignite/PRB/CT 2024 under-runs are
+the cheap-gas-year asymmetry ($2.19 vs $2.54/$3.52) — a gas-keyed band (a la the retired
+PRB sigmoid) is the structural fix; (2) CT_CHP 2025 +31% is 2025 EIA-923 incompleteness
+(ST_CHP shows +4,900% on the same benchmark) — mask 2025 CHP targets before trusting any
+solver move against them; (3) next step: run the Jacobian joint-move solver
+(`scripts/derive_offer_curve_jacobian.py --validate-run Run-76`) instead of further manual
+seesaw steps; consider its CC_REGULAR econ_high-down/peak-up band reshape for the 2023 CC
+under-run.
+
+**Data note:** Run-74+ include the regenerated unit-outage nameplates (Rio Nogales units
+189->223.5 MW, C.R. Wing 77.5->84.9; windows unchanged — ERCOT otherwise unaffected by the
+2026-06-10 multi-ISO outage regeneration).
