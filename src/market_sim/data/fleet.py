@@ -546,6 +546,16 @@ def generators_to_fleet_arrays(
                 "unit-outage derate (%s %d): %d plant-tranches derated",
                 _iso or "ERCOT", config.weather_year, applied_u,
             )
+        if not masks and not ufac:
+            # A backcast year with no measured windows in either layer (e.g.
+            # CAISO 2023: no CA unit-level CEMS extract until upload U1 lands)
+            # silently degrades to the statistical WEFOR/POF model; say so,
+            # and record it in the run's model_changes_note.
+            logger.warning(
+                "outage_source='historic' but no outage windows cover %s %d; "
+                "availability is statistical-only for this year",
+                _iso or "ERCOT", config.weather_year,
+            )
         # The partial-outage derate below is an ERCOT-only extract (CAMPD
         # CF-ceiling plateaus keyed to ERCOT plant codes); other ISOs carry no
         # such file, so it stays scoped to ERCOT.
