@@ -224,3 +224,51 @@ def test_aggregate_np6_hourly_missing_uploads_returns_none(tmp_path,
     out = capsys.readouterr().out
     assert "no NP6" in out
     assert "never" in out  # "Curtailment is never fabricated..."
+
+
+# ---------------------------------------------------------------------------
+# run_calibration_full.py shared curtailment table
+# ---------------------------------------------------------------------------
+
+
+def _flat_dispatch_frame(mw: float) -> pd.DataFrame:
+    """Return a minimal bundle dispatch frame with flat wind/solar output."""
+    hours = np.arange(HOURS_PER_YEAR, dtype=np.int32)
+    return pd.concat(
+        [pd.DataFrame({"fuel": fuel, "hour": hours, "mw": float(mw)})
+         for fuel in ("wind", "solar")],
+        ignore_index=True,
+    )
+
+
+def test_curtailment_table_uses_consumed_potential(capsys):
+    """The model side measures against the rescaled (consumed) potential.
+
+    ERCOT 2023's wind HSL is rescaled 104 -> 110 TWh before the dispatch
+    consumes it; measuring model curtailment against the raw HSL would
+    understate it by the whole rescale margin (reading ~0 for a run that
+    delivered more than the raw series).
+    """
+    from scripts.run_calibration_full import _print_curtailment_vs_reported
+
+    _print_curtailment_vs_reported(
+        2023, "ERCOT", _flat_dispatch_frame(0.0), label="3e"
+    )
+    out = capsys.readouterr().out
+    assert "[3e] Renewable curtailment" in out
+    wind_row = next(
+        line for line in out.splitlines() if line.strip().startswith("wind")
+    )
+    # The potential column reads the rescaled 110.00 TWh, not the raw 104.05.
+    assert "110.00" in wind_row
+
+
+def test_curtailment_table_data_needed_note(capsys):
+    """Missing HSL years: note for HSL-capable ISOs, silence otherwise."""
+    from scripts.run_calibration_full import _print_curtailment_vs_reported
+
+    _print_curtailment_vs_reported(2199, "ERCOT", _flat_dispatch_frame(0.0))
+    assert "no ERCOT HSL parquet" in capsys.readouterr().out
+
+    _print_curtailment_vs_reported(2199, "PJM", _flat_dispatch_frame(0.0))
+    assert capsys.readouterr().out == ""
