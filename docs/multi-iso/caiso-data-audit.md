@@ -207,9 +207,9 @@ Diff against `inputs/raw-data/campd-unit-level/<ST>_<year>.parquet`:
 
 | State-year | Unit-level | Facility-level | Notes |
 |---|---|---|---|
-| CA_2023 | **MISSING** (= U1) | present | expected gap; facility-level detection is the documented fallback until U1 lands |
-| CA_2024 | present | present | feeds `campd-unit-outages-CAISO.csv` (655 outage windows) |
-| CA_2025 | present | present | 731 outage windows |
+| CA_2023 | **present** (U1 landed 2026-06-11) | present | feeds `campd-unit-outages-CAISO.csv` (612 outage windows) |
+| CA_2024 | present | present | feeds `campd-unit-outages-CAISO.csv` (620 outage windows) |
+| CA_2025 | present | present | 701 outage windows |
 | NV_2023/24/25 | missing | missing | Desert Star only — see below |
 
 **Non-CA CEMS obligations:** Desert Star (ORIS 55077) is the only non-CA
@@ -272,12 +272,27 @@ summing — the loader warns. AES CC_REGULAR CEMS coverage is now 95%+ of
 class capacity; the largest remaining gaps are El Segundo and Desert Star
 as above.
 
-**2023 is statistical-availability-only** until U1 lands:
-`unit_outage_derate_factors(2023, iso="CAISO")` returns empty, and a
-`outage_source="historic"` CAISO 2023 run now logs a warning to that
-effect (`fleet.generators_to_fleet_arrays`). Record the caveat in the
-bundle's `model_changes_note` when the first CAISO 2023 backcast is
-registered.
+**P1-2023 resolution (2026-06-11): U1 landed, 2023 windows derived.**
+`CA_2023.parquet` (245 units across 109 facilities; all gas/wood, zero
+coal — same fuel mix as 2024/2025) is now in
+`inputs/raw-data/campd-unit-level/`, and `derive_campd_unit_outages.py
+--iso CAISO --years 2023 2024 2025` regenerated
+`campd-unit-outages-CAISO.csv` to **1,933 windows (612 in 2023, 620 in
+2024, 701 in 2025; 37 plants)**. The 2024 and 2025 rows regenerate
+**byte-identically** (raw-text and value-level) against the committed
+extract — the 2023 addition shifts nothing in the later years. As in
+2024/2025, only the event-based rule fires (every CA unit is gas-fired).
+A detector replay independent of the script, on the three largest CC
+plants with 2023 windows — La Paloma (55151), Moss Landing (260),
+Mountainview (358) — reproduced every 2023 window exactly, and the
+every-hour CF < 2% rule held inside each one.
+
+`unit_outage_derate_factors(2023, iso="CAISO")` now returns 30 derated
+`(plant, group)` bins (was empty), so an `outage_source="historic"` CAISO
+2023 fleet assembly **no longer logs the PR #300 "no outage windows cover
+CAISO 2023" warning** (verified by capturing
+`fleet.generators_to_fleet_arrays` logs). 2023 backcasts now carry
+measured unit-outage availability rather than statistical-only.
 
 ---
 
