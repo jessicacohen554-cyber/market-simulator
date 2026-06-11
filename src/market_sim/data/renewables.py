@@ -16,10 +16,12 @@ The exceptions are the backcasts with an hourly uncurtailed-potential (HSL)
 dataset, where the CF profile is built from that instead (see
 :func:`_hsl_cf_profile`) so the dispatch is handed the *uncurtailed*
 potential and re-curtails wind and solar under the modeled transmission
-limits:
+limits, and the calibration report can compare the modeled curtailment
+against the reported ``HSL - GEN``:
 
-* ERCOT 2023 — the NP6 High Sustained Limit dataset
-  (scripts/build_ercot_hsl.py);
+* ERCOT — years with a built NP6 HSL parquet
+  (scripts/build_ercot_hsl.py; 2023 from the UMass 60-Day-SCED dataset,
+  2024+ from uploaded ERCOT NP6 wind/solar production reports);
 * CAISO 2023/2024 — EIA-930 delivered generation plus CAISO's reported
   5-minute wind/solar curtailment (scripts/build_caiso_hsl.py). CAISO solar
   curtailment is multi-TWh, so without this the model cannot re-curtail.
@@ -154,14 +156,20 @@ _ISO_HOME_STATES: dict[str, frozenset[str]] = {
 
 _MONTHS_PER_YEAR: int = 12
 
-# ERCOT 2023 uncurtailed renewable potential (High Sustained Limit). When
-# present, the ERCOT 2023 backcast builds its CF profiles from this hourly
-# HSL series rather than from EIA-930 delivered generation, so the dispatch
+# ERCOT uncurtailed renewable potential (High Sustained Limit), one parquet
+# per backcast year (``ercot_<year>_hsl_hourly.parquet``). When a year's file
+# is present, the ERCOT backcast builds its CF profiles from the hourly HSL
+# series rather than from EIA-930 delivered generation, so the dispatch
 # re-curtails under modeled transmission limits. Built by
-# scripts/build_ercot_hsl.py.
-_ERCOT_HSL_FILE: Path = (
-    Path(__file__).parents[3]
-    / "inputs" / "raw-data" / "ercot-hsl" / "ercot_2023_hsl_hourly.parquet"
+# scripts/build_ercot_hsl.py (2023 from the UMass 60-Day-SCED dataset;
+# 2024+ from uploaded ERCOT NP6 wind/solar production reports).
+_ERCOT_HSL_DIR: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "ercot-hsl"
+)
+
+# Columns every per-year HSL parquet must carry (hourly MW series).
+_HSL_COLUMNS: tuple[str, ...] = (
+    "hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw", "solar_hsl_mw",
 )
 
 # CAISO uncurtailed renewable potential (the HSL analogue: EIA-930 delivered
@@ -181,8 +189,8 @@ def _hsl_file(iso: str, year: int) -> Path | None:
     uses the delivered EIA-930 hourly profile (which embeds the historical
     curtailment) instead of an uncurtailed potential.
     """
-    if iso == "ERCOT" and year == 2023:
-        return _ERCOT_HSL_FILE
+    if iso == "ERCOT":
+        return _ercot_hsl_path(year)
     if iso == "CAISO":
         return _CAISO_HSL_DIR / f"caiso_{year}_hsl_hourly.parquet"
     return None
@@ -195,10 +203,59 @@ def _hsl_file(iso: str, year: int) -> Path | None:
 # Targets are set above the EIA-930 delivered totals (wind 108, solar 31.9) to
 # offset the dispatch's economic re-curtailment, so the *delivered* output lands
 # on the actuals: wind ~1.8% curtailed -> 110, solar ~0.5% -> 32.0.
+# Years without an entry use the raw HSL series unrescaled — only add an
+# entry when build_ercot_hsl.py's EIA-930 cross-check shows the year's HSL
+# source is biased low against delivered generation.
 _HSL_RESCALE_TWH: dict[tuple[str, int, str], float] = {
     ("ERCOT", 2023, "wind"): 110.0,
     ("ERCOT", 2023, "solar"): 32.0,
 }
+
+
+def _ercot_hsl_path(year: int) -> Path:
+    """Return the per-year ERCOT HSL parquet path (which may not exist)."""
+    return _ERCOT_HSL_DIR / f"ercot_{year}_hsl_hourly.parquet"
+
+
+def load_ercot_hsl_hourly(year: int) -> pd.DataFrame | None:
+    """Return the ERCOT hourly HSL/GEN frame for ``year``, or ``None``.
+
+    The frame is the per-year parquet built by ``scripts/build_ercot_hsl.py``,
+    sorted by ``hour`` (the model's fixed non-leap 8760-hour clock): delivered
+    generation (``<fuel>_gen_mw``) and uncurtailed potential
+    (``<fuel>_hsl_mw``) for wind and solar, so ERCOT's *reported* curtailment
+    is ``hsl - gen``. Returns ``None`` when the year's parquet is missing or
+    malformed, signaling callers to fall back (profiles to EIA-930 delivered
+    generation; calibration reports to a model-only curtailment table).
+    Thin ERCOT wrapper over the ISO-generic :func:`load_hsl_hourly`.
+    """
+    return load_hsl_hourly("ERCOT", year)
+
+
+def hsl_potential_mw(iso: str, year: int, fuel: str) -> np.ndarray | None:
+    """Return the hourly uncurtailed potential (MW) the dispatch consumes.
+
+    This is the year's HSL-style series (ERCOT NP6 HSL, or the CAISO
+    delivered-plus-reported-curtailment analogue) with the per-year rescale
+    of :data:`_HSL_RESCALE_TWH` applied — exactly the MW series that
+    :func:`_hsl_cf_profile` turns into the dispatch's CF profile, so
+    calibration reports can reconstruct the model's hourly renewable
+    potential (e.g. for the modeled-vs-reported curtailment metric) without
+    re-deriving the fleet. Returns ``None`` when no HSL parquet covers
+    ``(iso, year)``.
+    """
+    df = load_hsl_hourly(iso, year)
+    if df is None:
+        return None
+    column = f"{fuel}_hsl_mw"
+    if column not in df.columns:
+        return None
+    hsl_mw = df[column].to_numpy(dtype=float)
+    target_twh = _HSL_RESCALE_TWH.get((iso, year, fuel))
+    if target_twh is not None and hsl_mw.sum() > 0:
+        # Scale the series to the target annual total, preserving its shape.
+        hsl_mw = hsl_mw * (target_twh * 1.0e6 / hsl_mw.sum())
+    return hsl_mw
 
 
 def _as_float(value: object) -> float | None:
@@ -499,7 +556,7 @@ def load_hsl_hourly(iso: str, year: int) -> pd.DataFrame | None:
     if path is None or not path.exists():
         return None
     df = pd.read_parquet(path)
-    if len(df) != HOURS_PER_YEAR:
+    if not set(_HSL_COLUMNS).issubset(df.columns) or len(df) != HOURS_PER_YEAR:
         return None
     return df.sort_values("hour").reset_index(drop=True)
 
@@ -510,26 +567,18 @@ def _hsl_cf_profile(
     """Return an hourly uncurtailed-potential CF profile, or ``None``.
 
     An HSL-style dataset records the hourly wind/solar output available
-    *before* curtailment — ERCOT 2023's NP6 High Sustained Limit, and the
-    CAISO delivered-plus-reported-curtailment analogue (see
-    :func:`_hsl_file`). Feeding that to the dispatch (rather than delivered
-    generation) lets it re-curtail under the modeled transmission limits.
-    Each series is chronological by the BA's local time, matching the
-    ``<BA> hourly`` demand.
+    *before* curtailment — ERCOT's NP6 High Sustained Limit (per-year
+    parquets), and the CAISO delivered-plus-reported-curtailment analogue
+    (see :func:`_hsl_file`). Feeding that to the dispatch (rather than
+    delivered generation) lets it re-curtail under the modeled transmission
+    limits. Each series is chronological by the BA's local time on the fixed
+    non-leap 8760-hour clock, matching the ``<BA> hourly`` demand.
 
     Returns ``None`` when no HSL data covers ``(iso, year, fuel)``.
     """
-    df = load_hsl_hourly(iso, year)
-    if df is None:
+    hsl_mw = hsl_potential_mw(iso, year, fuel)
+    if hsl_mw is None:
         return None
-    column = f"{fuel}_hsl_mw"
-    if column not in df.columns:
-        return None
-    hsl_mw = df[column].to_numpy(dtype=float)
-    target_twh = _HSL_RESCALE_TWH.get((iso, year, fuel))
-    if target_twh is not None and hsl_mw.sum() > 0:
-        # Scale the series to the delivered annual total, preserving its shape.
-        hsl_mw = hsl_mw * (target_twh * 1.0e6 / hsl_mw.sum())
     return _mw_to_cf(hsl_mw, monthly_capacity)
 
 
@@ -682,11 +731,11 @@ def load_renewable_profiles(
     scaled by the calibration knob ``config.renewable_cf_adjustment`` and
     re-clipped to ``[0, 1]``. Backcasts instead use measured hourly profiles
     on the calibration's chronological clock: an uncurtailed HSL-style series
-    where one covers the ISO-year — ERCOT 2023's NP6 HSL, CAISO's
-    delivered-plus-reported-curtailment analogue — so the dispatch
-    re-curtails (see :func:`_hsl_cf_profile`), and otherwise the delivered
-    ``<BA> hourly`` net generation for the ISO's balancing authority (see
-    :func:`_eia_hourly_cf_profile`).
+    where one covers the ISO-year — ERCOT years with a built NP6 HSL
+    parquet, CAISO's delivered-plus-reported-curtailment analogue — so the
+    dispatch re-curtails (see :func:`_hsl_cf_profile`), and otherwise the
+    delivered ``<BA> hourly`` net generation for the ISO's balancing
+    authority (see :func:`_eia_hourly_cf_profile`).
 
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
@@ -749,9 +798,9 @@ def load_renewable_profiles(
                 installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
             # A backcast prefers a measured hourly profile on the
             # calibration's chronological clock: an uncurtailed HSL-style
-            # series where one exists (ERCOT 2023, CAISO covered years);
-            # otherwise the ISO's delivered ``<BA> hourly`` net generation
-            # is used. Both are normalized per
+            # series where one exists (ERCOT years with a built HSL parquet,
+            # CAISO covered years); otherwise the ISO's delivered
+            # ``<BA> hourly`` net generation is used. Both are normalized per
             # MW of online capacity, so the vintage ramp distributes them
             # across zones, and neither takes the CF knob tuned to EIA-930 data.
             measured_cf = None

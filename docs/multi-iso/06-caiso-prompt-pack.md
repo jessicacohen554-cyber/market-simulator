@@ -531,6 +531,15 @@ for those years) and add modeled-vs-reported curtailment as a headline
 ERCOT metric (CAISO P6 pattern) — ERCOT West curtailment is large enough
 to matter.
 
+*Status 2026-06: code landed.* `build_ercot_hsl.py` builds any year —
+2024/2025 ingest ERCOT MIS wind/solar production reports (system-wide
+GEN + actual HSL) from `inputs/raw-data/ercot-hsl/np6/` once uploaded;
+the HSL profile path in `renewables.py` is per-year; and both
+calibration reports print the modeled-vs-reported curtailment headline
+(annual TWh/% + monthly shape). **Open: the NP6 report uploads for
+2024–2025.** First 2023 reading: model curtails wind 2.0% vs 4.7%
+reported, solar 0.4% vs 6.3% — under-curtailment to chase.
+
 ### J1 — PJM: import/export node (the +40 TWh structural gap) — DONE 2026-06-11
 
 Note: the structural gap itself was already closed by M4 (2026-06-05,
