@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-06-10T22:46:17",
+  "iso": "ERCOT",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "hours": 8760,
+  "passes": [
+    "P1"
+  ],
+  "commitment": false,
+  "commitment_screen_coal": true,
+  "gas_prices": {
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
+  },
+  "coal_lignite_mustrun": null,
+  "coal_prb_mustrun": null,
+  "coal_prb_passthrough": 1.0,
+  "outage_source": "historic",
+  "coal_prb_passthrough_sigmoid": true,
+  "coal_mustrun_per_plant": true,
+  "coal_drop_pof": true,
+  "coal_prb_passthrough_tiered": true,
+  "coal_plant_monthly_pricing": true,
+  "td_loss_factor": 0.0,
+  "storage_daily_cycling": false,
+  "gas_offer_curve": false,
+  "gas_monthly_actuals": false,
+  "offer_curve_overrides": {
+    "CC_REGULAR": {
+      "peak": 1.3
+    }
+  },
+  "offer_curve_deltas": {},
+  "curve_smoothing": {
+    "offer_curve_smoothing_n": null,
+    "offer_curve_smoothing_exp": null
+  },
+  "cc_derate_from_top": true,
+  "git_sha": "29492c6"
+}
