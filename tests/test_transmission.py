@@ -4,8 +4,13 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.constants import WECC_IMPORT_EFORD
-from market_sim.config.iso_configs import TransferLink
+from market_sim.config.constants import (
+    EXPORT_TRANCHES,
+    IMPORT_NODE_LINKS,
+    IMPORT_TRANCHES,
+    WECC_IMPORT_EFORD,
+)
+from market_sim.config.iso_configs import TransferLink, get_iso_config
 from market_sim.data.fleet import (
     Generator,
     assemble_mc,
@@ -13,9 +18,12 @@ from market_sim.data.fleet import (
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.transmission import (
+    build_export_sinks,
+    build_import_generators,
     build_incidence_matrix,
     build_wecc_export_sink,
     build_wecc_import_generators,
+    extend_with_import_node,
     get_ttc_array,
 )
 
@@ -354,6 +362,147 @@ class TestWeccImportModel(unittest.TestCase):
         # The must-run unit honors its minimum; the import tranches stay off.
         self.assertTrue(np.all(result.dispatch[5] >= 4000.0 - 1e-6))
         np.testing.assert_allclose(result.dispatch[:4], 0.0, atol=1e-6)
+
+
+class TestGenericImportNode(unittest.TestCase):
+    """Tests for the generalized per-ISO import/export node builders."""
+
+    def test_wecc_wrappers_match_generic_builders(self):
+        wrapped = build_wecc_import_generators()
+        generic = build_import_generators("CAISO")
+        self.assertEqual(
+            [g.unit_id for g in wrapped], [g.unit_id for g in generic]
+        )
+        sink = build_wecc_export_sink()
+        self.assertEqual(sink.zone, "WECC_import")
+        self.assertEqual(sink.pmax_mw, 0.0)
+        self.assertLess(sink.pmin_mw, 0.0)
+
+    def test_unconfigured_iso_has_no_import_node(self):
+        self.assertEqual(build_import_generators("ERCOT"), [])
+        self.assertEqual(build_export_sinks("ERCOT"), [])
+        ercot = get_iso_config("ERCOT")
+        self.assertIs(extend_with_import_node(ercot), ercot)
+
+    def test_pjm_blocks_cannot_arbitrage(self):
+        # Every PJM import tranche must cost more than every export sink
+        # pays, or the LP would clear phantom import->export flow for
+        # profit in all hours.
+        cheapest_import = min(p for _, _, p in IMPORT_TRANCHES["PJM"])
+        richest_sink = max(p for _, _, p in EXPORT_TRANCHES["PJM"])
+        self.assertGreater(cheapest_import, richest_sink)
+
+    def test_pjm_node_units_live_in_external_zone(self):
+        units = build_import_generators("PJM") + build_export_sinks("PJM")
+        self.assertTrue(units)
+        for g in units:
+            self.assertEqual(g.zone, "PJM_external")
+            self.assertEqual(g.fuel_type, "import")
+            self.assertEqual(g.heat_rate, 0.0)
+
+    def test_extend_with_import_node_appends_pjm_external(self):
+        base = get_iso_config("PJM")
+        extended = extend_with_import_node(base)
+        self.assertEqual(
+            extended.zone_names, [*base.zone_names, "PJM_external"]
+        )
+        self.assertEqual(
+            extended.n_links, base.n_links + len(IMPORT_NODE_LINKS["PJM"])
+        )
+        # The external zone carries no load and the result still validates.
+        self.assertEqual(extended.zones[-1].load_share, 0.0)
+        extended.validate_topology()
+        # Idempotent: a second call sees the zone present and no-ops.
+        self.assertIs(extend_with_import_node(extended), extended)
+        # The base config object is untouched (backcasts keep 8 zones).
+        self.assertEqual(len(base.zones), 8)
+
+    def test_caiso_topology_already_carries_its_node(self):
+        caiso = get_iso_config("CAISO")
+        self.assertIs(extend_with_import_node(caiso), caiso)
+
+
+class TestPjmImportNodeDispatch(unittest.TestCase):
+    """End-to-end dispatch through the PJM priced import/export node."""
+
+    def _solve(self, internal_mc, demand_mw):
+        """Solve a 2-zone PJM-like dispatch; returns (result, units)."""
+        zone_names = ["PJM_main", "PJM_external"]
+        internal = Generator(
+            unit_id="PJM_gas", name="PJM_gas", zone="PJM_main",
+            fuel_type="gas_cc", pmax_mw=150000.0, pmin_mw=0.0,
+            heat_rate=0.0, vom=internal_mc, eford=0.0,
+        )
+        units = (
+            [internal]
+            + build_import_generators("PJM")
+            + build_export_sinks("PJM")
+        )
+        fleet = generators_to_fleet_arrays(units, zone_names, hours=T)
+        links = [
+            TransferLink(
+                from_zone="PJM_external", to_zone="PJM_main", ttc_mw=30000.0
+            )
+        ]
+        incidence = build_incidence_matrix(links, zone_names)
+        ttc = get_ttc_array(links)
+        mc = assemble_mc(fleet, np.zeros((len(units), T)), carbon_price=0.0)
+        demand = np.vstack([np.full(T, demand_mw), np.zeros(T)])
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            **_no_renewables(2),
+        )
+        return result, units
+
+    def test_cheap_internal_power_fills_every_sink(self):
+        # Internal MC $10 sits below every sink price, so all sinks absorb
+        # at full capacity and the system exports their sum.
+        result, units = self._solve(internal_mc=10.0, demand_mw=80000.0)
+        sink_cap = sum(c for _, c, _ in EXPORT_TRANCHES["PJM"])
+        exports = -result.dispatch[1 + len(IMPORT_TRANCHES["PJM"]):].sum(
+            axis=0
+        )
+        np.testing.assert_allclose(exports, sink_cap, atol=1e-5)
+        # Imports stay off: every tranche costs more than internal supply.
+        n_imp = len(IMPORT_TRANCHES["PJM"])
+        np.testing.assert_allclose(
+            result.dispatch[1:1 + n_imp], 0.0, atol=1e-6
+        )
+
+    def test_sink_survives_min_gen_floor_fleet(self):
+        # A CHP steam-following floor anywhere in the fleet activates the
+        # min_gen lower-bound matrix for EVERY generator; export sinks
+        # (pmin < 0) must keep their absorption range rather than being
+        # pinned to a zero floor (the PJM calibration fleet always carries
+        # CHP floors, so without this the node could never export).
+        chp = Generator(
+            unit_id="PJM_chp", name="PJM_chp", zone="PJM_main",
+            fuel_type="gas_ct", pmax_mw=500.0, pmin_mw=0.0,
+            heat_rate=0.0, vom=12.0, eford=0.0, chp_grid_pmin_mw=200.0,
+        )
+        units = [chp] + build_export_sinks("PJM")
+        fleet = generators_to_fleet_arrays(
+            units, ["PJM_main", "PJM_external"], hours=T
+        )
+        self.assertIsNotNone(fleet.min_gen)
+        # The CHP floor binds; each sink keeps its negative lower bound.
+        np.testing.assert_allclose(fleet.min_gen[0], 200.0)
+        for i, (_, cap, _) in enumerate(EXPORT_TRANCHES["PJM"], start=1):
+            np.testing.assert_allclose(fleet.min_gen[i], -cap)
+
+    def test_expensive_internal_power_draws_scarcity_imports(self):
+        # Internal MC $50 sits above the $46 tranche but below the $60 one,
+        # and below no sink price, so only the cheap import tranche clears.
+        result, units = self._solve(internal_mc=50.0, demand_mw=80000.0)
+        tranches = IMPORT_TRANCHES["PJM"]
+        self.assertEqual(tranches[0][2], 46.0)
+        np.testing.assert_allclose(
+            result.dispatch[1], tranches[0][1], atol=1e-5
+        )
+        np.testing.assert_allclose(result.dispatch[2], 0.0, atol=1e-6)
+        # The richest sink pays $42 < $50: no exports.
+        exports = result.dispatch[1 + len(tranches):]
+        np.testing.assert_allclose(exports, 0.0, atol=1e-6)
 
 
 if __name__ == "__main__":
