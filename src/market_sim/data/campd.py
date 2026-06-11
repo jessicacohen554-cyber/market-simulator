@@ -83,6 +83,28 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     "SPP": (),
 }
 
+# CEMS-to-EIA split-plant remap: units that report CAMPD under a *legacy*
+# ORIS code but belong to a different EIA plant in the model fleet. AES
+# repowered Alamitos and Huntington Beach with new CCGTs that EIA lists as
+# their own plants (62115 / 62116) while their CEMS monitors kept filing
+# under the legacy boiler ORIS codes (315 / 335) alongside the remaining
+# once-through-cooling steamers. Keyed ``(facilityId, unitId)`` exactly as
+# the CAMPD unit-level extracts label them; the value is the EIA plant code
+# the unit's history belongs to. Applied wherever unit identity is known
+# (the unit-level extracts); the facility-level loader substitutes the
+# unit-level rows for these facilities so the split holds there too.
+CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
+    (315, "CT1"): 62115,   # AES Alamitos Energy Center (CC_REGULAR)
+    (315, "CT2"): 62115,
+    (335, "CT1"): 62116,   # AES Huntington Beach Energy Project (CC_REGULAR)
+    (335, "CT2"): 62116,
+}
+
+# Facilities with at least one remapped unit (split facilities).
+CAMPD_SPLIT_FACILITIES: frozenset[int] = frozenset(
+    f for f, _ in CAMPD_UNIT_PLANT_REMAP
+)
+
 # EIA-923 ``fuel_type`` codes burned by coal-class units.
 _COAL_EIA_FUELS: frozenset[str] = frozenset(
     {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
@@ -163,6 +185,11 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
     states bit-for-bit, even where a state appears in both. Unit-level rows are
     summed to the facility per hour downstream (:func:`plant_hourly_grid`,
     :func:`plant_hourly_net`), so the extra granularity is transparent here.
+
+    The only exception is the split facilities in
+    :data:`CAMPD_UNIT_PLANT_REMAP` (CA only): their rows are re-keyed (or, for
+    a facility-level file, substituted from the companion unit-level extract)
+    so each unit's history lands on the EIA plant the model fleet carries.
     """
     fname = f"{state}_{year}.parquet"
     path = next(
@@ -181,8 +208,59 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
         )
         return None
     raw = pd.read_parquet(path)
+    out = _normalize_campd(raw, year)
+    # Split-plant remap, facility-level case. A unit-level file carries unit
+    # identity, so the remap applies row-by-row in _normalize_campd. A
+    # facility-level file sums the split facility's units into one series;
+    # substitute the remapped unit-level rows for those facilities when the
+    # companion unit-level extract exists, so the new plant's history lands
+    # on its own EIA code there too. Without a companion file the facility
+    # stays summed under the legacy code (e.g. CA 2023 until U1 lands).
+    if "unitId" not in raw.columns:
+        split = sorted(CAMPD_SPLIT_FACILITIES & set(out["plant_id"].unique()))
+        if split:
+            unit_path = raw_dir / "campd-unit-level" / fname
+            if unit_path.exists():
+                unit_raw = pd.read_parquet(unit_path)
+                unit_raw = unit_raw[
+                    pd.to_numeric(unit_raw["facilityId"], errors="coerce")
+                    .isin(split)
+                ]
+                out = pd.concat(
+                    [
+                        out[~out["plant_id"].isin(split)],
+                        _normalize_campd(unit_raw, year),
+                    ],
+                    ignore_index=True,
+                )
+            else:
+                logger.warning(
+                    "CAMPD %s %d: split facilities %s have no unit-level "
+                    "extract; their units stay summed under the legacy code",
+                    state, year, split,
+                )
+    return out
+
+
+def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Normalize one raw CAMPD extract to the model's hourly schema.
+
+    When the extract carries unit identity (``unitId``), units in
+    :data:`CAMPD_UNIT_PLANT_REMAP` are re-keyed to the EIA plant their
+    history belongs to before any facility summing happens downstream.
+    """
+    plant_id = pd.to_numeric(raw["facilityId"], errors="coerce")
+    if "unitId" in raw.columns and len(raw):
+        fac = plant_id.fillna(-1).astype(int).to_numpy()
+        uid = raw["unitId"].astype(str).to_numpy()
+        remapped = [
+            CAMPD_UNIT_PLANT_REMAP.get((f, u), f) for f, u in zip(fac, uid)
+        ]
+        plant_id = pd.Series(
+            remapped, index=raw.index, dtype=float
+        ).where(plant_id.notna())
     out = pd.DataFrame({
-        "plant_id": pd.to_numeric(raw["facilityId"], errors="coerce"),
+        "plant_id": plant_id,
         "facility_name": raw["facilityName"].astype(str),
         "state": raw["stateCode"].astype(str),
         "year": np.int16(year),

@@ -71,9 +71,9 @@ def test_hsl_potential_applies_2023_rescale():
     np.testing.assert_allclose(pot.sum() / 1e6, 110.0, rtol=1e-9)
 
 
-def test_hsl_potential_non_ercot_returns_none():
-    """Only ERCOT carries HSL parquets today."""
-    assert hsl_potential_mw("CAISO", 2023, "wind") is None
+def test_hsl_potential_unmapped_iso_returns_none():
+    """An ISO with no HSL-style dataset mapping yields None."""
+    assert hsl_potential_mw("PJM", 2023, "wind") is None
 
 
 def test_hsl_cf_profile_covers_new_year(tmp_path, monkeypatch):

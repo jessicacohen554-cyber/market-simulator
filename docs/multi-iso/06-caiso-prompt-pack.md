@@ -19,8 +19,12 @@ Already in repo — do not re-acquire:
 - Topology: `_caiso_config()` — NP15/ZP26/SP15 + `WECC_import` node, Path
   15/26 TTCs (WECC catalog, Tier 3), COI/WOR import links; lat-band zone
   splitter in `zone_assignment.py`.
-- WECC import machinery: `model/transmission.py::build_wecc_import_generators()`
-  (tranche supply curve + export sink) — needs calibration, not construction.
+- WECC import machinery: generalized per-ISO in J1 (2026-06-11) —
+  `model/transmission.py::build_import_generators("CAISO")` /
+  `build_export_sinks("CAISO")` off `constants.IMPORT_TRANCHES` /
+  `EXPORT_TRANCHES` (tranche supply curve + export sink), with
+  `scripts/derive_import_tranches.py` to fit them — needs calibration,
+  not construction. The runner now also wires the CAISO export sink in.
 - `data/eia_hourly/CISO hourly.parquet` (EIA-930 demand/fuel/interchange).
 - `inputs/raw-data/CISO_fueltype.parquet`, `CISO_region.parquet`.
 - CAMPD unit-level CA **2024, 2025** (`campd-unit-level/CA_{2024,2025}.parquet`);
@@ -352,9 +356,11 @@ convention; zonal shapes measured if U4 landed.
 
 ```
 CAISO backcast: calibrate the WECC import node. Read
-model/transmission.py::build_wecc_import_generators(), playbook §8.2, and
-the PJM net-interchange gap writeup (docs/multi-iso/pjm-backcast-2023.md
-gap #1) — design anything you generalize so PJM can reuse it.
+model/transmission.py::build_import_generators / build_export_sinks (the
+J1-generalized machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
+scripts/derive_import_tranches.py (the PJM fitting workflow to reuse),
+playbook §8.2, and the PJM writeup (docs/multi-iso/pjm-backcast-2023.md
+§4). The machinery is built; this pack only fits CAISO's entries.
 
 1. Benchmark: hourly CISO net interchange from data/eia_hourly/CISO
    hourly.parquet (and per-neighbor splits if the parquet carries them).
@@ -500,15 +506,22 @@ out at `coal_prb_passthrough=0.83`) — measured monthly gas may resolve
 part of it without touching the passthrough. Also fix the stale
 `test_coal_supply_pricing_uses_year_trajectory` on main.
 
-### E2 — ERCOT: storage realism + nuclear refuel overlay
+### E2 — ERCOT: storage realism + nuclear refuel overlay — **DONE (2026-06-11)**
 
-Model PS discharge runs 9–10 TWh/yr vs 3–4 actual (no cycling
-cost/outages on PS) and coal/CT tuning currently compensates. Add the
-throughput-cost knob (shared with CAISO P5) and re-tune. Nuclear runs
-+2.4% with no refuel-outage overlay — derive monthly nuclear CF from
-EIA-923 actuals per backcast year (the CAISO P3 pattern,
-`forecast_nuclear_refuel.py` exists for forward years). Oil ~0 vs
-0.6–0.9 TWh actual ties to winter gas pricing (E1).
+Model BESS discharge ran +48% over the EIA-930 measured 2025 window
+(8.1 vs 5.4 TWh; the audit's "PS 9–10 TWh" figure was the same
+over-cycling read in an earlier environment) and coal/CT tuning
+compensated. Fixed by `ScenarioConfig.battery_dispatch_adder` (the
+battery analogue of the PJM pumped-storage adder; CAISO P5 reuses the
+same knob via `load_eia860_storage`), calibrated against the new
+EIA-930 BAT/UES bundle benchmark (`storage.parquet` + report §3d).
+Nuclear: the per-year EIA-923 monthly-CF overlay
+(`NUCLEAR_MONTHLY_CF_BY_YEAR`) had already landed (PR #252) and holds
+all three years at −0.7%; `scripts/derive_nuclear_monthly_cf.py` now
+derives/validates the table (`--check`) as the backcast analogue of
+`forecast_nuclear_refuel.py`. See docs/calibration-log.md (E2 entry)
+for the keeper run and the residual coal/CT items handed to E1.
+Oil ~0 vs 0.6–0.9 TWh actual still ties to winter gas pricing (E1).
 
 ### E3 — ERCOT: HSL coverage + curtailment metric
 
@@ -527,13 +540,21 @@ calibration reports print the modeled-vs-reported curtailment headline
 2024–2025.** First 2023 reading: model curtails wind 2.0% vs 4.7%
 reported, solar 0.4% vs 6.3% — under-curtailment to chase.
 
-### J1 — PJM: import/export node (the +40 TWh structural gap)
+### J1 — PJM: import/export node (the +40 TWh structural gap) — DONE 2026-06-11
 
-Still the biggest PJM gap: 2023 actual +40 TWh net export vs model 0.
-Reuse the generalized import-node machinery from CAISO P9 (priced
-tranches + export sink, calibrated to the EIA-930 PJM interchange
-duration curve). Expect this to pull gas dispatch up and re-shift the
-coal/gas balance — re-run the pjm-6 baseline after.
+Note: the structural gap itself was already closed by M4 (2026-06-05,
+measured tie-line schedule in `load_demand`) — the pjm-6 baseline served
+823 TWh (783 internal + 40 export) and gas dispatch had already risen.
+This pack delivered the remaining piece: the **generalized priced node**
+(P9's design, built here first since P9 hasn't run). `PJM_external` zone +
+import tranches + export sinks in `IMPORT_TRANCHES` / `EXPORT_TRANCHES`,
+fitted to the measured 2023 net-interchange duration curve by
+`scripts/derive_import_tranches.py` (2023: 100% of actual, duration RMSE
+~570 MW; 2024 drifts +37% — re-fit per vintage). Forward PJM scenarios
+(previously **zero** interchange) now carry price-responsive interchange;
+backcasts keep the measured schedule. Validation runs:
+`results/calibration/pjm_j1_baseline` (measured; pjm-6 regression) and
+`pjm_j1_priced` (`--priced-interchange`).
 
 ### J2 — PJM: winter fidelity (CT runtime, ST_GAS, oil, dual-fuel)
 
@@ -560,7 +581,10 @@ automatically once extracts land).
 
 ### Cross-cutting (build once, all ISOs benefit)
 
-- Import/export node generalization (P9 → J1 → NYISO/NEISO).
+- Import/export node generalization — built in J1 (constants-driven
+  `build_import_generators` / `build_export_sinks` /
+  `extend_with_import_node` + `derive_import_tranches.py`); P9 now only
+  needs to *calibrate* CAISO's entries; NYISO/NEISO only need constants.
 - Storage cycling/throughput cost (P5 → E2).
 - Curtailment as headline metric (P6 → E3 → SPP/MISO later).
 - Reserve co-optimization (doc 03 Pack I) stays LAST, after the summer
