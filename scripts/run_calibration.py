@@ -67,6 +67,7 @@ from market_sim.data.fleet import (  # noqa: E402
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
+    apply_dual_fuel_pricing,
     apply_plant_monthly_fuel_prices,
     prb_passthrough_series,
     prb_passthrough_series_follower,
@@ -501,6 +502,12 @@ def _calibration_config(
         # delivered gas — CC overran +25 TWh and displaced coal. Re-enable
         # per-plant EIA-923 monthly gas costs for them.
         gas_plant_monthly_fuel_pricing=(iso != "ERCOT"),
+        # Dual-fuel switching (doc 03 Pack G): EIA-860 oil/gas switch-capable
+        # gas units price fuel at min(gas, oil) per hour, so winter delivered-
+        # gas spikes past oil parity no longer price them out of the merit
+        # order. Gated to PJM (winter-fidelity cluster); ERCOT — whose fleet
+        # carries no meaningful dual-fuel behaviour — stays off and unchanged.
+        dual_fuel_switching=(iso.upper() == "PJM"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -912,6 +919,9 @@ def run_year(
     if config.coal_supply_repricing:
         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
     apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
+    # Dual-fuel switching last, so the oil-parity min sees the final
+    # (per-plant monthly) delivered gas price (PJM only; no-op elsewhere).
+    apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
