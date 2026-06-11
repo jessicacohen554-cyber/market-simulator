@@ -22,6 +22,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
+    CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
@@ -73,7 +74,30 @@ def get_ttc_array(links: list[TransferLink]) -> np.ndarray:
     return np.array([link.ttc_mw for link in links], dtype=float)
 
 
-def build_import_generators(iso: str) -> list[Generator]:
+def wecc_border_carbon_adder(carbon_price: float) -> float:
+    """Return the CAISO border carbon adjustment on imports ($/MWh).
+
+    CARB levies the cap-and-trade allowance obligation on electricity
+    imported into California; unspecified-source power is assessed at the
+    default emission factor :data:`CARB_UNSPECIFIED_IMPORT_EF`
+    (0.428 tCO2e/MWh, MRR 17 CCR §95111(b)). The adder is therefore
+    ``0.428 x allowance price`` — ~$15/MWh at the 2024 average allowance
+    price of $35.23/t — and belongs on every WECC import tranche price
+    (but NOT on the export sink: exports carry no CA compliance cost).
+
+    Args:
+        carbon_price: The allowance price in $/tCO2 (e.g. from
+            :func:`market_sim.policy.carbon.resolve_carbon_price`).
+
+    Returns:
+        The border adjustment in $/MWh of imported energy.
+    """
+    return CARB_UNSPECIFIED_IMPORT_EF * carbon_price
+
+
+def build_import_generators(
+    iso: str, border_carbon_per_mwh: float = 0.0
+) -> list[Generator]:
     """Return an ISO's import node as a list of pseudo-generators.
 
     The aggregate import capability from the ISO's neighbors is modeled as a
@@ -86,8 +110,17 @@ def build_import_generators(iso: str) -> list[Generator]:
     energy balance and the external zone's links into the ISO's trading
     zones -- no special LP formulation is needed.
 
+    A border carbon adjustment (CAISO: see :func:`wecc_border_carbon_adder`)
+    enters as ``border_carbon_per_mwh``, added to every tranche's price. It
+    is carried in the tranche VOM rather than as an ``emission_rate_co2`` so
+    the import carbon cost reaches the merit order without the import MWh
+    inflating the modeled *in-state* CO2 total that calibration benchmarks
+    against eGRID generation-based emissions.
+
     Args:
         iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
+        border_carbon_per_mwh: Border carbon adjustment ($/MWh) added to
+            each tranche price; 0 disables it.
 
     Returns:
         Import tranches ordered cheapest first; empty for an ISO with no
@@ -104,7 +137,7 @@ def build_import_generators(iso: str) -> list[Generator]:
             pmax_mw=capacity,
             pmin_mw=0.0,
             heat_rate=0.0,
-            vom=marginal_cost,
+            vom=marginal_cost + border_carbon_per_mwh,
             eford=IMPORT_EFORD.get(iso, 0.0),
         )
         for name, capacity, marginal_cost in IMPORT_TRANCHES.get(iso, [])
@@ -186,9 +219,11 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     return extended
 
 
-def build_wecc_import_generators() -> list[Generator]:
+def build_wecc_import_generators(
+    border_carbon_per_mwh: float = 0.0,
+) -> list[Generator]:
     """Return the CAISO WECC import node (see :func:`build_import_generators`)."""
-    return build_import_generators("CAISO")
+    return build_import_generators("CAISO", border_carbon_per_mwh)
 
 
 def build_wecc_export_sink() -> Generator:

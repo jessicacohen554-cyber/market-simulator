@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 
 from market_sim.config.constants import (
+    CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHES,
@@ -25,6 +26,7 @@ from market_sim.model.transmission import (
     build_wecc_import_generators,
     extend_with_import_node,
     get_ttc_array,
+    wecc_border_carbon_adder,
 )
 
 T = 24  # all transmission tests run a 24-hour horizon
@@ -503,6 +505,49 @@ class TestPjmImportNodeDispatch(unittest.TestCase):
         # The richest sink pays $42 < $50: no exports.
         exports = result.dispatch[1 + len(tranches):]
         np.testing.assert_allclose(exports, 0.0, atol=1e-6)
+
+
+class TestWeccBorderCarbon(unittest.TestCase):
+    """CA cap-and-trade border adjustment on WECC import tranche prices."""
+
+    def test_adder_is_unspecified_ef_times_allowance_price(self):
+        # CARB MRR default EF for unspecified imports: 0.428 tCO2e/MWh.
+        self.assertAlmostEqual(
+            wecc_border_carbon_adder(35.0), 0.428 * 35.0
+        )
+        self.assertAlmostEqual(wecc_border_carbon_adder(0.0), 0.0)
+
+    def test_default_build_carries_no_border_carbon(self):
+        generators = build_import_generators("CAISO")
+        for gen, (_, _, cost) in zip(generators, IMPORT_TRANCHES["CAISO"]):
+            self.assertAlmostEqual(gen.vom, cost)
+
+    def test_border_carbon_raises_every_tranche_price(self):
+        adder = wecc_border_carbon_adder(35.23)  # 2024 CARB average
+        generators = build_import_generators("CAISO", adder)
+        for gen, (_, _, cost) in zip(generators, IMPORT_TRANCHES["CAISO"]):
+            self.assertAlmostEqual(gen.vom, cost + adder)
+            # The adjustment is a price term, not an emission attribute:
+            # import MWh must not inflate the modeled in-state CO2 total.
+            self.assertEqual(gen.emission_rate_co2, 0.0)
+        # ~$15/MWh at the 2024 average allowance price.
+        self.assertAlmostEqual(adder, CARB_UNSPECIFIED_IMPORT_EF * 35.23)
+        self.assertGreater(adder, 14.0)
+        self.assertLess(adder, 16.0)
+
+    def test_legacy_wrapper_passes_the_adder_through(self):
+        adder = wecc_border_carbon_adder(35.23)
+        wrapped = build_wecc_import_generators(adder)
+        generic = build_import_generators("CAISO", adder)
+        self.assertEqual(
+            [(g.unit_id, g.vom) for g in wrapped],
+            [(g.unit_id, g.vom) for g in generic],
+        )
+
+    def test_export_sink_pays_no_border_carbon(self):
+        # Exports carry no CA compliance cost; the sink's price stays 0.
+        sink = build_wecc_export_sink()
+        self.assertEqual(sink.vom, 0.0)
 
 
 if __name__ == "__main__":

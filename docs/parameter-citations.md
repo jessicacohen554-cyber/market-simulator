@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**619 parameters registered** (292 flagged `needs-citation`).
+**622 parameters registered** (292 flagged `needs-citation`).
 
 
 ## Calibration
@@ -195,6 +195,7 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `carb_unspecified_import_ef` | 0.428 | 2 | CARB Mandatory GHG Reporting Regulation (MRR), 17 CCR §95111(b) — d… | 2018-12 |  |
 | `co2_rates.biomass.default` | 0.0 | 2 | EPA eGRID 2022 — petroleum-fired units | 2022 | auto-generated |
 | `co2_rates.coal.older` | 1.08 | 2 | EPA eGRID2022 | 2024-01 |  |
 | `co2_rates.coal.subcritical` | 1.0 | 2 | EPA eGRID2022 | 2024-01 |  |
@@ -227,7 +228,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.carbon_price_path` | zero | 1 | "zero", "low", "mid", "high"; used when carbon_price is 0.0 |  | auto-generated, needs-citation |
 | `scenario.plant_emission_rates_path` | inputs/processed/plant_emission_rates… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.so2_price` | 0.0 | 1 | $/ton SO2 |  | auto-generated, needs-citation |
+| `scenario.state_carbon_pricing` | True | 1 | Toggle: charge the ISO's state carbon-program allowance cost (CA ca… | 2026-06 |  |
 | `scenario.use_plant_emission_rates` | True | 2 | When True, generators pinned to a single plant take that plant's CA… |  | auto-generated, needs-citation |
+| `state_carbon_price_by_iso.CAISO` | {"2023": 33.03, "2024": 35.23, "2025"… | 2 | CARB / CA-Quebec joint auction current-vintage settlement prices, a… | 2025-11 |  |
 
 ## Fuel Prices
 

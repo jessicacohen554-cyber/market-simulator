@@ -296,8 +296,11 @@ def _calibration_config(
     The calibration configuration fixes the structural and policy levers to
     their backcast values: the weather year is the calibration year, the
     EIA-860 vintage capacity ramp is on, the EIA-930 generation-side demand
-    is used without a T&D gross-up, gas seasonality is on, and the carbon
-    price and RPS constraint are off.
+    is used without a T&D gross-up, gas seasonality is on, and the RPS
+    constraint is off. The federal carbon price is zero, which lets the
+    state carbon program through: CAISO years charge the measured CARB
+    cap-and-trade allowance price (see policy.carbon.state_carbon_price);
+    other ISOs see no carbon cost.
 
     The measured Henry Hub price is applied through ``gas_price_override``
     when that field exists on :class:`ScenarioConfig`; otherwise the run
@@ -325,8 +328,19 @@ def _calibration_config(
         #   demand target equals actual grid net generation and BTM CHP
         #   self-supply stays off-grid. See ScenarioConfig.td_loss_factor.
         gas_seasonality=True,
-        carbon_price=0.0,
+        carbon_price=0.0,  # no *federal* carbon price in the backcast years;
+        #   carbon_price=0 falls through to the state carbon program in
+        #   resolve_carbon_price, so CAISO charges the measured CARB
+        #   cap-and-trade allowance price (2023-25) on in-state fossil MC.
+        #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
+        gas_monthly_actuals=(iso.upper() == "CAISO"),  # CAISO default-on:
+        #   the +1.20 SoCal basis seed misses the measured delivered-gas
+        #   reality badly in stressed years (EIA-923 implied basis +7.06 in
+        #   2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in 2024, +1.12 in
+        #   2025), so CAISO backcasts price gas at the measured ISO-month
+        #   series. PJM keeps the --gas-monthly-actuals flag (its keeper
+        #   runs pass it explicitly); ERCOT stays on annual + shape (E1).
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
