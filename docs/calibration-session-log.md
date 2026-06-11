@@ -339,3 +339,46 @@ under-run.
 **Data note:** Run-74+ include the regenerated unit-outage nameplates (Rio Nogales units
 189->223.5 MW, C.R. Wing 77.5->84.9; windows unchanged — ERCOT otherwise unaffected by the
 2026-06-10 multi-ISO outage regeneration).
+
+-----
+
+## ERCOT Run-77 — gas_monthly_actuals backport experiment: REJECTED (2026-06-11)
+
+**Question:** does the PJM 2026-06 measured EIA-923 ISO-month gas pricing
+(`gas_monthly_actuals`), backported to the ERCOT backcast, close the 2024 coal
+under-run (PRB −13.1%) before touching `coal_prb_passthrough`?
+**Bundles:** `results/calibration/Run-77-gasact-2023/-2024` — exact Run-76 config +
+`--gas-monthly-actuals` (config diff verified: that one flag only). 2025 not re-run.
+
+**Answer: no — the gap doesn't close, it blows through zero into a larger overshoot,
+and 2023 breaks tolerance.** Run-76 → Run-77, diff % vs EIA-923:
+
+| class | 2023 | 2024 |
+|---|---|---|
+| COAL_PRB | +2.7 → **+23.3** | −13.1 → **+17.2** |
+| COAL_LIGNITE | −4.8 → **+10.3** | −17.7 → +5.0 |
+| CC_REGULAR | −4.7 → **−10.4** | +1.9 → −5.6 |
+| CT_PEAKER | +3.9 → −2.6 | −7.7 → **−21.3** |
+| ST_GAS | +2.8 → −2.3 | −8.6 → **−18.8** |
+
+Coal hourly *shape* also degrades (2024 Pearson 0.901 → 0.795, NRMSE 0.229 → 0.271):
+this is not an overshoot of the right signal.
+
+**Why (data misalignment, the documented rule-13 exception):** ERCOT's EIA-923
+Schedule-5 gas receipts cover only ~20% of burn (20–23 plants), skewed to
+muni/co-op/regulated reporters whose *delivered contract* cost embeds firm transport
+and distribution adders. The volume-weighted ISO-month series runs ~+$1/MMBtu above
+the merchant-hub level the (non-reporting, ~80%) merchant fleet actually pays
+(2023: measured avg ~$3.0 vs $2.04 delivered HH+basis; 2024: ~$2.7 vs $1.69). At ERCOT
+heat rates that flips the gas-CC/coal merit order in most months. PJM's reporter sample
+was representative of its hub; ERCOT's is not — the measured series is on a different
+cost boundary than the marginal hub price our gas offer model needs.
+
+**What survives:** the 2024 coal under-run *is* gas-price-sensitive (raising gas
+swings PRB 2024 by +30 pp), confirming the cheap-gas-year-asymmetry diagnosis. The
+measured monthly *shape* is also real (Jan-2024 winter event: $4.45 measured vs $1.94
+generic shape). A reconciled variant — measured month shape renormalized to the trusted
+annual HH+basis level — is the candidate structural fix to evaluate before any
+`coal_prb_passthrough` retune; the raw level swap is rejected. `gas_monthly_actuals`
+stays off for ERCOT (Run-76 remains the baseline); PJM unchanged (flag was already
+opt-in per ISO run).
