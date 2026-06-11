@@ -678,7 +678,10 @@ class ScenarioConfig:
     # extension, no LP structural change); emissions/heat rate stay on the
     # gas characterization. Off by default so ERCOT (no dual-fuel fleet
     # behaviour) and existing forecasts are unchanged; the calibration
-    # harness turns it on for PJM.
+    # harness turns it on for the winter-switching cluster — PJM and the NE/NY
+    # ISOs (NYISO downstate Ravenswood/Astoria/Bowline/Roseton/Northport CT/ST
+    # units carry ~17 GW of EIA-860-flagged oil backup; NEISO's Algonquin-spot
+    # marginal gas). See docs/multi-iso/nyiso-data-audit.md (P13).
     dual_fuel_switching: bool = False
 
     # Tier 3 (calibration) — thermal availability source. "statistical"
