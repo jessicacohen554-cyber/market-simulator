@@ -12,7 +12,12 @@ shaped. Per-plant EIA-923 monthly gas costs are **off by default**
 (``gas_plant_monthly_fuel_pricing``): merchant CCs in a hub all buy gas in
 the same market, and EIA-923 Schedule-5 gas reporting is too sparse (~12%
 of ERCOT CC MW) to split same-zone units without introducing a spurious
-price asymmetry.
+price asymmetry. For pipeline-constrained ISOs whose marginal gas cost is
+set by a blown-out trading hub rather than plant receipts (NEISO /
+Algonquin Citygate), the measured hub-month basis overlay
+(``gas_hub_basis_overlay``, :func:`apply_hub_basis_overlay`) replaces the
+gas price with measured Henry Hub monthly + measured hub basis in covered
+months.
 
 **Coal** generators in historical years still pay their own measured
 EIA-923 Schedule 5 monthly delivered cost where reported (lignite
@@ -263,7 +268,7 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
             series = np.where(
                 np.isnan(hourly_measured), series, hourly_measured
             )
-    return series
+    return _hub_overlay_series(series, config, year, hours)
 
 
 def _sigmoid_passthrough(
@@ -408,27 +413,38 @@ def iso_monthly_oil_prices(
     return _iso_monthly_fuel_prices(config, year, "Petroleum", monthly_costs_path)
 
 
-# Regional gas-basis upload (doc-07 U4 / doc-01 §4): per-ISO monthly delivered
-# hub basis ($/MMBtu over Henry Hub) for the named pipeline trading points that
-# EIA-923's plant-average delivered cost understates — Transco Z6 NY / Iroquois
-# for NYISO, Algonquin (AGT) for ISO-NE. The file is the schema-locked template
-# (header only) until a licensed ICE/Platts or EIA-citygate-proxy fill lands;
+# Regional gas-basis upload (doc-07/doc-08 U4 / doc-01 §4): per-ISO monthly
+# delivered hub basis ($/MMBtu over Henry Hub) for the named pipeline trading
+# points that EIA-923's plant-average delivered cost understates — Transco Z6
+# NY / Iroquois for NYISO, Algonquin (AGT) for ISO-NE. The NEISO/Algonquin leg
+# is filled (ISO-NE MA gas index, 2023-2025, 35/36 months); other ISOs remain
+# header-only until a licensed ICE/Platts or EIA-citygate-proxy fill lands;
 # see docs/multi-iso/data-acquisition-report.md §1.
 WINTER_GAS_BASIS_PATH: Path = (
     Path(__file__).parents[3] / "inputs" / "raw-data"
     / "gas_basis_by_iso_month.csv"
 )
 
+# Measured Henry Hub monthly spot averages (EIA RNGWHHDm via the
+# datasets/natural-gas public-domain mirror; see
+# docs/multi-iso/data-acquisition-report.md Step 1a). The hub-basis overlay
+# adds the measured ISO-month basis back onto this leg.
+HENRY_HUB_MONTHLY_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "gas-prices"
+    / "henry_hub_monthly.csv"
+)
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
+_HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 
 
 def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
     """Return the regional gas-basis frame, or ``None`` when it carries no rows.
 
-    The CSV (``iso,year,month,hub,basis_usd_mmbtu,source``) is the header-only
-    template until upload U4 lands, so an empty or absent file is the common
-    case and resolves to ``None`` (callers fall back to measured 923). Cached
-    per path so a multi-year run reads the file once.
+    The CSV (``iso,year,month,hub,basis_usd_mmbtu,source``) carries only the
+    ISOs whose hub leg has been sourced (currently NEISO/Algonquin), so an
+    empty or absent file resolves to ``None`` (callers fall back to measured
+    923). Cached per path so a multi-year run reads the file once.
     """
     resolved = path or WINTER_GAS_BASIS_PATH
     if resolved in _WINTER_BASIS_CACHE:
@@ -447,17 +463,19 @@ def load_winter_gas_basis(
 ) -> np.ndarray | None:
     """Measured monthly delivered gas basis ($/MMBtu over Henry Hub), or ``None``.
 
-    The downstate winter-basis layer (doc-07 design decision 3, upload U4): a
-    length-12 array of the ISO's named-hub basis (Transco Z6 NY / Iroquois for
-    NYISO) by calendar month, which spikes far above the plant-average EIA-923
-    delivered cost in January/February when downstate pipeline capacity is
-    scarce — the trigger that drives the dual-fuel gas→oil switch (P13). The
-    intended use is to layer this hub-specific series onto the downstate gas
-    path; until U4 lands the source CSV is the header-only template, so this
-    returns ``None`` and the gas path falls back to the measured ISO-month 923
-    series (:func:`iso_monthly_gas_prices`), which already carries the winter
-    shape volume-weighted across the ISO (Jan-2023 NYISO delivered $10.02/MMBtu
-    vs Henry Hub $3.27) if not the full downstate-only blowout.
+    The constrained-hub winter-basis layer (doc-07 design decision 3 /
+    doc-08 design decision 1, upload U4): a length-12 array of the ISO's
+    named-hub basis (Transco Z6 NY / Iroquois for NYISO, Algonquin Citygate
+    for NEISO) by calendar month, which spikes far above the plant-average
+    EIA-923 delivered cost in January/February when pipeline capacity is
+    scarce — the trigger that drives the dual-fuel gas→oil switch (P13).
+    The NEISO leg is filled (ISO-NE MA gas index 2023-2025) and consumed by
+    :func:`iso_hub_monthly_gas_prices` / :func:`apply_hub_basis_overlay`;
+    for ISOs whose hub leg has not landed (NYISO) this returns ``None`` and
+    the gas path falls back to the measured ISO-month 923 series
+    (:func:`iso_monthly_gas_prices`), which already carries the winter
+    shape volume-weighted across the ISO (Jan-2023 NYISO delivered
+    $10.02/MMBtu vs Henry Hub $3.27) if not the full downstate-only blowout.
 
     Returns ``None`` when the CSV is absent/empty or has no rows for this ISO
     and year; otherwise a ``(12,)`` array with ``NaN`` for unreported months.
@@ -474,6 +492,131 @@ def load_winter_gas_basis(
         if 0 <= m < 12:
             monthly[m] = float(row["basis_usd_mmbtu"])
     return monthly
+
+
+def _henry_hub_monthly(path: Path | None) -> dict[tuple[int, int], float]:
+    """Return ``{(year, month): $/MMBtu}`` measured Henry Hub monthly spot."""
+    resolved = Path(path) if path else HENRY_HUB_MONTHLY_PATH
+    if resolved in _HH_MONTHLY_CACHE:
+        return _HH_MONTHLY_CACHE[resolved]
+    out: dict[tuple[int, int], float] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved)
+        out = {
+            (int(r.year), int(r.month)): float(r.price_usd_mmbtu)
+            for r in frame.itertuples()
+        }
+    _HH_MONTHLY_CACHE[resolved] = out
+    return out
+
+
+def iso_hub_monthly_gas_prices(
+    config: ScenarioConfig, year: int,
+    basis_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+) -> np.ndarray | None:
+    """Measured hub-month delivered gas price ($/MMBtu), or ``None``.
+
+    Reconstructs the ISO's trading-hub monthly spot price as measured Henry
+    Hub monthly spot + the measured hub-month basis from
+    :func:`load_winter_gas_basis` (for NEISO: the Algonquin Citygate /
+    ISO-NE Massachusetts gas index, whose Dec-Feb basis blows out to
+    +$4-13/MMBtu while plant-average EIA-923 receipts stay far lower).
+    Months without a basis row — or without a Henry Hub monthly quote —
+    are ``NaN`` for the caller to leave on its existing series; returns
+    ``None`` when the CSV, the ISO or the year is absent entirely (forward
+    years, ISOs with no sourced hub series).
+    """
+    basis = load_winter_gas_basis(config, year, path=basis_path)
+    if basis is None:
+        return None
+    henry_hub = _henry_hub_monthly(henry_hub_path)
+    monthly = np.full(12, np.nan)
+    for m in range(12):
+        hh = henry_hub.get((year, m + 1))
+        if hh is not None and not np.isnan(basis[m]):
+            monthly[m] = hh + float(basis[m])
+    if np.isnan(monthly).all():
+        return None
+    return monthly
+
+
+def apply_hub_basis_overlay(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    basis_path: Path | None = None,
+) -> None:
+    """Reprice gas units at the measured hub-month spot in covered months.
+
+    Doc-08 NEISO design decision 1: in a pipeline-constrained ISO the
+    marginal gas unit prices off the constrained trading hub (Algonquin
+    Citygate), whose winter spot blows out far above plant-average EIA-923
+    receipts — the opportunity cost of gas in hand is the spot price it
+    could be resold at, so the dispatch-relevant marginal fuel cost is the
+    hub price for *every* gas unit, contracted or not. For each month with
+    a measured hub basis row (:func:`iso_hub_monthly_gas_prices`), every
+    gas generator's fuel price is **replaced** by the hub-month price,
+    superseding both the ISO-month EIA-923 series and the per-plant F923
+    overwrite — deliberate for NEISO, where only two plants report
+    Schedule-5 gas receipts (partly LNG-priced) and the hub index is the
+    far better measurement. Months without a basis row keep whatever the
+    earlier passes set. Runs *before* :func:`apply_dual_fuel_pricing`, so
+    dual-fuel units still cap the blown-out winter hub price at oil parity.
+
+    Gated on ``config.gas_hub_basis_overlay`` (off by default; the
+    calibration harness enables it for NEISO), so ERCOT/PJM/CAISO and all
+    forecasts are unchanged. Backcast-only by construction: forward years
+    have no basis rows. Mutates ``fuel_prices`` in place; idempotent.
+
+    Args:
+        fuel_prices: The ``(n_gen, T)`` delivered fuel-price array, updated
+            in place for gas generators in covered months.
+        fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects gas.
+        config: Scenario configuration supplying ``gas_hub_basis_overlay``,
+            ``iso`` and ``hours``.
+        year: Calendar year keying the hub-basis lookup.
+        basis_path: Optional override for the basis CSV path.
+    """
+    if not getattr(config, "gas_hub_basis_overlay", False):
+        return
+    monthly = iso_hub_monthly_gas_prices(config, year, basis_path)
+    if monthly is None:
+        return
+    hourly = _expand_monthly_to_hourly(monthly, fuel_prices.shape[1])
+    covered = ~np.isnan(hourly)
+    if not covered.any():
+        return
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    if gas_rows.size == 0:
+        return
+    fuel_prices[np.ix_(gas_rows, np.nonzero(covered)[0])] = hourly[covered]
+    logger.info(
+        "hub-basis overlay (%s %d): %d gas generators repriced at the "
+        "measured hub-month spot in %d/12 months (winter max %.2f $/MMBtu)",
+        config.iso, year, gas_rows.size,
+        int((~np.isnan(monthly)).sum()), float(np.nanmax(monthly)),
+    )
+
+
+def _hub_overlay_series(
+    series: np.ndarray, config: ScenarioConfig, year: int, hours: int
+) -> np.ndarray:
+    """Return ``series`` with covered months replaced by the hub-month spot.
+
+    The single-series analogue of :func:`apply_hub_basis_overlay`, used by
+    :func:`_gas_series` so gas-keyed coal passthrough sigmoids see the same
+    delivered gas price the merit order sees. No-op unless
+    ``config.gas_hub_basis_overlay`` is set and basis rows exist.
+    """
+    if not getattr(config, "gas_hub_basis_overlay", False):
+        return series
+    monthly = iso_hub_monthly_gas_prices(config, year)
+    if monthly is None:
+        return series
+    hourly = _expand_monthly_to_hourly(monthly, hours)
+    return np.where(np.isnan(hourly), series, hourly)
 
 
 def resolve_fuel_prices(
@@ -570,9 +713,13 @@ def resolve_fuel_prices(
     # overwrite pass apply_monthly=False and call
     # apply_plant_monthly_fuel_prices themselves afterwards, so the actual
     # EIA-923 monthly cost takes precedence over the supply-class base —
-    # followed by the dual-fuel min, which must see the final gas price.
+    # then the hub-basis overlay (the measured constrained-hub spot
+    # supersedes plant receipts in covered months), and finally the
+    # dual-fuel min, which must see the final gas price so oil parity caps
+    # the blown-out winter hub price.
     if apply_monthly:
         apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
+        apply_hub_basis_overlay(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices

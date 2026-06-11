@@ -23,6 +23,8 @@ from market_sim.data.fuel import (
     COAL_PRICE_PRB_BY_YEAR,
     _prb_monthly_actuals,
     apply_coal_supply_pricing,
+    apply_hub_basis_overlay,
+    iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
     resolve_annual_gas_price,
@@ -645,6 +647,56 @@ def test_nyiso_backcast_gas_mc_includes_rggi():
     assert resolve_carbon_price(caiso, 2025) == 28.06
 
 
+def test_neiso_backcast_gas_mc_includes_rggi():
+    """NEISO 2023-25 gas MC carries the RGGI allowance cost; off elsewhere.
+
+    The constants entry is the per-year average of the four RGGI quarterly
+    auction clearing prices, converted from $/short ton (as RGGI clears) to
+    the model's $/metric tonne. A 7.0-HR CC at the 2023 average (~$14.9/t)
+    shows the doc-08 "~$5-7/MWh on a CC" uplift.
+    """
+    hours = 24
+    fleet = _cc_fleet(hours=hours)
+    expected_by_year = {2023: 14.87, 2024: 22.83, 2025: 24.35}
+    for year, expected in expected_by_year.items():
+        neiso = ScenarioConfig(
+            iso="NEISO", mode="backcast", weather_year=year,
+            gas_seasonality=False, hours=hours,
+        )
+        carbon = resolve_carbon_price(neiso, year)
+        assert carbon == expected
+        zero_fuel = np.zeros((fleet.n_gen, hours))  # isolate the carbon term
+        uplift = assemble_mc(
+            fleet, zero_fuel, carbon_price=carbon
+        ) - assemble_mc(fleet, zero_fuel, carbon_price=0.0)
+        np.testing.assert_allclose(
+            uplift, get_emission_rate("gas_cc", 7.0) * carbon
+        )
+        # First-order but below the CAISO CARB wedge: $5-11/MWh on a CC.
+        assert 5.0 < uplift[0, 0] < 11.0
+    # 2023 specifically lands in the doc-08 $5-7/MWh band.
+    uplift_2023 = get_emission_rate("gas_cc", 7.0) * expected_by_year[2023]
+    assert 5.0 < uplift_2023 < 7.0
+
+    # Forward years have no measured RGGI price: fall through to the
+    # (zero) carbon path rather than extrapolating the auction series.
+    forward = ScenarioConfig(iso="NEISO", gas_seasonality=False, hours=hours)
+    assert resolve_carbon_price(forward, 2026) == 0.0
+
+    # ERCOT/PJM stay at zero; the CAISO CARB series is untouched.
+    for iso in ("ERCOT", "PJM"):
+        other = ScenarioConfig(
+            iso=iso, mode="backcast", weather_year=2024,
+            gas_seasonality=False, hours=hours,
+        )
+        assert resolve_carbon_price(other, 2024) == 0.0
+    caiso = ScenarioConfig(
+        iso="CAISO", mode="backcast", weather_year=2024,
+        gas_seasonality=False, hours=hours,
+    )
+    assert resolve_carbon_price(caiso, 2024) == 35.23
+
+
 def test_cc_7000_hr_at_18_per_ton_uplift_5_to_7_per_mwh():
     """A 7.0 HR gas CC at ~$18/t RGGI shows the doc-07 ~$5-7/MWh uplift."""
     fleet = _cc_fleet(heat_rate=7.0, hours=24)
@@ -663,9 +715,10 @@ def test_cc_7000_hr_at_18_per_ton_uplift_5_to_7_per_mwh():
 
 
 def test_winter_gas_basis_absent_falls_back_to_923(tmp_path):
-    """U4 not landed: an empty/absent basis CSV resolves to None (fall back)."""
+    """NYISO U4 not landed: no basis rows resolves to None (fall back)."""
     config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
-    # The in-repo template is header-only, so the default path returns None.
+    # The in-repo CSV carries no NYISO rows (only the NEISO/Algonquin leg
+    # is filled), so the default path returns None for NYISO.
     assert load_winter_gas_basis(config, 2023) is None
     # An absent path is likewise None (forward years / other ISOs).
     missing = tmp_path / "nope.csv"
@@ -691,6 +744,105 @@ def test_winter_gas_basis_loads_when_present(tmp_path):
     assert np.isnan(basis[3])  # April unreported -> NaN (caller fills from 923)
     # A year with no rows for this ISO falls back to None.
     assert load_winter_gas_basis(config, 2024, path=csv) is None
+
+
+# --- Algonquin hub-month basis overlay (NEISO winter gas blowout) -----------
+
+
+def test_hub_basis_overlay_replaces_covered_months(tmp_path):
+    """Covered months are repriced at HH-month + basis; others untouched.
+
+    A synthetic basis CSV with a single January 2024 row (+$10 over the
+    measured Jan-2024 Henry Hub of $3.18) must reprice every gas unit's
+    January hours to $13.18 while February (no row) and the coal row keep
+    their prior prices. With the flag off the overlay is a strict no-op.
+    """
+    basis_csv = tmp_path / "basis.csv"
+    basis_csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\n"
+        "NEISO,2024,1,AGT,10.0,test\n"
+    )
+    hours = 31 * 24 + 28 * 24  # January + February 2024
+    fleet = _sample_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="NEISO", mode="backcast", weather_year=2024,
+        gas_seasonality=False, hours=hours, gas_hub_basis_overlay=True,
+    )
+    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
+    before = fuel_prices.copy()
+    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
+
+    gas_rows = np.isin(fleet.fuel_type_idx, (
+        FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"],
+    ))
+    jan = slice(0, 31 * 24)
+    feb = slice(31 * 24, hours)
+    np.testing.assert_allclose(fuel_prices[gas_rows, jan], 3.18 + 10.0)
+    np.testing.assert_allclose(fuel_prices[gas_rows, feb], 4.0)
+    # Non-gas generators never see the hub price.
+    np.testing.assert_allclose(fuel_prices[~gas_rows], before[~gas_rows])
+
+    # Flag off: byte-identical no-op.
+    off = before.copy()
+    apply_hub_basis_overlay(
+        off, fleet, config.with_overrides(gas_hub_basis_overlay=False),
+        2024, basis_path=basis_csv,
+    )
+    np.testing.assert_array_equal(off, before)
+
+
+def test_neiso_hub_basis_overlay_winter_blowout_real_data():
+    """A January AGT-spike hour prices gas far above the annual average.
+
+    Uses the committed gas_basis_by_iso_month.csv (ISO-NE MA gas index /
+    Algonquin Citygate, isonewswire.com): Jan-2025 measured $16.92/MMBtu
+    (basis +$12.79 over HH) against a ~$4.6 annual mean, so winter gas MC
+    blows out well above plant-average levels — the ISO-NE price driver.
+    """
+    config = ScenarioConfig(
+        iso="NEISO", mode="backcast", weather_year=2025,
+        gas_price_override=3.53, hours=_HOURS, gas_hub_basis_overlay=True,
+    )
+    monthly = iso_hub_monthly_gas_prices(config, 2025)
+    if monthly is None:
+        import pytest
+        pytest.skip("gas_basis_by_iso_month.csv has no NEISO rows")
+    # Jan/Feb/Dec 2025 reconstruct the measured ISO-NE index blowout.
+    assert monthly[0] > 15.0   # Jan-25: 4.13 HH + 12.79 basis = 16.92
+    assert monthly[1] > 13.0   # Feb-25: 14.62
+    assert monthly[11] > 13.0  # Dec-25: 14.90
+    assert np.isnan(monthly[7])  # Aug-25 missing upstream: falls back
+    assert np.nanmin(monthly) < 3.0  # shoulder months stay cheap
+
+    fleet = _cc_fleet(hours=_HOURS)
+    prices = resolve_fuel_prices(config, fleet, 2025)
+    mc = assemble_mc(fleet, prices, carbon_price=0.0)
+    jan_mc = mc[0, : 31 * 24].mean()
+    annual_mc = mc[0].mean()
+    assert jan_mc > 2.0 * annual_mc, (
+        f"January gas MC {jan_mc:.1f} should blow out far above the "
+        f"annual average {annual_mc:.1f}"
+    )
+
+
+def test_hub_basis_overlay_noop_for_other_isos():
+    """ERCOT/PJM/CAISO fuel prices are unchanged by the overlay machinery.
+
+    The committed basis CSV carries only NEISO rows, and the flag defaults
+    off — both layers independently leave the other ISOs' resolver output
+    identical.
+    """
+    fleet = _sample_fleet(hours=24)
+    for iso in ("ERCOT", "PJM", "CAISO"):
+        base = ScenarioConfig(
+            iso=iso, mode="backcast", weather_year=2024,
+            gas_seasonality=False, hours=24,
+        )
+        default = resolve_fuel_prices(base, fleet, 2024)
+        forced = resolve_fuel_prices(
+            base.with_overrides(gas_hub_basis_overlay=True), fleet, 2024
+        )
+        np.testing.assert_array_equal(default, forced)
 
 
 def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
