@@ -1847,6 +1847,88 @@ def _print_curtailment_vs_reported(
     _print_table(month_rows)
 
 
+# Local hours-of-day of the evening net-load peak window, used to summarize
+# the battery discharge shape (CAISO's duck-curve discharge concentrates in
+# HE18-23, i.e. hours 17-22 0-based). Both the model and the EIA-930 series
+# index hour 0 at local midnight Jan 1, so ``hour % 24`` is the local hour.
+_EVENING_HOURS: tuple[int, int] = (17, 22)
+
+
+def _evening_share_pct(discharge: np.ndarray) -> float:
+    """Share (%) of total discharge falling in the evening-peak window."""
+    total = float(discharge.sum())
+    if total <= 0.0:
+        return float("nan")
+    hod = np.arange(discharge.shape[0]) % 24  # hour of local day
+    lo, hi = _EVENING_HOURS
+    return 100.0 * float(discharge[(hod >= lo) & (hod <= hi)].sum()) / total
+
+
+def _print_storage_cycling(
+    year: int, storage: pd.DataFrame, e930: dict | None,
+) -> None:
+    """[2b] Battery throughput + evening-discharge shape vs EIA-930.
+
+    The model side is the bundle's storage frame (battery vs pumped-storage
+    techs split out). The benchmark side is the EIA-930 ``battery`` /
+    ``pumped_storage`` net series, present only when the BA extract carries
+    the storage fuel codes (the current CISO extract folds batteries into
+    ``OTH``); absent benchmarks print as ``—`` so the model throughput is
+    still on the record.
+    """
+    batt = storage[storage["tech"] != "pumped_storage"]
+    if batt.empty:
+        return
+    hourly = (
+        batt.groupby("hour")[["charge_mw", "discharge_mw"]]
+        .sum().sort_index()
+    )
+    dis = hourly["discharge_mw"].to_numpy(dtype=float)
+    chg = hourly["charge_mw"].to_numpy(dtype=float)
+    obs = e930.get("battery") if e930 is not None else None
+
+    lo, hi = _EVENING_HOURS
+    print(f"\n  [2b] Battery cycling — {year} (model EIA-860 fleet vs "
+          "EIA-930 BAT)")
+    rows: list[tuple] = [("metric", "model", "EIA-930")]
+    if obs is not None:
+        T = min(dis.shape[0], obs.shape[0])
+        dis, chg, obs = dis[:T], chg[:T], obs[:T]
+        # EIA-930 BAT is a net series: + = discharging, - = charging.
+        o_dis = np.clip(obs, 0.0, None)
+        o_chg = np.clip(-obs, 0.0, None)
+        rows.append(("discharge TWh", f"{dis.sum() / _MWH_PER_TWH:.2f}",
+                     f"{o_dis.sum() / _MWH_PER_TWH:.2f}"))
+        rows.append(("charge TWh", f"{chg.sum() / _MWH_PER_TWH:.2f}",
+                     f"{o_chg.sum() / _MWH_PER_TWH:.2f}"))
+        rows.append((f"evening (h{lo}-{hi}) discharge share %",
+                     f"{_evening_share_pct(dis):.1f}",
+                     f"{_evening_share_pct(o_dis):.1f}"))
+        rows.append(("hourly net Pearson r",
+                     f"{_pearson_r(dis - chg, obs):.3f}", ""))
+    else:
+        rows.append(("discharge TWh",
+                     f"{dis.sum() / _MWH_PER_TWH:.2f}", "—"))
+        rows.append(("charge TWh", f"{chg.sum() / _MWH_PER_TWH:.2f}", "—"))
+        rows.append((f"evening (h{lo}-{hi}) discharge share %",
+                     f"{_evening_share_pct(dis):.1f}", "—"))
+    _print_table(rows)
+    if obs is None:
+        print("    (no EIA-930 battery series in this BA extract — model "
+              "throughput reported alone)")
+
+    ps = storage[storage["tech"] == "pumped_storage"]
+    if not ps.empty:
+        ps_dis = float(ps["discharge_mw"].sum()) / _MWH_PER_TWH
+        ps_obs = e930.get("pumped_storage") if e930 is not None else None
+        bench = (
+            f"{np.clip(ps_obs, 0.0, None).sum() / _MWH_PER_TWH:.2f}"
+            if ps_obs is not None else "—"
+        )
+        print(f"    pumped-storage discharge: model {ps_dis:.2f} TWh; "
+              f"EIA-930 {bench}")
+
+
 def _report_generic(
     run_dir: Path, iso: str, meta: dict, system: pd.DataFrame,
     e930_all: pd.DataFrame | None,
@@ -1861,6 +1943,10 @@ def _report_generic(
     CHP and CAMPD diagnostics are skipped.
     """
     reference = _load_reference()
+    storage_path = run_dir / "storage.parquet"
+    storage_all = (
+        pd.read_parquet(storage_path) if storage_path.exists() else None
+    )
     for year in meta["years"]:
         ref_year = reference.get("isos", {}).get(iso, {}).get(str(year), {})
         ref_gen = _aggregate_twh(ref_year.get("generation_twh", {}))
@@ -1981,6 +2067,15 @@ def _report_generic(
             else:
                 print("    model            :    0.00 TWh "
                       "(energy-only; no external interchange node)")
+
+        # --- [2b] Battery cycling: throughput + evening-discharge shape ---
+        if storage_all is not None:
+            s = storage_all[
+                (storage_all["year"] == year)
+                & (storage_all["pass"] == pass_label)
+            ]
+            if not s.empty:
+                _print_storage_cycling(year, s, e930)
 
         # --- [3] Price level + duration ---
         zones = sorted(sysd["zone"].unique())

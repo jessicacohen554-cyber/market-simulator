@@ -188,5 +188,66 @@ class TestEIALoader(unittest.TestCase):
         self.assertLess(reported.sum(), HOURS_PER_YEAR)
 
 
+class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
+    """EIA-930 battery/pumped-storage benchmark series wire in when present.
+
+    The storage split (``NG: BAT`` / ``NG: PS``) only exists in extract
+    vintages whose BA reports it; the benchmark loader must pick the series
+    up when a regenerated extract carries them and skip them silently when
+    it does not (the current CISO extract folds batteries into ``OTH``).
+    """
+
+    def _benchmark_from_frame(self, frame):
+        """Run ``load_eia_hourly_benchmark`` against a synthetic extract."""
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        from market_sim.data import eia_loader
+
+        with tempfile.TemporaryDirectory() as tmp:
+            frame.to_parquet(Path(tmp) / "CISO hourly.parquet", index=False)
+            with mock.patch.object(
+                eia_loader, "EIA_HOURLY_DIR", Path(tmp)
+            ):
+                return eia_loader.load_eia_hourly_benchmark("CAISO", 2023)
+
+    @staticmethod
+    def _synthetic_frame(with_battery: bool):
+        import pandas as pd
+
+        times = pd.date_range("2023-01-01", periods=48, freq="h")
+        frame = pd.DataFrame({
+            "UTC time": times,
+            "Local date": times,
+            "NG: SUN": np.linspace(0.0, 470.0, 48),
+            "Net generation": np.full(48, 1_000.0),
+        })
+        if with_battery:
+            # Net series: negative = charging (midday), positive =
+            # discharging (evening).
+            frame["NG: BAT"] = np.tile(
+                np.concatenate([np.full(12, -50.0), np.full(12, 80.0)]), 2
+            )
+            frame["NG: PS"] = np.full(48, 5.0)
+        return frame
+
+    def test_battery_series_present_when_extract_carries_it(self):
+        bench = self._benchmark_from_frame(self._synthetic_frame(True))
+        self.assertIn("battery", bench)
+        self.assertIn("pumped_storage", bench)
+        self.assertEqual(bench["battery"].shape, (HOURS_PER_YEAR,))
+        # Sign convention survives the round trip: charging hours negative,
+        # discharging hours positive.
+        self.assertLess(bench["battery"][0], 0.0)
+        self.assertGreater(bench["battery"][12], 0.0)
+
+    def test_battery_series_skipped_when_absent(self):
+        bench = self._benchmark_from_frame(self._synthetic_frame(False))
+        self.assertNotIn("battery", bench)
+        self.assertNotIn("pumped_storage", bench)
+        self.assertIn("solar", bench)  # the rest of the benchmark is intact
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -88,6 +88,7 @@ from market_sim.model.commitment import (  # noqa: E402
 from market_sim.model.dispatch import solve_dispatch  # noqa: E402
 from market_sim.model.storage import (  # noqa: E402
     load_eia860_storage,
+    storage_cap_profiles,
     storage_units_to_arrays,
 )
 from market_sim.model.transmission import (  # noqa: E402
@@ -340,6 +341,13 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
+        storage_vintage_ramp=(iso.upper() == "CAISO"),  # CAISO commissioned
+        #   3.0 GW of batteries during 2023 and 3.6 GW during 2024 (EIA-860
+        #   energy-storage schedule), so a flat year-end fleet overstates the
+        #   spring/summer battery capability by 1.5-2 GW — the dispatch caps
+        #   ramp month-by-month from each COD instead. ERCOT/PJM stay flat:
+        #   their calibrations were tuned against year-end fleets and flip on
+        #   only with a recalibration pass (CAISO prompt pack E2).
         nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
         #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
         #   fill those months from state/zone neighbours before the Henry Hub
@@ -940,6 +948,12 @@ def run_year(
 
     storage_units = load_eia860_storage(iso, year, config)
     storage = storage_units_to_arrays(storage_units, zone_names)
+    # Static (n_storage,) caps, or hour-varying (n_storage, T) when the
+    # intra-year COD ramp is on (config.storage_vintage_ramp) and capacity
+    # was commissioned mid-year — mid-year GWs stay offline before COD.
+    storage_power_cap, storage_energy_cap = storage_cap_profiles(
+        storage_units, storage, config.hours
+    )
 
     dispatch_kwargs = dict(
         wind_cf=wind_cf,
@@ -949,8 +963,8 @@ def run_year(
         voll=config.voll,
         incidence=incidence,
         ttc=ttc,
-        storage_power_cap=storage.power_cap,
-        storage_energy_cap=storage.energy_cap,
+        storage_power_cap=storage_power_cap,
+        storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage.zone_idx,
         eta_chg=storage.eta_chg,
         eta_dis=storage.eta_dis,
