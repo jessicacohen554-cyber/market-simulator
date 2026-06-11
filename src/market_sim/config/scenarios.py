@@ -613,6 +613,19 @@ class ScenarioConfig:
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
 
+    # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
+    # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
+    # Natural Gas?" on the Multifuel schedule) price their fuel at
+    # min(gas, oil) per hour, so when the delivered gas price spikes past
+    # oil parity the unit bids on its backup distillate/residual cost instead
+    # of being priced out — the winter fuel-switching behaviour central to
+    # PJM/NYISO/ISO-NE cold snaps. Objective-only (an assemble_mc fuel-price
+    # extension, no LP structural change); emissions/heat rate stay on the
+    # gas characterization. Off by default so ERCOT (no dual-fuel fleet
+    # behaviour) and existing forecasts are unchanged; the calibration
+    # harness turns it on for PJM.
+    dual_fuel_switching: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -824,6 +837,7 @@ TIER_TAGS: dict[str, int] = {
     "pumped_storage_dispatch_adder": 3,
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
+    "dual_fuel_switching": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }
