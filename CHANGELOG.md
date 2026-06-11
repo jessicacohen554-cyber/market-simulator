@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-06-11 (NEISO backcast P13 — dual-fuel / oil winter switching)
+
+NEISO prompt-pack P13 (Wave 1) — activate and validate oil/dual-fuel winter
+switching, the second half of the ISO-NE winter-price mechanism (P7 set the
+Algonquin gas basis). The national machinery needed no source change beyond the
+gating already in place; this pack confirms detection end-to-end, proves the
+switch consumes the P7 overlay, validates modeled oil against EIA-923, and adds
+tests. ERCOT/PJM/CAISO MC unchanged (regression-tested).
+
+- **Detection confirmed.** `fleet.dual_fuel_plant_groups()` (EIA-860 Multifuel
+  "Switch Between Oil and Natural Gas? = Y", NG-primary) intersects the loaded
+  NEISO fleet at **107 gas tranches / 6,367 MW across 42 plants** (incl.
+  Middletown, Montville). Oil-**primary** RFO/DFO steam is correctly excluded
+  from the switch and carried as `oil` fuel type: **135 units / 5,182 MW**
+  (Wyman, Canal, New Haven, Montville, Newington). Mystic is **retired** in the
+  2025 EIA-860 vintage — correctly absent.
+- **Switch consumes the P7 overlay.** `resolve_fuel_prices` already orders
+  `apply_hub_basis_overlay` before `apply_dual_fuel_pricing`, so a dual-fuel
+  unit caps the AGT-blown winter hub gas at `min(hub_gas, oil)` × gas HR.
+  `dual_fuel_switching` stays default-on for the PJM + NE/NY cluster and off for
+  ERCOT/CAISO/MISO/SPP.
+- **Validation (2023 smoke, `--iso NEISO --year 2023 --hours 8760`):** modeled
+  oil **0.24 TWh** vs EIA-923 **0.39 TWh** — same order of magnitude, not
+  near-zero (the doc-08 red-flag test passes). The ~37% shortfall tracks the
+  gas_cc over-run in this pre-calibration smoke (69.3 vs 54.3 TWh) and should
+  close as P11/P12 tune the offer-curve/import/gas-basis knobs.
+- **Documented limitation (not fabricated).** The committed AGT basis is
+  *monthly*; monthly averages never reach distillate parity (~$18/MMBtu; max
+  Jan-2025 $16.9), so the dual-fuel CT/ST switch is wired but does not bind on
+  monthly data — winter oil comes from the oil-primary steam fleet's scarcity
+  dispatch. A daily-AGT U4 refinement is what would trip the CT switch. Same
+  shape as the NYISO P13 finding.
+- **Tests.** `tests/test_fuel.py`: `test_neiso_hub_overlay_drives_dual_fuel_
+  switch` (Jan AGT spike trips the dual-fuel unit to oil; gas-only unit eats
+  the full hub spike; shoulder month stays on gas) and
+  `test_neiso_monthly_agt_basis_stays_below_distillate_parity` (guards the
+  monthly-granularity finding across 2023–2025). Existing dual-fuel gating /
+  parity / overlay no-op tests already cover ERCOT/PJM/CAISO unchanged.
+- **Docs.** `docs/multi-iso/neiso-data-audit.md` §2b (detection + validation
+  table); doc-08 §1 "Done by P13" status; this entry.
+
 ## 2026-06-11 (NEISO backcast P7 — measured gas, Algonquin winter basis, RGGI)
 
 NEISO prompt-pack P7 (Wave 1) — the structural price pack. Measured monthly
