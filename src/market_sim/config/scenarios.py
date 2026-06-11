@@ -651,6 +651,23 @@ class ScenarioConfig:
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
 
+    # Tier 3 (calibration) — measured hub-month gas basis overlay (doc-08
+    # NEISO P7). In months with a measured hub basis row in
+    # inputs/raw-data/gas_basis_by_iso_month.csv (NEISO: Algonquin Citygate
+    # via the ISO-NE MA gas index, 2023-2025), every gas unit's fuel price
+    # is REPLACED by measured Henry Hub monthly + the measured hub basis —
+    # the constrained-hub spot is the marginal gas unit's opportunity cost,
+    # far above plant-average EIA-923 receipts in Dec-Feb blowouts (Jan-25
+    # AGT basis +$12.79/MMBtu) and the better measurement where Schedule-5
+    # gas reporting is near-empty (two NEISO reporters). Supersedes the
+    # ISO-month and per-plant F923 gas passes in covered months; runs before
+    # the dual-fuel min so oil parity still caps the winter spike. Off by
+    # default so ERCOT/PJM/CAISO and all forecasts are unchanged; the
+    # calibration harness enables it for NEISO. Backcast-only by
+    # construction (no basis rows in forward years). See
+    # market_sim.data.fuel.apply_hub_basis_overlay.
+    gas_hub_basis_overlay: bool = False
+
     # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
     # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
     # Natural Gas?" on the Multifuel schedule) price their fuel at
@@ -882,6 +899,7 @@ TIER_TAGS: dict[str, int] = {
     "pumped_storage_dispatch_adder": 3,
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
+    "gas_hub_basis_overlay": 3,
     "dual_fuel_switching": 3,
     "outage_source": 3,
     "gas_price_override": 3,

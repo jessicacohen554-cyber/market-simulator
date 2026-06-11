@@ -300,8 +300,9 @@ def _calibration_config(
     is used without a T&D gross-up, gas seasonality is on, and the RPS
     constraint is off. The federal carbon price is zero, which lets the
     state carbon program through: CAISO years charge the measured CARB
-    cap-and-trade allowance price (see policy.carbon.state_carbon_price);
-    other ISOs see no carbon cost.
+    cap-and-trade allowance price, and NYISO/NEISO years the measured RGGI
+    auction clearing average (see policy.carbon.state_carbon_price); other
+    ISOs see no carbon cost.
 
     The measured Henry Hub price is applied through ``gas_price_override``
     when that field exists on :class:`ScenarioConfig`; otherwise the run
@@ -332,20 +333,35 @@ def _calibration_config(
         carbon_price=0.0,  # no *federal* carbon price in the backcast years;
         #   carbon_price=0 falls through to the state carbon program in
         #   resolve_carbon_price, so CAISO charges the measured CARB
-        #   cap-and-trade allowance price (2023-25) on in-state fossil MC.
+        #   cap-and-trade allowance price and NYISO/NEISO the measured RGGI
+        #   auction clearing average (2023-25) on in-state fossil MC.
         #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
-        gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO")),  # default-on:
-        #   the +1.20 SoCal basis seed misses the measured delivered-gas
-        #   reality badly in stressed years (EIA-923 implied basis +7.06 in
-        #   2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in 2024, +1.12 in
-        #   2025), so CAISO backcasts price gas at the measured ISO-month
-        #   series. NYISO is the same story (P7): the flat +0.55 basis seed
-        #   misses the Transco Z6 winter blowout the measured 923 series
-        #   carries (Jan-2023 delivered $10.02/MMBtu vs HH $3.27; Dec-2025
-        #   $8.20), so NYISO backcasts price gas at the measured ISO-month
-        #   series too. PJM keeps the --gas-monthly-actuals flag (its keeper
-        #   runs pass it explicitly); ERCOT stays on annual + shape (E1).
+        gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO", "NEISO")),
+        #   Default-on: the +1.20 SoCal basis seed misses the measured
+        #   delivered-gas reality badly in stressed years (EIA-923 implied
+        #   basis +7.06 in 2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in
+        #   2024, +1.12 in 2025), so CAISO backcasts price gas at the
+        #   measured ISO-month series. NYISO is the same story (P7): the
+        #   flat +0.55 basis seed misses the Transco Z6 winter blowout the
+        #   measured 923 series carries (Jan-2023 delivered $10.02/MMBtu vs
+        #   HH $3.27; Dec-2025 $8.20), so NYISO backcasts price gas at the
+        #   measured ISO-month series too. NEISO default-on for the same
+        #   reason (the +1.10 seed is a normal-year scalar), though its
+        #   ISO-month 923 series rests on two reporting plants — the AGT hub
+        #   overlay below supersedes it in covered months. PJM keeps the
+        #   --gas-monthly-actuals flag (its keeper runs pass it explicitly);
+        #   ERCOT stays on annual + shape (E1).
+        gas_hub_basis_overlay=(iso.upper() == "NEISO"),
+        #   Doc-08 NEISO design decision 1: the marginal NEISO gas unit
+        #   prices off Algonquin Citygate spot, whose Dec-Feb basis blows out
+        #   to +$4-13/MMBtu (measured ISO-NE MA gas index 2023-2025,
+        #   inputs/raw-data/gas_basis_by_iso_month.csv). The overlay replaces
+        #   the gas price with HH-month + measured AGT basis in covered
+        #   months — THE ISO-NE winter price driver and the dual-fuel switch
+        #   trigger (P13). No basis rows exist for other ISOs (the NYISO
+        #   Transco Z6 leg is still unsourced), so this is a NEISO-only
+        #   repricing.
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.

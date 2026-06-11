@@ -51,13 +51,21 @@ Already in repo — **do not re-build**:
   `build_export_sinks("NEISO")` machinery built (J1) — NEISO needs **constants**
   in `IMPORT_TRANCHES`/`EXPORT_TRANCHES` plus calibration.
 
-Missing (the work below): **`GAS_BASIS_DIFFERENTIAL["NEISO"]` has no entry**
-(add it); NEISO blocks in `calibration_reference.json` and `actual_lmp.json`;
-zonal LMPs; zonal hourly load; hydro budgets + Northfield PS wiring; BESS
-fleet; RGGI in marginal cost; NEISO import/export tranche constants +
-calibration; **Algonquin winter basis + dual-fuel activation** (the headline);
-offer-curve tranche derivation; CHP identification; Millstone/Seabrook nuclear
-monthly CF.
+Missing (the work below): NEISO blocks in `calibration_reference.json` and
+`actual_lmp.json`; zonal LMPs; zonal hourly load; hydro budgets + Northfield
+PS wiring; BESS fleet; NEISO import/export tranche constants + calibration;
+dual-fuel activation (P13); offer-curve tranche derivation; CHP
+identification; Millstone/Seabrook nuclear monthly CF.
+
+**Done by P7 (2026-06-11):** `GAS_BASIS_DIFFERENTIAL["NEISO"]` (+1.10,
+EIA-923 normal-year seed); RGGI in marginal cost
+(`STATE_CARBON_PRICE_BY_ISO["NEISO"]`, 2023–2025, default-on);
+**Algonquin winter basis** as the `gas_hub_basis_overlay` measured
+hub-month repricing (U4 satisfied via the ISO-NE MA gas index — 35/36
+months 2023–2025 in `inputs/raw-data/gas_basis_by_iso_month.csv`; Aug-2025
+missing upstream, falls back to EIA-923/shaped); `gas_monthly_actuals`
+default-on for NEISO. P13 still owes the dual-fuel switch activation that
+consumes the overlay.
 
 ## 2. Upload manifest (user manual tasks — sessions cannot fetch these)
 

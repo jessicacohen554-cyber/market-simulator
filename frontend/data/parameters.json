@@ -2522,6 +2522,79 @@
       "flags": []
     },
     {
+      "param_id": "coal_price_base.NEISO",
+      "display_name": "Coal Price Base / Neiso",
+      "value": 3.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Tier-3 placeholder: PJM bituminous blend (EIA AEO 2024, 2.3) plus a rail-into-New-England premium. Merrimack Station (the only NE coal plant in the window, ~5% CF, deactivated Jun-2025) reports no EIA-923 Schedule-5 receipts and EIA state tables suppress NH coal.",
+      "source_date": "2026-06",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Prices a near-idle peaking coal unit only; refine in NEISO calibration (doc-08 P11/P12) if Merrimack dispatch is mis-leveled.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": [
+        "modeled",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "gas_basis_differential.NEISO",
+      "display_name": "Gas Basis Differential / Neiso",
+      "value": 1.1,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "EIA-923 Schedule 5 fuel receipts: quantity-weighted delivered gas to New England plants minus EIA Henry Hub annual average — +1.17 (2024: 3.37 vs 2.19), +1.07 (2025 Apr-Sep: 4.60 vs 3.53); 2023 measured +3.17, skewed by the Jan/Feb arctic events. Seeded at the normal-year +1.10.",
+      "source_date": "2026-06",
+      "page_or_table": "",
+      "url": "https://www.eia.gov/electricity/data/eia923/",
+      "notes": "Only two NE plants report Schedule-5 gas receipts (EIA codes 1660, 6081), so this scalar is a forward-year/fallback value; NEISO backcasts use gas_monthly_actuals + the Algonquin hub-month basis overlay instead.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.gas_hub_basis_overlay",
+      "display_name": "Gas Hub Basis Overlay",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Market simulator model design decision (doc-08 NEISO design decision 1: Algonquin winter basis is THE ISO-NE price driver). Measured basis rows: ISO-NE \"average Massachusetts natural gas index price\" (isonewswire.com monthly wholesale reports, 2023-2025; a volume-weighted AGT-area index) minus EIA Henry Hub monthly spot.",
+      "source_date": "2026-06",
+      "page_or_table": "",
+      "url": "https://isonewswire.com/",
+      "notes": "Default off; the calibration harness enables it for NEISO. Replaces gas prices with HH-month + measured hub basis in covered months; see inputs/raw-data/gas_basis_by_iso_month.csv for the per-month source URLs.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "state_carbon_price_by_iso.NEISO",
+      "display_name": "State Carbon Price By Iso / Neiso",
+      "value": {
+        "2023": 14.87,
+        "2024": 22.83,
+        "2025": 24.35
+      },
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "RGGI, Inc. quarterly auction results press releases (\"CO2 Allowances Sold for $X in Nth RGGI Auction\", Auctions 59-70); yearly simple average of the four clearing prices, converted from $/short ton (RGGI clearing unit) to $/metric tonne (x 1.10231): 2023 $13.49->14.87, 2024 $20.71->22.83, 2025 $22.09->24.35",
+      "source_date": "2025-12",
+      "page_or_table": "",
+      "url": "https://www.rggi.org/auctions/auction-results/prices-volumes",
+      "notes": "All six New England states are RGGI members, so the allowance cost applies ISO-wide (doc-08 design decision 3). Backcast years only; forward years fall through to carbon_price_path. NOTE: the NYISO entry stores the published short-ton prices unconverted — unify the two RGGI conventions in a joint pass.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
@@ -6231,6 +6304,27 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nyiso_hydro_treaty_min_flow",
+      "display_name": "Nyiso Hydro Treaty Min Flow",
+      "value": {
+        "2693": 0.25,
+        "2694": 0.5
+      },
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "NYISO treaty-mandated minimum flows for the two large NYPA hydro plants. EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.  Niagara (plant 2693 — Robert Moses Niagara Power Plant, ~2,429 MW): The Treaty Between the United States and Canada Concerning Diversion of the Niagara River (27 UST 1957, signed 1950; effective 1954) requires maintaining scenic flows of 50,000 cfs (Nov–Mar) / 100,000 cfs (Apr–Oct) over Horseshoe Falls. This reduces divertible flow to 60–75% of the ~202,000 cfs average natural flow, with a minimum power-generation obligation corresponding to ~25% of nameplate. Source: International Joint Commission, \"Supplementary Order of Approval No. 2\", 1953; FERC Project No. 2216 (NYPA).  St-Lawrence (plant 2694 — Robert Moses Power Dam, ~912 MW): The IJC Order of Approval governing Lake Ontario / St. Lawrence outflows (original order 1952; superseded by \"Plan 2014\", effective 2017) requires minimum hydraulic flows for navigation, ecology, and power. The Moses-Saunders dam at Massena typically operates above 50% of nameplate continuously. Source: International Joint Commission, \"Lake Ontario–St. Lawrence River Plan 2014\", 2016; FERC Project No. 2000 (NYPA/OPG).",
+      "source_date": "1957",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
