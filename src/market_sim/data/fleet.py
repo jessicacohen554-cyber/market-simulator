@@ -632,6 +632,13 @@ def generators_to_fleet_arrays(
     )
     if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any:
         min_gen = np.zeros((n_gen, hours), dtype=float)
+        # min_gen replaces pmin as the LP lower bound for EVERY generator
+        # (build_variable_bounds), so export sinks (pmin < 0, absorption
+        # modeled as negative generation) must keep their range — a zero
+        # floor would pin them off whenever any CHP/ST_GAS floor is active.
+        neg_pmin = pmin < 0.0
+        if neg_pmin.any():
+            min_gen[neg_pmin, :] = pmin[neg_pmin, np.newaxis]
         if st_mr_frac > 0.0 or st_off_frac > 0.0:
             summer_mask = np.isin(_hour_to_month_index(hours) + 1,
                                   list(_GAS_ST_SUMMER_MONTHS))
