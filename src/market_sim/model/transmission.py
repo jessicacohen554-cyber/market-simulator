@@ -7,23 +7,28 @@ builders turn a list of :class:`~market_sim.config.iso_configs.TransferLink`
 objects into the ``incidence`` and ``ttc`` arrays that
 :func:`~market_sim.model.dispatch.solve_dispatch` already accepts.
 
-The CAISO WECC import node is also modeled here: rather than a bespoke LP
-formulation, the rest of the WECC is represented as a handful of synthetic
-:class:`~market_sim.data.fleet.Generator` objects in the ``WECC_import``
-zone. Appended to the fleet, they participate in dispatch purely through
-the ordinary energy balance and the WECC_import links into the CAISO
-trading zones (NP15 / SP15).
+Priced import/export nodes are also modeled here: rather than a bespoke LP
+formulation, an ISO's neighbors are represented as a handful of synthetic
+:class:`~market_sim.data.fleet.Generator` objects in the ISO's external
+zone (:data:`~market_sim.config.constants.IMPORT_ZONE`) — import supply
+tranches plus export sinks. Appended to the fleet, they participate in
+dispatch purely through the ordinary energy balance and the external zone's
+links into the ISO's trading zones. CAISO's WECC node was the original;
+the same machinery now serves PJM (and is data-driven, so NYISO/NEISO only
+need constants entries).
 """
 
 import numpy as np
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
-    WECC_EXPORT_CAP_MW,
-    WECC_IMPORT_EFORD,
-    WECC_IMPORT_TRANCHES,
+    EXPORT_TRANCHES,
+    IMPORT_EFORD,
+    IMPORT_NODE_LINKS,
+    IMPORT_TRANCHES,
+    IMPORT_ZONE,
 )
-from market_sim.config.iso_configs import TransferLink
+from market_sim.config.iso_configs import ISOConfig, TransferLink, Zone
 from market_sim.data.fleet import Generator
 
 
@@ -68,62 +73,124 @@ def get_ttc_array(links: list[TransferLink]) -> np.ndarray:
     return np.array([link.ttc_mw for link in links], dtype=float)
 
 
-def build_wecc_import_generators() -> list[Generator]:
-    """Return the CAISO WECC import node as a list of pseudo-generators.
+def build_import_generators(iso: str) -> list[Generator]:
+    """Return an ISO's import node as a list of pseudo-generators.
 
-    The aggregate import capability into CAISO from the rest of the WECC is
-    modeled as a stepped supply curve: each tranche is a synthetic
-    :class:`~market_sim.data.fleet.Generator` in the ``WECC_import`` zone.
+    The aggregate import capability from the ISO's neighbors is modeled as a
+    stepped supply curve: each tranche of
+    :data:`~market_sim.config.constants.IMPORT_TRANCHES` becomes a synthetic
+    :class:`~market_sim.data.fleet.Generator` in the ISO's external zone.
     The marginal cost of a tranche is set directly through the ``vom``
     field; ``heat_rate`` is zero, so no fuel price enters the cost. Appended
     to the fleet, the tranches compete in merit order through the ordinary
-    energy balance and the WECC_import links into the CAISO trading zones --
-    no special LP formulation is needed.
+    energy balance and the external zone's links into the ISO's trading
+    zones -- no special LP formulation is needed.
+
+    Args:
+        iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
 
     Returns:
-        Four import tranches ordered cheapest first, spanning 15000 MW.
+        Import tranches ordered cheapest first; empty for an ISO with no
+        import node configured (e.g. ERCOT, whose DC-tie interchange rides
+        in its demand series).
     """
-    tranches = WECC_IMPORT_TRANCHES
+    zone = IMPORT_ZONE.get(iso)
     return [
         Generator(
-            unit_id=f"WECC_import_{name}",
+            unit_id=f"{zone}_{name}",
             name=name,
-            zone="WECC_import",
+            zone=zone,
             fuel_type="import",
             pmax_mw=capacity,
             pmin_mw=0.0,
             heat_rate=0.0,
             vom=marginal_cost,
-            eford=WECC_IMPORT_EFORD,
+            eford=IMPORT_EFORD.get(iso, 0.0),
         )
-        for name, capacity, marginal_cost in tranches
+        for name, capacity, marginal_cost in IMPORT_TRANCHES.get(iso, [])
     ]
 
 
-def build_wecc_export_sink() -> Generator:
-    """Return the CAISO export "sink" as a single pseudo-generator.
+def build_export_sinks(iso: str) -> list[Generator]:
+    """Return an ISO's export sinks as a list of pseudo-generators.
 
-    CAISO surplus -- typically midday solar that exceeds in-state demand --
-    is exported across the WECC_import links into the ``WECC_import`` zone,
-    where this sink absorbs it. Absorption is modeled
-    as *negative* generation: the unit's output is bounded in ``[-5000, 0]``
-    MW, so a dispatch of ``-x`` withdraws ``x`` MW from the WECC_import
-    node. The 5000 MW export capability is therefore carried by ``pmin_mw``,
-    and ``pmax_mw`` is held at zero so the sink can never inject phantom
-    cheap power and distort the import merit order.
+    ISO surplus is exported across the external zone's links and absorbed
+    by these sinks. Absorption is modeled as *negative* generation: each
+    block's output is bounded in ``[-capacity, 0]`` MW, so a dispatch of
+    ``-x`` withdraws ``x`` MW from the external node. The capacity is
+    therefore carried by ``pmin_mw``, and ``pmax_mw`` is held at zero so a
+    sink can never inject phantom cheap power and distort the import merit
+    order. A block's $/MWh price rides in ``vom``: negative dispatch times
+    a positive ``vom`` *reduces* the LP objective, so the block is the
+    neighbors' willingness-to-pay and the ISO exports into it whenever its
+    internal marginal cost is below that price (CAISO's single $0 sink
+    only ever absorbs surplus that would otherwise be curtailed).
+
+    Args:
+        iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
 
     Returns:
-        A 5000 MW export sink located in the ``WECC_import`` zone.
+        Export sinks in the ISO's external zone; empty when none are
+        configured.
     """
-    # TODO: fit the export capability from EIA-930 interchange data.
-    return Generator(
-        unit_id="WECC_export_sink",
-        name="WECC_export_sink",
-        zone="WECC_import",
-        fuel_type="import",
-        pmax_mw=0.0,
-        pmin_mw=-WECC_EXPORT_CAP_MW,
-        heat_rate=0.0,
-        vom=0.0,
-        eford=0.0,
+    zone = IMPORT_ZONE.get(iso)
+    return [
+        Generator(
+            unit_id=f"{zone}_{name}",
+            name=name,
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=0.0,
+            pmin_mw=-capacity,
+            heat_rate=0.0,
+            vom=price,
+            eford=0.0,
+        )
+        for name, capacity, price in EXPORT_TRANCHES.get(iso, [])
+    ]
+
+
+def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
+    """Return ``iso_config`` with its external import/export zone appended.
+
+    Adds the ISO's :data:`~market_sim.config.constants.IMPORT_ZONE` as a
+    zero-load zone plus its border links
+    (:data:`~market_sim.config.constants.IMPORT_NODE_LINKS`). A no-op when
+    the ISO has no import node configured or the zone is already part of
+    the topology (CAISO bakes ``WECC_import`` into ``_caiso_config``).
+
+    PJM's external node is appended here, on demand, rather than baked into
+    ``_pjm_config``: an external zone whose links join several border zones
+    creates a wheeling path around the internal interfaces (real PJM loop
+    flow, but absent from the calibrated 8-zone backcast, which serves the
+    measured interchange schedule at its border zones instead).
+    """
+    iso = iso_config.name
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None or zone in iso_config.zone_names:
+        return iso_config
+    links = [
+        TransferLink(from_zone=zone, to_zone=border, ttc_mw=ttc)
+        for border, ttc in IMPORT_NODE_LINKS.get(iso, [])
+    ]
+    extended = iso_config.model_copy(
+        update={
+            "zones": [
+                *iso_config.zones,
+                Zone(name=zone, iso=iso, load_share=0.0),
+            ],
+            "links": [*iso_config.links, *links],
+        }
     )
+    extended.validate_topology()
+    return extended
+
+
+def build_wecc_import_generators() -> list[Generator]:
+    """Return the CAISO WECC import node (see :func:`build_import_generators`)."""
+    return build_import_generators("CAISO")
+
+
+def build_wecc_export_sink() -> Generator:
+    """Return the CAISO export sink (see :func:`build_export_sinks`)."""
+    return build_export_sinks("CAISO")[0]

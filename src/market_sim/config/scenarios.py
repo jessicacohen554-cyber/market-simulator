@@ -581,9 +581,13 @@ class ScenarioConfig:
     # does not see; with no adder the LP arbitrages PS every day the spread
     # clears RTE losses and generates ~2-3x the observed PS energy, shaving
     # exactly the peaks the CT fleet actually served. This is the reduced-form
-    # opportunity cost of that reserve duty, calibrated so PJM PS lands near
-    # its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).
-    pumped_storage_dispatch_adder: float = 10.0
+    # opportunity cost of that reserve duty. ``None`` (default) resolves per
+    # ISO from constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO — PJM $10,
+    # calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr (EIA-923 PS
+    # gross generation); ISOs without a calibrated entry (e.g. CAISO) get
+    # 0.0 until their own calibration says otherwise. A number overrides the
+    # per-ISO default for every ISO in the scenario.
+    pumped_storage_dispatch_adder: float | None = None
 
     # Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), the
     # battery analogue of pumped_storage_dispatch_adder. Two real costs the
@@ -608,6 +612,19 @@ class ScenarioConfig:
     # ERCOT calibration is unchanged; backcast-only by construction (forward
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
+
+    # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
+    # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
+    # Natural Gas?" on the Multifuel schedule) price their fuel at
+    # min(gas, oil) per hour, so when the delivered gas price spikes past
+    # oil parity the unit bids on its backup distillate/residual cost instead
+    # of being priced out — the winter fuel-switching behaviour central to
+    # PJM/NYISO/ISO-NE cold snaps. Objective-only (an assemble_mc fuel-price
+    # extension, no LP structural change); emissions/heat rate stay on the
+    # gas characterization. Off by default so ERCOT (no dual-fuel fleet
+    # behaviour) and existing forecasts are unchanged; the calibration
+    # harness turns it on for PJM.
+    dual_fuel_switching: bool = False
 
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
@@ -820,6 +837,7 @@ TIER_TAGS: dict[str, int] = {
     "pumped_storage_dispatch_adder": 3,
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
+    "dual_fuel_switching": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }
