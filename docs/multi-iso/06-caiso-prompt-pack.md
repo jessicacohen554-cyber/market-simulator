@@ -27,16 +27,17 @@ Already in repo — do not re-acquire:
   not construction. The runner now also wires the CAISO export sink in.
 - `data/eia_hourly/CISO hourly.parquet` (EIA-930 demand/fuel/interchange).
 - `inputs/raw-data/CISO_fueltype.parquet`, `CISO_region.parquet`.
-- CAMPD unit-level CA **2024, 2025** (`campd-unit-level/CA_{2024,2025}.parquet`);
-  facility-level CA 2023–2025; derived `campd-unit-outages-CAISO.csv`
-  (2024–2025 windows only).
+- CAMPD unit-level CA **2023, 2024, 2025**
+  (`campd-unit-level/CA_{2023,2024,2025}.parquet`); facility-level CA
+  2023–2025; derived `campd-unit-outages-CAISO.csv` (2023–2025 windows,
+  1,933 total).
 - EIA-860 (incl. energy-storage operable/proposed/retired parquets), EIA-923
   zips 2023–2025, eGRID 2023/2024, Henry Hub daily/monthly — all national.
 - Market-design registry: CAISO RA (`capacity_market=True`), CA RPS entry,
   VOLL $2,000, `GAS_BASIS_DIFFERENTIAL["CAISO"] = +1.20` (Tier-3 seed).
 
-Missing (the work below): CAISO entries in `actual_lmp.json`; CA_2023
-unit-level CEMS; hub LMPs; TAC-area load; curtailment/uncurtailed profiles;
+Missing (the work below): CAISO entries in `actual_lmp.json`; hub LMPs;
+TAC-area load; curtailment/uncurtailed profiles;
 hydro/PS/BESS fleet wiring for CAISO; calibrated import curve; offer-curve
 tranche derivation for the CAISO fleet; CHP identification. Done since:
 calibration reference (P0); gas + carbon (P7 — measured monthly gas
@@ -46,7 +47,7 @@ default-on, CARB allowance in MC, border carbon on import tranches).
 
 | # | Item | Source | Destination | Needed by |
 |---|---|---|---|---|
-| U1 | CAMPD unit-level `CA_2023.parquet` (hourly CEMS, same schema as CA_2024) | EPA CAMPD bulk download | `inputs/raw-data/campd-unit-level/` | P1 (only for the 2023 year) |
+| U1 | CAMPD unit-level `CA_2023.parquet` (hourly CEMS, same schema as CA_2024) — **done (2026-06-11)**: landed and `derive_campd_unit_outages.py --iso CAISO` regenerated `campd-unit-outages-CAISO.csv` (612 new 2023 windows; 2024/2025 byte-identical) | EPA CAMPD bulk download | `inputs/raw-data/campd-unit-level/` | P1 (only for the 2023 year) |
 | U2 | DA + RT hourly LMPs at TH_NP15, TH_SP15, TH_ZP26 (gen hubs), 2023–2025 | CAISO OASIS `PRC_LMP` (DAM) + `PRC_INTVL_LMP` (RTM, hourly-averaged) | `inputs/raw-data/lmp-data/CAISO/` | P10 |
 | U3 | Wind & Solar Production-and-Curtailment data, 2023–2025 (hourly or 5-min) | CAISO "Managing Oversupply" / daily curtailment reports | `inputs/raw-data/caiso-curtailment/` | P6 |
 | U4 | TAC-area actual hourly load (PGE/SCE/SDGE TACs), 2023–2025 | CAISO OASIS `SLD_FCST` with `market_run_id=ACTUAL` (monthly loops; ≥5 s between calls) | `inputs/raw-data/zone-specific-demand/CAISO/` | P8 |
