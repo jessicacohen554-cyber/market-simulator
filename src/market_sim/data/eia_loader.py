@@ -436,6 +436,41 @@ def load_ercot_nuclear_gen(year: int) -> np.ndarray | None:
     return series.to_numpy(dtype=float)
 
 
+def load_ercot_battery_gen(year: int) -> dict[str, np.ndarray] | None:
+    """Return ERCOT hourly battery discharge and charge (MW) for a year.
+
+    Reads the EIA-930 ``ERCO hourly`` battery series on the same
+    chronological clock as the other benchmark series: ``NG: BAT`` carries
+    the fleet's net discharge and ``NG: UES`` (unspecified energy storage)
+    its net charge as negative MW. The two are folded into non-negative
+    ``{"battery_discharge": ..., "battery_charge": ...}`` arrays of
+    ``(HOURS_PER_YEAR,)``.
+
+    Unlike the fossil/nuclear loaders, hours the BA had not yet begun
+    reporting (ERCOT's battery series starts mid-2024) are kept as NaN
+    rather than gap-filled or rejected, so a partial-coverage year still
+    yields a benchmark over its reported window. Returns ``None`` when the
+    file, the year, or both battery columns are unavailable.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None:
+        return None
+    cols = [c for c in ("NG: BAT", "NG: UES") if c in frame.columns]
+    if not cols:
+        return None
+    # BAT (discharge) and UES (charge) can be nonzero in the same hour, so
+    # positive/negative MW are folded per column — never netted across them.
+    values = frame[cols].to_numpy(dtype=float)
+    if np.isnan(values).all():
+        return None
+    discharge = np.nansum(np.clip(values, 0.0, None), axis=1)
+    charge = np.nansum(np.clip(-values, 0.0, None), axis=1)
+    unreported = np.isnan(values).all(axis=1)
+    discharge[unreported] = np.nan
+    charge[unreported] = np.nan
+    return {"battery_discharge": discharge, "battery_charge": charge}
+
+
 def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
     """Return the rows of ``df`` matching the given ISO and year.
 
