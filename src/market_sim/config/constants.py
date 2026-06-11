@@ -379,6 +379,13 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   due to Permian associated gas oversupply and pipeline constraints.
 # SoCal Citygate (CAISO): historically trades at a premium to Henry Hub
 #   due to pipeline constraints into California and limited local production.
+#   Measured check (EIA-923 Schedule 5, quantity-weighted delivered gas to
+#   CAISO plants minus Henry Hub annual average): +$7.06 in 2023 (the
+#   Dec-22/Jan-23 western gas crisis — Jan-2023 delivered $38.7/MMBtu vs
+#   HH $3.27), +$2.26 in 2024, +$1.12 in 2025. The +1.20 seed is only
+#   right in a normal year; CAISO backcasts therefore default to
+#   gas_monthly_actuals (measured ISO-month delivered gas), which makes
+#   this scalar a forward-year/fallback value only.
 # PJM: no single hub. PJM gas burn spans the Appalachian supply basin
 #   (Dominion South / TETCO M2, a structural Marcellus *discount* to Henry
 #   Hub from takeaway-constrained oversupply) and the Mid-Atlantic load
@@ -512,6 +519,31 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
     "mid": {2026: 0, 2030: 15, 2040: 35, 2050: 50},   # RFF — mid carbon price path
     "high": {2026: 0, 2030: 30, 2040: 70, 2050: 110},  # RFF — high carbon price path
 }
+
+# State carbon-program allowance prices ($/tCO2) by ISO and calendar year.
+# Each year is the simple average of the four quarterly CA-Quebec joint
+# auction *current vintage* settlement prices (the auctions clear at one
+# uniform price, and quarterly volumes are near-equal, so the simple mean
+# is the volume-weighted mean to the cent). CAISO backcasts charge this
+# allowance cost on every in-state fossil unit's marginal cost via
+# resolve_carbon_price (default-on; see ScenarioConfig.state_carbon_pricing).
+# Source: CARB "Summary of Auction Settlement Prices and Results" /
+#   CA-Quebec joint auction summary results reports (ww2.arb.ca.gov),
+#   cross-checked against the WCI auction price history.
+#   2023: Feb $27.85, May $30.33, Aug $35.20, Nov $38.73 -> $33.03
+#   2024: Feb $41.76, May $37.02, Aug $30.24, Nov $31.91 -> $35.23
+#   2025: Feb $29.27, May $25.87 (floor), Aug $28.76, Nov $28.32 -> $28.06
+STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
+    "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
+}
+
+# CARB default emission factor for unspecified-source imported electricity
+# (tCO2e/MWh). CAISO levies a border carbon adjustment on unspecified WECC
+# imports at this factor x the allowance price; applied to the WECC import
+# tranche prices (model/transmission.py::build_wecc_import_generators).
+# Source: CARB Mandatory GHG Reporting Regulation (MRR), 17 CCR §95111(b) —
+#   default emission factor for unspecified power, 0.428 MT CO2e/MWh.
+CARB_UNSPECIFIED_IMPORT_EF: float = 0.428
 
 # Storage technology parameters.
 # Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).

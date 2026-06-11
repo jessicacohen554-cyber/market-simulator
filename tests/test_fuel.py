@@ -16,17 +16,20 @@ from market_sim.data.fleet import (
     Generator,
     assemble_mc,
     generators_to_fleet_arrays,
+    get_emission_rate,
 )
 from market_sim.data.fuel import (
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
     _prb_monthly_actuals,
     apply_coal_supply_pricing,
+    iso_monthly_gas_prices,
     resolve_annual_gas_price,
     resolve_fuel_prices,
     resolve_nox_price,
 )
 from market_sim.model.dispatch import solve_dispatch
+from market_sim.policy.carbon import resolve_carbon_price
 
 _HOURS = 8760
 _ZONE_NAMES = ["north", "south"]
@@ -525,3 +528,96 @@ def test_oil_peaker_dispatches_only_at_high_prices():
     assert result.dispatch[oil_idx, 1] > 1.0
     # The clearing price is far higher when the oil peaker is marginal.
     assert result.prices[0, 1] > result.prices[0, 0]
+
+
+# --- CA cap-and-trade in CAISO marginal cost (CARB allowance pricing) ------
+
+
+def _cc_fleet(heat_rate: float = 7.0, hours: int = 24):
+    """Return a single gas-CC fleet at the given heat rate.
+
+    ``emission_rate_co2`` is set the way the fleet loaders set it —
+    ``get_emission_rate(fuel, heat_rate)`` — so the carbon term in
+    ``assemble_mc`` is exercised exactly as in a real fleet.
+    """
+    generators = [
+        Generator(
+            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
+            pmax_mw=400.0, heat_rate=heat_rate, vom=2.0, eford=0.0,
+            emission_rate_co2=get_emission_rate("gas_cc", heat_rate),
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, ["north"], hours=hours)
+
+
+def test_caiso_backcast_gas_mc_includes_carbon():
+    """CAISO 2024 gas MC carries the CARB allowance cost; off elsewhere."""
+    hours = 24
+    fleet = _cc_fleet(hours=hours)
+    caiso = ScenarioConfig(
+        iso="CAISO", mode="backcast", weather_year=2024,
+        gas_seasonality=False, hours=hours,
+    )
+    fuel_prices = resolve_fuel_prices(caiso, fleet, 2024)
+    carbon = resolve_carbon_price(caiso, 2024)
+    assert carbon == 35.23  # 2024 CARB quarterly-auction settlement average
+    mc_with = assemble_mc(fleet, fuel_prices, carbon_price=carbon)
+    mc_without = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+    uplift = mc_with - mc_without
+    expected = get_emission_rate("gas_cc", 7.0) * carbon
+    np.testing.assert_allclose(uplift, expected)
+    assert expected > 10.0  # the carbon wedge is first-order, ~$14/MWh
+
+    # ERCOT and PJM backcasts resolve to a zero carbon price: identical MC.
+    for iso in ("ERCOT", "PJM"):
+        other = ScenarioConfig(
+            iso=iso, mode="backcast", weather_year=2024,
+            gas_seasonality=False, hours=hours,
+        )
+        assert resolve_carbon_price(other, 2024) == 0.0
+
+
+def test_cc_7000_hr_at_35_per_ton_uplift_near_13_per_mwh():
+    """A 7.0 HR gas CC at $35/t shows the expected ~$13-14/MWh uplift."""
+    fleet = _cc_fleet(heat_rate=7.0, hours=24)
+    fuel_prices = np.zeros((fleet.n_gen, 24))  # isolate the carbon term
+    uplift = assemble_mc(fleet, fuel_prices, carbon_price=35.0) - assemble_mc(
+        fleet, fuel_prices, carbon_price=0.0
+    )
+    # 7.0 MMBtu/MWh x 0.057 tCO2/MMBtu (model gas CO2 factor) x $35/t.
+    np.testing.assert_allclose(uplift, 7.0 * 0.057 * 35.0)
+    assert 12.0 < uplift[0, 0] < 15.0
+
+
+def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
+    """gas_monthly_actuals prices CAISO gas at the measured EIA-923 series.
+
+    The measured ISO-month volume-weighted delivered cost replaces the
+    Henry Hub + (+1.20 basis seed) x seasonality shape month by month. The
+    2023 series must carry the Dec-22/Jan-23 western gas crisis (January
+    delivered gas far above any shaped trajectory value).
+    """
+    measured = iso_monthly_gas_prices(
+        ScenarioConfig(iso="CAISO", mode="backcast", weather_year=2023), 2023
+    )
+    if measured is None:
+        import pytest
+        pytest.skip("EIA-923 monthly fuel cost parquet not available")
+    assert measured.shape == (12,)
+    assert np.isfinite(measured).all()  # every month has gas receipts
+    # Jan-2023: measured ~$38.7/MMBtu vs trajectory + basis ~ $4-5.
+    assert measured[0] > 20.0
+
+    hours = 8760
+    fleet = _cc_fleet(hours=hours)
+    base = ScenarioConfig(
+        iso="CAISO", mode="backcast", weather_year=2023,
+        gas_price_override=2.54, hours=hours,
+    )
+    shaped = resolve_fuel_prices(base, fleet, 2023)
+    actuals = resolve_fuel_prices(
+        base.with_overrides(gas_monthly_actuals=True), fleet, 2023
+    )
+    # January hours pay the measured price, not the shaped trajectory.
+    np.testing.assert_allclose(actuals[0, :744], measured[0])
+    assert actuals[0, 0] > shaped[0, 0]
