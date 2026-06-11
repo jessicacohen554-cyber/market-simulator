@@ -77,7 +77,7 @@ from market_sim.data.fuel import (  # noqa: E402
 from market_sim.data.renewables import (  # noqa: E402
     hsl_potential_mw,
     inject_offshore_wind_availability,
-    load_ercot_hsl_hourly,
+    load_hsl_hourly,
     load_renewable_profiles,
 )
 from market_sim.model.commitment import (  # noqa: E402
@@ -1155,15 +1155,16 @@ def _report_curtailment(
     """Print the headline modeled-vs-reported renewable curtailment metric.
 
     Modeled curtailment is the dispatch's unused wind/solar potential. For
-    ERCOT years with a built HSL parquet (scripts/build_ercot_hsl.py) the
-    reported curtailment — ERCOT's telemetered ``HSL - GEN`` — is printed
-    beside it, with the monthly shape, mirroring the CAISO P6 pattern: a
-    transmission-constrained dispatch fed uncurtailed potential should
-    reproduce both the level and the seasonality of real curtailment. The
-    reported comparison is suppressed on a sub-annual smoke run, and the
-    table falls back to model-only columns when no HSL data covers the year.
+    ISO-years with a built HSL-style parquet (scripts/build_ercot_hsl.py /
+    build_caiso_hsl.py) the reported curtailment — the telemetered
+    ``hsl - gen`` — is printed beside it, with the monthly shape (the CAISO
+    P6 / ERCOT E3 headline metric): a transmission-constrained dispatch fed
+    uncurtailed potential should reproduce both the level and the
+    seasonality of real curtailment. The reported comparison is suppressed
+    on a sub-annual smoke run, and the table falls back to model-only
+    columns when no HSL data covers the year.
     """
-    hsl = load_ercot_hsl_hourly(year) if iso == "ERCOT" else None
+    hsl = load_hsl_hourly(iso, year)
     compare = hsl is not None and full_year
 
     caps = {"wind": context.wind_cap_mw, "solar": context.solar_cap_mw}
@@ -1206,9 +1207,9 @@ def _report_curtailment(
     _print_table("Renewable curtailment — modeled vs reported", rows)
     if hsl is None:
         print(
-            f"    (no reported HSL data for {iso} {year}; for ERCOT, build "
-            "inputs/raw-data/ercot-hsl/ with scripts/build_ercot_hsl.py — "
-            "2024+ needs the NP6 report uploads)"
+            f"    (no reported HSL data for {iso} {year}; build with "
+            "scripts/build_ercot_hsl.py / build_caiso_hsl.py — ERCOT 2024+ "
+            "needs the NP6 report uploads)"
         )
         return
     if not compare:
