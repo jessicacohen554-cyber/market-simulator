@@ -641,6 +641,7 @@ def run_year(
     prb_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
+    battery_dispatch_adder: float = 0.0,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
@@ -700,6 +701,11 @@ def run_year(
     # bounds storage perfect foresight to within-day arbitrage.
     if storage_daily_cycling:
         config = config.with_overrides(storage_daily_cycling=True)
+    # Battery throughput/cycling cost (run_calibration_full --battery-adder):
+    # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
+    if battery_dispatch_adder:
+        config = config.with_overrides(
+            battery_dispatch_adder=battery_dispatch_adder)
     if gas_offer_curve:
         config = config.with_overrides(gas_offer_curve=True)
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
@@ -887,9 +893,8 @@ def run_year(
     wind_mc -= wind_eac
     solar_mc -= solar_eac
 
-    storage = storage_units_to_arrays(
-        load_eia860_storage(iso, year, config), zone_names
-    )
+    storage_units = load_eia860_storage(iso, year, config)
+    storage = storage_units_to_arrays(storage_units, zone_names)
 
     dispatch_kwargs = dict(
         wind_cf=wind_cf,
@@ -935,7 +940,7 @@ def run_year(
         "fleet_arrays": fleet_arrays, "mc_base": mc_base, "mc_bid": mc_bid,
         "p1_result": result, "demand": demand,
         "dispatch_kwargs": dispatch_kwargs, "config": config,
-        "context": context,
+        "context": context, "storage_units": storage_units,
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
