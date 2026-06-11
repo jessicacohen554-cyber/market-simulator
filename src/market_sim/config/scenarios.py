@@ -262,6 +262,15 @@ class ScenarioConfig:
     # calibration year ramps month-by-month from each plant's commercial
     # operation date (EIA-860 Operating Month/Year). When False, flat
     # year-end capacity is used (pre-calibration behavior).
+    storage_vintage_ramp: bool = False  # When True, the EIA-860 backcast
+    # battery fleet's dispatch power/energy caps ramp month-by-month from
+    # each unit's COD (EIA-860 Operating Month/Year) — the storage analogue
+    # of vintage_capacity_ramp. First-order for CAISO, which commissioned
+    # 3.0 GW during 2023 and 3.6 GW during 2024 (EIA-860 energy-storage
+    # schedule), so a flat year-end fleet overstates the spring/summer
+    # battery capability by 1.5-2 GW. Off by default: the ERCOT/PJM
+    # backcasts were calibrated against flat year-end fleets and stay
+    # unchanged until recalibrated (CAISO prompt pack E2).
 
     # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
     # Each coal bin is split into three tranches modeling its take-or-pay
@@ -594,11 +603,15 @@ class ScenarioConfig:
     # energy-only LP otherwise ignores: cycling degradation (cell-replacement
     # capex amortized per MWh discharged — ~$15-25/MWh for li-ion at current
     # pack prices, NREL "Utility-Scale Battery Storage" ATB 2024 cycle-life
-    # basis) and the ancillary-service opportunity cost of arbitraging instead
-    # of holding reserve (the dominant ERCOT BESS revenue stream through 2024,
-    # ERCOT ESR reports). With no adder the LP cycles the fleet every day the
-    # spread clears RTE losses (~1.2-1.3 cycles/day) where the observed ERCOT
-    # fleet ran ~0.7-0.8 (EIA-930 BAT discharge vs EIA-860 fleet energy).
+    # basis; the original cycle-aging literature put it at $25-50/MWh — Xu,
+    # Zhao, Zheng, Litvinov & Kirschen 2018, "Factoring the Cycle Aging Cost
+    # of Batteries Participating in Electricity Markets", IEEE Trans. Power
+    # Systems 33(2)) and the ancillary-service opportunity cost of
+    # arbitraging instead of holding reserve (the dominant ERCOT BESS
+    # revenue stream through 2024, ERCOT ESR reports). With no adder the LP
+    # cycles the fleet every day the spread clears RTE losses (~1.2-1.3
+    # cycles/day) where the observed ERCOT fleet ran ~0.7-0.8 (EIA-930 BAT
+    # discharge vs EIA-860 fleet energy).
     # Default 0.0 = prior behaviour; calibration backcasts set it (see
     # docs/calibration-best-so-far.md).
     battery_dispatch_adder: float = 0.0
@@ -791,6 +804,7 @@ TIER_TAGS: dict[str, int] = {
     "wefor_multiplier": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
+    "storage_vintage_ramp": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
     "coal_tranche_2_frac": 3,

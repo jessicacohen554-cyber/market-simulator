@@ -712,8 +712,10 @@ def build_variable_bounds(
         wind_cap: Installed wind capacity per zone, shape ``(n_zones,)``.
         solar_cf: Solar capacity factor of shape ``(n_zones, T)``.
         solar_cap: Installed solar capacity per zone, shape ``(n_zones,)``.
-        storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``.
-        storage_energy_cap: SOC energy cap, shape ``(n_storage,)``.
+        storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``
+            or hour-varying ``(n_storage, T)`` (COD intra-year ramp).
+        storage_energy_cap: SOC energy cap, shape ``(n_storage,)`` or
+            ``(n_storage, T)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``.
 
     Returns:
@@ -748,10 +750,19 @@ def build_variable_bounds(
         * np.asarray(solar_cf, dtype=float)
     ).T
 
-    # Storage: 0 <= Chg, Dis <= power_cap; 0 <= SOC <= energy_cap.
+    # Storage: 0 <= Chg, Dis <= power_cap; 0 <= SOC <= energy_cap. Caps are
+    # static ``(n_storage,)`` arrays, or hour-varying ``(n_storage, T)`` —
+    # the EIA-860 COD intra-year ramp (storage.storage_cap_profiles) feeds
+    # the latter so capacity commissioned mid-year is offline before COD.
     if layout.n_storage:
-        power_cap = np.asarray(storage_power_cap, dtype=float)[np.newaxis, :]
-        energy_cap = np.asarray(storage_energy_cap, dtype=float)[np.newaxis, :]
+        power_cap = np.asarray(storage_power_cap, dtype=float)
+        power_cap = (
+            power_cap.T if power_cap.ndim == 2 else power_cap[np.newaxis, :]
+        )
+        energy_cap = np.asarray(storage_energy_cap, dtype=float)
+        energy_cap = (
+            energy_cap.T if energy_cap.ndim == 2 else energy_cap[np.newaxis, :]
+        )
         col_upper[:, layout._chg_off : layout._dis_off] = power_cap
         col_upper[:, layout._dis_off : layout._soc_off] = power_cap
         col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
@@ -881,8 +892,11 @@ def solve_dispatch(
         voll: Value of lost load applied to load-slack variables.
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``.
-        storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``.
-        storage_energy_cap: SOC energy cap, shape ``(n_storage,)``.
+        storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``
+            or hour-varying ``(n_storage, T)`` (COD intra-year ramp; see
+            ``storage.storage_cap_profiles``).
+        storage_energy_cap: SOC energy cap, shape ``(n_storage,)`` or
+            ``(n_storage, T)``.
         storage_zone_idx: Zone index of each storage unit.
         eta_chg: Storage charge efficiency, scalar or ``(n_storage,)``.
         eta_dis: Storage discharge efficiency, scalar or ``(n_storage,)``.
