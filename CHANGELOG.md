@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-11 (CAISO backcast — demand series and zonal disaggregation)
+
+CAISO prompt-pack P8 (doc 06 §P8): system demand and zonal load split.
+
+- **System demand from the EIA-930 `CISO hourly` extract.** `load_demand`
+  gains a CAISO branch (`_load_caiso_hourly_demand`) reading
+  `data/eia_hourly/CISO hourly.parquet`, so demand shares the
+  chronological clock of the wind/solar/benchmark series read off the
+  same rows (ERCOT precedent: the demand-profiles parquet is hour-shifted,
+  which would desynchronize the duck curve). Generation-side convention,
+  `td_loss_factor = 0.0`; **no interchange netting** — CAISO imports are
+  supply via the `WECC_import` node, netting them into demand would
+  double count. Net-load convention documented (playbook §8.1, data
+  dictionary): the series is net of ~15+ GW BTM PV; backcasts model
+  front-of-meter resources only.
+- **Measured zonal load split from TAC-area load (upload U4, partial).**
+  `eia_loader.caiso_zonal_load_shares` maps OASIS `SLD_FCST` ACTUAL
+  TAC-area hourly load onto the trading hubs (PGE-TAC split 0.86/0.14
+  onto NP15/ZP26 — no TAC boundary at Path 15, ratio preserved from the
+  prior split, Tier 3; SCE+SDGE+VEA→SP15) and serves measured hourly
+  zonal shapes for covered hours; uncovered hours carry the
+  sample-average shares. Only 2023-01 has landed, so the static
+  `load_share` fallback is now *measured* from that sample via the
+  generalized `scripts/derive_load_shares.py caiso`:
+  NP15/ZP26/SP15 = 0.43/0.07/0.50 → 0.3969/0.0646/0.5385 (Tier 2,
+  winter-month sample — summer shifts share south). Refresh path:
+  complete the U4 monthly pulls; shapes upgrade automatically.
+- Tests: CAISO hourly shares sum to 1.0 each hour, measured window moves
+  while the fallback stays static, missing-file year falls back, and
+  zonal demand reconciles to the CISO system series within rounding.
+
 ## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
 
 Implements the P0 "fix before quoting any forward run" items from
