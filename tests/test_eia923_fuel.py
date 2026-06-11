@@ -427,6 +427,29 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 gen("bituminous", unit_id="COAL_z_p1_mustrun"), 0.7, bit_pt),
             0.0)
 
+    def test_lignite_routing(self):
+        # campd_tranche_fuel_frac returns the lignite passthrough for lignite
+        # above-must-run tranches when given; must-run lignite stays 0.0 and
+        # other supplies are untouched by it.
+        from market_sim.data.fleet import campd_tranche_fuel_frac
+        def gen(supply, unit_id="COAL_z_p1_econ"):
+            return Generator(
+                unit_id=unit_id, name="x", zone="z", fuel_type="coal",
+                pmax_mw=100.0, heat_rate=10.0, coal_supply=supply,
+                plant_group="COAL",
+            )
+        lig_pt = np.array([0.72, 0.95])
+        self.assertIs(
+            campd_tranche_fuel_frac(gen("lignite"), 0.7, 1.0, lig_pt), lig_pt)
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("prb"), 0.7, 1.0, lig_pt), 0.7)
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("waste"), 0.7, 1.0, lig_pt), 1.0)
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                gen("lignite", unit_id="COAL_z_p1_mustrun"), 0.7, 1.0, lig_pt),
+            0.0)
+
     def test_gas_series_uses_monthly_actuals_when_on(self):
         # With gas_monthly_actuals, the sigmoid keys off the measured EIA-923
         # ISO-month gas series (PJM Jan-2024 spiked past $5/MMBtu), so the
@@ -446,6 +469,54 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         jan = slice(0, 31 * 24)
         self.assertGreater(
             float(np.mean(measured[jan])), float(np.mean(shaped[jan])))
+
+
+class LignitePassthroughSigmoidTest(unittest.TestCase):
+    """The gas-keyed lignite passthrough sigmoid (ERCOT mine-mouth fleet)."""
+
+    def test_off_returns_full_cost(self):
+        from market_sim.data.fuel import lignite_passthrough_series
+        cfg = ScenarioConfig(gas_price_override=2.19)
+        self.assertEqual(lignite_passthrough_series(cfg, 2024, 8760), 1.0)
+
+    def test_on_rises_with_gas_between_floor_and_ceil(self):
+        from market_sim.data.fuel import lignite_passthrough_series
+        def mean_pt(gas):
+            cfg = ScenarioConfig(
+                gas_price_override=gas,
+                coal_lignite_passthrough_sigmoid=True,
+            )
+            return float(np.mean(lignite_passthrough_series(cfg, 2024, 8760)))
+        low, mid, high = mean_pt(2.0), mean_pt(2.85), mean_pt(6.0)
+        self.assertLess(low, mid)
+        self.assertLess(mid, high)
+        self.assertGreaterEqual(low, 0.70)       # floor
+        self.assertLessEqual(high, 1.00 + 1e-9)  # ceil: never marks lignite up
+        self.assertGreater(high, 0.95)           # dear gas -> ~full cost
+
+    def test_param_overrides_respected(self):
+        from market_sim.data.fuel import lignite_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=1.0,
+            coal_lignite_passthrough_sigmoid=True,
+            coal_lignite_passthrough_floor=0.55,
+            coal_lignite_passthrough_ceil=1.10,
+            coal_lignite_passthrough_gas_mid=3.0,
+            coal_lignite_passthrough_gas_slope=4.0,
+        )
+        series = lignite_passthrough_series(cfg, 2024, 8760)
+        # Gas far below the midpoint with a steep slope -> pinned at floor.
+        self.assertAlmostEqual(float(np.min(series)), 0.55, places=2)
+
+    def test_seasonal_variation_when_on(self):
+        from market_sim.data.fuel import lignite_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=2.85, coal_lignite_passthrough_sigmoid=True,
+            gas_seasonality=True,
+        )
+        series = lignite_passthrough_series(cfg, 2025, 8760)
+        self.assertEqual(series.shape, (8760,))
+        self.assertGreater(series.max() - series.min(), 0.02)  # months differ
 
 
 if __name__ == "__main__":

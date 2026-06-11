@@ -1129,13 +1129,15 @@ def split_gas_tranches(
 def campd_tranche_fuel_frac(
     gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0,
     coal_bit_passthrough: "float | np.ndarray" = 1.0,
+    coal_lignite_passthrough: "float | np.ndarray" = 1.0,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
-    ``coal_prb_passthrough`` / ``coal_bit_passthrough`` may be a scalar
-    (flat) or an ``(T,)`` array (the gas-keyed sigmoid); whichever is given
-    is returned for PRB / bituminous above-must-run tranches respectively
-    and applied by :func:`apply_coal_tranches`.
+    ``coal_prb_passthrough`` / ``coal_bit_passthrough`` /
+    ``coal_lignite_passthrough`` may be a scalar (flat) or an ``(T,)`` array
+    (the gas-keyed sigmoid); whichever is given is returned for PRB /
+    bituminous / lignite above-must-run tranches respectively and applied by
+    :func:`apply_coal_tranches`.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
@@ -1144,8 +1146,10 @@ def campd_tranche_fuel_frac(
     to price-take: an already-online PRB unit (rail take-or-pay) bids to
     clear rather than on full marginal cost. Bituminous tranches above
     must-run pass ``coal_bit_passthrough`` (1.0 = full cost unless the
-    gas-keyed bit sigmoid is on — the PJM coal fleet). Mine-mouth lignite,
-    waste coal and all other tranches pass full fuel cost (``1.0``).
+    gas-keyed bit sigmoid is on — the PJM coal fleet); mine-mouth lignite
+    tranches above must-run pass ``coal_lignite_passthrough`` (1.0 = full
+    cost unless the gas-keyed lignite sigmoid is on — the ERCOT mine-mouth
+    fleet). Waste coal and all other tranches pass full fuel cost (``1.0``).
     """
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
@@ -1158,6 +1162,8 @@ def campd_tranche_fuel_frac(
             return coal_prb_passthrough
         if supply == "bituminous":
             return coal_bit_passthrough
+        if supply == "lignite":
+            return coal_lignite_passthrough
     return 1.0
 
 
