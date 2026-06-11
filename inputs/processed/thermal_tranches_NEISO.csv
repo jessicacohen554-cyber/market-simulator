@@ -1,0 +1,77 @@
+plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector
+1595,CC_CHP,Kendall Square Station,ok,206.0,24504,70.0,0.0,140.4,150.0,0.6,0.0,merchant
+10567,CC_CHP,Algonquin Windsor Locks,ok,64.0,1381,25.0,0.0,35.9,43.8,8.3,0.0,merchant
+50002,CC_CHP,Pittsfield Generating LP,ok,157.7,1717,19.0,0.0,41.2,53.3,6.8,0.0,merchant
+52061,CC_CHP,Hartford Hospital Cogeneration,eia923_cf,8.6,0,,,,,,26.5,commercial
+57666,CC_CHP,Foxwoods CoGen,eia923_cf,14.5,0,,,,,,5.4,commercial
+58084,CC_CHP,"Kimberly Clark-Unit 1,2,3",eia923_cf,18.6,0,,,,,,23.6,industrial
+58159,CC_CHP,UCONN Cogen Facility,eia923_cf,24.6,0,,,,,,0.0,commercial
+568,CC_REGULAR,Bridgeport Station,ok,496.2,22562,53.2,0.0,84.8,96.3,1.8,,
+1682,CC_REGULAR,Cleary Flood Hybrid,ok,103.0,3263,7.8,0.0,68.0,71.8,2.8,,
+3236,CC_REGULAR,Manchester Street,ok,471.0,7898,40.3,0.0,62.0,64.3,4.5,,
+6081,CC_REGULAR,Stony Brook,ok,209.1,186,42.3,0.0,81.7,91.1,21.5,,
+10307,CC_REGULAR,Bellingham Cogeneration Facility,ok,264.0,3463,32.6,0.0,62.1,73.9,10.6,,
+10726,CC_REGULAR,Masspower,ok,245.0,8558,13.5,0.0,52.7,59.2,7.3,,
+51030,CC_REGULAR,Ocean State Power,ok,231.8,15041,35.8,0.0,61.3,66.4,5.2,,
+52026,CC_REGULAR,Dartmouth Power Associates LP,ok,94.3,3812,14.8,0.0,22.3,58.3,2.3,,
+54324,CC_REGULAR,Ocean State Power II,ok,267.6,9965,29.5,0.0,53.4,56.8,5.8,,
+54805,CC_REGULAR,Milford Power LP,ok,204.8,4397,50.8,0.0,55.7,75.2,1.9,,
+55026,CC_REGULAR,Dighton Power Plant,ok,165.6,6797,62.8,0.0,86.4,100.8,2.1,,
+55041,CC_REGULAR,Berkshire Power,ok,229.2,6396,67.2,0.0,88.6,98.6,2.7,,
+55042,CC_REGULAR,Bridgeport Energy Project,ok,538.0,15795,58.0,0.0,81.2,90.1,2.0,,
+55048,CC_REGULAR,Tiverton Power Plant,ok,273.0,19771,54.6,0.0,89.0,98.5,2.7,,
+55068,CC_REGULAR,Maine Independence Station,ok,497.6,17617,17.5,0.0,28.8,40.3,8.8,,
+55079,CC_REGULAR,Millennium Power,ok,330.1,6708,24.8,0.0,64.8,67.3,5.3,,
+55100,CC_REGULAR,Rumford Power LLC,ok,253.8,9328,36.3,0.0,68.6,84.3,5.1,,
+55107,CC_REGULAR,Rhode Island State Energy Center,ok,554.0,20668,70.0,0.0,82.5,96.0,2.3,,
+55126,CC_REGULAR,Milford Power Project,ok,510.1,21907,61.6,0.0,85.7,96.4,2.5,,
+55149,CC_REGULAR,Lake Road Generating Plant,ok,828.8,22548,34.4,0.0,53.2,57.4,6.7,,
+55170,CC_REGULAR,Granite Ridge,ok,668.0,20302,23.1,0.0,37.1,61.6,4.5,,
+55211,CC_REGULAR,ANP Bellingham Energy Project,ok,520.2,24437,22.5,0.0,36.9,50.2,5.4,,
+55212,CC_REGULAR,ANP Blackstone Energy Project,ok,481.7,23871,27.0,0.0,44.4,56.9,5.9,,
+55294,CC_REGULAR,Westbrook Energy Center Power Plant,ok,526.8,20861,34.4,0.0,71.2,102.7,3.1,,
+55317,CC_REGULAR,Fore River Generating Station,ok,724.0,20716,40.5,0.0,58.8,79.5,5.5,,
+55661,CC_REGULAR,Newington Energy Center,ok,560.5,8768,25.4,0.0,75.3,95.5,4.0,,
+56047,CC_REGULAR,CPV Towantic Energy Center,ok,743.8,21744,55.7,0.0,95.5,101.6,3.1,,
+56798,CC_REGULAR,Kleen Energy Systems,ok,622.0,15405,63.8,0.0,84.6,91.2,0.5,,
+60903,CC_REGULAR,Salem Harbor Power Development LP,ok,1156.4,10956,11.7,0.0,20.7,31.3,5.1,,
+2364,COAL,Merrimack,ok,108.0,1170,70.0,0.0,150.0,150.0,,,
+10108,CT_CHP,Hampton Facility,eia923_cf,3.8,0,,,,,,4.3,industrial
+10408,CT_CHP,Clark University,eia923_cf,2.0,0,,,,,,13.1,commercial
+10883,CT_CHP,Medical Area Total Energy Plant,eia923_cf,38.5,0,,,,,,36.5,commercial
+50621,CT_CHP,Central Power Plant,eia923_cf,7.6,0,,,,,,18.0,commercial
+54225,CT_CHP,Gillette SBMC,eia923_cf,7.2,0,,,,,,17.9,industrial
+54228,CT_CHP,Erving Paper Mills,eia923_cf,5.5,0,,,,,,57.7,industrial
+54605,CT_CHP,Pratt & Whitney,ok,28.0,17833,53.6,0.0,60.7,64.3,,50.0,industrial
+54907,CT_CHP,Mass Inst Tech Cntrl Utilities/Cogen Plt,eia923_cf,35.4,0,,,,,,34.7,commercial
+54937,CT_CHP,Wellesley College Central Utility Plant,eia923_cf,4.0,0,,,,,,0.9,commercial
+56928,CT_CHP,Fairfield University CHP Plant,eia923_cf,4.5,0,,,,,,42.0,commercial
+57179,CT_CHP,HSCo CHP,eia923_cf,3.5,0,,,,,,56.6,commercial
+58152,CT_CHP,Danbury Hospital Cogen Plant,eia923_cf,3.6,0,,,,,,54.6,commercial
+58153,CT_CHP,Eastern Maine Medical Center,eia923_cf,3.8,0,,,,,,56.3,commercial
+58158,CT_CHP,Wesleyan University Cogen 1,eia923_cf,2.3,0,,,,,,23.1,commercial
+58166,CT_CHP,Smith College Central Heating Plant,eia923_cf,2.7,0,,,,,,31.5,commercial
+58184,CT_CHP,Rand Whitney CHP Plant,eia923_cf,16.5,0,,,,,,27.0,industrial
+58185,CT_CHP,Amherst College Co Gen,eia923_cf,1.2,0,,,,,,33.8,commercial
+58327,CT_CHP,Bradley Energy Center,eia923_cf,5.8,0,,,,,,14.7,commercial
+60276,CT_CHP,West Groton CHP,eia923_cf,3.3,0,,,,,,39.9,industrial
+61186,CT_CHP,Boston Medical Center CHP Plant,eia923_cf,2.0,0,,,,,,42.7,commercial
+61703,CT_CHP,Sikorsky Aircraft CHP,eia923_cf,10.3,0,,,,,,37.3,industrial
+61857,CT_CHP,Toray Plastic America's CHP Plant,eia923_cf,19.3,0,,,,,,41.3,industrial
+62757,CT_CHP,Bridgewater Complex Co-Generation Plant,eia923_cf,1.5,0,,,,,,4.5,commercial
+66018,CT_CHP,Norton Powerhouse 2,eia923_cf,3.3,0,,,,,,52.0,industrial
+68493,CT_CHP,Central Heating Plant,eia923_cf,10.0,0,,,,,,49.5,commercial
+1660,CT_PEAKER,Potter Station 2,ok,105.2,1973,23.8,0.0,37.1,55.1,,,
+1678,CT_PEAKER,Waters River,ok,46.0,571,22.8,0.0,39.1,56.5,,,
+6635,CT_PEAKER,A L Pierce,ok,74.1,442,32.5,0.0,63.4,76.9,,,
+50243,CT_PEAKER,Bucksport Generation LLC,ok,178.0,457,16.9,0.0,48.3,61.8,,,
+55517,CT_PEAKER,Wallingford Energy,ok,317.9,613,55.3,0.0,78.0,85.9,,,
+56629,CT_PEAKER,Waterbury Generation,ok,96.0,2624,31.4,0.0,62.5,75.0,,,
+59882,CT_PEAKER,Exelon West Medway II LLC,ok,188.6,6506,11.1,0.0,28.1,45.6,,,
+63559,CT_PEAKER,MMWEC Simple Cycle Gas Turbine,ok,63.0,741,28.6,0.0,50.8,65.1,,,
+10417,ST_CHP,Indian Orchard Plant 1,eia923_cf,3.2,0,,,,,,0.0,industrial
+50087,ST_CHP,Univ of Massachusetts Medical Center,eia923_cf,6.0,0,,,,,,7.4,commercial
+52024,ST_CHP,Rhode Island Hospital,eia923_cf,10.4,0,,,,,,0.0,commercial
+54236,ST_CHP,Pfizer Groton Plant,eia923_cf,22.5,0,,,,,,3.4,industrial
+58160,ST_CHP,Williams College - Campus CHP,eia923_cf,3.0,0,,,,,,2.1,commercial
+546,ST_GAS,Montville Station,ok,81.0,356,70.0,0.0,150.0,150.0,,,
