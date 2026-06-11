@@ -174,6 +174,7 @@ def compute_monthly_markup(
     dispatch: np.ndarray,
     T: int,
     gas_st_season_spread: bool = False,
+    chp_startup_covered: bool = False,
 ) -> np.ndarray:
     """Compute the ``(n_gen, T)`` monthly startup-amortization markup.
 
@@ -208,6 +209,14 @@ def compute_monthly_markup(
         return startup / max(avg_run, 1.0)
 
     for g, gen in enumerate(generators):
+        # A steam-host-obligated cogen never pays a cold start on its own
+        # account: the host's steam demand keeps the unit hot (or the start
+        # is incurred for steam regardless of the energy market), so its
+        # energy bid carries no startup amortization.
+        if chp_startup_covered and gen.plant_group in (
+            "CC_CHP", "CT_CHP", "ST_CHP",
+        ):
+            continue
         startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:
             continue
