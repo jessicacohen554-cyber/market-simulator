@@ -1,0 +1,74 @@
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index fb5c096..a9a9804 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -1501,8 +1501,35 @@ def _print_plant_level(year, dispatch, e923) -> None:
+     _print_table(rows)
+ 
+ 
++def _chp_btm_mw_map() -> dict[int, float]:
++    """Return ``{plant_code: flat BTM MW}`` for the ERCOT CHP fleet.
++
++    The LP dispatches only the grid-facing share of a CHP plant (the
++    host-self-supply share — ``chp_btm_pct``, 35-50% of nameplate — is
++    pulled out), while CAMPD measures the whole plant. Without adding the
++    BTM share back, a 50%-BTM cogen can never exceed ~0.5 CF on the CAMPD
++    scale and the CF-band panel reads a structural measurement asymmetry
++    as a dispatch-shape miss. Petra Nova (own parasitic-load treatment,
++    not a BTM cogen) is excluded.
++    """
++    from market_sim.data.fleet import (
++        PETRA_NOVA_PLANT_CODE, chp_btm_pct, load_campd_bins,
++    )
++    bins = load_campd_bins(ScenarioConfig().campd_bins_path)
++    chp = bins[bins["Plant_Group"].isin(("CC_CHP", "CT_CHP", "ST_CHP"))]
++    out: dict[int, float] = {}
++    for _, row in chp.iterrows():
++        code = int(row["Plant_Code"])
++        if code <= 0 or code == PETRA_NOVA_PLANT_CODE:
++            continue
++        pct = chp_btm_pct(code, str(row["Plant_Group"]))
++        out[code] = float(row["capacity_mw"]) * pct / 100.0
++    return out
++
++
+ def _plant_hourly_fit(
+     year: int, dispatch: pd.DataFrame, campd_year: pd.DataFrame, hours: int,
++    btm_mw_by_plant: dict[int, float] | None = None,
+ ) -> tuple[pd.DataFrame, pd.DataFrame]:
+     """Return per-plant hourly model-vs-CAMPD fit for every resolved plant.
+ 
+@@ -1511,6 +1538,12 @@ def _plant_hourly_fit(
+     aggregates into multi-plant bins (``plant_code == 0``) and plants without
+     CAMPD coverage are absent.
+ 
++    ``btm_mw_by_plant`` (CHP plants) adds the plant's flat behind-the-meter
++    host-supply MW back onto the model series in every hour the grid share
++    is running, so the comparison covers the whole plant like CAMPD does
++    (the LP itself sees only the grid-facing share). Hours where the model
++    is fully off (outage overlay) stay at zero.
++
+     Returns two frames: ``fit`` — one row per plant with Pearson r, NRMSE,
+     annual model / CAMPD GWh and the CF-band occupancy summary
+     (``cf_band_overlap`` / ``cf_emd``, see
+@@ -1537,6 +1570,9 @@ def _plant_hourly_fit(
+         m = piv[plant_code].to_numpy(dtype=float)
+         T = min(m.shape[0], observed.shape[0], hours)
+         m, o = m[:T], observed[:T]
++        btm_mw = (btm_mw_by_plant or {}).get(int(plant_code), 0.0)
++        if btm_mw > 0.0:
++            m = m + btm_mw * (m > 0.0)
+         try:
+             occ = check_cf_band_occupancy(m, o, band_width=_CF_BAND_WIDTH)
+         except ValueError:  # both series identically zero
+@@ -2182,8 +2218,9 @@ def report_run(run_dir: Path) -> None:
+                 campd_year = campd_all[campd_all["year"] == year]
+                 if not campd_year.empty:
+                     hours = int(dispatch["hour"].max()) + 1
++                    btm_mw_map = _chp_btm_mw_map() if iso == "ERCOT" else None
+                     fit, cf_bands = _plant_hourly_fit(
+-                        year, dispatch, campd_year, hours
++                        year, dispatch, campd_year, hours, btm_mw_map
+                     )
+                     _print_plant_hourly_fit(year, fit)
+                     _print_plant_cf_bands(year, cf_bands)
