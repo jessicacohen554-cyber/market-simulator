@@ -31,6 +31,10 @@ inputs/processed/*.parquet
 /frontend/data/backcast/manifest.js
 /frontend/data/backcast/benchmark.js
 
+# Class-totals cache for scripts/derive_offer_curve_jacobian.py (rebuilt on
+# demand from the calibration bundles; the CSV it derives IS committed)
+inputs/processed/.offer_curve_jacobian_cache.json
+
 # OS
 .DS_Store
 
