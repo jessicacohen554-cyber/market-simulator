@@ -28,6 +28,32 @@ against the reported ``HSL - GEN``:
   CAISO years without a full-year curtailment workbook (2025 today) keep
   the delivered EIA-930 profile fallback — see the data-needed marker in
   scripts/build_caiso_hsl.py.
+
+All other ISOs use the delivered ``<BA> hourly`` net-generation series from
+the EIA-930 hourly extract (see :func:`_eia_hourly_cf_profile`).  For NEISO
+in particular, ISO-NE reported curtailment is sub-1 % of potential, so the
+delivered EIA-930 ``ISNE hourly`` series is the documented default and no
+uncurtailed-potential (HSL) parquet is built.  NEISO wind/solar profiles are
+zone-shaped by EIA-860 plant-location capacity shares: ME/NH/VT onshore wind
+concentrates in the North zone; CT and MA/RI utility solar distribute across
+Connecticut and Central.
+
+**NEISO solar accounting note** — ISO-NE's extensive net-metered solar
+(rooftop + small commercial) is reported as a *reduction in net load* rather
+than as explicit generation, so the EIA-930 ``ISNE hourly NG: SUN`` column
+captures only grid-scale wholesale solar (~800–1 600 GWh/yr) while the
+EIA-860 operable schedule includes all utility-scale plants ≥ 1 MW
+(including distribution-connected, ~2.7 GW in 2023).  As a result the
+mean CF of the EIA-930-derived solar profile relative to the EIA-860 total
+installed capacity is approximately 0.04 — well below the physical
+utility-PV CF of ~0.15 — but the dispatch energy balance is correct because
+the EIA-930 net-load demand series already excludes BTM solar.  The wind
+profile is unaffected (all NEISO wind is grid-connected), and its mean CF
+benchmarks against the EIA-923 fleet average (~0.30).
+
+If ISO-NE ever publishes granular curtailment data, a dedicated HSL parquet
+can be built following the CAISO pattern in scripts/build_caiso_hsl.py — see
+:func:`_hsl_file` for the data-needed marker.
 """
 
 from __future__ import annotations
@@ -193,6 +219,11 @@ def _hsl_file(iso: str, year: int) -> Path | None:
         return _ercot_hsl_path(year)
     if iso == "CAISO":
         return _CAISO_HSL_DIR / f"caiso_{year}_hsl_hourly.parquet"
+    # NEISO: ISO-NE reported curtailment is sub-1 % of potential — the
+    # delivered EIA-930 ISNE series is the documented default; no uncurtailed-
+    # potential parquet is built.  To add one, follow the CAISO pattern in
+    # scripts/build_caiso_hsl.py and wire a ``_NEISO_HSL_DIR`` constant above.
+    # data-needed: requires ISO-NE to publish granular curtailment data.
     return None
 
 # The raw ERCOT 2023 wind HSL series sums below the EIA-930 delivered total
