@@ -84,7 +84,14 @@ the only tranche the commitment screen evaluates. Above it, the
 rises, and the **Peak** tranche is duct-firing or scarcity output. The
 committed share is not a coarse class assumption: for combined cycles it is
 derived per plant from each unit's own CAMPD record (see §3), applied via
-`CC_REGULAR_COMMITTED_PCT_BY_PLANT` under the ERCOT default.
+`CC_REGULAR_COMMITTED_PCT_BY_PLANT` under the ERCOT default and via the
+per-ISO `thermal_tranches_<ISO>.csv` artifact elsewhere. For per-ISO
+artifacts that carry it (CAISO onward), the CC **peaking share** is likewise
+measured per plant (`peaking_pct`, consumed by
+`fleet.thermal_tranche_peaking` under `cc_peaking_per_plant`): the share of
+the plant's demonstrated sustained maximum (P99.5 of online net MW) it
+clears in fewer than 5% of its online hours — the duct-firing / scarcity
+reach — superseding the offer curve's class-wide `pct_peaking`.
 
 Whenever an offer curve is configured for the group (the ERCOT default),
 the band heat rates come from the curve, **not** from the CSV `HR_Mult_*`
@@ -250,7 +257,9 @@ informational only; the overlay measures length as
 | Tranche structure, capacity split, CHP must-run post-processing | `docs/binning-methodology.md`; `src/market_sim/data/fleet.py` |
 | *n*-slice economic ramp (`_econ_curve_steps`) | `src/market_sim/data/fleet.py` |
 | Smoothing config (`offer_curve_smoothing_n` / `_exp`) | `src/market_sim/config/scenarios.py` |
-| Committed % / coal must-run % derivation | `scripts/derive_thermal_tranches.py` |
+| Committed % / coal must-run % / CC peaking % derivation | `scripts/derive_thermal_tranches.py` |
+| Per-ISO bin-assignment export (source-tagged) | `scripts/export_iso_bin_assignments.py` |
+| CEMS→EIA split-plant remap (AES Alamitos / Huntington Beach) | `src/market_sim/data/campd.py` (`CAMPD_UNIT_PLANT_REMAP`) |
 | Facility-level outage detection + thresholds | `scripts/derive_campd_outages.py` |
 | Unit-level outage detection | `scripts/derive_campd_unit_outages.py` |
 | Historic-outage overlay | `src/market_sim/data/outages.py` |

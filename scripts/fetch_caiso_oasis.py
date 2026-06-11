@@ -89,20 +89,41 @@ def _url(params: dict, start: dt.date, end: dt.date, node: str | None) -> str:
     return BASE + "?" + "&".join(f"{k}={v}" for k, v in parts.items())
 
 
-def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes:
-    """Download ``url`` with simple exponential-backoff retries."""
+def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
+    """Download ``url`` with exponential-backoff retries.
+
+    Returns ``None`` instead of raising when every attempt fails (e.g. OASIS
+    hangs on a too-large window — observed on 25-day PRC_LMP queries), so the
+    caller can shrink the window and continue rather than abort a multi-hour
+    crawl.
+    """
     delay = sleep_s
     for attempt in range(retries):
         try:
-            with urllib.request.urlopen(url, timeout=120) as resp:
+            with urllib.request.urlopen(url, timeout=60) as resp:
                 return resp.read()
         except Exception as exc:  # noqa: BLE001 - network errors of any shape
-            if attempt == retries - 1:
-                raise
-            print(f"    retry after error: {exc}", file=sys.stderr)
-            time.sleep(delay)
-            delay *= 2
-    raise RuntimeError("unreachable")
+            print(f"    attempt {attempt + 1}/{retries} failed: {exc}",
+                  file=sys.stderr, flush=True)
+            if attempt < retries - 1:
+                time.sleep(delay)
+                delay *= 2
+    return None
+
+
+def _oasis_error(payload: bytes) -> str:
+    """Return the ERR_DESC from an OASIS XML error payload, if any."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(payload)) as zf:
+            for name in zf.namelist():
+                if name.lower().endswith(".xml"):
+                    m = re.search(rb"<m:ERR_DESC>([^<]*)</m:ERR_DESC>",
+                                  zf.read(name))
+                    if m:
+                        return m.group(1).decode(errors="replace")
+    except Exception:  # noqa: BLE001 - diagnostic only
+        pass
+    return "unknown"
 
 
 def _extract_csv(payload: bytes) -> tuple[str, bytes] | None:
@@ -211,20 +232,36 @@ def fetch_dataset(
             print(f"  {tag} ...", flush=True)
             payload = _fetch(url, sleep_s=sleep_s)
             time.sleep(sleep_s)
-            result = _extract_csv(payload)
+            result = _extract_csv(payload) if payload is not None else None
             got = _covered_days(result[1]) if result else set()
             if result and need <= got:
                 target.write_bytes(result[1])
                 cur = win_end
-                size = window  # reset after success
+                # AIMD window sizing: grow gently after success instead of
+                # resetting to the maximum — OASIS hangs on windows past its
+                # per-report limit, and reprobing the max on every success
+                # would waste ~5 requests per window.
+                size = min(window, size * 2)
             elif size > 1:
                 size = max(1, size // 2)
-                print(f"    incomplete ({len(got)}/{len(need)} days) — "
-                      f"halving window to {size}d", flush=True)
+                reason = (
+                    "no response" if payload is None
+                    else f"OASIS: {_oasis_error(payload)}" if result is None
+                    else f"{len(got)}/{len(need)} days"
+                )
+                print(f"    incomplete ({reason}) — halving window to "
+                      f"{size}d", flush=True)
             else:
-                # single-day window still failing: record and move on
-                print(f"    FAILED single-day window {cur} — skipping",
-                      file=sys.stderr, flush=True)
+                # Single-day window still failing: skip the day. Persistent
+                # runs of these at the start of the range usually mean the
+                # data has aged out of OASIS retention (~39 months).
+                reason = (
+                    "no response" if payload is None
+                    else f"OASIS: {_oasis_error(payload)}" if result is None
+                    else "wrong days returned"
+                )
+                print(f"    FAILED single-day window {cur} ({reason}) — "
+                      f"skipping", file=sys.stderr, flush=True)
                 cur = win_end
 
 
