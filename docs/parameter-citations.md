@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**630 parameters registered** (297 flagged `needs-citation`).
+**635 parameters registered** (298 flagged `needs-citation`).
 
 
 ## Calibration
@@ -231,6 +231,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.state_carbon_pricing` | True | 1 | Toggle: charge the ISO's state carbon-program allowance cost (CA ca… | 2026-06 |  |
 | `scenario.use_plant_emission_rates` | True | 2 | When True, generators pinned to a single plant take that plant's CA… |  | auto-generated, needs-citation |
 | `state_carbon_price_by_iso.CAISO` | {"2023": 33.03, "2024": 35.23, "2025"… | 2 | CARB / CA-Quebec joint auction current-vintage settlement prices, a… | 2025-11 |  |
+| `state_carbon_price_by_iso.NEISO` | {"2023": 14.87, "2024": 22.83, "2025"… | 2 | RGGI, Inc. quarterly auction results press releases ("CO2 Allowance… | 2025-12 |  |
 | `state_carbon_price_by_iso.NYISO` | {"2023": 13.49, "2024": 20.71, "2025"… | 2 | RGGI quarterly CO2-allowance auction clearing prices, annual simple… | 2025-12 |  |
 
 ## Fuel Prices
@@ -240,6 +241,7 @@ inline comment and still need a dated primary source — search the table for
 | `biomass_price_per_mmbtu` | 2.5 | 2 | Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas un… | 2024 | auto-generated |
 | `coal_price_base.CAISO` | 2.5 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
 | `coal_price_base.ERCOT` | 2.0 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
+| `coal_price_base.NEISO` | 3.0 | 2 | Tier-3 placeholder: PJM bituminous blend (EIA AEO 2024, 2.3) plus a… | 2026-06 | modeled, needs-citation |
 | `coal_price_base.NYISO` | 2.3 | 2 | NY grid coal fleet retired (Somerset/Cayuga, 2020); no 2023+ unit p… | 2024 |  |
 | `coal_price_base.PJM` | 2.3 | 2 | Central/Northern Appalachian bituminous + PRB-by-rail |  | auto-generated, needs-citation |
 | `coal_price_escalation` | 0.01 | 2 | Annual real escalation rate for coal prices. Reflects mine closures… | 2024 | auto-generated |
@@ -260,6 +262,7 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_wind.mid` | 8.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `gas_basis_differential.CAISO` | 1.2 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
 | `gas_basis_differential.ERCOT` | -0.5 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
+| `gas_basis_differential.NEISO` | 1.1 | 2 | EIA-923 Schedule 5 fuel receipts: quantity-weighted delivered gas t… | 2026-06 |  |
 | `gas_basis_differential.NYISO` | 0.55 | 2 | EIA-923 delivered-gas basis (see below) |  | auto-generated, needs-citation |
 | `gas_basis_differential.PJM` | 0.67 | 2 | TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify |  | auto-generated, needs-citation |
 | `gas_monthly_seasonality` | {"1": 1.15, "2": 1.1, "3": 1.02, "4":… | 2 | EIA Henry Hub monthly spot prices | 2024 |  |
@@ -308,6 +311,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
 | `scenario.eac_price_solar` | 0.0 | 1 | $/MWh |  | auto-generated, needs-citation |
 | `scenario.eac_price_wind` | 0.0 | 1 | $/MWh, onshore wind REC |  | auto-generated, needs-citation |
+| `scenario.gas_hub_basis_overlay` | False | 3 | Market simulator model design decision (doc-08 NEISO design decisio… | 2026-06 | modeled |
 | `scenario.gas_monthly_actuals` | False | 3 | Tier 3 (calibration) — price gas at the ISO's measured EIA-923 mont… | 2024 | auto-generated |
 | `scenario.gas_plant_monthly_fuel_pricing` | False | 2 | Per-plant monthly gas pricing. OFF by default: every gas generator … |  | auto-generated, needs-citation |
 | `scenario.gas_price_override` | None | 3 | When set, pins the annual |  | auto-generated, needs-citation |
@@ -323,6 +327,12 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.nearby_fuel_price_fallback` | False | 3 | Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True… |  | auto-generated, needs-citation |
 | `scenario.nearby_fuel_price_min_state_plants` | 2 | 3 | state-mean sample floor; |  | auto-generated, needs-citation |
 | `wright_reference_gw.gas_cc` | 1220.0 | 2 | was 1200. IEA WEO 2025. | 2025 | auto-generated |
+
+## Hydro
+
+| param_id | value | tier | source | date | flags |
+|---|---|---|---|---|---|
+| `nyiso_hydro_treaty_min_flow` | {"2693": 0.25, "2694": 0.5} | 2 | NYISO treaty-mandated minimum flows for the two large NYPA hydro pl… | 1957 | auto-generated |
 
 ## Market Design
 
