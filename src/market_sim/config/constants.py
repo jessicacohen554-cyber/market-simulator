@@ -244,6 +244,24 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
         2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
     },
+    # NYISO = FitzPatrick (EIA 6110, 844 MW), Nine Mile Point 1+2 (EIA 2589,
+    # 1,903 MW combined), R E Ginna (EIA 6122, 579 MW) — fleet nameplate
+    # 3,326 MW. Indian Point (EIA 8907) retired Apr 2021 and is absent from
+    # the EIA-860 operable fleet. Monthly EIA-923 net generation / (fleet
+    # nameplate x hours in month), clipped at 1.0 (ERCOT convention). The dips
+    # are the actual staggered ~2-year refueling cadence, each verified to a
+    # single reactor in the per-plant EIA-923 series:
+    #   2023 Apr 0.74  — Ginna refuel (plant CF 0.28) + a Nine Mile unit (0.76).
+    #   2024 Mar 0.69  — Nine Mile 2 refuel (plant CF 0.46).
+    #   2024 Aug-Sep   — FitzPatrick refuel (0.63 / 0.37); Oct Ginna (0.48).
+    #   2025           — only a mild Nine Mile dip (Mar 0.80); no deep refuel.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NYISO.
+    "NYISO": {
+        2023: [1.00, 0.98, 0.86, 0.74, 0.99, 0.99, 0.96, 0.97, 0.88, 0.97, 0.99, 0.99],
+        2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
+        2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],
+    },
 }
 
 # Equivalent forced outage rate (demand) by technology class.
