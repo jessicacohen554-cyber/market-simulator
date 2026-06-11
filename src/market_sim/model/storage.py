@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from market_sim.config.constants import (
     DEFAULT_MARKET_DESIGN,
     MARKET_DESIGN,
+    PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO,
     PUMPED_STORAGE_DURATION_HOURS,
     PUMPED_STORAGE_RTE,
     STORAGE_ANNUAL_BUILD_CAP_MW,
@@ -55,8 +56,10 @@ class StorageUnit(BaseModel):
     eta_discharge: float = 1.0
     zone_idx: int = 0
     # Dispatch cost per MWh discharged (added to the LP discharge slot).
-    # Zero for batteries; pumped storage carries the calibrated throughput
-    # adder (see ScenarioConfig.pumped_storage_dispatch_adder).
+    # Pumped storage carries the per-ISO calibrated throughput adder
+    # (resolve_pumped_storage_dispatch_adder); grid batteries carry the
+    # battery cycling/throughput adder
+    # (ScenarioConfig.battery_dispatch_adder, default 0).
     vom: float = 0.0
 
 
@@ -228,7 +231,9 @@ def load_eia860_storage(
     Args:
         iso: ISO identifier; zones come from its topology config.
         year: Backcast year; units commissioned after it are excluded.
-        config: Scenario config; supplies the ``storage_rte_4hr`` override.
+        config: Scenario config; supplies the ``storage_rte_4hr`` override
+            and the ``battery_dispatch_adder`` throughput cost carried on
+            each battery unit's ``vom``.
 
     Returns:
         One aggregated ``StorageUnit`` per zone with nonzero storage
@@ -277,6 +282,10 @@ def load_eia860_storage(
         per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
+    # Throughput/cycling cost per MWh discharged (degradation + ancillary-
+    # service opportunity cost) — the battery analogue of the pumped-storage
+    # adder below; see ScenarioConfig.battery_dispatch_adder.
+    adder = float(getattr(config, "battery_dispatch_adder", 0.0))
     units = [
         StorageUnit(
             unit_id=f"{zone}_eia860_storage",
@@ -287,12 +296,33 @@ def load_eia860_storage(
             eta_charge=eta,
             eta_discharge=eta,
             zone_idx=z_idx,
+            vom=adder,
         )
         for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
         if per_zone_power.get(zone, 0.0) > 0.0
     ]
     units.extend(load_eia860_pumped_storage(iso, year, config))
     return units
+
+
+def resolve_pumped_storage_dispatch_adder(
+    iso: str, config: ScenarioConfig | None
+) -> float:
+    """Return the pumped-storage dispatch adder ($/MWh discharged) for an ISO.
+
+    An explicit ``config.pumped_storage_dispatch_adder`` wins. ``None`` (the
+    field default, or no config at all) falls back to the per-ISO calibrated
+    default in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO` — PJM $10; ISOs
+    without a calibrated entry (e.g. CAISO) resolve to 0.0 until their own
+    calibration says otherwise.
+    """
+    explicit = (
+        getattr(config, "pumped_storage_dispatch_adder", None)
+        if config is not None else None
+    )
+    if explicit is not None:
+        return float(explicit)
+    return PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO.get(iso.upper(), 0.0)
 
 
 def load_eia860_pumped_storage(
@@ -303,12 +333,15 @@ def load_eia860_pumped_storage(
     Pumped storage is reported on the EIA-860 *generator* schedule (prime
     mover ``PS``), not the battery energy-storage schedule, so the battery
     loader alone misses it entirely — e.g. PJM's ~5 GW (Bath County, Muddy
-    Run, Yards Creek, Seneca, Smith Mountain), the fleet's largest
-    peak-shaving resource. Each operating PS unit online by the end of
-    ``year`` is aggregated per zone into one ``StorageUnit``. EIA-860 carries
-    no energy capacity or RTE for PS, so the cited fleet-average duration
-    (:data:`PUMPED_STORAGE_DURATION_HOURS`) and round-trip efficiency
-    (:data:`PUMPED_STORAGE_RTE`) constants are applied.
+    Run, Yards Creek, Seneca, Smith Mountain) and CAISO's ~2.1 GW (Helms,
+    W. R. Gianelli, Edward C Hyatt, J S Eastwood, Thermalito, O'Neill), the
+    fleets' largest peak-shaving resources. Each operating PS unit online by
+    the end of ``year`` is aggregated per zone into one ``StorageUnit``.
+    EIA-860 carries no energy capacity or RTE for PS, so the cited
+    fleet-average duration (:data:`PUMPED_STORAGE_DURATION_HOURS`) and
+    round-trip efficiency (:data:`PUMPED_STORAGE_RTE`) constants are applied.
+    The discharge ``vom`` is the per-ISO dispatch adder
+    (:func:`resolve_pumped_storage_dispatch_adder`).
 
     Returns one ``StorageUnit`` per zone with nonzero PS capacity; empty when
     the generator parquet is missing or the ISO has no pumped storage.
@@ -350,10 +383,7 @@ def load_eia860_pumped_storage(
         per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
 
     eta = PUMPED_STORAGE_RTE ** 0.5
-    adder = (
-        float(getattr(config, "pumped_storage_dispatch_adder", 0.0))
-        if config is not None else 0.0
-    )
+    adder = resolve_pumped_storage_dispatch_adder(iso, config)
     return [
         StorageUnit(
             unit_id=f"{zone}_eia860_pumped_storage",
