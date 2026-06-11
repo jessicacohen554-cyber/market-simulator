@@ -65,6 +65,47 @@ _CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
     "VEA-TAC": {"SP15": 1.0},
 }
 
+# NYISO settlement zone (OASIS "pal" actual-load zone names) -> model
+# transmission zone. Maps the eleven NYISO load zones (A–K) onto the five
+# model zones that aggregate them along the binding downstate-import interfaces
+# (Central-East / Total-East cutset, UPNY-SENY, Dunwoodie-South, Long Island
+# import). Both the single-letter form (A–K) and the OASIS PTID-name form are
+# accepted so the parser handles whichever column the upload carries.
+#
+# Aggregation: A+B+C+D+E → Upstate_West  (cheap upstate generation belt)
+#              F+G        → Capital_Hudson (Capital District + Hudson Valley)
+#              H+I        → Lower_Hudson   (Millwood + Dunwoodie pocket)
+#              J          → NYC            (New York City)
+#              K          → Long_Island    (Long Island / LIPA territory)
+_NYISO_LOAD_ZONE_GROUPS: dict[str, str] = {
+    # Zone A — West (Niagara frontier)
+    "A": "Upstate_West", "WEST": "Upstate_West",
+    # Zone B — Genesee
+    "B": "Upstate_West", "GENESE": "Upstate_West",
+    # Zone C — Central
+    "C": "Upstate_West", "CENTRL": "Upstate_West",
+    # Zone D — North
+    "D": "Upstate_West", "NORTH": "Upstate_West",
+    # Zone E — Mohawk Valley
+    "E": "Upstate_West", "MHK VL": "Upstate_West",
+    # Zone F — Capital District
+    "F": "Capital_Hudson", "CAPITL": "Capital_Hudson",
+    # Zone G — Hudson Valley
+    "G": "Capital_Hudson", "HUD VL": "Capital_Hudson",
+    # Zone H — Millwood (Lower Hudson)
+    "H": "Lower_Hudson", "MILLWD": "Lower_Hudson",
+    # Zone I — Dunwoodie (Lower Hudson)
+    "I": "Lower_Hudson", "DUNWOD": "Lower_Hudson",
+    # Zone J — New York City
+    "J": "NYC", "N.Y.C.": "NYC",
+    # Zone K — Long Island
+    "K": "Long_Island", "LONGIL": "Long_Island",
+}
+
+# Directory for NYISO zonal actual-load CSVs (upload U3). Absent until the
+# user uploads NYISO OASIS "pal" actual-load files.
+_NYISO_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR / "NYISO"
+
 # Minimum measured TAC hours to derive CAISO zonal shapes from a partial-year
 # upload (U4 lands month by month); below this, fall back to static shares.
 _CAISO_TAC_MIN_HOURS: int = 28 * 24
@@ -292,6 +333,35 @@ def _load_caiso_hourly_demand(year: int) -> np.ndarray | None:
     the caller to fall back to the per-ISO demand-profiles parquet.
     """
     frame = _eia_hourly_frame_filled("CISO", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
+
+
+def _load_nyiso_hourly_demand(year: int) -> np.ndarray | None:
+    """Return NYISO hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``NYIS hourly`` extract so demand shares the
+    chronological clock of the wind/solar/benchmark series read off the same
+    rows (the ERCOT/CAISO precedent: the demand-profiles parquet is
+    hour-shifted relative to this frame). Isolated missing meter hours are
+    interpolated.
+
+    **Net-load convention (playbook §8.1):** this series is metered at the
+    transmission level and is already net of behind-the-meter PV/storage/DER.
+    Backcasts model only front-of-meter resources against it. NY's BTM wedge
+    is smaller than CAISO's (~15+ GW) but growing downstate — document per
+    backcast year. Unlike ERCOT, net interchange is *not* folded into demand
+    here: NYISO imports are modeled as a calibrated priced node (P9 /
+    playbook §8.2), so netting interchange into demand would double count them.
+
+    Returns ``None`` when no usable full-year frame is available, signaling
+    the caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("NYIS", year)
     if frame is None:
         return None
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
@@ -793,6 +863,107 @@ def caiso_zonal_load_shares(
     return shares
 
 
+def nyiso_zonal_load_shares(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NYISO load shares, or ``None``.
+
+    Reads NYISO actual zonal hourly load (upload U3: NYISO OASIS ``pal``
+    actual-load CSV, ``NYISO_load_actuals_<year>.csv``) and maps the eleven
+    settlement zones (A–K) onto the five model zones via
+    :data:`_NYISO_LOAD_ZONE_GROUPS`, returning each model zone's hour-by-hour
+    fraction of system load. The caller multiplies these time-varying shares by
+    the EIA-930 NYIS system demand total, so each zone gets its own measured
+    shape — the heavily loaded downstate NYC (J) and Long Island (K) pockets
+    peak at different hours than cheap upstate generation — while the system
+    level stays tied to the existing demand series.
+
+    **Expected CSV format (upload U3):** ``NYISO_load_actuals_<year>.csv``
+    under ``inputs/raw-data/zone-specific-demand/NYISO/``, with columns
+    ``Time Stamp`` (Eastern local, hour-beginning), ``Name`` (NYISO zone name
+    CAPITL/CENTRL/… or letter A–K), and ``Load`` (MW). Files are sourced from
+    the NYISO OASIS "pal" actual-load endpoint (hourly integrated, all eleven
+    zones, 2023–2025).
+
+    Returns ``None`` when the file is absent so the caller falls back to the
+    static Gold-Book load shares in :func:`_nyiso_config` (Tier 3 —
+    calibration). Refresh path: upload NYISO OASIS pal actual-load CSVs for
+    2023–2025 as ``NYISO_load_actuals_<year>.csv`` (see upload manifest U3).
+
+    Timestamps are Eastern local time (America/New_York); they are placed on
+    the model's fixed non-leap 8760-hour clock (Feb 29 dropped). Any
+    spring-forward DST gap is back-filled from the previous hour.
+    """
+    path = _NYISO_ZONAL_LOAD_DIR / f"NYISO_load_actuals_{year}.csv"
+    if not path.exists():
+        logger.warning(
+            "NYISO zonal load file not found (%s); using static load_share "
+            "split (Tier 3 — upload U3 to refresh)", path,
+        )
+        return None
+    df = pd.read_csv(path)
+    # Flexible column detection: NYISO OASIS downloads use "Time Stamp" for
+    # the timestamp and "Name" for the zone; tolerate minor naming variants.
+    ts_col = next(
+        (c for c in df.columns if c.lower().replace(" ", "_") in
+         ("time_stamp", "timestamp", "datetime", "date_time")),
+        None,
+    )
+    zone_col = next(
+        (c for c in df.columns if c.lower() in ("name", "zone", "zone_name")),
+        None,
+    )
+    load_col = next(
+        (c for c in df.columns if c.lower() in ("load", "mw", "load_mw")),
+        None,
+    )
+    if ts_col is None or zone_col is None or load_col is None:
+        logger.warning(
+            "NYISO zonal load file %s is missing expected columns "
+            "(need timestamp, zone-name, and MW load); using static shares",
+            path.name,
+        )
+        return None
+    ts = pd.to_datetime(df[ts_col], errors="coerce")
+    # NYISO OASIS timestamps are Eastern local (tz-naive). If the file carries
+    # tz-aware UTC timestamps (uncommon), convert to Eastern first.
+    if ts.dt.tz is not None:
+        ts = ts.dt.tz_convert("America/New_York")
+    else:
+        ts = ts.dt.tz_localize("America/New_York", ambiguous="NaT",
+                               nonexistent="NaT")
+    ts_local = ts.dt.tz_localize(None)
+    keep = (
+        (ts_local.dt.year == year)
+        & ts_local.notna()
+        & ~((ts_local.dt.month == 2) & (ts_local.dt.day == 29))
+    )
+    df = df[keep].copy()
+    ts_local = ts_local[keep]
+    if df.empty:
+        logger.warning(
+            "NYISO zonal load file %s has no %d data after filtering; "
+            "using static shares", path.name, year,
+        )
+        return None
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts_local.dt.month.to_numpy() - 1]
+        + (ts_local.dt.day.to_numpy() - 1) * 24
+        + ts_local.dt.hour.to_numpy()
+    )
+    df["_mzone"] = df[zone_col].astype(str).str.strip().map(_NYISO_LOAD_ZONE_GROUPS)
+    unmapped = df["_mzone"].isna()
+    if unmapped.any():
+        missing = sorted(df.loc[unmapped, zone_col].unique())
+        logger.warning(
+            "NYISO load zones not mapped to a model zone: %s", missing
+        )
+        df = df[~unmapped]
+        hoy = hoy[~unmapped.to_numpy()]
+    mw = pd.to_numeric(df[load_col], errors="coerce").to_numpy(dtype=float)
+    return _hourly_shares_from_groups(df["_mzone"], hoy, pd.Series(mw), zone_names)
+
+
 def pjm_net_interchange(year: int) -> np.ndarray | None:
     """Return PJM's hourly net export (MW, export-positive), or ``None``.
 
@@ -940,7 +1111,12 @@ def load_demand(
     CAISO, demand comes from the EIA-930 ``CISO hourly`` extract with **no**
     interchange netting — imports are supply, modeled by the ``WECC_import``
     node (see :func:`_load_caiso_hourly_demand`; the series is net load,
-    already net of ~15+ GW BTM PV, per the playbook §8.1 convention). Other
+    already net of ~15+ GW BTM PV, per the playbook §8.1 convention). For
+    NYISO, demand comes from the EIA-930 ``NYIS hourly`` extract with **no**
+    interchange netting — imports are a calibrated priced node (P9 /
+    playbook §8.2; see :func:`_load_nyiso_hourly_demand`); the series is net
+    load, already net of behind-the-meter PV/storage/DER (playbook §8.1;
+    NY's BTM wedge is smaller than CAISO's but growing downstate). Other
     ISOs use the demand-profiles parquet alone, with no interchange.
 
     Args:
@@ -979,6 +1155,8 @@ def load_demand(
             raw_mw, interchange = ercot_hourly
     elif iso == "CAISO":
         raw_mw = _load_caiso_hourly_demand(year)
+    elif iso == "NYISO":
+        raw_mw = _load_nyiso_hourly_demand(year)
     if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
@@ -1015,18 +1193,21 @@ def load_demand(
             if pjm_ix is not None:
                 interchange = pjm_ix
 
-    # PJM, ERCOT and CAISO allocate demand by each zone's own measured hourly
-    # shape (from the PJM metered-load / ERCOT native-load / CAISO TAC-area
-    # files) when available, so zones peak at different times; every other ISO
-    # (and these three without the file) uses the static per-zone share
-    # broadcast across hours. Both are (n_zones, T) weight matrices summing to
-    # 1.0 down each hour, so the rest of the math is identical.
+    # PJM, ERCOT, CAISO and NYISO allocate demand by each zone's own measured
+    # hourly shape (from the PJM metered-load / ERCOT native-load / CAISO
+    # TAC-area / NYISO pal actual-load files) when available, so zones peak at
+    # different times; every other ISO (and these four without their file) uses
+    # the static per-zone share broadcast across hours. Both are (n_zones, T)
+    # weight matrices summing to 1.0 down each hour, so the rest of the math
+    # is identical.
     if iso == "PJM":
         zonal_shares = pjm_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "ERCOT":
         zonal_shares = ercot_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "CAISO":
         zonal_shares = caiso_zonal_load_shares(year, iso_config.zone_names)
+    elif iso == "NYISO":
+        zonal_shares = nyiso_zonal_load_shares(year, iso_config.zone_names)
     else:
         zonal_shares = None
     if zonal_shares is not None:
