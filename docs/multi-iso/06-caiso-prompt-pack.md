@@ -536,11 +536,17 @@ multiple-energy-source fields and an oil price series; gate on PJM.
 
 ### J3 — PJM: benchmark + coverage upgrades
 
-(a) Hourly PJM LMP upload → true duration-curve overlay (only monthly
-averages exist in `lmp-data/`); would also localize the summer-LMP
-scarcity residual (Jul/Aug ~−$6–8) before any reserve/ORDC work.
+(a) **Done 2026-06-11** — the `lmp-data/` PJM exports were already hourly
+(12 hubs; the `_monthly_` filename is a misnomer). `derive_actual_lmp.py`
+now emits `actual_lmp_hourly_PJM.parquet` + duration-curve percentiles in
+`actual_lmp.json`, and `analyze_lmp_residual.py` localizes the residual:
+Jul/Aug −4.9 (2023) / −6.4 (2024), concentrated in the 11:00–18:00 ramp
+and the actual ≥$75 regime (92% of the 2024 $·h gap), p50 matches —
+see `pjm-lmp-residual.md` before any reserve/ORDC work.
 (b) CAMPD unit-level gaps: MD/DE/NC/TN (and MI 2023/2025) still on
-statistical availability — upload + regenerate `campd-unit-outages-PJM.csv`.
+statistical availability — upload + regenerate `campd-unit-outages-PJM.csv`
+(TN is now in `campd.ISO_STATES["PJM"]`, so the derivation widens
+automatically once extracts land).
 (c) Nuclear refuel overlay (shared with E2).
 
 ### Cross-cutting (build once, all ISOs benefit)
