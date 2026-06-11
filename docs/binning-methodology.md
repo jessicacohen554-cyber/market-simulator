@@ -48,6 +48,23 @@ default), via `fleet.CC_REGULAR_COMMITTED_PCT_BY_PLANT`. The CSV
 `Pct_Committed` column is only the fallback for plants without CAMPD
 coverage.
 
+Non-ERCOT ISOs have no curated bin CSV: `fleet_to_bins` synthesizes the
+same per-plant frame from the EIA-860 fleet plus the CAMPD-derived
+`inputs/processed/thermal_tranches_<ISO>.csv` (committed %, coal must-run %,
+and — where the artifact carries `peaking_pct` (CAISO onward) — a measured
+per-plant CC duct-firing share, applied via `fleet.thermal_tranche_peaking`
+under `cc_peaking_per_plant` and superseding the offer curve's class-wide
+`pct_peaking`). The resulting assignments are committed for review as
+`inputs/processed/bin_assignments_<ISO>.csv`
+(`scripts/export_iso_bin_assignments.py`), one row per
+`(Plant_Code, Plant_Group)` with a source tag per derived quantity
+(`campd` vs `class_default`; CHP must-run carries its floor provenance).
+Under `chp_steam_following`, a cogen whose measured committed floor exceeds
+its grid-facing share once the BTM host pull-out is removed (Elk Hills,
+Marcus Hook) is clamped into the grid share — committed keeps its measured
+level, the scarcity peak gives way — so the LP never carries more than the
+grid-facing capacity.
+
 ## Plant groups
 
 `Plant_Group` is the primary classifier. The six dispatched groups and

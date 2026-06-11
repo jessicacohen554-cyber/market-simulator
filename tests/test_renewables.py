@@ -10,6 +10,7 @@ from market_sim.data.renewables import (
     _eia860_monthly_capacity,
     _eia860_zone_shares,
     derive_cf_profile,
+    load_hsl_hourly,
     load_renewable_profiles,
 )
 
@@ -193,18 +194,21 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
     assert solar_cap[wecc] == 0.0
 
 
-def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
-    """A CAISO backcast builds its CF profile from the CISO hourly extract.
+def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
+    """A CAISO backcast builds its CF profile from the uncurtailed potential.
 
-    With ``mode="backcast"`` set the run is a historical backcast, so the
-    profile is built from the EIA-930 ``CISO hourly`` net generation (the new
-    per-BA file-resolution path generalized from the ERCOT-only loader), not
-    the EIA-930 distribution. CAISO is multi-zone, so the measured profile is
+    With ``mode="backcast"`` set and the CAISO HSL-analogue parquet present
+    (delivered EIA-930 generation + CAISO's reported curtailment, built by
+    scripts/build_caiso_hsl.py), the profile is the *uncurtailed* potential —
+    so the dispatch re-curtails CAISO's multi-TWh solar curtailment instead
+    of inheriting it. CAISO is multi-zone, so the measured profile is
     distributed across the NP15/ZP26/SP15 trading zones by EIA-860 capacity:
-    the capacity-weighted sum across zones reconstructs the delivered hourly
-    generation (only the measured path does this — the distribution path would
-    produce a different shape), and the implied profile mean equals the
-    realized annual-average CF (delivered generation / year-end capacity).
+    the capacity-weighted sum across zones reconstructs the hourly HSL series
+    (floored at zero — EIA-930 reports small negative night-time solar, and a
+    CF cannot go negative), sits at or above delivered generation in every
+    hour, and the implied profile mean equals the realized uncurtailed
+    annual-average CF (potential / year-end capacity), slightly above the
+    delivered EIA-923-style CF by the curtailment share.
     """
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(
@@ -216,6 +220,8 @@ def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
     )
     wecc = iso_config.zone_names.index("WECC_import")
     gen = load_eia_hourly_renewable_gen("CAISO", _CAL_YEAR)
+    hsl = load_hsl_hourly("CAISO", _CAL_YEAR)
+    assert hsl is not None
 
     for fuel, cf, cap in (
         ("wind", wind_cf, wind_cap),
@@ -225,20 +231,88 @@ def test_caiso_backcast_cf_profile_matches_realized_annual_cf():
         assert cap[wecc] == 0.0
         assert np.all(cf[wecc] == 0.0)
 
-        # Capacity-weighted CF across zones reconstructs the delivered hourly
-        # MW: same annual energy and same chronological shape.
+        # Capacity-weighted CF across zones reconstructs the uncurtailed
+        # hourly MW (zero-floored): same annual energy, same chronological
+        # shape, and at or above the delivered series everywhere.
+        potential = np.maximum(
+            hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float), 0.0
+        )
         reconstructed = (cap[:, None] * cf).sum(axis=0)
         np.testing.assert_allclose(
-            reconstructed.sum(), gen[fuel].sum(), rtol=0.01
+            reconstructed.sum(), potential.sum(), rtol=0.01
         )
-        assert np.corrcoef(reconstructed, gen[fuel])[0, 1] > 0.999
+        assert np.corrcoef(reconstructed, potential)[0, 1] > 0.999
+        assert np.all(reconstructed >= gen[fuel] - 1e-6)
 
-        # Hence the capacity-weighted profile mean equals the realized
-        # annual-average CF = delivered generation / year-end capacity.
-        realized_cf = gen[fuel].mean() / cap.sum()
+        # The capacity-weighted profile mean equals the realized uncurtailed
+        # annual-average CF — at or a few percent above the delivered
+        # (EIA-923-style) CF, by exactly the reported curtailment share.
+        delivered_cf = gen[fuel].mean() / cap.sum()
+        uncurtailed_cf = potential.mean() / cap.sum()
         weighted_cf = reconstructed.mean() / cap.sum()
         assert 0.0 < weighted_cf < 1.0
-        np.testing.assert_allclose(weighted_cf, realized_cf, atol=0.01)
+        np.testing.assert_allclose(weighted_cf, uncurtailed_cf, atol=0.01)
+        assert delivered_cf <= weighted_cf <= delivered_cf * 1.10
+
+
+def test_caiso_hsl_parquet_uncurtailed_at_least_delivered():
+    """Every CAISO HSL parquet has HSL >= delivered in every single hour.
+
+    The HSL analogue is delivered + reported curtailment, so the inequality
+    holds by construction; this guards the builder against sign or alignment
+    regressions. At least one covered year must exist (the 2023/2024
+    workbooks are committed), and solar curtailment must be the documented
+    multi-TWh wedge.
+    """
+    covered = [
+        year for year in (2023, 2024, 2025)
+        if load_hsl_hourly("CAISO", year) is not None
+    ]
+    assert 2023 in covered and 2024 in covered
+    for year in covered:
+        df = load_hsl_hourly("CAISO", year)
+        assert len(df) == HOURS_PER_YEAR
+        for fuel in ("wind", "solar"):
+            gen = df[f"{fuel}_gen_mw"].to_numpy(dtype=float)
+            hsl = df[f"{fuel}_hsl_mw"].to_numpy(dtype=float)
+            assert np.all(hsl >= gen - 1e-6), (
+                f"CAISO {year} {fuel}: HSL below delivered"
+            )
+        solar_curt_twh = (
+            df["solar_hsl_mw"].sum() - df["solar_gen_mw"].sum()
+        ) / 1e6
+        assert 1.0 < solar_curt_twh < 6.0
+
+
+def test_ercot_2023_hsl_path_untouched_by_caiso_wiring():
+    """The ERCOT 2023 HSL profile still reconstructs the rescaled NP6 series.
+
+    The CAISO HSL lookup generalized the file resolution; ERCOT 2023 must
+    keep its exact prior behavior — the NP6 HSL shape rescaled to the
+    ``_HSL_RESCALE_TWH`` targets (wind 110, solar 32 TWh).
+    """
+    from market_sim.data.renewables import _HSL_RESCALE_TWH
+
+    iso_config = get_iso_config("ERCOT")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="ERCOT", mode="backcast",
+        gas_price_override=2.54,
+    )
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
+        "ERCOT", _CAL_YEAR, iso_config, config
+    )
+    hsl = load_hsl_hourly("ERCOT", _CAL_YEAR)
+    assert hsl is not None
+
+    for fuel, cf, cap in (
+        ("wind", wind_cf, wind_cap),
+        ("solar", solar_cf, solar_cap),
+    ):
+        reconstructed = (cap[:, None] * cf).sum(axis=0)
+        target_mwh = _HSL_RESCALE_TWH[("ERCOT", _CAL_YEAR, fuel)] * 1.0e6
+        np.testing.assert_allclose(reconstructed.sum(), target_mwh, rtol=0.01)
+        raw = hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float)
+        assert np.corrcoef(reconstructed, raw)[0, 1] > 0.999
 
 
 def test_miso_cf_profile_mean_matches_annual_average_cf():

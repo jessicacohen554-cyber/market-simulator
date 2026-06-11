@@ -52,7 +52,11 @@ from market_sim.data.eia923 import (
     plant_month_price_grid,
     state_month_price_grid,
 )
-from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
+from market_sim.data.fleet import (
+    FUEL_TYPE_MAP,
+    FleetArrays,
+    dual_fuel_plant_groups,
+)
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 
 logger = logging.getLogger(__name__)
@@ -275,6 +279,45 @@ def _expand_monthly_to_hourly(
     return monthly[_month_index(hours)]
 
 
+def _iso_monthly_fuel_prices(
+    config: ScenarioConfig, year: int, fuel_group: str,
+    monthly_costs_path: Path | None = None,
+) -> np.ndarray | None:
+    """Measured ISO-month delivered price ($/MMBtu) for one F923 fuel group.
+
+    Volume-weights the EIA-923 monthly receipt costs of ``fuel_group``
+    across the ISO's plants into one hub-level price per month. Months with
+    no reported receipts are returned as ``NaN`` for the caller to fill from
+    the per-fuel default; returns ``None`` when the parquet, the year or the
+    ISO's plants are absent entirely.
+    """
+    costs = _load_monthly_cache(monthly_costs_path)
+    if costs is None or year not in available_years(costs):
+        return None
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        iso_plants = frozenset(build_zone_lookup(config.iso))
+    except Exception:
+        return None
+    if not iso_plants:
+        return None
+    sub = costs[
+        (costs["year"] == year)
+        & (costs["fuel_group"] == fuel_group)
+        & costs["plant_id"].isin(iso_plants)
+    ]
+    if sub.empty:
+        return None
+    monthly = np.full(12, np.nan)
+    spend = sub["price_per_mmbtu"] * sub["quantity"]
+    by_month = sub.assign(spend=spend).groupby("month")[["spend", "quantity"]].sum()
+    for m, row in by_month.iterrows():
+        if row["quantity"] > 0:
+            monthly[int(m) - 1] = row["spend"] / row["quantity"]
+    return monthly
+
+
 def iso_monthly_gas_prices(
     config: ScenarioConfig, year: int,
     monthly_costs_path: Path | None = None,
@@ -291,31 +334,28 @@ def iso_monthly_gas_prices(
     ``NaN`` for the caller to fill from the trajectory; returns ``None``
     when the parquet, the year or the ISO's plants are absent entirely.
     """
-    costs = _load_monthly_cache(monthly_costs_path)
-    if costs is None or year not in available_years(costs):
-        return None
-    from market_sim.data.zone_assignment import build_zone_lookup
+    return _iso_monthly_fuel_prices(config, year, "Natural Gas", monthly_costs_path)
 
-    try:
-        iso_plants = frozenset(build_zone_lookup(config.iso))
-    except Exception:
-        return None
-    if not iso_plants:
-        return None
-    sub = costs[
-        (costs["year"] == year)
-        & (costs["fuel_group"] == "Natural Gas")
-        & costs["plant_id"].isin(iso_plants)
-    ]
-    if sub.empty:
-        return None
-    monthly = np.full(12, np.nan)
-    spend = sub["price_per_mmbtu"] * sub["quantity"]
-    by_month = sub.assign(spend=spend).groupby("month")[["spend", "quantity"]].sum()
-    for m, row in by_month.iterrows():
-        if row["quantity"] > 0:
-            monthly[int(m) - 1] = row["spend"] / row["quantity"]
-    return monthly
+
+def iso_monthly_oil_prices(
+    config: ScenarioConfig, year: int,
+    monthly_costs_path: Path | None = None,
+) -> np.ndarray | None:
+    """Measured ISO-month delivered oil price ($/MMBtu), or ``None``.
+
+    The oil price series for dual-fuel switching parity: the volume-weighted
+    EIA-923 Schedule 5 monthly Petroleum (distillate / residual) receipt
+    cost across the ISO's plants, one hub-level price per month. For PJM
+    states this runs ~$17-23/MMBtu over 2023-2025 (EIA-923 Schedule 5
+    receipts; consistent with the EIA "cost of distillate fuel oil delivered
+    to the electric power sector" series, ~$20/MMBtu distillate /
+    ~$14/MMBtu residual 2023-2024 — see
+    :data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`). Months with
+    no reported receipts are ``NaN``; ``None`` when the parquet, the year or
+    the ISO's plants are absent (forward years), in which case callers fall
+    back to the flat cited default.
+    """
+    return _iso_monthly_fuel_prices(config, year, "Petroleum", monthly_costs_path)
 
 
 def resolve_fuel_prices(
@@ -346,6 +386,11 @@ def resolve_fuel_prices(
     units (``biomass``) the delivered biomass fuel cost
     (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`). All other
     generators carry a zero fuel price.
+
+    When ``config.dual_fuel_switching`` is set (and ``apply_monthly`` is
+    True), EIA-860 oil/gas switch-capable gas units are finally capped at
+    the delivered oil price per hour (:func:`apply_dual_fuel_pricing`), so
+    their marginal cost is ``min(gas_mc, oil_mc)``.
 
     The same code path runs both backcasts and forward projections — the
     F923 lookup simply finds nothing in a forward year and every plant
@@ -406,11 +451,98 @@ def resolve_fuel_prices(
     # Callers that set a coal-supply base (lignite/PRB) before the monthly
     # overwrite pass apply_monthly=False and call
     # apply_plant_monthly_fuel_prices themselves afterwards, so the actual
-    # EIA-923 monthly cost takes precedence over the supply-class base.
+    # EIA-923 monthly cost takes precedence over the supply-class base —
+    # followed by the dual-fuel min, which must see the final gas price.
     if apply_monthly:
         apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
+        apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices
+
+
+def dual_fuel_oil_price_series(
+    config: ScenarioConfig, year: int,
+    monthly_costs_path: Path | None = None,
+) -> np.ndarray:
+    """Return the ``(T,)`` delivered oil price ($/MMBtu) for dual-fuel parity.
+
+    The measured ISO-month EIA-923 Petroleum series
+    (:func:`iso_monthly_oil_prices`) expanded to hours, with unreported
+    months — and years with no F923 data at all (forward years) — filled
+    from the flat cited default
+    (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`).
+    """
+    monthly = iso_monthly_oil_prices(config, year, monthly_costs_path)
+    if monthly is None:
+        return np.full(config.hours, OIL_PRICE_PER_MMBTU, dtype=float)
+    filled = np.where(
+        np.isnan(monthly), OIL_PRICE_PER_MMBTU, np.asarray(monthly, dtype=float)
+    )
+    return _expand_monthly_to_hourly(filled, config.hours)
+
+
+def apply_dual_fuel_pricing(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    monthly_costs_path: Path | None = None,
+) -> None:
+    """Cap dual-fuel gas units' fuel price at the delivered oil price.
+
+    Doc 03 Pack G: a gas unit flagged oil/gas switch-capable in the EIA-860
+    Multifuel schedule (:func:`market_sim.data.fleet.dual_fuel_plant_groups`)
+    burns whichever fuel is cheaper each hour, so its marginal cost is
+    ``min(gas_mc, oil_mc)`` — implemented as an elementwise
+    ``min(gas_price, oil_price)`` on the fuel-price array, which
+    :func:`~market_sim.data.fleet.assemble_mc` then multiplies by the unit's
+    (gas) heat rate. The switch binds only when the unit's delivered gas
+    price spikes past oil parity (winter basis events), so normal-month
+    dispatch is unchanged. Objective-only: no LP structural change, and
+    emissions stay on the gas characterization (a known simplification —
+    oil burn hours under-count CO2 slightly).
+
+    Gated on ``config.dual_fuel_switching`` (off by default; the calibration
+    harness enables it for PJM), so ERCOT and existing forecasts are
+    byte-identical. Mutates ``fuel_prices`` in place; idempotent, so callers
+    that re-apply it after a later gas-price overwrite are safe.
+
+    Args:
+        fuel_prices: The ``(n_gen, T)`` delivered fuel-price array, updated
+            in place for dual-fuel-capable gas generators.
+        fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects gas
+            units and ``plant_code`` / ``plant_group`` key the EIA-860
+            dual-fuel capability lookup.
+        config: Scenario configuration supplying ``dual_fuel_switching``,
+            ``iso`` and ``hours``.
+        year: Calendar year keying the measured oil-price lookup.
+        monthly_costs_path: Optional override for the F923 parquet path.
+    """
+    if not getattr(config, "dual_fuel_switching", False):
+        return
+    groups = fleet.plant_group
+    if groups is None:
+        return
+    capable = dual_fuel_plant_groups()
+    if not capable:
+        return
+
+    oil_hourly = dual_fuel_oil_price_series(config, year, monthly_costs_path)
+    is_gas = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
+    n_capped = 0
+    mw_capped = 0.0
+    for g in np.nonzero(is_gas)[0]:
+        if (int(fleet.plant_code[g]), str(groups[g])) not in capable:
+            continue
+        np.minimum(fuel_prices[g], oil_hourly, out=fuel_prices[g])
+        n_capped += 1
+        mw_capped += float(fleet.pmax[g])
+    if n_capped:
+        logger.info(
+            "dual-fuel switching (%s %d): %d gas tranches (%.0f MW) capped "
+            "at the delivered oil price",
+            config.iso, year, n_capped, mw_capped,
+        )
 
 
 def apply_plant_monthly_fuel_prices(

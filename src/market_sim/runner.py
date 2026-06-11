@@ -65,7 +65,9 @@ from market_sim.model.storage import (
 )
 from market_sim.model.transmission import (
     build_incidence_matrix,
-    build_wecc_import_generators,
+    build_export_sinks,
+    build_import_generators,
+    extend_with_import_node,
     get_ttc_array,
 )
 from market_sim.policy.carbon import resolve_carbon_price
@@ -137,15 +139,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     )
 
     iso_config = get_iso_config(iso)
+    # Interconnected ISOs with a configured import node (CAISO's WECC node,
+    # PJM's external node) model their neighbors as priced import tranches
+    # plus export sinks: pseudo-generators that ride along with the dispatch
+    # fleet but never evolve. PJM's external zone is appended to the topology
+    # here; CAISO's is baked in.
+    import_generators = build_import_generators(iso) + build_export_sinks(iso)
+    if import_generators:
+        iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
 
     # Weather-year inputs are fixed across the run; load them once. The CF
     # profiles (wind_cf, solar_cf) are resource-driven and stay fixed, but
     # wind_cap and solar_cap are mutable: capacity evolution grows them each
     # year as new renewables are built.
+    # When the priced node is active it serves the interchange, so the
+    # measured schedule stays out of demand (it would double-count the
+    # export); forward years have no measured schedule anyway.
     base_demand = load_demand(
         iso, config.weather_year, iso_config,
         td_loss_factor=config.td_loss_factor,
+        include_interchange=not import_generators,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, config.weather_year, iso_config, config
@@ -157,9 +171,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         solar_cf = solar_cf[:, :config.hours]
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = get_ttc_array(iso_config.links)
-    # CAISO models the rest of the WECC as import pseudo-generators that
-    # ride along with the dispatch fleet but never evolve.
-    wecc_generators = build_wecc_import_generators() if iso == "CAISO" else []
 
     fleet = None
     loss_tracker: dict[str, int] = {}
@@ -320,7 +331,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # CAMPD bins already embed the coal supply curve as a base + peak
         # split, so take-or-pay tranching applies only to the legacy fleet.
         if campd_bins is not None:
-            dispatch_fleet = fleet + wecc_generators
+            dispatch_fleet = fleet + import_generators
             # Must-run tranches bid at VOM + carbon + NOx only — the fuel
             # is sunk under take-or-pay coal contracts, CHP host steam
             # obligations or ERCOT RUC. apply_coal_tranches subtracts the
@@ -336,7 +347,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             ]
         else:
             dispatch_fleet, fuel_fracs = split_coal_tranches(
-                fleet + wecc_generators, config
+                fleet + import_generators, config
             )
         # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific
         # ones for generators pinned to a single plant, so emission prices

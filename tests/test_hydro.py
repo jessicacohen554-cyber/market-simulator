@@ -260,7 +260,16 @@ class TestHydroBudgetLoader(unittest.TestCase):
         hpm = hours_per_month()
         mm = hb.monthly_min_energy(hpm)
         self.assertEqual(mm.shape, (hb.n_hydro, 12))
-        np.testing.assert_allclose(mm, hb.min_mw[:, None] * hpm[None, :])
+        # The floor is the sustained min-flow energy, clipped to the monthly
+        # budget so the two-sided dispatch row stays feasible (lower <= upper)
+        # in low-inflow months.
+        raw = hb.min_mw[:, None] * hpm[None, :]
+        np.testing.assert_allclose(mm, np.minimum(raw, hb.monthly_energy))
+        self.assertTrue(np.all(mm <= hb.monthly_energy + 1e-9))
+        # The clip binds somewhere (ERCOT hydro has months well below 20% CF)
+        # but not everywhere.
+        self.assertTrue(np.any(mm < raw))
+        self.assertTrue(np.any(mm == raw))
 
     def test_align_to_reorders_to_fleet_subset(self):
         hb = load_hydro_budget("ERCOT", 2023)
@@ -281,6 +290,131 @@ class TestHydroBudgetLoader(unittest.TestCase):
         hpm = hours_per_month()
         self.assertEqual(hpm.shape, (12,))
         self.assertEqual(int(hpm.sum()), 8760)
+
+
+class TestCAISOHydroBudget(unittest.TestCase):
+    """CAISO hydro energy budgets from EIA-923 (multi-iso P4).
+
+    Anchors: EIA-923 CISO conventional-hydro (prime mover ``HY``) monthly
+    net generation sums to 23.90 TWh (2023, extreme wet year) and 21.48 TWh
+    (2024). EIA-930 CISO cross-check: 24.40 TWh 2023 (hydro incl. PS net —
+    the pre-2024 schema does not split them) and ~22.8 TWh 2024
+    (12.51 Jan-Jun incl-PS + 10.25 Jul-Dec excl-PS across the schema split).
+    The famous ~2x wet/dry swing is 2022-vs-2023; within the 2023-2025 data
+    window the swing is 2023 -> 2024 at about +11%.
+    """
+
+    # EIA-923 anchors (TWh) — regression guards on the BA filter, the
+    # plant aggregation and the negative-month clip.
+    EIA923_TWH = {2023: 23.90, 2024: 21.48}
+    # EIA-930 CISO hydro (TWh) — the sanity cross-check source.
+    EIA930_TWH = {2023: 24.40, 2024: 22.76}
+
+    def test_totals_match_eia923_anchors(self):
+        for year, expected in self.EIA923_TWH.items():
+            hb = load_hydro_budget("CAISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertAlmostEqual(total, expected, delta=0.01 * expected)
+
+    def test_totals_within_10pct_of_eia930(self):
+        for year, expected in self.EIA930_TWH.items():
+            hb = load_hydro_budget("CAISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertLess(abs(total - expected) / expected, 0.10)
+
+    def test_wet_2023_exceeds_2024(self):
+        wet = load_hydro_budget("CAISO", 2023).monthly_energy.sum()
+        nxt = load_hydro_budget("CAISO", 2024).monthly_energy.sum()
+        ratio = wet / nxt
+        self.assertGreater(ratio, 1.05)
+        self.assertLess(ratio, 1.25)
+
+    def test_zones_resolve_to_caiso_topology(self):
+        hb = load_hydro_budget("CAISO", 2023)
+        self.assertTrue(set(hb.zones) <= {"NP15", "ZP26", "SP15"})
+        # Sierra/Cascade hydro concentrates north of Path 26: NP15 carries
+        # the bulk of the nameplate.
+        np15_mw = hb.max_mw[np.array(hb.zones) == "NP15"].sum()
+        self.assertGreater(np15_mw, 0.7 * hb.max_mw.sum())
+
+    def test_2025_backfill_recovers_survey_only_coverage(self):
+        # The 2025 EIA-923 early release carries only the monthly-survey
+        # reporters: 26 CAISO plants, ~12.3 TWh vs ~21.4 TWh actual
+        # (EIA-930 excl-PS). Backfilling non-reporters from 2024 recovers
+        # the fleet to within 10% of the EIA-930 total.
+        bare = load_hydro_budget("CAISO", 2025)
+        self.assertLess(bare.n_hydro, 50)
+        filled = load_hydro_budget("CAISO", 2025, backfill_year=2024)
+        self.assertGreater(filled.n_hydro, 150)
+        total = filled.monthly_energy.sum() / 1e6
+        self.assertLess(abs(total - 21.35) / 21.35, 0.10)
+        # Reporters keep their 2025 budgets — only non-reporters are filled.
+        self.assertGreater(
+            filled.monthly_energy.sum(), bare.monthly_energy.sum()
+        )
+
+    def test_dispatch_respects_real_monthly_budgets(self):
+        # End-to-end: the three largest CAISO hydro plants dispatched over
+        # January + February 2023 at their real EIA-923 budgets. Hydro is
+        # the cheapest unit, so each plant-month budget binds from above:
+        # dispatch <= budget always, == min(budget, nameplate-hours) here.
+        hb = load_hydro_budget("CAISO", 2023)
+        top = np.argsort(hb.max_mw)[-3:]
+        pmax = hb.max_mw[top]
+        budget = hb.monthly_energy[top][:, :2]  # (3 plants, Jan + Feb)
+        hpm = hours_per_month()[:2]
+        T = int(hpm.sum())
+        month_idx = np.repeat([0, 1], hpm)
+
+        gens = [
+            Generator(
+                unit_id=f"H{i}", name=f"H{i}", zone="Z", fuel_type="hydro",
+                pmax_mw=float(pmax[i]), pmin_mw=0.0, eford=0.0,
+            )
+            for i in range(3)
+        ]
+        peak_demand = float(pmax.sum()) + 500.0
+        gens.append(
+            Generator(
+                unit_id="G0", name="G0", zone="Z", fuel_type="gas_cc",
+                pmax_mw=peak_demand + 100.0, pmin_mw=0.0, eford=0.0,
+            )
+        )
+        fleet = generators_to_fleet_arrays(gens, ["Z"], hours=T)
+        demand = np.full((1, T), peak_demand)
+        mc = np.vstack([np.zeros((3, T)), np.full((1, T), 50.0)])
+        res = solve_dispatch(
+            fleet, demand, np.zeros((1, T)), np.zeros(1),
+            np.zeros((1, T)), np.zeros(1), mc=mc, voll=5000.0,
+            hydro_monthly_energy=budget, hydro_month_index=month_idx,
+        )
+        for g in range(3):
+            for m in range(2):
+                dispatched = res.dispatch[g][month_idx == m].sum()
+                self.assertLessEqual(dispatched, budget[g, m] * (1 + 1e-6))
+                expected = min(budget[g, m], pmax[g] * hpm[m])
+                self.assertAlmostEqual(
+                    dispatched, expected, delta=1e-3 * max(expected, 1.0)
+                )
+
+
+class TestOtherISOBudgetsUnchanged(unittest.TestCase):
+    """PJM / ERCOT hydro budgets are untouched by the CAISO P4 stage."""
+
+    def test_pjm_2023_budget_regression(self):
+        hb = load_hydro_budget("PJM", 2023)
+        self.assertEqual(hb.n_hydro, 72)
+        self.assertAlmostEqual(
+            hb.monthly_energy.sum() / 1e6, 8.976, delta=0.05
+        )
+        self.assertAlmostEqual(hb.max_mw.sum(), 3288.0, delta=20.0)
+
+    def test_ercot_2023_budget_regression(self):
+        hb = load_hydro_budget("ERCOT", 2023)
+        self.assertEqual(hb.n_hydro, 14)
+        self.assertAlmostEqual(
+            hb.monthly_energy.sum() / 1e6, 0.350, delta=0.005
+        )
 
 
 if __name__ == "__main__":
