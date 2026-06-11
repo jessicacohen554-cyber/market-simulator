@@ -24,6 +24,7 @@ from market_sim.data.fuel import (
     _prb_monthly_actuals,
     apply_coal_supply_pricing,
     iso_monthly_gas_prices,
+    load_winter_gas_basis,
     resolve_annual_gas_price,
     resolve_fuel_prices,
     resolve_nox_price,
@@ -587,6 +588,109 @@ def test_cc_7000_hr_at_35_per_ton_uplift_near_13_per_mwh():
     # 7.0 MMBtu/MWh x 0.057 tCO2/MMBtu (model gas CO2 factor) x $35/t.
     np.testing.assert_allclose(uplift, 7.0 * 0.057 * 35.0)
     assert 12.0 < uplift[0, 0] < 15.0
+
+
+def test_nyiso_backcast_years_pay_rggi_allowance_price():
+    """NYISO 2023-2025 carbon resolves to the RGGI auction-average price."""
+    config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
+    # Simple mean of the four quarterly RGGI clearing prices each year
+    # (constants.STATE_CARBON_PRICE_BY_ISO citation).
+    assert resolve_carbon_price(config, 2023) == 13.49
+    assert resolve_carbon_price(config, 2024) == 20.71
+    assert resolve_carbon_price(config, 2025) == 22.09
+    # RGGI rose 2023->2025; the price level moves with it.
+    assert (
+        resolve_carbon_price(config, 2023)
+        < resolve_carbon_price(config, 2025)
+    )
+
+
+def test_nyiso_rggi_off_with_state_carbon_pricing_flag():
+    """The state_carbon_pricing toggle disables RGGI for NYISO."""
+    config = ScenarioConfig(
+        iso="NYISO", mode="backcast", weather_year=2024,
+        state_carbon_pricing=False,
+    )
+    assert resolve_carbon_price(config, 2024) == 0.0
+
+
+def test_nyiso_backcast_gas_mc_includes_rggi():
+    """NYISO gas MC carries the RGGI allowance cost; unchanged elsewhere."""
+    hours = 24
+    fleet = _cc_fleet(hours=hours)
+    nyiso = ScenarioConfig(
+        iso="NYISO", mode="backcast", weather_year=2024,
+        gas_seasonality=False, hours=hours,
+    )
+    fuel_prices = resolve_fuel_prices(nyiso, fleet, 2024)
+    carbon = resolve_carbon_price(nyiso, 2024)
+    assert carbon == 20.71  # 2024 RGGI auction average
+    mc_with = assemble_mc(fleet, fuel_prices, carbon_price=carbon)
+    mc_without = assemble_mc(fleet, fuel_prices, carbon_price=0.0)
+    uplift = mc_with - mc_without
+    expected = get_emission_rate("gas_cc", 7.0) * carbon
+    np.testing.assert_allclose(uplift, expected)
+
+    # ERCOT/PJM stay carbon-free, and CAISO keeps its own CARB price — the
+    # NYISO addition leaves every other ISO's resolved carbon price unchanged.
+    for iso in ("ERCOT", "PJM"):
+        other = ScenarioConfig(
+            iso=iso, mode="backcast", weather_year=2024,
+            gas_seasonality=False, hours=hours,
+        )
+        assert resolve_carbon_price(other, 2024) == 0.0
+    caiso = ScenarioConfig(iso="CAISO", mode="backcast", weather_year=2024)
+    assert resolve_carbon_price(caiso, 2023) == 33.03
+    assert resolve_carbon_price(caiso, 2024) == 35.23
+    assert resolve_carbon_price(caiso, 2025) == 28.06
+
+
+def test_cc_7000_hr_at_18_per_ton_uplift_5_to_7_per_mwh():
+    """A 7.0 HR gas CC at ~$18/t RGGI shows the doc-07 ~$5-7/MWh uplift."""
+    fleet = _cc_fleet(heat_rate=7.0, hours=24)
+    fuel_prices = np.zeros((fleet.n_gen, 24))  # isolate the carbon term
+    uplift = assemble_mc(fleet, fuel_prices, carbon_price=18.0) - assemble_mc(
+        fleet, fuel_prices, carbon_price=0.0
+    )
+    # 7.0 MMBtu/MWh x 0.057 tCO2/MMBtu x $18/t = $7.18/MWh.
+    np.testing.assert_allclose(uplift, 7.0 * 0.057 * 18.0)
+    assert 5.0 <= uplift[0, 0] <= 7.5
+    # The measured RGGI years (2023 $13.49 -> 2025 $22.09) bracket the doc-07
+    # design-decision-4 band of ~$5-9/MWh for a ~0.4 t/MWh CC.
+    er = get_emission_rate("gas_cc", 7.0)
+    assert 5.0 <= er * 13.49 <= 9.0
+    assert 5.0 <= er * 22.09 <= 9.0
+
+
+def test_winter_gas_basis_absent_falls_back_to_923(tmp_path):
+    """U4 not landed: an empty/absent basis CSV resolves to None (fall back)."""
+    config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
+    # The in-repo template is header-only, so the default path returns None.
+    assert load_winter_gas_basis(config, 2023) is None
+    # An absent path is likewise None (forward years / other ISOs).
+    missing = tmp_path / "nope.csv"
+    assert load_winter_gas_basis(config, 2023, path=missing) is None
+
+
+def test_winter_gas_basis_loads_when_present(tmp_path):
+    """When U4 lands, the per-ISO monthly hub basis is read by month."""
+    csv = tmp_path / "gas_basis_by_iso_month.csv"
+    csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\n"
+        "NYISO,2023,1,Transco Z6 NY,6.50,ICE\n"
+        "NYISO,2023,2,Transco Z6 NY,4.20,ICE\n"
+        "NYISO,2023,7,Transco Z6 NY,-0.30,ICE\n"
+        "PJM,2023,1,TETCO M3,2.00,ICE\n"
+    )
+    config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
+    basis = load_winter_gas_basis(config, 2023, path=csv)
+    assert basis is not None
+    assert basis[0] == 6.50   # January winter spike
+    assert basis[1] == 4.20   # February
+    assert basis[6] == -0.30  # July shoulder discount
+    assert np.isnan(basis[3])  # April unreported -> NaN (caller fills from 923)
+    # A year with no rows for this ISO falls back to None.
+    assert load_winter_gas_basis(config, 2024, path=csv) is None
 
 
 def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():

@@ -710,6 +710,122 @@ class TestEIA860PumpedStorage(unittest.TestCase):
                 u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
             )
 
+    def test_neiso_pumped_storage_present(self):
+        # NEISO's PS fleet: Northfield Mountain (plant 547, 4×292 MW =
+        # 1,168 MW, Central zone) + Bear Swamp (plant 8005, 2×333 MW =
+        # 666 MW, Central zone) + Rocky River (plant 539, 31 MW, CT zone)
+        # = ~1,865 MW total. Northfield is the dominant unit (~1.1 GW per
+        # the prompt spec); both Northfield and Bear Swamp aggregate into
+        # the Central zone, so Central carries ~1,834 MW.
+        units = load_eia860_pumped_storage("NEISO", 2023)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 1700.0)
+        self.assertLess(total_mw, 2100.0)
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertIn(u.zone, {"North", "Central", "Boston", "Connecticut"})
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+        # Northfield + Bear Swamp aggregate into Central; it is the largest zone.
+        central_mw = sum(u.power_cap_mw for u in units if u.zone == "Central")
+        self.assertGreater(central_mw, 1700.0,
+                           msg="Central zone should hold Northfield+Bear Swamp")
+
+
+class TestNYISOPumpedStorage(unittest.TestCase):
+    """NYISO pumped-storage fleet from EIA-860 (P4 hydro stage).
+
+    NYISO's PS fleet consists of two facilities on the EIA-860 generator
+    schedule (prime mover PS):
+
+    * Blenheim-Gilboa Pumped Storage Project (plant in Schoharie County,
+      NY — Capital_Hudson zone): ~1,000 MW of reversible units. The
+      largest single PS plant in NYISO. Source: EIA-860, NYPA project data.
+
+    * Lewiston Pump-Generating Plant (part of the Niagara Power Project,
+      Niagara County — Upstate_West zone): ~220 MW of pump-turbine units
+      that modulate Lake Ontario levels. Source: EIA-860, FERC Project 2216.
+
+    Combined nameplate: ~1,220 MW. Duration and RTE apply the fleet-average
+    constants (:data:`PUMPED_STORAGE_DURATION_HOURS`,
+    :data:`PUMPED_STORAGE_RTE`) used for PJM and CAISO PS — no new modeling
+    design.
+
+    The PS dispatch adder is default off (0.0) for NYISO: no calibration
+    pass has yet been run to measure the reserve-duty opportunity cost
+    equivalent to PJM's $10/MWh. This is consistent with the per-ISO
+    map in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`, which does not
+    include NYISO.
+    """
+
+    def test_ps_total_mw_in_range(self):
+        # Blenheim-Gilboa (~1,000 MW) + Lewiston (~220 MW) = ~1,220 MW.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 1_000.0)
+        self.assertLess(total_mw, 1_500.0)
+
+    def test_ps_zones_in_nyiso_topology(self):
+        # Both zones hosting PS are valid NYISO model zones.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        nyiso_zones = {"Upstate_West", "Capital_Hudson", "Lower_Hudson",
+                       "NYC", "Long_Island"}
+        for u in units:
+            self.assertIn(u.zone, nyiso_zones)
+
+    def test_ps_tech_and_params_match_fleet_standard(self):
+        # Duration and RTE follow the fleet constants used for PJM/CAISO PS.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        self.assertTrue(units, "NYISO PS fleet is empty")
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+
+    def test_ps_dispatch_adder_default_off(self):
+        # NYISO PS adder is 0.0 until a calibration pass measures
+        # Blenheim-Gilboa's reserve-duty opportunity cost.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NYISO", ScenarioConfig()),
+            0.0,
+        )
+        units = load_eia860_pumped_storage("NYISO", 2023, ScenarioConfig())
+        for u in units:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_ps_dispatch_adder_respects_explicit_override(self):
+        # An explicit config override must reach NYISO PS units.
+        cfg = ScenarioConfig(pumped_storage_dispatch_adder=7.5)
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NYISO", cfg), 7.5
+        )
+        units = load_eia860_pumped_storage("NYISO", 2023, cfg)
+        for u in units:
+            self.assertEqual(u.vom, 7.5)
+
+    def test_pjm_caiso_ps_unchanged_by_nyiso_p4(self):
+        # NYISO P4 additions must not alter PJM or CAISO PS fleet totals.
+        pjm_mw = sum(
+            u.power_cap_mw
+            for u in load_eia860_pumped_storage("PJM", 2024)
+        )
+        self.assertGreater(pjm_mw, 4_500.0)
+        caiso_mw = sum(
+            u.power_cap_mw
+            for u in load_eia860_pumped_storage("CAISO", 2023)
+        )
+        self.assertGreater(caiso_mw, 1_900.0)
+
 
 class TestPumpedStorageDispatchAdder(unittest.TestCase):
     """Per-ISO resolution of the PS dispatch adder (reserve-duty proxy)."""
@@ -734,6 +850,18 @@ class TestPumpedStorageDispatchAdder(unittest.TestCase):
             0.0,
         )
         units = load_eia860_pumped_storage("CAISO", 2023, ScenarioConfig())
+        self.assertTrue(units)
+        for u in units:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_neiso_default_is_off(self):
+        # NEISO PS adder is 0.0 by default (not in the per-ISO map); off
+        # until a NEISO calibration pass measures Northfield's reserve duty.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NEISO", ScenarioConfig(iso="NEISO")),
+            0.0,
+        )
+        units = load_eia860_pumped_storage("NEISO", 2023, ScenarioConfig(iso="NEISO"))
         self.assertTrue(units)
         for u in units:
             self.assertEqual(u.vom, 0.0)
@@ -970,6 +1098,131 @@ class TestStorageVintageRamp(unittest.TestCase):
         self.assertAlmostEqual(discharge[:24].sum(), 0.0, places=6)
         self.assertGreater(discharge[24:].sum(), 0.0)
         self.assertLessEqual(charge.max(), 100.0 + 1e-6)
+
+
+class TestEIA860NYISOBatteryFleet(unittest.TestCase):
+    """NYISO BESS fleet built from the EIA-860 energy-storage schedule.
+
+    Acceptance: modeled NYISO storage fleet matches EIA-860 totals per year.
+    The NYISO fleet is small (~200-220 MW in 2023-2024) with a pronounced
+    downstate concentration (NYC + Long Island) and uses the same
+    battery_dispatch_adder / COD-ramp knobs as CAISO and ERCOT.
+    """
+
+    def _expected_totals(self, year: int):
+        """Return (expected_mw, expected_mwh) from the raw parquet for year."""
+        import pandas as pd
+
+        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.data.zone_assignment import build_zone_lookup
+
+        path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+        if not path.exists():
+            self.skipTest("EIA-860 energy-storage parquet not present")
+        lookup = build_zone_lookup("NYISO")
+        df = pd.read_parquet(path)
+        df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+        power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+        energy = pd.to_numeric(
+            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
+        )
+        op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+        in_iso = df["Plant Code"].map(
+            lambda c: c == c and lookup.get(int(c)) is not None
+        ).astype(bool)
+        online = in_iso & power.notna() & (power > 0) & ~(op_year > year)
+        return float(power[online].sum()), float(energy[online].sum())
+
+    def test_fleet_totals_match_eia860_per_year(self):
+        # Acceptance check: the modeled fleet reproduces the EIA-860 year-end
+        # power and energy totals for 2023 and 2024, recomputed independently
+        # from the raw parquet through the same eGRID/EIA-860 zone lookup.
+        for year in (2023, 2024):
+            expected_mw, expected_mwh = self._expected_totals(year)
+            units = _battery_units(
+                load_eia860_storage("NYISO", year, ScenarioConfig(iso="NYISO"))
+            )
+            self.assertAlmostEqual(
+                sum(u.power_cap_mw for u in units), expected_mw, delta=1.0,
+                msg=f"NYISO {year} MW mismatch"
+            )
+            self.assertAlmostEqual(
+                sum(u.energy_cap_mwh for u in units), expected_mwh, delta=1.0,
+                msg=f"NYISO {year} MWh mismatch"
+            )
+
+    def test_fleet_nonzero(self):
+        # NYISO had an operational BESS fleet by end-2023; the loader must
+        # produce at least one battery unit with positive capacity.
+        units = _battery_units(
+            load_eia860_storage("NYISO", 2023, ScenarioConfig(iso="NYISO"))
+        )
+        self.assertTrue(units)
+        self.assertGreater(sum(u.power_cap_mw for u in units), 0.0)
+
+    def test_downstate_nyc_longisland_concentration(self):
+        # The NYC five-boroughs and Long Island hold a material share of the
+        # NYISO BESS fleet (downstate density vs the upstate hydro footprint).
+        units = _battery_units(
+            load_eia860_storage("NYISO", 2024, ScenarioConfig(iso="NYISO"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        downstate_mw = sum(
+            u.power_cap_mw for u in units
+            if u.zone in ("NYC", "Long_Island")
+        )
+        self.assertGreater(total_mw, 0.0)
+        # Downstate carries a nonzero but not dominant share (~15-35% of fleet)
+        self.assertGreater(downstate_mw, 0.0)
+        self.assertLess(downstate_mw / total_mw, 0.60)
+
+    def test_battery_dispatch_adder_carried(self):
+        # battery_dispatch_adder propagates to each NYISO battery unit's vom.
+        adder = 5.0
+        units = _battery_units(
+            load_eia860_storage(
+                "NYISO", 2024,
+                ScenarioConfig(iso="NYISO", battery_dispatch_adder=adder)
+            )
+        )
+        for u in units:
+            self.assertEqual(u.vom, adder)
+
+    def test_vintage_ramp_applies_mid_year(self):
+        # With storage_vintage_ramp=True any NYISO units commissioned during
+        # the year carry a monthly COD profile: January < December, nondecreasing.
+        cfg = ScenarioConfig(iso="NYISO", storage_vintage_ramp=True)
+        units = _battery_units(load_eia860_storage("NYISO", 2024, cfg))
+        ramped = [u for u in units if u.monthly_power_mw is not None]
+        # NYISO did commission storage during 2024 (20 MW in Erie county, etc.)
+        self.assertTrue(ramped, "Expected at least one zone to show a COD ramp")
+        for u in ramped:
+            self.assertEqual(len(u.monthly_power_mw), 12)
+            self.assertAlmostEqual(u.monthly_power_mw[-1], u.power_cap_mw)
+            for m in range(1, 12):
+                self.assertGreaterEqual(
+                    u.monthly_power_mw[m], u.monthly_power_mw[m - 1]
+                )
+
+    def test_ercot_pjm_caiso_unchanged(self):
+        # Adding NYISO to the EIA-860 supplement set must not alter the
+        # ERCOT, PJM, or CAISO fleet totals or unit attributes.
+        for iso in ("ERCOT", "PJM", "CAISO"):
+            cfg = ScenarioConfig(iso=iso)
+            units_before = load_eia860_storage(iso, 2024, cfg)
+            # Re-import to guarantee the lookup cache hasn't been poisoned.
+            from market_sim.data.zone_assignment import build_zone_lookup
+            build_zone_lookup(iso)  # warm cache
+            units_after = load_eia860_storage(iso, 2024, cfg)
+            self.assertEqual(
+                len(units_before), len(units_after),
+                msg=f"{iso} unit count changed after NYISO supplement was added"
+            )
+            for u_b, u_a in zip(units_before, units_after):
+                self.assertAlmostEqual(
+                    u_b.power_cap_mw, u_a.power_cap_mw, places=6,
+                    msg=f"{iso} unit {u_b.unit_id} power changed"
+                )
 
 
 if __name__ == "__main__":

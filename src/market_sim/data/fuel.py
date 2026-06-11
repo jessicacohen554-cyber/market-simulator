@@ -208,12 +208,62 @@ def prb_passthrough_series_follower(
     )
 
 
+def bit_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray":
+    """Return the bituminous above-must-run fuel passthrough — flat or gas-keyed.
+
+    The PJM coal-fleet analogue of :func:`prb_passthrough_series`. When
+    ``config.coal_bit_passthrough_sigmoid`` is False, returns ``1.0`` (full
+    fuel cost — current behaviour). When True, returns an ``(hours,)``
+    logistic of the monthly delivered gas price ($/MMBtu) rising from
+    ``coal_bit_passthrough_floor`` (cheap gas — bit coal discounts to hold
+    its baseload against cheap gas CC) to ``coal_bit_passthrough_ceil``
+    (dear gas — full cost, or a markup > 1.0 that suppresses over-run),
+    centred at ``coal_bit_passthrough_gas_mid`` with slope
+    ``coal_bit_passthrough_gas_slope`` per $/MMBtu.
+
+    Keying off the monthly gas price tracks the merit-order crossover the
+    same way the PRB sigmoid does: bit coal's competitiveness against gas CC
+    scales with the delivered gas price.
+    """
+    if not getattr(config, "coal_bit_passthrough_sigmoid", False):
+        return 1.0
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_bit_passthrough_floor,
+        config.coal_bit_passthrough_ceil,
+        config.coal_bit_passthrough_gas_mid,
+        config.coal_bit_passthrough_gas_slope,
+    )
+
+
 def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
-    """Return the ``(hours,)`` delivered gas price ($/MMBtu), seasonal if on."""
+    """Return the ``(hours,)`` delivered gas price ($/MMBtu).
+
+    The same series the merit order prices gas at: when
+    ``config.gas_monthly_actuals`` is set (the PJM keeper config), the
+    measured EIA-923 ISO-month delivered cost replaces the annual price ×
+    generic seasonal shape month-by-month (months with no receipts keep the
+    shaped value), so a gas-keyed coal passthrough sigmoid sees the real
+    winter spikes the merit order sees. Otherwise the annual price, shaped
+    by the seasonality factors when ``config.gas_seasonality`` is on.
+    """
     gas = resolve_annual_gas_price(config, year)
     if config.gas_seasonality:
-        return gas * _seasonal_factors(hours)
-    return np.full(hours, gas, dtype=float)
+        series = gas * _seasonal_factors(hours)
+    else:
+        series = np.full(hours, gas, dtype=float)
+    if getattr(config, "gas_monthly_actuals", False):
+        measured = iso_monthly_gas_prices(config, year)
+        if measured is not None:
+            hourly_measured = _expand_monthly_to_hourly(
+                np.asarray(measured, dtype=float), hours
+            )
+            series = np.where(
+                np.isnan(hourly_measured), series, hourly_measured
+            )
+    return series
 
 
 def _sigmoid_passthrough(
@@ -356,6 +406,74 @@ def iso_monthly_oil_prices(
     back to the flat cited default.
     """
     return _iso_monthly_fuel_prices(config, year, "Petroleum", monthly_costs_path)
+
+
+# Regional gas-basis upload (doc-07 U4 / doc-01 §4): per-ISO monthly delivered
+# hub basis ($/MMBtu over Henry Hub) for the named pipeline trading points that
+# EIA-923's plant-average delivered cost understates — Transco Z6 NY / Iroquois
+# for NYISO, Algonquin (AGT) for ISO-NE. The file is the schema-locked template
+# (header only) until a licensed ICE/Platts or EIA-citygate-proxy fill lands;
+# see docs/multi-iso/data-acquisition-report.md §1.
+WINTER_GAS_BASIS_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data"
+    / "gas_basis_by_iso_month.csv"
+)
+
+_WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
+
+
+def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
+    """Return the regional gas-basis frame, or ``None`` when it carries no rows.
+
+    The CSV (``iso,year,month,hub,basis_usd_mmbtu,source``) is the header-only
+    template until upload U4 lands, so an empty or absent file is the common
+    case and resolves to ``None`` (callers fall back to measured 923). Cached
+    per path so a multi-year run reads the file once.
+    """
+    resolved = path or WINTER_GAS_BASIS_PATH
+    if resolved in _WINTER_BASIS_CACHE:
+        return _WINTER_BASIS_CACHE[resolved]
+    frame: pd.DataFrame | None = None
+    if Path(resolved).exists():
+        loaded = pd.read_csv(resolved)
+        if not loaded.empty:
+            frame = loaded
+    _WINTER_BASIS_CACHE[resolved] = frame
+    return frame
+
+
+def load_winter_gas_basis(
+    config: ScenarioConfig, year: int, path: Path | None = None,
+) -> np.ndarray | None:
+    """Measured monthly delivered gas basis ($/MMBtu over Henry Hub), or ``None``.
+
+    The downstate winter-basis layer (doc-07 design decision 3, upload U4): a
+    length-12 array of the ISO's named-hub basis (Transco Z6 NY / Iroquois for
+    NYISO) by calendar month, which spikes far above the plant-average EIA-923
+    delivered cost in January/February when downstate pipeline capacity is
+    scarce — the trigger that drives the dual-fuel gas→oil switch (P13). The
+    intended use is to layer this hub-specific series onto the downstate gas
+    path; until U4 lands the source CSV is the header-only template, so this
+    returns ``None`` and the gas path falls back to the measured ISO-month 923
+    series (:func:`iso_monthly_gas_prices`), which already carries the winter
+    shape volume-weighted across the ISO (Jan-2023 NYISO delivered $10.02/MMBtu
+    vs Henry Hub $3.27) if not the full downstate-only blowout.
+
+    Returns ``None`` when the CSV is absent/empty or has no rows for this ISO
+    and year; otherwise a ``(12,)`` array with ``NaN`` for unreported months.
+    """
+    frame = _load_winter_basis_frame(path)
+    if frame is None:
+        return None
+    sub = frame[(frame["iso"] == config.iso) & (frame["year"] == year)]
+    if sub.empty:
+        return None
+    monthly = np.full(12, np.nan)
+    for _, row in sub.iterrows():
+        m = int(row["month"]) - 1
+        if 0 <= m < 12:
+            monthly[m] = float(row["basis_usd_mmbtu"])
+    return monthly
 
 
 def resolve_fuel_prices(

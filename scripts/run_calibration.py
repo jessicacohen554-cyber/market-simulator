@@ -70,6 +70,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
     apply_plant_monthly_fuel_prices,
+    bit_passthrough_series,
     prb_passthrough_series,
     prb_passthrough_series_follower,
     resolve_fuel_prices,
@@ -334,12 +335,16 @@ def _calibration_config(
         #   cap-and-trade allowance price (2023-25) on in-state fossil MC.
         #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
-        gas_monthly_actuals=(iso.upper() == "CAISO"),  # CAISO default-on:
+        gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO")),  # default-on:
         #   the +1.20 SoCal basis seed misses the measured delivered-gas
         #   reality badly in stressed years (EIA-923 implied basis +7.06 in
         #   2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in 2024, +1.12 in
         #   2025), so CAISO backcasts price gas at the measured ISO-month
-        #   series. PJM keeps the --gas-monthly-actuals flag (its keeper
+        #   series. NYISO is the same story (P7): the flat +0.55 basis seed
+        #   misses the Transco Z6 winter blowout the measured 923 series
+        #   carries (Jan-2023 delivered $10.02/MMBtu vs HH $3.27; Dec-2025
+        #   $8.20), so NYISO backcasts price gas at the measured ISO-month
+        #   series too. PJM keeps the --gas-monthly-actuals flag (its keeper
         #   runs pass it explicitly); ERCOT stays on annual + shape (E1).
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
@@ -674,6 +679,8 @@ def run_year(
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
+    coal_bit_sigmoid: bool = False,
+    bit_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
@@ -733,6 +740,14 @@ def run_year(
     if prb_overrides:
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None})
+    # Gas-keyed bituminous passthrough sigmoid (run_calibration_full
+    # --coal-bit-sigmoid / --bit-* flags): the PJM coal-fleet analogue of the
+    # PRB sigmoid; None entries keep the ScenarioConfig defaults.
+    if coal_bit_sigmoid:
+        config = config.with_overrides(coal_bit_passthrough_sigmoid=True)
+    if bit_overrides:
+        config = config.with_overrides(
+            **{k: v for k, v in bit_overrides.items() if v is not None})
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
     # multipliers come straight from the CSV, bypassing the offer curve.
@@ -833,7 +848,10 @@ def run_year(
         # PRB above-must-run passthrough: flat scalar, or an (T,) gas-keyed
         # sigmoid when config.coal_prb_passthrough_sigmoid is set. When tiered,
         # low-floor load-follower PRB plants get the follower-tier sigmoid.
+        # Bituminous tranches get their own gas-keyed sigmoid when
+        # config.coal_bit_passthrough_sigmoid is set (1.0 = full cost off it).
         prb_pt = prb_passthrough_series(config, year, config.hours)
+        bit_pt = bit_passthrough_series(config, year, config.hours)
         if (config.coal_prb_passthrough_sigmoid
                 and config.coal_prb_passthrough_tiered):
             foll_pt = prb_passthrough_series_follower(
@@ -843,14 +861,19 @@ def run_year(
 
             def _pt_for(g):
                 if (g.fuel_type == "coal"
-                        and getattr(g, "coal_supply", "") == "prb"
+                        and getattr(g, "coal_supply", "")
+                        in ("prb", "subbituminous")
                         and COAL_MUSTRUN_BY_PLANT.get(
                             g.plant_code, 100.0) <= thr):
                     return foll_pt
                 return prb_pt
-            fuel_fracs = [campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet]
+            fuel_fracs = [
+                campd_tranche_fuel_frac(g, _pt_for(g), bit_pt) for g in fleet
+            ]
         else:
-            fuel_fracs = [campd_tranche_fuel_frac(g, prb_pt) for g in fleet]
+            fuel_fracs = [
+                campd_tranche_fuel_frac(g, prb_pt, bit_pt) for g in fleet
+            ]
     else:
         # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
         # unit as its own LP column so plant_code / plant_group / state carry
@@ -880,8 +903,9 @@ def run_year(
                 ]
                 fleet = non_binned + thermal_fleet
                 prb_pt = prb_passthrough_series(config, year, config.hours)
+                bit_pt = bit_passthrough_series(config, year, config.hours)
                 fuel_fracs = [
-                    campd_tranche_fuel_frac(g, prb_pt) for g in fleet
+                    campd_tranche_fuel_frac(g, prb_pt, bit_pt) for g in fleet
                 ]
             else:
                 fleet, fuel_fracs = split_coal_tranches(

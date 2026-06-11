@@ -398,8 +398,112 @@ class TestCAISOHydroBudget(unittest.TestCase):
                 )
 
 
+class TestNEISOHydroBudget(unittest.TestCase):
+    """NEISO hydro energy budgets from EIA-923 (P4 hydro+PS stage).
+
+    ISO-NE conventional hydro is modest — 8.55 TWh (2023), 6.71 TWh (2024)
+    — and concentrated in the North zone (ME/NH/VT, ~81% of annual energy).
+    EIA-923 ``HY`` and EIA-930 ``WAT`` agree within 15% for both years
+    (2023: 8.55 vs 8.77 TWh; 2024: 6.71 vs 7.42 TWh — small QF/non-
+    dispatchable plants create minor timing differences between the two
+    surveys but both land in the same ballpark).
+
+    2025 is survey-only in the early-release EIA-923 (5 reporters vs
+    ~166 full-year plants); backfilling non-reporters from 2024 recovers
+    the fleet to near the 2024 level.
+    """
+
+    # EIA-923 anchors (TWh) via load_hydro_budget — regression guards on
+    # the ISNE BA filter, monthly-column aggregation, and negative-gen clip.
+    EIA923_TWH = {2023: 8.548, 2024: 6.714}
+    # EIA-930 ISNE WAT (conventional hydro, excluding PS fuel-type ``PS``).
+    # Source: inputs/raw-data/ISNE_fueltype.parquet, column fueltype=="WAT".
+    EIA930_WAT_TWH = {2023: 8.774, 2024: 7.424}
+
+    def test_shapes_for_both_backcast_years(self):
+        for year in self.EIA923_TWH:
+            hb = load_hydro_budget("NEISO", year)
+            self.assertGreater(hb.n_hydro, 0)
+            self.assertEqual(hb.monthly_energy.shape, (hb.n_hydro, 12))
+            self.assertEqual(hb.min_mw.shape, (hb.n_hydro,))
+            self.assertEqual(hb.max_mw.shape, (hb.n_hydro,))
+            self.assertEqual(len(hb.plant_names), hb.n_hydro)
+            self.assertTrue(np.all(np.diff(hb.plant_ids) > 0))
+            self.assertTrue(np.all(hb.monthly_energy >= 0.0))
+            self.assertTrue(np.all(hb.max_mw > 0.0))
+
+    def test_totals_match_eia923_anchors(self):
+        for year, expected in self.EIA923_TWH.items():
+            hb = load_hydro_budget("NEISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertAlmostEqual(total, expected, delta=0.01 * expected,
+                                   msg=f"NEISO {year} TWh")
+
+    def test_totals_within_15pct_of_eia930_wat(self):
+        # EIA-923 HY vs EIA-930 WAT sanity cross-check. 2023 is within 3%;
+        # 2024 is ~10% (EIA-930 captures some December generation in early
+        # January, so annual boundaries differ slightly). A 15% tolerance
+        # guards against gross BA-filter bugs without demanding survey parity.
+        for year, ref in self.EIA930_WAT_TWH.items():
+            hb = load_hydro_budget("NEISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertLess(
+                abs(total - ref) / ref, 0.15,
+                msg=f"NEISO {year} EIA-923 {total:.3f} TWh vs EIA-930 {ref:.3f} TWh",
+            )
+
+    def test_north_zone_carries_majority_of_energy(self):
+        # ME/NH/VT run-of-river plants dominate NEISO hydro; North zone
+        # should carry >70% of annual energy in both years (actual: ~81%).
+        for year in self.EIA923_TWH:
+            hb = load_hydro_budget("NEISO", year)
+            zones = np.array(hb.zones)
+            north_e = hb.monthly_energy[zones == "North"].sum()
+            total_e = hb.monthly_energy.sum()
+            self.assertGreater(
+                north_e / total_e, 0.70,
+                msg=f"NEISO {year} North zone fraction",
+            )
+
+    def test_zones_are_valid_neiso_topology(self):
+        hb = load_hydro_budget("NEISO", 2023)
+        valid = {"North", "Central", "Boston", "Connecticut", ""}
+        self.assertTrue(
+            set(hb.zones) <= valid,
+            msg=f"Unexpected zones: {set(hb.zones) - valid}",
+        )
+
+    def test_nameplate_from_eia860(self):
+        # EIA-860 ISNE HY nameplate is ~1,900 MW; the loader falls back to
+        # peak-average power for any plant absent from EIA-860, so the sum
+        # will land somewhat above the strict nameplate total.
+        hb = load_hydro_budget("NEISO", 2023)
+        self.assertGreater(hb.max_mw.sum(), 1500.0)
+        self.assertLess(hb.max_mw.sum(), 2500.0)
+
+    def test_2025_backfill_recovers_survey_only_coverage(self):
+        # 2025 early-release EIA-923: only monthly-survey reporters (~5).
+        # Backfilling non-reporters from 2024 recovers the fleet to the
+        # 2024 level (~166 plants) and the TWh to within 5% of 2024.
+        bare = load_hydro_budget("NEISO", 2025)
+        self.assertLess(bare.n_hydro, 20,
+                        msg="2025 bare should be survey-only subset")
+        filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
+        self.assertGreater(filled.n_hydro, 100,
+                           msg="backfill should recover near-full fleet")
+        total_twh = filled.monthly_energy.sum() / 1e6
+        ref_twh = self.EIA923_TWH[2024]
+        self.assertLess(
+            abs(total_twh - ref_twh) / ref_twh, 0.05,
+            msg=f"2025 backfilled {total_twh:.3f} TWh vs 2024 {ref_twh:.3f} TWh",
+        )
+        self.assertGreater(
+            filled.monthly_energy.sum(), bare.monthly_energy.sum()
+        )
+
+
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
-    """PJM / ERCOT hydro budgets are untouched by the CAISO P4 stage."""
+    """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
 
     def test_pjm_2023_budget_regression(self):
         hb = load_hydro_budget("PJM", 2023)
@@ -414,6 +518,294 @@ class TestOtherISOBudgetsUnchanged(unittest.TestCase):
         self.assertEqual(hb.n_hydro, 14)
         self.assertAlmostEqual(
             hb.monthly_energy.sum() / 1e6, 0.350, delta=0.005
+        )
+
+    def test_caiso_2023_budget_regression(self):
+        hb = load_hydro_budget("CAISO", 2023)
+        self.assertAlmostEqual(
+            hb.monthly_energy.sum() / 1e6, 23.90, delta=0.01 * 23.90
+        )
+
+    def test_per_plant_min_flow_none_is_identical_to_existing(self):
+        # Passing per_plant_min_flow=None must reproduce the exact same
+        # budget as not passing the argument at all — no regression to PJM.
+        base = load_hydro_budget("PJM", 2023)
+        explicit_none = load_hydro_budget("PJM", 2023, per_plant_min_flow=None)
+        import numpy as np
+        np.testing.assert_array_equal(base.plant_ids, explicit_none.plant_ids)
+        np.testing.assert_array_equal(base.min_mw, explicit_none.min_mw)
+        np.testing.assert_array_equal(base.max_mw, explicit_none.max_mw)
+
+
+class TestNYISOHydroBudget(unittest.TestCase):
+    """NYISO hydro energy budgets from EIA-923 (P4 hydro stage).
+
+    Anchors: EIA-923 NYIS conventional hydro (prime mover ``HY``) monthly
+    net generation sums to 28.40 TWh (2023) and 27.88 TWh (2024). Both
+    years are anchored on the full annual EIA-923 release.
+
+    EIA-930 NYIS NG:WAT crosscheck: 26.84 TWh 2023, 26.86 TWh 2024.
+    EIA-930 WAT includes PS net generation (generation minus pumping);
+    because the NYISO PS fleet is a net energy consumer, EIA-923 HY >
+    EIA-930 WAT by approximately 1–2 TWh (the PS net pumping load).
+
+    The NYISO hydro fleet (~4.6 GW, ~28 TWh/yr) is the largest in the
+    model — larger than CAISO's ~4 GW Sierra/Cascade fleet — and is
+    dominated by NYPA's Robert Moses Niagara (~2.4 GW, ~15 TWh) and
+    Robert Moses Power Dam on the St-Lawrence (~0.9 GW, ~7 TWh), with
+    ~1 TWh from smaller run-of-river plants in the Capital/Hudson region.
+    """
+
+    EIA923_TWH = {2023: 28.40, 2024: 27.88}
+    # EIA-930 NYIS NG:WAT (hydro + PS net) annual totals.
+    EIA930_WAT_TWH = {2023: 26.84, 2024: 26.86}
+
+    def test_totals_match_eia923_anchors(self):
+        for year, expected in self.EIA923_TWH.items():
+            hb = load_hydro_budget("NYISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertAlmostEqual(total, expected, delta=0.01 * expected)
+
+    def test_eia923_exceeds_eia930_by_ps_net_pumping(self):
+        # EIA-923 HY (gross conventional hydro) > EIA-930 WAT (hydro + PS
+        # net) because the NYISO PS fleet (Blenheim-Gilboa + Lewiston) is
+        # a net energy consumer — it pumps more than it generates. The gap
+        # is bounded by the total PS installed capacity and reasonable
+        # cycling assumptions (< 3 TWh/yr net pumping for 1.22 GW of PS).
+        for year, wat in self.EIA930_WAT_TWH.items():
+            hb = load_hydro_budget("NYISO", year)
+            hy_twh = hb.monthly_energy.sum() / 1e6
+            self.assertGreater(hy_twh, wat)
+            self.assertLess(hy_twh - wat, 3.0)
+
+    def test_totals_within_10pct_of_eia930(self):
+        # EIA-923 HY is within 10% of EIA-930 WAT; the EIA-930 WAT is the
+        # sanity cross-check, accounting for PS net pumping.
+        for year, wat in self.EIA930_WAT_TWH.items():
+            hb = load_hydro_budget("NYISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertLess(abs(total - wat) / wat, 0.10)
+
+    def test_spring_freshet_exceeds_fall(self):
+        # NYISO hydro shows more generation in spring (March-May) than fall
+        # (September-November) driven by Adirondack/Catskill snowmelt and
+        # spring precipitation, primarily in the smaller run-of-river
+        # plants. Niagara and St-Lawrence moderate the contrast.
+        for year in (2023, 2024):
+            hb = load_hydro_budget("NYISO", year)
+            monthly = hb.monthly_energy.sum(axis=0)
+            spring = monthly[2:5].sum()  # March, April, May
+            fall = monthly[8:11].sum()   # September, October, November
+            self.assertGreater(spring, fall,
+                msg=f"NYISO {year}: spring {spring/1e6:.2f} TWh should "
+                    f"exceed fall {fall/1e6:.2f} TWh")
+
+    def test_nameplate_dominated_by_niagara(self):
+        # Niagara (plant 2693, Robert Moses Niagara, ~2,429 MW) accounts
+        # for more than 50% of total NYISO hydro nameplate capacity.
+        hb = load_hydro_budget("NYISO", 2023)
+        niagara_idx = np.flatnonzero(hb.plant_ids == 2693)
+        self.assertEqual(len(niagara_idx), 1)
+        niagara_mw = hb.max_mw[niagara_idx[0]]
+        self.assertGreater(niagara_mw / hb.max_mw.sum(), 0.50)
+        # Nameplate total consistent with ~4.5-4.8 GW EIA-860 fleet.
+        self.assertGreater(hb.max_mw.sum(), 4_000.0)
+        self.assertLess(hb.max_mw.sum(), 5_500.0)
+
+    def test_zones_limited_to_upstate(self):
+        # NYISO conventional hydro is wholly upstate: Niagara and the
+        # St-Lawrence fleet are in Upstate_West; smaller run-of-river
+        # plants on the Hudson and Mohawk are in Capital_Hudson. No hydro
+        # appears in the downstate zones (Lower_Hudson, NYC, Long_Island).
+        hb = load_hydro_budget("NYISO", 2023)
+        zone_set = set(hb.zones) - {""}
+        self.assertTrue(zone_set <= {"Upstate_West", "Capital_Hudson"},
+            msg=f"Unexpected zones: {zone_set - {'Upstate_West', 'Capital_Hudson'}}")
+        self.assertIn("Upstate_West", zone_set)
+
+    def test_upstate_west_dominates_by_nameplate(self):
+        # Niagara + St-Lawrence + western run-of-river put Upstate_West
+        # above 85% of total NYISO hydro nameplate.
+        hb = load_hydro_budget("NYISO", 2023)
+        zones = np.array(hb.zones)
+        uw_mw = hb.max_mw[zones == "Upstate_West"].sum()
+        self.assertGreater(uw_mw / hb.max_mw.sum(), 0.80)
+
+    def test_2025_survey_only_has_few_reporters(self):
+        # The 2025 EIA-923 early release carries only the monthly-survey
+        # (large) reporters — NYISO 2025 has just 3 plants (Niagara, Power
+        # Dam, and one more) covering ~21 TWh (the big plants run flat).
+        bare = load_hydro_budget("NYISO", 2025)
+        self.assertLess(bare.n_hydro, 10)
+        # The survey-only plants are the largest ones so their TWh is high.
+        self.assertGreater(bare.monthly_energy.sum() / 1e6, 15.0)
+
+    def test_2025_backfill_recovers_fleet(self):
+        # Backfilling 2024 non-reporters into 2025 recovers the fleet to
+        # near the full 2024 annual level (within 10%) while preserving the
+        # survey reporters' 2025 budgets.
+        bare = load_hydro_budget("NYISO", 2025)
+        filled = load_hydro_budget("NYISO", 2025, backfill_year=2024)
+        self.assertGreater(filled.n_hydro, 100)
+        # Total lands within 10% of 2024.
+        total_2024 = load_hydro_budget("NYISO", 2024).monthly_energy.sum() / 1e6
+        filled_twh = filled.monthly_energy.sum() / 1e6
+        self.assertLess(abs(filled_twh - total_2024) / total_2024, 0.10)
+        # Survey reporters keep their own 2025 budget (not overwritten).
+        self.assertGreater(filled.monthly_energy.sum(), bare.monthly_energy.sum())
+
+    def test_dispatch_respects_real_monthly_budgets(self):
+        # End-to-end: the two large NYISO hydro plants (Niagara, Power Dam)
+        # dispatched over January + February 2023 at their EIA-923 budgets.
+        # Hydro is cheapest, so budget binds from above.
+        hb = load_hydro_budget("NYISO", 2023)
+        niagara = np.flatnonzero(hb.plant_ids == 2693)
+        powerdam = np.flatnonzero(hb.plant_ids == 2694)
+        top = np.concatenate([niagara, powerdam])
+        pmax = hb.max_mw[top]
+        budget = hb.monthly_energy[top][:, :2]
+        hpm = hours_per_month()[:2]
+        T = int(hpm.sum())
+        month_idx = np.repeat([0, 1], hpm)
+
+        gens = [
+            Generator(
+                unit_id=f"H{i}", name=f"H{i}", zone="Z",
+                fuel_type="hydro", pmax_mw=float(pmax[i]),
+                pmin_mw=0.0, eford=0.0,
+            )
+            for i in range(len(top))
+        ]
+        peak_demand = float(pmax.sum()) + 500.0
+        gens.append(
+            Generator(
+                unit_id="G0", name="G0", zone="Z", fuel_type="gas_cc",
+                pmax_mw=peak_demand + 100.0, pmin_mw=0.0, eford=0.0,
+            )
+        )
+        fleet = generators_to_fleet_arrays(gens, ["Z"], hours=T)
+        demand = np.full((1, T), peak_demand)
+        mc = np.vstack([np.zeros((len(top), T)), np.full((1, T), 50.0)])
+        res = solve_dispatch(
+            fleet, demand, np.zeros((1, T)), np.zeros(1),
+            np.zeros((1, T)), np.zeros(1), mc=mc, voll=5000.0,
+            hydro_monthly_energy=budget, hydro_month_index=month_idx,
+        )
+        for g in range(len(top)):
+            for m in range(2):
+                dispatched = res.dispatch[g][month_idx == m].sum()
+                self.assertLessEqual(dispatched, budget[g, m] * (1 + 1e-6))
+                expected = min(budget[g, m], pmax[g] * hpm[m])
+                self.assertAlmostEqual(
+                    dispatched, expected, delta=1e-3 * max(expected, 1.0)
+                )
+
+
+class TestNYISOTreatyMinFlows(unittest.TestCase):
+    """Treaty-mandated minimum flows for Niagara and St-Lawrence.
+
+    The 1950 Niagara Treaty and the IJC/Plan 2014 St-Lawrence order require
+    sustained minimum hydraulic flows from the NYPA plants. These floors are
+    stored in :data:`market_sim.config.constants.NYISO_HYDRO_TREATY_MIN_FLOW`
+    and applied via the ``per_plant_min_flow`` argument.
+
+    Niagara plant 2693 (Robert Moses Niagara, ~2,429 MW): 25% of nameplate
+    St-Lawrence plant 2694 (Robert Moses Power Dam, ~912 MW): 50% of nameplate
+    """
+
+    # EIA plant IDs: EIA-860/923 ORIS codes.
+    NIAGARA_PLANT_ID = 2693
+    ST_LAWRENCE_PLANT_ID = 2694
+
+    def setUp(self):
+        from market_sim.config.constants import NYISO_HYDRO_TREATY_MIN_FLOW
+        self.treaty = NYISO_HYDRO_TREATY_MIN_FLOW
+        self.hb_no_floor = load_hydro_budget("NYISO", 2023)
+        self.hb_treaty = load_hydro_budget(
+            "NYISO", 2023, per_plant_min_flow=self.treaty
+        )
+
+    def test_treaty_constant_covers_both_plants(self):
+        self.assertIn(self.NIAGARA_PLANT_ID, self.treaty)
+        self.assertIn(self.ST_LAWRENCE_PLANT_ID, self.treaty)
+
+    def test_niagara_min_flow_fraction(self):
+        # 25% of Niagara nameplate = ~607 MW minimum sustained output.
+        self.assertAlmostEqual(self.treaty[self.NIAGARA_PLANT_ID], 0.25)
+
+    def test_st_lawrence_min_flow_fraction(self):
+        # 50% of St-Lawrence nameplate = ~456 MW minimum sustained output.
+        self.assertAlmostEqual(self.treaty[self.ST_LAWRENCE_PLANT_ID], 0.50)
+
+    def test_niagara_min_mw_applied(self):
+        # With treaty floors, Niagara's min_mw is 25% of its max_mw.
+        n_idx = np.flatnonzero(self.hb_treaty.plant_ids == self.NIAGARA_PLANT_ID)
+        self.assertEqual(len(n_idx), 1)
+        i = n_idx[0]
+        expected_min = 0.25 * self.hb_treaty.max_mw[i]
+        self.assertAlmostEqual(self.hb_treaty.min_mw[i], expected_min, places=3)
+
+    def test_st_lawrence_min_mw_applied(self):
+        # With treaty floors, Power Dam's min_mw is 50% of its max_mw.
+        sl_idx = np.flatnonzero(
+            self.hb_treaty.plant_ids == self.ST_LAWRENCE_PLANT_ID
+        )
+        self.assertEqual(len(sl_idx), 1)
+        i = sl_idx[0]
+        expected_min = 0.50 * self.hb_treaty.max_mw[i]
+        self.assertAlmostEqual(self.hb_treaty.min_mw[i], expected_min, places=3)
+
+    def test_without_treaty_floors_min_mw_is_zero(self):
+        # Default (no per-plant floor, min_flow_fraction=0) has no minimum.
+        n_idx = np.flatnonzero(
+            self.hb_no_floor.plant_ids == self.NIAGARA_PLANT_ID
+        )
+        sl_idx = np.flatnonzero(
+            self.hb_no_floor.plant_ids == self.ST_LAWRENCE_PLANT_ID
+        )
+        self.assertEqual(self.hb_no_floor.min_mw[n_idx[0]], 0.0)
+        self.assertEqual(self.hb_no_floor.min_mw[sl_idx[0]], 0.0)
+
+    def test_non_treaty_plants_use_global_floor(self):
+        # Other plants (not in the treaty dict) use the global min_flow_fraction.
+        hb_global = load_hydro_budget(
+            "NYISO", 2023,
+            min_flow_fraction=0.10,
+            per_plant_min_flow=self.treaty,
+        )
+        for i, pid in enumerate(hb_global.plant_ids):
+            if int(pid) in self.treaty:
+                continue
+            self.assertAlmostEqual(
+                hb_global.min_mw[i], 0.10 * hb_global.max_mw[i], places=3
+            )
+
+    def test_treaty_floor_takes_max_over_global(self):
+        # A global min_flow_fraction lower than the treaty value must not
+        # override the treaty floor (the max() rule applies).
+        hb_low_global = load_hydro_budget(
+            "NYISO", 2023,
+            min_flow_fraction=0.10,
+            per_plant_min_flow=self.treaty,
+        )
+        n_idx = np.flatnonzero(
+            hb_low_global.plant_ids == self.NIAGARA_PLANT_ID
+        )
+        i = n_idx[0]
+        # Treaty says 0.25 > global 0.10, so treaty wins.
+        self.assertAlmostEqual(
+            hb_low_global.min_mw[i], 0.25 * hb_low_global.max_mw[i], places=3
+        )
+
+    def test_min_energy_floors_feasible_vs_budget(self):
+        # Monthly min energy floors must never exceed the monthly budget
+        # (infeasible two-sided constraint) — the clip in monthly_min_energy
+        # must handle any month where the floor exceeds the inflow budget.
+        hpm = hours_per_month()
+        mm = self.hb_treaty.monthly_min_energy(hpm)
+        self.assertTrue(
+            np.all(mm <= self.hb_treaty.monthly_energy + 1e-9),
+            msg="Treaty min-energy floor exceeds budget for some plant-month",
         )
 
 

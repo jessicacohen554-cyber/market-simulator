@@ -34,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import gc
 import gzip
 import json
 import logging
@@ -918,7 +919,8 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_lignite_mustrun", "coal_prb_mustrun",
                 "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
                 "coal_mustrun_per_plant", "coal_drop_pof",
-                "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
+                "coal_prb_passthrough_tiered", "coal_bit_passthrough_sigmoid",
+                "coal_bit_sigmoid_overrides", "coal_plant_monthly_pricing",
                 "td_loss_factor", "offer_curve_overrides",
                 "offer_curve_deltas", "priced_interchange", "git_sha",
             )
@@ -947,6 +949,8 @@ def solve_and_persist(
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
+    coal_bit_sigmoid: bool = False,
+    bit_overrides: dict | None = None,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
@@ -1036,6 +1040,8 @@ def solve_and_persist(
             coal_drop_pof=coal_drop_pof,
             coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
             prb_overrides=prb_overrides,
+            coal_bit_sigmoid=coal_bit_sigmoid,
+            bit_overrides=bit_overrides,
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             battery_dispatch_adder=battery_dispatch_adder,
@@ -1091,6 +1097,15 @@ def solve_and_persist(
             if campd_year is not None:
                 campd_frames.append(campd_year)
 
+        # Release this year's solve state before the next year allocates its
+        # own LP. A PJM per-plant year peaks ~13 GB inside HiGHS; carrying the
+        # previous year's result/context/P2-state into the next build pushed a
+        # 3-year backcast past 16 GB and into the OOM killer. Only the compact
+        # per-year frames accumulated above survive the loop.
+        del result, context, result_p1, p2_state, demand, must_run
+        del must_run_total, labelled, res
+        gc.collect()
+
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
     )
@@ -1127,6 +1142,10 @@ def solve_and_persist(
         "coal_mustrun_per_plant": coal_mustrun_per_plant,
         "coal_drop_pof": coal_drop_pof,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
+        "coal_bit_passthrough_sigmoid": coal_bit_sigmoid,
+        "coal_bit_sigmoid_overrides": {
+            k: v for k, v in (bit_overrides or {}).items() if v is not None
+        },
         "coal_plant_monthly_pricing": _calibration_config(
             years[0], iso, hours, gas_prices[years[0]]
         ).coal_plant_monthly_pricing,
@@ -1160,6 +1179,12 @@ def solve_and_persist(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
+    if coal_bit_sigmoid:
+        recorded_cfg = recorded_cfg.with_overrides(
+            coal_bit_passthrough_sigmoid=True)
+    if bit_overrides:
+        recorded_cfg = recorded_cfg.with_overrides(
+            **{k: v for k, v in bit_overrides.items() if v is not None})
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
             plant_tranche_config_path=plant_tranche_config)
@@ -2347,6 +2372,25 @@ def main() -> None:
                         help="Baseload PRB sigmoid cheap-gas floor.")
     parser.add_argument("--prb-ceil", type=float, default=None,
                         help="Baseload PRB sigmoid dear-gas ceiling.")
+    # Gas-keyed bituminous passthrough sigmoid (PJM coal fleet). Off by
+    # default — turning it on replaces full fuel cost on bituminous
+    # above-must-run tranches with a logistic of the monthly delivered gas
+    # price (the measured EIA-923 series when --gas-monthly-actuals is on).
+    parser.add_argument(
+        "--coal-bit-sigmoid", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Gas-key the bituminous coal passthrough: above-must-run bit "
+             "tranches get a fuel discount when gas is cheap and a markup "
+             "when dear (coal_bit_passthrough_* params), tracking the "
+             "bit-vs-gas-CC merit-order crossover. Off = full fuel cost.")
+    parser.add_argument("--bit-floor", type=float, default=None,
+                        help="Bit sigmoid cheap-gas floor.")
+    parser.add_argument("--bit-ceil", type=float, default=None,
+                        help="Bit sigmoid dear-gas ceiling.")
+    parser.add_argument("--bit-gas-mid", type=float, default=None,
+                        help="Bit sigmoid logistic midpoint ($/MMBtu).")
+    parser.add_argument("--bit-gas-slope", type=float, default=None,
+                        help="Bit sigmoid logistic slope (per $/MMBtu).")
     parser.add_argument("--prb-follower-floor", type=float, default=None,
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
@@ -2502,6 +2546,13 @@ def main() -> None:
             "coal_prb_passthrough_gas_slope": args.prb_gas_slope,
             "coal_prb_follower_gas_mid": args.prb_follower_gas_mid,
             "coal_prb_follower_gas_slope": args.prb_follower_gas_slope,
+        },
+        coal_bit_sigmoid=args.coal_bit_sigmoid,
+        bit_overrides={
+            "coal_bit_passthrough_floor": args.bit_floor,
+            "coal_bit_passthrough_ceil": args.bit_ceil,
+            "coal_bit_passthrough_gas_mid": args.bit_gas_mid,
+            "coal_bit_passthrough_gas_slope": args.bit_gas_slope,
         },
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,

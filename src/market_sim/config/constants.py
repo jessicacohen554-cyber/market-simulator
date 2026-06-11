@@ -192,6 +192,30 @@ PUMPED_STORAGE_RTE: float = 0.80
 # off until a CAISO calibration pass measures Helms' reserve duty.
 PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
 
+# NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
+# EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
+#
+# Niagara (plant 2693 — Robert Moses Niagara Power Plant, ~2,429 MW):
+#   The Treaty Between the United States and Canada Concerning Diversion of
+#   the Niagara River (27 UST 1957, signed 1950; effective 1954) requires
+#   maintaining scenic flows of 50,000 cfs (Nov–Mar) / 100,000 cfs (Apr–Oct)
+#   over Horseshoe Falls. This reduces divertible flow to 60–75% of the ~202,000
+#   cfs average natural flow, with a minimum power-generation obligation
+#   corresponding to ~25% of nameplate. Source: International Joint Commission,
+#   "Supplementary Order of Approval No. 2", 1953; FERC Project No. 2216 (NYPA).
+#
+# St-Lawrence (plant 2694 — Robert Moses Power Dam, ~912 MW):
+#   The IJC Order of Approval governing Lake Ontario / St. Lawrence outflows
+#   (original order 1952; superseded by "Plan 2014", effective 2017) requires
+#   minimum hydraulic flows for navigation, ecology, and power. The Moses-Saunders
+#   dam at Massena typically operates above 50% of nameplate continuously.
+#   Source: International Joint Commission, "Lake Ontario–St. Lawrence River
+#   Plan 2014", 2016; FERC Project No. 2000 (NYPA/OPG).
+NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
+    2693: 0.25,  # Robert Moses Niagara Power Plant — 1950 Niagara Treaty
+    2694: 0.50,  # Robert Moses Power Dam (St-Lawrence) — IJC Order / Plan 2014
+}
+
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
@@ -243,6 +267,24 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
         2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
         2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
+    },
+    # NYISO = FitzPatrick (EIA 6110, 844 MW), Nine Mile Point 1+2 (EIA 2589,
+    # 1,903 MW combined), R E Ginna (EIA 6122, 579 MW) — fleet nameplate
+    # 3,326 MW. Indian Point (EIA 8907) retired Apr 2021 and is absent from
+    # the EIA-860 operable fleet. Monthly EIA-923 net generation / (fleet
+    # nameplate x hours in month), clipped at 1.0 (ERCOT convention). The dips
+    # are the actual staggered ~2-year refueling cadence, each verified to a
+    # single reactor in the per-plant EIA-923 series:
+    #   2023 Apr 0.74  — Ginna refuel (plant CF 0.28) + a Nine Mile unit (0.76).
+    #   2024 Mar 0.69  — Nine Mile 2 refuel (plant CF 0.46).
+    #   2024 Aug-Sep   — FitzPatrick refuel (0.63 / 0.37); Oct Ginna (0.48).
+    #   2025           — only a mild Nine Mile dip (Mar 0.80); no deep refuel.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NYISO.
+    "NYISO": {
+        2023: [1.00, 0.98, 0.86, 0.74, 0.99, 0.99, 0.96, 0.97, 0.88, 0.97, 0.99, 0.99],
+        2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
+        2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],
     },
 }
 
@@ -455,6 +497,10 @@ COAL_PRICE_BASE: dict[str, float] = {
     "PJM": 2.3,    # Central/Northern Appalachian bituminous + PRB-by-rail
     #   delivered blend. Source: EIA AEO 2024 delivered coal price; refined
     #   per-plant by the EIA-923 monthly fuel-cost overlay where reported.
+    "NYISO": 2.3,  # NY's grid coal fleet is retired (Somerset/Cayuga, 2020),
+    #   so no unit prices off this in a 2023+ backcast; carried as a defensive
+    #   Appalachian-delivered fallback (≈ PJM) for any residual/legacy coal
+    #   unit. Source: EIA AEO 2024 delivered coal price.
 }
 
 # Annual real escalation rate for coal prices.
@@ -533,8 +579,34 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 #   2023: Feb $27.85, May $30.33, Aug $35.20, Nov $38.73 -> $33.03
 #   2024: Feb $41.76, May $37.02, Aug $30.24, Nov $31.91 -> $35.23
 #   2025: Feb $29.27, May $25.87 (floor), Aug $28.76, Nov $28.32 -> $28.06
+# NYISO is a RGGI state: every in-state fossil unit surrenders one RGGI CO2
+# allowance per (short) ton emitted, so the auction clearing price enters
+# marginal cost exactly as the CARB allowance does for CAISO. Each year is the
+# simple average of that calendar year's four quarterly RGGI auction current-
+# control-period clearing prices (the auctions clear at one uniform price and
+# quarterly volumes are near-equal, so the simple mean is the volume-weighted
+# mean to the cent). At a ~0.37 tCO2/MWh gas-CC rate this adds ~$5/MWh (2023) to
+# ~$8/MWh (2025) — material to the NYISO price level though smaller than CA
+# cap-and-trade (doc-07 design decision 4). Source: RGGI, Inc. auction results
+# ("CO2 Allowances Sold for $X in the Nth RGGI Auction" press releases,
+# rggi.org/auctions/auction-results):
+#   2023: A59 (Mar) $12.50, A60 (Jun) $12.73, A61 (Sep) $13.85,
+#         A62 (Dec) $14.88 -> $13.49
+#   2024: A63 (Mar) $16.00, A64 (Jun) $21.03, A65 (Sep) $25.75,
+#         A66 (Dec) $20.05 -> $20.71
+#   2025: A67 (Mar) $19.76, A68 (Jun) $19.63, A69 (Sep) $22.25,
+#         A70 (Dec) $26.73 -> $22.09
+# Caveat: RGGI allowances are denominated per *short* ton CO2 while the model's
+# emission_rate_co2 is per *metric* tonne, so charging these prices against the
+# metric-tonne rate understates the true allowance cost by ~10.2% (1 t = 1.1023
+# short tons). The understatement is small and keeps each stored value an exact,
+# citable match to the published RGGI clearing prices; a future refinement can
+# scale by 1.1023 if winter price fidelity demands it. Like CAISO, RGGI carries
+# no border carbon adjustment on imports (contrast CARB's unspecified-import EF),
+# so the NYISO import node is unaffected.
 STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
     "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
+    "NYISO": {2023: 13.49, 2024: 20.71, 2025: 22.09},
 }
 
 # CARB default emission factor for unspecified-source imported electricity

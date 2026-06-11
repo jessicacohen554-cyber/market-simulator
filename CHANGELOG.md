@@ -1,5 +1,97 @@
 # Changelog
 
+## 2026-06-11 (NYISO backcast P7 — measured gas, winter basis, RGGI carbon)
+
+NYISO prompt-pack P7. Prices NYISO gas at the measured EIA-923 ISO-month series
+and charges RGGI on in-state fossil marginal cost, both default-on for NYISO
+backcasts. ERCOT/PJM/CAISO marginal cost is unchanged (full suite green bar one
+pre-existing, unrelated CAISO TAC-area load-data failure).
+
+- **Measured monthly gas default-on for NYISO.** `run_calibration.py` flips
+  `gas_monthly_actuals` on for NYISO (as CAISO), so backcasts price gas at the
+  EIA-923 volume-weighted ISO-month delivered cost (nearby-plant/state fallback)
+  instead of Henry Hub + the flat +0.55 basis seed. The measured monthly basis
+  runs +0.66/+0.49/+0.89 (2023–25) — annual deltas of only +0.11/−0.07/+0.34 vs
+  the seed, but the **monthly** series carries the Transco Z6 winter blowout the
+  seed flattens (Jan-2023 delivered **$10.02**/MMBtu vs HH $3.27; Dec-2025
+  $8.20). Delta report in `nyiso-data-audit.md` §4.
+- **RGGI in marginal cost (default-on).** `STATE_CARBON_PRICE_BY_ISO["NYISO"]`
+  = `{2023: 13.49, 2024: 20.71, 2025: 22.09}` $/tCO2 — each year the simple mean
+  of the four quarterly RGGI auction clearing prices (per-auction citations in
+  `constants.py` / `parameter-citations.md`). Applied via the same
+  `resolve_carbon_price` path CAISO uses; ~$5.4→$8.8/MWh on a 0.40 t/MWh gas CC.
+  No border adjustment on imports (contrast CARB). A 7.0-HR CC at $18/t shows a
+  $7.18/MWh uplift (doc-07 design-decision-4 ~$5–7/MWh).
+- **Winter basis (U4) not landed → 923 fallback.** Added the tested
+  `data.fuel.load_winter_gas_basis()` loader for the per-ISO monthly hub-basis
+  CSV (`gas_basis_by_iso_month.csv`); it is still the header-only template, so
+  the loader returns `None` and the gas path falls back to the measured 923
+  series. Limitation and activation path documented (`nyiso-data-audit.md` §4).
+- **`COAL_PRICE_BASE["NYISO"]`** added (2.3, defensive Appalachian fallback;
+  NY grid coal is retired) so `resolve_fuel_prices` no longer `KeyError`s on the
+  NYISO fleet.
+- **Tests.** NYISO RGGI price + gas-MC uplift, ERCOT/PJM carbon-free and CAISO
+  CARB unchanged, the $18/t CC uplift band, and the winter-basis loader
+  (absent → `None`; present → per-month parse). `test_capacity.py` gains the
+  NYISO RGGI case alongside CAISO's.
+
+## 2026-06-11 (NYISO backcast P1 — unit-outage windows verified, coverage documented)
+
+NYISO prompt-pack P1. Verifies the measured CAMPD unit-outage overlay for
+NYISO and documents its detection coverage. No data regenerated — the
+committed `campd-unit-outages-NYISO.csv` is current, and ERCOT/PJM/CAISO
+extracts are untouched.
+
+- **CSV verified current (2023 + 2025).** `derive_campd_unit_outages.py
+  --iso NYISO` reproduces the committed `campd-unit-outages-NYISO.csv`
+  **byte-identically** from the present `campd-unit-level/NY_{2023,2025}.parquet`
+  extracts (1 621 windows, 44 plants). No `NY_2024.parquet` has landed, so
+  **2024 is statistical-availability-only**: `unit_outage_derate_factors`
+  returns an empty dict for 2024 and the fleet builder logs the statistical
+  fallback. The CSV adds 2024 automatically once the extract is supplied.
+- **Event-based rule confirmed; no coal targets.** NYISO's CEMS data carries
+  **no coal-labelled units**, so the coal real-run rule fires on zero units —
+  every NYISO unit is detected by the load-following event-based rule (any
+  hour ≥ 2% CF breaks a window, ≥ 120 h minimum). Spot-checked Ravenswood,
+  Astoria, Roseton/Danskammer, and Bowline: the cold-standby oil-gas steamers
+  resolve into many event windows, the modern CCGTs into few.
+- **Overlay wiring confirmed.** Under `outage_source == "historic"` for
+  `--iso NYISO`, `generators_to_fleet_arrays` picks up the NYISO CSV through
+  the generic per-ISO path (`unit_outage_csv_for_iso` → `_generic_unit_outage_target`
+  / `_iso_plant_capacity`), mirroring PJM/CAISO; a smoke build derates 120
+  plant-tranches for 2023 and 2025. The facility-summed layer has no NYISO
+  file and degrades gracefully (as with CAISO).
+- **Coverage documented.** `docs/offer-curve-methodology.md` §3 gains a
+  *Detection coverage* subsection: of ≈ 21.2 GW of qualifying NYISO fossil
+  capacity, **89% (≈ 18.9 GW, 44 plants) is CEMS-measured** and 11% falls to
+  statistical, with CT/oil peakers carrying no overlay by design.
+
+## 2026-06-11 (CAISO backcast P10 — LMP benchmark + zonal-sufficiency test)
+
+CAISO prompt-pack P10 (Wave 1). The OASIS hub LMPs (upload U2) are now a
+calibration price benchmark, and the 3-zone topology has its empirical gate.
+ERCOT/PJM outputs regenerate byte-identically (regression-checked).
+
+- **`actual_lmp.json` CAISO block + hourly sidecar.**
+  `scripts/derive_actual_lmp.py` grew a CAISO builder: with no single system
+  hub, the comparable-to-the-model system price is the three trading hubs
+  (TH_NP15/TH_ZP26/TH_SP15) **load-weighted by zone share** and reindexed
+  onto the Pacific dispatch clock. Emits DA + RT **2024 & 2025**
+  annual/monthly means + duration-curve percentiles, plus
+  `actual_lmp_hourly_CAISO.parquet` for the overlay. A full-year gate omits
+  the retention-aged 2023 DAM stub; RT 2023 was never fetched.
+- **Zonal-sufficiency test (`scripts/caiso_zonal_sufficiency.py`).** Hub-spread
+  duration curves from the DA aggregates. Conclusion: **keep 3 zones** — the
+  NP15−SP15 spread exceeds $20/MWh in 16.8% (2024) / 10.3% (2025) of hours
+  (Path 15 north-south congestion, NP15 dear, solar shoulder seasons), while
+  SP15 and ZP26 move together (>$20 in ~1% of hours). Write-up in
+  `docs/multi-iso/caiso-zonal-adequacy.md`.
+- **Aggregates documented as complete.**
+  `scripts/postprocess_oasis_downloads.py` is idempotent/rerun-safe; the
+  committed `CAISO_{dam,rtm}_hourly_{2024,2025}.csv` and
+  `CAISO_tac_load_hourly_{2024,2025}.csv` are full years × all hubs/TACs.
+  `caiso-data-audit.md` §4 U2 marked done with the 2023 gaps recorded.
+
 ## 2026-06-11 (E3 follow-up — one curtailment table, measured against consumed potential)
 
 Cleanup after E3 (#304) and CAISO P6 (#310) landed overlapping curtailment

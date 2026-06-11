@@ -1127,26 +1127,37 @@ def split_gas_tranches(
 
 
 def campd_tranche_fuel_frac(
-    gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0
+    gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0,
+    coal_bit_passthrough: "float | np.ndarray" = 1.0,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
-    ``coal_prb_passthrough`` may be a scalar (flat) or an ``(T,)`` array (the
-    gas-keyed sigmoid); whichever is given is returned for PRB above-must-run
-    tranches and applied by :func:`apply_coal_tranches`.
+    ``coal_prb_passthrough`` / ``coal_bit_passthrough`` may be a scalar
+    (flat) or an ``(T,)`` array (the gas-keyed sigmoid); whichever is given
+    is returned for PRB / bituminous above-must-run tranches respectively
+    and applied by :func:`apply_coal_tranches`.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
     they bid VOM + carbon + NOx only. Every PRB coal tranche *above* must-run
     (committed, economic and peaking) passes ``coal_prb_passthrough`` < 1.0
     to price-take: an already-online PRB unit (rail take-or-pay) bids to
-    clear rather than on full marginal cost. Mine-mouth lignite and all
-    other tranches pass full fuel cost (``1.0``).
+    clear rather than on full marginal cost. Bituminous tranches above
+    must-run pass ``coal_bit_passthrough`` (1.0 = full cost unless the
+    gas-keyed bit sigmoid is on — the PJM coal fleet). Mine-mouth lignite,
+    waste coal and all other tranches pass full fuel cost (``1.0``).
     """
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
-    if gen.fuel_type == "coal" and getattr(gen, "coal_supply", "") == "prb":
-        return coal_prb_passthrough
+    if gen.fuel_type == "coal":
+        supply = getattr(gen, "coal_supply", "")
+        # PRB == sub-bituminous; one name across ISOs (plant_taxonomy
+        # COAL_SUPPLY_TO_CLASS routes both to COAL_PRB). The curated ERCOT
+        # map tags "prb"; the derived EIA-923 rank CSVs tag "subbituminous".
+        if supply in ("prb", "subbituminous"):
+            return coal_prb_passthrough
+        if supply == "bituminous":
+            return coal_bit_passthrough
     return 1.0
 
 
