@@ -3072,6 +3072,7 @@ def _econ_curve_steps(
     curve_cap: float,
     n: int,
     exp: float,
+    mid: float | None = None,
 ) -> list[tuple[str, float, float, float, int, int, float]]:
     """Slice a rising economic ramp into ``n`` flat sub-tranches.
 
@@ -3080,16 +3081,26 @@ def _econ_curve_steps(
     ``lo_mult`` toward ``pk_mult`` along ``mult(t) = lo + (pk - lo) * t**exp``,
     ``t = (k + 0.5)/n``. ``exp == 1`` is a straight (linear) ramp matching a
     thermal unit's gently-rising incremental heat rate; ``exp > 1`` is convex
-    (cheap-bottom). The slices carry no min-run or start cost — they are
-    incremental output of an already-committed unit. Suffixes start with
-    ``econ`` (``econc00`` …) so :func:`apply_commitment_with_coal_pin` couples
-    them to the bin's committed tranche and shuts them down together.
+    (cheap-bottom). When ``mid`` is given it replaces the power shape with a
+    two-segment piecewise-linear ramp anchored at the capacity midpoint:
+    ``f(0) = 0``, ``f(0.5) = mid``, ``f(1) = 1`` (fraction of the lo->pk
+    rise), so ``mid < 0.5`` keeps the middle of the curve cheap and
+    concentrates the rise in the top slices — an independent shape control
+    the single ``exp`` exponent cannot express. The slices carry no min-run
+    or start cost — they are incremental output of an already-committed
+    unit. Suffixes start with ``econ`` (``econc00`` …) so
+    :func:`apply_commitment_with_coal_pin` couples them to the bin's
+    committed tranche and shuts them down together.
     """
     slice_cap = curve_cap / n
     steps: list[tuple[str, float, float, float, int, int, float]] = []
     for k in range(n):
         t = (k + 0.5) / n
-        mult = lo_mult + (pk_mult - lo_mult) * (t ** exp)
+        if mid is not None:
+            f = 2.0 * mid * t if t <= 0.5 else mid + (1.0 - mid) * (2.0 * t - 1.0)
+        else:
+            f = t ** exp
+        mult = lo_mult + (pk_mult - lo_mult) * f
         steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
     return steps
 
@@ -3417,6 +3428,8 @@ def bins_to_fleet(
         # floor.
         n_curve = int(getattr(config, "offer_curve_smoothing_n", 0) or 0)
         curve_exp = float(getattr(config, "offer_curve_smoothing_exp", 1.0))
+        _mid = getattr(config, "offer_curve_smoothing_mid", None)
+        curve_mid = float(_mid) if _mid is not None else None
         if ov is not None:
             # Per-plant sheet: the econ ramp spans econ-low to econ-high; the
             # sheet's peaking band stays a separate tranche below.
@@ -3426,6 +3439,7 @@ def bins_to_fleet(
                 econ_steps = _econ_curve_steps(
                     base_hr, lo_m, pk_m,
                     nameplate * curve_pct / 100.0, n_curve, curve_exp,
+                    curve_mid,
                 )
             else:
                 econ_steps = [
@@ -3440,6 +3454,7 @@ def bins_to_fleet(
             if n_curve > 0 and econ_cap > 0.0 and pk_m > lo_m:
                 econ_steps = _econ_curve_steps(
                     base_hr, lo_m, pk_m, econ_cap, n_curve, curve_exp,
+                    curve_mid,
                 )
             else:
                 share = float(offer["econ_low_share"])
@@ -3454,6 +3469,7 @@ def bins_to_fleet(
             if n_curve > 0 and econ_cap > 0.0 and hi_mult > lo_mult:
                 econ_steps = _econ_curve_steps(
                     base_hr, lo_mult, hi_mult, econ_cap, n_curve, curve_exp,
+                    curve_mid,
                 )
             else:
                 econ_steps = [
