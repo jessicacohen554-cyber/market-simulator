@@ -182,6 +182,15 @@ PUMPED_STORAGE_DURATION_HOURS: float = 10.0
 # Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia Energy
 # Storage Handbook; DOE PSH fact sheet cites ~80%).
 PUMPED_STORAGE_RTE: float = 0.80
+# Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form
+# opportunity cost of the regulation/reserve duty the energy-only LP does not
+# see (PSH pure O&M is < $1/MWh; with no adder the LP arbitrages PS every day
+# the spread clears RTE losses and overshoots observed PS energy ~2-3x).
+# PJM: $10 calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr of
+# EIA-923 gross generation (calibration-log 2026-06-10, "pjm 3 ps-adder").
+# ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays
+# off until a CAISO calibration pass measures Helms' reserve duty.
+PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
 
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
