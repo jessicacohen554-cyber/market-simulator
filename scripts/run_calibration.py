@@ -857,7 +857,8 @@ def run_year(
 
             def _pt_for(g):
                 if (g.fuel_type == "coal"
-                        and getattr(g, "coal_supply", "") == "prb"
+                        and getattr(g, "coal_supply", "")
+                        in ("prb", "subbituminous")
                         and COAL_MUSTRUN_BY_PLANT.get(
                             g.plant_code, 100.0) <= thr):
                     return foll_pt
