@@ -140,7 +140,12 @@ untouched (no import node; full suite green minus the known-stale
 - **Runs:** `results/calibration/pjm_j1_baseline` (pjm-6 config re-run,
   measured schedule — regression check) and
   `results/calibration/pjm_j1_priced` (same config through the priced node —
-  calibration validation).
+  calibration validation). Priced 2023: net export +39.0 TWh = 97.6% of
+  actual (duration RMSE 647 MW); 2024 drifts +26% as fitted. The priced run
+  also flattens zonal spreads (the external node wheels around the internal
+  interfaces; all zones land at one price vs the baseline's ~$5 spread) and
+  caps scarcity at the $46 import tranche (baseline max $695) — two more
+  reasons backcasts keep the measured schedule.
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
