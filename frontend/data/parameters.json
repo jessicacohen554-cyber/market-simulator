@@ -6026,6 +6026,24 @@
       ]
     },
     {
+      "param_id": "pumped_storage_dispatch_adder_by_iso.PJM",
+      "display_name": "Pumped Storage Dispatch Adder By Iso / Pjm",
+      "value": 10.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form opportunity cost of the regulation/reserve duty the energy-only LP does not see (PSH pure O&M is < $1/MWh; with no adder the LP arbitrages PS every day the spread clears RTE losses and overshoots observed PS energy ~2-3x). PJM: $10 calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr of EIA-923 gross generation (calibration-log 2026-06-10, \"pjm 3 ps-adder\"). ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays off until a CAISO calibration pass measures Helms' reserve duty.",
+      "source_date": "2026-06",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "pumped_storage_duration_hours",
       "display_name": "Pumped Storage Duration Hours",
       "value": 10.0,
@@ -7468,6 +7486,24 @@
       "domain": "Uncategorized",
       "tier": 2,
       "source": "was 40000. Source: ERCOT CDR Dec 2024.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.battery_dispatch_adder",
+      "display_name": "Battery Dispatch Adder",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), the battery analogue of pumped_storage_dispatch_adder. Two real costs the energy-only LP otherwise ignores: cycling degradation (cell-replacement capex amortized per MWh discharged — ~$15-25/MWh for li-ion at current pack prices, NREL \"Utility-Scale Battery Storage\" ATB 2024 cycle-life basis) and the ancillary-service opportunity cost of arbitraging instead of holding reserve (the dominant ERCOT BESS revenue stream through 2024, ERCOT ESR reports). With no adder the LP cycles the fleet every day the spread clears RTE losses (~1.2-1.3 cycles/day) where the observed ERCOT fleet ran ~0.7-0.8 (EIA-930 BAT discharge vs EIA-860 fleet energy). Default 0.0 = prior behaviour; calibration backcasts set it (see docs/calibration-best-so-far.md).",
       "source_date": "2024",
       "page_or_table": "",
       "url": "",
@@ -9604,7 +9640,7 @@
     {
       "param_id": "scenario.pumped_storage_dispatch_adder",
       "display_name": "Pumped Storage Dispatch Adder",
-      "value": 10.0,
+      "value": null,
       "unit": "",
       "domain": "Storage",
       "tier": 3,
