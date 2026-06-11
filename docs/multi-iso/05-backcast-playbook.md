@@ -221,12 +221,20 @@ This is a build-once module; CAISO forces it first (doc 06 P13).
 
 Every non-ERCOT ISO is interconnected and the interchange wedge is
 first-order (PJM +40 TWh export; CAISO ~20–25% import share). The pattern
-is the CAISO WECC node (`build_wecc_import_generators()`): an import zone
-with `load_share=0`, links with TTC, a 3–4 tranche priced supply curve
-(plus an export sink). Calibrate the tranche prices/quantities so the
-modeled **net-interchange duration curve** tracks EIA-930. Where a
-neighbor's price sets the tranche (HQ, Mid-C, Palo Verde), cite the proxy.
-Seasonal shaping (NW hydro year) where the data demands it.
+is the per-ISO priced node (`build_import_generators(iso)` /
+`build_export_sinks(iso)` off `constants.IMPORT_TRANCHES` /
+`EXPORT_TRANCHES`; `extend_with_import_node` appends the zone+links when
+not baked into the topology): an import zone with `load_share=0`, links
+with TTC, a 3–4 tranche priced supply curve plus priced export sinks.
+Calibrate the tranche prices/quantities so the modeled **net-interchange
+duration curve** tracks EIA-930 (`scripts/derive_import_tranches.py`; the
+measured series is typically hourly price-orthogonal, so fit the duration
+curve, not the hours). Where a neighbor's price sets the tranche (HQ,
+Mid-C, Palo Verde), cite the proxy. Seasonal shaping (NW hydro year) where
+the data demands it. For *backcast* years with a measured interchange
+series, prefer serving the measured schedule (PJM precedent,
+`load_demand(include_interchange=...)`); the priced node is the forward
+mechanism and is validated with `--priced-interchange` runs.
 
 ### 8.3 Curtailment as a first-class metric
 
