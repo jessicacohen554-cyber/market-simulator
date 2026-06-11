@@ -2395,6 +2395,16 @@ def main() -> None:
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
                         help="Follower-tier PRB sigmoid ceiling.")
+    parser.add_argument("--prb-gas-mid", type=float, default=None,
+                        help="Baseload PRB sigmoid gas-price midpoint "
+                             "($/MMBtu).")
+    parser.add_argument("--prb-gas-slope", type=float, default=None,
+                        help="Baseload PRB sigmoid slope (per $/MMBtu).")
+    parser.add_argument("--prb-follower-gas-mid", type=float, default=None,
+                        help="Follower-tier PRB sigmoid gas-price midpoint "
+                             "($/MMBtu).")
+    parser.add_argument("--prb-follower-gas-slope", type=float, default=None,
+                        help="Follower-tier PRB sigmoid slope (per $/MMBtu).")
     parser.add_argument(
         "--storage-daily-cycling", action="store_true",
         help="Cap storage to within-day arbitrage: each unit's SOC must "
@@ -2532,6 +2542,10 @@ def main() -> None:
             "coal_prb_passthrough_ceil": args.prb_ceil,
             "coal_prb_follower_floor": args.prb_follower_floor,
             "coal_prb_follower_ceil": args.prb_follower_ceil,
+            "coal_prb_passthrough_gas_mid": args.prb_gas_mid,
+            "coal_prb_passthrough_gas_slope": args.prb_gas_slope,
+            "coal_prb_follower_gas_mid": args.prb_follower_gas_mid,
+            "coal_prb_follower_gas_slope": args.prb_follower_gas_slope,
         },
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
