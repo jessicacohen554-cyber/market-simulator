@@ -603,3 +603,21 @@ regenerated):
 amortization markup (steam host keeps units hot — model bug, not a tuning
 knob); then re-read the CT_CHP top bands and CC_CHP partial-train range
 against the BTM-aware panel before any tranche-share (pct_peaking) move.
+
+---
+
+## ERCOT Run 83 — CHP startup exemption: no-op, mechanism ruled out (2026-06-11)
+
+**Run 83 (`run83_chp_startup`, dashboard `run83 chp startup`).**
+`chp_startup_covered` (CC_CHP/CT_CHP/ST_CHP exempt from the P1 startup
+markup) reproduces run 79 exactly in every class-year. Root cause of the
+no-op: the bin builder assigns startup cost to the **committed tranche
+only** (econ/peak tranches carry 0.0), and CHP committed tranches run
+continuously on their must-run floors, so their monthly amortization was
+already ~$0/MWh. **Finding: startup cost is ruled out as the cause of the
+CT_CHP top-band miss** (BTM-aware panel: CAMPD 25% of hours above 0.8 CF
+vs model 1.7%); the miss is the CT_CHP band economics (econ_high 1.30 /
+peak 1.32 on high CT heat rates) and/or tranche shares (pct_econ 32 /
+pct_peak 5) — a CHP offer-curve/tranche item for the next pass. The flag
+stays available (harmless, default off, correctly recorded in run_config
+since the prb_overrides recording fix). Keeper remains the run-79 config.
