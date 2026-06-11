@@ -1293,6 +1293,62 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("import_scarcity_1", 1000.0, 46.0),
         ("import_scarcity_2", 3000.0, 60.0),
     ],
+    # NYISO is a large, near-constant net importer: EIA-930 (NYIS hourly)
+    # shows imports in 100% of 2023 hours, −2,677 MW avg (+23.45 TWh net
+    # import), 922 MW in the lightest-import hour (p2) up to 5,929 MW deepest.
+    # The supply curve is the neighbor merit order, cheapest first; each block
+    # is priced at the neighbor hub it proxies and sized to a step of the
+    # import duration curve (scripts/derive_import_tranches.py against the
+    # NYIS net-interchange series). Imports clear when NYISO's internal price
+    # rises above a block's price — so the cheap HQ/Ontario hydro is the
+    # always-on baseload and PJM/ISO-NE/scarcity blocks layer in as price
+    # climbs. Tier 3 (calibration). Neighbor-price proxies:
+    #   - HQ_hydro: Hydro-Québec is ~95% hydro with near-zero SRMC; the
+    #     Châteauguay/Cedars economy-energy price into NY zones D–F runs a
+    #     winter premium. Proxy ~$14/MWh. Source: HQ generation mix (HQ
+    #     Annual Report); NYISO–HQ Châteauguay interface schedules.
+    #   - IESO_Ontario: Ontario HOEP averaged ≈C$28/MWh (≈US$21) in 2023 on
+    #     surplus nuclear+hydro baseload (often low/negative). Proxy ~$24.
+    #     Source: IESO Hourly Ontario Energy Price (HOEP) 2023.
+    #   - PJM_west: PJM Western Hub / AEP-Dayton day-ahead LMP averaged
+    #     ≈$30/MWh in 2023 (cheap Marcellus gas). Proxy ~$34. Source: PJM
+    #     Western Hub LMP, Monitoring Analytics SOM 2023.
+    #   - ISONE_tie: ISO-NE Mass Hub LMP averaged ≈$38/MWh in 2023. Proxy
+    #     ~$44 (it sets the upper-middle imports). Source: ISO-NE Mass Hub.
+    #   - import_scarcity: HQ/PJM peak economy energy in NYISO scarcity hours
+    #     (top decile, where NYISO LMP > $70). Source: NYISO LMP tail.
+    "NYISO": [
+        ("HQ_hydro", 900.0, 14.0),
+        ("IESO_Ontario", 1200.0, 24.0),
+        ("PJM_west", 1100.0, 34.0),
+        ("ISONE_tie", 800.0, 44.0),
+        ("import_scarcity", 1900.0, 75.0),
+    ],
+    # NEISO is a steady net importer (EIA-930 ISNE hourly): −1,728 MW avg /
+    # +15.14 TWh net import in 2023 (98% import hours), easing to −1,175 MW /
+    # +10.30 TWh in 2024 (84%). Imports peak at ~4,386 MW. Blocks priced at
+    # the neighbor hub, cheapest first; the HQ HVDC ties are the always-on
+    # baseload. Tier 3 (calibration). Neighbor-price proxies:
+    #   - HQ_PhaseII: the ~2,000 MW Hydro-Québec Phase II HVDC into NEMA
+    #     (Sandy Pond); HQ hydro SRMC near zero, sold at economy energy.
+    #     Proxy ~$18. Source: ISO-NE external-interface schedules; HQ mix.
+    #   - Highgate: the VT–HQ HVDC tie (~225 MW) into northern NE; same HQ
+    #     hydro proxy, slight wheeling premium ~$22. Source: ISO-NE/VELCO
+    #     Highgate ratings.
+    #   - NB_north: the New England–New Brunswick ties into Maine (~700 MW),
+    #     NB hydro/nuclear. Proxy ~$30. Source: ISO-NE–NB interface.
+    #   - NYISO_CT: the NYISO ties into Connecticut — Cross-Sound Cable
+    #     (346 MW) + Northport–Norwalk (200 MW) + the NY–NE AC interface.
+    #     Priced at the NYISO Hud Valley / Mass Hub seam ~$36. Source:
+    #     NYISO–ISO-NE interface schedules.
+    #   - import_scarcity: HQ/NY peak economy energy in ISNE scarcity hours.
+    "NEISO": [
+        ("HQ_PhaseII", 1000.0, 18.0),
+        ("Highgate", 300.0, 22.0),
+        ("NB_north", 800.0, 30.0),
+        ("NYISO_CT", 1100.0, 36.0),
+        ("import_scarcity", 1200.0, 68.0),
+    ],
 }
 
 # Export sinks: each block absorbs up to its capacity as *negative*
@@ -1327,6 +1383,25 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("export_offpeak", 1800.0, 20.0),
         ("export_trough", 2100.0, 18.0),
     ],
+    # NYISO almost never exports (EIA-930 NYIS: net export ≤ +131 MW in 2023,
+    # +449 in 2024 — well under 1% of hours), so a single small sink absorbs
+    # the rare upstate-hydro/wind surplus in near-zero-price hours. Priced
+    # below every import tranche (no import↔export arbitrage). Tier 3.
+    # Source: NYIS net-interchange tail (export-positive p100); the neighbor
+    # WTP in those hours is Ontario HOEP / PJM West off-peak (~$10).
+    "NYISO": [
+        ("export_surplus", 600.0, 10.0),
+    ],
+    # NEISO exports more than NYISO — up to ~1,045 MW (2023) and ~1,770 MW
+    # (2024) in low-load/high-hydro hours (the 2% export share in 2023 grew
+    # to 16% in 2024 as load softened). Two sinks proxy the neighbor demand
+    # stack (surplus to NY/NB): a shallow firm block and a deeper trough
+    # block, both priced below every NEISO import tranche. Tier 3. Source:
+    # ISNE net-interchange tail; NYISO/NB off-peak WTP.
+    "NEISO": [
+        ("export_firm", 700.0, 16.0),
+        ("export_trough", 1100.0, 8.0),
+    ],
 }
 
 # Name of each ISO's external import/export zone. CAISO's is baked into its
@@ -1337,6 +1412,13 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 IMPORT_ZONE: dict[str, str] = {
     "CAISO": "WECC_import",
     "PJM": "PJM_external",
+    # NYISO's external node is appended on demand (like PJM); the backcast
+    # 5-zone topology is untouched.
+    "NYISO": "NYISO_external",
+    # NEISO's is baked into _neiso_config (like CAISO's WECC_import): the
+    # HQ_import zone already carries the HQ Phase II tie, so the import
+    # tranches/sinks land there and extend_with_import_node is a no-op.
+    "NEISO": "HQ_import",
 }
 
 # Links joining an appended external zone to its border zones:
@@ -1356,6 +1438,30 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
         ("PJM_Dominion", 6300.0),
         ("PJM_EMAAC", 5700.0),
     ],
+    # NYISO external node → border-zone links. The single external bubble
+    # holds all import tranches/sinks; the LP routes each through whichever
+    # link reaches load, subject to the internal interfaces (Central-East,
+    # UPNY-SENY, Dunwoodie-South). TTCs envelope the real interface ratings
+    # of the ties landing in each model zone (sum ≈ 6.4 GW ≥ the 5.9 GW
+    # deepest measured import). Tier 3 — verify against NYISO operating-limit
+    # postings. Source: NYISO interface limits ("Gold Book"); tie ratings.
+    #   - Upstate_West: IESO/Ontario (Niagara zone A + St-Lawrence ~2.0 GW)
+    #     plus PJM West (Homer City/Keystone ~1.0 GW).
+    #   - Capital_Hudson: HQ Châteauguay/Cedars (~1.1 GW) + the NY–NE AC
+    #     interface (~0.6 GW).
+    #   - Lower_Hudson: PJM into the lower Hudson Valley / 5018 line toward
+    #     NYC (~1.2 GW).
+    #   - Long_Island: ISO-NE Cross-Sound Cable (346 MW) + Northport–Norwalk
+    #     (200 MW) ≈ 0.55 GW.
+    "NYISO": [
+        ("Upstate_West", 3000.0),
+        ("Capital_Hudson", 1700.0),
+        ("Lower_Hudson", 1200.0),
+        ("Long_Island", 550.0),
+    ],
+    # NEISO needs no entry: its HQ_import links (HQ Phase II → Boston,
+    # Highgate/NB → North, NYISO ties → Connecticut) are baked into
+    # _neiso_config, so extend_with_import_node is a no-op there.
 }
 
 # Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
@@ -1365,6 +1471,11 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
 IMPORT_EFORD: dict[str, float] = {
     "CAISO": 0.02,
     "PJM": 0.0,
+    # NYISO/NEISO blocks are scheduled interties (HQ HVDC, PJM/Ontario/NB
+    # AC ties) whose availability is already embedded in the fitted
+    # capacities — no extra derate, as for PJM.
+    "NYISO": 0.0,
+    "NEISO": 0.0,
 }
 
 # Backwards-compatible aliases for the original CAISO-only WECC names.
