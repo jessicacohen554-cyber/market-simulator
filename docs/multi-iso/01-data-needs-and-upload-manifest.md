@@ -164,7 +164,15 @@ wind/solar capacity by zone from **EIA-860** (national, present) — so capacity
 ISO-specific is the **uncurtailed potential profile (HSL)**:
 
 - ERCOT uses the NP6 HSL dataset (`scripts/build_ercot_hsl.py`) to feed the
-  dispatch *uncurtailed* wind/solar so it re-curtails under modeled limits.
+  dispatch *uncurtailed* wind/solar so it re-curtails under modeled limits,
+  one parquet per backcast year. 2023 builds from the UMass 60-Day-SCED
+  dataset (auto-downloaded); **2024+ needs an upload**: ERCOT MIS wind/solar
+  power-production reports (NP4-732-CD / NP4-737-CD hourly actuals, or
+  NP4-733-CD / NP4-738-CD 5-minute actuals — both carry system-wide actual
+  GEN and actual HSL), dropped as csv/zip under
+  `inputs/raw-data/ercot-hsl/np6/`, then re-run the script. Years with a
+  built parquet also get the modeled-vs-reported curtailment headline table
+  in the calibration reports (the CAISO P6 pattern).
 - Other ISOs' HSL analogues, and hydro, are detailed in
   `04-transmission-zones-and-congestion.md` §4. Where no HSL exists, the
   fallback is the EIA-930 delivered-generation distribution (already curtailed),
@@ -202,6 +210,7 @@ MUST UPLOAD (per ISO):
 [ ] Zonal hourly load (multi-zone)    for load_share + zonal shape
 [ ] TTC / interface limits            see doc 04 (multi-zone)
 [ ] Renewable HSL / uncurtailed       see doc 04 (where available)
+[ ] ERCOT NP6 HSL reports 2024-2025   inputs/raw-data/ercot-hsl/np6/
 [ ] Hydro monthly energy budget       (NYISO, CAISO, ISO-NE esp.)
 
 ALREADY NATIONAL / NO UPLOAD:
