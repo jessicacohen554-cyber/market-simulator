@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-10-run74-ct-walkback",
+  "label": "run74 ct walkback",
+  "date": "2026-06-10",
+  "shorthand": "run74-ct-walkback",
+  "definition": "Run74 (from Run-73): walk back the CT_PEAKER committed overshoot 1.10->1.22 (Run-73 went +18.4/+9.9/+11.8 from -2.7/-15.5/-6.6; the cheap CTs also displaced ~2 TWh/yr of ST_GAS); cheapen COAL_LIGNITE committed 0.95->0.88 and econ_low 1.00->0.92 against the 2024 -21.5% under-run. ST_GAS, COAL_PRB, CC_REGULAR, CHP classes held at Run-73. First run on the regenerated unit-outage extract (Rio Nogales units 189->223.5 MW, C.R. Wing 77.5->84.9 MW -> slightly deeper unit derates; windows unchanged).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-10-run74-ct-walkback.js",
+  "bundle": "results/calibration/Run-74"
+}
