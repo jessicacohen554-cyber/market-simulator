@@ -125,29 +125,41 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
 
 
 # EIA-923-CF fallback floor for CHP plants without CAMPD coverage (small
-# cogens below the CEMS reporting threshold — e.g. every PJM ST_CHP). The
-# plant's pooled EIA-923 class net generation over nameplate approximates its
-# steady steam-following output; the mean-to-floor haircut converts that
-# average CF into a holdable floor (a steady cogen's P2 hourly CF runs a bit
-# under its mean), and the cap keeps a CEMS-invisible plant from being forced
-# on harder than any CAMPD-observed peer.
+# cogens below the CEMS reporting threshold — e.g. every PJM ST_CHP, and the
+# CAISO refinery / Kern EOR cogens, which are largely exempt from Part 75
+# CEMS). The floor is the plant's MINIMUM monthly EIA-923 class CF over the
+# pooled window — the monthly analogue of the CAMPD all-hours P2: a cogen that
+# idles (or stands down for an outage) for a whole month carries no hard steam
+# obligation at that level, while a steady steam host's worst month measures
+# the output it always holds. The month-to-hour haircut converts that monthly
+# average into an hourly holdable floor (within its floor month a plant's
+# hourly P2 runs a bit under the monthly mean), and the cap keeps a
+# CEMS-invisible plant from being forced on harder than any CAMPD-observed
+# peer.
 _CHP_F923_FLOOR_FACTOR: float = 0.85
 _CHP_F923_FLOOR_CAP: float = 75.0
+
+# Days per month (non-leap); February is overridden per year so a leap-year
+# CF is not understated by ~3.4%.
+_DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
 def _chp_f923_floor_cf(
     years: list[int], cap: dict[tuple[int, str], float],
 ) -> dict[tuple[int, str], float]:
-    """Return ``{(code, group): pmin_cf %}`` from EIA-923 class net generation.
+    """Return ``{(code, group): pmin_cf %}`` from EIA-923 monthly generation.
 
-    For each CHP ``(plant, group)`` in the fleet, the pooled EIA-923 net
+    For each CHP ``(plant, group)`` in the fleet, every reported month's net
     generation of that class (canonical :func:`classify_plant` bucketing)
-    divided by ``nameplate x hours`` gives the average CF; scaled by
-    :data:`_CHP_F923_FLOOR_FACTOR` and capped it becomes the total must-run
-    floor for plants the CAMPD extracts cannot see.
+    divided by ``nameplate x hours-in-month`` gives a monthly CF sample; the
+    minimum over the pooled window, scaled by :data:`_CHP_F923_FLOOR_FACTOR`
+    and capped, becomes the total must-run floor for plants the CAMPD
+    extracts cannot see. Plants with no class generation at all are absent
+    from the result (no row, no floor); a plant with a zero month keeps a row
+    with a zero floor — its EIA-923 sector still sizes the BTM share.
     """
     from market_sim.config.plant_taxonomy import classify_plant
-    from market_sim.data.eia923 import load_monthly_generation
+    from market_sim.data.eia923 import load_monthly_generation, monthly_netgen_columns
 
     gen = load_monthly_generation()
     gen = gen[gen["year"].isin(years)].copy()
@@ -157,17 +169,29 @@ def _chp_f923_floor_cf(
             gen["fuel_type"], gen["prime_mover"], gen["chp"], gen["plant_id"]
         )
     ]
-    by_key = gen.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
+    mcols = monthly_netgen_columns()
+    by_key = gen.groupby(["plant_id", "klass", "year"])[mcols].sum()
     out: dict[tuple[int, str], float] = {}
     for (code, group), nameplate in cap.items():
         if group not in _CHP_GROUPS or nameplate <= 0:
             continue
-        mwh = float(by_key.get((code, group), 0.0))
-        if mwh <= 0.0:
+        min_cf, total_mwh = np.inf, 0.0
+        for year in years:
+            try:
+                months = by_key.loc[(code, group, year)].to_numpy(dtype=float)
+            except KeyError:
+                continue
+            hours = np.array(_DAYS_IN_MONTH, dtype=float) * 24.0
+            if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
+                hours[1] = 29.0 * 24.0
+            cf = months / (nameplate * hours)
+            min_cf = min(min_cf, float(np.nanmin(cf)))
+            total_mwh += float(np.nansum(months))
+        if total_mwh <= 0.0 or not np.isfinite(min_cf):
             continue
-        avg_cf = mwh / (nameplate * 8760.0 * len(years))
         out[(code, group)] = min(
-            100.0 * avg_cf * _CHP_F923_FLOOR_FACTOR, _CHP_F923_FLOOR_CAP
+            100.0 * max(min_cf, 0.0) * _CHP_F923_FLOOR_FACTOR,
+            _CHP_F923_FLOOR_CAP,
         )
     return out
 
