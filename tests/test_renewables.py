@@ -2,7 +2,11 @@
 
 import numpy as np
 
-from market_sim.config.constants import HOURS_PER_YEAR, RENEWABLE_INSTALLED_MW
+from market_sim.config.constants import (
+    HOURS_PER_YEAR,
+    RENEWABLE_AVG_CF,
+    RENEWABLE_INSTALLED_MW,
+)
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import load_eia_hourly_renewable_gen
@@ -360,3 +364,89 @@ def test_spp_and_neiso_cf_profiles_match_annual_average_cf():
         cf = derive_cf_profile(mw / mw.sum(), avg_cf)
         assert cf.min() >= 0.0 and cf.max() <= 1.0
         np.testing.assert_allclose(cf.mean(), avg_cf, atol=1e-5)
+
+
+def test_neiso_backcast_eia930_zone_distribution():
+    """NEISO backcast uses EIA-930 ISNE delivered gen, zone-shaped by EIA-860.
+
+    With ``mode="backcast"`` ISO-NE wind/solar profiles come from the EIA-930
+    ``ISNE hourly`` net-generation series and are distributed across the four
+    in-footprint NEISO zones by EIA-860 plant-location capacity shares:
+
+    * Wind — bulk in the North zone (ME/NH/VT onshore belt); mean CF
+      benchmarks against the EIA-923 fleet average (~0.30, atol 0.10).
+    * Solar — distributed across Connecticut and Central (CT + MA/RI);
+      EIA-930 ISNE ``NG: SUN`` captures only grid-scale (non-BTM) wholesale
+      solar (~800–1 600 GWh/yr).  ISO-NE's net-metered solar reduces load
+      rather than appearing as generation, so the mean CF relative to EIA-860
+      total installed capacity is ~0.04, much lower than the physical
+      utility-PV value (~0.15).  The energy balance is correct because the
+      EIA-930 net-load demand series already excludes BTM solar; the solar
+      benchmark therefore checks the absolute annual GWh rather than the
+      CF relative to total installed capacity.
+    * HQ_import virtual node carries zero capacity and zero CF.
+    * ERCOT/CAISO HSL paths are unaffected by NEISO wiring.
+    """
+    iso_config = get_iso_config("NEISO")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="NEISO", mode="backcast",
+        gas_price_override=3.0,
+    )
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
+        "NEISO", _CAL_YEAR, iso_config, config
+    )
+    zones = iso_config.zone_names
+    north = zones.index("North")
+    central = zones.index("Central")
+    ct = zones.index("Connecticut")
+    hq = zones.index("HQ_import")
+
+    # EIA-860 multi-zone distribution was used — at least two real zones carry
+    # capacity; the virtual HQ_import node stays empty in both technologies.
+    assert (wind_cap > 0.0).sum() >= 2, "wind should spread across ≥2 zones"
+    assert wind_cap[hq] == 0.0
+    assert solar_cap[hq] == 0.0
+    assert np.all(wind_cf[hq] == 0.0)
+    assert np.all(solar_cf[hq] == 0.0)
+
+    # Wind bulk sits in the North zone (ME/NH/VT onshore wind belt).
+    assert wind_cap[north] > 0.0
+    assert wind_cap[north] == wind_cap.max()
+
+    # Solar is distributed across Connecticut and/or Central — together they
+    # hold the majority of in-footprint utility solar (CT farms + MA/RI PV).
+    assert solar_cap[ct] + solar_cap[central] > 0.5 * solar_cap.sum()
+
+    # CF arrays are (n_zones, HOURS_PER_YEAR) and physically bounded.
+    assert wind_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
+    assert solar_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
+    assert wind_cf.min() >= 0.0 and wind_cf.max() <= 1.0
+    assert solar_cf.min() >= 0.0 and solar_cf.max() <= 1.0
+
+    wind_mw = (wind_cap[:, None] * wind_cf).sum(axis=0)
+    solar_mw = (solar_cap[:, None] * solar_cf).sum(axis=0)
+
+    # Benchmark wind mean CF vs EIA-923 fleet average (ISO-NE onshore wind
+    # ~0.30; EIA Electric Power Monthly 2023).  This is a real data-quality
+    # guard — the profile is derived from measured EIA-930 data, not from a
+    # normalized distribution, so the mean won't be algebraically exact.
+    mean_wind_cf = wind_mw.mean() / wind_cap.sum()
+    np.testing.assert_allclose(
+        mean_wind_cf, RENEWABLE_AVG_CF["NEISO"]["wind"], atol=0.10,
+        err_msg="NEISO wind mean CF too far from EIA-923 fleet average",
+    )
+
+    # Benchmark solar against absolute annual GWh rather than mean CF.
+    # EIA-930 ISNE NG:SUN = grid-scale wholesale solar only (~800–1 600 GWh).
+    # The CF relative to EIA-860 total installed capacity is ~0.04 — not a
+    # defect: BTM solar is already embedded in the EIA-930 net-load demand.
+    solar_annual_gwh = solar_mw.sum() / 1e3
+    assert 400 < solar_annual_gwh < 2000, (
+        f"NEISO wholesale solar annual generation out of EIA-923 range: "
+        f"{solar_annual_gwh:.0f} GWh (expected 400–2 000)"
+    )
+
+    # ERCOT and CAISO HSL paths must be unaffected by NEISO wiring.
+    assert load_hsl_hourly("ERCOT", _CAL_YEAR) is not None
+    assert load_hsl_hourly("CAISO", _CAL_YEAR) is not None
+    assert load_hsl_hourly("NEISO", _CAL_YEAR) is None
