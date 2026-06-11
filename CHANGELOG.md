@@ -1,5 +1,52 @@
 # Changelog
 
+## 2026-06-11 (PJM J1 — generalized priced import/export node)
+
+Closes backlog item J1 (doc 06 §6). The +40 TWh PJM net-export structural
+gap itself was already served by the measured tie-line schedule (2026-06-05,
+Module M4) — the pjm-6 baseline carries it (2023 demand 823 TWh = 783
+internal + 40 export) and gas dispatch already rose accordingly. What was
+missing is the **price-responsive** node: forward PJM scenarios fell back to
+*zero* interchange, and the CAISO WECC machinery was not reusable. ERCOT is
+untouched (no import node; full suite green minus the known-stale
+`test_coal_supply_pricing_uses_year_trajectory`, doc 06 E1).
+
+- **Generalized machinery** (`model/transmission.py`): per-ISO
+  `IMPORT_TRANCHES` / `EXPORT_TRANCHES` / `IMPORT_ZONE` / `IMPORT_NODE_LINKS`
+  / `IMPORT_EFORD` constants drive `build_import_generators(iso)`,
+  `build_export_sinks(iso)` (priced negative-generation blocks — a sink's
+  $/MWh rides in `vom`, so absorbing exports credits the neighbors'
+  willingness-to-pay) and `extend_with_import_node(iso_config)`. CAISO's
+  WECC entries moved into the dicts unchanged (`build_wecc_*` remain as
+  wrappers); NYISO/NEISO only need constants entries.
+- **PJM node, calibrated to the 2023 net-interchange duration curve.**
+  `PJM_external` zone + 5 border links (TTCs bounding the measured per-zone
+  tie flows) joined on demand. Two scarcity import tranches (4 GW @ $46/$60)
+  + six export sinks (9.8 GW @ $18–42), fitted by the new
+  `scripts/derive_import_tranches.py`: measured net export is hourly
+  price-orthogonal (corr −0.06), so the fit pairs the pjm_6 price duration
+  curve with the measured interchange duration curve quantile-by-quantile.
+  Static fit: 2023 annual 100% of actual, duration RMSE ~570 MW, diurnal
+  corr 0.49; the same curve over-exports 2024 by ~+37% (load growth cut
+  exports at an unchanged price level) — Tier 3, re-fit per vintage.
+- **No double counting.** `load_demand` gained `include_interchange`; the
+  runner and `--priced-interchange` calibration runs disable the measured
+  schedule when the node serves interchange. Backcasts keep the measured
+  schedule (data-first; exact); `run_calibration_full.py --priced-interchange`
+  validates the node's calibration and the report's [2] section now prints
+  the node's net position, duration-curve RMSE and import-hour share.
+- **Forward runs**: `runner.run_scenario_iso` builds the node for any ISO
+  with constants entries — PJM forecasts now carry price-responsive
+  interchange (previously zero), and CAISO forward runs gain the export
+  sink that `build_wecc_export_sink` documented but never wired in.
+- **Bug fix:** `generators_to_fleet_arrays` pinned export sinks to a zero
+  floor whenever any CHP/ST_GAS `min_gen` floor was active (the min_gen
+  matrix replaces `pmin` as the LP lower bound for *every* generator, and
+  PJM fleets always carry CHP floors). Sinks now keep their negative range.
+- **Runs:** `results/calibration/pjm_j1_baseline` (pjm-6 config re-run,
+  measured schedule — regression check) and
+  `results/calibration/pjm_j1_priced` (same config through the priced node —
+  calibration validation).
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
