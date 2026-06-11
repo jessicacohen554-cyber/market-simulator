@@ -286,6 +286,26 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
         2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],
     },
+    # NEISO = Millstone units 2+3 (EIA 566, CT, 2,108 MW combined) + Seabrook
+    # (EIA 6115, NH, 1,247 MW) — fleet nameplate 3,355 MW. Pilgrim (EIA 6098,
+    # Plymouth MA) retired May 2019 and Vermont Yankee (EIA 7350) retired Dec
+    # 2014; both are absent from the EIA-860 operable fleet. Monthly EIA-923
+    # net generation / (fleet nameplate x hours in month), clipped at 1.0
+    # (ERCOT convention). The dips are the actual staggered refueling cadence,
+    # each verified to a single reactor going to ~0 in the per-plant EIA-923
+    # series:
+    #   2023 Apr 0.41 — Seabrook refuel (plant CF 0.00) + a Millstone unit (0.66).
+    #   2023 Jun 0.38 — deep Millstone outage (plant CF 0.02); Seabrook full.
+    #   2023 Nov 0.63 — a Millstone unit (plant CF 0.41).
+    #   2024 Oct 0.44 — Seabrook refuel (0.12; Nov 0.57) + a Millstone unit (Sep 0.71).
+    #   2025 Apr-May 0.75/0.77 — a Millstone unit refuel (0.59/0.64); Seabrook full year.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NEISO.
+    "NEISO": {
+        2023: [0.98, 0.98, 0.99, 0.41, 0.60, 0.38, 0.93, 0.93, 0.91, 0.84, 0.63, 0.87],
+        2024: [0.88, 1.00, 1.00, 1.00, 0.99, 1.00, 0.99, 0.98, 0.81, 0.44, 0.76, 0.97],
+        2025: [1.00, 1.00, 1.00, 0.75, 0.77, 1.00, 0.99, 0.93, 0.99, 0.86, 1.00, 1.00],
+    },
 }
 
 # Equivalent forced outage rate (demand) by technology class.
