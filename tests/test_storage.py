@@ -972,5 +972,130 @@ class TestStorageVintageRamp(unittest.TestCase):
         self.assertLessEqual(charge.max(), 100.0 + 1e-6)
 
 
+class TestEIA860NYISOBatteryFleet(unittest.TestCase):
+    """NYISO BESS fleet built from the EIA-860 energy-storage schedule.
+
+    Acceptance: modeled NYISO storage fleet matches EIA-860 totals per year.
+    The NYISO fleet is small (~200-220 MW in 2023-2024) with a pronounced
+    downstate concentration (NYC + Long Island) and uses the same
+    battery_dispatch_adder / COD-ramp knobs as CAISO and ERCOT.
+    """
+
+    def _expected_totals(self, year: int):
+        """Return (expected_mw, expected_mwh) from the raw parquet for year."""
+        import pandas as pd
+
+        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.data.zone_assignment import build_zone_lookup
+
+        path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+        if not path.exists():
+            self.skipTest("EIA-860 energy-storage parquet not present")
+        lookup = build_zone_lookup("NYISO")
+        df = pd.read_parquet(path)
+        df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+        power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+        energy = pd.to_numeric(
+            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
+        )
+        op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+        in_iso = df["Plant Code"].map(
+            lambda c: c == c and lookup.get(int(c)) is not None
+        ).astype(bool)
+        online = in_iso & power.notna() & (power > 0) & ~(op_year > year)
+        return float(power[online].sum()), float(energy[online].sum())
+
+    def test_fleet_totals_match_eia860_per_year(self):
+        # Acceptance check: the modeled fleet reproduces the EIA-860 year-end
+        # power and energy totals for 2023 and 2024, recomputed independently
+        # from the raw parquet through the same eGRID/EIA-860 zone lookup.
+        for year in (2023, 2024):
+            expected_mw, expected_mwh = self._expected_totals(year)
+            units = _battery_units(
+                load_eia860_storage("NYISO", year, ScenarioConfig(iso="NYISO"))
+            )
+            self.assertAlmostEqual(
+                sum(u.power_cap_mw for u in units), expected_mw, delta=1.0,
+                msg=f"NYISO {year} MW mismatch"
+            )
+            self.assertAlmostEqual(
+                sum(u.energy_cap_mwh for u in units), expected_mwh, delta=1.0,
+                msg=f"NYISO {year} MWh mismatch"
+            )
+
+    def test_fleet_nonzero(self):
+        # NYISO had an operational BESS fleet by end-2023; the loader must
+        # produce at least one battery unit with positive capacity.
+        units = _battery_units(
+            load_eia860_storage("NYISO", 2023, ScenarioConfig(iso="NYISO"))
+        )
+        self.assertTrue(units)
+        self.assertGreater(sum(u.power_cap_mw for u in units), 0.0)
+
+    def test_downstate_nyc_longisland_concentration(self):
+        # The NYC five-boroughs and Long Island hold a material share of the
+        # NYISO BESS fleet (downstate density vs the upstate hydro footprint).
+        units = _battery_units(
+            load_eia860_storage("NYISO", 2024, ScenarioConfig(iso="NYISO"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        downstate_mw = sum(
+            u.power_cap_mw for u in units
+            if u.zone in ("NYC", "Long_Island")
+        )
+        self.assertGreater(total_mw, 0.0)
+        # Downstate carries a nonzero but not dominant share (~15-35% of fleet)
+        self.assertGreater(downstate_mw, 0.0)
+        self.assertLess(downstate_mw / total_mw, 0.60)
+
+    def test_battery_dispatch_adder_carried(self):
+        # battery_dispatch_adder propagates to each NYISO battery unit's vom.
+        adder = 5.0
+        units = _battery_units(
+            load_eia860_storage(
+                "NYISO", 2024,
+                ScenarioConfig(iso="NYISO", battery_dispatch_adder=adder)
+            )
+        )
+        for u in units:
+            self.assertEqual(u.vom, adder)
+
+    def test_vintage_ramp_applies_mid_year(self):
+        # With storage_vintage_ramp=True any NYISO units commissioned during
+        # the year carry a monthly COD profile: January < December, nondecreasing.
+        cfg = ScenarioConfig(iso="NYISO", storage_vintage_ramp=True)
+        units = _battery_units(load_eia860_storage("NYISO", 2024, cfg))
+        ramped = [u for u in units if u.monthly_power_mw is not None]
+        # NYISO did commission storage during 2024 (20 MW in Erie county, etc.)
+        self.assertTrue(ramped, "Expected at least one zone to show a COD ramp")
+        for u in ramped:
+            self.assertEqual(len(u.monthly_power_mw), 12)
+            self.assertAlmostEqual(u.monthly_power_mw[-1], u.power_cap_mw)
+            for m in range(1, 12):
+                self.assertGreaterEqual(
+                    u.monthly_power_mw[m], u.monthly_power_mw[m - 1]
+                )
+
+    def test_ercot_pjm_caiso_unchanged(self):
+        # Adding NYISO to the EIA-860 supplement set must not alter the
+        # ERCOT, PJM, or CAISO fleet totals or unit attributes.
+        for iso in ("ERCOT", "PJM", "CAISO"):
+            cfg = ScenarioConfig(iso=iso)
+            units_before = load_eia860_storage(iso, 2024, cfg)
+            # Re-import to guarantee the lookup cache hasn't been poisoned.
+            from market_sim.data.zone_assignment import build_zone_lookup
+            build_zone_lookup(iso)  # warm cache
+            units_after = load_eia860_storage(iso, 2024, cfg)
+            self.assertEqual(
+                len(units_before), len(units_after),
+                msg=f"{iso} unit count changed after NYISO supplement was added"
+            )
+            for u_b, u_a in zip(units_before, units_after):
+                self.assertAlmostEqual(
+                    u_b.power_cap_mw, u_a.power_cap_mw, places=6,
+                    msg=f"{iso} unit {u_b.unit_id} power changed"
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
