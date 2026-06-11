@@ -201,12 +201,19 @@ is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.p
 
 Additional gap found (not in the original manifest):
 
-- **U8 (proposed): EIA-930 CISO battery columns.** `data/eia_hourly/CISO
-  hourly.parquet` carries demand/interchange/fuel columns (`NG: COL …
-  NG: OTH`) for 2023–2025 but **no battery charge/discharge column**, and
-  CISO does report batteries in EIA-930. P5's cycling benchmark needs the
-  parquet re-extracted with the battery series (or the throughput
-  benchmark taken from the CAISO battery special reports instead).
+- **U8 (proposed): EIA-930 CISO battery columns.** Status 2026-06-11:
+  six-month BALANCE parquets uploaded to `inputs/raw-data/eia-930/` for
+  **2023 and 2025 (2024 both halves still missing)**. Validated: CISO
+  demand reconciles with `data/eia_hourly/CISO hourly.parquet` (2023:
+  218.13 vs 218.14 TWh). Schema finding: CISO never populates the
+  dedicated `Battery Storage` column (15 other BAs do, CISO does not,
+  either vintage) — CISO batteries live inside **`Other Fuel Sources`**,
+  whose hourly swings (−7.4 GW midday charge to +9.4 GW evening
+  discharge in 2025) are unmistakably the BESS fleet plus a small
+  geothermal/biomass baseload. P5's cycling benchmark should therefore
+  use the CISO `Other` series net of an estimated baseload, not a
+  battery column. Minor: 2025 halves carry 24 NaN demand hours each
+  (use the `(Adjusted)` columns); 2023 Jul–Dec has 2.
 
 ## 5. Present and verified (do not re-acquire)
 
