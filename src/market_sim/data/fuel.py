@@ -208,12 +208,62 @@ def prb_passthrough_series_follower(
     )
 
 
+def bit_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray":
+    """Return the bituminous above-must-run fuel passthrough — flat or gas-keyed.
+
+    The PJM coal-fleet analogue of :func:`prb_passthrough_series`. When
+    ``config.coal_bit_passthrough_sigmoid`` is False, returns ``1.0`` (full
+    fuel cost — current behaviour). When True, returns an ``(hours,)``
+    logistic of the monthly delivered gas price ($/MMBtu) rising from
+    ``coal_bit_passthrough_floor`` (cheap gas — bit coal discounts to hold
+    its baseload against cheap gas CC) to ``coal_bit_passthrough_ceil``
+    (dear gas — full cost, or a markup > 1.0 that suppresses over-run),
+    centred at ``coal_bit_passthrough_gas_mid`` with slope
+    ``coal_bit_passthrough_gas_slope`` per $/MMBtu.
+
+    Keying off the monthly gas price tracks the merit-order crossover the
+    same way the PRB sigmoid does: bit coal's competitiveness against gas CC
+    scales with the delivered gas price.
+    """
+    if not getattr(config, "coal_bit_passthrough_sigmoid", False):
+        return 1.0
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_bit_passthrough_floor,
+        config.coal_bit_passthrough_ceil,
+        config.coal_bit_passthrough_gas_mid,
+        config.coal_bit_passthrough_gas_slope,
+    )
+
+
 def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
-    """Return the ``(hours,)`` delivered gas price ($/MMBtu), seasonal if on."""
+    """Return the ``(hours,)`` delivered gas price ($/MMBtu).
+
+    The same series the merit order prices gas at: when
+    ``config.gas_monthly_actuals`` is set (the PJM keeper config), the
+    measured EIA-923 ISO-month delivered cost replaces the annual price ×
+    generic seasonal shape month-by-month (months with no receipts keep the
+    shaped value), so a gas-keyed coal passthrough sigmoid sees the real
+    winter spikes the merit order sees. Otherwise the annual price, shaped
+    by the seasonality factors when ``config.gas_seasonality`` is on.
+    """
     gas = resolve_annual_gas_price(config, year)
     if config.gas_seasonality:
-        return gas * _seasonal_factors(hours)
-    return np.full(hours, gas, dtype=float)
+        series = gas * _seasonal_factors(hours)
+    else:
+        series = np.full(hours, gas, dtype=float)
+    if getattr(config, "gas_monthly_actuals", False):
+        measured = iso_monthly_gas_prices(config, year)
+        if measured is not None:
+            hourly_measured = _expand_monthly_to_hourly(
+                np.asarray(measured, dtype=float), hours
+            )
+            series = np.where(
+                np.isnan(hourly_measured), series, hourly_measured
+            )
+    return series
 
 
 def _sigmoid_passthrough(
@@ -765,15 +815,24 @@ def _fuel_name(fuel_idx: int) -> str:
 
 
 # --- CAMPD coal delivered fuel cost ($/MMBtu), by year and supply type ------
-# Mine-mouth lignite: $1.45 flat across 2023-2025, then escalates at general
-# inflation through the modeling window. PRB-by-rail: measured delivered cost
+# Mine-mouth lignite: $1.05 flat across 2023-2025, then escalates at general
+# inflation through the modeling window. This is the marginal extraction cost
+# of the dedicated mine, not the accounting delivered cost (~$2+/MMBtu): the
+# mine's fixed/capital costs are sunk under the plant's take-or-pay supply
+# arrangement, so the dispatch bid carries only the incremental mining cash
+# cost — the lignite analogue of the PRB price-taking passthrough. Calibrated
+# (Run 80) so the lignite committed/economic tranches clear under the gas-CC
+# stack in cheap-gas years (2024 monthly CC committed ~$15-16/MWh), matching
+# the fleet's observed baseload-must-run behaviour; the prior $1.45 priced
+# lignite's above-must-run capacity out of the 2023/2024 merit order entirely
+# (lignite -12.8%/-23.8% vs EIA-923). PRB-by-rail: measured delivered cost
 # for 2023-2025; from 2026 a forward curve decomposes the 2023-2025 average
 # into commodity (42%), diesel-driven rail freight (12%) and non-diesel rail
 # freight (46%). The commodity component holds flat through 2030 then declines
 # 1.5%/yr as coal demand falls; non-diesel rail escalates at inflation; the
 # diesel-rail component is held at its 2025 level (the model carries no
 # forward diesel price curve). Source: operator/EIA cost data, user calibration.
-_LIGNITE_PRICE_2023_25: float = 1.45
+_LIGNITE_PRICE_2023_25: float = 1.05
 _PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
 _PRB_COMMODITY_SHARE: float = 0.42
 _PRB_RAIL_DIESEL_SHARE: float = 0.12

@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**622 parameters registered** (292 flagged `needs-citation`).
+**627 parameters registered** (296 flagged `needs-citation`).
 
 
 ## Calibration
@@ -273,6 +273,11 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_per_tech_gw.NYISO.gas_cc` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.PJM.gas_cc` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.SPP.gas_cc` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_ceil` | 1.25 | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_floor` | 0.82 | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_gas_mid` | 3.4 | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_gas_slope` | 2.5 | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJ… | 2023 | auto-generated |
 | `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
 | `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
 | `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
