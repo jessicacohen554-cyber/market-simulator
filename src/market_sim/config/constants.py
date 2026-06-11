@@ -456,6 +456,23 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   monthly basis reaching +$3-7 in Jan/Dec) — enable
 #   gas_plant_monthly_fuel_pricing for the monthly shape when winter price
 #   fidelity matters.
+# NEISO: New England gas burn prices off Algonquin Citygate (AGT), the
+#   pipeline-constrained hub whose winter basis blows out to many multiples
+#   of Henry Hub (doc-08 design decision 1). The +1.10 scalar is the
+#   EIA-923 delivered-basis seed for *normal* (non-arctic-event) years:
+#   quantity-weighted delivered gas cost to New England plants (Schedule 5
+#   fuel receipts) minus the Henry Hub annual average was +$1.17 in 2024
+#   (3.37 vs 2.19) and +$1.07 in Apr-Sep 2025 (4.60 vs 3.53); 2023 measured
+#   +$3.17 (5.70 vs 2.54), inflated by the Jan/Feb-2023 arctic events
+#   (Jan-23 delivered $15.17/MMBtu). Source: EIA-923 Schedule 5 receipt
+#   aggregation, same EIA family as the other ISOs. STRONG caveat: only TWO
+#   New England plants report Schedule-5 gas receipts (EIA plant codes 1660,
+#   6081 — partly LNG-supplied), so the sample is far sparser than
+#   PJM/NYISO. NEISO backcasts therefore default to gas_monthly_actuals +
+#   the measured Algonquin hub-month basis overlay
+#   (gas_hub_basis_overlay; inputs/raw-data/gas_basis_by_iso_month.csv),
+#   which makes this scalar a forward-year/fallback value only — like the
+#   CAISO +1.20 seed.
 # These are annual average differentials, held constant across the
 # projection period for simplicity.
 #
@@ -465,6 +482,7 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
     "PJM": 0.67,      # EIA-923 delivered-gas basis (see below)
     "NYISO": 0.55,    # EIA-923 delivered-gas basis (see below)
+    "NEISO": 1.10,    # EIA-923 delivered-gas basis, normal-year (see below)
 }
 
 # --- Monthly Gas Price Seasonality Factors ---
@@ -501,6 +519,14 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   so no unit prices off this in a 2023+ backcast; carried as a defensive
     #   Appalachian-delivered fallback (≈ PJM) for any residual/legacy coal
     #   unit. Source: EIA AEO 2024 delivered coal price.
+    "NEISO": 3.0,  # New England's only coal in the backcast window is
+    #   Merrimack Station (NH, ~440 MW bituminous-by-rail, ~5% CF,
+    #   deactivated Jun-2025). Its delivered cost is confidential (no
+    #   EIA-923 Schedule-5 receipts; EIA state tables suppress NH coal), so
+    #   this is the PJM bituminous blend (2.3) plus a rail-into-New-England
+    #   premium — a Tier-3 placeholder that only prices a near-idle peaking
+    #   coal unit. Refine in NEISO calibration (doc-08 P11/P12) if Merrimack
+    #   dispatch is visibly mis-leveled.
 }
 
 # Annual real escalation rate for coal prices.
@@ -566,13 +592,15 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
     "high": {2026: 0, 2030: 30, 2040: 70, 2050: 110},  # RFF — high carbon price path
 }
 
-# State carbon-program allowance prices ($/tCO2) by ISO and calendar year.
-# Each year is the simple average of the four quarterly CA-Quebec joint
-# auction *current vintage* settlement prices (the auctions clear at one
-# uniform price, and quarterly volumes are near-equal, so the simple mean
-# is the volume-weighted mean to the cent). CAISO backcasts charge this
-# allowance cost on every in-state fossil unit's marginal cost via
+# State carbon-program allowance prices ($/tCO2, metric) by ISO and
+# calendar year. Each year is the simple average of the four quarterly
+# auction clearing prices (both programs clear each auction at one uniform
+# price, and quarterly volumes are near-equal, so the simple mean is the
+# volume-weighted mean to within cents). Backcasts charge this allowance
+# cost on every in-state fossil unit's marginal cost via
 # resolve_carbon_price (default-on; see ScenarioConfig.state_carbon_pricing).
+#
+# CAISO — CA cap-and-trade (CARB), $/metric ton as published.
 # Source: CARB "Summary of Auction Settlement Prices and Results" /
 #   CA-Quebec joint auction summary results reports (ww2.arb.ca.gov),
 #   cross-checked against the WCI auction price history.
@@ -604,9 +632,26 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # scale by 1.1023 if winter price fidelity demands it. Like CAISO, RGGI carries
 # no border carbon adjustment on imports (contrast CARB's unspecified-import EF),
 # so the NYISO import node is unaffected.
+#
+# NEISO — the same RGGI auctions (all six New England states are RGGI
+# members, so the allowance cost applies ISO-wide; doc-08 design decision
+# 3), but stored CONVERTED to the model's $/metric-tonne emission-rate
+# unit at 1 short ton = 0.907185 t (x 1.10231):
+#   2023: $13.49/short ton -> $14.87/t
+#   2024: $20.71/short ton -> $22.83/t
+#   2025: $22.09/short ton -> $24.35/t
+# (Auction-level prices and source as the NYISO block above; press-release
+# URLs rggi.org/sites/default/files/Uploads/Auction-Materials/
+# {59..70}/PR*_Auction{59..70}.pdf, retrieved 2026-06-11.)
+# HARMONIZATION NOTE: NYISO (above) deliberately stores the published
+# short-ton clearing prices (exact citable match, ~10.2% understatement);
+# NEISO stores the metric-converted values (unit-exact MC). The two RGGI
+# entries should be unified one way or the other in a joint NYISO/NEISO
+# calibration pass.
 STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
     "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
     "NYISO": {2023: 13.49, 2024: 20.71, 2025: 22.09},
+    "NEISO": {2023: 14.87, 2024: 22.83, 2025: 24.35},
 }
 
 # CARB default emission factor for unspecified-source imported electricity
