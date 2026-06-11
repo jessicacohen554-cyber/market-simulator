@@ -67,6 +67,7 @@ from market_sim.data.fleet import (  # noqa: E402
 )
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
+    apply_dual_fuel_pricing,
     apply_plant_monthly_fuel_prices,
     prb_passthrough_series,
     prb_passthrough_series_follower,
@@ -87,7 +88,10 @@ from market_sim.model.storage import (  # noqa: E402
     storage_units_to_arrays,
 )
 from market_sim.model.transmission import (  # noqa: E402
+    build_export_sinks,
+    build_import_generators,
     build_incidence_matrix,
+    extend_with_import_node,
     get_ttc_array,
 )
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
@@ -498,6 +502,12 @@ def _calibration_config(
         # delivered gas — CC overran +25 TWh and displaced coal. Re-enable
         # per-plant EIA-923 monthly gas costs for them.
         gas_plant_monthly_fuel_pricing=(iso != "ERCOT"),
+        # Dual-fuel switching (doc 03 Pack G): EIA-860 oil/gas switch-capable
+        # gas units price fuel at min(gas, oil) per hour, so winter delivered-
+        # gas spikes past oil parity no longer price them out of the merit
+        # order. Gated to PJM (winter-fidelity cluster); ERCOT — whose fleet
+        # carries no meaningful dual-fuel behaviour — stays off and unchanged.
+        dual_fuel_switching=(iso.upper() == "PJM"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -649,6 +659,7 @@ def run_year(
     curve_smoothing: dict[str, float | int | None] | None = None,
     cc_derate_from_top: bool = False,
     must_run_mw: "np.ndarray | None" = None,
+    priced_interchange: bool = False,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -668,6 +679,12 @@ def run_year(
         commitment_enabled: When True, run the P2 unit-commitment pass after
             P1 and return the P1 result for comparison.
         commitment_screen_coal: When False, coal is exempt from the P2 screen.
+        priced_interchange: When True, interchange is served by the priced
+            import/export node (import tranches + export sinks in the ISO's
+            external zone, the forward-scenario mechanism) instead of the
+            measured schedule added to demand. Lets a backcast validate the
+            node's calibration against the EIA-930 net-interchange duration
+            curve.
 
     Returns:
         A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
@@ -723,10 +740,20 @@ def run_year(
     if cc_derate_from_top:
         config = config.with_overrides(cc_outage_derate_from_top=True)
     iso_config = get_iso_config(iso)
+    # Priced import/export node: the external zone joins the topology and its
+    # import tranches + export sinks join the fleet below; the measured
+    # interchange schedule then stays out of demand (no double count).
+    import_generators: list = []
+    if priced_interchange:
+        import_generators = (
+            build_import_generators(iso) + build_export_sinks(iso)
+        )
+        iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
 
     demand = load_demand(
-        iso, year, iso_config, td_loss_factor=config.td_loss_factor
+        iso, year, iso_config, td_loss_factor=config.td_loss_factor,
+        include_interchange=not priced_interchange,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
@@ -865,6 +892,18 @@ def run_year(
             sum(g.pmax_mw for g in hydro_units),
             hydro_monthly_energy.sum() / 1e6,
         )
+    if import_generators:
+        fleet = fleet + import_generators
+        fuel_fracs = list(fuel_fracs) + [1.0] * len(import_generators)
+        logger.info(
+            "%s %d: priced import/export node — %d import tranches "
+            "(%.0f MW), %d export sinks (%.0f MW)",
+            iso, year,
+            sum(1 for g in import_generators if g.pmax_mw > 0),
+            sum(g.pmax_mw for g in import_generators),
+            sum(1 for g in import_generators if g.pmin_mw < 0),
+            -sum(g.pmin_mw for g in import_generators),
+        )
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config
     )
@@ -880,6 +919,9 @@ def run_year(
     if config.coal_supply_repricing:
         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
     apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
+    # Dual-fuel switching last, so the oil-parity min sees the final
+    # (per-plant monthly) delivered gas price (PJM only; no-op elsewhere).
+    apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
