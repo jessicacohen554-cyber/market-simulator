@@ -185,6 +185,50 @@ outage windows for it — but it is ~1% of CISO gas capacity. Verdict:
 is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.py
 --iso CAISO` rerun (P1).
 
+### Unit-outage detection coverage (P1, verified 2026-06-11)
+
+`campd-unit-outages-CAISO.csv` (1,386 windows: 655 in 2024, 731 in 2025,
+38 plants) regenerates **byte-identically** from the committed CA_2024/
+CA_2025 extracts via `derive_campd_unit_outages.py --iso CAISO`. Every CA
+CAMPD unit is gas-fired (234 pipeline-NG + 3 NG + 2 other-gas + 1 wood;
+zero coal), so only the **event-based rule** (every-hour CF < 2%, ≥ 120 h)
+fires; the coal real-run rule has no CAISO targets (the fleet's lone
+COAL-group plant, Argus Cogen 10684 / 25 MW, has no CEMS extract). A
+detector replay on the 5 largest plants (Alamitos, Ormond Beach, Moss
+Landing, La Paloma, Mountainview + Delta Energy Center) reproduced the CSV
+windows exactly, and the every-hour rule held inside each window. Known-
+event check: all four Moss Landing CC units go dark **2025-01-16** for ~27
+days — the Vistra battery fire that took the colocated gas plant offline.
+
+Share of CAISO gas capacity (fleet pmax, 28.9 GW) with CEMS unit history:
+
+| Class | Fleet MW | CEMS-covered |
+|---|---|---|
+| CC_REGULAR | 13,708 | 84% |
+| CC_CHP | 2,707 | 51% |
+| ST_GAS | 2,859 | 100% |
+| CT_CHP | 1,962 | 17% (no overlay anyway) |
+| CT_PEAKER | 7,616 | 79% (no overlay by design) |
+| **All gas** | **28,852** | **77%** |
+| **Overlay-eligible (CC + ST_GAS)** | **19,274** | **82%** |
+
+The remaining 18% of overlay-eligible capacity stays on statistical
+availability. Largest gaps: **AES Huntington Beach Energy Project (62116,
+630 MW)** and **AES Alamitos Energy Center (62115, 603 MW)** — their CEMS
+history exists but reports under the *legacy* ORIS codes (335 / 315), so
+their windows currently route to the legacy ST_GAS boiler bins (which were
+near-dead all year regardless) instead of the new CC_REGULAR bins. An
+ORIS→EIA split-plant remap (like ERCOT's `_unit_outage_target`) would
+recover them — follow-up candidate. Then El Segundo Energy Center (57901,
+510 MW CC) and Desert Star (55077, NV — see above).
+
+**2023 is statistical-availability-only** until U1 lands:
+`unit_outage_derate_factors(2023, iso="CAISO")` returns empty, and a
+`outage_source="historic"` CAISO 2023 run now logs a warning to that
+effect (`fleet.generators_to_fleet_arrays`). Record the caveat in the
+bundle's `model_changes_note` when the first CAISO 2023 backcast is
+registered.
+
 ---
 
 ## 4. Upload manifest status (doc-06 U1–U7)
