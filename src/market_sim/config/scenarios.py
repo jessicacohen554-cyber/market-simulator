@@ -585,6 +585,20 @@ class ScenarioConfig:
     # its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).
     pumped_storage_dispatch_adder: float = 10.0
 
+    # Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), the
+    # battery analogue of pumped_storage_dispatch_adder. Two real costs the
+    # energy-only LP otherwise ignores: cycling degradation (cell-replacement
+    # capex amortized per MWh discharged — ~$15-25/MWh for li-ion at current
+    # pack prices, NREL "Utility-Scale Battery Storage" ATB 2024 cycle-life
+    # basis) and the ancillary-service opportunity cost of arbitraging instead
+    # of holding reserve (the dominant ERCOT BESS revenue stream through 2024,
+    # ERCOT ESR reports). With no adder the LP cycles the fleet every day the
+    # spread clears RTE losses (~1.2-1.3 cycles/day) where the observed ERCOT
+    # fleet ran ~0.7-0.8 (EIA-930 BAT discharge vs EIA-860 fleet energy).
+    # Default 0.0 = prior behaviour; calibration backcasts set it (see
+    # docs/calibration-best-so-far.md).
+    battery_dispatch_adder: float = 0.0
+
     # Tier 3 (calibration) — price gas at the ISO's measured EIA-923 monthly
     # volume-weighted delivered cost instead of annual Henry Hub + basis ×
     # the generic seasonality shape. One hub-level price per month (per-plant
@@ -804,6 +818,7 @@ TIER_TAGS: dict[str, int] = {
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,
     "pumped_storage_dispatch_adder": 3,
+    "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
     "outage_source": 3,
     "gas_price_override": 3,

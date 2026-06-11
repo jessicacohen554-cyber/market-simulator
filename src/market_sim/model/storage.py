@@ -55,8 +55,10 @@ class StorageUnit(BaseModel):
     eta_discharge: float = 1.0
     zone_idx: int = 0
     # Dispatch cost per MWh discharged (added to the LP discharge slot).
-    # Zero for batteries; pumped storage carries the calibrated throughput
-    # adder (see ScenarioConfig.pumped_storage_dispatch_adder).
+    # Pumped storage carries the calibrated throughput adder
+    # (ScenarioConfig.pumped_storage_dispatch_adder); grid batteries carry
+    # the battery cycling/throughput adder
+    # (ScenarioConfig.battery_dispatch_adder, default 0).
     vom: float = 0.0
 
 
@@ -228,7 +230,9 @@ def load_eia860_storage(
     Args:
         iso: ISO identifier; zones come from its topology config.
         year: Backcast year; units commissioned after it are excluded.
-        config: Scenario config; supplies the ``storage_rte_4hr`` override.
+        config: Scenario config; supplies the ``storage_rte_4hr`` override
+            and the ``battery_dispatch_adder`` throughput cost carried on
+            each battery unit's ``vom``.
 
     Returns:
         One aggregated ``StorageUnit`` per zone with nonzero storage
@@ -277,6 +281,10 @@ def load_eia860_storage(
         per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
+    # Throughput/cycling cost per MWh discharged (degradation + ancillary-
+    # service opportunity cost) — the battery analogue of the pumped-storage
+    # adder below; see ScenarioConfig.battery_dispatch_adder.
+    adder = float(getattr(config, "battery_dispatch_adder", 0.0))
     units = [
         StorageUnit(
             unit_id=f"{zone}_eia860_storage",
@@ -287,6 +295,7 @@ def load_eia860_storage(
             eta_charge=eta,
             eta_discharge=eta,
             zone_idx=z_idx,
+            vom=adder,
         )
         for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
         if per_zone_power.get(zone, 0.0) > 0.0

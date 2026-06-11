@@ -10,6 +10,7 @@ from market_sim.data.eia_loader import (
     ercot_zonal_load_shares,
     load_demand,
     load_demand_meta,
+    load_ercot_battery_gen,
     load_generation_profiles,
 )
 
@@ -116,6 +117,31 @@ class TestEIALoader(unittest.TestCase):
         self.assertFalse(profiles.empty)
         self.assertTrue((profiles["iso"] == "ERCOT").all())
         self.assertTrue((profiles["year"] == _TEST_YEAR).all())
+
+    def test_ercot_battery_gen_2025_full_year(self):
+        """2025 battery benchmark covers the year with sane magnitudes."""
+        bench = load_ercot_battery_gen(2025)
+        self.assertIsNotNone(bench)
+        dis = bench["battery_discharge"]
+        chg = bench["battery_charge"]
+        self.assertEqual(dis.shape, (HOURS_PER_YEAR,))
+        self.assertEqual(chg.shape, (HOURS_PER_YEAR,))
+        # Non-negative wherever reported; charge exceeds discharge (RTE loss).
+        self.assertTrue(np.nanmin(dis) >= 0.0)
+        self.assertTrue(np.nanmin(chg) >= 0.0)
+        self.assertGreater(np.nansum(chg), np.nansum(dis))
+        # ERCOT 2025 fleet discharged ~5-6 TWh (EIA-930 BAT series).
+        self.assertGreater(np.nansum(dis) / 1e6, 4.0)
+        self.assertLess(np.nansum(dis) / 1e6, 7.0)
+
+    def test_ercot_battery_gen_partial_year_keeps_nan(self):
+        """2024 (reporting starts mid-year) keeps NaN, never gap-fills."""
+        bench = load_ercot_battery_gen(2024)
+        self.assertIsNotNone(bench)
+        dis = bench["battery_discharge"]
+        reported = ~np.isnan(dis)
+        self.assertGreater(reported.sum(), 0)
+        self.assertLess(reported.sum(), HOURS_PER_YEAR)
 
 
 if __name__ == "__main__":
