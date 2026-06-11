@@ -311,10 +311,10 @@ def test_coal_supply_pricing_forward_year_uses_trajectory():
 
 
 def test_lignite_flat_then_escalates():
-    """Lignite is $1.05 flat 2023-2025, then escalates at inflation."""
-    assert COAL_PRICE_LIGNITE_BY_YEAR[2023] == 1.05
-    assert COAL_PRICE_LIGNITE_BY_YEAR[2025] == 1.05
-    assert COAL_PRICE_LIGNITE_BY_YEAR[2026] > 1.05
+    """Lignite is $1.45 flat 2023-2025, then escalates at inflation."""
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2023] == 1.45
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2025] == 1.45
+    assert COAL_PRICE_LIGNITE_BY_YEAR[2026] > 1.45
     assert COAL_PRICE_LIGNITE_BY_YEAR[2050] > COAL_PRICE_LIGNITE_BY_YEAR[2030]
 
 
