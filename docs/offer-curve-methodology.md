@@ -292,6 +292,47 @@ covers **2023 and 2025 only**; it regenerates byte-identically from the
 present extracts and adds 2024 automatically once `NY_2024.parquet` is
 supplied.
 
+> **A note on the unit-outage CSV vs the tranche shares.** The unit-outage
+> windows above (`campd-unit-outages-NYISO.csv`) are 2023 + 2025 only,
+> because they read the *unit-level* CEMS extracts and no unit-level 2024
+> file exists. The committed / peaking *tranche* shares in
+> `thermal_tranches_NYISO.csv` are derived over **2023 + 2024 + 2025**: that
+> derivation reads the *facility-level* hourly net (`load_campd_hourly`),
+> and the facility-level `NY_2024.parquet` *is* present, so the extra year of
+> dispatch history sharpens each plant's measured minimum-stable-load and
+> duct-firing reach even though 2024 outage windows are still missing.
+
+### NYISO inflexible layer (no coal must-run)
+
+NYISO's CEMS data has **zero coal rows**, so the offer curve carries **no
+coal must-run tranche** — the sunk-fuel baseload floor that pins ERCOT/PJM
+coal simply has no NYISO target (`mustrun_pct` is `0.0` for every NYISO
+plant-group). The genuinely inflexible NYISO generation is instead:
+
+- **CHP behind-the-meter steam hosts** — removed from LP capacity and
+  reconstructed in post-processing (§1; sized from the P3 CHP floors in
+  `thermal_tranches_NYISO.csv`).
+- **Nuclear** (FitzPatrick, Nine Mile 1 & 2, Ginna ≈ 3.3 GW upstate) on its
+  monthly-CF baseload model; Indian Point is retired (Units 2/3, 2020/2021)
+  and absent from the 2023+ fleet.
+- **Hydro min-flows** — the Niagara / St-Lawrence treaty-mandated minimum
+  flows (`nyiso_hydro_treaty_min_flow`).
+- **Reliability-must-run (RMR) units.** NYISO designated the four NYC peaking
+  barges — **Gowanus 2 & 3 (EIA 2494) and Narrows 1 & 2 (EIA 2499)**, ≈ 565
+  MW nameplate / 508 MW reliability capability — as RMR to keep them online
+  past their planned 1 May 2025 deactivation, addressing the NYC reliability
+  deficiency in NYISO's Q2-2025 Short-Term Assessment of Reliability.[^nyiso-rmr]
+  That designation begins **after** the 2023 + 2025 backcast window, so the
+  model treats both barges as ordinary economic `CT_PEAKER` units (each a
+  measured single-digit committed floor, no must-run pin) rather than forcing
+  them on — the correct historical behaviour for the backcast years.
+
+[^nyiso-rmr]: NYISO, "PRESS RELEASE | NYISO Identifies Solution to Solve New
+York City Reliability Need" and "Future New York City Electric Grid
+Reliability Deficiency Explained," nyiso.com (2024); reported in Utility Dive,
+"NYISO to keep 4 NYC peakers running past planned 2025 retirement to maintain
+reliability" (2024).
+
 ---
 
 ### Source references
