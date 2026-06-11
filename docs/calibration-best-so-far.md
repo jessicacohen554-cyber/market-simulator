@@ -1,7 +1,12 @@
 # ERCOT calibration — best config so far
 
 Keeper: **e2 4 / dashboard `run79 storage retune`** (2026-06-11, bundle
-`results/calibration/e2_4_retune`, highspy 1.14.0). Reproduce with:
+`results/calibration/e2_4_retune`, highspy 1.14.0), **revalidated unchanged
+as `run80 coal tuning`** (bundle `results/calibration/run80a_code_baseline`
+— the identical config re-solved on post-E3 main reproduces every
+class-year; the run-80 lignite price sweep and PRB sigmoid probes were
+net-negative and reverted, see the Run 80 calibration-log entry).
+Reproduce with:
 
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \

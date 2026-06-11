@@ -494,3 +494,68 @@ committed −0.094.
 gas-price-keyed, → E1 measured monthly gas); CT_CHP 2025 +28% is the known
 incomplete 2025 CHP benchmark, not a model change; storage intra-year fleet
 ramp (finding 2) if the 2024 window becomes a target.
+
+---
+
+## ERCOT Run 80 — coal tuning: lignite price sweep + PRB sigmoid probes (2026-06-11)
+
+**Scope:** the run-79 lignite deficit (−12.8% / −23.8% / +0.7% vs EIA-923,
+2023/24/25) and PRB 2024 (−9.9%). Five bundles: `run80a_code_baseline`,
+`run80b_lignite_105`, `run80c_lignite_115`, `run80d_prb_floor_068`,
+`run80e_prb_shaped`. PRB sigmoid held at run-79 defaults in 80a–80c;
+lignite held at the measured $1.45 in 80a/80d/80e.
+
+**Run 80a — rebaseline (keeper).** The exact run-79 config re-run on
+current main reproduces run 79's class table to the reported precision in
+every class-year: the post-run-79 merges (E3 HSL loader unification,
+curtailment report unification, CAISO/PJM-gated loader work) do not move
+ERCOT P1 dispatch, and the solve reproduces under highspy 1.14.0 (the
+run-77 caveat does not bite here). Registered on the dashboard as
+`run80 coal tuning` — config unchanged from run 79.
+
+**Lignite price sweep (80b/80c) — reverted.** Mine-mouth lignite repriced
+$1.45 → $1.05/$1.15 (marginal-extraction-cost framing; mine fixed costs
+sunk under take-or-pay):
+
+| lignite vs EIA-923 | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| $1.45 (run79/80a) | −12.8% | −23.8% | +0.7% |
+| $1.15 (80c) | +1.9% | −10.6% | +2.2% |
+| $1.05 (80b) | +6.2% | −5.0% | +2.2% |
+
+No single price fits both cheap-gas years (the 2023↔2024 trade is
+year-keyed), and the cheap-lignite probes bleed PRB (2024 −9.9 →
+−11.3/−11.8) and CT_PEAKER share. Decision: keep lignite at the measured
+$1.45 — it is grounded in operator/EIA cost data. (Hourly coal NRMSE did
+improve under the reprice — 2024 0.229 → 0.202 — recorded for any future
+revisit.)
+
+**PRB sigmoid probes (80d/80e) — negative result, parameters stay.**
+80d cut the cheap-gas floors one step (baseload 0.78 → 0.68, follower
+0.68 → 0.58): the gradient is strong (~+4.4 TWh PRB per −0.10 floor in
+each cheap-gas year) and 2024/2025 land at +0.1%/0.0%, but 2023 overshoots
+−0.8 → +9.0% and the gain displaces CT_PEAKER (2024 −12.8 → −19.4) and
+ST_GAS (−2.7 → −8.3) rather than only CC_REGULAR's over-run — net all-class
+error worsens in 2023 and 2024. 80e reshaped the logistic
+(floor 0.68 / ceil 1.42 / mid 2.65 / slope 3.6, via the new
+`--prb-gas-mid`/`--prb-gas-slope` flags) to hold 2023/2025 at run-79
+passthrough while keeping 80d's 2024 discount; it failed (PRB 2023 +10.8%)
+for a structural reason: **2023's cheap months (gas $2.29–2.45) overlap
+2024's range, so no gas-keyed curve can discount 2024 without discounting
+a third of 2023.** Annual-average anchors do not hold in monthly space.
+
+**Finding — the PRB residual is two plants, not the curve.** Per-plant
+(model − CAMPD, GWh): W A Parish −2064/−3858/−2456 and J K Spruce
+−1289/−1728/−1253 under-run in *all* years including dear-gas 2025, masked
+at class level by Martin Lake / Sandy Creek / Limestone overshoots. The 80d
+floor cut reached the wrong plants (Martin Lake +209 → +1705 in 2023) and
+left Parish at −2847 in 2024. Parish (15% MR) and Spruce (12% MR) carry the
+lowest must-run floors in `COAL_MUSTRUN_BY_PLANT`; Parish is additionally
+the mixed gas/coal facility where coal outages are CAMPD-undetectable.
+
+**Open items:** per-plant Parish/Spruce correction (must-run floors or a
+`--plant-tranche-config` sheet row) is the right next coal lever — the
+fleet-wide sigmoid is the wrong altitude; lignite 2023/24 and the
+remaining 2024 coal deficit stay with E1 (measured monthly gas,
+`--gas-monthly-actuals` is now wired); CT_CHP 2025 +28% unchanged
+(incomplete 2025 CHP benchmark).
