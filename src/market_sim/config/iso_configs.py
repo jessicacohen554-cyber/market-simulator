@@ -187,17 +187,25 @@ def _caiso_config() -> ISOConfig:
     the Path 15 / Path 26 interties that bound the state's recurring
     north–south congestion.
 
-    Load shares apportion CAISO TAC-area demand (PG&E / SCE / SDG&E) onto the
-    three hubs: NP15 ≈ PG&E north of Path 15; ZP26 ≈ the PG&E central San
-    Joaquin Valley between Path 15 and Path 26; SP15 ≈ SCE + SDG&E south of
-    Path 26. Source: CAISO demand by TAC area (CAISO OASIS / Annual Report on
-    Market Issues & Performance). Tier 3 (calibration) — verify against
-    metered TAC-area load.
+    Load shares apportion CAISO TAC-area demand onto the three hubs: NP15 ≈
+    PG&E north of Path 15; ZP26 ≈ the PG&E central San Joaquin Valley between
+    Path 15 and Path 26; SP15 ≈ SCE + SDG&E (+ the tiny VEA TAC) south of
+    Path 26. Measured from CAISO OASIS ``SLD_FCST`` ACTUAL TAC-area hourly
+    load (upload U4, Jan-2023 sample; ``scripts/derive_load_shares.py
+    caiso``): PGE-TAC 46.1%, SCE-TAC 44.3%, SDGE-TAC 9.2%, VEA-TAC 0.4% of
+    component-TAC load. PGE-TAC straddles Path 15 and is split 0.86/0.14
+    between NP15 and ZP26, preserving the prior 0.43:0.07 ratio (no TAC
+    boundary exists at Path 15 to measure it; Tier 3 — calibration). Tier 2
+    (derived): the sample is one winter month — summer AC load shifts share
+    south, so SP15 is likely understated — refresh when the full 2023–25 U4
+    pulls land. Hourly *shapes* come from the same file via
+    ``eia_loader.caiso_zonal_load_shares``; these static shares are its
+    fallback.
     """
     zones = [
-        Zone(name="NP15", iso="CAISO", load_share=0.43),
-        Zone(name="ZP26", iso="CAISO", load_share=0.07),
-        Zone(name="SP15", iso="CAISO", load_share=0.50),
+        Zone(name="NP15", iso="CAISO", load_share=0.3969),
+        Zone(name="ZP26", iso="CAISO", load_share=0.0646),
+        Zone(name="SP15", iso="CAISO", load_share=0.5385),
         # WECC_import is an import node, not a load zone, so it carries no load.
         Zone(name="WECC_import", iso="CAISO", load_share=0.0),
     ]

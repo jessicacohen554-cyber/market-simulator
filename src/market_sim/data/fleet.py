@@ -638,6 +638,13 @@ def generators_to_fleet_arrays(
     )
     if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any:
         min_gen = np.zeros((n_gen, hours), dtype=float)
+        # min_gen replaces pmin as the LP lower bound for EVERY generator
+        # (build_variable_bounds), so export sinks (pmin < 0, absorption
+        # modeled as negative generation) must keep their range — a zero
+        # floor would pin them off whenever any CHP/ST_GAS floor is active.
+        neg_pmin = pmin < 0.0
+        if neg_pmin.any():
+            min_gen[neg_pmin, :] = pmin[neg_pmin, np.newaxis]
         if st_mr_frac > 0.0 or st_off_frac > 0.0:
             summer_mask = np.isin(_hour_to_month_index(hours) + 1,
                                   list(_GAS_ST_SUMMER_MONTHS))
@@ -2916,6 +2923,34 @@ def thermal_tranche_overrides(
     return out
 
 
+@lru_cache(maxsize=8)
+def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
+
+    The CAMPD-derived duct-firing / scarcity share from
+    ``inputs/processed/thermal_tranches_<ISO>.csv`` (``peaking_pct``, written
+    by ``scripts/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
+    share of the plant's demonstrated sustained maximum it clears in fewer
+    than 5% of its online hours. Empty when the ISO has no artifact or it
+    predates the column. Applied per plant in :func:`bins_to_fleet` under
+    ``config.cc_peaking_per_plant`` — the per-ISO measured analogue of the
+    hand-set ERCOT :data:`CC_REGULAR_PEAKING_PCT_BY_PLANT` — superseding the
+    offer curve's class-wide ``pct_peaking``.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "peaking_pct" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok" or pd.isna(r.peaking_pct):
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = float(r.peaking_pct)
+    return out
+
+
 def fleet_to_bins(
     generators: list[Generator], iso: str, config: ScenarioConfig
 ) -> pd.DataFrame:
@@ -2937,6 +2972,7 @@ def fleet_to_bins(
     the fleet has no thermal plants.
     """
     overrides = thermal_tranche_overrides(iso)
+    peaking = thermal_tranche_peaking(iso)
     # Aggregate the per-generator fleet to one row per (plant, group): capacity
     # sums, heat rate is capacity-weighted.
     agg: dict[tuple[int, str], dict] = {}
@@ -2965,7 +3001,7 @@ def fleet_to_bins(
         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
         pct_mc = committed
         pct_mr = mustrun if group == "COAL" else d_mr
-        pct_peak = d_peak
+        pct_peak = peaking.get((code, group), d_peak)
         # Keep the split feasible: clip committed + peaking to leave room for an
         # economic band above the must-run floor.
         room = max(0.0, 100.0 - pct_mr)
@@ -3374,6 +3410,17 @@ def bins_to_fleet(
         pct_peak = float(b["pct_peak"])
         if offer is not None and "pct_peaking" in offer:
             pct_peak = float(offer["pct_peaking"])
+        if group in ("CC_REGULAR", "CC_CHP") and getattr(
+                config, "cc_peaking_per_plant", False):
+            # Per-plant CAMPD-derived duct-firing share from the ISO's
+            # thermal-tranche artifact (thermal_tranche_peaking), superseding
+            # the offer curve's class-wide pct_peaking; the hand-set ERCOT
+            # map below stays the final word for its four plants.
+            _pk = thermal_tranche_peaking(
+                (getattr(config, "iso", "ERCOT") or "ERCOT")
+            ).get((plant_code, group))
+            if _pk is not None:
+                pct_peak = _pk
         if (group == "CC_REGULAR"
                 and getattr(config, "cc_peaking_per_plant", False)
                 and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
@@ -3383,6 +3430,15 @@ def bins_to_fleet(
         denom = 100.0 - pct_mr
         committed_cap = grid_cap * pct_mc / denom if denom > 0.0 else 0.0
         peak_cap = grid_cap * pct_peak / denom if denom > 0.0 else 0.0
+        # The steam-following BTM substitution above can leave committed +
+        # peaking exceeding the grid share (a cogen whose measured committed
+        # floor is ~70% of nameplate against a 35% BTM pull-out, e.g. Elk
+        # Hills / Marcus Hook); clamp into grid_cap — committed keeps its
+        # measured level, the scarcity peak gives way — so the LP never
+        # carries more capacity than the grid-facing share.
+        if committed_cap + peak_cap > grid_cap:
+            committed_cap = min(committed_cap, grid_cap)
+            peak_cap = max(0.0, min(peak_cap, grid_cap - committed_cap))
         econ_cap = max(grid_cap - committed_cap - peak_cap, 0.0)
 
         zone = str(b["ERCOT_Zone"])

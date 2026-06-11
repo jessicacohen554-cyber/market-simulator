@@ -1,5 +1,115 @@
 # Changelog
 
+## 2026-06-11 (CAISO P6 — uncurtailed renewable potential, the HSL analogue)
+
+CAISO backcasts now feed the dispatch *uncurtailed* wind/solar potential so
+it re-curtails endogenously (playbook §8.3), instead of inheriting the
+historical curtailment baked into EIA-930 delivered output. ERCOT's NP6 HSL
+path is byte-for-byte unchanged (regression-tested).
+
+- **`scripts/build_caiso_hsl.py`** builds
+  `inputs/raw-data/caiso-hsl/caiso_<year>_hsl_hourly.parquet` (same schema
+  as `ercot-hsl/`): uncurtailed = EIA-930 `CISO hourly` delivered +
+  CAISO's reported 5-minute wind/solar curtailment
+  (`inputs/raw-data/caiso-curtailment/`, upload U3), mapped onto the
+  model's non-leap 8760 clock. 2023 and 2024 are built and committed
+  (curtailment 2.66 / 3.40 TWh — matches CAISO's published totals;
+  solar ~6.3 / 6.6% of potential, spring-peaked). 2025's workbook ends in
+  May, so the year is **skipped with a data-needed marker** rather than
+  fabricating zero curtailment for Jun–Dec; CAISO 2025 keeps the
+  delivered-profile fallback.
+- **`renewables.py`**: the HSL file lookup is generalized (`_hsl_file`);
+  `load_renewable_profiles` now resolves CAISO backcast years to the
+  uncurtailed parquet, zone-shaped by EIA-860 capacity exactly like the
+  delivered path. New `load_hsl_hourly(iso, year)` exposes the GEN/HSL
+  frame to the report and tests.
+- **Calibration report**: new headline table `[1b] Renewable curtailment`
+  in the generic (non-ERCOT) report — modeled re-curtailment
+  (potential − dispatched) vs ISO-reported (HSL − delivered), annual TWh
+  per fuel plus the monthly GWh shape. Prints only for HSL-backed
+  ISO-years.
+- **Tests**: CAISO backcast profile reconstructs the zero-floored HSL and
+  sits ≥ delivered every hour; every committed CAISO HSL parquet has
+  HSL ≥ delivered hourly with multi-TWh solar curtailment; ERCOT 2023
+  still reconstructs the rescaled NP6 targets (110 / 32 TWh).
+
+## 2026-06-11 (CAISO backcast — demand series and zonal disaggregation)
+
+CAISO prompt-pack P8 (doc 06 §P8): system demand and zonal load split.
+
+- **System demand from the EIA-930 `CISO hourly` extract.** `load_demand`
+  gains a CAISO branch (`_load_caiso_hourly_demand`) reading
+  `data/eia_hourly/CISO hourly.parquet`, so demand shares the
+  chronological clock of the wind/solar/benchmark series read off the
+  same rows (ERCOT precedent: the demand-profiles parquet is hour-shifted,
+  which would desynchronize the duck curve). Generation-side convention,
+  `td_loss_factor = 0.0`; **no interchange netting** — CAISO imports are
+  supply via the `WECC_import` node, netting them into demand would
+  double count. Net-load convention documented (playbook §8.1, data
+  dictionary): the series is net of ~15+ GW BTM PV; backcasts model
+  front-of-meter resources only.
+- **Measured zonal load split from TAC-area load (upload U4, partial).**
+  `eia_loader.caiso_zonal_load_shares` maps OASIS `SLD_FCST` ACTUAL
+  TAC-area hourly load onto the trading hubs (PGE-TAC split 0.86/0.14
+  onto NP15/ZP26 — no TAC boundary at Path 15, ratio preserved from the
+  prior split, Tier 3; SCE+SDGE+VEA→SP15) and serves measured hourly
+  zonal shapes for covered hours; uncovered hours carry the
+  sample-average shares. Only 2023-01 has landed, so the static
+  `load_share` fallback is now *measured* from that sample via the
+  generalized `scripts/derive_load_shares.py caiso`:
+  NP15/ZP26/SP15 = 0.43/0.07/0.50 → 0.3969/0.0646/0.5385 (Tier 2,
+  winter-month sample — summer shifts share south). Refresh path:
+  complete the U4 monthly pulls; shapes upgrade automatically.
+- Tests: CAISO hourly shares sum to 1.0 each hour, measured window moves
+  while the fallback stays static, missing-file year falls back, and
+  zonal demand reconciles to the CISO system series within rounding.
+## 2026-06-11 (PJM J1 — generalized priced import/export node)
+
+Closes backlog item J1 (doc 06 §6). The +40 TWh PJM net-export structural
+gap itself was already served by the measured tie-line schedule (2026-06-05,
+Module M4) — the pjm-6 baseline carries it (2023 demand 823 TWh = 783
+internal + 40 export) and gas dispatch already rose accordingly. What was
+missing is the **price-responsive** node: forward PJM scenarios fell back to
+*zero* interchange, and the CAISO WECC machinery was not reusable. ERCOT is
+untouched (no import node; full suite green minus the known-stale
+`test_coal_supply_pricing_uses_year_trajectory`, doc 06 E1).
+
+- **Generalized machinery** (`model/transmission.py`): per-ISO
+  `IMPORT_TRANCHES` / `EXPORT_TRANCHES` / `IMPORT_ZONE` / `IMPORT_NODE_LINKS`
+  / `IMPORT_EFORD` constants drive `build_import_generators(iso)`,
+  `build_export_sinks(iso)` (priced negative-generation blocks — a sink's
+  $/MWh rides in `vom`, so absorbing exports credits the neighbors'
+  willingness-to-pay) and `extend_with_import_node(iso_config)`. CAISO's
+  WECC entries moved into the dicts unchanged (`build_wecc_*` remain as
+  wrappers); NYISO/NEISO only need constants entries.
+- **PJM node, calibrated to the 2023 net-interchange duration curve.**
+  `PJM_external` zone + 5 border links (TTCs bounding the measured per-zone
+  tie flows) joined on demand. Two scarcity import tranches (4 GW @ $46/$60)
+  + six export sinks (9.8 GW @ $18–42), fitted by the new
+  `scripts/derive_import_tranches.py`: measured net export is hourly
+  price-orthogonal (corr −0.06), so the fit pairs the pjm_6 price duration
+  curve with the measured interchange duration curve quantile-by-quantile.
+  Static fit: 2023 annual 100% of actual, duration RMSE ~570 MW, diurnal
+  corr 0.49; the same curve over-exports 2024 by ~+37% (load growth cut
+  exports at an unchanged price level) — Tier 3, re-fit per vintage.
+- **No double counting.** `load_demand` gained `include_interchange`; the
+  runner and `--priced-interchange` calibration runs disable the measured
+  schedule when the node serves interchange. Backcasts keep the measured
+  schedule (data-first; exact); `run_calibration_full.py --priced-interchange`
+  validates the node's calibration and the report's [2] section now prints
+  the node's net position, duration-curve RMSE and import-hour share.
+- **Forward runs**: `runner.run_scenario_iso` builds the node for any ISO
+  with constants entries — PJM forecasts now carry price-responsive
+  interchange (previously zero), and CAISO forward runs gain the export
+  sink that `build_wecc_export_sink` documented but never wired in.
+- **Bug fix:** `generators_to_fleet_arrays` pinned export sinks to a zero
+  floor whenever any CHP/ST_GAS `min_gen` floor was active (the min_gen
+  matrix replaces `pmin` as the LP lower bound for *every* generator, and
+  PJM fleets always carry CHP floors). Sinks now keep their negative range.
+- **Runs:** `results/calibration/pjm_j1_baseline` (pjm-6 config re-run,
+  measured schedule — regression check) and
+  `results/calibration/pjm_j1_priced` (same config through the priced node —
+  calibration validation).
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
@@ -59,6 +169,88 @@ existing forecasts are byte-identical.
 - **Tests.** `test_fuel.py`: switch above parity / no switch below / off
   by default (ERCOT unchanged) / per-hour cap granularity. `test_fleet.py`:
   real-parquet capability extract and missing-parquet fallback.
+## 2026-06-11 (CAISO hydro energy budgets + pumped storage — multi-iso P4)
+
+Verifies the CAISO hydro/PS data through the generic PJM-built machinery
+and makes the pumped-storage dispatch adder a per-ISO default. Full detail
+in `docs/calibration-log.md` (2026-06-11 CAISO entry). **Cache keys
+rotate**: `ScenarioConfig.pumped_storage_dispatch_adder` default changed
+`10.0 → None`.
+
+- **CAISO hydro budgets verified** (no loader changes needed): EIA-923
+  CISO `HY` monthlies give 166 plants / 23.90 TWh (2023, extreme wet) and
+  160 / 21.48 TWh (2024), within −2.0% / −5.6% of EIA-930 CISO hydro; all
+  plants resolve to NP15/ZP26/SP15. Regression anchors added to
+  `tests/test_hydro.py` (incl. an end-to-end solve pinning monthly
+  dispatch ≤ budget on real CAISO budgets, and PJM/ERCOT-unchanged
+  checks).
+- **`load_hydro_budget(..., backfill_year=)`** (default off): the 2025
+  EIA-923 early release covers only monthly-survey reporters (CAISO: 26 of
+  ~185 plants, 12.3 of ~21.4 TWh); backfilling non-reporters from 2024
+  recovers 20.39 TWh (−4.5% vs EIA-930). For the CAISO 2025 backcast.
+- **Per-ISO PS dispatch adder** (`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`):
+  PJM keeps its calibrated $10/MWh reserve-duty proxy; CAISO (2,078 MW
+  EIA-860 PS fleet, Helms 1,053 MW, all NP15; 10 h / RTE 0.80 fleet
+  params) resolves to $0 until its calibration says otherwise. The
+  `ScenarioConfig` field is now `None` = per-ISO; a number overrides all.
+- **`HydroBudget.monthly_min_energy` clips to the monthly budget** so a
+  nameplate-fraction min-flow floor can't make a low-inflow month
+  infeasible. Small-vs-large hydro split judged not warranted (≤30 MW =
+  14% of CAISO capacity, ~13% of energy; see calibration log).
+- Parameter registry regenerated; `validate_parameters.py` passes again
+  (the new constants plus three previously missing scenario fields are
+  registered).
+## 2026-06-11 (CAISO pack P2 — per-plant offer-curve tranches & bin assignments)
+
+CAISO backcast, 2024-first. ERCOT/PJM committed artifacts are untouched
+(byte-identical); one runtime fix below also applies to PJM.
+
+- **CEMS→EIA split-plant remap** (`campd.CAMPD_UNIT_PLANT_REMAP`): the AES
+  Alamitos / Huntington Beach CCGTs (EIA 62115/62116) report CEMS under the
+  legacy boiler ORIS codes (315/335). Their units (CT1/CT2) are re-keyed
+  wherever unit identity is known, and facility-level loads substitute the
+  companion unit-level rows for the split facilities (gross conserved).
+  ~5.0 TWh/yr of CC history now attaches to the right fleet rows.
+- **ST_GAS peaker exclusions**: AES Alamitos (315), AES Huntington Beach
+  (335) and Ormond Beach (350) — the last once-through-cooling steamers,
+  online 0.4–2.5% of CAMPD 2024–25 hours — join
+  `outages.ST_GAS_PEAKER_PLANTS`: no outage overlay, no reliability floor,
+  purely economic dispatch. `campd-unit-outages-CAISO.csv` regenerated:
+  1,386 → 1,321 windows (126 economic-idleness rows dropped, 61 measured
+  CC windows added for 62115/62116; all other rows byte-identical).
+- **`thermal_tranches_CAISO.csv` re-derived from 2024–25** (2023 deferred
+  with U1) with the remap in place: 83 measured plant-groups. Huntington's
+  ST_GAS committed drops 68.2 → 8.9% (was polluted by the colocated CC);
+  62115/62116 get measured committed 28.2/29.8%. CHP steam floors are
+  **consumed, not re-derived** (`--chp-floors-from`): all 86 P3 floors
+  byte-preserved.
+- **Per-plant CC peaking (duct-firing) shares**: new `peaking_pct` column —
+  the share of a CC's demonstrated sustained maximum (P99.5 of online net
+  MW) cleared in <5% of online hours, capped at 25 — consumed by
+  `fleet.thermal_tranche_peaking` under `cc_peaking_per_plant`, superseding
+  the offer curve's class `pct_peaking`. CAISO CCs derive 0–6% (they cycle
+  on the solar ramp; duct-fire headroom is thin) with Malburg at the 25 cap.
+- **Bin assignments emitted**: `inputs/processed/bin_assignments_CAISO.csv`
+  (`scripts/export_iso_bin_assignments.py`), 258 rows
+  (Plant_Code, Plant_Group, Pct_Must_Run/Committed/Economic/Peaking, source
+  tags). Measured committed covers 92.5% of CC_REGULAR, 100% of ST_GAS,
+  78.6% of CT_PEAKER MW. Mixed facilities split per Plant_Group (Glenarm
+  422 CC+CT flagged; no cross-fuel re-key needed).
+- **CHP grid-share clamp in `bins_to_fleet`** (fix, affects PJM too): under
+  `chp_steam_following`, a cogen whose measured committed floor exceeds the
+  grid share net of the BTM pull-out (Elk Hills, Salinas River; PJM Marcus
+  Hook, Grays Ferry) carried more LP capacity than its grid-facing share
+  (up to +13%). Committed + peaking now clamp into `grid_cap` (committed
+  keeps its measured level; the scarcity peak gives way).
+- **Geothermal verification** (audit §2c): the biomass/OTHER must-run
+  injection carries CISO geothermal at 8.05/7.81 TWh (2023/24) in a
+  monthly-shaped 835–969 MW baseload band — not a flat annual average. The
+  dedicated EIA-930 GEO column is only populated from mid-Dec 2025 (CISO
+  folds geothermal into the 930 NG aggregate before that); where populated
+  it reads 740 MW flat (CV 4.4%) vs the injection's 746 MW — within 1%.
+- Tests: `tests/test_caiso_bins.py` (remap routing, artifact bounds, bin
+  shares sum to 100, CHP BTM removed from LP capacity, per-plant peaking
+  survives the offer-curve override).
 
 ## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
 
