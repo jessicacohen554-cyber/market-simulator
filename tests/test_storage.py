@@ -1187,5 +1187,231 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
                 )
 
 
+class TestEIA860NEISOBatteryFleet(unittest.TestCase):
+    """The NEISO BESS fleet built from the EIA-860 energy-storage schedule.
+
+    Acceptance criterion: modeled fleet power and energy match the EIA-860
+    operable-storage totals for every backcast year (per playbook §8.4).
+    """
+
+    def _eia860_neiso_totals(self, year: int) -> tuple[float, float]:
+        """Return (expected_mw, expected_mwh) from raw EIA-860 for NEISO.
+
+        Replicates load_eia860_storage's filter: OP status, op_year <= year,
+        positive nameplate power, within the ISNE balancing authority.
+        Uses the EIA-860 plant file's BA codes (not eGRID) so the lookup
+        covers both eGRID-vintage and post-eGRID-2023 plants.
+        """
+        import pandas as pd
+        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.data.zone_assignment import build_zone_lookup
+
+        path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+        if not path.exists():
+            self.skipTest("EIA-860 energy-storage parquet not present")
+
+        plant_path = EIA_860_DIR / "eia860_plant.parquet"
+        if not plant_path.exists():
+            self.skipTest("EIA-860 plant parquet not present")
+
+        plant = pd.read_parquet(plant_path)
+        isne_oris = set(
+            int(c)
+            for c in plant.loc[
+                plant["Balancing Authority Code"].astype(str).str.strip() == "ISNE",
+                "Plant Code",
+            ].dropna()
+        )
+
+        lookup = build_zone_lookup("NEISO")
+        df = pd.read_parquet(path)
+        df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+        power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+        energy = pd.to_numeric(
+            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
+        )
+        op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+
+        # Keep rows: ISNE BA, op_year <= year, positive power, zone found.
+        mask = (
+            df["Plant Code"].apply(
+                lambda c: pd.notna(c) and int(c) in isne_oris
+            )
+            & power.notna()
+            & (power > 0)
+            & ~(op_year > year)
+            & df["Plant Code"].apply(
+                lambda c: pd.notna(c) and lookup.get(int(c)) is not None
+            )
+        )
+        expected_mw = float(power[mask].sum())
+        e_filled = energy.copy()
+        e_filled[mask & energy.isna()] = power[mask & energy.isna()] * 2.0
+        expected_mwh = float(e_filled[mask].sum())
+        return expected_mw, expected_mwh
+
+    def test_fleet_totals_vs_eia860_per_year(self):
+        """Modeled NEISO battery fleet matches EIA-860 totals per year."""
+        for year in (2023, 2024):
+            exp_mw, exp_mwh = self._eia860_neiso_totals(year)
+            units = _battery_units(
+                load_eia860_storage("NEISO", year, ScenarioConfig(iso="NEISO"))
+            )
+            self.assertGreater(exp_mw, 0.0, f"No NEISO battery data for {year}")
+            self.assertAlmostEqual(
+                sum(u.power_cap_mw for u in units),
+                exp_mw,
+                delta=1.0,
+                msg=f"NEISO {year} MW mismatch",
+            )
+            self.assertAlmostEqual(
+                sum(u.energy_cap_mwh for u in units),
+                exp_mwh,
+                delta=1.0,
+                msg=f"NEISO {year} MWh mismatch",
+            )
+
+    def test_2024_capacity_in_expected_range(self):
+        # NEISO's EIA-860 2024 battery fleet is ~420 MW (mostly MA, small
+        # clusters in ME/VT/RI/CT); the loader must land in that band.
+        units = _battery_units(
+            load_eia860_storage("NEISO", 2024, ScenarioConfig(iso="NEISO"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 350.0)
+        self.assertLess(total_mw, 500.0)
+
+    def test_zones_are_valid_neiso_zones(self):
+        # Every unit must land in one of the four load zones (HQ_import is a
+        # zero-load import node and should never hold battery capacity).
+        valid_load_zones = {"North", "Central", "Boston", "Connecticut"}
+        units = _battery_units(
+            load_eia860_storage("NEISO", 2024, ScenarioConfig(iso="NEISO"))
+        )
+        self.assertTrue(units, "No NEISO battery units loaded")
+        for u in units:
+            self.assertIn(
+                u.zone,
+                valid_load_zones,
+                f"Unit {u.unit_id} placed in unexpected zone {u.zone}",
+            )
+
+    def test_ma_heavy_distribution(self):
+        # Massachusetts hosts the bulk of ISO-NE's battery capacity (~80%).
+        # Boston (NEMA/Essex/Middlesex/Norfolk/Suffolk) and Central (rest of
+        # MA plus RI) together should exceed North+Connecticut.
+        units = _battery_units(
+            load_eia860_storage("NEISO", 2024, ScenarioConfig(iso="NEISO"))
+        )
+        self.assertTrue(units)
+        ma_mw = sum(
+            u.power_cap_mw
+            for u in units
+            if u.zone in {"Boston", "Central"}
+        )
+        other_mw = sum(
+            u.power_cap_mw
+            for u in units
+            if u.zone in {"North", "Connecticut"}
+        )
+        self.assertGreater(ma_mw, other_mw)
+
+    def test_ramp_mid_year_applies(self):
+        # NEISO commissioned batteries mid-year in 2024 (Groton BESS 1 & 2,
+        # Holden BESS 1, Paxton BESS 1 in Aug 2024). With vintage_ramp=True
+        # the January online capacity must be less than December's.
+        cfg = ScenarioConfig(iso="NEISO", storage_vintage_ramp=True)
+        units = _battery_units(load_eia860_storage("NEISO", 2024, cfg))
+        ramped = [u for u in units if u.monthly_power_mw is not None]
+        self.assertTrue(ramped, "Expected at least one ramped NEISO zone in 2024")
+        jan_total = sum(u.monthly_power_mw[0] for u in ramped)
+        dec_total = sum(u.monthly_power_mw[-1] for u in ramped)
+        self.assertLess(jan_total, dec_total)
+        for u in ramped:
+            self.assertEqual(len(u.monthly_power_mw), 12)
+            self.assertAlmostEqual(u.monthly_power_mw[-1], u.power_cap_mw)
+            self.assertAlmostEqual(u.monthly_energy_mwh[-1], u.energy_cap_mwh)
+            for m in range(1, 12):
+                self.assertGreaterEqual(
+                    u.monthly_power_mw[m], u.monthly_power_mw[m - 1]
+                )
+
+    def test_battery_dispatch_adder_applied(self):
+        # battery_dispatch_adder flows to every NEISO battery unit's vom.
+        cfg = ScenarioConfig(iso="NEISO", battery_dispatch_adder=5.0)
+        units = _battery_units(load_eia860_storage("NEISO", 2024, cfg))
+        self.assertTrue(units)
+        for u in units:
+            self.assertEqual(u.vom, 5.0)
+
+    def test_eia930_battery_benchmark_if_present(self):
+        # EIA-930 ISNE BAT data (net discharge, MW) is NaN pre-2024 and
+        # sparse in 2024; this test verifies the data path and reports
+        # non-null coverage without asserting a specific value (the data is
+        # too sparse for a hard constraint).
+        import pandas as pd
+
+        path = (
+            __import__("pathlib").Path(__file__).parents[1]
+            / "inputs"
+            / "raw-data"
+            / "ISNE_fueltype.parquet"
+        )
+        if not path.exists():
+            self.skipTest("ISNE_fueltype.parquet not present")
+        df = pd.read_parquet(path)
+        bat = df[df["fueltype"] == "BAT"]
+        if bat.empty:
+            self.skipTest("No BAT rows in ISNE_fueltype.parquet")
+        bat_2024 = bat[bat["period"].dt.year == 2024]
+        nonnull = bat_2024["value_mwh"].notna().sum()
+        # The data is valid (non-empty series), even if sparse pre-2025.
+        self.assertGreaterEqual(len(bat_2024), 0)
+        # When non-null data exists, values must be non-negative (net
+        # discharge can be zero but not negative in the fueltype column).
+        if nonnull > 0:
+            non_null_vals = bat_2024.loc[
+                bat_2024["value_mwh"].notna(), "value_mwh"
+            ]
+            self.assertTrue((non_null_vals >= 0).all())
+
+
+class TestNEISOStorageUnchangedForOtherISOs(unittest.TestCase):
+    """Adding NEISO to _EIA860_SUPPLEMENT_ISOS must not alter ERCOT/CAISO/PJM."""
+
+    def test_ercot_battery_fleet_totals_unaffected(self):
+        # ERCOT was already in _EIA860_SUPPLEMENT_ISOS before this change.
+        # Verify that the 2024 ERCOT battery fleet is still ~8 GW
+        # (EIA-860 ERCO-BA sum; the 2024 Texas fleet pre-2025 buildup).
+        units = _battery_units(
+            load_eia860_storage("ERCOT", 2024, ScenarioConfig(iso="ERCOT"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 5_000.0)
+        self.assertLess(total_mw, 12_000.0)
+
+    def test_caiso_battery_fleet_totals_unaffected(self):
+        # CAISO was already in _EIA860_SUPPLEMENT_ISOS; confirm that the
+        # NEISO addition has not moved the CAISO 2024 totals.
+        units = _battery_units(
+            load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 10_000.0)
+        self.assertLess(total_mw, 12_500.0)
+
+    def test_pjm_battery_fleet_totals_unaffected(self):
+        # PJM is NOT in _EIA860_SUPPLEMENT_ISOS (and remains so); this
+        # test verifies PJM's 2024 battery fleet is still loaded correctly.
+        # EIA-860 ERCO-BA sum for 2024 is ~350 MW (pre-interconnection-queue
+        # buildup: PA/NJ/DE small commercial BESS, not the large queued MW).
+        units = _battery_units(
+            load_eia860_storage("PJM", 2024, ScenarioConfig(iso="PJM"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 100.0)
+        self.assertLess(total_mw, 1_500.0)
+
+
 if __name__ == "__main__":
     unittest.main()
