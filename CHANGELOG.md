@@ -131,6 +131,44 @@ untouched (no import node; full suite green minus the known-stale
   derivation still awaits MD/DE/NC/TN (+ MI 2023/2025) CAMPD unit-level
   extracts before `campd-unit-outages-PJM.csv` can be regenerated.
 
+## 2026-06-11 (PJM winter fidelity — dual-fuel switching, doc 03 Pack G)
+
+Implements oil/gas dual-fuel switching for the PJM backcast (J2 winter
+fidelity cluster: CT runtime −16/−21%, ST_GAS 2024 winter −15%, oil 0 vs
+0.9 TWh). Objective-only — an `assemble_mc` fuel-price extension, no LP
+structural change. Gated on `ScenarioConfig.dual_fuel_switching` (default
+off; the calibration harness enables it for PJM only), so ERCOT and all
+existing forecasts are byte-identical.
+
+- **Dual-fuel flag from EIA-860 multiple-energy-source fields.** New
+  `fleet.dual_fuel_plant_groups()` reads the committed EIA-860 Multifuel
+  schedule parquet (`eia860_multifuel_operable.parquet`) and flags every
+  operable gas-primary unit ("Energy Source 1" = NG) whose "Switch
+  Between Oil and Natural Gas?" field is Y, classing each with the
+  canonical gas classifier so the `(plant_code, plant_group)` keys line
+  up with both the per-unit EIA-860 fleet and the per-plant tranche
+  fleet. 577 keys nationally; 101 in PJM (~27 GW of switch-capable gas).
+- **Oil price series with citations.** New `fuel.iso_monthly_oil_prices()`
+  — the volume-weighted EIA-923 Schedule 5 monthly Petroleum receipt cost
+  across the ISO's plants (PJM ~$17–23/MMBtu over 2023–2025; consistent
+  with EIA's distillate ~$20 / residual ~$14 per MMBtu delivered to the
+  electric power sector, 2023–2024) — sharing one resolver with
+  `iso_monthly_gas_prices`. Unreported months and forward years fall back
+  to the cited flat `OIL_PRICE_PER_MMBTU` ($18).
+- **MC = min(gas, oil) per hour for capable units.** New
+  `fuel.apply_dual_fuel_pricing()` caps each capable gas tranche's hourly
+  fuel price at the delivered oil price (idempotent elementwise min,
+  applied after the per-plant EIA-923 monthly gas overwrite so it sees
+  the final delivered gas price). Emissions/heat rate stay on the gas
+  characterization (known simplification). On the PJM 2024 calibration
+  fleet the cap binds where reported delivered gas spiked past oil parity
+  (e.g. plant 56807's CC tranches, 628 MW, ~12k unit-hours at an average
+  −$32/MMBtu); with monthly ISO/plant-average gas it binds for few
+  plant-months, so most of the modeled-oil gap awaits finer-than-monthly
+  winter gas pricing.
+- **Tests.** `test_fuel.py`: switch above parity / no switch below / off
+  by default (ERCOT unchanged) / per-hour cap granularity. `test_fleet.py`:
+  real-parquet capability extract and missing-parquet fallback.
 ## 2026-06-11 (CAISO hydro energy budgets + pumped storage — multi-iso P4)
 
 Verifies the CAISO hydro/PS data through the generic PJM-built machinery
