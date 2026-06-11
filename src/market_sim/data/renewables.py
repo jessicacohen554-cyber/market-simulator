@@ -54,6 +54,14 @@ benchmarks against the EIA-923 fleet average (~0.30).
 If ISO-NE ever publishes granular curtailment data, a dedicated HSL parquet
 can be built following the CAISO pattern in scripts/build_caiso_hsl.py — see
 :func:`_hsl_file` for the data-needed marker.
+
+NYISO wind and solar curtailment is modest (well under 1 TWh annually) and
+NYISO does not publish an hourly uncurtailed-potential series comparable to
+CAISO or ERCOT NP6, so the documented default for NYISO backcasts is the
+EIA-930 NYIS delivered-generation series. Zone-shaping uses EIA-860 capacity
+shares: upstate NY counties (zones A–E) hold the bulk of wind capacity, and
+solar spreads across upstate and downstate zones. The HSL path is stubbed in
+:func:`_hsl_file`; see the data-needed marker there.
 """
 
 from __future__ import annotations
@@ -207,6 +215,19 @@ _CAISO_HSL_DIR: Path = (
     Path(__file__).parents[3] / "inputs" / "raw-data" / "caiso-hsl"
 )
 
+# NYISO curtailment parquet directory (reserved for future data).
+# DATA NEEDED: NYISO does not publish hourly uncurtailed-potential series
+# comparable to CAISO or ERCOT NP6, so this directory is currently empty.
+# When NYISO begins publishing such data, build one parquet per backcast year
+# (schema: ``_HSL_COLUMNS``) under this directory and extend :func:`_hsl_file`.
+# Until then the NYISO backcast uses EIA-930 NYIS delivered generation and
+# curtailment is not explicitly modeled (it embeds the historical curtailment,
+# which EIA-923 shows is well under 1 TWh/yr — below the threshold where
+# explicit re-curtailment changes dispatch materially).
+_NYISO_HSL_DIR: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "nyiso-hsl"
+)
+
 
 def _hsl_file(iso: str, year: int) -> Path | None:
     """Return the uncurtailed-potential parquet for ``(iso, year)``, or ``None``.
@@ -219,6 +240,13 @@ def _hsl_file(iso: str, year: int) -> Path | None:
         return _ercot_hsl_path(year)
     if iso == "CAISO":
         return _CAISO_HSL_DIR / f"caiso_{year}_hsl_hourly.parquet"
+    if iso == "NYISO":
+        # DATA NEEDED: nyiso_<year>_hsl_hourly.parquet in _NYISO_HSL_DIR.
+        # NYISO wind/solar curtailment is small (well under 1 TWh/yr per
+        # EIA-923) and no hourly curtailment series is currently published.
+        # The delivered EIA-930 NYIS profile is the documented default.
+        candidate = _NYISO_HSL_DIR / f"nyiso_{year}_hsl_hourly.parquet"
+        return candidate if candidate.exists() else None
     # NEISO: ISO-NE reported curtailment is sub-1 % of potential — the
     # delivered EIA-930 ISNE series is the documented default; no uncurtailed-
     # potential parquet is built.  To add one, follow the CAISO pattern in
@@ -625,13 +653,19 @@ def _eia_hourly_cf_profile(
     delivered (already curtailed) output, so — like the EIA-930 generation
     distributions — the dispatch does not separately re-curtail it.
 
-    Returns ``None`` when the ISO has no mapped hourly extract or no data
-    covers the ``(year, fuel)`` pair.
+    Returns ``None`` when the ISO has no mapped hourly extract, no data
+    covers the ``(year, fuel)`` pair, or the reported series sums to zero —
+    all-zero signals a BA reporting gap rather than genuine zero generation
+    (e.g., EIA-930 NYIS does not separately report solar), and the caller
+    should fall back to the EIA-930 distribution-based profile.
     """
     gen = load_eia_hourly_renewable_gen(iso, year)
     if gen is None or fuel not in gen:
         return None
-    return _mw_to_cf(gen[fuel], monthly_capacity)
+    mw = gen[fuel]
+    if mw.sum() == 0.0:
+        return None
+    return _mw_to_cf(mw, monthly_capacity)
 
 
 def _extract_fuel_values(profiles: pd.DataFrame, fuel: str) -> np.ndarray:
