@@ -86,7 +86,11 @@ class HydroBudget:
         The run-of-river ``min_mw`` floor sustained over a month is a
         minimum monthly *energy* ``min_mw * hours_in_month``; this is the
         lower-bound companion to ``monthly_energy`` consumed by the dispatch
-        hydro constraint family (``hydro_monthly_min``).
+        hydro constraint family (``hydro_monthly_min``). The floor is clipped
+        to ``monthly_energy`` so the two-sided dispatch row stays feasible
+        (lower <= upper) in low-inflow months, where a nameplate-fraction
+        floor can exceed the measured budget (CAISO small hydro runs dry
+        autumns at a few percent of nameplate-hours).
 
         Args:
             hours_per_month: Number of hours in each of the twelve months,
@@ -96,7 +100,8 @@ class HydroBudget:
             The ``(n_hydro, 12)`` minimum-energy floor in MWh.
         """
         hpm = np.asarray(hours_per_month, dtype=float)
-        return self.min_mw[:, np.newaxis] * hpm[np.newaxis, :]
+        floor = self.min_mw[:, np.newaxis] * hpm[np.newaxis, :]
+        return np.minimum(floor, self.monthly_energy)
 
     def align_to(
         self, plant_codes: np.ndarray | list[int]
@@ -229,6 +234,7 @@ def load_hydro_budget(
     iso: str,
     year: int,
     min_flow_fraction: float = 0.0,
+    backfill_year: int | None = None,
 ) -> HydroBudget:
     """Load an ISO's hydro monthly energy budget and MW envelope.
 
@@ -244,6 +250,14 @@ def load_hydro_budget(
         min_flow_fraction: Run-of-river minimum flow as a fraction of
             nameplate. ``0.0`` (default) leaves ``min_mw`` at zero — no
             enforced minimum.
+        backfill_year: When set, plants that reported in ``backfill_year``
+            but not in ``year`` are carried in at their ``backfill_year``
+            monthly generation. The most recent EIA-923 vintage is an early
+            release covering only the monthly-survey (large) reporters —
+            CAISO 2025 carries 26 of ~185 plants, 12.3 of ~21 TWh (EIA-930)
+            — so a backcast of that year passes the prior year here until
+            the final annual file lands. ``None`` (default) loads ``year``
+            exactly as reported.
 
     Returns:
         A :class:`HydroBudget` keyed to the hydro generator subset, ordered
@@ -255,6 +269,18 @@ def load_hydro_budget(
         ValueError: When no hydro generation is found for ``(iso, year)``.
     """
     gen = _load_hydro_generation(iso, year)
+    if backfill_year is not None:
+        prior = _load_hydro_generation(iso, backfill_year)
+        fill = prior[~prior["plant_id"].isin(set(gen["plant_id"]))]
+        if not fill.empty:
+            mcols = monthly_netgen_columns()
+            logger.info(
+                "%s %d hydro budget: backfilled %d non-reporting plants "
+                "(%.1f GWh) from %d",
+                iso, year, len(fill),
+                fill[mcols].sum().sum() / 1000.0, backfill_year,
+            )
+            gen = pd.concat([gen, fill], ignore_index=True)
     if gen.empty:
         raise ValueError(f"No EIA-923 hydro generation for {iso} in {year}")
 
