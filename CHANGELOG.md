@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-11 (E3 follow-up — one curtailment table, measured against consumed potential)
+
+Cleanup after E3 (#304) and CAISO P6 (#310) landed overlapping curtailment
+reporting:
+
+- **One shared table.** The ERCOT-only `_print_curtailment` duplicate in
+  `run_calibration_full.py` is gone; the ERCOT report path now calls the
+  shared `_print_curtailment_vs_reported` (printed as `[3e]` there, `[1b]`
+  on the generic path via a `label` parameter).
+- **Model curtailment measures against the *consumed* potential**
+  (`hsl_potential_mw`, the per-year-rescaled HSL) instead of the raw HSL.
+  Latent-bug fix: ERCOT 2023's wind HSL is rescaled 104 -> 110 TWh before
+  dispatch, so against the raw series the model's wind curtailment read a
+  phantom ~0. The reported side keeps the raw `hsl - gen`. Regression test
+  added.
+- **Data-needed note instead of silent skip** for HSL-capable ISO-years
+  without a built parquet (ERCOT 2024+ awaiting the NP6 uploads); ISOs with
+  no HSL family stay silent.
+- `run_calibration.py`'s reported-curtailment comparison now resolves any
+  ISO through `load_hsl_hourly` (was ERCOT-gated), so CAISO smoke runs of
+  the older script also get the reported columns.
+
 ## 2026-06-11 (CAISO backcast P5 — grid-battery fleet: COD ramp + EIA-930 battery benchmark wiring)
 
 CAISO prompt-pack P5 (Wave 1). The CAISO BESS fleet was already loaded from
