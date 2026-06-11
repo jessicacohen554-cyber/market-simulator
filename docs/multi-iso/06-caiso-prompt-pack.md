@@ -506,15 +506,22 @@ out at `coal_prb_passthrough=0.83`) — measured monthly gas may resolve
 part of it without touching the passthrough. Also fix the stale
 `test_coal_supply_pricing_uses_year_trajectory` on main.
 
-### E2 — ERCOT: storage realism + nuclear refuel overlay
+### E2 — ERCOT: storage realism + nuclear refuel overlay — **DONE (2026-06-11)**
 
-Model PS discharge runs 9–10 TWh/yr vs 3–4 actual (no cycling
-cost/outages on PS) and coal/CT tuning currently compensates. Add the
-throughput-cost knob (shared with CAISO P5) and re-tune. Nuclear runs
-+2.4% with no refuel-outage overlay — derive monthly nuclear CF from
-EIA-923 actuals per backcast year (the CAISO P3 pattern,
-`forecast_nuclear_refuel.py` exists for forward years). Oil ~0 vs
-0.6–0.9 TWh actual ties to winter gas pricing (E1).
+Model BESS discharge ran +48% over the EIA-930 measured 2025 window
+(8.1 vs 5.4 TWh; the audit's "PS 9–10 TWh" figure was the same
+over-cycling read in an earlier environment) and coal/CT tuning
+compensated. Fixed by `ScenarioConfig.battery_dispatch_adder` (the
+battery analogue of the PJM pumped-storage adder; CAISO P5 reuses the
+same knob via `load_eia860_storage`), calibrated against the new
+EIA-930 BAT/UES bundle benchmark (`storage.parquet` + report §3d).
+Nuclear: the per-year EIA-923 monthly-CF overlay
+(`NUCLEAR_MONTHLY_CF_BY_YEAR`) had already landed (PR #252) and holds
+all three years at −0.7%; `scripts/derive_nuclear_monthly_cf.py` now
+derives/validates the table (`--check`) as the backcast analogue of
+`forecast_nuclear_refuel.py`. See docs/calibration-log.md (E2 entry)
+for the keeper run and the residual coal/CT items handed to E1.
+Oil ~0 vs 0.6–0.9 TWh actual still ties to winter gas pricing (E1).
 
 ### E3 — ERCOT: HSL coverage + curtailment metric
 

@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-11 (ERCOT E2 — storage throughput cost + nuclear refuel validation)
+
+ERCOT backcast realism for storage and nuclear (backlog item E2); PJM
+unchanged (knob defaults to 0 and PJM bundles are untouched).
+
+- **`ScenarioConfig.battery_dispatch_adder`** (Tier 3, default 0): per-MWh-
+  discharged throughput/cycling cost on the EIA-860 grid-battery fleet — the
+  battery analogue of `pumped_storage_dispatch_adder` (cycling degradation +
+  ancillary-service opportunity cost the energy-only LP ignores). Wired
+  `load_eia860_storage` → `StorageUnit.vom` → the LP discharge slot;
+  `run_calibration_full.py --battery-adder`. Without it the LP over-cycled
+  the ERCOT BESS fleet +48% vs the EIA-930 measured 2025 discharge; at the
+  calibrated $10/MWh the model lands −1.5% (5.36 vs 5.44 TWh).
+- **Storage observability:** calibration bundles persist per-unit hourly
+  charge/discharge (`storage.parquet`, P1/P2 incl. `--run-p2`), carry the
+  EIA-930 battery benchmark series (`NG: BAT`/`NG: UES`, NaN over unreported
+  hours so partial years benchmark their reported window), and the report
+  gains a §3d storage-throughput section.
+- **ERCOT keeper re-tuned** (dashboard `run79 storage retune`): battery
+  adder $10 + Jacobian joint-move on the non-CHP bands. 2023/2025 thermal
+  classes land within ±3% (lignite and 2024's cheap-gas coal deficit → E1);
+  nuclear −0.7% all years.
+- **`scripts/derive_nuclear_monthly_cf.py`**: backcast analogue of
+  `forecast_nuclear_refuel.py` — derives `NUCLEAR_MONTHLY_CF_BY_YEAR` from
+  EIA-923 monthly actuals and `--check`-validates the committed table
+  (ERCOT 2023–2025 reproduce exactly; the audit's +2.4% nuclear overshoot
+  predated the overlay landing in PR #252).
+- **Solver provenance:** `meta.json` records `highspy_version`. An
+  identical-config Run-77 re-run on highspy 1.14.0 moved class splits
+  several TWh at an equal objective (cheap-gas PRB/gas committed bid
+  plateau admits alternate optima) — see the calibration-log E2 entry.
 ## 2026-06-11 (CAISO P6 — uncurtailed renewable potential, the HSL analogue)
 
 CAISO backcasts now feed the dispatch *uncurtailed* wind/solar potential so
