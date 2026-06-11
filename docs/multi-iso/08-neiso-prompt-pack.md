@@ -64,8 +64,23 @@ EIA-923 normal-year seed); RGGI in marginal cost
 hub-month repricing (U4 satisfied via the ISO-NE MA gas index — 35/36
 months 2023–2025 in `inputs/raw-data/gas_basis_by_iso_month.csv`; Aug-2025
 missing upstream, falls back to EIA-923/shaped); `gas_monthly_actuals`
-default-on for NEISO. P13 still owes the dual-fuel switch activation that
-consumes the overlay.
+default-on for NEISO.
+
+**Done by P13 (2026-06-11):** dual-fuel/oil winter switching activated and
+validated for NEISO. `dual_fuel_switching` default-on (PJM + NE/NY cluster;
+off for ERCOT/CAISO/MISO/SPP); the switch consumes the P7 AGT overlay
+(`apply_hub_basis_overlay` runs before `apply_dual_fuel_pricing`, so the
+dual-fuel cap sees the blown-out hub gas). Detection: 107 gas tranches /
+6,367 MW across 42 plants (incl. Middletown, Montville) plus the oil-primary
+steam fleet (135 units / 5,182 MW: Wyman, Canal, New Haven, Montville,
+Newington — Mystic is retired in the 2025 EIA-860 vintage). Validation
+(2023 smoke): modeled oil 0.24 TWh vs EIA-923 0.39 TWh — same order of
+magnitude, not near-zero. **Known limitation:** the committed AGT basis is
+*monthly* and monthly averages never reach distillate parity (~$18/MMBtu;
+max Jan-2025 $16.9), so the dual-fuel CT/ST switch is wired but does not bind
+on monthly data — winter oil comes from the oil-primary steam fleet's
+scarcity dispatch; a daily-AGT U4 refinement is what would trip the CT switch.
+See `docs/multi-iso/neiso-data-audit.md` §2b.
 
 ## 2. Upload manifest (user manual tasks — sessions cannot fetch these)
 

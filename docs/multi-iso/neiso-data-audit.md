@@ -153,6 +153,64 @@ capacity table could not be pulled directly; the headline FCM figure is from
 the public ISO Newswire release, and the in-repo eGRID 2023 workbook
 (`BACODE=ISNE`) serves as the EPA fleet benchmark.
 
+### 2b. P13 dual-fuel / oil winter switching — activation & validation
+
+The national dual-fuel machinery (`fleet.py::dual_fuel_plant_groups`, the `oil`
+fuel type + `OIL` offer band, `fuel.py::apply_dual_fuel_pricing`) is **activated
+and validated** for NEISO this session; no source change was needed beyond the
+gating already in place (`dual_fuel_switching` on for the PJM + NE/NY winter
+cluster, off for ERCOT/CAISO/MISO/SPP — `run_calibration._calibration_config`).
+
+**1. Detection (EIA-860 Multifuel schedule).** `dual_fuel_plant_groups()`
+flags every NG-primary unit with "Switch Between Oil and Natural Gas? = Y";
+intersected with the loaded NEISO fleet this is **107 gas tranches / 6,367 MW
+across 42 plants** — including Middletown and Montville Station (the doc-08
+named CT/ST switchers). Oil-**primary** steam (Energy Source 1 = `RFO`/`DFO`)
+is correctly *excluded* from the switch set and instead carried as `oil` fuel
+type: **135 oil units / 5,182 MW**, led by William F Wyman (ME, 846 MW), Canal
+(MA, ~1.45 GW RFO steam + DFO GT), New Haven Steam, Montville and Newington.
+Note: **Mystic is retired** in the 2025 EIA-860 vintage (only a 1 MW PV site
+remains under "BWC Mystic River") — it is correctly absent, not a detection
+miss.
+
+**2. The switch consumes the P7 overlay.** In `resolve_fuel_prices` the order is
+`apply_hub_basis_overlay` → `apply_dual_fuel_pricing`, so a dual-fuel unit caps
+the AGT-blown winter hub gas at delivered oil parity, i.e. `min(hub_gas, oil)`
+× gas heat rate. Covered by `tests/test_fuel.py::
+test_neiso_hub_overlay_drives_dual_fuel_switch` (a Jan AGT spike past parity
+trips the dual-fuel unit to oil while a gas-only unit eats the full hub spike;
+the shoulder month leaves both on gas).
+
+**3. Monthly-granularity limitation (documented, not fabricated).** The
+committed `gas_basis_by_iso_month.csv` is *monthly*, and monthly AGT averages
+never reach distillate parity (~$18/MMBtu): max **Feb-2023 $8.1, Dec-2024 $9.1,
+Jan-2025 $16.9** — all below oil. So the **dual-fuel CT/ST switch is correctly
+wired but does not bind on monthly data** — the daily cold-snap AGT spot
+blowouts that flip dual-fuel units in real time are smoothed away. (Same shape
+as the NYISO P13 finding.) A finer **daily AGT** upload (a U4 refinement) is
+what would make the CT switch bind; guarded by
+`test_neiso_monthly_agt_basis_stays_below_distillate_parity`. Modeled winter
+oil therefore comes predominantly from the **oil-primary steam fleet** (~5 GW)
+dispatching at winter scarcity, not the CT switch.
+
+**4. Validation vs the EIA-923 oil column (2023 smoke,
+`run_calibration --iso NEISO --year 2023 --hours 8760`):**
+
+| Class | Model TWh | EIA-923 TWh | diff |
+|---|---|---|---|
+| **oil** | **0.24** | **0.39** | **−37%** |
+| gas_ct | 1.67 | 1.89 | −12% |
+| gas_st | 0.28 | 0.40 | −31% |
+
+Modeled oil is **same order of magnitude** and **not near-zero** — the doc-08
+red-flag test passes. It sits ~37% under the EIA target partly because gas_cc
+over-runs in this pre-calibration smoke (69.3 vs 54.3 TWh; cheap gas displaces
+oil at the margin), so oil should rise toward 0.39 TWh once the offer-curve /
+import / gas-basis knobs are tuned in P11/P12. Citation target: the per-year
+EIA-923 oil column in `inputs/calibration/calibration_reference.json`
+(`isos.NEISO.<year>.generation_twh.oil` = 0.39 / 0.31 / 0.91 TWh for
+2023/24/25).
+
 ## 3. CEMS coverage
 
 Distinct states of NEISO-fleet **fossil** plants and the diff against
@@ -198,8 +256,12 @@ make-or-break. The Stage-E reference and fleet/CEMS audit are complete now.
 - **P7 (2026-06-11, doc-08):** `GAS_BASIS_DIFFERENTIAL["NEISO"]` (+1.10 seed),
   RGGI in marginal cost (`STATE_CARBON_PRICE_BY_ISO["NEISO"]`, 2023–2025,
   default-on), Algonquin winter basis via `gas_hub_basis_overlay` (35/36
-  months), `gas_monthly_actuals` default-on. P13 still owes the dual-fuel
-  switch activation that consumes the overlay.
+  months), `gas_monthly_actuals` default-on.
+- **P13 (2026-06-11, doc-08):** dual-fuel/oil winter switching activated and
+  validated for NEISO — `dual_fuel_switching` default-on, the switch consumes
+  the P7 AGT overlay (`apply_hub_basis_overlay` runs before
+  `apply_dual_fuel_pricing` in `resolve_fuel_prices`, so the dual-fuel cap sees
+  the blown-out hub gas). See §2b for the validation finding.
 - **Outage windows (P1 scope):** `campd-unit-outages-NEISO.csv` complete for
   2023–2025 (§3); `ISO_STATES["NEISO"]` set.
 
