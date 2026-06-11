@@ -494,6 +494,43 @@ def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
     np.testing.assert_allclose(fuel_prices[1], gas)  # gas-only untouched
 
 
+def test_dual_fuel_nyiso_switches_on_parity(monkeypatch):
+    """NYISO dual-fuel units cap at oil when winter gas crosses parity (P13).
+
+    Mirrors the PJM parity test for the NYISO instantiation (doc-07 design
+    decision 3): with the gas leg spiked past distillate parity, the flagged
+    NYISO dual-fuel CT prices off oil while the gas-only CT keeps its gas
+    price.
+    """
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet()
+    config = ScenarioConfig(
+        iso="NYISO", hours=24, gas_seasonality=False,
+        gas_price_override=25.0, dual_fuel_switching=True,
+    )
+    prices = resolve_fuel_prices(config, fleet, 2030)
+    delivered_gas = resolve_annual_gas_price(config, 2030)
+    assert delivered_gas > OIL_PRICE_PER_MMBTU
+    np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched to oil
+    np.testing.assert_allclose(prices[1], delivered_gas)        # gas-only
+    np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # pure-oil unit
+
+
+def test_calibration_config_dual_fuel_gating():
+    """The backcast config activates dual-fuel for the NE/NY/PJM cluster only.
+
+    Test req #4 / doc-07 P13: NYISO and NEISO switch on (NE/NY winter
+    switching), PJM stays on (unchanged), and ERCOT/CAISO/MISO/SPP stay off
+    (byte-identical). Guards the ERCOT/PJM/CAISO regression.
+    """
+    from scripts.run_calibration import _calibration_config
+
+    on = {"NYISO", "NEISO", "PJM"}
+    for iso in ("NYISO", "NEISO", "PJM", "ERCOT", "CAISO", "MISO", "SPP"):
+        cfg = _calibration_config(2023, iso, 24, 3.0)
+        assert cfg.dual_fuel_switching is (iso in on), iso
+
+
 def test_oil_peaker_dispatches_only_at_high_prices():
     """An oil peaker stays idle until demand exceeds cheaper capacity.
 
