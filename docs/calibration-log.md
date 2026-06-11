@@ -209,6 +209,73 @@ on main (asserts pre-measured-PRB constant).
 
 ---
 
+### 2026-06-11 — CAISO — hydro energy budgets + pumped storage (data stage, multi-iso P4)
+
+- **Benchmark:** EIA-923 monthly net generation 2023–2025; EIA-930 CISO
+  hydro (cross-check); EIA-860 2025 ER generator schedule.
+- **Scope:** data-stage verification + wiring, not a dispatch calibration
+  run. The PJM hydro/PS machinery (2026-06-09 entry) is fully generic —
+  `load_hydro_budget` / `_hydro_fleet` / `load_eia860_pumped_storage` work
+  for CAISO unmodified; this stage verified the CAISO data through them and
+  made the PS dispatch adder a per-ISO default.
+
+**Hydro budgets (EIA-923 `HY`, BA = CISO):**
+
+| Year | Plants | Budget (TWh) | EIA-930 CISO hydro (TWh) | Δ |
+|---|---|---|---|---|
+| 2023 | 166 | 23.90 | 24.40 (incl. PS net — pre-2024 schema doesn't split) | −2.0% |
+| 2024 | 160 | 21.48 | ≈22.76 (12.51 Jan–Jun incl-PS + 10.25 Jul–Dec excl-PS) | −5.6% |
+| 2025 | 26 | 12.32 (→ 20.39 backfilled) | 21.35 (excl-PS, full year) | −4.5% backfilled |
+
+- Zones resolve cleanly: NP15 136 / SP15 24 / ZP26 6 plants (2023), no
+  blanks; NP15 carries >70% of the 6.4 GW nameplate (Sierra/Cascade hydro
+  north of Path 26).
+- **Wet/dry swing:** the "~2x wet-vs-dry" expectation is 2022 (dry,
+  ~12-13 TWh) vs 2023 (extreme wet) — 2022 is outside the data window. The
+  measured 2023→2024 swing is +11.3% (23.90 vs 21.48), confirmed by EIA-930
+  (~+7%); the budgets preserve it exactly since they *are* the EIA-923
+  monthlies. Acceptance (±10% of EIA-923 for 2023/2024) holds by
+  construction and is now pinned by `tests/test_hydro.py` regression
+  anchors.
+- **2025 coverage caveat:** the 2025 EIA-923 vintage is the early release
+  (monthly-survey reporters only): 26 of ~185 CAISO plants, 12.3 of
+  ~21.4 TWh. `load_hydro_budget(..., backfill_year=2024)` carries
+  non-reporters in at their 2024 monthlies → 20.39 TWh (−4.5% vs EIA-930).
+  The CAISO 2025 backcast should pass it (and drop it when the final
+  annual file lands). Default off, so ERCOT/PJM runs are byte-identical.
+- **Small vs large split — not warranted:** ≤30 MW (CAISO RPS small-hydro
+  threshold) is 132 plants but only 0.90 GW (14% of capacity) and
+  3.10/2.56 TWh (13.0%/11.9% of 2023/2024 energy). Plant-level budgets
+  already individuate each small plant, and EIA-930 carries a single hydro
+  series to calibrate against, so a structural class split adds nothing
+  today. Min-flow floors stay available via `min_flow_fraction` (default 0,
+  as PJM); `HydroBudget.monthly_min_energy` now clips the floor to the
+  monthly budget so a nameplate-fraction floor can't render a low-inflow
+  month infeasible (CAISO small hydro runs dry autumns at a few percent of
+  nameplate-hours).
+
+**Pumped storage (EIA-860 prime mover `PS`, BA = CISO):** 2,078 MW, all
+NP15 — Helms 1,053 MW (3×351; PG&E rates the upgraded units ~1,212 MW —
+EIA-860 nameplate is the model input), W. R. Gianelli 424, Edward C Hyatt
+293, J S Eastwood 200, Thermalito 82, O'Neill 25. Fleet-average params per
+the PJM pattern: 10 h duration (DOE PSH 2023 fact sheet), RTE 0.80
+(DOE/Sandia ESHB).
+
+- **PS dispatch adder is now a per-ISO default**
+  (`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`): PJM keeps its calibrated
+  $10/MWh reserve-duty proxy (2026-06-10 "pjm 3 ps-adder"); CAISO resolves
+  to $0 until a CAISO calibration pass measures Helms' reserve/regulation
+  duty. `ScenarioConfig.pumped_storage_dispatch_adder` default changed
+  `10.0 → None` (= per-ISO); an explicit number still overrides every ISO.
+  Note for the run-classifier: configs recorded before/after this change
+  differ on this key (10.0 vs null) with identical PJM behavior.
+
+**Open items:** CAISO calibration pass to set (or confirm zero) the CAISO
+PS adder once the P-stage backcast runs; revisit the 2025 hydro backfill
+when the final EIA-923 2025 annual file lands.
+
+---
+
 ## Cross-class offer-curve tuning Jacobian (2026-06-11)
 
 **Tool:** `scripts/derive_offer_curve_jacobian.py` → `inputs/processed/offer_curve_jacobian.csv`
