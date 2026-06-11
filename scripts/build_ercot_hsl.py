@@ -1,9 +1,8 @@
-"""Build ERCOT 2023 uncurtailed renewable potential (HSL) hourly profiles.
+"""Build ERCOT uncurtailed renewable potential (HSL) hourly profiles.
 
-Downloads the UMass nodal-curtailment dataset (derived from ERCOT's 60-Day
-SCED Disclosure Reports), aggregates the per-plant 15-minute High Sustained
-Limit (HSL) and curtailment series into system-wide hourly totals, and writes
-them to ``inputs/raw-data/ercot-hsl/ercot_2023_hsl_hourly.parquet``.
+For each requested year, writes system-wide hourly wind/solar delivered
+generation (GEN) and uncurtailed potential (HSL) to
+``inputs/raw-data/ercot-hsl/ercot_<year>_hsl_hourly.parquet``.
 
 HSL is the uncurtailed generation *potential*: the most a resource could have
 produced given wind/sun at that moment. Delivered generation is
@@ -11,21 +10,50 @@ produced given wind/sun at that moment. Delivered generation is
     GEN = HSL - curtailment
 
 so the GEN/HSL ratio yields the endogenous curtailment that a transmission-
-constrained dispatch model should be able to reproduce.
+constrained dispatch model should be able to reproduce, and ``HSL - GEN`` is
+ERCOT's *reported* curtailment that the calibration report benchmarks the
+modeled curtailment against.
 
-Source dataset:
-    https://github.com/codecexp/nodal-curtailment-analysis
-    Maji, Irwin, Shenoy, Sitaraman (UMass Amherst), ACM e-Energy 2025.
+Two source paths, by year:
+
+* **2023** — the UMass nodal-curtailment dataset (derived from ERCOT's
+  60-Day SCED Disclosure Reports), cloned from GitHub and aggregated from
+  per-plant 15-minute series:
+      https://github.com/codecexp/nodal-curtailment-analysis
+      Maji, Irwin, Shenoy, Sitaraman (UMass Amherst), ACM e-Energy 2025.
+
+* **2024 onward** — ERCOT MIS wind/solar power-production reports (the NP6
+  HSL upload) placed under ``inputs/raw-data/ercot-hsl/np6/``, as ``.csv``
+  or ``.zip`` of CSVs, flat or in per-year subdirectories. Accepted report
+  families (both carry system-wide actual GEN and system-wide actual HSL):
+    - NP4-732-CD / NP4-737-CD  Wind / Solar Power Production — Hourly
+      Averaged Actual and Forecasted Values
+    - NP4-733-CD / NP4-738-CD  Wind / Solar Power Production — Actual
+      5-Minute Averaged Values
+  Files are matched to wind vs solar by filename or column signature, and
+  rows lacking an actual value (the reports' forward-forecast rows) are
+  dropped. Until those uploads land for a year, the year is skipped with a
+  data-needed message — curtailment is never fabricated.
+
+The output series sit on the model's fixed non-leap 8760-hour clock keyed to
+ERCOT-local time: Feb 29 of a leap year is dropped, repeated fall-back hours
+are averaged, and the spring-forward gap is interpolated — matching the
+``ERCO hourly`` demand clock (see eia_loader).
 
 Run:
-    python scripts/build_ercot_hsl.py
+    python scripts/build_ercot_hsl.py                 # all buildable years
+    python scripts/build_ercot_hsl.py --year 2024 2025
 """
 
 from __future__ import annotations
 
+import argparse
+import io
+import json
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -33,21 +61,46 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-REPO_URL = "https://github.com/codecexp/nodal-curtailment-analysis"
-YEAR = 2023
+UMASS_REPO_URL = "https://github.com/codecexp/nodal-curtailment-analysis"
+UMASS_YEAR = 2023
 HOURS_PER_YEAR = 8760
-INTERVALS_PER_HOUR = 4  # 15-minute SCED telemetry
+INTERVALS_PER_HOUR = 4  # 15-minute SCED telemetry (UMass dataset)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-hsl"
-OUT_FILE = OUT_DIR / "ercot_2023_hsl_hourly.parquet"
+# NP6 HSL upload drop zone for 2024+ (ERCOT MIS power-production reports).
+NP6_DIR = OUT_DIR / "np6"
+
+# Years built when --year is not given. Extend as backcast years are added.
+DEFAULT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+# Calendar month per hour of the fixed non-leap 8760-hour clock (Feb 29 is
+# dropped from leap years, so this mapping holds for every model year).
+_MONTH_OF_HOUR: np.ndarray = pd.date_range(
+    "2023-01-01", periods=HOURS_PER_YEAR, freq="h"
+).month.to_numpy()
+
+# Largest hole (hours) interpolated when placing NP6 report series on the
+# 8760-hour clock. The DST spring-forward gap is 1 hour; anything beyond a
+# day of missing telemetry means the upload is incomplete and is rejected.
+_MAX_GAP_HOURS = 24
 
 # EIA-930 (Hourly Grid Monitor) reference totals for the ERCOT balancing
-# authority, 2023, used only as a sanity check on the aggregated GEN series.
+# authority, 2023, used only as a sanity check on the aggregated GEN series
+# when inputs/calibration/calibration_reference.json is unavailable.
 # Texas-wide wind/solar (~108 / ~32 TWh, EIA Today in Energy id=66464) is
 # larger than the ERCOT BA alone because it also counts SPP Panhandle wind
 # that lies outside ERCOT, so the ERCOT-only comparison is approximate.
-EIA_REFERENCE_TWH = {"wind": 105.0, "solar": 32.0}
+EIA_REFERENCE_TWH: dict[int, dict[str, float]] = {
+    2023: {"wind": 105.0, "solar": 32.0},
+}
+
+REFERENCE_PATH = REPO_ROOT / "inputs" / "calibration" / "calibration_reference.json"
+
+
+def out_file(year: int) -> Path:
+    """Return the output parquet path for ``year``."""
+    return OUT_DIR / f"ercot_{year}_hsl_hourly.parquet"
 
 
 def clone_dataset(dest: Path) -> Path:
@@ -62,17 +115,17 @@ def clone_dataset(dest: Path) -> Path:
     Raises:
         subprocess.CalledProcessError: if the ``git clone`` fails.
     """
-    print(f"Cloning {REPO_URL} ...")
+    print(f"Cloning {UMASS_REPO_URL} ...")
     subprocess.run(
-        ["git", "clone", "--depth", "1", REPO_URL, str(dest)],
+        ["git", "clone", "--depth", "1", UMASS_REPO_URL, str(dest)],
         check=True,
         capture_output=True,
     )
     return dest / "data"
 
 
-def aggregate_system_hourly(data_dir: Path) -> pd.DataFrame:
-    """Aggregate per-plant 15-minute series into system-wide hourly totals.
+def aggregate_umass_hourly(data_dir: Path) -> pd.DataFrame:
+    """Aggregate the 2023 per-plant 15-minute series into hourly totals.
 
     For each of wind and solar, the per-plant HSL and curtailment CSVs are
     summed across plants at each 15-minute timestamp, then averaged over
@@ -132,6 +185,11 @@ def aggregate_system_hourly(data_dir: Path) -> pd.DataFrame:
         gen = np.minimum(np.clip(hsl - curt, 0.0, None), hsl)
         fuels[fuel] = {"hsl": hsl, "gen": gen}
 
+    return _assemble_frame(fuels)
+
+
+def _assemble_frame(fuels: dict[str, dict[str, np.ndarray]]) -> pd.DataFrame:
+    """Return the output frame from per-fuel ``{"gen": ..., "hsl": ...}``."""
     out = pd.DataFrame(
         {
             "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
@@ -141,23 +199,278 @@ def aggregate_system_hourly(data_dir: Path) -> pd.DataFrame:
             "solar_hsl_mw": fuels["solar"]["hsl"],
         }
     )
-    # Calendar month per hour for the monthly curtailment breakdown. 2023 is
-    # not a leap year, so a plain 8760-hour range maps cleanly to months.
-    out["month"] = (
-        pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
-        .month.to_numpy()
-    )
+    # Calendar month per hour for the monthly curtailment breakdown, on the
+    # fixed non-leap clock shared by every model year.
+    out["month"] = _MONTH_OF_HOUR
     return out
 
 
-def print_validation(df: pd.DataFrame) -> None:
+# ---------------------------------------------------------------------------
+# NP6 upload ingestion (2024+)
+# ---------------------------------------------------------------------------
+
+# Column-name fragments identifying a report's fuel when the filename does
+# not: the wind reports carry STWPF/WGRPP forecast columns, the solar
+# reports STPPF/PVGRPP.
+_WIND_SIGNATURES = ("STWPF", "WGRPP")
+_SOLAR_SIGNATURES = ("STPPF", "PVGRPP")
+
+# Candidate single-column interval timestamps (5-minute report family).
+_TIMESTAMP_COLUMNS = (
+    "SCED_TIMESTAMP", "SCED_TIME_STAMP", "INTERVAL_ENDING", "TIME_STAMP",
+    "TIMESTAMP", "DATETIME",
+)
+
+
+def _np6_files(year: int) -> list[Path]:
+    """Return candidate NP6 upload files for ``year`` (csv or zip)."""
+    roots = [NP6_DIR, NP6_DIR / str(year)]
+    files: list[Path] = []
+    for root in roots:
+        if not root.is_dir():
+            continue
+        for path in sorted(root.iterdir()):
+            if path.suffix.lower() in (".csv", ".zip") and path.is_file():
+                files.append(path)
+    return files
+
+
+def _read_csvs(path: Path) -> list[tuple[str, pd.DataFrame]]:
+    """Read ``path`` into ``(name, frame)`` pairs, expanding zips of CSVs."""
+    if path.suffix.lower() == ".csv":
+        return [(path.name, pd.read_csv(path))]
+    out: list[tuple[str, pd.DataFrame]] = []
+    with zipfile.ZipFile(path) as zf:
+        for info in zf.infolist():
+            if not info.filename.lower().endswith(".csv"):
+                continue
+            with zf.open(info) as fh:
+                out.append(
+                    (f"{path.name}:{info.filename}",
+                     pd.read_csv(io.BytesIO(fh.read())))
+                )
+    return out
+
+
+def _fuel_of(name: str, columns: list[str]) -> str | None:
+    """Identify a report's fuel from its filename or column signature."""
+    lowered = name.lower()
+    if "wind" in lowered or "wpp" in lowered:
+        return "wind"
+    if "solar" in lowered or "spp" in lowered or "pvgr" in lowered:
+        return "solar"
+    joined = " ".join(columns)
+    if any(sig in joined for sig in _WIND_SIGNATURES):
+        return "wind"
+    if any(sig in joined for sig in _SOLAR_SIGNATURES):
+        return "solar"
+    return None
+
+
+def _pick_column(
+    columns: list[str], require: tuple[str, ...], exclude: tuple[str, ...] = ()
+) -> str | None:
+    """Return the first column containing every ``require`` fragment."""
+    for col in columns:
+        if all(r in col for r in require) and not any(e in col for e in exclude):
+            return col
+    return None
+
+
+def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
+    """Reduce one report frame to ``(ts, gen_mw, hsl_mw)`` rows.
+
+    Handles both report families: the hourly NP4-732/737 layout
+    (``DELIVERY_DATE`` + ``HOUR_ENDING``, with a DST flag for the repeated
+    fall-back hour) and the 5-minute NP4-733/738 layout (a single interval
+    timestamp column). The GEN column is the system-wide actual; the HSL
+    column is the system-wide actual HSL, preferred over the COP HSL when
+    both are present (COP HSLs aggregate only On-Line resources' operating
+    plans; the actual HSL is the telemetered potential).
+
+    Raises:
+        ValueError: when the timestamp, GEN or HSL column cannot be found.
+    """
+    df = df.rename(columns=lambda c: str(c).strip().upper())
+    columns = list(df.columns)
+
+    if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
+        date = pd.to_datetime(df["DELIVERY_DATE"])
+        # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
+        he = (
+            df["HOUR_ENDING"].astype(str).str.split(":").str[0]
+            .astype(int)
+        )
+        ts = date + pd.to_timedelta(he - 1, unit="h")
+    else:
+        ts_col = next((c for c in _TIMESTAMP_COLUMNS if c in columns), None)
+        if ts_col is None:
+            raise ValueError(
+                f"{name}: no DELIVERY_DATE/HOUR_ENDING pair and none of "
+                f"{_TIMESTAMP_COLUMNS} present (columns: {columns[:8]}...)"
+            )
+        ts = pd.to_datetime(df[ts_col])
+        # 5-minute stamps are interval-ending when the year's first stamp
+        # does not sit on an hour boundary; shift by one second before
+        # flooring so the interval lands in the hour it covers.
+        if (ts.dt.minute != 0).any():
+            ts = ts - pd.Timedelta(seconds=1)
+        ts = ts.dt.floor("h")
+
+    gen_col = (
+        _pick_column(columns, ("ACTUAL", "SYSTEM"), exclude=("HSL",))
+        or _pick_column(columns, ("SYSTEM_WIDE",), exclude=("HSL",))
+    )
+    hsl_col = (
+        _pick_column(columns, ("ACTUAL", "SYSTEM", "HSL"))
+        or _pick_column(columns, ("SYSTEM", "HSL"))
+        or _pick_column(columns, ("HSL",))
+    )
+    if gen_col is None or hsl_col is None:
+        raise ValueError(
+            f"{name}: could not locate system-wide GEN/HSL columns "
+            f"(columns: {columns})"
+        )
+
+    out = pd.DataFrame({
+        "ts": ts,
+        "gen_mw": pd.to_numeric(df[gen_col], errors="coerce"),
+        "hsl_mw": pd.to_numeric(df[hsl_col], errors="coerce"),
+    })
+    # Forecast-only rows (the rolling future window of the hourly reports)
+    # carry no actuals; drop them rather than treating them as telemetry.
+    return out.dropna(subset=["gen_mw", "hsl_mw"])
+
+
+def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Place ``(ts, gen_mw, hsl_mw)`` rows on the non-leap 8760-hour clock.
+
+    Rows are filtered to ``year`` with Feb 29 dropped, then averaged by
+    local ``(month, day, hour)`` — which collapses sub-hourly intervals,
+    overlapping rolling-window postings, and the repeated DST fall-back
+    hour alike — and reindexed onto the fixed non-leap hourly calendar.
+    Remaining holes (the DST spring-forward hour, scattered telemetry
+    gaps) are linearly interpolated.
+
+    Raises:
+        ValueError: when more than ``_MAX_GAP_HOURS`` hours are missing.
+    """
+    ts = rows["ts"]
+    keep = (ts.dt.year == year) & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    rows = rows[keep]
+    grouped = rows.groupby(
+        [ts[keep].dt.month, ts[keep].dt.day, ts[keep].dt.hour]
+    )[["gen_mw", "hsl_mw"]].mean()
+    grouped.index.names = ["month", "day", "hour"]
+
+    calendar = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
+    full_index = pd.MultiIndex.from_arrays(
+        [calendar.month, calendar.day, calendar.hour],
+        names=["month", "day", "hour"],
+    )
+    aligned = grouped.reindex(full_index)
+    missing = int(aligned["gen_mw"].isna().sum())
+    if missing > _MAX_GAP_HOURS:
+        raise ValueError(
+            f"{year}: {missing} of {HOURS_PER_YEAR} hours missing after "
+            f"aggregation (max {_MAX_GAP_HOURS}) — the NP6 upload looks "
+            "incomplete"
+        )
+    aligned = aligned.interpolate(limit_direction="both")
+    return aligned.reset_index(drop=True)
+
+
+def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
+    """Aggregate the year's NP6 report uploads into the hourly output frame.
+
+    Returns ``None`` (with a data-needed message) when no usable wind+solar
+    report files for ``year`` are found under ``inputs/raw-data/ercot-hsl/np6/``.
+
+    GEN is floored at zero, and HSL is floored at GEN: the reports'
+    telemetry occasionally shows actual output a shade above the recorded
+    potential, and flooring HSL (rather than capping GEN) preserves the
+    delivered totals the EIA-930 cross-check validates while keeping
+    reported curtailment ``HSL - GEN`` non-negative.
+    """
+    files = _np6_files(year)
+    per_fuel: dict[str, list[pd.DataFrame]] = {"wind": [], "solar": []}
+    for path in files:
+        for name, raw in _read_csvs(path):
+            fuel = _fuel_of(name, list(raw.columns.astype(str).str.upper()))
+            if fuel is None:
+                print(f"  skipping {name}: cannot identify wind vs solar")
+                continue
+            parsed = _parse_report(name, raw)
+            in_year = parsed[parsed["ts"].dt.year == year]
+            if in_year.empty:
+                continue
+            per_fuel[fuel].append(in_year)
+
+    missing = [f for f, frames in per_fuel.items() if not frames]
+    if missing:
+        np6 = (
+            NP6_DIR.relative_to(REPO_ROOT)
+            if NP6_DIR.is_relative_to(REPO_ROOT) else NP6_DIR
+        )
+        print(
+            f"\n{year}: no NP6 {'/'.join(missing)} report data found under "
+            f"{np6}/ — skipping.\n"
+            "  Upload ERCOT wind/solar power-production reports covering the "
+            "year\n"
+            "  (NP4-732-CD/NP4-737-CD hourly actuals, or NP4-733-CD/"
+            "NP4-738-CD 5-minute\n"
+            "  actuals; csv or zip), then re-run. Curtailment is never "
+            "fabricated from\n"
+            "  delivered-generation data."
+        )
+        return None
+
+    fuels: dict[str, dict[str, np.ndarray]] = {}
+    for fuel, frames in per_fuel.items():
+        hourly = _to_model_clock(pd.concat(frames, ignore_index=True), year)
+        gen = np.clip(hourly["gen_mw"].to_numpy(dtype=float), 0.0, None)
+        hsl = np.maximum(hourly["hsl_mw"].to_numpy(dtype=float), gen)
+        fuels[fuel] = {"gen": gen, "hsl": hsl}
+    return _assemble_frame(fuels)
+
+
+# ---------------------------------------------------------------------------
+# Validation + output
+# ---------------------------------------------------------------------------
+
+
+def _eia_reference_twh(year: int) -> tuple[dict[str, float], str] | None:
+    """Return ``(totals, source)`` for the EIA delivered cross-check.
+
+    Prefers the EIA-923 totals in calibration_reference.json (the ERCOT-BA
+    benchmark the backcasts calibrate against); falls back to the hardcoded
+    Texas-wide approximations for years predating the reference file.
+    """
+    if REFERENCE_PATH.exists():
+        ref = json.loads(REFERENCE_PATH.read_text())
+        gen = (
+            ref.get("isos", {}).get("ERCOT", {}).get(str(year), {})
+            .get("generation_twh", {})
+        )
+        if "wind" in gen and "solar" in gen:
+            totals = {"wind": float(gen["wind"]), "solar": float(gen["solar"])}
+            return totals, "EIA-923 (calibration reference)"
+    fallback = EIA_REFERENCE_TWH.get(year)
+    if fallback is None:
+        return None
+    return fallback, "EIA-930 Texas-wide (approximate)"
+
+
+def print_validation(df: pd.DataFrame, year: int) -> None:
     """Print annual totals, peaks, monthly curtailment and the EIA check.
 
     Args:
-        df: The aggregated hourly DataFrame from
-            :func:`aggregate_system_hourly`, including the ``month`` column.
+        df: The aggregated hourly DataFrame (including the ``month``
+            column) from :func:`aggregate_umass_hourly` or
+            :func:`aggregate_np6_hourly`.
+        year: The calendar year the frame covers.
     """
-    print("\n=== ERCOT 2023 uncurtailed renewable potential (HSL) ===")
+    print(f"\n=== ERCOT {year} uncurtailed renewable potential (HSL) ===")
     print(f"Rows: {len(df)} (expected {HOURS_PER_YEAR})")
 
     for fuel in ("wind", "solar"):
@@ -183,29 +496,57 @@ def print_validation(df: pd.DataFrame) -> None:
         s = 100.0 * (1.0 - m["solar_gen_mw"].sum() / m["solar_hsl_mw"].sum())
         print(f"  {month:>5} {w:>8.2f} {s:>8.2f}")
 
-    print("\nEIA-930 cross-check (delivered generation):")
+    reference = _eia_reference_twh(year)
+    if reference is None:
+        print("\nEIA cross-check skipped: no reference totals for "
+              f"{year} (see inputs/calibration/calibration_reference.json).")
+        return
+    totals, source = reference
+    print(f"\nEIA cross-check (delivered generation, vs {source}):")
     for fuel in ("wind", "solar"):
         gen_twh = df[f"{fuel}_gen_mw"].sum() / 1e6
-        ref = EIA_REFERENCE_TWH[fuel]
+        ref = totals[fuel]
         diff = 100.0 * (gen_twh - ref) / ref
         print(
-            f"  {fuel:>5}: nodal {gen_twh:6.2f} TWh vs EIA ~{ref:.0f} TWh "
-            f"({diff:+.1f}%)"
+            f"  {fuel:>5}: HSL-source {gen_twh:6.2f} TWh vs EIA "
+            f"~{ref:.0f} TWh ({diff:+.1f}%)"
         )
-    print(
-        "  Note: EIA Texas-wide totals include SPP Panhandle wind outside\n"
-        "  ERCOT, so the ERCOT-only nodal total is expected to run lower."
-    )
+    if source.startswith("EIA-930"):
+        print(
+            "  Note: EIA Texas-wide totals include SPP Panhandle wind outside"
+            "\n  ERCOT, so the ERCOT-only nodal total is expected to run "
+            "lower."
+        )
 
 
-def main() -> None:
-    """Download, aggregate and write the ERCOT 2023 HSL hourly parquet."""
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory() as tmp:
-        data_dir = clone_dataset(Path(tmp) / "nodal-curtailment-analysis")
-        df = aggregate_system_hourly(data_dir)
+def build_year(year: int) -> bool:
+    """Build and write one year's HSL parquet. Returns True on success."""
+    if year == UMASS_YEAR:
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = clone_dataset(Path(tmp) / "nodal-curtailment-analysis")
+            df = aggregate_umass_hourly(data_dir)
+        source = UMASS_REPO_URL
+        description = (
+            "ERCOT 2023 system-wide hourly wind/solar HSL (uncurtailed "
+            "potential) and delivered generation, aggregated from the "
+            "UMass nodal-curtailment dataset (60-Day SCED Disclosure)."
+        )
+    else:
+        df = aggregate_np6_hourly(year)
+        if df is None:
+            return False
+        source = (
+            "ERCOT MIS wind/solar power production reports "
+            "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
+            "inputs/raw-data/ercot-hsl/np6/"
+        )
+        description = (
+            f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
+            "potential) and delivered generation, aggregated from ERCOT "
+            "MIS power-production reports (system-wide actual GEN and HSL)."
+        )
 
-    print_validation(df)
+    print_validation(df, year)
 
     table = pa.Table.from_pandas(
         df[["hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw",
@@ -214,19 +555,40 @@ def main() -> None:
     )
     table = table.replace_schema_metadata(
         {
-            "source": REPO_URL,
-            "description": (
-                "ERCOT 2023 system-wide hourly wind/solar HSL (uncurtailed "
-                "potential) and delivered generation, aggregated from the "
-                "UMass nodal-curtailment dataset (60-Day SCED Disclosure)."
-            ),
+            "source": source,
+            "description": description,
             "units": "MW (hourly-average; numerically equal to MWh per hour)",
-            "year": str(YEAR),
+            "year": str(year),
         }
     )
-    pq.write_table(table, OUT_FILE)
-    print(f"\nWrote {OUT_FILE.relative_to(REPO_ROOT)} "
-          f"({OUT_FILE.stat().st_size / 1024:.1f} KiB)")
+    path = out_file(year)
+    pq.write_table(table, path)
+    print(f"\nWrote {path.relative_to(REPO_ROOT)} "
+          f"({path.stat().st_size / 1024:.1f} KiB)")
+    return True
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Build the requested ERCOT HSL hourly parquets."""
+    parser = argparse.ArgumentParser(
+        prog="build_ercot_hsl",
+        description="Build ERCOT hourly wind/solar HSL (uncurtailed "
+                    "potential) parquets.",
+    )
+    parser.add_argument(
+        "--year", type=int, nargs="+", default=list(DEFAULT_YEARS),
+        help="Years to build (default: %(default)s). 2023 downloads the "
+             "UMass dataset; later years need NP6 report uploads under "
+             "inputs/raw-data/ercot-hsl/np6/.",
+    )
+    args = parser.parse_args(argv)
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    built = [year for year in args.year if build_year(year)]
+    skipped = sorted(set(args.year) - set(built))
+    if skipped:
+        print(f"\nSkipped (no source data): {skipped}")
+    return 0 if built else 1
 
 
 if __name__ == "__main__":
