@@ -815,24 +815,15 @@ def _fuel_name(fuel_idx: int) -> str:
 
 
 # --- CAMPD coal delivered fuel cost ($/MMBtu), by year and supply type ------
-# Mine-mouth lignite: $1.05 flat across 2023-2025, then escalates at general
-# inflation through the modeling window. This is the marginal extraction cost
-# of the dedicated mine, not the accounting delivered cost (~$2+/MMBtu): the
-# mine's fixed/capital costs are sunk under the plant's take-or-pay supply
-# arrangement, so the dispatch bid carries only the incremental mining cash
-# cost — the lignite analogue of the PRB price-taking passthrough. Calibrated
-# (Run 80) so the lignite committed/economic tranches clear under the gas-CC
-# stack in cheap-gas years (2024 monthly CC committed ~$15-16/MWh), matching
-# the fleet's observed baseload-must-run behaviour; the prior $1.45 priced
-# lignite's above-must-run capacity out of the 2023/2024 merit order entirely
-# (lignite -12.8%/-23.8% vs EIA-923). PRB-by-rail: measured delivered cost
+# Mine-mouth lignite: $1.45 flat across 2023-2025, then escalates at general
+# inflation through the modeling window. PRB-by-rail: measured delivered cost
 # for 2023-2025; from 2026 a forward curve decomposes the 2023-2025 average
 # into commodity (42%), diesel-driven rail freight (12%) and non-diesel rail
 # freight (46%). The commodity component holds flat through 2030 then declines
 # 1.5%/yr as coal demand falls; non-diesel rail escalates at inflation; the
 # diesel-rail component is held at its 2025 level (the model carries no
 # forward diesel price curve). Source: operator/EIA cost data, user calibration.
-_LIGNITE_PRICE_2023_25: float = 1.05
+_LIGNITE_PRICE_2023_25: float = 1.45
 _PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
 _PRB_COMMODITY_SHARE: float = 0.42
 _PRB_RAIL_DIESEL_SHARE: float = 0.12
