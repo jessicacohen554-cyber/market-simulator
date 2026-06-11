@@ -41,6 +41,47 @@ tests. ERCOT/PJM/CAISO MC unchanged (regression-tested).
 - **Docs.** `docs/multi-iso/neiso-data-audit.md` §2b (detection + validation
   table); doc-08 §1 "Done by P13" status; this entry.
 
+## 2026-06-11 (NYISO + NEISO P9 — priced import/export node, offline tranche fit)
+
+NYISO and NEISO prompt-pack P9 (Wave 1), done together because they share
+`constants.IMPORT_TRANCHES` / `EXPORT_TRANCHES`. Adds each ISO's priced
+import/export node to the generalized J1 machinery (`build_import_generators`
+/ `build_export_sinks` / `extend_with_import_node`) and fits the tranche
+capacities to the EIA-930 net-interchange **duration curve** — an offline
+data fit on the measured series, no LP calibration run (modeled-net-import
+validation is P11/P12's, and depends on this pack, so self-validating here
+would be circular). ERCOT/PJM/CAISO are untouched (regression-tested).
+
+- **`IMPORT_TRANCHES` / `EXPORT_TRANCHES["NYISO"]`.** NYISO is a large,
+  near-constant net importer (EIA-930 NYIS: +23.45 TWh / −2,677 MW avg in
+  2023, imports in 100% of hours). Five import tranches priced at the
+  neighbor hub, cheapest first — HQ hydro ($14, Châteauguay/Cedars), Ontario
+  HOEP ($24), PJM West ($34), ISO-NE Mass Hub ($44), scarcity ($75) — plus
+  one small export sink ($10; NYISO almost never exports). Each proxy cited
+  inline (Tier 3).
+- **`IMPORT_TRANCHES` / `EXPORT_TRANCHES["NEISO"]`.** NEISO is a steady net
+  importer (+15.14 TWh / −1,728 MW avg in 2023, easing to +10.30 TWh in
+  2024). Five tranches — HQ Phase II ($18, Sandy Pond HVDC), Highgate ($22,
+  VT–HQ), NB/north ($30), NYISO ties ($36, Cross-Sound/Northport–Norwalk),
+  scarcity ($68) — and two export sinks ($16/$8). The HQ_import zone was
+  already in `_neiso_config`; added its Highgate/NB → North and NYISO-tie →
+  Connecticut links so the bubble can carry the full ~4.4 GW measured import.
+- **`IMPORT_ZONE` / `IMPORT_NODE_LINKS` / `IMPORT_EFORD`** entries for both.
+  NYISO's external node (`NYISO_external`) is appended on demand by
+  `extend_with_import_node` (PJM pattern) with four border links (sum ≈ 6.4
+  GW); NEISO's is baked in (CAISO pattern). EFORD 0 (scheduled interties).
+- **Duration-curve fit (offline, no LP).** `derive_import_tranches.py` gains
+  a measured-only mode (no `--bundle`): the node's achievable net-export
+  *levels* are placed optimally against the measured duration curve, so the
+  reported RMSE depends only on the block capacities, not a (circular)
+  self-solved price. Headline fit RMSE: **NYISO 320 MW (2023) / 333 (2024)**,
+  **NEISO 271 / 266 (2023/24)** — both tighter than PJM's ~570; annual TWh
+  within ~1%.
+- **Report.** The calibration report's net-interchange section [2] now prints
+  the offline priced-node **fit RMSE** alongside the modeled annual TWh,
+  duration curve, and a new **diurnal** shape line, for every ISO with the
+  node configured. `--priced-interchange` smoke-solves for both ISOs.
+
 ## 2026-06-11 (NEISO backcast P7 — measured gas, Algonquin winter basis, RGGI)
 
 NEISO prompt-pack P7 (Wave 1) — the structural price pack. Measured monthly
