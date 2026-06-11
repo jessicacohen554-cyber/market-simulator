@@ -335,12 +335,16 @@ def _calibration_config(
         #   cap-and-trade allowance price (2023-25) on in-state fossil MC.
         #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
-        gas_monthly_actuals=(iso.upper() == "CAISO"),  # CAISO default-on:
+        gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO")),  # default-on:
         #   the +1.20 SoCal basis seed misses the measured delivered-gas
         #   reality badly in stressed years (EIA-923 implied basis +7.06 in
         #   2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in 2024, +1.12 in
         #   2025), so CAISO backcasts price gas at the measured ISO-month
-        #   series. PJM keeps the --gas-monthly-actuals flag (its keeper
+        #   series. NYISO is the same story (P7): the flat +0.55 basis seed
+        #   misses the Transco Z6 winter blowout the measured 923 series
+        #   carries (Jan-2023 delivered $10.02/MMBtu vs HH $3.27; Dec-2025
+        #   $8.20), so NYISO backcasts price gas at the measured ISO-month
+        #   series too. PJM keeps the --gas-monthly-actuals flag (its keeper
         #   runs pass it explicitly); ERCOT stays on annual + shape (E1).
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
