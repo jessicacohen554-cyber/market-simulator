@@ -43,6 +43,10 @@ on:
         description: "Cap storage to within-day arbitrage (recommended)"
         type: boolean
         default: true
+      extra_flags:
+        description: "Extra run_calibration_full.py flags appended verbatim, e.g. '--gas-monthly-actuals --priced-interchange --coal-bit-sigmoid' (the PJM keeper trio + bit sigmoid)"
+        type: string
+        default: ""
       note:
         description: "Optional free-text note (becomes the run's dashboard definition)"
         type: string
@@ -151,6 +155,7 @@ jobs:
           NOTE: ${{ inputs.note }}
           PRB_SIGMOID: ${{ inputs.prb_sigmoid }}
           STORAGE_DAILY: ${{ inputs.storage_daily_cycling }}
+          EXTRA_FLAGS: ${{ inputs.extra_flags }}
         run: |
           set -euo pipefail
           ARGS=( --iso "$ISO" --year $YEARS \
@@ -163,6 +168,13 @@ jobs:
           fi
           if [ "$STORAGE_DAILY" = "true" ]; then
             ARGS+=( --storage-daily-cycling )
+          fi
+          # Operator-supplied passthrough flags (e.g. the PJM keeper trio:
+          # --gas-monthly-actuals --priced-interchange, plus --coal-bit-sigmoid).
+          # Word-split deliberately; flags only, validated by the CLI parser.
+          if [ -n "$EXTRA_FLAGS" ]; then
+            # shellcheck disable=SC2206
+            ARGS+=( $EXTRA_FLAGS )
           fi
           echo "run_calibration_full.py ${ARGS[*]}"
           python scripts/run_calibration_full.py "${ARGS[@]}"
