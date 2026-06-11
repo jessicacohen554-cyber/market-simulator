@@ -300,8 +300,8 @@ measured unit-outage availability rather than statistical-only.
 
 | # | Item | Destination | Status |
 |---|---|---|---|
-| U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **done (2026-06-11)** — landed; `derive_campd_unit_outages.py --iso CAISO` regenerated `campd-unit-outages-CAISO.csv` with 612 measured 2023 windows (2024/2025 byte-identical). 2023 backcasts now carry measured unit outages |
-| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10. OASIS gotcha found 2026-06-11: multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) |
+| U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
+| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **done (as available)** — see §4a. DA 2024+2025 and RT 2024+2025 are full years × 3 hubs; the `actual_lmp.json` CAISO block + `actual_lmp_hourly_CAISO.parquet` and the zonal-sufficiency test are built. **Gaps:** DA 2023 is a ~3-trade-date stub (OASIS ~39-month retention aged it out before the mid-2026 pull) and RT 2023 was never fetched, so there is no usable 2023 price year. OASIS gotcha (2026-06-11): multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) and `scripts/postprocess_oasis_downloads.py` folds the raw windows into the committed hourly aggregates |
 | U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
 | U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
 | U5 | Path 15/26 hourly flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
@@ -325,6 +325,52 @@ Additional gap found (not in the original manifest):
   the CISO `Other` series net of an estimated baseload in every year,
   not a battery column. Minor: prefer the `(Adjusted)` demand columns
   (raw has 24 NaN hours per 2025 half, 48 in 2024-H2, 2 in 2023-H2).
+
+### 4a. LMP benchmark + zonal-sufficiency (U2 / P10, 2026-06-11)
+
+**Aggregates.** `scripts/postprocess_oasis_downloads.py` folds the OASIS raw
+window CSVs into the committed hourly aggregates and is idempotent/rerun-safe
+(one command re-ingests any future drop; overlapping fetch windows dedupe on
+the `(timestamp, node|tac_area)` key). Current coverage:
+
+| Series | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| DAM (`CAISO_dam_hourly`) | ~3 trade dates (retention stub) | full, 366 d × 3 hubs | full, 365 d × 3 hubs |
+| RTM (`CAISO_rtm_hourly`) | **not fetched** | full × 3 hubs | full × 3 hubs |
+| TAC load (`CAISO_tac_load_hourly`) | Jan only (hand-downloaded `SLD_FCST`) | full × 5 TACs | full × 5 TACs |
+
+The 126 raw RTM/load window files were staged out in commit `a81eb80`; the
+aggregates are the repo's record. The 2023 DAM/RTM gap is OASIS retention
+(~39 months — by mid-2026 only late-Feb-2023 survives) and an unfetched RT
+2023; not recoverable from OASIS now.
+
+**Calibration reference.** `scripts/derive_actual_lmp.py` grew a CAISO
+builder alongside ERCOT/PJM (ERCOT/PJM outputs regenerate byte-identically —
+regression-checked). CAISO has no single system hub, so the
+comparable-to-the-model system price is the three trading hubs **load-weighted
+by zone share** (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, the
+`config.iso_configs` `load_share` values), reindexed onto the Pacific
+prevailing-time dispatch clock. Written:
+
+- `inputs/calibration/actual_lmp.json` CAISO block — DA + RT **2024 & 2025**
+  annual/monthly means + `da_pct`/`rt_pct` duration-curve percentiles
+  (2024 DA $35.81 / RT $32.94; 2025 DA $34.62 / RT $33.63). 2023 is omitted:
+  a full-year gate (`CAISO_MIN_HOURS`) rejects the DAM stub, and RT 2023 is
+  absent.
+- `inputs/calibration/actual_lmp_hourly_CAISO.parquet` — the dense
+  fixed-8760 system DA/RT series (2 years) for the duration-curve overlay
+  (`scripts/analyze_lmp_residual.py`).
+
+**Zonal-sufficiency test (design decision 3).** Full write-up in
+`caiso-zonal-adequacy.md`; reproduce with
+`scripts/caiso_zonal_sufficiency.py`. Conclusion: **keep 3 zones.** The DA
+NP15−SP15 spread exceeds $20/MWh in 16.8% (2024) / 10.3% (2025) of hours
+(p99 $46–66), with NP15 the dear side 98–99% of the time and the separation
+concentrated in solar shoulder months (Mar–May, Oct–Nov) and midday hours —
+Path 15 north-south congestion a single zone cannot reproduce. SP15 and ZP26
+move together (>$20 only 0.7–1.3% of hours), so the load-bearing split is
+NP15-vs-South; the next refinement lever is the Path 15 TTC (U5), not more
+zones.
 
 ## 5. Present and verified (do not re-acquire)
 
