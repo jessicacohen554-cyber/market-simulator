@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-11 (CAISO P6 — uncurtailed renewable potential, the HSL analogue)
+
+CAISO backcasts now feed the dispatch *uncurtailed* wind/solar potential so
+it re-curtails endogenously (playbook §8.3), instead of inheriting the
+historical curtailment baked into EIA-930 delivered output. ERCOT's NP6 HSL
+path is byte-for-byte unchanged (regression-tested).
+
+- **`scripts/build_caiso_hsl.py`** builds
+  `inputs/raw-data/caiso-hsl/caiso_<year>_hsl_hourly.parquet` (same schema
+  as `ercot-hsl/`): uncurtailed = EIA-930 `CISO hourly` delivered +
+  CAISO's reported 5-minute wind/solar curtailment
+  (`inputs/raw-data/caiso-curtailment/`, upload U3), mapped onto the
+  model's non-leap 8760 clock. 2023 and 2024 are built and committed
+  (curtailment 2.66 / 3.40 TWh — matches CAISO's published totals;
+  solar ~6.3 / 6.6% of potential, spring-peaked). 2025's workbook ends in
+  May, so the year is **skipped with a data-needed marker** rather than
+  fabricating zero curtailment for Jun–Dec; CAISO 2025 keeps the
+  delivered-profile fallback.
+- **`renewables.py`**: the HSL file lookup is generalized (`_hsl_file`);
+  `load_renewable_profiles` now resolves CAISO backcast years to the
+  uncurtailed parquet, zone-shaped by EIA-860 capacity exactly like the
+  delivered path. New `load_hsl_hourly(iso, year)` exposes the GEN/HSL
+  frame to the report and tests.
+- **Calibration report**: new headline table `[1b] Renewable curtailment`
+  in the generic (non-ERCOT) report — modeled re-curtailment
+  (potential − dispatched) vs ISO-reported (HSL − delivered), annual TWh
+  per fuel plus the monthly GWh shape. Prints only for HSL-backed
+  ISO-years.
+- **Tests**: CAISO backcast profile reconstructs the zero-floored HSL and
+  sits ≥ delivered every hour; every committed CAISO HSL parquet has
+  HSL ≥ delivered hourly with multi-TWh solar curtailment; ERCOT 2023
+  still reconstructs the rescaled NP6 targets (110 / 32 TWh).
+
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
