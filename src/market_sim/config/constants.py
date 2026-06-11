@@ -213,6 +213,10 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
 # backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal
 # refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2).
+# Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly
+# net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly
+# exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy);
+# re-run with --check after an EIA-923 refresh.
 # Tier: 3 (calibration)
 NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     "ERCOT": {
