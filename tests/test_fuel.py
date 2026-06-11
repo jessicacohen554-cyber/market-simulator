@@ -862,6 +862,84 @@ def test_neiso_hub_basis_overlay_winter_blowout_real_data():
     )
 
 
+def test_neiso_hub_overlay_drives_dual_fuel_switch(monkeypatch):
+    """P13: the AGT hub-basis overlay is what trips the dual-fuel switch.
+
+    The end-to-end NEISO winter mechanism (doc-08 decisions 1-2): the
+    measured Algonquin Citygate spot (``apply_hub_basis_overlay``) blows the
+    gas price out past distillate parity in the cold month, and because the
+    overlay runs *before* :func:`apply_dual_fuel_pricing` in
+    :func:`resolve_fuel_prices`, the dual-fuel unit then caps that blown-out
+    hub price at oil — it *consumes* the overlay. A gas-only unit eats the
+    full hub spike; a cheap month leaves both on gas. Driven through the real
+    resolver with the hub series monkeypatched to a Jan blowout so the test
+    does not depend on a specific calendar year's committed basis.
+    """
+    _patch_dual_fuel_capability(monkeypatch)
+    # Jan AGT spot far above distillate parity ($18); July cheap. The overlay
+    # replaces the gas price outright in covered months (it is the measured
+    # constrained-hub spot, not a basis adder).
+    hub = np.full(12, 2.0)
+    hub[0] = 30.0
+    monkeypatch.setattr(
+        "market_sim.data.fuel.iso_hub_monthly_gas_prices",
+        lambda config, year, basis_path=None: hub,
+    )
+    hours = 31 * 24 + 28 * 24 + 31 * 24  # Jan-Mar, enough to span the spike
+    fleet = _dual_fuel_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="NEISO", mode="backcast", weather_year=2030, hours=hours,
+        gas_seasonality=False, gas_hub_basis_overlay=True,
+        dual_fuel_switching=True,
+    )
+    # 2030: no F923 petroleum data, so oil parity is the flat default.
+    prices = resolve_fuel_prices(config, fleet, 2030)
+    jan = slice(0, 31 * 24)
+    feb = slice(31 * 24, 31 * 24 + 28 * 24)
+    # Dual-fuel unit: switched to oil in the AGT-spike month, on (cheap) gas
+    # in the shoulder month.
+    np.testing.assert_allclose(prices[0, jan], OIL_PRICE_PER_MMBTU)
+    np.testing.assert_allclose(prices[0, feb], 2.0)
+    # Gas-only unit eats the full hub spike — no oil backup to switch to.
+    np.testing.assert_allclose(prices[1, jan], 30.0)
+    np.testing.assert_allclose(prices[1, feb], 2.0)
+    # The pure-oil steam unit always prices off oil.
+    np.testing.assert_allclose(prices[2, jan], OIL_PRICE_PER_MMBTU)
+
+
+def test_neiso_monthly_agt_basis_stays_below_distillate_parity():
+    """Doc-08 P13 limitation: monthly AGT averages do not cross oil parity.
+
+    The committed gas_basis_by_iso_month.csv carries *monthly* Algonquin
+    Citygate prices, which smooth over the daily cold-snap spot blowouts that
+    actually drive the dual-fuel switch in real time. Across 2023-2025 every
+    monthly AGT value stays below distillate parity (~$18/MMBtu), so the
+    dual-fuel CT/ST switch is correctly wired (see
+    :func:`test_neiso_hub_overlay_drives_dual_fuel_switch`) but rarely binds
+    on monthly granularity — modeled winter oil comes predominantly from the
+    oil-primary steam fleet (Canal/Wyman/New Haven/Montville/Newington, ~5 GW)
+    dispatching at scarcity, not the CT switch. Daily AGT (a finer U4 upload)
+    is what would make the CT switch bind. This guards the documented finding
+    against a silent change to the basis CSV.
+    """
+    for year in (2023, 2024, 2025):
+        config = ScenarioConfig(
+            iso="NEISO", mode="backcast", weather_year=year, hours=_HOURS,
+            gas_price_override=3.0, gas_hub_basis_overlay=True,
+        )
+        monthly = iso_hub_monthly_gas_prices(config, year)
+        if monthly is None:
+            import pytest
+            pytest.skip("gas_basis_by_iso_month.csv has no NEISO rows")
+        # Winter months blow out well above the shoulder, but the monthly
+        # average never reaches distillate parity.
+        assert np.nanmax(monthly) < OIL_PRICE_PER_MMBTU, (
+            f"{year}: monthly AGT max {np.nanmax(monthly):.1f} unexpectedly "
+            "crossed distillate parity — revisit the P13 monthly-granularity "
+            "limitation note"
+        )
+
+
 def test_hub_basis_overlay_noop_for_other_isos():
     """ERCOT/PJM/CAISO fuel prices are unchanged by the overlay machinery.
 
