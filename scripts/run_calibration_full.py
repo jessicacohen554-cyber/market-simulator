@@ -792,6 +792,15 @@ def _btm_frame(
     })
 
 
+def _highspy_version() -> str:
+    """Return the installed highspy version, or '' if unavailable."""
+    try:
+        from importlib.metadata import version
+        return version("highspy")
+    except Exception:
+        return ""
+
+
 def _git_sha() -> str:
     """Return the current git short SHA, or '' if unavailable."""
     try:
@@ -1134,6 +1143,13 @@ def solve_and_persist(
         "cc_derate_from_top": cc_derate_from_top,
         "priced_interchange": priced_interchange,
         "git_sha": _git_sha(),
+        # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
+        # years putting PRB committed bids on top of gas committed bids)
+        # admit alternate optimal vertices, and different HiGHS releases
+        # pick different ones — class TWh can move several TWh at an
+        # identical objective. Record the version so a non-reproducing
+        # bundle can be traced to a solver upgrade.
+        "highspy_version": _highspy_version(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
     # Rebuild the recorded config WITH the same overrides + deltas applied, so
