@@ -8282,6 +8282,100 @@
       ]
     },
     {
+      "param_id": "scenario.coal_bit_passthrough_ceil",
+      "display_name": "Coal Bit Passthrough Ceil",
+      "value": 1.25,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "dear-gas asymptote (>1 = markup)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_bit_passthrough_floor",
+      "display_name": "Coal Bit Passthrough Floor",
+      "value": 0.82,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "cheap-gas asymptote",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_bit_passthrough_gas_mid",
+      "display_name": "Coal Bit Passthrough Gas Mid",
+      "value": 3.4,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "$/MMBtu logistic midpoint",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_bit_passthrough_gas_slope",
+      "display_name": "Coal Bit Passthrough Gas Slope",
+      "value": 2.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "logistic slope per $/MMBtu",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_bit_passthrough_sigmoid",
+      "display_name": "Coal Bit Passthrough Sigmoid",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJM coal-fleet analogue of the PRB sigmoid above). When True, every bituminous-supply coal tranche above must-run passes a logistic of the monthly delivered gas price instead of full fuel cost: a discount when gas is cheap (Appalachian/Illinois-Basin bit holds its baseload against cheap gas CC) and a markup > 1.0 when gas is dear (so it doesn't over-run). Keyed off the measured EIA-923 ISO-month gas series when gas_monthly_actuals is on (the PJM keeper config), else the shaped trajectory. Defaults bracket the per-month bit-vs-gas-CC breakeven passthrough across PJM 2023-2025 (~0.5 at $2.2/MMBtu gas to ~1.7 at $6.9) conservatively — a moderate pull toward breakeven, not full price-taking. Off (default) keeps full fuel cost.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.coal_committed_hr_mult",
       "display_name": "Coal Committed Hr Mult",
       "value": 1.22,
