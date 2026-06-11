@@ -143,6 +143,34 @@ class TestNuclearAvailability(unittest.TestCase):
             "Spring should have lower availability than summer",
         )
 
+    def test_caiso_nuclear_by_year_refueling(self):
+        """CAISO backcast years use the Diablo Canyon EIA-923 monthly CF.
+
+        The per-year vector embeds the actual staggered refueling cadence:
+        unit 2 down Oct-Dec 2023, unit 1 down Apr-May 2024. The 923-derived
+        CF is realized availability, applied directly (no EFORD stacking).
+        """
+        starts = np.cumsum(
+            [0] + [d * 24 for d in
+                   (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
+        )
+        cfg23 = ScenarioConfig(mode="backcast", weather_year=2023, iso="CAISO")
+        fa23 = generators_to_fleet_arrays(
+            [self._nuclear_gen()], ["North"], iso="CAISO", config=cfg23
+        )
+        oct23 = fa23.availability[0, starts[9]:starts[10]].mean()
+        self.assertAlmostEqual(oct23, 0.47, places=2)
+
+        cfg24 = ScenarioConfig(mode="backcast", weather_year=2024, iso="CAISO")
+        fa24 = generators_to_fleet_arrays(
+            [self._nuclear_gen()], ["North"], iso="CAISO", config=cfg24
+        )
+        apr24 = fa24.availability[0, starts[3]:starts[4]].mean()
+        self.assertAlmostEqual(apr24, 0.60, places=2)
+        # Full-output months run at the measured ~1.0, not 1 - EFORD.
+        jan24 = fa24.availability[0, starts[0]:starts[1]].mean()
+        self.assertAlmostEqual(jan24, 1.00, places=2)
+
     def test_no_iso_keeps_flat_availability(self):
         """Without an ISO, nuclear availability stays flat 1 - eford."""
         gen = self._nuclear_gen()
@@ -157,6 +185,41 @@ class TestNuclearAvailability(unittest.TestCase):
         )
         fa = generators_to_fleet_arrays([coal], ["North"], iso="ERCOT")
         np.testing.assert_allclose(fa.availability[0], 1.0 - coal.eford)
+
+
+class TestCaisoChpOverrides(unittest.TestCase):
+    """Tests for the derived CAISO CHP steam-following artifact."""
+
+    def test_caiso_chp_artifact_loads(self):
+        """thermal_tranches_CAISO.csv supplies per-plant floors + sectors."""
+        from market_sim.data.fleet import (
+            chp_btm_pct,
+            chp_overrides,
+            chp_pmin_cf,
+        )
+
+        overrides = chp_overrides("CAISO")
+        self.assertGreater(
+            len(overrides), 50,
+            "CAISO CHP artifact should cover the cogen fleet",
+        )
+        for code, (pmin, sector) in overrides.items():
+            if pmin is not None:
+                self.assertTrue(
+                    0.0 <= pmin <= 75.0,
+                    f"plant {code} floor {pmin} outside [0, 75]",
+                )
+            if sector is not None:
+                self.assertIn(
+                    sector, ("merchant", "industrial", "commercial")
+                )
+        # Watson Cogeneration (Torrance refinery host): measured EIA-923
+        # monthly floor with an industrial-sector BTM share.
+        self.assertEqual(chp_pmin_cf(50216, iso="CAISO"), 31.2)
+        self.assertEqual(chp_btm_pct(50216, "CC_CHP", iso="CAISO"), 50.0)
+        # The CAISO artifact must not leak into the ERCOT lookup (Baytown
+        # keeps its hardcoded CAMPD value).
+        self.assertEqual(chp_pmin_cf(55015, iso="ERCOT"), 49.7)
 
 
 class TestThermalAvailability(unittest.TestCase):
