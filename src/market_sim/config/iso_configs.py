@@ -461,7 +461,13 @@ def _nyiso_config() -> ISOConfig:
     York load is heavily downstate — zone J alone is ≈ 28% — so the link
     structure has to carry that load behind the import interfaces. Source:
     NYISO Load & Capacity Data ("Gold Book"), zonal energy/peak by load
-    zone. Tier 3 (calibration) — verify against metered zonal load.
+    zone. **Tier 3 (calibration)** — static Gold-Book shares are the fallback
+    pending upload U3. When ``inputs/raw-data/zone-specific-demand/NYISO/
+    NYISO_load_actuals_<year>.csv`` is present, :func:`eia_loader.load_demand`
+    gives each zone its own measured hourly shape via
+    :func:`eia_loader.nyiso_zonal_load_shares` (zones peak at different hours),
+    keyed by the A–K → model-zone aggregation. Refresh path: upload NYISO
+    OASIS "pal" actual-load CSVs for 2023–2025 (upload manifest U3).
     """
     zones = [
         Zone(name="Upstate_West", iso="NYISO", load_share=0.365),
