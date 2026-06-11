@@ -581,9 +581,13 @@ class ScenarioConfig:
     # does not see; with no adder the LP arbitrages PS every day the spread
     # clears RTE losses and generates ~2-3x the observed PS energy, shaving
     # exactly the peaks the CT fleet actually served. This is the reduced-form
-    # opportunity cost of that reserve duty, calibrated so PJM PS lands near
-    # its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).
-    pumped_storage_dispatch_adder: float = 10.0
+    # opportunity cost of that reserve duty. ``None`` (default) resolves per
+    # ISO from constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO — PJM $10,
+    # calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr (EIA-923 PS
+    # gross generation); ISOs without a calibrated entry (e.g. CAISO) get
+    # 0.0 until their own calibration says otherwise. A number overrides the
+    # per-ISO default for every ISO in the scenario.
+    pumped_storage_dispatch_adder: float | None = None
 
     # Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), the
     # battery analogue of pumped_storage_dispatch_adder. Two real costs the
