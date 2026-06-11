@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-11 (NYISO backcast P7 — measured gas, winter basis, RGGI carbon)
+
+NYISO prompt-pack P7. Prices NYISO gas at the measured EIA-923 ISO-month series
+and charges RGGI on in-state fossil marginal cost, both default-on for NYISO
+backcasts. ERCOT/PJM/CAISO marginal cost is unchanged (full suite green bar one
+pre-existing, unrelated CAISO TAC-area load-data failure).
+
+- **Measured monthly gas default-on for NYISO.** `run_calibration.py` flips
+  `gas_monthly_actuals` on for NYISO (as CAISO), so backcasts price gas at the
+  EIA-923 volume-weighted ISO-month delivered cost (nearby-plant/state fallback)
+  instead of Henry Hub + the flat +0.55 basis seed. The measured monthly basis
+  runs +0.66/+0.49/+0.89 (2023–25) — annual deltas of only +0.11/−0.07/+0.34 vs
+  the seed, but the **monthly** series carries the Transco Z6 winter blowout the
+  seed flattens (Jan-2023 delivered **$10.02**/MMBtu vs HH $3.27; Dec-2025
+  $8.20). Delta report in `nyiso-data-audit.md` §4.
+- **RGGI in marginal cost (default-on).** `STATE_CARBON_PRICE_BY_ISO["NYISO"]`
+  = `{2023: 13.49, 2024: 20.71, 2025: 22.09}` $/tCO2 — each year the simple mean
+  of the four quarterly RGGI auction clearing prices (per-auction citations in
+  `constants.py` / `parameter-citations.md`). Applied via the same
+  `resolve_carbon_price` path CAISO uses; ~$5.4→$8.8/MWh on a 0.40 t/MWh gas CC.
+  No border adjustment on imports (contrast CARB). A 7.0-HR CC at $18/t shows a
+  $7.18/MWh uplift (doc-07 design-decision-4 ~$5–7/MWh).
+- **Winter basis (U4) not landed → 923 fallback.** Added the tested
+  `data.fuel.load_winter_gas_basis()` loader for the per-ISO monthly hub-basis
+  CSV (`gas_basis_by_iso_month.csv`); it is still the header-only template, so
+  the loader returns `None` and the gas path falls back to the measured 923
+  series. Limitation and activation path documented (`nyiso-data-audit.md` §4).
+- **`COAL_PRICE_BASE["NYISO"]`** added (2.3, defensive Appalachian fallback;
+  NY grid coal is retired) so `resolve_fuel_prices` no longer `KeyError`s on the
+  NYISO fleet.
+- **Tests.** NYISO RGGI price + gas-MC uplift, ERCOT/PJM carbon-free and CAISO
+  CARB unchanged, the $18/t CC uplift band, and the winter-basis loader
+  (absent → `None`; present → per-month parse). `test_capacity.py` gains the
+  NYISO RGGI case alongside CAISO's.
+
 ## 2026-06-11 (NYISO backcast P1 — unit-outage windows verified, coverage documented)
 
 NYISO prompt-pack P1. Verifies the measured CAMPD unit-outage overlay for
