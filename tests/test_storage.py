@@ -690,5 +690,38 @@ class TestEIA860PumpedStorage(unittest.TestCase):
         self.assertIn("li_ion", techs)
 
 
+class TestBatteryDispatchAdder(unittest.TestCase):
+    """ScenarioConfig.battery_dispatch_adder on the EIA-860 battery fleet."""
+
+    def test_default_zero_leaves_battery_vom_unchanged(self):
+        units = load_eia860_storage("ERCOT", 2024, ScenarioConfig())
+        batteries = [u for u in units if u.tech_name != "pumped_storage"]
+        self.assertTrue(batteries)
+        for u in batteries:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_adder_carried_on_battery_vom_only(self):
+        cfg = ScenarioConfig(iso="PJM").with_overrides(
+            battery_dispatch_adder=17.5
+        )
+        units = load_eia860_storage("PJM", 2024, cfg)
+        for u in units:
+            if u.tech_name == "pumped_storage":
+                # PS keeps its own throughput adder, not the battery one.
+                self.assertEqual(u.vom, cfg.pumped_storage_dispatch_adder)
+            else:
+                self.assertEqual(u.vom, 17.5)
+
+    def test_adder_reaches_storage_arrays(self):
+        cfg = ScenarioConfig(iso="ERCOT").with_overrides(
+            battery_dispatch_adder=12.0
+        )
+        units = load_eia860_storage("ERCOT", 2024, cfg)
+        arrays = storage_units_to_arrays(
+            units, [u.zone for u in units]
+        )
+        self.assertTrue((arrays.vom == 12.0).all())
+
+
 if __name__ == "__main__":
     unittest.main()
