@@ -193,7 +193,7 @@ is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.p
 |---|---|---|---|
 | U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
 | U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10. OASIS gotcha found 2026-06-11: multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) |
-| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **mostly landed** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; **2025 file covers only Jan–May** — re-download the current 2025 workbook when convenient |
+| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; 2025 published only through 2025-05-31 (re-download confirmed byte-identical 2026-06-11 — that's all CAISO has posted; Jun–Dec 2025 would have to come from the daily curtailment PDFs if ever needed) |
 | U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending |
 | U5 | Path 15/26 hourly flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
 | U6 | CARB cap-and-trade auction prices 2023–2025 (optional) | cite into `constants.py` | **not yet in repo** — public auction results are web-searchable from this environment, so P7 can self-serve; no upload strictly required |
@@ -201,19 +201,21 @@ is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.p
 
 Additional gap found (not in the original manifest):
 
-- **U8 (proposed): EIA-930 CISO battery columns.** Status 2026-06-11:
-  six-month BALANCE parquets uploaded to `inputs/raw-data/eia-930/` for
-  **2023 and 2025 (2024 both halves still missing)**. Validated: CISO
-  demand reconciles with `data/eia_hourly/CISO hourly.parquet` (2023:
-  218.13 vs 218.14 TWh). Schema finding: CISO never populates the
-  dedicated `Battery Storage` column (15 other BAs do, CISO does not,
-  either vintage) — CISO batteries live inside **`Other Fuel Sources`**,
-  whose hourly swings (−7.4 GW midday charge to +9.4 GW evening
-  discharge in 2025) are unmistakably the BESS fleet plus a small
-  geothermal/biomass baseload. P5's cycling benchmark should therefore
-  use the CISO `Other` series net of an estimated baseload, not a
-  battery column. Minor: 2025 halves carry 24 NaN demand hours each
-  (use the `(Adjusted)` columns); 2023 Jul–Dec has 2.
+- **U8: EIA-930 six-month BALANCE parquets — complete.** All six halves
+  (2023/2024/2025) in `inputs/raw-data/eia-930/`, validated 2026-06-11:
+  CISO demand reconciles with `data/eia_hourly/CISO hourly.parquet`
+  (2023: 218.13 vs 218.14 TWh; 2024: 222.87 vs 224.03 — raw vs adjusted
+  demand plus 48 NaN raw hours; same pattern 2025). EIA switched schema
+  mid-2024: 2023 + 2024-H1 are the old 44-column layout, 2024-H2 + 2025
+  the new 65-column layout. Key finding: CISO never populates the
+  dedicated `Battery Storage` column in the new schema (15 other BAs
+  do) — CISO batteries live inside **`Other Fuel Sources`**, whose
+  hourly swings (−7.4 GW midday charge to +9.4 GW evening discharge in
+  2025; −6.7/+7.4 in 2024-H2) are unmistakably the BESS fleet plus a
+  small geothermal/biomass baseload. P5's cycling benchmark should use
+  the CISO `Other` series net of an estimated baseload in every year,
+  not a battery column. Minor: prefer the `(Adjusted)` demand columns
+  (raw has 24 NaN hours per 2025 half, 48 in 2024-H2, 2 in 2023-H2).
 
 ## 5. Present and verified (do not re-acquire)
 
