@@ -962,6 +962,42 @@ class TestResolveCarbonPrice(unittest.TestCase):
         self.assertAlmostEqual(resolve_carbon_price(config, 2100), 110.0)
 
 
+class TestStateCarbonProgram(unittest.TestCase):
+    """CA cap-and-trade allowance pricing for CAISO backcast years."""
+
+    def test_caiso_backcast_years_pay_carb_allowance_price(self):
+        # CARB quarterly-auction settlement averages (constants.py citation).
+        config = ScenarioConfig(iso="CAISO", mode="backcast", weather_year=2024)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2023), 33.03)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2024), 35.23)
+        self.assertAlmostEqual(resolve_carbon_price(config, 2025), 28.06)
+
+    def test_off_for_isos_without_a_state_program(self):
+        # ERCOT/PJM backcasts stay carbon-free: their MC is unchanged.
+        for iso in ("ERCOT", "PJM"):
+            config = ScenarioConfig(iso=iso, mode="backcast", weather_year=2024)
+            for year in (2023, 2024, 2025):
+                self.assertEqual(resolve_carbon_price(config, year), 0.0)
+
+    def test_state_carbon_pricing_flag_disables(self):
+        config = ScenarioConfig(
+            iso="CAISO", mode="backcast", weather_year=2024,
+            state_carbon_pricing=False,
+        )
+        self.assertEqual(resolve_carbon_price(config, 2024), 0.0)
+
+    def test_explicit_carbon_price_overrides_state_program(self):
+        config = ScenarioConfig(iso="CAISO", carbon_price=50.0)
+        self.assertEqual(resolve_carbon_price(config, 2024), 50.0)
+
+    def test_caiso_forward_years_fall_back_to_path(self):
+        # No CARB entry beyond 2025: forward years use carbon_price_path.
+        config = ScenarioConfig(iso="CAISO", carbon_price_path="zero")
+        self.assertEqual(resolve_carbon_price(config, 2030), 0.0)
+        config = ScenarioConfig(iso="CAISO", carbon_price_path="mid")
+        self.assertAlmostEqual(resolve_carbon_price(config, 2030), 15.0)
+
+
 class TestPolicyConstraints(unittest.TestCase):
     """The constraint-policy extension point."""
 

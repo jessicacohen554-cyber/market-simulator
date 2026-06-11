@@ -39,6 +39,13 @@ class ScenarioConfig:
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
     carbon_price: float = 0.0  # $/ton CO2
     carbon_price_path: str = "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
+    state_carbon_pricing: bool = True  # Charge the ISO's state carbon-program
+    # allowance cost (CA cap-and-trade for CAISO; STATE_CARBON_PRICE_BY_ISO)
+    # when carbon_price is 0.0 and the year has a measured allowance price.
+    # Only CAISO 2023-2025 is registered, so this is default-on for CAISO
+    # backcasts and a no-op everywhere else (ERCOT/PJM have no state program;
+    # forward years have no entry and fall through to carbon_price_path).
+    # See market_sim.policy.carbon.resolve_carbon_price.
     nox_price: float = 0.0  # $/ton NOx
     so2_price: float = 0.0  # $/ton SO2
     demand_growth_rate: float = 0.01  # flat override used only when no structured rates exist
@@ -717,6 +724,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_price_path": 1,
     "carbon_price": 1,
     "carbon_price_path": 1,
+    "state_carbon_pricing": 1,
     "nox_price": 1,
     "so2_price": 1,
     "demand_growth_rate": 1,
