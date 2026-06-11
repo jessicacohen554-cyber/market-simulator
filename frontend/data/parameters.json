@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-06-10",
+  "generated": "2026-06-11",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -5664,6 +5664,68 @@
       ]
     },
     {
+      "param_id": "nuclear_monthly_cf_by_year.CAISO",
+      "display_name": "Nuclear Monthly Cf By Year / Caiso",
+      "value": {
+        "2023": [
+          0.96,
+          1.0,
+          0.92,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.99,
+          0.96,
+          0.47,
+          0.66,
+          0.83
+        ],
+        "2024": [
+          1.0,
+          1.0,
+          1.0,
+          0.6,
+          0.62,
+          1.0,
+          1.0,
+          0.99,
+          0.94,
+          0.98,
+          1.0,
+          1.0
+        ],
+        "2025": [
+          1.0,
+          1.0,
+          0.95,
+          0.71,
+          0.69,
+          1.0,
+          1.0,
+          0.9,
+          1.0,
+          0.57,
+          0.92,
+          0.97
+        ]
+      },
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-year nuclear monthly capacity factor derived from EIA-923 net generation (the actual staggered refueling cadence each year, not a fixed seasonal average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2). Tier: 3 (calibration)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "nuclear_monthly_cf_by_year.ERCOT",
       "display_name": "Nuclear Monthly Cf By Year / Ercot",
       "value": {
@@ -7550,6 +7612,25 @@
       ]
     },
     {
+      "param_id": "scenario.cc_outage_derate_from_top",
+      "display_name": "Cc Outage Derate From Top",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Outage capacity comes off the TOP of a CC_REGULAR plant's offer stack instead of pro-rata across its tranches. The default (False) scales every tranche by the same hourly availability factor, which drags the cheap committed block down with the plant — a 2x1 CC with one train out (availability ~0.67) sees its committed floor fall from ~37% to ~25% of nameplate and the LP parks there, while the real plant runs its remaining train near full load (CAMPD dwells at 36-43% CF). When True, each CC_REGULAR plant's hourly available MW (unchanged in total) fills its tranches bottom-up in heat-rate order — committed first, econ slices, duct-fire peak last — so a partial outage truncates the expensive end of the curve and the committed floor keeps its level, exactly as a real plant sheds its least-efficient increments first.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.cc_peak_hr_override",
       "display_name": "Cc Peak Hr Override",
       "value": null,
@@ -8822,6 +8903,24 @@
       ]
     },
     {
+      "param_id": "scenario.gas_monthly_actuals",
+      "display_name": "Gas Monthly Actuals",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — price gas at the ISO's measured EIA-923 monthly volume-weighted delivered cost instead of annual Henry Hub + basis × the generic seasonality shape. One hub-level price per month (per-plant gas stays off — same-zone units never split on patchy reporting), so real winter events the fixed shape damps (PJM Jan-2024: $5.07 measured vs ~$2.5 shaped) reach the merit order. Off by default so the present ERCOT calibration is unchanged; backcast-only by construction (forward years have no F923 rows and keep the trajectory).",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.gas_offer_curve",
       "display_name": "Gas Offer Curve",
       "value": false,
@@ -9311,6 +9410,25 @@
       ]
     },
     {
+      "param_id": "scenario.offer_curve_smoothing_mid",
+      "display_name": "Offer Curve Smoothing Mid",
+      "value": null,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Optional midpoint anchor for the econ ramp shape: the fraction of the lo->pk heat-rate rise reached at the capacity midpoint (t = 0.5), rendered as a two-segment piecewise-linear ramp f(0)=0, f(0.5)=mid, f(1)=1. None (default) keeps the t**exp power shape. mid < 0.5 keeps the middle slices cheap and concentrates the rise in the top of the curve — e.g. 0.25 prices slice 4 of 6 like a linear ramp's slice 2 — which the single exp exponent cannot do without also distorting the bottom. Overrides offer_curve_smoothing_exp when set.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.offer_curve_smoothing_n",
       "display_name": "Offer Curve Smoothing N",
       "value": 6,
@@ -9472,6 +9590,25 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Optional per-plant tranche-config override CSV (one row per plant with its five tranche shares of nameplate — must-run / committed / econ-low / econ-high / peaking — and the five per-tranche heat-rate multipliers on the plant's base HR). When set, each listed plant's tranche split and band heat rates come straight from the sheet, bypassing offer_curve_by_group and the per-plant committed/peaking dicts; plants absent from the sheet keep the configured defaults. Produced/round-tripped by scripts/export_tranche_config.py and edited via the desktop launcher.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pumped_storage_dispatch_adder",
+      "display_name": "Pumped Storage Dispatch Adder",
+      "value": 10.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 3,
+      "source": "Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure O&M is < $1/MWh, but the fleet (e.g. Bath County) reserves much of its duty for regulation/reserves and follows pumping schedules the energy-only LP does not see; with no adder the LP arbitrages PS every day the spread clears RTE losses and generates ~2-3x the observed PS energy, shaving exactly the peaks the CT fleet actually served. This is the reduced-form opportunity cost of that reserve duty, calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr (EIA-923 PS gross generation).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
