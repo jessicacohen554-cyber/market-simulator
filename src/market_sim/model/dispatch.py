@@ -6,6 +6,7 @@ Part 3: HiGHS solver invocation and result extraction.
 """
 
 import logging
+import os
 import time
 from dataclasses import dataclass
 
@@ -983,6 +984,14 @@ def solve_dispatch(
 
     h = highspy.Highs()
     h.setOptionValue("output_flag", False)
+    # Memory-constrained boxes can cap HiGHS's thread count (parallel dual
+    # simplex keeps per-thread factorization workspaces; on a ~12 GB
+    # plant-level ISO-year LP the default all-cores run can spike past a
+    # small container's RAM and get OOM-killed). Unset keeps HiGHS's
+    # automatic threading; the LP optimum is identical either way.
+    _threads = os.environ.get("MARKET_SIM_HIGHS_THREADS")
+    if _threads:
+        h.setOptionValue("threads", int(_threads))
     # Economic-dispatch LPs are already tight, and the per-hour blocks make
     # the matrix huge but trivially structured. HiGHS presolve then scales
     # with the ~1.8M column count while removing almost nothing -- on a full
