@@ -49,19 +49,26 @@ logger = logging.getLogger("build_calibration_reference")
 # 2021-2024 each have their own EIA-860 fleet snapshot; 2025 reuses the
 # latest available EIA-860 vintage (2024), which carries no 2025 builds, so
 # its renewable capacity equals the 2024 year-end totals held flat. ERCOT was
-# the first ISO calibrated; PJM the second; CAISO the third. The per-ISO-year
-# derivation is fully generic on the ISO's zone topology (zone_names) and
-# balancing-authority code, so adding an ISO is a CALIBRATION_ISOS +
-# BA-code-map change only.
+# the first ISO calibrated; PJM the second; CAISO the third; NYISO and NEISO
+# are the Stage-E additions. The per-ISO-year derivation is fully generic on
+# the ISO's zone topology (zone_names) and balancing-authority code, so adding
+# an ISO is a CALIBRATION_ISOS + BA-code-map change only.
 CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
-CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM", "CAISO")
+CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO")
 
 # Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
 # (doc 06: 2023 = wet hydro + Diablo at full output; 2024/2025 = the
 # big-battery era) — the years with CAMPD unit-level CA extracts and EIA-923
-# by-fuel benchmarks. ISOs not listed use the full CALIBRATION_YEARS span.
+# by-fuel benchmarks. NYISO targets 2023 (cleanest year, full CEMS) and 2025;
+# 2024 is added once the NY_2024 CEMS extract lands (doc 07 §2 U1) — the
+# reference data for 2024 already exists, but the backcast year is gated on
+# its unit-level outages. NEISO targets 2023-2025 (it has the most complete
+# CEMS coverage of the new ISOs). ISOs not listed use the full
+# CALIBRATION_YEARS span.
 CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     "CAISO": (2023, 2024, 2025),
+    "NYISO": (2023, 2025),
+    "NEISO": (2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -198,7 +205,13 @@ def _egrid_benchmark(iso: str) -> dict:
     """
     # eGRID balancing-authority code for the ISO footprint. eGRID's BACODE
     # uses the same EIA-930 codes as :data:`_ISO_BA_CODE` (ERCO, PJM, ...).
-    ba_code = {"ERCOT": "ERCO", "PJM": "PJM", "CAISO": "CISO"}[iso]
+    ba_code = {
+        "ERCOT": "ERCO",
+        "PJM": "PJM",
+        "CAISO": "CISO",
+        "NYISO": "NYIS",
+        "NEISO": "ISNE",
+    }[iso]
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
     plants = df[df["BACODE"] == ba_code].copy()
 
@@ -264,8 +277,32 @@ def _write_year_csv(iso: str, year: int, renewables: dict) -> Path:
 
 # EIA-923 reported fuel-type codes that count as coal.
 _EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"})
+# EIA-923 reported fuel-type codes that count as oil (distillate, residual,
+# kerosene, jet, waste oil, petroleum coke) — the dual-fuel winter switch fuel
+# in NYISO/NEISO. Any prime mover counts; the fuel code alone classifies oil.
+_EIA923_OIL_FUELS: frozenset[str] = frozenset(
+    {"DFO", "RFO", "JF", "KER", "WO", "PC"}
+)
 # ISO identifier -> EIA balancing-authority code.
-_ISO_BA_CODE: dict[str, str] = {"ERCOT": "ERCO", "CAISO": "CISO", "PJM": "PJM"}
+_ISO_BA_CODE: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "PJM": "PJM",
+    "NYISO": "NYIS",
+    "NEISO": "ISNE",
+}
+
+# Extra EIA-923 by-fuel benchmarks emitted only for the ISOs where they are
+# first-order. NYISO and NEISO additionally benchmark conventional hydro
+# (NYISO's Niagara/St-Lawrence carry ~25-30 TWh/yr) and the winter dual-fuel
+# oil burn. The already-calibrated ERCOT/PJM/CAISO blocks are not listed, so
+# their generation_twh stays byte-identical (hydro/oil are negligible or not
+# benchmarked there). Pumped storage (WAT/PS) is storage, not energy, and is
+# excluded from the hydro total.
+_EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
+    "NYISO": ("hydro", "oil"),
+    "NEISO": ("hydro", "oil"),
+}
 
 
 def _eia923_generation(iso: str, year: int) -> dict[str, float]:
@@ -275,9 +312,11 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
     zip under ``inputs/raw-data``, keeps the rows in the ISO's balancing
     authority, and classifies each by reported fuel code and prime mover.
     Gas is split into combined cycle (prime movers CA/CT/CC/CS), combustion
-    turbine (GT) and gas steam (ST). Unlike the eGRID plant snapshot, these
-    totals sum to the balancing authority's actual net generation, so they
-    are a self-consistent calibration benchmark.
+    turbine (GT) and gas steam (ST). For ISOs in
+    :data:`_EIA923_EXTRA_FUELS_BY_ISO` (NYISO/NEISO) conventional hydro
+    (WAT/HY) and oil (:data:`_EIA923_OIL_FUELS`) are emitted too. Unlike the
+    eGRID plant snapshot, these totals sum to the balancing authority's actual
+    net generation, so they are a self-consistent calibration benchmark.
 
     Returns an empty dict when no EIA-923 zip exists for the year (2021 and
     2022 have none) or the ISO has no balancing-authority mapping.
@@ -317,6 +356,12 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
         "wind": fc == "WND",
         "solar": fc == "SUN",
     }
+    for fuel in _EIA923_EXTRA_FUELS_BY_ISO.get(iso, ()):
+        if fuel == "hydro":
+            # Conventional hydro only; pumped storage (WAT/PS) is storage.
+            masks["hydro"] = (fc == "WAT") & (pm == "HY")
+        elif fuel == "oil":
+            masks["oil"] = fc.isin(_EIA923_OIL_FUELS)
     return {
         fuel: round(float(net_gen[mask].sum()) / _MWH_PER_TWH, 4)
         for fuel, mask in masks.items()
