@@ -192,6 +192,30 @@ PUMPED_STORAGE_RTE: float = 0.80
 # off until a CAISO calibration pass measures Helms' reserve duty.
 PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
 
+# NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
+# EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
+#
+# Niagara (plant 2693 — Robert Moses Niagara Power Plant, ~2,429 MW):
+#   The Treaty Between the United States and Canada Concerning Diversion of
+#   the Niagara River (27 UST 1957, signed 1950; effective 1954) requires
+#   maintaining scenic flows of 50,000 cfs (Nov–Mar) / 100,000 cfs (Apr–Oct)
+#   over Horseshoe Falls. This reduces divertible flow to 60–75% of the ~202,000
+#   cfs average natural flow, with a minimum power-generation obligation
+#   corresponding to ~25% of nameplate. Source: International Joint Commission,
+#   "Supplementary Order of Approval No. 2", 1953; FERC Project No. 2216 (NYPA).
+#
+# St-Lawrence (plant 2694 — Robert Moses Power Dam, ~912 MW):
+#   The IJC Order of Approval governing Lake Ontario / St. Lawrence outflows
+#   (original order 1952; superseded by "Plan 2014", effective 2017) requires
+#   minimum hydraulic flows for navigation, ecology, and power. The Moses-Saunders
+#   dam at Massena typically operates above 50% of nameplate continuously.
+#   Source: International Joint Commission, "Lake Ontario–St. Lawrence River
+#   Plan 2014", 2016; FERC Project No. 2000 (NYPA/OPG).
+NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
+    2693: 0.25,  # Robert Moses Niagara Power Plant — 1950 Niagara Treaty
+    2694: 0.50,  # Robert Moses Power Dam (St-Lawrence) — IJC Order / Plan 2014
+}
+
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
