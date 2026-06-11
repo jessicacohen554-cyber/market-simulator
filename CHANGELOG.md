@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-11 (CAISO backcast P10 — LMP benchmark + zonal-sufficiency test)
+
+CAISO prompt-pack P10 (Wave 1). The OASIS hub LMPs (upload U2) are now a
+calibration price benchmark, and the 3-zone topology has its empirical gate.
+ERCOT/PJM outputs regenerate byte-identically (regression-checked).
+
+- **`actual_lmp.json` CAISO block + hourly sidecar.**
+  `scripts/derive_actual_lmp.py` grew a CAISO builder: with no single system
+  hub, the comparable-to-the-model system price is the three trading hubs
+  (TH_NP15/TH_ZP26/TH_SP15) **load-weighted by zone share** and reindexed
+  onto the Pacific dispatch clock. Emits DA + RT **2024 & 2025**
+  annual/monthly means + duration-curve percentiles, plus
+  `actual_lmp_hourly_CAISO.parquet` for the overlay. A full-year gate omits
+  the retention-aged 2023 DAM stub; RT 2023 was never fetched.
+- **Zonal-sufficiency test (`scripts/caiso_zonal_sufficiency.py`).** Hub-spread
+  duration curves from the DA aggregates. Conclusion: **keep 3 zones** — the
+  NP15−SP15 spread exceeds $20/MWh in 16.8% (2024) / 10.3% (2025) of hours
+  (Path 15 north-south congestion, NP15 dear, solar shoulder seasons), while
+  SP15 and ZP26 move together (>$20 in ~1% of hours). Write-up in
+  `docs/multi-iso/caiso-zonal-adequacy.md`.
+- **Aggregates documented as complete.**
+  `scripts/postprocess_oasis_downloads.py` is idempotent/rerun-safe; the
+  committed `CAISO_{dam,rtm}_hourly_{2024,2025}.csv` and
+  `CAISO_tac_load_hourly_{2024,2025}.csv` are full years × all hubs/TACs.
+  `caiso-data-audit.md` §4 U2 marked done with the 2023 gaps recorded.
+
 ## 2026-06-11 (E3 follow-up — one curtailment table, measured against consumed potential)
 
 Cleanup after E3 (#304) and CAISO P6 (#310) landed overlapping curtailment

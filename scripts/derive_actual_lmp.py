@@ -22,6 +22,12 @@ system-wide hub-average series of each market:
   * ERCOT — ``HB_HUBAVG`` settlement point in the DAM (hourly) and RTM
     (15-minute) Load-Zone/Hub settlement-point-price reports.
   * PJM — the mean across the 12 trading hubs in the hourly RT/DA LMP export.
+  * CAISO — the three trading hubs (TH_NP15/TH_ZP26/TH_SP15) in the OASIS
+    hourly aggregates (``scripts/postprocess_oasis_downloads.py``),
+    load-weighted by zone share into a system price. DA is 2024-2025 only
+    and RT 2024-2025 only: OASIS's ~39-month retention had already aged out
+    most of 2023 DAM by the mid-2026 pull (only a few Feb-2023 trade dates
+    survive), and 2023 RTM was never fetched.
 
 For ISOs with a true hourly source (PJM today), two extras are produced for
 the price-duration-curve overlay (J3a):
@@ -61,6 +67,24 @@ DEFAULT_YEARS = (2023, 2024, 2025)
 
 PJM_SRC = "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
 ERCOT_SRC = "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)"
+CAISO_SRC = ("CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), "
+             "load-weighted across TH_NP15/TH_ZP26/TH_SP15")
+
+# CAISO has no single system hub; the comparable-to-the-model "system price"
+# is the three trading hubs load-weighted by their zone shares (the same
+# static ``load_share`` values in ``config.iso_configs``; WECC_import is 0).
+CAISO_HUB_WEIGHTS = {
+    "TH_NP15_GEN-APND": 0.3969,
+    "TH_ZP26_GEN-APND": 0.0646,
+    "TH_SP15_GEN-APND": 0.5385,
+}
+# CISO localizes to Pacific prevailing time, like the model's dispatch clock
+# (``scripts/convert_eia930.py`` BA_TIMEZONES["CISO"], ``eia_loader``).
+CAISO_TZ = "America/Los_Angeles"
+# Minimum valid system-hours to emit a CAISO year. Guards against the
+# retention-aged 2023 DAM stub (OASIS keeps ~39 months, so by mid-2026 only
+# the last few Feb-2023 trade dates survive) and the never-fetched 2023 RTM.
+CAISO_MIN_HOURS = 8000
 
 # Duration-curve percentile levels for the ``da_pct`` / ``rt_pct`` records.
 _PCT_LEVELS = (1, 5, 10, 25, 50, 75, 90, 95, 99)
@@ -151,6 +175,84 @@ def _pjm(year: int) -> tuple[dict, pd.DataFrame] | None:
     return rec, hourly
 
 
+def _caiso_system_series(name: str, year: int) -> pd.Series | None:
+    """Load-weighted CAISO hub system price, indexed by local Pacific time.
+
+    ``name`` is the aggregate stem (``dam`` or ``rtm``). The per-year hourly
+    aggregate (``scripts/postprocess_oasis_downloads.py``) is pivoted to one
+    column per hub, weighted by ``CAISO_HUB_WEIGHTS`` into a single system
+    price, and reindexed onto the Pacific wall clock. Returns ``None`` when
+    the aggregate is missing, lacks a hub, or carries fewer than
+    ``CAISO_MIN_HOURS`` complete hours — i.e. cannot stand for a year (the
+    retention-aged 2023 DAM stub and the unfetched 2023 RTM).
+    """
+    path = LMP_DIR / "CAISO" / f"CAISO_{name}_hourly_{year}.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path, usecols=["interval_start_gmt", "node", "LMP"])
+    wide = df.pivot_table(index="interval_start_gmt", columns="node",
+                          values="LMP", aggfunc="mean")
+    if not set(CAISO_HUB_WEIGHTS) <= set(wide.columns):
+        return None
+    wide = wide[list(CAISO_HUB_WEIGHTS)].dropna()
+    if len(wide) < CAISO_MIN_HOURS:
+        return None
+    w = np.array(list(CAISO_HUB_WEIGHTS.values()))
+    price = wide.to_numpy() @ (w / w.sum())
+    ts = pd.to_datetime(wide.index, utc=True).tz_convert(CAISO_TZ)
+    return pd.Series(price, index=ts, name="price")
+
+
+def _caiso_densify(ser: pd.Series) -> np.ndarray:
+    """Dense fixed-8760 array from a Pacific-time-indexed price series.
+
+    Feb 29 is dropped, the DST fall-back hour averages its two instances and
+    the missing spring-forward hour is NaN — the same calendar as
+    :func:`_hub_mean_hourly`.
+    """
+    hour = _hour_index(pd.Series(ser.index))
+    g = pd.Series(ser.to_numpy()).groupby(hour).mean()
+    g = g[g.index >= 0]
+    return g.reindex(range(_HOURS_PER_YEAR)).to_numpy(float)
+
+
+def _caiso(year: int) -> tuple[dict, pd.DataFrame] | None:
+    """Return ``(record, hourly)`` for CAISO, or ``None`` if no usable year.
+
+    Mirrors :func:`_pjm`: the ``{da, rt, da_mon, rt_mon, da_pct, rt_pct,
+    src}`` record uses the load-weighted hub system price, and ``hourly`` is
+    the dense system series for the parquet sidecar. DA and RT are emitted
+    independently, so a year present in DAM but not RTM still produces a
+    record (as ERCOT 2025 does with RT only).
+    """
+    series = {"da": _caiso_system_series("dam", year),
+              "rt": _caiso_system_series("rtm", year)}
+    if series["da"] is None and series["rt"] is None:
+        return None
+    parts: dict = {}
+    dense: dict[str, np.ndarray] = {}
+    for key, ser in series.items():
+        if ser is None:
+            dense[key] = np.full(_HOURS_PER_YEAR, np.nan)
+            continue
+        d = _caiso_densify(ser)
+        dense[key] = d
+        parts[key] = round(float(ser.mean()), 2)
+        parts[f"{key}_mon"] = _by_month(ser.to_numpy(),
+                                        pd.Series(ser.index).dt.month)
+        parts[f"{key}_pct"] = _pct(d)
+    rec = {k: parts[k] for k in
+           ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct") if k in parts}
+    rec["src"] = CAISO_SRC
+    hourly = pd.DataFrame({
+        "year": np.int16(year),
+        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+        "rt": dense["rt"].astype(np.float32),
+        "da": dense["da"].astype(np.float32),
+    })
+    return rec, hourly
+
+
 def _month_of(v) -> int | None:
     """Month (1-12) from an ERCOT date cell (``MM/DD/YYYY`` or a datetime)."""
     if v is None:
@@ -220,7 +322,7 @@ def _ercot(year: int) -> tuple[dict, None] | None:
     return out, None
 
 
-BUILDERS = {"ERCOT": _ercot, "PJM": _pjm}
+BUILDERS = {"ERCOT": _ercot, "PJM": _pjm, "CAISO": _caiso}
 
 
 def build(years) -> tuple[dict, dict]:
