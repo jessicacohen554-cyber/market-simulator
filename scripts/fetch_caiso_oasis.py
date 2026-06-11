@@ -133,6 +133,36 @@ def _expected_days(start: dt.date, end: dt.date) -> set[str]:
     return {str(start + dt.timedelta(days=i)) for i in range((end - start).days)}
 
 
+def _aggregate_covered_days(out_dir: Path, key: str, node: str | None) -> set[str]:
+    """Return days already covered by this dataset's hourly aggregate files.
+
+    ``scripts/postprocess_oasis_downloads.py`` folds raw window CSVs into
+    per-year hourly aggregates (``CAISO_{key}_hourly_{year}.csv``) and stages
+    the raws out of the repo, so on a fresh checkout the aggregates are the
+    only record of what was already fetched. A day counts as covered when the
+    reference series (the requested node, or ``CA ISO-TAC`` for the load
+    report) has at least 23 hourly rows (DST-short days have 23).
+    """
+    ref = node or "CA ISO-TAC"
+    counts: dict[dt.date, int] = {}
+    stamp = re.compile(rb"(\d{4})-(\d{2})-(\d{2})[ T](\d{2})")
+    for path in sorted(out_dir.glob(f"CAISO_{key}_hourly_*.csv")):
+        with open(path, "rb") as fh:
+            for line in fh:
+                if ref.encode() not in line:
+                    continue
+                m = stamp.search(line)
+                if not m:
+                    continue
+                y, mo, d, h = (int(g) for g in m.groups())
+                # Aggregate timestamps are GMT; shift back to the PST trade
+                # date the fetch windows are expressed in.
+                trade = (dt.datetime(y, mo, d, h)
+                         - dt.timedelta(hours=UTC_OFFSET_HOURS)).date()
+                counts[trade] = counts.get(trade, 0) + 1
+    return {str(day) for day, n in counts.items() if n >= 23}
+
+
 def _windows(start: dt.date, end: dt.date, days: int):
     cur = start
     while cur < end:
@@ -141,8 +171,18 @@ def _windows(start: dt.date, end: dt.date, days: int):
         cur = nxt
 
 
-def fetch_dataset(key: str, years: list[int], window: int, sleep_s: float) -> None:
-    """Fetch one dataset for the given years with adaptive window sizing."""
+def fetch_dataset(
+    key: str,
+    years: list[int],
+    window: int,
+    sleep_s: float,
+    deadline: float | None = None,
+) -> None:
+    """Fetch one dataset for the given years with adaptive window sizing.
+
+    Stops cleanly (returns) when ``deadline`` (a ``time.monotonic`` value)
+    passes, so a CI job can leave time for post-processing and commit.
+    """
     spec = DATASETS[key]
     out_dir: Path = spec["out_dir"]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -153,13 +193,18 @@ def fetch_dataset(key: str, years: list[int], window: int, sleep_s: float) -> No
     end = min(end, today)  # OASIS has no future actuals
 
     for node in nodes:
+        done_days = _aggregate_covered_days(out_dir, key, node)
         cur = start
         size = window
         while cur < end:
+            if deadline is not None and time.monotonic() > deadline:
+                print(f"  deadline reached — stopping {key} cleanly", flush=True)
+                return
             win_end = min(cur + dt.timedelta(days=size), end)
             tag = f"{key}_{node or 'ALL'}_{cur:%Y%m%d}_{win_end:%Y%m%d}"
             target = out_dir / f"{tag}.csv"
-            if target.exists():
+            need = _expected_days(cur, win_end)
+            if target.exists() or need <= done_days:
                 cur = win_end
                 continue
             url = _url(spec["params"], cur, win_end, node)
@@ -168,7 +213,6 @@ def fetch_dataset(key: str, years: list[int], window: int, sleep_s: float) -> No
             time.sleep(sleep_s)
             result = _extract_csv(payload)
             got = _covered_days(result[1]) if result else set()
-            need = _expected_days(cur, win_end)
             if result and need <= got:
                 target.write_bytes(result[1])
                 cur = win_end
@@ -194,11 +238,18 @@ def main() -> None:
                         help="initial window size in days (adaptively halved)")
     parser.add_argument("--sleep", type=float, default=5.0,
                         help="seconds between OASIS requests")
+    parser.add_argument("--deadline-minutes", type=float, default=None,
+                        help="stop fetching cleanly after this many minutes "
+                             "(for CI jobs with a hard timeout)")
     args = parser.parse_args()
 
+    deadline = (
+        time.monotonic() + args.deadline_minutes * 60.0
+        if args.deadline_minutes else None
+    )
     for key in args.datasets:
         print(f"=== {key} ({DATASETS[key]['params']['queryname']}) ===")
-        fetch_dataset(key, args.years, args.window, args.sleep)
+        fetch_dataset(key, args.years, args.window, args.sleep, deadline)
     print("done. Commit the new files under inputs/raw-data/ when finished.")
 
 
