@@ -69,6 +69,7 @@ from market_sim.model.transmission import (
     build_import_generators,
     extend_with_import_node,
     get_ttc_array,
+    wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.ira import compute_dispatch_credits
@@ -143,8 +144,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # PJM's external node) model their neighbors as priced import tranches
     # plus export sinks: pseudo-generators that ride along with the dispatch
     # fleet but never evolve. PJM's external zone is appended to the topology
-    # here; CAISO's is baked in.
-    import_generators = build_import_generators(iso) + build_export_sinks(iso)
+    # here; CAISO's is baked in. CAISO import tranches carry the CA
+    # cap-and-trade border adjustment on unspecified imports (CARB EF
+    # 0.428 t/MWh x allowance price), priced once at the first simulated
+    # year's carbon price — the tranche VOM is static across the run, so a
+    # rising forecast carbon path is not re-tracked here. The export sink
+    # is exempt (exports carry no CA compliance cost).
+    border_carbon = (
+        wecc_border_carbon_adder(resolve_carbon_price(config, START_YEAR))
+        if iso == "CAISO"
+        else 0.0
+    )
+    import_generators = (
+        build_import_generators(iso, border_carbon) + build_export_sinks(iso)
+    )
     if import_generators:
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names

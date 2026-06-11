@@ -35,11 +35,12 @@ Already in repo — do not re-acquire:
 - Market-design registry: CAISO RA (`capacity_market=True`), CA RPS entry,
   VOLL $2,000, `GAS_BASIS_DIFFERENTIAL["CAISO"] = +1.20` (Tier-3 seed).
 
-Missing (the work below): CAISO entries in `calibration_reference.json` and
-`actual_lmp.json`; CA_2023 unit-level CEMS; hub LMPs; TAC-area load;
-curtailment/uncurtailed profiles; hydro/PS/BESS fleet wiring for CAISO;
-CA cap-and-trade in marginal cost; calibrated import curve; offer-curve
-tranche derivation for the CAISO fleet; CHP identification.
+Missing (the work below): CAISO entries in `actual_lmp.json`; CA_2023
+unit-level CEMS; hub LMPs; TAC-area load; curtailment/uncurtailed profiles;
+hydro/PS/BESS fleet wiring for CAISO; calibrated import curve; offer-curve
+tranche derivation for the CAISO fleet; CHP identification. Done since:
+calibration reference (P0); gas + carbon (P7 — measured monthly gas
+default-on, CARB allowance in MC, border carbon on import tranches).
 
 ## 2. Upload manifest (user manual tasks — sessions cannot fetch these)
 
