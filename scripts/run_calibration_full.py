@@ -70,6 +70,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_renewable_gen,
 )
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
+from market_sim.model.transmission import extend_with_import_node  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _COAL_SUPPLY_TO_CURVE,
     coal_supply_class,
@@ -169,6 +170,8 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     # its CAMPD units return at the ``eff_bin`` branch above.
     if fuel == "coal":
         return "COAL"
+    if fuel == "import":
+        return "import"
     if fuel in {"gas_cc", "gas_cc_ccs"}:
         return "CC_REGULAR"
     if fuel == "gas_ct":
@@ -908,7 +911,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_mustrun_per_plant", "coal_drop_pof",
                 "coal_prb_passthrough_tiered", "coal_plant_monthly_pricing",
                 "td_loss_factor", "offer_curve_overrides",
-                "offer_curve_deltas", "git_sha",
+                "offer_curve_deltas", "priced_interchange", "git_sha",
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
@@ -944,10 +947,17 @@ def solve_and_persist(
     offer_curve_deltas: dict | None = None,
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
+    priced_interchange: bool = False,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
     iso_config = get_iso_config(iso)
+    if priced_interchange:
+        # Interchange served by the priced import/export node (external zone
+        # + import tranches + export sinks) instead of the measured schedule;
+        # the bundle's zone set and demand frames follow the extended
+        # topology so they match run_year's solve.
+        iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
@@ -982,7 +992,8 @@ def solve_and_persist(
         gas_prices[year] = gas_price
         cfg = _calibration_config(year, iso, hours, gas_price)
         demand = load_demand(
-            iso, year, iso_config, td_loss_factor=cfg.td_loss_factor
+            iso, year, iso_config, td_loss_factor=cfg.td_loss_factor,
+            include_interchange=not priced_interchange,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
@@ -1026,6 +1037,7 @@ def solve_and_persist(
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
             must_run_mw=must_run_total,
+            priced_interchange=priced_interchange,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1120,6 +1132,7 @@ def solve_and_persist(
         "offer_curve_deltas": offer_curve_deltas or {},
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
+        "priced_interchange": priced_interchange,
         "git_sha": _git_sha(),
     }
     (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
@@ -1717,6 +1730,10 @@ def _report_generic(
         model = _aggregate_twh(
             (dispatch.groupby("fuel")["mw"].sum() / _MWH_PER_TWH).to_dict()
         )
+        # The priced import/export node's net position is interchange, not
+        # generation — it reports in [2], and excluding it keeps the model
+        # total (gross internal generation) comparable to the EIA-930 total.
+        model.pop("import", None)
         e930_twh = {
             f: float(e930[f].sum()) / _MWH_PER_TWH
             for f in _GENERIC_FUEL_ORDER
@@ -1757,15 +1774,41 @@ def _report_generic(
             print("\n  [2] Net interchange (EIA sign: + = net export)")
             print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
                   f"({ix.mean():+.0f} MW avg)")
-            # PJM adds its measured tie-line net export to demand (the
-            # import/export node), so the fleet serves it; other ISOs are
-            # energy-only with no interchange node.
-            model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+            # Three interchange representations, in order of preference:
+            # the priced import/export node when its units are in the
+            # dispatch (net export = -(import tranches + export sinks));
+            # PJM's measured tie-line schedule added to demand; else the
+            # energy-only zero.
+            node = dispatch[dispatch["fuel"] == "import"]
+            if len(node):
+                model_ix = -(
+                    node.groupby("hour", observed=True)["mw"].sum()
+                    .sort_index().to_numpy(dtype=float)
+                )
+                how = "priced import/export node"
+            else:
+                model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+                how = "served as a scheduled interchange added to demand"
             if model_ix is not None:
                 m_twh = float(model_ix.sum()) / _MWH_PER_TWH
                 print(f"    model            : {m_twh:+.2f} TWh "
-                      f"({model_ix.mean():+.0f} MW avg; served as a scheduled "
-                      "interchange added to demand)")
+                      f"({model_ix.mean():+.0f} MW avg; {how})")
+                n = min(model_ix.shape[0], ix.shape[0])
+                dur_m = np.sort(model_ix[:n])
+                dur_a = np.sort(np.asarray(ix, dtype=float)[:n])
+                rmse = float(np.sqrt(((dur_m - dur_a) ** 2).mean()))
+                pcts = [1, 10, 50, 90, 99]
+                qm = np.percentile(model_ix[:n], pcts)
+                qa = np.percentile(np.asarray(ix, dtype=float)[:n], pcts)
+                print(f"    duration curve   : RMSE {rmse:.0f} MW; "
+                      "p01/p10/p50/p90/p99 model "
+                      + "/".join(f"{v:+.0f}" for v in qm)
+                      + " vs actual "
+                      + "/".join(f"{v:+.0f}" for v in qa))
+                print(f"    import hours     : model "
+                      f"{100.0 * float((model_ix[:n] < 0).mean()):.1f}% vs "
+                      f"actual "
+                      f"{100.0 * float((np.asarray(ix)[:n] < 0).mean()):.1f}%")
             else:
                 print("    model            :    0.00 TWh "
                       "(energy-only; no external interchange node)")
@@ -2151,6 +2194,14 @@ def main() -> None:
              "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
              "(cheap-bottomed), <1 concave (cheap mid/top).")
     parser.add_argument(
+        "--priced-interchange", action="store_true",
+        help="Serve interchange through the priced import/export node "
+             "(import tranches + export sinks in the ISO's external zone, "
+             "the forward-scenario mechanism) instead of the measured "
+             "schedule added to demand. Used to validate the node's tranche "
+             "calibration against the EIA-930 net-interchange duration "
+             "curve.")
+    parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
              "band rather than replacing it, so a re-tune need not restate the "
@@ -2226,6 +2277,7 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
+        priced_interchange=args.priced_interchange,
         note=args.note,
     )
     report_run(run_dir)

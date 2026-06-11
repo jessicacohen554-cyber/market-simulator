@@ -19,8 +19,12 @@ Already in repo — do not re-acquire:
 - Topology: `_caiso_config()` — NP15/ZP26/SP15 + `WECC_import` node, Path
   15/26 TTCs (WECC catalog, Tier 3), COI/WOR import links; lat-band zone
   splitter in `zone_assignment.py`.
-- WECC import machinery: `model/transmission.py::build_wecc_import_generators()`
-  (tranche supply curve + export sink) — needs calibration, not construction.
+- WECC import machinery: generalized per-ISO in J1 (2026-06-11) —
+  `model/transmission.py::build_import_generators("CAISO")` /
+  `build_export_sinks("CAISO")` off `constants.IMPORT_TRANCHES` /
+  `EXPORT_TRANCHES` (tranche supply curve + export sink), with
+  `scripts/derive_import_tranches.py` to fit them — needs calibration,
+  not construction. The runner now also wires the CAISO export sink in.
 - `data/eia_hourly/CISO hourly.parquet` (EIA-930 demand/fuel/interchange).
 - `inputs/raw-data/CISO_fueltype.parquet`, `CISO_region.parquet`.
 - CAMPD unit-level CA **2024, 2025** (`campd-unit-level/CA_{2024,2025}.parquet`);
@@ -352,9 +356,11 @@ convention; zonal shapes measured if U4 landed.
 
 ```
 CAISO backcast: calibrate the WECC import node. Read
-model/transmission.py::build_wecc_import_generators(), playbook §8.2, and
-the PJM net-interchange gap writeup (docs/multi-iso/pjm-backcast-2023.md
-gap #1) — design anything you generalize so PJM can reuse it.
+model/transmission.py::build_import_generators / build_export_sinks (the
+J1-generalized machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
+scripts/derive_import_tranches.py (the PJM fitting workflow to reuse),
+playbook §8.2, and the PJM writeup (docs/multi-iso/pjm-backcast-2023.md
+§4). The machinery is built; this pack only fits CAISO's entries.
 
 1. Benchmark: hourly CISO net interchange from data/eia_hourly/CISO
    hourly.parquet (and per-neighbor splits if the parquet carries them).
@@ -518,13 +524,21 @@ for those years) and add modeled-vs-reported curtailment as a headline
 ERCOT metric (CAISO P6 pattern) — ERCOT West curtailment is large enough
 to matter.
 
-### J1 — PJM: import/export node (the +40 TWh structural gap)
+### J1 — PJM: import/export node (the +40 TWh structural gap) — DONE 2026-06-11
 
-Still the biggest PJM gap: 2023 actual +40 TWh net export vs model 0.
-Reuse the generalized import-node machinery from CAISO P9 (priced
-tranches + export sink, calibrated to the EIA-930 PJM interchange
-duration curve). Expect this to pull gas dispatch up and re-shift the
-coal/gas balance — re-run the pjm-6 baseline after.
+Note: the structural gap itself was already closed by M4 (2026-06-05,
+measured tie-line schedule in `load_demand`) — the pjm-6 baseline served
+823 TWh (783 internal + 40 export) and gas dispatch had already risen.
+This pack delivered the remaining piece: the **generalized priced node**
+(P9's design, built here first since P9 hasn't run). `PJM_external` zone +
+import tranches + export sinks in `IMPORT_TRANCHES` / `EXPORT_TRANCHES`,
+fitted to the measured 2023 net-interchange duration curve by
+`scripts/derive_import_tranches.py` (2023: 100% of actual, duration RMSE
+~570 MW; 2024 drifts +37% — re-fit per vintage). Forward PJM scenarios
+(previously **zero** interchange) now carry price-responsive interchange;
+backcasts keep the measured schedule. Validation runs:
+`results/calibration/pjm_j1_baseline` (measured; pjm-6 regression) and
+`pjm_j1_priced` (`--priced-interchange`).
 
 ### J2 — PJM: winter fidelity (CT runtime, ST_GAS, oil, dual-fuel)
 
@@ -551,7 +565,10 @@ automatically once extracts land).
 
 ### Cross-cutting (build once, all ISOs benefit)
 
-- Import/export node generalization (P9 → J1 → NYISO/NEISO).
+- Import/export node generalization — built in J1 (constants-driven
+  `build_import_generators` / `build_export_sinks` /
+  `extend_with_import_node` + `derive_import_tranches.py`); P9 now only
+  needs to *calibrate* CAISO's entries; NYISO/NEISO only need constants.
 - Storage cycling/throughput cost (P5 → E2).
 - Curtailment as headline metric (P6 → E3 → SPP/MISO later).
 - Reserve co-optimization (doc 03 Pack I) stays LAST, after the summer
