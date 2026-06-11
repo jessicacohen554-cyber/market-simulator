@@ -527,11 +527,27 @@ def _neiso_config() -> ISOConfig:
     that bounds Maine wind/hydro deliveries to the southern load, mirroring
     the CAISO load-zones-plus-import-node pattern.
 
-    Load shares apportion ISO-NE zonal metered load onto the four zones:
-    North ≈ ME+NH+VT, Central ≈ WCMA+SEMA+RI, Boston ≈ the NEMA/Boston zone,
-    Connecticut ≈ CT. Source: ISO-NE zonal metered load / net energy for load
-    by load zone (ISO-NE CELT Report and zonal load data). Tier 3
-    (calibration) — verify against metered load-zone net energy for load.
+    Load shares apportion ISO-NE zonal metered load onto the four zones,
+    aggregating the eight ISO-NE load zones:
+
+    - **North** (ME + NH + VT): Maine, New Hampshire, Vermont
+    - **Central** (WCMASS + SEMASS + RI): Western/Central MA, SE Mass, Rhode Island
+    - **Boston** (NEMA): Northeast Massachusetts, the NEMA/Boston import pocket
+    - **Connecticut** (CT): Connecticut
+
+    The static shares (0.20/0.30/0.21/0.29) are seeded from the ISO-NE CELT
+    Report and RSP zonal load data. Source: ISO-NE zonal net energy for load by
+    load zone. Tier 3 (calibration). **Refresh path (U3):** upload the ISO-NE
+    hourly load-zone NEL SMD CSV for 2023–2025 to
+    ``inputs/raw-data/zone-specific-demand/NEISO/`` and run
+    ``scripts/derive_load_shares.py neiso`` to derive measured shares and hourly
+    zonal shapes. These static shares are then the fallback for years without a
+    zonal file.
+
+    **Net-load convention (playbook §8.1):** EIA-930 ISNE demand is metered at
+    the transmission level and is already net of behind-the-meter PV (material
+    in MA/CT). Backcasts model only front-of-meter resources. The ``HQ_import``
+    node handles HQ Phase II imports as a priced supply node, not load.
     """
     zones = [
         Zone(name="North", iso="NEISO", load_share=0.20),

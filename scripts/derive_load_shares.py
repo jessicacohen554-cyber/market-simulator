@@ -26,12 +26,18 @@ Three modes, one per ISO with a per-zone load upload:
     ``eia_loader._NYISO_LOAD_ZONE_GROUPS`` mapping the hourly-shape loader
     uses.
 
+``neiso``
+    Reads the ISO-NE hourly load-zone net energy for load (upload U3: ISO-NE
+    SMD hourly_load CSV with Date + Hour Ending + zone columns) under
+    ``inputs/raw-data/zone-specific-demand/NEISO/`` and maps the eight ISO-NE
+    load zones onto the model's four transmission zones:
+    North (ME+NH+VT), Central (WCMASS+SEMASS+RI), Boston (NEMA), Connecticut (CT).
+
 All modes print the per-day raw-zone shares (to expose seasonal variability)
-and the averaged model-zone shares that feed ``load_share`` in
-``iso_configs``.
+and the averaged model-zone shares that feed ``load_share`` in ``iso_configs``.
 
 Run from the repo root:
-    ``python scripts/derive_load_shares.py [ercot|caiso|nyiso]``
+    ``python scripts/derive_load_shares.py [ercot|caiso|nyiso|neiso]``
 """
 
 from __future__ import annotations
@@ -55,6 +61,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
 REF = REPO / "data" / "reference"
 CAISO_TAC_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
 NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
+NEISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NEISO"
 
 WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "WEST"]
 
@@ -77,6 +84,18 @@ CAISO_ZONES = ["NP15", "ZP26", "SP15"]
 NYISO_ZONES = [
     "Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"
 ]
+
+# ISO-NE 8 load zones -> 4 model transmission zones (same mapping as
+# eia_loader._NEISO_LOAD_ZONE_GROUPS).
+NEISO_ZONE_MAP: dict[str, str] = {
+    "ME": "North", "NH": "North", "VT": "North",
+    "NEMA": "Boston", ".H.NEMA": "Boston",
+    "SEMASS": "Central", ".H.SEMASS": "Central",
+    "WCMASS": "Central", ".H.WCMASS": "Central",
+    "RI": "Central",
+    "CT": "Connecticut",
+}
+NEISO_MODEL_ZONES = ["North", "Central", "Boston", "Connecticut"]
 
 
 def _daily_totals() -> list[tuple[str, dict[str, float]]]:
@@ -295,11 +314,93 @@ def derive_nyiso() -> None:
     )
 
 
+def derive_neiso() -> None:
+    """Derive NEISO model-zone load shares from ISO-NE hourly load SMD CSVs."""
+    files = sorted(NEISO_DIR.glob("NEISO_load_hourly_*.csv"))
+    if not files:
+        raise SystemExit(
+            f"no NEISO_load_hourly_<year>.csv found under {NEISO_DIR}/ "
+            "(upload U3: ISO-NE hourly_load SMD CSV with Date+Hour Ending+zone columns)"
+        )
+
+    frames = []
+    for f in files:
+        df = pd.read_csv(f)
+        df.columns = [str(c).strip() for c in df.columns]
+        date_col = next(
+            (c for c in df.columns if c.upper().startswith("DATE")), None
+        )
+        he_col = next(
+            (c for c in df.columns
+             if "HOUR" in c.upper() and "END" in c.upper()), None
+        )
+        if date_col is None or he_col is None:
+            print(f"  WARNING: {f.name} missing Date / Hour Ending columns, skipped")
+            continue
+        df["_date"] = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
+        df["_he"] = pd.to_numeric(df[he_col], errors="coerce")
+        df = df[(df["_he"] >= 1) & (df["_he"] <= 24)].copy()
+        df["_day"] = df["_date"].dt.strftime("%Y-%m-%d")
+        frames.append(df)
+
+    if not frames:
+        raise SystemExit("No usable NEISO load files found.")
+
+    combined = pd.concat(frames, ignore_index=True)
+    zone_cols = [c for c in NEISO_ZONE_MAP if c in combined.columns]
+    if not zone_cols:
+        raise SystemExit(
+            f"No recognised zone columns found. Expected one of: "
+            f"{sorted(NEISO_ZONE_MAP)}"
+        )
+
+    # Per-day totals per raw zone.
+    daily = combined.pivot_table(
+        index="_day", columns=None, values=zone_cols, aggfunc="sum"
+    )
+    daily_totals = daily.sum(axis=1)
+    shares = daily.div(daily_totals, axis=0)
+
+    n_hours = len(combined)
+    print(
+        f"=== ISO-NE zone share of NEISO load, {len(daily)} days "
+        f"({n_hours} hours; full year = 8760) ==="
+    )
+    print("day".ljust(12) + "".join(c[:8].rjust(9) for c in zone_cols))
+    for day, row in shares.iterrows():
+        print(day.ljust(12) + "".join(f"{row[c]:8.1%} " for c in zone_cols))
+
+    avg = shares.mean()
+    print("\n=== ISO-NE zone shares (averaged over days) ===")
+    for c in zone_cols:
+        print(f"  {c:10s} {avg[c]:.4f}")
+
+    # Map to model zones.
+    mshare = {z: 0.0 for z in NEISO_MODEL_ZONES}
+    for c in zone_cols:
+        mshare[NEISO_ZONE_MAP[c]] += float(avg[c])
+
+    print("\n=== Model-zone load_share (averaged; paste into iso_configs) ===")
+    for z in NEISO_MODEL_ZONES:
+        print(f"  {z:14s} {mshare[z]:.4f}")
+    print(f"  {'sum':14s} {sum(mshare.values()):.4f}")
+
+    print("\n=== Seasonal spread per model zone across sample days ===")
+    for z in NEISO_MODEL_ZONES:
+        zone_raw = [c for c in zone_cols if NEISO_ZONE_MAP[c] == z]
+        vals = shares[zone_raw].sum(axis=1) if zone_raw else pd.Series([0.0])
+        if vals.max() > 0:
+            print(
+                f"  {z:14s} min {vals.min():6.1%}  max {vals.max():6.1%}  "
+                f"spread {vals.max() - vals.min():5.1%}"
+            )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "iso", nargs="?", default="ercot",
-        choices=("ercot", "caiso", "nyiso"),
+        choices=("ercot", "caiso", "nyiso", "neiso"),
         help="which ISO's per-zone load archive to derive shares from",
     )
     args = parser.parse_args()
@@ -307,8 +408,10 @@ def main() -> None:
         derive_ercot()
     elif args.iso == "caiso":
         derive_caiso()
-    else:
+    elif args.iso == "nyiso":
         derive_nyiso()
+    else:
+        derive_neiso()
 
 
 if __name__ == "__main__":
