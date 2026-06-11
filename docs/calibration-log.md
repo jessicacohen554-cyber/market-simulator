@@ -562,3 +562,44 @@ fleet-wide sigmoid is the wrong altitude; lignite 2023/24 and the
 remaining 2024 coal deficit stay with E1 (measured monthly gas,
 `--gas-monthly-actuals` is now wired); CT_CHP 2025 +28% unchanged
 (incomplete 2025 CHP benchmark).
+
+---
+
+## ERCOT Run 82 — Jacobian joint move; BTM-aware CHP panel (2026-06-11)
+
+**Run 82 (`run82_jacobian_joint`, dashboard `run82 jacobian joint`) —
+rejected.** The derive_offer_curve_jacobian recipe vs the run-79 error
+vector (non-CHP knobs, |Δ| ≤ 0.15) predicted total |err| 28.5 → 25.4 TWh.
+Actual: PRB 2023 0.0%, CC_REGULAR 2024/25 and ST_GAS 2023 improve — but
+CT_PEAKER explodes to +20.9/+14.2/+21.0% (was −2.6/−12.8/−2.9). Cause: the
+recipe's CT_PEAKER committed −0.132 stacked on run-79's −0.34 (cumulative
+−0.47 below the calibrated default, mult 1.14 → 0.67) crossed a merit-order
+step far outside the regime the matrix sampled. The keeper stays the run-79
+config. **Lesson: the Jacobian solves annual class TWh only (no hourly
+shape), and its linearization fails when a recipe move stacks onto a knob
+already far from the sampled neighborhood — cap cumulative moves and
+re-derive locally first.**
+
+**BTM-aware per-plant CHP panel (reporting fix).** The [7]/[7b] per-plant
+fit compared grid-facing LP dispatch against whole-plant CAMPD net — for
+CHP plants the 35–50% behind-the-meter host-supply share made high CF bands
+unreachable by construction (the fleet-wide "CC_CHP has 0 hours above 0.8
+CF" read was substantially this artifact). `_plant_hourly_fit` now adds the
+flat BTM MW back in hours the grid share runs (Petra Nova excluded — own
+parasitic treatment). Honest residuals after the fix (run80a bundle panels
+regenerated):
+
+* **CC_CHP**: band overlap improves (Deer Park 0.50 → 0.68, Baytown
+  0.48 → 0.62); remaining miss is the model being too *binary* — it
+  under-occupies CAMPD's 0.2–0.5 CF range (partial-train operation below
+  the modeled must-run floor) and over-occupies 0.9–1.0.
+* **CT_CHP**: the original diagnosis survives the fix — CAMPD spends 25%
+  of hours above 0.8 CF, the model 1.7%; the model parks at 0.6–0.8. The
+  top ~20% of CT_CHP capacity is priced out (econ_high/peak mults plus the
+  P1 startup markup, which CHP bins currently pay despite steam-host
+  obligations covering their starts).
+
+**Next (run 83 candidates):** exempt CHP classes from the startup
+amortization markup (steam host keeps units hot — model bug, not a tuning
+knob); then re-read the CT_CHP top bands and CC_CHP partial-train range
+against the BTM-aware panel before any tranche-share (pct_peaking) move.
