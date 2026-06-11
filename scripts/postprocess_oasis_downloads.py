@@ -53,6 +53,13 @@ def _merge_write(per_year: dict[int, pd.DataFrame], out_dir: Path,
         path = out_dir / f"{stem}_{year}.csv"
         if path.exists():
             frame = pd.concat([pd.read_csv(path), frame], ignore_index=True)
+        # Normalize the timestamp key: rows read back from an existing CSV
+        # are strings while freshly parsed rows are tz-aware datetimes, and
+        # mixed types defeat drop_duplicates (the bug that doubled the 2023
+        # load aggregate in workflow run 27352329351).
+        frame["interval_start_gmt"] = pd.to_datetime(
+            frame["interval_start_gmt"], utc=True
+        )
         frame = (
             frame.drop_duplicates(subset=keys, keep="last")
             .sort_values(keys)
