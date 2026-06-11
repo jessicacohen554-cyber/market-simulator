@@ -342,6 +342,24 @@ class ScenarioConfig:
     coal_prb_follower_gas_mid: float = 2.85
     coal_prb_follower_gas_slope: float = 2.5
 
+    # Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJM
+    # coal-fleet analogue of the PRB sigmoid above). When True, every
+    # bituminous-supply coal tranche above must-run passes a logistic of the
+    # monthly delivered gas price instead of full fuel cost: a discount when
+    # gas is cheap (Appalachian/Illinois-Basin bit holds its baseload against
+    # cheap gas CC) and a markup > 1.0 when gas is dear (so it doesn't
+    # over-run). Keyed off the measured EIA-923 ISO-month gas series when
+    # gas_monthly_actuals is on (the PJM keeper config), else the shaped
+    # trajectory. Defaults bracket the per-month bit-vs-gas-CC breakeven
+    # passthrough across PJM 2023-2025 (~0.5 at $2.2/MMBtu gas to ~1.7 at
+    # $6.9) conservatively — a moderate pull toward breakeven, not full
+    # price-taking. Off (default) keeps full fuel cost.
+    coal_bit_passthrough_sigmoid: bool = False
+    coal_bit_passthrough_floor: float = 0.82    # cheap-gas asymptote
+    coal_bit_passthrough_ceil: float = 1.25     # dear-gas asymptote (>1 = markup)
+    coal_bit_passthrough_gas_mid: float = 3.40  # $/MMBtu logistic midpoint
+    coal_bit_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
+
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
     # this value; the committed/economic/peaking grid tranches rescale to fill
@@ -832,6 +850,11 @@ TIER_TAGS: dict[str, int] = {
     "coal_prb_follower_ceil": 3,
     "coal_prb_follower_gas_mid": 3,
     "coal_prb_follower_gas_slope": 3,
+    "coal_bit_passthrough_sigmoid": 3,
+    "coal_bit_passthrough_floor": 3,
+    "coal_bit_passthrough_ceil": 3,
+    "coal_bit_passthrough_gas_mid": 3,
+    "coal_bit_passthrough_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
