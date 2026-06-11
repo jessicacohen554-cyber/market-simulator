@@ -6,6 +6,7 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
     load_demand,
     pjm_net_interchange,
+    pjm_zonal_interchange,
     pjm_zonal_load_shares,
 )
 
@@ -34,6 +35,25 @@ def test_pjm_demand_includes_net_export():
     # Total served ≈ internal load + net export; the export is a real uplift.
     assert demand.mean() > 90_000.0  # ~94 GW incl. export vs ~89 GW load-only
     np.testing.assert_allclose(demand.mean(), 89_400 + ix.mean(), rtol=0.03)
+
+
+def test_pjm_demand_can_exclude_interchange():
+    """``include_interchange=False`` returns internal load only.
+
+    Callers serving interchange through the priced import/export node
+    (forward scenarios, ``--priced-interchange`` backcasts) must keep the
+    measured schedule out of demand or the export would be counted twice.
+    """
+    pjm = get_iso_config("PJM")
+    with_ix = load_demand("PJM", _TEST_YEAR, pjm).sum(axis=0)
+    without = load_demand(
+        "PJM", _TEST_YEAR, pjm, include_interchange=False
+    ).sum(axis=0)
+    # load_demand applies the per-border-zone attribution, so the uplift it
+    # removes is the zonal series (which, unlike the scalar, leaves the DST
+    # gap hour at zero).
+    zx = pjm_zonal_interchange(_TEST_YEAR, pjm.zone_names).sum(axis=0)
+    np.testing.assert_allclose(with_ix - without, zx, atol=1e-6)
 
 
 def test_pjm_zonal_shares_sum_to_one_each_hour():

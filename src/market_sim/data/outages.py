@@ -81,12 +81,23 @@ QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
 # remaining ST_GAS units run sustained idling / drag patterns and DO get the
 # outage + reliability treatment. Excluded from the overlay below.
 ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset({
+    # ERCOT
     3504,   # Stryker Creek
     3453,   # Mountain Creek
     3490,   # Graham
     3507,   # Trinidad (TX)
     3576,   # Ray Olinger
     4266,   # Spencer
+    # CAISO — the last once-through-cooling steamers, kept on OTC compliance
+    # extensions as RMR-style reliability units. CAMPD 2024-25 shows them
+    # online only 0.4-2.5% of hours (spiky, run-when-called), so the
+    # event-based outage rule would flood them with economic-idleness
+    # windows; they dispatch purely economically instead.
+    315,    # AES Alamitos LLC units 3-5 (legacy boilers; the colocated
+            #   CCGT reports under this ORIS too but is remapped to EIA
+            #   62115 — campd.CAMPD_UNIT_PLANT_REMAP)
+    335,    # AES Huntington Beach LLC unit 2 (CCGT remapped to 62116)
+    350,    # Ormond Beach units 1-2
 })
 
 # Minimum outage span to overlay, in hours (>= 2 days). The CAMPD detector
