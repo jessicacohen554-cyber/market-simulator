@@ -548,12 +548,20 @@ def _calibration_config(
         # delivered gas — CC overran +25 TWh and displaced coal. Re-enable
         # per-plant EIA-923 monthly gas costs for them.
         gas_plant_monthly_fuel_pricing=(iso != "ERCOT"),
-        # Dual-fuel switching (doc 03 Pack G): EIA-860 oil/gas switch-capable
-        # gas units price fuel at min(gas, oil) per hour, so winter delivered-
-        # gas spikes past oil parity no longer price them out of the merit
-        # order. Gated to PJM (winter-fidelity cluster); ERCOT — whose fleet
-        # carries no meaningful dual-fuel behaviour — stays off and unchanged.
-        dual_fuel_switching=(iso.upper() == "PJM"),
+        # Dual-fuel switching (doc 03 Pack G; doc-07 design decision 3): EIA-860
+        # oil/gas switch-capable gas units price fuel at min(gas, oil) per hour,
+        # so winter delivered-gas spikes past oil parity no longer price them out
+        # of the merit order. Gated to the winter-fidelity cluster — PJM plus the
+        # NE/NY ISOs (doc-07 P13: NYISO downstate Ravenswood/Astoria/Bowline/
+        # Roseton/Northport CT/ST units carry ~17 GW of oil backup; doc-08:
+        # NEISO's Algonquin-spot marginal gas unit). Default-off for every other
+        # ISO (ERCOT/CAISO/MISO/SPP) — their fleets carry no meaningful dual-fuel
+        # behaviour — so they stay byte-identical. NOTE (NYISO U4 caveat): without
+        # the Transco Z6 winter-basis upload, the gas leg is the ISO-average
+        # measured 923 series, whose Jan-2023 $10.02/MMBtu stays below distillate
+        # parity (~$16-20), so the switch is correctly wired but rarely binds on
+        # the ISO-average; the downstate Z6 blowout (U4) is what crosses parity.
+        dual_fuel_switching=(iso.upper() in ("PJM", "NYISO", "NEISO")),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
