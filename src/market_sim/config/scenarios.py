@@ -383,6 +383,16 @@ class ScenarioConfig:
     # keep the full POF/WEFOR seasonal model.
     coal_drop_pof: bool = False
 
+    # Tier 3 (calibration) — CHP startup costs covered by the steam host.
+    # When True, CHP classes (CC_CHP / CT_CHP / ST_CHP) are exempt from the
+    # P1 monthly startup-amortization markup: a steam-host-obligated cogen
+    # never pays a cold start on its own account (the host's steam demand
+    # keeps the unit hot, or the start is incurred for steam regardless of
+    # the energy market), so its energy bid carries no startup component.
+    # Off (default) keeps the legacy behaviour where CHP CAMPD bins pay
+    # their bin startup cost like merchant units.
+    chp_startup_covered: bool = False
+
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
     # hard minimum-generation floor of that fraction of capacity in May-Sep
