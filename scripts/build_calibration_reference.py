@@ -49,11 +49,20 @@ logger = logging.getLogger("build_calibration_reference")
 # 2021-2024 each have their own EIA-860 fleet snapshot; 2025 reuses the
 # latest available EIA-860 vintage (2024), which carries no 2025 builds, so
 # its renewable capacity equals the 2024 year-end totals held flat. ERCOT was
-# the first ISO calibrated; PJM is the second. The per-ISO-year derivation is
-# fully generic on the ISO's zone topology (zone_names) and balancing-authority
-# code, so adding an ISO is a CALIBRATION_ISOS + BA-code-map change only.
+# the first ISO calibrated; PJM the second; CAISO the third. The per-ISO-year
+# derivation is fully generic on the ISO's zone topology (zone_names) and
+# balancing-authority code, so adding an ISO is a CALIBRATION_ISOS +
+# BA-code-map change only.
 CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
-CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM")
+CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM", "CAISO")
+
+# Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
+# (doc 06: 2023 = wet hydro + Diablo at full output; 2024/2025 = the
+# big-battery era) — the years with CAMPD unit-level CA extracts and EIA-923
+# by-fuel benchmarks. ISOs not listed use the full CALIBRATION_YEARS span.
+CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
+    "CAISO": (2023, 2024, 2025),
+}
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
 # Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
@@ -189,7 +198,7 @@ def _egrid_benchmark(iso: str) -> dict:
     """
     # eGRID balancing-authority code for the ISO footprint. eGRID's BACODE
     # uses the same EIA-930 codes as :data:`_ISO_BA_CODE` (ERCO, PJM, ...).
-    ba_code = {"ERCOT": "ERCO", "PJM": "PJM"}[iso]
+    ba_code = {"ERCOT": "ERCO", "PJM": "PJM", "CAISO": "CISO"}[iso]
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
     plants = df[df["BACODE"] == ba_code].copy()
 
@@ -325,7 +334,7 @@ def build_reference() -> Path:
     isos: dict[str, dict] = {}
     for iso in CALIBRATION_ISOS:
         years: dict[str, dict] = {}
-        for year in CALIBRATION_YEARS:
+        for year in CALIBRATION_YEARS_BY_ISO.get(iso, CALIBRATION_YEARS):
             renewables = _eia860_renewables(iso, year)
             years[str(year)] = {
                 "henry_hub_actual": HENRY_HUB_ACTUAL[year],
