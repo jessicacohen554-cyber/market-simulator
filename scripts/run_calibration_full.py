@@ -1681,6 +1681,90 @@ def _aggregate_twh(by_fuel: dict[str, float]) -> dict[str, float]:
     return out
 
 
+def _print_curtailment_vs_reported(
+    year: int, iso: str, dispatch: pd.DataFrame
+) -> None:
+    """[1b] Modeled vs reported wind/solar curtailment (HSL-backed ISO-years).
+
+    The headline re-curtailment metric of playbook §8.3: the dispatch was fed
+    the *uncurtailed* potential (delivered + reported curtailment, the HSL
+    analogue — see ``market_sim.data.renewables``), so its endogenous
+    curtailment ``potential - dispatched`` is directly comparable to the
+    curtailment the ISO actually reported (``hsl - gen`` in the same
+    parquet). Annual TWh per fuel plus the monthly GWh shape. Skipped
+    silently for ISO-years with no HSL dataset (those backcasts consume the
+    delivered profile and have nothing to re-curtail).
+    """
+    from market_sim.data.renewables import load_hsl_hourly
+
+    hsl = load_hsl_hourly(iso, year)
+    if hsl is None:
+        return
+
+    modeled = {}
+    for fuel in ("wind", "solar"):
+        rows = dispatch[dispatch["fuel"] == fuel]
+        if rows.empty:
+            return
+        modeled[fuel] = (
+            rows.groupby("hour", observed=True)["mw"].sum()
+            .sort_index().to_numpy(dtype=float)
+        )
+
+    T = min(_HOURS_PER_YEAR, *(len(v) for v in modeled.values()))
+    print(f"\n  [1b] Renewable curtailment — {year} "
+          "(model re-curtailment vs ISO-reported; potential = delivered + "
+          "reported curtailment)")
+    if T < _HOURS_PER_YEAR:
+        print(f"    NOTE: {T}-hour run — reported series truncated to match.")
+    rows_out: list[tuple] = [(
+        "fuel", "potential TWh", "model TWh", "model curt", "model %",
+        "reported curt", "reported %",
+    )]
+    monthly: dict[str, dict[str, np.ndarray]] = {}
+    for fuel in ("wind", "solar"):
+        # The potential the LP saw is the CF-floored HSL (negative EIA-930
+        # night-time values clamp to zero in the profile), so floor here too;
+        # otherwise modeled curtailment picks up phantom night-time slack.
+        potential = np.maximum(
+            hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float)[:T], 0.0
+        )
+        delivered = np.minimum(
+            np.maximum(hsl[f"{fuel}_gen_mw"].to_numpy(dtype=float)[:T], 0.0),
+            potential,
+        )
+        model_curt = np.maximum(potential - modeled[fuel][:T], 0.0)
+        reported_curt = potential - delivered
+        monthly[fuel] = {"model": model_curt, "reported": reported_curt}
+        pot_twh = potential.sum() / _MWH_PER_TWH
+        rows_out.append((
+            fuel,
+            f"{pot_twh:.2f}",
+            f"{modeled[fuel][:T].sum() / _MWH_PER_TWH:.2f}",
+            f"{model_curt.sum() / _MWH_PER_TWH:.3f}",
+            f"{100.0 * model_curt.sum() / potential.sum():.2f}",
+            f"{reported_curt.sum() / _MWH_PER_TWH:.3f}",
+            f"{100.0 * reported_curt.sum() / potential.sum():.2f}",
+        ))
+    _print_table(rows_out)
+
+    month_idx = _hour_to_month(T)
+    month_rows: list[tuple] = [(
+        "month", "wind mdl", "wind rep", "solar mdl", "solar rep",
+    )]
+    for m in range(1, 13):
+        sel = month_idx == m
+        if not sel.any():
+            break
+        month_rows.append((
+            _MONTH_NAMES[m - 1],
+            *(f"{monthly[fuel][kind][sel].sum() / 1e3:.1f}"
+              for fuel in ("wind", "solar") for kind in ("model", "reported")),
+        ))
+    print("\n    Monthly curtailment (GWh):")
+    _print_table(month_rows)
+
+
 def _report_generic(
     run_dir: Path, iso: str, meta: dict, system: pd.DataFrame,
     e930_all: pd.DataFrame | None,
@@ -1766,6 +1850,9 @@ def _report_generic(
         print(f"    {'TOTAL':<9} {_twh(model_total)} {'100.0':>5} "
               f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
               f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}")
+
+        # --- [1b] Curtailment: model re-curtailment vs ISO-reported ---
+        _print_curtailment_vs_reported(year, iso, dispatch)
 
         # --- [2] Net interchange: model vs EIA-930 ---
         if e930 is not None and "interchange" in e930:
