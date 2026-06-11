@@ -73,10 +73,11 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     # footprint lets the outage derivation widen automatically as more CAMPD
     # extracts land. Unit-level extracts present: PA, NJ, IL, OH, IN, KY, WV,
     # VA, DC (2023-2025; NJ through 2024) and MI (2024). Still absent: MD, DE,
-    # NC — plants there keep the statistical availability model until added.
+    # NC, TN — plants there keep the statistical availability model until
+    # added (regenerate campd-unit-outages-PJM.csv once the extracts land).
     "PJM": (
         "PA", "NJ", "MD", "DE", "IL", "OH", "IN", "KY", "WV", "VA", "NC",
-        "MI", "DC",
+        "TN", "MI", "DC",
     ),
     "MISO": ("IL",),
     "SPP": (),
