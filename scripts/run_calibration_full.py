@@ -34,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import gc
 import gzip
 import json
 import logging
@@ -1095,6 +1096,15 @@ def solve_and_persist(
             )
             if campd_year is not None:
                 campd_frames.append(campd_year)
+
+        # Release this year's solve state before the next year allocates its
+        # own LP. A PJM per-plant year peaks ~13 GB inside HiGHS; carrying the
+        # previous year's result/context/P2-state into the next build pushed a
+        # 3-year backcast past 16 GB and into the OOM killer. Only the compact
+        # per-year frames accumulated above survive the loop.
+        del result, context, result_p1, p2_state, demand, must_run
+        del must_run_total, labelled, res
+        gc.collect()
 
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
