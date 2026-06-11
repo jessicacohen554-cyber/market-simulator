@@ -235,6 +235,7 @@ def load_hydro_budget(
     year: int,
     min_flow_fraction: float = 0.0,
     backfill_year: int | None = None,
+    per_plant_min_flow: dict[int, float] | None = None,
 ) -> HydroBudget:
     """Load an ISO's hydro monthly energy budget and MW envelope.
 
@@ -258,6 +259,14 @@ def load_hydro_budget(
             — so a backcast of that year passes the prior year here until
             the final annual file lands. ``None`` (default) loads ``year``
             exactly as reported.
+        per_plant_min_flow: Optional ``{plant_id: fraction}`` overrides
+            for specific plants. A plant's min-flow fraction is the maximum
+            of ``min_flow_fraction`` and its per-plant entry (if any), so
+            treaty-mandated floors on large plants are honoured even when
+            the global floor is zero. Plants absent from the dict fall back
+            to ``min_flow_fraction``. Intended for treaty-mandated minimum
+            flows such as NYISO's Niagara/St-Lawrence obligations (see
+            :data:`market_sim.config.constants.NYISO_HYDRO_TREATY_MIN_FLOW`).
 
     Returns:
         A :class:`HydroBudget` keyed to the hydro generator subset, ordered
@@ -302,7 +311,18 @@ def load_hydro_budget(
         [nameplate.get(int(pid), float(peak_avg_mw[i])) for i, pid in enumerate(plant_ids)],
         dtype=float,
     )
-    min_mw = float(min_flow_fraction) * max_mw
+    # Per-plant min-flow: take the max of the global floor and any
+    # per-plant treaty override so treaty floors override without lowering
+    # a higher global floor set by the caller.
+    if per_plant_min_flow:
+        fracs = np.array(
+            [max(float(min_flow_fraction), per_plant_min_flow.get(int(pid), 0.0))
+             for pid in plant_ids],
+            dtype=float,
+        )
+        min_mw = fracs * max_mw
+    else:
+        min_mw = float(min_flow_fraction) * max_mw
     plant_zones = [zones.get(int(pid), "") for pid in plant_ids]
 
     logger.info(
