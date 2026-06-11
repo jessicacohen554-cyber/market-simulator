@@ -68,6 +68,58 @@ untouched (no import node; full suite green minus the known-stale
   derivation still awaits MD/DE/NC/TN (+ MI 2023/2025) CAMPD unit-level
   extracts before `campd-unit-outages-PJM.csv` can be regenerated.
 
+## 2026-06-11 (CAISO pack P2 — per-plant offer-curve tranches & bin assignments)
+
+CAISO backcast, 2024-first. ERCOT/PJM committed artifacts are untouched
+(byte-identical); one runtime fix below also applies to PJM.
+
+- **CEMS→EIA split-plant remap** (`campd.CAMPD_UNIT_PLANT_REMAP`): the AES
+  Alamitos / Huntington Beach CCGTs (EIA 62115/62116) report CEMS under the
+  legacy boiler ORIS codes (315/335). Their units (CT1/CT2) are re-keyed
+  wherever unit identity is known, and facility-level loads substitute the
+  companion unit-level rows for the split facilities (gross conserved).
+  ~5.0 TWh/yr of CC history now attaches to the right fleet rows.
+- **ST_GAS peaker exclusions**: AES Alamitos (315), AES Huntington Beach
+  (335) and Ormond Beach (350) — the last once-through-cooling steamers,
+  online 0.4–2.5% of CAMPD 2024–25 hours — join
+  `outages.ST_GAS_PEAKER_PLANTS`: no outage overlay, no reliability floor,
+  purely economic dispatch. `campd-unit-outages-CAISO.csv` regenerated:
+  1,386 → 1,321 windows (126 economic-idleness rows dropped, 61 measured
+  CC windows added for 62115/62116; all other rows byte-identical).
+- **`thermal_tranches_CAISO.csv` re-derived from 2024–25** (2023 deferred
+  with U1) with the remap in place: 83 measured plant-groups. Huntington's
+  ST_GAS committed drops 68.2 → 8.9% (was polluted by the colocated CC);
+  62115/62116 get measured committed 28.2/29.8%. CHP steam floors are
+  **consumed, not re-derived** (`--chp-floors-from`): all 86 P3 floors
+  byte-preserved.
+- **Per-plant CC peaking (duct-firing) shares**: new `peaking_pct` column —
+  the share of a CC's demonstrated sustained maximum (P99.5 of online net
+  MW) cleared in <5% of online hours, capped at 25 — consumed by
+  `fleet.thermal_tranche_peaking` under `cc_peaking_per_plant`, superseding
+  the offer curve's class `pct_peaking`. CAISO CCs derive 0–6% (they cycle
+  on the solar ramp; duct-fire headroom is thin) with Malburg at the 25 cap.
+- **Bin assignments emitted**: `inputs/processed/bin_assignments_CAISO.csv`
+  (`scripts/export_iso_bin_assignments.py`), 258 rows
+  (Plant_Code, Plant_Group, Pct_Must_Run/Committed/Economic/Peaking, source
+  tags). Measured committed covers 92.5% of CC_REGULAR, 100% of ST_GAS,
+  78.6% of CT_PEAKER MW. Mixed facilities split per Plant_Group (Glenarm
+  422 CC+CT flagged; no cross-fuel re-key needed).
+- **CHP grid-share clamp in `bins_to_fleet`** (fix, affects PJM too): under
+  `chp_steam_following`, a cogen whose measured committed floor exceeds the
+  grid share net of the BTM pull-out (Elk Hills, Salinas River; PJM Marcus
+  Hook, Grays Ferry) carried more LP capacity than its grid-facing share
+  (up to +13%). Committed + peaking now clamp into `grid_cap` (committed
+  keeps its measured level; the scarcity peak gives way).
+- **Geothermal verification** (audit §2c): the biomass/OTHER must-run
+  injection carries CISO geothermal at 8.05/7.81 TWh (2023/24) in a
+  monthly-shaped 835–969 MW baseload band — not a flat annual average. The
+  dedicated EIA-930 GEO column is only populated from mid-Dec 2025 (CISO
+  folds geothermal into the 930 NG aggregate before that); where populated
+  it reads 740 MW flat (CV 4.4%) vs the injection's 746 MW — within 1%.
+- Tests: `tests/test_caiso_bins.py` (remap routing, artifact bounds, bin
+  shares sum to 100, CHP BTM removed from LP capacity, per-plant peaking
+  survives the offer-curve override).
+
 ## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
 
 Implements the P0 "fix before quoting any forward run" items from

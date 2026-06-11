@@ -149,6 +149,16 @@ carries a separate `gas_st` row (1.4 TWh 2023 → 0.1 TWh 2025 — the last
 once-through-cooling steamers aging out). P2 should make sure spiky
 ST_GAS runners land on the peaker exclusion list per the prompt.
 
+**P2 resolution (2026-06-11):** the three ST_GAS-group plants — AES
+Alamitos LLC (315, legacy boilers 3–5), AES Huntington Beach LLC (335,
+boiler 2) and Ormond Beach (350) — are on `outages.ST_GAS_PEAKER_PLANTS`.
+CAMPD 2024–25 shows them online only 0.4–2.5% of hours (run-when-called
+OTC reliability units), so the event-based detector had flooded them with
+economic-idleness "outage" windows (126 of the extract's 1,386 rows); they
+now carry no outage overlay and no reliability floor, dispatching purely
+economically. Their measured committed floors (5.8–8.9%) stay recorded in
+`thermal_tranches_CAISO.csv`.
+
 ### 2c. Geothermal (CAISO-specific, no ERCOT/PJM precedent)
 
 CISO has ~2.1 GW / ~8 TWh-yr of geothermal (The Geysers, Imperial Valley)
@@ -159,6 +169,31 @@ for CISO, so the injection can be benchmarked directly. P2/P3 should
 confirm the OTHER injection reproduces the ~0.9 CF baseload shape rather
 than a flat average — it is effectively part of CAISO's must-run layer
 (doc-06 design decision 4).
+
+**P2 verification (2026-06-11):** confirmed, with one correction to the
+benchmark claim above.
+
+- **The injection carries the right energy and a baseload shape.** All 14–15
+  CISO geothermal plants classify to `OTHER` (`classify_plant('GEO', …)`)
+  and are injected by `_must_run_profiles`: 8.05 TWh (2023) and 7.81 TWh
+  (2024), matching eGRID's ~8 TWh, shaped by the EIA-923 monthly profile —
+  a band of 871–969 MW (2023) / 835–926 MW (2024, min/max 0.90), flat
+  within each month. It is *not* a flat annual average: refuel/maintenance
+  months (e.g. May 2024, 835 MW) sit visibly below the band top.
+- **The dedicated EIA-930 `GEO` column is empty until mid-Dec 2025** —
+  same new-schema pattern as the battery column (§U8). For 2023–24, CISO's
+  geothermal is folded into the 930 *Natural Gas* aggregate (85.1 TWh in
+  2024 vs ~68 TWh of actual gas; `Other Fuel Sources` is BESS-net,
+  annual mean −130 MW, and carries no geothermal). Direct benchmarking is
+  only possible for the ~16 populated days (Dec 16–31, 2025): 740 MW mean,
+  hourly CV 4.4% — against the EIA-923-derived 2025 level of 746 MW.
+  Agreement within 1%, and the flatness confirms the baseload shape.
+- **On "~0.9 CF":** realized CF against the 2,148 MW eGRID nameplate is
+  ~0.42 (The Geysers steam-field derate); the ~0.9 figure describes the
+  *shape* — hourly output holds ≥90% of the fleet's running maximum
+  essentially all hours — which the monthly-flat injection reproduces.
+- 2025 caveat: the early-release EIA-923 M-file covers only 7 of 14
+  plants (6.53 TWh lower bound); re-run when the final file lands (§1c).
 
 ---
 
@@ -221,6 +256,21 @@ near-dead all year regardless) instead of the new CC_REGULAR bins. An
 ORIS→EIA split-plant remap (like ERCOT's `_unit_outage_target`) would
 recover them — follow-up candidate. Then El Segundo Energy Center (57901,
 510 MW CC) and Desert Star (55077, NV — see above).
+
+**P2 resolution (2026-06-11): the remap landed** as
+`campd.CAMPD_UNIT_PLANT_REMAP` — units CT1/CT2 at ORIS 315 → EIA 62115 and
+at ORIS 335 → EIA 62116, applied (a) row-wise wherever unit identity is
+known (the unit-level extracts, hence `derive_campd_unit_outages.py`), and
+(b) in `campd._read_one` for facility-level loads by substituting the
+companion unit-level rows for the split facilities (gross conservation
+verified to 0.1 GWh on CA 2024). The regenerated
+`campd-unit-outages-CAISO.csv` (1,321 windows) carries 61 properly
+attributed CC_REGULAR windows for 62115/62116; every row for a
+non-touched facility is byte-identical to the P1 extract. CA 2023 has no
+unit-level extract (U1), so 2023 facility-level loads keep the legacy
+summing — the loader warns. AES CC_REGULAR CEMS coverage is now 95%+ of
+class capacity; the largest remaining gaps are El Segundo and Desert Star
+as above.
 
 **2023 is statistical-availability-only** until U1 lands:
 `unit_outage_derate_factors(2023, iso="CAISO")` returns empty, and a
