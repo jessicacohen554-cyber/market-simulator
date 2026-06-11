@@ -2009,6 +2009,12 @@ def main() -> None:
              "equal-capacity slices the econ ramp is rendered into. Sweep "
              "knob for testing finer offer-curve granularity (e.g. 12).")
     parser.add_argument(
+        "--curve-mid", type=float, default=None,
+        help="Override offer_curve_smoothing_mid: fraction of the econ "
+             "ramp's lo->pk rise reached at its capacity midpoint "
+             "(piecewise-linear shape anchor; <0.5 = cheap middle, steep "
+             "top). Unset keeps the t**exp power shape.")
+    parser.add_argument(
         "--curve-exp", type=float, default=None,
         help="Override offer_curve_smoothing_exp (default 1.0 = linear "
              "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
@@ -2085,6 +2091,7 @@ def main() -> None:
         curve_smoothing={
             "offer_curve_smoothing_n": args.curve_n,
             "offer_curve_smoothing_exp": args.curve_exp,
+            "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
         note=args.note,
