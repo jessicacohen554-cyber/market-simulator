@@ -11,7 +11,8 @@
   "calibration_flags": {
     "iso": "PJM",
     "years": [
-      2023
+      2023,
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -20,7 +21,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2023": 2.54,
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
