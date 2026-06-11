@@ -2434,6 +2434,58 @@
       ]
     },
     {
+      "param_id": "carb_unspecified_import_ef",
+      "display_name": "Carb Unspecified Import Ef",
+      "value": 0.428,
+      "unit": "tCO2e/MWh",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "CARB Mandatory GHG Reporting Regulation (MRR), 17 CCR §95111(b) — default emission factor for unspecified-source imported electricity, 0.428 MT CO2e/MWh. Used as the CAISO border carbon adjustment on WECC import tranche prices (EF x allowance price).",
+      "source_date": "2018-12",
+      "page_or_table": "",
+      "url": "https://ww2.arb.ca.gov/our-work/programs/mandatory-greenhouse-gas-emissions-reporting",
+      "notes": "Carried in tranche VOM (not emission_rate_co2) so import MWh do not inflate the modeled in-state CO2 total benchmarked against eGRID.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.state_carbon_pricing",
+      "display_name": "State Carbon Pricing",
+      "value": true,
+      "unit": "",
+      "domain": "Emissions",
+      "tier": 1,
+      "source": "Toggle: charge the ISO's state carbon-program allowance cost (CA cap-and-trade for CAISO, STATE_CARBON_PRICE_BY_ISO) when carbon_price is 0. Default-on; only CAISO 2023-2025 is registered, so it is a no-op for other ISOs and forward years.",
+      "source_date": "2026-06",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Model design decision (doc-06 CAISO design decision 5: carbon is in marginal cost).",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
+      "param_id": "state_carbon_price_by_iso.CAISO",
+      "display_name": "State Carbon Price By Iso / Caiso",
+      "value": {
+        "2023": 33.03,
+        "2024": 35.23,
+        "2025": 28.06
+      },
+      "unit": "$/tCO2",
+      "domain": "Emissions",
+      "tier": 2,
+      "source": "CARB / CA-Quebec joint auction current-vintage settlement prices, annual simple average of the four quarterly auctions. 2023: Feb $27.85, May $30.33, Aug $35.20, Nov $38.73 -> $33.03; 2024: Feb $41.76, May $37.02, Aug $30.24, Nov $31.91 -> $35.23; 2025: Feb $29.27, May $25.87 (settled at the reserve floor), Aug $28.76, Nov $28.32 -> $28.06. CARB 'Summary of Auction Settlement Prices and Results', cross-checked against the WCI auction price history (Quebec MELCCFP).",
+      "source_date": "2025-11",
+      "page_or_table": "",
+      "url": "https://ww2.arb.ca.gov/our-work/programs/cap-and-trade-program/auction-information/auction-notices-and-reports",
+      "notes": "Applied to CAISO backcast marginal cost via policy/carbon.py::state_carbon_price; default-on (scenario.state_carbon_pricing).",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": []
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
