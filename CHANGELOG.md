@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-06-11 (NEISO backcast P7 — measured gas, Algonquin winter basis, RGGI)
+
+NEISO prompt-pack P7 (Wave 1) — the structural price pack. Measured monthly
+gas, the Algonquin Citygate winter basis, and RGGI now reach NEISO marginal
+cost; ERCOT/PJM/CAISO fuel prices and MC are unchanged (regression-tested).
+
+- **`GAS_BASIS_DIFFERENTIAL["NEISO"] = +1.10`** (was missing). EIA-923
+  Schedule-5 delivered-gas basis vs Henry Hub annual: +1.17 (2024), +1.07
+  (2025 Apr–Sep); 2023 measured +3.17, skewed by the Jan/Feb arctic events.
+  Strong caveat documented: only **two** NE plants report Schedule-5 gas
+  (EIA codes 1660, 6081, partly LNG-priced), so the scalar is a
+  forward-year/fallback value only — backcasts use the measured paths below.
+- **Algonquin hub-month basis overlay (upload U4 satisfied via web-sourced
+  index).** `inputs/raw-data/gas_basis_by_iso_month.csv` (the doc-01
+  header-only template) now carries 35 of 36 NEISO months 2023–2025:
+  basis = ISO-NE "average Massachusetts natural gas index price" (a
+  volume-weighted AGT-area index, isonewswire.com monthly wholesale posts,
+  one source URL per row) − EIA Henry Hub monthly. Winter blowouts land as
+  measured: Jan-24 +4.50, Dec-24 +6.12, Jan-25 +12.79, Feb-25 +10.43,
+  Dec-25 +10.64 $/MMBtu. Aug-2025 is missing upstream (no post found) and
+  falls back to the EIA-923/shaped path — the flagged limitation.
+- **New `gas_hub_basis_overlay` (Tier 3, default off).**
+  `fuel.apply_hub_basis_overlay` REPLACES every gas unit's fuel price with
+  measured HH-month + measured hub basis in covered months — the
+  constrained-hub spot is the marginal unit's opportunity cost, and for
+  NEISO the index is the far better measurement than the 2-plant Schedule-5
+  sample (which it supersedes, e.g. LNG-skewed Jan-24 receipts of $11.69 vs
+  the $7.68 index). Runs before the dual-fuel min so oil parity still caps
+  the winter spike (the P13 switch trigger). Cross-check: the resolved 2024
+  NEISO annual gas mean is $3.03 vs ISO-NE's published $3.06.
+- **RGGI in marginal cost.** `STATE_CARBON_PRICE_BY_ISO["NEISO"]` =
+  {2023: 14.87, 2024: 22.83, 2025: 24.35} $/t — yearly averages of the four
+  RGGI quarterly auction clearing prices (Auctions 59–70, rggi.org press
+  releases, cited per year), converted from RGGI's $/short ton at ×1.10231.
+  Default-on for NEISO backcasts through the existing CAISO/CARB machinery
+  (~$6–10/MWh on a 7.0-HR CC). All six NE states are RGGI members, so the
+  cost applies ISO-wide.
+- **Calibration harness defaults:** `gas_monthly_actuals` now also on for
+  NEISO; `gas_hub_basis_overlay` on for NEISO only. `COAL_PRICE_BASE["NEISO"]
+  = 3.0` placeholder added (Merrimack, ~5% CF, confidential receipts) so the
+  resolver prices the NEISO fleet at all.
+- **Tests:** RGGI in NEISO gas MC 2023–2025 (with the $5–7/MWh 2023 CC
+  uplift), ERCOT/PJM zero and CAISO untouched; synthetic-CSV overlay
+  semantics (covered months replaced, others kept, non-gas untouched, flag
+  off = no-op); real-data Jan-2025 AGT-spike hour prices gas MC > 2× the
+  annual average; ERCOT/PJM/CAISO resolver output byte-identical even with
+  the flag forced on (no basis rows exist for them).
+
 ## 2026-06-11 (NYISO backcast P7 — measured gas, winter basis, RGGI carbon)
 
 NYISO prompt-pack P7. Prices NYISO gas at the measured EIA-923 ISO-month series
