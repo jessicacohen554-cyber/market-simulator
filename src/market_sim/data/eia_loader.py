@@ -325,7 +325,13 @@ def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
 
 # EIA-930 ``<BA> hourly`` per-fuel net-generation columns, mapped to the
 # model's benchmark series names. Gas is the whole gas fleet (CC + CT + ST),
-# the counterpart to the model's summed gas dispatch.
+# the counterpart to the model's summed gas dispatch. The storage rows are
+# *net* series (positive = discharging, negative = charging) and only appear
+# in extract vintages whose BA reports the EIA-930 storage split (``BAT`` /
+# ``PS`` fuel codes; the current CISO extract predates the split and folds
+# batteries into the legacy ``OTH`` category) — absent columns are skipped
+# below, so the battery benchmark wires itself in automatically once a
+# regenerated extract carries them.
 _EIA930_BENCHMARK_COLUMNS: tuple[tuple[str, str], ...] = (
     ("coal", "NG: COL"),
     ("gas", "NG: NG"),
@@ -334,6 +340,8 @@ _EIA930_BENCHMARK_COLUMNS: tuple[tuple[str, str], ...] = (
     ("solar", "NG: SUN"),
     ("oil", "NG: OIL"),
     ("hydro", "NG: WAT"),
+    ("battery", "NG: BAT"),
+    ("pumped_storage", "NG: PS"),
 )
 
 
