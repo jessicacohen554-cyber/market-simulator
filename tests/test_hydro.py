@@ -398,8 +398,112 @@ class TestCAISOHydroBudget(unittest.TestCase):
                 )
 
 
+class TestNEISOHydroBudget(unittest.TestCase):
+    """NEISO hydro energy budgets from EIA-923 (P4 hydro+PS stage).
+
+    ISO-NE conventional hydro is modest — 8.55 TWh (2023), 6.71 TWh (2024)
+    — and concentrated in the North zone (ME/NH/VT, ~81% of annual energy).
+    EIA-923 ``HY`` and EIA-930 ``WAT`` agree within 15% for both years
+    (2023: 8.55 vs 8.77 TWh; 2024: 6.71 vs 7.42 TWh — small QF/non-
+    dispatchable plants create minor timing differences between the two
+    surveys but both land in the same ballpark).
+
+    2025 is survey-only in the early-release EIA-923 (5 reporters vs
+    ~166 full-year plants); backfilling non-reporters from 2024 recovers
+    the fleet to near the 2024 level.
+    """
+
+    # EIA-923 anchors (TWh) via load_hydro_budget — regression guards on
+    # the ISNE BA filter, monthly-column aggregation, and negative-gen clip.
+    EIA923_TWH = {2023: 8.548, 2024: 6.714}
+    # EIA-930 ISNE WAT (conventional hydro, excluding PS fuel-type ``PS``).
+    # Source: inputs/raw-data/ISNE_fueltype.parquet, column fueltype=="WAT".
+    EIA930_WAT_TWH = {2023: 8.774, 2024: 7.424}
+
+    def test_shapes_for_both_backcast_years(self):
+        for year in self.EIA923_TWH:
+            hb = load_hydro_budget("NEISO", year)
+            self.assertGreater(hb.n_hydro, 0)
+            self.assertEqual(hb.monthly_energy.shape, (hb.n_hydro, 12))
+            self.assertEqual(hb.min_mw.shape, (hb.n_hydro,))
+            self.assertEqual(hb.max_mw.shape, (hb.n_hydro,))
+            self.assertEqual(len(hb.plant_names), hb.n_hydro)
+            self.assertTrue(np.all(np.diff(hb.plant_ids) > 0))
+            self.assertTrue(np.all(hb.monthly_energy >= 0.0))
+            self.assertTrue(np.all(hb.max_mw > 0.0))
+
+    def test_totals_match_eia923_anchors(self):
+        for year, expected in self.EIA923_TWH.items():
+            hb = load_hydro_budget("NEISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertAlmostEqual(total, expected, delta=0.01 * expected,
+                                   msg=f"NEISO {year} TWh")
+
+    def test_totals_within_15pct_of_eia930_wat(self):
+        # EIA-923 HY vs EIA-930 WAT sanity cross-check. 2023 is within 3%;
+        # 2024 is ~10% (EIA-930 captures some December generation in early
+        # January, so annual boundaries differ slightly). A 15% tolerance
+        # guards against gross BA-filter bugs without demanding survey parity.
+        for year, ref in self.EIA930_WAT_TWH.items():
+            hb = load_hydro_budget("NEISO", year)
+            total = hb.monthly_energy.sum() / 1e6
+            self.assertLess(
+                abs(total - ref) / ref, 0.15,
+                msg=f"NEISO {year} EIA-923 {total:.3f} TWh vs EIA-930 {ref:.3f} TWh",
+            )
+
+    def test_north_zone_carries_majority_of_energy(self):
+        # ME/NH/VT run-of-river plants dominate NEISO hydro; North zone
+        # should carry >70% of annual energy in both years (actual: ~81%).
+        for year in self.EIA923_TWH:
+            hb = load_hydro_budget("NEISO", year)
+            zones = np.array(hb.zones)
+            north_e = hb.monthly_energy[zones == "North"].sum()
+            total_e = hb.monthly_energy.sum()
+            self.assertGreater(
+                north_e / total_e, 0.70,
+                msg=f"NEISO {year} North zone fraction",
+            )
+
+    def test_zones_are_valid_neiso_topology(self):
+        hb = load_hydro_budget("NEISO", 2023)
+        valid = {"North", "Central", "Boston", "Connecticut", ""}
+        self.assertTrue(
+            set(hb.zones) <= valid,
+            msg=f"Unexpected zones: {set(hb.zones) - valid}",
+        )
+
+    def test_nameplate_from_eia860(self):
+        # EIA-860 ISNE HY nameplate is ~1,900 MW; the loader falls back to
+        # peak-average power for any plant absent from EIA-860, so the sum
+        # will land somewhat above the strict nameplate total.
+        hb = load_hydro_budget("NEISO", 2023)
+        self.assertGreater(hb.max_mw.sum(), 1500.0)
+        self.assertLess(hb.max_mw.sum(), 2500.0)
+
+    def test_2025_backfill_recovers_survey_only_coverage(self):
+        # 2025 early-release EIA-923: only monthly-survey reporters (~5).
+        # Backfilling non-reporters from 2024 recovers the fleet to the
+        # 2024 level (~166 plants) and the TWh to within 5% of 2024.
+        bare = load_hydro_budget("NEISO", 2025)
+        self.assertLess(bare.n_hydro, 20,
+                        msg="2025 bare should be survey-only subset")
+        filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
+        self.assertGreater(filled.n_hydro, 100,
+                           msg="backfill should recover near-full fleet")
+        total_twh = filled.monthly_energy.sum() / 1e6
+        ref_twh = self.EIA923_TWH[2024]
+        self.assertLess(
+            abs(total_twh - ref_twh) / ref_twh, 0.05,
+            msg=f"2025 backfilled {total_twh:.3f} TWh vs 2024 {ref_twh:.3f} TWh",
+        )
+        self.assertGreater(
+            filled.monthly_energy.sum(), bare.monthly_energy.sum()
+        )
+
+
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
-    """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO P4 stage."""
+    """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
 
     def test_pjm_2023_budget_regression(self):
         hb = load_hydro_budget("PJM", 2023)

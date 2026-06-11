@@ -710,6 +710,32 @@ class TestEIA860PumpedStorage(unittest.TestCase):
                 u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
             )
 
+    def test_neiso_pumped_storage_present(self):
+        # NEISO's PS fleet: Northfield Mountain (plant 547, 4×292 MW =
+        # 1,168 MW, Central zone) + Bear Swamp (plant 8005, 2×333 MW =
+        # 666 MW, Central zone) + Rocky River (plant 539, 31 MW, CT zone)
+        # = ~1,865 MW total. Northfield is the dominant unit (~1.1 GW per
+        # the prompt spec); both Northfield and Bear Swamp aggregate into
+        # the Central zone, so Central carries ~1,834 MW.
+        units = load_eia860_pumped_storage("NEISO", 2023)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 1700.0)
+        self.assertLess(total_mw, 2100.0)
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertIn(u.zone, {"North", "Central", "Boston", "Connecticut"})
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+        # Northfield + Bear Swamp aggregate into Central; it is the largest zone.
+        central_mw = sum(u.power_cap_mw for u in units if u.zone == "Central")
+        self.assertGreater(central_mw, 1700.0,
+                           msg="Central zone should hold Northfield+Bear Swamp")
+
 
 class TestNYISOPumpedStorage(unittest.TestCase):
     """NYISO pumped-storage fleet from EIA-860 (P4 hydro stage).
@@ -824,6 +850,18 @@ class TestPumpedStorageDispatchAdder(unittest.TestCase):
             0.0,
         )
         units = load_eia860_pumped_storage("CAISO", 2023, ScenarioConfig())
+        self.assertTrue(units)
+        for u in units:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_neiso_default_is_off(self):
+        # NEISO PS adder is 0.0 by default (not in the per-ISO map); off
+        # until a NEISO calibration pass measures Northfield's reserve duty.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NEISO", ScenarioConfig(iso="NEISO")),
+            0.0,
+        )
+        units = load_eia860_pumped_storage("NEISO", 2023, ScenarioConfig(iso="NEISO"))
         self.assertTrue(units)
         for u in units:
             self.assertEqual(u.vom, 0.0)
