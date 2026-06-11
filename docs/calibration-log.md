@@ -216,7 +216,10 @@ on main (asserts pre-measured-PRB constant).
 Pure parquet/JSON analysis of the existing calibration bundles — no LP re-solve. Re-run it
 after every new backcast bundle lands; unknown runs are auto-classified (scenario-config
 equality + git diff between recorded shas + note keywords) so it keeps working for every
-ISO as tuning sequences accrue.
+ISO as tuning sequences accrue. (Complements `scripts/curve_class_jacobian.py`, the step-4
+quick-look: that tool fits one pooled regression with year fixed effects across all
+bundles; this one restricts to verified pure-curve pairs, fits each year separately,
+attaches jackknife errors per cell, and adds the adjacency validation + joint-move solver.)
 
 **Method.** From consecutive run pairs whose only difference is offer-curve band-multiplier
 moves, collect observations Δ(band multipliers) → Δ(class TWh) per year and fit a
@@ -224,10 +227,13 @@ ridge-regularized linear map `Δgen[class] ≈ Σ S[class,(class2,band)]·Δmult
 with leave-one-pair-out jackknife standard errors. Pairs with structural code/data changes
 are excluded via a curated registry in the script: Run-63 (storage fix), Run-64 (ER plant
 append), Run-66 (CHP BTM trim), Run-68 (measured PRB fuel), Run-69 (CC_CHP eGRID HR
-re-base), Run-71 (demand alignment), Run-73 (CHP steam-floor + Petra Nova). Regression
-inputs: ERCOT 60→61, 61→62, 64→65, 66→67, 69→70, 71→72 (6 pairs × 3 years); PJM
-pjm 4→5, 5→6, 6→7 (3 pairs × 2 years). Each year is fitted separately (the 2024 vs
-2023/2025 asymmetry is gas-price-driven: $2.54 / $2.19 / $3.52 per MMBtu).
+re-base), Run-71 (demand alignment), Run-73 (CHP steam-floor + Petra Nova), Run-74
+(regenerated unit-outage extract — config-identical to Run-73 but the note discloses the
+data change, so 73→74 is excluded too). Regression inputs: ERCOT 60→61, 61→62, 64→65,
+66→67, 69→70, 71→72 plus the two auto-admitted step-2 peak-sweep A/Bs
+(peak145→130→160; single-knob CC_REGULAR.peak moves on identical configs) = 8 pairs ×
+3 years; PJM pjm 4→5, 5→6, 6→7 (3 pairs × 2 years). Each year is fitted separately (the
+2024 vs 2023/2025 asymmetry is gas-price-driven: $2.54 / $2.19 / $3.52 per MMBtu).
 
 **Sanity anchors reproduced** (Run-72→73, structural — sign checks only, all PASS):
 CT_PEAKER committed 1.30→1.10 lifted CT_PEAKER +1.62/+2.10/+1.35 TWh (2023/24/25) while
@@ -238,15 +244,17 @@ ST_GAS fell −1.75/−2.44/−2.02; COAL_PRB committed/econ_low −0.10 lifted 
 
 | Knob | Responds | 2023 | 2024 | 2025 | Reading |
 |---|---|---|---|---|---|
-| CT_PEAKER.committed | CC_REGULAR | +5.8 | +5.0 | +3.8 | pricing the CT committed band up pushes its energy into the CC residual |
-| CT_PEAKER.committed | COAL_PRB | −4.2 | −3.4 | (low) | dearer CTs raise prices into PRB's econ ramp window |
+| CT_PEAKER.committed | CC_REGULAR | +5.8 | +5.1 | +3.8 | pricing the CT committed band up pushes its energy into the CC residual |
+| CT_PEAKER.committed | COAL_PRB | −4.3 | −3.4 | (low) | dearer CTs raise prices into PRB's econ ramp window |
 | CT_PEAKER.committed | CT_PEAKER | −2.6 | −2.7 | −2.8 | own-band loss, roughly half of what CC_REGULAR gains |
 | CC_REGULAR.econ_high | CC_REGULAR | −3.8 | −3.1 | −2.4 | the big residual marginal class; its econ_high is the single strongest own-knob |
-| CC_REGULAR.econ_high | COAL_PRB | +2.6 | +2.5 | (low) | CC econ_high and PRB econ_high overlap the same $23–35 price window |
+| CC_REGULAR.econ_high | COAL_PRB | +2.7 | +2.5 | (low) | CC econ_high and PRB econ_high overlap the same $23–35 price window |
+| CC_REGULAR.peak | CC_REGULAR / COAL_PRB | (low) | −1.9 / +1.6 | (low) | from the step-2 duct-firing peak sweep; the peak band trades against PRB in 2024 |
 | COAL_PRB.econ_high | COAL_PRB | −4.1 | −4.4 | (low) | own-band; 2024 strongest (cheapest gas year squeezes the coal window) |
-| COAL_PRB.econ_high | CC_REGULAR | +4.4 | +3.7 | +2.3 | the PRB↔CC substitution is symmetric to the row above |
+| COAL_PRB.econ_high | CC_REGULAR | +4.4 | +3.7 | (low) | the PRB↔CC substitution is symmetric to the row above |
 | COAL_PRB.econ_high | ST_GAS | +1.4 | +1.9 | (low) | second-order spill into steam gas |
 | ST_GAS.committed | CT_PEAKER | −1.5 | −1.5 | −1.6 | cheaper ST_GAS committed crowds CTs out (and vice versa) |
+| ST_GAS.econ_high | CC_REGULAR | −2.9 | −2.4 | −2.0 | aliased with the co-moved CC_REGULAR.econ_high (n=2) — treat with care |
 | COAL_LIGNITE.econ_high | CT_PEAKER | (low) | −1.5 | (low) | lignite econ band trades against peakers in the tight 2024 stack |
 
 PJM (3 pairs, 2023/24 — treat as provisional): CT_PEAKER econ bands are the dominant
@@ -254,40 +262,42 @@ knobs (econ_high −21, econ_low −11 TWh/unit own-class, med confidence), with
 committed ↔ CT_PEAKER the strongest cross (+16 TWh/unit, n=2).
 
 **Caveats.** CT_PEAKER.committed and ST_GAS.committed co-moved identically in two of the
-six ERCOT pairs, so their attributions are partially aliased — the Run-72→73 anchor
-(where CT moved without ST_GAS committed) shows the CT committed knob's nearest
-substitution partner is ST_GAS specifically; read the CT→CC_REGULAR row as "CT committed
-energy goes to the gas mid-merit pool (CC_REGULAR + ST_GAS)". Cells flagged `low`
-(n_obs<2 or |coef|<stderr) are not to be trusted individually. The merit-order adjacency
-check (band $/MWh range = band mult × class base HR × monthly fuel price, vs the
-demand-weighted clearing-price distribution in each bundle's `system.parquet`) confirms
-every med/high regression coupling pairs classes whose offer bands overlap where the
-price distribution has mass.
+ERCOT pairs, so their attributions are partially aliased — the Run-72→73 anchor (where
+CT moved without ST_GAS committed) shows the CT committed knob's nearest substitution
+partner is ST_GAS specifically; read the CT→CC_REGULAR row as "CT committed energy goes
+to the gas mid-merit pool (CC_REGULAR + ST_GAS)". Cells flagged `low` (n_obs<2 or
+|coef|<stderr) are not to be trusted individually. The merit-order adjacency check (band
+$/MWh range = band mult × class base HR × monthly fuel price, vs the demand-weighted
+clearing-price distribution in each bundle's `system.parquet`) confirms every med/high
+regression coupling pairs classes whose offer bands overlap where the price distribution
+has mass.
 
 **Joint-move recipe.** Given a target error vector `err` (TWh per class-year, model −
 EIA-923), the script solves `min ‖S·Δm + err‖² + λ‖Δm‖²` over the four price bands
 (knobs with n_obs ≥ 2), box-constrained to per-step moves |Δm| ≤ 0.15, by projected
-gradient. Worked example against Run-73's errors
-(`python scripts/derive_offer_curve_jacobian.py --iso ERCOT --validate-run Run-73`):
+gradient. Worked example against Run-74's errors
+(`python scripts/derive_offer_curve_jacobian.py --iso ERCOT --validate-run Run-74`):
 
 ```
 Recommended Δmult            Predicted errors (TWh, model − EIA-923)
 CC_REGULAR  econ_high −0.150            err now            err predicted
-ST_GAS      econ_high −0.150            2023  2024  2025   2023  2024  2025
-ST_GAS      committed −0.150  CC_REG   −5.95 +3.38 −3.52  −4.57 +4.44 −2.47
-CT_PEAKER   committed +0.150  ST_GAS   −1.41 −3.53 −2.71  −0.65 −2.78 −2.00
-CT_CHP      committed −0.150  CT_PEAK  +1.42 +0.82 +0.87  +1.30 +0.77 +0.72
-CT_CHP      econ_high +0.150  PRB      +1.44 −5.47 +3.04  +0.86 −5.92 +2.94
-CT_CHP      peak      −0.150  LIGNITE  −1.20 −2.99 +0.25  −1.26 −3.03 +0.24
-COAL_LIGNITE econ_low +0.117  CT_CHP   −1.12 −0.72 +2.46  −1.14 −0.72 +2.34
-COAL_PRB    econ_high −0.115
-COAL_LIGNITE econ_high −0.104
+CC_REGULAR  peak      +0.150            2023  2024  2025   2023  2024  2025
+ST_GAS      committed −0.150  CC_REG   −6.01 +3.51 −3.19  −4.90 +4.19 −2.16
+ST_GAS      econ_high −0.150  ST_GAS   −0.79 −2.83 −1.89  +0.12 −1.98 −0.97
+CT_CHP      committed −0.150  CT_PEAK  +0.08 −1.03 −0.44  +0.27 −0.68 −0.30
+CT_CHP      econ_high +0.150  PRB      +1.67 −5.14 +3.04  +1.28 −5.39 +3.04
+CT_CHP      peak      −0.150  LIGNITE  −0.68 −2.36 +0.26  −0.57 −2.30 +0.27
+CC_CHP      econ_high +0.150  CT_CHP   −1.12 −0.72 +2.48  −1.14 −0.72 +2.37
+COAL_LIGNITE econ_high −0.150
+COAL_PRB    econ_high −0.121
+COAL_PRB    committed +0.082
+CT_PEAKER   committed +0.069
 ```
 
-The solver lifts the under-running classes (ST_GAS cheapened on both committed and
-econ_high; CC_REGULAR econ_high down against the 2023/25 under-run) and trims the
-CT_PEAKER over-run — but the mixed signs across years (CC_REGULAR −6.0/+3.4/−3.5,
-PRB +1.4/−5.5/+3.0) are the honest limit of what any single multiplier move can fix:
-those need year-dependent levers (gas-price-keyed shaping), not more band tuning.
-Re-derive the matrix and recipe after each run; one solved joint move per iteration
-replaces the sequential single-knob walk.
+The solver cheapens the under-running classes (ST_GAS on committed and econ_high;
+CC_REGULAR econ_high against the 2023/25 under-run, with peak raised to give 2024 back)
+and nudges CT_PEAKER committed up against the residual over-run — but the mixed signs
+across years (CC_REGULAR −6.0/+3.5/−3.2, PRB +1.7/−5.1/+3.0) are the honest limit of
+what any single multiplier move can fix: those need year-dependent levers
+(gas-price-keyed shaping), not more band tuning. Re-derive the matrix and recipe after
+each run; one solved joint move per iteration replaces the sequential single-knob walk.

@@ -78,6 +78,9 @@ PRICE_BANDS = BANDS[:4]
 #                from the regression, usable only as a qualitative sign check.
 #   legacy     — early/exploratory bundles whose provenance was not verified;
 #                excluded by default (force with --include-pair).
+#   sidecar    — A/B experiment off a mainline run (e.g. a smoothing sweep);
+#                removed from the pairing chain entirely so the mainline runs
+#                on either side still pair with each other.
 # Verification for the entries below: model_changes_note review plus
 # `git diff <sha0> <sha1> -- src/ inputs/ data/` between the recorded shas
 # (clean for every pure pair; note that several structural changes do NOT
@@ -109,7 +112,8 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "Run-71": ("structural", "2025 demand-alignment fix (curves unchanged from Run-70)"),
     "Run-72": ("pure", "multiplier moves only (note + clean git)"),
     "Run-73": ("structural", "CHP steam-floor fix + Petra Nova reclassification (curve moves mixed in — sign-check only)"),
-    "curve-n12-2024": ("structural", "A/B of offer_curve_smoothing_n, single year"),
+    "curve-n12-2024": ("sidecar", "A/B of offer_curve_smoothing_n off Run-72, single year"),
+    "Run-74": ("structural", "regenerated unit-outage extract (Rio Nogales / C.R. Wing derates) alongside the curve walk-back"),
     # --- PJM ---
     "pjm_2023": ("legacy", "exploratory era"),
     "pjm_2024": ("legacy", "exploratory era"),
@@ -359,6 +363,11 @@ def curve_deltas(b0: Bundle, b1: Bundle, klasses: set[str]) -> dict:
 
 def build_pairs(bundles: list[Bundle], cache: dict,
                 include: set[str], exclude: set[str]) -> list[PairObs]:
+    side = [b for b in bundles if REGISTRY.get(b.name, ("",))[0] == "sidecar"]
+    for b in side:
+        print(f"  [sidecar   ] {b.name}: {REGISTRY[b.name][1]} — "
+              "skipped from the pairing chain")
+    bundles = [b for b in bundles if b not in side]
     pairs = []
     for b0, b1 in zip(bundles, bundles[1:]):
         if not set(b0.years) & set(b1.years):
@@ -756,8 +765,13 @@ def main(argv: list[str] | None = None) -> int:
     CACHE_PATH.write_text(json.dumps(cache))
     if all_S:
         out = pd.concat(all_S, ignore_index=True)
+        if args.out.exists():  # keep other ISOs' rows when run with --iso
+            prev = pd.read_csv(args.out)
+            out = pd.concat(
+                [prev[~prev["iso"].isin(out["iso"])], out], ignore_index=True)
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        out.to_csv(args.out, index=False)
+        out.sort_values(["iso", "year", "out_class", "band", "in_class"]
+                        ).to_csv(args.out, index=False)
         print(f"\nwrote {len(out)} cells -> {args.out}")
     return 0
 
