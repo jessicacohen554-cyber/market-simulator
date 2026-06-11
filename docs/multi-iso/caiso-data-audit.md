@@ -207,9 +207,9 @@ Diff against `inputs/raw-data/campd-unit-level/<ST>_<year>.parquet`:
 
 | State-year | Unit-level | Facility-level | Notes |
 |---|---|---|---|
-| CA_2023 | **MISSING** (= U1) | present | expected gap; facility-level detection is the documented fallback until U1 lands |
-| CA_2024 | present | present | feeds `campd-unit-outages-CAISO.csv` (655 outage windows) |
-| CA_2025 | present | present | 731 outage windows |
+| CA_2023 | **present** (U1 landed 2026-06-11) | present | feeds `campd-unit-outages-CAISO.csv` (612 outage windows) |
+| CA_2024 | present | present | feeds `campd-unit-outages-CAISO.csv` (620 outage windows) |
+| CA_2025 | present | present | 701 outage windows |
 | NV_2023/24/25 | missing | missing | Desert Star only — see below |
 
 **Non-CA CEMS obligations:** Desert Star (ORIS 55077) is the only non-CA
@@ -272,12 +272,27 @@ summing — the loader warns. AES CC_REGULAR CEMS coverage is now 95%+ of
 class capacity; the largest remaining gaps are El Segundo and Desert Star
 as above.
 
-**2023 is statistical-availability-only** until U1 lands:
-`unit_outage_derate_factors(2023, iso="CAISO")` returns empty, and a
-`outage_source="historic"` CAISO 2023 run now logs a warning to that
-effect (`fleet.generators_to_fleet_arrays`). Record the caveat in the
-bundle's `model_changes_note` when the first CAISO 2023 backcast is
-registered.
+**P1-2023 resolution (2026-06-11): U1 landed, 2023 windows derived.**
+`CA_2023.parquet` (245 units across 109 facilities; all gas/wood, zero
+coal — same fuel mix as 2024/2025) is now in
+`inputs/raw-data/campd-unit-level/`, and `derive_campd_unit_outages.py
+--iso CAISO --years 2023 2024 2025` regenerated
+`campd-unit-outages-CAISO.csv` to **1,933 windows (612 in 2023, 620 in
+2024, 701 in 2025; 37 plants)**. The 2024 and 2025 rows regenerate
+**byte-identically** (raw-text and value-level) against the committed
+extract — the 2023 addition shifts nothing in the later years. As in
+2024/2025, only the event-based rule fires (every CA unit is gas-fired).
+A detector replay independent of the script, on the three largest CC
+plants with 2023 windows — La Paloma (55151), Moss Landing (260),
+Mountainview (358) — reproduced every 2023 window exactly, and the
+every-hour CF < 2% rule held inside each one.
+
+`unit_outage_derate_factors(2023, iso="CAISO")` now returns 30 derated
+`(plant, group)` bins (was empty), so an `outage_source="historic"` CAISO
+2023 fleet assembly **no longer logs the PR #300 "no outage windows cover
+CAISO 2023" warning** (verified by capturing
+`fleet.generators_to_fleet_arrays` logs). 2023 backcasts now carry
+measured unit-outage availability rather than statistical-only.
 
 ---
 
@@ -285,7 +300,7 @@ registered.
 
 | # | Item | Destination | Status |
 |---|---|---|---|
-| U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
+| U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **done (2026-06-11)** — landed; `derive_campd_unit_outages.py --iso CAISO` regenerated `campd-unit-outages-CAISO.csv` with 612 measured 2023 windows (2024/2025 byte-identical). 2023 backcasts now carry measured unit outages |
 | U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10. OASIS gotcha found 2026-06-11: multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) |
 | U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
 | U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
