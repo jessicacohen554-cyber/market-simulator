@@ -397,11 +397,12 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_storage.high` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.low` | 0.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.mid` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `pumped_storage_dispatch_adder_by_iso.PJM` | 10.0 | 2 | Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduc… | 2026-06 | auto-generated |
 | `pumped_storage_duration_hours` | 10.0 | 2 | Pumped-storage hydro fleet parameters (EIA-860 PS units enter the s… | 2023 | auto-generated |
 | `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
-| `scenario.pumped_storage_dispatch_adder` | 10.0 | 3 | Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure… |  | auto-generated, needs-citation |
+| `scenario.pumped_storage_dispatch_adder` | None | 3 | Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure… |  | auto-generated, needs-citation |
 | `scenario.storage_capacity_value` | True | 2 | Storage new-entry value stack. ``storage_capacity_value`` globally … |  | auto-generated, needs-citation |
 | `scenario.storage_daily_cycling` | False | 2 | When True, each storage unit's SOC |  | auto-generated, needs-citation |
 | `scenario.storage_degradation` | True | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -492,6 +493,7 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `end_year` | 2050 | 0 | Market simulator model design decision | 2026-05 |  |
 | `hours_per_year` | 8760 | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.battery_dispatch_adder` | 0.0 | 3 | Tier 3 — grid-battery throughput/cycling cost ($/MWh discharged), t… | 2024 | auto-generated |
 | `scenario.campd_bins_path` | inputs/custom-bin-assignments.csv | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.cc_committed_hr_mult` | 1.23 | 3 | CC part-load penalty ~23% |  | auto-generated, needs-citation |
 | `scenario.cc_committed_hr_override` | None | 3 | Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's… |  | auto-generated, needs-citation |

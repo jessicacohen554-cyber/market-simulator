@@ -26,6 +26,9 @@ from market_sim.model.storage import (
     load_eia860_pumped_storage,
     load_eia860_storage,
     storage_cap_profiles,
+
+
+    resolve_pumped_storage_dispatch_adder,
     storage_units_to_arrays,
 )
 from market_sim.config.constants import (
@@ -690,6 +693,72 @@ class TestEIA860PumpedStorage(unittest.TestCase):
         self.assertIn("pumped_storage", techs)
         self.assertIn("li_ion", techs)
 
+    def test_caiso_pumped_storage_present(self):
+        # CAISO's PS fleet — Helms (1,053 MW per EIA-860; PG&E rates the
+        # upgraded units 1,212 MW), W. R. Gianelli, Edward C Hyatt,
+        # J S Eastwood, Thermalito, O'Neill — totals ~2.1 GW, all in NP15.
+        units = load_eia860_pumped_storage("CAISO", 2023)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 1900.0)
+        self.assertLess(total_mw, 2300.0)
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertIn(u.zone, {"NP15", "ZP26", "SP15"})
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+
+
+class TestPumpedStorageDispatchAdder(unittest.TestCase):
+    """Per-ISO resolution of the PS dispatch adder (reserve-duty proxy)."""
+
+    def test_pjm_default_is_calibrated_10(self):
+        # PJM's $10/MWh reduced-form reserve duty (calibration-log
+        # 2026-06-10, "pjm 3 ps-adder") flows from the per-ISO default.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("PJM", ScenarioConfig()),
+            10.0,
+        )
+        units = load_eia860_pumped_storage("PJM", 2024, ScenarioConfig())
+        self.assertTrue(units)
+        for u in units:
+            self.assertEqual(u.vom, 10.0)
+
+    def test_caiso_default_is_off(self):
+        # CAISO has no calibrated reserve-duty adder yet: off by default
+        # until a CAISO calibration pass says otherwise.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("CAISO", ScenarioConfig()),
+            0.0,
+        )
+        units = load_eia860_pumped_storage("CAISO", 2023, ScenarioConfig())
+        self.assertTrue(units)
+        for u in units:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_no_config_falls_back_to_per_iso_default(self):
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("PJM", None), 10.0
+        )
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("CAISO", None), 0.0
+        )
+
+    def test_explicit_value_overrides_every_iso(self):
+        cfg = ScenarioConfig(pumped_storage_dispatch_adder=5.0)
+        for iso in ("PJM", "CAISO", "ERCOT"):
+            self.assertEqual(
+                resolve_pumped_storage_dispatch_adder(iso, cfg), 5.0
+            )
+        zero = ScenarioConfig(pumped_storage_dispatch_adder=0.0)
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("PJM", zero), 0.0
+        )
+
 
 class TestBatteryDispatchAdder(unittest.TestCase):
     """ScenarioConfig.battery_dispatch_adder on the EIA-860 battery fleet."""
@@ -708,8 +777,12 @@ class TestBatteryDispatchAdder(unittest.TestCase):
         units = load_eia860_storage("PJM", 2024, cfg)
         for u in units:
             if u.tech_name == "pumped_storage":
-                # PS keeps its own throughput adder, not the battery one.
-                self.assertEqual(u.vom, cfg.pumped_storage_dispatch_adder)
+                # PS keeps its own throughput adder (per-ISO resolved:
+                # PJM's calibrated $10), not the battery one.
+                self.assertEqual(
+                    u.vom,
+                    resolve_pumped_storage_dispatch_adder("PJM", cfg),
+                )
             else:
                 self.assertEqual(u.vom, 17.5)
 

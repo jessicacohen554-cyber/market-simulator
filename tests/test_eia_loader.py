@@ -7,6 +7,8 @@ import numpy as np
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
+    _load_caiso_hourly_demand,
+    caiso_zonal_load_shares,
     ercot_zonal_load_shares,
     load_demand,
     load_demand_meta,
@@ -15,6 +17,10 @@ from market_sim.data.eia_loader import (
 )
 
 _TEST_YEAR = 2024
+
+# The only year with a TAC-area load file so far (upload U4 is partial:
+# 2023-01 landed; the remaining monthly pulls are pending).
+_CAISO_TAC_YEAR = 2023
 
 # Reference peak demand bands (MW), from EIA-930: ERCOT ~85,544 MW,
 # CAISO ~47,571 MW for 2024.
@@ -72,6 +78,44 @@ class TestEIALoader(unittest.TestCase):
         system = demand[nonzero[0][0]] / nonzero[0][1]
         for z, share in nonzero:
             np.testing.assert_allclose(demand[z], share * system, rtol=1e-9)
+
+    def test_caiso_zonal_shares_sum_to_one(self):
+        """CAISO per-zone hourly shares are fractions summing to 1.0 each hour."""
+        zone_names = get_iso_config("CAISO").zone_names
+        shares = caiso_zonal_load_shares(_CAISO_TAC_YEAR, zone_names)
+        self.assertIsNotNone(shares)
+        self.assertEqual(shares.shape, (len(zone_names), HOURS_PER_YEAR))
+        np.testing.assert_allclose(shares.sum(axis=0), 1.0, rtol=1e-9)
+        # WECC_import is an import node, not a load zone: no load share.
+        self.assertTrue(np.all(shares[zone_names.index("WECC_import")] == 0.0))
+
+    def test_caiso_zonal_shares_measured_window_moves(self):
+        """Measured hours carry real hourly shapes, not one constant split.
+
+        Only January is covered by the partial U4 upload, so the January
+        shares must vary hour to hour while the uncovered remainder of the
+        year carries the constant sample-average shares.
+        """
+        zone_names = get_iso_config("CAISO").zone_names
+        shares = caiso_zonal_load_shares(_CAISO_TAC_YEAR, zone_names)
+        jan = shares[zone_names.index("NP15"), : 31 * 24]
+        self.assertGreater(jan.std(), 1e-3)
+        rest = shares[zone_names.index("NP15"), 31 * 24 :]
+        self.assertEqual(len(np.unique(rest)), 1)
+
+    def test_caiso_zonal_shares_fall_back_without_file(self):
+        """A year with no TAC-area file falls back to the static split."""
+        zone_names = get_iso_config("CAISO").zone_names
+        self.assertIsNone(caiso_zonal_load_shares(_TEST_YEAR, zone_names))
+
+    def test_caiso_zonal_demand_reconciles_to_system_series(self):
+        """Zonal demand sums back to the EIA-930 CISO system series each hour."""
+        caiso = get_iso_config("CAISO")
+        for year in (_CAISO_TAC_YEAR, _TEST_YEAR):
+            demand = load_demand("CAISO", year, caiso)
+            system = _load_caiso_hourly_demand(year)
+            self.assertIsNotNone(system)
+            np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
 
     def test_ercot_zonal_shares_sum_to_one(self):
         """ERCOT per-zone hourly shares are fractions summing to 1.0 each hour."""

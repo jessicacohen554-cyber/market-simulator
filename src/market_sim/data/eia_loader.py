@@ -50,6 +50,25 @@ _ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
     "FWEST": "West", "WEST": "West",
 }
 
+# CAISO TAC-area actual hourly load (upload U4: OASIS SLD_FCST with
+# market_run_id=ACTUAL, monthly pulls) -> model zone weights. PG&E's TAC
+# straddles Path 15, so it is split between NP15 and ZP26 with fixed weights
+# that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists
+# at Path 15 to measure the split; Tier 3 — calibration). SCE and SDG&E sit
+# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
+# southern-Nevada pocket). The "CA ISO-TAC" system-total rows are dropped and
+# shares are normalized over the component TACs.
+_CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
+    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    "SCE-TAC": {"SP15": 1.0},
+    "SDGE-TAC": {"SP15": 1.0},
+    "VEA-TAC": {"SP15": 1.0},
+}
+
+# Minimum measured TAC hours to derive CAISO zonal shapes from a partial-year
+# upload (U4 lands month by month); below this, fall back to static shares.
+_CAISO_TAC_MIN_HOURS: int = 28 * 24
+
 # PJM's hourly actual tie-line interchange (import/export) lives here, one file
 # per year. Used to add PJM's net export to the demand the internal fleet must
 # serve, closing the energy-only model's largest structural gap (PJM is a large
@@ -248,6 +267,37 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     if np.isnan(demand).any() or np.isnan(interchange).any():
         return None
     return demand, interchange
+
+
+def _load_caiso_hourly_demand(year: int) -> np.ndarray | None:
+    """Return CAISO hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``CISO hourly`` extract so demand shares the
+    chronological clock of the wind/solar/benchmark series read off the same
+    rows (the ERCOT precedent: the demand-profiles parquet is hour-shifted
+    relative to this frame, which desynchronizes demand from the renewable
+    series — fatal for CAISO's duck curve). Isolated missing meter hours are
+    interpolated.
+
+    **Net-load convention (playbook §8.1):** this series is metered at the
+    transmission level and is already net of CAISO's ~15+ GW of
+    behind-the-meter PV; backcasts model only front-of-meter resources
+    against it. Unlike ERCOT, the BA's net interchange is *not* folded into
+    demand here: CAISO imports are modeled as supply by the ``WECC_import``
+    node's priced pseudo-generators
+    (:func:`market_sim.model.transmission.build_wecc_import_generators`), so
+    netting interchange into demand would double count them.
+
+    Returns ``None`` when no usable full-year frame is available, signaling
+    the caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("CISO", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
 
 
 def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
@@ -651,6 +701,98 @@ def ercot_zonal_load_shares(
     return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
 
 
+def caiso_zonal_load_shares(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly CAISO load shares, or ``None``.
+
+    Reads CAISO's TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
+    with ``market_run_id=ACTUAL``; ``CAISO_tac_load_hourly_<year>.csv``) and
+    maps the TAC areas onto the three trading-hub zones via
+    :data:`_CAISO_TAC_ZONE_WEIGHTS` — PGE-TAC split 0.86/0.14 between NP15
+    and ZP26, SCE + SDG&E + VEA to SP15 — returning each model zone's
+    hour-by-hour fraction of system load. The caller multiplies these
+    time-varying shares by the EIA-930 system demand total, so the system
+    level stays tied to the CISO demand series while zones get measured
+    shapes. The ``WECC_import`` node is absent from the weights and keeps an
+    all-zero row.
+
+    U4 arrives in monthly OASIS pulls, so the file may cover only part of the
+    year. Hours inside the measured window get their measured shares; hours
+    outside it (and any DST spring-forward gap) carry the sample-average zone
+    shares, so the matrix always partitions every hour. Fewer than
+    :data:`_CAISO_TAC_MIN_HOURS` measured hours — or a missing file — returns
+    ``None`` and the caller falls back to the static per-zone ``load_share``
+    (itself derived from this data via ``scripts/derive_load_shares.py``).
+    Refresh path: complete the U4 monthly pulls for 2023–2025.
+
+    Timestamps are UTC interval starts; they are converted to Pacific local
+    time and placed on the model's fixed non-leap 8760-hour clock (Feb 29
+    dropped). Overlapping OASIS pulls duplicate rows verbatim; duplicates are
+    dropped on ``(tac_area, interval_start_gmt)``.
+    """
+    path = _ZONAL_LOAD_DIR / "CAISO" / f"CAISO_tac_load_hourly_{year}.csv"
+    if not path.exists():
+        logger.warning(
+            "CAISO TAC-area load file not found (%s); using static "
+            "load_share split", path,
+        )
+        return None
+    df = pd.read_csv(path, parse_dates=["interval_start_gmt"])
+    df = df[df["tac_area"].isin(_CAISO_TAC_ZONE_WEIGHTS)]
+    df = df.drop_duplicates(subset=["tac_area", "interval_start_gmt"])
+    ts = (
+        pd.DatetimeIndex(df["interval_start_gmt"])
+        .tz_convert("America/Los_Angeles")
+        .tz_localize(None)
+    )
+    keep = (ts.year == year) & ~((ts.month == 2) & (ts.day == 29))
+    df, ts = df[keep], ts[keep]
+    if df.empty:
+        logger.warning(
+            "CAISO TAC-area load file %s has no %d rows; using static "
+            "load_share split", path.name, year,
+        )
+        return None
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts.month - 1]
+        + (ts.day - 1) * 24
+        + ts.hour
+    )
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    grid = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    mw = df["mw"].to_numpy(dtype=float)
+    tac = df["tac_area"].to_numpy()
+    for tac_name, weights in _CAISO_TAC_ZONE_WEIGHTS.items():
+        sel = (tac == tac_name) & ~np.isnan(mw)
+        if not sel.any():
+            continue
+        for zone, weight in weights.items():
+            np.add.at(grid[zone_idx[zone]], hoy[sel], weight * mw[sel])
+    col_tot = grid.sum(axis=0)
+    covered = col_tot > 0.0
+    n_covered = int(covered.sum())
+    if n_covered < _CAISO_TAC_MIN_HOURS:
+        logger.warning(
+            "CAISO TAC-area load for %d covers only %d hours "
+            "(< %d required); using static load_share split",
+            year, n_covered, _CAISO_TAC_MIN_HOURS,
+        )
+        return None
+    shares = np.empty_like(grid)
+    shares[:, covered] = grid[:, covered] / col_tot[covered]
+    if n_covered < HOURS_PER_YEAR:
+        mean_share = grid[:, covered].sum(axis=1) / col_tot[covered].sum()
+        shares[:, ~covered] = mean_share[:, None]
+        logger.warning(
+            "CAISO TAC-area load for %d covers %d/%d hours; uncovered hours "
+            "use the sample-average zone shares (refresh: complete the U4 "
+            "monthly OASIS pulls)",
+            year, n_covered, HOURS_PER_YEAR,
+        )
+    return shares
+
+
 def pjm_net_interchange(year: int) -> np.ndarray | None:
     """Return PJM's hourly net export (MW, export-positive), or ``None``.
 
@@ -775,6 +917,7 @@ def load_demand(
     iso_config: ISOConfig | None = None,
     td_loss_factor: float = 0.0,
     data_dir: Path = DATA_DIR,
+    include_interchange: bool = True,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -793,7 +936,11 @@ def load_demand(
     fleet must serve, a net export raises it. For PJM, the internal-load
     demand-profiles series is combined with the measured tie-line net export
     from :func:`pjm_net_interchange` (PJM's import/export node), so the fleet
-    generates internal load *plus* the ~40 TWh PJM actually exported. Other
+    generates internal load *plus* the ~40 TWh PJM actually exported. For
+    CAISO, demand comes from the EIA-930 ``CISO hourly`` extract with **no**
+    interchange netting — imports are supply, modeled by the ``WECC_import``
+    node (see :func:`_load_caiso_hourly_demand`; the series is net load,
+    already net of ~15+ GW BTM PV, per the playbook §8.1 convention). Other
     ISOs use the demand-profiles parquet alone, with no interchange.
 
     Args:
@@ -805,6 +952,12 @@ def load_demand(
             allocated demand is scaled by ``1 + td_loss_factor``. Defaults
             to ``0.0`` (no gross-up).
         data_dir: Directory containing the EIA-930 parquet extracts.
+        include_interchange: When ``False``, the measured net-interchange
+            schedule is left out of the returned demand (PJM tie-line
+            export; ERCOT DC ties). Callers serving interchange through the
+            priced import/export node instead
+            (:func:`market_sim.model.transmission.build_import_generators`)
+            must disable it here so the export is not counted twice.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -819,10 +972,14 @@ def load_demand(
         iso_config = get_iso_config(iso)
 
     interchange = np.zeros(HOURS_PER_YEAR, dtype=float)
-    ercot_hourly = _load_ercot_hourly(year) if iso == "ERCOT" else None
-    if ercot_hourly is not None:
-        raw_mw, interchange = ercot_hourly
-    else:
+    raw_mw: np.ndarray | None = None
+    if iso == "ERCOT":
+        ercot_hourly = _load_ercot_hourly(year)
+        if ercot_hourly is not None:
+            raw_mw, interchange = ercot_hourly
+    elif iso == "CAISO":
+        raw_mw = _load_caiso_hourly_demand(year)
+    if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
         assert len(subset) == HOURS_PER_YEAR, (
@@ -834,6 +991,9 @@ def load_demand(
     assert not np.isnan(raw_mw).any(), f"NaN demand for {iso} {year}"
     assert raw_mw.max() > 0.0, f"Non-positive peak demand for {iso} {year}"
 
+    if not include_interchange:
+        interchange = np.zeros(HOURS_PER_YEAR, dtype=float)
+
     # PJM's import/export "node": add its measured net export to the demand the
     # internal fleet must serve (the demand-profiles ``raw_mw`` is internal
     # load; PJM is a large net exporter, so without this the fleet under-
@@ -842,7 +1002,7 @@ def load_demand(
     # Prefer the per-border-zone attribution (export drawn from the zone that
     # carries the tie) over a system-wide spread; fall back to the scalar.
     zone_interchange = None
-    if iso == "PJM":
+    if iso == "PJM" and include_interchange:
         zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
         if zone_interchange is not None:
             logger.info(
@@ -855,16 +1015,18 @@ def load_demand(
             if pjm_ix is not None:
                 interchange = pjm_ix
 
-    # PJM and ERCOT allocate demand by each zone's own measured hourly shape
-    # (from the PJM metered-load / ERCOT native-load files) when available, so
-    # zones peak at different times; every other ISO (and these two without the
-    # file) uses the static per-zone share broadcast across hours. Both are
-    # (n_zones, T) weight matrices summing to 1.0 down each hour, so the rest of
-    # the math is identical.
+    # PJM, ERCOT and CAISO allocate demand by each zone's own measured hourly
+    # shape (from the PJM metered-load / ERCOT native-load / CAISO TAC-area
+    # files) when available, so zones peak at different times; every other ISO
+    # (and these three without the file) uses the static per-zone share
+    # broadcast across hours. Both are (n_zones, T) weight matrices summing to
+    # 1.0 down each hour, so the rest of the math is identical.
     if iso == "PJM":
         zonal_shares = pjm_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "ERCOT":
         zonal_shares = ercot_zonal_load_shares(year, iso_config.zone_names)
+    elif iso == "CAISO":
+        zonal_shares = caiso_zonal_load_shares(year, iso_config.zone_names)
     else:
         zonal_shares = None
     if zonal_shares is not None:

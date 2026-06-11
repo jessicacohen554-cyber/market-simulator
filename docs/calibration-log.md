@@ -209,6 +209,73 @@ on main (asserts pre-measured-PRB constant).
 
 ---
 
+### 2026-06-11 — CAISO — hydro energy budgets + pumped storage (data stage, multi-iso P4)
+
+- **Benchmark:** EIA-923 monthly net generation 2023–2025; EIA-930 CISO
+  hydro (cross-check); EIA-860 2025 ER generator schedule.
+- **Scope:** data-stage verification + wiring, not a dispatch calibration
+  run. The PJM hydro/PS machinery (2026-06-09 entry) is fully generic —
+  `load_hydro_budget` / `_hydro_fleet` / `load_eia860_pumped_storage` work
+  for CAISO unmodified; this stage verified the CAISO data through them and
+  made the PS dispatch adder a per-ISO default.
+
+**Hydro budgets (EIA-923 `HY`, BA = CISO):**
+
+| Year | Plants | Budget (TWh) | EIA-930 CISO hydro (TWh) | Δ |
+|---|---|---|---|---|
+| 2023 | 166 | 23.90 | 24.40 (incl. PS net — pre-2024 schema doesn't split) | −2.0% |
+| 2024 | 160 | 21.48 | ≈22.76 (12.51 Jan–Jun incl-PS + 10.25 Jul–Dec excl-PS) | −5.6% |
+| 2025 | 26 | 12.32 (→ 20.39 backfilled) | 21.35 (excl-PS, full year) | −4.5% backfilled |
+
+- Zones resolve cleanly: NP15 136 / SP15 24 / ZP26 6 plants (2023), no
+  blanks; NP15 carries >70% of the 6.4 GW nameplate (Sierra/Cascade hydro
+  north of Path 26).
+- **Wet/dry swing:** the "~2x wet-vs-dry" expectation is 2022 (dry,
+  ~12-13 TWh) vs 2023 (extreme wet) — 2022 is outside the data window. The
+  measured 2023→2024 swing is +11.3% (23.90 vs 21.48), confirmed by EIA-930
+  (~+7%); the budgets preserve it exactly since they *are* the EIA-923
+  monthlies. Acceptance (±10% of EIA-923 for 2023/2024) holds by
+  construction and is now pinned by `tests/test_hydro.py` regression
+  anchors.
+- **2025 coverage caveat:** the 2025 EIA-923 vintage is the early release
+  (monthly-survey reporters only): 26 of ~185 CAISO plants, 12.3 of
+  ~21.4 TWh. `load_hydro_budget(..., backfill_year=2024)` carries
+  non-reporters in at their 2024 monthlies → 20.39 TWh (−4.5% vs EIA-930).
+  The CAISO 2025 backcast should pass it (and drop it when the final
+  annual file lands). Default off, so ERCOT/PJM runs are byte-identical.
+- **Small vs large split — not warranted:** ≤30 MW (CAISO RPS small-hydro
+  threshold) is 132 plants but only 0.90 GW (14% of capacity) and
+  3.10/2.56 TWh (13.0%/11.9% of 2023/2024 energy). Plant-level budgets
+  already individuate each small plant, and EIA-930 carries a single hydro
+  series to calibrate against, so a structural class split adds nothing
+  today. Min-flow floors stay available via `min_flow_fraction` (default 0,
+  as PJM); `HydroBudget.monthly_min_energy` now clips the floor to the
+  monthly budget so a nameplate-fraction floor can't render a low-inflow
+  month infeasible (CAISO small hydro runs dry autumns at a few percent of
+  nameplate-hours).
+
+**Pumped storage (EIA-860 prime mover `PS`, BA = CISO):** 2,078 MW, all
+NP15 — Helms 1,053 MW (3×351; PG&E rates the upgraded units ~1,212 MW —
+EIA-860 nameplate is the model input), W. R. Gianelli 424, Edward C Hyatt
+293, J S Eastwood 200, Thermalito 82, O'Neill 25. Fleet-average params per
+the PJM pattern: 10 h duration (DOE PSH 2023 fact sheet), RTE 0.80
+(DOE/Sandia ESHB).
+
+- **PS dispatch adder is now a per-ISO default**
+  (`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`): PJM keeps its calibrated
+  $10/MWh reserve-duty proxy (2026-06-10 "pjm 3 ps-adder"); CAISO resolves
+  to $0 until a CAISO calibration pass measures Helms' reserve/regulation
+  duty. `ScenarioConfig.pumped_storage_dispatch_adder` default changed
+  `10.0 → None` (= per-ISO); an explicit number still overrides every ISO.
+  Note for the run-classifier: configs recorded before/after this change
+  differ on this key (10.0 vs null) with identical PJM behavior.
+
+**Open items:** CAISO calibration pass to set (or confirm zero) the CAISO
+PS adder once the P-stage backcast runs; revisit the 2025 hydro backfill
+when the final EIA-923 2025 annual file lands.
+
+---
+
 ## Cross-class offer-curve tuning Jacobian (2026-06-11)
 
 **Tool:** `scripts/derive_offer_curve_jacobian.py` → `inputs/processed/offer_curve_jacobian.csv`
@@ -301,3 +368,92 @@ across years (CC_REGULAR −6.0/+3.5/−3.2, PRB +1.7/−5.1/+3.0) are the hones
 what any single multiplier move can fix: those need year-dependent levers
 (gas-price-keyed shaping), not more band tuning. Re-derive the matrix and recipe after
 each run; one solved joint move per iteration replaces the sequential single-knob walk.
+
+---
+
+## ERCOT E2 — storage realism + nuclear refuel overlay (2026-06-11)
+
+**Scope (E2 backlog, doc 06 §6):** the LP over-cycled the ERCOT BESS fleet
+("PS 9–10 TWh vs 3–4" in the audit shorthand; ERCOT has no pumped storage —
+the resource is grid batteries) and coal/CT band tuning had absorbed part of
+the error; nuclear ran with a refuel question mark. PJM untouched.
+
+**New instrumentation (this session):** calibration bundles now persist
+per-unit hourly storage charge/discharge (`storage.parquet`, P1/P2) and an
+EIA-930 battery benchmark (`NG: BAT` discharge / `NG: UES` charge; NaN kept
+over unreported hours), with a report §3d comparing the model over the
+benchmark's reported window. ERCOT coverage: 2025 ≈ full year (5.44 TWh
+discharge / 6.67 charge), 2024 ≈ 19% (Nov–Dec window, 0.72 TWh), 2023 none.
+`meta.json` also records `highspy_version` (see finding 3).
+
+**Runs** (P1, `--storage-daily-cycling`, Run-77 offer-curve deltas unless
+noted; bundles `e2_1_storage_base`, `e2_2_adder20`, `e2_3_adder10`,
+`e2_4_retune`; the last two are dashboard `run78 battery adder` /
+`run79 storage retune`):
+
+| | model dis TWh 2023/24/25 | vs measured |
+|---|---|---|
+| e2 1 adder $0 (baseline) | 1.90 / 4.72 / 8.09 | 2025 +48%, 2024 window +33% |
+| e2 2 adder $20 | 0.22 / 0.37 / 3.03 | 2025 −44% (overcorrected) |
+| e2 3 adder $10 | 1.05 / 1.35 / 5.34 | **2025 −2.0%**, 2024 window −52% |
+| e2 4 = e2 3 + band re-tune | 0.99 / 1.40 / 5.36 | **2025 −1.5%** |
+
+**Keeper: e2 4** — `battery_dispatch_adder = 10.0` $/MWh discharged (same
+magnitude as the PJM pumped-storage adder; reduced-form cycling degradation +
+ancillary-service opportunity cost) plus a Jacobian joint-move re-tune of the
+non-CHP bands targeting e2 3's residuals (CHP knobs held per the Run-77
+discipline): CC_REGULAR econ_high −0.15 / peak +0.15; COAL_PRB committed
++0.110 / econ_high +0.15 / peak +0.028; COAL_LIGNITE econ_low +0.15 /
+econ_high −0.087; ST_GAS committed −0.15 / econ_high −0.15; CT_PEAKER
+committed −0.094.
+
+| vs EIA-923 incl. BTM (e2 4) | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| CC_REGULAR | −1.3% | +2.9% | +0.9% |
+| COAL_PRB | −0.8% | −9.9% | −1.5% |
+| COAL_LIGNITE | −12.8% | −23.8% | +0.7% |
+| CT_PEAKER | −2.6% | −12.8% | −2.9% |
+| ST_GAS | +7.4% | −2.7% | +2.8% |
+| nuclear | −0.7% | −0.7% | −0.7% |
+| coal hourly Pearson r (NRMSE) | 0.940 (0.171) | 0.905 (0.229) | 0.808 (0.162) |
+| battery discharge vs 930 window | n/a | −55% (19% cov.) | **−1.5%** |
+
+**Findings:**
+
+1. **The storage error was real and the bands were carrying it.** Killing the
+   over-cycling alone (e2 1 → e2 3) recovered CT_PEAKER from −22/−43/−14% to
+   −20/−36/−11 and ST_GAS similarly — the rest of the CT/ST deficit is not
+   storage, it is the E1 winter/cheap-gas pricing item. With the re-tune on
+   top, 2023 and 2025 land essentially everywhere in tolerance (lignite 2023
+   excepted) while 2024 keeps the familiar cheap-gas coal deficit
+   (PRB −9.9%, lignite −23.8%) that measured monthly gas (E1) owns.
+2. **One adder cannot fit both 2024's shoulder window and 2025.** The $10
+   value anchors the only full-coverage measured year (2025, −1.5%); the
+   Nov–Dec 2024 window runs −55% partly because the model's year-end EIA-860
+   fleet (8.1 GW) understates the actual late-2024 fleet and the window is
+   shoulder-season (shallow spreads sit right at the adder threshold). A COD
+   month intra-year fleet ramp (CAISO P5 pattern) is the structural fix if
+   the window matters later.
+3. **Reproducibility caveat (important for every future ERCOT pass):** the
+   Run-77 config re-run in this session's environment did NOT reproduce
+   Run-77's class splits (COAL_PRB 2023 +14% vs Run-77's ~+1%; totals equal
+   to 0.01 TWh; duals ±$1 in the cheap-gas years, +$0.08 in 2025). Cheap gas
+   puts PRB committed bids on top of gas committed bids — a near-degenerate
+   plateau where alternate optimal vertices exist, and a different (then-
+   unrecorded) HiGHS build picks a different one. `meta.json` now records
+   `highspy_version` (this session: 1.14.0); the keeper's COAL_PRB committed
+   +0.110 also lifts that bid off the tie, which should make the split less
+   solver-sensitive going forward. Consider pinning `highspy` in
+   `pyproject.toml` if cross-machine reproduction matters.
+4. **Nuclear was already fixed and is now provably data-derived.** The
+   per-year EIA-923 monthly-CF overlay (`NUCLEAR_MONTHLY_CF_BY_YEAR`, PR
+   #252) holds nuclear at −0.7% in all three years (the audit's +2.4%
+   predates it). New `scripts/derive_nuclear_monthly_cf.py --check`
+   regenerates and validates the table from EIA-923 (ERCOT 2023–2025
+   reproduce exactly); the residual −0.7% is the CF≤1.0 cap vs winter net
+   capability above EIA-860 nameplate — accepted.
+
+**Open items:** lignite 2023/2024 deficit and ST_GAS 2023 +7.4% (both
+gas-price-keyed, → E1 measured monthly gas); CT_CHP 2025 +28% is the known
+incomplete 2025 CHP benchmark, not a model change; storage intra-year fleet
+ramp (finding 2) if the 2024 window becomes a target.
