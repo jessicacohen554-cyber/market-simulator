@@ -172,10 +172,75 @@ doc-07 design-decision-4's ~$5–9/MWh band. RGGI carries **no border adjustment
 on imports (contrast CARB), so the NYISO import node is unaffected. ERCOT/PJM
 stay carbon-free and CAISO keeps its CARB prices — all unchanged.
 
-## 5. Upload manifest status (doc-07 U1–U7)
+## 5. Dual-fuel winter switching (P13, verified 2026-06-11)
+
+### Activation
+
+The national dual-fuel machinery (`fleet.dual_fuel_plant_groups` detection,
+the `oil` fuel type + `OIL` offer curve, `fuel.apply_dual_fuel_pricing`) is
+**activated for NYISO** by setting `dual_fuel_switching` in the backcast config
+(`_calibration_config`) for the winter-switching cluster — **PJM (existing) +
+NYISO + NEISO**. Default-off for every other ISO (ERCOT/CAISO/MISO/SPP), so
+their dispatch stays byte-identical (the ERCOT/PJM/CAISO regression guard). No
+new LP code: the switch is an objective-only `min(gas_price, oil_price)` on the
+fuel-price array, which `assemble_mc` multiplies by the unit's (gas) heat rate.
+
+### Detection — NYISO dual-fuel units (EIA-860 Multifuel schedule)
+
+`dual_fuel_plant_groups()` reads the committed EIA-860 Multifuel schedule
+(`inputs/raw-data/eia-860/eia860_multifuel_operable.parquet`), flagging every
+gas-primary (`Energy Source 1 = NG`) operable unit whose **"Switch Between Oil
+and Natural Gas?" = Y** field is set, classed with the same canonical
+`classify_plant` the fleet loaders use. Intersected with the NYISO model fleet
+this matches **177 gas tranches / ~17.1 GW** of switch-capable capacity — the
+downstate CT/ST oil-backup fleet doc-07 design decision 3 calls out:
+
+| Plant | Code | Group | Switch cap (MW) | ES-2 backup |
+|-------|------|-------|-----------------|-------------|
+| Ravenswood | 2500 | CC_REGULAR | 1947 | DFO |
+| Northport | 2516 | ST_GAS | 1592 | RFO |
+| Roseton | 8006 | ST_GAS | 1222 | RFO |
+| Bowline Point | 2625 | ST_GAS | 1160 | RFO |
+| Astoria Generating Station | 8906 | ST_GAS | 923 | RFO |
+| Linden Cogen | 50006 | CC_CHP | 915 | (NYISO-serving) |
+| Bethlehem Energy Center | 2539 | CC_REGULAR | 813 | KER/RFO |
+| E F Barrett, East River, Astoria Energy I/II, … | — | CT/ST | (balance) | DFO/RFO |
+
+Source: EIA-860 (2023 release) Multifuel schedule, in-repo. Distillate (DFO) /
+residual (RFO) fuel-oil backup; oil parity is `OIL_PRICE_PER_MMBTU = $18/MMBtu`
+(distillate/residual delivered, `constants.py`, EIA "cost of fuel-oil delivered
+to the electric power sector"), refined per month by the measured EIA-923
+Schedule 5 Petroleum receipt series (`iso_monthly_oil_prices`).
+
+### Switch logic & validation (Jan-2023 smoke window)
+
+When the unit's delivered **gas** price exceeds **oil** parity the tranche bids
+on oil; otherwise on gas. Validated on the real NYISO 2023 fleet:
+
+- Mechanism is live: 177 tranches (17.1 GW) recognized and routed through
+  `apply_dual_fuel_pricing` under the NYISO backcast config.
+- On the **ISO-average measured 923 gas** the January gas leg is ~$10–12/MMBtu
+  — **below** the ~$16/MMBtu Jan-2023 oil parity — so the switch is correctly
+  wired but **does not bind** on the ISO-average series (0 binding hours).
+
+### U4 caveat — winter validation limited until the Transco Z6 basis lands
+
+The downstate **Transco Z6 NY / Iroquois** winter blowout (U4) is the leg that
+pushes NYC/Long-Island delivered gas *above* oil parity; the ISO-average 923
+series (§4) averages it away. U4 has **not landed**
+(`gas_basis_by_iso_month.csv` carries no NYISO rows — paywalled ICE/Platts).
+So: the dual-fuel **mechanism is activated and unit-tested** (parity switch +
+ERCOT/PJM/CAISO-unchanged guard), but **winter binding cannot be validated
+against the EIA-923/930 oil column until U4 fills the downstate hub basis** and
+`apply_hub_basis_overlay` lifts the downstate gas leg past parity. Activation
+path: fill U4 → the hub-basis overlay raises downstate winter gas → the already
+-wired switch binds and prices Ravenswood/Astoria/Bowline off oil in cold snaps.
+
+## 6. Upload manifest status (doc-07 U1–U7)
 
 _P0 (Stage E) — to be written. P1-relevant: **U1 (`NY_2024.parquet`)** is the
 only blocker for the 2024 backcast year and its outage windows; 2023 + 2025
 are complete and current. **U4 (gas basis)** and **U6 (RGGI prices)** status:
 U6 satisfied by web-search (RGGI auction results, cited); U4 still absent —
-gas falls back to measured 923 (see §4)._
+gas falls back to measured 923 (see §4), so the P13 dual-fuel switch is wired
+but winter-validation-limited (see §5)._
