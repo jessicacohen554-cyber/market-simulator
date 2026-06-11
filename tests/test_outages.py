@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.data.outages import (
@@ -14,6 +15,8 @@ from market_sim.data.outages import (
     _qualifying_plant_codes,
     outage_hour_mask,
     outage_masks_for_year,
+    unit_outage_csv_for_iso,
+    unit_outage_derate_factors,
 )
 
 # Repository root (tests/ lives at the repo root).
@@ -220,6 +223,166 @@ class RealDataIntegrationTest(unittest.TestCase):
                        "ST_GAS", "ST_CHP"}),
         )
         self.assertNotIn("CT_PEAKER", QUALIFYING_PLANT_GROUPS)
+
+
+class NEISOUnitOutageSmokeTest(unittest.TestCase):
+    """Smoke tests for the NEISO unit-outage overlay (P1 verification).
+
+    NEISO's CAMPD unit-level coverage: CT/MA/ME/RI/VT for 2023+2024+2025;
+    NH for 2023+2024 only (NH_2025 unit-level parquet not yet uploaded —
+    NH 2025 falls back to the statistical availability model).
+
+    The fossil fleet is primarily gas CC/CHP and oil steam (ST_GAS); the one
+    genuine coal facility is Merrimack Station (2364, NH), whose units 1+2
+    burn coal and use the averaged real-run rule.  The event-based rule fires
+    for all load-following CC/ST units.  CT_CHP windows are recorded in the
+    CSV but excluded from the derate overlay (_generic_unit_outage_target
+    returns None for combustion turbines), matching the ERCOT convention.
+    """
+
+    NEISO_CSV: Path = REPO / "inputs" / "raw-data" / "campd-unit-outages-NEISO.csv"
+
+    def _df(self) -> pd.DataFrame:
+        return pd.read_csv(self.NEISO_CSV)
+
+    def test_neiso_unit_outage_csv_exists(self):
+        self.assertTrue(
+            self.NEISO_CSV.exists(),
+            f"NEISO unit-outage CSV missing: {self.NEISO_CSV}",
+        )
+
+    def test_csv_covers_all_three_years(self):
+        df = self._df()
+        years_present = set(df["outage_start"].str[:4].unique())
+        for yr in ("2023", "2024", "2025"):
+            self.assertIn(yr, years_present, f"Year {yr} absent from NEISO CSV")
+
+    def test_2025_has_fewer_facilities_than_2023_due_to_nh_gap(self):
+        # NH_2025 unit-level is missing; NH plants drop out of 2025 coverage.
+        df = self._df()
+        n23 = df[df["outage_start"].str.startswith("2023")]["facility_id"].nunique()
+        n24 = df[df["outage_start"].str.startswith("2024")]["facility_id"].nunique()
+        n25 = df[df["outage_start"].str.startswith("2025")]["facility_id"].nunique()
+        self.assertEqual(n23, n24, "2023 and 2024 should have equal facility counts")
+        self.assertLess(n25, n23, "2025 should have fewer facilities than 2023 (NH gap)")
+
+    def test_event_based_rule_dominates_plant_group_mix(self):
+        # CC_REGULAR + CC_CHP + ST_GAS + CT_CHP (all event-based) > COAL rows.
+        df = self._df()
+        event_based = df["plant_group"].isin(
+            {"CC_REGULAR", "CC_CHP", "ST_GAS", "CT_CHP"}
+        ).sum()
+        coal = (df["plant_group"] == "COAL").sum()
+        self.assertGreater(event_based, coal * 10, "event-based rows should heavily dominate")
+
+    def test_coal_target_is_merrimack_only_in_2023_2024(self):
+        # Merrimack (2364, NH) is the single NEISO coal facility.
+        df = self._df()
+        coal = df[df["plant_group"] == "COAL"]
+        self.assertFalse(coal.empty, "Merrimack coal rows must be present")
+        self.assertEqual(
+            set(coal["facility_id"].unique()),
+            {2364},
+            "COAL group must be exclusively Merrimack (2364)",
+        )
+        # Coal rows only span 2023–2024; NH_2025 unit-level is missing.
+        coal_years = set(coal["outage_start"].str[:4].unique())
+        self.assertNotIn("2025", coal_years, "No COAL rows expected for 2025 (NH gap)")
+
+    def test_kleen_energy_cc_windows_detected(self):
+        # Kleen Energy (56798, Southington CT) is a CC_REGULAR plant with
+        # multiple sustained outage windows across all three years.
+        df = self._df()
+        kleen = df[
+            (df["facility_id"] == 56798) & (df["plant_group"] == "CC_REGULAR")
+        ]
+        self.assertFalse(kleen.empty, "Kleen Energy CC windows must be in CSV")
+        for yr in ("2023", "2024", "2025"):
+            self.assertTrue(
+                kleen["outage_start"].str.startswith(yr).any(),
+                f"Kleen Energy missing {yr} windows",
+            )
+
+    def test_bridgeport_harbor_cc_windows_detected(self):
+        # Bridgeport Harbor (568, CT) is a single-unit CC; outage windows
+        # appear in every backcast year.
+        df = self._df()
+        bh = df[
+            (df["facility_id"] == 568) & (df["plant_group"] == "CC_REGULAR")
+        ]
+        self.assertFalse(bh.empty, "Bridgeport Harbor CC windows must be in CSV")
+
+    def test_derate_factors_load_for_2023_and_2024(self):
+        # unit_outage_derate_factors must return a non-empty dict for
+        # 2023 and 2024 with valid (0,1]-bounded availability arrays.
+        for year in (2023, 2024):
+            factors = unit_outage_derate_factors(year, iso="NEISO")
+            self.assertGreater(
+                len(factors), 0,
+                f"NEISO derate factors empty for {year}",
+            )
+            for key, arr in factors.items():
+                self.assertEqual(arr.shape, (HOURS_PER_YEAR,))
+                self.assertTrue(
+                    np.all((arr >= 0.0) & (arr <= 1.0)),
+                    f"Derate array out of [0,1] for {key} in {year}",
+                )
+
+    def test_derate_factors_load_for_2025(self):
+        # 2025 coverage is thinner (NH gap) but must still load.
+        factors = unit_outage_derate_factors(2025, iso="NEISO")
+        self.assertGreater(len(factors), 0, "NEISO 2025 derate factors must be non-empty")
+        # NH absence reduces factor count below 2023/2024.
+        factors_2023 = unit_outage_derate_factors(2023, iso="NEISO")
+        self.assertLess(
+            len(factors), len(factors_2023),
+            "2025 should have fewer derate entries than 2023 due to NH gap",
+        )
+
+    def test_merrimack_coal_in_derate_2023_not_2025(self):
+        # Merrimack coal (2364) is in 2023/2024 derate but absent from 2025
+        # because NH_2025 unit-level parquet is missing.
+        key = (2364, "COAL")
+        self.assertIn(key, unit_outage_derate_factors(2023, iso="NEISO"))
+        self.assertIn(key, unit_outage_derate_factors(2024, iso="NEISO"))
+        self.assertNotIn(key, unit_outage_derate_factors(2025, iso="NEISO"))
+
+    def test_kleen_energy_in_derate_all_years(self):
+        key = (56798, "CC_REGULAR")
+        for year in (2023, 2024, 2025):
+            self.assertIn(
+                key,
+                unit_outage_derate_factors(year, iso="NEISO"),
+                f"Kleen Energy missing from derate factors {year}",
+            )
+
+    def test_derate_availability_in_bounds(self):
+        # Availability arrays must be in [0, 1] — no negative values or > 1.
+        # All-zero availability is valid (e.g. Stony Brook 6081 whose 5-unit
+        # CAMPD total of 507 MW exceeds the 209 MW fleet entry for the
+        # CC_REGULAR bin, so concurrent unit outages clip to full derate).
+        for year in (2023, 2024, 2025):
+            for key, arr in unit_outage_derate_factors(year, iso="NEISO").items():
+                self.assertGreaterEqual(float(arr.min()), 0.0,
+                    f"Negative availability for {key} in {year}")
+                self.assertLessEqual(float(arr.max()), 1.0,
+                    f"Availability > 1 for {key} in {year}")
+
+    def test_no_coal_in_neiso_for_2025(self):
+        # With NH_2025 missing, there must be zero COAL derate entries in 2025.
+        factors_2025 = unit_outage_derate_factors(2025, iso="NEISO")
+        coal_keys = [k for k in factors_2025 if k[1] == "COAL"]
+        self.assertEqual(coal_keys, [], "No COAL derate entries expected for NEISO 2025")
+
+    def test_other_iso_unit_outage_csvs_untouched(self):
+        # The NEISO P1 work must not alter ERCOT, PJM, or CAISO unit-outage CSVs.
+        raw = REPO / "inputs" / "raw-data"
+        for iso in ("CAISO", "PJM"):
+            path = raw / f"campd-unit-outages-{iso}.csv"
+            self.assertTrue(path.exists(), f"{iso} unit-outage CSV must still exist")
+        # ERCOT uses the canonical name.
+        ercot_path = raw / "campd-unit-outages.csv"
+        self.assertTrue(ercot_path.exists(), "ERCOT unit-outage CSV must still exist")
 
 
 if __name__ == "__main__":
