@@ -297,6 +297,29 @@ class TestUnifiedOfferCurve(unittest.TestCase):
         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.30, places=6)
 
+    def test_midpoint_anchor_reshapes_the_ramp(self):
+        # offer_curve_smoothing_mid = 0.25 sags the ramp below linear in the
+        # bottom half and concentrates the rise in the top slices, while the
+        # endpoints (econ_low / econ_high reach) are unchanged.
+        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
+                 "econ_low_share": 0.5, "pct_peaking": 10.0}
+        lin = sorted(g.heat_rate for g in self._build("CC_REGULAR", offer)
+                     if "_econc" in g.unit_id)
+        mid = sorted(
+            g.heat_rate
+            for g in self._build(
+                "CC_REGULAR", offer, offer_curve_smoothing_mid=0.25
+            )
+            if "_econc" in g.unit_id
+        )
+        self.assertEqual(len(mid), 6)
+        # Bottom half cheaper than the linear ramp, same lo->hi span overall.
+        for m, l in zip(mid[:3], lin[:3]):
+            self.assertLess(m, l)
+        self.assertLess(mid[-1], self.BASE_HR * 1.3 + 1e-6)
+        # Monotone rising slices (a valid offer curve).
+        self.assertEqual(mid, sorted(mid))
+
 
 class TestCommitmentParams(unittest.TestCase):
     """Per-bin commitment parameters flow through to the screen."""
