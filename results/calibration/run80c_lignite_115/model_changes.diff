@@ -1,0 +1,13 @@
+diff --git a/src/market_sim/data/fuel.py b/src/market_sim/data/fuel.py
+index edd9414..b5b8967 100644
+--- a/src/market_sim/data/fuel.py
++++ b/src/market_sim/data/fuel.py
+@@ -782,7 +782,7 @@ def _fuel_name(fuel_idx: int) -> str:
+ # 1.5%/yr as coal demand falls; non-diesel rail escalates at inflation; the
+ # diesel-rail component is held at its 2025 level (the model carries no
+ # forward diesel price curve). Source: operator/EIA cost data, user calibration.
+-_LIGNITE_PRICE_2023_25: float = 1.05
++_LIGNITE_PRICE_2023_25: float = 1.15
+ _PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
+ _PRB_COMMODITY_SHARE: float = 0.42
+ _PRB_RAIL_DIESEL_SHARE: float = 0.12
