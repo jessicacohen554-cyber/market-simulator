@@ -450,3 +450,125 @@ def test_neiso_backcast_eia930_zone_distribution():
     assert load_hsl_hourly("ERCOT", _CAL_YEAR) is not None
     assert load_hsl_hourly("CAISO", _CAL_YEAR) is not None
     assert load_hsl_hourly("NEISO", _CAL_YEAR) is None
+
+
+# ---------------------------------------------------------------------------
+# NYISO renewable profile tests (EIA-930 NYIS delivered-distribution path)
+# ---------------------------------------------------------------------------
+
+def test_nyiso_hsl_returns_none():
+    """NYISO has no HSL parquet — curtailment path is stubbed.
+
+    NYISO wind/solar curtailment is small (well under 1 TWh/yr per EIA-923)
+    and NYISO does not publish hourly uncurtailed-potential data, so
+    ``load_hsl_hourly`` must return ``None`` for every NYISO year and the
+    backcast stays on the delivered EIA-930 path.  Confirming None also
+    guards against accidentally placing a file in _NYISO_HSL_DIR that would
+    silently divert the backcast onto a stub dataset.
+    """
+    for year in (2023, 2024, 2025):
+        assert load_hsl_hourly("NYISO", year) is None, (
+            f"Expected no NYISO HSL parquet for {year}; curtailment path must "
+            "stay on the delivered EIA-930 default until real data is available"
+        )
+
+
+def test_nyiso_backcast_cf_profile_mean_matches_eia923():
+    """NYISO backcast profile mean approximates the EIA-923 annual CF.
+
+    Wind uses the NYIS BA hourly measured generation (EIA-930 ``NYIS
+    hourly.parquet``); solar falls back to the EIA-930 distribution shape
+    because EIA-930 NYIS does not separately report solar generation
+    (``NG: SUN`` is all-zero for the BA extract). Both paths land within
+    ±50 % of the EIA-923-calibrated ``RENEWABLE_AVG_CF["NYISO"]`` benchmark
+    values (wind ~0.26, solar ~0.15), confirming the EIA-930 NYIS
+    delivered-distribution path is wired correctly end-to-end.
+    """
+    iso_config = get_iso_config("NYISO")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="NYISO", mode="backcast",
+        gas_price_override=2.54,
+    )
+    wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
+        "NYISO", _CAL_YEAR, iso_config, config
+    )
+
+    assert wind_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
+    assert solar_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
+    assert np.all(wind_cf >= 0.0) and np.all(wind_cf <= 1.0)
+    assert np.all(solar_cf >= 0.0) and np.all(solar_cf <= 1.0)
+
+    for fuel, cf, cap in (
+        ("wind", wind_cf, wind_cap),
+        ("solar", solar_cf, solar_cap),
+    ):
+        total_cap = cap.sum()
+        assert total_cap > 0.0, f"NYISO {fuel} capacity must be positive"
+        # Capacity-weighted hourly mean reconstructs the delivered CF.
+        weighted_mean = (cap[:, None] * cf).sum(axis=0).mean() / total_cap
+        assert 0.0 < weighted_mean < 1.0, (
+            f"NYISO {fuel} weighted mean CF must be in (0, 1); got {weighted_mean:.4f}"
+        )
+        # Benchmark: within ±50 % of the EIA-923-calibrated annual-average CF.
+        # Wind mean ≈ 0.19 (measured 2023 NYIS hourly) vs benchmark 0.26;
+        # solar mean ≈ 0.15 (EIA-930 distribution fallback, flat shape) vs 0.15.
+        benchmark = RENEWABLE_AVG_CF["NYISO"][fuel]
+        np.testing.assert_allclose(
+            weighted_mean, benchmark, rtol=0.50,
+            err_msg=(
+                f"NYISO {fuel} backcast mean CF {weighted_mean:.3f} is outside "
+                f"±50 % of EIA-923 benchmark {benchmark:.3f}"
+            ),
+        )
+
+
+def test_nyiso_wind_concentrates_upstate():
+    """NYISO wind capacity concentrates in the upstate zones.
+
+    EIA-860 places virtually all NY utility wind in the upstate counties
+    (zones A–E → Upstate_West and the A-E fringe of Capital_Hudson).  The
+    downstate zones (Lower_Hudson, NYC, Long_Island) should hold little or no
+    wind capacity, consistent with the physical resource geography.
+    """
+    iso_config = get_iso_config("NYISO")
+    config = ScenarioConfig(
+        weather_year=_CAL_YEAR, iso="NYISO", mode="backcast",
+        gas_price_override=2.54,
+    )
+    _, wind_cap, _, _ = load_renewable_profiles(
+        "NYISO", _CAL_YEAR, iso_config, config
+    )
+
+    zone_names = iso_config.zone_names
+    upstate_west = zone_names.index("Upstate_West")
+
+    # Upstate_West holds the largest share of NYISO wind (Chautauqua /
+    # Madison / Lewis / Jefferson / Steuben counties — the bulk of NY wind).
+    assert wind_cap[upstate_west] == wind_cap.max(), (
+        "Upstate_West should hold the most NYISO wind capacity"
+    )
+    # Downstate zones carry negligible wind capacity (< 5 % of the fleet).
+    total = wind_cap.sum()
+    for zone in ("Lower_Hudson", "NYC", "Long_Island"):
+        idx = zone_names.index(zone)
+        assert wind_cap[idx] / total < 0.05, (
+            f"{zone} wind share {wind_cap[idx]/total:.1%} exceeds 5 % — "
+            "unexpected downstate wind concentration"
+        )
+
+
+def test_ercot_caiso_hsl_paths_untouched_by_nyiso_wiring():
+    """ERCOT and CAISO HSL lookups are unaffected by the NYISO stub.
+
+    Adding the NYISO branch in ``_hsl_file`` must not disturb the existing
+    ERCOT and CAISO dispatch paths.  ERCOT 2023 must still resolve to its NP6
+    parquet; CAISO 2023 must still resolve to the delivered-plus-curtailment
+    HSL analogue.
+    """
+    ercot_hsl = load_hsl_hourly("ERCOT", _CAL_YEAR)
+    assert ercot_hsl is not None, "ERCOT 2023 HSL parquet must still load"
+    assert len(ercot_hsl) == HOURS_PER_YEAR
+
+    caiso_hsl = load_hsl_hourly("CAISO", _CAL_YEAR)
+    assert caiso_hsl is not None, "CAISO 2023 HSL parquet must still load"
+    assert len(caiso_hsl) == HOURS_PER_YEAR
