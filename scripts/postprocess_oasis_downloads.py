@@ -74,13 +74,15 @@ def _lmp_frames(paths: list[Path], hourly_mean: bool) -> dict[int, pd.DataFrame]
     per_year: dict[int, list[pd.DataFrame]] = {}
     for path in paths:
         df = pd.read_csv(path)
+        # PRC_LMP names the price column MW; PRC_INTVL_LMP names it VALUE.
+        value_col = "MW" if "MW" in df.columns else "VALUE"
         ts = pd.to_datetime(df["INTERVALSTARTTIME_GMT"], utc=True)
         df = df.assign(interval_start_gmt=ts.dt.floor("h") if hourly_mean else ts)
         wide = (
             df.pivot_table(
                 index=["interval_start_gmt", "NODE"],
                 columns="LMP_TYPE",
-                values="MW",
+                values=value_col,
                 aggfunc="mean",  # 5-min -> hourly mean; no-op for hourly DAM
             )
             .reset_index()
