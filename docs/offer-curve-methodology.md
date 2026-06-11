@@ -335,6 +335,62 @@ reliability" (2024).
 
 ---
 
+### NEISO inflexible layer (no coal must-run) and the oil / dual-fuel peaker band
+
+NEISO's committed / peaking tranche shares are derived per plant from the
+**2023 + 2024 + 2025** NE-state facility-level CEMS (`ME, NH, MA, CT, RI, VT`),
+the same `derive_thermal_tranches.py` machinery used for the other ISOs, and
+emitted with per-row source tags as `inputs/processed/bin_assignments_NEISO.csv`.
+The pooled three-year window gives strong CAMPD coverage of the dispatchable
+fleet: **100%** of CC_REGULAR capacity (≈ 12.8 GW), **≈ 87%** of CC_CHP, and
+**≈ 89%** of CT_PEAKER capacity carry a *measured* committed share; the rest —
+the sub-CEMS fuel-cell / micro-cogen tail — keeps the class default. The same
+artifact carries each combined cycle's measured duct-firing **peaking** share
+(P95 vs P99.5 of online net MW, capped at 25%), applied under
+`cc_peaking_per_plant`.
+
+**No coal must-run tranche.** NEISO's only operating coal unit is **Merrimack**
+(EIA 2364, Bow NH). By the 2023-2025 window it survives in CEMS as a
+**winter-peaking** unit — a few hundred online hours a year, not a continuously
+run baseload — so its derived `mustrun_pct` is **0.0**. The sunk-fuel
+take-or-pay floor that pins ERCOT/PJM coal has no NEISO target: every NEISO
+plant-group's must-run share is `0.0`, Merrimack included. It dispatches on
+economics like any other thermal unit, with a measured committed floor and the
+historic-outage overlay, rather than being forced on. The genuinely inflexible
+NEISO generation is instead:
+
+- **CHP behind-the-meter steam hosts** — removed from LP capacity and
+  reconstructed in post-processing (§1; sized from the P3 CHP floors in
+  `thermal_tranches_NEISO.csv`). The cogen tail is dominated by sub-CEMS
+  university / hospital / industrial plants whose floor comes from the EIA-923
+  monthly-CF fallback (`status = eia923_cf`).
+- **Nuclear** — Millstone 2 & 3 (EIA 566, CT, ≈ 2.1 GW) and Seabrook (EIA 6115,
+  NH, ≈ 1.25 GW), ≈ 3.4 GW total on the monthly-CF baseload model.
+- **Hydro min-flows** — run-of-river and treaty/licence minimum flows on the
+  Connecticut and Androscoggin systems.
+- **Reliability units** — any RMR-designated capacity for the modelled years;
+  none binds across the 2023-2025 backcast window, so no thermal bin carries a
+  reliability must-run pin.
+
+**The oil / dual-fuel peaker band — tagged, not re-derived.** ISO-NE's winter
+price mechanism leans on oil and dual-fuel switching, the back half of which P13
+activated (`dual_fuel_switching`, default-on for NE/NY/PJM). The plants that
+make up that band are **tagged**, not re-derived here: `dual_fuel_plant_groups()`
+reads the EIA-860 multifuel schedule and flags every gas-primary unit that can
+switch to oil backup, keyed `(plant_code, plant_group)` so the tags line up with
+the offer-curve bins. In NEISO that flags ≈ 50 `(plant, group)` keys in the
+dispatched fleet — the **ST_OIL-capable** steamer **Montville** (546) and the
+gas-primary **CT peakers** (Potter Station, Waters River, A L Pierce, Bucksport,
+Waterbury, Exelon West Medway II, MMWEC, …) among them. These are ordinary
+**economic** peaker / steam bins (low annual CF, no must-run pin); the oil
+switch is a *fuel-price* overlay (`apply_dual_fuel_pricing` caps the
+AGT-blown winter hub gas at `min(hub_gas, oil)`), not a capacity floor or a
+forced commitment. Oil-**primary** RFO/DFO units (Canal, Wyman, New Haven, the
+oil-primary Montville/Newington boilers) are carried separately as `oil`-fuel
+generators and are not part of the gas offer-curve tranche fleet.
+
+---
+
 ### Source references
 
 | Component | File |
