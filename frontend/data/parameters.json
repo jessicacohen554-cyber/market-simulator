@@ -4329,6 +4329,61 @@
       ]
     },
     {
+      "param_id": "export_tranches.NEISO",
+      "display_name": "Export Tranches / Neiso",
+      "value": [
+        [
+          "export_firm",
+          700.0,
+          16.0
+        ],
+        [
+          "export_trough",
+          1100.0,
+          8.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Export sinks: each block absorbs up to its capacity as *negative* generation, paying its $/MWh price (the LP credits the price as avoided cost, so the ISO exports whenever its marginal cost is below it).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "export_tranches.NYISO",
+      "display_name": "Export Tranches / Nyiso",
+      "value": [
+        [
+          "export_surplus",
+          600.0,
+          10.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Export sinks: each block absorbs up to its capacity as *negative* generation, paying its $/MWh price (the LP credits the price as avoided cost, so the ISO exports whenever its marginal cost is below it).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "export_tranches.PJM",
       "display_name": "Export Tranches / Pjm",
       "value": [
@@ -5375,6 +5430,44 @@
       ]
     },
     {
+      "param_id": "import_eford.NEISO",
+      "display_name": "Import Eford / Neiso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks carry a generation-like availability (NERC GADS — representative for out-of-state generation); PJM's blocks are scheduled interties whose availability is already embedded in the fitted capacities.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "import_eford.NYISO",
+      "display_name": "Import Eford / Nyiso",
+      "value": 0.0,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks carry a generation-like availability (NERC GADS — representative for out-of-state generation); PJM's blocks are scheduled interties whose availability is already embedded in the fitted capacities.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "import_eford.PJM",
       "display_name": "Import Eford / Pjm",
       "value": 0.0,
@@ -5391,6 +5484,41 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "import_node_links.NYISO",
+      "display_name": "Import Node Links / Nyiso",
+      "value": [
+        [
+          "Upstate_West",
+          3000.0
+        ],
+        [
+          "Capital_Hudson",
+          1700.0
+        ],
+        [
+          "Lower_Hudson",
+          1200.0
+        ],
+        [
+          "Long_Island",
+          550.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Links joining an appended external zone to its border zones: (border zone, TTC MW). CAISO needs no entry — its links are part of its topology (Path 66/COI, Path 46/WOR). PJM TTCs bound the widest measured 2023-24 per-border-zone tie flow (eia_loader.pjm_zonal_interchange): ComEd −2.3..+7.4 GW, AEP-Ohio −1.0..+4.8, ATSI −5.7..+5.0, Dominion −6.2..+3.1, EMAAC −0.1..+5.7. West-APS / Central-PA / SWMAAC carry no mapped ties. Source: PJM tie-line actual interchange (inputs/raw-data/iso-specific-transmission/). Tier 3 — verify against PJM's published interface ratings.",
+      "source_date": "2023-24",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -5473,6 +5601,96 @@
       ]
     },
     {
+      "param_id": "import_tranches.NEISO",
+      "display_name": "Import Tranches / Neiso",
+      "value": [
+        [
+          "HQ_PhaseII",
+          1000.0,
+          18.0
+        ],
+        [
+          "Highgate",
+          300.0,
+          22.0
+        ],
+        [
+          "NB_north",
+          800.0,
+          30.0
+        ],
+        [
+          "NYISO_CT",
+          1100.0,
+          36.0
+        ],
+        [
+          "import_scarcity",
+          1200.0,
+          68.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Priced import/export node, per ISO (playbook §8.2): an interconnected ISO models its neighbors as a zero-load external zone holding a stepped import supply curve (tranches the LP dispatches in merit order) and a set of export sinks (negative-generation blocks priced at the neighbors' willingness-to-pay). Net interchange then responds to the ISO's own prices: imports clear when the internal price exceeds a tranche's cost, exports when it falls below a sink's price.  IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "import_tranches.NYISO",
+      "display_name": "Import Tranches / Nyiso",
+      "value": [
+        [
+          "HQ_hydro",
+          900.0,
+          14.0
+        ],
+        [
+          "IESO_Ontario",
+          1200.0,
+          24.0
+        ],
+        [
+          "PJM_west",
+          1100.0,
+          34.0
+        ],
+        [
+          "ISONE_tie",
+          800.0,
+          44.0
+        ],
+        [
+          "import_scarcity",
+          1900.0,
+          75.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Priced import/export node, per ISO (playbook §8.2): an interconnected ISO models its neighbors as a zero-load external zone holding a stepped import supply curve (tranches the LP dispatches in merit order) and a set of export sinks (negative-generation blocks priced at the neighbors' willingness-to-pay). Net interchange then responds to the ISO's own prices: imports clear when the internal price exceeds a tranche's cost, exports when it falls below a sink's price.  IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "import_tranches.PJM",
       "display_name": "Import Tranches / Pjm",
       "value": [
@@ -5506,6 +5724,44 @@
       "param_id": "import_zone.CAISO",
       "display_name": "Import Zone / Caiso",
       "value": "WECC_import",
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "Name of each ISO's external import/export zone. CAISO's is baked into its topology (_caiso_config); PJM's is appended on demand by transmission.extend_with_import_node, so the calibrated 8-zone backcast topology (which serves the *measured* interchange schedule instead) is untouched.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "import_zone.NEISO",
+      "display_name": "Import Zone / Neiso",
+      "value": "HQ_import",
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "Name of each ISO's external import/export zone. CAISO's is baked into its topology (_caiso_config); PJM's is appended on demand by transmission.extend_with_import_node, so the calibrated 8-zone backcast topology (which serves the *measured* interchange schedule instead) is untouched.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "import_zone.NYISO",
+      "display_name": "Import Zone / Nyiso",
+      "value": "NYISO_external",
       "unit": "",
       "domain": "Transmission",
       "tier": 2,
@@ -6233,6 +6489,68 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Per-year nuclear monthly capacity factor derived from EIA-923 net generation (the actual staggered refueling cadence each year, not a fixed seasonal average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2). Tier: 3 (calibration)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "nuclear_monthly_cf_by_year.NEISO",
+      "display_name": "Nuclear Monthly Cf By Year / Neiso",
+      "value": {
+        "2023": [
+          0.98,
+          0.98,
+          0.99,
+          0.41,
+          0.6,
+          0.38,
+          0.93,
+          0.93,
+          0.91,
+          0.84,
+          0.63,
+          0.87
+        ],
+        "2024": [
+          0.88,
+          1.0,
+          1.0,
+          1.0,
+          0.99,
+          1.0,
+          0.99,
+          0.98,
+          0.81,
+          0.44,
+          0.76,
+          0.97
+        ],
+        "2025": [
+          1.0,
+          1.0,
+          1.0,
+          0.75,
+          0.77,
+          1.0,
+          0.99,
+          0.93,
+          0.99,
+          0.86,
+          1.0,
+          1.0
+        ]
+      },
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Per-year nuclear monthly capacity factor derived from EIA-923 net generation (the actual staggered refueling cadence each year, not a fixed seasonal average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2). Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy); re-run with --check after an EIA-923 refresh. Tier: 3 (calibration)",
       "source_date": "",
       "page_or_table": "",
       "url": "",
