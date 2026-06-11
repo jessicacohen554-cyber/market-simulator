@@ -3,19 +3,161 @@
 Companion to `docs/multi-iso/07-nyiso-prompt-pack.md` and the upload manifest
 there (U1–U7). Each section is owned by the pack that filled it.
 
-> **Scope note.** This file was started by **P1 (unit-outage windows)** with
-> §3 (CEMS coverage / unit-outage detection). Sections 1–2 (calibration
-> reference, fleet sanity) and 4 (upload-manifest status) are P0's to write or
-> refresh; they are stubbed here so the section numbering matches
-> `caiso-data-audit.md`.
+> **Scope note.** Started by **P1 (unit-outage windows)** with §3 (CEMS
+> coverage / unit-outage detection); §4 added by **P7 (gas + RGGI)**. **P0
+> (Stage E, 2026-06-11)** filled §1 (calibration reference), §2 (fleet sanity),
+> and §5 (upload-manifest status). Done together with the NEISO audit
+> (`neiso-data-audit.md`) in one pass — both ISOs share
+> `scripts/build_calibration_reference.py` + `calibration_reference.json`.
 
-## 1. Calibration reference
+## 1. Calibration reference — extended for NYISO 2023 + 2025 (P0)
 
-_P0 (Stage E) — to be written._
+`scripts/build_calibration_reference.py` now derives NYISO (and NEISO)
+alongside ERCOT/PJM/CAISO. NYISO uses a per-ISO year override
+(`CALIBRATION_YEARS_BY_ISO["NYISO"] = (2023, 2025)`) with BA code `NYIS`.
+**2024 is deliberately deferred** — the 2024 EIA-930/923/860 reference data all
+exist (and the script would emit a clean 2024 block today), but the backcast
+*year* is gated on the `NY_2024` CAMPD extract (upload U1), so 2024 enters the
+override only when that lands, matching doc-07 §2.
 
-## 2. Fleet sanity
+Written artifacts:
 
-_P0 (Stage E) — to be written._
+- `inputs/calibration/calibration_reference.json` — NYISO blocks for
+  2023/2025: EIA-930 demand stats (`data/eia_hourly/NYIS hourly.parquet`),
+  measured Henry Hub, EIA-923 by-fuel `generation_twh` (now including the
+  **large hydro** and the **oil** columns — see §1a), EIA-860 wind/solar
+  December totals + 5-zone shares + monthly ramps, and the eGRID 2023
+  `BACODE=NYIS` generation/emissions benchmark.
+- `inputs/calibration/NYISO_{2023,2025}_renewable_capacity.csv` — per-zone,
+  per-month EIA-860 operable wind/solar capacity.
+
+Headline reference values:
+
+| Year | Demand (TWh) | Peak (MW) | HH ($/MMBtu) | Wind Dec (MW) | Solar Dec (MW) | EIA-923 gas cc/ct/st (TWh) | Nuclear (TWh) | **Hydro (TWh)** | **Oil (TWh)** |
+|---|---|---|---|---|---|---|---|---|---|
+| 2023 | 147.1 | 30,206 | 2.54 | 2,738 | 1,645 | 49.5 / 4.6 / 9.7 | 27.5 | **28.4** | **0.42** |
+| 2025 | 151.6 | 31,857 | 3.52 | 2,868 | 2,930 | 45.4 / 3.4 / 11.5 | 28.4 | **21.0** | **1.06** |
+
+eGRID 2023 NYIS benchmark (headline): gas_cc 45.0 TWh / gas_ct 19.3 TWh
+(eGRID's heat-rate CC/CT split lumps no-heat-rate gas into CT, unlike the
+prime-mover-based 923 split — 923 is the more reliable class benchmark),
+hydro 28.0 TWh, nuclear 27.5 TWh, oil 0.50 TWh, biomass 2.58 TWh; CO2 totals
+gas_cc 16.25 + gas_ct 10.36 + biomass 1.33 + oil 0.26 ≈ **28.2 Mt**.
+
+### 1a. Hydro + oil added to the EIA-923 benchmark (code change this session)
+
+The shared `_eia923_generation` masks previously emitted only
+coal/gas_cc/gas_ct/gas_st/nuclear/wind/solar — fine for ERCOT/PJM/CAISO, but
+NYISO's ~25–30 TWh/yr of Niagara/St-Lawrence hydro and the winter dual-fuel
+oil burn are first-order and *must* be benchmarked. Two scoped additions:
+
+- **hydro** = EIA-923 fuel code `WAT` + prime mover `HY` (conventional hydro
+  only; pumped storage `WAT`/`PS`, which nets negative, is excluded — it is
+  storage, not energy, per doc-07 design decision 2).
+- **oil** = fuel codes `DFO`/`RFO`/`JF`/`KER`/`WO`/`PC`, any prime mover.
+
+These are gated through `_EIA923_EXTRA_FUELS_BY_ISO = {NYISO, NEISO}`, so the
+already-calibrated ERCOT/PJM/CAISO `generation_twh` blocks are untouched
+(hydro/oil are negligible or unbenchmarked there). eGRID already mapped
+`HYDRO`/`OIL` generically, so the eGRID benchmark needed no change beyond the
+new `NYIS`/`ISNE` BACODE entries.
+
+### 1b. Regression guard — verified, with the known ERCOT/PJM drift finding
+
+The merged `calibration_reference.json` was diffed against the committed
+version: **every ERCOT/PJM/CAISO block and all top-level fields are
+byte-identical** (zero removed/changed lines; the only additions are the
+NYISO/NEISO `isos` and `egrid_benchmark` entries). The committed
+ERCOT/PJM/CAISO renewable-capacity CSVs were left untouched.
+
+**Finding (backlog, ERCOT/PJM-owned — same item as caiso-data-audit §1b):**
+re-running the script at HEAD *would* shift the committed ERCOT/PJM blocks,
+because the ERCOT topology gained a **`Northeast`** zone (committed ERCOT CSVs
+carry 6 zones, current `iso_configs` has 7) and the EIA-860 parquets were
+rebuilt, both *after* the ERCOT/PJM reference was last generated (2026-06-10).
+The committed ERCOT/PJM artifacts are therefore one config/EIA-860 vintage
+stale. To honor the byte-identical guard this session **preserved** the
+committed ERCOT/PJM/CAISO blocks verbatim (load committed JSON → insert only
+NYISO/NEISO → re-dump) and restored the ERCOT/PJM CSVs from HEAD. Re-baselining
+ERCOT/PJM belongs to an ERCOT/PJM calibration session, not this NY/NE pack.
+CAISO (regenerated 2026-06-11) is current and reproduces byte-identically.
+
+### 1c. Known caveats on the NYISO blocks
+
+- **2025 `generation_twh` is a lower bound.** The `f923_2025` zip is the
+  early-release M-file; annual-only respondents are absent. NYIS shows it
+  clearly: 2025 hydro 21.0 TWh (vs 28.4 in 2023) and solar 0.66 TWh (vs 2.05)
+  are light because most hydro/small-solar reporters have not yet filed. All 12
+  months are present — this is respondent coverage, not a partial year. Demand
+  (EIA-930) is complete; only the 923 by-fuel mix is preliminary. **P11/P12
+  must treat the 2025 fuel-mix targets as preliminary** and re-run the script
+  when the final 2025 EIA-923 lands. (ERCOT/PJM/CAISO 2025 carry the same
+  national caveat.)
+- **Demand is net load** (playbook §8.1): EIA-930 NYIS demand is net of NY's
+  growing, downstate-concentrated BTM PV wedge. Backcasts model front-of-meter
+  resources only; forecast gross-up is the build-once BTM module.
+
+## 2. Fleet sanity — `get_iso_config("NYISO")` + NYIS BA filter (P0)
+
+`load_fleet_from_csv("NYISO", get_iso_config("NYISO"))` (the per-plant EIA-860
+path; wind/solar/hydro/storage load via their own machinery and are excluded
+here):
+
+- **460 LP generators, 151 distinct plants, 30,405 MW** fossil + nuclear:
+
+| Class | MW | Units |
+|---|---|---|
+| gas_ct | 12,432 | 172 |
+| gas_cc | 11,349 | 122 |
+| nuclear | 3,326 | 4 |
+| **oil** | **2,906** | **58** |
+| biomass | 392 | 104 |
+
+- **Oil is prominent (2,906 MW)** and **dual-fuel is dominant: 17,098 MW
+  across 51 plants** carry an EIA-860 oil/gas switch flag
+  (`dual_fuel_plant_groups`) — the winter gas→oil switching machinery P13
+  activates. This is the headline NYISO fleet feature.
+- **Zone distribution (MW):** Upstate_West 7,835 / Capital_Hudson 7,991 /
+  Lower_Hudson 111 / NYC 9,292 / Long_Island 5,176. **No unassigned plants**
+  (zero fallback-zone warnings). `Lower_Hudson` is generation-thin by design —
+  a downstate load pocket whose largest former unit (Indian Point) is retired;
+  mid-Hudson steamers (Roseton/Danskammer/Bowline) land in Capital_Hudson.
+  P2/P10 should confirm this aggregation reproduces the downstate price
+  separation.
+- **States:** NY 28,891 MW (149 plants) + **NJ 1,513 MW (2 plants)** —
+  **Bayonne Energy Center** (ORIS 56964) and **Linden Cogen** (ORIS 50006),
+  both physically in NJ but in the **NYIS** balancing authority, injecting into
+  NYISO Zone J (NYC) via HVDC. Correctly included; not an error.
+- **Indian Point confirmed ABSENT** from the 2023+ fleet (Units 2/3 retired
+  2020/2021). The 4 nuclear units are FitzPatrick (844 MW), Nine Mile Point 1
+  (620) & 2 (1,283), and Ginna (579) — ~3.3 GW upstate, matching doc-07
+  design decision 6.
+
+### 2a. Comparison vs published totals (NYISO Gold Book)
+
+The fleet loader covers fossil + nuclear only; renewables, hydro, and storage
+load through their own machinery (P4/P5/P6). Reconstructed nameplate:
+fossil+nuclear 30.4 GW + wind 2.7 + solar 1.6 + hydro (~5.7 GW nameplate:
+Niagara ~2.7, St-Lawrence ~0.9, conventional ~2.1) + Blenheim-Gilboa PS ~1.2 ≈
+**~42 GW nameplate**, which sits above the published **37,375 MW summer
+generating capability** (2024) — expected, since summer capability is
+weather/age-derated below nameplate.
+
+| Class | Model | Published benchmark | Verdict |
+|---|---|---|---|
+| Fossil + nuclear | 30,405 MW | NYISO Gold Book 2024: ~37.4 GW *total* summer capability (incl. hydro/VRE/storage, derated) | reconciles once companion fleets + derate applied |
+| Nuclear | 3,326 MW (4 units) | FitzPatrick + Nine Mile 1&2 + Ginna, ~3.3 GW | ✓ Indian Point retired |
+| Wind | 2,738 MW (Dec-2023) | eGRID 2023 NYIS: 2,738 MW (923 CF cross-check 4.77 TWh) | ✓ |
+| Solar | 1,645 MW (Dec-2023) | utility-scale only; BTM excluded (net-load) | ✓ direction |
+
+Source: [NYISO 2024 Load & Capacity Data Report (Gold Book)](https://www.nyiso.com/documents/20142/2226333/2024-Gold-Book-Public.pdf);
+[NYISO Power Trends / 2024 summer assessment](https://www.nyiso.com/power-trends)
+(summer generating capability 37,375 MW; RNA generating capability 37,595 MW).
+Note: nyiso.com returns 403 from this environment (EIA/ISO hosts blocked,
+playbook §2), so the per-zone Gold Book capacity table could not be pulled
+directly; the headline summer-capability figure is from the public Power Trends
+material, and the in-repo eGRID 2023 workbook (`BACODE=NYIS`) serves as the
+EPA fleet benchmark.
 
 ## 3. CEMS coverage
 
@@ -29,11 +171,20 @@ that carries Part-75 CEMS reports under a NY state-year extract. Diff against
 | `NY_2024` | **missing** (upload U1) | 2024 stays statistical-availability-only |
 | `NY_2025` | **present** | feeds `campd-unit-outages-NYISO.csv` (764 windows) |
 
-2024 is the only gap. Until `NY_2024.parquet` lands (manifest U1, P0/P1),
+2024 is the only NY gap. Until `NY_2024.parquet` lands (manifest U1, P0/P1),
 an `outage_source="historic"` NYISO 2024 run carries no measured windows and
 degrades to the statistical WEFOR/POF availability model for that year
 (`unit_outage_derate_factors(2024, iso="NYISO")` returns `{}`; the fleet
 assembly logs the "no outage windows cover NYISO 2024" warning by design).
+
+**P0 fossil-state note (2026-06-11):** assembling the fleet surfaced **2 NJ
+plants** — Bayonne Energy Center + Linden Cogen (1,513 MW, 5% of fossil),
+NYIS-BA injections into Zone J (§2). `NJ_{2023,2024,2025}` CAMPD extracts *do*
+exist in `campd-unit-level/`, so these have CEMS data available, but
+`campd.ISO_STATES["NYISO"] = ("NY",)` means the NYISO outage derivation does
+not read NJ — those plants run on statistical availability. Low priority; a
+one-line `ISO_STATES` change + `derive_campd_unit_outages.py --iso NYISO`
+rerun would fold them in (P1 follow-up candidate).
 
 ### Unit-outage detection coverage (P1, verified 2026-06-11)
 
@@ -172,6 +323,29 @@ doc-07 design-decision-4's ~$5–9/MWh band. RGGI carries **no border adjustment
 on imports (contrast CARB), so the NYISO import node is unaffected. ERCOT/PJM
 stay carbon-free and CAISO keeps its CARB prices — all unchanged.
 
+## 5. Upload manifest status (doc-07 U1–U7) (P0)
+
+| # | Item | Destination | Status |
+|---|------|-------------|--------|
+| U1 | CAMPD unit-level `NY_2024.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — gates the 2024 backcast year + 2024 outage windows; 2023/2025 present |
+| U2 | DA+RT hourly zonal LBMP (WEST/CAPITL/N.Y.C./LONGIL) 2023–2025 | `inputs/raw-data/lmp-data/NYISO/` | **missing** — needed by P10; price calibration is level-only without it |
+| U3 | Zonal hourly load A–K 2023–2025 | `inputs/raw-data/zone-specific-demand/NYISO/` | **missing** — zonal load stays on static Gold-Book shares (0.365/0.175/0.06/0.28/0.12) until landed (P8) |
+| U4 | Transco Z6 NY / Iroquois delivered gas basis 2023–2025 | cite into `constants.py` / gas path | **missing** — `gas_basis_by_iso_month.csv` is header-only; gas falls back to measured EIA-923 (see §4). Downstate winter spike not yet fully captured (P7/P13) |
+| U5 | Niagara/St-Lawrence + Blenheim-Gilboa monthly generation (optional) | `inputs/raw-data/nyiso-hydro/` | **not needed yet** — EIA-923 monthly hydro is in-repo (P4 refinement only) |
+| U6 | RGGI allowance prices 2023–2025 (optional) | cite into `STATE_CARBON_PRICE_BY_ISO` | **satisfied (web-search)** — RGGI auction clearing prices cited; active default-on (see §4) |
+| U7 | Central-East / Total-East / Dunwoodie-South interface flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/NYISO/` | **missing** — TTCs stay on Tier-3 Gold-Book seeds (P10 validation) |
+
+U2–U4 unblock the full pack; the Stage-E reference and fleet/CEMS audit are
+complete without them.
+
+## 6. Out-of-scope observations for the backlog
+
+- ERCOT/PJM calibration-reference staleness vs the new `Northeast` zone +
+  EIA-860 vintage (§1b) — ERCOT/PJM-owned re-baseline.
+- NJ CEMS (Bayonne/Linden) not wired into NYISO outage derivation (§3) — a
+  small (5%) optional coverage gap.
+- 2025 EIA-923 early-release respondent coverage (§1c) — national, re-run on
+  the final file.
 ## 5. Dual-fuel winter switching (P13, verified 2026-06-11)
 
 ### Activation
