@@ -711,6 +711,96 @@ class TestEIA860PumpedStorage(unittest.TestCase):
             )
 
 
+class TestNYISOPumpedStorage(unittest.TestCase):
+    """NYISO pumped-storage fleet from EIA-860 (P4 hydro stage).
+
+    NYISO's PS fleet consists of two facilities on the EIA-860 generator
+    schedule (prime mover PS):
+
+    * Blenheim-Gilboa Pumped Storage Project (plant in Schoharie County,
+      NY — Capital_Hudson zone): ~1,000 MW of reversible units. The
+      largest single PS plant in NYISO. Source: EIA-860, NYPA project data.
+
+    * Lewiston Pump-Generating Plant (part of the Niagara Power Project,
+      Niagara County — Upstate_West zone): ~220 MW of pump-turbine units
+      that modulate Lake Ontario levels. Source: EIA-860, FERC Project 2216.
+
+    Combined nameplate: ~1,220 MW. Duration and RTE apply the fleet-average
+    constants (:data:`PUMPED_STORAGE_DURATION_HOURS`,
+    :data:`PUMPED_STORAGE_RTE`) used for PJM and CAISO PS — no new modeling
+    design.
+
+    The PS dispatch adder is default off (0.0) for NYISO: no calibration
+    pass has yet been run to measure the reserve-duty opportunity cost
+    equivalent to PJM's $10/MWh. This is consistent with the per-ISO
+    map in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`, which does not
+    include NYISO.
+    """
+
+    def test_ps_total_mw_in_range(self):
+        # Blenheim-Gilboa (~1,000 MW) + Lewiston (~220 MW) = ~1,220 MW.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 1_000.0)
+        self.assertLess(total_mw, 1_500.0)
+
+    def test_ps_zones_in_nyiso_topology(self):
+        # Both zones hosting PS are valid NYISO model zones.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        nyiso_zones = {"Upstate_West", "Capital_Hudson", "Lower_Hudson",
+                       "NYC", "Long_Island"}
+        for u in units:
+            self.assertIn(u.zone, nyiso_zones)
+
+    def test_ps_tech_and_params_match_fleet_standard(self):
+        # Duration and RTE follow the fleet constants used for PJM/CAISO PS.
+        units = load_eia860_pumped_storage("NYISO", 2023)
+        self.assertTrue(units, "NYISO PS fleet is empty")
+        for u in units:
+            self.assertEqual(u.tech_name, "pumped_storage")
+            self.assertAlmostEqual(
+                u.energy_cap_mwh,
+                u.power_cap_mw * PUMPED_STORAGE_DURATION_HOURS,
+            )
+            self.assertAlmostEqual(
+                u.eta_charge * u.eta_discharge, PUMPED_STORAGE_RTE, places=6
+            )
+
+    def test_ps_dispatch_adder_default_off(self):
+        # NYISO PS adder is 0.0 until a calibration pass measures
+        # Blenheim-Gilboa's reserve-duty opportunity cost.
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NYISO", ScenarioConfig()),
+            0.0,
+        )
+        units = load_eia860_pumped_storage("NYISO", 2023, ScenarioConfig())
+        for u in units:
+            self.assertEqual(u.vom, 0.0)
+
+    def test_ps_dispatch_adder_respects_explicit_override(self):
+        # An explicit config override must reach NYISO PS units.
+        cfg = ScenarioConfig(pumped_storage_dispatch_adder=7.5)
+        self.assertEqual(
+            resolve_pumped_storage_dispatch_adder("NYISO", cfg), 7.5
+        )
+        units = load_eia860_pumped_storage("NYISO", 2023, cfg)
+        for u in units:
+            self.assertEqual(u.vom, 7.5)
+
+    def test_pjm_caiso_ps_unchanged_by_nyiso_p4(self):
+        # NYISO P4 additions must not alter PJM or CAISO PS fleet totals.
+        pjm_mw = sum(
+            u.power_cap_mw
+            for u in load_eia860_pumped_storage("PJM", 2024)
+        )
+        self.assertGreater(pjm_mw, 4_500.0)
+        caiso_mw = sum(
+            u.power_cap_mw
+            for u in load_eia860_pumped_storage("CAISO", 2023)
+        )
+        self.assertGreater(caiso_mw, 1_900.0)
+
+
 class TestPumpedStorageDispatchAdder(unittest.TestCase):
     """Per-ISO resolution of the PS dispatch adder (reserve-duty proxy)."""
 
