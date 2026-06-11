@@ -1,0 +1,14 @@
+{
+  "id": "2026-06-11-pjm-11-j1-measured",
+  "label": "pjm 11 j1 measured",
+  "date": "2026-06-11",
+  "shorthand": "pjm-11-j1-measured",
+  "definition": "pjm J1 baseline re-run: pjm-6 cc-peak config on the import/export-node branch (measured interchange schedule; regression check vs pjm_6_ccpeak)",
+  "years": [
+    2023,
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-11-pjm-11-j1-measured.js",
+  "bundle": "results/calibration/pjm_j1_baseline"
+}
