@@ -21,6 +21,38 @@
   derivation still awaits MD/DE/NC/TN (+ MI 2023/2025) CAMPD unit-level
   extracts before `campd-unit-outages-PJM.csv` can be regenerated.
 
+## 2026-06-11 (CAISO hydro energy budgets + pumped storage — multi-iso P4)
+
+Verifies the CAISO hydro/PS data through the generic PJM-built machinery
+and makes the pumped-storage dispatch adder a per-ISO default. Full detail
+in `docs/calibration-log.md` (2026-06-11 CAISO entry). **Cache keys
+rotate**: `ScenarioConfig.pumped_storage_dispatch_adder` default changed
+`10.0 → None`.
+
+- **CAISO hydro budgets verified** (no loader changes needed): EIA-923
+  CISO `HY` monthlies give 166 plants / 23.90 TWh (2023, extreme wet) and
+  160 / 21.48 TWh (2024), within −2.0% / −5.6% of EIA-930 CISO hydro; all
+  plants resolve to NP15/ZP26/SP15. Regression anchors added to
+  `tests/test_hydro.py` (incl. an end-to-end solve pinning monthly
+  dispatch ≤ budget on real CAISO budgets, and PJM/ERCOT-unchanged
+  checks).
+- **`load_hydro_budget(..., backfill_year=)`** (default off): the 2025
+  EIA-923 early release covers only monthly-survey reporters (CAISO: 26 of
+  ~185 plants, 12.3 of ~21.4 TWh); backfilling non-reporters from 2024
+  recovers 20.39 TWh (−4.5% vs EIA-930). For the CAISO 2025 backcast.
+- **Per-ISO PS dispatch adder** (`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`):
+  PJM keeps its calibrated $10/MWh reserve-duty proxy; CAISO (2,078 MW
+  EIA-860 PS fleet, Helms 1,053 MW, all NP15; 10 h / RTE 0.80 fleet
+  params) resolves to $0 until its calibration says otherwise. The
+  `ScenarioConfig` field is now `None` = per-ISO; a number overrides all.
+- **`HydroBudget.monthly_min_energy` clips to the monthly budget** so a
+  nameplate-fraction min-flow floor can't make a low-inflow month
+  infeasible. Small-vs-large hydro split judged not warranted (≤30 MW =
+  14% of CAISO capacity, ~13% of energy; see calibration log).
+- Parameter registry regenerated; `validate_parameters.py` passes again
+  (the new constants plus three previously missing scenario fields are
+  registered).
+
 ## 2026-06-09 (Forecast mode — P0 fixes from the peer review)
 
 Implements the P0 "fix before quoting any forward run" items from
