@@ -52,8 +52,9 @@ Total columns = T × (n_gen + 4×n_zones + 3×n_storage + n_links), T=8760
 
 ## Objective
 
-min Σ mc[g,t]×P[g,t] + ε×(Chg+Dis) + VOLL×Slack + dump_cost×Dump
+min Σ mc[g,t]×P[g,t] + ε×(Chg+Dis) + dis_cost[s]×Dis + VOLL×Slack + dump_cost×Dump
 Where mc = heat_rate × fuel_price + vom + emission_rate × carbon_price + nox_rate × nox_price + …
+dis_cost = per-unit storage throughput adder (PS per-ISO calibrated; batteries ScenarioConfig.battery_dispatch_adder, default 0)
 dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negative-MC production credits
 
 ## Key Constraints

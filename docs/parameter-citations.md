@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**608 parameters registered** (283 flagged `needs-citation`).
+**618 parameters registered** (292 flagged `needs-citation`).
 
 
 ## Calibration
@@ -290,6 +290,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_prb_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed PRB passthrough sigmoid. When True… | 2023 | auto-generated |
 | `scenario.coal_prb_passthrough_tiered` | False | 3 | Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plant… |  | auto-generated, needs-citation |
 | `scenario.coal_supply_repricing` | True | 3 | When True (default), coal generators are repriced to the flat annua… |  | auto-generated, needs-citation |
+| `scenario.dual_fuel_switching` | False | 3 | Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas uni… |  | auto-generated, needs-citation |
 | `scenario.eac_price_geothermal` | 0.0 | 1 | $/MWh, clean firm generation credit |  | auto-generated, needs-citation |
 | `scenario.eac_price_nuclear` | 0.0 | 1 | $/MWh, e.g. NY/IL Zero Emission Credit ~$17 |  | auto-generated, needs-citation |
 | `scenario.eac_price_offshore_wind` | 0.0 | 1 | $/MWh, offshore-specific EAC (may differ from onshore) |  | auto-generated, needs-citation |
@@ -363,6 +364,8 @@ inline comment and still need a dated primary source — search the table for
 | `geothermal_params.egs.eford` | 0.05 | 2 | comparable to nuclear. DOE GeoVision 2019 | 2019 | auto-generated |
 | `hydrogen_turbine_params.h2_ccgt.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |
 | `hydrogen_turbine_params.h2_ct.eford` | 0.06 | 2 | above gas CT — immature fleet. Engineering judgment |  | auto-generated, needs-citation |
+| `import_eford.CAISO` | 0.02 | 2 | Import tranche forced outage rate, per ISO. CAISO's WECC supply blo… |  | auto-generated, needs-citation |
+| `import_eford.PJM` | 0.0 | 2 | Import tranche forced outage rate, per ISO. CAISO's WECC supply blo… |  | auto-generated, needs-citation |
 | `nuclear_monthly_cf.CAISO` | [1.0, 0.99, 0.96, 0.95, 0.97, 1.0, 1.… | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
 | `nuclear_monthly_cf.ERCOT` | [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, … | 2 | NRC / IAEA Power Reactor Information System (PRIS), 2019-2023 | 2024-01 |  |
 | `scenario.cc_outage_derate_from_top` | False | 2 | Outage capacity comes off the TOP of a CC_REGULAR plant's offer sta… |  | auto-generated, needs-citation |
@@ -546,6 +549,8 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_gas_cc_ccs.high` | 25.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_gas_cc_ccs.low` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_gas_cc_ccs.mid` | 15.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
+| `export_tranches.CAISO` | [["export_sink", 5000.0, 0.0]] | 2 | Export sinks: each block absorbs up to its capacity as *negative* g… |  | auto-generated, needs-citation |
+| `export_tranches.PJM` | [["export_firm", 700.0, 42.0], ["expo… | 2 | Export sinks: each block absorbs up to its capacity as *negative* g… |  | auto-generated, needs-citation |
 | `geothermal_params.egs.heat_rate` | 0.0 | 2 | no fuel |  | auto-generated, needs-citation |
 | `geothermal_params.egs.vom` | 1.0 | 2 | $/MWh — minimal, no fuel. NREL ATB 2024 | 2024 | auto-generated |
 | `global_annual_deployment_gw.gas_cc_ccs` | 1.5 | 2 | GW/yr global CCS additions on power plants. |  | auto-generated, needs-citation |
@@ -567,6 +572,8 @@ inline comment and still need a dated primary source — search the table for
 | `hydrogen_turbine_params.h2_ccgt.vom` | 3.5 | 2 | $/MWh. NREL ATB 2024 (gas CT analog + H2 premium) | 2024 | auto-generated |
 | `hydrogen_turbine_params.h2_ct.heat_rate` | 9.5 | 2 | MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023 | 2023 | auto-generated |
 | `hydrogen_turbine_params.h2_ct.vom` | 4.0 | 2 | $/MWh. NREL ATB 2024 (gas CT analog + H2 premium) | 2024 | auto-generated |
+| `import_tranches.CAISO` | [["PNW_hydro", 3000.0, 15.0], ["DSW_C… | 2 | Priced import/export node, per ISO (playbook §8.2): an interconnect… |  | auto-generated, needs-citation |
+| `import_tranches.PJM` | [["import_scarcity_1", 1000.0, 46.0],… | 2 | Priced import/export node, per ISO (playbook §8.2): an interconnect… |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_cc_ccs.base_cf` | 0.8 | 2 | Lower than unabated CC (0.85) due to higher MC |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_cc_ccs.capex_per_kw` | 2300.0 | 2 | $/kW total plant cost (host CCGT + capture island). |  | auto-generated, needs-citation |
 | `new_entry_costs.gas_cc_ccs.fom_per_kw_yr` | 45.0 | 2 | $/kW-yr. Source: NETL Rev 4. |  | auto-generated, needs-citation |
@@ -643,6 +650,8 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `import_zone.CAISO` | WECC_import | 2 | Name of each ISO's external import/export zone. CAISO's is baked in… |  | auto-generated, needs-citation |
+| `import_zone.PJM` | PJM_external | 2 | Name of each ISO's external import/export zone. CAISO's is baked in… |  | auto-generated, needs-citation |
 | `scenario.unknown_zone_default` | South_Central | 2 | zone for bins tagged "Unknown" |  | auto-generated, needs-citation |
 
 ## Uncategorized
@@ -655,6 +664,7 @@ inline comment and still need a dated primary source — search the table for
 | `global_annual_deployment_gw.li_ion` | 50.0 | 2 | was 30. BNEF 2025. | 2025 | auto-generated |
 | `global_annual_deployment_gw.solar` | 400.0 | 2 | was 350. IRENA 2025. | 2025 | auto-generated |
 | `global_annual_deployment_gw.wind` | 130.0 | 2 | was 120. IRENA 2025. | 2025 | auto-generated |
+| `import_node_links.PJM` | [["PJM_ComEd", 7500.0], ["PJM_AEP_Ohi… | 2 | Links joining an appended external zone to its border zones: (borde… | 2023-24 | auto-generated |
 | `inflation_rate` | 0.022 | 2 | Assumed long-run inflation rate for nominal-to-real conversion. Use… |  | auto-generated, needs-citation |
 | `mmbtu_per_mwh` | 3.412 | 2 | MMBtu per MWh — thermodynamic identity, used to convert the derived… |  | auto-generated, needs-citation |
 | `queue_cap_gw.MISO` | 10 | 2 | Annual interconnection queue caps (GW/yr) by ISO. Source: ERCOT CDR… |  | auto-generated, needs-citation |
