@@ -11,6 +11,10 @@ has changed yet; these define *how* to do it, piece by piece.
 | `02-market-design-modules.md` | LP modularity assessment, the capacity-market revenue gap, per-ISO module profile, toggleable module catalogue. |
 | `03-prompt-pack-plan.md` | Self-contained build prompts (Packs A–J) with files, tests, acceptance criteria, and ERCOT regression guard. |
 | `04-transmission-zones-and-congestion.md` | Per-ISO zone topology, congestion corridors, TTC sourcing (binding-frequency method), renewable HSL sourcing. |
+| `05-backcast-playbook.md` | **Canonical process reference (v2).** The end-to-end recipe at ERCOT/PJM parity; copy doc 06's pack structure per new ISO. |
+| `06-caiso-prompt-pack.md` | CAISO instantiation — the template prompt pack (P0–P14 waves). |
+| `07-nyiso-prompt-pack.md` | **NYISO** instantiation — hydro (Niagara/St-Lawrence), downstate congestion, dual-fuel winter, HQ/PJM imports, RGGI, ICAP. Topology/zone-assignment/outage-windows already landed; starts at Stage E. |
+| `08-neiso-prompt-pack.md` | **NEISO (ISO-NE)** instantiation — Algonquin winter basis + dual-fuel (the headline), HQ Phase II imports, Northfield PS, FCM, RGGI. Best CEMS coverage of the new ISOs; starts at Stage E. |
 
 ## At-a-glance roadmap
 
