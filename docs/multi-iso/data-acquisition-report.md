@@ -84,8 +84,11 @@ permissive policy or add allowlist entries.
 The basis CSV needs two legs: **Henry Hub** (the subtrahend) and a **hub price**
 (the minuend). The Henry Hub leg was recovered; the hub-price leg was not.
 
-`gas_basis_by_iso_month.csv` is the **header-only template** (schema locked,
-zero rows) so an automated/manual fill-in drops straight in:
+`gas_basis_by_iso_month.csv` carried zero rows until 2026-06-11, when the
+NEISO P7 pack filled the **NEISO/Algonquin leg** (35 of 36 months
+2023–2025; hub price = ISO-NE "average Massachusetts natural gas index
+price" from isonewswire.com monthly wholesale posts, one source URL per
+row; Aug-2025 missing upstream). Other ISOs remain unfilled. The schema:
 
 ```
 iso,year,month,hub,basis_usd_mmbtu,source
@@ -290,7 +293,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
 |------|--------|---------------|---------|
 | **Henry Hub daily** | **GOT (7368 rows, 1997-01-07…2026-05-11)** | `inputs/raw-data/gas-prices/henry_hub_daily.csv` ← datasets/natural-gas (EIA, PDDL) | — |
 | **Henry Hub monthly** | **GOT (352 rows, 1997-01…2026-04)** | `inputs/raw-data/gas-prices/henry_hub_monthly.csv` ← same | — |
-| Gas basis CSV (schema) | **template only** | `inputs/raw-data/gas_basis_by_iso_month.csv` | header, 0 rows (needs hub leg) |
+| Gas basis CSV (schema) | **NEISO filled** (2026-06-11) | `inputs/raw-data/gas_basis_by_iso_month.csv` | NEISO/AGT 35 rows 2023–2025 (ISO-NE MA gas index); other ISOs still need their hub leg |
 | Gas basis — citygate proxy leg | MISSING | api.eia.gov / dnav citygate | host allowlist (key present, no mirror) |
 | Gas basis — exact hubs | MISSING | ICE / Platts | paywalled (no license) |
 | NYISO zonal load | MISSING | mis.nyiso.com/public/csv/pal/ | host allowlist (no auth needed) |
