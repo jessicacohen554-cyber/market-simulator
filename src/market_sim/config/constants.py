@@ -220,6 +220,17 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2024: [0.93, 1.00, 0.82, 0.74, 0.78, 0.98, 0.92, 0.97, 0.99, 0.68, 0.75, 1.00],
         2025: [0.97, 1.00, 1.00, 0.92, 0.89, 1.00, 1.00, 0.99, 0.94, 0.76, 0.91, 1.00],
     },
+    # CAISO = Diablo Canyon units 1+2 (EIA plant 6099, fleet nameplate
+    # 2,240 MW). Monthly EIA-923 net generation / (nameplate x hours in
+    # month), clipped at 1.0 — the ERCOT convention. The dips are the actual
+    # staggered ~18-month refueling cadence: U2 down Oct-Dec 2023, U1 down
+    # Apr-May 2024, U1 Apr-May 2025 and U2 Oct 2025.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    "CAISO": {
+        2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
+        2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
+        2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
+    },
 }
 
 # Equivalent forced outage rate (demand) by technology class.
