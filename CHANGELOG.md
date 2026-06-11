@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-11 (NYISO backcast P1 — unit-outage windows verified, coverage documented)
+
+NYISO prompt-pack P1. Verifies the measured CAMPD unit-outage overlay for
+NYISO and documents its detection coverage. No data regenerated — the
+committed `campd-unit-outages-NYISO.csv` is current, and ERCOT/PJM/CAISO
+extracts are untouched.
+
+- **CSV verified current (2023 + 2025).** `derive_campd_unit_outages.py
+  --iso NYISO` reproduces the committed `campd-unit-outages-NYISO.csv`
+  **byte-identically** from the present `campd-unit-level/NY_{2023,2025}.parquet`
+  extracts (1 621 windows, 44 plants). No `NY_2024.parquet` has landed, so
+  **2024 is statistical-availability-only**: `unit_outage_derate_factors`
+  returns an empty dict for 2024 and the fleet builder logs the statistical
+  fallback. The CSV adds 2024 automatically once the extract is supplied.
+- **Event-based rule confirmed; no coal targets.** NYISO's CEMS data carries
+  **no coal-labelled units**, so the coal real-run rule fires on zero units —
+  every NYISO unit is detected by the load-following event-based rule (any
+  hour ≥ 2% CF breaks a window, ≥ 120 h minimum). Spot-checked Ravenswood,
+  Astoria, Roseton/Danskammer, and Bowline: the cold-standby oil-gas steamers
+  resolve into many event windows, the modern CCGTs into few.
+- **Overlay wiring confirmed.** Under `outage_source == "historic"` for
+  `--iso NYISO`, `generators_to_fleet_arrays` picks up the NYISO CSV through
+  the generic per-ISO path (`unit_outage_csv_for_iso` → `_generic_unit_outage_target`
+  / `_iso_plant_capacity`), mirroring PJM/CAISO; a smoke build derates 120
+  plant-tranches for 2023 and 2025. The facility-summed layer has no NYISO
+  file and degrades gracefully (as with CAISO).
+- **Coverage documented.** `docs/offer-curve-methodology.md` §3 gains a
+  *Detection coverage* subsection: of ≈ 21.2 GW of qualifying NYISO fossil
+  capacity, **89% (≈ 18.9 GW, 44 plants) is CEMS-measured** and 11% falls to
+  statistical, with CT/oil peakers carrying no overlay by design.
+
 ## 2026-06-11 (CAISO backcast P10 — LMP benchmark + zonal-sufficiency test)
 
 CAISO prompt-pack P10 (Wave 1). The OASIS hub LMPs (upload U2) are now a

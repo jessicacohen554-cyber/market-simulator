@@ -248,6 +248,50 @@ consumed by the historic-outage overlay. (The `duration_hours` column is
 informational only; the overlay measures length as
 `outage_stop − outage_start`.)
 
+### Detection coverage: CEMS-measured vs statistical
+
+The historic overlay only reaches a plant for a year in which that plant's
+units appear in the CAMPD CEMS extract for that year; everything else falls
+back to the statistical WEFOR/POF availability model. Coverage therefore
+splits three ways — **measured** (a CEMS unit-outage window overlays the
+statistical model), **statistical** (qualifying fossil bin, but no window
+landed — either the unit ran without a sustained dead span, or no CEMS
+extract exists for that year), and **no overlay by design** (combustion-turbine
+peakers and the listed `ST_GAS_PEAKER_PLANTS`, which dispatch purely
+economically).
+
+**NYISO worked example.** NYISO has **no coal** in its CEMS data, so the
+coal real-run rule (`detect_outages`) fires on **zero** units — every NYISO
+unit is detected by the load-following **event-based** rule
+(`detect_outages_eventbased`: a window is broken by any single hour ≥ 2% CF
+and must run ≥ 120 h). The qualifying fossil fleet (CC + sustained ST_GAS,
+`QUALIFYING_PLANT_GROUPS` minus the peaker exclusions) totals **≈ 21.2 GW**
+across 65 plants:
+
+| Coverage | Plants | Capacity | Source |
+|----------|-------:|---------:|--------|
+| **CEMS-measured** (unit-outage windows) | 44 | ≈ 18.9 GW (**89%**) | `campd-unit-outages-NYISO.csv` (2023 + 2025) |
+| **Statistical** (qualifying, no window) | 21 | ≈ 2.3 GW (11%) | WEFOR/POF |
+
+Outside this qualifying set, **≈ 2.6 GW** of `CT_PEAKER` and a further
+**≈ 2.9 GW** of unbinned oil peakers carry **no overlay by design** and
+dispatch economically, while nuclear and biomass use their own availability
+models. The big NYC / Hudson-valley oil-gas steamers — Ravenswood, Astoria
+Generating, Roseton, Danskammer, Bowline — sit cold for long stretches and
+the event-based rule resolves each cold spell into its own window (e.g.
+Danskammer 2480 ≈ 1.4 k unit-outage-days/yr, Bowline 2625 ≈ 0.5–0.6 k),
+whereas the modern baseload CCGTs (Astoria Energy 55375, Cricket Valley
+57185) run far more and carry only short, sparse windows.
+
+**The 2024 gap.** No `campd-unit-level/NY_2024.parquet` CEMS extract has
+landed, so a NYISO **2024** backcast has *no* measured windows in either
+overlay layer and degrades entirely to the statistical model — the
+`unit_outage_derate_factors` lookup returns an empty dict for 2024 and
+`generators_to_fleet_arrays` logs the statistical-only fallback. The CSV
+covers **2023 and 2025 only**; it regenerates byte-identically from the
+present extracts and adds 2024 automatically once `NY_2024.parquet` is
+supplied.
+
 ---
 
 ### Source references
