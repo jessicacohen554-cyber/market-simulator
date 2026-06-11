@@ -8,12 +8,14 @@ from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
     _load_caiso_hourly_demand,
+    _load_nyiso_hourly_demand,
     caiso_zonal_load_shares,
     ercot_zonal_load_shares,
     load_demand,
     load_demand_meta,
     load_ercot_battery_gen,
     load_generation_profiles,
+    nyiso_zonal_load_shares,
 )
 
 _TEST_YEAR = 2024
@@ -21,6 +23,10 @@ _TEST_YEAR = 2024
 # The only year with a TAC-area load file so far (upload U4 is partial:
 # 2023-01 landed; the remaining monthly pulls are pending).
 _CAISO_TAC_YEAR = 2023
+
+# NYISO primary backcast year: 2023 is the cleanest year in the NYIS hourly
+# extract (full 8760 hours; 2024 is a leap year needing Feb-29 strip).
+_NYISO_TEST_YEAR = 2023
 
 # Reference peak demand bands (MW), from EIA-930: ERCOT ~85,544 MW,
 # CAISO ~47,571 MW for 2024.
@@ -186,6 +192,77 @@ class TestEIALoader(unittest.TestCase):
         reported = ~np.isnan(dis)
         self.assertGreater(reported.sum(), 0)
         self.assertLess(reported.sum(), HOURS_PER_YEAR)
+
+
+class TestNYISODemand(unittest.TestCase):
+    """Tests for NYISO demand loading and zonal disaggregation (P8).
+
+    U3 (NYISO OASIS pal actual-load CSVs) is absent, so zonal shapes fall
+    back to the static Gold-Book load shares (Tier 3). These tests verify:
+      - Zone shares sum to 1.0 under the static allocation.
+      - Zonal demand reconciles to the EIA-930 NYIS system series each hour.
+      - ``nyiso_zonal_load_shares`` returns ``None`` without U3 data.
+    """
+
+    def test_nyiso_demand_shape(self):
+        """NYISO demand spans its five zones over a full year."""
+        nyiso = get_iso_config("NYISO")
+        demand = load_demand("NYISO", _NYISO_TEST_YEAR)
+        self.assertEqual(demand.shape, (nyiso.n_zones, HOURS_PER_YEAR))
+
+    def test_nyiso_demand_no_nan(self):
+        """NYISO zonal demand contains no NaN values."""
+        self.assertFalse(
+            np.isnan(load_demand("NYISO", _NYISO_TEST_YEAR)).any()
+        )
+
+    def test_nyiso_zone_shares_sum_to_one(self):
+        """Static NYISO zone load shares sum to exactly 1.0.
+
+        This is the Tier-3 fallback that applies until upload U3 lands.
+        Each zone's row is its load_share fraction of the system series, so
+        the shares must sum to 1.0 to conserve energy.
+        """
+        nyiso = get_iso_config("NYISO")
+        total = sum(z.load_share for z in nyiso.zones)
+        self.assertAlmostEqual(total, 1.0, places=10)
+
+    def test_nyiso_static_zone_rows_are_share_split(self):
+        """Without U3, each NYISO zone row is a constant multiple of the system series."""
+        nyiso = get_iso_config("NYISO")
+        demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
+        nonzero = [
+            (i, z.load_share)
+            for i, z in enumerate(nyiso.zones)
+            if z.load_share > 0.0
+        ]
+        system = demand[nonzero[0][0]] / nonzero[0][1]
+        for i, share in nonzero:
+            np.testing.assert_allclose(demand[i], share * system, rtol=1e-9)
+
+    def test_nyiso_zonal_demand_reconciles_to_system_series(self):
+        """NYISO zonal demand sums back to the EIA-930 NYIS system series each hour.
+
+        This holds for both the static-share (no U3) and measured-share (U3
+        present) paths: the weight matrix always sums to 1.0 across zones per
+        hour, so the column sum of the demand array equals the system series.
+        """
+        nyiso = get_iso_config("NYISO")
+        demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
+        system = _load_nyiso_hourly_demand(_NYISO_TEST_YEAR)
+        self.assertIsNotNone(system)
+        np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
+
+    def test_nyiso_zonal_shares_fall_back_without_u3(self):
+        """``nyiso_zonal_load_shares`` returns ``None`` when U3 is absent.
+
+        Without the NYISO OASIS pal actual-load files, the loader must fall
+        back to the static Gold-Book shares rather than raising an error.
+        Refresh path: upload U3 (NYISO_load_actuals_<year>.csv) to
+        inputs/raw-data/zone-specific-demand/NYISO/.
+        """
+        zone_names = get_iso_config("NYISO").zone_names
+        self.assertIsNone(nyiso_zonal_load_shares(_NYISO_TEST_YEAR, zone_names))
 
 
 class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
