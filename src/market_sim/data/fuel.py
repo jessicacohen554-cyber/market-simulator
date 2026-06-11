@@ -243,6 +243,36 @@ def bit_passthrough_series(
     )
 
 
+def lignite_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray":
+    """Return the lignite above-must-run fuel passthrough — flat or gas-keyed.
+
+    The ERCOT mine-mouth-fleet analogue of :func:`bit_passthrough_series`.
+    When ``config.coal_lignite_passthrough_sigmoid`` is False, returns ``1.0``
+    (full fuel cost — current behaviour). When True, returns an ``(hours,)``
+    logistic of the monthly delivered gas price ($/MMBtu) rising from
+    ``coal_lignite_passthrough_floor`` (cheap gas — mine-mouth lignite's
+    take-or-pay fixed costs are sunk, so it discounts its bid to hold
+    baseload against cheap gas CC) to ``coal_lignite_passthrough_ceil``
+    (dear gas — full cost; the default ceil of 1.0 never marks lignite up),
+    centred at ``coal_lignite_passthrough_gas_mid`` with slope
+    ``coal_lignite_passthrough_gas_slope`` per $/MMBtu.
+
+    This discounts the bid, not the cost: the measured ~$1.45/MMBtu
+    delivered lignite price still anchors the full-cost end of the curve.
+    """
+    if not getattr(config, "coal_lignite_passthrough_sigmoid", False):
+        return 1.0
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_lignite_passthrough_floor,
+        config.coal_lignite_passthrough_ceil,
+        config.coal_lignite_passthrough_gas_mid,
+        config.coal_lignite_passthrough_gas_slope,
+    )
+
+
 def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
     """Return the ``(hours,)`` delivered gas price ($/MMBtu).
 
