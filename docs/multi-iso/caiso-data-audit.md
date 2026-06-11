@@ -149,6 +149,16 @@ carries a separate `gas_st` row (1.4 TWh 2023 → 0.1 TWh 2025 — the last
 once-through-cooling steamers aging out). P2 should make sure spiky
 ST_GAS runners land on the peaker exclusion list per the prompt.
 
+**P2 resolution (2026-06-11):** the three ST_GAS-group plants — AES
+Alamitos LLC (315, legacy boilers 3–5), AES Huntington Beach LLC (335,
+boiler 2) and Ormond Beach (350) — are on `outages.ST_GAS_PEAKER_PLANTS`.
+CAMPD 2024–25 shows them online only 0.4–2.5% of hours (run-when-called
+OTC reliability units), so the event-based detector had flooded them with
+economic-idleness "outage" windows (126 of the extract's 1,386 rows); they
+now carry no outage overlay and no reliability floor, dispatching purely
+economically. Their measured committed floors (5.8–8.9%) stay recorded in
+`thermal_tranches_CAISO.csv`.
+
 ### 2c. Geothermal (CAISO-specific, no ERCOT/PJM precedent)
 
 CISO has ~2.1 GW / ~8 TWh-yr of geothermal (The Geysers, Imperial Valley)
@@ -159,6 +169,31 @@ for CISO, so the injection can be benchmarked directly. P2/P3 should
 confirm the OTHER injection reproduces the ~0.9 CF baseload shape rather
 than a flat average — it is effectively part of CAISO's must-run layer
 (doc-06 design decision 4).
+
+**P2 verification (2026-06-11):** confirmed, with one correction to the
+benchmark claim above.
+
+- **The injection carries the right energy and a baseload shape.** All 14–15
+  CISO geothermal plants classify to `OTHER` (`classify_plant('GEO', …)`)
+  and are injected by `_must_run_profiles`: 8.05 TWh (2023) and 7.81 TWh
+  (2024), matching eGRID's ~8 TWh, shaped by the EIA-923 monthly profile —
+  a band of 871–969 MW (2023) / 835–926 MW (2024, min/max 0.90), flat
+  within each month. It is *not* a flat annual average: refuel/maintenance
+  months (e.g. May 2024, 835 MW) sit visibly below the band top.
+- **The dedicated EIA-930 `GEO` column is empty until mid-Dec 2025** —
+  same new-schema pattern as the battery column (§U8). For 2023–24, CISO's
+  geothermal is folded into the 930 *Natural Gas* aggregate (85.1 TWh in
+  2024 vs ~68 TWh of actual gas; `Other Fuel Sources` is BESS-net,
+  annual mean −130 MW, and carries no geothermal). Direct benchmarking is
+  only possible for the ~16 populated days (Dec 16–31, 2025): 740 MW mean,
+  hourly CV 4.4% — against the EIA-923-derived 2025 level of 746 MW.
+  Agreement within 1%, and the flatness confirms the baseload shape.
+- **On "~0.9 CF":** realized CF against the 2,148 MW eGRID nameplate is
+  ~0.42 (The Geysers steam-field derate); the ~0.9 figure describes the
+  *shape* — hourly output holds ≥90% of the fleet's running maximum
+  essentially all hours — which the monthly-flat injection reproduces.
+- 2025 caveat: the early-release EIA-923 M-file covers only 7 of 14
+  plants (6.53 TWh lower bound); re-run when the final file lands (§1c).
 
 ---
 
@@ -185,6 +220,65 @@ outage windows for it — but it is ~1% of CISO gas capacity. Verdict:
 is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.py
 --iso CAISO` rerun (P1).
 
+### Unit-outage detection coverage (P1, verified 2026-06-11)
+
+`campd-unit-outages-CAISO.csv` (1,386 windows: 655 in 2024, 731 in 2025,
+38 plants) regenerates **byte-identically** from the committed CA_2024/
+CA_2025 extracts via `derive_campd_unit_outages.py --iso CAISO`. Every CA
+CAMPD unit is gas-fired (234 pipeline-NG + 3 NG + 2 other-gas + 1 wood;
+zero coal), so only the **event-based rule** (every-hour CF < 2%, ≥ 120 h)
+fires; the coal real-run rule has no CAISO targets (the fleet's lone
+COAL-group plant, Argus Cogen 10684 / 25 MW, has no CEMS extract). A
+detector replay on the 5 largest plants (Alamitos, Ormond Beach, Moss
+Landing, La Paloma, Mountainview + Delta Energy Center) reproduced the CSV
+windows exactly, and the every-hour rule held inside each window. Known-
+event check: all four Moss Landing CC units go dark **2025-01-16** for ~27
+days — the Vistra battery fire that took the colocated gas plant offline.
+
+Share of CAISO gas capacity (fleet pmax, 28.9 GW) with CEMS unit history:
+
+| Class | Fleet MW | CEMS-covered |
+|---|---|---|
+| CC_REGULAR | 13,708 | 84% |
+| CC_CHP | 2,707 | 51% |
+| ST_GAS | 2,859 | 100% |
+| CT_CHP | 1,962 | 17% (no overlay anyway) |
+| CT_PEAKER | 7,616 | 79% (no overlay by design) |
+| **All gas** | **28,852** | **77%** |
+| **Overlay-eligible (CC + ST_GAS)** | **19,274** | **82%** |
+
+The remaining 18% of overlay-eligible capacity stays on statistical
+availability. Largest gaps: **AES Huntington Beach Energy Project (62116,
+630 MW)** and **AES Alamitos Energy Center (62115, 603 MW)** — their CEMS
+history exists but reports under the *legacy* ORIS codes (335 / 315), so
+their windows currently route to the legacy ST_GAS boiler bins (which were
+near-dead all year regardless) instead of the new CC_REGULAR bins. An
+ORIS→EIA split-plant remap (like ERCOT's `_unit_outage_target`) would
+recover them — follow-up candidate. Then El Segundo Energy Center (57901,
+510 MW CC) and Desert Star (55077, NV — see above).
+
+**P2 resolution (2026-06-11): the remap landed** as
+`campd.CAMPD_UNIT_PLANT_REMAP` — units CT1/CT2 at ORIS 315 → EIA 62115 and
+at ORIS 335 → EIA 62116, applied (a) row-wise wherever unit identity is
+known (the unit-level extracts, hence `derive_campd_unit_outages.py`), and
+(b) in `campd._read_one` for facility-level loads by substituting the
+companion unit-level rows for the split facilities (gross conservation
+verified to 0.1 GWh on CA 2024). The regenerated
+`campd-unit-outages-CAISO.csv` (1,321 windows) carries 61 properly
+attributed CC_REGULAR windows for 62115/62116; every row for a
+non-touched facility is byte-identical to the P1 extract. CA 2023 has no
+unit-level extract (U1), so 2023 facility-level loads keep the legacy
+summing — the loader warns. AES CC_REGULAR CEMS coverage is now 95%+ of
+class capacity; the largest remaining gaps are El Segundo and Desert Star
+as above.
+
+**2023 is statistical-availability-only** until U1 lands:
+`unit_outage_derate_factors(2023, iso="CAISO")` returns empty, and a
+`outage_source="historic"` CAISO 2023 run now logs a warning to that
+effect (`fleet.generators_to_fleet_arrays`). Record the caveat in the
+bundle's `model_changes_note` when the first CAISO 2023 backcast is
+registered.
+
 ---
 
 ## 4. Upload manifest status (doc-06 U1–U7)
@@ -193,20 +287,29 @@ is uploaded anyway it is three small parquets and a `derive_campd_unit_outages.p
 |---|---|---|---|
 | U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
 | U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **missing** (no CAISO dir; `actual_lmp.json` has ERCOT/PJM only) — blocks P10. OASIS gotcha found 2026-06-11: multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) |
-| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **mostly landed** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; **2025 file covers only Jan–May** — re-download the current 2025 workbook when convenient |
-| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending |
+| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
+| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
 | U5 | Path 15/26 hourly flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
 | U6 | CARB cap-and-trade auction prices 2023–2025 (optional) | cite into `constants.py` | **not yet in repo** — public auction results are web-searchable from this environment, so P7 can self-serve; no upload strictly required |
 | U7 | CA BTM PV + storage trajectory (optional, forecast P13) | `inputs/raw-data/caiso-btm/` | **missing** — backcast unaffected (net-load convention) |
 
 Additional gap found (not in the original manifest):
 
-- **U8 (proposed): EIA-930 CISO battery columns.** `data/eia_hourly/CISO
-  hourly.parquet` carries demand/interchange/fuel columns (`NG: COL …
-  NG: OTH`) for 2023–2025 but **no battery charge/discharge column**, and
-  CISO does report batteries in EIA-930. P5's cycling benchmark needs the
-  parquet re-extracted with the battery series (or the throughput
-  benchmark taken from the CAISO battery special reports instead).
+- **U8: EIA-930 six-month BALANCE parquets — complete.** All six halves
+  (2023/2024/2025) in `inputs/raw-data/eia-930/`, validated 2026-06-11:
+  CISO demand reconciles with `data/eia_hourly/CISO hourly.parquet`
+  (2023: 218.13 vs 218.14 TWh; 2024: 222.87 vs 224.03 — raw vs adjusted
+  demand plus 48 NaN raw hours; same pattern 2025). EIA switched schema
+  mid-2024: 2023 + 2024-H1 are the old 44-column layout, 2024-H2 + 2025
+  the new 65-column layout. Key finding: CISO never populates the
+  dedicated `Battery Storage` column in the new schema (15 other BAs
+  do) — CISO batteries live inside **`Other Fuel Sources`**, whose
+  hourly swings (−7.4 GW midday charge to +9.4 GW evening discharge in
+  2025; −6.7/+7.4 in 2024-H2) are unmistakably the BESS fleet plus a
+  small geothermal/biomass baseload. P5's cycling benchmark should use
+  the CISO `Other` series net of an estimated baseload in every year,
+  not a battery column. Minor: prefer the `(Adjusted)` demand columns
+  (raw has 24 NaN hours per 2025 half, 48 in 2024-H2, 2 in 2023-H2).
 
 ## 5. Present and verified (do not re-acquire)
 

@@ -78,3 +78,34 @@ context.
 | `wind_potential_mwh` | float | MWh | Annual available wind energy (capacity factor × capacity, summed over zones and hours). |
 | `solar_potential_mwh` | float | MWh | Annual available solar energy. |
 | `storage_energy_cap_mwh` | float | MWh | Total storage energy capacity. |
+
+## Demand input conventions (EIA-930)
+
+The hourly system demand behind every cached result comes from EIA-930
+balancing-authority data (`market_sim.data.eia_loader.load_demand`). Two
+conventions apply to all ISOs and are baked into backcast calibration:
+
+- **Generation-side accounting.** EIA-930 demand satisfies
+  `Demand + Interchange = Net Generation`, so the series is already at the
+  generation level. Backcasts therefore run with `td_loss_factor = 0.0` —
+  no T&D gross-up — so the grid demand target equals actual grid net
+  generation and behind-the-meter CHP self-supply stays off-grid (the
+  ERCOT convention; see `ScenarioConfig.td_loss_factor`).
+- **Net-load convention** (backcast playbook §8.1). EIA-930 demand is
+  metered at the transmission level and is **net of behind-the-meter
+  PV/storage/DER**. Backcasts model **only ISO-metered, front-of-meter
+  resources** as supply; a BTM solar profile must never be added on the
+  supply side against net demand (double counting). **CAISO is the
+  extreme case: its demand series is net of ~15+ GW of BTM PV**, so much
+  of the duck-curve shaping lives inside the demand series itself — that
+  is correct and self-consistent for backcasts. This is the convention
+  note every future ISO addition copies.
+
+Per-ISO specifics:
+
+| ISO | System series | Interchange handling | Zonal allocation |
+|---|---|---|---|
+| ERCOT | `data/eia_hourly/ERCO hourly.parquet` | DC-tie net interchange folded into demand | Measured hourly weather-zone shapes (NP3-565-CD native load) |
+| PJM | demand-profiles parquet | Measured tie-line net export added per border zone | Measured hourly transmission-zone shapes (metered-load files) |
+| CAISO | `data/eia_hourly/CISO hourly.parquet` | **None** — imports are supply via the `WECC_import` node's priced pseudo-generators | Measured hourly TAC-area shapes (upload U4, OASIS `SLD_FCST` ACTUAL) where covered; static measured shares (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, Jan-2023 sample) elsewhere. PGE-TAC splits 0.86/0.14 onto NP15/ZP26; SCE+SDGE+VEA map to SP15. Refresh: complete the U4 monthly pulls 2023–2025. |
+| others | demand-profiles parquet | none | static per-zone `load_share` |

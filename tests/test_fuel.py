@@ -20,6 +20,7 @@ from market_sim.data.fleet import (
 from market_sim.data.fuel import (
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
+    _prb_monthly_actuals,
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
     resolve_fuel_prices,
@@ -272,19 +273,38 @@ def _coal_gen(supply: str) -> Generator:
 
 
 def test_coal_supply_pricing_uses_year_trajectory():
-    """Lignite and PRB take their per-year delivered cost from the curve."""
+    """Lignite stays on the per-year curve; PRB takes the measured monthly
+    reporter series in historical years (annual trajectory otherwise)."""
     config = ScenarioConfig()
     gens = [_coal_gen("lignite"), _coal_gen("prb"), _coal_gen("")]
     fuel_prices = np.full((3, 24), 2.0)
     apply_coal_supply_pricing(fuel_prices, gens, config, 2024)
     assert np.allclose(fuel_prices[0], COAL_PRICE_LIGNITE_BY_YEAR[2024])
-    # PRB is the year's delivered cost, take-or-pay discounted.
+    # 2024 is historical: PRB prices at the measured EIA-923 PRB reporter
+    # series (January, for a 24-hour horizon), take-or-pay discounted. With
+    # no F923 parquet shipped the flat annual trajectory is the fallback.
+    monthly = _prb_monthly_actuals().get(2024)
+    expected_prb = (
+        monthly[0] if monthly is not None else COAL_PRICE_PRB_BY_YEAR[2024]
+    )
     assert np.allclose(
         fuel_prices[1],
-        COAL_PRICE_PRB_BY_YEAR[2024] * config.coal_prb_contract_passthrough,
+        expected_prb * config.coal_prb_contract_passthrough,
     )
     # Untagged coal keeps the generic price already in the array.
     assert np.allclose(fuel_prices[2], 2.0)
+
+
+def test_coal_supply_pricing_forward_year_uses_trajectory():
+    """A forward year with no F923 reports prices PRB at the annual curve."""
+    config = ScenarioConfig()
+    gens = [_coal_gen("prb")]
+    fp = np.full((1, 24), 2.0)
+    apply_coal_supply_pricing(fp, gens, config, 2026)
+    assert np.allclose(
+        fp[0],
+        COAL_PRICE_PRB_BY_YEAR[2026] * config.coal_prb_contract_passthrough,
+    )
 
 
 def test_lignite_flat_then_escalates():
@@ -366,6 +386,106 @@ def test_oil_priced_above_gas_and_biomass():
     bio_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["biomass"])[0][0]
     assert prices[oil_idx, 0] > prices[gas_idx, 0]
     assert prices[oil_idx, 0] > prices[bio_idx, 0]
+
+
+# --- Dual-fuel switching (doc 03 Pack G) -----------------------------------
+
+_DF_PLANT = 1234           # dual-fuel capable plant (monkeypatched lookup)
+_PLAIN_PLANT = 5678        # gas-only plant
+
+
+def _dual_fuel_fleet(hours: int = 24):
+    """Return a fleet with a dual-fuel CT, a gas-only CT and an oil unit."""
+    generators = [
+        Generator(
+            unit_id="CT_DUAL", name="Dual-Fuel CT", zone="north",
+            fuel_type="gas_ct", pmax_mw=100.0, heat_rate=11.0, eford=0.0,
+            plant_code=_DF_PLANT, plant_group="CT_PEAKER",
+        ),
+        Generator(
+            unit_id="CT_PLAIN", name="Gas-Only CT", zone="north",
+            fuel_type="gas_ct", pmax_mw=100.0, heat_rate=11.0, eford=0.0,
+            plant_code=_PLAIN_PLANT, plant_group="CT_PEAKER",
+        ),
+        Generator(
+            unit_id="OIL", name="Oil Peaker", zone="south", fuel_type="oil",
+            pmax_mw=50.0, heat_rate=13.5, eford=0.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
+
+
+def _patch_dual_fuel_capability(monkeypatch):
+    """Pin the EIA-860 dual-fuel lookup to the synthetic test plant."""
+    monkeypatch.setattr(
+        "market_sim.data.fuel.dual_fuel_plant_groups",
+        lambda: frozenset({(_DF_PLANT, "CT_PEAKER")}),
+    )
+
+
+def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
+    """A dual-fuel unit pays the oil price when gas exceeds oil parity."""
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet()
+    # Delivered gas = 25 + PJM basis, far above the flat oil price (forward
+    # year: no F923 petroleum data, so oil parity is OIL_PRICE_PER_MMBTU).
+    config = ScenarioConfig(
+        iso="PJM", hours=24, gas_seasonality=False,
+        gas_price_override=25.0, dual_fuel_switching=True,
+    )
+    prices = resolve_fuel_prices(config, fleet, 2030)
+    delivered_gas = resolve_annual_gas_price(config, 2030)
+    assert delivered_gas > OIL_PRICE_PER_MMBTU
+    np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched
+    np.testing.assert_allclose(prices[1], delivered_gas)        # gas-only
+    np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
+
+
+def test_dual_fuel_no_switch_below_parity(monkeypatch):
+    """Cheap gas leaves a dual-fuel unit on its gas price (min is gas)."""
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet()
+    config = ScenarioConfig(
+        iso="PJM", hours=24, gas_seasonality=False,
+        gas_price_override=2.0, dual_fuel_switching=True,
+    )
+    prices = resolve_fuel_prices(config, fleet, 2030)
+    delivered_gas = resolve_annual_gas_price(config, 2030)
+    assert delivered_gas < OIL_PRICE_PER_MMBTU
+    np.testing.assert_allclose(prices[0], delivered_gas)
+    np.testing.assert_allclose(prices[1], delivered_gas)
+
+
+def test_dual_fuel_off_by_default_ercot_unchanged(monkeypatch):
+    """With the flag off (the default — ERCOT), prices are byte-identical."""
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet()
+    base = ScenarioConfig(
+        iso="ERCOT", hours=24, gas_seasonality=False, gas_price_override=25.0,
+    )
+    assert base.dual_fuel_switching is False
+    prices = resolve_fuel_prices(base, fleet, 2030)
+    delivered_gas = resolve_annual_gas_price(base, 2030)
+    np.testing.assert_allclose(prices[0], delivered_gas)
+    np.testing.assert_allclose(prices[1], delivered_gas)
+
+
+def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
+    """The per-hour min caps spike hours and leaves cheap-gas hours alone."""
+    from market_sim.data.fuel import apply_dual_fuel_pricing
+
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet(hours=4)
+    config = ScenarioConfig(
+        iso="PJM", hours=4, dual_fuel_switching=True,
+    )
+    gas = np.array([3.0, 30.0, 17.9, 50.0])
+    fuel_prices = np.vstack([gas, gas, np.full(4, OIL_PRICE_PER_MMBTU)])
+    apply_dual_fuel_pricing(fuel_prices, fleet, config, 2030)
+    np.testing.assert_allclose(
+        fuel_prices[0], [3.0, OIL_PRICE_PER_MMBTU, 17.9, OIL_PRICE_PER_MMBTU]
+    )
+    np.testing.assert_allclose(fuel_prices[1], gas)  # gas-only untouched
 
 
 def test_oil_peaker_dispatches_only_at_high_prices():
