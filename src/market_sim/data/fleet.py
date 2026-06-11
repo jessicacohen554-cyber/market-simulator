@@ -57,6 +57,12 @@ EIA_860_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860
 # markets, produced by ``scripts/process_eia860.py`` from the raw release.
 EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
 
+# Committed parquet of the EIA-860 Multifuel schedule (operable units),
+# produced by ``scripts/process_eia860.py``. Carries the multiple-energy-
+# source fields ("Energy Source 2", "Multiple Fuels?", "Switch Between Oil
+# and Natural Gas?", oil/gas capacity splits) that flag dual-fuel units.
+EIA_860_MULTIFUEL_PARQUET_NAME: str = "eia860_multifuel_operable.parquet"
+
 # Directory for derived, inspectable fleet outputs (the binned-fleet cache).
 PROCESSED_DIR: Path = Path(__file__).parents[3] / "inputs" / "processed"
 
@@ -1666,6 +1672,72 @@ def _chp_by_plant(eia860_dir: Path) -> "pd.Series":
         is_y.groupby(raw["Plant Code"]).any()
         .map({True: "Y", False: "N"})
     )
+
+
+@lru_cache(maxsize=2)
+def dual_fuel_plant_groups(
+    eia860_dir: Path = EIA_860_DIR,
+) -> frozenset[tuple[int, str]]:
+    """Return ``(plant_code, plant_group)`` pairs of oil/gas dual-fuel units.
+
+    Reads the EIA-860 Multifuel schedule (:data:`EIA_860_MULTIFUEL_PARQUET_NAME`)
+    and flags every operable gas-primary unit ("Energy Source 1" = ``NG``)
+    whose "Switch Between Oil and Natural Gas?" field is ``Y`` — the units
+    that physically carry oil backup (typically "Energy Source 2" = ``DFO`` /
+    ``RFO``) and can switch when gas spikes past oil parity. Each flagged
+    unit is classed with the same canonical gas classifier the fleet loaders
+    use (:func:`~market_sim.config.plant_taxonomy.classify_plant`), so the
+    returned keys line up with both the raw EIA-860 per-unit fleet and the
+    per-plant tranche fleet (:func:`fleet_to_bins` / :func:`bins_to_fleet`),
+    whose generators carry ``plant_code`` + ``plant_group``.
+
+    Oil-primary switchers are excluded: they are already modeled as ``oil``
+    units paying the oil price. Returns an empty set when the multifuel
+    parquet is absent, so fleets without the EIA-860 extract are unchanged.
+    """
+    path = Path(eia860_dir) / EIA_860_MULTIFUEL_PARQUET_NAME
+    if not path.exists():
+        return frozenset()
+    try:
+        raw = pd.read_parquet(path, columns=[
+            "Plant Code", "Energy Source 1", "Prime Mover",
+            "Switch Between Oil and Natural Gas?",
+        ])
+    except Exception:
+        logger.warning(
+            "EIA-860 multifuel parquet at %s is unreadable — "
+            "no dual-fuel units flagged", path,
+        )
+        return frozenset()
+
+    chp = _chp_by_plant(Path(eia860_dir))
+    pairs: set[tuple[int, str]] = set()
+    for row in raw.itertuples(index=False):
+        source = str(row[1] or "").strip().upper()
+        switch = str(row[3] or "").strip().upper()
+        if source != "NG" or not switch.startswith("Y"):
+            continue
+        try:
+            plant_code = int(row[0])
+        except (TypeError, ValueError):
+            continue
+        chp_flag = str(chp.get(plant_code, "N")).startswith("Y")
+        group = classify_plant(source, row[2], chp_flag, plant_code)
+        if group not in _EIA860_GAS_GROUPS:
+            # Mirror _rows_to_generators: an exotic prime mover the canonical
+            # classifier returns OTHER for falls back to the fuel-type group
+            # (+ CHP variant), so the key matches the fleet's grouping.
+            fuel_type = _map_fuel_type(None, source, row[2])
+            group = _EIA860_PLANT_GROUP_BY_FUEL.get(fuel_type or "", "")
+            if chp_flag:
+                group = _CHP_GROUP_FOR.get(group, group)
+        if group:
+            pairs.add((plant_code, group))
+    logger.info(
+        "EIA-860 multifuel: %d (plant, group) dual-fuel gas keys flagged",
+        len(pairs),
+    )
+    return frozenset(pairs)
 
 
 def _load_fleet_from_parquet(

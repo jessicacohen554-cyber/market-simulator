@@ -984,6 +984,36 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class TestDualFuelPlantGroups(unittest.TestCase):
+    """EIA-860 multifuel dual-fuel capability lookup (doc 03 Pack G)."""
+
+    def test_real_multifuel_extract(self):
+        """The committed EIA-860 multifuel parquet yields gas-class keys."""
+        from market_sim.data.fleet import (
+            _EIA860_GAS_GROUPS,
+            EIA_860_DIR,
+            EIA_860_MULTIFUEL_PARQUET_NAME,
+            dual_fuel_plant_groups,
+        )
+        if not (EIA_860_DIR / EIA_860_MULTIFUEL_PARQUET_NAME).exists():
+            self.skipTest("EIA-860 multifuel parquet not present")
+        pairs = dual_fuel_plant_groups()
+        self.assertGreater(len(pairs), 0)
+        for plant_code, group in pairs:
+            self.assertIsInstance(plant_code, int)
+            self.assertGreater(plant_code, 0)
+            # Gas-primary switchers only — they class into the gas groups.
+            self.assertIn(group, _EIA860_GAS_GROUPS)
+
+    def test_missing_parquet_returns_empty(self):
+        """A directory without the multifuel extract flags nothing."""
+        from market_sim.data.fleet import dual_fuel_plant_groups
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(
+                dual_fuel_plant_groups(Path(tmp)), frozenset()
+            )
+
+
 class TestLoadPlannedAdditionsNonThermal(unittest.TestCase):
     """An ISO whose proposed pipeline is all non-thermal returns empty.
 

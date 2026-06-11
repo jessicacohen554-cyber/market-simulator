@@ -455,6 +455,11 @@ COAL_PRICE_ESCALATION: float = 0.01
 # trajectory) since oil rarely runs and is not a price-setting baseload fuel.
 # Source: EIA distillate (~$20/MMBtu) and residual (~$14/MMBtu) fuel oil
 # delivered to the electric power sector, 2023-2024 average.
+# Also the dual-fuel switching parity fallback: in backcast years the measured
+# EIA-923 Schedule 5 monthly Petroleum receipt series
+# (market_sim.data.fuel.iso_monthly_oil_prices; PJM ~$17-23/MMBtu, 2023-2025)
+# takes precedence, and this flat value fills unreported months and forward
+# years.
 OIL_PRICE_PER_MMBTU: float = 18.0
 
 # Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas units.
