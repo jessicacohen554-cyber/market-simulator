@@ -25,6 +25,7 @@ from market_sim.model.storage import (
     estimate_storage_revenue,
     load_eia860_pumped_storage,
     load_eia860_storage,
+    storage_cap_profiles,
     storage_units_to_arrays,
 )
 from market_sim.config.constants import (
@@ -721,6 +722,183 @@ class TestBatteryDispatchAdder(unittest.TestCase):
             units, [u.zone for u in units]
         )
         self.assertTrue((arrays.vom == 12.0).all())
+
+
+def _battery_units(units):
+    """Return the non-pumped-storage units of an EIA-860 storage fleet."""
+    return [u for u in units if u.tech_name != "pumped_storage"]
+
+
+class TestEIA860CAISOBatteryFleet(unittest.TestCase):
+    """The CAISO BESS fleet built from the EIA-860 energy-storage schedule."""
+
+    def test_2024_capacity_matches_published(self):
+        # California's grid-scale battery fleet crossed 10 GW during 2024
+        # (CEC, "California Exceeds 10,000 MW of Battery Storage", 2024);
+        # CAISO's DMM 2024 annual report puts the ISO fleet at ~11 GW by
+        # year-end, and the EIA-860 CISO-BA sum is 11.1 GW. The loader
+        # must land in that band.
+        units = _battery_units(
+            load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
+        )
+        total_mw = sum(u.power_cap_mw for u in units)
+        self.assertGreater(total_mw, 10_000.0)
+        self.assertLess(total_mw, 12_500.0)
+
+    def test_fleet_matches_eia860_totals_per_year(self):
+        # Acceptance check: the modeled fleet reproduces the EIA-860
+        # year-end power and energy totals, recomputed independently from
+        # the raw parquet through the same eGRID/EIA-860 zone lookup.
+        import pandas as pd
+
+        from market_sim.data.fleet import EIA_860_DIR
+        from market_sim.data.zone_assignment import build_zone_lookup
+
+        path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+        if not path.exists():
+            self.skipTest("EIA-860 energy-storage parquet not present")
+        lookup = build_zone_lookup("CAISO")
+        df = pd.read_parquet(path)
+        df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+        power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+        energy = pd.to_numeric(
+            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
+        )
+        op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+        in_iso = df["Plant Code"].map(
+            lambda c: c == c and lookup.get(int(c)) is not None
+        ).astype(bool)
+
+        for year in (2023, 2024):
+            online = in_iso & power.notna() & (power > 0) & ~(op_year > year)
+            expected_mw = float(power[online].sum())
+            expected_mwh = float(energy[online].sum())
+            units = _battery_units(load_eia860_storage(
+                "CAISO", year, ScenarioConfig(iso="CAISO")
+            ))
+            self.assertAlmostEqual(
+                sum(u.power_cap_mw for u in units), expected_mw, delta=1.0,
+            )
+            self.assertAlmostEqual(
+                sum(u.energy_cap_mwh for u in units), expected_mwh,
+                delta=1.0,
+            )
+
+    def test_duration_carried_from_eia860_energy_capacity(self):
+        # EIA-860 reports energy capacity directly; the CAISO fleet averages
+        # ~3.4 h (not the 4 h li-ion default), and that measured duration
+        # must reach the SOC bound.
+        units = _battery_units(
+            load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
+        )
+        duration = (
+            sum(u.energy_cap_mwh for u in units)
+            / sum(u.power_cap_mw for u in units)
+        )
+        self.assertGreater(duration, 3.0)
+        self.assertLess(duration, 4.0)
+
+
+class TestStorageVintageRamp(unittest.TestCase):
+    """The intra-year COD capacity ramp (``storage_vintage_ramp``)."""
+
+    RAMP_CONFIG = ScenarioConfig(iso="CAISO", storage_vintage_ramp=True)
+
+    def test_caiso_ramp_applies_mid_year(self):
+        # CAISO commissioned ~3.6 GW during 2024 (EIA-860), so with the ramp
+        # on, January online capacity must sit well below December, and the
+        # monthly profile must be nondecreasing with December equal to the
+        # year-end scalar caps.
+        units = _battery_units(
+            load_eia860_storage("CAISO", 2024, self.RAMP_CONFIG)
+        )
+        ramped = [u for u in units if u.monthly_power_mw is not None]
+        self.assertTrue(ramped)
+        jan = sum(u.monthly_power_mw[0] for u in ramped)
+        dec = sum(u.monthly_power_mw[-1] for u in ramped)
+        self.assertLess(jan, dec - 2_000.0)
+        for u in ramped:
+            self.assertEqual(len(u.monthly_power_mw), 12)
+            self.assertAlmostEqual(u.monthly_power_mw[-1], u.power_cap_mw)
+            self.assertAlmostEqual(u.monthly_energy_mwh[-1], u.energy_cap_mwh)
+            for m in range(1, 12):  # m: month index
+                self.assertGreaterEqual(
+                    u.monthly_power_mw[m], u.monthly_power_mw[m - 1]
+                )
+
+    def test_cap_profiles_expand_to_hours(self):
+        units = load_eia860_storage("CAISO", 2024, self.RAMP_CONFIG)
+        arrays = storage_units_to_arrays(
+            units, get_iso_config("CAISO").zone_names
+        )
+        power, energy = storage_cap_profiles(units, arrays, 8760)
+        self.assertEqual(power.shape, (arrays.n_storage, 8760))
+        self.assertEqual(energy.shape, (arrays.n_storage, 8760))
+        # Capacity steps up across the year; December hours carry the
+        # year-end caps.
+        self.assertLess(power[:, 0].sum(), power[:, -1].sum())
+        np.testing.assert_allclose(power[:, -1], arrays.power_cap)
+        np.testing.assert_allclose(energy[:, -1], arrays.energy_cap)
+
+    def test_cap_profiles_static_without_ramp(self):
+        # Ramp off: the static 1-D arrays pass through untouched, so the
+        # LP bounds (and every existing backcast) are bit-identical.
+        units = load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
+        arrays = storage_units_to_arrays(
+            units, get_iso_config("CAISO").zone_names
+        )
+        power, energy = storage_cap_profiles(units, arrays, 8760)
+        self.assertIs(power, arrays.power_cap)
+        self.assertIs(energy, arrays.energy_cap)
+
+    def test_ercot_pjm_default_fleets_unchanged(self):
+        # The ramp is a per-ISO calibration opt-in: with the default config
+        # ERCOT and PJM keep flat year-end fleets and zero-cost battery
+        # discharge, leaving their calibrated backcasts untouched.
+        for iso in ("ERCOT", "PJM"):
+            units = load_eia860_storage(iso, 2024, ScenarioConfig(iso=iso))
+            for u in units:
+                self.assertIsNone(u.monthly_power_mw)
+                self.assertIsNone(u.monthly_energy_mwh)
+                if u.tech_name != "pumped_storage":
+                    self.assertEqual(u.vom, 0.0)
+
+    def test_dispatch_honors_hour_varying_caps(self):
+        # A unit offline in day 1 (caps 0) and online in day 2 (100 MW /
+        # 400 MWh) must sit idle through day 1's identical price spread and
+        # arbitrage only day 2.
+        T = 48
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=T, pmax=400.0)
+        fleet.pmax[0] = 300.0  # cheap gen short of the peak -> price spread
+        mc = np.vstack([np.full(T, 20.0), np.full(T, 80.0)])
+        demand = np.full((1, T), 200.0)
+        demand[0, 12:24] = 400.0
+        demand[0, 36:48] = 400.0
+        power_cap = np.zeros((1, T))
+        power_cap[0, 24:] = 100.0
+        energy_cap = np.zeros((1, T))
+        energy_cap[0, 24:] = 400.0
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            storage_power_cap=power_cap,
+            storage_energy_cap=energy_cap,
+            storage_zone_idx=np.array([0]),
+            eta_chg=np.array([0.92]),
+            eta_dis=np.array([0.92]),
+        )
+        charge = result.storage_charge[0]
+        discharge = result.storage_discharge[0]
+        self.assertAlmostEqual(charge[:24].sum(), 0.0, places=6)
+        self.assertAlmostEqual(discharge[:24].sum(), 0.0, places=6)
+        self.assertGreater(discharge[24:].sum(), 0.0)
+        self.assertLessEqual(charge.max(), 100.0 + 1e-6)
 
 
 if __name__ == "__main__":

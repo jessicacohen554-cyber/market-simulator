@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**606 parameters registered** (283 flagged `needs-citation`).
+**608 parameters registered** (283 flagged `needs-citation`).
 
 
 ## Calibration
@@ -32,6 +32,7 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `scenario.basis_differential_factor` | 1.0 | 3 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.battery_dispatch_adder` | 0.0 | 3 | Xu, Zhao, Zheng, Litvinov & Kirschen, 'Factoring the Cycle Aging Co… | 2018-03 | modeled |
 | `scenario.cc_cycling_adder_f_class` | 3.66 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
 | `scenario.cc_cycling_adder_h_class` | 3.92 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
 | `scenario.cc_cycling_adder_older` | 2.91 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
@@ -39,6 +40,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ct_cycling_adder_frame` | 5.02 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
 | `scenario.ct_cycling_adder_older` | 4.85 | 3 | NREL/SR-5500-55433 (Kumar et al. 2012) | 2012-04 | modeled |
 | `scenario.renewable_cf_adjustment` | 1.0 | 3 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.storage_vintage_ramp` | False | 3 | EIA Form 860 — 2024 | 2024-06 | modeled |
 | `scenario.td_loss_factor` | 0.0 | 3 | EIA-930 ERCOT hourly (Demand + Interchange = Net Generation) | 2026-05 |  |
 | `scenario.vintage_capacity_ramp` | True | 3 | EIA Form 860 — 2024 | 2024-06 |  |
 

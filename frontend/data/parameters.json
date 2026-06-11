@@ -2398,6 +2398,42 @@
       ]
     },
     {
+      "param_id": "scenario.battery_dispatch_adder",
+      "display_name": "ScenarioConfig.battery_dispatch_adder",
+      "value": 0.0,
+      "unit": "$/MWh discharged",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "Xu, Zhao, Zheng, Litvinov & Kirschen, 'Factoring the Cycle Aging Cost of Batteries Participating in Electricity Markets', IEEE Trans. Power Systems 33(2); NREL ATB 2024 battery augmentation costs",
+      "source_date": "2018-03",
+      "page_or_table": "§IV (marginal cycle-aging cost); ATB 2024 utility-scale battery O&M",
+      "url": "https://doi.org/10.1109/TPWRS.2017.2733339",
+      "notes": "Grid-battery throughput/cycling cost bid per MWh discharged (the battery analogue of pumped_storage_dispatch_adder): cycling degradation (~$15-25/MWh li-ion at current pack prices; $25-50/MWh in the original cycle-aging literature) plus the ancillary-service opportunity cost of arbitraging instead of holding reserve (dominant ERCOT BESS revenue through 2024, ERCOT ESR reports). Default 0 = off; calibration backcasts set it when the LP over-cycles vs the EIA-930 battery benchmark (~1.2-1.3 modeled cycles/day vs ~0.7-0.8 observed for ERCOT).",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
+      "param_id": "scenario.storage_vintage_ramp",
+      "display_name": "ScenarioConfig.storage_vintage_ramp",
+      "value": false,
+      "unit": "-",
+      "domain": "Calibration",
+      "tier": 3,
+      "source": "EIA Form 860 — 2024",
+      "source_date": "2024-06",
+      "page_or_table": "Energy_Storage_Operable — Operating Month / Operating Year",
+      "url": "https://www.eia.gov/electricity/data/eia860/",
+      "notes": "When True, the EIA-860 backcast battery fleet's dispatch caps ramp month-by-month from each unit's COD — the storage analogue of vintage_capacity_ramp. First-order for CAISO (3.0 GW commissioned during 2023, 3.6 GW during 2024); off by default so the ERCOT/PJM backcasts calibrated against flat year-end fleets are unchanged.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-11",
+      "flags": [
+        "modeled"
+      ]
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,

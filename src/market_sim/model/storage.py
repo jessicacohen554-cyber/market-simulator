@@ -60,6 +60,13 @@ class StorageUnit(BaseModel):
     # the battery cycling/throughput adder
     # (ScenarioConfig.battery_dispatch_adder, default 0).
     vom: float = 0.0
+    # Intra-year COD capacity ramp (backcast, ScenarioConfig.
+    # storage_vintage_ramp): capacity online in each month Jan-Dec of the
+    # backcast year, stepping up as the EIA-860 COD months pass. December
+    # equals ``power_cap_mw`` / ``energy_cap_mwh``. ``None`` = online at
+    # full capacity all year (the static default).
+    monthly_power_mw: list[float] | None = None
+    monthly_energy_mwh: list[float] | None = None
 
 
 @dataclass
@@ -214,25 +221,45 @@ def load_eia860_storage(
 
     Reads the EIA-860 operable energy-storage schedule, keeps units online
     by the end of ``year``, assigns each to a model zone via the eGRID
-    ORIS->zone lookup, and aggregates power and energy capacity per zone
-    into one ``StorageUnit`` each. Pumped-storage hydro (reported on the
-    generator schedule, not the energy-storage schedule) is appended via
+    ORIS->zone lookup (plant coordinates / FIPS county), and aggregates
+    power and energy capacity per zone into one ``StorageUnit`` each.
+    Pumped-storage hydro (reported on the generator schedule, not the
+    energy-storage schedule) is appended via
     :func:`load_eia860_pumped_storage`. This grounds a calibration backcast
     in the historical storage fleet rather than the forward-looking
     ``STORAGE_BASE_FLEET_MW`` scenario constant.
+
+    Co-located/hybrid batteries stay separate resources: the energy-storage
+    schedule reports the battery half of a solar+storage plant on its own
+    row (the PV half lives on the solar schedule feeding the renewables
+    loader), so a Moss Landing-style hybrid contributes its full battery
+    power/energy here without double-counting its PV.
+
+    When ``config.storage_vintage_ramp`` is on, capacity commissioned
+    *during* ``year`` contributes only from its EIA-860 Operating Month
+    onward: each zone aggregate carries a Jan-Dec ``monthly_power_mw`` /
+    ``monthly_energy_mwh`` profile (December = the year-end scalar caps)
+    that :func:`storage_cap_profiles` expands into hour-varying dispatch
+    bounds. This is the storage analogue of the renewables
+    ``vintage_capacity_ramp`` and is first-order for CAISO, which added
+    3.0 GW mid-2023 and 3.6 GW mid-2024.
 
     EIA-860 does not report round-trip efficiency, so the 4-hour lithium-ion
     RTE is applied uniformly. It is read through :func:`_storage_rte`, so a
     calibration sweep of ``config.storage_rte_4hr`` reaches the backcast
     fleet exactly as it reaches the forward-entry path -- rather than being
-    silently pinned to the :data:`STORAGE_TECHS` constant.
+    silently pinned to the :data:`STORAGE_TECHS` constant. Battery units bid
+    ``config.battery_dispatch_adder`` per MWh discharged (default 0), the
+    calibration knob that tames LP over-cycling vs the EIA-930 battery
+    benchmark.
 
     Args:
         iso: ISO identifier; zones come from its topology config.
         year: Backcast year; units commissioned after it are excluded.
-        config: Scenario config; supplies the ``storage_rte_4hr`` override
-            and the ``battery_dispatch_adder`` throughput cost carried on
-            each battery unit's ``vom``.
+        config: Scenario config; supplies the ``storage_rte_4hr`` override,
+            the ``storage_vintage_ramp`` COD-ramp toggle, and the
+            ``battery_dispatch_adder`` throughput cost carried on each
+            battery unit's ``vom``.
 
     Returns:
         One aggregated ``StorageUnit`` per zone with nonzero storage
@@ -259,11 +286,16 @@ def load_eia860_storage(
         df["Nameplate Energy Capacity (MWh)"], errors="coerce"
     )
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+    op_month = pd.to_numeric(df["Operating Month"], errors="coerce")
 
-    per_zone_power: dict[str, float] = {}
-    per_zone_energy: dict[str, float] = {}
-    for code, p_mw, e_mwh, oy in zip(
-        df["Plant Code"], power, energy, op_year
+    # Cumulative capacity online per zone per month (12,); December is the
+    # year-end total. Vintages before the backcast year fill all twelve
+    # months; a unit commissioned during it fills from its COD month on
+    # (the renewables vintage-ramp convention, month missing -> January).
+    per_zone_power: dict[str, np.ndarray] = {}
+    per_zone_energy: dict[str, np.ndarray] = {}
+    for code, p_mw, e_mwh, oy, om in zip(
+        df["Plant Code"], power, energy, op_year, op_month
     ):
         if p_mw != p_mw or p_mw <= 0.0:  # NaN or non-positive
             continue
@@ -277,31 +309,89 @@ def load_eia860_storage(
             continue
         if e_mwh != e_mwh or e_mwh <= 0.0:  # blank energy capacity
             e_mwh = p_mw * _EIA860_STORAGE_FALLBACK_DURATION_HR
-        per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
-        per_zone_energy[zone] = per_zone_energy.get(zone, 0.0) + float(e_mwh)
+        start = 0
+        if oy == oy and int(oy) == year and om == om:
+            start = min(max(int(om), 1), 12) - 1
+        zone_p = per_zone_power.setdefault(zone, np.zeros(12))
+        zone_e = per_zone_energy.setdefault(zone, np.zeros(12))
+        zone_p[start:] += float(p_mw)
+        zone_e[start:] += float(e_mwh)
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
     # Throughput/cycling cost per MWh discharged (degradation + ancillary-
     # service opportunity cost) — the battery analogue of the pumped-storage
     # adder below; see ScenarioConfig.battery_dispatch_adder.
     adder = float(getattr(config, "battery_dispatch_adder", 0.0))
-    units = [
-        StorageUnit(
-            unit_id=f"{zone}_eia860_storage",
-            zone=zone,
-            tech_name="li_ion",
-            power_cap_mw=per_zone_power[zone],
-            energy_cap_mwh=per_zone_energy[zone],
-            eta_charge=eta,
-            eta_discharge=eta,
-            zone_idx=z_idx,
-            vom=adder,
+    units: list[StorageUnit] = []
+    for z_idx, zone in enumerate(get_iso_config(iso).zone_names):
+        monthly_p = per_zone_power.get(zone)
+        if monthly_p is None or monthly_p[-1] <= 0.0:
+            continue
+        monthly_e = per_zone_energy[zone]
+        # A monthly profile is attached only when the ramp is enabled and
+        # the zone actually gained capacity mid-year; otherwise the unit
+        # stays static and the dispatch bounds remain 1-D.
+        ramped = config.storage_vintage_ramp and monthly_p[0] < monthly_p[-1]
+        units.append(
+            StorageUnit(
+                unit_id=f"{zone}_eia860_storage",
+                zone=zone,
+                tech_name="li_ion",
+                power_cap_mw=float(monthly_p[-1]),
+                energy_cap_mwh=float(monthly_e[-1]),
+                eta_charge=eta,
+                eta_discharge=eta,
+                zone_idx=z_idx,
+                vom=adder,
+                monthly_power_mw=(
+                    [float(x) for x in monthly_p] if ramped else None
+                ),
+                monthly_energy_mwh=(
+                    [float(x) for x in monthly_e] if ramped else None
+                ),
+            )
         )
-        for z_idx, zone in enumerate(get_iso_config(iso).zone_names)
-        if per_zone_power.get(zone, 0.0) > 0.0
-    ]
     units.extend(load_eia860_pumped_storage(iso, year, config))
     return units
+
+
+def storage_cap_profiles(
+    units: list[StorageUnit],
+    arrays: StorageArrays,
+    hours: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return the dispatch power/energy cap bounds for a storage fleet.
+
+    A fleet with no intra-year COD ramp passes through unchanged as the
+    static ``(n_storage,)`` arrays. When any unit carries a monthly COD
+    profile (``StorageUnit.monthly_power_mw``, set by
+    :func:`load_eia860_storage` under ``config.storage_vintage_ramp``), both
+    caps expand to ``(n_storage, hours)``: a ramped unit's charge/discharge
+    and SOC bounds step up at each month boundary as capacity reaches
+    commercial operation, so GWs commissioned mid-year cannot dispatch
+    before their COD. ``units`` must be in the same order as ``arrays``
+    (as built by :func:`storage_units_to_arrays`).
+
+    Note: the LP's annual cyclic SOC constraint pins a ramped unit's
+    year-end SOC back to its January level, which the January bound caps at
+    zero — the unit ends the year empty. That is a one-cycle artifact,
+    negligible against fleet-scale annual throughput.
+    """
+    if not any(u.monthly_power_mw is not None for u in units):
+        return arrays.power_cap, arrays.energy_cap
+    from market_sim.data.fleet import _hour_to_month_index
+
+    month_idx = _hour_to_month_index(hours)
+    power = np.repeat(arrays.power_cap[:, np.newaxis], hours, axis=1)
+    energy = np.repeat(arrays.energy_cap[:, np.newaxis], hours, axis=1)
+    for s, unit in enumerate(units):  # s: storage-unit index
+        if unit.monthly_power_mw is None:
+            continue
+        power[s] = np.asarray(unit.monthly_power_mw, dtype=float)[month_idx]
+        energy[s] = np.asarray(unit.monthly_energy_mwh, dtype=float)[
+            month_idx
+        ]
+    return power, energy
 
 
 def load_eia860_pumped_storage(

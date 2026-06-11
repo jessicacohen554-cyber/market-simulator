@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-06-11 (CAISO backcast P5 — grid-battery fleet: COD ramp + EIA-930 battery benchmark wiring)
+
+CAISO prompt-pack P5 (Wave 1). The CAISO BESS fleet was already loaded from
+the EIA-860 energy-storage schedule (11.1 GW / 38.5 GWh by end-2024 in the
+CISO BA, matching CAISO's published ~11 GW and the CEC's 10-GW-crossed-in-2024
+milestone); this pack adds what the year-end snapshot missed. The pack's
+cycling-cost item landed independently as ERCOT E2's `battery_dispatch_adder`
+(PR #312) — P5 adopts that knob (no duplicate field) and adds the cycle-aging
+citation to its registry entry. ERCOT/PJM backcasts are unchanged
+(regression-guarded by tests). **Cache keys rotate**: `ScenarioConfig` gained
+`storage_vintage_ramp`, so previously cached scenario-years re-solve on
+first touch.
+
+- **Intra-year COD capacity ramp (`storage_vintage_ramp`).** CAISO
+  commissioned 3.0 GW of batteries during 2023 and 3.6 GW during 2024, so a
+  flat year-end fleet overstates spring capability by ~2 GW.
+  `load_eia860_storage` now aggregates each zone's capacity per EIA-860
+  Operating Month (the renewables `vintage_capacity_ramp` convention) and the
+  new `storage.storage_cap_profiles` expands the monthly steps into
+  hour-varying `(n_storage, T)` charge/discharge/SOC bounds, which
+  `dispatch.build_variable_bounds` now accepts alongside the static 1-D form.
+  Tier-3 toggle, on for CAISO only in `_calibration_config`; ERCOT/PJM keep
+  their calibrated flat year-end fleets until a recalibration pass (pack E2).
+- **EIA-930 battery benchmark wired "if present" for every ISO.** Neither
+  `data/eia_hourly/CISO hourly.parquet` nor `inputs/raw-data/CISO_fueltype.parquet`
+  carries the EIA-930 `BAT`/`PS` storage split yet (CISO batteries currently
+  ride in `OTH`, which swings −8.5 to +9.7 GW with a clear charge-midday /
+  discharge-evening shape). The generic `load_eia_hourly_benchmark` now maps
+  `NG: BAT`→`battery` and `NG: PS`→`pumped_storage` (net series, + =
+  discharge), picked up automatically once a regenerated extract carries
+  them — complementing E2's ERCOT-specific `load_ercot_battery_gen`. The
+  non-ERCOT calibration report gains a `[2b] Battery cycling` section off
+  the bundle's `storage.parquet` (E2's frame): model vs EIA-930
+  discharge/charge TWh, evening (h17-22) discharge share, and hourly-net
+  Pearson r — model-only with a note while the benchmark columns are absent.
+- **Tests.** CAISO 2024 fleet vs published capacity (>10 GW, CEC/CAISO DMM);
+  per-year power+energy totals reconciled against an independent EIA-860
+  recomputation (acceptance); ramp monotonicity, December == year-end caps,
+  profile expansion, and an LP check that a unit is idle before COD;
+  ERCOT/PJM fleets carry no ramp and zero cycling cost under defaults;
+  EIA-930 battery columns wired when present, skipped when absent.
+
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
