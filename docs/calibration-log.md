@@ -276,6 +276,43 @@ when the final EIA-923 2025 annual file lands.
 
 ---
 
+### 2026-06-11 — CAISO — P7 gas + carbon (structural, no full run)
+
+- **Scope:** doc-06 pack P7 — measured monthly gas and CA cap-and-trade in
+  CAISO marginal cost. Structural inputs only; no calibration bundle (P11
+  runs the smoke backcast once the other Wave-1 packs land).
+- **Model changes:** `gas_monthly_actuals` default-on for CAISO backcasts
+  (`_calibration_config`); CARB allowance price in `resolve_carbon_price`
+  via `STATE_CARBON_PRICE_BY_ISO` (default-on, `state_carbon_pricing`);
+  border carbon adjustment on the CAISO import tranches
+  (`wecc_border_carbon_adder` feeding `build_import_generators`, CARB
+  unspecified EF 0.428 t/MWh).
+
+**Findings (EIA-923 Schedule 5, CAISO plants, quantity-weighted):**
+
+- Measured CAISO delivered-gas basis vs Henry Hub annual average:
+  **+$7.06 (2023), +$2.26 (2024), +$1.12 (2025)** against the +1.20
+  `GAS_BASIS_DIFFERENTIAL` seed. The seed is ~right for 2025, half the
+  2024 reality, and misses 2023 entirely — Jan-2023 delivered gas was
+  **$38.7/MMBtu** (Dec-22/Jan-23 western gas crisis) vs ~$4.5 shaped.
+- Zonal split (the SoCal vs PG&E premium the per-plant path captures):
+  implied annual basis NP15 +7.82 / SP15 +5.38 (2023), NP15 +2.20 /
+  SP15 +2.42 (2024), NP15 +0.98 / SP15 +1.59 (2025). Caveat: only 6-7
+  CAISO plants (~11-14% of gas burn) report Schedule-5 gas costs; the
+  nearby-plant fallback fills the rest at the CA *state* mean (CA spans
+  both hubs), so zonal price asymmetry reaches only the reporters
+  themselves. The ISO-month volume-weighted series is robust to this.
+- Carbon: a 7.0 HR CC carries ~$14/MWh of allowance cost at the 2024
+  average CARB price ($35.23/t); the import border adder is ~$15/MWh
+  (0.428 × allowance). Without these the CAISO price level cannot
+  calibrate (doc-06 design decision 5).
+- 168 h CAISO smoke (2024): solves Optimal, measured gas + carbon active
+  (F923: 22 own-plant, 550 gap-filled generators), January-week average
+  price $63.98/MWh, no slack. ERCOT/PJM regression: full test suite
+  green; both ISOs resolve a zero carbon price and keep their gas paths.
+
+---
+
 ## Cross-class offer-curve tuning Jacobian (2026-06-11)
 
 **Tool:** `scripts/derive_offer_curve_jacobian.py` → `inputs/processed/offer_curve_jacobian.csv`
