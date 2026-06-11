@@ -1,1 +1,36 @@
 iso,year,month,hub,basis_usd_mmbtu,source
+NEISO,2023,1,Algonquin Citygate (ISO-NE MA gas index),1.46,https://isonewswire.com/2023/03/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2023/
+NEISO,2023,2,Algonquin Citygate (ISO-NE MA gas index),5.75,https://isonewswire.com/2023/03/23/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2023/
+NEISO,2023,3,Algonquin Citygate (ISO-NE MA gas index),0.63,https://isonewswire.com/2023/04/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2023/
+NEISO,2023,4,Algonquin Citygate (ISO-NE MA gas index),-0.28,https://isonewswire.com/2023/05/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2023/
+NEISO,2023,5,Algonquin Citygate (ISO-NE MA gas index),-0.57,https://isonewswire.com/2023/06/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2023/
+NEISO,2023,6,Algonquin Citygate (ISO-NE MA gas index),0.42,https://isonewswire.com/2023/07/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2023/
+NEISO,2023,7,Algonquin Citygate (ISO-NE MA gas index),0.18,https://isonewswire.com/2023/09/05/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2023/
+NEISO,2023,8,Algonquin Citygate (ISO-NE MA gas index),-1.18,https://isonewswire.com/2024/09/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2024/ (prior-year figure quoted in the Aug-2024 post)
+NEISO,2023,9,Algonquin Citygate (ISO-NE MA gas index),-1.04,https://isonewswire.com/2023/10/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2023/
+NEISO,2023,10,Algonquin Citygate (ISO-NE MA gas index),-1.57,https://isonewswire.com/2023/12/07/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2023/
+NEISO,2023,11,Algonquin Citygate (ISO-NE MA gas index),0.74,https://isonewswire.com/2024/01/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2023/
+NEISO,2023,12,Algonquin Citygate (ISO-NE MA gas index),0.7,https://isonewswire.com/2024/01/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2023/
+NEISO,2024,1,Algonquin Citygate (ISO-NE MA gas index),4.5,https://isonewswire.com/2024/02/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2024/
+NEISO,2024,2,Algonquin Citygate (ISO-NE MA gas index),1.77,https://isonewswire.com/2024/04/01/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2024/
+NEISO,2024,3,Algonquin Citygate (ISO-NE MA gas index),0.14,https://isonewswire.com/2024/05/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2024/
+NEISO,2024,4,Algonquin Citygate (ISO-NE MA gas index),-0.09,https://isonewswire.com/2024/05/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2024/
+NEISO,2024,5,Algonquin Citygate (ISO-NE MA gas index),-0.52,https://isonewswire.com/2024/06/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2024/
+NEISO,2024,6,Algonquin Citygate (ISO-NE MA gas index),-0.62,https://isonewswire.com/2024/07/31/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2024/
+NEISO,2024,7,Algonquin Citygate (ISO-NE MA gas index),-0.24,https://isonewswire.com/2024/09/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2024/
+NEISO,2024,8,Algonquin Citygate (ISO-NE MA gas index),-0.37,https://isonewswire.com/2024/09/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2024/
+NEISO,2024,9,Algonquin Citygate (ISO-NE MA gas index),-0.47,https://isonewswire.com/2024/10/31/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2024/
+NEISO,2024,10,Algonquin Citygate (ISO-NE MA gas index),-0.41,https://isonewswire.com/2024/12/05/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2024/
+NEISO,2024,11,Algonquin Citygate (ISO-NE MA gas index),0.14,https://isonewswire.com/2025/01/09/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2024/
+NEISO,2024,12,Algonquin Citygate (ISO-NE MA gas index),6.12,https://isonewswire.com/2025/01/31/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2024/
+NEISO,2025,1,Algonquin Citygate (ISO-NE MA gas index),12.79,https://isonewswire.com/2025/03/10/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2025/
+NEISO,2025,2,Algonquin Citygate (ISO-NE MA gas index),10.43,https://isonewswire.com/2025/03/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2025/
+NEISO,2025,3,Algonquin Citygate (ISO-NE MA gas index),0.14,https://isonewswire.com/2025/04/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2025/
+NEISO,2025,4,Algonquin Citygate (ISO-NE MA gas index),-0.28,https://isonewswire.com/2025/06/04/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2025/
+NEISO,2025,5,Algonquin Citygate (ISO-NE MA gas index),-0.57,https://isonewswire.com/2025/07/01/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2025/
+NEISO,2025,6,Algonquin Citygate (ISO-NE MA gas index),-0.13,https://isonewswire.com/2025/07/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2025/
+NEISO,2025,7,Algonquin Citygate (ISO-NE MA gas index),1.03,https://isonewswire.com/2025/08/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2025/
+NEISO,2025,9,Algonquin Citygate (ISO-NE MA gas index),-0.95,https://isonewswire.com/2025/11/05/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2025/
+NEISO,2025,10,Algonquin Citygate (ISO-NE MA gas index),-0.82,https://isonewswire.com/2025/11/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2025/
+NEISO,2025,11,Algonquin Citygate (ISO-NE MA gas index),0.89,https://isonewswire.com/2025/12/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2025/
+NEISO,2025,12,Algonquin Citygate (ISO-NE MA gas index),10.64,https://isonewswire.com/2026/02/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2025/
