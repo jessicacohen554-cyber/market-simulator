@@ -12,16 +12,16 @@ from market_sim.config.scenarios import ScenarioConfig
 def state_carbon_price(config: ScenarioConfig, year: int) -> float | None:
     """Return the ISO's state carbon-program allowance price, or ``None``.
 
-    Looks up :data:`STATE_CARBON_PRICE_BY_ISO` — the CA cap-and-trade (CARB)
-    quarterly-auction settlement average for CAISO and the RGGI quarterly
-    auction clearing-price average for NYISO, both 2023-2025 — so a CAISO or
-    NYISO backcast charges every in-state fossil unit the measured allowance
-    cost without any per-scenario configuration. Returns ``None`` (caller
-    falls through to the scenario carbon path) when
-    ``config.state_carbon_pricing`` is off, the ISO has no registered
-    program, or the year is outside the measured series (forward years
-    need an allowance-price *trajectory*, which is deliberately not seeded
-    here).
+    Looks up :data:`STATE_CARBON_PRICE_BY_ISO` — the CA cap-and-trade
+    (CARB) quarterly-auction settlement average for CAISO, and the RGGI
+    quarterly-auction clearing-price average for NYISO and NEISO (all six
+    New England states are RGGI members), 2023-2025 — so a backcast
+    charges every in-state fossil unit the measured allowance cost without
+    any per-scenario configuration. Returns ``None`` (caller falls through
+    to the scenario carbon path) when ``config.state_carbon_pricing`` is
+    off, the ISO has no registered program, or the year is outside the
+    measured series (forward years need an allowance-price *trajectory*,
+    which is deliberately not seeded here).
 
     Args:
         config: Scenario config supplying ``iso`` and the
