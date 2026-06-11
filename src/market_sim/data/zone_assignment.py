@@ -798,8 +798,10 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # opting one ISO in cannot move another ISO's derived outputs (the ERCOT/PJM
 # byte-identical regression guard): ERCOT was first (2024+ wind/solar/
 # storage), CAISO second (2024-2025 greenfield solar, ~4.8 GW absent from
-# eGRID 2023), NYISO third (2024+ downstate battery fleet).
-_EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO", "NYISO"})
+# eGRID 2023), NYISO third (2024+ downstate battery fleet), NEISO fourth
+# (2022-2024 MA batteries: 29 plants / ~44 MW absent from eGRID 2023, rising
+# to 346 MW with the 2025 Cranberry Point and Cross Town BESS additions).
+_EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO", "NYISO", "NEISO"})
 
 
 def _eia860_ba_zones(iso: str) -> dict[int, str]:
