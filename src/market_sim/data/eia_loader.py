@@ -767,6 +767,7 @@ def load_demand(
     iso_config: ISOConfig | None = None,
     td_loss_factor: float = 0.0,
     data_dir: Path = DATA_DIR,
+    include_interchange: bool = True,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -797,6 +798,12 @@ def load_demand(
             allocated demand is scaled by ``1 + td_loss_factor``. Defaults
             to ``0.0`` (no gross-up).
         data_dir: Directory containing the EIA-930 parquet extracts.
+        include_interchange: When ``False``, the measured net-interchange
+            schedule is left out of the returned demand (PJM tie-line
+            export; ERCOT DC ties). Callers serving interchange through the
+            priced import/export node instead
+            (:func:`market_sim.model.transmission.build_import_generators`)
+            must disable it here so the export is not counted twice.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -826,6 +833,9 @@ def load_demand(
     assert not np.isnan(raw_mw).any(), f"NaN demand for {iso} {year}"
     assert raw_mw.max() > 0.0, f"Non-positive peak demand for {iso} {year}"
 
+    if not include_interchange:
+        interchange = np.zeros(HOURS_PER_YEAR, dtype=float)
+
     # PJM's import/export "node": add its measured net export to the demand the
     # internal fleet must serve (the demand-profiles ``raw_mw`` is internal
     # load; PJM is a large net exporter, so without this the fleet under-
@@ -834,7 +844,7 @@ def load_demand(
     # Prefer the per-border-zone attribution (export drawn from the zone that
     # carries the tie) over a system-wide spread; fall back to the scalar.
     zone_interchange = None
-    if iso == "PJM":
+    if iso == "PJM" and include_interchange:
         zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
         if zone_interchange is not None:
             logger.info(
