@@ -50,6 +50,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
 from market_sim.data.hydro import load_hydro_budget  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _AGGREGATABLE_FUELS,
+    _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
     Generator,
     aggregate_fleet,
@@ -73,7 +74,9 @@ from market_sim.data.fuel import (  # noqa: E402
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
+    hsl_potential_mw,
     inject_offshore_wind_availability,
+    load_ercot_hsl_hourly,
     load_renewable_profiles,
 )
 from market_sim.model.commitment import (  # noqa: E402
@@ -994,13 +997,6 @@ def _generation_twh(result, context: FleetContext) -> dict[str, float]:
     return twh
 
 
-def _curtailment_pct(potential: float, dispatched: float) -> float:
-    """Return curtailed energy as a percentage of available potential."""
-    if potential <= 0.0:
-        return 0.0
-    return 100.0 * max(potential - dispatched, 0.0) / potential
-
-
 def _print_table(title: str, rows: list[tuple]) -> None:
     """Print a titled, column-aligned text table."""
     print(f"\n  {title}")
@@ -1092,19 +1088,109 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     ))
     _print_table("Zonal prices", price_rows)
 
-    wind_curt = _curtailment_pct(
-        context.wind_potential_mwh, float(result.wind_dispatched.sum())
-    )
-    solar_curt = _curtailment_pct(
-        context.solar_potential_mwh, float(result.solar_dispatched.sum())
-    )
-    _print_table("Renewable curtailment", [
-        ("resource", "installed GW", "curtailed %"),
-        ("wind", f"{context.wind_cap_mw / 1e3:.2f}", f"{wind_curt:.1f}"),
-        ("solar", f"{context.solar_cap_mw / 1e3:.2f}", f"{solar_curt:.1f}"),
-    ])
+    _report_curtailment(year, iso, result, context, full_year)
 
     _report_hourly_correlation(year, iso, result, context, full_year)
+
+
+def _report_curtailment(
+    year: int, iso: str, result, context: FleetContext, full_year: bool
+) -> None:
+    """Print the headline modeled-vs-reported renewable curtailment metric.
+
+    Modeled curtailment is the dispatch's unused wind/solar potential. For
+    ERCOT years with a built HSL parquet (scripts/build_ercot_hsl.py) the
+    reported curtailment — ERCOT's telemetered ``HSL - GEN`` — is printed
+    beside it, with the monthly shape, mirroring the CAISO P6 pattern: a
+    transmission-constrained dispatch fed uncurtailed potential should
+    reproduce both the level and the seasonality of real curtailment. The
+    reported comparison is suppressed on a sub-annual smoke run, and the
+    table falls back to model-only columns when no HSL data covers the year.
+    """
+    hsl = load_ercot_hsl_hourly(year) if iso == "ERCOT" else None
+    compare = hsl is not None and full_year
+
+    caps = {"wind": context.wind_cap_mw, "solar": context.solar_cap_mw}
+    potential = {
+        "wind": context.wind_potential_mwh,
+        "solar": context.solar_potential_mwh,
+    }
+    dispatched = {
+        "wind": np.asarray(result.wind_dispatched, dtype=float).sum(axis=0),
+        "solar": np.asarray(result.solar_dispatched, dtype=float).sum(axis=0),
+    }
+
+    rows: list[tuple] = [(
+        "resource", "installed GW", "potential TWh",
+        "model TWh", "model %", "reported TWh", "reported %",
+    )]
+    for fuel in ("wind", "solar"):
+        pot_mwh = potential[fuel]
+        curt_mwh = max(pot_mwh - float(dispatched[fuel].sum()), 0.0)
+        reported_twh = reported_pct = "—"
+        if compare:
+            rep_curt = float(
+                (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"])
+                .clip(lower=0.0).sum()
+            )
+            rep_pot = float(hsl[f"{fuel}_hsl_mw"].sum())
+            reported_twh = f"{rep_curt / _MWH_PER_TWH:.2f}"
+            reported_pct = (
+                f"{100.0 * rep_curt / rep_pot:.1f}" if rep_pot > 0 else "—"
+            )
+        rows.append((
+            fuel,
+            f"{caps[fuel] / 1e3:.2f}",
+            f"{pot_mwh / _MWH_PER_TWH:.2f}",
+            f"{curt_mwh / _MWH_PER_TWH:.2f}",
+            f"{100.0 * curt_mwh / pot_mwh:.1f}" if pot_mwh > 0 else "—",
+            reported_twh,
+            reported_pct,
+        ))
+    _print_table("Renewable curtailment — modeled vs reported", rows)
+    if hsl is None:
+        print(
+            f"    (no reported HSL data for {iso} {year}; for ERCOT, build "
+            "inputs/raw-data/ercot-hsl/ with scripts/build_ercot_hsl.py — "
+            "2024+ needs the NP6 report uploads)"
+        )
+        return
+    if not compare:
+        print("    (reported comparison suppressed -- full 8760h run "
+              "required)")
+        return
+
+    # Monthly shape: model re-curtailment vs reported, GWh per month. The
+    # model's hourly potential is the same rescaled HSL series the dispatch
+    # consumed (renewables.hsl_potential_mw), so the comparison isolates
+    # *when* the model curtails, not profile-construction differences.
+    month_idx = _hour_to_month_index(HOURS_PER_YEAR)
+    monthly: dict[str, np.ndarray] = {}
+    for fuel in ("wind", "solar"):
+        pot_mw = hsl_potential_mw(iso, year, fuel)
+        model_curt = np.clip(pot_mw - dispatched[fuel][:HOURS_PER_YEAR], 0.0, None)
+        rep_curt = (
+            (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"])
+            .clip(lower=0.0).to_numpy(dtype=float)
+        )
+        monthly[f"{fuel}_model"] = np.bincount(
+            month_idx, weights=model_curt, minlength=12
+        ) / 1e3
+        monthly[f"{fuel}_reported"] = np.bincount(
+            month_idx, weights=rep_curt, minlength=12
+        ) / 1e3
+    monthly_rows: list[tuple] = [
+        ("month", "wind model", "wind rptd", "solar model", "solar rptd"),
+    ]
+    for m in range(12):
+        monthly_rows.append((
+            str(m + 1),
+            f"{monthly['wind_model'][m]:.0f}",
+            f"{monthly['wind_reported'][m]:.0f}",
+            f"{monthly['solar_model'][m]:.0f}",
+            f"{monthly['solar_reported'][m]:.0f}",
+        ))
+    _print_table("Monthly curtailment (GWh)", monthly_rows)
 
 
 def _report_hourly_correlation(

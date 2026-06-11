@@ -1285,6 +1285,72 @@ def _print_thermal_annual(year, model_twh, btm, e923_annual) -> None:
     _print_table(rows)
 
 
+def _print_curtailment(year: int, model_hourly: dict) -> None:
+    """[3e] Renewable curtailment — model re-curtailment vs reported HSL−GEN.
+
+    The headline curtailment metric (CAISO P6 pattern): the dispatch is fed
+    ERCOT's uncurtailed HSL potential, so its unused wind/solar should
+    reproduce the level *and* monthly shape of ERCOT's reported curtailment.
+    Reported curtailment comes from the per-year HSL parquet
+    (scripts/build_ercot_hsl.py); the model's hourly potential is the same
+    rescaled HSL series the dispatch consumed (renewables.hsl_potential_mw).
+    Prints a data-needed note when the year's HSL parquet has not been built
+    (2024+ needs the NP6 report uploads).
+
+    Caveat: re-reporting a bundle that was *solved* before the year's HSL
+    parquet existed overstates model curtailment — that run consumed
+    delivered (already-curtailed) profiles, not this potential. Re-solve the
+    year after building a new HSL parquet.
+    """
+    from market_sim.data.renewables import (
+        hsl_potential_mw,
+        load_ercot_hsl_hourly,
+    )
+
+    hsl = load_ercot_hsl_hourly(year)
+    if hsl is None:
+        print(f"\n  [3e] Renewable curtailment — {year}: no ERCOT HSL "
+              "parquet; build with scripts/build_ercot_hsl.py (2024+ needs "
+              "the NP6 report uploads under inputs/raw-data/ercot-hsl/np6/)")
+        return
+    print(f"\n  [3e] Renewable curtailment — {year}  (model re-curtailment "
+          "vs ERCOT reported HSL − GEN)")
+    rows = [("fuel", "potential TWh", "model TWh", "model %",
+             "reported TWh", "reported %")]
+    monthly: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for fuel in ("wind", "solar"):
+        pot = hsl_potential_mw("ERCOT", year, fuel)
+        model = model_hourly.get(fuel, np.zeros(_HOURS_PER_YEAR))
+        T = min(pot.shape[0], model.shape[0])
+        model_curt = np.clip(pot[:T] - model[:T], 0.0, None)
+        rep_curt = (
+            (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"])
+            .clip(lower=0.0).to_numpy(dtype=float)[:T]
+        )
+        rep_pot = float(hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float)[:T].sum())
+        pot_sum = float(pot[:T].sum())
+        rows.append((
+            fuel,
+            f"{pot_sum / _MWH_PER_TWH:8.2f}",
+            f"{model_curt.sum() / _MWH_PER_TWH:8.2f}",
+            f"{100.0 * model_curt.sum() / pot_sum:6.1f}" if pot_sum else "—",
+            f"{rep_curt.sum() / _MWH_PER_TWH:8.2f}",
+            f"{100.0 * rep_curt.sum() / rep_pot:6.1f}" if rep_pot else "—",
+        ))
+        monthly[fuel] = (
+            _hourly_to_monthly(model_curt), _hourly_to_monthly(rep_curt),
+        )
+    _print_table(rows)
+    rows = [("GWh/month",) + _MONTH_NAMES]
+    for fuel in ("wind", "solar"):
+        mdl, rpt = monthly[fuel]
+        rows.append((f"{fuel} model",)
+                    + tuple(f"{v / 1e3:5.0f}" for v in mdl))
+        rows.append((f"{fuel} rptd",)
+                    + tuple(f"{v / 1e3:5.0f}" for v in rpt))
+    _print_table(rows)
+
+
 # Non-fossil / residual classes surfaced in their own table: the dispatchable
 # oil peaker plus the must-run injected classes (biomass, hydro, OTHER).
 _NONFOSSIL_REPORT_CLASSES: tuple[str, ...] = ("oil", "biomass", "hydro", "OTHER")
@@ -1880,6 +1946,7 @@ def report_run(run_dir: Path) -> None:
                                 & (storage_all["pass"] == pass_label)],
                     e930,
                 )
+            _print_curtailment(year, model_hourly)
             _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
                            btm, e923_annual)
             if e930 is not None:
