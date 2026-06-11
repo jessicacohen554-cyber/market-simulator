@@ -1,6 +1,6 @@
 """Derive measured zone load shares from per-zone ISO load archives.
 
-Two modes, one per ISO with a per-zone load upload:
+Three modes, one per ISO with a per-zone load upload:
 
 ``ercot``
     Reads the ERCOT "Actual System Load by Weather Zone" (NP6-345-CD) daily
@@ -16,11 +16,22 @@ Two modes, one per ISO with a per-zone load upload:
     ``eia_loader._CAISO_TAC_ZONE_WEIGHTS`` mapping the hourly-shape loader
     uses.
 
-Both print the per-day raw-zone shares (to expose seasonal variability) and
-the averaged model-zone shares that feed ``load_share`` in
+``nyiso``
+    Reads the NYISO OASIS "pal" actual-load CSVs (upload U3:
+    ``NYISO_load_actuals_<year>.csv``) under
+    ``inputs/raw-data/zone-specific-demand/NYISO/`` and aggregates the eleven
+    NYISO settlement zones (A–K) onto the model's five transmission zones
+    (A+B+C+D+E → Upstate_West; F+G → Capital_Hudson; H+I → Lower_Hudson;
+    J → NYC; K → Long_Island) via the same
+    ``eia_loader._NYISO_LOAD_ZONE_GROUPS`` mapping the hourly-shape loader
+    uses.
+
+All modes print the per-day raw-zone shares (to expose seasonal variability)
+and the averaged model-zone shares that feed ``load_share`` in
 ``iso_configs``.
 
-Run from the repo root: ``python scripts/derive_load_shares.py [ercot|caiso]``
+Run from the repo root:
+    ``python scripts/derive_load_shares.py [ercot|caiso|nyiso]``
 """
 
 from __future__ import annotations
@@ -36,10 +47,14 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.data.eia_loader import _CAISO_TAC_ZONE_WEIGHTS  # noqa: E402
+from market_sim.data.eia_loader import (  # noqa: E402
+    _CAISO_TAC_ZONE_WEIGHTS,
+    _NYISO_LOAD_ZONE_GROUPS,
+)
 
 REF = REPO / "data" / "reference"
 CAISO_TAC_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
+NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
 
 WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "WEST"]
 
@@ -58,6 +73,10 @@ WZ_TO_ZONE = {
 ZONES = ["West", "Panhandle", "North", "Houston", "South_Central", "South"]
 
 CAISO_ZONES = ["NP15", "ZP26", "SP15"]
+
+NYISO_ZONES = [
+    "Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"
+]
 
 
 def _daily_totals() -> list[tuple[str, dict[str, float]]]:
@@ -165,17 +184,131 @@ def derive_caiso() -> None:
         )
 
 
+def derive_nyiso() -> None:
+    """Derive NYISO model-zone load shares from OASIS "pal" actual-load CSVs.
+
+    Reads all ``NYISO_load_actuals_<year>.csv`` files from
+    ``inputs/raw-data/zone-specific-demand/NYISO/`` (upload U3). Each file
+    must carry columns ``Time Stamp`` (Eastern local, hour-beginning),
+    ``Name`` (NYISO zone name CAPITL/CENTRL/… or letter A–K), and
+    ``Load`` (MW).
+
+    Prints per-day zone shares (to expose seasonal variability), the annual-
+    average model-zone shares to paste into ``iso_configs._nyiso_config()``,
+    and the seasonal spread per model zone.
+    """
+    files = sorted(NYISO_DIR.glob("NYISO_load_actuals_*.csv"))
+    if not files:
+        raise SystemExit(
+            f"no NYISO_load_actuals_<year>.csv found under {NYISO_DIR}/ "
+            "(upload U3: NYISO OASIS 'pal' actual-load hourly CSVs)"
+        )
+
+    frames = []
+    for f in files:
+        df = pd.read_csv(f)
+        # Flexible column detection to match NYISO OASIS CSV naming variants.
+        ts_col = next(
+            (c for c in df.columns if c.lower().replace(" ", "_") in
+             ("time_stamp", "timestamp", "datetime", "date_time")),
+            None,
+        )
+        zone_col = next(
+            (c for c in df.columns if c.lower() in ("name", "zone", "zone_name")),
+            None,
+        )
+        load_col = next(
+            (c for c in df.columns if c.lower() in ("load", "mw", "load_mw")),
+            None,
+        )
+        if ts_col is None or zone_col is None or load_col is None:
+            print(
+                f"  WARNING: {f.name} missing expected columns "
+                f"(need timestamp, zone-name, MW); skipping"
+            )
+            continue
+        sub = pd.DataFrame({
+            "ts": pd.to_datetime(df[ts_col], errors="coerce"),
+            "zone": df[zone_col].astype(str).str.strip(),
+            "mw": pd.to_numeric(df[load_col], errors="coerce"),
+        }).dropna()
+        if sub["ts"].dt.tz is not None:
+            sub["ts"] = sub["ts"].dt.tz_localize(None)
+        frames.append(sub)
+
+    if not frames:
+        raise SystemExit("No usable NYISO load files found.")
+
+    df = pd.concat(frames, ignore_index=True)
+    df["mzone"] = df["zone"].map(_NYISO_LOAD_ZONE_GROUPS)
+    unmapped = df["mzone"].isna()
+    if unmapped.any():
+        print(
+            f"  WARNING: zones not in mapping (skipped): "
+            f"{sorted(df.loc[unmapped, 'zone'].unique())}"
+        )
+        df = df[~unmapped]
+
+    # Keep only the eleven settlement zones (drop any system totals).
+    known = set(_NYISO_LOAD_ZONE_GROUPS.keys())
+    df = df[df["zone"].isin(known)]
+
+    df["day"] = df["ts"].dt.strftime("%Y-%m-%d")
+    pivot = df.pivot_table(index="day", columns="mzone", values="mw", aggfunc="sum")
+    pivot = pivot.reindex(columns=NYISO_ZONES, fill_value=0.0)
+    shares = pivot.div(pivot.sum(axis=1), axis=0)
+
+    n_hours = df["ts"].nunique()
+    print(
+        f"=== Model-zone share of NYISO load, {len(pivot)} days "
+        f"({n_hours} hours; full year = 8760) ==="
+    )
+    hdr = "day".ljust(12) + "".join(z[:9].rjust(12) for z in NYISO_ZONES)
+    print(hdr)
+    for day, row in shares.iterrows():
+        print(
+            day.ljust(12)
+            + "".join(f"{row[z]:11.1%} " for z in NYISO_ZONES)
+        )
+
+    avg = shares.mean()
+    print("\n=== Model-zone load_share (averaged; paste into iso_configs) ===")
+    for z in NYISO_ZONES:
+        print(f"  {z:16s} {avg[z]:.4f}")
+    print(f"  {'sum':16s} {avg.sum():.4f}")
+
+    print("\n=== Seasonal spread per model zone ===")
+    for z in NYISO_ZONES:
+        vals = shares[z]
+        print(
+            f"  {z:16s} min {vals.min():6.1%}  max {vals.max():6.1%}  "
+            f"spread {vals.max() - vals.min():5.1%}"
+        )
+
+    print(
+        "\n=== Zone A–K → model-zone mapping ===\n"
+        "  A B C D E → Upstate_West  (upstate generation belt)\n"
+        "  F G       → Capital_Hudson (Capital District + Hudson Valley)\n"
+        "  H I       → Lower_Hudson   (Millwood + Dunwoodie)\n"
+        "  J         → NYC\n"
+        "  K         → Long_Island\n"
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "iso", nargs="?", default="ercot", choices=("ercot", "caiso"),
+        "iso", nargs="?", default="ercot",
+        choices=("ercot", "caiso", "nyiso"),
         help="which ISO's per-zone load archive to derive shares from",
     )
     args = parser.parse_args()
     if args.iso == "ercot":
         derive_ercot()
-    else:
+    elif args.iso == "caiso":
         derive_caiso()
+    else:
+        derive_nyiso()
 
 
 if __name__ == "__main__":
