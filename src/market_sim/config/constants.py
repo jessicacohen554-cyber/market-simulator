@@ -182,6 +182,15 @@ PUMPED_STORAGE_DURATION_HOURS: float = 10.0
 # Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia Energy
 # Storage Handbook; DOE PSH fact sheet cites ~80%).
 PUMPED_STORAGE_RTE: float = 0.80
+# Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form
+# opportunity cost of the regulation/reserve duty the energy-only LP does not
+# see (PSH pure O&M is < $1/MWh; with no adder the LP arbitrages PS every day
+# the spread clears RTE losses and overshoots observed PS energy ~2-3x).
+# PJM: $10 calibrated so PJM PS lands near its observed ~3.5-4 TWh/yr of
+# EIA-923 gross generation (calibration-log 2026-06-10, "pjm 3 ps-adder").
+# ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays
+# off until a CAISO calibration pass measures Helms' reserve duty.
+PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
 
 # Gas-fired generation availability factors by ISO.
 # Source: NERC GADS 2019-2023.
@@ -213,12 +222,27 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
 # backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal
 # refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2).
+# Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly
+# net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly
+# exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy);
+# re-run with --check after an EIA-923 refresh.
 # Tier: 3 (calibration)
 NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     "ERCOT": {
         2023: [1.00, 1.00, 0.89, 0.75, 0.78, 0.95, 0.99, 0.99, 0.99, 0.87, 0.91, 1.00],
         2024: [0.93, 1.00, 0.82, 0.74, 0.78, 0.98, 0.92, 0.97, 0.99, 0.68, 0.75, 1.00],
         2025: [0.97, 1.00, 1.00, 0.92, 0.89, 1.00, 1.00, 0.99, 0.94, 0.76, 0.91, 1.00],
+    },
+    # CAISO = Diablo Canyon units 1+2 (EIA plant 6099, fleet nameplate
+    # 2,240 MW). Monthly EIA-923 net generation / (nameplate x hours in
+    # month), clipped at 1.0 — the ERCOT convention. The dips are the actual
+    # staggered ~18-month refueling cadence: U2 down Oct-Dec 2023, U1 down
+    # Apr-May 2024, U1 Apr-May 2025 and U2 Oct 2025.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    "CAISO": {
+        2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
+        2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
+        2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
     },
 }
 
@@ -1059,33 +1083,120 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "NEISO": {"wind": 1400.0, "solar": 2700.0},
 }
 
-# CAISO WECC import supply curve tranches: (name, capacity MW, VOM $/MWh).
-# These represent the aggregate WECC supply merit order available to CAISO.
+# Priced import/export node, per ISO (playbook §8.2): an interconnected ISO
+# models its neighbors as a zero-load external zone holding a stepped import
+# supply curve (tranches the LP dispatches in merit order) and a set of
+# export sinks (negative-generation blocks priced at the neighbors'
+# willingness-to-pay). Net interchange then responds to the ISO's own prices:
+# imports clear when the internal price exceeds a tranche's cost, exports
+# when it falls below a sink's price.
 #
-# CALIBRATION TODO (high priority before running CAISO scenarios):
-# 1. Pull CAISO net interchange from EIA-930 hourly data (2022-2024).
-# 2. Correlate hourly import MW vs. CAISO day-ahead price.
-# 3. Fit a 3-4 step supply curve to the import-vs-price scatter.
-# 4. Validate aggregate import capacity against CAISO OASIS path ratings
-#    (Path 15, Path 26, Path 46, PDCI — sum ~12-15 GW).
-# 5. Validate export capability against CAISO curtailment + export data.
-#
-# Current values are engineering estimates, not empirically fitted.
-# Source: engineering judgment from EIA-930 visual inspection, CAISO OASIS.
-WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = [
-    ("PNW_hydro", 3000.0, 15.0),      # Pacific NW hydro — cheap but limited
-    ("DSW_CCGT", 5000.0, 35.0),        # Desert SW combined-cycle gas
-    ("DSW_CT", 4000.0, 55.0),          # Desert SW combustion turbine
-    ("Expensive_import", 3000.0, 80.0), # High-cost marginal import
-]
+# IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
+IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
+    # CAISO WECC import supply merit order.
+    #
+    # CALIBRATION TODO (high priority before running CAISO scenarios —
+    # CAISO P9, doc 06): fit to the EIA-930 CISO net-interchange duration
+    # curve exactly as the PJM block below was fitted
+    # (scripts/derive_import_tranches.py), and validate aggregate capacity
+    # against CAISO OASIS path ratings (Path 15/26/46, PDCI — ~12-15 GW).
+    # Current values are engineering estimates, not empirically fitted.
+    # Source: engineering judgment from EIA-930 visual inspection, CAISO OASIS.
+    "CAISO": [
+        ("PNW_hydro", 3000.0, 15.0),      # Pacific NW hydro — cheap but limited
+        ("DSW_CCGT", 5000.0, 35.0),        # Desert SW combined-cycle gas
+        ("DSW_CT", 4000.0, 55.0),          # Desert SW combustion turbine
+        ("Expensive_import", 3000.0, 80.0), # High-cost marginal import
+    ],
+    # PJM scarcity imports (MISO / NYISO / the Carolinas selling into PJM
+    # when PJM prices spike). Total capacity bounds the deepest measured
+    # net-import hour (−2.9 GW in 2023, −3.8 GW in 2024). Prices sit above
+    # every PJM export sink so import and export blocks can never clear
+    # against each other in the same hour. Tier 3 (calibration) — fitted to
+    # the 2023 net-interchange duration curve; see EXPORT_TRANCHES["PJM"]
+    # for the method and sources.
+    "PJM": [
+        ("import_scarcity_1", 1000.0, 46.0),
+        ("import_scarcity_2", 3000.0, 60.0),
+    ],
+}
 
-# CAISO export capability to WECC (MW).
-# Source: placeholder pending EIA-930 calibration.
-WECC_EXPORT_CAP_MW: float = 5000.0
+# Export sinks: each block absorbs up to its capacity as *negative*
+# generation, paying its $/MWh price (the LP credits the price as avoided
+# cost, so the ISO exports whenever its marginal cost is below it).
+EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
+    # CAISO: a single free sink for midday solar oversupply (exports clear
+    # only against curtailment, not on price). Capacity is a placeholder
+    # pending EIA-930 calibration (CAISO P9).
+    "CAISO": [
+        ("export_sink", 5000.0, 0.0),
+    ],
+    # PJM was a ~40 TWh / +4,564 MW-avg net exporter in 2023 (EIA-930; PJM
+    # tie-line file). Blocks proxy the neighbor demand stack (NYISO cables,
+    # MISO, the Carolinas/TVA): capacities and prices fitted so the modeled
+    # net-interchange duration curve tracks the measured 2023 curve against
+    # the pjm_6 baseline price duration (quantile pairing; duration RMSE
+    # ~570 MW, annual 40.0 TWh = 100% of actual, diurnal corr 0.49). The
+    # same curve over-exports 2024 by ~+37% (PJM load growth cut exports at
+    # an unchanged price level) — re-fit per forward vintage if it matters.
+    # Backcasts ignore these blocks: they serve the measured tie-line
+    # schedule instead (eia_loader.pjm_net_interchange). Tier 3
+    # (calibration) — fitted by scripts/derive_import_tranches.py from
+    # inputs/raw-data/iso-specific-transmission/
+    # PJM_2023_import_export_act_sch_interchange.csv +
+    # results/calibration/pjm_6_ccpeak.
+    "PJM": [
+        ("export_firm", 700.0, 42.0),
+        ("export_peak", 1700.0, 36.0),
+        ("export_mid", 1700.0, 30.0),
+        ("export_shoulder", 1800.0, 25.0),
+        ("export_offpeak", 1800.0, 20.0),
+        ("export_trough", 2100.0, 18.0),
+    ],
+}
 
-# WECC import tranche forced outage rate.
-# Source: NERC GADS — representative availability for out-of-state imports.
-WECC_IMPORT_EFORD: float = 0.02
+# Name of each ISO's external import/export zone. CAISO's is baked into its
+# topology (_caiso_config); PJM's is appended on demand by
+# transmission.extend_with_import_node, so the calibrated 8-zone backcast
+# topology (which serves the *measured* interchange schedule instead) is
+# untouched.
+IMPORT_ZONE: dict[str, str] = {
+    "CAISO": "WECC_import",
+    "PJM": "PJM_external",
+}
+
+# Links joining an appended external zone to its border zones:
+# (border zone, TTC MW). CAISO needs no entry — its links are part of its
+# topology (Path 66/COI, Path 46/WOR). PJM TTCs bound the widest measured
+# 2023-24 per-border-zone tie flow (eia_loader.pjm_zonal_interchange):
+# ComEd −2.3..+7.4 GW, AEP-Ohio −1.0..+4.8, ATSI −5.7..+5.0, Dominion
+# −6.2..+3.1, EMAAC −0.1..+5.7. West-APS / Central-PA / SWMAAC carry no
+# mapped ties. Source: PJM tie-line actual interchange
+# (inputs/raw-data/iso-specific-transmission/). Tier 3 — verify against
+# PJM's published interface ratings.
+IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
+    "PJM": [
+        ("PJM_ComEd", 7500.0),
+        ("PJM_AEP_Ohio", 4900.0),
+        ("PJM_ATSI", 5800.0),
+        ("PJM_Dominion", 6300.0),
+        ("PJM_EMAAC", 5700.0),
+    ],
+}
+
+# Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
+# carry a generation-like availability (NERC GADS — representative for
+# out-of-state generation); PJM's blocks are scheduled interties whose
+# availability is already embedded in the fitted capacities.
+IMPORT_EFORD: dict[str, float] = {
+    "CAISO": 0.02,
+    "PJM": 0.0,
+}
+
+# Backwards-compatible aliases for the original CAISO-only WECC names.
+WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = IMPORT_TRANCHES["CAISO"]
+WECC_EXPORT_CAP_MW: float = EXPORT_TRANCHES["CAISO"][0][1]
+WECC_IMPORT_EFORD: float = IMPORT_EFORD["CAISO"]
 
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
