@@ -213,6 +213,7 @@ def main() -> None:
     # plant_group (the same source _fleet_group_by_code / the benchmark backfill
     # use). Without this every non-ERCOT facility missed the bin sheet, fell
     # through QUALIFYING_PLANT_GROUPS, and produced zero unit-outage windows.
+    name_by_code: dict[int, str] = {}
     if iso == "ERCOT":
         bins = pd.read_csv(args.bins)
         group_by_code = {
@@ -223,11 +224,18 @@ def main() -> None:
         from market_sim.config.iso_configs import get_iso_config
         from market_sim.data.fleet import load_fleet_from_csv
         iso_config = get_iso_config(iso)
-        group_by_code = {
-            int(g.plant_code): g.plant_group
-            for g in load_fleet_from_csv(iso, iso_config)
-            if int(g.plant_code) > 0 and g.plant_group
-        }
+        group_by_code = {}
+        for g in load_fleet_from_csv(iso, iso_config):
+            if int(g.plant_code) > 0 and g.plant_group:
+                group_by_code[int(g.plant_code)] = g.plant_group
+                name_by_code[int(g.plant_code)] = g.name
+    # Facility names for units re-keyed by the CEMS->EIA split-plant remap
+    # (their CAMPD facilityName is the legacy plant's).
+    remap_names = {
+        c: name_by_code[c]
+        for c in set(campd.CAMPD_UNIT_PLANT_REMAP.values())
+        if c in name_by_code
+    }
 
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
@@ -240,6 +248,18 @@ def main() -> None:
             df = _load_unit_year(state, year)
             if df.empty:
                 continue
+            # CEMS->EIA split-plant remap (campd.CAMPD_UNIT_PLANT_REMAP):
+            # re-key units that report under a legacy ORIS to the EIA plant
+            # the model fleet carries (AES Alamitos / Huntington Beach CCGTs),
+            # BEFORE the group lookup and the peaker-exclusion check, so the
+            # new CC plants get their own windows and the legacy steamers'
+            # exclusion does not swallow them.
+            df["facilityId"] = [
+                campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
+                for f, u in zip(
+                    df["facilityId"].astype(int), df["unitId"].astype(str)
+                )
+            ]
             for fac_id, fac in df.groupby("facilityId", observed=True):
                 group = group_by_code.get(int(fac_id))
                 # Only the coal/CC/gas-steam fleet carries an outage overlay;
@@ -249,7 +269,9 @@ def main() -> None:
                     continue
                 if int(fac_id) in ST_GAS_PEAKER_PLANTS:
                     continue
-                fac_name = str(fac["facilityName"].iloc[0])
+                fac_name = remap_names.get(
+                    int(fac_id), str(fac["facilityName"].iloc[0])
+                )
                 units = {
                     uid: _unit_year_grid(u, year)
                     for uid, u in fac.groupby("unitId", observed=True)
