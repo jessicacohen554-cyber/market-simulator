@@ -31,6 +31,12 @@ unchanged (knob defaults to 0 and PJM bundles are untouched).
   identical-config Run-77 re-run on highspy 1.14.0 moved class splits
   several TWh at an equal objective (cheap-gas PRB/gas committed bid
   plateau admits alternate optima) — see the calibration-log E2 entry.
+- **Docs realigned** (sync-docs): methodology-spec storage section now
+  documents the per-unit discharge-cost adders (the "flag if unrealistic
+  cycling appears" sensitivity fired and was resolved); claude.md objective
+  carries the `dis_cost×Dis` term; parameter registry regenerated
+  (battery_dispatch_adder + upstream dual-fuel/import params).
+
 ## 2026-06-11 (CAISO P6 — uncurtailed renewable potential, the HSL analogue)
 
 CAISO backcasts now feed the dispatch *uncurtailed* wind/solar potential so
