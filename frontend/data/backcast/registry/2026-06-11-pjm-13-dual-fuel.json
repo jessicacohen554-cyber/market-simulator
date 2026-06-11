@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-11-pjm-13-dual-fuel",
+  "label": "pjm 13 dual fuel",
+  "date": "2026-06-11",
+  "shorthand": "pjm-13-dual-fuel",
+  "definition": "pjm 13: run-12 keeper config on current main (incl. oil/gas dual-fuel switching); 2025 added to the PJM backcast",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-11-pjm-13-dual-fuel.js",
+  "bundle": "results/calibration/pjm_13_2025"
+}
