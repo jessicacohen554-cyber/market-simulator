@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run85-coal-soft",
+  "label": "run85 coal soft",
+  "date": "2026-06-12",
+  "shorthand": "run85-coal-soft",
+  "definition": "Run 85 (REJECTED probe): softer coal dose \u2014 lignite sigmoid floor 0.75/ceil 1.00, PRB floor 0.74/follower 0.64 (about half the run84 discount). Lignite recovers to +2.3/-8.8/+1.9 (keeper -12.8/-23.8/+0.7) and hourly coal/gas dispatch shape improves, but the 2024 gas collateral fails the bar: CT_PEAKER -17.9 (keeper -12.8) and ST_GAS -6.5 (keeper -2.7). 2024 ledger: coal +2.95 TWh taken from CC_REGULAR -1.14 but also ST_GAS -0.70 / CT_PEAKER -0.42 (the already-short donors adjacent in merit order) \u2014 confirms no pure-coal dose exists. LMP MAE 31.0/9.1/11.6 vs keeper 30.9/8.9/11.7 (within the +/-$1 gate). Keeper stays run 79.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run85-coal-soft.js",
+  "bundle": "results/calibration/run85_coal_soft"
+}
