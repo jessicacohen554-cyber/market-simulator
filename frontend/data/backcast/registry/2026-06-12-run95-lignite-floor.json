@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run95-lignite-floor",
+  "label": "run95 lignite floor",
+  "date": "2026-06-12",
+  "shorthand": "run95-lignite-floor",
+  "definition": "Run 95: MEASURED PROBE, not a keeper - lignite-floor full-dose endpoint (0.75 -> 0.69, 2x the 0.72 candidate; interpolate) on the run-94 base (CT_PEAKER econ_high delta -0.20) + Kiamichi bins v2 (peaking 15 -> 30: split 20/65/15 -> 20/50/30). Measures: LIG 2024 gain per floor unit, 2023 coal-split leakage, ML23 guard slope, PRB 2024 intra-coal steal, Kiamichi capacity-trim response. MEASURED (vs run92, TWh): LIG +0.62/+0.71/+0.04 -> LIG 2024 -0.96 FLIPS TO PASS; PRB -0.16/-0.15/-0.00 (intra-coal steal); CC -0.36/-0.40/-0.02; ST_GAS ~0; floor-vector guards IMPROVE (ML23 582 -> 515, LS23 797 -> 769); 2023 coal split +1.5 -> +2.2% (+0.7 leakage, passes); LMP 32.21/7.42/2.12 (held). Kiamichi bins v2 is a DEAD LEVER: 6.06/6.85/6.17 -> 6.03/6.77/6.17 TWh - the over-run is bid-price-driven, not capacity-bound; v2 NOT committed to inputs. Still 6 fails here only because the run-94 CT dose (gamma=1) keeps ST_GAS 2025 flipped (-1.15); the floor vector itself flips lignite 2024 with no new fail -> feeds run 96.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run95-lignite-floor.js",
+  "bundle": "results/calibration/run95_lignite_probe"
+}
