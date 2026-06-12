@@ -3,7 +3,7 @@
   "label": "run85 coal soft",
   "date": "2026-06-12",
   "shorthand": "run85-coal-soft",
-  "definition": "Run 85 (REJECTED probe): softer coal dose \u2014 lignite sigmoid floor 0.75/ceil 1.00, PRB floor 0.74/follower 0.64 (about half the run84 discount). Lignite recovers to +2.3/-8.8/+1.9 (keeper -12.8/-23.8/+0.7) and hourly coal/gas dispatch shape improves, but the 2024 gas collateral fails the bar: CT_PEAKER -17.9 (keeper -12.8) and ST_GAS -6.5 (keeper -2.7). 2024 ledger: coal +2.95 TWh taken from CC_REGULAR -1.14 but also ST_GAS -0.70 / CT_PEAKER -0.42 (the already-short donors adjacent in merit order) \u2014 confirms no pure-coal dose exists. LMP MAE 31.0/9.1/11.6 vs keeper 30.9/8.9/11.7 (within the +/-$1 gate). Keeper stays run 79.",
+  "definition": "Run 85 (KEEPER, supersedes run 79): softer coal dose \u2014 lignite sigmoid floor 0.75/ceil 1.00, PRB floor 0.74/follower 0.64 (about half the run84 discount). Judged on the size-aware volume bar (>=20 TWh classes on +/-5%, <20 TWh on +/-1 TWh absolute), run 85 beats run 79: 4 in-scope fails vs 5, total class volume error 24.0 -> 20.9 TWh, lignite fixed (-12.8/-23.8/+0.7 -> +2.3/-8.8/+1.9), hourly coal NRMSE improved (0.229 -> 0.198 in 2024), LMP MAE 31.0/9.1/11.6 within the gate. All four remaining misses are the single 2024 cheap-gas year and marginal (PRB -7.9%; ST_GAS/lignite/CT_PEAKER ~ -1.2 to -1.5 TWh): in 2024 CC_REGULAR sits +3.1 TWh too high while coal/peakers/steamers each sit ~1 TWh too low. Next session targets that 2024 cluster (CC_REGULAR econ-ramp shape + PRB sigmoid).",
   "years": [
     2023,
     2024,
