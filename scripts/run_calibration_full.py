@@ -968,6 +968,7 @@ def solve_and_persist(
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
     priced_interchange: bool = False,
+    hydro_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -1060,6 +1061,7 @@ def solve_and_persist(
             cc_derate_from_top=cc_derate_from_top,
             must_run_mw=must_run_total,
             priced_interchange=priced_interchange,
+            hydro_backfill_year=hydro_backfill_year,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1171,6 +1173,7 @@ def solve_and_persist(
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
         "priced_interchange": priced_interchange,
+        "hydro_backfill_year": hydro_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
         # years putting PRB committed bids on top of gas committed bids)
@@ -2681,6 +2684,17 @@ def main() -> None:
              "(no measured-schedule mode), off elsewhere; pass "
              "--no-priced-interchange to force the measured schedule.")
     parser.add_argument(
+        "--hydro-backfill-year", type=int, default=None,
+        help="Carry conventional-hydro plants that reported in this prior "
+             "year but not in the backcast year at their prior-year monthly "
+             "net generation (load_hydro_budget early-release path). The most "
+             "recent EIA-923 vintage is a monthly-survey-only release that "
+             "under-counts hydro until the final annual file lands (NEISO "
+             "2025: 5 of ~166 plants, 0.09 of ~6 TWh), and the missing inflow "
+             "is otherwise served by gas, inflating the modeled gas level. "
+             "Unset (default) loads the backcast year exactly as reported and "
+             "changes no existing run.")
+    parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
              "band rather than replacing it, so a re-tune need not restate the "
@@ -2791,6 +2805,7 @@ def main() -> None:
         cc_derate_from_top=args.cc_derate_from_top,
         priced_interchange=resolve_priced_interchange(
             args.priced_interchange, iso),
+        hydro_backfill_year=args.hydro_backfill_year,
         note=args.note,
     )
     report_run(run_dir)
