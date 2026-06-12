@@ -855,11 +855,13 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # a ~2x ceiling before the markup outprices waste at all), while the
     # at-actual 2023 months sit at $3.4-5.0 — runs 17/18 bit 2023's
     # Jan/Feb ($4.85-4.98) and pushed 2023 COAL_WC out of the 1 TWh cap,
-    # so the curve rises even later and steeper (mid 5.30, slope 3):
-    # ~1.2-1.3 at 2023's winter prices, ~1.35 at Feb/Dec-2025's $5.0-5.1,
-    # ~2.1 at Jan-2025's $6.86.
+    # so the curve rises even later and steeper (mid 5.15, slope 3):
+    # ~1.3-1.4 at 2023's winter prices, ~1.4 at Feb/Dec-2025's $5.0-5.1,
+    # ~2.1 at Jan-2025's $6.86. Midpoint split: 5.30 would release too
+    # much of Feb/Dec-2025 once the run-19 econ-ramp midpoint (curve-mid
+    # 0.35) lifts WC mid-band dispatch in both years.
     ("PJM", "waste"): {
-        "floor": 1.00, "ceil": 2.10, "gas_mid": 5.30, "gas_slope": 3.0},
+        "floor": 1.00, "ceil": 2.10, "gas_mid": 5.15, "gas_slope": 3.0},
 }
 
 
