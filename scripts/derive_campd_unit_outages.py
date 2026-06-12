@@ -320,11 +320,15 @@ def main() -> None:
                 # report opTime but never grossLoad (Seward's CFB boilers),
                 # so the gross-based detector is blind to them in every year.
                 # When NO unit at the facility reports any gross, rebuild the
-                # unit series as opTime-fraction x an equal share of the
-                # EIA-860 plant nameplate. Boiler<->generator id matching is
-                # unreliable at such plants, so the equal split (not the
-                # per-unit EIA match) is the capacity basis: one boiler down
-                # at a two-boiler CFB derates half the plant.
+                # unit series as a BINARY operated/idle proxy x an equal
+                # share of the EIA-860 plant nameplate: a boiler that
+                # operated at all in an hour was available (fractional
+                # opTime is cycling, not an outage — scaling by the fraction
+                # over-flags sustained part-load spans as outages under the
+                # coal rule). Boiler<->generator id matching is unreliable
+                # at such plants, so the equal split (not the per-unit EIA
+                # match) is the capacity basis: one boiler down at a
+                # two-boiler CFB derates half the plant.
                 if iso != "ERCOT" and all(p <= 0.0 for p in peaks.values()):
                     npl = npl_by_plant.get(int(fac_id), 0.0)
                     ot_units = {
@@ -335,7 +339,9 @@ def main() -> None:
                     if npl > 0.0 and ot_units:
                         share = npl / len(ot_units)
                         units = {
-                            uid: _unit_year_grid(u, year, col="opTime") * share
+                            uid: np.where(
+                                _unit_year_grid(u, year, col="opTime") > 0.0,
+                                share, 0.0)
                             for uid, u in ot_units.items()
                         }
                         peaks = {uid: float(g.max()) for uid, g in units.items()}
