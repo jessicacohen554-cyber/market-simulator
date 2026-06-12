@@ -234,7 +234,16 @@ Mid-C, Palo Verde), cite the proxy. Seasonal shaping (NW hydro year) where
 the data demands it. For *backcast* years with a measured interchange
 series, prefer serving the measured schedule (PJM precedent,
 `load_demand(include_interchange=...)`); the priced node is the forward
-mechanism and is validated with `--priced-interchange` runs.
+mechanism and is validated with `--priced-interchange` runs. **Wired
+default-on for PJM, NYISO and NEISO** (`_SCALAR_INTERCHANGE_ISOS`;
+`{nyiso,neiso}_net_interchange` read the EIA-930 `Total interchange` column,
+already export-positive so a net import is negative and lowers the residual
+the internal fleet serves). ERCOT (islanded, DC ties in its own extract) and
+CAISO (imports modeled by the `WECC_import` node, §8.1) stay out — netting
+their interchange into demand would double count. P9b (2026-06) closed both
+NYISO and NEISO smoke interchange rows this way: gas fell from +25.6% / +11.2%
+over EIA-923 to −9.8% / −5.0%, the served schedule matching the measured to
+duration RMSE 0 MW.
 
 ### 8.3 Curtailment as a first-class metric
 

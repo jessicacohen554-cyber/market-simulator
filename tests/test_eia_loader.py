@@ -246,9 +246,14 @@ class TestNYISODemand(unittest.TestCase):
         This holds for both the static-share (no U3) and measured-share (U3
         present) paths: the weight matrix always sums to 1.0 across zones per
         hour, so the column sum of the demand array equals the system series.
+        Interchange is disabled here so the reconciliation isolates the zonal
+        split; NYISO now serves the measured net-interchange schedule by
+        default (a net-import wedge that otherwise shifts the system total).
         """
         nyiso = get_iso_config("NYISO")
-        demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
+        demand = load_demand(
+            "NYISO", _NYISO_TEST_YEAR, nyiso, include_interchange=False
+        )
         system = _load_nyiso_hourly_demand(_NYISO_TEST_YEAR)
         self.assertIsNotNone(system)
         np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)
