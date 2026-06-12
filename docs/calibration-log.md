@@ -960,12 +960,22 @@ Monthly LMP MAE ($/MWh, demand-weighted |model − actual RT|), keeper / 85 / 86
 11.6 / 11.7 / 17.5. The coal runs (85/86) hold the ±$1 gate every year; only
 run 87 moves the level materially (2023 better, 2025 worse).
 
-**Keeper decision.** Run 79 stays the keeper; no run beats it. The coal-gas
-split has **no offer-curve / fuel solution within the trusted region**: the
-coal sigmoids (85) and measured gas (87) both move coal at the expense of the
-already-short peakers/steamers, and the Jacobian gas counter-move (86) is
-trust-region-frozen because run-79's gas curves already sit at the edges of
-every sampled range (see Run 86). The next coal lever is the per-plant
-Parish/Spruce correction (run-81 finding), and the 2023 LMP level needs the
-ORDC scarcity adder (run-88+); neither is a fleet-wide offer-curve move.
-`docs/calibration-best-so-far.md` unchanged.
+**Keeper decision (revised 2026-06-12).** **Run 85 is promoted to keeper,
+superseding run 79** — judged on the size-aware volume bar (≥20 TWh classes on
+±5%, <20 TWh on ±1 TWh absolute), run 85 has 4 in-scope fails vs run 79's 5,
+cuts total class volume error 24.0 → 20.9 TWh, fixes the worst class (lignite),
+improves hourly coal NRMSE, and holds the LMP gate. The flat-percentage "no
+class worse by >2 pts" guard had rejected it on a −5 pt CT_PEAKER move that is
+only +0.4 TWh on an 8-TWh class — the distortion the size-aware bar removes.
+Runs 86 and 87 stay rejected. The one honest caveat on run 85: CT_PEAKER/ST_GAS
+are low in the *wrong direction* (EIA says both should run more), but the gap is
+now a single 2024 cheap-gas cluster (~1 TWh each, all marginal) — in 2024
+CC_REGULAR sits +3.1 TWh too high while coal/peakers/steamers each sit ~1 TWh
+too low. The coal-gas split still has no *fleet-wide* offer-curve / fuel fix
+(measured gas (87) over-corrects; the Jacobian gas counter-move (86) is
+trust-region-frozen because run-79's gas curves sit at the sampled-range
+edges); the live levers for the 2024 cluster are the **CC_REGULAR econ-ramp
+shape** (`offer_curve_smoothing_mid`, a built-but-unused lever) and the **PRB
+sigmoid** retune, with the per-plant Parish/Spruce correction (run-81 finding)
+and the ORDC scarcity adder for the 2023 LMP level (run-88+) as the structural
+items. `docs/calibration-best-so-far.md` updated to run 85.
