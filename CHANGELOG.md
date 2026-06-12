@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-06-12 (CAISO import/export node calibrated — CAISO P9)
+
+Fitted `IMPORT_TRANCHES["CAISO"]` / `EXPORT_TRANCHES["CAISO"]` to the EIA-930
+CISO net-interchange duration curve, replacing the placeholder engineering
+estimates. This is the calibration follow-up to defaulting the priced node on
+(below).
+
+- **Method.** `scripts/derive_import_tranches.py` measured-only mode against the
+  pooled 2023-2025 CISO series (the existing CAISO bundle has no priced node, so
+  a bundle-mode price fit would be circular). CAISO is a heavy, growing net
+  importer: −28.9 / −32.4 / −36.2 TWh and imports in 86% / 89% / 91% of hours.
+- **New tranches.** Six import blocks tiling the import duration curve —
+  PNW_hydro_base (COI firm hydro baseload) → PNW_midC → DSW_solar_PV → DSW_CCGT
+  → DSW_CT → WECC_scarcity, 11.4 GW total — plus two export sinks (export_solar
+  midday surplus + export_curtail $0 floor, 6.5 GW). Prices are pre-carbon
+  delivered WECC energy costs, cheapest-first, all below every sink; the CARB
+  border-carbon adder is layered on at build time.
+- **Fit quality** (price-orthogonal, vs measured): annual net imports within
+  1-3%, duration-curve RMSE ~560 MW (was ~1,400), import-hour share 83-88% vs
+  86-91%. Aggregate import capacity sits between the deepest measured hour
+  (11.0 GW) and the ~12-15 GW WECC simultaneous-import rating (COI + PDCI +
+  Path 46/45). Modeled clearing-frequency validation is deferred to CAISO
+  P10/P11.
+- Updated `build_wecc_export_sink` (now returns the $0 curtailment sink, since
+  CAISO has two sinks) and the affected transmission tests.
+
+## 2026-06-12 (CAISO backcasts default to priced WECC interchange)
+
+CAISO backcasts now serve interchange through the priced import/export node by
+default — the calibration harness no longer needs an explicit
+`--priced-interchange` flag for CAISO.
+
+- **Why.** `eia_loader.load_demand` does no interchange netting for CAISO (the
+  CISO series is net load), so a backcast run *without* the priced node leaves
+  CAISO's ~30 TWh/yr of net imports unserved and the domestic fleet
+  over-generates gas. There is no measured-schedule mode for CAISO to displace,
+  so the priced WECC node is the only correct default (the eastern ISOs keep
+  their measured tie-line schedule by default).
+- **New `constants.PRICED_INTERCHANGE_DEFAULT_ISOS`** (`frozenset({"CAISO"})`)
+  plus a `resolve_priced_interchange(flag, iso)` helper. Both
+  `run_calibration.py` and `run_calibration_full.py` expose
+  `--priced-interchange` / `--no-priced-interchange` (tri-state, default per
+  ISO); the run_config records the resolved value.
+- **Tranches still uncalibrated.** The CAISO import tranches remain engineering
+  estimates (CAISO P9 TODO: fit to the EIA-930 CISO net-interchange duration
+  curve and validate vs OASIS path ratings). Defaulting the node *on* fixes the
+  structural gap; fitting the tranche shape is the follow-up.
+
 ## 2026-06-11 (NEISO backcast P2 — per-plant offer-curve tranches & bin assignments)
 
 NEISO prompt-pack P2 — the offline derivation that turns the NEISO thermal fleet

@@ -1,21 +1,46 @@
 # ERCOT calibration — best config so far
 
-Keeper: **e2 4 / dashboard `run79 storage retune`** (2026-06-11, bundle
-`results/calibration/e2_4_retune`, highspy 1.14.0), **revalidated
-unchanged on post-E3 main** (bundle
-`results/calibration/run80a_code_baseline` reproduces every class-year).
-The run-80/81 probes (dashboard `run80 lignite 1.15`, `run81 prb floor`),
-the run-82 Jacobian joint move, and the run-84 coal-sigmoid probe (lignite
-balanced at +5.4/−5.0/+2.1 but CT_PEAKER/ST_GAS 2024 collateral beyond the
-bar) were all net-negative and reverted — see the Runs 80–81, Run 82 and
-Run 84 calibration-log entries.
-Reproduce with:
+Keeper: **run 91 / dashboard `run91 cc shave`** (2026-06-12, bundle
+`results/calibration/run91_cc_shave055`, highspy 1.14.0). **Supersedes run 85
+(`run85_coal_soft`)** on the size-aware volume bar (see "Success bar" below):
+run 91 has 3 in-scope fails vs run 85's 4, shrinks the 2024 cheap-gas cluster
+7.37 → 3.65 TWh (PRB 2024 −7.9 → −4.9% now PASSES; CC_REGULAR 2024
++2.1 → +0.4%), improves hourly coal NRMSE (0.198 → 0.182 in 2024) and holds
+the LMP gate. It adds two CC_REGULAR-side moves on top of run 85's config —
+the coal sigmoids and everything else are unchanged. Reproduce with:
 
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \
     --storage-daily-cycling --battery-adder 10 \
-    --offer-curve-delta-json <run79 deltas>   # meta.json offer_curve_deltas
+    --offer-curve-delta-json <run91 deltas> \   # run_config.json offer_curve_deltas
+    --coal-lignite-sigmoid --lignite-floor 0.75 --lignite-ceil 1.00 \
+    --prb-floor 0.74 --prb-follower-floor 0.64 \
+    --curve-mid 0.35
 ```
+
+Run 85 remains the documented predecessor; its config and table are in the git
+history of this file and the "ERCOT Runs 85–87" / "ERCOT Runs 89–91"
+calibration-log entries.
+
+## Success bar (size-aware)
+
+Judge each class by size, not a flat percentage (a flat % is loosest exactly
+where the system mix is dominated):
+
+- class total **≥ 20 TWh** (CC_REGULAR, CC_CHP, COAL_PRB): within **±5%** every
+  year.
+- class total **< 20 TWh** (ST_GAS, COAL_LIGNITE, CT_PEAKER, CT_CHP): within
+  **±1 TWh** (absolute) every year.
+- CT_CHP excluded (known +28% 2025 CHP-benchmark gap).
+
+Never regress a class vs the keeper. Under this bar run 91 has 3 in-scope
+fails vs run 85's 4, all still in the single 2024 cheap-gas year and all
+marginal: ST_GAS −1.12 TWh, lignite −1.31 TWh, CT_PEAKER −1.22 TWh. The
+honest caveats: PRB 2024 (−4.9%) and ST_GAS 2023 (+0.95 TWh) pass with
+<0.1 TWh margin, the CC moves spend 2023 CC_REGULAR headroom (−2.7 → −4.6%,
+still in tolerance, −6.6 TWh on the 144-TWh class), and total |class error|
+is flat vs run 85 (~21.0 TWh) — the win is distributional (fail count + the
+2024 cluster), not aggregate.
 
 ## Config (the knobs that matter)
 
@@ -24,19 +49,31 @@ python scripts/run_calibration_full.py --year 2023 2024 2025 \
   passthrough sigmoid (baseload + follower tiers), `coal_drop_pof`,
   historic outage overlay, per-plant monthly coal pricing — all defaults of
   `run_calibration_full.py`.
-- `storage_daily_cycling = on` (SOC returns to its day-start level every
-  24 h — bounds single-LP perfect foresight to within-day arbitrage).
-- **`battery_dispatch_adder = 10.0` $/MWh discharged** (E2, 2026-06-11):
-  reduced-form BESS cycling degradation + ancillary-service opportunity
-  cost; lands 2025 battery discharge at −1.5% vs the EIA-930 measured
-  5.44 TWh (the LP over-cycled +48% without it). Same magnitude as the PJM
-  `pumped_storage_dispatch_adder`.
-- Nuclear: per-year EIA-923 monthly CF overlay (`NUCLEAR_MONTHLY_CF_BY_YEAR`)
-  — nuclear −0.7% every year; validate with
-  `scripts/derive_nuclear_monthly_cf.py --check`.
-- Offer-curve deltas vs the calibrated defaults (recorded in the bundle's
-  `meta.json`): CC_REGULAR {committed −0.05, econ_low −0.10, econ_high
-  −0.45, peak +0.25}; CC_CHP {econ_high +0.43, peak −0.50, pct_peaking −4};
+- Coal passthrough sigmoids (the run-85 adds, unchanged in run 91):
+  - `coal_lignite_passthrough_sigmoid = on`, floor 0.75 / ceil 1.00.
+  - `coal_prb_passthrough_floor = 0.74`, `coal_prb_follower_floor = 0.64`.
+  - Gas-mid/slope at the built-in defaults (2.85 / 2.5) for all tiers. The
+    run-90 probe measured why these must NOT be retuned for 2024: the PRB
+    TWh response is ~65 TWh per unit passthrough in 2024 but ~142 in 2023
+    (2023 sits on the coal-gas knife edge), and no single logistic can cut
+    below $2.1 shaped gas while tracking the run-85 curve at $2.29+.
+- **`offer_curve_smoothing_mid = 0.35`** (`--curve-mid 0.35`, the run-89 add):
+  the n=6 econ-ramp shape anchor f(0)=0, f(0.5)=0.35, f(1)=1. CC_REGULAR's
+  econ ramp is nearly flat (econ_low 1.06 → econ_high 0.96) so the anchor
+  barely moves it, while the steep-ramp classes (PRB econ_low 0.40 →
+  econ_high 1.38, ST_GAS, CT) get cheaper middles — draining CC_REGULAR's
+  2024 mid-merit surplus into them. (m > 0.5 moves volume the OTHER way —
+  the rejected first probe, bundle `run89_midpoint065`.)
+- **CC_REGULAR offer-curve delta retune (the run-91 add):** econ_high
+  −0.45 → **−0.40**, peak +0.25 → **+0.32** (everything else identical to
+  run 79's deltas). Jacobian-direction, dose set at 55% of the measured
+  full-dose response (bundle `run91_cc_shave_full` is the β=1 endpoint;
+  the feasibility box on the measured B→full vector is β ∈ [0.39, 0.74]).
+- `storage_daily_cycling = on`; **`battery_dispatch_adder = 10.0`** $/MWh
+  (E2, unchanged); nuclear per-year EIA-923 monthly CF overlay (−0.7%/yr).
+- Full offer-curve deltas vs calibrated defaults (recorded in the bundle's
+  `run_config.json`): CC_REGULAR {committed −0.05, econ_low −0.10, econ_high
+  −0.40, peak +0.32}; CC_CHP {econ_high +0.43, peak −0.50, pct_peaking −4};
   CT_CHP {committed −0.20, econ_low −0.08, econ_high +0.10, peak −0.08};
   CT_PEAKER {committed −0.34, econ_high +0.20}; ST_GAS {committed −0.385,
   econ_low −0.13, econ_high −0.35, peak −1.0}; COAL_PRB {committed −0.04,
@@ -47,25 +84,29 @@ python scripts/run_calibration_full.py --year 2023 2024 2025 \
 
 | class | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| CC_REGULAR | −1.3% | +2.9% | +0.9% |
-| CC_CHP | +1.1% | +0.8% | +2.0% |
-| COAL_PRB | −0.8% | −9.9% | −1.5% |
-| COAL_LIGNITE | −12.8% | −23.8% | +0.7% |
-| CT_PEAKER | −2.6% | −12.8% | −2.9% |
-| ST_GAS | +7.4% | −2.7% | +2.8% |
+| CC_REGULAR | −4.6% | +0.4% | −1.0% |
+| CC_CHP | +1.1% | +0.9% | +2.1% |
+| COAL_PRB | +4.3% | −4.9% | +0.7% |
+| COAL_LIGNITE | +2.1% | −9.4% | +1.9% |
+| CT_PEAKER | −0.8% | −14.8% | −0.9% |
+| ST_GAS | +5.7% | −6.1% | +2.9% |
 | nuclear | −0.7% | −0.7% | −0.7% |
-| coal hourly r (NRMSE) | 0.940 (0.171) | 0.905 (0.229) | 0.808 (0.162) |
-| battery dis. vs EIA-930 | n/a | −55% (19% cov. window) | **−1.5%** |
+| coal hourly NRMSE | 0.150 | 0.182 | 0.168 |
+| LMP MAE vs actual RT ($/MWh) | 31.1 | 9.2 | 11.5 |
 
-Unserved energy 0.000 in all years. 2024's coal deficit (PRB −9.9, lignite
-−23.8) is the known cheap-gas-year signature → E1 (measured monthly gas
-backport). Full pass narrative: `docs/calibration-log.md`, "ERCOT E2" entry
-(including the solver-version reproducibility caveat — `meta.json` now
-records `highspy_version`).
+Unserved energy 0.000 in all years. Plant guard: Martin Lake / Limestone 2023
+at +914/+948 GWh (under the ~1 TWh line; run 85 was +614/+810); Martin Lake
+2025 +1.50 TWh (run 85 +1.35 — watch on any further coal-side move). The
+residual is the smaller 2024 trio above plus the 2023 LMP level miss (missing
+ORDC scarcity pricing — localized in the "ERCOT Runs 85–87" log entry, still
+the structural follow-up).
 
 ## History
 
-The previous keeper config (flat `coal_prb_passthrough = 0.83`, commitment
-pass, 2023/2024 only — git `249fec7`) predates the sigmoid passthrough
-family and the Run-60..77 loop and is superseded by the above; see git
-history of this file for its details.
+Run 85 (`run85_coal_soft`, coal passthrough sigmoids) was the keeper through
+2026-06-12 and is superseded by the above; run 79 (`e2_4_retune`) before it.
+The run-80/81/82/84 probes, runs 86/87 (Jacobian gas counter-move; measured
+monthly gas) and run 90 (2024-keyed PRB sigmoid retune — the year-gradient
+finding) were net-negative; see the calibration-log entries. The previous flat
+`coal_prb_passthrough = 0.83` keeper (git `249fec7`) predates the sigmoid
+family entirely.
