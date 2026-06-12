@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-3-2024",
+  "label": "neiso 3 2024",
+  "date": "2026-06-12",
+  "shorthand": "neiso-3-2024",
+  "definition": "P12 baseline: NEISO defaults + commitment, served interchange (P9b), year 2024",
+  "years": [
+    2024
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-3-2024.js",
+  "bundle": "results/calibration/neiso_p12_base_2024"
+}

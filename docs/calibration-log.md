@@ -1138,3 +1138,96 @@ lignite 2024, and the CT_CHP 2025 benchmark gap. A lignite floor probe
 (0.75 → 0.72) is the one cheap candidate, but Martin Lake 2023 sits at
 +914 GWh with ~86 GWh of guard headroom — re-run the guard before keeping
 anything.
+
+
+## NEISO 2 — full calibration to sign-off 2023–2025 (P12) (2026-06-12)
+
+**Runs `neiso_p12_base_2023`, `neiso_p12_base_2024`, `neiso_p12_hydrofix_2025`;
+dashboard `neiso 2 2023`, `neiso 3 2024`, `neiso 4 2025 hydrofix`** — the NEISO
+sign-off backcast across 2023–2025, run as three parallel per-year bundles with
+distinct `--out-dir` (a combined `--year 2023 2024 2025` bundle hit a warm-start
+basis degeneracy in the per-year P2 commitment solves and was abandoned; the
+three single-year bundles solve cleanly and reproduce each other to <0.1 TWh).
+**Prereqs:** P9b (served interchange) merged, P11 structural rows green. The
+keeper is the **NEISO structural defaults — no offer-band tuning** (playbook §6):
+served measured net interchange, the Algonquin (AGT) `gas_hub_basis_overlay`,
+`dual_fuel_switching`, RGGI via the state-carbon program, `gas_monthly_actuals`,
+per-plant F923 gas pricing. The **only** P12 change is a data-vintage fix —
+`--hydro-backfill-year 2024` for the 2025 bundle (opt-in, default-None, every
+existing run byte-identical; committed in the P12 code change merged via #383).
+**P10 still held** (no NEISO `actual_lmp.json`), so price is level-only.
+
+### Scorecard vs the P0 targets
+
+| target | 2023 | 2024 | 2025† | verdict |
+|---|---|---|---|---|
+| **gas** ±5% | −3.2% / 930 (−5.1% / 923) | −2.8% / 930 (−5.0% / 923) | **−3.9% / 930** | ✅ vs the grid benchmark |
+| **nuclear** | −0.2% | −0.2% | +0.7% | ✅ |
+| **hydro** | −0.7% / 923 | −0.6% / 923 | +30% (2024 proxy vs 930 5.12) | ✅ 23/24; 25 provisional |
+| **oil** | 0.02 vs 0.39 | 0.01 vs 0.31 | 0.01 vs 1.24 | ⚠ winter-shape (U4, filed) |
+| **CO₂** ±10% vs eGRID | **−9.2%** (22.81 vs 25.13 Mt) | **−8.5%** (24.52 vs 26.79 Mt) | 24.58 Mt (no eGRID-25) | ✅ |
+| **net interchange** ±15% | **exact** (−15.14 TWh, 0 MW RMSE, corr +1.00) | **exact** (−10.30, 0 MW) | **exact** (−8.13, 0 MW) | ✅ |
+
+**Gas benchmark sourcing.** The NEISO model is grid-side (CHP runs its
+steam-following grid share; the behind-the-meter host supply is pulled out and
+there is no btm.parquet to add back), so total gas is scored against **EIA-930**
+— the matching grid-delivered series — at **−3.2 / −2.8 / −3.9%**, comfortably
+inside ±5%. The −5% vs EIA-923 is the documented whole-plant offset: 923 reports
+gross CHP output including the BTM host slice the grid never sees (the same
+923-vs-930 structural gap the ERCOT fuel-split note logs at ~14% on the CHP host
+supply). Both benchmarks are reported; they are not mixed within a year.
+
+†2025 EIA-923 is a monthly-survey-only early release; final hydro has not landed
+(5 of ~166 plants, 0.09 of ~6 TWh). `--hydro-backfill-year 2024` carries the
+non-reporting plants at their 2024 inflow, restoring ~6.6 TWh; **without it 2025
+gas was +6.5% vs 930** (the missing inflow served by gas). The 2024 proxy is
+wetter than 2025's true 5.12 TWh (EIA-930), so modeled hydro over-states ~1.5 TWh
+and gas sits a touch low — a provisional-year artifact that self-corrects on the
+final 2025 file.
+
+### Ranked residuals (none band-tunable)
+
+1. **[FILED · winter oil shape] Oil near-zero (0.01–0.02 TWh) vs EIA-923
+   0.31–0.39 / EIA-930 0.37–1.24.** Magnitude within ±1 TWh (size-aware) but the
+   season shape is wrong: ISO-NE burns oil in cold-snap dual-fuel switches, and
+   the **monthly** AGT basis never reaches distillate parity (Jan-2025 HH $3.52 +
+   AGT +12.79 ≈ $16.3/MMBtu vs ~$18–20 parity), so the wired CT/ST switch
+   correctly does not trip on monthly data; serving interchange also displaces
+   the prior oil-steam scarcity burn. **The fix is the daily-AGT U4 upload, not a
+   band tune** (task brief; P11 gap #3; doc-08 decision 1). Not tuned.
+2. **[AMBER · PS/BESS over-cycling] PS discharge 0.39 / 0.50 / 0.86 TWh vs
+   EIA-930 — / 0.30 / 1.93; grid BESS 0.06 / 0.12 / 0.34 vs — / 0.01 / 0.15.**
+   Down sharply from the energy-only smoke's 1.35 TWh (P11 gap-#2 cross-coupling:
+   served imports remove part of the arbitrage spread). Not a scored target and
+   immaterial to fuel-mix / CO₂; `--battery-adder` / a PS throughput cost is the
+   lever if it is ever scored. Not tuned (would not move the sign-off metrics).
+3. **[INFO · price level, P10 held] All five zones price identically
+   ($53.61 / $55.72 / $59.50 for 2023/24/25); no Boston/CT separation** — Tier-3
+   RSP TTC seeds non-binding, no measured interface limits (U6). Level reported,
+   not scored, until the U2 LMP upload (P10).
+4. **[TRACE] Coal 0.00–0.08 vs ~0.2 TWh** — the lone Merrimack unit; trace.
+
+### Keeper decision & provenance
+
+The NEISO **structural defaults are the sign-off keeper** — all three scored
+targets (fuel-mix gas ±5% on the grid benchmark, CO₂ ±10% vs eGRID, net
+interchange ±15%) pass for the complete-data years 2023/2024; 2025 passes
+gas/interchange and is provisional on hydro pending the final EIA-923. **No
+offer band was moved** (zero per-class curve overrides), consistent with the
+playbook §6 structural discipline. doc-00 Stage G checklist green for NEISO.
+Reproduce per year:
+
+```
+python scripts/run_calibration_full.py --iso NEISO --year <Y> --commitment \
+    [--hydro-backfill-year 2024]   # the bracketed flag for 2025 only
+```
+
+**Citations.** eGRID CO₂ benchmark: EPA eGRID2023 (rev2) / eGRID2024, sheet
+`SRL23`/`SRL24`, column `SRCO2AN`, subregion `NEWE` — 27.69 / 29.53 M short tons
+→ **25.13 / 26.79 Mt** (×0.90718474 short-ton→tonne). Model CO₂ from each plant's
+`emission_rate_co2 = heat_rate × FUEL_CO2_FACTOR_PER_MMBTU` (152 NEISO fossil
+plants matched, 0 on fallback) — a base-rate figure, so the dispatch's band-HR
+multipliers make it conservative (true model CO₂ slightly higher / the gap
+smaller). AGT winter basis: `inputs/raw-data/gas_basis_by_iso_month.csv` (ISO-NE
+MA gas index, isonewswire monthly posts, 35/36 months 2023–2025). Hydro
+early-release backfill rationale documented at `load_hydro_budget`.
