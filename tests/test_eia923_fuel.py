@@ -519,5 +519,49 @@ class LignitePassthroughSigmoidTest(unittest.TestCase):
         self.assertGreater(series.max() - series.min(), 0.02)  # months differ
 
 
+class SubPassthroughSigmoidTest(unittest.TestCase):
+    """The split subbituminous sigmoid and its inherit-PRB default."""
+
+    def test_off_returns_none_so_routing_inherits_prb(self):
+        from market_sim.data.fuel import sub_passthrough_series
+        cfg = ScenarioConfig(gas_price_override=2.19)
+        self.assertIsNone(sub_passthrough_series(cfg, 2024, 8760))
+
+    def test_on_uses_its_own_params(self):
+        from market_sim.data.fuel import sub_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=2.0, coal_sub_passthrough_sigmoid=True,
+            coal_sub_passthrough_floor=0.60, coal_sub_passthrough_ceil=1.20,
+            coal_sub_passthrough_gas_mid=3.0,
+            coal_sub_passthrough_gas_slope=2.5,
+            # PRB params left at defaults to prove independence.
+        )
+        series = sub_passthrough_series(cfg, 2024, 8760)
+        self.assertEqual(series.shape, (8760,))
+        self.assertGreaterEqual(float(series.min()), 0.60)
+        self.assertLessEqual(float(series.max()), 1.20 + 1e-9)
+
+    def test_routing_split_vs_inherit(self):
+        # sub_pt None -> "subbituminous" inherits the PRB passthrough
+        # (historical aliasing); sub_pt given -> its own value. "prb"-tagged
+        # plants never take the sub passthrough.
+        from market_sim.data.fleet import campd_tranche_fuel_frac
+        def gen(supply):
+            return Generator(
+                unit_id="COAL_z_p1_econ", name="x", zone="z",
+                fuel_type="coal", pmax_mw=100.0, heat_rate=10.0,
+                coal_supply=supply, plant_group="COAL",
+            )
+        sub_pt = np.array([0.65, 1.05])
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, 1.0, 1.0), 0.7)
+        self.assertIs(
+            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, 1.0, 1.0,
+                                    sub_pt),
+            sub_pt)
+        self.assertEqual(
+            campd_tranche_fuel_frac(gen("prb"), 0.7, 1.0, 1.0, sub_pt), 0.7)
+
+
 if __name__ == "__main__":
     unittest.main()
