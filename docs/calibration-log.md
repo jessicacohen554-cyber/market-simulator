@@ -1738,3 +1738,108 @@ revenue with the adder moves in the sane direction and order:
 +20%, wind +9%; 2024 +33/+92%; 2025 ≈ +0% (comfortable reserves). Unit
 tests `tests/test_scarcity.py` (13: pin/cap/floor/monotonicity/season-block
 mapping/headroom composition/backcast floor gating).
+
+---
+
+## NYISO 2025 — EIA-930 refresh unblock + price re-score (2023 & 2025) (2026-06-12)
+
+**Run `results/calibration/nyiso_p12_2025_refreshed`, dashboard `nyiso 2025
+refreshed`.** Unblocks the year P12 had to file as data-blocked and re-scores
+the price metrics P12 had to leave as "level-only" (U2/P10 LMP had not landed).
+Branch `claude/nyiso-2025-refresh-rescore`.
+
+### The unblock — refreshed EIA-930 NYIS extract spans full 2025
+
+The user re-uploaded the EIA-930 raw long files
+(`inputs/raw-data/eia-930/NYIS_region.parquet` + `NYIS_fueltype.parquet`, now
+2015–2026). Regenerated the wide hourly with
+`python scripts/convert_eia930.py NYIS --input-dir inputs/raw-data/eia-930 --force`:
+`NYIS hourly` now carries **8,760 h for 2025** (Demand non-null 8,760/8,760),
+where the old extract stopped at **Q1'25 (2,154 h)**. 2023 (8,760) and 2024
+(8,784, leap) are byte-identical to the prior file — Demand 147.05/150.88 TWh,
+net interchange −23.45/−20.39 TWh, WND 4.60/6.04 TWh all unchanged — so the
+2023 keeper, the other ISOs, and every loader test are untouched (only the
+NYIS parquet changed). `nyiso_net_interchange(2025)` now returns the measured
+series (**−19.09 TWh**, was `None`); `_load_nyiso_hourly_demand(2025)` returns
+151.55 TWh on the EIA-930 clock instead of the gross demand-profiles fallback.
+
+### The over-gen closes — interchange served (was the +22.7% wedge)
+
+P12's `nyiso_p12_base_2025` over-generated **+22.7%** (151.9 vs EIA-923 123.8
+TWh) purely because `load_demand` fell back to gross demand and served **0** of
+the import wedge. With the refreshed parquet the measured net interchange is
+served by default:
+
+| | model | actual EIA-930 |
+|---|---|---|
+| net interchange (TWh) | **−19.09** 🟢 | −19.09 |
+| duration RMSE | **0 MW** | — |
+| import-hours | 99.8% | 99.8% |
+| diurnal corr | **+1.00** | — |
+
+Fuel mix (`--commitment`):
+
+| fuel | model | EIA-930 | Δ930 | EIA-923 (prelim) | Δ923 |
+|---|---|---|---|---|---|
+| gas | 68.30 | 70.25 | **−2.8%** | 60.21 | +13.4% |
+| nuclear | 28.38 | 27.95 | +1.5% | 28.41 | −0.1% |
+| wind | 7.05 | 7.05 | exact | — | — |
+| hydro | 21.05 | 24.10 | −12.7% | 21.05 | budget |
+| oil | 0.02 | 0.18 | — | 1.06 | U4-gated |
+| **TOTAL** | **132.76** | 129.54 | **+2.5%** | 115.84 | +14.6% |
+
+**EIA-923 2025 is the preliminary M-file** (total 115.84 TWh, ~17 below served
+demand; solar 0.66, biomass/oil under-reported) — **flagged, not chased**.
+Against EIA-930 (the operationally consistent basis) gas is **−2.8%** and total
+**+2.5%**: the over-gen is gone and the gas level is sane. The +13.4% vs 923
+reads off the under-reported preliminary total, the same EIA-930/EIA-923
+demand-basis gap documented for the 2023 keeper, not a dispatch error.
+
+### Price re-score — P12's "level-only" metrics now scored (2023 + 2025)
+
+Scored both the 2023 keeper (`nyiso_smoke_2023`) and this 2025 run against
+`actual_lmp.json` (per-zone DA/RT levels) + `actual_lmp_hourly_NYISO.parquet`
+(system duration, via `scripts/analyze_lmp_residual.py`).
+
+**System level + duration ($/MWh):**
+
+| year | model avg | actual RT | actual DA | resid RT | p50 m/a | p90 m/a | p99 m/a | max m/a |
+|---|---|---|---|---|---|---|---|---|
+| 2023 | 41.79 | 30.29 | 31.11 | +11.50 | 36/26 | 66/42 | 104/120 | 236/1147 |
+| 2025 | 69.24 | 60.73 | 60.71 | +8.51 | 57/45 | 114/114 | 157/222 | 314/2074 |
+
+**Per-zone average (model vs actual DA, resid $/MWh):**
+
+| zone | 2023 model | 2023 actDA | Δ | 2025 model | 2025 actDA | Δ |
+|---|---|---|---|---|---|---|
+| Upstate_West | 38.94 | 26.08 | +12.86 | 66.82 | 55.89 | +10.93 |
+| Capital_Hudson | 43.42 | 36.38 | +7.04 | 70.61 | 65.15 | +5.46 |
+| Lower_Hudson | 43.42 | 33.58 | +9.84 | 70.61 | 62.99 | +7.62 |
+| NYC | 43.42 | 33.95 | +9.47 | 70.61 | 65.41 | +5.20 |
+| Long_Island | 43.42 | 40.77 | +2.65 | 70.61 | 68.87 | +1.74 |
+
+**Reading.** Both years **over-price the mid-merit band** (2025 p50 $57 vs $45)
+and **under-price the scarcity tail** (2025 p99 $157 vs $222; max $314 vs
+$2,074) — the no-ORDC / no-reserve-scarcity signature (the model carries no
+scarcity adder). The 2025 p90 is near-exact ($113.7 vs $113.6). The model
+collapses the four downstate zones to one price: it captures the upstate-cheap
+/ downstate-dear separation (Upstate_West ≈ $4 below downstate) but not the full
+actual J−A spread (≈$13), the documented interface-TTC / downstate-congestion
+structural item (U7). Long_Island is the closest zone both years (+$1.7/+$2.7);
+the over-pricing is heaviest upstate, consistent with the gas-level floor
+sitting above measured upstate LBMP. Per-run detail in the bundle's
+`SUMMARY-nyiso-2025-refreshed.md` / `PRICE-RESCORE-*`.
+
+### Discipline & scope
+
+Structural-discipline run (playbook §6): **no offer band tuned**. oil stays
+**U4-gated** (no Transco-Z6 / Iroquois daily gas basis uploaded for NYISO —
+monthly-average Jan gas stays below distillate parity). **2024 stays blocked**
+on `NY_2024` unit-level CEMS + the missing `NYISO_2024_renewable_capacity.csv`.
+**ERCOT/PJM/CAISO/NEISO untouched** — the only data change is the `NYIS hourly`
+parquet, whose 2023/2024 content is byte-identical pre/post; loader/demand/
+renewables tests pass (the 3 CAISO zonal-share failures are pre-existing and
+unrelated, per the P9b note). doc-00 status table updated (NYISO now 2023+2025,
+price-scored); dashboard carries the run; `docs/multi-iso/nyiso-backcast-2023.md`
+and `docs/calibration-best-so-far-nyiso.md` updated with the 2025 results and
+the now-scored price metrics.
