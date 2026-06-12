@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-nyiso-2-chp-covered",
+  "label": "nyiso 2 chp covered",
+  "date": "2026-06-12",
+  "shorthand": "nyiso-2-chp-covered",
+  "definition": "REJECTED (negligible) P12 probe. Hypothesis: the CHP under-dispatch (CC_CHP -14.6%, CT_CHP -44%, ST_CHP -18% vs EIA-923) is a startup-amortization artifact, so --chp-startup-covered (steam-host cogen pays no energy-market cold start) lets CHP run toward its must-run reality. Result: CHP moved only +0.1 TWh total (CC_CHP +0.03, ST_CHP +0.05, CT_CHP +0.02; CC_REGULAR -0.03, ST_GAS -0.05; gas total 57.53->57.54; avg $42.72->$43.02). The CHP/peaker deficit is STRUCTURAL (model dispatches CHP economically, no hard steam-host must-run floor), not a startup-cost artifact, and the basis-capped total leaves no room. Keeper unchanged.",
+  "years": [
+    2023
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-nyiso-2-chp-covered.js",
+  "bundle": "results/calibration/nyiso_p12_chp_2023"
+}
