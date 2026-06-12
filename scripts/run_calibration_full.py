@@ -2548,6 +2548,26 @@ def main() -> None:
     parser.add_argument("--sub-gas-slope", type=float, default=None,
                         help="Subbituminous sigmoid logistic slope "
                              "(per $/MMBtu).")
+    # Waste-coal passthrough sigmoid (culm/gob, the PJM COAL_WC class).
+    # Near-free reclamation fuel: no cheap-gas discount, only a dear-gas
+    # bid markup to suppress high-gas-year over-run. Off by default =
+    # full fuel cost.
+    parser.add_argument(
+        "--coal-waste-sigmoid", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Gas-key the waste-coal passthrough on its own curve "
+             "(coal_waste_passthrough_* params / per-ISO defaults). "
+             "Off = full fuel cost.")
+    parser.add_argument("--waste-floor", type=float, default=None,
+                        help="Waste-coal sigmoid cheap-gas floor.")
+    parser.add_argument("--waste-ceil", type=float, default=None,
+                        help="Waste-coal sigmoid dear-gas ceiling.")
+    parser.add_argument("--waste-gas-mid", type=float, default=None,
+                        help="Waste-coal sigmoid logistic midpoint "
+                             "($/MMBtu).")
+    parser.add_argument("--waste-gas-slope", type=float, default=None,
+                        help="Waste-coal sigmoid logistic slope "
+                             "(per $/MMBtu).")
     parser.add_argument("--prb-follower-floor", type=float, default=None,
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
@@ -2730,6 +2750,12 @@ def main() -> None:
             "coal_sub_passthrough_ceil": args.sub_ceil,
             "coal_sub_passthrough_gas_mid": args.sub_gas_mid,
             "coal_sub_passthrough_gas_slope": args.sub_gas_slope,
+            "coal_waste_passthrough_sigmoid":
+                True if args.coal_waste_sigmoid else None,
+            "coal_waste_passthrough_floor": args.waste_floor,
+            "coal_waste_passthrough_ceil": args.waste_ceil,
+            "coal_waste_passthrough_gas_mid": args.waste_gas_mid,
+            "coal_waste_passthrough_gas_slope": args.waste_gas_slope,
         },
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
