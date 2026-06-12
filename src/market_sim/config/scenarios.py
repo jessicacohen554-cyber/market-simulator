@@ -832,9 +832,13 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # to ~1.7 at $6.9) conservatively — a moderate pull toward breakeven,
     # not full price-taking. Ceiling 1.25 -> 1.32 (PJM run 16): trims the
     # dear-gas-2025 BIT over-run (+6.3 -> +3.3 TWh) while the cheap-gas
-    # 2024 passthrough moves <0.01, leaving 2024 BIT at-actual.
+    # 2024 passthrough moves <0.01, leaving 2024 BIT at-actual. Floor
+    # 0.82 -> 0.80 (run 19): the export-sink reprice deepened the cheap-
+    # hour price trough and bled 2023/24 BIT (-4.8 TWh in 2024); a 2%
+    # deeper cheap-gas discount restores bit's near-tied committed/econ
+    # blocks against gas CC on the plateau.
     ("PJM", "bituminous"): {
-        "floor": 0.82, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
+        "floor": 0.80, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
     # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
     # cut from the run-13 no-sigmoid residuals — over-dispatch grows with
     # the gas price (+5% at $2.2-2.5 HH to +12% at $3.5), so no cheap-gas
@@ -846,14 +850,18 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
         "floor": 1.00, "ceil": 1.25, "gas_mid": 3.40, "gas_slope": 2.5},
     # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
     # fuel, so no cheap-gas discount (floor 1.0) — only a dear-gas markup.
-    # Placement from the run-16/17 monthly EIA-923 decomposition: the
-    # over-runs live in $4+ gas months (Jan-2025 +0.48 TWh at $6.86 needs
+    # Placement from the run-16/17/18 monthly EIA-923 decomposition: the
+    # over-runs live in $5+ gas months (Jan-2025 +0.48 TWh at $6.86 needs
     # a ~2x ceiling before the markup outprices waste at all), while the
-    # at-actual 2023 months sit at $3.4-3.6 — so the curve stays flat
-    # through $3.6 (run 17's 3.4 midpoint bit them: 2023 COAL_WC fell to
-    # -1.33, out of the 1 TWh cap) and rises late and tall instead.
+    # at-actual 2023 months sit at $3.4-5.0 — runs 17/18 bit 2023's
+    # Jan/Feb ($4.85-4.98) and pushed 2023 COAL_WC out of the 1 TWh cap,
+    # so the curve rises even later and steeper (mid 5.15, slope 3):
+    # ~1.3-1.4 at 2023's winter prices, ~1.4 at Feb/Dec-2025's $5.0-5.1,
+    # ~2.1 at Jan-2025's $6.86. Midpoint split: 5.30 would release too
+    # much of Feb/Dec-2025 once the run-19 econ-ramp midpoint (curve-mid
+    # 0.35) lifts WC mid-band dispatch in both years.
     ("PJM", "waste"): {
-        "floor": 1.00, "ceil": 2.10, "gas_mid": 4.80, "gas_slope": 2.0},
+        "floor": 1.00, "ceil": 2.10, "gas_mid": 5.15, "gas_slope": 3.0},
 }
 
 
