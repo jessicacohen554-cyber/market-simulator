@@ -386,6 +386,20 @@ diurnal import/export sign pattern reproduced; knob values cited as
 Tier 3 calibration parameters.
 ```
 
+**Status — tranche fit DONE (2026-06-12).** `IMPORT_TRANCHES["CAISO"]` /
+`EXPORT_TRANCHES["CAISO"]` were fitted to the pooled 2023-2025 CISO
+net-interchange duration curve with `derive_import_tranches.py` (measured-only
+mode — the existing CAISO bundle has no priced node, so a bundle-mode price fit
+would be circular). Six import blocks (PNW hydro baseload → desert-SW gas →
+west-wide scarcity, 11.4 GW total) + two export sinks (midday-solar surplus +
+$0 curtailment floor, 6.5 GW). Price-orthogonal fit vs the measured series:
+annual net imports within 1-3%, duration-curve RMSE ~560 MW (was ~1,400 for the
+placeholder), import-hour share 83-88% vs 86-91% measured; aggregate import
+capacity sits between the deepest measured hour (11.0 GW) and the ~12-15 GW WECC
+simultaneous-import rating. Remaining: re-score the *modeled* net-interchange
+(clearing frequency vs the solved CAISO price duration curve) once P10/P11 run
+a CAISO bundle with the priced node on.
+
 ### P10 — LMP benchmark & zonal-sufficiency test (Wave 1)
 
 ```
