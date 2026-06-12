@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-nyiso-p11-diag-priced",
+  "label": "nyiso p11 diag priced",
+  "date": "2026-06-12",
+  "shorthand": "nyiso-p11-diag-priced",
+  "definition": "nyiso p11 diagnostic: --priced-interchange (confirm import node reclaims the gas wedge)",
+  "years": [
+    2023
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-nyiso-p11-diag-priced.js",
+  "bundle": "results/calibration/nyiso_smoke_2023_priced"
+}
