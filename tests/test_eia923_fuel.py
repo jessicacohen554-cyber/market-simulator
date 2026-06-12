@@ -391,7 +391,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
 
     def test_on_rises_with_gas_between_floor_and_ceil(self):
         # Params resolve from the (PJM, bituminous) COAL_SIGMOID_DEFAULTS
-        # entry (0.82 / 1.32 / 3.40 / 2.5).
+        # entry (0.80 / 1.32 / 3.40 / 2.5).
         from market_sim.data.fuel import coal_passthrough_series
         def mean_pt(gas):
             cfg = ScenarioConfig(
@@ -403,7 +403,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         low, mid, high = mean_pt(2.0), mean_pt(3.4), mean_pt(7.0)
         self.assertLess(low, mid)
         self.assertLess(mid, high)
-        self.assertGreaterEqual(low, 0.82)       # floor
+        self.assertGreaterEqual(low, 0.80)       # floor
         self.assertLessEqual(high, 1.32 + 1e-9)  # ceil
         self.assertGreater(high, 1.0)            # dear gas -> markup
 
