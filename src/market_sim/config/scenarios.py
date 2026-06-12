@@ -380,6 +380,17 @@ class ScenarioConfig:
     coal_lignite_passthrough_gas_mid: float | None = None
     coal_lignite_passthrough_gas_slope: float | None = None
 
+    # Waste coal (culm/gob/mine-refuse, the PJM COAL_WC class): the fuel is
+    # a near-free reclamation byproduct, so there is no cheap-gas discount
+    # to give (floor ~1.0) — the curve exists to mark the bid UP when gas
+    # is dear, suppressing the over-run a cheap-fuel fleet shows in
+    # high-gas years.
+    coal_waste_passthrough_sigmoid: bool = False
+    coal_waste_passthrough_floor: float | None = None
+    coal_waste_passthrough_ceil: float | None = None
+    coal_waste_passthrough_gas_mid: float | None = None
+    coal_waste_passthrough_gas_slope: float | None = None
+
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
     # this value; the committed/economic/peaking grid tranches rescale to fill
@@ -794,8 +805,8 @@ class ScenarioConfig:
 # specified by explicit fields — gets no sigmoid: the flat passthrough.
 #
 # Supply keys match coal_supply_class tags ("prb" / "subbituminous" /
-# "bituminous" / "lignite"), plus "prb_follower" for the ERCOT tiered
-# low-must-run load-follower tier of the prb curve.
+# "bituminous" / "lignite" / "waste"), plus "prb_follower" for the ERCOT
+# tiered low-must-run load-follower tier of the prb curve.
 COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # ERCOT PRB-by-rail (curated COAL_PLANT_SUPPLY tags): per-month
     # PRB-vs-gas-CC breakeven across 2023-2025 (run-70s tuning series).
@@ -831,6 +842,13 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # discarded).
     ("PJM", "subbituminous"): {
         "floor": 1.00, "ceil": 1.25, "gas_mid": 3.40, "gas_slope": 2.5},
+    # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
+    # fuel, so no cheap-gas discount (floor 1.0; 2023/24 residuals already
+    # within the 1 TWh cap untouched) — only a dear-gas markup to shave the
+    # ~+2 TWh 2025 over-run at ~$3.5 gas. Same PJM delivered-gas crossover
+    # midpoint as the bit/subbit curves.
+    ("PJM", "waste"): {
+        "floor": 1.00, "ceil": 1.45, "gas_mid": 3.40, "gas_slope": 2.5},
 }
 
 
@@ -966,6 +984,11 @@ TIER_TAGS: dict[str, int] = {
     "coal_sub_passthrough_ceil": 3,
     "coal_sub_passthrough_gas_mid": 3,
     "coal_sub_passthrough_gas_slope": 3,
+    "coal_waste_passthrough_sigmoid": 3,
+    "coal_waste_passthrough_floor": 3,
+    "coal_waste_passthrough_ceil": 3,
+    "coal_waste_passthrough_gas_mid": 3,
+    "coal_waste_passthrough_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,

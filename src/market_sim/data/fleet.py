@@ -1134,12 +1134,12 @@ def campd_tranche_fuel_frac(
 
     ``passthrough_by_supply`` maps a coal supply tag (the
     :func:`coal_supply_class` vocabulary — "prb" / "subbituminous" /
-    "bituminous" / "lignite") to that supply chain's passthrough: a scalar
-    (flat) or an ``(T,)`` array (its gas-keyed sigmoid,
+    "bituminous" / "lignite" / "waste") to that supply chain's passthrough:
+    a scalar (flat) or an ``(T,)`` array (its gas-keyed sigmoid,
     ``fuel.coal_passthrough_by_supply``). Each coal tranche above must-run
     looks up its own tag, so each supply's curve — tuned to its basin, rank
     and delivery economics per ISO — applies only to its own plants. Tags
-    without an entry (e.g. "waste", unclassified "") pass full fuel cost
+    without an entry (e.g. unclassified "") pass full fuel cost
     (``1.0``); :func:`apply_coal_tranches` applies the result.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
