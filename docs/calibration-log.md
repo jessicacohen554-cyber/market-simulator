@@ -621,3 +621,77 @@ peak 1.32 on high CT heat rates) and/or tranche shares (pct_econ 32 /
 pct_peak 5) — a CHP offer-curve/tranche item for the next pass. The flag
 stays available (harmless, default off, correctly recorded in run_config
 since the prb_overrides recording fix). Keeper remains the run-79 config.
+
+---
+
+## ERCOT Run 84 — coal sigmoids: lignite passthrough + PRB floor retune (2026-06-12)
+
+**Run 84 (`run84_coal_sigmoids`, dashboard `run84 coal sigmoids`) —
+rejected, but the lignite mechanism works.** One run, two coal moves on
+the run-79 keeper config:
+
+* **(A1) Gas-keyed lignite passthrough sigmoid** (new
+  `--coal-lignite-sigmoid`; floor 0.70, ceil 1.00, mid 2.85, slope 2.5 —
+  defaults derived from the run-80 flat-reprice anchors: $1.15 ≈ pt 0.79
+  fixed 2023, $1.05 ≈ 0.72 fixed 2024, 2025 wants full cost). Mine-mouth
+  take-or-pay fixed costs are sunk, so the BID discounts in cheap-gas
+  months; the measured $1.45/MMBtu delivered-cost constant is untouched.
+  Implementation mirrors the PRB/bit sigmoids end to end
+  (`coal_lignite_passthrough_*` in ScenarioConfig,
+  `lignite_passthrough_series`, a lignite route in
+  `campd_tranche_fuel_frac`; must-run tranches stay VOM-only).
+* **(A2) PRB sigmoid floor −0.05** (baseload 0.78 → 0.73, follower
+  0.68 → 0.63) — half the run-81 floor gradient (+9.8/+10.0/+1.5 PRB
+  points per −0.10), aiming to spread PRB error across years.
+
+**Result vs keeper (2023/24/25):** lignite −12.8/−23.8/+0.7 →
+**+5.4/−5.0/+2.1** (balanced, all within ±6 — the sigmoid does what the
+flat reprices couldn't, holding 2025 at full cost); PRB −0.8/−9.9/−1.5 →
++1.9/−7.3/−0.9; Martin Lake/Limestone land +0.5/+0.2 TWh over CAMPD (not
+the run-81 blow-up); Parish/Spruce structural deficit unchanged (out of
+scope). **Rejected on gas collateral:** the cheap 2024 coal eats the gas
+classes — CT_PEAKER 2024 −12.8 → −18.6, ST_GAS 2024 −2.7 → −7.2, both
+beyond the ~2-point bar. Keeper stays run 79.
+
+**Next:** soften the 2024 discount — lignite floor ~0.75–0.78 and/or the
+PRB floor scale nearer 0.4 (floors 0.74/0.64) — and re-read the
+CT_PEAKER/ST_GAS columns. (Run 83's `--chp-startup-covered` was a no-op —
+see its entry above — so there is nothing to fold into a run-85 candidate
+from that probe.) Per-supply sigmoid note (2026-06-12): every coal supply tag now
+carries its own independently tunable sigmoid family — PRB
+(+follower tier), bituminous, lignite, and a new subbituminous split
+(`--coal-sub-sigmoid`, default = inherit PRB exactly as before) — since
+each encodes basin/type/transport-specific contract economics.
+
+## Jacobian tool v2 — dispatch-shape + LMP objectives, trust region (2026-06-12)
+
+`scripts/derive_offer_curve_jacobian.py` now regresses three error blocks
+per pure pair instead of annual TWh alone:
+
+* **twh** — annual class TWh (unchanged, BTM-aware);
+* **shape** — hourly NRMSE of non-CHP gas and coal vs EIA-930 (the [5]
+  table convention) plus the mean panel-plant CF-band EMD from
+  `plant_cf_bands.parquet`;
+* **lmp** — demand-weighted monthly |model − actual RT| from
+  `system.parquet` vs the committed `actual_lmp.json` reference.
+
+The joint-move recipe minimizes a weighted sum (`--w-twh/--w-shape/
+--w-lmp`, each block normalized to its `--baseline` magnitude, default
+run-79) and prints the predicted change PER BLOCK, so a TWh fix that
+degrades shape or LMP is visible before any LP solve. A **trust region**
+zeroes any knob whose post-move resolved multiplier would exit the value
+range actually sampled by the pure pairs (with a "re-derive locally first"
+warning) — the run-82 failure mode. Back-test
+(`--backtest e2_4_retune run82_jacobian_joint`): the trust region flags
+the CT_PEAKER committed move (post-move 1.008 vs sampled [1.140, 1.480]),
+and the twh block underpredicts its actual effect (+1.1 vs +2.2 TWh 2024)
+— exactly the extrapolation nonlinearity the region guards against.
+`inputs/processed/offer_curve_jacobian.csv` is schema v2 (new `metric`
+column; `metric == "twh"` reproduces v1). Registry additions classify the
+e2/run80/run82 chain (run80b–e as sidecars off run80a — 80d/80e
+run_configs predate the sigmoid-provenance fix and must not be trusted for
+sigmoid params); config-presence diffs with inert defaults no longer
+downgrade pure pairs. Shape/LMP sensitivity cells start data-poor
+(historical pairs moved knobs for TWh reasons) and carry the existing
+n_obs/stderr confidence flags; expect the LMP block to act as a guardrail
+rather than a driver.

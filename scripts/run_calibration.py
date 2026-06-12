@@ -74,6 +74,7 @@ from market_sim.data.fuel import (  # noqa: E402
     lignite_passthrough_series,
     prb_passthrough_series,
     prb_passthrough_series_follower,
+    sub_passthrough_series,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -876,10 +877,14 @@ def run_year(
         # Bituminous and lignite tranches get their own gas-keyed sigmoids
         # when config.coal_bit_passthrough_sigmoid /
         # config.coal_lignite_passthrough_sigmoid are set (1.0 = full cost
-        # off them).
+        # off them). Subbituminous-tagged tranches inherit the PRB family
+        # (sub_pt None) unless config.coal_sub_passthrough_sigmoid splits
+        # them onto their own curve — per-supply sigmoids encode basin/
+        # transport-specific economics.
         prb_pt = prb_passthrough_series(config, year, config.hours)
         bit_pt = bit_passthrough_series(config, year, config.hours)
         lignite_pt = lignite_passthrough_series(config, year, config.hours)
+        sub_pt = sub_passthrough_series(config, year, config.hours)
         if (config.coal_prb_passthrough_sigmoid
                 and config.coal_prb_passthrough_tiered):
             foll_pt = prb_passthrough_series_follower(
@@ -896,12 +901,14 @@ def run_year(
                     return foll_pt
                 return prb_pt
             fuel_fracs = [
-                campd_tranche_fuel_frac(g, _pt_for(g), bit_pt, lignite_pt)
+                campd_tranche_fuel_frac(
+                    g, _pt_for(g), bit_pt, lignite_pt, sub_pt
+                )
                 for g in fleet
             ]
         else:
             fuel_fracs = [
-                campd_tranche_fuel_frac(g, prb_pt, bit_pt, lignite_pt)
+                campd_tranche_fuel_frac(g, prb_pt, bit_pt, lignite_pt, sub_pt)
                 for g in fleet
             ]
     else:
@@ -937,8 +944,11 @@ def run_year(
                 lignite_pt = lignite_passthrough_series(
                     config, year, config.hours
                 )
+                sub_pt = sub_passthrough_series(config, year, config.hours)
                 fuel_fracs = [
-                    campd_tranche_fuel_frac(g, prb_pt, bit_pt, lignite_pt)
+                    campd_tranche_fuel_frac(
+                        g, prb_pt, bit_pt, lignite_pt, sub_pt
+                    )
                     for g in fleet
                 ]
             else:
