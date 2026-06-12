@@ -233,11 +233,12 @@ function rcls(r){return r==null?"":r>=R_GOOD?"good":r>=R_OK?"ok":"bad";}
 function fmtPct(d){return (d>=0?"+":"")+d.toFixed(1)+"%";}
 function fmtpp(d){return (d>=0?"+":"")+d.toFixed(1);}
 // ---- generation mix (system-wide; matches the calibration [3b] analysis) ----
-// Model total per fossil class = grid LP + behind-the-meter must-run (gmModel);
-// actual = full EIA-923 (classFull). Shows each class's share of TOTAL
-// generation and of FOSSIL generation, plus the model's pp deviation from the
-// actual fossil share. Non-fossil rows (nuclear/wind/solar) give the share of
-// total generation only. Zone-independent: 923/930 totals are system-wide.
+// Model total per class = grid LP + behind-the-meter must-run (gmModel);
+// actual = full EIA-923 (classFull, which spans fossil AND non-fossil
+// classes). One row per class: TWh and proportional share of TOTAL
+// generation, plus the model's pp share deviation. Zone-independent:
+// 923/930 totals are system-wide. (genMixData's fossil/total split is kept
+// for the KPI share criterion, not shown here.)
 function mixLabel(g){return META.groupLabel[g]||({ST_CHP:"Steam Gas CHP"}[g])||g;}
 function genMixData(id,yr){const B=BENCH[yr];const gm=(MODEL[id].years[yr]||{}).gmModel||{};
  const nf=(MODEL[id].years[yr]||{}).nonfossil||{};
@@ -245,27 +246,21 @@ function genMixData(id,yr){const B=BENCH[yr];const gm=(MODEL[id].years[yr]||{}).
  const mGen=mFos+(nf.nuclear||0)+(nf.wind||0)+(nf.solar||0);
  return {gm,nf,mFos,mGen};}
 function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
- const cf=B.classFull,e930=B.e930||{},FG=Object.keys(cf);
- const aFos=FG.reduce((s,g)=>s+(cf[g]||0),0);
- const aGen=aFos+(e930.nuclear||0)+(e930.wind||0)+(e930.solar||0);
- const D=genMixData(id,yr);
- let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total &amp; of fossil generation vs full EIA-923)</span></h2>';
- h+=`<p class=psub>Actual fossil ${aFos.toFixed(1)} TWh of ${aGen.toFixed(1)} TWh total · ${MODEL[id].label} fossil ${D.mFos.toFixed(1)} TWh</p>`;
+ const cf=B.classFull,FG=Object.keys(cf),gm=(MODEL[id].years[yr]||{}).gmModel||{};
+ const aGen=FG.reduce((s,g)=>s+(cf[g]||0),0);
+ const mGen=FG.reduce((s,g)=>s+(gm[g]||0),0);
+ let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs full EIA-923)</span></h2>';
+ h+=`<p class=psub>${MODEL[id].label} total ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh</p>`;
  h+='<div class=tablewrap><table><thead><tr><th>class</th>'
   +'<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
-  +'<th>model %fos</th><th>actual %fos</th><th>Δpp</th></tr></thead><tbody>';
- for(const g of FG){const a_f=100*(cf[g]||0)/aFos,a_g=100*(cf[g]||0)/aGen;
-  const m=D.gm[g]||0,m_f=D.mFos>0?100*m/D.mFos:0,m_g=D.mGen>0?100*m/D.mGen:0,dpp=m_f-a_f;
-  h+=`<tr><td>${mixLabel(g)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${(cf[g]||0).toFixed(2)}</td>`
+  +'<th>Δpp</th></tr></thead><tbody>';
+ for(const g of FG){const a=cf[g]||0,m=gm[g]||0;
+  const a_g=aGen>0?100*a/aGen:0,m_g=mGen>0?100*m/mGen:0,dpp=m_g-a_g;
+  h+=`<tr><td>${mixLabel(g)}</td><td class=num>${m.toFixed(2)}</td><td class=num>${a.toFixed(2)}</td>`
     +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td>`
-    +`<td class=num>${m_f.toFixed(1)}</td><td class=num>${a_f.toFixed(1)}</td>`
     +`<td class="num ${ppcls(dpp)}">${fmtpp(dpp)}</td></tr>`;}
- h+=`<tr class=sub><td>Fossil total</td><td class=num>${D.mFos.toFixed(2)}</td><td class=num>${aFos.toFixed(2)}</td>`
-   +`<td class=num>${(100*D.mFos/D.mGen).toFixed(1)}</td><td class=num>${(100*aFos/aGen).toFixed(1)}</td>`
+ h+=`<tr class=sub><td>Total</td><td class=num>${mGen.toFixed(2)}</td><td class=num>${aGen.toFixed(2)}</td>`
    +`<td class=num>100.0</td><td class=num>100.0</td><td class=num></td></tr>`;
- for(const f of ["nuclear","wind","solar"]){const a_g=100*(e930[f]||0)/aGen,m=D.nf[f]||0,m_g=D.mGen>0?100*m/D.mGen:0;
-  h+=`<tr><td>${f}</td><td class=num>${m.toFixed(2)}</td><td class=num>${(e930[f]||0).toFixed(2)}</td>`
-    +`<td class=num>${m_g.toFixed(1)}</td><td class=num>${a_g.toFixed(1)}</td><td class=num>—</td><td class=num>—</td><td class=num>—</td></tr>`;}
  return h+'</tbody></table></div></div>';}
 // ---- tooltip + run-id ----
 const tip=document.getElementById("bctip");
