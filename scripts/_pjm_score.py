@@ -54,6 +54,14 @@ def score(bundle: str) -> int:
                 fails += 1
             print(f"{year:>4} {name:<10} {m:>8.2f} {a:>8.2f} {d:>+7.2f} "
                   f"{100 * d / a if a else float('nan'):>+6.1f}%  {v}")
+        # Net interchange (informational, no tolerance gate; net-export
+        # positive). Present only for priced-interchange bundles.
+        ix = next((fr for fr in y["fuelRows"]
+                   if fr["fuel"] == "interchange"), None)
+        if ix is not None and ix["b"]:
+            im, ib = float(ix["m"]), float(ix["b"])
+            print(f"{year:>4} {'interchg':<10} {im:>8.2f} {ib:>8.2f} "
+                  f"{im - ib:>+7.2f} {100 * (im - ib) / ib:>+6.1f}%  (info)")
         # LMP (informational, no tolerance gate)
         lmp = y["lmp"]
         pd_sum = sum(z["p"] * z["d"] for z in lmp.values())
