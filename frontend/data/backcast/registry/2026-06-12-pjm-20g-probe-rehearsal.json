@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-pjm-20g-probe-rehearsal",
+  "label": "pjm 20g probe rehearsal",
+  "date": "2026-06-12",
+  "shorthand": "pjm-20g-probe-rehearsal",
+  "definition": "run 20g rehearsal probe: full run-21 candidate (band trio + curve-mid 0.45 + waste sigmoid counter ceil 2.60 slope 3.5), 2025 only \u2014 verifies WC<=0.80 before the 3-year solve. Outcome (2025): WC +0.88 (passes 1.0 cap, misses the <0.80 widening goal; counter ceil 2.60/slope 3.5 bought -0.27 of the band trio's +0.24+mid +0.04). gas -1.84, COAL_BIT +4.56, coal-total +5.59 (4.1%), LMP -21.3% (best yet, +2.5pp vs run 19). Counter retuned to ceil 3.00/slope 3.5/gas-mid 5.30 in 20h.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-20g-probe-rehearsal.js",
+  "bundle": "results/calibration/pjm_20g_rehearsal25"
+}
