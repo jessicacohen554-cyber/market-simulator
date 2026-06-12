@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-pjm-18-export-reprice",
+  "label": "pjm 18 export reprice",
+  "date": "2026-06-12",
+  "shorthand": "pjm-18-export-reprice",
+  "definition": "pjm 18 keeper: run-13 base (priced interchange, measured monthly gas, dual-fuel) + persistent PJM coal sigmoid defaults (bit ceil 1.32 from run 16; waste 1.0/2.10/4.80/2.0 revised from run-17 monthly decomposition) + export sinks repriced -$6 to stop the 2024/25 over-export that marginal gas backfilled (gas 2024 +24 TWh). All params from COAL_SIGMOID_DEFAULTS / EXPORT_TRANCHES \u2014 no per-run tuning flags Outcome: gas 2024 +24.2 -> +14.2 TWh (in the 5% cap) and 2025 near-perfect (BIT +0.4, WC +0.2, coal-total +0.6), but the deeper price trough bled cheap-gas-year coal: coal-total 2024 -6.20 (cap 5.81) and COAL_WC 2023 -1.26 \u2014 corrected in run 19 (trough sinks +$4 back, waste mid 5.3/slope 3, bit floor 0.80).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-18-export-reprice.js",
+  "bundle": "results/calibration/pjm_18_keeper"
+}
