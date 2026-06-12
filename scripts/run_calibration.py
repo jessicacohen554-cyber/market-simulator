@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 from dataclasses import fields
 from pathlib import Path
@@ -86,7 +87,7 @@ from market_sim.model.commitment import (  # noqa: E402
     compute_commitment,
     compute_monthly_markup,
 )
-from market_sim.model.dispatch import solve_dispatch  # noqa: E402
+from market_sim.model.dispatch import DispatchModel, solve_dispatch  # noqa: E402
 from market_sim.model.storage import (  # noqa: E402
     load_eia860_storage,
     storage_cap_profiles,
@@ -1040,8 +1041,19 @@ def run_year(
         hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
     )
+    # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
+    # -- and differ only in the objective (P1 = base MC + startup markup). With
+    # MARKET_SIM_WARMSTART=1 the model is built once and P1 warm-starts from
+    # P0's optimal basis (changeColsCost in place), skipping the second matrix
+    # build and converging in far fewer simplex iterations. Default off keeps
+    # the original two-independent-cold-solves path.
+    _warm = os.environ.get("MARKET_SIM_WARMSTART") == "1"
+    model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
     # P0: solve with base MC to extract per-month run lengths.
-    r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
+    if _warm:
+        r0 = model.solve(mc=mc_base)
+    else:
+        r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
     # P1: solve with bid MC = base MC + monthly startup amortization.
     markup = compute_monthly_markup(
         fleet, fleet_arrays, r0.dispatch, config.hours,
@@ -1049,7 +1061,10 @@ def run_year(
         chp_startup_covered=getattr(config, "chp_startup_covered", False),
     )
     mc_bid = mc_base + markup
-    result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
+    if _warm:
+        result = model.solve(mc=mc_bid)
+    else:
+        result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
 
     context = FleetContext.from_arrays(
         fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
