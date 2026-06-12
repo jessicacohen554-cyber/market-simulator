@@ -379,6 +379,24 @@ class ScenarioConfig:
     coal_lignite_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
     coal_lignite_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
 
+    # Tier 3 (calibration) — separate SUBBITUMINOUS passthrough sigmoid.
+    # Each coal passthrough sigmoid encodes basin/type/transport-specific
+    # economics (PRB rail take-or-pay, Appalachian/Illinois-Basin bit,
+    # mine-mouth lignite), so each supply tag carries its own tunable curve.
+    # Plants tagged "subbituminous" (the derived EIA-923 rank CSVs, non-ERCOT
+    # ISOs) historically alias onto the PRB sigmoid because plant_taxonomy
+    # routes both to COAL_PRB — but a sub-bituminous plant outside the Powder
+    # River Basin does not necessarily share PRB's rail contract economics.
+    # Off (default): "subbituminous" keeps inheriting the PRB family
+    # (passthrough, sigmoid, follower tier) — no calibration moves. On:
+    # subbituminous tranches above must-run use this family's own logistic
+    # instead. Param defaults start at the PRB values; tune from there.
+    coal_sub_passthrough_sigmoid: bool = False
+    coal_sub_passthrough_floor: float = 0.78    # cheap-gas asymptote
+    coal_sub_passthrough_ceil: float = 1.50     # dear-gas asymptote (>1 = markup)
+    coal_sub_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
+    coal_sub_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
+
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
     # this value; the committed/economic/peaking grid tranches rescale to fill
@@ -909,6 +927,11 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_passthrough_ceil": 3,
     "coal_lignite_passthrough_gas_mid": 3,
     "coal_lignite_passthrough_gas_slope": 3,
+    "coal_sub_passthrough_sigmoid": 3,
+    "coal_sub_passthrough_floor": 3,
+    "coal_sub_passthrough_ceil": 3,
+    "coal_sub_passthrough_gas_mid": 3,
+    "coal_sub_passthrough_gas_slope": 3,
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
