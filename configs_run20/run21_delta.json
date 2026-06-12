@@ -1,0 +1,22 @@
+{
+ "CC_REGULAR": {
+  "econ_low": 0.03,
+  "econ_high": 0.15,
+  "peak": 0.85
+ },
+ "COAL_BIT": {
+  "committed": -0.1,
+  "econ_low": -0.05,
+  "econ_high": -0.04
+ },
+ "CT_PEAKER": {
+  "econ_low": -0.1,
+  "econ_high": -0.11
+ },
+ "COAL_WC": {
+  "committed": -0.06,
+  "econ_low": -0.06,
+  "econ_high": -0.06,
+  "peak": -0.06
+ }
+}
