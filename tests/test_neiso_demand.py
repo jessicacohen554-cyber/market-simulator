@@ -100,9 +100,14 @@ def test_neiso_zonal_demand_reconciles_to_system_series():
 
     With the static share fallback (U3 absent), each zone row is a constant
     fraction of the system series so the sum is exact to floating-point.
+    Interchange is disabled so the reconciliation isolates the zonal split;
+    NEISO now serves the measured net-interchange schedule by default (a
+    net-import wedge that otherwise shifts the system total).
     """
     neiso = get_iso_config("NEISO")
-    demand = load_demand("NEISO", _TEST_YEAR, neiso)
+    demand = load_demand(
+        "NEISO", _TEST_YEAR, neiso, include_interchange=False
+    )
     system = _load_neiso_hourly_demand(_TEST_YEAR)
     if system is None:
         pytest.skip("ISNE hourly parquet not available for year")
@@ -239,7 +244,11 @@ def test_neiso_zonal_load_shares_expected_values():
 
 
 def test_neiso_zonal_demand_reconciles_with_synthetic_file():
-    """With a synthetic U3 file, zonal demand still sums to the system series."""
+    """With a synthetic U3 file, zonal demand still sums to the system series.
+
+    Interchange is disabled so the reconciliation isolates the zonal split
+    (NEISO serves the measured net-interchange schedule by default).
+    """
     neiso = get_iso_config("NEISO")
     system = _load_neiso_hourly_demand(_TEST_YEAR)
     if system is None:
@@ -252,6 +261,8 @@ def test_neiso_zonal_demand_reconciles_with_synthetic_file():
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
         with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
-            demand = load_demand("NEISO", _TEST_YEAR, neiso)
+            demand = load_demand(
+                "NEISO", _TEST_YEAR, neiso, include_interchange=False
+            )
 
     np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)

@@ -68,6 +68,8 @@ from market_sim.data.eia923 import (  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_eia_hourly_benchmark,
+    neiso_net_interchange,
+    nyiso_net_interchange,
     pjm_net_interchange,
     load_ercot_battery_gen,
     load_ercot_fossil_gen,
@@ -2124,7 +2126,17 @@ def _report_generic(
                 )
                 how = "priced import/export node"
             else:
-                model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+                # No priced node in dispatch → the measured net-interchange
+                # schedule was folded into demand by default (load_demand,
+                # include_interchange=True). PJM is a net exporter; NYISO/NEISO
+                # are net importers — all three serve the measured EIA-930
+                # schedule the same way (P9 / playbook §8.2).
+                measured_ix = {
+                    "PJM": pjm_net_interchange,
+                    "NYISO": nyiso_net_interchange,
+                    "NEISO": neiso_net_interchange,
+                }.get(iso)
+                model_ix = measured_ix(year) if measured_ix is not None else None
                 how = "served as a scheduled interchange added to demand"
             if model_ix is not None:
                 m_twh = float(model_ix.sum()) / _MWH_PER_TWH
