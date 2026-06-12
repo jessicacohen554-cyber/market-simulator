@@ -362,7 +362,10 @@ model/transmission.py::build_import_generators / build_export_sinks (the
 J1-generalized machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
 scripts/derive_import_tranches.py (the PJM fitting workflow to reuse),
 playbook §8.2, and the PJM writeup (docs/multi-iso/pjm-backcast-2023.md
-§4). The machinery is built; this pack only fits CAISO's entries.
+§4). The machinery is built AND on by default for CAISO
+(constants.PRICED_INTERCHANGE_DEFAULT_ISOS — CAISO backcasts serve the
+priced WECC node without the --priced-interchange flag, since CAISO has no
+measured-schedule mode); this pack only fits CAISO's tranche entries.
 
 1. Benchmark: hourly CISO net interchange from data/eia_hourly/CISO
    hourly.parquet (and per-neighbor splits if the parquet carries them).
