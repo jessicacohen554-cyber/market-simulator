@@ -3,7 +3,7 @@
   "label": "nyiso p11 smoke 2023",
   "date": "2026-06-12",
   "shorthand": "nyiso-p11-smoke-2023",
-  "definition": "nyiso p11 smoke 2023: structural backcast (hydro/nuclear/dual-fuel/RGGI/imports wired; P10 LMP held \u2014 price level-only)",
+  "definition": "NYISO smoke 2023 (P11 structural backcast), re-run under P9b: the measured EIA-930 net interchange is now served by default in load_demand (generalized from PJM-only to {PJM,NYISO,NEISO}). This closes the dominant structural gap the original smoke flagged — NYISO is a ~16%-of-load net importer (−23.45 TWh) and the default path previously served 0, dumping the import wedge on in-state gas. Net-interchange row now GREEN: model −23.45 vs actual −23.45 TWh (duration RMSE 0 MW, import-hours 100%, diurnal corr +1.00). Gas falls 80.11 → 57.52 TWh (+25.6% → −9.8% vs EIA-923 63.79; EIA-930 61.00); TOTAL 147.31 → 123.77 TWh (+16.0% → −2.5%); avg price $70.99 → $42.72. P10 LMP still held (price level-only, not scored). Hydro/nuclear/wind dead-on. No offer band tuned — the interchange gate is green and unblocks the downstream packs (P7 gas+U4 basis, P13 winter oil, P10/U2 LMP, P8/U3 zonal load).",
   "years": [
     2023
   ],
