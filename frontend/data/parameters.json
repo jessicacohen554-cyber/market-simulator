@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-06-11",
+  "generated": "2026-06-12",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -8754,6 +8754,25 @@
       ]
     },
     {
+      "param_id": "scenario.chp_startup_covered",
+      "display_name": "Chp Startup Covered",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Tier 3 (calibration) — CHP startup costs covered by the steam host. When True, CHP classes (CC_CHP / CT_CHP / ST_CHP) are exempt from the P1 monthly startup-amortization markup: a steam-host-obligated cogen never pays a cold start on its own account (the host's steam demand keeps the unit hot, or the start is incurred for steam regardless of the energy market), so its energy bid carries no startup component. Off (default) keeps the legacy behaviour where CHP CAMPD bins pay their bin startup cost like merchant units.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.chp_steam_following",
       "display_name": "Chp Steam Following",
       "value": false,
@@ -8794,7 +8813,7 @@
     {
       "param_id": "scenario.coal_bit_passthrough_ceil",
       "display_name": "Coal Bit Passthrough Ceil",
-      "value": 1.25,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -8813,7 +8832,7 @@
     {
       "param_id": "scenario.coal_bit_passthrough_floor",
       "display_name": "Coal Bit Passthrough Floor",
-      "value": 0.82,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -8832,7 +8851,7 @@
     {
       "param_id": "scenario.coal_bit_passthrough_gas_mid",
       "display_name": "Coal Bit Passthrough Gas Mid",
-      "value": 3.4,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -8851,7 +8870,7 @@
     {
       "param_id": "scenario.coal_bit_passthrough_gas_slope",
       "display_name": "Coal Bit Passthrough Gas Slope",
-      "value": 2.5,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -8962,6 +8981,101 @@
       ]
     },
     {
+      "param_id": "scenario.coal_lignite_passthrough_ceil",
+      "display_name": "Coal Lignite Passthrough Ceil",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_lignite_passthrough_floor",
+      "display_name": "Coal Lignite Passthrough Floor",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_lignite_passthrough_gas_mid",
+      "display_name": "Coal Lignite Passthrough Gas Mid",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_lignite_passthrough_gas_slope",
+      "display_name": "Coal Lignite Passthrough Gas Slope",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_lignite_passthrough_sigmoid",
+      "display_name": "Coal Lignite Passthrough Sigmoid",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Lignite (mine-mouth; full cost / no sigmoid everywhere today — the slot exists so a mine-mouth curve can be characterized per ISO later without re-plumbing).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.coal_mustrun_per_plant",
       "display_name": "Coal Mustrun Per Plant",
       "value": false,
@@ -9040,7 +9154,7 @@
     {
       "param_id": "scenario.coal_prb_follower_ceil",
       "display_name": "Coal Prb Follower Ceil",
-      "value": 1.35,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9059,7 +9173,7 @@
     {
       "param_id": "scenario.coal_prb_follower_floor",
       "display_name": "Coal Prb Follower Floor",
-      "value": 0.68,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9078,7 +9192,7 @@
     {
       "param_id": "scenario.coal_prb_follower_gas_mid",
       "display_name": "Coal Prb Follower Gas Mid",
-      "value": 2.85,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9097,7 +9211,7 @@
     {
       "param_id": "scenario.coal_prb_follower_gas_slope",
       "display_name": "Coal Prb Follower Gas Slope",
-      "value": 2.5,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9173,7 +9287,7 @@
     {
       "param_id": "scenario.coal_prb_passthrough_ceil",
       "display_name": "Coal Prb Passthrough Ceil",
-      "value": 1.5,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9192,7 +9306,7 @@
     {
       "param_id": "scenario.coal_prb_passthrough_floor",
       "display_name": "Coal Prb Passthrough Floor",
-      "value": 0.78,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9211,7 +9325,7 @@
     {
       "param_id": "scenario.coal_prb_passthrough_gas_mid",
       "display_name": "Coal Prb Passthrough Gas Mid",
-      "value": 2.85,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9230,7 +9344,7 @@
     {
       "param_id": "scenario.coal_prb_passthrough_gas_slope",
       "display_name": "Coal Prb Passthrough Gas Slope",
-      "value": 2.5,
+      "value": null,
       "unit": "",
       "domain": "Fuel Prices",
       "tier": 3,
@@ -9272,6 +9386,196 @@
       "domain": "Fuel Prices",
       "tier": 3,
       "source": "Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plants whose per-plant must-run floor is <= coal_prb_follower_mustrun_max use a SEPARATE follower-tier sigmoid (coal_prb_follower_*); the rest use the baseload sigmoid above. The low-floor units are load-followers (they cycle), not baseload price-takers, so they can want a different curve. Follower params default to the baseload values, so the toggle is a no-op until tuned. Requires coal_prb_passthrough_sigmoid and coal_mustrun_per_plant.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_sub_passthrough_ceil",
+      "display_name": "Coal Sub Passthrough Ceil",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_sub_passthrough_floor",
+      "display_name": "Coal Sub Passthrough Floor",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_sub_passthrough_gas_mid",
+      "display_name": "Coal Sub Passthrough Gas Mid",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_sub_passthrough_gas_slope",
+      "display_name": "Coal Sub Passthrough Gas Slope",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_sub_passthrough_sigmoid",
+      "display_name": "Coal Sub Passthrough Sigmoid",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Subbituminous: the derived EIA-923 rank tag. Historically aliased onto the PRB sigmoid (plant_taxonomy routes both to COAL_PRB), but a sub-bituminous plant outside ERCOT does not share ERCOT PRB's rail contract economics — each ISO's subbit fleet gets its own curve (e.g. PJM's two PRB-by-rail plants delivered into PJM conditions).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_subbit_passthrough_ceil",
+      "display_name": "Coal Subbit Passthrough Ceil",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_subbit_passthrough_floor",
+      "display_name": "Coal Subbit Passthrough Floor",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_subbit_passthrough_gas_mid",
+      "display_name": "Coal Subbit Passthrough Gas Mid",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_subbit_passthrough_gas_slope",
+      "display_name": "Coal Subbit Passthrough Gas Slope",
+      "value": null,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_subbit_passthrough_sigmoid",
+      "display_name": "Coal Subbit Passthrough Sigmoid",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Subbituminous (derived EIA-923 rank tag; e.g. PJM's two PRB-by-rail plants delivered into PJM market conditions — distinct from the curated ERCOT \"prb\" supply and tuned separately per ISO).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
