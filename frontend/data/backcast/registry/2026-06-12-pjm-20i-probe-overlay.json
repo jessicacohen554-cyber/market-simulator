@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-pjm-20i-probe-overlay",
+  "label": "pjm 20i probe overlay",
+  "date": "2026-06-12",
+  "shorthand": "pjm-20i-probe-overlay",
+  "definition": "run 20i probe: band trio + curve-mid 0.45 + DEFAULT waste sigmoid on the regenerated outage overlay (opTime proxy + net-zero-to-grid + DE/NJ/MD extracts), 2025 only. Outcome (2025, corrected availability): gas +0.02 (dead-on), coal-total +1.55, COAL_BIT +2.28, LMP -18.0% (from -21.3% \u2014 tighter real supply lifts prices), but COAL_WC -1.10 FAILS low: the default waste sigmoid still suppresses the dear months it was tuned to suppress when the phantom BTM plants inflated WC. Next: waste sigmoid OFF (20j).",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-20i-probe-overlay.js",
+  "bundle": "results/calibration/pjm_20i_overlay25"
+}
