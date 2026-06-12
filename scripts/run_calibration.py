@@ -41,7 +41,12 @@ import numpy as np
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.constants import HOURS_PER_YEAR, VOM  # noqa: E402
+from market_sim.config.constants import (  # noqa: E402
+    HOURS_PER_YEAR,
+    PRICED_INTERCHANGE_DEFAULT_ISOS,
+    VOM,
+    resolve_priced_interchange,
+)
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
@@ -1418,6 +1423,16 @@ def _build_parser() -> argparse.ArgumentParser:
              "coal gains no new generation in P2 (P1 locks it). Only "
              "meaningful with --commitment.",
     )
+    parser.add_argument(
+        "--priced-interchange", action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Serve interchange through the priced import/export node "
+             "(import tranches + export sinks in the ISO's external zone) "
+             "instead of the measured schedule added to demand. Default per "
+             f"ISO: on for {', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+             "(no measured-schedule mode), off elsewhere; pass "
+             "--no-priced-interchange to force the measured schedule.",
+    )
     return parser
 
 
@@ -1429,6 +1444,8 @@ def main(argv: list[str] | None = None) -> None:
     """
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
+    priced_interchange = resolve_priced_interchange(
+        args.priced_interchange, iso)
     reference = _load_reference()
     ttc_overrides = {
         "ttc_wn": args.ttc_wn,
@@ -1447,6 +1464,7 @@ def main(argv: list[str] | None = None) -> None:
             args.coal_passthrough,
             commitment_enabled=args.commitment,
             commitment_screen_coal=not args.no_coal_p2,
+            priced_interchange=priced_interchange,
         )
         if result_p1 is not None:
             _report_year(year, iso, result_p1, context, reference, label="P1")
