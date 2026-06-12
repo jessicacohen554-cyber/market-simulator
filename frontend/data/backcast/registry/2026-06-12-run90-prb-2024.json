@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run90-prb-2024",
+  "label": "run90 prb 2024",
+  "date": "2026-06-12",
+  "shorthand": "run90-prb-2024",
+  "definition": "Run 90 (REJECTED, gradient anchor): base B (run 89) + 2024-keyed PRB sigmoid retune (slope 5 centered 2.45 between 2024's cheap shaped-gas months 1.97-2.08 and 2023's cheapest 2.29; floors -0.06 to 0.68/0.58, ceils pinned at >=2.5 to 1.17/1.04). Overshoots BOTH years: PRB 2024 -5.5 -> +4.4% but PRB 2023 +3.4 -> +12.4% (FAIL) and CC_REGULAR 2023 -3.9 -> -5.5% (FAIL); Martin Lake guard blown (+2.0 TWh 2023, the run-81 failure mode). 5 in-scope fails vs run 85's 4. The measured year-gradients are the finding: ~65 TWh per unit passthrough in 2024 vs ~142 in 2023 - 2023 sits on the coal-gas knife edge, and no single logistic can cut below $2.1 gas while tracking run-85's curve at 2.29+ (the ceil/mid/slope trade leaks into 2023 winter or 2025). The PRB-2024 fix must ride the CC_REGULAR econ_high adjacency instead (run 91).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run90-prb-2024.js",
+  "bundle": "results/calibration/run90_prb_2024"
+}
