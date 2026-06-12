@@ -16,8 +16,10 @@ playbook §6 discipline that structural fixes dominate band multipliers.
 > after P9b (measured interchange) merged. A combined `--year 2023 2024 2025`
 > bundle hit a warm-start basis degeneracy in the P2 commitment solves; the
 > three single-year bundles solve cleanly and reproduce each other to <0.1
-> TWh. **P10 still held** (no `actual_lmp.json` NEISO block, upload U2);
-> price is level-only throughout. The 2025 bundle uses `--hydro-backfill-year
+> TWh. **P10 has since landed** (2026-06-12) — the `actual_lmp.json` NEISO
+> block + hourly sidecar are present and the keepers are now **price-scored**
+> (§"Largest gaps" #3); the fuel-mix / CO₂ / interchange sign-off below is
+> unchanged. The 2025 bundle uses `--hydro-backfill-year
 > 2024` — the EIA-923 2025 early-release has only 6 of ~166 NEISO hydro
 > plants reporting, yielding 0.09 TWh; the backfill restores ~6.6 TWh at the
 > 2024 inflow rate.
@@ -252,19 +254,55 @@ correction if PS cycling becomes a scored metric. Not tuned because it would
 not move gas/CO₂/interchange. **Owner:** P4 (PS throughput cost) / P5 (BESS
 cycling), after storage benchmarks are formalised.
 
-### 3. [INFO · price level/duration — P10 held] All zones identical; no Boston/CT congestion separation
+### 3. [SCORED 2026-06-12 · price level/duration] Mid-curve over-prices 2023/24, winter tail mis-placed; filed to U4/U6/P9, not band-tuned
 
-All four model zones (North / Central / Boston / Connecticut) price
-identically in all years — $53.61 / $55.72 / $59.50 for 2023/24/25 — because
-the Tier-3 RSP-derived TTC seeds are non-binding and no measured interface
-limits exist (U6 upload). Real ISO-NE congestion separates the Boston–Hub and
-CT–Hub spreads under summer peak and winter constrained conditions.
+P10 (the U2 LMP upload) landed and the three keepers were **scored** against
+the `actual_lmp.json` NEISO hub (`.H.INTERNAL_HUB`) — see
+`calibration-log.md` §NEISO price re-score for the full breakdown. Modeled
+hub mean vs actual RT / DA:
 
-Price is not benchmarked (P10 held; no `actual_lmp.json` NEISO block), so
-this is informational. ISO-NE's published 2023–2024 internal hub prices
-(~$70/MWh in 2023; ~$55/MWh in 2024) are broadly consistent with the modeled
-levels, but hourly comparison requires U2. **Owner:** P10 (U2 hourly LMP +
-U6 interface flows; `neiso-zonal-adequacy.md`).
+| year | model | actual RT | actual DA | resid vs RT | >$75 share (model / act) |
+|---|---:|---:|---:|---:|---:|
+| 2023 | 53.58 | 35.70 | 36.82 | **+50%** | 24.7% / 5.9% |
+| 2024 | 55.68 | 39.54 | 41.51 | **+41%** | 29.8% / 8.2% |
+| 2025 | 53.44 | 65.89 | 67.86 | **−19%** | 5.8% / 27.2% |
+
+The price does **not** meet the ±5–10% level / duration target, but the miss
+is **filed, not tuned** (the structural fuel-mix / CO₂ / interchange rows are
+green and untouched; zero offer-band moves):
+
+- **Winter (Jan/Feb/Dec) = the monthly-AGT gap (U4).** The modeled winter is a
+  *flat monthly plateau* (2023 Jan/Feb p50 $123 → max $147; 2025 p50 $55 →
+  max $66) because the committed AGT basis is monthly — every winter hour
+  inherits the same monthly-mean gas. Real winter is daily-spot-spiky (2023
+  actual p99 $273, max $462; 2025 p99 $285). The model **never clears an hour
+  >$200 in any winter** (vs 44 / 11 / 160 actual): the p99 tail under-shoots in
+  every year. Where the monthly mean over-states the typical hour the model
+  over-prices (2023/24 mid-curve, the fat >$75 band); where the realized daily
+  blowout dwarfs it the model under-prices (2025 Jan −79 / Feb −72 / Dec −69
+  $/MWh). Both directions are the **daily-AGT U4 data gap** (neiso-data-audit
+  §2b; gap #1 above is the same limitation on the oil side) — not an offer
+  band. The summer-peak over-pricing months (Jul-2023 $128, Aug-2024 $87, zero
+  slack) are the oil-steam scarcity dispatch that the monthly AGT pushes into
+  summer instead of winter — same U4 family, filed.
+- **Zonal separation — 4-zone gate confirmed, CT tail filed (U6).** Modeled
+  Boston−Hub and CT−Hub spreads are exactly $0 (all four load zones identical;
+  RSP TTC seeds non-binding). Actual day-ahead separation is itself sub-$2 mean
+  (Boston−Hub +0.3..+0.8, CT−Hub −0.8..−1.9), so the copper-plate internal
+  price tracks the "level-market" reality within tolerance for Boston/North.
+  The one divergence: the model cannot reproduce **Connecticut's growing
+  cheap-side tail** (CT−Hub p99 $5 → $13.5 across 2023→2025). Do **not** add
+  zones (`neiso-zonal-adequacy.md` keeps the 4-zone split on structural
+  grounds); the lever is the U6 interface-limit upload, not topology.
+- **Mid-curve level (year-flatness) = served-interchange convention (P9).** The
+  model sits ~$54 every year while actual rises $36 → $66, because imports are
+  netted into demand rather than price-setting (cheap HQ hydro never sets the
+  margin). `--priced-interchange` pulled 2024 to $48 (still over) — the priced
+  node is the forward mechanism.
+
+**Owner:** P7/P13 (U4 daily AGT — winter tail), P10 (U6 interface flows — CT
+zonal tail), P9 (priced node — mid-curve level). `neiso-zonal-adequacy.md`
+carries the spread duration curves.
 
 ### 4. [TRACE] Coal 0.00–0.08 vs ~0.2 TWh
 
@@ -315,9 +353,12 @@ CSV are the only NEISO-specific tranche tuning and are data-derived.
 1. ~~Serve measured net-interchange schedule (gap #1 in P11 smoke).~~
    **Done** — measured schedule for backcasts (P9b); priced HQ_import node
    for forward scenarios (P9), validated with `--priced-interchange`.
-2. **Upload U2 (DA + RT hourly LMPs, 2023–2025)** — unblocks P10: formal
-   price benchmarking, duration-curve overlay, Boston/CT spread analysis.
-   `derive_actual_lmp.py --iso NEISO` + `actual_lmp.json` NEISO block.
+2. ~~Upload U2 (DA + RT hourly LMPs, 2023–2025) — formal price benchmarking,
+   duration-curve overlay, Boston/CT spread analysis.~~ **Done (2026-06-12,
+   P10)** — `actual_lmp.json` NEISO block + `actual_lmp_hourly_NEISO.parquet`
+   landed; the three keepers are scored (gap #3 above). The scoring confirms
+   the winter tail is the U4 daily-AGT gap (next item) and the CT zonal tail is
+   U6 — no offer-band fix.
 3. **Upload U4 refinement (daily Algonquin Citygate basis, 2023–2025)** —
    the single most important future upload for winter accuracy. Daily cold-
    snap AGT spot prices (>$30/MMBtu on peak days) trip the dual-fuel CT
