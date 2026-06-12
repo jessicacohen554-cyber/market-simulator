@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run93-cc-probe",
+  "label": "run93 cc probe",
+  "date": "2026-06-12",
+  "shorthand": "run93-cc-probe",
+  "definition": "Run 93: fresh Jacobian probe on the corrected (Kiamichi) fleet \u2014 CC_REGULAR econ_high -0.40 -> -0.30 (+0.10, the measured full-dose endpoint for the CC give-back; beta-dosing method). Pre-Kiamichi pure pairs are stale; expect 2023 amplification ~2-3x old jacobian rows. MEASURED PROBE, not a keeper: response ~3x the old CC self-row (CC -2.7/-2.2/-2.2 TWh, PRB +1.4/+0.9/+0.6); full dose blows the 2023 guards (Martin Lake +1164 / Limestone +1084 GWh) and the 2023 coal split (+4.2%), bounding the run-95 dose at beta<=0.37. LMP gate held (32.0/7.2/2.3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run93-cc-probe.js",
+  "bundle": "results/calibration/run93_jacobian_probe"
+}
