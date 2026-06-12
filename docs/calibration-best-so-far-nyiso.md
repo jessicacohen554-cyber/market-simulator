@@ -49,7 +49,7 @@ classes — the least-distorting place for it.
 | **TOTAL gen** | **123.77** | **129.67** | **−4.5%** | demand-basis gap |
 | net interchange | −23.45 | −23.45 (930) | RMSE **0 MW** | ✓ |
 | CO2 (approx, class rates) | ~24.2 Mt | eGRID 26.9 (excl-biogenic) | ~−10% | downstream of gas |
-| avg price (level-only, P10 held) | $42.72 | — | max $235.81 | not scored |
+| avg price (P10/U2 landed; demand-weighted P1) | $41.79 | actual RT $30.29 / DA $31.11 | +$11.50 vs RT | scored — mid over / tail under |
 
 ## The gas-total basis floor (why −9.9% is not a dispatch error)
 
@@ -113,22 +113,44 @@ the −9.9% is the EIA-930/EIA-923 reconciliation, documented, not tuned.
 - **Residual gas after interchange** 🟢 — gas is *under*, not over: the served
   measured wedge fully removes the P11 over-generation; the residual −9.9% is
   the demand-basis floor above, not unserved imports.
-- **Downstate congestion separation** ⚪ not scored — modeled zonal spread is
-  small ($0–4); cannot compare J−A / K−A LBMP (P10/U2 LMP upload held).
+- **Downstate congestion separation** 🟡 now scored (P10/U2 landed) — model
+  collapses the four downstate zones to one price and captures only the
+  upstate-cheap / downstate-dear split (≈$4), not the full actual J−A spread
+  (≈$13); the interface-TTC structural item (U7). See the price re-score below.
 - **Hydro displacement** 🟢 — +1.3% vs EIA-923, budget honored.
 - **Nuclear refuel months** 🟢 — −0.1% annual; monthly CF overlay clean.
-- **Import-share drift** 🟢 (2023) — exact match. **🔴 2025/2024 are data-blocked
-  (below).**
+- **Import-share drift** 🟢 (2023 −23.45 / 2025 −19.09 TWh, exact). **🔴 2024
+  is data-blocked (below).**
+
+## 2025 — UNBLOCKED & price-scored (2026-06-12)
+
+The EIA-930 `NYIS hourly` extract was refreshed to span full 2025 (was Q1-only),
+so `nyiso_net_interchange(2025)` now returns the measured series (−19.09 TWh) and
+the backcast serves the import wedge. Run `nyiso_p12_2025_refreshed` (dashboard
+`nyiso 2025 refreshed`): the P12 **+22.7% over-generation closes** — gas 68.30
+TWh (**−2.8%** vs EIA-930 70.25), TOTAL 132.76 (**+2.5%** vs EIA-930 129.54),
+nuclear −0.1%, wind exact, hydro at budget. **EIA-923 2025 is the preliminary
+M-file** (total 115.84 TWh, renewables/biomass/oil under-reported) — flagged,
+not chased; EIA-930 is the operational basis. Full detail in the calibration log
+("NYISO 2025") and the bundle `SUMMARY-nyiso-2025-refreshed.md`.
+
+## Price re-score (P10/U2 landed — no longer level-only)
+
+System level + duration ($/MWh), vs `actual_lmp.json` + `actual_lmp_hourly_NYISO`:
+
+| year | model avg | actual RT | resid | p50 m/a | p90 m/a | p99 m/a |
+|---|---|---|---|---|---|---|
+| 2023 | 41.79 | 30.29 | +11.50 | 36/26 | 66/42 | 104/120 |
+| 2025 | 69.24 | 60.73 | +8.51 | 57/45 | 114/114 | 157/222 |
+
+Per-zone level resid vs actual DA ranges +$1.7 (Long_Island) to +$12.9
+(Upstate_West, 2023). Both years over-price the mid-merit band and under-price
+the scarcity tail (p99/max) — the no-ORDC/no-reserve-scarcity signature; p90 is
+near-exact in 2025. This is the price level the model produces honestly; the
+offset is the structural scarcity gap, not an offer-band miss.
 
 ## Blocked years (not runnable as clean backcasts yet)
 
-- **2025** — the EIA-930 `NYIS hourly` extract stops at **Q1 2025** (2,160 h of
-  8,760), so `nyiso_net_interchange(2025)` returns `None` and the backcast
-  serves **0** of the ~−23 TWh import wedge → **+22.7% over-generation**
-  (151.9 vs EIA-923 123.8 TWh, avg price $127). The 2025 EIA-923 benchmark is
-  also preliminary (biomass 0.13, solar 0.66 TWh — under-reported). **Refresh:
-  extend the EIA-930 NYIS extract through 2025-12 and re-pull final 2025
-  EIA-923.** Until then 2025 is filed, not calibrated.
 - **2024** — blocked on `NY_2024` unit-level CEMS (only facility-level present)
   and the missing `NYISO_2024_renewable_capacity.csv`.
 
@@ -150,8 +172,11 @@ P12 probes, all rejected (logged in `docs/calibration-log.md`, "NYISO P12"):
   wind 4.77, solar 2.05, OTHER 2.20, biomass 0.84, oil 0.42 TWh.
 - **Net interchange** — EIA-930 `NYIS hourly` `Total interchange` (export-
   positive), 2023 = −23.45 TWh / −2,677 MW avg; served as-is by `load_demand`
-  (P9b). Coverage: 2023 full, 2024 full, **2025 Q1-only (2,160 h)** — the 2025
-  block.
+  (P9b). Coverage: 2023 full, 2024 full, **2025 full (refreshed 2026-06-12;
+  −19.09 TWh)** — the EIA-930 extract now spans 2015–2026.
+- **LMP benchmark** — `inputs/calibration/actual_lmp.json` (per-zone DA/RT
+  levels) + `actual_lmp_hourly_NYISO.parquet` (system hourly DA/RT), landed
+  via P10/U2; 2023 RT $30.29 / DA $31.11, 2025 RT $60.73 / DA $60.71.
 - **Demand basis** — EIA-930 `NYIS hourly` Demand is transmission-metered
   (generation-side / net of BTM PV), so `td_loss_factor = 0.0` (playbook §8.1;
   param `scenario.td_loss_factor`, EIA-930 Demand + Interchange = Net Generation).
