@@ -1408,7 +1408,11 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # class tolerance and lands 2024/2025 net interchange near the EIA-930
     # actuals, trading away some 2023 export depth (the neighbor-demand
     # year-shape is price-orthogonal, so a static price-keyed node cannot
-    # hit 2023's +40 and 2024's +33 simultaneously). Backcasts without
+    # hit 2023's +40 and 2024's +33 simultaneously). PJM run 19 then put
+    # $4 back on the two cheapest sinks: dropping the trough floor to
+    # $12-14 had pushed cheap-hour prices below the coal committed bids,
+    # bleeding 2023/24 coal out of its class tolerance — the upper four
+    # sinks keep the full -$6 that did the gas-2024 work. Backcasts without
     # --priced-interchange ignore these blocks: they serve the measured
     # tie-line schedule instead (eia_loader.pjm_net_interchange). NOTE: the
     # 2025 tie-line CSV diverges from EIA-930 May-2025 onward (+32.9 vs
@@ -1422,8 +1426,8 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("export_peak", 1700.0, 30.0),
         ("export_mid", 1700.0, 24.0),
         ("export_shoulder", 1800.0, 19.0),
-        ("export_offpeak", 1800.0, 14.0),
-        ("export_trough", 2100.0, 12.0),
+        ("export_offpeak", 1800.0, 18.0),
+        ("export_trough", 2100.0, 16.0),
     ],
     # NYISO almost never exports (EIA-930 NYIS: net export ≤ +131 MW in 2023,
     # +449 in 2024 — well under 1% of hours), so a single small sink absorbs
