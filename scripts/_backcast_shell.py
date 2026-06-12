@@ -41,18 +41,14 @@ body{background:var(--bg-page)}
 .bc-main{flex:1;min-width:0}
 .bc-side h3{font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin:var(--space-md) 0 var(--space-sm)}
 .bc-side h3:first-child{margin-top:0}
-/* ISO / market toggle — the primary axis: prominent, color-coded buttons. Each
-   button sets its own ISO color in --c (inline) so the dot, hover and active
-   fill all follow it. */
-.isobtns{display:flex;flex-direction:column;gap:7px}
-.isobtn{display:flex;align-items:center;gap:9px;text-align:left;border:1px solid var(--border);background:var(--bg-surface);border-radius:var(--radius-md);padding:11px 13px;font-size:var(--fs-sm);cursor:pointer;color:var(--ink);font-weight:700;transition:background .12s ease,border-color .12s ease,box-shadow .12s ease}
-.isobtn:hover{border-color:var(--c);box-shadow:var(--shadow-sm)}
-.isobtn .dot{width:11px;height:11px;border-radius:50%;background:var(--c);flex:0 0 auto}
-.isobtn .iname{flex:1;letter-spacing:.01em}
-.isobtn .icount{font-size:var(--fs-xs);font-weight:600;color:var(--ink-muted);font-variant-numeric:tabular-nums}
-.isobtn.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:var(--shadow-sm)}
-.isobtn.on .dot{background:#fff}
-.isobtn.on .icount{color:rgba(255,255,255,.82)}
+/* ISO / market toggle — the primary axis. A native <select> (mobile-friendly:
+   the OS picker handles small screens) wrapped with a color dot that follows
+   the active ISO's --c. */
+.isoselwrap{position:relative;display:flex;align-items:center}
+.isoselwrap .dot{position:absolute;left:13px;width:11px;height:11px;border-radius:50%;background:var(--c,var(--accent));pointer-events:none}
+.isosel{width:100%;appearance:none;-webkit-appearance:none;border:1px solid var(--c,var(--border));background:var(--bg-surface);border-radius:var(--radius-md);padding:11px 34px 11px 33px;font-size:var(--fs-sm);font-weight:700;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm)}
+.isosel:focus{outline:2px solid var(--c,var(--accent));outline-offset:1px}
+.isoselwrap::after{content:"";position:absolute;right:14px;width:8px;height:8px;border-right:2px solid var(--ink-muted);border-bottom:2px solid var(--ink-muted);transform:rotate(45deg) translateY(-2px);pointer-events:none}
 .isohint{font-size:var(--fs-xs);color:var(--ink-faint);margin:7px 2px 0;line-height:1.4}
 /* Header ISO badge — echoes the active market next to the page title. */
 .isobadge{display:inline-flex;align-items:center;gap:7px;font-size:var(--fs-sm);font-weight:700;color:#fff;background:var(--c,var(--accent));padding:4px 12px 4px 10px;border-radius:999px;box-shadow:var(--shadow-sm);white-space:nowrap}
@@ -121,7 +117,6 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 .sumband{color:var(--ink-muted);font-size:var(--fs-xs);margin:6px 0 0;display:flex;gap:16px;flex-wrap:wrap}
 .sumband i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 @media(max-width:820px){.bc-wrap{flex-direction:column;padding:var(--space-sm)}.bc-side{position:static;width:100%;flex-basis:auto}.bc-main{width:100%}
- .isobtns{flex-direction:row}.isobtn{flex:1;padding:9px 10px}
  .runlist{max-height:190px}}
 @media(max-width:640px){th,td{padding:6px 7px;font-size:var(--fs-xs)}
  .bc-top{flex-direction:column;align-items:stretch;gap:var(--space-sm)}
@@ -133,7 +128,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 <div id=bctip></div>
 <div class=bc-wrap>
  <aside class=bc-side>
-  <h3>Market (ISO)</h3><div class=isobtns id=isoSel></div>
+  <h3>Market (ISO)</h3><div class=isoselwrap id=isoWrap><span class=dot></span><select class=isosel id=isoSel aria-label="Market (ISO)"></select></div>
   <p class=isohint id=isoHint></p>
   <h3>Run</h3><div class=runlist id=runList></div>
   <p class=isohint>Click a run id for its definition. Newest first.</p>
@@ -912,7 +907,9 @@ async function selectIso(iso){
   Object.keys(_aggC).forEach(k=>delete _aggC[k]);
   Object.keys(_eAllC).forEach(k=>delete _eAllC[k]);
   Object.keys(_mAllC).forEach(k=>delete _mAllC[k]);
-  [...document.getElementById("isoSel").children].forEach(b=>b.classList.toggle("on",b.dataset.iso===iso));
+  const sel=document.getElementById("isoSel");
+  sel.value=iso;
+  document.getElementById("isoWrap").style.setProperty("--c",isoColorVar(iso));
   updateIsoChrome(iso);
   build();
 }
@@ -920,10 +917,8 @@ async function boot(){try{
   const isos=Object.keys(window.BC.meta);
   const isoSel=document.getElementById("isoSel");
   isoSel.innerHTML=isos.map(i=>{const n=isoRunCount(i);
-    return `<button class=isobtn data-iso="${i}" style="--c:${isoColorVar(i)}">`
-      +`<span class=dot></span><span class=iname>${i}</span>`
-      +`<span class=icount>${n} run${n===1?"":"s"}</span></button>`;}).join("");
-  isoSel.onclick=e=>{const b=e.target.closest(".isobtn");if(b&&b.dataset.iso!==st.iso)selectIso(b.dataset.iso);};
+    return `<option value="${i}">${i} · ${n} run${n===1?"":"s"}</option>`;}).join("");
+  isoSel.onchange=()=>{if(isoSel.value!==st.iso)selectIso(isoSel.value);};
   st={run:null,year:0,zones:new Set(),page:"report",klass:"",plant:"agg",iso:null};
   SUB_BASE=document.getElementById("pageSub").textContent;
   document.getElementById("diag").style.display="none";
