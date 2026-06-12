@@ -28,6 +28,21 @@ system-wide hub-average series of each market:
     and RT 2024-2025 only: OASIS's ~39-month retention had already aged out
     most of 2023 DAM by the mid-2026 pull (only a few Feb-2023 trade dates
     survive), and 2023 RTM was never fetched.
+  * NYISO — the eleven zonal LBMPs (DAM hourly / RTD 5-minute averaged to the
+    hour) from ``NYISO/``. The system price is the simple mean of the eleven
+    *internal* zones (the H Q / NPX / O H / PJM external-proxy buses are
+    excluded); the five model zones are the simple mean of their constituent
+    NYISO zones.
+  * NEISO — the ISO-NE SMD ``*_smd_hourly.xlsx`` per-zone sheets (hourly
+    ``DA_LMP`` / ``RT_LMP``) from ``NEISO/``. The system price is the
+    ``.H.INTERNAL_HUB`` ("ISO NE CA" sheet); the four model zones are the
+    simple mean of their constituent SMD load zones.
+
+The two zonal ISOs (NYISO, NEISO) additionally carry a ``zones`` sub-dict —
+``{model_zone: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
+``da``/``rt``/``*_mon``/``*_pct``; the dashboard reads only the top-level hub
+fields, so the sub-dict is additive and leaves the ERCOT/PJM/CAISO blocks
+byte-identical.
 
 For ISOs with a true hourly source (PJM, CAISO, and ERCOT — the ERCOT
 HB_HUBAVG hub-average is itself the comparable system price, from the DAM
@@ -71,6 +86,12 @@ PJM_SRC = "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
 ERCOT_SRC = "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)"
 CAISO_SRC = ("CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), "
              "load-weighted across TH_NP15/TH_ZP26/TH_SP15")
+NYISO_SRC = ("NYISO zonal LBMP (DAM hourly / RTD 5-min averaged to the hour); "
+             "hub is the simple mean of the 11 internal zones, model zones the "
+             "simple mean of their constituent NYISO zones")
+NEISO_SRC = ("ISO-NE SMD hourly DA_LMP / RT_LMP; hub is the .H.INTERNAL_HUB "
+             "(ISO NE CA sheet), model zones the simple mean of their "
+             "constituent SMD load zones")
 
 # CAISO has no single system hub; the comparable-to-the-model "system price"
 # is the three trading hubs load-weighted by their zone shares (the same
@@ -384,7 +405,221 @@ def _ercot(year: int) -> tuple[dict, pd.DataFrame] | None:
     return out, hourly
 
 
-BUILDERS = {"ERCOT": _ercot, "PJM": _pjm, "CAISO": _caiso}
+# ── NYISO / NEISO (zonal) ───────────────────────────────────────────────────
+# NYISO publishes eleven load zones; the model folds them into five. The four
+# external-proxy buses (H Q Hydro-Québec, NPX New England, O H Ontario, PJM)
+# are excluded from the internal-zone system price — they are import nodes, not
+# NY load zones (they can sanity-check the P9 import tie, out of scope here).
+NYISO_INTERNAL = ("WEST", "GENESE", "CENTRL", "NORTH", "MHK VL", "CAPITL",
+                  "HUD VL", "MILLWD", "DUNWOD", "N.Y.C.", "LONGIL")
+NYISO_ZONE_MAP: dict[str, list[str]] = {
+    "Upstate_West": ["WEST", "GENESE", "CENTRL", "NORTH", "MHK VL"],
+    "Capital_Hudson": ["CAPITL"],
+    "Lower_Hudson": ["HUD VL", "MILLWD", "DUNWOD"],
+    "NYC": ["N.Y.C."],
+    "Long_Island": ["LONGIL"],
+}
+
+# ISO-NE SMD per-zone sheets folded into the four model zones; the hub is the
+# system "ISO NE CA" sheet (.H.INTERNAL_HUB). In every SMD sheet DA_LMP is
+# column 4 and RT_LMP column 8 (0-based), and Hr_End ("01".."24") is
+# hour-ending, so hour-beginning is the field minus one. The workbook uses a
+# fixed 24-hour-per-day clock (no DST 23/25-hour days; leap years carry Feb 29).
+NEISO_HUB_SHEET = "ISO NE CA"
+NEISO_DA_COL, NEISO_RT_COL = 4, 8
+NEISO_ZONE_MAP: dict[str, list[str]] = {
+    "North": ["ME", "NH", "VT"],
+    "Central": ["WCMA", "SEMA", "RI"],
+    "Boston": ["NEMA"],
+    "Connecticut": ["CT"],
+}
+
+
+def _read_nyiso_csv(data: bytes) -> pd.DataFrame:
+    """Parse one NYISO daily zone CSV's timestamp / name / price columns."""
+    return pd.read_csv(
+        io.BytesIO(data), usecols=["Time Stamp", "Name", "LBMP ($/MWHr)"]
+    ).rename(columns={"LBMP ($/MWHr)": "lmp"})
+
+
+def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
+    """Hourly per-internal-zone NYISO LBMP wide frame for ``year`` / ``kind``.
+
+    ``kind`` is ``"da"`` — the day-ahead monthly ``damlbmp_zone`` zips inside
+    ``NYISO_zonal_hourly.zip``, already hourly — or ``"rt"`` — the flat monthly
+    ``realtime_zone`` zips, 5-minute, averaged to the hour. Columns are the
+    eleven internal zones (external-proxy buses dropped); the index is the
+    local (EPT) wall-clock hour, with the duplicated DST fall-back hour
+    averaged and the missing spring-forward hour absent. ``None`` if no source.
+    """
+    frames: list[pd.DataFrame] = []
+    if kind == "da":
+        outer_path = LMP_DIR / "NYISO" / "NYISO_zonal_hourly.zip"
+        if not outer_path.exists():
+            return None
+        fmt = "%m/%d/%Y %H:%M"
+        with zipfile.ZipFile(outer_path) as outer:
+            for name in outer.namelist():
+                base = name.rsplit("/", 1)[-1]
+                if not (base.startswith(str(year)) and "damlbmp_zone" in base):
+                    continue
+                with zipfile.ZipFile(io.BytesIO(outer.read(name))) as inner:
+                    frames += [_read_nyiso_csv(inner.read(dn))
+                               for dn in inner.namelist() if dn.endswith(".csv")]
+    else:
+        fmt = "%m/%d/%Y %H:%M:%S"
+        for path in sorted(
+                (LMP_DIR / "NYISO").glob(f"{year}*realtime_zone_csv.zip")):
+            with zipfile.ZipFile(path) as z:
+                frames += [_read_nyiso_csv(z.read(dn))
+                           for dn in z.namelist() if dn.endswith(".csv")]
+    if not frames:
+        return None
+    df = pd.concat(frames, ignore_index=True)
+    df = df[df["Name"].isin(NYISO_INTERNAL)]
+    ts = pd.to_datetime(df["Time Stamp"], format=fmt, errors="coerce")
+    df = df.assign(ts=ts.dt.floor("h")).dropna(subset=["ts"])
+    # pivot_table mean folds the RT 5-minute intervals and the DST fall-back
+    # hour's two instances into one value per zone per wall-clock hour.
+    return df.pivot_table(index="ts", columns="Name", values="lmp",
+                          aggfunc="mean")
+
+
+def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
+    """Model-zone (+ ``hub``) hourly NYISO LBMP frame for ``year`` / ``kind``.
+
+    Columns are the five model zones (each the simple mean of its constituent
+    NYISO internal zones) plus ``hub`` (the simple mean of all eleven internal
+    zones), indexed by the local hour. Shared by the JSON builder and the
+    zonal-sufficiency test. ``None`` when the source files are absent.
+    """
+    wide = _nyiso_wide(year, kind)
+    if wide is None:
+        return None
+    cols = {z: wide[[c for c in members if c in wide.columns]].mean(axis=1)
+            for z, members in NYISO_ZONE_MAP.items()}
+    present = [z for z in NYISO_INTERNAL if z in wide.columns]
+    cols["hub"] = wide[present].mean(axis=1)
+    return pd.DataFrame(cols)
+
+
+def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
+    """``{"da": series, "rt": series}`` of hourly LMP for one SMD sheet.
+
+    The timestamp is the row's Date plus (Hr_End − 1) hours. Leap-day Feb 29
+    rows stay in (dropped only when densified onto the 8760 calendar).
+    """
+    rows = wb[sheet].iter_rows(values_only=True)
+    next(rows, None)  # header
+    idx: list = []
+    da: list = []
+    rt: list = []
+    for r in rows:
+        if r is None or r[0] is None or r[1] is None:
+            continue
+        try:
+            he = int(str(r[1]))
+        except ValueError:
+            continue
+        idx.append(pd.Timestamp(r[0]) + pd.Timedelta(hours=he - 1))
+        da.append(r[NEISO_DA_COL])
+        rt.append(r[NEISO_RT_COL])
+    index = pd.DatetimeIndex(idx)
+    return {"da": pd.Series(pd.to_numeric(da, errors="coerce"), index=index),
+            "rt": pd.Series(pd.to_numeric(rt, errors="coerce"), index=index)}
+
+
+def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
+    """Model-zone (+ ``hub``) hourly NEISO LMP frame for ``year`` / ``kind``.
+
+    Columns are the four model zones (each the simple mean of its constituent
+    SMD load-zone sheets) plus ``hub`` (the .H.INTERNAL_HUB "ISO NE CA"
+    sheet), indexed by the local hour. Shared by the JSON builder and the
+    zonal-sufficiency test. ``None`` when the workbook is absent.
+    """
+    path = LMP_DIR / "NEISO" / f"{year}_smd_hourly.xlsx"
+    if not path.exists():
+        return None
+    needed = {NEISO_HUB_SHEET, *(s for ss in NEISO_ZONE_MAP.values() for s in ss)}
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    raw = {sh: _neiso_sheet_series(wb, sh)[kind]
+           for sh in wb.sheetnames if sh in needed}
+    wb.close()
+    cols: dict[str, pd.Series] = {}
+    for z, sheets in NEISO_ZONE_MAP.items():
+        avail = [raw[s] for s in sheets if s in raw]
+        if avail:
+            cols[z] = pd.concat(avail, axis=1).mean(axis=1)
+    if NEISO_HUB_SHEET in raw:
+        cols["hub"] = raw[NEISO_HUB_SHEET]
+    return pd.DataFrame(cols) if cols else None
+
+
+def _assemble_zonal(frames: dict[str, pd.DataFrame | None], year: int,
+                    src: str) -> tuple[dict, pd.DataFrame]:
+    """Build the JSON record + dense hourly frame from model-zone/hub frames.
+
+    ``frames`` maps ``"da"`` / ``"rt"`` to a model-zone-plus-``hub`` frame (or
+    ``None``). The top-level ``da``/``rt``/``*_mon``/``*_pct`` mirror the
+    ERCOT/PJM/CAISO schema and carry the hub; a ``zones`` sub-dict adds each
+    model zone's ``da``/``rt``/``da_mon``/``rt_mon``. The dense 8760 hub series
+    feeds the parquet sidecar (same calendar as the other ISOs).
+    """
+    parts: dict = {}
+    zones_out: dict[str, dict] = {}
+    dense: dict[str, np.ndarray] = {}
+    for kind in ("da", "rt"):
+        fr = frames.get(kind)
+        if fr is None or "hub" not in fr.columns or not fr["hub"].notna().any():
+            dense[kind] = np.full(_HOURS_PER_YEAR, np.nan)
+            continue
+        months = pd.Series(fr.index).dt.month
+        hub = fr["hub"]
+        parts[kind] = round(float(hub.mean()), 2)
+        parts[f"{kind}_mon"] = _by_month(hub.to_numpy(), months)
+        d = _caiso_densify(hub)
+        dense[kind] = d
+        parts[f"{kind}_pct"] = _pct(d)
+        for z in fr.columns:
+            if z == "hub":
+                continue
+            ser = fr[z]
+            entry = zones_out.setdefault(z, {})
+            entry[kind] = round(float(ser.mean()), 2)
+            entry[f"{kind}_mon"] = _by_month(ser.to_numpy(), months)
+    rec = {k: parts[k] for k in
+           ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct") if k in parts}
+    order = ("da", "rt", "da_mon", "rt_mon")
+    rec["zones"] = {z: {k: e[k] for k in order if k in e}
+                    for z, e in zones_out.items()}
+    rec["src"] = src
+    hourly = pd.DataFrame({
+        "year": np.int16(year),
+        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+        "rt": dense["rt"].astype(np.float32),
+        "da": dense["da"].astype(np.float32),
+    })
+    return rec, hourly
+
+
+def _nyiso(year: int) -> tuple[dict, pd.DataFrame] | None:
+    """Return ``(record, hourly)`` for NYISO, or ``None`` if no source files."""
+    frames = {k: nyiso_zone_hourly(year, k) for k in ("da", "rt")}
+    if frames["da"] is None and frames["rt"] is None:
+        return None
+    return _assemble_zonal(frames, year, NYISO_SRC)
+
+
+def _neiso(year: int) -> tuple[dict, pd.DataFrame] | None:
+    """Return ``(record, hourly)`` for NEISO, or ``None`` if no workbook."""
+    frames = {k: neiso_zone_hourly(year, k) for k in ("da", "rt")}
+    if frames["da"] is None and frames["rt"] is None:
+        return None
+    return _assemble_zonal(frames, year, NEISO_SRC)
+
+
+BUILDERS = {"ERCOT": _ercot, "PJM": _pjm, "CAISO": _caiso,
+            "NYISO": _nyiso, "NEISO": _neiso}
 
 
 def build(years) -> tuple[dict, dict]:
