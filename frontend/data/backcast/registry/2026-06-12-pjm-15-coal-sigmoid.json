@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-pjm-15-coal-sigmoid",
+  "label": "pjm 15 coal sigmoid",
+  "date": "2026-06-12",
+  "shorthand": "pjm-15-coal-sigmoid",
+  "definition": "pjm 15: run-13 config + region-dependent gas-keyed coal sigmoids (PJM bituminous + PJM subbituminous, each its own per-ISO COAL_SIGMOID_DEFAULTS curve) \u2014 coal offer linked to measured monthly gas; supersedes discarded run 14 (ERCOT prb params had leaked onto PJM subbit)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-15-coal-sigmoid.js",
+  "bundle": "results/calibration/pjm_15_coal_sigmoid"
+}
