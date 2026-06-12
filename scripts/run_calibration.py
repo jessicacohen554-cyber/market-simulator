@@ -645,7 +645,8 @@ def _apply_ttc_overrides(
 
 
 def _hydro_fleet(
-    iso: str, year: int, zone_names: list[str]
+    iso: str, year: int, zone_names: list[str],
+    backfill_year: int | None = None,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -660,9 +661,19 @@ def _hydro_fleet(
 
     Plants that resolve to no model zone are dropped. Returns
     ``([], None)`` when the ISO has no usable hydro for ``year``.
+
+    ``backfill_year`` carries plants that reported hydro in that prior year
+    but not in ``year`` at their prior-year monthly generation — the
+    :func:`load_hydro_budget` early-release path. The most recent EIA-923
+    vintage is a monthly-survey-only release covering the large reporters, so
+    a current-year backcast under-counts conventional hydro until the final
+    annual file lands (NEISO 2025: 5 of ~166 plants, 0.09 of ~6 TWh); the
+    missing inflow is otherwise served by gas, inflating the modeled gas
+    level. ``None`` (default) loads ``year`` exactly as reported and changes
+    no existing run.
     """
     try:
-        budget = load_hydro_budget(iso, year)
+        budget = load_hydro_budget(iso, year, backfill_year=backfill_year)
     except (FileNotFoundError, ValueError):
         return [], None
     units: list[Generator] = []
@@ -721,6 +732,7 @@ def run_year(
     cc_derate_from_top: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     priced_interchange: bool = False,
+    hydro_backfill_year: int | None = None,
 ) -> tuple[object, FleetContext, object | None]:
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -957,7 +969,8 @@ def run_year(
     # and by its measured monthly net generation via the dispatch LP's hydro
     # budget rows. Replaces the flat-monthly must-run injection (which could
     # not peak-shave) and leaves ISOs without hydro data unchanged.
-    hydro_units, hydro_monthly_energy = _hydro_fleet(iso, year, zone_names)
+    hydro_units, hydro_monthly_energy = _hydro_fleet(
+        iso, year, zone_names, backfill_year=hydro_backfill_year)
     hydro_gen_idx = None
     if hydro_units:
         hydro_gen_idx = np.arange(
