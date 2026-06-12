@@ -82,6 +82,17 @@ on monthly data — winter oil comes from the oil-primary steam fleet's
 scarcity dispatch; a daily-AGT U4 refinement is what would trip the CT switch.
 See `docs/multi-iso/neiso-data-audit.md` §2b.
 
+**Done by P12 + P14 (2026-06-12, Stage G + H sign-off):** full 2023–2025
+calibration to sign-off. Three parallel bundles (`neiso_p12_base_2023`,
+`neiso_p12_base_2024`, `neiso_p12_hydrofix_2025`); keeper is the structural
+defaults — no offer-band tuning. Scorecard: gas ✅ −2.8 to −3.9% vs EIA-930;
+nuclear ✅ ≤0.7%; hydro ✅ (2023/24); CO₂ ✅ −8.5 to −9.2% vs eGRID;
+interchange ✅ exact. Filed limitations: winter oil shape (U4 daily AGT, gap
+#1), PS/BESS over-cycling (AMBER), price level/congestion (P10 held, U2).
+P14 wrote `docs/multi-iso/neiso-backcast-2024.md` and updated the status
+table (doc-00), manifest (doc-01), data dictionary, offer-curve doc, and
+parameter citations. See `docs/calibration-log.md` §NEISO 2 and §NEISO P12.
+
 ## 2. Upload manifest (user manual tasks — sessions cannot fetch these)
 
 | # | Item | Source | Destination | Needed by |
