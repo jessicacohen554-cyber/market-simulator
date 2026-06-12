@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-12 (ERCOT — ORDC scarcity-pricing overlay + revenue wiring)
+
+Post-solve ERCOT ORDC scarcity adder (published RTORPA formula, zero fitted
+parameters) and forecast-mode revenue plumbing, behind
+`ScenarioConfig.scarcity_pricing_enabled` (default off). The LP, volumes and
+emissions are untouched; the overlay owns the price tail.
+
+- **`src/market_sim/results/scarcity.py`** — published ORDC math: two
+  half-hour LOLP terms, normal-CDF over reserves minus the minimum
+  contingency level (LOLP pinned to 1 below it), `(VOLL − λ)` cap, the
+  2019/2020 PUCT 0.5σ curve shift and the OBDRR048 multi-step RTORPA floor
+  (date-gated 2023-11-01). Reserve headroom from the solved fleet
+  (thermal availability − dispatch + storage and renewable-curtailment
+  headroom; optional AS-plan netting, default 0 — netting the AS plan
+  double-counts scarcity since ERCOT's RTOLCAP/RTOFFCAP count AS-held
+  capacity; see docs/ordc-overlay.md).
+- **`scripts/derive_ordc_overlay.py`** — post-processes a solved bundle:
+  reconstructs hourly availability via the new
+  `run_calibration.run_year(fleet_only=True)` exit (no LP re-solve), caches
+  `availability.parquet`, writes `scarcity.parquet`
+  (`lmp`/`scarcity_adder`/`lmp_scarcity`), prints gate metrics, the
+  pre-adder residual-vs-headroom diagnostic (`--diagnostic`) and a
+  per-class revenue report (`--revenue-report`).
+- **`scripts/analyze_lmp_residual.py --with-scarcity`** — tail localization
+  on the overlaid series.
+- **`src/market_sim/runner.py`** — forecast mode (ERCOT only): economic
+  retirement / new entry / CCS screens now see `prices + adder` instead of
+  raw LP duals (the over-retirement bias on scarcity-dependent classes);
+  persisted results unchanged.
+- **ScenarioConfig** — 10 new tier-1/2 fields (`ordc_voll`, `ordc_mcl_mw`,
+  `ordc_lolp_{sigma,mu}_mw`, `ordc_lolp_shift_sigma`, `ordc_multistep_floor`,
+  `ordc_as_plan_mw`, `ordc_lolp_params_path`, `scarcity_pricing_enabled`)
+  with curated citations in the parameter registry; PUCT changes (pre-Uri
+  $9,000 VOLL) are runnable scenarios.
+- **Validation (run92_kiamichi):** 2023 monthly LMP MAE 32.1 → 28.0 with
+  the deep tail restored (0 → 15 hours >$500 vs 104 actual); 2024/2025 hold
+  the ±$1 gates (7.3 → 7.9, 2.2 → 2.2). Docs: `docs/ordc-overlay.md`,
+  calibration-log section "ERCOT — ORDC scarcity overlay + AS netting".
+
 ## 2026-06-12 (NYISO + NEISO P10 — LMP benchmark & zonal-sufficiency)
 
 Processed the uploaded NYISO and NEISO LMP drops into the price reference and
