@@ -531,6 +531,17 @@ class ScenarioConfig:
     # offer-curve value. Off by default.
     cc_peaking_per_plant: bool = False
 
+    # When True, every CC_REGULAR / CC_CHP plant's peaking-tranche % comes
+    # from the EIA-860 duct-burner flag (fleet.cc_duct_peaking_pct):
+    # duct-fired plants get their nameplate-vs-net-summer capability gap as
+    # the peak band, non-duct CC plants get 0 — no phantom scarcity band on
+    # plants with no duct firing. Supersedes the offer curve's class-wide
+    # ``pct_peaking`` (the band heat-rate multipliers still apply on top);
+    # plants absent from the EIA-860 sheet keep the class value, and the
+    # ERCOT hand-set CC_REGULAR_PEAKING_PCT_BY_PLANT map stays the final
+    # word for its plants. Off by default.
+    cc_duct_peaking: bool = False
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
