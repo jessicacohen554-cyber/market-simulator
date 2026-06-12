@@ -173,6 +173,7 @@ _COAL_SIGMOID_FIELD_STEM: dict[str, str] = {
     "subbituminous": "sub_passthrough",
     "bituminous": "bit_passthrough",
     "lignite": "lignite_passthrough",
+    "waste": "waste_passthrough",
 }
 
 _COAL_SIGMOID_PARAMS = ("floor", "ceil", "gas_mid", "gas_slope")
@@ -245,11 +246,12 @@ def coal_passthrough_by_supply(
     The routing table :func:`market_sim.data.fleet.campd_tranche_fuel_frac`
     consumes: each coal tranche looks up its own ``coal_supply`` tag, so a
     bituminous plant can never receive the prb curve and vice-versa. Tags
-    without an entry (e.g. "waste") pass full fuel cost.
+    without an entry (e.g. unclassified "") pass full fuel cost.
     """
     return {
         supply: coal_passthrough_series(config, year, hours, supply)
-        for supply in ("prb", "subbituminous", "bituminous", "lignite")
+        for supply in (
+            "prb", "subbituminous", "bituminous", "lignite", "waste")
     }
 
 
