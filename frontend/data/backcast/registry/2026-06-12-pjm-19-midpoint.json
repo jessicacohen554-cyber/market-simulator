@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-pjm-19-midpoint",
+  "label": "pjm 19 midpoint",
+  "date": "2026-06-12",
+  "shorthand": "pjm-19-midpoint",
+  "definition": "pjm 19: run-18 keeper config + correctives \u2014 export trough sinks +$4 back (offpeak 18 / trough 16; upper four keep -$6), bit sigmoid floor 0.80 (restore cheap-gas-year BIT bled by the deeper price trough), waste sigmoid mid 5.15 / slope 3.0 (release 2023 Jan-Feb $4.85-4.98, keep the Jan-2025 2.1x bite), and the ERCOT run-89/91 econ-ramp midpoint --curve-mid 0.35 (cheap middle, steep top: drains the CC_REGULAR 2024 surplus into the under-running coal classes) KEEPER: every generation-mix class-year passes the 1-TWh-or-5% tolerance \u2014 2023 gas -1.1/coal-tot -2.7/WC -0.79; 2024 gas +15.7 (4.4%)/coal-tot -5.50 (4.7%)/WC -0.68; 2025 gas +4.7/BIT +0.05/WC +0.87/coal-tot +0.90.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-19-midpoint.js",
+  "bundle": "results/calibration/pjm_19_midpoint"
+}
