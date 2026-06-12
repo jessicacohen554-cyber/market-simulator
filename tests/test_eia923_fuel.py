@@ -317,15 +317,16 @@ class PrbPassthroughSigmoidTest(unittest.TestCase):
     """The gas-keyed PRB passthrough sigmoid and its on/off toggle."""
 
     def test_off_returns_flat_scalar(self):
-        from market_sim.data.fuel import prb_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(
             gas_price_override=2.19, coal_prb_passthrough=0.9,
             coal_prb_passthrough_sigmoid=False,
         )
-        self.assertEqual(prb_passthrough_series(cfg, 2024, 8760), 0.9)
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "prb"), 0.9)
 
     def test_on_rises_with_gas_between_floor_and_ceil(self):
-        from market_sim.data.fuel import prb_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         def mean_pt(gas):
             cfg = ScenarioConfig(
                 gas_price_override=gas, coal_prb_passthrough_sigmoid=True,
@@ -333,7 +334,8 @@ class PrbPassthroughSigmoidTest(unittest.TestCase):
                 coal_prb_passthrough_gas_mid=3.0,
                 coal_prb_passthrough_gas_slope=1.8,
             )
-            return float(np.mean(prb_passthrough_series(cfg, 2024, 8760)))
+            return float(np.mean(
+                coal_passthrough_series(cfg, 2024, 8760, "prb")))
         low, mid, high = mean_pt(2.0), mean_pt(3.0), mean_pt(6.0)
         self.assertLess(low, mid)
         self.assertLess(mid, high)
@@ -342,12 +344,14 @@ class PrbPassthroughSigmoidTest(unittest.TestCase):
         self.assertGreater(high, 1.0)            # dear gas -> markup
 
     def test_seasonal_variation_when_on(self):
-        from market_sim.data.fuel import prb_passthrough_series
+        # Params left at None resolve from COAL_SIGMOID_DEFAULTS for the
+        # default ERCOT iso (region-dependent defaults).
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(
             gas_price_override=3.52, coal_prb_passthrough_sigmoid=True,
             gas_seasonality=True,
         )
-        series = prb_passthrough_series(cfg, 2025, 8760)
+        series = coal_passthrough_series(cfg, 2025, 8760, "prb")
         self.assertEqual(series.shape, (8760,))
         self.assertGreater(series.max() - series.min(), 0.05)  # months differ
 
@@ -366,7 +370,7 @@ class PrbPassthroughSigmoidTest(unittest.TestCase):
         mc = assemble_mc(arrays, fuel_prices, 0.0, 0.0)
         full = mc[0, 0]
         pt = np.array([0.0, 0.5, 1.0, 1.5])  # incl. a >1 markup hour
-        ff = campd_tranche_fuel_frac(gen, pt)  # array passes through for PRB
+        ff = campd_tranche_fuel_frac(gen, {"prb": pt})  # array via routing
         np.testing.assert_array_equal(ff, pt)
         apply_coal_tranches(mc, [gen], arrays, [ff], fuel_prices)
         # hour 0: full fuel (20) removed; hour 2: none; hour 3: +50% markup.
@@ -380,17 +384,22 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
     """The gas-keyed bituminous passthrough sigmoid (PJM coal fleet)."""
 
     def test_off_returns_full_cost(self):
-        from market_sim.data.fuel import bit_passthrough_series
-        cfg = ScenarioConfig(gas_price_override=2.19)
-        self.assertEqual(bit_passthrough_series(cfg, 2024, 8760), 1.0)
+        from market_sim.data.fuel import coal_passthrough_series
+        cfg = ScenarioConfig(iso="PJM", gas_price_override=2.19)
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "bituminous"), 1.0)
 
     def test_on_rises_with_gas_between_floor_and_ceil(self):
-        from market_sim.data.fuel import bit_passthrough_series
+        # Params resolve from the (PJM, bituminous) COAL_SIGMOID_DEFAULTS
+        # entry (0.82 / 1.25 / 3.40 / 2.5).
+        from market_sim.data.fuel import coal_passthrough_series
         def mean_pt(gas):
             cfg = ScenarioConfig(
-                gas_price_override=gas, coal_bit_passthrough_sigmoid=True,
+                iso="PJM", gas_price_override=gas,
+                coal_bit_passthrough_sigmoid=True,
             )
-            return float(np.mean(bit_passthrough_series(cfg, 2024, 8760)))
+            return float(np.mean(
+                coal_passthrough_series(cfg, 2024, 8760, "bituminous")))
         low, mid, high = mean_pt(2.0), mean_pt(3.4), mean_pt(7.0)
         self.assertLess(low, mid)
         self.assertLess(mid, high)
@@ -398,10 +407,11 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         self.assertLessEqual(high, 1.25 + 1e-9)  # ceil
         self.assertGreater(high, 1.0)            # dear gas -> markup
 
-    def test_routes_to_bituminous_tranches_only(self):
-        # campd_tranche_fuel_frac returns the bit passthrough for bituminous
-        # above-must-run tranches, the PRB passthrough for PRB, 0.0 for
-        # must-run and 1.0 for everything else (lignite, waste, gas).
+    def test_routes_each_supply_to_its_own_curve(self):
+        # campd_tranche_fuel_frac routes each coal tranche by its own
+        # coal_supply tag: bituminous / prb / subbituminous each take their
+        # own curve, must-run passes 0.0, and tags without an entry (waste,
+        # unmapped lignite) pass full cost.
         from market_sim.data.fleet import campd_tranche_fuel_frac
         def gen(supply, unit_id="COAL_z_p1_econ", fuel="coal"):
             return Generator(
@@ -410,21 +420,19 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 plant_group="COAL",
             )
         bit_pt = np.array([0.85, 1.2])
+        subbit_pt = np.array([1.0, 1.15])
+        pt = {"prb": 0.7, "subbituminous": subbit_pt, "bituminous": bit_pt}
+        self.assertIs(campd_tranche_fuel_frac(gen("bituminous"), pt), bit_pt)
+        self.assertEqual(campd_tranche_fuel_frac(gen("prb"), pt), 0.7)
+        # "subbituminous" (the derived EIA-923 rank tag) is its OWN supply
+        # chain with its own per-ISO curve — NOT aliased to prb.
         self.assertIs(
-            campd_tranche_fuel_frac(gen("bituminous"), 0.7, bit_pt), bit_pt)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("prb"), 0.7, bit_pt), 0.7)
-        # "subbituminous" (the derived EIA-923 rank tag) IS PRB — one name
-        # across ISOs — so it takes the PRB passthrough, not the bit one.
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, bit_pt), 0.7)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("lignite"), 0.7, bit_pt), 1.0)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("waste"), 0.7, bit_pt), 1.0)
+            campd_tranche_fuel_frac(gen("subbituminous"), pt), subbit_pt)
+        self.assertEqual(campd_tranche_fuel_frac(gen("lignite"), pt), 1.0)
+        self.assertEqual(campd_tranche_fuel_frac(gen("waste"), pt), 1.0)
         self.assertEqual(
             campd_tranche_fuel_frac(
-                gen("bituminous", unit_id="COAL_z_p1_mustrun"), 0.7, bit_pt),
+                gen("bituminous", unit_id="COAL_z_p1_mustrun"), pt),
             0.0)
 
     def test_lignite_routing(self):
@@ -439,15 +447,13 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 plant_group="COAL",
             )
         lig_pt = np.array([0.72, 0.95])
-        self.assertIs(
-            campd_tranche_fuel_frac(gen("lignite"), 0.7, 1.0, lig_pt), lig_pt)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("prb"), 0.7, 1.0, lig_pt), 0.7)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("waste"), 0.7, 1.0, lig_pt), 1.0)
+        pt = {"prb": 0.7, "lignite": lig_pt}
+        self.assertIs(campd_tranche_fuel_frac(gen("lignite"), pt), lig_pt)
+        self.assertEqual(campd_tranche_fuel_frac(gen("prb"), pt), 0.7)
+        self.assertEqual(campd_tranche_fuel_frac(gen("waste"), pt), 1.0)
         self.assertEqual(
             campd_tranche_fuel_frac(
-                gen("lignite", unit_id="COAL_z_p1_mustrun"), 0.7, 1.0, lig_pt),
+                gen("lignite", unit_id="COAL_z_p1_mustrun"), pt),
             0.0)
 
     def test_gas_series_uses_monthly_actuals_when_on(self):
@@ -455,7 +461,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         # ISO-month gas series (PJM Jan-2024 spiked past $5/MMBtu), so the
         # winter passthrough exceeds the shaped-trajectory value.
         from market_sim.data.fuel import (
-            bit_passthrough_series, iso_monthly_gas_prices,
+            coal_passthrough_series, iso_monthly_gas_prices,
         )
         base = ScenarioConfig(
             iso="PJM", hours=8760, gas_price_override=2.19,
@@ -463,9 +469,10 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         )
         if iso_monthly_gas_prices(base, 2024) is None:
             self.skipTest("no PJM EIA-923 monthly gas parquet shipped")
-        shaped = bit_passthrough_series(base, 2024, 8760)
-        measured = bit_passthrough_series(
-            base.with_overrides(gas_monthly_actuals=True), 2024, 8760)
+        shaped = coal_passthrough_series(base, 2024, 8760, "bituminous")
+        measured = coal_passthrough_series(
+            base.with_overrides(gas_monthly_actuals=True),
+            2024, 8760, "bituminous")
         jan = slice(0, 31 * 24)
         self.assertGreater(
             float(np.mean(measured[jan])), float(np.mean(shaped[jan])))
@@ -475,18 +482,22 @@ class LignitePassthroughSigmoidTest(unittest.TestCase):
     """The gas-keyed lignite passthrough sigmoid (ERCOT mine-mouth fleet)."""
 
     def test_off_returns_full_cost(self):
-        from market_sim.data.fuel import lignite_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(gas_price_override=2.19)
-        self.assertEqual(lignite_passthrough_series(cfg, 2024, 8760), 1.0)
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "lignite"), 1.0)
 
     def test_on_rises_with_gas_between_floor_and_ceil(self):
-        from market_sim.data.fuel import lignite_passthrough_series
+        # Params resolve from the (ERCOT, lignite) COAL_SIGMOID_DEFAULTS
+        # entry (0.70 / 1.00 / 2.85 / 2.5, the run-80 anchors).
+        from market_sim.data.fuel import coal_passthrough_series
         def mean_pt(gas):
             cfg = ScenarioConfig(
                 gas_price_override=gas,
                 coal_lignite_passthrough_sigmoid=True,
             )
-            return float(np.mean(lignite_passthrough_series(cfg, 2024, 8760)))
+            return float(np.mean(
+                coal_passthrough_series(cfg, 2024, 8760, "lignite")))
         low, mid, high = mean_pt(2.0), mean_pt(2.85), mean_pt(6.0)
         self.assertLess(low, mid)
         self.assertLess(mid, high)
@@ -495,7 +506,7 @@ class LignitePassthroughSigmoidTest(unittest.TestCase):
         self.assertGreater(high, 0.95)           # dear gas -> ~full cost
 
     def test_param_overrides_respected(self):
-        from market_sim.data.fuel import lignite_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(
             gas_price_override=1.0,
             coal_lignite_passthrough_sigmoid=True,
@@ -504,31 +515,35 @@ class LignitePassthroughSigmoidTest(unittest.TestCase):
             coal_lignite_passthrough_gas_mid=3.0,
             coal_lignite_passthrough_gas_slope=4.0,
         )
-        series = lignite_passthrough_series(cfg, 2024, 8760)
+        series = coal_passthrough_series(cfg, 2024, 8760, "lignite")
         # Gas far below the midpoint with a steep slope -> pinned at floor.
         self.assertAlmostEqual(float(np.min(series)), 0.55, places=2)
 
     def test_seasonal_variation_when_on(self):
-        from market_sim.data.fuel import lignite_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(
             gas_price_override=2.85, coal_lignite_passthrough_sigmoid=True,
             gas_seasonality=True,
         )
-        series = lignite_passthrough_series(cfg, 2025, 8760)
+        series = coal_passthrough_series(cfg, 2025, 8760, "lignite")
         self.assertEqual(series.shape, (8760,))
         self.assertGreater(series.max() - series.min(), 0.02)  # months differ
 
 
 class SubPassthroughSigmoidTest(unittest.TestCase):
-    """The split subbituminous sigmoid and its inherit-PRB default."""
+    """The subbituminous sigmoid: its own supply chain, never PRB's."""
 
-    def test_off_returns_none_so_routing_inherits_prb(self):
-        from market_sim.data.fuel import sub_passthrough_series
+    def test_off_returns_full_cost(self):
+        # Off = flat full cost. Under per-(ISO, supply) curves there is no
+        # PRB inheritance: subbituminous is its own supply chain everywhere
+        # (the old aliasing let ERCOT prb params leak onto PJM subbit).
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(gas_price_override=2.19)
-        self.assertIsNone(sub_passthrough_series(cfg, 2024, 8760))
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "subbituminous"), 1.0)
 
     def test_on_uses_its_own_params(self):
-        from market_sim.data.fuel import sub_passthrough_series
+        from market_sim.data.fuel import coal_passthrough_series
         cfg = ScenarioConfig(
             gas_price_override=2.0, coal_sub_passthrough_sigmoid=True,
             coal_sub_passthrough_floor=0.60, coal_sub_passthrough_ceil=1.20,
@@ -536,31 +551,54 @@ class SubPassthroughSigmoidTest(unittest.TestCase):
             coal_sub_passthrough_gas_slope=2.5,
             # PRB params left at defaults to prove independence.
         )
-        series = sub_passthrough_series(cfg, 2024, 8760)
+        series = coal_passthrough_series(cfg, 2024, 8760, "subbituminous")
         self.assertEqual(series.shape, (8760,))
         self.assertGreaterEqual(float(series.min()), 0.60)
         self.assertLessEqual(float(series.max()), 1.20 + 1e-9)
 
-    def test_routing_split_vs_inherit(self):
-        # sub_pt None -> "subbituminous" inherits the PRB passthrough
-        # (historical aliasing); sub_pt given -> its own value. "prb"-tagged
-        # plants never take the sub passthrough.
-        from market_sim.data.fleet import campd_tranche_fuel_frac
-        def gen(supply):
-            return Generator(
-                unit_id="COAL_z_p1_econ", name="x", zone="z",
-                fuel_type="coal", pmax_mw=100.0, heat_rate=10.0,
-                coal_supply=supply, plant_group="COAL",
-            )
-        sub_pt = np.array([0.65, 1.05])
+
+class RegionDependentCoalSigmoidTest(unittest.TestCase):
+    """Per-(ISO, supply) sigmoid resolution: curves never cross regions."""
+
+    def test_uncharacterized_iso_supply_stays_flat(self):
+        # Enabling the bit sigmoid on an ISO with no (iso, bituminous) entry
+        # must NOT borrow another region's curve — it falls back flat.
+        from market_sim.data.fuel import coal_passthrough_series
+        cfg = ScenarioConfig(
+            iso="ERCOT", gas_price_override=3.0,
+            coal_bit_passthrough_sigmoid=True,
+        )
         self.assertEqual(
-            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, 1.0, 1.0), 0.7)
-        self.assertIs(
-            campd_tranche_fuel_frac(gen("subbituminous"), 0.7, 1.0, 1.0,
-                                    sub_pt),
-            sub_pt)
-        self.assertEqual(
-            campd_tranche_fuel_frac(gen("prb"), 0.7, 1.0, 1.0, sub_pt), 0.7)
+            coal_passthrough_series(cfg, 2024, 8760, "bituminous"), 1.0)
+
+    def test_pjm_subbit_resolves_from_table_not_prb(self):
+        # PJM subbituminous has its own first-cut curve (floor 1.0 — no
+        # cheap-gas discount), distinct from the ERCOT prb curve (floor .78).
+        from market_sim.data.fuel import coal_sigmoid_params
+        pjm = ScenarioConfig(iso="PJM")
+        ercot = ScenarioConfig(iso="ERCOT")
+        sub = coal_sigmoid_params(pjm, "subbituminous")
+        prb = coal_sigmoid_params(ercot, "prb")
+        self.assertEqual(sub["floor"], 1.00)
+        self.assertEqual(prb["floor"], 0.78)
+        self.assertNotEqual(sub["floor"], prb["floor"])
+
+    def test_explicit_fields_override_table(self):
+        # CLI tuning flags (explicit non-None config fields) win over the
+        # per-ISO table entry-by-entry.
+        from market_sim.data.fuel import coal_sigmoid_params
+        cfg = ScenarioConfig(iso="PJM", coal_bit_passthrough_floor=0.5)
+        p = coal_sigmoid_params(cfg, "bituminous")
+        self.assertEqual(p["floor"], 0.5)
+        self.assertEqual(p["ceil"], 1.25)   # rest still from the table
+
+    def test_incomplete_explicit_params_resolve_none(self):
+        # No table entry + only partial explicit fields -> no curve (None),
+        # so the series falls back flat rather than guessing.
+        from market_sim.data.fuel import coal_sigmoid_params
+        cfg = ScenarioConfig(iso="NYISO", coal_bit_passthrough_floor=0.8)
+        self.assertIsNone(coal_sigmoid_params(cfg, "bituminous"))
+
 
 
 if __name__ == "__main__":
