@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-nyiso-2025-refreshed",
+  "label": "nyiso 2025 refreshed",
+  "date": "2026-06-12",
+  "shorthand": "nyiso-2025-refreshed",
+  "definition": "NYISO 2025 backcast, re-run after the EIA-930 NYIS hourly extract was refreshed to span full 2025 (the old extract stopped at Q1'25, so nyiso_net_interchange(2025) returned None and load_demand fell back to gross demand-profiles, serving 0 of the import wedge — the P12 +22.7% over-generation). With the refreshed parquet the measured net interchange is now served by default: model -19.09 vs actual -19.09 TWh (duration RMSE 0 MW, import-hours 99.8%, diurnal corr +1.00). The gas over-gen closes: gas 68.30 TWh (-2.8% vs EIA-930 70.25); TOTAL 132.76 (+2.5% vs EIA-930 129.54); nuclear 28.38 (-0.1% vs 923), wind 7.05 (exact vs 930), hydro 21.05 (budget). vs EIA-923 2025 the mix reads gas +13.4% / total +14.6%, but EIA-923 2025 is the PRELIMINARY M-file (total only 115.84 TWh, ~17 below served demand; solar 0.66, biomass under-reported) — flagged, not chased; EIA-930 is the operationally consistent basis. Price re-scored now that P10/U2 landed (no longer level-only): system avg model $69.24 vs actual RT $60.73 / DA $60.71 (+$8.5); per-zone level resid vs DA +$1.7 (Long_Island) to +$10.9 (Upstate_West); duration p90 $113.7 vs $113.6 (near-exact) but mid over-priced (p50 $57 vs $45) and scarcity tail under-priced (p99 $157 vs $222) — the no-ORDC/no-reserve-scarcity signature shared with 2023. oil 0.02 still U4-gated. Structural-discipline run; no offer band tuned.",
+  "years": [
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-nyiso-2025-refreshed.js",
+  "bundle": "results/calibration/nyiso_p12_2025_refreshed"
+}
