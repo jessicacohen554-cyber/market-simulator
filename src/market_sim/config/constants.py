@@ -1404,6 +1404,35 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     ],
 }
 
+# ISOs whose backcasts serve interchange through the priced import/export node
+# by default (no --priced-interchange flag required).
+#
+# CAISO is the canonical case: load_demand does NO interchange netting for
+# CAISO (the CISO series is net load; eia_loader.load_demand leaves the
+# interchange array zero regardless of include_interchange), so without the
+# priced node the domestic fleet must serve all of CAISO's ~30 TWh/yr of net
+# imports itself and over-generates gas. There is no measured-schedule mode for
+# CAISO to displace, so priced interchange is the only correct default. The
+# WECC_import node is baked into _caiso_config, so enabling it is free.
+#
+# PJM/NYISO/NEISO are deliberately ABSENT: their calibrated backcast topologies
+# serve the *measured* tie-line schedule by default, and --priced-interchange
+# is the opt-in used to validate the node's tranche calibration.
+PRICED_INTERCHANGE_DEFAULT_ISOS: frozenset[str] = frozenset({"CAISO"})
+
+
+def resolve_priced_interchange(flag: bool | None, iso: str) -> bool:
+    """Resolve the ``--priced-interchange`` tri-state flag for ``iso``.
+
+    ``flag`` is ``True``/``False`` when set explicitly on the CLI
+    (``--priced-interchange`` / ``--no-priced-interchange``), or ``None`` to
+    fall back to the per-ISO default in
+    :data:`PRICED_INTERCHANGE_DEFAULT_ISOS`.
+    """
+    if flag is not None:
+        return flag
+    return iso in PRICED_INTERCHANGE_DEFAULT_ISOS
+
 # Name of each ISO's external import/export zone. CAISO's is baked into its
 # topology (_caiso_config); PJM's is appended on demand by
 # transmission.extend_with_import_node, so the calibrated 8-zone backcast
