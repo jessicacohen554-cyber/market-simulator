@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run91-cc-shave",
+  "label": "run91 cc shave",
+  "date": "2026-06-12",
+  "shorthand": "run91-cc-shave",
+  "definition": "Run 91 (KEEPER, supersedes run 85): base B (run 89, econ-ramp midpoint 0.35) + CC_REGULAR per-class shave at 55% of the measured full-dose vector: econ_high delta -0.45 -> -0.40 (+0.05) and peak +0.25 -> +0.32 (+0.07). On the size-aware bar: 3 in-scope fails vs run 85's 4, no new fails, the 2024 cheap-gas cluster shrinks 7.37 -> 3.65 TWh. PRB 2024 -7.9 -> -4.9% (PASS, by 0.04 TWh), CC_REGULAR 2024 +2.1 -> +0.4%, CT_PEAKER -17.9 -> -14.8% (-1.22 TWh), ST_GAS -1.19 -> -1.12 TWh, lignite -1.23 -> -1.31 TWh (the remaining fails). LMP MAE 31.1/9.2/11.5 within the gate; 2024 coal NRMSE 0.198 -> 0.182; Martin Lake/Limestone 2023 guards 914/948 GWh. Caveats: PRB 2024 and ST_GAS 2023 (+0.95 TWh) pass with <0.1 TWh margin, and the CC moves spend 2023 CC_REGULAR headroom (-2.7 -> -4.6%, still in tolerance).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run91-cc-shave.js",
+  "bundle": "results/calibration/run91_cc_shave055"
+}
