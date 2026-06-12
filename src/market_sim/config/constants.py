@@ -241,6 +241,23 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
 }
 
+# Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
+# not yet returned to service: plant code -> first calendar year the unit is
+# expected to generate. Backcast years before that year zero the unit's
+# availability (it is physically offline, EIA-923 net generation = 0), and
+# scripts/derive_nuclear_monthly_cf.py excludes it from the fleet pmax for
+# those years so the derived CF is not diluted. Forecast runs are unaffected
+# (the unit stays in the fleet at its EIA-860 capacity).
+#   8011 — Crane Clean Energy Center (ex-TMI-1, 802.8 MW net summer): shut
+#   2019, restart announced Sep 2024 (Constellation/Microsoft PPA) with grid
+#   return targeted 2027 (EIA-860 2025ER carries it as OP with a planned 2028
+#   repower year). Zero EIA-923 net generation 2023-2025; without this entry
+#   the PJM backcast carried ~6.5 TWh/yr of phantom nuclear.
+# Tier: 3 (calibration)
+NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
+    8011: 2027,
+}
+
 # Per-year nuclear monthly capacity factor derived from EIA-923 net generation
 # (the actual staggered refueling cadence each year, not a fixed seasonal
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
@@ -267,6 +284,25 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
         2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
         2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
+    },
+    # PJM = the 18-plant EIA-860 operable nuclear fleet (Dresden, Quad Cities,
+    # Salem, Peach Bottom, Surry, Cook, Calvert Cliffs, Perry, Braidwood,
+    # Byron, LaSalle, Beaver Valley, Susquehanna, Limerick, Hope Creek, Davis
+    # Besse, North Anna) — 32,689 MW after excluding the dormant Crane/TMI-1
+    # restart (EIA 8011, 802.8 MW; NUCLEAR_DORMANT_UNTIL — zero EIA-923
+    # output 2023-2025). Monthly EIA-923 net generation / (fleet pmax x hours
+    # in month), clipped at 1.0 (ERCOT convention; the cap costs ~0.5-1.0
+    # TWh/yr vs measured energy). Before this entry PJM fell back to the
+    # static NUCLEAR_MONTHLY_CF seasonal pattern x (1 - EFORD), which (with
+    # the phantom Crane capacity) over-produced a flat ~278 TWh vs measured
+    # 272.6/272.4/270.0 — the systematic +4.5/+6.0/+8.0 TWh nuclear residual
+    # of calibration runs 1-19.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos PJM.
+    "PJM": {
+        2023: [1.00, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.00],
+        2024: [1.00, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.00],
+        2025: [1.00, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.00],
     },
     # NYISO = FitzPatrick (EIA 6110, 844 MW), Nine Mile Point 1+2 (EIA 2589,
     # 1,903 MW combined), R E Ginna (EIA 6122, 579 MW) — fleet nameplate

@@ -443,6 +443,28 @@ def build_payload(runs: list[tuple[str, Path]],
                     "fuel": fuel, "m": round(m_twh, 2),
                     "b": round(b_twh, 2) if b_twh is not None else None,
                     "r": r2, "nrmse": n2})
+            # Net interchange (net-export positive, the EIA-930 sign
+            # convention): model = -(priced import/export node dispatch:
+            # import tranches positive, export sinks negative), actual = the
+            # EIA-930 region "interchange" series. Only present when the
+            # bundle solved with --priced-interchange (klass "import" rows
+            # exist); a measured-schedule bundle nets interchange into demand,
+            # so a row would compare actual to itself. Informational — it
+            # makes the import/export node's error visible instead of letting
+            # fuels silently shift to cover it.
+            imp = disp[disp["klass"] == "import"]
+            ob_ix = e.get("interchange")
+            if not imp.empty and ob_ix is not None:
+                ms_ix = -(imp.groupby("hour")["mw"].sum()
+                          .reindex(range(_T), fill_value=0.0)
+                          .to_numpy(float))
+                fuel_rows.append({
+                    "fuel": "interchange",
+                    "m": round(float(ms_ix.sum()) / 1e6, 2),
+                    "b": round(float(ob_ix.sum()) / 1e6, 2),
+                    "r": (round(_pearson(ms_ix, ob_ix), 3)
+                          if ob_ix.std() > 0 else None),
+                    "nrmse": round(_nrmse(ms_ix, ob_ix), 3)})
             # Per-zone average LMP (load-weighted) from the system duals, for
             # the dashboard's average-LMP KPI. P1 pass; the shell averages over
             # the selected zones, weighting by demand. ``pMon``/``dMon`` carry
@@ -783,7 +805,7 @@ function renderFuelTable(){let body="";const years=D.years;
  // per run: system fuel rows (zone filter does not apply to EIA-930)
  let h="<table><thead><tr><th>fuel</th>"+D.model.map(r=>`<th>${r.label} Δ</th>`).join("")+"<th>EIA-930</th></tr></thead><tbody>";
  for(const yr of years){h+=`<tr class=sumrow><td colspan=${D.model.length+2}>${yr}</td></tr>`;
-  const fuels=["gas","coal","nuclear","wind","solar"];
+  const fuels=["gas","coal","nuclear","wind","solar","interchange"];
   for(const f of fuels){let row=`<tr><td class=lbl>${f}</td>`;let b=null;
    for(const run of D.model){const fr=(run.years[yr]?.fuelRows||[]).find(x=>x.fuel===f);
     if(!fr||fr.b==null){row+="<td class=num>—</td>";continue;}b=fr.b;const d=100*(fr.m-fr.b)/fr.b;
