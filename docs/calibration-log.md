@@ -979,3 +979,76 @@ shape** (`offer_curve_smoothing_mid`, a built-but-unused lever) and the **PRB
 sigmoid** retune, with the per-plant Parish/Spruce correction (run-81 finding)
 and the ORDC scarcity adder for the 2023 LMP level (run-88+) as the structural
 items. `docs/calibration-best-so-far.md` updated to run 85.
+
+---
+
+## NYISO + NEISO P9b — serve measured net interchange in backcasts (2026-06-12)
+
+**Runs `nyiso_smoke_2023`, `neiso_smoke_2024` (re-run in place); dashboard
+`nyiso p11 smoke 2023`, `neiso 1 smoke`.** Closes the single red structural
+row both P11 smokes flagged: NYISO/NEISO backcasts served **0 TWh** of imports
+because the `load_demand` interchange branch was PJM-only, so the LP overfilled
+the import wedge with in-state gas. Both ISOs are steady net importers, but the
+priced import node only builds under `--priced-interchange`.
+
+**Fix (eia_loader).** Added `nyiso_net_interchange(year)` /
+`neiso_net_interchange(year)` sourcing the measured hourly net interchange from
+the EIA-930 `NYIS hourly` / `ISNE hourly` parquets' `Total interchange` column
+(shared `_eia930_net_interchange` helper). EIA's sign convention is already
+export-positive (a net import is negative), so the column is served as-is with
+**no** flip — unlike `pjm_net_interchange`, which negates PJM's import-positive
+tie-line file. The `load_demand` interchange branch is generalized from PJM-only
+to `{PJM, NYISO, NEISO}` (`_SCALAR_INTERCHANGE_ISOS`), default-on for backcast
+years (`include_interchange=True`); a net import lowers the residual the
+internal fleet serves. ERCOT (islanded; DC ties via its own extract) and CAISO
+(imports modeled by the `WECC_import` node, playbook §8.1) stay out. The priced
+node remains the *forward* mechanism, used under `--priced-interchange`
+(`include_interchange=False`, no double count). Also restored the NEISO P8
+demand infrastructure (`_load_neiso_hourly_demand`, `neiso_zonal_load_shares`)
+accidentally clobbered by a bad rebase in the NYISO P8 commit, so NEISO demand
+reads the ISNE clock and the served interchange is hour-matched.
+
+### Results — both interchange rows now green
+
+**NYISO 2023** (`--commitment`, P10 LMP still held → price level-only):
+
+| fuel | energy-only (old) | **P9b (served)** | EIA-923 | EIA-930 |
+|---|---|---|---|---|
+| gas (cc+ct+st) | 80.11 (+25.6%) | **57.52 (−9.8%)** | 63.79 | 61.00 |
+| nuclear | 27.49 | 27.49 | 27.52 | 24.00 |
+| hydro | 28.38 | 28.38 | 28.40 | 26.84 |
+| **TOTAL** | **147.31 (+16.0%)** | **123.77 (−2.5%)** | 126.96 | 118.61 |
+| net interchange (TWh) | **0.00** 🔴 | **−23.45** 🟢 | — | −23.45 |
+
+Net interchange: model −23.45 vs actual −23.45 TWh (duration RMSE **0 MW**,
+import-hours 100% vs 100%, diurnal corr **+1.00** — the served measured
+schedule). Avg price $70.99 → **$42.72** (0 negative hours; level **not**
+scored, P10 held). The energy-only gas_ct +81% / gas_st +113% / CO2 +57% reads
+were interchange symptoms and collapse with the wedge served.
+
+**NEISO 2024** (`--commitment`, P10 LMP held):
+
+| fuel | energy-only (old) | **P9b (served)** | EIA-923 | EIA-930 |
+|---|---|---|---|---|
+| gas (cc+ct+st) | 67.81 (+11.2%) | **57.94 (−5.0%)** | 60.99 | 59.64 |
+| nuclear | 26.48 | 26.48 | 26.55 | 26.41 |
+| hydro | 6.67 | 6.67 | 6.71 | 7.39 |
+| **TOTAL** | — | **103.96 (+1.1%)** | 102.82 | 98.81 |
+| net interchange (TWh) | **0.00** 🔴 | **−10.30** 🟢 | — | −10.30 |
+
+Net interchange: model −10.30 vs actual −10.30 TWh (duration RMSE **0 MW**,
+import-hours 83.8% vs 83.8%, diurnal corr **+1.00**). PS over-cycling
+self-corrects from the energy-only 1.35 TWh toward EIA-930's 0.30 (now 0.50 —
+the gap-#2 cross-coupling the smoke predicted: cheap imports remove part of the
+arbitrage spread). Avg price $69.99 → **$55.72**.
+
+**Regression guard.** ERCOT/PJM/CAISO `load_demand` outputs byte-identical
+(sha256 over 2023+2024 demand arrays, pre/post). Full suite **1006 passed** (3
+pre-existing CAISO zonal-share failures unrelated to this change). New tests:
+`nyiso/neiso_net_interchange` import-negative; demand serves the measured wedge
+by default; zonal-reconciliation tests isolated with `include_interchange=False`.
+
+**Keeper decision.** Both remain structural-discipline smokes, **not** tuning
+keepers — the interchange gate is now green, which *unblocks* the downstream
+packs (P7 measured gas + U4 winter basis, P13 winter oil, P10/U2 LMP, P8/U3
+zonal load) that were held behind it. No offer band tuned (playbook §6).
