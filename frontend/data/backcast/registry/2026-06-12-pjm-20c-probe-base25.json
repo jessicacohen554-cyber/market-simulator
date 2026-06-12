@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-pjm-20c-probe-base25",
+  "label": "pjm 20c probe base25",
+  "date": "2026-06-12",
+  "shorthand": "pjm-20c-probe-base25",
+  "definition": "run 20c probe anchor: run-19 config exactly, 2025 only (pure-pair base for 2025 band probe + curve-mid comparator). Outcome: reproduces run-19's 2025 slice exactly (gas +4.74, COAL_BIT +0.05, COAL_WC +0.87, LMP -23.8%) \u2014 confirms single-year solves replicate the 3-year run at HEAD (highspy 1.14.0, knife edges vertex-stable). Anchor for the 2025 pure pair and curve-mid comparator.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-20c-probe-base25.js",
+  "bundle": "results/calibration/pjm_20c_base25"
+}
