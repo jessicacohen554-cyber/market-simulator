@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run92-kiamichi",
+  "label": "run92 kiamichi",
+  "date": "2026-06-12",
+  "shorthand": "run92-kiamichi",
+  "definition": "Run 92 (STRUCTURAL FLEET FIX, retuning baseline \u2014 not the scored keeper): run-91 tuning unchanged + Kiamichi Energy Facility (EIA 55501, Kiowa OK, ba_code ERCO, 1370 MW F-class CC, online 2003, HR 8.12) added to the fleet. The TX-state-filtered registry build had dropped the single out-of-state ERCOT-BA plant while the EIA-923 CC_REGULAR benchmark counted its ~5.2 TWh/yr \u2014 a -3.5pt structural bias the CC fleet covered by over-running CAMPD (+13.2 TWh in 2024). The fix lands the targeted cells: CC_REGULAR 2023 -4.6 -> -1.3%, 2023 fuel split passes both fuels (gas -1.9 / coal +1.5), 2024 gas split +0.2; and the LMP level was the smoking gun: MAE 2025 11.5 -> 2.2 $/MWh, 2024 9.2 -> 7.3 (2023 32.1, at the gate edge). But the run-91 offer tuning is stale on the corrected fleet: Kiamichi's 5.3 TWh crowds the adjacent classes, CC_REGULAR 2024 +4.1% (+5.9 TWh), CT_PEAKER fails all three years, 6 in-scope class fails vs run 85's 4. Next campaign: re-derive the offer-curve calibration on the corrected fleet (the pre-Kiamichi Jacobian pairs no longer apply).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run92-kiamichi.js",
+  "bundle": "results/calibration/run92_kiamichi"
+}
