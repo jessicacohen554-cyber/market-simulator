@@ -1052,3 +1052,89 @@ by default; zonal-reconciliation tests isolated with `include_interchange=False`
 keepers — the interchange gate is now green, which *unblocks* the downstream
 packs (P7 measured gas + U4 winter basis, P13 winter oil, P10/U2 LMP, P8/U3
 zonal load) that were held behind it. No offer band tuned (playbook §6).
+
+---
+
+## ERCOT Runs 89–91 — CC_REGULAR shape + PRB 2024 (2026-06-12)
+
+**Scope.** Close run 85's remaining miss — the single 2024 cheap-gas cluster
+(CC_REGULAR +3.1 TWh too high; PRB −7.9% / −3.47 TWh, ST_GAS −1.19,
+lignite −1.23, CT_PEAKER −1.48 TWh each ~1 TWh too low) — via the two levers
+scoped at the run-85 keeper decision: the never-used econ-ramp midpoint
+(`offer_curve_smoothing_mid`, commit c31cd42) and a 2024-keyed PRB sigmoid
+retune. **Run 91 is the new keeper** (3 in-scope fails vs run 85's 4, no new
+fails, 2024 cluster 7.37 → 3.65 TWh); `docs/calibration-best-so-far.md`
+updated. Dashboard: `run89 midpoint`, `run90 prb 2024`, `run91 cc shave`
+(top-5 retention prunes run83; the rejected runs 86/87 entries were also
+dropped — their bundles stay in `results/calibration`). All scoring below is
+the size-aware bar (≥20 TWh classes ±5%, <20 TWh ±1 TWh absolute, CT_CHP
+excluded) vs run 85.
+
+### Run 89 — econ-ramp midpoint 0.35 (base B)
+Two bundles: `run89_midpoint065` (m=0.65 probe, rejected) and
+`run89_midpoint035` (m=0.35, the chosen run 89). The brief's m>0.5 guess
+**inverted**: m=0.65 made CC_REGULAR *gain* +1.47 TWh in 2024 and PRB lose
+−1.0. Mechanism: the midpoint anchor reshapes every econ ramp, and
+CC_REGULAR's ramp is nearly FLAT (econ_low 1.06 → econ_high 0.96), so the
+anchor barely moves CC while the steep-ramp classes (PRB 0.40 → 1.38, ST_GAS,
+CT) get pricier middles — CC wins the mid-merit hours they vacate. m=0.35
+runs the same mechanism in reverse: CC_REGULAR 2024 +3.09 → **+1.37 TWh**
+(+0.9%), PRB 2024 −7.9 → −5.5%, CT_PEAKER −17.9 → −15.5%, with small
+lignite (−0.17 TWh) / ST_GAS (−0.04) collateral. Same 4 fails as run 85 but
+the cluster shrinks 7.37 → 6.28 TWh; LMP MAE 31.2/9.3/11.4 (gate held); 2024
+coal NRMSE improves 0.198 → 0.185. **Base B for runs 90–91.** Side effects
+to remember: the midpoint costs CC_REGULAR 2023 −1.7 TWh (−2.7 → −3.9%) and
+gives PRB 2023 +0.93 — it spends 2023 headroom.
+
+### Run 90 — 2024-keyed PRB sigmoid retune (REJECTED, gradient anchor)
+B + reshaped PRB logistic: slope 2.5 → 5 centered 2.85 → $2.45 — between
+2024's cheap shaped-gas months ($1.97–2.08; the sigmoid sees annual gas ×
+`GAS_MONTHLY_SEASONALITY`, so 2024 = $1.97–2.58, 2023 = $2.29–3.00) and
+2023's cheapest ($2.29) — floors −0.06 (0.68/0.58), ceils pinned to run-85
+values at ≥$2.5 (1.17/1.04). The shape analysis said 2023's cheap months
+keep ~⅓ of 2024's discount; the realized TWh blew through it: PRB 2024
++4.34 TWh (+4.4%, overshoot) but **PRB 2023 +4.09 TWh (+12.4%, FAIL)**,
+CC_REGULAR 2023 −5.5% (FAIL), Martin Lake 2023 +2.0 TWh (the run-81 guard
+blow-up). 5 fails vs 4. **The quantified lesson (extends run-80e):** the
+realized year-gradient is ~65 TWh per unit passthrough in 2024 vs **~142 in
+2023** — 2023 sits on the coal-gas knife edge, so even month-deltas of
+−0.03 detonate. And the 4-param logistic cannot cut below $2.1 while
+tracking run-85's curve at $2.29+: pinning the ceil low leaks discount into
+2023 winter/2025; keeping ceil 1.50 with a steep low mid marks up the
+$2.4–2.6 overlap months (2024 Dec/Jan = 2023 Mar/Jul/Aug in gas space).
+The PRB sigmoid stays at run-85 parameters in the keeper.
+
+### Run 91 — CC_REGULAR per-class shave (KEEPER)
+B + CC_REGULAR deltas econ_high −0.45 → −0.40 (+0.05), peak +0.25 → +0.32
+(+0.07). Direction from the jacobian (CC_REGULAR.econ_high → PRB 2024
+**+6.96 TWh/unit, med conf** — the PRB-2024 fix rides CC's adjacency, not
+the coal bid; peak's PRB-2023 row is negative, trimming where headroom is
+thinnest), dose from measurement: the full-dose probe (econ_high +0.09 /
+peak +0.13, bundle `run91_cc_shave_full`, unregistered) moved every class
+the predicted way but ~1.7–3× the jacobian magnitudes in 2023 (CC −5.3%,
+PRB +5.3%, ST_GAS +1.06 TWh — three hairline fails, guards +1.05), giving
+a measured B→full response vector with feasibility box β ∈ [0.39, 0.74];
+the keeper runs β=0.55. Result (`run91_cc_shave055`): **3 fails vs run 85's
+4** — PRB 2024 −4.9% PASSES (by 0.04 TWh), CC_REGULAR 2024 +0.4%, 2023/2025
+all pass (CC 2023 −4.6%, PRB 2023 +4.3%, ST_GAS 2023 +0.95). Remaining
+fails: ST_GAS 2024 −1.12 (run 85 −1.19), CT_PEAKER −1.22 (−1.48), lignite
+−1.31 (−1.23, a 0.08 TWh drift — the one nominal regression, size-aware
+noise). 2024 ledger vs run 85: CC_REGULAR −2.51 gave, PRB +1.33 / CT +0.26 /
+ST_GAS +0.07 took. Guards: Martin Lake/Limestone 2023 +914/+948 GWh; Martin
+Lake 2025 +1.50 (run 85 +1.35 — watch). LMP MAE 31.1/9.2/11.5 (gate held);
+2024 coal NRMSE 0.198 → 0.182, gas 0.118. Honest caveats: PRB 2024 and
+ST_GAS 2023 pass with <0.1 TWh margin (fragile to any further coal/gas
+move), and total |class error| is flat (~21.0 TWh) — the 2024 win is paid
+for inside CC_REGULAR 2023's tolerance band (−2.7 → −4.6%). The keeper
+decision rests on the bar as stated: fewer fails, none new, smaller cluster.
+
+**Open items (runs 92+).** The remaining 2024 trio (ST_GAS/lignite/
+CT_PEAKER, all −1.1..−1.3 TWh) has no clean fleet-wide lever left at this
+operating point — every coal/gas knob measured this session trades one
+hairline constraint for another; the structural items stand: ORDC scarcity
+adder for the 2023 LMP level (89% of the summer $·h gap in the ≥$200 band),
+per-plant Parish/Spruce correction (under-run all years, −3.9 TWh 2024),
+lignite 2024, and the CT_CHP 2025 benchmark gap. A lignite floor probe
+(0.75 → 0.72) is the one cheap candidate, but Martin Lake 2023 sits at
++914 GWh with ~86 GWh of guard headroom — re-run the guard before keeping
+anything.
