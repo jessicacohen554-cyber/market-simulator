@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-06-11 (NEISO backcast P2 — per-plant offer-curve tranches & bin assignments)
+
+NEISO prompt-pack P2 — the offline derivation that turns the NEISO thermal fleet
+into per-plant offer-curve tranches. The CAMPD committed / peaking shares
+(2023 + 2024 + 2025 NE-state facility CEMS) and the source-tagged bin-assignment
+artifact already landed alongside P3; this pack validates that pipeline
+end-to-end, documents the NEISO inflexible layer and the oil/dual-fuel peaker
+band, and adds the regression tests. No modeled validation here (that is
+P11/P12); ERCOT/PJM/CAISO artifacts are byte-identical (regression-tested).
+
+- **Committed / peaking from CAMPD.** `thermal_tranches_NEISO.csv` carries each
+  plant's measured committed floor (P5 of online available-CF) and CC duct-firing
+  peaking share (P95 vs P99.5 of online net MW, capped 25%) over the pooled
+  three-year window. Coverage: **100%** of CC_REGULAR MW (≈ 12.8 GW), **≈ 87%**
+  of CC_CHP, **≈ 89%** of CT_PEAKER carry a *measured* committed share; the
+  sub-CEMS fuel-cell / micro-cogen tail keeps the class default.
+- **No coal must-run.** NEISO's lone coal unit, **Merrimack** (EIA 2364), is a
+  winter peaker by 2023-2025 (a few hundred CEMS online hours/yr), so its
+  derived `mustrun_pct` is **0.0** — every NEISO plant-group's must-run share is
+  zero. The inflexible layer is CHP BTM steam hosts, nuclear (Millstone 2 & 3,
+  Seabrook ≈ 3.4 GW), hydro min-flows, and any reliability units (none binds in
+  the window).
+- **Oil / dual-fuel peaker band — tagged from P13, not re-derived.**
+  `fleet.dual_fuel_plant_groups()` (EIA-860 multifuel) flags the gas-primary
+  oil-switchers in the offer-curve fleet — Montville (ST_OIL-capable) and the CT
+  peakers (Potter, Waters River, A L Pierce, Bucksport, Waterbury, Exelon West
+  Medway II, MMWEC, …). These dispatch as ordinary economic bins with no
+  must-run pin; the oil switch is a fuel-price overlay, not a capacity floor.
+- **Bin assignments are deterministic.** `bin_assignments_NEISO.csv` regenerates
+  byte-for-byte from the current code + tranche artifact (no stale hand-edits);
+  mixed gas facilities (Hartford Hospital, Kimberly Clark, Dartmouth Power,
+  Medical Area Total Energy) split one row per `Plant_Group`.
+- **Tests:** `tests/test_neiso_bins.py` — fleet bins load and cover the thermal
+  fleet, tranche shares sum to 100, no coal must-run layer, CHP BTM removed from
+  LP capacity, dual-fuel peakers dispatch economically, and the artifact is
+  deterministic. ERCOT/PJM/CAISO bins regression-tested byte-identical.
+
 ## 2026-06-11 (NEISO backcast P13 — dual-fuel / oil winter switching)
 
 NEISO prompt-pack P13 (Wave 1) — activate and validate oil/dual-fuel winter
