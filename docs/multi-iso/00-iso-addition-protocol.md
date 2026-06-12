@@ -47,7 +47,7 @@ Companion documents in this directory:
 | PJM   | 4 zones, cited zonal-peak shares + TTCs    | PJM    | FIPS state→zone     | none       | none           | No       |
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
 | SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
-| NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023 (2025 Q1-only; 2024 blocked) | `NYIS hourly` (2023–Q1'25) | **2023** (P12 keeper; 2025/2024 data-blocked) |
+| NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
 | NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
 
 All ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE`. The remaining
