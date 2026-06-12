@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-12 (NYISO Stage H — P14 documentation sign-off)
+
+NYISO 2023 backcast reaches Stage H. All packs P0–P13 were merged in earlier
+sessions; this pass reconciles the prose docs with the as-built code:
+
+- **New:** `docs/multi-iso/nyiso-backcast-2023.md` — results tables, the
+  served-interchange structural fix (P9b closing the +25.6% over-generation),
+  the 2024/2025 data blocks as named gaps, P12 probe results (`nyiso 1
+  gas-actuals` no-op, `nyiso 2 chp-covered` negligible), and next-step
+  hypotheses. Written in the style of `pjm-backcast-2023.md`.
+- **doc-01:** EIA-930 §2 table updated — NYISO (`NYIS`), CAISO, PJM, ISO-NE
+  rows changed from "MISSING — upload" to "present" (the banner already noted
+  all-7-ISO coverage; the table rows were stale).
+- **doc-07:** §1 P12 sign-off banner added; P14 prompt marked done.
+- **CHANGELOG** this entry.
+
+No code, config, or data changes in this pass. Parameter citations for NYISO
+were already appended in P12 (`state_carbon_price_by_iso.NYISO`,
+`nyiso_hydro_treaty_min_flow`, measured monthly gas citations in
+`calibration-best-so-far-nyiso.md`).
+
 ## 2026-06-12 (CAISO import/export node calibrated — CAISO P9)
 
 Fitted `IMPORT_TRANCHES["CAISO"]` / `EXPORT_TRANCHES["CAISO"]` to the EIA-930
