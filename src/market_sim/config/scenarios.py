@@ -313,89 +313,72 @@ class ScenarioConfig:
     # Mine-mouth lignite is left at full cost. 1.0 = full fuel cost (off).
     coal_prb_passthrough: float = 1.00
 
-    # Tier 3 (calibration) — gas-keyed PRB passthrough sigmoid. When True, the
-    # flat coal_prb_passthrough is replaced by a logistic of the monthly
-    # delivered gas price: PRB economic tranches get a deep fuel discount when
-    # gas is cheap (so they clear against cheap gas CC) and little/none — or a
-    # markup > 1.0 — when gas is dear (so they don't over-run). Off (default)
-    # keeps the flat coal_prb_passthrough. Defaults grounded in the per-month
-    # PRB-vs-gas-CC breakeven passthrough across 2023-2025. See
-    # fuel.prb_passthrough_series.
+    # Tier 3 (calibration) — gas-keyed coal passthrough sigmoids, ONE
+    # INDEPENDENTLY TUNABLE LOGISTIC PER COAL SUPPLY CHAIN. Each supply
+    # class ("prb" rail take-or-pay, "subbituminous" derived-rank,
+    # "bituminous" Appalachian/Illinois-Basin, "lignite" mine-mouth) has its
+    # own economics — basin, rank, mine-mouth vs rail, contract structure —
+    # so each gets its own sigmoid, and the sigmoids are REGION-DEPENDENT:
+    # the floor/ceil/gas_mid/gas_slope fields below default to None, which
+    # resolves from COAL_SIGMOID_DEFAULTS[(iso, supply)] (the per-ISO tuned
+    # curves). Setting a field explicitly (CLI tuning flags) overrides the
+    # table; an ISO/supply with neither a table entry nor explicit fields
+    # gets NO sigmoid (the flat fallback), so a curve tuned in one ISO can
+    # never silently apply to another ISO's coal fleet. See
+    # fuel.coal_passthrough_series.
+    #
+    # When a sigmoid is on, every above-must-run tranche of that supply
+    # passes a logistic of the monthly delivered gas price instead of its
+    # flat passthrough: a fuel discount when gas is cheap (coal holds its
+    # baseload against cheap gas CC) and a markup > 1.0 when gas is dear (so
+    # it doesn't over-run). Keyed off the measured EIA-923 ISO-month gas
+    # series when gas_monthly_actuals is on, else the shaped trajectory.
     coal_prb_passthrough_sigmoid: bool = False
-    coal_prb_passthrough_floor: float = 0.78    # cheap-gas asymptote
-    coal_prb_passthrough_ceil: float = 1.50     # dear-gas asymptote (>1 = markup)
-    coal_prb_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
-    coal_prb_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
+    coal_prb_passthrough_floor: float | None = None
+    coal_prb_passthrough_ceil: float | None = None
+    coal_prb_passthrough_gas_mid: float | None = None
+    coal_prb_passthrough_gas_slope: float | None = None
 
-    # Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plants
-    # whose per-plant must-run floor is <= coal_prb_follower_mustrun_max use a
-    # SEPARATE follower-tier sigmoid (coal_prb_follower_*); the rest use the
+    # Tier 3 (calibration) — tiered PRB passthrough (ERCOT). When True, PRB
+    # plants whose per-plant must-run floor is <= coal_prb_follower_mustrun_max
+    # use a SEPARATE follower-tier sigmoid (coal_prb_follower_*, the
+    # "prb_follower" supply key in COAL_SIGMOID_DEFAULTS); the rest use the
     # baseload sigmoid above. The low-floor units are load-followers (they
     # cycle), not baseload price-takers, so they can want a different curve.
-    # Follower params default to the baseload values, so the toggle is a no-op
-    # until tuned. Requires coal_prb_passthrough_sigmoid and
-    # coal_mustrun_per_plant.
+    # Requires coal_prb_passthrough_sigmoid and coal_mustrun_per_plant.
     coal_prb_passthrough_tiered: bool = False
     coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
-    coal_prb_follower_floor: float = 0.68
-    coal_prb_follower_ceil: float = 1.35
-    coal_prb_follower_gas_mid: float = 2.85
-    coal_prb_follower_gas_slope: float = 2.5
+    coal_prb_follower_floor: float | None = None
+    coal_prb_follower_ceil: float | None = None
+    coal_prb_follower_gas_mid: float | None = None
+    coal_prb_follower_gas_slope: float | None = None
 
-    # Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJM
-    # coal-fleet analogue of the PRB sigmoid above). When True, every
-    # bituminous-supply coal tranche above must-run passes a logistic of the
-    # monthly delivered gas price instead of full fuel cost: a discount when
-    # gas is cheap (Appalachian/Illinois-Basin bit holds its baseload against
-    # cheap gas CC) and a markup > 1.0 when gas is dear (so it doesn't
-    # over-run). Keyed off the measured EIA-923 ISO-month gas series when
-    # gas_monthly_actuals is on (the PJM keeper config), else the shaped
-    # trajectory. Defaults bracket the per-month bit-vs-gas-CC breakeven
-    # passthrough across PJM 2023-2025 (~0.5 at $2.2/MMBtu gas to ~1.7 at
-    # $6.9) conservatively — a moderate pull toward breakeven, not full
-    # price-taking. Off (default) keeps full fuel cost.
-    coal_bit_passthrough_sigmoid: bool = False
-    coal_bit_passthrough_floor: float = 0.82    # cheap-gas asymptote
-    coal_bit_passthrough_ceil: float = 1.25     # dear-gas asymptote (>1 = markup)
-    coal_bit_passthrough_gas_mid: float = 3.40  # $/MMBtu logistic midpoint
-    coal_bit_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
-
-    # Tier 3 (calibration) — gas-keyed LIGNITE passthrough sigmoid (ERCOT
-    # mine-mouth fleet analogue of the PRB/bit sigmoids above). When True,
-    # every lignite-supply coal tranche above must-run passes a logistic of
-    # the monthly delivered gas price instead of full fuel cost: mine-mouth
-    # take-or-pay fixed costs are sunk, so in cheap-gas months lignite
-    # discounts its bid to hold baseload against cheap gas CC instead of
-    # being priced out (the delivered-price constant stays grounded at the
-    # measured ~$1.45/MMBtu — this discounts the BID, not the cost).
-    # Defaults derived from the run-80 flat-reprice anchors: a $1.15/MMBtu
-    # flat probe ≈ passthrough 0.79 fixed 2023, a $1.05 ≈ 0.72 fixed 2024,
-    # and 2025 wants ~full cost — a sigmoid on the PRB midpoint/slope with
-    # floor 0.70 and ceil 1.00 (no dear-gas markup) lands all three.
-    # Off (default) keeps full fuel cost.
-    coal_lignite_passthrough_sigmoid: bool = False
-    coal_lignite_passthrough_floor: float = 0.70    # cheap-gas asymptote
-    coal_lignite_passthrough_ceil: float = 1.00     # dear-gas asymptote (full cost)
-    coal_lignite_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
-    coal_lignite_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
-
-    # Tier 3 (calibration) — separate SUBBITUMINOUS passthrough sigmoid.
-    # Each coal passthrough sigmoid encodes basin/type/transport-specific
-    # economics (PRB rail take-or-pay, Appalachian/Illinois-Basin bit,
-    # mine-mouth lignite), so each supply tag carries its own tunable curve.
-    # Plants tagged "subbituminous" (the derived EIA-923 rank CSVs, non-ERCOT
-    # ISOs) historically alias onto the PRB sigmoid because plant_taxonomy
-    # routes both to COAL_PRB — but a sub-bituminous plant outside the Powder
-    # River Basin does not necessarily share PRB's rail contract economics.
-    # Off (default): "subbituminous" keeps inheriting the PRB family
-    # (passthrough, sigmoid, follower tier) — no calibration moves. On:
-    # subbituminous tranches above must-run use this family's own logistic
-    # instead. Param defaults start at the PRB values; tune from there.
+    # Subbituminous: the derived EIA-923 rank tag. Historically aliased onto
+    # the PRB sigmoid (plant_taxonomy routes both to COAL_PRB), but a
+    # sub-bituminous plant outside ERCOT does not share ERCOT PRB's rail
+    # contract economics — each ISO's subbit fleet gets its own curve
+    # (e.g. PJM's two PRB-by-rail plants delivered into PJM conditions).
     coal_sub_passthrough_sigmoid: bool = False
-    coal_sub_passthrough_floor: float = 0.78    # cheap-gas asymptote
-    coal_sub_passthrough_ceil: float = 1.50     # dear-gas asymptote (>1 = markup)
-    coal_sub_passthrough_gas_mid: float = 2.85  # $/MMBtu logistic midpoint
-    coal_sub_passthrough_gas_slope: float = 2.5  # logistic slope per $/MMBtu
+    coal_sub_passthrough_floor: float | None = None
+    coal_sub_passthrough_ceil: float | None = None
+    coal_sub_passthrough_gas_mid: float | None = None
+    coal_sub_passthrough_gas_slope: float | None = None
+
+    # Bituminous (the PJM coal fleet's dominant rank).
+    coal_bit_passthrough_sigmoid: bool = False
+    coal_bit_passthrough_floor: float | None = None
+    coal_bit_passthrough_ceil: float | None = None
+    coal_bit_passthrough_gas_mid: float | None = None
+    coal_bit_passthrough_gas_slope: float | None = None
+
+    # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
+    # cheap-gas months lignite discounts its BID (not its cost) to hold
+    # baseload against cheap gas CC instead of being priced out.
+    coal_lignite_passthrough_sigmoid: bool = False
+    coal_lignite_passthrough_floor: float | None = None
+    coal_lignite_passthrough_ceil: float | None = None
+    coal_lignite_passthrough_gas_mid: float | None = None
+    coal_lignite_passthrough_gas_slope: float | None = None
 
     # Tier 3 (calibration) — CAMPD coal must-run overrides. When set, replace
     # the per-plant CSV must-run percentage for coal of the given supply with
@@ -798,6 +781,57 @@ class ScenarioConfig:
         """Load a config from YAML, merging stored overrides onto defaults."""
         data = yaml.safe_load(Path(path).read_text()) or {}
         return cls(**data)
+
+
+# Per-(ISO, coal supply) gas-keyed passthrough sigmoid defaults — the tuned
+# curves behind the coal_*_passthrough_sigmoid toggles. Each entry reflects
+# one specific coal supply chain in one market: the basin, rank, mine-mouth
+# vs rail delivery and contract structure all shift where the coal-vs-gas-CC
+# merit-order crossover sits, so a curve tuned in one ISO must never leak
+# into another. ScenarioConfig fields left at None resolve from here
+# (fuel.coal_sigmoid_params); explicit fields (CLI tuning flags) override
+# entry-by-entry. An (iso, supply) pair absent here — and not fully
+# specified by explicit fields — gets no sigmoid: the flat passthrough.
+#
+# Supply keys match coal_supply_class tags ("prb" / "subbituminous" /
+# "bituminous" / "lignite"), plus "prb_follower" for the ERCOT tiered
+# low-must-run load-follower tier of the prb curve.
+COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
+    # ERCOT PRB-by-rail (curated COAL_PLANT_SUPPLY tags): per-month
+    # PRB-vs-gas-CC breakeven across 2023-2025 (run-70s tuning series).
+    ("ERCOT", "prb"): {
+        "floor": 0.78, "ceil": 1.50, "gas_mid": 2.85, "gas_slope": 2.5},
+    ("ERCOT", "prb_follower"): {
+        "floor": 0.68, "ceil": 1.35, "gas_mid": 2.85, "gas_slope": 2.5},
+    # Safety net for any future ERCOT coal plant that misses the curated map
+    # and lands on the derived "subbituminous" rank tag: mirror the prb
+    # baseload curve (PRB IS sub-bituminous; same basin economics in ERCOT).
+    ("ERCOT", "subbituminous"): {
+        "floor": 0.78, "ceil": 1.50, "gas_mid": 2.85, "gas_slope": 2.5},
+    # ERCOT mine-mouth lignite, derived from the run-80 flat-reprice
+    # anchors: a $1.15/MMBtu flat probe ≈ passthrough 0.79 fixed 2023, a
+    # $1.05 ≈ 0.72 fixed 2024, and 2025 wants ~full cost — a sigmoid on the
+    # PRB midpoint/slope with floor 0.70 and ceil 1.00 (no dear-gas markup)
+    # lands all three. The delivered-price constant stays grounded at the
+    # measured ~$1.45/MMBtu; this discounts the BID, not the cost.
+    ("ERCOT", "lignite"): {
+        "floor": 0.70, "ceil": 1.00, "gas_mid": 2.85, "gas_slope": 2.5},
+    # PJM bituminous (Appalachian/Illinois Basin): brackets the per-month
+    # bit-vs-gas-CC breakeven across PJM 2023-2025 (~0.5 at $2.2/MMBtu gas
+    # to ~1.7 at $6.9) conservatively — a moderate pull toward breakeven,
+    # not full price-taking.
+    ("PJM", "bituminous"): {
+        "floor": 0.82, "ceil": 1.25, "gas_mid": 3.40, "gas_slope": 2.5},
+    # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
+    # cut from the run-13 no-sigmoid residuals — over-dispatch grows with
+    # the gas price (+5% at $2.2-2.5 HH to +12% at $3.5), so no cheap-gas
+    # discount (floor 1.0) and a dear-gas markup, on the PJM delivered-gas
+    # crossover (gas_mid as bituminous). NOT the ERCOT prb curve: that
+    # floor/ceil suppressed these plants 12-21% below actuals (run 14,
+    # discarded).
+    ("PJM", "subbituminous"): {
+        "floor": 1.00, "ceil": 1.25, "gas_mid": 3.40, "gas_slope": 2.5},
+}
 
 
 TIER_TAGS: dict[str, int] = {
