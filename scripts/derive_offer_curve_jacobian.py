@@ -209,6 +209,15 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "run80e_prb_shaped": ("sidecar", "PRB sigmoid shape probe off run80a (rejected; run_config sigmoid params are stale defaults)"),
     "run82_jacobian_joint": ("pure", "Jacobian recipe curve deltas only off run80a (rejected as a keeper but a valid sensitivity observation — incl. CT_PEAKER committed at 1.008)"),
     "run84_coal_sigmoids": ("structural", "lignite passthrough sigmoid + PRB floor retune (coal sigmoid params, not curve moves)"),
+    "run91_cc_shave055": ("pure", "beta=0.55 dose of the run-90->run-91-full vector: CC_REGULAR econ_high/peak deltas only (note + clean git)"),
+    "run92_kiamichi": ("structural", "Kiamichi fleet fix: missing 1.4 GW CC added to registry + bins (run-91 tuning unchanged)"),
+    "run93_jacobian_probe": ("pure", "CC_REGULAR econ_high -0.40 -> -0.30 only, off run92 on the corrected fleet (the post-Kiamichi re-derivation probe)"),
+    # run94/run95 are probes whose chain pairs are structural either way
+    # (Kiamichi bins CSV trim in 94, lignite sigmoid floor in 95); sidecar
+    # them so run93 pairs with run95b, the corrected-fleet committed step.
+    "run94_ct_kiamichi": ("sidecar", "CT econ_high -0.20 probe + Kiamichi bins trim v1 off the run-92 config (rejected: flips ST_GAS 2025); vector in the runs-93-96 calibration-log section"),
+    "run95_lignite_probe": ("sidecar", "lignite floor 0.69 endpoint + Kiamichi bins v2 probe off run94 (sigmoid param + bins, not curve knobs); vector in the runs-93-96 calibration-log section"),
+    "run95b_cc_committed_probe": ("pure", "vs chain-predecessor run93: CC_REGULAR committed -0.05 -> +0.05 and econ_high -0.30 -> -0.40 (curve moves only; the Kiamichi bins v1 trim between their shas is a measured within-CC ~0.15 TWh perturbation, run-94 note — accepted)"),
     # --- PJM ---
     "pjm_2023": ("legacy", "exploratory era"),
     "pjm_2024": ("legacy", "exploratory era"),
