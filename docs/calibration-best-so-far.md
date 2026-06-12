@@ -1,5 +1,20 @@
 # ERCOT calibration — best config so far
 
+> **STATUS (2026-06-12, post-run-92): the calibration is OPEN.** Run 92
+> added the missing Kiamichi CC (EIA 55501, 1370 MW, the TX-state filter
+> had dropped the one out-of-state ERCOT-BA plant) to
+> `inputs/master-plant-registry.csv` + `inputs/custom-bin-assignments.csv`.
+> That fleet fix is permanent — which means **run 91's table below is no
+> longer reproducible on current inputs** (its config now yields run 92's
+> results). Run 91 remains the best *scored* run; run 92 is the corrected
+> **retuning baseline**: it fixes the structural cells (CC_REGULAR 2023
+> −1.3%, 2023 fuel split passes, LMP MAE 2025 11.5 → **2.2** $/MWh, 2024
+> 9.2 → 7.3) but the run-91 offer tuning is stale on the bigger CC fleet
+> (CC_REGULAR 2024 +4.1%, CT_PEAKER fails all years, 6 class fails). The
+> next campaign re-derives the offer-curve calibration on the corrected
+> fleet; the pre-Kiamichi Jacobian pure pairs no longer apply. See the
+> "ERCOT Run 92" calibration-log entry.
+
 Keeper: **run 91 / dashboard `run91 cc shave`** (2026-06-12, bundle
 `results/calibration/run91_cc_shave055`, highspy 1.14.0). **Supersedes run 85
 (`run85_coal_soft`)** on the size-aware volume bar (see "Success bar" below):

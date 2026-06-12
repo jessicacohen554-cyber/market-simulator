@@ -1474,3 +1474,56 @@ diurnal sign pattern is not reproduced. Per playbook §6 the red structural row
 all of them would compensate for the over-import and bake in errors that must be
 unwound once the node is repriced. The bundle and its `derive_import_tranches.py
 --bundle` re-fit boundaries are the evidence for that next pass.
+
+---
+
+---
+
+## ERCOT Run 92 — Kiamichi fleet fix: the missing 1.4 GW CC (2026-06-12)
+
+**Trigger.** Post-run-91 question: why does the model "generate ~470 TWh when
+actual is 475"? Reconciliation: the LP serves EIA-930 demand exactly (446.0
+TWh 2023, unserved 0); on the 923 basis the model+BTM totals 473.9 vs 475.2.
+The wedge decomposes into the solar source difference (model solar follows
+930 actuals, +3.8 TWh above what 923 credits) and **one plant**: the 923
+CC_REGULAR benchmark includes **Kiamichi Energy Facility (EIA 55501)** —
+Kiowa OK, `ba_code ERCO`, 1370 MW F-class 2×(2×1) CC, online 2003, EIA
+annual HR 8.119, ~5.0–5.3 TWh/yr — the **single ERCOT-BA plant outside
+Texas** (1401 TX + 1 OK), dropped by the TX-state-filtered registry build.
+With `use_campd_bins=True` the bins CSV IS the fleet, so the plant never
+dispatched. The CC fleet covered the hole by over-running CAMPD (+4.7 TWh
+2023, **+13.2 TWh 2024**) — most of run-91's "CC_REGULAR 2023 −4.6%" and
+the 2023 gas-split fail were this bias, not mix tuning. CAMPD-vs-923 class
+wedge is a stable ~+14 TWh/yr (~5 Kiamichi + ~9 netting).
+
+**Fix (permanent, inputs).** Registry row (EIA-860 facts, CC-fleet medians
+for ancillary fields, `has_campd_data=False` — no OK CAMPD extract, so
+statistical availability, no outage overlay, absent from per-plant panels)
++ bins row (North / N_CC7 / 25-60-15 committed-econ-peak, HR mults
+1.08/1.0/1.55). Smoke-tested: 3 LP tranches, 1370.2 MW, zone North.
+
+**Run 92 (`run92_kiamichi`, dashboard `run92 kiamichi`; prunes run84).**
+Run-91 tuning unchanged on the corrected fleet. The targeted cells land:
+**CC_REGULAR 2023 −4.6 → −1.3%**, ST_GAS 2023 +0.95 → −0.29 TWh, 2023 fuel
+split passes both fuels (gas −1.9 / coal +1.5; was fail/fail), 2024 gas
+split +0.2. **The LMP level was the smoking gun: MAE 2025 11.5 → 2.2
+$/MWh, 2024 9.2 → 7.3** (2023 32.1, at the ±$1 gate edge) — the model had
+been over-pricing tight years because 1.4 GW of real supply was missing.
+But the run-91 offer tuning is stale on the bigger CC fleet: Kiamichi's
+energy crowds the adjacent classes instead of the incumbent CCs giving
+back their over-run — CC_REGULAR 2024 **+4.1%** (+5.9 TWh), CT_PEAKER
+fails **all three years** (−1.5/−2.6/−1.7 TWh), PRB 2024 −8.5%, ST_GAS
+2024 −13.2%. **6 in-scope class fails vs run 85's 4 → run 92 is NOT the
+scored keeper; it is the corrected baseline.** Guards: Martin Lake/
+Limestone 2023 +582/+797 (clean).
+
+**Keeper bookkeeping.** Run 91 remains the best scored run, but the fleet
+fix is permanent, so run 91 is **not reproducible on current inputs** —
+`calibration-best-so-far.md` carries an OPEN status note. The next
+campaign re-tunes the offer curves on the corrected fleet: the CC give-back
+(econ_high/peak up, now with real 2023 headroom — CC 2023 sits at −1.3%),
+CT_PEAKER recovery in all years (year-blind lever is finally safe: CT is
+under everywhere; mind the run-82 committed-step explosion zone below mult
+~1.0), and the 2024 coal trio. The pre-Kiamichi Jacobian pure pairs no
+longer describe the fleet — re-derive with fresh probe pairs before
+trusting any recipe.
