@@ -1,6 +1,6 @@
 # New-ISO Addition Protocol & Checklist
 
-> **Update 2026-06-10:** the *process* description below predates the PJM
+> **Update 2026-06-12:** the *process* description below predates the PJM
 > backcast and is superseded by `05-backcast-playbook.md` (v2 process:
 > per-plant CAMPD tranches, unit-level outage overlays, CHP
 > steam-following, measured monthly gas, hydro/PS wiring, dashboard
@@ -9,7 +9,11 @@
 > backcast under active calibration** (see `docs/calibration-log.md`,
 > runs pjm 1–8); EIA-930 hourly parquets now exist for **all seven ISOs**;
 > CAISO has CAMPD unit-level CA 2024–2025 + a derived outage CSV. CAISO
-> execution plan: `06-caiso-prompt-pack.md`.
+> execution plan: `06-caiso-prompt-pack.md`. **NEISO has a signed-off
+> 2023–2025 backcast** (Stage H complete, 2026-06-12): 4 load zones
+> (North/Central/Boston/Connecticut) + HQ_import node, measured AGT
+> winter basis, RGGI in MC, dual-fuel switching, measured interchange
+> schedule. See `docs/multi-iso/neiso-backcast-2024.md`.
 
 Status: **topology landed; calibration pending.** All seven ISOs are now
 registered in `config/iso_configs.py` with real (cited, Tier-3) zone load
@@ -44,7 +48,7 @@ Companion documents in this directory:
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
 | SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023 (2025 Q1-only; 2024 blocked) | `NYIS hourly` (2023–Q1'25) | **2023** (P12 keeper; 2025/2024 data-blocked) |
-| NEISO | 1 zone (real ISO-NE is zonal — future)     | ISNE   | largest-zone        | 2023–25    | `ISNE hourly`  | **Yes (P12)** |
+| NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12)** |
 
 All ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE`. The remaining
 gaps are **data + market-design fidelity** (Stages C–H), not topology.
