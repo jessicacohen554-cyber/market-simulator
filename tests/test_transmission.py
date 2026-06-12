@@ -293,41 +293,36 @@ class TestWeccImportModel(unittest.TestCase):
         return result, fleet
 
     def test_low_demand_dispatches_only_cheapest_tranche(self):
-        # CAISO demand (2000 MW) fits inside the $15 PNW_hydro tranche
-        # (3000 MW * 0.98 availability = 2940 MW).
+        # CAISO demand (500 MW) fits inside the $14 PNW_hydro_base tranche
+        # (800 MW * 0.98 availability = 784 MW).
         generators = build_wecc_import_generators()
-        result, _ = self._solve_caiso(generators, caiso_demand=2000.0)
+        result, _ = self._solve_caiso(generators, caiso_demand=500.0)
 
-        # Only tranche 0 (PNW_hydro) carries the load; the rest stay off.
-        np.testing.assert_allclose(result.dispatch[0], 2000.0, atol=1e-6)
+        # Only tranche 0 (PNW_hydro_base) carries the load; the rest stay off.
+        np.testing.assert_allclose(result.dispatch[0], 500.0, atol=1e-6)
         np.testing.assert_allclose(result.dispatch[1:], 0.0, atol=1e-6)
-        # The 15000 MW link is uncongested, so CAISO prices at the
-        # marginal import tranche's marginal cost.
-        np.testing.assert_allclose(result.prices[0], 15.0, atol=1e-6)
+        # The link is uncongested, so CAISO prices at the marginal import
+        # tranche's marginal cost.
+        np.testing.assert_allclose(result.prices[0], 14.0, atol=1e-6)
 
     def test_high_demand_dispatches_all_tranches_in_merit_order(self):
-        # CAISO demand (14000 MW) needs every tranche but not their full
-        # 14700 MW of available capacity.
+        # CAISO demand (10000 MW) needs every tranche but not the full
+        # 11400 MW * 0.98 = 11172 MW of available import capacity.
         generators = build_wecc_import_generators()
-        result, _ = self._solve_caiso(generators, caiso_demand=14000.0)
+        result, _ = self._solve_caiso(generators, caiso_demand=10000.0)
 
-        # The three cheaper tranches load to their available maxima.
+        # The five cheaper tranches load to their available maxima.
+        for i, cap in enumerate((800.0, 1800.0, 1800.0, 1800.0, 2200.0)):
+            np.testing.assert_allclose(
+                result.dispatch[i], cap * _IMPORT_AVAIL, atol=1e-6
+            )
+        # The $92 WECC_scarcity tranche is marginal and only partly loaded.
+        served_by_cheaper = (800.0 + 1800.0 + 1800.0 + 1800.0 + 2200.0) * _IMPORT_AVAIL
         np.testing.assert_allclose(
-            result.dispatch[0], 3000.0 * _IMPORT_AVAIL, atol=1e-6
-        )
-        np.testing.assert_allclose(
-            result.dispatch[1], 5000.0 * _IMPORT_AVAIL, atol=1e-6
-        )
-        np.testing.assert_allclose(
-            result.dispatch[2], 4000.0 * _IMPORT_AVAIL, atol=1e-6
-        )
-        # The $80 tranche is marginal and only partly loaded.
-        served_by_cheaper = (3000.0 + 5000.0 + 4000.0) * _IMPORT_AVAIL
-        np.testing.assert_allclose(
-            result.dispatch[3], 14000.0 - served_by_cheaper, atol=1e-6
+            result.dispatch[5], 10000.0 - served_by_cheaper, atol=1e-6
         )
         # CAISO prices at the most expensive dispatched tranche.
-        np.testing.assert_allclose(result.prices[0], 80.0, atol=1e-6)
+        np.testing.assert_allclose(result.prices[0], 92.0, atol=1e-6)
 
     def test_surplus_solar_exports_to_sink(self):
         # A must-run CAISO_main unit (pmin 4000 MW) forces 3000 MW of
@@ -354,9 +349,9 @@ class TestWeccImportModel(unittest.TestCase):
             generators, caiso_demand=1000.0, solar_cap=solar_cap, solar_cf=solar_cf
         )
 
-        # Generator order: 4 import tranches, then the sink (index 4),
-        # then the CAISO_main must-run unit (index 5).
-        sink_dispatch = result.dispatch[4]
+        # Generator order: 6 import tranches, then the sink (index 6),
+        # then the CAISO_main must-run unit (index 7).
+        sink_dispatch = result.dispatch[6]
         forced_surplus = 4000.0 - 1000.0  # must-run pmin minus CAISO demand
 
         # Link flow is negative: power moves CAISO_main -> WECC_import.
@@ -364,8 +359,8 @@ class TestWeccImportModel(unittest.TestCase):
         # The sink absorbs the export as negative generation.
         self.assertTrue(np.all(sink_dispatch <= -forced_surplus + 1e-6))
         # The must-run unit honors its minimum; the import tranches stay off.
-        self.assertTrue(np.all(result.dispatch[5] >= 4000.0 - 1e-6))
-        np.testing.assert_allclose(result.dispatch[:4], 0.0, atol=1e-6)
+        self.assertTrue(np.all(result.dispatch[7] >= 4000.0 - 1e-6))
+        np.testing.assert_allclose(result.dispatch[:6], 0.0, atol=1e-6)
 
 
 class TestGenericImportNode(unittest.TestCase):
