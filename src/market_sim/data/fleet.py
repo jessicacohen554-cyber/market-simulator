@@ -1127,51 +1127,33 @@ def split_gas_tranches(
 
 
 def campd_tranche_fuel_frac(
-    gen: Generator, coal_prb_passthrough: "float | np.ndarray" = 1.0,
-    coal_bit_passthrough: "float | np.ndarray" = 1.0,
-    coal_lignite_passthrough: "float | np.ndarray" = 1.0,
-    coal_sub_passthrough: "float | np.ndarray | None" = None,
+    gen: Generator,
+    passthrough_by_supply: "dict[str, float | np.ndarray] | None" = None,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
-    Each passthrough may be a scalar (flat) or an ``(T,)`` array (the
-    gas-keyed sigmoid); whichever is given is returned for PRB / bituminous /
-    lignite / subbituminous above-must-run tranches respectively and applied
-    by :func:`apply_coal_tranches`. The sigmoids are per-supply on purpose —
-    each encodes basin/type/transport-specific contract economics.
+    ``passthrough_by_supply`` maps a coal supply tag (the
+    :func:`coal_supply_class` vocabulary — "prb" / "subbituminous" /
+    "bituminous" / "lignite") to that supply chain's passthrough: a scalar
+    (flat) or an ``(T,)`` array (its gas-keyed sigmoid,
+    ``fuel.coal_passthrough_by_supply``). Each coal tranche above must-run
+    looks up its own tag, so each supply's curve — tuned to its basin, rank
+    and delivery economics per ISO — applies only to its own plants. Tags
+    without an entry (e.g. "waste", unclassified "") pass full fuel cost
+    (``1.0``); :func:`apply_coal_tranches` applies the result.
 
     Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
     take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
-    they bid VOM + carbon + NOx only. Every PRB coal tranche *above* must-run
-    (committed, economic and peaking) passes ``coal_prb_passthrough`` < 1.0
-    to price-take: an already-online PRB unit (rail take-or-pay) bids to
-    clear rather than on full marginal cost. Bituminous tranches above
-    must-run pass ``coal_bit_passthrough`` (1.0 = full cost unless the
-    gas-keyed bit sigmoid is on — the PJM coal fleet); mine-mouth lignite
-    tranches above must-run pass ``coal_lignite_passthrough`` (1.0 = full
-    cost unless the gas-keyed lignite sigmoid is on — the ERCOT mine-mouth
-    fleet). "subbituminous"-tagged tranches (the derived EIA-923 rank CSVs)
-    take ``coal_sub_passthrough`` when given, else inherit the PRB value —
-    the historical aliasing, since plant_taxonomy routes both to COAL_PRB.
-    Waste coal and all other tranches pass full fuel cost (``1.0``).
+    they bid VOM + carbon + NOx only. A passthrough < 1.0 price-takes (an
+    already-online unit bids to clear rather than on full marginal cost);
+    > 1.0 marks the bid up to suppress over-dispatch.
     """
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
-    if gen.fuel_type == "coal":
-        supply = getattr(gen, "coal_supply", "")
-        # The curated ERCOT map tags PRB plants "prb"; the derived EIA-923
-        # rank CSVs tag "subbituminous" (PRB == sub-bituminous in the class
-        # taxonomy, but the supply tags stay distinct so their passthrough
-        # economics can be tuned separately).
-        if supply == "prb":
-            return coal_prb_passthrough
-        if supply == "subbituminous":
-            return (coal_sub_passthrough if coal_sub_passthrough is not None
-                    else coal_prb_passthrough)
-        if supply == "bituminous":
-            return coal_bit_passthrough
-        if supply == "lignite":
-            return coal_lignite_passthrough
+    if gen.fuel_type == "coal" and passthrough_by_supply:
+        return passthrough_by_supply.get(
+            getattr(gen, "coal_supply", ""), 1.0
+        )
     return 1.0
 
 
