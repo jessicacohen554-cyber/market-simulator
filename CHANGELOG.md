@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-06-12 (NYISO 2025 — EIA-930 refresh unblock + price re-score)
+
+Refreshed the EIA-930 `NYIS hourly` extract and re-ran NYISO 2025, which P12
+had to file as data-blocked, then price-scored 2023 + 2025 now that P10/U2 LMP
+landed.
+
+- **`data/eia_hourly/NYIS hourly.parquet` regenerated** from the re-uploaded raw
+  long files (`inputs/raw-data/eia-930/NYIS_{region,fueltype}.parquet`, now
+  2015–2026) via `python scripts/convert_eia930.py NYIS --input-dir
+  inputs/raw-data/eia-930 --force`. 2025 now carries a full 8,760 h (was
+  Q1-only, 2,154 h); 2023/2024 demand & interchange are byte-identical
+  pre/post, so the 2023 keeper, other ISOs, and loader tests are untouched.
+  `nyiso_net_interchange(2025)` now returns the measured series (−19.09 TWh,
+  was `None`).
+- **NYISO 2025 backcast re-run** (`results/calibration/nyiso_p12_2025_refreshed`,
+  dashboard `nyiso 2025 refreshed`). The P12 +22.7% over-generation closes: the
+  measured net interchange is served by default (−19.09 vs −19.09 TWh, duration
+  RMSE 0 MW), gas 68.30 TWh (−2.8% vs EIA-930 70.25), total 132.76 (+2.5% vs
+  129.54). EIA-923 2025 is the preliminary M-file (total 115.84 TWh,
+  under-reported) — flagged, EIA-930 used as the operational basis.
+- **Price re-score (no longer level-only)** — scored 2023 keeper + 2025 vs
+  `actual_lmp.json` (per-zone DA/RT) + `actual_lmp_hourly_NYISO.parquet` (system
+  duration, `scripts/analyze_lmp_residual.py`). 2023 model $41.79 vs RT $30.29
+  (+$11.5); 2025 $69.24 vs RT $60.73 (+$8.5). Both over-price the mid-merit band
+  and under-price the scarcity tail (no-ORDC signature); p90 near-exact in 2025.
+  Per-zone level + duration logged in the calibration log and bundle
+  `SUMMARY-nyiso-2025-refreshed.md` / `PRICE-RESCORE-*`.
+- **Docs** — `docs/calibration-log.md` ("NYISO 2025"), the doc-00 status table
+  (NYISO now 2023+2025, price-scored), doc-07 §1 banner, the backcast writeup
+  and `docs/calibration-best-so-far-nyiso.md` updated. oil stays U4-gated; 2024
+  stays blocked on NY_2024 CEMS. ERCOT/PJM/CAISO/NEISO untouched.
+
 ## 2026-06-12 (ERCOT — ORDC scarcity-pricing overlay + revenue wiring)
 
 Post-solve ERCOT ORDC scarcity adder (published RTORPA formula, zero fitted

@@ -26,8 +26,11 @@ imports, and RGGI, which are the items that actually move NYISO's calibration.
 > P14 (this doc-sync pass) closes Stage H. Results, gaps, and hypotheses are
 > in `docs/multi-iso/nyiso-backcast-2023.md`; keeper config in
 > `docs/calibration-best-so-far-nyiso.md`; run log in
-> `docs/calibration-log.md` (NYISO P11, P9b, P12). 2025/2024 remain
-> data-blocked (see §5 blocked years in the calibration-best-so-far doc).
+> `docs/calibration-log.md` (NYISO P11, P9b, P12). **Update 2026-06-12:** the
+> EIA-930 `NYIS hourly` extract was refreshed to span full 2025 and P10/U2 LMP
+> landed, so **2025 is now unblocked, run, and price-scored** (`nyiso 2025
+> refreshed`, log "NYISO 2025"); only **2024** remains data-blocked (NY_2024
+> CEMS). See §5 blocked years in the calibration-best-so-far doc.
 
 Already in repo — **do not re-build**:
 
