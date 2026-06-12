@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-12 (CAISO import/export node calibrated — CAISO P9)
+
+Fitted `IMPORT_TRANCHES["CAISO"]` / `EXPORT_TRANCHES["CAISO"]` to the EIA-930
+CISO net-interchange duration curve, replacing the placeholder engineering
+estimates. This is the calibration follow-up to defaulting the priced node on
+(below).
+
+- **Method.** `scripts/derive_import_tranches.py` measured-only mode against the
+  pooled 2023-2025 CISO series (the existing CAISO bundle has no priced node, so
+  a bundle-mode price fit would be circular). CAISO is a heavy, growing net
+  importer: −28.9 / −32.4 / −36.2 TWh and imports in 86% / 89% / 91% of hours.
+- **New tranches.** Six import blocks tiling the import duration curve —
+  PNW_hydro_base (COI firm hydro baseload) → PNW_midC → DSW_solar_PV → DSW_CCGT
+  → DSW_CT → WECC_scarcity, 11.4 GW total — plus two export sinks (export_solar
+  midday surplus + export_curtail $0 floor, 6.5 GW). Prices are pre-carbon
+  delivered WECC energy costs, cheapest-first, all below every sink; the CARB
+  border-carbon adder is layered on at build time.
+- **Fit quality** (price-orthogonal, vs measured): annual net imports within
+  1-3%, duration-curve RMSE ~560 MW (was ~1,400), import-hour share 83-88% vs
+  86-91%. Aggregate import capacity sits between the deepest measured hour
+  (11.0 GW) and the ~12-15 GW WECC simultaneous-import rating (COI + PDCI +
+  Path 46/45). Modeled clearing-frequency validation is deferred to CAISO
+  P10/P11.
+- Updated `build_wecc_export_sink` (now returns the $0 curtailment sink, since
+  CAISO has two sinks) and the affected transmission tests.
+
 ## 2026-06-12 (CAISO backcasts default to priced WECC interchange)
 
 CAISO backcasts now serve interchange through the priced import/export node by
