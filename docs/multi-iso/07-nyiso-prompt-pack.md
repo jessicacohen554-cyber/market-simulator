@@ -19,7 +19,15 @@ imports, and RGGI, which are the items that actually move NYISO's calibration.
 
 ---
 
-## 1. Current state (verified 2026-06-11)
+## 1. Current state (verified 2026-06-11; P12 sign-off 2026-06-12)
+
+> **P12 sign-off (2026-06-12).** All packs P0–P13 are merged. The 2023
+> backcast is at Stage-G keeper (`nyiso p11 smoke 2023` promoted by P12).
+> P14 (this doc-sync pass) closes Stage H. Results, gaps, and hypotheses are
+> in `docs/multi-iso/nyiso-backcast-2023.md`; keeper config in
+> `docs/calibration-best-so-far-nyiso.md`; run log in
+> `docs/calibration-log.md` (NYISO P11, P9b, P12). 2025/2024 remain
+> data-blocked (see §5 blocked years in the calibration-best-so-far doc).
 
 Already in repo — **do not re-build**:
 
@@ -486,6 +494,13 @@ generation is non-trivial in cold months; citations recorded.
 ```
 
 ### P14 — Documentation sign-off (last)
+
+> **Done — 2026-06-12.** sync-docs pass completed: doc-00 status table
+> (P12 already updated it), doc-01 manifest table (NYISO/CAISO/PJM/NEISO
+> EIA-930 rows marked present), doc-07 §1 update banner added. New file
+> `docs/multi-iso/nyiso-backcast-2023.md` written (results tables, the
+> served-interchange structural fix, 2024/2025 data blocks, hypotheses).
+> CHANGELOG entry appended.
 
 ```
 NYISO Stage H. Run the sync-docs flow: reconcile docs (00 status table, 01

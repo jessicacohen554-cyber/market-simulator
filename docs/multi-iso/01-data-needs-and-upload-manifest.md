@@ -66,10 +66,10 @@ EIA-930 normalized per-fuel generation distribution + the demand series).
 | ISO | EIA-930 BA code(s) | File to upload | Status |
 |-----|--------------------|----------------|--------|
 | ERCOT | `ERCO` | `ERCO hourly.parquet` | **present** |
-| CAISO | `CISO` | `CISO hourly.parquet` | **MISSING — upload** |
-| PJM | `PJM` | `PJM hourly.parquet` | **MISSING — upload** |
-| NYISO | `NYIS` | `NYIS hourly.parquet` | **MISSING — upload** |
-| ISO-NE | `ISNE` | `ISNE hourly.parquet` | **MISSING — upload** |
+| CAISO | `CISO` | `CISO hourly.parquet` | **present** |
+| PJM | `PJM` | `PJM hourly.parquet` | **present** |
+| NYISO | `NYIS` | `NYIS hourly.parquet` | **present** (2023 full; 2024 full; 2025 Q1-only — 2025 backcast blocked) |
+| ISO-NE | `ISNE` | `ISNE hourly.parquet` | **present** |
 | MISO | `MISO` | `MISO hourly.parquet` | **MISSING — upload** |
 | SPP | `SWPP` | `SWPP hourly.parquet` | **MISSING — upload** |
 
