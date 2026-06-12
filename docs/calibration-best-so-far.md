@@ -4,8 +4,11 @@ Keeper: **e2 4 / dashboard `run79 storage retune`** (2026-06-11, bundle
 `results/calibration/e2_4_retune`, highspy 1.14.0), **revalidated
 unchanged on post-E3 main** (bundle
 `results/calibration/run80a_code_baseline` reproduces every class-year).
-The run-80/81 probes (dashboard `run80 lignite 1.15`, `run81 prb floor`)
-were net-negative and reverted — see the Runs 80–81 calibration-log entry.
+The run-80/81 probes (dashboard `run80 lignite 1.15`, `run81 prb floor`),
+the run-82 Jacobian joint move, and the run-84 coal-sigmoid probe (lignite
+balanced at +5.4/−5.0/+2.1 but CT_PEAKER/ST_GAS 2024 collateral beyond the
+bar) were all net-negative and reverted — see the Runs 80–81, Run 82 and
+Run 84 calibration-log entries.
 Reproduce with:
 
 ```
