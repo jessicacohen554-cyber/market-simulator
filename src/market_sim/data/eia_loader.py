@@ -9,6 +9,7 @@ normalized per-fuel distributions.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
 
@@ -105,6 +106,20 @@ _NYISO_LOAD_ZONE_GROUPS: dict[str, str] = {
 # Directory for NYISO zonal actual-load CSVs (upload U3). Absent until the
 # user uploads NYISO OASIS "pal" actual-load files.
 _NYISO_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR / "NYISO"
+
+# ISO-NE SMD load zone -> model transmission zone. Maps the eight ISO-NE load
+# zones onto the four model zones (North = ME+NH+VT, Central = WCMASS+SEMASS+RI,
+# Boston = NEMA, Connecticut = CT). The ``.H.<zone>`` hub-prefixed column
+# variants the SMD downloads sometimes carry are accepted alongside the bare
+# names. ``HQ_import`` is a priced node, not a load zone, so it is absent here.
+_NEISO_LOAD_ZONE_GROUPS: dict[str, str] = {
+    "ME": "North", "NH": "North", "VT": "North",
+    "NEMA": "Boston", ".H.NEMA": "Boston",
+    "SEMASS": "Central", ".H.SEMASS": "Central",
+    "WCMASS": "Central", ".H.WCMASS": "Central",
+    "RI": "Central",
+    "CT": "Connecticut",
+}
 
 # Minimum measured TAC hours to derive CAISO zonal shapes from a partial-year
 # upload (U4 lands month by month); below this, fall back to static shares.
@@ -362,6 +377,32 @@ def _load_nyiso_hourly_demand(year: int) -> np.ndarray | None:
     the caller to fall back to the per-ISO demand-profiles parquet.
     """
     frame = _eia_hourly_frame_filled("NYIS", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
+
+
+def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
+    """Return NEISO hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``ISNE hourly`` extract so demand shares the
+    chronological clock of the wind/solar/benchmark series read off the same
+    rows (same rationale as CAISO/NYISO). Isolated missing meter hours are
+    interpolated. This keeps demand aligned with the measured net-interchange
+    schedule (:func:`neiso_net_interchange`) drawn from the same ISNE frame.
+
+    **Net-load convention (playbook §8.1):** EIA-930 ISNE demand is metered
+    at the transmission level and is already net of behind-the-meter PV
+    (material in MA/CT). Backcasts model only front-of-meter resources
+    against it; do not add a BTM solar profile on the supply side.
+
+    Returns ``None`` when no usable full-year frame is available, signaling
+    the caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("ISNE", year)
     if frame is None:
         return None
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
@@ -964,6 +1005,112 @@ def nyiso_zonal_load_shares(
     return _hourly_shares_from_groups(df["_mzone"], hoy, pd.Series(mw), zone_names)
 
 
+def neiso_zonal_load_shares(
+    year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NEISO load shares, or ``None``.
+
+    Reads the ISO-NE hourly load-zone net energy for load (upload U3:
+    ``inputs/raw-data/zone-specific-demand/NEISO/NEISO_load_hourly_{year}.csv``)
+    and maps the eight ISO-NE load zones onto the four model zones via
+    :data:`_NEISO_LOAD_ZONE_GROUPS`:
+
+    - **North**: ME + NH + VT
+    - **Central**: WCMASS + SEMASS + RI
+    - **Boston**: NEMA (the NEMA/Boston load pocket)
+    - **Connecticut**: CT
+
+    ``HQ_import`` is a priced-import node and keeps an all-zero row. The
+    caller multiplies these time-varying shares by the EIA-930 ISNE system
+    demand total, giving each zone its own measured hourly shape rather than
+    a single system curve scaled by a static share.
+
+    **Net-load convention (playbook §8.1):** ISO-NE demand is metered at
+    the transmission level and is already net of behind-the-meter PV
+    (material in MA/CT). Backcasts model only front-of-meter resources.
+
+    Expected CSV format (ISO-NE SMD wide): ``Date`` (MM/DD/YYYY),
+    ``Hour Ending`` (1–24), then zone columns (CT, ME, NH, RI, VT, NEMA,
+    SEMASS, WCMASS). The ``.H.NEMA`` / ``.H.SEMASS`` / ``.H.WCMASS``
+    hub-prefixed variants are also accepted. The DST fall-back 25th hour
+    and Feb 29 of a leap year are dropped; the spring-forward gap is
+    back-filled from the previous hour.
+
+    Returns ``None`` when the file is absent so the caller falls back to
+    the static per-zone ``load_share`` (the current RSP-seeded
+    0.20/0.30/0.21/0.29 split). **Refresh path (U3):** upload the ISO-NE
+    hourly load-zone NEL file for 2023–2025 to
+    ``inputs/raw-data/zone-specific-demand/NEISO/`` and run
+    ``scripts/derive_load_shares.py neiso`` to re-derive the annual shares
+    and replace the static Tier-3 values.
+    """
+    path = _ZONAL_LOAD_DIR / "NEISO" / f"NEISO_load_hourly_{year}.csv"
+    if not path.exists():
+        logger.warning(
+            "NEISO zonal load file not found (%s); using static "
+            "load_share split. Refresh path: upload U3 (ISO-NE hourly_load "
+            "SMD CSV for %d) to inputs/raw-data/zone-specific-demand/NEISO/",
+            path, year,
+        )
+        return None
+    df = pd.read_csv(path)
+    df.columns = [str(c).strip() for c in df.columns]
+    date_col = next(
+        (c for c in df.columns if c.upper().startswith("DATE")), None
+    )
+    he_col = next(
+        (c for c in df.columns
+         if "HOUR" in c.upper() and "END" in c.upper()), None
+    )
+    if date_col is None or he_col is None:
+        logger.warning(
+            "NEISO zonal load file %s missing Date / Hour Ending columns; "
+            "using static load_share split", path.name,
+        )
+        return None
+    date = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
+    hour_ending = pd.to_numeric(df[he_col], errors="coerce")
+    # HE 1 = midnight–1am → hour_of_day 0; HE 24 = 11pm–midnight → 23.
+    # Skip HE 25 (DST fall-back extra hour).
+    valid_he = hour_ending.notna() & (hour_ending >= 1) & (hour_ending <= 24)
+    df = df[valid_he].copy()
+    date = date[valid_he].reset_index(drop=True)
+    hour_of_day = (hour_ending[valid_he].astype(int) - 1).to_numpy()
+    month = date.dt.month.to_numpy()
+    day = date.dt.day.to_numpy()
+    keep = ~((month == 2) & (day == 29))
+    df = df[keep]
+    month, day, hour_of_day = month[keep], day[keep], hour_of_day[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[month - 1]
+        + (day - 1) * 24
+        + hour_of_day
+    )
+    zone_cols = [c for c in _NEISO_LOAD_ZONE_GROUPS if c in df.columns]
+    missing_cols = sorted(set(_NEISO_LOAD_ZONE_GROUPS) - set(df.columns))
+    if missing_cols:
+        logger.warning(
+            "NEISO load zones absent from %s: %s", path.name, missing_cols,
+        )
+    if not zone_cols:
+        logger.warning(
+            "NEISO zonal load file %s has no recognised zone columns; "
+            "using static load_share split", path.name,
+        )
+        return None
+    mzone = pd.concat(
+        [pd.Series([_NEISO_LOAD_ZONE_GROUPS[c]] * len(df)) for c in zone_cols],
+        ignore_index=True,
+    )
+    hoy_long = np.tile(hoy, len(zone_cols))
+    mw = pd.concat(
+        [pd.to_numeric(df[c], errors="coerce").reset_index(drop=True)
+         for c in zone_cols],
+        ignore_index=True,
+    )
+    return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
+
+
 def pjm_net_interchange(year: int) -> np.ndarray | None:
     """Return PJM's hourly net export (MW, export-positive), or ``None``.
 
@@ -1082,6 +1229,73 @@ def pjm_zonal_interchange(
     return out
 
 
+def _eia930_net_interchange(ba_code: str, year: int) -> np.ndarray | None:
+    """Return a BA's hourly net export (MW, export-positive), or ``None``.
+
+    Reads the EIA-930 ``<BA> hourly`` extract's ``Total interchange`` column
+    for ``year`` on the model's fixed non-leap 8760-hour clock (the same frame
+    the demand series is drawn from, so interchange stays aligned to demand).
+    EIA's sign convention is **already** the one :func:`load_demand` expects —
+    positive = net export (raises what the internal fleet must serve), negative
+    = net import (lowers it) — so the column is returned as-is, with **no** sign
+    flip (unlike :func:`pjm_net_interchange`, which negates PJM's
+    import-positive tie-line file). Small calendar holes are interpolated.
+
+    Returns ``None`` when the file, the year, or the ``Total interchange``
+    column is unavailable, so the caller falls back to zero interchange.
+    """
+    frame = _eia_hourly_frame_filled(ba_code, year)
+    if frame is None or "Total interchange" not in frame.columns:
+        return None
+    interchange = (
+        frame["Total interchange"].interpolate().bfill().ffill()
+        .to_numpy(dtype=float)
+    )
+    if np.isnan(interchange).any() or interchange.shape[0] != HOURS_PER_YEAR:
+        return None
+    return interchange
+
+
+def nyiso_net_interchange(year: int) -> np.ndarray | None:
+    """Return NYISO's hourly net export (MW, export-positive), or ``None``.
+
+    Sources the measured net interchange from the EIA-930 ``NYIS hourly``
+    extract's ``Total interchange`` column (see :func:`_eia930_net_interchange`
+    for the sign convention). NYISO is a steady ~16%-of-load net importer (2023:
+    −23.45 TWh), so the series is predominantly negative and serving it reduces
+    the residual the in-state fleet must generate — the import wedge that would
+    otherwise be mis-attributed to internal gas (P9 / playbook §8.2). Mirrors
+    :func:`pjm_net_interchange`'s shape; ``None`` when the year is unavailable.
+    """
+    return _eia930_net_interchange("NYIS", year)
+
+
+def neiso_net_interchange(year: int) -> np.ndarray | None:
+    """Return NEISO's hourly net export (MW, export-positive), or ``None``.
+
+    Sources the measured net interchange from the EIA-930 ``ISNE hourly``
+    extract's ``Total interchange`` column (see :func:`_eia930_net_interchange`
+    for the sign convention). ISO-NE is a steady ~9%-of-load net importer (2024:
+    −10.30 TWh — the HQ Phase II + New Brunswick + NYISO wedge), so serving the
+    series reduces the residual the internal fleet must generate (P9 / playbook
+    §8.2). Mirrors :func:`pjm_net_interchange`'s shape; ``None`` when the year
+    is unavailable.
+    """
+    return _eia930_net_interchange("ISNE", year)
+
+
+# ISOs whose measured net interchange is served as a system-wide scalar
+# schedule (spread across zones by load share), as opposed to PJM's per-border-
+# zone tie attribution or ERCOT's demand-aligned DC-tie series. CAISO is
+# deliberately excluded — its imports are supply modeled by the WECC_import
+# node, not netted into demand (playbook §8.1); ERCOT is islanded and carries
+# its DC ties through its own EIA-930 extract.
+_SCALAR_INTERCHANGE_ISOS: dict[str, Callable[[int], np.ndarray | None]] = {
+    "NYISO": nyiso_net_interchange,
+    "NEISO": neiso_net_interchange,
+}
+
+
 def load_demand(
     iso: str,
     year: int,
@@ -1112,12 +1326,19 @@ def load_demand(
     interchange netting — imports are supply, modeled by the ``WECC_import``
     node (see :func:`_load_caiso_hourly_demand`; the series is net load,
     already net of ~15+ GW BTM PV, per the playbook §8.1 convention). For
-    NYISO, demand comes from the EIA-930 ``NYIS hourly`` extract with **no**
-    interchange netting — imports are a calibrated priced node (P9 /
-    playbook §8.2; see :func:`_load_nyiso_hourly_demand`); the series is net
-    load, already net of behind-the-meter PV/storage/DER (playbook §8.1;
-    NY's BTM wedge is smaller than CAISO's but growing downstate). Other
-    ISOs use the demand-profiles parquet alone, with no interchange.
+    NYISO and NEISO, demand comes from the EIA-930 ``NYIS hourly`` / ``ISNE
+    hourly`` extracts (see :func:`_load_nyiso_hourly_demand` /
+    :func:`_load_neiso_hourly_demand`), combined by default with the measured
+    EIA-930 net-interchange schedule from :func:`nyiso_net_interchange` /
+    :func:`neiso_net_interchange` — both are
+    steady net importers, so serving the measured (predominantly import) wedge
+    lowers what the in-state fleet must generate instead of over-filling with
+    internal gas (P9 / playbook §8.2). The priced import node remains the
+    forward mechanism, used under ``--priced-interchange`` (where
+    ``include_interchange`` is ``False`` so the wedge is not double counted).
+    The demand series is net load, already net of behind-the-meter
+    PV/storage/DER (playbook §8.1). Other ISOs use the demand-profiles parquet
+    alone, with no interchange.
 
     Args:
         iso: ISO identifier, e.g. ``"ERCOT"``.
@@ -1157,6 +1378,8 @@ def load_demand(
         raw_mw = _load_caiso_hourly_demand(year)
     elif iso == "NYISO":
         raw_mw = _load_nyiso_hourly_demand(year)
+    elif iso == "NEISO":
+        raw_mw = _load_neiso_hourly_demand(year)
     if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
@@ -1172,13 +1395,17 @@ def load_demand(
     if not include_interchange:
         interchange = np.zeros(HOURS_PER_YEAR, dtype=float)
 
-    # PJM's import/export "node": add its measured net export to the demand the
-    # internal fleet must serve (the demand-profiles ``raw_mw`` is internal
-    # load; PJM is a large net exporter, so without this the fleet under-
-    # generates by the export and mis-attributes the missing gas to coal). The
-    # ERCOT path already carries interchange from its EIA-930 extract.
-    # Prefer the per-border-zone attribution (export drawn from the zone that
-    # carries the tie) over a system-wide spread; fall back to the scalar.
+    # Measured net interchange as an import/export "node": add the BA's net
+    # export to the demand the internal fleet must serve (the ``raw_mw`` is
+    # internal load). PJM is a large net exporter (without this the fleet
+    # under-generates by the export and mis-attributes the missing gas to
+    # coal); NYISO/NEISO are steady net importers (a negative schedule, which
+    # lowers the residual the in-state fleet serves so the import wedge is not
+    # over-generated as internal gas). The ERCOT path already carries
+    # interchange from its EIA-930 extract. PJM prefers the per-border-zone
+    # attribution (export drawn from the zone that carries the tie) over a
+    # system-wide spread, falling back to the scalar; NYISO/NEISO use the
+    # scalar spread by load share.
     zone_interchange = None
     if iso == "PJM" and include_interchange:
         zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
@@ -1192,14 +1419,29 @@ def load_demand(
             pjm_ix = pjm_net_interchange(year)
             if pjm_ix is not None:
                 interchange = pjm_ix
+    elif iso in _SCALAR_INTERCHANGE_ISOS and include_interchange:
+        # NYISO/NEISO are steady net importers (HQ, NYISO/PJM/IESO, NB ties).
+        # Serve the *measured* EIA-930 net-interchange schedule so the import
+        # wedge displaces internal gas instead of being over-generated in-state
+        # (P9 / playbook §8.2; the priced node is the forward mechanism, used
+        # under --priced-interchange where include_interchange is False). No
+        # per-zone tie attribution yet, so the scalar is spread by load share.
+        measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](year)
+        if measured_ix is not None:
+            interchange = measured_ix
+            logger.info(
+                "%s net interchange applied for %d: %+.0f MW avg "
+                "(export-positive, measured EIA-930)",
+                iso, year, float(measured_ix.mean()),
+            )
 
-    # PJM, ERCOT, CAISO and NYISO allocate demand by each zone's own measured
-    # hourly shape (from the PJM metered-load / ERCOT native-load / CAISO
-    # TAC-area / NYISO pal actual-load files) when available, so zones peak at
-    # different times; every other ISO (and these four without their file) uses
-    # the static per-zone share broadcast across hours. Both are (n_zones, T)
-    # weight matrices summing to 1.0 down each hour, so the rest of the math
-    # is identical.
+    # PJM, ERCOT, CAISO, NYISO and NEISO allocate demand by each zone's own
+    # measured hourly shape (from the PJM metered-load / ERCOT native-load /
+    # CAISO TAC-area / NYISO pal / ISO-NE SMD actual-load files) when available,
+    # so zones peak at different times; every other ISO (and these five without
+    # their file) uses the static per-zone share broadcast across hours. Both
+    # are (n_zones, T) weight matrices summing to 1.0 down each hour, so the
+    # rest of the math is identical.
     if iso == "PJM":
         zonal_shares = pjm_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "ERCOT":
@@ -1208,6 +1450,8 @@ def load_demand(
         zonal_shares = caiso_zonal_load_shares(year, iso_config.zone_names)
     elif iso == "NYISO":
         zonal_shares = nyiso_zonal_load_shares(year, iso_config.zone_names)
+    elif iso == "NEISO":
+        zonal_shares = neiso_zonal_load_shares(year, iso_config.zone_names)
     else:
         zonal_shares = None
     if zonal_shares is not None:
