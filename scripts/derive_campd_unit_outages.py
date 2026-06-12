@@ -112,6 +112,18 @@ def build_capacity_index(
     return exact, by_digits
 
 
+def plant_nameplate_index(eia860_path: Path) -> dict[int, float]:
+    """Return ``plant_id -> total generator nameplate MW`` from EIA-860."""
+    gens = pd.read_parquet(
+        eia860_path, columns=["plant_id", "nameplate_capacity_mw"]
+    ).dropna()
+    out: dict[int, float] = {}
+    for plant_id, cap in gens.itertuples(index=False):
+        if float(cap) > 0.0:
+            out[int(plant_id)] = out.get(int(plant_id), 0.0) + float(cap)
+    return out
+
+
 def unit_capacity_mw(
     plant_id: int,
     unit_id: object,
@@ -137,7 +149,9 @@ def unit_capacity_mw(
     return observed_peak, "observed_peak"
 
 
-def _unit_year_grid(sub: pd.DataFrame, year: int) -> np.ndarray:
+def _unit_year_grid(
+    sub: pd.DataFrame, year: int, col: str = "grossLoad"
+) -> np.ndarray:
     """Return one unit-year's hourly gross on the full calendar-year clock.
 
     CAMPD omits non-operating hours, so the unit's reported hours are placed on
@@ -146,7 +160,7 @@ def _unit_year_grid(sub: pd.DataFrame, year: int) -> np.ndarray:
     detector. Returns the gross-MW array (length = hours in the year).
     """
     ts = sub["date"] + pd.to_timedelta(sub["hour"], unit="h")
-    series = pd.Series(sub["grossLoad"].to_numpy(dtype=float), index=ts)
+    series = pd.Series(sub[col].to_numpy(dtype=float), index=ts)
     series = series.groupby(level=0).sum().sort_index()
     full = pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00:00", freq="h")
     return series.reindex(full).fillna(0.0).to_numpy(dtype=float)
@@ -161,7 +175,7 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
     df = pd.read_parquet(
         path,
         columns=["facilityId", "facilityName", "unitId", "date", "hour",
-                 "grossLoad", "primaryFuelInfo"],
+                 "grossLoad", "opTime", "primaryFuelInfo"],
     )
     df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
     df = df.dropna(subset=["facilityId"])
@@ -169,6 +183,7 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
     df["date"] = pd.to_datetime(df["date"])
     df["hour"] = pd.to_numeric(df["hour"], errors="coerce").astype("Int64")
     df["grossLoad"] = pd.to_numeric(df["grossLoad"], errors="coerce")
+    df["opTime"] = pd.to_numeric(df["opTime"], errors="coerce")
     return df.dropna(subset=["hour"])
 
 
@@ -239,15 +254,23 @@ def main() -> None:
 
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
+    npl_by_plant = plant_nameplate_index(Path(args.eia860))
 
     states = campd.states_for_iso(iso)
     rows: list[dict] = []
     summary: list[tuple] = []
+    # (facility, year) -> any non-null CAMPD grossLoad seen; feeds the
+    # net-zero-to-grid rule below (mirrors the benchmark's CAMPD backfill).
+    campd_gross_seen: set[tuple[int, int]] = set()
     for state in states:
         for year in args.years:
             df = _load_unit_year(state, year)
             if df.empty:
                 continue
+            for fac_id, has in df.groupby("facilityId", observed=True)[
+                    "grossLoad"].apply(lambda s: s.notna().any()).items():
+                if has:
+                    campd_gross_seen.add((int(fac_id), year))
             # CEMS->EIA split-plant remap (campd.CAMPD_UNIT_PLANT_REMAP):
             # re-key units that report under a legacy ORIS to the EIA plant
             # the model fleet carries (AES Alamitos / Huntington Beach CCGTs),
@@ -280,7 +303,8 @@ def main() -> None:
                 # CAMPD labels every solid fuel — including ERCOT's lignite —
                 # as "Coal".
                 unit_is_coal = {
-                    uid: str(u["primaryFuelInfo"].iloc[0]).strip().lower() == "coal"
+                    uid: str(u["primaryFuelInfo"].iloc[0]).strip().lower()
+                    in ("coal", "coal refuse")
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
                 # Per-unit nameplate (EIA-860, peak fallback) and the facility
@@ -292,6 +316,30 @@ def main() -> None:
                     )
                     for uid in units
                 }
+                # Gross-silent facility fallback (non-ERCOT): some units
+                # report opTime but never grossLoad (Seward's CFB boilers),
+                # so the gross-based detector is blind to them in every year.
+                # When NO unit at the facility reports any gross, rebuild the
+                # unit series as opTime-fraction x an equal share of the
+                # EIA-860 plant nameplate. Boiler<->generator id matching is
+                # unreliable at such plants, so the equal split (not the
+                # per-unit EIA match) is the capacity basis: one boiler down
+                # at a two-boiler CFB derates half the plant.
+                if iso != "ERCOT" and all(p <= 0.0 for p in peaks.values()):
+                    npl = npl_by_plant.get(int(fac_id), 0.0)
+                    ot_units = {
+                        uid: u for uid, u in fac.groupby("unitId", observed=True)
+                        if float(pd.to_numeric(u["opTime"], errors="coerce")
+                                 .fillna(0.0).max()) > 0.0
+                    }
+                    if npl > 0.0 and ot_units:
+                        share = npl / len(ot_units)
+                        units = {
+                            uid: _unit_year_grid(u, year, col="opTime") * share
+                            for uid, u in ot_units.items()
+                        }
+                        peaks = {uid: float(g.max()) for uid, g in units.items()}
+                        caps = {uid: (share, "optime_proxy") for uid in units}
                 fac_cap = sum(c for c, _ in caps.values()) or 0.0
                 ran = {uid for uid, pk in peaks.items() if pk > 0.0}
                 for uid, gross in units.items():
@@ -348,6 +396,69 @@ def main() -> None:
                             (int(fac_id), fac_name, uid, group, year,
                              len(windows), out_days)
                         )
+
+    # Net-zero-to-grid years (non-ERCOT). A fleet plant that reported real
+    # grid generation in an earlier EIA-923 year but, in a target year, has
+    # no F923 filing AND no CAMPD gross output (so the benchmark's CAMPD
+    # backfill can't see it either) delivered nothing the benchmark counts —
+    # even when CAMPD opTime shows its boilers running (the PA waste-coal
+    # behind-the-meter crypto conversions: Gilberton, Panther Creek,
+    # Scrubgrass, Grant Town). An explicit ~zero F923 filing counts too.
+    # Plants that stopped filing F923 but still report CAMPD gross (Colver,
+    # Cordova) are NOT flagged: the benchmark backfills them and they
+    # genuinely serve the grid. One full-year window per plant-year.
+    if iso != "ERCOT":
+        e923 = pd.read_parquet(
+            REPO / "inputs" / "processed" / "eia923_monthly_generation.parquet",
+            columns=["plant_id", "netgen_annual_mwh", "year"],
+        )
+        tot = e923.groupby(["plant_id", "year"])["netgen_annual_mwh"] \
+                  .sum(min_count=1)
+        years_in_923 = sorted(e923["year"].unique())
+        for fac_id, group in sorted(group_by_code.items()):
+            if group not in QUALIFYING_PLANT_GROUPS:
+                continue
+            if int(fac_id) in ST_GAS_PEAKER_PLANTS:
+                continue
+            npl = npl_by_plant.get(int(fac_id), 0.0)
+            if npl <= 0.0:
+                continue
+            for year in args.years:
+                if year not in years_in_923:
+                    continue
+                t = tot.get((fac_id, year))
+                prior = [
+                    tot.get((fac_id, y)) for y in years_in_923 if y < year
+                ]
+                ran_before = any(p is not None and not pd.isna(p)
+                                 and p > 10_000.0 for p in prior)
+                filed = t is not None and not pd.isna(t)
+                zero_now = (
+                    (filed and t < 1_000.0)
+                    or (not filed
+                        and (int(fac_id), year) not in campd_gross_seen)
+                )
+                if not (ran_before and zero_now):
+                    continue
+                rows.append({
+                    "facility_name": name_by_code.get(int(fac_id), ""),
+                    "facility_id": int(fac_id),
+                    "unit_id": "NET0-923",
+                    "unit_capacity_mw": round(npl, 1),
+                    "plant_capacity_mw": round(npl, 1),
+                    "unit_pct_of_plant": 100.0,
+                    "plant_group": group,
+                    "capacity_source": "eia923_netzero",
+                    "outage_start": f"{year}-01-01",
+                    "outage_end": f"{year}-12-31",
+                    "duration_days": 365.0,
+                    "peer_units_online": 0,
+                    "total_units_at_plant": 1,
+                })
+                summary.append(
+                    (int(fac_id), name_by_code.get(int(fac_id), ""),
+                     "NET0-923", group, year, 1, 365.0)
+                )
 
     cols = [
         "facility_name", "facility_id", "unit_id", "unit_capacity_mw",
