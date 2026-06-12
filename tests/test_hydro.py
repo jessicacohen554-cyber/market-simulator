@@ -282,6 +282,32 @@ class TestHydroBudgetLoader(unittest.TestCase):
         np.testing.assert_allclose(energy[1], hb.monthly_energy[1])
         np.testing.assert_allclose(max_mw, hb.max_mw[[3, 1]])
 
+    def test_backfill_carries_nonreporting_prior_year_plants(self):
+        # NEISO 2025 EIA-923 is a monthly-survey-only early release: only a
+        # handful of large hydro plants have filed, so a current-year budget
+        # under-counts conventional hydro by ~6 TWh. backfill_year=2024 carries
+        # the plants that reported in 2024 but not 2025 at their 2024 inflow.
+        bare = load_hydro_budget("NEISO", 2025)
+        filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
+        self.assertGreater(filled.n_hydro, bare.n_hydro)
+        self.assertGreater(
+            filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum())
+        # The plants that DID report 2025 keep their as-reported budget — the
+        # backfill only adds the missing ones, never overwrites a filer.
+        for pid in bare.plant_ids:
+            i_bare = list(bare.plant_ids).index(int(pid))
+            i_full = list(filled.plant_ids).index(int(pid))
+            np.testing.assert_allclose(
+                filled.monthly_energy[i_full], bare.monthly_energy[i_bare])
+
+    def test_backfill_none_is_identical_to_current_build(self):
+        # The default (no backfill) must be byte-for-byte the prior behaviour,
+        # so every existing ISO/year run is unchanged.
+        a = load_hydro_budget("NEISO", 2025)
+        b = load_hydro_budget("NEISO", 2025, backfill_year=None)
+        np.testing.assert_array_equal(a.plant_ids, b.plant_ids)
+        np.testing.assert_allclose(a.monthly_energy, b.monthly_energy)
+
     def test_unknown_iso_year_raises(self):
         with self.assertRaises(ValueError):
             load_hydro_budget("ERCOT", 1901)
