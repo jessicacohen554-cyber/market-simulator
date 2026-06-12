@@ -919,8 +919,9 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "coal_lignite_mustrun", "coal_prb_mustrun",
                 "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
                 "coal_mustrun_per_plant", "coal_drop_pof",
-                "coal_prb_passthrough_tiered", "coal_bit_passthrough_sigmoid",
-                "coal_bit_sigmoid_overrides", "coal_plant_monthly_pricing",
+                "coal_prb_passthrough_tiered", "coal_prb_sigmoid_overrides",
+                "coal_bit_passthrough_sigmoid", "coal_bit_sigmoid_overrides",
+                "coal_plant_monthly_pricing",
                 "td_loss_factor", "offer_curve_overrides",
                 "offer_curve_deltas", "priced_interchange", "git_sha",
             )
@@ -1142,6 +1143,9 @@ def solve_and_persist(
         "coal_mustrun_per_plant": coal_mustrun_per_plant,
         "coal_drop_pof": coal_drop_pof,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
+        "coal_prb_sigmoid_overrides": {
+            k: v for k, v in (prb_overrides or {}).items() if v is not None
+        },
         "coal_bit_passthrough_sigmoid": coal_bit_sigmoid,
         "coal_bit_sigmoid_overrides": {
             k: v for k, v in (bit_overrides or {}).items() if v is not None
@@ -1179,19 +1183,22 @@ def solve_and_persist(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
+    # Coal sigmoid flags mirror run_year exactly — run_config.json must
+    # record the same enables/params the LP solved with (the prb sigmoid +
+    # tiered flags used to be skipped here, under-reporting the run).
+    recorded_cfg = recorded_cfg.with_overrides(
+        coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
+        coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
+    )
+    if prb_overrides:
+        recorded_cfg = recorded_cfg.with_overrides(
+            **{k: v for k, v in prb_overrides.items() if v is not None})
     if coal_bit_sigmoid:
         recorded_cfg = recorded_cfg.with_overrides(
             coal_bit_passthrough_sigmoid=True)
     if bit_overrides:
         recorded_cfg = recorded_cfg.with_overrides(
             **{k: v for k, v in bit_overrides.items() if v is not None})
-    if prb_overrides:
-        # Mirror the solve path: without this, a --prb-* / --chp-* override
-        # run records the ScenarioConfig defaults in run_config.json (the
-        # run80d/run80e bundles carry this gap — their notes/meta hold the
-        # actual values).
-        recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in prb_overrides.items() if v is not None})
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
             plant_tranche_config_path=plant_tranche_config)
@@ -2412,11 +2419,15 @@ def main() -> None:
     # gas-keyed PRB passthrough sigmoid (tiered baseload/follower), POF dropped
     # on coal. All on by default; use the --no-* form to disable.
     parser.add_argument(
-        "--prb-passthrough-sigmoid", action=argparse.BooleanOptionalAction,
-        default=True,
+        "--coal-prb-sigmoid", "--prb-passthrough-sigmoid",
+        action=argparse.BooleanOptionalAction,
+        default=True, dest="coal_prb_sigmoid",
         help="Gas-key the PRB passthrough: a logistic of the monthly gas "
              "price replaces the flat --coal-prb-passthrough (deep discount "
-             "when gas is cheap, none/markup when dear).",
+             "when gas is cheap, none/markup when dear). Params resolve "
+             "from the per-ISO COAL_SIGMOID_DEFAULTS curve; no curve for "
+             "the ISO = flat passthrough. (--prb-passthrough-sigmoid is "
+             "the legacy spelling.)",
     )
     parser.add_argument(
         "--coal-mustrun-per-plant", action=argparse.BooleanOptionalAction,
@@ -2513,17 +2524,16 @@ def main() -> None:
                         help="Lignite sigmoid logistic midpoint ($/MMBtu).")
     parser.add_argument("--lignite-gas-slope", type=float, default=None,
                         help="Lignite sigmoid logistic slope (per $/MMBtu).")
-    # Separate subbituminous passthrough sigmoid. Off by default —
-    # "subbituminous"-tagged plants (the derived EIA-923 rank CSVs) keep
-    # inheriting the PRB family. Turning it on splits them onto their own
-    # logistic, since non-PRB sub-bituminous basins need not share PRB rail
-    # take-or-pay economics.
+    # Subbituminous passthrough sigmoid: the derived EIA-923 rank tag
+    # (e.g. PJM's two PRB-by-rail plants delivered into PJM market
+    # conditions) — a separate supply chain from the curated ERCOT "prb"
+    # tag, with its own per-ISO curve. Off by default = full fuel cost.
     parser.add_argument(
         "--coal-sub-sigmoid", action=argparse.BooleanOptionalAction,
         default=False,
-        help="Split subbituminous-tagged coal off the PRB passthrough "
-             "sigmoid onto its own gas-keyed curve (coal_sub_passthrough_* "
-             "params). Off = inherit the PRB family (historical aliasing).")
+        help="Gas-key the subbituminous coal passthrough on its own curve "
+             "(coal_sub_passthrough_* params / per-ISO defaults). "
+             "Off = full fuel cost.")
     parser.add_argument("--sub-floor", type=float, default=None,
                         help="Subbituminous sigmoid cheap-gas floor.")
     parser.add_argument("--sub-ceil", type=float, default=None,
@@ -2683,7 +2693,7 @@ def main() -> None:
         coal_prb_passthrough=args.coal_prb_passthrough,
         persist_p2_state=args.persist_p2_state,
         outage_source=args.outage_source,
-        coal_prb_passthrough_sigmoid=args.prb_passthrough_sigmoid,
+        coal_prb_passthrough_sigmoid=args.coal_prb_sigmoid,
         coal_mustrun_per_plant=args.coal_mustrun_per_plant,
         coal_drop_pof=args.coal_drop_pof,
         coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
