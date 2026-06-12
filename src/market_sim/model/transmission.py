@@ -227,5 +227,12 @@ def build_wecc_import_generators(
 
 
 def build_wecc_export_sink() -> Generator:
-    """Return the CAISO export sink (see :func:`build_export_sinks`)."""
-    return build_export_sinks("CAISO")[0]
+    """Return CAISO's $0 curtailment export sink.
+
+    CAISO has two export sinks (a shallow midday-solar block and this deeper
+    curtailment floor; see :func:`build_export_sinks`). This convenience
+    wrapper returns the $0 curtailment block — the "free" sink that absorbs
+    surplus that would otherwise be shed.
+    """
+    sinks = build_export_sinks("CAISO")
+    return min(sinks, key=lambda g: g.vom)
