@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-caiso-2-priced-ix",
+  "label": "caiso 2 priced ix",
+  "date": "2026-06-12",
+  "shorthand": "caiso-2-priced-ix",
+  "definition": "CAISO P11 smoke (2023-2025, 8760h, P1+P2 commitment) \u2014 first CAISO bundle with the priced WECC interchange node ON by default (PRICED_INTERCHANGE_DEFAULT_ISOS) and the 2023-2025-fitted IMPORT_TRANCHES/EXPORT_TRANCHES['CAISO']. Structural verdict: the priced node CLOSES the old energy-only gas-overproduction gap, but OVERSHOOTS \u2014 it over-imports (-61.7/-49.3/-52.9 TWh modeled vs -28.9/-32.4/-36.2 EIA-930, i.e. +114%/+52%/+46%, well outside \u00b115%) and never reproduces the midday export sign-flip (import-hour share ~100% vs 86-91% measured; export sinks never clear). Root cause: the static tranche prices ($14-92, absolute delivered-WECC-energy costs) sit BELOW the modeled CAISO price duration curve (p10 $43-48, zero negative hours) in nearly every hour, so almost the full 11.4 GW import stack clears continuously while the $0-8 sinks never do. Consequence: domestic gas now UNDER-produces (44.98/54.47/62.16 TWh vs EIA-923 76.04/67.68/55.18). RED structural row #2 (net interchange) FILED, not tuned \u2014 fix is a bundle-mode tranche-price recalibration against this solved price curve (P9/P12), no offer-band tuning this pass (playbook \u00a76). Not a calibration keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-caiso-2-priced-ix.js",
+  "bundle": "results/calibration/caiso_1_priced_ix"
+}
