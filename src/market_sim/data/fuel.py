@@ -273,6 +273,33 @@ def lignite_passthrough_series(
     )
 
 
+def sub_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray | None":
+    """Return the subbituminous above-must-run passthrough, or ``None``.
+
+    Each coal passthrough sigmoid encodes basin/type/transport-specific
+    economics, so "subbituminous"-tagged plants (the derived EIA-923 rank
+    CSVs; non-PRB sub-bituminous basins) get their own tunable curve. When
+    ``config.coal_sub_passthrough_sigmoid`` is False (default), returns
+    ``None`` — the routing layer then keeps the historical behaviour of
+    inheriting the PRB family (passthrough, sigmoid and follower tier),
+    since plant_taxonomy maps both supplies to COAL_PRB. When True, returns
+    the family's own ``(hours,)`` logistic of the monthly delivered gas
+    price (``coal_sub_passthrough_*`` params, same form as the PRB/bit/
+    lignite sigmoids).
+    """
+    if not getattr(config, "coal_sub_passthrough_sigmoid", False):
+        return None
+    return _sigmoid_passthrough(
+        _gas_series(config, year, hours),
+        config.coal_sub_passthrough_floor,
+        config.coal_sub_passthrough_ceil,
+        config.coal_sub_passthrough_gas_mid,
+        config.coal_sub_passthrough_gas_slope,
+    )
+
+
 def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
     """Return the ``(hours,)`` delivered gas price ($/MMBtu).
 
