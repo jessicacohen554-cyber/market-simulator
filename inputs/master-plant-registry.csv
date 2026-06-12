@@ -831,3 +831,4 @@ plantid,nameplate_capacity_mw,fuel_type,prime_mover,technology,year_built,plant_
 8063,626.7,MWH,BA,Batteries,2022,DeCordova Steam Electric Station,ERCO,,0.126817,15.52048198496244,0.017395423443667,0.0,NG,True,OTHER,,692.757162,1.828349,0.0,0.0,4.9901,0.0,83.67
 34702,1565.0,NG,ST,Natural Gas Steam Turbine,1958,W A Parish [ST],ERCO,,,10.76,,0.0,NG,True,ST_GAS,,,,,,,,
 49392,352.0,NG,ST,Natural Gas Steam Turbine,1974,Barney M Davis [ST],ERCO,,,10.7,,0.0,NG,True,ST_GAS,,,,,,,,
+55501,1370.2,NG,CA,Natural Gas Fired Combined Cycle,2003,Kiamichi Energy Facility,ERCO,,0.02845,8.118674,0.442391,0.0,NG,False,CC_REGULAR,inefficient,438.16341,0.068652,0.002056,6409.8389,20.3591,0.0324,26.33
