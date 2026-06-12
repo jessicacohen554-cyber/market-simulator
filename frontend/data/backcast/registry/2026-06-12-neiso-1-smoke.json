@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-1-smoke",
+  "label": "neiso 1 smoke",
+  "date": "2026-06-12",
+  "shorthand": "neiso-1-smoke",
+  "definition": "NEISO smoke 2024 (P11): first full-bundle backcast \u2014 gas_monthly_actuals + Algonquin hub-basis overlay + dual-fuel/oil switching + RGGI all default-on; P10 LMP benchmark held (price level-only, no actual_lmp). Structural-checklist pass, no offer-band tuning. HEADLINE STRUCTURAL GAP: net interchange is NOT served on the default backcast path (load_demand wires the measured schedule only for ERCOT/PJM; NEISO falls through with interchange=0), so the ~10.3 TWh / 9%-of-demand HQ+NY import wedge is generated internally \u2014 gas lands +11% vs EIA-923 (67.8 vs 61.0 TWh) and avg price is biased high (~$70). A --priced-interchange diagnostic brackets the truth from the other side (over-imports -23.5 vs actual -10.3 TWh \u2192 gas -26%, $48). Fix is P9: wire NEISO's measured ISNE net-interchange into load_demand (PJM precedent) for backcast years. Oil holds at full-bundle scale (0.24 TWh, P13 figure; summer-peaker-weighted). PS over-cycles 4.5x (1.35 vs 0.30 TWh).",
+  "years": [
+    2024
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-1-smoke.js",
+  "bundle": "results/calibration/neiso_smoke_2024"
+}
