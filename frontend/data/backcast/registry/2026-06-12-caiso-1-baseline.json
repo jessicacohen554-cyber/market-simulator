@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-caiso-1-baseline",
+  "label": "caiso 1 baseline",
+  "date": "2026-06-12",
+  "shorthand": "caiso-1-baseline",
+  "definition": "First CAISO backcast baseline (2023-2025, 8760h, energy-only P1). Code-default parameters, no CAISO-specific tuning yet. Known gaps to calibrate: domestic gas overproduces because the energy-only model has no external interchange node for CAISO's ~30 TWh/yr net imports; the LP does not yet re-curtail solar (0 vs ~2.5-3 TWh reported) and shows no negative-price hours. Establishes the harness and benchmark wiring for subsequent tuning passes.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-caiso-1-baseline.js",
+  "bundle": "results/calibration/20260611-234006"
+}
