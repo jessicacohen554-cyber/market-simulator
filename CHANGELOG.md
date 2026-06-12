@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-06-12 (NYISO + NEISO P10 — LMP benchmark & zonal-sufficiency)
+
+Processed the uploaded NYISO and NEISO LMP drops into the price reference and
+ran the zonal-sufficiency gate for both ISOs (prompt P10, docs 07/08).
+
+- **Organized `inputs/raw-data/lmp-data/`** — the uploads landed flat and mixed
+  across ISOs; the 2023–2025 NYISO files (`NYISO_zonal_hourly.zip`, the monthly
+  `*realtime_zone_csv.zip`, `dartmonthlylmpindex_*.csv`) moved to `NYISO/` and
+  the NEISO files (`*_smd_hourly.xlsx`, `historical.zip`) to `NEISO/` via
+  `git mv`. The SPP `*DAMLZHBSPP*` / `mirDownload.zip` and the PJM/CAISO files
+  were left in place.
+- **`scripts/derive_actual_lmp.py`** — added NYISO and NEISO builders.
+  `actual_lmp.json` now carries complete NYISO (5-zone) and NEISO (4-zone)
+  2023–2025 blocks: hub-level `da`/`rt`/`*_mon`/`*_pct` (NYISO = simple mean of
+  the 11 internal zones; NEISO = the `.H.INTERNAL_HUB`) plus a new additive
+  `zones` sub-dict of per-model-zone DA/RT annual + monthly means. ERCOT, PJM
+  and CAISO blocks and their hourly parquets are **byte-identical**. New
+  `actual_lmp_hourly_{NYISO,NEISO}.parquet` sidecars (same shape as PJM) feed
+  the duration-curve overlays.
+- **New: `scripts/_zonal_sufficiency.py`, `scripts/nyiso_zonal_sufficiency.py`,
+  `scripts/neiso_zonal_sufficiency.py`** — the zone-spread duration-curve test
+  (per-year p50/p90/p99, % hours |spread|>$5 / >$20, season + hour-of-day
+  concentration), in the style of `scripts/caiso_zonal_sufficiency.py`.
+- **New: `docs/multi-iso/nyiso-zonal-adequacy.md`** — 5 zones stand decisively;
+  large one-signed downstate-dear separation (K/Long-Island the load-bearing
+  split, p99 $85–98, >$20 in 10–21% of hours; J/NYC and F/Capital material).
+  **New: `docs/multi-iso/neiso-zonal-adequacy.md`** — 4 zones stand but weakly;
+  zones track the hub within a dollar or two (CT carries the only growing tail,
+  p99 $5→$13.5 over 2023–2025). Noted that the NEISO SMD workbooks also carry
+  zonal load — a follow-on U3/P8 demand refresh, out of scope here.
+
 ## 2026-06-12 (NEISO Stage H sign-off — P14 documentation)
 
 Completed Stage H (documentation and sign-off) for the ISO-NE backcast.
