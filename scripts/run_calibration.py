@@ -419,6 +419,14 @@ def _calibration_config(
         #   WH2, Rayburn, Temple) move the duct-burner peak band start to 85%
         #   (pct_peaking 15) so the expensive band bites earlier and they back
         #   down out of the 80-90% CF range (fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT).
+        cc_duct_peaking=(iso.upper() == "PJM"),  # per-plant EIA-860
+        #   duct-burner peaking shares for CC_REGULAR/CC_CHP: duct-fired
+        #   plants (65 of 84 PJM CCs, ~50 GW) get their nameplate-vs-summer
+        #   capability gap as the peak band, the 19 non-duct plants (~10 GW)
+        #   get 0 — replacing the class-uniform pct_peaking 8.0 that handed
+        #   every CC the same phantom duct band and stacked the fleet at one
+        #   72% CF mass point (fleet.cc_duct_peaking_pct). ERCOT keeps its
+        #   CAMPD-fitted class curve + hand-set per-plant map.
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
         ct_econ_hr_override=1.2,        # BTM + steam-following floor; raised in
         ct_peak_hr_override=1.4,        # run9 (CT_CHP was running too much).
