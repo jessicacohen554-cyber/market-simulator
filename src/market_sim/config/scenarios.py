@@ -245,6 +245,60 @@ class ScenarioConfig:
     # re-dispatch happens around fixed coal. Lets a calibration isolate the
     # gas-internal commitment effect without coal absorbing decommitted gas.
 
+    # Tier 1/2 — ERCOT ORDC scarcity-pricing overlay (post-solve; never an LP
+    # input). Replicates ERCOT's published real-time on-line reserve price
+    # adder (RTORPA): adder = weighted LOLP x (VOLL - system lambda), LOLP
+    # from a normal CDF over reserves minus the minimum contingency level.
+    # The overlay owns the price tail and scarcity revenue only — dispatch,
+    # volumes and emissions are untouched (the LP stays the emissions
+    # engine). See docs/ordc-overlay.md for formula provenance. ERCOT-only:
+    # capacity-market ISOs recover fixed cost through capacity revenue
+    # (capacity_revenue_per_mw_yr), not scarcity adders.
+    scarcity_pricing_enabled: bool = False  # Master flag. Backcast: emits the
+    # lmp + adder series next to the energy-only LMP (which the volume
+    # calibration gates stay on). Forecast: retirement / new-entry / CCS
+    # screens see prices + adder, so peaker and storage economics include
+    # scarcity revenue instead of bare LP duals (which over-retire).
+    ordc_voll: float = 5000.0  # $/MWh. ORDC VOLL = system-wide offer cap
+    # (HCAP), $5,000 since 2022-01-01 (16 TAC 25.509, PUCT Project 52631;
+    # was $9,000 pre-Uri — runnable as a scenario).
+    ordc_mcl_mw: float = 3000.0  # Minimum contingency level X, MW. LOLP is
+    # administratively 1.0 at reserves <= X (adder pins to VOLL - lambda).
+    # 3,000 MW since 2022-01-01 (OBDRR038, PUCT Project 52373 blueprint
+    # order); 2,000 MW pre-Uri.
+    ordc_lolp_sigma_mw: float = 1400.0  # Std dev of the hourly reserve
+    # error (MW) in the LOLP normal CDF. ERCOT publishes seasonal /
+    # time-of-day-block values (NP6-576-ER); this flat fallback is bounded
+    # from the OBDRR048 floor breakpoints (see docs/ordc-overlay.md
+    # "Parameter provenance") and is NOT fitted to price residuals. Use
+    # ordc_lolp_params_path to supply the published table when available.
+    ordc_lolp_mu_mw: float = 0.0  # Mean of the hourly reserve error (MW)
+    # before the PUCT-ordered curve shift below. NP6-576-ER publishes the
+    # seasonal values; 0 is the neutral fallback.
+    ordc_lolp_shift_sigma: float = 0.5  # Rightward LOLP-curve shift in
+    # units of sigma — LOLP is evaluated with effective mean mu + shift x
+    # sigma. Two 0.25-sigma steps ordered by PUCT Project 48551 (Mar 2019,
+    # Mar 2020). 0.0 reproduces the pre-2019 curve.
+    ordc_multistep_floor: bool = True  # OBDRR048 multi-step RTORPA floor,
+    # effective 2023-11-01: adder >= $20/MWh when reserves <= 6,500 MW,
+    # >= $10/MWh when 6,500 < reserves <= 7,000 MW. Date-gated in backcast
+    # years; applied unconditionally in forecast years when True.
+    ordc_as_plan_mw: float = 0.0  # Ancillary-service plan netting, MW.
+    # 0 (default) treats the model's full dispatchable headroom as ORDC
+    # reserves, matching ERCOT's published reserve definition: RTOLCAP /
+    # RTOFFCAP count AS-held capacity (RRS/ECRS/Non-Spin headroom) as
+    # reserves, so netting the AS plan out double-counts scarcity —
+    # validated on run92_kiamichi, where netting the published 8,100 MW
+    # (2023 average total AS, IMM 2023 State of the Market Report)
+    # produces ~10x the actual count of cap-pinned hours. Set to the
+    # published AS plan to model reserves as energy-market-available
+    # headroom only (rejected; see docs/ordc-overlay.md). Full AS
+    # co-optimization is out of scope.
+    ordc_lolp_params_path: str | None = None  # Optional CSV of seasonal /
+    # TOD-block LOLP parameters (columns: season, tod_block, mu_mw,
+    # sigma_mw — ERCOT NP6-576-ER layout). When set, overrides the flat
+    # ordc_lolp_mu_mw / ordc_lolp_sigma_mw fallbacks per hour.
+
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
     basis_differential_factor: float = 1.0
@@ -945,6 +999,15 @@ TIER_TAGS: dict[str, int] = {
     "commitment_storage_weight": 2,
     "commitment_storage_in_merit_floor": 2,
     "commitment_screen_coal": 2,
+    "scarcity_pricing_enabled": 1,
+    "ordc_voll": 1,
+    "ordc_mcl_mw": 1,
+    "ordc_lolp_sigma_mw": 2,
+    "ordc_lolp_mu_mw": 2,
+    "ordc_lolp_shift_sigma": 2,
+    "ordc_multistep_floor": 2,
+    "ordc_as_plan_mw": 2,
+    "ordc_lolp_params_path": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,

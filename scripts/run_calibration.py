@@ -733,7 +733,8 @@ def run_year(
     must_run_mw: "np.ndarray | None" = None,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
-) -> tuple[object, FleetContext, object | None]:
+    fleet_only: bool = False,
+) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
 
     Builds the calibration configuration, loads the EIA-860 generator and
@@ -752,6 +753,12 @@ def run_year(
         commitment_enabled: When True, run the P2 unit-commitment pass after
             P1 and return the P1 result for comparison.
         commitment_screen_coal: When False, coal is exempt from the P2 screen.
+        fleet_only: When True, stop after the fleet/storage arrays are built
+            and return a state dict instead of solving any LP. Lets a
+            post-processor (e.g. the ORDC scarcity overlay,
+            ``scripts/derive_ordc_overlay.py``) reconstruct the exact hourly
+            availability a persisted bundle solved against — same config,
+            same outage overlay, same derates — without re-solving.
         priced_interchange: When True, interchange is served by the priced
             import/export node (import tranches + export sinks in the ISO's
             external zone, the forward-scenario mechanism) instead of the
@@ -1035,6 +1042,23 @@ def run_year(
     storage_power_cap, storage_energy_cap = storage_cap_profiles(
         storage_units, storage, config.hours
     )
+
+    if fleet_only:
+        # Availability-reconstruction exit (no LP): everything a post-solve
+        # consumer needs to recompute pmax x availability per unit-hour,
+        # the renewable potential (cf x cap) and the storage power caps,
+        # aligned with the persisted bundle.
+        return {
+            "config": config,
+            "fleet": fleet,
+            "fleet_arrays": fleet_arrays,
+            "storage_units": storage_units,
+            "storage": storage,
+            "storage_power_cap": storage_power_cap,
+            "wind_cf": wind_cf, "wind_cap": wind_cap,
+            "solar_cf": solar_cf, "solar_cap": solar_cap,
+            "demand": demand,
+        }
 
     dispatch_kwargs = dict(
         wind_cf=wind_cf,
