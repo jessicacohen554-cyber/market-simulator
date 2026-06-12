@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-12 (NEISO Stage H sign-off — P14 documentation)
+
+Completed Stage H (documentation and sign-off) for the ISO-NE backcast.
+The P12 three-year bundle (2023–2025) remains the keeper; this entry documents
+and commits all reconciliation work only.
+
+- **New file: `docs/multi-iso/neiso-backcast-2024.md`** — calibration results
+  document in the style of `pjm-backcast-2023.md`. Covers the 2024 primary year
+  in full (fuel-mix table, CO₂, interchange, run inputs) and cross-year 2023/2025
+  scorecard. Documents the monthly-AGT dual-fuel limitation (largest monthly
+  basis Jan-2025 $16.31 — below distillate parity ~$18/MMBtu; daily AGT U4
+  needed to fully resolve), PS/BESS over-cycling (amber), P10-held price level,
+  and the 2025 hydro-backfill-year workaround.
+- **`docs/multi-iso/00-iso-addition-protocol.md`** — NEISO row updated to 4-zone
+  topology (North/Central/Boston/CT + HQ_import), FIPS state→zone assignment,
+  Stage H sign-off 2026-06-12.
+- **`docs/multi-iso/01-data-needs-and-upload-manifest.md`** — EIA-930 table
+  body updated (all seven ISOs now "present"); NEISO CEMS row corrected (all six
+  states 2023/2024 present; NH_2025 the only remaining gap — upload U1).
+- **`docs/multi-iso/08-neiso-prompt-pack.md`** — P14 block added with Stage G/H
+  sign-off scorecard summary and filed limitations.
+- **`docs/data-dictionary.md`** — NEISO and NYISO rows added to the per-ISO
+  demand conventions table (measured interchange handling, zonal allocation).
+- **`docs/parameter-citations.md`** — Six NEISO-specific entries resolved:
+  `market_design.NEISO` (ISO-NE FCA 18 $95/kW-yr net CONE), `state_rps_floors.NEISO`
+  (MA CES + regional blend), `gas_availability_factor.NEISO` (NERC GADS
+  2019-2023, P12 verified), `nuclear_monthly_cf.NEISO` (EIA-923 Millstone 2+3 +
+  Seabrook 2019–2023), `coal_price_base.NEISO` (EIA AEO 2024 NE bituminous,
+  Tier-3 placeholder), `import_eford.NEISO` (scheduled NEPOOL/ISO-NE interties,
+  0% EFORd per NERC GADS).
 ## 2026-06-12 (NYISO Stage H — P14 documentation sign-off)
 
 NYISO 2023 backcast reaches Stage H. All packs P0–P13 were merged in earlier
