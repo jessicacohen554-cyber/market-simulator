@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
     NOX_RATES,
+    NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF,
     NUCLEAR_MONTHLY_CF_BY_YEAR,
     THERMAL_AVAILABILITY,
@@ -384,6 +385,21 @@ def generators_to_fleet_arrays(
                 availability[g_idx, :] = (
                     base if from_actual else (1.0 - gen.eford) * base
                 )
+    # Dormant nuclear (EIA-860 lists OP but the unit is physically offline,
+    # e.g. the Crane/TMI-1 restart): zero it in backcast years before its
+    # return-to-service year. Forecast runs keep the unit — in backcast mode
+    # weather_year is the calendar year; in forecast it is only a weather
+    # shape, so the comparison would be meaningless there.
+    if (
+        _yr is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+    ):
+        for g_idx, gen in enumerate(generators):
+            if (
+                gen.fuel_type == "nuclear"
+                and _yr < NUCLEAR_DORMANT_UNTIL.get(int(gen.plant_code), 0)
+            ):
+                availability[g_idx, :] = 0.0
 
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
     # the year. The shoulder absorbs the outage shifted out of summer; winter
