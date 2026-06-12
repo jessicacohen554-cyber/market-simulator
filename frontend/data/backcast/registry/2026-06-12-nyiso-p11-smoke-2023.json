@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-nyiso-p11-smoke-2023",
+  "label": "nyiso p11 smoke 2023",
+  "date": "2026-06-12",
+  "shorthand": "nyiso-p11-smoke-2023",
+  "definition": "nyiso p11 smoke 2023: structural backcast (hydro/nuclear/dual-fuel/RGGI/imports wired; P10 LMP held \u2014 price level-only)",
+  "years": [
+    2023
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-nyiso-p11-smoke-2023.js",
+  "bundle": "results/calibration/nyiso_smoke_2023"
+}
