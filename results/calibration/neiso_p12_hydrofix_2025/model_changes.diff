@@ -1,0 +1,144 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 44ce6f0..0f4668f 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -645,7 +645,8 @@ def _apply_ttc_overrides(
+ 
+ 
+ def _hydro_fleet(
+-    iso: str, year: int, zone_names: list[str]
++    iso: str, year: int, zone_names: list[str],
++    backfill_year: int | None = None,
+ ) -> tuple[list[Generator], np.ndarray | None]:
+     """Return the ISO's conventional-hydro LP units and their monthly budgets.
+ 
+@@ -660,9 +661,19 @@ def _hydro_fleet(
+ 
+     Plants that resolve to no model zone are dropped. Returns
+     ``([], None)`` when the ISO has no usable hydro for ``year``.
++
++    ``backfill_year`` carries plants that reported hydro in that prior year
++    but not in ``year`` at their prior-year monthly generation — the
++    :func:`load_hydro_budget` early-release path. The most recent EIA-923
++    vintage is a monthly-survey-only release covering the large reporters, so
++    a current-year backcast under-counts conventional hydro until the final
++    annual file lands (NEISO 2025: 5 of ~166 plants, 0.09 of ~6 TWh); the
++    missing inflow is otherwise served by gas, inflating the modeled gas
++    level. ``None`` (default) loads ``year`` exactly as reported and changes
++    no existing run.
+     """
+     try:
+-        budget = load_hydro_budget(iso, year)
++        budget = load_hydro_budget(iso, year, backfill_year=backfill_year)
+     except (FileNotFoundError, ValueError):
+         return [], None
+     units: list[Generator] = []
+@@ -721,6 +732,7 @@ def run_year(
+     cc_derate_from_top: bool = False,
+     must_run_mw: "np.ndarray | None" = None,
+     priced_interchange: bool = False,
++    hydro_backfill_year: int | None = None,
+ ) -> tuple[object, FleetContext, object | None]:
+     """Solve the single-year calibration dispatch for one ISO-year.
+ 
+@@ -957,7 +969,8 @@ def run_year(
+     # and by its measured monthly net generation via the dispatch LP's hydro
+     # budget rows. Replaces the flat-monthly must-run injection (which could
+     # not peak-shave) and leaves ISOs without hydro data unchanged.
+-    hydro_units, hydro_monthly_energy = _hydro_fleet(iso, year, zone_names)
++    hydro_units, hydro_monthly_energy = _hydro_fleet(
++        iso, year, zone_names, backfill_year=hydro_backfill_year)
+     hydro_gen_idx = None
+     if hydro_units:
+         hydro_gen_idx = np.arange(
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 93cc211..a8c5e0f 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -968,6 +968,7 @@ def solve_and_persist(
+     curve_smoothing: dict | None = None,
+     cc_derate_from_top: bool = False,
+     priced_interchange: bool = False,
++    hydro_backfill_year: int | None = None,
+     note: str = "",
+ ) -> Path:
+     """Solve every year/pass, write the parquet bundle, return the run dir."""
+@@ -1060,6 +1061,7 @@ def solve_and_persist(
+             cc_derate_from_top=cc_derate_from_top,
+             must_run_mw=must_run_total,
+             priced_interchange=priced_interchange,
++            hydro_backfill_year=hydro_backfill_year,
+         )
+         if persist_p2_state:
+             _save_p2_state(run_dir, year, p2_state)
+@@ -1171,6 +1173,7 @@ def solve_and_persist(
+         "curve_smoothing": curve_smoothing or {},
+         "cc_derate_from_top": cc_derate_from_top,
+         "priced_interchange": priced_interchange,
++        "hydro_backfill_year": hydro_backfill_year,
+         "git_sha": _git_sha(),
+         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
+         # years putting PRB committed bids on top of gas committed bids)
+@@ -2680,6 +2683,17 @@ def main() -> None:
+              f"{', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+              "(no measured-schedule mode), off elsewhere; pass "
+              "--no-priced-interchange to force the measured schedule.")
++    parser.add_argument(
++        "--hydro-backfill-year", type=int, default=None,
++        help="Carry conventional-hydro plants that reported in this prior "
++             "year but not in the backcast year at their prior-year monthly "
++             "net generation (load_hydro_budget early-release path). The most "
++             "recent EIA-923 vintage is a monthly-survey-only release that "
++             "under-counts hydro until the final annual file lands (NEISO "
++             "2025: 5 of ~166 plants, 0.09 of ~6 TWh), and the missing inflow "
++             "is otherwise served by gas, inflating the modeled gas level. "
++             "Unset (default) loads the backcast year exactly as reported and "
++             "changes no existing run.")
+     parser.add_argument(
+         "--offer-curve-delta-json", default=None, metavar="JSON",
+         help="Like --offer-curve-json but each value is ADDED to the current "
+@@ -2791,6 +2805,7 @@ def main() -> None:
+         cc_derate_from_top=args.cc_derate_from_top,
+         priced_interchange=resolve_priced_interchange(
+             args.priced_interchange, iso),
++        hydro_backfill_year=args.hydro_backfill_year,
+         note=args.note,
+     )
+     report_run(run_dir)
+diff --git a/tests/test_hydro.py b/tests/test_hydro.py
+index e90cb89..d94fb7b 100644
+--- a/tests/test_hydro.py
++++ b/tests/test_hydro.py
+@@ -282,6 +282,32 @@ class TestHydroBudgetLoader(unittest.TestCase):
+         np.testing.assert_allclose(energy[1], hb.monthly_energy[1])
+         np.testing.assert_allclose(max_mw, hb.max_mw[[3, 1]])
+ 
++    def test_backfill_carries_nonreporting_prior_year_plants(self):
++        # NEISO 2025 EIA-923 is a monthly-survey-only early release: only a
++        # handful of large hydro plants have filed, so a current-year budget
++        # under-counts conventional hydro by ~6 TWh. backfill_year=2024 carries
++        # the plants that reported in 2024 but not 2025 at their 2024 inflow.
++        bare = load_hydro_budget("NEISO", 2025)
++        filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
++        self.assertGreater(filled.n_hydro, bare.n_hydro)
++        self.assertGreater(
++            filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum())
++        # The plants that DID report 2025 keep their as-reported budget — the
++        # backfill only adds the missing ones, never overwrites a filer.
++        for pid in bare.plant_ids:
++            i_bare = list(bare.plant_ids).index(int(pid))
++            i_full = list(filled.plant_ids).index(int(pid))
++            np.testing.assert_allclose(
++                filled.monthly_energy[i_full], bare.monthly_energy[i_bare])
++
++    def test_backfill_none_is_identical_to_current_build(self):
++        # The default (no backfill) must be byte-for-byte the prior behaviour,
++        # so every existing ISO/year run is unchanged.
++        a = load_hydro_budget("NEISO", 2025)
++        b = load_hydro_budget("NEISO", 2025, backfill_year=None)
++        np.testing.assert_array_equal(a.plant_ids, b.plant_ids)
++        np.testing.assert_allclose(a.monthly_energy, b.monthly_energy)
++
+     def test_unknown_iso_year_raises(self):
+         with self.assertRaises(ValueError):
+             load_hydro_budget("ERCOT", 1901)
