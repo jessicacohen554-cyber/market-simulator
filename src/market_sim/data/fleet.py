@@ -410,6 +410,17 @@ def generators_to_fleet_arrays(
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
         drop_coal_pof = getattr(config, "coal_drop_pof", False)
+        # Historic-backcast WEFOR residual: the CAMPD overlay + unit-level
+        # derate already carry every >= 5-day outage for the covered classes
+        # (coal + _POF_DROP_GROUPS), so their full statistical WEFOR would
+        # double-count those events. Cap it at the short-outage residual the
+        # overlay's detector floor leaves uncovered. CTs have no overlay
+        # coverage and keep the full statistical model.
+        wefor_res = (
+            getattr(config, "wefor_residual", None)
+            if getattr(config, "outage_source", "statistical") == "historic"
+            else None
+        )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -419,6 +430,11 @@ def generators_to_fleet_arrays(
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
             wefor *= config.wefor_multiplier
+            if wefor_res is not None and (
+                gen.fuel_type == "coal"
+                or gen.plant_group in _POF_DROP_GROUPS
+            ):
+                wefor = min(wefor, wefor_res)
             if drop_coal_pof and gen.fuel_type == "coal":
                 # Planned maintenance now comes from the historic outage
                 # overlay, so drop the statistical POF (and its summer->shoulder
