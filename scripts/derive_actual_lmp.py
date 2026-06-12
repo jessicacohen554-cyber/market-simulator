@@ -29,8 +29,10 @@ system-wide hub-average series of each market:
     most of 2023 DAM by the mid-2026 pull (only a few Feb-2023 trade dates
     survive), and 2023 RTM was never fetched.
 
-For ISOs with a true hourly source (PJM today), two extras are produced for
-the price-duration-curve overlay (J3a):
+For ISOs with a true hourly source (PJM, CAISO, and ERCOT — the ERCOT
+HB_HUBAVG hub-average is itself the comparable system price, from the DAM
+hourly and the RTM 15-minute intervals averaged to the hour), two extras are
+produced for the price-duration-curve overlay (J3a):
 
   * ``da_pct`` / ``rt_pct`` in the JSON — duration-curve percentiles of the
     hub-mean hourly price (``p99`` is a high price, ``p1`` a low one).
@@ -265,18 +267,45 @@ def _month_of(v) -> int | None:
         return None
 
 
-def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int) -> dict | None:
-    """``{ann, mon}`` ``HB_HUBAVG`` price for an ERCOT settlement-point workbook.
+def _month_day(v) -> tuple[int, int] | None:
+    """``(month, day)`` from an ERCOT date cell (``MM/DD/YYYY`` or a datetime)."""
+    if v is None:
+        return None
+    if hasattr(v, "month"):
+        return int(v.month), int(v.day)
+    try:
+        p = str(v).strip().split("/")
+        return int(p[0]), int(p[1])
+    except (ValueError, IndexError):
+        return None
+
+
+def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int,
+                  hod_col: int, hod_kind: str) -> dict | None:
+    """``HB_HUBAVG`` annual/monthly means + dense hourly series for a workbook.
 
     Args:
         zip_glob: Glob (under ``LMP_DIR``) selecting the report zip.
         name_col: Zero-based column index of the settlement-point name.
         price_col: Zero-based column index of the settlement-point price.
+        hod_col: Zero-based column index of the hour-of-day field — the DAM
+            "Hour Ending" (``HH:00``) string or the RTM "Delivery Hour" (1-24)
+            integer; hour-of-day is the field minus one (hour-beginning, the
+            PJM convention).
+        hod_kind: ``"he"`` for the DAM ``HH:00`` string, ``"int"`` for the RTM
+            1-24 integer.
 
     Returns:
-        ``{"ann": annual_mean, "mon": [12 monthly means or None]}`` over every
-        HB_HUBAVG row (the report's date column, index 0, gives the month), or
-        ``None`` when no matching zip is present.
+        ``{"ann": annual_mean, "mon": [12 monthly means or None],
+        "hourly": np.ndarray[8760]}`` over every HB_HUBAVG row (the report's
+        date column, index 0, gives the month/day), or ``None`` when no
+        matching zip is present. The annual/monthly means weight every raw row
+        equally (15-minute intervals for RTM, including Feb 29 and the
+        duplicated DST fall-back hour) — unchanged from the pre-hourly code.
+        The ``hourly`` series instead lands on the model's fixed non-leap local
+        calendar: Feb 29 is dropped, the RTM 15-minute intervals and the
+        duplicated DST fall-back hour average into their hour, and the missing
+        spring-forward hour stays NaN.
     """
     paths = sorted(LMP_DIR.glob(zip_glob))
     if not paths:
@@ -286,6 +315,8 @@ def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int) -> dict | None:
         data = z.read(inner)
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
     msum, mcnt = [0.0] * 12, [0] * 12
+    hsum = np.zeros(_HOURS_PER_YEAR)
+    hcnt = np.zeros(_HOURS_PER_YEAR, dtype=np.int64)
     for sheet in wb.sheetnames:
         rows = wb[sheet].iter_rows(values_only=True)
         next(rows, None)  # header
@@ -293,33 +324,64 @@ def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int) -> dict | None:
             if r is None or len(r) <= price_col:
                 continue
             if r[name_col] == "HB_HUBAVG" and r[price_col] is not None:
+                price = float(r[price_col])
                 mo = _month_of(r[0])
                 if mo is None:
                     continue
-                msum[mo - 1] += float(r[price_col])
+                msum[mo - 1] += price
                 mcnt[mo - 1] += 1
+                md = _month_day(r[0])
+                if md is None:
+                    continue
+                m, d = md
+                if m == 2 and d == 29:  # model calendar drops Feb 29
+                    continue
+                hod = (int(str(r[hod_col]).split(":")[0]) - 1
+                       if hod_kind == "he" else int(r[hod_col]) - 1)
+                hoy = _MONTH_START_HOUR[m - 1] + (d - 1) * 24 + hod
+                if 0 <= hoy < _HOURS_PER_YEAR:
+                    hsum[hoy] += price
+                    hcnt[hoy] += 1
     wb.close()
     n = sum(mcnt)
     if not n:
         return None
     mon = [round(msum[i] / mcnt[i], 2) if mcnt[i] else None for i in range(12)]
-    return {"ann": sum(msum) / n, "mon": mon}
+    hourly = np.where(hcnt > 0, hsum / np.where(hcnt > 0, hcnt, 1), np.nan)
+    return {"ann": sum(msum) / n, "mon": mon, "hourly": hourly}
 
 
-def _ercot(year: int) -> tuple[dict, None] | None:
-    """Return ``(record, None)`` for ERCOT, or ``None`` (no hourly sidecar)."""
+def _ercot(year: int) -> tuple[dict, pd.DataFrame] | None:
+    """Return ``(record, hourly)`` for ERCOT, or ``None`` if no usable year.
+
+    Mirrors :func:`_pjm`: the ``{da, rt, da_mon, rt_mon, da_pct, rt_pct, src}``
+    record uses the ``HB_HUBAVG`` hub-average price (itself the comparable ERCOT
+    system price), and ``hourly`` is the dense series for the parquet sidecar.
+    DA and RT are emitted independently, so 2025 — RT only, no DAM workbook —
+    still produces a record (its ``da`` column is all-NaN).
+    """
     # DAM columns: Date, Hour Ending, Repeated, Settlement Point(3), Price(4).
-    da = _ercot_hubavg(f"*DAMLZHBSPP_{year}*.zip", 3, 4)
+    da = _ercot_hubavg(f"*DAMLZHBSPP_{year}*.zip", 3, 4, 1, "he")
     # RTM columns: Date, Hour, Interval, Repeated, Name(4), Type, Price(6).
-    rt = _ercot_hubavg(f"*RTMLZHBSPP_{year}*.zip", 4, 6)
+    rt = _ercot_hubavg(f"*RTMLZHBSPP_{year}*.zip", 4, 6, 1, "int")
     if da is None and rt is None:
         return None
     out: dict = {"src": ERCOT_SRC}
+    da_h = da["hourly"] if da is not None else np.full(_HOURS_PER_YEAR, np.nan)
+    rt_h = rt["hourly"] if rt is not None else np.full(_HOURS_PER_YEAR, np.nan)
     if da is not None:
         out["da"], out["da_mon"] = round(da["ann"], 2), da["mon"]
+        out["da_pct"] = _pct(da_h)
     if rt is not None:
         out["rt"], out["rt_mon"] = round(rt["ann"], 2), rt["mon"]
-    return out, None
+        out["rt_pct"] = _pct(rt_h)
+    hourly = pd.DataFrame({
+        "year": np.int16(year),
+        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+        "rt": rt_h.astype(np.float32),
+        "da": da_h.astype(np.float32),
+    })
+    return out, hourly
 
 
 BUILDERS = {"ERCOT": _ercot, "PJM": _pjm, "CAISO": _caiso}
