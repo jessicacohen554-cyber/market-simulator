@@ -302,4 +302,4 @@ ST_GAS,South_Central,3,SC_STGAS3,3612,V H Braunig,1138.0,8.49,,,0.0,30.0,65.0,5.
 ST_GAS,South_Central,4,SC_STGAS4,3628,R W Miller,537.6,13.02,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
 ST_GAS,South_Central,5,SC_STGAS5,56708,CFB Power Plant,310.0,15.83,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
 ST_GAS,South_Central,6,SC_STGAS6,6243,Dansby,203.2,9.96,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
-CC_REGULAR,North,7,N_CC7 (8.30-8.75),55501,Kiamichi Energy Facility,1370.2,8.12,2x1,F-class,0.0,25.0,60.0,15.0,8.0,4.0,,1.08,1.0,1.55
+CC_REGULAR,North,7,N_CC7 (8.30-8.75),55501,Kiamichi Energy Facility,1370.2,8.12,2x1,F-class,0.0,20.0,65.0,15.0,8.0,4.0,,1.08,1.06,1.55
