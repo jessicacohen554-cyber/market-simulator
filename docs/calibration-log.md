@@ -1646,3 +1646,95 @@ Dashboard runs `neiso 2 2023` / `neiso 3 2024` / `neiso 4 2025 hydrofix`
 re-registered so the now-present NEISO `actual_lmp` benchmark drives the price
 scorecard. Reproduce: `python scripts/analyze_lmp_residual.py
 results/calibration/neiso_p12_base_2023 … --months 1 2 --years 2023 2024 2025`.
+
+---
+
+## ERCOT — ORDC scarcity overlay + AS netting (2026-06-12)
+
+**Campaign: give the energy-only LP the price tail it structurally cannot
+produce, post-solve, so capacity-expansion revenue (and therefore the 2040s
+fleet behind the emissions answer) stops being computed on duals with zero
+scarcity rent. Volumes untouched by construction. Baseline bundle:
+`run92_kiamichi` (the corrected-fleet baseline, LMP MAE 32.1 / 7.3 / 2.2);
+this campaign is independent of the runs-93-95 volume retune.** Full
+methodology + provenance: `docs/ordc-overlay.md`.
+
+**Mechanism (published, zero fitted parameters).** ERCOT's RTORPA as
+published (ORDC OBD / NPRR568; 2024 Biennial ORDC Report): two half-hour
+LOLP terms — `0.5·(VOLL−λ)·[LOLP(R; μ, σ) + LOLP(R; μ/2, σ/√2)]`, LOLP =
+1−NormCDF(R−X) pinned to 1 at R ≤ X — with the post-Uri values as
+ScenarioConfig defaults: VOLL `ordc_voll` $5,000 (PUCT 52631, eff.
+2022-01-01), X `ordc_mcl_mw` 3,000 MW (OBDRR038/52373), the 2019/2020
+PUCT-48551 curve shift `ordc_lolp_shift_sigma` 0.5σ (a mean shift, not σ
+inflation — web-verified), and the OBDRR048 multi-step RTORPA floor ($20 ≤
+6,500 MW / $10 ≤ 7,000 MW, date-gated at its 2023-11-01 effective date).
+All knobs are tier-1/2 scenario fields with citations in the registry; a
+PUCT cap change is a runnable scenario (pre-Uri $9,000 tested: 2023 tail
+moves up, mean adder $2.97→$5.37, >$500 hours 15→22 — direction correct).
+Implementation: `results/scarcity.py` + `scripts/derive_ordc_overlay.py`
+(post-processes a bundle; reconstructs the exact hourly availability via a
+new `run_year(fleet_only=True)` exit — no LP re-solve) writing
+`scarcity.parquet` (lmp + scarcity_adder + lmp_scarcity) next to the
+untouched energy-only series; `analyze_lmp_residual.py --with-scarcity`.
+RTC+B (2025-12-05) retired the ORDC for AS demand curves — ASDCs stay
+VOLL-anchored/ORDC-shaped, so the overlay remains the right first-order
+forward-year scarcity representation. RTORDPA (reliability deployments) not
+modeled. One genuinely unverifiable input: the seasonal/TOD-block μ/σ
+(ERCOT NP6-576-ER — ercot.com egress-blocked from this environment, no
+secondary source quotes 2022-25 values). Flat fallback σ=1,400 MW bounded a
+priori from the OBDRR048 floor anchor (at σ=2,800 a $10 floor at 7 GW would
+be vacuous); `ordc_lolp_params_path` takes the published table when fetched
+— the highest-value follow-up.
+
+**Diagnostic first (the honesty gate) — PASSED.** Before any adder:
+actual-minus-model residual vs reconstructed model headroom is cleanly
+monotone in 2023 (>20 GW: −$1; 6-8 GW: +$860; <4 GW: +$2,181; Spearman
+−0.48 Jun-Sep), the actual ≥$200 hours sit at the thin end (median headroom
+8.1 vs 23.0 GW overall, 100 of 181 in Aug), and 2024/25 tail hours sit fat
+(10.4 / 16.1 GW medians). The outage overlay / load shape is sound; the
+miss is the price mechanism, as diagnosed in Runs 85-87 §D.
+
+**AS netting — investigated, REJECTED as default (the campaign's main
+empirical finding).** Netting the published AS plan (8,100 MW, IMM 2023
+SOM) out of headroom — the brief's proposed reserves definition — puts
+model reserves at/below the MCL in 1,000+ hours of 2023 vs 104 actual
+>$500 hours: MAE 32.1→512 / 7.3→100 / 2.2→43. Structural reason: ERCOT's
+published reserve inputs (RTOLCAP/RTOFFCAP) *count* AS-held capacity as
+reserves, so subtracting the AS plan double-counts scarcity. Default
+`ordc_as_plan_mw=0`: model headroom (thermal avail − dispatch + storage
+cap−dis+chg + renewable curtailment headroom, hydro excluded) plays
+RTOLCAP+RTOFFCAP, all-online (the LP has no commitment state — documented
+approximation, both directions: perfect-commitment headroom overstates
+on-line reserves in shoulder hours; missing Load Resources ~2-3 GW
+understates them).
+
+**Validation (gates vs run92_kiamichi, defaults).** Monthly LMP MAE
+(demand-weighted): **2023 32.1 → 28.0** (>=$200 hours 0→31 vs 181 actual,
+>$500 0→15 vs 104, max $3,131; Jun-Sep $·h gap 12% closed) — the ≤~15
+target is **missed honestly**; **2024 7.3 → 7.9 and 2025 2.2 → 2.2 hold
+the ±$1 gate** (adder >$1 in 163/28/4 hours per year — the published curve
+indeed rarely binds in the comfortable years). σ-sensitivity (reported,
+not tuned: σ=2,800 would give 2023 MAE 11.1 and hold the other gates, but
+it contradicts the floor anchor and picking it for the score is the
+forbidden fit). Remaining-gap attribution: (a) perfect-commitment headroom
+in the $100-1,000 shoulder hours, (b) the IMM-documented 2023 artificial
+scarcity (conservative ECRS deployment roughly doubled Jun-Dec 2023 RT
+prices, >$12B — flowed through RTORDPA/deployments an ORDC-only overlay
+correctly does not reproduce), (c) the unverified σ. Volumes tripwire: the
+overlay only adds files (`availability.parquet`, `scarcity.parquet`); no
+tracked bundle file modified; `_session_score run92_kiamichi` unchanged by
+construction. Dashboard monthly-LMP panel deliberately untouched.
+
+**Revenue wiring (the capacity-expansion deliverable).** Audit: forecast
+retirement/new-entry/CCS screens consumed raw LP duals
+(`runner.py` `prior_results["prices"]` → `capacity.evolve_fleet` →
+`apply_economic_retirements` inframarginal margin, `estimate_expected_revenue`)
+— the over-retirement bias, confirmed. Fixed: with
+`scarcity_pricing_enabled` (ERCOT-only) the runner now hands
+`prices + adder` to the capacity-economics path; persisted results and
+volumes untouched; capacity-market ISOs untouched. Per-class backcast
+revenue with the adder moves in the sane direction and order:
+**CT_PEAKER 2023 +83%, storage discharge +168%**, ST_GAS +46%, CC_REGULAR
++20%, wind +9%; 2024 +33/+92%; 2025 ≈ +0% (comfortable reserves). Unit
+tests `tests/test_scarcity.py` (13: pin/cap/floor/monotonicity/season-block
+mapping/headroom composition/backcast floor gating).
