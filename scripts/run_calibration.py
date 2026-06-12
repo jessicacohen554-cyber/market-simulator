@@ -71,11 +71,8 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
     apply_plant_monthly_fuel_prices,
-    bit_passthrough_series,
-    lignite_passthrough_series,
-    prb_passthrough_series,
-    prb_passthrough_series_follower,
-    sub_passthrough_series,
+    coal_passthrough_by_supply,
+    prb_follower_passthrough_series,
     resolve_fuel_prices,
 )
 from market_sim.data.renewables import (  # noqa: E402
@@ -767,9 +764,12 @@ def run_year(
     if prb_overrides:
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None})
-    # Gas-keyed bituminous passthrough sigmoid (run_calibration_full
-    # --coal-bit-sigmoid / --bit-* flags): the PJM coal-fleet analogue of the
-    # PRB sigmoid; None entries keep the ScenarioConfig defaults.
+    # Gas-keyed coal passthrough sigmoids per supply chain. The bit family
+    # has its own flag/overrides; the sub/lignite enables and all their
+    # tuning params ride the generic prb_overrides ScenarioConfig override
+    # channel (run_calibration_full --coal-{sub,lignite}-sigmoid and the
+    # --{sub,lignite}-* flags). Params left at None resolve from the
+    # per-ISO COAL_SIGMOID_DEFAULTS table (fuel.coal_sigmoid_params).
     if coal_bit_sigmoid:
         config = config.with_overrides(coal_bit_passthrough_sigmoid=True)
     if bit_overrides:
@@ -868,49 +868,35 @@ def run_year(
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
         # under take-or-pay coal contracts, CHP host steam obligations or
-        # ERCOT RUC. PRB coal tranches above must-run price-take: they pass
-        # only coal_prb_passthrough of their fuel cost into the bid so
-        # baseloaded PRB clears the merit order instead of being priced out
-        # by cheap gas. apply_coal_tranches applies both discounts.
-        # PRB above-must-run passthrough: flat scalar, or an (T,) gas-keyed
-        # sigmoid when config.coal_prb_passthrough_sigmoid is set. When tiered,
-        # low-floor load-follower PRB plants get the follower-tier sigmoid.
-        # Bituminous and lignite tranches get their own gas-keyed sigmoids
-        # when config.coal_bit_passthrough_sigmoid /
-        # config.coal_lignite_passthrough_sigmoid are set (1.0 = full cost
-        # off them). Subbituminous-tagged tranches inherit the PRB family
-        # (sub_pt None) unless config.coal_sub_passthrough_sigmoid splits
-        # them onto their own curve — per-supply sigmoids encode basin/
-        # transport-specific economics.
-        prb_pt = prb_passthrough_series(config, year, config.hours)
-        bit_pt = bit_passthrough_series(config, year, config.hours)
-        lignite_pt = lignite_passthrough_series(config, year, config.hours)
-        sub_pt = sub_passthrough_series(config, year, config.hours)
+        # ERCOT RUC. Above must-run, each coal tranche passes its own
+        # supply chain's passthrough — flat scalar, or an (T,) gas-keyed
+        # sigmoid resolved per (ISO, supply) — so baseloaded coal clears
+        # the merit order instead of being priced out by cheap gas.
+        # apply_coal_tranches applies the discounts/markups.
+        pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
         if (config.coal_prb_passthrough_sigmoid
                 and config.coal_prb_passthrough_tiered):
-            foll_pt = prb_passthrough_series_follower(
-                config, year, config.hours
-            )
+            # Tiered PRB (ERCOT): low-must-run "prb" load-followers swap
+            # the baseload prb curve for the follower-tier one. The tier
+            # split is specific to the curated ERCOT prb supply.
+            foll = {**pt_by_supply,
+                    "prb": prb_follower_passthrough_series(
+                        config, year, config.hours)}
             thr = config.coal_prb_follower_mustrun_max
 
             def _pt_for(g):
                 if (g.fuel_type == "coal"
-                        and getattr(g, "coal_supply", "")
-                        in ("prb", "subbituminous")
+                        and getattr(g, "coal_supply", "") == "prb"
                         and COAL_MUSTRUN_BY_PLANT.get(
                             g.plant_code, 100.0) <= thr):
-                    return foll_pt
-                return prb_pt
+                    return foll
+                return pt_by_supply
             fuel_fracs = [
-                campd_tranche_fuel_frac(
-                    g, _pt_for(g), bit_pt, lignite_pt, sub_pt
-                )
-                for g in fleet
+                campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet
             ]
         else:
             fuel_fracs = [
-                campd_tranche_fuel_frac(g, prb_pt, bit_pt, lignite_pt, sub_pt)
-                for g in fleet
+                campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet
             ]
     else:
         # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
@@ -940,17 +926,11 @@ def run_year(
                     if (int(g.plant_code), g.plant_group) not in binned
                 ]
                 fleet = non_binned + thermal_fleet
-                prb_pt = prb_passthrough_series(config, year, config.hours)
-                bit_pt = bit_passthrough_series(config, year, config.hours)
-                lignite_pt = lignite_passthrough_series(
+                pt_by_supply = coal_passthrough_by_supply(
                     config, year, config.hours
                 )
-                sub_pt = sub_passthrough_series(config, year, config.hours)
                 fuel_fracs = [
-                    campd_tranche_fuel_frac(
-                        g, prb_pt, bit_pt, lignite_pt, sub_pt
-                    )
-                    for g in fleet
+                    campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet
                 ]
             else:
                 fleet, fuel_fracs = split_coal_tranches(
