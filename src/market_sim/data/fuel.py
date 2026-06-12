@@ -49,7 +49,7 @@ from market_sim.config.constants import (
     OIL_PRICE_PER_MMBTU,
     START_YEAR,
 )
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS, ScenarioConfig
 from market_sim.data.eia923 import (
     EIA923_MONTHLY_COSTS_PATH,
     available_years,
@@ -164,139 +164,115 @@ def _seasonal_factors(hours: int) -> np.ndarray:
     return np.tile(full_year, reps)[:hours]
 
 
-def prb_passthrough_series(
-    config: ScenarioConfig, year: int, hours: int
-) -> "float | np.ndarray":
-    """Return the PRB above-must-run fuel passthrough — flat or gas-keyed.
+# Coal supply tag (coal_supply_class / COAL_PLANT_SUPPLY vocabulary) -> the
+# ScenarioConfig field stem of its sigmoid params. "prb_follower" is the
+# ERCOT tiered low-must-run tier of the prb curve, not a supply tag.
+_COAL_SIGMOID_FIELD_STEM: dict[str, str] = {
+    "prb": "prb_passthrough",
+    "prb_follower": "prb_follower",
+    "subbituminous": "sub_passthrough",
+    "bituminous": "bit_passthrough",
+    "lignite": "lignite_passthrough",
+}
 
-    When ``config.coal_prb_passthrough_sigmoid`` is False, returns the flat
-    ``config.coal_prb_passthrough`` scalar (current behaviour). When True,
-    returns an ``(hours,)`` logistic of the monthly delivered gas price
-    ($/MMBtu): the passthrough rises from ``coal_prb_passthrough_floor``
-    (cheap gas — PRB needs a deep fuel discount to clear against cheap gas CC)
-    to ``coal_prb_passthrough_ceil`` (dear gas — little or no discount, and a
-    value > 1.0 marks the PRB bid *up* to suppress over-dispatch), centred at
-    ``coal_prb_passthrough_gas_mid`` with slope
-    ``coal_prb_passthrough_gas_slope`` per $/MMBtu.
+_COAL_SIGMOID_PARAMS = ("floor", "ceil", "gas_mid", "gas_slope")
 
-    Keying off the monthly gas price tracks the merit-order crossover: PRB is
-    infra-marginal under gas CC, so the gap it must close scales with gas.
+
+def coal_sigmoid_params(
+    config: ScenarioConfig, supply: str
+) -> dict[str, float] | None:
+    """Resolve the sigmoid params for one ``(config.iso, supply)`` pair.
+
+    Starts from the region-dependent ``COAL_SIGMOID_DEFAULTS`` entry for the
+    config's ISO, then overlays any explicitly-set (non-None) ScenarioConfig
+    ``coal_<supply>_passthrough_*`` field — the CLI tuning path. Returns
+    None when the resolved set is incomplete (no table entry and not fully
+    specified by explicit fields): that ISO/supply has no characterized
+    curve and must fall back to the flat passthrough rather than borrow
+    another region's economics.
     """
-    if not getattr(config, "coal_prb_passthrough_sigmoid", False):
-        return config.coal_prb_passthrough
+    stem = _COAL_SIGMOID_FIELD_STEM[supply]
+    params = dict(
+        COAL_SIGMOID_DEFAULTS.get((config.iso.upper(), supply), {})
+    )
+    for p in _COAL_SIGMOID_PARAMS:
+        v = getattr(config, f"coal_{stem}_{p}", None)
+        if v is not None:
+            params[p] = v
+    if any(p not in params for p in _COAL_SIGMOID_PARAMS):
+        return None
+    return params
+
+
+def coal_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int, supply: str
+) -> "float | np.ndarray":
+    """Return one coal supply chain's above-must-run fuel passthrough.
+
+    Flat fallback when the supply's ``coal_<supply>_passthrough_sigmoid``
+    toggle is off, or when no sigmoid is characterized for this
+    ``(config.iso, supply)`` (see :func:`coal_sigmoid_params`): the flat
+    ``config.coal_prb_passthrough`` scalar for prb, full cost (``1.0``) for
+    every other supply.
+
+    When the sigmoid applies, returns an ``(hours,)`` logistic of the
+    monthly delivered gas price ($/MMBtu) rising from the supply's ``floor``
+    (cheap gas — coal needs a fuel discount to clear against cheap gas CC)
+    to its ``ceil`` (dear gas — full cost, or a markup > 1.0 that
+    suppresses over-run), centred at ``gas_mid`` with ``gas_slope`` per
+    $/MMBtu. Keying off the monthly gas price tracks the merit-order
+    crossover: infra-marginal coal's gap to close scales with gas.
+    """
+    stem = _COAL_SIGMOID_FIELD_STEM[supply]
+    flat = config.coal_prb_passthrough if supply == "prb" else 1.0
+    if not getattr(config, f"coal_{stem}_sigmoid", False):
+        return flat
+    params = coal_sigmoid_params(config, supply)
+    if params is None:
+        return flat
     return _sigmoid_passthrough(
         _gas_series(config, year, hours),
-        config.coal_prb_passthrough_floor,
-        config.coal_prb_passthrough_ceil,
-        config.coal_prb_passthrough_gas_mid,
-        config.coal_prb_passthrough_gas_slope,
+        params["floor"], params["ceil"],
+        params["gas_mid"], params["gas_slope"],
     )
 
 
-def prb_passthrough_series_follower(
+def coal_passthrough_by_supply(
     config: ScenarioConfig, year: int, hours: int
-) -> np.ndarray:
+) -> dict[str, "float | np.ndarray"]:
+    """Return ``{supply tag: passthrough}`` for every sigmoid-capable supply.
+
+    The routing table :func:`market_sim.data.fleet.campd_tranche_fuel_frac`
+    consumes: each coal tranche looks up its own ``coal_supply`` tag, so a
+    bituminous plant can never receive the prb curve and vice-versa. Tags
+    without an entry (e.g. "waste") pass full fuel cost.
+    """
+    return {
+        supply: coal_passthrough_series(config, year, hours, supply)
+        for supply in ("prb", "subbituminous", "bituminous", "lignite")
+    }
+
+
+def prb_follower_passthrough_series(
+    config: ScenarioConfig, year: int, hours: int
+) -> "float | np.ndarray":
     """Return the load-follower-tier PRB passthrough series (gas-keyed).
 
     Used only when ``config.coal_prb_passthrough_tiered`` is set, for PRB
     plants whose per-plant must-run floor is at or below
     ``coal_prb_follower_mustrun_max`` — the low-floor units that cycle as
     load-followers rather than baseload price-takers. Same logistic form as
-    the baseload tier but its own ``coal_prb_follower_*`` parameters.
+    the baseload tier but its own ``coal_prb_follower_*`` parameters
+    (per-ISO key ``"prb_follower"``); falls back to the baseload prb curve
+    when no follower curve is characterized.
     """
+    params = coal_sigmoid_params(config, "prb_follower")
+    if params is None:
+        return coal_passthrough_series(config, year, hours, "prb")
     return _sigmoid_passthrough(
         _gas_series(config, year, hours),
-        config.coal_prb_follower_floor,
-        config.coal_prb_follower_ceil,
-        config.coal_prb_follower_gas_mid,
-        config.coal_prb_follower_gas_slope,
-    )
-
-
-def bit_passthrough_series(
-    config: ScenarioConfig, year: int, hours: int
-) -> "float | np.ndarray":
-    """Return the bituminous above-must-run fuel passthrough — flat or gas-keyed.
-
-    The PJM coal-fleet analogue of :func:`prb_passthrough_series`. When
-    ``config.coal_bit_passthrough_sigmoid`` is False, returns ``1.0`` (full
-    fuel cost — current behaviour). When True, returns an ``(hours,)``
-    logistic of the monthly delivered gas price ($/MMBtu) rising from
-    ``coal_bit_passthrough_floor`` (cheap gas — bit coal discounts to hold
-    its baseload against cheap gas CC) to ``coal_bit_passthrough_ceil``
-    (dear gas — full cost, or a markup > 1.0 that suppresses over-run),
-    centred at ``coal_bit_passthrough_gas_mid`` with slope
-    ``coal_bit_passthrough_gas_slope`` per $/MMBtu.
-
-    Keying off the monthly gas price tracks the merit-order crossover the
-    same way the PRB sigmoid does: bit coal's competitiveness against gas CC
-    scales with the delivered gas price.
-    """
-    if not getattr(config, "coal_bit_passthrough_sigmoid", False):
-        return 1.0
-    return _sigmoid_passthrough(
-        _gas_series(config, year, hours),
-        config.coal_bit_passthrough_floor,
-        config.coal_bit_passthrough_ceil,
-        config.coal_bit_passthrough_gas_mid,
-        config.coal_bit_passthrough_gas_slope,
-    )
-
-
-def lignite_passthrough_series(
-    config: ScenarioConfig, year: int, hours: int
-) -> "float | np.ndarray":
-    """Return the lignite above-must-run fuel passthrough — flat or gas-keyed.
-
-    The ERCOT mine-mouth-fleet analogue of :func:`bit_passthrough_series`.
-    When ``config.coal_lignite_passthrough_sigmoid`` is False, returns ``1.0``
-    (full fuel cost — current behaviour). When True, returns an ``(hours,)``
-    logistic of the monthly delivered gas price ($/MMBtu) rising from
-    ``coal_lignite_passthrough_floor`` (cheap gas — mine-mouth lignite's
-    take-or-pay fixed costs are sunk, so it discounts its bid to hold
-    baseload against cheap gas CC) to ``coal_lignite_passthrough_ceil``
-    (dear gas — full cost; the default ceil of 1.0 never marks lignite up),
-    centred at ``coal_lignite_passthrough_gas_mid`` with slope
-    ``coal_lignite_passthrough_gas_slope`` per $/MMBtu.
-
-    This discounts the bid, not the cost: the measured ~$1.45/MMBtu
-    delivered lignite price still anchors the full-cost end of the curve.
-    """
-    if not getattr(config, "coal_lignite_passthrough_sigmoid", False):
-        return 1.0
-    return _sigmoid_passthrough(
-        _gas_series(config, year, hours),
-        config.coal_lignite_passthrough_floor,
-        config.coal_lignite_passthrough_ceil,
-        config.coal_lignite_passthrough_gas_mid,
-        config.coal_lignite_passthrough_gas_slope,
-    )
-
-
-def sub_passthrough_series(
-    config: ScenarioConfig, year: int, hours: int
-) -> "float | np.ndarray | None":
-    """Return the subbituminous above-must-run passthrough, or ``None``.
-
-    Each coal passthrough sigmoid encodes basin/type/transport-specific
-    economics, so "subbituminous"-tagged plants (the derived EIA-923 rank
-    CSVs; non-PRB sub-bituminous basins) get their own tunable curve. When
-    ``config.coal_sub_passthrough_sigmoid`` is False (default), returns
-    ``None`` — the routing layer then keeps the historical behaviour of
-    inheriting the PRB family (passthrough, sigmoid and follower tier),
-    since plant_taxonomy maps both supplies to COAL_PRB. When True, returns
-    the family's own ``(hours,)`` logistic of the monthly delivered gas
-    price (``coal_sub_passthrough_*`` params, same form as the PRB/bit/
-    lignite sigmoids).
-    """
-    if not getattr(config, "coal_sub_passthrough_sigmoid", False):
-        return None
-    return _sigmoid_passthrough(
-        _gas_series(config, year, hours),
-        config.coal_sub_passthrough_floor,
-        config.coal_sub_passthrough_ceil,
-        config.coal_sub_passthrough_gas_mid,
-        config.coal_sub_passthrough_gas_slope,
+        params["floor"], params["ceil"],
+        params["gas_mid"], params["gas_slope"],
     )
 
 
