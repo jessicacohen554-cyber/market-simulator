@@ -52,6 +52,10 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.constants import (  # noqa: E402
+    PRICED_INTERCHANGE_DEFAULT_ISOS,
+    resolve_priced_interchange,
+)
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
@@ -64,6 +68,8 @@ from market_sim.data.eia923 import (  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_eia_hourly_benchmark,
+    neiso_net_interchange,
+    nyiso_net_interchange,
     pjm_net_interchange,
     load_ercot_battery_gen,
     load_ercot_fossil_gen,
@@ -2120,7 +2126,17 @@ def _report_generic(
                 )
                 how = "priced import/export node"
             else:
-                model_ix = pjm_net_interchange(year) if iso == "PJM" else None
+                # No priced node in dispatch → the measured net-interchange
+                # schedule was folded into demand by default (load_demand,
+                # include_interchange=True). PJM is a net exporter; NYISO/NEISO
+                # are net importers — all three serve the measured EIA-930
+                # schedule the same way (P9 / playbook §8.2).
+                measured_ix = {
+                    "PJM": pjm_net_interchange,
+                    "NYISO": nyiso_net_interchange,
+                    "NEISO": neiso_net_interchange,
+                }.get(iso)
+                model_ix = measured_ix(year) if measured_ix is not None else None
                 how = "served as a scheduled interchange added to demand"
             if model_ix is not None:
                 m_twh = float(model_ix.sum()) / _MWH_PER_TWH
@@ -2653,13 +2669,17 @@ def main() -> None:
              "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
              "(cheap-bottomed), <1 concave (cheap mid/top).")
     parser.add_argument(
-        "--priced-interchange", action="store_true",
+        "--priced-interchange", action=argparse.BooleanOptionalAction,
+        default=None,
         help="Serve interchange through the priced import/export node "
              "(import tranches + export sinks in the ISO's external zone, "
              "the forward-scenario mechanism) instead of the measured "
              "schedule added to demand. Used to validate the node's tranche "
              "calibration against the EIA-930 net-interchange duration "
-             "curve.")
+             "curve. Default per ISO: on for "
+             f"{', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+             "(no measured-schedule mode), off elsewhere; pass "
+             "--no-priced-interchange to force the measured schedule.")
     parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
@@ -2769,7 +2789,8 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
-        priced_interchange=args.priced_interchange,
+        priced_interchange=resolve_priced_interchange(
+            args.priced_interchange, iso),
         note=args.note,
     )
     report_run(run_dir)
