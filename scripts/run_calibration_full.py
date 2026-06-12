@@ -2513,6 +2513,27 @@ def main() -> None:
                         help="Lignite sigmoid logistic midpoint ($/MMBtu).")
     parser.add_argument("--lignite-gas-slope", type=float, default=None,
                         help="Lignite sigmoid logistic slope (per $/MMBtu).")
+    # Separate subbituminous passthrough sigmoid. Off by default —
+    # "subbituminous"-tagged plants (the derived EIA-923 rank CSVs) keep
+    # inheriting the PRB family. Turning it on splits them onto their own
+    # logistic, since non-PRB sub-bituminous basins need not share PRB rail
+    # take-or-pay economics.
+    parser.add_argument(
+        "--coal-sub-sigmoid", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Split subbituminous-tagged coal off the PRB passthrough "
+             "sigmoid onto its own gas-keyed curve (coal_sub_passthrough_* "
+             "params). Off = inherit the PRB family (historical aliasing).")
+    parser.add_argument("--sub-floor", type=float, default=None,
+                        help="Subbituminous sigmoid cheap-gas floor.")
+    parser.add_argument("--sub-ceil", type=float, default=None,
+                        help="Subbituminous sigmoid dear-gas ceiling.")
+    parser.add_argument("--sub-gas-mid", type=float, default=None,
+                        help="Subbituminous sigmoid logistic midpoint "
+                             "($/MMBtu).")
+    parser.add_argument("--sub-gas-slope", type=float, default=None,
+                        help="Subbituminous sigmoid logistic slope "
+                             "(per $/MMBtu).")
     parser.add_argument("--prb-follower-floor", type=float, default=None,
                         help="Follower-tier PRB sigmoid floor.")
     parser.add_argument("--prb-follower-ceil", type=float, default=None,
@@ -2685,6 +2706,12 @@ def main() -> None:
             "coal_lignite_passthrough_ceil": args.lignite_ceil,
             "coal_lignite_passthrough_gas_mid": args.lignite_gas_mid,
             "coal_lignite_passthrough_gas_slope": args.lignite_gas_slope,
+            "coal_sub_passthrough_sigmoid":
+                True if args.coal_sub_sigmoid else None,
+            "coal_sub_passthrough_floor": args.sub_floor,
+            "coal_sub_passthrough_ceil": args.sub_ceil,
+            "coal_sub_passthrough_gas_mid": args.sub_gas_mid,
+            "coal_sub_passthrough_gas_slope": args.sub_gas_slope,
         },
         coal_bit_sigmoid=args.coal_bit_sigmoid,
         bit_overrides={
