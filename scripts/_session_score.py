@@ -87,6 +87,27 @@ def main() -> None:
     print("\nplant guard (keep < ~+1000 GWh):")
     print(g[["year", "plant", "model_gwh", "campd_gwh", "model-campd_GWh"]]
           .to_string(index=False))
+    gas = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP"}
+    coal = {"COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL"}
+    e923 = pd.read_parquet(ROOT / run / "eia923.parquet")
+    btm = pd.read_parquet(ROOT / run / "btm.parquet")
+    print("\nfuel split gate (gas and coal totals within +/-2.5% per year;"
+          " PRB year-spread inside +/-5% is accepted when its multi-year"
+          " mean is centered):")
+    for f in sorted((ROOT / run / "dispatch").glob("*_P1.parquet")):
+        disp = pd.read_parquet(f, columns=["year", "klass", "mw"])
+        yr = int(disp["year"].iloc[0])
+        grid = disp.groupby("klass")["mw"].sum() / 1e6
+        b = btm[(btm["year"] == yr) & (btm["pass"] == "P1")]
+        bt = dict(zip(b["klass"], b["btm_twh"]))
+        bench = (e923[e923["year"] == yr].groupby("klass")["annual_mwh"]
+                 .sum() / 1e6)
+        for name, fam in (("GAS", gas), ("COAL", coal)):
+            m = sum(grid.get(c, 0.0) + bt.get(c, 0.0) for c in fam)
+            a = sum(bench.get(c, 0.0) for c in fam)
+            pct = (m / a - 1) * 100
+            tag = "PASS" if abs(pct) <= 2.5 else "FAIL"
+            print(f"  {yr} {name:4s} {pct:+5.1f}%  {tag}")
 
 
 if __name__ == "__main__":
