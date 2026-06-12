@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-pjm-17-waste-sigmoid",
+  "label": "pjm 17 waste sigmoid",
+  "date": "2026-06-12",
+  "shorthand": "pjm-17-waste-sigmoid",
+  "definition": "pjm 17: run-16 config (bit ceil 1.32) + waste-coal gas-keyed sigmoid (PJM COAL_WC, markup-only: floor 1.0 / ceil 1.45 / gas-mid 3.4 / slope 2.5) to shave the +1.98 TWh 2025 COAL_WC over-run at high gas without touching passing 2023/24 Outcome: 2025 COAL_WC +1.98 -> +0.37 TWh (in cap) but the low gas-mid bit 2023's at-actual winter months: 2023 COAL_WC -0.15 -> -1.33 (OUT). Curve revised for run 18 (mid 4.8, ceil 2.1).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-17-waste-sigmoid.js",
+  "bundle": "results/calibration/pjm_17_waste_sigmoid"
+}
