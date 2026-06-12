@@ -836,6 +836,280 @@ class DispatchResult:
     rps_shadow_price: float | None = None
 
 
+class DispatchModel:
+    """A reusable HiGHS dispatch LP whose objective can be re-costed in place.
+
+    The constraint matrix and the variable bounds depend only on the fleet,
+    demand and network topology -- never on the marginal cost. The
+    calibration's P0 (base cost) and P1 (bid cost) passes therefore share a
+    byte-identical feasible region and differ *only* in the objective. Build
+    the model once and call :meth:`solve` repeatedly: the second solve changes
+    just the cost coefficients and warm-starts the dual simplex from the
+    previous optimal basis, which converges in a handful of iterations because
+    the basis stays primal-feasible when only costs move.
+
+    The one-shot :func:`solve_dispatch` is a thin wrapper around this class, so
+    a single build+solve is numerically identical to the previous code path.
+    """
+
+    def __init__(
+        self,
+        fleet: "FleetArrays",
+        demand: np.ndarray,
+        wind_cf: np.ndarray,
+        wind_cap: np.ndarray,
+        solar_cf: np.ndarray,
+        solar_cap: np.ndarray,
+        voll: float = 5000,
+        incidence: "np.ndarray | sp.spmatrix | None" = None,
+        ttc: np.ndarray | None = None,
+        storage_power_cap: np.ndarray | None = None,
+        storage_energy_cap: np.ndarray | None = None,
+        storage_zone_idx: np.ndarray | None = None,
+        eta_chg: "np.ndarray | float | None" = None,
+        eta_dis: "np.ndarray | float | None" = None,
+        wind_mc: "np.ndarray | float" = 0.0,
+        solar_mc: "np.ndarray | float" = 0.0,
+        storage_discharge_eac: float = 0.0,
+        storage_discharge_cost: "np.ndarray | float" = 0.0,
+        rps_target: float | None = None,
+        hydro_monthly_energy: np.ndarray | None = None,
+        hydro_month_index: np.ndarray | None = None,
+        hydro_gen_idx: np.ndarray | None = None,
+        hydro_monthly_min: np.ndarray | None = None,
+        storage_daily_cycle_hours: int | None = None,
+        T: int | None = None,
+    ) -> None:
+        build_start = time.perf_counter()
+
+        demand = np.asarray(demand, dtype=float)
+        if T is None:
+            T = demand.shape[1]
+        n_zones = demand.shape[0]
+        n_gen = fleet.n_gen
+        n_storage = 0 if storage_power_cap is None else len(storage_power_cap)
+        n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
+
+        layout = VariableLayout(
+            n_gen=n_gen, n_zones=n_zones, n_storage=n_storage,
+            n_links=n_links, T=T,
+        )
+
+        A, row_lower, row_upper = build_constraints(
+            layout,
+            fleet,
+            demand,
+            incidence=incidence,
+            storage_zone_idx=storage_zone_idx,
+            eta_chg=eta_chg,
+            eta_dis=eta_dis,
+            rps_target=rps_target,
+            hydro_monthly_energy=hydro_monthly_energy,
+            hydro_month_index=hydro_month_index,
+            hydro_gen_idx=hydro_gen_idx,
+            hydro_monthly_min=hydro_monthly_min,
+            storage_daily_cycle_hours=storage_daily_cycle_hours,
+        )
+        col_lower, col_upper = build_variable_bounds(
+            layout,
+            fleet,
+            wind_cf,
+            wind_cap,
+            solar_cf,
+            solar_cap,
+            storage_power_cap=storage_power_cap,
+            storage_energy_cap=storage_energy_cap,
+            ttc=ttc,
+        )
+
+        # build_constraints returns CSR -- the row-wise layout HiGHS addRows
+        # consumes directly, so no format conversion is needed here.
+        starts = A.indptr[:-1].astype(np.int32)
+        indices = A.indices.astype(np.int32)
+        values = A.data.astype(np.float64)
+
+        inf = highspy.kHighsInf
+        col_upper = np.where(np.isinf(col_upper), inf, col_upper)
+        col_lower = np.where(np.isinf(col_lower), -inf, col_lower)
+        row_upper = np.where(np.isinf(row_upper), inf, row_upper)
+        row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
+
+        h = highspy.Highs()
+        h.setOptionValue("output_flag", False)
+        # Memory-constrained boxes can cap HiGHS's thread count (parallel dual
+        # simplex keeps per-thread factorization workspaces; on a ~12 GB
+        # plant-level ISO-year LP the default all-cores run can spike past a
+        # small container's RAM and get OOM-killed). Unset keeps HiGHS's
+        # automatic threading; the LP optimum is identical either way.
+        _threads = os.environ.get("MARKET_SIM_HIGHS_THREADS")
+        if _threads:
+            h.setOptionValue("threads", int(_threads))
+        # Economic-dispatch LPs are already tight, and the per-hour blocks make
+        # the matrix huge but trivially structured. HiGHS presolve then scales
+        # with the ~1.8M column count while removing almost nothing -- on a full
+        # 8760-hour model it costs ~17s of pure overhead. Skipping it lets the
+        # dual simplex solve the model directly in a few seconds.
+        h.setOptionValue("presolve", "off")
+        # Columns are added with a placeholder zero objective; the real cost
+        # vector is installed per-pass in solve() via changeColsCost, which is
+        # what lets a second pass warm-start from the first pass's basis.
+        h.addCols(
+            layout.total_columns,
+            np.zeros(layout.total_columns, dtype=np.float64),
+            col_lower,
+            col_upper,
+            0,
+            np.zeros(layout.total_columns, dtype=np.int32),
+            np.array([], dtype=np.int32),
+            np.array([], dtype=np.float64),
+        )
+        h.addRows(
+            A.shape[0],
+            row_lower,
+            row_upper,
+            A.nnz,
+            starts,
+            indices,
+            values,
+        )
+
+        self._h = h
+        self.fleet = fleet
+        self.layout = layout
+        self.T = T
+        self.n_zones = n_zones
+        self.n_storage = n_storage
+        self.n_links = n_links
+        self.voll = voll
+        self.wind_mc = wind_mc
+        self.solar_mc = solar_mc
+        self.storage_discharge_eac = storage_discharge_eac
+        self.storage_discharge_cost = storage_discharge_cost
+        self.rps_target = rps_target
+        self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
+        self.build_time = time.perf_counter() - build_start
+        self._n_solves = 0
+
+    def solve(
+        self,
+        mc: np.ndarray | None = None,
+        fuel_prices: np.ndarray | None = None,
+        carbon_price: "np.ndarray | float" = 0,
+        nox_price: "np.ndarray | float" = 0,
+        so2_price: "np.ndarray | float" = 0,
+    ) -> "DispatchResult":
+        """Install a marginal-cost vector and (re-)solve the LP.
+
+        The first call solves cold; subsequent calls change only the objective
+        coefficients and warm-start from the prior optimal basis.
+
+        Args:
+            mc: Marginal cost array of shape ``(n_gen, T)``. When ``None`` it is
+                assembled from ``fuel_prices``, ``carbon_price``, ``nox_price``
+                and ``so2_price``.
+            fuel_prices: Fuel prices passed to ``assemble_mc`` when ``mc`` is
+                ``None``.
+            carbon_price: Carbon price used when ``mc`` is ``None``.
+            nox_price: NOx price used when ``mc`` is ``None``.
+            so2_price: SO2 price used when ``mc`` is ``None``.
+
+        Returns:
+            A populated :class:`DispatchResult`.
+
+        Raises:
+            RuntimeError: When HiGHS does not return a feasible primal solution.
+        """
+        layout = self.layout
+        if mc is None:
+            mc = assemble_mc(
+                self.fleet, fuel_prices, carbon_price, nox_price,
+                so2=(self.fleet.so2_rate, so2_price),
+            )
+        mc = np.asarray(mc, dtype=float)
+
+        cost = build_cost_vector(
+            layout, mc, self.voll, wind_mc=self.wind_mc, solar_mc=self.solar_mc,
+            storage_discharge_eac=self.storage_discharge_eac,
+            storage_discharge_cost=self.storage_discharge_cost,
+        )
+
+        h = self._h
+        h.changeColsCost(layout.total_columns, self._all_cols, cost)
+
+        solve_start = time.perf_counter()
+        h.run()
+        solve_time = time.perf_counter() - solve_start
+        warm = self._n_solves > 0
+        self._n_solves += 1
+
+        logger.info(
+            f"Matrix build: {self.build_time:.3f}s, "
+            f"Solve: {solve_time:.3f}s ({'warm' if warm else 'cold'})"
+        )
+
+        _, primal_status = h.getInfoValue("primal_solution_status")
+        if primal_status != 2:
+            status = h.modelStatusToString(h.getModelStatus())
+            raise RuntimeError(
+                f"dispatch LP has no feasible primal solution (status: {status})"
+            )
+
+        T = self.T
+        n_zones = self.n_zones
+        n_storage = self.n_storage
+        n_links = self.n_links
+
+        solution = h.getSolution()
+        col_value = np.asarray(solution.col_value, dtype=float)
+        row_dual = np.asarray(solution.row_dual, dtype=float)
+
+        block = col_value.reshape(T, layout.vars_per_hour)
+        dispatch = block[:, layout._p_off : layout._w_off].T
+        wind_dispatched = block[:, layout._w_off : layout._s_off].T
+        solar_dispatched = block[:, layout._s_off : layout._chg_off].T
+        slack = block[:, layout._slack_off : layout._dump_off].T
+        dump = block[:, layout._dump_off :].T
+
+        storage_charge = storage_discharge = storage_soc = None
+        if n_storage:
+            storage_charge = block[:, layout._chg_off : layout._dis_off].T
+            storage_discharge = block[:, layout._dis_off : layout._soc_off].T
+            storage_soc = block[:, layout._soc_off : layout._flow_off].T
+
+        flows = None
+        if n_links:
+            flows = block[:, layout._flow_off : layout._slack_off].T
+
+        # Energy-balance duals occupy the first n_zones * T rows, hour-major;
+        # for a minimization the equality dual is the zonal price (no negation).
+        prices = row_dual[: n_zones * T].reshape(T, n_zones).T
+
+        # The RPS row, when present, is the final constraint row; its dual is
+        # the RPS shadow price -- the marginal cost of raising the clean-
+        # energy floor by one MWh.
+        rps_shadow_price = None
+        if self.rps_target is not None and self.rps_target > 0.0:
+            rps_shadow_price = float(row_dual[-1])
+
+        return DispatchResult(
+            dispatch=dispatch,
+            wind_dispatched=wind_dispatched,
+            solar_dispatched=solar_dispatched,
+            slack=slack,
+            dump=dump,
+            prices=prices,
+            storage_charge=storage_charge,
+            storage_discharge=storage_discharge,
+            storage_soc=storage_soc,
+            flows=flows,
+            objective_value=h.getObjectiveValue(),
+            status=h.modelStatusToString(h.getModelStatus()),
+            build_time=self.build_time,
+            solve_time=solve_time,
+            rps_shadow_price=rps_shadow_price,
+        )
+
+
 def solve_dispatch(
     fleet: FleetArrays,
     demand: np.ndarray,
@@ -931,167 +1205,37 @@ def solve_dispatch(
     Raises:
         RuntimeError: When HiGHS does not return a feasible primal solution.
     """
-    build_start = time.perf_counter()
-
-    demand = np.asarray(demand, dtype=float)
-    if T is None:
-        T = demand.shape[1]
-    n_zones = demand.shape[0]
-    n_gen = fleet.n_gen
-    n_storage = 0 if storage_power_cap is None else len(storage_power_cap)
-    n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
-
-    layout = VariableLayout(
-        n_gen=n_gen, n_zones=n_zones, n_storage=n_storage, n_links=n_links, T=T
-    )
-
-    if mc is None:
-        mc = assemble_mc(
-            fleet, fuel_prices, carbon_price, nox_price,
-            so2=(fleet.so2_rate, so2_price),
-        )
-    mc = np.asarray(mc, dtype=float)
-
-    cost = build_cost_vector(
-        layout, mc, voll, wind_mc=wind_mc, solar_mc=solar_mc,
-        storage_discharge_eac=storage_discharge_eac,
-        storage_discharge_cost=storage_discharge_cost,
-    )
-    A, row_lower, row_upper = build_constraints(
-        layout,
+    model = DispatchModel(
         fleet,
         demand,
+        wind_cf=wind_cf,
+        wind_cap=wind_cap,
+        solar_cf=solar_cf,
+        solar_cap=solar_cap,
+        voll=voll,
         incidence=incidence,
+        ttc=ttc,
+        storage_power_cap=storage_power_cap,
+        storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage_zone_idx,
         eta_chg=eta_chg,
         eta_dis=eta_dis,
+        wind_mc=wind_mc,
+        solar_mc=solar_mc,
+        storage_discharge_eac=storage_discharge_eac,
+        storage_discharge_cost=storage_discharge_cost,
         rps_target=rps_target,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,
         hydro_monthly_min=hydro_monthly_min,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
+        T=T,
     )
-    col_lower, col_upper = build_variable_bounds(
-        layout,
-        fleet,
-        wind_cf,
-        wind_cap,
-        solar_cf,
-        solar_cap,
-        storage_power_cap=storage_power_cap,
-        storage_energy_cap=storage_energy_cap,
-        ttc=ttc,
-    )
-
-    # build_constraints returns CSR -- the row-wise layout HiGHS addRows
-    # consumes directly, so no format conversion is needed here.
-    starts = A.indptr[:-1].astype(np.int32)
-    indices = A.indices.astype(np.int32)
-    values = A.data.astype(np.float64)
-
-    inf = highspy.kHighsInf
-    col_upper = np.where(np.isinf(col_upper), inf, col_upper)
-    col_lower = np.where(np.isinf(col_lower), -inf, col_lower)
-    row_upper = np.where(np.isinf(row_upper), inf, row_upper)
-    row_lower = np.where(np.isinf(row_lower), -inf, row_lower)
-
-    h = highspy.Highs()
-    h.setOptionValue("output_flag", False)
-    # Memory-constrained boxes can cap HiGHS's thread count (parallel dual
-    # simplex keeps per-thread factorization workspaces; on a ~12 GB
-    # plant-level ISO-year LP the default all-cores run can spike past a
-    # small container's RAM and get OOM-killed). Unset keeps HiGHS's
-    # automatic threading; the LP optimum is identical either way.
-    _threads = os.environ.get("MARKET_SIM_HIGHS_THREADS")
-    if _threads:
-        h.setOptionValue("threads", int(_threads))
-    # Economic-dispatch LPs are already tight, and the per-hour blocks make
-    # the matrix huge but trivially structured. HiGHS presolve then scales
-    # with the ~1.8M column count while removing almost nothing -- on a full
-    # 8760-hour model it costs ~17s of pure overhead. Skipping it lets the
-    # dual simplex solve the model directly in a few seconds.
-    h.setOptionValue("presolve", "off")
-    h.addCols(
-        layout.total_columns,
-        cost,
-        col_lower,
-        col_upper,
-        0,
-        np.zeros(layout.total_columns, dtype=np.int32),
-        np.array([], dtype=np.int32),
-        np.array([], dtype=np.float64),
-    )
-    h.addRows(
-        A.shape[0],
-        row_lower,
-        row_upper,
-        A.nnz,
-        starts,
-        indices,
-        values,
-    )
-    build_time = time.perf_counter() - build_start
-
-    solve_start = time.perf_counter()
-    h.run()
-    solve_time = time.perf_counter() - solve_start
-
-    logger.info(f"Matrix build: {build_time:.3f}s, Solve: {solve_time:.3f}s")
-
-    _, primal_status = h.getInfoValue("primal_solution_status")
-    if primal_status != 2:
-        status = h.modelStatusToString(h.getModelStatus())
-        raise RuntimeError(
-            f"dispatch LP has no feasible primal solution (status: {status})"
-        )
-
-    solution = h.getSolution()
-    col_value = np.asarray(solution.col_value, dtype=float)
-    row_dual = np.asarray(solution.row_dual, dtype=float)
-
-    block = col_value.reshape(T, layout.vars_per_hour)
-    dispatch = block[:, layout._p_off : layout._w_off].T
-    wind_dispatched = block[:, layout._w_off : layout._s_off].T
-    solar_dispatched = block[:, layout._s_off : layout._chg_off].T
-    slack = block[:, layout._slack_off : layout._dump_off].T
-    dump = block[:, layout._dump_off :].T
-
-    storage_charge = storage_discharge = storage_soc = None
-    if n_storage:
-        storage_charge = block[:, layout._chg_off : layout._dis_off].T
-        storage_discharge = block[:, layout._dis_off : layout._soc_off].T
-        storage_soc = block[:, layout._soc_off : layout._flow_off].T
-
-    flows = None
-    if n_links:
-        flows = block[:, layout._flow_off : layout._slack_off].T
-
-    # Energy-balance duals occupy the first n_zones * T rows, hour-major;
-    # for a minimization the equality dual is the zonal price (no negation).
-    prices = row_dual[: n_zones * T].reshape(T, n_zones).T
-
-    # The RPS row, when present, is the final constraint row; its dual is
-    # the RPS shadow price -- the marginal cost of raising the clean-
-    # energy floor by one MWh.
-    rps_shadow_price = None
-    if rps_target is not None and rps_target > 0.0:
-        rps_shadow_price = float(row_dual[-1])
-
-    return DispatchResult(
-        dispatch=dispatch,
-        wind_dispatched=wind_dispatched,
-        solar_dispatched=solar_dispatched,
-        slack=slack,
-        dump=dump,
-        prices=prices,
-        storage_charge=storage_charge,
-        storage_discharge=storage_discharge,
-        storage_soc=storage_soc,
-        flows=flows,
-        objective_value=h.getObjectiveValue(),
-        status=h.modelStatusToString(h.getModelStatus()),
-        build_time=build_time,
-        solve_time=solve_time,
-        rps_shadow_price=rps_shadow_price,
+    return model.solve(
+        mc=mc,
+        fuel_prices=fuel_prices,
+        carbon_price=carbon_price,
+        nox_price=nox_price,
+        so2_price=so2_price,
     )
