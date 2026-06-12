@@ -1527,3 +1527,122 @@ under everywhere; mind the run-82 committed-step explosion zone below mult
 ~1.0), and the 2024 coal trio. The pre-Kiamichi Jacobian pure pairs no
 longer describe the fleet — re-derive with fresh probe pairs before
 trusting any recipe.
+
+---
+
+## NEISO price re-score — P12 keepers vs actual_lmp (P10 landed) (2026-06-12)
+
+**Scope.** P10 (the U2 LMP upload) has landed: `inputs/calibration/actual_lmp.json`
+now carries a NEISO block (DA + RT hub `.H.INTERNAL_HUB` + the four model-zone
+averages, annual/monthly/duration percentiles) and
+`actual_lmp_hourly_NEISO.parquet` is the dense 8760 hub-mean sidecar. This pass
+**scores the price** of the three P12 sign-off keepers
+(`neiso_p12_base_2023`, `neiso_p12_base_2024`, `neiso_p12_hydrofix_2025`) that
+were signed off level-only — it does **not** re-tune them (the structural fuel-
+mix / CO₂ / interchange rows are green and stay green; zero offer-band moves).
+Scored from the existing bundles' `system.parquet` dual prices (no re-solve):
+the four model load zones price **identically** every hour, so the modeled hub
+is the common internal price (P1 pass, demand-served zones; `HQ_import` carries
+zero load and does not enter the demand-weighted level). Comparison convention
+follows `scripts/analyze_lmp_residual.py` — modeled vs actual **RT** (DA
+reported alongside).
+
+### 1. Level + duration-curve fit (hub `.H.INTERNAL_HUB`)
+
+| metric | 2023 | 2024 | 2025† |
+|---|---|---|---|
+| modeled hub mean ($/MWh) | 53.58 | 55.68 | 53.44 |
+| actual hub RT / DA | 35.70 / 36.82 | 39.54 / 41.51 | 65.89 / 67.86 |
+| residual vs RT ($ / %) | **+17.9 / +50%** | **+16.1 / +41%** | **−12.5 / −19%** |
+| model p50 / p90 / p99 | 36 / 125 / 150 | 38 / 105 / 125 | 53 / 64 / 94 |
+| actual-RT p50 / p90 / p99 | 27 / 57 / 184 | 30 / 68 / 168 | 45 / 144 / 246 |
+| >$75 tail share (model / actRT) | **24.7% / 5.9%** | **29.8% / 8.2%** | **5.8% / 27.2%** |
+| hourly corr (model vs actRT) | +0.30 | +0.31 | +0.45 |
+
+†2025 is the provisional year (`--hydro-backfill-year 2024`); its actual prices
+are final, but the modeled bundle inherits the 2025 hydro/oil data caveats.
+
+**The duration shape is the diagnosis, not the level.** In every year the model
+produces a **fat $75–150 plateau with no extreme tail**: model p99 *under-shoots*
+actual p99 in all three years (150 vs 184; 125 vs 168; 94 vs 246) while the
+>$75 share is 3–5× *too high* in 2023/2024 and 5× too low in 2025. The model
+never clears a single hour >$200 in any winter window; actual RT has 44 / 11 /
+160. This is the signature of a **monthly** marginal-fuel input meeting a market
+whose price is set by **daily** gas spot — see attribution (3).
+
+Per model zone (modeled uniform, no congestion): residual vs actual-zone RT is
+≈ uniform — 2023 +20.4..+21.4, 2024 +17.2..+18.5, 2025 −9.3..−11.6 — because
+the modeled zones are identical and the actual zones sit within ~$1.5 of each
+other (see 2).
+
+### 2. Zonal-spread adequacy (4-zone sufficiency gate) — confirmed, one item filed
+
+The modeled **Boston−Hub and CT−Hub spreads are exactly $0** (all four load
+zones price identically; the Tier-3 RSP TTC seeds never bind, no measured
+interface limits — U6 not uploaded). The actual day-ahead separation
+(`neiso-zonal-adequacy.md`) is itself tiny — signed-mean Boston−Hub +0.30 /
++0.55 / +0.81 and CT−Hub −0.78 / −1.18 / −1.87, every pocket median under
+$1/MWh — so the model's zero separation **tracks the actual to within the
+documented "level-market" tolerance** for Boston and North, and the adequacy
+doc's own conclusion (keep 4 zones on *structural*, not price, grounds) stands.
+**The one divergence filed:** the model cannot reproduce **Connecticut's
+growing cheap-side tail** (CT−Hub p99 $5.0 → $13.5 across 2023→2025, 7.4% of
+2025 hours >$5 below hub) — CT is well-supplied (Millstone + NEEWS imports) and
+parts cheap from the hub under cold-snap evening peaks, which a copper-plate
+internal price erases. **Do not add zones** (the spread is sub-$2 mean and the
+4-zone split is already justified structurally); the lever is the U6 interface-
+flow upload to replace the non-binding RSP TTC seeds, not topology. Filed.
+
+### 3. Winter-tail miss attributed to U4 (daily-AGT gap) — NO band tuning
+
+The residual is **concentrated in winter (Jan/Feb/Dec) and a few summer-peak
+months**, and the winter miss is the documented monthly-AGT limitation
+(neiso-data-audit §2b; doc-08 decision 1; P11 gap #3), **not** offer bands:
+
+- **The modeled winter is a flat monthly plateau.** Jan/Feb model duration:
+  2023 p50 $123 → max $147 (a $123–147 band); 2025 p50 $55 → max $66. The
+  intra-month hourly spread is ~zero because the committed AGT basis is
+  **monthly** — every winter hour inherits the same monthly-mean gas cost.
+  Real ISO-NE winter is spiky (2023 Jan/Feb actual p50 $38, p99 $273, max
+  $462; 2025 p50 $126, p99 $285) because price is set by **daily** AGT spot
+  blowouts.
+- **The miss cuts both ways, and both directions are U4.** Where the monthly
+  mean over-states the typical hour (2023/2024: many moderate actual hours sit
+  below the flat plateau) the model **over-prices the mid-curve** (fat >$75
+  band); where the realized daily blowout dwarfs the monthly mean (2025 Jan
+  +12.79 / Feb +10.43 / Dec +10.64 basis, actual winter ~$130) the model
+  **under-prices catastrophically** (Jan −79, Feb −72, Dec −69). Either way the
+  model **never reaches the cold-snap spike tail** (0 hours >$200 vs 44/11/160
+  actual) — the p99 under-shoot the task predicted. A daily-AGT series (U4)
+  would trip the dual-fuel CT switch and resolve the plateau into spikes; a
+  band move cannot manufacture daily price variance from a monthly input.
+- **Companion summer-peak over-pricing — same oil-steam family, filed not
+  tuned.** Jul-2023 ($128 vs $39) and Aug-2024 ($87 vs $39) are flat
+  over-priced *summer* plateaus with **zero slack** (max-slack 0; not VOLL —
+  the marginal unit is expensive oil-steam, HR ~10–12 × distillate). This is
+  the documented inversion: with the monthly AGT below distillate parity the
+  dual-fuel/oil-steam scarcity dispatch lands in summer peak hours instead of
+  winter cold snaps (backcast-2024 gap #1, the oil-shape item). The fix is the
+  same U4 daily basis, not an offer-band; filed.
+
+The broad year-over-year flatness (model ~$54 every year vs actual rising
+$36 → $66) is additionally the served-interchange convention: imports are
+netted into demand rather than price-setting, so cheap HQ hydro never sets the
+marginal price and the modeled marginal unit is always a dearer internal
+generator. The P11 smoke's `--priced-interchange` diagnostic pulled the 2024
+level to $48 (vs $56 served, $39.5 actual) — closer but still over; the priced
+node remains the forward mechanism. Structural (P9), filed, **not** band-tunable.
+
+### Scored verdict & keeper
+
+Price is now **scored** for 2023–2025 (level + duration + zonal spread); it does
+**not** meet the ±5% duration / ±5–10% level target. The miss is **filed**, not
+tuned: (a) winter Jan/Feb/Dec tail → **U4 daily AGT** (the make-or-break NEISO
+upload), (b) zonal CT cheap tail → **U6** interface limits, (c) mid-curve level
+→ priced-interchange node (P9). **No offer band was moved; the structural
+fuel-mix / CO₂ / interchange rows are untouched and still green.** The P12
+keepers remain the sign-off config. ERCOT / PJM / CAISO / NYISO untouched.
+Dashboard runs `neiso 2 2023` / `neiso 3 2024` / `neiso 4 2025 hydrofix`
+re-registered so the now-present NEISO `actual_lmp` benchmark drives the price
+scorecard. Reproduce: `python scripts/analyze_lmp_residual.py
+results/calibration/neiso_p12_base_2023 … --months 1 2 --years 2023 2024 2025`.

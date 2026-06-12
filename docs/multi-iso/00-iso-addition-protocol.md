@@ -48,10 +48,23 @@ Companion documents in this directory:
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
 | SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023 (2025 Q1-only; 2024 blocked) | `NYIS hourly` (2023–Q1'25) | **2023** (P12 keeper; 2025/2024 data-blocked) |
-| NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12)** |
+| NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
 
 All ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE`. The remaining
 gaps are **data + market-design fidelity** (Stages C–H), not topology.
+
+> **NEISO price row — now scored (2026-06-12, P10/U2 landed).** The NEISO P12
+> sign-off was price-*level-only*; with the `actual_lmp.json` NEISO block now
+> present, the three keepers are **scored** on level + duration + zonal spread
+> (see `calibration-log.md` §NEISO price re-score). Outcome: the price does not
+> yet meet the duration/level tolerance — modeled hub +50% / +41% / −19% vs
+> actual RT (2023/24/25) — but the miss is **filed, not tuned**: the
+> **winter Jan/Feb/Dec tail** is the monthly-vs-daily AGT-basis gap (upload
+> **U4**, the make-or-break NEISO item) — the modeled winter is a flat monthly
+> plateau that never reaches the daily cold-snap spikes; the **CT cheap-side
+> zonal tail** is U6 (interface limits); the mid-curve level is the
+> served-interchange convention (P9 priced node). No offer band was moved; the
+> green fuel-mix / CO₂ / interchange rows are untouched.
 
 **The dispatch LP itself is ISO-agnostic and well-parameterized** on
 `n_zones`, `n_storage`, `n_links`, the node-link `incidence` matrix, and per-
