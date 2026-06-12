@@ -5,6 +5,8 @@ import numpy as np
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
     load_demand,
+    neiso_net_interchange,
+    nyiso_net_interchange,
     pjm_net_interchange,
     pjm_zonal_interchange,
     pjm_zonal_load_shares,
@@ -54,6 +56,60 @@ def test_pjm_demand_can_exclude_interchange():
     # gap hour at zero).
     zx = pjm_zonal_interchange(_TEST_YEAR, pjm.zone_names).sum(axis=0)
     np.testing.assert_allclose(with_ix - without, zx, atol=1e-6)
+
+
+def test_nyiso_net_interchange_is_import_negative():
+    """NYISO's measured interchange loads as a steady net import (negative).
+
+    EIA's ``Total interchange`` is already export-positive, so a net importer
+    like NYISO (~16% of load in 2023) reads negative with no sign flip.
+    """
+    ix = nyiso_net_interchange(_TEST_YEAR)
+    assert ix is not None
+    assert ix.shape == (8760,)
+    assert not np.isnan(ix).any()
+    # NYISO imported ~23 TWh (≈ −2,677 MW avg) in 2023 — import-negative.
+    assert -4000.0 < ix.mean() < -1500.0
+
+
+def test_neiso_net_interchange_is_import_negative():
+    """NEISO's measured interchange loads as a steady net import (negative)."""
+    ix = neiso_net_interchange(2024)
+    assert ix is not None
+    assert ix.shape == (8760,)
+    assert not np.isnan(ix).any()
+    # ISO-NE imported ~10 TWh (≈ −1,175 MW avg) in 2024 — import-negative.
+    assert -2500.0 < ix.mean() < -500.0
+
+
+def test_nyiso_demand_serves_measured_import_by_default():
+    """NYISO demand nets the measured import wedge, lowering served load.
+
+    A net importer's schedule is negative, so serving it reduces the residual
+    the in-state fleet must generate (the import wedge that would otherwise be
+    over-generated as internal gas — P9 / playbook §8.2).
+    """
+    nyiso = get_iso_config("NYISO")
+    with_ix = load_demand("NYISO", _TEST_YEAR, nyiso).sum(axis=0)
+    without = load_demand(
+        "NYISO", _TEST_YEAR, nyiso, include_interchange=False
+    ).sum(axis=0)
+    ix = nyiso_net_interchange(_TEST_YEAR)
+    # The default path serves *less* than internal load by the import wedge.
+    assert with_ix.sum() < without.sum()
+    np.testing.assert_allclose(with_ix - without, ix, atol=1e-6)
+
+
+def test_neiso_demand_serves_measured_import_by_default():
+    """NEISO demand nets the measured import wedge, lowering served load."""
+    neiso = get_iso_config("NEISO")
+    with_ix = load_demand("NEISO", 2024, neiso).sum(axis=0)
+    without = load_demand(
+        "NEISO", 2024, neiso, include_interchange=False
+    ).sum(axis=0)
+    ix = neiso_net_interchange(2024)
+    assert with_ix.sum() < without.sum()
+    np.testing.assert_allclose(with_ix - without, ix, atol=1e-6)
 
 
 def test_pjm_zonal_shares_sum_to_one_each_hour():
