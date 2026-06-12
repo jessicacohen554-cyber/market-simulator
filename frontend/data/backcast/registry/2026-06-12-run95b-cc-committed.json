@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-run95b-cc-committed",
+  "label": "run95b cc committed",
+  "date": "2026-06-12",
+  "shorthand": "run95b-cc-committed",
+  "definition": "Run 95b: MEASURED PROBE, not a keeper - CC_REGULAR committed pure pair on the run-92 base (committed delta -0.05 -> +0.05, one clean +0.10 step; nothing else changed; Kiamichi bins at committed v1 20/65/15). Measures: where shed CC 2024 energy lands (PRB/ST_GAS/LIG 2024 refill vs CT vs imports), CC 2023 draw, coal-split and ML/LS guard slopes, LMP all years (abort lever if any year moves >$1). MEASURED (vs run92, TWh, per delta-unit at delta=1): CC -2.12/-1.63/-1.51 shed; refill lands PRB +0.83/+0.47/+0.45, ST_GAS +0.20/+0.20/+0.25, LIG +0.22/+0.19/+0.02, CT +0.06/+0.07/+0.08 (rest renewables/storage); Kiamichi itself sheds (6.06/6.85/6.17 -> 5.66/6.33/5.55 - the committed band prices its 20% committed tranche). LMP 32.06/7.17/2.29 (<= $0.12 move, lever NOT price-aborted). COSTS: 2023 coal split +1.5 -> +3.2% (FAILS the gate at delta=1; slope +1.7/unit), 2023 gas split -1.9 -> -2.6% (FAILS; -0.7/unit), guards ML23 +339/unit (921), LS23 +194/unit (991). VERDICT: the lever works but the 2024 refill (+0.47 PRB / +0.20 ST_GAS per unit) cannot reach the +1.53/+1.40 flips within the split/guard budget (delta <= ~0.2-0.6) - rejected for run 96 at meaningful dose; 4-fail path ruled out, realistic best stays 5.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-12-run95b-cc-committed.js",
+  "bundle": "results/calibration/run95b_cc_committed_probe"
+}
