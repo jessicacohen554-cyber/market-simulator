@@ -68,10 +68,10 @@ EIA-930 normalized per-fuel generation distribution + the demand series).
 | ERCOT | `ERCO` | `ERCO hourly.parquet` | **present** |
 | CAISO | `CISO` | `CISO hourly.parquet` | **present** |
 | PJM | `PJM` | `PJM hourly.parquet` | **present** |
-| NYISO | `NYIS` | `NYIS hourly.parquet` | **present** (2023 full; 2024 full; 2025 Q1-only — 2025 backcast blocked) |
+| NYISO | `NYIS` | `NYIS hourly.parquet` | **present** (2023–Q1 2025; 2025 full year needed for NYISO 2025 backcast) |
 | ISO-NE | `ISNE` | `ISNE hourly.parquet` | **present** |
-| MISO | `MISO` | `MISO hourly.parquet` | **MISSING — upload** |
-| SPP | `SWPP` | `SWPP hourly.parquet` | **MISSING — upload** |
+| MISO | `MISO` | `MISO hourly.parquet` | **present** |
+| SPP | `SWPP` | `SWPP hourly.parquet` | **present** |
 
 Each file must span all target backcast years and carry, at minimum, hourly
 demand and the per-fuel generation series (coal, gas, nuclear, hydro, wind,
@@ -96,7 +96,7 @@ boundaries, so several states are shared across ISOs.
 | ERCOT | TX | TX | — |
 | CAISO | CA (+ small NV/AZ imports) | CA | (NV, AZ if needed) |
 | NYISO | NY | NY | — |
-| ISO-NE | CT, MA, ME, NH, RI, VT | MA, ME, NH | **CT, RI, VT** |
+| ISO-NE | CT, MA, ME, NH, RI, VT | CT, MA, ME, NH, RI, VT (2023/2024); CT, MA, ME, RI, VT (2025) | **NH_2025 only** (upload U1 from doc-08) |
 | PJM | DE, IL(ComEd), IN, KY, MD, MI, NC, NJ, OH, PA, TN, VA, WV, DC | DE, IL, MD, NJ, PA | **IN, KY, MI, NC, OH, TN, VA, WV, DC** |
 | MISO | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI | IL, (TX) | **AR, IA, IN, KY, LA, MI, MN, MO, MS, ND, SD, WI** |
 | SPP | AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX, WY | (TX) | **AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, WY** |
