@@ -557,6 +557,88 @@ class SubPassthroughSigmoidTest(unittest.TestCase):
         self.assertLessEqual(float(series.max()), 1.20 + 1e-9)
 
 
+class WastePassthroughSigmoidTest(unittest.TestCase):
+    """The waste-coal sigmoid (culm/gob, PJM COAL_WC): markup-only curve."""
+
+    def test_off_returns_full_cost(self):
+        from market_sim.data.fuel import coal_passthrough_series
+        cfg = ScenarioConfig(iso="PJM", gas_price_override=2.19)
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "waste"), 1.0)
+
+    def test_on_uses_its_own_params(self):
+        from market_sim.data.fuel import coal_passthrough_series
+        cfg = ScenarioConfig(
+            gas_price_override=5.0, coal_waste_passthrough_sigmoid=True,
+            coal_waste_passthrough_floor=1.00,
+            coal_waste_passthrough_ceil=1.45,
+            coal_waste_passthrough_gas_mid=3.4,
+            coal_waste_passthrough_gas_slope=2.5,
+            # Bit/subbit params left at defaults to prove independence.
+        )
+        series = coal_passthrough_series(cfg, 2024, 8760, "waste")
+        self.assertEqual(series.shape, (8760,))
+        self.assertGreaterEqual(float(series.min()), 1.00)
+        self.assertLessEqual(float(series.max()), 1.45 + 1e-9)
+        # Gas well above the midpoint -> a real dear-gas markup.
+        self.assertGreater(float(series.mean()), 1.30)
+
+    def test_pjm_resolves_markup_only_curve_from_table(self):
+        # The (PJM, waste) COAL_SIGMOID_DEFAULTS entry: floor 1.0 (a
+        # near-free reclamation fuel gets no cheap-gas discount, so the
+        # passing 2023/24 years are untouched), dear-gas markup only.
+        from market_sim.data.fuel import coal_passthrough_series
+        def mean_pt(gas):
+            cfg = ScenarioConfig(
+                iso="PJM", gas_price_override=gas,
+                coal_waste_passthrough_sigmoid=True,
+            )
+            return float(np.mean(
+                coal_passthrough_series(cfg, 2024, 8760, "waste")))
+        low, mid, high = mean_pt(2.0), mean_pt(3.4), mean_pt(7.0)
+        self.assertLess(low, mid)
+        self.assertLess(mid, high)
+        self.assertGreaterEqual(low, 1.00)       # floor: never a discount
+        self.assertLessEqual(high, 1.45 + 1e-9)  # ceil
+        self.assertGreater(high, 1.0)            # dear gas -> markup
+
+    def test_uncharacterized_iso_stays_flat(self):
+        # No (iso, waste) table entry -> flat full cost, never another
+        # region's curve.
+        from market_sim.data.fuel import coal_passthrough_series
+        cfg = ScenarioConfig(
+            iso="ERCOT", gas_price_override=5.0,
+            coal_waste_passthrough_sigmoid=True,
+        )
+        self.assertEqual(
+            coal_passthrough_series(cfg, 2024, 8760, "waste"), 1.0)
+
+    def test_routing_picks_up_waste_series(self):
+        # coal_passthrough_by_supply now carries "waste", and
+        # campd_tranche_fuel_frac routes a waste tranche to it; must-run
+        # waste still passes 0.0.
+        from market_sim.data.fleet import campd_tranche_fuel_frac
+        from market_sim.data.fuel import coal_passthrough_by_supply
+        cfg = ScenarioConfig(
+            iso="PJM", gas_price_override=5.0,
+            coal_waste_passthrough_sigmoid=True,
+        )
+        pt = coal_passthrough_by_supply(cfg, 2024, 8760)
+        self.assertIn("waste", pt)
+        gen = Generator(
+            unit_id="COAL_z_p1_econ", name="x", zone="z", fuel_type="coal",
+            pmax_mw=100.0, heat_rate=10.0, coal_supply="waste",
+            plant_group="COAL_WC",
+        )
+        self.assertIs(campd_tranche_fuel_frac(gen, pt), pt["waste"])
+        mustrun = Generator(
+            unit_id="COAL_z_p1_mustrun", name="x", zone="z",
+            fuel_type="coal", pmax_mw=100.0, heat_rate=10.0,
+            coal_supply="waste", plant_group="COAL_WC",
+        )
+        self.assertEqual(campd_tranche_fuel_frac(mustrun, pt), 0.0)
+
+
 class RegionDependentCoalSigmoidTest(unittest.TestCase):
     """Per-(ISO, supply) sigmoid resolution: curves never cross regions."""
 
