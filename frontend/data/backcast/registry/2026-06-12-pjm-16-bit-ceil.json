@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-12-pjm-16-bit-ceil",
+  "label": "pjm 16 bit ceil",
+  "date": "2026-06-12",
+  "shorthand": "pjm-16-bit-ceil",
+  "definition": "pjm 16: run-15 config + bit sigmoid dear-gas ceiling 1.25 -> 1.32 to trim 2025 BIT over-dispatch (+6.28 TWh at the 5% edge) without disturbing cheap-gas 2024 (BIT +0.61)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-16-bit-ceil.js",
+  "bundle": "results/calibration/pjm_16_bit_trim"
+}

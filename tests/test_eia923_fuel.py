@@ -391,7 +391,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
 
     def test_on_rises_with_gas_between_floor_and_ceil(self):
         # Params resolve from the (PJM, bituminous) COAL_SIGMOID_DEFAULTS
-        # entry (0.82 / 1.25 / 3.40 / 2.5).
+        # entry (0.82 / 1.32 / 3.40 / 2.5).
         from market_sim.data.fuel import coal_passthrough_series
         def mean_pt(gas):
             cfg = ScenarioConfig(
@@ -404,7 +404,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
         self.assertLess(low, mid)
         self.assertLess(mid, high)
         self.assertGreaterEqual(low, 0.82)       # floor
-        self.assertLessEqual(high, 1.25 + 1e-9)  # ceil
+        self.assertLessEqual(high, 1.32 + 1e-9)  # ceil
         self.assertGreater(high, 1.0)            # dear gas -> markup
 
     def test_routes_each_supply_to_its_own_curve(self):
@@ -585,22 +585,30 @@ class WastePassthroughSigmoidTest(unittest.TestCase):
 
     def test_pjm_resolves_markup_only_curve_from_table(self):
         # The (PJM, waste) COAL_SIGMOID_DEFAULTS entry: floor 1.0 (a
-        # near-free reclamation fuel gets no cheap-gas discount, so the
-        # passing 2023/24 years are untouched), dear-gas markup only.
+        # near-free reclamation fuel gets no cheap-gas discount), flat
+        # through the $3.4-3.6 months 2023 needs kept, then a late, tall
+        # dear-gas markup (Jan-2025 $6.86 gas needs ~2x to bite).
+        from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
         from market_sim.data.fuel import coal_passthrough_series
-        def mean_pt(gas):
+        def mean_pt(delivered_gas):
+            # gas_price_override gets the ISO basis added; the sigmoid is
+            # placed on DELIVERED $/MMBtu (the measured EIA-923 series in
+            # real runs), so quote the probe in delivered terms.
             cfg = ScenarioConfig(
-                iso="PJM", gas_price_override=gas,
+                iso="PJM",
+                gas_price_override=delivered_gas
+                - GAS_BASIS_DIFFERENTIAL["PJM"],
                 coal_waste_passthrough_sigmoid=True,
             )
             return float(np.mean(
                 coal_passthrough_series(cfg, 2024, 8760, "waste")))
-        low, mid, high = mean_pt(2.0), mean_pt(3.4), mean_pt(7.0)
+        low, mid, high = mean_pt(2.0), mean_pt(4.8), mean_pt(8.0)
         self.assertLess(low, mid)
         self.assertLess(mid, high)
         self.assertGreaterEqual(low, 1.00)       # floor: never a discount
-        self.assertLessEqual(high, 1.45 + 1e-9)  # ceil
-        self.assertGreater(high, 1.0)            # dear gas -> markup
+        self.assertLess(mean_pt(3.5), 1.10)      # flat where 2023 must keep
+        self.assertLessEqual(high, 2.10 + 1e-9)  # ceil
+        self.assertGreater(high, 1.5)            # very dear gas -> big markup
 
     def test_uncharacterized_iso_stays_flat(self):
         # No (iso, waste) table entry -> flat full cost, never another
@@ -672,7 +680,7 @@ class RegionDependentCoalSigmoidTest(unittest.TestCase):
         cfg = ScenarioConfig(iso="PJM", coal_bit_passthrough_floor=0.5)
         p = coal_sigmoid_params(cfg, "bituminous")
         self.assertEqual(p["floor"], 0.5)
-        self.assertEqual(p["ceil"], 1.25)   # rest still from the table
+        self.assertEqual(p["ceil"], 1.32)   # rest still from the table
 
     def test_incomplete_explicit_params_resolve_none(self):
         # No table entry + only partial explicit fields -> no curve (None),
