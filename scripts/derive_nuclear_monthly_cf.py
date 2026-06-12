@@ -29,7 +29,10 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from market_sim.config.constants import NUCLEAR_MONTHLY_CF_BY_YEAR  # noqa: E402
+from market_sim.config.constants import (  # noqa: E402
+    NUCLEAR_DORMANT_UNTIL,
+    NUCLEAR_MONTHLY_CF_BY_YEAR,
+)
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
@@ -39,12 +42,19 @@ _MONTH_COLS = [
 ]
 
 
-def _nuclear_fleet(iso: str) -> tuple[list[int], float]:
-    """Return ``(plant_codes, total_pmax_mw)`` of an ISO's nuclear fleet."""
+def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], float]:
+    """Return ``(plant_codes, total_pmax_mw)`` of an ISO's nuclear fleet.
+
+    Plants dormant in ``year`` (NUCLEAR_DORMANT_UNTIL — listed OP in EIA-860
+    but physically offline, e.g. the Crane/TMI-1 restart) are excluded, the
+    same exclusion the backcast availability applies, so the derived CF is
+    not diluted by capacity that cannot run.
+    """
     cfg = get_iso_config(iso)
     units = [
         g for g in load_fleet_from_csv(iso, cfg)
         if g.fuel_type == "nuclear" and g.pmax_mw > 0
+        and year >= NUCLEAR_DORMANT_UNTIL.get(int(g.plant_code), 0)
     ]
     if not units:
         raise SystemExit(f"{iso}: no nuclear units in the model fleet")
@@ -62,7 +72,7 @@ def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
     the LP dispatches nuclear at its cap. Values are clipped to 1.0 and
     rounded to 2 decimals, matching the committed constants table.
     """
-    plant_codes, pmax_mw = _nuclear_fleet(iso)
+    plant_codes, pmax_mw = _nuclear_fleet(iso, year)
     gen = load_monthly_generation()
     rows = gen[(gen["year"] == year) & (gen["plant_id"].isin(plant_codes))]
     if rows.empty:
