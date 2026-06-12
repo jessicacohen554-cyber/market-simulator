@@ -1138,3 +1138,107 @@ lignite 2024, and the CT_CHP 2025 benchmark gap. A lignite floor probe
 (0.75 → 0.72) is the one cheap candidate, but Martin Lake 2023 sits at
 +914 GWh with ~86 GWh of guard headroom — re-run the guard before keeping
 anything.
+
+---
+
+## NYISO P12 — Full calibration loop to sign-off (2023; 2025/2024 data-blocked) (2026-06-12)
+
+**Keeper: the P9b served-interchange config (`nyiso p11 smoke 2023`, bundle
+`results/calibration/nyiso_smoke_2023`), promoted to the P12 sign-off keeper.**
+The loop ran the offer-curve / hydro / storage / import / dual-fuel knobs against
+the P11+P9b structural config and found **no honest knob that lifts an
+out-of-tolerance class without a zero-sum trade against an in-tolerance one or a
+convention violation** — so the structural config *is* the keeper. Recorded in
+`docs/calibration-best-so-far-nyiso.md`. Branch `claude/nyiso-p12-calibration`.
+**P10 LMP still held (U2)** → price level-only, not scored.
+
+### The mix is calibrated; the gas total is a documented basis floor
+
+2023 fuel-mix vs EIA-923 (P2): every renewable/baseload class is inside ±5%
+— hydro +1.3%, nuclear −0.1%, wind −3.6%, solar −5.0% (edge), OTHER 0.0%,
+CC_REGULAR −2.6%, ST_GAS −0.8% — and net interchange matches exactly (−23.45
+vs −23.45 TWh, duration RMSE **0 MW**, import-hours 100%, diurnal corr +1.00).
+The one class-level miss is **gas total −9.9%** (57.53 vs 63.84 TWh), and it is
+a **demand-basis floor, not a dispatch error**: the in-state fleet's total is
+pinned by energy balance to served demand = EIA-930 transmission-metered demand
+(147.05) + measured net interchange (−23.45) = **123.77 TWh**, which is 4.5%
+below EIA-923's plant-net-generation total (129.67). With every non-gas class
+on the EIA-923 mark, the −5.9 TWh total gap must fall on the swing fuel. The
+deficit lands on the small **CHP/peaker** classes (CC_CHP −14.6%, CT_CHP
+−44.2%, ST_CHP −18.0%, CT_PEAKER −75.2%) while the two big gas classes stay on
+target — the least-distorting landing spot. Against EIA-930 (the operationally
+consistent basis) gas is **−5.7%**. CO2 ≈ 24 Mt (class-rate approx) vs eGRID-2023
+26.9 Mt excl-biogenic ≈ −10%, downstream of the gas total.
+
+**Why no knob closes it (all rejected):**
+- **td_loss gross-up** — ruled out by convention: EIA-930 NYIS demand is
+  transmission-metered / generation-side (playbook §8.1, the ERCOT
+  `td_loss_factor=0` rule), so a distribution-loss gross-up double-counts.
+- **import scaling** — serving e.g. −20 TWh (inside the ±15% interchange
+  tolerance) would lift the total to ~127 and gas to ~−4%, but the measured
+  EIA-930 schedule is matched *exactly* (RMSE 0 MW). Degrading a perfect
+  measured match to paper over an EIA-930-vs-EIA-923 *benchmark-basis*
+  difference is overfitting, not calibration. **Rejected.**
+- **CHP / offer-curve / storage** — reshuffle within the fixed total; the
+  obvious CHP lever does not even do that (see `nyiso 2`).
+
+### Passes (one named hypothesis each)
+
+**nyiso 1 gas-actuals** (`--gas-monthly-actuals`, bundle
+`nyiso_p12_gasact_2023`) — **REJECTED, no-op.** Hypothesis: measured EIA-923
+monthly gas (Jan-2023 $10.02/MMBtu winter spike vs the flat $2.54 HH seed)
+re-levels gas and trips the dual-fuel oil switch. Result: **byte-identical**
+mix and price duration (gas 57.53, oil 0.013, avg $42.72, max $235.81) — the
+harness already enables `gas_monthly_actuals` + `gas_plant_monthly_fuel_pricing`
+by default for NYISO (the P11 "flat $2.54 seed" note predated the P9b re-run).
+So the winter gas level is already priced in, and oil still does not fire: even
+measured monthly Jan gas ($10) stays below distillate parity (~$16/MMBtu), the
+documented P13 limitation — **winter oil is gated on the U4 daily Transco-Z6 /
+Iroquois gas basis, which is not uploaded for NYISO** (only the NEISO/Algonquin
+leg is filled). oil −96.9% is therefore filed to U4, not tunable this pass.
+
+**nyiso 2 chp-covered** (`--chp-startup-covered`, bundle `nyiso_p12_chp_2023`)
+— **REJECTED, negligible.** Hypothesis: the CHP under-dispatch is a
+startup-amortization artifact — a steam-host cogen pays no energy-market cold
+start, so removing the markup lets CC_CHP/CT_CHP/ST_CHP run toward their
+must-run reality. Result: CHP moved only **+0.1 TWh total** (CC_CHP +0.027,
+ST_CHP +0.051, CT_CHP +0.017; CC_REGULAR −0.033, ST_GAS −0.048; gas total
+57.525 → 57.537; avg price $42.72 → $43.02). The CHP/peaker deficit is
+**structural** — the model dispatches CHP economically and enforces no hard
+steam-host must-run floor — not a startup-cost artifact, and within the fixed
+served total there is no room for the CHP classes to recover without displacing
+the on-target baseload gas. A hard steam-host / reliability-must-run floor
+(EIA-860 cogen steam load + downstate reliability commitments) is the structural
+follow-up, filed; it is not an offer-band knob.
+
+### 2025 and 2024 are data-blocked (filed, not calibrated)
+
+The P12 prompt asks for 2023 **+ 2025** in parallel. 2025 is **not yet a valid
+backcast year**:
+- The EIA-930 `NYIS hourly` extract stops at **Q1 2025** (2,160 of 8,760 h), so
+  `nyiso_net_interchange(2025)` returns `None`; `load_demand` falls back to the
+  demand-profiles parquet (full-year **gross** demand, 151.6 TWh) and serves
+  **0** of the ~−23 TWh import wedge → the 2025 baseline bundle
+  (`nyiso_p12_base_2025`) **over-generates +22.7%** (151.9 vs EIA-923 123.8 TWh,
+  gas +11.8%, avg price $127) — the exact P11 structural failure, here driven by
+  missing data rather than missing code.
+- The 2025 EIA-923 benchmark is preliminary (biomass 0.13, solar 0.66, oil 1.06
+  TWh — renewables/biomass under-reported), so even with interchange it could
+  not be scored.
+- **Refresh path:** extend the EIA-930 `NYIS hourly` extract through 2025-12 and
+  re-pull final 2025 EIA-923, then re-run `nyiso_p12_base_2025`. Until then the
+  2025 bundle is retained on disk as the data-gap evidence, **not registered.**
+
+2024 remains blocked on `NY_2024` unit-level CEMS (only facility-level present)
+and the missing `NYISO_2024_renewable_capacity.csv`.
+
+### Keeper decision & sign-off
+
+`nyiso p11 smoke 2023` is the **P12 keeper** (no new tuning bundle — the
+structural config is optimal under the binding constraint). 2023 Stage-G
+calibration is **green on every scorable target except the gas-total basis floor
+and the U4-gated winter oil**, both documented above. Dashboard carries the
+keeper; `nyiso_p12_gasact_2023` / `nyiso_p12_chp_2023` / `nyiso_p12_base_2025`
+are retained on disk as the rejected-probe / data-gap evidence (not registered —
+no keeper among them). `docs/calibration-best-so-far-nyiso.md` records the
+config; doc-00 status table + Stage-G checklist updated; citations appended.
