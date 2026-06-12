@@ -1361,27 +1361,35 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     "CAISO": [
         ("export_sink", 5000.0, 0.0),
     ],
-    # PJM was a ~40 TWh / +4,564 MW-avg net exporter in 2023 (EIA-930; PJM
-    # tie-line file). Blocks proxy the neighbor demand stack (NYISO cables,
-    # MISO, the Carolinas/TVA): capacities and prices fitted so the modeled
-    # net-interchange duration curve tracks the measured 2023 curve against
-    # the pjm_6 baseline price duration (quantile pairing; duration RMSE
-    # ~570 MW, annual 40.0 TWh = 100% of actual, diurnal corr 0.49). The
-    # same curve over-exports 2024 by ~+37% (PJM load growth cut exports at
-    # an unchanged price level) — re-fit per forward vintage if it matters.
-    # Backcasts ignore these blocks: they serve the measured tie-line
-    # schedule instead (eia_loader.pjm_net_interchange). Tier 3
-    # (calibration) — fitted by scripts/derive_import_tranches.py from
+    # PJM was a ~40 TWh / +4,564 MW-avg net exporter in 2023, easing to
+    # +32.7 TWh in 2024 and +18.0 TWh in 2025 (EIA-930). Blocks proxy the
+    # neighbor demand stack (NYISO cables, MISO, the Carolinas/TVA):
+    # capacities fitted to the 2023 net-interchange duration curve against
+    # the pjm_6 baseline price duration (quantile pairing,
+    # scripts/derive_import_tranches.py). Prices were originally fitted to
+    # 2023 alone (sinks 18-42), which over-exported 2024 by +9.6 TWh and
+    # 2025 by +7.5 TWh — the surplus backfilled by marginal gas (PJM run-16
+    # residuals). PJM run 18 shifted every sink down $6 to the values
+    # below: the three-year compromise that brings 2024 gas inside the 5%
+    # class tolerance and lands 2024/2025 net interchange near the EIA-930
+    # actuals, trading away some 2023 export depth (the neighbor-demand
+    # year-shape is price-orthogonal, so a static price-keyed node cannot
+    # hit 2023's +40 and 2024's +33 simultaneously). Backcasts without
+    # --priced-interchange ignore these blocks: they serve the measured
+    # tie-line schedule instead (eia_loader.pjm_net_interchange). NOTE: the
+    # 2025 tie-line CSV diverges from EIA-930 May-2025 onward (+32.9 vs
+    # +18.0 TWh annual) — fit against EIA-930, not the tie-line file, for
+    # 2025+. Tier 3 (calibration); source CSV:
     # inputs/raw-data/iso-specific-transmission/
     # PJM_2023_import_export_act_sch_interchange.csv +
-    # results/calibration/pjm_6_ccpeak.
+    # results/calibration/pjm_6_ccpeak, repriced on pjm_16_bit_trim.
     "PJM": [
-        ("export_firm", 700.0, 42.0),
-        ("export_peak", 1700.0, 36.0),
-        ("export_mid", 1700.0, 30.0),
-        ("export_shoulder", 1800.0, 25.0),
-        ("export_offpeak", 1800.0, 20.0),
-        ("export_trough", 2100.0, 18.0),
+        ("export_firm", 700.0, 36.0),
+        ("export_peak", 1700.0, 30.0),
+        ("export_mid", 1700.0, 24.0),
+        ("export_shoulder", 1800.0, 19.0),
+        ("export_offpeak", 1800.0, 14.0),
+        ("export_trough", 2100.0, 12.0),
     ],
     # NYISO almost never exports (EIA-930 NYIS: net export ≤ +131 MW in 2023,
     # +449 in 2024 — well under 1% of hours), so a single small sink absorbs
