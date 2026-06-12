@@ -4,16 +4,55 @@
 Pure parquet/JSON analysis of existing calibration bundles under
 ``results/calibration`` — no LP is re-solved. From consecutive run pairs whose
 only difference is offer-curve band-multiplier moves ("pure-curve pairs"), it
-collects observations Δ(band multiplier vector) → Δ(class TWh vector) per year
+collects observations Δ(band multiplier vector) → Δ(objective vector) per year
 and fits a sparse ridge-regularized linear map
 
-    Δgen[in_class] ≈ Σ S[in_class, (out_class, band)] · Δmult[(out_class, band)]
+    Δobj[target] ≈ Σ S[target, (out_class, band)] · Δmult[(out_class, band)]
 
 so tuning can solve one joint multi-class move instead of sequential
 single-knob walks that whack-a-mole between interrelated classes
 (CT_PEAKER committed ↔ ST_GAS, COAL_PRB ↔ COAL_LIGNITE, CC_REGULAR as the
 big residual marginal class). Each year is fitted separately — the 2024 vs
 2023/2025 asymmetry is gas-price-driven ($2.54 / $2.19 / $3.52 per MMBtu).
+
+Objectives (the "blocks")
+-------------------------
+The fitted targets and the joint-move objective span three blocks, so a TWh
+fix that wrecks the dispatch shape or the price level is visible BEFORE any
+LP is solved:
+
+- ``twh``   — annual class TWh (model, BTM-aware) per (year, class). The
+  original objective; err = model − EIA-923.
+- ``shape`` — hourly dispatch-shape residuals per year: NRMSE of the model's
+  hourly non-CHP gas and coal series vs EIA-930 (the report's [5] table
+  convention, flat-CHP subtracted from observed gas), plus the mean
+  CAMPD CF-band earth-mover distance across the tuning-panel plants
+  (``plant_cf_bands.parquet``). err = the metric itself (target 0).
+- ``lmp``   — demand-weighted monthly |model − actual RT| price MAE ($/MWh)
+  from ``system.parquet``'s hourly zone prices vs the committed
+  ``inputs/calibration/actual_lmp.json`` reference (the
+  ``scripts/derive_actual_lmp.py`` product). err = the MAE (target 0).
+
+The joint-move recipe minimizes a weighted sum of the three blocks
+(``--w-twh`` / ``--w-shape`` / ``--w-lmp``), each block normalized by its
+magnitude on the ``--baseline`` bundle (default ``e2_4_retune``, the run-79
+keeper) so the units are comparable; defaults are balanced. Shape/LMP
+sensitivity columns start data-poor (historical pairs moved knobs for TWh
+reasons) and are reported with the existing n_obs/stderr confidence flags
+rather than hidden; expect the LMP block to act mostly as a guardrail vetoing
+price-degrading moves — LMP error is dominated by drivers outside the
+offer-curve knobs (gas price path, scarcity pricing).
+
+Trust region
+------------
+The run-82 recipe wrecked CT_PEAKER (+21/+14/+21%) by extrapolating a knob
+far outside its sampled range (committed stacked to a cumulative −0.47 below
+the calibrated default and crossed a merit-order step). The recipe now
+zeroes any knob whose post-move resolved value (run_config.json's
+``offer_curve_by_group``) would land at/beyond the edge of the value range
+actually sampled by the pure pairs estimating that knob's column, printing a
+"re-derive locally first" warning instead of an extrapolated move. The
+per-step |Δmult| ≤ 0.15 cap (``--cap``) still applies on top.
 
 Run pairs that include structural code or data changes (storage fix, plant
 appends, BTM trims, fuel-cost re-grounding, demand alignment, heat-rate
@@ -25,15 +64,28 @@ are resolvable, so the tool keeps working as new backcasts accrue for any ISO.
 Outputs
 -------
 - ``inputs/processed/offer_curve_jacobian.csv`` (long format: iso, year,
-  out_class, band, in_class, dTWh_per_unit_mult, n_obs, stderr, confidence)
+  metric, out_class, band, in_class, dTWh_per_unit_mult, n_obs, stderr,
+  confidence). Schema v2: the ``metric`` column is new; filtering
+  ``metric == "twh"`` reproduces the v1 content exactly. For ``shape`` rows
+  the value column is d(NRMSE or EMD)/d(mult) and ``in_class`` names the
+  series (``gas`` / ``coal`` / ``cf_emd``); for ``lmp`` rows it is
+  d($/MWh MAE)/d(mult) with ``in_class == "system"``. The column name
+  ``dTWh_per_unit_mult`` is kept for backward compatibility.
 - printed matrix sorted by |sensitivity| with confidence flags
 - merit-order adjacency validation: each class-band's $/MWh offer range
   (band mult × class base HR × monthly fuel price) vs the demand-weighted
   clearing-price distribution in ``system.parquet`` — overlapping ranges are
   the substitution pairs the regression should agree with
-- a joint-move recipe: given the latest run's error vector err (TWh per
-  class-year), solve min ‖S·Δm + err‖² (ridge-regularized, per-step band
-  moves capped at ±0.15) and print the recommended Δm
+- a joint-move recipe: given the latest run's error blocks, solve
+  min ‖W·(S·Δm + err)‖² (ridge-regularized, per-step band moves capped at
+  ±0.15, trust-region-frozen knobs at 0) and print the recommended Δm with
+  the predicted change PER BLOCK
+- ``--validate-run RUN`` prints all three error blocks for the named run
+- ``--backtest BASE TARGET`` predicts TARGET's per-block changes from BASE's
+  config delta through the Jacobian and compares predicted vs actual — the
+  regression test for the trust region is
+  ``--backtest e2_4_retune run82_jacobian_joint`` flagging the CT_PEAKER
+  committed move
 
 Usage
 -----
@@ -41,6 +93,8 @@ Usage
     python scripts/derive_offer_curve_jacobian.py --iso ERCOT
     python scripts/derive_offer_curve_jacobian.py --include-pair Run-60-prbfix
     python scripts/derive_offer_curve_jacobian.py --validate-run Run-73
+    python scripts/derive_offer_curve_jacobian.py --iso ERCOT \\
+        --backtest e2_4_retune run82_jacobian_joint
 """
 
 from __future__ import annotations
@@ -69,6 +123,27 @@ FUEL_COSTS = REPO / "inputs" / "processed" / "eia923_monthly_fuel_costs.parquet"
 BANDS = ("committed", "econ_low", "econ_high", "peak",
          "econ_low_share", "pct_peaking")
 PRICE_BANDS = BANDS[:4]
+
+# Objective blocks. "twh" is the original annual-energy objective; "shape"
+# and "lmp" are the hourly-dispatch-shape and price-level objectives (see
+# module docstring). Default recipe weights are balanced; each block is
+# normalized by its baseline-bundle magnitude before weighting.
+METRICS = ("twh", "shape", "lmp")
+
+# Upper-case non-CHP gas classes for the EIA-930 gas shape comparison —
+# matches run_calibration_full's [5] table (_NONCHP_GAS). Coal classes are
+# any klass starting with "COAL".
+GAS_NONCHP_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+
+# Committed actual-LMP reference produced by scripts/derive_actual_lmp.py:
+# {"ERCOT": {"2024": {"rt": ..., "rt_mon": [...12...], ...}, ...}, ...}.
+ACTUAL_LMP_JSON = REPO / "inputs" / "calibration" / "actual_lmp.json"
+
+# Fixed non-leap dispatch calendar (matches market_sim.data.campd and
+# scripts/analyze_lmp_residual.py).
+_DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+_MONTH_START_HOUR = tuple(
+    int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(13))
 
 # ---------------------------------------------------------------------------
 # Pair classification registry. Keyed by the *later* run of a consecutive
@@ -114,6 +189,26 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "Run-73": ("structural", "CHP steam-floor fix + Petra Nova reclassification (curve moves mixed in — sign-check only)"),
     "curve-n12-2024": ("sidecar", "A/B of offer_curve_smoothing_n off Run-72, single year"),
     "Run-74": ("structural", "regenerated unit-outage extract (Rio Nogales / C.R. Wing derates) alongside the curve walk-back"),
+    # E2 storage family (dashboard runs 75-79). e2_2 precedes e2_1 by
+    # timestamp, so the chain order is e2_2 -> e2_1 -> e2_3 -> e2_4.
+    "e2_2_adder20": ("structural", "storage-persistence branch + battery adder 20 probe"),
+    "e2_1_storage_base": ("structural", "battery adder 20 -> 0 (scenario change)"),
+    "e2_3_adder10": ("structural", "battery adder 0 -> 10 (scenario change)"),
+    "e2_4_retune": ("pure", "coal/CT band re-tune on the adder-10 config (note + same adder as e2_3)"),
+    "run80a_code_baseline": ("structural", "run79 keeper config re-run on post-E3 main (code accumulation baseline; zero curve deltas)"),
+    # run80b..run80e are A/B probes off run80a (dashboard runs 80-81), all
+    # reverted. Sidecar so run80a still pairs with run82. CAUTION: 80b/80c
+    # repriced lignite via a constant outside scenario_config, and 80d/80e
+    # PREDATE the --prb-* provenance fix — their run_config.json shows
+    # DEFAULT sigmoid params while the true values are in
+    # meta/model_changes_note. Never let auto-classification or sigmoid-param
+    # reads trust those two run_configs.
+    "run80b_lignite_105": ("sidecar", "lignite flat reprice $1.05 probe off run80a (rejected; reprice not in scenario_config)"),
+    "run80c_lignite_115": ("sidecar", "lignite flat reprice $1.15 probe off run80a (rejected)"),
+    "run80d_prb_floor_068": ("sidecar", "PRB floor 0.68 probe off run80a (rejected; run_config sigmoid params are stale defaults)"),
+    "run80e_prb_shaped": ("sidecar", "PRB sigmoid shape probe off run80a (rejected; run_config sigmoid params are stale defaults)"),
+    "run82_jacobian_joint": ("pure", "Jacobian recipe curve deltas only off run80a (rejected as a keeper but a valid sensitivity observation — incl. CT_PEAKER committed at 1.008)"),
+    "run84_coal_sigmoids": ("structural", "lignite passthrough sigmoid + PRB floor retune (coal sigmoid params, not curve moves)"),
     # --- PJM ---
     "pjm_2023": ("legacy", "exploratory era"),
     "pjm_2024": ("legacy", "exploratory era"),
@@ -268,8 +363,188 @@ def class_totals(b: Bundle, cache: dict) -> pd.DataFrame:
                 "eia_twh": float(bench.get(k, 0.0)),
             })
     b.totals = pd.DataFrame(rows)
-    cache[b.name] = {"stamp": stamp, "rows": rows}
+    ent = cache.setdefault(b.name, {})
+    ent["stamp"], ent["rows"] = stamp, rows
     return b.totals
+
+
+# ---------------------------------------------------------------------------
+# Shape + LMP metrics (the non-TWh objective blocks)
+# ---------------------------------------------------------------------------
+
+def _nrmse(model: np.ndarray, obs: np.ndarray) -> float:
+    denom = float(np.mean(obs))
+    if denom <= 0:
+        return float("nan")
+    return float(np.sqrt(np.mean((model - obs) ** 2)) / denom)
+
+
+def _hourly_class_sum(disp: pd.DataFrame, mask: pd.Series, T: int) -> np.ndarray:
+    s = disp[mask].groupby("hour", observed=True)["mw"].sum()
+    return s.reindex(range(T), fill_value=0.0).to_numpy(dtype=float)
+
+
+def _shape_rows(b: Bundle, year: int, disp: pd.DataFrame,
+                e930: pd.DataFrame | None) -> list[dict]:
+    """NRMSE of hourly non-CHP gas / coal vs EIA-930 ([5] table convention)."""
+    if e930 is None:
+        return []
+    ey = e930[e930["year"] == year]
+    if ey.empty:
+        return []
+    obs = {s: g.sort_values("hour")["mw"].to_numpy(dtype=float)
+           for s, g in ey.groupby("series") if s in ("gas", "coal")}
+    if "gas" not in obs or "coal" not in obs:
+        return []
+    T = min(int(disp["hour"].max()) + 1, obs["gas"].shape[0])
+    klass = disp["klass"].astype(str)
+    gas_m = _hourly_class_sum(disp, klass.isin(GAS_NONCHP_CLASSES), T)
+    coal_m = _hourly_class_sum(disp, klass.str.startswith("COAL"), T)
+    # Observed 930 gas includes CHP; the model compares non-CHP gas, so the
+    # CHP grid energy comes off the observed series as a flat block (exactly
+    # the report's [5] convention).
+    chp_mwh = float(disp.loc[klass.str.endswith("_CHP"), "mw"].sum())
+    rows = [
+        {"year": year, "metric": "shape", "key": "gas",
+         "value": _nrmse(gas_m, obs["gas"][:T] - chp_mwh / T)},
+        {"year": year, "metric": "shape", "key": "coal",
+         "value": _nrmse(coal_m, obs["coal"][:T])},
+    ]
+    return [r for r in rows if np.isfinite(r["value"])]
+
+
+def _cf_emd_rows(b: Bundle) -> list[dict]:
+    """Mean CAMPD CF-band earth-mover distance across the panel plants.
+
+    ``plant_cf_bands.parquet`` holds, per (year, plant), the model and CAMPD
+    hour counts in 10%-of-capacity CF bands. EMD between the two normalized
+    histograms = Σ|cumdiff| × band width — the report's [7b] cf_emd.
+    """
+    p = b.path / "plant_cf_bands.parquet"
+    if not p.exists():
+        return []
+    bands = pd.read_parquet(p)
+    if "pass" in bands.columns:
+        bands = bands[bands["pass"] == "P1"]
+    rows = []
+    for year, gy in bands.groupby("year"):
+        emds = []
+        for _, gp in gy.groupby("plant_code"):
+            gp = gp.sort_values("cf_lo")
+            m, c = gp["model_hours"].to_numpy(float), gp["campd_hours"].to_numpy(float)
+            if m.sum() <= 0 or c.sum() <= 0:
+                continue
+            width = float((gp["cf_hi"] - gp["cf_lo"]).mean())
+            emds.append(np.abs(np.cumsum(m / m.sum() - c / c.sum())).sum() * width)
+        if emds:
+            rows.append({"year": int(year), "metric": "shape",
+                         "key": "cf_emd", "value": float(np.mean(emds))})
+    return rows
+
+
+def _lmp_rows(b: Bundle) -> list[dict]:
+    """Demand-weighted monthly |model − actual RT| MAE ($/MWh) per year.
+
+    Model: hourly demand-weighted system price from ``system.parquet`` (P1),
+    aggregated to demand-weighted monthly means on the fixed non-leap
+    calendar. Actual: the ISO's ``rt_mon`` series in actual_lmp.json.
+    """
+    if not ACTUAL_LMP_JSON.exists() or not (b.path / "system.parquet").exists():
+        return []
+    actual_all = json.loads(ACTUAL_LMP_JSON.read_text()).get(b.iso) or {}
+    sy = pd.read_parquet(b.path / "system.parquet",
+                         columns=["year", "pass", "hour", "price", "demand"])
+    if "pass" in sy.columns and (sy["pass"] == "P1").any():
+        sy = sy[sy["pass"] == "P1"]
+    rows = []
+    for year, g in sy.groupby("year"):
+        act = (actual_all.get(str(int(year))) or {}).get("rt_mon")
+        if not act:
+            continue
+        month = np.searchsorted(_MONTH_START_HOUR, g["hour"].to_numpy(),
+                                side="right").clip(1, 12)
+        gm = g.assign(month=month, pd_=g["price"] * g["demand"]).groupby(
+            "month").agg(pd_=("pd_", "sum"), d=("demand", "sum"))
+        gm["model"] = np.where(gm["d"] > 0, gm["pd_"] / gm["d"], np.nan)
+        num = den = 0.0
+        for m, r in gm.iterrows():
+            a = act[int(m) - 1] if int(m) <= len(act) else None
+            if a is None or not np.isfinite(r["model"]):
+                continue
+            num += r["d"] * abs(r["model"] - a)
+            den += r["d"]
+        if den > 0:
+            rows.append({"year": int(year), "metric": "lmp",
+                         "key": "system", "value": num / den})
+    return rows
+
+
+def bundle_metrics(b: Bundle, cache: dict) -> pd.DataFrame:
+    """Shape + LMP metric values per year (columns: year, metric, key, value).
+
+    Pure parquet/JSON reads, cached on the source files' stamps. Bundles
+    missing an input (old PJM format without plant_cf_bands, ISOs without an
+    actual-LMP reference) simply contribute fewer rows; pair deltas are
+    formed only over metrics both ends report.
+    """
+    files = sorted((b.path / "dispatch").glob("*_P1.parquet")) + [
+        p for p in (b.path / "eia930.parquet", b.path / "system.parquet",
+                    b.path / "plant_cf_bands.parquet") if p.exists()]
+    stamp = {f.name: [f.stat().st_mtime, f.stat().st_size] for f in files}
+    ent = cache.get(b.name, {}).get("metrics")
+    if ent and ent.get("stamp") == stamp:
+        return pd.DataFrame(ent["rows"],
+                            columns=["year", "metric", "key", "value"])
+    e930 = (pd.read_parquet(b.path / "eia930.parquet")
+            if (b.path / "eia930.parquet").exists() else None)
+    rows: list[dict] = []
+    for f in sorted((b.path / "dispatch").glob("*_P1.parquet")):
+        disp = pd.read_parquet(f, columns=["year", "klass", "hour", "mw"])
+        rows += _shape_rows(b, int(disp["year"].iloc[0]), disp, e930)
+    rows += _cf_emd_rows(b)
+    rows += _lmp_rows(b)
+    cache.setdefault(b.name, {})["metrics"] = {"stamp": stamp, "rows": rows}
+    return pd.DataFrame(rows, columns=["year", "metric", "key", "value"])
+
+
+def metric_values(b: Bundle, cache: dict) -> pd.Series:
+    """All objective values, indexed by (year, metric, key).
+
+    twh entries hold the model TWh per class (deltas across a pair are
+    Δgeneration); shape/lmp entries hold the residual metric itself.
+    """
+    t = class_totals(b, cache)
+    rows = {(int(r.year), "twh", r.klass): r.model_twh for r in t.itertuples()}
+    for r in bundle_metrics(b, cache).itertuples():
+        rows[(int(r.year), r.metric, r.key)] = r.value
+    idx = pd.MultiIndex.from_tuples(rows.keys(), names=["year", "metric", "key"])
+    return pd.Series(list(rows.values()), index=idx, dtype=float)
+
+
+def error_blocks(b: Bundle, cache: dict) -> pd.DataFrame:
+    """Error vector rows [year, metric, key, err] for the recipe target.
+
+    twh: model − EIA-923 (TWh). shape/lmp: the residual metric (target 0).
+    """
+    t = class_totals(b, cache)
+    rows = [{"year": int(r.year), "metric": "twh", "key": r.klass,
+             "err": r.model_twh - r.eia_twh} for r in t.itertuples()]
+    rows += [{"year": int(r.year), "metric": r.metric, "key": r.key,
+              "err": r.value} for r in bundle_metrics(b, cache).itertuples()]
+    return pd.DataFrame(rows)
+
+
+def block_scales(baseline: Bundle, cache: dict) -> dict[str, float]:
+    """RMS error magnitude per block on the baseline bundle (normalizers)."""
+    err = error_blocks(baseline, cache)
+    out = {}
+    for m in METRICS:
+        v = err.loc[err["metric"] == m, "err"].to_numpy(float)
+        v = v[np.isfinite(v)]
+        out[m] = float(np.sqrt(np.mean(v ** 2))) if v.size else 1.0
+        if out[m] <= 0:
+            out[m] = 1.0
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -294,10 +569,54 @@ def _git_pair_dirty(sha0: str, sha1: str) -> bool | None:
     return None  # sha not in local history
 
 
+_SC_DEFAULTS: dict | None = None
+
+
+def _scenario_defaults() -> dict:
+    """Current ScenarioConfig defaults, JSON-roundtripped like run_config.
+
+    Used to ignore key-presence-only config diffs: a field added to
+    ScenarioConfig between two runs shows up only in the newer bundle's
+    recorded config, but if its value there equals the (inert) dataclass
+    default the dispatch math was identical — e.g. run80a (predates the bit
+    sigmoid fields) vs run82 (records coal_bit_* defaults, sigmoid off).
+    Import failure degrades to {} — every presence diff then counts, which
+    only ever downgrades a pair (safe direction).
+    """
+    global _SC_DEFAULTS
+    if _SC_DEFAULTS is None:
+        try:
+            import dataclasses
+            sys.path.insert(0, str(REPO / "src"))
+            from market_sim.config.scenarios import ScenarioConfig
+            _SC_DEFAULTS = json.loads(json.dumps(
+                dataclasses.asdict(ScenarioConfig()), default=str))
+        except Exception:
+            _SC_DEFAULTS = {}
+    return _SC_DEFAULTS
+
+
 def _config_diff(b0: Bundle, b1: Bundle) -> list[str]:
-    """scenario_config keys (curves excluded) that differ inside the pair."""
-    return sorted(k for k in set(b0.scenario) | set(b1.scenario)
-                  if b0.scenario.get(k) != b1.scenario.get(k))
+    """scenario_config keys (curves excluded) that differ inside the pair.
+
+    Keys present on only one side are benign when the present value equals
+    the current ScenarioConfig default (a field added/removed across code
+    versions with an inert default); anything else differs for real.
+    """
+    missing = object()
+    defaults = _scenario_defaults()
+    out = []
+    for k in set(b0.scenario) | set(b1.scenario):
+        v0 = b0.scenario.get(k, missing)
+        v1 = b1.scenario.get(k, missing)
+        if v0 == v1:
+            continue
+        if v0 is missing or v1 is missing:
+            present = v1 if v0 is missing else v0
+            if k in defaults and present == defaults[k]:
+                continue
+        out.append(k)
+    return sorted(out)
 
 
 def classify_pair(b0: Bundle, b1: Bundle) -> tuple[str, str]:
@@ -396,39 +715,42 @@ def _ridge(X: np.ndarray, Y: np.ndarray, alpha: float) -> np.ndarray:
 
 
 def fit_year(pairs: list[PairObs], knobs: list[tuple[str, str]],
-             klasses: list[str], year: int, alpha: float) -> pd.DataFrame:
-    """Long-format S for one year, with jackknife stderr per cell."""
-    rows_x, rows_y, used = [], [], []
+             targets: list[tuple[str, str]], year: int, alpha: float,
+             deltas: dict[str, pd.Series]) -> pd.DataFrame:
+    """Long-format S for one year, with jackknife stderr per cell.
+
+    ``targets`` are (metric, key) pairs — ("twh", klass) plus shape/lmp
+    entries. Each target column is fitted on the pairs where both bundle
+    ends report the metric for this year, so a missing parquet in an old
+    bundle shrinks that column's n_obs instead of poisoning the fit.
+    """
+    rows_x, rows_y = [], []
     for p in pairs:
-        t0 = p.b0.totals.set_index("klass")
-        t1 = p.b1.totals.set_index("klass")
-        t0 = t0[t0["year"] == year]
-        t1 = t1[t1["year"] == year]
-        if t0.empty or t1.empty:
-            continue
+        d = deltas[p.label]
         rows_x.append([p.dmult.get(k, 0.0) for k in knobs])
-        rows_y.append([
-            float(t1["model_twh"].get(c, 0.0)) - float(t0["model_twh"].get(c, 0.0))
-            for c in klasses])
-        used.append(p)
-    if not used:
+        rows_y.append([d.get((year, m, key), np.nan) for (m, key) in targets])
+    if not rows_x:
         return pd.DataFrame()
     X, Y = np.array(rows_x), np.array(rows_y)
-    B = _ridge(X, Y, alpha)
-    n = len(used)
-    if n > 2:  # leave-one-pair-out jackknife
-        Bs = np.stack([
-            _ridge(np.delete(X, i, 0), np.delete(Y, i, 0), alpha)
-            for i in range(n)])
-        se = np.sqrt((n - 1) / n * ((Bs - Bs.mean(0)) ** 2).sum(0))
-    else:
-        se = np.full_like(B, np.nan)
-    n_obs = (np.abs(X) > 1e-9).sum(0)
 
     rows = []
-    for i, (cls, band) in enumerate(knobs):
-        for j, in_cls in enumerate(klasses):
-            coef, s = float(B[i, j]), float(se[i, j])
+    for j, (metric, key) in enumerate(targets):
+        ok = np.isfinite(Y[:, j])
+        if not ok.any():
+            continue
+        Xj, yj = X[ok], Y[ok, j:j + 1]
+        coefs = _ridge(Xj, yj, alpha)[:, 0]
+        n = int(ok.sum())
+        if n > 2:  # leave-one-pair-out jackknife
+            Bs = np.stack([
+                _ridge(np.delete(Xj, i, 0), np.delete(yj, i, 0), alpha)[:, 0]
+                for i in range(n)])
+            se = np.sqrt((n - 1) / n * ((Bs - Bs.mean(0)) ** 2).sum(0))
+        else:
+            se = np.full(len(knobs), np.nan)
+        n_obs = (np.abs(Xj) > 1e-9).sum(0)
+        for i, (cls, band) in enumerate(knobs):
+            coef, s = float(coefs[i]), float(se[i])
             if n_obs[i] >= 3 and np.isfinite(s) and abs(coef) > 2 * s:
                 conf = "high"
             elif n_obs[i] >= 2 and (not np.isfinite(s) or abs(coef) > s):
@@ -436,24 +758,32 @@ def fit_year(pairs: list[PairObs], knobs: list[tuple[str, str]],
             else:
                 conf = "low"
             rows.append({
-                "year": year, "out_class": cls, "band": band, "in_class": in_cls,
-                "dTWh_per_unit_mult": round(coef, 4),
+                "year": year, "metric": metric, "out_class": cls,
+                "band": band, "in_class": key,
+                "dTWh_per_unit_mult": round(coef, 6),
                 "n_obs": int(n_obs[i]),
-                "stderr": round(s, 4) if np.isfinite(s) else None,
+                "stderr": round(s, 6) if np.isfinite(s) else None,
                 "confidence": conf,
             })
     return pd.DataFrame(rows)
 
 
-def fit_iso(pairs: list[PairObs], alpha: float) -> pd.DataFrame:
+def fit_iso(pairs: list[PairObs], alpha: float, cache: dict) -> pd.DataFrame:
     pure = [p for p in pairs if p.status == "pure" and p.dmult]
     if not pure:
         return pd.DataFrame()
     knobs = sorted({k for p in pure for k in p.dmult})
-    klasses = sorted({k for p in pure for k in p.b1.totals["klass"]})
     years = sorted({y for p in pure for y in set(p.b0.years) & set(p.b1.years)})
+    deltas: dict[str, pd.Series] = {}
+    targets: set[tuple[str, str]] = set()
+    for p in pure:
+        v0, v1 = metric_values(p.b0, cache), metric_values(p.b1, cache)
+        common = v0.index.intersection(v1.index)
+        deltas[p.label] = (v1[common] - v0[common])
+        targets |= {(m, k) for (_, m, k) in common}
+    targets = sorted(targets)
     return pd.concat(
-        [fit_year(pure, knobs, klasses, y, alpha) for y in years],
+        [fit_year(pure, knobs, targets, y, alpha, deltas) for y in years],
         ignore_index=True)
 
 
@@ -584,7 +914,8 @@ def adjacency_check(b: Bundle, S: pd.DataFrame, cache: dict) -> None:
 
         if S.empty:
             continue
-        cross = S[(S["year"] == year) & (S["out_class"] != S["in_class"])
+        cross = S[(S["year"] == year) & (S["metric"] == "twh")
+                  & (S["out_class"] != S["in_class"])
                   & (S["confidence"] != "low")]
         cross = cross.reindex(
             cross["dTWh_per_unit_mult"].abs().sort_values(ascending=False).index
@@ -600,58 +931,202 @@ def adjacency_check(b: Bundle, S: pd.DataFrame, cache: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Joint-move recipe
+# Trust region
 # ---------------------------------------------------------------------------
 
-def solve_joint_move(S: pd.DataFrame, err: pd.DataFrame, ridge: float = 0.5,
-                     cap: float = 0.15, min_obs: int = 2,
-                     ) -> tuple[pd.Series, pd.DataFrame] | None:
-    """min ‖S·Δm + err‖² + λ‖Δm‖² with |Δm| ≤ cap, price bands only.
+def knob_sampled_ranges(pairs: list[PairObs],
+                        exclude: frozenset[str] = frozenset(),
+                        ) -> dict[tuple[str, str], tuple[float, float]]:
+    """{(class, band): (lo, hi)} resolved-value range sampled by pure pairs.
 
-    S: long-format Jacobian (one ISO). err: columns [year, klass, err_twh],
-    model − EIA-923. Returns (Δm per knob, predicted residual per class-year).
+    Only pairs where the knob actually moved contribute (both endpoints'
+    resolved values). ``exclude`` drops pairs touching the named bundles —
+    used by the back-test so the target run can't vouch for its own move.
+    """
+    rng: dict[tuple[str, str], tuple[float, float]] = {}
+    for p in pairs:
+        if p.status != "pure" or not p.dmult:
+            continue
+        if {p.b0.name, p.b1.name} & exclude:
+            continue
+        for (cls, band) in p.dmult:
+            for bnd in (p.b0, p.b1):
+                v = (bnd.curves.get(cls) or {}).get(band)
+                if v is None:
+                    continue
+                lo, hi = rng.get((cls, band), (float(v), float(v)))
+                rng[(cls, band)] = (min(lo, float(v)), max(hi, float(v)))
+    return rng
+
+
+def trust_region_violations(
+    dm: pd.Series, resolved: dict[str, dict[str, float]],
+    ranges: dict[tuple[str, str], tuple[float, float]], tol: float = 1e-9,
+) -> dict[tuple[str, str], str]:
+    """Knobs whose post-move resolved value exits the sampled range.
+
+    A step that lands at/beyond the edge of the values the pure pairs
+    actually sampled is an extrapolation — the run-82 failure mode — and is
+    reported for zeroing rather than trusted.
+    """
+    out = {}
+    for (cls, band), step in dm.items():
+        if abs(step) <= tol:
+            continue
+        v = (resolved.get(cls) or {}).get(band)
+        if v is None:
+            continue
+        lo, hi = ranges.get((cls, band), (float("nan"),) * 2)
+        if not np.isfinite(lo):
+            out[(cls, band)] = "knob never sampled by a pure pair"
+            continue
+        post = float(v) + float(step)
+        if post < lo - tol or post > hi + tol:
+            out[(cls, band)] = (
+                f"post-move {post:.3f} exits sampled range "
+                f"[{lo:.3f}, {hi:.3f}] (current {v:.3f})")
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Joint-move recipe (multi-objective)
+# ---------------------------------------------------------------------------
+
+def _recipe_system(S: pd.DataFrame, err: pd.DataFrame,
+                   weights: dict[str, float], scales: dict[str, float],
+                   min_obs: int):
+    """Assemble the weighted least-squares system across all blocks.
+
+    Returns (knobs, rows, A, b, w) — A·Δm + b is the predicted error per
+    row in native units; w is each row's weight (block weight / block
+    scale), applied inside the solver only.
     """
     S = S[(S["band"].isin(PRICE_BANDS)) & (S["n_obs"] >= min_obs)]
     if S.empty:
         return None
-    knobs = sorted({(r.out_class, r.band)
-                    for r in S.itertuples()})
-    years = sorted(set(S["year"]) & set(err["year"]))
-    klasses = sorted(set(S["in_class"]) & set(err["klass"]))
-    if not years or not klasses:
-        return None
-    coef = S.set_index(["year", "out_class", "band", "in_class"])[
+    knobs = sorted({(r.out_class, r.band) for r in S.itertuples()})
+    coef = S.set_index(["year", "metric", "in_class", "out_class", "band"])[
         "dTWh_per_unit_mult"]
-    e = err.set_index(["year", "klass"])["err_twh"]
-    A = np.array([[coef.get((y, c, bnd, k), 0.0) for (c, bnd) in knobs]
-                  for y in years for k in klasses])
-    b = np.array([e.get((y, k), 0.0) for y in years for k in klasses])
+    sk = set(zip(S["year"], S["metric"], S["in_class"]))
+    err = err[[(r.year, r.metric, r.key) in sk for r in err.itertuples()]]
+    err = err[np.isfinite(err["err"])]
+    if err.empty:
+        return None
+    rows = [(int(r.year), r.metric, r.key) for r in err.itertuples()]
+    A = np.array([[coef.get((y, m, k, c, bnd), 0.0) for (c, bnd) in knobs]
+                  for (y, m, k) in rows])
+    b = err["err"].to_numpy(float)
+    w = np.array([weights.get(m, 1.0) / scales.get(m, 1.0)
+                  for (_, m, _) in rows])
+    return knobs, rows, A, b, w
 
-    lam = ridge * float(np.trace(A.T @ A)) / max(len(knobs), 1)
-    L = float(np.linalg.norm(A, 2) ** 2 + lam)
-    x = np.zeros(len(knobs))
-    for _ in range(5000):  # projected gradient on the box constraint
-        x = np.clip(x - (A.T @ (A @ x + b) + lam * x) / L, -cap, cap)
+
+def _solve_box(A: np.ndarray, b: np.ndarray, w: np.ndarray, ridge: float,
+               lo: np.ndarray, hi: np.ndarray) -> np.ndarray:
+    """min ‖w·(A·x + b)‖² + λ‖x‖² s.t. lo ≤ x ≤ hi (projected gradient)."""
+    Aw, bw = A * w[:, None], b * w
+    lam = ridge * float(np.trace(Aw.T @ Aw)) / max(A.shape[1], 1)
+    L = float(np.linalg.norm(Aw, 2) ** 2 + lam)
+    if L <= 0:
+        return np.zeros(A.shape[1])
+    x = np.zeros(A.shape[1])
+    for _ in range(5000):
+        x = np.clip(x - (Aw.T @ (Aw @ x + bw) + lam * x) / L, lo, hi)
+    return x
+
+
+def _block_rms(rows: list[tuple], v: np.ndarray) -> dict[str, float]:
+    out = {}
+    for m in METRICS:
+        sel = np.array([r[1] == m for r in rows])
+        if sel.any():
+            out[m] = float(np.sqrt(np.mean(v[sel] ** 2)))
+    return out
+
+
+def solve_joint_move(
+    S: pd.DataFrame, err: pd.DataFrame, weights: dict[str, float],
+    scales: dict[str, float], resolved: dict[str, dict[str, float]],
+    ranges: dict[tuple[str, str], tuple[float, float]],
+    ridge: float = 0.5, cap: float = 0.15, min_obs: int = 2,
+) -> tuple[pd.Series, pd.DataFrame, dict[tuple[str, str], str]] | None:
+    """Multi-objective joint move with per-step cap and trust region.
+
+    Minimizes the block-weighted sum over twh + shape + lmp rows. Knobs whose
+    recommended step would push the target's resolved multiplier outside the
+    pure-pair sampled range are zeroed and re-solved (the trust region), so
+    the recipe never recommends an extrapolated move.
+
+    Returns (Δm, per-row prediction frame, {frozen knob: reason}).
+    """
+    sysm = _recipe_system(S, err, weights, scales, min_obs)
+    if sysm is None:
+        return None
+    knobs, rows, A, b, w = sysm
+    lo = np.full(len(knobs), -cap)
+    hi = np.full(len(knobs), cap)
+    x = _solve_box(A, b, w, ridge, lo, hi)
     dm = pd.Series(x, index=pd.MultiIndex.from_tuples(knobs))
+    frozen = trust_region_violations(dm, resolved, ranges)
+    if frozen:
+        for i, k in enumerate(knobs):
+            if k in frozen:
+                lo[i] = hi[i] = 0.0
+        x = _solve_box(A, b, w, ridge, lo, hi)
+        dm = pd.Series(x, index=pd.MultiIndex.from_tuples(knobs))
+        # The re-solve can route the same extrapolation through a different
+        # knob; freeze cumulatively until clean (bounded by the knob count).
+        for _ in range(len(knobs)):
+            more = {k: r for k, r in
+                    trust_region_violations(dm, resolved, ranges).items()
+                    if k not in frozen}
+            if not more:
+                break
+            frozen.update(more)
+            for i, k in enumerate(knobs):
+                if k in frozen:
+                    lo[i] = hi[i] = 0.0
+            x = _solve_box(A, b, w, ridge, lo, hi)
+            dm = pd.Series(x, index=pd.MultiIndex.from_tuples(knobs))
     resid = A @ x + b
     pred = pd.DataFrame({
-        "year": [y for y in years for _ in klasses],
-        "klass": klasses * len(years),
-        "err_now_twh": b.round(2), "err_pred_twh": resid.round(2)})
-    return dm, pred
+        "year": [r[0] for r in rows], "metric": [r[1] for r in rows],
+        "key": [r[2] for r in rows],
+        "err_now": b, "err_pred": resid})
+    return dm, pred, frozen
 
 
-def run_errors(b: Bundle, cache: dict) -> pd.DataFrame:
-    t = class_totals(b, cache)
-    t["err_twh"] = t["model_twh"] - t["eia_twh"]
-    return t[["year", "klass", "err_twh"]]
+def print_error_blocks(b: Bundle, cache: dict) -> None:
+    """All three error blocks for one run (--validate-run report)."""
+    err = error_blocks(b, cache)
+    print(f"\n  Error blocks — {b.name}:")
+    twh = err[err["metric"] == "twh"].pivot(index="key", columns="year",
+                                            values="err")
+    print("  [twh] model − EIA-923 (TWh):")
+    print("    " + twh.round(2).to_string().replace("\n", "\n    "))
+    other = err[err["metric"] != "twh"]
+    if other.empty:
+        print("  [shape]/[lmp] no metrics available (missing parquet or "
+              "actual-LMP reference)")
+        return
+    ov = other.pivot(index=["metric", "key"], columns="year", values="err")
+    print("  [shape] NRMSE vs EIA-930 / panel cf_emd; [lmp] demand-weighted "
+          "monthly |model − actual RT| ($/MWh):")
+    print("    " + ov.round(3).to_string().replace("\n", "\n    "))
 
 
 def print_recipe(iso: str, S: pd.DataFrame, target: Bundle, cache: dict,
-                 ridge: float, cap: float) -> None:
-    res = solve_joint_move(S, run_errors(target, cache), ridge=ridge, cap=cap)
+                 pairs: list[PairObs], baseline: Bundle,
+                 weights: dict[str, float], ridge: float, cap: float) -> None:
+    scales = block_scales(baseline, cache)
+    ranges = knob_sampled_ranges(pairs)
+    res = solve_joint_move(
+        S, error_blocks(target, cache), weights, scales, target.curves,
+        ranges, ridge=ridge, cap=cap)
     print(f"\n--- {iso} joint-move recipe (target: {target.name} errors; "
-          f"ridge-regularized, |Δmult| ≤ {cap}) ---")
+          f"blocks twh/shape/lmp weighted "
+          f"{weights['twh']:g}/{weights['shape']:g}/{weights['lmp']:g}, "
+          f"normalized to {baseline.name}; |Δmult| ≤ {cap}) ---")
     if not (target.path / "btm.parquet").exists():
         print("  NOTE: target bundle has no btm.parquet — errors are "
               "grid-only vs EIA-923 totals (BTM add-back missing), so "
@@ -659,18 +1134,110 @@ def print_recipe(iso: str, S: pd.DataFrame, target: Bundle, cache: dict,
     if res is None:
         print("  not enough well-observed knobs (n_obs >= 2) to solve")
         return
-    dm, pred = res
+    dm, pred, frozen = res
+    for (cls, band), reason in sorted(frozen.items()):
+        print(f"  TRUST REGION: {cls}.{band} step zeroed — {reason}; "
+              "re-derive locally first (run a small probe pair around the "
+              "current value before trusting a move here).")
     moves = dm[dm.abs() > 0.005].sort_values(key=lambda s: -s.abs())
     if moves.empty:
-        print("  no move recommended (errors already balanced or S too weak)")
+        print("  no move recommended (errors already balanced, S too weak, "
+              "or every useful knob trust-region-frozen)")
     else:
         print("  Recommended Δmult per knob:")
         for (cls, band), v in moves.items():
-            print(f"    {cls:<14} {band:<10} {v:+.3f}")
-    pv = pred.pivot(index="klass", columns="year",
-                    values=["err_now_twh", "err_pred_twh"])
+            lo, hi = ranges.get((cls, band), (float("nan"),) * 2)
+            cur = (target.curves.get(cls) or {}).get(band)
+            print(f"    {cls:<14} {band:<10} {v:+.3f}   "
+                  f"(resolved {cur:.3f} -> {cur + v:.3f}; "
+                  f"sampled [{lo:.3f}, {hi:.3f}])")
+    print("  Predicted change per block (RMS of err rows, native units — "
+          "TWh / NRMSE-EMD / $-per-MWh):")
+    now = _block_rms(list(zip(pred["year"], pred["metric"], pred["key"])),
+                     pred["err_now"].to_numpy(float))
+    aft = _block_rms(list(zip(pred["year"], pred["metric"], pred["key"])),
+                     pred["err_pred"].to_numpy(float))
+    for m in METRICS:
+        if m in now:
+            arrow = "improves" if aft[m] < now[m] - 1e-9 else (
+                "DEGRADES" if aft[m] > now[m] + 1e-9 else "unchanged")
+            print(f"    {m:<6} {now[m]:8.3f} -> {aft[m]:8.3f}  ({arrow})")
+    tw = pred[pred["metric"] == "twh"]
+    pv = tw.pivot(index="key", columns="year",
+                  values=["err_now", "err_pred"]).round(2)
     print("  Predicted class errors after the move (TWh, model − EIA-923):")
     print("    " + pv.to_string().replace("\n", "\n    "))
+
+
+# ---------------------------------------------------------------------------
+# Back-test: predict one historical move through the Jacobian
+# ---------------------------------------------------------------------------
+
+def backtest_pair(iso: str, S: pd.DataFrame, base: Bundle, target: Bundle,
+                  pairs: list[PairObs], cache: dict) -> None:
+    """Predict target's per-block changes from base's config delta.
+
+    The regression test for the trust region: with
+    ``--backtest e2_4_retune run82_jacobian_joint`` the CT_PEAKER committed
+    move must be flagged (its post-move value sat outside the range sampled
+    by every pure pair available at the time — the target itself is excluded
+    from the sampled-range computation here for exactly that reason).
+    """
+    klasses = {c for b in (base, target) for c in b.curves}
+    dmult = curve_deltas(base, target, klasses)
+    print(f"\n--- {iso} back-test: {base.name} -> {target.name} ---")
+    if not dmult:
+        print("  no offer-curve deltas between the two bundles")
+        return
+    print("  Config delta (Δmult per knob):")
+    for (cls, band), d in sorted(dmult.items()):
+        print(f"    {cls:<14} {band:<10} {d:+.3f}")
+
+    ranges = knob_sampled_ranges(pairs, exclude=frozenset({target.name}))
+    dm = pd.Series(dmult)
+    flags = trust_region_violations(dm, base.curves, ranges)
+    for (cls, band), reason in sorted(flags.items()):
+        print(f"  TRUST REGION would flag {cls}.{band}: {reason}")
+    if not flags:
+        print("  trust region: every knob's post-move value stays inside "
+              "its sampled range")
+
+    Sp = S[S["band"].isin(BANDS)]
+    coef = Sp.set_index(["year", "metric", "in_class", "out_class", "band"])[
+        "dTWh_per_unit_mult"]
+    known = {(c, bnd) for (_, _, _, c, bnd) in coef.index}
+    missing = sorted(set(dmult) - known)
+    if missing:
+        print("  knobs absent from the Jacobian (no pure-pair coverage): "
+              + ", ".join(f"{c}.{b}" for c, b in missing))
+
+    v0, v1 = metric_values(base, cache), metric_values(target, cache)
+    common = v0.index.intersection(v1.index)
+    actual = v1[common] - v0[common]
+    rows = []
+    for (y, m, k) in common:
+        p = sum(coef.get((y, m, k, c, bnd), 0.0) * d
+                for (c, bnd), d in dmult.items())
+        rows.append({"year": y, "metric": m, "key": k,
+                     "predicted": p, "actual": float(actual[(y, m, k)])})
+    cmp_df = pd.DataFrame(rows)
+    print("  Predicted vs actual change per block (RMS over rows):")
+    keys = list(zip(cmp_df["year"], cmp_df["metric"], cmp_df["key"]))
+    pr = _block_rms(keys, cmp_df["predicted"].to_numpy(float))
+    ar = _block_rms(keys, cmp_df["actual"].to_numpy(float))
+    er = _block_rms(keys, (cmp_df["predicted"]
+                           - cmp_df["actual"]).to_numpy(float))
+    for m in METRICS:
+        if m in ar:
+            print(f"    {m:<6} predicted RMS {pr.get(m, 0):8.3f}   "
+                  f"actual RMS {ar[m]:8.3f}   prediction-error RMS "
+                  f"{er[m]:8.3f}")
+    big = cmp_df.reindex(
+        cmp_df["actual"].abs().sort_values(ascending=False).index).head(12)
+    print("  Largest actual changes (predicted vs actual, native units):")
+    for _, r in big.iterrows():
+        print(f"    {int(r['year'])} {r['metric']:<6} {r['key']:<14} "
+              f"pred {r['predicted']:+8.3f}   actual {r['actual']:+8.3f}")
 
 
 # ---------------------------------------------------------------------------
@@ -693,7 +1260,27 @@ def main(argv: list[str] | None = None) -> int:
                     help="per-step band-move cap for the joint-move recipe")
     ap.add_argument("--validate-run", action="append", default=[],
                     help="bundle name(s) for adjacency check + recipe target "
-                         "(default: latest bundle per ISO)")
+                         "(default: latest bundle per ISO); prints all three "
+                         "error blocks (twh/shape/lmp) for the run")
+    ap.add_argument("--w-twh", type=float, default=1.0,
+                    help="recipe weight for the annual class-TWh block")
+    ap.add_argument("--w-shape", type=float, default=1.0,
+                    help="recipe weight for the hourly dispatch-shape block "
+                         "(EIA-930 NRMSE + panel cf_emd)")
+    ap.add_argument("--w-lmp", type=float, default=1.0,
+                    help="recipe weight for the monthly LMP-MAE block "
+                         "(mostly a guardrail vetoing price-degrading moves)")
+    ap.add_argument("--baseline", default="e2_4_retune",
+                    help="bundle whose per-block error magnitudes normalize "
+                         "the recipe blocks (default: the run-79 keeper "
+                         "e2_4_retune; falls back to the target run)")
+    ap.add_argument("--backtest", nargs=2, metavar=("BASE", "TARGET"),
+                    default=None,
+                    help="predict TARGET's per-block changes from BASE's "
+                         "offer-curve delta through the Jacobian and compare "
+                         "with the actual bundle-to-bundle changes; the "
+                         "trust region is evaluated as of BASE (TARGET's own "
+                         "pairs excluded)")
     ap.add_argument("--include-pair", action="append", default=[],
                     help="force-include the pair ending at this run name")
     ap.add_argument("--exclude-pair", action="append", default=[],
@@ -736,30 +1323,55 @@ def main(argv: list[str] | None = None) -> int:
         for p in pure:  # materialize totals for both ends
             class_totals(p.b0, cache)
 
-        S = fit_iso(pairs, args.ridge)
+        S = fit_iso(pairs, args.ridge, cache)
         S.insert(0, "iso", iso)
         all_S.append(S)
 
         print(f"\n--- {iso} sensitivity matrix "
-              f"({len(pure)} pure pairs; sorted by |dTWh/unit|; "
+              f"({len(pure)} pure pairs; twh block, sorted by |dTWh/unit|; "
               "cells with n_obs<2 or |coef|<stderr are low-confidence) ---")
-        show = S[S["dTWh_per_unit_mult"].abs() > 0.05]
+        twh = S[S["metric"] == "twh"]
+        show = twh[twh["dTWh_per_unit_mult"].abs() > 0.05]
         show = show.reindex(
             show["dTWh_per_unit_mult"].abs().sort_values(ascending=False).index)
-        print(show.drop(columns="iso").head(60).to_string(index=False))
+        print(show.drop(columns=["iso", "metric"]).head(60).to_string(index=False))
+        aux = S[S["metric"] != "twh"]
+        if not aux.empty:
+            print(f"\n--- {iso} shape/LMP sensitivities (d(metric)/d(mult); "
+                  "data-poor until pairs accrue — confidence flags matter "
+                  "more than magnitudes here) ---")
+            shaux = aux.reindex(
+                aux["dTWh_per_unit_mult"].abs().sort_values(ascending=False).index)
+            shaux = shaux[shaux["dTWh_per_unit_mult"].abs() > 1e-4]
+            print(shaux.drop(columns="iso").head(40).to_string(index=False))
 
         if iso == "ERCOT":
             check_anchors(by_name, cache)
 
         targets = ([by_name[n] for n in args.validate_run if n in by_name
                     and by_name[n].iso == iso] or [seq[-1]])
+        for t in (targets if args.validate_run else targets[:1]):
+            print_error_blocks(t, cache)
         if not args.no_validate:
             print(f"\n--- {iso} merit-order adjacency validation "
                   f"(bundle: {targets[0].name}) ---")
             adjacency_check(targets[0], S, cache)
         if not args.no_recipe:
-            print_recipe(iso, S, targets[0], cache,
+            baseline = by_name.get(args.baseline)
+            if baseline is None or baseline.iso != iso:
+                baseline = targets[0]
+            print_recipe(iso, S, targets[0], cache, pairs, baseline,
+                         weights={"twh": args.w_twh, "shape": args.w_shape,
+                                  "lmp": args.w_lmp},
                          ridge=args.recipe_ridge, cap=args.cap)
+        if args.backtest:
+            b0, b1 = (by_name.get(n) for n in args.backtest)
+            if b0 and b1 and b0.iso == iso and b1.iso == iso:
+                backtest_pair(iso, S, b0, b1, pairs, cache)
+            elif iso in {getattr(b, "iso", None) for b in (b0, b1)}:
+                print(f"\n  --backtest: bundle(s) not found for {iso}: "
+                      + ", ".join(n for n in args.backtest
+                                  if n not in by_name))
 
     CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
     CACHE_PATH.write_text(json.dumps(cache))
@@ -770,8 +1382,10 @@ def main(argv: list[str] | None = None) -> int:
             out = pd.concat(
                 [prev[~prev["iso"].isin(out["iso"])], out], ignore_index=True)
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        out.sort_values(["iso", "year", "out_class", "band", "in_class"]
-                        ).to_csv(args.out, index=False)
+        sort_cols = [c for c in
+                     ("iso", "year", "metric", "out_class", "band", "in_class")
+                     if c in out.columns]
+        out.sort_values(sort_cols).to_csv(args.out, index=False)
         print(f"\nwrote {len(out)} cells -> {args.out}")
     return 0
 
