@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-12 (CAISO backcasts default to priced WECC interchange)
+
+CAISO backcasts now serve interchange through the priced import/export node by
+default — the calibration harness no longer needs an explicit
+`--priced-interchange` flag for CAISO.
+
+- **Why.** `eia_loader.load_demand` does no interchange netting for CAISO (the
+  CISO series is net load), so a backcast run *without* the priced node leaves
+  CAISO's ~30 TWh/yr of net imports unserved and the domestic fleet
+  over-generates gas. There is no measured-schedule mode for CAISO to displace,
+  so the priced WECC node is the only correct default (the eastern ISOs keep
+  their measured tie-line schedule by default).
+- **New `constants.PRICED_INTERCHANGE_DEFAULT_ISOS`** (`frozenset({"CAISO"})`)
+  plus a `resolve_priced_interchange(flag, iso)` helper. Both
+  `run_calibration.py` and `run_calibration_full.py` expose
+  `--priced-interchange` / `--no-priced-interchange` (tri-state, default per
+  ISO); the run_config records the resolved value.
+- **Tranches still uncalibrated.** The CAISO import tranches remain engineering
+  estimates (CAISO P9 TODO: fit to the EIA-930 CISO net-interchange duration
+  curve and validate vs OASIS path ratings). Defaulting the node *on* fixes the
+  structural gap; fitting the tranche shape is the follow-up.
+
 ## 2026-06-11 (NEISO backcast P2 — per-plant offer-curve tranches & bin assignments)
 
 NEISO prompt-pack P2 — the offline derivation that turns the NEISO thermal fleet
