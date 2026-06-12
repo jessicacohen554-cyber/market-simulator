@@ -9,7 +9,9 @@ from market_sim.config.constants import (
     EXPORT_TRANCHES,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHES,
+    PRICED_INTERCHANGE_DEFAULT_ISOS,
     WECC_IMPORT_EFORD,
+    resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import TransferLink, get_iso_config
 from market_sim.data.fleet import (
@@ -594,6 +596,29 @@ class TestWeccBorderCarbon(unittest.TestCase):
         # Exports carry no CA compliance cost; the sink's price stays 0.
         sink = build_wecc_export_sink()
         self.assertEqual(sink.vom, 0.0)
+
+
+class PricedInterchangeDefaultTest(unittest.TestCase):
+    """The --priced-interchange tri-state default resolution.
+
+    CAISO has no measured-schedule mode (load_demand never nets interchange
+    for it), so its backcasts must serve imports through the priced WECC node
+    by default; the eastern ISOs default to their measured schedule.
+    """
+
+    def test_caiso_defaults_on(self):
+        self.assertIn("CAISO", PRICED_INTERCHANGE_DEFAULT_ISOS)
+        self.assertTrue(resolve_priced_interchange(None, "CAISO"))
+
+    def test_other_isos_default_off(self):
+        for iso in ("ERCOT", "PJM", "NYISO", "NEISO"):
+            self.assertFalse(resolve_priced_interchange(None, iso), iso)
+
+    def test_explicit_flag_overrides_default_both_ways(self):
+        # --no-priced-interchange forces the measured schedule even for CAISO;
+        # --priced-interchange forces the node on for an ISO that defaults off.
+        self.assertFalse(resolve_priced_interchange(False, "CAISO"))
+        self.assertTrue(resolve_priced_interchange(True, "ERCOT"))
 
 
 if __name__ == "__main__":
