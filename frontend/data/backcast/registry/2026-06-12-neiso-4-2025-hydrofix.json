@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-4-2025-hydrofix",
+  "label": "neiso 4 2025 hydrofix",
+  "date": "2026-06-12",
+  "shorthand": "neiso-4-2025-hydrofix",
+  "definition": "P12 neiso 2: 2025 hydro budget backfilled from 2024 (incomplete-EIA923 early-release proxy); closes the -98% hydro hole that inflated 2025 gas",
+  "years": [
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-4-2025-hydrofix.js",
+  "bundle": "results/calibration/neiso_p12_hydrofix_2025"
+}

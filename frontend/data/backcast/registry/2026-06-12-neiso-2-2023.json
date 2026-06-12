@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-2-2023",
+  "label": "neiso 2 2023",
+  "date": "2026-06-12",
+  "shorthand": "neiso-2-2023",
+  "definition": "P12 baseline: NEISO defaults + commitment, served interchange (P9b), year 2023",
+  "years": [
+    2023
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-2-2023.js",
+  "bundle": "results/calibration/neiso_p12_base_2023"
+}
