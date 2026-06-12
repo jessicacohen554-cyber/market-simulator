@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-06-11. Every numeric input to the model traces to a primary source
+_Generated 2026-06-12. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**645 parameters registered** (307 flagged `needs-citation`).
+**661 parameters registered** (323 flagged `needs-citation`).
 
 
 ## Calibration
@@ -278,32 +278,47 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_per_tech_gw.NYISO.gas_cc` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.PJM.gas_cc` | 4.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.SPP.gas_cc` | 2.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
-| `scenario.coal_bit_passthrough_ceil` | 1.25 | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
-| `scenario.coal_bit_passthrough_floor` | 0.82 | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
-| `scenario.coal_bit_passthrough_gas_mid` | 3.4 | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
-| `scenario.coal_bit_passthrough_gas_slope` | 2.5 | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_ceil` | None | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_floor` | None | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_gas_mid` | None | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
+| `scenario.coal_bit_passthrough_gas_slope` | None | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJ… | 2023 | auto-generated |
 | `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
 | `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
 | `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
 | `scenario.coal_lignite_mustrun_override` | None | 3 | Tier 3 (calibration) — CAMPD coal must-run overrides. When set, rep… |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_passthrough_ceil` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_passthrough_floor` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_passthrough_gas_mid` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_passthrough_gas_slope` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_lignite_passthrough_sigmoid` | False | 3 | Lignite (mine-mouth; full cost / no sigmoid everywhere today — the … |  | auto-generated, needs-citation |
 | `scenario.coal_mustrun_per_plant` | False | 3 | When True, coal must-run % comes from the per-plant CAMPD-derived t… |  | auto-generated, needs-citation |
 | `scenario.coal_peak_hr_penalty` | 1.08 | 3 | Coal peaking increment |  | auto-generated, needs-citation |
 | `scenario.coal_plant_monthly_pricing` | True | 3 | When True (default), coal generators that report EIA-923 monthly fu… |  | auto-generated, needs-citation |
 | `scenario.coal_prb_contract_passthrough` | 1.0 | 3 | Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal deli… |  | auto-generated, needs-citation |
-| `scenario.coal_prb_follower_ceil` | 1.35 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.coal_prb_follower_floor` | 0.68 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.coal_prb_follower_gas_mid` | 2.85 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.coal_prb_follower_gas_slope` | 2.5 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_ceil` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_floor` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_gas_mid` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_prb_follower_gas_slope` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.coal_prb_follower_mustrun_max` | 25.0 | 3 | MR% <= this -> follower tier |  | auto-generated, needs-citation |
 | `scenario.coal_prb_mustrun_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.coal_prb_passthrough` | 1.0 | 3 | Tier 3 (calibration) — CAMPD coal committed-tranche price-taking. A… |  | auto-generated, needs-citation |
-| `scenario.coal_prb_passthrough_ceil` | 1.5 | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
-| `scenario.coal_prb_passthrough_floor` | 0.78 | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
-| `scenario.coal_prb_passthrough_gas_mid` | 2.85 | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
-| `scenario.coal_prb_passthrough_gas_slope` | 2.5 | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_ceil` | None | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_floor` | None | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_gas_mid` | None | 3 | $/MMBtu logistic midpoint |  | auto-generated, needs-citation |
+| `scenario.coal_prb_passthrough_gas_slope` | None | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
 | `scenario.coal_prb_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed PRB passthrough sigmoid. When True… | 2023 | auto-generated |
 | `scenario.coal_prb_passthrough_tiered` | False | 3 | Tier 3 (calibration) — tiered PRB passthrough. When True, PRB plant… |  | auto-generated, needs-citation |
+| `scenario.coal_sub_passthrough_ceil` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_sub_passthrough_floor` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_sub_passthrough_gas_mid` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_sub_passthrough_gas_slope` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_sub_passthrough_sigmoid` | False | 3 | Subbituminous: the derived EIA-923 rank tag. Historically aliased o… |  | auto-generated, needs-citation |
+| `scenario.coal_subbit_passthrough_ceil` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_subbit_passthrough_floor` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_subbit_passthrough_gas_mid` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_subbit_passthrough_gas_slope` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.coal_subbit_passthrough_sigmoid` | False | 3 | Subbituminous (derived EIA-923 rank tag; e.g. PJM's two PRB-by-rail… |  | auto-generated, needs-citation |
 | `scenario.coal_supply_repricing` | True | 3 | When True (default), coal generators are repriced to the flat annua… |  | auto-generated, needs-citation |
 | `scenario.dual_fuel_switching` | False | 3 | Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas uni… |  | auto-generated, needs-citation |
 | `scenario.eac_price_geothermal` | 0.0 | 1 | $/MWh, clean firm generation credit |  | auto-generated, needs-citation |
@@ -635,6 +650,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ccs_retrofit_max_gw_per_year` | 3.0 | 2 | GW/yr retrofit throughput cap per ISO. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_min_remaining_life` | 15 | 2 | Only retrofit units with ≥ N years remaining useful life. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_vom_adder` | 8.0 | 2 | $/MWh additional VOM for capture O&M, solvent, compression. |  | auto-generated, needs-citation |
+| `scenario.chp_startup_covered` | False | 2 | Tier 3 (calibration) — CHP startup costs covered by the steam host.… |  | auto-generated, needs-citation |
 | `scenario.coal_tranche_1_frac` | 0.3 | 3 | Take-or-pay capacity fraction |  | auto-generated, needs-citation |
 | `scenario.coal_tranche_1_fuel_passthrough` | 0.0 | 3 | VOM only — fuel sunk |  | auto-generated, needs-citation |
 | `scenario.coal_tranche_2_frac` | 0.25 | 3 | Partially contracted |  | auto-generated, needs-citation |

@@ -352,9 +352,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # the function name still says "coal" but it gates on
             # fuel_type == "coal" only; non-coal must-run discounting is
             # handled via assemble_mc using fuel_fracs directly.)
+            # Flat prb passthrough only (forward scenarios don't gas-key);
+            # subbituminous mirrors prb here, matching the backcast routing
+            # convention pre-refactor.
             fuel_fracs = [
                 campd_tranche_fuel_frac(
-                    g, config.coal_prb_passthrough
+                    g, {"prb": config.coal_prb_passthrough,
+                        "subbituminous": config.coal_prb_passthrough}
                 )
                 for g in dispatch_fleet
             ]
