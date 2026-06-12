@@ -808,3 +808,58 @@ offer-band / hydro / gas-basis knob is moved in P12. The fast-P1 smoke and the
 P2 bundle agree on the diagnosis; the `--priced-interchange` diagnostic bundle
 (`neiso_smoke_2024_priced_ix`) is retained on disk as the bracketing evidence
 for gap #1 (not registered — it is a confirmation, not a numbered run).
+
+---
+
+## NYISO P11 — Smoke backcast 2023: structural gap report (2026-06-12)
+
+First NYISO calibration pass (playbook §6 smoke). Year **2023** (full CEMS;
+2024 blocked on `NY_2024`, upload U1). Prereqs P0–P9 + P13 merged; **P10 held
+on the LMP upload (U2)** — price calibration is **level-only** this pass (no
+actual-LBMP duration / zonal-spread comparison). Bundles:
+`results/calibration/nyiso_smoke_2023` (dashboard `nyiso p11 smoke 2023`) and
+the diagnostic `nyiso_smoke_2023_priced` (dashboard `nyiso p11 diag
+priced-interchange`). Per-run detail in
+`results/calibration/nyiso_smoke_2023/SUMMARY-nyiso-p11-smoke.md`.
+
+**Headline — one structural miss, not a band problem.** The energy-only
+backcast over-generates **+16% on total** (147.31 vs 126.96 TWh EIA-923),
+*entirely* in gas (80.11 vs 63.79 TWh, +25.6%). NYISO is a ~16%-of-load net
+importer (actual net interchange **−23.45 TWh**, EIA-930) and the default
+backcast serves **0 TWh** of imports — `_load_nyiso_hourly_demand` deliberately
+does not fold interchange into demand (defers to the priced node, §8.2), and the
+priced node only builds under `--priced-interchange`. So the ~24 TWh import
+wedge is displaced onto in-state gas. Hydro (−0.1%), nuclear (−0.1%), wind
+(−3.6%) are dead-on. **No offer band was tuned** (playbook discipline:
+structural rows red).
+
+**Confirmation (`--priced-interchange`).** The P9 node (5 tranches / 5900 MW)
+reclaims the whole wedge with no band change: gas 80.11 → **55.51 TWh** (−13%
+vs 923), net interchange 0 → **−25.41 TWh** (vs −23.45 actual; import-hours
+100% match, diurnal corr +0.80, duration RMSE 442 MW), total 147.31 → 121.75
+TWh, avg price $71 → $40/MWh. The energy-only gas_ct +81% / gas_st +113% /
+CO2 +57% reads are interchange symptoms.
+
+**Ranked gap list (structural-checklist order; owning pack per fix):**
+
+| # | Row | Status | Finding | Owner |
+|---|---|---|---|---|
+| 1 | demand / net-load | 🟢 | served = demand 147.05 TWh; FoM convention correct; zonal shares Tier-3 Gold-Book static (U3 not uploaded) | P8 (U3) |
+| 2 | **net interchange** | 🔴 dominant | serves 0 vs −23.45 TWh; ~24 TWh dumped on gas; priced node closes it | **P9** |
+| 3 | hydro + storage | 🟢 | hydro 28.38/28.40, budget honored; nuclear −0.1%; PS/BESS plausible but unbenchmarked (no EIA-930 BAT/PS column) | — (P5 data gap) |
+| 4 | gas + RGGI level | 🟡 | RGGI $13.49/t active; gas on flat HH $2.54 seed (`--gas-monthly-actuals` off, U4 basis absent); level unvalidatable (P10 held) | **P7** |
+| 5 | dual-fuel / outages | 🔴 | dual-fuel active (385 tranches/15.9 GW) but oil 0.15→0.00 vs 0.42 (923)/2.17 (930) — flat gas never crosses oil parity; outage overlay healthy (318 derated) | **P13 + P7** (U4) |
+| 6 | offer-curve bands | ⏸️ not tuned | rows 2/4/5 red → untouched; gas_ct/gas_st collapse to tolerance once imports served | P2/P12 |
+
+**NYISO watch items:** hydro displacement 🟢 (lands at budget); downstate
+congestion separation ⚪ not validated (modeled spread ~$0.5–1.5; P10/U2 held —
+cannot compare J−A/K−A LBMP; interface TTCs may need U7); winter dual-fuel 🔴
+(gated on U4 winter basis; Jan/Feb actual oil ~365/~454 GWh).
+
+**Next (in order):** (1) P9 serve interchange in NYISO backcasts — default-on
+priced node or fold the measured EIA-930 schedule into demand (PJM precedent),
+then refine the low-import tail / ~8% over-import; (2) P7 enable
+`--gas-monthly-actuals` + U4 winter basis; (3) P13 re-validate winter oil once
+U4 lands; (4) P10/U2 + P8/U3 uploads for price/separation/zonal load; (5) only
+then (P12) offer-curve bands. Keeper config: none yet — P11 is the structural
+diagnosis, not a tuning pass.
