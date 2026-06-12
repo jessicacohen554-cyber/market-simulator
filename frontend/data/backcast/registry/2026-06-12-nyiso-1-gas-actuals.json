@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-nyiso-1-gas-actuals",
+  "label": "nyiso 1 gas actuals",
+  "date": "2026-06-12",
+  "shorthand": "nyiso-1-gas-actuals",
+  "definition": "REJECTED (no-op) P12 probe. Hypothesis: measured EIA-923 monthly gas (P7) re-levels gas and trips the dual-fuel oil switch. Result: byte-identical to the keeper (nyiso p11 smoke 2023) \u2014 gas_monthly_actuals is already on by DEFAULT in the NYISO harness (Jan-2023 $10.02/MMBtu winter spike already priced; gas 57.53 TWh, oil 0.013, avg $42.72, max $235.81). Oil still does not fire: even measured monthly Jan gas ($10) stays below distillate parity (~$16/MMBtu) \u2014 winter oil is gated on the U4 daily Transco-Z6/Iroquois basis (not uploaded for NYISO). Keeper unchanged.",
+  "years": [
+    2023
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-nyiso-1-gas-actuals.js",
+  "bundle": "results/calibration/nyiso_p12_gasact_2023"
+}
