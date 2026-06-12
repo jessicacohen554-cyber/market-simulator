@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-pjm-20a-probe-cc",
+  "label": "pjm 20a probe cc",
+  "date": "2026-06-12",
+  "shorthand": "pjm-20a-probe-cc",
+  "definition": "run 20a jacobian probe: pure band move CC_REGULAR econ_high +0.10 on run-19 config, 2024 only. Outcome: gas 2024 +15.66->+11.76, coal-total -5.50->-3.17 (knife edge widened), COAL_BIT -4.27->-2.09, LMP -12.1%->-11.2%; all classes in tolerance. Strong gas->coal TWh lever (~-39 TWh gas, +22 TWh BIT per unit mult), mild LMP gain (+2.7 $/MWh per unit mult).",
+  "years": [
+    2024
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-12-pjm-20a-probe-cc.js",
+  "bundle": "results/calibration/pjm_20a_cc24"
+}
