@@ -863,3 +863,109 @@ then refine the low-import tail / ~8% over-import; (2) P7 enable
 U4 lands; (4) P10/U2 + P8/U3 uploads for price/separation/zonal load; (5) only
 then (P12) offer-curve bands. Keeper config: none yet — P11 is the structural
 diagnosis, not a tuning pass.
+
+
+## ERCOT Runs 85–87 — coal–gas split + LMP localization (2026-06-12)
+
+**Scope.** Resolve the run-84 finding that any coal bid discount adds coal TWh
+by taking them from the wrong gas classes (CT_PEAKER/ST_GAS, already short),
+not CC_REGULAR's surplus — three combos (85/86/87) — plus an hourly LMP
+residual diagnosis (the 2023 price level is ~$24 modelled vs ~$48 actual).
+All three runs rejected; the keeper stays run 79 (`e2_4_retune`). Dashboard:
+`run85 coal soft`, `run86 coal gas realloc`, `run87 gas monthly`
+(85→prunes run80, 86→run81, 87→run82, top-5 retention).
+
+**New data artifact — ERCOT hourly actual LMP.** `scripts/derive_actual_lmp.py`
+now emits `inputs/calibration/actual_lmp_hourly_ERCOT.parquet` (the HB_HUBAVG
+hub-average, DAM hourly + RTM 15-min averaged to the hour, on the model's
+fixed non-leap 8760 calendar — Feb 29 dropped, DST fall-back averaged via the
+repeated-hour rows, spring-forward NaN). The annual/monthly mean formulas are
+untouched so `actual_lmp.json` does not drift (verified by diff); ERCOT gains
+`da_pct`/`rt_pct` like PJM/CAISO. This unblocks `scripts/analyze_lmp_residual.py`
+for ERCOT.
+
+### Run 85 — softer coal dose (REJECTED, dose-response anchor)
+Run-79 config + `--coal-lignite-sigmoid --lignite-floor 0.75 --lignite-ceil
+1.00 --prb-floor 0.74 --prb-follower-floor 0.64` (about half the run-84
+discount). Lignite recovers to **+2.3/-8.8/+1.9** (keeper -12.8/-23.8/+0.7;
+run84 +5.4/-5.0/+2.1) — 2024 did not slide past -10 — and the hourly coal/gas
+dispatch shape *improves* (coal NRMSE 0.171/0.229 → 0.151/0.198). But the 2024
+gas collateral fails the bar: **CT_PEAKER -17.9** (keeper -12.8), **ST_GAS
+-6.5** (keeper -2.7), barely better than run-84's -18.6/-7.2 despite half the
+dose. 2024 ledger: coal +2.95 TWh (lignite +2.10, PRB +0.85) taken from
+CC_REGULAR -1.14 **and** ST_GAS -0.70 / CT_PEAKER -0.42 — the donor mix is
+unchanged from run 84, confirming the discounted coal clears against the
+already-short peakers/steamers adjacent in the merit order, not CC_REGULAR's
+surplus alone. Plant guard clean (Martin Lake 2025 +1.35, no run-81 blow-up).
+LMP MAE 31.0/9.1/11.6 vs keeper 30.9/8.9/11.7 — within the ±$1 gate.
+**Verdict: no pure-coal dose exists; the collateral scales with the discount.**
+
+### Run 86 — run85 coal + Jacobian gas counter-move (REJECTED)
+Derived the joint-move recipe (jacobian v2, `--validate-run run85_coal_soft`)
+against run-85's residual. The trust region **froze the entire gas-side
+counter-move**: run-79's CC_REGULAR/CT_PEAKER/ST_GAS curves already sit at the
+edges of every range sampled by the historical pure pairs, so every move the
+optimizer wants exits the region (the run-82 extrapolation lesson, now
+enforced). The tool had additionally downgraded run-82's pure pair on an inert
+`coal_bit_passthrough_*` provenance diff, narrowing CT_PEAKER.committed to
+[1.140, 1.480]; force-including it (`--include-pair run82_jacobian_joint`,
+restoring the [1.008, 1.480] the matrix should sample) unfroze exactly one
+gas-class knob: **CC_REGULAR peak +0.132** (2.500 → 2.632). CT_PEAKER/ST_GAS
+committed refills stayed frozen *and* unrecommended (Δ < 0.005) — the
+hypothesised "CT_PEAKER/ST_GAS refill" move is not what the data supports.
+Recipe per-block prediction (sidecar verbatim): **twh improves 1.49 → 1.43 but
+shape DEGRADES 0.134 → 0.136 and lmp DEGRADES 19.850 → 19.851**. Ran run-85's
+coal config + CC_REGULAR peak 0.382. Actual: the peak move barely moves
+anything — CT_PEAKER 2024 -17.9 → **-16.6** (still fails the bar vs keeper
+-12.8), coal and CC_REGULAR/ST_GAS ≈ run 85; LMP MAE 31.0/9.1/11.7 (within the
+±$1 gate), shape ≈ flat (the predicted degradation was negligible). 2024
+ledger: CC_REGULAR -1.33 / ST_GAS -0.68 / CT_PEAKER -0.31 gave — the donor mix
+is run-85's. **The coal-gas split has no offer-curve gas reallocation within
+the trusted region.**
+
+### Run 87 — measured monthly gas (REJECTED, mechanism probe for split + LMP)
+Run-79 config + `--gas-monthly-actuals`, no coal flags. ERCOT monthly gas
+exists (`fuel.iso_monthly_gas_prices`, 12/12 months all years; 2024 Apr $1.64,
+Aug $2.29 genuinely cheap). **(1) Coal-gas split — OVER-corrects.** Measured
+gas fixes the 2024 coal deficit (lignite -23.8→+1.2, PRB -9.9→+10.8) but
+overshoots (PRB +8.3/+10.8/+1.3) and worsens the gas classes *harder* than the
+coal sigmoids did: CT_PEAKER 2024 **-23.1** (keeper -12.8), ST_GAS 2024
+**-12.7** (keeper -2.7). 2024 ledger: coal +12.5 TWh, gas -9.7 (CC_REGULAR is
+now the largest donor at -6.78, the "right" one, but the move is so large
+CT_PEAKER/ST_GAS still bleed in absolute TWh). Martin Lake trips the plant
+guard (+1.42/+1.97/+1.51 vs CAMPD). The structural answer is **not** simply the
+gas path — the merit-order adjacency problem persists and measured gas
+amplifies it. **(2) LMP — confirms the scarcity diagnosis (see below).** 2023
+MAE improves 30.9→28.5 (the expensive winter months lift the level) but 2025
+MAE degrades 11.7→**17.5** (2025's dear gas over-prices), so it is not a free
+LMP win; and the 2023 summer >=$200 scarcity tail still carries ~100% of the
+residual while the mid-curve now slightly OVER-prices — exactly the signature
+of a scarcity miss, not a fuel-level miss.
+
+### (D) LMP residual localization — the 2023 miss is scarcity, not fuel
+`analyze_lmp_residual.py` on the keeper, 2023 Jun–Sep: model **$27.1** vs
+actual RT **$96.1** (residual -69.0). The gap is overwhelmingly in the tail:
+**89% of the summer $·h gap sits in the actual >=$200 band** (157 hours, actual
+mean $1,212 vs model $61); the model clears **0 hours >$500** vs 99 actual, and
+5 vs 157 hours >$200. The mid-curve tracks well (full-year p50 residual +0.20;
+actual-price bands below $50 within a few $/MWh). By hour-of-day the gap is the
+afternoon/evening scarcity window (hours 14–20, peak hour 19 residual -456); by
+month it is Aug (-160) / Sep (-61) / Jun (-37). **Read: missing ORDC-style
+reserve-scarcity pricing — a MODEL mechanism, scoped as the run-88+ follow-up,
+NOT bolted on this session.** Run 87 is the live test of the alternative
+(broad fuel offset) branch and rules it out: raising the fuel level
+over-corrects the 2023 mid-curve while leaving the scarcity tail miss intact.
+Monthly LMP MAE ($/MWh, demand-weighted |model − actual RT|), keeper / 85 / 86
+/ 87: 2023 30.9 / 31.0 / 31.0 / 28.5; 2024 8.9 / 9.1 / 9.1 / 9.8; 2025 11.7 /
+11.6 / 11.7 / 17.5. The coal runs (85/86) hold the ±$1 gate every year; only
+run 87 moves the level materially (2023 better, 2025 worse).
+
+**Keeper decision.** Run 79 stays the keeper; no run beats it. The coal-gas
+split has **no offer-curve / fuel solution within the trusted region**: the
+coal sigmoids (85) and measured gas (87) both move coal at the expense of the
+already-short peakers/steamers, and the Jacobian gas counter-move (86) is
+trust-region-frozen because run-79's gas curves already sit at the edges of
+every sampled range (see Run 86). The next coal lever is the per-plant
+Parish/Spruce correction (run-81 finding), and the 2023 LMP level needs the
+ORDC scarcity adder (run-88+); neither is a fleet-wide offer-curve move.
+`docs/calibration-best-so-far.md` unchanged.
