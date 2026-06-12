@@ -1579,6 +1579,20 @@ EAC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
     # Source: limited precedent, modeling assumption
 }
 
+# --- ERCOT ORDC scarcity overlay ------------------------------------------
+# Multi-step RTORPA price floor: (reserve threshold MW, floor $/MWh) steps.
+# The adder is floored at $20/MWh when reserves <= 6,500 MW and at $10/MWh
+# when 6,500 < reserves <= 7,000 MW. Source: OBDRR048, PUCT-approved
+# 2023-10-12, effective 2023-11-01 (ERCOT market notice M-A101623-01);
+# retired with the ORDC at RTC+B go-live (2025-12-05).
+ORDC_FLOOR_STEPS: tuple[tuple[float, float], ...] = (
+    (6500.0, 20.0),
+    (7000.0, 10.0),
+)
+# First hour (non-leap hour-of-year index) of 2023-11-01, the OBDRR048
+# effective date: Jan-Oct = 304 days.
+ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760
