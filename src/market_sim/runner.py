@@ -78,6 +78,7 @@ from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
+from market_sim.results.scarcity import reserve_headroom, scarcity_prices
 
 logger = logging.getLogger(__name__)
 
@@ -525,10 +526,52 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     mr["mr_co2_tons"].sum() / 1000.0,
                 )
 
+        # ORDC scarcity overlay (post-solve, ERCOT energy-only design): the
+        # published reserve-scarcity adder is computed from this year's
+        # solved headroom and added to the prices next year's capacity
+        # economics see — economic retirement, new entry and CCS retrofit
+        # screens (capacity.evolve_fleet) — so peakers and storage earn
+        # scarcity revenue instead of bare LP duals. Raw duals structurally
+        # carry no scarcity rent in a perfect-foresight LP with zero
+        # unserved energy, which over-retires dispatchables and under-
+        # builds; ERCOT's real price is energy + ORDC adder. Dispatch,
+        # volumes, emissions and persisted results are untouched. Other
+        # ISOs recover fixed cost through capacity-market revenue
+        # (capacity_revenue_per_mw_yr) — no adder there.
+        econ_prices = result.prices
+        if config.scarcity_pricing_enabled and iso == "ERCOT":
+            ren_headroom = (
+                wind_cf * np.asarray(wind_cap)[:, None]
+                + solar_cf * np.asarray(solar_cap)[:, None]
+                - result.wind_dispatched - result.solar_dispatched
+            ).sum(axis=0)
+            reserves = reserve_headroom(
+                fleet_arrays, result.dispatch, storage.power_cap,
+                result.storage_charge, result.storage_discharge,
+                config.ordc_as_plan_mw,
+                renewable_headroom=ren_headroom,
+            )
+            d_tot = year_demand.sum(axis=0)
+            lam = np.where(
+                d_tot > 0,
+                (result.prices * year_demand).sum(axis=0)
+                / np.where(d_tot > 0, d_tot, 1.0),
+                result.prices.mean(axis=0),
+            )
+            adder = scarcity_prices(
+                config, year, reserves, lam)["scarcity_adder"]
+            econ_prices = result.prices + adder[None, :]
+            logger.info(
+                "year %d: ORDC scarcity adder for capacity economics — "
+                "mean $%.2f/MWh, >$10 in %d h, max $%.0f",
+                year, float(adder.mean()), int((adder > 10).sum()),
+                float(adder.max()),
+            )
+
         prior_results = {
             "fleet_arrays": fleet_arrays,
             "dispatch_result": result,
-            "prices": result.prices,
+            "prices": econ_prices,
             "peak_demand": peak_demand,
             "planned_additions": planned_additions,
             "mc_cost": mc_cost,
