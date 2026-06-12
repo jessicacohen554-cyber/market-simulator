@@ -52,6 +52,10 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.constants import (  # noqa: E402
+    PRICED_INTERCHANGE_DEFAULT_ISOS,
+    resolve_priced_interchange,
+)
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
@@ -2633,13 +2637,17 @@ def main() -> None:
              "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
              "(cheap-bottomed), <1 concave (cheap mid/top).")
     parser.add_argument(
-        "--priced-interchange", action="store_true",
+        "--priced-interchange", action=argparse.BooleanOptionalAction,
+        default=None,
         help="Serve interchange through the priced import/export node "
              "(import tranches + export sinks in the ISO's external zone, "
              "the forward-scenario mechanism) instead of the measured "
              "schedule added to demand. Used to validate the node's tranche "
              "calibration against the EIA-930 net-interchange duration "
-             "curve.")
+             "curve. Default per ISO: on for "
+             f"{', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+             "(no measured-schedule mode), off elsewhere; pass "
+             "--no-priced-interchange to force the measured schedule.")
     parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
@@ -2743,7 +2751,8 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
-        priced_interchange=args.priced_interchange,
+        priced_interchange=resolve_priced_interchange(
+            args.priced_interchange, iso),
         note=args.note,
     )
     report_run(run_dir)
