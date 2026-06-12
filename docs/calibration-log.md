@@ -1231,3 +1231,246 @@ multipliers make it conservative (true model CO₂ slightly higher / the gap
 smaller). AGT winter basis: `inputs/raw-data/gas_basis_by_iso_month.csv` (ISO-NE
 MA gas index, isonewswire monthly posts, 35/36 months 2023–2025). Hydro
 early-release backfill rationale documented at `load_hydro_budget`.
+---
+
+## NYISO P12 — Full calibration loop to sign-off (2023; 2025/2024 data-blocked) (2026-06-12)
+
+**Keeper: the P9b served-interchange config (`nyiso p11 smoke 2023`, bundle
+`results/calibration/nyiso_smoke_2023`), promoted to the P12 sign-off keeper.**
+The loop ran the offer-curve / hydro / storage / import / dual-fuel knobs against
+the P11+P9b structural config and found **no honest knob that lifts an
+out-of-tolerance class without a zero-sum trade against an in-tolerance one or a
+convention violation** — so the structural config *is* the keeper. Recorded in
+`docs/calibration-best-so-far-nyiso.md`. Branch `claude/nyiso-p12-calibration`.
+**P10 LMP still held (U2)** → price level-only, not scored.
+
+### The mix is calibrated; the gas total is a documented basis floor
+
+2023 fuel-mix vs EIA-923 (P2): every renewable/baseload class is inside ±5%
+— hydro +1.3%, nuclear −0.1%, wind −3.6%, solar −5.0% (edge), OTHER 0.0%,
+CC_REGULAR −2.6%, ST_GAS −0.8% — and net interchange matches exactly (−23.45
+vs −23.45 TWh, duration RMSE **0 MW**, import-hours 100%, diurnal corr +1.00).
+The one class-level miss is **gas total −9.9%** (57.53 vs 63.84 TWh), and it is
+a **demand-basis floor, not a dispatch error**: the in-state fleet's total is
+pinned by energy balance to served demand = EIA-930 transmission-metered demand
+(147.05) + measured net interchange (−23.45) = **123.77 TWh**, which is 4.5%
+below EIA-923's plant-net-generation total (129.67). With every non-gas class
+on the EIA-923 mark, the −5.9 TWh total gap must fall on the swing fuel. The
+deficit lands on the small **CHP/peaker** classes (CC_CHP −14.6%, CT_CHP
+−44.2%, ST_CHP −18.0%, CT_PEAKER −75.2%) while the two big gas classes stay on
+target — the least-distorting landing spot. Against EIA-930 (the operationally
+consistent basis) gas is **−5.7%**. CO2 ≈ 24 Mt (class-rate approx) vs eGRID-2023
+26.9 Mt excl-biogenic ≈ −10%, downstream of the gas total.
+
+**Why no knob closes it (all rejected):**
+- **td_loss gross-up** — ruled out by convention: EIA-930 NYIS demand is
+  transmission-metered / generation-side (playbook §8.1, the ERCOT
+  `td_loss_factor=0` rule), so a distribution-loss gross-up double-counts.
+- **import scaling** — serving e.g. −20 TWh (inside the ±15% interchange
+  tolerance) would lift the total to ~127 and gas to ~−4%, but the measured
+  EIA-930 schedule is matched *exactly* (RMSE 0 MW). Degrading a perfect
+  measured match to paper over an EIA-930-vs-EIA-923 *benchmark-basis*
+  difference is overfitting, not calibration. **Rejected.**
+- **CHP / offer-curve / storage** — reshuffle within the fixed total; the
+  obvious CHP lever does not even do that (see `nyiso 2`).
+
+### Passes (one named hypothesis each)
+
+**nyiso 1 gas-actuals** (`--gas-monthly-actuals`, bundle
+`nyiso_p12_gasact_2023`) — **REJECTED, no-op.** Hypothesis: measured EIA-923
+monthly gas (Jan-2023 $10.02/MMBtu winter spike vs the flat $2.54 HH seed)
+re-levels gas and trips the dual-fuel oil switch. Result: **byte-identical**
+mix and price duration (gas 57.53, oil 0.013, avg $42.72, max $235.81) — the
+harness already enables `gas_monthly_actuals` + `gas_plant_monthly_fuel_pricing`
+by default for NYISO (the P11 "flat $2.54 seed" note predated the P9b re-run).
+So the winter gas level is already priced in, and oil still does not fire: even
+measured monthly Jan gas ($10) stays below distillate parity (~$16/MMBtu), the
+documented P13 limitation — **winter oil is gated on the U4 daily Transco-Z6 /
+Iroquois gas basis, which is not uploaded for NYISO** (only the NEISO/Algonquin
+leg is filled). oil −96.9% is therefore filed to U4, not tunable this pass.
+
+**nyiso 2 chp-covered** (`--chp-startup-covered`, bundle `nyiso_p12_chp_2023`)
+— **REJECTED, negligible.** Hypothesis: the CHP under-dispatch is a
+startup-amortization artifact — a steam-host cogen pays no energy-market cold
+start, so removing the markup lets CC_CHP/CT_CHP/ST_CHP run toward their
+must-run reality. Result: CHP moved only **+0.1 TWh total** (CC_CHP +0.027,
+ST_CHP +0.051, CT_CHP +0.017; CC_REGULAR −0.033, ST_GAS −0.048; gas total
+57.525 → 57.537; avg price $42.72 → $43.02). The CHP/peaker deficit is
+**structural** — the model dispatches CHP economically and enforces no hard
+steam-host must-run floor — not a startup-cost artifact, and within the fixed
+served total there is no room for the CHP classes to recover without displacing
+the on-target baseload gas. A hard steam-host / reliability-must-run floor
+(EIA-860 cogen steam load + downstate reliability commitments) is the structural
+follow-up, filed; it is not an offer-band knob.
+
+### 2025 and 2024 are data-blocked (filed, not calibrated)
+
+The P12 prompt asks for 2023 **+ 2025** in parallel. 2025 is **not yet a valid
+backcast year**:
+- The EIA-930 `NYIS hourly` extract stops at **Q1 2025** (2,160 of 8,760 h), so
+  `nyiso_net_interchange(2025)` returns `None`; `load_demand` falls back to the
+  demand-profiles parquet (full-year **gross** demand, 151.6 TWh) and serves
+  **0** of the ~−23 TWh import wedge → the 2025 baseline bundle
+  (`nyiso_p12_base_2025`) **over-generates +22.7%** (151.9 vs EIA-923 123.8 TWh,
+  gas +11.8%, avg price $127) — the exact P11 structural failure, here driven by
+  missing data rather than missing code.
+- The 2025 EIA-923 benchmark is preliminary (biomass 0.13, solar 0.66, oil 1.06
+  TWh — renewables/biomass under-reported), so even with interchange it could
+  not be scored.
+- **Refresh path:** extend the EIA-930 `NYIS hourly` extract through 2025-12 and
+  re-pull final 2025 EIA-923, then re-run `nyiso_p12_base_2025`. Until then the
+  2025 bundle is retained on disk as the data-gap evidence, **not registered.**
+
+2024 remains blocked on `NY_2024` unit-level CEMS (only facility-level present)
+and the missing `NYISO_2024_renewable_capacity.csv`.
+
+### Keeper decision & sign-off
+
+`nyiso p11 smoke 2023` is the **P12 keeper** (no new tuning bundle — the
+structural config is optimal under the binding constraint). 2023 Stage-G
+calibration is **green on every scorable target except the gas-total basis floor
+and the U4-gated winter oil**, both documented above. Dashboard carries the
+keeper; `nyiso_p12_gasact_2023` / `nyiso_p12_chp_2023` / `nyiso_p12_base_2025`
+are retained on disk as the rejected-probe / data-gap evidence (not registered —
+no keeper among them). `docs/calibration-best-so-far-nyiso.md` records the
+config; doc-00 status table + Stage-G checklist updated; citations appended.
+
+---
+
+## CAISO 2 — priced-WECC-node smoke 2023-2025 (P11, structural-checklist pass) (2026-06-12)
+
+**Run `results/calibration/caiso_1_priced_ix`, dashboard `caiso 2 priced-ix`** —
+the first CAISO full bundle (`run_calibration_full.py --iso CAISO --year 2023
+2024 2025 --hours 8760 --commitment`, P1+P2) solved with the **priced WECC
+import/export node ON by default** (`PRICED_INTERCHANGE_DEFAULT_ISOS={CAISO}`,
+no `--priced-interchange` flag — `load_demand` does no interchange netting for
+CAISO, so the node is the only correct default) and the 2023-2025-fitted
+`IMPORT_TRANCHES`/`EXPORT_TRANCHES["CAISO"]` (CHANGELOG 2026-06-12: 6 import
+blocks 11.4 GW + 2 export sinks 6.5 GW). Prereqs P0-P10 merged; **P10 is in
+level-only mode** — no `actual_lmp.json` CAISO block, so the modeled price level
+is reported, not scored. Structural-discipline pass (playbook §6): **no
+offer-band tuning** — structural row #2 is red and is **filed**, not tuned.
+
+This pass answers the P9 "remaining" item (re-score the *modeled* net
+interchange and clearing frequency vs the solved CAISO price duration curve,
+not just the offline price-orthogonal bound).
+
+### Headline numbers (P2 commitment bundle)
+
+| Metric | 2023 | 2024 | 2025 | Benchmark | Read |
+|---|---|---|---|---|---|
+| gas (TWh) | 44.98 | 54.47 | 62.16 | EIA-923 76.04 / 67.68 / 55.18 | **−41% / −19% / +13% — now UNDER-produces (over-import overshoot)** |
+| gas vs EIA-930 | 44.98 | 54.47 | 62.16 | 88.01 / 85.37 / 79.03 | −49% / −36% / −21% |
+| nuclear | 17.63 | 18.20 | 17.49 | 930 17.75 / 18.35 / 17.61 | ✓ −0.7% / −0.8% / −0.7% |
+| wind | 16.55 | 20.29 | 19.81 | 930 16.40 / 20.06 / 19.82 | ✓ (judged vs 930) |
+| solar | 39.79 | 47.91 | 49.81 | 930 37.17 / 44.64 / 49.70 | ✓ +7% / +7% / +0.2% vs 930 |
+| hydro | 23.78 | 21.23 | 12.32 | 930 24.42 / 22.73 / 21.34 | ✓ / ✓ / **−42% 2025 (partial-year budget; 923 2025 total 117 TWh = incomplete)** |
+| **net interchange (TWh)** | **−61.65** | **−49.26** | **−52.86** | **EIA-930 −28.87 / −32.38 / −36.16** | **RED — +114% / +52% / +46%, far outside ±15%** |
+| import-hour share | 99.9% | 100.0% | 100.0% | 85.9% / 89.0% / 90.9% | **RED — node never exports; midday sign-flip absent** |
+| diurnal corr | +0.96 | +0.96 | +0.90 | — | shape OK but amplitude tiny (peak→trough 1453/833/462 MW vs 5236/4596/4973 measured) and never crosses zero |
+| solar curtailment (TWh) | 0.000 | 0.000 | (no HSL) | reported 2.509 / 3.170 | **RED — model re-curtails ZERO (0% vs 6.3% / 6.6%)** |
+| battery discharge (TWh) | 4.99 | 6.86 | 9.61 | — (CISO folds BAT into OTH) | evening share 93% / 85% / 67%; no 930 benchmark |
+| PS discharge (TWh) | 1.80 | 1.27 | 0.39 | — | no 930 benchmark |
+| avg price ($/MWh) | 77.34 | 53.10 | 56.63 | — (P10 held) | 2023 biased high; **0 negative-price hours all years** (real CAISO has hundreds) |
+
+### Ranked gap list (structural-checklist order; hypotheses + owning pack)
+
+1. **[GREEN · demand/net-load]** CAISO demand is the CISO EIA-930 net-load
+   series (no interchange netting — the documented convention, §8.1/§8.2); the
+   import↔gas swap below is *not* a demand error. Minor: 2023 TAC-area load
+   covers 8759/8760 h, the gap filled with sample-average zone shares (refresh:
+   complete the U4 monthly OASIS pulls). No action.
+
+2. **[RED · net interchange] The priced WECC node OVER-imports — it closes the
+   old gas-overproduction gap but overshoots into the opposite error.** Modeled
+   net interchange **−61.65 / −49.26 / −52.86 TWh vs EIA-930 −28.87 / −32.38 /
+   −36.16** (+114% / +52% / +46%, all far outside the ±15% acceptance band).
+   The node imports in **~100% of hours vs 86-91% measured** and **never
+   exports**, so the midday solar export sign-flip is not reproduced (measured
+   p90/p99 are positive — +661/+3574 MW in 2023 — but the model stays −2548 MW
+   at p99). **Root cause: tranche *prices*, not capacities.** The offline
+   price-orthogonal fit is good (duration RMSE ~560 MW, annual within 1-3%; the
+   capacities tile the duration curve), but the static tranche prices
+   ($14 PNW_hydro → $92 WECC_scarcity, absolute delivered-WECC-energy costs)
+   sit **below the modeled CAISO price duration curve** (p10 $43-48, *zero*
+   negative hours) in nearly every hour, so almost the full 11.4 GW import stack
+   clears continuously while the $0-8 export sinks essentially never clear (the
+   modeled price never collapses midday). Bundle-mode `derive_import_tranches.py
+   --bundle caiso_1_priced_ix` confirms it: current constants score
+   **216% / 154% / 148% of actual annual** against *this* solved price curve,
+   and the re-fit pushes the import/export boundary up to ~$34-48 with import
+   blocks layered at $46-275 (2023) / $44-74 (2024) / $48-80 (2025). **This is
+   a calibration item, not a structural-machinery one** — the node, zone, links
+   and capacities are right; only the price levels relative to the modeled
+   CAISO price are off. **Owner: P9/P12** — re-price `IMPORT_TRANCHES`/
+   `EXPORT_TRANCHES["CAISO"]` in bundle mode against the solved price duration
+   curve, iterating (re-pricing shifts the solved price, so 2-3 passes). **This
+   blocks everything below — do not tune offer bands until it is fixed.**
+
+3. **[RED · curtailment] The LP re-curtails zero solar/wind.** Model curtailment
+   **0.000 TWh** both HSL years vs reported solar **2.509 (6.3%) / 3.170 TWh
+   (6.6%)** and wind 0.151 / 0.229. With 6-8 GW of cheap imports flooding supply
+   and **no negative-price hours**, the midday oversupply that should spill
+   instead displaces gas/exports — a *symptom of gap #2* (cheap imports remove
+   the negative-price regime that drives curtailment) compounded by the P6
+   profile path (the LP consumed the delivered/HSL potential and dispatched
+   100% of it). 2025 has **no CAISO HSL parquet** (`build_caiso_hsl.py` not yet
+   run). **Hypothesis:** re-measure curtailment after gap #2 is fixed; if still
+   zero, the renewable feed is delivered-not-potential (P6 fallback). **Owner:
+   P6 (HSL build for all years) / re-check after P9/P12.**
+
+4. **[AMBER · gas+carbon level — downstream of #2] Gas no longer overproduces —
+   it now UNDER-produces.** The task's confirm-the-headline-gap check: the prior
+   energy-only baseline (`caiso 1 baseline`) over-generated gas because it had
+   no interchange node for CAISO's ~30 TWh/yr net imports. With the node ON,
+   gas falls to **44.98 / 54.47 / 62.16 TWh — now −41% / −19% vs EIA-923 in
+   2023/2024** (and +13% in the partial-2025). This is a **direct one-for-one
+   swap with gap #2**: the +33 TWh of excess 2023 imports displaces ≈31 TWh of
+   gas. So the structural fix (priced node) addressed the right gap, but its
+   over-calibration moved gas through the target and out the far side. Gas lands
+   right once the node imports the correct ~29 TWh (gap #2 fix). **No gas knob
+   this pass** — moving fuel passthrough or offer bands here would bake in a
+   compensating error against the over-import (the PJM lesson). **Owner: resolves
+   with #2.** Carbon: CARB cap-and-trade enters MC via `state_carbon_pricing`
+   (CAISO allowance + border adder on tranches); level not separately scored
+   (P10 held).
+
+5. **[AMBER · hydro/PS/battery throughput] 2025 hydro low; storage has no 930
+   benchmark.** Hydro ✓ in 2023/2024 (−2.6% / −6.6% vs 930) but **−42% in 2025**
+   (12.32 vs 21.34) — the 2025 monthly budget is partial (EIA-923 2025 system
+   total is only 117 TWh, an incomplete reporting year), a *data* gap not a
+   dispatch one. Battery throughput (4.99→9.61 TWh, growing with the fleet) and
+   PS (1.80→0.39 TWh) cannot be scored — the CISO extract folds BAT into `OTH`.
+   Evening-discharge share is high (93%→67%, plausibly correct for CA evening
+   ramp) but unverifiable. **Hypothesis:** complete the 2025 hydro budget (U4
+   refresh); add the storage benchmark when a CISO battery series is available.
+   Watch over-cycling after gap #2 (cheap imports inflate arbitrage spread, the
+   NEISO PS lesson). **Owner: P4 (2025 budget) / P5 (battery benchmark).**
+
+6. **[INFO · outages]** Historic unit-outage overlay fires (229 CAISO
+   plant-tranches derated 2023). No coverage red flag this pass. No action.
+
+7. **[INFO · price level/duration — P10 held]** No `actual_lmp.json` CAISO
+   block, so the modeled level (avg $77.34 / $53.10 / $56.63) is reported, not
+   benchmarked. All four zones (NP15/SP15/ZP26/WECC_import) price *identically*
+   every year — **no NP15↔SP15 separation** (the Tier-3 TTC seeds are
+   non-binding) — and **zero negative-price hours** all years, which real CAISO
+   contradicts (the midday solar collapse). Both are biased by gap #2 (cheap
+   imports prop the floor up). **Owner: P10 (U2 LMP upload + U5 Path 15/26 flows
+   for congestion/negatives).**
+
+### Keeper decision
+
+`caiso 2 priced-ix` registered as the second CAISO run (baseline + this; under
+the 5-run retention limit, no pruning). **Not a calibration keeper for tuning.**
+The priced WECC node is the correct structural mechanism and it closes the
+energy-only baseline's headline gas-overproduction gap — but it is **mis-priced
+relative to the modeled CAISO price**, so it over-imports (+46-114%) and
+suppresses gas below target while never reproducing the midday export sign-flip.
+**Acceptance NOT met:** modeled net interchange is far outside ±15% and the
+diurnal sign pattern is not reproduced. Per playbook §6 the red structural row
+(#2 interchange) is **filed for a bundle-mode tranche-price recalibration
+(P9/P12)** — no offer-band, gas, hydro or storage knob is moved this pass, since
+all of them would compensate for the over-import and bake in errors that must be
+unwound once the node is repriced. The bundle and its `derive_import_tranches.py
+--bundle` re-fit boundaries are the evidence for that next pass.
