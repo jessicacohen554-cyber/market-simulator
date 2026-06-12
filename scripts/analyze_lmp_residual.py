@@ -18,9 +18,16 @@ breaks the residual down three ways:
   * actual-price band — which actual price regimes carry the residual, with
     each band's share of the total $.h gap.
 
+With ``--with-scarcity`` the model series becomes the ORDC-overlaid price
+(energy LMP + scarcity adder) from the bundle's ``scarcity.parquet``
+(scripts/derive_ordc_overlay.py); the energy-only series — which the
+volume calibration gates are defined on — is what you get without the
+flag.
+
 Usage:
     python scripts/analyze_lmp_residual.py RUN_DIR [RUN_DIR ...]
         [--months 7 8] [--years 2023 2024] [--out FILE.md]
+        [--with-scarcity]
 """
 from __future__ import annotations
 
@@ -201,15 +208,32 @@ def _year_report(year: int, model_y: pd.DataFrame, act_y: pd.DataFrame,
     return lines
 
 
+def _apply_scarcity(model: pd.DataFrame, bundle: Path) -> pd.DataFrame:
+    """Add the bundle's ORDC scarcity adder to the model price series."""
+    p = bundle / "scarcity.parquet"
+    if not p.exists():
+        raise SystemExit(
+            f"missing {p} — run scripts/derive_ordc_overlay.py first")
+    sc = pd.read_parquet(p)[["year", "hour", "scarcity_adder"]]
+    out = model.merge(sc, on=["year", "hour"], how="left")
+    out["price"] = out["price"] + out["scarcity_adder"].fillna(0.0)
+    return out[["year", "hour", "price"]]
+
+
 def report(bundles: list[Path], months: list[int],
-           years: list[int] | None) -> str:
+           years: list[int] | None, with_scarcity: bool = False) -> str:
     """Build the markdown residual report across ``bundles``."""
-    lines = ["# Hourly LMP residual localization", ""]
+    title = "# Hourly LMP residual localization"
+    if with_scarcity:
+        title += " — ORDC scarcity overlay applied"
+    lines = [title, ""]
     for bundle in bundles:
         meta = json.loads((bundle / "meta.json").read_text())
         iso = meta.get("iso", "ERCOT")
         actual = _actual_hourly(iso)
         model = _model_system_price(bundle)
+        if with_scarcity:
+            model = _apply_scarcity(model, bundle)
         got_years = sorted(set(model["year"]).intersection(actual["year"]))
         if years:
             got_years = [y for y in got_years if y in years]
@@ -230,8 +254,11 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=None)
     ap.add_argument("--out", type=Path, default=None,
                     help="write the markdown report here (default: stdout)")
+    ap.add_argument("--with-scarcity", action="store_true",
+                    help="overlay the ORDC scarcity adder (scarcity.parquet)"
+                         " on the model price series")
     args = ap.parse_args()
-    md = report(args.bundles, args.months, args.years)
+    md = report(args.bundles, args.months, args.years, args.with_scarcity)
     if args.out:
         args.out.write_text(md)
         print(f"wrote {args.out}")
