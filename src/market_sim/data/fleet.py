@@ -42,6 +42,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
+    ct_deployment_floor_for_year,
     default_outages_path,
     outage_masks_for_year,
     partial_outage_derate_factors,
@@ -443,6 +444,26 @@ def generators_to_fleet_arrays(
         if ct_floor_frac > 0.0:
             ct_floor_mwh = ct_mustrun_floor_mwh_by_plant(int(_yr))
     ct_floor_plants = set(ct_floor_mwh)
+    # Per-plant CT_PEAKER AS/RUC-deployment hourly floor (config
+    # .ct_deployment_overlay, backcast only): the measured out-of-merit CEMS
+    # energy, applied below as a sparse per-hour min-gen bound. Unlike the
+    # must-run floor above, the deployment units keep the statistical WEFOR/POF
+    # model (the floor is well below pmax in its hours), so they are NOT added
+    # to ct_floor_plants — only availability-capped where they coincide.
+    ct_deploy_floor: dict[int, np.ndarray] = {}
+    ct_deploy_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "ct_deployment_overlay", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        ct_deploy_frac = float(
+            getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0
+        )
+        if ct_deploy_frac > 0.0:
+            ct_deploy_floor = ct_deployment_floor_for_year(int(_yr), hours)
+    ct_deploy_plants = set(ct_deploy_floor)
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
@@ -710,7 +731,8 @@ def generators_to_fleet_arrays(
     chp_pmin_any = any(
         getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
     )
-    if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any or ct_floor_plants:
+    if (st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any
+            or ct_floor_plants or ct_deploy_plants):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
         # (build_variable_bounds), so export sinks (pmin < 0, absorption
@@ -796,6 +818,37 @@ def generators_to_fleet_arrays(
                         take = np.minimum(remaining, cap_mw)
                         min_gen[g_idx, hmask] = take
                         remaining = remaining - take
+        # Per-plant CT_PEAKER AS/RUC-deployment hourly floor: in each plant's
+        # measured out-of-merit hours, force its observed net output as a
+        # minimum, distributed over the plant's tranches cheapest-first
+        # (committed -> econ -> peak) and each capped at the tranche's available
+        # MW that hour. The floor is sparse (zero outside deployment hours), so
+        # the in-merit hours dispatch economically as before; ``np.maximum``
+        # composes it with any reliability must-run floor already placed above
+        # rather than clobbering it.
+        if ct_deploy_plants:
+            ct_d_tranches: dict[int, list[int]] = {}
+            for g_idx, gen in enumerate(generators):
+                if (gen.plant_group == "CT_PEAKER"
+                        and int(gen.plant_code) in ct_deploy_plants):
+                    ct_d_tranches.setdefault(
+                        int(gen.plant_code), []).append(g_idx)
+            deploy_mwh = 0.0
+            for pc, idxs in ct_d_tranches.items():
+                idxs.sort(key=lambda i: heat_rate[i])
+                remaining = ct_deploy_frac * ct_deploy_floor[pc]  # (hours,)
+                deploy_mwh += float(remaining.sum())
+                for g_idx in idxs:
+                    cap = pmax[g_idx] * availability[g_idx, :]
+                    take = np.minimum(remaining, cap)
+                    np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
+                    remaining = remaining - take
+            logger.info(
+                "CT deployment overlay (%s %s): floored %d peaker(s), "
+                "%.2f TWh of out-of-merit energy (frac %.2f)",
+                _iso or "ERCOT", _yr, len(ct_d_tranches),
+                deploy_mwh / 1e6, ct_deploy_frac,
+            )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
