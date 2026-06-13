@@ -1307,7 +1307,7 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # CAPACITIES tile the EIA-930 CISO net-interchange duration curve (held
     # fixed); block PRICES re-fitted in BUNDLE mode against the SOLVED CAISO
     # price duration curve (P9/P12 structural re-price, docs/calibration-log.md
-    # "CAISO 3 — import re-price"). CAISO is a heavy, growing net importer:
+    # "CAISO 4 — import re-price"). CAISO is a heavy, growing net importer:
     # −28.9 / −32.4 / −36.2 TWh, imports in 86% / 89% / 91% of hours across
     # 2023-25 (~20-25% of energy) — the biggest supply block after gas. Median
     # import ~4.2 GW, deepest hour ~11.0 GW; aggregate 11.4 GW sits between that
