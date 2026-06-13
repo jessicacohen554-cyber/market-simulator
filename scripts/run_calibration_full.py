@@ -2563,6 +2563,24 @@ def main() -> None:
              "Requires --ct-mustrun-per-plant.",
     )
     parser.add_argument(
+        "--ct-deployment", action=argparse.BooleanOptionalAction, default=False,
+        help="Inject the per-plant CT_PEAKER AS/RUC-deployment hourly floor "
+             "(outages.ct_deployment_floor_for_year, built by "
+             "scripts/derive_ct_deployment.py): in the measured out-of-merit "
+             "hours where the RT price was below a peaker's marginal cost, floor "
+             "it to its observed CEMS output, recovering the ~1.4-2.3 TWh/yr of "
+             "AS/reliability deployment energy the energy-only LP omits — WITHOUT "
+             "flooring CT to its full CEMS output (in-merit hours stay "
+             "economic). A pure LP min-gen bound (no MIP). Backcast-only; off by "
+             "default.",
+    )
+    parser.add_argument(
+        "--ct-deployment-floor-frac", type=float, default=1.0,
+        help="Fraction of the measured deployment energy forced (default 1.0). "
+             "Lower it if a year would overshoot its CT class bar. Requires "
+             "--ct-deployment.",
+    )
+    parser.add_argument(
         "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
         help="Drop the statistical planned-outage (POF) derate on coal "
              "(planned maintenance comes from the historic outage overlay); "
@@ -2930,6 +2948,10 @@ def main() -> None:
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
+            "ct_deployment_overlay": True if args.ct_deployment else None,
+            "ct_deployment_floor_frac": (
+                args.ct_deployment_floor_frac if args.ct_deployment else None
+            ),
             "wefor_residual_groups": (
                 frozenset(g.strip() for g in args.wefor_relief_groups.split(","))
                 if args.wefor_relief_groups else None
