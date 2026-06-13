@@ -1031,9 +1031,24 @@ def run_year(
             sum(1 for g in import_generators if g.pmin_mw < 0),
             -sum(g.pmin_mw for g in import_generators),
         )
+    # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
+    # on/off shape so the floor starts/stops with the real unit (zero in every
+    # hour the plant did not report load), instead of being smeared flat. The
+    # parasitic factor only scales magnitude, which the per-month shape
+    # normalization removes, so a bare gross series is enough.
+    ct_campd_shape = None
+    if getattr(config, "ct_mustrun_per_plant", False):
+        from market_sim.data import campd as _campd
+        _states = _campd.states_for_iso(iso)
+        if _states:
+            _cdf = _campd.load_campd_hourly(_states, [config.weather_year])
+            if not _cdf.empty:
+                ct_campd_shape = _campd.plant_hourly_net(
+                    _cdf, {}, config.weather_year, hours=config.hours
+                )
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config,
-        load_shape=demand.sum(axis=0),
+        load_shape=demand.sum(axis=0), ct_campd_shape=ct_campd_shape,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
