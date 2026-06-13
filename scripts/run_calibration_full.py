@@ -752,8 +752,22 @@ def _backfill_eia923_with_campd(
 
 def _btm_frame(
     year: int, pass_label: str, result, context, generation: pd.DataFrame,
+    btm_backfill_year: int | None = None,
+    campd_active: set[int] | None = None,
 ) -> pd.DataFrame:
-    """Return behind-the-meter CHP must-run by class for one year-pass."""
+    """Return behind-the-meter CHP must-run by class for one year-pass.
+
+    ``btm_backfill_year``: the BTM add-back is keyed off the plant's EIA-923
+    class net generation for ``year``; the most recent 923 vintage is a
+    monthly-survey-only release that can miss a plant entirely (e.g. San
+    Jacinto, 7325, absent from the 2025 vintage), zeroing its add-back while
+    the class *benchmark* keeps the plant via the CAMPD backfill — an
+    inconsistent comparison. When set, a plant whose (plant, class) 923
+    total is zero for ``year`` borrows its ``btm_backfill_year`` class total
+    instead, but ONLY if CAMPD shows the plant actually generating in
+    ``year`` (``campd_active``) — a CEMS-silent plant stays dropped on both
+    sides. Mirrors ``--hydro-backfill-year``. Unset = no change.
+    """
     from market_sim.config.scenarios import ScenarioConfig
     from market_sim.data.fleet import load_campd_bins
     from market_sim.results.emissions import compute_must_run_emissions
@@ -786,6 +800,32 @@ def _btm_frame(
         int(code): float(class_total.get((int(code), str(grp)), 0.0))
         for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
     }
+    if btm_backfill_year is not None:
+        donor = generation[generation["year"] == btm_backfill_year].copy()
+        donor["klass"] = [
+            _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
+            for f, pm, c, pid in zip(
+                donor["fuel_type"], donor["prime_mover"], donor["chp"],
+                donor["plant_id"],
+            )
+        ]
+        donor_total = donor.groupby(
+            ["plant_id", "klass"])["netgen_annual_mwh"].sum()
+        for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"]):
+            code = int(code)
+            if total_by_plant.get(code, 0.0) > 0.0:
+                continue
+            if campd_active is not None and code not in campd_active:
+                continue
+            carried = float(donor_total.get((code, str(grp)), 0.0))
+            if carried > 0.0:
+                total_by_plant[code] = carried
+                logging.info(
+                    "BTM 923 backfill %s: plant %s %s carries %s class "
+                    "netgen %.0f MWh (missing from the %s vintage, CAMPD "
+                    "active)", year, code, grp, btm_backfill_year, carried,
+                    year,
+                )
     mr = compute_must_run_emissions(
         bins, year, total_gen_by_plant=total_by_plant,
         grid_gen_by_plant=grid_by_plant,
@@ -969,6 +1009,7 @@ def solve_and_persist(
     cc_derate_from_top: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
+    btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir."""
@@ -1069,6 +1110,18 @@ def solve_and_persist(
         if result_p1 is not None:
             labelled.insert(0, ("P1", result_p1))
 
+        # CAMPD hourly is built before the per-pass frames so the BTM 923
+        # backfill can gate on "did the plant actually run this year" —
+        # it depends only on the year, not the solve result.
+        campd_year = (
+            _campd_hourly_frame(year, iso, parasitic_factors, hours)
+            if has_campd else None
+        )
+        campd_active: set[int] | None = None
+        if campd_year is not None:
+            _by_plant = campd_year.groupby("plant_id")["net_mw"].sum()
+            campd_active = set(_by_plant[_by_plant > 0.0].index.astype(int))
+
         for label, res in labelled:
             passes_seen.add(label)
             _dispatch_frame(
@@ -1087,16 +1140,17 @@ def solve_and_persist(
                 storage_frames.append(storage_frame)
             if is_ercot:
                 btm_frames.append(
-                    _btm_frame(year, label, res, context, generation)
+                    _btm_frame(
+                        year, label, res, context, generation,
+                        btm_backfill_year=btm_backfill_year,
+                        campd_active=campd_active,
+                    )
                 )
 
         e930 = _eia930_frame(year, iso, iso_config)
         if e930 is not None:
             eia930_frames.append(e930)
         if has_campd:
-            campd_year = _campd_hourly_frame(
-                year, iso, parasitic_factors, hours
-            )
             eia923_frames.append(
                 _backfill_eia923_with_campd(
                     _eia923_frame(year, generation, iso), campd_year,
@@ -1174,6 +1228,7 @@ def solve_and_persist(
         "cc_derate_from_top": cc_derate_from_top,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
+        "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
         # years putting PRB committed bids on top of gas committed bids)
@@ -2705,6 +2760,16 @@ def main() -> None:
              "Unset (default) loads the backcast year exactly as reported and "
              "changes no existing run.")
     parser.add_argument(
+        "--btm-backfill-year", type=int, default=None,
+        help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
+             "class netgen from this prior year when the backcast year's "
+             "923 vintage has no row for the plant AND CAMPD shows it "
+             "generating — the early monthly-survey-only 923 release "
+             "otherwise zeroes the model-side add-back while the class "
+             "benchmark keeps the plant via the CAMPD backfill (e.g. San "
+             "Jacinto 7325 in 2025). Unset (default) changes no existing "
+             "run.")
+    parser.add_argument(
         "--offer-curve-delta-json", default=None, metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
              "band rather than replacing it, so a re-tune need not restate the "
@@ -2817,6 +2882,7 @@ def main() -> None:
         priced_interchange=resolve_priced_interchange(
             args.priced_interchange, iso),
         hydro_backfill_year=args.hydro_backfill_year,
+        btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
     report_run(run_dir)
