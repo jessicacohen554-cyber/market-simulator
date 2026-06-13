@@ -460,40 +460,55 @@ def partial_outage_derate_factors(
 # reliability-unit-commitment deployment + reserve-adequacy wedge), the floor is
 # the plant's *measured* net output; zero everywhere else. Applied as a min-gen
 # bound by fleet.generators_to_fleet_arrays when ScenarioConfig
-# .ct_deployment_overlay is set (ERCOT backcast only) so the LP reproduces the
-# ~1.4-2.3 TWh/yr of out-of-merit CT energy an energy-only merit order omits,
+# .ct_deployment_overlay is set (backcast only, any ISO — the artifact is keyed
+# per ISO via ct_deployment_csv) so the LP reproduces the out-of-merit CT energy
+# an energy-only merit order omits,
 # WITHOUT flooring CT to its full CEMS output (the in-merit hours stay
 # economic). Unlike the CT reliability must-run floor (which covers all hours
 # and so exempts its units from WEFOR/POF), this floor is sparse and well below
 # pmax in its hours, so the units keep the statistical availability model and
 # the floor is simply availability-capped where they ever coincide.
-CT_DEPLOYMENT_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "calibration"
-    / "ct_deployment_floor_ERCOT.parquet"
-)
+_CT_DEPLOYMENT_DIR: Path = Path(__file__).parents[3] / "inputs" / "calibration"
+
+
+def ct_deployment_csv(iso: str = "ERCOT") -> Path:
+    """Return the per-ISO CT deployment-floor artifact path.
+
+    ``scripts/derive_ct_deployment.py`` writes one parquet per ISO
+    (``ct_deployment_floor_<ISO>.parquet``); the overlay reads the file for
+    the ISO it is dispatching so every ISO's out-of-merit wedge is sourced
+    from its own CEMS + LMP measurement.
+    """
+    return _CT_DEPLOYMENT_DIR / f"ct_deployment_floor_{iso.upper()}.parquet"
+
+
+# Backward-compatible alias: the default ERCOT artifact path.
+CT_DEPLOYMENT_CSV: Path = ct_deployment_csv("ERCOT")
 
 
 @lru_cache(maxsize=None)
 def ct_deployment_floor_for_year(
-    year: int, hours: int = HOURS_PER_YEAR
+    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
 ) -> dict[int, np.ndarray]:
     """Return ``{plant_code: (hours,) deployment floor MW}`` for ``year``.
 
     Reads the per-plant out-of-merit deployment-hour floors written by
     ``scripts/derive_ct_deployment.py`` (long: ``year, plant_code, hour,
-    floor_mw``) and rebuilds each plant's dense 8760-hour floor (zero outside
-    its deployment hours). Returns an empty dict when the artifact is missing
-    (the overlay then degrades to the unmodified energy-only dispatch) or when
-    the year is absent. The arrays are shared read-only via the cache.
+    floor_mw``) for ``iso`` and rebuilds each plant's dense 8760-hour floor
+    (zero outside its deployment hours). Returns an empty dict when the
+    artifact is missing (the overlay then degrades to the unmodified
+    energy-only dispatch) or when the year is absent. The arrays are shared
+    read-only via the cache.
     """
-    if not CT_DEPLOYMENT_CSV.exists():
+    path = ct_deployment_csv(iso)
+    if not path.exists():
         logger.warning(
             "CT deployment-floor artifact not found at %s; "
-            "the CT deployment overlay is a no-op for %d",
-            CT_DEPLOYMENT_CSV, year,
+            "the CT deployment overlay is a no-op for %s %d",
+            path, iso.upper(), year,
         )
         return {}
-    df = pd.read_parquet(CT_DEPLOYMENT_CSV)
+    df = pd.read_parquet(path)
     df = df[df["year"] == year]
     out: dict[int, np.ndarray] = {}
     for code, sub in df.groupby("plant_code", observed=True):
