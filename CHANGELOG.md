@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-13 (CAISO — offer-curve probe panel + Jacobian, sensitivity map only)
+
+Mapped CAISO offer-curve band sensitivities ahead of calibration; **no keeper,
+no band move applied** — the import-tranche mis-pricing (P9/P12) stays the
+blocking owner of the price level and the CC_REGULAR −21 TWh gap.
+
+- **Probe panel** (12 bundles, 2023, `results/calibration/caiso_probe_*`):
+  zero-delta code baseline reproducing `caiso_1_priced_ix`'s 2023 numbers, plus
+  11 single-knob ±0.05 band probes (CC_REGULAR ×5 incl. both committed signs,
+  CT_PEAKER ×2, ST_GAS ×2, CC_CHP, CT_CHP; no coal — CAISO has none). Dashboard:
+  `caiso 3 probe-base` / `3a` / `3k` kept, 9 dominated entries pruned.
+- **Jacobian fitted** (`inputs/processed/offer_curve_jacobian.csv`, +80 CAISO
+  cells; ERCOT/PJM rows byte-equal): CC_REGULAR committed/econ_low/econ_high
+  own-class −14.7/−9.0/−7.3 TWh/unit-mult (med confidence); CHP committed knobs
+  −3.6/−4.4; **CT_PEAKER, ST_GAS and CC peak knobs measure dead** — the
+  over-importing WECC node owns the margin and absorbs 30–50% of every live
+  move. Held-out back-test (CC committed +0.05): prediction-error RMS 0.039 TWh
+  vs actual 0.357. Max in-trust-region joint move recovers only 1.6 of the
+  21 TWh CC gap — documented as what the Jacobian cannot fix.
+- `scripts/derive_offer_curve_jacobian.py`: curated REGISTRY entries for the
+  probe chain + `ISO_STATES["CAISO"]={"CA"}` (adjacency fuel filter). Analysis:
+  `docs/calibration-log.md` "CAISO 3". ERCOT/PJM/NYISO/NEISO untouched.
+
 ## 2026-06-13 (NEISO offer-curve probe panel + Jacobian — analysis only)
 
 Mapped the offer-curve band sensitivities around the NEISO P12 primary-year
