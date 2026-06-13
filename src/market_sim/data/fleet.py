@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
     NOX_RATES,
+    NUCLEAR_DORMANT_UNTIL,
     NUCLEAR_MONTHLY_CF,
     NUCLEAR_MONTHLY_CF_BY_YEAR,
     THERMAL_AVAILABILITY,
@@ -384,6 +385,21 @@ def generators_to_fleet_arrays(
                 availability[g_idx, :] = (
                     base if from_actual else (1.0 - gen.eford) * base
                 )
+    # Dormant nuclear (EIA-860 lists OP but the unit is physically offline,
+    # e.g. the Crane/TMI-1 restart): zero it in backcast years before its
+    # return-to-service year. Forecast runs keep the unit — in backcast mode
+    # weather_year is the calendar year; in forecast it is only a weather
+    # shape, so the comparison would be meaningless there.
+    if (
+        _yr is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+    ):
+        for g_idx, gen in enumerate(generators):
+            if (
+                gen.fuel_type == "nuclear"
+                and _yr < NUCLEAR_DORMANT_UNTIL.get(int(gen.plant_code), 0)
+            ):
+                availability[g_idx, :] = 0.0
 
     # Summer peak, spring/autumn shoulder, and winter — a 3-way partition of
     # the year. The shoulder absorbs the outage shifted out of summer; winter
@@ -410,6 +426,17 @@ def generators_to_fleet_arrays(
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
         drop_coal_pof = getattr(config, "coal_drop_pof", False)
+        # Historic-backcast WEFOR residual: the CAMPD overlay + unit-level
+        # derate already carry every >= 5-day outage for the covered classes
+        # (coal + _POF_DROP_GROUPS), so their full statistical WEFOR would
+        # double-count those events. Cap it at the short-outage residual the
+        # overlay's detector floor leaves uncovered. CTs have no overlay
+        # coverage and keep the full statistical model.
+        wefor_res = (
+            getattr(config, "wefor_residual", None)
+            if getattr(config, "outage_source", "statistical") == "historic"
+            else None
+        )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -419,6 +446,11 @@ def generators_to_fleet_arrays(
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
             wefor *= config.wefor_multiplier
+            if wefor_res is not None and (
+                gen.fuel_type == "coal"
+                or gen.plant_group in _POF_DROP_GROUPS
+            ):
+                wefor = min(wefor, wefor_res)
             if drop_coal_pof and gen.fuel_type == "coal":
                 # Planned maintenance now comes from the historic outage
                 # overlay, so drop the statistical POF (and its summer->shoulder
@@ -2958,6 +2990,55 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+@lru_cache(maxsize=1)
+def cc_duct_peaking_pct() -> dict[int, float]:
+    """Return ``{plant_code: peaking_pct}`` for every EIA-860 CC plant.
+
+    Built from the raw EIA-860 Generator_Y Operable sheet parquet
+    (``eia860_generator_operable.parquet``): a plant is duct-fired when any
+    of its combined-cycle generators carries the "Duct Burners" = Y flag
+    (reported on the steam/CA rows). Duct-fired plants get the
+    nameplate-vs-net-summer capability gap as their peaking share,
+    ``100 x max(0, nameplate - net_summer) / nameplate`` summed over the
+    plant's CC generators; non-duct CC plants get 0.0 — they have no
+    duct-firing increment, so a class-uniform peak band hands them phantom
+    scarcity capacity. (The EIA-860 release carries no separate duct-burner
+    MW increment, so the capability gap is the proxy; for non-duct plants
+    that same gap is ambient derate, already modeled by
+    ``_SUMMER_CLASS_DERATE``.) Applied per plant under
+    ``config.cc_duct_peaking``, superseding the offer curve's class-wide
+    ``pct_peaking``. Plants absent from the sheet are absent from the map
+    (callers keep their class default).
+    """
+    path = EIA_860_DIR / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=[
+        "Plant Code", "Technology", "Duct Burners",
+        "Nameplate Capacity (MW)", "Summer Capacity (MW)",
+    ])
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
+    if cc.empty:
+        return {}
+    cc["plant_code"] = cc["Plant Code"].astype(float).astype(int)
+    cc["np"] = pd.to_numeric(cc["Nameplate Capacity (MW)"], errors="coerce")
+    cc["ns"] = pd.to_numeric(cc["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, float] = {}
+    for code, grp in cc.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        if np_sum <= 0.0:
+            continue
+        if (grp["Duct Burners"].astype(str).str.strip() == "Y").any():
+            ns_sum = float(grp["ns"].sum())
+            out[int(code)] = round(
+                100.0 * max(0.0, np_sum - ns_sum) / np_sum, 1
+            )
+        else:
+            out[int(code)] = 0.0
+    return out
+
+
 def fleet_to_bins(
     generators: list[Generator], iso: str, config: ScenarioConfig
 ) -> pd.DataFrame:
@@ -3428,6 +3509,16 @@ def bins_to_fleet(
             ).get((plant_code, group))
             if _pk is not None:
                 pct_peak = _pk
+        if group in ("CC_REGULAR", "CC_CHP") and getattr(
+                config, "cc_duct_peaking", False):
+            # Per-plant EIA-860 duct-burner peaking share: duct-fired plants
+            # get their capability gap, non-duct CCs get 0 (no phantom
+            # scarcity band). Supersedes the class-wide pct_peaking and the
+            # tranche artifact above; the ERCOT hand-set map below stays the
+            # final word for its plants.
+            _dpk = cc_duct_peaking_pct().get(plant_code)
+            if _dpk is not None:
+                pct_peak = _dpk
         if (group == "CC_REGULAR"
                 and getattr(config, "cc_peaking_per_plant", False)
                 and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
@@ -3816,6 +3907,12 @@ def plant_tranche_bands(
     pct_peak = float(b["pct_peak"])
     if offer is not None and "pct_peaking" in offer:
         pct_peak = float(offer["pct_peaking"])
+    if group in ("CC_REGULAR", "CC_CHP") and getattr(
+            config, "cc_duct_peaking", False):
+        # Per-plant EIA-860 duct-burner peaking share (see bins_to_fleet).
+        _dpk = cc_duct_peaking_pct().get(plant_code)
+        if _dpk is not None:
+            pct_peak = _dpk
     if (group == "CC_REGULAR"
             and getattr(config, "cc_peaking_per_plant", False)
             and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):

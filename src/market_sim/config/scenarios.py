@@ -309,6 +309,17 @@ class ScenarioConfig:
     # in the shoulder months, where WEFOR is heaviest after the summer-peak
     # redistribution. Does not touch the planned-outage (POF) or
     # weather/performance derate terms.
+    wefor_residual: float | None = None  # Historic-backcast WEFOR floor for
+    # the overlay-covered thermal classes (coal + CC_REGULAR/CC_CHP/ST_GAS/
+    # ST_CHP). The CAMPD historic overlay + unit-level derate already carry
+    # every >= 5-day outage for those classes, so the full statistical WEFOR
+    # (5% CC, 21% ST_GAS, 12% coal base + age escalation) double-counts them.
+    # When set (and outage_source == "historic"), each covered unit's WEFOR
+    # is capped at this short-outage residual — the < 5-day events below the
+    # overlay's detector floor, ~1-2%. None (default) keeps the full
+    # statistical WEFOR everywhere (forecast runs, ERCOT, and any backcast
+    # that has not been re-balanced on the corrected availability). CTs have
+    # no overlay coverage and are never affected.
     td_loss_factor: float = 0.0  # Gross-up of EIA-930 demand, as a fraction.
     # EIA-930 "Demand" is generation-side: Demand + Total Interchange = Net
     # Generation (verified to <0.01 TWh for ERCOT 2023/2024), so the demand
@@ -519,6 +530,17 @@ class ScenarioConfig:
     # economic tranche absorbs the difference. Other CC_REGULAR plants keep the
     # offer-curve value. Off by default.
     cc_peaking_per_plant: bool = False
+
+    # When True, every CC_REGULAR / CC_CHP plant's peaking-tranche % comes
+    # from the EIA-860 duct-burner flag (fleet.cc_duct_peaking_pct):
+    # duct-fired plants get their nameplate-vs-net-summer capability gap as
+    # the peak band, non-duct CC plants get 0 — no phantom scarcity band on
+    # plants with no duct firing. Supersedes the offer curve's class-wide
+    # ``pct_peaking`` (the band heat-rate multipliers still apply on top);
+    # plants absent from the EIA-860 sheet keep the class value, and the
+    # ERCOT hand-set CC_REGULAR_PEAKING_PCT_BY_PLANT map stays the final
+    # word for its plants. Off by default.
+    cc_duct_peaking: bool = False
 
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
@@ -1023,6 +1045,7 @@ TIER_TAGS: dict[str, int] = {
     "renewable_cf_adjustment": 3,
     "basis_differential_factor": 3,
     "wefor_multiplier": 3,
+    "wefor_residual": 3,
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
