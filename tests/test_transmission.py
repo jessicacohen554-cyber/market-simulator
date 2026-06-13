@@ -295,7 +295,7 @@ class TestWeccImportModel(unittest.TestCase):
     def test_low_demand_dispatches_only_cheapest_tranche(self):
         # CAISO demand (500 MW) fits inside the $28 PNW_hydro_base tranche
         # (800 MW * 0.98 availability = 784 MW). Price is the converged P9/P12
-        # re-price value (calibration-log "CAISO 3 — import re-price").
+        # re-price value (calibration-log "CAISO 4 — import re-price").
         generators = build_wecc_import_generators()
         result, _ = self._solve_caiso(generators, caiso_demand=500.0)
 
@@ -323,7 +323,7 @@ class TestWeccImportModel(unittest.TestCase):
             result.dispatch[5], 10000.0 - served_by_cheaper, atol=1e-6
         )
         # CAISO prices at the most expensive dispatched tranche (converged
-        # P9/P12 re-price value; calibration-log "CAISO 3 — import re-price").
+        # P9/P12 re-price value; calibration-log "CAISO 4 — import re-price").
         np.testing.assert_allclose(result.prices[0], 180.0, atol=1e-6)
 
     def test_surplus_solar_exports_to_sink(self):
