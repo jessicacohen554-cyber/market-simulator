@@ -1303,36 +1303,56 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 #
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
-    # CAISO WECC import supply merit order. Tier 3 (calibration) — fitted to
-    # the pooled 2023-2025 EIA-930 CISO net-interchange duration curve by
-    # scripts/derive_import_tranches.py (measured-only mode; the existing CAISO
-    # bundle has no priced node, so a bundle-mode price fit would be circular).
-    # CAISO is a heavy, growing net importer: −28.9 / −32.4 / −36.2 TWh and
-    # imports in 86% / 89% / 91% of hours across 2023-25, ~20-25% of energy —
-    # the single biggest supply block after gas. Block capacities tile the
-    # import duration curve (median import ~4.2 GW, deepest hour ~11.0 GW);
-    # the cheap PNW_hydro_base block is the near-always-on baseload and the
-    # desert-SW gas/scarcity blocks layer in as CAISO's price climbs. Fit
-    # quality vs the measured series (price-orthogonal optimal placement, the
-    # bound the LP can reach): annual net imports within 1-3%, duration-curve
-    # RMSE ~560 MW (was ~1,400 for the prior placeholder), import-hour share
-    # 83-88% vs 86-91% measured. Aggregate import capacity 11.4 GW sits between
-    # the deepest measured hour (11.0 GW) and the ~12-15 GW WECC simultaneous-
-    # import rating (COI/Path 66 ~4.8 GW + PDCI ~3.1 GW + Path 46 West-of-River
-    # + Path 45). Prices are pre-carbon delivered WECC energy costs, cheapest
-    # first and all above every export sink (no import↔export arbitrage); the
-    # CARB border-carbon adder is layered on at build time
-    # (build_import_generators). Block price proxies:
-    #   - PNW_hydro_base: COI firm Pacific-NW hydro, near-zero SRMC sold at
-    #     economy energy; the always-on baseload. ~$14 (cf NYISO HQ_hydro $14).
-    #   - PNW_midC: Mid-Columbia hydro/wind shoulder over COI/PDCI. ~$26.
+    # CAISO WECC import supply merit order. Tier 3 (calibration) — block
+    # CAPACITIES tile the EIA-930 CISO net-interchange duration curve (held
+    # fixed); block PRICES re-fitted in BUNDLE mode against the SOLVED CAISO
+    # price duration curve (P9/P12 structural re-price, docs/calibration-log.md
+    # "CAISO 3 — import re-price"). CAISO is a heavy, growing net importer:
+    # −28.9 / −32.4 / −36.2 TWh, imports in 86% / 89% / 91% of hours across
+    # 2023-25 (~20-25% of energy) — the biggest supply block after gas. Median
+    # import ~4.2 GW, deepest hour ~11.0 GW; aggregate 11.4 GW sits between that
+    # and the ~12-15 GW WECC simultaneous-import rating (COI/Path 66 ~4.8 GW +
+    # PDCI ~3.1 GW + Path 46 West-of-River + Path 45).
+    #
+    # WHY THESE PRICES (the re-price lesson): the prior placeholder priced every
+    # block BELOW the modeled gas merit order, so the 11.4 GW stack cleared
+    # ~continuously and net imports scored 214/152/146% of actual with gas at
+    # −41/−19/+13% vs EIA-923. The cheap blocks are INFRAMARGINAL baseload —
+    # re-pricing them below gas moves neither price nor quantity (gas sets the
+    # marginal price above them). The over-import was the TOP blocks
+    # (DSW_CCGT/CT/scarcity) sitting below gas; the fix prices them ABOVE the
+    # in-state gas merit order, so desert-SW gas imports cost ≈ CA gas + wheeling
+    # (their physical delivered cost) and back off to gas. Converged keeper
+    # (caiso_reprice_pass4): net imports 134/83/92% of actual (down from
+    # 214/152/146), gas −11/+13/+48% (2023 recovered from −41%). Prices are
+    # pre-carbon delivered-WECC costs (energy + wheeling), cheapest first and
+    # all above every export sink (no import↔export arbitrage); the CARB
+    # border-carbon adder (~+$12-15/MWh, EF 0.428 × allowance) is layered on at
+    # build time (build_import_generators) — now applied in the calibration
+    # path too (run_calibration.run_year, previously dropped). Block proxies:
+    #   - PNW_hydro_base: COI firm Pacific-NW hydro economy energy; the
+    #     always-on baseload, just below gas-CC. eff ≈ $40-43 w/ carbon.
+    #   - PNW_midC: Mid-Columbia hydro/wind shoulder over COI/PDCI.
     #   - DSW_solar_PV: desert-SW solar + Palo Verde nuclear midday, Path 46.
     #   - DSW_CCGT / DSW_CT: desert-SW gas combined-cycle / combustion turbine
-    #     (Mead / Four Corners), on-peak.
-    #   - WECC_scarcity: west-wide peak economy energy in CAISO heat events.
-    # Modeled clearing-frequency validation (vs the solved CAISO price duration
-    # curve) lives in the LMP/benchmark pass (CAISO P10/P11), not here.
-    # Source: EIA-930 CISO net-interchange 2023-2025; CAISO OASIS path ratings.
+    #     (Mead / Four Corners) — priced at CA-gas-equivalent + wheeling, i.e.
+    #     ABOVE in-state gas, so they peak rather than baseload.
+    #   - WECC_scarcity: west-wide peak economy energy in CAISO heat events;
+    #     clears only in 2023's price tail (~2 TWh), ~0 in 2024/25.
+    # LIMITATION (static-node, documented like PJM/NYISO): a single price vector
+    # cannot hit all three years within ±15% — 2023 has a fat price tail (p90
+    # $119; wet-hydro + lowest-storage year) while 2024/25 are compressed (p90
+    # $75/$80), an import-% offset of ~50-60 pts invariant to the price level.
+    # The keeper minimizes total error (2024/25 within ±15%, 2023 the +34%
+    # outlier). A year-keyed (availability/season) import lever is the structural
+    # next step. Note: the modeled CAISO price level runs high vs actual_lmp
+    # (model ~$60 vs CAISO 2024 RT ~$33) — a pre-existing P10/price-level item
+    # (baseline was already ~$53), since real imports are cheap-but-transmission-
+    # limited and a fixed-capacity priced node trades price-suppression for
+    # quantity-correctness. import-hour share / negative-price hours / midday
+    # export sign-flip stay P6-owned (delivered-not-potential solar feed).
+    # Source: EIA-930 CISO net-interchange 2023-2025; CAISO OASIS path ratings;
+    # solved bundle results/calibration/caiso_reprice_pass4.
     "CAISO": [
         ("PNW_hydro_base", 800.0, 28.0),    # COI firm PNW hydro — baseload
         ("PNW_midC", 1800.0, 36.0),         # Mid-C hydro/wind shoulder

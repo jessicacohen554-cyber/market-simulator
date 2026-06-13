@@ -293,8 +293,9 @@ class TestWeccImportModel(unittest.TestCase):
         return result, fleet
 
     def test_low_demand_dispatches_only_cheapest_tranche(self):
-        # CAISO demand (500 MW) fits inside the $14 PNW_hydro_base tranche
-        # (800 MW * 0.98 availability = 784 MW).
+        # CAISO demand (500 MW) fits inside the $28 PNW_hydro_base tranche
+        # (800 MW * 0.98 availability = 784 MW). Price is the converged P9/P12
+        # re-price value (calibration-log "CAISO 3 — import re-price").
         generators = build_wecc_import_generators()
         result, _ = self._solve_caiso(generators, caiso_demand=500.0)
 
@@ -303,7 +304,7 @@ class TestWeccImportModel(unittest.TestCase):
         np.testing.assert_allclose(result.dispatch[1:], 0.0, atol=1e-6)
         # The link is uncongested, so CAISO prices at the marginal import
         # tranche's marginal cost.
-        np.testing.assert_allclose(result.prices[0], 14.0, atol=1e-6)
+        np.testing.assert_allclose(result.prices[0], 28.0, atol=1e-6)
 
     def test_high_demand_dispatches_all_tranches_in_merit_order(self):
         # CAISO demand (10000 MW) needs every tranche but not the full
@@ -316,13 +317,14 @@ class TestWeccImportModel(unittest.TestCase):
             np.testing.assert_allclose(
                 result.dispatch[i], cap * _IMPORT_AVAIL, atol=1e-6
             )
-        # The $92 WECC_scarcity tranche is marginal and only partly loaded.
+        # The $180 WECC_scarcity tranche is marginal and only partly loaded.
         served_by_cheaper = (800.0 + 1800.0 + 1800.0 + 1800.0 + 2200.0) * _IMPORT_AVAIL
         np.testing.assert_allclose(
             result.dispatch[5], 10000.0 - served_by_cheaper, atol=1e-6
         )
-        # CAISO prices at the most expensive dispatched tranche.
-        np.testing.assert_allclose(result.prices[0], 92.0, atol=1e-6)
+        # CAISO prices at the most expensive dispatched tranche (converged
+        # P9/P12 re-price value; calibration-log "CAISO 3 — import re-price").
+        np.testing.assert_allclose(result.prices[0], 180.0, atol=1e-6)
 
     def test_surplus_solar_exports_to_sink(self):
         # A must-run CAISO_main unit (pmin 4000 MW) forces 3000 MW of
