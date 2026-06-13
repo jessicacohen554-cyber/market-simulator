@@ -966,7 +966,8 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "commitment_screen_coal", "gas_prices", "outage_source",
                 "coal_lignite_mustrun", "coal_prb_mustrun",
                 "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
-                "coal_mustrun_per_plant", "coal_drop_pof",
+                "coal_mustrun_per_plant", "ct_mustrun_per_plant",
+                "ct_mustrun_floor_frac", "coal_drop_pof",
                 "coal_prb_passthrough_tiered", "coal_prb_sigmoid_overrides",
                 "coal_bit_passthrough_sigmoid", "coal_bit_sigmoid_overrides",
                 "coal_plant_monthly_pricing",
@@ -995,6 +996,8 @@ def solve_and_persist(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    ct_mustrun_per_plant: bool = False,
+    ct_mustrun_floor_frac: float = 1.0,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
@@ -1088,6 +1091,8 @@ def solve_and_persist(
             outage_source=outage_source,
             coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
             coal_mustrun_per_plant=coal_mustrun_per_plant,
+            ct_mustrun_per_plant=ct_mustrun_per_plant,
+            ct_mustrun_floor_frac=ct_mustrun_floor_frac,
             coal_drop_pof=coal_drop_pof,
             coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
             prb_overrides=prb_overrides,
@@ -1205,6 +1210,8 @@ def solve_and_persist(
         "outage_source": outage_source,
         "coal_prb_passthrough_sigmoid": coal_prb_passthrough_sigmoid,
         "coal_mustrun_per_plant": coal_mustrun_per_plant,
+        "ct_mustrun_per_plant": ct_mustrun_per_plant,
+        "ct_mustrun_floor_frac": ct_mustrun_floor_frac,
         "coal_drop_pof": coal_drop_pof,
         "coal_prb_passthrough_tiered": coal_prb_passthrough_tiered,
         "coal_prb_sigmoid_overrides": {
@@ -1250,6 +1257,8 @@ def solve_and_persist(
         coal_prb_passthrough=coal_prb_passthrough,
         outage_source=outage_source,
         coal_mustrun_per_plant=coal_mustrun_per_plant,
+        ct_mustrun_per_plant=ct_mustrun_per_plant,
+        ct_mustrun_floor_frac=ct_mustrun_floor_frac,
         coal_drop_pof=coal_drop_pof,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
@@ -2536,6 +2545,24 @@ def main() -> None:
              "must-run overrides.",
     )
     parser.add_argument(
+        "--ct-mustrun-per-plant", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Inject a per-plant CT_PEAKER reliability must-run floor from each "
+             "peaker's observed EIA-923 monthly net generation "
+             "(fleet.ct_mustrun_floor_mwh_by_plant). The energy-only LP prices "
+             "simple-cycle peakers out (~0% CF) where the actuals show a ~4% "
+             "reserve/reliability run; the floor recovers that energy. WEFOR and "
+             "the planned-outage derate are exempt for floor units (the floor is "
+             "observed generation and already nets out real outages). Backcast-"
+             "only; off by default.",
+    )
+    parser.add_argument(
+        "--ct-mustrun-floor-frac", type=float, default=1.0,
+        help="Fraction of observed monthly CT_PEAKER net generation forced as "
+             "the reliability floor (default 1.0 = full observed energy). "
+             "Requires --ct-mustrun-per-plant.",
+    )
+    parser.add_argument(
         "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
         help="Drop the statistical planned-outage (POF) derate on coal "
              "(planned maintenance comes from the historic outage overlay); "
@@ -2884,6 +2911,8 @@ def main() -> None:
         outage_source=args.outage_source,
         coal_prb_passthrough_sigmoid=args.coal_prb_sigmoid,
         coal_mustrun_per_plant=args.coal_mustrun_per_plant,
+        ct_mustrun_per_plant=args.ct_mustrun_per_plant,
+        ct_mustrun_floor_frac=args.ct_mustrun_floor_frac,
         coal_drop_pof=args.coal_drop_pof,
         coal_prb_passthrough_tiered=args.prb_sigmoid_tiered,
         prb_overrides={
