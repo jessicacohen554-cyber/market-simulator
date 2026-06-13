@@ -1633,7 +1633,22 @@ def _plant_hourly_fit(
     model and CAMPD hours spent in that band (the timing-free operating-level
     histogram).
     """
-    model = dispatch[dispatch["plant_code"] > 0]
+    model = dispatch[dispatch["plant_code"] > 0].copy()
+    # Split-plant remap: a mixed plant is modelled as several bins with
+    # synthetic child codes ``parent*10+digit`` (e.g. W A Parish 3470 coal +
+    # 34702 gas-steam; see scripts/tag_mixed_plants.py), but CEMS reports the
+    # whole physical facility under the single parent plant_id. Fold each
+    # child's dispatch back onto its parent before the comparison, so a
+    # split plant's model series is its whole-plant output — matching what
+    # CAMPD measures. Without this the coal bin alone was compared to the
+    # coal+gas CEMS stack, inventing a multi-TWh phantom under-run (the
+    # run-97b/98 Parish chase).
+    cems_ids = set(int(p) for p in campd_year["plant_id"].unique())
+    def _to_cems(code: int) -> int:
+        code = int(code)
+        return code // 10 if (code not in cems_ids
+                              and code // 10 in cems_ids) else code
+    model["plant_code"] = model["plant_code"].map(_to_cems)
     piv = (
         model.groupby(["plant_code", "hour"], observed=True)["mw"].sum()
         .unstack("plant_code", fill_value=0.0).sort_index()
