@@ -2672,6 +2672,15 @@ def main() -> None:
              "startup component.",
     )
     parser.add_argument(
+        "--coal-warm-committed", action="store_true",
+        help="Exempt CAMPD coal committed tranches from the P1 startup"
+             "-amortization markup when the plant has a must-run floor: the "
+             "mustrun tranche keeps the boiler online, so committed-band "
+             "dispatch is a hot-unit ramp, not a cold start. Off (default) "
+             "keeps the legacy $100/MW coal start markup, which prices the "
+             "committed band above the econ ramp (the run-97b inversion).",
+    )
+    parser.add_argument(
         "--storage-daily-cycling", action="store_true",
         help="Cap storage to within-day arbitrage: each unit's SOC must "
              "return to its day-start level every 24h (bounds the single-LP "
@@ -2851,6 +2860,7 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "chp_startup_covered": True if args.chp_startup_covered else None,
+            "coal_warm_committed": True if args.coal_warm_committed else None,
             "wefor_residual": args.wefor_residual,
             "coal_lignite_passthrough_sigmoid":
                 True if args.coal_lignite_sigmoid else None,
