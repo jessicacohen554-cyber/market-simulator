@@ -2695,6 +2695,13 @@ def main() -> None:
              "startup component.",
     )
     parser.add_argument(
+        "--wefor-relief-groups", default=None,
+        help="Comma-separated plant groups the --wefor-residual cap applies "
+             "to (e.g. 'ST_GAS,ST_CHP'). Default (unset) keeps the legacy "
+             "scope: every CAMPD-covered class (coal + CC/ST + CHP). Use to "
+             "relieve only the class with a measured availability deficit "
+             "(ST_GAS) while leaving CC/coal on the full statistical model.")
+    parser.add_argument(
         "--committed-ramp-spread", type=float, default=None,
         help="Render the per-plant committed band as an n-slice rising ramp "
              "spanning committed_mult x (1 +/- this fraction) instead of one "
@@ -2894,6 +2901,10 @@ def main() -> None:
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
+            "wefor_residual_groups": (
+                frozenset(g.strip() for g in args.wefor_relief_groups.split(","))
+                if args.wefor_relief_groups else None
+            ),
             "wefor_residual": args.wefor_residual,
             "coal_lignite_passthrough_sigmoid":
                 True if args.coal_lignite_sigmoid else None,
