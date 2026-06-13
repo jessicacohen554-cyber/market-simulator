@@ -498,6 +498,16 @@ class ScenarioConfig:
     # Off (default) keeps the legacy markup on every committed tranche.
     coal_warm_committed: bool = False
 
+    # Render the per-plant committed band as an n-slice rising ramp (spanning
+    # the committed HR multiplier +/- this fraction) instead of one flat
+    # block, so a CAMPD bin clears its committed capacity progressively with
+    # price rather than snapping 0 -> full committed share in one hour (the
+    # under-populated mid-capacity-factor-band artifact of the commitment-free
+    # LP). 0.0 (default) keeps the flat block. The mean committed bid is
+    # unchanged, so class volume is ~preserved; only the dispatch level
+    # distribution smooths. Slice count = offer_curve_smoothing_n.
+    committed_ramp_spread: float = 0.0
+
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
     # hard minimum-generation floor of that fraction of capacity in May-Sep
