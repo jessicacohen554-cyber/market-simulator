@@ -487,6 +487,24 @@ class ScenarioConfig:
     # peaker some economic headroom above the must-run base.
     ct_mustrun_floor_frac: float = 1.0
 
+    # CT_PEAKER AS/RUC-deployment energy overlay (backcast only). Distinct from
+    # the reliability must-run floor above: instead of forcing the full observed
+    # net generation, it floors each CEMS-covered peaker to its *measured* output
+    # ONLY in the out-of-merit hours where the RT price was below the unit's
+    # marginal cost (the IMM-documented ancillary-service / reliability-unit-
+    # commitment deployment + reserve-adequacy wedge the energy-only merit order
+    # cannot dispatch — ~1.4-2.3 TWh/yr, scripts/derive_ct_deployment.py +
+    # outages.ct_deployment_floor_for_year). The in-merit hours stay economic, so
+    # CT is not floored to its full CEMS output. A sparse per-hour min-gen bound
+    # (no MIP — prices stay LP duals); the units keep the statistical
+    # availability model (the floor is well below pmax in its hours and merely
+    # availability-capped). Off by default; forecast years (no artifact) no-op.
+    ct_deployment_overlay: bool = False
+    # Fraction of the measured deployment energy to force (1.0 = the full
+    # measured out-of-merit wedge). Lower it to dial the recovered energy back
+    # if a year would overshoot its CT class bar.
+    ct_deployment_floor_frac: float = 1.0
+
     # When True, drop the statistical planned-outage (POF) derate on coal —
     # planned maintenance is now captured by the historic outage overlay, so
     # the POF would double-count. Keep WEFOR (forced outages) in the non-summer
@@ -1138,6 +1156,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_mustrun_per_plant": 3,
     "ct_mustrun_per_plant": 3,
     "ct_mustrun_floor_frac": 3,
+    "ct_deployment_overlay": 3,
+    "ct_deployment_floor_frac": 3,
     "coal_drop_pof": 3,
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
