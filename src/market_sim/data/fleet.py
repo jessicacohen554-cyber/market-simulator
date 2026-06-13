@@ -3742,10 +3742,42 @@ def bins_to_fleet(
         # the 1.5x peak VOM markup. The peak is always a separate flat tranche
         # that jumps up above the econ-low -> econ-high ramp.
         peak_vom_mult = 1.0 if offer is not None else 1.5
+        # Committed band: a single flat block by default. With
+        # ``committed_ramp_spread`` > 0 it is rendered as an n-slice rising
+        # ramp spanning committed_mult x (1 +/- spread), so the plant clears
+        # its committed capacity progressively as price rises rather than
+        # snapping from 0 to the full committed share in one step (the
+        # bimodal-dispatch / under-populated mid-CF-band artifact). The mean
+        # bid is unchanged, so class volume is ~preserved; only the operating
+        # -level distribution smooths. The first slice stays the screened
+        # anchor — it carries the min-run / min-down / start cost and (below)
+        # the must_run_pct / bin_nameplate tags — so commitment coupling and
+        # the BTM add-back are unaffected.
+        cr_spread = float(getattr(config, "committed_ramp_spread", 0.0) or 0.0)
+        if cr_spread > 0.0 and committed_cap > 0.5 and n_curve > 0 \
+                and base_hr > 0.0:
+            cmt_mult = committed_hr / base_hr
+            cmt_steps = _econ_curve_steps(
+                base_hr, cmt_mult * (1.0 - cr_spread),
+                cmt_mult * (1.0 + cr_spread),
+                committed_cap, n_curve, curve_exp, curve_mid,
+            )
+            committed_tranches = [
+                (("committed" if i == 0 else f"committed{i:02d}"),
+                 _cap, _hr, 1.0,
+                 int(b["min_run"]) if i == 0 else 0,
+                 int(b["min_down"]) if i == 0 else 0,
+                 startup if i == 0 else 0.0)
+                for i, (_s, _cap, _hr, *_r) in enumerate(cmt_steps)
+            ]
+        else:
+            committed_tranches = [
+                ("committed", committed_cap, committed_hr, 1.0,
+                 int(b["min_run"]), int(b["min_down"]), startup),
+            ]
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
-            ("committed", committed_cap, committed_hr, 1.0,
-             int(b["min_run"]), int(b["min_down"]), startup),
+            *committed_tranches,
             *econ_steps,
             ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
         ]
