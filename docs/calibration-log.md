@@ -2389,3 +2389,63 @@ structural. New dead levers (do not re-probe): fleet-wide
 OR without the exemption, monthly p10 floors as a split fix (sized
 insufficient). The flag itself stays in the codebase (default off) — it is
 the correct mechanism for any future per-plant/overlay treatment.
+
+## ERCOT — CORRECTION: the Parish "self-commitment" attribution was a split-plant diagnostic artifact (2026-06-13)
+
+**A user question ("isn't Parish a coal/gas split? they've been converting
+units to gas over time") exposed an error that misdirected runs 97b/98a/98b.
+The keeper (run 97a) and all gate scores are unaffected — this corrects an
+attribution and fixes a diagnostic, not the calibration.**
+
+**What was wrong.** The runs-97a/98 entries called W A Parish (EIA 3470) a
+−3.7 TWh "never-off self-scheduled baseload" and "essentially the whole PRB
+2024 fail." That −3.7 came from `_plant_hourly_fit`, which grouped the
+model by `plant_code` and compared to CEMS by `plant_id`. Parish is a
+**mixed plant**: the registry splits it into a coal bin (3470, 2443 MW SUB)
+and a gas-steam bin (synthetic child 34702, 1565 MW NG ST — the user's
+iterative coal→gas conversion; EIA-923 confirms NG/ST netgen 1.63 → 2.40 →
+2.61 TWh across 2023-25). CEMS reports the **whole physical facility** under
+plant_id 3470. So the diagnostic compared the model's *coal-only* bin
+(8.42 TWh) against the *coal+gas* CEMS stack (12.16 TWh) and invented a
+−3.7 phantom.
+
+**The corrected picture (model bins summed to the CEMS parent vs CEMS
+whole-plant):** Parish is **+0.22 / −1.36 / +0.15 TWh** for 2023/24/25 —
+dead-on in the normal- and dear-gas years, short only in the single
+cheapest-gas year. That is exactly the answer to the user's second
+question: the plant is **price-responsive, not price-blind**, and the model
+already reproduces it (Parish coal CF rises with gas price; whole-plant is
+within ±0.2 TWh in two of three years). Re-benchmarking it as "runs the
+same regardless of price" would be wrong.
+
+**Corrected PRB 2024 attribution.** The −3.94 TWh class fail is
+**distributed cheap-gas merit displacement across the whole PRB fleet**,
+not one plant: Spruce −1.60, Parish coal −1.35, Fayette −0.72, Limestone
+−0.53, Martin Lake −0.38, Coleto −0.28, partly offset by Sandy Creek +0.92.
+This is the documented run-90 year-gradient (cheap 2024 gas displaces PRB
+on bids; no fleet-wide passthrough deepens 2024 without flooding 2023).
+Runs 97b/98a/98b were therefore chasing a phantom — trying to push Parish
+coal up ~3.7 TWh when it is short only ~1.35, with the "missing" ~2.4 being
+the gas-steam bin that is already modelled correctly (in ST_GAS, not
+COAL_PRB). The run-98a warm-boiler exemption "passed" the 2024 split only
+by force-running coal the merit order correctly idles in a cheap-gas year,
+which is precisely why it detonated 2023. Those runs stay REJECTED for the
+right reason now.
+
+**Fix shipped.** `_plant_hourly_fit` now folds each synthetic child code
+(`parent*10+digit`, per `scripts/tag_mixed_plants.py`) back onto its CEMS
+parent before the comparison, so a split plant's model series is its
+whole-plant output — matching what CAMPD measures. Verified on the run-97a
+bundle (Parish r=0.85, whole-plant miss −1.36 in 2024). The fix only
+touches the per-plant diagnostic sidecar in *future* bundles; existing
+gate scores use class totals (which always counted 34702 in ST_GAS and the
+coal bins in COAL_PRB correctly), so the keeper is unchanged.
+
+**Disposition of the 2024 coal split.** It is the cheap-gas merit residual
+— distributed, price-responsive, fleet-wide — carried under the same
+philosophy as the existing PRB carve-out. Not floored (the price response
+is real and the model captures its direction), not re-benchmarked as
+price-blind (the per-plant evidence refutes that framing), and not
+reachable by any fleet-wide lever measured this campaign (the 2023/2024
+coal co-movement + the 2023 split's ~0.4% headroom block every one). Run
+97a remains the keeper.
