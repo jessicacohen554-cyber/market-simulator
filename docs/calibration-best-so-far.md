@@ -50,13 +50,19 @@ per-plant decomposition; do not chase with fleet-wide levers):**
   non-CEMS small peakers (Ector County, Permian Basin, Pearsall …) the
   merit order can't reach. The model already matches CEMS for the
   CAMPD-covered CT plants.
-- **COAL_PRB 2024** (−3.94): essentially one plant — W A Parish (−3.7),
-  a never-off self-scheduled baseload (8,760 CAMPD op-hours every year,
-  median 38–45% of cap vs the model's 15% floor) with no plant-specific
-  F923 coal price. Run 97b measured the committed-share fix BACKFIRING
-  (−0.82): under `commitment_screen_coal` a bigger unprofitable committed
-  block is decommitted wholesale. Parish's wedge is the same
-  self-commitment structure as the CT class.
+- **COAL_PRB 2024** (−3.94) **and the 2024 coal split (−8.5%)**:
+  essentially one plant — W A Parish (−3.7), a never-off self-scheduled
+  baseload (8,760 CAMPD op-hours every year, median 38–45% of cap vs the
+  model's 15% floor). The mechanism is proven: the P1 coal startup
+  amortization lands solely on the committed tranche, pricing it above
+  the econ ramp (run 97b's backfire), and removing it (run 98a,
+  `--coal-warm-committed`) passes the 2024 split (−2.2%) but detonates
+  2023 (+7.8% coal split, guards blown) — committed coal clears both
+  years. The residual is loss-making owner self-commitment the merit
+  order cannot produce endogenously; monthly CAMPD p10 floors are sized
+  at only +2.15 TWh net in 2024 (split → ~−4.8%, still failing). Fixing
+  it further is a methodology decision (monthly-floor overlay or split
+  re-benchmark) — see the "ERCOT Runs 98a/98b" log entry.
 - **ST_GAS 2024** (−1.99): the CPS steamers + Cedar Bayou; the committed
   band's startup amortization caps the honest per-plant gain measured in
   97a.
@@ -140,7 +146,14 @@ multi-year mean sits at −2.6% (+1.0 / −9.0 / −0.2).
   baseline bundle is now **run97a_gas_plants** (moved from run96, before
   that run92_kiamichi); `availability.parquet` + `scarcity.parquet` are
   committed in the bundle. 2023 LMP MAE 32.1 → 28.0 with the adder;
-  2024/2025 hold the ±$1 gate (7.4 → 8.0, 2.2 → 2.2).
+  2024/2025 hold the ±$1 gate (7.4 → 8.0, 2.2 → 2.2). The published
+  NP6-576-ER seasonal μ/σ table is now in
+  `inputs/calibration/ercot_ordc_lolp_params.csv` (user-fetched
+  2026-06-13) — use it with `ordc_lolp_shift_sigma = 0` (the published
+  Average embeds the PUCT 0.5σ shift; μ/σ ≈ 0.68 in every season):
+  `scarcity_np6shift0.parquet` in the keeper bundle, 2023 27.8 / 2024
+  8.0 / 2025 2.2 — within noise of the flat default, validating the
+  a-priori σ bound.
 
 ## Results (P1, vs EIA-923 incl. BTM add-back)
 
