@@ -2532,3 +2532,128 @@ price-blind (the per-plant evidence refutes that framing), and not
 reachable by any fleet-wide lever measured this campaign (the 2023/2024
 coal co-movement + the 2023 split's ~0.4% headroom block every one). Run
 97a remains the keeper.
+
+## ERCOT Runs 103–109 — the CT AS-deployment overlay + ST availability retune (2026-06-13)
+
+**The structural unlock the run-97a entry flagged, built and landed. NEW
+KEEPER: run 109a — 3 in-scope fails, beats run 97a's 4, the ST_GAS deficit
+fixed across all three years, LMP gate held. Cost (user-sanctioned): the
+2024 coal split deepens −8.5% → −9.5% (the CT out-of-merit gas displacing
+marginal cheap-gas PRB under fixed demand).**
+
+### The mechanism — CT AS/RUC-deployment overlay (`--ct-deployment`)
+
+The run-97a decomposition measured 31/38/44% of CEMS-covered CT_PEAKER energy
+(2023/24/25) running out of merit — hours where the RT price was below the
+unit's marginal cost — the IMM-documented ancillary-service / reliability-
+unit-commitment deployment + reserve-adequacy wedge (~1.4–2.3 TWh/yr) the
+energy-only LP structurally cannot dispatch. `scripts/derive_ct_deployment.py`
+measures it directly from CAMPD CEMS: for each CEMS-covered CT plant and each
+hour it generated, the hour is a **deployment hour** when `net_mw > 1` AND
+`actual RT LMP < plant_avg_heat_rate × gas_price + CT_VOM` (hr-mult 1.0,
+matching the documented 31/38/44% — measured 29.9/35.0/42.5%, 1.34/1.88/2.22
+TWh). It writes a per-plant **hourly** floor (`inputs/calibration/
+ct_deployment_floor_ERCOT.parquet`, only the out-of-merit hours, floored to
+the measured net output). `outages.ct_deployment_floor_for_year` +
+`fleet.generators_to_fleet_arrays` apply it as a sparse per-hour min-gen bound
+(cheapest tranche first, availability-capped) when
+`ScenarioConfig.ct_deployment_overlay` is set (ERCOT backcast only). A pure LP
+min-gen bound — no MIP, prices stay LP duals. The in-merit hours stay
+economic, so CT is NOT floored to its full CEMS output (the over-credit guard
+the brief required). Default off; forecast/other ISOs no-op (no artifact;
+`min_gen` byte-identical, verified). San Jacinto 7325 excluded (BTM cogen,
+avoids double-counting `--btm-backfill-year`). Unlike the CT reliability
+must-run floor (`ct_mustrun_per_plant`, which floors the FULL 923 net-gen and
+exempts its units from WEFOR/POF), the deployment units KEEP the statistical
+availability model — the floor is sparse and well below pmax in its hours, so
+exempting them would spuriously boost their high-price economic dispatch.
+
+### Run sequence (all on the run-97a config + the overlay)
+
+- **run 103** (`--ct-deployment` only): 5 fails. Realized net additive effect
+  +0.84/+1.41/+1.58 TWh (the LP front-loads CT into high-price hours, so it
+  produces only ~0.3 TWh in the out-of-merit hours; the floor is nearly pure
+  addition). Fixed CT 2023 (−1.53 → −0.69), lifted CT 2024 (−2.56 → −1.15) /
+  2025 (−0.90 → +0.68). But the floored CT displaces other classes in the
+  low-price hours: ST_GAS 2025 (−0.73 → −1.11) and lignite 2024 (−0.97 →
+  −1.03) newly fail (CC absorbs most — good — but ST/coal take some). 4 → 5
+  fails; the Phase-2 setup.
+- **runs 104a/104b** (+ ST_GAS,ST_CHP WEFOR relief, residual 0.02 / 0.08):
+  ST_GAS 2024/2025 fill, but blanket relief overshoots ST 2023 and re-craters
+  CT (the relief re-orders the low-merit stack; the floor protects only the
+  out-of-merit hours, not CT's in-merit economic dispatch). The deficits are
+  per-year-asymmetric (2023 wants ~0, 2024 +2, 2025 +1) but the relief is
+  uniform.
+- **runs 105a/105b** (+ ST_GAS committed bid raised −0.385 → −0.25 / −0.15):
+  DEAD/backfire. The ST committed band sits on a cliff — a 0.135 bid raise
+  craters ST_GAS (2024 −4.16) and the freed energy goes to CC (over), not CT.
+  6 fails. ST committed bid cannot shape years.
+- **runs 106a/106b** (relief 0.10 / 0.11, lignite floor 0.72): relief 0.11
+  threads ST across all three years. Discovered `--lignite-floor` is the
+  sigmoid PASSTHROUGH floor (higher = higher bid = LESS lignite in cheap gas),
+  so 0.72 made lignite 2024 WORSE — wrong lever direction.
+- **runs 107a/107b** (relief 0.11 / 0.125, keeper lignite 0.69): 107a ties
+  run 97a at 4 fails with all ST passing; 107b (gentler) underfills ST 2024.
+  lignite 2024 = −1.06 at the keeper floor (the CT-displacement, persistent).
+  Also FIXED a bundle-write bug: `--wefor-relief-groups` writes a frozenset
+  into the meta override record, and `json.dumps(meta)` had no default handler
+  → "frozenset is not JSON serializable" aborted meta.json/run_config.json/
+  plant_hourly_fit AFTER the parquets wrote (the run-102 "lost meta.json" was
+  this, not the container recycle). Fixed with `_json_default` (set/frozenset →
+  sorted list) on all three bundle dumps.
+- **runs 108a/109a/109b** (lignite-floor thread): 0.66 floods lignite 2023
+  (+1.03), 0.69 fails 2024 (−1.06); **0.675 threads both** (2023 +0.92, 2024
+  −0.85). 109b tried a CC econ_high bid raise (−0.40 → −0.20) to redirect the
+  2024 coal displacement off PRB onto over-built CC — BACKFIRED (CC is as
+  cliff-edged as ST committed: −5.8 TWh in every year, 7 fails).
+
+### Run 109a (`run109a_relief11_lig675`) — KEEPER, 3 fails
+
+run 97a config + `--ct-deployment` (frac 1.0) + `--wefor-residual 0.11
+--wefor-relief-groups ST_GAS,ST_CHP` + `--lignite-floor 0.675`. **3 in-scope
+fails {CT 2023 −1.08, CT 2024 −1.55, PRB 2024 −10.6%/−4.64} vs run 97a's 4
+{CT 2023, CT 2024, PRB 2024, ST 2024}.** ST_GAS fixed all years (2023 +5.4%/
++0.91, 2024 −5.1%/−0.93, 2025 +1.7%/+0.26); lignite threaded (2023 +0.92,
+2024 −0.85, 2025 +0.29); CC/CHP/PRB-2023/2025 all pass; no passing class
+regressed to a fail. **LMP gate held** (energy-only monthly MAE 32.3 / 7.8 /
+2.1, all within ±$1 of the 32.1/7.3/2.2 baseline). ORDC overlay re-derived on
+the keeper (availability + scarcity + scarcity_np6shift0; 2023 32.3 → 29.3
+with the adder). Guards clean (Martin Lake 2025 +1.43 TWh, unchanged).
+
+**The remaining 3 fails are structurally diagnosed:** CT 2023/2024 — the
+deployment overlay recovers the CEMS-covered out-of-merit wedge (covered
+plants now match CEMS), but the ~1.0–1.2 TWh/yr of bench in **non-CEMS small
+peakers** (Ector County, Permian Basin, Pearsall) has no hourly CEMS to key
+off and the merit order can't reach it; the ST relief also costs CT ~0.4
+TWh/yr. PRB 2024 — the documented run-90 cheap-gas residual, deepened ~0.7
+TWh by the CT overlay displacing marginal PRB under fixed demand.
+
+### The cost — 2024 coal split (user sign-off)
+
+The CT overlay adds out-of-merit gas (CT) and the relief adds ST gas; under
+fixed demand in the cheap-gas 2024 year, this displaces the marginal
+(uneconomic) coal — deepening the documented coal-side residual: 2024 coal
+split −8.5% → −9.5%, PRB 2024 −9.0% → −10.6%. The gas split holds (+0.4%).
+This is zero-sum (the only true surplus is CC over-run, which has an
+unfavorable gas-price year-gradient and a cliff-edged bid). Measured/dead
+levers this campaign confirm the split is not recoverable here: ST committed
+bid (105), CC econ_high bid (109b), PRB cheapening (run-90), lignite (the
+0.675 thread is at its limit). The user accepted the split regression
+(2026-06-13) as the cost of fixing the CT + ST volume under-clearing — the
+headline 4-fail bar + the LMP gate are the binding gates; the coal split is
+carried as the documented residual (same philosophy as the PRB carve-out).
+
+### Bookkeeping
+
+Keeper: run 109a (supersedes run 97a; `calibration-best-so-far.md` updated).
+New code (default off, forecast-safe): `ScenarioConfig.ct_deployment_overlay`
++ `ct_deployment_floor_frac`, `scripts/derive_ct_deployment.py`,
+`outages.ct_deployment_floor_for_year`, the `fleet.generators_to_fleet_arrays`
+min-gen block, the `--ct-deployment` flag, and the `_json_default` bundle-dump
+fix. New dead levers (do not re-probe): ST_GAS committed bid raise (cliff,
+105), CC econ_high bid raise on the overlay+relief basis (cliff, 109b),
+blanket WEFOR relief deeper than ~0.10 (overshoots 2023 / craters CT, 104),
+lignite floor outside ~0.675 (2023 flood / 2024 fail, 108). Follow-up (not
+this campaign): a non-CEMS small-peaker floor for the ~1.0 TWh CT 2024
+residual (Ector/Permian/Pearsall have 923 net-gen but no hourly CEMS — a
+923-based floor, distinct from the CEMS out-of-merit overlay).
