@@ -1477,9 +1477,12 @@ unwound once the node is repriced. The bundle and its `derive_import_tranches.py
 
 ---
 
-## CAISO 3 — import/export tranche re-price (P9/P12 structural fix) (2026-06-13)
+## CAISO 4 — import/export tranche re-price (P9/P12 structural fix) (2026-06-13)
 
-**Keeper `caiso_reprice_pass4`, dashboard `caiso 3 reprice`.** Resolves the
+(Numbered after the pre-fix offer-curve probe panel "CAISO 3" below, which the
+re-price unblocks; chronologically the probe came first.)
+
+**Keeper `caiso_reprice_pass4`, dashboard `caiso 4 reprice`.** Resolves the
 "CAISO 2 priced-ix" RED structural row #2 (import over-clear). Held the
 `IMPORT_TRANCHES`/`EXPORT_TRANCHES["CAISO"]` block CAPACITIES fixed (they tile
 the measured net-interchange duration curve) and re-priced only the per-block
