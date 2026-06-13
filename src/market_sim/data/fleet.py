@@ -328,6 +328,7 @@ def generators_to_fleet_arrays(
     iso: str | None = None,
     config: ScenarioConfig | None = None,
     load_shape: np.ndarray | None = None,
+    ct_campd_shape: dict[int, np.ndarray] | None = None,
 ) -> FleetArrays:
     """Convert a list of generators into vectorized ``FleetArrays``.
 
@@ -741,13 +742,17 @@ def generators_to_fleet_arrays(
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
         # above-median-load hours (where simple-cycle peakers actually run) and
-        # left at zero in the off-peak hours, so the floor displaces marginal
-        # gas/imports at the peak rather than coal baseload at night. Within each
-        # hour it is distributed over the plant's tranches cheapest-first
+        # left at zero whenever the peaker was actually offline, so it genuinely
+        # starts and stops (it is not held on at a flat baseload level) and
+        # displaces marginal gas/imports at the peak rather than coal baseload.
+        # The hourly *shape* comes from the plant's CAMPD/CEMS hourly record
+        # (zero in every hour the unit did not report load — real start/stop);
+        # where a plant has no CAMPD coverage it falls back to the system-load
+        # shape (energy placed in the above-median-load hours). Within each hour
+        # the floor is distributed over the plant's tranches cheapest-first
         # (committed -> econ -> peak), each capped at its available capacity. The
         # floor units' availability already excludes WEFOR/POF (set above), so
-        # the observed energy fits under the cap. With no load shape available
-        # the energy falls back to a flat monthly spread.
+        # the observed energy fits under the cap.
         if ct_floor_plants:
             month_idx = _hour_to_month_index(hours)
             sys_load = (
@@ -760,9 +765,9 @@ def generators_to_fleet_arrays(
                 if (gen.plant_group == "CT_PEAKER"
                         and int(gen.plant_code) in ct_floor_plants):
                     ct_tranches.setdefault(int(gen.plant_code), []).append(g_idx)
-            # Per-month hourly weights summing to 1.0 over the month's hours:
-            # max(load - median, 0) concentrates the energy in the peak hours.
-            month_weights: dict[int, np.ndarray] = {}
+            # System-load fallback weights (per month, summing to 1.0):
+            # max(load - median, 0) concentrates energy in the peak hours.
+            load_weights: dict[int, np.ndarray] = {}
             for m in range(12):
                 hmask = month_idx == m
                 n_h = int(hmask.sum())
@@ -775,16 +780,36 @@ def generators_to_fleet_arrays(
                         w = np.ones(n_h, dtype=float)
                 else:
                     w = np.ones(n_h, dtype=float)
-                month_weights[m] = w / w.sum()
+                load_weights[m] = w / w.sum()
             for pc, idxs in ct_tranches.items():
                 # Cheapest tranche first so the floor lands on the committed band.
                 idxs.sort(key=lambda i: heat_rate[i])
                 mwh12 = ct_floor_mwh[pc]
-                for m, w in month_weights.items():
+                campd_shape = (
+                    ct_campd_shape.get(pc) if ct_campd_shape is not None else None
+                )
+                for m in range(12):
+                    if m not in load_weights:
+                        continue
                     energy = ct_floor_frac * float(mwh12[m])
                     if energy <= 0.0:
                         continue
                     hmask = month_idx == m
+                    # Prefer the plant's CAMPD on/off shape (zero hours = offline,
+                    # so the floor starts/stops); fall back to the load shape.
+                    w = None
+                    if campd_shape is not None and len(campd_shape) == hours:
+                        # NaN hours = unit not reporting = offline -> zero weight,
+                        # so the floor genuinely stops there.
+                        cs = np.nan_to_num(
+                            np.asarray(campd_shape, dtype=float)[hmask],
+                            nan=0.0, posinf=0.0, neginf=0.0,
+                        )
+                        cs = np.maximum(cs, 0.0)
+                        if cs.sum() > 0.0:
+                            w = cs / cs.sum()
+                    if w is None:
+                        w = load_weights[m]
                     # Per-hour floor (MW) summing to ``energy`` MWh over the month.
                     remaining = energy * w
                     for g_idx in idxs:
