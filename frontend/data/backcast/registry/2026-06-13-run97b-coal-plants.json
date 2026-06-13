@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-13-run97b-coal-plants",
+  "label": "run97b coal plants",
+  "date": "2026-06-13",
+  "shorthand": "run97b-coal-plants",
+  "definition": "Run 97b: MEASURED PROBE, not a keeper - per-plant coal-side representation fix on the run-96 keeper base: W A Parish (3470) + J K Spruce (7097) Pct_Committed 20 -> 30 (econ 50 -> 40). CAMPD shows both as never-off self-scheduled baseload (Parish 8760 op hours every year, median 38-45 pct of cap in 2023/24 vs the model's 15 pct floor + non-clearing econ band; Parish alone is -1.9/-3.7/-2.3 TWh = essentially the whole PRB 2024 fail; Parish also has NO plant-specific F923 coal price - falls back to class pricing). Year-asymmetry argument: in 2024 coal is the out-of-merit fringe so the committed gain displaces gas/CC (helps the -8.3 pct 2024 coal split); in 2023 coal is mid-merit so displacement lands intra-coal (protects the +2.3 pct 2023 split). --btm-backfill-year 2024 for reporting parity with 97a. MEASURED PROBE - REJECTED: Parish/Spruce Pct_Committed 20 -> 30 made PRB 2024 WORSE (-3.85 -> -4.68, PRB 2023 +0.59 -> +0.09): under commitment_screen_coal a bigger committed block that fails the cheap-gas profitability screen is decommitted wholesale, removing capacity the econ band previously dispatched hourly. The coal committed-share lever is measured DEAD for self-scheduled baseload recovery; Parish's wedge is the same out-of-merit/self-commit structure as the CT class. Guards/LMP held; no inputs change kept from this probe.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-13-run97b-coal-plants.js",
+  "bundle": "results/calibration/run97b_coal_plants"
+}

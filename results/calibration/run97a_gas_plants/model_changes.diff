@@ -1,0 +1,24 @@
+diff --git a/inputs/custom-bin-assignments.csv b/inputs/custom-bin-assignments.csv
+index 1870ed6..b12c696 100644
+--- a/inputs/custom-bin-assignments.csv
++++ b/inputs/custom-bin-assignments.csv
+@@ -48,7 +48,7 @@ CC_REGULAR,South,5,S_CC5,55086,Gregory Power Plant,469.8,11.68,1x1,E-class,0.0,5
+ CC_REGULAR,South_Central,1,S_CC1,55137,Rio Nogales Power Project,940.2,6.52,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
+ CC_REGULAR,South_Central,2,S_CC2,55168,Bastrop Energy Center,618.7,6.94,1x1,F-class,0.0,45.0,40.0,15.0,16.0,6.0,,1.1,1.0,1.45
+ CC_REGULAR,South_Central,3,S_CC3,55144,Hays Energy Project,989.0,7.3,2x1,F-class,0.0,25.0,60.0,15.0,16.0,6.0,,1.08,1.0,1.55
+-CC_REGULAR,South_Central,4,S_CC4,7900,Sand Hill,696.4,7.37,1x1,F-class,0.0,45.0,40.0,15.0,8.0,4.0,,1.1,1.0,1.45
++CC_REGULAR,South_Central,4,S_CC4,7900,Sand Hill,696.4,7.37,1x1,F-class,0.0,25.0,40.0,35.0,8.0,4.0,,1.1,1.0,1.45
+ CC_REGULAR,South_Central,5,S_CC5,55153,Guadalupe Generating Station,1088.2,7.39,2x1,F-class,0.0,25.0,60.0,15.0,8.0,4.0,,1.08,1.0,1.55
+ CC_REGULAR,South_Central,6,S_CC6,4937,Thomas C Ferguson,574.6,10.12,1x1,E-class,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
+ CC_REGULAR,Unknown,1,U_CC1,55098,Frontera Energy Center,529.0,6.87,1x1,F-class,0.0,45.0,40.0,15.0,16.0,6.0,,1.1,1.0,1.45
+@@ -297,8 +297,8 @@ ST_GAS,North,7,N_STGAS7,4266,Spencer,126.5,13.65,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.
+ ST_GAS,South,1,S_STGAS1,49392,Barney M Davis [ST],352.0,10.7,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
+ CC_REGULAR,South,9,S_CC_BD,4939,Barney M Davis [CC],730.0,8.0,,,0.0,55.0,35.0,10.0,6.0,4.0,,1.12,1.0,1.35
+ ST_GAS,South_Central,1,SC_STGAS1,3601,Sim Gideon,623.0,10.9,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
+-ST_GAS,South_Central,2,SC_STGAS2,3611,O W Sommers,892.0,10.97,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
+-ST_GAS,South_Central,3,SC_STGAS3,3612,V H Braunig,1138.0,8.49,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
++ST_GAS,South_Central,2,SC_STGAS2,3611,O W Sommers,892.0,10.97,,,0.0,40.0,55.0,5.0,8.0,8.0,,1.12,1.0,1.06
++ST_GAS,South_Central,3,SC_STGAS3,3612,V H Braunig,1138.0,8.49,,,0.0,40.0,55.0,5.0,8.0,8.0,,1.12,1.0,1.06
+ ST_GAS,South_Central,4,SC_STGAS4,3628,R W Miller,537.6,13.02,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
+ ST_GAS,South_Central,5,SC_STGAS5,56708,CFB Power Plant,310.0,15.83,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
+ ST_GAS,South_Central,6,SC_STGAS6,6243,Dansby,203.2,9.96,,,0.0,30.0,65.0,5.0,8.0,8.0,,1.12,1.0,1.06
