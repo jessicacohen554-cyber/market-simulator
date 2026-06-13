@@ -833,14 +833,22 @@ def generators_to_fleet_arrays(
                         and int(gen.plant_code) in ct_deploy_plants):
                     ct_d_tranches.setdefault(
                         int(gen.plant_code), []).append(g_idx)
+            deploy_mwh = 0.0
             for pc, idxs in ct_d_tranches.items():
                 idxs.sort(key=lambda i: heat_rate[i])
                 remaining = ct_deploy_frac * ct_deploy_floor[pc]  # (hours,)
+                deploy_mwh += float(remaining.sum())
                 for g_idx in idxs:
                     cap = pmax[g_idx] * availability[g_idx, :]
                     take = np.minimum(remaining, cap)
                     np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
                     remaining = remaining - take
+            logger.info(
+                "CT deployment overlay (%s %s): floored %d peaker(s), "
+                "%.2f TWh of out-of-merit energy (frac %.2f)",
+                _iso or "ERCOT", _yr, len(ct_d_tranches),
+                deploy_mwh / 1e6, ct_deploy_frac,
+            )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
