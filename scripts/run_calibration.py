@@ -103,6 +103,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_incidence_matrix,
     extend_with_import_node,
     get_ttc_array,
+    wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
 from market_sim.policy.eac import (  # noqa: E402
@@ -844,8 +845,19 @@ def run_year(
     # interchange schedule then stays out of demand (no double count).
     import_generators: list = []
     if priced_interchange:
+        # CARB levies its cap-and-trade allowance on unspecified WECC imports
+        # (border carbon adjustment, EF 0.428 t/MWh x allowance), so every
+        # CAISO import tranche carries it in its delivered cost — the same
+        # adder the production runner applies (model.runner). It is NOT on the
+        # export sinks (exports owe no CA compliance cost). Resolved at the
+        # backcast year's carbon price (each calibration solve is single-year).
+        border_carbon = (
+            wecc_border_carbon_adder(resolve_carbon_price(config, year))
+            if iso == "CAISO" else 0.0
+        )
         import_generators = (
-            build_import_generators(iso) + build_export_sinks(iso)
+            build_import_generators(iso, border_carbon)
+            + build_export_sinks(iso)
         )
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
