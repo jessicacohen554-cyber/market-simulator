@@ -2695,6 +2695,15 @@ def main() -> None:
              "startup component.",
     )
     parser.add_argument(
+        "--committed-ramp-spread", type=float, default=None,
+        help="Render the per-plant committed band as an n-slice rising ramp "
+             "spanning committed_mult x (1 +/- this fraction) instead of one "
+             "flat block, so a plant clears its committed capacity "
+             "progressively with price rather than snapping to the full "
+             "committed share in one hour. Targets the under-populated "
+             "mid-CF-band (bimodal dispatch). Mean bid unchanged. Unset = "
+             "flat block (no change).")
+    parser.add_argument(
         "--coal-warm-committed", action="store_true",
         help="Exempt CAMPD coal committed tranches from the P1 startup"
              "-amortization markup when the plant has a must-run floor: the "
@@ -2884,6 +2893,7 @@ def main() -> None:
             # ride along here.
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
+            "committed_ramp_spread": args.committed_ramp_spread,
             "wefor_residual": args.wefor_residual,
             "coal_lignite_passthrough_sigmoid":
                 True if args.coal_lignite_sigmoid else None,
