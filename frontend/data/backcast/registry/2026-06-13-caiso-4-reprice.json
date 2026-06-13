@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-13-caiso-4-reprice",
+  "label": "caiso 4 reprice",
+  "date": "2026-06-13",
+  "shorthand": "caiso-4-reprice",
+  "definition": "P9/P12 CAISO import reprice pass 4 KEEPER candidate (balanced static set, all 3 years)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-13-caiso-4-reprice.js",
+  "bundle": "results/calibration/caiso_reprice_pass4"
+}
