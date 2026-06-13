@@ -1843,3 +1843,111 @@ unrelated, per the P9b note). doc-00 status table updated (NYISO now 2023+2025,
 price-scored); dashboard carries the run; `docs/multi-iso/nyiso-backcast-2023.md`
 and `docs/calibration-best-so-far-nyiso.md` updated with the 2025 results and
 the now-scored price metrics.
+
+## ERCOT Runs 93–96 — retune on the corrected fleet (2026-06-12)
+
+**Campaign: re-derive the offer-curve calibration on the post-Kiamichi
+fleet (run 92's open item) and name a keeper that beats run 92's 6 class
+fails on both gates with no regression. Method: measured probe vectors
+(runs 93/94/95/95b — every live lever priced as a pure response vector vs
+`run92_kiamichi`), then ONE keeper run (96) with doses solved against the
+measured constraint system. Runs 95 and 95b ran in parallel (rule #11);
+95b from a sparse git worktree pinned at HEAD so 95's Kiamichi bins edit
+could not contaminate it (the bins CSV is re-read per year mid-run).
+Result: run 96 = run 92 + a single lignite-floor move, 5 fails,
+both gates held — the keeper.** All TWh below are model − benchmark vs
+`run92_kiamichi` unless said otherwise; scoring is the size-aware bar +
+fuel-split gate of `calibration-best-so-far.md`; LMP is the energy-only
+monthly demand-weighted MAE (gate ±$1 of 32.1/7.3/2.2).
+
+### The measured vectors (TWh per unit dose, vs run 92)
+
+| cell | V_CC (93: CC econ_high −0.40→−0.30) | V_CT (94: CT econ_high +0.20→−0.20 + Kiamichi trim v1) | V_floor (95−94: lignite floor 0.75→0.69 + Kiamichi v2) | V_CCc (95b: CC committed −0.05→+0.05) |
+|---|---|---|---|---|
+| CC 23/24/25 | −2.68/−2.16/−2.15 | −0.24/−0.25/−0.21 | −0.36/−0.40/−0.02 | −2.12/−1.63/−1.51 |
+| PRB 23/24/25 | +1.41/+0.91/+0.61 | −0.02/−0.11/0.00 | −0.16/−0.15/−0.00 | +0.83/+0.47/+0.45 |
+| ST_GAS 23/24/25 | +0.20/+0.15/+0.35 | −0.19/−0.13/−0.16 | −0.02/−0.03/−0.00 | +0.20/+0.20/+0.25 |
+| LIG 23/24/25 | +0.26/+0.23/+0.03 | 0.00/−0.01/−0.00 | **+0.62/+0.71/+0.04** | +0.22/+0.19/+0.02 |
+| CT 23/24/25 | +0.01/+0.01/+0.12 | +0.45/+0.49/+0.36 | 0.00/+0.01/−0.00 | +0.06/+0.07/+0.08 |
+| 2023 coal split (from +1.5%) | +2.7 | ~0 | +0.7 | +1.7 |
+| ML/LS 2023 guard (from 582/797 GWh) | +582/+287 | ~0 | **−67/−28** | +339/+194 |
+| LMP (32.06/7.29/2.17) | held | held | held | ≤$0.12 — lever NOT price-aborted |
+
+**Run 93 (`run93_jacobian_probe`, prior session).** CC econ_high give-back
+full dose: ~3× the stale pre-Kiamichi jacobian; FAILS 2023 at β=1 (coal
+split +4.2%, guards 1164/1084) → β ≤ 0.37 on the split, ≤ ~0.71 on guards.
+
+**Run 94 (`run94_ct_kiamichi`, prior session).** CT recovery γ=1 leaves CT
+failing all years and flips ST_GAS 2025 to a NEW fail (−1.15 vs the −0.99
+knife-edge pass); Kiamichi cost-side trim v1 (20/65/15, econ HR 1.06,
+committed in inputs) moved Kiamichi only −0.12/−0.14/−0.18.
+
+**Run 95 (`run95_lignite_probe`, this session).** Lignite-floor endpoint
+probe (0.69 = 2× the 0.72 candidate) on the run-94 base + Kiamichi bins v2
+(peaking 15→30). Findings: (a) the floor vector flips lignite 2024
+(−1.66 → −0.96) with mild PRB intra-coal steal (−0.15) and +0.7 split
+leakage; (b) guards IMPROVE (ML23 582→515 — the floor redistributes
+lignite toward the non-guard plants); (c) **Kiamichi v2 is a dead lever**:
+6.06/6.85/6.17 → 6.03/6.77/6.17 TWh — the over-run is bid-price-driven,
+not capacity-bound; withheld capacity doesn't bind. v2 NOT committed
+(inputs stay at the run-94 v1 trim).
+
+**Run 95b (`run95b_cc_committed_probe`, this session).** CC_REGULAR
+committed pure pair on the run-92 base, one clean +0.10 step (a measured
+endpoint extends the trust region — the run-82 lesson was extrapolating,
+not probing). The lever works mechanically (CC sheds −2.12/−1.63/−1.51;
+Kiamichi itself sheds 0.40–0.62 — the class-wide committed multiplier
+prices its 20% committed tranche; LMP barely moves) **but the 2024 refill
+is too dilute**: +0.47 PRB / +0.20 ST_GAS per unit vs the +1.53/+1.40
+those flips need, while the costs scale fast (2023 coal split +1.7/unit —
+95b itself FAILS the 2023 gate both fuels at δ=1 — guards +339/+194,
+gas 2023 −0.7%). **The 4-fail path is measured dead**: within the split
+budget (0.7λ + 1.7δ + 2.7β ≤ 1.0 from +1.5) a δ of ~0.2 buys +0.09 PRB
+2024 — an order of magnitude short. "Realistic best ≈ 5 fails" confirmed.
+
+### Run 96 — the keeper (`run96_lignite_keeper`, dashboard `run96 lignite keeper`)
+
+Doses solved smallest-first against the constraint system: **λ=1 (lignite
+floor 0.69, the measured endpoint), β=γ=δ=0.** γ flips nothing (CT 2023
+needs γ≥1.16, blocked by ST_GAS 2025 and partly structural — the IMM 2023
+SOM AS-deployment wedge, see the ORDC entry: do NOT chase the last
+~1–1.5 TWh of CT with fleet-wide levers); β and δ eat the 2023 coal-split
+budget the floor needs (any β>0 at λ=1 breaches +2.5%); δ at the allowed
+~0.2 buys only cosmetics. So the keeper is run 92 + one knob. Measured:
+**5 in-scope fails vs run 92's 6** — lignite 2024 −1.66 → **−0.95 PASSES**;
+remaining: CT_PEAKER −1.51/−2.54/−1.74, PRB 2024 −8.8%, ST_GAS 2024 −2.41.
+No new fails, no regressions: ST_GAS 2025 −0.99 (0.01 margin) holds, CC
+2023 −1.6%, PRB 2024 drift −3.71→−3.85 inside an already-failing cell
+(size-aware noise, run-91 precedent). Splits: 2023 −2.1/+2.3 PASS, 2024
+coal −8.3% (improved from −9.3, still the structural residual), 2025 PASS.
+Guards ML/LS 2023 546/773 (better than run 92); ML 2025 +1.46 (watch).
+LMP MAE 32.06/7.31/2.17 — identical to run 92. Kiamichi 6.04/6.78/6.17 vs
+~5.2 actual (within-class watch). PRB mean +1.3/−8.8/−0.1 → −2.5%.
+`calibration-best-so-far.md` rewritten (OPEN status cleared).
+
+### ORDC overlay follow-through
+
+`derive_ordc_overlay.py run96_lignite_keeper --revenue-report` (post-solve,
+no LP): **the ORDC baseline bundle moves from run92_kiamichi to the
+keeper**; `availability.parquet` + `scarcity.parquet` committed in the
+bundle. Tail metrics next to the energy-only gate numbers: 2023 MAE
+32.1 → **28.0** (>$200 hours 0→31 vs 181 actual, >$500 0→15 vs 104, max
+adder $3,131, Jun–Sep $·h gap 12% closed); 2024 7.3 → 7.9 and 2025
+2.2 → 2.2 hold the ±$1 gate (adder >$1 in 163/28/4 h). Revenue direction
+sane and ordered: CT_PEAKER 2023 +84%, storage discharge +169%, ST_GAS
++46%, CC +20%, wind +9%; 2025 ≈ +0%.
+
+### Bookkeeping
+
+Jacobian: runs 91–96 classified in the deriver REGISTRY (91→91055 pure,
+92 structural fleet fix, 92→93 pure, 94/95 sidecars so the chain pairs
+93→95b — pure, the corrected-fleet committed step; 96 structural) →
+**12 ERCOT pure pairs** in `inputs/processed/offer_curve_jacobian.csv`
+(committed). Dashboard keeps 5 ERCOT runs: 92, 94, 95, 95b, 96 (95 pruned
+90; 95b pruned 91; 96 pruned 93 — probe vectors live here + in the
+sidecar definitions). Probe sidecars marked "MEASURED PROBE, not a
+keeper" with their response vectors. Dead levers measured this campaign
+(do not re-probe): Kiamichi capacity withholding (v2), CC committed at
+meaningful dose (split/guards), CT econ_high beyond the ST_GAS-2025
+budget, plus the prior list (CT/ST_GAS peak bands, CT committed,
+Kiamichi cost-side nudges).
