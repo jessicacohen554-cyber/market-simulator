@@ -850,6 +850,20 @@ def _highspy_version() -> str:
         return ""
 
 
+def _json_default(obj: object) -> object:
+    """JSON encoder fallback for bundle metadata.
+
+    ``set``/``frozenset`` (e.g. ``ScenarioConfig.wefor_residual_groups``,
+    carried through the generic prb_overrides channel) serialize as a sorted
+    list; anything else falls back to ``str`` so the dump never crashes
+    mid-bundle (the run-104..106 failure mode: a frozenset in the override
+    record aborted meta.json after the parquets were already written).
+    """
+    if isinstance(obj, (set, frozenset)):
+        return sorted(obj)
+    return str(obj)
+
+
 def _git_sha() -> str:
     """Return the current git short SHA, or '' if unavailable."""
     try:
@@ -978,7 +992,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
         "scenario_config": dataclasses.asdict(cfg),
     }
     (run_dir / "run_config.json").write_text(
-        json.dumps(payload, indent=2, default=str)
+        json.dumps(payload, indent=2, default=_json_default)
     )
     if git["dirty"]:
         diff = _git("diff", "HEAD", "--", *_GIT_STATE_EXCLUDE)
@@ -1247,7 +1261,7 @@ def solve_and_persist(
         # bundle can be traced to a solver upgrade.
         "highspy_version": _highspy_version(),
     }
-    (run_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+    (run_dir / "meta.json").write_text(json.dumps(meta, indent=2, default=_json_default))
     # Rebuild the recorded config WITH the same overrides + deltas applied, so
     # run_config.json's scenario_config.offer_curve_by_group is the exact
     # merged curve the LP solved against (not the bare defaults).
@@ -1845,7 +1859,7 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
 
     meta["passes"] = sorted(set(meta.get("passes", [])) | {"P2"})
     meta["p2_screen_coal"] = screen_coal
-    (bundle / "meta.json").write_text(json.dumps(meta, indent=2))
+    (bundle / "meta.json").write_text(json.dumps(meta, indent=2, default=_json_default))
     report_run(bundle)
 
 
