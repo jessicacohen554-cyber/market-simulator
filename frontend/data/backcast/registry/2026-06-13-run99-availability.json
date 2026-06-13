@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-13-run99-availability",
+  "label": "run99 availability",
+  "date": "2026-06-13",
+  "shorthand": "run99-availability",
+  "definition": "Run 99: MEASURED PROBE - availability double-count test on the run-97a keeper base. --wefor-residual 0 zeros the statistical forced-outage WEFOR for the CAMPD-covered classes (coal + CC_REGULAR/CC_CHP/ST_GAS/ST_CHP, the _POF_DROP_GROUPS); coal_drop_pof already drops their planned POF. Keeps the summer ambient capacity derate, per-plant coal max-CF ceilings, and ALL measured CAMPD layers (historic >10d overlay + unit-outage derate + partial-outage derate). Tests the user hypothesis that stacking statistical WEFOR/POF on top of the measured CAMPD outages double-counts unavailability and caps CC below its real summer ceiling (0.8-0.9 band pileup, 0.9-1.0 shortfall). Expected: CC ceiling rises -> 0.9-1.0 band fills, but volume over-generates (mean CF already matched), so this is step 1 of an availability-basis retune, NOT a keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-13-run99-availability.js",
+  "bundle": "results/calibration/run99_availability"
+}
