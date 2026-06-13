@@ -2050,3 +2050,106 @@ levers (do not re-probe): coal `Pct_Committed` raises under the commitment
 screen (97b), ST_GAS committed-share beyond ~+10 pts (startup-spread
 saturation, 97a), per-plant CC CSV shares for CAMPD-covered plants (the
 override no-op).
+## NEISO offer-curve probe panel + Jacobian — P12 keeper sensitivity map (analysis only) (2026-06-13)
+
+**Runs `neiso_probe_base_2024` + 10 single-knob probes; dashboard `neiso 8
+probe-cc-eh-plus` / `neiso 9 probe-cc-eh-minus` (9 dominated entries registered
+then pruned per the top-5 rule; all 11 bundles kept on disk).** Goal: map the
+offer-curve band sensitivities around the NEISO P12 primary-year keeper
+(`neiso_p12_base_2024`) to inform any future refinement. **The keeper is NOT
+re-tuned** — zero changes to the sign-off config; ERCOT/PJM/CAISO untouched
+(their `offer_curve_jacobian.csv` rows byte-identical).
+
+### Panel design
+
+`neiso_probe_base_2024` re-runs the P12 keeper config on current main
+(run80a-style code-accumulation anchor): it reproduces the keeper **exactly**
+(identical per-class TWh and $57.06 demand-weighted price), so no NEISO code
+drift since sha `6fbf83d` and probe deltas read directly against the keeper.
+Ten ±0.05 single-knob probes chain off it via `--offer-curve-delta-json`
+(each consecutive bundle pair is a verified pure-curve observation; REGISTRY
+entries added to `scripts/derive_offer_curve_jacobian.py`, plus the NEISO
+state set for the merit-order adjacency check):
+
+CC_REGULAR committed ±, CC_REGULAR econ_high ±, CT_PEAKER committed ±,
+ST_GAS committed −, ST_GAS peak −, CC_CHP committed −, CT_CHP committed −.
+
+**No OIL band exists to probe.** `fossil_classes()` carries no OIL/ST_OIL
+offer-curve class: the oil-primary steam fleet (Wyman, Canal, …) dispatches
+under the non-fossil `oil` class with no band knob, and the dual-fuel CT/ST
+gas tranches live in CT_PEAKER/ST_GAS. The ST_GAS probes are therefore the
+panel's oil/dual-fuel coverage — and they are **dead knobs** (below).
+
+### Knob → objective map (Jacobian, 10 pure pairs, year 2024)
+
+`python scripts/derive_offer_curve_jacobian.py --iso NEISO --baseline
+neiso_p12_base_2024 --validate-run neiso_probe_base_2024` → 70 NEISO cells in
+`inputs/processed/offer_curve_jacobian.csv`. High-confidence rows:
+
+| knob | twh (own) | twh (cross) | lmp d(MAE)/d(mult) | shape d(gas NRMSE) |
+|---|---|---|---|---|
+| CC_REGULAR.econ_high | CC_REGULAR −1.47 ±0.09 | CC_CHP +0.37, CT_PEAKER +0.12 | **+5.4 ±0.7** | −0.0046 |
+| CC_REGULAR.committed | CC_REGULAR −0.27 ±0.03 | CC_CHP +0.08 | +2.1 ±0.8 | −0.0019 |
+| CT_PEAKER.committed | CT_PEAKER −0.09 ±0.01 | CC_REGULAR +0.07 [low] | +0.02 [low] | +0.0004 |
+| CC_CHP.committed | CC_CHP −0.20 [med] | CC_REGULAR +0.18 [med] | −0.02 [low] | ≈0 |
+| ST_GAS.committed / .peak | **0 — dead** | 0 | 0 | 0 |
+| CT_CHP.committed | +0.06 [low, n=1] | — | — | — |
+
+Reading: **NEISO's TWh block is essentially band-immune.** The largest
+sensitivity (CC_REGULAR.econ_high, −1.47 TWh/unit-mult) moves only ±0.07 TWh
+at the ±0.05 probe size — with no coal and a trivial CT/ST fleet, the CC class
+has no substitution partner and band moves just relabel its own price. Every
+cross-coupling is merit-order-adjacency-consistent (overlap mass >99%). The
+real leverage is on the **price level**: econ_high ±0.05 moves the
+demand-weighted level ∓±~$1/MWh annual; committed ~40% of that.
+
+### Winter-tail caveat (Jan/Feb LMP sensitivity is U4, not a band)
+
+The econ_high price response is **winter-loaded ×2–3** (±0.05 → Jan ∓±2.2,
+Feb ∓±1.4, Dec ∓±1.4 $/MWh vs ∓±0.4–0.9 mid-year): in Jan/Feb the marginal
+unit is almost always CC_REGULAR on the **monthly** AGT basis, so a band
+multiplier scales the documented flat winter plateau up or down. **Do not
+read this as a winter-tail knob.** The price re-score attributes the winter
+miss to the monthly-AGT limitation (plateau instead of daily-spot spikes;
+model never clears an hour >$200 vs 44/11/160 actual) — a multiplier on a
+flat plateau cannot manufacture daily variance, and the dead ST_GAS knobs
+confirm no band brings the dual-fuel/oil fleet into the winter merit order
+(even cheapened −0.05 it never clears; modeled oil stays 0.006 TWh). The fix
+remains the **daily-AGT U4 upload** (doc-08 decision 1; P11 gap #3). Equally,
+the CHP TWh "errors" (CC_CHP −0.69, CT_CHP −0.79 vs 923) are mostly the
+grid-side BTM-host convention (gas vs EIA-930 is green at −2.8%), not
+band-tunable — the recipe's no-btm.parquet warning applies.
+
+### Joint-move recipe + backtest
+
+- Default solve (balanced twh/shape/lmp, cap 0.15): **every knob
+  trust-region-frozen, no move** — the solver wants extrapolations far outside
+  the ±0.05 sampled range to chase structural (U4 / BTM / served-interchange)
+  error. The trust region vetoing it is the correct answer.
+- Capped to the sampled range (`--cap 0.05`): Δ = {CC_REGULAR committed −0.05,
+  econ_high −0.05; CT_PEAKER committed +0.05; ST_GAS committed −0.045, peak
+  −0.05} with predicted twh RMS 0.671→0.649, LMP MAE 18.41→18.08 $/MWh, shape
+  slightly degrading. **Immaterial vs the 18.4 structural LMP residual — not
+  promoted.** It also chases the 2023/24 over-pricing sign: 2025 under-prices
+  (−12.5 $/MWh re-score), so the same move worsens 2025. That sign flip is the
+  gas-price/U4 asymmetry, knowable from the re-score without new panels —
+  2023/2025 panels skipped (the TWh block, which is what a panel uniquely
+  measures, showed nothing tunable; LMP-block transfer would only re-measure
+  the same plateau scaling).
+- Backtest (held-out `neiso_probe_cc_regular_committed_minus`, excluded from
+  the fit then predicted): TWh block prediction-error RMS **0.001 TWh**
+  (CC_REGULAR +0.012 pred vs +0.013 actual); LMP −0.142 pred vs −0.094 actual
+  (the up/down asymmetry of a one-sided fit); the trust region correctly
+  flags the held-out one-sided move as outside the remaining sampled range —
+  the run-82 regression behavior reproduced for NEISO.
+
+### Verdict
+
+No offer-band refinement is recommended for NEISO: the P12 structural-defaults
+keeper stands. The panel's value is the fitted sensitivity matrix (any future
+NEISO band discussion starts from "econ_high is the only live knob, it prices
+the U4 plateau, and TWh is band-immune") and the dead-knob proof for the
+oil/dual-fuel path. Reproduce a probe:
+`python scripts/run_calibration_full.py --iso NEISO --year 2024 --commitment
+--offer-curve-delta-json '{"CC_REGULAR":{"econ_high":-0.05}}' --out-dir
+results/calibration/neiso_probe_cc_regular_econ_high_minus`.
