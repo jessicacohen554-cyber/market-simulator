@@ -2013,13 +2013,15 @@ needs `--plant-tranche-config` (follow-up).
 
 Parish + Spruce `Pct_Committed` 20 → 30 (econ 50 → 40), the CAMPD-grounded
 "self-scheduled baseload" representation. Measured BACKFIRE: PRB 2024
-−3.85 → **−4.68** (−0.82), PRB 2023 +0.59 → +0.09, CC 2024 +0.41. The
-mechanism: under `commitment_screen_coal` the committed band is screened
-for run-length profitability — a bigger committed block that fails the
-cheap-gas screen is decommitted wholesale, removing capacity the econ band
-previously dispatched hour-by-hour. The coal committed-share lever is
-measured DEAD for baseload recovery; Parish's wedge is the same
-self-commitment/out-of-merit structure as the CT class. No inputs kept.
+−3.85 → **−4.68** (−0.82), PRB 2023 +0.59 → +0.09, CC 2024 +0.41.
+[MECHANISM CORRECTED in the "Runs 98a/98b" entry below — the original
+commitment-screen reading was wrong (P2 was off): the P1 startup
+amortization lands solely on the committed tranche (only it has min-run
+params; COAL bins carry $100/MW), pricing the committed band ABOVE the
+econ ramp top, so the share shift moved capacity INTO the startup-bearing
+band.] The coal committed-share lever is measured DEAD at this operating
+point; Parish's wedge is the same self-commitment/out-of-merit structure
+as the CT class. No inputs kept.
 
 ### Verdict + follow-ups
 
@@ -2297,3 +2299,93 @@ single-knob entries were registered then pruned per the 5-run retention
 `results/calibration/caiso_probe_*`). Jacobian:
 `inputs/processed/offer_curve_jacobian.csv` (iso=CAISO, year=2023) +
 REGISTRY/ISO_STATES entries in `scripts/derive_offer_curve_jacobian.py`.
+
+## ERCOT Runs 98a/98b — the committed-band inversion, the split verdict, and the published ORDC μ/σ (2026-06-13)
+
+**Trigger: the 2024 gas-vs-coal split (−8.5%, ~−4.9 TWh of coal) declared
+unacceptable; campaign to find its mechanism and fix it. Outcome: the
+mechanism is found and PROVEN (run 98a passes the 2024 split), but every
+honest implementation is measured or sized to fail 2023 — the split fail
+is the quantified footprint of loss-making coal self-commitment the
+energy-only merit order cannot produce. Run 97a remains the keeper.
+Separately: the user fetched NP6-576-ER, closing the ORDC overlay's one
+unverified parameter.**
+
+### The mechanism (corrects the run-97b reading)
+
+Tranche-bid forensics on the run-96 bundle: Parish's committed tranche
+cleared only at LMP ≥ ~$20 while its econ slices cleared from ~$13
+(committed-band utilization 18% vs econ 47%). Cause: COAL bins carry a
+$100/MW startup cost and ONLY the `_committed` tranche has min-run params,
+so `compute_monthly_markup` (P1 bid-cost) amortizes the cold start onto
+the committed band alone — pricing the design's cheap base band ABOVE the
+econ ramp top. The run-97b "backfire" was capacity moving into the
+startup-bearing band (NOT the commitment screen — P2 was off; the
+docstring "coal gets no startup markup" describes only the legacy path).
+Also ruled out en route: Parish's fuel price is already the measured
+PRB-reporter monthly average (Fayette + Spruce F923) — not a price-input
+problem.
+
+### Runs 98a/98b — warm-boiler exemption (REJECTED, the decisive pair)
+
+New flag `--coal-warm-committed` (ScenarioConfig `coal_warm_committed`,
+default off): a coal bin with a must-run floor never goes fully dark — its
+mustrun tranche holds the boiler online — so committed-band dispatch is a
+hot-unit ramp, not a cold start; exempt it from the P1 markup. Run 98a =
+run-97a config + flag; run 98b = 98a + Parish/Spruce committed 20 → 30
+(parallel probes, worktree-isolated bins). Measured: **the 2024 story is
+fully explained — coal split −8.5 → −2.2% PASSES, PRB 2024 −9.0 → −0.3%
+(Parish +3.8 TWh)** — and **2023 detonates: PRB +8.8%, coal split +7.8%,
+gas −3.1%, guards 1603/1215**, plus committed coal steals ST_GAS 2024
+(−2.98) and CT 2024 (−3.02) and re-flips lignite 2024 (−1.14): 5 fails,
+worse distribution. The exempted band (~$16/MWh) clears in BOTH years —
+no year-asymmetry. 98b ≡ 98a within noise (the share lever is redundant
+once the band clears). Both registered as rejected probes.
+
+### The split verdict (measured/sized lever ledger)
+
+To pass, 2024 needs ~+3.4 TWh of coal with ≤ +0.25 TWh of net 2023 coal
+headroom. Levers now measured or sized against that: CC econ_high β and
+CC committed δ (split budget 2.7β + 1.7δ ≤ ~0.3, runs 93/95b); lignite
+floor (at its measured endpoint, run 95); PRB sigmoid retune (run-90
+year-gradient, 2023 detonates); coal committed share (runs 97b/98b);
+fleet-wide warm exemption (run 98a); Parish fuel price (already measured);
+**monthly CAMPD p10 must-run floors (sized from data, not run: net
++1.04/+2.15/+1.32 TWh by year → split −8.5 → ~−4.8%, still failing, while
+2023 lands on its cap; closing fully needs p25+ floors — openly flooring
+the calibration target)**. Conclusion: the residual 2024 coal deficit is
+owner self-commitment in a loss-making year (Parish ~3.7 of the ~4.9,
+lignite ~1.0) — economically irrational dispatch the LP cannot produce
+endogenously. Honest paths forward are a user-sanctioned methodology
+change: (a) the monthly-floor overlay at p10 (closes ~40%, same family as
+the accepted annual CAMPD floors and the outage overlay), or (b)
+re-benchmark the 2024 split with the IMM-documented self-commitment wedge
+out of scope (a gate redefinition). Neither taken unilaterally.
+
+### NP6-576-ER — the ORDC μ/σ table (RESOLVED)
+
+User-fetched postings 2025-06-13 + 2025-09-12 of report 13233 →
+`inputs/calibration/ercot_ordc_lolp_params.csv` (season-constant in these
+vintages: summer 904/1333, fall 917/1340, winter 930/1351, spring 947/1368
+μ/σ MW). Two findings: the published σ validates the a-priori 1,400 MW
+floor-anchor bound within 5%; and μ/σ is constant ≈ 0.68 across seasons —
+the signature of the PUCT-48551 0.5σ administrative shift being EMBEDDED
+in the published Average → use the table with `--shift 0` (the double-
+shift reading improves 2023 to 24.3 but degrades 2024 past the ±$1 guard:
+7.4 → 8.5). With the table + shift 0 on the keeper: 2023 MAE 32.1 → 27.8,
+2024 → 8.0, 2025 → 2.2 (≈ the flat default — σ was never the 2023
+residual's driver; the gap attribution in the ORDC entry stands). Both
+series committed in the run-97a bundle (`scarcity_np6shift0.parquet`
+canonical, `scarcity_np6.parquet` sensitivity); `docs/ordc-overlay.md`
+caveat replaced with the resolution + vintage note.
+
+### Bookkeeping
+
+Keeper unchanged: run 97a. Dashboard: 98a/98b registered (rejected probes,
+vectors in sidecars), retention prunes run95 + run95b entries (bundles
+stay). Jacobian REGISTRY: 97b description corrected, 98a/98b classified
+structural. New dead levers (do not re-probe): fleet-wide
+`--coal-warm-committed` (2023 floods + guards), coal committed share with
+OR without the exemption, monthly p10 floors as a split fix (sized
+insufficient). The flag itself stays in the codebase (default off) — it is
+the correct mechanism for any future per-plant/overlay treatment.
