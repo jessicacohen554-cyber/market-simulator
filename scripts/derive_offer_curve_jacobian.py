@@ -261,6 +261,28 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "neiso_probe_st_gas_peak_minus": ("pure", "single knob: ST_GAS peak -0.05 (dual-fuel/oil-steam scarcity band)"),
     "neiso_probe_cc_chp_committed_minus": ("pure", "single knob: CC_CHP committed -0.05 (grid-side CHP share)"),
     "neiso_probe_ct_chp_committed_minus": ("pure", "single knob: CT_CHP committed -0.05 (grid-side CHP share)"),
+    # --- CAISO ---
+    # 2026-06-13 probe panel: 11 single-knob ±0.05 band probes chained off a
+    # zero-delta code baseline, all 2023-only at the same code state (results
+    # bundles committed between runs, so shas advance but src/inputs/data git
+    # diffs are clean — auto-classification agrees with every entry below).
+    # CAVEAT: the panel ran with the P11 import-tranche mis-pricing OPEN
+    # (the node over-imports +114% in 2023), so these sensitivities are
+    # conditional on the import stack owning the $45-90 margin: CT_PEAKER and
+    # ST_GAS knobs measure ~dead, and 30-50% of every CC_REGULAR band move
+    # trades against the import node. Re-probe after the P9/P12 re-price.
+    "caiso_probe_base": ("structural", "code-accumulation baseline off caiso_1_priced_ix (zero curve deltas, 2023 only)"),
+    "caiso_probe_cc_regular_committed_minus": ("pure", "single knob: CC_REGULAR committed -0.05"),
+    "caiso_probe_cc_regular_econ_low_minus": ("pure", "single knob: CC_REGULAR econ_low -0.05 (prior probe reverted)"),
+    "caiso_probe_cc_regular_econ_high_minus": ("pure", "single knob: CC_REGULAR econ_high -0.05"),
+    "caiso_probe_cc_regular_peak_minus": ("pure", "single knob: CC_REGULAR peak -0.05 (measured ~zero response)"),
+    "caiso_probe_ct_peaker_committed_minus": ("pure", "single knob: CT_PEAKER committed -0.05 (measured zero response — import-crowded)"),
+    "caiso_probe_ct_peaker_econ_low_minus": ("pure", "single knob: CT_PEAKER econ_low -0.05"),
+    "caiso_probe_st_gas_committed_plus": ("pure", "single knob: ST_GAS committed +0.05 (measured ~zero response)"),
+    "caiso_probe_st_gas_econ_low_plus": ("pure", "single knob: ST_GAS econ_low +0.05"),
+    "caiso_probe_cc_chp_committed_minus": ("pure", "single knob: CC_CHP committed -0.05"),
+    "caiso_probe_ct_chp_committed_minus": ("pure", "single knob: CT_CHP committed -0.05"),
+    "caiso_probe_cc_regular_committed_plus": ("pure", "single knob: CC_REGULAR committed +0.05 (held-out back-test probe; exclude via --exclude-pair to reproduce the validation)"),
 }
 
 # Bundles older than this per-ISO timestamp are "legacy" unless REGISTRY or
@@ -292,6 +314,7 @@ ISO_STATES = {
     "PJM": {"PA", "NJ", "MD", "DE", "OH", "WV", "VA", "KY", "IL", "IN",
             "MI", "NC", "TN", "DC"},
     "NEISO": {"CT", "MA", "ME", "NH", "RI", "VT"},
+    "CAISO": {"CA"},
 }
 
 
