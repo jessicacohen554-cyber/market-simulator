@@ -218,6 +218,7 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "run94_ct_kiamichi": ("sidecar", "CT econ_high -0.20 probe + Kiamichi bins trim v1 off the run-92 config (rejected: flips ST_GAS 2025); vector in the runs-93-96 calibration-log section"),
     "run95_lignite_probe": ("sidecar", "lignite floor 0.69 endpoint + Kiamichi bins v2 probe off run94 (sigmoid param + bins, not curve knobs); vector in the runs-93-96 calibration-log section"),
     "run95b_cc_committed_probe": ("pure", "vs chain-predecessor run93: CC_REGULAR committed -0.05 -> +0.05 and econ_high -0.30 -> -0.40 (curve moves only; the Kiamichi bins v1 trim between their shas is a measured within-CC ~0.15 TWh perturbation, run-94 note — accepted)"),
+    "run96_lignite_keeper": ("structural", "lignite sigmoid floor 0.75 -> 0.69 keeper (sigmoid param, not a curve knob; offer deltas = run92's)"),
     # --- PJM ---
     "pjm_2023": ("legacy", "exploratory era"),
     "pjm_2024": ("legacy", "exploratory era"),
