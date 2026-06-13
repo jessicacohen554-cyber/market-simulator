@@ -175,6 +175,7 @@ def compute_monthly_markup(
     T: int,
     gas_st_season_spread: bool = False,
     chp_startup_covered: bool = False,
+    coal_warm_committed: bool = False,
 ) -> np.ndarray:
     """Compute the ``(n_gen, T)`` monthly startup-amortization markup.
 
@@ -216,6 +217,17 @@ def compute_monthly_markup(
         if chp_startup_covered and gen.plant_group in (
             "CC_CHP", "CT_CHP", "ST_CHP",
         ):
+            continue
+        # Warm-boiler exemption: a CAMPD coal bin with a must-run floor
+        # never goes fully dark — its ``_mustrun`` tranche keeps the boiler
+        # online — so dispatching the ``_committed`` tranche is an output
+        # ramp on a hot unit, not a cold start. Without this the $100/MW
+        # coal start amortized over P0 run lengths prices the committed
+        # band ABOVE the econ ramp top (Parish 2024: committed cleared
+        # only at LMP >= ~$20 vs econ from ~$13 — the run-97b inversion),
+        # turning the design's cheap base band into a near-peak band.
+        if (coal_warm_committed and gen.fuel_type == "coal"
+                and getattr(gen, "must_run_pct", 0.0) > 0.0):
             continue
         startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:

@@ -489,6 +489,15 @@ class ScenarioConfig:
     # their bin startup cost like merchant units.
     chp_startup_covered: bool = False
 
+    # Warm-boiler coal committed band: a CAMPD coal bin with a per-plant
+    # must-run floor never goes fully dark (the mustrun tranche holds the
+    # boiler online), so its committed tranche's dispatch is a ramp on a
+    # hot unit, not a cold start — exempt it from the P1 startup
+    # amortization (the $100/MW coal start otherwise prices the committed
+    # band above the econ ramp, inverting the offer-curve band order).
+    # Off (default) keeps the legacy markup on every committed tranche.
+    coal_warm_committed: bool = False
+
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
     # hard minimum-generation floor of that fraction of capacity in May-Sep
