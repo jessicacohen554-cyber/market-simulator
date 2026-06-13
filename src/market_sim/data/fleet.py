@@ -327,6 +327,7 @@ def generators_to_fleet_arrays(
     hours: int = 8760,
     iso: str | None = None,
     config: ScenarioConfig | None = None,
+    load_shape: np.ndarray | None = None,
 ) -> FleetArrays:
     """Convert a list of generators into vectorized ``FleetArrays``.
 
@@ -422,6 +423,26 @@ def generators_to_fleet_arrays(
     # The annual-average availability of each unit is unchanged — only the
     # seasonal shape moves. Non-thermal units (nuclear, hydro, ...) keep the
     # 1 - EFORD derate. Age is the run year minus the unit's commission year.
+    #
+    # Per-plant CT_PEAKER reliability must-run floor (config.ct_mustrun_per_plant,
+    # backcast only). The observed EIA-923 net generation is forced on these
+    # peakers as a minimum below; because that floor already nets out every real
+    # outage, WEFOR and the planned-outage (maintenance) derate must NOT apply to
+    # the floor units (they would double-count and clip it). The table is keyed
+    # by plant code; an empty table (flag off, or forecast/missing 923) leaves
+    # every code path byte-identical.
+    ct_floor_mwh: dict[int, np.ndarray] = {}
+    ct_floor_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "ct_mustrun_per_plant", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        ct_floor_frac = float(getattr(config, "ct_mustrun_floor_frac", 1.0) or 0.0)
+        if ct_floor_frac > 0.0:
+            ct_floor_mwh = ct_mustrun_floor_mwh_by_plant(int(_yr))
+    ct_floor_plants = set(ct_floor_mwh)
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
@@ -463,7 +484,16 @@ def generators_to_fleet_arrays(
             )
             if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
-            if drop_coal_pof and gen.fuel_type == "coal":
+            if (gen.plant_group == "CT_PEAKER"
+                    and int(gen.plant_code) in ct_floor_plants):
+                # Reliability must-run floor unit: WEFOR and the planned-outage
+                # (maintenance) derate do not apply — the floor injected below is
+                # observed EIA-923 generation, which already embeds every real
+                # outage, so the statistical outage model would double-count and
+                # clip it. Keep only the flat performance derate (the summer
+                # ambient derate still multiplies in below).
+                availability[g_idx, :] = 1.0 - derate
+            elif drop_coal_pof and gen.fuel_type == "coal":
                 # Planned maintenance now comes from the historic outage
                 # overlay, so drop the statistical POF (and its summer->shoulder
                 # WEFOR redistribution) to avoid double-counting. Keep WEFOR in
@@ -680,7 +710,7 @@ def generators_to_fleet_arrays(
     chp_pmin_any = any(
         getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
     )
-    if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any:
+    if st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any or ct_floor_plants:
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
         # (build_variable_bounds), so export sinks (pmin < 0, absorption
@@ -707,6 +737,65 @@ def generators_to_fleet_arrays(
             pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
             if pmin_mw > 0.0:
                 min_gen[g_idx, :] = pmin_mw
+        # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
+        # observed monthly net generation (frac-scaled) across that month's
+        # hours, *shaped by system load* — the energy is placed in the
+        # above-median-load hours (where simple-cycle peakers actually run) and
+        # left at zero in the off-peak hours, so the floor displaces marginal
+        # gas/imports at the peak rather than coal baseload at night. Within each
+        # hour it is distributed over the plant's tranches cheapest-first
+        # (committed -> econ -> peak), each capped at its available capacity. The
+        # floor units' availability already excludes WEFOR/POF (set above), so
+        # the observed energy fits under the cap. With no load shape available
+        # the energy falls back to a flat monthly spread.
+        if ct_floor_plants:
+            month_idx = _hour_to_month_index(hours)
+            sys_load = (
+                np.asarray(load_shape, dtype=float)
+                if load_shape is not None and len(load_shape) == hours
+                else None
+            )
+            ct_tranches: dict[int, list[int]] = {}
+            for g_idx, gen in enumerate(generators):
+                if (gen.plant_group == "CT_PEAKER"
+                        and int(gen.plant_code) in ct_floor_plants):
+                    ct_tranches.setdefault(int(gen.plant_code), []).append(g_idx)
+            # Per-month hourly weights summing to 1.0 over the month's hours:
+            # max(load - median, 0) concentrates the energy in the peak hours.
+            month_weights: dict[int, np.ndarray] = {}
+            for m in range(12):
+                hmask = month_idx == m
+                n_h = int(hmask.sum())
+                if n_h == 0:
+                    continue
+                if sys_load is not None:
+                    lm = sys_load[hmask]
+                    w = np.maximum(lm - np.median(lm), 0.0)
+                    if w.sum() <= 0.0:
+                        w = np.ones(n_h, dtype=float)
+                else:
+                    w = np.ones(n_h, dtype=float)
+                month_weights[m] = w / w.sum()
+            for pc, idxs in ct_tranches.items():
+                # Cheapest tranche first so the floor lands on the committed band.
+                idxs.sort(key=lambda i: heat_rate[i])
+                mwh12 = ct_floor_mwh[pc]
+                for m, w in month_weights.items():
+                    energy = ct_floor_frac * float(mwh12[m])
+                    if energy <= 0.0:
+                        continue
+                    hmask = month_idx == m
+                    # Per-hour floor (MW) summing to ``energy`` MWh over the month.
+                    remaining = energy * w
+                    for g_idx in idxs:
+                        if not remaining.any():
+                            break
+                        # Flat availability within a calendar month for these
+                        # units, so the cap is a scalar.
+                        cap_mw = float((pmax[g_idx] * availability[g_idx, hmask]).min())
+                        take = np.minimum(remaining, cap_mw)
+                        min_gen[g_idx, hmask] = take
+                        remaining = remaining - take
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
@@ -2313,6 +2402,52 @@ def eia923_dominant_class_by_plant(year: int) -> dict[int, str]:
         if current is None or mwh > current[1]:
             best[pid] = (klass, mwh)
     return {pid: klass for pid, (klass, _) in best.items()}
+
+
+def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: array(12) monthly CT_PEAKER net-gen MWh}``.
+
+    Sums every EIA-923 Page-1 monthly net-generation row that classifies
+    (:func:`classify_plant`) as ``CT_PEAKER``, per plant, in calendar-month
+    order. This is the source of the per-plant simple-cycle reliability
+    must-run floor (``config.ct_mustrun_per_plant``): the energy-only LP prices
+    peakers out almost entirely while the actuals show a low (~4% CF) reserve/
+    reliability run, so the observed monthly energy is injected as a
+    minimum-generation floor.
+
+    Returns an empty mapping when EIA-923 has no data for ``year`` (forward /
+    scenario years, or a missing parquet), so callers fall back to no floor.
+    """
+    from market_sim.data.eia923 import (
+        load_monthly_generation,
+        monthly_netgen_columns,
+    )
+
+    try:
+        gen = load_monthly_generation()
+    except FileNotFoundError:
+        return {}
+    df = gen[gen["year"] == year]
+    if df.empty:
+        return {}
+    is_ct = [
+        classify_plant(
+            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
+            coal_class_resolver=_coal_class_for,
+        ) == "CT_PEAKER"
+        for pm, fuel, chp, pid in zip(
+            df["prime_mover"], df["fuel_type"], df["chp"], df["plant_id"],
+        )
+    ]
+    sub = df[pd.Series(is_ct, index=df.index)]
+    if sub.empty:
+        return {}
+    cols = monthly_netgen_columns()
+    grouped = sub.groupby("plant_id")[cols].sum()
+    return {
+        int(pid): row.to_numpy(dtype=float)
+        for pid, row in grouped.iterrows()
+    }
 
 
 # ERCOT coal-unit commission year by EIA plant code — the in-service year

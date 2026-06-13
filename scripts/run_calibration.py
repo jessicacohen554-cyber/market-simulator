@@ -293,6 +293,8 @@ def _calibration_config(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    ct_mustrun_per_plant: bool = False,
+    ct_mustrun_floor_frac: float = 1.0,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
@@ -404,6 +406,9 @@ def _calibration_config(
         #   PRB passthrough when set; else the flat coal_prb_passthrough.
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
         #   must-run floors when set; else the uniform lignite/PRB overrides.
+        ct_mustrun_per_plant=ct_mustrun_per_plant,  # per-plant EIA-923 CT_PEAKER
+        #   reliability must-run floor (WEFOR/POF exempt) when set.
+        ct_mustrun_floor_frac=ct_mustrun_floor_frac,
         coal_drop_pof=coal_drop_pof,  # drop statistical POF on coal (planned
         #   maintenance now comes from the historic outage overlay).
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,  # separate
@@ -725,6 +730,8 @@ def run_year(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    ct_mustrun_per_plant: bool = False,
+    ct_mustrun_floor_frac: float = 1.0,
     coal_drop_pof: bool = False,
     coal_prb_passthrough_tiered: bool = False,
     prb_overrides: dict | None = None,
@@ -788,6 +795,7 @@ def run_year(
         coal_lignite_mustrun, coal_prb_mustrun,
         coal_prb_passthrough, outage_source,
         coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
+        ct_mustrun_per_plant, ct_mustrun_floor_frac,
         coal_drop_pof, coal_prb_passthrough_tiered,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
@@ -1024,7 +1032,8 @@ def run_year(
             -sum(g.pmin_mw for g in import_generators),
         )
     fleet_arrays = generators_to_fleet_arrays(
-        fleet, zone_names, hours=config.hours, iso=iso, config=config
+        fleet, zone_names, hours=config.hours, iso=iso, config=config,
+        load_shape=demand.sum(axis=0),
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
 
