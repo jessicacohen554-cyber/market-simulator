@@ -1951,3 +1951,102 @@ keeper" with their response vectors. Dead levers measured this campaign
 meaningful dose (split/guards), CT econ_high beyond the ST_GAS-2025
 budget, plus the prior list (CT/ST_GAS peak bands, CT committed,
 Kiamichi cost-side nudges).
+
+## ERCOT Runs 97a/97b — per-plant retune + the BTM vintage fix (2026-06-13)
+
+**Campaign: the runs 93–96 retune exhausted the class-wide offer-curve
+dose space at 5 fails, so this session localized the remaining fails to
+plants (the run-96 bundle's per-plant panels) and fixed what was honestly
+fixable. Result: run 97a is the keeper — 4 in-scope fails, both gates, no
+regressions, every remaining fail structurally diagnosed. The probes ran
+in parallel (97a gas-side in the main tree, 97b coal-side in a sparse
+worktree, both off the run-96 config).**
+
+### The per-plant decomposition (run 96 bundle, model − CAMPD/923)
+
+- **ST_GAS 2024 (−2.41) is not diffuse**: V H Braunig −3.2 (and −2.5/−3.7
+  in 2023/25!), O W Sommers −0.8, Cedar Bayou −1.1 — the CPS San Antonio
+  self-scheduled steamers — offset by over-run elsewhere in the class.
+- **PRB 2024 (−3.85) is one plant**: W A Parish −3.7 (Spruce −1.6, offset
+  by over-runners). Parish is never off (8,760 CAMPD op-hours every year,
+  p10 ≈ the model's 15% floor — the floor is right), median 38–45% of cap
+  in 2023/24; it has NO plant-specific F923 coal price (class fallback).
+- **CT_PEAKER decomposes three ways**: (1) San Jacinto (7325): bins call it
+  CT_PEAKER but it behaves as a refinery cogen (flat ~50% CF; EIA-923 says
+  chp=N so the dominant-class override pins the class); its 65% must-run
+  share is BTM-removed and added back from the plant's 923 netgen — which
+  the incomplete 2025 vintage lacks entirely, zeroing 0.86 TWh of add-back
+  while the CAMPD-backfilled benchmark keeps the plant. The CT 2025 "fail"
+  was this artifact. (2) ~1.0 TWh/yr of bench sits in non-CEMS small
+  peakers (Ector County 649 vs 119 GWh, Permian Basin 460 vs 47, Pearsall,
+  …) the merit order can't reach. (3) Of the CEMS-covered CT energy, 31/38/
+  44% (2023/24/25) ran in hours with RT price below the unit's marginal
+  cost — the AS/RUC deployment + RA wedge, 1.4–2.3 TWh/yr, quantifying the
+  IMM-documented structure flagged in the ORDC entry. The model already
+  matches CEMS for CAMPD-covered CT plants (2024 model 5.03 vs 5.38 CEMS).
+- **Bonus: Sand Hill (7900)** — a CC+CT site flattened to one 7.37-HR
+  CC_REGULAR bin, model 3.61 vs 2.13 TWh actual in 2024 = a third of the
+  CC 2024 over-run. Its CT capacity dispatches at the CC heat rate.
+
+### Run 97a (`run97a_gas_plants`) — KEEPER, 4 fails
+
+Run-96 config + (1) `--btm-backfill-year 2024` — new flag, mirrors
+`--hydro-backfill-year`: a plant whose (plant, class) 923 total is zero
+for the year borrows the prior year's, ONLY if CAMPD shows it generating
+(CEMS-silent cogens stay dropped on both sides). Measured: CT_PEAKER 2025
+BTM 0 → 0.85 (San Jacinto), CC_CHP +0.14, all else ~0 — surgical. (2)
+Braunig + Sommers `Pct_Committed` 30 → 40. Measured: **CT_PEAKER 2025
+−1.74 → −0.90 PASSES**; ST_GAS 2023 −0.31 → +0.06, 2024 −2.41 → −1.99
+(still fails), 2025 margin −0.99 → −0.73; CC/PRB/lignite hold; splits
+2023 −2.0/+2.1 PASS; guards 498/760 (best of the campaign); LMP
+32.08/7.34/2.16 (gate held). Braunig/Sommers own-gain measured at only
++0.17 TWh each — the ST_GAS committed band carries the startup-spread
+markup (Braunig startup 28.5 t CO2, ~12 starts/yr), so the committed-share
+lever saturates: ST_GAS 2024 is not reachable representationally. The
+Sand Hill committed/peaking CSV edit in the run note was a measured
+**no-op** — `cc_committed_per_plant`/`cc_peaking_per_plant` override CSV
+shares for CAMPD-covered CC plants (Kiamichi only takes CSV values because
+it has no CAMPD extract) — reverted from inputs; per-plant CC surgery
+needs `--plant-tranche-config` (follow-up).
+
+### Run 97b (`run97b_coal_plants`) — REJECTED, the screen finding
+
+Parish + Spruce `Pct_Committed` 20 → 30 (econ 50 → 40), the CAMPD-grounded
+"self-scheduled baseload" representation. Measured BACKFIRE: PRB 2024
+−3.85 → **−4.68** (−0.82), PRB 2023 +0.59 → +0.09, CC 2024 +0.41. The
+mechanism: under `commitment_screen_coal` the committed band is screened
+for run-length profitability — a bigger committed block that fails the
+cheap-gas screen is decommitted wholesale, removing capacity the econ band
+previously dispatched hour-by-hour. The coal committed-share lever is
+measured DEAD for baseload recovery; Parish's wedge is the same
+self-commitment/out-of-merit structure as the CT class. No inputs kept.
+
+### Verdict + follow-ups
+
+Keeper run 97a: 4 fails (CT 2023 −1.53 / CT 2024 −2.56 / PRB 2024 −3.94 /
+ST_GAS 2024 −1.99), ties run 85's old 4-fail mark on the corrected fleet,
+beats run 96's 5; `calibration-best-so-far.md` updated; ORDC overlay
+re-derived on the keeper (2023 MAE 32.1 → 28.0, 2024/25 hold ±$1; baseline
+bundle moves run96 → run97a; availability+scarcity committed in-bundle).
+All four remaining fails share one structure: **self-committed /
+AS-deployed energy the energy-only merit order cannot dispatch** — the
+candidate mechanism is an explicit deployment overlay built from measured
+out-of-merit CEMS hours (run ≥ X MW while RT < marginal cost), analogous
+to the historic outage overlay; that is a methodology change needing user
+sign-off. Other follow-ups: Sand Hill per-plant tranche config (~1.5 TWh
+of CC 2024 over-run), Cedar Bayou, NP6-576-ER μ/σ (ercot.com still
+egress-blocked, 403, retried 2026-06-13). Forecast note: the kept changes
+are fleet representation (bins committed shares) and a backcast reporting
+flag — the bins edits flow into forecast mode; the flag is
+backcast-reporting only and changes no dispatch.
+
+### Bookkeeping
+
+Dashboard: 97a/97b registered; retention prunes run92 + run94 entries
+(bundles stay; run92 remains the documented baseline in this log).
+Jacobian REGISTRY: 96 → 97a and 97a → 97b classified structural (bins/
+reporting, no curve knobs) — 12 ERCOT pure pairs unchanged. New dead
+levers (do not re-probe): coal `Pct_Committed` raises under the commitment
+screen (97b), ST_GAS committed-share beyond ~+10 pts (startup-spread
+saturation, 97a), per-plant CC CSV shares for CAMPD-covered plants (the
+override no-op).
