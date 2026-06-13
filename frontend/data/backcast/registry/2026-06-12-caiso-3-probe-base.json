@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-caiso-3-probe-base",
+  "label": "caiso 3 probe base",
+  "date": "2026-06-12",
+  "shorthand": "caiso-3-probe-base",
+  "definition": "CAISO 3 offer-curve probe panel BASE (sensitivity mapping, NOT a tuning keeper): zero-delta re-run of the caiso_1_priced_ix config at current main, 2023 only. Anchor for 11 single-knob \u00b10.05 band probes (3a-3k; dominated entries pruned, bundles kept in results/calibration/caiso_probe_*). Import-tranche mis-pricing (P9/P12) still OPEN \u2014 the node over-imports and owns the margin, so band sensitivities are conditional on it.",
+  "years": [
+    2023
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-caiso-3-probe-base.js",
+  "bundle": "results/calibration/caiso_probe_base"
+}
