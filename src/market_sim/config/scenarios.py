@@ -471,6 +471,22 @@ class ScenarioConfig:
     # the CSV value. The historic outage overlay still applies on top.
     coal_mustrun_per_plant: bool = False
 
+    # When True, simple-cycle peakers (CT_PEAKER) carry a per-plant monthly
+    # reliability must-run floor equal to their observed EIA-923 net generation
+    # (fleet.ct_mustrun_floor_mwh_by_plant), injected as a minimum-generation
+    # bound. The energy-only LP prices CTs out almost entirely (~0% CF) where
+    # the actuals show ~4% — peakers run for local reliability / reserves, not
+    # economics — so the observed energy is forced on. Because the floor IS
+    # observed generation (it already nets out every real outage), the
+    # statistical WEFOR and planned-outage (maintenance) derates do NOT apply to
+    # these units; layering them on would double-count and clip the floor.
+    # Backcast-only; forecast years (no 923) get no floor. Off by default.
+    ct_mustrun_per_plant: bool = False
+    # Fraction of the observed monthly CT_PEAKER net generation to force as the
+    # reliability floor (1.0 = the full observed energy). Lower it to leave the
+    # peaker some economic headroom above the must-run base.
+    ct_mustrun_floor_frac: float = 1.0
+
     # When True, drop the statistical planned-outage (POF) derate on coal —
     # planned maintenance is now captured by the historic outage overlay, so
     # the POF would double-count. Keep WEFOR (forced outages) in the non-summer
@@ -1120,6 +1136,8 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
+    "ct_mustrun_per_plant": 3,
+    "ct_mustrun_floor_frac": 3,
     "coal_drop_pof": 3,
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
