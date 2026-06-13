@@ -463,7 +463,9 @@ def generators_to_fleet_arrays(
             getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0
         )
         if ct_deploy_frac > 0.0:
-            ct_deploy_floor = ct_deployment_floor_for_year(int(_yr), hours)
+            ct_deploy_floor = ct_deployment_floor_for_year(
+                int(_yr), hours, _iso or "ERCOT"
+            )
     ct_deploy_plants = set(ct_deploy_floor)
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year

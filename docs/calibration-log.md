@@ -2657,3 +2657,63 @@ lignite floor outside ~0.675 (2023 flood / 2024 fail, 108). Follow-up (not
 this campaign): a non-CEMS small-peaker floor for the ~1.0 TWh CT 2024
 residual (Ector/Permian/Pearsall have 923 net-gen but no hourly CEMS — a
 923-based floor, distinct from the CEMS out-of-merit overlay).
+
+## Cross-ISO — CT_PEAKER AS-deployment overlay generalized to PJM/CAISO/NYISO/NEISO; the PJM blanket-floor refutation (2026-06-13)
+
+**The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/derive_ct_deployment.py`
++ `outages.ct_deployment_floor_for_year` + `ScenarioConfig.ct_deployment_overlay`)
+is now ISO-parameterized and extended to the four remaining ISOs.** This entry
+records (a) the PJM blanket-floor measurement that proves the targeted overlay is
+the *only* mechanism that works, and (b) the per-ISO out-of-merit wedges the
+generalized derive script measures.
+
+**Why a blanket CT must-run floor is wrong (PJM measurement).** A parallel PJM
+session first tried the blanket per-plant CT must-run floor
+(`ct_mustrun_per_plant`, force *all* observed CAMPD-shaped CT energy). Measured on
+the PJM keeper it moves the CT/CC split correctly — CT_PEAKER −9.60 → −0.10 and
+CC_REGULAR +4.30 → +0.67 (the split itself is fixable) — **but it injects ~+5 TWh
+net gas** because the forced CT displaces coal + imports, not just CC:
+
+- 2024 gas +16.5 → **+21.4 FAIL** (gate ≈ +17.7); 2024 coal-tot −3.2 → **−6.2 FAIL**
+  (knife edge <5.0 breached).
+- 2023 / 2025 passed (2025 coal-tot even improved +5.83 → +4.72).
+
+A coal-cheapening retune to *absorb* the displaced gas does **not** converge: BIT
+`econ_low` −0.15 fixes 2024 coal but leaves gas **+20.15 FAIL**; −0.30 overshoots
+2025 coal-tot to **+8.29 FAIL**. 2024-gas and 2025-coal cannot be reconciled by any
+single offer lever — the same diagnosis as ERCOT. **CT is not offer-recoverable**,
+so only a *targeted* sub-marginal overlay (floor dispatch to the measured level
+**only** in hours where CEMS shows the unit running while RT LMP < its marginal
+cost) recovers the AS/RUC/reliability energy without over-crediting to full CEMS
+output and without displacing the coal/imports the energy-only LP already prices
+correctly. This is the empirical justification for adopting the overlay across all
+ISOs in place of the blanket floor.
+
+**Generalization shipped (reuse, not rebuild).**
+- `derive_ct_deployment.py` is now `--iso`-driven: it reads `campd.states_for_iso(iso)`
+  and `actual_lmp_hourly_<ISO>.parquet` and writes `ct_deployment_floor_<ISO>.parquet`.
+  ERCOT keeps its CAMPD-bin heat rates (`custom-bin-assignments.csv`); every other
+  ISO sources per-plant CT_PEAKER heat rates from the **same EIA-860 fleet the LP
+  dispatches** (`load_fleet_from_csv` + the canonical `classify_plant`, capacity-
+  weighted per plant), so "out of merit" is defined consistently with each ISO's CT
+  offer.
+- `outages.ct_deployment_floor_for_year(year, hours, iso)` and the `fleet.py`
+  min-gen wiring are ISO-keyed; the WEFOR/POF-exempt branch and the
+  cheapest-tranche-first availability-capped min-gen distribution carry over
+  unchanged. The overlay flag stays default-OFF, backcast-only.
+
+**Measured out-of-merit wedges (deploy TWh / share of covered CEMS CT energy;
+Henry Hub gas 2.54 / 2.19 / 3.52, `hr-mult` 1.0):**
+
+| ISO   | 2023 | 2024 | 2025 | notes |
+|-------|------|------|------|-------|
+| ERCOT | 1.34 (30%) | 1.88 (35%) | 2.22 (43%) | unchanged keeper artifact |
+| PJM   | 6.68 (37%) | 4.39 (24%) | 6.69 (30%) | 72–73 plants; NC/TN/MI lack CAMPD extracts |
+| CAISO | 0.00 ( 0%) | 0.28 ( 8%) | 0.39 (24%) | 2023 LMP file has no rows → no wedge that year (degrades to plain LP) |
+| NYISO | 1.87 (50%) | 0.78 (23%) | 1.00 (26%) | 20–21 plants |
+| NEISO | 0.08 (19%) | 0.04 ( 9%) | 0.05 (10%) | small CT fleet (8–9 plants) |
+
+The wedge is the *sub-marginal subset* of measured CT energy, not the full CT gap:
+the remaining (economic, price ≥ MC) CT shortfall stays with the LP and is
+offer-tunable, gas-neutral (CT↔CC). Per-ISO calibration against each registered
+keeper follows; runs are logged as MEASURED PROBEs until one beats its incumbent.
