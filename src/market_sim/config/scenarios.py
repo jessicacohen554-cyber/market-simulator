@@ -508,6 +508,16 @@ class ScenarioConfig:
     # distribution smooths. Slice count = offer_curve_smoothing_n.
     committed_ramp_spread: float = 0.0
 
+    # Restrict the WEFOR residual cap (wefor_residual) to a chosen set of
+    # plant groups. None (default) keeps the legacy scope — every
+    # CAMPD-covered class (coal + CC/ST and their CHP). Set e.g.
+    # {"ST_GAS", "ST_CHP"} to relieve only the class with a measured
+    # availability deficit, leaving CC and coal on the full statistical
+    # forced-outage model (the per-class evidence: ST_GAS 2024 was
+    # availability-capped; CC was already over; coal relief just lets gas
+    # displace it).
+    wefor_residual_groups: frozenset[str] | None = None
+
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a
     # hard minimum-generation floor of that fraction of capacity in May-Sep

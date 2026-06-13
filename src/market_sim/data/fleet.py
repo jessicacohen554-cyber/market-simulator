@@ -446,10 +446,22 @@ def generators_to_fleet_arrays(
             # Lighten (or raise) the forced-outage magnitude while keeping the
             # seasonal shape — applied before the summer/shoulder/winter split.
             wefor *= config.wefor_multiplier
-            if wefor_res is not None and (
-                gen.fuel_type == "coal"
-                or gen.plant_group in _POF_DROP_GROUPS
-            ):
+            # WEFOR residual cap (historic-backcast double-count relief). By
+            # default it applies to every CAMPD-covered class (coal +
+            # _POF_DROP_GROUPS), whose sustained outages the overlay/unit/
+            # partial derates already carry. ``wefor_residual_groups`` narrows
+            # it to a chosen subset — the measured per-class evidence shows
+            # the relief is only warranted where the class was actually
+            # availability-capped (ST_GAS 2024) and is harmful where the
+            # class is already over (CC) or displaces an un-relieved class
+            # (CT keeps the full statistical model — no CAMPD coverage).
+            _relief_groups = getattr(config, "wefor_residual_groups", None)
+            _covered = (
+                gen.plant_group in _relief_groups if _relief_groups
+                else (gen.fuel_type == "coal"
+                      or gen.plant_group in _POF_DROP_GROUPS)
+            )
+            if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
             if drop_coal_pof and gen.fuel_type == "coal":
                 # Planned maintenance now comes from the historic outage
