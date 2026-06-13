@@ -2153,3 +2153,147 @@ oil/dual-fuel path. Reproduce a probe:
 `python scripts/run_calibration_full.py --iso NEISO --year 2024 --commitment
 --offer-curve-delta-json '{"CC_REGULAR":{"econ_high":-0.05}}' --out-dir
 results/calibration/neiso_probe_cc_regular_econ_high_minus`.
+
+---
+
+## CAISO 3 — offer-curve probe panel + Jacobian (sensitivity map, 2023) (2026-06-13)
+
+**Goal: map CAISO offer-curve band sensitivities to inform calibration — NOT a
+tuning pass.** No keeper config is changed; no band move is committed. The
+panel quantifies which knobs do what *under the current structural state*, and
+that state includes the **OPEN import-tranche mis-pricing (P9/P12)**: the
+priced WECC node over-imports +114%/2023 and owns the $45–90 margin (CAISO 2
+entry above). Every number below is conditional on that — re-probe after the
+re-price.
+
+### Panel design
+
+12 bundles, 2023 only (the keeper-designate `caiso_1_priced_ix` covers
+2023-2025; 2023 confirmed as its first dispatch year), all
+`run_calibration_full.py --iso CAISO --year 2023 --commitment`:
+
+- **`caiso_probe_base`** — zero-delta code baseline. HEAD had moved 87
+  src/inputs files since `caiso_1_priced_ix`'s sha (`a1dc6e2`), so probes
+  paired against the old bundle would auto-classify structural; the re-run
+  reproduces its 2023 numbers exactly (avg price $77.34, 0 negative hours) —
+  the code drift is CAISO-inert, but the chain discipline stands
+  (run80a pattern).
+- **11 single-knob ±0.05 probes** chained off it (dashboard `caiso 3` +
+  `3a–3k`; bundles `results/calibration/caiso_probe_<class>_<band>_<sign>`):
+  CC_REGULAR committed −/+ (both signs; the + side run last and **held out**
+  for the back-test), econ_low −, econ_high −, peak −; CT_PEAKER committed −,
+  econ_low −; ST_GAS committed +, econ_low +; CC_CHP committed −; CT_CHP
+  committed −. CAISO has no coal fleet to speak of (COAL 0.39 TWh model, ~0
+  benchmark) — **COAL_* knobs skipped**. All pairs classify pure
+  (scenario-config-identical, clean `src/ inputs/ data/` git diffs, single
+  Δknob each); REGISTRY entries added to `derive_offer_curve_jacobian.py`.
+  Solver note: each 8760 h commitment solve peaks ~8 GB — run probes
+  sequentially on a 15 GB box (a 2-parallel attempt was OOM-killed).
+
+### Raw panel (ΔTWh vs probe base, 2023; Δavg-price $/MWh)
+
+| probe (Δmult) | CC_REG | CC_CHP | CT_CHP | CT_PK | ST_GAS | **import** | Δprice |
+|---|---|---|---|---|---|---|---|
+| CC.committed −0.05 | **+0.84** | −0.15 | −0.23 | 0.00 | −0.12 | **−0.28** | −1.21 |
+| CC.econ_low −0.05 | **+0.59** | −0.05 | −0.13 | 0.00 | −0.11 | **−0.30** | −0.69 |
+| CC.econ_high −0.05 | **+0.50** | −0.04 | −0.10 | 0.00 | −0.13 | **−0.25** | −0.55 |
+| CC.peak −0.05 | −0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| CT_PK.committed −0.05 | 0.00 | 0.00 | 0.00 | **0.00** | 0.00 | 0.00 | 0.00 |
+| CT_PK.econ_low −0.05 | −0.00 | −0.00 | −0.00 | +0.01 | −0.00 | −0.00 | −0.03 |
+| ST_GAS.committed +0.05 | 0.00 | 0.00 | 0.00 | 0.00 | **0.00** | 0.00 | 0.00 |
+| ST_GAS.econ_low +0.05 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| CC_CHP.committed −0.05 | −0.15 | **+0.22** | −0.02 | 0.00 | −0.01 | −0.03 | −0.18 |
+| CT_CHP.committed −0.05 | −0.20 | −0.03 | **+0.29** | −0.00 | −0.01 | −0.04 | −0.13 |
+| CC.committed +0.05 (held out) | **−0.83** | +0.13 | +0.22 | 0.00 | +0.11 | **+0.29** | +1.07 |
+
+Two structure-level reads, before any regression:
+
+1. **The import node is the counterparty to every live knob.** 30–50% of the
+   energy a CC_REGULAR band move shifts comes out of (or goes back into) the
+   import node, not other gas classes. The Jacobian's class-TWh matrix can't
+   show this (import is not a tuned class); it shows up as own-knob
+   sensitivities being ~40% larger than the sum of cross-class gains.
+2. **Most non-CC knobs are dead.** CT_PEAKER (0 TWh dispatched at base vs 4.15
+   TWh EIA-923), CC_REGULAR.peak (34 MWh moved — i.e. nothing), and both
+   ST_GAS knobs (+0.05 moved nothing because ST_GAS's 1.7 TWh sits in hours
+   where the next import tranche, not ST_GAS, is marginal). The merit-order
+   adjacency check confirms the bands overlap the clearing-price mass
+   (78–89% for CT_PEAKER/ST_GAS bands) — the knobs are *price-relevant on
+   paper* but the 11.4 GW import stack absorbs the substitution.
+
+### Jacobian (twh block, 2023, TWh per unit multiplier; med = |coef| > 2·jackknife-SE would be high, n_obs caps at 2 for single-knob chains)
+
+| knob | own-class | strongest cross | confidence |
+|---|---|---|---|
+| CC_REGULAR.committed | **−14.7** | CT_CHP +4.1, CC_CHP +2.8, ST_GAS +1.9 | med |
+| CC_REGULAR.econ_low | **−9.0** | CT_CHP +2.1, ST_GAS +1.7, CC_CHP +0.7 | med |
+| CC_REGULAR.econ_high | **−7.3** | ST_GAS +2.0, CT_CHP +1.5, CC_CHP +0.6 | med |
+| CT_CHP.committed | −4.4 | CC_REGULAR +2.9 | low (n=1 after hold-out) |
+| CC_CHP.committed | −3.6 | CC_REGULAR +2.2 | med/low |
+| CC_REGULAR.peak | (+1.9) | — | **low — measured ≈0, coefficient is ridge noise** |
+| CT_PEAKER.committed / econ_low | ≈0 / −0.09 | — | dead knobs |
+| ST_GAS.committed / econ_low | +0.24 / +0.21 | — | low; dead knobs |
+
+Shape block: only `gas` NRMSE is meaningful for CAISO —
+CC_REGULAR.committed d(NRMSE)/d(mult) +0.157 (med), i.e. lowering CC committed
+*improves* the EIA-930 gas shape slightly while it adds gas TWh. The `coal`
+NRMSE rows are junk (EIA-930 CAISO coal ≈ 0.01 TWh ⇒ near-zero NRMSE
+denominator; baseline "coal NRMSE" 28.8) — they inflate the shape-block scale
+and thereby mute the block in the recipe weighting; verified the recipe is
+**identical with `--w-shape 0`**, so no harm this pass, but a CAISO shape fit
+should filter the coal series. **LMP block: empty** — `actual_lmp.json`'s
+CAISO block covers 2024/2025 only (no 2023 `rt_mon`), so price-level
+sensitivities are unscored at the panel year; the per-probe Δavg-price column
+above is the available evidence (CC committed: ∓$1.1–1.2/MWh per ±0.05).
+
+### Back-test (held-out pair)
+
+`--exclude-pair caiso_probe_cc_regular_committed_plus --backtest
+caiso_probe_base caiso_probe_cc_regular_committed_plus`: prediction-error RMS
+**0.039 TWh** against an actual-change RMS 0.357 (CC_REGULAR pred −0.74 vs
+actual −0.83; CT_CHP +0.20 vs +0.22; CC_CHP +0.14 vs +0.13; ST_GAS +0.10 vs
++0.11). The ±0.05 neighbourhood is linear and near-symmetric
+(+0.842/−0.829 TWh for ∓0.05 committed). The trust region correctly flags the
++0.05 endpoint as outside the minus-side-only sampled range.
+
+### Joint-move recipe — reported, NOT applied
+
+`--cap 0.05` (so every step stays inside the sampled trust region):
+**CC_REGULAR committed/econ_low/econ_high −0.05 each, ST_GAS econ_low +0.05**;
+predicted CC_REGULAR error **−21.05 → −19.47 TWh** (twh-block RMS 9.125 →
+8.550), gas shape NRMSE −0.01, CHP classes degrade slightly (CC_CHP −6.24 →
+−6.44 grid-only). At the default ±0.15 cap every knob trust-region-freezes at
+the ±0.05 sampled edge — the correct conservative answer.
+
+### What the Jacobian CANNOT fix (the structural caveat, quantified)
+
+The maximal in-trust-region joint move buys back **1.6 of the 21.0 TWh**
+CC_REGULAR deficit. The deficit is not a band problem: it is the
+import-displacement gap (CAISO 2 gap #2 — the mis-priced WECC tranches
+over-import ~+33 TWh/2023 and displace gas one-for-one). Pushing bands harder
+would (a) extrapolate outside every sampled range, (b) claw energy mostly out
+of the import node — i.e. *paper over the import gap with offer-curve error*,
+the exact compensating-error failure the playbook §6 discipline exists to
+prevent — and (c) still leave CT_PEAKER at zero, since no ±0.05 band move
+revives a class the import stack has fully crowded out. Likewise the price
+level (2023 biased high, zero negative hours) belongs to the import node:
+$0.5–1.2/MWh per capped band move is an order of magnitude short of the gap,
+and the missing midday negative-price regime is an export-sink/tranche-price
+feature, not an offer-band one. **Owner: P9/P12 import-tranche re-pricing.
+After it lands, re-run this exact panel off a fresh code baseline and diff the
+two Jacobians** — CT_PEAKER/ST_GAS/peak knobs waking up and the CC→import
+coupling shrinking is the merit-order-level acceptance check that the re-price
+worked.
+
+### Scope & artifacts
+
+Sensitivity-mapping pass: **no calibration keeper committed; keeper configs,
+`config/`, `src/` dispatch math untouched; ERCOT/PJM/NYISO/NEISO untouched**
+(Jacobian CSV is additive — 80 new CAISO cells, other ISOs' rows byte-equal;
+ERCOT/PJM fits not re-run). Dashboard: `caiso 3 probe-base`, `3a`
+(strongest live knob), `3k` (held-out back-test) registered; the 9 dominated
+single-knob entries were registered then pruned per the 5-run retention
+(`caiso 1`/`caiso 2` retained; all 12 bundles kept under
+`results/calibration/caiso_probe_*`). Jacobian:
+`inputs/processed/offer_curve_jacobian.csv` (iso=CAISO, year=2023) +
+REGISTRY/ISO_STATES entries in `scripts/derive_offer_curve_jacobian.py`.
