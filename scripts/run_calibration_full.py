@@ -2462,6 +2462,16 @@ def main() -> None:
              "keep WEFOR in non-summer months and the derate all year.",
     )
     parser.add_argument(
+        "--wefor-residual", type=float, default=None,
+        help="Historic-backcast WEFOR residual: cap the statistical "
+             "forced-outage rate of the overlay-covered classes (coal + "
+             "CC_REGULAR/CC_CHP/ST_GAS/ST_CHP) at this short-outage floor "
+             "(e.g. 0.015) — the CAMPD overlay + unit derate already carry "
+             "every >=5-day outage, so the full WEFOR double-counts them. "
+             "Default None keeps the full statistical WEFOR (prior "
+             "behavior). CTs are unaffected.",
+    )
+    parser.add_argument(
         "--prb-sigmoid-tiered", action=argparse.BooleanOptionalAction,
         default=True,
         help="Use a separate follower-tier PRB passthrough sigmoid for "
@@ -2764,6 +2774,7 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "chp_startup_covered": True if args.chp_startup_covered else None,
+            "wefor_residual": args.wefor_residual,
             "coal_lignite_passthrough_sigmoid":
                 True if args.coal_lignite_sigmoid else None,
             "coal_lignite_passthrough_floor": args.lignite_floor,
