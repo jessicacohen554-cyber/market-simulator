@@ -1114,6 +1114,7 @@ def run_year(
         fleet, fleet_arrays, r0.dispatch, config.hours,
         gas_st_season_spread=config.gas_st_startup_spread,
         chp_startup_covered=getattr(config, "chp_startup_covered", False),
+        coal_warm_committed=getattr(config, "coal_warm_committed", False),
     )
     mc_bid = mc_base + markup
     if _warm:
