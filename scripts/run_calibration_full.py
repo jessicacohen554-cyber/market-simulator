@@ -1246,12 +1246,20 @@ def solve_and_persist(
     # merged curve the LP solved against (not the bare defaults).
     recorded_cfg = _calibration_config(
         years[0], iso, hours, gas_prices[years[0]],
+        commitment_screen_coal=screen_coal,
+        coal_prb_passthrough=coal_prb_passthrough,
+        outage_source=outage_source,
+        coal_mustrun_per_plant=coal_mustrun_per_plant,
+        coal_drop_pof=coal_drop_pof,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
-    # tiered flags used to be skipped here, under-reporting the run).
+    # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and
+    # screen flags used to be skipped here, so scenario_config under-reported
+    # what the LP actually solved — e.g. coal_drop_pof dumped False while the
+    # run used True).
     recorded_cfg = recorded_cfg.with_overrides(
         coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
         coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
