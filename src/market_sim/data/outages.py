@@ -451,3 +451,55 @@ def partial_outage_derate_factors(
         arr = out.setdefault(int(r.oris_code), np.ones(hours))
         arr[mask] = np.minimum(arr[mask], float(r.derate_factor))
     return out
+
+
+# CT_PEAKER AS/RUC-deployment energy floor (scripts/derive_ct_deployment.py).
+# A per-plant *hourly* minimum-generation floor on the model's 8760-hour clock:
+# in the out-of-merit hours where CEMS shows a simple-cycle peaker generating
+# below its marginal energy cost (the IMM-documented ancillary-service /
+# reliability-unit-commitment deployment + reserve-adequacy wedge), the floor is
+# the plant's *measured* net output; zero everywhere else. Applied as a min-gen
+# bound by fleet.generators_to_fleet_arrays when ScenarioConfig
+# .ct_deployment_overlay is set (ERCOT backcast only) so the LP reproduces the
+# ~1.4-2.3 TWh/yr of out-of-merit CT energy an energy-only merit order omits,
+# WITHOUT flooring CT to its full CEMS output (the in-merit hours stay
+# economic). Unlike the CT reliability must-run floor (which covers all hours
+# and so exempts its units from WEFOR/POF), this floor is sparse and well below
+# pmax in its hours, so the units keep the statistical availability model and
+# the floor is simply availability-capped where they ever coincide.
+CT_DEPLOYMENT_CSV: Path = (
+    Path(__file__).parents[3] / "inputs" / "calibration"
+    / "ct_deployment_floor_ERCOT.parquet"
+)
+
+
+@lru_cache(maxsize=None)
+def ct_deployment_floor_for_year(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) deployment floor MW}`` for ``year``.
+
+    Reads the per-plant out-of-merit deployment-hour floors written by
+    ``scripts/derive_ct_deployment.py`` (long: ``year, plant_code, hour,
+    floor_mw``) and rebuilds each plant's dense 8760-hour floor (zero outside
+    its deployment hours). Returns an empty dict when the artifact is missing
+    (the overlay then degrades to the unmodified energy-only dispatch) or when
+    the year is absent. The arrays are shared read-only via the cache.
+    """
+    if not CT_DEPLOYMENT_CSV.exists():
+        logger.warning(
+            "CT deployment-floor artifact not found at %s; "
+            "the CT deployment overlay is a no-op for %d",
+            CT_DEPLOYMENT_CSV, year,
+        )
+        return {}
+    df = pd.read_parquet(CT_DEPLOYMENT_CSV)
+    df = df[df["year"] == year]
+    out: dict[int, np.ndarray] = {}
+    for code, sub in df.groupby("plant_code", observed=True):
+        arr = np.zeros(hours, dtype=float)
+        hoy = sub["hour"].to_numpy()
+        valid = (hoy >= 0) & (hoy < hours)
+        arr[hoy[valid]] = sub["floor_mw"].to_numpy(dtype=float)[valid]
+        out[int(code)] = arr
+    return out
