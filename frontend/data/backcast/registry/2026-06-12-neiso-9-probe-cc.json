@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-9-probe-cc",
+  "label": "neiso 9 probe-cc-eh-minus",
+  "date": "2026-06-12",
+  "shorthand": "neiso-9-probe-cc",
+  "definition": "Probe (analysis-only, NOT a keeper): CC_REGULAR econ_high -0.05 off the P12-keeper anchor \u2014 the improving direction of the panel's dominant knob (2024 LMP MAE -0.155, winter months -1.4..-2.2 $/MWh) but it chases the U4 monthly-AGT structural miss, so it was not promoted. Part of the single-knob offer-curve Jacobian panel; keeper unchanged.",
+  "years": [
+    2024
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-9-probe-cc.js",
+  "bundle": "results/calibration/neiso_probe_cc_regular_econ_high_minus"
+}
