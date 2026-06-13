@@ -51,18 +51,28 @@ per-plant decomposition; do not chase with fleet-wide levers):**
   merit order can't reach. The model already matches CEMS for the
   CAMPD-covered CT plants.
 - **COAL_PRB 2024** (−3.94) **and the 2024 coal split (−8.5%)**:
-  essentially one plant — W A Parish (−3.7), a never-off self-scheduled
-  baseload (8,760 CAMPD op-hours every year, median 38–45% of cap vs the
-  model's 15% floor). The mechanism is proven: the P1 coal startup
-  amortization lands solely on the committed tranche, pricing it above
-  the econ ramp (run 97b's backfire), and removing it (run 98a,
-  `--coal-warm-committed`) passes the 2024 split (−2.2%) but detonates
-  2023 (+7.8% coal split, guards blown) — committed coal clears both
-  years. The residual is loss-making owner self-commitment the merit
-  order cannot produce endogenously; monthly CAMPD p10 floors are sized
-  at only +2.15 TWh net in 2024 (split → ~−4.8%, still failing). Fixing
-  it further is a methodology decision (monthly-floor overlay or split
-  re-benchmark) — see the "ERCOT Runs 98a/98b" log entry.
+  **distributed cheap-gas merit displacement across the whole PRB fleet**,
+  not one plant — Spruce −1.60, Parish coal −1.35, Fayette −0.72,
+  Limestone −0.53, Martin Lake −0.38, Coleto Creek −0.28, offset by Sandy
+  Creek +0.92. This is the documented PRB cheap-gas year-gradient (run 90):
+  2024's $1.97–2.08 shaped gas genuinely displaces PRB on bids, and no
+  fleet-wide passthrough can deepen 2024 without flooding 2023 (which has
+  ~0.4% split headroom). The plants are **price-responsive, and the model
+  captures it** — e.g. W A Parish whole-plant (its coal + gas-steam bins
+  summed) is +0.22 / **−1.36** / +0.15 TWh vs CEMS across 2023/24/25:
+  dead-on in the normal and dear-gas years, off only in the single
+  cheapest-gas year. (CORRECTION, 2026-06-13: an earlier note called
+  Parish a −3.7 TWh "self-committed baseload" and the whole PRB fail —
+  that was a diagnostic artifact; the per-plant fit compared the model's
+  coal-only bin against the CEMS *whole-plant* stack, which includes
+  Parish's 1,565 MW gas-steam units (EIA child 34702, ~2.4 TWh, modelled
+  correctly in ST_GAS). Fixed in `_plant_hourly_fit`; see the "ERCOT
+  Runs 98a/98b" + correction log entry. Runs 97b/98a/98b chased that
+  phantom — the warm-boiler exemption "passed" 2024 only by force-running
+  coal the merit order correctly idles, which is why it detonated 2023.)
+  Carry it as the cheap-gas residual under the PRB carve-out philosophy;
+  do **not** floor it (the price response is real) or re-benchmark it as
+  price-blind (it isn't).
 - **ST_GAS 2024** (−1.99): the CPS steamers + Cedar Bayou; the committed
   band's startup amortization caps the honest per-plant gain measured in
   97a.
@@ -100,9 +110,10 @@ Never regress a class vs the keeper. Run 97a's four fails are the
 structurally diagnosed set above. Honest caveats: ST_GAS 2025 now passes
 at −0.73 (the run-97a CPS move bought the −0.99 knife edge 0.26 TWh of
 margin; any CT cheapening still spends it, the run-94 lesson), the 2024
-coal split is −8.5% (the Parish/lignite cheap-gas residual, still
-failing), CT_PEAKER 2025 passes at −0.90 with 0.10 margin, and PRB's
-multi-year mean sits at −2.6% (+1.0 / −9.0 / −0.2).
+coal split is −8.5% (the distributed cheap-gas PRB/lignite residual,
+still failing — fleet-wide, price-responsive, not a single-plant fix),
+CT_PEAKER 2025 passes at −0.90 with 0.10 margin, and PRB's multi-year
+mean sits at −2.6% (+1.0 / −9.0 / −0.2).
 
 ## Config (the knobs that matter)
 
