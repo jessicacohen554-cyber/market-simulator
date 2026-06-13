@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-13 (NEISO offer-curve probe panel + Jacobian — analysis only)
+
+Mapped the offer-curve band sensitivities around the NEISO P12 primary-year
+keeper (`neiso_p12_base_2024`) without re-tuning it.
+
+- **11-run probe panel** under `results/calibration/neiso_probe_*`: a
+  code-accumulation anchor (P12 keeper config on current main — reproduces the
+  keeper exactly) plus ten ±0.05 single-knob `--offer-curve-delta-json` probes
+  (CC_REGULAR committed/econ_high ±, CT_PEAKER committed ±, ST_GAS
+  committed/peak −, CC_CHP/CT_CHP committed −). Dashboard keeps the two
+  econ_high probes (`neiso 8/9`); the 9 dominated entries were registered then
+  pruned per the top-5 rule (bundles kept).
+- **`scripts/derive_offer_curve_jacobian.py`**: NEISO REGISTRY entries (P11/P12
+  bundles + the panel's pure pairs) and the NEISO state set for the
+  merit-order adjacency check. Fit writes 70 NEISO cells into
+  `inputs/processed/offer_curve_jacobian.csv` (ERCOT/PJM rows byte-identical).
+- **Findings** (full writeup in `docs/calibration-log.md`): NEISO TWh is
+  band-immune (max −1.47 TWh/unit-mult, CC_REGULAR.econ_high — no coal, no
+  substitution partner); econ_high is the only live knob and prices the
+  monthly-AGT winter plateau (Jan/Feb-loaded ×2–3 — the U4 limitation, not a
+  band target); ST_GAS bands are dead, proving no band reaches the
+  dual-fuel/oil winter tail (no OIL band class exists). Joint-move recipe
+  trust-region-freezes at the default cap; the capped move is immaterial and
+  flips sign for 2025 — **no re-tune; the P12 keeper stands.** Backtest:
+  held-out probe predicted to 0.001 TWh RMS.
+
 ## 2026-06-12 (NYISO 2025 — EIA-930 refresh unblock + price re-score)
 
 Refreshed the EIA-930 `NYIS hourly` extract and re-ran NYISO 2025, which P12
