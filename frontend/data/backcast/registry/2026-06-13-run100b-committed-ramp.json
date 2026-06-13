@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-13-run100b-committed-ramp",
+  "label": "run100b committed ramp",
+  "date": "2026-06-13",
+  "shorthand": "run100b-committed-ramp",
+  "definition": "Run 100b: MEASURED PROBE (mid-CF-band shape, Option B) - committed-ramp-spread 0.15 on the run-97a keeper base. Renders each plant's committed band as a 6-slice rising ramp spanning committed_mult x (1 +/- 0.15) instead of a flat block, so the plant clears committed capacity progressively (smears the 0->committed-share snap that lands CC at the 0.45 plateau). Mean committed bid unchanged -> class volume ~preserved; targets the lower half of the 0.3-0.7 CF-band hole. Pairs with 100a.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-13-run100b-committed-ramp.js",
+  "bundle": "results/calibration/run100b_committed_ramp"
+}
