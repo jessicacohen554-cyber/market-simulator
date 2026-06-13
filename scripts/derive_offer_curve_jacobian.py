@@ -220,7 +220,9 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "run95b_cc_committed_probe": ("pure", "vs chain-predecessor run93: CC_REGULAR committed -0.05 -> +0.05 and econ_high -0.30 -> -0.40 (curve moves only; the Kiamichi bins v1 trim between their shas is a measured within-CC ~0.15 TWh perturbation, run-94 note — accepted)"),
     "run96_lignite_keeper": ("structural", "lignite sigmoid floor 0.75 -> 0.69 keeper (sigmoid param, not a curve knob; offer deltas = run92's)"),
     "run97a_gas_plants": ("structural", "per-plant bins committed-share edits (Braunig/Sommers) + --btm-backfill-year reporting fix (inputs/data change, no curve knobs)"),
-    "run97b_coal_plants": ("structural", "Parish/Spruce committed-share probe (bins edit, REJECTED: the coal commitment screen decommits the bigger block; PRB 2024 -0.82)"),
+    "run97b_coal_plants": ("structural", "Parish/Spruce committed-share probe (bins edit, REJECTED; mechanism corrected post-hoc: the P1 coal startup amortization prices the committed band above the econ ramp, so the share shift moved capacity into the startup-bearing band)"),
+    "run98a_warm_committed": ("structural", "--coal-warm-committed exemption probe (code flag, REJECTED: fixes the 2024 coal split but detonates 2023 - committed coal clears both years)"),
+    "run98b_warm_parish": ("structural", "warm exemption + Parish/Spruce committed shares (REJECTED: identical to 98a within noise - share lever redundant once the band clears)"),
     # --- PJM ---
     "pjm_2023": ("legacy", "exploratory era"),
     "pjm_2024": ("legacy", "exploratory era"),
