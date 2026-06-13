@@ -1334,12 +1334,12 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # curve) lives in the LMP/benchmark pass (CAISO P10/P11), not here.
     # Source: EIA-930 CISO net-interchange 2023-2025; CAISO OASIS path ratings.
     "CAISO": [
-        ("PNW_hydro_base", 800.0, 14.0),    # COI firm PNW hydro — baseload
-        ("PNW_midC", 1800.0, 26.0),         # Mid-C hydro/wind shoulder
-        ("DSW_solar_PV", 1800.0, 34.0),     # Desert SW solar + Palo Verde
+        ("PNW_hydro_base", 800.0, 31.0),    # COI firm PNW hydro — baseload
+        ("PNW_midC", 1800.0, 36.0),         # Mid-C hydro/wind shoulder
+        ("DSW_solar_PV", 1800.0, 41.0),     # Desert SW solar + Palo Verde
         ("DSW_CCGT", 1800.0, 48.0),         # Desert SW combined-cycle gas
-        ("DSW_CT", 2200.0, 66.0),           # Desert SW combustion turbine
-        ("WECC_scarcity", 3000.0, 92.0),    # Peak west-wide scarcity energy
+        ("DSW_CT", 2200.0, 67.0),           # Desert SW combustion turbine
+        ("WECC_scarcity", 3000.0, 90.0),    # Peak west-wide scarcity energy
     ],
     # PJM scarcity imports (MISO / NYISO / the Carolinas selling into PJM
     # when PJM prices spike). Total capacity bounds the deepest measured
@@ -1428,8 +1428,8 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # sinks brings the joint duration-curve RMSE to ~560 MW and annual net
     # interchange to ~100% of measured. Source: EIA-930 CISO net interchange.
     "CAISO": [
-        ("export_solar", 2500.0, 8.0),     # midday surplus sold to WECC
-        ("export_curtail", 4000.0, 0.0),   # deep oversupply curtailment floor
+        ("export_solar", 2500.0, 40.0),    # midday surplus sold to WECC
+        ("export_curtail", 4000.0, 26.0),  # deep oversupply curtailment floor
     ],
     # PJM was a ~40 TWh / +4,564 MW-avg net exporter in 2023, easing to
     # +32.7 TWh in 2024 and +18.0 TWh in 2025 (EIA-930). Blocks proxy the
