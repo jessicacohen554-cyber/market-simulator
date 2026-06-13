@@ -5,9 +5,10 @@ pass when ``--commitment`` is set), writes the full hourly per-plant results
 to a timestamped parquet bundle, and then computes the comparison report from
 that bundle. Nothing is lost: the bundle is the source of truth and can be
 re-queried for any ad-hoc analysis, and re-running never overwrites a prior
-run (each lands in its own timestamped directory).
+run (each lands in its own timestamped directory). Bundles are scoped by ISO
+so backcasts for different ISOs run in parallel without colliding.
 
-A run bundle lives in ``results/calibration/<timestamp>/`` and holds:
+A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
 
   * ``dispatch/<year>_<pass>.parquet`` — every generator's hourly MW (8760h)
     with plant_code / class / fuel / supply / zone metadata, plus wind and
@@ -28,7 +29,7 @@ same numbers can be reproduced from an old run with ``--report <dir>``.
 Usage:
     python scripts/run_calibration_full.py --year 2023 2024
     python scripts/run_calibration_full.py --year 2023 --commitment --no-coal-p2
-    python scripts/run_calibration_full.py --report results/calibration/<ts>
+    python scripts/run_calibration_full.py --report results/calibration/<iso>/<ts>
 """
 
 from __future__ import annotations
@@ -38,6 +39,7 @@ import gc
 import gzip
 import json
 import logging
+import os
 import pickle
 import subprocess
 import sys
@@ -2554,7 +2556,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--out-dir", default=None,
-        help="Bundle root (default results/calibration/<timestamp>).",
+        help="Bundle root (default results/calibration/<iso>/<timestamp>).",
     )
     parser.add_argument(
         "--note", default="",
@@ -2811,8 +2813,18 @@ def main() -> None:
     if args.out_dir:
         run_dir = Path(args.out_dir)
     else:
+        # Scope the default bundle by ISO so parallel multi-ISO backcasts each
+        # land in their own subtree and never collide on a shared timestamp
+        # directory (the persist mkdir is exist_ok=True, so two ISOs starting
+        # in the same second would otherwise intermix their files into one
+        # bundle). It also makes a bundle's ISO obvious from its path.
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-        run_dir = REPO / "results" / "calibration" / ts
+        run_dir = REPO / "results" / "calibration" / iso / ts
+        # Same-ISO runs launched within the same second still resolve to one
+        # timestamp dir; disambiguate with the PID (distinct per parallel
+        # process) so concurrent runs of one ISO stay isolated too.
+        if run_dir.exists():
+            run_dir = run_dir.with_name(f"{ts}-{os.getpid()}")
     run_dir = solve_and_persist(
         args.year, iso, args.hours, reference,
         commitment=args.commitment, screen_coal=not args.no_coal_p2,
