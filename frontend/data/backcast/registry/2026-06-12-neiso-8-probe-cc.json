@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-12-neiso-8-probe-cc",
+  "label": "neiso 8 probe-cc-eh-plus",
+  "date": "2026-06-12",
+  "shorthand": "neiso-8-probe-cc",
+  "definition": "Probe (analysis-only, NOT a keeper): CC_REGULAR econ_high +0.05 off the P12-keeper anchor \u2014 the dominant NEISO band knob; lifts winter price +1.4..2.2 $/MWh and worsens 2024 LMP MAE +0.40. Part of the 11-run single-knob offer-curve Jacobian panel; the keeper neiso 3 2024 is unchanged.",
+  "years": [
+    2024
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-12-neiso-8-probe-cc.js",
+  "bundle": "results/calibration/neiso_probe_cc_regular_econ_high_plus"
+}
