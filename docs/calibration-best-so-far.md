@@ -88,6 +88,19 @@ and with CT floored the relief lands without re-cratering CT to a fail.
 
 ## Success bar (size-aware)
 
+**GRID-DELIVERED basis (2026-06-14, user directive).** Every gate below judges
+what the LP actually dispatches to the grid against what actually reached the
+grid: model = the grid LP dispatch (NO behind-the-meter CHP add-back), actual =
+EIA-923 whole-plant **minus** the per-class BTM host supply (`btm.parquet`, the
+authoritative BTM held out of the LP). The host steam is held out of the LP, so
+crediting the model for it would score generation the model never optimized.
+(The absolute TWh miss is identical to the old whole-plant basis — the BTM
+cancels — so the ±1 TWh classes are unchanged; only the ±5% denominators are
+now honest grid-delivered sizes.) The dashboard's class/system scorecard + mix
+table use the same basis (`scripts/_session_score.py`, `render_calibration_html
+.build_payload`); only the per-plant heatmaps stay whole-plant, because CEMS —
+their comparison series — is itself whole-plant.
+
 Judge each class by size, not a flat percentage (a flat % is loosest exactly
 where the system mix is dominated):
 
@@ -95,17 +108,15 @@ where the system mix is dominated):
   year.
 - class total **< 20 TWh** (ST_GAS, COAL_LIGNITE, CT_PEAKER, CT_CHP): within
   **±1 TWh** (absolute) every year.
-- CT_CHP excluded (known +28% 2025 CHP-benchmark gap).
-- **Fuel-split gate (added 2026-06-12):** total gas and total coal generation
-  each within **±2.5%** per year. Benchmark sourcing (user judgment,
-  2026-06-12): **EIA-923 is the single source of truth for 2023/2024 fossil
-  classes including the coal/gas divide** (model totals include the BTM CHP
-  add-back, since 923 reports whole-plant output); **2025 fossil is checked
-  grid-only against EIA-930** (the 2025 923 vintage is incomplete — the
-  CT_CHP +28% gap); **solar/wind are benchmarked against EIA-930 only** and
-  sit outside this gate. The two sources differ structurally (930 gas runs
-  ~14% below 923 gas on the ~35 TWh of behind-the-meter CHP host supply), so
-  never mix them within a year.
+- CT_CHP excluded (known CHP-benchmark gap; ~+49% on the grid-delivered 2025
+  basis, where the grid-delivered actual is smaller than the whole-plant 923).
+- **Fuel-split gate:** total gas and total coal **grid** generation each within
+  **±2.5%** per year — model grid gas/coal vs (EIA-923 − BTM) gas/coal. EIA-930
+  grid totals are shown alongside as the independent grid check; the two sources
+  differ structurally (930 gas runs ~14% below 923 gas on the ~35 TWh of BTM CHP
+  host supply, so 930 ≈ 923−BTM), and the 2024 gas split sits at +0.5% vs
+  923−BTM / +4.7% vs 930. **solar/wind are benchmarked against EIA-930 only**
+  and sit outside this gate.
 - PRB carve-out (user judgment, 2026-06-12): PRB stays on the ±5% class bar
   and its year-to-year spread is accepted as long as the multi-year mean is
   centered (the run-90 gradient finding: 2023 responds at ~2.2× 2024 per
@@ -115,14 +126,11 @@ where the system mix is dominated):
   the **energy-only LMP** (raw duals). The ORDC overlay series
   (`lmp_scarcity`) is additive and never gates volumes or LMP.
 
-Never regress a class vs the keeper. Run 97a's four fails are the
-structurally diagnosed set above. Honest caveats: ST_GAS 2025 now passes
-at −0.73 (the run-97a CPS move bought the −0.99 knife edge 0.26 TWh of
-margin; any CT cheapening still spends it, the run-94 lesson), the 2024
-coal split is −8.5% (the distributed cheap-gas PRB/lignite residual,
-still failing — fleet-wide, price-responsive, not a single-plant fix),
-CT_PEAKER 2025 passes at −0.90 with 0.10 margin, and PRB's multi-year
-mean sits at −2.6% (+1.0 / −9.0 / −0.2).
+Never regress a class vs the keeper. Run 109a's three fails (CT 2023/2024, PRB
+2024) are the structurally diagnosed set above. Honest caveats: the 2024 coal
+split is −9.5% grid-delivered (the cheap-gas PRB/lignite residual deepened by
+the CT overlay displacing marginal coal), and PRB's multi-year mean sits at
+−3.7% (+0.0 / −10.6 / −0.6).
 
 ## Config (the knobs that matter)
 
@@ -186,19 +194,23 @@ mean sits at −2.6% (+1.0 / −9.0 / −0.2).
   is used with `ordc_lolp_shift_sigma = 0` (the published Average embeds the
   PUCT 0.5σ shift; μ/σ ≈ 0.68 in every season).
 
-## Results (P1, run 109a, vs EIA-923 incl. BTM add-back)
+## Results (P1, run 109a, GRID-DELIVERED: model grid vs EIA-923 − BTM)
 
 | class | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| CC_REGULAR | −2.3% | +2.7% | +0.9% |
-| CC_CHP | +1.0% | +0.7% | +2.2% |
+| CC_REGULAR | −2.3% | +2.9% | +0.9% |
+| CC_CHP | +1.6% | +1.1% | +3.5% |
 | COAL_PRB | +0.0% | **−10.6%** | −0.6% |
 | COAL_LIGNITE | +6.0% (+0.92 TWh) | −6.1% (−0.85 TWh) | +2.0% |
-| CT_PEAKER | **−14.1% (−1.08)** | **−18.8% (−1.55)** | +2.2% (+0.16 TWh) |
+| CT_PEAKER | **−15.5% (−1.08)** | **−21.0% (−1.55)** | +2.5% (+0.16 TWh) |
 | ST_GAS | +5.4% (+0.91) | −5.1% (−0.93) | +1.7% (+0.26 TWh) |
 | nuclear | −0.7% | −0.7% | −0.7% |
-| fuel split gas/coal | −1.8 / +1.6% | +0.4 / **−9.5%** | +2.2 / −1.8% |
+| fuel split gas/coal | −2.0 / +1.6% | +0.5 / **−9.5%** | (see 930) |
 | LMP MAE vs actual RT ($/MWh, energy-only) | 32.3 | 7.8 | 2.1 |
+
+(Grid-delivered shifts the ±5% denominators vs the old whole-plant table — the
+CHP classes most, e.g. CC_CHP +1.0% → +1.6% on the smaller grid actual — but
+the absolute TWh misses and the pass/fail verdicts are unchanged.)
 
 Bold = the 3 in-scope fails (CT 2023/2024, PRB 2024) + the carried 2024 coal
 split. Unserved energy 0.000 in all years. Plant guard: Martin Lake /
