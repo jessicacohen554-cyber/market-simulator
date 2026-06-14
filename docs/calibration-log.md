@@ -2658,6 +2658,7 @@ this campaign): a non-CEMS small-peaker floor for the ~1.0 TWh CT 2024
 residual (Ector/Permian/Pearsall have 923 net-gen but no hourly CEMS — a
 923-based floor, distinct from the CEMS out-of-merit overlay).
 
+<<<<<<< HEAD
 ## Cross-ISO — CT_PEAKER AS-deployment overlay generalized to PJM/CAISO/NYISO/NEISO; the PJM blanket-floor refutation (2026-06-13)
 
 **The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/derive_ct_deployment.py`
@@ -2717,3 +2718,35 @@ The wedge is the *sub-marginal subset* of measured CT energy, not the full CT ga
 the remaining (economic, price ≥ MC) CT shortfall stays with the LP and is
 offer-tunable, gas-neutral (CT↔CC). Per-ISO calibration against each registered
 keeper follows; runs are logged as MEASURED PROBEs until one beats its incumbent.
+
+## ERCOT — gate basis moved to GRID-DELIVERED (2026-06-14)
+
+**User directive after a run-109a dashboard read exposed a basis mismatch: the
+calibration gate added the behind-the-meter CHP host supply back to the model
+and compared to whole-plant EIA-923, while the dashboard mix table added only
+the CHP-class BTM — so CC_REGULAR/CT_PEAKER looked ~3.5 TWh more under on the
+dashboard than at the gate, and the system total read 471 vs 923's 475 (the
+omitted CC_REGULAR 2.83 + CT_PEAKER/San Jacinto 0.71 BTM).**
+
+**The fix: gate on grid-delivered accuracy.** The LP holds the BTM host steam
+OUT of the grid solve, so crediting the model for it scores generation the
+model never optimized. Now everywhere — `scripts/_session_score.py`, the
+dashboard class/system scorecard + mix table (`render_calibration_html
+.build_payload`: `gmModel` grid-only, `classFull` = EIA-923 − per-class
+`btm.parquet`) — model = grid LP dispatch, actual = EIA-923 whole-plant minus
+the per-class BTM host supply (= grid-delivered generation by class). The
+per-plant heatmaps stay whole-plant (CEMS, their comparison series, is itself
+whole-plant). The fuel-split gate is grid-vs-grid for all years (923−BTM, with
+EIA-930 grid shown as the independent check). The standalone-report add-back in
+`build_payload` line ~388 (per-plant model vs CEMS) is unchanged.
+
+**Impact: none on verdicts.** The absolute TWh miss is identical to the old
+whole-plant basis (the BTM cancels: (grid+BTM) − 923 = grid − (923−BTM)), so
+the ±1 TWh classes are byte-identical and the ±5% classes shift only by their
+(smaller) grid-delivered denominators. Re-scored grid-delivered: **run 109a = 3
+in-scope fails {CT 2023 −1.08, CT 2024 −1.55, PRB 2024 −10.6%}, run 97a = 4 —
+the keeper still beats run 97a.** Dashboard re-rendered (ERCOT bench parts +
+the 5 ERCOT run payloads now grid-delivered; non-ERCOT ISOs unchanged — they
+carry no `btm.parquet`, so grid-delivered = full 923). LMP/ORDC unaffected
+(energy-only LMP is already grid-side). `calibration-best-so-far.md` success
+bar + results table updated to the grid-delivered basis.
