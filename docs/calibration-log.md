@@ -2750,3 +2750,78 @@ the 5 ERCOT run payloads now grid-delivered; non-ERCOT ISOs unchanged — they
 carry no `btm.parquet`, so grid-delivered = full 923). LMP/ORDC unaffected
 (energy-only LMP is already grid-side). `calibration-best-so-far.md` success
 bar + results table updated to the grid-delivered basis.
+
+## ERCOT Runs 110–117 — per-plant CC duct overlay + PRB ease (NEW KEEPER run 115b, 2026-06-14)
+
+**User ask:** lift CC_REGULAR 2023 (run 109a left it −2.3%) with a **per-plant**
+CC peak band rather than a class-wide bid move; probe the PRB floor toward an
+**evenly distributed** miss (the user "most prefers 0.71 unless we find a
+justification for the 2024 anomaly"); adjust the other offer curves (incl. steam
+gas) around the result.
+
+**The mechanism — `--cc-duct-peaking`.** Each CC_REGULAR/CC_CHP plant's peaking
+tranche % is sized from its **EIA-860 duct-burner flag**: duct-fired plants get
+their nameplate-vs-net-summer capability gap as the expensive peak band, non-duct
+plants get **0** (no phantom scarcity band on a plant that cannot duct-fire).
+`fleet.cc_duct_peaking_pct()` → applied in `generators_to_fleet_arrays`
+(`ScenarioConfig.cc_duct_peaking`); supersedes the offer curve's class-wide
+`pct_peaking`, band HR multipliers still apply, the hand-set
+`CC_REGULAR_PEAKING_PCT_BY_PLANT` map stays final word, plants absent from the
+860 sheet keep the class value. Default off (other ISOs/forecast byte-identical).
+
+**The 2024 PRB anomaly is justified (the condition the user set is met).** The
+2024 PRB low is **not** a model defect: the LP correctly idles loss-making
+self-committed/contracted coal — the plants ran 40–52% CF while $2.19 gas put
+them below marginal cost, and there is no outage. So per the user's standing
+condition, the justification holds and the floor is left at 0.73 (lumpy-but-
+honest) rather than forced even at 0.71.
+
+**The PRB-even vs 2023-coal tradeoff (the run-90 gradient, re-confirmed).**
+Cheapening the PRB floor evens the multi-year miss but the evened 2023 PRB *is*
+an over-run of the 2023 coal plants:
+
+| PRB floor | run | PRB 2024 / mean | 2023 coal split | guards |
+|---|---|---|---|---|
+| 0.71 | 116b | −8.1% / −1.7% (most even) | **+3.8% FAIL** | Limestone +1015 breach |
+| 0.72 | 114a | −9.2% / −2.5% | **+3.0% FAIL** | clean (+917) |
+| **0.73** | **115b (keeper)** | −10.3% / −3.3% | **+2.2% PASS** | clean |
+| 0.74 | 109a | −10.6% / −3.7% | +1.6% | clean |
+
+0.73 is the lowest floor that keeps the 2023 coal split passing and the guards
+clean — the chosen point given the 2024 anomaly is justified.
+
+**Run sequence (all = run 109a config + `--cc-duct-peaking`, varying PRB floor /
+ST relief):**
+
+- **Scorer fix (prereq):** the grid-delivered split gate used 923−BTM for all
+  years, but the 2025 EIA-923 is the incomplete monthly vintage; switched 2025 to
+  EIA-930 (itself grid-side, the correct 2025 grid-delivered actual). This alone
+  cleared a phantom "2025 gas +3.6%" fail (it is +2.2% vs 930).
+- **114a** (0.72, relief 0.06): CC 2023 fixed, ST 2024 held, but 2023 coal split
+  +3.0% and PRB not evened (relief lifts ST 2024 → displaces PRB back down).
+- **115a/115b** (0.73, relief 0.07/0.06): **115b is the keeper.** 3 in-scope
+  fails {CT 2023 −1.61, CT 2024 −2.10, PRB 2024 −10.3%}. CC_REGULAR 2023
+  −2.3%→−0.8% **fixed**; CC_CHP +7/+7/+10%→+0.6/+0.8/+3.8% **re-centered** (duct
+  strips the phantom band off non-duct CHP); 2023 coal split +2.2% PASS; ST all
+  pass (2024 −4.2%/−0.76); LMP 32.5/8.1/2.2 holds.
+- **116a/116b** (0.71, relief 0.06/0.05): PRB most even (mean −1.7%) — confirms
+  the coupling fix (at a cheap floor the ST relief displaces over-built CC, not
+  PRB) — but 2023 coal split +3.8% + Limestone guard +1015. Rejected per the
+  justified-anomaly call.
+- **117a/117b** (0.73, relief 0.085/0.10): **negative probe** — eased the relief
+  to try to spare CT; it does NOT. CT 2024 barely moves (−2.10 → −2.00/−1.94)
+  while ST 2024 craters to a fail (−1.11/−1.31). Proves the **CT deepening is
+  cc-duct-intrinsic** (CC displacing CT in merit order), not relief-driven, and
+  that 0.06 is the correct relief.
+
+**The cost (user sign-off).** CT_PEAKER deepens vs run 109a (2023/2024 −0.53/
+−0.55 → −1.61/−2.10) — the cc-duct CC lift displaces CT, measured intrinsic and
+not relief-reachable. Accepted as the price of fixing the ±20-TWh CC class and
+grounding the CC peak band in EIA-860 rather than hand-set values. The single
+"never regress vs keeper" exception, signed off 2026-06-14.
+
+**Bookkeeping.** ORDC scarcity overlay re-derived on run 115b (availability +
+scarcity flat-1400/shift-0.5 + scarcity_np6shift0 NP6-576-ER canonical;
+post-solve additive, dispatch untouched; 2023 LMP MAE 32.5→30.1 with the adder).
+`calibration-best-so-far.md` STATUS/keeper/config/success-bar updated; dashboard
+re-registered (run 115b keeper, run 109a demoted to predecessor).
