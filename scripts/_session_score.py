@@ -120,13 +120,23 @@ def main() -> None:
                  .sum() / 1e6)
         for name, fam in (("GAS", gas), ("COAL", coal)):
             m = sum(grid.get(c, 0.0) for c in fam)
-            a = sum(bench.get(c, 0.0) - bt.get(c, 0.0) for c in fam)
-            pct = (m / a - 1) * 100
-            tag = "PASS" if abs(pct) <= 2.5 else "FAIL"
             a930 = t930.get((yr, name.lower()), float("nan"))
-            d930 = (m / a930 - 1) * 100 if a930 == a930 else float("nan")
-            print(f"  {yr} {name:4s} {pct:+5.1f}%  {tag}  (vs 923-BTM grid;"
-                  f" vs 930 grid {d930:+.1f}%)")
+            if yr >= 2025:
+                # 2025 EIA-923 is the incomplete monthly-survey vintage, so the
+                # grid-delivered actual comes from EIA-930 (itself grid-side);
+                # 923-BTM is shown as the secondary reference.
+                a = a930
+                a_alt = sum(bench.get(c, 0.0) - bt.get(c, 0.0) for c in fam)
+                src, alt = "930 grid", "923-BTM"
+            else:
+                a = sum(bench.get(c, 0.0) - bt.get(c, 0.0) for c in fam)
+                a_alt = a930
+                src, alt = "923-BTM grid", "930 grid"
+            pct = (m / a - 1) * 100 if a == a and a else float("nan")
+            tag = "PASS" if abs(pct) <= 2.5 else "FAIL"
+            d_alt = (m / a_alt - 1) * 100 if a_alt == a_alt and a_alt else float("nan")
+            print(f"  {yr} {name:4s} {pct:+5.1f}%  {tag}  (vs {src};"
+                  f" vs {alt} {d_alt:+.1f}%)")
 
 
 if __name__ == "__main__":
