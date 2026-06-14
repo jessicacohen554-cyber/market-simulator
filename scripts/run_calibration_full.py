@@ -2830,6 +2830,15 @@ def main() -> None:
              "offer curve instead of scaling every tranche (incl. the cheap "
              "committed floor) pro-rata. Plant hourly available MW unchanged.")
     parser.add_argument(
+        "--cc-duct-peaking", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Size each CC plant's peaking (duct-burner) tranche from its "
+             "EIA-860 nameplate-vs-net-summer capability gap (duct-fired "
+             "plants only; non-duct CCs get no peak band) — a per-plant, "
+             "manufacturer-spec share replacing the class-wide pct_peaking AND "
+             "the 4-plant hardcoded ERCOT override (sets cc_duct_peaking on, "
+             "cc_peaking_per_plant off). fleet.cc_duct_peaking_pct.")
+    parser.add_argument(
         "--curve-n", type=int, default=None,
         help="Override offer_curve_smoothing_n (default 6): the number of "
              "equal-capacity slices the econ ramp is rendered into. Sweep "
@@ -2962,6 +2971,10 @@ def main() -> None:
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
+            "cc_duct_peaking": True if args.cc_duct_peaking else None,
+            # Per-plant EIA-860 duct-burner shares supersede the 4-plant
+            # hardcoded ERCOT peaking override, so turn it off when on.
+            "cc_peaking_per_plant": False if args.cc_duct_peaking else None,
             "ct_deployment_overlay": True if args.ct_deployment else None,
             "ct_deployment_floor_frac": (
                 args.ct_deployment_floor_frac if args.ct_deployment else None
