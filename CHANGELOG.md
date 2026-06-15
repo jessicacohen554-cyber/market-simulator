@@ -27,6 +27,7 @@ ERCOT byte-identical guard (ERCOT stays on its exact prior path).
 - Tests: `tests/test_runner.py` covers the per-ISO binning path (ERCOT curated
   sheet, CAISO/NEISO/NYISO/PJM synth, MISO/SPP legacy fallback) and the overlay
   resolution (ERCOT→True, PJM→False, unlisted→config flag).
+
 ## 2026-06-15 (W1a — per-ISO planning reserve margin)
 
 The reserve-margin adequacy backstop
