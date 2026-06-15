@@ -230,6 +230,18 @@ def main() -> None:
         help="Measure and print the deployment wedge by zone/class without "
              "writing the artifact (the quantification check).",
     )
+    ap.add_argument(
+        "--mode", choices=["congestion", "full"], default="congestion",
+        help="Scoping of the floor. 'congestion' (default): the load-zone "
+             "congestion subset (ran AND LZ_price > MC AND HB_HUBAVG < MC) — the "
+             "price-recoverable wedge the single-price view misses (run118: the "
+             "7-zone LP already dispatches most of it, so it is near-no-op). "
+             "'full': floor every running hour to the plant's realized CEMS net "
+             "(the top-down zone floor) — a min-gen bound that binds only where "
+             "the model under-dispatches the pocket plant, forcing local "
+             "generation to the realized level and pulling the over-running "
+             "exporting zone down. Size with --floor at run time.",
+    )
     args = ap.parse_args()
 
     iso = args.iso.upper()
@@ -289,9 +301,17 @@ def main() -> None:
             n_plants += 1
             cems_total += float(series[ran].sum())
             lz = lz_cache[zone]
-            # Congestion subset: ran, economic at the LOCAL load-zone price, but
-            # out of merit at the system hub. NaN price hours are not counted.
-            deploy = ran & (lz > mc) & (hub < mc)
+            if args.mode == "full":
+                # Top-down zone floor: floor every running hour to the realized
+                # CEMS net. As a min-gen bound it binds only where the model
+                # under-dispatches the pocket plant, so the bound energy is the
+                # plant's under-run vs CEMS — the net pocket gap, not the 44 TWh
+                # naive out-of-merit total.
+                deploy = ran
+            else:
+                # Congestion subset: ran, economic at the LOCAL load-zone price,
+                # but out of merit at the system hub. NaN price hours skipped.
+                deploy = ran & (lz > mc) & (hub < mc)
             if not deploy.any():
                 continue
             n_hours += int(deploy.sum())
