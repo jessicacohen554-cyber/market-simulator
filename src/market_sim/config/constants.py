@@ -980,6 +980,43 @@ RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
 ERCOT_AS_SATURATION_REF_GW: float = 4.0
 ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 
+# ISOs that have a per-plant CAMPD bin artifact and therefore take the
+# offer-curve (per-plant tranche) binning path in the runner instead of the
+# legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
+# the curated ``inputs/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM are
+# covered by the CAMPD-derived ``inputs/processed/thermal_tranches_<ISO>.csv``
+# (and the committed ``inputs/processed/bin_assignments_<ISO>.csv`` review
+# artifacts). ISOs WITHOUT a bin artifact (MISO, SPP) are intentionally absent
+# and fall back to ``aggregate_fleet`` exactly as before. The runner gate keys
+# off this set so the per-plant path unlocks per ISO as its artifact lands.
+CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM"}
+)
+
+# Effective default for the historic (facility-summed) CAMPD outage overlay,
+# per ISO. The overlay hard-zeros coal/CC tranches when a plant's CEMS facility
+# sum drops out. It is the PRIMARY outage layer only where the unit-level
+# derate merely SUPPLEMENTS it, and is redundant (double-counting) where the
+# unit-level file is the COMPLETE CAMPD-derived source. The runner resolves the
+# effective flag as ``HISTORIC_OUTAGE_OVERLAY_BY_ISO.get(iso, <config flag>)``,
+# so an ISO absent from this map keeps the global ``ScenarioConfig`` default.
+# Reasoning per ISO:
+#   ERCOT  True  — facility-summed legacy extract is the primary layer; the
+#                  unit-level derate only catches single-unit losses it hides.
+#   CAISO  False — unit-level file derived fresh from ALL CAMPD units (complete).
+#   NEISO  False — same: complete CAMPD-derived unit-level source.
+#   NYISO  False — same: complete CAMPD-derived unit-level source.
+#   PJM    False — unit-level file built fresh by derive_campd_unit_outages.py
+#                  is the complete source; stacking the facility overlay on top
+#                  double-counts and over-derates (see scenarios.py).
+HISTORIC_OUTAGE_OVERLAY_BY_ISO: dict[str, bool] = {
+    "ERCOT": True,
+    "CAISO": False,
+    "NEISO": False,
+    "NYISO": False,
+    "PJM": False,
+}
+
 # Effective load-carrying capability (ELCC) of storage as a function of
 # duration (hours), as (duration_hr, credit) breakpoints; linearly
 # interpolated, clamped at the ends. Short-duration storage covers only the
