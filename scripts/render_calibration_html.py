@@ -37,6 +37,7 @@ import argparse
 import base64
 import importlib.util
 import json
+import re
 import sys
 from datetime import datetime
 from functools import lru_cache
@@ -50,6 +51,14 @@ sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
     "rcf", str(REPO / "scripts" / "run_calibration_full.py"))
 rcf = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rcf)
+# The ORDC scarcity overlay deriver supplies the reference monthly-MAE /
+# actual-RT / demand-weight implementations; the dashboard's display-only
+# overlay series reuses them verbatim so its numbers match the deriver's
+# stdout report (docs/ordc-overlay.md, "Reliability-deployment overlay").
+_spec_ordc = importlib.util.spec_from_file_location(
+    "ordc_overlay", str(REPO / "scripts" / "derive_ordc_overlay.py"))
+ordc = importlib.util.module_from_spec(_spec_ordc)
+_spec_ordc.loader.exec_module(ordc)
 
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS, class_label, classes_for_fuel930, fossil_classes, nonfossil_classes,
@@ -235,6 +244,43 @@ def _tranche_bands_for_bundle(bdir: Path) -> dict[int, list]:
         if bands:
             out[code] = bands
     return out
+
+
+def _load_scarcity_overlay(bdir: Path, year: int, hours: int) -> dict | None:
+    """Load the ERCOT ORDC scarcity overlay for a bundle-year, or ``None``.
+
+    The overlay is the post-solve ``lmp_scarcity = lmp + scarcity_adder``
+    series committed next to the energy-only duals. Prefers the calibrated
+    reliability-deployment series (``scarcity_reldeploy2500.parquet``) and
+    falls back to the published-ORDC-only ``scarcity.parquet``; returns
+    ``None`` when neither exists (non-ERCOT bundles / older runs), so the
+    energy-only payload is left exactly as it was.
+
+    Returns ``{adder, lmp, lmp_scarcity, series, reldeploy}`` with the three
+    hourly arrays NaN-padded to ``hours`` (the system-wide adder is added
+    uniformly to every zone, mirroring ERCOT's system-level reserve price
+    adder), the source file name and the reliability-deployment MW parsed
+    from it for the display label.
+    """
+    for name in ("scarcity_reldeploy2500.parquet", "scarcity.parquet"):
+        p = bdir / name
+        if not p.exists():
+            continue
+        df = pd.read_parquet(p)
+        df = df[df["year"] == year]
+        if df.empty:
+            continue
+        hh = df["hour"].to_numpy()
+        adder = np.full(hours, np.nan)
+        lmp = np.full(hours, np.nan)
+        lmp_scar = np.full(hours, np.nan)
+        adder[hh] = df["scarcity_adder"].to_numpy(float)
+        lmp[hh] = df["lmp"].to_numpy(float)
+        lmp_scar[hh] = df["lmp_scarcity"].to_numpy(float)
+        m = re.search(r"reldeploy(\d+)", name)
+        return {"adder": adder, "lmp": lmp, "lmp_scarcity": lmp_scar,
+                "series": name, "reldeploy": float(m.group(1)) if m else 0.0}
+    return None
 
 
 def build_payload(runs: list[tuple[str, Path]],
@@ -487,7 +533,16 @@ def build_payload(runs: list[tuple[str, Path]],
             sy = sys_all[sys_all["year"] == year]
             if "pass" in sy.columns and (sy["pass"] == "P1").any():
                 sy = sy[sy["pass"] == "P1"]
+            # Post-solve ORDC scarcity overlay (ERCOT only, display-only): the
+            # SECOND LMP series shown next to the energy-only duals. The
+            # energy-only ``lmp`` block below stays the GATED calibration metric
+            # and is byte-identical; ``lmpScar`` is purely additive (the
+            # system-wide adder added uniformly to each zone) and never re-gated.
+            hours = int(meta.get("hours", _T))
+            scar = (_load_scarcity_overlay(bdir, int(year), hours)
+                    if meta.get("iso") == "ERCOT" else None)
             lmp = {}
+            lmp_scar: dict[str, dict] = {}
             for zone, zg in sy.groupby("zone", observed=True):
                 price = zg["price"].to_numpy(float)
                 dem = zg["demand"].to_numpy(float)
@@ -499,6 +554,12 @@ def build_payload(runs: list[tuple[str, Path]],
                 midx = np.clip(np.searchsorted(_CUM, hr, side="right") - 1, 0, 11)
                 p_mon: list = [None] * 12
                 d_mon = [0.0] * 12
+                # Overlaid price for this zone = energy-only price + the
+                # system-wide adder (uniform across zones); demand-weighted per
+                # month exactly like p_mon so the shell re-weights it across the
+                # selected zones with the SAME dMon weights.
+                op = price + scar["adder"][hr] if scar is not None else None
+                p_mon_scar: list = [None] * 12
                 for m in range(12):
                     sel = midx == m
                     if not sel.any():
@@ -507,8 +568,14 @@ def build_payload(runs: list[tuple[str, Path]],
                     p_mon[m] = round(float((price[sel] * dem[sel]).sum()) / dd, 2) \
                         if dd > 0 else round(float(price[sel].mean()), 2)
                     d_mon[m] = round(dd / 1e6, 4)
+                    if op is not None:
+                        p_mon_scar[m] = round(
+                            float((op[sel] * dem[sel]).sum()) / dd, 2) \
+                            if dd > 0 else round(float(op[sel].mean()), 2)
                 lmp[str(zone)] = {"p": round(p, 2), "d": round(d_tot / 1e6, 4),
                                   "pMon": p_mon, "dMon": d_mon}
+                if scar is not None:
+                    lmp_scar[str(zone)] = {"pMonScar": p_mon_scar}
             # System-wide generation mix per fossil class (TWh), GRID-DELIVERED:
             # model = grid LP only (``_class_hourly`` sum, NO behind-the-meter
             # add-back), compared against ``bench.classFull`` which is now
@@ -571,6 +638,30 @@ def build_payload(runs: list[tuple[str, Path]],
             run_years[int(year)] = {
                 "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
                 "gmModel": gm_model, "lmp": lmp, "volErr": vol_err}
+            # Year-level scarcity-overlay summary (display-only): demand-weighted
+            # monthly LMP MAE vs actual RT for the energy-only and overlaid
+            # series, and tail-hour counts. Reuses the deriver's _monthly_mae /
+            # _actual_rt / _demand_weights so these match
+            # ``scripts/derive_ordc_overlay.py`` exactly. Provenance (series file
+            # + reliability-deployment MW) is kept so the label can state it.
+            if scar is not None and lmp_scar:
+                rt = ordc._actual_rt(int(year), hours)
+                w = ordc._demand_weights(bdir, int(year), hours)
+                lam, lam_s = scar["lmp"], scar["lmp_scarcity"]
+                run_years[int(year)]["lmpScar"] = lmp_scar
+                run_years[int(year)]["ordc"] = {
+                    "maeEnergyOnly": round(ordc._monthly_mae(lam, rt, w), 1),
+                    "maeOverlay": round(ordc._monthly_mae(lam_s, rt, w), 1),
+                    "hoursGt200": {
+                        "actual": int(np.nansum(rt > 200)),
+                        "model": int(np.nansum(lam > 200)),
+                        "overlay": int(np.nansum(lam_s > 200))},
+                    "hoursGt500": {
+                        "actual": int(np.nansum(rt > 500)),
+                        "model": int(np.nansum(lam > 500)),
+                        "overlay": int(np.nansum(lam_s > 500))},
+                    "series": scar["series"],
+                    "reldeployMw": scar["reldeploy"]}
         model_runs.append({"label": label, "years": run_years})
 
     # Only the fossil classes actually present in this ISO's dispatch, in the
