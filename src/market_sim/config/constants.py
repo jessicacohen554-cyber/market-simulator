@@ -1013,39 +1013,39 @@ QUEUE_CAP_GW: dict[str, float] = {
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
     "ERCOT": {
-        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "nuclear": 2.0,
+        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "gas_ct": 3.0, "nuclear": 2.0,
         "geothermal": 2.0,      # engineering judgment, EGS resource potential
         "offshore_wind": 0.0,   # Gulf coast not yet leased. Source: BOEM
     },
     "CAISO": {
-        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0,
+        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 1.0,
         "geothermal": 3.0,      # CA geothermal resource assessment
         "offshore_wind": 3.0,   # BOEM Pacific lease areas, CAISO TPP
     },
     # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
     # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
     "PJM": {
-        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "nuclear": 1.0,
+        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "gas_ct": 2.0, "nuclear": 1.0,
         "geothermal": 0.0,      # no utility-scale resource in footprint
         "offshore_wind": 2.0,   # NJ/MD/DE BOEM lease areas
     },
     "MISO": {
-        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "nuclear": 1.0,
+        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "gas_ct": 2.0, "nuclear": 1.0,
         "geothermal": 0.0,
         "offshore_wind": 0.0,   # Great Lakes not leased
     },
     "SPP": {
-        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "nuclear": 0.5,
+        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 0.0,
     },
     "NYISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 1.5,   # NY Bight BOEM lease areas
     },
     "NEISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 2.0,   # MA/RI BOEM lease areas
     },
@@ -1076,6 +1076,17 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "fom_per_kw_yr": 30.0,
         "learning_rate": 0.02,
         "base_cf": 0.55,
+        "lifetime_yr": 30,
+    },
+    "gas_ct": {  # NREL ATB 2024 frame combustion turbine / peaker. Annualized
+        # fixed cost (capex annuity + FOM) ~ the Brattle ERCOT CONE-for-2026
+        # frame-CT reference (~$162/kW-yr gross). base_cf is a nominal peaker
+        # duty cycle; the new-entry screen prices a gas_ct on its price-duration
+        # energy margin, not base_cf x mean price.
+        "capex_per_kw": 1250.0,
+        "fom_per_kw_yr": 21.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.12,
         "lifetime_yr": 30,
     },
     "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates

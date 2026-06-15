@@ -414,7 +414,9 @@ def apply_economic_retirements(
 # Classic candidate technologies considered for economic new entry. These
 # are costed from NEW_ENTRY_COSTS; emerging technologies are handled
 # separately (see _EMERGING_AVAILABLE_YEAR below).
-_NEW_ENTRY_TECHS: tuple[str, ...] = ("wind", "solar", "gas_cc", "nuclear_smr")
+_NEW_ENTRY_TECHS: tuple[str, ...] = (
+    "wind", "solar", "gas_cc", "gas_ct", "nuclear_smr",
+)
 
 # Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
 # the W[z,t]/S[z,t] dispatch variables) rather than entering as thermal
@@ -1003,12 +1005,67 @@ def apply_economic_new_entry(
 
         base_cf = NEW_ENTRY_COSTS[tech]["base_cf"]
         cum_gw = cumulative.get(tech) if cumulative else None
+
+        if tech in _THERMAL_FOM:
+            # Dispatchable thermal (gas_cc, gas_ct): a price-taking unit runs
+            # only when the clearing price clears its marginal cost, so its
+            # expected energy margin is the price-duration integral
+            # sum_t max(price_t - var_cost, 0) per MW -- which counts the
+            # scarcity-tail hours where a peaker earns the bulk of its margin.
+            # Compared against the unit's annualized FIXED cost (capex annuity
+            # + FOM), this is the net-revenue-vs-CONE test. The old flat
+            # base_cf x mean(price) understated peakers ~severalfold by
+            # ignoring the price shape.
+            heat_rate_bins = HEAT_RATE_BINS.get(tech, {})
+            best_hr = min(heat_rate_bins.values()) if heat_rate_bins else 0.0
+            co2_bins = CO2_RATES.get(tech, {})
+            best_co2 = min(co2_bins.values()) if co2_bins else 0.0
+            var_cost = (
+                best_hr * gas_price_per_mmbtu
+                + VOM.get(tech, 0.0)
+                + best_co2 * carbon_price
+            )
+            price_hourly = (
+                np.asarray(prices, dtype=float).mean(axis=0)
+                if np.asarray(prices).ndim > 1
+                else np.asarray(prices, dtype=float)
+            )
+            energy_margin = float(
+                np.maximum(price_hourly - var_cost, 0.0).sum()
+            )
+            # Annualized fixed cost ($/MW-yr): Wright-adjusted capex annuity +
+            # FOM. Thermal carries no IRA ITC/PTC, so this is the clean CONE.
+            costs = NEW_ENTRY_COSTS[tech]
+            capex_per_kw = costs["capex_per_kw"]
+            ref_gw = WRIGHT_REFERENCE_GW.get(tech)
+            if cum_gw is not None and ref_gw is not None:
+                capex_per_kw = wright_cost(
+                    capex_per_kw, cum_gw, ref_gw, costs["learning_rate"]
+                )
+            crf = _capital_recovery_factor(
+                config.real_discount_rate, costs["lifetime_yr"]
+            )
+            fixed_cost = (capex_per_kw * crf + costs["fom_per_kw_yr"]) * 1000.0
+            # Module M1 capacity payment (0 in ERCOT) + ERCOT AS revenue, the
+            # same streams credited in the retirement screen above.
+            effective_revenue = (
+                energy_margin
+                + capacity_revenue_per_mw_yr(
+                    iso_config.name, EFORD.get(tech, 0.05)
+                )
+                + as_revenue_per_mw_yr(tech, storage_power_mw, config)
+            )
+            margin = effective_revenue - fixed_cost
+            if margin > 0.0:
+                margins.append((margin, tech))
+            continue
+
+        # Non-dispatchable / must-run candidates (wind, solar, nuclear_smr):
+        # value the CF-shaped output at the expected price and net the
+        # levelized cost; clean attributes (EAC or RPS shadow price, the
+        # higher, never stacked) lift RPS-eligible renewables.
         lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
         effective_revenue = estimate_expected_revenue(prices, base_cf)
-        # Each MWh of clean generation produces one attribute certificate,
-        # sold once to the higher-value buyer: the exogenous EAC or the
-        # endogenous RPS shadow price. They do not stack -- take the max.
-        # The RPS shadow price is credited only to RPS-eligible renewables.
         rps_for_tech = (
             rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
         )
@@ -1020,35 +1077,6 @@ def apply_economic_new_entry(
                 effective_attribute_price * base_cf * HOURS_PER_YEAR
             )
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
-
-        # Thermal candidates also burn fuel: a gas CC earns margin only
-        # when the clearing price clears its marginal cost, so charge it
-        # the expected variable cost (fuel, VOM, carbon) of a best-in-class
-        # new unit. Without this, gas CC builds regardless of fuel price.
-        if tech in _THERMAL_FOM:
-            heat_rate_bins = HEAT_RATE_BINS.get(tech, {})
-            best_hr = min(heat_rate_bins.values()) if heat_rate_bins else 0.0
-            co2_bins = CO2_RATES.get(tech, {})
-            best_co2 = min(co2_bins.values()) if co2_bins else 0.0
-            var_cost = (
-                best_hr * gas_price_per_mmbtu
-                + VOM.get(tech, 0.0)
-                + best_co2 * carbon_price
-            )
-            annual_cost += var_cost * base_cf * HOURS_PER_YEAR
-
-            # Module M1: a new thermal unit in a capacity-market ISO also
-            # earns the resource-adequacy payment on its UCAP, the same
-            # stream credited in the retirement screen above.
-            effective_revenue += capacity_revenue_per_mw_yr(
-                iso_config.name, EFORD.get(tech, 0.05)
-            )
-            # ERCOT ancillary-service revenue, the same stream credited in the
-            # retirement screen (zero unless as_revenue_enabled, ERCOT only).
-            effective_revenue += as_revenue_per_mw_yr(
-                tech, storage_power_mw, config
-            )
-
         margin = effective_revenue - annual_cost
         if margin > 0.0:
             margins.append((margin, tech))

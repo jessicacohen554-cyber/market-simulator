@@ -721,11 +721,13 @@ class TestEconomicNewEntry(unittest.TestCase):
         # No technology exceeds its own per-tech cap.
         for tech, built_mw in by_tech.items():
             self.assertLessEqual(built_mw, caps[tech] * 1000.0 + 1e-6)
-        # gas_cc has the highest margin and wind the next, so both build
-        # to their full per-tech caps; solar is squeezed by the ISO total.
+        # With free fuel at $250 the two dispatchable gas techs have the
+        # highest margins, so both build to their full per-tech caps.
         self.assertAlmostEqual(by_tech["gas_cc"], caps["gas_cc"] * 1000.0)
-        self.assertAlmostEqual(by_tech["wind"], caps["wind"] * 1000.0)
-        self.assertLess(by_tech["solar"], caps["solar"] * 1000.0)
+        self.assertAlmostEqual(by_tech["gas_ct"], caps["gas_ct"] * 1000.0)
+        # The ISO total cap (12 GW) binds below the 16 GW sum of per-tech
+        # caps, so a lower-margin tech is squeezed below its own cap.
+        self.assertLess(by_tech.get("solar", 0.0), caps["solar"] * 1000.0)
         # Wind and solar are routed to the renewable pools, not the fleet.
         self.assertFalse(
             any(g.fuel_type in ("wind", "solar") for g in new_fleet)
@@ -757,23 +759,44 @@ class TestEconomicNewEntry(unittest.TestCase):
         self.assertEqual(additions, {})
 
     def test_gas_cc_charged_its_fuel_cost(self):
-        # At a $40/MWh average price and $3.50/MMBtu gas, a gas CC's
-        # expected variable fuel cost pushes its margin negative, so it
-        # does not build. Ignoring fuel cost (the prior bug) would let it
-        # build every year regardless of economics.
+        # The price-duration screen runs a CC only when the price clears its
+        # marginal (fuel) cost. At a flat $40/MWh with expensive $9/MMBtu gas
+        # the CC's variable cost exceeds the price every hour, so its energy
+        # margin is zero and it does not build. Ignoring fuel cost (the prior
+        # bug) would let it build regardless of economics.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 40.0)
 
         priced, _ = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=3.50
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=9.0
         )
         self.assertFalse(any(g.fuel_type == "gas_cc" for g in priced))
 
-        # With fuel treated as free, the same screen builds gas CC.
+        # With fuel treated as free, the same $40 price clears the CC's cost
+        # every hour, so it builds.
         free, _ = apply_economic_new_entry(
             [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=0.0
         )
         self.assertTrue(any(g.fuel_type == "gas_cc" for g in free))
+
+    def test_gas_ct_peaker_enters_on_scarcity_tail_not_flat_price(self):
+        # A simple-cycle peaker (gas_ct) is now a new-entry candidate, priced
+        # on its price-duration energy margin. It clears against a scarcity-
+        # rich curve (a few hundred high-price hours, where a peaker earns its
+        # margin) but not against a flat price that never exceeds its cost.
+        config = ScenarioConfig(iso="ERCOT")
+        tail = np.full(8760, 25.0)
+        tail[:250] = 5000.0  # the scarcity hours a peaker lives on
+        built, _ = apply_economic_new_entry(
+            [], tail, 2030, config, "ERCOT", gas_price_per_mmbtu=3.5
+        )
+        self.assertTrue(any(g.fuel_type == "gas_ct" for g in built))
+
+        flat = np.full(8760, 25.0)  # never clears the peaker's marginal cost
+        none, _ = apply_economic_new_entry(
+            [], flat, 2030, config, "ERCOT", gas_price_per_mmbtu=3.5
+        )
+        self.assertFalse(any(g.fuel_type == "gas_ct" for g in none))
 
     def test_nuclear_builds_only_when_prices_clear_capex(self):
         # Nuclear's ~$6800/kW capex needs high sustained prices to clear.
@@ -1275,8 +1298,11 @@ class TestCapacityIntegration(unittest.TestCase):
             egs_available_year=2099, offshore_wind_available_year=2099,
         )
         prices = np.full(8760, 250.0)
+        # Expensive gas suppresses the dispatchable gas candidates (their
+        # variable cost exceeds the price), isolating the renewable per-tech
+        # cap behaviour this test targets.
         new_fleet, additions = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT"
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=50.0
         )
 
         by_tech = _entry_by_tech(new_fleet, additions)
