@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-06-15 (docs — ERCOT→all-ISO propagation audit & prompt pack)
+
+Audited the ERCOT model's accumulated changes for applicability to the other
+six ISOs and produced a sequenced propagation prompt pack
+(`docs/multi-iso/09-ercot-propagation-prompt-pack.md`), indexed in the
+multi-iso README. Docs only — no code changed.
+
+- **Energy-only-specific (do NOT propagate):** ORDC overlay, the RTORDPA
+  reliability-deployment offset, the RTC+B regime switch, the exogenous AS
+  revenue stream, and the $5,000 energy-only VOLL stay ERCOT-gated.
+- **Already ISO-agnostic (verify only):** reserve-margin backstop, full
+  fossil/nuclear retirement, gas-CT peaker entry, price-duration entry
+  economics, commitment screen, priced imports, carbon pricing — these read
+  per-ISO config and already apply to any ISO.
+- **Actionable propagation gaps:** the ERCOT-tuned `planning_reserve_margin =
+  0.1375` global default (→ per-ISO registry), the ERCOT-gated CAMPD per-plant
+  binning at `runner.py:207`, the global `historic_outage_overlay` default, the
+  ERCOT-only curated fleet dicts, missing `thermal_tranches_{MISO,SPP}.csv`, and
+  uncurtailed-HSL coverage for PJM/NEISO/MISO/SPP.
+- Pack is sequenced W0 (parity-baseline gate) → W1a/W1b/W1c (parallel engine
+  generalizations) → W2a/W2b (parallel, after binning unlock) → W3 (per-ISO
+  HSL/recalibration), with an ERCOT byte-identical guard on every wave.
+
 ## 2026-06-15 (ERCOT — market-design regime switch: contain the 2023 reliability-deployment to its own design)
 
 The reliability-deployment offset (RTORDPA analogue) is calibrated to the 2023
