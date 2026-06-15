@@ -383,10 +383,14 @@ class ScenarioConfig:
     # economic screen still decides the profitable build; this only fills the
     # residual adequacy gap. Default off (byte-identical); recommended on for
     # forecasts. Uses the prior year's peak (build-ahead-of-need).
-    planning_reserve_margin: float = 0.1375  # Target planning reserve margin
-    # for the adequacy backstop. 13.75% is ERCOT's economically-optimal reserve
-    # margin (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO
-    # would use its installed-reserve-margin target.
+    planning_reserve_margin: float = 0.1375  # Fallback/override planning
+    # reserve margin for the adequacy backstop. The per-ISO registry
+    # constants.PLANNING_RESERVE_MARGIN_BY_ISO now LEADS: the backstop resolves
+    # PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, this scalar), so this value only
+    # applies as an explicit override or when an ISO is absent from the
+    # registry. 13.75% is ERCOT's economically-optimal reserve margin
+    # (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO uses its
+    # own installed-reserve-margin target from the registry.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0

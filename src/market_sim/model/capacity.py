@@ -54,6 +54,7 @@ from market_sim.config.constants import (
     NEW_ENTRY_COSTS,
     NOX_RATES,
     OFFSHORE_WIND_PARAMS,
+    PLANNING_RESERVE_MARGIN_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     RENEWABLE_CAPACITY_CREDIT,
@@ -1185,7 +1186,12 @@ def apply_reserve_margin_build(
     """
     if not config.reserve_margin_build_enabled or peak_demand_mw <= 0.0:
         return fleet, 0.0
-    required = peak_demand_mw * (1.0 + config.planning_reserve_margin)
+    # Per-ISO target leads; an explicit ScenarioConfig.planning_reserve_margin
+    # still overrides it for ISOs absent from the registry (fallback scalar).
+    reserve_margin = PLANNING_RESERVE_MARGIN_BY_ISO.get(
+        iso, config.planning_reserve_margin
+    )
+    required = peak_demand_mw * (1.0 + reserve_margin)
     firm_gap = required - firm_capacity_mw
     if firm_gap <= 0.0:
         return fleet, 0.0
@@ -1544,11 +1550,16 @@ def evolve_fleet(
             fleet, firm_mw, peak_demand, year, config, config.iso
         )
         if adequacy_mw > 0.0:
+            # Same per-ISO resolution as apply_reserve_margin_build so the
+            # logged margin reflects the value actually used.
+            resolved_margin = PLANNING_RESERVE_MARGIN_BY_ISO.get(
+                config.iso, config.planning_reserve_margin
+            )
             logger.info(
                 "year %d: reserve-margin backstop built %.0f MW gas_ct "
                 "(firm %.0f MW vs peak %.0f MW x %.3f margin)",
                 year, adequacy_mw, firm_mw, peak_demand,
-                1.0 + config.planning_reserve_margin,
+                1.0 + resolved_margin,
             )
 
     # Retirements, retrofits and new entry have reshaped the fleet;

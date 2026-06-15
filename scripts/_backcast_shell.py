@@ -219,6 +219,21 @@ function avgLMPMon(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};
  for(const z in L){if(!st.zones.has(z))continue;const zl=L[z];if(!zl.pMon||!zl.dMon)continue;
   for(let m=0;m<12;m++){if(zl.pMon[m]==null)continue;pd[m]+=zl.pMon[m]*zl.dMon[m];d[m]+=zl.dMon[m];any=true;}}
  return any?pd.map((s,m)=>d[m]>0?s/d[m]:null):null;}
+// Model + ORDC scarcity-overlay monthly avg LMP, load-weighted over the
+// selected zones (12 values, or null when the run carries no overlay). This is
+// the DISPLAY-ONLY second series (energy LMP + reliability-deployment adder);
+// the energy-only avgLMPMon above stays the gated metric. Re-weights pMonScar
+// with the SAME per-zone dMon (from the energy-only lmp block) as avgLMPMon, so
+// the two lines share an identical zone aggregation.
+function avgLMPMonScar(id,year){const Y=MODEL[id].years[year]||{},S=Y.lmpScar,L=Y.lmp||{};if(!S)return null;
+ const pd=Array(12).fill(0),d=Array(12).fill(0);let any=false;
+ for(const z in S){if(!st.zones.has(z))continue;const sp=S[z].pMonScar,dm=(L[z]||{}).dMon;if(!sp||!dm)continue;
+  for(let m=0;m<12;m++){if(sp[m]==null)continue;pd[m]+=sp[m]*dm[m];d[m]+=dm[m];any=true;}}
+ return any?pd.map((s,m)=>d[m]>0?s/d[m]:null):null;}
+// Year-level scarcity-overlay summary (system-wide demand-weighted MAEs + tail-
+// hour counts + provenance), computed in Python to match derive_ordc_overlay.py
+// exactly; null for runs/years with no overlay.
+function ordcInfo(id,year){return (MODEL[id].years[year]||{}).ordc||null;}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function ppcls(d){const a=Math.abs(d);return a<1?"good":a<3?"ok":"bad";}
 // Hourly-r banding for the dispatch-correlation views: the class aggregate is
@@ -500,20 +515,35 @@ function runYears(id){const m=META_RUN(id),ys=MODEL[id]?Object.keys(MODEL[id].ye
 // Monthly LMP table (Tables page reference; the report shows the same data as
 // charts). Model = load-weighted over the selected zones per month; actual =
 // the system DA / RT hub average per month. Δ = (model − actual)/actual.
+// Total monthly demand (TWh-equivalent weights) over the selected zones, for
+// demand-weighting the overlay's annual roll-up the same way avgLMP rolls up
+// the energy-only series.
+function monthDemandTot(id,year){const L=(MODEL[id].years[year]||{}).lmp||{};const d=Array(12).fill(0);let any=false;
+ for(const z in L){if(!st.zones.has(z))continue;const dm=L[z].dMon;if(!dm)continue;for(let m=0;m<12;m++){d[m]+=dm[m];any=true;}}return any?d:null;}
 function lmpMonthlyTable(id,yr){const mm=avgLMPMon(id,yr);if(!mm)return "";
  const aL=actualLMP(yr)||{},da=aL.da_mon,rt=aL.rt_mon;
+ const ms=avgLMPMonScar(id,yr),dT=monthDemandTot(id,yr);
+ // Demand-weighted annual overlay average (weighting monthly means by monthly
+ // demand reproduces the true hourly demand-weighted annual, as for avgLMP).
+ let annScar=null;if(ms&&dT){let pd=0,d=0;for(let m=0;m<12;m++){if(ms[m]==null)continue;pd+=ms[m]*dT[m];d+=dT[m];}annScar=d>0?pd/d:null;}
  const pair=(m,a)=>{const d=(m!=null&&a)?100*(m-a)/a:null;
   return `<td class=num>${a==null?"—":"$"+a.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td>`;};
+ const scarCell=v=>ms?`<td class=num style="color:${OVERLAY_COLOR}">${v==null?"—":"$"+v.toFixed(1)}</td>`:'';
  let h='<div class=panel><h2>Monthly LMP — model vs actual '
   +'<span class=psub>(model load-weighted over selected zones; actual = system hub average; Δ = (model − actual)/actual)</span></h2>'
   +'<div class=tablewrap><table><thead><tr><th>month</th><th>model $/MWh</th>'
+  +(ms?'<th>+ overlay $/MWh</th>':'')
   +(da?'<th>actual DA</th><th>Δ DA</th>':'')+(rt?'<th>actual RT</th><th>Δ RT</th>':'')+'</tr></thead><tbody>';
  for(let m=0;m<12;m++){h+=`<tr><td>${MONTHS[m]}</td><td class=num>${mm[m]==null?"—":"$"+mm[m].toFixed(1)}</td>`
+   +scarCell(ms?ms[m]:null)
    +(da?pair(mm[m],da[m]):'')+(rt?pair(mm[m],rt[m]):'')+'</tr>';}
  const ann=avgLMP(id,yr);
  h+=`<tr class=sub><td>Annual</td><td class=num>${ann==null?"—":"$"+ann.toFixed(1)}</td>`
+   +scarCell(annScar)
    +(da?pair(ann,aL.da):'')+(rt?pair(ann,aL.rt):'')+'</tr>';
- return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target.</p></div>';}
+ const O=ordcInfo(id,yr);
+ const note=O?` Overlay = energy LMP + ORDC/reliability-deployment adder (display-only, not gated); monthly LMP MAE vs actual RT ${O.maeEnergyOnly.toFixed(1)} → ${O.maeOverlay.toFixed(1)}.`:'';
+ return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target.'+note+'</p></div>';}
 // ============================ RUN REPORT ============================
 // The full-run view: every testing year at once. Class tolerance, dispatch
 // correlation and LMP fidelity per year, plus auto-generated diagnostics that
@@ -590,18 +620,44 @@ function mountCorrHeat(id,years){const div=document.getElementById("corrHeat");i
  Plotly.react(div,[trace],layout,{displayModeBar:false,responsive:true});}
 // Per-year LMP chart: model monthly avg (load-weighted, selected zones) vs the
 // actual DA/RT system hub averages. SVG (no Plotly) so it stays light on phones.
+// Overlay (model + ORDC scarcity adder) display color — distinct from the
+// energy-only Model (blue) and the actuals (grays).
+const OVERLAY_COLOR="#E67E22";
 function lmpYearCard(id,yr){const mm=avgLMPMon(id,yr),aL=actualLMP(yr)||{};
  const ann=avgLMP(id,yr),aP=aL.da!=null?aL.da:aL.rt,pdiff=(ann!=null&&aP)?100*(ann-aP)/aP:null;
  const head=`<div class=yhead>${yr}<span class="ysub ${pdiff==null?'':dcls(pdiff)}">${pdiff==null?"no actual":"annual Δ "+fmtPct(pdiff)}</span></div>`;
  if(!mm)return `<div class=ycard>${head}<p class=psub>No monthly model LMP in this payload.</p></div>`;
- return `<div class=ycard>${head}<div class=svgbox data-lmpyear="${yr}"></div></div>`;}
+ // Display-only overlay KPI: the demand-weighted monthly LMP MAE vs actual RT,
+ // energy-only → with overlay (system-wide; matches derive_ordc_overlay.py).
+ const O=ordcInfo(id,yr);
+ const cap=O?`<p class=psub style="margin:7px 0 0">Monthly LMP MAE vs actual RT: <b>${O.maeEnergyOnly.toFixed(1)}</b> energy-only → <b style="color:${OVERLAY_COLOR}">${O.maeOverlay.toFixed(1)}</b> with overlay <span style="color:${dcls(O.maeOverlay-O.maeEnergyOnly)}">(${O.maeOverlay<=O.maeEnergyOnly?"−":"+"}${Math.abs(O.maeOverlay-O.maeEnergyOnly).toFixed(1)})</span></p>`:"";
+ return `<div class=ycard>${head}<div class=svgbox data-lmpyear="${yr}"></div>${cap}</div>`;}
 function mountLmpCharts(id,years){document.querySelectorAll("[data-lmpyear]").forEach(box=>{
  const yr=+box.dataset.lmpyear,mm=avgLMPMon(id,yr),aL=actualLMP(yr)||{};if(!mm)return;
- const sets=[{pts:mm.map(v=>v==null?0:v),color:"#4A90D9",name:"Model",dash:"4 3"}];
+ const sets=[{pts:mm.map(v=>v==null?0:v),color:"#4A90D9",name:"Model (energy-only)",dash:"4 3"}];
+ // Third line: the display-only ORDC + reliability-deployment overlay.
+ const ms=avgLMPMonScar(id,yr);
+ if(ms)sets.push({pts:ms.map(v=>v==null?0:v),color:OVERLAY_COLOR,name:"Model + ORDC overlay",w:2.4,dash:"6 3"});
  if(aL.da_mon)sets.unshift({pts:aL.da_mon,color:"#647184",name:"Actual DA",w:3});
  if(aL.rt_mon)sets.unshift({pts:aL.rt_mon,color:"#9aa5b1",name:"Actual RT",w:2});
  const ymax=Math.max(20,...sets.flatMap(s=>s.pts.map(v=>Number(v)||0)))*1.15;
  box.appendChild(lineChart(sets,ymax,MONTHS.map(m=>m[0]),"",380,210));});}
+// Tail-hour table: hours above $200 / $500 — actual vs model (energy-only) vs
+// model + overlay — so the remaining tail gap is explicit. Numbers come from
+// the year-level ordc payload (matches derive_ordc_overlay.py). Returns "" when
+// the run carries no overlay.
+function tailHourPanel(id,years){const rows=years.map(yr=>({yr,o:ordcInfo(id,yr)})).filter(x=>x.o);
+ if(!rows.length)return "";
+ let h='<h3 style="font-size:var(--fs-base);margin:var(--space-md) 0 6px">Tail hours — actual vs model vs model + overlay</h3>'
+  +'<div class=tablewrap><table><thead><tr><th rowspan=2 style="vertical-align:bottom">year</th>'
+  +'<th colspan=3 style="text-align:center">hours &gt; $200</th><th colspan=3 style="text-align:center">hours &gt; $500</th></tr>'
+  +'<tr><th class=num>actual</th><th class=num>model</th><th class=num>+overlay</th>'
+  +'<th class=num>actual</th><th class=num>model</th><th class=num>+overlay</th></tr></thead><tbody>';
+ const ov=v=>`<td class=num style="color:${OVERLAY_COLOR};font-weight:600">${v}</td>`;
+ for(const {yr,o} of rows){const g2=o.hoursGt200,g5=o.hoursGt500;
+  h+=`<tr><td>${yr}</td><td class=num>${g2.actual}</td><td class=num>${g2.model}</td>${ov(g2.overlay)}`
+   +`<td class=num>${g5.actual}</td><td class=num>${g5.model}</td>${ov(g5.overlay)}</tr>`;}
+ return h+'</tbody></table></div><p class=psub style="margin-top:6px">The energy-only LP clears 0 scarcity hours by construction; the overlay rebuilds the deep tail (still short of actual — a flat reliability-deployment offset under-serves the milder 2024/2025 years).</p>';}
 // ---- diagnostics: localize each miss and suggest the likely source ----
 // Pure presentation-layer heuristics over the same payload numbers shown in
 // the charts (volErr month/zone decomposition, per-plant Δ923, class r, LMP
@@ -735,10 +791,14 @@ function renderReport(){const id=st.run,years=runYears(id);
  h+='<div class=panel><h2>Dispatch correlation by year <span class=psub>(hourly r of each class aggregate vs CAMPD)</span></h2>'
   +'<p class=psub>Green ≥ '+R_GOOD+' (tracking well), amber ≥ '+R_OK+', red below — red cells mean the class runs at the wrong times even if its annual volume is right.</p>'
   +'<div id=corrHeat></div></div>';
+ const O0=years.map(yr=>ordcInfo(id,yr)).find(Boolean);
+ const ovLeg=O0?`<span><i class=swatch style="border-top-color:${OVERLAY_COLOR}"></i>Model + ORDC overlay</span>`:'';
+ const ovNote=O0?` The <b style="color:${OVERLAY_COLOR}">model + ORDC overlay</b> line adds ERCOT's post-solve ORDC + reliability-deployment scarcity adder (reliability-deployment ${Math.round(O0.reldeployMw).toLocaleString()} MW, calibrated to the 2023 stress year; ORDC regime for backcast years ≤ 2025) on top of the energy-only duals. It is <b>display-only</b> — additive, not a calibration target and never gated; the energy-only Model series remains the gated metric.`:'';
  h+='<div class=panel><h2>LMP alignment <span class=psub>(monthly average; model load-weighted over selected zones vs system hub actuals)</span></h2>'
-  +'<div class=legend><span><i class=swatch style="border-top-color:#647184"></i>Actual DA</span><span><i class=swatch style="border-top-color:#9aa5b1"></i>Actual RT</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div>'
+  +'<div class=legend><span><i class=swatch style="border-top-color:#647184"></i>Actual DA</span><span><i class=swatch style="border-top-color:#9aa5b1"></i>Actual RT</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model (energy-only)</span>'+ovLeg+'</div>'
   +'<div class=lmpgrid>'+years.map(yr=>lmpYearCard(id,yr)).join("")+'</div>'
-  +'<p class=psub style="margin-top:var(--space-sm)">Diagnostic only — LMP level is not a calibration target; the model is an energy-only LP without ORDC / scarcity adders.</p></div>';
+  +tailHourPanel(id,years)
+  +'<p class=psub style="margin-top:var(--space-sm)">The gated calibration metric is the energy-only LMP (raw LP duals); LMP level itself is diagnostic, not a volume gate.'+ovNote+'</p></div>';
  h+=diagnosticsHTML(id,years);
  h+='<div class=panel>'+narrative([id])+'</div>';
  document.getElementById("content").innerHTML=h;
