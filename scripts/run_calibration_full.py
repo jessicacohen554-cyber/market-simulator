@@ -2595,6 +2595,28 @@ def main() -> None:
              "--ct-deployment.",
     )
     parser.add_argument(
+        "--reliability-deployment", action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Inject the spatial reliability-deployment hourly floor "
+             "(outages.reliability_deployment_floor_for_year, built by "
+             "scripts/derive_reliability_deployment.py): the generalization of "
+             "--ct-deployment to the load-pocket thermal fleet "
+             "(CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast). "
+             "In the hours where a pocket plant was economic at its LOCAL "
+             "load-zone price yet out of merit at the system hub, floor it to "
+             "its observed CEMS output, recovering the ~2.7-5.2 TWh/yr of "
+             "intra-zonal congestion energy the single-system-price LP omits — "
+             "reducing the North over-run and the SC/West/NE under-run WITHOUT "
+             "flooring to full CEMS. A pure LP min-gen bound (no MIP). "
+             "Backcast-only; off by default.",
+    )
+    parser.add_argument(
+        "--reliability-deployment-floor-frac", type=float, default=1.0,
+        help="Fraction of the measured congestion energy forced (default 1.0). "
+             "Lower it if a year would overshoot a pocket class bar. Requires "
+             "--reliability-deployment.",
+    )
+    parser.add_argument(
         "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
         help="Drop the statistical planned-outage (POF) derate on coal "
              "(planned maintenance comes from the historic outage overlay); "
@@ -2978,6 +3000,13 @@ def main() -> None:
             "ct_deployment_overlay": True if args.ct_deployment else None,
             "ct_deployment_floor_frac": (
                 args.ct_deployment_floor_frac if args.ct_deployment else None
+            ),
+            "reliability_deployment_overlay": (
+                True if args.reliability_deployment else None
+            ),
+            "reliability_deployment_floor_frac": (
+                args.reliability_deployment_floor_frac
+                if args.reliability_deployment else None
             ),
             "wefor_residual_groups": (
                 frozenset(g.strip() for g in args.wefor_relief_groups.split(","))
