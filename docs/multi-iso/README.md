@@ -15,6 +15,7 @@ has changed yet; these define *how* to do it, piece by piece.
 | `06-caiso-prompt-pack.md` | CAISO instantiation — the template prompt pack (P0–P14 waves). |
 | `07-nyiso-prompt-pack.md` | **NYISO** instantiation — hydro (Niagara/St-Lawrence), downstate congestion, dual-fuel winter, HQ/PJM imports, RGGI, ICAP. Topology/zone-assignment/outage-windows already landed; starts at Stage E. |
 | `08-neiso-prompt-pack.md` | **NEISO (ISO-NE)** instantiation — Algonquin winter basis + dual-fuel (the headline), HQ Phase II imports, Northfield PS, FCM, RGGI. Best CEMS coverage of the new ISOs; starts at Stage E. |
+| `09-ercot-propagation-prompt-pack.md` | **Reverse direction.** Audit of ERCOT's accumulated changes + a sequenced pack to perpetuate the *generic* engine improvements across all ISOs while leaving the *energy-only-specific* ones (ORDC, AS revenue, RTC+B) in ERCOT. |
 
 ## At-a-glance roadmap
 
