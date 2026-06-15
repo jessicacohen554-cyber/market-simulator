@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-15 (W1a — per-ISO planning reserve margin)
+
+The reserve-margin adequacy backstop
+(`capacity.py::apply_reserve_margin_build`) no longer makes every ISO inherit
+ERCOT's economically-optimal 13.75% reserve margin. Added
+`PLANNING_RESERVE_MARGIN_BY_ISO` (cited per-ISO resource-adequacy targets) and
+resolve the margin as
+`PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)`:
+
+- The per-ISO registry now leads; `ScenarioConfig.planning_reserve_margin`
+  (still 0.1375) is the fallback/override for an ISO absent from the registry.
+- Cited targets: ERCOT 0.1375 (Brattle/Astrapé 2022, PUCT), CAISO 0.15 (CPUC
+  RA), PJM 0.178 (PJM 2025/26 IRM), MISO 0.179 (MISO PY2024-25 LOLE ICAP PRMR),
+  SPP 0.15 (SPP Planning Criteria v4.1A), NYISO 0.244 (NYSRC 2025-26 IRM),
+  NEISO 0.157 (NERC 2023 LTRA reference margin; `needs-citation` for a firm
+  ISO-NE filing).
+- ERCOT parity: the registry value equals the historic scalar default, so the
+  ERCOT backstop build is byte-identical; capacity-market ISOs now force-build
+  to their own (higher) published floor. New `test_capacity.py` coverage for
+  ERCOT parity, the higher PJM floor, explicit-scalar override, and
+  absent-ISO fallback.
+
 ## 2026-06-15 (W1c — generic-improvement coverage verified for all seven ISOs)
 
 Verified that the already-ISO-agnostic ERCOT engine improvements fire for every
