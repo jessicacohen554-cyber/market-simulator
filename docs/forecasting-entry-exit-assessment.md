@@ -8,7 +8,11 @@
 > 1. **Reliability-deployment overlay** (`ordc_reliability_deployment_mw`, the
 >    RTORDPA analogue): at the recommended 2,500 MW the 2023 monthly LMP MAE
 >    drops 32.5 → 12.3 and 2023 tail scarcity rent rises ~10× (CT_PEAKER net
->    12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143).
+>    12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143). It is
+>    **regime-gated** (`ercot_market_design`): applied in the ORDC era (≤2025,
+>    so the 2023 backcast is reproduced under its own design) but **not carried
+>    into the RTC+B forecast** (≥2026) unless a scenario opts in — the erroneous
+>    2023 conservatism is contained to the design that produced it.
 > 2. **AS revenue** (`as_revenue_enabled`): calibrated, saturating
 >    ancillary-service revenue (storage $169/kW-yr at the 2023 fleet, falling to
 >    ~$17 by 10 GW) credited in the retirement/new-entry/storage-entry screens —

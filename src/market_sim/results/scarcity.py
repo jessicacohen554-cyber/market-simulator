@@ -308,6 +308,47 @@ def resolve_lolp_params(
     return config.ordc_lolp_mu_mw, config.ordc_lolp_sigma_mw
 
 
+# RTC+B (Real-Time Co-optimization + Batteries) replaced ERCOT's ORDC reserve
+# price adders with co-optimized AS demand curves at go-live on 2025-12-05, so
+# years from 2026 are RTC+B; 2023-2025 are the ORDC + RTORDPA design.
+_RTCB_FIRST_FULL_YEAR: int = 2026
+
+
+def ercot_market_regime(year: int, config) -> str:
+    """Return the ERCOT scarcity-pricing regime for a year: 'ordc' or 'rtcb'.
+
+    Honors an explicit ``config.ercot_market_design`` of ``"ordc"`` / ``"rtcb"``;
+    ``"auto"`` (default) is year-gated at the RTC+B go-live (ORDC through 2025,
+    RTC+B from 2026). This is what keeps the erroneous 2023 reserve-withholding
+    conservatism contained to the design that actually produced it, rather than
+    carried into the forward design.
+    """
+    design = getattr(config, "ercot_market_design", "auto")
+    if design == "ordc":
+        return "ordc"
+    if design == "rtcb":
+        return "rtcb"
+    if design != "auto":
+        raise ValueError(
+            f"ercot_market_design must be 'auto', 'ordc' or 'rtcb', "
+            f"got {design!r}")
+    return "ordc" if year < _RTCB_FIRST_FULL_YEAR else "rtcb"
+
+
+def effective_reliability_deployment_mw(year: int, config) -> float:
+    """Return the reliability-deployment reserve offset (MW) for the regime.
+
+    The RTORDPA analogue applies under the ORDC regime
+    (``ordc_reliability_deployment_mw`` — calibrated to the 2023 stress year);
+    under RTC+B the conservatism was reformed, so the forward offset is
+    ``rtcb_reliability_deployment_mw`` (default 0 — price to fundamentals),
+    which a scenario can raise to model 2023-style conservatism recurring.
+    """
+    if ercot_market_regime(year, config) == "ordc":
+        return float(getattr(config, "ordc_reliability_deployment_mw", 0.0))
+    return float(getattr(config, "rtcb_reliability_deployment_mw", 0.0))
+
+
 def scarcity_prices(
     config,
     year: int,
