@@ -12,6 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
+import pandas as pd
 
 from market_sim import runner
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
@@ -150,6 +151,143 @@ class TestMainCLI(RunnerTestBase):
 
         _, called_iso = run.call_args[0]
         self.assertEqual(called_iso, "CAISO")
+
+
+class _StopAfterFleetArrays(Exception):
+    """Raised by the traced fleet-array build to halt the run early."""
+
+
+def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
+    """Run ``run_scenario_iso`` just far enough to observe the fleet build.
+
+    The data loaders, storage builder and downstream collaborators are
+    patched so the run reaches the per-plant-vs-legacy binning decision and
+    the fleet-array build for *any* ISO without real input data or a solve.
+    Returns the per-plant bins source (``"ercot_sheet"`` via load_campd_bins,
+    ``"synth"`` via fleet_to_bins, or ``None``), which fleet builder ran
+    (``"campd"`` per-plant tranches vs ``"legacy"`` aggregate_fleet), and the
+    historic-outage overlay the fleet build actually received.
+    """
+    rec = {"bins_source": None, "builder": None, "overlay": None}
+
+    def fake_demand(_iso, _wy, iso_config, **_kw):
+        return np.full((len(iso_config.zone_names), 8), 1000.0)
+
+    def fake_renewables(_iso, _wy, iso_config, _config):
+        z = len(iso_config.zone_names)
+        return np.zeros((z, 8)), np.zeros(z), np.zeros((z, 8)), np.zeros(z)
+
+    def fake_load_campd_bins(*_a, **_k):
+        rec["bins_source"] = "ercot_sheet"
+        return "BINS"  # ERCOT's curated sheet; not indexed in this branch
+
+    def fake_fleet_to_bins(*_a, **_k):
+        rec["bins_source"] = "synth"
+        # A non-empty frame carrying the columns the runner's binned-set
+        # filter reads, so the synthesized CAMPD path is taken.
+        return pd.DataFrame(
+            {"Plant_Code": [1], "Plant_Group": ["CC_REGULAR"]}
+        )
+
+    def fake_bins_to_fleet(*_a, **_k):
+        rec["builder"] = "campd"
+        return [], {}
+
+    def fake_aggregate_fleet(*_a, **_k):
+        rec["builder"] = "legacy"
+        return []
+
+    def fake_fleet_arrays(_dispatch_fleet, _zone_names, *, hours, iso,
+                          config, load_shape):
+        rec["overlay"] = config.historic_outage_overlay
+        raise _StopAfterFleetArrays
+
+    config = ScenarioConfig(
+        iso=iso, hours=8, historic_outage_overlay=historic_overlay
+    )
+    with patch.object(runner, "load_demand", side_effect=fake_demand), \
+            patch.object(runner, "load_renewable_profiles",
+                         side_effect=fake_renewables), \
+            patch.object(runner, "load_planned_additions", return_value=[]), \
+            patch.object(runner, "load_fleet_from_csv", return_value=[]), \
+            patch.object(runner, "build_default_storage", return_value=[]), \
+            patch.object(runner, "load_campd_bins",
+                         side_effect=fake_load_campd_bins), \
+            patch.object(runner, "fleet_to_bins",
+                         side_effect=fake_fleet_to_bins), \
+            patch.object(runner, "bins_to_fleet",
+                         side_effect=fake_bins_to_fleet), \
+            patch.object(runner, "aggregate_fleet",
+                         side_effect=fake_aggregate_fleet), \
+            patch.object(runner, "campd_tranche_fuel_frac", return_value=1.0), \
+            patch.object(runner, "split_coal_tranches",
+                         side_effect=lambda f, c: (list(f), [1.0] * len(f))), \
+            patch.object(runner, "apply_plant_emission_rates"), \
+            patch.object(runner, "generators_to_fleet_arrays",
+                         side_effect=fake_fleet_arrays):
+        try:
+            runner.run_scenario_iso(config, iso)
+        except _StopAfterFleetArrays:
+            pass
+    return rec
+
+
+class TestCampdBinningGate(unittest.TestCase):
+    """The per-plant CAMPD binning path unlocks per-ISO by bin artifact."""
+
+    def test_ercot_takes_campd_path(self):
+        # Parity: ERCOT must still read its curated bin sheet and build the
+        # fleet from per-plant tranches (bins_to_fleet), never aggregate_fleet.
+        rec = _trace_fleet_build("ERCOT")
+        self.assertEqual(rec["bins_source"], "ercot_sheet")
+        self.assertEqual(rec["builder"], "campd")
+
+    def test_artifact_isos_take_campd_path(self):
+        # CAISO/NEISO/NYISO/PJM now follow ERCOT onto the per-plant path, with
+        # their bins synthesized from the CAMPD thermal-tranche artifact.
+        for iso in ("CAISO", "NEISO", "NYISO", "PJM"):
+            with self.subTest(iso=iso):
+                rec = _trace_fleet_build(iso)
+                self.assertEqual(rec["bins_source"], "synth")
+                self.assertEqual(rec["builder"], "campd")
+
+    def test_isos_without_artifact_fall_back_to_legacy(self):
+        # MISO/SPP have no bin artifact: no per-plant bins are built and the
+        # legacy aggregate_fleet path runs cleanly, exactly as before.
+        for iso in ("MISO", "SPP"):
+            with self.subTest(iso=iso):
+                rec = _trace_fleet_build(iso)
+                self.assertIsNone(rec["bins_source"])
+                self.assertEqual(rec["builder"], "legacy")
+
+    def test_gate_membership(self):
+        from market_sim.config.constants import CAMPD_BINNING_ISOS
+        for iso in ("ERCOT", "CAISO", "NEISO", "NYISO", "PJM"):
+            self.assertIn(iso, CAMPD_BINNING_ISOS)
+        for iso in ("MISO", "SPP"):
+            self.assertNotIn(iso, CAMPD_BINNING_ISOS)
+
+
+class TestHistoricOutageOverlayDefault(unittest.TestCase):
+    """The historic-outage overlay default is resolved per ISO."""
+
+    def test_ercot_overlay_true(self):
+        # ERCOT's facility-summed overlay is the primary layer: stays True.
+        self.assertTrue(_trace_fleet_build("ERCOT")["overlay"])
+
+    def test_pjm_overlay_false(self):
+        # PJM's unit-level file is the complete source: overlay defaults False
+        # even though the global ScenarioConfig default is True.
+        self.assertFalse(_trace_fleet_build("PJM")["overlay"])
+
+    def test_unlisted_iso_uses_config_flag(self):
+        # An ISO absent from the registry keeps the explicit config flag.
+        self.assertTrue(
+            _trace_fleet_build("MISO", historic_overlay=True)["overlay"]
+        )
+        self.assertFalse(
+            _trace_fleet_build("MISO", historic_overlay=False)["overlay"]
+        )
 
 
 class TestDemandGrowth(unittest.TestCase):
