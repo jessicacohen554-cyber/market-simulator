@@ -2,6 +2,15 @@
 
 Usage: python scripts/_session_score.py <bundle> [<base bundle>=run85_coal_soft]
 
+GRID-DELIVERED basis (2026-06-14, user directive): the gate judges what the LP
+actually dispatches to the grid against what actually reached the grid — model
+= the grid LP dispatch (NO behind-the-meter CHP add-back), actual = EIA-923
+whole-plant MINUS the per-class BTM host supply (= grid-delivered generation by
+class). The BTM host steam is held out of the LP, so crediting the model for it
+would score generation the model never optimized; gating grid-vs-grid removes
+that. (The absolute miss is identical to the old whole-plant basis — the BTM
+cancels — but the percentages are now honest grid-delivered errors.)
+
 Prints the [3b]-style class table with TWh + %, the size-aware pass/fail
 per class-year (>=20 TWh classes +/-5%, <20 TWh +/-1 TWh abs, CT_CHP
 excluded), the in-scope fail count vs the base, the 2024 TWh ledger
@@ -32,8 +41,10 @@ def class_table(run: str) -> pd.DataFrame:
         bench = (e923[e923["year"] == year].groupby("klass")["annual_mwh"]
                  .sum() / 1e6)
         for cls in CLASSES:
-            m = grid.get(cls, 0.0) + bt.get(cls, 0.0)
-            a = bench.get(cls, 0.0)
+            # Grid-delivered: model = grid LP only; actual = 923 whole-plant
+            # minus the class's BTM host supply.
+            m = grid.get(cls, 0.0)
+            a = bench.get(cls, 0.0) - bt.get(cls, 0.0)
             rows.append({"year": year, "class": cls, "model": m, "bench": a})
     return pd.DataFrame(rows)
 
@@ -93,12 +104,12 @@ def main() -> None:
     e930 = pd.read_parquet(ROOT / run / "eia930.parquet")
     t930 = e930.groupby(["year", "series"])["mw"].sum() / 1e6
     btm = pd.read_parquet(ROOT / run / "btm.parquet")
-    print("\nfuel split gate (gas and coal totals within +/-2.5% per year;"
-          " 2023/2024 model incl. BTM vs EIA-923, the fossil source of"
-          " truth; 2025 model grid-only vs EIA-930, the 923 vintage being"
-          " incomplete; solar/wind are benchmarked against 930 only and are"
-          " outside this gate. PRB year-spread inside +/-5% is accepted"
-          " when its multi-year mean is centered):")
+    print("\nfuel split gate (GRID-DELIVERED: gas and coal grid totals within"
+          " +/-2.5% per year; model = grid LP, actual = EIA-923 whole-plant"
+          " minus the per-class BTM host supply. EIA-930 grid totals are shown"
+          " alongside as the independent grid check. solar/wind sit outside"
+          " this gate. PRB year-spread inside +/-5% is accepted when its"
+          " multi-year mean is centered):")
     for f in sorted((ROOT / run / "dispatch").glob("*_P1.parquet")):
         disp = pd.read_parquet(f, columns=["year", "klass", "mw"])
         yr = int(disp["year"].iloc[0])
@@ -108,17 +119,24 @@ def main() -> None:
         bench = (e923[e923["year"] == yr].groupby("klass")["annual_mwh"]
                  .sum() / 1e6)
         for name, fam in (("GAS", gas), ("COAL", coal)):
+            m = sum(grid.get(c, 0.0) for c in fam)
+            a930 = t930.get((yr, name.lower()), float("nan"))
             if yr >= 2025:
-                m = sum(grid.get(c, 0.0) for c in fam)
-                a = t930.get((yr, name.lower()), float("nan"))
-                src = "930 grid-only"
+                # 2025 EIA-923 is the incomplete monthly-survey vintage, so the
+                # grid-delivered actual comes from EIA-930 (itself grid-side);
+                # 923-BTM is shown as the secondary reference.
+                a = a930
+                a_alt = sum(bench.get(c, 0.0) - bt.get(c, 0.0) for c in fam)
+                src, alt = "930 grid", "923-BTM"
             else:
-                m = sum(grid.get(c, 0.0) + bt.get(c, 0.0) for c in fam)
-                a = sum(bench.get(c, 0.0) for c in fam)
-                src = "923 incl. BTM"
-            pct = (m / a - 1) * 100
+                a = sum(bench.get(c, 0.0) - bt.get(c, 0.0) for c in fam)
+                a_alt = a930
+                src, alt = "923-BTM grid", "930 grid"
+            pct = (m / a - 1) * 100 if a == a and a else float("nan")
             tag = "PASS" if abs(pct) <= 2.5 else "FAIL"
-            print(f"  {yr} {name:4s} {pct:+5.1f}%  {tag}  (vs {src})")
+            d_alt = (m / a_alt - 1) * 100 if a_alt == a_alt and a_alt else float("nan")
+            print(f"  {yr} {name:4s} {pct:+5.1f}%  {tag}  (vs {src};"
+                  f" vs {alt} {d_alt:+.1f}%)")
 
 
 if __name__ == "__main__":

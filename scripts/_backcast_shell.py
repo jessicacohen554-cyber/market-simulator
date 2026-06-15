@@ -186,8 +186,8 @@ function matchedEAnnAll(year,grp){const k=year+"|"+grp;if(_eAllC[k]!=null)return
 function classBench923(year,grp,eAzones){const B=BENCH[year];
  const cf=B.classFull?B.classFull[grp]:null,eAll=matchedEAnnAll(year,grp);
  return (cf!=null&&eAll>0)?cf*(eAzones/eAll):eAzones;}
-// Model class total scaled the same way: the full grid-LP+BTM class total
-// (gmModel) allocated to the selected zones by the matched plants' model
+// Model class total scaled the same way: the grid-LP class total (gmModel,
+// grid-delivered, no BTM add-back) allocated to the selected zones by the matched plants' model
 // distribution — so the Δ-vs-923 compares full class to full class (matched
 // model vs full 923 would understate the model and exaggerate the shortfall).
 const _mAllC={};
@@ -244,7 +244,7 @@ function genMixPanel(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return "";
  const cf=B.classFull,FG=Object.keys(cf),gm=(MODEL[id].years[yr]||{}).gmModel||{};
  const aGen=FG.reduce((s,g)=>s+(cf[g]||0),0);
  const mGen=FG.reduce((s,g)=>s+(gm[g]||0),0);
- let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs full EIA-923)</span></h2>';
+ let h='<div class=panel><h2>Generation mix <span class=psub>(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 − BTM))</span></h2>';
  h+=`<p class=psub>${MODEL[id].label} total ${mGen.toFixed(1)} TWh · actual ${aGen.toFixed(1)} TWh</p>`;
  h+='<div class=tablewrap><table><thead><tr><th>class</th>'
   +'<th>model TWh</th><th>actual TWh</th><th>model %gen</th><th>actual %gen</th>'
@@ -423,8 +423,9 @@ const ALLMON=[0,1,2,3,4,5,6,7,8,9,10,11];
 // within ±SUM_TOL_PCT% OR SUM_TOL_TWH absolute (zone-aware, since classMetrics
 // honors st.zones).
 const NOPLOT='<p class=psub>Plotly failed to load — this view needs network access to the Plotly CDN.</p>';
-// System-wide model & actual TOTAL generation (TWh): model = grid-LP + BTM
-// fossil + non-fossil; actual = full EIA-923 fossil + EIA-930 nuclear/wind/solar.
+// System-wide model & actual TOTAL generation (TWh), grid-delivered: model =
+// grid-LP fossil + non-fossil; actual = (EIA-923 − BTM) fossil + EIA-930
+// nuclear/wind/solar (all grid-delivered).
 // The share criterion is zone-independent — non-fossil totals carry no zonal
 // split, so "share of total generation" is necessarily system-wide.
 function totalGen(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return null;
@@ -439,7 +440,7 @@ function totalGen(id,yr){const B=BENCH[yr];if(!B||!B.classFull)return null;
 function sharePP(id,yr,mCls,aCls){const T=totalGen(id,yr);if(!T)return null;
  return 100*mCls/T.mGen-100*aCls/T.aGen;}
 // The generation-mix accuracy test spans every benchmarked class: the fossil
-// classes (zone-aware, model grid+BTM vs full EIA-923) plus the non-fossil
+// classes (zone-aware, model grid vs grid-delivered EIA-923−BTM) plus the non-fossil
 // fuels (system-wide, model vs EIA-930). EIA-930 carries no separate geothermal
 // series (it folds into "other"), so only nuclear/wind/solar have an actual.
 const NONFOSSIL_FUELS=["nuclear","wind","solar"];
