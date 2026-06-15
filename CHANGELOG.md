@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-15 (diagnostics — CC >90% CF investigation + 5% CF-band view)
+
+Investigation of why grid-serving combined cycles (Colorado Bend II, Wolf Hollow
+II, Freestone, Guadalupe, …) miss their observed 90–97% CF hours in runs 115b /
+118, plus the tooling to see it. **No dispatch/calibration parameters changed** —
+the offer-curve fix is proposed in the writeup, not applied.
+
+- **Root cause documented** in `docs/cc-high-cf-investigation.md`: the
+  `CC_REGULAR` duct-firing **peak band** (top ~8% of nameplate at ~2.57× base
+  HR in run 118) is a *separate flat scarcity tranche above the econ ramp*, so
+  there is a price discontinuity from `econ_high` to the peak block. Combined
+  with the availability derate on `pmax`, that imposes an effective steady
+  output ceiling of ~87–92% of nameplate — Freestone never exceeds 87% of its
+  real peak in any year, logging **0** hours ≥90% CF against CAMPD's 1 300–3 000.
+  The per-CF-value "precision" chart's spikes are the LP parking at discrete
+  tranche edges, an artifact of the discretization.
+- **`--cf-band-width`** on `scripts/run_calibration_full.py` makes the `[7b]`
+  per-plant operating-level histogram and `plant_cf_bands.parquet` resolution
+  configurable (default unchanged at 0.10; pass **0.05** for twenty 5% bands).
+  The `[7b]` header now reads the width back from the data, and `cf_emd` already
+  infers it from the parquet, so the metric stays comparable across widths.
+- **`scripts/plot_cf_histogram.py`** — new standalone, dependency-free
+  (inline-SVG) per-plant model-vs-CAMPD CF histogram at a configurable band
+  width, the visual companion to `[7b]`.
+- **Stale doc fixed:** `docs/binning-methodology.md` claimed the CC/coal peak
+  band is *folded into* the econ ramp top (`_CURVE_FOLD_PEAK`). That fold was
+  removed; the peak is a separate flat tranche for every group. Corrected to
+  match `fleet.py` ("Nothing is folded into the ramp").
 ## 2026-06-15 (backcast dashboard — annual LMP Δ measured against the ORDC overlay)
 
 Fixed the dashboard's model-vs-actual LMP deltas so they compare like-for-like.
