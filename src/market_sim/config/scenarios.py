@@ -598,6 +598,26 @@ class ScenarioConfig:
     # if a year would overshoot its CT class bar.
     ct_deployment_floor_frac: float = 1.0
 
+    # Spatial reliability-deployment overlay (backcast only). The generalization
+    # of the CT deployment overlay above to the load-pocket thermal fleet
+    # (CC_REGULAR, COAL, ST_GAS, CC_CHP) in the under-running zones
+    # (South_Central, West, Northeast). The 7-zone reduced network cannot form
+    # the intra-zonal congestion pockets that pin local ERCOT prices above the
+    # system hub, so the single-system-price LP over-generates North and
+    # under-generates those pockets. This overlay floors each CEMS-covered
+    # pocket plant to its *measured* net output ONLY in the hours where it was
+    # economic at its LOCAL load-zone price yet out of merit at the system hub
+    # (the congestion subset — ~2.7/3.6/5.2 TWh, scripts/derive_reliability_
+    # deployment.py + outages.reliability_deployment_floor_for_year). A sparse
+    # per-hour min-gen bound (no MIP — prices stay LP duals); the units keep the
+    # statistical WEFOR/POF model (the floor is sparse and below pmax). Off by
+    # default; forecast years / other ISOs (no artifact) no-op.
+    reliability_deployment_overlay: bool = False
+    # Fraction of the measured reliability-deployment energy to force (1.0 = the
+    # full measured congestion wedge). Lower it if a year would overshoot a
+    # pocket class bar.
+    reliability_deployment_floor_frac: float = 1.0
+
     # When True, drop the statistical planned-outage (POF) derate on coal —
     # planned maintenance is now captured by the historic outage overlay, so
     # the POF would double-count. Keep WEFOR (forced outages) in the non-summer
@@ -1270,6 +1290,8 @@ TIER_TAGS: dict[str, int] = {
     "ct_mustrun_floor_frac": 3,
     "ct_deployment_overlay": 3,
     "ct_deployment_floor_frac": 3,
+    "reliability_deployment_overlay": 3,
+    "reliability_deployment_floor_frac": 3,
     "coal_drop_pof": 3,
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
