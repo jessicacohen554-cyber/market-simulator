@@ -330,6 +330,42 @@ stress-year scarcity, a screened steam unit's loss counter resets in a tight
 year and it is kept, rather than (previously) being immortal or (without the
 scarcity fix) spuriously retired.
 
+## Ancillary-service (AS) revenue in the capacity economics
+
+**Status:** implemented, `ScenarioConfig.as_revenue_enabled` (default off,
+ERCOT-only) + `as_revenue_multiplier` scenario knob. Code:
+`src/market_sim/model/ancillary.py`, credited in `capacity.apply_economic_
+retirements` / `apply_economic_new_entry` and `storage.apply_storage_new_entry`.
+
+**Why.** ERCOT's energy-only design pays no capacity revenue, but resources
+earn material AS income (Reg-Up/Down, RRS, ECRS, Non-Spin) the energy-only LP
+cannot produce. In 2023 AS was **~85% of ERCOT battery revenue** (~$169/kW-yr
+of a ~$196/kW total; IMM 2023 SOM / Modo Energy). Omitting it undervalues
+storage ~6× in the entry screen (its stack was energy arbitrage + capacity
+value, and capacity value is 0 in ERCOT) and makes tail thermal under-earn —
+over-retirement and under-build. This is **not** an AS co-optimization (out of
+scope); it is an exogenous calibrated $/kW-yr stream, the AS analogue of the
+scarcity overlay.
+
+**Rates and saturation.** Base $/kW-yr by tech (`constants.ERCOT_AS_REVENUE_
+PER_KW_YR`: storage 169, gas_ct 22, gas_st 15, gas_cc 8) at the 2023 ~4 GW
+calibration point, scaled by `as_revenue_multiplier` and a **saturation**
+factor — AS is a small, quickly-saturated market, so per-kW revenue falls as
+the AS-eligible (mostly storage) fleet grows: `(ref_gw / max(storage_gw,
+ref_gw)) ** 2.5`. Calibrated to reproduce the observed crash:
+
+| storage fleet | model storage AS $/kW-yr | observed (Modo) |
+|---|---|---|
+| 4 GW (2023) | 169 | ~169 |
+| 6.5 GW (2024) | 50 | ~40–45 |
+| 10 GW (2025) | 17 | ~15–20 |
+| 16 GW | 5 | (collapsing — AS −90% 2023→2025) |
+
+The saturation is what stops a forecast over-building storage forever on a
+static AS rate. The storage-entry screen sees the rate at the prior-year
+fleet's penetration; the thermal screens take the storage fleet through
+`evolve_fleet` (`prior_results["storage_power_mw"]`).
+
 ## Scope notes
 
 * **RTORDPA** (reliability deployment price adder — RUC/ERS/ECRS-deployment
