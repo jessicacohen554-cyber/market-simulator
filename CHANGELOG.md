@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-15 (ERCOT — reliability-deployment scarcity overlay + steam-gas retirement screen)
+
+Fixes the two entry/exit gaps `docs/forecasting-entry-exit-assessment.md`
+identified as making the model over-retire / under-price tail-dependent units.
+**Dispatch is byte-identical** — the scarcity adder is a separate series that
+never gates volumes; only the capacity-economics revenue and the retirement
+screen change.
+
+- **Reliability-deployment overlay** (`ordc_reliability_deployment_mw`, the
+  RTORDPA analogue; default 0, recommended ERCOT ~2,500 MW): a reserve-tightness
+  offset netted from reserves before the published ORDC curve, calibrated to the
+  2023 stress year. The published ORDC formula is untouched (stays
+  parameter-honest); this is an explicit, scenario-adjustable stress-year
+  scarcity calibration, kept separate. At 2,500 MW: 2023 monthly LMP MAE
+  32.5 → 12.3 (was → 30.1), 2023 scarcity hours 0 → 112 (vs 181 actual), 74% of
+  the Jun–Sep gap closed; 2024/2025 ~unchanged (self-targeting via the curve
+  nonlinearity). Wired into the deriver (`--reliability-deployment`) and the
+  runner's forecast econ-price path. Series committed as
+  `scarcity_reldeploy2500.parquet` in the keeper bundle. See
+  `docs/ordc-overlay.md`.
+- **Steam-gas retirement screen:** `gas_st` added to `capacity._THERMAL_FOM`
+  (+ `_RETIREMENT_YEARS`, `_FOM_MULTIPLIER`); new `fixed_om_gas_st = 35 $/kW-yr`,
+  `retirement_years_gas_st = 2`, `retirement_fom_multiplier_gas_st = 1.0`.
+  Legacy gas steam was previously absent from the screen → could never retire on
+  economics regardless of revenue. Net effect (2023 stress year, net $/kW-yr vs
+  bar): ST_GAS 21 → 127 (bar 35: retire → KEEP), COAL_PRB 22 → 143 (bar 52:
+  retire → KEEP), CT_PEAKER 12 → 109. Two regression tests added.
+- Assessment memo updated (`docs/forecasting-entry-exit-assessment.md`):
+  AS-revenue evidence corrected to point at the missing AS term in
+  `capacity.py` (AS-aware volume/cost layers exist; AS market *revenue* does
+  not). Full suite: 1,029 + 2 new pass; 3 pre-existing CAISO data-file
+  failures unrelated.
+
 ## 2026-06-13 (CAISO — offer-curve probe panel + Jacobian, sensitivity map only)
 
 Mapped CAISO offer-curve band sensitivities ahead of calibration; **no keeper,

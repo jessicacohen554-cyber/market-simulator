@@ -79,6 +79,7 @@ logger = logging.getLogger(__name__)
 _THERMAL_FOM: dict[str, str] = {
     "gas_cc": "fixed_om_gas_cc",
     "gas_ct": "fixed_om_gas_ct",
+    "gas_st": "fixed_om_gas_st",
     "coal": "fixed_om_coal",
 }
 
@@ -93,6 +94,7 @@ _RETIREMENT_YEARS: dict[str, str] = {
     "coal": "retirement_years_coal",
     "gas_ct": "retirement_years_gas_ct",
     "gas_cc": "retirement_years_gas_cc",
+    "gas_st": "retirement_years_gas_st",
 }
 
 # Per-fuel ScenarioConfig field names for the effective-FOM multiplier.
@@ -100,6 +102,7 @@ _FOM_MULTIPLIER: dict[str, str] = {
     "coal": "retirement_fom_multiplier_coal",
     "gas_ct": "retirement_fom_multiplier_gas_ct",
     "gas_cc": "retirement_fom_multiplier_gas_cc",
+    "gas_st": "retirement_fom_multiplier_gas_st",
 }
 
 # Assumed total thermal-plant operating life (years), used to estimate a

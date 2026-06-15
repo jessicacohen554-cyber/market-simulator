@@ -64,6 +64,7 @@ minimum contingency level X, where the adder pins to VOLL - lambda.
 | Multi-step RTORPA floor | `ordc_multistep_floor` + `constants.ORDC_FLOOR_STEPS` | $20 at R<=6,500 MW; $10 at 6,500-7,000 MW | OBDRR048, PUCT-approved 2023-10-12, effective 2023-11-01 (market notice M-A101623-01); date-gated in backcasts |
 | Reserve-error mu, sigma | `ordc_lolp_mu_mw` / `ordc_lolp_sigma_mw` / `ordc_lolp_params_path` | 0 / 1,400 MW flat (provisional — see below) | ERCOT NP6-576-ER "LOLP Distribution by Season and TOD Block" (report 13233): 4 seasons x 6 four-hour TOD blocks, refit quarterly on reserve-error history since nodal go-live |
 | AS plan netting | `ordc_as_plan_mw` | 0 (see "AS netting") | IMM 2023 State of the Market Report: 2023 average total AS 8,100 MW |
+| Reliability-deployment offset | `ordc_reliability_deployment_mw` | 0 (recommended ERCOT ~2,500; see "Reliability-deployment overlay") | NOT a published ORDC parameter — the RTORDPA analogue, calibrated to the 2023 stress year |
 
 **The mu/sigma table — RESOLVED (2026-06-13).** ERCOT publishes the
 seasonal/TOD-block reserve-error statistics in NP6-576-ER (ercot.com is
@@ -257,6 +258,77 @@ Per-class energy revenue, run92_kiamichi backcast, energy-only -> with adder
 
 Direction sanity holds: peakers and storage move most (in relative terms), and
 the adder revenue vanishes in the comfortable 2025 reserve year.
+
+## Reliability-deployment overlay (RTORDPA analogue) — stress-year scarcity calibration
+
+**Status:** implemented, `ScenarioConfig.ordc_reliability_deployment_mw`
+(default 0 — reproduces the published-ORDC-only baseline; recommended ERCOT
+value **~2,500 MW**). Netted from reserves in both the post-solve deriver
+(`--reliability-deployment`) and the runner's capacity-economics path.
+
+**Why it exists.** The published ORDC overlay above is parameter-honest and
+therefore recovers only ~7% of the 2023 summer scarcity gap (2023 monthly LMP
+MAE 32.5 → 30.1, 17 of 181 actual >$200 hours). The root cause is *not* the
+formula — it is the reserve input: in the 181 actual >$200 hours of 2023 the
+perfect-foresight LP shows **median 8.6 GW of reserve headroom** (it counts
+cold/slow/AS-held capacity as available — the perfect-commitment overstatement
+the AS-netting section flags). At that headroom the ORDC LOLP ≈ 0, so the adder
+≈ 0 exactly where it should bite. Real 2023 scarcity was driven by ERCOT's
+out-of-market reliability deployments and conservative ECRS commitment (the IMM
+estimated this roughly doubled Jun–Dec 2023 RT prices, >$12B) — the **RTORDPA**
+reliability-deployment adder, which an ORDC-only overlay correctly does not
+reproduce.
+
+**What it is — and the honesty boundary.** `ordc_reliability_deployment_mw` is
+a flat MW offset subtracted from reserves before the ORDC curve is evaluated.
+It is **not** a published ORDC parameter and **not** physically derived (the
+physical reserve biases partly offset — perfect commitment overstates reserves,
+omitted Load Resources understate them). It is an **explicit, scenario-
+adjustable calibration of stress-year scarcity intensity**, kept deliberately
+separate from the published ORDC formula (which stays untouched and honest), so
+the provenance mirrors ERCOT's real price decomposition: RTORPA = published
+formula; RTORDPA = discretionary deployment. The ORDC curve's nonlinearity
+makes the offset **self-targeting** — it lifts the adder only when reserves are
+already low (tight hours), so a slack year is ~unchanged. This is the lever a
+forecast varies as a scenario ("2023 reserve conservatism recurs" vs "prices to
+fundamentals").
+
+**Calibration sweep (keeper `run115b`, dispatch byte-identical throughout — the
+adder is a separate series and never gates volumes):**
+
+| offset MW | 2023 MAE | 2023 hrs >$200 (act 181) | 2023 Jun–Sep gap closed | 2024 MAE | 2025 MAE |
+|---|---|---|---|---|---|
+| 0 (ORDC only) | 32.5 → 30.1 | 0 → 17 | 7% | 8.0 | 2.2 |
+| 2,000 | 32.5 → 14.7 | — | — | 8.6 | 2.2 |
+| **2,500 (recommended)** | 32.5 → **12.3** | 0 → **112** | **74%** | 8.8 | 2.2 |
+| 3,000 | 32.5 → 16.1 | 0 → 184 | — | 9.0 | 2.1 |
+| 4,000 | 32.5 → 47.2 | overshoot | — | 8.7 | 2.1 |
+| 8,100 (full AS plan) | → 512 | catastrophic | — | blows up | blows up |
+
+At 2,500 MW the 2023 stress year is reproduced far more faithfully under its own
+market design; 2024/2025 (genuinely less tight) lift modestly (10 of 53 and 1 of
+31 tail hours) — a flat offset anchored to 2023 under-serves the milder years, a
+documented limitation a tightness-responsive offset would refine. The scarcity
+series is committed as `scarcity_reldeploy2500.parquet` alongside the canonical
+`scarcity.parquet` (ORDC-only) and the `scarcity_np6shift0.parquet` sensitivity.
+
+**Capacity-economics effect (net revenue $/kW-yr vs the going-forward retirement
+bar, ORDC-only → +reliability-deployment):** 2023 ST_GAS 21 → **127** (bar 35:
+retire → KEEP), COAL_PRB 22 → **143** (bar 52: retire → KEEP), CT_PEAKER 12 →
+**109**. The stress year now keeps the marginal units it should — see the
+steam-gas screen note below.
+
+### Steam-gas retirement screen (companion fix)
+
+Legacy gas steam carries `fuel_type = "gas_st"`, which was **absent from
+`capacity._THERMAL_FOM` = {gas_cc, gas_ct, coal}** — so `apply_economic_
+retirements` skipped every steam-gas unit and old steam gas could **never**
+retire on economics, regardless of revenue. `gas_st` is now screened
+(`fixed_om_gas_st = 35 $/kW-yr`, `retirement_years_gas_st = 2`, multiplier 1.0).
+This is what makes the reliability-deployment revenue actionable: with realistic
+stress-year scarcity, a screened steam unit's loss counter resets in a tight
+year and it is kept, rather than (previously) being immortal or (without the
+scarcity fix) spuriously retired.
 
 ## Scope notes
 
