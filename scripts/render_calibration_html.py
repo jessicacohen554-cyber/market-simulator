@@ -352,6 +352,17 @@ def build_payload(runs: list[tuple[str, Path]],
             # the zonal Δ-vs-923 are scaled to (matched plants understate
             # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
             e923_cls = e923.groupby("klass")["annual_mwh"].sum()
+            # Grid-delivered benchmark (2026-06-14, user directive): subtract
+            # each class's behind-the-meter CHP host supply (btm.parquet, the
+            # authoritative BTM held out of the LP) from the full EIA-923 class
+            # total, so the benchmark is what actually reached the grid — the
+            # same basis the model (grid LP, no add-back) and the gate score on.
+            # ISOs without a btm.parquet (no CHP split) keep full 923.
+            btm_cls = {}
+            if btm_all is not None:
+                _by = btm_all[(btm_all["year"] == year)
+                              & (btm_all["pass"] == "P1")]
+                btm_cls = dict(zip(_by["klass"], _by["btm_twh"]))
             # Every actual class is kept (not just the hardcoded MIX_GROUPS)
             # so the model's real plant classification — e.g. EIA-923-derived
             # coal ranks COAL_BIT / COAL_PRB / COAL_WC — carries its actual
@@ -363,7 +374,9 @@ def build_payload(runs: list[tuple[str, Path]],
                                   / 1e6, 3)
                          for f in ("gas", "coal", "nuclear", "wind",
                                    "solar")},
-                "classFull": {str(g): round(float(v) / 1e6, 4)
+                "classFull": {str(g): round(float(v) / 1e6
+                                            - float(btm_cls.get(str(g), 0.0)),
+                                            4)
                               for g, v in e923_cls.items()},
             }
             # Actual historical avg LMP ($/MWh), system hub-average, for the
@@ -496,20 +509,17 @@ def build_payload(runs: list[tuple[str, Path]],
                     d_mon[m] = round(dd / 1e6, 4)
                 lmp[str(zone)] = {"p": round(p, 2), "d": round(d_tot / 1e6, 4),
                                   "pMon": p_mon, "dMon": d_mon}
-            # System-wide generation mix per fossil class (TWh): model grid LP
-            # (``_class_hourly`` sum) + behind-the-meter must-run, exactly as
-            # run_calibration_full's [3b] thermal table builds the model total.
-            # Compared against ``bench.classFull`` (full EIA-923) it yields the
-            # share-of-fossil and the pp deviation shown in the mix table.
-            btm_y = {}
-            if btm_all is not None:
-                by = btm_all[(btm_all["year"] == year)
-                             & (btm_all["pass"] == "P1")]
-                btm_y = dict(zip(by["klass"], by["btm_twh"]))
+            # System-wide generation mix per fossil class (TWh), GRID-DELIVERED:
+            # model = grid LP only (``_class_hourly`` sum, NO behind-the-meter
+            # add-back), compared against ``bench.classFull`` which is now
+            # EIA-923 minus the per-class BTM host supply — so the mix table and
+            # the scorecard judge what the model dispatched to the grid against
+            # what actually reached the grid (user directive 2026-06-14). The
+            # per-plant heatmaps keep the whole-plant add-back (they compare to
+            # CEMS, which is whole-plant); only these class/system totals are
+            # grid-delivered.
             gm_model = {
-                g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6
-                         + (float(btm_y.get(g, 0.0))
-                            if g in ("CC_CHP", "CT_CHP", "ST_CHP") else 0.0), 4)
+                g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6, 4)
                 # sorted: set iteration order is hash-randomized per process,
                 # and the payload must be byte-stable across re-renders (an
                 # unchanged run must not show up as a git diff).
