@@ -327,6 +327,19 @@ class ScenarioConfig:
     # rejected ordc_as_plan_mw netting). A forecast can vary it as a
     # scenario knob ("2023 reserve conservatism recurs" vs "prices to
     # fundamentals").
+    as_revenue_enabled: bool = False  # Credit ERCOT ancillary-service market
+    # revenue (Reg/RRS/ECRS/Non-Spin) in the capacity economics — the
+    # retirement, new-entry and storage-entry screens. Default off (energy +
+    # scarcity only, byte-identical baseline); recommended on for ERCOT
+    # forecasts. ERCOT-only: capacity-market ISOs already recover fixed cost
+    # through capacity_revenue_per_mw_yr. Without it, storage is undervalued
+    # ~6x (AS was ~85% of 2023 ERCOT battery revenue) and tail thermal under-
+    # earns. The per-tech rates and saturation live in constants.ERCOT_AS_*;
+    # the revenue saturates steeply as the AS-eligible (mostly storage) fleet
+    # grows (Modo: battery AS revenue fell ~90% 2023->2025). See
+    # docs/ordc-overlay.md (AS revenue).
+    as_revenue_multiplier: float = 1.0  # Scenario scale on the calibrated AS
+    # revenue rates (forward AS-price view: tighter/looser AS markets).
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1126,6 +1139,8 @@ TIER_TAGS: dict[str, int] = {
     "ordc_as_plan_mw": 2,
     "ordc_lolp_params_path": 2,
     "ordc_reliability_deployment_mw": 2,
+    "as_revenue_enabled": 1,
+    "as_revenue_multiplier": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,

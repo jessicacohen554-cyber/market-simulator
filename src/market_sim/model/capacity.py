@@ -61,6 +61,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.fleet import FleetArrays, Generator, aggregate_fleet
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
@@ -236,6 +237,7 @@ def apply_economic_retirements(
     peak_demand: float,
     rps_shadow_price: float = 0.0,
     mc: np.ndarray | None = None,
+    storage_power_mw: float = 0.0,
 ) -> tuple[list[Generator], dict[str, int]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -349,6 +351,14 @@ def apply_economic_retirements(
         # over-retires thermal capacity there. Zero in energy-only ERCOT.
         net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
             config.iso, g.eford
+        )
+
+        # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
+        # income stream the energy-only LP cannot produce. Zero unless
+        # config.as_revenue_enabled (ERCOT only); saturates on the storage
+        # fleet. Omitting it makes tail thermal under-earn and over-retire.
+        net_revenue += g.pmax_mw * as_revenue_per_mw_yr(
+            g.fuel_type, storage_power_mw, config
         )
 
         threshold = getattr(
@@ -890,6 +900,7 @@ def apply_economic_new_entry(
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
+    storage_power_mw: float = 0.0,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -1031,6 +1042,11 @@ def apply_economic_new_entry(
             # stream credited in the retirement screen above.
             effective_revenue += capacity_revenue_per_mw_yr(
                 iso_config.name, EFORD.get(tech, 0.05)
+            )
+            # ERCOT ancillary-service revenue, the same stream credited in the
+            # retirement screen (zero unless as_revenue_enabled, ERCOT only).
+            effective_revenue += as_revenue_per_mw_yr(
+                tech, storage_power_mw, config
             )
 
         margin = effective_revenue - annual_cost
@@ -1340,6 +1356,10 @@ def evolve_fleet(
     peak_demand = float(_prior_attr(prior_results, "peak_demand", 0.0) or 0.0)
     planned = _prior_attr(prior_results, "planned_additions", []) or []
     mc_cost = _prior_attr(prior_results, "mc_cost")
+    # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
+    storage_power_mw = float(
+        _prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0
+    )
 
     # 1. Known retirements.
     fleet = apply_known_retirements(fleet, year)
@@ -1355,6 +1375,7 @@ def evolve_fleet(
             loss_tracker, peak_demand,
             rps_shadow_price=rps_shadow_price,
             mc=mc_cost,
+            storage_power_mw=storage_power_mw,
         )
 
     # 3. Known additions: planned units coming online this year.
@@ -1379,6 +1400,7 @@ def evolve_fleet(
             cumulative=cumulative,
             gas_price_per_mmbtu=gas_price_per_mmbtu,
             carbon_price=carbon_price,
+            storage_power_mw=storage_power_mw,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
 
