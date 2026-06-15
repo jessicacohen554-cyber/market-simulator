@@ -2,6 +2,7 @@
 
 import unittest
 from types import SimpleNamespace
+from unittest import mock
 
 import numpy as np
 
@@ -9,6 +10,7 @@ from market_sim.config.constants import (
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
+    PLANNING_RESERVE_MARGIN_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     WRIGHT_REFERENCE_GW,
@@ -371,6 +373,117 @@ class TestReserveMarginBuild(unittest.TestCase):
             [], 9999.0, 8000.0, 2030, on, "ERCOT"
         )
         self.assertEqual(b1, 0.0)
+
+    def test_ercot_parity_with_scalar_default(self):
+        """ERCOT resolves to 0.1375 and the build matches today's behavior.
+
+        The per-ISO registry leads, but ERCOT's registry target equals the
+        historic scalar default, so the ERCOT reserve-margin build is
+        byte-identical to the pre-registry behavior (the parity guard).
+        """
+        from market_sim.model.capacity import apply_reserve_margin_build
+        # Registry parity: ERCOT's entry is exactly the old scalar default.
+        self.assertEqual(PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"], 0.1375)
+        self.assertEqual(
+            PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"],
+            ScenarioConfig().planning_reserve_margin,
+        )
+        config = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        _, built_registry = apply_reserve_margin_build(
+            [_gen("cc", "gas_cc", pmax=1000.0)], firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0, year=2030, config=config, iso="ERCOT",
+        )
+        # Drop ERCOT from the registry so the scalar fallback (0.1375) is used
+        # instead; the resolved margin -- and the build -- must be identical.
+        with mock.patch.dict(
+            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
+        ) as registry:
+            del registry["ERCOT"]
+            _, built_scalar = apply_reserve_margin_build(
+                [_gen("cc", "gas_cc", pmax=1000.0)], firm_capacity_mw=5000.0,
+                peak_demand_mw=8000.0, year=2030, config=config, iso="ERCOT",
+            )
+        self.assertGreater(built_registry, 0.0)
+        self.assertEqual(built_registry, built_scalar)
+
+    def test_higher_target_iso_builds_more_than_ercot(self):
+        """A capacity-market ISO (PJM) force-builds more to its higher floor.
+
+        PJM's installed-reserve-margin target (~17.8%) exceeds ERCOT's 13.75%,
+        so for the same firm capacity and peak the adequacy backstop builds
+        strictly more gas_ct in PJM than it would at ERCOT's margin.
+        """
+        from market_sim.model.capacity import apply_reserve_margin_build
+        self.assertGreater(
+            PLANNING_RESERVE_MARGIN_BY_ISO["PJM"],
+            PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"],
+        )
+        config = ScenarioConfig(reserve_margin_build_enabled=True)
+        # Identical firm/peak; only the resolved per-ISO margin differs. The
+        # gap stays well under each ISO's queue cap so neither is clipped.
+        _, built_ercot = apply_reserve_margin_build(
+            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=config, iso="ERCOT",
+        )
+        _, built_pjm = apply_reserve_margin_build(
+            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=config, iso="PJM",
+        )
+        self.assertGreater(built_ercot, 0.0)
+        self.assertGreater(built_pjm, built_ercot)
+
+    def test_explicit_scalar_overrides_for_iso_absent_from_registry(self):
+        """The ScenarioConfig scalar drives any ISO absent from the registry.
+
+        With the ISO removed from the registry, an explicit
+        ``planning_reserve_margin`` is honored: a higher scalar builds strictly
+        more than the registry target it replaces.
+        """
+        from market_sim.model.capacity import apply_reserve_margin_build
+        # Registry PJM target (~0.178) vs an explicit, higher override (0.30).
+        registry_config = ScenarioConfig(reserve_margin_build_enabled=True)
+        _, built_registry = apply_reserve_margin_build(
+            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=registry_config, iso="PJM",
+        )
+        override_config = ScenarioConfig(
+            reserve_margin_build_enabled=True, planning_reserve_margin=0.30,
+        )
+        with mock.patch.dict(
+            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
+        ) as registry:
+            del registry["PJM"]
+            _, built_override = apply_reserve_margin_build(
+                [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+                year=2030, config=override_config, iso="PJM",
+            )
+        self.assertGreater(built_override, built_registry)
+
+    def test_iso_absent_from_registry_falls_back_to_scalar(self):
+        """An ISO with no registry entry uses ``config.planning_reserve_margin``.
+
+        ``.get(iso, config.planning_reserve_margin)`` returns the scalar
+        fallback, so the resolved margin equals the default 0.1375 -- the same
+        result as the ERCOT (registry) build at firm/peak parity.
+        """
+        from market_sim.model.capacity import apply_reserve_margin_build
+        config = ScenarioConfig(reserve_margin_build_enabled=True)
+        self.assertEqual(config.planning_reserve_margin, 0.1375)
+        with mock.patch.dict(
+            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
+        ) as registry:
+            del registry["PJM"]
+            _, built_fallback = apply_reserve_margin_build(
+                [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+                year=2030, config=config, iso="PJM",
+            )
+        # Same scalar (0.1375) applied to the same firm/peak as ERCOT.
+        _, built_ercot = apply_reserve_margin_build(
+            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=config, iso="ERCOT",
+        )
+        self.assertGreater(built_fallback, 0.0)
+        self.assertEqual(built_fallback, built_ercot)
 
 
 class TestRetirementMargin(unittest.TestCase):
