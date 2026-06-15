@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-15-run118-reldeploy-spatial-measured",
+  "label": "run118 reldeploy spatial (MEASURED PROBE)",
+  "date": "2026-06-15",
+  "shorthand": "run118-reldeploy-spatial-measured",
+  "definition": "MEASURED PROBE (not promoted; keeper stays run115b). run115b config + the orthogonal merit-ramp CC econ deltas + the new spatial reliability-deployment overlay (--reliability-deployment): a per-plant hourly min-gen floor on the load-pocket thermal fleet (CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast), scoped on the load-zone congestion subset (economic at the local LZ price but out of merit at HB_HUBAVG). The floor lands at the measured wedge (2.70/3.60/5.22 TWh) but is mostly NON-BINDING: the 7-zone LP already dispatches ~85-90% of the pocket fleet's congestion energy, so net North->SC/West redistribution is only ~0.3-0.9 TWh/yr. No class crosses a universal-gate boundary; it marginally worsens CC_REGULAR 2024/2025 (d +5.18->+5.25, +2.77->+2.85). The residual North-over/SC-under gap is the irreducible RUC piece / inter-zonal flow, not price-recoverable by this floor; the real lever is a top-down zone floor or finer zones (deferred).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-15-run118-reldeploy-spatial-measured.js",
+  "bundle": "results/calibration/run118_reldeploy_spatial"
+}
