@@ -577,6 +577,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "mc_cost": mc_cost,
             "rps_shadow_price": result.rps_shadow_price or 0.0,
             "retrofit_log": retrofit_log,
+            # AS-eligible (storage) fleet power for the AS-revenue saturation
+            # in next year's capacity screens (capacity.evolve_fleet).
+            "storage_power_mw": float(sum(storage.power_cap))
+            if storage.power_cap.ndim == 1
+            else float(storage.power_cap.sum(axis=0).max()),
         }
 
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
