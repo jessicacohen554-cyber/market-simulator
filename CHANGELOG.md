@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-15 (ERCOT — market-design regime switch: contain the 2023 reliability-deployment to its own design)
+
+The reliability-deployment offset (RTORDPA analogue) is calibrated to the 2023
+ECRS-conservatism design ERCOT reformed at RTC+B go-live (2025-12-05), so it
+must not be carried silently into forecasts. New `ercot_market_design`
+("auto"/"ordc"/"rtcb") + `rtcb_reliability_deployment_mw` (default 0), with
+`scarcity.ercot_market_regime` / `effective_reliability_deployment_mw`:
+
+- ORDC regime (auto: years <= 2025) applies `ordc_reliability_deployment_mw` —
+  2023 backcast reproduced under its own design (MAE 32.5 -> 12.3, unchanged).
+- RTC+B regime (auto: years >= 2026, forecast) applies
+  `rtcb_reliability_deployment_mw` (default 0 -> price to fundamentals); a
+  scenario can raise it to model 2023-style conservatism recurring.
+- Deriver and runner use the per-year effective offset. 3 regime tests added;
+  backcast 2023/2024/2025 behavior byte-identical.
+
 ## 2026-06-15 (capacity — reserve-margin adequacy backstop + full fossil/nuclear retirement coverage)
 
 Entry/exit fitness fix 4 from docs/forecasting-entry-exit-assessment.md, plus
