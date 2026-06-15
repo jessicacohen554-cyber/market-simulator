@@ -318,6 +318,28 @@ retire → KEEP), COAL_PRB 22 → **143** (bar 52: retire → KEEP), CT_PEAKER 1
 **109**. The stress year now keeps the marginal units it should — see the
 steam-gas screen note below.
 
+### Market-design regime switch (containing the erroneous 2023 design)
+
+The reliability-deployment offset is calibrated to the 2023 ECRS-conservatism /
+RTORDPA reserve withholding — a design the IMM judged erroneous and that ERCOT
+reformed at **RTC+B go-live (2025-12-05)**, when ORDC reserve adders were
+replaced by co-optimized AS demand curves. So it must not be carried silently
+into a forecast. `ScenarioConfig.ercot_market_design` (`"auto"` / `"ordc"` /
+`"rtcb"`) selects the regime, and `scarcity.ercot_market_regime(year, config)`
+/ `effective_reliability_deployment_mw(year, config)` apply it:
+
+- **ORDC regime** (auto: years ≤ 2025): the RTORDPA offset is
+  `ordc_reliability_deployment_mw` — so the 2023 backcast is reproduced under
+  its own design (MAE 32.5 → 12.3).
+- **RTC+B regime** (auto: years ≥ 2026, the forecast): the offset is
+  `rtcb_reliability_deployment_mw`, **default 0** — forward scarcity prices to
+  fundamentals under the reformed design. A scenario can raise it to model
+  "2023-style conservatism recurs." The ORDC overlay formula itself stays the
+  first-order representation of RTC+B scarcity (ASDCs are VOLL-anchored and
+  ORDC-shaped); only the discretionary reliability-deployment component is
+  regime-gated. This is what separates the 2023 backcast design from the
+  forward design rather than conflating them in one year-agnostic knob.
+
 ### Steam-gas retirement screen (companion fix)
 
 Legacy gas steam carries `fuel_type = "gas_st"`, which was **absent from

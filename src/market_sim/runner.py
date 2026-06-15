@@ -79,7 +79,11 @@ from market_sim.policy.rps import get_rps_target
 from market_sim.results.cache import is_cached, load_result, save_result
 from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
-from market_sim.results.scarcity import reserve_headroom, scarcity_prices
+from market_sim.results.scarcity import (
+    effective_reliability_deployment_mw,
+    reserve_headroom,
+    scarcity_prices,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -549,7 +553,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             reserves = reserve_headroom(
                 fleet_arrays, result.dispatch, storage.power_cap,
                 result.storage_charge, result.storage_discharge,
-                config.ordc_as_plan_mw + config.ordc_reliability_deployment_mw,
+                config.ordc_as_plan_mw
+                + effective_reliability_deployment_mw(year, config),
                 renewable_headroom=ren_headroom,
             )
             d_tot = year_demand.sum(axis=0)
