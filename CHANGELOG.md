@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-15 (W1c — generic-improvement coverage verified for all seven ISOs)
+
+Verified that the already-ISO-agnostic ERCOT engine improvements fire for every
+registered ISO, and that no per-ISO config datum they read is missing. **No
+engine code changed and no config backfill was needed** — every datum was
+already present and consistent with each ISO's real mechanism.
+
+- New `tests/test_iso_coverage.py` — parametrized over
+  `config.iso_configs._ISO_BUILDERS`. Asserts per ISO: gas_ct is a new-entry
+  candidate with a `QUEUE_CAP_PER_TECH_GW[iso]["gas_ct"]` cap; all seven
+  thermal fuel classes (coal, gas_cc, gas_ct, gas_st, oil, gas_cc_ccs, nuclear)
+  are in the retirement screen; an import node resolves where the ISO has
+  import tranches; ERCOT has no import node and a zero state carbon price
+  (parity).
+- New `docs/multi-iso/propagation-coverage.md` — per-ISO coverage matrix.
+  CAISO/PJM/NYISO/NEISO carry priced import nodes (ERCOT/MISO/SPP none, as
+  intended); CAISO (CARB) and NYISO/NEISO (RGGI) carry state carbon prices.
+- W1c marked DONE in `docs/multi-iso/09-ercot-propagation-prompt-pack.md`.
+
 ## 2026-06-15 (docs — ERCOT→all-ISO propagation audit & prompt pack)
 
 Audited the ERCOT model's accumulated changes for applicability to the other
