@@ -2658,7 +2658,6 @@ this campaign): a non-CEMS small-peaker floor for the ~1.0 TWh CT 2024
 residual (Ector/Permian/Pearsall have 923 net-gen but no hourly CEMS — a
 923-based floor, distinct from the CEMS out-of-merit overlay).
 
-<<<<<<< HEAD
 ## Cross-ISO — CT_PEAKER AS-deployment overlay generalized to PJM/CAISO/NYISO/NEISO; the PJM blanket-floor refutation (2026-06-13)
 
 **The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/derive_ct_deployment.py`
