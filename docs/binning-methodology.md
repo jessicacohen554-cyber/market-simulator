@@ -38,7 +38,7 @@ tranche bidding cheaply, not from a hard `pmin`.
 | **Must Run (MR%)**  | CHP host steam. 0% for non-CHP.                      | Removed from LP capacity; generation + CO₂ added back in post-processing.     |
 | **Committed (MC%)** | Minimum stable load once started.                    | Cheap block (`base_hr × offer["committed"]`, e.g. 0.92×); carries the start cost + min-run window and is the only screened tranche. |
 | **Economic**        | Normal incremental dispatch as price rises.          | Rendered as an **N-slice rising heat-rate ramp** (`_econ_curve_steps`), not one flat block — see [Economic ramp](#economic-ramp-the-default-dispatch-shape). |
-| **Peaking (PEAK%)** | Duct-firing / steep incremental cost.                | For CC/coal it is **folded into the top of the economic ramp**; for CT/ST it stays a separate flat scarcity tranche. |
+| **Peaking (PEAK%)** | Duct-firing / steep incremental cost.                | A **separate flat scarcity tranche above the econ ramp** for every group (CC included). It sits at `base_hr × peak_mult` (CC: the per-plant duct-burner multiplier, ~2.0–2.6×), so there is a price *discontinuity* between the top of the econ ramp (`econ_high`) and this block — the wall that keeps efficient CCs out of their top CF bins (see `docs/cc-high-cf-investigation.md`). |
 
 The `Pct_*` shares sum to 100% per plant. The **committed share** is not a
 coarse class assumption: for CC it is derived per-plant from each unit's
@@ -163,10 +163,10 @@ heat rate before the tranche multipliers are applied.
 
 This is how a CC/coal plant actually bids under the ERCOT calibration —
 **not** an optional add-on. Above its cheap Committed block, the plant's
-economic capacity (`econ_cap + peak_cap` for CC/coal, since the peak band
-is folded in) is sliced by `_econ_curve_steps` into
-`config.offer_curve_smoothing_n` equal-capacity steps whose heat-rate
-multiplier rises:
+economic capacity (`econ_cap`, spanning econ-low → econ-high; the duct-firing
+peak band is **not** folded in — it is a separate flat tranche above the ramp)
+is sliced by `_econ_curve_steps` into `config.offer_curve_smoothing_n`
+equal-capacity steps whose heat-rate multiplier rises:
 
 ```
 mult(t) = lo + (pk − lo) * t**exp        t = (k + 0.5) / n,  k = 0 … n−1
@@ -178,19 +178,25 @@ with the active ERCOT values:
 - `exp = config.offer_curve_smoothing_exp` (default **1.0** → a straight,
   linear ramp; `exp > 1` would be convex / cheap-bottomed)
 - `lo  = offer_curve_by_group[group]["econ_low"]`  (CC_REGULAR ≈ **1.06**)
-- `pk  = duct_burner_mult(turbine_class)` for CC (F-class **2.25**,
-  G/H-class **2.50**, older **2.00**); `offer_curve_by_group[...]["peak"]`
-  for non-folded groups.
+- `pk  = econ_high` — the **top of the econ ramp**, not the duct-firing
+  multiplier. The duct-firing peak (`duct_burner_mult(turbine_class)` for CC —
+  F-class **2.25**, G/H-class **2.50**, older **2.00** — or
+  `offer_curve_by_group[...]["peak"]`) is a **separate flat tranche above the
+  ramp**, so there is a deliberate price jump from `econ_high` to the peak
+  block.
 
-So each CC plant is a Committed block at `base_hr × 0.92` followed by six
-rising slices from `base_hr × ~1.06` up to `base_hr × 2.25–2.50`, scaled
-entirely by **its own** `base_hr`. The plant fills slice by slice as the
-hourly price clears each step, instead of snapping between two flat blocks.
+So each CC plant is a Committed block at `base_hr × ~0.9` followed by N rising
+econ slices from `base_hr × econ_low` up to `base_hr × econ_high`, then a flat
+duct-firing block at `base_hr × ~2.0–2.5`, scaled entirely by **its own**
+`base_hr`. The plant fills slice by slice as the hourly price clears each step;
+the top flat block only clears in scarcity hours, which is what keeps efficient
+CCs from reaching their observed >90 % CF mass (see
+`docs/cc-high-cf-investigation.md`).
 
-`_CURVE_FOLD_PEAK` (`CC_REGULAR`, `CC_CHP`, `COAL`) fold the duct-firing
-band into the ramp top; `_CURVE_ECON_ONLY` (`CT_PEAKER`, `ST_GAS`) ramp
-econ-low → econ-high and keep the peak band as a separate flat scarcity
-tranche.
+The econ ramp spans **econ-low → econ-high for every group**; the peak band is
+always a separate flat scarcity tranche above it. (`_CURVE_FOLD_PEAK` — which
+once folded the CC/coal duct-firing band into the ramp top — has been removed;
+`fleet.py` now reads "Nothing is folded into the ramp.")
 
 **Why a plant over/under-runs is set here.** The over/under of a single CC
 versus CAMPD is driven by (1) its `base_hr` anchor (it scales every slice)
@@ -238,13 +244,14 @@ reference-only and ignored by the loader.
 `config.offer_curve_smoothing_n` steps (default 6) of
 `mult(t) = lo + (pk − lo) × t**exp` with `exp = config.offer_curve_smoothing_exp`
 (default 1.0, linear) — so the unit fills gradually as the hourly price
-crosses its rising MC instead of parking at the top of a flat block. The
-curve's reach differs by group:
-- **CC_REGULAR / CC_CHP / COAL** — the peaking band is *folded into* the
-  rising curve (peak is the top of the smooth ramp, `lo → HR_Mult_Peaking`).
-- **CT_PEAKER / ST_GAS** — the curve spans only econ-low → econ-high; the
-  peak band stays a separate flat **scarcity** tranche (its high multiplier
-  is a price-wall floor, not a real ramp endpoint).
+crosses its rising MC instead of parking at the top of a flat block. For
+**every group** the curve spans only econ-low → econ-high and the peak band
+stays a separate flat **scarcity** tranche above it (its high multiplier is a
+price-wall floor, not a real ramp endpoint). This is true for CC/coal as well
+as CT/ST: the earlier "fold the peak into the CC ramp" behaviour was removed,
+so a CC has a deliberate price discontinuity between `econ_high` and its
+duct-firing block (the cause of the missing >90 % CF hours — see
+`docs/cc-high-cf-investigation.md`).
 
 `fleet.load_plant_tranche_config()` reads the sheet,
 `_bands_from_shares()` converts the cumulative shares into capacity-factor
