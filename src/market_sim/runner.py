@@ -13,15 +13,17 @@ import argparse
 import logging
 import time
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from multiprocessing import cpu_count
 
 import numpy as np
 
 from market_sim.config.constants import (
+    CAMPD_BINNING_ISOS,
     DEMAND_GROWTH_RATES,
     DEMAND_GROWTH_TRANSITION_YEAR,
     END_YEAR,
+    HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -36,6 +38,7 @@ from market_sim.data.fleet import (
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
+    fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
@@ -197,16 +200,30 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     # Load the CAMPD operational bins once when enabled. The same bin frame
     # builds the dispatch fleet and drives the CHP must-run post-processing.
-    # The bin assignments are ERCOT-specific, so other ISOs always use the
-    # legacy aggregate_fleet path regardless of ``use_campd_bins``.
-    # The base fleet is built once from the start year; its bins take the
-    # EIA-923 dominant class for that year (so a curated bin can't drift), then
-    # carry forward through the projection.
-    campd_bins = (
-        load_campd_bins(config.campd_bins_path, year=START_YEAR)
-        if config.use_campd_bins and iso == "ERCOT"
-        else None
-    )
+    # The per-plant binning path is taken by any ISO with a bin artifact
+    # (CAMPD_BINNING_ISOS); ISOs without one (e.g. MISO/SPP) always fall back
+    # to the legacy aggregate_fleet path regardless of ``use_campd_bins``.
+    #
+    # ERCOT reads its curated per-plant bin sheet
+    # (``config.campd_bins_path``); its base fleet is built once from the start
+    # year so its bins take the EIA-923 dominant class for that year (a curated
+    # bin can't drift), then carry forward through the projection. The other
+    # CAMPD ISOs have no curated sheet, so the SAME per-plant bins frame is
+    # synthesized from the EIA-860 fleet plus the ISO's CAMPD-derived
+    # ``thermal_tranches_<ISO>.csv`` (committed / coal must-run / CC peaking)
+    # via ``fleet_to_bins`` -- giving them ERCOT's smoothed rising offer curve
+    # and per-plant tranches. An ISO whose synthesis yields no thermal bins
+    # (no artifact) falls through to the legacy path.
+    campd_bins = None
+    if config.use_campd_bins and iso in CAMPD_BINNING_ISOS:
+        if iso == "ERCOT":
+            campd_bins = load_campd_bins(config.campd_bins_path, year=START_YEAR)
+        else:
+            campd_bins = fleet_to_bins(
+                load_fleet_from_csv(iso, iso_config), iso, config
+            )
+            if campd_bins.empty:
+                campd_bins = None
 
     # Storage is managed across years like the generation fleet: the base
     # year starts from the deployment-pace fleet, later years grow via the
@@ -249,13 +266,31 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # collapse happens before the LP -- the dominant solve-time win.
             if campd_bins is not None:
                 campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
-                # The CAMPD bins cover only the gas/coal thermal fleet;
-                # nuclear (and any other non-aggregatable unit) still comes
-                # from EIA-860 so it stays in the dispatch LP.
-                non_thermal = [
-                    g for g in load_fleet_from_csv(iso, iso_config)
-                    if g.fuel_type not in _AGGREGATABLE_FUELS
-                ]
+                all_gens = load_fleet_from_csv(iso, iso_config)
+                if iso == "ERCOT":
+                    # ERCOT's curated sheet covers the full gas/coal thermal
+                    # fleet; nuclear (and any other non-aggregatable unit)
+                    # still comes from EIA-860 so it stays in the dispatch LP.
+                    non_thermal = [
+                        g for g in all_gens
+                        if g.fuel_type not in _AGGREGATABLE_FUELS
+                    ]
+                else:
+                    # The synthesized bins cover exactly the thermal
+                    # (plant_code, plant_group) pairs in ``campd_bins``; every
+                    # other unit (nuclear, oil, biomass, and any thermal plant
+                    # the synthesis didn't bin) stays a raw LP unit. Filtering
+                    # on the exact binned set -- rather than a fuel allow-list
+                    # -- avoids dropping or double-counting any plant (the bin
+                    # groups include gas_st, which is not an aggregatable fuel).
+                    binned = set(zip(
+                        campd_bins["Plant_Code"].astype(int),
+                        campd_bins["Plant_Group"],
+                    ))
+                    non_thermal = [
+                        g for g in all_gens
+                        if (int(g.plant_code), g.plant_group) not in binned
+                    ]
                 fleet = non_thermal + campd_fleet
             else:
                 fleet = aggregate_fleet(
@@ -379,9 +414,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             apply_plant_emission_rates(
                 dispatch_fleet, config.plant_emission_rates_path
             )
+        # Resolve the historic (facility-summed) outage overlay per ISO. The
+        # facility overlay is the primary layer only for facility-summed ISOs
+        # (ERCOT); ISOs whose unit-level file is the complete CAMPD-derived
+        # source (e.g. PJM) disable it so the two layers don't double-count.
+        # An explicit config flag still applies for ISOs absent from the
+        # registry. The resolved value is threaded into the fleet-array build
+        # (the sole consumer) without mutating the run's recorded config, so
+        # ERCOT's default (overlay True) passes the original config unchanged.
+        outage_overlay = HISTORIC_OUTAGE_OVERLAY_BY_ISO.get(
+            iso, config.historic_outage_overlay
+        )
+        fleet_config = (
+            config
+            if outage_overlay == config.historic_outage_overlay
+            else replace(config, historic_outage_overlay=outage_overlay)
+        )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours, iso=iso,
-            config=config, load_shape=base_demand.sum(axis=0),
+            config=fleet_config, load_shape=base_demand.sum(axis=0),
         )
         # Replace flat offshore-wind availability with a derived hourly
         # profile; must run after fleet-array build and before dispatch.
