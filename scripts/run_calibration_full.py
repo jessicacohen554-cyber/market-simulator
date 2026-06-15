@@ -137,10 +137,13 @@ _PLANT_PANEL: tuple[tuple[int, str], ...] = (
     (63688, "Topaz Generating (CT peaker)"),
 )
 
-# CF-band width for the per-plant operating-level histogram ([7b] panel and
-# plant_cf_bands.parquet): 0.10 -> ten 10%-of-capacity bands. Coarse enough
-# to be robust to CAMPD net-vs-gross noise, fine enough to separate a CC's
-# committed floor / part-load / duct-fired modes.
+# Default CF-band width for the per-plant operating-level histogram ([7b]
+# panel and plant_cf_bands.parquet): 0.10 -> ten 10%-of-capacity bands. Coarse
+# enough to be robust to CAMPD net-vs-gross noise, fine enough to separate a
+# CC's committed floor / part-load / duct-fired modes. Override per run with
+# ``--cf-band-width`` (e.g. 0.05 for twenty 5% bands when inspecting where a CC
+# loses its >90% CF hours); the cf_emd metric reads the width back from the
+# parquet, so it stays comparable across band widths.
 _CF_BAND_WIDTH: float = 0.10
 
 
@@ -1642,6 +1645,7 @@ def _chp_btm_mw_map() -> dict[int, float]:
 def _plant_hourly_fit(
     year: int, dispatch: pd.DataFrame, campd_year: pd.DataFrame, hours: int,
     btm_mw_by_plant: dict[int, float] | None = None,
+    band_width: float = _CF_BAND_WIDTH,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return per-plant hourly model-vs-CAMPD fit for every resolved plant.
 
@@ -1701,7 +1705,7 @@ def _plant_hourly_fit(
         if btm_mw > 0.0:
             m = m + btm_mw * (m > 0.0)
         try:
-            occ = check_cf_band_occupancy(m, o, band_width=_CF_BAND_WIDTH)
+            occ = check_cf_band_occupancy(m, o, band_width=band_width)
         except ValueError:  # both series identically zero
             occ = None
         rows.append({
@@ -1765,11 +1769,14 @@ def _print_plant_cf_bands(year: int, bands: pd.DataFrame) -> None:
     """
     if not len(bands):
         return
-    print(f"\n  [7b] Hours per {_CF_BAND_WIDTH:.0%} CF band — {year} "
+    # Band width comes from the data, not the module default, so the header
+    # is correct whatever --cf-band-width the run used.
+    width = float((bands["cf_hi"] - bands["cf_lo"]).median())
+    print(f"\n  [7b] Hours per {width:.0%} CF band — {year} "
           "(model / CAMPD net; representative panel)")
     grouped = bands.groupby("plant_code", observed=True)
     edges = sorted(bands["cf_lo"].unique())
-    header = ("plant", "", *(f"{lo:.0%}-{lo + _CF_BAND_WIDTH:.0%}"
+    header = ("plant", "", *(f"{lo:.0%}-{lo + width:.0%}"
                              for lo in edges))
     rows = [header]
     for code, label in _PLANT_PANEL:
@@ -2309,12 +2316,16 @@ def _report_generic(
         print(f"    negative-price hours: {int((sysprice < 0).sum())}")
 
 
-def report_run(run_dir: Path) -> None:
+def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     """Print the full calibration report from a persisted bundle.
 
     ERCOT prints the full plant-level / CHP / CAMPD diagnostic. Other ISOs
     (PJM energy-only) print the generic fuel-mix / price / interchange report,
     which is all their bundle carries (see :func:`solve_and_persist`).
+
+    ``band_width`` sets the CF-band resolution of the ``[7b]`` panel and
+    ``plant_cf_bands.parquet`` (default :data:`_CF_BAND_WIDTH`); pass 0.05 for
+    twenty 5%-of-capacity bands.
     """
     meta = json.loads((run_dir / "meta.json").read_text())
     iso = meta["iso"]
@@ -2413,7 +2424,8 @@ def report_run(run_dir: Path) -> None:
                     hours = int(dispatch["hour"].max()) + 1
                     btm_mw_map = _chp_btm_mw_map() if iso == "ERCOT" else None
                     fit, cf_bands = _plant_hourly_fit(
-                        year, dispatch, campd_year, hours, btm_mw_map
+                        year, dispatch, campd_year, hours, btm_mw_map,
+                        band_width=band_width,
                     )
                     _print_plant_hourly_fit(year, fit)
                     _print_plant_cf_bands(year, cf_bands)
@@ -2511,6 +2523,13 @@ def main() -> None:
              "/ interchange report; ERCOT-only steps skipped).",
     )
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
+    parser.add_argument(
+        "--cf-band-width", type=float, default=_CF_BAND_WIDTH,
+        help="CF-band width for the [7b] per-plant operating-level histogram "
+             "and plant_cf_bands.parquet, as a fraction of capacity "
+             f"(default {_CF_BAND_WIDTH}). Use 0.05 for twenty 5%% bands to "
+             "see where an efficient CC loses its >90%% CF hours.",
+    )
     parser.add_argument(
         "--commitment", action="store_true",
         help="Run the P2 unit-commitment pass after P1; both are persisted.",
@@ -2925,7 +2944,7 @@ def main() -> None:
         args.offer_curve_delta_json, flag="--offer-curve-delta-json")
 
     if args.report:
-        report_run(Path(args.report))
+        report_run(Path(args.report), band_width=args.cf_band_width)
         return
 
     if args.rebuild_benchmark:
@@ -3058,7 +3077,7 @@ def main() -> None:
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
-    report_run(run_dir)
+    report_run(run_dir, band_width=args.cf_band_width)
 
 
 if __name__ == "__main__":
