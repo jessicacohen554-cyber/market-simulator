@@ -202,6 +202,26 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual([g.unit_id for g in fleet1], ["S0"])
         self.assertEqual(losses1["S0"], 0)
 
+    def test_every_fossil_class_and_nuclear_is_retirement_eligible(self):
+        # Regression: oil, gas_cc_ccs and nuclear were not screened; now every
+        # fossil class and nuclear can retire on economics. A deeply
+        # unprofitable unit of each accumulates a loss year (is screened).
+        from market_sim.model.capacity import _THERMAL_FOM
+        for fuel in ("coal", "gas_cc", "gas_ct", "gas_st", "gas_cc_ccs",
+                     "oil", "nuclear"):
+            self.assertIn(fuel, _THERMAL_FOM, fuel)
+        config = ScenarioConfig()
+        for fuel in ("oil", "nuclear", "gas_cc_ccs"):
+            fleet = [_gen("U0", fuel, pmax=100.0)]
+            arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+            prices = np.full((1, self.T), 1.0)  # far below any fixed cost
+            dispatch = self._dispatch_result(1, 1.0)
+            _, losses = apply_economic_retirements(
+                fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+                mc=np.zeros((1, self.T)),
+            )
+            self.assertEqual(losses.get("U0"), 1, f"{fuel} not screened")
+
     def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
         # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
         # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).
@@ -303,6 +323,54 @@ class TestEconomicRetirements(unittest.TestCase):
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
         self.assertEqual(losses1, {})
+
+
+class TestReserveMarginBuild(unittest.TestCase):
+    """The adequacy backstop: force-build firm capacity to the reserve margin."""
+
+    def test_firm_capacity_accredits_by_resource(self):
+        from market_sim.model.capacity import accredited_firm_capacity_mw
+        fleet = [
+            _gen("cc", "gas_cc", pmax=1000.0),   # eford default 0.05 in Generator
+            _gen("n", "nuclear", pmax=1000.0),
+        ]
+        # Thermal nets to UCAP (1 - eford); pool renewables to their credit.
+        firm = accredited_firm_capacity_mw(
+            fleet, wind_pool_mw=1000.0, solar_pool_mw=1000.0,
+            storage_firm_mw=500.0,
+        )
+        # 500 storage + 160 wind + 180 solar + thermal UCAP (both < nameplate).
+        self.assertGreater(firm, 500.0 + 160.0 + 180.0)
+        self.assertLess(firm, 500.0 + 160.0 + 180.0 + 2000.0)
+
+    def test_backstop_builds_to_meet_margin(self):
+        from market_sim.model.capacity import apply_reserve_margin_build
+        config = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        fleet = [_gen("cc", "gas_cc", pmax=1000.0)]
+        new_fleet, built = apply_reserve_margin_build(
+            fleet, firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=config, iso="ERCOT",
+        )
+        # required = 8000 * 1.1375 = 9100; gap = 4100 firm -> >0 nameplate.
+        self.assertGreater(built, 0.0)
+        self.assertTrue(
+            any(g.unit_id == "gas_ct_adequacy_2030" for g in new_fleet)
+        )
+
+    def test_backstop_noop_when_disabled_or_adequate(self):
+        from market_sim.model.capacity import apply_reserve_margin_build
+        # Disabled: no build even when short.
+        off = ScenarioConfig(iso="ERCOT")
+        _, b0 = apply_reserve_margin_build(
+            [], 0.0, 8000.0, 2030, off, "ERCOT"
+        )
+        self.assertEqual(b0, 0.0)
+        # Enabled but already adequate: no build.
+        on = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        _, b1 = apply_reserve_margin_build(
+            [], 9999.0, 8000.0, 2030, on, "ERCOT"
+        )
+        self.assertEqual(b1, 0.0)
 
 
 class TestRetirementMargin(unittest.TestCase):
