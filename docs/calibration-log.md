@@ -42,6 +42,73 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-15 — ERCOT — spatial reliability-deployment overlay (run118, MEASURED PROBE — weak lever, keeper stays run115b)
+
+**Scope.** Builds the spatial reliability-deployment overlay parked in the
+2026-06-15 merit/spatial diagnosis (`docs/spatial-ruc-session-prompt.md`): the
+generalization of the CT AS/RUC-deployment overlay to the load-pocket thermal
+fleet (CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast), scoped on
+the load-zone congestion subset. Built on the run115b config **+ the merit-ramp
+CC econ deltas** (`offer_curve_deltas_cc_merit_ramp.json`, the orthogonal merit
+axis) **+ `--reliability-deployment`**. Bundle
+`results/calibration/run118_reldeploy_spatial`.
+
+**Mechanism (built, wired, tested).** `scripts/derive_reliability_deployment.py`
+measures, for each CEMS-covered pocket plant and hour, a deployment hour ⇔
+`net_mw > min_mw AND LZ_price(plant_zone) > MC AND HB_HUBAVG < MC`
+(MC = plant_avg_HR × hr_mult × fuel_price + vom; gas at Henry Hub, coal at its
+delivered supply cost; LZ/HB from `actual_lmp_zonal_ERCOT.parquet`). Floor =
+measured CEMS net in those hours, else 0. **The wedge lands where the prior
+session measured it: 2.70 / 3.60 / 5.22 TWh (2023/24/25)** vs the target
+2.7/3.7/4.8 — NOT the ~44 TWh naïve out-of-merit test, confirming the load-zone
+congestion scoping. Wired as a sparse per-plant hourly min-gen bound
+(`ScenarioConfig.reliability_deployment_overlay` + `_floor_frac`;
+`outages.reliability_deployment_floor_for_year`; applied in
+`fleet.generators_to_fleet_arrays`, units keep WEFOR/POF). Default off; ERCOT
+backcast only; forecast / other ISO byte-identical.
+
+**Result — the floor is mostly NON-BINDING (the key finding).** The min-gen
+floor recovers only **~0.3–0.9 TWh/yr of net redistribution** despite flooring
+2.7–5.2 TWh, because **the model is already a 7-zone network with per-zone
+prices** (not the single-system-price LP the scoping diagnostic assumed), so it
+**already dispatches the pocket fleet in the congestion hours**. Measured on the
+floored plants directly (2025): plant 56349 floor 566 GWh / model already 327 in
+those hours (binding +261); plant 55215 floor 1157 / model already 1012 (binding
++186) — total binding increment **+0.64 TWh**, the rest redundant with the LP's
+existing zonal dispatch. Before → after (model TWh by zone):
+
+| year | North thermal | SC thermal | West thermal | North net-exp | West net-exp |
+|---|---|---|---|---|---|
+| 2023 | 79.2 → 79.0 | 39.3 → 39.5 | 9.7 → 9.8 | 7.5 → 7.3 | 14.1 → 14.2 |
+| 2024 | 83.3 → 83.1 | 42.8 → 42.9 | 10.5 → 10.7 | 5.9 → 5.7 | 11.9 → 12.1 |
+| 2025 | 82.5 → 82.2 | 37.8 → 38.0 | 11.5 → 11.9 | 11.4 → 11.1 | 6.6 → 6.9 |
+
+All deltas are in the **right direction** (North down, SC/West up; West net-export
+up, North net-export down) but ~0.2–0.4 TWh/zone — far too small to close the
++4.5 TWh CC_REGULAR North over-run or the −8.7 TWh SC thermal miss.
+
+**Universal-gate verdict (model grid vs 923−BTM; 0.33% ≈ 1.5 TWh, 0.5% ≈ 2.3).**
+No class crosses a gate boundary either way; the fail set is identical to the
+merit-ramp base (CC 2024/2025, PRB 2024, CT 2023/2024). The overlay **marginally
+worsens** CC_REGULAR in 2024/2025 (d +5.18 → +5.25, +2.77 → +2.85) because the
+floored SC/West CC plants add to the CC class total while displacing
+coal/CT — i.e. it slightly regresses the very class it was meant to help. In
+2023 it nudges CC toward center (−2.08 → −2.02). Gas/coal fuel-split moves are
+sub-0.1 TWh (within ±2.5%). LMP unaffected (min-gen bound, LP duals).
+
+**Conclusion — keeper stays run115b.** The price-recoverable congestion wedge is
+real (2.7–5.2 TWh of CEMS energy), but the 7-zone LP already dispatches ~85–90%
+of it, so a congestion-subset min-gen floor is a near-no-op for the spatial
+imbalance. The residual North-over/SC-under gap lives in the **irreducible
+RUC/reliability piece** (the ~6.7 TWh that ran below even the local price — the
+brief flagged it as NOT price-recoverable) and/or in **inter-zonal flow** the
+7-zone TTC network resolves differently from the real intra-zonal pockets. The
+real lever is the optional **top-down zone floor sized to the CAMPD−model net
+gap (capped at CEMS), or finer zones splitting the Valley/Permian pockets behind
+their binding limits** — deferred. The mechanism is committed off-by-default
+(reusable infrastructure + the orthogonal merit-ramp CC fix it carries). Logged
+as a MEASURED PROBE; not promoted.
+
 ### 2026-06-15 — ERCOT — CC_REGULAR within-class misallocation (merit + spatial diagnosis; merit-ramp probe)
 
 **Scope.** The efficient CC_REGULAR plants (Wolf Hollow II 59812, Colorado Bend
