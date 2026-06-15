@@ -28,6 +28,21 @@ the offer-curve fix is proposed in the writeup, not applied.
   band is *folded into* the econ ramp top (`_CURVE_FOLD_PEAK`). That fold was
   removed; the peak is a separate flat tranche for every group. Corrected to
   match `fleet.py` ("Nothing is folded into the ramp").
+- **Peak-band sweep (measured, not promoted).** `scripts/cc_peak_band_probe.py`
+  replays the run115b keeper with the CC_REGULAR peak multiplier lowered
+  (2.57× → 2.0× / 1.5×) across 2023–2025. The peak band is confirmed as the
+  lever for the price-limited plants (CB II, WH II, Guadalupe move toward their
+  observed >90% mass), but a **year-uniform cut is not a keeper**: peak 2.0×
+  breaches the 0.33% class gate in 2024/2025 (+2.50 / +1.75 TWh) and worsens
+  the plants that already over-run the top (CB II 2025). Freestone is
+  capacity-limited (model nameplate 1036 < real peak 1119 MW, no peak tranche)
+  and CB EC capacity-overstated (654 > 560) — per-plant data axes the offer
+  lever can't touch. Full results + recommended three-lever path in the
+  investigation doc.
+- **Dashboard:** the backcast "Hours at each capacity factor" panel defaults to
+  a 5% CF-band histogram (model vs CAMPD) with a toggle back to the per-CF line
+  (`scripts/_backcast_shell.py`: `cfBins` / `cfBarChart`).
+
 ## 2026-06-15 (backcast dashboard — annual LMP Δ measured against the ORDC overlay)
 
 Fixed the dashboard's model-vs-actual LMP deltas so they compare like-for-like.
