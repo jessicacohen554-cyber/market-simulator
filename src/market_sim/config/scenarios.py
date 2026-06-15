@@ -194,8 +194,10 @@ class ScenarioConfig:
     # unit-level outage file is derived fresh from ALL CAMPD unit data
     # (e.g. PJM via derive_campd_unit_outages.py), the unit-level layer is the
     # COMPLETE outage source and this facility overlay is redundant — stacking
-    # both double-counts and over-derates. Set False for those ISOs so the
-    # unit-level derate alone applies.
+    # both double-counts and over-derates. The per-ISO registry
+    # constants.HISTORIC_OUTAGE_OVERLAY_BY_ISO now sets the effective default;
+    # the runner resolves it as ``registry.get(iso, this_flag)``, so this flag
+    # is the global default and overrides for ISOs absent from that registry.
     historic_outage_overlay: bool = True
     # Optional per-plant tranche-config override CSV (one row per plant with its
     # five tranche shares of nameplate — must-run / committed / econ-low /
