@@ -47,6 +47,7 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 from market_sim.results.scarcity import (  # noqa: E402
     RESERVE_FUEL_TYPES,
+    effective_reliability_deployment_mw,
     scarcity_prices,
 )
 
@@ -383,7 +384,7 @@ def main() -> None:
             - a["renewable_dispatch_mw"].to_numpy(float)
             + _storage_headroom(bundle, year, hours, cap_t)
             - config.ordc_as_plan_mw
-            - config.ordc_reliability_deployment_mw
+            - effective_reliability_deployment_mw(year, config)
         )
         lam = _system_lambda(bundle, year, hours)
         res = scarcity_prices(config, year, reserves, np.nan_to_num(lam))

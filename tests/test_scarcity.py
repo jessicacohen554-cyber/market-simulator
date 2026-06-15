@@ -5,6 +5,8 @@ import pytest
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 from market_sim.results.scarcity import (
+    effective_reliability_deployment_mw,
+    ercot_market_regime,
     floor_active_mask,
     load_lolp_params,
     lolp,
@@ -14,6 +16,34 @@ from market_sim.results.scarcity import (
     season_of_hour,
     tod_block_of_hour,
 )
+
+
+def test_market_regime_auto_gates_at_rtcb_golive():
+    c = ScenarioConfig()  # ercot_market_design defaults "auto"
+    assert ercot_market_regime(2023, c) == "ordc"
+    assert ercot_market_regime(2025, c) == "ordc"
+    assert ercot_market_regime(2026, c) == "rtcb"
+    assert ercot_market_regime(2040, c) == "rtcb"
+
+
+def test_market_regime_explicit_override():
+    assert ercot_market_regime(2030, ScenarioConfig(ercot_market_design="ordc")) == "ordc"
+    assert ercot_market_regime(2023, ScenarioConfig(ercot_market_design="rtcb")) == "rtcb"
+    with pytest.raises(ValueError):
+        ercot_market_regime(2030, ScenarioConfig(ercot_market_design="bogus"))
+
+
+def test_reliability_offset_contained_to_ordc_regime():
+    # The 2023-calibrated RTORDPA offset applies in the ORDC era (backcast)
+    # but NOT in the RTC+B forecast era, unless the forward knob is set.
+    c = ScenarioConfig(ordc_reliability_deployment_mw=2500.0)
+    assert effective_reliability_deployment_mw(2023, c) == 2500.0
+    assert effective_reliability_deployment_mw(2030, c) == 0.0  # not carried forward
+    recur = ScenarioConfig(
+        ordc_reliability_deployment_mw=2500.0,
+        rtcb_reliability_deployment_mw=1500.0,
+    )
+    assert effective_reliability_deployment_mw(2030, recur) == 1500.0
 
 
 def test_lolp_pins_to_one_at_or_below_mcl():
