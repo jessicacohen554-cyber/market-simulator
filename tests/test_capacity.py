@@ -156,6 +156,52 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(fleet2, [])
         self.assertNotIn("T0", losses2)
 
+    def test_gas_st_is_screened_and_retires_after_two_loss_years(self):
+        # Regression: legacy gas steam (gas_st) used to be absent from the
+        # retirement screen entirely (not gas_cc/gas_ct/coal), so it could
+        # never retire on economics regardless of revenue. It is now screened
+        # with retirement_years_gas_st = 2 and fixed_om_gas_st = 35 $/kW-yr.
+        config = ScenarioConfig()
+        fleet = [_gen("S0", "gas_st", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # going_forward_cost = 35 * 1.0 * 100 * 1000 = 3_500_000.
+        # net_revenue = 10 $/MWh * 10 MW * 10 h = 1_000 << cost.
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(1, 10.0)
+
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        # First loss year: screened (counter increments), still online.
+        self.assertEqual([g.unit_id for g in fleet1], ["S0"])
+        self.assertEqual(losses1["S0"], 1)
+
+        fleet2, losses2 = apply_economic_retirements(
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
+        )
+        # Second consecutive loss year -- retired (was previously immortal).
+        self.assertEqual(fleet2, [])
+        self.assertNotIn("S0", losses2)
+
+    def test_gas_st_kept_when_a_stress_year_clears_its_fixed_cost(self):
+        # A stress-year price (the scarcity-rich case the reliability-
+        # deployment overlay restores) clears the going-forward bar, so the
+        # loss counter resets and the steam unit is kept.
+        config = ScenarioConfig()
+        fleet = [_gen("S0", "gas_st", pmax=100.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        # margin/h = (3550 - 50) * 100 = 350_000; over 10 h = 3_500_000,
+        # exactly the going-forward cost -> not a loss year.
+        prices = np.full((1, self.T), 3550.0)
+        mc = np.full((1, self.T), 50.0)
+        dispatch = self._dispatch_result(1, 100.0)
+        fleet1, losses1 = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {"S0": 1},
+            peak_demand=0.0, mc=mc,
+        )
+        self.assertEqual([g.unit_id for g in fleet1], ["S0"])
+        self.assertEqual(losses1["S0"], 0)
+
     def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
         # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
         # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).
