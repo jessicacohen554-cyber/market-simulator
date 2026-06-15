@@ -42,6 +42,86 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-15 — ERCOT — CC_REGULAR within-class misallocation (merit + spatial diagnosis; merit-ramp probe)
+
+**Scope.** The efficient CC_REGULAR plants (Wolf Hollow II 59812, Colorado Bend
+II 60122, …) run as a flat baseload block and over-generate — worst in high-gas
+2025 (WH2 +21.7%, CF 66 vs CAMPD 54) — while CAMPD shows them cycling all year.
+The CC class total passes the old ±5% bar, so this is a within-class
+*distribution* problem. This entry records the measured diagnosis (two distinct
+axes) and a merit-axis probe; the spatial axis is parked on a data dependency
+(see `docs/spatial-ruc-session-prompt.md`).
+
+**New gate (user directive, 2026-06-15).** Replace the size-tiered bar (±5% for
+≥20 TWh classes, ±1 TWh for smaller) with a **single universal gate: every
+in-scope class, every year, |model−actual| ≤ 0.33% of ISO annual generation**
+(≈1.47/1.53/1.61 TWh on ERCOT's 446/463/488 TWh; ~1/300, lands where the prior
+±1.5 TWh intuition did and scales with system size). Applied uniformly across
+classes and ISOs. Report 0.33% (tight) and 0.5% (~2.3 TWh, the energy-only LP
+structural-noise floor: the CT non-CEMS wedge and cheap-gas coal coupling live
+there). Under 0.33%, run115b has 5 in-scope fails: CT 2023/2024, **CC_REGULAR
+2024/2025 (+6.31/+3.61)**, COAL_PRB 2024 (−4.49).
+
+**Diagnosis — axis 1 (MERIT, flat econ band).** The run-92/96/97a calibration
+delta `CC_REGULAR econ_high −0.40` collapsed the econ ramp from its rising
+default (econ_low 1.16 → econ_high 1.41) into a flat/inverted block (1.06 →
+1.01): with `econ_low ≈ committed` there is no part-load window and no rising
+top, so the most-efficient unit's whole ~85% econ tranche sits at the bottom of
+the CC merit order and pins flat. Quantified: per-plant miss% correlates with
+heat rate −0.75/−0.79/−0.85 (2023/24/25), strengthening with gas price; the
+efficient tier (HR ≤ 7.11) over-runs +2.3/+3.4/+5.8% while the high-HR tier
+(HR > 8) under-runs −40/−32/−42% — a clean efficient-vs-inefficient mirror.
+Outage overlays and tranche sizing were both checked and **ruled out as
+causes**: the historic overlay covers CC_REGULAR/CC_CHP/COAL; CAMPD shows WH2/CB2
+reaching 0.91–0.93 CF (full availability — not outage-limited, the gap is ~2000
+h/yr of unmodeled cycling); and Pct_Committed is unit-specific (CAMPD-P5 min
+stable load, WH2 32.3 / CB2 36.6), peaking is per-plant (EIA-860 duct), econ is
+the residual.
+
+**Diagnosis — axis 2 (SPATIAL, the larger lever — PARKED).** Thermal miss by
+zone (2025): **North +6.1 TWh, South_Central −8.7, West −1.8, Northeast −1.0**;
+CC_REGULAR North is +4.5 TWh of the +3.6 class over-run — i.e. most of the
+"efficient over-run" is North over-generating. Load allocation is exact (model
+zonal demand == ERCOT native-load weather-zone shares). **Inter-zonal TTC is
+ruled out**: North→Houston 8000→4810 and halving South_Central imports were both
+exact no-ops (the meshed 7-zone network delivers cheap power regardless; TTCs
+already match the NP6-86 SCED archive). The binding ERCOT constraints are
+intra-zonal pockets the 7-zone model cannot form (NE_LOB 15%, Rio Grande Valley
+cluster ≈21%, HMLTN, WHARTN); the under-zone thermal ran 44 TWh "out-of-merit vs
+the hub" in 2025 — local congestion the single-system-price reduction misses.
+The fix is a **spatial reliability-deployment overlay** (per-plant out-of-merit
+floor, generalizing the CT deployment overlay), but it needs ERCOT zonal/hub
+prices (NP6-785-ER) which are not in the repo — parked. Full build prompt in
+`docs/spatial-ruc-session-prompt.md`.
+
+**Merit-ramp probe (this session).** Restore a rising econ ramp at ~base mean to
+fix the flatness without re-fighting the parked spatial/level axis or breaching
+2023: `CC_REGULAR econ_low −0.24 / econ_high −0.20` (resolved 0.92 → 1.21, mean
+1.065, committed→econ_low gap 0.05, slope 0.29). Deltas saved at
+`inputs/calibration/offer_curve_deltas_cc_merit_ramp.json`; all other run115b
+knobs unchanged. Result vs the run115b baseline (model TWh, d = model−bench):
+
+| CC_REGULAR | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| base d | −1.06 | +6.31 | +3.61 |
+| merit-ramp d | **−2.08** | **+5.18** | **+2.77** |
+
+Shape (the core complaint) is fixed: WH2 2025 sheds its 0.8–0.9 pin (5158 → 4242
+h) and fills the 0.4–0.8 cycling bands (e.g. 0.7–0.8: 8 → 684 h), tracking
+CAMPD's spread; WH2 level +21.7 → +17.6%, CB2 +15.6 → +12.8%; efficient-tier
+miss +5.8 → +3.5% (2025). **No class regresses** (PRB 2024 −4.49 → −3.97; CC_CHP
+/ ST_GAS / lignite all pass; CT unchanged). At the 0.5% gate the fail set is
+identical to base (CC 2024/2025, PRB 2024) with every magnitude smaller — a
+Pareto merit improvement. The residual CC over-run (2024 coal-coupled cheap-gas
+carve-out; 2025 the North spatial axis) is **not** closable by a year-uniform
+offer lever — measured: any econ-mean raise large enough to clear 2025 drops
+2023 *more* (2023 sheds CC to coal headroom), the documented gas-price
+year-gradient. **Kept as a measured probe / config artifact** (not promoted —
+keeper stays run115b — until the spatial overlay lands and the merit deltas fold
+into a clean-gate keeper).
+
+
+
 > **Status update (reconciled with code).** The 2026-05-17 entry below is the *earliest* ERCOT calibration snapshot and is **superseded** by a long line of later runs (the "run14"–"run24" series tracked in the backcast dashboard / `results/calibration/` bundles — render with `/calibration-report`). Crucially, the Gas-CT under-dispatch it blames on "no unit commitment" was the motivation for the **commitment layer that has since been built** (methodology spec §1.6; opt-in `commitment_enabled`), and ERCOT now defaults to CAMPD per-plant binning with tranche offer curves (§3.3). Read the entry below as history, not current state.
 
 ### 2026-05-17 — ERCOT — eGRID 2023 calibration parameterization
