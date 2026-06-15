@@ -1,44 +1,83 @@
 # ERCOT calibration — best config so far
 
-> **STATUS (2026-06-13, post-run-109a): NEW KEEPER — run 109a, the CT
-> AS-deployment overlay + ST availability retune.** The run-103→109 campaign
-> built a measured CT_PEAKER out-of-merit deployment floor (the structural
-> unlock) and re-ran the ST_GAS availability relief on top of it. Run 109a is
-> the keeper: **3 in-scope fails (beats run 97a's 4)**, the ST_GAS deficit
-> fixed across all three years, the LMP gate held. Supersedes run 97a. See the
-> "ERCOT Runs 103–109" log entry. (run 97a remains the documented prior keeper
-> and the basis the campaign stands on.)
+> **STATUS (2026-06-14, post-run-115b): NEW KEEPER — run 115b, the per-plant
+> CC duct-firing overlay + PRB-floor ease on top of run 109a.** The run-110→117
+> campaign added a measured per-plant CC peak-band structure (each CC plant's
+> duct-firing band sized from its EIA-860 nameplate-vs-net-summer gap, the
+> duct-burner flag) and eased the PRB floor 0.74 → 0.73. Run 115b is the keeper:
+> **still 3 in-scope fails (CT 2023/2024, PRB 2024)**, and it **fixes CC_REGULAR
+> 2023** (−2.3% → −0.8%) and **re-centers CC_CHP** (was running +7/+7/+10% hot,
+> now +0.6/+0.8/+3.8% — the duct mechanism strips the phantom peak band off
+> non-duct CC plants), with the 2023 coal split now passing (+2.2%) and the LMP
+> gate held (32.5 / 8.1 / 2.2 energy-only). Supersedes run 109a. See the "ERCOT
+> Runs 110–117" log entry. (run 97a remains the documented prior-prior keeper and
+> the basis the campaign stands on; run 109a is the immediate predecessor.)
+>
+> **Accepted cost (user sign-off 2026-06-14):** the CC duct lift displaces
+> CT_PEAKER in the merit order, so CT deepens vs run 109a (2023 −0.53 → −1.61,
+> 2024 −0.55 → −2.10 TWh). This is **intrinsic to the CC fix, not the ST relief**
+> — easing the relief 0.06 → 0.085/0.10 (runs 117a/b) barely moves CT (+0.1 TWh)
+> but craters ST 2024 into a fail, so 0.06 is the correct relief. CT was already
+> the documented non-CEMS-peaker fail in run 109a; it is carried deeper here as
+> the price of fixing the ±20-TWh CC class and grounding the CC peak band in
+> EIA-860 rather than hand-set values. **PRB 2024 is left lumpy (−10.3%) by
+> choice:** the 2024 anomaly is *justified* (the LP correctly idles loss-making
+> self-committed/contracted coal that ran 40–52% CF while $2.19 gas made it
+> uneconomic — no outage), so per the user's standing condition ("prefer 0.71
+> unless we find justification for the 2024 anomaly") the floor stays at 0.73
+> rather than forcing an even PRB at 0.71, which would over-run 2023 coal (split
+> +3.8%) and breach the Limestone guard (runs 114a/116b).
 
-Keeper: **run 109a / bundle `results/calibration/run109a_relief11_lig675`**
-(2026-06-13, highspy 1.14.0). Run 109a = run 97a's config **plus** three
-calibration moves that together fix the gas-side under-clearing run 97a left
-structurally diagnosed:
+Keeper: **run 115b / bundle `results/calibration/run115b_ccduct_prb73_relief06`**
+(2026-06-14, highspy 1.14.0). Run 115b = run 109a's config **plus** the per-plant
+CC duct-firing overlay, with the PRB floor eased one notch and the ST relief
+re-threaded for the new equilibrium:
 
-- **`--ct-deployment`** (CT AS/RUC-deployment overlay, default off): a measured
-  per-plant *hourly* min-generation floor that pins each CEMS-covered simple-
-  cycle peaker to its observed net output ONLY in the out-of-merit hours where
-  the RT price was below the unit's marginal cost — the IMM-documented
-  ancillary-service / reliability-unit-commitment deployment + reserve-adequacy
-  wedge the energy-only LP cannot dispatch. Measured 1.34/1.88/2.22 TWh
-  out-of-merit (29.9/35.0/42.5% of covered CT CEMS energy, matching the
-  documented 31/38/44%); realized net additive effect 0.84/1.41/1.58 TWh. The
-  in-merit hours stay economic, so CT is NOT floored to its full CEMS output. A
-  pure LP min-gen bound (no MIP — prices stay LP duals). Built by
+- **`--cc-duct-peaking` (the run-115b structural add):** each CC_REGULAR /
+  CC_CHP plant's peaking-tranche % is sized from its **EIA-860 duct-burner flag**
+  — duct-fired plants get their nameplate-vs-net-summer capability gap as the
+  expensive peak band, non-duct CC plants get **0** (no phantom scarcity band on
+  a plant that physically cannot duct-fire). Supersedes the offer curve's
+  class-wide `pct_peaking`; the band heat-rate multipliers still apply on top,
+  plants absent from the EIA-860 sheet keep the class value, and the ERCOT
+  hand-set `CC_REGULAR_PEAKING_PCT_BY_PLANT` map stays the final word for its
+  plants. Built from `fleet.cc_duct_peaking_pct()`; applied in
+  `fleet.generators_to_fleet_arrays` (`ScenarioConfig.cc_duct_peaking`).
+  **Fixes CC_REGULAR 2023 (−2.3% → −0.8%)** by moving the peak band to where the
+  duct firing actually is, and **re-centers CC_CHP** (+7.3/+7.0/+10.4% →
+  +0.6/+0.8/+3.8%) by removing the phantom band from non-duct CHP. Default off —
+  forecast mode and other ISOs are byte-identical (no-op without the flag).
+- **`--prb-floor 0.73 --prb-follower-floor 0.63`** (was 0.74 / 0.64): one notch
+  cheaper, nudging the PRB multi-year mean toward center (−3.7% → −3.3%) and
+  lifting 2023 PRB to +0.9% while keeping the **2023 coal split passing (+2.2%)**
+  and the Limestone/Martin Lake guards clean. NOT eased to 0.71/0.72 (the user's
+  even-PRB ideal): at those floors the evened 2023 PRB *is* an over-run of the
+  2023 coal plants (split +3.0/+3.8%, Limestone guard breach — runs 114a/116b),
+  and the 2024 PRB low is independently justified (self-commitment, see below),
+  so the lumpy PRB is left honest at 0.73 rather than force-flattened.
+- **`--ct-deployment`** (unchanged from run 109a): the measured per-plant hourly
+  CT out-of-merit floor; see the run-109a bullet retained below.
+- **`--wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP`** (was 0.11):
+  the cc-duct lift re-orders the low-merit stack, so the ST_GAS/ST_CHP relief is
+  re-threaded to **0.06** to hold ST 2024 in the new equilibrium (2023
+  +5.8%/+0.97, 2024 −4.2%/−0.76, 2025 +3.2%/+0.49 — all pass). This is the
+  correct level, not over-relief: easing it back toward 0.085/0.10 (runs 117a/b)
+  fails ST 2024 while barely sparing CT (the CT deepening is cc-duct-intrinsic).
+- **`--lignite-floor 0.675`** (unchanged from run 109a): lignite sigmoid
+  passthrough floor; 2023 +6.0%/2024 −6.1% both pass.
+
+**Retained run-109a foundation** (the gas-side structural unlock 115b builds on):
+
+- **`--ct-deployment`** (CT AS/RUC-deployment overlay): a measured per-plant
+  *hourly* min-generation floor pinning each CEMS-covered simple-cycle peaker to
+  its observed net output ONLY in the out-of-merit hours where the RT price was
+  below the unit's marginal cost — the IMM-documented AS / reliability-unit-
+  commitment + reserve-adequacy wedge the energy-only LP cannot dispatch.
+  Measured 1.34/1.88/2.22 TWh out-of-merit (29.9/35.0/42.5% of covered CT CEMS
+  energy). In-merit hours stay economic (CT not floored to full CEMS); a pure LP
+  min-gen bound (no MIP — prices stay LP duals). Built by
   `scripts/derive_ct_deployment.py` → `inputs/calibration/
-  ct_deployment_floor_ERCOT.parquet`; applied in
-  `fleet.generators_to_fleet_arrays` (`ScenarioConfig.ct_deployment_overlay`).
-  Fixes CT 2023 (−1.53 → −1.08) and lifts CT 2024/2025.
-- **`--wefor-residual 0.11 --wefor-relief-groups ST_GAS,ST_CHP`**: the ST_GAS/
-  ST_CHP forced-outage rate is capped at an 11% residual (the CAMPD overlay
-  already carries the ≥5-day outages), modeling the real ST availability the
-  full statistical WEFOR understates. With CT held up by the deployment floor,
-  this relief now lands: **ST_GAS 2024 −11.0% → −5.1%, all three years pass**
-  (2023 +5.4%/+0.91, 2024 −5.1%/−0.93, 2025 +1.7%/+0.26). Relief 0.11 threads
-  the per-year asymmetry — gentler underfills 2024, stronger overshoots 2023.
-- **`--lignite-floor 0.675`** (was 0.69): the CT overlay displaces marginal
-  cheap-gas lignite in 2024, so the lignite sigmoid passthrough floor is eased
-  0.69 → 0.675 to recover it; 0.675 is the thread (2023 +6.0%/+0.92 and 2024
-  −6.1%/−0.85 both pass — 0.69 fails 2024, 0.66 floods 2023).
+  ct_deployment_floor_ERCOT.parquet`.
 
 Reproduce with:
 
@@ -47,29 +86,35 @@ python scripts/run_calibration_full.py --year 2023 2024 2025 \
     --storage-daily-cycling --battery-adder 10 \
     --offer-curve-delta-json <run92/run96/run97a deltas> \  # run_config.json offer_curve_deltas
     --coal-lignite-sigmoid --lignite-floor 0.675 --lignite-ceil 1.00 \
-    --prb-floor 0.74 --prb-follower-floor 0.64 \
+    --prb-floor 0.73 --prb-follower-floor 0.63 \
     --curve-mid 0.35 --btm-backfill-year 2024 \
-    --ct-deployment --wefor-residual 0.11 --wefor-relief-groups ST_GAS,ST_CHP
+    --ct-deployment --cc-duct-peaking \
+    --wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP
 ```
 
 **The remaining 3 fails are all structurally diagnosed (do not chase):**
 
-- **CT_PEAKER 2023/2024** (−1.08/−1.55): the deployment overlay recovers the
-  CEMS-covered out-of-merit wedge (covered plants now match CEMS), but ~1.0–1.2
+- **CT_PEAKER 2023/2024** (−1.61/−2.10): the deployment overlay recovers the
+  CEMS-covered out-of-merit wedge (covered plants match CEMS), but ~1.0–1.2
   TWh/yr of bench sits in **non-CEMS small peakers** (Ector County, Permian
-  Basin, Pearsall …) that have no hourly CEMS for the overlay to key off and
-  that the merit order cannot reach. The ST relief also costs CT ~0.4 TWh/yr
-  (re-ordering the low-merit stack). Honestly diagnosed, not overlay-reachable.
-- **COAL_PRB 2024** (−10.6% / −4.64 TWh): the documented cheap-gas year-gradient
-  residual (run 90), now **deepened ~0.7 TWh** by the CT overlay displacing
-  marginal PRB under fixed demand in the cheap-gas year. This is the cost of the
-  CT/ST volume fix — accepted under the PRB carve-out. Do NOT chase (cheapening
-  PRB floods 2023/2025; the CC and ST bid levers crater their classes — runs
-  101/105/109b).
-- **2024 coal split** (−9.5%, was −8.5% in run 97a): the same CT-displaces-coal
-  effect; a ~1-point regression on the already-failing split gate, carried as
-  the documented cost of recovering the out-of-merit CT gas. The gas split holds
-  (+0.4% in 2024).
+  Basin, Pearsall …) that have no hourly CEMS for the overlay to key off and that
+  the merit order cannot reach. **Deepened vs run 109a** (−0.53/−0.55 → −1.61/
+  −2.10) because the cc-duct CC lift displaces CT in the merit order — measured
+  intrinsic to the CC fix (easing the ST relief 0.06 → 0.085/0.10 barely moves CT
+  but fails ST 2024, runs 117a/b), not relief-driven. Accepted as the price of
+  fixing the ±20-TWh CC class. Honestly diagnosed, not overlay-reachable.
+- **COAL_PRB 2024** (−10.3% / −4.49 TWh): the documented cheap-gas year-gradient
+  residual (run 90). **Justified, left lumpy by choice:** the 2024 low is the LP
+  correctly idling loss-making self-committed/contracted coal — the plants ran
+  40–52% CF while $2.19 gas put them below their marginal cost, no outage. Per
+  the user's standing condition ("prefer 0.71 unless we find justification for
+  the 2024 anomaly"), the justification holds, so the floor stays at 0.73 and the
+  spread is carried under the PRB carve-out. Do NOT chase (cheapening PRB to
+  0.71/0.72 floods 2023 coal — split +3.0/+3.8% + Limestone guard breach, runs
+  114a/116b; the CC and ST bid levers crater their classes — runs 101/105/109b).
+- **2024 coal split** (−9.3%, ~unchanged from run 109a's −9.5%): the cheap-gas
+  PRB/lignite residual; the **2023 coal split now passes (+2.2%, was over at the
+  0.71/0.72 probes)** with the 0.73 floor. The gas split holds (+1.0% in 2024).
   *PRB per-plant detail (the run-90/97a diagnosis, unchanged):* the 2024 PRB
   deficit is **distributed cheap-gas merit displacement across the whole fleet**
   — Spruce, Parish coal, Fayette, Limestone, Martin Lake, Coleto, offset by
@@ -88,6 +133,19 @@ and with CT floored the relief lands without re-cratering CT to a fail.
 
 ## Success bar (size-aware)
 
+**GRID-DELIVERED basis (2026-06-14, user directive).** Every gate below judges
+what the LP actually dispatches to the grid against what actually reached the
+grid: model = the grid LP dispatch (NO behind-the-meter CHP add-back), actual =
+EIA-923 whole-plant **minus** the per-class BTM host supply (`btm.parquet`, the
+authoritative BTM held out of the LP). The host steam is held out of the LP, so
+crediting the model for it would score generation the model never optimized.
+(The absolute TWh miss is identical to the old whole-plant basis — the BTM
+cancels — so the ±1 TWh classes are unchanged; only the ±5% denominators are
+now honest grid-delivered sizes.) The dashboard's class/system scorecard + mix
+table use the same basis (`scripts/_session_score.py`, `render_calibration_html
+.build_payload`); only the per-plant heatmaps stay whole-plant, because CEMS —
+their comparison series — is itself whole-plant.
+
 Judge each class by size, not a flat percentage (a flat % is loosest exactly
 where the system mix is dominated):
 
@@ -95,17 +153,19 @@ where the system mix is dominated):
   year.
 - class total **< 20 TWh** (ST_GAS, COAL_LIGNITE, CT_PEAKER, CT_CHP): within
   **±1 TWh** (absolute) every year.
-- CT_CHP excluded (known +28% 2025 CHP-benchmark gap).
-- **Fuel-split gate (added 2026-06-12):** total gas and total coal generation
-  each within **±2.5%** per year. Benchmark sourcing (user judgment,
-  2026-06-12): **EIA-923 is the single source of truth for 2023/2024 fossil
-  classes including the coal/gas divide** (model totals include the BTM CHP
-  add-back, since 923 reports whole-plant output); **2025 fossil is checked
-  grid-only against EIA-930** (the 2025 923 vintage is incomplete — the
-  CT_CHP +28% gap); **solar/wind are benchmarked against EIA-930 only** and
-  sit outside this gate. The two sources differ structurally (930 gas runs
-  ~14% below 923 gas on the ~35 TWh of behind-the-meter CHP host supply), so
-  never mix them within a year.
+- CT_CHP excluded (known CHP-benchmark gap; ~+49% on the grid-delivered 2025
+  basis, where the grid-delivered actual is smaller than the whole-plant 923).
+- **Fuel-split gate:** total gas and total coal **grid** generation each within
+  **±2.5%** per year — model grid gas/coal vs (EIA-923 − BTM) gas/coal for
+  2023/2024. **For 2025 the benchmark is EIA-930** (the 2025 EIA-923 is the
+  incomplete monthly-survey vintage, so 923−BTM is unreliable; EIA-930 is itself
+  grid-side and is the correct grid-delivered 2025 actual — `_session_score`
+  switches source by year). The other year's source is shown alongside as the
+  independent grid check; the two differ structurally (930 gas runs ~14% below
+  923 gas on the ~35 TWh of BTM CHP host supply, so 930 ≈ 923−BTM). On the keeper
+  the 2024 gas split sits at +1.0% vs 923−BTM / +4.2% vs 930, and the 2025 gas
+  split at +2.2% vs 930 / +3.6% vs 923−BTM. **solar/wind are benchmarked against
+  EIA-930 only** and sit outside this gate.
 - PRB carve-out (user judgment, 2026-06-12): PRB stays on the ±5% class bar
   and its year-to-year spread is accepted as long as the multi-year mean is
   centered (the run-90 gradient finding: 2023 responds at ~2.2× 2024 per
@@ -115,17 +175,25 @@ where the system mix is dominated):
   the **energy-only LMP** (raw duals). The ORDC overlay series
   (`lmp_scarcity`) is additive and never gates volumes or LMP.
 
-Never regress a class vs the keeper. Run 97a's four fails are the
-structurally diagnosed set above. Honest caveats: ST_GAS 2025 now passes
-at −0.73 (the run-97a CPS move bought the −0.99 knife edge 0.26 TWh of
-margin; any CT cheapening still spends it, the run-94 lesson), the 2024
-coal split is −8.5% (the distributed cheap-gas PRB/lignite residual,
-still failing — fleet-wide, price-responsive, not a single-plant fix),
-CT_PEAKER 2025 passes at −0.90 with 0.10 margin, and PRB's multi-year
-mean sits at −2.6% (+1.0 / −9.0 / −0.2).
+Never regress a class vs the keeper — **with one signed-off exception:** run 115b
+carries CT_PEAKER deeper than run 109a (2023/2024 −1.61/−2.10 vs −0.53/−0.55) as
+the measured, intrinsic cost of fixing the ±20-TWh CC class (the cc-duct lift
+displaces CT in merit order; not relief-reachable, runs 117a/b). Run 115b's three
+fails (CT 2023/2024, PRB 2024) are the structurally diagnosed set above. Honest
+caveats: the 2024 coal split is −9.3% grid-delivered (the cheap-gas PRB/lignite
+residual), CT runs deep (above), and PRB's multi-year mean sits at −3.3%
+(+0.9 / −10.3 / −0.6, lumpy-but-justified, see the COAL_PRB 2024 bullet).
 
 ## Config (the knobs that matter)
 
+- **CC duct-firing peak band (the run-115b structural add):**
+  `cc_duct_peaking = on` (`--cc-duct-peaking`). Sizes each CC_REGULAR/CC_CHP
+  plant's peaking tranche from its EIA-860 duct-burner flag (nameplate-vs-net-
+  summer gap; non-duct plants → 0). `fleet.cc_duct_peaking_pct()`; the hand-set
+  `CC_REGULAR_PEAKING_PCT_BY_PLANT` map still overrides for its plants. Fixes
+  CC_REGULAR 2023 and re-centers CC_CHP. Default off — other ISOs/forecast
+  byte-identical. (`cc_peaking_per_plant`, the offer-curve-`pct_peaking` analogue,
+  stays a separate off-by-default knob.)
 - **CT AS-deployment overlay (the run-109a structural unlock):**
   `ct_deployment_overlay = on` (`--ct-deployment`). The per-plant hourly
   out-of-merit floor; see the keeper bullets above and
@@ -133,11 +201,13 @@ mean sits at −2.6% (+1.0 / −9.0 / −0.2).
   `ct_deployment_floor_frac = 1.0` (the full measured wedge; a safety knob to
   dial back if a year overshoots its CT bar). Default off — forecast mode and
   any other ISO are byte-identical (no artifact → no-op).
-- **ST availability relief (the run-109a Phase-2 retune):**
-  `wefor_residual = 0.11` scoped to `wefor_residual_groups = {ST_GAS, ST_CHP}`
-  (`--wefor-residual 0.11 --wefor-relief-groups ST_GAS,ST_CHP`). Caps the
-  ST_GAS/ST_CHP forced-outage rate at the 11% short-outage residual (the CAMPD
-  overlay carries the ≥5-day events). Lands only because CT is floored first.
+- **ST availability relief (run-109a Phase-2 retune, re-threaded in run 115b):**
+  `wefor_residual = 0.06` scoped to `wefor_residual_groups = {ST_GAS, ST_CHP}`
+  (`--wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP`). Caps the
+  ST_GAS/ST_CHP forced-outage rate at the 6% short-outage residual (the CAMPD
+  overlay carries the ≥5-day events). Lands only because CT is floored first; the
+  level dropped 0.11 → 0.06 to hold ST 2024 once the cc-duct lift re-ordered the
+  low-merit stack (0.085/0.10 fail ST 2024, runs 117a/b).
 - `td_loss_factor = 0.0` (EIA-930 demand is generation-side; no gross-up).
 - Locked tier-pass-2 family: per-plant CAMPD coal must-run, gas-keyed PRB
   passthrough sigmoid (baseload + follower tiers), `coal_drop_pof`,
@@ -147,7 +217,9 @@ mean sits at −2.6% (+1.0 / −9.0 / −0.2).
   - `coal_lignite_passthrough_sigmoid = on`, **floor 0.675** (the run-109a
     thread to recover the CT-displaced lignite 2024; was 0.69 run 96→97a,
     0.75 run 85→95b) / ceil 1.00.
-  - `coal_prb_passthrough_floor = 0.74`, `coal_prb_follower_floor = 0.64`.
+  - `coal_prb_passthrough_floor = 0.73`, `coal_prb_follower_floor = 0.63`
+    (run 115b eased one notch from 0.74/0.64; NOT 0.71/0.72 — those over-run
+    2023 coal, runs 114a/116b).
   - Gas-mid/slope at the built-in defaults (2.85 / 2.5) for all tiers (the
     run-90 year-gradient finding: do NOT retune these for 2024).
 - **`offer_curve_smoothing_mid = 0.35`** (`--curve-mid 0.35`, the run-89 add).
@@ -186,19 +258,23 @@ mean sits at −2.6% (+1.0 / −9.0 / −0.2).
   is used with `ordc_lolp_shift_sigma = 0` (the published Average embeds the
   PUCT 0.5σ shift; μ/σ ≈ 0.68 in every season).
 
-## Results (P1, run 109a, vs EIA-923 incl. BTM add-back)
+## Results (P1, run 109a, GRID-DELIVERED: model grid vs EIA-923 − BTM)
 
 | class | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| CC_REGULAR | −2.3% | +2.7% | +0.9% |
-| CC_CHP | +1.0% | +0.7% | +2.2% |
+| CC_REGULAR | −2.3% | +2.9% | +0.9% |
+| CC_CHP | +1.6% | +1.1% | +3.5% |
 | COAL_PRB | +0.0% | **−10.6%** | −0.6% |
 | COAL_LIGNITE | +6.0% (+0.92 TWh) | −6.1% (−0.85 TWh) | +2.0% |
-| CT_PEAKER | **−14.1% (−1.08)** | **−18.8% (−1.55)** | +2.2% (+0.16 TWh) |
+| CT_PEAKER | **−15.5% (−1.08)** | **−21.0% (−1.55)** | +2.5% (+0.16 TWh) |
 | ST_GAS | +5.4% (+0.91) | −5.1% (−0.93) | +1.7% (+0.26 TWh) |
 | nuclear | −0.7% | −0.7% | −0.7% |
-| fuel split gas/coal | −1.8 / +1.6% | +0.4 / **−9.5%** | +2.2 / −1.8% |
+| fuel split gas/coal | −2.0 / +1.6% | +0.5 / **−9.5%** | (see 930) |
 | LMP MAE vs actual RT ($/MWh, energy-only) | 32.3 | 7.8 | 2.1 |
+
+(Grid-delivered shifts the ±5% denominators vs the old whole-plant table — the
+CHP classes most, e.g. CC_CHP +1.0% → +1.6% on the smaller grid actual — but
+the absolute TWh misses and the pass/fail verdicts are unchanged.)
 
 Bold = the 3 in-scope fails (CT 2023/2024, PRB 2024) + the carried 2024 coal
 split. Unserved energy 0.000 in all years. Plant guard: Martin Lake /
