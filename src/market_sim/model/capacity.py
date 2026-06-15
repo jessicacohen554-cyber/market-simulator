@@ -56,6 +56,7 @@ from market_sim.config.constants import (
     OFFSHORE_WIND_PARAMS,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
+    RENEWABLE_CAPACITY_CREDIT,
     VOM,
     WRIGHT_REFERENCE_GW,
 )
@@ -81,14 +82,21 @@ _THERMAL_FOM: dict[str, str] = {
     "gas_cc": "fixed_om_gas_cc",
     "gas_ct": "fixed_om_gas_ct",
     "gas_st": "fixed_om_gas_st",
+    "gas_cc_ccs": "fixed_om_gas_cc_ccs",
     "coal": "fixed_om_coal",
+    "oil": "fixed_om_oil",
+    "nuclear": "fixed_om_nuclear",
 }
 
 # Fuel classes that count toward the clean-energy share.
 _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
 
-# Fuel classes whose firm capacity backs the reliability floor.
-_FIRM_CLEAN_FUELS: tuple[str, ...] = ("nuclear", "hydro")
+# Fuel classes whose firm capacity backs the reliability floor as
+# always-present (not retirement-screened) baseload. Nuclear is NOT here: it
+# is now an economically-retirement-eligible thermal resource (_THERMAL_FOM),
+# so it is counted in the retained-thermal sum the floor protects rather than
+# pre-subtracted from peak. Only hydro (never screened) backs the floor.
+_FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
 # Per-fuel ScenarioConfig field names for the consecutive-loss threshold.
 _RETIREMENT_YEARS: dict[str, str] = {
@@ -96,6 +104,9 @@ _RETIREMENT_YEARS: dict[str, str] = {
     "gas_ct": "retirement_years_gas_ct",
     "gas_cc": "retirement_years_gas_cc",
     "gas_st": "retirement_years_gas_st",
+    "gas_cc_ccs": "retirement_years_gas_cc_ccs",
+    "oil": "retirement_years_oil",
+    "nuclear": "retirement_years_nuclear",
 }
 
 # Per-fuel ScenarioConfig field names for the effective-FOM multiplier.
@@ -104,6 +115,9 @@ _FOM_MULTIPLIER: dict[str, str] = {
     "gas_ct": "retirement_fom_multiplier_gas_ct",
     "gas_cc": "retirement_fom_multiplier_gas_cc",
     "gas_st": "retirement_fom_multiplier_gas_st",
+    "gas_cc_ccs": "retirement_fom_multiplier_gas_cc_ccs",
+    "oil": "retirement_fom_multiplier_oil",
+    "nuclear": "retirement_fom_multiplier_nuclear",
 }
 
 # Assumed total thermal-plant operating life (years), used to estimate a
@@ -1116,6 +1130,84 @@ def apply_economic_new_entry(
     return new_fleet, renewable_additions
 
 
+def accredited_firm_capacity_mw(
+    fleet: list[Generator],
+    wind_pool_mw: float = 0.0,
+    solar_pool_mw: float = 0.0,
+    storage_firm_mw: float = 0.0,
+) -> float:
+    """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
+
+    Each resource contributes the firm fraction of its nameplate it can be
+    relied on for at the system peak: thermal at ``1 - EFORd`` (UCAP),
+    variable renewables at their capacity credit
+    (:data:`RENEWABLE_CAPACITY_CREDIT`), storage at its
+    duration-dependent ELCC (passed in pre-accredited as ``storage_firm_mw``,
+    since the ELCC helper lives in the storage module). Wind/solar held in
+    the zonal pools (not Generators) are passed as ``wind_pool_mw`` /
+    ``solar_pool_mw``.
+    """
+    firm = float(storage_firm_mw)
+    firm += wind_pool_mw * RENEWABLE_CAPACITY_CREDIT["wind"]
+    firm += solar_pool_mw * RENEWABLE_CAPACITY_CREDIT["solar"]
+    for g in fleet:
+        credit = RENEWABLE_CAPACITY_CREDIT.get(g.fuel_type)
+        if credit is not None:
+            firm += g.pmax_mw * credit
+        else:
+            firm += g.pmax_mw * (1.0 - float(g.eford))
+    return firm
+
+
+def apply_reserve_margin_build(
+    fleet: list[Generator],
+    firm_capacity_mw: float,
+    peak_demand_mw: float,
+    year: int,
+    config: ScenarioConfig,
+    iso: str,
+) -> tuple[list[Generator], float]:
+    """Force-build firm capacity to meet the planning reserve margin.
+
+    The structural adequacy backstop (ReEDS/NEMS/CDR): after the economic
+    new-entry screen, if accredited firm capacity is below
+    ``peak_demand * (1 + planning_reserve_margin)`` the residual gap is
+    filled with the cheapest firm dispatchable resource (a ``gas_ct``
+    peaker), so adequacy holds even when under-priced energy/scarcity
+    revenue would otherwise under-build. The economic screen still owns the
+    profitable build; this only covers the shortfall.
+
+    Sized on nameplate (the gap is a firm-MW gap, so nameplate =
+    gap / (1 - EFORd_gas_ct)). The build is capped at the ISO's annual
+    interconnection-queue throughput so a single year cannot add unbounded
+    capacity. Returns ``(fleet, built_mw)``; a no-op (built 0) when disabled,
+    when the margin is already met, or when the queue cap is exhausted.
+    """
+    if not config.reserve_margin_build_enabled or peak_demand_mw <= 0.0:
+        return fleet, 0.0
+    required = peak_demand_mw * (1.0 + config.planning_reserve_margin)
+    firm_gap = required - firm_capacity_mw
+    if firm_gap <= 0.0:
+        return fleet, 0.0
+
+    credit = 1.0 - EFORD.get("gas_ct", 0.06)
+    nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
+    iso_config = get_iso_config(iso)
+    queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0
+    build_mw = min(nameplate_needed, queue_cap_mw) if queue_cap_mw > 0.0 \
+        else nameplate_needed
+    if build_mw <= 0.0:
+        return fleet, 0.0
+
+    zone = max(iso_config.zones, key=lambda z: z.load_share).name
+    unit = _make_new_generator(
+        "gas_ct", build_mw, zone, year, 0, config, iso_config.name
+    )
+    unit.unit_id = f"gas_ct_adequacy_{year}"
+    unit.name = unit.unit_id
+    return fleet + [unit], build_mw
+
+
 def _adjust_retrofit_capex(
     base_capex_kw: float, cumulative_gw: float | None
 ) -> float:
@@ -1431,6 +1523,33 @@ def evolve_fleet(
             storage_power_mw=storage_power_mw,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
+
+    # 6. Reserve-margin adequacy backstop: force-build firm capacity if the
+    # economic screen left the system below its planning reserve margin
+    # against the (prior-year, build-ahead-of-need) peak. Firm capacity nets
+    # the thermal fleet (UCAP) and the prior-year renewable pools / storage
+    # (threaded via prior_results). No-op unless reserve_margin_build_enabled.
+    if config.reserve_margin_build_enabled and peak_demand > 0.0:
+        wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
+        solar_pool_mw = float(
+            _prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0
+        )
+        storage_firm_mw = float(
+            _prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0
+        )
+        firm_mw = accredited_firm_capacity_mw(
+            fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw
+        )
+        fleet, adequacy_mw = apply_reserve_margin_build(
+            fleet, firm_mw, peak_demand, year, config, config.iso
+        )
+        if adequacy_mw > 0.0:
+            logger.info(
+                "year %d: reserve-margin backstop built %.0f MW gas_ct "
+                "(firm %.0f MW vs peak %.0f MW x %.3f margin)",
+                year, adequacy_mw, firm_mw, peak_demand,
+                1.0 + config.planning_reserve_margin,
+            )
 
     # Retirements, retrofits and new entry have reshaped the fleet;
     # re-collapse it into efficiency-bin representatives so the next LP solve
