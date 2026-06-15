@@ -903,6 +903,43 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
 
+# Target planning reserve margin per ISO for the reserve-margin adequacy
+# backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
+# installed-reserve-margin / planning-reserve-margin target through its
+# resource-adequacy process; ERCOT's 13.75% is its economically-optimal RM and
+# is NOT every ISO's target. The reserve-margin build resolves
+# ``PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)``,
+# so an explicit ScenarioConfig.planning_reserve_margin still overrides this
+# registry and an ISO absent here falls back to that scalar. Values are on the
+# same nameplate/ICAP basis the backstop uses (firm gap over peak).
+PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
+    # Economically-optimal RM for ERCOT's energy-only market. Source: Brattle
+    # & Astrapé, "Estimating the Economically Optimal Reserve Margin in ERCOT"
+    # (2022 update for the PUCT). This is the parity value (fallback default).
+    "ERCOT": 0.1375,
+    # CPUC Resource Adequacy program planning reserve margin (15%). Source:
+    # CPUC RA proceeding (R.21-10-002 / Decision adopting 15% PRM).
+    "CAISO": 0.15,
+    # PJM Installed Reserve Margin, raised to ~17.8% for the 2025/2026 delivery
+    # year. Source: PJM 2024 IRM/FPR study (PC, 2024-03-20), IRM ~17.8%.
+    "PJM": 0.178,
+    # MISO ICAP Planning Reserve Margin Requirement (PRMR). Source: MISO
+    # Planning Year 2024-25 LOLE Study Report (ICAP PRM ~17.9%).
+    "MISO": 0.179,
+    # SPP planning reserve margin, increased from 12% to 15% effective the 2023
+    # summer season. Source: SPP Planning Criteria Rev 4.1A (2023), §PRM.
+    "SPP": 0.15,
+    # NYCA Installed Reserve Margin set by NYSRC. Source: NYSRC 2025-2026 IRM
+    # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
+    # transmission-security constraints).
+    "NYISO": 0.244,
+    # ISO-NE: FCM sizes capacity to Net ICR rather than publishing a single RM,
+    # so this uses the NERC reference margin level for ISO-NE (~15.7%) as a
+    # stand-in until the ICR-implied margin is wired in. Source: NERC 2023 LTRA
+    # reference margin levels. needs-citation (firm ISO-NE RM filing).
+    "NEISO": 0.157,
+}
+
 # ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
 # economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
 # capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
