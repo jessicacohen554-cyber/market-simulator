@@ -518,3 +518,53 @@ def ct_deployment_floor_for_year(
         arr[hoy[valid]] = sub["floor_mw"].to_numpy(dtype=float)[valid]
         out[int(code)] = arr
     return out
+
+
+# Spatial reliability-deployment energy floor (scripts/derive_reliability_
+# deployment.py). The generalization of the CT deployment overlay to the
+# load-pocket thermal fleet (CC_REGULAR, COAL, ST_GAS, CC_CHP) in the
+# under-running zones (South_Central, West, Northeast). Same per-plant *hourly*
+# floor artifact and dense format as the CT overlay, but scoped on the load-zone
+# congestion subset: the measured CEMS net in hours where the plant was economic
+# at its LOCAL load-zone price yet out of merit at the system hub — the
+# intra-zonal congestion energy a single-system-price LP cannot dispatch.
+# Applied as a sparse min-gen bound by fleet.generators_to_fleet_arrays when
+# ScenarioConfig.reliability_deployment_overlay is set (ERCOT backcast only).
+def reliability_deployment_csv(iso: str = "ERCOT") -> Path:
+    """Return the per-ISO reliability-deployment-floor artifact path."""
+    return _CT_DEPLOYMENT_DIR / f"reliability_deployment_floor_{iso.upper()}.parquet"
+
+
+@lru_cache(maxsize=None)
+def reliability_deployment_floor_for_year(
+    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) deployment floor MW}`` for ``year``.
+
+    Reads the per-plant out-of-merit-at-hub-but-economic-locally floors written
+    by ``scripts/derive_reliability_deployment.py`` (long: ``year, plant_code,
+    hour, floor_mw``) for ``iso`` and rebuilds each plant's dense 8760-hour
+    floor (zero outside its deployment hours). Returns an empty dict when the
+    artifact is missing (the overlay then degrades to the unmodified
+    energy-only dispatch) or when the year is absent. Mirrors
+    :func:`ct_deployment_floor_for_year`; the arrays are shared read-only via
+    the cache.
+    """
+    path = reliability_deployment_csv(iso)
+    if not path.exists():
+        logger.warning(
+            "reliability deployment-floor artifact not found at %s; "
+            "the reliability deployment overlay is a no-op for %s %d",
+            path, iso.upper(), year,
+        )
+        return {}
+    df = pd.read_parquet(path)
+    df = df[df["year"] == year]
+    out: dict[int, np.ndarray] = {}
+    for code, sub in df.groupby("plant_code", observed=True):
+        arr = np.zeros(hours, dtype=float)
+        hoy = sub["hour"].to_numpy()
+        valid = (hoy >= 0) & (hoy < hours)
+        arr[hoy[valid]] = sub["floor_mw"].to_numpy(dtype=float)[valid]
+        out[int(code)] = arr
+    return out
