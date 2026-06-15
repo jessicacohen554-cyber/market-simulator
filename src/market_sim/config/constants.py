@@ -903,6 +903,33 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
 
+# ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
+# economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
+# capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
+# This is an exogenous, calibrated revenue stream — the AS analogue of the
+# scarcity overlay — NOT an AS co-optimization (out of scope). Base rates are
+# the 2023 calibration point (IMM 2023 SOM / Modo Energy): batteries earned
+# ~$169/kW-yr from AS in 2023 (~85% of their ~$196/kW total), the AS-eligible
+# fleet then ~4 GW. Thermal AS is a smaller per-kW slice (peakers/steam carry
+# more Reg/RRS/Non-Spin per MW than baseload CC). Source: Potomac Economics
+# 2023/2024 ERCOT State of the Market; Modo Energy ERCOT BESS revenue index.
+ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
+    "storage": 169.0,
+    "gas_ct": 22.0,
+    "gas_st": 15.0,
+    "gas_cc": 8.0,
+}
+
+# AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
+# the AS-eligible (mostly storage) fleet grows past the calibration point.
+# Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
+# exponent. Calibrated so the observed crash is reproduced: storage AS ~$169/kW
+# at ~4 GW (2023) -> ~$40/kW at ~6.5 GW (2024) -> ~$15-20/kW at ~10 GW (2025);
+# Modo reports AS revenue down ~90% 2023->2025. The same saturation applies to
+# thermal AS (batteries displaced thermal from Reg/RRS/ECRS).
+ERCOT_AS_SATURATION_REF_GW: float = 4.0
+ERCOT_AS_SATURATION_EXPONENT: float = 2.5
+
 # Effective load-carrying capability (ELCC) of storage as a function of
 # duration (hours), as (duration_hr, credit) breakpoints; linearly
 # interpolated, clamped at the ends. Short-duration storage covers only the
