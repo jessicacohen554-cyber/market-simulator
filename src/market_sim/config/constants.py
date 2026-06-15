@@ -903,6 +903,46 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
 
+# ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
+# economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
+# capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
+# This is an exogenous, calibrated revenue stream — the AS analogue of the
+# scarcity overlay — NOT an AS co-optimization (out of scope). Base rates are
+# the 2023 calibration point (IMM 2023 SOM / Modo Energy): batteries earned
+# ~$169/kW-yr from AS in 2023 (~85% of their ~$196/kW total), the AS-eligible
+# fleet then ~4 GW. Thermal AS is a smaller per-kW slice (peakers/steam carry
+# more Reg/RRS/Non-Spin per MW than baseload CC). Source: Potomac Economics
+# 2023/2024 ERCOT State of the Market; Modo Energy ERCOT BESS revenue index.
+ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
+    "storage": 169.0,
+    "gas_ct": 22.0,
+    "gas_st": 15.0,
+    "gas_cc": 8.0,
+}
+
+# Capacity credit (ELCC) of variable resources for the planning-reserve-margin
+# adequacy accounting — the firm fraction of nameplate each contributes to the
+# system peak. Thermal is accredited at 1 - EFORd (UCAP); storage uses
+# STORAGE_ELCC_BY_DURATION; these are the wind/solar/hydro values. ERCOT-class
+# summer-peak ELCC: solar contributes more than wind at the late-afternoon net
+# peak, both far below nameplate. Source: ERCOT CDR / ELCC studies, NREL/E3.
+RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
+    "wind": 0.16,
+    "solar": 0.18,
+    "offshore_wind": 0.30,
+    "hydro": 0.50,
+}
+
+# AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
+# the AS-eligible (mostly storage) fleet grows past the calibration point.
+# Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
+# exponent. Calibrated so the observed crash is reproduced: storage AS ~$169/kW
+# at ~4 GW (2023) -> ~$40/kW at ~6.5 GW (2024) -> ~$15-20/kW at ~10 GW (2025);
+# Modo reports AS revenue down ~90% 2023->2025. The same saturation applies to
+# thermal AS (batteries displaced thermal from Reg/RRS/ECRS).
+ERCOT_AS_SATURATION_REF_GW: float = 4.0
+ERCOT_AS_SATURATION_EXPONENT: float = 2.5
+
 # Effective load-carrying capability (ELCC) of storage as a function of
 # duration (hours), as (duration_hr, credit) breakpoints; linearly
 # interpolated, clamped at the ends. Short-duration storage covers only the
@@ -986,39 +1026,39 @@ QUEUE_CAP_GW: dict[str, float] = {
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
     "ERCOT": {
-        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "nuclear": 2.0,
+        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "gas_ct": 3.0, "nuclear": 2.0,
         "geothermal": 2.0,      # engineering judgment, EGS resource potential
         "offshore_wind": 0.0,   # Gulf coast not yet leased. Source: BOEM
     },
     "CAISO": {
-        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "nuclear": 1.0,
+        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 1.0,
         "geothermal": 3.0,      # CA geothermal resource assessment
         "offshore_wind": 3.0,   # BOEM Pacific lease areas, CAISO TPP
     },
     # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
     # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
     "PJM": {
-        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "nuclear": 1.0,
+        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "gas_ct": 2.0, "nuclear": 1.0,
         "geothermal": 0.0,      # no utility-scale resource in footprint
         "offshore_wind": 2.0,   # NJ/MD/DE BOEM lease areas
     },
     "MISO": {
-        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "nuclear": 1.0,
+        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "gas_ct": 2.0, "nuclear": 1.0,
         "geothermal": 0.0,
         "offshore_wind": 0.0,   # Great Lakes not leased
     },
     "SPP": {
-        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "nuclear": 0.5,
+        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 0.0,
     },
     "NYISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 1.5,   # NY Bight BOEM lease areas
     },
     "NEISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "nuclear": 0.5,
+        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 2.0,   # MA/RI BOEM lease areas
     },
@@ -1049,6 +1089,17 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "fom_per_kw_yr": 30.0,
         "learning_rate": 0.02,
         "base_cf": 0.55,
+        "lifetime_yr": 30,
+    },
+    "gas_ct": {  # NREL ATB 2024 frame combustion turbine / peaker. Annualized
+        # fixed cost (capex annuity + FOM) ~ the Brattle ERCOT CONE-for-2026
+        # frame-CT reference (~$162/kW-yr gross). base_cf is a nominal peaker
+        # duty cycle; the new-entry screen prices a gas_ct on its price-duration
+        # energy margin, not base_cf x mean price.
+        "capex_per_kw": 1250.0,
+        "fom_per_kw_yr": 21.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.12,
         "lifetime_yr": 30,
     },
     "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates

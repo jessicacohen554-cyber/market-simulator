@@ -1,17 +1,32 @@
 # Is this model fit to forecast ERCOT retirements and new entry?
 
-> **Update 2026-06-15 — partial fix implemented (see `docs/ordc-overlay.md`).**
-> Two of the gaps below are now addressed: (1) a **reliability-deployment
-> overlay** (`ordc_reliability_deployment_mw`, the RTORDPA analogue) restores
-> stress-year scarcity — at the recommended 2,500 MW the 2023 monthly LMP MAE
-> drops 32.5 → 12.3 and 2023 scarcity rent for the tail rises ~10× (CT_PEAKER
-> net 12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143), dispatch
-> byte-identical; (2) **legacy gas steam (`gas_st`) is now in the retirement
-> screen** (it was absent → immortal). Still open: AS *revenue* (below), the
-> entry-side fixes (CONE hurdle, `gas_ct`/storage candidates, price-duration
-> expected revenue), and the build-side reserve-margin constraint. The verdict
-> table below is unchanged in structure but the peaker/steam-gas *retirement*
-> calls are now materially better in stress years.
+> **Update 2026-06-15 — all four gaps now addressed (see `docs/ordc-overlay.md`
+> and the CHANGELOG).** The fixes below are implemented; each is default-off
+> and ERCOT-scoped where applicable, so the backcast calibration is unchanged
+> and dispatch is byte-identical (the scarcity/AS/adequacy logic lives in the
+> capacity-economics and overlay paths, not the LP):
+> 1. **Reliability-deployment overlay** (`ordc_reliability_deployment_mw`, the
+>    RTORDPA analogue): at the recommended 2,500 MW the 2023 monthly LMP MAE
+>    drops 32.5 → 12.3 and 2023 tail scarcity rent rises ~10× (CT_PEAKER net
+>    12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143).
+> 2. **AS revenue** (`as_revenue_enabled`): calibrated, saturating
+>    ancillary-service revenue (storage $169/kW-yr at the 2023 fleet, falling to
+>    ~$17 by 10 GW) credited in the retirement/new-entry/storage-entry screens —
+>    storage was ~6× undervalued without it.
+> 3. **Entry-side**: `gas_ct` is now a new-entry candidate (with a CONE-class
+>    cost and its own queue cap), and dispatchable-thermal entry is priced on a
+>    **price-duration energy margin vs annualized fixed cost** (the
+>    net-revenue-vs-CONE test) rather than flat CF × mean price.
+> 4. **Reserve-margin adequacy backstop** (`reserve_margin_build_enabled`):
+>    force-builds firm capacity to peak × (1 + 13.75%) when the economic screen
+>    under-builds — the ReEDS/NEMS/CDR structural mechanism.
+> Plus: **every fossil class (incl. oil, CCS-CC) and nuclear can now retire**
+> on economics (previously only gas_cc/gas_ct/coal — and gas_st/oil/CCS/nuclear
+> were unconditionally immortal). The verdict table below predates these fixes;
+> the peaker/steam-gas/storage entry-exit calls are now materially better,
+> especially in stress years. Remaining refinements: a tightness-responsive
+> (vs flat) reliability-deployment offset for the milder years, and validating
+> the forward trajectory end-to-end.
 
 
 
