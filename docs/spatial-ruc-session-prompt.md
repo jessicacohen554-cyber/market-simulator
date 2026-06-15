@@ -13,16 +13,30 @@ CT deployment overlay (`scripts/derive_ct_deployment.py`,
 `outages.ct_deployment_floor_for_year`, `ScenarioConfig.ct_deployment_overlay`).
 Read docs/calibration-best-so-far.md + docs/calibration-log.md first.
 
-DATA (assume already loaded this session)
-- ERCOT RTM hub/zone settlement-point prices 2023–2025 are in
-  `inputs/raw-data/lmp-data/` (ERCOT data product **NP6-785-ER**, "Historical RTM
-  Load Zone and Hub Prices"; DAM counterpart NP4-180-ER). Hubs: HB_NORTH,
-  HB_HOUSTON, HB_SOUTH, HB_WEST, HB_PAN, HB_BUSAVG/HB_HUBAVG; load zones LZ_*.
-- FIRST extend `scripts/derive_actual_lmp.py` to extract the per-hub hourly series
-  (today it keeps only HB_HUBAVG) into `inputs/calibration/actual_lmp_zonal_ERCOT.parquet`
-  (year, hour, settlement_point, rt, da). Map hubs→model zones:
-  HB_NORTH→{North,Northeast,Panhandle}, HB_HOUSTON→Houston, HB_WEST→West,
-  HB_SOUTH→{South,South_Central} (or use the LZ_* load zones for a finer map).
+DATA (present in repo — needs processing)
+- ERCOT Load-Zone-&-Hub settlement-point prices are committed in
+  `inputs/raw-data/lmp-data/`:
+    * RTM (real-time, 15-min): `*RTMLZHBSPP_2023.zip`, `*_2024.zip`, `*_2025.zip`
+    * DAM (day-ahead, hourly):  `*DAMLZHBSPP_2023.zip`, `*_2024.zip`
+  (NOTE: the `*realtime_zone_csv.zip` / `*_smd_hourly.xlsx` files in the same dir
+  are NYISO / ISO-NE — ignore them.)
+- Each zip contains ONE `.xlsx` (read with `pandas.read_excel(..., engine="openpyxl")`,
+  NOT read_csv). Columns: `Delivery Date, Delivery Hour, Delivery Interval,
+  Repeated Hour Flag, Settlement Point Name, Settlement Point Type,
+  Settlement Point Price`. Hubs: `HB_NORTH, HB_HOUSTON, HB_SOUTH, HB_WEST, HB_PAN,
+  HB_BUSAVG, HB_HUBAVG`. Load zones: `LZ_NORTH, LZ_HOUSTON, LZ_SOUTH, LZ_WEST,
+  LZ_AEN, LZ_CPS, LZ_LCRA, LZ_RAYBN`. RTM has 4 intervals/hour → average to hourly
+  (handle the `Repeated Hour Flag = Y` fall-DST hour; Delivery Hour is 1–24).
+- FIRST extend `scripts/derive_actual_lmp.py` (today it keeps only HB_HUBAVG) to
+  write `inputs/calibration/actual_lmp_zonal_ERCOT.parquet`
+  (`year, hour, settlement_point, rt, da`) on the model's fixed 8760-hour clock.
+  Map to the 7 model zones via the LZ load zones (finer than the hubs):
+    `LZ_NORTH→North`, `LZ_RAYBN→Northeast`, `LZ_HOUSTON→Houston`,
+    `LZ_WEST→{West, Panhandle}`, `LZ_SOUTH→South`,
+    `{LZ_AEN, LZ_CPS, LZ_LCRA}→South_Central` (Austin + CPS San Antonio + LCRA).
+  (Hub fallback: `HB_NORTH→North/NE/Pan`, `HB_HOUSTON→Houston`, `HB_WEST→West`,
+  `HB_SOUTH→South/South_Central`, `HB_PAN→Panhandle`.) Sanity-check that
+  `HB_HUBAVG` reproduces the existing `actual_lmp_hourly_ERCOT.parquet` `rt`.
 
 EVIDENCE FROM THE PRIOR SESSION (do not re-derive — verify briefly then build)
 - Zonal net export, 2025 model (gen−load, TWh): Houston −33.6, South_Central −19.7,
