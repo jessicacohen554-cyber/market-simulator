@@ -159,6 +159,22 @@ energy-only→overlay monthly-MAE caption and a >$200/>$500 tail-hour table; the
 energy-only LMP stays the gated calibration metric and its payload fields are
 byte-identical (the overlay only adds parallel `lmpScar`/`ordc` keys).
 
+**Dashboard annual Δ-vs-actual uses the overlay (not energy-only).** The actual
+ERCOT DA/RT series the dashboard compares against *include* the ORDC reserve
+adder, which the energy-only LP structurally cannot produce — so the displayed
+model-vs-actual deltas (the scorecard "LMP Δ vs DA/RT", the per-year card
+"annual Δ" badge, the monthly-LMP table Δ columns, and the LMP-alignment
+diagnostics) are taken against the **ORDC-overlaid** price wherever a run
+carries an overlay, falling back to energy-only only for runs/ISOs with none.
+Comparing the energy-only price against scarcity-inclusive actuals was
+apples-to-oranges and overstated the gap (e.g. run115b 2023 annual Δ vs DA
+−59% energy-only → −9% overlay; 2024 −30% → −22%). This is a display change in
+`scripts/_backcast_shell.py` only: the energy-only series is still shown and
+remains the gated metric, the overlay is never a gate, and no run payload
+changed (the overlay numbers were already baked into the `lmpScar`/`ordc`
+keys). The residual under-bias in the milder years (2024/2025) is the known
+flat-reliability-deployment-offset limitation, not a measurement artifact.
+
 ## Pre-implementation diagnostic (the honesty gate)
 
 Before any adder: is the model thin in the hours reality was thin? If not, the
