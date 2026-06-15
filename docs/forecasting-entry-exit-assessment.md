@@ -1,5 +1,20 @@
 # Is this model fit to forecast ERCOT retirements and new entry?
 
+> **Update 2026-06-15 — partial fix implemented (see `docs/ordc-overlay.md`).**
+> Two of the gaps below are now addressed: (1) a **reliability-deployment
+> overlay** (`ordc_reliability_deployment_mw`, the RTORDPA analogue) restores
+> stress-year scarcity — at the recommended 2,500 MW the 2023 monthly LMP MAE
+> drops 32.5 → 12.3 and 2023 scarcity rent for the tail rises ~10× (CT_PEAKER
+> net 12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143), dispatch
+> byte-identical; (2) **legacy gas steam (`gas_st`) is now in the retirement
+> screen** (it was absent → immortal). Still open: AS *revenue* (below), the
+> entry-side fixes (CONE hurdle, `gas_ct`/storage candidates, price-duration
+> expected revenue), and the build-side reserve-margin constraint. The verdict
+> table below is unchanged in structure but the peaker/steam-gas *retirement*
+> calls are now materially better in stress years.
+
+
+
 **Question.** The ERCOT energy-only LP backcast (keeper
 `results/calibration/run115b_ccduct_prb73_relief06`) reproduces dispatch
 volumes well but is materially off on prices, and badly off on the scarcity
@@ -149,8 +164,13 @@ findings fall out of it:
    in 2025, yet 2025 still had 31 actual >$200 hours. Any spike-dependent
    unit's 2025 scarcity component is entirely missing.
 3. **AS revenue — unmodeled — is the larger half of the miss for storage and a
-   material slice for CTs.** The model has **zero** AS revenue
-   (`ordc_as_plan_mw = 0`; no AS co-optimization — `docs/ordc-overlay.md`).
+   material slice for CTs.** The model has **zero** AS *revenue* in the
+   capacity economics: `apply_economic_retirements` net revenue = energy
+   margin + EAC/RPS attribute + capacity payment (0 for energy-only ERCOT) —
+   there is no AS term (`capacity.py`). AS-*aware* volume/cost layers do exist
+   (the `--ct-deployment` out-of-merit floor captures the AS/RUC-deployment
+   effect on CT *volumes*; `battery_dispatch_adder` folds in the AS
+   opportunity cost) — but no AS market *revenue* is credited to any unit.
    ERCOT batteries earned the *majority* of 2023–24 revenue from
    RRS/ECRS/Reg/non-spin, not energy. So even a perfectly calibrated energy
    scarcity rent would leave storage and peaker revenue badly short.
