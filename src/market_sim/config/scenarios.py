@@ -97,14 +97,22 @@ class ScenarioConfig:
     retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
+    retirement_years_gas_st: int = 2  # legacy gas steam — same grace as a CT
     retirement_fom_multiplier_coal: float = 1.3  # coal faces higher effective FOM
     # (regulatory risk, carbon liability, rising insurance). Source: Lazard LCOE 2024.
     retirement_fom_multiplier_gas_ct: float = 1.0
     retirement_fom_multiplier_gas_cc: float = 1.0
+    retirement_fom_multiplier_gas_st: float = 1.0
     retirement_reserve_margin: float = 0.15  # 15% reserve margin over peak net demand
     # Don't retire thermal below (peak_demand - firm_clean) * (1 + reserve_margin)
     fixed_om_gas_cc: float = 12.0  # $/kW-yr
     fixed_om_gas_ct: float = 8.0
+    fixed_om_gas_st: float = 35.0  # legacy gas steam (boiler/ST) going-forward fixed
+    # cost: high relative to a CC because old steam units are staffing- and
+    # maintenance-intensive. Until this field existed, gas_st was absent from the
+    # economic-retirement screen entirely (it is not gas_cc/gas_ct/coal), so old
+    # steam gas could never retire on economics regardless of revenue. Source:
+    # Lazard LCOE / NREL ATB legacy-steam FOM class ($30-40/kW-yr).
     fixed_om_coal: float = 40.0
     ira_ptc_wind: float = 26.0  # $/MWh
     ira_itc_solar: float = 0.30  # 30%
@@ -298,6 +306,27 @@ class ScenarioConfig:
     # TOD-block LOLP parameters (columns: season, tod_block, mu_mw,
     # sigma_mw — ERCOT NP6-576-ER layout). When set, overrides the flat
     # ordc_lolp_mu_mw / ordc_lolp_sigma_mw fallbacks per hour.
+    ordc_reliability_deployment_mw: float = 0.0  # Reliability-deployment /
+    # reserve-tightness offset (MW), subtracted from the model's reserves
+    # before the ORDC curve is evaluated. This is the RTORDPA analogue: the
+    # discretionary reserve withholding / out-of-market reliability
+    # deployment (ECRS/RUC) that drives real ERCOT scarcity ABOVE the
+    # published ORDC formula, which the perfect-foresight LP cannot produce
+    # (its reserves are biased high by perfect commitment). It is NOT a
+    # published ORDC parameter and NOT physically derived — it is an
+    # explicit, scenario-adjustable calibration of stress-year scarcity
+    # intensity, kept separate from the ORDC formula so the formula stays
+    # parameter-honest. The ORDC curve's nonlinearity makes it self-
+    # targeting: it lifts the adder only when reserves are already low
+    # (tight hours), leaving slack years ~unchanged. Default 0 reproduces
+    # the published-ORDC-only baseline. Recommended ERCOT value ~2,500 MW,
+    # calibrated so the 2023 stress year's scarcity pricing is reproduced
+    # under its own market design (2023 monthly LMP MAE 32.5 -> ~15 with
+    # the adder; 2024/2025 ~unchanged) — see docs/ordc-overlay.md. Values
+    # above ~4,000 MW overshoot; the full ~8,100 MW AS plan blows up (the
+    # rejected ordc_as_plan_mw netting). A forecast can vary it as a
+    # scenario knob ("2023 reserve conservatism recurs" vs "prices to
+    # fundamentals").
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1045,12 +1074,15 @@ TIER_TAGS: dict[str, int] = {
     "retirement_years_coal": 2,
     "retirement_years_gas_ct": 2,
     "retirement_years_gas_cc": 2,
+    "retirement_years_gas_st": 2,
     "retirement_fom_multiplier_coal": 2,
     "retirement_fom_multiplier_gas_ct": 2,
     "retirement_fom_multiplier_gas_cc": 2,
+    "retirement_fom_multiplier_gas_st": 2,
     "retirement_reserve_margin": 2,
     "fixed_om_gas_cc": 2,
     "fixed_om_gas_ct": 2,
+    "fixed_om_gas_st": 2,
     "fixed_om_coal": 2,
     "ira_ptc_wind": 2,
     "ira_itc_solar": 2,
@@ -1093,6 +1125,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_multistep_floor": 2,
     "ordc_as_plan_mw": 2,
     "ordc_lolp_params_path": 2,
+    "ordc_reliability_deployment_mw": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,
