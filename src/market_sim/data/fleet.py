@@ -46,6 +46,7 @@ from market_sim.data.outages import (
     default_outages_path,
     outage_masks_for_year,
     partial_outage_derate_factors,
+    reliability_deployment_floor_for_year,
     unit_outage_derate_factors,
 )
 
@@ -467,6 +468,30 @@ def generators_to_fleet_arrays(
                 int(_yr), hours, _iso or "ERCOT"
             )
     ct_deploy_plants = set(ct_deploy_floor)
+    # Spatial reliability-deployment hourly floor (config
+    # .reliability_deployment_overlay, backcast only): the load-pocket thermal
+    # fleet's measured congestion-subset CEMS energy (CC_REGULAR/COAL/ST_GAS/
+    # CC_CHP in South_Central/West/Northeast). Applied below as a sparse per-hour
+    # min-gen bound keyed by plant code, distributed cheapest-first over the
+    # plant's tranches. Like the CT deployment floor, these units keep the
+    # statistical WEFOR/POF model (the floor is sparse and below pmax), so they
+    # are only availability-capped where they coincide.
+    rd_deploy_floor: dict[int, np.ndarray] = {}
+    rd_deploy_frac = 0.0
+    if (
+        config is not None
+        and getattr(config, "reliability_deployment_overlay", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        rd_deploy_frac = float(
+            getattr(config, "reliability_deployment_floor_frac", 1.0) or 0.0
+        )
+        if rd_deploy_frac > 0.0:
+            rd_deploy_floor = reliability_deployment_floor_for_year(
+                int(_yr), hours, _iso or "ERCOT"
+            )
+    rd_deploy_plants = set(rd_deploy_floor)
     if config is not None and shoulder_hours > 0:
         run_year = config.weather_year
         summer_to_shoulder = summer_hours / shoulder_hours
@@ -735,7 +760,7 @@ def generators_to_fleet_arrays(
         getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
     )
     if (st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any
-            or ct_floor_plants or ct_deploy_plants):
+            or ct_floor_plants or ct_deploy_plants or rd_deploy_plants):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
         # (build_variable_bounds), so export sinks (pmin < 0, absorption
@@ -875,6 +900,37 @@ def generators_to_fleet_arrays(
                 "%.2f TWh of out-of-merit energy (frac %.2f)",
                 _iso or "ERCOT", _yr, len(ct_d_tranches),
                 deploy_mwh / 1e6, ct_deploy_frac,
+            )
+        # Per-plant spatial reliability-deployment hourly floor: in each
+        # load-pocket plant's measured congestion-subset hours (economic at its
+        # local load-zone price, out of merit at the system hub), force its
+        # observed net output as a minimum, distributed over the plant's
+        # tranches cheapest-first and each capped at that tranche's available MW.
+        # Keyed by plant code (any thermal class), so a split plant's tranches
+        # are gathered together. The floor is sparse (zero outside the
+        # congestion hours), so in-merit hours dispatch economically as before;
+        # ``np.maximum`` composes it with any floor already placed above.
+        if rd_deploy_plants:
+            rd_tranches: dict[int, list[int]] = {}
+            for g_idx, gen in enumerate(generators):
+                pc = int(gen.plant_code)
+                if pc in rd_deploy_plants:
+                    rd_tranches.setdefault(pc, []).append(g_idx)
+            rd_mwh = 0.0
+            for pc, idxs in rd_tranches.items():
+                idxs.sort(key=lambda i: heat_rate[i])
+                remaining = rd_deploy_frac * rd_deploy_floor[pc]  # (hours,)
+                rd_mwh += float(remaining.sum())
+                for g_idx in idxs:
+                    cap = pmax[g_idx] * availability[g_idx, :]
+                    take = np.minimum(remaining, cap)
+                    np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
+                    remaining = remaining - take
+            logger.info(
+                "reliability deployment overlay (%s %s): floored %d "
+                "pocket plant(s), %.2f TWh of congestion energy (frac %.2f)",
+                _iso or "ERCOT", _yr, len(rd_tranches),
+                rd_mwh / 1e6, rd_deploy_frac,
             )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
