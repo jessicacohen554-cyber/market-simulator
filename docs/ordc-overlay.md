@@ -152,9 +152,12 @@ separate series — `scarcity.parquet` columns `reserves_mw, lolp,
 scarcity_adder, lmp, lmp_scarcity` — next to the untouched energy-only LMP,
 which the volume calibration gates remain defined on.
 `analyze_lmp_residual.py --with-scarcity` reports the overlaid series. The
-dashboard's monthly-LMP panel is deliberately unchanged (the existing runs
-were gated on the energy-only LMP); if an overlaid series is ever added there
-it must be a clearly-labeled second series.
+backcast dashboard's monthly-LMP panel now draws the overlaid series
+(`lmp_scarcity`) as a clearly-labeled, display-only second line — "Model + ORDC
+overlay" — beside the energy-only Model and actual DA/RT, with a per-year
+energy-only→overlay monthly-MAE caption and a >$200/>$500 tail-hour table; the
+energy-only LMP stays the gated calibration metric and its payload fields are
+byte-identical (the overlay only adds parallel `lmpScar`/`ordc` keys).
 
 ## Pre-implementation diagnostic (the honesty gate)
 

@@ -47,3 +47,14 @@ inputs/processed/.offer_curve_jacobian_cache.json
 /results/calibration/_warm_2023/
 /results/calibration/caiso_reprice_pass*/
 /results/calibration/caiso_probe2_*/
+
+# Forecast / scenario run caches: transient per-ISO LP outputs keyed by
+# cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
+# are tracked; capacity-expansion forecast runs are reproducible from config.
+/results/ERCOT/
+/results/CAISO/
+/results/PJM/
+/results/MISO/
+/results/SPP/
+/results/NYISO/
+/results/NEISO/
