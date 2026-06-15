@@ -548,7 +548,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             reserves = reserve_headroom(
                 fleet_arrays, result.dispatch, storage.power_cap,
                 result.storage_charge, result.storage_discharge,
-                config.ordc_as_plan_mw,
+                config.ordc_as_plan_mw + config.ordc_reliability_deployment_mw,
                 renewable_headroom=ren_headroom,
             )
             d_tot = year_demand.sum(axis=0)
