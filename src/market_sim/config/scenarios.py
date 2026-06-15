@@ -98,11 +98,17 @@ class ScenarioConfig:
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
     retirement_years_gas_st: int = 2  # legacy gas steam — same grace as a CT
+    retirement_years_oil: int = 2  # oil/distillate peakers/steam
+    retirement_years_gas_cc_ccs: int = 3  # CCS-equipped CC, like a modern CC
+    retirement_years_nuclear: int = 3  # nuclear — long grace (irreversible exit)
     retirement_fom_multiplier_coal: float = 1.3  # coal faces higher effective FOM
     # (regulatory risk, carbon liability, rising insurance). Source: Lazard LCOE 2024.
     retirement_fom_multiplier_gas_ct: float = 1.0
     retirement_fom_multiplier_gas_cc: float = 1.0
     retirement_fom_multiplier_gas_st: float = 1.0
+    retirement_fom_multiplier_oil: float = 1.0
+    retirement_fom_multiplier_gas_cc_ccs: float = 1.0
+    retirement_fom_multiplier_nuclear: float = 1.0
     retirement_reserve_margin: float = 0.15  # 15% reserve margin over peak net demand
     # Don't retire thermal below (peak_demand - firm_clean) * (1 + reserve_margin)
     fixed_om_gas_cc: float = 12.0  # $/kW-yr
@@ -114,6 +120,14 @@ class ScenarioConfig:
     # steam gas could never retire on economics regardless of revenue. Source:
     # Lazard LCOE / NREL ATB legacy-steam FOM class ($30-40/kW-yr).
     fixed_om_coal: float = 40.0
+    fixed_om_oil: float = 25.0  # legacy oil/distillate steam & CT — high O&M,
+    # rarely run. Source: Lazard LCOE / EIA O&M.
+    fixed_om_gas_cc_ccs: float = 25.0  # CC + capture island going-forward fixed
+    # cost (host CC O&M + capture O&M). Source: NETL Rev 4 / NREL ATB CCS.
+    fixed_om_nuclear: float = 130.0  # existing nuclear avoidable fixed O&M
+    # (staffing, security, NRC fees) — large, but high net revenue keeps most
+    # reactors solvent; the screen lets a genuinely uneconomic one exit.
+    # Source: NEI / EIA nuclear operating-cost surveys, NREL ATB.
     ira_ptc_wind: float = 26.0  # $/MWh
     ira_itc_solar: float = 0.30  # 30%
     ira_itc_storage: float = 0.30
@@ -327,6 +341,32 @@ class ScenarioConfig:
     # rejected ordc_as_plan_mw netting). A forecast can vary it as a
     # scenario knob ("2023 reserve conservatism recurs" vs "prices to
     # fundamentals").
+    as_revenue_enabled: bool = False  # Credit ERCOT ancillary-service market
+    # revenue (Reg/RRS/ECRS/Non-Spin) in the capacity economics — the
+    # retirement, new-entry and storage-entry screens. Default off (energy +
+    # scarcity only, byte-identical baseline); recommended on for ERCOT
+    # forecasts. ERCOT-only: capacity-market ISOs already recover fixed cost
+    # through capacity_revenue_per_mw_yr. Without it, storage is undervalued
+    # ~6x (AS was ~85% of 2023 ERCOT battery revenue) and tail thermal under-
+    # earns. The per-tech rates and saturation live in constants.ERCOT_AS_*;
+    # the revenue saturates steeply as the AS-eligible (mostly storage) fleet
+    # grows (Modo: battery AS revenue fell ~90% 2023->2025). See
+    # docs/ordc-overlay.md (AS revenue).
+    as_revenue_multiplier: float = 1.0  # Scenario scale on the calibrated AS
+    # revenue rates (forward AS-price view: tighter/looser AS markets).
+    reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
+    # economic new-entry screen, force-build firm (gas_ct) capacity if the
+    # system's accredited firm capacity is below peak * (1 + planning reserve
+    # margin). This is the ReEDS/NEMS/CDR structural adequacy mechanism — it
+    # keeps the lights on when under-priced energy/scarcity revenue would
+    # otherwise under-build, independent of getting prices exactly right. The
+    # economic screen still decides the profitable build; this only fills the
+    # residual adequacy gap. Default off (byte-identical); recommended on for
+    # forecasts. Uses the prior year's peak (build-ahead-of-need).
+    planning_reserve_margin: float = 0.1375  # Target planning reserve margin
+    # for the adequacy backstop. 13.75% is ERCOT's economically-optimal reserve
+    # margin (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO
+    # would use its installed-reserve-margin target.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1075,15 +1115,24 @@ TIER_TAGS: dict[str, int] = {
     "retirement_years_gas_ct": 2,
     "retirement_years_gas_cc": 2,
     "retirement_years_gas_st": 2,
+    "retirement_years_oil": 2,
+    "retirement_years_gas_cc_ccs": 2,
+    "retirement_years_nuclear": 2,
     "retirement_fom_multiplier_coal": 2,
     "retirement_fom_multiplier_gas_ct": 2,
     "retirement_fom_multiplier_gas_cc": 2,
     "retirement_fom_multiplier_gas_st": 2,
+    "retirement_fom_multiplier_oil": 2,
+    "retirement_fom_multiplier_gas_cc_ccs": 2,
+    "retirement_fom_multiplier_nuclear": 2,
     "retirement_reserve_margin": 2,
     "fixed_om_gas_cc": 2,
     "fixed_om_gas_ct": 2,
     "fixed_om_gas_st": 2,
     "fixed_om_coal": 2,
+    "fixed_om_oil": 2,
+    "fixed_om_gas_cc_ccs": 2,
+    "fixed_om_nuclear": 2,
     "ira_ptc_wind": 2,
     "ira_itc_solar": 2,
     "ira_itc_storage": 2,
@@ -1126,6 +1175,10 @@ TIER_TAGS: dict[str, int] = {
     "ordc_as_plan_mw": 2,
     "ordc_lolp_params_path": 2,
     "ordc_reliability_deployment_mw": 2,
+    "as_revenue_enabled": 1,
+    "as_revenue_multiplier": 2,
+    "reserve_margin_build_enabled": 1,
+    "planning_reserve_margin": 2,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "coal_peak_hr_penalty": 3,

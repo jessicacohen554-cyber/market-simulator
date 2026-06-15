@@ -35,6 +35,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.model.capacity import CumulativeDeployment
 from market_sim.policy.ira import ira_phaseout_fraction
 
@@ -784,12 +785,17 @@ def apply_storage_new_entry(
         capacity_value = estimate_capacity_value(
             tech_name, existing_mw, config, iso
         )
+        # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
+        # 2023 battery revenue and absent from the energy-arbitrage + capacity
+        # value stack above. Saturates on the existing storage fleet, so each
+        # year's marginal build sees the AS rate at the current penetration.
+        as_revenue = as_revenue_per_mw_yr("storage", existing_mw, config)
         ref_key = "li_ion" if "li_ion" in tech_name else tech_name
         cum_gw = cumulative.get(ref_key) if cumulative else None
         cost = compute_storage_annual_cost(
             tech_name, year, config, cumulative_gw=cum_gw
         )
-        margin = revenue + capacity_value - cost
+        margin = revenue + capacity_value + as_revenue - cost
         if margin > 0.0:
             margins.append((margin, tech_name))
 

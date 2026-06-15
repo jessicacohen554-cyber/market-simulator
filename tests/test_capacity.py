@@ -202,6 +202,26 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual([g.unit_id for g in fleet1], ["S0"])
         self.assertEqual(losses1["S0"], 0)
 
+    def test_every_fossil_class_and_nuclear_is_retirement_eligible(self):
+        # Regression: oil, gas_cc_ccs and nuclear were not screened; now every
+        # fossil class and nuclear can retire on economics. A deeply
+        # unprofitable unit of each accumulates a loss year (is screened).
+        from market_sim.model.capacity import _THERMAL_FOM
+        for fuel in ("coal", "gas_cc", "gas_ct", "gas_st", "gas_cc_ccs",
+                     "oil", "nuclear"):
+            self.assertIn(fuel, _THERMAL_FOM, fuel)
+        config = ScenarioConfig()
+        for fuel in ("oil", "nuclear", "gas_cc_ccs"):
+            fleet = [_gen("U0", fuel, pmax=100.0)]
+            arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+            prices = np.full((1, self.T), 1.0)  # far below any fixed cost
+            dispatch = self._dispatch_result(1, 1.0)
+            _, losses = apply_economic_retirements(
+                fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+                mc=np.zeros((1, self.T)),
+            )
+            self.assertEqual(losses.get("U0"), 1, f"{fuel} not screened")
+
     def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
         # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
         # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).
@@ -303,6 +323,54 @@ class TestEconomicRetirements(unittest.TestCase):
         )
         self.assertEqual([g.unit_id for g in fleet1], ["W0"])
         self.assertEqual(losses1, {})
+
+
+class TestReserveMarginBuild(unittest.TestCase):
+    """The adequacy backstop: force-build firm capacity to the reserve margin."""
+
+    def test_firm_capacity_accredits_by_resource(self):
+        from market_sim.model.capacity import accredited_firm_capacity_mw
+        fleet = [
+            _gen("cc", "gas_cc", pmax=1000.0),   # eford default 0.05 in Generator
+            _gen("n", "nuclear", pmax=1000.0),
+        ]
+        # Thermal nets to UCAP (1 - eford); pool renewables to their credit.
+        firm = accredited_firm_capacity_mw(
+            fleet, wind_pool_mw=1000.0, solar_pool_mw=1000.0,
+            storage_firm_mw=500.0,
+        )
+        # 500 storage + 160 wind + 180 solar + thermal UCAP (both < nameplate).
+        self.assertGreater(firm, 500.0 + 160.0 + 180.0)
+        self.assertLess(firm, 500.0 + 160.0 + 180.0 + 2000.0)
+
+    def test_backstop_builds_to_meet_margin(self):
+        from market_sim.model.capacity import apply_reserve_margin_build
+        config = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        fleet = [_gen("cc", "gas_cc", pmax=1000.0)]
+        new_fleet, built = apply_reserve_margin_build(
+            fleet, firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
+            year=2030, config=config, iso="ERCOT",
+        )
+        # required = 8000 * 1.1375 = 9100; gap = 4100 firm -> >0 nameplate.
+        self.assertGreater(built, 0.0)
+        self.assertTrue(
+            any(g.unit_id == "gas_ct_adequacy_2030" for g in new_fleet)
+        )
+
+    def test_backstop_noop_when_disabled_or_adequate(self):
+        from market_sim.model.capacity import apply_reserve_margin_build
+        # Disabled: no build even when short.
+        off = ScenarioConfig(iso="ERCOT")
+        _, b0 = apply_reserve_margin_build(
+            [], 0.0, 8000.0, 2030, off, "ERCOT"
+        )
+        self.assertEqual(b0, 0.0)
+        # Enabled but already adequate: no build.
+        on = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        _, b1 = apply_reserve_margin_build(
+            [], 9999.0, 8000.0, 2030, on, "ERCOT"
+        )
+        self.assertEqual(b1, 0.0)
 
 
 class TestRetirementMargin(unittest.TestCase):
@@ -721,11 +789,13 @@ class TestEconomicNewEntry(unittest.TestCase):
         # No technology exceeds its own per-tech cap.
         for tech, built_mw in by_tech.items():
             self.assertLessEqual(built_mw, caps[tech] * 1000.0 + 1e-6)
-        # gas_cc has the highest margin and wind the next, so both build
-        # to their full per-tech caps; solar is squeezed by the ISO total.
+        # With free fuel at $250 the two dispatchable gas techs have the
+        # highest margins, so both build to their full per-tech caps.
         self.assertAlmostEqual(by_tech["gas_cc"], caps["gas_cc"] * 1000.0)
-        self.assertAlmostEqual(by_tech["wind"], caps["wind"] * 1000.0)
-        self.assertLess(by_tech["solar"], caps["solar"] * 1000.0)
+        self.assertAlmostEqual(by_tech["gas_ct"], caps["gas_ct"] * 1000.0)
+        # The ISO total cap (12 GW) binds below the 16 GW sum of per-tech
+        # caps, so a lower-margin tech is squeezed below its own cap.
+        self.assertLess(by_tech.get("solar", 0.0), caps["solar"] * 1000.0)
         # Wind and solar are routed to the renewable pools, not the fleet.
         self.assertFalse(
             any(g.fuel_type in ("wind", "solar") for g in new_fleet)
@@ -757,23 +827,44 @@ class TestEconomicNewEntry(unittest.TestCase):
         self.assertEqual(additions, {})
 
     def test_gas_cc_charged_its_fuel_cost(self):
-        # At a $40/MWh average price and $3.50/MMBtu gas, a gas CC's
-        # expected variable fuel cost pushes its margin negative, so it
-        # does not build. Ignoring fuel cost (the prior bug) would let it
-        # build every year regardless of economics.
+        # The price-duration screen runs a CC only when the price clears its
+        # marginal (fuel) cost. At a flat $40/MWh with expensive $9/MMBtu gas
+        # the CC's variable cost exceeds the price every hour, so its energy
+        # margin is zero and it does not build. Ignoring fuel cost (the prior
+        # bug) would let it build regardless of economics.
         config = ScenarioConfig(iso="ERCOT")
         prices = np.full(8760, 40.0)
 
         priced, _ = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=3.50
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=9.0
         )
         self.assertFalse(any(g.fuel_type == "gas_cc" for g in priced))
 
-        # With fuel treated as free, the same screen builds gas CC.
+        # With fuel treated as free, the same $40 price clears the CC's cost
+        # every hour, so it builds.
         free, _ = apply_economic_new_entry(
             [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=0.0
         )
         self.assertTrue(any(g.fuel_type == "gas_cc" for g in free))
+
+    def test_gas_ct_peaker_enters_on_scarcity_tail_not_flat_price(self):
+        # A simple-cycle peaker (gas_ct) is now a new-entry candidate, priced
+        # on its price-duration energy margin. It clears against a scarcity-
+        # rich curve (a few hundred high-price hours, where a peaker earns its
+        # margin) but not against a flat price that never exceeds its cost.
+        config = ScenarioConfig(iso="ERCOT")
+        tail = np.full(8760, 25.0)
+        tail[:250] = 5000.0  # the scarcity hours a peaker lives on
+        built, _ = apply_economic_new_entry(
+            [], tail, 2030, config, "ERCOT", gas_price_per_mmbtu=3.5
+        )
+        self.assertTrue(any(g.fuel_type == "gas_ct" for g in built))
+
+        flat = np.full(8760, 25.0)  # never clears the peaker's marginal cost
+        none, _ = apply_economic_new_entry(
+            [], flat, 2030, config, "ERCOT", gas_price_per_mmbtu=3.5
+        )
+        self.assertFalse(any(g.fuel_type == "gas_ct" for g in none))
 
     def test_nuclear_builds_only_when_prices_clear_capex(self):
         # Nuclear's ~$6800/kW capex needs high sustained prices to clear.
@@ -1275,8 +1366,11 @@ class TestCapacityIntegration(unittest.TestCase):
             egs_available_year=2099, offshore_wind_available_year=2099,
         )
         prices = np.full(8760, 250.0)
+        # Expensive gas suppresses the dispatchable gas candidates (their
+        # variable cost exceeds the price), isolating the renewable per-tech
+        # cap behaviour this test targets.
         new_fleet, additions = apply_economic_new_entry(
-            [], prices, 2030, config, "ERCOT"
+            [], prices, 2030, config, "ERCOT", gas_price_per_mmbtu=50.0
         )
 
         by_tech = _entry_by_tech(new_fleet, additions)
