@@ -354,6 +354,24 @@ class ScenarioConfig:
     # docs/ordc-overlay.md (AS revenue).
     as_revenue_multiplier: float = 1.0  # Scenario scale on the calibrated AS
     # revenue rates (forward AS-price view: tighter/looser AS markets).
+    ercot_market_design: str = "auto"  # ERCOT scarcity-pricing regime:
+    # "ordc"  — the 2014-Dec2025 ORDC + RTORDPA reliability-deployment design
+    #           (RTORPA from the ORDC curve PLUS the discretionary ECRS/RUC
+    #           reserve withholding the reliability-deployment offset stands in
+    #           for — the design that produced the 2023 prices).
+    # "rtcb"  — the RTC+B design (live 2025-12-05): AS demand curves co-optimized
+    #           in SCED. Still ORDC-shaped/VOLL-anchored, so the overlay is the
+    #           right first-order representation, but the 2023 reserve-withholding
+    #           conservatism was reformed, so the reliability-deployment offset
+    #           does NOT carry forward unless rtcb_reliability_deployment_mw is set.
+    # "auto"  — year-gated: ORDC for years <= 2025, RTC+B for >= 2026.
+    # This is what separates the (erroneous) 2023 backcast design from the
+    # forward design: ordc_reliability_deployment_mw applies only in the ORDC
+    # regime; the RTC+B regime uses rtcb_reliability_deployment_mw (default 0).
+    rtcb_reliability_deployment_mw: float = 0.0  # Reliability-deployment offset
+    # under the RTC+B regime (forecast). Default 0 — RTC+B reformed the ECRS
+    # conservatism, so forward scarcity prices to fundamentals. Set > 0 to model
+    # a scenario where 2023-style reserve conservatism recurs under RTC+B.
     reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
     # economic new-entry screen, force-build firm (gas_ct) capacity if the
     # system's accredited firm capacity is below peak * (1 + planning reserve
@@ -1177,6 +1195,8 @@ TIER_TAGS: dict[str, int] = {
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "as_revenue_multiplier": 2,
+    "ercot_market_design": 1,
+    "rtcb_reliability_deployment_mw": 2,
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
     "cc_peak_hr_penalty": 3,
