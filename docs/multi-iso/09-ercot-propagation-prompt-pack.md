@@ -240,6 +240,15 @@ fire for every non-ERCOT ISO, and backfill any per-ISO config they need.
 policy improvements are live for all seven ISOs; any missing per-ISO datum is
 filed with a citation.
 
+**Status: DONE.** `tests/test_iso_coverage.py` (parametrized over
+`_ISO_BUILDERS`) confirms, for every ISO: gas_ct is a new-entry candidate with
+a `QUEUE_CAP_PER_TECH_GW[iso]["gas_ct"]` cap; all seven thermal fuel classes
+are in the retirement screen; an import node resolves where the ISO has import
+tranches; and ERCOT carries no import node and a zero state carbon price
+(parity). **No config gap was found — no backfill and no engine-code change
+were needed.** Per-ISO results are tabulated in
+`docs/multi-iso/propagation-coverage.md`.
+
 ---
 
 ### W2a — Generalize curated fleet dicts to per-ISO artifacts  *(after W1b; G4)*
