@@ -920,6 +920,19 @@ ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
     "gas_cc": 8.0,
 }
 
+# Capacity credit (ELCC) of variable resources for the planning-reserve-margin
+# adequacy accounting — the firm fraction of nameplate each contributes to the
+# system peak. Thermal is accredited at 1 - EFORd (UCAP); storage uses
+# STORAGE_ELCC_BY_DURATION; these are the wind/solar/hydro values. ERCOT-class
+# summer-peak ELCC: solar contributes more than wind at the late-afternoon net
+# peak, both far below nameplate. Source: ERCOT CDR / ELCC studies, NREL/E3.
+RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
+    "wind": 0.16,
+    "solar": 0.18,
+    "offshore_wind": 0.30,
+    "hydro": 0.50,
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
