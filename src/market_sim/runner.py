@@ -59,6 +59,7 @@ from market_sim.model.commitment import (
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.storage import (
+    _elcc_for_duration,
     apply_storage_new_entry,
     build_default_storage,
     storage_units_to_arrays,
@@ -577,6 +578,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             "mc_cost": mc_cost,
             "rps_shadow_price": result.rps_shadow_price or 0.0,
             "retrofit_log": retrofit_log,
+            # AS-eligible (storage) fleet power for the AS-revenue saturation
+            # in next year's capacity screens (capacity.evolve_fleet).
+            "storage_power_mw": float(sum(storage.power_cap))
+            if storage.power_cap.ndim == 1
+            else float(storage.power_cap.sum(axis=0).max()),
+            # Renewable-pool and accredited-storage-firm capacity for next
+            # year's reserve-margin adequacy backstop.
+            "wind_cap_mw": float(np.sum(wind_cap)),
+            "solar_cap_mw": float(np.sum(solar_cap)),
+            "storage_firm_mw": float(sum(
+                u.power_cap_mw * _elcc_for_duration(
+                    u.energy_cap_mwh / u.power_cap_mw
+                    if u.power_cap_mw > 0 else 0.0
+                )
+                for u in storage_units
+            )),
         }
 
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
