@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-15 (multi-ISO — W1b: per-plant CAMPD binning & historic-outage overlay go per-ISO)
+
+Generalized two ERCOT-locked fleet behaviors so they resolve per ISO, with an
+ERCOT byte-identical guard (ERCOT stays on its exact prior path).
+
+- **Per-plant CAMPD binning unlocked beyond ERCOT.** `runner.py`'s binning gate
+  was hard-coded to `iso == "ERCOT"`; it now keys off the new
+  `constants.CAMPD_BINNING_ISOS = {ERCOT, CAISO, NEISO, NYISO, PJM}`. ERCOT still
+  reads its curated `custom-bin-assignments.csv`; the other CAMPD ISOs synthesize
+  the same per-plant bins frame from the EIA-860 fleet plus their CAMPD-derived
+  `thermal_tranches_<ISO>.csv` via `fleet_to_bins` (the runner now mirrors
+  `run_calibration.py`, filtering raw units by the exact binned `(plant_code,
+  plant_group)` set so no plant is dropped or double-counted). ISOs without a
+  bin artifact (MISO, SPP) cleanly fall back to the legacy `aggregate_fleet`
+  path, exactly as before.
+- **`historic_outage_overlay` default is now per-ISO.** New registry
+  `constants.HISTORIC_OUTAGE_OVERLAY_BY_ISO` sets the effective default: `True`
+  for the facility-summed ERCOT extract (the unit-level derate only supplements
+  it), `False` for ISOs whose unit-level CAMPD file is the complete source
+  (CAISO/NEISO/NYISO/PJM), so the two layers don't double-count. The runner
+  resolves `registry.get(iso, config.historic_outage_overlay)` and threads the
+  result into the fleet-array build without mutating the recorded run config;
+  the `ScenarioConfig` flag remains the fallback for ISOs absent from the
+  registry. No outage function signatures changed.
+- Tests: `tests/test_runner.py` covers the per-ISO binning path (ERCOT curated
+  sheet, CAISO/NEISO/NYISO/PJM synth, MISO/SPP legacy fallback) and the overlay
+  resolution (ERCOT→True, PJM→False, unlisted→config flag).
+
 ## 2026-06-15 (W1a — per-ISO planning reserve margin)
 
 The reserve-margin adequacy backstop
