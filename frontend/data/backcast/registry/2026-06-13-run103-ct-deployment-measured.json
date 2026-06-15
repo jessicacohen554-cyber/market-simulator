@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-13-run103-ct-deployment-measured",
+  "label": "run103 ct-deployment (MEASURED PROBE)",
+  "date": "2026-06-13",
+  "shorthand": "run103-ct-deployment-measured",
+  "definition": "MEASURED PROBE, not a keeper. CT AS-deployment overlay alone on the run97a config (--ct-deployment frac 1.0). 5 fails: fixes CT 2023 (-1.53->-0.69), lifts CT 2024/2025 (+0.84/1.41/1.58 TWh net), but the floored CT displaces ST_GAS 2025 and lignite 2024 in the low-price out-of-merit hours (new fails). The structural-unlock basis for the run104-109 ST availability retune -> keeper run109a.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-13-run103-ct-deployment-measured.js",
+  "bundle": "results/calibration/run103_ct_deployment"
+}
