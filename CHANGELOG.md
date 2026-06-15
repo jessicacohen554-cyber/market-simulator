@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-06-15 (capacity — AS revenue + new-entry peaker candidate + price-duration entry economics)
+
+Entry/exit fitness fixes 2-3 from docs/forecasting-entry-exit-assessment.md.
+
+- **Ancillary-service revenue** (see prior entry; src/market_sim/model/
+  ancillary.py) credited in the retirement, new-entry and storage-entry
+  screens.
+- **gas_ct (simple-cycle peaker) is now a new-entry candidate**
+  (`_NEW_ENTRY_TECHS`), with NEW_ENTRY_COSTS data (NREL ATB / Brattle ERCOT
+  CONE frame-CT ~$162/kW-yr) and its own per-ISO interconnection-queue cap
+  (ERCOT 3 GW/yr). Previously the model could not forecast new peaker entry at
+  all.
+- **Price-duration new-entry economics for dispatchable thermal:** gas_cc and
+  gas_ct expected revenue is now the price-duration energy margin
+  `sum_t max(price_t - var_cost, 0)` vs annualized fixed cost (the
+  net-revenue-vs-CONE test), replacing the flat `base_cf x mean(price)` that
+  ignored the price shape and understated peakers severalfold (they earn in the
+  scarcity tail, not at the mean). Renewable/nuclear CF-profile path unchanged.
+- Tests: gas_ct peaker-entry regression added; two queue-cap tests updated for
+  the new candidate mix; gas_cc fuel-cost test updated to the corrected
+  price-duration economics (a CC facing a flat price above its marginal cost
+  correctly runs baseload). test_capacity + test_storage + test_soundness +
+  test_ancillary green.
+
 ## 2026-06-15 (ERCOT — reliability-deployment scarcity overlay + steam-gas retirement screen)
 
 Fixes the two entry/exit gaps `docs/forecasting-entry-exit-assessment.md`
