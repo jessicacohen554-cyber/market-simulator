@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-15 (backcast dashboard — annual LMP Δ measured against the ORDC overlay)
+
+Fixed the dashboard's model-vs-actual LMP deltas so they compare like-for-like.
+The actual ERCOT DA/RT series the dashboard scores against *include* the ORDC
+reserve-price adder, which the energy-only dispatch LP structurally cannot
+produce — so measuring the energy-only model price against the scarcity-
+inclusive actuals was apples-to-oranges and made the model look far off (e.g.
+run115b/run118 2023 annual Δ vs DA ≈ −59%, 2024 ≈ −30%).
+
+- **All displayed annual/monthly LMP Δ-vs-actual now use the ORDC-overlaid
+  price** (energy LMP + ORDC/reliability-deployment adder) wherever a run
+  carries an overlay, falling back to energy-only only for runs/ISOs with none.
+  Affects the run scorecard ("LMP Δ vs DA/RT" + the "Avg LMP" KPI, now tinted
+  and labeled "model + ORDC" when overlaid), the per-year LMP card "annual Δ"
+  badge, the monthly-LMP table Δ columns + annual row, and the LMP-alignment
+  diagnostics. With the fix, run115b annual Δ vs DA: 2023 −59% → **−9%**, 2024
+  −30% → **−22%**, 2025 −1.8% → **−1.6%**.
+- New helpers `avgLMPScar` (demand-weighted annual overlay average, refactored
+  out of the monthly table) and `avgLMPDelta` (overlay-when-present, else
+  energy-only) in `scripts/_backcast_shell.py`.
+- Display-only and non-gating by construction: the energy-only series is still
+  shown beside the overlay, it remains the gated calibration metric, and **no
+  run payload changed** — the overlay values were already baked into the
+  `lmpScar`/`ordc` keys, so this is a pure dashboard-rendering fix (no re-run).
+  The residual 2024/2025 under-bias is the documented flat-reliability-
+  deployment-offset limitation (anchored to the 2023 stress year), not a
+  measurement artifact. See `docs/ordc-overlay.md`.
+
 ## 2026-06-15 (multi-ISO — W1b: per-plant CAMPD binning & historic-outage overlay go per-ISO)
 
 Generalized two ERCOT-locked fleet behaviors so they resolve per ISO, with an
