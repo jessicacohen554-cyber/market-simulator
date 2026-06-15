@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-14-run115b-cc-duct-prb",
+  "label": "run115b cc-duct + PRB 0.73 (KEEPER)",
+  "date": "2026-06-14",
+  "shorthand": "run115b-cc-duct-prb",
+  "definition": "NEW KEEPER (supersedes run109a). run109a + per-plant CC duct-firing overlay (--cc-duct-peaking: each CC plant's peak band sized from its EIA-860 duct-burner flag) + PRB floor 0.74->0.73 + ST relief re-threaded 0.11->0.06. 3 in-scope fails {CT 2023/2024, PRB 2024}; FIXES CC_REGULAR 2023 (-2.3->-0.8%) and re-centers CC_CHP (+7/+7/+10 -> +0.6/+0.8/+3.8%); 2023 coal split passes (+2.2%); ST all pass; LMP 32.5/8.1/2.2 holds. Accepted cost (signed off): CT deepens (-0.5 -> -1.6/-2.1 TWh), measured cc-duct-intrinsic not relief-driven. PRB 2024 left lumpy by choice (the anomaly is justified: LP correctly idles loss-making self-committed coal).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-14-run115b-cc-duct-prb.js",
+  "bundle": "results/calibration/run115b_ccduct_prb73_relief06"
+}

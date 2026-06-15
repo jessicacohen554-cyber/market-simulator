@@ -1,6 +1,6 @@
 {
   "id": "2026-06-13-run109a-ct-deploy-st",
-  "label": "run109a ct-deploy + ST retune (KEEPER)",
+  "label": "run109a ct-deploy + ST retune (prev keeper)",
   "date": "2026-06-13",
   "shorthand": "run109a-ct-deploy-st",
   "definition": "KEEPER (2026-06-13, supersedes run97a). CT AS-deployment overlay (--ct-deployment) + ST_GAS,ST_CHP WEFOR relief 0.11 + lignite floor 0.675. 3 in-scope fails {CT 2023 -1.08, CT 2024 -1.55, PRB 2024 -10.6%} vs run97a's 4; ST_GAS deficit fixed all years (2024 -11.0%->-5.1%); LMP gate held 32.3/7.8/2.1. Cost (user-signed-off): 2024 coal split -8.5%->-9.5% (CT out-of-merit gas displaces marginal cheap-gas PRB). Remaining fails structural: non-CEMS small peakers (CT) + documented cheap-gas PRB residual.",
