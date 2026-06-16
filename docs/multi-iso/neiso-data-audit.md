@@ -240,15 +240,41 @@ CT/ST switch never binds (guarded by
 (2c-B) lifts the coldest days past parity (264 gas-hours > $18 in Jan-2025), so
 the switch now trips on cold days.
 
-**Remaining gap — oil TWh (open).** Modeled oil is still under the EIA-930 `NG:
-OIL` column (2023 0.01 / 2024 0.00 / 2025 0.13 vs 0.32 / 0.37 / 1.24 TWh). The
-reason is the §2b dual-fuel switch is *objective-only*: a dual-fuel CC/CT that
-switches to oil prices at `min(gas, oil)` but its dispatched MWh is still
-**counted as gas**, and (capped at ~$122/MWh) it clears ahead of the more
-expensive oil-primary steam (~$189/MWh), so most real winter oil burn shows up
-as gas in the model. Closing this needs a generation **re-attribution** of
-dual-fuel switched MWh to oil (and the matching emissions move) — a reporting/
-accounting change that does not affect prices. Filed as the next step.
+### 2d. Oil generation re-attribution (2026-06-16)
+
+The §2b dual-fuel switch is *objective-only*: a dual-fuel CC/CT that switches to
+oil prices at `min(gas, oil)` but the LP still dispatches it on the gas
+heat-rate and the old keepers **counted its MWh as gas**, so modeled oil sat
+near zero (2023 0.01 / 2024 0.00 / 2025 0.13 TWh) far below the EIA-930 `NG:
+OIL` column (0.32 / 0.37 / 1.24). A switched dual-fuel unit-hour is petroleum
+generation (EIA-930 counts it in `NG: OIL`), so the dispatch is now
+**re-attributed**: `fuel.dual_fuel_switch_mask` marks the generator-hours where
+the pre-cap gas price exceeds oil parity (the counterpart of the `min` the
+switch writes), computed in `run_year` from the hub-overlaid gas price and
+threaded through `p2_state` into `_dispatch_frame`, which relabels those
+unit-hours `oil`. The switch/price are untouched (objective-only); this only
+moves the generation label, so the LMP level/tail is byte-identical.
+
+Result — modeled oil rises to the right **order of magnitude** (from ~0):
+
+| year | oil before | oil after | EIA-930 | gas after (vs 930) |
+|------|-----------:|----------:|--------:|-------------------:|
+| 2023 | 0.01 | **0.09** | 0.32 | 55.0 (−0.8%) |
+| 2024 | 0.00 | **0.15** | 0.37 | 59.4 (−0.4%) |
+| 2025 | 0.13 | **2.12** | 1.24 | 58.2 (−3.1%) |
+
+The cross-year fit is imperfect — 2023/24 under, 2025 over — because the
+price-parity switch assumes a unit burns oil in *every* hour its delivered gas
+exceeds oil, with no representation of **firm vs interruptible gas** (a
+dual-fuel CC on a firm pipeline contract keeps burning gas even when AGT spot
+tops oil) or **on-site oil inventory / air-permit limits** (which cap real
+winter oil hours). The daily-basis proxy (§2c-B) also over-amplifies the
+highest-basis year (2025), so its parity-hour count runs long. The
+re-attribution conserves total thermal generation (gas+oil), so it is a relabel,
+not new energy; CO2 still rides the gas characterization in `compute_emissions`
+(static per-generator rates) — the oil-vs-gas delta on ~1–2 TWh of switched burn
+is small (~1–2% of NEISO CO2) and is the documented residual. Precise oil
+matching needs firm-gas-share / oil-inventory data (a new upload).
 
 **4. Validation vs the EIA-923 oil column (2023 smoke,
 `run_calibration --iso NEISO --year 2023 --hours 8760`):**
