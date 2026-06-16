@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import HEAT_RATE_BINS
 from market_sim.config.iso_configs import get_iso_config
@@ -1027,3 +1028,39 @@ class TestLoadPlannedAdditionsNonThermal(unittest.TestCase):
         self.assertIsInstance(gens, list)
         for g in gens:
             self.assertNotIn(g.fuel_type, {"wind", "solar"})
+
+
+class TestCcCapacityReconcile(unittest.TestCase):
+    """``cc_capacity_reconcile`` raises listed CC capacities, raise-only.
+
+    The reconciliation table lifts an understated CC's LP capacity to its
+    demonstrated CAMPD peak; it must never lower a plant, and a missing
+    table must be a no-op so an enabled flag with no artifact is safe.
+    """
+
+    _BINS = ScenarioConfig().campd_bins_path
+    _RECON = "inputs/processed/cc_capacity_reconcile_ERCOT.csv"
+
+    def test_raises_listed_plants_only(self):
+        from market_sim.data.fleet import load_campd_bins
+        off = load_campd_bins(self._BINS).set_index("Plant_Code")["capacity_mw"]
+        on = load_campd_bins(
+            self._BINS, capacity_reconcile_path=self._RECON
+        ).set_index("Plant_Code")["capacity_mw"]
+        table = pd.read_csv(self._RECON)
+        listed = set(table["plant_code"].astype(int))
+        # Every plant absent from the table is byte-identical.
+        for code in off.index:
+            if int(code) not in listed:
+                self.assertAlmostEqual(off[code], on[code], places=3)
+        # Freestone (55226) is raised to its reconciled value; never lowered.
+        self.assertGreater(on[55226], off[55226])
+        self.assertTrue((on >= off - 1e-6).all())
+
+    def test_missing_table_is_noop(self):
+        from market_sim.data.fleet import load_campd_bins
+        off = load_campd_bins(self._BINS)["capacity_mw"].to_numpy()
+        on = load_campd_bins(
+            self._BINS, capacity_reconcile_path="/nonexistent/recon.csv"
+        )["capacity_mw"].to_numpy()
+        self.assertTrue(np.allclose(off, on))

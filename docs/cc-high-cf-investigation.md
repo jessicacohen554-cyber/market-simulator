@@ -178,6 +178,46 @@ offer lever. The probe tool and the 5%-band view ship here so the next
 calibration session can drive the per-plant work with the operating-level
 distribution in view.
 
+## Capacity reconciliation — implemented, the data axis for the understated plants
+
+The sweep above showed Freestone never reaches 90% at any peak price because
+its model nameplate (1036 MW) is below its real CAMPD peak (1119 MW): an F-class
+CC's **cold-weather over-rating** that the standard nameplate omits. EIA-860
+winter capacity corroborates it (Freestone 1095, Hays 1048, Lamar 1149, Forney
+1966 MW — all above their bin nameplate). `scripts/derive_cc_capacity_reconcile.py`
+writes a **raise-only** reconciliation —
+`cap = max(nameplate, demonstrated CAMPD p99.9 peak)` — committed as
+`inputs/processed/cc_capacity_reconcile_ERCOT.csv` and applied in
+`load_campd_bins` under `ScenarioConfig.cc_capacity_reconcile` (default off,
+ERCOT backcast). It raises 8 CC_REGULAR plants by 1.5–11% (+377 MW total) and
+never lowers one — CB EC (bin 654 = EIA-860 nameplate 654; over-runs on the
+offer side, not capacity) is correctly untouched.
+
+Result for 2023, capacity reconcile **only** (peak band unchanged at 2.57×),
+hours ≥90% CF base → reconciled → CAMPD:
+
+| plant | base | reconciled | CAMPD | model max MW |
+|---|---|---|---|---|
+| Freestone (55226) | **0** | **3956** | 1630 | 978 → 1050 |
+| Lamar (55097)     | 0 | **2143** | 2082 | 982 → 1029 |
+| Hays (55144)      | 0 | 1578 | 467 | 933 → 993 |
+| Odessa (55215)    | 0 | 0 | 2786 | 1005 → 1020 |
+| CC_REGULAR class Δ | | **+1.56 TWh** | | |
+
+The reconciliation **unblocks the hard zero** (Freestone 0 → 3956; Lamar lands
+almost exactly on CAMPD's 2082) and is the correct measured fix — those plants
+demonstrably produced that output. But Freestone and Hays now *overshoot*, and
+the class total moves +1.56 TWh (at the 0.33% gate). This is precisely the
+`claude.md` rule-11 signal: **the understated capacity was silently compensating
+for the offer curve's tendency to over-baseload efficient CCs.** Capping the
+plant low hid the over-baseloading; restoring the real capacity surfaces it. So
+capacity and the offer ramp are complementary — capacity gives the headroom to
+reach the top, the econ-ramp shape (the merit-ramp axis) controls how much the
+unit cycles vs sits there. A keeper pairs the two: reconcile capacity **and**
+steepen/per-plant the offer ramp so the in-gate class total and the cycling
+shape both hold. Odessa/Barney Davis need a larger reconciliation (their CAMPD
+peak still exceeds the +1.5% applied) and are left for the combined pass.
+
 ## Earlier framing (superseded by the sweep above)
 
 The lever is the CC duct-firing peak band, not the histogram. Candidate moves,
