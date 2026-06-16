@@ -58,3 +58,9 @@ inputs/processed/.offer_curve_jacobian_cache.json
 /results/SPP/
 /results/NYISO/
 /results/NEISO/
+
+# run119 dispatch parquets too large for the push endpoint (dashboard renders from the payload; regen via run_config.json)
+
+# run119 bundle kept local only (push endpoint caps payload size); dashboard renders from the committed run payload, bundle reproducible via run_config.json
+results/calibration/run119_cps_mustrun/
+results/calibration/run119_cps_mustrun.log
