@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-16T15:43:03",
+  "timestamp": "2026-06-16T17:01:18",
   "iso": "NYISO",
   "years": [
     2025
@@ -44,6 +44,6 @@
   "priced_interchange": true,
   "hydro_backfill_year": null,
   "btm_backfill_year": null,
-  "git_sha": "b8a390d",
+  "git_sha": "4a9e7f6",
   "highspy_version": "1.14.0"
 }
