@@ -1032,6 +1032,20 @@ class ScenarioConfig:
     # docs/multi-iso/neiso-data-audit.md.
     gas_hub_basis_daily: bool = False
 
+    # Tier 3 (calibration) — re-attribute dual-fuel switched generation to oil
+    # (doc-08 NEISO §2d). The dual-fuel switch (dual_fuel_switching) is
+    # objective-only: a unit that switches to oil prices at min(gas, oil) but
+    # the LP dispatches it on the gas heat-rate and its MWh would otherwise be
+    # reported as gas. When set, the calibration relabels the switched
+    # generator-hours (fuel.dual_fuel_switch_mask) as oil in the persisted
+    # dispatch so modeled oil matches the EIA-930 NG:OIL column — an
+    # LMP-neutral re-attribution (no LP/price change). Default-on for NEISO
+    # only (its AGT hub overlay is what pushes winter gas past oil parity);
+    # OFF for PJM/NYISO so their keepers stay byte-identical until their oil
+    # re-attribution is separately validated (their dual-fuel units do switch
+    # on their own winter gas, so enabling it would move their gas/oil split).
+    dual_fuel_oil_reattribution: bool = False
+
     # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
     # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
     # Natural Gas?" on the Multifuel schedule) price their fuel at
@@ -1393,6 +1407,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
+    "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
     "gas_price_override": 3,
 }
