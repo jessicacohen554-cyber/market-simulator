@@ -31,9 +31,14 @@ correct price driver it was always documented to be. See
 - **New keepers** `results/calibration/neiso_agt_daily_{2023,2024,2025}` (and
   the `neiso_agt_monthly_2025` A/B control). Supersede the `neiso_p12_*` /
   `neiso_hydro930_2025` keepers on price level.
-- **Known open gap:** modeled oil TWh still under the EIA-930 column because
-  dual-fuel switched MWh is counted as gas (objective-only switch); needs a
-  generation re-attribution (next step).
+- **Oil generation re-attribution.** Dual-fuel CC/CT unit-hours that switch to
+  oil (gas price > oil parity; `fuel.dual_fuel_switch_mask`) are relabeled from
+  gas to oil in the persisted dispatch (`_dispatch_frame`), since EIA-930 counts
+  that burn in `NG: OIL`. Objective-only and LMP-neutral (a relabel, not new
+  energy). Modeled oil rises to order of magnitude from ~0: 2023 0.01→0.09,
+  2024 0.00→0.15, 2025 0.13→2.12 TWh (EIA-930 0.32/0.37/1.24). Cross-year fit is
+  imperfect (2023/24 under, 2025 over) — the price-parity switch has no firm-gas
+  / oil-inventory limits; see `docs/multi-iso/neiso-data-audit.md` §2d.
 
 ## 2026-06-16 (physics — NYISO RCPF scarcity-pricing overlay)
 

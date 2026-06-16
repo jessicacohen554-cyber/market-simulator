@@ -299,6 +299,7 @@ def _dispatch_frame(
     year: int, pass_label: str, result, context, zone_names: list[str],
     iso: str = "ERCOT",
     must_run: dict[str, np.ndarray] | None = None,
+    oil_switch_mask: "np.ndarray | None" = None,
 ) -> pd.DataFrame:
     """Return the long per-generator-hour dispatch frame for one year-pass.
 
@@ -351,11 +352,26 @@ def _dispatch_frame(
 
     rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
     hours = np.tile(np.arange(T, dtype=np.int32), n_gen)
+    klass_col = rep(klass)
+    fuel_col = rep(fuels)
+    # Dual-fuel re-attribution: a gas unit that switched to its backup oil this
+    # hour (gas price > oil parity; mask from fuel.dual_fuel_switch_mask) burned
+    # petroleum, so its dispatched MWh is counted as oil (EIA-930 ``NG: OIL``),
+    # not gas — the LP still priced/dispatched it on the gas heat-rate (the
+    # switch is objective-only), this only relabels the generation. The mask is
+    # ``(n_gen, T)`` over the LP generators, the same (gen, hour) row-major order
+    # as ``disp.reshape(-1)`` and ``rep(...)``, so flatten and overwrite in place.
+    if oil_switch_mask is not None and np.asarray(oil_switch_mask).any():
+        flat = np.asarray(oil_switch_mask, dtype=bool)[:n_gen, :T].reshape(-1)
+        klass_col = np.asarray(klass_col, dtype=object)
+        fuel_col = np.asarray(fuel_col, dtype=object)
+        klass_col[flat] = "oil"
+        fuel_col[flat] = "oil"
     frames = [pd.DataFrame({
         "unit_id": rep(unit_ids),
         "plant_code": np.repeat(plant_codes.astype(np.int32), T),
-        "klass": rep(klass),
-        "fuel": rep(fuels),
+        "klass": klass_col,
+        "fuel": fuel_col,
         "supply": rep(supply),
         "zone": rep(zones),
         "hour": hours,
@@ -1155,6 +1171,7 @@ def solve_and_persist(
             _dispatch_frame(
                 year, label, res, context, zone_names, iso=iso,
                 must_run=must_run,
+                oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
             ).to_parquet(
                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
             )

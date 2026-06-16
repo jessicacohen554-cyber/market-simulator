@@ -1026,7 +1026,10 @@ def apply_dual_fuel_pricing(
     price spikes past oil parity (winter basis events), so normal-month
     dispatch is unchanged. Objective-only: no LP structural change, and
     emissions stay on the gas characterization (a known simplification —
-    oil burn hours under-count CO2 slightly).
+    oil burn hours under-count CO2 slightly). The *generation* of switched
+    hours is re-attributed to oil downstream in the calibration report via
+    :func:`dual_fuel_switch_mask` (so modeled oil matches the EIA-930
+    ``NG: OIL`` order of magnitude); the price/dispatch here is untouched.
 
     Gated on ``config.dual_fuel_switching`` (off by default; the calibration
     harness enables it for PJM), so ERCOT and existing forecasts are
@@ -1069,6 +1072,47 @@ def apply_dual_fuel_pricing(
             "at the delivered oil price",
             config.iso, year, n_capped, mw_capped,
         )
+
+
+def dual_fuel_switch_mask(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    monthly_costs_path: Path | None = None,
+) -> np.ndarray:
+    """Return the ``(n_gen, T)`` bool mask of dual-fuel gas units burning oil.
+
+    A dual-fuel-capable gas unit (:func:`dual_fuel_plant_groups`) runs on its
+    backup distillate/residual when its delivered gas price exceeds delivered
+    oil parity, so this marks the generator-hours where
+    ``gas_price > oil_price`` for the capable units — the counterpart of the
+    ``min`` that :func:`apply_dual_fuel_pricing` writes. Call it on the
+    pre-``min`` gas-price array (i.e. *before* :func:`apply_dual_fuel_pricing`),
+    so ``fuel_prices`` still carries the unburdened (hub-overlaid) gas price.
+
+    Used by the calibration's dispatch re-attribution: a switched unit-hour's
+    dispatched MWh is petroleum generation (EIA-930 counts it in ``NG: OIL``),
+    not gas, even though the LP carries it on the gas heat-rate. Returns an
+    all-``False`` mask when dual-fuel switching is off or no capable unit is in
+    the fleet, so non-NEISO/PJM runs see no re-attribution.
+    """
+    mask = np.zeros(fuel_prices.shape, dtype=bool)
+    if not getattr(config, "dual_fuel_switching", False):
+        return mask
+    groups = fleet.plant_group
+    if groups is None:
+        return mask
+    capable = dual_fuel_plant_groups()
+    if not capable:
+        return mask
+    oil_hourly = dual_fuel_oil_price_series(config, year, monthly_costs_path)
+    is_gas = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
+    for g in np.nonzero(is_gas)[0]:
+        if (int(fleet.plant_code[g]), str(groups[g])) not in capable:
+            continue
+        mask[g] = fuel_prices[g] > oil_hourly
+    return mask
 
 
 def apply_plant_monthly_fuel_prices(
