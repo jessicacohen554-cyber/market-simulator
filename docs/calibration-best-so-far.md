@@ -28,6 +28,24 @@
 > rather than forcing an even PRB at 0.71, which would over-run 2023 coal (split
 > +3.8%) and breach the Limestone guard (runs 114a/116b).
 
+> **CANDIDATE KEEPER (2026-06-16, audit follow-up D4): merit-ramp CC shape fix.**
+> `results/calibration/d4a_meritramp` = run 115b **+ the CC_REGULAR merit-ramp
+> econ deltas** (`inputs/calibration/offer_curve_deltas_cc_merit_ramp.json`:
+> econ_low −0.24 / econ_high −0.20, restoring a rising econ ramp). It **fixes
+> the CC_REGULAR operating-shape failure** (the missed >90% CF hours): per-class
+> cf_emd 0.099/0.105/0.113 → 0.088/0.098/0.101 and hourly r 0.74 → 0.76, with
+> the new `[7c]` regression gate 18/18 PASS (no class regresses), and it cuts
+> the CC over-run (2024 +6.31→+5.18, 2025 +3.61→+2.77 TWh). Cost: CC 2023
+> over-corrects low (−2.08, a 0.6-TWh fail at the 0.33% gate, so 6 in-scope
+> fails vs run115b's 5). Reproducible from the committed deltas alone. **Same CC
+> delta set as run119** (dashboard probe = merit-ramp + a CPS
+> local-reliability-mustrun floor, whose mechanism + bundle are not in the
+> repo). **Keeper of record stays run 115b** — promote the candidate when the
+> spatial axis closes the residual CC 2024/25 volume over-run (measured *not*
+> offer-closable: run118 spatial overlay weak, run119 CPS floor weak, finer-zone
+> topology still open). Cheapening the duct wall (d4b) was rejected (no shape
+> gain, worse volume). See `docs/audit-followup-tests-2026-06.md`.
+
 Keeper: **run 115b / bundle `results/calibration/run115b_ccduct_prb73_relief06`**
 (2026-06-14, highspy 1.14.0). Run 115b = run 109a's config **plus** the per-plant
 CC duct-firing overlay, with the PRB floor eased one notch and the ST relief
