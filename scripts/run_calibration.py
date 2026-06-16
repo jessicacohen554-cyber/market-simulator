@@ -345,6 +345,11 @@ def _calibration_config(
         #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
         gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO", "NEISO")),
+        # Daily Henry Hub within-month shape on top of the measured monthly
+        # level: physics-input correctness (the merit order sees the real
+        # day-to-day gas swing), mean-preserving so the annual mix is
+        # unchanged. On wherever the monthly-actuals level is.
+        gas_daily_shape=(iso.upper() in ("CAISO", "NYISO", "NEISO")),
         #   Default-on: the +1.20 SoCal basis seed misses the measured
         #   delivered-gas reality badly in stressed years (EIA-923 implied
         #   basis +7.06 in 2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in
