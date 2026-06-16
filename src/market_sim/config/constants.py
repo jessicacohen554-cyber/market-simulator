@@ -192,6 +192,33 @@ PUMPED_STORAGE_RTE: float = 0.80
 # off until a CAISO calibration pass measures Helms' reserve duty.
 PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {"PJM": 10.0}
 
+# PJM net-load reserve-demand scarcity overlay (post-solve, energy LMP adder).
+# PJM's perfect-foresight LP carries ~60 GW of idle headroom in its priciest
+# hours, so a reserve-keyed ORDC curve (the ERCOT mechanism) is flat across
+# price bands and cannot self-target the peak (fails the honesty gate in
+# docs/ordc-overlay.md). The price residual is instead monotone in NET LOAD
+# (demand − wind − solar), so the adder is keyed there — a reduced-form
+# reserve-demand curve, the PJM analogue of ERCOT's reliability-deployment
+# offset. Calibrated against actual hub-mean hourly RT (2023-25): 2023/2024
+# Jul/Aug residual −6.2/−8.8 → −1.1/+1.6, >$200 tail 0 → ~actual count.
+# - onset_frac: net-load fraction (of per-year peak) at which the adder turns
+#   on; below it the adder is 0. 0.82 ≈ the p85 net-load knee where the
+#   residual departs from ~0.
+# - penalty_max: adder ($/MWh) at peak net load. $220 is a deliberately
+#   conservative "typical-scarcity" anchor — well below PJM's reserve
+#   penalty-factor cap (Synchronized Reserve MRPF historically ~$850/MWh;
+#   raised under the Oct-2022 Energy Price Formation reform) — so the smooth
+#   curve reproduces routine afternoon scarcity, not the rare deep spikes
+#   (actual 2024/2025 max $439/$1,722, which it intentionally leaves on the
+#   table). Scenario-adjustable, not a published parameter.
+# - exponent: ramp convexity (1.4 = mildly convex, lifts the $75-200 shoulder
+#   while keeping the deep tail rare).
+PJM_SCARCITY_CURVE: dict[str, float] = {
+    "onset_frac": 0.82,
+    "penalty_max": 220.0,
+    "exponent": 1.4,
+}
+
 # NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
 # EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
 #
