@@ -42,7 +42,7 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
-### 2026-06-16 — ERCOT — AS-withholding probe (NOT a keeper): first-order effect, allocation is the crux
+### 2026-06-16 — ERCOT — AS-withholding probe (NOT a keeper): RESOLVED — thermal AS withholding is negligible (measured)
 
 **Probe**, not adopted. Tests the run121 hypothesis that the CC over-run is an
 ancillary-service-withholding effect (the energy-only LP holds zero AS; ERCOT
@@ -79,11 +79,33 @@ gets it right. That is exactly what the per-resource data resolves.**
   wrong (idle) tranches. Only the units that *actually* clear the AS award
   carry it — and those are identified per-resource in the DAM Gen Resource Data.
 
-**Next step (justified by this result): the per-resource DAM Gen Resource Data
-pull is warranted** — it pins which resources (and types: storage/load vs each
-thermal class) hold each hour's award, so the withdrawal lands on the real
-providers instead of a guess, and carves out the storage/load share. Flag stays
-default-off until then; neither heuristic is a keeper.
+**RESOLVED with the per-resource data (the conclusive run).** The 60-Day DAM
+Gen Resource Data, aggregated by Resource Type (RegUp + RRS + ECRS; offline
+Non-Spin and the storage/load share excluded), landed as
+`ercot_<year>_as_by_restype_hourly.parquet`. It reconciles with the NP3-911
+totals (2025: NP3-911 − NonSpin 4090 MW vs 4130 by-type, +40; 2024 ~600 short).
+**The measured *thermal* AS is tiny and shrinking: 778 MW/h in 2024 (21 % of the
+non-NonSpin AS), 429 MW/h in 2025 (10 %)** — storage holds 2.0→2.8 GW and load
+~0.9 GW. The code now withholds each thermal class's *own measured* hourly AS
+from its top-of-merit headroom (storage/load excluded; falls back to the
+upper-bound total only if the per-type file is absent).
+
+**2024 A/B (measured per-class) vs run121: negligible — and the run121
+hypothesis is DISPROVEN.** cf_emd 6/6 PASS within ±0.001 (CC_REGULAR 0.098,
+COAL 0.074, CT_PEAKER 0.050, ST_GAS 0.098 — all = baseline); CO₂ classes within
+±0.5 % (**CC over-run unchanged +3.5 % → +3.6 %**, CT_PEAKER −24.5 → −24.0,
+ST_GAS −4.2 → −4.0). The CC over-run is **not** a thermal-AS-withholding effect:
+thermal barely holds AS, and the ~0.8 GW it does hold sits on peaking headroom
+that wasn't generating, so removing it does ~nothing to the energy dispatch.
+
+**Conclusion:** the energy-only LP's omission of thermal AS is not a material
+error for the ERCOT backcast — lever closed. The feature stays as a
+data-grounded, default-off option (correct implementation if ever needed, e.g.
+a forecast where thermal carries more AS). The real ERCOT AS story is
+storage/load dominance; whether the model over-uses storage for energy
+arbitrage that is in reality committed to AS is a *separate* storage question,
+not thermal withholding. 2025 (thermal AS even smaller) is expected even more
+negligible; not separately run.
 
 ### 2026-06-16 — ERCOT — run121 NEW KEEPER: + storage vintage (COD) ramp (accuracy, not fit)
 
