@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-16 (data — NYISO ancillary-service reserve prices, measured RCPF validation)
+
+NYISO OASIS ancillary-service price downloads (`inputs/raw-data/NYISO-AS/`,
+the zip-of-zips `NYISO-AS-Data.zip`: monthly real-time `rtasp` 5-minute and
+day-ahead `damasp` hourly CSVs, 2021–2026) are processed into the measured
+reserve clearing prices — the empirical realization of the NYISO Reserve
+Constraint Penalty Factors, which the RCPF overlay can now validate against
+instead of standing on published curve values alone.
+
+- **`scripts/process_nyiso_as.py`** — folds the `rtasp` / `damasp` zips into
+  per-year per-zone hourly CSVs (`NYISO_as_{rt,da}_{year}.csv`: `spin_10`,
+  `nonsync_10`, `op_30`, `reg_cap` in $/MWh) and a compact calibration
+  reference `inputs/calibration/actual_as_reserve_NYISO.parquet` (per
+  (year, hour): `nyca_reserve_adder` = the WEST/upstate stacked RT reserve
+  price the system-wide overlay targets; `nyc_reserve_adder` = the full
+  downstate cascade the locational products target). Duplicate `(1)`
+  downloads are de-duplicated.
+- **`scripts/derive_nyiso_rcpf_overlay.py`** now reports the model adder
+  against this measured reserve adder.
+
+**What the measured data shows (2023 RT):** reserve scarcity is real and
+**locational** — the per-zone 30-min reserve price cascades from upstate
+(WEST max $662, nonzero 196 h) through the East/SENY zones up to **N.Y.C.**
+(max $727, nonzero 515 h); the stacked reserve price reaches **$2,448** in
+NYC (how LMP gets to $1,147+). This **corroborates the published
+`NYISO_RCPF_PRODUCTS` curve values** (upstate 30-min max $662 sits right
+under the $750 NYCA cap) — they are measured-consistent, not magic numbers.
+The measured NYCA reserve adder is >$0 in 629 h (mean $2.20) and the
+downstate NYC adder in 3,020 h (mean $6.37), versus the overlay's $0.00 —
+re-confirming the tail gap is a locational + LP-headroom-bias problem, to be
+closed by the congestion fix + locational RCPF products, not by forcing the
+system-wide curve.
+
 ## 2026-06-16 (NEISO — AGT hub-basis overlay wired into calibration)
 
 Makes the measured Algonquin Citygate (AGT) monthly gas basis the correct price
