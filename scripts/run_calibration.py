@@ -378,21 +378,18 @@ def _calibration_config(
         #   trigger (P13). No basis rows exist for other ISOs (the NYISO
         #   Transco Z6 leg is still unsourced), so this is a NEISO-only
         #   repricing.
-        gas_hub_basis_daily=(iso.upper() == "NEISO"),
-        #   Daily resolution for the AGT overlay above (doc-08 NEISO, the
-        #   daily-AGT refinement of U4). The measured monthly basis is the
-        #   right level but a flat monthly plateau never reaches distillate
-        #   parity (~$18/MMBtu; max Jan-25 hub $16.9), so the gas->oil switch
-        #   and the oil-steam fleet never trip and the winter LMP tail stays
-        #   flat. This redistributes each winter month's measured mean basis
-        #   across its days by NEISO daily demand^AGT_DAILY_BASIS_CONVEXITY
-        #   (coldest = highest-demand days carry the citygate blowout),
-        #   mean-preserving so the annual gas burn / fuel mix is unchanged —
-        #   tripping oil on the coldest days and building the winter tail. A
-        #   flagged proxy for the paywalled/network-blocked daily AGT spot
-        #   series (it falls back to the flat monthly overlay when the NEISO
-        #   demand series is unavailable). See market_sim.data.fuel
-        #   .iso_hub_daily_gas_prices and docs/multi-iso/neiso-data-audit.md.
+        gas_hub_basis_daily=False,
+        #   Daily resolution for the AGT overlay is an OFF-BY-DEFAULT diagnostic
+        #   (opt in with --gas-hub-basis-daily). It redistributes each winter
+        #   month's measured mean basis across days by NEISO
+        #   demand^AGT_DAILY_BASIS_CONVEXITY to build the winter >$200 tail the
+        #   flat monthly plateau can't — but that convexity is a value fitted to
+        #   the backcast (not a measured/forecast-grade input), and the daily
+        #   AGT spot it proxies (upload U4) is paywalled/unavailable, so the
+        #   keepers rest on the measured *monthly* overlay only and treat the
+        #   winter tail + near-zero oil as honest monthly-granularity limits.
+        #   See market_sim.data.fuel.iso_hub_daily_gas_prices and
+        #   docs/multi-iso/neiso-data-audit.md.
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
@@ -605,11 +602,13 @@ def _calibration_config(
         # parity (~$16-20), so the switch is correctly wired but rarely binds on
         # the ISO-average; the downstate Z6 blowout (U4) is what crosses parity.
         dual_fuel_switching=(iso.upper() in ("PJM", "NYISO", "NEISO")),
-        # Re-attribute switched dual-fuel MWh to oil (doc-08 §2d) for NEISO
-        # only: its AGT hub overlay drives winter gas past oil parity, so the
-        # switched generation is petroleum (EIA-930 NG:OIL). Off for PJM/NYISO
-        # so their keepers stay byte-identical until separately validated.
-        dual_fuel_oil_reattribution=(iso.upper() == "NEISO"),
+        # Re-attribute switched dual-fuel MWh to oil (doc-08 §2d) — OFF by
+        # default (opt in with --gas-hub-basis-daily, which it rides with):
+        # it only bites once the daily overlay pushes winter gas past oil
+        # parity, and the daily overlay is itself an off-by-default diagnostic.
+        # With the keepers on the monthly overlay, modeled oil stays near zero
+        # (the documented monthly-granularity limit), not relabeled.
+        dual_fuel_oil_reattribution=False,
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
