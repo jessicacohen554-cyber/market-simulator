@@ -397,6 +397,39 @@ function cfLineChart(model,campd,bands,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw-
  svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));
  svg.addEventListener("mouseleave",()=>{hideTip();guide.setAttribute("opacity",0);});
  bindTouchTip(svg,at);return svg;}
+// hours-by-CF binned into fixed-width intervals (default 5 CF points): the
+// LP parks an already-committed unit at the discrete edges of its offer-curve
+// tranches, so the per-CF "precision" line is a comb of spikes that never
+// lines up with the smooth CAMPD density; 5% bins collapse that comb into a
+// comparable shape (and make a CC's missing >90% CF mass obvious).
+function cfBins(cf,w){const n=Math.ceil(100/w),b=new Array(n).fill(0);
+ for(let i=0;i<cf.length;i++){let v=cf[i];if(v<0)v=0;if(v>100)v=100;let k=Math.floor(v/w);if(k>=n)k=n-1;b[k]++;}return b;}
+// CF histogram (model vs CAMPD, hours per fixed CF band) with the same
+// offer-curve tranche markers as cfLineChart. model/campd are cfBins arrays.
+function cfBarChart(model,campd,bands,w,vw,vh){const L=52,R=14,TTv=18,B=40,pw=vw-L-R,ph=vh-TTv-B;
+ const svg=svgEl(vw,vh);const n=model.length;const ymax=Math.max(1,...model,...campd)*1.12;
+ const slot=pw*w/100,bw=Math.max(2,slot*0.40);
+ const X=c=>L+pw*Math.min(Math.max(c,0),100)/100,Y=v=>TTv+ph*(1-Math.min(Math.max(v,0),ymax)/ymax),cx=i=>X((i+0.5)*w);
+ const g=mk("g",{"font-size":12,fill:"#8a93a0"});
+ for(let i=0;i<=4;i++){const y=TTv+ph*i/4;g.appendChild(mk("line",{x1:L,y1:y,x2:vw-R,y2:y,stroke:"#eef1f4"}));g.appendChild(mk("text",{x:L-7,y:y+4,"text-anchor":"end"},Math.round(ymax*(1-i/4))));}
+ for(let c=0;c<=100;c+=10){g.appendChild(mk("text",{x:X(c),y:vh-14,"text-anchor":"middle"},c));}
+ g.appendChild(mk("text",{x:L+pw/2,y:vh-1,"text-anchor":"middle","font-size":11,fill:"#6b7480"},"capacity factor (%)"));
+ svg.appendChild(g);
+ (bands||[]).forEach((bd,i)=>{const x=X(bd.cf_lo);
+  svg.appendChild(mk("line",{x1:x,y1:TTv,x2:x,y2:TTv+ph,stroke:"#aab2bd","stroke-width":1,"stroke-dasharray":"3 3"}));
+  const tag=bd.vom?"VOM":(bd.mult!=null?bd.mult.toFixed(2)+"×":"");
+  const txt=bd.name+(tag?" "+tag:""),tw=txt.length*5.6+8,ty=TTv+4+(i%3)*15;
+  let tx=x+3;if(tx+tw>vw-R)tx=x-tw-3;if(tx<L)tx=L+1;
+  svg.appendChild(mk("rect",{x:tx,y:ty,width:tw,height:13,rx:3,fill:"#1a2233",opacity:0.85}));
+  svg.appendChild(mk("text",{x:tx+4,y:ty+10,"font-size":9.5,fill:"#fff"},txt));});
+ const hasC=campd&&campd.length;
+ for(let i=0;i<n;i++){const c=cx(i);
+  if(hasC){const ch=campd[i];svg.appendChild(mk("rect",{x:c-bw,y:Y(ch),width:bw,height:TTv+ph-Y(ch),fill:"#647184"}));}
+  const mh=model[i];svg.appendChild(mk("rect",{x:hasC?c:c-bw/2,y:Y(mh),width:bw,height:TTv+ph-Y(mh),fill:"#4A90D9"}));}
+ const at=(px,py)=>{const r=svg.getBoundingClientRect();let i=Math.floor(((px-r.left)/r.width*vw-L)/slot);i=Math.min(Math.max(i,0),n-1);
+  const lo=Math.round(i*w),hi=Math.min(100,Math.round((i+1)*w));
+  posTipXY(`<b>CF ${lo}–${hi}%</b><br><span style=color:#4A90D9>●</span> Model: ${model[i]} h${hasC?`<br><span style=color:#647184>●</span> CAMPD: ${campd[i]} h`:""}`,px,py);};
+ svg.addEventListener("mousemove",e=>at(e.clientX,e.clientY));svg.addEventListener("mouseleave",hideTip);bindTouchTip(svg,at);return svg;}
 // ---- reference tables (Tables page) ----
 function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
  let h='<div class=panel><h2>Fuel totals vs EIA-930 <span class=psub>(system-wide; 930 not zonal)</span></h2><div class=tablewrap><table><thead><tr><th>fuel</th><th>model TWh</th><th>EIA-930</th><th>Δ</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
@@ -885,7 +918,7 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
   +'<h4>CAMPD actual</h4><canvas class=heat id=hC width=365 height=24></canvas><div class=ax id=axC></div>'
   +'<h4>Model</h4><canvas class=heat id=hM width=365 height=24></canvas><div class=ax id=axM></div></div>';
  h+='<div class=panel><h2>Average daily profile (CF%)</h2><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sProf></div></div>';
- h+='<div class=panel><h2>Hours at each capacity factor</h2><p class=psub>Vertical markers are this plant\'s offer-curve tranche boundaries; the tag is the heat-rate multiplier priced from that CF up. Pick a single plant for markers.</p><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
+ h+='<div class=panel><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2>Hours at each capacity factor</h2><div class=seg id=cfModeSeg><button data-m=bins>5% bins</button><button data-m=line>Per-CF line</button></div></div><p class=psub>Hours the plant spent at each capacity factor. <b>5% bins</b> (default) counts hours in 5-point CF intervals — the comparable shape; <b>per-CF line</b> is the raw 1-point density, whose spikes are the LP parking at offer-curve tranche edges. Vertical markers are this plant\'s tranche boundaries (tag = heat-rate multiplier priced from that CF up); pick a single plant for markers.</p><div class=legend><span><i class=swatch style="border-top-color:#647184"></i>CAMPD</span><span><i class=swatch style="border-top-color:#4A90D9"></i>Model</span></div><div class=svgbox id=sHist></div></div>';
  h+='<div class=panel><h2>Monthly generation (GWh)</h2><div class=svgbox id=sMon></div></div>';
  h+='<div class=panel><h2>Annual total (TWh)</h2><div class=svgbox id=cAnn></div></div>';
  document.getElementById("content").innerHTML=h;
@@ -901,7 +934,13 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
  if(hasC){drawHeat(hC,d.ccf);heatTip(hC,d.ccf,"CAMPD actual");}else{drawHeat(hC,d.ccf);hC.style.opacity=0.2;}
  drawHeat(hM,d.mcf);heatTip(hM,d.mcf,"Model");
  const trp=(st.plant&&st.plant!=="agg")?(MODEL[id].years[yr].plants[st.plant]||{}).tr||null:null;
- document.getElementById("sHist").appendChild(cfLineChart(cfLine(d.mcf),hasC?cfLine(d.ccf):[],trp,760,300));
+ const drawCfHist=()=>{const box=document.getElementById("sHist");box.innerHTML="";
+   if(st.cfMode==="line")box.appendChild(cfLineChart(cfLine(d.mcf),hasC?cfLine(d.ccf):[],trp,760,300));
+   else box.appendChild(cfBarChart(cfBins(d.mcf,5),hasC?cfBins(d.ccf,5):[],trp,5,760,300));};
+ const seg=document.getElementById("cfModeSeg");
+ seg.querySelectorAll("button").forEach(b=>{b.classList.toggle("on",b.dataset.m===st.cfMode);
+   b.onclick=()=>{st.cfMode=b.dataset.m;seg.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.m===st.cfMode));drawCfHist();};});
+ drawCfHist();
  document.getElementById("axC").innerHTML=document.getElementById("axM").innerHTML=MONTHS.map(m=>`<span>${m}</span>`).join("");
  const pc=profileArr(d.ccf),pm=profileArr(d.mcf),xl=Array(24).fill("");[0,6,12,18,23].forEach(hh=>xl[hh]=("0"+hh).slice(-2));
  const profSets=hasC?[{pts:pc,color:"#647184",name:"CAMPD",w:3},{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}]:[{pts:pm,color:"#4A90D9",name:"Model",dash:"4 3"}];
@@ -1009,7 +1048,7 @@ async function boot(){try{
   isoSel.innerHTML=isos.map(i=>{const n=isoRunCount(i);
     return `<option value="${i}">${i} · ${n} run${n===1?"":"s"}</option>`;}).join("");
   isoSel.onchange=()=>{if(isoSel.value!==st.iso)selectIso(isoSel.value);};
-  st={run:null,year:0,zones:new Set(),page:"report",klass:"",plant:"agg",iso:null};
+  st={run:null,year:0,zones:new Set(),page:"report",klass:"",plant:"agg",iso:null,cfMode:"bins"};
   SUB_BASE=document.getElementById("pageSub").textContent;
   document.getElementById("diag").style.display="none";
   await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);
