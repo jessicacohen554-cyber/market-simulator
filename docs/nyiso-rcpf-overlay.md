@@ -116,6 +116,25 @@ to fire now — by inflating requirements or subtracting a multi-GW headroom
 offset — would bury the locational/import error, so it is deliberately not
 done.
 
+## Measured validation (NYISO OASIS ancillary-service prices)
+
+The published `NYISO_RCPF_PRODUCTS` curve values are not taken on faith. NYISO
+OASIS real-time ancillary-service prices (`rtasp`, processed by
+`scripts/process_nyiso_as.py` into `inputs/calibration/actual_as_reserve_NYISO.parquet`)
+give the **measured** per-zone reserve clearing prices — the empirical RCPF
+realization — and the overlay report compares the model adder against them.
+
+The 2023 RT data corroborates both the curve values and the locational
+finding: the per-zone 30-min reserve price cascades from upstate (**WEST**
+max **$662**, nonzero 196 h — right under the $750 NYCA cap) through the
+East/SENY zones up to **N.Y.C.** (max **$727**, nonzero 515 h), and the
+*stacked* reserve price reaches **$2,448** in NYC (how the LMP tail reaches
+$1,147+). The measured NYCA (system-wide) reserve adder is >$0 in 629 h
+(mean $2.20); the downstate NYC cascade in 3,020 h (mean $6.37) — ~5× the
+NYCA incidence, i.e. the scarcity is overwhelmingly downstate. The overlay's
+system-wide adder is $0.00 against all of it, which is the quantified,
+measured version of the gating finding above.
+
 ## Usage
 
 ```
