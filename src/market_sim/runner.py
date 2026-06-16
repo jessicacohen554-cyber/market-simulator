@@ -164,8 +164,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         if iso == "CAISO"
         else 0.0
     )
+    # Year-grounded import ladder for backcasts: the priced node's neighbor-hub
+    # blocks are gas-priced, so a backcast pins the ladder to the simulated
+    # (weather) year. Forecasts pass weather_year too, but un-tabulated years
+    # fall back to the static ladder inside build_import_generators.
     import_generators = (
-        build_import_generators(iso, border_carbon) + build_export_sinks(iso)
+        build_import_generators(iso, border_carbon, year=config.weather_year)
+        + build_export_sinks(iso)
     )
     if import_generators:
         iso_config = extend_with_import_node(iso_config)

@@ -27,6 +27,7 @@ from market_sim.config.constants import (
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHES,
+    IMPORT_TRANCHES_BY_YEAR,
     IMPORT_ZONE,
 )
 from market_sim.config.iso_configs import ISOConfig, TransferLink, Zone
@@ -96,7 +97,7 @@ def wecc_border_carbon_adder(carbon_price: float) -> float:
 
 
 def build_import_generators(
-    iso: str, border_carbon_per_mwh: float = 0.0
+    iso: str, border_carbon_per_mwh: float = 0.0, year: int | None = None
 ) -> list[Generator]:
     """Return an ISO's import node as a list of pseudo-generators.
 
@@ -104,6 +105,12 @@ def build_import_generators(
     stepped supply curve: each tranche of
     :data:`~market_sim.config.constants.IMPORT_TRANCHES` becomes a synthetic
     :class:`~market_sim.data.fleet.Generator` in the ISO's external zone.
+    When ``year`` matches an
+    :data:`~market_sim.config.constants.IMPORT_TRANCHES_BY_YEAR` entry for the
+    ISO, that year-grounded ladder is used instead of the static default — the
+    priced node's neighbor-hub blocks are gas-priced, so a backcast year with a
+    different gas/neighbor-price level needs its own price ladder (an unmapped
+    year, e.g. any forecast year, falls back to the static ladder).
     The marginal cost of a tranche is set directly through the ``vom``
     field; ``heat_rate`` is zero, so no fuel price enters the cost. Appended
     to the fleet, the tranches compete in merit order through the ordinary
@@ -121,6 +128,8 @@ def build_import_generators(
         iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
         border_carbon_per_mwh: Border carbon adjustment ($/MWh) added to
             each tranche price; 0 disables it.
+        year: backcast year; selects an ``IMPORT_TRANCHES_BY_YEAR[iso][year]``
+            ladder when one exists, else the static ``IMPORT_TRANCHES[iso]``.
 
     Returns:
         Import tranches ordered cheapest first; empty for an ISO with no
@@ -128,6 +137,11 @@ def build_import_generators(
         in its demand series).
     """
     zone = IMPORT_ZONE.get(iso)
+    tranches = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) if (
+        year is not None
+    ) else None
+    if tranches is None:
+        tranches = IMPORT_TRANCHES.get(iso, [])
     return [
         Generator(
             unit_id=f"{zone}_{name}",
@@ -140,7 +154,7 @@ def build_import_generators(
             vom=marginal_cost + border_carbon_per_mwh,
             eford=IMPORT_EFORD.get(iso, 0.0),
         )
-        for name, capacity, marginal_cost in IMPORT_TRANCHES.get(iso, [])
+        for name, capacity, marginal_cost in tranches
     ]
 
 

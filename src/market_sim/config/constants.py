@@ -1529,6 +1529,16 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("import_scarcity", 1900.0, 75.0),
     ],
     # NEISO is a steady net importer (EIA-930 ISNE hourly): −1,728 MW avg /
+    # NOTE: the NYISO block above is the 2023 / default ladder. Its neighbor-hub
+    # prices are pinned to 2023 hub levels, so in higher-gas years the static
+    # ladder sits stale-cheap and the model over-imports on a flat ~max schedule
+    # (2025: model −34.7 vs actual −19.1 TWh, diurnal corr −0.80). The real
+    # neighbors (PJM West, ISO-NE) are themselves gas-priced and rise with the
+    # year, so the willingness-to-sell into NY rises too. IMPORT_TRANCHES_BY_YEAR
+    # below carries the year-grounded NYISO ladder; see its comment for the
+    # measured neighbor-hub ratios. (This generalizes the PJM static-node
+    # year-compromise noted in EXPORT_TRANCHES["PJM"] — NYISO's neighbor spread
+    # is too wide for a single static compromise to span.)
     # +15.14 TWh net import in 2023 (98% import hours), easing to −1,175 MW /
     # +10.30 TWh in 2024 (84%). Imports peak at ~4,386 MW. Blocks priced at
     # the neighbor hub, cheapest first; the HQ HVDC ties are the always-on
@@ -1558,6 +1568,40 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 # Export sinks: each block absorbs up to its capacity as *negative*
 # generation, paying its $/MWh price (the LP credits the price as avoided
 # cost, so the ISO exports whenever its marginal cost is below it).
+# Year-grounded import ladders. An (iso, year) entry overrides IMPORT_TRANCHES
+# for that backcast year; ISO-years absent here fall back to the static ladder
+# (so forecast years and un-tabulated ISOs are unchanged). Used by
+# transmission.build_import_generators(iso, year=...).
+#
+# NYISO 2024/2025: the priced node's marginal blocks proxy gas-priced
+# neighbor hubs, so each block is scaled off the 2023 base ladder by the
+# measured neighbor-hub RT-LMP ratio vs 2023 (inputs/calibration/actual_lmp.json,
+# rt_mon means): PJM West $28.4→$29.5→$42.9 (×1.04, ×1.51) prices the
+# PJM_west and Ontario blocks; ISO-NE Mass Hub $35.9→$39.4→$66.2 (×1.10, ×1.84)
+# prices the ISONE_tie and import_scarcity blocks. HQ hydro is mostly
+# gas-insensitive (HQ SRMC ≈ 0), so it rises at ~half the PJM ratio. Capacities
+# are unchanged — the duration-curve fit (scripts/derive_import_tranches.py) is
+# capacity-keyed; only the price ladder tracks the year. Tier 3 (calibration).
+IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = {
+    "NYISO": {
+        2024: [
+            ("HQ_hydro", 900.0, 14.0),
+            ("IESO_Ontario", 1200.0, 25.0),
+            ("PJM_west", 1100.0, 35.0),
+            ("ISONE_tie", 800.0, 48.0),
+            ("import_scarcity", 1900.0, 82.0),
+        ],
+        2025: [
+            ("HQ_hydro", 900.0, 18.0),
+            ("IESO_Ontario", 1200.0, 36.0),
+            ("PJM_west", 1100.0, 51.0),
+            ("ISONE_tie", 800.0, 81.0),
+            ("import_scarcity", 1900.0, 138.0),
+        ],
+    },
+}
+
+
 EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # CAISO midday solar-oversupply exports. Tier 3 (calibration) — fitted
     # alongside the import tranches to the pooled 2023-2025 CISO
