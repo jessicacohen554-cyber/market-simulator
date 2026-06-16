@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-06-16 (data — CAMPD unit-level outage integration across ISOs)
+
+Newly-uploaded EPA CAMPD unit-level extracts
+(`inputs/raw-data/campd-unit-level/{STATE}_{YEAR}.parquet`) are now routed into
+each ISO's unit-outage overlay. Each state file is incorporated into the
+ISO(s) whose EIA-860 fleet actually contains plants there — the per-ISO fleet
+filter in `derive_campd_unit_outages.py` keeps every detected window scoped to
+that ISO's own plants, so states shared across ISOs (e.g. IL/IN/KY/MI in both
+PJM and MISO, TX in both ERCOT and MISO) do not leak between them.
+
+- **`ISO_STATES` (`market_sim/data/campd.py`) widened to each ISO's fleet
+  footprint:**
+  - **MISO** expanded from the `IL`-only probe to its full footprint
+    (`AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI`).
+  - **NYISO** gains `NJ` — a handful of NYISO-fleet plants (EIA-860 BA
+    `NYIS`) sit physically in New Jersey.
+  - PJM/NEISO/ERCOT/CAISO maps unchanged; their newly-landed extracts (PJM
+    `MD/DE/MI/NJ-2025/TN`, NEISO `2025` for all non-NH states) are picked up
+    automatically on regeneration.
+  - SPP left empty (not yet a calibration target, no consumed CSV).
+- **Regenerated all six consumed unit-outage CSVs** with
+  `scripts/derive_campd_unit_outages.py --iso <ISO>`. Window-count deltas:
+  ERCOT 3346 (unchanged), CAISO 1933→1961, NYISO 1621→2498, NEISO 1305→1328,
+  PJM 4484→4594, MISO 78→3435. Every facility in each CSV is verified present
+  in that ISO's fleet, in a qualifying plant group, and not an excluded
+  ST_GAS peaker.
+- **NEISO 2025 coverage corrected.** The committed NEISO CSV predated the
+  2025 extracts already in the repo; regeneration brings 2025 to full coverage
+  for every NEISO state except NH (no `NH_2025.parquet`). The NH gap now shows
+  specifically as Merrimack (2364, the lone NEISO coal plant) dropping out of
+  2025, not as a lower overall facility count — two `test_outages.py` smoke
+  assertions that encoded the stale aggregate counts were updated accordingly
+  (the Merrimack/coal-gap invariants are unchanged and still pass).
+
 ## 2026-06-15 (diagnostics — CC >90% CF investigation + 5% CF-band view)
 
 Investigation of why grid-serving combined cycles (Colorado Bend II, Wolf Hollow
