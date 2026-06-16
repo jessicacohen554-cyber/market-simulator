@@ -604,6 +604,11 @@ def _calibration_config(
         # parity (~$16-20), so the switch is correctly wired but rarely binds on
         # the ISO-average; the downstate Z6 blowout (U4) is what crosses parity.
         dual_fuel_switching=(iso.upper() in ("PJM", "NYISO", "NEISO")),
+        # Re-attribute switched dual-fuel MWh to oil (doc-08 §2d) for NEISO
+        # only: its AGT hub overlay drives winter gas past oil parity, so the
+        # switched generation is petroleum (EIA-930 NG:OIL). Off for PJM/NYISO
+        # so their keepers stay byte-identical until separately validated.
+        dual_fuel_oil_reattribution=(iso.upper() == "NEISO"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -1128,8 +1133,12 @@ def run_year(
     # oil parity) BEFORE the min-cap below overwrites the gas price, so the
     # dispatch re-attribution can count their MWh as petroleum, not gas (the
     # switch itself is objective-only; this is a reporting re-attribution).
-    dual_fuel_oil_mask = dual_fuel_switch_mask(
-        fuel_prices, fleet_arrays, config, year
+    # Gated on dual_fuel_oil_reattribution (NEISO-only) so PJM/NYISO — whose
+    # dual-fuel units also switch on their own winter gas — stay byte-identical.
+    dual_fuel_oil_mask = (
+        dual_fuel_switch_mask(fuel_prices, fleet_arrays, config, year)
+        if getattr(config, "dual_fuel_oil_reattribution", False)
+        else None
     )
     # Dual-fuel switching last, so the oil-parity min sees the final delivered
     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
