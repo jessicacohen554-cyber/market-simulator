@@ -19,6 +19,17 @@ re-verified file/number are marked **[checked]**.
 This audit is **diagnosis only** — no dispatch or calibration parameter was
 changed.
 
+> **Follow-up (2026-06-16):** tests D1–D4 of §D have been run — see
+> `docs/audit-followup-tests-2026-06.md`. Headlines: out-of-sample (all
+> overlays off) the in-scope fails **double, 5 → 10**, system CO₂ runs +8/+9%
+> high and hourly-r degrades on 0/18 classes (D1, confirming B1); the
+> historic-outage overlay is the dominant — and most defensible — leakage
+> lever while the CEMS-pinned CT floor is the smaller, circular one (D2); the
+> new CO₂ gate catches a real keeper failure the volume gate hides (2024 coal
+> CO₂ −8.9%, D3); and the CC_REGULAR merit-ramp fixes the operating shape
+> cleanly but the 2024/25 volume over-run is not offer-closable (D4, confirming
+> the B2 spatial diagnosis).
+
 ---
 
 ## Executive summary
