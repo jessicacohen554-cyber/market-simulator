@@ -8,6 +8,7 @@ from market_sim.config.constants import (
     CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_NODE_LINKS,
+    IMPORT_TRANCHE_EF,
     IMPORT_TRANCHES,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     WECC_IMPORT_EFORD,
@@ -567,16 +568,25 @@ class TestWeccBorderCarbon(unittest.TestCase):
         for gen, (_, _, cost) in zip(generators, IMPORT_TRANCHES["CAISO"]):
             self.assertAlmostEqual(gen.vom, cost)
 
-    def test_border_carbon_raises_every_tranche_price(self):
-        adder = wecc_border_carbon_adder(35.23)  # 2024 CARB average
+    def test_border_carbon_scales_each_tranche_by_its_emission_factor(self):
+        # The border adjustment is the *unspecified* default (0.428 × price);
+        # each tranche pays it scaled by its own EF / 0.428, so clean blocks
+        # (hydro/solar, EF 0) pay nothing and unspecified blocks pay it in
+        # full — matching CARB's specified-vs-unspecified treatment.
+        price = 35.23  # 2024 CARB average allowance price
+        adder = wecc_border_carbon_adder(price)
         generators = build_import_generators("CAISO", adder)
-        for gen, (_, _, cost) in zip(generators, IMPORT_TRANCHES["CAISO"]):
-            self.assertAlmostEqual(gen.vom, cost + adder)
+        ef = IMPORT_TRANCHE_EF["CAISO"]
+        for gen, (name, _, cost) in zip(generators, IMPORT_TRANCHES["CAISO"]):
+            self.assertAlmostEqual(gen.vom, cost + ef[name] * price)
             # The adjustment is a price term, not an emission attribute:
             # import MWh must not inflate the modeled in-state CO2 total.
             self.assertEqual(gen.emission_rate_co2, 0.0)
+        # Clean blocks pay nothing; the unspecified block pays the full adder.
+        self.assertAlmostEqual(generators[0].vom, IMPORT_TRANCHES["CAISO"][0][2])
+        self.assertAlmostEqual(generators[-1].vom,
+                               IMPORT_TRANCHES["CAISO"][-1][2] + adder)
         # ~$15/MWh at the 2024 average allowance price.
-        self.assertAlmostEqual(adder, CARB_UNSPECIFIED_IMPORT_EF * 35.23)
         self.assertGreater(adder, 14.0)
         self.assertLess(adder, 16.0)
 
