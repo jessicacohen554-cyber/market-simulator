@@ -230,6 +230,27 @@ def _actual_rt(year: int, hours: int) -> np.ndarray:
     return out
 
 
+def _actual_as_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
+    """Measured RT reserve adder (NYCA + NYC) for a year, NaN-padded.
+
+    From ``actual_as_reserve_NYISO.parquet`` (built by
+    ``scripts/process_nyiso_as.py`` from the NYISO OASIS rtasp downloads):
+    ``nyca_reserve_adder`` is the system-wide reserve price the overlay's
+    system-wide adder should reproduce; ``nyc_reserve_adder`` is the full
+    downstate cascade the (future) locational products target.
+    """
+    p = CAL_DIR / "actual_as_reserve_NYISO.parquet"
+    out = {"nyca": np.full(hours, np.nan), "nyc": np.full(hours, np.nan)}
+    if not p.exists():
+        return out
+    ref = pd.read_parquet(p)
+    ref = ref[ref["year"] == year]
+    h = ref["hour"].to_numpy()
+    out["nyca"][h] = ref["nyca_reserve_adder"].to_numpy()
+    out["nyc"][h] = ref["nyc_reserve_adder"].to_numpy()
+    return out
+
+
 def _mae(model: np.ndarray, actual: np.ndarray,
          weights: np.ndarray | None = None) -> float:
     """Weighted mean absolute error, NaNs dropped."""
@@ -367,6 +388,23 @@ def main() -> None:
         if ad:
             print("    actual RT            " +
                   "  ".join(f"{ad.get(c, float('nan')):7.0f}" for c in cols))
+
+        # Validate the model adder against the MEASURED RT reserve price
+        # (process_nyiso_as.py): the system-wide overlay targets the NYCA
+        # (upstate) reserve adder; the downstate NYC cascade is the
+        # locational products' (future) target. This is the model-vs-measured
+        # check that keeps the curve honest rather than a magic number.
+        meas = _actual_as_reserve(year, hours)
+        if np.isfinite(meas["nyca"]).any():
+            for label, key in (("NYCA (system-wide)", "nyca"),
+                               ("NYC  (downstate)", "nyc")):
+                m = meas[key]
+                ok = np.isfinite(m)
+                print(f"  measured RT reserve adder {label}: >$0 in "
+                      f"{int((m[ok] > 0).sum()):,} h, >$50 in "
+                      f"{int((m[ok] > 50).sum()):,} h, max ${np.nanmax(m):,.0f}, "
+                      f"mean ${np.nanmean(m):.2f}  (model adder mean "
+                      f"${adder.mean():.2f})")
 
     out = pd.concat(frames, ignore_index=True)
     name = f"scarcity_{args.tag}.parquet" if args.tag else "scarcity.parquet"
