@@ -253,7 +253,12 @@ the pre-cap gas price exceeds oil parity (the counterpart of the `min` the
 switch writes), computed in `run_year` from the hub-overlaid gas price and
 threaded through `p2_state` into `_dispatch_frame`, which relabels those
 unit-hours `oil`. The switch/price are untouched (objective-only); this only
-moves the generation label, so the LMP level/tail is byte-identical.
+moves the generation label, so the LMP level/tail is byte-identical. Gated on
+`dual_fuel_oil_reattribution` (default-on for **NEISO only**): PJM and NYISO
+dual-fuel units also cross oil parity on their own winter gas (mask sums 10,416
+/ 4,104 gen-hours in 2024), so enabling it there would move their gas/oil split
+— it stays off for them until their oil re-attribution is separately validated,
+keeping the ERCOT/PJM/CAISO regression guard byte-identical.
 
 Result — modeled oil rises to the right **order of magnitude** (from ~0):
 
