@@ -2316,6 +2316,75 @@ def _report_generic(
         print(f"    negative-price hours: {int((sysprice < 0).sum())}")
 
 
+# cf_emd / pearson-r operating-shape regression gate (audit §D3 — the volume
+# gate is blind to operating shape; a class can pass on annual TWh while
+# missing its CF distribution, e.g. CC_REGULAR's >90% CF hours). The baseline
+# is the keeper of record's per-class best-achieved value; a tuning run FAILS
+# if it degrades shape beyond the margins. Pure post-processing over the fit
+# frame — never gates volumes.
+CF_EMD_GATE_MARGIN = 0.02   # cf_emd may rise at most this much vs baseline
+CF_R_GATE_MARGIN = 0.02     # pearson_r may fall at most this much vs baseline
+
+
+def _cf_emd_baseline_path(iso: str) -> Path:
+    return (REPO / "inputs" / "calibration"
+            / f"cf_emd_baseline_{iso.upper()}.json")
+
+
+def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
+    """Print the per-class operating-shape regression gate vs the keeper baseline.
+
+    Capacity-weights each class-year's per-plant ``cf_emd`` / ``pearson_r`` and
+    compares against ``inputs/calibration/cf_emd_baseline_<ISO>.json`` (the
+    keeper of record). No baseline file => the gate is SKIPPED (never a silent
+    pass), exactly as the audit's metrics-process fix requires.
+    """
+    path = _cf_emd_baseline_path(iso)
+    if not path.exists():
+        print(f"\n  [7c] operating-shape gate (cf_emd / r): SKIPPED — no "
+              f"baseline at {path.relative_to(REPO)}")
+        return
+    base = json.loads(path.read_text()).get("classes", {})
+
+    def wmean(g: pd.DataFrame, col: str) -> float:
+        w = g["cap_mw"].clip(lower=0.0)
+        return float((g[col] * w).sum() / w.sum()) if w.sum() else float("nan")
+
+    cmap = _class_map_for_gate(iso)
+    fit = fit.copy()
+    fit["group"] = fit["plant_code"].astype(int).map(cmap)
+    fit = fit[fit["group"].notna()]
+
+    print("\n  [7c] operating-shape regression gate vs keeper baseline "
+          f"(cf_emd <= base+{CF_EMD_GATE_MARGIN}; r >= base-{CF_R_GATE_MARGIN})")
+    print(f"  {'class':<12} {'year':>4}  {'cf_emd':>7} {'base':>6} {'gate':>5}"
+          f"  {'r':>6} {'base':>6} {'gate':>5}")
+    n_fail = 0
+    for (grp, year), g in fit.groupby(["group", "year"]):
+        b = base.get(str(grp), {}).get(str(int(year)))
+        if not b:
+            continue
+        emd, r = wmean(g, "cf_emd"), wmean(g, "pearson_r")
+        emd_ok = emd <= b["cf_emd"] + CF_EMD_GATE_MARGIN
+        r_ok = r >= b["pearson_r"] - CF_R_GATE_MARGIN
+        n_fail += (not emd_ok) + (not r_ok)
+        print(f"  {grp:<12} {int(year):>4}  {emd:>7.3f} {b['cf_emd']:>6.3f} "
+              f"{'PASS' if emd_ok else 'FAIL':>5}  {r:>6.3f} "
+              f"{b['pearson_r']:>6.3f} {'PASS' if r_ok else 'FAIL':>5}")
+    verdict = "PASS" if n_fail == 0 else f"{n_fail} regression(s)"
+    print(f"  [7c] operating-shape gate: {verdict}")
+
+
+def _class_map_for_gate(iso: str) -> dict[int, str]:
+    """Plant_Code -> dispatch class for the shape gate (ERCOT: the bin sheet)."""
+    if iso.upper() != "ERCOT":
+        return {}
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import load_campd_bins
+    b = load_campd_bins(ScenarioConfig().campd_bins_path)
+    return dict(zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str)))
+
+
 def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     """Print the full calibration report from a persisted bundle.
 
@@ -2439,9 +2508,9 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
                         plant_band_frames.append(cf_bands)
 
     if plant_fit_frames:
-        pd.concat(plant_fit_frames, ignore_index=True).to_parquet(
-            run_dir / "plant_hourly_fit.parquet", index=False
-        )
+        all_fit = pd.concat(plant_fit_frames, ignore_index=True)
+        all_fit.to_parquet(run_dir / "plant_hourly_fit.parquet", index=False)
+        _print_cf_emd_gate(all_fit, iso)
     if plant_band_frames:
         pd.concat(plant_band_frames, ignore_index=True).to_parquet(
             run_dir / "plant_cf_bands.parquet", index=False
