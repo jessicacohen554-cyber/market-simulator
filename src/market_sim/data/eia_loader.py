@@ -284,6 +284,34 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     return out
 
 
+def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
+    """Return EIA-930 measured conventional-hydro net generation by month.
+
+    Twelve-entry vector (MWh, index 0 = January) of the ISO's BA ``NG: WAT``
+    (water = conventional hydro) summed by local calendar month for ``year``.
+    Pumped storage (``NG: PS``) is deliberately excluded — it is a storage
+    resource, not inflow hydro. Returns ``None`` when the ISO has no per-BA
+    hourly extract, the year is not a clean 8760-hour series, the ``NG: WAT``
+    column is absent, or the year's hydro is all-zero/missing.
+
+    Used to repin an incomplete-EIA-923 hydro budget to its measured monthly
+    total — see :func:`market_sim.data.hydro.load_hydro_budget`
+    ``monthly_target_mwh``.
+    """
+    ba = _ISO_TO_HOURLY_BA.get(iso)
+    if ba is None:
+        return None
+    frame = _eia_hourly_frame(ba, year)
+    if frame is None or "NG: WAT" not in frame.columns:
+        return None
+    months = frame["Local date"].dt.month.to_numpy()
+    wat = pd.to_numeric(frame["NG: WAT"], errors="coerce").to_numpy()
+    out = np.array(
+        [np.nansum(wat[months == m]) for m in range(1, 13)], dtype=float
+    )
+    return out if out.sum() > 0.0 else None
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
