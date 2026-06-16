@@ -1,0 +1,207 @@
+# PJM reserve / ORDC scarcity-pricing overlay
+
+**Status:** implemented (post-solve overlay + measured-MCP validation), default
+off. PJM. Measured & real for the backcast (measured requirement + plant-level
+online reserve + published step curve), a published rule for the forecast.
+**Zero parameters fitted to the price residual.**
+**Code:** `src/market_sim/results/scarcity.py` (PJM section),
+`scripts/derive_pjm_ordc_overlay.py`.
+**Curve (cited):** `inputs/calibration/pjm_ordc_curve.csv` +
+`docs/multi-iso/pjm-reserve-curve-source.md`.
+**Data:** `inputs/raw-data/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
+2023–2025). **Bundle:** `results/calibration/pjm_26`.
+
+This is the PJM analogue of `docs/ordc-overlay.md` (ERCOT), not a copy: ERCOT's
+adder is a *smooth* LOLP curve; PJM's is a *vertical two-step* demand curve, so
+the honesty gate is sharper and the conclusion is different.
+
+## Why (the gap this closes — or doesn't)
+
+`docs/multi-iso/pjm-lmp-residual.md` localized the PJM model's miss as a missing
+**$75–200 afternoon reserve-scarcity regime** (energy-only annual LMP −1/−7/−17%
+for 2023/24/25; the 11:00–18:00 ramp carries the gap, p90+ of the duration curve
+explodes). PJM's real RT price = energy LMP + a reserve price component from the
+co-optimized Operating Reserve Demand Curve (ORDC). The energy-only LP cannot
+produce that component. This overlay reconstructs it from PJM's published market
+design and adds it post-solve, leaving the LP's volumes/emissions untouched.
+
+## The published mechanism (provenance)
+
+PJM jointly clears energy and three nested reserve products (Synchronized ⊆
+Primary ⊆ 30-Minute/Secondary) in two Reserve Zones (RTO and the
+Mid-Atlantic/Dominion sub-zone), DA and RT, against **vertical two-step ORDCs**
+(Manual 11 sec 4.3.3; established by the Reserve Price Formation reform, FERC
+EL19-58/ER19-1486, order 2020-05-21, implemented **2022-10-01**). Per product:
+
+```
+reserves R, requirement REQ:
+  R <  REQ           -> $850/MWh   (Step 1)
+  REQ <= R < REQ+190 -> $300/MWh   (Step 2)
+  R >= REQ+190       ->   $0       (no shortage)
+```
+
+The reserve clearing prices cascade the nested requirement shadow prices
+(Manual 11 sec 4.4.1): `SRMCP = SP_SR+SP_PR+SP_30`, `NSRMCP = SP_PR+SP_30`,
+`SecRMCP = SP_30`. The penalty factor enters the **energy** LMP because energy
+and reserves are co-optimized. Full per-value citations (PDF + section) are in
+`docs/multi-iso/pjm-reserve-curve-source.md`. Nothing is fitted to a residual.
+
+## Model mapping
+
+- **Requirement** — backcast uses the **measured** `as_req_mw` from
+  `reserve_market_results_{yr}.parquet` (RT, aggregated to hourly) / `da_*`
+  directly; forecast uses the Manual-11 rule (below).
+- **Reserves** — the model's **plant-level online (synchronized) reserve**: a
+  plant is synchronized when any of its tranches dispatch, and its reserve is
+  the unused headroom across all its thermal tranches, net of the AS plan
+  (`scarcity.pjm_online_reserve`, the shared online-reserve primitive the ERCOT
+  AS-withholding work also builds). Reconstructed (not re-solved) from the
+  bundle's `meta.json` via `run_year(..., fleet_only=True)`, cached as
+  `pjm_availability.parquet`.
+- **Adder** — `scarcity.pjm_reserve_cascade_mcp` applies the cited step curve
+  to the online reserve vs the measured requirement; the binding reserve price
+  (`energy_adder` = the Synchronized cascade) is added to every zone's LMP.
+  Written to `scarcity.parquet[year, hour, scarcity_adder, ...]`, consumed by
+  `analyze_lmp_residual.py --with-scarcity`. Dispatch/system parquets are
+  byte-identical (verified: the deriver writes only the two new parquets); the
+  adder never gates volumes.
+
+## Honesty gate — settled first (and it bites the overlay, by design)
+
+PJM's step is **vertical**: the adder is *exactly $0* unless reserves drop below
+`REQ+190` (~3.3 GW). Three candidate reserve measures, on `pjm_26`:
+
+| reserve measure | 2023 | 2024 | 2025 | usable? |
+|---|---|---|---|---|
+| TOTAL thermal headroom | ~38.3 GW | ~38.2 GW | ~37.6 GW | no — never < REQ → adder always $0 |
+| per-tranche online headroom | ~0 | ~0 | ~0 | no — LP runs tranches bang-bang → always "short", always $850 |
+| **PLANT-LEVEL online (synchronized)** | 15.5 GW | 16.1 GW | 14.6 GW | **the defensible measure** |
+
+Only plant-level online reserve is meaningful — but it sits **~5× above the
+~3.3 GW requirement** even in the hours reality was short. Against the measured
+Primary requirement the curve bites on plant-online reserve in only:
+
+| year | curve bites (step1 / step2) | measured RT shortage hrs (mcp≥$300) | model online reserve in those hrs (median) |
+|---|---|---|---|
+| 2023 | 8 h / 0 h | 15 | 12.7 GW (overall 14.9 GW) |
+| 2024 | 20 h / 0 h | 18 | 14.6 GW (overall 15.4 GW) |
+| 2025 | 3 h / 2 h | 38 | 11.7 GW (overall 14.0 GW) |
+
+**The perfect-foresight LP is not thin when reality was thin.** In PJM's real RT
+shortage hours the model still holds 12–15 GW of online reserve — far above the
+~3.3 GW step breakpoint — so the published curve produces ~$0 there. The actual-
+minus-model residual *is* monotone in online reserve (2024: +30 $/MWh in the
+6–8 GW band, +5 in 13–16 GW, −2 above 20 GW; 2025: +800 in the <4 GW band), so
+the signal is real and correctly localized — but the model's online-reserve
+**floor (~6–8 GW)** sits above where the vertical step engages, so the step
+never fires for those residual hours.
+
+This is the gate result, reported per the brief ("If reserves can't yet be
+measured online, stop and report; do not substitute a load proxy"): reserves
+**are** measured online, and the honest answer is that the published vertical
+step cannot self-target the $75–200 residual on this LP. We do **not** lower the
+breakpoint, net a load proxy, or inflate the penalty to manufacture scarcity
+(claude.md #11). The residual lives in the 6–13 GW online-reserve band, which in
+PJM's market is the **opportunity-cost** reserve price (the marginal unit's lost
+energy margin, set by AS co-optimization) plus congestion/uplift — not the
+penalty-factor shortage regime. That is the AS co-optimization this overlay,
+like the ERCOT one, explicitly does **not** attempt.
+
+## Validation — the curve itself, against measured MCP
+
+The primary measured check (`derive_pjm_ordc_overlay.py --validate-mcp`, no model
+involved) confirms the published curve reproduces measured reserve pricing in the
+regime an energy-only overlay can represent:
+
+**(1) Penalty levels match the cascade** — measured RT maxima are exact multiples
+of $850 (Manual 11 sec 4.4.1):
+
+| year | SR max | Primary (NSR) max | 30-min (Sec) max |
+|---|---|---|---|
+| 2023 | $1,700 (2×850) | $850 (1×850) | $0 |
+| 2024 | $1,700 (2×850) | $850 (1×850) | $0 |
+| 2025 | **$2,550 (3×850)** | $1,700 (2×850) | $850 (1×850) |
+
+**(2) Deficiency → shortage price** — in every RT 5-min interval where cleared
+Synchronized reserves fell below the requirement (`total_mw < as_req_mw`: 18 /
+2 / 22 intervals in 2023/24/25), the measured `mcp` was at the penalty level
+(**100%** ≥ $300). The reverse direction (penalty-priced intervals at apparent
+surplus: 1 / 13 / 50) is the **heavy-load requirement extension** (Manual 11
+sec 4.3 Step 2 "+ additional reserves … in anticipation of heavy load") — the
+binding curve used a requirement above the posted `as_req_mw`. The curve is
+correct; the posted column is the base requirement.
+
+The sub-penalty DA reserve MCP (max $187/$126/$370) is the opportunity-cost
+component (no DA shortage in the window) and is **not** something the energy-only
+overlay reproduces — the same boundary the ERCOT overlay draws at AS
+co-optimization.
+
+### Consequence check (energy LMP residual)
+
+`analyze_lmp_residual.py --with-scarcity` on `pjm_26` — the overlay adds the step
+adder in only 8 / 20 / 5 hours, so it closes **essentially none** of the
+afternoon residual (Jul/Aug 2024 stays −7.7 $/MWh; hours >$75: model 0/0/3 →
++overlay 0/1/7 vs **actual 147/297/712**). Per claude.md #11 this points the
+finger at the **reserve measurement / commitment**, not the curve: the LP's
+perfect-foresight commitment keeps too much capacity synchronized and idle, so
+its online reserve never thins to PJM's step. Closing the residual needs a
+reserve **co-optimization** (the marginal-unit opportunity cost in the 6–13 GW
+band) — out of scope here, exactly as for ERCOT — or a commitment model that
+reproduces PJM's tighter real-time online posture. The curve and the measured-MCP
+validation stand; the overlay is honest about not papering over the commitment
+gap with a fitted parameter.
+
+## Forecast rule (no measured requirement available)
+
+Forecast years have no `as_req_mw`, so the requirement is the **Manual 11 sec 4.3
+rule** = f(Largest Single Contingency, load):
+
+- Synchronized Reserve Requirement = Largest Single Contingency (LSC).
+- Primary Reserve Requirement ≈ 1.5 × LSC (the measured RTO `PR/SR` requirement
+  ratio is **1.45** in 2023 — the 150%-of-contingency convention).
+- 30-Minute (Secondary) Requirement from the largest gas contingency.
+- On-peak Hot/Cold-Weather-Alert hours extend all three (sec 4.3).
+
+LSC is the largest online unit's EcoMax; in the forecast fleet that is the single
+largest generator (a nuclear unit, ~1,300 MW RTO-wide). The plant-level online
+reserve and the step curve then price scarcity to fundamentals.
+
+## Reform / regime gating
+
+The two-step `$850/$300/+190 MW` curve has been **stable** across the backcast
+(Manual 11 Rev 127 → 129 → 136, all identical), in force since the Reserve Price
+Formation reform went live **2022-10-01** (FERC EL19-58). So unlike ERCOT (whose
+ORDC was *replaced* by RTC+B AS demand curves on 2025-12-05), PJM has **no
+regime switch** inside the 2023–2026 horizon: the same cited curve governs the
+backcast and the near-term forecast. Pre-reform (< 2022-10-01) is out of scope —
+the backcast does not reach it — and is deliberately not encoded; the CSV's
+`effective_date` is `2022-10-01` for every row. Any future PJM ORDC change is a
+CSV edit (a new dated block), never a code change.
+
+## Scope notes
+
+- **Opportunity-cost reserve price / AS co-optimization** — the sub-shortage
+  reserve MCP that carries the $75–200 residual — is **not modeled** (a reserve
+  co-optimization, the same boundary as ERCOT).
+- The overlay never enters the LP objective or constraints.
+- PJM is a capacity-market ISO; resource fixed-cost recovery runs through the
+  capacity market (`capacity_revenue_per_mw_yr`), so — unlike ERCOT — the
+  scarcity adder is **not** wired into the capacity-economics screens here. The
+  overlay is a price-formation / residual-diagnosis series, not a revenue stream.
+
+## How to run
+
+```bash
+# PRIMARY measured validation (curve vs measured MCP — no model, fast):
+python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --validate-mcp
+
+# Honesty gate (model online vs total reserve vs measured requirement):
+python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --diagnostic
+
+# Build the overlay (writes scarcity.parquet; no LP re-solve):
+python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26
+
+# Localize the residual with the overlay applied:
+python scripts/analyze_lmp_residual.py results/calibration/pjm_26 \
+    --with-scarcity --months 7 8
+```

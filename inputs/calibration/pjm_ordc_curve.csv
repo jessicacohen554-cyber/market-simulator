@@ -1,0 +1,24 @@
+# PJM Operating Reserve Demand Curve (ORDC) — cited step breakpoints & penalty factors.
+# Provenance per value: docs/multi-iso/pjm-reserve-curve-source.md.
+# In force across the 2023-2025 backcast under the Reserve Price Formation reform
+# (FERC EL19-58/ER19-1486, Order issued 2020-05-21, implemented 2022-10-01).
+# The two-step curve is IDENTICAL across services and reserve zones — Manual 11
+# sec 4.3.3: the demand curves "share the same penalty factors on the Y axis;
+# however, the desired reserve levels on the X axis differ" (the X breakpoint is
+# the per-product requirement + the offset below). Step 1 ($850) extends to the
+# requirement; step 2 ($300) extends 190 MW beyond it; $0 beyond step 2.
+# breakpoint_offset_mw is measured FROM the locational reserve requirement
+# (measured as_req_mw in the backcast; the Manual-11 rule in the forecast).
+service,locale,effective_date,step,breakpoint_offset_mw,penalty_factor,source
+Synchronized,RTO,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Synchronized,RTO,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
+Synchronized,MAD,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Synchronized,MAD,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
+Primary,RTO,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Primary,RTO,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
+Primary,MAD,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Primary,MAD,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
+Secondary,RTO,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Secondary,RTO,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
+Secondary,MAD,2022-10-01,1,0,850,m11 sec 4.3.3 Step 1
+Secondary,MAD,2022-10-01,2,190,300,m11 sec 4.3.3 Step 2
