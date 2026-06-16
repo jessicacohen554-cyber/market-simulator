@@ -37,6 +37,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import (
+    AGT_DAILY_BASIS_CONVEXITY,
     BIOMASS_PRICE_PER_MMBTU,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
@@ -655,6 +656,130 @@ def iso_hub_monthly_gas_prices(
     return monthly
 
 
+_NEISO_DAILY_DEMAND_CACHE: dict[int, np.ndarray | None] = {}
+
+
+def _neiso_daily_demand(year: int, hours: int) -> np.ndarray | None:
+    """Return mean NEISO demand per *model-calendar* day, or ``None``.
+
+    Reads the measured EIA-930 ISNE hourly demand
+    (:func:`market_sim.data.eia_loader._load_neiso_hourly_demand`) and folds it
+    to one mean value per calendar day on the model's ``_DAYS_IN_MONTH``
+    (non-leap, 8760-hour) clock — the same clock the gas-price hours run on, so
+    a 2024 leap day inherits the existing truncate-to-``hours`` convention. The
+    daily demand is the cold-stress proxy that shapes the within-month AGT
+    basis blowout (:func:`iso_hub_daily_gas_prices`). Cached per year. Returns
+    ``None`` when the ISNE extract is unavailable, so the caller falls back to
+    the flat monthly hub overlay.
+    """
+    if year in _NEISO_DAILY_DEMAND_CACHE:
+        return _NEISO_DAILY_DEMAND_CACHE[year]
+    # Local import avoids a module-load cycle (eia_loader imports neither fuel
+    # nor fleet); the daily-basis overlay is NEISO-only, so this is cold path.
+    from market_sim.data.eia_loader import _load_neiso_hourly_demand
+
+    hourly = _load_neiso_hourly_demand(year)
+    result: np.ndarray | None = None
+    if hourly is not None and hourly.size:
+        n_days = hours // 24
+        need = n_days * 24
+        h = np.asarray(hourly, dtype=float)
+        if h.size < need:
+            h = np.concatenate([h, np.full(need - h.size, float(h.mean()))])
+        result = h[:need].reshape(n_days, 24).mean(axis=1)
+    _NEISO_DAILY_DEMAND_CACHE[year] = result
+    return result
+
+
+def iso_hub_daily_gas_prices(
+    config: ScenarioConfig, year: int,
+    basis_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+) -> np.ndarray | None:
+    """Daily-resolved hub-month gas price ($/MMBtu), ``(hours,)``, or ``None``.
+
+    The daily refinement of :func:`iso_hub_monthly_gas_prices` (doc-08 NEISO,
+    the daily-AGT leg of upload U4). In each covered month the flat monthly hub
+    price (measured Henry Hub month + measured AGT month basis) is replaced by
+    a daily series, **mean-preserving at the monthly hub level** so the annual
+    gas burn and fuel mix are unchanged:
+
+      ``daily_hub[d] = hh_daily_norm[d] + basis_daily[d]``
+
+    where ``hh_daily_norm`` is the measured Henry Hub daily within-month series
+    re-centred to the measured monthly mean, and ``basis_daily`` redistributes
+    the measured monthly AGT basis across the month's days proportional to mean
+    NEISO daily demand raised to :data:`AGT_DAILY_BASIS_CONVEXITY` — the
+    coldest (highest-demand) days carry the convex citygate scarcity blowout
+    that a flat monthly plateau never reaches. The redistribution runs only in
+    winter-blowout months (positive monthly basis); shoulder/summer months
+    (zero or negative basis, no pipeline scarcity) keep the flat basis. Months
+    without a measured basis row or Henry Hub quote stay ``NaN`` for the caller
+    to leave on its existing series, exactly like the monthly variant.
+
+    This is the daily AGT spot the marginal gas unit would actually bid at on a
+    cold day; it is what trips the dual-fuel gas->oil switch and the oil-steam
+    fleet (:func:`apply_dual_fuel_pricing`, applied after this overlay) and so
+    builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis
+    is unavailable (so the caller no-ops) or when the NEISO demand series is
+    unavailable (so the caller falls back to the flat monthly overlay).
+    """
+    basis = load_winter_gas_basis(config, year, path=basis_path)
+    if basis is None:
+        return None
+    demand_daily = _neiso_daily_demand(year, config.hours)
+    if demand_daily is None:
+        return None
+    henry_hub = _henry_hub_monthly(henry_hub_path)
+    hh_daily = _henry_hub_daily(henry_hub_path).get(year, {})
+    p = AGT_DAILY_BASIS_CONVEXITY
+    T = config.hours
+    out = np.full(T, np.nan, dtype=float)
+    hour = 0
+    day0 = 0
+    for m in range(12):
+        n_days = _DAYS_IN_MONTH[m]
+        month_hours = n_days * 24
+        hh_m = henry_hub.get((year, m + 1))
+        b_m = basis[m]
+        if hh_m is not None and not np.isnan(b_m) and hour < T:
+            # Daily Henry Hub leg, re-centred to the measured monthly mean so
+            # the hub leg contributes exactly hh_m to the monthly mean.
+            quotes = hh_daily.get(m + 1)
+            if quotes:
+                arr = np.asarray(quotes, dtype=float)
+                day_hh = np.interp(
+                    np.linspace(0.0, 1.0, n_days),
+                    np.linspace(0.0, 1.0, len(arr)),
+                    arr,
+                )
+                dm = float(day_hh.mean())
+                if dm > 0:
+                    day_hh = day_hh * (hh_m / dm)
+                else:
+                    day_hh = np.full(n_days, hh_m)
+            else:
+                day_hh = np.full(n_days, hh_m)
+            # Daily AGT basis leg: convex demand redistribution of the measured
+            # monthly mean (mean over the month's days stays exactly b_m), only
+            # in positive-basis winter months; shoulder months stay flat.
+            seg = demand_daily[day0:day0 + n_days]
+            if b_m > 0 and seg.size == n_days:
+                w = np.power(seg, p)
+                wbar = float(w.mean())
+                day_basis = b_m * (w / wbar) if wbar > 0 else np.full(n_days, b_m)
+            else:
+                day_basis = np.full(n_days, b_m)
+            day_hub = day_hh + day_basis  # monthly mean == hh_m + b_m
+            shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
+            out[hour:hour + len(shaped)] = shaped
+        hour += month_hours
+        day0 += n_days
+    if np.isnan(out).all():
+        return None
+    return out
+
+
 def apply_hub_basis_overlay(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -681,24 +806,35 @@ def apply_hub_basis_overlay(
 
     Gated on ``config.gas_hub_basis_overlay`` (off by default; the
     calibration harness enables it for NEISO), so ERCOT/PJM/CAISO and all
-    forecasts are unchanged. Backcast-only by construction: forward years
-    have no basis rows. Mutates ``fuel_prices`` in place; idempotent.
+    forecasts are unchanged. When ``config.gas_hub_basis_daily`` is also set
+    the covered-month price is the daily-resolved AGT series
+    (:func:`iso_hub_daily_gas_prices`) — the flat monthly plateau replaced by
+    the cold-day blowout that trips the dual-fuel switch — falling back to the
+    flat monthly hub when the daily series is unavailable. Backcast-only by
+    construction: forward years have no basis rows. Mutates ``fuel_prices`` in
+    place; idempotent.
 
     Args:
         fuel_prices: The ``(n_gen, T)`` delivered fuel-price array, updated
             in place for gas generators in covered months.
         fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects gas.
         config: Scenario configuration supplying ``gas_hub_basis_overlay``,
-            ``iso`` and ``hours``.
+            ``gas_hub_basis_daily``, ``iso`` and ``hours``.
         year: Calendar year keying the hub-basis lookup.
         basis_path: Optional override for the basis CSV path.
     """
     if not getattr(config, "gas_hub_basis_overlay", False):
         return
-    monthly = iso_hub_monthly_gas_prices(config, year, basis_path)
-    if monthly is None:
-        return
-    hourly = _expand_monthly_to_hourly(monthly, fuel_prices.shape[1])
+    hourly: np.ndarray | None = None
+    daily = False
+    if getattr(config, "gas_hub_basis_daily", False):
+        hourly = iso_hub_daily_gas_prices(config, year, basis_path)
+        daily = hourly is not None
+    if hourly is None:
+        monthly = iso_hub_monthly_gas_prices(config, year, basis_path)
+        if monthly is None:
+            return
+        hourly = _expand_monthly_to_hourly(monthly, fuel_prices.shape[1])
     covered = ~np.isnan(hourly)
     if not covered.any():
         return
@@ -706,11 +842,13 @@ def apply_hub_basis_overlay(
     if gas_rows.size == 0:
         return
     fuel_prices[np.ix_(gas_rows, np.nonzero(covered)[0])] = hourly[covered]
+    month_of_hour = _month_index(hourly.size)
+    covered_months = int(np.unique(month_of_hour[covered]).size)
     logger.info(
-        "hub-basis overlay (%s %d): %d gas generators repriced at the "
-        "measured hub-month spot in %d/12 months (winter max %.2f $/MMBtu)",
-        config.iso, year, gas_rows.size,
-        int((~np.isnan(monthly)).sum()), float(np.nanmax(monthly)),
+        "hub-basis overlay (%s %d, %s): %d gas generators repriced at the "
+        "measured hub spot in %d/12 months (winter max %.2f $/MMBtu)",
+        config.iso, year, "daily" if daily else "monthly", gas_rows.size,
+        covered_months, float(np.nanmax(hourly)),
     )
 
 

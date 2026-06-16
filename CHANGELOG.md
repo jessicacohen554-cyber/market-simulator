@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-16 (NEISO — AGT hub-basis wiring fix + daily winter-basis refinement)
+
+Two coupled fixes that make the Algonquin Citygate (AGT) winter gas basis the
+correct price driver it was always documented to be. See
+`docs/multi-iso/neiso-data-audit.md` §2c.
+
+- **Bug fix — the AGT hub-basis overlay was never applied in the calibration
+  dispatch.** `run_calibration.run_year` resolves fuel prices with
+  `apply_monthly=False` and re-applied the plant-monthly and dual-fuel passes
+  but **not** `apply_hub_basis_overlay`, so every NEISO keeper priced gas at the
+  two-reporter EIA-923 ISO-month series instead of the measured AGT hub. That
+  series was over-priced in shoulder months and under-priced in winter, so the
+  modeled price level was wrong in both directions (load-weighted hub vs ISO-NE
+  .H.INTERNAL_HUB DA: 2023 $53.6→$34.5 vs $36.8; 2024 $55.7→$40.0 vs $41.5;
+  2025 $54.3→$68.0 vs $67.9). `run_year` now applies the overlay between the
+  plant-monthly and dual-fuel passes. The overlay is idempotent and no-ops for
+  non-NEISO ISOs, so ERCOT/PJM/CAISO/NYISO stay byte-identical.
+- **New `gas_hub_basis_daily` (default-on for NEISO; `--no-gas-hub-basis-daily`
+  to disable).** Daily resolution for the AGT overlay: each winter month's
+  measured mean basis is redistributed across its days by NEISO daily
+  demand^`AGT_DAILY_BASIS_CONVEXITY` (=7.0), with the measured daily Henry Hub
+  leg on top, mean-preserving per month (annual gas burn / fuel mix unchanged).
+  This trips the gas→oil switch on the coldest days and builds the winter LMP
+  tail that a flat monthly plateau cannot (2025 A/B, identical mean: hours
+  >$200 13→128, actual ~160). A flagged proxy for the paywalled/network-blocked
+  daily AGT spot series (U4); falls back to the flat monthly overlay when the
+  NEISO demand series is unavailable. `fuel.iso_hub_daily_gas_prices`,
+  `constants.AGT_DAILY_BASIS_CONVEXITY`, `scenario.gas_hub_basis_daily`.
+- **New keepers** `results/calibration/neiso_agt_daily_{2023,2024,2025}` (and
+  the `neiso_agt_monthly_2025` A/B control). Supersede the `neiso_p12_*` /
+  `neiso_hydro930_2025` keepers on price level.
+- **Known open gap:** modeled oil TWh still under the EIA-930 column because
+  dual-fuel switched MWh is counted as gas (objective-only switch); needs a
+  generation re-attribution (next step).
+
 ## 2026-06-16 (physics — NYISO RCPF scarcity-pricing overlay)
 
 NYISO's analogue of the ERCOT ORDC overlay: a post-solve reserve-demand-curve
