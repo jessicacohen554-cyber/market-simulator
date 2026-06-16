@@ -3008,6 +3008,14 @@ def main() -> None:
              "annual Henry Hub + basis x generic seasonality shape, so real "
              "winter gas events reach the merit order. Off by default.",
     )
+    parser.add_argument(
+        "--no-gas-hub-basis-daily", action="store_true",
+        help="NEISO only: hold the Algonquin Citygate hub-basis overlay at its "
+             "flat monthly level instead of the daily-resolved within-month "
+             "shape (default-on for NEISO). The monthly mean is identical, so "
+             "this isolates the daily refinement's contribution to the winter "
+             "price tail / gas->oil switching (an A/B control).",
+    )
     parser.add_argument("--plant-tranche-config", default=None,
                         help="Per-plant tranche-config CSV (one row per plant "
                              "with its tranche shares + per-band HR mults). "
@@ -3182,6 +3190,7 @@ def main() -> None:
             # The dict is a generic ScenarioConfig override channel
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
+            "gas_hub_basis_daily": False if args.no_gas_hub_basis_daily else None,
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,

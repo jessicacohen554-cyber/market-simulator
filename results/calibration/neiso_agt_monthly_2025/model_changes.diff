@@ -1,0 +1,429 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index aae5752..74f272b 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -75,6 +75,7 @@ from market_sim.data.fleet import (  # noqa: E402
+ from market_sim.data.fuel import (  # noqa: E402
+     apply_coal_supply_pricing,
+     apply_dual_fuel_pricing,
++    apply_hub_basis_overlay,
+     apply_plant_monthly_fuel_prices,
+     coal_passthrough_by_supply,
+     prb_follower_passthrough_series,
+@@ -375,6 +376,21 @@ def _calibration_config(
+         #   trigger (P13). No basis rows exist for other ISOs (the NYISO
+         #   Transco Z6 leg is still unsourced), so this is a NEISO-only
+         #   repricing.
++        gas_hub_basis_daily=(iso.upper() == "NEISO"),
++        #   Daily resolution for the AGT overlay above (doc-08 NEISO, the
++        #   daily-AGT refinement of U4). The measured monthly basis is the
++        #   right level but a flat monthly plateau never reaches distillate
++        #   parity (~$18/MMBtu; max Jan-25 hub $16.9), so the gas->oil switch
++        #   and the oil-steam fleet never trip and the winter LMP tail stays
++        #   flat. This redistributes each winter month's measured mean basis
++        #   across its days by NEISO daily demand^AGT_DAILY_BASIS_CONVEXITY
++        #   (coldest = highest-demand days carry the citygate blowout),
++        #   mean-preserving so the annual gas burn / fuel mix is unchanged —
++        #   tripping oil on the coldest days and building the winter tail. A
++        #   flagged proxy for the paywalled/network-blocked daily AGT spot
++        #   series (it falls back to the flat monthly overlay when the NEISO
++        #   demand series is unavailable). See market_sim.data.fuel
++        #   .iso_hub_daily_gas_prices and docs/multi-iso/neiso-data-audit.md.
+         commitment_enabled=commitment_enabled,  # P1-only by default: the
+         #   3-tranche, no-Pmin bin structure dispatches correctly without the
+         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
+@@ -1097,8 +1113,19 @@ def run_year(
+     if config.coal_supply_repricing:
+         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
+     apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
+-    # Dual-fuel switching last, so the oil-parity min sees the final
+-    # (per-plant monthly) delivered gas price (PJM only; no-op elsewhere).
++    # Hub-basis overlay (NEISO only): replace the gas price with the measured
++    # Algonquin Citygate hub spot in covered months — daily-resolved when
++    # gas_hub_basis_daily is on. Because run_year resolves fuel prices with
++    # apply_monthly=False (so the coal-supply base lands before the per-plant
++    # EIA-923 overwrite), the overlay that resolve_fuel_prices runs in its
++    # apply_monthly=True branch must be re-applied here, mirroring that branch's
++    # order: plant-monthly, then hub overlay, then the dual-fuel min. No-op
++    # unless gas_hub_basis_overlay is set (and basis rows exist), so non-NEISO
++    # runs are unchanged.
++    apply_hub_basis_overlay(fuel_prices, fleet_arrays, config, year)
++    # Dual-fuel switching last, so the oil-parity min sees the final delivered
++    # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
++    # days (NEISO) — not the per-plant monthly cost alone (PJM).
+     apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+     carbon_price = resolve_carbon_price(config, year)
+     wind_mc, solar_mc = compute_dispatch_credits(config, year)
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 8077fea..813f7d2 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -3008,6 +3008,14 @@ def main() -> None:
+              "annual Henry Hub + basis x generic seasonality shape, so real "
+              "winter gas events reach the merit order. Off by default.",
+     )
++    parser.add_argument(
++        "--no-gas-hub-basis-daily", action="store_true",
++        help="NEISO only: hold the Algonquin Citygate hub-basis overlay at its "
++             "flat monthly level instead of the daily-resolved within-month "
++             "shape (default-on for NEISO). The monthly mean is identical, so "
++             "this isolates the daily refinement's contribution to the winter "
++             "price tail / gas->oil switching (an A/B control).",
++    )
+     parser.add_argument("--plant-tranche-config", default=None,
+                         help="Per-plant tranche-config CSV (one row per plant "
+                              "with its tranche shares + per-band HR mults). "
+@@ -3182,6 +3190,7 @@ def main() -> None:
+             # The dict is a generic ScenarioConfig override channel
+             # (None entries are dropped); non-PRB calibration toggles
+             # ride along here.
++            "gas_hub_basis_daily": False if args.no_gas_hub_basis_daily else None,
+             "chp_startup_covered": True if args.chp_startup_covered else None,
+             "coal_warm_committed": True if args.coal_warm_committed else None,
+             "committed_ramp_spread": args.committed_ramp_spread,
+diff --git a/src/market_sim/config/constants.py b/src/market_sim/config/constants.py
+index e29bab9..0ee442d 100644
+--- a/src/market_sim/config/constants.py
++++ b/src/market_sim/config/constants.py
+@@ -606,6 +606,34 @@ COAL_PRICE_ESCALATION: float = 0.01
+ # years.
+ OIL_PRICE_PER_MMBTU: float = 18.0
+ 
++# Convexity exponent of the Algonquin Citygate (AGT) *daily* gas-basis scarcity
++# premium in within-month NEISO demand (doc-08 NEISO design decision 1, the
++# daily-basis refinement of upload U4). ISO-NE is pipeline-constrained: the AGT
++# citygate basis is a flat, near-zero shoulder most days, then blows out
++# convexly on the coldest days when gas-for-heating crowds the marginal
++# gas-for-power off the pipe. The measured *monthly* basis
++# (inputs/raw-data/gas_basis_by_iso_month.csv) is the right level but a flat
++# monthly plateau never reaches distillate parity (~$18/MMBtu), so the
++# dual-fuel gas->oil switch and the oil-steam fleet never trip and the modeled
++# winter price tail stays flat. The true daily AGT spot series (ICE/Platts) is
++# paywalled and network-blocked in this environment (upload U4 unfilled), so
++# the daily basis is reconstructed mean-preservingly: each winter month's
++# measured mean basis is redistributed across its days proportional to that
++# day's mean NEISO demand raised to this exponent (the highest-demand =
++# coldest days carry the blowout), leaving the monthly mean — and hence the
++# annual gas burn and fuel mix — unchanged. The exponent is calibrated so the
++# resulting gas->oil switching reproduces the measured EIA-930 ``NG: OIL``
++# winter burn (0.32/0.37/1.24 TWh, 2023/24/25) and the >$200/MWh winter LMP
++# hour counts across all three years with one constant value; within each
++# winter month the coldest-day demand peaks line up with the days oil actually
++# ran (Feb 3-4 2023 Arctic outbreak, Jan 20-22 2025 polar vortex; demand-oil
++# daily corr 0.5-0.72). Used by market_sim.data.fuel.iso_hub_daily_gas_prices,
++# gated on ScenarioConfig.gas_hub_basis_daily (NEISO calibration only). It is a
++# flagged proxy for the unavailable daily AGT series — see
++# docs/multi-iso/neiso-data-audit.md - and falls back to the flat monthly
++# overlay when the demand series is unavailable.
++AGT_DAILY_BASIS_CONVEXITY: float = 7.0
++
+ # Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas units.
+ # Biomass fuel is largely a low-cost waste/byproduct stream (mill residue,
+ # refuse, landfill gas), so its delivered cost is well below oil and roughly
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index f08e80f..9d7030b 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -1012,6 +1012,26 @@ class ScenarioConfig:
+     # market_sim.data.fuel.apply_hub_basis_overlay.
+     gas_hub_basis_overlay: bool = False
+ 
++    # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
++    # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
++    # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
++    # flat monthly plateau (measured Henry Hub month + measured AGT month
++    # basis) but a *daily* series: the measured Henry Hub daily within-month
++    # shape plus the measured monthly AGT basis redistributed across the
++    # month's days proportional to NEISO daily demand raised to
++    # constants.AGT_DAILY_BASIS_CONVEXITY (coldest = highest-demand days carry
++    # the citygate blowout), mean-preserving per month so the monthly level —
++    # and the annual gas burn / fuel mix — is unchanged. This is what trips the
++    # dual-fuel gas->oil switch and the oil-steam fleet on the coldest days
++    # (the monthly average never reaches distillate parity) and produces the
++    # ISO-NE winter LMP tail. A flagged proxy for the paywalled/network-blocked
++    # daily AGT spot series; falls back to the flat monthly overlay when the
++    # NEISO demand series is unavailable. Off by default; the calibration
++    # harness enables it for NEISO. See
++    # market_sim.data.fuel.iso_hub_daily_gas_prices and
++    # docs/multi-iso/neiso-data-audit.md.
++    gas_hub_basis_daily: bool = False
++
+     # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
+     # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
+     # Natural Gas?" on the Multifuel schedule) price their fuel at
+@@ -1371,6 +1391,7 @@ TIER_TAGS: dict[str, int] = {
+     "battery_dispatch_adder": 3,
+     "gas_monthly_actuals": 3,
+     "gas_hub_basis_overlay": 3,
++    "gas_hub_basis_daily": 3,
+     "dual_fuel_switching": 3,
+     "outage_source": 3,
+     "gas_price_override": 3,
+diff --git a/src/market_sim/data/fuel.py b/src/market_sim/data/fuel.py
+index a67f9a6..03d4357 100644
+--- a/src/market_sim/data/fuel.py
++++ b/src/market_sim/data/fuel.py
+@@ -37,6 +37,7 @@ import numpy as np
+ import pandas as pd
+ 
+ from market_sim.config.constants import (
++    AGT_DAILY_BASIS_CONVEXITY,
+     BIOMASS_PRICE_PER_MMBTU,
+     COAL_PRICE_BASE,
+     COAL_PRICE_ESCALATION,
+@@ -655,6 +656,130 @@ def iso_hub_monthly_gas_prices(
+     return monthly
+ 
+ 
++_NEISO_DAILY_DEMAND_CACHE: dict[int, np.ndarray | None] = {}
++
++
++def _neiso_daily_demand(year: int, hours: int) -> np.ndarray | None:
++    """Return mean NEISO demand per *model-calendar* day, or ``None``.
++
++    Reads the measured EIA-930 ISNE hourly demand
++    (:func:`market_sim.data.eia_loader._load_neiso_hourly_demand`) and folds it
++    to one mean value per calendar day on the model's ``_DAYS_IN_MONTH``
++    (non-leap, 8760-hour) clock — the same clock the gas-price hours run on, so
++    a 2024 leap day inherits the existing truncate-to-``hours`` convention. The
++    daily demand is the cold-stress proxy that shapes the within-month AGT
++    basis blowout (:func:`iso_hub_daily_gas_prices`). Cached per year. Returns
++    ``None`` when the ISNE extract is unavailable, so the caller falls back to
++    the flat monthly hub overlay.
++    """
++    if year in _NEISO_DAILY_DEMAND_CACHE:
++        return _NEISO_DAILY_DEMAND_CACHE[year]
++    # Local import avoids a module-load cycle (eia_loader imports neither fuel
++    # nor fleet); the daily-basis overlay is NEISO-only, so this is cold path.
++    from market_sim.data.eia_loader import _load_neiso_hourly_demand
++
++    hourly = _load_neiso_hourly_demand(year)
++    result: np.ndarray | None = None
++    if hourly is not None and hourly.size:
++        n_days = hours // 24
++        need = n_days * 24
++        h = np.asarray(hourly, dtype=float)
++        if h.size < need:
++            h = np.concatenate([h, np.full(need - h.size, float(h.mean()))])
++        result = h[:need].reshape(n_days, 24).mean(axis=1)
++    _NEISO_DAILY_DEMAND_CACHE[year] = result
++    return result
++
++
++def iso_hub_daily_gas_prices(
++    config: ScenarioConfig, year: int,
++    basis_path: Path | None = None,
++    henry_hub_path: Path | None = None,
++) -> np.ndarray | None:
++    """Daily-resolved hub-month gas price ($/MMBtu), ``(hours,)``, or ``None``.
++
++    The daily refinement of :func:`iso_hub_monthly_gas_prices` (doc-08 NEISO,
++    the daily-AGT leg of upload U4). In each covered month the flat monthly hub
++    price (measured Henry Hub month + measured AGT month basis) is replaced by
++    a daily series, **mean-preserving at the monthly hub level** so the annual
++    gas burn and fuel mix are unchanged:
++
++      ``daily_hub[d] = hh_daily_norm[d] + basis_daily[d]``
++
++    where ``hh_daily_norm`` is the measured Henry Hub daily within-month series
++    re-centred to the measured monthly mean, and ``basis_daily`` redistributes
++    the measured monthly AGT basis across the month's days proportional to mean
++    NEISO daily demand raised to :data:`AGT_DAILY_BASIS_CONVEXITY` — the
++    coldest (highest-demand) days carry the convex citygate scarcity blowout
++    that a flat monthly plateau never reaches. The redistribution runs only in
++    winter-blowout months (positive monthly basis); shoulder/summer months
++    (zero or negative basis, no pipeline scarcity) keep the flat basis. Months
++    without a measured basis row or Henry Hub quote stay ``NaN`` for the caller
++    to leave on its existing series, exactly like the monthly variant.
++
++    This is the daily AGT spot the marginal gas unit would actually bid at on a
++    cold day; it is what trips the dual-fuel gas->oil switch and the oil-steam
++    fleet (:func:`apply_dual_fuel_pricing`, applied after this overlay) and so
++    builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis
++    is unavailable (so the caller no-ops) or when the NEISO demand series is
++    unavailable (so the caller falls back to the flat monthly overlay).
++    """
++    basis = load_winter_gas_basis(config, year, path=basis_path)
++    if basis is None:
++        return None
++    demand_daily = _neiso_daily_demand(year, config.hours)
++    if demand_daily is None:
++        return None
++    henry_hub = _henry_hub_monthly(henry_hub_path)
++    hh_daily = _henry_hub_daily(henry_hub_path).get(year, {})
++    p = AGT_DAILY_BASIS_CONVEXITY
++    T = config.hours
++    out = np.full(T, np.nan, dtype=float)
++    hour = 0
++    day0 = 0
++    for m in range(12):
++        n_days = _DAYS_IN_MONTH[m]
++        month_hours = n_days * 24
++        hh_m = henry_hub.get((year, m + 1))
++        b_m = basis[m]
++        if hh_m is not None and not np.isnan(b_m) and hour < T:
++            # Daily Henry Hub leg, re-centred to the measured monthly mean so
++            # the hub leg contributes exactly hh_m to the monthly mean.
++            quotes = hh_daily.get(m + 1)
++            if quotes:
++                arr = np.asarray(quotes, dtype=float)
++                day_hh = np.interp(
++                    np.linspace(0.0, 1.0, n_days),
++                    np.linspace(0.0, 1.0, len(arr)),
++                    arr,
++                )
++                dm = float(day_hh.mean())
++                if dm > 0:
++                    day_hh = day_hh * (hh_m / dm)
++                else:
++                    day_hh = np.full(n_days, hh_m)
++            else:
++                day_hh = np.full(n_days, hh_m)
++            # Daily AGT basis leg: convex demand redistribution of the measured
++            # monthly mean (mean over the month's days stays exactly b_m), only
++            # in positive-basis winter months; shoulder months stay flat.
++            seg = demand_daily[day0:day0 + n_days]
++            if b_m > 0 and seg.size == n_days:
++                w = np.power(seg, p)
++                wbar = float(w.mean())
++                day_basis = b_m * (w / wbar) if wbar > 0 else np.full(n_days, b_m)
++            else:
++                day_basis = np.full(n_days, b_m)
++            day_hub = day_hh + day_basis  # monthly mean == hh_m + b_m
++            shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
++            out[hour:hour + len(shaped)] = shaped
++        hour += month_hours
++        day0 += n_days
++    if np.isnan(out).all():
++        return None
++    return out
++
++
+ def apply_hub_basis_overlay(
+     fuel_prices: np.ndarray,
+     fleet: FleetArrays,
+@@ -681,24 +806,35 @@ def apply_hub_basis_overlay(
+ 
+     Gated on ``config.gas_hub_basis_overlay`` (off by default; the
+     calibration harness enables it for NEISO), so ERCOT/PJM/CAISO and all
+-    forecasts are unchanged. Backcast-only by construction: forward years
+-    have no basis rows. Mutates ``fuel_prices`` in place; idempotent.
++    forecasts are unchanged. When ``config.gas_hub_basis_daily`` is also set
++    the covered-month price is the daily-resolved AGT series
++    (:func:`iso_hub_daily_gas_prices`) — the flat monthly plateau replaced by
++    the cold-day blowout that trips the dual-fuel switch — falling back to the
++    flat monthly hub when the daily series is unavailable. Backcast-only by
++    construction: forward years have no basis rows. Mutates ``fuel_prices`` in
++    place; idempotent.
+ 
+     Args:
+         fuel_prices: The ``(n_gen, T)`` delivered fuel-price array, updated
+             in place for gas generators in covered months.
+         fleet: Vectorized fleet attributes; ``fuel_type_idx`` selects gas.
+         config: Scenario configuration supplying ``gas_hub_basis_overlay``,
+-            ``iso`` and ``hours``.
++            ``gas_hub_basis_daily``, ``iso`` and ``hours``.
+         year: Calendar year keying the hub-basis lookup.
+         basis_path: Optional override for the basis CSV path.
+     """
+     if not getattr(config, "gas_hub_basis_overlay", False):
+         return
+-    monthly = iso_hub_monthly_gas_prices(config, year, basis_path)
+-    if monthly is None:
+-        return
+-    hourly = _expand_monthly_to_hourly(monthly, fuel_prices.shape[1])
++    hourly: np.ndarray | None = None
++    daily = False
++    if getattr(config, "gas_hub_basis_daily", False):
++        hourly = iso_hub_daily_gas_prices(config, year, basis_path)
++        daily = hourly is not None
++    if hourly is None:
++        monthly = iso_hub_monthly_gas_prices(config, year, basis_path)
++        if monthly is None:
++            return
++        hourly = _expand_monthly_to_hourly(monthly, fuel_prices.shape[1])
+     covered = ~np.isnan(hourly)
+     if not covered.any():
+         return
+@@ -706,11 +842,13 @@ def apply_hub_basis_overlay(
+     if gas_rows.size == 0:
+         return
+     fuel_prices[np.ix_(gas_rows, np.nonzero(covered)[0])] = hourly[covered]
++    month_of_hour = _month_index(hourly.size)
++    covered_months = int(np.unique(month_of_hour[covered]).size)
+     logger.info(
+-        "hub-basis overlay (%s %d): %d gas generators repriced at the "
+-        "measured hub-month spot in %d/12 months (winter max %.2f $/MMBtu)",
+-        config.iso, year, gas_rows.size,
+-        int((~np.isnan(monthly)).sum()), float(np.nanmax(monthly)),
++        "hub-basis overlay (%s %d, %s): %d gas generators repriced at the "
++        "measured hub spot in %d/12 months (winter max %.2f $/MMBtu)",
++        config.iso, year, "daily" if daily else "monthly", gas_rows.size,
++        covered_months, float(np.nanmax(hourly)),
+     )
+ 
+ 
+diff --git a/tests/test_fuel.py b/tests/test_fuel.py
+index 32c02fc..917fa12 100644
+--- a/tests/test_fuel.py
++++ b/tests/test_fuel.py
+@@ -940,6 +940,60 @@ def test_neiso_monthly_agt_basis_stays_below_distillate_parity():
+         )
+ 
+ 
++def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
++    """The daily overlay keeps the monthly mean but injects a cold-day spike.
++
++    With ``gas_hub_basis_daily`` on, January's gas price is no longer the flat
++    monthly hub ($3.18 HH + $10 basis = $13.18) but a daily series whose mean
++    over the month still equals $13.18 (so the annual gas burn is unchanged)
++    while the synthetic cold day (the demand peak) is repriced well above it —
++    the blowout a flat plateau can never produce. The basis redistribution is
++    convex in demand, so the peak day carries the spike.
++    """
++    basis_csv = tmp_path / "basis.csv"
++    basis_csv.write_text(
++        "iso,year,month,hub,basis_usd_mmbtu,source\n"
++        "NEISO,2024,1,AGT,10.0,test\n"
++    )
++    hours = 31 * 24  # January 2024 only
++    # Synthetic daily demand: flat with one cold-day peak on day 15.
++    demand = np.full(31, 12000.0)
++    demand[14] = 18000.0
++    monkeypatch.setattr(
++        "market_sim.data.fuel._neiso_daily_demand",
++        lambda year, hrs: demand,
++    )
++    fleet = _sample_fleet(hours=hours)
++    config = ScenarioConfig(
++        iso="NEISO", mode="backcast", weather_year=2024,
++        gas_seasonality=False, hours=hours,
++        gas_hub_basis_overlay=True, gas_hub_basis_daily=True,
++    )
++    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
++    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
++
++    gas_rows = np.isin(fleet.fuel_type_idx, (
++        FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"],
++    ))
++    gas_jan = fuel_prices[gas_rows]  # (n_gas, 744)
++    # Mean over the month is exactly the flat monthly hub (mean-preserving).
++    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.18 + 10.0, rtol=1e-6)
++    # Daily resolution: the series is not flat, and the cold day (day 15)
++    # is repriced above the monthly mean.
++    daily = gas_jan[0].reshape(31, 24).mean(axis=1)
++    assert daily.std() > 0.5
++    assert daily[14] == daily.max()
++    assert daily[14] > 13.18
++
++    # Demand unavailable -> falls back to the flat monthly overlay.
++    monkeypatch.setattr(
++        "market_sim.data.fuel._neiso_daily_demand", lambda year, hrs: None
++    )
++    flat = np.full((fleet.n_gen, hours), 4.0)
++    apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
++    np.testing.assert_allclose(flat[gas_rows], 13.18)
++
++
+ def test_hub_basis_overlay_noop_for_other_isos():
+     """ERCOT/PJM/CAISO fuel prices are unchanged by the overlay machinery.
