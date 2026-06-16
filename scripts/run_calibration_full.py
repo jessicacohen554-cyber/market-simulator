@@ -1024,6 +1024,7 @@ def solve_and_persist(
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
+    storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
@@ -1121,6 +1122,7 @@ def solve_and_persist(
             storage_daily_cycling=storage_daily_cycling,
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
+            storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
@@ -1251,6 +1253,7 @@ def solve_and_persist(
         "storage_daily_cycling": storage_daily_cycling,
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
+        "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
@@ -1312,6 +1315,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if as_reserve_withholding:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
+    if storage_as_commitment:
+        recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
     if battery_dispatch_adder:
         recorded_cfg = recorded_cfg.with_overrides(
             battery_dispatch_adder=battery_dispatch_adder)
@@ -2987,6 +2992,12 @@ def main() -> None:
              "storage/load split). Off = no withholding (default).",
     )
     parser.add_argument(
+        "--storage-as-commitment", action="store_true",
+        help="ERCOT: reserve the measured hourly storage up-AS MW from the "
+             "battery dispatch power cap (per-resource-type series), so AS-"
+             "committed capacity cannot also arbitrage energy. Off (default).",
+    )
+    parser.add_argument(
         "--battery-adder", type=float, default=0.0,
         help="Grid-battery throughput/cycling cost in $/MWh discharged "
              "(ScenarioConfig.battery_dispatch_adder): degradation + "
@@ -3241,6 +3252,7 @@ def main() -> None:
         storage_daily_cycling=args.storage_daily_cycling,
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
+        storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,

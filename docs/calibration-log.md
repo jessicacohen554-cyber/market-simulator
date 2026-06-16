@@ -42,6 +42,40 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-16 — ERCOT — storage AS-commitment probe: accuracy-positive, score-neutral (the real AS lever)
+
+Where the thermal-AS lever was negligible, the *storage* one is physically
+real. ERCOT batteries clear most of their value as AS (RegUp+RRS+ECRS): the
+per-resource-type data shows storage holding **2.0 GW/h in 2024, 2.8 GW in
+2025** — ~30 %+ of the fleet's power — which cannot also arbitrage energy. New
+opt-in flag `--storage-as-commitment` (default OFF, ERCOT-only) reserves that
+measured hourly storage-AS MW from the battery dispatch power cap (pro-rata by
+power; reserves power, not SOC). `ScenarioConfig.storage_as_commitment`;
+`model/storage.reserve_storage_as_power`.
+
+The energy-only LP otherwise dumps the **full fleet into a handful of hours**:
+baseline 2024 storage discharges in only 451 h/yr, peaking at **5.79 GW**. With
+the AS reservation it binds in the ~75–170 peak/scarcity hours where the model
+over-discharges — peak capped to **4.58 GW**, discharge spread to 511 h, annual
+energy ~flat (0.78 → 0.73 TWh).
+
+**2024 A/B vs run121: score-neutral, accuracy-positive.** cf_emd 6/6 PASS,
+several marginally better (CC_CHP 0.117 → 0.115, CT_PEAKER 0.051 → 0.049, ST_GAS
+0.098 → 0.097); CO₂ classes ~unchanged (CC_REGULAR +3.5 %, CT_PEAKER −24.5 →
+−24.2). It does **not** fix the CT_PEAKER under-run (documented non-CEMS small
+peakers), but it makes the storage dispatch defensible (measured AS reservation
+vs an unphysical full-fleet peak dump) — an accuracy keeper candidate in the
+spirit of run121's storage COD ramp, not a fit lever.
+
+**Where it should matter more — 2023.** The 2024 score effect is small because
+the keeper's `battery_dispatch_adder=10` already throttles storage to 0.78 TWh
+(a tuned proxy for the same AS-priority behaviour). 2023 has the highest AS
+share (smaller battery fleet, batteries earned ~85 % of revenue from AS) and is
+the scarcity year the ORDC overlay compensates for — capping storage peak dumps
+there should lift scarcity prices most. Re-check when 2023 data lands; and a
+follow-up worth testing is replacing the `battery_dispatch_adder` magic number
+with this measured constraint. Flag default-off pending that.
+
 ### 2026-06-16 — ERCOT — AS-withholding probe (NOT a keeper): RESOLVED — thermal AS withholding is negligible (measured)
 
 **Probe**, not adopted. Tests the run121 hypothesis that the CC over-run is an

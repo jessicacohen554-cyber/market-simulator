@@ -107,3 +107,32 @@ class TestWithholding:
         assert fa.availability.min() >= 0.0
         assert fa.availability.max() <= 1.0
 
+
+
+class TestStorageAsCommitment:
+    """Reserving measured storage up-AS MW from the battery power cap."""
+
+    def test_reserves_as_pro_rata(self):
+        from market_sim.model.storage import reserve_storage_as_power
+        import pandas as pd
+        asr = pd.read_parquet(
+            "inputs/raw-data/ercot-AS/ercot_2024_as_by_restype_hourly.parquet"
+        )["storage"].to_numpy(dtype=float)
+        pc = np.array([4000.0, 2500.0])  # 6.5 GW across two units
+        out = reserve_storage_as_power(pc, 2024, HOURS)
+        assert out.shape == (2, HOURS)
+        # Fleet power after = 6500 - storage_AS (floored at 0).
+        np.testing.assert_allclose(
+            out.sum(axis=0), np.clip(6500.0 - asr, 0.0, None), atol=1e-6
+        )
+        # Allocation stays pro-rata by unit power.
+        np.testing.assert_allclose(
+            out[0], (4000.0 / 6500.0) * out.sum(axis=0), atol=1e-6
+        )
+        assert out.min() >= 0.0
+
+    def test_missing_year_passthrough(self):
+        from market_sim.model.storage import reserve_storage_as_power
+        pc = np.array([4000.0, 2500.0])
+        out = reserve_storage_as_power(pc, 1999, HOURS)
+        np.testing.assert_array_equal(out, pc)
