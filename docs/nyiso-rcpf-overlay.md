@@ -1,0 +1,132 @@
+# NYISO RCPF scarcity-pricing overlay
+
+**Status:** implemented (post-solve overlay), default off
+(`ScenarioConfig.nyiso_rcpf_enabled`). NYISO only, system-wide (NYCA).
+**Code:** `src/market_sim/results/rcpf.py`,
+`scripts/derive_nyiso_rcpf_overlay.py`,
+constants `NYISO_RCPF_PRODUCTS` (`src/market_sim/config/constants.py`).
+**Validated against:** `results/calibration/nyiso_cal_{2023,2024,2025}` vs
+`inputs/calibration/actual_lmp_hourly_NYISO.parquet` (NYCA-hub RT).
+
+## Why
+
+Like ERCOT (see `docs/ordc-overlay.md`), the dispatch model is a
+perfect-foresight LP whose price is the demand-constraint dual with zero
+unserved energy, so it **structurally cannot produce scarcity prices**. The
+NYISO backcast clears a body around the right level but no tail: 2023 model
+max $97/MWh vs actual $1,147; 2025 model max $138 vs actual $2,074. NYISO's
+real RT price *is* energy plus reserve-shortage shadow prices — so the
+faithful representation is a post-solve overlay that replicates actual price
+formation, not a fit. The LP remains the validated volumes/emissions engine
+and is byte-identical with the overlay on or off.
+
+## The published mechanism (provenance)
+
+NYISO prices real-time scarcity through its **Reserve Constraint Penalty
+Factors (RCPF)** — stepped reserve *demand curves*, not an ERCOT-style
+ORDC/LOLP curve. When dispatchable headroom falls below an operating-reserve
+requirement, the demand curve sets the reserve clearing price, and through
+energy/reserve co-optimization that shadow price flows into the LBMP. The
+products are **nested** — 10-minute spinning ⊂ 10-minute total ⊂ 30-minute
+total — so in a deepening shortage the penalties **stack** into the energy
+price. That stacking is how NYISO RT LMP reaches the high-hundreds /
+low-thousands off a ~$2,000/MWh energy offer cap.
+
+Requirements (NYISO Transmission & Dispatch Operations Manual; 2025 largest
+single contingency ≈ 1,310 MW): 10-min spinning = ½ contingency = 655 MW,
+10-min total = contingency = 1,310 MW, 30-min total = 2× contingency =
+2,620 MW.
+
+Demand curve (NYISO MST Rate Schedule 4 / Ancillary Services Manual; the
+NYCA 30-minute curve per FERC Docket ER21-502, effective 2021):
+
+| Product            | Requirement | Max shadow price | Critical level |
+|--------------------|-------------|------------------|----------------|
+| NYCA 30-min total  | 2,620 MW    | $750/MWh         | 1,965 MW       |
+| NYCA 10-min total  | 1,310 MW    | $750/MWh         | (ramp to 0)    |
+| NYCA 10-min spin   | 655 MW      | $775/MWh         | (ramp to 0)    |
+
+The NYCA 30-minute curve is a nine-step downward-sloping curve that reaches
+its $750/MWh maximum at the 1,965 MW critical level (FERC ER21-502); the
+overlay represents each product's curve as **piecewise-linear** between its
+published anchors (requirement → $0, critical → max penalty). The anchors
+trace to the tariff; the slope between them is linearised pending the full
+nine-step table (WebFetch of NYISO/FERC source PDFs is unavailable in this
+environment). **Nothing here is fitted to LMP residuals**, and every value is
+a `ScenarioConfig` override (`nyiso_rcpf_products`).
+
+## Model mapping (documented approximations)
+
+* **Reserves** R = dispatchable-fossil available capacity (`gas_cc`,
+  `gas_ct`, `gas_st`, `oil`, incl. the outage overlay/derates) minus their
+  dispatch, plus storage headroom (power cap − discharge + charge). Nuclear
+  is baseload (no reserve; its headroom ≈ 0 anyway), coal is retired in NY,
+  and renewables/hydro are excluded (renewables provide no NYISO operating
+  reserve; hydro headroom is energy-limited — a small conservative omission).
+* **No on-line/ramp split.** The LP has no per-unit ramp-rate or commitment
+  state, so it cannot distinguish 10-minute-capable from 30-minute-capable
+  headroom. Every product sees the same R; the nesting is carried by the
+  requirements (a shortfall deep enough to breach the 10-min requirement is
+  by construction also short of the 30-min requirement, so the curves stack).
+  This over-states 10-minute capability and only matters in already-critical
+  hours.
+* **System-wide (NYCA).** Locational reserves (East zones F–K = 1,200 MW;
+  SENY 30-min = $500/MWh; NYC; Long Island) need per-zone headroom and land
+  with the zonal-congestion fix — see the finding below. The system-wide
+  overlay matches the NYCA-hub RT price the backcast reports.
+
+## Finding: the 2023–2025 tail is *locational*, and the overlay is gated by
+## the LP's perfect-foresight headroom
+
+Run across all three keeper bundles, the system-wide overlay fires **zero**
+adder in every hour. The diagnostic (`--diagnostic`) localises why: even in
+the actual >$300/MWh hours, the model's NYCA-wide reserve headroom is ~4–6 GW
+(2023: median 5,954 MW, p5 3,981 MW), never approaching the 2,620 MW 30-min
+requirement. The headroom *does* fall with price (2023: median 9,344 MW at
+<$50 → 5,954 MW at >$300), so the mechanism is directionally right — it is
+just ~3–4 GW too loose to bind.
+
+The cause is structural, not a curve-calibration problem, and **must not be
+papered over** (per the calibration methodology: a real input that makes the
+backcast worse is a discovered bug elsewhere — fix the root cause, never bury
+the error inside an inflated requirement or a headroom offset):
+
+1. **The 2023 NY scarcity tail was locational.** In the model's tightest
+   hours ~3.5 GW of imports plus idle gas leave 4–5 GW of NYCA-wide headroom;
+   real RT spikes to $1,147 came from **downstate import-constrained pockets**
+   (zones J/K behind binding Central-East / UPNY-SENY / Dunwoodie / Long
+   Island interfaces) and the **locational** East/SENY/NYC/LI reserve
+   requirements — none of which a NYCA-aggregate energy LP can see. This is
+   the same root cause as the congestion/zones gap (`#1` in the scorecard):
+   static Gold-Book load shares never let downstate peak hard enough to bind
+   the interfaces.
+2. **Perfect-foresight headroom bias + import over-service.** The energy LP
+   commits with perfect foresight and treats imports as flexible cheap slack
+   that backs down gas, so NYCA-wide capacity is never exhausted.
+
+**Therefore:** the overlay is correct, parameter-honest infrastructure that
+stays inert until the upstream physics lands. The path to the tail is, in
+order: (a) per-zone hourly actual load (upload **U3**) + the TTC/interface
+audit so downstate binds; (b) **locational** East/SENY/NYC/LI RCPF products
+keyed off per-zone headroom (this overlay is scaffolded for them — add rows
+to `NYISO_RCPF_PRODUCTS` evaluated on zonal reserves); then (c) the
+system-wide curves here bind naturally in genuinely NYCA-wide-tight hours
+(e.g. extreme winter/summer capacity events). Forcing the system-wide curve
+to fire now — by inflating requirements or subtracting a multi-GW headroom
+offset — would bury the locational/import error, so it is deliberately not
+done.
+
+## Usage
+
+```
+python scripts/derive_nyiso_rcpf_overlay.py results/calibration/nyiso_cal_2023 \
+    [--years 2023 2024 2025] [--tag scenarioX] [--rebuild-availability] \
+    [--diagnostic]
+```
+
+Writes `availability_rcpf.parquet` (cached reserve-fleet availability,
+reconstructed via `run_year(fleet_only=True)` — no LP re-solve) and
+`scarcity.parquet` (per (year, hour): `reserves_mw`, `scarcity_adder`,
+`lmp`, `lmp_scarcity`, and a per-product price column), next to the
+energy-only LMP. `--diagnostic` prints the headroom-vs-actual-tail
+localisation (the pre-adder gate) and exits.
