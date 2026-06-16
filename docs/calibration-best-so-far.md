@@ -1,6 +1,30 @@
 # ERCOT calibration — best config so far
 
-> **STATUS (2026-06-14, post-run-115b): NEW KEEPER — run 115b, the per-plant
+> **STATUS (2026-06-16): NEW KEEPER — run 120, the forecast-defensible config
+> (user directive).** `results/calibration/run120_meritramp_defensible` =
+> run 115b **+ the merit-ramp CC shape fix, with the CT AS/RUC-deployment
+> overlay turned OFF**. The user set a hard defensibility principle: keep only
+> mods that are physically/contractually real AND carry into the 2026–2050
+> forecast (unit outage overlays, take-or-pay coal sigmoids, lignite must-run,
+> cc-duct manufacturer spec, structural offer-curve shape fixes, actual fuel);
+> drop every CEMS-pinned "magic number" with no forward analogue (the CT
+> deployment floor, the spatial reliability-deployment floor, multi-pocket
+> floors). Result: **5 in-scope fails at the 0.5% universal gate** — CT_PEAKER
+> 2023/2024 (the *honest* under-run now that the CEMS floor is gone: an
+> energy-only LP cannot dispatch out-of-merit AS/RUC peaker energy, and there is
+> no defensible forward way to add it), CC_REGULAR 2024/2025 (the
+> spatial-irreducible residual — the binding congestion is **nodal, not zonal**:
+> 94% of SCED binding-constraint rent is on <200 kV local pockets, so finer
+> zones would not bind; see `docs/audit-followup-tests-2026-06.md`), and
+> COAL_PRB 2024 (cheap-gas economics, justified). The merit-ramp **fixes the
+> CC_REGULAR operating-shape failure** (cf_emd 0.099/0.105/0.113 →
+> 0.088/0.098/0.101, the new `[7c]` gate). CO₂ 8/9 (2024 coal residual). Carries
+> the published ORDC overlay (display-only, now the dashboard's default ERCOT
+> price line). Supersedes run 115b/run119. The run-115b block below is retained
+> as history (it scored 5 fails too, but with the CT floor papering over the
+> peaker under-run — less defensible).
+>
+> **STATUS (2026-06-14, post-run-115b): prior keeper — run 115b, the per-plant
 > CC duct-firing overlay + PRB-floor ease on top of run 109a.** The run-110→117
 > campaign added a measured per-plant CC peak-band structure (each CC plant's
 > duct-firing band sized from its EIA-860 nameplate-vs-net-summer gap, the
