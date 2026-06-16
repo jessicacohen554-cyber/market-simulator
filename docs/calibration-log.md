@@ -2471,6 +2471,40 @@ oil/dual-fuel path. Reproduce a probe:
 --offer-curve-delta-json '{"CC_REGULAR":{"econ_high":-0.05}}' --out-dir
 results/calibration/neiso_probe_cc_regular_econ_high_minus`.
 
+### Re-verification on current main (2026-06-16, sha `e3329bd`)
+
+The probe panel was built at sha `1e22402`; per-ISO CAMPD binning (W1b,
+`9061ae9`/`ad0dd79`) and the AS/CT-deployment overlay generalized to NEISO
+(`1bfa29f`) have landed on main since, so the `neiso_probe_base_2024`
+code-accumulation anchor was re-run on current main to test for NEISO output
+drift (`--iso NEISO --year 2024 --commitment`, default flags, identical to the
+committed anchor). **Result: zero drift.** The recheck reproduces the committed
+anchor *exactly* — max |ΔTWh| = 0.0000 across all 14 dispatch classes
+(CC_REGULAR 55.24, nuclear 26.48, …) and an identical $57.06 demand-weighted P1
+price. NEISO 2024 is bit-for-bit deterministic on the new binning/overlay code
+(consistent with the W1c generic-coverage verification `ec714de`).
+
+Because the base is unchanged and the ±0.05 delta mechanism is deterministic,
+the 10 single-knob probe bundles are no-ops on current code; they were **not**
+re-solved (identical-output compute). Rebuilding the Jacobian from the committed
+parquets (`derive_offer_curve_jacobian.py --iso NEISO --baseline
+neiso_p12_base_2024 --validate-run neiso_probe_base_2024`) reproduces
+`inputs/processed/offer_curve_jacobian.csv` **byte-identically** (1158 cells; 70
+NEISO; ERCOT/PJM/CAISO rows untouched), and the joint-move recipe is unchanged
+(twh 0.671 / shape 2.151 / lmp 18.413, every useful knob trust-region-frozen).
+The panel + Jacobian stand as the current-main NEISO sensitivity map; no re-tune.
+
+Zonal/TTC re-check (same session): `test_transmission.py`,
+`test_zone_assignment.py`, `test_iso_config.py`, `test_neiso_demand.py`,
+`test_neiso_bins.py` — 151 pass; `scripts/neiso_zonal_sufficiency.py` reproduces
+the committed `neiso-zonal-adequacy.md` table (every pocket-vs-hub median
+<$1/MWh, p90 <$5 except CT-2025, |spread|>$20 hours ≤0.7%). The 4-zone topology
++ RSP Tier-3 TTC seeds carry small, winter-loaded, CT-led separation and do not
+create spurious congestion — load zones and TTC links are sound. Drift-check
+tooling added: `scripts/_neiso_probe_compare.py` (per-class TWh + dw-price diff
+of two bundles) and `scripts/_run_neiso_probe_panel.sh` (panel reproduce
+harness, concurrency-capped at 2 for the multi-GB per-plant LP).
+
 ---
 
 ## CAISO 3 — offer-curve probe panel + Jacobian (sensitivity map, 2023) (2026-06-13)
