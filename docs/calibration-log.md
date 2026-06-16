@@ -42,6 +42,50 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-16 — ERCOT — audit follow-up D1–D4: out-of-sample test, overlay ablation, new shape/CO₂ gates, merit-ramp CANDIDATE KEEPER
+
+**Scope.** Ran the four prioritized tests from the third-party audit
+(`docs/ercot-backcast-audit-2026-06.md`); full results in
+`docs/audit-followup-tests-2026-06.md`. **2022 + H1-2026 excluded** (user's
+untrained holdout sets). `keeper_anchor` reproduced run115b's 5 fails exactly.
+
+- **D1 — out-of-sample (`--statistical-mode`, every answer-injection overlay
+  off).** In-scope fails **double 5 → 10**; CT_PEAKER collapses to ~0.8–1.8 TWh
+  (the deployment floor supplied its whole match); coal +7–8 TWh; system CO₂
+  +8/+9%; hourly-r degrades 0/18. The headline backcast is **not** a
+  forecast-skill prior. New umbrella flag `apply_statistical_mode`
+  (`run_calibration_full.py`, tested).
+- **D2 — single-overlay ablation.** The **historic-outage overlay dominates**
+  (5→9 alone; carries volume, CO₂ AND timing) and is the most *defensible*
+  (real outages). The **CT deployment floor is the most answer-injecting but
+  smallest** (5→6, ~1.5 TWh) — even with it CT fails (non-CEMS peakers
+  unreachable).
+- **D3 — the missing gates, built.** `scripts/score_backcast_shape_emissions
+  .py` (carbon-weighted CO₂ + cf_emd/r) caught a real keeper failure the volume
+  gate hides: **2024 coal CO₂ −8.9%** under a passing total (−0.2%) — gas/coal
+  split compensation. **Wired a `[7c]` cf_emd/pearson_r regression gate into the
+  live report** (`_print_cf_emd_gate`, baseline
+  `inputs/calibration/cf_emd_baseline_ERCOT.json` = keeper of record; SKIPs
+  loudly when absent, never silent-passes). statmode_d1 trips it with 32
+  regressions; the merit-ramp passes (improves CC shape).
+- **D4 — CC_REGULAR fix.** The **merit-ramp (d4a) is promoted to CANDIDATE
+  KEEPER**: it fixes the operating-shape failure cleanly (CC_REGULAR cf_emd
+  0.099/0.105/0.113 → 0.088/0.098/0.101, r 0.74 → 0.76; `[7c]` 18/18 PASS, no
+  class regresses) AND cuts the 2024/25 over-run (+6.31→+5.18, +3.61→+2.77), at
+  the cost of CC 2023 over-low (−2.08, a 0.6-TWh fail). Cheapening the duct wall
+  (d4b, peak 2.57→1.55×) adds NO shape benefit and worsens volume — rejected.
+  Reproducible from `inputs/calibration/offer_curve_deltas_cc_merit_ramp.json`
+  alone (no uncommitted mechanism). **This is the same CC delta set already in
+  run119** (dashboard probe = merit-ramp + a CPS local-reliability-mustrun
+  floor); run119's CPS mechanism + bundle are NOT in the repo, so d4a is the
+  reproducible candidate. The residual CC 2024/25 volume over-run is **not**
+  offer-closable (gas-price year-gradient + North/SC spatial axis) — confirmed
+  across both D4 variants; it needs the spatial lever (run118 overlay measured
+  weak; run119 CPS floor measured weak; finer-zone topology still open).
+- **Keeper of record stays run115b** (the candidate trades a 2023 volume fail
+  for the shape fix; promote when the spatial axis closes the residual). Bundles
+  trimmed (dispatch/ + campd dropped) — configs reproduce them.
+
 ### 2026-06-15 — ERCOT — spatial reliability-deployment overlay (run118, MEASURED PROBE — weak lever, keeper stays run115b)
 
 **Scope.** Builds the spatial reliability-deployment overlay parked in the
@@ -157,8 +201,17 @@ intra-zonal pockets the 7-zone model cannot form (NE_LOB 15%, Rio Grande Valley
 cluster ≈21%, HMLTN, WHARTN); the under-zone thermal ran 44 TWh "out-of-merit vs
 the hub" in 2025 — local congestion the single-system-price reduction misses.
 The fix is a **spatial reliability-deployment overlay** (per-plant out-of-merit
-floor, generalizing the CT deployment overlay), but it needs ERCOT zonal/hub
-prices (NP6-785-ER) which are not in the repo — parked. Full build prompt in
+floor, generalizing the CT deployment overlay). **UPDATE (2026-06-16):** the
+ERCOT zonal/hub prices (NP6-785-ER) ARE in the repo —
+`inputs/calibration/actual_lmp_zonal_ERCOT.parquet` (hubs HB_NORTH/HOUSTON/
+SOUTH/WEST/PAN/HUBAVG + load zones LZ_AEN/CPS/LCRA/RAYBN/HOUSTON/NORTH/SOUTH/
+WEST, RT+DA, 2023–25). They already powered run118's spatial reliability-
+deployment overlay (measured a near-no-op: the 7-zone LP already dispatches
+~85–90% of the congestion wedge) and run119's CPS local-reliability-mustrun
+floor (measured probe, net non-impactful — 6 fails vs run115b's 5). True
+finer-zone *topology* (splitting South_Central into AEN/CPS/LCRA, or the
+Valley/Permian sub-pockets behind their internal limits) still needs the
+sub-zonal TTC limits, not just prices. Full build prompt in
 `docs/spatial-ruc-session-prompt.md`.
 
 **Merit-ramp probe (this session).** Restore a rising econ ramp at ~base mean to
