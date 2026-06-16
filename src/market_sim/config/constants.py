@@ -1818,6 +1818,48 @@ ORDC_FLOOR_STEPS: tuple[tuple[float, float], ...] = (
 # effective date: Jan-Oct = 304 days.
 ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 
+# --- NYISO RCPF (Reserve Constraint Penalty Factor) scarcity overlay -------
+# NYISO does not use an ERCOT-style ORDC/LOLP curve. Real-time scarcity is
+# priced by the Reserve Constraint Penalty Factors: when dispatchable
+# headroom falls below an operating-reserve requirement, the reserve
+# demand curve sets the reserve clearing price, and that shadow price
+# enters the LBMP through energy/reserve co-optimization. The products are
+# nested (spinning subset of 10-minute-total subset of 30-minute-total), so
+# in a deepening shortage the penalties STACK into the energy price — which
+# is how NYISO RT LMP reaches the high-hundreds/low-thousands ($1,147/MWh
+# max in 2023) off a ~$2,000 energy offer cap.
+#
+# Each product is (name, requirement_mw, critical_mw, max_penalty_$/MWh):
+#   * requirement_mw — reserve target; the curve is $0 at or above it.
+#   * critical_mw    — reserve level at/below which the maximum penalty
+#                      applies; the curve ramps linearly from $0 at
+#                      requirement_mw to max_penalty at critical_mw (a
+#                      piecewise-linear stand-in for the published stepped
+#                      demand curve — the anchors are sourced, the slope
+#                      between them is linearised pending the full tariff
+#                      step table; nothing here is fitted to LMP residuals).
+#   * max_penalty    — the maximum allowable reserve shadow price ($/MWh).
+#
+# Requirements: NYISO sets 10-min spinning = 1/2 largest contingency,
+# 10-min total = largest contingency, 30-min total = 2x largest
+# contingency. Largest single contingency ~1,310 MW (NYISO Transmission &
+# Dispatch Operations Manual; 2025 value) -> 655 / 1,310 / 2,620 MW.
+# 30-min demand curve: $750/MWh maximum shadow price, applied at/below the
+# 1,965 MW critical level, nine-step downward-sloping over the top 655 MW
+# (FERC Docket ER21-502, eff. 2021; NYISO MST Rate Schedule 4). The
+# 10-minute products carry the higher value of faster response; their
+# maxima are the published RS4 ceilings ($750 non-sync, $775 spinning) and
+# ramp from the requirement (no published intermediate breakpoint -> linear
+# to zero reserve). Locational reserves (East F-K 1,200 MW, SENY $500/MWh,
+# NYC, Long Island) are NOT here: they need per-zone headroom, which lands
+# with the zonal-congestion fix; this system-wide NYCA overlay matches the
+# NYCA-hub RT price the backcast reports.
+NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
+    ("nyca_30min_total", 2620.0, 1965.0, 750.0),
+    ("nyca_10min_total", 1310.0, 0.0, 750.0),
+    ("nyca_10min_spin", 655.0, 0.0, 775.0),
+)
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760
