@@ -468,24 +468,26 @@ function classLabel(g){return isNonFos(g)?g[0].toUpperCase()+g.slice(1):mixLabel
 function classErr(id,yr,grp){const m=classMetrics(id,yr,grp);
  if(!m||!(m.bench923>0.02))return null;
  const mSys=((MODEL[id].years[yr].gmModel||{})[grp])||0,aSys=((BENCH[yr].classFull||{})[grp])||0;
- return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,sharePP:sharePP(id,yr,mSys,aSys),r:m.r,nr:m.nr};}
+ return {grp,err:100*(m.mFull-m.bench923)/m.bench923,mFull:m.mFull,bench923:m.bench923,annGen:(totalGen(id,yr)||{}).aGen||0,sharePP:sharePP(id,yr,mSys,aSys),r:m.r,nr:m.nr};}
 // Non-fossil class error (system-wide; EIA-930 actual). Same shape as a fossil
 // classErr so the tolerance test treats every class uniformly; nonfos flags it
 // so the system-error KPI stays fossil-only and labels can mark it system-wide.
 function nonFosErr(id,yr,fuel){const av=((BENCH[yr]||{}).e930||{})[fuel],mv=((MODEL[id].years[yr]||{}).nonfossil||{})[fuel];
  const a=av||0,m=mv||0;if(!(a>0.02))return null;
- return {grp:fuel,nonfos:true,err:100*(m-a)/a,mFull:m,bench923:a,sharePP:sharePP(id,yr,m,a)};}
+ return {grp:fuel,nonfos:true,err:100*(m-a)/a,mFull:m,bench923:a,annGen:(totalGen(id,yr)||{}).aGen||0,sharePP:sharePP(id,yr,m,a)};}
 function anyErr(id,yr,g){return isNonFos(g)?nonFosErr(id,yr,g):classErr(id,yr,g);}
 function classErrs(id,yr){const out=[];for(const g of allClasses()){const e=anyErr(id,yr,g);if(e)out.push(e);}return out;}
 // A fossil class passes only when BOTH hold:
-//  (1) volume: signed error within ±SUM_TOL_PCT% OR the absolute miss within
-//      SUM_TOL_TWH of actual (small classes can be off by a larger % while
-//      still within a TWh, so the dual band keeps them from dominating); and
+//  (1) volume: the absolute miss |model − actual| is within SUM_TOL_GEN_FRAC of
+//      ISO ANNUAL generation (the 2026-06-15 universal gate: 0.5% ≈ the
+//      structural-noise floor, ~2.3 TWh on ERCOT; scales with system size and
+//      is applied uniformly across classes and ISOs — supersedes the old
+//      ±5% OR ±1 TWh size-tiered bar); and
 //  (2) share: its share of TOTAL generation is within SUM_TOL_SHARE_PP
 //      percentage points of the actual share — so a class can't pass on volume
 //      alone while still misrepresenting the generation mix.
-const SUM_TOL_PCT=5,SUM_TOL_TWH=1.0,SUM_TOL_SHARE_PP=1.5;
-function volInTol(e,k){return Math.abs(e.err)<=k*SUM_TOL_PCT||Math.abs(e.mFull-e.bench923)<=k*SUM_TOL_TWH;}
+const SUM_TOL_PCT=5,SUM_TOL_GEN_FRAC=0.005,SUM_TOL_SHARE_PP=1.5;
+function volInTol(e,k){return e.annGen>0&&Math.abs(e.mFull-e.bench923)<=k*SUM_TOL_GEN_FRAC*e.annGen;}
 function shareInTol(e,k){return e.sharePP==null||Math.abs(e.sharePP)<=k*SUM_TOL_SHARE_PP;}
 function classInTol(e){return volInTol(e,1)&&shareInTol(e,1);}
 // Per-class status: good = in tolerance (both bands); ok = within twice both
@@ -659,10 +661,16 @@ function lmpYearCard(id,yr){const mm=avgLMPMon(id,yr),aL=actualLMP(yr)||{};
  return `<div class=ycard>${head}<div class=svgbox data-lmpyear="${yr}"></div>${cap}</div>`;}
 function mountLmpCharts(id,years){document.querySelectorAll("[data-lmpyear]").forEach(box=>{
  const yr=+box.dataset.lmpyear,mm=avgLMPMon(id,yr),aL=actualLMP(yr)||{};if(!mm)return;
- const sets=[{pts:mm.map(v=>v==null?0:v),color:"#4A90D9",name:"Model (energy-only)",dash:"4 3"}];
- // Third line: the display-only ORDC + reliability-deployment overlay.
+ // ERCOT default display: the ORDC-overlaid price is the PRIMARY Model line
+ // (the actuals carry the ORDC reserve adder the energy-only LP structurally
+ // cannot produce, so the overlay is the like-for-like model price); the
+ // energy-only series stays shown as a thin secondary line and remains the
+ // gated metric. Runs with no overlay fall back to energy-only as primary.
  const ms=avgLMPMonScar(id,yr);
- if(ms)sets.push({pts:ms.map(v=>v==null?0:v),color:OVERLAY_COLOR,name:"Model + ORDC overlay",w:2.4,dash:"6 3"});
+ const sets = ms
+   ? [{pts:ms.map(v=>v==null?0:v),color:OVERLAY_COLOR,name:"Model + ORDC overlay",w:3},
+      {pts:mm.map(v=>v==null?0:v),color:"#4A90D9",name:"Model (energy-only)",w:1.4,dash:"4 3"}]
+   : [{pts:mm.map(v=>v==null?0:v),color:"#4A90D9",name:"Model (energy-only)",dash:"4 3"}];
  if(aL.da_mon)sets.unshift({pts:aL.da_mon,color:"#647184",name:"Actual DA",w:3});
  if(aL.rt_mon)sets.unshift({pts:aL.rt_mon,color:"#9aa5b1",name:"Actual RT",w:2});
  const ymax=Math.max(20,...sets.flatMap(s=>s.pts.map(v=>Number(v)||0)))*1.15;
@@ -812,7 +820,7 @@ function diagnosticsHTML(id,years){const fs=diagFindings(id,years);
 function renderReport(){const id=st.run,years=runYears(id);
  if(!years.length){document.getElementById("content").innerHTML='<div class=panel><p class=psub>No year data in this run.</p></div>';return;}
  let h='<div class=panel><h2>Run scorecard — '+MODEL[id].label+'</h2>'
-  +'<p class=psub>All testing years at once. A class passes when its volume is within ±'+SUM_TOL_PCT+'% or '+SUM_TOL_TWH+' TWh of actual <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
+  +'<p class=psub>All testing years at once. A class passes when its volume miss |model − actual| is within '+(100*SUM_TOL_GEN_FRAC)+'% of ISO annual generation (the universal gate, ~2.3 TWh on ERCOT) <em>and</em> its share of total generation is within '+SUM_TOL_SHARE_PP+'pp. Fleet dispatch r = generation-weighted hourly correlation vs CAMPD. LMP is diagnostic only.</p>'
   +'<div class=yeargrid>'+years.map(yr=>yearScoreCard(id,yr)).join("")+'</div></div>';
  h+='<div class=panel><h2>Class tolerance by year <span class=psub>(signed volume error, model vs actual)</span></h2>'
   +'<p class=psub>Red = model over-generates, blue = under, gray = inside the ±'+SUM_TOL_PCT+'% band. Hover a cell for TWh and the pass/fail reason. Fossil classes are zone-aware vs full EIA-923; nuclear/wind/solar are system-wide vs EIA-930.</p>'
