@@ -1,89 +1,89 @@
 {
- "_source": "keeper of record run115b (keeper_anchor); capacity-weighted per class-year",
- "_gate": "regression: cf_emd <= base+emd_margin (0.02); pearson_r >= base-r_margin (0.02)",
+ "_source": "keeper of record run120 (forecast-defensible: merit-ramp, CT deployment OFF); capacity-weighted per class-year",
+ "_gate": "regression: cf_emd <= base+0.02; pearson_r >= base-0.02",
  "classes": {
   "CC_CHP": {
    "2023": {
-    "cf_emd": 0.1223,
-    "pearson_r": 0.5951
+    "cf_emd": 0.1248,
+    "pearson_r": 0.5998
    },
    "2024": {
-    "cf_emd": 0.1166,
-    "pearson_r": 0.6134
+    "cf_emd": 0.1192,
+    "pearson_r": 0.6199
    },
    "2025": {
-    "cf_emd": 0.1295,
-    "pearson_r": 0.6263
+    "cf_emd": 0.1315,
+    "pearson_r": 0.6341
    }
   },
   "CC_REGULAR": {
    "2023": {
-    "cf_emd": 0.0986,
-    "pearson_r": 0.7355
+    "cf_emd": 0.0885,
+    "pearson_r": 0.7569
    },
    "2024": {
-    "cf_emd": 0.1053,
-    "pearson_r": 0.7338
+    "cf_emd": 0.0983,
+    "pearson_r": 0.759
    },
    "2025": {
-    "cf_emd": 0.1125,
-    "pearson_r": 0.7187
+    "cf_emd": 0.1013,
+    "pearson_r": 0.7432
    }
   },
   "COAL": {
    "2023": {
-    "cf_emd": 0.079,
-    "pearson_r": 0.8022
+    "cf_emd": 0.0819,
+    "pearson_r": 0.8015
    },
    "2024": {
-    "cf_emd": 0.0751,
-    "pearson_r": 0.8016
+    "cf_emd": 0.0732,
+    "pearson_r": 0.8017
    },
    "2025": {
-    "cf_emd": 0.0837,
-    "pearson_r": 0.7019
+    "cf_emd": 0.0851,
+    "pearson_r": 0.7031
    }
   },
   "CT_CHP": {
    "2023": {
     "cf_emd": 0.0967,
-    "pearson_r": 0.199
+    "pearson_r": 0.1978
    },
    "2024": {
-    "cf_emd": 0.123,
-    "pearson_r": 0.076
+    "cf_emd": 0.1229,
+    "pearson_r": 0.0692
    },
    "2025": {
     "cf_emd": 0.0957,
-    "pearson_r": 0.1406
+    "pearson_r": 0.1403
    }
   },
   "CT_PEAKER": {
    "2023": {
-    "cf_emd": 0.0642,
-    "pearson_r": 0.6498
+    "cf_emd": 0.0817,
+    "pearson_r": 0.5414
    },
    "2024": {
-    "cf_emd": 0.052,
-    "pearson_r": 0.6283
+    "cf_emd": 0.0805,
+    "pearson_r": 0.4518
    },
    "2025": {
-    "cf_emd": 0.0459,
-    "pearson_r": 0.6245
+    "cf_emd": 0.0769,
+    "pearson_r": 0.4503
    }
   },
   "ST_GAS": {
    "2023": {
-    "cf_emd": 0.0696,
-    "pearson_r": 0.7596
+    "cf_emd": 0.0689,
+    "pearson_r": 0.7609
    },
    "2024": {
-    "cf_emd": 0.0978,
-    "pearson_r": 0.6316
+    "cf_emd": 0.0985,
+    "pearson_r": 0.6322
    },
    "2025": {
-    "cf_emd": 0.1163,
-    "pearson_r": 0.646
+    "cf_emd": 0.1158,
+    "pearson_r": 0.6511
    }
   }
  }
