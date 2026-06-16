@@ -189,6 +189,48 @@ shape/spatial problem, not a merit-tuning problem.** And the 2024 coal CO₂
   merit-ramp; the residual volume over-run is spatial and needs the parked
   NP6-785-ER work, not tuning.
 
+---
+
+## D4-spatial pre-test — would finer zones + a joint retune be impactful? **No.**
+
+Before building any finer-zone topology, the decisive, no-LP pre-test: rank
+ERCOT's actually-binding transmission constraints from the published SCED NP6-86
+shadow-price archive (`scripts/analyze_sced_binding.py` over 24,881 intervals,
+2023–25; full table `docs/sced-binding-constraints-2023-2025.csv`). The question
+was whether a North↔South_Central (or load-zone) split would place a *binding*
+limit between the CC_REGULAR over-zone and the under-zone — the only way a
+finer topology lets the offer curves relax toward physical instead of re-fitting
+the same global compensation.
+
+**Result — the congestion is nodal, not zonal:**
+
+- **94% of all binding-constraint congestion rent is on local pockets
+  (< 200 kV); only 6.2% is on the ≥ 345 kV backbone.** The single largest 345 kV
+  constraint (PAWNEE–CALAVERAS, internal to the San Antonio/SC area) is **0.73%**
+  of total rent; no zonal-scale interface carries meaningful congestion.
+- **The rent is extremely diffuse: 33 constraints to reach 50% of it, 123 to
+  reach 80%** (1,052 distinct binders). The top binders are deep sub-load-zone
+  pockets — the **Rio Grande Valley** cluster (FALFUR–PREMONT, BURNS–RIOHONDO,
+  CATARINA, LOYOLA, LA_PALMA), the **Permian/West** cluster (ODESSA–YARBR,
+  VEALMOOR–KOCHTAP, KNAPP, MIDLAND), and scattered 138 kV autotransformers — all
+  far below any practical zonal boundary.
+
+**Conclusion.** A finer-zone split would **not bind** (exactly why the earlier
+inter-zonal TTC moves, the run118 spatial overlay, and the run119 CPS floor were
+all weak — they operate at zonal/few-pocket resolution while the binding lives at
+nodal-pocket resolution). So **finer zones + a joint offer/sigmoid retune is not
+a promising lever**: with no binding zonal interface, the offer curves can't
+relax, and the retune would just re-fit the same global compensation on a
+slightly finer grid. The CC_REGULAR over-run's spatial component is real but
+lives **below zonal resolution** — capturing it needs a genuinely nodal model,
+or a data-targeted out-of-merit floor over dozens of the top SCED pockets (a
+heavy generalization of run119's single CPS floor, with steep diminishing
+returns given the 123-constraint tail). **Recommendation: do not build finer
+zones for this; accept the residual CC volume over-run as a documented
+zonal-reduction limitation, and keep the merit-ramp as the shape fix.**
+
+---
+
 **Not done (out of scope here):** the capacity hindcast (audit D-series is
 dispatch-only), the 2022/H1-2026 holdout (the user's untrained sets — excluded
 by request), and a tightness-responsive ORDC reliability-deployment offset
