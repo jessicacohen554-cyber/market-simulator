@@ -1,6 +1,23 @@
 # ERCOT calibration — best config so far
 
-> **STATUS (2026-06-16): NEW KEEPER — run 120, the forecast-defensible config
+> **STATUS (2026-06-16): NEW KEEPER — run 121 = run 120 + ERCOT storage vintage
+> (COD) ramp.** Adopted because it is **more accurate**, not because it fits
+> better (claude.md: prefer measured/accurate inputs over what fits the
+> backcast). ERCOT storage was using each year's flat year-end battery fleet;
+> run 121 ramps each unit's dispatch power/energy caps month-by-month from its
+> EIA-860 COD, so spring/summer availability in the growth years is now correct
+> (2025 storage discharge drops in Jan–May and converges to full by December).
+> Effect on volumes is small and correct-direction (CC_REGULAR 2025 +3.62 →
+> +3.11). **Same fail set as run 120: 5 at the 0.5% universal gate** (CT_PEAKER
+> 2023/2024 honest under-run, CC_REGULAR 2024/2025 residual, COAL_PRB 2024
+> cheap-gas), 7 at 0.33%. Everything else identical to run 120 (merit-ramp CC
+> shape fix, CT deployment OFF, no magic numbers; published ORDC overlay as the
+> default price line). The open CC over-run is now believed to be partly an
+> AS-withholding effect (energy-only LP holds zero ancillary services; ERCOT
+> held ~6–8 GW with ECRS new in June 2023) — the next defensible lever, scoped
+> for a separate session. Supersedes run 120/run 115b.
+>
+> **STATUS (2026-06-16): prior keeper — run 120, the forecast-defensible config
 > (user directive).** `results/calibration/run120_meritramp_defensible` =
 > run 115b **+ the merit-ramp CC shape fix, with the CT AS/RUC-deployment
 > overlay turned OFF**. The user set a hard defensibility principle: keep only
