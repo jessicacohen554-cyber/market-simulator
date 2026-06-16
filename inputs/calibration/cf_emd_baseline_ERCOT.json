@@ -1,0 +1,90 @@
+{
+ "_source": "keeper of record run115b (keeper_anchor); capacity-weighted per class-year",
+ "_gate": "regression: cf_emd <= base+emd_margin (0.02); pearson_r >= base-r_margin (0.02)",
+ "classes": {
+  "CC_CHP": {
+   "2023": {
+    "cf_emd": 0.1223,
+    "pearson_r": 0.5951
+   },
+   "2024": {
+    "cf_emd": 0.1166,
+    "pearson_r": 0.6134
+   },
+   "2025": {
+    "cf_emd": 0.1295,
+    "pearson_r": 0.6263
+   }
+  },
+  "CC_REGULAR": {
+   "2023": {
+    "cf_emd": 0.0986,
+    "pearson_r": 0.7355
+   },
+   "2024": {
+    "cf_emd": 0.1053,
+    "pearson_r": 0.7338
+   },
+   "2025": {
+    "cf_emd": 0.1125,
+    "pearson_r": 0.7187
+   }
+  },
+  "COAL": {
+   "2023": {
+    "cf_emd": 0.079,
+    "pearson_r": 0.8022
+   },
+   "2024": {
+    "cf_emd": 0.0751,
+    "pearson_r": 0.8016
+   },
+   "2025": {
+    "cf_emd": 0.0837,
+    "pearson_r": 0.7019
+   }
+  },
+  "CT_CHP": {
+   "2023": {
+    "cf_emd": 0.0967,
+    "pearson_r": 0.199
+   },
+   "2024": {
+    "cf_emd": 0.123,
+    "pearson_r": 0.076
+   },
+   "2025": {
+    "cf_emd": 0.0957,
+    "pearson_r": 0.1406
+   }
+  },
+  "CT_PEAKER": {
+   "2023": {
+    "cf_emd": 0.0642,
+    "pearson_r": 0.6498
+   },
+   "2024": {
+    "cf_emd": 0.052,
+    "pearson_r": 0.6283
+   },
+   "2025": {
+    "cf_emd": 0.0459,
+    "pearson_r": 0.6245
+   }
+  },
+  "ST_GAS": {
+   "2023": {
+    "cf_emd": 0.0696,
+    "pearson_r": 0.7596
+   },
+   "2024": {
+    "cf_emd": 0.0978,
+    "pearson_r": 0.6316
+   },
+   "2025": {
+    "cf_emd": 0.1163,
+    "pearson_r": 0.646
+   }
+  }
+ }
+}
