@@ -1,5 +1,48 @@
 # Changelog
 
+## 2026-06-16 (physics — NYISO RCPF scarcity-pricing overlay)
+
+NYISO's analogue of the ERCOT ORDC overlay: a post-solve reserve-demand-curve
+price adder that replicates NYISO real-time scarcity formation (Reserve
+Constraint Penalty Factors). The LP is untouched — volumes/dispatch/emissions
+are byte-identical with the overlay on or off; the adder is written next to
+the energy-only LMP.
+
+- **New module `market_sim/results/rcpf.py`** — the NYISO reserve demand
+  curve as a set of nested operating-reserve products (10-min spin ⊂ 10-min
+  total ⊂ 30-min total). Each product's curve is piecewise-linear between
+  published anchors; the products' penalties stack in a deepening shortage,
+  the way NYISO RT LMP reaches the low-thousands off a ~$2,000/MWh offer cap.
+- **`constants.NYISO_RCPF_PRODUCTS`** — (name, requirement_MW, critical_MW,
+  max_$/MWh) for the three NYCA products. Requirements from the NYISO
+  Transmission & Dispatch Operations Manual (largest contingency ≈1,310 MW →
+  655 / 1,310 / 2,620 MW); NYCA 30-min curve $750/MWh max at the 1,965 MW
+  critical level per FERC Docket ER21-502. Nothing fitted to LMP residuals.
+- **`ScenarioConfig.nyiso_rcpf_enabled` / `nyiso_rcpf_products`** — master
+  flag (default off) + optional curve override; both cited in
+  `frontend/data/parameters.json`.
+- **`scripts/derive_nyiso_rcpf_overlay.py`** — post-solve overlay mirroring
+  `derive_ordc_overlay.py`: reconstructs reserve-fleet headroom from a
+  persisted bundle (`run_year(fleet_only=True)`, no LP re-solve), applies the
+  RCPF curves, writes `scarcity.parquet` + `availability_rcpf.parquet`, and
+  reports tail counts / distribution / LMP MAE vs the actual NYCA RT series.
+- **Tests** `tests/test_rcpf.py`; **docs** `docs/nyiso-rcpf-overlay.md`.
+
+**Finding (run on the 2023–2025 keepers):** the system-wide overlay fires
+**zero** adder in every hour — the perfect-foresight energy LP floors at
+~5.5–6 GW of NYCA-wide reserve headroom even in its tightest hours (2023
+actual >$300 hours: model headroom median 5,954 MW, p5 3,981 MW), never
+approaching the 2,620 MW 30-min requirement. The 2023–2025 RT tail (max
+$1,147 / $997 / $2,074) is therefore **locational** — downstate
+import-constrained pockets (zones J/K) and the locational East/SENY/NYC/LI
+reserve requirements — not NYCA-wide capacity scarcity. Per the calibration
+methodology the overlay is deliberately *not* forced to fire (no inflated
+requirement, no headroom offset, which would bury the locational/import
+error). It is correct infrastructure that binds once the upstream physics
+lands: per-zone hourly load (upload U3) + the interface audit, then
+locational RCPF products keyed off zonal headroom — for which the overlay is
+already scaffolded.
+
 ## 2026-06-16 (data — CAMPD unit-level outage integration across ISOs)
 
 Newly-uploaded EPA CAMPD unit-level extracts
