@@ -42,6 +42,38 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-16 — ERCOT — run120 NEW KEEPER: forecast-defensible (merit-ramp, CT deployment OFF)
+
+**User directive — defensibility principle.** Keep only mods that are
+physically/contractually real AND carry into the 2026–2050 forecast (unit
+outage overlays, take-or-pay coal sigmoids, lignite must-run, cc-duct EIA-860
+spec, structural offer-curve shape fixes, actual F923 fuel); drop every
+CEMS-pinned "magic number" with no forward analogue. So the keeper drops the CT
+AS/RUC-deployment overlay (and never adopts the spatial reliability-deployment /
+multi-pocket floors).
+
+**run120** = run115b config **+ merit-ramp CC deltas, `--ct-deployment` OFF**
+(`results/calibration/run120_meritramp_defensible`). **5 in-scope fails at the
+0.5% universal gate** (the dashboard fail score is now 0.5% of ISO annual gen):
+- CT_PEAKER 2023/2024 (−2.52 / −3.61): the **honest** under-run — the
+  energy-only LP cannot dispatch out-of-merit AS/RUC peaker energy and there is
+  no defensible forward fix; the CEMS floor that papered this over is gone.
+- CC_REGULAR 2024/2025 (+5.68 / +3.62): spatial-irreducible. The binding
+  congestion is **nodal, not zonal** — `scripts/analyze_sced_binding.py` over
+  24,881 SCED intervals: 94% of binding-constraint rent is on <200 kV local
+  pockets (RGV, Permian), only 6.2% on the ≥345 kV backbone, 123 constraints for
+  80% of rent. Finer zones would not bind → not built. (At the tighter 0.33%
+  gate, +2 more: CC_REGULAR 2023 −1.81, CT_PEAKER 2025 −2.06.)
+- COAL_PRB 2024 (−3.64): cheap-gas economics (justified).
+
+Merit-ramp **fixes the CC_REGULAR operating shape** (cf_emd 0.099/0.105/0.113 →
+0.088/0.098/0.101; the new `[7c]` regression gate). CO₂ 8/9 (2024 coal
+residual). Carries the published ORDC overlay (display-only; now the dashboard's
+default ERCOT price line — the 2,500 MW reliability-deployment offset is itself a
+stress-year-fitted magic number, left off by default). Out-of-sample
+(statistical-mode) gap and the full D1–D4 audit in
+`docs/audit-followup-tests-2026-06.md`. Supersedes run115b/run119 as keeper.
+
 ### 2026-06-16 — ERCOT — audit follow-up D1–D4: out-of-sample test, overlay ablation, new shape/CO₂ gates, merit-ramp CANDIDATE KEEPER
 
 **Scope.** Ran the four prioritized tests from the third-party audit
