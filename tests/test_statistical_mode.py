@@ -53,3 +53,17 @@ def test_no_op_when_flag_unset():
     assert args.reliability_deployment is True
     assert args.wefor_residual == 0.06
     assert args.no_coal_monthly_pricing is False
+
+
+def test_ercot_calibration_enables_storage_vintage_ramp():
+    """ERCOT (and CAISO) backcast configs ramp storage by COD; PJM stays flat."""
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        "run_calibration",
+        Path(__file__).resolve().parents[1] / "scripts" / "run_calibration.py")
+    rc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rc)
+    assert rc._calibration_config(2024, "ERCOT", 8760, 2.19).storage_vintage_ramp
+    assert rc._calibration_config(2024, "CAISO", 8760, 2.19).storage_vintage_ramp
+    assert not rc._calibration_config(2024, "PJM", 8760, 2.19).storage_vintage_ramp
