@@ -15,6 +15,7 @@ from market_sim.data.fleet import (
     Generator,
     generators_to_fleet_arrays,
 )
+from market_sim.data.eia_loader import measured_monthly_hydro
 from market_sim.data.hydro import hours_per_month, load_hydro_budget
 from market_sim.model.dispatch import (
     VariableLayout,
@@ -526,6 +527,39 @@ class TestNEISOHydroBudget(unittest.TestCase):
         self.assertGreater(
             filled.monthly_energy.sum(), bare.monthly_energy.sum()
         )
+
+    def test_2025_eia930_monthly_pin(self):
+        # Pinning the backfilled 2025 budget to the measured EIA-930 NG: WAT
+        # monthly total corrects the flat-2024 over-statement (6.70 -> 5.12
+        # TWh) while leaving the MW envelope and per-plant within-month shares
+        # intact.
+        target = measured_monthly_hydro("NEISO", 2025)
+        self.assertIsNotNone(target)
+        self.assertEqual(target.shape, (12,))
+        backfilled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
+        pinned = load_hydro_budget(
+            "NEISO", 2025, backfill_year=2024, monthly_target_mwh=target)
+        # Monthly totals now equal the measured series, and annual ~5.12 TWh.
+        np.testing.assert_allclose(pinned.monthly_energy.sum(axis=0), target)
+        self.assertAlmostEqual(pinned.monthly_energy.sum() / 1e6, 5.12,
+                               delta=0.1)
+        self.assertLess(pinned.monthly_energy.sum(),
+                        backfilled.monthly_energy.sum())
+        # Power caps untouched; same plant set.
+        np.testing.assert_allclose(pinned.max_mw, backfilled.max_mw)
+        self.assertEqual(pinned.n_hydro, backfilled.n_hydro)
+        # Within-month per-plant shares preserved (January).
+        jan_b = backfilled.monthly_energy[:, 0]
+        jan_p = pinned.monthly_energy[:, 0]
+        np.testing.assert_allclose(jan_p / jan_p.sum(), jan_b / jan_b.sum())
+
+    def test_eia930_monthly_pin_wrong_length_raises(self):
+        with self.assertRaises(ValueError):
+            load_hydro_budget("NEISO", 2025, backfill_year=2024,
+                              monthly_target_mwh=np.ones(11))
+
+    def test_measured_monthly_hydro_unknown_iso_is_none(self):
+        self.assertIsNone(measured_monthly_hydro("NOT_AN_ISO", 2024))
 
 
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
