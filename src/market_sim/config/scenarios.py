@@ -1012,6 +1012,26 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_hub_basis_overlay.
     gas_hub_basis_overlay: bool = False
 
+    # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
+    # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
+    # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
+    # flat monthly plateau (measured Henry Hub month + measured AGT month
+    # basis) but a *daily* series: the measured Henry Hub daily within-month
+    # shape plus the measured monthly AGT basis redistributed across the
+    # month's days proportional to NEISO daily demand raised to
+    # constants.AGT_DAILY_BASIS_CONVEXITY (coldest = highest-demand days carry
+    # the citygate blowout), mean-preserving per month so the monthly level —
+    # and the annual gas burn / fuel mix — is unchanged. This is what trips the
+    # dual-fuel gas->oil switch and the oil-steam fleet on the coldest days
+    # (the monthly average never reaches distillate parity) and produces the
+    # ISO-NE winter LMP tail. A flagged proxy for the paywalled/network-blocked
+    # daily AGT spot series; falls back to the flat monthly overlay when the
+    # NEISO demand series is unavailable. Off by default; the calibration
+    # harness enables it for NEISO. See
+    # market_sim.data.fuel.iso_hub_daily_gas_prices and
+    # docs/multi-iso/neiso-data-audit.md.
+    gas_hub_basis_daily: bool = False
+
     # Tier 3 (calibration) — dual-fuel switching (doc 03 Pack G). Gas units
     # flagged oil/gas switch-capable in EIA-860 ("Switch Between Oil and
     # Natural Gas?" on the Multifuel schedule) price their fuel at
@@ -1371,6 +1391,7 @@ TIER_TAGS: dict[str, int] = {
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
     "gas_hub_basis_overlay": 3,
+    "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "outage_source": 3,
     "gas_price_override": 3,
