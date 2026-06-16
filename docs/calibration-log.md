@@ -42,6 +42,22 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-16 — ERCOT — run121 NEW KEEPER: + storage vintage (COD) ramp (accuracy, not fit)
+
+**run121** = run120 + ERCOT `storage_vintage_ramp` ON
+(`results/calibration/run121_storage_vintage`). Adopted because it is **more
+accurate** (claude.md rule: prefer measured inputs over what fits better), not
+for the score. ERCOT storage was on a flat year-end fleet; now each unit's
+dispatch caps ramp month-by-month from its EIA-860 COD. Verified: 2025 storage
+discharge drops Jan–May (e.g. Mar 369 → 263 GWh) and converges to full by
+December — the COD ramp working; the annual year-end peak is unchanged.
+**Same fail set as run120: 5 at 0.5%** (CT_PEAKER 2023/24, CC_REGULAR 2024/25,
+COAL_PRB 2024), 7 at 0.33%; CC_REGULAR 2025 improves +3.62 → +3.11. Published
+ORDC overlay re-derived (default display line). cf_emd baseline re-seeded to
+run121. The CC over-run is now believed partly an AS-withholding effect (the
+energy-only LP holds zero ancillary services; ERCOT held ~6–8 GW, ECRS new June
+2023) — next defensible lever, separate session. Supersedes run120.
+
 ### 2026-06-16 — ERCOT — run120 NEW KEEPER: forecast-defensible (merit-ramp, CT deployment OFF)
 
 **User directive — defensibility principle.** Keep only mods that are
