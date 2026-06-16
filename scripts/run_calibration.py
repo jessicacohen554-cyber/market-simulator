@@ -78,6 +78,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_hub_basis_overlay,
     apply_plant_monthly_fuel_prices,
     coal_passthrough_by_supply,
+    dual_fuel_switch_mask,
     prb_follower_passthrough_series,
     resolve_fuel_prices,
 )
@@ -1123,6 +1124,13 @@ def run_year(
     # unless gas_hub_basis_overlay is set (and basis rows exist), so non-NEISO
     # runs are unchanged.
     apply_hub_basis_overlay(fuel_prices, fleet_arrays, config, year)
+    # Capture which dual-fuel generator-hours will switch to oil (gas price >
+    # oil parity) BEFORE the min-cap below overwrites the gas price, so the
+    # dispatch re-attribution can count their MWh as petroleum, not gas (the
+    # switch itself is objective-only; this is a reporting re-attribution).
+    dual_fuel_oil_mask = dual_fuel_switch_mask(
+        fuel_prices, fleet_arrays, config, year
+    )
     # Dual-fuel switching last, so the oil-parity min sees the final delivered
     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
     # days (NEISO) — not the per-plant monthly cost alone (PJM).
@@ -1232,6 +1240,7 @@ def run_year(
         "p1_result": result, "demand": demand,
         "dispatch_kwargs": dispatch_kwargs, "config": config,
         "context": context, "storage_units": storage_units,
+        "dual_fuel_oil_mask": dual_fuel_oil_mask,
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin

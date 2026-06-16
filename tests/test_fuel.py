@@ -447,6 +447,34 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
     np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
 
 
+def test_dual_fuel_switch_mask_marks_only_switched_capable_units(monkeypatch):
+    """The mask flags the dual-fuel unit's switched hours, nothing else."""
+    from market_sim.data.fuel import dual_fuel_switch_mask
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet(hours=24)
+    config = ScenarioConfig(
+        iso="PJM", hours=24, gas_seasonality=False,
+        gas_price_override=25.0, dual_fuel_switching=True,
+    )
+    # Pre-min gas price array (what run_year passes before the dual-fuel cap).
+    gas_prices = resolve_fuel_prices(config, fleet, 2030, apply_monthly=False)
+    mask = dual_fuel_switch_mask(gas_prices, fleet, config, 2030)
+    # Row 0 is the dual-fuel CT (gas $25 > oil $18 → switched every hour);
+    # row 1 the gas-only CT and row 2 the oil unit are never re-attributed.
+    assert mask[0].all()
+    assert not mask[1].any()
+    assert not mask[2].any()
+
+    # Below parity: nothing switches.
+    cheap = config.with_overrides(gas_price_override=2.0)
+    gas_cheap = resolve_fuel_prices(cheap, fleet, 2030, apply_monthly=False)
+    assert not dual_fuel_switch_mask(gas_cheap, fleet, cheap, 2030).any()
+
+    # Flag off: empty mask regardless of price.
+    off = config.with_overrides(dual_fuel_switching=False)
+    assert not dual_fuel_switch_mask(gas_prices, fleet, off, 2030).any()
+
+
 def test_dual_fuel_no_switch_below_parity(monkeypatch):
     """Cheap gas leaves a dual-fuel unit on its gas price (min is gas)."""
     _patch_dual_fuel_capability(monkeypatch)

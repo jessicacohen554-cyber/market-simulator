@@ -1,18 +1,16 @@
 {
-  "timestamp": "2026-06-16T20:15:49",
+  "timestamp": "2026-06-16T20:44:25",
   "git": {
-    "sha": "b0f3665",
+    "sha": "60ca4e5",
     "branch": "claude/neiso-agt-daily-basis-gdmtuf",
     "dirty": true,
     "changed_files": [
       "cripts/run_calibration.py",
-      "src/market_sim/config/constants.py",
-      "src/market_sim/config/scenarios.py",
+      "scripts/run_calibration_full.py",
       "src/market_sim/data/fuel.py",
-      "tests/test_fuel.py",
-      "scripts/neiso_agt_validate.py"
+      "tests/test_fuel.py"
     ],
-    "diffstat": "scripts/run_calibration.py         |  31 ++++++-\n src/market_sim/config/constants.py |  28 +++++++\n src/market_sim/config/scenarios.py |  21 +++++\n src/market_sim/data/fuel.py        | 160 ++++++++++++++++++++++++++++++++++---\n tests/test_fuel.py                 |  54 +++++++++++++\n 5 files changed, 281 insertions(+), 13 deletions(-)"
+    "diffstat": "scripts/run_calibration.py      |  9 +++++++++\n scripts/run_calibration_full.py | 21 +++++++++++++++++++--\n src/market_sim/data/fuel.py     | 41 +++++++++++++++++++++++++++++++++++++++++\n tests/test_fuel.py              | 28 ++++++++++++++++++++++++++++\n 4 files changed, 97 insertions(+), 2 deletions(-)"
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -48,7 +46,7 @@
     "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": false,
-    "git_sha": "b0f3665"
+    "git_sha": "60ca4e5"
   },
   "scenario_config": {
     "weather_year": 2024,
