@@ -35,7 +35,10 @@ correct price driver it was always documented to be. See
   oil (gas price > oil parity; `fuel.dual_fuel_switch_mask`) are relabeled from
   gas to oil in the persisted dispatch (`_dispatch_frame`), since EIA-930 counts
   that burn in `NG: OIL`. Objective-only and LMP-neutral (a relabel, not new
-  energy). Modeled oil rises to order of magnitude from ~0: 2023 0.01→0.09,
+  energy). Gated on `dual_fuel_oil_reattribution`, default-on for NEISO only
+  (PJM/NYISO dual-fuel units also switch on their own winter gas, so it stays
+  off there to keep the ERCOT/PJM/CAISO regression guard byte-identical).
+  Modeled oil rises to order of magnitude from ~0: 2023 0.01→0.09,
   2024 0.00→0.15, 2025 0.13→2.12 TWh (EIA-930 0.32/0.37/1.24). Cross-year fit is
   imperfect (2023/24 under, 2025 over) — the price-parity switch has no firm-gas
   / oil-inventory limits; see `docs/multi-iso/neiso-data-audit.md` §2d.
