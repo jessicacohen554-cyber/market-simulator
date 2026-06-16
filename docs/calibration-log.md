@@ -3089,6 +3089,43 @@ this campaign): a non-CEMS small-peaker floor for the ~1.0 TWh CT 2024
 residual (Ector/Permian/Pearsall have 923 net-gen but no hourly CEMS — a
 923-based floor, distinct from the CEMS out-of-merit overlay).
 
+## NEISO — AGT hub-basis overlay was dead in calibration; wiring it in + daily basis + oil re-attribution (2026-06-16, keepers `neiso_agt_daily_{2023,2024,2025}`)
+
+Discovered while chasing the winter-tail/oil gap (doc-08 gap #1): the Algonquin
+Citygate hub-basis overlay — documented as THE NEISO price driver — was **never
+applied in the calibration dispatch.** `run_calibration.run_year` resolves fuel
+prices with `apply_monthly=False` and re-applied the plant-monthly and dual-fuel
+passes but not `apply_hub_basis_overlay`, so every NEISO keeper (P12/P14,
+hydro930) priced gas at the 2-reporter EIA-923 ISO-month series instead of the
+measured AGT hub (Jan-2025 gas **$5.30** vs hub **$16.92**/MMBtu). That series
+is over-priced in shoulder months and under-priced in winter, so the modeled
+load-weighted hub price was wrong in **both** directions vs ISO-NE
+.H.INTERNAL_HUB DA: **2023 $53.6→$34.5 (act $36.8); 2024 $55.7→$40.0 (act
+$41.5); 2025 $54.3→$68.0 (act $67.9)**, gas TWh to within ±0.8% of EIA-930.
+This supersedes the "price level at sign-off" finding — the level was wrong
+because the measured AGT data was ignored.
+
+Two fixes, one constant config across years:
+1. **Wire the overlay into `run_year`** (idempotent; no-ops for non-NEISO, so
+   ERCOT/PJM/CAISO/NYISO byte-identical). Fixes the level above.
+2. **Daily AGT basis** (`gas_hub_basis_daily`, default-on; `fuel
+   .iso_hub_daily_gas_prices`): each winter month's measured mean basis spread
+   across days by NEISO demand^`AGT_DAILY_BASIS_CONVEXITY`(=7), daily Henry Hub
+   leg on top, mean-preserving. A flagged proxy for the still-missing daily AGT
+   spot (U4). Builds the winter tail a flat monthly plateau can't — 2025 A/B
+   (identical monthly mean): hours >$200 **13→128** (act ~160), max $259→$283.
+3. **Oil re-attribution** (`fuel.dual_fuel_switch_mask` → `_dispatch_frame`):
+   dual-fuel unit-hours switching to oil are relabeled gas→oil in the persisted
+   dispatch (LMP-neutral relabel). Oil **0.01/0.00/0.13 → 0.09/0.15/2.12** TWh
+   (act 0.32/0.37/1.24) — order of magnitude, up from ~0; 2023/24 under and
+   2025 over because the price-parity switch has no firm-gas / oil-inventory
+   limits and the daily proxy over-amplifies the highest-basis year.
+
+Tests: 175 pass (test_fuel/test_neiso_*/test_hydro/test_iso_*). Open: precise
+oil cross-year fit needs firm-gas-share / oil-inventory data (new upload); the
+extreme >$200 tail is still light (esp. 2024, a low-basis year). See
+`docs/multi-iso/neiso-data-audit.md` §2c–2d, CHANGELOG 2026-06-16.
+
 ## Cross-ISO — CT_PEAKER AS-deployment overlay generalized to PJM/CAISO/NYISO/NEISO; the PJM blanket-floor refutation (2026-06-13)
 
 **The ERCOT AS-deployment overlay (runs 97a/103–109, `scripts/derive_ct_deployment.py`
