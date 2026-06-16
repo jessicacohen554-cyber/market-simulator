@@ -2170,9 +2170,12 @@ def _report_generic(
             (dispatch.groupby("fuel")["mw"].sum() / _MWH_PER_TWH).to_dict()
         )
         # The priced import/export node's net position is interchange, not
-        # generation — it reports in [2], and excluding it keeps the model
-        # total (gross internal generation) comparable to the EIA-930 total.
-        model.pop("import", None)
+        # generation — excluding it keeps the model TOTAL (gross internal
+        # generation) comparable to the EIA-930 generation total. It is carried
+        # out of the generation rows here and reported as its own "import"
+        # category below the total (net interchange-served energy), as well as
+        # in the [2] net-interchange reconciliation.
+        import_net_twh = model.pop("import", None)
         e930_twh = {
             f: float(e930[f].sum()) / _MWH_PER_TWH
             for f in _GENERIC_FUEL_ORDER
@@ -2205,6 +2208,28 @@ def _report_generic(
         print(f"    {'TOTAL':<9} {_twh(model_total)} {'100.0':>5} "
               f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
               f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}")
+
+        # Imports as their own category: net interchange-served energy (+ = net
+        # import into the ISO), shown below the generation total since it serves
+        # load but is not in-state generation. The model figure is the priced
+        # node's net position; the EIA-930 figure is the measured net import
+        # (the interchange series carries + = net export, so net import is its
+        # negation). Shares are of total load served (generation + net import).
+        ix_930 = e930.get("interchange") if e930 is not None else None
+        import_net_930 = (
+            -float(ix_930.sum()) / _MWH_PER_TWH if ix_930 is not None else None
+        )
+        if import_net_twh is not None or import_net_930 is not None:
+            served_m = model_total + (import_net_twh or 0.0)
+            served_g = (
+                e930_total + (import_net_930 or 0.0)
+                if e930_total is not None else None
+            )
+            print(f"    {'import':<9} {_twh(import_net_twh)} "
+                  f"{_pct(import_net_twh, served_m)} "
+                  f"{_twh(import_net_930)} {_pct(import_net_930, served_g)} "
+                  f"{_twh(None)} {_pct(None, None)}"
+                  "   (net; serves load, not in generation total)")
 
         # --- [1b] Curtailment: model re-curtailment vs ISO-reported ---
         _print_curtailment_vs_reported(year, iso, dispatch)
