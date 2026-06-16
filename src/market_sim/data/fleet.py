@@ -341,6 +341,16 @@ _AS_GAS_GROUPS: frozenset[str] = _AS_THERMAL_GROUPS - {"COAL"}
 # scripts/build_ercot_as_withholding.py).
 _AS_WITHHOLDING_DIR = Path("inputs/raw-data/ercot-AS")
 
+# Map each per-resource-type AS column (from the 60-Day DAM Gen Resource Data,
+# aggregated by ERCOT Resource Type) to the fleet plant_groups that share it.
+# Storage and load AS are not here: they do not withhold *thermal* energy.
+_AS_RESTYPE_TO_GROUPS: dict[str, frozenset[str]] = {
+    "gas_cc": frozenset({"CC_REGULAR", "CC_CHP"}),
+    "gas_ct": frozenset({"CT_PEAKER", "CT_CHP"}),
+    "gas_st": frozenset({"ST_GAS", "ST_CHP"}),
+    "coal": frozenset({"COAL"}),
+}
+
 
 @lru_cache(maxsize=8)
 def load_as_reserve_withholding_mw(year: int, hours: int) -> np.ndarray | None:
@@ -364,6 +374,63 @@ def load_as_reserve_withholding_mw(year: int, hours: int) -> np.ndarray | None:
     if len(series) < hours:
         series = np.concatenate([series, np.zeros(hours - len(series))])
     return series[:hours]
+
+
+def load_as_thermal_withholding(
+    year: int, hours: int
+) -> dict[str, np.ndarray] | None:
+    """Load ERCOT's measured per-thermal-class hourly AS-up MW for ``year``.
+
+    Reads ``ercot_<year>_as_by_restype_hourly.parquet`` — the per-resource
+    60-Day DAM AS awards aggregated by ERCOT Resource Type (RegUp + RRS +
+    ECRS; offline Non-Spin and the storage/load share are excluded, as those
+    do not withhold *thermal* energy). Returns ``{restype_col: (hours,) MW}``
+    for the thermal columns present (``gas_cc``/``gas_ct``/``gas_st``/
+    ``coal``), or ``None`` when the file is absent (caller then falls back to
+    the system-total upper bound). Same non-leap 8760-hour clock as the fleet.
+    """
+    path = _AS_WITHHOLDING_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    out: dict[str, np.ndarray] = {}
+    for col in _AS_RESTYPE_TO_GROUPS:
+        if col not in df.columns:
+            continue
+        series = df[col].to_numpy(dtype=float)
+        if len(series) < hours:
+            series = np.concatenate([series, np.zeros(hours - len(series))])
+        out[col] = series[:hours]
+    return out or None
+
+
+def _withdraw_top_of_merit(
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    heat_rate: np.ndarray,
+    pool: np.ndarray,
+    as_series: np.ndarray,
+) -> tuple[float, float]:
+    """Withdraw ``as_series`` MW/hour from ``pool``'s top-of-merit headroom.
+
+    Removes the hourly reserve from the highest-heat-rate (most expensive,
+    most peaking) available tranches in ``pool`` first, cascading down — the
+    headroom that physically carries the AS award. Mutates ``availability`` in
+    place and returns ``(GWh-equiv withdrawn, GWh-equiv unmet)`` for logging.
+    """
+    if pool.size == 0:
+        return 0.0, 0.0
+    order = pool[np.argsort(-heat_rate[pool], kind="stable")]
+    caps = pmax[order, np.newaxis] * availability[order, :]  # (k, hours)
+    cum_above = np.cumsum(caps, axis=0) - caps  # MW ranked above each tranche
+    removed = np.clip(as_series[np.newaxis, :] - cum_above, 0.0, caps)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        availability[order, :] = np.where(
+            pmax[order, np.newaxis] > 0.0,
+            (caps - removed) / pmax[order, np.newaxis], 0.0,
+        )
+    unmet = float(np.maximum(as_series - caps.sum(axis=0), 0.0).sum())
+    return float(removed.sum()), unmet
 
 
 def generators_to_fleet_arrays(
@@ -978,57 +1045,59 @@ def generators_to_fleet_arrays(
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
-    # Ancillary-service reserve withholding (ERCOT backcast probe). Capacity
-    # that clears upward AS (Reg-Up, RRS, ECRS, Non-Spin) is held out of the
-    # energy market. AS is carried on part-loaded *gas* headroom and peakers,
-    # not on baseload coal (self-committed, runs flat), so the hourly system
-    # AS-up MW is withdrawn from the gas thermal stack TOP-DOWN by heat rate —
-    # the most expensive/peaking headroom first — never from coal. This is the
-    # merit-ordered analogue of a flat pro-rata cut, which over-withheld
-    # baseload and forced peakers up. Still an upper bound (all AS booked to
-    # thermal, no storage/load split). Applied last, after every outage/derate;
-    # floored back up to any must-run min_gen so a forced unit stays feasible.
+    # Ancillary-service reserve withholding (ERCOT backcast). Capacity that
+    # clears upward AS (Reg-Up, RRS, ECRS) is held out of the energy market.
+    # When the per-resource-type series is available (60-Day DAM Gen Resource
+    # Data, aggregated by Resource Type), each thermal class withholds *its own
+    # measured* hourly AS MW from that class's top-of-merit headroom — the
+    # physically-grounded split (storage/load AS, which carry the bulk in
+    # ERCOT, are excluded as they do not withhold thermal energy; offline
+    # Non-Spin is excluded too). Falls back to the system-total upper bound
+    # (all AS on gas, no split) only when the per-type file is absent. Applied
+    # last, after every outage/derate; floored back up to any must-run min_gen.
     # Down-AS (Reg-Down) is excluded upstream — it removes no upward offer.
     if (config is not None
             and getattr(config, "as_reserve_withholding", False)
             and _iso == "ERCOT"):
-        as_mw = load_as_reserve_withholding_mw(
-            getattr(config, "weather_year", 0), hours
-        )
-        pool = np.array(
-            [i for i, g in enumerate(generators)
-             if g.plant_group in _AS_GAS_GROUPS],
-            dtype=int,
-        )
-        if as_mw is not None and pool.size:
-            # Withdraw top-down by heat rate (highest first): the peaking, most
-            # expensive gas headroom carries the reserve. removed[j] takes what
-            # is left of as_mw after the tranches ranked above j, capped at the
-            # tranche's available MW (the mirror of the CC top-of-stack realloc
-            # above).
-            order = pool[np.argsort(-heat_rate[pool], kind="stable")]
-            caps = pmax[order, np.newaxis] * availability[order, :]  # (k, T)
-            cum_above = np.cumsum(caps, axis=0) - caps  # MW ranked above each
-            removed = np.clip(as_mw[np.newaxis, :] - cum_above, 0.0, caps)
-            with np.errstate(divide="ignore", invalid="ignore"):
-                availability[order, :] = np.where(
-                    pmax[order, np.newaxis] > 0.0,
-                    (caps - removed) / pmax[order, np.newaxis], 0.0,
+        _yr_as = getattr(config, "weather_year", 0)
+        by_class = load_as_thermal_withholding(_yr_as, hours)
+        withdrawn = unmet = 0.0
+        if by_class is not None:
+            for col, series in by_class.items():
+                pool = np.array(
+                    [i for i, g in enumerate(generators)
+                     if g.plant_group in _AS_RESTYPE_TO_GROUPS[col]],
+                    dtype=int,
                 )
-            if min_gen is not None:
-                floor_frac = np.zeros_like(availability)
-                np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
-                          where=pmax[:, np.newaxis] > 0.0)
-                np.maximum(availability, floor_frac, out=availability)
-            np.clip(availability, 0.0, 1.0, out=availability)
-            unmet = float(np.maximum(as_mw - caps.sum(axis=0), 0.0).sum())
-            logger.info(
-                "AS reserve withholding (ERCOT %s): withdrew %.1f GWh-equiv "
-                "from gas thermal top-of-merit (mean %.0f MW/h; %.1f GWh "
-                "unmet by gas headroom) across %d tranches",
-                getattr(config, "weather_year", "?"), float(removed.sum()) / 1e3,
-                float(as_mw.mean()), unmet / 1e3, pool.size,
+                w, u = _withdraw_top_of_merit(
+                    availability, pmax, heat_rate, pool, series
+                )
+                withdrawn += w
+                unmet += u
+            source = "measured per-type"
+        else:
+            as_mw = load_as_reserve_withholding_mw(_yr_as, hours)
+            pool = np.array(
+                [i for i, g in enumerate(generators)
+                 if g.plant_group in _AS_GAS_GROUPS],
+                dtype=int,
             )
+            if as_mw is not None:
+                withdrawn, unmet = _withdraw_top_of_merit(
+                    availability, pmax, heat_rate, pool, as_mw
+                )
+            source = "system-total upper bound"
+        if min_gen is not None:
+            floor_frac = np.zeros_like(availability)
+            np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
+                      where=pmax[:, np.newaxis] > 0.0)
+            np.maximum(availability, floor_frac, out=availability)
+        np.clip(availability, 0.0, 1.0, out=availability)
+        logger.info(
+            "AS reserve withholding (ERCOT %s, %s): withdrew %.1f GWh-equiv "
+            "from thermal top-of-merit (%.1f GWh unmet by headroom)",
+            _yr_as, source, withdrawn / 1e3, unmet / 1e3,
+        )
 
     return FleetArrays(
         pmax=pmax,
