@@ -52,6 +52,7 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
     load_ercot_fossil_gen,
+    measured_monthly_hydro,
 )
 from market_sim.data.hydro import load_hydro_budget  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
@@ -666,6 +667,7 @@ def _apply_ttc_overrides(
 def _hydro_fleet(
     iso: str, year: int, zone_names: list[str],
     backfill_year: int | None = None,
+    eia930_monthly: bool = False,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -690,9 +692,19 @@ def _hydro_fleet(
     missing inflow is otherwise served by gas, inflating the modeled gas
     level. ``None`` (default) loads ``year`` exactly as reported and changes
     no existing run.
+
+    ``eia930_monthly`` repins the assembled budget's monthly energy to the
+    measured EIA-930 ``NG: WAT`` monthly total for ``(iso, year)`` (preserving
+    per-plant within-month shares), correcting both the level and the monthly
+    shape when the backfilled early-release vintage misstates an off-year
+    (NEISO 2025: 2024 backfill 6.65 TWh, flat, vs measured 5.12 TWh). No-op
+    when EIA-930 hydro for the ISO/year is unavailable. ``False`` (default)
+    changes no existing run.
     """
+    target = measured_monthly_hydro(iso, year) if eia930_monthly else None
     try:
-        budget = load_hydro_budget(iso, year, backfill_year=backfill_year)
+        budget = load_hydro_budget(
+            iso, year, backfill_year=backfill_year, monthly_target_mwh=target)
     except (FileNotFoundError, ValueError):
         return [], None
     units: list[Generator] = []
@@ -755,6 +767,7 @@ def run_year(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
+    hydro_eia930_monthly: bool = False,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -1026,7 +1039,8 @@ def run_year(
     # budget rows. Replaces the flat-monthly must-run injection (which could
     # not peak-shave) and leaves ISOs without hydro data unchanged.
     hydro_units, hydro_monthly_energy = _hydro_fleet(
-        iso, year, zone_names, backfill_year=hydro_backfill_year)
+        iso, year, zone_names, backfill_year=hydro_backfill_year,
+        eia930_monthly=hydro_eia930_monthly)
     hydro_gen_idx = None
     if hydro_units:
         hydro_gen_idx = np.arange(

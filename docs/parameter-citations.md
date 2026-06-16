@@ -353,6 +353,7 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `nyiso_hydro_treaty_min_flow` | {"2693": 0.25, "2694": 0.5} | 2 | NYISO treaty-mandated minimum flows for the two large NYPA hydro pl… | 1957 | auto-generated |
+| `--hydro-eia930-monthly` (NEISO 2025 budget) | 5.12 TWh, monthly [0.50,0.32,0.68,0.72,0.80,0.55,0.32,0.18,0.15,0.19,0.34,0.36] | 1 | EIA-930 ISNE hourly `NG: WAT` (water = conventional hydro), summed by local month; repins the incomplete-EIA-923-vintage budget. `data/eia_hourly/ISNE hourly.parquet` | 2025 | measured |
 
 ## Market Design
 
