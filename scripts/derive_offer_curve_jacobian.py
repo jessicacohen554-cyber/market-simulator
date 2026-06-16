@@ -285,6 +285,26 @@ REGISTRY: dict[str, tuple[str, str]] = {
     "caiso_probe_cc_chp_committed_minus": ("pure", "single knob: CC_CHP committed -0.05"),
     "caiso_probe_ct_chp_committed_minus": ("pure", "single knob: CT_CHP committed -0.05"),
     "caiso_probe_cc_regular_committed_plus": ("pure", "single knob: CC_REGULAR committed +0.05 (held-out back-test probe; exclude via --exclude-pair to reproduce the validation)"),
+    # --- NYISO ---
+    # 2026-06-16 probe panel: 10 single-knob ±0.05 band probes chained off a
+    # structurally-sound anchor (the P11 smoke's --priced-interchange config,
+    # 2023 only). The anchor reproduces the nyiso_smoke_2023 priced diagnostic
+    # to the float — 121.75 TWh total, -25.41 TWh net interchange, $40.34 avg —
+    # so the import wedge (the P9 structural row) is SERVED before any curve is
+    # probed. Gas classes only: NYISO has no coal fleet. Results bundles are
+    # committed between runs, so shas advance but src/inputs/data git diffs
+    # stay clean — auto-classification agrees with every entry below.
+    "nyiso_probe_base_2023": ("structural", "smoke priced-interchange config re-run on current main (code-accumulation anchor; zero curve deltas, 2023 only)"),
+    "nyiso_probe_cc_regular_committed_plus": ("pure", "single knob: CC_REGULAR committed +0.05 off the probe anchor"),
+    "nyiso_probe_cc_regular_committed_minus": ("pure", "single knob: CC_REGULAR committed -0.05 (pairs as -0.10 vs the plus probe)"),
+    "nyiso_probe_cc_regular_econ_high_plus": ("pure", "single knob: CC_REGULAR econ_high +0.05"),
+    "nyiso_probe_cc_regular_econ_high_minus": ("pure", "single knob: CC_REGULAR econ_high -0.05"),
+    "nyiso_probe_ct_peaker_committed_plus": ("pure", "single knob: CT_PEAKER committed +0.05"),
+    "nyiso_probe_ct_peaker_committed_minus": ("pure", "single knob: CT_PEAKER committed -0.05"),
+    "nyiso_probe_st_gas_committed_minus": ("pure", "single knob: ST_GAS committed -0.05 (dual-fuel ST winter coverage)"),
+    "nyiso_probe_st_gas_peak_minus": ("pure", "single knob: ST_GAS peak -0.05 (dual-fuel/oil-steam scarcity band)"),
+    "nyiso_probe_cc_chp_committed_minus": ("pure", "single knob: CC_CHP committed -0.05 (grid-side CHP share)"),
+    "nyiso_probe_ct_chp_committed_minus": ("pure", "single knob: CT_CHP committed -0.05 (grid-side CHP share)"),
 }
 
 # Bundles older than this per-ISO timestamp are "legacy" unless REGISTRY or
@@ -317,6 +337,7 @@ ISO_STATES = {
             "MI", "NC", "TN", "DC"},
     "NEISO": {"CT", "MA", "ME", "NH", "RI", "VT"},
     "CAISO": {"CA"},
+    "NYISO": {"NY"},
 }
 
 
