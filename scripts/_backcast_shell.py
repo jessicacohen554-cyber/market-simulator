@@ -436,6 +436,13 @@ function singleFuelTable(id,yr){const fr=MODEL[id].years[yr]?.fuelRows||[];
  for(const f of ["gas","coal","nuclear","wind","solar"]){const r=fr.find(x=>x.fuel===f);if(!r)continue;
   const d=r.b!=null?100*(r.m-r.b)/r.b:null;
   h+=`<tr><td>${f}</td><td class=num>${r.m.toFixed(1)}</td><td class=num>${r.b==null?"—":r.b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${r.r==null?"—":r.r.toFixed(3)}</td><td class=num>${r.nrmse==null?"—":r.nrmse.toFixed(3)}</td></tr>`;}
+ // Net imports as their own category, when the run solved with the priced
+ // import/export node (fuelRows carries it as "interchange", net-export +).
+ // Flip the sign to import-positive so the row reads as load-serving import
+ // volume, matching the [1] console table's "import" category.
+ const ix=fr.find(x=>x.fuel==="interchange");
+ if(ix){const m=-ix.m,b=ix.b==null?null:-ix.b;const d=(b!=null&&b!=0)?100*(m-b)/b:null;
+  h+=`<tr><td>net imports</td><td class=num>${m.toFixed(1)}</td><td class=num>${b==null?"—":b.toFixed(1)}</td><td class="num ${d==null?'':dcls(d)}">${d==null?"—":fmtPct(d)}</td><td class=num>${ix.r==null?"—":ix.r.toFixed(3)}</td><td class=num>${ix.nrmse==null?"—":Math.abs(ix.nrmse).toFixed(3)}</td></tr>`;}
  return h+'</tbody></table></div></div>';}
 function singleFossilTable(id,yr){let h='<div class=panel><h2>Fossil classes — model vs EIA-923, r/NRMSE vs CAMPD</h2><div class=tablewrap><table><thead><tr><th>class</th><th>model TWh</th><th>EIA-923</th><th>Δ923</th><th>r</th><th>NRMSE</th></tr></thead><tbody>';
  for(const grp of META.groups){const m=classMetrics(id,yr,grp);if(!m)continue;
