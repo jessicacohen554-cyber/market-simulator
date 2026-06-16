@@ -1032,6 +1032,7 @@ def solve_and_persist(
     cc_derate_from_top: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
+    hydro_eia930_monthly: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1129,6 +1130,7 @@ def solve_and_persist(
             must_run_mw=must_run_total,
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
+            hydro_eia930_monthly=hydro_eia930_monthly,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1257,6 +1259,7 @@ def solve_and_persist(
         "cc_derate_from_top": cc_derate_from_top,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
+        "hydro_eia930_monthly": hydro_eia930_monthly,
         "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
@@ -3077,6 +3080,17 @@ def main() -> None:
              "Unset (default) loads the backcast year exactly as reported and "
              "changes no existing run.")
     parser.add_argument(
+        "--hydro-eia930-monthly", action="store_true",
+        help="Repin the conventional-hydro monthly energy budget to the "
+             "measured EIA-930 NG: WAT monthly total for the ISO/year "
+             "(per-plant within-month shares preserved). Corrects both the "
+             "level and the monthly shape when the backfilled early-release "
+             "923 vintage misstates an off-inflow year (NEISO 2025: the 2024 "
+             "backfill yields 6.65 TWh, flat, vs measured 5.12 TWh). No-op "
+             "when EIA-930 hydro for the ISO/year is unavailable. Off "
+             "(default) changes no existing run. Pairs with "
+             "--hydro-backfill-year, which supplies the per-plant coverage.")
+    parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
              "class netgen from this prior year when the backcast year's "
@@ -3240,6 +3254,7 @@ def main() -> None:
         priced_interchange=resolve_priced_interchange(
             args.priced_interchange, iso),
         hydro_backfill_year=args.hydro_backfill_year,
+        hydro_eia930_monthly=args.hydro_eia930_monthly,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
