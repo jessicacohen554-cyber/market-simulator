@@ -749,6 +749,7 @@ def run_year(
     must_run_mw: "np.ndarray | None" = None,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
+    as_reserve_withholding: bool = False,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -826,6 +827,11 @@ def run_year(
     # bounds storage perfect foresight to within-day arbitrage.
     if storage_daily_cycling:
         config = config.with_overrides(storage_daily_cycling=True)
+    # AS reserve withholding (run_calibration_full --as-reserve-withholding):
+    # ERCOT-only upper-bound probe removing cleared up-AS MW from thermal
+    # headroom (fleet.generators_to_fleet_arrays).
+    if as_reserve_withholding:
+        config = config.with_overrides(as_reserve_withholding=True)
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
     if battery_dispatch_adder:
