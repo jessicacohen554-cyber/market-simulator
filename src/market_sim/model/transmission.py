@@ -26,6 +26,7 @@ from market_sim.config.constants import (
     EXPORT_TRANCHES,
     IMPORT_EFORD,
     IMPORT_NODE_LINKS,
+    IMPORT_TRANCHE_EF,
     IMPORT_TRANCHES,
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_ZONE,
@@ -118,16 +119,24 @@ def build_import_generators(
     zones -- no special LP formulation is needed.
 
     A border carbon adjustment (CAISO: see :func:`wecc_border_carbon_adder`)
-    enters as ``border_carbon_per_mwh``, added to every tranche's price. It
-    is carried in the tranche VOM rather than as an ``emission_rate_co2`` so
-    the import carbon cost reaches the merit order without the import MWh
-    inflating the modeled *in-state* CO2 total that calibration benchmarks
-    against eGRID generation-based emissions.
+    enters as ``border_carbon_per_mwh`` — the *unspecified* adjustment
+    (``CARB_UNSPECIFIED_IMPORT_EF`` × allowance price). Each tranche pays it
+    scaled by its own emission factor relative to the unspecified default
+    (:data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`), so a firm
+    hydro/solar block (EF 0) pays nothing while an unspecified block pays the
+    full adder — matching CARB, which charges specified imports their actual
+    (often zero) emissions and only unspecified power the 0.428 default. A
+    tranche absent from the EF map pays the full adder (byte-identical to the
+    prior flat behaviour for any ISO without a map). It is carried in the
+    tranche VOM rather than as an ``emission_rate_co2`` so the import carbon
+    cost reaches the merit order without the import MWh inflating the modeled
+    *in-state* CO2 total that calibration benchmarks against eGRID
+    generation-based emissions.
 
     Args:
         iso: ISO identifier, e.g. ``"CAISO"`` or ``"PJM"``.
-        border_carbon_per_mwh: Border carbon adjustment ($/MWh) added to
-            each tranche price; 0 disables it.
+        border_carbon_per_mwh: Unspecified-import border carbon adjustment
+            ($/MWh); 0 disables it. Scaled per tranche by its emission factor.
         year: backcast year; selects an ``IMPORT_TRANCHES_BY_YEAR[iso][year]``
             ladder when one exists, else the static ``IMPORT_TRANCHES[iso]``.
 
@@ -142,8 +151,12 @@ def build_import_generators(
     ) else None
     if tranches is None:
         tranches = IMPORT_TRANCHES.get(iso, [])
-    return [
-        Generator(
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    gens = []
+    for name, capacity, marginal_cost in tranches:
+        ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+        tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
+        gens.append(Generator(
             unit_id=f"{zone}_{name}",
             name=name,
             zone=zone,
@@ -151,11 +164,10 @@ def build_import_generators(
             pmax_mw=capacity,
             pmin_mw=0.0,
             heat_rate=0.0,
-            vom=marginal_cost + border_carbon_per_mwh,
+            vom=marginal_cost + tranche_carbon,
             eford=IMPORT_EFORD.get(iso, 0.0),
-        )
-        for name, capacity, marginal_cost in tranches
-    ]
+        ))
+    return gens
 
 
 def build_export_sinks(iso: str) -> list[Generator]:
