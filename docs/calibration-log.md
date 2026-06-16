@@ -76,6 +76,19 @@ there should lift scarcity prices most. Re-check when 2023 data lands; and a
 follow-up worth testing is replacing the `battery_dispatch_adder` magic number
 with this measured constraint. Flag default-off pending that.
 
+**2023 result (ESTIMATED storage-AS — `build_ercot_storage_as_2023_estimate.py`,
+intensity transfer from 2024 × EIA-860 fleet ratio, ECRS zeroed pre-June; ~832
+MW/h base, 0.31 intensity).** The mechanism is right and directionally helps the
+thing 2023 needs — the energy-only LP produces a laughable $75 max price; the
+reservation creates real scarcity spikes (max $75 → $226 base / $258 at the 0.40
+bracket; hours > $100 0 → 14 / 21). But the magnitude is small: a handful of
+hours, not the hundreds near the $5,000 cap that the ORDC overlay supplies.
+cf_emd 6/6 PASS both brackets (several marginally better), no regressions. So
+storage-AS commitment is a real but minor scarcity contributor, not an ORDC
+replacement — and 2023 is an estimate, so it can't be a keeper on its own.
+Net read across all three years: a defensible accuracy improvement (measured for
+2024/25), low score impact; adopt for correctness if at all, not for fit.
+
 ### 2026-06-16 — ERCOT — AS-withholding probe (NOT a keeper): RESOLVED — thermal AS withholding is negligible (measured)
 
 **Probe**, not adopted. Tests the run121 hypothesis that the CC over-run is an
