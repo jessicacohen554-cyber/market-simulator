@@ -869,8 +869,12 @@ def run_year(
             wecc_border_carbon_adder(resolve_carbon_price(config, year))
             if iso == "CAISO" else 0.0
         )
+        # Year-grounded import ladder: the priced node's neighbor-hub blocks
+        # are gas-priced, so each single-year calibration solve pins the ladder
+        # to its own year (IMPORT_TRANCHES_BY_YEAR); un-tabulated years fall
+        # back to the static default inside build_import_generators.
         import_generators = (
-            build_import_generators(iso, border_carbon)
+            build_import_generators(iso, border_carbon, year=year)
             + build_export_sinks(iso)
         )
         iso_config = extend_with_import_node(iso_config)
