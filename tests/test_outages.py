@@ -257,14 +257,29 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         for yr in ("2023", "2024", "2025"):
             self.assertIn(yr, years_present, f"Year {yr} absent from NEISO CSV")
 
-    def test_2025_has_fewer_facilities_than_2023_due_to_nh_gap(self):
-        # NH_2025 unit-level is missing; NH plants drop out of 2025 coverage.
+    def test_nh_gap_shows_as_merrimack_absence_not_lower_count(self):
+        # NH_2025 unit-level is still missing, but every other NEISO state now
+        # has a complete 2025 extract, so 2025 coverage is no longer thinner
+        # overall (it is in fact broader than the earlier partial snapshot).
+        # The NH gap shows specifically as Merrimack (2364, the lone NEISO
+        # coal plant, in NH) dropping out of 2025 — not as a lower total
+        # facility count.
         df = self._df()
-        n23 = df[df["outage_start"].str.startswith("2023")]["facility_id"].nunique()
-        n24 = df[df["outage_start"].str.startswith("2024")]["facility_id"].nunique()
-        n25 = df[df["outage_start"].str.startswith("2025")]["facility_id"].nunique()
-        self.assertEqual(n23, n24, "2023 and 2024 should have equal facility counts")
-        self.assertLess(n25, n23, "2025 should have fewer facilities than 2023 (NH gap)")
+        facs = {
+            yr: set(
+                df[df["outage_start"].str.startswith(yr)]["facility_id"].astype(int)
+            )
+            for yr in ("2023", "2024", "2025")
+        }
+        self.assertGreater(
+            min(len(s) for s in facs.values()), 20,
+            "all three backcast years should be broadly covered",
+        )
+        self.assertIn(2364, facs["2023"], "Merrimack (NH coal) present in 2023")
+        self.assertIn(2364, facs["2024"], "Merrimack (NH coal) present in 2024")
+        self.assertNotIn(
+            2364, facs["2025"], "Merrimack (NH) must drop out of 2025 (NH_2025 gap)"
+        )
 
     def test_event_based_rule_dominates_plant_group_mix(self):
         # CC_REGULAR + CC_CHP + ST_GAS + CT_CHP (all event-based) > COAL rows.
@@ -329,15 +344,13 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
                 )
 
     def test_derate_factors_load_for_2025(self):
-        # 2025 coverage is thinner (NH gap) but must still load.
+        # 2025 coverage is now complete for every NEISO state except NH, so the
+        # derate factors load and are non-empty. The NH_2025 gap shows as the
+        # absence of NH's coal plant (Merrimack), asserted in
+        # test_merrimack_coal_in_derate_2023_not_2025 and
+        # test_no_coal_in_neiso_for_2025 — not as a lower overall factor count.
         factors = unit_outage_derate_factors(2025, iso="NEISO")
         self.assertGreater(len(factors), 0, "NEISO 2025 derate factors must be non-empty")
-        # NH absence reduces factor count below 2023/2024.
-        factors_2023 = unit_outage_derate_factors(2023, iso="NEISO")
-        self.assertLess(
-            len(factors), len(factors_2023),
-            "2025 should have fewer derate entries than 2023 due to NH gap",
-        )
 
     def test_merrimack_coal_in_derate_2023_not_2025(self):
         # Merrimack coal (2364) is in 2023/2024 derate but absent from 2025
