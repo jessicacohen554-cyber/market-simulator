@@ -384,13 +384,14 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
-        storage_vintage_ramp=(iso.upper() == "CAISO"),  # CAISO commissioned
-        #   3.0 GW of batteries during 2023 and 3.6 GW during 2024 (EIA-860
-        #   energy-storage schedule), so a flat year-end fleet overstates the
-        #   spring/summer battery capability by 1.5-2 GW — the dispatch caps
-        #   ramp month-by-month from each COD instead. ERCOT/PJM stay flat:
-        #   their calibrations were tuned against year-end fleets and flip on
-        #   only with a recalibration pass (CAISO prompt pack E2).
+        storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT")),  # CAISO and
+        #   ERCOT both commissioned GWs of batteries mid-backcast (CAISO 3.0 GW
+        #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
+        #   2023-25), so a flat year-end fleet overstates spring/summer battery
+        #   capability — measured ERCOT model power 3.9/8.1/13.7 GW vs reality
+        #   ~3.5/6.5/10. The dispatch caps now ramp month-by-month from each
+        #   unit's COD (EIA-860 Operating Month/Year) for both. PJM stays flat
+        #   until its own recalibration pass.
         nearby_fuel_price_fallback=(iso.upper() != "ERCOT"),  # merchant-heavy
         #   ISOs (PJM) have many plants that file no EIA-923 delivered cost;
         #   fill those months from state/zone neighbours before the Henry Hub
