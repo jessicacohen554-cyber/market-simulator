@@ -46,22 +46,24 @@ class TestLoader:
 
 class TestWithholding:
     def _fleet(self, config: ScenarioConfig, iso: str = "ERCOT"):
-        # A large thermal unit (so the multi-GW AS is a partial cut, not a
-        # full zero-out) plus a wind unit that must stay untouched.
+        # A large gas unit (so the multi-GW AS is a partial cut, not a full
+        # zero-out), a coal unit that must stay untouched (gas-only pool), and
+        # a wind unit that must stay untouched (non-thermal).
         gens = [
             _gen("cc1", "CC_REGULAR", "gas_cc", 60_000.0, 1),
-            _gen("wind1", "WIND", "wind", 5_000.0, 2),
+            _gen("co1", "COAL", "coal", 5_000.0, 2),
+            _gen("wind1", "WIND", "wind", 5_000.0, 3),
         ]
         return generators_to_fleet_arrays(
             gens, ["Z0"], hours=HOURS, iso=iso, config=config
         )
 
-    def test_on_removes_as_from_thermal_only(self):
-        """Flag on cuts thermal headroom by the AS series; wind untouched.
+    def test_on_removes_as_from_gas_only(self):
+        """Flag on cuts gas headroom by the AS series; coal and wind untouched.
 
         The cut composes with the existing seasonal WEFOR derate, so the test
         compares the flag-on fleet against the flag-off baseline rather than a
-        bare 1.0. For a single thermal unit the pro-rata cut is exactly
+        bare 1.0. For a single gas unit the top-down withdrawal is exactly
         ``as_mw / pmax`` of nameplate each hour.
         """
         off = self._fleet(ScenarioConfig(iso="ERCOT", weather_year=2024))
@@ -72,9 +74,10 @@ class TestWithholding:
             on.availability[0], off.availability[0] - as_mw / 60_000.0,
             atol=1e-9,
         )
-        # Thermal headroom genuinely fell; wind is untouched.
+        # Gas headroom genuinely fell; coal and wind are untouched.
         assert on.availability[0].max() < off.availability[0].max()
         np.testing.assert_allclose(on.availability[1], off.availability[1])
+        np.testing.assert_allclose(on.availability[2], off.availability[2])
 
     def test_non_ercot_iso_unaffected(self):
         """The withholding is ERCOT-scoped; other ISOs see no effect."""
