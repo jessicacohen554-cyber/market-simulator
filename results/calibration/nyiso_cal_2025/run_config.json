@@ -1,11 +1,16 @@
 {
-  "timestamp": "2026-06-16T15:43:03",
+  "timestamp": "2026-06-16T17:01:18",
   "git": {
-    "sha": "b8a390d",
+    "sha": "4a9e7f6",
     "branch": "claude/nyiso-backcast-zonal-tests-iw2w19",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "dirty": true,
+    "changed_files": [
+      "cripts/run_calibration.py",
+      "src/market_sim/config/constants.py",
+      "src/market_sim/model/transmission.py",
+      "src/market_sim/runner.py"
+    ],
+    "diffstat": "scripts/run_calibration.py           |  6 ++++-\n src/market_sim/config/constants.py   | 44 ++++++++++++++++++++++++++++++++++++\n src/market_sim/model/transmission.py | 18 +++++++++++++--\n src/market_sim/runner.py             |  7 +++++-\n 4 files changed, 71 insertions(+), 4 deletions(-)"
   },
   "model_changes_note": "",
   "calibration_flags": {
@@ -41,7 +46,7 @@
     "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": true,
-    "git_sha": "b8a390d"
+    "git_sha": "4a9e7f6"
   },
   "scenario_config": {
     "weather_year": 2025,
