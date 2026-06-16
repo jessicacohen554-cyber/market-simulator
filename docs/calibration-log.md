@@ -42,6 +42,44 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-16 — ERCOT — AS-withholding probe (NOT a keeper): effect is first-order, naive upper bound hurts
+
+**Probe**, not adopted. Tests the run121 hypothesis that the CC over-run is an
+ancillary-service-withholding effect (the energy-only LP holds zero AS; ERCOT
+clears ~7 GW). New opt-in flag `--as-reserve-withholding` (default OFF,
+byte-identical baseline) removes the hourly cleared DAM **upward**-AS MW
+(RegUp + RRS + ECRS + Non-Spin; Reg-Down excluded) from thermal headroom before
+the supply curve clears. Series built by `scripts/build_ercot_as_withholding.py`
+from the NP3-911 cleared-AS reports (`inputs/raw-data/ercot-AS/`), on the model's
+non-leap 8760 ERCOT-local clock. **Upper bound:** books *all* AS to thermal,
+pro-rata across the available thermal stack — no storage/load split (the
+per-resource DAM Gen Resource Data needed for a true split is not in the
+uploaded set and the 60-day archive only begins Dec-2023). Mean 6.94 GW/h
+removed (4.5–9.8 GW range), ~10–14 % of thermal. A/B is 2024 only; baseline
+faithfully reproduces run121 (cf_emd 0.098/0.098/0.074 match the keeper).
+
+**Verdict: the effect is first-order (so it is real and worth modelling), but
+the naive pro-rata upper bound net-degrades the fit — confirming the *split*
+and the within-thermal *allocation* are what matter, not just the magnitude.**
+
+- **CC over-run confirmed as partly AS:** CC_REGULAR class CO₂ flips **+3.5 % →
+  −3.2 %** with withholding ON — the run121 hypothesis holds.
+- **But pro-rata over-withholds baseload**, forcing peakers/steam up to serve
+  load: CT_PEAKER CO₂ **−24.5 % → +45.7 %**, ST_GAS **−4.2 % → +19.4 %**. Coal
+  classes also worsen (PRB −9.1 → −7.4, lignite −4.9 → −11.5).
+- **Shape (cf_emd vs as_base):** CC_REGULAR 0.098 → 0.107, COAL 0.074 → 0.081,
+  CT_PEAKER 0.051 → 0.097 (the one gate FAIL), ST_GAS 0.098 → 0.118; CC_CHP
+  ~flat. pearson_r 6/6 still PASS (CT_CHP r 0.077 → 0.120). CO₂ total +1.6 %
+  PASS, but class gates coal −7.7 % / gas +8.1 % both just breach ±7 %.
+- **Why:** baseload coal/CC run flat-out *for energy* and hold little AS; AS
+  sits on part-loaded mid-merit gas and (increasingly) batteries/load. Pulling
+  it pro-rata off baseload is unphysical and wrong-signed for the peakers.
+
+**Next step (gated on this result): worth the per-resource DAM Gen Resource Data
+pull** — but only paired with a within-thermal allocation (withhold from
+headroom/marginal units, not baseload) and a storage/load carve-out. Flag stays
+default-off until then; pro-rata-on-all-thermal is not a keeper.
+
 ### 2026-06-16 — ERCOT — run121 NEW KEEPER: + storage vintage (COD) ramp (accuracy, not fit)
 
 **run121** = run120 + ERCOT `storage_vintage_ramp` ON
