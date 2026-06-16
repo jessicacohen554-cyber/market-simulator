@@ -967,6 +967,15 @@ class ScenarioConfig:
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
 
+    # Inject the measured Henry Hub *daily* within-month shape onto the gas
+    # series (fuel.gas_daily_shape_factors): the monthly delivered level is
+    # unchanged (factors normalize to 1.0 per month), but the merit order sees
+    # the real day-to-day commodity swing — cheap shoulder days and cold-snap
+    # spikes — instead of one flat price per month. Physics input correctness,
+    # applied before any offer-curve tuning; works in forecast too (a forward
+    # monthly level times a representative daily shape).
+    gas_daily_shape: bool = False
+
     # Tier 3 (calibration) — measured hub-month gas basis overlay (doc-08
     # NEISO P7). In months with a measured hub basis row in
     # inputs/raw-data/gas_basis_by_iso_month.csv (NEISO: Algonquin Citygate
