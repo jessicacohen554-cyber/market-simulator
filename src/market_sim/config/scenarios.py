@@ -699,6 +699,19 @@ class ScenarioConfig:
     # without CAMPD coverage keep the CSV value. Off by default (CSV split).
     cc_committed_per_plant: bool = False
 
+    # When True (ERCOT backcast), each CC_REGULAR plant's LP capacity is raised
+    # to its demonstrated CAMPD peak where that exceeds the curated bin
+    # nameplate — the cold-weather (winter) over-rating an F-class CC delivers
+    # that the standard nameplate omits. Raise-only: a plant that never
+    # dispatched to its rating keeps it. Without this, plants like Freestone
+    # (nameplate 1036 MW, observed peak 1119 MW) cannot reach the output the
+    # real plant did and log zero hours in their top CF band. Reconciliation
+    # table from scripts/derive_cc_capacity_reconcile.py. Off by default.
+    cc_capacity_reconcile: bool = False
+    cc_capacity_reconcile_path: str = (
+        "inputs/processed/cc_capacity_reconcile_ERCOT.csv"
+    )
+
     # When True, the CC_REGULAR plants in fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT
     # use that per-plant peaking-tranche % instead of the offer curve's
     # ``pct_peaking`` — moving where the expensive duct-burner peak band starts
