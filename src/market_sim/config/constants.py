@@ -1810,6 +1810,31 @@ IMPORT_EFORD: dict[str, float] = {
     "NEISO": 0.0,
 }
 
+# Per-tranche CO2 emission factor (tCO2/MWh) for the CARB border-carbon
+# adjustment on imports. CARB assesses its allowance obligation on the
+# *specified* emissions of an import — zero for firm hydro / solar / nuclear
+# delivered under an e-tag — and falls back to CARB_UNSPECIFIED_IMPORT_EF
+# (0.428) ONLY for unspecified power. Charging the flat 0.428 on every block
+# (the prior build-time behaviour) over-prices CAISO's clean import blocks
+# (PNW hydro, desert-SW solar/Palo Verde) by ~$12-15/MWh, lifting them above
+# the in-state gas merit order so the model burns domestic gas midday instead
+# of importing the cheap zero-carbon energy CAISO actually takes — inflating
+# the spring/midday price floor (model ~$46 vs actual ~$14 in Apr-May). Each
+# tranche now carries its resource's EF; build_import_generators scales the
+# border adder by ef / CARB_UNSPECIFIED_IMPORT_EF, so a tranche absent from
+# this map keeps the full unspecified default (byte-identical for any ISO
+# without an entry). Gas EFs ≈ heat rate × 0.0531 tCO2/MMBtu (CCGT ~7, CT ~10.4).
+IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
+    "CAISO": {
+        "PNW_hydro_base": 0.0,   # firm Pacific-NW hydro — specified, zero-EF
+        "PNW_midC": 0.0,         # Mid-Columbia hydro/wind
+        "DSW_solar_PV": 0.0,     # desert-SW solar + Palo Verde nuclear
+        "DSW_CCGT": 0.37,        # desert-SW combined-cycle gas (~7 HR)
+        "DSW_CT": 0.55,          # desert-SW combustion turbine (~10.4 HR)
+        "WECC_scarcity": CARB_UNSPECIFIED_IMPORT_EF,  # unspecified west-wide
+    },
+}
+
 # Backwards-compatible aliases for the original CAISO-only WECC names.
 WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = IMPORT_TRANCHES["CAISO"]
 WECC_EXPORT_CAP_MW: float = EXPORT_TRANCHES["CAISO"][0][1]
