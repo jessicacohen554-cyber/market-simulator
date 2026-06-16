@@ -358,6 +358,7 @@ Glenarm,422,GT5,71.0,192.0,37.0,CC_REGULAR,eia_exact,2025-11-25,2025-12-30,35.0,
 "Calpine Gilroy Cogen, LP",10034,S-100,112.0,112.0,100.0,CC_CHP,observed_peak,2025-09-24,2025-10-08,14.2,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,112.0,112.0,100.0,CC_CHP,observed_peak,2025-10-08,2025-12-02,54.8,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,112.0,112.0,100.0,CC_CHP,observed_peak,2025-12-05,2025-12-31,26.6,0,1
+Grossmont Hospital,10115,NET0-923,4.5,4.5,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 "Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-01-01,2023-01-11,10.4,0,1
 "Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-01-12,2023-01-22,10.3,0,1
 "Fresno Cogeneration Partners, LP",10156,GEN1,16.0,16.0,100.0,CT_CHP,eia_digits,2023-02-03,2023-02-14,10.8,0,1
@@ -700,6 +701,10 @@ Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-03,2025
 Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-17,2025-09-24,6.5,0,1
 Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-24,2025-12-01,67.8,0,1
 Badger Creek Limited,10650,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-12-01,2025-12-31,30.1,0,1
+University of California Santa Cruz,50064,NET0-923,7.4,7.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+San Antonio Regional Hospital,50234,NET0-923,2.7,2.7,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+High Sierra Limited,50495,NET0-923,49.8,49.8,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Harbor Cogen,50541,NET0-923,107.4,107.4,100.0,CC_REGULAR,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-01-01,2023-01-14,13.5,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-01-14,2023-02-06,23.0,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2023-02-07,2023-03-06,27.3,0,1
@@ -737,6 +742,9 @@ McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-03,2025-0
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-17,2025-09-23,5.7,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-09-23,2025-11-21,58.3,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-11-21,2025-12-31,40.3,0,1
+Agnews Power Plant,50748,NET0-923,32.0,32.0,100.0,CC_REGULAR,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Coalinga Cogeneration Facility,50750,NET0-923,6.8,6.8,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+CamChino Leasing LLC,50850,NET0-923,30.8,30.8,100.0,CC_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-01-09,2023-02-01,22.8,0,1
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-03-10,2023-03-22,11.6,0,1
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2023-10-15,2023-11-14,30.0,0,1
@@ -744,6 +752,14 @@ Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-05-13,2024-06-03,21.6,0,1
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2024-11-23,2024-12-07,13.8,0,1
 Salinas River Cogeneration Facility,50865,1,38.0,38.0,100.0,CT_CHP,observed_peak,2025-05-18,2025-05-29,11.0,0,1
+McKittrick Cogen,52076,NET0-923,12.0,12.0,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Cymric 31X Cogen,52081,NET0-923,6.8,6.8,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Cymric 6Z Cogen,52082,NET0-923,6.8,6.8,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Coalinga 25D Cogen,52086,NET0-923,13.6,13.6,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Cymric 36W Cogen,52104,NET0-923,12.4,12.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Yuba City Cogen Partners,52186,NET0-923,49.9,49.9,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Welport Lease Project,54447,NET0-923,5.0,5.0,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Dome Project,54449,NET0-923,6.0,6.0,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 Goal Line,54749,1,50.0,50.0,100.0,CC_CHP,observed_peak,2023-01-01,2023-04-26,115.6,0,1
 Goal Line,54749,1,50.0,50.0,100.0,CC_CHP,observed_peak,2023-05-02,2023-05-11,8.6,0,1
 Goal Line,54749,1,50.0,50.0,100.0,CC_CHP,observed_peak,2023-05-15,2023-07-14,59.6,0,1
@@ -980,6 +996,7 @@ Sunrise Power Company,55182,CTG2,303.0,603.0,50.2,CC_REGULAR,observed_peak,2024-
 Sunrise Power Company,55182,CTG2,303.0,603.0,50.2,CC_REGULAR,observed_peak,2024-05-15,2024-06-04,20.3,1,2
 Sunrise Power Company,55182,CTG2,312.0,619.0,50.4,CC_REGULAR,observed_peak,2025-01-06,2025-04-30,114.3,1,2
 Sunrise Power Company,55182,CTG2,312.0,619.0,50.4,CC_REGULAR,observed_peak,2025-05-08,2025-07-25,78.8,1,2
+Aera San Ardo Cogen Facility,55184,NET0-923,3.2,3.2,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 "Los Medanos Energy Center, LLC",55217,X724,317.0,634.0,50.0,CC_CHP,observed_peak,2023-03-20,2023-04-06,17.2,1,2
 "Los Medanos Energy Center, LLC",55217,X724,317.0,634.0,50.0,CC_CHP,observed_peak,2023-05-06,2023-06-01,26.3,1,2
 "Los Medanos Energy Center, LLC",55217,X724,317.0,634.0,50.0,CC_CHP,observed_peak,2023-07-22,2023-07-31,9.4,1,2
@@ -1660,6 +1677,7 @@ Malburg Generating Station,56041,M2,40.0,80.0,50.0,CC_REGULAR,eia_exact,2025-10-
 Malburg Generating Station,56041,M2,40.0,80.0,50.0,CC_REGULAR,eia_exact,2025-11-18,2025-11-24,6.6,1,2
 Malburg Generating Station,56041,M2,40.0,80.0,50.0,CC_REGULAR,eia_exact,2025-11-28,2025-12-20,21.8,1,2
 Malburg Generating Station,56041,M2,40.0,80.0,50.0,CC_REGULAR,eia_exact,2025-12-20,2025-12-31,11.1,1,2
+Clearwater Power Plant,56356,NET0-923,49.0,49.0,100.0,CC_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 Russell City Energy Company LLC,56467,CT1,316.0,516.0,61.2,CC_REGULAR,observed_peak,2023-01-12,2023-01-17,5.4,1,2
 Russell City Energy Company LLC,56467,CT1,316.0,516.0,61.2,CC_REGULAR,observed_peak,2023-03-04,2023-04-20,47.8,1,2
 Russell City Energy Company LLC,56467,CT1,316.0,516.0,61.2,CC_REGULAR,observed_peak,2023-05-04,2023-05-15,11.7,1,2
@@ -1825,6 +1843,8 @@ Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-09-
 Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-09-22,2025-10-07,14.5,0,1
 Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-10-08,2025-12-16,68.9,0,1
 Algonquin Power Sanger,57564,8,40.0,40.0,100.0,CC_REGULAR,observed_peak,2025-12-16,2025-12-31,15.5,0,1
+Broadridge Cogen,57580,NET0-923,5.2,5.2,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+High Sierra Cogeneration Plant,57977,NET0-923,6.2,6.2,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2023-04-01,2023-05-02,31.8,0,1
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2023-05-03,2023-05-16,13.3,0,1
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2023-05-16,2023-06-28,42.7,0,1
@@ -1857,6 +1877,11 @@ Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2025-09-30,2
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2025-11-10,2025-11-15,5.2,0,1
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2025-12-12,2025-12-25,12.2,0,1
 Lodi Energy Center,57978,CT1,185.0,185.0,100.0,CC_REGULAR,eia_exact,2025-12-25,2025-12-31,6.7,0,1
+Glass House Camarillo Cultivation,58432,NET0-923,13.2,13.2,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Santa Rita Jail Hybrid,58625,NET0-923,2.9,2.9,100.0,CT_CHP,eia923_netzero,2024-01-01,2024-12-31,365.0,0,1
+Santa Rita Jail Hybrid,58625,NET0-923,2.9,2.9,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+MCAGCC Cogen Plant,58914,NET0-923,16.4,16.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+Santa Rita Jail Fuel Cell,60385,NET0-923,1.4,1.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
 AES Alamitos Energy Center,62115,CT1,345.0,691.0,49.9,CC_REGULAR,observed_peak,2023-02-23,2023-03-02,7.5,1,2
 AES Alamitos Energy Center,62115,CT1,345.0,691.0,49.9,CC_REGULAR,observed_peak,2023-05-06,2023-05-11,5.4,1,2
 AES Alamitos Energy Center,62115,CT1,345.0,691.0,49.9,CC_REGULAR,observed_peak,2023-05-19,2023-05-28,8.9,1,2
@@ -1932,3 +1957,6 @@ AES Huntington Beach Energy Project,62116,CT2,348.0,700.0,49.7,CC_REGULAR,observ
 AES Huntington Beach Energy Project,62116,CT2,348.0,700.0,49.7,CC_REGULAR,observed_peak,2025-06-11,2025-06-18,6.7,1,2
 AES Huntington Beach Energy Project,62116,CT2,348.0,700.0,49.7,CC_REGULAR,observed_peak,2025-06-18,2025-06-26,7.7,1,2
 AES Huntington Beach Energy Project,62116,CT2,348.0,700.0,49.7,CC_REGULAR,observed_peak,2025-12-12,2025-12-17,5.8,1,2
+Berry NMW Cogens,62176,NET0-923,11.4,11.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+"Central CA Fuel Cell 1, LLC",63439,NET0-923,2.8,2.8,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
+San Manuel Central Plant Cogens,66472,NET0-923,5.4,5.4,100.0,CT_CHP,eia923_netzero,2025-01-01,2025-12-31,365.0,0,1
