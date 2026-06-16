@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-06-16T20:49:57",
+  "timestamp": "2026-06-16T22:24:17",
   "iso": "NEISO",
   "years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -12,7 +14,9 @@
   "commitment": true,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -43,9 +47,9 @@
   },
   "cc_derate_from_top": false,
   "priced_interchange": false,
-  "hydro_backfill_year": null,
-  "hydro_eia930_monthly": false,
+  "hydro_backfill_year": 2024,
+  "hydro_eia930_monthly": true,
   "btm_backfill_year": null,
-  "git_sha": "60ca4e5",
+  "git_sha": "3bf6075",
   "highspy_version": "1.14.0"
 }
