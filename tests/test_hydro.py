@@ -380,6 +380,34 @@ class TestCAISOHydroBudget(unittest.TestCase):
             filled.monthly_energy.sum(), bare.monthly_energy.sum()
         )
 
+    def test_measured_monthly_hydro_repins_incomplete_2025(self):
+        # measured_monthly_hydro exists to repin the incomplete 2025 EIA-923
+        # vintage to the EIA-930 metered total. The CISO 2025 hourly extract is
+        # 8751 local-year rows (9 short of a clean 8760), so the strict frame
+        # loader rejected it and the repin silently no-oped on the one year it
+        # is meant to fix. The gap-filling loader bridges the hole.
+        target = measured_monthly_hydro("CAISO", 2025)
+        self.assertIsNotNone(target)
+        self.assertEqual(target.shape, (12,))
+        self.assertLess(abs(target.sum() / 1e6 - 21.32) / 21.32, 0.02)
+        # 2023/2024 have clean frames and are unchanged by the gap-filler.
+        self.assertAlmostEqual(
+            measured_monthly_hydro("CAISO", 2023).sum() / 1e6, 24.40, delta=0.1
+        )
+
+    def test_2025_eia930_repin_recovers_full_budget(self):
+        # With monthly_target_mwh from EIA-930, the 26 survey-only reporters'
+        # energy is scaled up so the 2025 budget total matches the measured
+        # ~21.3 TWh (vs the bare 12.3 TWh early-release undercount), without
+        # adding plants (the MW envelope stays physical).
+        bare = load_hydro_budget("CAISO", 2025)
+        target = measured_monthly_hydro("CAISO", 2025)
+        repinned = load_hydro_budget("CAISO", 2025, monthly_target_mwh=target)
+        self.assertEqual(repinned.n_hydro, bare.n_hydro)
+        total = repinned.monthly_energy.sum() / 1e6
+        self.assertLess(abs(total - 21.32) / 21.32, 0.02)
+        self.assertGreater(total, bare.monthly_energy.sum() / 1e6 + 8.0)
+
     def test_dispatch_respects_real_monthly_budgets(self):
         # End-to-end: the three largest CAISO hydro plants dispatched over
         # January + February 2023 at their real EIA-923 budgets. Hydro is

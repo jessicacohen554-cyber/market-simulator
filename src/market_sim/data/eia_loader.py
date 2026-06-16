@@ -301,7 +301,14 @@ def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
     ba = _ISO_TO_HOURLY_BA.get(iso)
     if ba is None:
         return None
-    frame = _eia_hourly_frame(ba, year)
+    # Use the gap-filling frame, not the strict 8760 one: this helper exists to
+    # repin an *incomplete* EIA-923 vintage (notably 2025), and the current-year
+    # EIA-930 extract is itself often a few hours short of a clean local year
+    # (CISO 2025 is 8751 local-year rows). The strict loader rejects that and
+    # the repin silently no-ops on the very year it is meant to fix; the filled
+    # loader bridges the <=72h hole. The inserted gap rows carry NaT dates and
+    # NaN NG: WAT, so the per-month nansum below ignores them.
+    frame = _eia_hourly_frame_filled(ba, year)
     if frame is None or "NG: WAT" not in frame.columns:
         return None
     months = frame["Local date"].dt.month.to_numpy()
