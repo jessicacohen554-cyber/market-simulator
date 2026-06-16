@@ -391,6 +391,16 @@ class ScenarioConfig:
     # registry. 13.75% is ERCOT's economically-optimal reserve margin
     # (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO uses its
     # own installed-reserve-margin target from the registry.
+    as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
+    # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
+    # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
+    # thermal headroom before the energy supply curve clears, so capacity sold
+    # as AS cannot also offer energy. Default off (byte-identical baseline);
+    # ERCOT-only. This is an UPPER BOUND — it books all AS to thermal, with no
+    # storage/load split (the per-resource DAM Gen Resource Data needed for a
+    # true split is unavailable across the backcast window), so it over-
+    # withholds where batteries/load carry AS (most in the later years). Used
+    # to gate whether a rigorous thermal-share build is worth the data pull.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1233,6 +1243,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_lolp_params_path": 2,
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
+    "as_reserve_withholding": 1,
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,
