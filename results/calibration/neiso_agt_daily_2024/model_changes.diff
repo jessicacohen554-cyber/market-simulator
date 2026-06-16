@@ -1,0 +1,174 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 74f272b..81ede10 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -78,6 +78,7 @@ from market_sim.data.fuel import (  # noqa: E402
+     apply_hub_basis_overlay,
+     apply_plant_monthly_fuel_prices,
+     coal_passthrough_by_supply,
++    dual_fuel_switch_mask,
+     prb_follower_passthrough_series,
+     resolve_fuel_prices,
+ )
+@@ -1123,6 +1124,13 @@ def run_year(
+     # unless gas_hub_basis_overlay is set (and basis rows exist), so non-NEISO
+     # runs are unchanged.
+     apply_hub_basis_overlay(fuel_prices, fleet_arrays, config, year)
++    # Capture which dual-fuel generator-hours will switch to oil (gas price >
++    # oil parity) BEFORE the min-cap below overwrites the gas price, so the
++    # dispatch re-attribution can count their MWh as petroleum, not gas (the
++    # switch itself is objective-only; this is a reporting re-attribution).
++    dual_fuel_oil_mask = dual_fuel_switch_mask(
++        fuel_prices, fleet_arrays, config, year
++    )
+     # Dual-fuel switching last, so the oil-parity min sees the final delivered
+     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
+     # days (NEISO) — not the per-plant monthly cost alone (PJM).
+@@ -1232,6 +1240,7 @@ def run_year(
+         "p1_result": result, "demand": demand,
+         "dispatch_kwargs": dispatch_kwargs, "config": config,
+         "context": context, "storage_units": storage_units,
++        "dual_fuel_oil_mask": dual_fuel_oil_mask,
+     }
+ 
+     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 813f7d2..265df9b 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -299,6 +299,7 @@ def _dispatch_frame(
+     year: int, pass_label: str, result, context, zone_names: list[str],
+     iso: str = "ERCOT",
+     must_run: dict[str, np.ndarray] | None = None,
++    oil_switch_mask: "np.ndarray | None" = None,
+ ) -> pd.DataFrame:
+     """Return the long per-generator-hour dispatch frame for one year-pass.
+ 
+@@ -351,11 +352,26 @@ def _dispatch_frame(
+ 
+     rep = lambda a: np.repeat(np.asarray(a, dtype=object), T)  # noqa: E731
+     hours = np.tile(np.arange(T, dtype=np.int32), n_gen)
++    klass_col = rep(klass)
++    fuel_col = rep(fuels)
++    # Dual-fuel re-attribution: a gas unit that switched to its backup oil this
++    # hour (gas price > oil parity; mask from fuel.dual_fuel_switch_mask) burned
++    # petroleum, so its dispatched MWh is counted as oil (EIA-930 ``NG: OIL``),
++    # not gas — the LP still priced/dispatched it on the gas heat-rate (the
++    # switch is objective-only), this only relabels the generation. The mask is
++    # ``(n_gen, T)`` over the LP generators, the same (gen, hour) row-major order
++    # as ``disp.reshape(-1)`` and ``rep(...)``, so flatten and overwrite in place.
++    if oil_switch_mask is not None and np.asarray(oil_switch_mask).any():
++        flat = np.asarray(oil_switch_mask, dtype=bool)[:n_gen, :T].reshape(-1)
++        klass_col = np.asarray(klass_col, dtype=object)
++        fuel_col = np.asarray(fuel_col, dtype=object)
++        klass_col[flat] = "oil"
++        fuel_col[flat] = "oil"
+     frames = [pd.DataFrame({
+         "unit_id": rep(unit_ids),
+         "plant_code": np.repeat(plant_codes.astype(np.int32), T),
+-        "klass": rep(klass),
+-        "fuel": rep(fuels),
++        "klass": klass_col,
++        "fuel": fuel_col,
+         "supply": rep(supply),
+         "zone": rep(zones),
+         "hour": hours,
+@@ -1155,6 +1171,7 @@ def solve_and_persist(
+             _dispatch_frame(
+                 year, label, res, context, zone_names, iso=iso,
+                 must_run=must_run,
++                oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
+             ).to_parquet(
+                 run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
+             )
+diff --git a/src/market_sim/data/fuel.py b/src/market_sim/data/fuel.py
+index 03d4357..7021c22 100644
+--- a/src/market_sim/data/fuel.py
++++ b/src/market_sim/data/fuel.py
+@@ -1071,6 +1071,47 @@ def apply_dual_fuel_pricing(
+         )
+ 
+ 
++def dual_fuel_switch_mask(
++    fuel_prices: np.ndarray,
++    fleet: FleetArrays,
++    config: ScenarioConfig,
++    year: int,
++    monthly_costs_path: Path | None = None,
++) -> np.ndarray:
++    """Return the ``(n_gen, T)`` bool mask of dual-fuel gas units burning oil.
++
++    A dual-fuel-capable gas unit (:func:`dual_fuel_plant_groups`) runs on its
++    backup distillate/residual when its delivered gas price exceeds delivered
++    oil parity, so this marks the generator-hours where
++    ``gas_price > oil_price`` for the capable units — the counterpart of the
++    ``min`` that :func:`apply_dual_fuel_pricing` writes. Call it on the
++    pre-``min`` gas-price array (i.e. *before* :func:`apply_dual_fuel_pricing`),
++    so ``fuel_prices`` still carries the unburdened (hub-overlaid) gas price.
++
++    Used by the calibration's dispatch re-attribution: a switched unit-hour's
++    dispatched MWh is petroleum generation (EIA-930 counts it in ``NG: OIL``),
++    not gas, even though the LP carries it on the gas heat-rate. Returns an
++    all-``False`` mask when dual-fuel switching is off or no capable unit is in
++    the fleet, so non-NEISO/PJM runs see no re-attribution.
++    """
++    mask = np.zeros(fuel_prices.shape, dtype=bool)
++    if not getattr(config, "dual_fuel_switching", False):
++        return mask
++    groups = fleet.plant_group
++    if groups is None:
++        return mask
++    capable = dual_fuel_plant_groups()
++    if not capable:
++        return mask
++    oil_hourly = dual_fuel_oil_price_series(config, year, monthly_costs_path)
++    is_gas = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX)
++    for g in np.nonzero(is_gas)[0]:
++        if (int(fleet.plant_code[g]), str(groups[g])) not in capable:
++            continue
++        mask[g] = fuel_prices[g] > oil_hourly
++    return mask
++
++
+ def apply_plant_monthly_fuel_prices(
+     fuel_prices: np.ndarray,
+     fleet: FleetArrays,
+diff --git a/tests/test_fuel.py b/tests/test_fuel.py
+index 917fa12..469a1e7 100644
+--- a/tests/test_fuel.py
++++ b/tests/test_fuel.py
+@@ -447,6 +447,34 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
+     np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
+ 
+ 
++def test_dual_fuel_switch_mask_marks_only_switched_capable_units(monkeypatch):
++    """The mask flags the dual-fuel unit's switched hours, nothing else."""
++    from market_sim.data.fuel import dual_fuel_switch_mask
++    _patch_dual_fuel_capability(monkeypatch)
++    fleet = _dual_fuel_fleet(hours=24)
++    config = ScenarioConfig(
++        iso="PJM", hours=24, gas_seasonality=False,
++        gas_price_override=25.0, dual_fuel_switching=True,
++    )
++    # Pre-min gas price array (what run_year passes before the dual-fuel cap).
++    gas_prices = resolve_fuel_prices(config, fleet, 2030, apply_monthly=False)
++    mask = dual_fuel_switch_mask(gas_prices, fleet, config, 2030)
++    # Row 0 is the dual-fuel CT (gas $25 > oil $18 → switched every hour);
++    # row 1 the gas-only CT and row 2 the oil unit are never re-attributed.
++    assert mask[0].all()
++    assert not mask[1].any()
++    assert not mask[2].any()
++
++    # Below parity: nothing switches.
++    cheap = config.with_overrides(gas_price_override=2.0)
++    gas_cheap = resolve_fuel_prices(cheap, fleet, 2030, apply_monthly=False)
++    assert not dual_fuel_switch_mask(gas_cheap, fleet, cheap, 2030).any()
++
++    # Flag off: empty mask regardless of price.
++    off = config.with_overrides(dual_fuel_switching=False)
++    assert not dual_fuel_switch_mask(gas_prices, fleet, off, 2030).any()
++
++
+ def test_dual_fuel_no_switch_below_parity(monkeypatch):
+     """Cheap gas leaves a dual-fuel unit on its gas price (min is gas)."""
+     _patch_dual_fuel_capability(monkeypatch)
