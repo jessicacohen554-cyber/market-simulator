@@ -374,6 +374,25 @@ class ScenarioConfig:
     # under the RTC+B regime (forecast). Default 0 — RTC+B reformed the ECRS
     # conservatism, so forward scarcity prices to fundamentals. Set > 0 to model
     # a scenario where 2023-style reserve conservatism recurs under RTC+B.
+
+    # Tier 1/2 — NYISO RCPF (Reserve Constraint Penalty Factor) scarcity
+    # overlay (post-solve; never an LP input). NYISO's analogue of the ERCOT
+    # ORDC adder: a stepped reserve demand curve whose shadow price flows
+    # into the LBMP via energy/reserve co-optimization. The nested products
+    # (10-min spin ⊂ 10-min total ⊂ 30-min total) stack in a deepening
+    # shortage, reaching the high-hundreds/low-thousands tail the energy-only
+    # LP cannot produce. Owns the price tail only — zero whenever reserves
+    # clear the requirement (the vast majority of hours), so the body of the
+    # distribution is untouched. NYISO-only: other capacity-market ISOs
+    # recover fixed cost through capacity revenue. See
+    # results.rcpf / docs/nyiso-rcpf-overlay.md.
+    nyiso_rcpf_enabled: bool = False  # Master flag for the NYISO RCPF overlay.
+    nyiso_rcpf_products: tuple | None = None  # Optional override of the
+    # reserve demand-curve table (constants.NYISO_RCPF_PRODUCTS): a tuple of
+    # (name, requirement_mw, critical_mw, max_penalty_$/MWh) products. None
+    # uses the published NYISO defaults. A scenario can widen/tighten the
+    # curves (e.g. a future capacity-shortage view) without a code edit.
+
     reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
     # economic new-entry screen, force-build firm (gas_ct) capacity if the
     # system's accredited firm capacity is below peak * (1 + planning reserve
@@ -1256,6 +1275,8 @@ TIER_TAGS: dict[str, int] = {
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,
+    "nyiso_rcpf_enabled": 1,
+    "nyiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
     "cc_peak_hr_penalty": 3,
