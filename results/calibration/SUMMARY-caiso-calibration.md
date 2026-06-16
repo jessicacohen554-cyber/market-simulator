@@ -67,6 +67,27 @@ spring floor stays gas-set — gas never decommits. **LMP needs the decommit/flo
 structural fix, not more bid-lowering.** This was applied as a runtime
 `--offer-curve-delta-json`, NOT baked into code.
 
+### iter 2 — per-tranche border-carbon EF (clean imports exempt) + iter1 delta (2024)
+Code fix (committed): CARB border carbon scaled by per-tranche emission factor, so
+clean import blocks (PNW hydro, DSW solar/Palo Verde) pay no border carbon instead of
+the flat 0.428 unspecified default. Run also carried iter1's CC offer delta.
+Result (2024): **net import 20.1→32.1** (target 30.8 — now ON TARGET; the clean blocks
+now beat domestic gas midday as they should). **LMP 58.0→53.5** (spring −$4-5; Apr
+46.6→41.9). **But gas 83.5→71.8** (−13.6 — the new imports displaced gas ~1:1) and **Jan
+56.3→ −11.4 vs actual** (winter now UNDER-priced).
+**Conclusions:**
+- Gas and imports trade off serving the same residual load. Model now has gas+import =
+  104 TWh; reality is 116 (gas 85 + import 31). The missing ~12 TWh is served by
+  over-generation elsewhere — **solar over-absorption** (model curtails 0 vs ~2.5 TWh
+  reported; over-flat solar shape → midday net-load never goes negative). **This is a
+  STRUCTURAL input problem (solar capacity/shape, BTM, must-run floors, net-load duck
+  curve), not an offer-curve problem** — do the structural audit before more tuning.
+- iter1's econ_low/econ_high −0.15 cut was too deep for WINTER (Jan now under). The
+  spring-targeted lever is the COMMITTED cut; back off the econ cut in a refined keeper.
+- The remaining LMP overage (+20-30 Feb-Nov) is still floor-driven: gas stays marginal
+  midday because net-load stays positive (solar over-absorbed) and ~3 GW gas/CHP is
+  pinned committed.
+
 ## Recommended next steps
 
 1. **Spring floor (LMP) — the key lever:** let gas **decommit** midday so near-zero

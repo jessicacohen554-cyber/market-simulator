@@ -39,6 +39,26 @@ off-by-default diagnostic; see below.) See `docs/multi-iso/neiso-data-audit.md`
   data and promoted. `fuel.iso_hub_daily_gas_prices` /`dual_fuel_switch_mask`,
   `constants.AGT_DAILY_BASIS_CONVEXITY`. See `neiso-data-audit.md` §2c–2d.
 
+## 2026-06-16 (data — NYISO per-zone hourly actual load, upload U3)
+
+NYISO OASIS ``pal`` actual-load downloads (monthly zips of daily 5-minute
+zonal CSVs, 2023–2025, under
+``inputs/raw-data/zone-specific-demand/NYISO/raw/``) are folded into the
+per-year hourly CSVs the loader expects.
+
+- **`scripts/process_nyiso_zonal_load.py`** — aggregates each zone's
+  5-minute integrated load to the hour-beginning mean and writes
+  ``NYISO_load_actuals_{year}.csv`` (cols ``Time Stamp, Name, Load``) for the
+  eleven NYISO settlement zones. Idempotent; naive Eastern wall-clock
+  timestamps (the loader re-localizes and handles DST / Feb 29).
+- **Effect:** `eia_loader.nyiso_zonal_load_shares` now gives each model zone
+  its own *measured hourly shape* instead of the static Gold-Book share
+  fallback. NYC's share rises from the static 0.280 to a measured mean 0.328
+  peaking at **0.403**; at the 2023 system peak (30.2 GW) downstate (NYC +
+  Long Island) is **51.8%** of load (NYC 10.6 GW, Long Island 5.1 GW against
+  a 1,650 MW LI import limit). This is the downstate concentration the
+  congestion fix (scorecard gap #1) needs for the interfaces to bind.
+
 ## 2026-06-16 (physics — NYISO RCPF scarcity-pricing overlay)
 
 NYISO's analogue of the ERCOT ORDC overlay: a post-solve reserve-demand-curve
