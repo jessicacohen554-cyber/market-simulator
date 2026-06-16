@@ -94,6 +94,7 @@ from market_sim.model.commitment import (  # noqa: E402
 from market_sim.model.dispatch import DispatchModel, solve_dispatch  # noqa: E402
 from market_sim.model.storage import (  # noqa: E402
     load_eia860_storage,
+    reserve_storage_as_power,
     storage_cap_profiles,
     storage_units_to_arrays,
 )
@@ -767,6 +768,7 @@ def run_year(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
+    storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -850,6 +852,11 @@ def run_year(
     # headroom (fleet.generators_to_fleet_arrays).
     if as_reserve_withholding:
         config = config.with_overrides(as_reserve_withholding=True)
+    # Storage AS commitment (run_calibration_full --storage-as-commitment):
+    # ERCOT-only reservation of measured storage up-AS MW from the battery
+    # dispatch power cap (applied after storage_cap_profiles below).
+    if storage_as_commitment:
+        config = config.with_overrides(storage_as_commitment=True)
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
     if battery_dispatch_adder:
@@ -1121,6 +1128,12 @@ def run_year(
     storage_power_cap, storage_energy_cap = storage_cap_profiles(
         storage_units, storage, config.hours
     )
+    # Reserve the measured storage up-AS MW from the dispatch power cap so AS-
+    # committed battery capacity cannot also arbitrage energy (ERCOT only).
+    if getattr(config, "storage_as_commitment", False) and iso == "ERCOT":
+        storage_power_cap = reserve_storage_as_power(
+            storage_power_cap, config.weather_year, config.hours
+        )
 
     if fleet_only:
         # Availability-reconstruction exit (no LP): everything a post-solve

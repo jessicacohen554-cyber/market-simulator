@@ -420,6 +420,13 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
+    storage_as_commitment: bool = False  # ERCOT backcast: reserve the measured
+    # hourly storage upward-AS MW (RegUp/RRS/ECRS cleared by batteries, from the
+    # per-resource-type series) from the storage dispatch power cap, so capacity
+    # committed to AS cannot also arbitrage energy. Default off (byte-identical);
+    # ERCOT-only. Unlike thermal AS (tiny), storage carries ~2-3 GW of AS — a
+    # large share of the battery fleet — and the energy-only LP otherwise dumps
+    # the full fleet into the few highest-price hours. Reserves power, not SOC.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1272,6 +1279,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "as_reserve_withholding": 1,
+    "storage_as_commitment": 1,
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,
