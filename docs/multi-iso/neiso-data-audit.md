@@ -181,17 +181,74 @@ test_neiso_hub_overlay_drives_dual_fuel_switch` (a Jan AGT spike past parity
 trips the dual-fuel unit to oil while a gas-only unit eats the full hub spike;
 the shoulder month leaves both on gas).
 
-**3. Monthly-granularity limitation (documented, not fabricated).** The
+### 2c. AGT-basis wiring bug + daily refinement (2026-06-16)
+
+Two coupled fixes this session turned the AGT basis from documented-but-inert
+into the dominant correct price driver it was always meant to be.
+
+**A. The hub-basis overlay was never applied in the calibration dispatch.**
+`resolve_fuel_prices` runs `apply_hub_basis_overlay` only inside its
+`apply_monthly=True` branch, but `run_calibration.run_year` resolves fuel prices
+with `apply_monthly=False` (so the coal-supply base lands before the per-plant
+EIA-923 overwrite) and then re-applied *only* `apply_plant_monthly_fuel_prices`
+and `apply_dual_fuel_pricing` — **never the hub overlay.** So every NEISO keeper
+through P12/P14 priced gas at the EIA-923 ISO-month series (Jan-2025 gas
+**$5.30/MMBtu**, not the AGT hub **$16.92**), and the dual-fuel switch capped
+against that wrong gas — i.e. the AGT overlay and the §2b switch were dead code
+in the calibration path. Because NEISO's ISO-month 923 series rests on only two
+(partly LNG-priced) reporters, it was *over-priced* in most months and
+*under-priced* in winter, so the dead overlay mis-set the price level in **both
+directions**. Fix: `run_year` now calls `apply_hub_basis_overlay` between the
+plant-monthly and dual-fuel passes, mirroring the `apply_monthly=True` order
+(the overlay is idempotent and no-ops for non-NEISO, so ERCOT/PJM/CAISO/NYISO
+stay byte-identical). Effect on the load-weighted hub price level (vs ISO-NE
+.H.INTERNAL_HUB DA avg):
+
+| year | prior keeper | overlay wired | actual DA |
+|------|-------------:|--------------:|----------:|
+| 2023 | $53.61 (+46%) | **$34.52** | $36.82 |
+| 2024 | $55.72 (+34%) | **$39.99** | $41.47 |
+| 2025 | $54.31 (−20%) | **$67.95** | $67.86 |
+
+Gas TWh also tightened to near-exact (2023 −0.6%, 2024 −0.2%, 2025 +0.2% vs
+EIA-930). This supersedes the "level is at sign-off" finding in doc-08 — the
+prior price level was wrong because the measured AGT data was being ignored.
+
+**B. Daily AGT basis (the U4 refinement, proxy).** The real daily AGT spot
+series (ICE/Platts) is paywalled and network-blocked here (U4 unfilled), so the
+new `gas_hub_basis_daily` path (`fuel.iso_hub_daily_gas_prices`, default-on for
+NEISO; `--no-gas-hub-basis-daily` to disable) reconstructs it mean-preservingly:
+each winter month's measured mean basis is redistributed across its days
+proportional to NEISO daily demand raised to `AGT_DAILY_BASIS_CONVEXITY` (=7.0,
+calibrated to the measured oil burn + >$200 hour counts), with the measured
+daily Henry Hub leg on top — so the coldest (highest-demand) days carry the
+convex citygate blowout while the monthly mean (and the annual gas burn / fuel
+mix) is unchanged. The reconstructed peaks land on the historical cold events
+(Feb 3–4 2023 Arctic outbreak, Jan 20–22 2025 polar vortex; demand–oil daily
+corr 0.5–0.72). This is what builds the winter LMP tail — A/B on 2025 (monthly
+vs daily, identical mean): hours >$200 **13 → 128** (actual ~160), max
+**$259 → $283**, with the average unchanged at ~$68. It is a flagged proxy for
+the missing daily series and falls back to the flat monthly overlay when the
+NEISO demand series is unavailable.
+
+**3. Monthly-granularity limitation (now addressed by the daily proxy).** The
 committed `gas_basis_by_iso_month.csv` is *monthly*, and monthly AGT averages
 never reach distillate parity (~$18/MMBtu): max **Feb-2023 $8.1, Dec-2024 $9.1,
-Jan-2025 $16.9** — all below oil. So the **dual-fuel CT/ST switch is correctly
-wired but does not bind on monthly data** — the daily cold-snap AGT spot
-blowouts that flip dual-fuel units in real time are smoothed away. (Same shape
-as the NYISO P13 finding.) A finer **daily AGT** upload (a U4 refinement) is
-what would make the CT switch bind; guarded by
-`test_neiso_monthly_agt_basis_stays_below_distillate_parity`. Modeled winter
-oil therefore comes predominantly from the **oil-primary steam fleet** (~5 GW)
-dispatching at winter scarcity, not the CT switch.
+Jan-2025 $16.9** — all below oil, so on a flat monthly plateau the dual-fuel
+CT/ST switch never binds (guarded by
+`test_neiso_monthly_agt_basis_stays_below_distillate_parity`). The daily proxy
+(2c-B) lifts the coldest days past parity (264 gas-hours > $18 in Jan-2025), so
+the switch now trips on cold days.
+
+**Remaining gap — oil TWh (open).** Modeled oil is still under the EIA-930 `NG:
+OIL` column (2023 0.01 / 2024 0.00 / 2025 0.13 vs 0.32 / 0.37 / 1.24 TWh). The
+reason is the §2b dual-fuel switch is *objective-only*: a dual-fuel CC/CT that
+switches to oil prices at `min(gas, oil)` but its dispatched MWh is still
+**counted as gas**, and (capped at ~$122/MWh) it clears ahead of the more
+expensive oil-primary steam (~$189/MWh), so most real winter oil burn shows up
+as gas in the model. Closing this needs a generation **re-attribution** of
+dual-fuel switched MWh to oil (and the matching emissions move) — a reporting/
+accounting change that does not affect prices. Filed as the next step.
 
 **4. Validation vs the EIA-923 oil column (2023 smoke,
 `run_calibration --iso NEISO --year 2023 --hours 8760`):**
