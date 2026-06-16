@@ -13132,6 +13132,38 @@
         "auto-generated",
         "needs-citation"
       ]
+    },
+    {
+      "param_id": "scenario.nyiso_rcpf_enabled",
+      "display_name": "NYISO RCPF Scarcity Pricing Enabled",
+      "value": false,
+      "unit": "bool",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "Model design decision — post-solve NYISO Reserve Constraint Penalty Factor (RCPF) reserve-demand-curve overlay replicating NYISO real-time scarcity price formation, per NYISO MST Rate Schedule 4 / Ancillary Services Manual; NYCA 30-minute curve per FERC Docket ER21-502",
+      "source_date": "2021-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Default off: the volume calibration path is gated on the energy-only LMP. System-wide (NYCA). See docs/nyiso-rcpf-overlay.md.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-16",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.nyiso_rcpf_products",
+      "display_name": "NYISO RCPF Reserve Demand-Curve Products",
+      "value": null,
+      "unit": "tuple",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "NYISO operating-reserve requirements (largest single contingency ~1,310 MW: 10-min spin 655 MW, 10-min total 1,310 MW, 30-min total 2,620 MW; NYISO Transmission & Dispatch Operations Manual) and reserve demand-curve maxima (NYCA 30-min $750/MWh at 1,965 MW critical level, FERC Docket ER21-502; 10-min ceilings NYISO MST Rate Schedule 4). None uses constants.NYISO_RCPF_PRODUCTS defaults",
+      "source_date": "2021-07",
+      "page_or_table": "MST Rate Schedule 4",
+      "url": "",
+      "notes": "Override of the (name, requirement_MW, critical_MW, max_$/MWh) product table. Piecewise-linear between published anchors; not fitted to LMP residuals. See docs/nyiso-rcpf-overlay.md.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-16",
+      "flags": []
     }
   ]
 }
