@@ -75,8 +75,10 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
+    apply_hub_basis_overlay,
     apply_plant_monthly_fuel_prices,
     coal_passthrough_by_supply,
+    dual_fuel_switch_mask,
     prb_follower_passthrough_series,
     resolve_fuel_prices,
 )
@@ -375,6 +377,21 @@ def _calibration_config(
         #   trigger (P13). No basis rows exist for other ISOs (the NYISO
         #   Transco Z6 leg is still unsourced), so this is a NEISO-only
         #   repricing.
+        gas_hub_basis_daily=(iso.upper() == "NEISO"),
+        #   Daily resolution for the AGT overlay above (doc-08 NEISO, the
+        #   daily-AGT refinement of U4). The measured monthly basis is the
+        #   right level but a flat monthly plateau never reaches distillate
+        #   parity (~$18/MMBtu; max Jan-25 hub $16.9), so the gas->oil switch
+        #   and the oil-steam fleet never trip and the winter LMP tail stays
+        #   flat. This redistributes each winter month's measured mean basis
+        #   across its days by NEISO daily demand^AGT_DAILY_BASIS_CONVEXITY
+        #   (coldest = highest-demand days carry the citygate blowout),
+        #   mean-preserving so the annual gas burn / fuel mix is unchanged —
+        #   tripping oil on the coldest days and building the winter tail. A
+        #   flagged proxy for the paywalled/network-blocked daily AGT spot
+        #   series (it falls back to the flat monthly overlay when the NEISO
+        #   demand series is unavailable). See market_sim.data.fuel
+        #   .iso_hub_daily_gas_prices and docs/multi-iso/neiso-data-audit.md.
         commitment_enabled=commitment_enabled,  # P1-only by default: the
         #   3-tranche, no-Pmin bin structure dispatches correctly without the
         #   P2 screen. Opt in with --commitment to add the unit-commitment pass.
@@ -587,6 +604,11 @@ def _calibration_config(
         # parity (~$16-20), so the switch is correctly wired but rarely binds on
         # the ISO-average; the downstate Z6 blowout (U4) is what crosses parity.
         dual_fuel_switching=(iso.upper() in ("PJM", "NYISO", "NEISO")),
+        # Re-attribute switched dual-fuel MWh to oil (doc-08 §2d) for NEISO
+        # only: its AGT hub overlay drives winter gas past oil parity, so the
+        # switched generation is petroleum (EIA-930 NG:OIL). Off for PJM/NYISO
+        # so their keepers stay byte-identical until separately validated.
+        dual_fuel_oil_reattribution=(iso.upper() == "NEISO"),
     )
     if any(f.name == "gas_price_override" for f in fields(ScenarioConfig)):
         config = config.with_overrides(gas_price_override=gas_price)
@@ -1097,8 +1119,30 @@ def run_year(
     if config.coal_supply_repricing:
         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
     apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
-    # Dual-fuel switching last, so the oil-parity min sees the final
-    # (per-plant monthly) delivered gas price (PJM only; no-op elsewhere).
+    # Hub-basis overlay (NEISO only): replace the gas price with the measured
+    # Algonquin Citygate hub spot in covered months — daily-resolved when
+    # gas_hub_basis_daily is on. Because run_year resolves fuel prices with
+    # apply_monthly=False (so the coal-supply base lands before the per-plant
+    # EIA-923 overwrite), the overlay that resolve_fuel_prices runs in its
+    # apply_monthly=True branch must be re-applied here, mirroring that branch's
+    # order: plant-monthly, then hub overlay, then the dual-fuel min. No-op
+    # unless gas_hub_basis_overlay is set (and basis rows exist), so non-NEISO
+    # runs are unchanged.
+    apply_hub_basis_overlay(fuel_prices, fleet_arrays, config, year)
+    # Capture which dual-fuel generator-hours will switch to oil (gas price >
+    # oil parity) BEFORE the min-cap below overwrites the gas price, so the
+    # dispatch re-attribution can count their MWh as petroleum, not gas (the
+    # switch itself is objective-only; this is a reporting re-attribution).
+    # Gated on dual_fuel_oil_reattribution (NEISO-only) so PJM/NYISO — whose
+    # dual-fuel units also switch on their own winter gas — stay byte-identical.
+    dual_fuel_oil_mask = (
+        dual_fuel_switch_mask(fuel_prices, fleet_arrays, config, year)
+        if getattr(config, "dual_fuel_oil_reattribution", False)
+        else None
+    )
+    # Dual-fuel switching last, so the oil-parity min sees the final delivered
+    # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
+    # days (NEISO) — not the per-plant monthly cost alone (PJM).
     apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
@@ -1205,6 +1249,7 @@ def run_year(
         "p1_result": result, "demand": demand,
         "dispatch_kwargs": dispatch_kwargs, "config": config,
         "context": context, "storage_units": storage_units,
+        "dual_fuel_oil_mask": dual_fuel_oil_mask,
     }
 
     # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin

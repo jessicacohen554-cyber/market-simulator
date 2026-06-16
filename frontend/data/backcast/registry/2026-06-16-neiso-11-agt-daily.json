@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-16-neiso-11-agt-daily",
+  "label": "neiso 11 agt daily",
+  "date": "2026-06-16",
+  "shorthand": "neiso-11-agt-daily",
+  "definition": "neiso 11 (2024). Same config as neiso 10. Hub price avg $40.0 vs actual DA $41.5; gas -0.4% vs EIA-930; oil 0.15 vs 0.37 TWh; winter >$200 tail still light (a low-basis year).",
+  "years": [
+    2024
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-16-neiso-11-agt-daily.js",
+  "bundle": "results/calibration/neiso_agt_daily_2024"
+}
