@@ -2509,6 +2509,30 @@ def rebuild_benchmark(bundle: Path) -> None:
     report_run(bundle)
 
 
+def apply_statistical_mode(args) -> None:
+    """Force the out-of-sample (forecast-machinery) overlay set when ``args.
+
+    statistical_mode`` is set. One switch turns off every per-hour / per-year
+    answer-injection overlay — the historic outage overlay (-> statistical
+    WEFOR/POF), the CT AS/RUC-deployment floor, the spatial
+    reliability-deployment floor, the ST WEFOR-residual relief, and per-plant
+    EIA-923 monthly coal pricing (the coal-monthly disable rides the
+    ``prb_overrides`` channel via ``args.no_coal_monthly_pricing``). Structural
+    levers (offer curves, coal passthrough sigmoids, cc-duct band, storage
+    daily cycling) and the realized annual Henry Hub gas price are untouched,
+    so the run measures forecast machinery rather than calibration plumbing.
+    Mutates ``args`` in place; a no-op when ``statistical_mode`` is False.
+    """
+    if not getattr(args, "statistical_mode", False):
+        return
+    args.outage_source = "statistical"
+    args.ct_deployment = False
+    args.reliability_deployment = False
+    args.wefor_residual = None
+    args.wefor_relief_groups = None
+    args.no_coal_monthly_pricing = True
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -2634,6 +2658,33 @@ def main() -> None:
         help="Fraction of the measured congestion energy forced (default 1.0). "
              "Lower it if a year would overshoot a pocket class bar. Requires "
              "--reliability-deployment.",
+    )
+    parser.add_argument(
+        "--statistical-mode", action="store_true",
+        help="Out-of-sample (forecast-machinery) backcast: disable every "
+             "per-hour / per-year answer-injection overlay in one switch — "
+             "historic outage overlay (->statistical WEFOR/POF), the CT "
+             "AS/RUC-deployment floor, the spatial reliability-deployment "
+             "floor, the ST WEFOR-residual relief, and per-plant EIA-923 "
+             "monthly coal pricing (->fall back to the supply-class "
+             "trajectory). Keeps the STRUCTURAL model (per-plant heat rates, "
+             "committed floors, offer curves, gas-keyed coal passthrough "
+             "sigmoids, cc-duct band, storage daily cycling) and the realized "
+             "annual Henry Hub gas price (the 'realized-fuel' variant, "
+             "isolating dispatch machinery from fuel-forecast error). "
+             "Residual backcast devices that have no clean toggle and stay on "
+             "(documented small-order): the 2023-only ERCOT wind HSL rescale, "
+             "the nuclear monthly-CF overlay, and per-plant CEMS emission "
+             "rates (the latter does not affect dispatch at carbon_price=0). "
+             "Overrides any conflicting overlay flag.",
+    )
+    parser.add_argument(
+        "--no-coal-monthly-pricing", dest="no_coal_monthly_pricing",
+        action="store_true",
+        help="Disable per-plant EIA-923 monthly delivered coal pricing "
+             "(coal_plant_monthly_pricing) so every coal plant falls back to "
+             "its supply-class trajectory. A single-overlay ablation knob "
+             "(implied by --statistical-mode).",
     )
     parser.add_argument(
         "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
@@ -2938,6 +2989,7 @@ def main() -> None:
              "Applied on top of --offer-curve-json when both are given. The "
              "resolved absolute curve is recorded in run_config.json.")
     args = parser.parse_args()
+    apply_statistical_mode(args)
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
     offer_curve_deltas = _parse_offer_curve_json(
@@ -3032,6 +3084,12 @@ def main() -> None:
                 if args.wefor_relief_groups else None
             ),
             "wefor_residual": args.wefor_residual,
+            # Backcast-only per-plant F923 coal price: off in statistical mode
+            # / under the ablation flag (falls back to the supply-class
+            # trajectory, exactly as a forward year does).
+            "coal_plant_monthly_pricing": (
+                False if args.no_coal_monthly_pricing else None
+            ),
             "coal_lignite_passthrough_sigmoid":
                 True if args.coal_lignite_sigmoid else None,
             "coal_lignite_passthrough_floor": args.lignite_floor,
