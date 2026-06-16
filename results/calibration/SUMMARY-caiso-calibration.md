@@ -1,0 +1,89 @@
+# CAISO backcast calibration — diagnosis & iteration log (2026-06-16)
+
+Branch: `claude/caiso-backcast-zonal-tests-34emxa`. Goal: improve CAISO LMP and
+generation-mix accuracy across 2023/2024/2025; flag structural needs.
+
+Scratch bundles (`caiso_tune*`, `caiso_probe2_*`) are gitignored and do **not**
+survive into a fresh container — re-run the baseline first. A 3-year run is
+~27 min; a single year ~9 min. **Iterate on 2024** (it has the LMP reference and
+is the middle gas-price year), confirm keepers on 3 years.
+
+Setup: `uv venv && source .venv/bin/activate && uv pip install -e ".[dev]"`.
+
+## Targets (EIA-930) and baseline errors
+
+| Year | gas target | base gas | net-import target | base import | base LMP | actual LMP |
+|---|---|---|---|---|---|---|
+| 2023 | 87.8 | 67.7 (−20) | 28.5 | 38.6 (+10 over) | $85.9 | *none* |
+| 2024 | 85.4 | 76.2 (−9) | 30.8 | 26.9 (under) | $60.6 | $32.9 |
+| 2025 | 79.0 | 81.6 (+2.6) | 35.8 | 33.2 (under) | $65.0 | $33.6 |
+
+Baseline = `caiso_tune0_base` (3-yr, current main, `--commitment --priced-interchange`).
+
+## Core diagnosis (high confidence)
+
+- **LMP ~2× too high; a price-FLOOR problem concentrated in Feb–Dec.** January is
+  already accurate (Jan-24 model $63.7 vs actual $67.7); spring/summer is +20…+39
+  too high (Apr/May model $48/$48 vs actual $14/$11).
+- **Root cause:** in a spring-midday hour with ~17 GW solar, gas_cc stays
+  *committed* (~651 MW) and sets the clearing price at the committed-band bid
+  (~$36). Gas never decommits through the solar glut, so the model can't reach
+  the real near-zero spring prices. Real CAISO exports surplus midday solar
+  (interchange swings to +3,500 MW); the model imports 96–100% of hours and
+  almost never exports — its interchange and price distributions are far too flat.
+- **Import capacities are correct** (achievable best-case net-import matches
+  actuals every year via `derive_import_tranches.py` measured-only score); the
+  tranche **prices/merit position** are off. Volume error is non-uniform (over in
+  2023, under in 2024/25) — the inherent tension of a single static curve across
+  three gas-price regimes ($2.54/$2.19/$3.52).
+
+## Structural conclusions
+
+- **Do NOT add a CAISO ORDC overlay or ancillary-services stream for LMP.** Both
+  are ERCOT-only capacity/scarcity-tail mechanisms; CAISO is RA-backed ($2,000
+  cap, no ORDC) and the model already *over*-prices — a scarcity adder makes it
+  worse.
+- **No 2023 actual CAISO LMP** (RTM never fetched; OASIS aged out). LMP scoring is
+  2024/25 only. Consider a 2023 proxy if needed.
+
+## Jacobian guidance
+
+`python scripts/derive_offer_curve_jacobian.py --iso CAISO` — joint-move recipe
+wants CC/gas committed+econ bands ~−0.15 (CC_REGULAR committed 0.92→0.77,
+econ_low 1.06→0.91, econ_high 1.27→1.12, ST_GAS committed 0.81→0.72) but **all
+moves are trust-region-frozen** (probes only sampled ±0.05). CC_REGULAR is the
+dominant high-confidence marginal class. 2023 per-class TWh err (CHP biased low):
+CC_REGULAR −4.0, CT_PEAKER −4.1 (under); ST_GAS +3.4, CT_CHP +1.3 (over).
+
+## Iteration log
+
+### iter 1 — CC_REGULAR committed −0.20, econ_low/high −0.15 (2024)
+Cmd: `... --offer-curve-delta-json '{"CC_REGULAR":{"committed":-0.20,"econ_low":-0.15,"econ_high":-0.15}}'`
+Result (2024): **gas 76.2→83.5** (target 85.4; −9.2→−1.9 — mix nearly fixed).
+**LMP 60.6→58.0** (target 32.9 — barely moved). Net import 26.9→20.1 (−10.7 under).
+Spring still +33…+38; Jan went −4→−8 (slightly under).
+**Conclusion:** lowering the committed *bid* fixes the MIX but not LMP, because the
+spring floor stays gas-set — gas never decommits. **LMP needs the decommit/floor
+structural fix, not more bid-lowering.** This was applied as a runtime
+`--offer-curve-delta-json`, NOT baked into code.
+
+## Recommended next steps
+
+1. **Spring floor (LMP) — the key lever:** let gas **decommit** midday so near-zero
+   solar/curtailment is marginal. Investigate `cc_committed_per_plant` /
+   min-stable-load / the P2 commitment screen — too much CC is pinned committed.
+   This (not bid level) is what unlocks the spring lows.
+2. **Export node reshaping:** make midday surplus *export* (price→$0/$8) instead of
+   importing. `derive_import_tranches.py --iso CAISO --year <Y> --bundle <bundle>`
+   (bundle mode); watch circularity (anchors to model price). Smaller/pricier cheap
+   import tranches + easier exports widen the swing.
+3. **2025 hydro −9 TWh** (model 12.3 vs 21.3) — likely a hydro-budget/backfill data
+   gap; check `--hydro-backfill-year` and the 2025 EIA-923 hydro vintage.
+4. Once a direction is locked, bake **CAISO-specific** offer-curve values into
+   `scripts/run_calibration.py` `_calibration_config` (current `econ_low=1.06`/
+   `econ_high=1.27` are shared non-PJM/non-ERCOT defaults — give CAISO its own
+   branch so NEISO is unaffected). Run a 3-year confirmation, re-derive the
+   Jacobian, register the keeper via the `calibration-report` skill.
+
+Commit discipline: scratch bundles gitignored; commit only code/constants/offer-curve
+changes, the re-derived Jacobian CSV, and a final registered keeper.
