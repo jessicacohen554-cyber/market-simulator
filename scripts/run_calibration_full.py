@@ -1023,6 +1023,7 @@ def solve_and_persist(
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
+    as_reserve_withholding: bool = False,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
     offer_curve_overrides: dict | None = None,
@@ -1118,6 +1119,7 @@ def solve_and_persist(
             plant_tranche_config=plant_tranche_config,
             storage_daily_cycling=storage_daily_cycling,
             battery_dispatch_adder=battery_dispatch_adder,
+            as_reserve_withholding=as_reserve_withholding,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
             offer_curve_overrides=offer_curve_overrides,
@@ -1246,6 +1248,7 @@ def solve_and_persist(
         ).td_loss_factor,
         "storage_daily_cycling": storage_daily_cycling,
         "battery_dispatch_adder": battery_dispatch_adder,
+        "as_reserve_withholding": as_reserve_withholding,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
         "offer_curve_overrides": offer_curve_overrides or {},
@@ -1304,6 +1307,8 @@ def solve_and_persist(
             plant_tranche_config_path=plant_tranche_config)
     if storage_daily_cycling:
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
+    if as_reserve_withholding:
+        recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
     if battery_dispatch_adder:
         recorded_cfg = recorded_cfg.with_overrides(
             battery_dispatch_adder=battery_dispatch_adder)
@@ -2971,6 +2976,14 @@ def main() -> None:
              "perfect-foresight advantage). Off = annual-cyclic (default).",
     )
     parser.add_argument(
+        "--as-reserve-withholding", action="store_true",
+        help="ERCOT upper-bound probe: remove the hourly cleared DAM up-AS MW "
+             "(RegUp/RRS/ECRS/Non-Spin, from "
+             "scripts/build_ercot_as_withholding.py) from thermal headroom "
+             "before the supply curve clears. Books all AS to thermal (no "
+             "storage/load split). Off = no withholding (default).",
+    )
+    parser.add_argument(
         "--battery-adder", type=float, default=0.0,
         help="Grid-battery throughput/cycling cost in $/MWh discharged "
              "(ScenarioConfig.battery_dispatch_adder): degradation + "
@@ -3213,6 +3226,7 @@ def main() -> None:
         plant_tranche_config=args.plant_tranche_config,
         storage_daily_cycling=args.storage_daily_cycling,
         battery_dispatch_adder=args.battery_adder,
+        as_reserve_withholding=args.as_reserve_withholding,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
         offer_curve_overrides=offer_curve_overrides,
