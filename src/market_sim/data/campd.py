@@ -64,22 +64,39 @@ _MONTH_START_HOUR: tuple[int, ...] = tuple(
 ISO_STATES: dict[str, tuple[str, ...]] = {
     "ERCOT": ("TX",),
     "CAISO": ("CA",),
-    "NYISO": ("NY",),
+    # NY plus NJ: a handful of qualifying NYISO-fleet plants sit physically in
+    # New Jersey (EIA-860 balancing authority ``NYIS``), so their unit-level
+    # extract feeds NYISO too. ``load_campd_hourly`` and the outage derivation
+    # filter every loaded state to the ISO's own fleet, so listing NJ here
+    # cannot leak PJM-side NJ plants into NYISO.
+    "NYISO": ("NY", "NJ"),
     # Keyed "NEISO" to match the iso_configs registry name (was "ISONE",
     # which no fleet loader recognised, so the lookup always came back empty).
     "NEISO": ("ME", "NH", "MA", "CT", "RI", "VT"),
     # Full PJM footprint. ``load_campd_hourly`` warns and skips any state
     # whose ``{STATE}_{YEAR}.parquet`` is not present, so listing the whole
     # footprint lets the outage derivation widen automatically as more CAMPD
-    # extracts land. Unit-level extracts present: PA, NJ, IL, OH, IN, KY, WV,
-    # VA, DC (2023-2025; NJ through 2024) and MI (2024). Still absent: MD, DE,
-    # NC, TN — plants there keep the statistical availability model until
-    # added (regenerate campd-unit-outages-PJM.csv once the extracts land).
+    # extracts land. Unit-level extracts now present for every PJM-fleet state
+    # (PA, NJ, MD, DE, IL, OH, IN, KY, WV, VA, TN, MI, DC) across 2023-2025;
+    # NC is retained for completeness though no qualifying PJM-fleet plant
+    # currently sits there.
     "PJM": (
         "PA", "NJ", "MD", "DE", "IL", "OH", "IN", "KY", "WV", "VA", "NC",
         "TN", "MI", "DC",
     ),
-    "MISO": ("IL",),
+    # Full MISO footprint. The MISO fleet (EIA-860 BA ``MISO``) carries
+    # qualifying plants across all of these states, and unit-level CAMPD
+    # extracts for each now exist, so the unit-outage derivation covers the
+    # whole fleet rather than the IL-only probe it began as. States overlap
+    # PJM (IL, IN, KY, MI) and ERCOT (TX, MISO South / Entergy Texas); the
+    # per-ISO fleet filter keeps each ISO's windows to its own plants.
+    "MISO": (
+        "AR", "IA", "IL", "IN", "KY", "LA", "MI", "MN", "MO", "MS", "ND",
+        "SD", "TX", "WI",
+    ),
+    # SPP fleet spans AR, IA, KS, LA, MN, MO, ND, NE, NM, OK, SD, TX, but SPP
+    # is not yet stood up as a calibration target and has no consumed
+    # unit-outage CSV; populate this and regenerate when SPP is added.
     "SPP": (),
 }
 
