@@ -303,7 +303,12 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
             series = np.where(
                 np.isnan(hourly_measured), series, hourly_measured
             )
-    return _hub_overlay_series(series, config, year, hours)
+    series = _hub_overlay_series(series, config, year, hours)
+    if getattr(config, "gas_daily_shape", False):
+        # Inject the within-month daily commodity swing onto the correctly-
+        # levelled monthly series (mean-preserving, so the annual mix holds).
+        series = series * gas_daily_shape_factors(year, hours)
+    return series
 
 
 def _sigmoid_passthrough(
@@ -469,8 +474,21 @@ HENRY_HUB_MONTHLY_PATH: Path = (
     / "henry_hub_monthly.csv"
 )
 
+# Measured Henry Hub *daily* spot (EIA RNGWHHD, same public-domain mirror as
+# the monthly leg). Used only for its within-month *shape*: the gas series
+# already carries the correct monthly delivered level (F923 / hub-basis
+# overlay), and the daily leg injects the intra-month commodity swing the
+# merit order would actually see day to day — cheap shoulder days and
+# cold-snap spikes — without moving the monthly mean (the factors are
+# normalized to each month's own daily mean, so they average to 1.0).
+HENRY_HUB_DAILY_PATH: Path = (
+    Path(__file__).parents[3] / "inputs" / "raw-data" / "gas-prices"
+    / "henry_hub_daily.csv"
+)
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
+_HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 
 
 def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
@@ -543,6 +561,67 @@ def _henry_hub_monthly(path: Path | None) -> dict[tuple[int, int], float]:
         }
     _HH_MONTHLY_CACHE[resolved] = out
     return out
+
+
+def _henry_hub_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
+    """Return ``{year: {month: [daily $/MMBtu, ...]}}`` measured Henry Hub spot.
+
+    Days are grouped by calendar month in date order; trading-day gaps
+    (weekends/holidays) simply yield shorter lists. Cached per path.
+    """
+    resolved = Path(path) if path else HENRY_HUB_DAILY_PATH
+    if resolved in _HH_DAILY_CACHE:
+        return _HH_DAILY_CACHE[resolved]
+    out: dict[int, dict[int, list[float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(
+                r.date.month, []
+            ).append(float(r.price_usd_mmbtu))
+    _HH_DAILY_CACHE[resolved] = out
+    return out
+
+
+def gas_daily_shape_factors(
+    year: int, hours: int, path: Path | None = None
+) -> np.ndarray:
+    """Return ``(hours,)`` within-month daily gas-price shape factors.
+
+    Each calendar day's factor is the measured Henry Hub daily spot divided by
+    that month's own daily mean, so the factors average to 1.0 within every
+    month — multiplying the (correctly-levelled) monthly gas series by them
+    adds the real intra-month commodity swing while leaving the monthly mean,
+    and hence the annual generation mix, unchanged. The daily spot has only
+    trading days; the (typically ~21) quotes are spread evenly across the
+    month's calendar days (a weekend inherits the bracketing trading values'
+    block), and a month with no quotes resolves to all-ones (no shape). This
+    is the same mechanism a forecast would use (a forward monthly level times
+    a representative daily shape), so it is not backcast-only.
+    """
+    factors = np.ones(hours, dtype=float)
+    by_year = _henry_hub_daily(path).get(year)
+    if not by_year:
+        return factors
+    hour = 0
+    for month_idx, n_days in enumerate(_DAYS_IN_MONTH):
+        month_hours = n_days * 24
+        quotes = by_year.get(month_idx + 1)
+        if quotes and hour < hours:
+            arr = np.asarray(quotes, dtype=float)
+            mean = float(arr.mean())
+            if mean > 0:
+                # Spread the month's trading-day quotes across its calendar
+                # days, then repeat each day's factor across its 24 hours.
+                day_factor = np.interp(
+                    np.linspace(0.0, 1.0, n_days),
+                    np.linspace(0.0, 1.0, len(arr)),
+                    arr / mean,
+                )
+                shaped = np.repeat(day_factor, 24)[: max(0, hours - hour)]
+                factors[hour:hour + len(shaped)] = shaped
+        hour += month_hours
+    return factors
 
 
 def iso_hub_monthly_gas_prices(
@@ -722,6 +801,15 @@ def resolve_fuel_prices(
             gas_price_hourly = np.where(
                 np.isnan(hourly_measured), gas_price_hourly, hourly_measured
             )
+
+    # Daily Henry Hub within-month shape: the monthly level above is correct
+    # (trajectory / measured ISO-month), and this multiplies in the real
+    # day-to-day commodity swing the marginal gas unit's bid would track,
+    # mean-preserving per month so the annual gas burn is unchanged. This is
+    # the gas price the gas units actually bid at, so it is shaped here (the
+    # coal-sigmoid reference in _gas_series is shaped identically).
+    if getattr(config, "gas_daily_shape", False):
+        gas_price_hourly = gas_price_hourly * gas_daily_shape_factors(year, T)
 
     coal_price = COAL_PRICE_BASE[config.iso] * (
         1.0 + COAL_PRICE_ESCALATION
