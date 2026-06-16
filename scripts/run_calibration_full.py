@@ -2551,8 +2551,8 @@ def main() -> None:
         "--cf-band-width", type=float, default=_CF_BAND_WIDTH,
         help="CF-band width for the [7b] per-plant operating-level histogram "
              "and plant_cf_bands.parquet, as a fraction of capacity "
-             f"(default {_CF_BAND_WIDTH}). Use 0.05 for twenty 5%% bands to "
-             "see where an efficient CC loses its >90%% CF hours.",
+             f"(default {_CF_BAND_WIDTH}). Use 0.05 for twenty bands of 5 "
+             "points each to see where an efficient CC loses its high-CF hours.",
     )
     parser.add_argument(
         "--commitment", action="store_true",

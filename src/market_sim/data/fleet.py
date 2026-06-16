@@ -3063,8 +3063,49 @@ def _override_bin_class_from_eia923(
     return bins
 
 
+def _reconcile_cc_capacity(
+    bins: pd.DataFrame, reconcile_path: str | Path
+) -> pd.DataFrame:
+    """Raise listed CC plants' ``capacity_mw`` to their reconciled value.
+
+    Reads the per-plant reconciliation table
+    (``scripts/derive_cc_capacity_reconcile.py``) and lifts ``capacity_mw``
+    for each listed plant to ``reconciled_mw`` — the demonstrated CAMPD peak
+    where it exceeds the curated bin nameplate (the cold-weather over-rating).
+    **Raise-only**: a reconciled value at or below the current capacity is
+    ignored, so the table can never shrink a plant. A missing file is a no-op
+    (the flag is on but the artifact was not generated). See
+    :attr:`ScenarioConfig.cc_capacity_reconcile`.
+    """
+    path = Path(reconcile_path)
+    if not path.exists():
+        logger.warning(
+            "cc_capacity_reconcile on but %s missing — no capacity change", path
+        )
+        return bins
+    table = pd.read_csv(path)
+    recon = dict(
+        zip(table["plant_code"].astype(int), table["reconciled_mw"].astype(float))
+    )
+    old_cap = bins["capacity_mw"].astype(float).to_numpy()
+    new_cap = np.array([
+        max(float(cur), recon.get(int(code), 0.0))
+        for code, cur in zip(bins["Plant_Code"].astype(int), old_cap)
+    ])
+    raised = int((new_cap > old_cap + 1e-6).sum())
+    bins = bins.copy()
+    bins["capacity_mw"] = new_cap
+    logger.info(
+        "CC capacity reconcile: raised %d plant(s) to demonstrated peak "
+        "(+%.0f MW total) from %s",
+        raised, float((new_cap - old_cap).sum()), path.name,
+    )
+    return bins
+
+
 def load_campd_bins(
-    csv_path: str | Path, year: int | None = None
+    csv_path: str | Path, year: int | None = None,
+    capacity_reconcile_path: str | Path | None = None,
 ) -> pd.DataFrame:
     """Load the CAMPD bin assignments, one row per plant.
 
@@ -3186,6 +3227,9 @@ def load_campd_bins(
 
     if year is not None:
         bins = _override_bin_class_from_eia923(bins, year)
+
+    if capacity_reconcile_path is not None:
+        bins = _reconcile_cc_capacity(bins, capacity_reconcile_path)
 
     bad = bins["pct_mr"] + bins["pct_mc"] + bins["pct_econ"] + bins["pct_peak"]
     if not (bad == 100).all():
