@@ -42,6 +42,18 @@ the offer-curve fix is proposed in the writeup, not applied.
 - **Dashboard:** the backcast "Hours at each capacity factor" panel defaults to
   a 5% CF-band histogram (model vs CAMPD) with a toggle back to the per-CF line
   (`scripts/_backcast_shell.py`: `cfBins` / `cfBarChart`).
+- **CC capacity reconciliation (`ScenarioConfig.cc_capacity_reconcile`, default
+  off, ERCOT backcast).** Raises an understated CC's LP capacity to its
+  demonstrated CAMPD peak where that exceeds the curated bin nameplate — the
+  cold-weather (winter) over-rating EIA-860 corroborates. Raise-only (never
+  lowers a real nameplate); reconciliation table from
+  `scripts/derive_cc_capacity_reconcile.py` →
+  `inputs/processed/cc_capacity_reconcile_ERCOT.csv` (8 CC_REGULAR plants,
+  +377 MW), applied in `load_campd_bins`. Validated: it unblocks Freestone's
+  hard zero (0 → 3956 hrs ≥90% CF in 2023; Lamar lands on CAMPD's 2082), and
+  surfaces — per `claude.md` rule 11 — that the understated capacity was masking
+  the offer curve's over-baseloading (class total +1.56 TWh; pair with the
+  offer-ramp shape for a keeper). Tests in `tests/test_fleet.py`.
 
 ## 2026-06-15 (backcast dashboard — annual LMP Δ measured against the ORDC overlay)
 

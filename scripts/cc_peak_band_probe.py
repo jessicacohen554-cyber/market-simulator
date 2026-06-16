@@ -55,6 +55,9 @@ def main() -> None:
     ap.add_argument("--pct-peaking", type=float, default=None,
                     help="target resolved CC_REGULAR peaking share, %% of "
                          "nameplate (e.g. 5). Omit to keep the baseline.")
+    ap.add_argument("--capacity-reconcile", action="store_true",
+                    help="raise understated CC capacities to their demonstrated "
+                         "CAMPD peak (ScenarioConfig.cc_capacity_reconcile)")
     args = ap.parse_args()
 
     from scripts.run_calibration_full import solve_and_persist, _load_reference
@@ -83,6 +86,9 @@ def main() -> None:
     # `coal_prb_sigmoid_overrides` is exactly the non-None subset main() built.
     prb_overrides = dict(flags.get("coal_prb_sigmoid_overrides") or {})
     bit_overrides = dict(flags.get("coal_bit_sigmoid_overrides") or {})
+    if args.capacity_reconcile:
+        prb_overrides["cc_capacity_reconcile"] = True
+        print("CC capacity reconcile: ON (raise to demonstrated CAMPD peak)")
 
     solve_and_persist(
         args.years, flags["iso"], int(flags.get("hours", 8760)),
