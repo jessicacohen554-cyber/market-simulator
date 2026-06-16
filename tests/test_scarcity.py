@@ -10,7 +10,6 @@ from market_sim.results.scarcity import (
     floor_active_mask,
     load_lolp_params,
     lolp,
-    netload_scarcity_adder,
     ordc_adder,
     reserve_headroom,
     scarcity_prices,
@@ -182,32 +181,6 @@ def _toy_fleet_arrays(t: int = 4) -> FleetArrays:
         efficiency_bin=np.zeros(3),
         plant_code=np.zeros(3, dtype=int),
     )
-
-
-def test_netload_adder_zero_below_onset_and_max_at_peak():
-    peak = 100_000.0
-    nl = np.array([60_000.0, 82_000.0, 91_000.0, 100_000.0])
-    adder = netload_scarcity_adder(
-        nl, peak_netload_mw=peak, onset_frac=0.82, penalty_max=220.0,
-        exponent=1.4)
-    assert adder[0] == 0.0          # below onset
-    assert adder[1] == 0.0          # at onset (x=0)
-    assert 0.0 < adder[2] < 220.0   # mid-ramp
-    assert adder[3] == pytest.approx(220.0)  # at peak
-
-
-def test_netload_adder_monotone_and_convex():
-    peak = 100_000.0
-    nl = np.linspace(82_000.0, 100_000.0, 10)
-    adder = netload_scarcity_adder(
-        nl, peak_netload_mw=peak, onset_frac=0.82, penalty_max=220.0,
-        exponent=2.0)
-    assert np.all(np.diff(adder) >= 0)          # monotone non-decreasing
-    # convex (exponent > 1): the ramp is below the linear chord at midpoint
-    mid = netload_scarcity_adder(
-        np.array([91_000.0]), peak_netload_mw=peak, onset_frac=0.82,
-        penalty_max=220.0, exponent=2.0)[0]
-    assert mid < 0.5 * 220.0
 
 
 def test_reserve_headroom_composition():
