@@ -204,69 +204,77 @@ plant-monthly and dual-fuel passes, mirroring the `apply_monthly=True` order
 stay byte-identical). Effect on the load-weighted hub price level (vs ISO-NE
 .H.INTERNAL_HUB DA avg):
 
-| year | prior keeper | overlay wired | actual DA |
-|------|-------------:|--------------:|----------:|
-| 2023 | $53.61 (+46%) | **$34.52** | $36.82 |
-| 2024 | $55.72 (+34%) | **$39.99** | $41.47 |
-| 2025 | $54.31 (−20%) | **$67.95** | $67.86 |
+| year | prior keeper | overlay wired (keeper) | actual DA |
+|------|-------------:|-----------------------:|----------:|
+| 2023 | $53.61 (+46%) | **$34.41** | $36.82 |
+| 2024 | $55.72 (+34%) | **$39.84** | $41.47 |
+| 2025 | $54.31 (−20%) | **$68.52** | $67.86 |
 
-Gas TWh also tightened to near-exact (2023 −0.6%, 2024 −0.2%, 2025 +0.2% vs
-EIA-930). This supersedes the "level is at sign-off" finding in doc-08 — the
-prior price level was wrong because the measured AGT data was being ignored.
+Gas TWh also tightened to near-exact (within −1.3% of EIA-930 all years). This
+supersedes the "level is at sign-off" finding in doc-08 — the prior price level
+was wrong because the measured AGT data was being ignored.
 
-**B. Daily AGT basis (the U4 refinement, proxy).** The real daily AGT spot
-series (ICE/Platts) is paywalled and network-blocked here (U4 unfilled), so the
-new `gas_hub_basis_daily` path (`fuel.iso_hub_daily_gas_prices`, default-on for
-NEISO; `--no-gas-hub-basis-daily` to disable) reconstructs it mean-preservingly:
-each winter month's measured mean basis is redistributed across its days
-proportional to NEISO daily demand raised to `AGT_DAILY_BASIS_CONVEXITY` (=7.0,
-calibrated to the measured oil burn + >$200 hour counts), with the measured
-daily Henry Hub leg on top — so the coldest (highest-demand) days carry the
-convex citygate blowout while the monthly mean (and the annual gas burn / fuel
-mix) is unchanged. The reconstructed peaks land on the historical cold events
-(Feb 3–4 2023 Arctic outbreak, Jan 20–22 2025 polar vortex; demand–oil daily
-corr 0.5–0.72). This is what builds the winter LMP tail — A/B on 2025 (monthly
-vs daily, identical mean): hours >$200 **13 → 128** (actual ~160), max
-**$259 → $283**, with the average unchanged at ~$68. It is a flagged proxy for
-the missing daily series and falls back to the flat monthly overlay when the
-NEISO demand series is unavailable.
+The **keeper** (`neiso_agt_3yr`, one 2023–2025 bundle, neiso 13) rests on this
+monthly overlay alone — no fitted parameter — with hydro 930-pinned uniformly
+across years: gas within −1.3% of EIA-930, hydro 8.70/7.33/5.11 vs 930
+8.77/7.39/5.12, load-weighted hub $34.4/$39.8/$68.5 vs actual DA
+$36.8/$41.5/$67.9.
 
-**3. Monthly-granularity limitation (now addressed by the daily proxy).** The
+**B. Daily AGT basis (off-by-default diagnostic, NOT in the keeper).** The real
+daily AGT spot series (ICE/Platts) is paywalled and network-blocked here (U4
+unfilled). The `gas_hub_basis_daily` path (`fuel.iso_hub_daily_gas_prices`, opt
+in with `--gas-hub-basis-daily`) reconstructs it mean-preservingly: each winter
+month's measured mean basis is redistributed across days proportional to NEISO
+daily demand raised to `AGT_DAILY_BASIS_CONVEXITY` (=7.0), with the measured
+daily Henry Hub leg on top, so the coldest days carry the convex citygate
+blowout while the monthly mean is unchanged; the reconstructed peaks land on the
+historical cold events (Feb 3–4 2023 Arctic outbreak, Jan 20–22 2025 polar
+vortex; demand–oil daily corr 0.5–0.72). A/B on 2025 (identical monthly mean):
+hours >$200 **13 → 128** (actual ~160), max **$259 → $283**, average unchanged.
+**But the convexity is a value fitted to the backcast** (chosen to reproduce the
+measured oil/>$200 counts — i.e. tuned to the answer it predicts), not a
+measured or forecast-grade input. So this is an opt-in diagnostic, **off in the
+keeper**: a backcast without the daily AGT series should not manufacture the
+within-month tail from a fitted shape. When real daily AGT (U4) lands, the
+convexity can be *derived* from the observed daily-basis-vs-demand relationship
+and promoted into the keeper.
+
+**3. Monthly-granularity limitation (documented, accepted in the keeper).** The
 committed `gas_basis_by_iso_month.csv` is *monthly*, and monthly AGT averages
 never reach distillate parity (~$18/MMBtu): max **Feb-2023 $8.1, Dec-2024 $9.1,
-Jan-2025 $16.9** — all below oil, so on a flat monthly plateau the dual-fuel
+Jan-2025 $16.9** — all below oil, so on the flat monthly plateau the dual-fuel
 CT/ST switch never binds (guarded by
-`test_neiso_monthly_agt_basis_stays_below_distillate_parity`). The daily proxy
-(2c-B) lifts the coldest days past parity (264 gas-hours > $18 in Jan-2025), so
-the switch now trips on cold days.
+`test_neiso_monthly_agt_basis_stays_below_distillate_parity`) and modeled winter
+oil stays near zero. The keeper accepts this as the honest limit of
+monthly-granularity data; only the opt-in daily proxy (2c-B) lifts the coldest
+days past parity (264 gas-hours > $18 in Jan-2025).
 
-### 2d. Oil generation re-attribution (2026-06-16)
+### 2d. Oil generation re-attribution (off-by-default diagnostic, 2026-06-16)
 
 The §2b dual-fuel switch is *objective-only*: a dual-fuel CC/CT that switches to
 oil prices at `min(gas, oil)` but the LP still dispatches it on the gas
-heat-rate and the old keepers **counted its MWh as gas**, so modeled oil sat
-near zero (2023 0.01 / 2024 0.00 / 2025 0.13 TWh) far below the EIA-930 `NG:
-OIL` column (0.32 / 0.37 / 1.24). A switched dual-fuel unit-hour is petroleum
-generation (EIA-930 counts it in `NG: OIL`), so the dispatch is now
-**re-attributed**: `fuel.dual_fuel_switch_mask` marks the generator-hours where
-the pre-cap gas price exceeds oil parity (the counterpart of the `min` the
-switch writes), computed in `run_year` from the hub-overlaid gas price and
-threaded through `p2_state` into `_dispatch_frame`, which relabels those
-unit-hours `oil`. The switch/price are untouched (objective-only); this only
-moves the generation label, so the LMP level/tail is byte-identical. Gated on
-`dual_fuel_oil_reattribution` (default-on for **NEISO only**): PJM and NYISO
-dual-fuel units also cross oil parity on their own winter gas (mask sums 10,416
-/ 4,104 gen-hours in 2024), so enabling it there would move their gas/oil split
-— it stays off for them until their oil re-attribution is separately validated,
-keeping the ERCOT/PJM/CAISO regression guard byte-identical.
+heat-rate and counts its MWh as **gas**, so the keeper's modeled oil sits near
+zero (2023 0.00 / 2024 0.00 / 2025 0.06 TWh) below the EIA-930 `NG: OIL` column
+(0.32 / 0.37 / 1.24) — the documented monthly-granularity limit (§2c-3). An
+opt-in **re-attribution** (`dual_fuel_oil_reattribution`, rides
+`--gas-hub-basis-daily`) relabels switched unit-hours as oil:
+`fuel.dual_fuel_switch_mask` marks the generator-hours where the pre-cap gas
+price exceeds oil parity (the counterpart of the `min` the switch writes),
+threaded through `p2_state` into `_dispatch_frame`. It is LMP-neutral (a
+generation relabel, not new energy) and **off in the keeper** — it only bites
+with the daily overlay, and is gated NEISO-only regardless (PJM/NYISO dual-fuel
+units also cross oil parity on their own winter gas — mask sums 10,416 / 4,104
+gen-hours in 2024 — so enabling it there would move their gas/oil split and
+break the ERCOT/PJM/CAISO byte-identical guard).
 
-Result — modeled oil rises to the right **order of magnitude** (from ~0):
+With the diagnostic on (daily overlay + re-attribution), modeled oil rises to
+the right **order of magnitude** (from ~0):
 
-| year | oil before | oil after | EIA-930 | gas after (vs 930) |
-|------|-----------:|----------:|--------:|-------------------:|
-| 2023 | 0.01 | **0.09** | 0.32 | 55.0 (−0.8%) |
-| 2024 | 0.00 | **0.15** | 0.37 | 59.4 (−0.4%) |
-| 2025 | 0.13 | **2.12** | 1.24 | 58.2 (−3.1%) |
+| year | oil keeper | oil (diagnostic) | EIA-930 |
+|------|-----------:|-----------------:|--------:|
+| 2023 | 0.00 | **0.09** | 0.32 |
+| 2024 | 0.00 | **0.15** | 0.37 |
+| 2025 | 0.06 | **2.12** | 1.24 |
 
 The cross-year fit is imperfect — 2023/24 under, 2025 over — because the
 price-parity switch assumes a unit burns oil in *every* hour its delivered gas
