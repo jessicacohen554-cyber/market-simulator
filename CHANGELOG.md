@@ -1,10 +1,12 @@
 # Changelog
 
-## 2026-06-16 (NEISO — AGT hub-basis wiring fix + daily winter-basis refinement)
+## 2026-06-16 (NEISO — AGT hub-basis overlay wired into calibration)
 
-Two coupled fixes that make the Algonquin Citygate (AGT) winter gas basis the
-correct price driver it was always documented to be. See
-`docs/multi-iso/neiso-data-audit.md` §2c.
+Makes the measured Algonquin Citygate (AGT) monthly gas basis the correct price
+driver it was always documented to be — a bug fix using data already in the
+repo, no new parameters. (A fitted daily-basis refinement is included only as an
+off-by-default diagnostic; see below.) See `docs/multi-iso/neiso-data-audit.md`
+§2c–2d.
 
 - **Bug fix — the AGT hub-basis overlay was never applied in the calibration
   dispatch.** `run_calibration.run_year` resolves fuel prices with
@@ -17,31 +19,25 @@ correct price driver it was always documented to be. See
   2025 $54.3→$68.0 vs $67.9). `run_year` now applies the overlay between the
   plant-monthly and dual-fuel passes. The overlay is idempotent and no-ops for
   non-NEISO ISOs, so ERCOT/PJM/CAISO/NYISO stay byte-identical.
-- **New `gas_hub_basis_daily` (default-on for NEISO; `--no-gas-hub-basis-daily`
-  to disable).** Daily resolution for the AGT overlay: each winter month's
-  measured mean basis is redistributed across its days by NEISO daily
-  demand^`AGT_DAILY_BASIS_CONVEXITY` (=7.0), with the measured daily Henry Hub
-  leg on top, mean-preserving per month (annual gas burn / fuel mix unchanged).
-  This trips the gas→oil switch on the coldest days and builds the winter LMP
-  tail that a flat monthly plateau cannot (2025 A/B, identical mean: hours
-  >$200 13→128, actual ~160). A flagged proxy for the paywalled/network-blocked
-  daily AGT spot series (U4); falls back to the flat monthly overlay when the
-  NEISO demand series is unavailable. `fuel.iso_hub_daily_gas_prices`,
-  `constants.AGT_DAILY_BASIS_CONVEXITY`, `scenario.gas_hub_basis_daily`.
-- **New keepers** `results/calibration/neiso_agt_daily_{2023,2024,2025}` (and
-  the `neiso_agt_monthly_2025` A/B control). Supersede the `neiso_p12_*` /
-  `neiso_hydro930_2025` keepers on price level.
-- **Oil generation re-attribution.** Dual-fuel CC/CT unit-hours that switch to
-  oil (gas price > oil parity; `fuel.dual_fuel_switch_mask`) are relabeled from
-  gas to oil in the persisted dispatch (`_dispatch_frame`), since EIA-930 counts
-  that burn in `NG: OIL`. Objective-only and LMP-neutral (a relabel, not new
-  energy). Gated on `dual_fuel_oil_reattribution`, default-on for NEISO only
-  (PJM/NYISO dual-fuel units also switch on their own winter gas, so it stays
-  off there to keep the ERCOT/PJM/CAISO regression guard byte-identical).
-  Modeled oil rises to order of magnitude from ~0: 2023 0.01→0.09,
-  2024 0.00→0.15, 2025 0.13→2.12 TWh (EIA-930 0.32/0.37/1.24). Cross-year fit is
-  imperfect (2023/24 under, 2025 over) — the price-parity switch has no firm-gas
-  / oil-inventory limits; see `docs/multi-iso/neiso-data-audit.md` §2d.
+- **Keeper** `results/calibration/neiso_agt_3yr` (one 2023–2025 bundle, dashboard
+  neiso 13), on the measured monthly overlay with hydro 930-pinned uniformly —
+  **no fitted parameter**. Gas within −1.3% of EIA-930 all years; hydro
+  8.70/7.33/5.11 vs 930 8.77/7.39/5.12. Supersedes the `neiso_p12_*` /
+  `neiso_hydro930_2025` keepers. The winter >$200 tail and near-zero oil are the
+  honest monthly-granularity limits.
+- **`gas_hub_basis_daily` + `dual_fuel_oil_reattribution` are OFF-BY-DEFAULT
+  diagnostics** (opt in with `--gas-hub-basis-daily`), NOT in the keeper. The
+  daily path redistributes each winter month's measured mean basis across days
+  by NEISO demand^`AGT_DAILY_BASIS_CONVEXITY` (=7.0) and re-attributes switched
+  dual-fuel MWh to oil; it builds the winter tail / oil burn the monthly plateau
+  can't (2025 A/B, identical mean: hours >$200 13→128; oil 0.06→2.12 vs 1.24).
+  But the convexity is *fitted to the backcast* (tuned to the oil/>$200 counts
+  it predicts), not a measured/forecast-grade input, and the daily AGT spot it
+  proxies (U4) is paywalled/unavailable — so a backcast without that series
+  should not manufacture the within-month tail from a fitted shape. Kept opt-in
+  for diagnosis; when real daily AGT lands the convexity can be derived from
+  data and promoted. `fuel.iso_hub_daily_gas_prices` /`dual_fuel_switch_mask`,
+  `constants.AGT_DAILY_BASIS_CONVEXITY`. See `neiso-data-audit.md` §2c–2d.
 
 ## 2026-06-16 (physics — NYISO RCPF scarcity-pricing overlay)
 
