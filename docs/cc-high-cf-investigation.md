@@ -118,7 +118,107 @@ wall above — it only makes the gap legible.)
       --years 2023,2024,2025 --band-width 0.05 --out /tmp/cc_cf_hist.html
   ```
 
-## Proposed fix (not yet applied — needs a calibration sweep)
+## Experimental sweep — the peak band IS the lever, but a blanket cut isn't a keeper
+
+Replaying the run115b keeper with the CC_REGULAR peak multiplier lowered from
+2.57× toward a physical duct-firing increment (`scripts/cc_peak_band_probe.py`,
+which reproduces every other knob from the bundle's `run_config.json`) confirms
+the diagnosis and bounds the lever. Hours ≥90% CF, base (peak 2.57×) →
+**peak 2.0×** → CAMPD, all three years:
+
+| plant | 2023 base/2.0/CAMPD | 2024 base/2.0/CAMPD | 2025 base/2.0/CAMPD |
+|---|---|---|---|
+| CB II (60122)   | 2003 / 2769 / 3845 | 3841 / 4345 / 3278 | 3678 / 3978 / **975** |
+| WH II (59812)   | 344 / 1069 / 2314  | 196 / 936 / 2608   | 154 / 587 / 976 |
+| Freestone (55226)| **0 / 0** / 1630  | **0 / 0** / 1338   | **0 / 0** / 3065 |
+| Guadalupe (55153)| 2 / 31 / 1482     | 8 / 40 / 1082      | 2 / 16 / 668 |
+| CB EC (56350)   | 2463 / 2473 / 449  | 570 / 649 / **61** | 363 / 405 / **20** |
+| CC_REGULAR class Δ | **+1.50 TWh** | **+2.50 TWh** | **+1.75 TWh** |
+
+(At peak **1.5×**, 2023 CB II/WH II reach 4331/2695 — closer still — but the
+class total moves +3.37 TWh and CB EC blows out to 1332 hrs ≥90% vs CAMPD 449.)
+
+What the sweep establishes:
+
+1. **The peak band is the correct lever** for the price-limited plants: lowering
+   it moves CB II, WH II and Guadalupe toward their observed >90% mass in the
+   cheap-gas direction.
+2. **A year-uniform blanket cut cannot close the gap.** Peak 2.0× lands the
+   class total at the 0.33% gate in 2023 (+1.50 TWh) but **breaches it in
+   2024/2025** (+2.50 / +1.75), and it pushes the plants that *already
+   over-run* further off — CB II in 2025 is already 3678 hrs ≥90% against
+   CAMPD's 975 (the documented "runs baseload when it should cycle"), and a
+   cheaper peak makes that worse. WH II and CB II thus want **opposite**
+   year treatment, the within-class misallocation the calibration log parks on
+   the spatial axis.
+3. **Freestone is capacity-limited, not price-limited.** It logs 0 hours ≥90%
+   in every variant because its model nameplate (1036 MW, with only
+   committed/econ tranches — no peak band dispatched) is **below its real CAMPD
+   peak (1119 MW)**; the peak multiplier never touches it. Conversely CB EC's
+   model nameplate (654 MW) is **above** its real peak (560 MW), so it
+   over-runs the top regardless. These are per-plant capacity-data errors, a
+   separate axis from the offer curve.
+
+**Conclusion: no blanket peak retune is promotable as a keeper.** The honest
+read is three coupled fixes, none a single knob:
+
+- a **moderate** peak reduction (≈2.0×) is safe only in 2023 on the class gate;
+  to use it in 2024/2025 it must be paired with the offsetting levers below;
+- **per-plant** peak treatment (`cc_peaking_per_plant`) so CB EC (and CB II in
+  high-gas years) keep a higher wall while WH II / Guadalupe get a lower one;
+- **per-plant capacity reconciliation** against the CAMPD observed peak —
+  Freestone up (~1036 → ~1120 MW, the cold-weather CC over-rating), CB EC down
+  (~654 → ~560) — preferring the measured peak over the static nameplate, per
+  the project's "accurate data over estimates" rule.
+
+The residual after all three is the spatial/within-class misallocation already
+documented in `docs/calibration-log.md` (parked on the missing NP6-785-ER zonal
+prices), so closing the CC >90% gap fully is gated on that data, not on a new
+offer lever. The probe tool and the 5%-band view ship here so the next
+calibration session can drive the per-plant work with the operating-level
+distribution in view.
+
+## Capacity reconciliation — implemented, the data axis for the understated plants
+
+The sweep above showed Freestone never reaches 90% at any peak price because
+its model nameplate (1036 MW) is below its real CAMPD peak (1119 MW): an F-class
+CC's **cold-weather over-rating** that the standard nameplate omits. EIA-860
+winter capacity corroborates it (Freestone 1095, Hays 1048, Lamar 1149, Forney
+1966 MW — all above their bin nameplate). `scripts/derive_cc_capacity_reconcile.py`
+writes a **raise-only** reconciliation —
+`cap = max(nameplate, demonstrated CAMPD p99.9 peak)` — committed as
+`inputs/processed/cc_capacity_reconcile_ERCOT.csv` and applied in
+`load_campd_bins` under `ScenarioConfig.cc_capacity_reconcile` (default off,
+ERCOT backcast). It raises 8 CC_REGULAR plants by 1.5–11% (+377 MW total) and
+never lowers one — CB EC (bin 654 = EIA-860 nameplate 654; over-runs on the
+offer side, not capacity) is correctly untouched.
+
+Result for 2023, capacity reconcile **only** (peak band unchanged at 2.57×),
+hours ≥90% CF base → reconciled → CAMPD:
+
+| plant | base | reconciled | CAMPD | model max MW |
+|---|---|---|---|---|
+| Freestone (55226) | **0** | **3956** | 1630 | 978 → 1050 |
+| Lamar (55097)     | 0 | **2143** | 2082 | 982 → 1029 |
+| Hays (55144)      | 0 | 1578 | 467 | 933 → 993 |
+| Odessa (55215)    | 0 | 0 | 2786 | 1005 → 1020 |
+| CC_REGULAR class Δ | | **+1.56 TWh** | | |
+
+The reconciliation **unblocks the hard zero** (Freestone 0 → 3956; Lamar lands
+almost exactly on CAMPD's 2082) and is the correct measured fix — those plants
+demonstrably produced that output. But Freestone and Hays now *overshoot*, and
+the class total moves +1.56 TWh (at the 0.33% gate). This is precisely the
+`claude.md` rule-11 signal: **the understated capacity was silently compensating
+for the offer curve's tendency to over-baseload efficient CCs.** Capping the
+plant low hid the over-baseloading; restoring the real capacity surfaces it. So
+capacity and the offer ramp are complementary — capacity gives the headroom to
+reach the top, the econ-ramp shape (the merit-ramp axis) controls how much the
+unit cycles vs sits there. A keeper pairs the two: reconcile capacity **and**
+steepen/per-plant the offer ramp so the in-gate class total and the cycling
+shape both hold. Odessa/Barney Davis need a larger reconciliation (their CAMPD
+peak still exceeds the +1.5% applied) and are left for the combined pass.
+
+## Earlier framing (superseded by the sweep above)
 
 The lever is the CC duct-firing peak band, not the histogram. Candidate moves,
 in order of preference (keep accurate inputs per the project rules; do not bury
