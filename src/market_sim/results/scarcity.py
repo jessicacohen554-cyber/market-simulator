@@ -384,3 +384,200 @@ def scarcity_prices(
             config.ordc_lolp_shift_sigma),
         "scarcity_adder": adder,
     }
+
+
+# ===========================================================================
+# PJM stepped ORDC reserve-scarcity overlay
+# ===========================================================================
+#
+# PJM's scarcity mechanism is structurally different from ERCOT's smooth LOLP.
+# PJM co-optimizes energy and three nested reserve products against *vertical
+# step* Operating Reserve Demand Curves (Manual 11 sec 4.3.3), established by
+# the Reserve Price Formation reform (FERC EL19-58/ER19-1486, order 2020-05-21,
+# implemented 2022-10-01). Each product/zone curve is two steps:
+#
+#     reserves R, requirement REQ:
+#       R <  REQ           -> $850/MWh   (Step 1)
+#       REQ <= R < REQ+190 -> $300/MWh   (Step 2)
+#       R >= REQ+190       ->   $0       (no shortage)
+#
+# The penalty factor enters the energy LMP because energy and reserves are
+# co-optimized: relieving the reserve constraint by backing down a marginal
+# energy unit transfers the constraint's shadow price into the price of energy.
+# Parameters live in inputs/calibration/pjm_ordc_curve.csv (cited in
+# docs/multi-iso/pjm-reserve-curve-source.md); nothing here is fitted to a
+# price residual.
+#
+# HONESTY GATE (see docs/multi-iso/pjm-reserve-ordc.md). The step is vertical,
+# so the adder is *exactly $0* unless measured reserves drop below REQ+190
+# (~3.2 GW). On TOTAL fleet headroom the perfect-foresight LP carries ~39 GW and
+# never goes short; on per-tranche online headroom it carries ~0 (the LP runs
+# each tranche bang-bang). The only defensible measure is PLANT-LEVEL online
+# (synchronized) reserve — a plant is synchronized when any of its tranches
+# dispatch, and its reserve is the unused headroom across all its tranches. Even
+# that sits ~5x above the requirement (~16 GW vs ~3 GW) in the hours reality was
+# short, so the published curve bites in only a handful of hours/yr and cannot
+# self-target the $75-200 afternoon residual. That residual is the sub-shortage
+# *opportunity-cost* reserve price (the marginal unit's lost energy margin) plus
+# congestion, which is the AS co-optimization this overlay — like the ERCOT one
+# — explicitly does not attempt. We report the gate result; we do not fudge the
+# curve or the reserve measure to manufacture scarcity (claude.md #11).
+
+# Cascade weights: how each published reserve-product clearing price sums the
+# nested requirement shadow prices (Manual 11 sec 4.4.1). Keys are the data
+# `service` codes in reserve_market_results_*.parquet.
+PJM_RESERVE_CASCADE: dict[str, tuple[str, ...]] = {
+    "SR": ("Synchronized", "Primary", "Secondary"),   # SRMCP  = SP_SR+SP_PR+SP_30
+    "PR": ("Primary", "Secondary"),                    # NSRMCP =       SP_PR+SP_30
+    "30MIN": ("Secondary",),                           # SecMCP =             SP_30
+}
+
+
+def load_pjm_ordc_curve(
+    path: str | Path,
+) -> dict[tuple[str, str], list[tuple[float, float]]]:
+    """Load the cited PJM ORDC step curve keyed by (service, locale).
+
+    Reads inputs/calibration/pjm_ordc_curve.csv (columns ``service``,
+    ``locale``, ``step``, ``breakpoint_offset_mw``, ``penalty_factor``) and
+    returns, per (service, locale), the step list ``[(offset_mw, penalty), ...]``
+    sorted by ascending offset. ``offset_mw`` is measured from the reserve
+    requirement (so the requirement itself supplies the X-axis position).
+
+    Returns:
+        Mapping ``(service, locale) -> [(offset_mw, penalty_factor), ...]``.
+    """
+    import pandas as pd
+
+    df = pd.read_csv(path, comment="#")
+    need = {"service", "locale", "breakpoint_offset_mw", "penalty_factor"}
+    if not need.issubset(df.columns):
+        raise ValueError(
+            f"PJM ORDC curve {path} must have columns {sorted(need)}")
+    out: dict[tuple[str, str], list[tuple[float, float]]] = {}
+    for (svc, loc), grp in df.groupby(["service", "locale"]):
+        steps = sorted(
+            (float(r.breakpoint_offset_mw), float(r.penalty_factor))
+            for r in grp.itertuples())
+        out[(str(svc), str(loc))] = steps
+    return out
+
+
+def pjm_reserve_demand_price(
+    reserves_mw: np.ndarray | float,
+    requirement_mw: np.ndarray | float,
+    ordc_steps: list[tuple[float, float]],
+) -> np.ndarray:
+    """Shadow price ($/MWh) of one PJM reserve requirement, stepped curve.
+
+    PJM's reserve demand curve is a descending step function of cleared
+    reserves: at reserves below the requirement the top penalty factor applies;
+    each subsequent step (requirement + offset) lowers the price; beyond the
+    last breakpoint the price is $0 (Manual 11 sec 4.3.3). This is the marginal
+    value of the reserve constraint — what is added to the co-optimized energy
+    price when the constraint binds.
+
+    Args:
+        reserves_mw: Cleared/available reserves R, scalar or hourly array (MW).
+        requirement_mw: Reserve Requirement REQ, scalar or hourly array (MW).
+        ordc_steps: ``[(offset_mw, penalty_factor), ...]`` from
+            :func:`load_pjm_ordc_curve`, e.g. ``[(0, 850), (190, 300)]``.
+
+    Returns:
+        Step price array ($/MWh), >= 0, broadcast over reserves/requirement.
+    """
+    r = np.asarray(reserves_mw, dtype=float)
+    req = np.asarray(requirement_mw, dtype=float)
+    price = np.zeros(np.broadcast(r, req).shape, dtype=float)
+    # Apply widest offset first so the tightest (lowest-offset, highest-penalty)
+    # binding step wins — mirrors the ERCOT floor-step logic.
+    for offset, penalty in sorted(ordc_steps, reverse=True):
+        price = np.where(r < req + offset, penalty, price)
+    return price
+
+
+def pjm_reserve_cascade_mcp(
+    reserves_by_product: dict[str, np.ndarray],
+    requirements_by_product: dict[str, np.ndarray],
+    curve_by_product: dict[str, list[tuple[float, float]]],
+) -> dict[str, np.ndarray]:
+    """Cascaded PJM reserve clearing prices from nested requirement shadows.
+
+    Computes each product's step shadow price ``SP_x`` with
+    :func:`pjm_reserve_demand_price`, then sums them per the product/locational
+    substitution cascade (Manual 11 sec 4.4.1, :data:`PJM_RESERVE_CASCADE`):
+    Synchronized clears against SR+PR+30, Primary (non-sync) against PR+30,
+    Secondary against 30 only.
+
+    Args:
+        reserves_by_product: ``{"Synchronized": R_sr, "Primary": R_pr,
+            "Secondary": R_30}`` hourly reserve arrays (MW).
+        requirements_by_product: same keys, hourly requirement arrays (MW).
+        curve_by_product: same keys, each a step list ``[(offset, penalty)]``.
+
+    Returns:
+        ``{"SR": SRMCP, "PR": NSRMCP, "30MIN": SecRMCP, "energy_adder": ...}``
+        in $/MWh. ``energy_adder`` is the binding reserve price transferred to
+        the energy LMP — the richest (Synchronized) cascade, i.e. ``SR``.
+    """
+    sp = {
+        prod: pjm_reserve_demand_price(
+            reserves_by_product[prod], requirements_by_product[prod],
+            curve_by_product[prod])
+        for prod in ("Synchronized", "Primary", "Secondary")
+    }
+    out: dict[str, np.ndarray] = {}
+    for service, products in PJM_RESERVE_CASCADE.items():
+        out[service] = sum(sp[p] for p in products)
+    # The energy LMP picks up the binding reserve shadow price; the synchronized
+    # cascade is the most complete (it includes every nested constraint that a
+    # marginal online MW could relieve).
+    out["energy_adder"] = out["SR"]
+    return out
+
+
+def pjm_online_reserve(
+    avail_mw: np.ndarray,
+    dispatch_mw: np.ndarray,
+    plant_id: np.ndarray,
+    thermal_mask: np.ndarray,
+    as_plan_mw: np.ndarray | float = 0.0,
+) -> np.ndarray:
+    """Plant-level online (synchronized-basis) thermal reserve, MW.
+
+    The PJM analogue of the ERCOT online-reserve primitive. A plant is
+    *synchronized* in an hour when any of its thermal tranches dispatch; its
+    reserve is the unused headroom summed across all that plant's thermal
+    tranches (``pmax*availability - dispatch``). Headroom MUST be aggregated at
+    the plant, not the tranche: the binned LP runs each tranche bang-bang, so
+    per-tranche online headroom is ~0 and would falsely price every hour. Only
+    the headroom of *online* plants counts (an idle plant's capacity is not
+    synchronized and cannot meet a 10-/30-minute reserve in PJM's clearing).
+    The PJM ancillary-service plan (the reserve MW the market withholds from
+    energy) is netted off, mirroring the ERCOT AS-withholding primitive.
+
+    Args:
+        avail_mw: ``(n_unit, T)`` available MW (pmax × availability).
+        dispatch_mw: ``(n_unit, T)`` solved dispatch MW.
+        plant_id: ``(n_unit,)`` plant identifier shared by a plant's tranches.
+        thermal_mask: ``(n_unit,)`` bool, reserve-providing thermal units.
+        as_plan_mw: scalar or ``(T,)`` AS-plan netting (MW).
+
+    Returns:
+        ``(T,)`` plant-level online thermal reserve (MW), >= 0 before netting.
+    """
+    avail = np.asarray(avail_mw, dtype=float)[thermal_mask]
+    disp = np.asarray(dispatch_mw, dtype=float)[thermal_mask]
+    pid = np.asarray(plant_id)[thermal_mask]
+    T = avail.shape[1]
+
+    # Group tranches by plant: codes -> dense indices for np.add.at.
+    codes, inv = np.unique(pid, return_inverse=True)
+    plant_avail = np.zeros((len(codes), T))
+    plant_disp = np.zeros((len(codes), T))
+    np.add.at(plant_avail, inv, avail)
+    np.add.at(plant_disp, inv, disp)
+
+    online = plant_disp > 0.5  # plant synchronized this hour
+    reserve = np.where(online, plant_avail - plant_disp, 0.0).sum(axis=0)
+    return reserve - np.asarray(as_plan_mw, dtype=float)
