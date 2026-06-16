@@ -337,9 +337,24 @@ _AS_THERMAL_GROUPS: frozenset[str] = frozenset({
 # is excluded from the withdrawal so the probe does not strand baseload.
 _AS_GAS_GROUPS: frozenset[str] = _AS_THERMAL_GROUPS - {"COAL"}
 
-# ERCOT cleared DAM up-AS withholding series, by year (built by
-# scripts/build_ercot_as_withholding.py).
-_AS_WITHHOLDING_DIR = Path("inputs/raw-data/ercot-AS")
+# PJM AS-withholding pool: gas thermal + flexible oil (steam/CT). PJM's Primary
+# Reserve sits on synchronized, part-loaded thermal headroom; the flexible oil
+# steam/CT fleet carries the same quick-start reserve as gas. Coal and nuclear
+# (baseload, self-committed, run flat) hold little upward reserve and are
+# excluded, mirroring the ERCOT gas-only pool.
+_AS_PJM_GROUPS: frozenset[str] = _AS_GAS_GROUPS | {"oil"}
+
+# Per-ISO reserve-withholding configuration: (raw-data dir, file prefix,
+# withdrawal pool of plant_groups). The measured system-wide hourly reserve
+# held out of energy sits in ``<dir>/<prefix>_<year>_as_up_mw.parquet`` on the
+# non-leap 8760-hour clock; built by scripts/build_{ercot,pjm}_as_withholding.
+_AS_WITHHOLDING: dict[str, tuple[Path, str, frozenset[str]]] = {
+    "ERCOT": (Path("inputs/raw-data/ercot-AS"), "ercot", _AS_GAS_GROUPS),
+    "PJM": (Path("inputs/raw-data/PJM-AS"), "pjm", _AS_PJM_GROUPS),
+}
+
+# Back-compat alias (ERCOT default location; used by the per-type loader).
+_AS_WITHHOLDING_DIR = _AS_WITHHOLDING["ERCOT"][0]
 
 # Map each per-resource-type AS column (from the 60-Day DAM Gen Resource Data,
 # aggregated by ERCOT Resource Type) to the fleet plant_groups that share it.
@@ -353,17 +368,25 @@ _AS_RESTYPE_TO_GROUPS: dict[str, frozenset[str]] = {
 
 
 @lru_cache(maxsize=8)
-def load_as_reserve_withholding_mw(year: int, hours: int) -> np.ndarray | None:
-    """Load ERCOT's hourly cleared DAM up-AS withholding MW for ``year``.
+def load_as_reserve_withholding_mw(
+    year: int, hours: int, iso: str = "ERCOT"
+) -> np.ndarray | None:
+    """Load ``iso``'s hourly system-wide reserve-withholding MW for ``year``.
 
-    Returns the ``(hours,)`` system-wide upward-AS MW series written by
-    :mod:`scripts.build_ercot_as_withholding`, or ``None`` when the parquet
-    is absent (the feature then silently no-ops, like a backcast year with no
-    outage windows). The file sits on the same non-leap 8760-hour clock as the
-    fleet, so it is returned as-is when ``hours == 8760``; other horizons take
-    the leading ``hours`` values.
+    Returns the ``(hours,)`` reserve-held-out-of-energy MW series written by
+    :mod:`scripts.build_ercot_as_withholding` (ERCOT: cleared DAM up-AS) or
+    :mod:`scripts.build_pjm_as_withholding` (PJM: the RT Primary Reserve
+    requirement), or ``None`` when the parquet is absent (the feature then
+    silently no-ops, like a backcast year with no outage windows). The file
+    sits on the same non-leap 8760-hour clock as the fleet, so it is returned
+    as-is when ``hours == 8760``; other horizons take the leading ``hours``
+    values.
     """
-    path = _AS_WITHHOLDING_DIR / f"ercot_{year}_as_up_mw.parquet"
+    spec = _AS_WITHHOLDING.get((iso or "ERCOT").upper())
+    if spec is None:
+        return None
+    as_dir, prefix, _ = spec
+    path = as_dir / f"{prefix}_{year}_as_up_mw.parquet"
     if not path.exists():
         logger.warning(
             "as_reserve_withholding on but %s is missing; AS withholding "
@@ -1045,23 +1068,33 @@ def generators_to_fleet_arrays(
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
 
-    # Ancillary-service reserve withholding (ERCOT backcast). Capacity that
-    # clears upward AS (Reg-Up, RRS, ECRS) is held out of the energy market.
-    # When the per-resource-type series is available (60-Day DAM Gen Resource
-    # Data, aggregated by Resource Type), each thermal class withholds *its own
-    # measured* hourly AS MW from that class's top-of-merit headroom — the
-    # physically-grounded split (storage/load AS, which carry the bulk in
-    # ERCOT, are excluded as they do not withhold thermal energy; offline
-    # Non-Spin is excluded too). Falls back to the system-total upper bound
-    # (all AS on gas, no split) only when the per-type file is absent. Applied
-    # last, after every outage/derate; floored back up to any must-run min_gen.
+    # Ancillary-service reserve withholding (backcast). Capacity the market
+    # holds out of energy as upward reserve is withdrawn from the gas/flexible-
+    # thermal top-of-merit headroom (most expensive/peaking headroom first —
+    # the part-loaded capacity that physically carries the reserve), so the
+    # energy supply curve clears without it and the afternoon-peak price lifts.
+    # ERCOT: the cleared DAM up-AS (Reg-Up/RRS/ECRS); when the per-resource-type
+    # series is available each thermal class withholds *its own measured* hourly
+    # AS MW from its top-of-merit headroom (the physically-grounded split;
+    # storage/load AS, which carry the bulk in ERCOT, are excluded as they do
+    # not withhold thermal energy), else the system-total upper bound on the gas
+    # pool. PJM: the measured RT Primary Reserve requirement (the binding
+    # upward 10-min product that nests Synchronized, Manual 11 sec 4.4.1) on the
+    # gas + flexible-oil pool (coal/nuclear baseload excluded). The withdrawn
+    # pool is consistent with scarcity.pjm_online_reserve, which measures
+    # plant-level online reserve over the same thermal fleet. Applied last,
+    # after every outage/derate; floored back up to any must-run min_gen.
     # Down-AS (Reg-Down) is excluded upstream — it removes no upward offer.
     if (config is not None
             and getattr(config, "as_reserve_withholding", False)
-            and _iso == "ERCOT"):
+            and _iso in _AS_WITHHOLDING):
         _yr_as = getattr(config, "weather_year", 0)
-        by_class = load_as_thermal_withholding(_yr_as, hours)
+        pool_groups = _AS_WITHHOLDING[_iso][2]
         withdrawn = unmet = 0.0
+        # Per-resource-type split is ERCOT-only (no PJM per-type AS file);
+        # every other ISO uses the system-total measured series on its pool.
+        by_class = (load_as_thermal_withholding(_yr_as, hours)
+                    if _iso == "ERCOT" else None)
         if by_class is not None:
             for col, series in by_class.items():
                 pool = np.array(
@@ -1076,17 +1109,18 @@ def generators_to_fleet_arrays(
                 unmet += u
             source = "measured per-type"
         else:
-            as_mw = load_as_reserve_withholding_mw(_yr_as, hours)
+            as_mw = load_as_reserve_withholding_mw(_yr_as, hours, iso=_iso)
             pool = np.array(
                 [i for i, g in enumerate(generators)
-                 if g.plant_group in _AS_GAS_GROUPS],
+                 if g.plant_group in pool_groups],
                 dtype=int,
             )
             if as_mw is not None:
                 withdrawn, unmet = _withdraw_top_of_merit(
                     availability, pmax, heat_rate, pool, as_mw
                 )
-            source = "system-total upper bound"
+            source = ("measured PR requirement" if _iso == "PJM"
+                      else "system-total upper bound")
         if min_gen is not None:
             floor_frac = np.zeros_like(availability)
             np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
@@ -1094,9 +1128,9 @@ def generators_to_fleet_arrays(
             np.maximum(availability, floor_frac, out=availability)
         np.clip(availability, 0.0, 1.0, out=availability)
         logger.info(
-            "AS reserve withholding (ERCOT %s, %s): withdrew %.1f GWh-equiv "
+            "AS reserve withholding (%s %s, %s): withdrew %.1f GWh-equiv "
             "from thermal top-of-merit (%.1f GWh unmet by headroom)",
-            _yr_as, source, withdrawn / 1e3, unmet / 1e3,
+            _iso, _yr_as, source, withdrawn / 1e3, unmet / 1e3,
         )
 
     return FleetArrays(
