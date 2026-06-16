@@ -447,6 +447,34 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
     np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
 
 
+def test_dual_fuel_switch_mask_marks_only_switched_capable_units(monkeypatch):
+    """The mask flags the dual-fuel unit's switched hours, nothing else."""
+    from market_sim.data.fuel import dual_fuel_switch_mask
+    _patch_dual_fuel_capability(monkeypatch)
+    fleet = _dual_fuel_fleet(hours=24)
+    config = ScenarioConfig(
+        iso="PJM", hours=24, gas_seasonality=False,
+        gas_price_override=25.0, dual_fuel_switching=True,
+    )
+    # Pre-min gas price array (what run_year passes before the dual-fuel cap).
+    gas_prices = resolve_fuel_prices(config, fleet, 2030, apply_monthly=False)
+    mask = dual_fuel_switch_mask(gas_prices, fleet, config, 2030)
+    # Row 0 is the dual-fuel CT (gas $25 > oil $18 → switched every hour);
+    # row 1 the gas-only CT and row 2 the oil unit are never re-attributed.
+    assert mask[0].all()
+    assert not mask[1].any()
+    assert not mask[2].any()
+
+    # Below parity: nothing switches.
+    cheap = config.with_overrides(gas_price_override=2.0)
+    gas_cheap = resolve_fuel_prices(cheap, fleet, 2030, apply_monthly=False)
+    assert not dual_fuel_switch_mask(gas_cheap, fleet, cheap, 2030).any()
+
+    # Flag off: empty mask regardless of price.
+    off = config.with_overrides(dual_fuel_switching=False)
+    assert not dual_fuel_switch_mask(gas_prices, fleet, off, 2030).any()
+
+
 def test_dual_fuel_no_switch_below_parity(monkeypatch):
     """Cheap gas leaves a dual-fuel unit on its gas price (min is gas)."""
     _patch_dual_fuel_capability(monkeypatch)
@@ -938,6 +966,60 @@ def test_neiso_monthly_agt_basis_stays_below_distillate_parity():
             "crossed distillate parity — revisit the P13 monthly-granularity "
             "limitation note"
         )
+
+
+def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
+    """The daily overlay keeps the monthly mean but injects a cold-day spike.
+
+    With ``gas_hub_basis_daily`` on, January's gas price is no longer the flat
+    monthly hub ($3.18 HH + $10 basis = $13.18) but a daily series whose mean
+    over the month still equals $13.18 (so the annual gas burn is unchanged)
+    while the synthetic cold day (the demand peak) is repriced well above it —
+    the blowout a flat plateau can never produce. The basis redistribution is
+    convex in demand, so the peak day carries the spike.
+    """
+    basis_csv = tmp_path / "basis.csv"
+    basis_csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\n"
+        "NEISO,2024,1,AGT,10.0,test\n"
+    )
+    hours = 31 * 24  # January 2024 only
+    # Synthetic daily demand: flat with one cold-day peak on day 15.
+    demand = np.full(31, 12000.0)
+    demand[14] = 18000.0
+    monkeypatch.setattr(
+        "market_sim.data.fuel._neiso_daily_demand",
+        lambda year, hrs: demand,
+    )
+    fleet = _sample_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="NEISO", mode="backcast", weather_year=2024,
+        gas_seasonality=False, hours=hours,
+        gas_hub_basis_overlay=True, gas_hub_basis_daily=True,
+    )
+    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
+
+    gas_rows = np.isin(fleet.fuel_type_idx, (
+        FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"],
+    ))
+    gas_jan = fuel_prices[gas_rows]  # (n_gas, 744)
+    # Mean over the month is exactly the flat monthly hub (mean-preserving).
+    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.18 + 10.0, rtol=1e-6)
+    # Daily resolution: the series is not flat, and the cold day (day 15)
+    # is repriced above the monthly mean.
+    daily = gas_jan[0].reshape(31, 24).mean(axis=1)
+    assert daily.std() > 0.5
+    assert daily[14] == daily.max()
+    assert daily[14] > 13.18
+
+    # Demand unavailable -> falls back to the flat monthly overlay.
+    monkeypatch.setattr(
+        "market_sim.data.fuel._neiso_daily_demand", lambda year, hrs: None
+    )
+    flat = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
+    np.testing.assert_allclose(flat[gas_rows], 13.18)
 
 
 def test_hub_basis_overlay_noop_for_other_isos():
