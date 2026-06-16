@@ -2616,6 +2616,38 @@ byte-for-byte on current main). No offer-curve tuning is warranted (structural
 gaps, dead-knob panel). Actionable next steps are the U4 daily-AGT upload (winter
 tail/oil, user-supplied) and the 2025 hydro 930-scaling refinement.
 
+### 2025 hydro repinned to measured EIA-930 monthly (`neiso_hydro930_2025`, KEEPER for 2025)
+
+Implemented gap #2: the new `--hydro-eia930-monthly` flag repins the assembled
+conventional-hydro monthly energy budget to the measured EIA-930 `NG: WAT`
+(water) monthly total for the ISO/year, preserving the per-plant within-month
+shares (`data/eia_loader.py::measured_monthly_hydro` →
+`data/hydro.py::load_hydro_budget(monthly_target_mwh=…)`). The 2024 backfill
+supplies the per-plant spatial coverage the incomplete 2025 EIA-923 vintage
+lacks; the EIA-930 pin then fixes the energy level **and** the monthly shape
+(2025 is dry Aug–Oct: 0.15–0.19 TWh/mo vs the flat-2024 0.4–0.7). The MW
+envelope is left at physical capability — only the inter-temporal energy limit
+moves. Opt-in (default off changes no existing run); the 2025 keeper command is
+now `--hydro-backfill-year 2024 --hydro-eia930-monthly`.
+
+Effect — `neiso_hydro930_2025` vs the `neiso_p12_hydrofix_2025` flat backfill:
+
+| fuel | flat-2024 backfill | EIA-930 monthly pin | EIA-930 actual |
+|---|---|---|---|
+| hydro | 6.65 TWh (+30%) | **5.11 (−0.2%)** | 5.12 |
+| gas | 57.75 (−3.9%) | **59.22 (−1.4%)** | 60.09 |
+| price avg | $53.46 | $54.31 | — |
+
+The 1.5 TWh of over-stated hydro inflow had been displacing gas; pinning hydro
+to the measured series corrects **both** the hydro row and the −3.9% gas miss in
+one move (the mechanism filed under gap #3), with nuclear/wind/solar/interchange
+still exact. Improvement uses measured EIA-930 data, not an estimate
+(claude.md data-preference rule). Tests: `test_hydro.py::test_2025_eia930_monthly_pin`
+(+ wrong-length / unknown-ISO guards); full suite 1120 passed (the 3 CAISO
+`test_eia_loader` zonal-share failures are pre-existing on `origin/main`,
+unrelated). ERCOT/PJM/CAISO/NYISO hydro byte-identical (flag default off).
+Remaining 2025 gap is the winter oil/AGT tail (U4, the larger lever).
+
 ---
 
 ## CAISO 3 — offer-curve probe panel + Jacobian (sensitivity map, 2023) (2026-06-13)

@@ -236,6 +236,7 @@ def load_hydro_budget(
     min_flow_fraction: float = 0.0,
     backfill_year: int | None = None,
     per_plant_min_flow: dict[int, float] | None = None,
+    monthly_target_mwh: np.ndarray | None = None,
 ) -> HydroBudget:
     """Load an ISO's hydro monthly energy budget and MW envelope.
 
@@ -267,6 +268,18 @@ def load_hydro_budget(
             to ``min_flow_fraction``. Intended for treaty-mandated minimum
             flows such as NYISO's Niagara/St-Lawrence obligations (see
             :data:`market_sim.config.constants.NYISO_HYDRO_TREATY_MIN_FLOW`).
+        monthly_target_mwh: Optional twelve-entry vector of measured monthly
+            hydro net generation (e.g. EIA-930 ``NG: WAT``). When set, each
+            month's per-plant energy budget is scaled so its total matches the
+            target, preserving the within-month per-plant shares. This pins the
+            assembled budget's level *and* monthly shape to a measured series
+            when the EIA-923 vintage is an incomplete early release whose
+            backfilled budget misstates a lower- or higher-inflow year (NEISO
+            2025: the 2024 backfill yields 6.65 TWh, mostly flat, vs the
+            measured EIA-930 5.12 TWh concentrated away from the dry
+            late-summer). The MW envelope is left at its physical (unscaled)
+            capability; only the energy budget is repinned. ``None`` (default)
+            changes no existing run.
 
     Returns:
         A :class:`HydroBudget` keyed to the hydro generator subset, ordered
@@ -324,6 +337,28 @@ def load_hydro_budget(
     else:
         min_mw = float(min_flow_fraction) * max_mw
     plant_zones = [zones.get(int(pid), "") for pid in plant_ids]
+
+    # Pin the monthly energy budget to a measured monthly hydro total
+    # (EIA-930 NG: WAT), preserving each month's per-plant shares. Done after
+    # the MW envelope above so the power caps stay at physical capability and
+    # only the inter-temporal energy limit is repinned.
+    if monthly_target_mwh is not None:
+        target = np.asarray(monthly_target_mwh, dtype=float)
+        if target.shape != (_MONTHS_PER_YEAR,):
+            raise ValueError(
+                f"monthly_target_mwh must have {_MONTHS_PER_YEAR} entries, "
+                f"got shape {target.shape}"
+            )
+        col_sums = monthly_energy.sum(axis=0)
+        scale = np.divide(
+            target, col_sums, out=np.ones_like(target), where=col_sums > 0.0
+        )
+        monthly_energy = monthly_energy * scale[np.newaxis, :]
+        logger.info(
+            "%s %d hydro budget pinned to measured monthly total %.1f GWh "
+            "(was %.1f GWh)",
+            iso, year, target.sum() / 1000.0, col_sums.sum() / 1000.0,
+        )
 
     logger.info(
         "Loaded %s %d hydro budget: %d plants, %.1f GWh annual, %.0f MW nameplate",
