@@ -55,7 +55,6 @@ from market_sim.data.eia_loader import (  # noqa: E402
 )
 from market_sim.data.hydro import load_hydro_budget  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
-    _AGGREGATABLE_FUELS,
     _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
     Generator,
@@ -902,7 +901,13 @@ def run_year(
     # and other non-aggregatable units from EIA-860), the legacy
     # equal-width heat-rate binning otherwise.
     campd_bins = (
-        load_campd_bins(config.campd_bins_path, year=year)
+        load_campd_bins(
+            config.campd_bins_path, year=year,
+            capacity_reconcile_path=(
+                config.cc_capacity_reconcile_path
+                if config.cc_capacity_reconcile else None
+            ),
+        )
         if config.use_campd_bins and iso == "ERCOT"
         else None
     )
