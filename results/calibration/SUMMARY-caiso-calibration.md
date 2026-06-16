@@ -10,6 +10,18 @@ is the middle gas-price year), confirm keepers on 3 years.
 
 Setup: `uv venv && source .venv/bin/activate && uv pip install -e ".[dev]"`.
 
+> **CORRECTION (2026-06-16 structural audit — see
+> `AUDIT-caiso-structural.md`):** the "gas target" column below is **EIA-930
+> `NG: NG`, which is geo/bio-inflated**. EIA-930 CISO reports *no* geothermal
+> (`NG: GEO` 100 % NaN) and no biomass, so its gas figure silently absorbs
+> ~8 TWh geothermal (The Geysers) + ~3 TWh biomass that the model (and EIA-923)
+> break out separately. On the clean baseline, **model 2024 total gas (67.95)
+> matches the EIA-923 reference (67.68) to <0.5 %** — the "−9 gas gap" is a
+> benchmark artifact. **Score CAISO gas against EIA-923; do NOT tune the offer
+> curve to raise gas toward the EIA-930 number.** (2023 gas *is* genuinely low,
+> but from over-import, not gas supply.) The real LMP problem is the over-priced
+> midday FLOOR (flat all-hours import + gas_cc never decommitting), not the mix.
+
 ## Targets (EIA-930) and baseline errors
 
 | Year | gas target | base gas | net-import target | base import | base LMP | actual LMP |
