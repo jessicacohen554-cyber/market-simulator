@@ -19,7 +19,7 @@ _RCF = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_RCF)
 
 _BASELINE = REPO / "inputs" / "calibration" / "cf_emd_baseline_ERCOT.json"
-_KEEPER_FIT = (REPO / "results" / "calibration" / "keeper_anchor"
+_KEEPER_FIT = (REPO / "results" / "calibration" / "run120_meritramp_defensible"
                / "plant_hourly_fit.parquet")
 
 
@@ -34,7 +34,7 @@ def test_baseline_file_is_well_formed():
 
 
 @pytest.mark.skipif(not _KEEPER_FIT.exists(),
-                    reason="keeper_anchor bundle not present")
+                    reason="run120 keeper bundle not present")
 def test_keeper_passes_its_own_baseline(capsys):
     # The baseline is the keeper of record, so the keeper's own fit must PASS.
     fit = pd.read_parquet(_KEEPER_FIT)
@@ -44,7 +44,7 @@ def test_keeper_passes_its_own_baseline(capsys):
 
 
 @pytest.mark.skipif(not _KEEPER_FIT.exists(),
-                    reason="keeper_anchor bundle not present")
+                    reason="run120 keeper bundle not present")
 def test_degraded_shape_is_flagged(capsys):
     # Inflate every plant's cf_emd far past the margin and crush r: must FAIL.
     fit = pd.read_parquet(_KEEPER_FIT).copy()
