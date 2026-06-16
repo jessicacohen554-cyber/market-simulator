@@ -2559,6 +2559,58 @@ tooling added: `scripts/_neiso_probe_compare.py` (per-class TWh + dw-price diff
 of two bundles) and `scripts/_run_neiso_probe_panel.sh` (panel reproduce
 harness, concurrency-capped at 2 for the multi-GB per-plant LP).
 
+## NEISO — full 3-year backcast re-run on current main (2026-06-16, sha `8429fdb`)
+
+Ran the complete 2023+2024+2025 NEISO backcast (full 8760, commitment on, keeper
+config; 2025 with `--hydro-backfill-year 2024`) in parallel on current main, to
+confirm the P12 sign-off still holds end-to-end after the W1b binning + overlay
+accumulation. **All three years reproduce the committed P12 keepers
+byte-identically** (`neiso_cal3_{year}` vs `neiso_p12_*`: max |ΔTWh| = 0.00000,
+identical demand-weighted P1 price 56.45 / 57.06 / 55.07). The re-run bundles
+were therefore deleted (exact duplicates of the keepers); the keepers stand as
+the 3-year calibration of record.
+
+### Scorecard — model vs EIA-930 delivered (the convention-correct basis)
+
+| year | gas | nuclear | wind | solar | hydro | oil | net interchange | price avg |
+|---|---|---|---|---|---|---|---|---|
+| 2023 | 53.68 (−3.2%) | 23.17 (exact) | 3.25 (exact) | 0.89 (exact) | 8.49 (−3.2%) | 0.02 vs 0.32 | −15.14 TWh **exact** (RMSE 0) | $53.61 |
+| 2024 | 57.94 (−2.9%) | 26.48 (+0.3%) | 3.45 (exact) | 1.31 (exact) | 6.67 (−9.7% vs 930 / −0.6% vs 923) | 0.01 vs 0.37 | −10.30 TWh **exact** | $55.72 |
+| 2025 | 57.75 (−3.9%) | 27.64 (+0.7%) | 4.53 (exact) | 1.58 (exact) | 6.65 vs 5.12 (**+30%**) | 0.01 vs 1.24 | −8.13 TWh **exact** | $53.46 |
+
+Big structural blocks pass across all three years: gas −2.9 to −3.9% vs EIA-930,
+nuclear/wind/solar essentially exact, net interchange exact (served EIA-930
+schedule), price level $53–56. Use **EIA-930** for the renewable rows — EIA-923
+`generation_twh.solar` (3.7–4.5 TWh) includes distributed/BTM PV that the model
+nets into demand (front-of-meter only, doc-08 decision 7), so a raw-923 solar
+comparison spuriously reads −70%. The 2025 EIA-923 vintage is also an incomplete
+early release (923 TOTAL 85.3 vs 930 100.3 TWh; 923 hydro 0.09, nuclear share
+inflated) — gate 2025 on EIA-930, not 923.
+
+### Open gaps (unchanged from P12; not offer-tunable)
+
+1. **Winter oil / Algonquin daily basis (gap #1, upload U4).** Modeled oil
+   0.01–0.02 TWh vs actual 0.32 (2023) / 0.37 (2024) / **1.24 (2025)** TWh, and
+   the winter price tail is a flat monthly-AGT plateau (model max $195–259 vs
+   actual daily spot spikes). The monthly AGT basis cannot manufacture daily
+   variance and never trips the dual-fuel CT/ST switch — the jacobian panel
+   already proved the ST_GAS bands are dead knobs here. Needs the **daily** AGT
+   upload (U4); not recoverable by offer-band tuning. 2025 is the worst year
+   (1.24 TWh oil), so U4 matters most there.
+2. **2025 hydro budget.** The 2024-backfill proxy gives 6.65 TWh vs EIA-930's
+   5.12 (+30% / +1.5 TWh) — 2025 was a materially lower hydro year than 2024, so
+   the flat backfill over-states it. A 930-annual-scaled 2025 budget (≈5.1 TWh on
+   the 2024 monthly shape) is the data-grounded fix and the one improvement
+   available without an external upload.
+3. **Gas −3% vs EIA-930** is consistent across years and partly the mirror of
+   the missing winter oil (≈0.3–1.2 TWh that should displace gas) plus biomass
+   classification; it tightens once U4 lands.
+
+Conclusion: the NEISO model is a calibrated 3-year backcast (P12 sign-off holds
+byte-for-byte on current main). No offer-curve tuning is warranted (structural
+gaps, dead-knob panel). Actionable next steps are the U4 daily-AGT upload (winter
+tail/oil, user-supplied) and the 2025 hydro 930-scaling refinement.
+
 ---
 
 ## CAISO 3 — offer-curve probe panel + Jacobian (sensitivity map, 2023) (2026-06-13)
