@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -414,6 +415,52 @@ def storage_cap_profiles(
             month_idx
         ]
     return power, energy
+
+
+# ERCOT measured per-resource-type AS series (built by
+# scripts/build_ercot_as_by_restype). The ``storage`` column is the hourly MW
+# that batteries cleared as upward AS and therefore could not also offer as
+# energy arbitrage.
+_AS_RESTYPE_DIR = Path("inputs/raw-data/ercot-AS")
+
+
+def reserve_storage_as_power(
+    power_cap: np.ndarray, year: int, hours: int
+) -> np.ndarray:
+    """Reserve ERCOT's measured hourly storage up-AS MW from the power cap.
+
+    ERCOT batteries clear most of their value as ancillary services (RegUp +
+    RRS + ECRS): that power is committed and cannot also serve energy. The
+    energy-only LP otherwise dumps the full fleet into the few highest-price
+    hours. This subtracts the measured hourly storage up-AS MW
+    (``ercot_<year>_as_by_restype_hourly.parquet``, ``storage`` column) from
+    the dispatch power cap, allocated across the fleet pro-rata by available
+    power, so the discharge/charge bound in those hours reflects only the
+    arbitrage-available power. Returns the (possibly broadcast) ``(n_storage,
+    hours)`` cap; a missing file or empty fleet passes ``power_cap`` through.
+
+    Note: this reserves *power*, not state of charge — the first-order
+    constraint that binds in the scarcity hours where the LP over-discharges.
+    """
+    pc = np.asarray(power_cap, dtype=float)
+    if pc.size == 0:
+        return power_cap
+    path = _AS_RESTYPE_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    if not path.exists():
+        return power_cap
+    as_storage = pd.read_parquet(path)["storage"].to_numpy(dtype=float)
+    if len(as_storage) < hours:
+        as_storage = np.concatenate(
+            [as_storage, np.zeros(hours - len(as_storage))]
+        )
+    as_storage = as_storage[:hours]
+    pc2 = (np.repeat(pc[:, np.newaxis], hours, axis=1)
+           if pc.ndim == 1 else pc.copy())
+    total = pc2.sum(axis=0)  # (hours,) fleet power available
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weight = np.where(total[np.newaxis, :] > 0.0,
+                          pc2 / total[np.newaxis, :], 0.0)
+    return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
 def load_eia860_pumped_storage(
