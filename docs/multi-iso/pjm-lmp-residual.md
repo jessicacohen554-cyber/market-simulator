@@ -73,6 +73,69 @@ months are on or slightly above actuals (Jan +2.8, Dec +1.2).
   `market_sim.results.calibration.check_price_duration_curve`, which the
   hourly parquet can now feed as `benchmarks["prices"]`).
 
+## J4 — net-load reserve-demand scarcity overlay (the afternoon regime)
+
+**Date:** 2026-06-16. **Code:** `scarcity.netload_scarcity_adder`,
+`scripts/derive_pjm_scarcity.py`, `constants.PJM_SCARCITY_CURVE`. Post-solve
+overlay (no LP re-solve); writes `scarcity.parquet` consumed by
+`analyze_lmp_residual.py --with-scarcity`.
+
+### Honesty gate — why this is *not* the ERCOT ORDC
+
+A reserve-keyed ORDC curve (the ERCOT mechanism, `ordc_adder`) **cannot work
+for PJM** and was rejected on the pre-implementation diagnostic. ERCOT's
+energy-only LP is genuinely thin in its priciest hours (~8.6 GW headroom,
+near the 3 GW MCL), so the published LOLP×(VOLL−λ) curve self-targets. PJM's
+LP instead sits on **~60 GW of idle headroom during the hours actual RT ≥
+$100** (never below 28 GW idle all year), and the model's online-flexible
+reserve (dispatched gas + storage) is **flat at ~11 GW across every actual
+price band** (rho ≈ +0.18). A reserve-keyed curve would smear a uniform
+adder, not self-target the peak — the honesty gate forbids that.
+
+The discriminating variable is **net load** (demand − wind − solar): the
+energy-only residual is monotone in the net-load percentile (≈0 below p50,
++4.7 at p90, +33 at p99; rho(load, actual) = 0.52; 56% of actual ≥$75 h sit
+in the top load decile). So the adder is keyed on net load — a reduced-form
+reserve-demand curve, the PJM analogue of ERCOT's reliability-deployment
+offset, anchored to PJM's administrative reserve **penalty factors**, not a
+physically-derived LOLP.
+
+### Curve and calibration
+
+`adder = penalty_max · clip((nl − onset_frac·peak_nl)/(peak_nl −
+onset_frac·peak_nl), 0, 1)^exponent`, per year (self-normalising across load
+growth). `PJM_SCARCITY_CURVE` = onset_frac **0.82**, penalty_max **$220**,
+exponent **1.4**, calibrated against the hub-mean hourly RT actuals. The $220
+peak adder is a deliberately conservative *typical-scarcity* anchor — below
+PJM's Synchronized-Reserve penalty-factor cap (~$850/MWh historically; raised
+under the Oct-2022 Energy Price Formation reform) — so it reproduces routine
+afternoon scarcity and intentionally leaves the rare deep spikes on the table
+(actual 2024/2025 max $439/$1,722).
+
+Result on the `pjm_26` keeper (energy-only → +overlay):
+
+| year | annual resid | Jul/Aug resid | monthly MAE | >$200 h (act/eo/ov) |
+|---|---|---|---|---|
+| 2023 | −0.86 → **+0.29** | −6.24 → **−1.10** | 3.59 → 2.69 | 6 / 0 / 9 |
+| 2024 | −2.98 → **−0.72** | −8.82 → **+1.57** | 3.58 → 2.42 | 18 / 0 / 21 |
+| 2025 | −8.62 → **−7.19** | −11.25 → **−6.52** | 8.61 → 7.22 | 59 / 0 / 14 |
+
+The afternoon ramp is the fix: 2024 hour-of-day residual hour 15 −20.9 →
++0.2, hour 16 −35.4 → −5.8, hour 17 −40.4 → −1.5.
+
+### Known limitations
+
+1. **Evening overshoot (18:00–20:00).** Net load peaks ~1–2 h *after* the
+   actual price peak (load still high, solar gone), so the curve over-lifts
+   the early evening: 2024 hour-18/19/20 residual +12.9/+26.7/+19.5. Intrinsic
+   to a net-load-only proxy; a v2 ramp/solar-aware coincidence weighting would
+   refine it. Note this **compounds with the measured-interchange evening
+   overshoot** (J3a interchange A/B), so the two fixes must be re-balanced
+   together, not stacked naively.
+2. **2025 broad level miss survives.** 2025 is under in *every* month
+   (−4 to −22), not just the peak — a level/fuel-basis issue the scarcity
+   overlay correctly does **not** paper over.
+
 ## J3b status (CAMPD unit-level coverage)
 
 Blocked on uploads: `inputs/raw-data/campd-unit-level/` still has **no

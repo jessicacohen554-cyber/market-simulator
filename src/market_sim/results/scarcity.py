@@ -241,6 +241,56 @@ def floor_active_mask(year: int, hours: int) -> np.ndarray:
     return hour_idx >= ORDC_FLOOR_START_HOUR_2023
 
 
+def netload_scarcity_adder(
+    netload_mw: np.ndarray,
+    *,
+    peak_netload_mw: float,
+    onset_frac: float,
+    penalty_max: float,
+    exponent: float = 2.0,
+) -> np.ndarray:
+    """Net-load reserve-demand scarcity adder ($/MWh), PJM-style.
+
+    A reduced-form reserve-demand curve keyed off **net load** (load minus
+    wind and solar), not modelled reserve headroom. Rationale: unlike
+    energy-only ERCOT — where the perfect-foresight LP's tight-hour headroom
+    (~8.6 GW) is close enough to the minimum contingency level for the
+    published ORDC LOLP curve to bite — PJM's LP sits on ~60 GW of idle
+    capacity in its priciest hours, so an ``ordc_adder`` keyed off reserves
+    is flat across price bands and cannot self-target the peak (the honesty
+    gate in docs/ordc-overlay.md forbids that). The discriminating variable
+    is instead net load: the actual-vs-model price residual is monotone in
+    the net-load percentile (≈0 below p50, rising into the top decile).
+
+    This is the PJM analogue of ERCOT's reliability-deployment offset — an
+    explicit, scenario-adjustable calibration of reserve-scarcity intensity
+    anchored to PJM's administrative reserve **penalty factors**, not a
+    physically derived LOLP. The curve is a convex ramp that is zero below
+    ``onset_frac × peak_netload`` and rises to ``penalty_max`` at the peak,
+    so it is self-targeting (only the highest-net-load hours are lifted) and
+    a slack year is ~unchanged.
+
+    Args:
+        netload_mw: ``(T,)`` hourly net load (demand − wind − solar), MW.
+        peak_netload_mw: Reference peak net load, MW (per-year, so the curve
+            self-normalises across load growth).
+        onset_frac: Fraction of peak net load at which the adder turns on
+            (e.g. 0.85 → no adder below 85% of peak net load).
+        penalty_max: Adder at the peak net load, $/MWh (PJM reserve
+            penalty-factor scale).
+        exponent: Convexity of the ramp (>1 concentrates the adder at the
+            very top; 1.0 = linear).
+
+    Returns:
+        ``(T,)`` adder array in $/MWh, >= 0.
+    """
+    nl = np.asarray(netload_mw, dtype=float)
+    onset = onset_frac * peak_netload_mw
+    span = max(peak_netload_mw - onset, 1.0)
+    x = np.clip((nl - onset) / span, 0.0, 1.0)
+    return penalty_max * x ** exponent
+
+
 def reserve_headroom(
     fleet_arrays: FleetArrays,
     dispatch: np.ndarray,
