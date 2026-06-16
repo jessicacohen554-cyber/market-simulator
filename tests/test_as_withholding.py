@@ -10,7 +10,6 @@ thermal. See ``ScenarioConfig.as_reserve_withholding`` and
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
@@ -84,14 +83,14 @@ class TestWithholding:
         )
         np.testing.assert_allclose(on.availability[2], off.availability[2])
 
-    def test_non_ercot_iso_unaffected(self):
-        """The withholding is ERCOT-scoped; other ISOs see no effect."""
+    def test_unconfigured_iso_unaffected(self):
+        """The withholding is scoped to ISOs with an AS series; others no-op."""
         off = self._fleet(
-            ScenarioConfig(iso="PJM", weather_year=2024), iso="PJM")
+            ScenarioConfig(iso="MISO", weather_year=2024), iso="MISO")
         on = self._fleet(
-            ScenarioConfig(iso="PJM", weather_year=2024,
+            ScenarioConfig(iso="MISO", weather_year=2024,
                            as_reserve_withholding=True),
-            iso="PJM")
+            iso="MISO")
         np.testing.assert_allclose(on.availability[0], off.availability[0])
 
     def test_never_below_zero(self):
@@ -107,6 +106,47 @@ class TestWithholding:
         assert fa.availability.min() >= 0.0
         assert fa.availability.max() <= 1.0
 
+
+
+class TestPjmWithholding:
+    """PJM: the RT Primary Reserve requirement on the gas + flexible-oil pool."""
+
+    def test_loads_pjm_primary_requirement(self):
+        """The PJM parquet loads as a positive ~3 GW series."""
+        s = load_as_reserve_withholding_mw(2024, HOURS, iso="PJM")
+        assert s is not None and s.shape == (HOURS,)
+        assert 2_000.0 < s.mean() < 5_000.0
+        assert s.min() > 0.0
+
+    def test_withholds_gas_and_oil_not_coal(self):
+        """Gas + oil headroom is cut top-of-merit; coal/wind untouched."""
+        as_mw = load_as_reserve_withholding_mw(2024, HOURS, iso="PJM")
+        # Oil has the higher heat rate, so the top-of-merit withdrawal empties
+        # the oil headroom first, then spills the remainder into the gas unit.
+        gens = [
+            _gen("cc1", "CC_REGULAR", "gas_cc", 40_000.0, 1),
+            _gen("oil1", "oil", "oil", 4_000.0, 2),
+            _gen("co1", "COAL", "coal", 20_000.0, 3),
+            _gen("wind1", "WIND", "wind", 5_000.0, 4),
+        ]
+        gens[1].heat_rate = 12.0  # oil dearer than gas (8.0) -> withdrawn first
+        off = generators_to_fleet_arrays(
+            gens, ["Z0"], hours=HOURS, iso="PJM",
+            config=ScenarioConfig(iso="PJM", weather_year=2024))
+        on = generators_to_fleet_arrays(
+            gens, ["Z0"], hours=HOURS, iso="PJM",
+            config=ScenarioConfig(iso="PJM", weather_year=2024,
+                                  as_reserve_withholding=True))
+        # Coal and wind never lose headroom.
+        np.testing.assert_allclose(on.availability[2], off.availability[2])
+        np.testing.assert_allclose(on.availability[3], off.availability[3])
+        # The 4 GW oil unit is fully withdrawn (3+ GW requirement > 4 GW only
+        # in the peak, so oil is ~emptied) and the gas unit carries the rest;
+        # total withdrawn equals the requirement (pool headroom >> requirement).
+        oil_cut = (off.availability[1] - on.availability[1]) * 4_000.0
+        gas_cut = (off.availability[0] - on.availability[0]) * 40_000.0
+        np.testing.assert_allclose(oil_cut + gas_cut, as_mw, atol=1e-3)
+        assert on.availability.min() >= 0.0
 
 
 class TestStorageAsCommitment:
