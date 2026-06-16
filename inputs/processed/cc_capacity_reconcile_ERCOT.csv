@@ -1,0 +1,9 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source
+4939,Barney M Davis [CC],730.0,811.4,947.0,811.4,11.2,campd_demonstrated_peak
+55226,Freestone Energy Center,1036.0,1112.5,1095.2,1112.5,7.4,campd_demonstrated_peak
+55144,Hays Energy Project,989.0,1051.9,1048.0,1051.9,6.4,campd_demonstrated_peak
+55097,Lamar Power Project,1112.6,1166.2,1149.0,1166.2,4.8,campd_demonstrated_peak
+55086,Gregory Power Plant,469.8,490.4,411.0,490.4,4.4,campd_demonstrated_peak
+55480,Forney Energy Center,1894.2,1940.3,1966.0,1940.3,2.4,campd_demonstrated_peak
+55153,Guadalupe Generating Station,1088.2,1106.8,1042.0,1106.8,1.7,campd_demonstrated_peak
+55215,Odessa-Ector Power Plant,1152.8,1169.8,1202.6,1169.8,1.5,campd_demonstrated_peak

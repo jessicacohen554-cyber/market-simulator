@@ -217,7 +217,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     campd_bins = None
     if config.use_campd_bins and iso in CAMPD_BINNING_ISOS:
         if iso == "ERCOT":
-            campd_bins = load_campd_bins(config.campd_bins_path, year=START_YEAR)
+            campd_bins = load_campd_bins(
+                config.campd_bins_path, year=START_YEAR,
+                capacity_reconcile_path=(
+                    config.cc_capacity_reconcile_path
+                    if config.cc_capacity_reconcile else None
+                ),
+            )
         else:
             campd_bins = fleet_to_bins(
                 load_fleet_from_csv(iso, iso_config), iso, config
