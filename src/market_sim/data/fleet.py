@@ -323,6 +323,43 @@ def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     return pof, wefor, derate
 
 
+# Dispatchable thermal plant groups that clear upward ancillary service and
+# can therefore withhold energy when they do (gas CC/CT/ST + coal, incl. their
+# CHP variants). Storage, renewables, nuclear and hydro are excluded from the
+# AS-reserve-withholding pool.
+_AS_THERMAL_GROUPS: frozenset[str] = frozenset({
+    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP", "COAL",
+})
+
+# ERCOT cleared DAM up-AS withholding series, by year (built by
+# scripts/build_ercot_as_withholding.py).
+_AS_WITHHOLDING_DIR = Path("inputs/raw-data/ercot-AS")
+
+
+@lru_cache(maxsize=8)
+def load_as_reserve_withholding_mw(year: int, hours: int) -> np.ndarray | None:
+    """Load ERCOT's hourly cleared DAM up-AS withholding MW for ``year``.
+
+    Returns the ``(hours,)`` system-wide upward-AS MW series written by
+    :mod:`scripts.build_ercot_as_withholding`, or ``None`` when the parquet
+    is absent (the feature then silently no-ops, like a backcast year with no
+    outage windows). The file sits on the same non-leap 8760-hour clock as the
+    fleet, so it is returned as-is when ``hours == 8760``; other horizons take
+    the leading ``hours`` values.
+    """
+    path = _AS_WITHHOLDING_DIR / f"ercot_{year}_as_up_mw.parquet"
+    if not path.exists():
+        logger.warning(
+            "as_reserve_withholding on but %s is missing; AS withholding "
+            "skipped for %d", path, year,
+        )
+        return None
+    series = pd.read_parquet(path)["as_up_mw"].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(hours - len(series))])
+    return series[:hours]
+
+
 def generators_to_fleet_arrays(
     generators: list[Generator],
     zone_names: list[str],
@@ -934,6 +971,47 @@ def generators_to_fleet_arrays(
             )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
+
+    # Ancillary-service reserve withholding (ERCOT backcast probe). Capacity
+    # that clears upward AS (Reg-Up, RRS, ECRS, Non-Spin) is held out of the
+    # energy market, shifting the thermal supply curve left. The hourly system
+    # AS-up MW is removed from total thermal headroom pro-rata (a uniform
+    # fractional cut preserves merit order within the thermal stack), an upper
+    # bound that books all AS to thermal with no storage/load split. Applied
+    # last, after every outage/derate, then floored back up to any must-run
+    # min_gen so a forced unit stays feasible. Down-AS (Reg-Down) is excluded
+    # upstream — it does not remove an upward energy offer.
+    if (config is not None
+            and getattr(config, "as_reserve_withholding", False)
+            and _iso == "ERCOT"):
+        as_mw = load_as_reserve_withholding_mw(
+            getattr(config, "weather_year", 0), hours
+        )
+        thermal = np.array(
+            [i for i, g in enumerate(generators)
+             if g.plant_group in _AS_THERMAL_GROUPS],
+            dtype=int,
+        )
+        if as_mw is not None and thermal.size:
+            avail_mw = pmax[thermal, np.newaxis] * availability[thermal, :]
+            total = avail_mw.sum(axis=0)  # (hours,) thermal headroom
+            keep = np.clip(
+                1.0 - as_mw / np.maximum(total, 1e-6), 0.0, 1.0
+            )
+            availability[thermal, :] *= keep[np.newaxis, :]
+            if min_gen is not None:
+                floor_frac = np.zeros_like(availability)
+                np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
+                          where=pmax[:, np.newaxis] > 0.0)
+                np.maximum(availability, floor_frac, out=availability)
+            np.clip(availability, 0.0, 1.0, out=availability)
+            removed = float(np.minimum(as_mw, total).sum())
+            logger.info(
+                "AS reserve withholding (ERCOT %s): removed %.1f GWh-equiv "
+                "thermal headroom (mean %.0f MW/h) across %d thermal tranches",
+                getattr(config, "weather_year", "?"), removed / 1e3,
+                float(as_mw.mean()), thermal.size,
+            )
 
     return FleetArrays(
         pmax=pmax,
