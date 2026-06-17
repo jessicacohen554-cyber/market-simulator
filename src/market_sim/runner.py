@@ -444,6 +444,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet, zone_names, hours=config.hours, iso=iso,
             config=fleet_config, load_shape=base_demand.sum(axis=0),
+            year=year,
         )
         # Replace flat offshore-wind availability with a derived hourly
         # profile; must run after fleet-array build and before dispatch.
