@@ -387,6 +387,62 @@ def measured_interchange_envelope(
     return imp_tab[rm, rh], exp_tab[rm, rh]
 
 
+def measured_gas_floor_profile(
+    iso: str, year: int, hours: int, percentile: float = 50.0
+) -> np.ndarray | None:
+    """Return the measured month×hour-of-day EIA-930 ``NG: NG`` profile (MW).
+
+    For each hour of the run horizon, the ``percentile`` of measured EIA-930
+    natural-gas net generation (``NG: NG``) for that hour's (month,
+    hour-of-day) bucket. Used as the magnitude of the CAISO Resource-Adequacy
+    must-offer minimum-commitment floor (see
+    :func:`market_sim.model.transmission.inject_caiso_gas_commitment_floor`):
+    holding the gas fleet online midday at (a fraction of) this measured
+    profile makes the model *long* midday, so its surplus exports/curtails at
+    ~$0 — reproducing CAISO's collapsed spring-midday LMP.
+
+    The (month, hour-of-day) bucketing follows
+    :func:`measured_interchange_envelope`: a measured diurnal/seasonal shape
+    with no fitted constant, robust to leap-year / missing hours (gap rows
+    carry NaN ``NG: NG`` and drop out of each bucket). The median (default
+    percentile) is the *typical* gas level RA commitment holds the fleet at;
+    the caller scales it by ``config.caiso_gas_floor_frac``.
+
+    Note ``NG: NG`` is the EIA-930 gas figure, which for CISO silently absorbs
+    geothermal/biomass (EIA-930 reports neither for CISO); that inflation is
+    irrelevant here — this profile shapes a *floor*, not a benchmark, and gas
+    generation is still validated against EIA-923, not this series.
+
+    Returns ``(hours,)`` MW, or ``None`` when the ISO has no BA hourly extract,
+    the ``NG: NG`` column is absent, or the year is uncovered (a forecast
+    year), in which case the caller leaves the fleet unfloored (byte-identical).
+    """
+    ba = _ISO_TO_HOURLY_BA.get(iso)
+    if ba is None:
+        return None
+    frame = _eia_hourly_frame_filled(ba, year)
+    if frame is None or "NG: NG" not in frame.columns:
+        return None
+    local = pd.DatetimeIndex(frame["Local time"])
+    month = local.month.to_numpy(dtype=float)
+    hod = local.hour.to_numpy(dtype=float)
+    ng = pd.to_numeric(frame["NG: NG"], errors="coerce").to_numpy()
+
+    tab = np.zeros((12, 24))
+    for m in range(1, 13):
+        for h in range(24):
+            sel = (month == m) & (hod == h)
+            v = ng[sel]
+            v = v[np.isfinite(v)]
+            if v.size:
+                tab[m - 1, h] = np.percentile(v, percentile)
+
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    rm = clock.month.to_numpy() - 1
+    rh = clock.hour.to_numpy()
+    out = tab[rm, rh]
+    return out if np.any(out > 0.0) else None
+
 
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
