@@ -41,16 +41,15 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
-from market_sim.config.paths import EIA_860_DIR, INPUTS_DIR
+from market_sim.config.paths import INPUTS_DIR
 
 logger = logging.getLogger(__name__)
 
 _REGISTRY = INPUTS_DIR / "master-plant-registry.csv"
-# Month-precise generator-level EIA-860 operable schedule (Operating Month /
-# Year, Planned Retirement Month / Year per generator). Preferred over the
-# year-only processed thermal parquet because it carries the commissioning
-# *month* the renewable/storage ramps already use.
-_EIA860_OPERABLE = EIA_860_DIR / "eia860_generator_operable.parquet"
+# The month-precise generator-level EIA-860 operable schedule (Operating Month /
+# Year, Planned Retirement Month / Year per generator) is read from the active
+# vintage directory (paths.active_eia860_dir) inside _load_cod_map, so a
+# year-matched vintage switch is honored and the cache keys on the directory.
 
 # Month assumed for a unit whose COD *year* is known but whose month is not
 # (e.g. a plant carried only by the master registry's year-only ``year_built``,
@@ -68,8 +67,20 @@ _ONLINE_YEAR_SENTINEL = 2000
 CodEntry = tuple[int, int, int | None, int | None]
 
 
-@lru_cache(maxsize=1)
 def load_cod_map() -> dict[int, CodEntry]:
+    """Public entry point: build the COD map for the active EIA-860 vintage.
+
+    Resolves the directory through :func:`paths.active_eia860_dir` (so a
+    ``ScenarioConfig.eia860_vintage_year`` switch is honored) and defers to the
+    directory-keyed cache below.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    return _load_cod_map(active_eia860_dir())
+
+
+@lru_cache(maxsize=4)
+def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
     """Build the ``{plant_code: (online_year, online_month, ret_year, ret_month)}`` map.
 
     Reduced from the month-precise EIA-860 operable generator schedule:
@@ -94,8 +105,9 @@ def load_cod_map() -> dict[int, CodEntry]:
     """
     cod: dict[int, CodEntry] = {}
 
-    if _EIA860_OPERABLE.exists():
-        df = pd.read_parquet(_EIA860_OPERABLE)
+    operable = eia860_dir / "eia860_generator_operable.parquet"
+    if operable.exists():
+        df = pd.read_parquet(operable)
         pc = pd.to_numeric(df.get("Plant Code"), errors="coerce")
         oy = pd.to_numeric(df.get("Operating Year"), errors="coerce")
         om = pd.to_numeric(df.get("Operating Month"), errors="coerce")

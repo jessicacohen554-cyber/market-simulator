@@ -998,6 +998,13 @@ def run_year(
     # the offer curve instead of scaling every tranche pro-rata.
     if cc_derate_from_top:
         config = config.with_overrides(cc_outage_derate_from_top=True)
+    # Point the EIA-860 loaders at a year-matched vintage when the scenario asks
+    # for one (backcast knob; None resets to the canonical 2025ER snapshot the
+    # COD ramp filters to the solved year). Must precede every fleet / storage /
+    # renewable / COD-map load below so they all read the same vintage.
+    from market_sim.config.paths import set_eia860_vintage
+    set_eia860_vintage(
+        config.eia860_vintage_year if config.mode == "backcast" else None)
     iso_config = get_iso_config(iso)
     # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
     # Transmission project in service Dec 2023) — applied before the import
