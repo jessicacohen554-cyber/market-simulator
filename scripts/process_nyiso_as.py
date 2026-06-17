@@ -173,6 +173,20 @@ _MONTH_START_HOUR = list(__import__("numpy").cumsum(
 # SENY + NYC locational), the highest reserve price in the state.
 _REF_ZONES = {"nyca_reserve_adder": "WEST", "nyc_reserve_adder": "N.Y.C."}
 
+# Representative NYISO settlement zone for each MODEL zone's stacked RT reserve
+# price (the locational cascade tier the model zone carries): A-E share the
+# NYCA tier, F adds East, G-K add SENY, J adds NYC. These columns let the RCPF
+# overlay validate every model zone's adder against measured data without
+# re-reading the per-zone CSV. Keyed ``reserve_<model_zone>``; the legacy
+# nyca/nyc aliases above are kept for backward compatibility.
+_MODEL_ZONE_REF = {
+    "reserve_Upstate_West": "WEST",
+    "reserve_Capital_Hudson": "CAPITL",
+    "reserve_Lower_Hudson": "DUNWOD",
+    "reserve_NYC": "N.Y.C.",
+    "reserve_Long_Island": "LONGIL",
+}
+
 CAL_DIR = REPO / "inputs" / "calibration"
 
 
@@ -180,15 +194,18 @@ def build_reference(years: list[int]) -> Path | None:
     """Write the compact measured RT reserve-adder calibration reference.
 
     ``inputs/calibration/actual_as_reserve_NYISO.parquet`` — per (year, hour)
-    on the model's non-leap 8760 clock: ``nyca_reserve_adder`` (the WEST
-    stacked RT reserve price, i.e. the system-wide NYCA component) and
-    ``nyc_reserve_adder`` (the N.Y.C. stacked RT reserve price, the full
-    downstate cascade). This is the empirical target the RCPF overlay
-    validates its model adder against (the measured analogue of
-    ``actual_lmp_hourly_NYISO.parquet``).
+    on the model's non-leap 8760 clock. Two legacy series:
+    ``nyca_reserve_adder`` (the WEST stacked RT reserve price, the system-wide
+    NYCA component) and ``nyc_reserve_adder`` (the N.Y.C. stacked RT reserve
+    price, the full downstate cascade); plus one ``reserve_<model_zone>``
+    column per model zone (the stacked RT reserve price of the settlement zone
+    whose cascade tier it carries, ``_MODEL_ZONE_REF``), so the RCPF overlay
+    validates every model zone's adder against measured data — the measured
+    analogue of ``actual_lmp_hourly_NYISO.parquet``.
     """
     import numpy as np
 
+    columns = {**_REF_ZONES, **_MODEL_ZONE_REF}
     frames = []
     for year in years:
         path = AS_DIR / f"NYISO_as_rt_{year}.csv"
@@ -205,21 +222,25 @@ def build_reference(years: list[int]) -> Path | None:
         )
         df = df.assign(hour=hoy)
         out = {"year": np.int16(year), "hour": np.arange(8760, dtype=np.int32)}
-        for col, zone in _REF_ZONES.items():
+        # One groupby per settlement zone reused across its column aliases.
+        for zone in set(columns.values()):
             s = (df[df["Name"] == zone].groupby("hour")["stack"].max()
-                 .reindex(range(8760)))
-            out[col] = s.to_numpy(dtype=np.float32)
+                 .reindex(range(8760)).to_numpy(dtype=np.float32))
+            for col, z in columns.items():
+                if z == zone:
+                    out[col] = s
         frames.append(pd.DataFrame(out))
     if not frames:
         return None
     ref = pd.concat(frames, ignore_index=True)
     out_path = CAL_DIR / "actual_as_reserve_NYISO.parquet"
     ref.to_parquet(out_path, index=False)
-    nyca, nyc = ref["nyca_reserve_adder"], ref["nyc_reserve_adder"]
-    print(f"  reference: {out_path.name} — NYCA adder >$0 in "
-          f"{int((nyca > 0).sum()):,} h (max ${np.nanmax(nyca):,.0f}); "
-          f"NYC adder >$0 in {int((nyc > 0).sum()):,} h "
-          f"(max ${np.nanmax(nyc):,.0f})")
+    print(f"  reference: {out_path.name} — per-(year,hour) stacked RT reserve "
+          f"for {len(_MODEL_ZONE_REF)} model zones + NYCA/NYC aliases:")
+    for col in ("nyca_reserve_adder", *_MODEL_ZONE_REF):
+        s = ref[col]
+        print(f"    {col:28s} >$0 in {int((s > 0).sum()):,} h, "
+              f"mean ${np.nanmean(s):.2f}, max ${np.nanmax(s):,.0f}")
     return out_path
 
 
