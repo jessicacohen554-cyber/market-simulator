@@ -1171,6 +1171,7 @@ def run_year(
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config,
         load_shape=demand.sum(axis=0), ct_campd_shape=ct_campd_shape,
+        year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
     # Shape the priced import/export node by the measured EIA-930 diurnal
