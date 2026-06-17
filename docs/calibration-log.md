@@ -123,6 +123,26 @@ out-of-merit floor over dozens of the top SCED pockets — a heavy structural pi
 with steep diminishing returns, correctly its own session
 (`docs/spatial-ruc-session-prompt.md`). Not pursued here.
 
+**Follow-up ("keep tuning") — spatial reliability-deployment overlay re-confirmed
+NO-OP on the run124 keeper.** run118 tested the congestion-subset min-gen floor
+on run115b (which had CT-deployment ON, no storage-AS) and found it near-redundant
+with the 7-zone LP's existing zonal dispatch. Re-ran `--reliability-deployment`
+on the *clean run124 base* (CT-deployment OFF ⇒ deeper CT under-run ⇒ more merit
+room for the pocket CC/ST plants the floor targets) to test whether it now binds
+— 2024/2025, bundles `run124_reldeploy_2024/2025`. **Still a near-no-op:** every
+class moves <0.1 TWh (CC_REGULAR +0.07/+0.08 — the *wrong* direction, as run118
+found; CT_PEAKER −0.02/−0.03; ST_GAS +0.05). The 2.7–5.2 TWh congestion wedge is
+real but the 7-zone LP already dispatches ~85–90% of it regardless of the CT/
+storage state, so the spatial imbalance is irreducible by a price-recoverable
+congestion floor — it lives in the genuinely nodal (sub-zonal) pockets or the
+~6.7 TWh below-local-price RUC piece. The only lever that would bind is a top-down
+CAMPD-net-gap zone floor, which is the **CEMS-pinned, no-forward-analogue** class
+the user deliberately dropped in run120 (forecast-defensibility) — so it is not
+adopted. **Net: every defensible volume lever on the run124 keeper is now
+exhausted; all remaining fails (CT 2023/24 non-CEMS, CC 2024/25 nodal, PRB 2024
+cheap-gas) are structurally diagnosed and out of reach of a defensible offer/
+floor.** Probes registered on the dashboard.
+
 
 ### 2026-06-17 — ERCOT — run124 NEW KEEPER: the AS-aware storage design (run121 + --storage-as-commitment)
 
