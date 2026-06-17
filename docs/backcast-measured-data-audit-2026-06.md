@@ -70,39 +70,41 @@ test; none is in use).
 
 ---
 
-## One live gray-area item: the HSL rescale
+## The HSL rescale — RESOLVED (2026-06-17)
 
-`data/renewables.py:268` `_HSL_RESCALE_TWH` is a **module-level hardcode** keyed
-`(ERCOT, 2023, wind)=110.0` / `(ERCOT, 2023, solar)=32.0`. It is applied
-unconditionally by `hsl_potential_mw()` → `_hsl_cf_profile()` whenever the 2023
-ERCOT HSL profile is built — there is **no config flag gating it**. Run 124
-includes 2023, so it **is live** in run 124's 2023 renewable potential.
+**Was:** `data/renewables.py` `_HSL_RESCALE_TWH` was a module-level hardcode
+`(ERCOT, 2023, wind)=110.0` / `(ERCOT, 2023, solar)=32.0`, applied
+unconditionally whenever the 2023 ERCOT HSL profile was built. Its two parts had
+different verdicts: raising the raw HSL up to *at least* the EIA-930 delivered
+total was a legitimate physical-floor fix (the UMass-derived series sums *below*
+delivered, which is impossible for a potential), **but** the targets were
+deliberately set *above* delivered "to offset the dispatch's economic
+re-curtailment, so the *delivered* output lands on the actuals" — tuning an
+**input** so the model's **output** matched a measured actual, the exact
+anti-pattern the rule forbids (no forward analogue; the `+offset` was sized to
+*this model's* curtailment behaviour).
 
-Two parts, with different verdicts:
+**Now:** the model-output target is gone. `hsl_potential_mw()` consumes each HSL
+parquet as-is, with **one real-data coverage reconciliation**: when a source's
+own delivered (its `GEN` column) materially undercounts the EIA-930 system
+delivered total (a partial-footprint dataset), the series is scaled UP to the
+EIA-930 level *preserving the dataset's own measured curtailment ratio*
+(`delivered/HSL`). That reconciles two real datasets — the parquet's hourly shape
++ curtailment ratio, the EIA-930 level — and references nothing about model
+output. The model then curtails endogenously and the modeled-vs-reported
+curtailment gap is a **diagnostic**, not a fit target (Rule #11). For 2023 this
+now yields wind **113.28 TWh** / solar **34.01 TWh** at the measured 4.67% / 6.29%
+curtailment ratios, replacing the back-solved 110 / 32.
 
-- **Part that passes:** raising the raw HSL series up to *at least* the EIA-930
-  delivered total. HSL is uncurtailed potential and must be ≥ delivered; the raw
-  2023 wind series summed *below* delivered (~104 vs 108 TWh), which is physically
-  impossible. Reconciling a biased-low input up to a physical floor is a
-  legitimate data fix.
-
-- **Part that fails the test (flag):** the targets are deliberately set *above*
-  delivered (110 vs 108 wind; 32.0 vs 31.9 solar) **"to offset the dispatch's
-  economic re-curtailment, so the *delivered* output lands on the actuals"**
-  (comment at `renewables.py:262-264`). That second step tunes an **input** so the
-  model's **output** matches a measured actual — the textbook pattern the rule
-  forbids. It is a small effect (~1.8% wind, ~0.5% solar) and arguably benign
-  because backcast renewable delivery is weather-fixed and near-must-take, but it
-  *is* a measured-outcome-driven rescale with no forward analogue (the `+offset`
-  is sized to *this model's* curtailment behaviour in *this year*).
-
-**Recommendation (not yet applied — diagnosis only):** split the rescale.
-Reconcile HSL up to `max(raw_HSL, EIA-930 delivered)` as the physical floor
-(passes), and drop the curtailment-offset top-up; let the LP's endogenous
-curtailment land where it lands and report the modeled-vs-reported curtailment gap
-as a *diagnostic*, not close it by inflating the potential. If a year's delivered
-renewable miss is then large, treat it as a discovered bug (per Rule #11), not a
-rescale target.
+The reconciliation is a **no-op for full-footprint published data** (whose
+delivered already matches EIA-930 within 2%). `build_ercot_hsl.py` now prefers the
+authoritative ERCOT **NP4-732/737** published HSL for *any* year (drop the reports
+into `np6/`), falling back to the UMass reconstruction for 2023 only when no
+published upload exists. **Action for the user:** supplying the published
+2023/2024/2025 NP6 HSL retires the reconciliation entirely — 2024/2025 currently
+have *no* HSL parquet at all and fall back to EIA-930-delivered-as-CF (no
+curtailment modelling), so the published uploads also turn on endogenous
+curtailment for those years.
 
 ---
 
@@ -112,14 +114,13 @@ Run 124 **complies** with the new rule on the load-bearing items: the CEMS
 deployment floors and the fitted ORDC scarcity offset — the mechanisms that
 previously "fed the answer in" — are off, and the remaining measured inputs
 (outages, F923 fuel, CEMS rates, the storage-AS reservation) all pass the
-forward-analogue test. The standing exposure is twofold:
-
-1. **Governance** — the deployment overlays and the ORDC offset still exist and
-   were keeper-enabled as recently as runs 118/122/123. Keep them default-off and
-   out of keepers; if used, label them probes and never quote their fit as skill.
-2. **The HSL rescale** is the one *live* measured-outcome-driven input in run 124.
-   Small, but it is the rule's exact anti-pattern and should be reduced to a
-   physical-floor reconciliation.
+forward-analogue test. After the 2026-06-17 HSL fix, the remaining standing
+exposure is **governance**: the CEMS deployment overlays and the ORDC offset
+still exist in code and were keeper-enabled as recently as runs 118/122/123. Keep
+them default-off and out of keepers; if used, label them probes and never quote
+their fit as skill. (The HSL output-target rescale — previously the one live
+measured-outcome-driven input — has been replaced with a real-data coverage
+reconciliation; see the section above.)
 
 The strongest single confirmation remains the still-unrun **statistical-mode
 backcast** (every overlay off — `forecast-validation-plan.md` Phase 3): it would
