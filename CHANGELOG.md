@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-06-17 (CAISO — RA must-offer midday gas-commitment floor: model goes long, spring-midday LMP floor collapses to ~$0)
+
+New default-off mechanism that reproduces CAISO's collapsed spring-midday LMP by
+making the model **long** midday. CAISO's Resource-Adequacy must-offer obligation
+keeps gas online at min-load through the solar glut (it can't economically cycle
+off for the evening ramp), so it over-generates midday and the ISO
+exports/curtails the surplus — the marginal is the export, priced near $0. The
+economic dispatch instead decommits gas to ~1.5 GW midday and imports the
+balance, staying balanced, so its midday marginal is always a ≥$28 import/gas
+(the over-priced floor; `AUDIT-caiso-structural.md` phase 2).
+
+- **Mechanism (measured, no magic number).** A hard min-generation floor on the
+  gas fleet (`gas_cc`/`gas_ct`/`gas_st`) over the midday solar-glut window
+  (local hours 9–16), sized to `--caiso-gas-floor-frac` × the measured EIA-930
+  `NG: NG` (month × hour-of-day median) profile, through the hour-varying
+  `FleetArrays.min_gen` lower bound — the same mechanism the CHP steam floor and
+  the CT/reliability-deployment overlays use. The hourly fleet target is
+  distributed cheapest-first (by heat rate), each unit capped at its available
+  capacity, and survives the P2 commitment screen (`preserve_min_gen`), so the
+  screen can't decommit RA gas it held on for reliability.
+  - `eia_loader.measured_gas_floor_profile` — the (month × hod) percentile of
+    measured EIA-930 `NG: NG` mapped onto the run horizon (mirrors
+    `measured_interchange_envelope`).
+  - `transmission.inject_caiso_gas_commitment_floor` — injected in
+    `run_calibration` after `generators_to_fleet_arrays`, mirroring
+    `inject_offshore_wind_availability` / `inject_interchange_shape`.
+  - Flags: `--caiso-gas-commitment-floor` (`config.caiso_gas_commitment_floor`,
+    default off) + `--caiso-gas-floor-frac` (default 1.0).
+- **Frac is a measured fraction, not a fitted constant.** EIA-930's `NG: NG` for
+  CISO silently absorbs ~21 % geo+bio (EIA-930 reports neither), so
+  **frac ≈ 0.79 = EIA-923 gas / EIA-930 `NG: NG`** strips that and targets the
+  true must-offer gas. The keeper uses **frac 0.80**.
+- **Result (2024, clean floor-only A/B vs `caiso_tune0_base`).** The model goes
+  long midday — spring-midday gas 1457→4835 MW (frac 0.70) … 6874 MW (frac 1.0,
+  ≈ the measured 6834), net interchange flips from +2308 MW (import) toward
+  export, export hours rise from 0 %. The spring-midday LMP **floor collapses
+  from a hard $28 to ~$0**: at frac 0.80, LMP min 28→0, spring p5 36→8, spring
+  min 28→0, with gas modestly up (68.0→71.3 TWh, +5 %; validated vs EIA-923 =
+  67.7, **not** EIA-930). 3-year keeper (`frac 0.80`, +2025 hydro repin): LMP
+  min 0.0 every year (was $8/$28/$42); gas 67.2/71.3/70.6 (2023/24/25). The
+  spring *mean* still sits above actual — pushing the belly **below** $0 is the
+  negative-renewable-offer tail (Session B); this collapses the floor, not the
+  negative tail. Watch item respected: the surplus **exports/curtails**, it does
+  not pad the mix.
+- **Default off ⇒ byte-identical.** Every existing run/ISO is unchanged when the
+  flag is off (CAISO-only; no-op for non-CAISO, frac≤0, no gas units, or no
+  measured profile). Tests: `TestCaisoGasCommitmentFloor` (8),
+  `TestGasFloorProfile` (4). Full write-up:
+  `results/calibration/RESULTS-caiso-ra-mustoffer-floor.md`.
+
 ## 2026-06-17 (NEISO — CT_PEAKER reserve recovered: ct_deployment overlay survives the P2 commitment screen)
 
 The targeted CT AS/reserve-deployment overlay now survives the P2 unit-commitment
