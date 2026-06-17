@@ -86,6 +86,47 @@ class TestVariableLayout(unittest.TestCase):
         self.assertEqual(len(cols), len(set(cols)))
         self.assertEqual(len(cols), layout.vars_per_hour)
 
+    def test_reserve_coopt_columns_off_by_default(self):
+        """n_reserve/n_ordc_steps default to 0 -> byte-identical layout."""
+        base = VariableLayout(n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10)
+        coopt0 = VariableLayout(
+            n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10,
+            n_reserve=0, n_ordc_steps=0,
+        )
+        self.assertEqual(base.vars_per_hour, coopt0.vars_per_hour)
+        self.assertEqual(base.total_columns, coopt0.total_columns)
+        self.assertEqual(base._dump_off, coopt0._dump_off)
+
+    def test_reserve_coopt_columns_when_enabled(self):
+        """Reserve/ORDC blocks append after dump; indices stay unique."""
+        layout = VariableLayout(
+            n_gen=3, n_zones=2, n_storage=1, n_links=1, T=5,
+            n_reserve=3, n_ordc_steps=2,
+        )
+        # vars_per_hour = 3 + 4*2 + 3*1 + 1 + 3 + 2 = 20
+        self.assertEqual(layout.vars_per_hour, 20)
+        # Reserve block sits right after the dump block (dump = n_zones wide).
+        self.assertEqual(layout._reserve_off, layout._dump_off + layout.n_zones)
+        self.assertEqual(layout._ordc_off, layout._reserve_off + 3)
+        cols = []
+        for g in range(3):
+            cols.append(layout.p_col(g, 2))
+            cols.append(layout.r_col(g, 2))
+        for z in range(2):
+            cols += [layout.w_col(z, 2), layout.s_col(z, 2),
+                     layout.slack_col(z, 2), layout.dump_col(z, 2)]
+        for s in range(1):
+            cols += [layout.chg_col(s, 2), layout.dis_col(s, 2),
+                     layout.soc_col(s, 2)]
+        cols.append(layout.flow_col(0, 2))
+        for k in range(2):
+            cols.append(layout.ordc_col(k, 2))
+        self.assertEqual(len(cols), len(set(cols)))
+        self.assertEqual(len(cols), layout.vars_per_hour)
+        # All within hour t=2's contiguous block.
+        lo = 2 * layout.vars_per_hour
+        self.assertTrue(all(lo <= c < lo + layout.vars_per_hour for c in cols))
+
     def test_columns_advance_by_vars_per_hour(self):
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=8)
         self.assertEqual(
