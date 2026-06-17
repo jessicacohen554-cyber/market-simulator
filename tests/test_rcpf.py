@@ -3,12 +3,17 @@
 import numpy as np
 import pytest
 
-from market_sim.config.constants import NYISO_RCPF_PRODUCTS
+from market_sim.config.constants import (
+    NYISO_RCPF_LOCATIONAL,
+    NYISO_RCPF_PRODUCTS,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results.rcpf import (
+    locational_zone_adders,
     rcpf_adder,
     rcpf_product_prices,
     reserve_demand_price,
+    resolve_rcpf_locational,
     resolve_rcpf_products,
 )
 
@@ -103,3 +108,79 @@ def test_resolve_products_default_and_override():
 def test_config_flag_defaults_off():
     assert ScenarioConfig().nyiso_rcpf_enabled is False
     assert ScenarioConfig().nyiso_rcpf_products is None
+    assert ScenarioConfig().nyiso_rcpf_locational is None
+
+
+# --- locational (zonal) reserve cascade ------------------------------------
+
+# The five model zones, ample reserves everywhere (no shortage anywhere).
+_AMPLE = {
+    "Upstate_West": np.full(4, 9000.0),
+    "Capital_Hudson": np.full(4, 4000.0),
+    "Lower_Hudson": np.full(4, 2000.0),
+    "NYC": np.full(4, 6000.0),
+    "Long_Island": np.full(4, 3000.0),
+}
+
+
+def test_locational_zero_when_every_region_ample():
+    adders = locational_zone_adders(_AMPLE)
+    assert set(adders) == set(_AMPLE)
+    for a in adders.values():
+        assert np.allclose(a, 0.0)
+
+
+def test_locational_cascade_membership():
+    # Upstate carries no locational region; NYC carries the most (East+NYC,
+    # SENY is scaffolded empty). Reserves zero everywhere -> every region's
+    # products pin to max, so the per-zone adder is the sum over the regions
+    # that contain the zone.
+    zero = {z: np.zeros(2) for z in _AMPLE}
+    adders = locational_zone_adders(zero)
+    # Upstate is in no locational region.
+    assert np.allclose(adders["Upstate_West"], 0.0)
+    east_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["East"]["products"])
+    nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
+    # Capital_Hudson: East only.
+    assert adders["Capital_Hudson"][0] == pytest.approx(east_max)
+    # NYC: East + NYC (deepest in the cascade).
+    assert adders["NYC"][0] == pytest.approx(east_max + nyc_max)
+    # NYC adder strictly exceeds every upstate/East-only zone.
+    assert adders["NYC"][0] > adders["Capital_Hudson"][0] > 0.0
+
+
+def test_locational_region_headroom_is_summed_over_member_zones():
+    # East requirement is 1,200 MW over F-K. Split 700 + 500 across two member
+    # zones -> region reserve 1,200 == requirement -> $0 East contribution.
+    at_req = {z: np.zeros(1) for z in _AMPLE}
+    at_req["Capital_Hudson"] = np.array([700.0])
+    at_req["Lower_Hudson"] = np.array([500.0])
+    # The other East members (NYC, Long_Island) at 0 -> region total 1200.
+    at_req["NYC"] = np.array([0.0])
+    at_req["Long_Island"] = np.array([0.0])
+    a = locational_zone_adders(at_req)
+    # East region reserve = 1200 == requirement -> East contributes 0; NYC zone
+    # still has its own NYC-region shortage though (reserve 0).
+    nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
+    assert a["Capital_Hudson"][0] == pytest.approx(0.0)
+    assert a["NYC"][0] == pytest.approx(nyc_max)
+
+
+def test_locational_resolve_default_and_override():
+    assert resolve_rcpf_locational(ScenarioConfig()) is NYISO_RCPF_LOCATIONAL
+    custom = {"NYC": {"zones": ("NYC",),
+                      "products": (("z", 500.0, 0.0, 999.0),)}}
+    cfg = ScenarioConfig(nyiso_rcpf_locational=custom)
+    assert resolve_rcpf_locational(cfg) is custom
+    a = locational_zone_adders({"NYC": np.zeros(1)}, config=cfg)
+    assert a["NYC"][0] == pytest.approx(999.0)
+
+
+def test_locational_empty_products_region_is_noop():
+    # SENY is scaffolded with no products: it must not raise or contribute.
+    only_seny = {"Lower_Hudson": np.zeros(1), "NYC": np.zeros(1),
+                 "Long_Island": np.zeros(1)}
+    regions = {"SENY": NYISO_RCPF_LOCATIONAL["SENY"]}
+    a = locational_zone_adders(only_seny, regions=regions)
+    for v in a.values():
+        assert np.allclose(v, 0.0)
