@@ -19,6 +19,7 @@ need constants entries).
 """
 
 import numpy as np
+import pandas as pd
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
@@ -327,4 +328,107 @@ def inject_interchange_shape(
                 ).copy()
             for r in exp_rows:
                 fleet_arrays.min_gen[r, :] = fleet_arrays.pmin[r] * exp_frac
+    return True
+
+
+# Midday solar-glut window (local hour-of-day, ``[start, end)``) over which the
+# CAISO RA must-offer gas floor binds — the duck-curve belly when CAISO is long
+# and exports/curtails its surplus. Outside it the gas fleet dispatches purely
+# economically (no floor), so the evening ramp and overnight hours are
+# unchanged. Mirrors the existing seasonal must-run windows (``_GAS_ST_SUMMER_
+# MONTHS`` in data/fleet.py): a documented operating window, not a fitted value.
+CAISO_GAS_FLOOR_HOURS: tuple[int, int] = (9, 16)
+
+
+def inject_caiso_gas_commitment_floor(
+    fleet_arrays,
+    iso: str,
+    year: int,
+    frac: float = 1.0,
+    percentile: float = 50.0,
+    hod_window: tuple[int, int] = CAISO_GAS_FLOOR_HOURS,
+) -> bool:
+    """Floor the CAISO gas fleet midday at the measured EIA-930 ``NG: NG``.
+
+    Models CAISO's Resource-Adequacy **must-offer** obligation: RA-committed
+    gas stays online at minimum load through the midday solar glut (it cannot
+    economically cycle off and back on for the evening ramp), so it
+    over-generates midday and the ISO exports/curtails the surplus at ~$0. The
+    economic dispatch instead decommits gas to ~2 GW midday and imports the
+    balance, staying balanced — so its marginal is always a ≥$28 import/gas and
+    the midday LMP floors far above the real ~$0/negative price.
+
+    After :func:`~market_sim.data.fleet.generators_to_fleet_arrays` builds the
+    fleet, this imposes a hard minimum-generation floor on the gas fleet
+    (``gas_cc`` / ``gas_ct`` / ``gas_st``) over the midday ``hod_window``,
+    sized to ``frac`` × the measured EIA-930 ``NG: NG`` (month×hour-of-day
+    ``percentile``) profile (:func:`~market_sim.data.eia_loader
+    .measured_gas_floor_profile`). The hourly fleet target is distributed over
+    the gas units **cheapest-first** (by heat rate), each capped at its
+    available capacity — the same hour-varying ``FleetArrays.min_gen`` lower
+    bound the CHP steam floor and the CT reliability-deployment overlay use, and
+    composed with any floor already present via ``maximum``. The floor makes the
+    model long midday; pair it with ``--interchange-shaping`` (export side) and
+    the $0 export/curtailment sink so the surplus prices at ~$0.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when ``iso`` is not CAISO, ``frac`` is
+    non-positive, the fleet has no gas units, or no measured ``NG: NG`` profile
+    is available (forecast year / unmapped ISO).
+    """
+    if iso != "CAISO" or frac <= 0.0:
+        return False
+    from market_sim.data.eia_loader import measured_gas_floor_profile
+    from market_sim.data.fleet import FUEL_TYPE_MAP
+
+    gas_codes = [FUEL_TYPE_MAP[f] for f in ("gas_cc", "gas_ct", "gas_st")]
+    is_gas = np.isin(fleet_arrays.fuel_type_idx, gas_codes)
+    gas_rows = np.flatnonzero(is_gas & (fleet_arrays.pmax > 0.0))
+    if gas_rows.size == 0:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    profile = measured_gas_floor_profile(iso, year, hours, percentile)
+    if profile is None:
+        return False
+
+    # Restrict the floor to the midday window (zero elsewhere). Row 0 of the
+    # dispatch is the first local hour of the year, so a plain local clock
+    # reproduces the hour-of-day index (the interchange-envelope convention).
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    hod = clock.hour.to_numpy()
+    start, end = hod_window
+    midday = (hod >= start) & (hod < end)
+    target = np.zeros(hours, dtype=float)
+    target[midday] = frac * np.asarray(profile, dtype=float)[midday]
+
+    # Never demand more gas than the fleet can supply that hour, so a feasible
+    # LP solution always exists (the floor cannot manufacture unmet demand).
+    avail_cap = (
+        fleet_arrays.pmax[gas_rows, np.newaxis]
+        * fleet_arrays.availability[gas_rows, :]
+    )
+    np.minimum(target, avail_cap.sum(axis=0), out=target)
+
+    if fleet_arrays.min_gen is None:
+        fleet_arrays.min_gen = np.broadcast_to(
+            fleet_arrays.pmin[:, np.newaxis],
+            (fleet_arrays.pmin.size, hours),
+        ).copy()
+
+    # Distribute the hourly fleet target cheapest-first (by heat rate), each
+    # unit capped at its available capacity — the convention the CT/reliability
+    # deployment overlays use (data/fleet.py). ``maximum`` composes the floor
+    # with any CHP/ST/export floor already in min_gen rather than clobbering it.
+    order = gas_rows[
+        np.argsort(fleet_arrays.heat_rate[gas_rows], kind="stable")
+    ]
+    remaining = target.copy()
+    for r in order:
+        cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        take = np.minimum(remaining, cap)
+        np.maximum(
+            fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :]
+        )
+        remaining = remaining - take
     return True

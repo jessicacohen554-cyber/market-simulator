@@ -15,6 +15,7 @@ from market_sim.data.eia_loader import (
     load_demand_meta,
     load_ercot_battery_gen,
     load_generation_profiles,
+    measured_gas_floor_profile,
     measured_interchange_envelope,
     nyiso_zonal_load_shares,
 )
@@ -293,6 +294,40 @@ class TestInterchangeEnvelope(unittest.TestCase):
     def test_forecast_year_returns_none(self):
         self.assertIsNone(
             measured_interchange_envelope("CAISO", 2030, HOURS_PER_YEAR)
+        )
+
+
+class TestGasFloorProfile(unittest.TestCase):
+    """Measured EIA-930 NG: NG midday gas-floor profile (CAISO)."""
+
+    def test_caiso_profile_shape_and_spring_midday_level(self):
+        prof = measured_gas_floor_profile("CAISO", 2024, HOURS_PER_YEAR)
+        self.assertIsNotNone(prof)
+        self.assertEqual(prof.shape, (HOURS_PER_YEAR,))
+        self.assertTrue((prof >= 0).all())
+        import pandas as pd
+        cal = pd.date_range("2024-01-01", periods=HOURS_PER_YEAR, freq="h")
+        hod = cal.hour.to_numpy()
+        month = cal.month.to_numpy()
+        # Real CAISO runs several GW of gas at spring midday (the diagnosis:
+        # ~6-7.6 GW NG: NG); the measured median is comfortably above 3 GW.
+        spring_mid = np.isin(month, [4, 5]) & (hod >= 11) & (hod <= 14)
+        self.assertGreater(prof[spring_mid].mean(), 3000.0)
+
+    def test_percentile_orders(self):
+        # A higher percentile gives a higher (or equal) floor everywhere.
+        lo = measured_gas_floor_profile("CAISO", 2024, HOURS_PER_YEAR, 25.0)
+        hi = measured_gas_floor_profile("CAISO", 2024, HOURS_PER_YEAR, 75.0)
+        self.assertTrue((hi >= lo - 1e-6).all())
+
+    def test_forecast_year_returns_none(self):
+        self.assertIsNone(
+            measured_gas_floor_profile("CAISO", 2030, HOURS_PER_YEAR)
+        )
+
+    def test_unmapped_iso_returns_none(self):
+        self.assertIsNone(
+            measured_gas_floor_profile("ZZZ", 2024, HOURS_PER_YEAR)
         )
 
 

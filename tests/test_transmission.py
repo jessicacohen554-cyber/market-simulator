@@ -3,6 +3,7 @@
 import unittest
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.constants import (
     CARB_UNSPECIFIED_IMPORT_EF,
@@ -22,6 +23,7 @@ from market_sim.data.fleet import (
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.transmission import (
+    CAISO_GAS_FLOOR_HOURS,
     build_export_sinks,
     build_import_generators,
     build_incidence_matrix,
@@ -29,6 +31,7 @@ from market_sim.model.transmission import (
     build_wecc_import_generators,
     extend_with_import_node,
     get_ttc_array,
+    inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
     wecc_border_carbon_adder,
 )
@@ -426,6 +429,140 @@ class TestInterchangeShaping(unittest.TestCase):
         before = fa.availability.copy()
         self.assertFalse(inject_interchange_shape(fa, "CAISO", 2030))
         np.testing.assert_array_equal(fa.availability, before)
+
+
+class TestCaisoGasCommitmentFloor(unittest.TestCase):
+    """CAISO RA must-offer midday minimum-commitment floor on the gas fleet."""
+
+    def _gas_fleet(self, hours, cc_mw=2000.0, ct_mw=1500.0):
+        # Two gas units (CC cheaper than CT) + an import tranche + an export
+        # sink with a negative pmin, so the export-sink-preservation path is
+        # exercised. A small default cap (3.5 GW) is well below the measured
+        # NG: NG (6-9 GW midday) so the clamp path is exercised; pass a large
+        # cap to leave the floor unclamped.
+        gens = [
+            Generator(unit_id="cc", name="cc", zone="NP15", fuel_type="gas_cc",
+                      pmax_mw=cc_mw, pmin_mw=0.0, heat_rate=7.0),
+            Generator(unit_id="ct", name="ct", zone="SP15", fuel_type="gas_ct",
+                      pmax_mw=ct_mw, pmin_mw=0.0, heat_rate=10.0),
+            Generator(unit_id="imp", name="imp", zone="WECC_import",
+                      fuel_type="import", pmax_mw=5000.0, pmin_mw=0.0),
+            Generator(unit_id="exp", name="exp", zone="WECC_import",
+                      fuel_type="import", pmax_mw=0.0, pmin_mw=-3000.0),
+        ]
+        zone_names = ["NP15", "SP15", "WECC_import"]
+        fa = generators_to_fleet_arrays(gens, zone_names, hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, clock.month.to_numpy(), clock.hour.to_numpy()
+
+    def test_floors_gas_midday_and_leaves_night_unfloored(self):
+        H = 8760
+        fa, gens, month, hod = self._gas_fleet(H)
+        self.assertIsNone(fa.min_gen)
+        applied = inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
+        self.assertTrue(applied)
+        self.assertIsNotNone(fa.min_gen)
+
+        is_gas = np.array(
+            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
+        )
+        gas_floor = fa.min_gen[is_gas].sum(axis=0)
+        lo, hi = CAISO_GAS_FLOOR_HOURS
+        midday = (hod >= lo) & (hod < hi)
+        night = hod < lo
+        # Spring midday is floored well above zero (real CAISO ~6-7 GW gas).
+        spring_mid = midday & np.isin(month, [4, 5])
+        self.assertGreater(gas_floor[spring_mid].mean(), 1000.0)
+        # Outside the window the gas fleet carries no floor.
+        np.testing.assert_array_equal(gas_floor[night], 0.0)
+
+    def test_floor_never_exceeds_available_capacity(self):
+        # The measured NG: NG (~6-9 GW) exceeds this tiny fleet's 3.5 GW, so the
+        # floor must clamp to the available cap — never manufacturing infeasible
+        # demand the LP can't serve.
+        H = 8760
+        fa, gens, _, _ = self._gas_fleet(H)
+        inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
+        is_gas = np.array(
+            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
+        )
+        cap = (fa.pmax[is_gas, None] * fa.availability[is_gas]).sum(axis=0)
+        floor = fa.min_gen[is_gas].sum(axis=0)
+        self.assertTrue(bool((floor <= cap + 1e-6).all()))
+
+    def test_cheapest_unit_floored_first(self):
+        # With a large CC cap (> the measured NG: NG), the whole fleet target
+        # lands on the CC (cheapest) and the CT carries no floor.
+        H = 8760
+        fa, gens, _, hod = self._gas_fleet(H, cc_mw=30000.0, ct_mw=1500.0)
+        inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
+        lo, hi = CAISO_GAS_FLOOR_HOURS
+        midday = (hod >= lo) & (hod < hi)
+        cc_floor = fa.min_gen[0]
+        ct_floor = fa.min_gen[1]
+        self.assertGreater(cc_floor[midday].mean(), 3000.0)  # carries the floor
+        np.testing.assert_array_equal(ct_floor, 0.0)  # CT untouched
+
+    def test_export_sink_pmin_preserved(self):
+        # Creating min_gen must keep the export sink's negative lower bound,
+        # else a zero floor would pin the sink off (no exports).
+        fa, gens, _, _ = self._gas_fleet(48)
+        inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
+        exp_row = [g.unit_id for g in gens].index("exp")
+        np.testing.assert_array_equal(
+            fa.min_gen[exp_row], fa.pmin[exp_row]
+        )
+
+    def test_non_caiso_is_no_op(self):
+        fa, _, _, _ = self._gas_fleet(48)
+        self.assertFalse(inject_caiso_gas_commitment_floor(fa, "PJM", 2024, 1.0))
+        self.assertIsNone(fa.min_gen)
+
+    def test_nonpositive_frac_is_no_op(self):
+        fa, _, _, _ = self._gas_fleet(48)
+        self.assertFalse(
+            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 0.0)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_forecast_year_is_no_op(self):
+        # No EIA-930 NG: NG profile for a forecast year -> no floor.
+        fa, _, _, _ = self._gas_fleet(48)
+        self.assertFalse(
+            inject_caiso_gas_commitment_floor(fa, "CAISO", 2030, 1.0)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_no_gas_units_is_no_op(self):
+        # An all-import fleet (no gas rows) -> no floor.
+        gens = [
+            Generator(unit_id="imp", name="imp", zone="WECC_import",
+                      fuel_type="import", pmax_mw=5000.0, pmin_mw=0.0),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["WECC_import"], hours=48)
+        self.assertFalse(
+            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
+        )
+        self.assertIsNone(fa.min_gen)
+
+    def test_frac_scales_the_floor(self):
+        # A large fleet cap leaves the floor unclamped, so frac scales it
+        # linearly: the 0.3 floor is exactly 0.3x the full floor.
+        H = 8760
+        fa_full, gens, _, hod = self._gas_fleet(H, cc_mw=30000.0)
+        fa_half, _, _, _ = self._gas_fleet(H, cc_mw=30000.0)
+        inject_caiso_gas_commitment_floor(fa_full, "CAISO", 2024, 1.0)
+        inject_caiso_gas_commitment_floor(fa_half, "CAISO", 2024, 0.3)
+        is_gas = np.array(
+            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
+        )
+        full = fa_full.min_gen[is_gas].sum(axis=0)
+        half = fa_half.min_gen[is_gas].sum(axis=0)
+        lo, hi = CAISO_GAS_FLOOR_HOURS
+        midday = (hod >= lo) & (hod < hi) & (full > 0.0)
+        self.assertTrue(midday.any())
+        ratio = half[midday] / full[midday]
+        self.assertTrue(np.allclose(ratio, 0.3, atol=1e-6))
 
 
 class TestGenericImportNode(unittest.TestCase):
