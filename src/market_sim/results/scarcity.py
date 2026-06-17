@@ -669,7 +669,7 @@ def largest_single_contingency_mw(
     return max(by_plant.values()) if by_plant else 0.0
 
 
-_PJM_AS_DIR = Path(__file__).resolve().parents[2] / "inputs" / "raw-data" / "PJM-AS"
+_PJM_AS_DIR = Path(__file__).resolve().parents[3] / "inputs" / "raw-data" / "PJM-AS"
 
 
 def load_pjm_measured_reserve_requirement(
