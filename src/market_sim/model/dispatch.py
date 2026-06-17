@@ -476,23 +476,28 @@ def _build_reserve_rows(
     reserve_requirement: np.ndarray,
     reserve_eligible: np.ndarray,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
-    """Build the energy+reserve co-optimization constraint rows.
+    """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
-    Two families (vectorized, no Python loop over hours):
+    Reserve is tracked per *zone* (``n_reserve == n_zones``), not per unit: one
+    reserve variable ``R_z[z,t]`` and one shared-headroom row per zone-hour.
+    This keeps the LP tractable at per-plant fleet scale (a per-unit headroom
+    row for every generator-hour is tens of millions of rows; per-zone is a few
+    per hour) while giving the same economics — the zonal headroom dual is what
+    lifts that zone's energy LMP. Two families, both vectorized (no hour loop):
 
-    * **Shared headroom** -- for each reserve-eligible generator ``g`` and hour
-      ``t``: ``P[g,t] + R[g,t] <= pmax*avail[g,t]``. A unit's capacity is split
-      between energy and upward reserve, so committing energy consumes reserve
-      headroom (and vice-versa). This shared scarcity is what transfers the
-      reserve price into the energy LMP.
+    * **Shared headroom** -- for each zone ``z`` and hour ``t``:
+      ``sum_{eligible g in z} P[g,t] + R_z[z,t] <= sum_{eligible g in z}
+      cap[g,t]``. The zone's thermal capacity is split between energy and upward
+      reserve, so committing energy consumes reserve headroom and vice-versa.
     * **Reserve balance** -- for each hour ``t``:
-      ``sum_g R[g,t] + sum_k ORDC_k[t] >= requirement[t]``. The ORDC shortfall
+      ``sum_z R_z[z,t] + sum_k ORDC_k[t] >= requirement[t]``. The ORDC shortfall
       steps let the requirement go unmet at the published penalty price, so the
       balance-row dual is the reserve clearing price.
 
     Args:
-        layout: Variable layout (must have ``n_reserve == n_gen``).
-        fleet: Fleet arrays supplying ``pmax`` and ``(n_gen, T)`` availability.
+        layout: Variable layout (must have ``n_reserve == n_zones``).
+        fleet: Fleet arrays supplying ``pmax``, ``(n_gen, T)`` availability and
+            per-generator ``zone_idx``.
         reserve_requirement: ``(T,)`` hourly reserve requirement in MW.
         reserve_eligible: ``(n_gen,)`` boolean of reserve-eligible generators.
 
@@ -502,32 +507,42 @@ def _build_reserve_rows(
         rows are ``>=`` (upper ``+inf``).
     """
     T = layout.T
-    vph = layout.vars_per_hour
-    hour_off = np.arange(T) * vph  # (T,) per-hour column stride
+    n_zones = layout.n_zones
+    elig = np.asarray(reserve_eligible, dtype=bool)  # (n_gen,)
+    cap = fleet.pmax[:, np.newaxis] * fleet.availability  # (n_gen, T)
+    zone_idx = np.asarray(fleet.zone_idx, dtype=int)
 
-    elig = np.flatnonzero(np.asarray(reserve_eligible, dtype=bool))  # (n_e,)
-    n_e = elig.size
-    cap = (fleet.pmax[:, np.newaxis] * fleet.availability)  # (n_gen, T)
-
-    # --- Shared-headroom rows: P[g,t] + R[g,t] <= cap, one per (eligible g, t).
-    # Row (i, t) -> local row i*T + t. Two entries: P col and R col.
-    g_cols_p = hour_off[None, :] + layout._p_off + elig[:, None]       # (n_e, T)
-    g_cols_r = hour_off[None, :] + layout._reserve_off + elig[:, None]  # (n_e, T)
-    hr_rows = (np.arange(n_e)[:, None] * T + np.arange(T)[None, :])     # (n_e, T)
-    rows = np.concatenate([hr_rows.ravel(), hr_rows.ravel()])
-    cols = np.concatenate([g_cols_p.ravel(), g_cols_r.ravel()])
-    data = np.ones(rows.size, dtype=float)
-    headroom = sp.csr_matrix(
-        (data, (rows, cols)), shape=(n_e * T, layout.total_columns)
+    # Eligible-generator -> zone incidence, (n_zones, n_gen): 1 where g is
+    # reserve-eligible and resides in zone z.
+    e_idx = np.flatnonzero(elig)
+    zone_gen_elig = sp.csr_matrix(
+        (np.ones(e_idx.size), (zone_idx[e_idx], e_idx)),
+        shape=(n_zones, layout.n_gen),
     )
-    hr_lower = np.full(n_e * T, -np.inf)
-    hr_upper = cap[elig, :].ravel()  # (n_e*T,), hour-major per eligible unit
 
-    # --- Reserve-balance rows: sum_g R + sum_k ORDC_k >= requirement, one/hour.
-    # Per-hour row vector with 1s on every eligible R column and every ORDC col.
-    bal_row = sp.lil_matrix((1, vph))
-    for g in elig:
-        bal_row[0, layout._reserve_off + int(g)] = 1.0
+    # --- Shared-headroom per-hour block, (n_zones, vph): +1 on each eligible
+    # gen's P column (zone-summed) and +1 on this zone's reserve column.
+    zeros = lambda w: sp.csr_matrix((n_zones, w))  # noqa: E731
+    headroom_per_hour = sp.hstack(
+        [
+            zone_gen_elig,                                  # P block
+            zeros(layout._reserve_off - layout._w_off),     # W..dump
+            sp.eye(n_zones, format="csr"),                  # reserve block
+            zeros(layout.n_ordc_steps),                     # ORDC block
+        ],
+        format="csr",
+    )
+    headroom = sp.kron(sp.eye(T, format="csr"), headroom_per_hour, format="csr")
+    # RHS: zone-summed eligible capacity per hour, hour-major (row t*n_zones+z).
+    zone_cap = zone_gen_elig @ cap  # (n_zones, T)
+    hr_upper = zone_cap.T.ravel()
+    hr_lower = np.full(n_zones * T, -np.inf)
+
+    # --- Reserve-balance per-hour row, (1, vph): 1 on every reserve and ORDC
+    # column. sum_z R_z + sum_k ORDC_k >= requirement.
+    bal_row = sp.lil_matrix((1, layout.vars_per_hour))
+    for z in range(n_zones):
+        bal_row[0, layout._reserve_off + z] = 1.0
     for k in range(layout.n_ordc_steps):
         bal_row[0, layout._ordc_off + k] = 1.0
     balance = sp.kron(sp.eye(T, format="csr"), bal_row.tocsr(), format="csr")
@@ -833,7 +848,6 @@ def build_variable_bounds(
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
     ttc: np.ndarray | None = None,
-    reserve_eligible: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
@@ -926,18 +940,11 @@ def build_variable_bounds(
     col_upper[:, layout._dump_off : layout._reserve_off] = np.inf
 
     # Energy+reserve co-optimization bounds (co-opt only).
-    # Reserve R[g,t]: 0 <= R <= pmax*availability for reserve-eligible units
-    # (the headroom each unit can offer up); 0 for ineligible units. The
-    # shared-headroom constraint (build_constraints) then enforces P + R <= cap.
+    # Per-zone reserve R_z[z,t]: 0 <= R_z <= inf; the per-zone shared-headroom
+    # constraint (build_constraints: sum_{eligible g in z} P + R_z <= zone cap)
+    # is what bounds it, transferring the reserve price into that zone's LMP.
     if layout.n_reserve > 0:
-        elig = (
-            np.ones(layout.n_gen, dtype=bool)
-            if reserve_eligible is None
-            else np.asarray(reserve_eligible, dtype=bool)
-        )
-        reserve_cap = (fleet.pmax[:, np.newaxis] * fleet.availability).T
-        reserve_cap = reserve_cap * elig[np.newaxis, :]
-        col_upper[:, layout._reserve_off : layout._ordc_off] = reserve_cap
+        col_upper[:, layout._reserve_off : layout._ordc_off] = np.inf
 
     # ORDC shortfall steps S_k[t]: 0 <= S_k <= step width (MW). Each step's
     # width is the MW span the published demand curve prices at that penalty.
@@ -1010,7 +1017,7 @@ class DispatchResult:
     emissions: np.ndarray | None = None
     rps_shadow_price: float | None = None
     # Energy+reserve co-optimization outputs (None unless co-opt is on).
-    reserve_dispatch: np.ndarray | None = None   # (n_gen, T) upward reserve MW
+    reserve_dispatch: np.ndarray | None = None   # (n_zones, T) upward reserve MW
     reserve_price: np.ndarray | None = None       # (T,) reserve clearing $/MWh
 
 
@@ -1073,10 +1080,12 @@ class DispatchModel:
         n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
 
         # Energy+reserve co-optimization is active when a requirement is given.
-        # One reserve var per generator (eligibility via its bound) plus one
-        # shortfall var per published ORDC step.
+        # Reserve is tracked per ZONE (one reserve var + one shared-headroom row
+        # per zone-hour, not per unit — the per-unit form is tens of millions of
+        # rows at per-plant scale), plus one shortfall var per published ORDC
+        # step.
         coopt = reserve_requirement is not None
-        n_reserve = n_gen if coopt else 0
+        n_reserve = n_zones if coopt else 0
         n_ordc_steps = (
             0 if not coopt or ordc_penalties is None else len(ordc_penalties)
         )
@@ -1113,7 +1122,6 @@ class DispatchModel:
             storage_power_cap=storage_power_cap,
             storage_energy_cap=storage_energy_cap,
             ttc=ttc,
-            reserve_eligible=reserve_eligible,
             ordc_step_widths=ordc_step_widths,
         )
 
@@ -1184,17 +1192,9 @@ class DispatchModel:
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
-        if coopt:
-            elig = (
-                np.ones(n_gen, dtype=bool)
-                if reserve_eligible is None
-                else np.asarray(reserve_eligible, dtype=bool)
-            )
-            # Reserve block = shared-headroom rows (n_eligible*T) + reserve-
-            # balance rows (T), appended last; the balance rows are the final T.
-            self._n_reserve_rows = int(elig.sum()) * T + T
-        else:
-            self._n_reserve_rows = 0
+        # Reserve block = per-zone shared-headroom rows (n_zones*T) + reserve-
+        # balance rows (T), appended last; the balance rows are the final T.
+        self._n_reserve_rows = (n_zones * T + T) if coopt else 0
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         self.build_time = time.perf_counter() - build_start
         self._n_solves = 0
@@ -1303,10 +1303,10 @@ class DispatchModel:
             rps_idx = -1 - self._n_reserve_rows
             rps_shadow_price = float(row_dual[rps_idx])
 
-        # Energy+reserve co-optimization outputs. Reserve dispatch is the R[g,t]
-        # block; the reserve clearing price is the dual of the reserve-balance
-        # rows (the final T rows), which the shared-headroom constraint transfers
-        # into the energy LMP above.
+        # Energy+reserve co-optimization outputs. Reserve dispatch is the
+        # per-zone R_z block (n_zones, T); the reserve clearing price is the dual
+        # of the reserve-balance rows (the final T rows), which the per-zone
+        # shared-headroom constraint transfers into each zone's energy LMP above.
         reserve_dispatch = reserve_price = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
