@@ -209,5 +209,81 @@ class TestMeasuredRequirementHonestyGate(unittest.TestCase):
         self.assertAlmostEqual(formula[0], mean_req, delta=0.03 * mean_req)
 
 
+class TestErcotOrdcDemandSteps(unittest.TestCase):
+    """The ERCOT VOLL-anchored ORDC demand curve -> ascending LP shortfall steps."""
+
+    def _steps(self, **kw):
+        from market_sim.results.scarcity import ercot_ordc_demand_steps
+
+        params = dict(
+            voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
+            shift_sigma=0.5, n_steps=40, sigma_span=5.0, multistep_floor=False,
+        )
+        params.update(kw)
+        return ercot_ordc_demand_steps(**params)
+
+    def test_req_total_is_curve_top(self):
+        # req_total = mcl + (mu + shift*sigma) + sigma_span*sigma.
+        req_total, _, _ = self._steps()
+        self.assertAlmostEqual(req_total, 3000.0 + 700.0 + 5 * 1400.0)
+
+    def test_widths_span_full_requirement(self):
+        # Total shortfall capacity must let reserves fall to 0 in any hour.
+        req_total, _, widths = self._steps()
+        self.assertAlmostEqual(widths.sum(), req_total)
+
+    def test_penalties_ascend_cheapest_first(self):
+        # Outermost (highest-reserve) band is cheapest; ORDC price rises as
+        # reserves fall, so the discretized penalties must be non-decreasing.
+        _, pens, _ = self._steps()
+        self.assertTrue(np.all(np.diff(pens) >= -1e-9))
+
+    def test_penalties_capped_at_voll(self):
+        _, pens, _ = self._steps(voll=5000.0)
+        self.assertLessEqual(pens.max(), 5000.0 + 1e-6)
+        # The innermost band (reserves near 0, both LOLP terms -> 1) approaches
+        # VOLL.
+        self.assertGreater(pens.max(), 0.9 * 5000.0)
+
+    def test_higher_voll_scales_prices_up(self):
+        _, pens_lo, _ = self._steps(voll=5000.0)
+        _, pens_hi, _ = self._steps(voll=9000.0)
+        self.assertGreater(pens_hi.max(), pens_lo.max())
+
+    def test_multistep_floor_lifts_low_reserve_bands(self):
+        # With the OBDRR048 floor on, bands below 6,500 MW reserve are >= $20.
+        from market_sim.results.scarcity import ercot_ordc_demand_steps
+
+        req_total, pens, widths = ercot_ordc_demand_steps(
+            voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
+            shift_sigma=0.5, multistep_floor=True,
+        )
+        # Reserve at each band's lower edge, descending from req_total.
+        grid = np.linspace(req_total, 0.0, len(widths) + 1)
+        r_edge = grid[1:]
+        self.assertTrue(np.all(pens[r_edge <= 6500.0] >= 20.0 - 1e-9))
+
+
+class TestErcotReserveEligible(unittest.TestCase):
+    """Only dispatchable thermal classes back ORDC reserve."""
+
+    def test_thermal_eligible_renewables_not(self):
+        from types import SimpleNamespace
+
+        from market_sim.data.fleet import FUEL_TYPE_NAMES
+        from market_sim.results.scarcity import (
+            RESERVE_FUEL_TYPES,
+            ercot_reserve_eligible,
+        )
+
+        name_to_idx = {n: i for i, n in enumerate(FUEL_TYPE_NAMES)}
+        fuels = ["gas_ct", "coal", "nuclear", "wind", "solar", "hydro"]
+        idx = np.array([name_to_idx[f] for f in fuels if f in name_to_idx])
+        kept = [f for f in fuels if f in name_to_idx]
+        elig = ercot_reserve_eligible(SimpleNamespace(fuel_type_idx=idx))
+        for f, e in zip(kept, elig):
+            self.assertEqual(e, f in RESERVE_FUEL_TYPES, f"{f} eligibility")
+
+
 if __name__ == "__main__":
     unittest.main()
