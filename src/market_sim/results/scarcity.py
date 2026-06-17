@@ -604,6 +604,52 @@ def pjm_primary_reserve_requirement(
     return np.full(int(hours), max(0.0, factor * float(lsc_mw)), dtype=float)
 
 
+def pjm_ordc_shortfall_steps(
+    ordc_steps: list[tuple[float, float]],
+    requirement_mw: float,
+) -> tuple[float, np.ndarray, np.ndarray]:
+    """Convert the published ORDC demand curve into LP reserve-shortfall steps.
+
+    The published curve (``load_pjm_ordc_curve``) is a *descending* demand: at
+    reserves below the requirement the top penalty applies, and each breakpoint
+    ``requirement + offset`` above it steps the price down (to $0 past the last
+    breakpoint). The co-optimization LP instead needs *ascending* shortfall
+    steps for the reserve-balance row ``sum R + sum shortfall_k >= req_total``,
+    each ``shortfall_k in [0, width_k]`` priced at ``penalties_k``. Being short
+    by the cheapest band first reproduces the demand curve, so the balance-row
+    dual equals the binding step's penalty — the ORDC reserve clearing price.
+
+    For PJM's two-step curve ``[(0, 850), (190, 300)]`` at requirement ``REQ``
+    this returns ``req_total = REQ + 190`` and steps ``([300, 850], [190, REQ])``:
+    the first 190 MW of shortfall (reserves between ``REQ`` and ``REQ+190``)
+    costs $300, the rest (reserves below ``REQ``) costs $850.
+
+    Args:
+        ordc_steps: ``[(offset_mw, penalty_factor), ...]`` from
+            :func:`load_pjm_ordc_curve`.
+        requirement_mw: The reserve requirement REQ in MW (scalar).
+
+    Returns:
+        ``(req_total_mw, penalties, widths)``: the balance RHS and the per-step
+        penalty ($/MWh) and width (MW) arrays, ordered cheapest band first.
+    """
+    steps = sorted(ordc_steps)  # ascending offset
+    offsets = [o for o, _ in steps]
+    penalties = [p for _, p in steps]
+    req = float(requirement_mw)
+    req_total = req + offsets[-1]
+    pens: list[float] = []
+    widths: list[float] = []
+    # Outer bands between consecutive breakpoints, cheapest (outermost) first.
+    for k in range(len(steps) - 1, 0, -1):
+        widths.append(offsets[k] - offsets[k - 1])
+        pens.append(penalties[k])
+    # Inner band [0, requirement): being short below the requirement, top price.
+    widths.append(req)
+    pens.append(penalties[0])
+    return req_total, np.array(pens, dtype=float), np.array(widths, dtype=float)
+
+
 def pjm_online_reserve(
     avail_mw: np.ndarray,
     dispatch_mw: np.ndarray,
