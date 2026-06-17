@@ -1065,3 +1065,63 @@ class TestCcCapacityReconcile(unittest.TestCase):
         )["capacity_mw"].to_numpy()
         self.assertTrue(np.allclose(off, on))
 
+
+class TestOtherFossilScoring(unittest.TestCase):
+    """The OTHER_FOSSIL scoring bucket for genuinely-mixed gas-thermal plants."""
+
+    def _frame(self):
+        return pd.DataFrame({
+            "plant_code": [6243, 6243, 298, 4195, 6243],
+            "klass": ["CT_PEAKER", "ST_GAS", "COAL_PRB", "ST_GAS", "nuclear"],
+            "mw": [1.0, 1.0, 1.0, 1.0, 1.0],
+        })
+
+    def test_mixed_plants_rebucketed_both_classes(self):
+        from unittest import mock
+
+        from market_sim.data.fleet import apply_other_fossil_scoring
+        with mock.patch(
+            "market_sim.data.fleet.mixed_fossil_plants",
+            return_value=frozenset({6243, 4195}),
+        ):
+            out = apply_other_fossil_scoring(self._frame(), 2023)
+        klass = list(out["klass"])
+        # Both of mixed plant 6243's gas-thermal rows -> OTHER_FOSSIL ...
+        self.assertEqual(klass[0], "OTHER_FOSSIL")
+        self.assertEqual(klass[1], "OTHER_FOSSIL")
+        # ... 4195 too ...
+        self.assertEqual(klass[3], "OTHER_FOSSIL")
+        # ... but coal and the non-gas-thermal nuclear row are untouched.
+        self.assertEqual(klass[2], "COAL_PRB")
+        self.assertEqual(klass[4], "nuclear")
+
+    def test_no_mixed_plants_is_noop(self):
+        from unittest import mock
+
+        from market_sim.data.fleet import apply_other_fossil_scoring
+        df = self._frame()
+        with mock.patch(
+            "market_sim.data.fleet.mixed_fossil_plants",
+            return_value=frozenset(),
+        ):
+            out = apply_other_fossil_scoring(df, 2023)
+        self.assertEqual(list(out["klass"]), list(df["klass"]))
+
+    def test_categorical_class_column_supported(self):
+        from unittest import mock
+
+        from market_sim.data.fleet import apply_other_fossil_scoring
+        df = self._frame()
+        df["klass"] = df["klass"].astype("category")
+        with mock.patch(
+            "market_sim.data.fleet.mixed_fossil_plants",
+            return_value=frozenset({6243}),
+        ):
+            out = apply_other_fossil_scoring(df, 2023)
+        self.assertEqual(out["klass"].iloc[0], "OTHER_FOSSIL")
+
+    def test_real_eia923_flags_known_mixed_plant(self):
+        # Integration: Dansby (6243) is a ~50/50 steam+GT plant in 2023.
+        from market_sim.data.fleet import mixed_fossil_plants
+        self.assertIn(6243, mixed_fossil_plants(2023))
+
