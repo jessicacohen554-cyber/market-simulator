@@ -1064,3 +1064,4 @@ class TestCcCapacityReconcile(unittest.TestCase):
             self._BINS, capacity_reconcile_path="/nonexistent/recon.csv"
         )["capacity_mw"].to_numpy()
         self.assertTrue(np.allclose(off, on))
+

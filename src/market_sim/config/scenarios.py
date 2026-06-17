@@ -187,6 +187,21 @@ class ScenarioConfig:
     use_campd_bins: bool = True
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
+    # Commercial-operation-date (COD) vintage ramp (market_sim.data.cod_ramp).
+    # The backcast fleet snapshot is a recent vintage that includes units built
+    # AFTER the solved year; with this on (the default), every generator —
+    # thermal, nuclear, oil, and the ERCOT CAMPD bins — is masked month-by-month
+    # by its commercial-operation (and retirement) date, so a backcast dispatches
+    # only what was actually online: a unit that came online or retired part-way
+    # through the year is available only in the months it operated, applied as a
+    # single monthly mask inside generators_to_fleet_arrays. The month-precise
+    # COD comes from the EIA-860 plant-code map (cod_ramp.load_cod_map); this is
+    # the thermal analogue of vintage_capacity_ramp/storage_vintage_ramp. Pure
+    # capacity accounting (no fitting), so it is forecast-applicable as well as
+    # backcast-correct. Engages in backcast mode (forecast runs pass an explicit
+    # calendar year); set False to keep the full present-day snapshot (e.g. to
+    # reproduce a pre-COD-ramp run).
+    cod_ramp_enabled: bool = True
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
@@ -449,6 +464,18 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
+    energy_reserve_coopt: bool = False  # PJM: co-optimize energy and Primary
+    # Reserve inside the LP. Adds a per-unit reserve variable sharing each
+    # unit's headroom with energy (P + R <= pmax*avail), a reserve-balance
+    # constraint at the structural requirement (1.5 x most-severe single
+    # contingency, scarcity.pjm_primary_reserve_requirement), and the published
+    # two-step ORDC demand curve (inputs/calibration/pjm_ordc_curve.csv) as
+    # priced shortfall steps so the reserve clearing price emerges as the
+    # constraint dual and lifts the energy LMP endogenously. Replaces the
+    # post-solve derive_pjm_ordc_overlay.py adder when on (no double-count).
+    # Structural, forecast-applicable (requirement + price both move with the
+    # fleet); the measured PJM-AS series is a backcast honesty gate only.
+    # Default off (byte-identical); PJM-only until other ISOs are validated.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -537,7 +564,6 @@ class ScenarioConfig:
     # battery capability by 1.5-2 GW. Off by default: the ERCOT/PJM
     # backcasts were calibrated against flat year-end fleets and stay
     # unchanged until recalibrated (CAISO prompt pack E2).
-
     # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
     # Each coal bin is split into three tranches modeling its take-or-pay
     # fuel contract: a fraction of capacity at a fraction of fuel passthrough.
@@ -1389,6 +1415,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
+    "energy_reserve_coopt": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
@@ -1419,6 +1446,7 @@ TIER_TAGS: dict[str, int] = {
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
+    "cod_ramp_enabled": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
     "coal_tranche_2_frac": 3,

@@ -86,13 +86,26 @@ def _compare(model: float, benchmark: float, tolerance: float) -> dict:
 # --- Actuals source authority ----------------------------------------------
 # A volume comparison needs one authoritative "actual" per class. EIA-923
 # (Schedule-5 net generation) is authoritative for every dispatchable class,
-# EXCEPT solar: utility-scale plus distributed PV is under-reported in 923, so
-# solar volume is benchmarked against EIA-930 (hourly net generation by source)
-# instead. This is the single source-authority rule -- downstream consumers
-# (e.g. the backcast volume-error export) reuse it rather than re-deciding the
-# source per class, so the choice lives in one place.
+# EXCEPT the variable renewables (solar, wind): both are under-reported or
+# mis-assigned in EIA-923 relative to what actually reached the grid, so they
+# are benchmarked against EIA-930 (hourly net generation by source) instead.
+#   * solar: utility-scale plus distributed PV is under-reported in 923.
+#   * wind: the BA-level 923 net-gen survey systematically under-counts CISO
+#     wind (CA wind plants assigned to neighbouring BAs / out-of-state imports);
+#     it also collapses in the incomplete current-year (2025) 923 release for
+#     EVERY ISO. For COMPLETE vintages in the wind-heavy ISOs the 923 and 930
+#     wind totals agree to within a few percent (ERCOT/PJM/NYISO/NEISO 2023-24),
+#     so routing wind to 930 is a near-no-op there and a correction for CAISO /
+#     any incomplete vintage. EIA-930 is grid-side telemetry — exactly what the
+#     model's renewable dispatch targets.
+# This is the single source-authority rule -- downstream consumers (e.g. the
+# backcast volume-error export) reuse it rather than re-deciding the source per
+# class, so the choice lives in one place.
 EIA923_SOURCE: str = "eia923"
 EIA930_SOURCE: str = "eia930"
+
+# Classes whose authoritative volume actual is EIA-930, not EIA-923.
+_EIA930_CLASSES: frozenset[str] = frozenset({"solar", "wind"})
 
 
 def actuals_source(klass: str) -> str:
@@ -102,10 +115,11 @@ def actuals_source(klass: str) -> str:
         klass: Model plant-class key (e.g. ``"CC_REGULAR"``, ``"solar"``).
 
     Returns:
-        :data:`EIA930_SOURCE` for solar, :data:`EIA923_SOURCE` for every other
-        class.
+        :data:`EIA930_SOURCE` for the variable renewables (solar, wind),
+        :data:`EIA923_SOURCE` for every other class.
     """
-    return EIA930_SOURCE if str(klass).lower() == "solar" else EIA923_SOURCE
+    return (EIA930_SOURCE if str(klass).lower() in _EIA930_CLASSES
+            else EIA923_SOURCE)
 
 
 def signed_volume_error(model_twh: float, actual_twh: float) -> float:
