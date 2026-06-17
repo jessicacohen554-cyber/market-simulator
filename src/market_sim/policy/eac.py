@@ -97,6 +97,45 @@ def compute_eac_dispatch_credits(
     )
 
 
+def apply_negative_renewable_offer_floor(
+    wind_mc: np.ndarray | float,
+    solar_mc: np.ndarray | float,
+    config: ScenarioConfig,
+) -> tuple[np.ndarray | float, np.ndarray | float]:
+    """Floor the wind/solar dispatch offers at the negative keep-running value.
+
+    When ``config.negative_renewable_offers`` is on, each renewable's dispatch
+    offer is driven to at most ``-config.renewable_keep_running_value`` $/MWh —
+    the REC / PTC value a renewable on a PPA forgoes if curtailed, so it bids
+    below $0 to keep producing. In the oversupply (long) hours where the
+    marginal resource is curtailed wind/solar, the energy-balance dual then
+    clears negative, reproducing CAISO's negative midday LMPs; the existing $0
+    export/curtailment sink still floors any surplus that can be exported, so
+    the negative price only appears once that sink is exhausted (true forced
+    curtailment).
+
+    The floor is the MORE-negative of the existing offer and the keep-running
+    value (an element-wise ``min``), so a wind offer already carrying the
+    federal PTC (e.g. ``-26``) is left untouched — no double-count — while
+    solar, whose dispatch offer is ``$0`` (it earns the ITC, not the PTC), is
+    carried negative by the REC value.
+
+    When the flag is off this is an exact identity (byte-identical baseline).
+
+    Args:
+        wind_mc: Wind dispatch offer in $/MWh; scalar or ``(n_zones, T)``.
+        solar_mc: Solar dispatch offer in $/MWh; scalar or ``(n_zones, T)``.
+        config: Scenario config supplying the flag and the keep-running value.
+
+    Returns:
+        The ``(wind_mc, solar_mc)`` offers after applying the floor.
+    """
+    if not config.negative_renewable_offers:
+        return wind_mc, solar_mc
+    floor = -config.renewable_keep_running_value
+    return np.minimum(wind_mc, floor), np.minimum(solar_mc, floor)
+
+
 def get_eac_price_for_new_entry(tech: str, config: ScenarioConfig) -> float:
     """Return the exogenous EAC price in $/MWh for a resource type.
 
