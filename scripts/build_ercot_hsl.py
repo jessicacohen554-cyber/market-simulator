@@ -16,24 +16,32 @@ modeled curtailment against.
 
 Two source paths, by year:
 
-* **2023** — the UMass nodal-curtailment dataset (derived from ERCOT's
-  60-Day SCED Disclosure Reports), cloned from GitHub and aggregated from
-  per-plant 15-minute series:
-      https://github.com/codecexp/nodal-curtailment-analysis
-      Maji, Irwin, Shenoy, Sitaraman (UMass Amherst), ACM e-Energy 2025.
-
-* **2024 onward** — ERCOT MIS wind/solar power-production reports (the NP6
-  HSL upload) placed under ``inputs/raw-data/ercot-hsl/np6/``, as ``.csv``
-  or ``.zip`` of CSVs, flat or in per-year subdirectories. Accepted report
-  families (both carry system-wide actual GEN and system-wide actual HSL):
+* **Published NP6 (preferred, any year)** — ERCOT MIS wind/solar
+  power-production reports (the NP6 HSL upload) placed under
+  ``inputs/raw-data/ercot-hsl/np6/``, as ``.csv`` or ``.zip`` of CSVs, flat or
+  in per-year subdirectories. Accepted report families (both carry system-wide
+  actual GEN and system-wide actual HSL):
     - NP4-732-CD / NP4-737-CD  Wind / Solar Power Production — Hourly
       Averaged Actual and Forecasted Values
     - NP4-733-CD / NP4-738-CD  Wind / Solar Power Production — Actual
       5-Minute Averaged Values
   Files are matched to wind vs solar by filename or column signature, and
   rows lacking an actual value (the reports' forward-forecast rows) are
-  dropped. Until those uploads land for a year, the year is skipped with a
-  data-needed message — curtailment is never fabricated.
+  dropped. This is the authoritative full-footprint potential, so the
+  renewables loader consumes it directly (no coverage reconciliation).
+
+* **2023 fallback** — when no NP6 upload covers 2023, the UMass
+  nodal-curtailment dataset (derived from ERCOT's 60-Day SCED Disclosure
+  Reports), cloned from GitHub and aggregated from per-plant 15-minute series:
+      https://github.com/codecexp/nodal-curtailment-analysis
+      Maji, Irwin, Shenoy, Sitaraman (UMass Amherst), ACM e-Energy 2025.
+  This is a *partial-footprint* reconstruction whose delivered undercounts the
+  EIA-930 system total; the renewables loader reconciles it up to that level
+  preserving its measured curtailment ratio (``renewables.hsl_potential_mw``).
+  Drop the published 2023 NP4-732/737 reports into ``np6/`` to supersede it.
+
+For any year with neither source the year is skipped with a data-needed
+message — curtailment is never fabricated.
 
 The output series sit on the model's fixed non-leap 8760-hour clock keyed to
 ERCOT-local time: Feb 29 of a leap year is dropped, repeated fall-back hours
@@ -520,8 +528,29 @@ def print_validation(df: pd.DataFrame, year: int) -> None:
 
 
 def build_year(year: int) -> bool:
-    """Build and write one year's HSL parquet. Returns True on success."""
-    if year == UMASS_YEAR:
+    """Build and write one year's HSL parquet. Returns True on success.
+
+    Any year prefers the authoritative ERCOT NP4-732/737 power-production
+    reports (full-footprint published HSL) when an upload is present under
+    ``np6/``. 2023 additionally falls back to the UMass nodal reconstruction
+    when no NP6 upload exists — a partial-footprint source the renewables
+    loader reconciles up to the EIA-930 delivered level (see
+    ``renewables.hsl_potential_mw``); drop the published 2023 reports into
+    ``np6/`` to supersede it and retire the reconciliation entirely.
+    """
+    df = aggregate_np6_hourly(year)
+    if df is not None:
+        source = (
+            "ERCOT MIS wind/solar power production reports "
+            "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
+            "inputs/raw-data/ercot-hsl/np6/"
+        )
+        description = (
+            f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
+            "potential) and delivered generation, aggregated from ERCOT "
+            "MIS power-production reports (system-wide actual GEN and HSL)."
+        )
+    elif year == UMASS_YEAR:
         with tempfile.TemporaryDirectory() as tmp:
             data_dir = clone_dataset(Path(tmp) / "nodal-curtailment-analysis")
             df = aggregate_umass_hourly(data_dir)
@@ -529,12 +558,12 @@ def build_year(year: int) -> bool:
         description = (
             "ERCOT 2023 system-wide hourly wind/solar HSL (uncurtailed "
             "potential) and delivered generation, aggregated from the "
-            "UMass nodal-curtailment dataset (60-Day SCED Disclosure)."
+            "UMass nodal-curtailment dataset (60-Day SCED Disclosure). "
+            "Partial-footprint reconstruction — superseded by a published "
+            "NP4-732/737 upload in np6/ when available."
         )
     else:
-        df = aggregate_np6_hourly(year)
-        if df is None:
-            return False
+        return False
         source = (
             "ERCOT MIS wind/solar power production reports "
             "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
