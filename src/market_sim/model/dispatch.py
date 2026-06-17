@@ -41,6 +41,15 @@ class VariableLayout:
     n_storage: int
     n_links: int
     T: int = HOURS_PER_YEAR
+    # Energy+reserve co-optimization columns, appended after the dump block so
+    # every existing offset is unchanged. Both 0 (the default) leave
+    # ``vars_per_hour`` and the whole layout byte-identical to the energy-only
+    # LP. ``n_reserve`` is one upward-reserve variable per thermal generator
+    # (R[g,t], eligibility enforced by its upper bound); ``n_ordc_steps`` is the
+    # number of reserve-demand-curve shortfall variables per hour (the ORDC
+    # steps that price a reserve shortfall, system-wide).
+    n_reserve: int = 0
+    n_ordc_steps: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -50,6 +59,8 @@ class VariableLayout:
             + 4 * self.n_zones
             + 3 * self.n_storage
             + self.n_links
+            + self.n_reserve
+            + self.n_ordc_steps
         )
 
     @property
@@ -108,6 +119,16 @@ class VariableLayout:
             + self.n_zones
         )
 
+    @property
+    def _reserve_off(self) -> int:
+        """Per-hour offset of the upward-reserve block (co-opt only)."""
+        return self._dump_off + self.n_zones
+
+    @property
+    def _ordc_off(self) -> int:
+        """Per-hour offset of the ORDC shortfall block (co-opt only)."""
+        return self._reserve_off + self.n_reserve
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -144,6 +165,14 @@ class VariableLayout:
         """Return the column index of dump for zone ``z`` in hour ``t``."""
         return t * self.vars_per_hour + self._dump_off + z
 
+    def r_col(self, g: int, t: int) -> int:
+        """Return the column index of generator ``g``'s reserve in hour ``t``."""
+        return t * self.vars_per_hour + self._reserve_off + g
+
+    def ordc_col(self, k: int, t: int) -> int:
+        """Return the column index of ORDC shortfall step ``k`` in hour ``t``."""
+        return t * self.vars_per_hour + self._ordc_off + k
+
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
         start = self._p_off + g
@@ -159,6 +188,7 @@ def build_cost_vector(
     solar_mc: np.ndarray | float = 0.0,
     storage_discharge_eac: float = 0.0,
     storage_discharge_cost: np.ndarray | float = 0.0,
+    ordc_penalties: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -237,7 +267,27 @@ def build_cost_vector(
         -storage_discharge_eac,
     )
     dump_cost = max(storage_epsilon, -min_renewable_mc + storage_epsilon)
-    block[:, layout._dump_off :] = dump_cost
+    # Dump block only -- the reserve/ORDC co-opt blocks (when present) follow it
+    # and are priced separately below. With no co-opt columns _reserve_off ==
+    # total vars/hour, so this stays the original "to the end" assignment.
+    block[:, layout._dump_off : layout._reserve_off] = dump_cost
+
+    # Energy+reserve co-optimization (co-opt only; both blocks empty otherwise).
+    # Reserve variables R[g,t] carry no direct cost -- their economic cost is the
+    # energy opportunity cost, enforced by the shared-headroom constraint, which
+    # is exactly what lifts the energy LMP. The ORDC shortfall steps carry the
+    # published reserve-demand-curve penalty prices ($/MWh): paying step k's
+    # penalty is the system's willingness-to-pay to be short reserve, so the
+    # binding step sets the reserve clearing price (the balance-row dual).
+    if layout.n_ordc_steps > 0:
+        if ordc_penalties is None:
+            raise ValueError(
+                "build_cost_vector: n_ordc_steps > 0 requires ordc_penalties")
+        pen = np.asarray(ordc_penalties, dtype=float)
+        if pen.shape != (layout.n_ordc_steps,):
+            raise ValueError(
+                f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)")
+        block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
 
     return cost
 
@@ -420,6 +470,76 @@ def _build_storage_daily_cycle_rows(
     ).tocsr()
 
 
+def _build_reserve_rows(
+    layout: VariableLayout,
+    fleet: FleetArrays,
+    reserve_requirement: np.ndarray,
+    reserve_eligible: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Build the energy+reserve co-optimization constraint rows.
+
+    Two families (vectorized, no Python loop over hours):
+
+    * **Shared headroom** -- for each reserve-eligible generator ``g`` and hour
+      ``t``: ``P[g,t] + R[g,t] <= pmax*avail[g,t]``. A unit's capacity is split
+      between energy and upward reserve, so committing energy consumes reserve
+      headroom (and vice-versa). This shared scarcity is what transfers the
+      reserve price into the energy LMP.
+    * **Reserve balance** -- for each hour ``t``:
+      ``sum_g R[g,t] + sum_k ORDC_k[t] >= requirement[t]``. The ORDC shortfall
+      steps let the requirement go unmet at the published penalty price, so the
+      balance-row dual is the reserve clearing price.
+
+    Args:
+        layout: Variable layout (must have ``n_reserve == n_gen``).
+        fleet: Fleet arrays supplying ``pmax`` and ``(n_gen, T)`` availability.
+        reserve_requirement: ``(T,)`` hourly reserve requirement in MW.
+        reserve_eligible: ``(n_gen,)`` boolean of reserve-eligible generators.
+
+    Returns:
+        ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
+        and their bounds. Headroom rows are ``<=`` (lower ``-inf``); balance
+        rows are ``>=`` (upper ``+inf``).
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    hour_off = np.arange(T) * vph  # (T,) per-hour column stride
+
+    elig = np.flatnonzero(np.asarray(reserve_eligible, dtype=bool))  # (n_e,)
+    n_e = elig.size
+    cap = (fleet.pmax[:, np.newaxis] * fleet.availability)  # (n_gen, T)
+
+    # --- Shared-headroom rows: P[g,t] + R[g,t] <= cap, one per (eligible g, t).
+    # Row (i, t) -> local row i*T + t. Two entries: P col and R col.
+    g_cols_p = hour_off[None, :] + layout._p_off + elig[:, None]       # (n_e, T)
+    g_cols_r = hour_off[None, :] + layout._reserve_off + elig[:, None]  # (n_e, T)
+    hr_rows = (np.arange(n_e)[:, None] * T + np.arange(T)[None, :])     # (n_e, T)
+    rows = np.concatenate([hr_rows.ravel(), hr_rows.ravel()])
+    cols = np.concatenate([g_cols_p.ravel(), g_cols_r.ravel()])
+    data = np.ones(rows.size, dtype=float)
+    headroom = sp.csr_matrix(
+        (data, (rows, cols)), shape=(n_e * T, layout.total_columns)
+    )
+    hr_lower = np.full(n_e * T, -np.inf)
+    hr_upper = cap[elig, :].ravel()  # (n_e*T,), hour-major per eligible unit
+
+    # --- Reserve-balance rows: sum_g R + sum_k ORDC_k >= requirement, one/hour.
+    # Per-hour row vector with 1s on every eligible R column and every ORDC col.
+    bal_row = sp.lil_matrix((1, vph))
+    for g in elig:
+        bal_row[0, layout._reserve_off + int(g)] = 1.0
+    for k in range(layout.n_ordc_steps):
+        bal_row[0, layout._ordc_off + k] = 1.0
+    balance = sp.kron(sp.eye(T, format="csr"), bal_row.tocsr(), format="csr")
+    bal_lower = np.asarray(reserve_requirement, dtype=float).ravel()
+    bal_upper = np.full(T, np.inf)
+
+    block = sp.vstack([headroom, balance], format="csr")
+    row_lower = np.concatenate([hr_lower, bal_lower])
+    row_upper = np.concatenate([hr_upper, bal_upper])
+    return block, row_lower, row_upper
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -434,6 +554,8 @@ def build_constraints(
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    reserve_requirement: np.ndarray | None = None,
+    reserve_eligible: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -541,6 +663,10 @@ def build_constraints(
             flow_block,                          # transmission flow
             eye_z,                               # load slack (+)
             -eye_z,                              # overgeneration dump (-)
+            # Co-opt reserve/ORDC columns do not appear in the energy balance
+            # (zero blocks); empty when off, keeping per_hour width == vph.
+            sp.csr_matrix((n_zones, layout.n_reserve)),
+            sp.csr_matrix((n_zones, layout.n_ordc_steps)),
         ],
         format="csr",
     )
@@ -678,6 +804,22 @@ def build_constraints(
         row_lower = np.concatenate([row_lower, [rhs]])
         row_upper = np.concatenate([row_upper, [np.inf]])
 
+    # Optional energy+reserve co-optimization rows (shared headroom + reserve
+    # balance). Appended last so the reserve-balance dual is recoverable by row
+    # index. Omitted (identical LP) unless the layout carries reserve columns.
+    if layout.n_reserve > 0 and reserve_requirement is not None:
+        elig = (
+            np.ones(layout.n_gen, dtype=bool)
+            if reserve_eligible is None
+            else np.asarray(reserve_eligible, dtype=bool)
+        )
+        res_block, res_lower, res_upper = _build_reserve_rows(
+            layout, fleet, reserve_requirement, elig
+        )
+        A = sp.vstack([A, res_block], format="csr")
+        row_lower = np.concatenate([row_lower, res_lower])
+        row_upper = np.concatenate([row_upper, res_upper])
+
     return A, row_lower, row_upper
 
 
@@ -691,6 +833,8 @@ def build_variable_bounds(
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
     ttc: np.ndarray | None = None,
+    reserve_eligible: np.ndarray | None = None,
+    ordc_step_widths: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -776,8 +920,39 @@ def build_variable_bounds(
     # Load slack: 0 <= Slack <= inf.
     col_upper[:, layout._slack_off : layout._dump_off] = np.inf
 
-    # Overgeneration dump: 0 <= Dump <= inf.
-    col_upper[:, layout._dump_off :] = np.inf
+    # Overgeneration dump: 0 <= Dump <= inf. Bounded to the dump block so the
+    # co-opt reserve/ORDC blocks (when present) keep their own bounds below;
+    # with no co-opt columns _reserve_off == vph, recovering "to the end".
+    col_upper[:, layout._dump_off : layout._reserve_off] = np.inf
+
+    # Energy+reserve co-optimization bounds (co-opt only).
+    # Reserve R[g,t]: 0 <= R <= pmax*availability for reserve-eligible units
+    # (the headroom each unit can offer up); 0 for ineligible units. The
+    # shared-headroom constraint (build_constraints) then enforces P + R <= cap.
+    if layout.n_reserve > 0:
+        elig = (
+            np.ones(layout.n_gen, dtype=bool)
+            if reserve_eligible is None
+            else np.asarray(reserve_eligible, dtype=bool)
+        )
+        reserve_cap = (fleet.pmax[:, np.newaxis] * fleet.availability).T
+        reserve_cap = reserve_cap * elig[np.newaxis, :]
+        col_upper[:, layout._reserve_off : layout._ordc_off] = reserve_cap
+
+    # ORDC shortfall steps S_k[t]: 0 <= S_k <= step width (MW). Each step's
+    # width is the MW span the published demand curve prices at that penalty.
+    if layout.n_ordc_steps > 0:
+        if ordc_step_widths is None:
+            raise ValueError(
+                "build_variable_bounds: n_ordc_steps > 0 requires "
+                "ordc_step_widths")
+        widths = np.asarray(ordc_step_widths, dtype=float)
+        if widths.shape != (layout.n_ordc_steps,):
+            raise ValueError(
+                f"ordc_step_widths shape {widths.shape} != "
+                f"({layout.n_ordc_steps},)")
+        col_upper[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] \
+            = widths[np.newaxis, :]
 
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen
@@ -834,6 +1009,9 @@ class DispatchResult:
     solve_time: float
     emissions: np.ndarray | None = None
     rps_shadow_price: float | None = None
+    # Energy+reserve co-optimization outputs (None unless co-opt is on).
+    reserve_dispatch: np.ndarray | None = None   # (n_gen, T) upward reserve MW
+    reserve_price: np.ndarray | None = None       # (T,) reserve clearing $/MWh
 
 
 class DispatchModel:
@@ -878,6 +1056,10 @@ class DispatchModel:
         hydro_gen_idx: np.ndarray | None = None,
         hydro_monthly_min: np.ndarray | None = None,
         storage_daily_cycle_hours: int | None = None,
+        reserve_requirement: np.ndarray | None = None,
+        reserve_eligible: np.ndarray | None = None,
+        ordc_penalties: np.ndarray | None = None,
+        ordc_step_widths: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -890,9 +1072,18 @@ class DispatchModel:
         n_storage = 0 if storage_power_cap is None else len(storage_power_cap)
         n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
 
+        # Energy+reserve co-optimization is active when a requirement is given.
+        # One reserve var per generator (eligibility via its bound) plus one
+        # shortfall var per published ORDC step.
+        coopt = reserve_requirement is not None
+        n_reserve = n_gen if coopt else 0
+        n_ordc_steps = (
+            0 if not coopt or ordc_penalties is None else len(ordc_penalties)
+        )
+
         layout = VariableLayout(
             n_gen=n_gen, n_zones=n_zones, n_storage=n_storage,
-            n_links=n_links, T=T,
+            n_links=n_links, T=T, n_reserve=n_reserve, n_ordc_steps=n_ordc_steps,
         )
 
         A, row_lower, row_upper = build_constraints(
@@ -909,6 +1100,8 @@ class DispatchModel:
             hydro_gen_idx=hydro_gen_idx,
             hydro_monthly_min=hydro_monthly_min,
             storage_daily_cycle_hours=storage_daily_cycle_hours,
+            reserve_requirement=reserve_requirement,
+            reserve_eligible=reserve_eligible,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -920,6 +1113,8 @@ class DispatchModel:
             storage_power_cap=storage_power_cap,
             storage_energy_cap=storage_energy_cap,
             ttc=ttc,
+            reserve_eligible=reserve_eligible,
+            ordc_step_widths=ordc_step_widths,
         )
 
         # build_constraints returns CSR -- the row-wise layout HiGHS addRows
@@ -986,6 +1181,20 @@ class DispatchModel:
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
         self.rps_target = rps_target
+        # Co-opt state for re-costing and dual extraction.
+        self._coopt = coopt
+        self.ordc_penalties = ordc_penalties
+        if coopt:
+            elig = (
+                np.ones(n_gen, dtype=bool)
+                if reserve_eligible is None
+                else np.asarray(reserve_eligible, dtype=bool)
+            )
+            # Reserve block = shared-headroom rows (n_eligible*T) + reserve-
+            # balance rows (T), appended last; the balance rows are the final T.
+            self._n_reserve_rows = int(elig.sum()) * T + T
+        else:
+            self._n_reserve_rows = 0
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         self.build_time = time.perf_counter() - build_start
         self._n_solves = 0
@@ -1031,6 +1240,7 @@ class DispatchModel:
             layout, mc, self.voll, wind_mc=self.wind_mc, solar_mc=self.solar_mc,
             storage_discharge_eac=self.storage_discharge_eac,
             storage_discharge_cost=self.storage_discharge_cost,
+            ordc_penalties=self.ordc_penalties,
         )
 
         h = self._h
@@ -1068,7 +1278,8 @@ class DispatchModel:
         wind_dispatched = block[:, layout._w_off : layout._s_off].T
         solar_dispatched = block[:, layout._s_off : layout._chg_off].T
         slack = block[:, layout._slack_off : layout._dump_off].T
-        dump = block[:, layout._dump_off :].T
+        # Dump is the dump block only; with co-opt off _reserve_off == vph.
+        dump = block[:, layout._dump_off : layout._reserve_off].T
 
         storage_charge = storage_discharge = storage_soc = None
         if n_storage:
@@ -1084,12 +1295,22 @@ class DispatchModel:
         # for a minimization the equality dual is the zonal price (no negation).
         prices = row_dual[: n_zones * T].reshape(T, n_zones).T
 
-        # The RPS row, when present, is the final constraint row; its dual is
-        # the RPS shadow price -- the marginal cost of raising the clean-
-        # energy floor by one MWh.
+        # The RPS row, when present, is appended after the energy/storage/hydro
+        # rows; its dual is the RPS shadow price. The reserve block (when on) is
+        # appended *after* the RPS row, so index from the end past it.
         rps_shadow_price = None
         if self.rps_target is not None and self.rps_target > 0.0:
-            rps_shadow_price = float(row_dual[-1])
+            rps_idx = -1 - self._n_reserve_rows
+            rps_shadow_price = float(row_dual[rps_idx])
+
+        # Energy+reserve co-optimization outputs. Reserve dispatch is the R[g,t]
+        # block; the reserve clearing price is the dual of the reserve-balance
+        # rows (the final T rows), which the shared-headroom constraint transfers
+        # into the energy LMP above.
+        reserve_dispatch = reserve_price = None
+        if self._coopt:
+            reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
+            reserve_price = row_dual[-T:].reshape(T)
 
         return DispatchResult(
             dispatch=dispatch,
@@ -1104,6 +1325,8 @@ class DispatchModel:
             flows=flows,
             objective_value=h.getObjectiveValue(),
             status=h.modelStatusToString(h.getModelStatus()),
+            reserve_dispatch=reserve_dispatch,
+            reserve_price=reserve_price,
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
@@ -1140,6 +1363,10 @@ def solve_dispatch(
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
+    reserve_requirement: np.ndarray | None = None,
+    reserve_eligible: np.ndarray | None = None,
+    ordc_penalties: np.ndarray | None = None,
+    ordc_step_widths: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -1230,6 +1457,10 @@ def solve_dispatch(
         hydro_gen_idx=hydro_gen_idx,
         hydro_monthly_min=hydro_monthly_min,
         storage_daily_cycle_hours=storage_daily_cycle_hours,
+        reserve_requirement=reserve_requirement,
+        reserve_eligible=reserve_eligible,
+        ordc_penalties=ordc_penalties,
+        ordc_step_widths=ordc_step_widths,
         T=T,
     )
     return model.solve(
