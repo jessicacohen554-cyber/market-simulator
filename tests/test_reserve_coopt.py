@@ -58,6 +58,22 @@ class TestLargestSingleContingency(unittest.TestCase):
             largest_single_contingency_mw(retired),
         )
 
+    def test_plant_aggregation_sums_common_mode_units(self):
+        # Two 1100 MW units at one plant (common-mode) outrank a single 1300.
+        pmax = np.array([1100.0, 1100.0, 1300.0])
+        plant_code = np.array([10, 10, 20])  # units 0,1 share plant 10
+        self.assertEqual(
+            largest_single_contingency_mw(pmax, plant_code=plant_code), 2200.0
+        )
+
+    def test_plant_code_zero_treated_individually(self):
+        # plant_code <= 0 (imports / pseudo-units) never aggregate together.
+        pmax = np.array([800.0, 800.0, 1300.0])
+        plant_code = np.array([0, 0, 20])
+        self.assertEqual(
+            largest_single_contingency_mw(pmax, plant_code=plant_code), 1300.0
+        )
+
 
 class TestPrimaryReserveRequirement(unittest.TestCase):
     """The 1.5x-MSSC structural requirement."""
