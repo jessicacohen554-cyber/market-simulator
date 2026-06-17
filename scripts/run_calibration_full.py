@@ -1050,6 +1050,7 @@ def solve_and_persist(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
+    interchange_shaping: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1149,6 +1150,7 @@ def solve_and_persist(
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
+            interchange_shaping=interchange_shaping,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1280,6 +1282,7 @@ def solve_and_persist(
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
+        "interchange_shaping": interchange_shaping,
         "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
@@ -3130,6 +3133,14 @@ def main() -> None:
              "(default) changes no existing run. Pairs with "
              "--hydro-backfill-year, which supplies the per-plant coverage.")
     parser.add_argument(
+        "--interchange-shaping", action="store_true",
+        help="Shape the priced import/export node by the measured EIA-930 "
+             "month x hour-of-day net-interchange envelope, so it imports "
+             "overnight and EXPORTS the midday solar glut instead of clearing "
+             "a flat all-hours import. Targets CAISO's over-priced midday "
+             "floor. Requires --priced-interchange; no-op without a measured "
+             "envelope. Off (default) changes no existing run.")
+    parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
              "class netgen from this prior year when the backcast year's "
@@ -3299,6 +3310,7 @@ def main() -> None:
             args.priced_interchange, iso),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
+        interchange_shaping=args.interchange_shaping,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )

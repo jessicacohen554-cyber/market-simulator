@@ -417,6 +417,14 @@ class ScenarioConfig:
     # registry. 13.75% is ERCOT's economically-optimal reserve margin
     # (Brattle/Astrape 2022 study for the PUCT); a capacity-market ISO uses its
     # own installed-reserve-margin target from the registry.
+    interchange_shaping: bool = False  # Priced-interchange node: shape the
+    # import-tranche availability and export-sink floor by the measured EIA-930
+    # month x hour-of-day net-interchange envelope (transmission.
+    # inject_interchange_shape), so the node imports overnight and EXPORTS the
+    # midday solar glut instead of clearing a flat all-hours import. Default off
+    # (byte-identical); only fires when priced_interchange is on and a measured
+    # envelope exists. Targets CAISO's over-priced midday floor (the flat node
+    # floors price at the cheapest active import tranche all day).
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
@@ -1319,6 +1327,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_lolp_params_path": 2,
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
+    "interchange_shaping": 1,
     "as_reserve_withholding": 1,
     "storage_as_commitment": 1,
     "as_revenue_multiplier": 2,
