@@ -16,6 +16,7 @@ import numpy as np
 from market_sim.config.constants import PJM_PRIMARY_RESERVE_LSC_FACTOR
 from market_sim.results.scarcity import (
     largest_single_contingency_mw,
+    pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
 )
 
@@ -77,6 +78,30 @@ class TestPrimaryReserveRequirement(unittest.TestCase):
 
     def test_nonnegative(self):
         self.assertTrue((pjm_primary_reserve_requirement(0.0, 24) >= 0).all())
+
+
+class TestOrdcShortfallSteps(unittest.TestCase):
+    """The published demand curve -> ascending LP shortfall steps."""
+
+    _CURVE = [(0.0, 850.0), (190.0, 300.0)]  # PJM Primary RTO
+
+    def test_two_step_curve_conversion(self):
+        req_total, pens, widths = pjm_ordc_shortfall_steps(self._CURVE, 3000.0)
+        self.assertEqual(req_total, 3190.0)  # REQ + max offset
+        np.testing.assert_allclose(pens, [300.0, 850.0])   # cheapest band first
+        np.testing.assert_allclose(widths, [190.0, 3000.0])
+
+    def test_widths_span_full_requirement_extent(self):
+        # Total shortfall capacity must let reserves fall to 0 (R=0 feasible).
+        req_total, _, widths = pjm_ordc_shortfall_steps(self._CURVE, 2500.0)
+        self.assertAlmostEqual(widths.sum(), req_total)
+
+    def test_unordered_input_is_sorted(self):
+        req_total, pens, widths = pjm_ordc_shortfall_steps(
+            [(190.0, 300.0), (0.0, 850.0)], 1000.0
+        )
+        self.assertEqual(req_total, 1190.0)
+        np.testing.assert_allclose(pens, [300.0, 850.0])
 
 
 class TestMeasuredRequirementHonestyGate(unittest.TestCase):
