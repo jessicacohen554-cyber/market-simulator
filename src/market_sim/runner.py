@@ -84,6 +84,7 @@ from market_sim.results.emissions import compute_must_run_emissions
 from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
+    ercot_reserve_coopt_inputs,
     reserve_headroom,
     scarcity_prices,
 )
@@ -528,6 +529,23 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 ),
                 T=config.hours,
             )
+            # Energy + operating-reserve co-optimization (ERCOT-only, gated): the
+            # published ORDC reserve demand curve enters the LP as a VOLL-anchored
+            # reserve demand, so reserve-eligible thermal units part-load against a
+            # shared-headroom constraint and the reserve clearing price lifts the
+            # energy LMP endogenously (RTSPP = LMP + reserve price). Replaces the
+            # post-solve adder below when on — alters dispatch volumes, so it is a
+            # gated, recalibration-requiring change. See docs/ordc-overlay.md.
+            if getattr(config, "energy_reserve_coopt", False) and iso == "ERCOT":
+                (
+                    coopt_req, coopt_elig, coopt_pens, coopt_widths,
+                ) = ercot_reserve_coopt_inputs(config, fleet_arrays, config.hours)
+                dispatch_kwargs.update(
+                    reserve_requirement=coopt_req,
+                    reserve_eligible=coopt_elig,
+                    ordc_penalties=coopt_pens,
+                    ordc_step_widths=coopt_widths,
+                )
             # P0: solve with base MC to extract per-month run lengths.
             r0 = solve_dispatch(
                 fleet_arrays, year_demand, mc=mc_base, **dispatch_kwargs
@@ -606,8 +624,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # volumes, emissions and persisted results are untouched. Other
         # ISOs recover fixed cost through capacity-market revenue
         # (capacity_revenue_per_mw_yr) — no adder there.
+        # When co-optimization is on the energy LMP (result.prices) already
+        # carries the scarcity lift via the reserve clearing price, so the
+        # post-solve adder is skipped to avoid double-counting.
         econ_prices = result.prices
-        if config.scarcity_pricing_enabled and iso == "ERCOT":
+        if (config.scarcity_pricing_enabled and iso == "ERCOT"
+                and not getattr(config, "energy_reserve_coopt", False)):
             ren_headroom = (
                 wind_cf * np.asarray(wind_cap)[:, None]
                 + solar_cf * np.asarray(solar_cap)[:, None]
