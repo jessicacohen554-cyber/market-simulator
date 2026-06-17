@@ -366,6 +366,25 @@ _AS_RESTYPE_TO_GROUPS: dict[str, frozenset[str]] = {
     "coal": frozenset({"COAL"}),
 }
 
+# CAISO formula-based upward operating-reserve requirement (used by the
+# default-off ``as_reserve_formula`` scaffold until OASIS cleared-AS data
+# (AS_REQ/AS_RESULTS) can be pulled — outbound network is blocked in the remote
+# env). R(t) = max(MSSC, MORC_LOAD_FRAC*load) + REG_UP_LOAD_FRAC*load, a
+# published-standard WECC requirement carrying no fitted constants:
+#   - contingency reserve = WECC MORC: the greater of the most-severe single
+#     contingency (the largest single online unit nameplate) or 5% of
+#     hydro-served + 7% of thermal-served load (~6.7% of load for CA's mix);
+#   - regulation-up ~= 1% of load (CAISO Reg ~300-500 MW on 25-40 GW).
+# Reg-Down is a downward product (it withholds no upward energy offer), excluded.
+_CAISO_MORC_LOAD_FRAC = 0.067
+_CAISO_REG_UP_LOAD_FRAC = 0.01
+
+# The WECC most-severe single contingency (MSSC) is the largest single
+# synchronous unit (for CAISO a Diablo Canyon unit, ~1.1 GW). Imports are
+# aggregate tranches and wind/solar are many small inverters, so neither is a
+# credible single-unit contingency; both are excluded when sizing the MSSC.
+_CAISO_MSSC_EXCLUDE_FUELS: frozenset[str] = frozenset({"import", "wind", "solar"})
+
 
 @lru_cache(maxsize=8)
 def load_as_reserve_withholding_mw(
@@ -425,6 +444,37 @@ def load_as_thermal_withholding(
             series = np.concatenate([series, np.zeros(hours - len(series))])
         out[col] = series[:hours]
     return out or None
+
+
+def caiso_operating_reserve_mw(
+    load_shape: np.ndarray, mssc_mw: float, hours: int
+) -> np.ndarray:
+    """Formula-based CAISO upward operating-reserve requirement (MW/hour).
+
+    ``R(t) = max(MSSC, 0.067*load(t)) + 0.01*load(t)`` — a published-standard
+    WECC requirement carrying no fitted constants:
+
+    * **Contingency reserve** is the WECC Minimum Operating Reliability Criterion
+      (MORC): the greater of the most-severe single contingency (``mssc_mw``, the
+      largest single online unit nameplate — ~1,150 MW for a Diablo Canyon unit)
+      or 5% of hydro-served + 7% of thermal-served load (~6.7% of load for
+      California's generation mix; :data:`_CAISO_MORC_LOAD_FRAC`).
+    * **Regulation-up** is ~1% of load (CAISO Reg ~300-500 MW on 25-40 GW of
+      load; :data:`_CAISO_REG_UP_LOAD_FRAC`).
+
+    Reg-Down is a downward product — it withholds no upward energy offer — and is
+    excluded. ``load_shape`` is the hourly system load (MW) on the fleet's clock;
+    a shorter series is zero-padded and a longer one truncated to ``hours``. This
+    is the default-off scaffold to be replaced by measured OASIS AS_REQ/
+    AS_RESULTS MW once the remote-env outbound-network block is lifted.
+    """
+    load = np.asarray(load_shape, dtype=float)
+    if load.shape[0] < hours:
+        load = np.concatenate([load, np.zeros(hours - load.shape[0])])
+    load = load[:hours]
+    contingency = np.maximum(float(mssc_mw), _CAISO_MORC_LOAD_FRAC * load)
+    regulation = _CAISO_REG_UP_LOAD_FRAC * load
+    return contingency + regulation
 
 
 def _withdraw_top_of_merit(
@@ -1131,6 +1181,46 @@ def generators_to_fleet_arrays(
             "AS reserve withholding (%s %s, %s): withdrew %.1f GWh-equiv "
             "from thermal top-of-merit (%.1f GWh unmet by headroom)",
             _iso, _yr_as, source, withdrawn / 1e3, unmet / 1e3,
+        )
+
+    # CAISO formula-based operating-reserve withholding (default off; the
+    # measured-OASIS path is unavailable until the remote-env outbound-network
+    # block is lifted). Computes R(t) = max(MSSC, 0.067*load) + 0.01*load from
+    # the load shape and the fleet's largest single-unit nameplate (the WECC
+    # MSSC), then withdraws it from the gas top-of-merit headroom exactly like
+    # the measured ERCOT/PJM path above — lifting the tight-hour / evening-tail
+    # price. Coal/nuclear baseload is left out of the pool, and the midday floor
+    # (a separate longness/marginal-offer problem) is untouched.
+    if (config is not None
+            and getattr(config, "as_reserve_formula", False)
+            and _iso == "CAISO"
+            and load_shape is not None):
+        mssc_mw = float(
+            max((pmax[i] for i, g in enumerate(generators)
+                 if g.fuel_type not in _CAISO_MSSC_EXCLUDE_FUELS),
+                default=0.0)
+        )
+        r_mw = caiso_operating_reserve_mw(load_shape, mssc_mw, hours)
+        pool = np.array(
+            [i for i, g in enumerate(generators)
+             if g.plant_group in _AS_GAS_GROUPS],
+            dtype=int,
+        )
+        withdrawn, unmet = _withdraw_top_of_merit(
+            availability, pmax, heat_rate, pool, r_mw
+        )
+        if min_gen is not None:
+            floor_frac = np.zeros_like(availability)
+            np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
+                      where=pmax[:, np.newaxis] > 0.0)
+            np.maximum(availability, floor_frac, out=availability)
+        np.clip(availability, 0.0, 1.0, out=availability)
+        logger.info(
+            "CAISO operating-reserve withholding (formula, %s): MSSC %.0f MW, "
+            "R(t) mean %.0f / max %.0f MW; withdrew %.1f GWh-equiv from gas "
+            "top-of-merit (%.1f GWh unmet by headroom)",
+            getattr(config, "weather_year", 0), mssc_mw,
+            float(r_mw.mean()), float(r_mw.max()), withdrawn / 1e3, unmet / 1e3,
         )
 
     return FleetArrays(
