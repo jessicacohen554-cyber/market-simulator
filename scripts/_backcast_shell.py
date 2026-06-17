@@ -123,6 +123,10 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  .ctl{justify-content:space-between;flex-wrap:wrap}.ctlwide{min-width:0}
  .seg{flex:1;flex-wrap:wrap}.seg button{flex:1}.bc-top select{flex:1}
  .kpigrid,.yeargrid,.lmpgrid{grid-template-columns:1fr}.svgbox{margin:0 -4px}}
+.deepdive{display:inline-block;margin:0 0 var(--space-sm);font-size:var(--fs-sm);font-weight:600;
+ color:var(--iso-ercot,var(--accent,#1a6dd0));text-decoration:none;border:1px solid var(--border);
+ border-radius:var(--radius-md,8px);padding:6px 12px;background:#fbfcfd}
+.deepdive:hover{background:#f0f3f6;text-decoration:underline}
 </style></head><body>
 <nav class=nav><a class="nav-brand" href="index.html"><span class="nav-brand-mark">&#9650;</span> Market Simulator</a></nav>
 <div id=bctip></div>
@@ -138,6 +142,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
    <h1 style="font-size:var(--fs-xl);margin:0">Backcast Results</h1>
    <span id=isoBadge class=isobadge></span></div>
   <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated __GEN__</p>
+  <a class=deepdive href="offer-curve-grounding.html">&#128202; Deep dive: ERCOT offer-curve grounding — measured DAM offers vs the run124 bands &rarr;</a>
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
