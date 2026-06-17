@@ -331,6 +331,19 @@ documented limitation a tightness-responsive offset would refine. The scarcity
 series is committed as `scarcity_reldeploy2500.parquet` alongside the canonical
 `scarcity.parquet` (ORDC-only) and the `scarcity_np6shift0.parquet` sensitivity.
 
+**Recalibration on the AS-aware keeper (run124, 2026-06-17).** The 2,500 MW
+recommended offset is calibrated to a keeper *without* the measured storage-AS
+commitment. On run124 (`--storage-as-commitment`), the AS reservation already
+caps the battery peak dump and so tightens peak-hour reserves on its own,
+supplying ~1 GW-equivalent of the discretionary reliability tightness the offset
+used to carry — so **2,500 MW now overshoots** (2023 hours >$200 220 vs actual
+181; 2024/2025 MAE degrade to 9.9 / 7.1). Re-swept on run124, the offset that
+reproduces the run115b "2,500 MW" outcome (2023 MAE ~12.5, ~120 of 181 tail
+hours, 2024 within ~±$1) is **~1,500 MW**, committed as
+`scarcity_reldeploy1500.parquet` in the run124 bundle (the run124-appropriate
+stress series). This is an interaction between two display-only levers; it never
+gates volumes. See `docs/lmp-decomposition-2026-06.md`.
+
 **Capacity-economics effect (net revenue $/kW-yr vs the going-forward retirement
 bar, ORDC-only → +reliability-deployment):** 2023 ST_GAS 21 → **127** (bar 35:
 retire → KEEP), COAL_PRB 22 → **143** (bar 52: retire → KEEP), CT_PEAKER 12 →
