@@ -198,7 +198,7 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         return []
 
     def fake_fleet_arrays(_dispatch_fleet, _zone_names, *, hours, iso,
-                          config, load_shape):
+                          config, load_shape, year=None):
         rec["overlay"] = config.historic_outage_overlay
         raise _StopAfterFleetArrays
 
