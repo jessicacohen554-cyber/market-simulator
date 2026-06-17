@@ -1038,3 +1038,96 @@ class TestSolverBenchmark(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestReserveCoOptimization(unittest.TestCase):
+    """Trivial-case tests for in-LP energy+reserve co-optimization."""
+
+    T = 4
+
+    def _no_renewables(self, n_zones):
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def test_reserve_met_from_free_headroom_no_price_lift(self):
+        # 1 gen 100 MW @ $20, demand 80 -> 20 MW free headroom. Reserve req 10
+        # < 20: met for free, reserve price 0, energy LMP stays $20.
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
+                            pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 20.0)
+        demand = np.full((1, self.T), 80.0)
+        res = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            reserve_requirement=np.full(self.T, 10.0),
+            reserve_eligible=np.array([True]),
+            ordc_penalties=np.array([1000.0]),
+            ordc_step_widths=np.array([1000.0]),
+            **self._no_renewables(1),
+        )
+        np.testing.assert_allclose(res.dispatch, 80.0)
+        self.assertTrue((res.reserve_dispatch >= 10.0 - 1e-6).all())
+        np.testing.assert_allclose(res.reserve_price, 0.0, atol=1e-6)
+        np.testing.assert_allclose(res.prices, 20.0, atol=1e-6)
+
+    def test_reserve_scarcity_lifts_energy_lmp(self):
+        # Same gen, reserve req 30 > 20 free headroom: 10 MW short, priced at
+        # the $1000 ORDC step. The shared-headroom constraint binds (P+R=100),
+        # transferring the reserve price into the energy LMP: $20 + $1000.
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
+                            pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 20.0)
+        demand = np.full((1, self.T), 80.0)
+        res = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            reserve_requirement=np.full(self.T, 30.0),
+            reserve_eligible=np.array([True]),
+            ordc_penalties=np.array([1000.0]),
+            ordc_step_widths=np.array([1000.0]),
+            **self._no_renewables(1),
+        )
+        np.testing.assert_allclose(res.dispatch, 80.0)
+        # Reserve capped by headroom at 20 MW (P + R <= 100).
+        np.testing.assert_allclose(res.reserve_dispatch, 20.0, atol=1e-6)
+        np.testing.assert_allclose(res.reserve_price, 1000.0, atol=1e-6)
+        np.testing.assert_allclose(res.prices, 1020.0, atol=1e-6)
+
+    def test_idle_unit_supplies_reserve_without_lifting_price(self):
+        # Cheap 100 MW @ $20 + idle 100 MW @ $90. Demand 80, reserve req 50.
+        # Cheap serves energy (80) + 20 reserve; the idle unit supplies the
+        # remaining 30 reserve from free headroom -> reserve price 0, LMP $20.
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0,
+                            pmin=0.0, eford=0.0)
+        mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 90.0)])
+        demand = np.full((1, self.T), 80.0)
+        res = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T,
+            reserve_requirement=np.full(self.T, 50.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([1000.0]),
+            ordc_step_widths=np.array([1000.0]),
+            **self._no_renewables(1),
+        )
+        total_reserve = res.reserve_dispatch.sum(axis=0)
+        np.testing.assert_allclose(total_reserve, 50.0, atol=1e-6)
+        np.testing.assert_allclose(res.reserve_price, 0.0, atol=1e-6)
+        np.testing.assert_allclose(res.prices, 20.0, atol=1e-6)
+
+    def test_off_path_matches_energy_only(self):
+        # No reserve_requirement -> co-opt columns absent; identical result.
+        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=60.0,
+                            pmin=0.0, eford=0.0)
+        mc = np.vstack([np.full(self.T, 25.0), np.full(self.T, 55.0)])
+        demand = np.full((1, self.T), 70.0)
+        base = solve_dispatch(fleet, demand, mc=mc, T=self.T,
+                              **self._no_renewables(1))
+        coopt_off = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, reserve_requirement=None,
+            **self._no_renewables(1),
+        )
+        np.testing.assert_allclose(base.dispatch, coopt_off.dispatch)
+        np.testing.assert_allclose(base.prices, coopt_off.prices)
+        self.assertIsNone(coopt_off.reserve_price)
