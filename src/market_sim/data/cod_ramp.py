@@ -37,23 +37,20 @@ from __future__ import annotations
 
 import logging
 from functools import lru_cache
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+from market_sim.config.paths import EIA_860_DIR, INPUTS_DIR
+
 logger = logging.getLogger(__name__)
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
-_REGISTRY = _REPO_ROOT / "inputs" / "master-plant-registry.csv"
+_REGISTRY = INPUTS_DIR / "master-plant-registry.csv"
 # Month-precise generator-level EIA-860 operable schedule (Operating Month /
 # Year, Planned Retirement Month / Year per generator). Preferred over the
 # year-only processed thermal parquet because it carries the commissioning
 # *month* the renewable/storage ramps already use.
-_EIA860_OPERABLE = (
-    _REPO_ROOT / "inputs" / "raw-data" / "eia-860"
-    / "eia860_generator_operable.parquet"
-)
+_EIA860_OPERABLE = EIA_860_DIR / "eia860_generator_operable.parquet"
 
 # Month assumed for a unit whose COD *year* is known but whose month is not
 # (e.g. a plant carried only by the master registry's year-only ``year_built``,
