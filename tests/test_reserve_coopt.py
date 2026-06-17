@@ -16,6 +16,7 @@ import numpy as np
 from market_sim.config.constants import PJM_PRIMARY_RESERVE_LSC_FACTOR
 from market_sim.results.scarcity import (
     largest_single_contingency_mw,
+    load_pjm_measured_reserve_requirement,
     pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
 )
@@ -56,6 +57,22 @@ class TestLargestSingleContingency(unittest.TestCase):
         self.assertGreater(
             largest_single_contingency_mw(full),
             largest_single_contingency_mw(retired),
+        )
+
+    def test_plant_aggregation_sums_common_mode_units(self):
+        # Two 1100 MW units at one plant (common-mode) outrank a single 1300.
+        pmax = np.array([1100.0, 1100.0, 1300.0])
+        plant_code = np.array([10, 10, 20])  # units 0,1 share plant 10
+        self.assertEqual(
+            largest_single_contingency_mw(pmax, plant_code=plant_code), 2200.0
+        )
+
+    def test_plant_code_zero_treated_individually(self):
+        # plant_code <= 0 (imports / pseudo-units) never aggregate together.
+        pmax = np.array([800.0, 800.0, 1300.0])
+        plant_code = np.array([0, 0, 20])
+        self.assertEqual(
+            largest_single_contingency_mw(pmax, plant_code=plant_code), 1300.0
         )
 
 
@@ -102,6 +119,24 @@ class TestOrdcShortfallSteps(unittest.TestCase):
         )
         self.assertEqual(req_total, 1190.0)
         np.testing.assert_allclose(pens, [300.0, 850.0])
+
+
+class TestMeasuredRequirementLoader(unittest.TestCase):
+    """The backcast measured-requirement loader (reliability input)."""
+
+    def test_loads_8760_positive_requirement(self):
+        req = load_pjm_measured_reserve_requirement(2024, 8760)
+        if req is None:
+            self.skipTest("PJM-AS 2024 parquet not present")
+        self.assertEqual(req.shape, (8760,))
+        self.assertTrue((req > 0).all())  # holes filled, never zero
+        # Matches the measured PJM_RTO Primary requirement (~3.42 GW, 2024).
+        self.assertTrue(3000.0 < req.mean() < 3700.0)
+
+    def test_missing_year_returns_none(self):
+        self.assertIsNone(
+            load_pjm_measured_reserve_requirement(1999, 8760)
+        )
 
 
 class TestMeasuredRequirementHonestyGate(unittest.TestCase):
