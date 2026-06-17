@@ -1796,6 +1796,34 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     # _neiso_config, so extend_with_import_node is a no-op there.
 }
 
+# Year-varying NYISO interface transfer limits that change with the AC
+# Transmission build-out. The static limits in iso_configs._nyiso_config are
+# the post-upgrade values; an (iso, year) entry here overrides the matching
+# link's TTC for that backcast year (run_calibration._apply_iso_year_ttc).
+# Years/links absent here keep the static config value.
+#
+# NY Transco's "AC Transmission" project — Segment A (Central-East, Edic–New
+# Scotland / Princetown–Rotterdam 345 kV) and Segment B (UPNY/SENY,
+# Knickerbocker–Pleasant Valley 345 kV) — targeted in-service December 2023,
+# so the 2023 backcast runs on the PRE-upgrade limits and 2024+ on the upgraded
+# limits. The static 2,850 MW Central-East value sits between them, so it both
+# under-binds 2023 (real limit ~2,350 MW) and over-binds 2024-25 (real limit
+# ~3,850 MW), flattening the west-to-east congestion the interface carries.
+#   - Central-East (Upstate_West -> Capital_Hudson): pre-upgrade ~2,350 MW
+#     (NYISO Operating Study Winter 2023-24), raised ~1,500 MW by Segment A to
+#     ~3,850 MW. Source: NYISO Operating Study Winter 2023-24; Wood Mackenzie
+#     / ESAI Power "Central East Interface" briefings (FERC-approved Public
+#     Policy Transmission Need, NY Transco AC Transmission).
+#   - UPNY-SENY is left at its static 5,150 MW (Segment B raised it further,
+#     but the interface does not bind in the backcast). Tier 3 (calibration) —
+#     verify the exact annual normal limits against NYISO operating-limit
+#     postings; the seasonal envelope is approximated by a single annual value.
+NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
+    2023: {("Upstate_West", "Capital_Hudson"): 2350.0},
+    2024: {("Upstate_West", "Capital_Hudson"): 3850.0},
+    2025: {("Upstate_West", "Capital_Hudson"): 3850.0},
+}
+
 # Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
 # carry a generation-like availability (NERC GADS — representative for
 # out-of-state generation); PJM's blocks are scheduled interties whose

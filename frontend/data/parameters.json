@@ -13166,6 +13166,22 @@
       "flags": []
     },
     {
+      "param_id": "nyiso_interface_ttc_by_year",
+      "display_name": "NYISO Year-Varying Interface Transfer Limits",
+      "value": {"2023": {"Upstate_West->Capital_Hudson": 2350.0}, "2024": {"Upstate_West->Capital_Hudson": 3850.0}, "2025": {"Upstate_West->Capital_Hudson": 3850.0}},
+      "unit": "MW",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "NYISO Central-East interface transfer limit by backcast year, tracking the NY Transco 'AC Transmission' project (Segment A = Central-East Edic-New Scotland / Princetown-Rotterdam 345 kV; in service ~December 2023): pre-upgrade ~2,350 MW (NYISO Operating Study Winter 2023-24), raised ~1,500 MW to ~3,850 MW post-Segment-A. The static iso_configs value (2,850 MW) sits between the pre/post limits. Source: NYISO Operating Study Winter 2023-24; Wood Mackenzie / ESAI Power Central-East briefings; FERC-approved Public Policy Transmission Need.",
+      "source_date": "2024-03",
+      "page_or_table": "NYISO Operating Study Winter 2023-24",
+      "url": "",
+      "notes": "(year -> {(from,to): MW}); overrides the static Central-East link TTC per year in run_calibration._apply_iso_year_ttc. Tier 3 — verify exact annual normal limits against NYISO operating-limit postings; single annual value approximates the seasonal envelope.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-17",
+      "flags": []
+    },
+    {
       "param_id": "scenario.nyiso_rcpf_locational",
       "display_name": "NYISO RCPF Locational Reserve Regions",
       "value": null,
