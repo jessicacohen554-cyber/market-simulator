@@ -1864,8 +1864,15 @@ class NeighborInterface:
         proxy_ba: Fallback BA code for the load shape when ``ba_code`` has no
             extract; ``None`` to fold straight into the aggregate.
         gas_basis: $/MMBtu basis of the neighbor's gas hub vs Henry Hub.
-        marginal_heat_rate: MMBtu/MWh of the neighbor's price-setting unit
-            (a gas CC/CT on the margin); the structural HR pin (~7.5).
+        marginal_heat_rate: MMBtu/MWh of the neighbor's *effective* price-
+            setting margin — calibrated so ``gas x heat_rate`` reproduces the
+            neighbor's own realized annual LMP, NOT a single physical unit's
+            heat rate. It runs higher than a CC's ~7 because a real RTO's LMP
+            sits above bare gas-burn cost (older marginal units, congestion,
+            scarcity and reserve adders). Anchoring to the neighbor's measured
+            price formation — a reproducible, gas-responsive quantity — keeps
+            the seam forecast-native (the level scales with forward gas) while
+            never being tuned to the ISO's net-MWh flow (claude.md rule #11).
         hurdle: $/MWh seam friction (wheeling + losses + scheduling), the
             dead-band the ISO↔neighbor spread must clear before flow starts.
         interface_limit_mw: bidirectional transfer rating bounding seam flow.
@@ -1893,15 +1900,33 @@ class NeighborInterface:
 # and gas bases carry "verify against published ratings / EIA-923" caveats.
 #
 # PJM seams (PJM is a structural net exporter): MISO to the west, NYISO to the
-# north/east, and the Carolinas/Southeast to the south. Heat rate 7.5 MMBtu/MWh
-# is an older gas-CC marginal unit (HEAT_RATE_BINS gas "older"); hurdle $3/MWh is
-# a mid-range wheeling+loss+scheduling friction (the $2-4 band). Gas bases are
-# the neighbor hub vs Henry Hub:
-#   - MISO: Chicago Citygate / mid-continent trades ~flat to Henry Hub. 0.0.
-#   - NYISO: reuse GAS_BASIS_DIFFERENTIAL["NYISO"] (+0.55, EIA-923 delivered).
-#   - Carolinas: Transco/Southeast trades ~flat to Henry Hub. 0.0. ba_code DUK
-#     has no extract yet, so it prices on the SOCO (Southern Co.) load shape
-#     until a Duke extract is added.
+# north/east, and the Carolinas/Southeast to the south. PJM exports because its
+# resource mix (coal retirements + efficient new CCs, generation near load) sets
+# an LMP *below* its neighbors' — confirmed in the field (PJM 2024 State of the
+# Market §9; ACORE/PJM-MISO joint studies) and in the price levels: MISO RT LMP
+# averaged ~$36/MWh in 2023 and ~$31 in 2024 (Potomac Economics MISO IMM SOM) vs
+# PJM's ~$28/$30, and the measured net export shrinks with the spread
+# (+40 -> +33 -> +18 TWh, 2023-25).
+#
+# Effective marginal heat rate per neighbor is calibrated so gas x HR reproduces
+# the neighbor's OWN realized annual LMP (rule #11: anchor to the neighbor's
+# measured price formation, never to PJM's flow); the year-to-year level then
+# rides on the Henry Hub trajectory, so it is forecast-native. The ratio is
+# empirically stable because LMP tracks gas: MISO ~$36/$2.54 (2023) ~= $31/$2.19
+# (2024) ~= 14.2 MMBtu/MWh both years.
+#   - MISO (basis ~0, Chicago Citygate ~flat to HH): HR 14.2, anchored to the
+#     MISO IMM RT LMP / Henry Hub ratio (stable 2023-24).
+#   - NYISO (basis +0.55, EIA-923 delivered): HR 13.1, anchored to the actual
+#     NYISO RT LMP $36 (2024) / delivered gas $2.74. CAVEAT: NYISO downstate is
+#     congestion/scarcity-dominated, so its implied ratio is NOT stable (9.8 in
+#     2023, 13.1 in 2024, 17.7 in 2025); 13.1 is the mid-year anchor and will
+#     understate NY's tight years. NYISO is the smallest PJM seam (EMAAC only).
+#   - Carolinas (basis ~0): HR 13.5, an ESTIMATE pending a Duke (DUK) LMP/extract
+#     — the Southeast is not an organized market, so this is anchored to a
+#     ~$30/MWh SERC bilateral level / Henry Hub, priced on the SOCO load shape.
+# Hurdle $2/MWh is the inter-RTO wheeling/transaction adder production-cost
+# models use (OMS-RSC seams interface-pricing study); PJM exports at thin spreads
+# (the 2024 PJM-MISO mean spread is only ~$1.5), so the hurdle must stay small.
 # Interface limits envelope the published PJM seam transfer capabilities (PJM
 # RTEP / NERC interconnection-reliability postings); verify against PJM's
 # published interface ratings before quoting a forecast.
@@ -1911,8 +1936,8 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             name="MISO",
             ba_code="MISO",
             gas_basis=0.0,
-            marginal_heat_rate=7.5,
-            hurdle=3.0,
+            marginal_heat_rate=14.2,
+            hurdle=2.0,
             interface_limit_mw=10000.0,
             border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
         ),
@@ -1920,8 +1945,8 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             name="NYISO",
             ba_code="NYIS",
             gas_basis=GAS_BASIS_DIFFERENTIAL["NYISO"],
-            marginal_heat_rate=7.5,
-            hurdle=3.0,
+            marginal_heat_rate=13.1,
+            hurdle=2.0,
             interface_limit_mw=3000.0,
             border_zones=("PJM_EMAAC",),
         ),
@@ -1930,8 +1955,8 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             ba_code="DUK",
             proxy_ba="SOCO",
             gas_basis=0.0,
-            marginal_heat_rate=7.5,
-            hurdle=3.0,
+            marginal_heat_rate=13.5,
+            hurdle=2.0,
             interface_limit_mw=3500.0,
             border_zones=("PJM_Dominion",),
         ),
