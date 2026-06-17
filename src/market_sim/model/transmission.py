@@ -359,8 +359,9 @@ def inject_caiso_gas_commitment_floor(
     the midday LMP floors far above the real ~$0/negative price.
 
     After :func:`~market_sim.data.fleet.generators_to_fleet_arrays` builds the
-    fleet, this imposes a hard minimum-generation floor on the gas fleet
-    (``gas_cc`` / ``gas_ct`` / ``gas_st``) over the midday ``hod_window``,
+    fleet, this imposes a hard minimum-generation floor on the flexible gas
+    fleet (``gas_cc`` / ``gas_ct`` — the RA must-offer fleet; near-retired
+    ``gas_st`` boilers are excluded) over the midday ``hod_window``,
     sized to ``frac`` × the measured EIA-930 ``NG: NG`` (month×hour-of-day
     ``percentile``) profile (:func:`~market_sim.data.eia_loader
     .measured_gas_floor_profile`). The hourly fleet target is distributed over
@@ -381,7 +382,14 @@ def inject_caiso_gas_commitment_floor(
     from market_sim.data.eia_loader import measured_gas_floor_profile
     from market_sim.data.fleet import FUEL_TYPE_MAP
 
-    gas_codes = [FUEL_TYPE_MAP[f] for f in ("gas_cc", "gas_ct", "gas_st")]
+    # The RA must-offer midday fleet is the flexible CC/CT gas that stays
+    # online for the evening ramp — NOT the near-retired gas-steam boilers
+    # (CA gas_st is ~0.15 TWh/yr in EIA-923; they are local-reliability/off,
+    # not held online midday). Including gas_st let the floor manufacture
+    # ~1.9 TWh of phantom steam (ST_GAS 1.7 -> 3.7 TWh in 2024). Scope it to
+    # gas_cc/gas_ct so the measured NG: NG midday target is met by the real
+    # must-offer fleet.
+    gas_codes = [FUEL_TYPE_MAP[f] for f in ("gas_cc", "gas_ct")]
     is_gas = np.isin(fleet_arrays.fuel_type_idx, gas_codes)
     gas_rows = np.flatnonzero(is_gas & (fleet_arrays.pmax > 0.0))
     if gas_rows.size == 0:
