@@ -50,6 +50,19 @@ _REGISTRY = INPUTS_DIR / "master-plant-registry.csv"
 # Year, Planned Retirement Month / Year per generator) is read from the active
 # vintage directory (paths.active_eia860_dir) inside _load_cod_map, so a
 # year-matched vintage switch is honored and the cache keys on the directory.
+#
+# Alongside the operable schedule, the same directory's within-window retiree
+# parquet (eia860_generator_retired_within_window.parquet, built by
+# ``scripts/process_eia860.py --retired-window-from`` from the final EIA-860
+# vintages' "Retired and Canceled" sheets) is unioned into the COD map so the
+# ramp can age out whole plants that retired mid-window and so are absent from
+# the default recent operable vintage (e.g. Mystic, plant 1588, retired
+# mid-2024). It carries the actual retirement in ``planned_retirement_*``. The
+# fleet loader injects the matching generators (the snapshot can only drop a
+# unit it contains). A year-matched native vintage carries those exits in its
+# own operable file and ships no retiree parquet, so the union is a no-op there
+# (no double-count).
+_RETIRED_WINDOW_NAME = "eia860_generator_retired_within_window.parquet"
 
 # Month assumed for a unit whose COD *year* is known but whose month is not
 # (e.g. a plant carried only by the master registry's year-only ``year_built``,
@@ -65,6 +78,27 @@ _ONLINE_YEAR_SENTINEL = 2000
 
 # One per-plant COD record: month-precise online and (optional) retirement date.
 CodEntry = tuple[int, int, int | None, int | None]
+
+
+def _cod_work_frame(
+    path, columns: dict[str, str]
+) -> "pd.DataFrame | None":
+    """Read an EIA-860 generator parquet into the COD reducer's column frame.
+
+    ``columns`` maps the reducer's short names (``pc``/``oy``/``om``/``cap``/
+    ``ry``/``rm``) to the source parquet's actual column names, so the operable
+    sheet (raw EIA-860 headers) and the within-window retiree parquet (canonical
+    schema) feed the same per-plant reduction. Returns ``None`` when the file is
+    absent.
+    """
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    frame = pd.DataFrame({
+        short: pd.to_numeric(df.get(src), errors="coerce")
+        for short, src in columns.items()
+    })
+    return frame.dropna(subset=["pc", "oy"])
 
 
 def load_cod_map() -> dict[int, CodEntry]:
@@ -105,18 +139,27 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
     """
     cod: dict[int, CodEntry] = {}
 
-    operable = eia860_dir / "eia860_generator_operable.parquet"
-    if operable.exists():
-        df = pd.read_parquet(operable)
-        pc = pd.to_numeric(df.get("Plant Code"), errors="coerce")
-        oy = pd.to_numeric(df.get("Operating Year"), errors="coerce")
-        om = pd.to_numeric(df.get("Operating Month"), errors="coerce")
-        cap = pd.to_numeric(df.get("Nameplate Capacity (MW)"), errors="coerce")
-        ry = pd.to_numeric(df.get("Planned Retirement Year"), errors="coerce")
-        rm = pd.to_numeric(df.get("Planned Retirement Month"), errors="coerce")
-        work = pd.DataFrame(
-            {"pc": pc, "oy": oy, "om": om, "cap": cap, "ry": ry, "rm": rm}
-        ).dropna(subset=["pc", "oy"])
+    # The operable schedule (raw EIA-860 headers) plus the active directory's
+    # within-window retiree parquet (canonical schema) feed the same per-plant
+    # reduction. The retiree file is absent from a year-matched native vintage
+    # dir (which carries its exits in the operable file already), so the union
+    # is a no-op there.
+    frames = [
+        _cod_work_frame(eia860_dir / "eia860_generator_operable.parquet", {
+            "pc": "Plant Code", "oy": "Operating Year", "om": "Operating Month",
+            "cap": "Nameplate Capacity (MW)", "ry": "Planned Retirement Year",
+            "rm": "Planned Retirement Month",
+        }),
+        _cod_work_frame(eia860_dir / _RETIRED_WINDOW_NAME, {
+            "pc": "plant_id", "oy": "operating_year", "om": "operating_month",
+            "cap": "nameplate_capacity_mw", "ry": "planned_retirement_year",
+            "rm": "planned_retirement_month",
+        }),
+    ]
+    frames = [f for f in frames if f is not None]
+    work = pd.concat(frames, ignore_index=True) if frames else None
+
+    if work is not None and not work.empty:
         work["om"] = work["om"].fillna(COD_FALLBACK_MONTH).clip(1, 12)
         # Positive nameplate weights the COD; fall back to equal weight when a
         # plant reports no capacity so it still gets a representative date.
