@@ -269,10 +269,10 @@ def load_eia860_storage(
         capacity. Empty when the EIA-860 file is missing or no operable
         units fall inside the ISO.
     """
-    from market_sim.data.fleet import EIA_860_DIR
+    from market_sim.config.paths import active_eia860_dir
     from market_sim.data.zone_assignment import build_zone_lookup
 
-    path = EIA_860_DIR / "eia860_energy_storage_operable.parquet"
+    path = active_eia860_dir() / "eia860_energy_storage_operable.parquet"
     if not path.exists():
         return []
     try:
@@ -484,10 +484,11 @@ def load_eia860_pumped_storage(
     Returns one ``StorageUnit`` per zone with nonzero PS capacity; empty when
     the generator parquet is missing or the ISO has no pumped storage.
     """
-    from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+    from market_sim.config.paths import active_eia860_dir
+    from market_sim.data.fleet import EIA_860_PARQUET_NAME
     from market_sim.data.zone_assignment import build_zone_lookup
 
-    path = EIA_860_DIR / EIA_860_PARQUET_NAME
+    path = active_eia860_dir() / EIA_860_PARQUET_NAME
     if not path.exists():
         return []
     try:
