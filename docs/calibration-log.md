@@ -42,6 +42,111 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-17 — ERCOT — nodal sub-zonal pockets (run124): MEASURED NO-GO (the over-run is not pocket-reachable)
+
+**Goal.** Close the CC_REGULAR North over-run (run124: +5.60 / +3.12 TWh
+2024/25; North carries ~+4.5) and the linked SC/West/NE under-run by adding the
+binding **sub-zonal pockets** the 7-zone reduced network cannot form — letting
+the thermal offer curves relax toward physical instead of re-fitting global
+compensation on a coarse grid (the NE_LOB pattern generalised, with the SCED
+NP6-86 archive now in hand). **Result: NO-GO — keeper stays run124.** The
+residual is not reachable by any *defensibly-buildable* pocket; it is the
+irreducible below-local-price RUC piece + the gas-price year-gradient. Probe
+code (a Rio_Grande/VALEXP pocket) built, measured, and **reverted (not
+promoted).**
+
+**Anchor.** Reproduced run124 exactly on this environment (highspy 1.14.0):
+CC_REGULAR 2024 **+5.60** / 2025 **+3.12**, CT_PEAKER −2.40 / −3.50 / −1.69 —
+the documented **5 fails @0.5%** (CC 24/25, CT 23/24, COAL_PRB 24). So every
+delta below is vs a same-environment baseline.
+
+**1. Where the over-run lives (by-zone CC_REGULAR, model TWh).** The over-run is
+concentrated in **North** — and the network is essentially uncongested, so cheap
+North CC freely serves the under-zones (mean zonal energy price flat at $20.1
+2024 / $32.5 2025 across North/SC/Houston/South/West):
+
+| zone | 2024 | 2025 |
+|---|---|---|
+| **North** | **78.22** | **76.36** |
+| South_Central | 34.81 | 31.41 |
+| Houston | 15.76 | 14.01 |
+| West | 9.40 | 9.81 |
+| South | 9.06 | 8.55 |
+| Northeast | 1.54 | 2.90 |
+
+**2. GTC inventory — the buildability test (the decisive new finding).** Ranked
+every aggregate GTC (empty FromStation) in the NP6-86 archive
+(`scripts/derive_ttc_limits.py` / `analyze_sced_binding.py`) by zone and
+modelled-or-not:
+
+| GTC | binds % | limit@bind | status |
+|---|---|---|---|
+| NE_LOB | 48 | ~1,281 MW | **modelled** (Northeast→North 1300) |
+| PNHNDL | 45 | ~3,297 MW | **modelled** (Panhandle→North 2680) |
+| WESTEX | 40 | ~10,453 MW | **modelled** (West→North/SC 7300/2700) |
+| **VALEXP** (Rio Grande Valley) | **46** | **~537 MW** | **UNMODELLED — only clean one** |
+| EASTEX | 45 | — | tiny (rent 0.14M) |
+| N_TO_H | 5 | ~4,810 MW | modelled (North→Houston 8000) |
+
+So the **only clean unmodelled aggregate GTC is VALEXP — and it is in the South
+zone (~1 GW gen), not North.** There is **no aggregate GTC for North** (the
+over-zone) or for the internal SC/West under-zones. The **Permian binders are
+all diffuse <200 kV internal lines** (ODESSA–YARBR `6520__E`, VEALMOOR–KOCHTAP
+`15060__B`, KNAPP `6437__F`, MIDLAND) — **no aggregate "Permian export" GTC
+exists**, so a Permian sub-zone has *no measured export limit* (data-first
+fail). This is the precise, sharpened form of the D4-spatial finding (94% of
+rent on <200 kV pockets): the rent is real but lives below any pocket the
+reduced model can carry a *measured* limit for.
+
+**3. The Valley/VALEXP probe (built the one measured pocket; the NE_LOB pattern
+generalised).** Added a `Rio_Grande` zone split out of South
+(`zone_assignment._ercot_zone` lat<27.0 / −99.0≤lon<−97.0 box → Magic Valley CC,
+Red Gate, Silas Ray + small RGV peakers, ~1 GW), a `Rio_Grande→South`
+TransferLink at the **measured 537 MW VALEXP limit**, and a SOUTHERN-load split
+in `eia_loader` (the load share is a Tier-3 estimate, 0.030 of system — there is
+**no published RGV/South native-load split**; the RGV is inside the single
+SOUTHERN weather zone). 2025, vs anchor:
+- **The pocket interface BINDS hard** — Rio_Grande price separates from South in
+  **61.6% of hours** (mean $2,096, max $4,979). The generalised-NE_LOB mechanism
+  works: a measured-GTC sub-zonal pocket binds in the model.
+- **But North CC is untouched** — North CC **76.18 vs 76.36** (≈ flat); the
+  pocket is in the wrong zone and cannot relieve the +4.5 over-run.
+- **And it cannot be specified defensibly** — **1.70 TWh unserved** energy, all
+  in Rio_Grande (3,218 load-shed hours). Root cause: **VALEXP is an *export*
+  limit on a net-*importing* load pocket** (RGV mean demand 1.66 GW, peak 2.68
+  GW vs ~1 GW local gen + 537 MW). Modelling the single GTC as the pocket's
+  interchange capacity starves it; the RGV's real (multi-line, multi-GW) *import*
+  capacity is not a single measurable GTC. So even the one clean GTC is the
+  wrong *instrument* for the energy-balance hours that carry the CC residual.
+
+**4. Reachability diagnostic — is the North over-run spatially reachable AT
+ALL?** Hard-tightened North's export corridors to *unphysical* levels
+(North→SC 5000→1500, North→Houston 8000→2000 — no measured-GTC basis) to *force*
+a binding interface around the actual over-zone. The interfaces then bound 25%
+of hours (price separation up to $25), zero unserved. Effect on CC_REGULAR
+(2025, TWh): North **76.36 → 73.89** (−2.47 of the +4.5 over-run); SC +0.71,
+Houston +0.38, South +0.16; West −0.37, NE −0.21; **class TOTAL 143.04 → 141.24
+(−1.80)**. So even *forcing* a bind: (i) only ~2.5 of the +4.5 moves, (ii) it
+does **not** cleanly relocate to the under-zones — ~1.8 TWh leaves the CC class
+entirely (fuel substitution), which would *worsen* the CC volume gate. At the
+**measured** interface limits nothing binds (flat $32.5; inter-zonal TTC
+tightening to measured GTCs was already an exact no-op, run115b notes; the
+congestion-subset floor a near-no-op, run118).
+
+**Defensibility verdict (the prompt's two-part gate).** (a) *Does a measured
+pocket bind where the residual lives?* **No** — North/SC/West-internal have no
+unmodelled aggregate GTC; Permian is diffuse <200 kV; the only clean GTC
+(VALEXP) is in South and is an export limit on a load pocket. (b) *Even when a
+bind is forced, do the offer deltas relax?* **No** — the North CC drop is
+partial and substitutes fuel rather than relocating CC; you would have to re-fit,
+not relax. **Both fail ⇒ NO-GO.** This is the prompt's anticipated valid negative
+result: *the residual North-over/SC-under is the irreducible ~6.7 TWh
+below-local-price RUC commitment + the gas-price year-gradient, not a
+pocket-topology gap.* Consistent with D4-spatial, run118, and the inter-zonal
+no-op. Keeper stays **run124**; the merit-ramp remains the CC shape fix. Probe
+diagnostics were single-year scratch (not dashboard-registered; the pocket code
+is reverted).
+
 ### 2026-06-17 — ERCOT — LMP decomposition + CT_PEAKER offer re-derivation (run124 keeper held; overlay recalibrated)
 
 Two-track session on the run124 keeper's open price/marginal residuals. **No
