@@ -144,8 +144,13 @@
 > repo). **Keeper of record stays run 115b** — promote the candidate when the
 > spatial axis closes the residual CC 2024/25 volume over-run (measured *not*
 > offer-closable: run118 spatial overlay weak, run119 CPS floor weak, finer-zone
-> topology still open). Cheapening the duct wall (d4b) was rejected (no shape
-> gain, worse volume). See `docs/audit-followup-tests-2026-06.md`.
+> topology now a **measured NO-GO** — 2026-06-17 nodal-pockets session:
+> over-run is in North, no unmodelled aggregate GTC isolates it; Permian binders
+> are diffuse <200 kV (no export GTC); the one clean unmodelled GTC, VALEXP/RGV,
+> is in South + an export limit on a load pocket; a forced North-bind moves only
+> ~2.5 of +4.5 TWh and substitutes fuel — see calibration-log). Cheapening the
+> duct wall (d4b) was rejected (no shape gain, worse volume). See
+> `docs/audit-followup-tests-2026-06.md`.
 
 Keeper: **run 115b / bundle `results/calibration/run115b_ccduct_prb73_relief06`**
 (2026-06-14, highspy 1.14.0). Run 115b = run 109a's config **plus** the per-plant
