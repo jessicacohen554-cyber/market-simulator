@@ -202,6 +202,17 @@ class ScenarioConfig:
     # calendar year); set False to keep the full present-day snapshot (e.g. to
     # reproduce a pre-COD-ramp run).
     cod_ramp_enabled: bool = True
+    eia860_vintage_year: int | None = None  # Year-matched EIA-860 vintage for a
+    # backcast. None (default) uses the canonical 2025-Early-Release snapshot in
+    # inputs/raw-data/eia-860/ filtered to the solved year by the COD ramp. Set
+    # to a year with a committed inputs/raw-data/eia-860/vintage_<year>/ (2023,
+    # 2024) to read the native annual release instead — removing the COD ramp's
+    # capacity-weighted-mean COD smear and the absence of units that retired
+    # between the solved year and the 2025 snapshot. Measured effect is small
+    # (~0.4% of ERCOT installed capacity vs the COD-ramped 2025ER fleet, ~240 MW
+    # of retired-2023->25 units), a correctness/provenance refinement rather than
+    # a scarcity driver; gated, recalibrate before a keeper. See
+    # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
