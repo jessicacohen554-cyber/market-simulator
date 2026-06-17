@@ -1040,6 +1040,7 @@ def solve_and_persist(
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
+    as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
     gas_monthly_actuals: bool = False,
@@ -1051,6 +1052,7 @@ def solve_and_persist(
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    negative_renewable_offers: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1139,6 +1141,7 @@ def solve_and_persist(
             storage_daily_cycling=storage_daily_cycling,
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
+            as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
             gas_monthly_actuals=gas_monthly_actuals,
@@ -1151,6 +1154,7 @@ def solve_and_persist(
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
             interchange_shaping=interchange_shaping,
+            negative_renewable_offers=negative_renewable_offers,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1272,6 +1276,7 @@ def solve_and_persist(
         "storage_daily_cycling": storage_daily_cycling,
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
+        "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
         "gas_monthly_actuals": gas_monthly_actuals,
@@ -1283,6 +1288,7 @@ def solve_and_persist(
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
         "interchange_shaping": interchange_shaping,
+        "negative_renewable_offers": negative_renewable_offers,
         "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
@@ -1335,6 +1341,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if as_reserve_withholding:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
+    if as_reserve_formula:
+        recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
         recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
     if battery_dispatch_adder:
@@ -3012,6 +3020,15 @@ def main() -> None:
              "storage/load split). Off = no withholding (default).",
     )
     parser.add_argument(
+        "--as-reserve-formula", action="store_true",
+        help="CAISO formula-based operating-reserve withholding: remove "
+             "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
+             "1%% regulation-up; fleet.caiso_operating_reserve_mw) from the gas "
+             "top-of-merit headroom before the supply curve clears, lifting the "
+             "evening tail. CAISO-only, no-fitted-constants scaffold until OASIS "
+             "cleared-AS data can be pulled. Off = no withholding (default).",
+    )
+    parser.add_argument(
         "--storage-as-commitment", action="store_true",
         help="ERCOT: reserve the measured hourly storage up-AS MW from the "
              "battery dispatch power cap (per-resource-type series), so AS-"
@@ -3140,6 +3157,16 @@ def main() -> None:
              "a flat all-hours import. Targets CAISO's over-priced midday "
              "floor. Requires --priced-interchange; no-op without a measured "
              "envelope. Off (default) changes no existing run.")
+    parser.add_argument(
+        "--negative-renewable-offers", action="store_true",
+        help="Floor the curtailable wind/solar dispatch offer at the negative "
+             "keep-running (REC/PTC) value (ScenarioConfig."
+             "renewable_keep_running_value, default $20/MWh) so curtailed "
+             "renewables set a sub-$0 marginal price in oversupply, "
+             "reproducing CAISO's negative midday LMPs. Pushes the floor below "
+             "the existing $0 export/curtailment sink; only bites once the "
+             "model is long midday (the RA must-offer commitment workstream). "
+             "Off (default) is byte-identical.")
     parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
@@ -3295,6 +3322,7 @@ def main() -> None:
         storage_daily_cycling=args.storage_daily_cycling,
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
+        as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
         gas_monthly_actuals=args.gas_monthly_actuals,
@@ -3311,6 +3339,7 @@ def main() -> None:
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
+        negative_renewable_offers=args.negative_renewable_offers,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )

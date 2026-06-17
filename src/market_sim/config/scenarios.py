@@ -435,6 +435,17 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
+    as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
+    # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
+    # 0.01*load (WECC MORC contingency + 1% regulation-up; see
+    # fleet.caiso_operating_reserve_mw) from the gas top-of-merit headroom before
+    # the energy curve clears, so capacity held as reserve cannot also offer
+    # energy and the tight-hour / evening-tail price lifts. Default off
+    # (byte-identical baseline); CAISO-only. A published-standard, no-fitted-
+    # constants scaffold until OASIS cleared-AS data (AS_REQ/AS_RESULTS) can be
+    # pulled to replace the formula with measured MW (outbound network is blocked
+    # in the remote env). Lifts the evening tail only — it does NOT touch the
+    # separately-handled midday floor.
     storage_as_commitment: bool = False  # ERCOT backcast: reserve the measured
     # hourly storage upward-AS MW (RegUp/RRS/ECRS cleared by batteries, from the
     # per-resource-type series) from the storage dispatch power cap, so capacity
@@ -442,6 +453,31 @@ class ScenarioConfig:
     # ERCOT-only. Unlike thermal AS (tiny), storage carries ~2-3 GW of AS — a
     # large share of the battery fleet — and the energy-only LP otherwise dumps
     # the full fleet into the few highest-price hours. Reserves power, not SOC.
+    negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
+    # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
+    # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
+    # bid BELOW $0 to keep producing for their RPS/REC and federal-PTC value, so
+    # in the spring-midday solar glut the marginal (curtailed) unit clears
+    # negative. The model's wind/solar are availability-capped LP slices that
+    # otherwise carry a $0 (solar) or -PTC (wind) offer and are never marginal,
+    # so the model floors at $0 at best. When on, the wind/solar dispatch offer
+    # is floored at the negative keep-running value below (so curtailing them is
+    # the costly action and the LMP follows them negative). Default off
+    # (byte-identical baseline); pushes the floor below the existing $0
+    # export/curtailment sink. Only bites once the model is LONG midday (the RA
+    # must-offer commitment floor workstream); develop/test in a forced-long
+    # harness. ISO-agnostic mechanism, but targeted at CAISO.
+    renewable_keep_running_value: float = 20.0  # $/MWh, the curtailable
+    # renewable "keep-running" value used as the negative-offer floor when
+    # negative_renewable_offers is on: a renewable on a PPA/REC will pay up to
+    # this much to avoid being curtailed, so it bids -keep_running_value. One
+    # defensible constant (not a per-hour shape). $20/MWh sits in the middle of
+    # the cited range: CA RPS Bucket-1 (PCC1) REC prices have historically
+    # cleared ~$10-25/MWh, and the federal §45 wind PTC is ~$28/MWh (2024,
+    # inflation-adjusted). For wind the floor is the MORE-negative of this and
+    # the PTC already on wind_mc (so the PTC, when active, dominates and there
+    # is no double-count); for solar — which earns the ITC, not the PTC, so its
+    # dispatch offer is $0 — this REC value is what carries it negative.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1329,7 +1365,10 @@ TIER_TAGS: dict[str, int] = {
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
     "as_reserve_withholding": 1,
+    "as_reserve_formula": 1,
     "storage_as_commitment": 1,
+    "negative_renewable_offers": 1,
+    "renewable_keep_running_value": 2,
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,
