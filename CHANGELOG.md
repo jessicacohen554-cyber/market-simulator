@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-06-17 (NEISO — backcast fleet made year-correct: within-window plant exits)
+
+The COD ramp can only age out a unit that is **in the fleet snapshot**, but the
+single recent operable EIA-860 vintage (2025 Early Release) omits whole plants
+that ran during the backcast window and retired before it — so a 2023–2025
+backcast was missing them in **every** year and the surviving plants silently
+over-dispatched to cover the hole. New keeper `neiso_mystic_cod_3yr` (neiso 17),
+superseding neiso 16; ERCOT/PJM/CAISO/NYISO unaffected (additive data + a
+backcast-only, mode-gated loader).
+
+- **The blind spot.** Mystic Generating Station (plant `1588`, a ~1.4 GW CC in
+  NEISO's Boston/NEMA zone) generated ~1.3 TWh in 2023, ran Jan–May 2024, and
+  retired June 2024 — but the 2025ER carries no Mystic CC at all (the early
+  release omits pre-survey retirees). It was absent from the modeled fleet in
+  every year; the surviving CCs over-dispatched ~1.3 TWh to match the EIA-923
+  CC_REGULAR total, a hidden composition error (wrong plants, wrong zone).
+- **Fix (general, mirror of forecast's planned additions).**
+  `scripts/process_eia860.py --retired-window-from <final.zip ...>` reads the
+  "Retired and Canceled" sheet of each final EIA-860 vintage (2023, 2024, which
+  carry Mystic with its real June-2024 retirement), keeps whole-plant exits that
+  retired in/after the window start and are absent from the operable snapshot,
+  and writes `eia860_generator_retired_within_window.parquet`. `load_cod_map()`
+  unions it (the ramp gains each exit's retirement month) and a backcast-only
+  `fleet.load_retired_within_window(iso)` injects the matching generators
+  (gated on `mode == "backcast"`, so a forecast never carries a retired unit).
+- **Capped by observed CEMS outages.** An injected exit is a real generator at
+  its full economic merit, but several ran far below merit for reliability/RMR
+  reasons. The historic unit-outage overlay now covers the retirees too
+  (`derive_campd_unit_outages.py` and `outages._iso_plant_capacity` both union
+  the retiree fleet), so Mystic's `(1588, CC_REGULAR)` derate resolves to its
+  ~0.11 observed availability ceiling and the LP cannot run it as baseload.
+- **Result.** Mystic now dispatches **0.72 TWh (2023) / 0.85 TWh (Jan–Jun 2024)
+  in Boston, zero 2025**; the modeled CC_REGULAR plant set differs by year
+  (**31 / 31 / 29**, was the identical 29 every year). Total CC_REGULAR stays in
+  tolerance (−0.2 / −0.2 / +8.7 % vs EIA-923) and the run is gas-neutral
+  (54.8 / 58.9 / 60.1 TWh) and price-level-neutral (34.5 / 39.8 / 70.5 vs DA
+  36.8 / 41.5 / 67.9) vs neiso 16; 2025 is byte-identical (Mystic absent).
+  Mystic's 0.72 vs 1.31 TWh actual is the reliability/RMR dispatch the economic
+  LP cannot recover (same class as the documented CT/ST/oil wedge); the 2025
+  +8.7 % CC over-forecast is the separate merit-order issue, untouched here.
+  Other within-window NEISO exits handled the same way (Tanner Street CC, South
+  Meadow / North Main oil, Androscoggin Mill gas-ST, …). Tests: +12 across
+  `test_cod_ramp` / `test_fleet` / `test_outages`.
+
 ## 2026-06-17 (ERCOT — OTHER_FOSSIL scoring bucket for genuinely-mixed gas-thermal plants)
 
 The EIA-923 dominant-class assignment collapses each plant to one model class
