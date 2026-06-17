@@ -1041,7 +1041,11 @@ if __name__ == "__main__":
 
 
 class TestReserveCoOptimization(unittest.TestCase):
-    """Trivial-case tests for in-LP energy+reserve co-optimization."""
+    """Trivial-case tests for in-LP energy+reserve co-optimization.
+
+    Reserve is tracked per zone (``reserve_dispatch`` is ``(n_zones, T)``);
+    these single-zone cases make the zone aggregate equal to the fleet total.
+    """
 
     T = 4
 
@@ -1096,9 +1100,10 @@ class TestReserveCoOptimization(unittest.TestCase):
         np.testing.assert_allclose(res.prices, 1020.0, atol=1e-6)
 
     def test_idle_unit_supplies_reserve_without_lifting_price(self):
-        # Cheap 100 MW @ $20 + idle 100 MW @ $90. Demand 80, reserve req 50.
-        # Cheap serves energy (80) + 20 reserve; the idle unit supplies the
-        # remaining 30 reserve from free headroom -> reserve price 0, LMP $20.
+        # Cheap 100 MW @ $20 + idle 100 MW @ $90, both in one zone. Demand 80,
+        # reserve req 50. Cheap serves the 80 energy; the zone has 120 MW of
+        # headroom (200 cap - 80 dispatched), far above the 50 MW requirement,
+        # so reserve clears free -> reserve price 0, LMP stays $20.
         fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0,
                             pmin=0.0, eford=0.0)
         mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 90.0)])
@@ -1111,8 +1116,10 @@ class TestReserveCoOptimization(unittest.TestCase):
             ordc_step_widths=np.array([1000.0]),
             **self._no_renewables(1),
         )
+        # Requirement met (reserve beyond it is free, so the exact level is
+        # indeterminate); the point is the price does not lift.
         total_reserve = res.reserve_dispatch.sum(axis=0)
-        np.testing.assert_allclose(total_reserve, 50.0, atol=1e-6)
+        self.assertTrue((total_reserve >= 50.0 - 1e-6).all())
         np.testing.assert_allclose(res.reserve_price, 0.0, atol=1e-6)
         np.testing.assert_allclose(res.prices, 20.0, atol=1e-6)
 
