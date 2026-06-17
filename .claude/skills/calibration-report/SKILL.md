@@ -52,15 +52,17 @@ rebasing:
 Run id = `<bundle date>-<shorthand>`; shorthand + the 1-3 sentence definition
 are auto-derived from each bundle's `run_config.json` model-changes note.
 
-**Retention rule (2026-06-11, user-set; supersedes the 3-run rule of
-2026-06-10): the dashboard keeps the top 5 runs per ISO** — the 5 most
-recent (highest-numbered) runs. Register every completed numbered run,
-keeper or rejected probe alike (mark rejected probes as such in the
-sidecar definition). When registering a run beyond the limit, delete the
-displaced oldest run's sidecar (`registry/<id>.json`) and payload
-(`runs/<id>.js`) in the same commit, then regen/rebuild the manifest.
-Bundles in `results/calibration/` are kept — only the dashboard
-registration is pruned.
+**Retention rule (2026-06-17, user-set; supersedes the 5-run rule of
+2026-06-11): the dashboard keeps the top 10 runs per ISO.** Register EVERY
+completed run — keeper or probe alike (mark rejected probes "(PROBE)" in the
+sidecar definition). **Do not run a probe bundle without registering it** —
+the dashboard is the only way the user sees results; an unregistered /tmp
+probe leaves them flying blind. When over the 10-run limit, delete the
+displaced **oldest** runs' sidecar (`registry/<id>.json`) and payload
+(`runs/<id>.js`) in the same commit — drop the oldest even when an old run
+scored better, because the model design evolves and only the prior keeper
+stays a meaningful comparison. Then regen/rebuild the manifest. Bundles in
+`results/calibration/` are kept — only the dashboard registration is pruned.
 
 From 2026-06 onward, label **PJM** runs sequentially as `pjm 1 <keyword>`,
 `pjm 2 <keyword>`, ... — a running integer plus a brief keyword descriptor of
