@@ -31,7 +31,11 @@ from market_sim.config.constants import (
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
-from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR
+from market_sim.config.paths import (
+    EIA_860_DIR,
+    PROCESSED_DIR,
+    active_eia860_dir,
+)
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
     COAL_SUPPLY_TO_CLASS,
@@ -2334,11 +2338,24 @@ def _chp_by_plant(eia860_dir: Path) -> "pd.Series":
     )
 
 
-@lru_cache(maxsize=2)
 def dual_fuel_plant_groups(
-    eia860_dir: Path = EIA_860_DIR,
+    eia860_dir: Path | None = None,
 ) -> frozenset[tuple[int, str]]:
     """Return ``(plant_code, plant_group)`` pairs of oil/gas dual-fuel units.
+
+    Resolves the EIA-860 directory through :func:`paths.active_eia860_dir` when
+    not given (so a year-matched vintage switch is honored) and defers to the
+    directory-keyed cache below.
+    """
+    return _dual_fuel_plant_groups(
+        Path(eia860_dir) if eia860_dir is not None else active_eia860_dir())
+
+
+@lru_cache(maxsize=4)
+def _dual_fuel_plant_groups(
+    eia860_dir: Path,
+) -> frozenset[tuple[int, str]]:
+    """Cached ``(plant_code, plant_group)`` dual-fuel pairs for one directory.
 
     Reads the EIA-860 Multifuel schedule (:data:`EIA_860_MULTIFUEL_PARQUET_NAME`)
     and flags every operable gas-primary unit ("Energy Source 1" = ``NG``)
@@ -2566,7 +2583,7 @@ def load_fleet_from_csv(
     """
     iso = iso.upper()
     if data_dir is None:
-        data_dir = EIA_860_DIR
+        data_dir = active_eia860_dir()
     data_dir = Path(data_dir)
     if iso_config is None:
         try:
@@ -2662,7 +2679,7 @@ def load_planned_additions(
     """
     iso = iso.upper()
     if data_dir is None:
-        data_dir = EIA_860_DIR
+        data_dir = active_eia860_dir()
     data_dir = Path(data_dir)
     if iso_config is None:
         try:
@@ -3795,7 +3812,7 @@ def cc_duct_peaking_pct() -> dict[int, float]:
     ``pct_peaking``. Plants absent from the sheet are absent from the map
     (callers keep their class default).
     """
-    path = EIA_860_DIR / "eia860_generator_operable.parquet"
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(path, columns=[
