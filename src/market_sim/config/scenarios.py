@@ -541,6 +541,17 @@ class ScenarioConfig:
     # battery capability by 1.5-2 GW. Off by default: the ERCOT/PJM
     # backcasts were calibrated against flat year-end fleets and stay
     # unchanged until recalibrated (CAISO prompt pack E2).
+    thermal_vintage_ramp: bool = False  # When True, thermal/fossil capacity
+    # for the simulated year ramps month-by-month from each unit's commercial
+    # operation date and steps down at its retirement month (EIA-860 Operating
+    # Month/Year and Planned Retirement Month/Year) — the thermal analogue of
+    # vintage_capacity_ramp/storage_vintage_ramp. A unit that comes online or
+    # retires mid-year is then available only for the months it actually
+    # operated, instead of the all-year-or-nothing annual online_year/
+    # retirement_year screen. Pure capacity accounting (no fitting), so it is
+    # forecast-applicable as well as backcast-correct. Off by default: existing
+    # ISO backcasts were calibrated against the annual screen and stay
+    # byte-identical until recalibrated.
 
     # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
     # Each coal bin is split into three tranches modeling its take-or-pay
@@ -1423,6 +1434,7 @@ TIER_TAGS: dict[str, int] = {
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
+    "thermal_vintage_ramp": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
     "coal_tranche_2_frac": 3,
