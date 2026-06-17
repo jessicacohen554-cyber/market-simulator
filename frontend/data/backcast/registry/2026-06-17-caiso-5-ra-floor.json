@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-17-caiso-5-ra-floor",
+  "label": "caiso 5 ra floor",
+  "date": "2026-06-17",
+  "shorthand": "caiso-5-ra-floor",
+  "definition": "RA must-offer midday gas-commitment floor (--caiso-gas-commitment-floor, frac 0.80) + 2025 hydro repin. Holds the gas fleet online over the midday solar-glut window at 0.80x the measured EIA-930 NG: NG (the EIA-923/EIA-930 gas ratio, stripping the geo+bio NG: NG absorbs), via FleetArrays.min_gen, so the model goes LONG midday and its surplus exports/curtails at ~$0. Collapses the over-priced spring-midday LMP floor: LMP min 8/28/41 -> 0 (2023/24/25); 2024 spring p5 36->8, spring min 28->0, midday import 2253->258 MW. Gas modestly up and disciplined (+4.1/+4.2/+2.4 TWh; 2024 71.3 vs EIA-923 67.7, +5.3%) — the surplus exports, it does not pad load. Pushing the belly negative is Session B.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-17-caiso-5-ra-floor.js",
+  "bundle": "results/calibration/caiso_floor_f08_3yr"
+}
