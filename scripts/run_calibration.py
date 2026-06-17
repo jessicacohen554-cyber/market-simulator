@@ -821,6 +821,7 @@ def run_year(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
+    as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -909,6 +910,13 @@ def run_year(
     # Reserve requirement; fleet.generators_to_fleet_arrays).
     if as_reserve_withholding:
         config = config.with_overrides(as_reserve_withholding=True)
+    # CAISO formula-based operating-reserve withholding (run_calibration_full
+    # --as-reserve-formula): withhold R(t) = max(MSSC, 0.067*load) + 0.01*load
+    # (WECC MORC + 1% regulation-up) from gas top-of-merit headroom; CAISO-only,
+    # the default-off scaffold until OASIS cleared-AS data can be pulled
+    # (fleet.caiso_operating_reserve_mw / generators_to_fleet_arrays).
+    if as_reserve_formula:
+        config = config.with_overrides(as_reserve_formula=True)
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).
