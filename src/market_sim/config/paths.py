@@ -54,6 +54,50 @@ CALIBRATION_DIR: Path = INPUTS_DIR / "calibration"
 
 # inputs/raw-data/ subdirectories -----------------------------------------
 EIA_860_DIR: Path = RAW_DATA_DIR / "eia-860"
+
+# --- EIA-860 vintage selection -------------------------------------------
+# The committed EIA-860 parquets in EIA_860_DIR are the 2025 Early Release
+# (operating years through 2025) — a single recent snapshot the COD ramp
+# filters to the solved year for backcasts. A *year-matched* vintage (the
+# native EIA-860 annual release for the solved year, processed into
+# ``EIA_860_DIR/vintage_<year>/``) removes the COD-ramp approximation (the
+# capacity-weighted-mean COD smear of mixed-vintage plants) and the absence of
+# units that retired between the solved year and the 2025 snapshot. Measured
+# effect on installed ERCOT capacity is small (~0.4% vs the COD-ramped 2025ER
+# fleet — see docs/cod-vintage-ramp.md), so this is a correctness/provenance
+# refinement, not a scarcity driver; it is opt-in via
+# ``ScenarioConfig.eia860_vintage_year`` (backcast-only). The active directory
+# is a process-global set per year-solve through :func:`set_eia860_vintage`;
+# loaders resolve their default data dir through :func:`active_eia860_dir`.
+_ACTIVE_EIA_860_DIR: Path = EIA_860_DIR
+
+
+def active_eia860_dir() -> Path:
+    """Return the EIA-860 directory loaders should read from.
+
+    Defaults to the canonical (2025 Early Release) ``EIA_860_DIR`` and is
+    redirected to a ``vintage_<year>`` subdirectory by
+    :func:`set_eia860_vintage`.
+    """
+    return _ACTIVE_EIA_860_DIR
+
+
+def set_eia860_vintage(year: int | None) -> Path:
+    """Point the EIA-860 loaders at a year-matched vintage (or the default).
+
+    ``year=None`` (or a year with no committed ``vintage_<year>/`` directory)
+    resets to the canonical ``EIA_860_DIR``. Returns the resolved directory.
+    Caches keyed on the resolved directory (``fleet._chp_by_plant``,
+    ``fleet.dual_fuel_plant_groups``, ``cod_ramp.load_cod_map``) pick the switch
+    up automatically because the directory is part of their cache key.
+    """
+    global _ACTIVE_EIA_860_DIR
+    if year is None:
+        _ACTIVE_EIA_860_DIR = EIA_860_DIR
+    else:
+        candidate = EIA_860_DIR / f"vintage_{int(year)}"
+        _ACTIVE_EIA_860_DIR = candidate if candidate.is_dir() else EIA_860_DIR
+    return _ACTIVE_EIA_860_DIR
 EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
