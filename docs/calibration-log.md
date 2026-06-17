@@ -42,6 +42,86 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-17 — ERCOT — run124 NEW KEEPER: the AS-aware storage design (run121 + --storage-as-commitment)
+
+**run124** = run121's exact config **+ `--storage-as-commitment`**
+(`results/calibration/run124_storage_as_keeper`; CT deployment OFF,
+`battery_dispatch_adder=10` retained, storage vintage COD ramp on, merit-ramp CC,
+cc-duct). Finalizes the storage AS-commitment lever (the run122/123 probes) into a
+clean 3-year keeper. **Adopted for ACCURACY, not fit.** Supersedes run121.
+
+**Scores vs run121: identical, by design.** Volume **5 fails @0.5%** (CT_PEAKER
+2023/24, CC_REGULAR 2024/25, COAL_PRB 2024), **7 @0.33%** — the same set. **cf_emd
+[7c] 18/18 PASS**, several marginally better (CC_CHP 2023 0.124→0.121 / 2024
+0.118→0.115; CT_PEAKER 2024 0.080→0.076; ST_GAS 2023 0.069→0.068 / 2024
+0.098→0.097), no regressions. **CO₂ 8/9** (2024 coal −7.0% cheap-gas residual,
+unchanged; totals within ±5% all years). The storage-AS change is on the storage
+class — thermal volumes/CO₂ move <0.01%.
+
+**The accuracy gain (why it's a keeper):** the energy-only LP dumps the full
+battery fleet into a handful of hours. 2024 baseline discharges in 451 h, peaking
+at **5.93 GW**; the AS reservation caps that to a **physical 4.59 GW** spread over
+511 h, landing the 2024 storage benchmark dead-on — discharge 0.781 → **0.728 TWh**
+(EIA-930 0.722), charge 0.857 (EIA-930 0.870). **12 unphysical >4.6 GW dump hours
+→ 0**: in the top dump hour (h6833) the model committed 4.0 GW to AS yet baseline
+discharged 5.9 GW of energy; the reservation throttles it to 2.65 GW. 2023 (the
+ESTIMATE year) 0.525 → 0.51 TWh, peak 2.95 → 2.56 GW; 2025 ≈ unchanged
+(3.799 → 3.788 TWh — the model under-runs the 5.45-TWh 2025 fleet regardless, a
+separate item the storage-AS lever doesn't touch).
+
+**TASK 3 — the "trade the magic number for data" experiment (the headline
+finding): the measured AS constraint COMPLEMENTS, does not REPLACE,
+`battery_dispatch_adder=10`.** A/B on 2024:
+
+| 2024 design | storage discharge (EIA-930 **0.722**) | charge (**0.870**) | peak GW | hrs>1MW | CC_REG | COAL_PRB | CT_PEAK | fails@0.5% | cf_emd |
+|---|---|---|---|---|---|---|---|---|---|
+| run121 (adder10, no AS) | 0.781 (+8%) | 0.918 | 5.93 | 452 | +5.64 | −3.62 | −3.53 | 3 | base |
+| **run124 (adder10 + AS)** | **0.728 (+0.8%)** | **0.857** | **4.59** | 511 | +5.60 | −3.64 | −3.50 | 3 | **6/6, 3 better** |
+| adder0 + AS (REJECTED) | **2.724 (+277%)** | 3.205 | 5.91 | 2059 | +6.59 | −3.43 | −4.00 | 3 | CT_PEAKER r 0.466→0.445 **FAIL** |
+
+The adder is the throughput/degradation + AS-opportunity cost that bounds storage
+**energy** (total cycling); the AS reservation is the measured physical commitment
+that caps the **peak** (power). They are orthogonal: dropping the adder to 0 leaves
+the LP free to over-cycle in the 2059 hours where AS is low (storage explodes to
+3.8× benchmark and CT_PEAKER's shape regresses), because the reservation only binds
+in the high-AS peak hours. With both on, 2024 energy lands at +0.8% of benchmark —
+no over-suppression, so no harmful double-count. **adder=10 stays** as a defensible
+degradation VOM (`ScenarioConfig.battery_dispatch_adder`, forecast-applicable; not
+a CEMS-pinned magic number); the data validates it does real, distinct work and
+adds physical peak fidelity on top.
+
+**TASK 1 — structural / market-integrity review (clean).** (a) No double-counting:
+`as_revenue_enabled` is OFF in the keeper — that path only feeds the capacity
+new-entry/retirement screens, which don't run in the P1 backcast, so the dispatch
+power reservation and AS capacity-revenue are orthogonal. (b) ORDC overlay is
+display-only and never gates volumes/LMP; `ordc_as_plan_mw` netting is OFF
+(rejected), so storage AS is not subtracted a second time — the overlay reflects
+the post-reservation dispatch correctly. (c) **Reg-Down correctly excluded**: the
+up-AS source (`ercot_<yr>_as_up_mw.parquet`) has no `regdn` column; the storage
+series is RegUp+RRS+ECRS only (offline Non-Spin excluded from thermal). (d)
+Per-resource-type reconciles with NP3-911: by_restype(storage+load+thermal) vs
+non-NonSpin up-AS = +40 MW (2025, ~1%), −600 MW (2024, storage conservative).
+(e) **SOC vs power**: the reservation reserves power, not SOC. For the energy
+backcast (what we score) power is the binding, first-order constraint — it caps
+the unphysical dump. SOC reservation (holding energy behind an RRS/ECRS award)
+would matter for AS-deliverability/adequacy in a FORECAST, but is not needed for
+the backcast and is left as a documented future refinement.
+
+**TASK 2 — physical operating review (positive).** Fleet RTE = discharge/charge =
+**0.850** (exact li-ion-4hr target); **0 hours** of simultaneous charge>1 &
+discharge>1 MW (no unphysical round-tripping); the reserved fleet AS matches the
+measured series exactly (peak 4596 MW / mean 2045 MW = the AS series); **0 hours**
+where fleet discharge exceeds the AS-reduced power cap (the reservation is fully
+respected and self-consistent). Thermal must-run/outage overlays compose
+unchanged. High-AS scarcity hours spot-checked: the reservation throttles each
+hour by exactly its measured AS MW.
+
+NOTE: the dashboard probes run122 (2024) / run123 (2023 est) had **CT deployment
+ON** — they were run121 + storage-AS + CT-deployment, split across two single-year
+runs, *not* a clean run121 + storage-AS. run124 is the clean keeper-grade 3-year
+reproduction (CT deployment OFF). The storage-AS conclusion is unaffected (the
+reservation is orthogonal to the CT overlay).
+
 ### 2026-06-16 — ERCOT — storage AS-commitment probe: accuracy-positive, score-neutral (the real AS lever)
 
 Where the thermal-AS lever was negligible, the *storage* one is physically
