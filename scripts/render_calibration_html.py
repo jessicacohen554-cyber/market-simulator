@@ -65,7 +65,10 @@ from market_sim.config.plant_taxonomy import (  # noqa: E402
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
-    load_campd_bins, plant_tranche_bands,
+    OTHER_FOSSIL_CLASS,
+    apply_other_fossil_scoring,
+    load_campd_bins,
+    plant_tranche_bands,
 )
 from market_sim.results.calibration import (  # noqa: E402
     actuals_source, signed_volume_error,
@@ -79,7 +82,10 @@ from market_sim.results.calibration import (  # noqa: E402
 _group_label = class_label                  # known canonical name, else humanized
 GROUP_LABEL = dict(LABELS)
 _NONFOSSIL_KLASS = nonfossil_classes()
-FOSSIL_GROUPS = list(fossil_classes())
+# OTHER_FOSSIL: the scoring bucket for genuinely-mixed gas-thermal plants
+# (apply_other_fossil_scoring). Added to the fossil groups so the model side's
+# `klass.isin(FOSSIL_GROUPS)` filter keeps it, matching the EIA-923 side.
+FOSSIL_GROUPS = [*fossil_classes(), OTHER_FOSSIL_CLASS]
 MIX_GROUPS = list(FOSSIL_GROUPS)
 _GAS_GROUPS = classes_for_fuel930("gas")
 _COAL_GROUPS = classes_for_fuel930("coal")
@@ -322,8 +328,17 @@ def build_payload(runs: list[tuple[str, Path]],
             if years is not None and int(year) not in years:
                 continue
             years_set.add(int(year))
-            disp = pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet")
-            e923 = e923_all[e923_all["year"] == year]
+            # Re-bucket genuinely-mixed gas-thermal plants into OTHER_FOSSIL on
+            # both the model and the EIA-923 side, so a coin-flip plant scores in
+            # the same bucket on both and stops distorting the clean classes
+            # (a scoring transform — dispatch itself is unchanged).
+            disp = apply_other_fossil_scoring(
+                pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet"),
+                year, plant_col="plant_code",
+            )
+            e923 = apply_other_fossil_scoring(
+                e923_all[e923_all["year"] == year], year, plant_col="plant_id",
+            )
             e930 = e930_all[e930_all["year"] == year]
             campd = campd_all[campd_all["year"] == year]
 
