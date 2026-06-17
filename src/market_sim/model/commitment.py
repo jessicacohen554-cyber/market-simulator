@@ -405,6 +405,7 @@ def apply_commitment_with_coal_pin(
     p1_dispatch: np.ndarray,        # (n_gen, T) from the P1 solve
     generators: list[Generator],    # fleet list aligned with committed rows
     screen_coal: bool = True,
+    preserve_min_gen: bool = False,
 ) -> FleetArrays:
     """Return new ``FleetArrays`` with the commitment screen applied.
 
@@ -431,6 +432,16 @@ def apply_commitment_with_coal_pin(
         generators: The dispatch fleet, aligned with ``committed`` rows.
         screen_coal: When False, CAMPD coal is pinned to its P1 dispatch
             instead of being commitment-screened (it gains no new P2 gen).
+        preserve_min_gen: When True, the P1 ``min_gen`` hard floor is carried
+            into the P2 fleet and each floored generator-hour's availability is
+            raised to cover it, so a reserve / AS-deployment floor
+            (``ct_deployment`` / ``reliability_deployment`` overlays) survives
+            the *economic* commitment screen rather than being decommitted —
+            those units ran for reliability, not economics, so the economic
+            screen must not shut them off. Default False reproduces the prior
+            behaviour exactly (``min_gen`` dropped in P2), so every non-overlay
+            caller — the forecast runner and all other ISOs/keepers — is
+            byte-identical.
 
     Returns:
         A new ``FleetArrays`` with availability adjusted for P2.
@@ -504,6 +515,21 @@ def apply_commitment_with_coal_pin(
         sub[restore] = np.maximum(sub[restore], p1_frac[rows][restore])
         avail[rows] = sub
 
+    # Carry the P1 hard floor (min_gen) into P2 when asked: a reserve /
+    # AS-deployment floor must survive the economic commitment screen. The LP
+    # binds ``min_gen <= P <= pmax * availability``, so wherever a floor is set
+    # the screen's ``avail = 0`` in a decommitted hour would make the bound
+    # infeasible — raise availability to at least ``min_gen / pmax`` for those
+    # floored generator-hours so the floor stays feasible and forces the unit on.
+    p2_min_gen = None
+    if preserve_min_gen and fleet_arrays.min_gen is not None:
+        p2_min_gen = fleet_arrays.min_gen
+        pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
+        floored = p2_min_gen > 0.0
+        if floored.any():
+            need = np.clip(p2_min_gen / pmax_safe, 0.0, 1.0)
+            avail = np.where(floored, np.maximum(avail, need), avail)
+
     return FleetArrays(
         pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),
         heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
@@ -513,4 +539,5 @@ def apply_commitment_with_coal_pin(
         availability=avail, unit_ids=fleet_arrays.unit_ids,
         efficiency_bin=fleet_arrays.efficiency_bin,
         plant_code=fleet_arrays.plant_code,
+        min_gen=p2_min_gen,
     )
