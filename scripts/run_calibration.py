@@ -791,6 +791,7 @@ def run_year(
     as_reserve_withholding: bool = False,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
+    interchange_shaping: bool = False,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -842,6 +843,8 @@ def run_year(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
+    if interchange_shaping:
+        config = config.with_overrides(interchange_shaping=True)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -1115,6 +1118,18 @@ def run_year(
         load_shape=demand.sum(axis=0), ct_campd_shape=ct_campd_shape,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
+    # Shape the priced import/export node by the measured EIA-930 diurnal
+    # interchange envelope (import overnight, export the midday solar glut) so
+    # the node stops clearing a flat all-hours import that floors the midday
+    # price. Only fires with priced interchange + the opt-in flag + a measured
+    # envelope; otherwise the static node is unchanged.
+    if priced_interchange and getattr(config, "interchange_shaping", False):
+        from market_sim.model.transmission import inject_interchange_shape
+        if inject_interchange_shape(fleet_arrays, iso, year):
+            logger.info(
+                "%s %d: priced node shaped by measured EIA-930 interchange "
+                "envelope (import overnight / export midday)", iso, year,
+            )
 
     # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
     # (our costs), then the actual EIA-923 monthly per-plant delivered cost
