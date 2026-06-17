@@ -156,12 +156,21 @@ gap with a fitted parameter.
 
 ## Reserve-withholding recalibration — the re-solve the overlay deferred
 
-**Status:** implemented (default off), **bundle `results/calibration/pjm_27_aswh`**
-(keeper `pjm_26` config + `as_reserve_withholding` on, 2023–25 re-solved).
-**Result: the withholding lever is ~inert on the energy LMP; it does not close
-the afternoon residual.** This is the experiment the consequence-check above
-pointed at — withhold the measured cleared reserve from the energy dispatch and
-*re-solve* (not a post-solve overlay) — carried out and reported honestly.
+**Status:** implemented, **bundle `results/calibration/pjm_27_aswh`** (`pjm_26`
+config + `as_reserve_withholding` on, 2023–25 re-solved). This is **retained
+structure**, not a probe to accept/reject by fit: PJM genuinely holds its
+Primary Reserve out of the energy stack, so the model should too (claude.md #1 —
+right structure first; backcast match is not the keeper criterion). The level
+calibration (offer curves) is retuned *after* the reserve price structure is
+complete, not by reverting the structure.
+
+**What it does and does not do.** Withholding alone is **~inert on the energy
+LMP** — necessary structure, but not sufficient to price the residual. The
+afternoon $75–200 band is the reserve **opportunity-cost price**, whose correct
+structure is energy+reserve **co-optimization in the LP** (the next build, below)
+— a pre-solve headroom haircut cannot produce a reserve shadow price. So the
+withholding stays on as the structural baseline; co-optimization is what carries
+the band; offer-curve tuning then calibrates the level.
 
 **What it does.** `ScenarioConfig.as_reserve_withholding` (the ERCOT primitive,
 now generalized to PJM — shared `fleet._withdraw_top_of_merit`, per-ISO pool +
@@ -211,14 +220,16 @@ where PJM's vertical ORDC step is $0. The residual is the sub-shortage reserve
 *price* (the marginal unit's lost energy margin from AS co-optimization), which a
 pre-solve headroom haircut cannot produce: thinning reserve further only makes
 the vertical step bite at **penalty** levels ($850+), which *overshoots* the
-actual $75–200 (overlay+withholding Jul/Aug 2024 swings to **+14.3**). Closing
-the residual needs the reserve **co-optimization** the overlay scopes out (raise
-the marginal unit's offer by its reserve opportunity cost), or a commitment model
-reproducing PJM's tighter real-time online posture — exactly the boundary already
-drawn, now confirmed by a full re-solve rather than inferred. Per claude.md #11
-the measured data stays in (it is correct and the fit is marginally *better*, not
-worse); we do not revert to an estimate or tune the withdrawal to manufacture a
-lift. `pjm_26` remains the keeper; `pjm_27_aswh` is the documented probe.
+actual $75–200 (overlay+withholding Jul/Aug 2024 swings to **+14.3**). The right
+structure is **energy+reserve co-optimization** in the LP: a reserve-requirement
+constraint whose dual is the reserve price, with reserve limited to deliverable
+(10-min-ramp / synchronized) headroom so the requirement binds — the marginal
+unit's offer then carries its reserve opportunity cost and the band is priced
+*inside* the solve. That is the next structural build; withholding is its
+pre-condition (it removes the must-hold MW from the energy stack), and
+offer-curve tuning calibrates the level afterward. `pjm_27_aswh` is the
+structural baseline — matching the residual is not what makes a run a keeper
+(claude.md #1).
 
 **Consistency fix (a real bug found en route).** `derive_pjm_ordc_overlay.py`'s
 `_run_year_kwargs` did not forward `as_reserve_withholding`, so on a withholding
@@ -256,8 +267,10 @@ CSV edit (a new dated block), never a code change.
 ## Scope notes
 
 - **Opportunity-cost reserve price / AS co-optimization** — the sub-shortage
-  reserve MCP that carries the $75–200 residual — is **not modeled** (a reserve
-  co-optimization, the same boundary as ERCOT).
+  reserve MCP that carries the $75–200 residual — is the **next structural build**
+  (energy+reserve co-optimization in the LP; see "Reserve-withholding
+  recalibration" above), not a permanent boundary. The post-solve overlay only
+  prices the shortage (penalty) regime.
 - The overlay never enters the LP objective or constraints.
 - PJM is a capacity-market ISO; resource fixed-cost recovery runs through the
   capacity market (`capacity_revenue_per_mw_yr`), so — unlike ERCOT — the
