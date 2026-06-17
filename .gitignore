@@ -55,6 +55,7 @@ inputs/processed/.offer_curve_jacobian_cache.json
 /results/calibration/nyiso_u3_*/
 /results/calibration/caiso_ixshape*/
 /results/calibration/nyiso_ce_*/
+/results/calibration/nyiso_oc_*/
 
 # Forecast / scenario run caches: transient per-ISO LP outputs keyed by
 # cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
