@@ -35,39 +35,64 @@ Run against PJM 2023/24/25, with no LP, on three measured benchmarks:
 | **Neighbor price *level*** (vs actual NYISO LMP) | understates: $23 vs $30, $21 vs $36, $26 vs $61 — gap widens in tight years |
 | **Seam direction** (spread sign vs measured net export) | **wrong sign**: predicts PJM imports; PJM exports in 95–98% of hours; hit-rate 2–11% |
 
-### The headline finding
+### The headline finding (corrected after a literature check)
 
-**PJM's structural net export is not a gas-price-spread phenomenon, and a shared
-marginal heat rate across regions cannot reproduce it.** On a like-for-like
-gas-marginal basis PJM's reference price ($24 / $21 / $27) is *higher* than its
-neighbors' ($20 / $17 / $22), because PJM's Marcellus-delivered gas basis
-(+$0.67) exceeds MISO's and the Carolinas' (~$0). So the pure gas-basis spread
-says PJM should *import* — the exact opposite of the +40 → +18 TWh it actually
-exports. PJM exports because its **fleet** (abundant nuclear, coal, and
-efficient CCs) sets a clearing price below its neighbors' despite pricier gas;
-assigning every region the same 7.5 heat rate erases exactly that
-fleet-efficiency difference.
+**The price-spread mechanism is correct and standard; the failure was that the
+neighbor price was built too cheap.** A first reading of the validation —
+"the spread predicts imports, so PJM's export isn't price-driven" — is *wrong*,
+and an external check shows why:
 
-There is a weak positive hour-to-hour signal in the spread (corr +0.15…+0.26 in
-2023/24, ~0 in 2025), so the *shape* mechanism (load-driven price) is sound; the
-**level/sign** is what fails.
+* The field is unanimous that PJM↔neighbor flows follow price spreads net of a
+  transaction (hurdle) cost, and that PJM is a structural net *exporter* because
+  its resource mix (coal retirements + efficient new CCs, generation near load)
+  makes **PJM's LMP lower than its neighbors'**. PJM's 2024 State of the Market
+  report and the ACORE / PJM-MISO joint studies say exactly this.
+* The numbers confirm the *direction*: MISO's 2024 average real-time LMP was
+  **$31/MWh** (Potomac Economics, MISO IMM) vs PJM's ~$29.5 — and ~$36 (MISO)
+  vs $28 (PJM) in 2023. So MISO really is the dearer region, and the measured
+  net export shrinks as the spread shrinks (+40 TWh in 2023's wide spread →
+  +18 TWh in 2025's narrow one).
+* Our **constructed** MISO price was **$16 (2024)** — roughly half the real $31.
+  The flat 7.5 MMBtu/MWh heat rate and the mean-preserving linear load shape
+  reproduce only the gas-*burn* floor; they omit the marginal-unit inefficiency,
+  congestion, and scarcity that lift a real RTO's LMP well above gas×7.5. With
+  the neighbor mis-priced below PJM, the spread sign flips and the seam predicts
+  imports.
 
-### Implication for step (2) — do NOT fit it away
+So the lesson is not "abandon the spread" — it is "**price the neighbor to its
+own realized LMP, not to a bare gas-burn floor**." The shape mechanism is
+already sound (hourly corr +0.4 vs actual NYISO LMP); only the level is wrong.
 
-The physically faithful lever is a **per-region marginal heat rate** (and
-possibly supply-curve convexity, `load_shape_exponent` > 1) reflecting each
-fleet's marginal efficiency — PJM lower, its neighbors higher — pinned to fleet
-data (EIA-860/930 marginal-unit mix), **never to the net-MWh target**. That
-keeps the construction forecast-native. The level gap vs actual NYISO LMP also
-reflects congestion/scarcity premia outside a gas×HR proxy (NYISO downstate is
-an extreme case and a poor heat-rate anchor); MISO and the Southeast are the
-better-behaved gas-marginal references to calibrate the per-region heat rate
-against.
+### Implication for step (2) — calibrate the level to the neighbor, NOT to the flow
 
-This is consistent with the prior fitted `EXPORT_TRANCHES`, which only
-reproduced PJM's export by pricing the export sinks at the *neighbors' avoided
-cost* ($16–36/MWh) — i.e. the neighbors' marginal price, which the flat-HR
-reference price undershoots.
+The faithful lever is a **per-region marginal heat rate** (and possibly
+supply-curve convexity, `load_shape_exponent` > 1) that makes each neighbor's
+reference price reproduce *that neighbor's own* annual LMP — MISO ≈ $31 (2024),
+etc. This is admissible under rule #11: the anchor is the neighbor's measured
+price formation (a reproducible physical/market quantity that responds to
+forward gas and load), **never PJM's net-MWh flow**. MISO and the Southeast are
+the clean gas-marginal anchors; NYISO downstate is congestion-dominated (implied
+HR ~10→18 across 2023-25) and a poor heat-rate anchor — keep its residual as a
+documented congestion premium rather than chasing it with HR.
+
+Hurdle rate: production-cost models use ~$2/MWh wheeling/transaction adders on
+inter-RTO transactions (OMS-RSC seams study), so the $3/MWh default sits in the
+right band.
+
+This is consistent with the prior fitted `EXPORT_TRANCHES`, which reproduced
+PJM's export only by pricing the export sinks at the *neighbors' avoided cost*
+($16–36/MWh) — i.e. the neighbors' marginal price, which the flat-HR reference
+price undershoots. The reference-price interface replaces that fit with the
+neighbor's *own* gas+load+HR price, anchored to its measured LMP level.
+
+### Sources
+
+* PJM 2024 State of the Market (Monitoring Analytics), §9 Interchange.
+* "Billions in Benefits: Expanding Transmission Between MISO and PJM" (ACORE,
+  2023) and the PJM/MISO Joint Modeling Case Study — PJM net-exporter rationale.
+* 2024 MISO State of the Market Report (Potomac Economics): MISO RT LMP $31/MWh.
+* OMS-RSC Seams Study — Interface Pricing (SPP/MISO IMM): hurdle/wheeling
+  adders (~$2/MWh) for inter-RTO transactions in production-cost models.
 
 ## Files
 
