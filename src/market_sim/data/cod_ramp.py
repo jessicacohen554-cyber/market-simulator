@@ -41,11 +41,11 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
-from market_sim.config.paths import INPUTS_DIR
+from market_sim.config.paths import PLANT_REGISTRY_CSV
 
 logger = logging.getLogger(__name__)
 
-_REGISTRY = INPUTS_DIR / "master-plant-registry.csv"
+_REGISTRY = PLANT_REGISTRY_CSV
 # The month-precise generator-level EIA-860 operable schedule (Operating Month /
 # Year, Planned Retirement Month / Year per generator) is read from the active
 # vintage directory (paths.active_eia860_dir) inside _load_cod_map, so a

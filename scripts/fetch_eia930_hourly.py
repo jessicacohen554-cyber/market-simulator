@@ -2,7 +2,7 @@
 """Fetch EIA-930 hourly Grid Monitor data and write the wide ``<BA> hourly``
 parquet that ``data/eia_loader.py`` reads.
 
-The hourly extracts in ``data/eia_hourly/`` were originally hand-uploaded; this
+The hourly extracts in ``data/raw/eia-930-hourly/`` were originally hand-uploaded; this
 script makes the pull reproducible. It mirrors the EIA-API convention used by
 ``fetch_eia860.py`` (``EIA_API_KEY`` env var or ``.env`` fallback) and emits the
 exact column schema the loader expects:
@@ -22,7 +22,7 @@ Run locally (the managed environment's allowlist blocks api.eia.gov):
     python scripts/fetch_eia930_hourly.py --ba NYIS --start 2023-01-01 \
         --end 2025-12-31
 
-Then upload the refreshed ``data/eia_hourly/NYIS hourly.parquet``.
+Then upload the refreshed ``data/raw/eia-930-hourly/NYIS hourly.parquet``.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ import requests
 
 REGION_URL = "https://api.eia.gov/v2/electricity/rto/region-data/data/"
 FUEL_URL = "https://api.eia.gov/v2/electricity/rto/fuel-type-data/data/"
-OUTPUT_DIR = Path(__file__).parent.parent / "data" / "eia_hourly"
+OUTPUT_DIR = Path(__file__).parent.parent / "data" / "raw" / "eia-930-hourly"
 PAGE_SIZE = 5000  # EIA API v2 max rows per request
 
 # BA local timezone — used to convert the UTC ``period`` to the ``Local time`` /
@@ -150,7 +150,7 @@ def main() -> None:
         "--out",
         type=Path,
         default=None,
-        help="Output parquet (default: data/eia_hourly/<BA> hourly.parquet)",
+        help="Output parquet (default: data/raw/eia-930-hourly/<BA> hourly.parquet)",
     )
     args = ap.parse_args()
 

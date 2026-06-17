@@ -1,7 +1,7 @@
 """Build CAISO uncurtailed renewable potential (HSL-analogue) hourly profiles.
 
 Reads CAISO's published *Production and Curtailments* workbooks
-(``inputs/raw-data/caiso-curtailment/productionandcurtailmentsdata_<year>.xlsx``,
+(``data/raw/caiso-curtailment/productionandcurtailmentsdata_<year>.xlsx``,
 5-minute interval data from the daily curtailment reports) and combines the
 reported wind/solar curtailment with the EIA-930 ``CISO hourly`` delivered
 generation into the HSL analogue the playbook (doc 05 §8.3) calls for:
@@ -12,7 +12,7 @@ so the GEN/HSL pair mirrors ERCOT's NP6 dataset (see
 scripts/build_ercot_hsl.py) and the dispatch can *re-curtail* CAISO solar
 under the modeled transmission limits instead of inheriting the historical
 curtailment baked into delivered output. One parquet per year is written to
-``inputs/raw-data/caiso-hsl/caiso_<year>_hsl_hourly.parquet`` with the same
+``data/raw/caiso-hsl/caiso_<year>_hsl_hourly.parquet`` with the same
 schema as the ERCOT file.
 
 Both inputs are on the model's chronological clock: the EIA-930 series is the
@@ -55,8 +55,8 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_eia_hourly_renewable_gen,
 )
 
-RAW_DIR = REPO_ROOT / "inputs" / "raw-data" / "caiso-curtailment"
-OUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "caiso-hsl"
+RAW_DIR = REPO_ROOT / "data" / "raw" / "caiso-curtailment"
+OUT_DIR = REPO_ROOT / "data" / "raw" / "caiso-hsl"
 
 INTERVALS_PER_HOUR = 12  # 5-minute report intervals
 

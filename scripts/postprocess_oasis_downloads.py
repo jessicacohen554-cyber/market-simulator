@@ -5,12 +5,12 @@ bulky — the 5-minute RTM LMP series alone is ~800 MB over 2023-2025 — so the
 repo keeps tidy hourly aggregates instead and the raw files are staged out
 (in CI they become a build artifact):
 
-* ``inputs/raw-data/lmp-data/CAISO/CAISO_dam_hourly_{year}.csv``
+* ``data/raw/lmp-data/CAISO/CAISO_dam_hourly_{year}.csv``
   -- columns ``interval_start_gmt, node, LMP, MCC, MCE, MCL, MGHG`` (hourly
   DAM prices per trading hub, straight from PRC_LMP).
-* ``inputs/raw-data/lmp-data/CAISO/CAISO_rtm_hourly_{year}.csv``
+* ``data/raw/lmp-data/CAISO/CAISO_rtm_hourly_{year}.csv``
   -- same shape; the PRC_INTVL_LMP 5-minute intervals averaged per hour.
-* ``inputs/raw-data/zone-specific-demand/CAISO/CAISO_tac_load_hourly_{year}.csv``
+* ``data/raw/zone-specific-demand/CAISO/CAISO_tac_load_hourly_{year}.csv``
   -- columns ``interval_start_gmt, tac_area, mw`` for the CAISO TAC areas
   (PGE/SCE/SDGE/VEA TACs + the CA ISO-TAC system total) from SLD_FCST.
 
@@ -34,8 +34,8 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-LMP_DIR = REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO"
-LOAD_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
+LMP_DIR = REPO / "data" / "raw" / "lmp-data" / "CAISO"
+LOAD_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "CAISO"
 
 # CAISO TAC areas kept from SLD_FCST (the report also carries the other WECC
 # BAs' system loads, which we drop). VEA is Valley Electric, the small NV

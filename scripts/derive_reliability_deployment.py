@@ -107,7 +107,7 @@ _CLASS_VOM: dict[str, float] = {
 
 
 def _out_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
+    return (REPO / "data" / "raw" / "_validation-source"
             / f"reliability_deployment_floor_{iso.upper()}.parquet")
 
 
@@ -184,12 +184,12 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins", default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"),
         help="ERCOT per-plant bin CSV; supplies the in-scope plant set, zones "
              "and heat rates.",
     )
     ap.add_argument(
-        "--lmp", default=str(REPO / "inputs" / "calibration"
+        "--lmp", default=str(REPO / "data" / "raw" / "_validation-source"
                              / "actual_lmp_zonal_ERCOT.parquet"),
         help="Zonal LMP parquet (year, hour, settlement_point, rt, da). The rt "
              "series of the plant's load zone and HB_HUBAVG are the local / hub "
@@ -257,7 +257,7 @@ def main() -> None:
     meta = _plant_meta(Path(args.bins), classes, zones)
     lmp = pd.read_parquet(args.lmp)
     states = campd.states_for_iso(iso)
-    par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    par_path = REPO / "data" / "raw" / "_processed-legacy" / "parasitic_load_factors.parquet"
     factors = (
         campd.pooled_factor_map(pd.read_parquet(par_path))
         if par_path.exists() else {}

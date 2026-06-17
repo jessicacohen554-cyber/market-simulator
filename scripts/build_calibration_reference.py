@@ -7,7 +7,7 @@ constants), the measured Henry Hub gas price, and a generation/emissions
 benchmark to compare against.
 
 This script extracts that reference data once and writes it under
-``inputs/calibration/`` so :mod:`scripts.run_calibration` (and any other
+``data/raw/_validation-source/`` so :mod:`scripts.run_calibration` (and any other
 consumer) can read pre-computed values rather than re-deriving them:
 
 * ``calibration_reference.json`` — the full reference: per ISO and year, the
@@ -99,7 +99,7 @@ HENRY_HUB_ACTUAL: dict[int, float] = {
 # eGRID benchmark workbook (EPA Emissions & Generation Resource Integrated
 # Database, 2023 data release). The plant-level sheet PLNT23 carries a
 # one-row banner above the header, hence skiprows=1.
-EGRID_PATH: Path = REPO / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
+EGRID_PATH: Path = REPO / "data" / "raw" / "fleet-egrid" / "egrid2023_data_rev2 2.xlsx"
 EGRID_SHEET: str = "PLNT23"
 EGRID_SKIPROWS: int = 1
 EGRID_YEAR: int = 2023
@@ -131,7 +131,7 @@ SHORT_TON_TO_METRIC_TONNE: float = 0.90718474
 _MWH_PER_TWH: float = 1.0e6
 _MONTHS: tuple[int, ...] = tuple(range(1, 13))
 
-OUTPUT_DIR: Path = REPO / "inputs" / "calibration"
+OUTPUT_DIR: Path = REPO / "data" / "raw" / "_validation-source"
 
 
 def _eia860_renewables(iso: str, year: int) -> dict:
@@ -339,7 +339,7 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
 def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
     """Return the EIA-923 Schedule-5 rows for an ISO's balancing authority.
 
-    Reads the ``f923_{year}`` zip under ``inputs/raw-data``, keeps the rows in
+    Reads the ``f923_{year}`` zip under ``data/raw``, keeps the rows in
     the ISO's balancing authority, and returns a frame with ``net_gen`` (MWh),
     ``pm`` (prime mover) and ``fc`` (fuel code). ``None`` when no zip exists for
     the year (2021/2022) or the ISO has no balancing-authority mapping. Cached
@@ -349,7 +349,7 @@ def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
     if ba is None:
         return None
     matches = sorted(
-        (REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip")
+        (REPO / "data" / "raw").glob(f"f923_{year}*.zip")
     )
     if not matches:
         return None

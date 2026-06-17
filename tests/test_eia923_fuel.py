@@ -38,7 +38,7 @@ from market_sim.data.fuel import (
 )
 
 ZONE_NAMES = get_iso_config("ERCOT").zone_names
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = "data/raw/reference/custom-bin-assignments.csv"
 
 # Plant 3439 (Laredo) reports natural-gas receipts in every month of
 # 2024, so it exercises the per-plant monthly gas lookup end-to-end.

@@ -13,7 +13,7 @@ annual release (``eia860<year>*.zip`` under ``inputs/raw-data/eia-860``) and
 writes a small per-year lookup so each backcast year is bucketed with its own
 vintage's CHP designation:
 
-    inputs/processed/eia860_chp_by_year.parquet  ->  columns (year, plant_id, chp)
+    data/raw/_processed-legacy/eia860_chp_by_year.parquet  ->  columns (year, plant_id, chp)
 
 A plant is marked ``Y`` when ANY of its operable units is flagged CHP in that
 year's release (mirroring :func:`market_sim.data.fleet._chp_by_plant`).

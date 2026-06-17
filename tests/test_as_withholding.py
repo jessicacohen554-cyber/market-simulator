@@ -320,7 +320,7 @@ class TestStorageAsCommitment:
         from market_sim.model.storage import reserve_storage_as_power
         import pandas as pd
         asr = pd.read_parquet(
-            "inputs/raw-data/ercot-AS/ercot_2024_as_by_restype_hourly.parquet"
+            "data/raw/ercot-AS/ercot_2024_as_by_restype_hourly.parquet"
         )["storage"].to_numpy(dtype=float)
         pc = np.array([4000.0, 2500.0])  # 6.5 GW across two units
         out = reserve_storage_as_power(pc, 2024, HOURS)

@@ -41,7 +41,7 @@ def main() -> None:
     ap.add_argument("bundle")
     ap.add_argument("--year", type=int, default=2025)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"))
+        "--bins", default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"))
     args = ap.parse_args()
     bundle = Path(args.bundle)
     year = args.year

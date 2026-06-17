@@ -3,7 +3,7 @@
 Companion to the NYISO zonal-load loader
 (:func:`market_sim.data.eia_loader.nyiso_zonal_load_shares`, upload U3). The
 raw downloads are monthly zips of *daily* 5-minute integrated-load CSVs
-(``inputs/raw-data/zone-specific-demand/NYISO/raw/<YYYYMM01>pal_csv.zip``),
+(``data/raw/zone-specific-demand/NYISO/raw/<YYYYMM01>pal_csv.zip``),
 each row ``Time Stamp, Time Zone, Name, PTID, Load`` for the eleven NYISO
 settlement zones (WEST, GENESE, CENTRL, NORTH, MHK VL, CAPITL, HUD VL,
 MILLWD, DUNWOD, N.Y.C., LONGIL). That is ~1M rows/zone-year at 5-minute
@@ -12,7 +12,7 @@ resolution — far too bulky to keep, and the loader only needs hour-by-hour
 hour-beginning mean (the standard hourly-integrated load) and writes one
 compact CSV per year:
 
-* ``inputs/raw-data/zone-specific-demand/NYISO/NYISO_load_actuals_{year}.csv``
+* ``data/raw/zone-specific-demand/NYISO/NYISO_load_actuals_{year}.csv``
   -- columns ``Time Stamp`` (Eastern wall-clock, hour-beginning), ``Name``
   (the NYISO OASIS zone name), ``Load`` (MW). This is exactly the format
   ``nyiso_zonal_load_shares`` detects.
@@ -34,7 +34,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
+NYISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NYISO"
 RAW_DIR = NYISO_DIR / "raw"
 
 # The eleven NYISO settlement-zone names as they appear in the pal CSVs.

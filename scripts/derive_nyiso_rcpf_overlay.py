@@ -54,7 +54,7 @@ from market_sim.results.rcpf import (  # noqa: E402
     resolve_rcpf_products,
 )
 
-CAL_DIR = REPO / "inputs" / "calibration"
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 # Dispatchable fossil fuel types that carry NYISO operating reserve. Nuclear
 # is baseload (no reserve; its headroom is ~0 anyway), coal is retired in NY,
@@ -382,7 +382,7 @@ def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     """Measured per-model-zone stacked RT reserve price, NaN-padded.
 
     Prefers the committed compact reference
-    (``inputs/calibration/actual_as_reserve_NYISO.parquet``, which carries one
+    (``data/raw/_validation-source/actual_as_reserve_NYISO.parquet``, which carries one
     ``reserve_<model_zone>`` column per model zone, built by
     scripts/process_nyiso_as.py); falls back to the raw per-zone RT CSV. The
     value is the stacked reserve price (10-min spin + 10-min non-sync + 30-min
@@ -402,7 +402,7 @@ def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
                 arr[rf["hour"].to_numpy()] = rf[col].to_numpy()
                 out[zone] = arr
             return out
-    p = REPO / "inputs" / "raw-data" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
+    p = REPO / "data" / "raw" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
     if not p.exists():
         return {}
     df = pd.read_csv(p)

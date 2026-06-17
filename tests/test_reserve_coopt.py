@@ -21,7 +21,7 @@ from market_sim.results.scarcity import (
     pjm_primary_reserve_requirement,
 )
 
-_PJM_AS_DIR = Path(__file__).resolve().parents[1] / "inputs" / "raw-data" / "PJM-AS"
+_PJM_AS_DIR = Path(__file__).resolve().parents[1] / "data" / "raw" / "PJM-AS"
 
 
 class TestLargestSingleContingency(unittest.TestCase):

@@ -161,11 +161,11 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=2.0)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
+        "--bins", default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv")
     )
     ap.add_argument(
         "--out", default=None,
-        help="Output CSV. Defaults to inputs/raw-data/campd-outages.csv for "
+        help="Output CSV. Defaults to data/raw/campd-outages.csv for "
              "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
     )
     args = ap.parse_args()
@@ -176,7 +176,7 @@ def main() -> None:
             "campd-outages.csv" if iso == "ERCOT"
             else f"campd-outages-{iso}.csv"
         )
-        args.out = str(REPO / "inputs" / "raw-data" / fname)
+        args.out = str(REPO / "data" / "raw" / fname)
 
     nameplate, pname, grp = _nameplate_groups(iso, args.bins)
 

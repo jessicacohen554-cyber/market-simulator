@@ -52,7 +52,7 @@ from market_sim.results.scarcity import (  # noqa: E402
     scarcity_prices,
 )
 
-CAL_DIR = REPO / "inputs" / "calibration"
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = np.cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])

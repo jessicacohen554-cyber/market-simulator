@@ -126,7 +126,7 @@ def _actual_lmp_table() -> dict:
     Returns an empty dict when the reference is absent, so the dashboard renders
     a model-only price card rather than failing.
     """
-    p = REPO / "inputs" / "calibration" / "actual_lmp.json"
+    p = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
     return json.loads(p.read_text()) if p.exists() else {}
 
 

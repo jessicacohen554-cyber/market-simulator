@@ -131,7 +131,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("run_calibration")
 
 # Calibration reference written by scripts/build_calibration_reference.py.
-REFERENCE_PATH: Path = REPO / "inputs" / "calibration" / "calibration_reference.json"
+REFERENCE_PATH: Path = REPO / "data" / "raw" / "_validation-source" / "calibration_reference.json"
 
 # Fallback measured Henry Hub annual-average spot price ($/MMBtu), used when
 # the calibration reference JSON has not yet been generated.
@@ -236,7 +236,7 @@ def _apply_offer_curve_deltas(
 
 # Calibrated PJM thermal offer curve (per-class band heat-rate multipliers on
 # AHR x delivered fuel price). Tuned against the 2023 & 2024 EIA-930 fuel mix
-# and PJM hub-average LMP (inputs/calibration). Built in two stages, mirroring
+# and PJM hub-average LMP (data/raw/_validation-source). Built in two stages, mirroring
 # the operator workflow:
 #   1. SHAPE — relative band multipliers set the generation mix: coal vs gas,
 #      and the CC / CT / gas-steam split. With PJM delivered gas ~ $3.21/MMBtu
@@ -383,7 +383,7 @@ def _calibration_config(
         #   Doc-08 NEISO design decision 1: the marginal NEISO gas unit
         #   prices off Algonquin Citygate spot, whose Dec-Feb basis blows out
         #   to +$4-13/MMBtu (measured ISO-NE MA gas index 2023-2025,
-        #   inputs/raw-data/gas_basis_by_iso_month.csv). The overlay replaces
+        #   data/raw/gas_basis_by_iso_month.csv). The overlay replaces
         #   the gas price with HH-month + measured AGT basis in covered
         #   months — THE ISO-NE winter price driver and the dual-fuel switch
         #   trigger (P13). No basis rows exist for other ISOs (the NYISO

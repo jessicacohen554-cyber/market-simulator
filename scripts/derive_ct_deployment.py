@@ -79,12 +79,12 @@ DEFAULT_GAS_PRICE: dict[int, float] = {2023: 2.54, 2024: 2.19, 2025: 3.52}
 DEFAULT_EXCLUDE: frozenset[int] = frozenset({7325})
 
 def _out_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
+    return (REPO / "data" / "raw" / "_validation-source"
             / f"ct_deployment_floor_{iso.upper()}.parquet")
 
 
 def _lmp_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
+    return (REPO / "data" / "raw" / "_validation-source"
             / f"actual_lmp_hourly_{iso.upper()}.parquet")
 
 
@@ -136,7 +136,7 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins", default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"),
         help="ERCOT per-plant bin CSV; supplies the CT_PEAKER plant set + heat "
              "rates for ERCOT. Ignored for other ISOs (heat rates come from the "
              "ISO's EIA-860 fleet via load_fleet_from_csv).",
@@ -211,7 +211,7 @@ def main() -> None:
 
     lmp = pd.read_parquet(lmp_path)
     states = campd.states_for_iso(iso)
-    par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    par_path = REPO / "data" / "raw" / "_processed-legacy" / "parasitic_load_factors.parquet"
     factors = (
         campd.pooled_factor_map(pd.read_parquet(par_path))
         if par_path.exists() else {}

@@ -30,7 +30,7 @@ LP is solved:
   (``plant_cf_bands.parquet``). err = the metric itself (target 0).
 - ``lmp``   — demand-weighted monthly |model − actual RT| price MAE ($/MWh)
   from ``system.parquet``'s hourly zone prices vs the committed
-  ``inputs/calibration/actual_lmp.json`` reference (the
+  ``data/raw/_validation-source/actual_lmp.json`` reference (the
   ``scripts/derive_actual_lmp.py`` product). err = the MAE (target 0).
 
 The joint-move recipe minimizes a weighted sum of the three blocks
@@ -63,7 +63,7 @@ are resolvable, so the tool keeps working as new backcasts accrue for any ISO.
 
 Outputs
 -------
-- ``inputs/processed/offer_curve_jacobian.csv`` (long format: iso, year,
+- ``data/raw/_processed-legacy/offer_curve_jacobian.csv`` (long format: iso, year,
   metric, out_class, band, in_class, dTWh_per_unit_mult, n_obs, stderr,
   confidence). Schema v2: the ``metric`` column is new; filtering
   ``metric == "twh"`` reproduces the v1 content exactly. For ``shape`` rows
@@ -111,9 +111,9 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 DEFAULT_ROOT = REPO / "results" / "calibration"
-DEFAULT_OUT = REPO / "inputs" / "processed" / "offer_curve_jacobian.csv"
-CACHE_PATH = REPO / "inputs" / "processed" / ".offer_curve_jacobian_cache.json"
-FUEL_COSTS = REPO / "inputs" / "processed" / "eia923_monthly_fuel_costs.parquet"
+DEFAULT_OUT = REPO / "data" / "raw" / "_processed-legacy" / "offer_curve_jacobian.csv"
+CACHE_PATH = REPO / "data" / "raw" / "_processed-legacy" / ".offer_curve_jacobian_cache.json"
+FUEL_COSTS = REPO / "data" / "raw" / "_processed-legacy" / "eia923_monthly_fuel_costs.parquet"
 
 # Offer-curve knobs per class as resolved in run_config.json
 # scenario_config.offer_curve_by_group. The first four are heat-rate band
@@ -137,7 +137,7 @@ GAS_NONCHP_CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
 
 # Committed actual-LMP reference produced by scripts/derive_actual_lmp.py:
 # {"ERCOT": {"2024": {"rt": ..., "rt_mon": [...12...], ...}, ...}, ...}.
-ACTUAL_LMP_JSON = REPO / "inputs" / "calibration" / "actual_lmp.json"
+ACTUAL_LMP_JSON = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd and
 # scripts/analyze_lmp_residual.py).

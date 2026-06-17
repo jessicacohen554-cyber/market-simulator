@@ -40,7 +40,7 @@ status code, because the QSE-submitted curve is the offer **regardless of award*
 distribution is exactly what we want to characterize. Downstream analysis filters
 on ``committed`` where committed-band economics specifically want online units.
 
-Outputs (under ``inputs/processed/`` by default):
+Outputs (under ``data/raw/_processed-legacy/`` by default):
 
   * ``ercot_dam_offers.parquet`` — the tidy long offer table.
   * ``ercot_resource_settlement_crosswalk.csv`` — the unique
@@ -91,8 +91,8 @@ ONLINE_STATUSES = {"ON", "ONOS", "ONRR", "ONTEST", "ONEMR", "ONREG", "EMR", "EMR
 N_CURVE_POINTS = 10
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INPUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot"
-DEFAULT_OUTPUT_DIR = REPO_ROOT / "inputs" / "processed"
+DEFAULT_INPUT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "data" / "raw" / "_processed-legacy"
 DEFAULT_GLOB = "60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet"
 
 # Columns carried straight through from the wide row onto every tidy point row.

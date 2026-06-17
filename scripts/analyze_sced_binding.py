@@ -7,7 +7,7 @@ would redistribute the CC_REGULAR over-run) or to deep intra-zonal pockets a
 modest split would not form. No LP solve — pure aggregation of the published
 5-minute binding-constraint shadow prices.
 
-For every SCED interval in `inputs/raw-data/iso-specific-transmission/
+For every SCED interval in `data/raw/iso-specific-transmission/
 *SCEDBTCNP686*.zip` (nested zips), accumulate per ConstraintName:
   - binding intervals (ShadowPrice > 0) and their share,
   - sum / max ShadowPrice ($/MWh-interval) — the congestion-rent proxy,
@@ -26,7 +26,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-SRC = REPO / "inputs" / "raw-data" / "iso-specific-transmission"
+SRC = REPO / "data" / "raw" / "iso-specific-transmission"
 COLS = ["ConstraintName", "ShadowPrice", "FromStation", "ToStation",
         "FromStationkV", "ToStationkV"]
 

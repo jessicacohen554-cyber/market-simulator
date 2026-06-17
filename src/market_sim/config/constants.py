@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from market_sim.config.paths import CALIBRATION_DIR
+
 # Heat rate efficiency bins (MMBtu/MWh) by fuel class and technology vintage.
 # Lower heat rate means higher thermal efficiency.
 # Source: EIA Table 8 (Average Tested Heat Rates by Prime Mover and Fuel Type).
@@ -2057,7 +2059,7 @@ ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 # measured hourly series. The ORDC demand curve that PRICES a shortfall is the
 # published two-step curve in inputs/calibration/pjm_ordc_curve.csv.
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
-PJM_ORDC_CURVE_PATH: str = "inputs/calibration/pjm_ordc_curve.csv"
+PJM_ORDC_CURVE_PATH: str = str(CALIBRATION_DIR / "pjm_ordc_curve.csv")
 
 # --- NYISO RCPF (Reserve Constraint Penalty Factor) scarcity overlay -------
 # NYISO does not use an ERCOT-style ORDC/LOLP curve. Real-time scarcity is

@@ -22,7 +22,7 @@ intensities, so no LP re-solve is needed:
    regression gate vs baseline (fail if r drops by more than `--r-margin`).
 
 The actual-CO2 side uses the plant's measured `co2_kg_per_mwh_net`
-(`inputs/processed/plant_emission_rates.parquet`, itself derived from CAMPD
+(`data/raw/_processed-legacy/plant_emission_rates.parquet`, itself derived from CAMPD
 co2/gen) applied to the CEMS net generation, so it reconstructs the measured
 CAMPD CO2; the model side applies the same per-plant intensity to the model's
 dispatched generation. Per plant the CO2 error therefore equals the volume
@@ -57,8 +57,8 @@ CO2_CLASS_BAND = 0.07      # per fuel class
 DEFAULT_EMD_MARGIN = 0.02  # cf_emd may rise at most this much vs baseline
 DEFAULT_R_MARGIN = 0.02    # pearson_r may fall at most this much vs baseline
 
-_BIN_SHEET = REPO / "inputs" / "custom-bin-assignments.csv"
-_RATES = REPO / "inputs" / "processed" / "plant_emission_rates.parquet"
+_BIN_SHEET = REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"
+_RATES = REPO / "data" / "raw" / "_processed-legacy" / "plant_emission_rates.parquet"
 
 # Plant_Group -> coarse fuel for the coal/gas CO2 split.
 _COAL_GROUPS = {"COAL"}

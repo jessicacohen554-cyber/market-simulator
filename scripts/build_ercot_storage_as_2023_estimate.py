@@ -41,7 +41,7 @@ from market_sim.model.storage import load_eia860_storage
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AS_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-AS"
+AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
 # ERCOT ECRS went live 2023-06-10 (hour-of-year index on the non-leap clock).
 ECRS_START_HOUR = (31 + 28 + 31 + 30 + 31 + 9) * 24  # 2023-06-10 00:00
 

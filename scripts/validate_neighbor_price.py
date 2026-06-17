@@ -41,7 +41,7 @@ from market_sim.data.neighbor_price import (
 )
 
 HOURS = 8760
-_LMP_DIR = Path(__file__).resolve().parents[1] / "inputs" / "calibration"
+_LMP_DIR = Path(__file__).resolve().parents[1] / "data" / "raw" / "_validation-source"
 
 # EIA-930 BA code for each ISO's own net interchange (export-positive).
 _ISO_BA = {"PJM": "PJM", "CAISO": "CISO", "NYISO": "NYIS", "NEISO": "ISNE"}

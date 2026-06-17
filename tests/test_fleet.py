@@ -825,7 +825,7 @@ class HistoricOutageOverlayTest(unittest.TestCase):
     # Repo root (tests/ lives at the repo root); the overlay reads the
     # committed bin assignments and outage extract.
     _REPO = Path(__file__).parents[1]
-    _BINS = str(_REPO / "inputs" / "custom-bin-assignments.csv")
+    _BINS = str(_REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv")
 
     def _fleet(self):
         # Coleto Creek (6178) is a coal plant with a real >2-day 2023
@@ -1039,7 +1039,7 @@ class TestCcCapacityReconcile(unittest.TestCase):
     """
 
     _BINS = ScenarioConfig().campd_bins_path
-    _RECON = "inputs/processed/cc_capacity_reconcile_ERCOT.csv"
+    _RECON = "data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv"
 
     def test_raises_listed_plants_only(self):
         from market_sim.data.fleet import load_campd_bins

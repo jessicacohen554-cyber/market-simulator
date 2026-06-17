@@ -18,7 +18,7 @@ released per year, and is emitted to parquet only under ``--include-hourly``.
 Usage:
     python scripts/generate_financial_reports.py \\
         --results-dir results/ERCOT/abc123def/ \\
-        --eia860-path data/fleet/eia860_2024.xlsx \\
+        --eia860-path data/raw/fleet-egrid/eia860_2024.xlsx \\
         --ownership-map data/ownership/parent_company_fleet_2024.parquet \\
         --iso ERCOT --output-dir reports/ --years 2026-2050 \\
         [--discount-rate 0.08] [--include-hourly]

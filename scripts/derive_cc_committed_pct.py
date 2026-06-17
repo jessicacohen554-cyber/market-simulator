@@ -7,7 +7,7 @@ the CSV ``Pct_Committed``) is currently a coarse assumed value (clustered at
 20/25/45/55). This script grounds it per plant by measuring each combined
 cycle's minimum stable output directly from EPA CAMPD/CEMS hourly gross output
 for Jan-July 2023, the window the unit-level outage extract
-(``inputs/tx-jan-aug23-unit-outages.csv``) covers, so the *available* capacity
+(``data/raw/reference/tx-jan-aug23-unit-outages.csv``) covers, so the *available* capacity
 at each hour is known (nameplate minus the units the extract reports out for
 maintenance). Without that correction a plant running its remaining units while
 one is in outage would look like it is running below its true minimum.
@@ -31,7 +31,7 @@ Method, per CC_REGULAR plant:
 The committed % is expressed as a percent of nameplate (available-capacity
 basis). The script prints the full percentile distribution and the committed
 (online) fraction so the choice of P5 is transparent. It writes the per-plant
-table to ``inputs/processed/cc_committed_pct.csv``; the model constant
+table to ``data/raw/_processed-legacy/cc_committed_pct.csv``; the model constant
 ``fleet.CC_REGULAR_COMMITTED_PCT_BY_PLANT`` is populated from it and overrides
 the CSV ``Pct_Committed`` when ``config.cc_committed_per_plant`` is set (the
 economic tranche absorbs the difference so the tranche split still sums to 100%).
@@ -71,12 +71,12 @@ _ONLINE_FRAC: float = 0.05
 # ramp-transient hours while still capturing the minimum stable load.
 _FLOOR_PCTILE: int = 5
 
-_OUT_CSV: Path = REPO / "inputs" / "processed" / "cc_committed_pct.csv"
+_OUT_CSV: Path = REPO / "data" / "raw" / "_processed-legacy" / "cc_committed_pct.csv"
 
 
 def _parasitic_factor_map() -> dict[int, float]:
     """Return ``{plant_id: net/gross factor}`` from the derived artifact."""
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = REPO / "data" / "raw" / "_processed-legacy" / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))

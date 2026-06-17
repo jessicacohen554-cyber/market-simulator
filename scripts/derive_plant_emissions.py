@@ -12,9 +12,9 @@ decomposition and per-start incremental emissions. These feed two uses:
 
 It depends on ``parasitic_load_factors.parquet`` (run
 ``scripts/derive_parasitic_load.py`` first). Writes
-``inputs/processed/plant_emission_rates.{parquet,csv}`` (one row per
+``data/raw/_processed-legacy/plant_emission_rates.{parquet,csv}`` (one row per
 plant-year plus a pooled ``year == 0`` summary) and, unless ``--no-registry``,
-adds per-MWh-net rate columns to ``inputs/master-plant-registry.csv``.
+adds per-MWh-net rate columns to ``data/raw/reference/master-plant-registry.csv``.
 
 Usage:
     python scripts/derive_plant_emissions.py --iso ERCOT --years 2023 2024 2025
@@ -45,8 +45,8 @@ _MIXED_COAL_SHARE_HI: float = 0.90
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_plant_emissions")
 
-PROCESSED_DIR = REPO / "inputs" / "processed"
-REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
+PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
+REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 PARASITIC_PATH = PROCESSED_DIR / "parasitic_load_factors.parquet"
 
 # Per-MWh-net rate columns mirrored into the registry.

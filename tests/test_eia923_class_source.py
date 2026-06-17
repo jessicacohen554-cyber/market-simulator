@@ -22,7 +22,7 @@ from market_sim.data.fleet import (
     load_campd_bins,
 )
 
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = "data/raw/reference/custom-bin-assignments.csv"
 # The base calibration year the ERCOT fleet is built for; EIA-923 covers it.
 YEAR = 2024
 

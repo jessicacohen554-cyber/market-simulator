@@ -12,11 +12,11 @@ It downloads, per backcast year:
 
 * ``dam``  -- PRC_LMP (DAM, version 12), one query per trading hub
   (TH_NP15/TH_SP15/TH_ZP26 ``_GEN-APND``) per window
-  -> ``inputs/raw-data/lmp-data/CAISO/``
+  -> ``data/raw/lmp-data/CAISO/``
 * ``rtm``  -- PRC_INTVL_LMP (RTM 5-minute, version 2), same hubs
-  -> ``inputs/raw-data/lmp-data/CAISO/``
+  -> ``data/raw/lmp-data/CAISO/``
 * ``load`` -- SLD_FCST (market_run_id=ACTUAL, version 1), all TAC areas
-  -> ``inputs/raw-data/zone-specific-demand/CAISO/``
+  -> ``data/raw/zone-specific-demand/CAISO/``
 
 OASIS quirks this script works around (observed 2026-06-11):
 
@@ -56,17 +56,17 @@ HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
 DATASETS: dict[str, dict] = {
     "dam": {
         "params": {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"},
-        "out_dir": REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO",
+        "out_dir": REPO / "data" / "raw" / "lmp-data" / "CAISO",
         "per_node": True,
     },
     "rtm": {
         "params": {"queryname": "PRC_INTVL_LMP", "market_run_id": "RTM", "version": "2"},
-        "out_dir": REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO",
+        "out_dir": REPO / "data" / "raw" / "lmp-data" / "CAISO",
         "per_node": True,
     },
     "load": {
         "params": {"queryname": "SLD_FCST", "market_run_id": "ACTUAL", "version": "1"},
-        "out_dir": REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO",
+        "out_dir": REPO / "data" / "raw" / "zone-specific-demand" / "CAISO",
         "per_node": False,
     },
 }
@@ -287,7 +287,7 @@ def main() -> None:
     for key in args.datasets:
         print(f"=== {key} ({DATASETS[key]['params']['queryname']}) ===")
         fetch_dataset(key, args.years, args.window, args.sleep, deadline)
-    print("done. Commit the new files under inputs/raw-data/ when finished.")
+    print("done. Commit the new files under data/raw/ when finished.")
 
 
 if __name__ == "__main__":

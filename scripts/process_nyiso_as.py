@@ -1,7 +1,7 @@
 """Fold raw NYISO OASIS ancillary-services price zips into per-year CSVs.
 
 Companion to the NYISO load processor (:mod:`scripts.process_nyiso_zonal_load`).
-The raw downloads under ``inputs/raw-data/NYISO-AS/raw/`` are monthly zips of
+The raw downloads under ``data/raw/NYISO-AS/raw/`` are monthly zips of
 *daily* CSVs — real-time 5-minute (``<YYYYMM01>rtasp_csv.zip``) and day-ahead
 hourly (``<YYYYMM01>damasp_csv.zip``) — each row carrying a zone's reserve and
 regulation clearing prices:
@@ -23,8 +23,8 @@ ground truth for the locational reserve products.
 This aggregates each zone's prices to the hour-beginning mean and writes one
 compact CSV per market and year:
 
-* ``inputs/raw-data/NYISO-AS/NYISO_as_rt_{year}.csv`` (real-time)
-* ``inputs/raw-data/NYISO-AS/NYISO_as_da_{year}.csv`` (day-ahead)
+* ``data/raw/NYISO-AS/NYISO_as_rt_{year}.csv`` (real-time)
+* ``data/raw/NYISO-AS/NYISO_as_da_{year}.csv`` (day-ahead)
 
 columns ``Time Stamp`` (Eastern wall-clock, hour-beginning), ``Name`` (NYISO
 zone), ``spin_10``, ``nonsync_10``, ``op_30``, ``reg_cap`` (all $/MWh).
@@ -44,7 +44,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-AS_DIR = REPO / "inputs" / "raw-data" / "NYISO-AS"
+AS_DIR = REPO / "data" / "raw" / "NYISO-AS"
 RAW_DIR = AS_DIR / "raw"
 # The committed download is a single zip-of-zips; the monthly rtasp/damasp
 # zips are extracted into RAW_DIR on demand (RAW_DIR is gitignored — the
@@ -187,13 +187,13 @@ _MODEL_ZONE_REF = {
     "reserve_Long_Island": "LONGIL",
 }
 
-CAL_DIR = REPO / "inputs" / "calibration"
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 
 def build_reference(years: list[int]) -> Path | None:
     """Write the compact measured RT reserve-adder calibration reference.
 
-    ``inputs/calibration/actual_as_reserve_NYISO.parquet`` — per (year, hour)
+    ``data/raw/_validation-source/actual_as_reserve_NYISO.parquet`` — per (year, hour)
     on the model's non-leap 8760 clock. Two legacy series:
     ``nyca_reserve_adder`` (the WEST stacked RT reserve price, the system-wide
     NYCA component) and ``nyc_reserve_adder`` (the N.Y.C. stacked RT reserve

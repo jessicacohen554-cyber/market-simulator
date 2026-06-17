@@ -30,7 +30,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-DAM_DIR = REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO"
+DAM_DIR = REPO / "data" / "raw" / "lmp-data" / "CAISO"
 
 HUBS = {"NP15": "TH_NP15_GEN-APND",
         "ZP26": "TH_ZP26_GEN-APND",

@@ -57,8 +57,8 @@ _MIN_COAL_SHARE: float = 0.90
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("analyze_coal_mustrun")
 
-PROCESSED_DIR = REPO / "inputs" / "processed"
-REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
+PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
+REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 
 # Model seasons (1-based months); mirrors fleet._SUMMER_MONTHS / _CC_SHOULDER.
 _SEASON_OF_MONTH: dict[int, str] = {

@@ -8,10 +8,10 @@ correlation and to set per-MWh-net emission rates.
 
 This script is ISO-agnostic: pass ``--states`` and ``--years`` directly, or
 ``--iso`` to use the :data:`market_sim.data.campd.ISO_STATES` lookup. It
-writes ``inputs/processed/parasitic_load_factors.{parquet,csv}`` (one row per
+writes ``data/raw/_processed-legacy/parasitic_load_factors.{parquet,csv}`` (one row per
 plant-year plus a pooled ``year == 0`` summary per plant) and, unless
 ``--no-registry``, back-fills the ``parasitic_load_pct`` column of
-``inputs/master-plant-registry.csv``.
+``data/raw/reference/master-plant-registry.csv``.
 
 Usage:
     python scripts/derive_parasitic_load.py --iso ERCOT --years 2023 2024 2025
@@ -37,8 +37,8 @@ from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_parasitic_load")
 
-PROCESSED_DIR = REPO / "inputs" / "processed"
-REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
+PROCESSED_DIR = REPO / "data" / "raw" / "_processed-legacy"
+REGISTRY_PATH = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 
 
 def _registry_plant_groups() -> dict[int, str]:

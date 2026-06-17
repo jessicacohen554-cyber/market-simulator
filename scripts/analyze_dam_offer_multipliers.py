@@ -34,7 +34,7 @@ The three-part ERCOT offer maps onto the model tranches as:
     scarcity-capable hours; the normal-hours deep top is masked by ERCOT).
 
 Outputs a per-class x band multiplier-distribution CSV
-(``inputs/processed/ercot_offer_multiplier_summary.csv``) and prints the overlay
+(``data/raw/_processed-legacy/ercot_offer_multiplier_summary.csv``) and prints the overlay
 tables used in the writeup.
 
 Usage::
@@ -52,9 +52,9 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OFFERS = REPO_ROOT / "inputs" / "processed" / "ercot_dam_offers.parquet"
-HENRY_HUB = REPO_ROOT / "inputs" / "raw-data" / "gas-prices" / "henry_hub_daily.csv"
-OUT_SUMMARY = REPO_ROOT / "inputs" / "processed" / "ercot_offer_multiplier_summary.csv"
+OFFERS = REPO_ROOT / "data" / "raw" / "_processed-legacy" / "ercot_dam_offers.parquet"
+HENRY_HUB = REPO_ROOT / "data" / "raw" / "gas-prices" / "henry_hub_daily.csv"
+OUT_SUMMARY = REPO_ROOT / "data" / "raw" / "_processed-legacy" / "ercot_offer_multiplier_summary.csv"
 
 ERCOT_GAS_BASIS = -0.5  # GAS_BASIS_DIFFERENTIAL['ERCOT'], $/MMBtu over Henry Hub
 

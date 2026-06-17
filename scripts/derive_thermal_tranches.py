@@ -42,7 +42,7 @@ CT_PEAKER, CT_CHP, ST_GAS, COAL):
      ``fleet.thermal_tranche_peaking`` (supersedes the offer curve's class
      ``pct_peaking``).
 
-Per ISO it writes ``inputs/processed/thermal_tranches_{ISO}.csv`` with one row
+Per ISO it writes ``data/raw/_processed-legacy/thermal_tranches_{ISO}.csv`` with one row
 per ``(plant_code, plant_group)``. Plants with too little run-time to set a
 reliable floor are written with ``status != ok`` and keep the model's CSV/class
 default.
@@ -58,7 +58,7 @@ Usage:
     python scripts/derive_thermal_tranches.py --iso PJM --years 2024
     python scripts/derive_thermal_tranches.py --iso ERCOT --years 2023 2024
     python scripts/derive_thermal_tranches.py --iso CAISO --years 2024 2025 \
-        --chp-floors-from inputs/processed/thermal_tranches_CAISO.csv
+        --chp-floors-from data/raw/_processed-legacy/thermal_tranches_CAISO.csv
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
     """Return ``{plant_id: sector_class}`` from the EIA-923 Page 1 workbooks.
 
     Reads "EIA Sector Number" for every plant from the raw
-    ``inputs/raw-data/f923_{year} (1).zip`` archives (the same source the
+    ``data/raw/f923_{year} (1).zip`` archives (the same source the
     monthly-generation artifact is built from) and maps it through
     :data:`_EIA_SECTOR_CLASS`. When a plant's sector differs across rows or
     years (rare), the most frequent class wins.
@@ -121,7 +121,7 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
 
     votes: dict[int, Counter] = {}
     for year in years:
-        zpath = REPO / "inputs" / "raw-data" / f"f923_{year} (1).zip"
+        zpath = REPO / "data" / "raw" / f"f923_{year} (1).zip"
         if not zpath.exists():
             print(f"  (no EIA-923 archive for {year}: {zpath.name})")
             continue
@@ -250,7 +250,7 @@ _PEAKING_MAX_PCTILE: float = 99.5
 
 def _parasitic_factor_map() -> dict[int, float]:
     """Return ``{plant_id: net/gross factor}`` from the derived artifact."""
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = REPO / "data" / "raw" / "_processed-legacy" / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))
@@ -267,7 +267,7 @@ def _fleet_nameplate_and_group(
     """
     cap: dict[tuple[int, str], float] = {}
     if iso == "ERCOT":
-        bins = load_campd_bins("inputs/custom-bin-assignments.csv")
+        bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
         for c, g, m in zip(
             bins["Plant_Code"], bins["Plant_Group"], bins["capacity_mw"]
         ):
@@ -346,7 +346,7 @@ def main() -> None:
     args = ap.parse_args()
     iso = args.iso.upper()
     out_path = Path(args.out) if args.out else (
-        REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv"
+        REPO / "data" / "raw" / "_processed-legacy" / f"thermal_tranches_{iso}.csv"
     )
 
     states = campd.states_for_iso(iso)

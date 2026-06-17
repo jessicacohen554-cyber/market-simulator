@@ -128,7 +128,8 @@ def build_rows(year: int = 2023) -> pd.DataFrame:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default=str(REPO / "inputs"
+    ap.add_argument("--out", default=str(REPO / "data" / "raw"
+                                         / "_processed-legacy"
                                          / "plant-tranche-config.csv"))
     ap.add_argument("--year", type=int, default=2023,
                     help="Calibration year whose resolved config to export "

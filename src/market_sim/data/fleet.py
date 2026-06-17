@@ -32,7 +32,10 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
+    CAMPD_BINS_CSV,
     EIA_860_DIR,
+    ERCOT_AS_DIR,
+    PJM_AS_DIR,
     PROCESSED_DIR,
     active_eia860_dir,
 )
@@ -365,8 +368,8 @@ _AS_PJM_GROUPS: frozenset[str] = _AS_GAS_GROUPS | {"oil"}
 # held out of energy sits in ``<dir>/<prefix>_<year>_as_up_mw.parquet`` on the
 # non-leap 8760-hour clock; built by scripts/build_{ercot,pjm}_as_withholding.
 _AS_WITHHOLDING: dict[str, tuple[Path, str, frozenset[str]]] = {
-    "ERCOT": (Path("inputs/raw-data/ercot-AS"), "ercot", _AS_GAS_GROUPS),
-    "PJM": (Path("inputs/raw-data/PJM-AS"), "pjm", _AS_PJM_GROUPS),
+    "ERCOT": (ERCOT_AS_DIR, "ercot", _AS_GAS_GROUPS),
+    "PJM": (PJM_AS_DIR, "pjm", _AS_PJM_GROUPS),
 }
 
 # Back-compat alias (ERCOT default location; used by the per-type loader).
@@ -826,7 +829,7 @@ def generators_to_fleet_arrays(
                 bins_path=(
                     getattr(
                         config, "campd_bins_path",
-                        "inputs/custom-bin-assignments.csv",
+                        str(CAMPD_BINS_CSV),
                     )
                     if is_ercot else None
                 ),
@@ -861,7 +864,7 @@ def generators_to_fleet_arrays(
         ufac = unit_outage_derate_factors(
             config.weather_year, hours,
             getattr(config, "campd_bins_path",
-                    "inputs/custom-bin-assignments.csv"),
+                    str(CAMPD_BINS_CSV)),
             iso=_iso or "ERCOT",
         )
         if ufac:

@@ -23,8 +23,8 @@ from market_sim.data.fleet import (
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
 
 REPO = Path(__file__).resolve().parent.parent
-BIN_ASSIGNMENTS = REPO / "inputs" / "processed" / "bin_assignments_CAISO.csv"
-UNIT_OUTAGES = REPO / "inputs" / "raw-data" / "campd-unit-outages-CAISO.csv"
+BIN_ASSIGNMENTS = REPO / "data" / "raw" / "_processed-legacy" / "bin_assignments_CAISO.csv"
+UNIT_OUTAGES = REPO / "data" / "raw" / "campd-unit-outages-CAISO.csv"
 ZONES = get_iso_config("CAISO").zone_names
 
 # The CAISO once-through-cooling steamers (run-when-called reliability
@@ -69,7 +69,7 @@ class TestCaisoTrancheArtifact(unittest.TestCase):
     def test_no_coal_rows(self):
         """No coal must-run layer: the artifact derives zero COAL rows."""
         df = pd.read_csv(
-            REPO / "inputs" / "processed" / "thermal_tranches_CAISO.csv"
+            REPO / "data" / "raw" / "_processed-legacy" / "thermal_tranches_CAISO.csv"
         )
         self.assertEqual(len(df[df["plant_group"] == "COAL"]), 0)
 

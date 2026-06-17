@@ -4,13 +4,13 @@ Three modes, one per ISO with a per-zone load upload:
 
 ``ercot``
     Reads the ERCOT "Actual System Load by Weather Zone" (NP6-345-CD) daily
-    CSV archives under ``data/reference/`` and aggregates the 8 ERCOT weather
+    CSV archives under ``data/raw/reference/`` and aggregates the 8 ERCOT weather
     zones onto the model's 6 transmission zones.
 
 ``caiso``
     Reads the CAISO TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
     with ``market_run_id=ACTUAL``) under
-    ``inputs/raw-data/zone-specific-demand/CAISO/`` and maps the TAC areas
+    ``data/raw/zone-specific-demand/CAISO/`` and maps the TAC areas
     onto the model's three trading-hub zones (PGE-TAC split between NP15 and
     ZP26, SCE + SDG&E + VEA to SP15) via the same
     ``eia_loader._CAISO_TAC_ZONE_WEIGHTS`` mapping the hourly-shape loader
@@ -19,7 +19,7 @@ Three modes, one per ISO with a per-zone load upload:
 ``nyiso``
     Reads the NYISO OASIS "pal" actual-load CSVs (upload U3:
     ``NYISO_load_actuals_<year>.csv``) under
-    ``inputs/raw-data/zone-specific-demand/NYISO/`` and aggregates the eleven
+    ``data/raw/zone-specific-demand/NYISO/`` and aggregates the eleven
     NYISO settlement zones (A–K) onto the model's five transmission zones
     (A+B+C+D+E → Upstate_West; F+G → Capital_Hudson; H+I → Lower_Hudson;
     J → NYC; K → Long_Island) via the same
@@ -29,7 +29,7 @@ Three modes, one per ISO with a per-zone load upload:
 ``neiso``
     Reads the ISO-NE hourly load-zone net energy for load (upload U3: ISO-NE
     SMD hourly_load CSV with Date + Hour Ending + zone columns) under
-    ``inputs/raw-data/zone-specific-demand/NEISO/`` and maps the eight ISO-NE
+    ``data/raw/zone-specific-demand/NEISO/`` and maps the eight ISO-NE
     load zones onto the model's four transmission zones:
     North (ME+NH+VT), Central (WCMASS+SEMASS+RI), Boston (NEMA), Connecticut (CT).
 
@@ -58,10 +58,10 @@ from market_sim.data.eia_loader import (  # noqa: E402
     _NYISO_LOAD_ZONE_GROUPS,
 )
 
-REF = REPO / "data" / "reference"
-CAISO_TAC_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
-NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
-NEISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NEISO"
+REF = REPO / "data" / "raw" / "reference"
+CAISO_TAC_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "CAISO"
+NYISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NYISO"
+NEISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NEISO"
 
 WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "WEST"]
 
@@ -207,7 +207,7 @@ def derive_nyiso() -> None:
     """Derive NYISO model-zone load shares from OASIS "pal" actual-load CSVs.
 
     Reads all ``NYISO_load_actuals_<year>.csv`` files from
-    ``inputs/raw-data/zone-specific-demand/NYISO/`` (upload U3). Each file
+    ``data/raw/zone-specific-demand/NYISO/`` (upload U3). Each file
     must carry columns ``Time Stamp`` (Eastern local, hour-beginning),
     ``Name`` (NYISO zone name CAPITL/CENTRL/… or letter A–K), and
     ``Load`` (MW).

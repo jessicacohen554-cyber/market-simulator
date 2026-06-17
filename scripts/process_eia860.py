@@ -15,8 +15,8 @@ Usage:
     python scripts/process_eia860.py --zip PATH [--out-dir DIR]
 
 Defaults:
-    --zip      inputs/raw-data/eia-860/eia8602024.zip
-    --out-dir  inputs/raw-data/eia-860
+    --zip      data/raw/eia-860/eia8602024.zip
+    --out-dir  data/raw/eia-860
 """
 
 from __future__ import annotations
@@ -186,7 +186,7 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
     # PLHTRT -- derived from CEMS fuel consumption -- is the source. It is
     # plant-level, so every generator at a plant inherits the same value.
     egrid_path = (
-        Path(__file__).parents[1] / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
+        Path(__file__).parents[1] / "data" / "raw" / "fleet-egrid" / "egrid2023_data_rev2 2.xlsx"
     )
     if egrid_path.exists():
         egrid = pd.read_excel(

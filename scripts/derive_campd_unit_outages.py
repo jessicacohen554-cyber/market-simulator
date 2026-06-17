@@ -5,12 +5,12 @@ unit at a plant into one CEMS series, so a single-unit outage at a multi-unit
 plant — and, critically, a *coal*-unit outage at a mixed coal/gas facility
 (W A Parish, Barney M Davis) — is masked by the units that keep running and is
 never detected. This script reads the per-unit CAMPD extracts in
-``inputs/raw-data/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
+``data/raw/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
 ``unit``-hour, carrying ``unitId``) and detects an outage for each *unit*
 independently, on the unit's own gross output.
 
 For every sustained unit outage (>= ``--min-outage-days``) it writes one row to
-``inputs/raw-data/campd-unit-outages.csv`` in the schema the unit-level derate
+``data/raw/campd-unit-outages.csv`` in the schema the unit-level derate
 overlay (:func:`market_sim.data.outages.unit_outage_derate_factors`) consumes:
 each row removes the unit's capacity share of its model bin from availability
 over the outage window. The unit's capacity is the EIA-860 generator nameplate
@@ -72,7 +72,7 @@ from scripts.derive_campd_outages import (  # noqa: E402
 
 # CAMPD unit-level extracts live in their own subdirectory; the flat raw-data
 # files are facility-summed and carry no unitId.
-UNIT_LEVEL_DIR: Path = REPO / "inputs" / "raw-data" / "campd-unit-level"
+UNIT_LEVEL_DIR: Path = REPO / "data" / "raw" / "campd-unit-level"
 
 
 def _norm_unit_id(uid: object) -> str:
@@ -193,17 +193,17 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins", default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
     )
     ap.add_argument(
         "--eia860",
-        default=str(REPO / "inputs" / "raw-data" / "eia-860" / "eia860_generators.parquet"),
+        default=str(REPO / "data" / "raw" / "eia-860" / "eia860_generators.parquet"),
         help="EIA-860 generator parquet, for per-unit nameplate capacity.",
     )
     ap.add_argument(
         "--out", default=None,
-        help="Output CSV; defaults to inputs/raw-data/campd-unit-outages.csv "
+        help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
              "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     args = ap.parse_args()
@@ -214,7 +214,7 @@ def main() -> None:
             "campd-unit-outages.csv" if iso == "ERCOT"
             else f"campd-unit-outages-{iso}.csv"
         )
-        args.out = str(REPO / "inputs" / "raw-data" / fname)
+        args.out = str(REPO / "data" / "raw" / fname)
 
     # Each facility's model plant group (the LP bin the derate routes into).
     # Split facilities (W A Parish 3470, Barney M Davis 4939) carry their
@@ -415,7 +415,7 @@ def main() -> None:
     # genuinely serve the grid. One full-year window per plant-year.
     if iso != "ERCOT":
         e923 = pd.read_parquet(
-            REPO / "inputs" / "processed" / "eia923_monthly_generation.parquet",
+            REPO / "data" / "raw" / "_processed-legacy" / "eia923_monthly_generation.parquet",
             columns=["plant_id", "netgen_annual_mwh", "year"],
         )
         tot = e923.groupby(["plant_id", "year"])["netgen_annual_mwh"] \

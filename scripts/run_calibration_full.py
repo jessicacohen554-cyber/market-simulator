@@ -532,7 +532,7 @@ def _parasitic_factor_map() -> dict[int, float]:
     falls back to scaling CAMPD gross by 1.0 (treating gross as net), which
     only shifts the level, not the timing the correlation cares about.
     """
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = REPO / "data" / "raw" / "_processed-legacy" / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))
@@ -2191,7 +2191,7 @@ def _print_curtailment_vs_reported(
             print(f"\n  [{label}] Renewable curtailment — {year}: no {iso} "
                   "HSL parquet; build with scripts/build_"
                   f"{iso.lower()}_hsl.py (ERCOT 2024+ needs the NP6 report "
-                  "uploads under inputs/raw-data/ercot-hsl/np6/)")
+                  "uploads under data/raw/ercot-hsl/np6/)")
         return
 
     modeled = {}
@@ -2580,7 +2580,7 @@ CF_R_GATE_MARGIN = 0.02     # pearson_r may fall at most this much vs baseline
 
 
 def _cf_emd_baseline_path(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
+    return (REPO / "data" / "raw" / "_validation-source"
             / f"cf_emd_baseline_{iso.upper()}.json")
 
 
@@ -2588,7 +2588,7 @@ def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
     """Print the per-class operating-shape regression gate vs the keeper baseline.
 
     Capacity-weights each class-year's per-plant ``cf_emd`` / ``pearson_r`` and
-    compares against ``inputs/calibration/cf_emd_baseline_<ISO>.json`` (the
+    compares against ``data/raw/_validation-source/cf_emd_baseline_<ISO>.json`` (the
     keeper of record). No baseline file => the gate is SKIPPED (never a silent
     pass), exactly as the audit's metrics-process fix requires.
     """

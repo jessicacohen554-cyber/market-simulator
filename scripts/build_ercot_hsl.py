@@ -2,7 +2,7 @@
 
 For each requested year, writes system-wide hourly wind/solar delivered
 generation (GEN) and uncurtailed potential (HSL) to
-``inputs/raw-data/ercot-hsl/ercot_<year>_hsl_hourly.parquet``.
+``data/raw/ercot-hsl/ercot_<year>_hsl_hourly.parquet``.
 
 HSL is the uncurtailed generation *potential*: the most a resource could have
 produced given wind/sun at that moment. Delivered generation is
@@ -18,7 +18,7 @@ Two source paths, by year:
 
 * **Published NP6 (preferred, any year)** — ERCOT MIS wind/solar
   power-production reports (the NP6 HSL upload) placed under
-  ``inputs/raw-data/ercot-hsl/np6/``, as ``.csv`` or ``.zip`` of CSVs, flat or
+  ``data/raw/ercot-hsl/np6/``, as ``.csv`` or ``.zip`` of CSVs, flat or
   in per-year subdirectories. Accepted report families (both carry system-wide
   actual GEN and system-wide actual HSL):
     - NP4-732-CD / NP4-737-CD  Wind / Solar Power Production — Hourly
@@ -75,7 +75,7 @@ HOURS_PER_YEAR = 8760
 INTERVALS_PER_HOUR = 4  # 15-minute SCED telemetry (UMass dataset)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-hsl"
+OUT_DIR = REPO_ROOT / "data" / "raw" / "ercot-hsl"
 # NP6 HSL upload drop zone for 2024+ (ERCOT MIS power-production reports).
 NP6_DIR = OUT_DIR / "np6"
 
@@ -95,7 +95,7 @@ _MAX_GAP_HOURS = 24
 
 # EIA-930 (Hourly Grid Monitor) reference totals for the ERCOT balancing
 # authority, 2023, used only as a sanity check on the aggregated GEN series
-# when inputs/calibration/calibration_reference.json is unavailable.
+# when data/raw/_validation-source/calibration_reference.json is unavailable.
 # Texas-wide wind/solar (~108 / ~32 TWh, EIA Today in Energy id=66464) is
 # larger than the ERCOT BA alone because it also counts SPP Panhandle wind
 # that lies outside ERCOT, so the ERCOT-only comparison is approximate.
@@ -103,7 +103,7 @@ EIA_REFERENCE_TWH: dict[int, dict[str, float]] = {
     2023: {"wind": 105.0, "solar": 32.0},
 }
 
-REFERENCE_PATH = REPO_ROOT / "inputs" / "calibration" / "calibration_reference.json"
+REFERENCE_PATH = REPO_ROOT / "data" / "raw" / "_validation-source" / "calibration_reference.json"
 
 
 def out_file(year: int) -> Path:
@@ -392,7 +392,7 @@ def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
     """Aggregate the year's NP6 report uploads into the hourly output frame.
 
     Returns ``None`` (with a data-needed message) when no usable wind+solar
-    report files for ``year`` are found under ``inputs/raw-data/ercot-hsl/np6/``.
+    report files for ``year`` are found under ``data/raw/ercot-hsl/np6/``.
 
     GEN is floored at zero, and HSL is floored at GEN: the reports'
     telemetry occasionally shows actual output a shade above the recorded
@@ -507,7 +507,7 @@ def print_validation(df: pd.DataFrame, year: int) -> None:
     reference = _eia_reference_twh(year)
     if reference is None:
         print("\nEIA cross-check skipped: no reference totals for "
-              f"{year} (see inputs/calibration/calibration_reference.json).")
+              f"{year} (see data/raw/_validation-source/calibration_reference.json).")
         return
     totals, source = reference
     print(f"\nEIA cross-check (delivered generation, vs {source}):")
@@ -543,7 +543,7 @@ def build_year(year: int) -> bool:
         source = (
             "ERCOT MIS wind/solar power production reports "
             "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
-            "inputs/raw-data/ercot-hsl/np6/"
+            "data/raw/ercot-hsl/np6/"
         )
         description = (
             f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
@@ -567,7 +567,7 @@ def build_year(year: int) -> bool:
         source = (
             "ERCOT MIS wind/solar power production reports "
             "(NP4-732/733-CD wind, NP4-737/738-CD solar), uploaded to "
-            "inputs/raw-data/ercot-hsl/np6/"
+            "data/raw/ercot-hsl/np6/"
         )
         description = (
             f"ERCOT {year} system-wide hourly wind/solar HSL (uncurtailed "
@@ -608,7 +608,7 @@ def main(argv: list[str] | None = None) -> int:
         "--year", type=int, nargs="+", default=list(DEFAULT_YEARS),
         help="Years to build (default: %(default)s). 2023 downloads the "
              "UMass dataset; later years need NP6 report uploads under "
-             "inputs/raw-data/ercot-hsl/np6/.",
+             "data/raw/ercot-hsl/np6/.",
     )
     args = parser.parse_args(argv)
 

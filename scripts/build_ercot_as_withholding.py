@@ -2,7 +2,7 @@
 
 For each requested year, sums ERCOT's cleared Day-Ahead Market *upward*
 ancillary-service quantities into a single system-wide hourly MW series and
-writes it to ``inputs/raw-data/ercot-AS/ercot_<year>_as_up_mw.parquet``.
+writes it to ``data/raw/ercot-AS/ercot_<year>_as_up_mw.parquet``.
 
 This series is the capacity that thermal/storage units clear as AS and so
 hold *out* of the energy market. The backcast's AS-reserve-withholding probe
@@ -14,7 +14,7 @@ notes). Down-regulation (Reg-Down) is excluded: it does not remove an upward
 energy offer.
 
 Source: ERCOT 2-Day Cleared DAM Ancillary Service reports (NP3-911-ER), one
-zip per service, already uploaded under ``inputs/raw-data/ercot-AS/``. Each
+zip per service, already uploaded under ``data/raw/ercot-AS/``. Each
 zip holds a single JSON with ``fields`` + ``data`` (rows of
 ``[deliveryDate, hourEnding, totalClearedAS<SVC>]``).
 
@@ -50,7 +50,7 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AS_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-AS"
+AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
 
 # Years built when --year is not given. The cleared-AS archive begins
 # 2023-12-10, so 2023 has no usable coverage and is omitted.
@@ -166,7 +166,7 @@ def build_year(year: int) -> bool:
     table = pa.Table.from_pandas(frame, preserve_index=False)
     table = table.replace_schema_metadata({
         "source": "ERCOT 2-Day Cleared DAM Ancillary Service reports "
-                  "(NP3-911-ER), inputs/raw-data/ercot-AS/",
+                  "(NP3-911-ER), data/raw/ercot-AS/",
         "description": f"ERCOT {year} system-wide hourly cleared DAM upward "
                        "ancillary-service MW (RegUp + RRS + ECRS + NonSpin; "
                        "Reg-Down excluded), on the non-leap 8760-hour "

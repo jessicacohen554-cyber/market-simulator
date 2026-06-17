@@ -30,8 +30,8 @@ from market_sim.data.fleet import (
 )
 
 REPO = Path(__file__).resolve().parent.parent
-TRANCHES = REPO / "inputs" / "processed" / "thermal_tranches_NYISO.csv"
-BIN_ASSIGNMENTS = REPO / "inputs" / "processed" / "bin_assignments_NYISO.csv"
+TRANCHES = REPO / "data" / "raw" / "_processed-legacy" / "thermal_tranches_NYISO.csv"
+BIN_ASSIGNMENTS = REPO / "data" / "raw" / "_processed-legacy" / "bin_assignments_NYISO.csv"
 ZONES = get_iso_config("NYISO").zone_names
 
 # The Gowanus 2 & 3 and Narrows 1 & 2 NYC peaking barges — NYISO's RMR units

@@ -4,7 +4,7 @@ Compares a calibration bundle's hourly system price (the dispatch LP's
 energy-balance duals, demand-weighted across zones — the dashboard's
 average-LMP convention) against the actual hub-mean hourly LMP series
 produced by ``scripts/derive_actual_lmp.py``
-(``inputs/calibration/actual_lmp_hourly_{ISO}.parquet``).
+(``data/raw/_validation-source/actual_lmp_hourly_{ISO}.parquet``).
 
 The point is diagnosis, not a score: before reaching for structural fixes
 (reserves/ORDC, scarcity adders) the monthly residual must be localized.
@@ -39,7 +39,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-CAL_DIR = REPO / "inputs" / "calibration"
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd).
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)

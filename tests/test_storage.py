@@ -1391,8 +1391,8 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
 
         path = (
             __import__("pathlib").Path(__file__).parents[1]
-            / "inputs"
-            / "raw-data"
+            / "data"
+            / "raw"
             / "ISNE_fueltype.parquet"
         )
         if not path.exists():

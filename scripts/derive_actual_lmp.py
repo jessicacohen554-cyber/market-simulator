@@ -5,7 +5,7 @@ the actual historical market price. Parsing the raw ERCOT settlement-point
 workbooks (20+ MB xlsx, 15-minute real-time intervals) on every dashboard
 render would be slow and would pull ``openpyxl`` into the render path, so this
 script reduces the raw price files to a tiny committed reference,
-``inputs/calibration/actual_lmp.json``:
+``data/raw/_validation-source/actual_lmp.json``:
 
     {"ERCOT": {"2024": {"da": 28.09, "rt": 26.83,
                         "da_mon": [...12...], "rt_mon": [...12...],
@@ -51,12 +51,12 @@ produced for the price-duration-curve overlay (J3a):
 
   * ``da_pct`` / ``rt_pct`` in the JSON — duration-curve percentiles of the
     hub-mean hourly price (``p99`` is a high price, ``p1`` a low one).
-  * ``inputs/calibration/actual_lmp_hourly_{ISO}.parquet`` — the hub-mean
+  * ``data/raw/_validation-source/actual_lmp_hourly_{ISO}.parquet`` — the hub-mean
     hourly series itself (columns ``year``, ``hour``, ``rt``, ``da``), dense
     on the model's fixed 8760-hour local calendar: Feb 29 is dropped, the
     DST fall-back hour is averaged, and the spring-forward hour is NaN.
 
-Run after refreshing ``inputs/raw-data/lmp-data/``; commit the JSON and the
+Run after refreshing ``data/raw/lmp-data/``; commit the JSON and the
 hourly parquet. Missing source files for an ISO/year are skipped, so a
 partial data drop still produces a valid reference.
 
@@ -76,9 +76,9 @@ import openpyxl
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-LMP_DIR = REPO / "inputs" / "raw-data" / "lmp-data"
-OUT = REPO / "inputs" / "calibration" / "actual_lmp.json"
-HOURLY_OUT = REPO / "inputs" / "calibration"  # actual_lmp_hourly_{ISO}.parquet
+LMP_DIR = REPO / "data" / "raw" / "lmp-data"
+OUT = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
+HOURLY_OUT = REPO / "data" / "raw" / "_validation-source"  # actual_lmp_hourly_{ISO}.parquet
 
 DEFAULT_YEARS = (2023, 2024, 2025)
 

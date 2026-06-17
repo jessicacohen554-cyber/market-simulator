@@ -14,7 +14,7 @@ ceiling is an outage, not economic part-load — plus a confirmed combined-cycle
 allowlist. Economic single-train CC operation looks identical to a partial
 outage from CF alone, so other CC plants are excluded until confirmed.
 
-Writes ``inputs/raw-data/campd-partial-outages.csv``.
+Writes ``data/raw/campd-partial-outages.csv``.
 """
 from __future__ import annotations
 
@@ -81,10 +81,10 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--out", default=str(
-        REPO / "inputs" / "raw-data" / "campd-partial-outages.csv"))
+        REPO / "data" / "raw" / "campd-partial-outages.csv"))
     args = ap.parse_args()
 
-    bins = load_campd_bins("inputs/custom-bin-assignments.csv")
+    bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
     cap = dict(zip(bins["Plant_Code"].astype(int), bins["capacity_mw"]))
     name = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"]))
     group = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))

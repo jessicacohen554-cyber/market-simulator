@@ -3,9 +3,9 @@
 Non-ERCOT ISOs have no curated ``custom-bin-assignments.csv``; their
 per-plant bins are synthesized at runtime by ``fleet.fleet_to_bins`` from the
 EIA-860 fleet plus the CAMPD-derived thermal-tranche artifact
-(``inputs/processed/thermal_tranches_<ISO>.csv``). This script writes that
+(``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``). This script writes that
 synthetic frame out as a committed, reviewable artifact —
-``inputs/processed/bin_assignments_<ISO>.csv`` — one row per
+``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` — one row per
 ``(Plant_Code, Plant_Group)`` with the four tranche shares
 (``Pct_Must_Run / Pct_Committed / Pct_Economic / Pct_Peaking``, summing to
 100) and a source tag per derived quantity:
@@ -69,7 +69,7 @@ _CHP_GROUPS: frozenset[str] = frozenset({"CC_CHP", "CT_CHP", "ST_CHP"})
 
 def _chp_floor_status(iso: str) -> dict[int, str]:
     """Return ``{plant_code: artifact status}`` for the ISO's CHP rows."""
-    path = REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv"
+    path = REPO / "data" / "raw" / "_processed-legacy" / f"thermal_tranches_{iso}.csv"
     if not path.exists():
         return {}
     df = pd.read_csv(path)
@@ -165,7 +165,7 @@ def main() -> None:
     args = ap.parse_args()
     iso = args.iso.upper()
     out_path = Path(args.out) if args.out else (
-        REPO / "inputs" / "processed" / f"bin_assignments_{iso}.csv"
+        REPO / "data" / "raw" / "_processed-legacy" / f"bin_assignments_{iso}.csv"
     )
 
     out = build_bin_assignments(iso)

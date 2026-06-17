@@ -21,7 +21,7 @@ longer spans multiple fuel classes is left untouched.
 
 Usage:
     python scripts/tag_mixed_plants.py
-    python scripts/tag_mixed_plants.py --bins inputs/custom-bin-assignments.csv
+    python scripts/tag_mixed_plants.py --bins data/raw/reference/custom-bin-assignments.csv
 """
 
 from __future__ import annotations
@@ -40,8 +40,8 @@ sys.path.insert(0, str(REPO / "src"))
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("tag_mixed_plants")
 
-DEFAULT_BINS = REPO / "inputs" / "custom-bin-assignments.csv"
-DEFAULT_REGISTRY = REPO / "inputs" / "master-plant-registry.csv"
+DEFAULT_BINS = REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"
+DEFAULT_REGISTRY = REPO / "data" / "raw" / "reference" / "master-plant-registry.csv"
 
 # Plant_Group -> (fuel tag, code digit). Same digit groups configs of one fuel.
 _GROUP_TAG: dict[str, tuple[str, int]] = {

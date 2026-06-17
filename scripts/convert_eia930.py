@@ -1,7 +1,7 @@
 """Convert long-format EIA-930 uploads into the wide per-BA hourly parquet.
 
 The EIA Hourly Electric Grid Monitor bulk download ships two long (tidy)
-parquet files per balancing authority in ``inputs/raw-data``:
+parquet files per balancing authority in ``data/raw``:
 
 * ``<BA>_fueltype.parquet`` -- one row per ``(period, fueltype)`` with the
   net generation by fuel code in ``value_mwh`` (period is UTC, tz-aware).
@@ -9,7 +9,7 @@ parquet files per balancing authority in ``inputs/raw-data``:
   family series (``type`` in ``D``/``DF``/``NG``/``TI``) in ``value_mwh``.
 
 This script pivots both into the wide schema that
-``data/eia_hourly/<BA> hourly.parquet`` uses (the same layout as the existing
+``data/raw/eia-930-hourly/<BA> hourly.parquet`` uses (the same layout as the existing
 ``ERCO hourly`` extract that ``market_sim.data.renewables`` /
 ``market_sim.data.eia_loader`` consume): one row per hour with ``NG: <CODE>``
 generation columns, the ``Demand``/``Demand forecast``/``Net generation``/
@@ -38,8 +38,8 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-INPUT_DIR = REPO_ROOT / "inputs" / "raw-data"
-OUTPUT_DIR = REPO_ROOT / "data" / "eia_hourly"
+INPUT_DIR = REPO_ROOT / "data" / "raw"
+OUTPUT_DIR = REPO_ROOT / "data" / "raw" / "eia-930-hourly"
 
 # EIA-930 balancing-authority local timezone. The Hourly Grid Monitor reports
 # each BA on its own local clock; these are the IANA/Olson zones EIA uses for

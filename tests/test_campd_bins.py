@@ -25,7 +25,7 @@ from market_sim.model.commitment import (
 )
 from market_sim.results.emissions import compute_must_run_emissions
 
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = "data/raw/reference/custom-bin-assignments.csv"
 ZONE_NAMES = get_iso_config("ERCOT").zone_names
 
 
