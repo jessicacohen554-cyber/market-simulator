@@ -192,17 +192,85 @@ def test_reserve_headroom_composition():
     cap = np.array([20.0])
     chg = np.array([[10.0, 0.0, 0.0, 0.0]])
     dis = np.array([[0.0, 0.0, 20.0, 0.0]])
-    r = reserve_headroom(fa, dispatch, cap, chg, dis, as_plan_mw=10.0,
-                         renewable_headroom=np.array([0.0, 0.0, 0.0, 5.0]))
-    # Hour 0: thermal avail = 100*0.5 + 50 = 100, disp 100 -> 0;
-    # storage 20 - 0 + 10 = 30; minus AS 10 => 20.
-    assert r[0] == pytest.approx(20.0)
-    # Hour 1: avail 150 - 130 = 20; storage 20; -10 => 30.
-    assert r[1] == pytest.approx(30.0)
-    # Hour 2: avail 150 - 150 = 0; storage 20 - 20 = 0; -10 => -10.
-    assert r[2] == pytest.approx(-10.0)
-    # Hour 3: avail 0 + storage 20 - 10 + renewables 5 => 15.
-    assert r[3] == pytest.approx(15.0)
+    r_online, r_offline = reserve_headroom(
+        fa, dispatch, cap, chg, dis, as_plan_mw=10.0,
+        renewable_headroom=np.array([0.0, 0.0, 0.0, 5.0]))
+    # g1 (gas_cc) and g2 (coal) are dispatched every hour, so both are online
+    # and neither is quick-start (only gas_ct/oil are) — the offline (non-spin)
+    # tier is zero throughout and r_online matches the old single-tier sum.
+    assert (r_offline == 0.0).all()
+    # Hour 0: thermal headroom = (50-50)+(50-50)=0; storage 20 - 0 + 10 = 30;
+    # minus AS 10 => 20.
+    assert r_online[0] == pytest.approx(20.0)
+    # Hour 1: thermal headroom (100-80)+(50-50)=20; storage 20; -10 => 30.
+    assert r_online[1] == pytest.approx(30.0)
+    # Hour 2: thermal headroom 0; storage 20 - 20 = 0; -10 => -10.
+    assert r_online[2] == pytest.approx(-10.0)
+    # Hour 3: thermal headroom 0; storage 20; -10 + renewables 5 => 15.
+    assert r_online[3] == pytest.approx(15.0)
+
+
+def _split_fleet_arrays(t: int = 2) -> FleetArrays:
+    """gas_cc (slow-start) + gas_ct (quick-start), one plant each."""
+    return FleetArrays(
+        pmax=np.array([100.0, 40.0]),
+        pmin=np.zeros(2),
+        heat_rate=np.full(2, 7.0),
+        vom=np.zeros(2),
+        emission_rate=np.zeros(2),
+        nox_rate=np.zeros(2),
+        so2_rate=np.zeros(2),
+        zone_idx=np.zeros(2, dtype=int),
+        fuel_type_idx=np.array(
+            [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]]),
+        availability=np.ones((2, t)),
+        unit_ids=["cc", "ct"],
+        efficiency_bin=np.zeros(2),
+        plant_code=np.array([10, 20]),
+    )
+
+
+def test_online_offline_split_excludes_cold_slowstart():
+    fa = _split_fleet_arrays()
+    # Hour 0: both offline (dispatch 0). Hour 1: both online.
+    dispatch = np.array([[0.0, 60.0], [0.0, 10.0]])
+    cap = np.zeros(0)  # no storage
+    r_online, r_offline = reserve_headroom(
+        fa, dispatch, cap, None, None, as_plan_mw=0.0)
+    # Hour 0: gas_cc offline+slow-start -> excluded entirely; gas_ct offline
+    # but quick-start -> its 40 MW backs the offline (non-spin) tier only.
+    assert r_online[0] == pytest.approx(0.0)
+    assert r_offline[0] == pytest.approx(40.0)
+    # Hour 1: both online -> spinning headroom (100-60)+(40-10)=70 online,
+    # nothing in the offline tier.
+    assert r_online[1] == pytest.approx(70.0)
+    assert r_offline[1] == pytest.approx(0.0)
+
+
+def test_offline_split_raises_adder_vs_legacy_single_tier():
+    """A scarce online tier with offline backup prices above RTOFFCAP=0."""
+    r_online = np.array([3500.0])
+    r_offline = np.array([4000.0])
+    lam = np.array([100.0])
+    kw = dict(voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
+              multistep_floor=False)
+    split = ordc_adder(r_online + r_offline, lam,
+                       reserves_online_mw=r_online, **kw)
+    legacy = ordc_adder(r_online + r_offline, lam, **kw)  # both tiers = full
+    # The first-half term sees only the tight online tier, so the split adder
+    # is strictly higher than treating all reserve as online (RTOFFCAP=0).
+    assert split[0] > legacy[0]
+
+
+def test_reserve_headroom_accepts_hourly_as_plan():
+    fa = _split_fleet_arrays()
+    dispatch = np.array([[60.0, 60.0], [10.0, 10.0]])
+    r_online, _ = reserve_headroom(
+        fa, dispatch, np.zeros(0), None, None,
+        as_plan_mw=np.array([0.0, 50.0]))
+    # Spinning headroom 70 both hours; hour 1 nets a 50 MW hourly AS plan.
+    assert r_online[0] == pytest.approx(70.0)
+    assert r_online[1] == pytest.approx(20.0)
 
 
 def test_scarcity_prices_wrapper_backcast_floor_gating():
@@ -217,4 +285,5 @@ def test_scarcity_prices_wrapper_backcast_floor_gating():
     # Before Nov 1 2023 no floor; after, the $10 step at 6,900 MW.
     assert adder[0] == pytest.approx(0.0, abs=1e-6)
     assert adder[304 * 24] == pytest.approx(10.0)
-    assert set(out) == {"reserves_mw", "lolp", "scarcity_adder"}
+    assert set(out) == {
+        "reserves_mw", "reserves_online_mw", "lolp", "scarcity_adder"}
