@@ -46,9 +46,15 @@ NYC/SENY pocket, invisible to the NYCA-aggregate energy LP.
   regions (NYCA ⊃ East ⊃ SENY ⊃ NYC) as `region -> {zones, products}`, mapped
   onto the five-zone model topology. East: 1,200 MW 30-min over zones F–K,
   $500/MWh max; NYC (zone J): 1,000 MW 30-min + 500 MW 10-min, $500/MWh max
-  (FERC ER21-502 / NYISO MST Rate Schedule 4). SENY (zones G–K) is scaffolded
-  empty pending the RS4 requirement MW — a documented under-model. Overridable
-  via `ScenarioConfig.nyiso_rcpf_locational`.
+  (FERC ER21-502 / NYISO MST Rate Schedule 4). SENY (zones G–K): $500/MWh max
+  sourced, MW requirement a **placeholder** 1,100 MW (midpoint of the sourced
+  nested anchors East 1,200 ⊇ SENY ⊇ NYC 1,000; `TODO(SENY-MW)` to source the
+  RS4 value). Overridable via `ScenarioConfig.nyiso_rcpf_locational`.
+- **`scripts/process_nyiso_as.py`** — the committed measured reference
+  `actual_as_reserve_NYISO.parquet` now carries a `reserve_<model_zone>` column
+  for all five model zones (built from the NYISO OASIS RT AS archive, 2023–25,
+  all 11 settlement zones), so the overlay validates every zone against
+  measured data from the committed artifact, not the raw CSV.
 - **`results.rcpf.locational_zone_adders`** — prices each region's reserve
   demand curve on the sum of its member zones' headroom and stacks it onto
   every zone the region contains (on top of the system-wide NYCA tier),

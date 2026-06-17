@@ -1952,11 +1952,14 @@ NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
 #     (FERC ER21-502; NYISO MST RS4 / "Establishing Zone J Operating
 #     Reserves"). Model zone J → NYC.
 #   * SENY (zones G–K → Lower_Hudson, NYC, Long_Island) also carries a
-#     30-minute requirement priced to a $500/MWh maximum, but its MW
-#     requirement is not yet sourced to the tariff step table, so it is
-#     scaffolded empty here — a *documented under-model*: zones H/I/K sit one
-#     measured cascade tier (SENY) above the East-only level this table
-#     reproduces for them, pending the Rate Schedule 4 requirement value.
+#     30-minute requirement priced to a $500/MWh maximum (FERC ER21-502).
+#     PLACEHOLDER requirement 1,100 MW: bracketed by the two *sourced* nested
+#     tariff anchors East (F–K) 1,200 MW ⊇ SENY (G–K) ⊇ NYC (J) 1,000 MW, so
+#     SENY ∈ [1,000, 1,200] MW; 1,100 is the midpoint. This is NOT yet the
+#     tariff value — the modeled SENY-tier adder is validated against the
+#     measured G–K reserve prices (process_nyiso_as.py), not fitted to them.
+#     TODO(SENY-MW): replace 1,100 with the published Rate Schedule 4 SENY
+#     30-minute requirement once sourced (pull NYISO MST RS4 / Potomac SOM).
 # critical_mw is 0 for every locational product (the demand curve ramps
 # linearly from $0 at the requirement to the maximum penalty at zero
 # reserves) — the documented stand-in for the published stepped curve, the
@@ -1970,7 +1973,9 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     },
     "SENY": {
         "zones": ("Lower_Hudson", "NYC", "Long_Island"),
-        "products": (),  # requirement pending RS4 citation (see note above)
+        # PLACEHOLDER MW (1,100, bracket midpoint) — TODO(SENY-MW): source the
+        # Rate Schedule 4 SENY 30-min requirement; penalty $500 is sourced.
+        "products": (("seny_30min_total", 1100.0, 0.0, 500.0),),
     },
     "NYC": {
         "zones": ("NYC",),
