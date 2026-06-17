@@ -2313,15 +2313,35 @@ def _rows_to_generators(
     ]
 
 
-@lru_cache(maxsize=2)
-def _chp_by_plant(eia860_dir: Path) -> "pd.Series":
+# Per-year EIA-860 plant-level CHP lookup (built by
+# ``scripts/build_eia860_chp_by_year.py``): columns (year, plant_id, chp). When
+# present it lets a multi-year backcast bucket each year with its own vintage's
+# CHP designation instead of the single committed snapshot.
+EIA_860_CHP_BY_YEAR_NAME: str = "eia860_chp_by_year.parquet"
+
+
+@lru_cache(maxsize=8)
+def _chp_by_plant(eia860_dir: Path, year: int | None = None) -> "pd.Series":
     """Return ``{plant_id: "Y"/"N"}`` plant-level CHP flag from EIA-860.
 
-    Reads the raw operable-generator sheet (which carries ``Associated with
-    Combined Heat and Power System``, dropped from the processed generators
-    parquet) and marks a plant CHP if *any* of its units is flagged. Empty
-    series when the sheet is absent, so callers default every plant to non-CHP.
+    With ``year`` set and the per-year lookup
+    (:data:`EIA_860_CHP_BY_YEAR_NAME`, under ``inputs/processed``) present, the
+    flag is read from THAT year's EIA-860 release, so a 3-year backcast does not
+    classify 2023/2024 with the latest snapshot's cogen status. Falls back to
+    the single committed operable-generator sheet (the most recent vintage) when
+    no year is given, the per-year lookup is missing, or the year is absent from
+    it. A plant is CHP when *any* of its operable units is flagged. Empty series
+    when no source exists, so callers default every plant to non-CHP.
     """
+    if year is not None:
+        by_year = PROCESSED_DIR / EIA_860_CHP_BY_YEAR_NAME
+        if by_year.exists():
+            df = pd.read_parquet(by_year)
+            sub = df[df["year"] == int(year)]
+            if not sub.empty:
+                return pd.Series(
+                    sub["chp"].to_numpy(), index=sub["plant_id"].to_numpy()
+                )
     path = eia860_dir / "eia860_generator_operable.parquet"
     col = "Associated with Combined Heat and Power System"
     if not path.exists():
@@ -2401,7 +2421,8 @@ def dual_fuel_plant_groups(
 
 
 def _load_fleet_from_parquet(
-    parquet_path: Path, iso: str, iso_config: ISOConfig | None
+    parquet_path: Path, iso: str, iso_config: ISOConfig | None,
+    year: int | None = None,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -2421,8 +2442,12 @@ def _load_fleet_from_parquet(
     # Join the plant-level CHP flag (dropped from the processed generators
     # parquet) from the raw EIA-860 operable sheet, so gas cogens are grouped
     # CC_CHP / CT_CHP / ST_CHP. A plant is CHP if any of its units is flagged.
+    # ``year`` selects that vintage's CHP designation when the per-year lookup
+    # is available (else the latest committed snapshot).
     df = df.copy()
-    df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent)).fillna("N")
+    df["chp"] = (
+        df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
+    )
 
     generators = _rows_to_generators(df, iso, iso_config)
     if not generators:
@@ -2534,6 +2559,7 @@ def load_fleet_from_csv(
     iso: str,
     iso_config: ISOConfig | None = None,
     data_dir: Path | None = None,
+    year: int | None = None,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -2556,6 +2582,10 @@ def load_fleet_from_csv(
             is known; ISOs without a config get a single ISO-named zone.
         data_dir: Directory holding the EIA-860 data. Defaults to
             ``inputs/raw-data/eia-860``.
+        year: Optional backcast year. When set and the per-year CHP lookup is
+            present, gas cogens are bucketed with THAT year's EIA-860 CHP
+            designation rather than the latest committed snapshot's (see
+            :func:`_chp_by_plant`). ``None`` keeps the snapshot vintage.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -2587,7 +2617,9 @@ def load_fleet_from_csv(
         )
     else:
         parquet_path = data_dir / EIA_860_PARQUET_NAME
-        from_parquet = _load_fleet_from_parquet(parquet_path, iso, iso_config)
+        from_parquet = _load_fleet_from_parquet(
+            parquet_path, iso, iso_config, year
+        )
         if from_parquet is None:
             raise FileNotFoundError(
                 f"No EIA-860 data for {iso}: expected a per-ISO override "

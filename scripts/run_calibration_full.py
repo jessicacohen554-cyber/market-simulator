@@ -538,18 +538,22 @@ def _parasitic_factor_map() -> dict[int, float]:
     return campd.pooled_factor_map(pd.read_parquet(path))
 
 
-def _fleet_group_by_code(iso: str, iso_config) -> dict[int, str]:
+def _fleet_group_by_code(
+    iso: str, iso_config, year: int | None = None
+) -> dict[int, str]:
     """Return ``{plant_code: plant_group}`` from the EIA-860 per-plant fleet.
 
     The non-ERCOT analogue of the ERCOT CAMPD bin sheet's plant->group map,
     used to bucket the CAMPD/EIA-923 benchmark backfill. Built from the fleet's
     ``plant_group`` (COAL / CC_REGULAR / CT_PEAKER / ST_GAS / their CHP
-    variants), so it matches the dispatch frame's classes.
+    variants), so it matches the dispatch frame's classes. ``year`` selects that
+    vintage's EIA-860 CHP designation, so the benchmark backfill buckets a plant
+    CHP-vs-merchant the same way the year's dispatch fleet does.
     """
     from market_sim.data.fleet import load_fleet_from_csv
 
     out: dict[int, str] = {}
-    for g in load_fleet_from_csv(iso, iso_config):
+    for g in load_fleet_from_csv(iso, iso_config, year=year):
         code = int(g.plant_code)
         if code > 0 and g.plant_group:
             out[code] = g.plant_group
@@ -775,6 +779,155 @@ def _backfill_eia923_with_campd(
     if add:
         e923 = pd.concat([e923, pd.DataFrame(add)], ignore_index=True)
     return e923
+
+
+# Variable-renewable classes the EIA-923 monthly survey under-reports (no CAMPD
+# backfill reaches them) but EIA-930 telemetry measures grid-side — the basis
+# the model's grid LP dispatch is judged on. Replaced with the EIA-930 grid
+# total whenever the EIA-923 class total falls below this fraction of it (the
+# same per-fuel guard build_calibration_reference applies to the reference).
+_EIA930_RENEWABLE_CLASSES: tuple[str, ...] = ("wind", "solar", "hydro")
+_EIA923_RENEWABLE_COMPLETENESS_FRACTION: float = 0.90
+# A whole vintage is a partial release when the ISO's total EIA-923 net gen is
+# below this fraction of the EIA-930 grid net generation (the 2025 early monthly
+# survey ~73%); only then is biomass — absent from CAMPD and EIA-930 — carried
+# from the prior complete year.
+_EIA923_VINTAGE_COMPLETENESS_FRACTION: float = 0.90
+
+
+def _e930_series_annual_monthly(
+    e930: pd.DataFrame | None, series: str, year: int,
+) -> tuple[float, list[float]]:
+    """Return ``(annual_mwh, [m01..m12])`` for one EIA-930 long-format series."""
+    if e930 is None:
+        return 0.0, [0.0] * 12
+    sub = e930[e930["series"] == series]
+    if sub.empty:
+        return 0.0, [0.0] * 12
+    arr = sub.sort_values("hour")["mw"].to_numpy(dtype=float)
+    months = _hour_months(year, len(arr))
+    monthly = [
+        float(np.clip(arr[months == m], 0.0, None).sum())
+        for m in range(1, 13)
+    ]
+    return float(sum(monthly)), monthly
+
+
+def _replace_class_total(
+    e923: pd.DataFrame, klass: str, year: int,
+    annual: float, monthly: list[float],
+) -> pd.DataFrame:
+    """Drop ``klass``'s per-plant rows and insert one synthetic class-total row.
+
+    The variable-renewable / biomass benchmark is a class aggregate (the dashboard
+    ``classFull`` sums EIA-923 by class), so a single sentinel row (``plant_id``
+    0) carrying the class annual + monthly is sufficient and keeps the by-class
+    total exact. No renewable class is matched per-plant downstream.
+    """
+    mcols = [f"m{i:02d}" for i in range(1, 13)]
+    kept = e923[e923["klass"] != klass].copy()
+    row = {
+        "year": np.int16(year), "plant_id": 0, "klass": klass,
+        "annual_mwh": float(annual),
+        **{c: float(monthly[i]) for i, c in enumerate(mcols)},
+    }
+    return pd.concat([kept, pd.DataFrame([row])], ignore_index=True)
+
+
+def _vintage_completeness(
+    year: int, generation: pd.DataFrame, iso: str, e930: pd.DataFrame | None,
+) -> float:
+    """ISO EIA-923 total net gen as a fraction of the EIA-930 grid net_gen.
+
+    ~1.0 for a complete vintage; the 2025 early monthly survey reads ~0.73.
+    Returns 1.0 when no EIA-930 net_gen is available (no swap then).
+    """
+    ann930_net, _ = _e930_series_annual_monthly(e930, "net_gen", year)
+    if ann930_net <= 0.0:
+        return 1.0
+    iso_plants = _iso_plant_ids(iso)
+    g = generation[generation["year"] == year]
+    if iso_plants:
+        g = g[g["plant_id"].isin(iso_plants)]
+    e923_total = float(g["netgen_annual_mwh"].sum())
+    return e923_total / ann930_net
+
+
+def _backfill_renewables_eia930(
+    e923: pd.DataFrame, year: int, iso: str,
+    generation: pd.DataFrame, e930: pd.DataFrame | None,
+) -> pd.DataFrame:
+    """Source under-counted renewables from EIA-930 and biomass from a prior year.
+
+    For an incomplete EIA-923 vintage (the current-year early monthly survey),
+    the variable renewables and biomass are not reached by the CAMPD thermal
+    backfill, leaving the per-class benchmark far below the real grid total. This
+    repairs them so EVERY class carries a full-year 2025 benchmark:
+
+    * ``wind`` / ``solar`` / ``hydro``: when the EIA-923 class total is below
+      :data:`_EIA923_RENEWABLE_COMPLETENESS_FRACTION` of the EIA-930 grid series,
+      the class total (annual + monthly shape) is taken from EIA-930 — the
+      grid-side authority the model's dispatch is scored against. Complete
+      vintages, where the two agree, are unchanged; CAISO wind, under-reported in
+      EIA-923 every year, is corrected in every year (matching the reference).
+    * ``biomass``: absent from both CAMPD and EIA-930. When the whole vintage is
+      a partial release (:func:`_vintage_completeness`), the prior complete
+      year's biomass class total is carried forward, scaled by the vintage
+      completeness (its monthly shape reused), rather than left truncated.
+    """
+    if e930 is None:
+        return e923
+    cls_total = e923.groupby("klass")["annual_mwh"].sum()
+    for klass in _EIA930_RENEWABLE_CLASSES:
+        ann930, mon930 = _e930_series_annual_monthly(e930, klass, year)
+        if ann930 <= 0.0:
+            continue
+        cur = float(cls_total.get(klass, 0.0))
+        if cur < _EIA923_RENEWABLE_COMPLETENESS_FRACTION * ann930:
+            logger.info(
+                "EIA-923 %d %s %.2f TWh under-counts EIA-930 %.2f TWh; "
+                "using EIA-930 grid total", year, klass,
+                cur / _MWH_PER_TWH, ann930 / _MWH_PER_TWH,
+            )
+            e923 = _replace_class_total(e923, klass, year, ann930, mon930)
+
+    completeness = _vintage_completeness(year, generation, iso, e930)
+    if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
+        mcols = [f"m{i:02d}" for i in range(1, 13)]
+        prior = _eia923_frame(year - 1, generation, iso)
+        prior_bio = prior[prior["klass"] == "biomass"]
+        prior_ann = float(prior_bio["annual_mwh"].sum())
+        cur_bio = float(cls_total.get("biomass", 0.0))
+        est = prior_ann * completeness
+        if prior_ann > 0.0 and est > cur_bio:
+            prior_mon = prior_bio[mcols].sum().to_numpy(dtype=float)
+            psum = float(prior_mon.sum())
+            monthly = (
+                (prior_mon * (est / psum)).tolist() if psum > 0
+                else [est / 12.0] * 12
+            )
+            logger.info(
+                "EIA-923 %d biomass %.2f TWh incomplete (vintage %.0f%%); "
+                "carrying %d biomass %.2f TWh x completeness -> %.2f TWh",
+                year, cur_bio / _MWH_PER_TWH, completeness * 100.0,
+                year - 1, prior_ann / _MWH_PER_TWH, est / _MWH_PER_TWH,
+            )
+            e923 = _replace_class_total(e923, "biomass", year, est, monthly)
+    return e923
+
+
+def _benchmark_eia923_frame(
+    year: int, generation: pd.DataFrame, iso: str,
+    campd_year: pd.DataFrame | None, group_by_code: dict[int, str],
+    e930: pd.DataFrame | None,
+) -> pd.DataFrame:
+    """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
+    EIA-930 renewable / prior-year biomass repair for incomplete vintages.
+    """
+    e923 = _backfill_eia923_with_campd(
+        _eia923_frame(year, generation, iso), campd_year, group_by_code, year,
+    )
+    return _backfill_renewables_eia930(e923, year, iso, generation, e930)
 
 
 def _btm_frame(
@@ -1087,6 +1240,10 @@ def solve_and_persist(
     has_campd = bool(campd.states_for_iso(iso))
     generation = load_monthly_generation()
     parasitic_factors = _parasitic_factor_map()
+    # ERCOT's plant->group map is the curated, year-independent bin sheet; the
+    # per-plant ISOs rebuild it per year inside the loop so the CAMPD backfill
+    # buckets a plant with the year's own EIA-860 CHP vintage (see below).
+    group_by_code: dict[int, str] = {}
     if is_ercot:
         from market_sim.config.scenarios import ScenarioConfig
         from market_sim.data.fleet import load_campd_bins
@@ -1094,8 +1251,6 @@ def solve_and_persist(
         group_by_code = dict(
             zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
         )
-    else:
-        group_by_code = _fleet_group_by_code(iso, iso_config)
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     storage_frames: list[pd.DataFrame] = []
@@ -1105,6 +1260,8 @@ def solve_and_persist(
     for year in years:
         gas_price = _henry_hub_actual(reference, year)
         gas_prices[year] = gas_price
+        if not is_ercot:
+            group_by_code = _fleet_group_by_code(iso, iso_config, year)
         cfg = _calibration_config(year, iso, hours, gas_price)
         demand = load_demand(
             iso, year, iso_config, td_loss_factor=cfg.td_loss_factor,
@@ -1217,9 +1374,8 @@ def solve_and_persist(
             eia930_frames.append(e930)
         if has_campd:
             eia923_frames.append(
-                _backfill_eia923_with_campd(
-                    _eia923_frame(year, generation, iso), campd_year,
-                    group_by_code, year,
+                _benchmark_eia923_frame(
+                    year, generation, iso, campd_year, group_by_code, e930,
                 )
             )
             if campd_year is not None:
@@ -2645,24 +2801,24 @@ def rebuild_benchmark(bundle: Path) -> None:
     # Plant -> group map for the CAMPD backfill: ERCOT's curated bin sheet,
     # the per-plant EIA-860 fleet for every other ISO — the same sources the
     # solve path uses, so a rebuilt benchmark groups plants identically.
+    group_by_code: dict[int, str] = {}
     if is_ercot:
         bins = load_campd_bins(ScenarioConfig().campd_bins_path)
         group_by_code = dict(
             zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
         )
-    else:
-        group_by_code = _fleet_group_by_code(iso, iso_config)
 
     e923f, e930f, campdf = [], [], []
     for year in years:
+        if not is_ercot:
+            group_by_code = _fleet_group_by_code(iso, iso_config, year)
         campd_year = _campd_hourly_frame(year, iso, parasitic_factors, hours)
+        e930 = _eia930_frame(year, iso, iso_config)
         e923f.append(
-            _backfill_eia923_with_campd(
-                _eia923_frame(year, generation, iso), campd_year,
-                group_by_code, year,
+            _benchmark_eia923_frame(
+                year, generation, iso, campd_year, group_by_code, e930,
             )
         )
-        e930 = _eia930_frame(year, iso, iso_config)
         if e930 is not None:
             e930f.append(e930)
         if campd_year is not None:
