@@ -56,6 +56,11 @@ inputs/processed/.offer_curve_jacobian_cache.json
 /results/calibration/caiso_ixshape*/
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
+# CAISO RA must-offer gas-floor scratch backcasts (Session A frac sweep +
+# 3-yr keeper) and its matched no-floor+repin baseline; regenerable from
+# --caiso-gas-commitment-floor.
+/results/calibration/caiso_floor*/
+/results/calibration/caiso_base_repin*/
 /results/calibration/nyiso_ce_*/
 /results/calibration/nyiso_oc_*/
 # CAISO AS operating-reserve formula before/after bundles (regenerable via
