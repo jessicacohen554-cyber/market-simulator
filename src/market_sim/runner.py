@@ -43,6 +43,7 @@ from market_sim.data.fleet import (
     load_campd_bins,
     load_fleet_from_csv,
     load_planned_additions,
+    load_retired_within_window,
     split_coal_tranches,
 )
 from market_sim.data.fuel import (
@@ -229,6 +230,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # via ``fleet_to_bins`` -- giving them ERCOT's smoothed rising offer curve
     # and per-plant tranches. An ISO whose synthesis yields no thermal bins
     # (no artifact) falls through to the legacy path.
+    # Within-window plant exits (the backcast mirror of planned additions):
+    # whole plants that retired mid-window are absent from the single recent
+    # operable snapshot, so they are injected into the base fleet and the COD
+    # ramp ages each out by its real retirement month. Backcast-mode only — a
+    # forecast must not carry an already-retired unit. Loaded before the bins
+    # are synthesized so the retirees are binned with the rest of the fleet.
+    retired_within_window: list[Generator] = []
+    if config.mode == "backcast":
+        retired_within_window = load_retired_within_window(iso, iso_config)
+
     campd_bins = None
     if config.use_campd_bins and iso in CAMPD_BINNING_ISOS:
         if iso == "ERCOT":
@@ -241,7 +252,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         else:
             campd_bins = fleet_to_bins(
-                load_fleet_from_csv(iso, iso_config), iso, config
+                load_fleet_from_csv(iso, iso_config) + retired_within_window,
+                iso, config,
             )
             if campd_bins.empty:
                 campd_bins = None
@@ -287,7 +299,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # collapse happens before the LP -- the dominant solve-time win.
             if campd_bins is not None:
                 campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
-                all_gens = load_fleet_from_csv(iso, iso_config)
+                all_gens = load_fleet_from_csv(iso, iso_config) + retired_within_window
                 if iso == "ERCOT":
                     # ERCOT's curated sheet covers the full gas/coal thermal
                     # fleet; nuclear (and any other non-aggregatable unit)
@@ -315,7 +327,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 fleet = non_thermal + campd_fleet
             else:
                 fleet = aggregate_fleet(
-                    load_fleet_from_csv(iso, iso_config),
+                    load_fleet_from_csv(iso, iso_config) + retired_within_window,
                     n_bins=config.heat_rate_bin_count,
                 )
             # Planned units already due by the first simulated year (their
