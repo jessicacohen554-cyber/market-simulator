@@ -116,6 +116,26 @@ respected and self-consistent). Thermal must-run/outage overlays compose
 unchanged. High-AS scarcity hours spot-checked: the reservation throttles each
 hour by exactly its measured AS MW.
 
+**TASK 4 — offer-curve Jacobian on the new design (stable, no class over-levered).**
+4-probe panel on the storage-AS design (2024, −0.05 single-band moves vs the
+run124 base), Δ(class TWh):
+
+| −0.05 move | CC_REG | CC_CHP | COAL_PRB | LIG | ST_GAS | CT_PEAK | CT_CHP |
+|---|---|---|---|---|---|---|---|
+| CC_REGULAR econ_high | **+1.23** | −0.40 | −0.54 | −0.16 | −0.06 | +0.01 | −0.08 |
+| CC_REGULAR committed | **+0.43** | −0.12 | −0.18 | −0.04 | −0.05 | −0.01 | −0.03 |
+| CT_PEAKER committed | −0.06 | −0.01 | −0.10 | −0.00 | −0.25 | **+0.43** | −0.01 |
+| ST_GAS committed | −0.43 | −0.07 | −0.06 | −0.03 | **+0.61** | −0.00 | −0.02 |
+
+Every **own-class** (diagonal) response is correctly signed (cheapening a band
+raises its class) and **larger than any of its cross-class responses** — no class
+swings more than the band that was moved, so nothing is over-levered and no knob
+crosses a merit-order step (the run-82 failure mode). The cross-couplings are the
+documented ERCOT ones (CC_REGULAR the big marginal class displacing COAL_PRB/CC_CHP;
+the CT_PEAKER↔ST_GAS pair; ST_GAS↔CC_REGULAR). Net Σ Δ across classes ≈ 0 (±0.006
+TWh) — pure reshuffle, no spurious generation. The storage-AS change left the
+thermal offer-curve sensitivities stable (it touches only the storage power cap).
+
 NOTE: the dashboard probes run122 (2024) / run123 (2023 est) had **CT deployment
 ON** — they were run121 + storage-AS + CT-deployment, split across two single-year
 runs, *not* a clean run121 + storage-AS. run124 is the clean keeper-grade 3-year
