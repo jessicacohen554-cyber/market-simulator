@@ -63,12 +63,29 @@ def test_load_ercot_hsl_missing_year_returns_none():
     assert load_ercot_hsl_hourly(2199) is None
 
 
-def test_hsl_potential_applies_2023_rescale():
-    """ERCOT 2023 wind potential is rescaled to the 110 TWh target."""
+def test_hsl_potential_reconciles_2023_coverage():
+    """ERCOT 2023 wind potential is reconciled to the EIA-930 footprint.
+
+    The UMass-derived 2023 series undercounts the system footprint (its
+    delivered GEN sums below the EIA-930 delivered total), so the potential is
+    scaled up to the EIA-930 level *preserving the dataset's own delivered/HSL
+    curtailment ratio* — never a tune to model output. The reconciled total is
+    EIA-930 delivered / (GEN/HSL), and the curtailment ratio is unchanged.
+    """
+    df = renewables.load_hsl_hourly("ERCOT", 2023)
+    src_gen = float(df["wind_gen_mw"].sum())
+    src_hsl = float(df["wind_hsl_mw"].sum())
+    delivered = renewables._eia930_delivered_mwh("ERCOT", 2023, "wind")
+
     pot = hsl_potential_mw("ERCOT", 2023, "wind")
     assert pot is not None
     assert pot.shape == (HOURS_PER_YEAR,)
-    np.testing.assert_allclose(pot.sum() / 1e6, 110.0, rtol=1e-9)
+    # Reconciled to the EIA-930 footprint at the dataset's own curtailment ratio.
+    np.testing.assert_allclose(pot.sum(), delivered / (src_gen / src_hsl), rtol=1e-9)
+    # Curtailment ratio (delivered/HSL) preserved by the level-only scaling.
+    np.testing.assert_allclose(
+        delivered / pot.sum(), src_gen / src_hsl, rtol=1e-9
+    )
 
 
 def test_hsl_potential_unmapped_iso_returns_none():
@@ -79,12 +96,16 @@ def test_hsl_potential_unmapped_iso_returns_none():
 def test_hsl_cf_profile_covers_new_year(tmp_path, monkeypatch):
     """A newly built per-year parquet (e.g. 2024 NP6) feeds the CF path.
 
-    No rescale entry exists for the synthetic year, so the CF profile must
-    round-trip exactly to the raw HSL MW series through the online capacity.
+    A full-footprint source needs no coverage reconciliation, so with the
+    EIA-930 reference absent the CF profile must round-trip exactly to the raw
+    HSL MW series through the online capacity.
     """
     year = 2024
     series = _write_synthetic_hsl(tmp_path, year)
     monkeypatch.setattr(renewables, "_ERCOT_HSL_DIR", tmp_path)
+    # No EIA-930 footprint reference -> series consumed as-is (the published
+    # full-footprint case); exercises the no-reconciliation round-trip.
+    monkeypatch.setattr(renewables, "_eia930_delivered_mwh", lambda *a, **k: None)
 
     # Two zones, online all year, comfortably above the peak HSL so the CF
     # clip at 1.0 never engages and the round-trip is exact.
@@ -242,12 +263,13 @@ def _flat_dispatch_frame(mw: float) -> pd.DataFrame:
 
 
 def test_curtailment_table_uses_consumed_potential(capsys):
-    """The model side measures against the rescaled (consumed) potential.
+    """The model side measures against the reconciled (consumed) potential.
 
-    ERCOT 2023's wind HSL is rescaled 104 -> 110 TWh before the dispatch
-    consumes it; measuring model curtailment against the raw HSL would
-    understate it by the whole rescale margin (reading ~0 for a run that
-    delivered more than the raw series).
+    ERCOT 2023's wind HSL is reconciled 104 -> 113.28 TWh (the EIA-930
+    footprint at the dataset's curtailment ratio) before the dispatch consumes
+    it; measuring model curtailment against the raw HSL would understate it by
+    the whole reconciliation margin (reading ~0 for a run that delivered more
+    than the raw series).
     """
     from scripts.run_calibration_full import _print_curtailment_vs_reported
 
@@ -259,8 +281,8 @@ def test_curtailment_table_uses_consumed_potential(capsys):
     wind_row = next(
         line for line in out.splitlines() if line.strip().startswith("wind")
     )
-    # The potential column reads the rescaled 110.00 TWh, not the raw 104.05.
-    assert "110.00" in wind_row
+    # The potential column reads the reconciled 113.28 TWh, not the raw 104.05.
+    assert "113.28" in wind_row
 
 
 def test_curtailment_table_data_needed_note(capsys):
