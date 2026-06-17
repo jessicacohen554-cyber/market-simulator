@@ -392,6 +392,13 @@ class ScenarioConfig:
     # (name, requirement_mw, critical_mw, max_penalty_$/MWh) products. None
     # uses the published NYISO defaults. A scenario can widen/tighten the
     # curves (e.g. a future capacity-shortage view) without a code edit.
+    nyiso_rcpf_locational: dict | None = None  # Optional override of the
+    # locational reserve regions (constants.NYISO_RCPF_LOCATIONAL): a dict of
+    # region -> {"zones": (model-zone names), "products": ((name, req_mw,
+    # crit_mw, max_$/MWh), ...)}. None uses the published NYISO defaults
+    # (East / SENY / NYC). The overlay stacks each region's demand-curve price
+    # onto every model zone the region contains, on top of the system-wide
+    # NYCA tier (nyiso_rcpf_products); see results.rcpf.locational_zone_adders.
 
     reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
     # economic new-entry screen, force-build firm (gas_ct) capacity if the
@@ -1319,6 +1326,7 @@ TIER_TAGS: dict[str, int] = {
     "rtcb_reliability_deployment_mw": 2,
     "nyiso_rcpf_enabled": 1,
     "nyiso_rcpf_products": 2,
+    "nyiso_rcpf_locational": 2,
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
     "cc_peak_hr_penalty": 3,

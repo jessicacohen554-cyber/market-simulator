@@ -47,7 +47,10 @@ sys.path.insert(0, str(REPO / "scripts"))
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 from market_sim.results.rcpf import (  # noqa: E402
+    locational_zone_adders,
+    rcpf_adder,
     rcpf_product_prices,
+    resolve_rcpf_locational,
     resolve_rcpf_products,
 )
 
@@ -177,9 +180,102 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
     return df
 
 
+def _model_zone_names(meta: dict) -> list[str]:
+    """The model topology's zone order (matches fleet ``zone_idx``).
+
+    Rebuilds the NYISO config the solve used (the external import node joins
+    the topology under ``--priced-interchange``), so ``zone_idx`` lines up
+    with these names. The external node carries no load/reserve and is
+    excluded from the locational reserve regions.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.model.transmission import extend_with_import_node
+    cfg = get_iso_config(meta["iso"])
+    if meta.get("priced_interchange"):
+        cfg = extend_with_import_node(cfg)
+    return list(cfg.zone_names)
+
+
+def build_zonal_availability(bundle: Path, years: list[int], meta: dict,
+                             pass_label: str,
+                             force: bool = False) -> pd.DataFrame:
+    """Reconstruct (or load) per-model-zone hourly reserve-fleet availability.
+
+    The locational analogue of :func:`build_availability`: a long frame with
+    columns ``year``, ``hour``, ``zone``, ``thermal_avail_mw`` (the zone's
+    reserve-providing fossil fleet pmax x availability), ``thermal_dispatch_mw``
+    (those units' solved final-pass dispatch in the zone) and
+    ``storage_power_cap_mw`` (the zone's storage discharge cap). Cached as
+    ``availability_rcpf_zonal.parquet``. No LP solve (same config as meta.json).
+    """
+    out_path = bundle / "availability_rcpf_zonal.parquet"
+    if out_path.exists() and not force:
+        cached = pd.read_parquet(out_path)
+        if set(cached["year"].unique()) >= set(years):
+            return cached
+
+    from run_calibration import run_year  # late import: heavy module
+
+    zone_names = _model_zone_names(meta)
+    frames = []
+    for year in years:
+        state = run_year(
+            year, meta["iso"], meta["hours"],
+            meta["gas_prices"][str(year)], **_run_year_kwargs(meta),
+        )
+        fa = state["fleet_arrays"]
+        fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fa.fuel_type_idx])
+        thermal = np.isin(fuel_names, sorted(NYISO_RESERVE_FUEL_TYPES))
+        zidx = np.asarray(fa.zone_idx)
+
+        disp = pd.read_parquet(
+            bundle / "dispatch" / f"{year}_{pass_label}.parquet")
+        disp_t = disp[disp["fuel"].astype(str).isin(NYISO_RESERVE_FUEL_TYPES)]
+        disp_by_zone = (
+            disp_t.groupby(["zone", "hour"])["mw"].sum()
+            .unstack(fill_value=0.0)
+            .reindex(columns=range(meta["hours"]), fill_value=0.0)
+        )
+
+        # Per-zone storage discharge power cap (sum over the zone's ESRs).
+        cap = np.asarray(state["storage_power_cap"], dtype=float)
+        storage_units = state.get("storage_units") or []
+        cap_by_zone: dict[str, np.ndarray] = {}
+        for i, unit in enumerate(storage_units):
+            z = getattr(unit, "zone", None)
+            row = cap[i] if cap.ndim == 2 else np.full(meta["hours"], cap[i])
+            cap_by_zone[z] = cap_by_zone.get(
+                z, np.zeros(meta["hours"])) + row
+
+        for zi, zone in enumerate(zone_names):
+            sel = thermal & (zidx == zi)
+            avail = ((fa.pmax[sel, None] * fa.availability[sel]).sum(axis=0)
+                     if sel.any() else np.zeros(meta["hours"]))
+            disp_z = (disp_by_zone.loc[zone].to_numpy()
+                      if zone in disp_by_zone.index
+                      else np.zeros(meta["hours"]))
+            frames.append(pd.DataFrame({
+                "year": np.int16(year),
+                "hour": np.arange(meta["hours"], dtype=np.int32),
+                "zone": zone,
+                "thermal_avail_mw": avail.astype(np.float32),
+                "thermal_dispatch_mw": disp_z.astype(np.float32),
+                "storage_power_cap_mw": cap_by_zone.get(
+                    zone, np.zeros(meta["hours"])).astype(np.float32),
+            }))
+    df = pd.concat(frames, ignore_index=True)
+    df.to_parquet(out_path, index=False)
+    print(f"wrote {out_path}")
+    return df
+
+
 def _storage_headroom(bundle: Path, year: int, hours: int, pass_label: str,
-                      cap_t: np.ndarray) -> np.ndarray:
-    """Storage headroom: power cap - discharge + charge (ESR convention)."""
+                      cap_t: np.ndarray,
+                      zone: "str | None" = None) -> np.ndarray:
+    """Storage headroom: power cap - discharge + charge (ESR convention).
+
+    System-wide when ``zone`` is None; otherwise restricted to one model zone.
+    """
     p = bundle / "storage.parquet"
     if not p.exists():
         return cap_t
@@ -187,6 +283,8 @@ def _storage_headroom(bundle: Path, year: int, hours: int, pass_label: str,
     st = st[st["year"] == year]
     if "pass" in st.columns and (st["pass"] == pass_label).any():
         st = st[st["pass"] == pass_label]
+    if zone is not None:
+        st = st[st["zone"] == zone]
     g = st.groupby("hour")[["charge_mw", "discharge_mw"]].sum().reindex(
         range(hours), fill_value=0.0)
     return cap_t - g["discharge_mw"].to_numpy() + g["charge_mw"].to_numpy()
@@ -204,6 +302,21 @@ def _system_lambda(bundle: Path, year: int, hours: int,
     lam = np.where(g["d"] > 0, g["pd_"] / g["d"], g["p"])
     out = np.full(hours, np.nan)
     out[g.index.to_numpy()] = lam
+    return out
+
+
+def _zonal_lambda(bundle: Path, year: int, hours: int,
+                  pass_label: str) -> dict[str, np.ndarray]:
+    """Per-model-zone hourly energy price (the zonal LBMP the LP solved)."""
+    sy = pd.read_parquet(bundle / "system.parquet")
+    sy = sy[sy["year"] == year]
+    if "pass" in sy.columns and (sy["pass"] == pass_label).any():
+        sy = sy[sy["pass"] == pass_label]
+    out: dict[str, np.ndarray] = {}
+    for zone, g in sy.groupby("zone"):
+        arr = np.full(hours, np.nan)
+        arr[g["hour"].to_numpy()] = g["price"].to_numpy()
+        out[str(zone)] = arr
     return out
 
 
@@ -248,6 +361,51 @@ def _actual_as_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     h = ref["hour"].to_numpy()
     out["nyca"][h] = ref["nyca_reserve_adder"].to_numpy()
     out["nyc"][h] = ref["nyc_reserve_adder"].to_numpy()
+    return out
+
+
+# Representative NYISO settlement zone for each model zone's measured RT
+# reserve price (the stacked spin_10 + nonsync_10 + op_30 cascade in
+# NYISO_as_rt_<year>.csv). Each model zone validates against the NYISO zone
+# whose cascade tier it carries (process_nyiso_as.py): A-E share the NYCA
+# tier, F adds East, G-K add SENY, J adds NYC.
+_MODEL_ZONE_TO_NYISO_AS = {
+    "Upstate_West": "WEST",
+    "Capital_Hudson": "CAPITL",
+    "Lower_Hudson": "DUNWOD",
+    "NYC": "N.Y.C.",
+    "Long_Island": "LONGIL",
+}
+
+
+def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
+    """Measured per-model-zone stacked RT reserve price, NaN-padded.
+
+    Reads the per-zone NYISO RT ancillary-service file
+    (``inputs/raw-data/NYISO-AS/NYISO_as_rt_<year>.csv``,
+    scripts/process_nyiso_as.py) and returns the stacked reserve price
+    (10-min spin + 10-min non-sync + 30-min operating) for the representative
+    settlement zone of each model zone — the empirical target the modeled
+    locational adder is validated against. Empty when the file is absent.
+    """
+    p = REPO / "inputs" / "raw-data" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
+    if not p.exists():
+        return {}
+    df = pd.read_csv(p)
+    df["stack"] = df[["spin_10", "nonsync_10", "op_30"]].sum(axis=1)
+    ts = pd.to_datetime(df["Time Stamp"], errors="coerce")
+    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    hoy = (
+        _MONTH_START_HOUR[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy()
+    )
+    df = df.assign(hour=hoy)
+    out: dict[str, np.ndarray] = {}
+    for model_zone, ny_zone in _MODEL_ZONE_TO_NYISO_AS.items():
+        s = (df[df["Name"] == ny_zone].groupby("hour")["stack"].max()
+             .reindex(range(hours)))
+        out[model_zone] = s.to_numpy(dtype=float)
     return out
 
 
@@ -306,6 +464,9 @@ def main() -> None:
                     help="write scarcity_<tag>.parquet (scenario runs)")
     ap.add_argument("--diagnostic", action="store_true",
                     help="print headroom-vs-actual-tail localization only")
+    ap.add_argument("--locational", action="store_true",
+                    help="per-zone locational reserve overlay (East/SENY/NYC) "
+                         "validated against the measured per-zone RT reserve")
     ap.add_argument("--rebuild-availability", action="store_true")
     args = ap.parse_args()
 
@@ -325,6 +486,11 @@ def main() -> None:
     for prod in products:
         print(f"  {prod[0]}: req {prod[1]:,.0f}  crit {prod[2]:,.0f}  "
               f"max ${prod[3]:,.0f}")
+
+    if args.locational:
+        locational(bundle, years, meta, pass_label, config, args.tag,
+                   force=args.rebuild_availability)
+        return
 
     avail = build_availability(
         bundle, years, meta, pass_label, force=args.rebuild_availability)
@@ -408,6 +574,96 @@ def main() -> None:
 
     out = pd.concat(frames, ignore_index=True)
     name = f"scarcity_{args.tag}.parquet" if args.tag else "scarcity.parquet"
+    out.to_parquet(bundle / name, index=False)
+    print(f"\nwrote {bundle / name}")
+
+
+def locational(bundle: Path, years: list[int], meta: dict, pass_label: str,
+               config, tag: "str | None", force: bool = False) -> None:
+    """Per-zone locational RCPF overlay: stack East/SENY/NYC reserve adders.
+
+    Builds per-model-zone reserve headroom (build_zonal_availability), then
+    for each zone the total scarcity adder = the system-wide NYCA adder (same
+    for every zone) + the locational adder (sum of the demand-curve prices of
+    every reserve region containing the zone, on that region's headroom;
+    results.rcpf.locational_zone_adders). The adder is stacked onto the zone's
+    energy LBMP and written to ``scarcity_locational[_<tag>].parquet`` (long,
+    per year/hour/zone). Validates each zone's modeled adder against the
+    measured per-zone RT reserve price (process_nyiso_as.py) — the empirical
+    cascade the regions are meant to reproduce, not a fitted target.
+    """
+    zone_names = [z for z in _model_zone_names(meta) if z != "NYISO_external"]
+    regions = resolve_rcpf_locational(config)
+    print("\nlocational reserve regions (region: zones | products):")
+    for name, reg in regions.items():
+        members = [z for z in reg["zones"] if z in zone_names]
+        prods = ", ".join(f"{p[0]}(req {p[1]:,.0f}, max ${p[3]:,.0f})"
+                          for p in reg["products"]) or "(scaffolded, empty)"
+        print(f"  {name}: {'+'.join(members)} | {prods}")
+
+    zavail = build_zonal_availability(
+        bundle, years, meta, pass_label, force=force)
+
+    frames = []
+    for year in years:
+        za = zavail[zavail["year"] == year]
+        # Per-zone reserve headroom (thermal headroom + storage headroom).
+        zone_reserves: dict[str, np.ndarray] = {}
+        for zone in zone_names:
+            z = za[za["zone"] == zone]
+            cap_t = z["storage_power_cap_mw"].to_numpy(float)
+            zone_reserves[zone] = (
+                z["thermal_avail_mw"].to_numpy(float)
+                - z["thermal_dispatch_mw"].to_numpy(float)
+                + _storage_headroom(bundle, year, meta["hours"], pass_label,
+                                    cap_t, zone=zone)
+            )
+        # System-wide NYCA adder (same for every zone) + locational adders.
+        system_reserves = sum(zone_reserves.values())
+        nyca = rcpf_adder(system_reserves, config=config)
+        loc = locational_zone_adders(zone_reserves, config=config)
+        lam = _zonal_lambda(bundle, year, meta["hours"], pass_label)
+        meas = _actual_zone_reserve(year, meta["hours"])
+
+        print(f"\n=== {year} per-zone locational adder vs measured RT reserve "
+              f"(NYISO zone) ===")
+        hdr = ("  %-15s %-7s  %8s %8s %8s   %8s %8s %8s" %
+               ("model zone", "NYISO", "mdl>$0h", "mdl_mean", "mdl_max",
+                "meas>$0h", "meas_mean", "meas_max"))
+        print(hdr)
+        for zone in zone_names:
+            adder = nyca + loc.get(zone, np.zeros(meta["hours"]))
+            frames.append(pd.DataFrame({
+                "year": np.int16(year),
+                "hour": np.arange(meta["hours"], dtype=np.int32),
+                "zone": zone,
+                "reserves_mw": zone_reserves[zone].astype(np.float32),
+                "nyca_adder": nyca.astype(np.float32),
+                "locational_adder": loc.get(
+                    zone, np.zeros(meta["hours"])).astype(np.float32),
+                "scarcity_adder": adder.astype(np.float32),
+                "lmp": lam.get(zone, np.full(meta["hours"], np.nan)
+                               ).astype(np.float32),
+                "lmp_scarcity": (lam.get(
+                    zone, np.full(meta["hours"], np.nan)) + adder
+                ).astype(np.float32),
+            }))
+            m = meas.get(zone)
+            ny = _MODEL_ZONE_TO_NYISO_AS.get(zone, "")
+            if m is not None and np.isfinite(m).any():
+                ok = np.isfinite(m)
+                print("  %-15s %-7s  %8d %8.2f %8.0f   %8d %8.2f %8.0f" % (
+                    zone, ny, int((adder > 0).sum()), float(adder.mean()),
+                    float(adder.max()), int((m[ok] > 0).sum()),
+                    float(np.nanmean(m)), float(np.nanmax(m))))
+            else:
+                print("  %-15s %-7s  %8d %8.2f %8.0f   %8s %8s %8s" % (
+                    zone, ny, int((adder > 0).sum()), float(adder.mean()),
+                    float(adder.max()), "-", "-", "-"))
+
+    out = pd.concat(frames, ignore_index=True)
+    name = (f"scarcity_locational_{tag}.parquet" if tag
+            else "scarcity_locational.parquet")
     out.to_parquet(bundle / name, index=False)
     print(f"\nwrote {bundle / name}")
 
