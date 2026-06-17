@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-06-17 (NEISO — Merrimack reclassified COAL_BIT; CC_REGULAR offer-curve Jacobian re-derived)
+
+The lone NEISO coal unit is now classified by its **measured** rank, and the
+CC_REGULAR offer-curve sensitivity panel was re-seeded on the corrected
+(AGT-overlay-wired) structure because the prior Jacobian was stale.
+
+- **Merrimack (ORIS 2364) → COAL_BIT.** `scripts/derive_coal_supply.py --iso
+  NEISO` reads the plant's EIA-923 Schedule-5 fuel receipts (54,050 tons
+  2023-2025, 100 % bituminous) and writes `inputs/processed/coal_supply_NEISO.csv`,
+  so `fleet.coal_supply_class(2364)` returns `bituminous` and the dispatch class,
+  offer curve, and delivered-cost path all resolve to **COAL_BIT** instead of the
+  generic unclassified `COAL` fallback. EIA-860 confirms the window: unit 1
+  (108 MW, `OP`, retire 2027) runs all three backcast years, unit 2 (330 MW, `OS`)
+  is out of service — so coal is the EIA-930 ISNE 0.18/0.24/0.28 TWh winter-peaking
+  run, not zero. Dispatch is unchanged (the COAL_BIT and generic COAL curves are
+  identical and the NEISO delivered cost is already the bituminous-by-rail blend);
+  the new 3-year keeper `neiso_cc_coalbit_3yr` (neiso 14) reproduces `neiso_agt_3yr`
+  to the TWh with coal now scored against the bituminous benchmark.
+- **CC_REGULAR Jacobian re-derived (`results/calibration/neiso_probe_v2_*`).**
+  Fresh ±0.05 single-knob probes on the wired keeper show the live CC_REGULAR
+  bands (econ_high > econ_low > committed) redistribute energy **only within the
+  CC family (CC_REGULAR ↔ CC_CHP) and to imports — never to CT_PEAKER, ST_GAS, or
+  oil** (ST_GAS is dead to its own knob too). CT_PEAKER's cheapest tranche
+  (1.55 × 10.4 ≈ 16.1 eff-HR) sits above CC_REGULAR's whole curve including the
+  duct-fire fold (2.25 × 7.0 ≈ 15.8), so CC tuning cannot reach the peakers. The
+  CC_REGULAR offer curve is **held at the keeper values** (no Jacobian-supported
+  move improves the CT/ST/oil mix); the CT/ST shortfall is the not-offer-recoverable
+  reserve/AS-deployment limit (cross-ISO finding), recoverable only via the
+  off-by-default `ct_deployment` overlay. ERCOT/PJM/CAISO byte-identical (the only
+  change is the additive NEISO coal CSV; no offer-curve code edit). See
+  `docs/calibration-log.md` and `docs/multi-iso/neiso-data-audit.md` §2e.
+
 ## 2026-06-17 (NYISO locational RCPF reserve overlay — the downstate scarcity tail)
 
 The NYISO RCPF scarcity overlay gains its **locational** tier. With measured
