@@ -1051,6 +1051,7 @@ def solve_and_persist(
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    negative_renewable_offers: bool = False,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1151,6 +1152,7 @@ def solve_and_persist(
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
             interchange_shaping=interchange_shaping,
+            negative_renewable_offers=negative_renewable_offers,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1283,6 +1285,7 @@ def solve_and_persist(
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
         "interchange_shaping": interchange_shaping,
+        "negative_renewable_offers": negative_renewable_offers,
         "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
@@ -3141,6 +3144,16 @@ def main() -> None:
              "floor. Requires --priced-interchange; no-op without a measured "
              "envelope. Off (default) changes no existing run.")
     parser.add_argument(
+        "--negative-renewable-offers", action="store_true",
+        help="Floor the curtailable wind/solar dispatch offer at the negative "
+             "keep-running (REC/PTC) value (ScenarioConfig."
+             "renewable_keep_running_value, default $20/MWh) so curtailed "
+             "renewables set a sub-$0 marginal price in oversupply, "
+             "reproducing CAISO's negative midday LMPs. Pushes the floor below "
+             "the existing $0 export/curtailment sink; only bites once the "
+             "model is long midday (the RA must-offer commitment workstream). "
+             "Off (default) is byte-identical.")
+    parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
              "class netgen from this prior year when the backcast year's "
@@ -3311,6 +3324,7 @@ def main() -> None:
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
+        negative_renewable_offers=args.negative_renewable_offers,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )

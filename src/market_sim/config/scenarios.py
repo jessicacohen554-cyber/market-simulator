@@ -442,6 +442,31 @@ class ScenarioConfig:
     # ERCOT-only. Unlike thermal AS (tiny), storage carries ~2-3 GW of AS — a
     # large share of the battery fleet — and the energy-only LP otherwise dumps
     # the full fleet into the few highest-price hours. Reserves power, not SOC.
+    negative_renewable_offers: bool = False  # Let curtailable wind/solar set a
+    # sub-$0 marginal price in oversupply, reproducing CAISO's negative midday
+    # LMPs (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). California renewables
+    # bid BELOW $0 to keep producing for their RPS/REC and federal-PTC value, so
+    # in the spring-midday solar glut the marginal (curtailed) unit clears
+    # negative. The model's wind/solar are availability-capped LP slices that
+    # otherwise carry a $0 (solar) or -PTC (wind) offer and are never marginal,
+    # so the model floors at $0 at best. When on, the wind/solar dispatch offer
+    # is floored at the negative keep-running value below (so curtailing them is
+    # the costly action and the LMP follows them negative). Default off
+    # (byte-identical baseline); pushes the floor below the existing $0
+    # export/curtailment sink. Only bites once the model is LONG midday (the RA
+    # must-offer commitment floor workstream); develop/test in a forced-long
+    # harness. ISO-agnostic mechanism, but targeted at CAISO.
+    renewable_keep_running_value: float = 20.0  # $/MWh, the curtailable
+    # renewable "keep-running" value used as the negative-offer floor when
+    # negative_renewable_offers is on: a renewable on a PPA/REC will pay up to
+    # this much to avoid being curtailed, so it bids -keep_running_value. One
+    # defensible constant (not a per-hour shape). $20/MWh sits in the middle of
+    # the cited range: CA RPS Bucket-1 (PCC1) REC prices have historically
+    # cleared ~$10-25/MWh, and the federal §45 wind PTC is ~$28/MWh (2024,
+    # inflation-adjusted). For wind the floor is the MORE-negative of this and
+    # the PTC already on wind_mc (so the PTC, when active, dominates and there
+    # is no double-count); for solar — which earns the ITC, not the PTC, so its
+    # dispatch offer is $0 — this REC value is what carries it negative.
 
     # Tier 3 (calibration)
     renewable_cf_adjustment: float = 1.0
@@ -1330,6 +1355,8 @@ TIER_TAGS: dict[str, int] = {
     "interchange_shaping": 1,
     "as_reserve_withholding": 1,
     "storage_as_commitment": 1,
+    "negative_renewable_offers": 1,
+    "renewable_keep_running_value": 2,
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,
