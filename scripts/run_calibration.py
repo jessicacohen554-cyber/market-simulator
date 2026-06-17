@@ -1294,9 +1294,19 @@ def _commitment_pass(state: dict, config=None):
         storage_discharge=p1.storage_discharge,
         storage_zone_idx=dk["storage_zone_idx"], demand=state["demand"],
     )
+    # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
+    # must survive the economic commitment screen — those units ran for
+    # reliability, not economics. Preserve min_gen through P2 only when such an
+    # overlay is active (NEISO/other backcasts opt in); off by default so the
+    # forecast runner and every non-overlay keeper stay byte-identical.
+    preserve_min_gen = bool(
+        getattr(cfg, "ct_deployment_overlay", False)
+        or getattr(cfg, "reliability_deployment_overlay", False)
+    )
     fa_p2 = apply_commitment_with_coal_pin(
         fa, committed, p1.dispatch, fleet,
         screen_coal=cfg.commitment_screen_coal,
+        preserve_min_gen=preserve_min_gen,
     )
     return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk)
 
