@@ -1052,9 +1052,9 @@ def solve_and_persist(
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
-    negative_renewable_offers: bool = False,
-    caiso_gas_commitment_floor: bool = False,
-    caiso_gas_floor_frac: float = 1.0,
+    negative_renewable_offers: bool | None = None,
+    caiso_gas_commitment_floor: bool | None = None,
+    caiso_gas_floor_frac: float | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1364,6 +1364,20 @@ def solve_and_persist(
     if cc_derate_from_top:
         recorded_cfg = recorded_cfg.with_overrides(
             cc_outage_derate_from_top=True)
+    if interchange_shaping:
+        recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
+    # Tri-state floor / negative-offer overrides — mirror run_year so
+    # run_config.json records what the LP solved with (None = the per-ISO base
+    # default baked in _calibration_config: CAISO floor+negative ON at 0.80).
+    if negative_renewable_offers is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            negative_renewable_offers=negative_renewable_offers)
+    if caiso_gas_commitment_floor is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor)
+    if caiso_gas_floor_frac is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_gas_floor_frac=caiso_gas_floor_frac)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -3164,7 +3178,8 @@ def main() -> None:
              "floor. Requires --priced-interchange; no-op without a measured "
              "envelope. Off (default) changes no existing run.")
     parser.add_argument(
-        "--negative-renewable-offers", action="store_true",
+        "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
+        default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
              "keep-running (REC/PTC) value (ScenarioConfig."
              "renewable_keep_running_value, default $20/MWh) so curtailed "
@@ -3172,9 +3187,12 @@ def main() -> None:
              "reproducing CAISO's negative midday LMPs. Pushes the floor below "
              "the existing $0 export/curtailment sink; only bites once the "
              "model is long midday (the RA must-offer commitment workstream). "
-             "Off (default) is byte-identical.")
+             "Default (unset) keeps the per-ISO base config value — ON for "
+             "CAISO (the keeper), off elsewhere; --no-negative-renewable-offers "
+             "forces it off (e.g. a baseline probe).")
     parser.add_argument(
-        "--caiso-gas-commitment-floor", action="store_true",
+        "--caiso-gas-commitment-floor", action=argparse.BooleanOptionalAction,
+        default=None,
         help="CAISO Resource-Adequacy must-offer floor: hold the gas fleet "
              "(gas_cc/gas_ct/gas_st) online over the midday solar-glut window "
              "at the measured EIA-930 NG: NG profile (scaled by "
@@ -3183,15 +3201,18 @@ def main() -> None:
              "midday and CAISO exports/curtails the surplus at ~$0; the floor "
              "makes the model LONG midday so its surplus prices at ~$0 "
              "(collapsing the over-priced spring-midday LMP floor). CAISO-only; "
-             "pair with --interchange-shaping (export side). Off (default) "
-             "changes no existing run.")
+             "pair with --interchange-shaping (export side). Default (unset) "
+             "keeps the per-ISO base config value — ON for CAISO (the keeper "
+             "at frac 0.80), off elsewhere; --no-caiso-gas-commitment-floor "
+             "forces it off (the no-floor baseline probe).")
     parser.add_argument(
-        "--caiso-gas-floor-frac", type=float, default=1.0,
+        "--caiso-gas-floor-frac", type=float, default=None,
         help="Fraction of the measured EIA-930 NG: NG (month x hour-of-day "
-             "median) the --caiso-gas-commitment-floor targets (default 1.0). "
-             "Lower keeps modeled gas TWh nearer EIA-923 — forcing commitment "
-             "can inflate gas, and the surplus must export/curtail, not pad "
-             "the mix.")
+             "median) the --caiso-gas-commitment-floor targets. Default (unset) "
+             "keeps the base config value (0.80 for CAISO = EIA-923 gas / "
+             "EIA-930 NG: NG, stripping geo+bio). Lower keeps modeled gas TWh "
+             "nearer EIA-923 — forcing commitment can inflate gas, and the "
+             "surplus must export/curtail, not pad the mix.")
     parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
