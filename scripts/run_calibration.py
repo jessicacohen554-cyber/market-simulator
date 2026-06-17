@@ -56,6 +56,11 @@ from market_sim.data.eia_loader import (  # noqa: E402
     measured_monthly_hydro,
 )
 from market_sim.data.hydro import load_hydro_budget  # noqa: E402
+from market_sim.data.cod_ramp import (  # noqa: E402
+    load_cod_year_map,
+    ramp_bins,
+    ramp_fleet,
+)
 from market_sim.data.fleet import (  # noqa: E402
     _hour_to_month_index,
     COAL_MUSTRUN_BY_PLANT,
@@ -1012,6 +1017,17 @@ def run_year(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
     )
 
+    # Commercial-operation-date (COD) ramp: in a backcast the fleet snapshot is a
+    # recent vintage that includes units built after the solved year. With the
+    # ramp on (default), every generator is filtered/pro-rated by its
+    # commissioning year so the backcast dispatches only what was actually online
+    # (the same rule renewables/storage already follow). See data.cod_ramp.
+    _cod_ramp = getattr(config, "cod_ramp_enabled", True) and config.mode == "backcast"
+    _cod_map = load_cod_year_map() if _cod_ramp else {}
+
+    def _ramp_list(gens):
+        return ramp_fleet(gens, year, _cod_map) if _cod_ramp else gens
+
     # Build the dispatch fleet the same way the runner does: CAMPD
     # operational bins for ERCOT (three stepped tranches per bin, nuclear
     # and other non-aggregatable units from EIA-860), the legacy
@@ -1027,6 +1043,10 @@ def run_year(
         if config.use_campd_bins and iso == "ERCOT"
         else None
     )
+    if campd_bins is not None and _cod_ramp:
+        # The bins carry no build year, so ramp the per-plant capacities here
+        # (before they are aggregated into LP generators) via the plant-code map.
+        campd_bins = ramp_bins(campd_bins, year, _cod_map)
     if campd_bins is not None:
         campd_fleet, _ = bins_to_fleet(campd_bins, zone_names, config)
         # Gas/coal are dispatched via the CAMPD bins; biomass is injected as a
@@ -1034,10 +1054,10 @@ def run_year(
         # unit here. Oil is kept as its own raw LP unit so it dispatches as the
         # scarcity peaker it is (its fuel price / heat rate come from constants).
         _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
-        non_thermal = [
+        non_thermal = _ramp_list([
             g for g in load_fleet_from_csv(iso, iso_config)
             if g.fuel_type not in _campd_binned_or_injected
-        ]
+        ])
         fleet = non_thermal + campd_fleet
         # Must-run tranches bid at VOM + carbon + NOx only — fuel sunk
         # under take-or-pay coal contracts, CHP host steam obligations or
@@ -1087,7 +1107,7 @@ def run_year(
         # binned-keys exclusion guarantees no double-count and no dropped unit.
         if (getattr(config, "plant_level_fleet", False)
                 and thermal_tranche_overrides(iso)):
-            all_gens = load_fleet_from_csv(iso, iso_config)
+            all_gens = _ramp_list(load_fleet_from_csv(iso, iso_config))
             synth = fleet_to_bins(all_gens, iso, config)
             if not synth.empty:
                 binned = set(zip(
@@ -1113,7 +1133,7 @@ def run_year(
             n_bins = 0 if getattr(config, "plant_level_fleet", False) \
                 else config.heat_rate_bin_count
             fleet_base = aggregate_fleet(
-                load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
+                _ramp_list(load_fleet_from_csv(iso, iso_config)), n_bins=n_bins,
             )
             fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
             # Optional stepped gas offer curve (committed/economic/peaking
