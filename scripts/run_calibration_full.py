@@ -1040,6 +1040,7 @@ def solve_and_persist(
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
     as_reserve_withholding: bool = False,
+    energy_reserve_coopt: bool = False,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
@@ -1143,6 +1144,7 @@ def solve_and_persist(
             storage_daily_cycling=storage_daily_cycling,
             battery_dispatch_adder=battery_dispatch_adder,
             as_reserve_withholding=as_reserve_withholding,
+            energy_reserve_coopt=energy_reserve_coopt,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
@@ -1280,6 +1282,7 @@ def solve_and_persist(
         "storage_daily_cycling": storage_daily_cycling,
         "battery_dispatch_adder": battery_dispatch_adder,
         "as_reserve_withholding": as_reserve_withholding,
+        "energy_reserve_coopt": energy_reserve_coopt,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
@@ -1347,6 +1350,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if as_reserve_withholding:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
+    if energy_reserve_coopt:
+        recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if as_reserve_formula:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
@@ -3026,6 +3031,16 @@ def main() -> None:
              "storage/load split). Off = no withholding (default).",
     )
     parser.add_argument(
+        "--energy-reserve-coopt", action="store_true",
+        help="PJM energy+reserve co-optimization inside the LP: add a per-unit "
+             "reserve variable sharing each unit's headroom with energy, a "
+             "reserve-balance constraint at the structural 1.5x-MSSC Primary "
+             "Reserve requirement, and the published two-step ORDC demand curve "
+             "as priced shortfall steps, so the reserve clearing price emerges "
+             "as a dual and lifts the energy LMP. Replaces the post-solve ORDC "
+             "overlay. PJM-only. Off = energy-only LP (default).",
+    )
+    parser.add_argument(
         "--as-reserve-formula", action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
              "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
@@ -3347,6 +3362,7 @@ def main() -> None:
         storage_daily_cycling=args.storage_daily_cycling,
         battery_dispatch_adder=args.battery_adder,
         as_reserve_withholding=args.as_reserve_withholding,
+        energy_reserve_coopt=args.energy_reserve_coopt,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
