@@ -411,6 +411,29 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
+        caiso_gas_commitment_floor=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: the RA must-offer midday gas-commitment floor holds the
+        #   RA-obligated gas fleet online at min-load through the solar glut (it
+        #   can't economically cycle off for the evening ramp), so the model goes
+        #   LONG midday and its surplus exports/curtails at ~$0 — the structurally
+        #   correct CAISO market design. Validated keeper caiso-6-floor-negrenew:
+        #   spring-midday LMP floor collapses (min 28->0 every year) with gas
+        #   disciplined vs EIA-923 (2024 71.3 vs 67.7). See
+        #   transmission.inject_caiso_gas_commitment_floor and
+        #   results/calibration/RESULTS-caiso-ra-mustoffer-floor.md. Other ISOs
+        #   stay off (byte-identical).
+        caiso_gas_floor_frac=(0.80 if iso.upper() == "CAISO" else 1.0),  # 0.80 =
+        #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
+        #   NG: NG silently absorbs (CISO reports neither) — targets the true
+        #   must-offer gas without padding the mix.
+        negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
+        #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
+        #   marginal price once the model is long past the $0 export sink — the
+        #   negative midday tail. Byte-identical when not binding (current floor
+        #   frac reaches $0, not yet negative; bites with export shaping / a
+        #   higher floor). See policy.eac.apply_negative_renewable_offer_floor
+        #   and results/calibration/NEGRENEW-caiso-findings.md.
         storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT")),  # CAISO and
         #   ERCOT both commissioned GWs of batteries mid-backcast (CAISO 3.0 GW
         #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
@@ -831,9 +854,9 @@ def run_year(
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
-    negative_renewable_offers: bool = False,
-    caiso_gas_commitment_floor: bool = False,
-    caiso_gas_floor_frac: float = 1.0,
+    negative_renewable_offers: bool | None = None,
+    caiso_gas_commitment_floor: bool | None = None,
+    caiso_gas_floor_frac: float | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -887,13 +910,18 @@ def run_year(
     )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
-    if negative_renewable_offers:
-        config = config.with_overrides(negative_renewable_offers=True)
-    if caiso_gas_commitment_floor:
+    # Tri-state overrides: None = keep the per-ISO base default from
+    # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
+    # validated keeper); an explicit True/False from the CLI overrides it (so a
+    # no-floor baseline probe is --no-caiso-gas-commitment-floor).
+    if negative_renewable_offers is not None:
         config = config.with_overrides(
-            caiso_gas_commitment_floor=True,
-            caiso_gas_floor_frac=caiso_gas_floor_frac,
-        )
+            negative_renewable_offers=negative_renewable_offers)
+    if caiso_gas_commitment_floor is not None:
+        config = config.with_overrides(
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor)
+    if caiso_gas_floor_frac is not None:
+        config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -1734,11 +1762,13 @@ def _build_parser() -> argparse.ArgumentParser:
              "--no-priced-interchange to force the measured schedule.",
     )
     parser.add_argument(
-        "--negative-renewable-offers", action="store_true",
+        "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
+        default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
              "keep-running (REC/PTC) value so curtailed renewables set a "
              "sub-$0 marginal price in oversupply (CAISO negative midday "
-             "LMPs). Off (default) is byte-identical.",
+             "LMPs). Default (unset) keeps the per-ISO base config value (ON "
+             "for CAISO); --no-negative-renewable-offers forces it off.",
     )
     return parser
 
