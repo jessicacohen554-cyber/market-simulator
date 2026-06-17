@@ -41,17 +41,29 @@ Model mapping (documented approximations):
   trace to the NYISO tariff (see constants.NYISO_RCPF_PRODUCTS); nothing is
   fitted to LMP residuals.
 
-The products, requirements and penalty maxima are
-``constants.NYISO_RCPF_PRODUCTS`` (overridable per ScenarioConfig). The
-overlay is system-wide (NYCA), matching the NYCA-hub RT price the backcast
-reports; locational East/SENY/NYC/Long-Island reserves need per-zone
-headroom and land with the zonal-congestion fix.
+The system-wide products, requirements and penalty maxima are
+``constants.NYISO_RCPF_PRODUCTS`` (overridable per ScenarioConfig); the
+system-wide adder (:func:`rcpf_adder`) matches the NYCA-hub RT price.
+
+NYISO's reserve market is also LOCATIONAL: nested reserve regions (East ⊃
+SENY ⊃ NYC, all nested in NYCA) each carry their own requirement and demand
+curve over the resources physically inside the region, so a downstate
+shortage stacks region penalties into the *zonal* LBMP even when the system
+is long on reserves. :func:`locational_zone_adders` evaluates those regional
+curves on per-model-zone reserve headroom (``constants.NYISO_RCPF_LOCATIONAL``)
+and returns a per-zone adder that the overlay stacks onto each zone's price
+on top of the system-wide NYCA tier. This is how the model reproduces the
+measured upstate→NYC reserve-price cascade and the downstate scarcity tail
+the NYCA-aggregate energy LP cannot see.
 """
 from __future__ import annotations
 
 import numpy as np
 
-from market_sim.config.constants import NYISO_RCPF_PRODUCTS
+from market_sim.config.constants import (
+    NYISO_RCPF_LOCATIONAL,
+    NYISO_RCPF_PRODUCTS,
+)
 
 
 def reserve_demand_price(
@@ -154,3 +166,60 @@ def rcpf_product_prices(
         total = total + p
     out["adder"] = total
     return out
+
+
+def resolve_rcpf_locational(config) -> dict:
+    """Return the locational reserve-region table for a config (override or default)."""
+    regions = getattr(config, "nyiso_rcpf_locational", None)
+    return regions if regions else NYISO_RCPF_LOCATIONAL
+
+
+def locational_zone_adders(
+    zone_reserves: "dict[str, np.ndarray]",
+    config=None,
+    regions: "dict | None" = None,
+) -> dict[str, np.ndarray]:
+    """Per-model-zone locational RCPF adder ($/MWh) from per-zone headroom.
+
+    NYISO's nested reserve regions (East ⊃ SENY ⊃ NYC, all nested in NYCA)
+    each carry a reserve requirement and demand curve over the resources
+    *physically located inside the region*. A model zone's locational adder
+    is the sum of the demand-curve prices of every region that contains the
+    zone, each evaluated on that region's reserve headroom (the sum of its
+    member zones' headroom). This reproduces the measured per-zone reserve
+    cascade (constants.NYISO_RCPF_LOCATIONAL): upstate zones carry no
+    locational adder, the downstate pocket stacks East + SENY + NYC.
+
+    The system-wide NYCA tier (``NYISO_RCPF_PRODUCTS`` / ``rcpf_adder``) is
+    NOT included here — it is added to every zone separately, on top of these
+    locational adders, by the overlay.
+
+    Args:
+        zone_reserves: ``{model_zone_name: (T,) reserve headroom MW}``. A
+            zone absent from the mapping contributes 0 MW to any region it
+            belongs to (and receives a 0 adder if it appears in no region).
+        config: Optional ScenarioConfig (supplies ``nyiso_rcpf_locational``).
+        regions: Optional explicit region table, overriding both.
+
+    Returns:
+        ``{model_zone_name: (T,) adder}`` for every zone in ``zone_reserves``,
+        in $/MWh, >= 0.
+    """
+    if regions is None:
+        regions = (
+            resolve_rcpf_locational(config) if config is not None
+            else NYISO_RCPF_LOCATIONAL
+        )
+    zr = {z: np.asarray(r, dtype=float) for z, r in zone_reserves.items()}
+    shape = next(iter(zr.values())).shape if zr else (0,)
+    adders = {z: np.zeros(shape) for z in zr}
+    for region in regions.values():
+        products = tuple(region.get("products", ()))
+        members = [z for z in region["zones"] if z in zr]
+        if not products or not members:
+            continue
+        region_reserve = sum(zr[z] for z in members)
+        region_adder = rcpf_adder(region_reserve, products=products)
+        for z in members:
+            adders[z] = adders[z] + region_adder
+    return adders
