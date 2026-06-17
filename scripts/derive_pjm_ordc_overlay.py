@@ -89,6 +89,12 @@ def _run_year_kwargs(meta: dict) -> dict:
         cc_derate_from_top=meta.get("cc_derate_from_top", False),
         priced_interchange=meta.get("priced_interchange", False),
         hydro_backfill_year=meta.get("hydro_backfill_year"),
+        # Reconstruct the SAME fleet the dispatch was solved against: when the
+        # bundle withheld reserve from energy, the availability the
+        # online-reserve primitive measures must carry that withdrawal too, or
+        # it reports full headroom against a withheld dispatch and over-states
+        # the reserve by the withdrawn MW.
+        as_reserve_withholding=meta.get("as_reserve_withholding", False),
         fleet_only=True,
     )
 
