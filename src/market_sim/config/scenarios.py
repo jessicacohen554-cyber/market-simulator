@@ -1110,6 +1110,20 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_hub_basis_overlay.
     gas_hub_basis_overlay: bool = False
 
+    # Tier 3 (calibration) — NYISO per-zone gas-hub basis. NYISO's regions price
+    # gas off different pipeline indices (cheap Tenn Z4 200L / Niagara upstate,
+    # dearer Iroquois Z2 / Tenn Z6 in the Capital/Hudson east, Transco Z6 NY in
+    # the city), so the east marginal gas costs persistently more than the west
+    # all year — the structural source of the upstate-cheap / east-dear LMP
+    # gradient that a single ISO-month series flattens. When set, every NYISO
+    # gas unit is shifted by its zone's measured hub offset vs the east
+    # reference (Iroquois Z2), so the calibrated east level is unchanged and the
+    # cheaper west/city zones drop. Off by default so other ISOs and all
+    # forecasts are byte-identical; the calibration harness enables it for
+    # NYISO. Backcast-only (no hub rows in forward years). See
+    # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
+    nyiso_zonal_gas_basis: bool = False
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -1520,6 +1534,7 @@ TIER_TAGS: dict[str, int] = {
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
     "gas_hub_basis_overlay": 3,
+    "nyiso_zonal_gas_basis": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
