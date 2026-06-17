@@ -131,20 +131,23 @@ market is **nested and locational** (`constants.NYISO_RCPF_LOCATIONAL`):
 |---|---|---|---|---|
 | NYCA   | all five (system-wide)        | 2,620 MW | $750 | FERC ER21-502 |
 | East   | Capital_Hudson, Lower_Hudson, NYC, Long_Island (F–K) | 1,200 MW | $500 | FERC ER21-502 / RS4 |
-| SENY   | Lower_Hudson, NYC, Long_Island (G–K) | *(pending RS4 MW)* | $500 | scaffolded |
+| SENY   | Lower_Hudson, NYC, Long_Island (G–K) | 1,100 MW *(placeholder)* | $500 | $500 sourced; MW = TODO |
 | NYC    | NYC (J): 1,000 MW 30-min + 500 MW 10-min | 1,000 / 500 MW | $500 | RS4 / "Zone J Reserves" |
 
 Each region's reserve headroom is the **sum of its member zones'** dispatchable
 headroom, and a zone's locational adder is the sum of the demand-curve prices
 of every region that contains it (the NYCA system tier is added on top of all
 of them). This reproduces the measured cascade tiers (`process_nyiso_as.py`):
-A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC. The SENY product
-list is intentionally **empty** — its $500 30-min curve is published but the
-MW requirement is not yet sourced to the RS4 step table — a documented
-under-model for zones H/I/K (one tier below the measured G–K level). Every
+A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC. SENY's $500 30-min
+penalty is sourced but its MW requirement is a **placeholder** (1,100 MW —
+the midpoint of the two sourced nested anchors East 1,200 MW ⊇ SENY ⊇ NYC
+1,000 MW; `TODO(SENY-MW)`: replace with the published RS4 value). Every other
 locational requirement/penalty is a tariff value; **nothing is fitted to LMP
 residuals**, and each zone's modeled adder is validated against the measured
-per-zone RT reserve price.
+per-zone RT reserve price (the committed `actual_as_reserve_NYISO.parquet` now
+carries a `reserve_<model_zone>` column for all five model zones, built from
+the NYISO OASIS RT ancillary-service archive, 2023–25, all 11 settlement
+zones).
 
 Across all three keepers the NYC locational adder fires in the right hours and
 its mean tracks the measured N.Y.C. reserve adder without tuning (2023:
