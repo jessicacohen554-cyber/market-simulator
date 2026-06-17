@@ -9,7 +9,10 @@ online reserve + published step curve), a published rule for the forecast.
 **Curve (cited):** `inputs/calibration/pjm_ordc_curve.csv` +
 `docs/multi-iso/pjm-reserve-curve-source.md`.
 **Data:** `inputs/raw-data/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
-2023–2025). **Bundle:** `results/calibration/pjm_26`.
+2023–2025 + `pjm_<yr>_as_up_mw.parquet`, the withholding series from
+`scripts/build_pjm_as_withholding.py`). **Bundles:** `results/calibration/pjm_26`
+(keeper), `results/calibration/pjm_27_aswh` (reserve-withholding probe — see
+"Reserve-withholding recalibration" below).
 
 This is the PJM analogue of `docs/ordc-overlay.md` (ERCOT), not a copy: ERCOT's
 adder is a *smooth* LOLP curve; PJM's is a *vertical two-step* demand curve, so
@@ -151,6 +154,78 @@ reproduces PJM's tighter real-time online posture. The curve and the measured-MC
 validation stand; the overlay is honest about not papering over the commitment
 gap with a fitted parameter.
 
+## Reserve-withholding recalibration — the re-solve the overlay deferred
+
+**Status:** implemented (default off), **bundle `results/calibration/pjm_27_aswh`**
+(keeper `pjm_26` config + `as_reserve_withholding` on, 2023–25 re-solved).
+**Result: the withholding lever is ~inert on the energy LMP; it does not close
+the afternoon residual.** This is the experiment the consequence-check above
+pointed at — withhold the measured cleared reserve from the energy dispatch and
+*re-solve* (not a post-solve overlay) — carried out and reported honestly.
+
+**What it does.** `ScenarioConfig.as_reserve_withholding` (the ERCOT primitive,
+now generalized to PJM — shared `fleet._withdraw_top_of_merit`, per-ISO pool +
+loader) removes a measured hourly reserve MW from the gas + flexible-oil
+top-of-merit headroom before the energy supply curve clears. PJM's withheld
+series is the **measured RT Primary Reserve requirement** (`as_req_mw`, service
+`PR`, locale `PJM_RTO`, the binding upward 10-min product that nests
+Synchronized — Manual 11 sec 4.4.1), 5-min→hourly on the non-leap 8760 clock,
+~3 GW/yr, written by `scripts/build_pjm_as_withholding.py` to
+`inputs/raw-data/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
+Data Miner reserve-market parquets cited in `pjm-reserve-curve-source.md`. DA
+(`da_reserve_market_results`) was considered as the basis for our single-clearing
+(day-ahead-style) model: the Primary requirement is a reliability quantity
+(≈1.5×LSC), basis-independent to ~3% (DA/RT means agree every year), so the
+choice is immaterial to dispatch — RT was used because it has complete year
+coverage while DA is truncated at year-end. We withhold the **requirement**, not
+cleared `total_mw`, because cleared total includes Tier-1 synchronized headroom
+that is not actually withdrawn from energy.
+
+**What happened (the honest result).** Withholding the real ~3 GW reserve moves
+the energy LMP by **~$0.1**:
+
+| Jul/Aug residual ($/MWh) | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| `pjm_26` energy-only | −6.24 | −8.82 | −11.25 |
+| `pjm_27_aswh` energy-only | −6.20 | −8.81 | −11.07 |
+| full-year mean | −0.86→−0.73 | −2.98→−2.95 | −8.62→−8.24 |
+| full-year p50 (gate, no overshoot) | +1.81→+2.12 | +0.53→+0.56 | −1.51→−1.11 |
+
+Hours >$75 (Jul/Aug) stay **0** vs actual 147/297/712. Volumes/emissions are
+unchanged (annual generation identical to `pjm_26`; class shifts <0.6% — CC a
+hair down, peaking/coal a hair up, the expected withholding direction), so the
+calibration gates do not regress. The full-year p50 is preserved (no
+overnight/shoulder overshoot).
+
+**Why it is inert — the diagnosis (claude.md #11, root cause not buried).** The
+top-of-merit withdrawal removes the **most expensive** headroom first, which in
+PJM's comfortable afternoons (~$30–75, ~12 GW slack) is **idle** oil/CT-peaker
+capacity sitting at zero dispatch. Lowering the upper bound of a non-dispatching
+unit is a no-op for the LP, so the marginal afternoon unit (a part-loaded gas CC)
+is unchanged and the price barely moves. Confirmed on the re-derived honesty
+gate: the 3 GW withdrawal thins **total** reserve by ~3 GW (38→35 GW) but
+**online** reserve by only ~1–2 GW (15→14 GW), because most of the withdrawal
+lands on idle plants that were never part of online reserve. Online reserve stays
+~14 GW — still ~4–5× the ~3 GW requirement, deep in the **opportunity-cost band**
+where PJM's vertical ORDC step is $0. The residual is the sub-shortage reserve
+*price* (the marginal unit's lost energy margin from AS co-optimization), which a
+pre-solve headroom haircut cannot produce: thinning reserve further only makes
+the vertical step bite at **penalty** levels ($850+), which *overshoots* the
+actual $75–200 (overlay+withholding Jul/Aug 2024 swings to **+14.3**). Closing
+the residual needs the reserve **co-optimization** the overlay scopes out (raise
+the marginal unit's offer by its reserve opportunity cost), or a commitment model
+reproducing PJM's tighter real-time online posture — exactly the boundary already
+drawn, now confirmed by a full re-solve rather than inferred. Per claude.md #11
+the measured data stays in (it is correct and the fit is marginally *better*, not
+worse); we do not revert to an estimate or tune the withdrawal to manufacture a
+lift. `pjm_26` remains the keeper; `pjm_27_aswh` is the documented probe.
+
+**Consistency fix (a real bug found en route).** `derive_pjm_ordc_overlay.py`'s
+`_run_year_kwargs` did not forward `as_reserve_withholding`, so on a withholding
+bundle it reconstructed the fleet at *full* availability while reading the
+*withheld* dispatch — over-stating reserve by the withdrawn MW (it reported
+online reserve unchanged at ~15 GW). The reconstruction now mirrors the solve.
+
 ## Forecast rule (no measured requirement available)
 
 Forecast years have no `as_req_mw`, so the requirement is the **Manual 11 sec 4.3
@@ -204,4 +279,18 @@ python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26
 # Localize the residual with the overlay applied:
 python scripts/analyze_lmp_residual.py results/calibration/pjm_26 \
     --with-scarcity --months 7 8
+
+# --- Reserve-withholding recalibration (the re-solve) ---
+# 1. Build the measured withholding series (RT Primary Reserve requirement):
+python scripts/build_pjm_as_withholding.py            # 2023 2024 2025
+# 2. Re-solve the keeper config + withholding, one year per parallel job
+#    (claude.md #45; cap ~2 concurrent — 2 PJM plant-level solves peak >15 GB):
+python scripts/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
+python scripts/_pjm_aswh_run.py 2024 results/calibration/pjm_27_aswh_2024
+python scripts/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
+python scripts/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
+    results/calibration/pjm_27_aswh_202{3,4,5}
+# 3. Re-derive + re-check the residual (result: ~inert — see section above):
+python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_27_aswh --diagnostic
+python scripts/analyze_lmp_residual.py results/calibration/pjm_27_aswh --months 7 8
 ```
