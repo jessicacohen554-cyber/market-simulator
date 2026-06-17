@@ -254,21 +254,25 @@ def _hsl_file(iso: str, year: int) -> Path | None:
     # data-needed: requires ISO-NE to publish granular curtailment data.
     return None
 
-# The raw ERCOT 2023 wind HSL series sums below the EIA-930 delivered total
-# (~104 vs 108 TWh) — impossible, since HSL is the uncurtailed potential and
-# must be at least the delivered. Rescale the series (preserving its hourly
-# shape) up to the delivered EIA-930 annual total so the dispatch starts from a
-# physically consistent potential. Keyed by (iso, year, fuel) -> annual TWh.
-# Targets are set above the EIA-930 delivered totals (wind 108, solar 31.9) to
-# offset the dispatch's economic re-curtailment, so the *delivered* output lands
-# on the actuals: wind ~1.8% curtailed -> 110, solar ~0.5% -> 32.0.
-# Years without an entry use the raw HSL series unrescaled — only add an
-# entry when build_ercot_hsl.py's EIA-930 cross-check shows the year's HSL
-# source is biased low against delivered generation.
-_HSL_RESCALE_TWH: dict[tuple[str, int, str], float] = {
-    ("ERCOT", 2023, "wind"): 110.0,
-    ("ERCOT", 2023, "solar"): 32.0,
-}
+# An HSL parquet records the hourly *uncurtailed potential* (HSL >= delivered);
+# the dispatch curtails endogenously from it and the modeled-vs-reported
+# curtailment gap is a *diagnostic*, never a fit target (claude.md: measured
+# data is a reproducible physical input, never the answer — no pinning the
+# backcast to actuals). The series is therefore consumed as-is, with ONE
+# real-data reconciliation (see :func:`hsl_potential_mw`): a derived /
+# partial-footprint source (e.g. the 2023 UMass nodal reconstruction) can cover
+# fewer plants than the full ISO, so its annual delivered undercounts the
+# authoritative EIA-930 system total — physically impossible for a potential,
+# since HSL >= delivered >= EIA-930 delivered. There the series is scaled UP to
+# the EIA-930 delivered footprint *preserving the dataset's own measured
+# curtailment ratio* (delivered/HSL). That reconciles two real datasets (the
+# parquet's hourly shape + curtailment ratio, the EIA-930 level); it references
+# nothing about model output and is a no-op for authoritative full-footprint
+# NP4-732/737 HSL uploads, whose delivered already matches EIA-930 within
+# tolerance. Prefer replacing any derived source with the published ERCOT
+# NP4-732/737 HSL (scripts/build_ercot_hsl.py, np6/ drop zone) so the
+# reconciliation never fires.
+_HSL_COVERAGE_RECONCILE_TOL = 0.98  # reconcile only a > 2% footprint undercount
 
 
 def _ercot_hsl_path(year: int) -> Path:
@@ -294,14 +298,17 @@ def load_ercot_hsl_hourly(year: int) -> pd.DataFrame | None:
 def hsl_potential_mw(iso: str, year: int, fuel: str) -> np.ndarray | None:
     """Return the hourly uncurtailed potential (MW) the dispatch consumes.
 
-    This is the year's HSL-style series (ERCOT NP6 HSL, or the CAISO
-    delivered-plus-reported-curtailment analogue) with the per-year rescale
-    of :data:`_HSL_RESCALE_TWH` applied — exactly the MW series that
-    :func:`_hsl_cf_profile` turns into the dispatch's CF profile, so
-    calibration reports can reconstruct the model's hourly renewable
-    potential (e.g. for the modeled-vs-reported curtailment metric) without
-    re-deriving the fleet. Returns ``None`` when no HSL parquet covers
-    ``(iso, year)``.
+    This is the year's HSL-style series (ERCOT NP4-732/737 HSL, or the CAISO
+    delivered-plus-reported-curtailment analogue), consumed as-is apart from
+    the real-data coverage reconciliation described on
+    :data:`_HSL_COVERAGE_RECONCILE_TOL`: a partial-footprint source whose
+    delivered (GEN) undercounts the EIA-930 system total is scaled UP to that
+    level while preserving its own measured curtailment ratio (delivered/HSL),
+    a no-op for full-footprint published uploads. The result is exactly the MW
+    series :func:`_hsl_cf_profile` turns into the dispatch's CF profile, so
+    calibration reports can reconstruct the model's hourly renewable potential
+    (e.g. for the modeled-vs-reported curtailment metric) without re-deriving
+    the fleet. Returns ``None`` when no HSL parquet covers ``(iso, year)``.
     """
     df = load_hsl_hourly(iso, year)
     if df is None:
@@ -310,11 +317,41 @@ def hsl_potential_mw(iso: str, year: int, fuel: str) -> np.ndarray | None:
     if column not in df.columns:
         return None
     hsl_mw = df[column].to_numpy(dtype=float)
-    target_twh = _HSL_RESCALE_TWH.get((iso, year, fuel))
-    if target_twh is not None and hsl_mw.sum() > 0:
-        # Scale the series to the target annual total, preserving its shape.
-        hsl_mw = hsl_mw * (target_twh * 1.0e6 / hsl_mw.sum())
+    hsl_total = float(hsl_mw.sum())
+    gen_column = f"{fuel}_gen_mw"
+    if hsl_total <= 0.0 or gen_column not in df.columns:
+        return hsl_mw
+    # Real-data coverage reconciliation (see _HSL_COVERAGE_RECONCILE_TOL). The
+    # dataset's own delivered (GEN) vs the EIA-930 system delivered measures
+    # footprint completeness; when the source materially undercounts, scale UP
+    # to the EIA-930 level preserving the measured delivered/HSL ratio — never
+    # a tune to model output. No-op for full-footprint published data.
+    delivered_mwh = _eia930_delivered_mwh(iso, year, fuel)
+    src_gen = float(df[gen_column].sum())
+    if (
+        delivered_mwh is not None
+        and src_gen > 0.0
+        and src_gen < _HSL_COVERAGE_RECONCILE_TOL * delivered_mwh
+    ):
+        delivered_to_hsl = src_gen / hsl_total  # the dataset's measured ratio
+        target_hsl = delivered_mwh / delivered_to_hsl
+        hsl_mw = hsl_mw * (target_hsl / hsl_total)
     return hsl_mw
+
+
+def _eia930_delivered_mwh(iso: str, year: int, fuel: str) -> float | None:
+    """Return the EIA-930 annual delivered generation (MWh) for the fuel.
+
+    The reconciliation target for :func:`hsl_potential_mw` — the authoritative
+    system delivered total an uncurtailed-potential series must sit at or above.
+    Returns ``None`` when the ISO/year/fuel has no mapped hourly extract or the
+    series sums to zero (a reporting gap, not genuine zero output).
+    """
+    gen = load_eia_hourly_renewable_gen(iso, year)
+    if gen is None or fuel not in gen:
+        return None
+    total = float(gen[fuel].sum())
+    return total if total > 0.0 else None
 
 
 def _as_float(value: object) -> float | None:
