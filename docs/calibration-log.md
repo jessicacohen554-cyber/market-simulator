@@ -3525,3 +3525,86 @@ scarcity flat-1400/shift-0.5 + scarcity_np6shift0 NP6-576-ER canonical;
 post-solve additive, dispatch untouched; 2023 LMP MAE 32.5→30.1 with the adder).
 `calibration-best-so-far.md` STATUS/keeper/config/success-bar updated; dashboard
 re-registered (run 115b keeper, run 109a demoted to predecessor).
+
+## NEISO — Merrimack reclassified COAL_BIT + CC_REGULAR offer-curve Jacobian re-derived on the AGT-wired structure (2026-06-17, keeper `neiso_cc_coalbit_3yr`, "neiso 14")
+
+Two pieces of work on the corrected (AGT-overlay-wired, `neiso_agt_3yr`/neiso 13)
+structure: (1) the lone NEISO coal unit is now classified by its measured rank,
+and (2) the CC_REGULAR offer-curve sensitivity panel was re-seeded with fresh
+±0.05 probes — the prior Jacobian was derived when the AGT overlay was dead code
+and is stale.
+
+### 1. Merrimack (ORIS 2364) — bituminous, COAL_BIT (data-driven, no fitted value)
+
+`scripts/derive_coal_supply.py --iso NEISO` sums Merrimack's EIA-923 Schedule-5
+fuel receipts (54,050 tons 2023-2025) → **100 % bituminous** →
+`inputs/processed/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
+`fleet.coal_supply_class(2364)` now returns `bituminous`, so the dispatch class,
+offer curve, and delivered-cost path all resolve to **`COAL_BIT`** instead of the
+generic unclassified `COAL` fallback the plant carried before. EIA-860 confirms
+the retirement/availability window: unit 1 (108 MW net summer, `BIT`, status
+`OP`, planned retire 2027) operates across the whole backcast window; unit 2
+(330 MW, `BIT`, status `OS`) is out of service. So coal is **not zero** — the
+~108 MW unit 1 produces the EIA-930 ISNE coal column (0.18/0.24/0.28 TWh) as a
+low-CF winter-peaking run.
+
+Effect on dispatch: **none.** `COAL_BIT` and the generic `COAL` offer curve are
+byte-identical (committed 0.90 / econ_low 0.95 / econ_high 1.10 / peak 1.45 /
+econ_low_share 0.55) and `COAL_PRICE_BASE["NEISO"]` (3.0, the bituminous-by-rail
+blend) is already the delivered cost, so `neiso_cc_coalbit_3yr` reproduces
+`neiso_agt_3yr` to the TWh — gas 54.78/58.89/60.14 (vs 930 55.47/59.64/60.09,
+−1.2 / −1.3 / +0.1 %), load-weighted price 34.92/40.22/70.54, coal
+0.0145/0.00/0.237 — with coal now labelled COAL_BIT in the scorecard so it scores
+against the bituminous benchmark instead of a generic split.
+
+### 2. CC_REGULAR Jacobian, re-seeded on `neiso_agt_3yr` (2024, P2, ΔTWh vs base)
+
+The stale panel (branch `claude/neiso-backcast-jacobian-ziz6pj`, SHA `3c9e5fd`,
+pre-AGT-wiring) anchored at CC_REGULAR 55.31 / CT_PEAKER 0.336 — different from
+the wired keeper (CC_REGULAR 56.56 / CT_PEAKER 0.014), confirming it could not be
+trusted. Fresh single-knob ±0.05 probes (`results/calibration/neiso_probe_v2_*`,
+base reproduces the keeper exactly):
+
+| knob (±0.05 on CC_REGULAR unless noted) | ΔCC_REGULAR | ΔCC_CHP | ΔCT_PEAKER | ΔST_GAS | Δoil |
+|---|---|---|---|---|---|
+| econ_high +0.05 (1.27→1.32) | −0.061 | +0.016 | 0 | 0 | 0 |
+| econ_high −0.05 (1.27→1.22) | +0.070 | −0.023 | 0 | 0 | 0 |
+| econ_low  +0.05 (1.06→1.11) | −0.048 | +0.016 | 0 | 0 | 0 |
+| committed +0.05 (0.92→0.97) | −0.012 | +0.004 | 0 | 0 | 0 |
+| ST_GAS committed −0.05 | 0 | 0 | 0 | 0 | 0 |
+
+**Live CC_REGULAR bands, by |ΔCC|/0.05: econ_high (~1.3/unit) > econ_low (~1.0)
+> committed (~0.24).** But every live band redistributes energy **only within the
+CC family (CC_REGULAR ↔ CC_CHP) and to the measured import schedule** — **none
+reaches CT_PEAKER, ST_GAS, or oil**, all of which stay at 0. ST_GAS is dead even
+to its own committed knob.
+
+**Why (structural merit order).** Class base heat rates: CC ≈ 7.0, CT/ST ≈ 10.4
+(Merrimack COAL_BIT 11.34). CC_REGULAR's economic ramp folds the duct-fire peak
+into its top (`_CURVE_FOLD_PEAK`), spanning econ_low → peak = 2.25, i.e. up to
+2.25 × 7.0 ≈ 15.8 effective HR. CT_PEAKER's *cheapest* tranche (committed
+1.55 × 10.4 ≈ 16.1 effective HR) sits **above** the entire CC_REGULAR curve, so
+when CC backs down the next-cheapest increment is always CC_CHP (committed
+0.92 × 7.2) or an HQ/NYISO import — never a CT peaker. This matches EIA-923's
+prime-mover split (gas_cc is ~95 % of NEISO gas) and the cross-ISO finding that
+**"CT is not offer-recoverable"** (a blanket CT floor injects ~+5 TWh net gas
+displacing coal/imports; only the targeted sub-marginal AS-deployment overlay
+recovers reserve energy, NEISO wedge ≈ 0.05 TWh on its 8-9-plant CT fleet).
+
+**Decision: hold the CC_REGULAR offer curve at the keeper values** (committed
+0.92 / econ_low 1.06 / econ_high 1.27 / peak 2.25 / econ_low_share 0.50 /
+pct_peaking 8.0), one constant set across 2023/2024/2025. No Jacobian-supported
+move shifts the CT_PEAKER/ST_GAS/oil mix, and any change tuned to the residual
+would move the (already-correct) gas total or price level for nothing — exactly
+the "no magic numbers / merit order first" discipline. The "CC_REGULAR too cheap"
+symptom is **correct behaviour**: CC genuinely is the cheapest gas and should
+serve essentially the whole gas merit order; the CT_PEAKER (~2 TWh EIA-923) and
+ST_GAS (~0.3) shortfall is reserve / AS / reliability / load-pocket deployment
+the aggregated 4-zone energy-only LP does not reproduce, recoverable only via the
+off-by-default `ct_deployment` overlay, **not** the offer curve.
+
+**Keeper = `neiso_cc_coalbit_3yr` (neiso 14)**: `neiso_agt_3yr` structure (no
+offer-curve change) + the Merrimack COAL_BIT reclassification. Tests: 297 pass
+(fuel/neiso/iso/hydro/zone/transmission). Regression guard: the only change is
+the additive `coal_supply_NEISO.csv` (national plant code 2364, no ERCOT/PJM/CAISO
+collision) and no offer-curve code edit, so ERCOT/PJM/CAISO stay byte-identical.
