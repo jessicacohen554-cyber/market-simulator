@@ -186,6 +186,15 @@ plant's committed % and coal must-run % (§1) — so both the offer-curve
 shape and the availability are grounded in the plant's own observed
 behaviour rather than coarse class assumptions.
 
+The outage overlay answers "was a *built* unit running?"; a separate
+**commercial-operation-date (COD) vintage ramp** answers "was the unit *built*
+yet?" — the fleet snapshot is a recent vintage, so a backcast must drop capacity
+commissioned after the solved year (and add back the months a mid-year-COD unit
+was online). That ramp is sourced from EIA-860 (not CAMPD, which has no build
+dates), covers every fleet path including the CAMPD bins, and is on by default
+for backcasts (`cod_ramp_enabled`). See
+[`docs/cod-vintage-ramp.md`](cod-vintage-ramp.md).
+
 ### Outage detection: thresholds on days without running
 
 A unit is flagged as on outage when its CEMS output shows it is **not

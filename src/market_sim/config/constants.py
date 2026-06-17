@@ -1903,6 +1903,23 @@ ORDC_FLOOR_STEPS: tuple[tuple[float, float], ...] = (
 # effective date: Jan-Oct = 304 days.
 ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 
+# --- PJM Primary Reserve requirement (energy+reserve co-optimization) -------
+# PJM sets the synchronized/primary reserve requirement from the Most-Severe
+# Single Contingency (MSSC): PJM Manual 13 (Emergency Operations) / Manual 11
+# sec 4.4. The Primary Reserve Requirement is held at ~1.5x the MSSC (the
+# largest single resource/tie loss), the binding upward 10-minute product that
+# nests Synchronized. Approximated in-model as factor x the fleet's Largest
+# Single Contingency (the largest single dispatchable unit), giving a
+# fleet-responsive, near-flat requirement: with the model's largest PJM unit
+# this reproduces the measured PJM_RTO pr_req_mw (mean ~3.42 GW, 2024) — the
+# honesty gate in tests/test_reserve_coopt.py, validated against
+# inputs/raw-data/PJM-AS. Forecast-applicable: the MSSC moves with the fleet
+# (retire the largest unit -> the requirement falls), unlike replaying the
+# measured hourly series. The ORDC demand curve that PRICES a shortfall is the
+# published two-step curve in inputs/calibration/pjm_ordc_curve.csv.
+PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
+PJM_ORDC_CURVE_PATH: str = "inputs/calibration/pjm_ordc_curve.csv"
+
 # --- NYISO RCPF (Reserve Constraint Penalty Factor) scarcity overlay -------
 # NYISO does not use an ERCOT-style ORDC/LOLP curve. Real-time scarcity is
 # priced by the Reserve Constraint Penalty Factors: when dispatchable

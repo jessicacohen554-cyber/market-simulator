@@ -623,18 +623,23 @@ def build_payload(runs: list[tuple[str, Path]],
                     zc["a"] = [round(x, 4) for x in zc["a"]]
                     zc["e"] = [_vol_err(m, a)
                                for m, a in zip(zc["m"], zc["a"])]
-            # Solar: EIA-930 system annual baseline (no zone/month breakdown).
-            solar_m = float(nf.get("solar", 0.0))
-            solar_a = float(bench[int(year)]["e930"].get("solar", 0.0))
-            if solar_a > 0.0 or solar_m > 0.0:
-                vol_err["solar"] = {
-                    "src": actuals_source("solar"),
-                    "sys": {
-                        "m": round(solar_m, 4),
-                        "a": round(solar_a, 4),
-                        "e": _vol_err(solar_m, solar_a),
-                    },
-                }
+            # Variable renewables: EIA-930 system annual baseline (no zone/month
+            # breakdown — 930 is neither zonal nor split into model classes
+            # here). Both solar and wind route to EIA-930 via actuals_source
+            # (the BA-level 923 net-gen survey under-counts CISO wind and
+            # collapses in the incomplete 2025 release for every ISO).
+            for _vr in ("solar", "wind"):
+                vr_m = float(nf.get(_vr, 0.0))
+                vr_a = float(bench[int(year)]["e930"].get(_vr, 0.0))
+                if vr_a > 0.0 or vr_m > 0.0:
+                    vol_err[_vr] = {
+                        "src": actuals_source(_vr),
+                        "sys": {
+                            "m": round(vr_m, 4),
+                            "a": round(vr_a, 4),
+                            "e": _vol_err(vr_m, vr_a),
+                        },
+                    }
             run_years[int(year)] = {
                 "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
                 "gmModel": gm_model, "lmp": lmp, "volErr": vol_err}

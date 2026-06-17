@@ -406,6 +406,29 @@ def _calibration_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
+        caiso_gas_commitment_floor=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: the RA must-offer midday gas-commitment floor holds the
+        #   RA-obligated gas fleet online at min-load through the solar glut (it
+        #   can't economically cycle off for the evening ramp), so the model goes
+        #   LONG midday and its surplus exports/curtails at ~$0 — the structurally
+        #   correct CAISO market design. Validated keeper caiso-6-floor-negrenew:
+        #   spring-midday LMP floor collapses (min 28->0 every year) with gas
+        #   disciplined vs EIA-923 (2024 71.3 vs 67.7). See
+        #   transmission.inject_caiso_gas_commitment_floor and
+        #   results/calibration/RESULTS-caiso-ra-mustoffer-floor.md. Other ISOs
+        #   stay off (byte-identical).
+        caiso_gas_floor_frac=(0.80 if iso.upper() == "CAISO" else 1.0),  # 0.80 =
+        #   EIA-923 gas / EIA-930 NG: NG, stripping the ~21% geo+bio the CISO
+        #   NG: NG silently absorbs (CISO reports neither) — targets the true
+        #   must-offer gas without padding the mix.
+        negative_renewable_offers=(iso.upper() == "CAISO"),  # CAISO keeper
+        #   default-ON: CA solar/wind bid below $0 (RPS/REC/PTC keep-running
+        #   value) in oversupply, so the curtailable renewable tier sets a sub-$0
+        #   marginal price once the model is long past the $0 export sink — the
+        #   negative midday tail. Byte-identical when not binding (current floor
+        #   frac reaches $0, not yet negative; bites with export shaping / a
+        #   higher floor). See policy.eac.apply_negative_renewable_offer_floor
+        #   and results/calibration/NEGRENEW-caiso-findings.md.
         storage_vintage_ramp=(iso.upper() in ("CAISO", "ERCOT")),  # CAISO and
         #   ERCOT both commissioned GWs of batteries mid-backcast (CAISO 3.0 GW
         #   in 2023 + 3.6 GW in 2024; ERCOT ramped ~3.5 -> 6.5 -> 10 GW across
@@ -823,12 +846,13 @@ def run_year(
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
     as_reserve_formula: bool = False,
+    energy_reserve_coopt: bool = False,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
-    negative_renewable_offers: bool = False,
-    caiso_gas_commitment_floor: bool = False,
-    caiso_gas_floor_frac: float = 1.0,
+    negative_renewable_offers: bool | None = None,
+    caiso_gas_commitment_floor: bool | None = None,
+    caiso_gas_floor_frac: float | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -882,13 +906,18 @@ def run_year(
     )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
-    if negative_renewable_offers:
-        config = config.with_overrides(negative_renewable_offers=True)
-    if caiso_gas_commitment_floor:
+    # Tri-state overrides: None = keep the per-ISO base default from
+    # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
+    # validated keeper); an explicit True/False from the CLI overrides it (so a
+    # no-floor baseline probe is --no-caiso-gas-commitment-floor).
+    if negative_renewable_offers is not None:
         config = config.with_overrides(
-            caiso_gas_commitment_floor=True,
-            caiso_gas_floor_frac=caiso_gas_floor_frac,
-        )
+            negative_renewable_offers=negative_renewable_offers)
+    if caiso_gas_commitment_floor is not None:
+        config = config.with_overrides(
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor)
+    if caiso_gas_floor_frac is not None:
+        config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -928,6 +957,12 @@ def run_year(
     # (fleet.caiso_operating_reserve_mw / generators_to_fleet_arrays).
     if as_reserve_formula:
         config = config.with_overrides(as_reserve_formula=True)
+    # Energy+reserve co-optimization (run_calibration_full
+    # --energy-reserve-coopt): co-optimize energy and Primary Reserve inside the
+    # LP (structural 1.5 x MSSC requirement + published ORDC demand curve);
+    # PJM-gated in _run_dispatch. Replaces the post-solve ORDC overlay.
+    if energy_reserve_coopt:
+        config = config.with_overrides(energy_reserve_coopt=True)
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).
@@ -1011,6 +1046,14 @@ def run_year(
     ttc = _apply_ttc_overrides(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
     )
+
+    # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
+    # snapshot is a recent vintage that includes units built after the solved
+    # year. The ramp is now applied uniformly inside generators_to_fleet_arrays
+    # (config.cod_ramp_enabled, default on) via the month-precise EIA-860
+    # plant-code map — covering the ERCOT CAMPD bins and every raw EIA-860 unit
+    # alike — so the per-fleet-path scaling that used to live here is gone. See
+    # data.cod_ramp.
 
     # Build the dispatch fleet the same way the runner does: CAMPD
     # operational bins for ERCOT (three stepped tranches per bin, nuclear
@@ -1171,6 +1214,7 @@ def run_year(
     fleet_arrays = generators_to_fleet_arrays(
         fleet, zone_names, hours=config.hours, iso=iso, config=config,
         load_shape=demand.sum(axis=0), ct_campd_shape=ct_campd_shape,
+        year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
     # Shape the priced import/export node by the measured EIA-930 diurnal
@@ -1312,6 +1356,47 @@ def run_year(
         hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
     )
+
+    # Energy+reserve co-optimization (config.energy_reserve_coopt; PJM-gated
+    # until other ISOs are validated). Reserve-eligible units are dispatchable
+    # thermal; the requirement is the structural 1.5 x most-severe single
+    # contingency (fleet-derived, forecast-responsive), and the published
+    # two-step ORDC curve prices a shortfall so the reserve clearing price
+    # emerges as the balance-row dual and lifts the energy LMP. This replaces
+    # the post-solve ORDC overlay (derive_pjm_ordc_overlay.py) for co-opt runs.
+    if getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
+        from market_sim.config.constants import PJM_ORDC_CURVE_PATH
+        from market_sim.data.fleet import FUEL_TYPE_NAMES
+        from market_sim.results.scarcity import (
+            RESERVE_FUEL_TYPES,
+            largest_single_contingency_mw,
+            load_pjm_ordc_curve,
+            pjm_ordc_shortfall_steps,
+            pjm_primary_reserve_requirement,
+        )
+        elig = np.array(
+            [FUEL_TYPE_NAMES[i] in RESERVE_FUEL_TYPES
+             for i in fleet_arrays.fuel_type_idx],
+            dtype=bool,
+        )
+        lsc = largest_single_contingency_mw(
+            fleet_arrays.pmax, fleet_arrays.availability, elig
+        )
+        req = float(pjm_primary_reserve_requirement(lsc, config.hours)[0])
+        curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
+        req_total, ordc_pen, ordc_w = pjm_ordc_shortfall_steps(curve, req)
+        dispatch_kwargs.update(
+            reserve_requirement=np.full(config.hours, req_total),
+            reserve_eligible=elig,
+            ordc_penalties=ordc_pen,
+            ordc_step_widths=ordc_w,
+        )
+        logger.info(
+            "energy+reserve co-opt (PJM): MSSC %.0f MW, Primary req %.0f MW "
+            "(+%.0f ORDC shoulder), %d reserve-eligible units",
+            lsc, req, req_total - req, int(elig.sum()),
+        )
+
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
     # -- and differ only in the objective (P1 = base MC + startup markup). So
     # build the model once and warm-start P1 from P0's optimal basis
@@ -1713,11 +1798,13 @@ def _build_parser() -> argparse.ArgumentParser:
              "--no-priced-interchange to force the measured schedule.",
     )
     parser.add_argument(
-        "--negative-renewable-offers", action="store_true",
+        "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
+        default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
              "keep-running (REC/PTC) value so curtailed renewables set a "
              "sub-$0 marginal price in oversupply (CAISO negative midday "
-             "LMPs). Off (default) is byte-identical.",
+             "LMPs). Default (unset) keeps the per-ISO base config value (ON "
+             "for CAISO); --no-negative-renewable-offers forces it off.",
     )
     return parser
 
