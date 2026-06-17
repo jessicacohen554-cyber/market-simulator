@@ -69,6 +69,16 @@ RESERVE_FUEL_TYPES: frozenset[str] = frozenset(
     {"gas_cc", "gas_ct", "gas_st", "coal", "nuclear", "oil"}
 )
 
+# Quick-start subset of the reserve fleet: units that can synchronize and reach
+# output within ERCOT's 30-minute non-spin window from cold (simple-cycle gas
+# turbines and oil peakers, ~10-30 min start). When OFFLINE these still back the
+# *off-line* (second-half) ORDC reserve term. A cold slow-start unit (coal,
+# combined-cycle, gas/CHP steam, nuclear — hours to start) backs NEITHER term:
+# the perfect-foresight LP otherwise counts its idle capacity as responsive
+# reserve, the documented overstatement that drove the fitted RTORDPA offset
+# (docs/ercot-backcast-audit-2026-06 B3/B5a).
+QUICK_START_FUEL_TYPES: frozenset[str] = frozenset({"gas_ct", "oil"})
+
 # ERCOT ORDC seasons (calendar quarters of the LOLP statistics): winter =
 # Dec-Feb, spring = Mar-May, summer = Jun-Aug, fall = Sep-Nov.
 _SEASON_OF_MONTH: tuple[str, ...] = (
@@ -182,19 +192,24 @@ def ordc_adder(
     shift_sigma: float = 0.5,
     multistep_floor: bool = True,
     floor_active: np.ndarray | bool = True,
+    reserves_online_mw: np.ndarray | None = None,
 ) -> np.ndarray:
     """Hourly ORDC price adder ($/MWh) for a reserve and price series.
 
-    Implements RTORPA with the model's whole netted headroom treated as
-    on-line reserves (RTOFFCAP = 0, see module docstring): two half-hour
-    LOLP terms — the full-hour curve (mu, sigma) and the first-half curve
-    (mu/2, sigma/sqrt(2)) — each weighted 0.5 and multiplied by
-    ``max(VOLL - lambda, 0)``. The OBDRR048 multi-step floor is applied
-    where ``floor_active``, then the total is capped so lambda + adder
-    never exceeds VOLL.
+    Implements RTORPA's two half-hour LOLP terms — the full-hour curve
+    ``LOLP(R_online + R_offline; mu, sigma)`` and the first-half curve
+    ``LOLP(R_online; mu/2, sigma/sqrt(2))`` (off-line 30-minute reserve only
+    helps the second half) — each weighted 0.5 and multiplied by
+    ``max(VOLL - lambda, 0)``. ``reserves_mw`` is the full-hour reserve
+    (online + offline); ``reserves_online_mw`` is the online (spinning) tier
+    that backs the first half. When ``reserves_online_mw`` is ``None`` both
+    terms use ``reserves_mw`` (the legacy RTOFFCAP = 0 behaviour). The OBDRR048
+    multi-step floor is keyed to the online reserve (ERCOT's physical
+    responsive capability) where ``floor_active``, then the total is capped so
+    lambda + adder never exceeds VOLL.
 
     Args:
-        reserves_mw: Hourly netted reserves in MW.
+        reserves_mw: Hourly full-hour reserves (online + offline) in MW.
         system_lambda: Hourly system energy price in $/MWh.
         voll: Value of lost load / system-wide offer cap in $/MWh.
         mcl_mw: Minimum contingency level in MW.
@@ -204,6 +219,8 @@ def ordc_adder(
         multistep_floor: Apply the OBDRR048 RTORPA floor steps.
         floor_active: Boolean or hourly mask gating the floor (it took
             effect 2023-11-01; pass a mask for 2023 backcasts).
+        reserves_online_mw: Hourly online (spinning) reserves in MW; defaults
+            to ``reserves_mw``.
 
     Returns:
         ``(T,)`` adder array in $/MWh, >= 0.
@@ -211,20 +228,24 @@ def ordc_adder(
     lam = np.asarray(system_lambda, dtype=float)
     headroom_to_cap = np.maximum(voll - lam, 0.0)
 
+    r_full = np.asarray(reserves_mw, dtype=float)
+    r_online = (
+        r_full if reserves_online_mw is None
+        else np.asarray(reserves_online_mw, dtype=float)
+    )
     mu = np.asarray(mu_mw, dtype=float)
     sigma = np.asarray(sigma_mw, dtype=float)
-    lolp_full = lolp(reserves_mw, mu, sigma, mcl_mw, shift_sigma)
+    lolp_full = lolp(r_full, mu, sigma, mcl_mw, shift_sigma)
     lolp_half = lolp(
-        reserves_mw, mu / 2.0, sigma / np.sqrt(2.0), mcl_mw, shift_sigma)
+        r_online, mu / 2.0, sigma / np.sqrt(2.0), mcl_mw, shift_sigma)
     adder = 0.5 * headroom_to_cap * (lolp_full + lolp_half)
 
     if multistep_floor:
         floor = np.zeros_like(adder)
-        r = np.asarray(reserves_mw, dtype=float)
         # Steps are (threshold, floor) sorted descending so the tightest
-        # (lowest-reserve) step wins.
+        # (lowest-reserve) step wins; keyed to online responsive reserve.
         for threshold, value in sorted(ORDC_FLOOR_STEPS, reverse=True):
-            floor = np.where(r <= threshold, value, floor)
+            floor = np.where(r_online <= threshold, value, floor)
         adder = np.maximum(adder, np.where(floor_active, floor, 0.0))
 
     # Protocol cap: lambda + adders <= VOLL (the system-wide offer cap).
@@ -241,23 +262,58 @@ def floor_active_mask(year: int, hours: int) -> np.ndarray:
     return hour_idx >= ORDC_FLOOR_START_HOUR_2023
 
 
+def _online_plant_mask(
+    fleet_arrays: FleetArrays, dispatch: np.ndarray, threshold_mw: float
+) -> np.ndarray:
+    """Return an ``(n_gen, T)`` bool mask of units belonging to an online plant.
+
+    A unit is "online" in hour *t* when its plant is producing — needed because
+    per-plant binning splits one physical plant into several LP units (must-run
+    / committed / economic / peaking tranches sharing a ``plant_code``). The
+    upper tranche of a running plant carries spinning headroom even at zero
+    dispatch, so online status is decided at the **plant** level: every tranche
+    of a plant whose summed dispatch exceeds ``threshold_mw`` is online. Units
+    with no ``plant_code`` (code 0 / absent) fall back to their own dispatch.
+    """
+    disp = np.asarray(dispatch, dtype=float)
+    online = disp > threshold_mw
+    codes = getattr(fleet_arrays, "plant_code", None)
+    if codes is None:
+        return online
+    codes = np.asarray(codes)
+    for code in np.unique(codes[codes > 0]):
+        rows = np.flatnonzero(codes == code)
+        online[rows] = disp[rows].sum(axis=0) > threshold_mw
+    return online
+
+
 def reserve_headroom(
     fleet_arrays: FleetArrays,
     dispatch: np.ndarray,
     storage_power_cap: np.ndarray,
     storage_charge: np.ndarray | None,
     storage_discharge: np.ndarray | None,
-    as_plan_mw: float,
+    as_plan_mw: float | np.ndarray,
     renewable_headroom: np.ndarray | None = None,
-) -> np.ndarray:
-    """Hourly netted reserve headroom (MW) from solved-dispatch arrays.
+    online_threshold_mw: float = 1.0,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Hourly online/offline reserve split (MW) from solved-dispatch arrays.
 
-    ``R = sum_thermal(pmax x availability - dispatch) + storage headroom
-    + renewable curtailment headroom - AS plan``. Storage headroom follows
-    ERCOT's ESR telemetry convention (capability minus net output): power
-    cap - discharge + charge. Curtailed renewables count (ERCOT telemetry
-    is HSL - output); in real scarcity hours renewables run at potential,
-    so the term is ~0 exactly where the adder matters.
+    Splits operating reserve into the two tiers ERCOT's ORDC prices against:
+
+    * **online (spinning)** — headroom on thermal units whose plant is running,
+      plus storage headroom (ESR telemetry: power cap - discharge + charge) and
+      curtailed-renewable headroom, **minus** the ancillary-service plan held
+      out of energy (``as_plan_mw``, scalar or ``(T,)``);
+    * **offline (30-minute non-spin)** — available capacity on quick-start units
+      (:data:`QUICK_START_FUEL_TYPES`) whose plant is *not* running.
+
+    A cold slow-start unit (coal / combined-cycle / steam / nuclear that is not
+    running) contributes to **neither** tier — it cannot respond within the
+    operating hour — which removes the perfect-foresight LP's phantom reserve.
+    Curtailed renewables count toward online reserve (ERCOT telemetry is
+    HSL - output); in real scarcity hours renewables run at potential so that
+    term is ~0 exactly where the adder matters.
 
     Args:
         fleet_arrays: The fleet the LP solved against (availability incl.
@@ -266,26 +322,34 @@ def reserve_headroom(
         storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` MW caps.
         storage_charge: ``(n_storage, T)`` charge MW (``None`` = none).
         storage_discharge: ``(n_storage, T)`` discharge MW.
-        as_plan_mw: Ancillary-service plan netting in MW.
+        as_plan_mw: Ancillary-service plan netting in MW (scalar or ``(T,)``).
         renewable_headroom: Optional ``(T,)`` curtailed wind+solar MW
             (potential cf x cap minus dispatched).
+        online_threshold_mw: Plant dispatch above which it counts as online.
 
     Returns:
-        ``(T,)`` reserves array in MW (may go negative under deep
-        scarcity; the LOLP pins to 1 below the MCL regardless).
+        Tuple ``(r_online, r_offline)`` of ``(T,)`` MW arrays. ``r_online`` may
+        go negative under deep scarcity; the LOLP pins to 1 below the MCL.
     """
     fuel_names = np.array(
         [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     thermal = np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
-    avail = (
-        fleet_arrays.pmax[thermal, None] * fleet_arrays.availability[thermal]
-    ).sum(axis=0)
-    served = np.asarray(dispatch, dtype=float)[thermal].sum(axis=0)
+    quick = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
+
+    disp = np.asarray(dispatch, dtype=float)
+    avail_cap = fleet_arrays.pmax[:, None] * fleet_arrays.availability
+    headroom = np.maximum(avail_cap - disp, 0.0)
+    online_unit = _online_plant_mask(fleet_arrays, disp, online_threshold_mw)
+
+    online_thermal = thermal[:, None] & online_unit
+    offline_quick = thermal[:, None] & quick[:, None] & ~online_unit
+    r_online_thermal = np.where(online_thermal, headroom, 0.0).sum(axis=0)
+    r_offline = np.where(offline_quick, headroom, 0.0).sum(axis=0)
 
     cap = np.asarray(storage_power_cap, dtype=float)
     storage_headroom = (
         cap.sum(axis=0) if cap.ndim == 2
-        else np.full(avail.shape, cap.sum())
+        else np.full(r_online_thermal.shape, cap.sum())
     )
     if storage_discharge is not None and np.size(storage_discharge):
         storage_headroom = (
@@ -293,10 +357,12 @@ def reserve_headroom(
             - np.asarray(storage_discharge, dtype=float).sum(axis=0)
             + np.asarray(storage_charge, dtype=float).sum(axis=0)
         )
-    reserves = avail - served + storage_headroom - as_plan_mw
+    as_arr = np.broadcast_to(
+        np.asarray(as_plan_mw, dtype=float), r_online_thermal.shape)
+    r_online = r_online_thermal + storage_headroom - as_arr
     if renewable_headroom is not None:
-        reserves = reserves + np.asarray(renewable_headroom, dtype=float)
-    return reserves
+        r_online = r_online + np.asarray(renewable_headroom, dtype=float)
+    return r_online, r_offline
 
 
 def resolve_lolp_params(
@@ -354,16 +420,23 @@ def scarcity_prices(
     year: int,
     reserves_mw: np.ndarray,
     system_lambda: np.ndarray,
+    reserves_online_mw: np.ndarray | None = None,
 ) -> dict[str, np.ndarray]:
     """Convenience wrapper: hourly LOLP + adder for a config and year.
 
-    Returns a dict with ``reserves_mw``, ``lolp`` (full-hour curve) and
-    ``scarcity_adder`` arrays. The caller adds the adder to its price
-    series (every zone sees the same system-wide adder, matching ERCOT,
-    where the reserve price adder is a system-level component of every
-    settlement point price).
+    ``reserves_mw`` is the full-hour reserve (online + offline);
+    ``reserves_online_mw`` is the online tier backing the first-half LOLP term
+    (defaults to ``reserves_mw`` for the legacy RTOFFCAP = 0 behaviour). Returns
+    a dict with ``reserves_mw``, ``reserves_online_mw``, ``lolp`` (full-hour
+    curve) and ``scarcity_adder`` arrays. The caller adds the adder to its price
+    series (every zone sees the same system-wide adder, matching ERCOT, where
+    the reserve price adder is a system-level component of every settlement
+    point price).
     """
     hours = len(np.asarray(reserves_mw))
+    online = (
+        reserves_mw if reserves_online_mw is None else reserves_online_mw
+    )
     mu, sigma = resolve_lolp_params(config, hours)
     adder = ordc_adder(
         reserves_mw, system_lambda,
@@ -376,9 +449,11 @@ def scarcity_prices(
             floor_active_mask(year, hours) if config.mode == "backcast"
             else True
         ),
+        reserves_online_mw=online,
     )
     return {
         "reserves_mw": np.asarray(reserves_mw, dtype=float),
+        "reserves_online_mw": np.asarray(online, dtype=float),
         "lolp": lolp(
             reserves_mw, mu, sigma, config.ordc_mcl_mw,
             config.ordc_lolp_shift_sigma),

@@ -115,12 +115,39 @@ deployment floors and the fitted ORDC scarcity offset — the mechanisms that
 previously "fed the answer in" — are off, and the remaining measured inputs
 (outages, F923 fuel, CEMS rates, the storage-AS reservation) all pass the
 forward-analogue test. After the 2026-06-17 HSL fix, the remaining standing
-exposure is **governance**: the CEMS deployment overlays and the ORDC offset
-still exist in code and were keeper-enabled as recently as runs 118/122/123. Keep
-them default-off and out of keepers; if used, label them probes and never quote
-their fit as skill. (The HSL output-target rescale — previously the one live
-measured-outcome-driven input — has been replaced with a real-data coverage
-reconciliation; see the section above.)
+exposure is **governance**: the CEMS deployment overlays still exist in code and
+were keeper-enabled as recently as runs 118/122/123. Keep them default-off and
+out of keepers; if used, label them probes and never quote their fit as skill.
+(The HSL output-target rescale — previously the one live measured-outcome-driven
+input — has been replaced with a real-data coverage reconciliation; see above.)
+
+## ORDC scarcity pricing made formulaic — RESOLVED (2026-06-17)
+
+The fitted scarcity offset (`ordc_reliability_deployment_mw`, ~2,500 MW tuned to
+the 2023 LMP residual) is **deprecated and out of the default reserve path**,
+replaced by a market-design-grounded **on-line/off-line reserve split**
+(`results.scarcity.reserve_headroom` / `ordc_adder`): only responsive capacity
+backs the ORDC curve — a cold slow-start unit the perfect-foresight LP left idle
+is not real-time reserve, and the published RTOLCAP (online) / RTOFFCAP
+(quick-start non-spin) two-tier LOLP structure is now evaluated honestly instead
+of the RTOFFCAP = 0 shortcut.
+
+Two candidate "formulaic" levers were tested and **rejected** on run 124:
+- **AS-plan netting** (measured or a published-standard formula): overshoots
+  catastrophically (2023 MAE 32 → 814, fires 3,300+ h vs 181 actual). ERCOT's
+  RTOLCAP already counts online AS-held capacity as reserve, so netting it
+  double-counts — confirming the prior `ordc_as_plan_mw` rejection.
+- A forecast AS-requirement formula was built then removed (its only purpose was
+  the rejected netting).
+
+The split alone **reproduces scarcity incidence** (online reserve < the 6,500 MW
+floor in 178 h ≈ 181 actual >$200 h) and improves 2023 monthly LMP MAE
+**32.3 → 27.7** (2024/25 neutral) with **no fitted constant**. It does not fully
+close the 2023 magnitude gap, and per Rule #1 that residual is **not** chased
+with an offset: its honest cause is the bang-bang energy-only LP never
+part-loading units to carry spinning reserve. The real next step is **AS/reserve
+co-optimization in the LP** (the documented B5a structural gap), not a knob. See
+`docs/ordc-overlay.md`.
 
 The strongest single confirmation remains the still-unrun **statistical-mode
 backcast** (every overlay off — `forecast-validation-plan.md` Phase 3): it would

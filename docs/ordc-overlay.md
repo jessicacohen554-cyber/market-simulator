@@ -128,19 +128,46 @@ below the MCL in 1,000+ hours of 2023 (vs 104 actual hours above $500),
 RTOFFCAP **count AS-held capacity as reserves** (undeployed Reg/RRS/ECRS
 headroom of on-line units is exactly what RTOLCAP measures), so subtracting
 the AS plan from headroom double-counts scarcity. The default is therefore
-`ordc_as_plan_mw = 0`: the model's full dispatchable headroom plays the role
-of RTOLCAP + RTOFFCAP (treated as all on-line, RTOFFCAP = 0 — the LP has no
-commitment state; both LOLP terms are evaluated at the same R, which
-*understates* the first-half term relative to a real on-line/off-line split).
+`ordc_as_plan_mw = 0`. (Re-confirmed 2026-06-17 with the formulaic AS
+requirement: netting ~5.8 GW still drives 2023 monthly MAE 32 -> 814 and fires
+the adder in 3,300+ hours vs 181 actual. AS netting is the wrong lever.)
 
-**Known approximation (documented, both directions):** the LP's headroom
-overstates real on-line reserves in moderately tight hours (capacity that was
-actually off-line and slower than 30 minutes counts in neither RTOLCAP nor
-RTOFFCAP, but the LP counts it — perfect commitment), and understates real
-reserves by omitting Load Resources (~2-3 GW of RRS/ECRS is load-side, not in
-the model's supply fleet). These partially offset; resolving them properly is
-AS co-optimization, which is explicitly **out of scope** (a future
-battery-economics enhancement, not this overlay).
+### On-line / off-line reserve split — implemented (2026-06-17)
+
+The real overstatement is **perfect commitment**, not un-netted AS: the
+energy-only LP counts a cold, slow-start unit it happened to leave idle as
+fully available reserve. `reserve_headroom` now returns an **(online, offline)**
+split (`results.scarcity`):
+
+* **online (spinning)** — headroom on thermal units whose plant is running
+  (plant-level, since per-plant binning splits a plant into tranches), plus
+  storage and curtailed-renewable headroom;
+* **offline (30-min non-spin)** — available capacity on *quick-start* units
+  (gas CT / oil) whose plant is not running;
+* a cold **slow-start** unit (coal / CC / steam / nuclear, idle) backs
+  **neither** tier.
+
+`ordc_adder` then evaluates the full-hour LOLP term on `online + offline` and
+the first-half term on `online` alone (the published RTOLCAP / RTOFFCAP
+structure), instead of the old RTOFFCAP = 0 shortcut. This is the
+market-design-grounded replacement for the fitted RTORDPA offset and carries no
+fitted constant.
+
+**Validated on run 124 (all overlays off, offset 0):** the split moves 2023
+from 2 -> 33 model hours >$200 (181 actual) and improves 2023 monthly LMP MAE
+**32.3 -> 27.7**, with 2024/2025 ~neutral (7.8 -> 7.9, 2.3 -> 2.3). The online
+reserve drops below the 6,500 MW floor in **178 hours ≈ the 181 actual >$200
+hours**, so the split reproduces scarcity *incidence* correctly. It does **not**
+fully close the 2023 magnitude gap (33 vs 181), and per Non-Negotiable Rule #1
+that residual is **not** chased with an offset: its honest cause is that the
+bang-bang LP never part-loads units to carry spinning reserve, so even the
+online tier is generous. Closing it properly is **AS / reserve
+co-optimization** in the LP (force units to part-load against a reserve
+requirement) — the genuine next structural step, larger than this overlay.
+
+**Remaining approximation:** the model omits Load Resources (~2-3 GW of
+RRS/ECRS is load-side, not in the supply fleet), which the reserve
+co-optimization would also carry.
 
 ### System lambda and the output series
 
@@ -278,12 +305,16 @@ Per-class energy revenue, run92_kiamichi backcast, energy-only -> with adder
 Direction sanity holds: peakers and storage move most (in relative terms), and
 the adder revenue vanishes in the comfortable 2025 reserve year.
 
-## Reliability-deployment overlay (RTORDPA analogue) — stress-year scarcity calibration
+## Reliability-deployment overlay (RTORDPA analogue) — DEPRECATED
 
-**Status:** implemented, `ScenarioConfig.ordc_reliability_deployment_mw`
-(default 0 — reproduces the published-ORDC-only baseline; recommended ERCOT
-value **~2,500 MW**). Netted from reserves in both the post-solve deriver
-(`--reliability-deployment`) and the runner's capacity-economics path.
+**Status (2026-06-17): SUPERSEDED by the on-line/off-line reserve split above.**
+`ScenarioConfig.ordc_reliability_deployment_mw` was a flat, non-physical offset
+**fitted to the 2023 LMP residual** (~2,500 MW). Per claude.md (no pinning the
+backcast to actuals) it is no longer part of the default reserve computation;
+it is retained only as a default-0, explicitly-labelled diagnostic probe that
+still subtracts from the online reserve when set. The grounded mechanism (the
+on-line/off-line split) now plays its role. The history below is kept for
+context.
 
 **Why it exists.** The published ORDC overlay above is parameter-honest and
 therefore recovers only ~7% of the 2023 summer scarcity gap (2023 monthly LMP
