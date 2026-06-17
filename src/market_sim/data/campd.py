@@ -36,10 +36,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.paths import RAW_DATA_DIR
+
 logger = logging.getLogger(__name__)
 
-# Default location of the raw CAMPD state-year extracts.
-RAW_DATA_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data"
+# Default location of the raw CAMPD state-year extracts (re-exported from the
+# central path registry).
 
 # Unit conversions to kilograms (the canonical mass unit for derived rates).
 SHORT_TON_TO_KG: float = 907.18474
