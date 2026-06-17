@@ -435,6 +435,17 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
+    as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
+    # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
+    # 0.01*load (WECC MORC contingency + 1% regulation-up; see
+    # fleet.caiso_operating_reserve_mw) from the gas top-of-merit headroom before
+    # the energy curve clears, so capacity held as reserve cannot also offer
+    # energy and the tight-hour / evening-tail price lifts. Default off
+    # (byte-identical baseline); CAISO-only. A published-standard, no-fitted-
+    # constants scaffold until OASIS cleared-AS data (AS_REQ/AS_RESULTS) can be
+    # pulled to replace the formula with measured MW (outbound network is blocked
+    # in the remote env). Lifts the evening tail only — it does NOT touch the
+    # separately-handled midday floor.
     storage_as_commitment: bool = False  # ERCOT backcast: reserve the measured
     # hourly storage upward-AS MW (RegUp/RRS/ECRS cleared by batteries, from the
     # per-resource-type series) from the storage dispatch power cap, so capacity
@@ -1354,6 +1365,7 @@ TIER_TAGS: dict[str, int] = {
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
     "as_reserve_withholding": 1,
+    "as_reserve_formula": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
