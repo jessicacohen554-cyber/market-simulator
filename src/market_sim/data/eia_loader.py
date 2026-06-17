@@ -18,20 +18,23 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.paths import (
+    EIA_930_DIR,
+    EIA_HOURLY_DIR,
+    ISO_TRANSMISSION_DIR,
+    ZONE_DEMAND_DIR,
+)
 
 logger = logging.getLogger(__name__)
 
-# Default location of the EIA-930 parquet extracts, resolved relative to the
-# repository root (this file lives at src/market_sim/data/eia_loader.py).
-DATA_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-930"
+# Default location of the EIA-930 parquet extracts (from the central registry).
+DATA_DIR: Path = EIA_930_DIR
 
 # PJM (metered, 20 transmission zones) and ERCOT (NP3-565-CD native load, 8
 # weather zones) both publish per-zone hourly load here, one file per year.
 # Used to give each model zone its *own* hourly load shape (zones peak at
 # different times) instead of a single system shape scaled by a static share.
-_ZONAL_LOAD_DIR: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "zone-specific-demand"
-)
+_ZONAL_LOAD_DIR: Path = ZONE_DEMAND_DIR
 # Back-compat alias (PJM-specific name) for any external importer.
 _PJM_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR
 
@@ -129,9 +132,7 @@ _CAISO_TAC_MIN_HOURS: int = 28 * 24
 # per year. Used to add PJM's net export to the demand the internal fleet must
 # serve, closing the energy-only model's largest structural gap (PJM is a large
 # net exporter, ~40 TWh in 2023).
-_PJM_INTERCHANGE_DIR: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "iso-specific-transmission"
-)
+_PJM_INTERCHANGE_DIR: Path = ISO_TRANSMISSION_DIR
 
 # Real PJM transmission zone -> model zone (the eight-zone aggregation in
 # iso_configs._pjm_config). ``RTO`` is the system total and is dropped.
@@ -164,8 +165,7 @@ _GENERATION_PROFILES_FILE = "eia_generation_profiles.parquet"
 # per balancing authority (built from the long uploads by
 # scripts/convert_eia930.py). Unlike the per-ISO demand-profiles parquet,
 # they carry the Total Interchange series (DC-tie imports/exports), used to
-# net out interchange in load_demand.
-EIA_HOURLY_DIR: Path = Path(__file__).parents[3] / "data" / "eia_hourly"
+# net out interchange in load_demand. Re-exported from the central registry.
 
 # Model ISO -> EIA-930 BA code for the per-BA wide hourly extract. An ISO
 # with no entry here falls back to the demand-profiles parquet.
