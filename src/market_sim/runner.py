@@ -613,11 +613,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 + solar_cf * np.asarray(solar_cap)[:, None]
                 - result.wind_dispatched - result.solar_dispatched
             ).sum(axis=0)
-            reserves = reserve_headroom(
+            # Online/offline reserve split (results.scarcity): only responsive
+            # capacity backs the ORDC curve — a cold slow-start unit the
+            # perfect-foresight LP left idle is NOT real-time reserve. This is
+            # the market-design-grounded replacement for the fitted flat RTORDPA
+            # offset (the offset stays addable, default 0, as an explicit probe;
+            # NOT netting the AS plan — ERCOT's RTOLCAP already counts online
+            # AS-held capacity as reserve, so subtracting it double-counts).
+            r_online, r_offline = reserve_headroom(
                 fleet_arrays, result.dispatch, storage.power_cap,
                 result.storage_charge, result.storage_discharge,
-                config.ordc_as_plan_mw
-                + effective_reliability_deployment_mw(year, config),
+                effective_reliability_deployment_mw(year, config),
                 renewable_headroom=ren_headroom,
             )
             d_tot = year_demand.sum(axis=0)
@@ -628,7 +634,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 result.prices.mean(axis=0),
             )
             adder = scarcity_prices(
-                config, year, reserves, lam)["scarcity_adder"]
+                config, year, r_online + r_offline, lam,
+                reserves_online_mw=r_online)["scarcity_adder"]
             econ_prices = result.prices + adder[None, :]
             logger.info(
                 "year %d: ORDC scarcity adder for capacity economics — "

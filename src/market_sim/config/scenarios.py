@@ -337,27 +337,23 @@ class ScenarioConfig:
     # TOD-block LOLP parameters (columns: season, tod_block, mu_mw,
     # sigma_mw — ERCOT NP6-576-ER layout). When set, overrides the flat
     # ordc_lolp_mu_mw / ordc_lolp_sigma_mw fallbacks per hour.
-    ordc_reliability_deployment_mw: float = 0.0  # Reliability-deployment /
-    # reserve-tightness offset (MW), subtracted from the model's reserves
-    # before the ORDC curve is evaluated. This is the RTORDPA analogue: the
-    # discretionary reserve withholding / out-of-market reliability
-    # deployment (ECRS/RUC) that drives real ERCOT scarcity ABOVE the
-    # published ORDC formula, which the perfect-foresight LP cannot produce
-    # (its reserves are biased high by perfect commitment). It is NOT a
-    # published ORDC parameter and NOT physically derived — it is an
-    # explicit, scenario-adjustable calibration of stress-year scarcity
-    # intensity, kept separate from the ORDC formula so the formula stays
-    # parameter-honest. The ORDC curve's nonlinearity makes it self-
-    # targeting: it lifts the adder only when reserves are already low
-    # (tight hours), leaving slack years ~unchanged. Default 0 reproduces
-    # the published-ORDC-only baseline. Recommended ERCOT value ~2,500 MW,
-    # calibrated so the 2023 stress year's scarcity pricing is reproduced
-    # under its own market design (2023 monthly LMP MAE 32.5 -> ~15 with
-    # the adder; 2024/2025 ~unchanged) — see docs/ordc-overlay.md. Values
-    # above ~4,000 MW overshoot; the full ~8,100 MW AS plan blows up (the
-    # rejected ordc_as_plan_mw netting). A forecast can vary it as a
-    # scenario knob ("2023 reserve conservatism recurs" vs "prices to
-    # fundamentals").
+    ordc_reliability_deployment_mw: float = 0.0  # DEPRECATED reliability-
+    # deployment / reserve-tightness offset (MW), subtracted from reserves
+    # before the ORDC curve. This was the fitted RTORDPA analogue — a flat,
+    # NON-physical offset calibrated to the 2023 stress year's LMP residual
+    # (~2,500 MW). It is **superseded** by the formulaic reserve accounting in
+    # results.scarcity: (1) the online/offline reserve split (cold slow-start
+    # capacity no longer counts as responsive reserve — the real cause of the
+    # perfect-commitment headroom overstatement this offset papered over), and
+    # (2) AS-plan netting from the measured cleared-DAM up-AS series (or the
+    # ercot_operating_reserve_mw formula in forecast / 2023). Both are
+    # market-design-grounded and renewable-responsive, so the keeper needs no
+    # fitted offset. Per claude.md (no pinning the backcast to actuals) this is
+    # kept only as a default-0, explicitly-labelled diagnostic probe — never a
+    # keeper — and is still added on top of the AS netting when set, so a
+    # scenario can model extra discretionary conservatism. The runner no longer
+    # depends on it for the baseline. See docs/backcast-measured-data-audit-
+    # 2026-06.md and docs/ordc-overlay.md.
     as_revenue_enabled: bool = False  # Credit ERCOT ancillary-service market
     # revenue (Reg/RRS/ECRS/Non-Spin) in the capacity economics — the
     # retirement, new-entry and storage-entry screens. Default off (energy +
