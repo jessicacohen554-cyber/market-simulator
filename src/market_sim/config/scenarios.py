@@ -187,6 +187,15 @@ class ScenarioConfig:
     use_campd_bins: bool = True
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
+    # Commercial-operation-date (COD) ramp (market_sim.data.cod_ramp). The
+    # backcast fleet snapshot is a recent vintage that includes units built
+    # AFTER the solved year; with this on (the default), every generator —
+    # thermal, nuclear, oil — is ramped by its commissioning year so a backcast
+    # dispatches only what was actually online (units built after the run year
+    # are dropped; units built during it are pro-rated). This matches the rule
+    # renewables/storage already follow. Backcast-mode only; set False to keep
+    # the full present-day snapshot (e.g. to reproduce a pre-COD-ramp run).
+    cod_ramp_enabled: bool = True
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
