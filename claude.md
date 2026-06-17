@@ -32,6 +32,7 @@ tests/       → pytest, one file per module
 
 ## Non-Negotiable Rules
 
+1. **Right market structure first, offer-curve tuning second — backcast match is NOT the objective.** The goal is a model whose *mechanisms* mirror the real market (reserve withholding/co-optimization, scarcity pricing, congestion, commitment, fuel/passthrough physics). Build the correct structure, *then* tune offer curves to calibrate the level. **Never judge a structurally-correct mechanism by whether it improves the backcast fit, and never reject/revert it because the residual didn't move** — a real market behaviour stays in even if it makes the fit worse (then fix the actual root cause per #11). Conversely, never reach the right number through a mechanism that isn't real (a fitted adder, a load proxy, a haircut tuned to the residual). A run is a "keeper" because it is the most structurally faithful, not because it has the lowest MAE; a more-accurate run that is missing real structure is **not** a keeper.
 1. **No Python loops over hours in LP construction.** Use np.tile, np.repeat, scipy.sparse.kron, block_diag. If you write `for t in range(8760):` in the matrix builder, stop and vectorize.
 1. **Renewables are decision variables** on LHS of energy balance with MC=0, upper bound = CF × capacity. NOT netted from demand.
 1. **Prices = LP duals** on energy balance constraints. No separate pricing model.
