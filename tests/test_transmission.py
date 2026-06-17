@@ -29,6 +29,7 @@ from market_sim.model.transmission import (
     build_wecc_import_generators,
     extend_with_import_node,
     get_ttc_array,
+    inject_interchange_shape,
     wecc_border_carbon_adder,
 )
 
@@ -364,6 +365,67 @@ class TestWeccImportModel(unittest.TestCase):
         # The must-run unit honors its minimum; the import tranches stay off.
         self.assertTrue(np.all(result.dispatch[7] >= 4000.0 - 1e-6))
         np.testing.assert_allclose(result.dispatch[:6], 0.0, atol=1e-6)
+
+
+class TestInterchangeShaping(unittest.TestCase):
+    """Diurnal/seasonal shaping of the CAISO priced import/export node."""
+
+    def _caiso_node_fleet(self, hours):
+        import pandas as pd
+
+        gens = build_import_generators("CAISO") + build_export_sinks("CAISO")
+        zone_names = ["NP15", "ZP26", "SP15", "WECC_import"]
+        fa = generators_to_fleet_arrays(gens, zone_names, hours=hours)
+        clock = pd.date_range("2024-01-01", periods=hours, freq="h")
+        return fa, gens, clock.month.to_numpy(), clock.hour.to_numpy()
+
+    def test_shaping_swings_import_down_and_export_up_midday(self):
+        H = 8760
+        fa, gens, month, hod = self._caiso_node_fleet(H)
+        avail_before = fa.availability.copy()
+        applied = inject_interchange_shape(fa, "CAISO", 2024)
+        self.assertTrue(applied)
+
+        imp = np.array([g.pmax_mw > 0 for g in gens])
+        exp = np.array([g.pmax_mw <= 0 and g.pmin_mw < 0 for g in gens])
+        spring_mid = (np.isin(month, [4, 5])) & (hod >= 12) & (hod <= 15)
+        night = hod <= 4
+
+        # Import availability is shaped down at spring midday vs overnight.
+        imp_avail = fa.availability[imp]
+        self.assertLess(
+            imp_avail[:, spring_mid].mean(), 0.6 * imp_avail[:, night].mean()
+        )
+        # And it actually changed from the flat base.
+        self.assertFalse(np.allclose(fa.availability[imp], avail_before[imp]))
+
+        # Export floor (min_gen, negative = export) opens up at spring midday.
+        self.assertIsNotNone(fa.min_gen)
+        exp_floor = fa.min_gen[exp]
+        self.assertLess(exp_floor[:, spring_mid].mean(), -100.0)
+        # Overnight export is shut (winter/night CA imports).
+        self.assertGreater(exp_floor[:, night].mean(), -50.0)
+
+    def test_no_op_without_import_node(self):
+        # A plain thermal fleet has no import/export rows -> returns False and
+        # leaves availability untouched (byte-identical).
+        gens = [
+            Generator(
+                unit_id="g1", name="g1", zone="NP15", fuel_type="gas_cc",
+                pmax_mw=400.0, pmin_mw=0.0,
+            )
+        ]
+        fa = generators_to_fleet_arrays(gens, ["NP15"], hours=48)
+        before = fa.availability.copy()
+        self.assertFalse(inject_interchange_shape(fa, "CAISO", 2024))
+        np.testing.assert_array_equal(fa.availability, before)
+
+    def test_forecast_year_is_unshaped(self):
+        # No EIA-930 envelope for a forecast year -> no-op, node unchanged.
+        fa, gens, _, _ = self._caiso_node_fleet(48)
+        before = fa.availability.copy()
+        self.assertFalse(inject_interchange_shape(fa, "CAISO", 2030))
+        np.testing.assert_array_equal(fa.availability, before)
 
 
 class TestGenericImportNode(unittest.TestCase):
