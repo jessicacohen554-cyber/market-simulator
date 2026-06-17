@@ -1043,6 +1043,15 @@ function updateIsoChrome(iso){
 async function selectIso(iso){
   st.iso=iso;
   META=window.BC.meta[iso];
+  // benchmark.js is the large data file; if the deploy shipped the shell
+  // without it (404 / stale / out-of-sync build), benchGz is undefined here.
+  // Fail with an actionable message instead of a cryptic "undefined is not an
+  // object" that blanks the page.
+  if(!window.BC.benchGz||window.BC.benchGz[iso]==null)
+   throw new Error("benchmark data for "+iso+" is unavailable — "
+    +"frontend/data/backcast/benchmark.js did not load or is out of sync with "
+    +"the page. Re-run the Pages deploy (scripts/build_manifest.py) so the "
+    +"shell and benchmark.js are rebuilt together.");
   BENCH=await inflate(window.BC.benchGz[iso]);
   const first=isoRunsNewest()[0];
   st.run=first?first.id:null;
@@ -1058,6 +1067,16 @@ async function selectIso(iso){
   build();
 }
 async function boot(){try{
+  // The two data files (manifest.js → window.BC.meta/manifest, benchmark.js →
+  // window.BC.benchGz) load via <script src> before this runs. If either is
+  // missing (404 / empty / blocked), surface exactly which one rather than
+  // crashing deep inside selectIso.
+  if(!window.BC||!window.BC.meta||!window.BC.manifest)
+   throw new Error("manifest data is unavailable — "
+    +"frontend/data/backcast/manifest.js did not load.");
+  if(!window.BC.benchGz)
+   throw new Error("benchmark data is unavailable — "
+    +"frontend/data/backcast/benchmark.js did not load.");
   const isos=Object.keys(window.BC.meta);
   const isoSel=document.getElementById("isoSel");
   isoSel.innerHTML=isos.map(i=>{const n=isoRunCount(i);
