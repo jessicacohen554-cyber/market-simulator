@@ -425,6 +425,24 @@ class ScenarioConfig:
     # (byte-identical); only fires when priced_interchange is on and a measured
     # envelope exists. Targets CAISO's over-priced midday floor (the flat node
     # floors price at the cheapest active import tranche all day).
+    caiso_gas_commitment_floor: bool = False  # CAISO Resource-Adequacy
+    # must-offer minimum-commitment floor: hold the gas fleet (gas_cc/gas_ct/
+    # gas_st) online over the midday solar-glut window at the measured EIA-930
+    # NG: NG profile (caiso_gas_floor_frac-scaled), via the hour-varying
+    # FleetArrays.min_gen lower bound (transmission.
+    # inject_caiso_gas_commitment_floor). RA gas can't economically cycle off
+    # for the evening ramp, so it over-generates midday and CAISO exports/
+    # curtails the surplus at ~$0; the economic dispatch instead decommits gas
+    # and imports, staying balanced (so its midday marginal is a >=$28 import/
+    # gas — the over-priced floor). The floor makes the model LONG so its
+    # surplus prices at ~$0. Default off (byte-identical); CAISO-only, no-op
+    # without a measured NG: NG profile. Pair with --interchange-shaping
+    # (export side) + the $0 export/curtailment sink.
+    caiso_gas_floor_frac: float = 1.0  # Fraction of the measured EIA-930 NG: NG
+    # (month x hour-of-day median) the midday gas floor targets. 1.0 = the full
+    # measured profile; lower keeps modeled gas TWh nearer EIA-923 (forcing
+    # commitment can inflate gas — the surplus must export/curtail, not pad the
+    # mix). Only used when caiso_gas_commitment_floor is on.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
@@ -1371,6 +1389,8 @@ TIER_TAGS: dict[str, int] = {
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
+    "caiso_gas_commitment_floor": 1,
+    "caiso_gas_floor_frac": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "storage_as_commitment": 1,
