@@ -22,6 +22,11 @@ inputs/processed/*.parquet
 # emission rates, read at runtime by the dispatch LP and calibration report.
 !inputs/processed/parasitic_load_factors.parquet
 !inputs/processed/plant_emission_rates.parquet
+# Per-year EIA-860 plant-level CHP flag lookup (~0.5 MB), produced by
+# scripts/build_eia860_chp_by_year.py from the committed EIA-860 release zips.
+# The fleet loader reads it so a multi-year backcast buckets each year's gas
+# cogens with that year's CHP designation instead of the latest snapshot's.
+!inputs/processed/eia860_chp_by_year.parquet
 
 # Generated backcast dashboard files — assembled from the committed registry
 # sidecars + bench parts by scripts/build_manifest.py (locally for preview, in
