@@ -16,6 +16,7 @@ import numpy as np
 from market_sim.config.constants import PJM_PRIMARY_RESERVE_LSC_FACTOR
 from market_sim.results.scarcity import (
     largest_single_contingency_mw,
+    load_pjm_measured_reserve_requirement,
     pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
 )
@@ -118,6 +119,24 @@ class TestOrdcShortfallSteps(unittest.TestCase):
         )
         self.assertEqual(req_total, 1190.0)
         np.testing.assert_allclose(pens, [300.0, 850.0])
+
+
+class TestMeasuredRequirementLoader(unittest.TestCase):
+    """The backcast measured-requirement loader (reliability input)."""
+
+    def test_loads_8760_positive_requirement(self):
+        req = load_pjm_measured_reserve_requirement(2024, 8760)
+        if req is None:
+            self.skipTest("PJM-AS 2024 parquet not present")
+        self.assertEqual(req.shape, (8760,))
+        self.assertTrue((req > 0).all())  # holes filled, never zero
+        # Matches the measured PJM_RTO Primary requirement (~3.42 GW, 2024).
+        self.assertTrue(3000.0 < req.mean() < 3700.0)
+
+    def test_missing_year_returns_none(self):
+        self.assertIsNone(
+            load_pjm_measured_reserve_requirement(1999, 8760)
+        )
 
 
 class TestMeasuredRequirementHonestyGate(unittest.TestCase):
