@@ -15,6 +15,7 @@ from market_sim.data.eia_loader import (
     load_demand_meta,
     load_ercot_battery_gen,
     load_generation_profiles,
+    measured_interchange_envelope,
     nyiso_zonal_load_shares,
 )
 
@@ -268,6 +269,31 @@ class TestNYISODemand(unittest.TestCase):
         """
         zone_names = get_iso_config("NYISO").zone_names
         self.assertIsNone(nyiso_zonal_load_shares(_NYISO_TEST_YEAR, zone_names))
+
+
+class TestInterchangeEnvelope(unittest.TestCase):
+    """Measured EIA-930 diurnal/seasonal net-interchange envelope (CAISO)."""
+
+    def test_caiso_envelope_swings_import_overnight_export_midday(self):
+        env = measured_interchange_envelope("CAISO", 2024, HOURS_PER_YEAR)
+        self.assertIsNotNone(env)
+        imp, exp = env
+        self.assertEqual(imp.shape, (HOURS_PER_YEAR,))
+        self.assertEqual(exp.shape, (HOURS_PER_YEAR,))
+        self.assertTrue((imp >= 0).all() and (exp >= 0).all())
+        hod = np.arange(HOURS_PER_YEAR) % 24
+        midday = (hod >= 11) & (hod <= 15)
+        night = hod <= 5
+        # CA imports overnight and backs off / exports midday.
+        self.assertLess(imp[midday].mean(), imp[night].mean())
+        # Midday carries real export capability; deep night essentially none.
+        self.assertGreater(exp[midday].mean(), 200.0)
+        self.assertLess(exp[night].mean(), 50.0)
+
+    def test_forecast_year_returns_none(self):
+        self.assertIsNone(
+            measured_interchange_envelope("CAISO", 2030, HOURS_PER_YEAR)
+        )
 
 
 class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
