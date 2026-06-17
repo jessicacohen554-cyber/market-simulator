@@ -869,8 +869,9 @@ def run_year(
     if storage_daily_cycling:
         config = config.with_overrides(storage_daily_cycling=True)
     # AS reserve withholding (run_calibration_full --as-reserve-withholding):
-    # ERCOT-only upper-bound probe removing cleared up-AS MW from thermal
-    # headroom (fleet.generators_to_fleet_arrays).
+    # remove the measured cleared reserve MW from the gas/flexible-thermal
+    # headroom before the energy supply curve clears (ERCOT up-AS / PJM Primary
+    # Reserve requirement; fleet.generators_to_fleet_arrays).
     if as_reserve_withholding:
         config = config.with_overrides(as_reserve_withholding=True)
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
