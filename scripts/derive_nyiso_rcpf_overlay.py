@@ -381,13 +381,27 @@ _MODEL_ZONE_TO_NYISO_AS = {
 def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     """Measured per-model-zone stacked RT reserve price, NaN-padded.
 
-    Reads the per-zone NYISO RT ancillary-service file
-    (``inputs/raw-data/NYISO-AS/NYISO_as_rt_<year>.csv``,
-    scripts/process_nyiso_as.py) and returns the stacked reserve price
-    (10-min spin + 10-min non-sync + 30-min operating) for the representative
-    settlement zone of each model zone — the empirical target the modeled
-    locational adder is validated against. Empty when the file is absent.
+    Prefers the committed compact reference
+    (``inputs/calibration/actual_as_reserve_NYISO.parquet``, which carries one
+    ``reserve_<model_zone>`` column per model zone, built by
+    scripts/process_nyiso_as.py); falls back to the raw per-zone RT CSV. The
+    value is the stacked reserve price (10-min spin + 10-min non-sync + 30-min
+    operating) of the settlement zone whose cascade tier the model zone carries
+    — the empirical target the modeled locational adder is validated against.
+    Empty when neither source is available.
     """
+    ref = CAL_DIR / "actual_as_reserve_NYISO.parquet"
+    if ref.exists():
+        rf = pd.read_parquet(ref)
+        rf = rf[rf["year"] == year]
+        cols = {z: f"reserve_{z}" for z in _MODEL_ZONE_TO_NYISO_AS}
+        if rf.shape[0] and all(c in rf.columns for c in cols.values()):
+            out: dict[str, np.ndarray] = {}
+            for zone, col in cols.items():
+                arr = np.full(hours, np.nan)
+                arr[rf["hour"].to_numpy()] = rf[col].to_numpy()
+                out[zone] = arr
+            return out
     p = REPO / "inputs" / "raw-data" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
     if not p.exists():
         return {}
