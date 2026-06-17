@@ -1824,6 +1824,120 @@ NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
     2025: {("Upstate_West", "Capital_Hudson"): 3850.0},
 }
 
+# --- Forecast-grade reference-price interface (multi-ISO, ISO-agnostic) ---
+# The fitted IMPORT_TRANCHES/EXPORT_TRANCHES above are a backcast fit: their
+# prices/capacities are tuned to each ISO's net-interchange duration curve, so
+# they need re-fitting per year and are blind to neighbor fundamentals — fine
+# for a backcast, wrong for a 2026-2050 forecast. The reference-price interface
+# replaces them with a *forecast-native* construction: each neighbor's energy
+# price is built from forward drivers (its gas hub price and its load shape) and
+# the seam clears on the spread against the ISO's own price, bounded by the real
+# interface limit. Nothing here is tuned to the net-MWh target, so the backcast
+# (does the seam reproduce the measured net export *without being told to*?)
+# becomes genuine validation rather than a fit. See model-methodology-spec §8.3
+# and src/market_sim/data/neighbor_price.py.
+#
+#   neighbor_price[h] = (henry_hub[year] + gas_basis) x marginal_heat_rate
+#                       x load_shape(neighbor_load[h])
+#   import when ISO_price > neighbor_price + hurdle
+#   export when ISO_price < neighbor_price - hurdle
+#   |flow| <= interface_limit_mw
+@dataclass(frozen=True)
+class NeighborInterface:
+    """One external seam to a neighboring balancing authority.
+
+    Every field is a forecast input (a forward gas/load driver) or a
+    physically-pinned structural constant (heat rate, hurdle, interface
+    rating) — none is tuned to a net-interchange target. ``ba_code`` names
+    the EIA-930 balancing authority whose hourly load drives the neighbor's
+    price *shape*; when that per-BA extract is absent (e.g. the Carolinas,
+    which have no standalone extract yet) ``proxy_ba`` supplies a stand-in
+    load shape one seam removed, and the neighbor still prices individually.
+    Drop in the real ``<ba_code> hourly.parquet`` later and the proxy is
+    bypassed automatically — no structural change. A neighbor that resolves
+    to neither its own nor a proxy extract folds into the capacity-weighted
+    aggregate (:meth:`InterfacePrices.aggregate`).
+
+    Attributes:
+        name: Human label for the seam, e.g. ``"MISO"``.
+        ba_code: Primary EIA-930 BA code for the neighbor's load shape.
+        proxy_ba: Fallback BA code for the load shape when ``ba_code`` has no
+            extract; ``None`` to fold straight into the aggregate.
+        gas_basis: $/MMBtu basis of the neighbor's gas hub vs Henry Hub.
+        marginal_heat_rate: MMBtu/MWh of the neighbor's price-setting unit
+            (a gas CC/CT on the margin); the structural HR pin (~7.5).
+        hurdle: $/MWh seam friction (wheeling + losses + scheduling), the
+            dead-band the ISO↔neighbor spread must clear before flow starts.
+        interface_limit_mw: bidirectional transfer rating bounding seam flow.
+        border_zones: ISO model zones the seam physically lands on.
+        load_shape_exponent: convexity of the price response to neighbor
+            load; 1.0 is a parameter-free, mean-preserving linear shape
+            (>1 adds a peak premium from climbing the neighbor's offer stack).
+    """
+
+    name: str
+    ba_code: str
+    gas_basis: float
+    marginal_heat_rate: float
+    hurdle: float
+    interface_limit_mw: float
+    border_zones: tuple[str, ...]
+    proxy_ba: str | None = None
+    load_shape_exponent: float = 1.0
+
+
+# Per-ISO neighbor registry for the reference-price interface. ISO-agnostic
+# machinery, parameterized here per ISO + data. PJM is the validated ISO; other
+# ISOs adopt the same construction once their neighbor specs are filled in (so
+# they stay byte-identical until then). Tier 3 (calibration) — interface limits
+# and gas bases carry "verify against published ratings / EIA-923" caveats.
+#
+# PJM seams (PJM is a structural net exporter): MISO to the west, NYISO to the
+# north/east, and the Carolinas/Southeast to the south. Heat rate 7.5 MMBtu/MWh
+# is an older gas-CC marginal unit (HEAT_RATE_BINS gas "older"); hurdle $3/MWh is
+# a mid-range wheeling+loss+scheduling friction (the $2-4 band). Gas bases are
+# the neighbor hub vs Henry Hub:
+#   - MISO: Chicago Citygate / mid-continent trades ~flat to Henry Hub. 0.0.
+#   - NYISO: reuse GAS_BASIS_DIFFERENTIAL["NYISO"] (+0.55, EIA-923 delivered).
+#   - Carolinas: Transco/Southeast trades ~flat to Henry Hub. 0.0. ba_code DUK
+#     has no extract yet, so it prices on the SOCO (Southern Co.) load shape
+#     until a Duke extract is added.
+# Interface limits envelope the published PJM seam transfer capabilities (PJM
+# RTEP / NERC interconnection-reliability postings); verify against PJM's
+# published interface ratings before quoting a forecast.
+INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
+    "PJM": [
+        NeighborInterface(
+            name="MISO",
+            ba_code="MISO",
+            gas_basis=0.0,
+            marginal_heat_rate=7.5,
+            hurdle=3.0,
+            interface_limit_mw=10000.0,
+            border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
+        ),
+        NeighborInterface(
+            name="NYISO",
+            ba_code="NYIS",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["NYISO"],
+            marginal_heat_rate=7.5,
+            hurdle=3.0,
+            interface_limit_mw=3000.0,
+            border_zones=("PJM_EMAAC",),
+        ),
+        NeighborInterface(
+            name="Carolinas",
+            ba_code="DUK",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=7.5,
+            hurdle=3.0,
+            interface_limit_mw=3500.0,
+            border_zones=("PJM_Dominion",),
+        ),
+    ],
+}
+
 # Import tranche forced outage rate, per ISO. CAISO's WECC supply blocks
 # carry a generation-like availability (NERC GADS — representative for
 # out-of-state generation); PJM's blocks are scheduled interties whose
