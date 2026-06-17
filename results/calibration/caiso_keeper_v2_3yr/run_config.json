@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-06-17T18:15:52",
+  "timestamp": "2026-06-17T18:56:02",
   "git": {
-    "sha": "ae17f1e",
+    "sha": "6a55269",
     "branch": "claude/caiso-model-diagnostics-qcc173",
     "dirty": false,
     "changed_files": [],
@@ -45,7 +45,7 @@
     "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": true,
-    "git_sha": "ae17f1e"
+    "git_sha": "6a55269"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -176,12 +176,12 @@
     "reserve_margin_build_enabled": false,
     "planning_reserve_margin": 0.1375,
     "interchange_shaping": false,
-    "caiso_gas_commitment_floor": false,
-    "caiso_gas_floor_frac": 1.0,
+    "caiso_gas_commitment_floor": true,
+    "caiso_gas_floor_frac": 0.8,
     "as_reserve_withholding": false,
     "as_reserve_formula": false,
     "storage_as_commitment": false,
-    "negative_renewable_offers": false,
+    "negative_renewable_offers": true,
     "renewable_keep_running_value": 20.0,
     "renewable_cf_adjustment": 1.0,
     "basis_differential_factor": 1.0,

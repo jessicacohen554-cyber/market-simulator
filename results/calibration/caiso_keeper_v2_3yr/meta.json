@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-17T18:15:52",
+  "timestamp": "2026-06-17T18:56:02",
   "iso": "CAISO",
   "years": [
     2023,
@@ -52,10 +52,10 @@
   "hydro_backfill_year": 2024,
   "hydro_eia930_monthly": true,
   "interchange_shaping": false,
-  "negative_renewable_offers": true,
-  "caiso_gas_commitment_floor": true,
-  "caiso_gas_floor_frac": 0.8,
+  "negative_renewable_offers": null,
+  "caiso_gas_commitment_floor": null,
+  "caiso_gas_floor_frac": null,
   "btm_backfill_year": null,
-  "git_sha": "ae17f1e",
+  "git_sha": "6a55269",
   "highspy_version": "1.14.0"
 }
