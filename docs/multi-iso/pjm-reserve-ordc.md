@@ -237,6 +237,50 @@ bundle it reconstructed the fleet at *full* availability while reading the
 *withheld* dispatch — over-stating reserve by the withdrawn MW (it reported
 online reserve unchanged at ~15 GW). The reconstruction now mirrors the solve.
 
+## Campaign: build the reserve price structure, then tune (claude.md #1)
+
+User-set methodology: **right market structure first, offer-curve tuning second;
+backcast match is not the objective.** The afternoon $75–200 band is a
+price-formation structure the energy-only LP lacks, built in sequence (not by
+fitting an adder or a haircut to the residual).
+
+**Targeting (Jul/Aug afternoon peak, 2024, from `pjm_27_aswh`, via
+`scripts/_pjm_online_headroom_breakdown.py`).** Online plants are already ~91%
+loaded; the 13.4 GW of online headroom is CT_PEAKER 4.8 (75% loaded) + COAL 3.4 +
+CC_REGULAR 2.9 + baseload 1.8 + ST_GAS 0.5. Two findings reframe the build:
+
+1. The honesty gate's "14 GW online vs 3 GW" compares the model's **total**
+   online headroom to PJM's **synchronized-reserve product** (the 10-min slice) —
+   different quantities. PJM's online fleet also carries ~10 GW of slower
+   unloaded capacity; reserve scarcity (requirement binding) is genuinely rare in
+   both. So the band is the reserve **opportunity-cost price in non-shortage
+   hours**, not a shortage.
+2. **Why the pre-solve withholding is inert, exactly:** top-of-merit removes the
+   *expensive* CT/oil headroom, but the clearing price is set by the *cheap*
+   CC/coal headroom *below* it, so the margin is unchanged. Reserve is real but
+   must come off the **marginal** headroom to move price — which a pre-solve
+   availability haircut cannot target.
+
+**Phase 1 — commitment posture.** The LP's energy pass (P1, no unit commitment)
+part-loads many CCs rather than fully loading fewer, so cheap headroom is
+abundant at the margin. Tighten the online posture (startup/min-run economics, or
+the P2 screen) so the marginal afternoon unit reflects PJM's real commitment.
+
+**Phase 2 — energy+reserve co-optimization (the lever that prices the band).**
+Add reserve decision vars `R[g,t] ≥ 0` for the reserve-eligible thermal pool with
+`P+R ≤ pmax·avail`, `R ≤ ramp10[g]` (10-min deliverable — the cap that makes the
+requirement bind), and per-reserve-zone `Σ R ≥ REQ[t]` (the measured Primary
+requirement). The requirement's **dual is the reserve price**; because reserve is
+held on the cheapest-opportunity-cost (marginal) MW, holding ~3 GW displaces
+cheap energy and lifts the afternoon LMP by the offer-curve slope over 3 GW —
+priced *inside* the solve, no overlay, no haircut. (This is the structure the
+pre-solve withholding only approximated; withholding is its pre-condition.)
+Note: adds `R` columns for the reserve pool — memory-heavy at PJM plant-level
+(energy-only already nears the box limit), so solve serially / profile first.
+
+**Phase 3 — retune offer curves** to the corrected structure (the level), only
+after phases 1–2 are in.
+
 ## Forecast rule (no measured requirement available)
 
 Forecast years have no `as_req_mw`, so the requirement is the **Manual 11 sec 4.3
