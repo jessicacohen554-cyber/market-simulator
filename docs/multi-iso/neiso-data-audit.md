@@ -307,6 +307,50 @@ EIA-923 oil column in `inputs/calibration/calibration_reference.json`
 (`isos.NEISO.<year>.generation_twh.oil` = 0.39 / 0.31 / 0.91 TWh for
 2023/24/25).
 
+### 2e. Merrimack coal rank (COAL_BIT) + CC_REGULAR Jacobian re-derivation (2026-06-17)
+
+**Merrimack classified bituminous (COAL_BIT), data-driven.** The lone NEISO coal
+unit (ORIS 2364, Bow NH; Granite Shore Power) previously carried `supply = ''`
+(unclassified) and fell to the generic `COAL` default for both delivered fuel
+cost and offer-curve key. `scripts/derive_coal_supply.py --iso NEISO` — the same
+EIA-923 Schedule-5 receipts machinery already used for PJM — sums the plant's
+coal receipts (54,050 tons 2023-2025) and finds them **100 % bituminous**,
+writing `inputs/processed/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
+`fleet.coal_supply_class(2364)` now returns `bituminous`, so the dispatch class,
+`offer_curve_by_group` key, and `_coal_supply_class` scorecard label all resolve
+to **`COAL_BIT`**; the delivered cost stays `COAL_PRICE_BASE["NEISO"]` = 3.0 (the
+bituminous-by-rail blend, already correct). EIA-860 confirms the
+retirement/availability window: generator 1 (113.6 MW nameplate / 108 MW net
+summer, `BIT`, status `OP`, planned retirement 2027) operates across all three
+backcast years and generator 2 (345.6 MW, `BIT`, status `OS`) is out of service,
+so the ~108 MW unit 1 produces the EIA-930 ISNE coal column (**0.18 / 0.24 / 0.28
+TWh**) as a low-CF winter-peaking run — confirming coal is *not* zero. The
+classification is **dispatch-neutral** (the `COAL_BIT` and generic `COAL` offer
+curves are byte-identical and the delivered cost is unchanged): the keeper
+`neiso_cc_coalbit_3yr` reproduces `neiso_agt_3yr` to the TWh (coal 0.0145 / 0.00 /
+0.237, well inside the size-aware ±1 TWh band), only now scored against the
+bituminous benchmark.
+
+**CC_REGULAR offer-curve Jacobian, re-seeded on the wired structure.** The prior
+Jacobian/dead-knob panel was derived **before** the AGT overlay was wired into the
+dispatch (§2c), so it is stale: its anchor (CC_REGULAR 55.31 / CT_PEAKER 0.336)
+differs from the wired keeper (56.56 / 0.014). Fresh ±0.05 single-knob probes
+(`results/calibration/neiso_probe_v2_*`, base reproduces the keeper exactly) give
+the corrected sensitivity (2024, P2, ΔTWh): econ_high ±0.05 → ∓0.061/+0.070
+CC_REGULAR; econ_low +0.05 → −0.048; committed +0.05 → −0.012. The **live**
+CC_REGULAR bands are econ_high > econ_low > committed, but **every one
+redistributes only within the CC family (CC_REGULAR ↔ CC_CHP) and to the measured
+import schedule — none reaches CT_PEAKER, ST_GAS, or oil** (ST_GAS is dead to its
+own committed knob). The cause is structural: CC base HR ≈ 7.0 vs CT/ST ≈ 10.4, so
+CT_PEAKER's cheapest tranche (committed 1.55 × 10.4 ≈ 16.1 eff-HR) sits above
+CC_REGULAR's whole economic curve including the duct-fire fold (peak 2.25 × 7.0 ≈
+15.8). The "CC over-cheap" symptom is therefore correct behaviour (CC genuinely is
+the cheapest gas, ~95 % of the EIA-923 prime-mover split); the CT_PEAKER (~2 TWh)
+/ ST_GAS (~0.3) gap is reserve / AS / load-pocket deployment the energy-only
+4-zone LP does not reproduce, recoverable only by the off-by-default
+`ct_deployment` overlay (NEISO wedge ≈ 0.05 TWh, §`Cross-ISO` in calibration-log),
+**not** offer-curve tunable. The CC_REGULAR curve is held at the keeper values.
+
 ## 3. CEMS coverage
 
 Distinct states of NEISO-fleet **fossil** plants and the diff against

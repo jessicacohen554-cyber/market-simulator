@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-17-neiso-14-coalbit",
+  "label": "neiso 14 coalbit",
+  "date": "2026-06-17",
+  "shorthand": "neiso-14-coalbit",
+  "definition": "neiso 14: Merrimack reclassified COAL_BIT (EIA-923 bituminous receipts); CC_REGULAR offer curve unchanged (Jacobian re-derived on AGT-wired structure shows CC bands redistribute only within CC family + imports, CT/ST/oil not offer-reachable)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-06-17-neiso-14-coalbit.js",
+  "bundle": "results/calibration/neiso_cc_coalbit_3yr"
+}
