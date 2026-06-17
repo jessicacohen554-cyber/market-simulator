@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-06-17 (ALL ISOs — commercial-operation-date (COD) ramp for the whole fleet, default-on for backcasts)
+
+The backcast fleet snapshot (the curated ERCOT CAMPD bins / the EIA-860 generator
+parquet) is a recent vintage that includes units commissioned **after** the
+solved year. Renewables and storage already respect their commercial-operation
+dates, but thermal/nuclear/oil did not — so a 2023 backcast dispatched GWs of
+capacity that were not yet built, inflating reserve headroom and suppressing the
+scarcity prices the LP can set. New `market_sim.data.cod_ramp` extends the COD
+rule to **every generator** (`cod_ramp_enabled`, default-on, backcast-mode only):
+
+- `cod_year < run_year` → fully online; `cod_year == run_year` → pro-rated by a
+  half-year default (EIA-860 / the registry record the year, not the month — a
+  month-precise hourly mask is the future refinement); `cod_year > run_year` →
+  dropped.
+- Commissioning year is keyed by EIA plant code from the curated master registry
+  (`year_built`), back-filled from the EIA-860 parquet (`operating_year`).
+- Applied two ways so it covers both fleet paths: `ramp_bins` scales the per-plant
+  CAMPD bin capacities before they aggregate into LP generators (ERCOT — the bins
+  carry no build year); `ramp_fleet` scales/drops raw `Generator` objects by their
+  `online_year` (EIA-860 path — nuclear, oil, every non-ERCOT ISO).
+- **Measured ERCOT impact:** the 2023 backcast fleet drops **1,214 MW** (9 plants
+  built 2024 removed + 2023-COD units pro-rated; 81,704 → 80,491 MW), 2024 drops
+  248 MW, 2025 unchanged — removing phantom capacity that was un-thinning the
+  scarcity hours. **Gated:** this shifts dispatch/LMP and needs a calibration
+  re-run before any keeper is re-cut; set `cod_ramp_enabled=False` to reproduce a
+  pre-ramp run.
+
+## 2026-06-17 (ERCOT — 60-Day DAM offer parser + thermal offer-curve grounding)
+
+`scripts/parse_ercot_dam_offers.py` reshapes the wide 60-Day DAM Disclosure Gen
+Resource Data into a tidy per-(resource, hour, curve-point) offer table (19.5 M
+rows, 2022-11 → 2025-11) with the three-part startup/min-gen fields, and
+`scripts/analyze_dam_offer_multipliers.py` inverts the offers into the model's
+heat-rate-multiplier space to overlay the measured distribution on the run124
+bands (`docs/ercot-dam-offer-grounding-2026-06.md`). Verdict: CC bands sit inside
+the observed distribution; the CT econ ramp is flat at fuel cost (econ_high p50
+~1.11 every year), so the model's rising 1.27→2.18 ramp is an offer markup, not
+the observed energy-curve shape — a defensible re-derivation target. Analysis
+only; no band changed.
+
 ## 2026-06-17 (CAISO — RA must-offer midday gas-commitment floor: model goes long, spring-midday LMP floor collapses to ~$0)
 
 New default-off mechanism that reproduces CAISO's collapsed spring-midday LMP by
