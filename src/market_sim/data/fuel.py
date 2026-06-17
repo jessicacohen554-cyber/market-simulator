@@ -78,6 +78,12 @@ _GAS_FUEL_IDX: tuple[int, ...] = (
     FUEL_TYPE_MAP["gas_st"],
 )
 
+# Floor for a delivered gas price after a zonal-basis shift: a deep negative
+# regional basis (e.g. a cheap upstate index) can never drive the marginal fuel
+# cost to zero or below. Well under any real delivered cost, so it only guards
+# the degenerate tail.
+_GAS_PRICE_FLOOR: float = 0.10
+
 # Fuel-type integer code for coal-fired units, which pay the coal price.
 _COAL_FUEL_IDX: int = FUEL_TYPE_MAP["coal"]
 
@@ -464,6 +470,24 @@ def iso_monthly_oil_prices(
 # see docs/multi-iso/data-acquisition-report.md §1.
 WINTER_GAS_BASIS_PATH: Path = RAW_DATA_DIR / "gas_basis_by_iso_month.csv"
 
+# Measured NYISO per-zone annual gas-hub prices (NYISO State of the Market
+# reports, Potomac Economics, Figure A-6 annual averages). NYISO prices each
+# region off a different pipeline index — the cheap western/Central zones on
+# Tenn Z4 200L / Niagara, the Capital/Hudson and Long Island zones on Iroquois
+# Z2 / Tenn Z6, and New York City on Transco Z6 (NY) — so the marginal gas unit
+# in the east costs persistently more than in the west even when the system
+# delivered-cost average (EIA-923 volume-weighted) is the same. That basis,
+# at ~7 MMBtu/MWh, is the structural source of the steady upstate-cheap /
+# east-dear LMP gradient (Central-East congestion realizes it); a single
+# ISO-month series cannot. Consumed by :func:`apply_nyiso_zonal_gas_basis`.
+NYISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "nyiso_zonal_gas_hub.csv"
+
+# The east reference zone whose hub (Iroquois Z2 — the bulk of NYISO gas burns
+# in the Capital/Hudson/LI pocket) anchors the offset: zones cheaper than it
+# (Upstate on Tenn Z4, NYC on Transco Z6) get a negative basis, leaving the
+# already-calibrated east level untouched while opening the west-to-east spread.
+NYISO_GAS_HUB_REFERENCE_ZONE: str = "Capital_Hudson"
+
 # Measured Henry Hub monthly spot averages (EIA RNGWHHDm via the
 # datasets/natural-gas public-domain mirror; see
 # docs/multi-iso/data-acquisition-report.md Step 1a). The hub-basis overlay
@@ -844,6 +868,108 @@ def apply_hub_basis_overlay(
     )
 
 
+_NYISO_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
+
+
+def _load_nyiso_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
+    """Load the NYISO per-zone annual gas-hub table, or ``None`` if absent."""
+    resolved = Path(path) if path else NYISO_ZONAL_GAS_HUB_PATH
+    if resolved in _NYISO_ZONAL_HUB_CACHE:
+        return _NYISO_ZONAL_HUB_CACHE[resolved]
+    frame: pd.DataFrame | None = None
+    if resolved.exists():
+        loaded = pd.read_csv(resolved)
+        if not loaded.empty:
+            frame = loaded
+    _NYISO_ZONAL_HUB_CACHE[resolved] = frame
+    return frame
+
+
+def nyiso_zonal_gas_offsets(
+    year: int, path: Path | None = None
+) -> dict[str, float] | None:
+    """Return ``{zone: $/MMBtu offset vs the east reference}`` for NYISO, or None.
+
+    The offset is the zone's measured hub price (Tenn Z4 200L upstate, Iroquois
+    Z2 in the Capital/Hudson/LI east, Transco Z6 NY in the city) minus the
+    reference zone's hub (:data:`NYISO_GAS_HUB_REFERENCE_ZONE`, Iroquois Z2).
+    The reference zone resolves to 0.0, so the calibrated east gas level is
+    preserved and only the cheaper west/city zones shift down — opening the
+    persistent upstate-cheap / east-dear basis the system-average series flattens.
+    Returns ``None`` when the table is missing or has no rows for ``year``.
+    """
+    frame = _load_nyiso_zonal_gas_hub(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    hub = {str(r.zone): float(r.hub_usd_mmbtu) for r in sub.itertuples()}
+    ref = hub.get(NYISO_GAS_HUB_REFERENCE_ZONE)
+    if ref is None:
+        return None
+    return {z: price - ref for z, price in hub.items()}
+
+
+def apply_nyiso_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Shift each NYISO gas unit's price by its zone's measured hub basis.
+
+    NYISO's regions buy gas off different, persistently-priced pipeline indices
+    (:data:`NYISO_ZONAL_GAS_HUB_PATH`): the marginal gas unit in the Capital/
+    Hudson east pays Iroquois Z2 / Tenn Z6 while the western and Central zones
+    pay the cheaper Tenn Z4 200L / Niagara, so the east marginal gas costs
+    ~$1-3/MMBtu more than the west all year. The EIA-923 volume-weighted
+    ISO-month series and the thin per-plant F923 receipts (only ~5 NY plants
+    report Schedule-5 gas) both wash this gradient out, leaving the model's
+    west-to-east LMP spread a knife-edge fuel-merit accident. This adds the
+    measured per-zone offset (:func:`nyiso_zonal_gas_offsets`, anchored so the
+    east reference zone is unchanged) to every gas unit's delivered price,
+    floored at a small positive so a deep negative basis cannot drive fuel
+    cost below zero. Runs after the F923 plant-monthly overwrite and before
+    :func:`apply_dual_fuel_pricing`, so oil parity still caps any winter spike.
+
+    Gated on ``config.nyiso_zonal_gas_basis`` and ``config.iso == "NYISO"``
+    (off by default; the calibration harness enables it for NYISO), so every
+    other ISO and all forecasts are byte-identical. Mutates ``fuel_prices`` in
+    place; idempotent given the same inputs.
+    """
+    if not getattr(config, "nyiso_zonal_gas_basis", False):
+        return
+    if config.iso != "NYISO":
+        return
+    offsets = nyiso_zonal_gas_offsets(year, path)
+    if offsets is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    if gas_rows.size == 0:
+        return
+    # Per-generator additive offset from its zone (0.0 for the reference zone
+    # and any zone absent from the table — e.g. the priced external node).
+    offset_by_zone_idx = np.array(
+        [offsets.get(name, 0.0) for name in zone_names], dtype=float
+    )
+    gen_offset = offset_by_zone_idx[fleet.zone_idx[gas_rows]]
+    floored = np.maximum(
+        fuel_prices[gas_rows, :] + gen_offset[:, np.newaxis], _GAS_PRICE_FLOOR
+    )
+    fuel_prices[gas_rows, :] = floored
+    logger.info(
+        "NYISO zonal gas basis (%d): %d gas units shifted by zone hub offset "
+        "(min %.2f, max %.2f $/MMBtu vs %s)",
+        year, gas_rows.size, float(gen_offset.min()), float(gen_offset.max()),
+        NYISO_GAS_HUB_REFERENCE_ZONE,
+    )
+
+
 def _hub_overlay_series(
     series: np.ndarray, config: ScenarioConfig, year: int, hours: int
 ) -> np.ndarray:
@@ -973,6 +1099,11 @@ def resolve_fuel_prices(
     if apply_monthly:
         apply_plant_monthly_fuel_prices(fuel_prices, fleet, config, year)
         apply_hub_basis_overlay(fuel_prices, fleet, config, year)
+        # NYISO: shift each gas unit to its zone's measured pipeline-hub level
+        # so the east marginal gas stays dearer than the west (the structural
+        # source of the upstate-cheap / east-dear LMP spread). Before dual-fuel
+        # so oil parity still caps any winter blowout.
+        apply_nyiso_zonal_gas_basis(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices
