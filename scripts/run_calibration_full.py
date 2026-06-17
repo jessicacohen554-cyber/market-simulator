@@ -1053,6 +1053,8 @@ def solve_and_persist(
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
     negative_renewable_offers: bool = False,
+    caiso_gas_commitment_floor: bool = False,
+    caiso_gas_floor_frac: float = 1.0,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1155,6 +1157,8 @@ def solve_and_persist(
             hydro_eia930_monthly=hydro_eia930_monthly,
             interchange_shaping=interchange_shaping,
             negative_renewable_offers=negative_renewable_offers,
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor,
+            caiso_gas_floor_frac=caiso_gas_floor_frac,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1289,6 +1293,8 @@ def solve_and_persist(
         "hydro_eia930_monthly": hydro_eia930_monthly,
         "interchange_shaping": interchange_shaping,
         "negative_renewable_offers": negative_renewable_offers,
+        "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
+        "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "btm_backfill_year": btm_backfill_year,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
@@ -3168,6 +3174,25 @@ def main() -> None:
              "model is long midday (the RA must-offer commitment workstream). "
              "Off (default) is byte-identical.")
     parser.add_argument(
+        "--caiso-gas-commitment-floor", action="store_true",
+        help="CAISO Resource-Adequacy must-offer floor: hold the gas fleet "
+             "(gas_cc/gas_ct/gas_st) online over the midday solar-glut window "
+             "at the measured EIA-930 NG: NG profile (scaled by "
+             "--caiso-gas-floor-frac), via FleetArrays.min_gen. RA gas can't "
+             "economically cycle off for the evening ramp, so it over-generates "
+             "midday and CAISO exports/curtails the surplus at ~$0; the floor "
+             "makes the model LONG midday so its surplus prices at ~$0 "
+             "(collapsing the over-priced spring-midday LMP floor). CAISO-only; "
+             "pair with --interchange-shaping (export side). Off (default) "
+             "changes no existing run.")
+    parser.add_argument(
+        "--caiso-gas-floor-frac", type=float, default=1.0,
+        help="Fraction of the measured EIA-930 NG: NG (month x hour-of-day "
+             "median) the --caiso-gas-commitment-floor targets (default 1.0). "
+             "Lower keeps modeled gas TWh nearer EIA-923 — forcing commitment "
+             "can inflate gas, and the surplus must export/curtail, not pad "
+             "the mix.")
+    parser.add_argument(
         "--btm-backfill-year", type=int, default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
              "class netgen from this prior year when the backcast year's "
@@ -3340,6 +3365,8 @@ def main() -> None:
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
         negative_renewable_offers=args.negative_renewable_offers,
+        caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
+        caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
