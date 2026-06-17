@@ -84,16 +84,17 @@ class TestCheckGenerationMix(unittest.TestCase):
 
 
 class TestActualsSourceAuthority(unittest.TestCase):
-    """``actuals_source`` picks EIA-923 for every class except solar."""
+    """``actuals_source`` picks EIA-930 for variable renewables, 923 otherwise."""
 
-    def test_solar_uses_eia930(self):
-        """Solar volume is benchmarked against EIA-930, case-insensitively."""
-        self.assertEqual(actuals_source("solar"), EIA930_SOURCE)
-        self.assertEqual(actuals_source("Solar"), EIA930_SOURCE)
+    def test_variable_renewables_use_eia930(self):
+        """Solar and wind volume are benchmarked against EIA-930."""
+        for klass in ("solar", "Solar", "wind", "WIND"):
+            self.assertEqual(actuals_source(klass), EIA930_SOURCE, klass)
 
     def test_every_other_class_uses_eia923(self):
-        """Fossil and other non-solar classes use EIA-923 as the baseline."""
-        for klass in ("CC_REGULAR", "COAL_PRB", "CT_PEAKER", "wind", "nuclear"):
+        """Fossil and other non-renewable classes use EIA-923 as the baseline."""
+        for klass in ("CC_REGULAR", "COAL_PRB", "CT_PEAKER", "ST_GAS",
+                      "nuclear", "hydro"):
             self.assertEqual(actuals_source(klass), EIA923_SOURCE, klass)
 
 
