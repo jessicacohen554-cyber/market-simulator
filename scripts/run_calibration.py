@@ -1370,6 +1370,7 @@ def run_year(
         from market_sim.results.scarcity import (
             RESERVE_FUEL_TYPES,
             largest_single_contingency_mw,
+            load_pjm_measured_reserve_requirement,
             load_pjm_ordc_curve,
             pjm_ordc_shortfall_steps,
             pjm_primary_reserve_requirement,
@@ -1380,21 +1381,40 @@ def run_year(
             dtype=bool,
         )
         lsc = largest_single_contingency_mw(
-            fleet_arrays.pmax, fleet_arrays.availability, elig
+            fleet_arrays.pmax, fleet_arrays.availability, elig,
+            plant_code=fleet_arrays.plant_code,
         )
-        req = float(pjm_primary_reserve_requirement(lsc, config.hours)[0])
+        # Backcast: use the measured PJM Primary Reserve requirement (a reliability
+        # input, like the outage overlay), hour-varying. Forecast: the fleet-
+        # responsive 1.5x-MSSC formula. The measured series is never tuned to the
+        # LMP; the fleet MSSC is logged either way for the forecast cross-check.
+        measured = (
+            load_pjm_measured_reserve_requirement(config.weather_year, config.hours)
+            if config.mode == "backcast" else None
+        )
+        if measured is not None:
+            req_hourly = measured
+            req_src = "measured PJM pr_req"
+        else:
+            req_hourly = pjm_primary_reserve_requirement(lsc, config.hours)
+            req_src = "1.5x-MSSC formula"
         curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
-        req_total, ordc_pen, ordc_w = pjm_ordc_shortfall_steps(curve, req)
+        # ORDC shortfall steps: inner band sized to the peak requirement so
+        # reserves can fall to zero in every hour; the +offset shoulder is added
+        # per hour to the (possibly hour-varying) requirement.
+        max_offset = max(o for o, _ in curve)
+        _, ordc_pen, ordc_w = pjm_ordc_shortfall_steps(curve, float(req_hourly.max()))
         dispatch_kwargs.update(
-            reserve_requirement=np.full(config.hours, req_total),
+            reserve_requirement=req_hourly + max_offset,
             reserve_eligible=elig,
             ordc_penalties=ordc_pen,
             ordc_step_widths=ordc_w,
         )
         logger.info(
-            "energy+reserve co-opt (PJM): MSSC %.0f MW, Primary req %.0f MW "
-            "(+%.0f ORDC shoulder), %d reserve-eligible units",
-            lsc, req, req_total - req, int(elig.sum()),
+            "energy+reserve co-opt (PJM): MSSC %.0f MW (formula req %.0f), using "
+            "%s req mean %.0f MW (+%.0f ORDC shoulder), %d reserve-eligible units",
+            lsc, 1.5 * lsc, req_src, float(req_hourly.mean()), max_offset,
+            int(elig.sum()),
         )
 
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds

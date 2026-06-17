@@ -616,15 +616,21 @@ def largest_single_contingency_mw(
     pmax: np.ndarray,
     availability: np.ndarray | None = None,
     reserve_mask: np.ndarray | None = None,
+    plant_code: np.ndarray | None = None,
 ) -> float:
-    """Most-Severe Single Contingency proxy: the largest single unit (MW).
+    """Most-Severe Single Contingency proxy: the largest single resource (MW).
 
     The reserve requirement's reliability basis (PJM Manual 13): the largest
-    single resource whose loss the system must cover. Taken as the maximum
-    per-unit deliverable capacity over the reserve-eligible fleet — by
-    construction fleet-responsive (retire the largest unit and the MSSC, hence
-    the requirement, falls), which is what makes the requirement forecast-valid
-    rather than a replay of the measured series.
+    single resource whose loss the system must cover. The physical contingency
+    is a common-mode loss of a *plant* (units sharing a station/bus), not one
+    LP row — a binned/per-plant fleet splits a station across many tranches and
+    units, so the bare per-row maximum badly understates the MSSC. When
+    ``plant_code`` is supplied, deliverable capacity is summed per plant first
+    and the largest *plant* is the MSSC; rows with ``plant_code <= 0`` (imports,
+    aggregated pseudo-units) are treated individually. Fleet-responsive by
+    construction — retire the largest plant and the MSSC, hence the requirement,
+    falls — which is what makes the requirement forecast-valid rather than a
+    replay of the measured series.
 
     Args:
         pmax: ``(n_gen,)`` per-unit nameplate MW.
@@ -632,9 +638,11 @@ def largest_single_contingency_mw(
             MW per unit. ``None`` uses bare nameplate.
         reserve_mask: ``(n_gen,)`` boolean of reserve-eligible units. ``None``
             considers every unit.
+        plant_code: ``(n_gen,)`` EIA plant code per unit. When given, capacity
+            is aggregated to the plant (common-mode contingency) before the max.
 
     Returns:
-        Largest single-unit MW (0.0 for an empty/zero fleet).
+        Largest single-resource MW (0.0 for an empty/zero fleet).
     """
     pmax = np.asarray(pmax, dtype=float)
     if pmax.size == 0:
@@ -642,13 +650,66 @@ def largest_single_contingency_mw(
     if availability is not None:
         deliverable = pmax * np.asarray(availability, dtype=float).max(axis=1)
     else:
-        deliverable = pmax
+        deliverable = pmax.copy()
     if reserve_mask is not None:
-        mask = np.asarray(reserve_mask, dtype=bool)
-        deliverable = deliverable[mask]
-        if deliverable.size == 0:
-            return 0.0
-    return float(deliverable.max())
+        deliverable = deliverable * np.asarray(reserve_mask, dtype=bool)
+    if deliverable.max(initial=0.0) <= 0.0:
+        return 0.0
+    if plant_code is None:
+        return float(deliverable.max())
+    # Aggregate to the plant (common-mode loss). Rows with no real plant code
+    # (imports / aggregated pseudo-units) each count as their own contingency.
+    pc = np.asarray(plant_code)
+    by_plant: dict[object, float] = {}
+    for i, cap in enumerate(deliverable):
+        if cap <= 0.0:
+            continue
+        key = int(pc[i]) if int(pc[i]) > 0 else ("_row", i)
+        by_plant[key] = by_plant.get(key, 0.0) + float(cap)
+    return max(by_plant.values()) if by_plant else 0.0
+
+
+_PJM_AS_DIR = Path(__file__).resolve().parents[3] / "inputs" / "raw-data" / "PJM-AS"
+
+
+def load_pjm_measured_reserve_requirement(
+    year: int, hours: int = 8760, data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Return the measured PJM_RTO Primary Reserve requirement (MW), hourly.
+
+    The published reserve requirement (``pr_req_mw`` in
+    ``inputs/raw-data/PJM-AS/pjm_<year>_as_up_mw.parquet``, derived by
+    ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner) is a measured
+    *reliability* quantity — the capacity PJM holds against its most-severe
+    single contingency, set by a published market-design formula (Manual 13),
+    not a price actual. Using it as the co-optimization requirement in a
+    backcast is the reserve analogue of the historic outage / fuel-price
+    overlays: a measured physical input, not a fit to the LMP residual. The
+    forecast path uses :func:`pjm_primary_reserve_requirement` (the fleet-
+    responsive 1.5x-MSSC formula) instead.
+
+    Returns ``None`` when the parquet is absent (caller falls back to the
+    formula).
+    """
+    path = Path(data_dir) / f"pjm_{year}_as_up_mw.parquet"
+    if not path.exists():
+        return None
+    import pandas as pd
+
+    req = pd.read_parquet(path)["pr_req_mw"].to_numpy(dtype=float)
+    # Data holes (documented ~24 h) read as 0; forward/back-fill so the
+    # requirement is never spuriously zero.
+    if (req <= 0.0).any():
+        good = req > 0.0
+        if good.any():
+            idx = np.where(good, np.arange(len(req)), -1)
+            np.maximum.accumulate(idx, out=idx)
+            idx[idx < 0] = np.flatnonzero(good)[0]
+            req = req[idx]
+    if len(req) >= hours:
+        return req[:hours]
+    # Tile up to the requested horizon (defensive; series is normally 8760).
+    return np.resize(req, hours)
 
 
 def pjm_primary_reserve_requirement(
