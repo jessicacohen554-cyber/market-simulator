@@ -518,6 +518,26 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         self.assertFalse(inject_caiso_gas_commitment_floor(fa, "PJM", 2024, 1.0))
         self.assertIsNone(fa.min_gen)
 
+    def test_gas_steam_is_excluded_from_the_floor(self):
+        # The near-retired gas-steam fleet is NOT the RA must-offer midday
+        # fleet; including it manufactured phantom ST_GAS (1.7 -> 3.7 TWh). The
+        # floor must land only on the flexible CC/CT fleet, never on gas_st.
+        H = 8760
+        gens = [
+            Generator(unit_id="cc", name="cc", zone="NP15", fuel_type="gas_cc",
+                      pmax_mw=20000.0, pmin_mw=0.0, heat_rate=7.0),
+            Generator(unit_id="st", name="st", zone="SP15", fuel_type="gas_st",
+                      pmax_mw=5000.0, pmin_mw=0.0, heat_rate=11.0),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["NP15", "SP15"], hours=H)
+        self.assertTrue(
+            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0))
+        st_row = np.array([g.fuel_type == "gas_st" for g in gens])
+        self.assertEqual(float(fa.min_gen[st_row].sum()), 0.0)
+        # The CC (the flexible fleet) still carries the whole midday floor.
+        cc_row = np.array([g.fuel_type == "gas_cc" for g in gens])
+        self.assertGreater(float(fa.min_gen[cc_row].sum()), 0.0)
+
     def test_nonpositive_frac_is_no_op(self):
         fa, _, _, _ = self._gas_fleet(48)
         self.assertFalse(
