@@ -350,14 +350,26 @@ artifact carries each combined cycle's measured duct-firing **peaking** share
 `cc_peaking_per_plant`.
 
 **No coal must-run tranche.** NEISO's only operating coal unit is **Merrimack**
-(EIA 2364, Bow NH). By the 2023-2025 window it survives in CEMS as a
-**winter-peaking** unit — a few hundred online hours a year, not a continuously
-run baseload — so its derived `mustrun_pct` is **0.0**. The sunk-fuel
-take-or-pay floor that pins ERCOT/PJM coal has no NEISO target: every NEISO
-plant-group's must-run share is `0.0`, Merrimack included. It dispatches on
-economics like any other thermal unit, with a measured committed floor and the
-historic-outage overlay, rather than being forced on. The genuinely inflexible
-NEISO generation is instead:
+(EIA 2364, Bow NH; Granite Shore Power). EIA-860 carries unit 1 (113.6 MW
+nameplate / 108 MW net summer, `BIT`, status `OP`, planned retirement 2027) as
+operating across the whole 2023-2025 window and the larger unit 2 (345.6 MW,
+`BIT`, status `OS`) as out of service, so the dispatched coal capacity is the
+~108 MW unit 1 — confirming the EIA-930 ISNE coal column (0.18/0.24/0.28 TWh)
+is a low-CF winter-peaking run, not zero and not a baseload. Its **coal rank is
+derived, not assumed**: `scripts/derive_coal_supply.py --iso NEISO` sums the
+plant's EIA-923 Schedule-5 fuel receipts (54,050 tons 2023-2025, **100 %
+bituminous**) and writes `inputs/processed/coal_supply_NEISO.csv`, which
+`fleet.coal_supply_class` merges on top of the curated ERCOT map. Merrimack
+therefore resolves to the **`COAL_BIT`** dispatch class, offer curve, and
+delivered-cost path (`COAL_PRICE_BASE["NEISO"]` = 3.0, the bituminous-by-rail
+blend) rather than the generic unclassified `COAL` fallback it carried before.
+By the 2023-2025 window it survives in CEMS as a **winter-peaking** unit — a few
+hundred online hours a year, not a continuously run baseload — so its derived
+`mustrun_pct` is **0.0**. The sunk-fuel take-or-pay floor that pins ERCOT/PJM
+coal has no NEISO target: every NEISO plant-group's must-run share is `0.0`,
+Merrimack included. It dispatches on economics like any other thermal unit, with
+a measured committed floor and the historic-outage overlay, rather than being
+forced on. The genuinely inflexible NEISO generation is instead:
 
 - **CHP behind-the-meter steam hosts** — removed from LP capacity and
   reconstructed in post-processing (§1; sized from the P3 CHP floors in
