@@ -50,6 +50,7 @@ from market_sim.config.constants import (
     OIL_PRICE_PER_MMBTU,
     START_YEAR,
 )
+from market_sim.config.paths import GAS_PRICES_DIR, RAW_DATA_DIR
 from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS, ScenarioConfig
 from market_sim.data.eia923 import (
     EIA923_MONTHLY_COSTS_PATH,
@@ -461,19 +462,13 @@ def iso_monthly_oil_prices(
 # is filled (ISO-NE MA gas index, 2023-2025, 35/36 months); other ISOs remain
 # header-only until a licensed ICE/Platts or EIA-citygate-proxy fill lands;
 # see docs/multi-iso/data-acquisition-report.md §1.
-WINTER_GAS_BASIS_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data"
-    / "gas_basis_by_iso_month.csv"
-)
+WINTER_GAS_BASIS_PATH: Path = RAW_DATA_DIR / "gas_basis_by_iso_month.csv"
 
 # Measured Henry Hub monthly spot averages (EIA RNGWHHDm via the
 # datasets/natural-gas public-domain mirror; see
 # docs/multi-iso/data-acquisition-report.md Step 1a). The hub-basis overlay
 # adds the measured ISO-month basis back onto this leg.
-HENRY_HUB_MONTHLY_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "gas-prices"
-    / "henry_hub_monthly.csv"
-)
+HENRY_HUB_MONTHLY_PATH: Path = GAS_PRICES_DIR / "henry_hub_monthly.csv"
 
 # Measured Henry Hub *daily* spot (EIA RNGWHHD, same public-domain mirror as
 # the monthly leg). Used only for its within-month *shape*: the gas series
@@ -482,10 +477,7 @@ HENRY_HUB_MONTHLY_PATH: Path = (
 # merit order would actually see day to day — cheap shoulder days and
 # cold-snap spikes — without moving the monthly mean (the factors are
 # normalized to each month's own daily mean, so they average to 1.0).
-HENRY_HUB_DAILY_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "gas-prices"
-    / "henry_hub_daily.csv"
-)
+HENRY_HUB_DAILY_PATH: Path = GAS_PRICES_DIR / "henry_hub_daily.csv"
 
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
