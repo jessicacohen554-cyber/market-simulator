@@ -3628,3 +3628,61 @@ offer-curve change) + the Merrimack COAL_BIT reclassification. Tests: 297 pass
 (fuel/neiso/iso/hydro/zone/transmission). Regression guard: the only change is
 the additive `coal_supply_NEISO.csv` (national plant code 2364, no ERCOT/PJM/CAISO
 collision) and no offer-curve code edit, so ERCOT/PJM/CAISO stay byte-identical.
+
+## NEISO — CT_PEAKER reserve recovered: ct_deployment overlay now survives the P2 commitment screen (2026-06-17, NEW KEEPER `neiso_ctdeploy_3yr`, "neiso 16")
+
+Follow-on to neiso 14. The re-derived Jacobian proved the CC_REGULAR offer curve
+cannot move energy to CT_PEAKER/ST_GAS/oil, and the cross-ISO work proved a
+*blanket* CT floor injects net gas. The one sanctioned lever for the CT gap is
+the **targeted `ct_deployment` overlay** (floors CT to its measured output only
+in the sub-marginal hours CEMS shows it running while RT LMP < its MC). Deriving
+it for NEISO (`scripts/derive_ct_deployment.py --iso NEISO` →
+`inputs/calibration/ct_deployment_floor_NEISO.parquet`) measures the wedge at
+**0.08 / 0.04 / 0.05 TWh** (2023/24/25) — small, as expected for NEISO's 8-9-plant
+CT fleet.
+
+**The bug: a reserve floor was being decommitted by the economic screen.** With
+`--ct-deployment` the overlay floored CT correctly in **P1** (CT 0.014 → 0.052
+TWh, 2024) but **P2 stripped it back to 0.014**. Root cause:
+`commitment.apply_commitment_with_coal_pin` reconstructs the P2 `FleetArrays`
+**without `min_gen`** — so every hard floor (the deployment reserve floor *and*
+the CHP steam-following floor) was silently dropped in P2, and the commitment
+screen then decommitted the now-floorless CT peakers as uneconomic. A reserve /
+AS-deployment floor represents energy that ran for *reliability*, not economics,
+so the *economic* commitment screen must not shut it off.
+
+**Fix (gated, regression-proof).** `apply_commitment_with_coal_pin` gains
+`preserve_min_gen` (default **False** = byte-identical to before): when True it
+carries `min_gen` into the P2 fleet and raises each floored generator-hour's
+availability to cover it (the LP binds `min_gen ≤ P ≤ pmax·availability`, so a
+decommitted `availability=0` would otherwise make the floor infeasible).
+`run_calibration._commitment_pass` passes `preserve_min_gen=True` **only when a
+deployment overlay is active** (`ct_deployment_overlay` /
+`reliability_deployment_overlay`, both default-off). So the forecast runner and
+every keeper that does not opt into a deployment overlay — ERCOT, PJM, CAISO,
+NYISO, and NEISO neiso 14 — take the exact prior code path. **Verified
+empirically:** NEISO base 2024 re-run on the fixed code with the overlay off is
+**byte-identical** (P1 and P2, max |ΔTWh| = 0.00000000) to the pre-fix base.
+Tests: 361 pass (incl. test_commitment / test_campd_bins / test_tranche_hr).
+
+**Result (3-year keeper, `--ct-deployment`):**
+
+| year | CT_PEAKER 14→16 | gas total (vs EIA-930) | price 16 (vs 14) | coal |
+|------|-----------------|------------------------|------------------|------|
+| 2023 | 0.014 → **0.084** | 54.78 (−1.2%) | 34.89 (was 34.92) | 0.015 |
+| 2024 | 0.014 → **0.052** | 58.89 (−1.3%) | 40.19 (was 40.22) | 0.000 |
+| 2025 | 0.038 → **0.079** | 60.14 (+0.1%) | 70.49 (was 70.54) | 0.237 |
+
+CT_PEAKER recovers the measured reserve wedge (2-6× the pre-overlay level) while
+the **gas total and price level stay at sign-off** — the CT energy displaces CC
+*within* the gas family (gas-neutral, +0.002 TWh), not coal/imports, which is the
+whole point of the *targeted* overlay versus the refuted blanket floor. CHP
+must-run floors (CT_CHP/ST_CHP) also now correctly survive P2 (a small +0.06/+0.01
+TWh, gas-neutral) since they are contractual must-run. The residual CT (~2 TWh
+EIA-923) / ST_GAS (~0.3) / oil (~0.3-1.2) gap is the documented
+non-offer-recoverable reserve / winter-monthly-data limit — not chased here.
+
+**Keeper = `neiso_ctdeploy_3yr` (neiso 16)**, superseding neiso 14 as the NEISO
+keeper (neiso 14 stays the offer-curve-only predecessor). Regression guard:
+ERCOT/PJM/CAISO byte-identical (the `preserve_min_gen` gate is off for them;
+the coal CSV is additive); only NEISO `bench` + the new code path move.
