@@ -187,14 +187,20 @@ class ScenarioConfig:
     use_campd_bins: bool = True
     campd_bins_path: str = "inputs/custom-bin-assignments.csv"
     plant_registry_path: str = "inputs/master-plant-registry.csv"
-    # Commercial-operation-date (COD) ramp (market_sim.data.cod_ramp). The
-    # backcast fleet snapshot is a recent vintage that includes units built
+    # Commercial-operation-date (COD) vintage ramp (market_sim.data.cod_ramp).
+    # The backcast fleet snapshot is a recent vintage that includes units built
     # AFTER the solved year; with this on (the default), every generator —
-    # thermal, nuclear, oil — is ramped by its commissioning year so a backcast
-    # dispatches only what was actually online (units built after the run year
-    # are dropped; units built during it are pro-rated). This matches the rule
-    # renewables/storage already follow. Backcast-mode only; set False to keep
-    # the full present-day snapshot (e.g. to reproduce a pre-COD-ramp run).
+    # thermal, nuclear, oil, and the ERCOT CAMPD bins — is masked month-by-month
+    # by its commercial-operation (and retirement) date, so a backcast dispatches
+    # only what was actually online: a unit that came online or retired part-way
+    # through the year is available only in the months it operated, applied as a
+    # single monthly mask inside generators_to_fleet_arrays. The month-precise
+    # COD comes from the EIA-860 plant-code map (cod_ramp.load_cod_map); this is
+    # the thermal analogue of vintage_capacity_ramp/storage_vintage_ramp. Pure
+    # capacity accounting (no fitting), so it is forecast-applicable as well as
+    # backcast-correct. Engages in backcast mode (forecast runs pass an explicit
+    # calendar year); set False to keep the full present-day snapshot (e.g. to
+    # reproduce a pre-COD-ramp run).
     cod_ramp_enabled: bool = True
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
@@ -562,18 +568,6 @@ class ScenarioConfig:
     # battery capability by 1.5-2 GW. Off by default: the ERCOT/PJM
     # backcasts were calibrated against flat year-end fleets and stay
     # unchanged until recalibrated (CAISO prompt pack E2).
-    thermal_vintage_ramp: bool = False  # When True, thermal/fossil capacity
-    # for the simulated year ramps month-by-month from each unit's commercial
-    # operation date and steps down at its retirement month (EIA-860 Operating
-    # Month/Year and Planned Retirement Month/Year) — the thermal analogue of
-    # vintage_capacity_ramp/storage_vintage_ramp. A unit that comes online or
-    # retires mid-year is then available only for the months it actually
-    # operated, instead of the all-year-or-nothing annual online_year/
-    # retirement_year screen. Pure capacity accounting (no fitting), so it is
-    # forecast-applicable as well as backcast-correct. Off by default: existing
-    # ISO backcasts were calibrated against the annual screen and stay
-    # byte-identical until recalibrated.
-
     # Tier 3 (calibration) — Coal take-or-pay supply-curve tranches
     # Each coal bin is split into three tranches modeling its take-or-pay
     # fuel contract: a fraction of capacity at a fraction of fuel passthrough.
@@ -1456,7 +1450,7 @@ TIER_TAGS: dict[str, int] = {
     "td_loss_factor": 3,
     "vintage_capacity_ramp": 3,
     "storage_vintage_ramp": 3,
-    "thermal_vintage_ramp": 3,
+    "cod_ramp_enabled": 3,
     "coal_tranche_1_frac": 3,
     "coal_tranche_1_fuel_passthrough": 3,
     "coal_tranche_2_frac": 3,
