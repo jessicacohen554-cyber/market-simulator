@@ -289,13 +289,14 @@ def test_caiso_hsl_parquet_uncurtailed_at_least_delivered():
 
 
 def test_ercot_2023_hsl_path_untouched_by_caiso_wiring():
-    """The ERCOT 2023 HSL profile still reconstructs the rescaled NP6 series.
+    """The ERCOT 2023 HSL profile still reconstructs the consumed potential.
 
-    The CAISO HSL lookup generalized the file resolution; ERCOT 2023 must
-    keep its exact prior behavior — the NP6 HSL shape rescaled to the
-    ``_HSL_RESCALE_TWH`` targets (wind 110, solar 32 TWh).
+    The CAISO HSL lookup generalized the file resolution; ERCOT 2023 must keep
+    its behavior — the HSL shape reconciled to the EIA-930 footprint
+    (:func:`hsl_potential_mw`), with the fleet CF round-tripping back to that
+    consumed potential at the raw series' hourly shape.
     """
-    from market_sim.data.renewables import _HSL_RESCALE_TWH
+    from market_sim.data.renewables import hsl_potential_mw
 
     iso_config = get_iso_config("ERCOT")
     config = ScenarioConfig(
@@ -313,7 +314,7 @@ def test_ercot_2023_hsl_path_untouched_by_caiso_wiring():
         ("solar", solar_cf, solar_cap),
     ):
         reconstructed = (cap[:, None] * cf).sum(axis=0)
-        target_mwh = _HSL_RESCALE_TWH[("ERCOT", _CAL_YEAR, fuel)] * 1.0e6
+        target_mwh = hsl_potential_mw("ERCOT", _CAL_YEAR, fuel).sum()
         np.testing.assert_allclose(reconstructed.sum(), target_mwh, rtol=0.01)
         raw = hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float)
         assert np.corrcoef(reconstructed, raw)[0, 1] > 0.999
