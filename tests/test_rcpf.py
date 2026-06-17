@@ -131,22 +131,26 @@ def test_locational_zero_when_every_region_ample():
 
 
 def test_locational_cascade_membership():
-    # Upstate carries no locational region; NYC carries the most (East+NYC,
-    # SENY is scaffolded empty). Reserves zero everywhere -> every region's
-    # products pin to max, so the per-zone adder is the sum over the regions
-    # that contain the zone.
+    # Upstate carries no locational region; NYC carries the most (East+SENY+
+    # NYC). Reserves zero everywhere -> every region's products pin to max, so
+    # the per-zone adder is the sum over the regions that contain the zone.
     zero = {z: np.zeros(2) for z in _AMPLE}
     adders = locational_zone_adders(zero)
     # Upstate is in no locational region.
     assert np.allclose(adders["Upstate_West"], 0.0)
     east_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["East"]["products"])
+    seny_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["SENY"]["products"])
     nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
     # Capital_Hudson: East only.
     assert adders["Capital_Hudson"][0] == pytest.approx(east_max)
-    # NYC: East + NYC (deepest in the cascade).
-    assert adders["NYC"][0] == pytest.approx(east_max + nyc_max)
-    # NYC adder strictly exceeds every upstate/East-only zone.
-    assert adders["NYC"][0] > adders["Capital_Hudson"][0] > 0.0
+    # Lower_Hudson / Long_Island: East + SENY.
+    assert adders["Lower_Hudson"][0] == pytest.approx(east_max + seny_max)
+    assert adders["Long_Island"][0] == pytest.approx(east_max + seny_max)
+    # NYC: East + SENY + NYC (deepest in the cascade).
+    assert adders["NYC"][0] == pytest.approx(east_max + seny_max + nyc_max)
+    # The cascade is strictly increasing downstate.
+    assert (adders["NYC"][0] > adders["Lower_Hudson"][0]
+            > adders["Capital_Hudson"][0] > 0.0)
 
 
 def test_locational_region_headroom_is_summed_over_member_zones():
@@ -159,11 +163,15 @@ def test_locational_region_headroom_is_summed_over_member_zones():
     at_req["NYC"] = np.array([0.0])
     at_req["Long_Island"] = np.array([0.0])
     a = locational_zone_adders(at_req)
-    # East region reserve = 1200 == requirement -> East contributes 0; NYC zone
-    # still has its own NYC-region shortage though (reserve 0).
-    nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
+    # East region reserve = 1200 == requirement -> East contributes 0. The
+    # Capital_Hudson zone is in East only, so its total adder is 0.
     assert a["Capital_Hudson"][0] == pytest.approx(0.0)
-    assert a["NYC"][0] == pytest.approx(nyc_max)
+    # NYC zone still carries its SENY (reserve 500) and NYC (reserve 0)
+    # shortages: SENY region reserve = 500+0+0 = 500 < 1100, NYC = 0.
+    seny = NYISO_RCPF_LOCATIONAL["SENY"]["products"][0]
+    seny_at_500 = seny[3] * (seny[1] - 500.0) / (seny[1] - seny[2])
+    nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
+    assert a["NYC"][0] == pytest.approx(seny_at_500 + nyc_max)
 
 
 def test_locational_resolve_default_and_override():
@@ -177,10 +185,9 @@ def test_locational_resolve_default_and_override():
 
 
 def test_locational_empty_products_region_is_noop():
-    # SENY is scaffolded with no products: it must not raise or contribute.
-    only_seny = {"Lower_Hudson": np.zeros(1), "NYC": np.zeros(1),
-                 "Long_Island": np.zeros(1)}
-    regions = {"SENY": NYISO_RCPF_LOCATIONAL["SENY"]}
-    a = locational_zone_adders(only_seny, regions=regions)
+    # A region with no products must not raise or contribute.
+    regions = {"Empty": {"zones": ("NYC", "Long_Island"), "products": ()}}
+    a = locational_zone_adders(
+        {"NYC": np.zeros(1), "Long_Island": np.zeros(1)}, regions=regions)
     for v in a.values():
         assert np.allclose(v, 0.0)
