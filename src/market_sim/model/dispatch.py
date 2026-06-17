@@ -41,6 +41,15 @@ class VariableLayout:
     n_storage: int
     n_links: int
     T: int = HOURS_PER_YEAR
+    # Energy+reserve co-optimization columns, appended after the dump block so
+    # every existing offset is unchanged. Both 0 (the default) leave
+    # ``vars_per_hour`` and the whole layout byte-identical to the energy-only
+    # LP. ``n_reserve`` is one upward-reserve variable per thermal generator
+    # (R[g,t], eligibility enforced by its upper bound); ``n_ordc_steps`` is the
+    # number of reserve-demand-curve shortfall variables per hour (the ORDC
+    # steps that price a reserve shortfall, system-wide).
+    n_reserve: int = 0
+    n_ordc_steps: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -50,6 +59,8 @@ class VariableLayout:
             + 4 * self.n_zones
             + 3 * self.n_storage
             + self.n_links
+            + self.n_reserve
+            + self.n_ordc_steps
         )
 
     @property
@@ -108,6 +119,16 @@ class VariableLayout:
             + self.n_zones
         )
 
+    @property
+    def _reserve_off(self) -> int:
+        """Per-hour offset of the upward-reserve block (co-opt only)."""
+        return self._dump_off + self.n_zones
+
+    @property
+    def _ordc_off(self) -> int:
+        """Per-hour offset of the ORDC shortfall block (co-opt only)."""
+        return self._reserve_off + self.n_reserve
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -143,6 +164,14 @@ class VariableLayout:
     def dump_col(self, z: int, t: int) -> int:
         """Return the column index of dump for zone ``z`` in hour ``t``."""
         return t * self.vars_per_hour + self._dump_off + z
+
+    def r_col(self, g: int, t: int) -> int:
+        """Return the column index of generator ``g``'s reserve in hour ``t``."""
+        return t * self.vars_per_hour + self._reserve_off + g
+
+    def ordc_col(self, k: int, t: int) -> int:
+        """Return the column index of ORDC shortfall step ``k`` in hour ``t``."""
+        return t * self.vars_per_hour + self._ordc_off + k
 
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
