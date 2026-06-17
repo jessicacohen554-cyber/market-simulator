@@ -319,6 +319,75 @@ def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
     return out if out.sum() > 0.0 else None
 
 
+def measured_interchange_envelope(
+    iso: str, year: int, hours: int, percentile: float = 90.0
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return the measured month×hour-of-day net-import/export envelope (MW).
+
+    The priced-interchange node clears a near-constant schedule because its
+    tranche capacities are available every hour. Real CAISO interchange instead
+    follows a strong diurnal/seasonal duck: it imports overnight (PNW hydro /
+    desert-SW gas) and **exports** the midday solar glut. This returns, per hour
+    of the run horizon, the ``percentile`` of measured EIA-930 ``Total
+    interchange`` for that hour's (month, hour-of-day) bucket, split into the
+    net-import and net-export envelopes (EIA sign: positive = net export):
+
+        import_cap[t] = P_pctile( max(0, -interchange) | month(t), hod(t) )
+        export_cap[t] = P_pctile( max(0, +interchange) | month(t), hod(t) )
+
+    The caller scales the node's import-tranche availability and export-sink
+    floor by these envelopes (relative to the static tranche totals), so the
+    node can only import up to roughly its historical capability in that
+    period and can export the midday surplus — the price still clears in merit
+    order *within* the envelope, so this adds the measured temporal shape
+    without pinning the flow or introducing any fitted constant. ``percentile``
+    near the top of the distribution (default 90) keeps headroom above the
+    median so price, not the cap, sets the typical hour.
+
+    Returns ``(import_cap, export_cap)``, each ``(hours,)`` MW, or ``None`` when
+    the ISO has no BA hourly extract or the year is not covered (a forecast
+    year), in which case the caller leaves the static node unshaped.
+    """
+    ba = _ISO_TO_HOURLY_BA.get(iso)
+    if ba is None:
+        return None
+    frame = _eia_hourly_frame_filled(ba, year)
+    if frame is None or "Total interchange" not in frame.columns:
+        return None
+    local = pd.DatetimeIndex(frame["Local time"])
+    month = local.month.to_numpy(dtype=float)
+    hod = local.hour.to_numpy(dtype=float)
+    ti = pd.to_numeric(frame["Total interchange"], errors="coerce").to_numpy()
+    imp = np.where(np.isfinite(ti), np.clip(-ti, 0.0, None), np.nan)
+    exp = np.where(np.isfinite(ti), np.clip(ti, 0.0, None), np.nan)
+
+    # Per (month, hour-of-day) bucket percentile. Empty buckets stay 0.
+    imp_tab = np.zeros((12, 24))
+    exp_tab = np.zeros((12, 24))
+    for m in range(1, 13):
+        for h in range(24):
+            sel = (month == m) & (hod == h)
+            if not sel.any():
+                continue
+            ii = imp[sel]
+            ee = exp[sel]
+            ii = ii[np.isfinite(ii)]
+            ee = ee[np.isfinite(ee)]
+            if ii.size:
+                imp_tab[m - 1, h] = np.percentile(ii, percentile)
+            if ee.size:
+                exp_tab[m - 1, h] = np.percentile(ee, percentile)
+
+    # Map the (month, hod) tables onto the run horizon. Row 0 of the dispatch
+    # is the first local hour of the year (see _eia_hourly_frame), so a plain
+    # local clock reproduces that index.
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    rm = clock.month.to_numpy() - 1
+    rh = clock.hour.to_numpy()
+    return imp_tab[rm, rh], exp_tab[rm, rh]
+
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.

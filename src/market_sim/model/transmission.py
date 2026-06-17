@@ -262,3 +262,69 @@ def build_wecc_export_sink() -> Generator:
     """
     sinks = build_export_sinks("CAISO")
     return min(sinks, key=lambda g: g.vom)
+
+
+def inject_interchange_shape(
+    fleet_arrays, iso: str, year: int, percentile: float = 90.0
+) -> bool:
+    """Shape the priced import/export node by the measured diurnal interchange.
+
+    The static node (:func:`build_import_generators` /
+    :func:`build_export_sinks`) makes every import tranche and export sink
+    available in every hour, so the LP clears a near-constant import schedule
+    and never exports — whereas real CAISO imports overnight and **exports** the
+    midday solar glut. After :func:`generators_to_fleet_arrays` builds the
+    fleet, this scales, per hour:
+
+    * each import tranche's ``availability`` by the measured net-import envelope
+      (so midday cheap imports shrink toward their historical midday level), and
+    * each export sink's hour-varying lower bound (``min_gen``) by the measured
+      net-export envelope (so the midday surplus can flow into the sink).
+
+    The envelope is the (month × hour-of-day) percentile of EIA-930 ``Total
+    interchange`` (:func:`market_sim.data.eia_loader
+    .measured_interchange_envelope`) relative to the node's static tranche
+    totals — a measured shape with no fitted constant. Price still clears in
+    merit order *within* the envelope. Modifies ``fleet_arrays`` in place.
+
+    Returns ``True`` when a shape was applied, ``False`` when the node is absent
+    or no measured envelope is available (forecast year / unmapped ISO), in
+    which case the static node is left unchanged (byte-identical).
+    """
+    from market_sim.data.eia_loader import measured_interchange_envelope
+    from market_sim.data.fleet import FUEL_TYPE_MAP
+
+    import_code = FUEL_TYPE_MAP["import"]
+    is_node = fleet_arrays.fuel_type_idx == import_code
+    imp_rows = np.flatnonzero(is_node & (fleet_arrays.pmax > 0.0))
+    exp_rows = np.flatnonzero(
+        is_node & (fleet_arrays.pmax <= 0.0) & (fleet_arrays.pmin < 0.0)
+    )
+    if imp_rows.size == 0 and exp_rows.size == 0:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    env = measured_interchange_envelope(iso, year, hours, percentile)
+    if env is None:
+        return False
+    import_cap, export_cap = env
+
+    if imp_rows.size:
+        import_total = float(fleet_arrays.pmax[imp_rows].sum())
+        if import_total > 0.0:
+            imp_avail = np.clip(import_cap / import_total, 0.0, 1.0)
+            for r in imp_rows:
+                fleet_arrays.availability[r, :] *= imp_avail
+
+    if exp_rows.size:
+        export_total = float(-fleet_arrays.pmin[exp_rows].sum())
+        if export_total > 0.0:
+            exp_frac = np.clip(export_cap / export_total, 0.0, 1.0)
+            if fleet_arrays.min_gen is None:
+                fleet_arrays.min_gen = np.broadcast_to(
+                    fleet_arrays.pmin[:, np.newaxis],
+                    (fleet_arrays.pmin.size, hours),
+                ).copy()
+            for r in exp_rows:
+                fleet_arrays.min_gen[r, :] = fleet_arrays.pmin[r] * exp_frac
+    return True
