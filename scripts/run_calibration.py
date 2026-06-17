@@ -43,6 +43,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
     HOURS_PER_YEAR,
+    NYISO_INTERFACE_TTC_BY_YEAR,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     VOM,
     resolve_priced_interchange,
@@ -686,6 +687,37 @@ def _apply_ttc_overrides(
     return ttc
 
 
+def _apply_iso_year_ttc(iso_config, iso: str, year: int):
+    """Return ``iso_config`` with year-varying interface TTCs applied.
+
+    Some interfaces change capacity across the backcast years as transmission
+    is built (e.g. NYISO's Central-East jumps with the NY Transco AC
+    Transmission project, in service December 2023). The static topology in
+    ``iso_configs`` carries one value; this rewrites the matching links to the
+    year-accurate limit (``constants.NYISO_INTERFACE_TTC_BY_YEAR``) so 2023
+    runs on the pre-upgrade limit and 2024+ on the upgraded one. A no-op for
+    ISOs/years with no entry.
+    """
+    if iso != "NYISO":
+        return iso_config
+    overrides = NYISO_INTERFACE_TTC_BY_YEAR.get(year)
+    if not overrides:
+        return iso_config
+    links = []
+    for link in iso_config.links:
+        new_ttc = overrides.get((link.from_zone, link.to_zone))
+        if new_ttc is not None and new_ttc != link.ttc_mw:
+            logger.info(
+                "NYISO %d interface TTC: %s->%s %.0f -> %.0f MW "
+                "(AC Transmission year-varying limit)",
+                year, link.from_zone, link.to_zone, link.ttc_mw, new_ttc,
+            )
+            links.append(link.model_copy(update={"ttc_mw": new_ttc}))
+        else:
+            links.append(link)
+    return iso_config.model_copy(update={"links": links})
+
+
 def _hydro_fleet(
     iso: str, year: int, zone_names: list[str],
     backfill_year: int | None = None,
@@ -904,6 +936,10 @@ def run_year(
     if cc_derate_from_top:
         config = config.with_overrides(cc_outage_derate_from_top=True)
     iso_config = get_iso_config(iso)
+    # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
+    # Transmission project in service Dec 2023) — applied before the import
+    # node joins so the corrected links flow through the whole solve.
+    iso_config = _apply_iso_year_ttc(iso_config, iso, year)
     # Priced import/export node: the external zone joins the topology and its
     # import tranches + export sinks join the fleet below; the measured
     # interchange schedule then stays out of demand (no double count).
