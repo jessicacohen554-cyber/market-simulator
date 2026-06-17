@@ -14,13 +14,13 @@ benchmarks on the backcast, so the mechanism is vetted on its own terms:
    measured EIA-930 net interchange (export-positive): the share of hours the
    spread calls the flow direction correctly, plus the correlation of the spread
    with the measured net export.
-3. **Like-for-like vs actual-LMP framing** — the spread is reported both ways:
-   the ISO's *own* reference price vs the neighbor's (the marginal-cost
-   comparison the LP dual will make), and the ISO's *actual* LMP vs the
-   neighbor's (the realized-price comparison).
+The ISO's own price is taken as its *actual* hourly LMP — the realized-price
+comparison, and the best pre-LP proxy for the LP energy dual the wired-in seam
+will clear against.
 
-Nothing here is tuned; the script only reports. A poor score is a structural
-finding to surface, not a residual to fit (claude.md rule #1).
+Nothing here is tuned to the net-MWh flow; the neighbor heat rates are anchored
+to each neighbor's *own* realized LMP (claude.md rule #11). A residual is a
+structural finding to surface, not something to fit away.
 
 Usage:
     python scripts/validate_neighbor_price.py --iso PJM --years 2023 2024 2025
@@ -33,15 +33,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import (
-    GAS_BASIS_DIFFERENTIAL,
-    INTERFACE_NEIGHBORS,
-    NeighborInterface,
-)
+from market_sim.config.constants import INTERFACE_NEIGHBORS
 from market_sim.data.eia_loader import _eia930_net_interchange
 from market_sim.data.neighbor_price import (
     interface_reference_prices,
-    neighbor_reference_price,
     seam_flow_direction,
 )
 
@@ -65,28 +60,6 @@ def _actual_lmp(iso: str, year: int) -> np.ndarray | None:
     if len(s) != HOURS:
         return None
     return s.interpolate().bfill().ffill().to_numpy(dtype=float)
-
-
-def _own_reference_price(iso: str, year: int) -> np.ndarray | None:
-    """Return the ISO's *own* reference price, built like a neighbor's.
-
-    Uses the ISO's gas basis, the shared marginal heat rate, and the ISO's own
-    load shape — the gas-marginal cost the LP dual approximates. ``None`` when
-    the ISO's gas basis or load extract is unavailable.
-    """
-    basis = GAS_BASIS_DIFFERENTIAL.get(iso)
-    if basis is None:
-        return None
-    hr = INTERFACE_NEIGHBORS.get(iso, [NeighborInterface(
-        name="", ba_code="", gas_basis=0.0, marginal_heat_rate=7.5,
-        hurdle=3.0, interface_limit_mw=1.0, border_zones=())])[0].marginal_heat_rate
-    self_spec = NeighborInterface(
-        name=f"{iso}_self", ba_code=iso, gas_basis=basis,
-        marginal_heat_rate=hr, hurdle=3.0, interface_limit_mw=1.0,
-        border_zones=(),
-    )
-    priced = neighbor_reference_price(self_spec, year, HOURS)
-    return priced[0] if priced is not None else None
 
 
 def _direction_score(
@@ -142,20 +115,18 @@ def validate(iso: str, years: list[int]) -> None:
             print("  (no measured net interchange — skipping direction score)")
             continue
         iso_actual = _actual_lmp(iso, year)
-        iso_ref = _own_reference_price(iso, year)
         print(f"  measured net export: mean {net_export.mean():7.1f} MW  "
               f"({net_export.sum() / 1e6:+.2f} TWh)  "
               f"export-hours {float((net_export > 0).mean()):.2f}")
-        for label, iso_price in (("actual-LMP", iso_actual),
-                                 ("own-ref", iso_ref)):
-            if iso_price is None:
-                continue
-            mexp, pexp, hit, corr = _direction_score(
-                iso_price, agg, hurdle, net_export)
-            print(f"    [{label:10s}] {iso} mean ${iso_price.mean():6.2f} "
-                  f"vs neigh ${agg.mean():6.2f}  "
-                  f"pred export-share {pexp:.2f}  dir hit-rate {hit:.2f}  "
-                  f"corr(spread,-netexp) {corr:+.2f}")
+        if iso_actual is None:
+            print("  (no actual ISO LMP — skipping direction score)")
+            continue
+        mexp, pexp, hit, corr = _direction_score(
+            iso_actual, agg, hurdle, net_export)
+        print(f"    [actual-LMP] {iso} mean ${iso_actual.mean():6.2f} "
+              f"vs neigh ${agg.mean():6.2f}  "
+              f"meas export-share {mexp:.2f}  pred {pexp:.2f}  "
+              f"dir hit-rate {hit:.2f}  corr(spread,-netexp) {corr:+.2f}")
 
 
 def main() -> None:

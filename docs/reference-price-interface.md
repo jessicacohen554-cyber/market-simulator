@@ -29,11 +29,31 @@ up on its own data with no code change.
 
 Run against PJM 2023/24/25, with no LP, on three measured benchmarks:
 
+**Before calibration** (flat 7.5 heat rate, the placeholder):
+
 | benchmark | result |
 |---|---|
 | **Neighbor price *shape*** (vs actual NYISO LMP) | tracks: hourly corr +0.39 / +0.40 / +0.49 |
-| **Neighbor price *level*** (vs actual NYISO LMP) | understates: $23 vs $30, $21 vs $36, $26 vs $61 — gap widens in tight years |
-| **Seam direction** (spread sign vs measured net export) | **wrong sign**: predicts PJM imports; PJM exports in 95–98% of hours; hit-rate 2–11% |
+| **Neighbor price *level*** | far too cheap: constructed MISO $19/$16/$22 vs real ~$36/$31/$41 |
+| **Seam direction** (spread sign vs measured net export) | **wrong sign**: predicts PJM imports; hit-rate 2–11% |
+
+**After calibration** (effective heat rates anchored to each neighbor's realized
+LMP — MISO 14.2, NYISO 13.1, Carolinas 13.5; hurdle $2/MWh):
+
+| year | PJM LMP | neighbor agg | measured export-hrs | predicted | dir hit-rate | corr(spread,−netexp) |
+|---|---|---|---|---|---|---|
+| 2023 | $28.4 | $36.5 | 0.98 | 0.81 | **0.81** | +0.27 |
+| 2024 | $29.5 | $31.6 | 0.96 | 0.68 | **0.69** | +0.25 |
+| 2025 | $42.9 | $41.2 | 0.95 | 0.62 | **0.63** | +0.01 |
+
+Anchoring the neighbor to its own realized LMP flips the seam to correctly
+predict PJM **export** in the majority of hours (was ~0). The remaining gap
+between predicted (62–81%) and measured (95–98%) export hours is a **structural
+export floor** — PJM exports scheduled/firm baseload (nuclear that can't back
+down, bilateral contracts) even in hours when its price is at or above the
+neighbor's. A pure economic price-spread captures the economic majority, not
+this floor; step (2) handles it explicitly (a small must-export floor, or
+accepting the economic portion) rather than inflating the heat rate to fake it.
 
 ### The headline finding (corrected after a literature check)
 
@@ -63,7 +83,7 @@ So the lesson is not "abandon the spread" — it is "**price the neighbor to its
 own realized LMP, not to a bare gas-burn floor**." The shape mechanism is
 already sound (hourly corr +0.4 vs actual NYISO LMP); only the level is wrong.
 
-### Implication for step (2) — calibrate the level to the neighbor, NOT to the flow
+### The fix (now implemented) — calibrate the level to the neighbor, NOT to the flow
 
 The faithful lever is a **per-region marginal heat rate** (and possibly
 supply-curve convexity, `load_shape_exponent` > 1) that makes each neighbor's
@@ -75,9 +95,28 @@ the clean gas-marginal anchors; NYISO downstate is congestion-dominated (implied
 HR ~10→18 across 2023-25) and a poor heat-rate anchor — keep its residual as a
 documented congestion premium rather than chasing it with HR.
 
+This is now in the `INTERFACE_NEIGHBORS` registry: MISO 14.2, NYISO 13.1,
+Carolinas 13.5 MMBtu/MWh, hurdle $2/MWh (the OMS-RSC inter-RTO wheeling adder;
+PJM exports at thin spreads, so the hurdle must stay small). The validation
+table above is the result.
+
+### Open items for step (2) — the LP wiring
+
+1. **Structural export floor.** The economic spread predicts 62–81% export
+   hours vs the measured 95–98%; the ~15–30 pt residual is PJM's
+   scheduled/firm baseload export. Handle it explicitly (a small must-export
+   floor on the seam, or accept the economic portion) — never by inflating the
+   heat rate to fake the floor.
+2. **NYISO year-instability.** Its implied HR runs 9.8→13.1→17.7 (2023-25)
+   because downstate congestion/scarcity dominates; the single 13.1 anchor
+   overshoots 2023 ($40 vs actual $30) and undershoots 2025 ($45 vs $61). NYISO
+   is the smallest seam (EMAAC only), so the aggregate impact is limited, but a
+   congestion premium or year-grounded NY anchor is the eventual refinement.
+3. **Carolinas LMP.** The 13.5 HR is a SERC-bilateral estimate on the SOCO
+   proxy; replace with a Duke (DUK) extract + realized LMP when available.
+
 Hurdle rate: production-cost models use ~$2/MWh wheeling/transaction adders on
-inter-RTO transactions (OMS-RSC seams study), so the $3/MWh default sits in the
-right band.
+inter-RTO transactions (OMS-RSC seams study), matching the registry default.
 
 This is consistent with the prior fitted `EXPORT_TRANCHES`, which reproduced
 PJM's export only by pricing the export sinks at the *neighbors' avoided cost*
