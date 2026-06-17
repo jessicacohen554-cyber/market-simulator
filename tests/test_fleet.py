@@ -28,6 +28,7 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     load_fleet_from_csv,
     load_planned_additions,
+    load_retired_within_window,
     split_coal_tranches,
 )
 
@@ -733,6 +734,38 @@ class TestLoadPlannedAdditions(unittest.TestCase):
     def test_unknown_data_dir_returns_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(load_planned_additions("ERCOT", data_dir=tmp), [])
+
+
+class TestLoadRetiredWithinWindow(unittest.TestCase):
+    """Within-window plant exits — the backcast mirror of planned additions."""
+
+    def test_neiso_includes_mystic_cc(self):
+        retirees = load_retired_within_window("NEISO")
+        self.assertTrue(retirees, "expected NEISO within-window retirees")
+        mystic = [g for g in retirees if int(g.plant_code) == 1588]
+        self.assertTrue(mystic, "Mystic (plant 1588) should be a NEISO exit")
+        for g in mystic:
+            self.assertEqual(g.fuel_type, "gas_cc")
+            self.assertEqual(g.plant_group, "CC_REGULAR")
+            self.assertEqual(g.zone, "Boston")  # NEMA, not a fallback zone
+            self.assertEqual(g.retirement_year, 2024)
+            self.assertIn(g.retirement_month, (4, 5, 6))
+            self.assertLess(g.online_year, 2023)
+            self.assertGreater(g.pmax_mw, 0.0)
+        self.assertGreater(
+            sum(g.pmax_mw for g in mystic), 1_000.0,
+            "Mystic CC is ~1.4 GW",
+        )
+
+    def test_retiree_absent_from_operable_snapshot(self):
+        # The whole point: Mystic is gone from the single recent operable
+        # vintage, so it is sourced only from the retiree parquet.
+        operable = load_fleet_from_csv("NEISO")
+        self.assertFalse(any(int(g.plant_code) == 1588 for g in operable))
+
+    def test_unknown_data_dir_returns_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(load_retired_within_window("NEISO", data_dir=tmp), [])
 
 
 class TestCoalTranches(unittest.TestCase):
