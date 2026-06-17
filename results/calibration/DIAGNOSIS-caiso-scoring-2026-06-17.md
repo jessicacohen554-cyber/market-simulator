@@ -155,3 +155,42 @@ python scripts/run_calibration_full.py --iso CAISO --year 2024 \
 
 Run single-year (~9 min); two concurrent CAISO solves OOM a 15 GB box (per
 `claude.md` rule 11 caveat) — the parallel 2023 leg was OOM-killed, run it alone.
+
+## Resolution status (implemented this session)
+
+- **P0 — DONE.** `actuals_source` routes wind (and solar) to EIA-930; the
+  renderer scores wind against EIA-930 (was omitted); `build_calibration_reference`
+  guards incomplete vintages (per-fuel wind/solar→EIA-930 below 80%, whole-vintage
+  `eia923_incomplete` flag below 90%). `calibration_reference.json` patched
+  surgically (CAISO 2024 wind 15.42→20.06, all-ISO 2025 wind→EIA-930; 2023 and
+  non-CAISO 2024 byte-identical). Tests: `test_calibration_reference_guard.py`,
+  updated `test_calibration.py`.
+- **P1 — DONE.** Dashboard keeper refreshed: `caiso-6-floor-negrenew` replaces the
+  stale `caiso-2-priced-ix` over-import bundle (then `caiso-7` after the P3 gas_st
+  fix). Run report scores wind vs EIA-930.
+- **P2 — DONE.** `_calibration_config` defaults the RA must-offer floor (frac 0.80)
+  + negative renewable offers ON for CAISO (other ISOs byte-identical); the CLI
+  flags are tri-state (`--no-…` for a baseline probe); `run_config.json` now records
+  the effective config. Validated 3-yr: 2024 gas 71.3 vs EIA-923 67.7 (+5.3%),
+  LMP min 28→0 every year. Test: `test_caiso_keeper_defaults.py`.
+- **P3 (partial) — DONE.** The RA floor is scoped to gas_cc/gas_ct; the
+  near-retired gas_st boilers (real ~0.15 TWh) are excluded (they were inflated
+  1.72→3.66 TWh by the floor). Test: `test_gas_steam_is_excluded_from_the_floor`.
+
+### P3 — deferred (with rationale)
+
+- **Per-year import ladder (`IMPORT_TRANCHES_BY_YEAR["CAISO"]`)** for the 2023
+  over-import (+14.5 TWh): the mechanism exists, but a defensible ladder must be
+  derived without the bundle-mode **circularity** the audit flags (the deriver
+  anchors to the model's own — miscalibrated — price duration curve), and it
+  needs a 3-yr re-validation. Larger than a surgical fix; left for a dedicated
+  import-calibration pass.
+- **Residual gas_st (~1.7 TWh) and biomass (~5.4 vs ~3) over-run:** both are
+  merit-order / offer-curve level, which the structural docs (`AUDIT-…`,
+  `NEXT-…`) explicitly defer to a separate offer-curve phase — not changed here
+  to avoid chasing the fit through an unvalidated merit-order move
+  (`claude.md` rule #1). Biomass-as-must-run (like geothermal) is the candidate
+  but shifts merit order, so it belongs in that phase with its own validation.
+- **Mean LMP level (~$54 vs ~$33):** the floor fixed the midday *floor* (min→0);
+  the remaining level gap is the broad offer-curve calibration, out of scope for
+  a structural diagnosis.
