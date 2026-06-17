@@ -365,7 +365,7 @@
           "gas_st": 0.1536,
           "nuclear": 18.3788,
           "solar": 49.4631,
-          "wind": 15.4206
+          "wind": 20.0605
         },
         "henry_hub_actual": 2.19,
         "renewables": {
@@ -548,7 +548,7 @@
           "gas_st": 0.0925,
           "nuclear": 17.5584,
           "solar": 39.7628,
-          "wind": 4.2419
+          "wind": 19.8206
         },
         "henry_hub_actual": 3.52,
         "renewables": {
@@ -714,7 +714,8 @@
               "ZP26": 0.505983
             }
           }
-        }
+        },
+        "eia923_incomplete": true
       }
     },
     "ERCOT": {
@@ -1689,7 +1690,7 @@
           "gas_st": 6.4578,
           "nuclear": 41.6317,
           "solar": 55.7945,
-          "wind": 90.7484
+          "wind": 115.1202
         },
         "henry_hub_actual": 3.52,
         "renewables": {
@@ -2365,8 +2366,8 @@
           "hydro": 0.0907,
           "nuclear": 27.6189,
           "oil": 0.9092,
-          "solar": 1.0205,
-          "wind": 3.0421
+          "solar": 1.5774,
+          "wind": 4.5331
         },
         "henry_hub_actual": 3.52,
         "renewables": {
@@ -2562,7 +2563,8 @@
               "North": 0.894957
             }
           }
-        }
+        },
+        "eia923_incomplete": true
       }
     },
     "NYISO": {
@@ -2798,7 +2800,7 @@
           "nuclear": 28.4076,
           "oil": 1.0577,
           "solar": 0.6617,
-          "wind": 4.4606
+          "wind": 7.0488
         },
         "henry_hub_actual": 3.52,
         "renewables": {
@@ -2994,7 +2996,8 @@
               "Upstate_West": 0.954674
             }
           }
-        }
+        },
+        "eia923_incomplete": true
       }
     },
     "PJM": {
@@ -3729,7 +3732,7 @@
           "gas_st": 14.9808,
           "nuclear": 270.0369,
           "solar": 21.6328,
-          "wind": 20.9952
+          "wind": 32.0962
         },
         "henry_hub_actual": 3.52,
         "renewables": {
