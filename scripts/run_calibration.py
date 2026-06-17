@@ -1380,7 +1380,8 @@ def run_year(
             dtype=bool,
         )
         lsc = largest_single_contingency_mw(
-            fleet_arrays.pmax, fleet_arrays.availability, elig
+            fleet_arrays.pmax, fleet_arrays.availability, elig,
+            plant_code=fleet_arrays.plant_code,
         )
         req = float(pjm_primary_reserve_requirement(lsc, config.hours)[0])
         curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
