@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-17 (ERCOT — OTHER_FOSSIL scoring bucket for genuinely-mixed gas-thermal plants)
+
+The EIA-923 dominant-class assignment collapses each plant to one model class
+(`eia923_dominant_class_by_plant`), but a handful of plants are a near-50/50 mix
+of steam and combustion-turbine units (Dansby, Powerlane, V H Braunig), so the
+"dominant" class is a coin-flip that can flip year-to-year and pollute the clean
+CC/CT/ST scores. `market_sim.data.fleet.apply_other_fossil_scoring` now re-buckets
+these into an **OTHER_FOSSIL** scoring class:
+
+- A plant is flagged `mixed_fossil_plants` when no single gas-thermal class holds
+  >= 60% of its EIA-923 net generation and its two largest classes are both
+  gas-thermal. The transform relabels those plants' gas-thermal rows to
+  OTHER_FOSSIL on **both** the model dispatch frame and the EIA-923 actuals frame
+  (keyed by EIA plant code), so they score in the same bucket on both sides.
+- **Scoring/benchmark only — dispatch is unchanged.** The bin keeps its
+  dominant-class offer curve; no re-solve. Applied in the text report ([3b]/[4])
+  and the dashboard (`classFull` / `gmModel`), so it needs no recalibration —
+  ERCOT keepers were regenerated from their existing bundles.
+- Effect (ERCOT 2023): pulls ~0.25 TWh of ambiguous generation out of CC/CT/ST
+  into OTHER_FOSSIL, cleaning the gas-class scores (e.g. ST_GAS +4.8 → +3.2).
+
 ## 2026-06-17 (Measured-data rule + HSL real-data reconciliation + formulaic ERCOT ORDC reserves)
 
 New Non-Negotiable Rule (claude.md): measured data is allowed only as a
