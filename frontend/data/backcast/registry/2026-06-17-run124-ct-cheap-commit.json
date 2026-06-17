@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-17-run124-ct-cheap-commit",
+  "label": "run124 CT cheap-commit (PROBE \u2014 REJECTED)",
+  "date": "2026-06-17",
+  "shorthand": "run124-ct-cheap-commit",
+  "definition": "PROBE (2024, rejected). run124 keeper with a cheaper CT_PEAKER committed band (0.80, markup ramp kept) to chase the CT volume under-run. CT over-recovers (3.91->9.11 TWh) but ST_GAS craters -2.4 TWh (FAIL) via the documented CT<->ST -0.25 cross-coupling, and the upper-body price collapses. Negative result: the CT under-run is not offer-closable. See docs/lmp-decomposition-2026-06.md.",
+  "years": [
+    2024
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-17-run124-ct-cheap-commit.js",
+  "bundle": "results/calibration/ct_cheapcommit_2024"
+}
