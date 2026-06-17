@@ -669,6 +669,49 @@ def largest_single_contingency_mw(
     return max(by_plant.values()) if by_plant else 0.0
 
 
+_PJM_AS_DIR = Path(__file__).resolve().parents[2] / "inputs" / "raw-data" / "PJM-AS"
+
+
+def load_pjm_measured_reserve_requirement(
+    year: int, hours: int = 8760, data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Return the measured PJM_RTO Primary Reserve requirement (MW), hourly.
+
+    The published reserve requirement (``pr_req_mw`` in
+    ``inputs/raw-data/PJM-AS/pjm_<year>_as_up_mw.parquet``, derived by
+    ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner) is a measured
+    *reliability* quantity — the capacity PJM holds against its most-severe
+    single contingency, set by a published market-design formula (Manual 13),
+    not a price actual. Using it as the co-optimization requirement in a
+    backcast is the reserve analogue of the historic outage / fuel-price
+    overlays: a measured physical input, not a fit to the LMP residual. The
+    forecast path uses :func:`pjm_primary_reserve_requirement` (the fleet-
+    responsive 1.5x-MSSC formula) instead.
+
+    Returns ``None`` when the parquet is absent (caller falls back to the
+    formula).
+    """
+    path = Path(data_dir) / f"pjm_{year}_as_up_mw.parquet"
+    if not path.exists():
+        return None
+    import pandas as pd
+
+    req = pd.read_parquet(path)["pr_req_mw"].to_numpy(dtype=float)
+    # Data holes (documented ~24 h) read as 0; forward/back-fill so the
+    # requirement is never spuriously zero.
+    if (req <= 0.0).any():
+        good = req > 0.0
+        if good.any():
+            idx = np.where(good, np.arange(len(req)), -1)
+            np.maximum.accumulate(idx, out=idx)
+            idx[idx < 0] = np.flatnonzero(good)[0]
+            req = req[idx]
+    if len(req) >= hours:
+        return req[:hours]
+    # Tile up to the requested horizon (defensive; series is normally 8760).
+    return np.resize(req, hours)
+
+
 def pjm_primary_reserve_requirement(
     lsc_mw: float,
     hours: int,
