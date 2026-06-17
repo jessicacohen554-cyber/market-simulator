@@ -1,6 +1,66 @@
 # ERCOT calibration — best config so far
 
-> **STATUS (2026-06-16): NEW KEEPER — run 121 = run 120 + ERCOT storage vintage
+> **STATUS (2026-06-17): NEW KEEPER — run 124 = run 121 + `--storage-as-commitment`
+> (the measured storage AS-aware design).** `results/calibration/run124_storage_as_keeper`
+> = run 121's exact config (CT deployment OFF, `battery_dispatch_adder=10`,
+> merit-ramp CC, cc-duct, storage vintage COD ramp) **plus** the measured hourly
+> storage up-AS power reservation. ERCOT batteries clear ~2.0 GW (2024) / 2.8 GW
+> (2025) of their power as ancillary services (RegUp+RRS+ECRS); that power is
+> committed and cannot also arbitrage energy. `--storage-as-commitment` subtracts
+> the measured per-resource-type storage-AS MW
+> (`inputs/raw-data/ercot-AS/ercot_<yr>_as_by_restype_hourly.parquet`, `storage`
+> column; Reg-Down and offline Non-Spin excluded) from the battery dispatch power
+> cap, pro-rata by available power. **Adopted for ACCURACY, not fit** (claude.md:
+> prefer measured/defensible over what fits) — the energy-only LP otherwise dumps
+> the full battery fleet into a handful of hours (2024 peak **5.93 GW** in 451 h);
+> the reservation caps that to a **physical 4.59 GW** spread over 511 h and lands
+> the 2024 storage benchmark dead-on (discharge 0.781 → **0.728 TWh** vs EIA-930
+> **0.722**; charge 0.857 vs 0.870). **12 unphysical >4.6 GW dump hours eliminated**
+> (a battery holding 2–4 GW of AS cannot also deliver 5–6 GW of energy).
+> **Scores identical to run 121** — same **5 fails @0.5%** (CT_PEAKER 2023/24,
+> CC_REGULAR 2024/25, COAL_PRB 2024), **7 @0.33%**; **cf_emd [7c] 18/18 PASS**
+> (several marginally better: CC_CHP, CT_PEAKER 2024, ST_GAS); **CO₂ 8/9** (2024
+> coal −7.0% residual, unchanged). Supersedes run 121.
+>
+> **Key tuning finding (the "trade the magic number for data" experiment):** the
+> measured AS reservation **complements, does not replace,** `battery_dispatch_adder
+> =10`. The two discipline different things — the **adder** is the throughput/
+> degradation + AS-opportunity cost that bounds storage **energy** (total cycling);
+> the **AS reservation** is the measured physical commitment that caps the **peak**
+> (power). Dropping the adder to 0 with the reservation on **explodes** 2024 storage
+> to **2.72 TWh** (3.8× the 0.722 benchmark; charge 3.21 TWh) and regresses
+> CT_PEAKER's hourly r (0.466 → 0.445, [7c] FAIL) — the reservation caps only the
+> high-AS peak hours, while zero cycling cost lets the LP over-cycle in 2059 other
+> hours. With both on, energy lands at +0.8% of benchmark (no over-suppression =
+> no harmful double-count). adder=10 stays — it is a defensible degradation VOM
+> (`ScenarioConfig.battery_dispatch_adder`, forecast-applicable), not a CEMS-pinned
+> magic number. **Market-integrity:** no double-counting (`as_revenue_enabled` OFF
+> in the P1 backcast — that path only feeds the capacity screens; ORDC overlay
+> `ordc_as_plan_mw` netting OFF; the reservation touches only the storage power
+> cap). Reg-Down correctly excluded; per-restype reconciles with NP3-911 (2025
+> +40 MW, 2024 conservative −600 MW). RTE 0.850 (exact target), zero
+> simultaneous-charge/discharge hours, zero deliverability violations. **2023
+> storage-AS is an ESTIMATE** (intensity transfer from 2024 × EIA-860 COD fleet
+> ratio, ECRS zeroed pre-June; `build_ercot_storage_as_2023_estimate.py`); 2024/25
+> are measured. Reservation reserves **power, not SOC** — first-order-correct for
+> the energy backcast (SOC reservation is a forecast-only AS-deliverability
+> refinement, not needed here). NOTE: the earlier single-year probes run 122
+> (2024) / run 123 (2023 est) had **CT deployment ON** — they were *not* clean
+> run 121 + storage-AS; run 124 is the clean 3-year keeper-grade reproduction.
+>
+> Reproduce:
+> ```
+> python scripts/run_calibration_full.py --year 2023 2024 2025 \
+>     --storage-daily-cycling --battery-adder 10 --storage-as-commitment \
+>     --offer-curve-delta-json inputs/calibration/offer_curve_deltas_cc_merit_ramp.json \
+>     --coal-lignite-sigmoid --lignite-floor 0.675 --lignite-ceil 1.00 \
+>     --prb-floor 0.73 --prb-follower-floor 0.63 \
+>     --curve-mid 0.35 --btm-backfill-year 2024 --cc-duct-peaking \
+>     --wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP
+> ```
+> (storage vintage COD ramp auto-enables for ERCOT; CT deployment stays OFF.)
+
+> **STATUS (2026-06-16): prior keeper — run 121 = run 120 + ERCOT storage vintage
 > (COD) ramp.** Adopted because it is **more accurate**, not because it fits
 > better (claude.md: prefer measured/accurate inputs over what fits the
 > backcast). ERCOT storage was using each year's flat year-end battery fleet;
