@@ -1380,7 +1380,34 @@ def run_year(
     # two-step ORDC curve prices a shortfall so the reserve clearing price
     # emerges as the balance-row dual and lifts the energy LMP. This replaces
     # the post-solve ORDC overlay (derive_pjm_ordc_overlay.py) for co-opt runs.
-    if getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
+    if getattr(config, "energy_reserve_coopt", False) and config.iso == "ERCOT":
+        # ERCOT: the published ORDC reserve demand curve enters the LP as a
+        # VOLL-anchored reserve demand (scarcity.ercot_ordc_demand_steps).
+        # Reserve-eligible thermal units split capacity between energy and
+        # upward reserve against the shared-headroom constraint, and the reserve
+        # clearing price (the balance-row dual) lifts the energy LMP endogenously
+        # — RTSPP = LMP + reserve price. Replaces the post-solve ORDC overlay
+        # for co-opt runs. The curve is constant across hours; the scarcity
+        # *incidence* comes from the hourly fleet availability in the headroom
+        # RHS, so the requirement is flat at the demand curve's top.
+        from market_sim.results.scarcity import ercot_reserve_coopt_inputs
+
+        coopt_req, coopt_elig, coopt_pen, coopt_w = ercot_reserve_coopt_inputs(
+            config, fleet_arrays, config.hours
+        )
+        dispatch_kwargs.update(
+            reserve_requirement=coopt_req,
+            reserve_eligible=coopt_elig,
+            ordc_penalties=coopt_pen,
+            ordc_step_widths=coopt_w,
+        )
+        logger.info(
+            "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
+            "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
+            float(coopt_req[0]), len(coopt_pen), float(coopt_pen.min()),
+            float(coopt_pen.max()), int(coopt_elig.sum()),
+        )
+    elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
         from market_sim.config.constants import PJM_ORDC_CURVE_PATH
         from market_sim.data.fleet import FUEL_TYPE_NAMES
         from market_sim.results.scarcity import (
