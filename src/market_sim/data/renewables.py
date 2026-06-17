@@ -80,6 +80,7 @@ from market_sim.config.constants import (
     RENEWABLE_INSTALLED_MW,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.paths import CAISO_HSL_DIR, ERCOT_HSL_DIR, NYISO_HSL_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import (
     DATA_DIR,
@@ -197,9 +198,7 @@ _MONTHS_PER_YEAR: int = 12
 # re-curtails under modeled transmission limits. Built by
 # scripts/build_ercot_hsl.py (2023 from the UMass 60-Day-SCED dataset;
 # 2024+ from uploaded ERCOT NP6 wind/solar production reports).
-_ERCOT_HSL_DIR: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "ercot-hsl"
-)
+_ERCOT_HSL_DIR: Path = ERCOT_HSL_DIR
 
 # Columns every per-year HSL parquet must carry (hourly MW series).
 _HSL_COLUMNS: tuple[str, ...] = (
@@ -211,9 +210,7 @@ _HSL_COLUMNS: tuple[str, ...] = (
 # with the same schema as the ERCOT file. Built by scripts/build_caiso_hsl.py;
 # a year without a full-year curtailment workbook has no parquet here and
 # falls back to the delivered EIA-930 hourly profile.
-_CAISO_HSL_DIR: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "caiso-hsl"
-)
+_CAISO_HSL_DIR: Path = CAISO_HSL_DIR
 
 # NYISO curtailment parquet directory (reserved for future data).
 # DATA NEEDED: NYISO does not publish hourly uncurtailed-potential series
@@ -224,9 +221,7 @@ _CAISO_HSL_DIR: Path = (
 # curtailment is not explicitly modeled (it embeds the historical curtailment,
 # which EIA-923 shows is well under 1 TWh/yr — below the threshold where
 # explicit re-curtailment changes dispatch materially).
-_NYISO_HSL_DIR: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "nyiso-hsl"
-)
+_NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 
 
 def _hsl_file(iso: str, year: int) -> Path | None:
