@@ -149,6 +149,12 @@ class Generator(BaseModel):
     eford: float = 0.05
     online_year: int = 2000
     retirement_year: int | None = None
+    # Commercial-operation / retirement *month* (1-12) within the online/
+    # retirement year, from EIA-860 Operating Month / Planned Retirement Month.
+    # Default 1 (online) / 12 (retire end-of-year) reproduce the all-year
+    # annual screen; consumed only by config.thermal_vintage_ramp.
+    online_month: int = 1
+    retirement_month: int | None = None
     is_must_run: bool = False
 
     # CAMPD operational-bin attributes. Set only for generators built by
@@ -514,6 +520,7 @@ def generators_to_fleet_arrays(
     config: ScenarioConfig | None = None,
     load_shape: np.ndarray | None = None,
     ct_campd_shape: dict[int, np.ndarray] | None = None,
+    year: int | None = None,
 ) -> FleetArrays:
     """Convert a list of generators into vectorized ``FleetArrays``.
 
@@ -1223,6 +1230,50 @@ def generators_to_fleet_arrays(
             float(r_mw.mean()), float(r_mw.max()), withdrawn / 1e3, unmet / 1e3,
         )
 
+    # Thermal COD vintage ramp. The thermal analogue of the renewable/storage
+    # vintage ramps: a unit that came online or retired part-way through the
+    # simulated year is available only in the months it actually operated,
+    # instead of the all-year-or-nothing annual online_year/retirement_year
+    # screen. Pure capacity accounting from EIA-860 Operating Month / Planned
+    # Retirement Month — formulaic and forecast-applicable, not a backcast fit.
+    # Applied last (after every outage/derate/withholding) so nothing re-raises
+    # an offline month; min_gen (the hard must-run floor) is zeroed in offline
+    # months too, else the LP lower bound would force a not-yet-built/retired
+    # unit to run. The default online_month=1 / retirement_month=12 make a
+    # full-year unit a no-op. Off by default (config.thermal_vintage_ramp).
+    _cod_year = year if year is not None else getattr(config, "weather_year", None)
+    if (config is not None
+            and getattr(config, "thermal_vintage_ramp", False)
+            and _cod_year is not None):
+        months = np.arange(1, 13)  # (12,) 1-based calendar months
+        online_mask = np.ones((n_gen, 12), dtype=float)
+        for g_idx, gen in enumerate(generators):
+            oy, om = gen.online_year, gen.online_month
+            ry, rm = gen.retirement_year, gen.retirement_month
+            on = np.ones(12, dtype=bool)
+            if oy > _cod_year:
+                on[:] = False
+            elif oy == _cod_year:
+                on &= months >= om
+            if ry is not None:
+                if ry < _cod_year:
+                    on[:] = False
+                elif ry == _cod_year:
+                    on &= months <= (rm if rm is not None else 12)
+            online_mask[g_idx] = on
+        if (online_mask < 1.0).any():
+            month_idx = _hour_to_month_index(hours)
+            ramp = online_mask[:, month_idx]  # (n_gen, hours) 0/1
+            availability *= ramp
+            if min_gen is not None:
+                min_gen *= ramp
+            offline = int((online_mask < 1.0).sum())
+            logger.info(
+                "thermal vintage ramp (%s %s): %d unit-months masked offline "
+                "(mid-year COD / retirement)",
+                _iso, _cod_year, offline,
+            )
+
     return FleetArrays(
         pmax=pmax,
         pmin=pmin,
@@ -1801,10 +1852,17 @@ _COLUMN_ALIASES: dict[str, set[str]] = {
         "operating_year", "operatingyear", "opyr", "operating_date",
         "operatingdate",
     },
+    "operating_month": {
+        "operating_month", "operatingmonth", "opmonth",
+    },
     "planned_retirement_year": {
         "planned_retirement_year", "plannedretirementyear",
         "planned_retirement_date", "plannedretirement", "retirement_year",
         "retirementyear",
+    },
+    "planned_retirement_month": {
+        "planned_retirement_month", "plannedretirementmonth",
+        "retirement_month", "retirementmonth",
     },
     "status": {"status", "statusdescription", "status_description"},
     "heat_rate": {
@@ -1883,6 +1941,29 @@ def _to_year(value: object) -> int | None:
     text = str(value).strip()
     match = re.search(r"(?:19|20)\d{2}", text)
     return int(match.group(0)) if match else None
+
+
+def _to_month(value: object) -> int | None:
+    """Extract a calendar month (1-12) from an int, float or string.
+
+    Returns ``None`` when the value is missing or out of range, letting the
+    caller fall back to its default (January for online, December for retire).
+    """
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        if value != value:  # NaN
+            return None
+        month = int(value)
+        return month if 1 <= month <= 12 else None
+    text = str(value).strip()
+    if not text:
+        return None
+    try:
+        month = int(float(text))
+    except ValueError:
+        return None
+    return month if 1 <= month <= 12 else None
 
 
 # Model fuel type -> historic-outage plant group, for EIA-860 fleets (every
@@ -2135,6 +2216,8 @@ def _rows_to_generators(
             continue
 
         operating_year = _to_year(data.get("operating_year")) or 2000
+        operating_month = _to_month(data.get("operating_month")) or 1
+        retirement_month = _to_month(data.get("planned_retirement_month"))
         ebin = _efficiency_bin(fuel_type, operating_year)
 
         # Prefer a unit-level heat rate (e.g. from eGRID) when present.
@@ -2209,7 +2292,9 @@ def _rows_to_generators(
                 "nox_rate": NOX_RATES.get(fuel_type, 0.0),
                 "eford": EFORD.get(fuel_type, 0.05),
                 "online_year": operating_year,
+                "online_month": operating_month,
                 "retirement_year": _to_year(data.get("planned_retirement_year")),
+                "retirement_month": retirement_month,
                 "is_must_run": fuel_type == "nuclear",
             }
         )
@@ -4433,7 +4518,8 @@ def bins_to_fleet(
             )
 
     fleet_arrays = generators_to_fleet_arrays(
-        fleet, zone_names, hours=config.hours, iso=config.iso, config=config
+        fleet, zone_names, hours=config.hours, iso=config.iso, config=config,
+        year=config.weather_year,
     )
     return fleet, fleet_arrays
 
