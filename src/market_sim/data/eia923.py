@@ -20,20 +20,19 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.paths import PROCESSED_DIR
+
 logger = logging.getLogger(__name__)
 
-# Default location of the processed F923 monthly cost parquet, resolved
-# relative to the repo root (this file lives at src/market_sim/data/).
+# Default location of the processed F923 monthly cost parquet (central registry).
 EIA923_MONTHLY_COSTS_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "processed"
-    / "eia923_monthly_fuel_costs.parquet"
+    PROCESSED_DIR / "eia923_monthly_fuel_costs.parquet"
 )
 
 # Default location of the processed F923 Page-1 generation parquet, with
 # one row per ``(year, plant_id, prime_mover, fuel_type, chp)``.
 EIA923_MONTHLY_GENERATION_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "processed"
-    / "eia923_monthly_generation.parquet"
+    PROCESSED_DIR / "eia923_monthly_generation.parquet"
 )
 
 _MONTHS_SHORT: tuple[str, ...] = (

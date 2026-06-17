@@ -31,6 +31,7 @@ from market_sim.config.constants import (
     VOM,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.paths import EIA_860_DIR, PROCESSED_DIR
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
     COAL_SUPPLY_TO_CLASS,
@@ -57,9 +58,8 @@ from market_sim.data.outages import (
 
 logger = logging.getLogger(__name__)
 
-# Location of the EIA-860 / eGRID CSV extracts, resolved relative to the
-# repository root (this file lives at src/market_sim/data/fleet.py).
-EIA_860_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860"
+# Location of the EIA-860 / eGRID CSV extracts. Re-exported from the central
+# path registry (other data modules import EIA_860_DIR from fleet).
 
 # Committed parquet of real EIA-860 generators for the seven wholesale
 # markets, produced by ``scripts/process_eia860.py`` from the raw release.
@@ -72,7 +72,7 @@ EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
 EIA_860_MULTIFUEL_PARQUET_NAME: str = "eia860_multifuel_operable.parquet"
 
 # Directory for derived, inspectable fleet outputs (the binned-fleet cache).
-PROCESSED_DIR: Path = Path(__file__).parents[3] / "inputs" / "processed"
+# Re-exported from the central path registry.
 
 # Columns of the cached plant-level binned-fleet parquet, one row per
 # physical generator with its loader-assigned efficiency bin and attributes.
@@ -3279,8 +3279,7 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
 # Default location of the CAMPD-derived per-plant emission-rate artifact
 # (scripts/derive_plant_emissions.py), resolved relative to the repo root.
 PLANT_EMISSION_RATES_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "processed"
-    / "plant_emission_rates.parquet"
+    PROCESSED_DIR / "plant_emission_rates.parquet"
 )
 
 # kg -> metric tonnes, the model's internal emission-rate mass unit.

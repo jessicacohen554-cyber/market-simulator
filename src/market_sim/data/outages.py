@@ -28,6 +28,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.paths import CALIBRATION_DIR, RAW_DATA_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +44,7 @@ logger = logging.getLogger(__name__)
 # only covered a handful of plants and missed e.g. San Miguel's spring/fall
 # blocks. The > 10-day span filter (MIN_OUTAGE_SPAN_HOURS) still selects only
 # sustained maintenance from these windows.
-OUTAGES_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-outages.csv"
-)
+OUTAGES_CSV: Path = RAW_DATA_DIR / "campd-outages.csv"
 
 # Default CAMPD bin-assignment CSV, the plant_code -> Plant_Group source used
 # to decide which plants are coal/CC. Matches ScenarioConfig.campd_bins_path.
@@ -57,7 +56,7 @@ BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
 # CAMPD CEMS state extracts. Those per-ISO files already contain only coal/CC/
 # gas-steam plants (the derivation's GROUPS filter), so the overlay trusts
 # them without re-intersecting against an ISO-specific bin CSV.
-_OUTAGES_DIR: Path = Path(__file__).parents[3] / "inputs" / "raw-data"
+_OUTAGES_DIR: Path = RAW_DATA_DIR
 
 
 def default_outages_path(iso: str | None) -> Path:
@@ -271,9 +270,7 @@ def outage_masks_for_year(
 # CC/gas-steam units only when they go genuinely dead (event-based), so an
 # economically idle CC turbine is not mistaken for an outage. Rows carry full
 # (year, start, end) windows; outage_hour_mask clips each to the run year.
-UNIT_OUTAGE_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-unit-outages.csv"
-)
+UNIT_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-unit-outages.csv"
 UNIT_OUTAGE_MIN_DAYS: int = 5
 # W A Parish (3470) coal units; the rest of its units are gas steam, modeled
 # under the split code 34702. Combustion turbines (CT_PEAKER / CT_CHP) are
@@ -427,9 +424,7 @@ def unit_outage_derate_factors(
 # Partial (unit-level) outage derates approximated from CAMPD CF-ceiling
 # plateaus (scripts/derive_partial_outages.py). A multiplicative availability
 # factor per plant: 1.0 outside detected windows, derate_factor within.
-PARTIAL_OUTAGE_CSV: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "campd-partial-outages.csv"
-)
+PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 
 
 @lru_cache(maxsize=None)
@@ -468,7 +463,7 @@ def partial_outage_derate_factors(
 # and so exempts its units from WEFOR/POF), this floor is sparse and well below
 # pmax in its hours, so the units keep the statistical availability model and
 # the floor is simply availability-capped where they ever coincide.
-_CT_DEPLOYMENT_DIR: Path = Path(__file__).parents[3] / "inputs" / "calibration"
+_CT_DEPLOYMENT_DIR: Path = CALIBRATION_DIR
 
 
 def ct_deployment_csv(iso: str = "ERCOT") -> Path:
