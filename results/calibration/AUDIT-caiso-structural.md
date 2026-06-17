@@ -296,3 +296,66 @@ loader fix; the keeper should use both.
 **Jacobian:** not re-derived — the hydro fix changes the 2025 hydro *level*, not
 the thermal-class merit-order band sensitivities the offer-curve Jacobian
 measures.
+
+---
+
+## Phase 2 — interchange shaping result + corrected floor diagnosis
+
+### Fix 2 (built, default-off) — measured interchange shaping
+`transmission.inject_interchange_shape` + `eia_loader.measured_interchange_envelope`
+shape the priced node's import-tranche availability and export-sink floor by the
+measured EIA-930 month×hour-of-day net-interchange envelope (p90), so the node
+imports overnight and can export the midday surplus instead of clearing a flat
+all-hours import. Opt-in via `--interchange-shaping` / `config.interchange_shaping`
+(default off; byte-identical for every other run/ISO). Tests:
+`tests/test_transmission.py::TestInterchangeShaping`,
+`tests/test_eia_loader.py::TestInterchangeEnvelope`.
+
+**Result — NEGATIVE for the floor (do not enable for the keeper):**
+
+| metric (2024) | before (flat node) | after (shaped) | actual |
+|---|---|---|---|
+| net import (TWh) | 35.7 | 18.2 | 30.8 |
+| spring-midday import (MW) | 2308 | 119 | ~ −1500 (export) |
+| export hours | 0.0 % | 0.0 % | ~11 % |
+| LMP mean ($) | 57.4 | 64.7 | 33.0 |
+| LMP min / p5 ($) | 28 / 39 | 32 / 44 | −41 / −10 |
+| gas (TWh) | 67.95 | 85.1 | EIA-923 67.7 |
+
+The diurnal shape *worked* (midday imports backed off 2308→119 MW), but the floor
+went **up**: capping the cheap midday import ($28 PNW) just substituted ~$40
+domestic gas as the marginal unit. The model **still never exports (0 %)** because
+it is never *long* — in the 400 cheapest shaped hours it imports only 332 MW and
+gas_cc is committed in 100 % of them.
+
+### Corrected floor diagnosis
+CAISO's over-priced midday floor is **not** an interchange artifact. Root cause:
+**the model is never long midday** — supply never exceeds demand, so the marginal
+resource is always domestic gas or a priced import (≥ ~$28–40); it can never reach
+the export sink ($8/$0) or negative prices because it has no surplus to dump.
+
+Real CAISO *is* long midday (it exports ~+2 GW and curtails), which is why its
+prices collapse to ~$0/negative. Two market-design mechanisms make it long that
+the model lacks:
+1. **RA must-offer commitment** — Resource-Adequacy gas stays online at min-load
+   through midday (can't economically cycle off for the evening ramp) → forced
+   oversupply. The model instead economically *decommits* gas to ~2 GW midday and
+   imports the rest, staying balanced.
+2. **Negative renewable offers** — CA solar/wind bid below $0 (RPS/REC/PTC value)
+   in oversupply; the model's solar is must-take at $0 and never marginal.
+
+The earlier-session hypotheses ("over-flat solar", "let gas decommit midday") and
+this session's first instinct ("the flat import node floors price") are all
+**wrong about the mechanism**: the floor is a *longness / marginal-offer*
+phenomenon (RA commitment + renewable bidding), not capacity, solar shape, or
+interchange.
+
+### Next phase — three parallel workstreams (see `results/calibration/NEXT-caiso-floor-prompts.md`)
+1. **RA must-offer minimum-commitment floor** — make the model long midday (the
+   real floor fix).
+2. **Negative / curtailable renewable offers** — price the surplus at ≤$0 (the
+   negative tail); pairs with (1) and with the shaped export envelope (Fix 2).
+3. **AS reserve-requirement formula** (WECC MORC, default-off) — the evening tail;
+   independent of the floor; placeholder until OASIS cleared-AS data can be pulled
+   (outbound network is blocked in the remote env, so OASIS is currently
+   unreachable).
