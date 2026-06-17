@@ -351,6 +351,14 @@ def _calibration_config(
         #   ERCOT/PJM have no state program and stay at 0.
         rps_enabled=False,
         gas_monthly_actuals=(iso.upper() in ("CAISO", "NYISO", "NEISO")),
+        # NYISO prices gas off different pipeline hubs by region (cheap Tenn Z4
+        # 200L / Niagara upstate, dearer Iroquois Z2 / Tenn Z6 in the east,
+        # Transco Z6 NY in the city), so the east marginal gas is persistently
+        # dearer than the west — the structural source of the upstate-cheap /
+        # east-dear LMP gradient the ISO-month average flattens. Measured from
+        # the NYISO State-of-the-Market reports (inputs/raw-data/
+        # nyiso_zonal_gas_hub.csv); see fuel.apply_nyiso_zonal_gas_basis.
+        nyiso_zonal_gas_basis=(iso.upper() == "NYISO"),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is
