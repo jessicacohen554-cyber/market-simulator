@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026-06-17 (NYISO locational RCPF reserve overlay — the downstate scarcity tail)
+
+The NYISO RCPF scarcity overlay gains its **locational** tier. With measured
+zonal load (upload U3) active, the per-zone diagnostic confirms the 2023–2025
+scarcity tail is downstate: in the actual >$300/MWh hours the **NYC** zone's
+reserve headroom collapses to ~1,000 MW — the NYC 30-minute reserve
+requirement — while NYCA-wide headroom is still ~5 GW, so the system-wide
+overlay (correctly) stays $0. The shortage lives inside the import-constrained
+NYC/SENY pocket, invisible to the NYCA-aggregate energy LP.
+
+- **`constants.NYISO_RCPF_LOCATIONAL`** — NYISO's nested locational reserve
+  regions (NYCA ⊃ East ⊃ SENY ⊃ NYC) as `region -> {zones, products}`, mapped
+  onto the five-zone model topology. East: 1,200 MW 30-min over zones F–K,
+  $500/MWh max; NYC (zone J): 1,000 MW 30-min + 500 MW 10-min, $500/MWh max
+  (FERC ER21-502 / NYISO MST Rate Schedule 4). SENY (zones G–K) is scaffolded
+  empty pending the RS4 requirement MW — a documented under-model. Overridable
+  via `ScenarioConfig.nyiso_rcpf_locational`.
+- **`results.rcpf.locational_zone_adders`** — prices each region's reserve
+  demand curve on the sum of its member zones' headroom and stacks it onto
+  every zone the region contains (on top of the system-wide NYCA tier),
+  reproducing the measured upstate→NYC reserve-price cascade.
+- **`scripts/derive_nyiso_rcpf_overlay.py --locational`** — builds per-model-
+  zone reserve headroom (`availability_rcpf_zonal.parquet`), writes the per-zone
+  `scarcity_locational.parquet`, and validates each zone's modeled adder against
+  the measured per-zone RT reserve price (`NYISO_as_rt_<year>.csv`). No LP
+  re-solve; the adder is post-solve and byte-identical to the energy-only LP.
+
+Result (no fitting to LMP residuals): the NYC locational adder fires in the
+right hours and its mean tracks the measured N.Y.C. reserve adder (2023: model
+$5.15 vs measured $6.37; 2024: $4.36 vs $7.64), producing a downstate price
+tail to ~$1,100/MWh. It under-fires in *incidence* (2023: 219 h vs 3,020 h;
+worse in the tight 2025 summer) because the LP's downstate headroom is still
+too loose in the body — the perfect-foresight import over-service that backs
+down NYC gas, which the overlay now quantifies. Import discipline (pricing each
+tranche from its neighbor's marginal cost) is the next structural lever. Tests:
+`tests/test_rcpf.py` (locational cascade, region-headroom summing, override,
+empty-region no-op).
+
 ## 2026-06-16 (data — NYISO ancillary-service reserve prices, measured RCPF validation)
 
 NYISO OASIS ancillary-service price downloads (`inputs/raw-data/NYISO-AS/`,
