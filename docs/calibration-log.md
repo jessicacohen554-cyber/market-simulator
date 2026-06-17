@@ -42,6 +42,88 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 <!-- Copy the block below for each calibration run. Newest first. -->
 
+### 2026-06-17 — ERCOT — LMP decomposition + CT_PEAKER offer re-derivation (run124 keeper held; overlay recalibrated)
+
+Two-track session on the run124 keeper's open price/marginal residuals. **No
+promotion — run124 stays the keeper of record.** Full writeup:
+`docs/lmp-decomposition-2026-06.md`.
+
+**TASK 1 — "dispatch is spot-on, LMP is off" (the reframing, measured).** The
+energy-only LMP MAE (32.3 / 7.8 / 2.3) is **tail-dominated, not a body error.**
+Full-year body/tail split (threshold actual RT $80): the body (~95% of hours,
+~all dispatched energy) sits at a **$7–9/h** MAE with a near-zero mean residual
+(2025 even +$3.6); the tail carries **78% (2023) / 47% / 30%** of the total
+$·h error from **5.0% / 3.0% / 4.4%** of hours. 2023's whole $32 MAE is **86%
+August+Sep+Jun** (August: model $27.8 vs RT $191.7). Price duration: model P99
+**$40/$34/$63** vs RT **$644/$147/$138**; the model's entire tail is the CT
+peak band (~$226 in 2023) + the odd VOLL slack hour. The actual RT fat tail
+(hundreds of $100–$5,000 h, ORDC/RTORPA + AS co-opt) is **structurally absent
+from the LP duals** — irreducible by construction (zero-unserved-energy
+perfect-foresight LP prices at the marginal *generator offer*). **The model's
+marginal unit is NOT mis-classed:** in the price-setting hours it is a CT peaker
+in both model and reality (honesty diagnostic: model is genuinely thin in the
+hours reality was thin, ρ≈−0.39); reality just stacks the reserve-demand-curve
+adder on top of that same generator. Analytic offer-band overlay confirms the
+body (p50–p90, $18–$32) is the CC_REGULAR econ ramp, the upper body (p95–p99,
+$34–$63) the CT committed→econ_high bands, the ceiling the CT peak band — the
+merit order reality runs.
+
+**TASK 1b — overlay recalibration (the one fixable LMP target, display-only).**
+Scored the *published* overlay (the dashboard's price line) on run124: published
+NP6-576-ER shift0 closes ~22% of the 2023 summer gap (MAE 32.3 → **24.6**),
+honestly cannot close 2023 (perfect-commitment headroom ~8.6 GW median in the
+181 actual >$200 h ⇒ ORDC LOLP≈0). **New finding: the AS-aware keeper
+re-calibrates the reliability-deployment (RTORDPA) offset from run115b's 2,500
+MW to ~1,500 MW.** `--storage-as-commitment` already caps the battery peak dump,
+tightening peak-hour reserves and supplying ~1 GW-equivalent of the discretionary
+tightness the old 2,500 MW carried — so 2,500 now **overshoots** on run124 (2023
+hours >$200 220 vs actual 181; 2024/25 MAE 9.9/7.1). Re-swept: 1,500 MW gives
+2023 MAE **12.5** / 120 of 181 tail hours / 2024 7.6 / 2025 4.1 — the run124
+analogue of run115b's 2,500 MW outcome. Committed `scarcity_np6shift0.parquet`
+(published canonical) + `scarcity_reldeploy1500.parquet` (run124 stress) to the
+bundle. Display-only; never gates volumes.
+
+**TASK 2 — CT_PEAKER grounded offer re-derivation (NEGATIVE — structural
+residual confirmed).** The run124 CT offer (committed 1.14, econ_low 1.27,
+econ_high 2.18, peak 13.15) has a **rising** econ ramp, which is the *opposite*
+of a physical CT heat-rate curve (a CT's incremental HR *falls* toward full
+load). The rising ramp is an **offer markup** — startup amortization + scarcity/
+opportunity cost, how ERCOT peakers actually bid — not a heat rate. Two 2024
+test re-derivations (grid TWh; actual CT≈7.4, ST≈18.2):
+
+| 2024 | CT_PEAKER | ST_GAS | model price p90/p95/p99 | upper-body 45–80 h |
+|---|---|---|---|---|
+| run124 keeper | 3.91 (−3.5) | 17.87 (−0.3 PASS) | 33/35/42 | 41 h |
+| A: heat-rate-pure (committed 1.30, econ flat 1.00→1.05) | 8.25 (+0.8 over) | **15.73 (−2.5 FAIL)** | 25/28/33 | 4 h |
+| B: cheap committed 0.80 (keep markup ramp) | 9.11 (+1.7 over) | **15.80 (−2.4 FAIL)** | 25/28/34 | 4 h |
+| actual RT p90/p95/p99 | — | — | 42/61/147 | — |
+
+Both grounded/cheaper CT offers (i) **over-recover** the CT volume under-run but
+**crater ST_GAS by ~2.4 TWh into a clear fail** (the documented CT↔ST −0.25
+cross-coupling — run124 holds CT at −3.5 precisely because ST_GAS needs that
+merit space), AND (ii) make the **price shape worse** — the upper body collapses
+(p90–p99 33→25 / 42→33), moving *away* from RT (42/61/147). So the run124 rising
+markup ramp is load-bearing: it holds CT to realistic volume *and* lifts the
+upper-body price toward RT. **The CT under-run is the non-CEMS small-peaker
+structural gap** (Ector County, Permian Basin, Pearsall — no hourly CEMS,
+unreachable by merit order), **not** an offer mispricing. Document, leave;
+run124 CT offer kept. No Jacobian re-levering: the existing run124 panel (CT
+committed −0.05 → CT +0.43 / ST −0.25) already predicts exactly what A/B
+confirmed — the documented cross-coupling, no class over-levered. Probes:
+`ct_hrpure_2024`, `ct_cheapcommit_2024` (rejected; 2024 single-year).
+
+**TASK 3 — CC_REGULAR nodal volume residual: DEFERRED (gated on resolution, not
+data).** The zonal LMP artifact (`actual_lmp_zonal_ERCOT.parquet`) IS available,
+but the D4-spatial pre-test already proved the binding congestion is **nodal,
+not zonal** (94% of SCED rent on <200 kV local pockets; 123 constraints to reach
+80%; no zonal interface carries meaningful rent), so finer zones would not bind
+and a zonal overlay re-fits the same global compensation (run118/119 weak). The
++5.60/+3.12 TWh 2024/25 over-run needs a genuinely nodal model or a data-targeted
+out-of-merit floor over dozens of the top SCED pockets — a heavy structural piece
+with steep diminishing returns, correctly its own session
+(`docs/spatial-ruc-session-prompt.md`). Not pursued here.
+
+
 ### 2026-06-17 — ERCOT — run124 NEW KEEPER: the AS-aware storage design (run121 + --storage-as-commitment)
 
 **run124** = run121's exact config **+ `--storage-as-commitment`**
