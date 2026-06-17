@@ -1917,6 +1917,70 @@ NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_10min_spin", 655.0, 0.0, 775.0),
 )
 
+# --- NYISO locational (zonal) RCPF reserve products ------------------------
+# NYISO's reserve market is LOCATIONAL: nested reserve regions (NYCA ⊃ East ⊃
+# SENY ⊃ NYC) each carry their own reserve requirement and demand curve, so a
+# downstate shortage stacks region penalties into the *zonal* LBMP even when
+# the system as a whole is long on reserves. This is why the system-wide
+# NYCA overlay (NYISO_RCPF_PRODUCTS above) fires $0 in the backcast's tightest
+# hours — measured NYCA-wide headroom never nears 2,620 MW — while the
+# measured per-zone reserve price cascades from upstate to New York City
+# (process_nyiso_as.py: WEST stacked RT reserve mean $2.20 → N.Y.C. $6.37,
+# max $2,448). The downstate scarcity is real but locational, set by the
+# reserve shortage *inside* the import-constrained NYC/SENY load pocket, not
+# by a NYCA-wide shortfall.
+#
+# Each region maps to the model zones physically inside it (the five-zone
+# topology in iso_configs._nyiso_config). The region's reserve headroom is
+# the sum of those zones' dispatchable headroom; a model zone's locational
+# adder is the sum of the demand-curve prices of every region that contains
+# it. This reproduces the measured cascade tiers (per-zone RT reserve price,
+# scripts/process_nyiso_as.py): zones A–E see the NYCA component only; zone F
+# adds East; zones G–K add SENY; zone J adds NYC. The NYCA (system-wide) tier
+# stays in NYISO_RCPF_PRODUCTS and is applied to every zone on top of these.
+#
+# Each region: member model zones + a product table with the same
+# (name, requirement_mw, critical_mw, max_penalty_$/MWh) convention and
+# piecewise-linear demand curve as NYISO_RCPF_PRODUCTS.
+#   * East — NYISO requires 1,200 MW of 30-minute Reserves to be located east
+#     of the Central-East interface (zones F–K); the 30-minute reserve demand
+#     curve maximum is $500/MWh (FERC Docket ER21-502, the SENY/East 30-minute
+#     uplift from $25 to $500/MW, eff. 2021; NYISO MST Rate Schedule 4).
+#     Model zones F–K → Capital_Hudson, Lower_Hudson, NYC, Long_Island.
+#   * NYC — NYISO procures 500 MW of 10-minute and 1,000 MW of 30-minute
+#     Reserves within zone J (New York City); demand-curve maximum $500/MWh
+#     (FERC ER21-502; NYISO MST RS4 / "Establishing Zone J Operating
+#     Reserves"). Model zone J → NYC.
+#   * SENY (zones G–K → Lower_Hudson, NYC, Long_Island) also carries a
+#     30-minute requirement priced to a $500/MWh maximum, but its MW
+#     requirement is not yet sourced to the tariff step table, so it is
+#     scaffolded empty here — a *documented under-model*: zones H/I/K sit one
+#     measured cascade tier (SENY) above the East-only level this table
+#     reproduces for them, pending the Rate Schedule 4 requirement value.
+# critical_mw is 0 for every locational product (the demand curve ramps
+# linearly from $0 at the requirement to the maximum penalty at zero
+# reserves) — the documented stand-in for the published stepped curve, the
+# same convention as the NYCA 10-minute products. Nothing here is fitted to
+# LMP residuals; the model adder is validated against the measured per-zone
+# RT reserve price (actual_as_reserve_NYISO.parquet).
+NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
+    "East": {
+        "zones": ("Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"),
+        "products": (("east_30min_total", 1200.0, 0.0, 500.0),),
+    },
+    "SENY": {
+        "zones": ("Lower_Hudson", "NYC", "Long_Island"),
+        "products": (),  # requirement pending RS4 citation (see note above)
+    },
+    "NYC": {
+        "zones": ("NYC",),
+        "products": (
+            ("nyc_30min_total", 1000.0, 0.0, 500.0),
+            ("nyc_10min_total", 500.0, 0.0, 500.0),
+        ),
+    },
+}
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760
