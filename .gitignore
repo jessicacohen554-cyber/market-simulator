@@ -57,6 +57,7 @@ inputs/processed/.offer_curve_jacobian_cache.json
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
 /results/calibration/nyiso_ce_*/
+/results/calibration/nyiso_oc_*/
 # CAISO AS operating-reserve formula before/after bundles (regenerable via
 # run_config.json; the before/after is reported, the parquet is scratch).
 /results/calibration/caiso_asformula_*/
