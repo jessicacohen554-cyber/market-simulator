@@ -82,6 +82,8 @@ from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
 from market_sim.model.transmission import extend_with_import_node  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     _COAL_SUPPLY_TO_CURVE,
+    OTHER_FOSSIL_CLASS,
+    apply_other_fossil_scoring,
     coal_supply_class,
 )
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
@@ -117,8 +119,12 @@ _CHP_CLASSES: tuple[str, ...] = tuple(
     c for c in _GAS_CLASSES if c.endswith("_CHP"))
 _NONCHP_GAS: tuple[str, ...] = tuple(
     c for c in _GAS_CLASSES if not c.endswith("_CHP"))
-# All thermal classes the [3b] / [4] tables iterate over.
-_THERMAL_CLASSES: tuple[str, ...] = (*_GAS_CLASSES, *_COAL_CLASSES)
+# All thermal classes the [3b] / [4] tables iterate over. OTHER_FOSSIL holds the
+# genuinely-mixed gas-thermal plants pulled out of the clean CC/CT/ST classes by
+# apply_other_fossil_scoring (a scoring bucket only — dispatch is unchanged).
+_THERMAL_CLASSES: tuple[str, ...] = (
+    *_GAS_CLASSES, OTHER_FOSSIL_CLASS, *_COAL_CLASSES
+)
 
 # Representative plants for the plant-level report. The user picks these
 # because they span every operational class the per-plant binning resolves
@@ -2519,7 +2525,13 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     plant_band_frames: list[pd.DataFrame] = []
 
     for year in meta["years"]:
-        e923 = e923_all[e923_all["year"] == year]
+        # Re-bucket genuinely-mixed gas-thermal plants (no class >= 60% of the
+        # plant's EIA-923 generation) into OTHER_FOSSIL — the same transform is
+        # applied to the model dispatch frame below, so a coin-flip plant lands
+        # in the same bucket on both sides and stops distorting the clean classes.
+        e923 = apply_other_fossil_scoring(
+            e923_all[e923_all["year"] == year], year, plant_col="plant_id"
+        )
         e923_annual = _e923_annual(e923)
         e923_monthly = _e923_monthly(e923)
         e930 = None
@@ -2540,7 +2552,9 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
             if len(meta["passes"]) > 1:
                 tag = "P1 (pre-commitment)" if pass_label == "P1" else "P2 (committed)"
                 print(f"\n  ----- {tag} -----")
-            dispatch = pd.read_parquet(disp_path)
+            dispatch = apply_other_fossil_scoring(
+                pd.read_parquet(disp_path), year, plant_col="plant_code"
+            )
             sysd = system[(system["year"] == year) & (system["pass"] == pass_label)]
             btm = dict(zip(
                 btm_all[(btm_all["year"] == year) & (btm_all["pass"] == pass_label)]["klass"],
