@@ -19,20 +19,16 @@ from pathlib import Path
 
 import pandas as pd
 
+from market_sim.config.paths import EIA_860_DIR, FLEET_DIR
+
 logger = logging.getLogger(__name__)
 
-# eGRID 2023 plant-level workbook, resolved relative to the repo root
-# (this file lives at src/market_sim/data/zone_assignment.py).
-_EGRID_PATH: Path = (
-    Path(__file__).parents[3] / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
-)
+# eGRID 2023 plant-level workbook (from the central path registry).
+_EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
 
 # EIA-860 plant file — current plant coordinates and balancing-authority
 # codes. Used to zone plants too new for the eGRID 2023 vintage.
-_EIA860_PLANT_PATH: Path = (
-    Path(__file__).parents[3] / "inputs" / "raw-data" / "eia-860"
-    / "eia860_plant.parquet"
-)
+_EIA860_PLANT_PATH: Path = EIA_860_DIR / "eia860_plant.parquet"
 
 # Model ISO name → eGRID balancing-authority code (BACODE column).
 _ISO_TO_BA_CODE: dict[str, str] = {
