@@ -28,19 +28,33 @@ import json
 import logging
 import sys
 import zipfile
+from functools import lru_cache
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
-from market_sim.data.eia_loader import load_demand_meta  # noqa: E402
+from market_sim.data.eia_loader import (  # noqa: E402
+    load_demand_meta,
+    load_eia_hourly_benchmark,
+)
 from market_sim.data.renewables import (  # noqa: E402
     _RENEWABLE_FUELS,
     _eia860_monthly_capacity,
 )
+
+# An incomplete current-year EIA-923 release (e.g. the 2025 early monthly
+# survey, ~70% of plants reporting) silently under-counts every fuel — most
+# severely the variable renewables, which have no CEMS backfill. When the
+# EIA-923 BA solar+wind total falls below this fraction of the EIA-930
+# grid-side (wind+solar) telemetry, the vintage is treated as incomplete and
+# wind/solar are sourced from EIA-930 instead (the authority the volume gate
+# already uses for these classes, see results.calibration.actuals_source).
+_EIA923_RENEWABLE_COMPLETENESS_FRACTION: float = 0.80
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("build_calibration_reference")
@@ -275,6 +289,12 @@ def _write_year_csv(iso: str, year: int, renewables: dict) -> Path:
     return path
 
 
+# A whole EIA-923 vintage is treated as a partial release (every fuel, incl.
+# the gas split, under-counted) when the balancing authority's total EIA-923
+# net generation falls below this fraction of the EIA-930 grid net generation
+# for the year. The 2025 early monthly survey runs ~74%; complete years ~100%.
+_EIA923_VINTAGE_COMPLETENESS_FRACTION: float = 0.90
+
 # EIA-923 reported fuel-type codes that count as coal.
 _EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"})
 # EIA-923 reported fuel-type codes that count as oil (distillate, residual,
@@ -306,33 +326,37 @@ _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
 
 
 def _eia923_generation(iso: str, year: int) -> dict[str, float]:
-    """Return EIA-923 net generation by model fuel (TWh) for an ISO-year.
+    """EIA-923 net generation by model fuel (TWh), with the incomplete-vintage
+    guard applied (wind/solar deferred to EIA-930 when the 923 release is a
+    partial current-year survey). See :func:`_eia923_generation_raw` for the
+    raw extraction and :func:`_guard_incomplete_eia923` for the guard.
+    """
+    return _guard_incomplete_eia923(
+        iso, year, _eia923_generation_raw(iso, year))
 
-    Reads the EIA-923 Schedule 2/3/4/5/M workbook from the ``f923_{year}``
-    zip under ``inputs/raw-data``, keeps the rows in the ISO's balancing
-    authority, and classifies each by reported fuel code and prime mover.
-    Gas is split into combined cycle (prime movers CA/CT/CC/CS), combustion
-    turbine (GT) and gas steam (ST). For ISOs in
-    :data:`_EIA923_EXTRA_FUELS_BY_ISO` (NYISO/NEISO) conventional hydro
-    (WAT/HY) and oil (:data:`_EIA923_OIL_FUELS`) are emitted too. Unlike the
-    eGRID plant snapshot, these totals sum to the balancing authority's actual
-    net generation, so they are a self-consistent calibration benchmark.
 
-    Returns an empty dict when no EIA-923 zip exists for the year (2021 and
-    2022 have none) or the ISO has no balancing-authority mapping.
+@lru_cache(maxsize=None)
+def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
+    """Return the EIA-923 Schedule-5 rows for an ISO's balancing authority.
+
+    Reads the ``f923_{year}`` zip under ``inputs/raw-data``, keeps the rows in
+    the ISO's balancing authority, and returns a frame with ``net_gen`` (MWh),
+    ``pm`` (prime mover) and ``fc`` (fuel code). ``None`` when no zip exists for
+    the year (2021/2022) or the ISO has no balancing-authority mapping. Cached
+    so the by-fuel split and the completeness check share a single read.
     """
     ba = _ISO_BA_CODE.get(iso)
     if ba is None:
-        return {}
+        return None
     matches = sorted(
         (REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip")
     )
     if not matches:
-        return {}
+        return None
     with zipfile.ZipFile(matches[0]) as zf:
         inner = [n for n in zf.namelist() if "Schedules_2_3_4_5_M" in n]
         if not inner:
-            return {}
+            return None
         with zf.open(inner[0]) as handle:
             df = pd.read_excel(
                 handle,
@@ -341,11 +365,32 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
             )
     df.columns = [str(c).replace("\n", " ").strip() for c in df.columns]
     df = df[df["Balancing Authority Code"].astype(str).str.strip() == ba]
-    net_gen = pd.to_numeric(
-        df["Net Generation (Megawatthours)"], errors="coerce"
-    ).fillna(0.0)
-    pm = df["Reported Prime Mover"].astype(str).str.strip()
-    fc = df["Reported Fuel Type Code"].astype(str).str.strip()
+    return pd.DataFrame({
+        "net_gen": pd.to_numeric(
+            df["Net Generation (Megawatthours)"], errors="coerce").fillna(0.0),
+        "pm": df["Reported Prime Mover"].astype(str).str.strip(),
+        "fc": df["Reported Fuel Type Code"].astype(str).str.strip(),
+    })
+
+
+def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
+    """Return EIA-923 net generation by model fuel (TWh) for an ISO-year.
+
+    Classifies each balancing-authority row (:func:`_eia923_ba_frame`) by
+    reported fuel code and prime mover. Gas is split into combined cycle (prime
+    movers CA/CT/CC/CS), combustion turbine (GT) and gas steam (ST). For ISOs in
+    :data:`_EIA923_EXTRA_FUELS_BY_ISO` (NYISO/NEISO) conventional hydro
+    (WAT/HY) and oil (:data:`_EIA923_OIL_FUELS`) are emitted too. Unlike the
+    eGRID plant snapshot, these totals sum to the balancing authority's actual
+    net generation, so they are a self-consistent calibration benchmark.
+
+    Returns an empty dict when no EIA-923 zip exists for the year (2021 and
+    2022 have none) or the ISO has no balancing-authority mapping.
+    """
+    df = _eia923_ba_frame(iso, year)
+    if df is None:
+        return {}
+    net_gen, pm, fc = df["net_gen"], df["pm"], df["fc"]
     is_gas = fc == "NG"
     masks = {
         "coal": fc.isin(_EIA923_COAL_FUELS),
@@ -368,6 +413,96 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
     }
 
 
+def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
+    """Return EIA-930 grid-side net generation by fuel (TWh) for an ISO-year.
+
+    Reads the per-BA hourly extract and sums each delivered fuel series. Empty
+    when the ISO has no EIA-930 extract for the year. Grid-side telemetry, so
+    the variable-renewable totals are not subject to the EIA-923 survey's
+    under-count / BA mis-assignment.
+    """
+    bench = load_eia_hourly_benchmark(iso, year)
+    if not bench:
+        return {}
+    return {
+        fuel: round(float(np.nansum(np.asarray(arr, dtype=float)))
+                    / _MWH_PER_TWH, 4)
+        for fuel, arr in bench.items()
+    }
+
+
+def _incomplete_renewable_fuels(
+    iso: str, year: int, raw: dict[str, float]
+) -> list[str]:
+    """Return the variable-renewable fuels EIA-923 under-counts for an ISO-year.
+
+    A fuel (wind or solar) is under-counted when its raw EIA-923 BA total is
+    below :data:`_EIA923_RENEWABLE_COMPLETENESS_FRACTION` of the EIA-930
+    grid-side telemetry for that fuel. Evaluated PER FUEL (not on the combined
+    renewable total) so a partial wind release is caught even when solar
+    reports fully. Empty for complete vintages (the two sources then agree to
+    within a few percent), so the guard is a no-op there. Also empty when there
+    is no EIA-923 vintage at all (``raw`` empty, e.g. 2021/2022): a missing
+    benchmark is left missing, not fabricated from EIA-930.
+    """
+    if not raw:
+        return []
+    e930 = _eia930_annual_by_fuel(iso, year)
+    out: list[str] = []
+    for fuel in ("wind", "solar"):
+        ref = e930.get(fuel, 0.0)
+        if ref <= 0.0:
+            continue
+        if raw.get(fuel, 0.0) < _EIA923_RENEWABLE_COMPLETENESS_FRACTION * ref:
+            out.append(fuel)
+    return out
+
+
+def _guard_incomplete_eia923(
+    iso: str, year: int, gen: dict[str, float]
+) -> dict[str, float]:
+    """Source wind/solar from EIA-930 when the EIA-923 vintage under-counts them.
+
+    The incomplete current-year EIA-923 release under-counts the variable
+    renewables (no CEMS backfill reaches them). Any wind/solar fuel below the
+    completeness fraction (:func:`_incomplete_renewable_fuels`) is replaced with
+    the EIA-930 grid total — byte-identical for complete vintages, where the two
+    agree. Other classes are left on EIA-923 (thermal is backfilled from CAMPD
+    downstream); callers flag the year via :func:`_eia923_is_incomplete`.
+    """
+    e930 = _eia930_annual_by_fuel(iso, year)
+    patched = dict(gen)
+    for fuel in _incomplete_renewable_fuels(iso, year, gen):
+        logger.info(
+            "%s %s: EIA-923 %s %.2f TWh is incomplete; using EIA-930 %.2f TWh",
+            iso, year, fuel, patched.get(fuel, 0.0), e930[fuel])
+        patched[fuel] = e930[fuel]
+    return patched
+
+
+def _eia923_is_incomplete(iso: str, year: int) -> bool:
+    """True when the WHOLE ISO-year EIA-923 vintage is a partial release.
+
+    Distinct from the per-fuel renewable guard (which also fires on a
+    single-fuel BA mis-assignment, e.g. CAISO wind, in an otherwise complete
+    year): this stamps the reference year block only when the balancing
+    authority's *total* EIA-923 net generation is far below the EIA-930 grid
+    total (the 2025 early survey, ~74%), so downstream scorecards know the
+    remaining EIA-923 by-fuel totals — notably the gas split, which has no
+    clean EIA-930 equivalent — are incomplete and should defer to EIA-930.
+    Complete vintages return False, so the flag never appears in their block.
+    """
+    df = _eia923_ba_frame(iso, year)
+    if df is None:
+        return False
+    e930 = _eia930_annual_by_fuel(iso, year)
+    e930_total = e930.get("net_gen", 0.0)
+    if e930_total <= 0.0:
+        return False
+    e923_total = float(df["net_gen"].sum()) / _MWH_PER_TWH
+    return e923_total < _EIA923_VINTAGE_COMPLETENESS_FRACTION * e930_total
+
+
 def build_reference() -> Path:
     """Build the calibration reference JSON and per-year CSVs.
 
@@ -381,12 +516,19 @@ def build_reference() -> Path:
         years: dict[str, dict] = {}
         for year in CALIBRATION_YEARS_BY_ISO.get(iso, CALIBRATION_YEARS):
             renewables = _eia860_renewables(iso, year)
-            years[str(year)] = {
+            block = {
                 "henry_hub_actual": HENRY_HUB_ACTUAL[year],
                 "demand": _demand_totals(iso, year),
                 "renewables": renewables,
                 "generation_twh": _eia923_generation(iso, year),
             }
+            if _eia923_is_incomplete(iso, year):
+                # Partial current-year EIA-923 release: wind/solar already
+                # swapped to EIA-930 above; flag so scorecards know the
+                # remaining EIA-923 by-fuel totals (notably the gas split) are
+                # incomplete and should defer to EIA-930 grid totals.
+                block["eia923_incomplete"] = True
+            years[str(year)] = block
             csv_path = _write_year_csv(iso, year, renewables)
             logger.info("wrote %s", csv_path.relative_to(REPO))
         isos[iso] = years
