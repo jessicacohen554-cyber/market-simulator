@@ -237,10 +237,20 @@ def main() -> None:
         }
     else:
         from market_sim.config.iso_configs import get_iso_config
-        from market_sim.data.fleet import load_fleet_from_csv
+        from market_sim.data.fleet import (
+            load_fleet_from_csv,
+            load_retired_within_window,
+        )
         iso_config = get_iso_config(iso)
         group_by_code = {}
-        for g in load_fleet_from_csv(iso, iso_config):
+        # Within-window plant exits dispatch in the backcast fleet too, so they
+        # need their observed CEMS outage windows derived — else an injected
+        # retiree (e.g. Mystic) runs uncapped at its full economic merit.
+        fleet = (
+            load_fleet_from_csv(iso, iso_config)
+            + load_retired_within_window(iso, iso_config)
+        )
+        for g in fleet:
             if int(g.plant_code) > 0 and g.plant_group:
                 group_by_code[int(g.plant_code)] = g.plant_group
                 name_by_code[int(g.plant_code)] = g.name
