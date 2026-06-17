@@ -106,15 +106,57 @@ the error inside an inflated requirement or a headroom offset):
 
 **Therefore:** the overlay is correct, parameter-honest infrastructure that
 stays inert until the upstream physics lands. The path to the tail is, in
-order: (a) per-zone hourly actual load (upload **U3**) + the TTC/interface
-audit so downstate binds; (b) **locational** East/SENY/NYC/LI RCPF products
-keyed off per-zone headroom (this overlay is scaffolded for them — add rows
-to `NYISO_RCPF_PRODUCTS` evaluated on zonal reserves); then (c) the
-system-wide curves here bind naturally in genuinely NYCA-wide-tight hours
+order: (a) per-zone hourly actual load (upload **U3**, now active) + the
+TTC/interface audit so downstate binds; (b) **locational** East/SENY/NYC RCPF
+products keyed off per-zone headroom (now implemented — see below); then (c)
+the system-wide curves here bind naturally in genuinely NYCA-wide-tight hours
 (e.g. extreme winter/summer capacity events). Forcing the system-wide curve
 to fire now — by inflating requirements or subtracting a multi-GW headroom
 offset — would bury the locational/import error, so it is deliberately not
 done.
+
+## The locational overlay (`--locational`)
+
+With measured zonal load (upload U3) active, the per-zone diagnostic confirms
+the locational thesis: in the 2023 actual >$300/MWh hours the **NYC** zone's
+reserve headroom collapses to ~1,000 MW — exactly the NYC 30-minute reserve
+requirement — while NYCA-wide headroom is still ~5 GW. The shortage is real
+but lives *inside* the import-constrained NYC/SENY pocket, invisible to the
+NYCA-aggregate energy LP.
+
+`results.rcpf.locational_zone_adders` prices that shortage. NYISO's reserve
+market is **nested and locational** (`constants.NYISO_RCPF_LOCATIONAL`):
+
+| Region | Model zones (NYISO A–K) | 30-min req | Max penalty | Source |
+|---|---|---|---|---|
+| NYCA   | all five (system-wide)        | 2,620 MW | $750 | FERC ER21-502 |
+| East   | Capital_Hudson, Lower_Hudson, NYC, Long_Island (F–K) | 1,200 MW | $500 | FERC ER21-502 / RS4 |
+| SENY   | Lower_Hudson, NYC, Long_Island (G–K) | *(pending RS4 MW)* | $500 | scaffolded |
+| NYC    | NYC (J): 1,000 MW 30-min + 500 MW 10-min | 1,000 / 500 MW | $500 | RS4 / "Zone J Reserves" |
+
+Each region's reserve headroom is the **sum of its member zones'** dispatchable
+headroom, and a zone's locational adder is the sum of the demand-curve prices
+of every region that contains it (the NYCA system tier is added on top of all
+of them). This reproduces the measured cascade tiers (`process_nyiso_as.py`):
+A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC. The SENY product
+list is intentionally **empty** — its $500 30-min curve is published but the
+MW requirement is not yet sourced to the RS4 step table — a documented
+under-model for zones H/I/K (one tier below the measured G–K level). Every
+locational requirement/penalty is a tariff value; **nothing is fitted to LMP
+residuals**, and each zone's modeled adder is validated against the measured
+per-zone RT reserve price.
+
+Across all three keepers the NYC locational adder fires in the right hours and
+its mean tracks the measured N.Y.C. reserve adder without tuning (2023:
+model **$5.15** vs measured **$6.37**; 2024: $4.36 vs $7.64), producing a
+downstate price tail to ~$1,100/MWh the energy-only LP could not. It still
+*under-fires in incidence* (2023: 219 h vs measured 3,020 h; the gap widens in
+the tight 2025 summer, $6.06 vs $28.73) because the LP's downstate headroom is
+still too loose in the body — the perfect-foresight import over-service that
+backs down NYC gas. That residual is the **import-discipline** lever (price
+each import tranche from its neighbor's marginal cost), the next structural
+step; the overlay quantifies exactly how much headroom the imports are giving
+away, rather than hiding it.
 
 ## Measured validation (NYISO OASIS ancillary-service prices)
 
@@ -140,7 +182,7 @@ measured version of the gating finding above.
 ```
 python scripts/derive_nyiso_rcpf_overlay.py results/calibration/nyiso_cal_2023 \
     [--years 2023 2024 2025] [--tag scenarioX] [--rebuild-availability] \
-    [--diagnostic]
+    [--diagnostic] [--locational]
 ```
 
 Writes `availability_rcpf.parquet` (cached reserve-fleet availability,
@@ -149,3 +191,12 @@ reconstructed via `run_year(fleet_only=True)` — no LP re-solve) and
 `lmp`, `lmp_scarcity`, and a per-product price column), next to the
 energy-only LMP. `--diagnostic` prints the headroom-vs-actual-tail
 localisation (the pre-adder gate) and exits.
+
+`--locational` runs the per-zone overlay instead: it caches
+`availability_rcpf_zonal.parquet` (per-model-zone reserve-fleet availability,
+thermal dispatch and storage cap), writes `scarcity_locational.parquet` (long,
+per (year, hour, zone): `reserves_mw`, `nyca_adder`, `locational_adder`,
+`scarcity_adder`, `lmp`, `lmp_scarcity`), and prints each model zone's modeled
+adder against the measured per-zone RT reserve price
+(`inputs/raw-data/NYISO-AS/NYISO_as_rt_<year>.csv`). The LP is untouched — the
+adder is post-solve, stacked onto the persisted zonal LBMP.
