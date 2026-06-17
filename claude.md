@@ -6,6 +6,14 @@ Default to concise answers: lead with the result/answer, keep prose tight, and
 expand only when asked. Prefer short paragraphs and small lists over long
 blocks of text. Don't restate the question or pad with preamble.
 
+**Deliver copy-paste artifacts whole, in one block.** Whenever the output is
+something the user will copy and use as a unit — a handoff prompt for a new
+session, a command, a config snippet, a commit message, a block of code — emit
+the complete, final version in a single fenced code block, ready to paste. Never
+build such an artifact incrementally across multiple turns and expect the user to
+stitch the pieces together. If new information means an artifact needs to change,
+re-send the entire updated artifact in one block, not a diff or an addendum.
+
 ## What This Is
 
 LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: seven ISOs registered in `config/iso_configs.py` — ERCOT (6 zones, the calibrated reference), CAISO (3 zones + WECC import node), PJM (4 zones), MISO (3 zones), SPP (2 zones), NYISO, NEISO — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
