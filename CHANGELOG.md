@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-17 (NEISO — CT_PEAKER reserve recovered: ct_deployment overlay survives the P2 commitment screen)
+
+The targeted CT AS/reserve-deployment overlay now survives the P2 unit-commitment
+pass, recovering NEISO's measured sub-marginal CT_PEAKER energy without injecting
+net gas. New keeper `neiso_ctdeploy_3yr` (neiso 16), superseding neiso 14.
+
+- **Bug fix — a reserve floor was being decommitted by the economic screen.**
+  `commitment.apply_commitment_with_coal_pin` rebuilt the P2 `FleetArrays`
+  **without `min_gen`**, so every hard floor (the `ct_deployment` reserve floor
+  and the CHP steam-following floor) was dropped in P2 and the commitment screen
+  decommitted the floored peakers as uneconomic. A reserve / AS-deployment floor
+  is energy that ran for reliability, not economics, so the *economic* screen
+  must not shut it off.
+- **Fix (gated, regression-proof).** `apply_commitment_with_coal_pin` gains
+  `preserve_min_gen` (default False = byte-identical): when True it carries
+  `min_gen` into P2 and raises each floored generator-hour's availability to
+  cover the floor (the LP binds `min_gen ≤ P ≤ pmax·availability`).
+  `run_calibration._commitment_pass` sets it True **only when a deployment
+  overlay is active** (`ct_deployment_overlay` / `reliability_deployment_overlay`,
+  both default-off), so the forecast runner and every non-overlay keeper
+  (ERCOT/PJM/CAISO/NYISO + NEISO neiso 14) take the exact prior path — verified
+  byte-identical (NEISO base 2024, overlay off, max |ΔTWh| = 0.0). Tests 361 pass.
+- **Result.** With `--ct-deployment`, `scripts/derive_ct_deployment.py --iso
+  NEISO` measures the wedge at 0.08/0.04/0.05 TWh and CT_PEAKER recovers
+  0.014/0.014/0.038 → 0.084/0.052/0.079 TWh (2023/24/25) while the gas total
+  (54.78/58.89/60.14, −1.2/−1.3/+0.1% vs EIA-930) and price level
+  (34.9/40.2/70.5 vs actual DA 36.8/41.5/67.9) stay at sign-off — the CT energy
+  displaces CC within gas, not coal/imports (the blanket-floor failure mode).
+  See `docs/calibration-log.md` and `docs/multi-iso/neiso-data-audit.md` §2e.
+
 ## 2026-06-17 (NEISO — Merrimack reclassified COAL_BIT; CC_REGULAR offer-curve Jacobian re-derived)
 
 The lone NEISO coal unit is now classified by its **measured** rank, and the
