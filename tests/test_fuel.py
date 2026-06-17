@@ -24,9 +24,11 @@ from market_sim.data.fuel import (
     _prb_monthly_actuals,
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
+    apply_nyiso_zonal_gas_basis,
     iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
+    nyiso_zonal_gas_offsets,
     resolve_annual_gas_price,
     resolve_fuel_prices,
     resolve_nox_price,
@@ -1074,3 +1076,76 @@ def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
     # January hours pay the measured price, not the shaped trajectory.
     np.testing.assert_allclose(actuals[0, :744], measured[0])
     assert actuals[0, 0] > shaped[0, 0]
+
+
+_NYISO_ZONES = [
+    "Upstate_West",
+    "Capital_Hudson",
+    "Lower_Hudson",
+    "NYC",
+    "Long_Island",
+]
+
+
+def _nyiso_gas_fleet(hours: int = 48):
+    """Two identical gas CCs, one upstate (cheap hub) and one in the east."""
+    generators = [
+        Generator(
+            unit_id="GAS_UP",
+            name="Upstate CC",
+            zone="Upstate_West",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_CAP",
+            name="Capital CC",
+            zone="Capital_Hudson",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _NYISO_ZONES, hours=hours)
+
+
+def test_nyiso_zonal_gas_offsets_west_below_east():
+    """Upstate and NYC carry a negative gas basis vs the east reference (0)."""
+    off = nyiso_zonal_gas_offsets(2023)
+    assert off is not None
+    assert off["Capital_Hudson"] == 0.0  # reference zone anchors at zero
+    assert off["Upstate_West"] < -1.0  # Tenn Z4 200L well below Iroquois Z2
+    assert off["NYC"] < 0.0  # Transco Z6 NY below Iroquois Z2
+    assert off["Long_Island"] == 0.0  # Iroquois Z2, same as the reference
+
+
+def test_nyiso_zonal_gas_basis_shifts_only_when_enabled():
+    """The overlay lowers upstate gas only for NYISO with the flag on."""
+    hours = 48
+    fleet = _nyiso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 4.0)
+    config = ScenarioConfig(iso="NYISO", hours=hours)
+
+    off_prices = base.copy()
+    apply_nyiso_zonal_gas_basis(off_prices, fleet, config, 2023)
+    np.testing.assert_array_equal(off_prices, base)  # flag off -> no-op
+
+    on_prices = base.copy()
+    apply_nyiso_zonal_gas_basis(
+        on_prices, fleet, config.with_overrides(nyiso_zonal_gas_basis=True), 2023
+    )
+    up = fleet.unit_ids.index("GAS_UP")
+    cap = fleet.unit_ids.index("GAS_CAP")
+    assert on_prices[up, 0] < base[up, 0]  # upstate cheaper
+    assert on_prices[cap, 0] == base[cap, 0]  # east reference unchanged
+    assert on_prices[up, 0] == 4.0 + nyiso_zonal_gas_offsets(2023)["Upstate_West"]
+
+
+def test_nyiso_zonal_gas_basis_skips_other_isos():
+    """A non-NYISO ISO is untouched even with the flag set."""
+    hours = 48
+    fleet = _nyiso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 4.0)
+    config = ScenarioConfig(iso="PJM", hours=hours, nyiso_zonal_gas_basis=True)
+    prices = base.copy()
+    apply_nyiso_zonal_gas_basis(prices, fleet, config, 2023)
+    np.testing.assert_array_equal(prices, base)
