@@ -2874,6 +2874,39 @@ _GAS_BIN_GROUPS: frozenset[str] = frozenset(
 
 
 @lru_cache(maxsize=8)
+def _eia923_plant_class_totals(year: int) -> dict[int, dict[str, float]]:
+    """Return ``{plant_code: {model class: annual net-gen MWh}}`` from EIA-923.
+
+    Classifies every ``(plant, prime_mover, fuel, chp)`` EIA-923 Page-1
+    generation row through the canonical :func:`classify_plant` and sums net
+    generation per (plant, class). The shared basis for both the per-plant
+    dominant class and the genuinely-mixed-plant detection. Empty when EIA-923
+    has no data for ``year``.
+    """
+    from market_sim.data.eia923 import load_monthly_generation
+
+    try:
+        gen = load_monthly_generation()
+    except FileNotFoundError:
+        return {}
+    df = gen[gen["year"] == year]
+    if df.empty:
+        return {}
+
+    totals: dict[int, dict[str, float]] = {}
+    for pid, pm, fuel, chp, mwh in zip(
+        df["plant_id"], df["prime_mover"], df["fuel_type"],
+        df["chp"], df["netgen_annual_mwh"],
+    ):
+        klass = classify_plant(
+            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
+            coal_class_resolver=_coal_class_for,
+        )
+        totals.setdefault(int(pid), {})
+        totals[int(pid)][klass] = totals[int(pid)].get(klass, 0.0) + float(mwh)
+    return totals
+
+
 def eia923_dominant_class_by_plant(year: int) -> dict[int, str]:
     """Return ``{plant_code: dominant model class}`` from EIA-923 Page-1 netgen.
 
@@ -2887,34 +2920,83 @@ def eia923_dominant_class_by_plant(year: int) -> dict[int, str]:
     scenario years, or a missing parquet), so callers fall back cleanly to the
     curated (ERCOT) or EIA-860-derived class.
     """
-    from market_sim.data.eia923 import load_monthly_generation
+    out: dict[int, str] = {}
+    for pid, by in _eia923_plant_class_totals(year).items():
+        out[pid] = max(by.items(), key=lambda kv: kv[1])[0]
+    return out
 
-    try:
-        gen = load_monthly_generation()
-    except FileNotFoundError:
-        return {}
-    df = gen[gen["year"] == year]
-    if df.empty:
-        return {}
 
-    totals: dict[tuple[int, str], float] = {}
-    for pid, pm, fuel, chp, mwh in zip(
-        df["plant_id"], df["prime_mover"], df["fuel_type"],
-        df["chp"], df["netgen_annual_mwh"],
-    ):
-        klass = classify_plant(
-            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
-            coal_class_resolver=_coal_class_for,
-        )
-        key = (int(pid), klass)
-        totals[key] = totals.get(key, 0.0) + float(mwh)
+# Gas-thermal scoring classes a single plant can mix (steam vs combustion-turbine
+# units), and the dominant-share floor below which the plant is treated as
+# genuinely mixed — no single class earns the bin, so collapsing it to one class
+# is a coin-flip that can flip year-to-year (e.g. Dansby 50/50 ST/CT).
+_GAS_THERMAL_SCORING_CLASSES: frozenset[str] = frozenset({
+    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP",
+})
+OTHER_FOSSIL_CLASS: str = "OTHER_FOSSIL"
+OTHER_FOSSIL_MIN_DOMINANT_FRAC: float = 0.60
 
-    best: dict[int, tuple[str, float]] = {}
-    for (pid, klass), mwh in totals.items():
-        current = best.get(pid)
-        if current is None or mwh > current[1]:
-            best[pid] = (klass, mwh)
-    return {pid: klass for pid, (klass, _) in best.items()}
+
+@lru_cache(maxsize=8)
+def mixed_fossil_plants(year: int) -> frozenset[int]:
+    """Return the EIA plant codes that are genuinely mixed gas-thermal plants.
+
+    A plant qualifies when no single gas-thermal class holds at least
+    :data:`OTHER_FOSSIL_MIN_DOMINANT_FRAC` (60%) of its EIA-923 net generation
+    and its two largest classes are both gas-thermal — i.e. a steam + combustion-
+    turbine mix we cannot cleanly assign to CC / CT / ST from the plant-summed
+    data. These are scored in an ``OTHER_FOSSIL`` bucket (on both the model and
+    the actual side) by :func:`apply_other_fossil_scoring`, so the coin-flip does
+    not distort the clean-class scores. Dispatch is unaffected — the bin keeps
+    its dominant-class offer curve. Empty when EIA-923 has no data for ``year``.
+    """
+    out: set[int] = set()
+    for pid, by in _eia923_plant_class_totals(year).items():
+        total = sum(by.values())
+        if total <= 0.0:
+            continue
+        ranked = sorted(by.items(), key=lambda kv: kv[1], reverse=True)
+        (top_cls, top_mwh) = ranked[0]
+        second_cls = ranked[1][0] if len(ranked) > 1 else None
+        if (
+            top_mwh / total < OTHER_FOSSIL_MIN_DOMINANT_FRAC
+            and top_cls in _GAS_THERMAL_SCORING_CLASSES
+            and second_cls in _GAS_THERMAL_SCORING_CLASSES
+        ):
+            out.add(pid)
+    return frozenset(out)
+
+
+def apply_other_fossil_scoring(
+    df: pd.DataFrame, year: int,
+    plant_col: str = "plant_code", class_col: str = "klass",
+) -> pd.DataFrame:
+    """Re-bucket genuinely-mixed plants' gas-thermal rows into ``OTHER_FOSSIL``.
+
+    A reporting/benchmark transform (NOT a dispatch change): for every row whose
+    ``plant_col`` is a :func:`mixed_fossil_plants` plant and whose ``class_col``
+    is a gas-thermal class, the class is relabelled ``OTHER_FOSSIL``. Applied
+    symmetrically to the model dispatch frame and the EIA-923 actuals frame so a
+    mixed plant's generation lands in the same bucket on both sides. Returns the
+    frame unchanged (a copy is made only when something is relabelled) when the
+    year has no mixed plants or the columns are absent.
+    """
+    mixed = mixed_fossil_plants(year)
+    if not mixed or plant_col not in df.columns or class_col not in df.columns:
+        return df
+    codes = pd.to_numeric(df[plant_col], errors="coerce")
+    mask = codes.isin(mixed) & df[class_col].isin(_GAS_THERMAL_SCORING_CLASSES)
+    if not bool(mask.any()):
+        return df
+    out = df.copy()
+    # The class column is often a pandas Categorical (from parquet); register the
+    # new bucket as a category before assigning, else the setitem raises.
+    if isinstance(out[class_col].dtype, pd.CategoricalDtype):
+        if OTHER_FOSSIL_CLASS not in out[class_col].cat.categories:
+            out[class_col] = out[class_col].cat.add_categories([OTHER_FOSSIL_CLASS])
+    out.loc[mask, class_col] = OTHER_FOSSIL_CLASS
+    return out
+
 
 
 def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
