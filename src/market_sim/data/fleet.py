@@ -39,6 +39,11 @@ from market_sim.config.plant_taxonomy import (
     coal_code_to_class,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.data.cod_ramp import (
+    effective_cod,
+    load_cod_map,
+    monthly_online_mask,
+)
 from market_sim.data.outages import (
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
@@ -151,8 +156,9 @@ class Generator(BaseModel):
     retirement_year: int | None = None
     # Commercial-operation / retirement *month* (1-12) within the online/
     # retirement year, from EIA-860 Operating Month / Planned Retirement Month.
-    # Default 1 (online) / 12 (retire end-of-year) reproduce the all-year
-    # annual screen; consumed only by config.thermal_vintage_ramp.
+    # Default 1 (online) / None (retire end-of-year) reproduce the all-year
+    # annual screen; consumed by the COD ramp (config.cod_ramp_enabled) as the
+    # fall-back when a generator's plant is absent from cod_ramp.load_cod_map.
     online_month: int = 1
     retirement_month: int | None = None
     is_must_run: bool = False
@@ -1230,48 +1236,46 @@ def generators_to_fleet_arrays(
             float(r_mw.mean()), float(r_mw.max()), withdrawn / 1e3, unmet / 1e3,
         )
 
-    # Thermal COD vintage ramp. The thermal analogue of the renewable/storage
-    # vintage ramps: a unit that came online or retired part-way through the
-    # simulated year is available only in the months it actually operated,
-    # instead of the all-year-or-nothing annual online_year/retirement_year
-    # screen. Pure capacity accounting from EIA-860 Operating Month / Planned
-    # Retirement Month — formulaic and forecast-applicable, not a backcast fit.
-    # Applied last (after every outage/derate/withholding) so nothing re-raises
-    # an offline month; min_gen (the hard must-run floor) is zeroed in offline
-    # months too, else the LP lower bound would force a not-yet-built/retired
-    # unit to run. The default online_month=1 / retirement_month=12 make a
-    # full-year unit a no-op. Off by default (config.thermal_vintage_ramp).
+    # Commercial-operation-date (COD) vintage ramp — the single COD mechanism
+    # for the whole fleet (data.cod_ramp). A unit that came online or retired
+    # part-way through the solved year is available only in the months it
+    # actually operated, instead of the all-year-or-nothing annual screen: the
+    # thermal/nuclear/oil analogue of the renewable/storage vintage ramps. The
+    # month-precise COD comes from the EIA-860 plant-code map (data.cod_ramp
+    # .load_cod_map) — which is what gives the ERCOT CAMPD bins (carrying no
+    # build date of their own) their COD — with each generator's own
+    # online_year/month as the fall-back. Applied last (after every outage/
+    # derate/withholding) so nothing re-raises an offline month; min_gen (the
+    # hard must-run floor) is zeroed in offline months too, else the LP lower
+    # bound would force a not-yet-built/retired unit to run. Default-on for
+    # backcasts (config.cod_ramp_enabled); forecast runs pass an explicit
+    # calendar ``year`` to engage it.
     _cod_year = year if year is not None else getattr(config, "weather_year", None)
     if (config is not None
-            and getattr(config, "thermal_vintage_ramp", False)
+            and getattr(config, "cod_ramp_enabled", True)
+            and getattr(config, "mode", "forecast") == "backcast"
             and _cod_year is not None):
-        months = np.arange(1, 13)  # (12,) 1-based calendar months
+        cod_map = load_cod_map()
         online_mask = np.ones((n_gen, 12), dtype=float)
         for g_idx, gen in enumerate(generators):
-            oy, om = gen.online_year, gen.online_month
-            ry, rm = gen.retirement_year, gen.retirement_month
-            on = np.ones(12, dtype=bool)
-            if oy > _cod_year:
-                on[:] = False
-            elif oy == _cod_year:
-                on &= months >= om
-            if ry is not None:
-                if ry < _cod_year:
-                    on[:] = False
-                elif ry == _cod_year:
-                    on &= months <= (rm if rm is not None else 12)
-            online_mask[g_idx] = on
+            oy, om, ry, rm = effective_cod(
+                int(gen.plant_code), gen.online_year, gen.online_month,
+                gen.retirement_year, gen.retirement_month, cod_map,
+            )
+            online_mask[g_idx] = monthly_online_mask(oy, om, ry, rm, _cod_year)
         if (online_mask < 1.0).any():
             month_idx = _hour_to_month_index(hours)
             ramp = online_mask[:, month_idx]  # (n_gen, hours) 0/1
             availability *= ramp
             if min_gen is not None:
                 min_gen *= ramp
+            dropped = int((online_mask.max(axis=1) < 1.0).sum())
             offline = int((online_mask < 1.0).sum())
             logger.info(
-                "thermal vintage ramp (%s %s): %d unit-months masked offline "
-                "(mid-year COD / retirement)",
-                _iso, _cod_year, offline,
+                "COD ramp (%s %s): %d unit-months masked offline "
+                "(mid-year COD / retirement), %d unit(s) fully not-yet-built/"
+                "retired",
+                _iso, _cod_year, offline, dropped,
             )
 
     return FleetArrays(
