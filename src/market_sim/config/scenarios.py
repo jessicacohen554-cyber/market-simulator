@@ -1181,8 +1181,15 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # hour price trough and bled 2023/24 BIT (-4.8 TWh in 2024); a 2%
     # deeper cheap-gas discount restores bit's near-tied committed/econ
     # blocks against gas CC on the plateau.
+    # Floor 0.80 -> 0.76 (2026-06-17, on the pjm_27_aswh reserve-withholding
+    # baseline): a 4% deeper cheap-gas discount (bituminous bidding toward its
+    # take-or-pay/avoidable cost to hold merit under cheap gas) pulls coal
+    # toward EIA-930 in every year — 2024 (cheapest gas, $2.19) -8.1% -> -5.8%,
+    # 2023 -4.7% -> -2.7%, 2025 (dear gas, near gas_mid) -1.7% -> -1.0%; gas
+    # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
+    # and leaves the dear-gas ceiling untouched. (scripts/_pjm_bit_floor_probe.)
     ("PJM", "bituminous"): {
-        "floor": 0.80, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
+        "floor": 0.76, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
     # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
     # cut from the run-13 no-sigmoid residuals — over-dispatch grows with
     # the gas price (+5% at $2.2-2.5 HH to +12% at $3.5), so no cheap-gas
