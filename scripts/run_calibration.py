@@ -77,6 +77,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
     apply_hub_basis_overlay,
+    apply_nyiso_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
     coal_passthrough_by_supply,
     dual_fuel_switch_mask,
@@ -1272,6 +1273,13 @@ def run_year(
     # unless gas_hub_basis_overlay is set (and basis rows exist), so non-NEISO
     # runs are unchanged.
     apply_hub_basis_overlay(fuel_prices, fleet_arrays, config, year)
+    # NYISO per-zone gas-hub basis: shift each gas unit to its region's pipeline
+    # index so the east marginal gas stays dearer than the west (the structural
+    # source of the upstate-cheap / east-dear spread). Mirrors the
+    # resolve_fuel_prices apply_monthly=True order: after the plant-monthly /
+    # hub overlay, before the dual-fuel min so oil parity still caps any winter
+    # spike. No-op unless nyiso_zonal_gas_basis is set (NYISO only).
+    apply_nyiso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
     # Capture which dual-fuel generator-hours will switch to oil (gas price >
     # oil parity) BEFORE the min-cap below overwrites the gas price, so the
     # dispatch re-attribution can count their MWh as petroleum, not gas (the
