@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-17-pjm-27-reserve-withholding",
+  "label": "pjm 27 reserve withholding",
+  "date": "2026-06-17",
+  "shorthand": "pjm-27-reserve-withholding",
+  "definition": "REJECTED PROBE. pjm_26 keeper config + as_reserve_withholding (withhold the measured ~3 GW RT Primary Reserve requirement from the gas/oil energy stack and re-solve). Result: ~inert on energy LMP (Jul/Aug residual 2024 -8.82->-8.81; hours>$75 still 0; full-year p50 preserved; volumes unchanged). Top-of-merit withdrawal lands on idle peaker/oil headroom, so online reserve only thins 15->14 GW (still ~5x the requirement). The $75-200 afternoon residual is the opportunity-cost reserve regime, which needs AS co-optimization, not a headroom haircut. pjm_26 stays the keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-06-17-pjm-27-reserve-withholding.js",
+  "bundle": "results/calibration/pjm_27_aswh"
+}
