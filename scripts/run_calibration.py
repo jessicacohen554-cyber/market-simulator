@@ -827,6 +827,8 @@ def run_year(
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
     negative_renewable_offers: bool = False,
+    caiso_gas_commitment_floor: bool = False,
+    caiso_gas_floor_frac: float = 1.0,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -882,6 +884,11 @@ def run_year(
         config = config.with_overrides(interchange_shaping=True)
     if negative_renewable_offers:
         config = config.with_overrides(negative_renewable_offers=True)
+    if caiso_gas_commitment_floor:
+        config = config.with_overrides(
+            caiso_gas_commitment_floor=True,
+            caiso_gas_floor_frac=caiso_gas_floor_frac,
+        )
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -1178,6 +1185,20 @@ def run_year(
                 "%s %d: priced node shaped by measured EIA-930 interchange "
                 "envelope (import overnight / export midday)", iso, year,
             )
+    # CAISO RA must-offer floor: hold the gas fleet online midday at the
+    # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
+    # its surplus exports/curtails at ~$0 (mirrors inject_interchange_shape).
+    if getattr(config, "caiso_gas_commitment_floor", False):
+        from market_sim.model.transmission import (
+            inject_caiso_gas_commitment_floor,
+        )
+        frac = float(getattr(config, "caiso_gas_floor_frac", 1.0))
+        if inject_caiso_gas_commitment_floor(fleet_arrays, iso, year, frac):
+            logger.info(
+                "%s %d: RA must-offer floor — gas fleet held online midday at "
+                "%.2f x measured EIA-930 NG: NG (long-midday floor)",
+                iso, year, frac,
+            )
 
     # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
     # (our costs), then the actual EIA-923 monthly per-plant delivered cost
@@ -1374,6 +1395,7 @@ def _commitment_pass(state: dict, config=None):
     preserve_min_gen = bool(
         getattr(cfg, "ct_deployment_overlay", False)
         or getattr(cfg, "reliability_deployment_overlay", False)
+        or getattr(cfg, "caiso_gas_commitment_floor", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(
         fa, committed, p1.dispatch, fleet,
