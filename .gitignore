@@ -54,6 +54,8 @@ inputs/processed/.offer_curve_jacobian_cache.json
 # nyiso_cal_* until the structure is green and keepers are regenerated last).
 /results/calibration/nyiso_u3_*/
 /results/calibration/caiso_ixshape*/
+# Session B (negative curtailable-renewable offers) scratch backcasts.
+/results/calibration/caiso_negrenew*/
 /results/calibration/nyiso_ce_*/
 
 # Forecast / scenario run caches: transient per-ISO LP outputs keyed by

@@ -112,6 +112,7 @@ from market_sim.model.transmission import (  # noqa: E402
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
 from market_sim.policy.eac import (  # noqa: E402
     apply_eac_to_mc,
+    apply_negative_renewable_offer_floor,
     compute_eac_dispatch_credits,
 )
 from market_sim.policy.ira import compute_dispatch_credits  # noqa: E402
@@ -824,6 +825,7 @@ def run_year(
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    negative_renewable_offers: bool = False,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -877,6 +879,8 @@ def run_year(
     )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
+    if negative_renewable_offers:
+        config = config.with_overrides(negative_renewable_offers=True)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -1214,6 +1218,15 @@ def run_year(
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
     solar_mc -= solar_eac
+    # Floor the curtailable wind/solar offers at the negative keep-running
+    # (REC/PTC) value so curtailed renewables can set a sub-$0 marginal price
+    # in oversupply (CAISO negative midday LMPs). No-op unless
+    # config.negative_renewable_offers is on; the floor is the more-negative of
+    # the existing offer and -renewable_keep_running_value (so wind's PTC is not
+    # double-counted). See market_sim.policy.eac.
+    wind_mc, solar_mc = apply_negative_renewable_offer_floor(
+        wind_mc, solar_mc, config
+    )
 
     storage_units = load_eia860_storage(iso, year, config)
     storage = storage_units_to_arrays(storage_units, zone_names)
@@ -1669,6 +1682,13 @@ def _build_parser() -> argparse.ArgumentParser:
              "(no measured-schedule mode), off elsewhere; pass "
              "--no-priced-interchange to force the measured schedule.",
     )
+    parser.add_argument(
+        "--negative-renewable-offers", action="store_true",
+        help="Floor the curtailable wind/solar dispatch offer at the negative "
+             "keep-running (REC/PTC) value so curtailed renewables set a "
+             "sub-$0 marginal price in oversupply (CAISO negative midday "
+             "LMPs). Off (default) is byte-identical.",
+    )
     return parser
 
 
@@ -1701,6 +1721,7 @@ def main(argv: list[str] | None = None) -> None:
             commitment_enabled=args.commitment,
             commitment_screen_coal=not args.no_coal_p2,
             priced_interchange=priced_interchange,
+            negative_renewable_offers=args.negative_renewable_offers,
         )
         if result_p1 is not None:
             _report_year(year, iso, result_p1, context, reference, label="P1")
