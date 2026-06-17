@@ -1,31 +1,44 @@
 # Changelog
 
-## 2026-06-17 (ALL ISOs — commercial-operation-date (COD) ramp for the whole fleet, default-on for backcasts)
+## 2026-06-17 (ALL ISOs — commercial-operation-date (COD) vintage ramp for the whole fleet, default-on for backcasts)
 
 The backcast fleet snapshot (the curated ERCOT CAMPD bins / the EIA-860 generator
 parquet) is a recent vintage that includes units commissioned **after** the
 solved year. Renewables and storage already respect their commercial-operation
 dates, but thermal/nuclear/oil did not — so a 2023 backcast dispatched GWs of
 capacity that were not yet built, inflating reserve headroom and suppressing the
-scarcity prices the LP can set. New `market_sim.data.cod_ramp` extends the COD
-rule to **every generator** (`cod_ramp_enabled`, default-on, backcast-mode only):
+scarcity prices the LP can set. `market_sim.data.cod_ramp` now extends the COD
+rule to **every generator** as a single month-precise mechanism
+(`cod_ramp_enabled`, default-on, backcast mode; forecast-applicable):
 
-- `cod_year < run_year` → fully online; `cod_year == run_year` → pro-rated by a
-  half-year default (EIA-860 / the registry record the year, not the month — a
-  month-precise hourly mask is the future refinement); `cod_year > run_year` →
-  dropped.
-- Commissioning year is keyed by EIA plant code from the curated master registry
-  (`year_built`), back-filled from the EIA-860 parquet (`operating_year`).
-- Applied two ways so it covers both fleet paths: `ramp_bins` scales the per-plant
-  CAMPD bin capacities before they aggregate into LP generators (ERCOT — the bins
-  carry no build year); `ramp_fleet` scales/drops raw `Generator` objects by their
-  `online_year` (EIA-860 path — nuclear, oil, every non-ERCOT ISO).
-- **Measured ERCOT impact:** the 2023 backcast fleet drops **1,214 MW** (9 plants
-  built 2024 removed + 2023-COD units pro-rated; 81,704 → 80,491 MW), 2024 drops
-  248 MW, 2025 unchanged — removing phantom capacity that was un-thinning the
-  scarcity hours. **Gated:** this shifts dispatch/LMP and needs a calibration
-  re-run before any keeper is re-cut; set `cod_ramp_enabled=False` to reproduce a
-  pre-ramp run.
+- One monthly online mask inside `generators_to_fleet_arrays`: `online_year >
+  run_year` → offline; `online_year == run_year` → online from `online_month` on
+  (a Sept-COD unit is absent in the August scarcity hours, which a flat annual
+  prorate gets wrong); retirements step capacity down at `retirement_month`. The
+  mask zeroes the must-run floor (`min_gen`) in offline months too, so the LP
+  lower bound cannot force a not-yet-built / retired unit to run.
+- **Sourced from EIA-860, not CAMPD** (which has no build dates):
+  `load_cod_map()` reduces `eia860_generator_operable.parquet` (month-precise
+  `Operating Month/Year`, `Planned Retirement Month/Year`) to a per-plant
+  capacity-weighted `{plant_code: (online_year, online_month, ret_year,
+  ret_month)}` map. This is what gives the ERCOT CAMPD bins — which carry no
+  build date of their own — their COD; raw EIA-860 units fall back to their own
+  `online_year`/`online_month`. Registry-only plants back-fill at a mid-year
+  default month.
+- **Reconciliation:** this collapses two overlapping COD implementations that had
+  coexisted on `main` — the year-granular `cod_ramp_enabled` (`ramp_bins` /
+  `ramp_fleet`, registry-keyed, flat half-year prorate) and the month-granular
+  `thermal_vintage_ramp` (which reached only EIA-860-month-carrying gens, missing
+  the ERCOT bins) — into one path. `ramp_bins`/`ramp_fleet`/`online_fraction`/
+  `load_cod_year_map` and the `thermal_vintage_ramp` flag are deleted; see
+  [`docs/cod-vintage-ramp.md`](docs/cod-vintage-ramp.md).
+- **Measured ERCOT impact:** the 2023 bins shed ~870 MW cap-month-equivalent
+  (496 MW of plants built after 2023 dropped outright — incl. Remy Jade 484 MW,
+  COD 2024-06 — plus nine 2023-COD plants masked from their real online month,
+  e.g. Brotman 484 MW from May); 2024 ~250 MW; 2025 unchanged. **Gated:** the
+  month mask moves the COD-year units versus the old flat prorate, so it needs a
+  calibration re-run before a keeper is re-cut (run125 → run126); set
+  `cod_ramp_enabled=False` to reproduce a pre-ramp run.
 
 ## 2026-06-17 (ERCOT — 60-Day DAM offer parser + thermal offer-curve grounding)
 
