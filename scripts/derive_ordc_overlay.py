@@ -48,6 +48,7 @@ from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 from market_sim.results.scarcity import (  # noqa: E402
     RESERVE_FUEL_TYPES,
     effective_reliability_deployment_mw,
+    reserve_headroom,
     scarcity_prices,
 )
 
@@ -111,9 +112,11 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
     LP solve).
     """
     out_path = bundle / "availability.parquet"
+    _required = {"thermal_online_mw", "thermal_offline_mw"}
     if out_path.exists() and not force:
         cached = pd.read_parquet(out_path)
-        if set(cached["year"].unique()) >= set(years):
+        if (set(cached["year"].unique()) >= set(years)
+                and _required.issubset(cached.columns)):
             return cached
 
     from run_calibration import run_year  # late import: heavy module
@@ -139,6 +142,21 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
             .reindex(range(meta["hours"]), fill_value=0.0)
             .to_numpy()
         )
+
+        # Online/offline reserve split (results.scarcity): a cold slow-start
+        # unit does not back reserve. Rebuild the per-unit (n_gen, T) dispatch
+        # matrix aligned to the reconstructed fleet, then take the thermal-only
+        # split (zero storage / no AS here — storage, renewable headroom and
+        # the AS plan are layered on in main, where they are available).
+        dm = (
+            disp.pivot_table(index="unit_id", columns="hour", values="mw",
+                             aggfunc="sum", fill_value=0.0)
+            .reindex(index=[str(u) for u in fa.unit_ids],
+                     columns=range(meta["hours"]), fill_value=0.0)
+            .to_numpy()
+        )
+        r_on_th, r_off_th = reserve_headroom(
+            fa, dm, np.zeros(0), None, None, as_plan_mw=0.0)
 
         # Renewable potential (cf x cap summed over zones) and dispatch:
         # the difference is curtailed headroom, which ERCOT's reserve
@@ -167,6 +185,8 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
             "hour": np.arange(meta["hours"], dtype=np.int32),
             "thermal_avail_mw": avail.astype(np.float32),
             "thermal_dispatch_mw": disp_t.astype(np.float32),
+            "thermal_online_mw": r_on_th.astype(np.float32),
+            "thermal_offline_mw": r_off_th.astype(np.float32),
             "renewable_avail_mw": ren_avail.astype(np.float32),
             "renewable_dispatch_mw": ren_disp.astype(np.float32),
             "storage_power_cap_mw": cap_t.astype(np.float32),
@@ -377,22 +397,34 @@ def main() -> None:
     for year in years:
         a = avail[avail["year"] == year]
         cap_t = a["storage_power_cap_mw"].to_numpy(float)
-        reserves = (
-            a["thermal_avail_mw"].to_numpy(float)
-            - a["thermal_dispatch_mw"].to_numpy(float)
-            + a["renewable_avail_mw"].to_numpy(float)
+        ren_headroom = (
+            a["renewable_avail_mw"].to_numpy(float)
             - a["renewable_dispatch_mw"].to_numpy(float)
+        )
+        # Online/offline reserve split — the grounded mechanism (mirrors
+        # runner.run_scenario_iso). Online tier = spinning thermal headroom +
+        # curtailed-renewable + storage; offline tier = quick-start non-spin
+        # headroom (cold slow-start excluded). The AS plan is NOT netted —
+        # ERCOT's RTOLCAP already counts online AS-held capacity as reserve, so
+        # subtracting it double-counts (confirmed: it overshoots ~6x). The
+        # legacy fitted offset only subtracts when explicitly set (default 0).
+        r_offline = a["thermal_offline_mw"].to_numpy(float)
+        r_online = (
+            a["thermal_online_mw"].to_numpy(float)
+            + ren_headroom
             + _storage_headroom(bundle, year, hours, cap_t)
-            - config.ordc_as_plan_mw
             - effective_reliability_deployment_mw(year, config)
         )
         lam = _system_lambda(bundle, year, hours)
-        res = scarcity_prices(config, year, reserves, np.nan_to_num(lam))
+        res = scarcity_prices(
+            config, year, r_online + r_offline, np.nan_to_num(lam),
+            reserves_online_mw=r_online)
         adder = res["scarcity_adder"]
         frames.append(pd.DataFrame({
             "year": np.int16(year),
             "hour": np.arange(hours, dtype=np.int32),
-            "reserves_mw": reserves.astype(np.float32),
+            "reserves_mw": (r_online + r_offline).astype(np.float32),
+            "reserves_online_mw": r_online.astype(np.float32),
             "lolp": res["lolp"].astype(np.float32),
             "scarcity_adder": adder.astype(np.float32),
             "lmp": lam.astype(np.float32),

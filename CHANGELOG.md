@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-17 (Measured-data rule + HSL real-data reconciliation + formulaic ERCOT ORDC reserves)
+
+New Non-Negotiable Rule (claude.md): measured data is allowed only as a
+reproducible physical/market input that has a forward analogue, never as a
+measured *outcome* fed back to force the backcast to match. Audit of the current
+keeper (run 124) in `docs/backcast-measured-data-audit-2026-06.md`: compliant on
+the load-bearing items (CEMS deployment floors and the fitted ORDC offset off).
+Two follow-on fixes landed from the audit:
+
+- **HSL: output-target rescale → real-data coverage reconciliation.** The 2023
+  `_HSL_RESCALE_TWH` set renewable potential *above* delivered so the LP's
+  economic re-curtailment landed delivered output on the actuals (tuning an input
+  to the model's output). Replaced: `renewables.hsl_potential_mw` consumes each
+  HSL parquet as-is, with one real-data reconciliation — a partial-footprint
+  source whose delivered (GEN) undercounts the EIA-930 system total is scaled UP
+  to that level *preserving its measured curtailment ratio*; no-op for
+  full-footprint published data. `build_ercot_hsl.py` now prefers the published
+  NP4-732/737 HSL for any year (np6/), UMass only as the 2023 fallback.
+
+- **ERCOT ORDC: fitted offset → on-line/off-line reserve split.** The fitted
+  `ordc_reliability_deployment_mw` (~2,500 MW tuned to the 2023 LMP residual) is
+  deprecated and out of the default reserve path. `results.scarcity.reserve_headroom`
+  now returns an (online, offline) split — only responsive capacity backs the
+  ORDC curve; a cold slow-start unit the LP left idle is not reserve — and
+  `ordc_adder` evaluates the published RTOLCAP/RTOFFCAP two-tier LOLP honestly.
+  AS-plan netting was tested and **rejected** (RTOLCAP already counts online
+  AS-held capacity as reserve → double-counts, overshoots ~6×). The split
+  reproduces 2023 scarcity *incidence* (online reserve < 6,500 MW floor in 178 h
+  ≈ 181 actual >$200 h) and improves 2023 monthly LMP MAE 32.3 → 27.7 with no
+  fitted constant; 2024/25 neutral. The residual magnitude gap is left for AS/
+  reserve co-optimization (the bang-bang LP doesn't part-load to carry reserve),
+  not chased with an offset (Rule #1). See `docs/ordc-overlay.md`.
+
 ## 2026-06-17 (CAISO — RA must-offer midday gas-commitment floor: model goes long, spring-midday LMP floor collapses to ~$0)
 
 New default-off mechanism that reproduces CAISO's collapsed spring-midday LMP by
