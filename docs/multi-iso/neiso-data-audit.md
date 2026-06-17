@@ -351,6 +351,22 @@ the cheapest gas, ~95 % of the EIA-923 prime-mover split); the CT_PEAKER (~2 TWh
 `ct_deployment` overlay (NEISO wedge ≈ 0.05 TWh, §`Cross-ISO` in calibration-log),
 **not** offer-curve tunable. The CC_REGULAR curve is held at the keeper values.
 
+**CT_PEAKER reserve recovered via the ct_deployment overlay (keeper neiso 16).**
+The one sanctioned lever for the CT gap — the targeted `ct_deployment` overlay
+(`scripts/derive_ct_deployment.py --iso NEISO` →
+`inputs/calibration/ct_deployment_floor_NEISO.parquet`, wedge 0.08/0.04/0.05 TWh)
+— floored CT correctly in P1 but was **stripped by the P2 commitment screen**
+because `commitment.apply_commitment_with_coal_pin` rebuilt the P2 fleet without
+`min_gen`. Fixed by carrying `min_gen` through P2 under a `preserve_min_gen` gate
+that is active **only** when a deployment overlay is set (default-off; the
+forecast runner and every non-overlay keeper stay byte-identical, verified on
+NEISO base 2024). With `--ct-deployment` the keeper `neiso_ctdeploy_3yr`
+(neiso 16) lifts CT_PEAKER 0.014/0.014/0.038 → **0.084/0.052/0.079 TWh** with the
+gas total and price level unchanged (the CT energy displaces CC within gas, not
+coal/imports). The residual CT (~2 TWh) / ST_GAS (~0.3) / oil gap is the
+documented non-offer-recoverable reserve / winter-monthly-data limit. See
+calibration-log 2026-06-17.
+
 ## 3. CEMS coverage
 
 Distinct states of NEISO-fleet **fossil** plants and the diff against
