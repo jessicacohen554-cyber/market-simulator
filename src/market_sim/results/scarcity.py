@@ -58,6 +58,7 @@ from scipy.special import ndtr
 from market_sim.config.constants import (
     ORDC_FLOOR_START_HOUR_2023,
     ORDC_FLOOR_STEPS,
+    PJM_PRIMARY_RESERVE_LSC_FACTOR,
 )
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
@@ -534,6 +535,119 @@ def pjm_reserve_cascade_mcp(
     # marginal online MW could relieve).
     out["energy_adder"] = out["SR"]
     return out
+
+
+def largest_single_contingency_mw(
+    pmax: np.ndarray,
+    availability: np.ndarray | None = None,
+    reserve_mask: np.ndarray | None = None,
+) -> float:
+    """Most-Severe Single Contingency proxy: the largest single unit (MW).
+
+    The reserve requirement's reliability basis (PJM Manual 13): the largest
+    single resource whose loss the system must cover. Taken as the maximum
+    per-unit deliverable capacity over the reserve-eligible fleet — by
+    construction fleet-responsive (retire the largest unit and the MSSC, hence
+    the requirement, falls), which is what makes the requirement forecast-valid
+    rather than a replay of the measured series.
+
+    Args:
+        pmax: ``(n_gen,)`` per-unit nameplate MW.
+        availability: ``(n_gen, T)`` availability, used to take peak deliverable
+            MW per unit. ``None`` uses bare nameplate.
+        reserve_mask: ``(n_gen,)`` boolean of reserve-eligible units. ``None``
+            considers every unit.
+
+    Returns:
+        Largest single-unit MW (0.0 for an empty/zero fleet).
+    """
+    pmax = np.asarray(pmax, dtype=float)
+    if pmax.size == 0:
+        return 0.0
+    if availability is not None:
+        deliverable = pmax * np.asarray(availability, dtype=float).max(axis=1)
+    else:
+        deliverable = pmax
+    if reserve_mask is not None:
+        mask = np.asarray(reserve_mask, dtype=bool)
+        deliverable = deliverable[mask]
+        if deliverable.size == 0:
+            return 0.0
+    return float(deliverable.max())
+
+
+def pjm_primary_reserve_requirement(
+    lsc_mw: float,
+    hours: int,
+    factor: float = PJM_PRIMARY_RESERVE_LSC_FACTOR,
+) -> np.ndarray:
+    """Hourly PJM Primary Reserve requirement (MW) = ``factor x MSSC``.
+
+    The structural, forecast-applicable requirement for the energy+reserve
+    co-optimization: PJM holds Primary Reserve at ~1.5x the most-severe single
+    contingency (PJM Manual 13 / Manual 11 sec 4.4). Returned as a flat hourly
+    array because the requirement is a near-constant reliability quantity (the
+    measured PJM_RTO ``pr_req_mw`` varies only ~+/-15% around its mean and RT/DA
+    agree within ~3%). ``lsc_mw`` from :func:`largest_single_contingency_mw`
+    keeps it fleet-responsive; the measured series
+    (``inputs/raw-data/PJM-AS``) is a backcast honesty gate only, never an LP
+    input.
+
+    Args:
+        lsc_mw: Most-severe single contingency (largest single unit) MW.
+        hours: Horizon length (typically 8760).
+        factor: Requirement / MSSC ratio (PJM_PRIMARY_RESERVE_LSC_FACTOR).
+
+    Returns:
+        ``(hours,)`` reserve requirement in MW.
+    """
+    return np.full(int(hours), max(0.0, factor * float(lsc_mw)), dtype=float)
+
+
+def pjm_ordc_shortfall_steps(
+    ordc_steps: list[tuple[float, float]],
+    requirement_mw: float,
+) -> tuple[float, np.ndarray, np.ndarray]:
+    """Convert the published ORDC demand curve into LP reserve-shortfall steps.
+
+    The published curve (``load_pjm_ordc_curve``) is a *descending* demand: at
+    reserves below the requirement the top penalty applies, and each breakpoint
+    ``requirement + offset`` above it steps the price down (to $0 past the last
+    breakpoint). The co-optimization LP instead needs *ascending* shortfall
+    steps for the reserve-balance row ``sum R + sum shortfall_k >= req_total``,
+    each ``shortfall_k in [0, width_k]`` priced at ``penalties_k``. Being short
+    by the cheapest band first reproduces the demand curve, so the balance-row
+    dual equals the binding step's penalty — the ORDC reserve clearing price.
+
+    For PJM's two-step curve ``[(0, 850), (190, 300)]`` at requirement ``REQ``
+    this returns ``req_total = REQ + 190`` and steps ``([300, 850], [190, REQ])``:
+    the first 190 MW of shortfall (reserves between ``REQ`` and ``REQ+190``)
+    costs $300, the rest (reserves below ``REQ``) costs $850.
+
+    Args:
+        ordc_steps: ``[(offset_mw, penalty_factor), ...]`` from
+            :func:`load_pjm_ordc_curve`.
+        requirement_mw: The reserve requirement REQ in MW (scalar).
+
+    Returns:
+        ``(req_total_mw, penalties, widths)``: the balance RHS and the per-step
+        penalty ($/MWh) and width (MW) arrays, ordered cheapest band first.
+    """
+    steps = sorted(ordc_steps)  # ascending offset
+    offsets = [o for o, _ in steps]
+    penalties = [p for _, p in steps]
+    req = float(requirement_mw)
+    req_total = req + offsets[-1]
+    pens: list[float] = []
+    widths: list[float] = []
+    # Outer bands between consecutive breakpoints, cheapest (outermost) first.
+    for k in range(len(steps) - 1, 0, -1):
+        widths.append(offsets[k] - offsets[k - 1])
+        pens.append(penalties[k])
+    # Inner band [0, requirement): being short below the requirement, top price.
+    widths.append(req)
+    pens.append(penalties[0])
+    return req_total, np.array(pens, dtype=float), np.array(widths, dtype=float)
 
 
 def pjm_online_reserve(

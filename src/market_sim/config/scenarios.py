@@ -462,6 +462,18 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
+    energy_reserve_coopt: bool = False  # PJM: co-optimize energy and Primary
+    # Reserve inside the LP. Adds a per-unit reserve variable sharing each
+    # unit's headroom with energy (P + R <= pmax*avail), a reserve-balance
+    # constraint at the structural requirement (1.5 x most-severe single
+    # contingency, scarcity.pjm_primary_reserve_requirement), and the published
+    # two-step ORDC demand curve (inputs/calibration/pjm_ordc_curve.csv) as
+    # priced shortfall steps so the reserve clearing price emerges as the
+    # constraint dual and lifts the energy LMP endogenously. Replaces the
+    # post-solve derive_pjm_ordc_overlay.py adder when on (no double-count).
+    # Structural, forecast-applicable (requirement + price both move with the
+    # fleet); the measured PJM-AS series is a backcast honesty gate only.
+    # Default off (byte-identical); PJM-only until other ISOs are validated.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -1413,6 +1425,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
+    "energy_reserve_coopt": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,

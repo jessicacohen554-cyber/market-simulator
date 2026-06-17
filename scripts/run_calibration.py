@@ -851,6 +851,7 @@ def run_year(
     hydro_backfill_year: int | None = None,
     as_reserve_withholding: bool = False,
     as_reserve_formula: bool = False,
+    energy_reserve_coopt: bool = False,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -961,6 +962,12 @@ def run_year(
     # (fleet.caiso_operating_reserve_mw / generators_to_fleet_arrays).
     if as_reserve_formula:
         config = config.with_overrides(as_reserve_formula=True)
+    # Energy+reserve co-optimization (run_calibration_full
+    # --energy-reserve-coopt): co-optimize energy and Primary Reserve inside the
+    # LP (structural 1.5 x MSSC requirement + published ORDC demand curve);
+    # PJM-gated in _run_dispatch. Replaces the post-solve ORDC overlay.
+    if energy_reserve_coopt:
+        config = config.with_overrides(energy_reserve_coopt=True)
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).
@@ -1361,6 +1368,47 @@ def run_year(
         hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
     )
+
+    # Energy+reserve co-optimization (config.energy_reserve_coopt; PJM-gated
+    # until other ISOs are validated). Reserve-eligible units are dispatchable
+    # thermal; the requirement is the structural 1.5 x most-severe single
+    # contingency (fleet-derived, forecast-responsive), and the published
+    # two-step ORDC curve prices a shortfall so the reserve clearing price
+    # emerges as the balance-row dual and lifts the energy LMP. This replaces
+    # the post-solve ORDC overlay (derive_pjm_ordc_overlay.py) for co-opt runs.
+    if getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
+        from market_sim.config.constants import PJM_ORDC_CURVE_PATH
+        from market_sim.data.fleet import FUEL_TYPE_NAMES
+        from market_sim.results.scarcity import (
+            RESERVE_FUEL_TYPES,
+            largest_single_contingency_mw,
+            load_pjm_ordc_curve,
+            pjm_ordc_shortfall_steps,
+            pjm_primary_reserve_requirement,
+        )
+        elig = np.array(
+            [FUEL_TYPE_NAMES[i] in RESERVE_FUEL_TYPES
+             for i in fleet_arrays.fuel_type_idx],
+            dtype=bool,
+        )
+        lsc = largest_single_contingency_mw(
+            fleet_arrays.pmax, fleet_arrays.availability, elig
+        )
+        req = float(pjm_primary_reserve_requirement(lsc, config.hours)[0])
+        curve = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
+        req_total, ordc_pen, ordc_w = pjm_ordc_shortfall_steps(curve, req)
+        dispatch_kwargs.update(
+            reserve_requirement=np.full(config.hours, req_total),
+            reserve_eligible=elig,
+            ordc_penalties=ordc_pen,
+            ordc_step_widths=ordc_w,
+        )
+        logger.info(
+            "energy+reserve co-opt (PJM): MSSC %.0f MW, Primary req %.0f MW "
+            "(+%.0f ORDC shoulder), %d reserve-eligible units",
+            lsc, req, req_total - req, int(elig.sum()),
+        )
+
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
     # -- and differ only in the objective (P1 = base MC + startup markup). So
     # build the model once and warm-start P1 from P0's optimal basis
