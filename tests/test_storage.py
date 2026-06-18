@@ -1389,12 +1389,9 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
         # too sparse for a hard constraint).
         import pandas as pd
 
-        path = (
-            __import__("pathlib").Path(__file__).parents[1]
-            / "inputs"
-            / "raw-data"
-            / "ISNE_fueltype.parquet"
-        )
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "ISNE_fueltype.parquet"
         if not path.exists():
             self.skipTest("ISNE_fueltype.parquet not present")
         df = pd.read_parquet(path)

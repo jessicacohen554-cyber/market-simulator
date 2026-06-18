@@ -28,10 +28,11 @@ from market_sim.data.fleet import (
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
+from market_sim.config.paths import PROCESSED_DIR
 
 REPO = Path(__file__).resolve().parent.parent
-TRANCHES = REPO / "inputs" / "processed" / "thermal_tranches_NYISO.csv"
-BIN_ASSIGNMENTS = REPO / "inputs" / "processed" / "bin_assignments_NYISO.csv"
+TRANCHES = PROCESSED_DIR / "thermal_tranches_NYISO.csv"
+BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_NYISO.csv"
 ZONES = get_iso_config("NYISO").zone_names
 
 # The Gowanus 2 & 3 and Narrows 1 & 2 NYC peaking barges — NYISO's RMR units
