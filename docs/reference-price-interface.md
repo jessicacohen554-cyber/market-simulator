@@ -184,16 +184,41 @@ fossil to feed the excess export; LMP and renewables/nuclear are within
 tolerance; the cross-year *ordering* +88.9 > +66.5 > +54.9 tracks measured
 +40 > +32.6 > +18, so the spread mechanism has the right *direction*).
 
-### Next structural fix — a flow-responsive neighbor price
+### The structural fix — a flow-responsive neighbor price (implemented)
 
-The real fix is to make the neighbor price **slope with net import from PJM**:
-as PJM exports more, the neighbor's native generation is displaced, sliding its
-price down its own `gas × HR × load_shape` supply curve, narrowing the spread
-and self-limiting export to the economic equilibrium. This is what the old
-fitted `EXPORT_TRANCHES` approximated with stepped avoided-cost blocks; the flat
-single-price reference seam dropped the slope. The slope is physically anchored
-(the neighbor's own load level and the already-calibrated supply curve) — no new
-fitted parameter, not tuned to net-MWh — and is the work that follows this note.
+The neighbor price is now made to **slope with net flow** (`SEAM_FLOW_TRANCHES`
+= 8 bands per direction, `neighbor_price.seam_tranche_prices`): exporting `E` MW
+into a neighbor displaces `E` MW of its native generation, so its price is read
+at its load *reduced* by `E` — the willingness-to-pay slides down the neighbor's
+own `gas × HR × (load/mean)^exp` supply curve; importing reads it at load + `I`.
+As PJM exports more the spread narrows and the seam self-limits instead of
+pinning at the cap. This restores the slope the old fitted `EXPORT_TRANCHES`
+carried, but anchored to the neighbor's own load and calibrated curve — no new
+fitted parameter, nothing tuned to net-MWh (rule #11). The LP seam is built as
+`n`-band import/export pseudo-gens (`build_reference_price_node`) and each band
+priced at its midpoint flow (`inject_reference_price_mc`).
+
+**Result (`pjm_31`, 2023):** it works *directionally* — the seams de-saturate
+(MISO at-cap 67 % → 47 %, NYISO 98 % → 41 % of hours) and the over-export falls
++88.9 → **+77.8 TWh** (gas over-generation +30.7 → +22.1, LMP $30.68 → $30.01 vs
+actual $28.44). But the **load-displacement slope is too gentle to reach measured
++40**: a neighbor's load (MISO ~75 GW) dwarfs the seam flow (≤7.3 GW), so
+displacing the flow drops its price only ~10 % (~$3.6), not enough to close the
+structural ~$5.8 PJM-vs-neighbor spread over the cap range. The deepest export
+bands still clear in many hours.
+
+### Next lever — neighbor supply-curve convexity
+
+The residual is now a *slope steepness* problem, not a level or limit one. The
+neighbor price uses `load_shape_exponent = 1` (price linear in load), giving the
+gentle slope above. A real marginal supply curve is **convex** — price rises
+steeply as the fleet approaches its top. Calibrating each neighbor's
+price-vs-net-load convexity to **its own** realized LMP/load relationship (a
+measurable market quantity, rule #11) would steepen the self-limiting so the
+deep export bands fall below PJM's price and the flow settles nearer the
+measured ~3.3 GW (MISO). That is the next refinement; it is *not* to be reached
+by cranking the exponent to hit +40, but by fitting it to the neighbor's own
+price formation.
 
 ### Sources
 
