@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-18-run129-dam-offers-cc",
+  "label": "run129 dam-offers CC-only",
+  "date": "2026-06-18",
+  "shorthand": "run129-dam-offers-cc",
+  "definition": "Measured DAM offer-curve HR multipliers applied to CC only (CC_REGULAR+CC_CHP, peak mode B); CT/ST left on the calibrated curve to avoid the CT<->ST coupling crater that sank run128. vs run127 anchor: fixes the large CC_CHP over-run (+18/+19/+23% -> +0.4/+0.5/+3.6%) and trims CT_PEAKER's under-run; ST_GAS drifts a little high (swing class). Gate 12/18 vs 13/18 baseline, LMP/tail ~flat. Defensible measured keeper candidate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-18-run129-dam-offers-cc.js",
+  "bundle": "results/calibration/ercot_dam_offers_cconly_3yr"
+}
