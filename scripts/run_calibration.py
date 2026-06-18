@@ -903,6 +903,7 @@ def run_year(
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    interchange_shaping_export_only: bool = False,
     reference_price_interface: bool = False,
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
@@ -960,6 +961,9 @@ def run_year(
     )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
+    if interchange_shaping_export_only:
+        config = config.with_overrides(
+            interchange_shaping=True, interchange_shaping_export_only=True)
     if reference_price_interface:
         config = config.with_overrides(reference_price_interface=True)
     # Tri-state overrides: None = keep the per-ISO base default from
@@ -1320,10 +1324,15 @@ def run_year(
     # envelope; otherwise the static node is unchanged.
     if priced_interchange and getattr(config, "interchange_shaping", False):
         from market_sim.model.transmission import inject_interchange_shape
-        if inject_interchange_shape(fleet_arrays, iso, year):
+        export_only = getattr(
+            config, "interchange_shaping_export_only", False)
+        if inject_interchange_shape(
+                fleet_arrays, iso, year, export_only=export_only):
             logger.info(
                 "%s %d: priced node shaped by measured EIA-930 interchange "
-                "envelope (import overnight / export midday)", iso, year,
+                "envelope (%s)", iso, year,
+                "export midday only — imports uncapped" if export_only
+                else "import overnight / export midday",
             )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
     # measured EIA-930 NG: NG profile (frac-scaled) so the model goes LONG and
