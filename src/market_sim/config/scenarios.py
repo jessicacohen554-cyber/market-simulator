@@ -10,6 +10,12 @@ from pathlib import Path
 
 import yaml
 
+from market_sim.config.paths import (
+    CAMPD_BINS_CSV,
+    PLANT_REGISTRY_CSV,
+    PROCESSED_DIR,
+)
+
 
 @dataclass
 class ScenarioConfig:
@@ -185,8 +191,8 @@ class ScenarioConfig:
     # structure). When False the legacy equal-width heat-rate binning of
     # aggregate_fleet() is used. See docs/binning-methodology.md.
     use_campd_bins: bool = True
-    campd_bins_path: str = "inputs/custom-bin-assignments.csv"
-    plant_registry_path: str = "inputs/master-plant-registry.csv"
+    campd_bins_path: str = str(CAMPD_BINS_CSV)
+    plant_registry_path: str = str(PLANT_REGISTRY_CSV)
     # Commercial-operation-date (COD) vintage ramp (market_sim.data.cod_ramp).
     # The backcast fleet snapshot is a recent vintage that includes units built
     # AFTER the solved year; with this on (the default), every generator —
@@ -239,7 +245,9 @@ class ScenarioConfig:
     # CAMPD-measured CO2/NOx/SO2 rates per MWh net (plant_emission_rates_path)
     # in place of the fuel-class defaults, so emission prices bite per plant.
     use_plant_emission_rates: bool = True
-    plant_emission_rates_path: str = "inputs/processed/plant_emission_rates.parquet"
+    plant_emission_rates_path: str = str(
+        PROCESSED_DIR / "plant_emission_rates.parquet"
+    )
 
     # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
     # The top (Peaking) slice of a bin is a separate LP generator whose
@@ -875,8 +883,8 @@ class ScenarioConfig:
     # real plant did and log zero hours in their top CF band. Reconciliation
     # table from scripts/derive_cc_capacity_reconcile.py. Off by default.
     cc_capacity_reconcile: bool = False
-    cc_capacity_reconcile_path: str = (
-        "inputs/processed/cc_capacity_reconcile_ERCOT.csv"
+    cc_capacity_reconcile_path: str = str(
+        PROCESSED_DIR / "cc_capacity_reconcile_ERCOT.csv"
     )
 
     # When True, the CC_REGULAR plants in fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT

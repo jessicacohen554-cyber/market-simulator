@@ -37,11 +37,12 @@ from market_sim.data.fleet import (
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
+from market_sim.config.paths import PROCESSED_DIR
 from scripts.export_iso_bin_assignments import build_bin_assignments
 
 REPO = Path(__file__).resolve().parent.parent
-TRANCHES = REPO / "inputs" / "processed" / "thermal_tranches_NEISO.csv"
-BIN_ASSIGNMENTS = REPO / "inputs" / "processed" / "bin_assignments_NEISO.csv"
+TRANCHES = PROCESSED_DIR / "thermal_tranches_NEISO.csv"
+BIN_ASSIGNMENTS = PROCESSED_DIR / "bin_assignments_NEISO.csv"
 ZONES = get_iso_config("NEISO").zone_names
 
 # Merrimack (Bow, NH) — NEISO's last operating coal unit, a winter peaker by the

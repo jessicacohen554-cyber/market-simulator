@@ -18,7 +18,9 @@ _SPEC = importlib.util.spec_from_file_location(
 _RCF = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_RCF)
 
-_BASELINE = REPO / "inputs" / "calibration" / "cf_emd_baseline_ERCOT.json"
+from market_sim.config.paths import CALIBRATION_DIR
+
+_BASELINE = CALIBRATION_DIR / "cf_emd_baseline_ERCOT.json"
 _KEEPER_FIT = (REPO / "results" / "calibration" / "run121_storage_vintage"
                / "plant_hourly_fit.parquet")
 

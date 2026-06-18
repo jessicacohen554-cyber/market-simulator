@@ -9,6 +9,7 @@ import pandas as pd
 
 from market_sim.config.constants import HEAT_RATE_BINS
 from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.paths import CAMPD_BINS_CSV, PROCESSED_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     _CC_SHOULDER_MONTHS,
@@ -858,7 +859,7 @@ class HistoricOutageOverlayTest(unittest.TestCase):
     # Repo root (tests/ lives at the repo root); the overlay reads the
     # committed bin assignments and outage extract.
     _REPO = Path(__file__).parents[1]
-    _BINS = str(_REPO / "inputs" / "custom-bin-assignments.csv")
+    _BINS = str(CAMPD_BINS_CSV)
 
     def _fleet(self):
         # Coleto Creek (6178) is a coal plant with a real >2-day 2023
@@ -1072,7 +1073,7 @@ class TestCcCapacityReconcile(unittest.TestCase):
     """
 
     _BINS = ScenarioConfig().campd_bins_path
-    _RECON = "inputs/processed/cc_capacity_reconcile_ERCOT.csv"
+    _RECON = str(PROCESSED_DIR / "cc_capacity_reconcile_ERCOT.csv")
 
     def test_raises_listed_plants_only(self):
         from market_sim.data.fleet import load_campd_bins

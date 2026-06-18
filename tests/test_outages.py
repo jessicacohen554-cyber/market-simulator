@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.paths import CAMPD_BINS_CSV, RAW_DATA_DIR
 from market_sim.data.outages import (
     MIN_OUTAGE_SPAN_HOURS,
     QUALIFYING_PLANT_GROUPS,
@@ -21,8 +22,8 @@ from market_sim.data.outages import (
 
 # Repository root (tests/ lives at the repo root).
 REPO = Path(__file__).parents[1]
-BINS_CSV = str(REPO / "inputs" / "custom-bin-assignments.csv")
-OUTAGES_CSV = str(REPO / "inputs" / "raw-data" / "ercot-outages.csv")
+BINS_CSV = str(CAMPD_BINS_CSV)
+OUTAGES_CSV = str(RAW_DATA_DIR / "ercot-outages.csv")
 
 
 class HourOfYearTest(unittest.TestCase):
@@ -240,7 +241,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
     returns None for combustion turbines), matching the ERCOT convention.
     """
 
-    NEISO_CSV: Path = REPO / "inputs" / "raw-data" / "campd-unit-outages-NEISO.csv"
+    NEISO_CSV: Path = RAW_DATA_DIR / "campd-unit-outages-NEISO.csv"
 
     def _df(self) -> pd.DataFrame:
         return pd.read_csv(self.NEISO_CSV)
@@ -408,7 +409,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
 
     def test_other_iso_unit_outage_csvs_untouched(self):
         # The NEISO P1 work must not alter ERCOT, PJM, or CAISO unit-outage CSVs.
-        raw = REPO / "inputs" / "raw-data"
+        raw = RAW_DATA_DIR
         for iso in ("CAISO", "PJM"):
             path = raw / f"campd-unit-outages-{iso}.csv"
             self.assertTrue(path.exists(), f"{iso} unit-outage CSV must still exist")
