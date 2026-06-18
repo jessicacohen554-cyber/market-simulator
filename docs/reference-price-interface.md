@@ -124,8 +124,109 @@ PJM's export only by pricing the export sinks at the *neighbors' avoided cost*
 price undershoots. The reference-price interface replaces that fit with the
 neighbor's *own* gas+load+HR price, anchored to its measured LMP level.
 
+## Step 3 — real interface limits, and the LP over-export finding
+
+Step 2 wired the seam into the dispatch LP. The first full-LP run (`pjm_30`,
+2023-25) **over-exported 2.2-3.0×**: modeled net export +88.9 / +66.5 / +54.9
+TWh vs measured +40.0 / +32.6 / +18.0. Step 3 set out to bound this with real
+published interface limits, then run/score/register.
+
+### What was done — limits from PJM's own published flows (rule #11)
+
+The Tier-3 envelope limits (MISO 10 / NYISO 3 / Carolinas 3.5 GW) were replaced
+with the **firm continuous transfer capability** of each seam, derived from
+PJM's OWN published per-tie interchange (Data Miner
+`import_export_act_sch_interchange`,
+`inputs/raw-data/iso-specific-transmission/PJM_<year>_*`): each external tie is
+mapped to its seam, the per-tie hourly actual flow is summed to the
+*simultaneous* seam transfer, and the limit is the **p99.5 of |seam flow|**
+pooled over 2023-25 (the duration curve's upper envelope minus the top ~0.5%
+transient/loop-flow hours). Reproducible, regenerable for a forward year, and
+computed from the flow series *before any LP runs* — not tuned to the net-MWh
+target. See `scripts/derive_interface_limits.py` (`--check` guards the constants):
+
+| seam | old | new (p99.5) | why |
+|---|---|---|---|
+| MISO | 10,000 | **7,300** | old was sum-of-tie-maxima; simultaneous seam never exceeds 8,789 (max), p99.5 7,290 |
+| NYISO | 3,000 | **3,900** | old *under*-stated; export p99.5 3,866 (cross-checks Neptune 660 + Hudson HTP 660 + Linden VFT 330 + AC ties ~2,000 ≈ 3,650) |
+| Carolinas | 3,500 | **2,400** | Duke/Progress ties |
+
+A structural fact falls out of the per-tie data: **the South/Carolinas seam is a
+net importer** — PJM net-imports from Duke/TVA, exporting only ~17% of hours. The
+TVA/LGEE south-west ties (~8 TWh/yr of PJM imports) have no neighbor in the
+three-seam build yet.
+
+### The finding — honest limits do NOT bound the over-export
+
+Re-running `pjm_30` with the corrected limits left the over-export essentially
+unchanged (+88.9 → still +88.9 TWh in 2023). The genuine validation
+(`limits from ratings, the TWh falls out`) **fails**, and the reason is
+structural, not a limit-magnitude problem:
+
+* The seams **saturate at their caps** — NYISO exports at the limit in **98%** of
+  hours, MISO 67%, Carolinas 51%. The LP exports at the cap whenever the spread
+  is positive.
+* The neighbor reference price is `gas × HR × load_shape` — **flow-independent**.
+  When PJM dumps 7.3 GW into MISO, MISO's modeled price stays at its realized
+  ~$36.5, the spread ($36.5 − PJM's $30.7 = $5.8) stays well above the $2 hurdle,
+  so export pins at the cap.
+* Reality's realized MISO transfer averages only **3.3 GW** (far below the 7.3 GW
+  physical cap), because the realized economic transfer *self-limits*: as a
+  neighbor absorbs imports it climbs down its own supply stack and its price
+  falls toward PJM's, closing the spread. The flat reference price omits exactly
+  that elasticity.
+
+Lowering the cap to ~3.3 GW to hit +40 would be **fitting the limit to the
+outcome** (rule #11 violation), so it was not done. The corrected limits are
+kept because they are independently correct; `pjm_30` is registered as the
+documented over-export record (gas +9-11 %, coal +11-16 % — PJM over-generates
+fossil to feed the excess export; LMP and renewables/nuclear are within
+tolerance; the cross-year *ordering* +88.9 > +66.5 > +54.9 tracks measured
++40 > +32.6 > +18, so the spread mechanism has the right *direction*).
+
+### The structural fix — a flow-responsive neighbor price (implemented)
+
+The neighbor price is now made to **slope with net flow** (`SEAM_FLOW_TRANCHES`
+= 8 bands per direction, `neighbor_price.seam_tranche_prices`): exporting `E` MW
+into a neighbor displaces `E` MW of its native generation, so its price is read
+at its load *reduced* by `E` — the willingness-to-pay slides down the neighbor's
+own `gas × HR × (load/mean)^exp` supply curve; importing reads it at load + `I`.
+As PJM exports more the spread narrows and the seam self-limits instead of
+pinning at the cap. This restores the slope the old fitted `EXPORT_TRANCHES`
+carried, but anchored to the neighbor's own load and calibrated curve — no new
+fitted parameter, nothing tuned to net-MWh (rule #11). The LP seam is built as
+`n`-band import/export pseudo-gens (`build_reference_price_node`) and each band
+priced at its midpoint flow (`inject_reference_price_mc`).
+
+**Result (`pjm_31`, 2023):** it works *directionally* — the seams de-saturate
+(MISO at-cap 67 % → 47 %, NYISO 98 % → 41 % of hours) and the over-export falls
++88.9 → **+77.8 TWh** (gas over-generation +30.7 → +22.1, LMP $30.68 → $30.01 vs
+actual $28.44). But the **load-displacement slope is too gentle to reach measured
++40**: a neighbor's load (MISO ~75 GW) dwarfs the seam flow (≤7.3 GW), so
+displacing the flow drops its price only ~10 % (~$3.6), not enough to close the
+structural ~$5.8 PJM-vs-neighbor spread over the cap range. The deepest export
+bands still clear in many hours.
+
+### Next lever — neighbor supply-curve convexity
+
+The residual is now a *slope steepness* problem, not a level or limit one. The
+neighbor price uses `load_shape_exponent = 1` (price linear in load), giving the
+gentle slope above. A real marginal supply curve is **convex** — price rises
+steeply as the fleet approaches its top. Calibrating each neighbor's
+price-vs-net-load convexity to **its own** realized LMP/load relationship (a
+measurable market quantity, rule #11) would steepen the self-limiting so the
+deep export bands fall below PJM's price and the flow settles nearer the
+measured ~3.3 GW (MISO). That is the next refinement; it is *not* to be reached
+by cranking the exponent to hit +40, but by fitting it to the neighbor's own
+price formation.
+
 ### Sources
 
+* PJM Data Miner — `import_export_act_sch_interchange` per-tie actual flows
+  (2023-25), the source for `scripts/derive_interface_limits.py`.
+* NERC Interregional Transfer Capability Study (ITCS) Part 1, Aug 2024; PJM/MISO
+  ITCS — corroborating seam transfer-capability context (PDFs network-blocked in
+  the build env; used for cross-checks, not the limit values).
 * PJM 2024 State of the Market (Monitoring Analytics), §9 Interchange.
 * "Billions in Benefits: Expanding Transmission Between MISO and PJM" (ACORE,
   2023) and the PJM/MISO Joint Modeling Case Study — PJM net-exporter rationale.
@@ -138,4 +239,6 @@ neighbor's *own* gas+load+HR price, anchored to its measured LMP level.
 - `src/market_sim/data/neighbor_price.py` — the module (pure, no LP).
 - `src/market_sim/config/constants.py` — `NeighborInterface`, `INTERFACE_NEIGHBORS`.
 - `scripts/validate_neighbor_price.py` — the validation report.
-- `tests/test_neighbor_price.py` — 15 unit + integration tests.
+- `scripts/derive_interface_limits.py` — derives the seam limits from PJM's
+  published per-tie flows (`--check` asserts the constants still match).
+- `tests/test_neighbor_price.py` — unit + integration tests.

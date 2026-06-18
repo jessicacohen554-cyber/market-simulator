@@ -170,8 +170,8 @@ class TestInterfacePricesAndAggregate(unittest.TestCase):
             "NYISO": np.array([40.0, 40.0]),
         }
         agg = prices.aggregate()
-        # PJM MISO limit 10000, NYISO 3000 -> weighted toward MISO's 20.
-        w = (10000 * 20 + 3000 * 40) / 13000
+        # PJM MISO limit 7300, NYISO 3900 -> weighted toward MISO's 20.
+        w = (7300 * 20 + 3900 * 40) / (7300 + 3900)
         np.testing.assert_allclose(agg, w)
 
     def test_aggregate_none_when_empty(self):
@@ -224,29 +224,37 @@ class TestPJMIntegration(unittest.TestCase):
 class TestReferencePriceNode(unittest.TestCase):
     """The LP seam builder + the hourly mc injector."""
 
-    def test_node_has_import_and_export_per_neighbor(self):
+    def test_node_has_import_and_export_tranches_per_neighbor(self):
+        from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
         from market_sim.model.transmission import build_reference_price_node
 
         gens = build_reference_price_node("PJM")
         n_neighbors = len(INTERFACE_NEIGHBORS["PJM"])
-        self.assertEqual(len(gens), 2 * n_neighbors)
+        # n tranches x 2 directions per neighbor.
+        self.assertEqual(len(gens), 2 * SEAM_FLOW_TRANCHES * n_neighbors)
         imports = [g for g in gens if g.pmax_mw > 0]
         exports = [g for g in gens if g.pmax_mw == 0 and g.pmin_mw < 0]
-        self.assertEqual(len(imports), n_neighbors)
-        self.assertEqual(len(exports), n_neighbors)
-        # Capacity matches each neighbor's interface limit.
+        self.assertEqual(len(imports), SEAM_FLOW_TRANCHES * n_neighbors)
+        self.assertEqual(len(exports), SEAM_FLOW_TRANCHES * n_neighbors)
+        # The MISO import tranches each carry limit/n and sum to the limit.
         miso = next(n for n in INTERFACE_NEIGHBORS["PJM"] if n.name == "MISO")
-        miso_imp = next(g for g in imports if g.unit_id.endswith("MISO"))
-        self.assertEqual(miso_imp.pmax_mw, miso.interface_limit_mw)
+        miso_imp = [g for g in imports if "_refimp_MISO#" in g.unit_id]
+        self.assertEqual(len(miso_imp), SEAM_FLOW_TRANCHES)
+        for g in miso_imp:
+            self.assertAlmostEqual(
+                g.pmax_mw, miso.interface_limit_mw / SEAM_FLOW_TRANCHES)
+        self.assertAlmostEqual(
+            sum(g.pmax_mw for g in miso_imp), miso.interface_limit_mw)
 
     def test_unregistered_iso_node_is_empty(self):
         from market_sim.model.transmission import build_reference_price_node
 
         self.assertEqual(build_reference_price_node("ERCOT"), [])
 
-    def test_inject_sets_import_plus_export_minus_hurdle(self):
+    def test_inject_sets_flow_responsive_tranche_prices(self):
         from types import SimpleNamespace
 
+        from market_sim.data.neighbor_price import seam_tranche_prices
         from market_sim.model.transmission import (
             build_reference_price_node,
             inject_reference_price_mc,
@@ -262,20 +270,32 @@ class TestReferencePriceNode(unittest.TestCase):
             self.skipTest("EIA-930 neighbor extracts not present")
         # The ordinary unit's row is untouched.
         np.testing.assert_array_equal(mc[0], 99.0)
-        prices = interface_reference_prices("PJM", 2023, 8760)
+        cache: dict[str, object] = {}
         for r, uid in enumerate(unit_ids):
-            if "_refimp_" in uid:
-                name = uid.rsplit("_refimp_", 1)[1]
+            for mark, is_export in (("_refimp_", False), ("_refexp_", True)):
+                if mark not in uid:
+                    continue
+                tag = uid.rsplit(mark, 1)[1]
+                name, _, k_str = tag.partition("#")
+                k = int(k_str) - 1
                 spec = next(n for n in INTERFACE_NEIGHBORS["PJM"]
                             if n.name == name)
-                np.testing.assert_allclose(
-                    mc[r], prices.per_neighbor[name] + spec.hurdle)
-            elif "_refexp_" in uid:
-                name = uid.rsplit("_refexp_", 1)[1]
-                spec = next(n for n in INTERFACE_NEIGHBORS["PJM"]
-                            if n.name == name)
-                np.testing.assert_allclose(
-                    mc[r], prices.per_neighbor[name] - spec.hurdle)
+                if name not in cache:
+                    cache[name] = seam_tranche_prices(spec, 2023, 8760)
+                export_p, import_p, _ = cache[name]
+                band = export_p[k] if is_export else import_p[k]
+                expect = band - spec.hurdle if is_export else band + spec.hurdle
+                np.testing.assert_allclose(mc[r], expect)
+        # Export tranches must be monotone non-increasing in flow (the seam
+        # slopes down: deeper export bands pay less), and the deepest export
+        # band is strictly below the first — the self-limiting slope.
+        miso_exp = sorted(
+            (int(uid.rsplit("#", 1)[1]), r)
+            for r, uid in enumerate(unit_ids) if "_refexp_MISO#" in uid)
+        first = mc[miso_exp[0][1]]
+        last = mc[miso_exp[-1][1]]
+        self.assertTrue(np.all(last <= first + 1e-9))
+        self.assertLess(float(last.mean()), float(first.mean()))
 
     def test_inject_noop_without_node(self):
         from types import SimpleNamespace
