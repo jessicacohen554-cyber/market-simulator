@@ -46,6 +46,8 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
 
 from market_sim.results.calibration import (  # noqa: E402
     check_cf_band_occupancy,
@@ -161,7 +163,7 @@ def main() -> None:
     args = ap.parse_args()
 
     bundle: Path = args.bundle
-    campd = pd.read_parquet(bundle / "campd.parquet")
+    campd = pd.read_parquet(bundle_input_path(bundle, "campd"))
     cems_ids = set(int(p) for p in campd["plant_id"].unique())
     want_plants = (
         {int(p) for p in args.plants.split(",") if p.strip()}

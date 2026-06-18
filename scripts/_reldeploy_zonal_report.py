@@ -13,11 +13,14 @@ Used to quantify the spatial reliability-deployment overlay's before/after.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
 
 # CEMS-covered thermal classes (the dispatch klass / bin-sheet Plant_Group).
 THERMAL = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP",
@@ -49,7 +52,7 @@ def main() -> None:
 
     disp = pd.read_parquet(bundle / "dispatch" / f"{year}_P1.parquet")
     sysd = pd.read_parquet(bundle / "system.parquet")
-    campd = pd.read_parquet(bundle / "campd.parquet")
+    campd = pd.read_parquet(bundle_input_path(bundle, "campd"))
     sysd = sysd[(sysd["year"] == year) & (sysd["pass"] == "P1")]
     campd = campd[campd["year"] == year]
 
