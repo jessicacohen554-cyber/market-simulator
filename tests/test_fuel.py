@@ -1149,3 +1149,69 @@ def test_nyiso_zonal_gas_basis_skips_other_isos():
     prices = base.copy()
     apply_nyiso_zonal_gas_basis(prices, fleet, config, 2023)
     np.testing.assert_array_equal(prices, base)
+
+
+def test_nyiso_monthly_ttc_expands_to_seasonal_envelope():
+    """The Central-East TTC follows the measured monthly envelope per hour.
+
+    Structure-first (claude.md rule #1): NYISO's day-ahead Central-East limit
+    steps up when the AC Transmission upgrade energizes (Dec 2023) and derates
+    each shoulder season; _apply_iso_monthly_ttc must expand the scalar TTC to a
+    (hours, n_links) matrix whose Central-East column tracks
+    NYISO_INTERFACE_TTC_BY_MONTH, leap-year safe.
+    """
+    from scripts.run_calibration import _apply_iso_monthly_ttc
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.constants import NYISO_INTERFACE_TTC_BY_MONTH
+
+    cfg = get_iso_config("NYISO")
+    ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
+    hours = 8760
+    out = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2023, hours)
+
+    assert out.ndim == 2 and out.shape == (hours, len(cfg.links))
+    profile = NYISO_INTERFACE_TTC_BY_MONTH[2023][("Upstate_West", "Capital_Hudson")]
+    ce = next(
+        i for i, link in enumerate(cfg.links)
+        if (link.from_zone, link.to_zone) == ("Upstate_West", "Capital_Hudson")
+    )
+    assert out[0, ce] == profile[0]      # Jan hour 0 -> Jan limit
+    assert out[hours - 1, ce] == profile[11]  # Dec last hour -> Dec limit
+    assert out[31 * 24, ce] == profile[1]     # first Feb hour -> Feb limit
+    # The Dec post-upgrade limit is well above the shoulder-season floor.
+    assert profile[11] > profile[3]
+
+
+def test_nyiso_monthly_ttc_leap_year_hours():
+    """2024 has 8784 hours; the month map must stay aligned through Feb 29."""
+    from scripts.run_calibration import _apply_iso_monthly_ttc
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.constants import NYISO_INTERFACE_TTC_BY_MONTH
+
+    cfg = get_iso_config("NYISO")
+    ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
+    out = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2024, 8784)
+    ce = next(
+        i for i, link in enumerate(cfg.links)
+        if (link.from_zone, link.to_zone) == ("Upstate_West", "Capital_Hudson")
+    )
+    profile = NYISO_INTERFACE_TTC_BY_MONTH[2024][("Upstate_West", "Capital_Hudson")]
+    assert out.shape == (8784, len(cfg.links))
+    assert out[8784 - 1, ce] == profile[11]   # last hour is still December
+
+
+def test_monthly_ttc_noop_for_other_isos_and_untabulated_years():
+    """No monthly table -> the scalar TTC array is returned unchanged (1-D)."""
+    from scripts.run_calibration import _apply_iso_monthly_ttc
+    from market_sim.config.iso_configs import get_iso_config
+
+    cfg = get_iso_config("NYISO")
+    ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
+    # Non-NYISO ISO.
+    out_pjm = _apply_iso_monthly_ttc(ttc, cfg, "PJM", 2023, 8760)
+    assert np.asarray(out_pjm).ndim == 1
+    np.testing.assert_array_equal(out_pjm, ttc)
+    # NYISO year with no table entry.
+    out_old = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2099, 8760)
+    assert np.asarray(out_old).ndim == 1
+    np.testing.assert_array_equal(out_old, ttc)
