@@ -60,6 +60,7 @@ from market_sim.config.constants import (
     ORDC_FLOOR_STEPS,
     PJM_PRIMARY_RESERVE_LSC_FACTOR,
 )
+from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
 # Fuel types whose headroom counts toward operating reserves. Renewables
@@ -782,7 +783,7 @@ def largest_single_contingency_mw(
     return max(by_plant.values()) if by_plant else 0.0
 
 
-_PJM_AS_DIR = Path(__file__).resolve().parents[3] / "inputs" / "raw-data" / "PJM-AS"
+_PJM_AS_DIR = RAW_DATA_DIR / "PJM-AS"
 
 
 def load_pjm_measured_reserve_requirement(
