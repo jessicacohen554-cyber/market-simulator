@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-18-run130-ct-peak-cool",
+  "label": "run130 ct-peak-cool (PROBE)",
+  "date": "2026-06-18",
+  "shorthand": "run130-ct-peak-cool",
+  "definition": "PROBE on run129: lower CT_PEAKER econ_high 2.18->1.58 and peak 13.15->7.15 (ST untouched) to cool the 2024/2025 LMP hot bias. RESULT: LMP barely moved (2025 MAE 17.06->16.62, avg -0.45; 2024 -0.21) \u2014 rules OUT the CT offer curve as the LMP lever and confirms the hot bias is the price FLOOR (2025 model clears <$20 only 6h vs 2329 actual) + 2024 scarcity spikes (Apr/Aug/Oct), i.e. the co-opt/ORDC layer, not CT/ST econ. Volume side-benefit: CT_PEAKER toward bench (-7%->+2% 2025) and ST over-run trimmed; gate still 12/18. Next: chase the co-opt reserve adder / ORDC floor, not offers.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-18-run130-ct-peak-cool.js",
+  "bundle": "results/calibration/ercot_dam_ctcool1_3yr"
+}
