@@ -87,6 +87,10 @@ from market_sim.data.fleet import (  # noqa: E402
     coal_supply_class,
 )
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
+from scripts._bundle_io import (  # noqa: E402
+    bundle_input_path,
+    write_shared_input,
+)
 from scripts.run_calibration import (  # noqa: E402
     _calibration_config,
     _commitment_pass,
@@ -1397,21 +1401,26 @@ def solve_and_persist(
     pd.concat(system_frames, ignore_index=True).to_parquet(
         run_dir / "system.parquet", index=False
     )
+    # campd / eia930 / eia923 are deterministic input/benchmark frames shared
+    # across an ISO's runs — write them once to the content-addressed shared
+    # store and reference them from meta.json instead of duplicating ~6 MB into
+    # every bundle. Run outputs (system/dispatch/storage/btm) stay in-bundle.
+    shared_inputs: dict[str, str] = {}
     if eia930_frames:
-        pd.concat(eia930_frames, ignore_index=True).to_parquet(
-            run_dir / "eia930.parquet", index=False
+        shared_inputs["eia930"] = write_shared_input(
+            pd.concat(eia930_frames, ignore_index=True), "eia930", iso, run_dir
         )
     if eia923_frames:
-        pd.concat(eia923_frames, ignore_index=True).to_parquet(
-            run_dir / "eia923.parquet", index=False
+        shared_inputs["eia923"] = write_shared_input(
+            pd.concat(eia923_frames, ignore_index=True), "eia923", iso, run_dir
         )
     if btm_frames:
         pd.concat(btm_frames, ignore_index=True).to_parquet(
             run_dir / "btm.parquet", index=False
         )
     if campd_frames:
-        pd.concat(campd_frames, ignore_index=True).to_parquet(
-            run_dir / "campd.parquet", index=False
+        shared_inputs["campd"] = write_shared_input(
+            pd.concat(campd_frames, ignore_index=True), "campd", iso, run_dir
         )
     if storage_frames:
         pd.concat(storage_frames, ignore_index=True).to_parquet(
@@ -1467,6 +1476,7 @@ def solve_and_persist(
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "btm_backfill_year": btm_backfill_year,
+        "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
         # Solver provenance: near-tied offer-curve plateaus (e.g. cheap-gas
         # years putting PRB committed bids on top of gas committed bids)
@@ -2664,10 +2674,8 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     meta = json.loads((run_dir / "meta.json").read_text())
     iso = meta["iso"]
     system = pd.read_parquet(run_dir / "system.parquet")
-    e930_all = (
-        pd.read_parquet(run_dir / "eia930.parquet")
-        if (run_dir / "eia930.parquet").exists() else None
-    )
+    e930_path = bundle_input_path(run_dir, "eia930")
+    e930_all = pd.read_parquet(e930_path) if e930_path is not None else None
 
     print(f"\n{'=' * 80}")
     print(f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
@@ -2679,12 +2687,10 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
         _report_generic(run_dir, iso, meta, system, e930_all)
         return
 
-    e923_all = pd.read_parquet(run_dir / "eia923.parquet")
+    e923_all = pd.read_parquet(bundle_input_path(run_dir, "eia923"))
     btm_all = pd.read_parquet(run_dir / "btm.parquet")
-    campd_all = (
-        pd.read_parquet(run_dir / "campd.parquet")
-        if (run_dir / "campd.parquet").exists() else None
-    )
+    campd_path = bundle_input_path(run_dir, "campd")
+    campd_all = pd.read_parquet(campd_path) if campd_path is not None else None
     storage_all = (
         pd.read_parquet(run_dir / "storage.parquet")
         if (run_dir / "storage.parquet").exists() else None
@@ -2836,17 +2842,23 @@ def rebuild_benchmark(bundle: Path) -> None:
         if campd_year is not None:
             campdf.append(campd_year)
 
-    pd.concat(e923f, ignore_index=True).to_parquet(
-        bundle / "eia923.parquet", index=False
+    # Rebuild into the content-addressed shared store and re-point the bundle's
+    # meta (so a rebuilt benchmark dedupes like a fresh solve's). Any legacy
+    # in-bundle copy is left as-is; report_run resolves the shared ref first.
+    shared_inputs = dict(meta.get("shared_inputs", {}))
+    shared_inputs["eia923"] = write_shared_input(
+        pd.concat(e923f, ignore_index=True), "eia923", iso, bundle
     )
     if e930f:
-        pd.concat(e930f, ignore_index=True).to_parquet(
-            bundle / "eia930.parquet", index=False
+        shared_inputs["eia930"] = write_shared_input(
+            pd.concat(e930f, ignore_index=True), "eia930", iso, bundle
         )
     if campdf:
-        pd.concat(campdf, ignore_index=True).to_parquet(
-            bundle / "campd.parquet", index=False
+        shared_inputs["campd"] = write_shared_input(
+            pd.concat(campdf, ignore_index=True), "campd", iso, bundle
         )
+    meta["shared_inputs"] = shared_inputs
+    (bundle / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     logger.info("rebuilt benchmark parquets in %s (no re-solve)", bundle)
     report_run(bundle)
 
@@ -3304,8 +3316,7 @@ def build_parser() -> argparse.ArgumentParser:
                              "bypassing offer_curve_by_group. Generate/edit "
                              "with scripts/export_tranche_config.py.")
     parser.add_argument(
-        "--offer-curve-json", "--offer-curve-override-json", default=None,
-        metavar="JSON", dest="offer_curve_json",
+        "--offer-curve-json", default=None, metavar="JSON",
         help="Per-class/per-band heat-rate multiplier overrides as a JSON "
              "object, deep-merged onto the calibrated offer_curve_by_group "
              "defaults. Each top-level key is a fleet class (CC_REGULAR, "
@@ -3314,9 +3325,7 @@ def build_parser() -> argparse.ArgumentParser:
              "econ_low, econ_high, peak, econ_low_share, pct_peaking). "
              'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
-             ".json file. The merged curve is recorded in run_config.json. "
-             "(--offer-curve-override-json is an accepted alias, used by the "
-             "measured-DAM-multiplier recipe in scripts/derive_dam_offer_hrmults.py.)")
+             ".json file. The merged curve is recorded in run_config.json.")
     parser.add_argument(
         "--cc-derate-from-top", action="store_true",
         help="Reallocate CC_REGULAR outage derates top-of-stack: a partial "
