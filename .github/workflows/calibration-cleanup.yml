@@ -1,20 +1,28 @@
 name: calibration-cleanup
 
 # Purge old calibration run bundles from the repo AND from all git history,
-# selecting by each run dir's last-commit date. Rewrites history (BFG-style via
-# git-filter-repo) and force-pushes every branch, so the bundles stop bloating
-# clones. DRY-RUN by default — preview first, then re-run with dry_run=false.
+# selecting by each run dir's last-commit date, and/or strip every blob bigger
+# than a threshold. Rewrites history (BFG-style via git-filter-repo) and
+# force-pushes the DEFAULT branch (what fresh clones check out). DRY-RUN by
+# default — preview first, then re-run with dry_run=false.
 #
-# WARNING: a non-dry run REWRITES HISTORY on every branch. All existing clones
-# and open PRs must be re-cloned/rebased afterward. If main is a protected
-# branch, allow force-push for GITHUB_TOKEN (or run with a PAT that can bypass).
+# NOTE: date-based dir removal frees little on its own (git de-dupes identical
+# inputs and delta-compresses similar dispatch parquets across runs). To
+# actually shrink the repo, set strip_blobs_bigger_than (e.g. 1M) — the
+# dashboard renders from the small frontend runs/*.js, not the parquet bundles,
+# so stripping the big blobs does not break it.
+#
+# WARNING: a non-dry run REWRITES HISTORY on the default branch. Existing clones
+# and open PRs must be re-cloned/rebased. If the branch is protected against
+# force-push, allow it for GITHUB_TOKEN or run with a PAT that can bypass.
 
 on:
   workflow_dispatch:
     inputs:
       before_date:
-        description: "Purge run dirs whose LAST commit is before this date (YYYY-MM-DD)"
-        required: true
+        description: "Purge run dirs whose LAST commit is before this date (YYYY-MM-DD). Blank = none."
+        required: false
+        default: ""
         type: string
       path_prefix:
         description: "Directory holding the bundle subdirs"
@@ -24,10 +32,10 @@ on:
       keep_dirs:
         description: "Comma-separated bundle dir names to ALWAYS keep"
         required: false
-        default: "caiso_keeper_v2_3yr"
+        default: "caiso_keeper_v2_3yr,_shared"
         type: string
       strip_blobs_bigger_than:
-        description: "Also strip EVERY blob bigger than this from all history (e.g. 1M). Blank = skip."
+        description: "Strip EVERY blob bigger than this from all history (e.g. 1M). The real size lever. Blank = skip."
         required: false
         default: ""
         type: string
@@ -71,27 +79,32 @@ jobs:
         working-directory: repo.git
         run: |
           set -euo pipefail
-          PREFIX='${{ inputs.path_prefix }}'
-          CUTOFF_TS=$(date -u -d '${{ inputs.before_date }}' +%s)
-          BR=$(git symbolic-ref --short HEAD 2>/dev/null || echo main)
-          IFS=',' read -ra KEEP <<< '${{ inputs.keep_dirs }}'
           : > /tmp/removelist.txt
-          for dir in $(git ls-tree -d --name-only "$BR" "$PREFIX/" 2>/dev/null); do
-            base=$(basename "$dir"); skip=false
-            for k in "${KEEP[@]}"; do [ "$base" = "$(echo "$k" | xargs)" ] && skip=true; done
-            if $skip; then echo "KEEP(listed) $dir"; continue; fi
-            last=$(git log -1 --format=%cI "$BR" -- "$dir" 2>/dev/null || true)
-            [ -z "$last" ] && continue
-            if [ "$(date -u -d "$last" +%s)" -lt "$CUTOFF_TS" ]; then
-              echo "PURGE $dir (last $last)"; echo "$dir/" >> /tmp/removelist.txt
-            else
-              echo "keep  $dir (last $last)"
-            fi
-          done
+          if [ -n '${{ inputs.before_date }}' ]; then
+            PREFIX='${{ inputs.path_prefix }}'
+            CUTOFF_TS=$(date -u -d '${{ inputs.before_date }}' +%s)
+            BR=$(git symbolic-ref --short HEAD 2>/dev/null || echo main)
+            IFS=',' read -ra KEEP <<< '${{ inputs.keep_dirs }}'
+            for dir in $(git ls-tree -d --name-only "$BR" "$PREFIX/" 2>/dev/null); do
+              base=$(basename "$dir"); skip=false
+              for k in "${KEEP[@]}"; do [ "$base" = "$(echo "$k" | xargs)" ] && skip=true; done
+              if $skip; then echo "KEEP(listed) $dir"; continue; fi
+              last=$(git log -1 --format=%cI "$BR" -- "$dir" 2>/dev/null || true)
+              [ -z "$last" ] && continue
+              if [ "$(date -u -d "$last" +%s)" -lt "$CUTOFF_TS" ]; then
+                echo "PURGE $dir (last $last)"; echo "$dir/" >> /tmp/removelist.txt
+              else
+                echo "keep  $dir (last $last)"
+              fi
+            done
+          else
+            echo "No before_date given — date-based dir removal skipped."
+          fi
           n=$(wc -l < /tmp/removelist.txt | tr -d ' '); echo "Selected $n dir(s)."
           {
-            echo "### Calibration cleanup — cutoff before ${{ inputs.before_date }}"
-            echo "Selected **$n** bundle dir(s) to purge:"
+            echo "### Calibration cleanup"
+            echo "before_date: '${{ inputs.before_date }}'  |  strip_blobs_bigger_than: '${{ inputs.strip_blobs_bigger_than }}'"
+            echo "Selected **$n** bundle dir(s) to purge by date:"
             echo '```'; cat /tmp/removelist.txt; echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -99,22 +112,33 @@ jobs:
         if: ${{ inputs.dry_run }}
         run: echo "DRY RUN — nothing rewritten or pushed. Re-run with dry_run=false to apply."
 
-      - name: Rewrite history and force-push all refs
+      - name: Rewrite history and force-push the default branch
         if: ${{ !inputs.dry_run }}
         working-directory: repo.git
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          BR=$(git symbolic-ref --short HEAD 2>/dev/null || echo main)
           ARGS=()
           [ -s /tmp/removelist.txt ] && ARGS+=(--invert-paths --paths-from-file /tmp/removelist.txt)
           [ -n '${{ inputs.strip_blobs_bigger_than }}' ] && \
             ARGS+=(--strip-blobs-bigger-than '${{ inputs.strip_blobs_bigger_than }}')
-          if [ ${#ARGS[@]} -eq 0 ]; then echo "Nothing selected; exiting."; exit 0; fi
+          if [ ${#ARGS[@]} -eq 0 ]; then
+            echo "Nothing to do (no before_date matches and no strip threshold). Exiting."; exit 0
+          fi
+          du -sh . | sed 's/^/.git BEFORE: /'
           git filter-repo --force "${ARGS[@]}"
-          echo "Rewritten .git size:"; du -sh .
+          du -sh . | sed 's/^/.git AFTER:  /'
           git remote add origin \
             "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          git push --force --all origin
-          git push --force --tags origin
-          echo "Force-pushed all rewritten refs." >> "$GITHUB_STEP_SUMMARY"
+          # Push ONLY the default branch (what fresh clones check out). Pushing
+          # --all force-pushes every rewritten branch in one oversized pack,
+          # which GitHub rejects with HTTP 500.
+          ok=false
+          for i in 1 2 3 4; do
+            if git push --force origin "refs/heads/$BR:refs/heads/$BR"; then ok=true; break; fi
+            echo "push attempt $i failed; retrying in $((i*10))s"; sleep $((i*10))
+          done
+          $ok || { echo "Push failed after retries (repo on GitHub is unchanged)."; exit 1; }
+          echo "Force-pushed rewritten **$BR**." >> "$GITHUB_STEP_SUMMARY"
