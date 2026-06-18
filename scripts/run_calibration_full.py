@@ -31,3 +31,25 @@ Usage:
     python scripts/run_calibration_full.py --year 2023 --commitment --no-coal-p2
     python scripts/run_calibration_full.py --report results/calibration/<iso>/<ts>
 """
+
+from __future__ import annotations
+
+import argparse
+import gc
+import gzip
+import json
+import logging
+import os
+import pickle
+import subprocess
+import sys
+from datetime import datetime
+from functools import lru_cache
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
