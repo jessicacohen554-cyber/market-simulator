@@ -6,25 +6,26 @@ script, and test. This removes the brittle "count the parents" idiom (which
 silently breaks when a file moves between directory depths) and gives a single
 place to see — and redirect — where the model's inputs live.
 
-Resolution is byte-identical to the historic per-module values: the data
-modules live at ``src/market_sim/data/<mod>.py`` and resolved the repo root as
-``Path(__file__).parents[3]``; this file lives at
-``src/market_sim/config/paths.py`` and resolves it the same way, so every
-constant below points exactly where it pointed before.
+Single data root (W1)
+---------------------
+The repo's data used to live under two competing roots (``inputs/`` and
+``data/``). The W1 relocation collapsed them into one tree under ``data/raw/``
+via ``git mv`` (history-preserving, byte-identical contents). Every constant
+below now points into ``data/raw``; only the locations and this file changed.
 
 DATA_ROOT seam
 --------------
 ``DATA_ROOT`` defaults to the repository root but can be overridden with the
 ``MARKET_SIM_DATA_ROOT`` environment variable. With the variable unset (the
-default) ``DATA_ROOT == REPO_ROOT`` and all paths are unchanged; setting it
-relocates the whole data tree in one move (e.g. to a mounted dataset).
+default) ``DATA_ROOT == REPO_ROOT``; setting it relocates the whole data tree
+in one move (e.g. to a mounted dataset).
 
 Forward-looking helpers
 -----------------------
-``RAW_DIR``, ``CLEAN_DIR``, ``DICTIONARY_DIR`` and :func:`clean_path` describe
-the *future* ``data/raw`` + ``data/clean`` layout. They are defined here so
-later waves can migrate onto them, but nothing in the model reads them yet —
-they are unused this session.
+``CLEAN_DIR``, ``DICTIONARY_DIR`` and :func:`clean_path` describe the *future*
+``data/clean`` layout. They are defined here so later waves can migrate onto
+them, but nothing in the model reads them yet. ``RAW_DIR`` is now live and
+aliases :data:`RAW_DATA_DIR`.
 """
 
 from __future__ import annotations
@@ -46,11 +47,22 @@ DATA_ROOT: Path = Path(os.environ.get("MARKET_SIM_DATA_ROOT", REPO_ROOT))
 # Current data locations (everything the model reads today).
 # ---------------------------------------------------------------------------
 
-# inputs/ tree -------------------------------------------------------------
+# Single consolidated data root (W1 relocation). The two historic roots
+# (``inputs/`` + ``data/``) were collapsed into one tree under ``data/raw/``:
+# ``inputs/raw-data`` -> ``data/raw``; the legacy ``data/{fleet,reference,
+# eia_hourly}`` and ``inputs/{processed,calibration}`` were folded in as
+# subdirectories (see below). Relocation was a pure ``git mv`` — file contents
+# are byte-identical, only their location (and these constants) changed.
+#
+# ``INPUTS_DIR`` is retained for backward compatibility but the model no longer
+# reads anything under it; everything now resolves under ``data/raw``.
 INPUTS_DIR: Path = DATA_ROOT / "inputs"
-RAW_DATA_DIR: Path = INPUTS_DIR / "raw-data"
-PROCESSED_DIR: Path = INPUTS_DIR / "processed"
-CALIBRATION_DIR: Path = INPUTS_DIR / "calibration"
+RAW_DATA_DIR: Path = DATA_ROOT / "data" / "raw"
+# inputs/processed and inputs/calibration were relocated under data/raw with
+# leading-underscore names that sort them apart from the raw downloads and flag
+# them as not-yet-curated (they get curated in W3).
+PROCESSED_DIR: Path = RAW_DATA_DIR / "_processed-legacy"
+CALIBRATION_DIR: Path = RAW_DATA_DIR / "_validation-source"
 
 # inputs/raw-data/ subdirectories -----------------------------------------
 EIA_860_DIR: Path = RAW_DATA_DIR / "eia-860"
@@ -106,16 +118,29 @@ ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 NYISO_HSL_DIR: Path = RAW_DATA_DIR / "nyiso-hsl"
 
-# data/ tree ---------------------------------------------------------------
-FLEET_DIR: Path = DATA_ROOT / "data" / "fleet"
-REFERENCE_DIR: Path = DATA_ROOT / "data" / "reference"
-EIA_HOURLY_DIR: Path = DATA_ROOT / "data" / "eia_hourly"
+# Legacy data/ tree, folded into data/raw/ (W1). The directory names were
+# disambiguated on the way in so they don't collide with existing data/raw
+# subdirs: data/fleet -> data/raw/fleet-egrid (eGRID workbook),
+# data/reference -> data/raw/reference, data/eia_hourly -> data/raw/eia-930-hourly.
+FLEET_DIR: Path = RAW_DATA_DIR / "fleet-egrid"
+REFERENCE_DIR: Path = RAW_DATA_DIR / "reference"
+EIA_HOURLY_DIR: Path = RAW_DATA_DIR / "eia-930-hourly"
+
+# Loose curated reference files that used to sit at the inputs/ root; relocated
+# into data/raw/reference/ (W1). Centralized here so the modules that read them
+# (config.scenarios, data.cod_ramp, data.outages, data.fleet) resolve one path
+# instead of hardcoding a CWD-relative ``inputs/...`` string.
+PLANT_REGISTRY_CSV: Path = REFERENCE_DIR / "master-plant-registry.csv"
+CAMPD_BINS_CSV: Path = REFERENCE_DIR / "custom-bin-assignments.csv"
+TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 
 # ---------------------------------------------------------------------------
-# Forward-looking layout (data/raw + data/clean). Unused this session; defined
-# so later migration waves can adopt it without re-touching every module.
+# Raw/clean layout. ``RAW_DIR`` is now live and identical to ``RAW_DATA_DIR``
+# (the W1 relocation made data/raw the single raw root). ``CLEAN_DIR`` /
+# ``DICTIONARY_DIR`` / :func:`clean_path` remain forward-looking — nothing in
+# the model reads them yet; later waves curate into data/clean.
 # ---------------------------------------------------------------------------
-RAW_DIR: Path = DATA_ROOT / "data" / "raw"
+RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
 DICTIONARY_DIR: Path = DATA_ROOT / "data" / "dictionary"
 
