@@ -272,6 +272,12 @@ def main() -> None:
                          "2-3x), and it is governed by the dedicated lignite-sigmoid / "
                          "PRB-floor calibration — so the measured override scopes to the "
                          "gas energy stack (CC/CT/ST_GAS). Coal is always REPORTED.")
+    ap.add_argument("--only-groups", default=None, metavar="G1,G2",
+                    help="restrict the override JSON to these output groups "
+                         "(e.g. CC_REGULAR,CC_CHP for the CC-only variant that "
+                         "avoids the CT<->ST coupling crater). Default: all gas groups.")
+    ap.add_argument("--out-json", default=None, metavar="PATH",
+                    help="override JSON output path (default offer_curve_dam_hrmults.json)")
     args = ap.parse_args()
 
     fleet_hr = class_base_hr()
@@ -324,18 +330,25 @@ def main() -> None:
     print(f"\nWrote {OUT_SUMMARY}")
 
     if args.write_json:
-        curve = build_override_curve(results, args.peak_mode, args.include_coal)
-        OUT_JSON.write_text(json.dumps(curve, indent=1) + "\n")
-        print(f"Wrote {OUT_JSON}  (peak-mode {args.peak_mode}, "
-              f"coal {'included' if args.include_coal else 'excluded'})")
+        only = (set(g.strip() for g in args.only_groups.split(","))
+                if args.only_groups else None)
+        curve = build_override_curve(results, args.peak_mode, args.include_coal, only)
+        out_path = Path(args.out_json) if args.out_json else OUT_JSON
+        out_path.write_text(json.dumps(curve, indent=1) + "\n")
+        print(f"Wrote {out_path}  (peak-mode {args.peak_mode}, "
+              f"coal {'included' if args.include_coal else 'excluded'}, "
+              f"groups {sorted(curve)})")
         print(json.dumps(curve, indent=1))
 
 
 def build_override_curve(results: dict[str, dict], peak_mode: str,
-                         include_coal: bool = False) -> dict:
+                         include_coal: bool = False,
+                         only_groups: set[str] | None = None) -> dict:
     """Assemble the class -> band -> multiplier override from the measured p50s."""
     curve: dict[str, dict[str, float]] = {}
     for group, r in results.items():
+        if only_groups is not None and group not in only_groups:
+            continue
         if group.startswith("COAL") and not include_coal:
             continue
         bands = {
