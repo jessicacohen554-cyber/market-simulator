@@ -21,6 +21,9 @@ from pathlib import Path
 
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
 CLASSES = ["CC_REGULAR", "CC_CHP", "COAL_PRB", "ST_GAS", "COAL_LIGNITE",
            "CT_PEAKER", "CT_CHP"]
@@ -29,7 +32,7 @@ GUARD_PLANTS = {6146: "Martin Lake", 298: "Limestone"}
 
 def class_table(run: str) -> pd.DataFrame:
     d = ROOT / run
-    e923 = pd.read_parquet(d / "eia923.parquet")
+    e923 = pd.read_parquet(bundle_input_path(d, "eia923"))
     btm = pd.read_parquet(d / "btm.parquet")
     rows = []
     for f in sorted((d / "dispatch").glob("*_P1.parquet")):
@@ -100,8 +103,8 @@ def main() -> None:
           .to_string(index=False))
     gas = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP"}
     coal = {"COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL"}
-    e923 = pd.read_parquet(ROOT / run / "eia923.parquet")
-    e930 = pd.read_parquet(ROOT / run / "eia930.parquet")
+    e923 = pd.read_parquet(bundle_input_path(ROOT / run, "eia923"))
+    e930 = pd.read_parquet(bundle_input_path(ROOT / run, "eia930"))
     t930 = e930.groupby(["year", "series"])["mw"].sum() / 1e6
     btm = pd.read_parquet(ROOT / run / "btm.parquet")
     print("\nfuel split gate (GRID-DELIVERED: gas and coal grid totals within"
