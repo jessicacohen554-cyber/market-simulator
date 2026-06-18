@@ -365,6 +365,42 @@ class TestBuildVariableBounds(unittest.TestCase):
                 self.assertEqual(col_lower[layout.slack_col(z, t)], 0.0)
                 self.assertTrue(np.isinf(col_upper[layout.slack_col(z, t)]))
 
+    def test_per_hour_ttc_sets_seasonal_flow_bounds(self):
+        # A 2-D ttc (T, n_links) sets a distinct flow limit each hour, so an
+        # interface can follow a seasonal envelope (NYISO Central-East monthly
+        # TTC) instead of one static value.
+        layout = VariableLayout(n_gen=1, n_zones=2, n_storage=0, n_links=1, T=3)
+        fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=3)
+        ttc_per_hour = np.array([[100.0], [250.0], [400.0]])  # (T, n_links)
+        col_lower, col_upper = build_variable_bounds(
+            layout,
+            fleet,
+            wind_cf=np.zeros((2, 3)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, 3)),
+            solar_cap=np.zeros(2),
+            ttc=ttc_per_hour,
+        )
+        for t, limit in enumerate([100.0, 250.0, 400.0]):  # t: hour index
+            self.assertEqual(col_upper[layout.flow_col(0, t)], limit)
+            self.assertEqual(col_lower[layout.flow_col(0, t)], -limit)
+
+    def test_one_d_and_two_d_ttc_agree_when_constant(self):
+        # A 1-D ttc and a constant 2-D ttc must produce identical bounds — the
+        # static path stays byte-identical.
+        layout = VariableLayout(n_gen=1, n_zones=2, n_storage=0, n_links=1, T=4)
+        fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=4)
+        kwargs = dict(
+            wind_cf=np.zeros((2, 4)), wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, 4)), solar_cap=np.zeros(2),
+        )
+        lo1, up1 = build_variable_bounds(layout, fleet, ttc=np.array([300.0]), **kwargs)
+        lo2, up2 = build_variable_bounds(
+            layout, fleet, ttc=np.full((4, 1), 300.0), **kwargs
+        )
+        np.testing.assert_array_equal(lo1, lo2)
+        np.testing.assert_array_equal(up1, up2)
+
 
 class TestSolveDispatch(unittest.TestCase):
     """End-to-end tests for ``solve_dispatch`` (all use T=24)."""
