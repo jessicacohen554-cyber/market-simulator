@@ -917,7 +917,8 @@ def build_variable_bounds(
             or hour-varying ``(n_storage, T)`` (COD intra-year ramp).
         storage_energy_cap: SOC energy cap, shape ``(n_storage,)`` or
             ``(n_storage, T)``.
-        ttc: Total transfer capability per link, shape ``(n_links,)``.
+        ttc: Total transfer capability per link, shape ``(n_links,)``
+            (static) or ``(T, n_links)`` (per-hour seasonal limit).
 
     Returns:
         Tuple ``(col_lower, col_upper)`` of length ``layout.total_columns``.
@@ -968,11 +969,16 @@ def build_variable_bounds(
         col_upper[:, layout._dis_off : layout._soc_off] = power_cap
         col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
 
-    # Transmission flow: -ttc <= Flow <= ttc (bidirectional).
+    # Transmission flow: -ttc <= Flow <= ttc (bidirectional). A 1-D ``ttc``
+    # (n_links,) broadcasts across all hours (the static-limit path); a 2-D
+    # ``ttc`` (T, n_links) sets a per-hour limit per link, letting an interface
+    # follow a seasonal envelope (NYISO Central-East monthly TTC).
     if layout.n_links:
-        ttc_row = np.asarray(ttc, dtype=float)[np.newaxis, :]
-        col_lower[:, layout._flow_off : layout._slack_off] = -ttc_row
-        col_upper[:, layout._flow_off : layout._slack_off] = ttc_row
+        ttc_arr = np.asarray(ttc, dtype=float)
+        if ttc_arr.ndim == 1:
+            ttc_arr = ttc_arr[np.newaxis, :]
+        col_lower[:, layout._flow_off : layout._slack_off] = -ttc_arr
+        col_upper[:, layout._flow_off : layout._slack_off] = ttc_arr
 
     # Load slack: 0 <= Slack <= inf.
     col_upper[:, layout._slack_off : layout._dump_off] = np.inf
@@ -1439,7 +1445,8 @@ def solve_dispatch(
         so2_price: SO2 price used when ``mc`` is ``None``.
         voll: Value of lost load applied to load-slack variables.
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
-        ttc: Total transfer capability per link, shape ``(n_links,)``.
+        ttc: Total transfer capability per link, shape ``(n_links,)``
+            (static) or ``(T, n_links)`` (per-hour seasonal limit).
         storage_power_cap: Charge/discharge power cap, shape ``(n_storage,)``
             or hour-varying ``(n_storage, T)`` (COD intra-year ramp; see
             ``storage.storage_cap_profiles``).
