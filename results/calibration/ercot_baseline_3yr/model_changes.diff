@@ -1,0 +1,25 @@
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index cfb8f06..a7e549b 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -3285,7 +3285,8 @@ def main() -> None:
+                              "bypassing offer_curve_by_group. Generate/edit "
+                              "with scripts/export_tranche_config.py.")
+     parser.add_argument(
+-        "--offer-curve-json", default=None, metavar="JSON",
++        "--offer-curve-json", "--offer-curve-override-json", default=None,
++        metavar="JSON", dest="offer_curve_json",
+         help="Per-class/per-band heat-rate multiplier overrides as a JSON "
+              "object, deep-merged onto the calibrated offer_curve_by_group "
+              "defaults. Each top-level key is a fleet class (CC_REGULAR, "
+@@ -3294,7 +3295,9 @@ def main() -> None:
+              "econ_low, econ_high, peak, econ_low_share, pct_peaking). "
+              'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
+              '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
+-             ".json file. The merged curve is recorded in run_config.json.")
++             ".json file. The merged curve is recorded in run_config.json. "
++             "(--offer-curve-override-json is an accepted alias, used by the "
++             "measured-DAM-multiplier recipe in scripts/derive_dam_offer_hrmults.py.)")
+     parser.add_argument(
+         "--cc-derate-from-top", action="store_true",
+         help="Reallocate CC_REGULAR outage derates top-of-stack: a partial "
