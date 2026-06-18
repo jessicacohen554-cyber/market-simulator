@@ -105,6 +105,25 @@ def neighbor_load_shape(
         and ``ba_used`` is the BA code whose load produced it (the primary or
         the proxy), or ``None`` when neither extract yields a usable series.
     """
+    loaded = _neighbor_load(neighbor, year, hours)
+    if loaded is None:
+        return None
+    load, mean_load, ba = loaded
+    shape = (load / mean_load) ** neighbor.load_shape_exponent
+    return shape, ba
+
+
+def _neighbor_load(
+    neighbor: NeighborInterface, year: int, hours: int
+) -> tuple[np.ndarray, float, str] | None:
+    """Return the neighbor's raw hourly load (MW), its mean, and the BA used.
+
+    The shared front-end of :func:`neighbor_load_shape` and
+    :func:`seam_tranche_prices`: it resolves the EIA-930 ``Demand`` series for
+    ``neighbor.ba_code`` (or ``proxy_ba`` when the primary extract is absent),
+    sliced to the model's clock. Returns ``None`` when neither extract yields a
+    usable ``(hours,)`` series.
+    """
     for ba in (neighbor.ba_code, neighbor.proxy_ba):
         if ba is None:
             continue
@@ -123,8 +142,7 @@ def neighbor_load_shape(
         mean_load = float(load.mean())
         if mean_load <= 0.0:
             continue
-        shape = (load / mean_load) ** neighbor.load_shape_exponent
-        return shape, ba
+        return load, mean_load, ba
     return None
 
 
@@ -157,6 +175,77 @@ def neighbor_reference_price(
     baseload = neighbor_gas_price(neighbor, year, gas_scenario)
     baseload *= neighbor.marginal_heat_rate
     return baseload * shape, ba_used
+
+
+# Number of piecewise-linear tranches the flow-responsive seam splits each
+# neighbor's [0, limit] import and export ranges into. The neighbor price is
+# evaluated at the midpoint flow of each tranche, so the seam sees a stepped
+# approximation of the neighbor's downward-sloping import-demand curve; 8 steps
+# resolves the slope finely enough that the export self-limits smoothly without
+# materially enlarging the LP (8 x 2 rows x 3 PJM neighbors = 48 seam rows).
+SEAM_FLOW_TRANCHES: int = 8
+
+
+def seam_tranche_prices(
+    neighbor: NeighborInterface,
+    year: int,
+    hours: int,
+    n_tranches: int = SEAM_FLOW_TRANCHES,
+    gas_scenario: str = "mid",
+) -> tuple[np.ndarray, np.ndarray, str] | None:
+    """Return the flow-responsive export/import tranche prices for one seam.
+
+    The flat :func:`neighbor_reference_price` holds the neighbor's price fixed
+    regardless of how much the ISO exports into it, so the LP exports at the
+    interface limit whenever the spread is positive (the ``pjm_30`` over-export).
+    This makes the price **respond to the flow**: exporting ``E`` MW into the
+    neighbor displaces that much of the neighbor's native generation, so its
+    price is evaluated at its load *reduced* by ``E`` — sliding the
+    willingness-to-pay down the neighbor's own ``gas x HR x (load/mean)^exp``
+    supply curve. Importing ``I`` MW raises the neighbor's effective load by
+    ``I`` (it must generate the export), lifting the price the ISO pays. As the
+    ISO exports more the spread narrows and the flow self-limits at the economic
+    equilibrium, instead of pinning at the cap.
+
+    The slope is the neighbor's own load level and already-calibrated supply
+    curve — no parameter is tuned to the net-MWh target (claude.md rule #11).
+    Tranche ``k`` (1-based) covers the flow band ``[(k-1)/n, k/n] x limit`` and
+    is priced at its **midpoint** flow ``(k-0.5)/n x limit``; the per-tranche
+    hurdle is applied by the LP injector, not here.
+
+    Args:
+        neighbor: The seam specification (supplies the interface limit, heat
+            rate, gas basis and load-shape exponent).
+        year: Calendar year.
+        hours: Length of the hourly series.
+        n_tranches: Number of flow bands per direction.
+        gas_scenario: Henry Hub trajectory key.
+
+    Returns:
+        ``(export_prices, import_prices, ba_used)`` where each price array is
+        ``(n_tranches, hours)`` — row ``k-1`` is the marginal price of the
+        ``k``-th flow band — or ``None`` when the neighbor has no load shape (it
+        then falls back to the flat aggregate, which carries no slope).
+    """
+    loaded = _neighbor_load(neighbor, year, hours)
+    if loaded is None:
+        return None
+    load, mean_load, ba_used = loaded
+    baseload = neighbor_gas_price(neighbor, year, gas_scenario)
+    baseload *= neighbor.marginal_heat_rate
+    exp = neighbor.load_shape_exponent
+    step = neighbor.interface_limit_mw / n_tranches
+    # Midpoint flow of each band: (k-0.5) x step, k = 1..n.
+    midpoints = (np.arange(n_tranches, dtype=float) + 0.5) * step
+    # Effective load floored at 5% of mean so a band wider than a low-load hour
+    # cannot drive the price to zero or negative (it asymptotes to a cheap
+    # floor instead). load[h] - E for export, load[h] + I for import.
+    floor = 0.05 * mean_load
+    export_eff = np.clip(load[None, :] - midpoints[:, None], floor, None)
+    import_eff = load[None, :] + midpoints[:, None]
+    export_prices = baseload * (export_eff / mean_load) ** exp
+    import_prices = baseload * (import_eff / mean_load) ** exp
+    return export_prices, import_prices, ba_used
 
 
 @dataclass
