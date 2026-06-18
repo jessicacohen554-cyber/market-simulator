@@ -202,6 +202,17 @@ class ScenarioConfig:
     # calendar year); set False to keep the full present-day snapshot (e.g. to
     # reproduce a pre-COD-ramp run).
     cod_ramp_enabled: bool = True
+    eia860_vintage_year: int | None = None  # Year-matched EIA-860 vintage for a
+    # backcast. None (default) uses the canonical 2025-Early-Release snapshot in
+    # inputs/raw-data/eia-860/ filtered to the solved year by the COD ramp. Set
+    # to a year with a committed inputs/raw-data/eia-860/vintage_<year>/ (2023,
+    # 2024) to read the native annual release instead — removing the COD ramp's
+    # capacity-weighted-mean COD smear and the absence of units that retired
+    # between the solved year and the 2025 snapshot. Measured effect is small
+    # (~0.4% of ERCOT installed capacity vs the COD-ramped 2025ER fleet, ~240 MW
+    # of retired-2023->25 units), a correctness/provenance refinement rather than
+    # a scarcity driver; gated, recalibrate before a keeper. See
+    # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
@@ -464,18 +475,29 @@ class ScenarioConfig:
     # true split is unavailable across the backcast window), so it over-
     # withholds where batteries/load carry AS (most in the later years). Used
     # to gate whether a rigorous thermal-share build is worth the data pull.
-    energy_reserve_coopt: bool = False  # PJM: co-optimize energy and Primary
-    # Reserve inside the LP. Adds a per-unit reserve variable sharing each
-    # unit's headroom with energy (P + R <= pmax*avail), a reserve-balance
-    # constraint at the structural requirement (1.5 x most-severe single
-    # contingency, scarcity.pjm_primary_reserve_requirement), and the published
-    # two-step ORDC demand curve (inputs/calibration/pjm_ordc_curve.csv) as
-    # priced shortfall steps so the reserve clearing price emerges as the
-    # constraint dual and lifts the energy LMP endogenously. Replaces the
-    # post-solve derive_pjm_ordc_overlay.py adder when on (no double-count).
+    energy_reserve_coopt: bool = False  # Co-optimize energy and operating
+    # reserve inside the LP (PJM and ERCOT). Adds a zonal reserve variable
+    # sharing each eligible unit's headroom with energy (P + R <= pmax*avail), a
+    # reserve-balance constraint at the requirement, and a published reserve
+    # demand curve as priced shortfall steps so the reserve clearing price
+    # emerges as the constraint dual and lifts the energy LMP endogenously.
+    # Replaces the post-solve overlay when on (no double-count).
+    #   * PJM — Primary Reserve at the structural 1.5 x most-severe single
+    #     contingency (scarcity.pjm_primary_reserve_requirement) priced by the
+    #     two-step ORDC curve (inputs/calibration/pjm_ordc_curve.csv).
+    #   * ERCOT — the VOLL-anchored ORDC reserve demand curve discretized into
+    #     shortfall steps (scarcity.ercot_ordc_demand_steps): reserve-eligible
+    #     thermal units part-load so the LP carries real spinning reserve instead
+    #     of counting cold/idle slow-start capacity as responsive (the perfect-
+    #     commitment headroom overstatement the post-solve overlay's online/
+    #     offline split and the fitted RTORDPA offset both worked around). This is
+    #     the RTC+B design (live 2025-12-05) and supersedes scarcity_pricing_
+    #     enabled when on (the runner/calibration path skips the adder).
     # Structural, forecast-applicable (requirement + price both move with the
-    # fleet); the measured PJM-AS series is a backcast honesty gate only.
-    # Default off (byte-identical); PJM-only until other ISOs are validated.
+    # fleet); measured reserve series are backcast honesty gates only. GATED
+    # CHANGE — it alters dispatch volumes (units part-load for reserve), so it is
+    # NOT byte-identical and the volume calibration must be re-run before a
+    # keeper. Default off. See docs/ordc-overlay.md (energy+reserve co-opt).
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see

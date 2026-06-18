@@ -416,6 +416,119 @@ def effective_reliability_deployment_mw(year: int, config) -> float:
     return float(getattr(config, "rtcb_reliability_deployment_mw", 0.0))
 
 
+def ercot_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
+    """Boolean ``(n_gen,)`` mask of ORDC-reserve-eligible generators.
+
+    The same dispatchable thermal classes the post-solve overlay counts toward
+    operating reserve (:data:`RESERVE_FUEL_TYPES` — gas/coal/nuclear/oil);
+    wind, solar, hydro and imports hold nothing responsive back. In the
+    energy+reserve co-optimization LP the shared-headroom row lets only these
+    units split capacity between energy and upward reserve, so a unit must be
+    eligible to part-load against the reserve requirement.
+    """
+    fuel_names = np.array(
+        [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    return np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
+
+
+def ercot_ordc_demand_steps(
+    *,
+    voll: float,
+    mcl_mw: float,
+    mu_mw: float,
+    sigma_mw: float,
+    shift_sigma: float,
+    n_steps: int = 40,
+    sigma_span: float = 5.0,
+    multistep_floor: bool = True,
+) -> tuple[float, np.ndarray, np.ndarray]:
+    """Discretize the VOLL-anchored ORDC reserve demand curve into LP shortfall steps.
+
+    The co-optimization analogue of the post-solve :func:`ordc_adder`. ERCOT's
+    ORDC *is* a reserve demand curve: the marginal value of the R-th MW of
+    operating reserve is the loss-of-load probability at that reserve level
+    times the value of lost load. Co-optimized inside SCED (the RTC+B design,
+    live 2025-12-05) the curve clears against the units' opportunity cost of
+    holding energy headroom, and the reserve clearing price lifts the energy
+    LMP through the shared-headroom constraint — reproducing RTSPP = LMP +
+    reserve price *endogenously*, rather than the post-solve ``(VOLL - lambda)``
+    adder the energy-only LP needs.
+
+    The curve is **VOLL-anchored**, not ``(VOLL - lambda)``-anchored: an LP
+    objective coefficient must be a constant, and lambda (the energy price) is
+    endogenous here. This is the co-optimization-correct form and matches the
+    published RTC+B AS demand curves (fixed price-vs-MW schedules anchored at
+    the offer cap); the energy price the reserve dual lifts already carries
+    lambda, so the cleared total reproduces the LMP + reserve value the
+    ``(VOLL - lambda)`` overlay approximates. The two LOLP terms mirror RTORPA's
+    two half-hour curves (full-hour ``mu/sigma`` and first-half ``mu/2,
+    sigma/sqrt(2)``), so the demand price at reserve ``R`` is
+    ``0.5 * VOLL * (LOLP_full(R) + LOLP_half(R))`` — capped at VOLL by
+    construction (both LOLP -> 1 as R -> 0).
+
+    Returns ``(req_total_mw, penalties, widths)`` in the contract
+    :func:`pjm_ordc_shortfall_steps` produces and ``model.dispatch`` consumes:
+    the reserve-balance RHS and the per-step penalty ($/MWh) and width (MW)
+    arrays, ordered cheapest band (highest reserve) first.
+    """
+    mu_eff = mu_mw + shift_sigma * sigma_mw
+    # Reserve level above which the ORDC value is negligible — the top of the
+    # demand curve and the reserve-balance requirement. Past mcl + mu_eff +
+    # sigma_span*sigma the LOLP (hence the price) is ~0, so demand stops there.
+    req_total = float(mcl_mw + mu_eff + sigma_span * sigma_mw)
+    # Descending reserve grid req_total -> 0; band j spans (grid[j+1], grid[j]]
+    # of reserve, priced at the ORDC value at its lower reserve edge (the level
+    # at which that band starts clearing), so penalties ascend as reserves fall
+    # — cheapest (outermost, highest-reserve) band first.
+    grid = np.linspace(req_total, 0.0, int(n_steps) + 1)
+    widths = grid[:-1] - grid[1:]            # (n_steps,), positive
+    r_edge = grid[1:]                        # lower reserve edge of each band
+    lolp_full = lolp(r_edge, mu_mw, sigma_mw, mcl_mw, shift_sigma)
+    lolp_half = lolp(
+        r_edge, mu_mw / 2.0, sigma_mw / np.sqrt(2.0), mcl_mw, shift_sigma)
+    penalties = 0.5 * float(voll) * (lolp_full + lolp_half)
+    if multistep_floor:
+        # OBDRR048 RTORPA floor (>= $20 at reserves <= 6,500 MW, >= $10 at
+        # 6,500-7,000 MW). In the forward RTC+B regime the floor applies
+        # unconditionally; the date-gating the post-solve overlay does for the
+        # 2023 backcast is not modeled here (co-opt is primarily forward).
+        floor = np.zeros_like(penalties)
+        for threshold, value in sorted(ORDC_FLOOR_STEPS, reverse=True):
+            floor = np.where(r_edge <= threshold, value, floor)
+        penalties = np.maximum(penalties, floor)
+    return req_total, penalties.astype(float), widths.astype(float)
+
+
+def ercot_reserve_coopt_inputs(
+    config, fleet_arrays: FleetArrays, hours: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Assemble the ERCOT energy+reserve co-optimization inputs for ``solve_dispatch``.
+
+    Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
+    ordc_step_widths)``: the hourly reserve-balance RHS (flat at the demand
+    curve's top), the reserve-eligible generator mask, and the VOLL-anchored
+    ORDC shortfall-step penalties and widths. The demand curve is constant
+    across hours — the hourly scarcity *incidence* comes from the hourly
+    availability in the shared-headroom RHS (a tight fleet clears reserve lower
+    on the curve, at a higher price), not from a time-varying curve shape — so a
+    seasonal/TOD ``ordc_lolp_params_path`` table is reduced to its mean here.
+    """
+    mu, sigma = resolve_lolp_params(config, hours)
+    mu_s = float(np.mean(mu))
+    sigma_s = float(np.mean(sigma))
+    req_total, penalties, widths = ercot_ordc_demand_steps(
+        voll=config.ordc_voll,
+        mcl_mw=config.ordc_mcl_mw,
+        mu_mw=mu_s,
+        sigma_mw=sigma_s,
+        shift_sigma=config.ordc_lolp_shift_sigma,
+        multistep_floor=config.ordc_multistep_floor,
+    )
+    requirement = np.full(int(hours), req_total, dtype=float)
+    eligible = ercot_reserve_eligible(fleet_arrays)
+    return requirement, eligible, penalties, widths
+
+
 def scarcity_prices(
     config,
     year: int,
