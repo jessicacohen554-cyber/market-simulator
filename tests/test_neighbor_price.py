@@ -170,8 +170,8 @@ class TestInterfacePricesAndAggregate(unittest.TestCase):
             "NYISO": np.array([40.0, 40.0]),
         }
         agg = prices.aggregate()
-        # PJM MISO limit 10000, NYISO 3000 -> weighted toward MISO's 20.
-        w = (10000 * 20 + 3000 * 40) / 13000
+        # PJM MISO limit 7300, NYISO 3900 -> weighted toward MISO's 20.
+        w = (7300 * 20 + 3900 * 40) / (7300 + 3900)
         np.testing.assert_allclose(agg, w)
 
     def test_aggregate_none_when_empty(self):
