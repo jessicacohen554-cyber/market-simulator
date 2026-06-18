@@ -48,10 +48,10 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Free runner disk space
+      - name: Free disk space (safe — keep the tool cache the runner needs)
         run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
-                      /usr/local/.ghcup /opt/hostedtoolcache || true
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android || true
+          sudo docker image prune -af >/dev/null 2>&1 || true
           df -h /
 
       - name: Install git-filter-repo
