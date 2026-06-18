@@ -1773,23 +1773,34 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     # NYISO external node → border-zone links. The single external bubble
     # holds all import tranches/sinks; the LP routes each through whichever
     # link reaches load, subject to the internal interfaces (Central-East,
-    # UPNY-SENY, Dunwoodie-South). TTCs envelope the real interface ratings
-    # of the ties landing in each model zone (sum ≈ 6.4 GW ≥ the 5.9 GW
-    # deepest measured import). Tier 3 — verify against NYISO operating-limit
-    # postings. Source: NYISO interface limits ("Gold Book"); tie ratings.
-    #   - Upstate_West: IESO/Ontario (Niagara zone A + St-Lawrence ~2.0 GW)
-    #     plus PJM West (Homer City/Keystone ~1.0 GW).
-    #   - Capital_Hudson: HQ Châteauguay/Cedars (~1.1 GW) + the NY–NE AC
-    #     interface (~0.6 GW).
-    #   - Lower_Hudson: PJM into the lower Hudson Valley / 5018 line toward
-    #     NYC (~1.2 GW).
-    #   - Long_Island: ISO-NE Cross-Sound Cable (346 MW) + Northport–Norwalk
-    #     (200 MW) ≈ 0.55 GW.
+    # UPNY-SENY, Dunwoodie-South). The TTCs must land each tie in the model
+    # zone it PHYSICALLY enters, otherwise cheap imports bypass the binding
+    # internal interface and erase the real congestion spread. The per-tie
+    # entry zones and ratings below are MEASURED from NYISO's hourly
+    # ExternalLimitsFlows postings (inputs/raw-data/NYISO/External Limit
+    # Flow*.zip; "Positive Limit" column, 2023): each SCH-* intertie mapped
+    # to its model zone (derive: per-tie median positive limit by zone).
+    #   - Upstate_West (zones A–E): HQ Châteauguay (1.5 GW) + Cedars (0.25)
+    #     into zone D North, IESO/Ontario (1.75) into A/D, PJM AC ties
+    #     (2.2, Homer City/Keystone) into zone A West. The dominant import
+    #     gateway (~1.7 GW measured net). Capacity capped at 3.0 GW (the
+    #     ties are rarely simultaneous; measured deepest upstate import and
+    #     the Central-East cut both sit well below the tie-rating sum).
+    #   - NYC (zone J): PJM Hudson Transmission (HTP 660) + Linden VFT (315)
+    #     — the in-city DC/PAR cables, ~1.0 GW.
+    #   - Long_Island (zone K): PJM Neptune (660) + ISO-NE Cross-Sound (330)
+    #     + Northport–Norwalk / NPX_1385 (200) ≈ 1.2 GW.
+    #   - Capital_Hudson (F–G) and Lower_Hudson (H–I) have NO net-import tie:
+    #     Capital's only external interface is NY↔NE (SCH-NE-NY), which runs
+    #     a net EXPORT (~-0.5 GW measured), and Lower_Hudson is internal.
+    #     Both are therefore served across Central-East from upstate (or by
+    #     in-zone gas), which is what preserves the measured west→east spread.
+    #     The NE export is a ~0.5 GW second-order effect deferred to an
+    #     export-side refinement. Tier 2 — measured tie ratings/locations.
     "NYISO": [
         ("Upstate_West", 3000.0),
-        ("Capital_Hudson", 1700.0),
-        ("Lower_Hudson", 1200.0),
-        ("Long_Island", 550.0),
+        ("NYC", 1000.0),
+        ("Long_Island", 1200.0),
     ],
     # NEISO needs no entry: its HQ_import links (HQ Phase II → Boston,
     # Highgate/NB → North, NYISO ties → Connecticut) are baked into
