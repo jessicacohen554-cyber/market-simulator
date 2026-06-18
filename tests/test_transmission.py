@@ -141,6 +141,34 @@ class TestTransmissionDispatch(unittest.TestCase):
         # Expensive zone-B generator stays off.
         np.testing.assert_allclose(result.dispatch[1], 0.0)
 
+    def test_one_way_link_forbids_reverse_flow(self):
+        # An asymmetric interface: a one-way A->B link (is_bidirectional=False)
+        # carries import into B up to its TTC but cannot carry power back B->A,
+        # so pairing two opposite one-way links gives an interface different
+        # import vs export ratings. Here B is cheap and A needs power, so the
+        # economic flow would be B->A; the one-way A->B link must block it.
+        from market_sim.model.transmission import get_link_bidirectional_array
+        zone_names = ["A", "B"]
+        fleet = _fleet([("A", 500.0), ("B", 500.0)], zone_names)
+        mc = np.vstack([np.full(T, 80.0), np.full(T, 30.0)])  # B cheap, A dear
+        demand = np.vstack([np.full(T, 300.0), np.full(T, 0.0)])  # load in A
+
+        links = [TransferLink(
+            from_zone="A", to_zone="B", ttc_mw=1000.0, is_bidirectional=False)]
+        incidence = build_incidence_matrix(links, zone_names)
+        ttc = get_ttc_array(links)
+        bidir = get_link_bidirectional_array(links)
+        self.assertFalse(bool(bidir[0]))
+
+        result = solve_dispatch(
+            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            link_bidirectional=bidir, **_no_renewables(2),
+        )
+        # Reverse (B->A) flow is forbidden: flow floored at 0, so A serves its
+        # own load with the dear local gen and B's cheap gen can't reach it.
+        np.testing.assert_allclose(result.flows[0], 0.0, atol=1e-6)
+        np.testing.assert_allclose(result.prices[0], 80.0)
+
     def test_zero_ttc_decouples_zones(self):
         # Same setup, but the link has zero transfer capability.
         zone_names = ["A", "B"]
