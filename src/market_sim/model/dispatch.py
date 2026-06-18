@@ -570,7 +570,7 @@ def _build_reserve_rows(
     zone_cap = zone_gen_elig @ cap  # (n_zones, T)
     if use_storage:
         spc = np.asarray(storage_power_cap, dtype=float)
-        zone_storage = _storage_zone_matrix(s_zone, n_zones, n_storage)
+        zone_storage = _build_zone_storage_map(s_zone, n_zones, n_storage)
         if spc.ndim == 2:
             zone_cap = zone_cap + (zone_storage @ spc)        # (n_zones, T)
         else:
