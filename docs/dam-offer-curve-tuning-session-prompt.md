@@ -30,10 +30,24 @@ recalibrate/compare, do not silently cut a keeper.
   *chosen* per-class HR multipliers (`ScenarioConfig.cc_committed_hr_mult=1.23`,
   `ct_committed_hr_mult=1.28`, `coal_committed_hr_mult=1.22`, the `*_econ_hr_mult`
   set, etc.). The goal is to ground them in real submitted offers.
-- **Baseline to beat** (current offer curves + co-opt, 3 years): the bundle at
-  `results/calibration/ERCOT/<latest timestamp>/` produced by the prior session.
-  Its `meta.json` records the exact recipe; the `Reproduce` command is the
-  run124 keeper recipe + `--energy-reserve-coopt`.
+- **Baseline to beat** (current offer curves + co-opt, 3 years): committed at
+  `results/calibration/ercot_baseline_coopt_3yr/` (its `meta.json` records the
+  exact recipe = run124 keeper + `--energy-reserve-coopt`). Demand-weighted
+  system-LMP tail of that baseline — compare the DAM run against these:
+
+  | year | mean $/MWh | h>$200 | h>$500 | actual h>$200 / >$500 |
+  |---|---|---|---|---|
+  | 2023 | 45.8 | 151 | 88 | ~181 / ~104 |
+  | 2024 | 34.0 | 78 | 52 | ~53 / ~16 |
+  | 2025 | 48.4 | 83 | 56 | ~31 / ~3 |
+
+  Note: 2024/2025 **overshoot the deep tail** (flat 10,700 MW co-opt reserve
+  requirement fires too hard in comfortable years). That is a co-opt-side issue,
+  not an offer-curve one; the offer-curve change mainly moves the body/mean.
+  Don't expect DAM offer tuning to fix the 2024/25 >$500 overshoot.
+
+  Regenerate the report any time with
+  `python scripts/run_calibration_full.py --report results/calibration/ercot_baseline_coopt_3yr`.
 
 ## The data (already in the repo — no external fetch; ercot.com is egress-blocked)
 
