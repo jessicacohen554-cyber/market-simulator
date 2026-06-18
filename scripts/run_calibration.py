@@ -44,6 +44,7 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.constants import (  # noqa: E402
     HOURS_PER_YEAR,
     INTERFACE_NEIGHBORS,
+    NYISO_INTERFACE_TTC_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_YEAR,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     VOM,
@@ -755,6 +756,45 @@ def _apply_iso_year_ttc(iso_config, iso: str, year: int):
     return iso_config.model_copy(update={"links": links})
 
 
+def _apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
+    """Expand the scalar TTC array to a per-hour ``(hours, n_links)`` matrix
+    when the ISO has a measured monthly interface envelope for ``year``.
+
+    NYISO's Central-East day-ahead TTC is not flat across a year: it steps up
+    when the AC Transmission upgrade energizes (Dec 2023) and derates each
+    late-summer/shoulder. ``constants.NYISO_INTERFACE_TTC_BY_MONTH`` carries the
+    measured 12-month mean per interface; this maps each hour of the backcast
+    year to its calendar month (leap-safe) and rewrites the matching link's
+    limit hour by hour, so the dispatch binds on the seasonal envelope rather
+    than one annual value. Returns ``ttc`` unchanged (1-D) for ISOs/years with
+    no monthly table — byte-identical to the prior scalar path.
+    """
+    if iso != "NYISO":
+        return ttc
+    monthly = NYISO_INTERFACE_TTC_BY_MONTH.get(year)
+    if not monthly:
+        return ttc
+    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30,
+                      31, 31, 30, 31, 30, 31]
+    month_of_hour = np.repeat(
+        np.arange(1, 13), [d * 24 for d in days_per_month]
+    )[:hours]
+    ttc_t = np.broadcast_to(ttc, (hours, len(ttc))).copy()
+    for i, link in enumerate(iso_config.links):
+        profile = monthly.get((link.from_zone, link.to_zone))
+        if profile is None:
+            continue
+        prof = np.asarray(profile, dtype=float)
+        ttc_t[:, i] = prof[month_of_hour - 1]
+        logger.info(
+            "NYISO %d %s->%s monthly TTC envelope: %.0f-%.0f MW "
+            "(measured Central-East DAM postings)",
+            year, link.from_zone, link.to_zone, prof.min(), prof.max(),
+        )
+    return ttc_t
+
+
 def _hydro_fleet(
     iso: str, year: int, zone_names: list[str],
     backfill_year: int | None = None,
@@ -1080,6 +1120,10 @@ def run_year(
     ttc = _apply_ttc_overrides(
         iso_config, get_ttc_array(iso_config.links), ttc_overrides
     )
+    # Seasonal interface envelope: expand the scalar TTC to a per-hour matrix
+    # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
+    # for ISOs/years without one.
+    ttc = _apply_iso_monthly_ttc(ttc, iso_config, iso, year, demand.shape[1])
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved

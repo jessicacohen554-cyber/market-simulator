@@ -1798,30 +1798,49 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
 
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
-# the post-upgrade values; an (iso, year) entry here overrides the matching
-# link's TTC for that backcast year (run_calibration._apply_iso_year_ttc).
-# Years/links absent here keep the static config value.
+# nominal; an (iso, year) entry here overrides the matching link's TTC for that
+# backcast year (run_calibration._apply_iso_year_ttc). Years/links absent here
+# keep the static config value.
 #
-# NY Transco's "AC Transmission" project — Segment A (Central-East, Edic–New
-# Scotland / Princetown–Rotterdam 345 kV) and Segment B (UPNY/SENY,
-# Knickerbocker–Pleasant Valley 345 kV) — targeted in-service December 2023,
-# so the 2023 backcast runs on the PRE-upgrade limits and 2024+ on the upgraded
-# limits. The static 2,850 MW Central-East value sits between them, so it both
-# under-binds 2023 (real limit ~2,350 MW) and over-binds 2024-25 (real limit
-# ~3,850 MW), flattening the west-to-east congestion the interface carries.
-#   - Central-East (Upstate_West -> Capital_Hudson): pre-upgrade ~2,350 MW
-#     (NYISO Operating Study Winter 2023-24), raised ~1,500 MW by Segment A to
-#     ~3,850 MW. Source: NYISO Operating Study Winter 2023-24; Wood Mackenzie
-#     / ESAI Power "Central East Interface" briefings (FERC-approved Public
-#     Policy Transmission Need, NY Transco AC Transmission).
-#   - UPNY-SENY is left at its static 5,150 MW (Segment B raised it further,
-#     but the interface does not bind in the backcast). Tier 3 (calibration) —
-#     verify the exact annual normal limits against NYISO operating-limit
-#     postings; the seasonal envelope is approximated by a single annual value.
+# These are the MEASURED day-ahead TTC the market actually cleared against,
+# from NYISO's hour-by-hour ATC/TTC postings for the "CENT EAST" interface
+# (MIS ATC_TTC files, mirrored in inputs/raw-data/NYISO/ATC_TTC.zip), aggregated
+# by scripts/derive_nyiso_central_east_ttc.py. They supersede the earlier
+# operating-study / Wood Mackenzie estimates (~2,350 pre / ~3,850 post), which
+# overstated the operative DAM limit: the posted DAM TTC the dispatch must
+# respect runs ~1,750 MW through Nov 2023 and ~2,850 MW from Dec 2023 on — both
+# ~1,000 MW below the published "normal" ratings.
+#
+# NY Transco's "AC Transmission" Segment A (Central-East, Edic–New Scotland /
+# Princetown–Rotterdam 345 kV) energized in December 2023, which the postings
+# capture as a step from ~1,525-1,950 MW (Jan-Nov 2023) to ~2,725 MW (Dec 2023)
+# and ~2,500-3,175 MW across 2024-25, with a recurring late-summer/shoulder
+# derate. NYISO_INTERFACE_TTC_BY_MONTH carries that seasonal envelope (12
+# monthly means per year); _BY_YEAR carries the annual mean as the scalar
+# fallback for paths that do not apply the monthly profile (e.g. forecast).
+# UPNY-SENY stays at its static 5,150 MW (it does not bind in the backcast).
 NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
-    2023: {("Upstate_West", "Capital_Hudson"): 2350.0},
-    2024: {("Upstate_West", "Capital_Hudson"): 3850.0},
-    2025: {("Upstate_West", "Capital_Hudson"): 3850.0},
+    2023: {("Upstate_West", "Capital_Hudson"): 1750.0},
+    2024: {("Upstate_West", "Capital_Hudson"): 2850.0},
+    2025: {("Upstate_West", "Capital_Hudson"): 2850.0},
+}
+
+# Measured calendar-month mean DAM TTC (MW) for the Central-East interface, one
+# 12-element list (Jan..Dec) per backcast year. Applied per-hour over a single
+# backcast year by run_calibration._apply_iso_monthly_ttc, which expands the
+# scalar TTC array to (hours, n_links) so the dispatch runs on the seasonal
+# Central-East envelope instead of one annual value. Regenerate with
+# scripts/derive_nyiso_central_east_ttc.py after refreshing the postings.
+NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2023: {("Upstate_West", "Capital_Hudson"): [
+        1950.0, 1875.0, 1550.0, 1450.0, 1600.0, 1900.0,
+        1775.0, 1650.0, 1550.0, 1575.0, 1525.0, 2725.0]},
+    2024: {("Upstate_West", "Capital_Hudson"): [
+        3050.0, 3075.0, 3000.0, 2875.0, 2825.0, 2750.0,
+        2800.0, 2700.0, 2525.0, 2825.0, 2750.0, 3075.0]},
+    2025: {("Upstate_West", "Capital_Hudson"): [
+        3175.0, 3075.0, 2725.0, 2500.0, 2525.0, 2925.0,
+        3025.0, 3000.0, 2850.0, 2850.0, 2725.0, 2900.0]},
 }
 
 # --- Forecast-grade reference-price interface (multi-ISO, ISO-agnostic) ---
