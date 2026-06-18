@@ -15,6 +15,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
+
 
 def _final_pass(df: pd.DataFrame) -> pd.DataFrame:
     order = sorted(df["pass"].unique(), key=lambda p: str(p))
@@ -37,8 +40,8 @@ def report(run_dir: Path) -> None:
     over200 = int((price > 200).sum())
 
     eia_oil = np.nan
-    eia_path = run_dir / "eia930.parquet"
-    if eia_path.exists():
+    eia_path = bundle_input_path(run_dir, "eia930")
+    if eia_path is not None:
         e = pd.read_parquet(eia_path)
         oil = e[e["series"] == "oil"]
         if not oil.empty:
