@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-06-17T18:56:02",
+  "timestamp": "2026-06-17T23:37:51",
   "git": {
-    "sha": "6a55269",
-    "branch": "claude/caiso-model-diagnostics-qcc173",
+    "sha": "48afc03",
+    "branch": "claude/caiso-eia923-chp-fix-syrs07",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
@@ -45,7 +45,7 @@
     "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": true,
-    "git_sha": "6a55269"
+    "git_sha": "48afc03"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -134,6 +134,7 @@
     "use_campd_bins": true,
     "campd_bins_path": "inputs/custom-bin-assignments.csv",
     "plant_registry_path": "inputs/master-plant-registry.csv",
+    "cod_ramp_enabled": true,
     "historic_outage_overlay": false,
     "plant_tranche_config_path": null,
     "unknown_zone_default": "South_Central",
@@ -179,6 +180,7 @@
     "caiso_gas_commitment_floor": true,
     "caiso_gas_floor_frac": 0.8,
     "as_reserve_withholding": false,
+    "energy_reserve_coopt": false,
     "as_reserve_formula": false,
     "storage_as_commitment": false,
     "negative_renewable_offers": true,
@@ -355,6 +357,7 @@
     "gas_monthly_actuals": true,
     "gas_daily_shape": true,
     "gas_hub_basis_overlay": false,
+    "nyiso_zonal_gas_basis": false,
     "gas_hub_basis_daily": false,
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,

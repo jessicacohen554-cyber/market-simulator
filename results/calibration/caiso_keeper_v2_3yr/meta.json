@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-17T18:56:02",
+  "timestamp": "2026-06-17T23:37:51",
   "iso": "CAISO",
   "years": [
     2023,
@@ -36,6 +36,7 @@
   "storage_daily_cycling": false,
   "battery_dispatch_adder": 0.0,
   "as_reserve_withholding": false,
+  "energy_reserve_coopt": false,
   "as_reserve_formula": false,
   "storage_as_commitment": false,
   "gas_offer_curve": false,
@@ -56,6 +57,6 @@
   "caiso_gas_commitment_floor": null,
   "caiso_gas_floor_frac": null,
   "btm_backfill_year": null,
-  "git_sha": "6a55269",
+  "git_sha": "48afc03",
   "highspy_version": "1.14.0"
 }
