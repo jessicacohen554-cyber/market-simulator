@@ -15,6 +15,9 @@ from pathlib import Path
 
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
 CLASSES = [
     "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS",
@@ -29,7 +32,7 @@ PLANTS = {
 def class_table(run: str) -> pd.DataFrame:
     """Return model-vs-923 diff%% per (year, class) for one bundle."""
     d = ROOT / run
-    e923 = pd.read_parquet(d / "eia923.parquet")
+    e923 = pd.read_parquet(bundle_input_path(d, "eia923"))
     btm = pd.read_parquet(d / "btm.parquet")
     rows = []
     for f in sorted((d / "dispatch").glob("*_P1.parquet")):
