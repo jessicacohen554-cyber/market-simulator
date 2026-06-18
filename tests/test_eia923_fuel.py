@@ -19,6 +19,7 @@ from market_sim.config.constants import (
     HENRY_HUB_TRAJECTORIES,
 )
 from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.paths import CAMPD_BINS_CSV
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia923 import (
     available_years,
@@ -38,7 +39,7 @@ from market_sim.data.fuel import (
 )
 
 ZONE_NAMES = get_iso_config("ERCOT").zone_names
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = str(CAMPD_BINS_CSV)
 
 # Plant 3439 (Laredo) reports natural-gas receipts in every month of
 # 2024, so it exercises the per-plant monthly gas lookup end-to-end.
