@@ -296,6 +296,10 @@ def main() -> int:
     args = ap.parse_args()
     years = tuple(args.years)
 
+    # The output dir may be absent on a fresh/stripped checkout (e.g. a branch
+    # whose inputs tree is recovered separately); create it before writing.
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+
     if args.source in ("miso", "all"):
         print(f"Fetching MISO {MISO_HUB} ex-post LMP for {years} ...")
         fetch_miso(years)
