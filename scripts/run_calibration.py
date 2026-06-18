@@ -43,6 +43,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
     HOURS_PER_YEAR,
+    INTERFACE_NEIGHBORS,
     NYISO_INTERFACE_TTC_BY_YEAR,
     PRICED_INTERCHANGE_DEFAULT_ISOS,
     VOM,
@@ -106,8 +107,10 @@ from market_sim.model.transmission import (  # noqa: E402
     build_export_sinks,
     build_import_generators,
     build_incidence_matrix,
+    build_reference_price_node,
     extend_with_import_node,
     get_ttc_array,
+    inject_reference_price_mc,
     wecc_border_carbon_adder,
 )
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
@@ -859,6 +862,7 @@ def run_year(
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    reference_price_interface: bool = False,
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
@@ -915,6 +919,8 @@ def run_year(
     )
     if interchange_shaping:
         config = config.with_overrides(interchange_shaping=True)
+    if reference_price_interface:
+        config = config.with_overrides(reference_price_interface=True)
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
     # validated keeper); an explicit True/False from the CLI overrides it (so a
@@ -1029,10 +1035,21 @@ def run_year(
         # are gas-priced, so each single-year calibration solve pins the ladder
         # to its own year (IMPORT_TRANCHES_BY_YEAR); un-tabulated years fall
         # back to the static default inside build_import_generators.
-        import_generators = (
-            build_import_generators(iso, border_carbon, year=year)
-            + build_export_sinks(iso)
-        )
+        # Forecast-grade reference-price interface (PJM today): replace the
+        # fitted tranches with one import/export pseudo-gen per neighbor, priced
+        # hourly from neighbor gas x heat-rate x load-shape (mc overwritten by
+        # inject_reference_price_mc after assembly). Gated to ISOs in
+        # INTERFACE_NEIGHBORS; byte-identical (falls through to the fitted node)
+        # otherwise. See docs/reference-price-interface.md.
+        if getattr(config, "reference_price_interface", False) and (
+            iso in INTERFACE_NEIGHBORS
+        ):
+            import_generators = build_reference_price_node(iso)
+        else:
+            import_generators = (
+                build_import_generators(iso, border_carbon, year=year)
+                + build_export_sinks(iso)
+            )
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
 
@@ -1311,6 +1328,22 @@ def run_year(
     )
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
+    # Reference-price seam: overwrite each neighbor pseudo-gen's mc row with its
+    # hourly reference price ± hurdle (the cost is hourly, so it could not ride
+    # in the static vom). mc_bid inherits it (the import gens take no startup
+    # markup). No-op unless the reference node is in the fleet, so non-reference
+    # runs stay byte-identical.
+    if getattr(config, "reference_price_interface", False) and (
+        iso in INTERFACE_NEIGHBORS
+    ):
+        if inject_reference_price_mc(
+            fleet_arrays, mc_base, iso, year, config.gas_price_path
+        ):
+            logger.info(
+                "%s %d: reference-price interface — %d neighbor seams priced "
+                "from gas x heat-rate x load-shape (hurdle in $/MWh)",
+                iso, year, len(INTERFACE_NEIGHBORS.get(iso, [])),
+            )
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
     solar_mc -= solar_eac
@@ -1868,6 +1901,15 @@ def _build_parser() -> argparse.ArgumentParser:
              "--no-priced-interchange to force the measured schedule.",
     )
     parser.add_argument(
+        "--reference-price-interface", action="store_true",
+        help="Serve the priced-interchange seam through the forecast-grade "
+             "reference-price interface (per-neighbor gas x heat-rate x "
+             "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
+             "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
+             "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
+             "See docs/reference-price-interface.md.",
+    )
+    parser.add_argument(
         "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
         default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
@@ -1889,6 +1931,10 @@ def main(argv: list[str] | None = None) -> None:
     iso = args.iso.upper()
     priced_interchange = resolve_priced_interchange(
         args.priced_interchange, iso)
+    # The reference-price interface serves the seam through the priced node, so
+    # it implies priced interchange (unless explicitly turned off on the CLI).
+    if args.reference_price_interface and args.priced_interchange is not False:
+        priced_interchange = True
     reference = _load_reference()
     ttc_overrides = {
         "ttc_wn": args.ttc_wn,
@@ -1908,6 +1954,7 @@ def main(argv: list[str] | None = None) -> None:
             commitment_enabled=args.commitment,
             commitment_screen_coal=not args.no_coal_p2,
             priced_interchange=priced_interchange,
+            reference_price_interface=args.reference_price_interface,
             negative_renewable_offers=args.negative_renewable_offers,
         )
         if result_p1 is not None:

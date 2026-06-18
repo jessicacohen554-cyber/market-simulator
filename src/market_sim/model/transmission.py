@@ -210,6 +210,118 @@ def build_export_sinks(iso: str) -> list[Generator]:
     ]
 
 
+# Unit-id markers tagging a reference-price seam pseudo-generator so the
+# post-assembly mc injector (:func:`inject_reference_price_mc`) can find each row
+# and map it back to its neighbor. Import rows take the neighbor price + hurdle;
+# export rows take the neighbor price - hurdle.
+_REF_IMPORT_MARK = "_refimp_"
+_REF_EXPORT_MARK = "_refexp_"
+
+
+def build_reference_price_node(iso: str) -> list[Generator]:
+    """Return the reference-price seam as import/export pseudo-generators.
+
+    The forecast-grade replacement for the fitted
+    :func:`build_import_generators` / :func:`build_export_sinks`: one import
+    pseudo-generator and one export sink **per neighbor** in
+    :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`, each sized to that
+    neighbor's interface transfer limit and placed in the ISO's external zone.
+    The marginal cost is left at zero here — it is a *placeholder* overwritten
+    hour-by-hour with the neighbor's reference price ± hurdle by
+    :func:`inject_reference_price_mc` after the fleet's mc is assembled (the cost
+    is hourly, so it cannot ride in the static ``vom``). The unit id carries the
+    neighbor name (via :data:`_REF_IMPORT_MARK` / :data:`_REF_EXPORT_MARK`) so
+    the injector can map each row back to its neighbor.
+
+    Import rows are ordinary positive-output generators bounded ``[0, limit]``;
+    export sinks are negative-output blocks bounded ``[-limit, 0]`` (the same
+    convention as :func:`build_export_sinks`). With every neighbor in the one
+    external bubble, the LP trades with the cheapest neighbor to import from and
+    the dearest to export to each hour, in merit order, bounded by each
+    neighbor's limit and the external zone's border-link TTCs.
+
+    Args:
+        iso: ISO identifier; must have an entry in ``INTERFACE_NEIGHBORS`` and
+            in :data:`~market_sim.config.constants.IMPORT_ZONE`.
+
+    Returns:
+        Import + export pseudo-generators; empty for an ISO with no neighbor
+        registry (so an un-onboarded ISO stays byte-identical).
+    """
+    from market_sim.config.constants import INTERFACE_NEIGHBORS
+
+    zone = IMPORT_ZONE.get(iso)
+    gens: list[Generator] = []
+    for neighbor in INTERFACE_NEIGHBORS.get(iso, []):
+        gens.append(Generator(
+            unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}",
+            name=f"ref_import_{neighbor.name}",
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=neighbor.interface_limit_mw,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=0.0,
+            eford=0.0,
+        ))
+        gens.append(Generator(
+            unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}",
+            name=f"ref_export_{neighbor.name}",
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=0.0,
+            pmin_mw=-neighbor.interface_limit_mw,
+            heat_rate=0.0,
+            vom=0.0,
+            eford=0.0,
+        ))
+    return gens
+
+
+def inject_reference_price_mc(
+    fleet_arrays, mc: np.ndarray, iso: str, year: int,
+    gas_scenario: str = "mid",
+) -> bool:
+    """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
+
+    Mirrors :func:`inject_interchange_shape`'s post-assembly pattern, but for
+    cost rather than availability: after the fleet's marginal-cost matrix is
+    assembled, each reference-price pseudo-generator's row is replaced with its
+    neighbor's hourly reference price (from
+    :func:`market_sim.data.neighbor_price.interface_reference_prices`) plus a
+    hurdle for an import row and minus a hurdle for an export row. So PJM imports
+    from a neighbor only when its own LMP exceeds that neighbor's price by the
+    hurdle, and exports only when it falls below by the hurdle. A neighbor that
+    resolved no individual price (no load extract or proxy) falls back to the
+    capacity-weighted aggregate. Modifies ``mc`` in place.
+
+    Returns ``True`` when at least one seam row was priced, ``False`` when the
+    fleet has no reference-price node (so a non-reference run is untouched).
+    """
+    from market_sim.config.constants import INTERFACE_NEIGHBORS
+    from market_sim.data.neighbor_price import interface_reference_prices
+
+    hours = int(mc.shape[1])
+    prices = interface_reference_prices(iso, year, hours, gas_scenario)
+    aggregate = prices.aggregate()
+    specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if _REF_IMPORT_MARK in uid:
+            name, sign = uid.rsplit(_REF_IMPORT_MARK, 1)[1], +1.0
+        elif _REF_EXPORT_MARK in uid:
+            name, sign = uid.rsplit(_REF_EXPORT_MARK, 1)[1], -1.0
+        else:
+            continue
+        price = prices.per_neighbor.get(name, aggregate)
+        if price is None:
+            continue
+        hurdle = specs[name].hurdle if name in specs else 0.0
+        mc[row, :] = price + sign * hurdle
+        applied = True
+    return applied
+
+
 def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     """Return ``iso_config`` with its external import/export zone appended.
 
