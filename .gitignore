@@ -90,3 +90,6 @@ results/calibration/run119_cps_mustrun/
 results/calibration/run119_cps_mustrun.log
 inputs/raw-data/NYISO-AS/raw/
 /results/calibration/pjm_29_20*/
+# Intermediate per-year reference-price (pjm_30) run bundles; only the merged
+# 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
+/results/calibration/pjm_30_20*/
