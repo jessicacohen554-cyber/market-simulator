@@ -59,6 +59,7 @@ from market_sim.config.constants import (  # noqa: E402
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
 )
@@ -536,7 +537,7 @@ def _parasitic_factor_map() -> dict[int, float]:
     falls back to scaling CAMPD gross by 1.0 (treating gross as net), which
     only shifts the level, not the timing the correlation cares about.
     """
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))
@@ -2614,8 +2615,7 @@ CF_R_GATE_MARGIN = 0.02     # pearson_r may fall at most this much vs baseline
 
 
 def _cf_emd_baseline_path(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
-            / f"cf_emd_baseline_{iso.upper()}.json")
+    return CALIBRATION_DIR / f"cf_emd_baseline_{iso.upper()}.json"
 
 
 def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
