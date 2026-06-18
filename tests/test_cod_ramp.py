@@ -223,5 +223,44 @@ class TestCodRampInFleetArrays(unittest.TestCase):
         self.assertEqual(fa.min_gen[0, jul:aug].max(), 0.0)
 
 
+class TestEia860VintageSelection(unittest.TestCase):
+    """Year-matched EIA-860 vintage switch (config.eia860_vintage_year)."""
+
+    def tearDown(self):
+        from market_sim.config.paths import set_eia860_vintage
+
+        set_eia860_vintage(None)  # never leak a vintage into other tests
+
+    def test_switch_redirects_and_cache_rekeys(self):
+        from market_sim.config.paths import (
+            EIA_860_DIR,
+            active_eia860_dir,
+            set_eia860_vintage,
+        )
+
+        v2023 = EIA_860_DIR / "vintage_2023"
+        if not v2023.is_dir():
+            self.skipTest("vintage_2023 EIA-860 directory not committed")
+        set_eia860_vintage(None)
+        default_map = load_cod_map()
+        set_eia860_vintage(2023)
+        self.assertEqual(active_eia860_dir(), v2023)
+        v_map = load_cod_map()
+        # A real, earlier vintage has strictly fewer plants than the 2025ER
+        # snapshot — proves the cache re-keyed on the directory rather than
+        # serving the first-cached map.
+        self.assertLess(len(v_map), len(default_map))
+
+    def test_missing_vintage_falls_back_to_default(self):
+        from market_sim.config.paths import (
+            EIA_860_DIR,
+            active_eia860_dir,
+            set_eia860_vintage,
+        )
+
+        set_eia860_vintage(1999)  # no vintage_1999/ directory exists
+        self.assertEqual(active_eia860_dir(), EIA_860_DIR)
+
+
 if __name__ == "__main__":
     unittest.main()

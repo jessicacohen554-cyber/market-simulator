@@ -73,6 +73,43 @@ generator) to a per-plant map:
   map; the model's `2000` default is treated as "vintage unknown" so a real
   pre-existing unit is never dropped.
 
+## Year-matched vintage option (`eia860_vintage_year`)
+
+The COD ramp above filters a single recent snapshot (the committed **2025 Early
+Release**, operating years through 2025) down to the solved year. A year-matched
+**native vintage** — the EIA-860 annual release for the solved year itself —
+removes the two residual approximations the ramp carries: the capacity-weighted-
+mean COD smear of a genuinely mixed-vintage plant, and the absence of units that
+were operable in the solved year but retired before the 2025 snapshot (those
+sit in the snapshot's `retired_and_canceled` file, so the ramp cannot re-add
+them).
+
+`ScenarioConfig.eia860_vintage_year` (default `None`, backcast-only) opts in:
+set it to a year with a committed `inputs/raw-data/eia-860/vintage_<year>/`
+(2023, 2024 ship today) and every EIA-860 loader — fleet, COD map,
+wind/solar/storage, dual-fuel/CHP — reads the native release instead.
+Mechanically it is a process-global active directory
+(`config.paths.set_eia860_vintage`, called once per year-solve in
+`run_calibration.run_year` and `runner.run_year`); the three `@lru_cache`d
+loaders (`fleet._chp_by_plant`, `fleet.dual_fuel_plant_groups`,
+`cod_ramp.load_cod_map`) key on the resolved directory, so the switch can never
+serve a stale-vintage map. `vintage_<year>/` holds only the loader-consumed
+parquets (generators, generator/storage operable + proposed, wind/solar
+operable, multifuel, plant, owner), regenerated from the committed annual zip by
+`scripts/process_eia860.py --zip eia860<year>.zip --out-dir
+inputs/raw-data/eia-860/vintage_<year>`.
+
+**Measured effect is small — this is a correctness/provenance refinement, not a
+scarcity driver.** The COD-ramped 2025ER fleet already reproduces the native
+vintage's ERCOT installed capacity to within **+485 MW (0.36%) for 2023** and
+**+567 MW (0.38%) for 2024**; only **~244 MW (11 units, 2023)** were operable
+then but dropped from the 2025ER snapshot via retirement, and the batteries that
+could inflate evening-peak ORDC reserves differ by **< 305 MW**. So the native
+vintage validates the ramp and tidies the edges; it does not manufacture missing
+scarcity (the price mechanism does — see docs/ordc-overlay.md). Because the
+month mask vs the native operable set moves the COD-year units, this is a
+**gated** change: recalibrate before re-cutting a keeper.
+
 ## Reconciliation note (2026-06-17)
 
 This mechanism replaced two overlapping COD implementations that briefly

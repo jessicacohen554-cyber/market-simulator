@@ -369,7 +369,7 @@ def _eia860_monthly_capacity(
     fuel: str,
     zone_names: list[str],
     cal_year: int | None,
-    data_dir: Path = EIA_860_DIR,
+    data_dir: Path | None = None,
 ) -> np.ndarray | None:
     """Return an ``(n_zones, 12)`` array of operable capacity (MW) by month.
 
@@ -394,6 +394,10 @@ def _eia860_monthly_capacity(
     file_name = _EIA860_OPERABLE_FILES.get(fuel)
     if file_name is None:
         return None
+    if data_dir is None:
+        from market_sim.config.paths import active_eia860_dir
+
+        data_dir = active_eia860_dir()
     path = Path(data_dir) / file_name
     if not path.exists():
         return None

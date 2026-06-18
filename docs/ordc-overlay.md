@@ -164,6 +164,68 @@ bang-bang LP never part-loads units to carry spinning reserve, so even the
 online tier is generous. Closing it properly is **AS / reserve
 co-optimization** in the LP (force units to part-load against a reserve
 requirement) — the genuine next structural step, larger than this overlay.
+**Implemented — see the next section.**
+
+### Energy + operating-reserve co-optimization in the LP (`energy_reserve_coopt`, ERCOT)
+
+**Status:** implemented, `ScenarioConfig.energy_reserve_coopt` (default off,
+shared with the PJM co-optimization). The structural successor to the
+post-solve overlay: instead of computing a reserve adder *after* an energy-only
+solve, the published ORDC reserve demand curve enters the LP itself, so the
+dispatch carries real spinning reserve and the energy LMP picks up scarcity
+endogenously. This is ERCOT's own RTC+B design (co-optimized AS demand curves
+in SCED, live 2025-12-05).
+
+**Mechanism (reuses the existing co-optimization LP — `model.dispatch`).** The
+LP already supports a per-zone upward-reserve variable `R[z,t]`, a shared-
+headroom row `sum_{eligible g in z} P[g,t] + R[z,t] <= sum cap[g,t]`, a reserve-
+balance row `sum_z R[z,t] + sum_k ORDC_k[t] >= requirement[t]`, and priced ORDC
+shortfall steps, all gated on `reserve_requirement is not None`. The ERCOT
+wiring (`scarcity.ercot_reserve_coopt_inputs` →
+`scarcity.ercot_ordc_demand_steps`) supplies the three inputs:
+
+* **reserve-eligible mask** — the same dispatchable thermal classes
+  (`RESERVE_FUEL_TYPES`); wind/solar/hydro/imports hold nothing responsive.
+* **VOLL-anchored ORDC demand steps** — the ORDC *is* a reserve demand curve:
+  the marginal value of the R-th MW of reserve is `0.5 · VOLL · (LOLP_full(R) +
+  LOLP_half(R))`, the same two half-hour LOLP terms as RTORPA, discretized into
+  ascending shortfall-price bands (cheapest = highest-reserve band first). The
+  OBDRR048 $20/$10 floor is applied (unconditionally — co-opt is primarily a
+  forward/RTC+B mechanism, so the 2023 date-gating the overlay does is dropped).
+* **flat requirement** at the curve's top (`mcl + mu_eff + 5σ`, where the price
+  is ≈0). The hourly scarcity *incidence* comes from the hourly fleet
+  availability in the shared-headroom RHS — a tight fleet clears reserve lower
+  on the curve, at a higher price — not from a time-varying curve, so a
+  seasonal/TOD `ordc_lolp_params_path` table is reduced to its mean.
+
+**The VOLL-anchored vs (VOLL − λ) choice (the one modeling judgment).** The
+legacy post-solve adder is `(VOLL − λ)·LOLP` because energy and reserve were
+*not* co-optimized — the adder is what's *added* to an already-cleared energy
+price. An LP objective coefficient must be constant, and λ is endogenous in
+co-optimization, so the in-LP demand curve is **VOLL-anchored** (no λ
+subtraction). This is the co-optimization-correct form and matches the
+published RTC+B AS demand curves (fixed price-vs-MW schedules anchored at the
+offer cap): the energy LMP the reserve dual lifts *already* carries λ, so the
+cleared total reproduces the LMP + reserve-value the `(VOLL − λ)` overlay
+approximated, without double-counting λ. The shared-headroom dual equals the
+reserve clearing price in a binding hour, so the zone's energy LMP = energy MC +
+reserve price = ERCOT's RTSPP — verified at LP scale by
+`test_dispatch.test_reserve_scarcity_lifts_energy_lmp` ($20 MC + $1000 reserve →
+$1020 LMP).
+
+**Relationship to the overlay.** Co-opt **supersedes** `scarcity_pricing_
+enabled`: when both the co-opt flag and the overlay are set, the runner/
+calibration path uses the co-opt LMP (which already carries scarcity) and skips
+the post-solve adder, so the price is never double-counted.
+
+**GATED — not byte-identical.** Unlike the post-solve overlay (which writes only
+new series and leaves dispatch/volumes/emissions untouched), co-optimization
+**changes the dispatch**: reserve-eligible units part-load to hold headroom, so
+volumes, emissions and the LP duals all move. It is therefore default-off and
+the volume calibration must be re-run and re-gated before a co-opt keeper is
+cut. The post-solve overlay remains the validated, volume-neutral price tail for
+energy-only keepers; co-opt is the path for studying the reserve-carrying
+dispatch and the RTC+B forward design.
 
 **Remaining approximation:** the model omits Load Resources (~2-3 GW of
 RRS/ECRS is load-side, not in the supply fleet), which the reserve
