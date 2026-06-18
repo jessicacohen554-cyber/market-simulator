@@ -12,7 +12,11 @@ import unittest
 import numpy as np
 
 import market_sim.data.neighbor_price as np_mod
-from market_sim.config.constants import HENRY_HUB_TRAJECTORIES, NeighborInterface
+from market_sim.config.constants import (
+    HENRY_HUB_TRAJECTORIES,
+    INTERFACE_NEIGHBORS,
+    NeighborInterface,
+)
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 from market_sim.data.neighbor_price import (
     InterfacePrices,
@@ -215,6 +219,73 @@ class TestPJMIntegration(unittest.TestCase):
         for price in res.per_neighbor.values():
             self.assertEqual(price.shape, (8760,))
             self.assertTrue(np.all(price > 0.0))
+
+
+class TestReferencePriceNode(unittest.TestCase):
+    """The LP seam builder + the hourly mc injector."""
+
+    def test_node_has_import_and_export_per_neighbor(self):
+        from market_sim.model.transmission import build_reference_price_node
+
+        gens = build_reference_price_node("PJM")
+        n_neighbors = len(INTERFACE_NEIGHBORS["PJM"])
+        self.assertEqual(len(gens), 2 * n_neighbors)
+        imports = [g for g in gens if g.pmax_mw > 0]
+        exports = [g for g in gens if g.pmax_mw == 0 and g.pmin_mw < 0]
+        self.assertEqual(len(imports), n_neighbors)
+        self.assertEqual(len(exports), n_neighbors)
+        # Capacity matches each neighbor's interface limit.
+        miso = next(n for n in INTERFACE_NEIGHBORS["PJM"] if n.name == "MISO")
+        miso_imp = next(g for g in imports if g.unit_id.endswith("MISO"))
+        self.assertEqual(miso_imp.pmax_mw, miso.interface_limit_mw)
+
+    def test_unregistered_iso_node_is_empty(self):
+        from market_sim.model.transmission import build_reference_price_node
+
+        self.assertEqual(build_reference_price_node("ERCOT"), [])
+
+    def test_inject_sets_import_plus_export_minus_hurdle(self):
+        from types import SimpleNamespace
+
+        from market_sim.model.transmission import (
+            build_reference_price_node,
+            inject_reference_price_mc,
+        )
+
+        gens = build_reference_price_node("PJM")
+        # A fleet with one ordinary unit ahead of the seam pseudo-gens.
+        unit_ids = ["gas_cc_PJM_x"] + [g.unit_id for g in gens]
+        fa = SimpleNamespace(unit_ids=unit_ids)
+        mc = np.full((len(unit_ids), 8760), 99.0)  # sentinel
+        applied = inject_reference_price_mc(fa, mc, "PJM", 2023)
+        if not applied:
+            self.skipTest("EIA-930 neighbor extracts not present")
+        # The ordinary unit's row is untouched.
+        np.testing.assert_array_equal(mc[0], 99.0)
+        prices = interface_reference_prices("PJM", 2023, 8760)
+        for r, uid in enumerate(unit_ids):
+            if "_refimp_" in uid:
+                name = uid.rsplit("_refimp_", 1)[1]
+                spec = next(n for n in INTERFACE_NEIGHBORS["PJM"]
+                            if n.name == name)
+                np.testing.assert_allclose(
+                    mc[r], prices.per_neighbor[name] + spec.hurdle)
+            elif "_refexp_" in uid:
+                name = uid.rsplit("_refexp_", 1)[1]
+                spec = next(n for n in INTERFACE_NEIGHBORS["PJM"]
+                            if n.name == name)
+                np.testing.assert_allclose(
+                    mc[r], prices.per_neighbor[name] - spec.hurdle)
+
+    def test_inject_noop_without_node(self):
+        from types import SimpleNamespace
+
+        from market_sim.model.transmission import inject_reference_price_mc
+
+        fa = SimpleNamespace(unit_ids=["gas_cc_PJM_x", "coal_PJM_y"])
+        mc = np.full((2, 8760), 50.0)
+        self.assertFalse(inject_reference_price_mc(fa, mc, "PJM", 2023))
+        np.testing.assert_array_equal(mc, 50.0)  # byte-identical
 
 
 if __name__ == "__main__":
