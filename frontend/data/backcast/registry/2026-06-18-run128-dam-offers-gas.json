@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-18-run128-dam-offers-gas",
+  "label": "run128 dam-offers gas (PROBE)",
+  "date": "2026-06-18",
+  "shorthand": "run128-dam-offers-gas",
+  "definition": "PROBE. Measured DAM offer-curve HR multipliers for the whole gas stack (CC/CT/ST_GAS), peak mode B, coal excluded. vs run127: CC improves (CC_CHP +15-20% over -> +/-4%) but ST_GAS craters -56/-67% and CT_PEAKER over-runs +53/+97% via the -0.25 CT<->ST coupling. LMP/tail ~flat. Rejected as a whole; CC-only follow-up is run129.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-18-run128-dam-offers-gas.js",
+  "bundle": "results/calibration/ercot_dam_offers_3yr"
+}
