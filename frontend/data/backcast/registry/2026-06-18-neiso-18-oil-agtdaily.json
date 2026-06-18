@@ -1,0 +1,15 @@
+{
+ "id": "2026-06-18-neiso-18-oil-agtdaily",
+ "label": "neiso 18 oil agtdaily",
+ "date": "2026-06-18",
+ "shorthand": "neiso-18-oil-agtdaily",
+ "definition": "neiso 18 (PROBE \u2014 partial pass; lever for 2025 CC over-dispatch). Baseline (neiso 17 mystic-cod) + --gas-hub-basis-daily: the daily within-month Algonquin Citygate basis shape (mean-preserving, demand-convex) with dual-fuel switched MWh re-attributed to oil. Targets the 2025 winter oil gap (Jan -330 / Dec -303 GWh in baseline). Result per-class TWh (model / EIA-923 %): CC_REGULAR 52.36 -0.0% / 56.37 -0.4% / 55.98 +5.4% (2023/24/25) vs baseline -0.2/-0.2/+8.7% \u2014 pulls 2025 CC down 1.77 TWh toward tolerance, 2023/24 stay in tol (no regression). oil 0.088/0.145/2.124 vs actual 0.39/0.31/0.91: recovers winter oil but OVERSHOOTS 2025 to +134% (the daily-AGT convexity, fitted not forecast-grade, builds too much oil at the 26 $/MMBtu winter spike). CT_PEAKER (-84%) and ST_GAS (-96%) unchanged \u2014 this lever does not touch the summer CT/ST wedge. Verdict: most effective single lever on the 2025 CC gap, but needs a damped basis convexity / oil-frac cap to stop the oil overshoot before it is a keeper.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-06-18-neiso-18-oil-agtdaily.js",
+ "bundle": "results/calibration/neiso_oil_agtdaily_3yr"
+}
