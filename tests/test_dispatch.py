@@ -1123,6 +1123,36 @@ class TestReserveCoOptimization(unittest.TestCase):
         np.testing.assert_allclose(res.reserve_price, 0.0, atol=1e-6)
         np.testing.assert_allclose(res.prices, 20.0, atol=1e-6)
 
+    def test_storage_backs_reserve_when_enabled(self):
+        # One 100 MW @ $20 thermal serving 90 MW load -> 10 MW thermal headroom.
+        # Reserve req 30: 20 MW short on thermal alone. A 40 MW storage unit
+        # (idle) supplies the rest only when reserve_storage=True, so the
+        # requirement clears and the reserve price stays at 0; without it, the
+        # 20 MW shortfall would price at the $1000 ORDC step.
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
+                            pmin=0.0, eford=0.0)
+        mc = np.full((1, self.T), 20.0)
+        demand = np.full((1, self.T), 90.0)
+        kw = dict(
+            reserve_requirement=np.full(self.T, 30.0),
+            reserve_eligible=np.array([True]),
+            ordc_penalties=np.array([1000.0]),
+            ordc_step_widths=np.array([1000.0]),
+            storage_power_cap=np.array([40.0]),
+            storage_energy_cap=np.array([160.0]),
+            storage_zone_idx=np.array([0]),
+            **self._no_renewables(1),
+        )
+        without = solve_dispatch(fleet, demand, mc=mc, T=self.T,
+                                 reserve_storage=False, **kw)
+        with_stor = solve_dispatch(fleet, demand, mc=mc, T=self.T,
+                                   reserve_storage=True, **kw)
+        # Thermal-only: 10 MW headroom < 30 req -> 20 MW priced at $1000.
+        self.assertTrue((without.reserve_price > 100.0).all())
+        # Storage room covers the gap -> requirement met free, no price lift.
+        np.testing.assert_allclose(with_stor.reserve_price, 0.0, atol=1e-6)
+        np.testing.assert_allclose(with_stor.prices, 20.0, atol=1e-6)
+
     def test_off_path_matches_energy_only(self):
         # No reserve_requirement -> co-opt columns absent; identical result.
         fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=60.0,
