@@ -114,8 +114,12 @@ def neighbor_load_shape(
         load = (
             frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
         )
-        if load.shape[0] != hours or np.isnan(load).any():
+        # The extract is on the model's 8760 clock; a short-horizon run (hours
+        # < 8760) takes the leading window, matching how demand is sliced. A
+        # run asking for MORE hours than the extract has is unservable.
+        if load.shape[0] < hours or np.isnan(load).any():
             continue
+        load = load[:hours]
         mean_load = float(load.mean())
         if mean_load <= 0.0:
             continue
