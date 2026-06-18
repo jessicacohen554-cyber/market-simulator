@@ -447,6 +447,17 @@ class ScenarioConfig:
     # (byte-identical); only fires when priced_interchange is on and a measured
     # envelope exists. Targets CAISO's over-priced midday floor (the flat node
     # floors price at the cheapest active import tranche all day).
+    reference_price_interface: bool = False  # Priced-interchange node: serve the
+    # seam through the forecast-grade reference-price interface instead of the
+    # fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Each neighbor's hourly price is
+    # built from forward drivers — (henry_hub + gas_basis) x marginal_heat_rate x
+    # neighbor_load_shape — and the seam clears on the spread vs the ISO's own LMP
+    # with a small hurdle, bounded by the interface limit (config.constants.
+    # INTERFACE_NEIGHBORS; transmission.build_reference_price_node +
+    # inject_reference_price_mc). Nothing is tuned to the net-MWh target, so the
+    # backcast net export is a genuine validation. Requires priced_interchange;
+    # gated to ISOs present in INTERFACE_NEIGHBORS (PJM today), byte-identical
+    # otherwise. Default off. See docs/reference-price-interface.md.
     caiso_gas_commitment_floor: bool = False  # CAISO Resource-Adequacy
     # must-offer minimum-commitment floor: hold the gas fleet (gas_cc/gas_ct/
     # gas_st) online over the midday solar-glut window at the measured EIA-930
@@ -1447,6 +1458,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
+    "reference_price_interface": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
     "as_reserve_withholding": 1,
