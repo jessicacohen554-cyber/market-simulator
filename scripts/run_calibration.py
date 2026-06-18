@@ -1087,7 +1087,7 @@ def run_year(
         # scarcity peaker it is (its fuel price / heat rate come from constants).
         _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
         non_thermal = [
-            g for g in load_fleet_from_csv(iso, iso_config)
+            g for g in load_fleet_from_csv(iso, iso_config, year=year)
             if g.fuel_type not in _campd_binned_or_injected
         ]
         fleet = non_thermal + campd_fleet
@@ -1139,7 +1139,7 @@ def run_year(
         # binned-keys exclusion guarantees no double-count and no dropped unit.
         if (getattr(config, "plant_level_fleet", False)
                 and thermal_tranche_overrides(iso)):
-            all_gens = load_fleet_from_csv(iso, iso_config)
+            all_gens = load_fleet_from_csv(iso, iso_config, year=year)
             synth = fleet_to_bins(all_gens, iso, config)
             if not synth.empty:
                 binned = set(zip(
@@ -1165,7 +1165,7 @@ def run_year(
             n_bins = 0 if getattr(config, "plant_level_fleet", False) \
                 else config.heat_rate_bin_count
             fleet_base = aggregate_fleet(
-                load_fleet_from_csv(iso, iso_config), n_bins=n_bins,
+                load_fleet_from_csv(iso, iso_config, year=year), n_bins=n_bins,
             )
             fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
             # Optional stepped gas offer curve (committed/economic/peaking
