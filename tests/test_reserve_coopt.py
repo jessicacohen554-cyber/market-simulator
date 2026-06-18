@@ -14,6 +14,7 @@ from pathlib import Path
 import numpy as np
 
 from market_sim.config.constants import PJM_PRIMARY_RESERVE_LSC_FACTOR
+from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.results.scarcity import (
     largest_single_contingency_mw,
     load_pjm_measured_reserve_requirement,
@@ -21,7 +22,7 @@ from market_sim.results.scarcity import (
     pjm_primary_reserve_requirement,
 )
 
-_PJM_AS_DIR = Path(__file__).resolve().parents[1] / "inputs" / "raw-data" / "PJM-AS"
+_PJM_AS_DIR = RAW_DATA_DIR / "PJM-AS"
 
 
 class TestLargestSingleContingency(unittest.TestCase):

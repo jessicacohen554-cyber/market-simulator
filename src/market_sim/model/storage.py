@@ -35,6 +35,7 @@ from market_sim.config.constants import (
     WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
+from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.model.capacity import CumulativeDeployment
@@ -421,7 +422,7 @@ def storage_cap_profiles(
 # scripts/build_ercot_as_by_restype). The ``storage`` column is the hourly MW
 # that batteries cleared as upward AS and therefore could not also offer as
 # energy arbitrage.
-_AS_RESTYPE_DIR = Path("inputs/raw-data/ercot-AS")
+_AS_RESTYPE_DIR = RAW_DATA_DIR / "ercot-AS"
 
 
 def reserve_storage_as_power(
