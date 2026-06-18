@@ -61,6 +61,52 @@ generator) to a per-plant map:
 * Plants present only in the curated master registry (`year_built`, year-only)
   are back-filled at a mid-year default month (`COD_FALLBACK_MONTH = 7`).
 
+## Within-window plant exits (the snapshot's blind spot)
+
+The ramp can only age out a unit **that is in the fleet snapshot**. The
+committed operable vintage is a single recent release (EIA-860 2025 Early
+Release), so a whole plant that ran through part of the backcast window and
+retired *before* that vintage is absent from **every** modeled year — the ramp
+has nothing to mask, and the surviving plants silently over-dispatch to cover
+the hole. The textbook case is **Mystic Generating Station** (plant `1588`, a
+~1.4 GW CC in NEISO's Boston/NEMA zone): it generated ~1.3 TWh in 2023, ran
+Jan–May 2024, and retired June 2024 — but the 2025ER carries no Mystic CC at
+all (the early release omits pre-survey retirees).
+
+The fix mirrors how the **forecast** runner injects EIA-860 planned additions:
+a **backcast-only** loader injects the within-window exits.
+
+* `scripts/process_eia860.py --retired-window-from <final-vintage.zip ...>`
+  reads the "Retired and Canceled" sheet of each **final** EIA-860 vintage
+  (2023, 2024 — which *do* carry Mystic with its real June-2024 retirement),
+  keeps whole-plant exits that retired in or after `RETIREMENT_WINDOW_START`
+  (2023, the window start) and are **absent from the operable snapshot**, and
+  writes `eia860_generator_retired_within_window.parquet` in the canonical
+  fleet schema. The unit's **actual** retirement month/year is written into the
+  `planned_retirement_*` columns and `status` is forced to `OP`, so both
+  consumers treat it uniformly:
+  * `cod_ramp.load_cod_map()` unions this parquet with the operable schedule
+    before the per-plant reduction, so the COD map gains the exit's retirement
+    date and the ramp ages it out by month.
+  * `fleet.load_retired_within_window(iso)` builds the matching `Generator`
+    objects (zones from eGRID geography, fuel/CHP class as usual). The backcast
+    fleet build in `run_calibration.py` and the backcast branch of `runner.py`
+    union them into the base fleet — gated on `config.mode == "backcast"`, the
+    exact mirror of `load_planned_additions` (forecast). A forecast solves a
+    forward year and must **not** carry an already-retired unit, so it never
+    sees them.
+* **Whole-plant exits only.** A plant still present in the operable snapshot
+  (a *partial* retirement) keeps its surviving units there, and the plant-keyed
+  COD map holds the whole plant online — so its retired units are deliberately
+  left out rather than injected with a retirement the plant-level map cannot
+  represent. This is the same plant-level limitation the retirement rule above
+  already documents.
+
+Net effect for NEISO: the modeled `CC_REGULAR` plant set now **differs by year**
+(Mystic present in 2023 + Jan–May 2024, absent in 2025) instead of the identical
+post-retirement set every year, and the surviving CCs no longer over-dispatch to
+cover Mystic's missing ~1.3 TWh.
+
 ### How each fleet path gets its COD
 
 `cod_ramp.effective_cod` resolves each generator's date, **plant-code map first**:
