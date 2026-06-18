@@ -475,6 +475,8 @@ def _build_reserve_rows(
     fleet: FleetArrays,
     reserve_requirement: np.ndarray,
     reserve_eligible: np.ndarray,
+    storage_zone_idx: np.ndarray | None = None,
+    storage_power_cap: np.ndarray | float | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -500,6 +502,12 @@ def _build_reserve_rows(
             per-generator ``zone_idx``.
         reserve_requirement: ``(T,)`` hourly reserve requirement in MW.
         reserve_eligible: ``(n_gen,)`` boolean of reserve-eligible generators.
+        storage_zone_idx: ``(n_storage,)`` zone of each storage unit. When given
+            (with ``storage_power_cap``), storage backs upward reserve too —
+            ERCOT batteries are the dominant RRS/ECRS/Reg provider, so excluding
+            them understates reserve supply and overstates scarcity.
+        storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` MW power cap;
+            a unit's upward reserve room is ``cap - discharge + charge``.
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
@@ -508,6 +516,7 @@ def _build_reserve_rows(
     """
     T = layout.T
     n_zones = layout.n_zones
+    n_storage = layout.n_storage
     elig = np.asarray(reserve_eligible, dtype=bool)  # (n_gen,)
     cap = fleet.pmax[:, np.newaxis] * fleet.availability  # (n_gen, T)
     zone_idx = np.asarray(fleet.zone_idx, dtype=int)
@@ -521,20 +530,51 @@ def _build_reserve_rows(
     )
 
     # --- Shared-headroom per-hour block, (n_zones, vph): +1 on each eligible
-    # gen's P column (zone-summed) and +1 on this zone's reserve column.
-    zeros = lambda w: sp.csr_matrix((n_zones, w))  # noqa: E731
-    headroom_per_hour = sp.hstack(
-        [
-            zone_gen_elig,                                  # P block
-            zeros(layout._reserve_off - layout._w_off),     # W..dump
-            sp.eye(n_zones, format="csr"),                  # reserve block
-            zeros(layout.n_ordc_steps),                     # ORDC block
-        ],
-        format="csr",
+    # gen's energy column (zone-summed) and +1 on this zone's reserve column, so
+    # the row reads sum_g P[g] + R_z <= sum_g cap[g]. Storage (when supplied)
+    # also backs reserve: a unit's upward room is cap - Dis + Chg, so its
+    # discharge column enters with +1 and its charge column with -1, and the
+    # power cap is added to the RHS — sum_g P + sum_s(Dis_s - Chg_s) + R_z <=
+    # sum_g cap + sum_s powercap, i.e. R_z <= thermal headroom + storage room.
+    rows: list[np.ndarray] = []
+    cols: list[np.ndarray] = []
+    vals: list[np.ndarray] = []
+    # eligible thermal P columns
+    rows.append(zone_idx[e_idx]); cols.append(e_idx)
+    vals.append(np.ones(e_idx.size))
+    # reserve columns (one per zone)
+    z_all = np.arange(n_zones)
+    rows.append(z_all); cols.append(layout._reserve_off + z_all)
+    vals.append(np.ones(n_zones))
+
+    use_storage = (
+        n_storage > 0
+        and storage_zone_idx is not None
+        and storage_power_cap is not None
     )
+    if use_storage:
+        s_zone = np.asarray(storage_zone_idx, dtype=int)
+        s_idx = np.arange(n_storage)
+        rows.append(s_zone); cols.append(layout._dis_off + s_idx)
+        vals.append(np.ones(n_storage))            # +Dis
+        rows.append(s_zone); cols.append(layout._chg_off + s_idx)
+        vals.append(-np.ones(n_storage))           # -Chg
+    headroom_per_hour = sp.coo_matrix(
+        (np.concatenate(vals),
+         (np.concatenate(rows), np.concatenate(cols))),
+        shape=(n_zones, layout.vars_per_hour),
+    ).tocsr()
     headroom = sp.kron(sp.eye(T, format="csr"), headroom_per_hour, format="csr")
-    # RHS: zone-summed eligible capacity per hour, hour-major (row t*n_zones+z).
+    # RHS: zone-summed eligible capacity per hour, hour-major (row t*n_zones+z),
+    # plus storage power cap added to its zone.
     zone_cap = zone_gen_elig @ cap  # (n_zones, T)
+    if use_storage:
+        spc = np.asarray(storage_power_cap, dtype=float)
+        zone_storage = _storage_zone_matrix(s_zone, n_zones, n_storage)
+        if spc.ndim == 2:
+            zone_cap = zone_cap + (zone_storage @ spc)        # (n_zones, T)
+        else:
+            zone_cap = zone_cap + (zone_storage @ spc)[:, None]
     hr_upper = zone_cap.T.ravel()
     hr_lower = np.full(n_zones * T, -np.inf)
 
@@ -571,6 +611,7 @@ def build_constraints(
     storage_daily_cycle_hours: int | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
+    reserve_storage_power_cap: np.ndarray | float | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -829,7 +870,9 @@ def build_constraints(
             else np.asarray(reserve_eligible, dtype=bool)
         )
         res_block, res_lower, res_upper = _build_reserve_rows(
-            layout, fleet, reserve_requirement, elig
+            layout, fleet, reserve_requirement, elig,
+            storage_zone_idx=storage_zone_idx,
+            storage_power_cap=reserve_storage_power_cap,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -1065,6 +1108,7 @@ class DispatchModel:
         storage_daily_cycle_hours: int | None = None,
         reserve_requirement: np.ndarray | None = None,
         reserve_eligible: np.ndarray | None = None,
+        reserve_storage: bool = False,
         ordc_penalties: np.ndarray | None = None,
         ordc_step_widths: np.ndarray | None = None,
         T: int | None = None,
@@ -1111,6 +1155,8 @@ class DispatchModel:
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
+            reserve_storage_power_cap=(
+                storage_power_cap if reserve_storage else None),
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1365,6 +1411,7 @@ def solve_dispatch(
     storage_daily_cycle_hours: int | None = None,
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
+    reserve_storage: bool = False,
     ordc_penalties: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
     T: int | None = None,
@@ -1459,6 +1506,7 @@ def solve_dispatch(
         storage_daily_cycle_hours=storage_daily_cycle_hours,
         reserve_requirement=reserve_requirement,
         reserve_eligible=reserve_eligible,
+        reserve_storage=reserve_storage,
         ordc_penalties=ordc_penalties,
         ordc_step_widths=ordc_step_widths,
         T=T,
