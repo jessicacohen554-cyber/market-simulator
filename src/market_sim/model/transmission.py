@@ -412,7 +412,8 @@ def build_wecc_export_sink() -> Generator:
 
 
 def inject_interchange_shape(
-    fleet_arrays, iso: str, year: int, percentile: float = 90.0
+    fleet_arrays, iso: str, year: int, percentile: float = 90.0,
+    export_only: bool = False,
 ) -> bool:
     """Shape the priced import/export node by the measured diurnal interchange.
 
@@ -437,6 +438,16 @@ def inject_interchange_shape(
     Returns ``True`` when a shape was applied, ``False`` when the node is absent
     or no measured envelope is available (forecast year / unmapped ISO), in
     which case the static node is left unchanged (byte-identical).
+
+    With ``export_only=True`` the import-availability cap is skipped: only the
+    export side (the midday-export envelope) is shaped, leaving every import
+    tranche available in every hour. The full (both-sided) shape caps *gross*
+    import availability to the *net*-import envelope (net << gross, since CAISO
+    imports and exports simultaneously across different interties), which
+    starves baseload imports and substitutes gas — inflating gas TWh and the
+    mean LMP. Export-only keeps the part that helps (the midday export cap, so
+    surplus beyond the measured export curtails and prices negative) and drops
+    the part that regresses the mix.
     """
     from market_sim.data.eia_loader import measured_interchange_envelope
     from market_sim.data.fleet import FUEL_TYPE_MAP
@@ -456,7 +467,7 @@ def inject_interchange_shape(
         return False
     import_cap, export_cap = env
 
-    if imp_rows.size:
+    if imp_rows.size and not export_only:
         import_total = float(fleet_arrays.pmax[imp_rows].sum())
         if import_total > 0.0:
             imp_avail = np.clip(import_cap / import_total, 0.0, 1.0)

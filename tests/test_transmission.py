@@ -409,6 +409,28 @@ class TestInterchangeShaping(unittest.TestCase):
         # Overnight export is shut (winter/night CA imports).
         self.assertGreater(exp_floor[:, night].mean(), -50.0)
 
+    def test_export_only_leaves_imports_uncapped_but_shapes_export(self):
+        # export_only=True must leave every import tranche's availability
+        # byte-identical (no gross-import starvation) while still opening the
+        # midday export floor exactly as the full shape does.
+        H = 8760
+        fa, gens, month, hod = self._caiso_node_fleet(H)
+        avail_before = fa.availability.copy()
+        applied = inject_interchange_shape(
+            fa, "CAISO", 2024, export_only=True)
+        self.assertTrue(applied)
+
+        imp = np.array([g.pmax_mw > 0 for g in gens])
+        exp = np.array([g.pmax_mw <= 0 and g.pmin_mw < 0 for g in gens])
+        spring_mid = (np.isin(month, [4, 5])) & (hod >= 12) & (hod <= 15)
+
+        # Imports are untouched (the regression half is skipped).
+        np.testing.assert_array_equal(
+            fa.availability[imp], avail_before[imp])
+        # Export floor still opens midday (the half that unlocks negatives).
+        self.assertIsNotNone(fa.min_gen)
+        self.assertLess(fa.min_gen[exp][:, spring_mid].mean(), -100.0)
+
     def test_no_op_without_import_node(self):
         # A plain thermal fleet has no import/export rows -> returns False and
         # leaves availability untouched (byte-identical).
