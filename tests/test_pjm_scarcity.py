@@ -23,8 +23,10 @@ from market_sim.results.scarcity import (
     pjm_reserve_demand_price,
 )
 
+from market_sim.config.paths import CALIBRATION_DIR
+
 REPO = Path(__file__).resolve().parent.parent
-CURVE_CSV = REPO / "inputs" / "calibration" / "pjm_ordc_curve.csv"
+CURVE_CSV = CALIBRATION_DIR / "pjm_ordc_curve.csv"
 
 # The published two-step curve (offset_mw from requirement, penalty $/MWh).
 STEPS = [(0.0, 850.0), (190.0, 300.0)]

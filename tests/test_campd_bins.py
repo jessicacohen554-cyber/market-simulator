@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.paths import CAMPD_BINS_CSV
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
@@ -25,7 +26,7 @@ from market_sim.model.commitment import (
 )
 from market_sim.results.emissions import compute_must_run_emissions
 
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = str(CAMPD_BINS_CSV)
 ZONE_NAMES = get_iso_config("ERCOT").zone_names
 
 

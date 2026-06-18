@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
-from market_sim.config.paths import CALIBRATION_DIR, RAW_DATA_DIR
+from market_sim.config.paths import CALIBRATION_DIR, CAMPD_BINS_CSV, RAW_DATA_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ OUTAGES_CSV: Path = RAW_DATA_DIR / "campd-outages.csv"
 
 # Default CAMPD bin-assignment CSV, the plant_code -> Plant_Group source used
 # to decide which plants are coal/CC. Matches ScenarioConfig.campd_bins_path.
-BINS_CSV_DEFAULT: str = "inputs/custom-bin-assignments.csv"
+BINS_CSV_DEFAULT: str = str(CAMPD_BINS_CSV)
 
 # Per-ISO historic-outage extract. ERCOT keeps the original file name (so the
 # ERCOT backcast is unchanged); other ISOs use ``campd-outages-{ISO}.csv``,

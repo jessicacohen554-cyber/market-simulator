@@ -14,6 +14,7 @@ EIA-860 fleet, and the EIA-923 benchmark) from drifting:
 
 import unittest
 
+from market_sim.config.paths import CAMPD_BINS_CSV
 from market_sim.config.plant_taxonomy import classify_plant
 from market_sim.data.fleet import (
     _coal_class_for,
@@ -22,7 +23,7 @@ from market_sim.data.fleet import (
     load_campd_bins,
 )
 
-BINS_CSV = "inputs/custom-bin-assignments.csv"
+BINS_CSV = str(CAMPD_BINS_CSV)
 # The base calibration year the ERCOT fleet is built for; EIA-923 covers it.
 YEAR = 2024
 
