@@ -1212,6 +1212,7 @@ def solve_and_persist(
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    reference_price_interface: bool = False,
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
@@ -1321,6 +1322,7 @@ def solve_and_persist(
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
             interchange_shaping=interchange_shaping,
+            reference_price_interface=reference_price_interface,
             negative_renewable_offers=negative_renewable_offers,
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
@@ -1457,6 +1459,7 @@ def solve_and_persist(
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
         "interchange_shaping": interchange_shaping,
+        "reference_price_interface": reference_price_interface,
         "negative_renewable_offers": negative_renewable_offers,
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
@@ -1533,6 +1536,9 @@ def solve_and_persist(
             cc_outage_derate_from_top=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
+    if reference_price_interface:
+        recorded_cfg = recorded_cfg.with_overrides(
+            reference_price_interface=True)
     # Tri-state floor / negative-offer overrides — mirror run_year so
     # run_config.json records what the LP solved with (None = the per-ISO base
     # default baked in _calibration_config: CAISO floor+negative ON at 0.80).
@@ -3363,6 +3369,14 @@ def main() -> None:
              "floor. Requires --priced-interchange; no-op without a measured "
              "envelope. Off (default) changes no existing run.")
     parser.add_argument(
+        "--reference-price-interface", action="store_true",
+        help="Serve the priced-interchange seam through the forecast-grade "
+             "reference-price interface (per-neighbor gas x heat-rate x "
+             "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
+             "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
+             "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
+             "See docs/reference-price-interface.md.")
+    parser.add_argument(
         "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
         default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
@@ -3566,11 +3580,14 @@ def main() -> None:
             "offer_curve_smoothing_mid": args.curve_mid,
         },
         cc_derate_from_top=args.cc_derate_from_top,
-        priced_interchange=resolve_priced_interchange(
-            args.priced_interchange, iso),
+        priced_interchange=(
+            True if args.reference_price_interface
+            and args.priced_interchange is not False
+            else resolve_priced_interchange(args.priced_interchange, iso)),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
+        reference_price_interface=args.reference_price_interface,
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
