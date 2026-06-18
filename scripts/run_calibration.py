@@ -1405,6 +1405,8 @@ def run_year(
         dispatch_kwargs.update(
             reserve_requirement=coopt_req,
             reserve_eligible=coopt_elig,
+            reserve_storage=True,  # ERCOT batteries are the dominant RRS/ECRS
+            # provider — count their headroom as reserve, else scarcity overshoots.
             ordc_penalties=coopt_pen,
             ordc_step_widths=coopt_w,
         )
