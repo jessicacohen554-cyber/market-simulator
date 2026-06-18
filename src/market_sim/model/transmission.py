@@ -77,6 +77,21 @@ def get_ttc_array(links: list[TransferLink]) -> np.ndarray:
     return np.array([link.ttc_mw for link in links], dtype=float)
 
 
+def get_link_bidirectional_array(links: list[TransferLink]) -> np.ndarray:
+    """Return the ``(n_links,)`` bool array of per-link bidirectionality.
+
+    ``True`` (the default) lets a link carry power both ways up to its TTC;
+    ``False`` makes it one-way (from->to only, ``0 <= flow <= ttc``), so a
+    pair of opposite one-way links can give an interface an asymmetric rating
+    (e.g. a tight import limit into a load pocket with a looser export limit).
+    Returns all-``True`` when every link is bidirectional (the LP then leaves
+    the symmetric ``-ttc <= flow <= ttc`` path byte-identical).
+    """
+    return np.array(
+        [getattr(link, "is_bidirectional", True) for link in links], dtype=bool
+    )
+
+
 def wecc_border_carbon_adder(carbon_price: float) -> float:
     """Return the CAISO border carbon adjustment on imports ($/MWh).
 
@@ -212,9 +227,8 @@ def build_export_sinks(iso: str) -> list[Generator]:
 
 # Unit-id markers tagging a reference-price seam pseudo-generator so the
 # post-assembly mc injector (:func:`inject_reference_price_mc`) can find each row
-# and map it back to its neighbor and flow tranche. The id is
-# ``<zone><mark><name>#<k>`` — import rows take the neighbor price + hurdle,
-# export rows the neighbor price - hurdle, both evaluated at tranche ``k``'s flow.
+# and map it back to its neighbor. Import rows take the neighbor price + hurdle;
+# export rows take the neighbor price - hurdle.
 _REF_IMPORT_MARK = "_refimp_"
 _REF_EXPORT_MARK = "_refexp_"
 
@@ -223,27 +237,23 @@ def build_reference_price_node(iso: str) -> list[Generator]:
     """Return the reference-price seam as import/export pseudo-generators.
 
     The forecast-grade replacement for the fitted
-    :func:`build_import_generators` / :func:`build_export_sinks`: per neighbor in
-    :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`, the import and
-    export ranges are each split into
-    :data:`~market_sim.data.neighbor_price.SEAM_FLOW_TRANCHES` equal-width flow
-    bands, all placed in the ISO's external zone. Splitting into bands lets the
-    injector give each band a different, *flow-responsive* price (the neighbor's
-    price at that band's flow), so the seam sees a downward-sloping import-demand
-    curve and self-limits below the cap rather than pinning at it.
-
+    :func:`build_import_generators` / :func:`build_export_sinks`: one import
+    pseudo-generator and one export sink **per neighbor** in
+    :data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`, each sized to that
+    neighbor's interface transfer limit and placed in the ISO's external zone.
     The marginal cost is left at zero here — it is a *placeholder* overwritten
-    hour-by-hour by :func:`inject_reference_price_mc` after the fleet's mc is
-    assembled (the cost is hourly, so it cannot ride in the static ``vom``). The
-    unit id carries the neighbor name and tranche index (via
-    :data:`_REF_IMPORT_MARK` / :data:`_REF_EXPORT_MARK` and a ``#k`` suffix) so
-    the injector can map each row back to its neighbor and band.
+    hour-by-hour with the neighbor's reference price ± hurdle by
+    :func:`inject_reference_price_mc` after the fleet's mc is assembled (the cost
+    is hourly, so it cannot ride in the static ``vom``). The unit id carries the
+    neighbor name (via :data:`_REF_IMPORT_MARK` / :data:`_REF_EXPORT_MARK`) so
+    the injector can map each row back to its neighbor.
 
-    Import bands are positive-output generators bounded ``[0, limit/n]``; export
-    bands are negative-output sinks bounded ``[-limit/n, 0]`` (the
-    :func:`build_export_sinks` convention). The bands sum to the interface limit,
-    so total ``|flow| <= limit`` still holds; the LP fills bands in merit order,
-    bounded also by the external zone's border-link TTCs.
+    Import rows are ordinary positive-output generators bounded ``[0, limit]``;
+    export sinks are negative-output blocks bounded ``[-limit, 0]`` (the same
+    convention as :func:`build_export_sinks`). With every neighbor in the one
+    external bubble, the LP trades with the cheapest neighbor to import from and
+    the dearest to export to each hour, in merit order, bounded by each
+    neighbor's limit and the external zone's border-link TTCs.
 
     Args:
         iso: ISO identifier; must have an entry in ``INTERFACE_NEIGHBORS`` and
@@ -254,39 +264,32 @@ def build_reference_price_node(iso: str) -> list[Generator]:
         registry (so an un-onboarded ISO stays byte-identical).
     """
     from market_sim.config.constants import INTERFACE_NEIGHBORS
-    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
     zone = IMPORT_ZONE.get(iso)
     gens: list[Generator] = []
     for neighbor in INTERFACE_NEIGHBORS.get(iso, []):
-        # Split each direction into SEAM_FLOW_TRANCHES bands of equal width so
-        # the flow-responsive injector can price each band at its midpoint flow
-        # along the neighbor's supply curve. The bands sum to the interface
-        # limit, so |flow| <= limit still holds.
-        step = neighbor.interface_limit_mw / SEAM_FLOW_TRANCHES
-        for k in range(1, SEAM_FLOW_TRANCHES + 1):
-            gens.append(Generator(
-                unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}#{k}",
-                name=f"ref_import_{neighbor.name}_t{k}",
-                zone=zone,
-                fuel_type="import",
-                pmax_mw=step,
-                pmin_mw=0.0,
-                heat_rate=0.0,
-                vom=0.0,
-                eford=0.0,
-            ))
-            gens.append(Generator(
-                unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}#{k}",
-                name=f"ref_export_{neighbor.name}_t{k}",
-                zone=zone,
-                fuel_type="import",
-                pmax_mw=0.0,
-                pmin_mw=-step,
-                heat_rate=0.0,
-                vom=0.0,
-                eford=0.0,
-            ))
+        gens.append(Generator(
+            unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}",
+            name=f"ref_import_{neighbor.name}",
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=neighbor.interface_limit_mw,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=0.0,
+            eford=0.0,
+        ))
+        gens.append(Generator(
+            unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}",
+            name=f"ref_export_{neighbor.name}",
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=0.0,
+            pmin_mw=-neighbor.interface_limit_mw,
+            heat_rate=0.0,
+            vom=0.0,
+            eford=0.0,
+        ))
     return gens
 
 
@@ -297,61 +300,39 @@ def inject_reference_price_mc(
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
     Mirrors :func:`inject_interchange_shape`'s post-assembly pattern, but for
-    cost rather than availability. Each seam row is one flow tranche ``k`` of a
-    neighbor (``..._refimp_<name>#k`` / ``..._refexp_<name>#k``); its row is set
-    to the **flow-responsive** price for that band from
-    :func:`market_sim.data.neighbor_price.seam_tranche_prices` — the neighbor's
-    price evaluated at the band's midpoint flow, so the willingness-to-pay
-    slides down the neighbor's supply curve as the ISO exports more (and rises
-    as it imports more). An export tranche takes ``- hurdle``, an import tranche
-    ``+ hurdle``, so PJM exports only while a band's flow-responsive price still
-    exceeds its own LMP by the hurdle, and the seam self-limits below the cap
-    instead of pinning at it. A neighbor with no resolvable load shape falls back
-    to the flat capacity-weighted aggregate (every band at the same price — no
-    slope). Modifies ``mc`` in place.
+    cost rather than availability: after the fleet's marginal-cost matrix is
+    assembled, each reference-price pseudo-generator's row is replaced with its
+    neighbor's hourly reference price (from
+    :func:`market_sim.data.neighbor_price.interface_reference_prices`) plus a
+    hurdle for an import row and minus a hurdle for an export row. So PJM imports
+    from a neighbor only when its own LMP exceeds that neighbor's price by the
+    hurdle, and exports only when it falls below by the hurdle. A neighbor that
+    resolved no individual price (no load extract or proxy) falls back to the
+    capacity-weighted aggregate. Modifies ``mc`` in place.
 
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
     """
     from market_sim.config.constants import INTERFACE_NEIGHBORS
-    from market_sim.data.neighbor_price import (
-        interface_reference_prices,
-        seam_tranche_prices,
-    )
+    from market_sim.data.neighbor_price import interface_reference_prices
 
     hours = int(mc.shape[1])
-    aggregate = interface_reference_prices(iso, year, hours,
-                                           gas_scenario).aggregate()
+    prices = interface_reference_prices(iso, year, hours, gas_scenario)
+    aggregate = prices.aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
-    # Cache each neighbor's (export, import) tranche price matrices once.
-    tranches: dict[str, tuple | None] = {}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
         if _REF_IMPORT_MARK in uid:
-            tag, is_export = uid.rsplit(_REF_IMPORT_MARK, 1)[1], False
+            name, sign = uid.rsplit(_REF_IMPORT_MARK, 1)[1], +1.0
         elif _REF_EXPORT_MARK in uid:
-            tag, is_export = uid.rsplit(_REF_EXPORT_MARK, 1)[1], True
+            name, sign = uid.rsplit(_REF_EXPORT_MARK, 1)[1], -1.0
         else:
             continue
-        name, _, k_str = tag.partition("#")
-        k = int(k_str) - 1 if k_str else 0
-        if name not in tranches:
-            spec = specs.get(name)
-            tranches[name] = (
-                seam_tranche_prices(spec, year, hours,
-                                    gas_scenario=gas_scenario)
-                if spec is not None else None)
-        priced = tranches[name]
+        price = prices.per_neighbor.get(name, aggregate)
+        if price is None:
+            continue
         hurdle = specs[name].hurdle if name in specs else 0.0
-        if priced is not None:
-            export_p, import_p, _ = priced
-            band = export_p[k] if is_export else import_p[k]
-            mc[row, :] = band - hurdle if is_export else band + hurdle
-        elif aggregate is not None:
-            # No load shape: flat aggregate, same for every band (no slope).
-            mc[row, :] = aggregate - hurdle if is_export else aggregate + hurdle
-        else:
-            continue
+        mc[row, :] = price + sign * hurdle
         applied = True
     return applied
 
