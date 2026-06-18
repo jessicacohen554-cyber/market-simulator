@@ -70,6 +70,7 @@ from market_sim.data.fleet import (  # noqa: E402
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
+    load_retired_within_window,
     split_coal_tranches,
     split_gas_tranches,
     thermal_tranche_overrides,
@@ -1088,6 +1089,20 @@ def run_year(
     # alike — so the per-fleet-path scaling that used to live here is gone. See
     # data.cod_ramp.
 
+    # Whole-plant exits that retired mid-window (e.g. Mystic) are absent from
+    # the single recent operable snapshot, so the COD ramp has nothing to age
+    # out. Inject them into the backcast fleet base — the ramp
+    # (generators_to_fleet_arrays) then dispatches each through its real
+    # retirement month and zeros it after. Mirror of forecast's planned
+    # additions; backcast-mode only (run_calibration is always backcast). The
+    # year selects the active EIA-860 vintage; a year-matched native vintage
+    # carries these exits in its own operable file and ships no retiree parquet,
+    # so this returns nothing there (no double-count).
+    retired_units = (
+        load_retired_within_window(iso, iso_config, year=year)
+        if config.mode == "backcast" else []
+    )
+
     # Build the dispatch fleet the same way the runner does: CAMPD
     # operational bins for ERCOT (three stepped tranches per bin, nuclear
     # and other non-aggregatable units from EIA-860), the legacy
@@ -1111,7 +1126,8 @@ def run_year(
         # scarcity peaker it is (its fuel price / heat rate come from constants).
         _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
         non_thermal = [
-            g for g in load_fleet_from_csv(iso, iso_config, year=year)
+            g for g in (load_fleet_from_csv(iso, iso_config, year=year)
+                        + retired_units)
             if g.fuel_type not in _campd_binned_or_injected
         ]
         fleet = non_thermal + campd_fleet
@@ -1163,7 +1179,9 @@ def run_year(
         # binned-keys exclusion guarantees no double-count and no dropped unit.
         if (getattr(config, "plant_level_fleet", False)
                 and thermal_tranche_overrides(iso)):
-            all_gens = load_fleet_from_csv(iso, iso_config, year=year)
+            all_gens = (
+                load_fleet_from_csv(iso, iso_config, year=year) + retired_units
+            )
             synth = fleet_to_bins(all_gens, iso, config)
             if not synth.empty:
                 binned = set(zip(
@@ -1189,7 +1207,8 @@ def run_year(
             n_bins = 0 if getattr(config, "plant_level_fleet", False) \
                 else config.heat_rate_bin_count
             fleet_base = aggregate_fleet(
-                load_fleet_from_csv(iso, iso_config, year=year), n_bins=n_bins,
+                load_fleet_from_csv(iso, iso_config, year=year) + retired_units,
+                n_bins=n_bins,
             )
             fleet, fuel_fracs = split_coal_tranches(fleet_base, config)
             # Optional stepped gas offer curve (committed/economic/peaking
