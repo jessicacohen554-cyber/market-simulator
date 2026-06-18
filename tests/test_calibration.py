@@ -424,5 +424,53 @@ class TestRunCalibrationCheck(unittest.TestCase):
         self.assertEqual(DEFAULT_TOLERANCE, 0.05)
 
 
+class TestGasHubBasisDailyConvexityPlumbing(unittest.TestCase):
+    """``--gas-hub-basis-daily-convexity`` reaches the ScenarioConfig.
+
+    The NEISO oil-overshoot damping knob: the CLI flag must parse into the
+    args namespace and ride the generic per-run override channel
+    (``ScenarioConfig.with_overrides``, the same path the calibration harness
+    feeds ``prb_overrides`` through) onto the ``gas_hub_basis_daily_convexity``
+    field that ``fuel.iso_hub_daily_gas_prices`` reads.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "run_calibration_full",
+            Path(__file__).resolve().parents[1]
+            / "scripts" / "run_calibration_full.py",
+        )
+        cls.rcf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.rcf)
+
+    def test_flag_parses_into_namespace(self):
+        args = self.rcf.build_parser().parse_args(
+            ["--iso", "NEISO", "--year", "2025",
+             "--gas-hub-basis-daily", "--gas-hub-basis-daily-convexity", "4.0"]
+        )
+        self.assertTrue(args.gas_hub_basis_daily)
+        self.assertEqual(args.gas_hub_basis_daily_convexity, 4.0)
+
+    def test_unset_defaults_to_none(self):
+        """An unflagged run keeps the fitted AGT_DAILY_BASIS_CONVEXITY constant."""
+        args = self.rcf.build_parser().parse_args(
+            ["--iso", "NEISO", "--year", "2025"])
+        self.assertIsNone(args.gas_hub_basis_daily_convexity)
+
+    def test_override_channel_sets_config_field(self):
+        """The value rides ``with_overrides`` onto the recognized config field."""
+        from market_sim.config.scenarios import ScenarioConfig, TIER_TAGS
+
+        self.assertIsNone(ScenarioConfig().gas_hub_basis_daily_convexity)
+        config = ScenarioConfig().with_overrides(
+            gas_hub_basis_daily=True, gas_hub_basis_daily_convexity=4.0)
+        self.assertEqual(config.gas_hub_basis_daily_convexity, 4.0)
+        # Tagged tier-3 (calibration) so the parameter registry classifies it.
+        self.assertEqual(TIER_TAGS.get("gas_hub_basis_daily_convexity"), 3)
+
+
 if __name__ == "__main__":
     unittest.main()
