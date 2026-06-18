@@ -10,46 +10,5 @@ so backcasts for different ISOs run in parallel without colliding.
 
 A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
 
-  * ``dispatch/<year>_<pass>.parquet`` — every generator's hourly MW (8760h)
-    with plant_code / class / fuel / supply / zone metadata, plus wind and
-    solar as per-zone pseudo-units. Coal carries its supply class
-    (COAL_LIGNITE / COAL_PRB) so mine-mouth and PRB can be separated.
-  * ``system.parquet`` — per-zone hourly price, load slack and demand target,
-    for every year and pass.
-  * ``eia930.parquet`` — EIA-930 hourly benchmark series (gas, coal, wind,
-    solar, nuclear, net generation).
-  * ``eia923.parquet`` — EIA-923 net generation per (plant, class), annual and
-    by month.
-  * ``btm.parquet`` — behind-the-meter CHP must-run by class (off-grid).
-  * ``meta.json`` — run metadata (timestamp, years, passes, flags, prices).
-
-The report ([1]-[6] tables) is then computed entirely from the bundle, so the
-same numbers can be reproduced from an old run with ``--report <dir>``.
-
-Usage:
-    python scripts/run_calibration_full.py --year 2023 2024
-    python scripts/run_calibration_full.py --year 2023 --commitment --no-coal-p2
-    python scripts/run_calibration_full.py --report results/calibration/<iso>/<ts>
+  * ``dispatch/<year>_<pass>.parquet`` PLACEHOLDER
 """
-
-from __future__ import annotations
-
-import argparse
-import gc
-import gzip
-import json
-import logging
-import os
-import pickle
-import subprocess
-import sys
-from datetime import datetime
-from functools import lru_cache
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-
-REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO))
