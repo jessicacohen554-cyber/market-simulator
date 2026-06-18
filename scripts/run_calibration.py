@@ -51,6 +51,7 @@ from market_sim.config.constants import (  # noqa: E402
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand,
@@ -136,7 +137,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("run_calibration")
 
 # Calibration reference written by scripts/build_calibration_reference.py.
-REFERENCE_PATH: Path = REPO / "inputs" / "calibration" / "calibration_reference.json"
+REFERENCE_PATH: Path = CALIBRATION_DIR / "calibration_reference.json"
 
 # Fallback measured Henry Hub annual-average spot price ($/MMBtu), used when
 # the calibration reference JSON has not yet been generated.
