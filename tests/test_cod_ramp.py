@@ -108,6 +108,26 @@ class TestLoadCodMap(unittest.TestCase):
         # Documented neutral default for year-only (registry-only) plants.
         self.assertEqual(COD_FALLBACK_MONTH, 7)
 
+    def test_within_window_retiree_aged_out(self):
+        """A whole-plant mid-window exit is in the map with its real exit date.
+
+        Mystic (plant 1588, a ~1.4 GW CC that ran through 2023 and retired in
+        mid-2024) is absent from the single recent operable vintage; the COD
+        map unions it from the within-window retiree parquet so the ramp can
+        age it out. Online through 2023, gone after its 2024 retirement month.
+        """
+        cod_map = load_cod_map()
+        self.assertIn(1588, cod_map)
+        oy, om, ry, rm = cod_map[1588]
+        self.assertLess(oy, 2023)  # online well before the window
+        self.assertEqual(ry, 2024)
+        self.assertIn(rm, (4, 5, 6))  # EIA-860 records June 2024
+        self.assertEqual(monthly_online_mask(oy, om, ry, rm, 2023).sum(), 12)
+        masked_2024 = monthly_online_mask(oy, om, ry, rm, 2024).sum()
+        self.assertGreater(masked_2024, 0)
+        self.assertLessEqual(masked_2024, 6)
+        self.assertEqual(monthly_online_mask(oy, om, ry, rm, 2025).sum(), 0)
+
 
 class TestCodRampInFleetArrays(unittest.TestCase):
     """End-to-end masking inside generators_to_fleet_arrays."""
@@ -260,6 +280,88 @@ class TestEia860VintageSelection(unittest.TestCase):
 
         set_eia860_vintage(1999)  # no vintage_1999/ directory exists
         self.assertEqual(active_eia860_dir(), EIA_860_DIR)
+
+
+class TestNeisoWithinWindowRetireeFleetPath(unittest.TestCase):
+    """The NEISO backcast fleet ages a mid-window plant exit out by month.
+
+    Integration over the real loader + COD ramp: builds the NEISO fleet the way
+    the calibration runner does (operable snapshot + within-window retirees),
+    then checks the ramp masks Mystic (plant 1588) on through 2023, partway
+    through 2024, and off in 2025 -- and that the modeled CC_REGULAR plant set
+    differs by year (not the identical post-retirement set every year).
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import numpy as np
+
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.fleet import (
+            load_fleet_from_csv,
+            load_retired_within_window,
+        )
+
+        cls.np = np
+        cls.iso_config = get_iso_config("NEISO")
+        cls.zone_names = [z.name for z in cls.iso_config.zones]
+        retirees = load_retired_within_window("NEISO", cls.iso_config)
+        cls.fleet = load_fleet_from_csv("NEISO", cls.iso_config) + retirees
+        cls.has_mystic = any(int(g.plant_code) == 1588 for g in retirees)
+        # 1-based month -> cumulative hour boundary (non-leap year).
+        cls.month_start = np.cumsum(
+            [0] + [d * 24 for d in
+                   (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
+        )
+
+    def _arrays(self, year):
+        cfg = ScenarioConfig(
+            mode="backcast", weather_year=year, cod_ramp_enabled=True,
+            plant_level_fleet=True,
+        )
+        return generators_to_fleet_arrays(
+            self.fleet, self.zone_names, hours=8760, iso="NEISO",
+            config=cfg, year=year,
+        )
+
+    def _mystic_mw_by_month(self, fa):
+        idx = self.np.where(fa.plant_code == 1588)[0]
+        return [
+            float(sum(fa.pmax[i] * fa.availability[i, self.month_start[m]]
+                      for i in idx))
+            for m in range(12)
+        ]
+
+    def test_retiree_injected_into_snapshot(self):
+        self.assertTrue(
+            self.has_mystic, "Mystic (1588) not injected — retiree parquet?"
+        )
+
+    def test_mystic_online_all_of_2023(self):
+        mw = self._mystic_mw_by_month(self._arrays(2023))
+        self.assertTrue(all(m > 0 for m in mw), mw)
+
+    def test_mystic_retires_mid_2024(self):
+        mw = self._mystic_mw_by_month(self._arrays(2024))
+        self.assertTrue(all(m > 0 for m in mw[:5]), mw)   # online Jan-May
+        self.assertEqual(max(mw[6:]), 0.0, mw)            # gone by July
+
+    def test_mystic_absent_in_2025(self):
+        mw = self._mystic_mw_by_month(self._arrays(2025))
+        self.assertEqual(max(mw), 0.0, mw)
+
+    def test_cc_regular_set_differs_by_year(self):
+        def cc_codes(year):
+            fa = self._arrays(year)
+            on = fa.availability.max(axis=1) > 0
+            return {
+                int(c) for c, g, o in zip(fa.plant_code, self.fleet, on)
+                if g.plant_group == "CC_REGULAR" and o
+            }
+        c23, c25 = cc_codes(2023), cc_codes(2025)
+        self.assertIn(1588, c23)
+        self.assertNotIn(1588, c25)
+        self.assertNotEqual(c23, c25)
 
 
 if __name__ == "__main__":
