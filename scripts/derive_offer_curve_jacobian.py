@@ -110,6 +110,8 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from scripts._bundle_io import bundle_input_path  # noqa: E402
 DEFAULT_ROOT = REPO / "results" / "calibration"
 DEFAULT_OUT = REPO / "inputs" / "processed" / "offer_curve_jacobian.csv"
 CACHE_PATH = REPO / "inputs" / "processed" / ".offer_curve_jacobian_cache.json"
@@ -373,7 +375,7 @@ def discover_bundles(root: Path) -> list[Bundle]:
         sc = cfg.get("scenario_config", {})
         curves = sc.get("offer_curve_by_group") or {}
         disp = sorted((d / "dispatch").glob("*_P1.parquet"))
-        if not curves or not disp or not (d / "eia923.parquet").exists():
+        if not curves or not disp or bundle_input_path(d, "eia923") is None:
             continue
         meta = {}
         if (d / "meta.json").exists():
@@ -422,7 +424,7 @@ def class_totals(b: Bundle, cache: dict) -> pd.DataFrame:
         b.totals = pd.DataFrame(ent["rows"])
         return b.totals
 
-    e923 = pd.read_parquet(b.path / "eia923.parquet")
+    e923 = pd.read_parquet(bundle_input_path(b.path, "eia923"))
     btm_path = b.path / "btm.parquet"
     btm = pd.read_parquet(btm_path) if btm_path.exists() else None
     rows = []
@@ -577,8 +579,8 @@ def bundle_metrics(b: Bundle, cache: dict) -> pd.DataFrame:
     if ent and ent.get("stamp") == stamp:
         return pd.DataFrame(ent["rows"],
                             columns=["year", "metric", "key", "value"])
-    e930 = (pd.read_parquet(b.path / "eia930.parquet")
-            if (b.path / "eia930.parquet").exists() else None)
+    _e930p = bundle_input_path(b.path, "eia930")
+    e930 = pd.read_parquet(_e930p) if _e930p is not None else None
     rows: list[dict] = []
     for f in sorted((b.path / "dispatch").glob("*_P1.parquet")):
         disp = pd.read_parquet(f, columns=["year", "klass", "hour", "mw"])

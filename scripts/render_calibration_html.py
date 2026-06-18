@@ -60,6 +60,7 @@ _spec_ordc = importlib.util.spec_from_file_location(
 ordc = importlib.util.module_from_spec(_spec_ordc)
 _spec_ordc.loader.exec_module(ordc)
 
+from scripts._bundle_io import bundle_input_path  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS, class_label, classes_for_fuel930, fossil_classes, nonfossil_classes,
 )
@@ -315,9 +316,9 @@ def build_payload(runs: list[tuple[str, Path]],
         meta = json.loads((bdir / "meta.json").read_text())
         tr_bands = _tranche_bands_for_bundle(bdir)
         run_years: dict[int, dict] = {}
-        e923_all = pd.read_parquet(bdir / "eia923.parquet")
-        e930_all = pd.read_parquet(bdir / "eia930.parquet")
-        campd_all = pd.read_parquet(bdir / "campd.parquet")
+        e923_all = pd.read_parquet(bundle_input_path(bdir, "eia923"))
+        e930_all = pd.read_parquet(bundle_input_path(bdir, "eia930"))
+        campd_all = pd.read_parquet(bundle_input_path(bdir, "campd"))
         sys_all = pd.read_parquet(bdir / "system.parquet")
         # Behind-the-meter must-run per (year, pass, class) — the same off-grid
         # CHP host self-supply the LP held out, as the calibration report uses
