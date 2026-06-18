@@ -892,6 +892,7 @@ def build_variable_bounds(
     storage_energy_cap: np.ndarray | None = None,
     ttc: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
+    link_bidirectional: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -901,7 +902,11 @@ def build_variable_bounds(
     * Wind: ``0 <= W <= wind_cf * wind_cap``.
     * Solar: ``0 <= S <= solar_cf * solar_cap``.
     * Storage: ``0 <= Chg, Dis <= power_cap``; ``0 <= SOC <= energy_cap``.
-    * Transmission: ``-ttc <= Flow <= ttc`` (bidirectional).
+    * Transmission: ``-ttc <= Flow <= ttc`` (bidirectional links); a
+      one-way link (``link_bidirectional[ln]`` False) is bounded
+      ``0 <= Flow <= ttc`` so it can carry power only in its from->to
+      direction (used to give an interface an asymmetric rating by pairing
+      two opposite one-way links with different TTCs).
     * Load slack: ``0 <= Slack <= inf``.
     * Overgeneration dump: ``0 <= Dump <= inf``.
 
@@ -977,7 +982,14 @@ def build_variable_bounds(
         ttc_arr = np.asarray(ttc, dtype=float)
         if ttc_arr.ndim == 1:
             ttc_arr = ttc_arr[np.newaxis, :]
-        col_lower[:, layout._flow_off : layout._slack_off] = -ttc_arr
+        lower_arr = -ttc_arr
+        if link_bidirectional is not None:
+            # One-way links carry power only from->to: floor their flow at 0
+            # (so a pair of opposite one-way links gives an asymmetric rating).
+            oneway = ~np.asarray(link_bidirectional, dtype=bool)
+            if oneway.any():
+                lower_arr = np.where(oneway[np.newaxis, :], 0.0, lower_arr)
+        col_lower[:, layout._flow_off : layout._slack_off] = lower_arr
         col_upper[:, layout._flow_off : layout._slack_off] = ttc_arr
 
     # Load slack: 0 <= Slack <= inf.
@@ -1117,6 +1129,7 @@ class DispatchModel:
         reserve_storage: bool = False,
         ordc_penalties: np.ndarray | None = None,
         ordc_step_widths: np.ndarray | None = None,
+        link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -1175,6 +1188,7 @@ class DispatchModel:
             storage_energy_cap=storage_energy_cap,
             ttc=ttc,
             ordc_step_widths=ordc_step_widths,
+            link_bidirectional=link_bidirectional,
         )
 
         # build_constraints returns CSR -- the row-wise layout HiGHS addRows
@@ -1420,6 +1434,7 @@ def solve_dispatch(
     reserve_storage: bool = False,
     ordc_penalties: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
+    link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -1516,6 +1531,7 @@ def solve_dispatch(
         reserve_storage=reserve_storage,
         ordc_penalties=ordc_penalties,
         ordc_step_widths=ordc_step_widths,
+        link_bidirectional=link_bidirectional,
         T=T,
     )
     return model.solve(
