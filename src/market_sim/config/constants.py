@@ -1927,9 +1927,29 @@ class NeighborInterface:
 # Hurdle $2/MWh is the inter-RTO wheeling/transaction adder production-cost
 # models use (OMS-RSC seams interface-pricing study); PJM exports at thin spreads
 # (the 2024 PJM-MISO mean spread is only ~$1.5), so the hurdle must stay small.
-# Interface limits envelope the published PJM seam transfer capabilities (PJM
-# RTEP / NERC interconnection-reliability postings); verify against PJM's
-# published interface ratings before quoting a forecast.
+#
+# Interface limits are the firm continuous transfer capability of each seam,
+# derived from PJM's OWN published per-tie interchange (the Data Miner
+# import_export_act_sch_interchange extract): each external tie is mapped to its
+# seam, the per-tie hourly actual flow is summed to the *simultaneous* seam
+# transfer, and the limit is the p99.5 of |seam flow| pooled over 2023-25 — the
+# duration curve's upper envelope minus the top ~0.5% transient/loop-flow hours.
+# This is a reproducible physical rating (regenerable for a forward year,
+# responsive to changed flows), NOT a value tuned to the net-MWh target (rule
+# #11): the envelope is computed from the flow series before any LP runs. The
+# prior 10/3/3.5 GW were envelopes of the widest *single-tie* maxima, which
+# over-stated the simultaneous MISO seam (ties don't all peak at once) and
+# under-stated the multi-line NYISO seam. Re-derive / verify with
+# scripts/derive_interface_limits.py (--check asserts these still match):
+#   MISO      7,300 MW (was 10,000; simultaneous export p99.5 7,290, max 8,789)
+#   NYISO     3,900 MW (was  3,000; export p99.5 3,866, max 4,204 — cross-checks
+#             the published facility ratings: Neptune 660 + Hudson HTP 660 +
+#             Linden VFT 330 + PJM-NY AC ties ~2,000 ~= 3,650 MW)
+#   Carolinas 2,400 MW (was  3,500; |flow| p99.5 2,418 on the Duke/Progress ties
+#             — note PJM net-*imports* over this seam, exporting only ~17% of
+#             hours, so the limit binds mostly on the import side)
+# TVA/LGEE (the south-west ties PJM net-imports over, ~8 TWh/yr) have no neighbor
+# in this three-seam PJM build yet — a future seam (the generalize open item).
 INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     "PJM": [
         NeighborInterface(
@@ -1938,7 +1958,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             gas_basis=0.0,
             marginal_heat_rate=14.2,
             hurdle=2.0,
-            interface_limit_mw=10000.0,
+            interface_limit_mw=7300.0,
             border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
         ),
         NeighborInterface(
@@ -1947,7 +1967,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             gas_basis=GAS_BASIS_DIFFERENTIAL["NYISO"],
             marginal_heat_rate=13.1,
             hurdle=2.0,
-            interface_limit_mw=3000.0,
+            interface_limit_mw=3900.0,
             border_zones=("PJM_EMAAC",),
         ),
         NeighborInterface(
@@ -1957,7 +1977,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             gas_basis=0.0,
             marginal_heat_rate=13.5,
             hurdle=2.0,
-            interface_limit_mw=3500.0,
+            interface_limit_mw=2400.0,
             border_zones=("PJM_Dominion",),
         ),
     ],
