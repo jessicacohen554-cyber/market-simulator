@@ -169,12 +169,44 @@ The measured override is **not a clean keeper as a whole**. It splits:
   **volume** failure, not a price one.
 
 **Action taken:** the measured artifacts (derivation script, override JSON,
-comparison, this doc, and both bundles) are committed, but the override is **not
-promoted to the default** — the baseline command and its ST/CT volume calibration
-stay the keeper (no silent keeper cut). The natural defensible follow-up is a
-**CC-only measured variant** (apply the measured CC bands, which improve volumes,
-and leave CT/ST on the calibrated curve to avoid the coupling crater); that is a
-separate gated change, not silently folded in here.
+comparison, this doc, and both bundles) are committed, but the full-gas override
+is **not promoted to the default** — the baseline command and its ST/CT volume
+calibration stay the keeper (no silent keeper cut).
+
+## 7. CC-only variant (run129) — the defensible measured change
+
+The follow-up applies the measured bands to **CC only** (CC_REGULAR + CC_CHP,
+peak mode B; `inputs/calibration/offer_curve_dam_hrmults_cconly.json`,
+`scripts/derive_dam_offer_hrmults.py --only-groups CC_REGULAR,CC_CHP`), leaving
+CT/ST on the calibrated curve so the CT↔ST coupling never fires. Bundle
+`results/calibration/ercot_dam_offers_cconly_3yr` (dashboard run129).
+
+**Per-class % error vs EIA-923 (2023 / 2024 / 2025):**
+
+| class | BASE %err | CC-only %err | note |
+|---|---|---|---|
+| CC_CHP | +18.0 / +19.3 / +23.2 | **+0.4 / +0.5 / +3.6** | **fixed** — the largest, most systematic baseline miss |
+| CC_REGULAR | -2.9 / +3.8 / +2.1 | -2.2 / +4.7 / +3.8 | in band |
+| CT_PEAKER | -44 / -48 / -26 | **-29 / -33 / -7** | improved (2025 back in band) |
+| ST_GAS | +4.8 / -1.6 / +8.6 | +11.9 / +5.4 / +16.3 | drifts a little high (swing class absorbs the CC backdown) |
+| COAL | within band | within band | ~unchanged |
+
+- **Gate: 12/18 in-tolerance** (vs baseline 13/18, full-gas 8/18). Roughly
+  gate-neutral, but it fixes the structural **CC_CHP +18-23%** over-run that
+  baseline misses every year (a ~5 TWh, ~28 TWh class) and pulls CT_PEAKER
+  toward bench; the one regression is small-TWh ST_GAS drift (+2 TWh in 2023 /
+  2025, where the tight ±1 TWh band flips it to FAIL).
+- **LMP MAE** 10.50 / 13.08 / 17.06 (vs baseline 10.51 / 12.99 / 15.87) and the
+  **tail** (151/88 → 151/88 in 2023) are within noise.
+
+**Verdict:** CC-only is the **defensible measured change** — it lands the
+measured CC offers (which the grounding doc already judged "INSIDE, keep") and
+fixes the biggest systematic baseline volume error without the coupling crater,
+at near-neutral LMP/tail. It is a legitimate keeper candidate; promotion to the
+default is left to the user (the baseline stays the committed default until then).
+CT/ST stay on the calibrated curve — their measured offers are a swing-lever vs
+literal-offer conflict that a single offer height cannot resolve (grounding doc
+§4 ST_GAS).
 
 ## 7. Reproduce
 
