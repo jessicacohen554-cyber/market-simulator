@@ -38,7 +38,8 @@ Measured (`scripts/_dam_offer_compare.py` + a monthly/price-band split):
   the model prices **only 6 hours <$20 all year vs 2329 actual**; median model
   $30 vs $25.9. => a too-high price *floor*, not just a high body.
 
-So "lower CT/ST offers" is one lever, but the evidence points harder at:
+"lower CT/ST offers" was the first instinct but run130 (below) ruled it out —
+the evidence points at:
   1. **The 2025 floor** — why does the model almost never clear below $20?
      Suspects: the co-opt ORDC **reserve adder lifting non-scarce hours**, the
      **ORDC multistep floor** ($20 at reserves <=6500 MW / $10 at 6500-7000;
@@ -63,12 +64,22 @@ Spend the first hour on the decomposition (which lever owns each year) before
 sweeping — a single static curve change hits all three years, and 2023 is
 already good, so don't break it.
 
-## First probe already on the dashboard
+## First probe — CT offer lever is RULED OUT (run130)
 
-run130 (ct-peak-cool): cc_merit_ramp + CT_PEAKER econ_high -0.4 (2.18->1.58) and
-peak -6.0 (13.15->7.15), ST untouched, via
-`inputs/calibration/offer_curve_deltas_ctcool1.json`. See its dashboard sidecar
-for the result vs run129 — use it as the first data point, not the answer.
+run130 (`results/calibration/ercot_dam_ctcool1_3yr`, dashboard
+`2026-06-18-run130-ct-peak-cool`) lowered CT_PEAKER econ_high 2.18->1.58 and peak
+13.15->7.15 (ST untouched) on top of run129, via
+`inputs/calibration/offer_curve_deltas_ctcool1.json`. **Result: the LMP hot bias
+barely moved** — 2025 MAE 17.06->16.62 (avg -0.45), 2024 -0.21, 2023 flat. So the
+CT (and by extension the gas econ/peak) offer curve is **not** the lever for the
+2024/2025 hot bias — this confirms the decomposition below. It did help volumes
+(CT_PEAKER -7%->+2% in 2025, ST over-run trimmed; gate still 12/18), so it is a
+mild volume win, but it does NOT fix LMP.
+
+**=> Do not keep sweeping CT/ST offer heights for LMP. Go after the co-opt/ORDC
+layer:** the 2025 price floor (the model clears <$20 only 6 h/yr vs 2329 actual)
+and the 2024 scarcity spikes (Apr/Aug/Oct). The reserve adder / ORDC floor /
+reserve-demand steepness are the live levers; offers are spent.
 
 ## Levers & wiring
 
