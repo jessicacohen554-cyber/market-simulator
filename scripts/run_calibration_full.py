@@ -1212,6 +1212,7 @@ def solve_and_persist(
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
+    interchange_shaping_export_only: bool = False,
     reference_price_interface: bool = False,
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
@@ -1322,6 +1323,7 @@ def solve_and_persist(
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
             interchange_shaping=interchange_shaping,
+            interchange_shaping_export_only=interchange_shaping_export_only,
             reference_price_interface=reference_price_interface,
             negative_renewable_offers=negative_renewable_offers,
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
@@ -1459,6 +1461,7 @@ def solve_and_persist(
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
         "interchange_shaping": interchange_shaping,
+        "interchange_shaping_export_only": interchange_shaping_export_only,
         "reference_price_interface": reference_price_interface,
         "negative_renewable_offers": negative_renewable_offers,
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
@@ -1536,6 +1539,9 @@ def solve_and_persist(
             cc_outage_derate_from_top=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
+    if interchange_shaping_export_only:
+        recorded_cfg = recorded_cfg.with_overrides(
+            interchange_shaping=True, interchange_shaping_export_only=True)
     if reference_price_interface:
         recorded_cfg = recorded_cfg.with_overrides(
             reference_price_interface=True)
@@ -3369,6 +3375,17 @@ def main() -> None:
              "floor. Requires --priced-interchange; no-op without a measured "
              "envelope. Off (default) changes no existing run.")
     parser.add_argument(
+        "--interchange-shaping-export-only", action="store_true",
+        help="Like --interchange-shaping but shapes ONLY the export side, "
+             "leaving every import tranche available in every hour. The full "
+             "both-sided shape caps gross import availability to the net-import "
+             "envelope (net << gross), starving baseload imports and "
+             "substituting gas (inflating gas TWh and the mean LMP); export-only "
+             "keeps just the midday-export cap (surplus beyond the measured "
+             "export curtails and prices negative) without that regression. "
+             "Implies --interchange-shaping. Requires --priced-interchange; off "
+             "(default) changes no existing run.")
+    parser.add_argument(
         "--reference-price-interface", action="store_true",
         help="Serve the priced-interchange seam through the forecast-grade "
              "reference-price interface (per-neighbor gas x heat-rate x "
@@ -3587,6 +3604,7 @@ def main() -> None:
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,
+        interchange_shaping_export_only=args.interchange_shaping_export_only,
         reference_price_interface=args.reference_price_interface,
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,

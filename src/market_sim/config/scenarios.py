@@ -447,6 +447,13 @@ class ScenarioConfig:
     # (byte-identical); only fires when priced_interchange is on and a measured
     # envelope exists. Targets CAISO's over-priced midday floor (the flat node
     # floors price at the cheapest active import tranche all day).
+    interchange_shaping_export_only: bool = False  # Like interchange_shaping but
+    # skips the import-availability cap, shaping ONLY the export side. The both-
+    # sided shape caps gross import availability to the net-import envelope
+    # (net << gross), starving baseload imports and substituting gas; export-only
+    # keeps just the midday-export cap (surplus beyond the measured export
+    # curtails and prices negative) without the import regression. Implies
+    # interchange_shaping; default off (byte-identical).
     reference_price_interface: bool = False  # Priced-interchange node: serve the
     # seam through the forecast-grade reference-price interface instead of the
     # fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Each neighbor's hourly price is
@@ -1458,6 +1465,7 @@ TIER_TAGS: dict[str, int] = {
     "ordc_reliability_deployment_mw": 2,
     "as_revenue_enabled": 1,
     "interchange_shaping": 1,
+    "interchange_shaping_export_only": 1,
     "reference_price_interface": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
