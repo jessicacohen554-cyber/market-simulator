@@ -167,15 +167,20 @@ def convert_ba(ba: str, input_dir: Path) -> pd.DataFrame:
         KeyError: if ``ba`` has no known local timezone.
     """
     timezone = BA_TIMEZONES[ba]
-    fueltype = pd.read_parquet(input_dir / f"{ba}_fueltype.parquet")
     region = pd.read_parquet(input_dir / f"{ba}_region.parquet")
-
-    gen_wide = _pivot_long(fueltype, "fueltype")
-    gen_wide.columns = [f"NG: {code}" for code in gen_wide.columns]
-
     region_wide = _pivot_long(region, "type").rename(columns=REGION_TYPE_TO_COLUMN)
 
-    wide = region_wide.join(gen_wide, how="outer").sort_index()
+    # Fueltype (per-fuel net generation) is optional: some BAs (e.g. MISO)
+    # publish only the region demand family. The reference-price seam needs only
+    # the ``Demand`` column for its load shape, so a region-only BA still yields
+    # a usable hourly extract — just with no ``NG: <CODE>`` generation columns.
+    fueltype_path = input_dir / f"{ba}_fueltype.parquet"
+    if fueltype_path.exists():
+        gen_wide = _pivot_long(pd.read_parquet(fueltype_path), "fueltype")
+        gen_wide.columns = [f"NG: {code}" for code in gen_wide.columns]
+        wide = region_wide.join(gen_wide, how="outer").sort_index()
+    else:
+        wide = region_wide.sort_index()
     period = wide.index.to_series().reset_index(drop=True)
     wide = wide.reset_index(drop=True)
 
@@ -191,15 +196,16 @@ def convert_ba(ba: str, input_dir: Path) -> pd.DataFrame:
 
 
 def _has_input(ba: str, input_dir: Path) -> bool:
-    """Return whether both long input parquets exist for ``ba``."""
-    return (
-        (input_dir / f"{ba}_fueltype.parquet").exists()
-        and (input_dir / f"{ba}_region.parquet").exists()
-    )
+    """Return whether the (mandatory) region parquet exists for ``ba``.
+
+    The ``_region`` demand family is required; ``_fueltype`` is optional (a
+    region-only BA like MISO still builds, without ``NG: <CODE>`` columns).
+    """
+    return (input_dir / f"{ba}_region.parquet").exists()
 
 
 def _present_bas(input_dir: Path) -> list[str]:
-    """Return the known BAs that have both long input parquets, BA-sorted."""
+    """Return the known BAs that have the region input parquet, BA-sorted."""
     return sorted(ba for ba in BA_TIMEZONES if _has_input(ba, input_dir))
 
 
