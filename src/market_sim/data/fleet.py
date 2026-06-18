@@ -69,6 +69,18 @@ logger = logging.getLogger(__name__)
 # markets, produced by ``scripts/process_eia860.py`` from the raw release.
 EIA_860_PARQUET_NAME: str = "eia860_generators.parquet"
 
+# Committed parquet of within-window plant exits (whole plants that retired
+# mid-backcast and so are absent from the single recent operable vintage —
+# e.g. Mystic, plant 1588, a ~1.4 GW CC retired mid-2024). Built by
+# ``scripts/process_eia860.py --retired-window-from`` in the canonical fleet
+# schema (plus month-precise online/retirement columns), with ``status`` = OP
+# and the actual retirement carried in ``planned_retirement_*``. Injected into
+# the BACKCAST fleet so the COD ramp can dispatch each through its real
+# retirement month — the mirror of :func:`load_planned_additions` (forecast).
+EIA_860_RETIRED_WINDOW_PARQUET_NAME: str = (
+    "eia860_generator_retired_within_window.parquet"
+)
+
 # Committed parquet of the EIA-860 Multifuel schedule (operable units),
 # produced by ``scripts/process_eia860.py``. Carries the multiple-energy-
 # source fields ("Energy Source 2", "Multiple Fuels?", "Switch Between Oil
@@ -2647,6 +2659,73 @@ def load_fleet_from_csv(
         source = parquet_path
 
     _cache_binned_fleet(iso, generators, source)
+    return generators
+
+
+def load_retired_within_window(
+    iso: str,
+    iso_config: ISOConfig | None = None,
+    data_dir: Path | None = None,
+    year: int | None = None,
+) -> list[Generator]:
+    """Load whole-plant exits that retired mid-backcast for an ISO.
+
+    The committed operable EIA-860 snapshot is a single recent vintage, so a
+    plant that ran through part of the backcast window and retired before that
+    vintage (e.g. Mystic, plant 1588 — a ~1.4 GW CC active through 2023 that
+    retired mid-2024) is absent from *every* modeled year. The COD ramp can
+    only age out a unit it is given, so this injects those units into the
+    fleet; the ramp (keyed on the same plant code via
+    :func:`market_sim.data.cod_ramp.load_cod_map`, which unions the same
+    retiree record) then dispatches each through its real retirement month and
+    zeros it after.
+
+    Reads :data:`EIA_860_RETIRED_WINDOW_PARQUET_NAME` (canonical fleet schema,
+    ``status`` = OP), filters to the ISO's balancing authority, and builds
+    :class:`Generator` objects exactly as the operable fleet loader does (zones
+    from eGRID geography, CHP flag joined from the operable sheet). Returns an
+    empty list when the parquet is absent.
+
+    **Backcast-mode only** — the mirror of :func:`load_planned_additions`
+    (forecast). A forecast solves a forward year whose snapshot must not carry
+    a unit that has already retired, so callers gate this on
+    ``config.mode == "backcast"``.
+
+    Resolves the EIA-860 directory through :func:`paths.active_eia860_dir`
+    (honoring a ``ScenarioConfig.eia860_vintage_year`` switch). A year-matched
+    native vintage carries its within-window exits in its own operable file and
+    ships no retiree parquet, so this returns an empty list there — the operable
+    fleet already has them, and injecting again would double-count.
+    """
+    iso = iso.upper()
+    data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
+    if iso_config is None:
+        try:
+            iso_config = get_iso_config(iso)
+        except ValueError:
+            iso_config = None
+
+    path = data_dir / EIA_860_RETIRED_WINDOW_PARQUET_NAME
+    if not path.exists():
+        return []
+
+    df = _normalize_columns(pd.read_parquet(path))
+    ba_code = ISO_TO_BA_CODE.get(iso)
+    if ba_code is not None and "balancing_authority_code" in df.columns:
+        df = df[df["balancing_authority_code"].astype(str).str.strip() == ba_code]
+    if df.empty:
+        return []
+
+    df = df.copy()
+    df["chp"] = df["plant_id"].map(_chp_by_plant(path.parent, year)).fillna("N")
+    generators = _rows_to_generators(df, iso, iso_config)
+    if generators:
+        logger.info(
+            "loaded %d within-window retiree units for %s (%.0f MW, plants %s)",
+            len(generators), iso,
+            sum(g.pmax_mw for g in generators),
+            sorted({int(g.plant_code) for g in generators}),
+        )
     return generators
 
 

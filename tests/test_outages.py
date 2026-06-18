@@ -369,6 +369,25 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
                 f"Kleen Energy missing from derate factors {year}",
             )
 
+    def test_within_window_retiree_capped_by_observed_outages(self):
+        # Mystic (1588) is a within-window plant exit injected into the backcast
+        # fleet; it ran ~16% of hours on fuel-security dispatch, so its observed
+        # CEMS outage windows must derate (1588, CC_REGULAR) to a low
+        # availability ceiling — else the LP runs the ~1.4 GW CC as baseload.
+        # Present 2023/2024 (operated then), absent 2025 (retired mid-2024).
+        key = (1588, "CC_REGULAR")
+        for year in (2023, 2024):
+            factors = unit_outage_derate_factors(year, iso="NEISO")
+            self.assertIn(
+                key, factors,
+                f"Mystic derate missing for {year} — retiree not in capacity "
+                "denominator or outage windows not derived",
+            )
+            self.assertLess(
+                float(factors[key].mean()), 0.5,
+                f"Mystic {year} availability ceiling too high — over-dispatch",
+            )
+
     def test_derate_availability_in_bounds(self):
         # Availability arrays must be in [0, 1] — no negative values or > 1.
         # All-zero availability is valid (e.g. Stony Brook 6081 whose 5-unit

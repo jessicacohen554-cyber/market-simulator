@@ -339,10 +339,22 @@ def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
     the fleet's nameplate summed per ``(plant_code, plant_group)``.
     """
     from market_sim.config.iso_configs import get_iso_config
-    from market_sim.data.fleet import load_fleet_from_csv
+    from market_sim.data.fleet import (
+        load_fleet_from_csv,
+        load_retired_within_window,
+    )
 
+    iso_config = get_iso_config(iso)
+    # Within-window plant exits dispatch in the backcast fleet, so their
+    # capacity must be in the derate denominator — else their unit-outage rows
+    # route to a (plant_code, plant_group) absent from this map and are skipped,
+    # leaving the injected retiree (e.g. Mystic) un-capped.
+    fleet = (
+        load_fleet_from_csv(iso, iso_config)
+        + load_retired_within_window(iso, iso_config)
+    )
     cap: dict[tuple[int, str], float] = {}
-    for g in load_fleet_from_csv(iso, get_iso_config(iso)):
+    for g in fleet:
         code = int(g.plant_code)
         if code <= 0 or not g.plant_group:
             continue
