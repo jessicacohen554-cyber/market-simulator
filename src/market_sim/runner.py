@@ -552,6 +552,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 dispatch_kwargs.update(
                     reserve_requirement=coopt_req,
                     reserve_eligible=coopt_elig,
+                    reserve_storage=True,
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )
