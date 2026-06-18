@@ -727,7 +727,9 @@ def iso_hub_daily_gas_prices(
     the measured monthly AGT basis across the month's days proportional to mean
     NEISO daily demand raised to :data:`AGT_DAILY_BASIS_CONVEXITY` — the
     coldest (highest-demand) days carry the convex citygate scarcity blowout
-    that a flat monthly plateau never reaches. The redistribution runs only in
+    that a flat monthly plateau never reaches (``config.
+    gas_hub_basis_daily_convexity`` overrides the exponent when set — a lower
+    value damps the cold-day spike). The redistribution runs only in
     winter-blowout months (positive monthly basis); shoulder/summer months
     (zero or negative basis, no pipeline scarcity) keep the flat basis. Months
     without a measured basis row or Henry Hub quote stay ``NaN`` for the caller
@@ -748,7 +750,13 @@ def iso_hub_daily_gas_prices(
         return None
     henry_hub = _henry_hub_monthly(henry_hub_path)
     hh_daily = _henry_hub_daily(henry_hub_path).get(year, {})
-    p = AGT_DAILY_BASIS_CONVEXITY
+    # The convexity exponent defaults to the fitted AGT_DAILY_BASIS_CONVEXITY
+    # constant; config.gas_hub_basis_daily_convexity damps it (a lower exponent
+    # flattens the cold-day basis spike, so fewer hours cross dual-fuel oil
+    # parity — the NEISO oil-overshoot lever).
+    p = getattr(config, "gas_hub_basis_daily_convexity", None)
+    if p is None:
+        p = AGT_DAILY_BASIS_CONVEXITY
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
