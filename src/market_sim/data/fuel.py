@@ -30,6 +30,7 @@ one model.
 from __future__ import annotations
 
 import logging
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -108,6 +109,20 @@ _ZERO_FUEL_PRICE: float = 0.0
 
 # Calendar days per month for a non-leap year (sums to 365 -> 8760 hours).
 _DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+# Opt-in clean-data read path. When the ``MARKET_SIM_USE_CLEAN`` environment flag
+# is truthy, the delivered fuel-price loaders source their series from the
+# curated ``data/clean`` tree via the frozen ``clean_io.read_clean`` seam instead
+# of the raw ``data/raw/gas-prices`` CSVs. OFF by default: the raw path stays the
+# contract, so existing runs and calibrations are byte-identical unless a caller
+# opts in (and the clean path falls back to raw when the clean tree is absent).
+_USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUTHY: frozenset[str] = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean_data() -> bool:
+    """Whether the opt-in clean-data read path is enabled (default ``False``)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
 
 
 def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
@@ -507,6 +522,50 @@ _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 
+# Clean-data ("data/clean/fuel-prices") consumption. The curated dataset carries
+# the delivered fuel-price benchmarks as ``price_usd_per_mmbtu`` keyed by
+# ``(fuel, hub, interval_start_utc)``; the daily Henry Hub spot — the delivered
+# gas price — is its ``(gas, henry_hub)`` series. (Only Henry Hub daily is curated
+# today; see scripts/curate_fuel_prices.py.)
+_FUEL_PRICES_DATATYPE: str = "fuel-prices"
+_HENRY_HUB_CLEAN_KEY: tuple[str, str] = ("gas", "henry_hub")
+
+# Clean-backed daily series cache, keyed by (fuel, hub) so a multi-year run reads
+# the curated parquet once. Separate from _HH_DAILY_CACHE (raw, keyed by path).
+_HH_DAILY_CLEAN_CACHE: dict[tuple[str, str], dict[int, dict[int, list[float]]]] = {}
+
+
+def _clean_fuel_price_daily(fuel: str, hub: str) -> dict[int, dict[int, list[float]]]:
+    """Daily delivered price for one ``(fuel, hub)`` from the clean tree.
+
+    Clean-backed mirror of the raw-CSV reshaping in :func:`_henry_hub_daily`:
+    reads the curated ``fuel-prices`` dataset through the frozen
+    :func:`scripts.lib.clean_io.read_clean` seam (``price_usd_per_mmbtu`` by
+    ``fuel`` / ``hub``), selects the requested series and folds its daily price
+    into the same ``{year: {month: [daily $/MMBtu, ...]}}`` structure the raw
+    path builds. Ordered and grouped on ``interval_start_utc`` (00:00 UTC of each
+    price date), so the year/month buckets match the raw ``date`` exactly.
+    """
+    # Local import: the model→scripts edge is the consumption seam and is only
+    # crossed on the opt-in clean path, so module import stays cheap.
+    from scripts.lib.clean_io import read_clean
+
+    df = read_clean(
+        _FUEL_PRICES_DATATYPE,
+        validate=False,
+        columns=["interval_start_utc", "fuel", "hub", "price_usd_per_mmbtu"],
+    )
+    sel = df[(df["fuel"] == fuel) & (df["hub"] == hub)].sort_values(
+        "interval_start_utc"
+    )
+    out: dict[int, dict[int, list[float]]] = {}
+    for row in sel.itertuples(index=False):
+        ts = row.interval_start_utc
+        out.setdefault(ts.year, {}).setdefault(ts.month, []).append(
+            float(row.price_usd_per_mmbtu)
+        )
+    return out
+
 
 def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
     """Return the regional gas-basis frame, or ``None`` when it carries no rows.
@@ -585,7 +644,24 @@ def _henry_hub_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
 
     Days are grouped by calendar month in date order; trading-day gaps
     (weekends/holidays) simply yield shorter lists. Cached per path.
+
+    When the opt-in clean-data path is enabled (:func:`_use_clean_data`) and no
+    explicit ``path`` override is given, the series is sourced from the curated
+    ``data/clean/fuel-prices`` parquet — the ``(gas, henry_hub)`` rows, via
+    :func:`_clean_fuel_price_daily` — instead of the raw ``henry_hub_daily.csv``.
+    The clean and raw paths are byte-for-byte equal (the curator carries the
+    price column verbatim); when the clean partition is absent the loader falls
+    back to raw, so enabling the flag never breaks a tree that has not been
+    regenerated.
     """
+    if path is None and _use_clean_data():
+        from scripts.lib.clean_io import clean_exists
+
+        if clean_exists(_FUEL_PRICES_DATATYPE):
+            key = _HENRY_HUB_CLEAN_KEY
+            if key not in _HH_DAILY_CLEAN_CACHE:
+                _HH_DAILY_CLEAN_CACHE[key] = _clean_fuel_price_daily(*key)
+            return _HH_DAILY_CLEAN_CACHE[key]
     resolved = Path(path) if path else HENRY_HUB_DAILY_PATH
     if resolved in _HH_DAILY_CACHE:
         return _HH_DAILY_CACHE[resolved]
