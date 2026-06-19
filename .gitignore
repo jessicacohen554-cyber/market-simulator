@@ -127,3 +127,10 @@ results/calibration/*/scarcity*.parquet
 results/calibration/ercot_dam_cconly_rerun_3yr/
 # Shared input cache written by calibration runs (scratch).
 /results/calibration/_shared/
+
+# Curated clean tree is DERIVED and disposable: regenerated from data/raw by the
+# per-datatype scripts/curate_*.py (each writing through
+# scripts/lib/clean_io.write_clean). Sessions commit the curation script + its
+# test, never the generated parquet. The schema YAMLs and the data dictionary
+# under data/dictionary/ ARE committed (they are the contract, not output).
+/data/clean/
