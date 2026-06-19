@@ -1223,21 +1223,6 @@ class ScenarioConfig:
     # docs/multi-iso/neiso-data-audit.md.
     gas_hub_basis_daily: bool = False
 
-    # Tier 3 (calibration) — damp the daily-AGT basis convexity. The daily
-    # within-month basis redistribution (gas_hub_basis_daily, above) raises
-    # NEISO daily demand to constants.AGT_DAILY_BASIS_CONVEXITY (7.0) so the
-    # coldest days carry the citygate blowout. That default is fitted to the
-    # backcast and over-builds the cold-day spike: it pushes ~2.1 TWh of NEISO
-    # 2025 dual-fuel generation past oil parity vs the ~1.2 TWh EIA-930 NG:OIL
-    # target. When set (and gas_hub_basis_daily is on), this float overrides
-    # the convexity exponent — a lower value flattens the daily basis so fewer
-    # cold-day hours cross oil parity, damping the oil over-dispatch (and the
-    # over-aggressive winter LMP tail) without changing the mean-preserved
-    # monthly hub level. None (default) keeps the AGT_DAILY_BASIS_CONVEXITY
-    # constant, so existing runs are byte-identical. See
-    # market_sim.data.fuel.iso_hub_daily_gas_prices.
-    gas_hub_basis_daily_convexity: float | None = None
-
     # Tier 3 (calibration) — re-attribute dual-fuel switched generation to oil
     # (doc-08 NEISO §2d). The dual-fuel switch (dual_fuel_switching) is
     # objective-only: a unit that switches to oil prices at min(gas, oil) but
@@ -1633,7 +1618,6 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "gas_hub_basis_daily": 3,
-    "gas_hub_basis_daily_convexity": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,

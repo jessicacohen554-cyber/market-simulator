@@ -1,7 +1,6 @@
 """Tests for fuel price resolution against AEO Henry Hub trajectories."""
 
 import numpy as np
-import pytest
 
 from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
@@ -1216,54 +1215,3 @@ def test_monthly_ttc_noop_for_other_isos_and_untabulated_years():
     out_old = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2099, 8760)
     assert np.asarray(out_old).ndim == 1
     np.testing.assert_array_equal(out_old, ttc)
-
-
-def _patch_daily_basis_inputs(monkeypatch):
-    """Feed iso_hub_daily_gas_prices a synthetic Jan cold-snap basis month.
-
-    January carries a +10 $/MMBtu Algonquin basis over a $3 Henry Hub; three
-    cold days run at 3x demand and the rest at 1x, so the demand-convex
-    redistribution has something to concentrate. All other months are left
-    uncovered (no Henry Hub quote) so the assertions isolate January.
-    """
-    from market_sim.data import fuel as fuel_mod
-
-    basis = np.zeros(12)
-    basis[0] = 10.0  # January only
-    monkeypatch.setattr(fuel_mod, "load_winter_gas_basis",
-                        lambda config, year, path=None: basis)
-    demand = np.ones(365)
-    demand[4:7] = 3.0  # three cold January days
-    monkeypatch.setattr(fuel_mod, "_neiso_daily_demand",
-                        lambda year, hours: demand)
-    monkeypatch.setattr(fuel_mod, "_henry_hub_monthly",
-                        lambda path=None: {(2025, 1): 3.0})
-    monkeypatch.setattr(fuel_mod, "_henry_hub_daily",
-                        lambda path=None: {})  # flat daily HH -> uses monthly
-
-
-def test_daily_basis_convexity_override_damps_cold_day_spike(monkeypatch):
-    """A lower --gas-hub-basis-daily-convexity flattens the cold-day blowout.
-
-    The damping knob: ``gas_hub_basis_daily_convexity`` overrides the fitted
-    AGT_DAILY_BASIS_CONVEXITY exponent. A smaller exponent must lower the
-    January peak hub price (fewer hours past dual-fuel oil parity = less oil)
-    while preserving the mean (the redistribution is mean-preserving).
-    """
-    from market_sim.data.fuel import iso_hub_daily_gas_prices
-
-    _patch_daily_basis_inputs(monkeypatch)
-    jan = slice(0, 31 * 24)
-
-    full = iso_hub_daily_gas_prices(
-        ScenarioConfig(iso="NEISO", hours=8760), 2025)  # default constant 7.0
-    damped = iso_hub_daily_gas_prices(
-        ScenarioConfig(iso="NEISO", hours=8760,
-                       gas_hub_basis_daily_convexity=2.0), 2025)
-
-    assert full is not None and damped is not None
-    # Lower convexity => lower cold-day peak.
-    assert np.nanmax(damped[jan]) < np.nanmax(full[jan])
-    # Mean-preserving: January mean stays Henry Hub + basis = 3 + 10 regardless.
-    assert np.nanmean(full[jan]) == pytest.approx(13.0, abs=1e-6)
-    assert np.nanmean(damped[jan]) == pytest.approx(13.0, abs=1e-6)
