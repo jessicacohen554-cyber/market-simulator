@@ -66,6 +66,7 @@ solar spreads across upstate and downstate zones. The HSL path is stubbed in
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -635,6 +636,94 @@ def _mw_to_cf(
     return np.clip(cf, _CF_MIN, _CF_MAX)
 
 
+# Environment gate for sourcing the model's renewables inputs from the curated
+# ``data/clean`` tree (via the shared read seam ``scripts.lib.clean_io``) rather
+# than the raw HSL parquet tree. Default OFF: the raw GEN/HSL path is the
+# shipped behavior and remains the fallback whenever a clean partition is
+# absent. Flip ON (``MARKET_SIM_USE_CLEAN=1``) to read the schema-validated
+# clean ``renewables`` table. The two sources are bit-identical — the curation
+# (scripts/curate_renewables.py) is a pure unpivot of the wide HSL frame — so
+# enabling the flag does not change model output (see tests/test_consume_renewables.py).
+_USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUE_TOKENS: frozenset[str] = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether to source renewables from ``data/clean`` (see ``MARKET_SIM_USE_CLEAN``)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUE_TOKENS
+
+
+def _clean_io():  # type: ignore[no-untyped-def]
+    """Lazily import the clean read seam (``scripts.lib.clean_io``).
+
+    The seam lives at the repo root, outside the installed ``market_sim``
+    package, so the repo root is added to ``sys.path`` if it is not already
+    importable. Imported lazily so the default raw path never pays the cost.
+    """
+    try:
+        from scripts.lib import clean_io
+    except ModuleNotFoundError:
+        import sys
+
+        from market_sim.config.paths import REPO_ROOT
+
+        if str(REPO_ROOT) not in sys.path:
+            sys.path.insert(0, str(REPO_ROOT))
+        from scripts.lib import clean_io
+    return clean_io
+
+
+def _hsl_hourly_from_clean(iso: str, year: int) -> pd.DataFrame | None:
+    """Rebuild the wide GEN/HSL frame from the clean ``renewables`` table.
+
+    Reads the long, schema-validated clean partition
+    (``data/clean/renewables/<iso>/renewables_<year>.parquet``) through
+    :func:`scripts.lib.clean_io.read_clean` — loading wind/solar
+    ``generation_mw``, ``hsl_mw`` and ``curtailment_mw`` — and pivots the
+    ISO-wide (``zone == "SYSTEM"``) rows back to the wide ``_HSL_COLUMNS``
+    layout the raw loader emits. Every downstream consumer (curtailment,
+    :func:`hsl_potential_mw`, :func:`_hsl_cf_profile`) is therefore unchanged.
+
+    Returns ``None`` when no clean partition covers ``(iso, year)`` (the caller
+    then falls back to the raw parquet) or the partition is not a full year.
+    """
+    clean_io = _clean_io()
+    if not clean_io.clean_exists("renewables", iso=iso, year=year):
+        return None
+    long = clean_io.read_clean(
+        "renewables",
+        iso=iso,
+        year=year,
+        columns=[
+            "interval_start_utc",
+            "zone",
+            "fuel",
+            "generation_mw",
+            "hsl_mw",
+            "curtailment_mw",
+        ],
+    )
+    long = long[long["zone"] == "SYSTEM"]
+
+    wide: dict[str, np.ndarray] = {}
+    n_hours: int | None = None
+    for fuel in _RENEWABLE_FUELS:
+        rows = (
+            long[long["fuel"] == fuel]
+            .sort_values("interval_start_utc")
+            .reset_index(drop=True)
+        )
+        if n_hours is None:
+            n_hours = len(rows)
+        elif len(rows) != n_hours:
+            return None  # ragged per-fuel coverage — cannot form a wide frame
+        wide[f"{fuel}_gen_mw"] = rows["generation_mw"].to_numpy(dtype=float)
+        wide[f"{fuel}_hsl_mw"] = rows["hsl_mw"].to_numpy(dtype=float)
+    if not n_hours:
+        return None
+    return pd.DataFrame({"hour": np.arange(n_hours), **wide})
+
+
 def load_hsl_hourly(iso: str, year: int) -> pd.DataFrame | None:
     """Return the hourly GEN/HSL frame for ``(iso, year)``, or ``None``.
 
@@ -644,16 +733,38 @@ def load_hsl_hourly(iso: str, year: int) -> pd.DataFrame | None:
     by hour. ``hsl - gen`` is therefore the *reported* curtailment, the
     benchmark the calibration report compares modeled curtailment against.
 
-    Returns ``None`` when no HSL-style parquet covers the pair or the file
+    The frame is sourced from the raw per-year HSL parquet by default. When
+    ``MARKET_SIM_USE_CLEAN`` is set (see :func:`_use_clean`) it is read from
+    the curated ``data/clean`` tree instead, falling back to raw when no clean
+    partition covers the pair.
+
+    Returns ``None`` when no HSL-style source covers the pair or the source
     is not a clean full year.
+    """
+    df = None
+    if _use_clean():
+        df = _hsl_hourly_from_clean(iso, year)
+    if df is None:
+        df = _load_hsl_hourly_raw(iso, year)
+    if df is None:
+        return None
+    if not set(_HSL_COLUMNS).issubset(df.columns) or len(df) != HOURS_PER_YEAR:
+        return None
+    return df.sort_values("hour").reset_index(drop=True)
+
+
+def _load_hsl_hourly_raw(iso: str, year: int) -> pd.DataFrame | None:
+    """Read the raw per-year GEN/HSL parquet under ``data/raw``, or ``None``.
+
+    The shipped default source for :func:`load_hsl_hourly`: the wide HSL frame
+    built by ``scripts/build_{ercot,caiso}_hsl.py``. Returns ``None`` when no
+    parquet covers ``(iso, year)``; column/length validation is applied by the
+    caller so the raw and clean sources are checked identically.
     """
     path = _hsl_file(iso, year)
     if path is None or not path.exists():
         return None
-    df = pd.read_parquet(path)
-    if not set(_HSL_COLUMNS).issubset(df.columns) or len(df) != HOURS_PER_YEAR:
-        return None
-    return df.sort_values("hour").reset_index(drop=True)
+    return pd.read_parquet(path)
 
 
 def _hsl_cf_profile(
