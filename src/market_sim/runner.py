@@ -561,7 +561,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_cap=wind_cap,
                 solar_cf=solar_cf,
                 solar_cap=solar_cap,
-                voll=config.voll,
+                # Load-shed penalty = the ISO's own energy bid cap, not the
+                # ERCOT-flavored ScenarioConfig default ($5,000). Each ISOConfig
+                # carries its real cap (NYISO/CAISO/MISO/PJM $2,000 per FERC
+                # Order 831; ERCOT $5,000), so scarcity hours price at the cap
+                # the market actually clears against instead of a uniform $5k.
+                voll=iso_config.voll,
                 incidence=incidence,
                 ttc=ttc,
                 storage_power_cap=storage.power_cap,
