@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-19 (PJM — coal-rank fallback for mid-backcast retirees; coal-over de-masked)
+
+Three retiring PJM coal plants — **W H Sammis** (OH), **Homer City** (PA) and
+**AES Warrior Run** (MD), all bituminous — were left in the model's generic
+unranked `COAL` bucket because `coal_supply_class` consulted only the curated
+and EIA-923 fuel-receipt maps, and a plant that retired mid-backcast has no
+recent burned-fuel receipts to derive a rank from. The EIA-923 calibration
+benchmark already resolves them to `COAL_BIT` via the plant's fuel code, so the
+model showed a spurious generic "Coal" row the actual never has, and priced
+them at generic full fuel cost instead of PJM's bituminous passthrough.
+
+- **Fix** (`data.fleet.coal_supply_class`): a tertiary fallback to the retiree's
+  EIA-860 `energy_source` rank (`_eia860_retiree_coal_supply`), mirroring the
+  benchmark's fuel-code fallback so model and benchmark bucket these plants
+  identically. Scoped to the retired-within-window vintage only — the exact
+  structural gap; operable coal is untouched (an unresolved operable plant means
+  its ISO's receipt map was never derived, a separate piece of work). PJM coal
+  now fully resolves (32 bituminous, 0 unranked); 212 fleet/coal tests pass.
+- **Consequence — the "+7%" coal-over was a labeling artifact.** The scorecard's
+  `coal-tot` gate sums only `BIT+PRB+WC`, so it had been comparing **model coal
+  *minus* the 3 retirees** (the ~13 TWh hidden in the excluded generic bucket)
+  against **actual coal that *includes* them**. Apples-to-apples the 2023 PJM
+  coal-over is **+18.7% (+21 TWh)**, not +7%. Total model coal barely moved
+  (136.7→134.8 TWh; the bituminous repricing was ~dispatch-neutral) — only the
+  attribution became honest. LMP/interchange unchanged.
+- **Root cause now visible**: ~half the coal-over is the 3 retirees
+  over-dispatching (Homer City 9.1 vs 1.0 TWh actual). Two parts — a COD-ramp
+  partial-retirement bug (`load_cod_map` collapses heterogeneous unit-retirement
+  dates to the latest, keeping full capacity until then, so Homer City runs 2
+  units that retired Jul/Aug through year-end; a cross-ISO fix deferred) and the
+  dominant economic over-dispatch of cheap uneconomic retirees the energy-only
+  LP runs as baseload (needs CAMPD unit-level availability, not a fit).
+
 ## 2026-06-19 (NEISO — ISO-NE RCPF scarcity-pricing lever, mirroring NYISO)
 
 Adds an ISO-NE Reserve Constraint Penalty Factor (RCPF) scarcity overlay, the
