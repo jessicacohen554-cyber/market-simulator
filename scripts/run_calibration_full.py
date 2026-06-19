@@ -59,6 +59,7 @@ from market_sim.config.constants import (  # noqa: E402
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
 )
@@ -536,7 +537,7 @@ def _parasitic_factor_map() -> dict[int, float]:
     falls back to scaling CAMPD gross by 1.0 (treating gross as net), which
     only shifts the level, not the timing the correlation cares about.
     """
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))
@@ -2614,8 +2615,7 @@ CF_R_GATE_MARGIN = 0.02     # pearson_r may fall at most this much vs baseline
 
 
 def _cf_emd_baseline_path(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
-            / f"cf_emd_baseline_{iso.upper()}.json")
+    return CALIBRATION_DIR / f"cf_emd_baseline_{iso.upper()}.json"
 
 
 def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
@@ -2899,8 +2899,8 @@ def apply_statistical_mode(args) -> None:
     args.no_coal_monthly_pricing = True
 
 
-def build_parser() -> argparse.ArgumentParser:
-    """Construct the calibration CLI parser (separated out for unit testing)."""
+def main() -> None:
+    """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
         description="Calibration backcast (ERCOT full; other ISOs energy-only): "
                     "solve, persist, report."
@@ -3319,19 +3319,6 @@ def build_parser() -> argparse.ArgumentParser:
              "daily AGT spot it proxies (U4) is unavailable, so it is opt-in "
              "and the keepers stay on the measured monthly overlay.",
     )
-    parser.add_argument(
-        "--gas-hub-basis-daily-convexity", type=float, default=None,
-        metavar="EXPONENT",
-        help="Damp the --gas-hub-basis-daily cold-day spike: override the "
-             "demand convexity exponent (default constants."
-             "AGT_DAILY_BASIS_CONVEXITY=7.0, fitted to the backcast). A lower "
-             "value flattens the daily AGT basis so fewer cold-day hours cross "
-             "dual-fuel oil parity, damping the NEISO oil over-dispatch (the "
-             "full convexity over-builds 2025 oil to ~2.1 TWh vs the ~1.2 TWh "
-             "EIA-930 NG:OIL target). Mean-preserving at the monthly hub level, "
-             "so the annual gas burn is unchanged. Requires "
-             "--gas-hub-basis-daily; unset keeps the fitted constant.",
-    )
     parser.add_argument("--plant-tranche-config", default=None,
                         help="Per-plant tranche-config CSV (one row per plant "
                              "with its tranche shares + per-band HR mults). "
@@ -3511,12 +3498,6 @@ def build_parser() -> argparse.ArgumentParser:
              '"COAL_PRB":{"committed":-0.05}}\' nudges committed +0.05 / -0.05. '
              "Applied on top of --offer-curve-json when both are given. The "
              "resolved absolute curve is recorded in run_config.json.")
-    return parser
-
-
-def main() -> None:
-    """Solve + persist a timestamped bundle and report it, or report an old one."""
-    parser = build_parser()
     args = parser.parse_args()
     apply_statistical_mode(args)
 
@@ -3591,10 +3572,6 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "gas_hub_basis_daily": True if args.gas_hub_basis_daily else None,
-            "gas_hub_basis_daily_convexity": (
-                args.gas_hub_basis_daily_convexity
-                if args.gas_hub_basis_daily else None
-            ),
             "dual_fuel_oil_reattribution": (
                 True if args.gas_hub_basis_daily else None
             ),
