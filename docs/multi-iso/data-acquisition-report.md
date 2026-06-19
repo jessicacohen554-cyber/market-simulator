@@ -79,7 +79,7 @@ permissive policy or add allowlist entries.
 
 ---
 
-## Step 1 — Regional gas basis  →  `inputs/raw-data/gas_basis_by_iso_month.csv`
+## Step 1 — Regional gas basis  →  `data/raw/gas_basis_by_iso_month.csv`
 
 The basis CSV needs two legs: **Henry Hub** (the subtrahend) and a **hub price**
 (the minuend). The Henry Hub leg was recovered; the hub-price leg was not.
@@ -101,8 +101,8 @@ Files written:
 
 | File | Rows | Span | Columns |
 |------|------|------|---------|
-| `inputs/raw-data/gas-prices/henry_hub_daily.csv` | 7368 | 1997-01-07 … 2026-05-11 | `date,price_usd_mmbtu` |
-| `inputs/raw-data/gas-prices/henry_hub_monthly.csv` | 352 | 1997-01 … 2026-04 | `year,month,price_usd_mmbtu` |
+| `data/raw/gas-prices/henry_hub_daily.csv` | 7368 | 1997-01-07 … 2026-05-11 | `date,price_usd_mmbtu` |
+| `data/raw/gas-prices/henry_hub_monthly.csv` | 352 | 1997-01 … 2026-04 | `year,month,price_usd_mmbtu` |
 
 - **Source:** `datasets/natural-gas` (datahub.io "core/natural-gas"),
   `https://raw.githubusercontent.com/datasets/natural-gas/main/data/{daily,monthly}.csv`.
@@ -162,7 +162,7 @@ citygate average).
 3. For each ISO row: `basis = citygate[state,year,month] − hh[year,month]`,
    `hub` = the proxy name (e.g. "CA citygate (EIA N3050CA3)"),
    `source` = `"EIA citygate proxy"`.
-4. Write rows to `inputs/raw-data/gas_basis_by_iso_month.csv` for 2021–2025.
+4. Write rows to `data/raw/gas_basis_by_iso_month.csv` for 2021–2025.
 
 **Manual procedure (exact hubs, paywalled — only if a license exists):**
 - Source AGT, Transco Z6 NY, TETCO M3, Dominion South, Chicago Citygate,
@@ -181,7 +181,7 @@ estimated or invented.
 
 ---
 
-## Step 2 — Zonal hourly load  →  `inputs/raw-data/zonal-load/<ISO>/`
+## Step 2 — Zonal hourly load  →  `data/raw/zonal-load/<ISO>/`
 
 **GOT:** nothing this run. The `zonal-load/<ISO>/` directories were not created
 because there is no content to put in them (git does not track empty dirs);
@@ -210,7 +210,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
 - **Manual steps:** loop months 2021-01 … 2025-12, download each `…pal_csv.zip`,
   unzip, concatenate. Columns: timestamp, zone name (CAPITL, CENTRL, DUNWOD,
   GENESE, HUD VL, LONGIL, MHK VL, MILLWD, N.Y.C., NORTH, WEST), Load (MW).
-  Save to `inputs/raw-data/zonal-load/NYISO/`. Be polite (small delay per file).
+  Save to `data/raw/zonal-load/NYISO/`. Be polite (small delay per file).
 - **Why automation failed:** `mis.nyiso.com` blocked (host allowlist). No auth
   needed — this one is purely a network-policy issue and will work the moment
   the host is allowlisted.
@@ -226,7 +226,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
   zones (NP15/ZP26/SP15) at processing time.
 - Docs: http://www.caiso.com/Documents/OASIS-InterfaceSpecification.pdf
 - **Manual steps:** loop monthly 2021–2025, `curl` each SingleZip URL, unzip,
-  concat → `inputs/raw-data/zonal-load/CAISO/`. OASIS throttles aggressively —
+  concat → `data/raw/zonal-load/CAISO/`. OASIS throttles aggressively —
   keep ≥5 s between calls.
 - **Why automation failed:** `oasis.caiso.com` blocked (host allowlist).
 
@@ -240,7 +240,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
   (HTTP Basic auth).
 - **Manual steps:** either (a) download the per-year zonal load CSVs from the
   reports page, or (b) register for a Web Services account and pull
-  `hourlyloadzonal` per day/zone. Save to `inputs/raw-data/zonal-load/ISO-NE/`.
+  `hourlyloadzonal` per day/zone. Save to `data/raw/zonal-load/ISO-NE/`.
 - **Why automation failed:** `www.iso-ne.com` blocked (host allowlist); the API
   path additionally needs credentials not present in the repo.
 
@@ -253,7 +253,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
 - **Manual steps:** register at dataminer2.pjm.com, copy the subscription key,
   then `GET https://api.pjm.com/api/v1/hrl_load_metered?startRow=1&rowCount=50000&datetime_beginning_ept=…`
   paginated over 2021–2025; or use the browser "Download CSV" per zone. Save to
-  `inputs/raw-data/zonal-load/PJM/`. Also the source for the doc-04 load-share
+  `data/raw/zonal-load/PJM/`. Also the source for the doc-04 load-share
   refresh (replace the 0.37/0.28/0.20/0.15 placeholders).
 - **Why automation failed:** no PJM subscription key available, and `api.pjm.com`
   would also need allowlisting. Recorded the exact feed instead of guessing.
@@ -265,7 +265,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
   `YYYYMMDD_rf_al.xls` (Regional Forecast and Actual Load), served from MISO's
   public docs/`api.misoenergy.org` document store.
 - **Manual steps:** loop dates 2021–2025, download each `…_rf_al.xls`, parse the
-  actual-load columns by region → `inputs/raw-data/zonal-load/MISO/`. (The
+  actual-load columns by region → `data/raw/zonal-load/MISO/`. (The
   daily-file URL pattern shifts periodically; confirm the current path on the
   reports page first.)
 - **Why automation failed:** MISO hosts blocked by allowlist; URL pattern also
@@ -281,7 +281,7 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
   portal file browser.
 - **Manual steps:** sign in to SPP Marketplace (or use the public hourly-load
   browser if the needed granularity is there), download hourly load by area for
-  2021–2025 → `inputs/raw-data/zonal-load/SPP/`.
+  2021–2025 → `data/raw/zonal-load/SPP/`.
 - **Why automation failed:** SPP hosts blocked by allowlist and the richer feeds
   need a Marketplace login the repo does not hold.
 
@@ -291,9 +291,9 @@ below are allowlisted (e.g. `pip install gridstatus`, then pull per ISO/zone).
 
 | Item | Status | Path / Source | Blocker |
 |------|--------|---------------|---------|
-| **Henry Hub daily** | **GOT (7368 rows, 1997-01-07…2026-05-11)** | `inputs/raw-data/gas-prices/henry_hub_daily.csv` ← datasets/natural-gas (EIA, PDDL) | — |
-| **Henry Hub monthly** | **GOT (352 rows, 1997-01…2026-04)** | `inputs/raw-data/gas-prices/henry_hub_monthly.csv` ← same | — |
-| Gas basis CSV (schema) | **NEISO filled** (2026-06-11) | `inputs/raw-data/gas_basis_by_iso_month.csv` | NEISO/AGT 35 rows 2023–2025 (ISO-NE MA gas index); other ISOs still need their hub leg |
+| **Henry Hub daily** | **GOT (7368 rows, 1997-01-07…2026-05-11)** | `data/raw/gas-prices/henry_hub_daily.csv` ← datasets/natural-gas (EIA, PDDL) | — |
+| **Henry Hub monthly** | **GOT (352 rows, 1997-01…2026-04)** | `data/raw/gas-prices/henry_hub_monthly.csv` ← same | — |
+| Gas basis CSV (schema) | **NEISO filled** (2026-06-11) | `data/raw/gas_basis_by_iso_month.csv` | NEISO/AGT 35 rows 2023–2025 (ISO-NE MA gas index); other ISOs still need their hub leg |
 | Gas basis — citygate proxy leg | MISSING | api.eia.gov / dnav citygate | host allowlist (key present, no mirror) |
 | Gas basis — exact hubs | MISSING | ICE / Platts | paywalled (no license) |
 | NYISO zonal load | MISSING | mis.nyiso.com/public/csv/pal/ | host allowlist (no auth needed) |

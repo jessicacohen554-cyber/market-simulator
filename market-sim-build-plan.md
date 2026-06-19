@@ -114,10 +114,17 @@ market-sim/
 │   ├── decision-log.md
 │   └── reviewer-notes.md
 │
-├── data/
-│   ├── eia_hourly/                  # EIA parquets (7 ISOs × 5 years)
-│   ├── fleet/                       # EIA-860 generator data
-│   └── reference/                   # eGRID emission factors, etc.
+├── data/                            # all on-disk inputs; paths resolved via src/market_sim/config/paths.py
+│   ├── raw/                         # immutable source downloads — NEVER modified in place
+│   │   ├── eia-930/, eia-930-hourly/   # EIA hourly demand + generation by BA
+│   │   ├── eia-860/, fleet-egrid/      # generator inventory + eGRID emission factors
+│   │   ├── campd-unit-level/, campd-facility-level/  # EPA CEMS emissions
+│   │   ├── gas-prices/, lmp-data/, zone-specific-demand/   # fuel + price + load downloads
+│   │   ├── reference/                  # loose crosswalks/lookups (custom-bin-assignments.csv, master-plant-registry.csv, …)
+│   │   ├── _processed-legacy/          # not-yet-curated derived files (former inputs/processed)
+│   │   └── _validation-source/         # not-yet-curated validation actuals (former inputs/calibration)
+│   ├── clean/                       # curated, schema-validated Parquet (DERIVED — disposable, gitignored)
+│   └── dictionary/                  # the data contract: schema/<datatype>.schema.yaml + data-dictionary.md
 │
 ├── scripts/
 │   ├── export_results.py            # Convert cached Parquets → frontend JSON

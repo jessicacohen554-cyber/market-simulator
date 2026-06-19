@@ -33,7 +33,7 @@ python scripts/run_calibration_full.py --iso PJM --year 2023 \
 python scripts/run_calibration.py --iso PJM --year 2023
 ```
 
-Reference data (`inputs/calibration/calibration_reference.json`, PJM block) was
+Reference data (`data/raw/_validation-source/calibration_reference.json`, PJM block) was
 built by `scripts/build_calibration_reference.py` (now PJM-aware):
 EIA-860 year-end renewable capacity by zone, EIA-923 by-fuel net generation,
 measured Henry Hub, and the eGRID 2023 PJM generation/emissions benchmark.

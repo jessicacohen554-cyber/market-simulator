@@ -17,7 +17,7 @@ recalibrate/compare on the dashboard, don't silently cut a keeper.
   `2026-06-18-run127-dam-baseline-keeper`).
 - Recipe = the baseline command (co-opt, storage-AS, lignite-sigmoid/PRB-floor,
   cc_merit_ramp delta) + `--offer-curve-override-json
-  inputs/calibration/offer_curve_dam_hrmults_cconly.json` (measured CC bands
+  data/raw/_validation-source/offer_curve_dam_hrmults_cconly.json` (measured CC bands
   only; CT/ST left on the calibrated curve to avoid the -0.25 CT<->ST coupling
   crater that sank run128).
 - Volume gate: **12/18 classes in tolerance** (vs 13/18 baseline). CC_CHP fixed
@@ -69,7 +69,7 @@ already good, so don't break it.
 run130 (`results/calibration/ercot_dam_ctcool1_3yr`, dashboard
 `2026-06-18-run130-ct-peak-cool`) lowered CT_PEAKER econ_high 2.18->1.58 and peak
 13.15->7.15 (ST untouched) on top of run129, via
-`inputs/calibration/offer_curve_deltas_ctcool1.json`. **Result: the LMP hot bias
+`data/raw/_validation-source/offer_curve_deltas_ctcool1.json`. **Result: the LMP hot bias
 barely moved** — 2025 MAE 17.06->16.62 (avg -0.45), 2024 -0.21, 2023 flat. So the
 CT (and by extension the gas econ/peak) offer curve is **not** the lever for the
 2024/2025 hot bias — this confirms the decomposition below. It did help volumes
@@ -102,13 +102,13 @@ identical, explicit `--out-dir results/calibration/ercot_dam_<probe>_3yr`:
 
     python scripts/run_calibration_full.py --year 2023 2024 2025 \
         --storage-daily-cycling --battery-adder 10 --storage-as-commitment \
-        --offer-curve-delta-json inputs/calibration/<your_new_delta>.json \
+        --offer-curve-delta-json data/raw/_validation-source/<your_new_delta>.json \
         --coal-lignite-sigmoid --lignite-floor 0.675 --lignite-ceil 1.00 \
         --prb-floor 0.73 --prb-follower-floor 0.63 \
         --curve-mid 0.35 --btm-backfill-year 2024 --cc-duct-peaking \
         --wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP \
         --energy-reserve-coopt \
-        --offer-curve-override-json inputs/calibration/offer_curve_dam_hrmults_cconly.json \
+        --offer-curve-override-json data/raw/_validation-source/offer_curve_dam_hrmults_cconly.json \
         --out-dir results/calibration/ercot_dam_<probe>_3yr
 
 Each run ~13 min (3 yr). Env: `uv venv .venv && . .venv/bin/activate && uv pip
