@@ -11,14 +11,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
-from derive_import_tranches import measured_net_interchange  # noqa: E402
 
 # EIA benchmarks from the calibration log (CAISO 2 priced-ix entry).
 EIA930_IX = {2023: -28.87, 2024: -32.38, 2025: -36.16}      # net interchange TWh

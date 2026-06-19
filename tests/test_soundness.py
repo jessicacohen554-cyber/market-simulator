@@ -34,8 +34,6 @@ from pathlib import Path
 import numpy as np
 
 from market_sim.config.constants import (
-    HOURS_PER_YEAR,
-    START_YEAR,
     STORAGE_TIEBREAKER_EPSILON,
 )
 from market_sim.config.iso_configs import get_iso_config

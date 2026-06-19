@@ -99,8 +99,8 @@ def main() -> None:
     print(f"\nTotal SCED intervals processed: {total_intervals}")
     print(f"Distinct constraints that ever bound: {len(out)}")
     print(f"Total binding shadow price (congestion-rent proxy): {total_sp:,.0f}")
-    print(f"\nTop 30 binding constraints by total shadow price "
-          f"(share of all congestion rent in parens):")
+    print("\nTop 30 binding constraints by total shadow price "
+          "(share of all congestion rent in parens):")
     pd.set_option("display.width", 200)
     top = out.head(30).copy()
     top["rent_pct"] = (100 * top["sum_shadow"] / total_sp).round(1)
