@@ -22,7 +22,7 @@ python scripts/run_calibration_full.py --iso NYISO --year 2023 --commitment \
 Dashboard: **`nyiso p11 smoke 2023`** (P12-confirmed keeper; see
 `docs/calibration-log.md` NYISO P11, P9b, P12 entries).
 
-Reference data (`inputs/calibration/calibration_reference.json`, NYISO 2023
+Reference data (`data/raw/_validation-source/calibration_reference.json`, NYISO 2023
 block) was built by `scripts/build_calibration_reference.py`: EIA-860 year-end
 renewable capacity by zone, EIA-923 by-fuel net generation (including hydro and
 oil, added for NYISO via `_EIA923_EXTRA_FUELS_BY_ISO`), measured Henry Hub, and
@@ -282,9 +282,9 @@ columns are not scored.
 
 ### 2024 — NY_2024 CEMS + renewable capacity
 
-- `inputs/raw-data/campd-unit-level/NY_2024.parquet` is missing (upload U1):
+- `data/raw/campd-unit-level/NY_2024.parquet` is missing (upload U1):
   2024 runs with no measured outage windows (statistical availability only).
-- `inputs/calibration/NYISO_2024_renewable_capacity.csv` is missing (the
+- `data/raw/_validation-source/NYISO_2024_renewable_capacity.csv` is missing (the
   calibration-reference script defers 2024 per `CALIBRATION_YEARS_BY_ISO`).
 
 **Refresh path:** upload U1 (`NY_2024.parquet`), add 2024 to the year

@@ -46,7 +46,7 @@ All three runs use the same structural defaults via `_calibration_config`:
   nearby-plant fallback (20 plants have own F923 data; 286 filled by
   nearby-plant/state mean)
 - `gas_hub_basis_overlay` on — measured AGT monthly basis replaces per-plant
-  F923 gas in covered months (`inputs/raw-data/gas_basis_by_iso_month.csv`,
+  F923 gas in covered months (`data/raw/gas_basis_by_iso_month.csv`,
   35/36 NEISO months 2023–2025; Aug-2025 missing upstream, falls back to
   EIA-923/shaped)
 - `dual_fuel_switching` on — gas-primary dual-fuel units (107 tranches /
@@ -334,11 +334,11 @@ Merrimack Station (EIA 2364, Bow NH, ~108 MW bituminous, deactivated Jun-
 - `scripts/run_calibration_full.py` — `--hydro-backfill-year` option (default
   None; every prior ISO run byte-identical; used only for NEISO 2025
   provisional).
-- `inputs/processed/thermal_tranches_NEISO.csv` / `bin_assignments_NEISO.csv`
+- `data/raw/_processed-legacy/thermal_tranches_NEISO.csv` / `bin_assignments_NEISO.csv`
   — per-plant CAMPD committed + peaking shares (2023–2025 NE-state CEMS).
-- `inputs/raw-data/campd-unit-outages-NEISO.csv` — unit-level outage windows
+- `data/raw/campd-unit-outages-NEISO.csv` — unit-level outage windows
   (2023: 431, 2024: 452, 2025: 422 event-based windows; 34 facilities).
-- `inputs/raw-data/gas_basis_by_iso_month.csv` — 35/36 NEISO months (ISO-NE
+- `data/raw/gas_basis_by_iso_month.csv` — 35/36 NEISO months (ISO-NE
   MA gas index from isonewswire.com monthly posts; basis = index − EIA HH).
 
 **No offer-curve variant for NEISO.** National class defaults
