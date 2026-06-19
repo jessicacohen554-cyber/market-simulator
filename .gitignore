@@ -102,6 +102,14 @@ data/raw/NYISO-AS/raw/
 # Intermediate per-year reference-price (pjm_30) run bundles; only the merged
 # 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
 /results/calibration/pjm_30_20*/
+# Intermediate per-year reference-price+convexity (pjm_32) run bundles; only the
+# merged 3-year results/calibration/pjm_32 is committed.
+/results/calibration/pjm_32_20*/
+
+# Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
+# still records the pre-W1-relocation inputs/ paths in old bundle configs can
+# resolve them; never a committed artifact.
+/inputs/
 
 # Calibration bundles are committed slim (input/summary parquets only): the
 # per-hour dispatch dir and system.parquet are large regenerable intermediates
