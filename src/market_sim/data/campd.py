@@ -31,6 +31,7 @@ and exposes the three derivations the calibration pipeline needs:
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +43,22 @@ logger = logging.getLogger(__name__)
 
 # Default location of the raw CAMPD state-year extracts (re-exported from the
 # central path registry).
+
+# --- Clean-backed read path (opt-in) ----------------------------------------
+# By default this module parses the raw CAMPD state-year extracts under
+# ``data/raw`` (the path below). Set ``MARKET_SIM_USE_CLEAN`` to a truthy value
+# to instead route :func:`load_campd_hourly` through the curated ``emissions``
+# clean datatype via ``scripts.lib.clean_io.read_clean`` — the standardized
+# consumption seam. The switch is read from the environment per call (so tests
+# and callers can toggle it without reimport) and defaults OFF: with it unset
+# the raw path is used and behavior is byte-for-byte unchanged.
+_USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+_TRUTHY: frozenset[str] = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether the clean-backed emissions read path is enabled (env-gated, default OFF)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _TRUTHY
 
 # Unit conversions to kilograms (the canonical mass unit for derived rates).
 SHORT_TON_TO_KG: float = 907.18474
@@ -298,6 +315,103 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     return out
 
 
+def _import_clean_io():
+    """Import the shared ``scripts.lib.clean_io`` reader seam, lazily.
+
+    ``clean_io`` lives under ``scripts/`` (not an installed package), so the
+    repo root is put on ``sys.path`` the way the curation scripts do before the
+    import. Done lazily — only the opt-in clean path pays this cost, and the
+    raw path never imports it.
+    """
+    import sys
+
+    from market_sim.config import paths
+
+    root = str(paths.REPO_ROOT)
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    from scripts.lib import clean_io  # noqa: E402
+
+    return clean_io
+
+
+def _clean_to_model_frame(clean: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Map a clean ``emissions`` frame onto this module's hourly model schema.
+
+    Rebuilds the columns the raw normalizer (:func:`_normalize_campd`) emits so
+    every downstream derivation works unchanged: ``date`` / ``hour`` come from
+    the local wall-clock (``interval_start_local``, which is the same Local
+    Standard Time the raw extract carries), masses pass through in kg, and the
+    non-leap ``hour_of_year`` index is recomputed (Feb 29 dropped). Columns the
+    clean schema deliberately does not carry — ``facility_name``, ``state``,
+    ``steam_load`` — are filled with empty/NaN placeholders.
+    """
+    local = pd.to_datetime(clean["interval_start_local"])
+    out = pd.DataFrame({
+        "plant_id": pd.to_numeric(clean["plant_id"], errors="coerce"),
+        "facility_name": "",
+        "state": "",
+        "year": np.int16(year),
+        "date": local.dt.normalize(),
+        "hour": local.dt.hour.astype("Int64"),
+        "gross_mw": pd.to_numeric(clean["gross_mw"], errors="coerce"),
+        "steam_load": np.nan,
+        "co2_kg": pd.to_numeric(clean["co2_kg"], errors="coerce"),
+        "nox_kg": pd.to_numeric(clean["nox_kg"], errors="coerce"),
+        "so2_kg": pd.to_numeric(clean["so2_kg"], errors="coerce"),
+        "heat_mmbtu": pd.to_numeric(clean["heat_input_mmbtu"], errors="coerce"),
+    })
+    out = out.dropna(subset=["plant_id", "hour", "date"])
+    out["plant_id"] = out["plant_id"].astype(int)
+    out["hour"] = out["hour"].astype(int)
+    idx = _hour_index_8760(out["date"].dt.month, out["date"].dt.day, out["hour"])
+    out["hour_of_year"] = idx
+    return out[idx >= 0].reset_index(drop=True)
+
+
+def load_campd_hourly_clean(
+    years: list[int] | tuple[int, ...],
+    *,
+    plant_ids: set[int] | None = None,
+) -> pd.DataFrame:
+    """Load hourly emissions from the curated clean tree (the clean-backed path).
+
+    Mirror of :func:`load_campd_hourly`, but sourced from
+    ``clean_io.read_clean("emissions", year=...)`` rather than the raw CAMPD
+    state-year extracts. The clean ``emissions`` datatype is partitioned by year
+    only — its schema standardizes the two CAMPD grains and drops ``stateCode``
+    — so this reads whole years; pass ``plant_ids`` to restrict to a known set
+    of plants (e.g. an ISO fleet, or, as the parity test does, exactly the
+    plants a raw state-slice covers).
+
+    Returns the same model-facing schema as :func:`load_campd_hourly`
+    (``plant_id``, ``gross_mw``, masses in kg, ``heat_mmbtu``, ``hour_of_year``,
+    …), so downstream derivations are unaffected by the source switch. Years
+    with no clean partition are warned and skipped; the result is empty when no
+    partition is found.
+    """
+    clean_io = _import_clean_io()
+    frames: list[pd.DataFrame] = []
+    for year in years:
+        year = int(year)
+        if not clean_io.clean_exists("emissions", year=year):
+            logger.warning(
+                "no clean emissions partition for %d; regenerate with "
+                "`python scripts/regenerate_clean.py emissions`",
+                year,
+            )
+            continue
+        clean = clean_io.read_clean("emissions", year=year, validate=False)
+        frames.append(_clean_to_model_frame(clean, year))
+    if not frames:
+        return pd.DataFrame()
+    df = pd.concat(frames, ignore_index=True)
+    if plant_ids is not None:
+        wanted = {int(p) for p in plant_ids}
+        df = df[df["plant_id"].isin(wanted)].reset_index(drop=True)
+    return df
+
+
 def load_campd_hourly(
     states: list[str] | tuple[str, ...],
     years: list[int] | tuple[int, ...],
@@ -316,7 +430,17 @@ def load_campd_hourly(
         MW, heat input in MMBtu, plus an ``hour_of_year`` column in
         ``[0, 8760)`` (Feb 29 rows are dropped). Empty when no extract is
         found.
+
+    When the ``MARKET_SIM_USE_CLEAN`` switch is enabled (see :func:`_use_clean`)
+    the hourly rows are read from the curated ``emissions`` clean datatype via
+    :func:`load_campd_hourly_clean` instead of the raw extracts. The clean
+    datatype is partitioned by year (not state), so ``states`` is not applied in
+    that mode and ``raw_dir`` is ignored; consumers narrow to their own fleet by
+    ``plant_id`` downstream, exactly as they already do. The switch defaults
+    OFF, leaving the raw path below unchanged.
     """
+    if _use_clean():
+        return load_campd_hourly_clean(years)
     base = Path(raw_dir) if raw_dir is not None else RAW_DATA_DIR
     frames = [
         df
