@@ -107,10 +107,82 @@ def load_cod_map() -> dict[int, CodEntry]:
     Resolves the directory through :func:`paths.active_eia860_dir` (so a
     ``ScenarioConfig.eia860_vintage_year`` switch is honored) and defers to the
     directory-keyed cache below.
+
+    When the clean seam is on (``MARKET_SIM_USE_CLEAN``), the COD map is built
+    from the curated clean ``fleet`` registry instead (:func:`_load_cod_map_clean`),
+    routing the active vintage directory to its clean partition year so the same
+    ``eia860_vintage_year`` switch is honored end to end.
     """
     from market_sim.config.paths import active_eia860_dir
 
+    # Lazy import to dodge the fleet <-> cod_ramp module-load cycle (fleet imports
+    # cod_ramp at module top); both are fully imported by the time this is called.
+    from market_sim.data.fleet import _clean_fleet_year, _use_clean
+
+    if _use_clean():
+        return _load_cod_map_clean(_clean_fleet_year(active_eia860_dir()))
     return _load_cod_map(active_eia860_dir())
+
+
+@lru_cache(maxsize=4)
+def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
+    """Build the COD map from the curated clean ``fleet`` registry.
+
+    The clean counterpart of :func:`_load_cod_map`. The frozen clean ``fleet``
+    schema carries ``plant_id``, ``nameplate_capacity_mw`` and ``operating_year``
+    but NOT the month-precise ``Operating Month`` / ``Planned Retirement
+    Month``/``Year`` columns the raw reducer uses, so this is necessarily a
+    **year-precise** COD map: each plant's online year is the capacity-weighted
+    mean of its units' ``operating_year`` (rounded), its online month defaults to
+    :data:`COD_FALLBACK_MONTH`, and it carries **no** planned retirement.
+    Recovering month precision and plant retirements through the clean seam would
+    require a fleet-schema contract change — raise one rather than editing the
+    frozen YAML. The master-registry ``year_built`` back-fill is applied exactly
+    as on the raw path (the registry is a raw reference file, not part of the
+    clean contract).
+
+    Raises ``FileNotFoundError`` (with a regenerate hint) when the clean fleet
+    partition is absent — regenerate it with
+    ``python scripts/regenerate_clean.py fleet``.
+    """
+    from scripts.lib import clean_io
+
+    cod: dict[int, CodEntry] = {}
+
+    df = clean_io.read_clean(
+        "fleet", year=partition_year,
+        columns=["plant_id", "nameplate_capacity_mw", "operating_year"],
+    )
+    work = pd.DataFrame({
+        "pc": pd.to_numeric(df.get("plant_id"), errors="coerce"),
+        "cap": pd.to_numeric(df.get("nameplate_capacity_mw"), errors="coerce"),
+        "oy": pd.to_numeric(df.get("operating_year"), errors="coerce"),
+    }).dropna(subset=["pc", "oy"])
+
+    if not work.empty:
+        # Positive nameplate weights the COD; equal-weight a plant that reports
+        # no capacity so it still gets a representative year.
+        work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
+        for code, grp in work.groupby("pc"):
+            code = int(code)
+            weights = grp["w"].to_numpy()
+            if weights.sum() <= 0.0:
+                weights = np.ones(len(grp))
+            online_year = int(round(float(np.average(grp["oy"].to_numpy(), weights=weights))))
+            # Month unknown in the clean schema -> mid-year default; no retirement.
+            cod[code] = (online_year, COD_FALLBACK_MONTH, None, None)
+
+    # Registry-only back-fill (year-only -> mid-year default), never overriding
+    # a clean-fleet record — mirrors the raw reducer.
+    if _REGISTRY.exists():
+        reg = pd.read_csv(_REGISTRY, usecols=["plantid", "year_built"])
+        reg = reg.dropna(subset=["plantid", "year_built"])
+        for code, year in zip(reg["plantid"], reg["year_built"]):
+            code = int(code)
+            if code not in cod:
+                cod[code] = (int(year), COD_FALLBACK_MONTH, None, None)
+
+    return cod
 
 
 @lru_cache(maxsize=4)
