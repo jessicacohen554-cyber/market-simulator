@@ -174,7 +174,7 @@ P12 probes, all rejected (logged in `docs/calibration-log.md`, "NYISO P12"):
   positive), 2023 = −23.45 TWh / −2,677 MW avg; served as-is by `load_demand`
   (P9b). Coverage: 2023 full, 2024 full, **2025 full (refreshed 2026-06-12;
   −19.09 TWh)** — the EIA-930 extract now spans 2015–2026.
-- **LMP benchmark** — `inputs/calibration/actual_lmp.json` (per-zone DA/RT
+- **LMP benchmark** — `data/raw/_validation-source/actual_lmp.json` (per-zone DA/RT
   levels) + `actual_lmp_hourly_NYISO.parquet` (system hourly DA/RT), landed
   via P10/U2; 2023 RT $30.29 / DA $31.11, 2025 RT $60.73 / DA $60.71.
 - **Demand basis** — EIA-930 `NYIS hourly` Demand is transmission-metered

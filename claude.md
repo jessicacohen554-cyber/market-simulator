@@ -36,6 +36,13 @@ src/market_sim/
   results/   → cache.py, outputs.py, emissions.py, export.py, calibration.py, plant_financials.py
   runner.py  → main orchestrator (P0→P1→P2 solve loop, year evolution)
 tests/       → pytest, one file per module
+data/        → all on-disk inputs; every path resolves through config/paths.py (never Path(__file__).parents[...])
+  raw/       → immutable source downloads, NEVER modified in place — the single source root (W1 collapsed the old inputs/ + data/ roots into data/raw/)
+               eia-930*/, eia-860/, fleet-egrid/, campd-{unit,facility}-level/, gas-prices/, lmp-data/, zone-specific-demand/, …
+               reference/ (loose crosswalks: custom-bin-assignments.csv, master-plant-registry.csv, …),
+               _processed-legacy/ (former inputs/processed), _validation-source/ (former inputs/calibration)
+  clean/     → curated, schema-validated Parquet (DERIVED, disposable, gitignored)
+  dictionary/→ the data contract: schema/<datatype>.schema.yaml + data-dictionary.md
 ```
 
 ## Non-Negotiable Rules

@@ -51,7 +51,7 @@ recalibrate/compare, do not silently cut a keeper.
 
 ## The data (already in the repo — no external fetch; ercot.com is egress-blocked)
 
-`inputs/raw-data/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet`
+`data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_*.parquet`
 for **2023, 2024, 2025** (multiple files per year by month range). Schema
 (verified): per `Delivery Date` × `Hour Ending` × `Resource Name`:
 
@@ -63,7 +63,7 @@ for **2023, 2024, 2025** (multiple files per year by month range). Schema
   `Awarded Quantity`, `Energy Settlement Point Price`, and the AS awards/MCPCs.
 
 Companion files if useful: `…_EnergyOnlyOffers_*` (virtual/EOO offers),
-`…_EnergyBids_*`. Fuel (gas) price by day: `inputs/raw-data/gas-prices/` and the
+`…_EnergyBids_*`. Fuel (gas) price by day: `data/raw/gas-prices/` and the
 model's own `gas_price_override` / `iso_hub_daily_gas_prices`
 (`market_sim.data.fuel`). Per-class/plant base heat rates come from the model
 fleet (the CAMPD bins / `Plant_Avg_HR_MMBtu_MWh`); reuse `load_fleet_from_csv` /
@@ -119,7 +119,7 @@ Ask the user A vs B before wiring the Peak tranche. The body multipliers (steps
   per-group via `offer_curve_overrides` / `offer_curve_deltas`
   (`--offer-curve-override-json` / `--offer-curve-delta-json`). Prefer feeding
   the measured numbers through a committed JSON (e.g.
-  `inputs/calibration/offer_curve_dam_hrmults.json`) so the provenance is a data
+  `data/raw/_validation-source/offer_curve_dam_hrmults.json`) so the provenance is a data
   artifact, not a code edit — mirror `offer_curve_deltas_cc_merit_ramp.json`.
 - Keep the derivation script under `scripts/` (e.g. `derive_dam_offer_hrmults.py`)
   so the JSON is regenerable from the 60-day DAM parquets.
@@ -130,7 +130,7 @@ Baseline (current offer curves + co-opt), already produced last session:
 ```
 python scripts/run_calibration_full.py --year 2023 2024 2025 \
     --storage-daily-cycling --battery-adder 10 --storage-as-commitment \
-    --offer-curve-delta-json inputs/calibration/offer_curve_deltas_cc_merit_ramp.json \
+    --offer-curve-delta-json data/raw/_validation-source/offer_curve_deltas_cc_merit_ramp.json \
     --coal-lignite-sigmoid --lignite-floor 0.675 --lignite-ceil 1.00 \
     --prb-floor 0.73 --prb-follower-floor 0.63 \
     --curve-mid 0.35 --btm-backfill-year 2024 --cc-duct-peaking \
@@ -143,7 +143,7 @@ curves are the only change, **and name the bundle** with an explicit
 `--out-dir` (do NOT let it land in a bare timestamp dir):
 ```
     ... --energy-reserve-coopt \
-    --offer-curve-override-json inputs/calibration/offer_curve_dam_hrmults.json \
+    --offer-curve-override-json data/raw/_validation-source/offer_curve_dam_hrmults.json \
     --out-dir results/calibration/ercot_dam_offers_3yr
 ```
 (`--out-dir <path>` sets the bundle directory; otherwise it defaults to
