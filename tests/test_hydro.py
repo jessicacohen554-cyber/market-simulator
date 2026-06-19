@@ -472,7 +472,7 @@ class TestNEISOHydroBudget(unittest.TestCase):
     # the ISNE BA filter, monthly-column aggregation, and negative-gen clip.
     EIA923_TWH = {2023: 8.548, 2024: 6.714}
     # EIA-930 ISNE WAT (conventional hydro, excluding PS fuel-type ``PS``).
-    # Source: inputs/raw-data/ISNE_fueltype.parquet, column fueltype=="WAT".
+    # Source: data/raw/ISNE_fueltype.parquet, column fueltype=="WAT".
     EIA930_WAT_TWH = {2023: 8.774, 2024: 7.424}
 
     def test_shapes_for_both_backcast_years(self):

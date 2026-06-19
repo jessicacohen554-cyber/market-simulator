@@ -7,7 +7,7 @@ every LP hour, so it must be a real, reproducible *transfer rating* — never a
 value tuned to the net-MWh target (claude.md rule #11). This script derives it
 from PJM's OWN published per-tie interchange (the Data Miner
 ``import_export_act_sch_interchange`` extract,
-``inputs/raw-data/iso-specific-transmission/PJM_<year>_import_export_act_sch_interchange.csv``):
+``data/raw/iso-specific-transmission/PJM_<year>_import_export_act_sch_interchange.csv``):
 
   * each external tie is mapped to the registry seam it lands on (MISO, NYISO,
     Carolinas);
@@ -41,7 +41,7 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA_DIR = Path("inputs/raw-data/iso-specific-transmission")
+DATA_DIR = Path("data/raw/iso-specific-transmission")
 YEARS = (2023, 2024, 2025)
 PCTL = 0.995  # firm-continuous upper envelope (trims top ~0.5% transient hours)
 

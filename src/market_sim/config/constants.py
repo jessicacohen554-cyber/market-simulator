@@ -528,7 +528,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   6081 — partly LNG-supplied), so the sample is far sparser than
 #   PJM/NYISO. NEISO backcasts therefore default to gas_monthly_actuals +
 #   the measured Algonquin hub-month basis overlay
-#   (gas_hub_basis_overlay; inputs/raw-data/gas_basis_by_iso_month.csv),
+#   (gas_hub_basis_overlay; data/raw/gas_basis_by_iso_month.csv),
 #   which makes this scalar a forward-year/fallback value only — like the
 #   CAISO +1.20 seed.
 # These are annual average differentials, held constant across the
@@ -614,7 +614,7 @@ OIL_PRICE_PER_MMBTU: float = 18.0
 # citygate basis is a flat, near-zero shoulder most days, then blows out
 # convexly on the coldest days when gas-for-heating crowds the marginal
 # gas-for-power off the pipe. The measured *monthly* basis
-# (inputs/raw-data/gas_basis_by_iso_month.csv) is the right level but a flat
+# (data/raw/gas_basis_by_iso_month.csv) is the right level but a flat
 # monthly plateau never reaches distillate parity (~$18/MMBtu), so the
 # dual-fuel gas->oil switch and the oil-steam fleet never trip and the modeled
 # winter price tail stays flat. The true daily AGT spot series (ICE/Platts) is
@@ -1017,9 +1017,9 @@ ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 # ISOs that have a per-plant CAMPD bin artifact and therefore take the
 # offer-curve (per-plant tranche) binning path in the runner instead of the
 # legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
-# the curated ``inputs/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM are
-# covered by the CAMPD-derived ``inputs/processed/thermal_tranches_<ISO>.csv``
-# (and the committed ``inputs/processed/bin_assignments_<ISO>.csv`` review
+# the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM are
+# covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+# (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
 # artifacts). ISOs WITHOUT a bin artifact (MISO, SPP) are intentionally absent
 # and fall back to ``aggregate_fleet`` exactly as before. The runner gate keys
 # off this set so the per-plant path unlocks per ISO as its artifact lands.
@@ -1609,7 +1609,7 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 #
 # NYISO 2024/2025: the priced node's marginal blocks proxy gas-priced
 # neighbor hubs, so each block is scaled off the 2023 base ladder by the
-# measured neighbor-hub RT-LMP ratio vs 2023 (inputs/calibration/actual_lmp.json,
+# measured neighbor-hub RT-LMP ratio vs 2023 (data/raw/_validation-source/actual_lmp.json,
 # rt_mon means): PJM West $28.4→$29.5→$42.9 (×1.04, ×1.51) prices the
 # PJM_west and Ontario blocks; ISO-NE Mass Hub $35.9→$39.4→$66.2 (×1.10, ×1.84)
 # prices the ISONE_tie and import_scarcity blocks. HQ hydro is mostly
@@ -1677,7 +1677,7 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # 2025 tie-line CSV diverges from EIA-930 May-2025 onward (+32.9 vs
     # +18.0 TWh annual) — fit against EIA-930, not the tie-line file, for
     # 2025+. Tier 3 (calibration); source CSV:
-    # inputs/raw-data/iso-specific-transmission/
+    # data/raw/iso-specific-transmission/
     # PJM_2023_import_export_act_sch_interchange.csv +
     # results/calibration/pjm_6_ccpeak, repriced on pjm_16_bit_trim.
     "PJM": [
@@ -1762,7 +1762,7 @@ IMPORT_ZONE: dict[str, str] = {
 # ComEd −2.3..+7.4 GW, AEP-Ohio −1.0..+4.8, ATSI −5.7..+5.0, Dominion
 # −6.2..+3.1, EMAAC −0.1..+5.7. West-APS / Central-PA / SWMAAC carry no
 # mapped ties. Source: PJM tie-line actual interchange
-# (inputs/raw-data/iso-specific-transmission/). Tier 3 — verify against
+# (data/raw/iso-specific-transmission/). Tier 3 — verify against
 # PJM's published interface ratings.
 IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     "PJM": [
@@ -1779,7 +1779,7 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
     # zone it PHYSICALLY enters, otherwise cheap imports bypass the binding
     # internal interface and erase the real congestion spread. The per-tie
     # entry zones and ratings below are MEASURED from NYISO's hourly
-    # ExternalLimitsFlows postings (inputs/raw-data/NYISO/External Limit
+    # ExternalLimitsFlows postings (data/raw/NYISO/External Limit
     # Flow*.zip; "Positive Limit" column, 2023): each SCH-* intertie mapped
     # to its model zone (derive: per-tie median positive limit by zone).
     #   - Upstate_West (zones A–E): HQ Châteauguay (1.5 GW) + Cedars (0.25)
@@ -1817,7 +1817,7 @@ IMPORT_NODE_LINKS: dict[str, list[tuple[str, float]]] = {
 #
 # These are the MEASURED day-ahead TTC the market actually cleared against,
 # from NYISO's hour-by-hour ATC/TTC postings for the "CENT EAST" interface
-# (MIS ATC_TTC files, mirrored in inputs/raw-data/NYISO/ATC_TTC.zip), aggregated
+# (MIS ATC_TTC files, mirrored in data/raw/NYISO/ATC_TTC.zip), aggregated
 # by scripts/derive_nyiso_central_east_ttc.py. They supersede the earlier
 # operating-study / Wood Mackenzie estimates (~2,350 pre / ~3,850 post), which
 # overstated the operative DAM limit: the posted DAM TTC the dispatch must
@@ -2138,10 +2138,10 @@ ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 # fleet-responsive, near-flat requirement: with the model's largest PJM unit
 # this reproduces the measured PJM_RTO pr_req_mw (mean ~3.42 GW, 2024) — the
 # honesty gate in tests/test_reserve_coopt.py, validated against
-# inputs/raw-data/PJM-AS. Forecast-applicable: the MSSC moves with the fleet
+# data/raw/PJM-AS. Forecast-applicable: the MSSC moves with the fleet
 # (retire the largest unit -> the requirement falls), unlike replaying the
 # measured hourly series. The ORDC demand curve that PRICES a shortfall is the
-# published two-step curve in inputs/calibration/pjm_ordc_curve.csv.
+# published two-step curve in data/raw/_validation-source/pjm_ordc_curve.csv.
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
 PJM_ORDC_CURVE_PATH: str = str(CALIBRATION_DIR / "pjm_ordc_curve.csv")
 

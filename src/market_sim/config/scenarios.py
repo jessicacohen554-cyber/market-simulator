@@ -210,8 +210,8 @@ class ScenarioConfig:
     cod_ramp_enabled: bool = True
     eia860_vintage_year: int | None = None  # Year-matched EIA-860 vintage for a
     # backcast. None (default) uses the canonical 2025-Early-Release snapshot in
-    # inputs/raw-data/eia-860/ filtered to the solved year by the COD ramp. Set
-    # to a year with a committed inputs/raw-data/eia-860/vintage_<year>/ (2023,
+    # data/raw/eia-860/ filtered to the solved year by the COD ramp. Set
+    # to a year with a committed data/raw/eia-860/vintage_<year>/ (2023,
     # 2024) to read the native annual release instead — removing the COD ramp's
     # capacity-weighted-mean COD smear and the absence of units that retired
     # between the solved year and the 2025 snapshot. Measured effect is small
@@ -547,7 +547,7 @@ class ScenarioConfig:
     # Replaces the post-solve overlay when on (no double-count).
     #   * PJM — Primary Reserve at the structural 1.5 x most-severe single
     #     contingency (scarcity.pjm_primary_reserve_requirement) priced by the
-    #     two-step ORDC curve (inputs/calibration/pjm_ordc_curve.csv).
+    #     two-step ORDC curve (data/raw/_validation-source/pjm_ordc_curve.csv).
     #   * ERCOT — the VOLL-anchored ORDC reserve demand curve discretized into
     #     shortfall steps (scarcity.ercot_ordc_demand_steps): reserve-eligible
     #     thermal units part-load so the LP carries real spinning reserve instead
@@ -1219,7 +1219,7 @@ class ScenarioConfig:
 
     # Tier 3 (calibration) — measured hub-month gas basis overlay (doc-08
     # NEISO P7). In months with a measured hub basis row in
-    # inputs/raw-data/gas_basis_by_iso_month.csv (NEISO: Algonquin Citygate
+    # data/raw/gas_basis_by_iso_month.csv (NEISO: Algonquin Citygate
     # via the ISO-NE MA gas index, 2023-2025), every gas unit's fuel price
     # is REPLACED by measured Henry Hub monthly + the measured hub basis —
     # the constrained-hub spot is the marginal gas unit's opportunity cost,

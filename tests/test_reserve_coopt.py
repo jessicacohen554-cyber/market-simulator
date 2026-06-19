@@ -3,7 +3,7 @@
 Covers the structural reserve-requirement formula (the largest-single-
 contingency proxy and the 1.5x-MSSC Primary Reserve requirement) and an
 *honesty gate* that validates the formula's premise against the measured
-PJM_RTO Primary Reserve series (inputs/raw-data/PJM-AS) — confirming the
+PJM_RTO Primary Reserve series (data/raw/PJM-AS) — confirming the
 requirement really is a near-constant reliability quantity ~= 1.5 x MSSC, not
 a shape that must be replayed. The measured series is a validation target
 only; it is never an input to the optimization.
