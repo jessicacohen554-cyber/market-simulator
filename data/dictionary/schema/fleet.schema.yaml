@@ -1,0 +1,91 @@
+# Canonical schema: generator fleet registry
+#
+# Reconciles the generator-registry sources:
+#   EIA-860            : "Plant Code", "Generator ID", "Technology",
+#                        "Prime Mover", "Nameplate Capacity (MW)",
+#                        "Summer/Winter Capacity (MW)", "Operating Year",
+#                        "Nameplate Energy Capacity (MWh)" (storage)
+#   master-plant-registry.csv : plantid, nameplate_capacity_mw, fuel_type,
+#                        prime_mover, technology, year_built, ba_code, ...
+#   eGRID              : plant-level fleet attributes
+#
+# Reconciliation: EIA-860's spaced/parenthesized headers map to lower_snake_case
+# with explicit unit suffixes ("Nameplate Capacity (MW)" -> nameplate_capacity_mw,
+# "Nameplate Energy Capacity (MWh)" -> energy_capacity_mwh). plantid/"Plant Code"
+# -> plant_id and "Generator ID" -> unit_id mirror the emissions/outages keys.
+datatype: fleet
+schema_version: 1
+title: Generator fleet registry
+description: >-
+  One row per generating unit with capacity, fuel/technology and vintage,
+  reconciled across EIA-860, the master plant registry and eGRID.
+
+key_columns: [plant_id, unit_id]
+allow_additional_columns: false
+
+columns:
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant code (EIA-860 "Plant Code" / registry plantid).
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Generator id (EIA-860 "Generator ID"); use "ALL" for plant-grain rows.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: true
+    description: ISO/RTO the plant is assigned to, when mapped.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: true
+    description: Zone within the ISO, when mapped.
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: true
+    description: Plant name.
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: true
+    description: Canonical fuel/technology bucket (coal, gas, nuclear, ...).
+  - name: prime_mover
+    dtype: string
+    unit: none
+    nullable: true
+    description: Prime mover code (EIA-860 Prime Mover).
+  - name: technology
+    dtype: string
+    unit: none
+    nullable: true
+    description: Detailed technology description (EIA-860 Technology).
+  - name: nameplate_capacity_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Nameplate capacity (EIA-860 "Nameplate Capacity (MW)").
+  - name: summer_capacity_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Summer net capacity.
+  - name: winter_capacity_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Winter net capacity.
+  - name: energy_capacity_mwh
+    dtype: float64
+    unit: mwh
+    nullable: true
+    description: Storage energy capacity (EIA-860 "Nameplate Energy Capacity (MWh)").
+  - name: operating_year
+    dtype: int64
+    unit: year
+    nullable: true
+    description: First operating / build year (EIA-860 "Operating Year" / registry year_built).

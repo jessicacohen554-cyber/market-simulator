@@ -1,0 +1,57 @@
+# Canonical schema: generation by fuel
+#
+# Reconciles per-ISO/per-source fuel-output layouts:
+#   EIA-930  : wide "NG: COL/NG/NUC/WAT/SUN/WND/GEO/OIL/OTH" columns by BA
+#   PJM      : datetime_beginning_utc, fuel_type, mw, is_renewable (long)
+#   CAISO    : production-by-technology (solar/wind/thermal/hydro/imports)
+#
+# Reconciliation: the EIA-930 wide fuel columns are unpivoted to the long
+# (fuel, generation_mw) form used by PJM; CAISO technology buckets map onto
+# the same `fuel` vocabulary. One row per (iso, zone, fuel, hour).
+datatype: generation
+schema_version: 1
+title: Generation by fuel
+description: >-
+  Hourly generation (MW) by ISO, zone and fuel/technology, in long form.
+
+key_columns: [iso, zone, fuel, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local hour start.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Generation zone / balancing authority (use "SYSTEM" for ISO-wide totals).
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical fuel/technology bucket (coal, gas, nuclear, hydro, solar, wind,
+      geothermal, oil, storage, other).
+  - name: generation_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Average generation over the hour for this fuel.
+  - name: is_renewable
+    dtype: bool
+    unit: none
+    nullable: true
+    description: Whether the fuel counts as renewable (PJM is_renewable flag, when provided).
