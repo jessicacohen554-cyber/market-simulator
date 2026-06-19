@@ -17,7 +17,7 @@ Examples::
 
     python scripts/forecast_nuclear_refuel.py --isos ERCOT --years 2026 2027 2028
     python scripts/forecast_nuclear_refuel.py --isos ERCOT CAISO PJM \
-        --years 2026 2027 --cycle-years 2 --out inputs/nuclear-refuel-forecast.csv
+        --years 2026 2027 --cycle-years 2 --out data/raw/reference/nuclear-refuel-forecast.csv
 """
 from __future__ import annotations
 

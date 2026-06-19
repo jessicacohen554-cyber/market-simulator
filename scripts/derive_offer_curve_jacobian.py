@@ -30,7 +30,7 @@ LP is solved:
   (``plant_cf_bands.parquet``). err = the metric itself (target 0).
 - ``lmp``   — demand-weighted monthly |model − actual RT| price MAE ($/MWh)
   from ``system.parquet``'s hourly zone prices vs the committed
-  ``inputs/calibration/actual_lmp.json`` reference (the
+  ``data/raw/_validation-source/actual_lmp.json`` reference (the
   ``scripts/derive_actual_lmp.py`` product). err = the MAE (target 0).
 
 The joint-move recipe minimizes a weighted sum of the three blocks
@@ -63,7 +63,7 @@ are resolvable, so the tool keeps working as new backcasts accrue for any ISO.
 
 Outputs
 -------
-- ``inputs/processed/offer_curve_jacobian.csv`` (long format: iso, year,
+- ``data/raw/_processed-legacy/offer_curve_jacobian.csv`` (long format: iso, year,
   metric, out_class, band, in_class, dTWh_per_unit_mult, n_obs, stderr,
   confidence). Schema v2: the ``metric`` column is new; filtering
   ``metric == "twh"`` reproduces the v1 content exactly. For ``shape`` rows

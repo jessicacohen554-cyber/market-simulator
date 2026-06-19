@@ -8,7 +8,7 @@ capacity when the generator list order doesn't match zone geography.
 Source: EPA eGRID 2023 (rev 2), PLNT23 sheet.
 
 Note: if the eGRID file is updated, delete the cached binned-fleet
-parquets (``inputs/processed/*_fleet_binned.parquet``) so they are
+parquets (``data/raw/_processed-legacy/*_fleet_binned.parquet``) so they are
 regenerated with zone assignments derived from the new data.
 """
 

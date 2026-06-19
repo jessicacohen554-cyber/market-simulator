@@ -69,7 +69,7 @@ from scripts.derive_actual_lmp import (  # noqa: E402
 )
 
 # Write alongside the other realized-LMP parquets (actual_lmp_hourly_<ISO>.parquet),
-# which the W1 relocation moved from inputs/calibration/ to data/raw/_validation-source/
+# which the W1 relocation moved from data/raw/_validation-source/ to data/raw/_validation-source/
 # — the path derive_neighbor_convexity.py reads (config.paths.CALIBRATION_DIR). Kept as
 # a literal REPO-relative path, not an import, because the fetch GitHub Actions job
 # installs only pandas/numpy/etc. (not the market_sim package), so importing

@@ -12,7 +12,7 @@ was exported from. Tweak any cell to reshape that plant's offer; rows you delete
 fall back to the configured defaults.
 
 Usage:
-    python scripts/export_tranche_config.py [--out inputs/plant-tranche-config.csv]
+    python scripts/export_tranche_config.py [--out data/raw/reference/plant-tranche-config.csv]
 """
 from __future__ import annotations
 

@@ -22,7 +22,7 @@ intensities, so no LP re-solve is needed:
    regression gate vs baseline (fail if r drops by more than `--r-margin`).
 
 The actual-CO2 side uses the plant's measured `co2_kg_per_mwh_net`
-(`inputs/processed/plant_emission_rates.parquet`, itself derived from CAMPD
+(`data/raw/_processed-legacy/plant_emission_rates.parquet`, itself derived from CAMPD
 co2/gen) applied to the CEMS net generation, so it reconstructs the measured
 CAMPD CO2; the model side applies the same per-plant intensity to the model's
 dispatched generation. Per plant the CO2 error therefore equals the volume
