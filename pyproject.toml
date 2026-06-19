@@ -31,6 +31,16 @@ dev = [
 [project.scripts]
 market-sim = "market_sim.runner:main"
 
+[tool.pytest.ini_options]
+# Registered so `--strict-markers` does not error and ad-hoc marks can't slip in.
+# The clean-vs-raw parity tests (tests/test_consume_*.py) carry both: they
+# regenerate a slice of data/clean from raw and compare the clean-backed loader
+# against the raw loader, so they are slow and need real inputs present.
+markers = [
+    "slow: test is slow (regenerates clean data / runs the model)",
+    "integration: exercises real data inputs, not a hermetic unit test",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
