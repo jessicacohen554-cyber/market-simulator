@@ -491,6 +491,28 @@ class ScenarioConfig:
     # measured profile; lower keeps modeled gas TWh nearer EIA-923 (forcing
     # commitment can inflate gas — the surplus must export/curtail, not pad the
     # mix). Only used when caiso_gas_commitment_floor is on.
+    caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
+    # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
+    # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
+    # (PNW_hydro_base/PNW_midC) take the Mid-Columbia / Malin (COI/PDCI) intertie
+    # price; the desert-SW blocks (DSW_solar_PV/DSW_CCGT/DSW_CT) take the Palo
+    # Verde / Mead (Path 46) price. Diagnosis (DIAGNOSIS-caiso-import-ladder
+    # -2026-06-19): the static ladder — re-fit in bundle mode against the model's
+    # OWN solved price — prices imports too high and aseasonally, so the
+    # import-set cheaper hours run high and the node never goes long enough to
+    # price the negative midday tail (model 14 hrs <=$0 vs actual 868). The
+    # measured intertie LMP is the real delivered cost of the imported energy:
+    # seasonal (spring PNW-runoff crash), negative in the desert-SW solar glut,
+    # reproducible for a forward year, and responsive — not a number tuned to the
+    # residual. This is lever (A): it fixes the import-set hours + the negative
+    # tail; it does NOT fix the gas-cost-bound median (the larger half of the body
+    # overprice — doc lever B). Pair with --interchange-shaping so cheap imports
+    # stay at the real deliverable volume (else over-import). Carried via a
+    # post-assembly mc overwrite (transmission.inject_caiso_import_hub_prices +
+    # data.eia_loader.measured_import_hub_prices). Default off (byte-identical);
+    # CAISO-only; no-op without the measured intertie parquet (data/raw/
+    # _validation-source/wecc_intertie_lmp_hourly_CAISO.parquet), fetched from
+    # CAISO OASIS by the fetch-caiso-oasis workflow (open-egress runner).
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from

@@ -908,6 +908,7 @@ def run_year(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_import_hub_prices: bool | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -978,6 +979,9 @@ def run_year(
             caiso_gas_commitment_floor=caiso_gas_commitment_floor)
     if caiso_gas_floor_frac is not None:
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
+    if caiso_import_hub_prices is not None:
+        config = config.with_overrides(
+            caiso_import_hub_prices=caiso_import_hub_prices)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
@@ -1415,6 +1419,24 @@ def run_year(
                 "%s %d: reference-price interface — %d neighbor seams priced "
                 "from gas x heat-rate x load-shape (hurdle in $/MWh)",
                 iso, year, len(INTERFACE_NEIGHBORS.get(iso, [])),
+            )
+    # CAISO measured-hub import pricing: overwrite each priced-import tranche's mc
+    # row with the measured WECC neighbor-hub LMP it proxies (Mid-C/Malin for the
+    # PNW blocks, Palo Verde for the desert-SW blocks) + per-tranche border carbon,
+    # replacing the static bundle-fitted ladder. The real delivered cost of the
+    # imported energy: seasonal (spring runoff) and negative in the solar glut, so
+    # it both lowers the over-high body and reproduces the negative midday tail
+    # (DIAGNOSIS-caiso-import-ladder-2026-06-19). No-op (byte-identical) unless
+    # caiso_import_hub_prices is on AND the measured intertie parquet is present.
+    if getattr(config, "caiso_import_hub_prices", False):
+        from market_sim.model.transmission import inject_caiso_import_hub_prices
+        if inject_caiso_import_hub_prices(
+            fleet_arrays, mc_base, iso, year, carbon_price
+        ):
+            logger.info(
+                "%s %d: import tranches repriced to measured WECC intertie "
+                "hub LMPs (Mid-C / Palo Verde) — static ladder bypassed",
+                iso, year,
             )
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
