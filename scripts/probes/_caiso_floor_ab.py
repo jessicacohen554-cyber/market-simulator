@@ -6,7 +6,7 @@ measured EIA-930 NG: NG), net import / export-hour share, and the monthly /
 spring-tail LMP (vs the actual RT). Pass two bundles to print a side-by-side.
 
 Usage:
-    python scripts/_caiso_floor_ab.py <bundle_dir> [<bundle_dir2>] --year 2024
+    python scripts/probes/_caiso_floor_ab.py <bundle_dir> [<bundle_dir2>] --year 2024
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.data.eia_loader import measured_gas_floor_profile  # noqa: E402

@@ -5,12 +5,12 @@ blocks lower, to see whether the body collapses toward the actual ~$34 median
 (super-additive — confirming gas+import substitution) or only marginally.
 
 This is a sensitivity test, NOT a grounded keeper. Usage:
-    python scripts/_caiso_srmc_probe.py <out_dir> [--import-shift -15]
+    python scripts/probes/_caiso_srmc_probe.py <out_dir> [--import-shift -15]
 """
 from __future__ import annotations
 import argparse, sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import market_sim.config.constants as C
 from scripts.run_calibration_full import solve_and_persist
 from scripts.run_calibration import _load_reference

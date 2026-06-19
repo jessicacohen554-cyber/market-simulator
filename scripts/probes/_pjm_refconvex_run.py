@@ -1,25 +1,31 @@
-"""PJM reference-price interface run: one year -> its own bundle dir.
+"""PJM reference-price interface + neighbor convexity run: one year -> bundle.
 
-Reproduces the pjm_28 keeper's calibration_flags but swaps the interchange
-treatment: instead of the measured tie-line schedule (the keeper's
-priced_interchange=False), the seam is served by the forecast-grade
-reference-price interface (reference_price_interface=True, which implies
-priced_interchange=True). Every other offer-curve flag is the keeper's, so the
-only change is the seam, isolating its effect on PJM's net export and LMP.
+Reproduces the pjm_28 keeper's calibration_flags but serves the interchange
+seam through the forecast-grade reference-price interface
+(``reference_price_interface=True``, which implies ``priced_interchange=True``)
+WITH each neighbor's price-vs-load convexity wired in
+(``INTERFACE_NEIGHBORS["PJM"][*].load_shape_exponent = 1.63``, self-derived from
+NYISO's own realized RT LMP, adopted for MISO/Carolinas as the organized-thermal
+convexity pending their own LMP fetch — see the registry comment).
+
+This is the structural successor to pjm_30/pjm_31 (flat-slope reference seam,
+which over-exported +78-89 TWh): the convex neighbor supply curve steepens the
+seam's self-limiting so the export settles nearer the measured net flow, with
+nothing tuned to PJM's net-MWh target (claude.md rule #11).
 
 One year per invocation so the three years run as parallel background jobs to
-separate out-dirs (claude.md #45); merge with scripts/_pjm_aswh_merge.py.
+separate out-dirs (claude.md #45); merge with scripts/probes/_pjm_aswh_merge.py.
 
-Usage: python scripts/_pjm_refprice_run.py <year> <out_dir>
+Usage: python scripts/probes/_pjm_refconvex_run.py <year> <out_dir>
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 KEEPER = ROOT / "pjm_28"
 
 
@@ -54,9 +60,11 @@ def main(year: int, out: Path) -> None:
         priced_interchange=True,            # implied by the reference seam
         reference_price_interface=True,
         as_reserve_withholding=cf.get("as_reserve_withholding", False),
-        note=f"pjm_30_refprice: keeper pjm_28 config + forecast-grade "
-             f"reference-price interchange seam (replaces the measured "
-             f"schedule with per-neighbor gas x HR x load-shape), {year} only",
+        note=f"pjm_32_refconvex: keeper pjm_28 config + forecast-grade "
+             f"reference-price interchange seam with neighbor price-vs-load "
+             f"convexity (load_shape_exponent 1.63, self-derived from NYISO's "
+             f"own realized LMP; MISO/Carolinas adopt it pending own-LMP fetch) "
+             f"to self-limit the over-export, {year} only",
     )
     print(f"DONE {year} -> {out}")
 

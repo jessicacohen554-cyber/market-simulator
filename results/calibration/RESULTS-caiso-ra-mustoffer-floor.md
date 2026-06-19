@@ -33,7 +33,7 @@ CAISO runs ~6.8 GW `NG: NG` and **exports** ~+1.2 GW — gas is infra-marginal
 
 ## Frac sweep — 2024 (single-year, vs baseline)
 
-`scripts/_caiso_floor_ab.py`. EIA-923 gas = 67.7 TWh; actual RT spring
+`scripts/probes/_caiso_floor_ab.py`. EIA-923 gas = 67.7 TWh; actual RT spring
 Apr/May = $13.5/$10.9; actual da_pct min/p5 = −40.7/−10.2.
 
 | metric (2024) | base | frac 0.70 | frac 0.85 | frac 1.00 |
@@ -129,6 +129,6 @@ python scripts/run_calibration_full.py --iso CAISO --year 2023 2024 2025 \
   --caiso-gas-floor-frac 0.8 --hydro-backfill-year 2024 \
   --hydro-eia930-monthly --out-dir results/calibration/caiso_floor_f08_3yr
 # A/B
-python scripts/_caiso_floor_ab.py results/calibration/caiso_base_repin_3yr \
+python scripts/probes/_caiso_floor_ab.py results/calibration/caiso_base_repin_3yr \
   results/calibration/caiso_floor_f08_3yr --year 2024
 ```

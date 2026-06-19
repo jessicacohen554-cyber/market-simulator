@@ -5,7 +5,7 @@ claude.md #45). The overlay deriver and LMP-residual analyzer expect a single
 bundle with all years, so this concatenates the year-tagged parquets, copies
 the per-year dispatch files, and merges meta.json / run_config.json.
 
-Usage: python scripts/_pjm_aswh_merge.py <out_bundle> <year_dir> [<year_dir> ...]
+Usage: python scripts/probes/_pjm_aswh_merge.py <out_bundle> <year_dir> [<year_dir> ...]
 """
 import json
 import shutil
@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from lib.bundle_io import (  # noqa: E402
     SHARED_INPUT_NAMES,
     bundle_input_path,

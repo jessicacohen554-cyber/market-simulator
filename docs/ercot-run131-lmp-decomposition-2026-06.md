@@ -148,7 +148,7 @@ shipped extract — reproduces the documented gate exactly: 2023 MAE 10.5 / tail
 
 ### First-hour diagnostic (where the 2025 adder over-fires)
 
-`scripts/_ercot_2025_adder_diag.py` on the regenerated run131, demand-weighted
+`scripts/probes/_ercot_2025_adder_diag.py` on the regenerated run131, demand-weighted
 model price vs actual RTSPP:
 
 - **The +$11.2 overshoot is entirely the deep tail.** Decomposed by model price
