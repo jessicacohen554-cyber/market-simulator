@@ -162,9 +162,9 @@ def build_import_generators(
         in its demand series).
     """
     zone = IMPORT_ZONE.get(iso)
-    tranches = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) if (
-        year is not None
-    ) else None
+    tranches = (
+        IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) if (year is not None) else None
+    )
     if tranches is None:
         tranches = IMPORT_TRANCHES.get(iso, [])
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
@@ -172,17 +172,19 @@ def build_import_generators(
     for name, capacity, marginal_cost in tranches:
         ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
         tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
-        gens.append(Generator(
-            unit_id=f"{zone}_{name}",
-            name=name,
-            zone=zone,
-            fuel_type="import",
-            pmax_mw=capacity,
-            pmin_mw=0.0,
-            heat_rate=0.0,
-            vom=marginal_cost + tranche_carbon,
-            eford=IMPORT_EFORD.get(iso, 0.0),
-        ))
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_{name}",
+                name=name,
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=capacity,
+                pmin_mw=0.0,
+                heat_rate=0.0,
+                vom=marginal_cost + tranche_carbon,
+                eford=IMPORT_EFORD.get(iso, 0.0),
+            )
+        )
     return gens
 
 
@@ -280,33 +282,40 @@ def build_reference_price_node(iso: str) -> list[Generator]:
         # limit, so |flow| <= limit still holds.
         step = neighbor.interface_limit_mw / SEAM_FLOW_TRANCHES
         for k in range(1, SEAM_FLOW_TRANCHES + 1):
-            gens.append(Generator(
-                unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}#{k}",
-                name=f"ref_import_{neighbor.name}_t{k}",
-                zone=zone,
-                fuel_type="import",
-                pmax_mw=step,
-                pmin_mw=0.0,
-                heat_rate=0.0,
-                vom=0.0,
-                eford=0.0,
-            ))
-            gens.append(Generator(
-                unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}#{k}",
-                name=f"ref_export_{neighbor.name}_t{k}",
-                zone=zone,
-                fuel_type="import",
-                pmax_mw=0.0,
-                pmin_mw=-step,
-                heat_rate=0.0,
-                vom=0.0,
-                eford=0.0,
-            ))
+            gens.append(
+                Generator(
+                    unit_id=f"{zone}{_REF_IMPORT_MARK}{neighbor.name}#{k}",
+                    name=f"ref_import_{neighbor.name}_t{k}",
+                    zone=zone,
+                    fuel_type="import",
+                    pmax_mw=step,
+                    pmin_mw=0.0,
+                    heat_rate=0.0,
+                    vom=0.0,
+                    eford=0.0,
+                )
+            )
+            gens.append(
+                Generator(
+                    unit_id=f"{zone}{_REF_EXPORT_MARK}{neighbor.name}#{k}",
+                    name=f"ref_export_{neighbor.name}_t{k}",
+                    zone=zone,
+                    fuel_type="import",
+                    pmax_mw=0.0,
+                    pmin_mw=-step,
+                    heat_rate=0.0,
+                    vom=0.0,
+                    eford=0.0,
+                )
+            )
     return gens
 
 
 def inject_reference_price_mc(
-    fleet_arrays, mc: np.ndarray, iso: str, year: int,
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
     gas_scenario: str = "mid",
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
@@ -335,8 +344,7 @@ def inject_reference_price_mc(
     )
 
     hours = int(mc.shape[1])
-    aggregate = interface_reference_prices(iso, year, hours,
-                                           gas_scenario).aggregate()
+    aggregate = interface_reference_prices(iso, year, hours, gas_scenario).aggregate()
     specs = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
     # Cache each neighbor's (export, import) tranche price matrices once.
     tranches: dict[str, tuple | None] = {}
@@ -353,9 +361,10 @@ def inject_reference_price_mc(
         if name not in tranches:
             spec = specs.get(name)
             tranches[name] = (
-                seam_tranche_prices(spec, year, hours,
-                                    gas_scenario=gas_scenario)
-                if spec is not None else None)
+                seam_tranche_prices(spec, year, hours, gas_scenario=gas_scenario)
+                if spec is not None
+                else None
+            )
         priced = tranches[name]
         hurdle = specs[name].hurdle if name in specs else 0.0
         if priced is not None:
@@ -372,7 +381,11 @@ def inject_reference_price_mc(
 
 
 def inject_caiso_import_hub_prices(
-    fleet_arrays, mc: np.ndarray, iso: str, year: int, carbon_price: float,
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+    carbon_price: float,
 ) -> bool:
     """Overwrite the CAISO import tranche rows of ``mc`` with measured hub prices.
 
@@ -408,7 +421,7 @@ def inject_caiso_import_hub_prices(
     for row, uid in enumerate(fleet_arrays.unit_ids):
         if zone is None or not uid.startswith(f"{zone}_"):
             continue
-        tranche = uid[len(zone) + 1:]
+        tranche = uid[len(zone) + 1 :]
         hub_price = prices.get(tranche)
         if hub_price is None:
             continue  # tranche with no measured hub series stays on the ladder
@@ -474,7 +487,10 @@ def build_wecc_export_sink() -> Generator:
 
 
 def inject_interchange_shape(
-    fleet_arrays, iso: str, year: int, percentile: float = 90.0,
+    fleet_arrays,
+    iso: str,
+    year: int,
+    percentile: float = 90.0,
     export_only: bool = False,
 ) -> bool:
     """Shape the priced import/export node by the measured diurnal interchange.
@@ -632,8 +648,7 @@ def inject_caiso_gas_commitment_floor(
     # Never demand more gas than the fleet can supply that hour, so a feasible
     # LP solution always exists (the floor cannot manufacture unmet demand).
     avail_cap = (
-        fleet_arrays.pmax[gas_rows, np.newaxis]
-        * fleet_arrays.availability[gas_rows, :]
+        fleet_arrays.pmax[gas_rows, np.newaxis] * fleet_arrays.availability[gas_rows, :]
     )
     np.minimum(target, avail_cap.sum(axis=0), out=target)
 
@@ -647,15 +662,11 @@ def inject_caiso_gas_commitment_floor(
     # unit capped at its available capacity — the convention the CT/reliability
     # deployment overlays use (data/fleet.py). ``maximum`` composes the floor
     # with any CHP/ST/export floor already in min_gen rather than clobbering it.
-    order = gas_rows[
-        np.argsort(fleet_arrays.heat_rate[gas_rows], kind="stable")
-    ]
+    order = gas_rows[np.argsort(fleet_arrays.heat_rate[gas_rows], kind="stable")]
     remaining = target.copy()
     for r in order:
         cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
         take = np.minimum(remaining, cap)
-        np.maximum(
-            fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :]
-        )
+        np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
         remaining = remaining - take
     return True

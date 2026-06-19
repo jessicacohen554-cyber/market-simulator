@@ -46,29 +46,55 @@ DEFAULT_REGISTRY = REPO / "inputs" / "master-plant-registry.csv"
 # Plant_Group -> (fuel tag, code digit). Same digit groups configs of one fuel.
 _GROUP_TAG: dict[str, tuple[str, int]] = {
     "COAL": ("COAL", 1),
-    "ST_GAS": ("ST", 2), "ST_CHP": ("ST", 2),
-    "CT_PEAKER": ("CT", 3), "CT_CHP": ("CT", 3),
-    "CC_REGULAR": ("CC", 4), "CC_CHP": ("CC", 4),
+    "ST_GAS": ("ST", 2),
+    "ST_CHP": ("ST", 2),
+    "CT_PEAKER": ("CT", 3),
+    "CT_CHP": ("CT", 3),
+    "CC_REGULAR": ("CC", 4),
+    "CC_CHP": ("CC", 4),
 }
 
 # Per-tag registry metadata (fuel_type, prime_mover, primary_fuel, technology).
 _TAG_META: dict[str, dict[str, str]] = {
-    "COAL": {"fuel_type": "SUB", "prime_mover": "ST", "primary_fuel": "SUB",
-             "technology": "Conventional Steam Coal"},
-    "ST": {"fuel_type": "NG", "prime_mover": "ST", "primary_fuel": "NG",
-           "technology": "Natural Gas Steam Turbine"},
-    "CT": {"fuel_type": "NG", "prime_mover": "GT", "primary_fuel": "NG",
-           "technology": "Natural Gas Fired Combustion Turbine"},
-    "CC": {"fuel_type": "NG", "prime_mover": "CA", "primary_fuel": "NG",
-           "technology": "Natural Gas Fired Combined Cycle"},
+    "COAL": {
+        "fuel_type": "SUB",
+        "prime_mover": "ST",
+        "primary_fuel": "SUB",
+        "technology": "Conventional Steam Coal",
+    },
+    "ST": {
+        "fuel_type": "NG",
+        "prime_mover": "ST",
+        "primary_fuel": "NG",
+        "technology": "Natural Gas Steam Turbine",
+    },
+    "CT": {
+        "fuel_type": "NG",
+        "prime_mover": "GT",
+        "primary_fuel": "NG",
+        "technology": "Natural Gas Fired Combustion Turbine",
+    },
+    "CC": {
+        "fuel_type": "NG",
+        "prime_mover": "CA",
+        "primary_fuel": "NG",
+        "technology": "Natural Gas Fired Combined Cycle",
+    },
 }
 
 # Registry columns cleared on a newly-created child row — portion-specific
 # values that only unit-level data can fill.
 _CLEAR_ON_CHILD: tuple[str, ...] = (
-    "parasitic_load_pct", "annual_capacity_factor", "co2_kg_per_mwh_net",
-    "nox_kg_per_mwh_net", "so2_kg_per_mwh_net", "startup_co2_kg",
-    "startup_nox_kg", "startup_so2_kg", "starts_per_year", "heat_rate_bin",
+    "parasitic_load_pct",
+    "annual_capacity_factor",
+    "co2_kg_per_mwh_net",
+    "nox_kg_per_mwh_net",
+    "so2_kg_per_mwh_net",
+    "startup_co2_kg",
+    "startup_nox_kg",
+    "startup_so2_kg",
+    "starts_per_year",
+    "heat_rate_bin",
 )
 
 
@@ -95,9 +121,7 @@ def tag_mixed_plants(bins: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
         if len(tags) < 2:
             continue  # single fuel class — nothing to split
         # Dominant tag (most nameplate) keeps the real EIA code.
-        dominant = (
-            grp.groupby("_tag")["Nameplate_MW"].sum().idxmax()
-        )
+        dominant = grp.groupby("_tag")["Nameplate_MW"].sum().idxmax()
         for tag in tags:
             rows = (bins["Plant_Code"] == code) & (bins["_tag"] == tag)
             stem = _name_stem(bins.loc[rows, "Plant_Name"].iloc[0])
@@ -136,7 +160,8 @@ def _bin_attrs(bins: pd.DataFrame, code: int) -> dict:
 
 
 def sync_registry_to_bins(
-    bins: pd.DataFrame, registry: pd.DataFrame,
+    bins: pd.DataFrame,
+    registry: pd.DataFrame,
 ) -> tuple[pd.DataFrame, list[str]]:
     """Return ``(registry, changes)`` reconciled to the tagged bin file.
 
@@ -150,7 +175,8 @@ def sync_registry_to_bins(
     reg_codes = set(registry["plantid"].astype(int))
     bin_codes = set(bins["Plant_Code"].astype(int))
     children = {
-        c for c in bin_codes
+        c
+        for c in bin_codes
         if c not in reg_codes and (c // 10) in reg_codes and c % 10 in {1, 2, 3, 4}
     }
     changes: list[str] = []
@@ -169,9 +195,7 @@ def sync_registry_to_bins(
         for col in _CLEAR_ON_CHILD:
             if col in new_row.index:
                 new_row[col] = pd.NA
-        registry = pd.concat(
-            [registry, new_row.to_frame().T], ignore_index=True
-        )
+        registry = pd.concat([registry, new_row.to_frame().T], ignore_index=True)
         changes.append(f"added registry row {child} ('{new_row['plant_name']}')")
 
     return registry, changes

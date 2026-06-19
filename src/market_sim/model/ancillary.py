@@ -22,6 +22,7 @@ Gated on ``ScenarioConfig.as_revenue_enabled`` and ERCOT only; returns 0
 otherwise, so the default (off) is byte-identical and capacity-market ISOs
 are untouched.
 """
+
 from __future__ import annotations
 
 from market_sim.config.constants import (

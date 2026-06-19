@@ -26,9 +26,7 @@ class TestScenarioConfig(unittest.TestCase):
         self.assertEqual(ScenarioConfig().mode, "forecast")
 
     def test_mode_backcast_accepted(self):
-        self.assertEqual(
-            ScenarioConfig(mode="backcast").mode, "backcast"
-        )
+        self.assertEqual(ScenarioConfig(mode="backcast").mode, "backcast")
 
     def test_invalid_mode_rejected(self):
         with self.assertRaises(ValueError):
@@ -56,9 +54,7 @@ class TestScenarioConfig(unittest.TestCase):
         defaults = ScenarioConfig()
         self.assertEqual(loaded.carbon_price, 99.0)
         self.assertEqual(loaded.iso, defaults.iso)
-        self.assertEqual(
-            loaded.nominal_discount_rate, defaults.nominal_discount_rate
-        )
+        self.assertEqual(loaded.nominal_discount_rate, defaults.nominal_discount_rate)
 
     def test_to_yaml_only_writes_non_defaults(self):
         config = ScenarioConfig(carbon_price=33.0)
@@ -101,7 +97,7 @@ class TestRealToNominal(unittest.TestCase):
         """2036 is 10 years out, deflator = 1.022^10."""
         values = np.array([50.0])
         years = np.array([2036])
-        expected = 50.0 * (1.022 ** 10)
+        expected = 50.0 * (1.022**10)
         result = real_to_nominal(values, years)
         assert abs(result[0] - expected) < 1e-6
 

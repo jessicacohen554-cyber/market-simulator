@@ -14,9 +14,7 @@ import numpy as np
 import pandas as pd
 
 
-def compute_emissions(
-    dispatch: np.ndarray, emission_rates: np.ndarray
-) -> np.ndarray:
+def compute_emissions(dispatch: np.ndarray, emission_rates: np.ndarray) -> np.ndarray:
     """Return hourly system CO2 emissions from a dispatch schedule.
 
     Args:
@@ -118,8 +116,7 @@ def compute_must_run_emissions(
         mr["mr_mw"] = mr["capacity_mw"] * mr["pct_mr"] / 100.0
         mr["mr_gen_mwh"] = mr["mr_mw"] * 8760.0 * must_run_cf
     mr["mr_co2_tons"] = mr.apply(
-        lambda r: r["mr_gen_mwh"]
-        * get_emission_rate(r["fuel"], r["hr_weighted"]),
+        lambda r: r["mr_gen_mwh"] * get_emission_rate(r["fuel"], r["hr_weighted"]),
         axis=1,
     )
     return mr

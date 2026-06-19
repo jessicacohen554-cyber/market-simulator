@@ -34,6 +34,7 @@ Run from the repo root::
     python scripts/derive_interface_limits.py
     python scripts/derive_interface_limits.py --check   # assert constants match
 """
+
 from __future__ import annotations
 
 import argparse
@@ -50,8 +51,20 @@ PCTL = 0.995  # firm-continuous upper envelope (trims top ~0.5% transient hours)
 # LAGN are the south-west ties PJM net-*imports* over; the three-seam PJM build
 # has no neighbor for them yet, so they stay unmapped (see module docstring).
 SEAM_TIES: dict[str, list[str]] = {
-    "MISO": ["ALTE", "ALTW", "AMIL", "CWLP", "IPL", "MEC", "MECS",
-             "NIPS", "SIGE", "WEC", "MDU", "CIN"],
+    "MISO": [
+        "ALTE",
+        "ALTW",
+        "AMIL",
+        "CWLP",
+        "IPL",
+        "MEC",
+        "MECS",
+        "NIPS",
+        "SIGE",
+        "WEC",
+        "MDU",
+        "CIN",
+    ],
     "NYISO": ["NYIS", "HUDS", "NEPT", "LIND"],
     "Carolinas": ["CPLE", "CPLW", "DUK"],
 }
@@ -75,8 +88,9 @@ def _seam_flow() -> pd.DataFrame:
         path = DATA_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
         if not path.exists():
             continue
-        df = pd.read_csv(path, usecols=["datetime_beginning_utc", "tie_line",
-                                        "actual_flow"])
+        df = pd.read_csv(
+            path, usecols=["datetime_beginning_utc", "tie_line", "actual_flow"]
+        )
         df["seam"] = df["tie_line"].map(tie_to_seam)
         df["year"] = year
         frames.append(df)
@@ -86,40 +100,55 @@ def _seam_flow() -> pd.DataFrame:
     mapped = alldf.dropna(subset=["seam"])
     return mapped.pivot_table(
         index=["year", "datetime_beginning_utc"],
-        columns="seam", values="actual_flow", aggfunc="sum")
+        columns="seam",
+        values="actual_flow",
+        aggfunc="sum",
+    )
 
 
 def derive() -> dict[str, float]:
     piv = _seam_flow()
     limits: dict[str, float] = {}
-    print(f"PJM Data Miner per-tie actual flow, pooled {YEARS} "
-          f"(export = negative MW):\n")
-    print(f"{'seam':10s} {'export_max':>10s} {'p99.5|flow|':>11s} "
-          f"{'mean':>8s} {'export_hr%':>10s} -> limit_mw")
+    print(
+        f"PJM Data Miner per-tie actual flow, pooled {YEARS} (export = negative MW):\n"
+    )
+    print(
+        f"{'seam':10s} {'export_max':>10s} {'p99.5|flow|':>11s} "
+        f"{'mean':>8s} {'export_hr%':>10s} -> limit_mw"
+    )
     for seam in SEAM_TIES:
         x = piv[seam].dropna()
         limit = round(x.abs().quantile(PCTL) / 100.0) * 100.0
         limits[seam] = limit
-        print(f"{seam:10s} {(-x).clip(lower=0).max():10.0f} "
-              f"{x.abs().quantile(PCTL):11.0f} {x.mean():8.0f} "
-              f"{100 * (x < 0).mean():10.0f} -> {limit:.0f}")
+        print(
+            f"{seam:10s} {(-x).clip(lower=0).max():10.0f} "
+            f"{x.abs().quantile(PCTL):11.0f} {x.mean():8.0f} "
+            f"{100 * (x < 0).mean():10.0f} -> {limit:.0f}"
+        )
     return limits
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--check", action="store_true",
-                    help="assert the committed constants match the data")
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="assert the committed constants match the data",
+    )
     args = ap.parse_args()
 
     limits = derive()
 
     if args.check:
-        bad = {s: (limits[s], COMMITTED_MW[s])
-               for s in COMMITTED_MW if limits[s] != COMMITTED_MW[s]}
+        bad = {
+            s: (limits[s], COMMITTED_MW[s])
+            for s in COMMITTED_MW
+            if limits[s] != COMMITTED_MW[s]
+        }
         if bad:
             raise SystemExit(
-                f"interface limits drifted from committed constants: {bad}")
+                f"interface limits drifted from committed constants: {bad}"
+            )
         print("\nOK: derived limits match COMMITTED_MW.")
 
 

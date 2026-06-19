@@ -100,18 +100,61 @@ _KEY_COLUMNS: list[str] = ["plant_id", "unit_id", "interval_start_utc"]
 # Pacific=8, Alaska=9, Hawaii=10 (Arizona never observes DST anyway).
 STATE_STD_UTC_OFFSET_HOURS: dict[str, int] = {
     # Eastern (UTC-5)
-    "CT": 5, "DC": 5, "DE": 5, "FL": 5, "GA": 5, "IN": 5, "KY": 5, "MA": 5,
-    "MD": 5, "ME": 5, "MI": 5, "NC": 5, "NH": 5, "NJ": 5, "NY": 5, "OH": 5,
-    "PA": 5, "RI": 5, "SC": 5, "VA": 5, "VT": 5, "WV": 5,
+    "CT": 5,
+    "DC": 5,
+    "DE": 5,
+    "FL": 5,
+    "GA": 5,
+    "IN": 5,
+    "KY": 5,
+    "MA": 5,
+    "MD": 5,
+    "ME": 5,
+    "MI": 5,
+    "NC": 5,
+    "NH": 5,
+    "NJ": 5,
+    "NY": 5,
+    "OH": 5,
+    "PA": 5,
+    "RI": 5,
+    "SC": 5,
+    "VA": 5,
+    "VT": 5,
+    "WV": 5,
     # Central (UTC-6)
-    "AL": 6, "AR": 6, "IA": 6, "IL": 6, "KS": 6, "LA": 6, "MN": 6, "MO": 6,
-    "MS": 6, "ND": 6, "NE": 6, "OK": 6, "SD": 6, "TN": 6, "TX": 6, "WI": 6,
+    "AL": 6,
+    "AR": 6,
+    "IA": 6,
+    "IL": 6,
+    "KS": 6,
+    "LA": 6,
+    "MN": 6,
+    "MO": 6,
+    "MS": 6,
+    "ND": 6,
+    "NE": 6,
+    "OK": 6,
+    "SD": 6,
+    "TN": 6,
+    "TX": 6,
+    "WI": 6,
     # Mountain (UTC-7)
-    "AZ": 7, "CO": 7, "ID": 7, "MT": 7, "NM": 7, "UT": 7, "WY": 7,
+    "AZ": 7,
+    "CO": 7,
+    "ID": 7,
+    "MT": 7,
+    "NM": 7,
+    "UT": 7,
+    "WY": 7,
     # Pacific (UTC-8)
-    "CA": 8, "NV": 8, "OR": 8, "WA": 8,
+    "CA": 8,
+    "NV": 8,
+    "OR": 8,
+    "WA": 8,
     # Alaska / Hawaii
-    "AK": 9, "HI": 10,
+    "AK": 9,
+    "HI": 10,
 }
 
 _YEAR_RE = re.compile(r"_(\d{4})\.parquet$")
@@ -168,11 +211,18 @@ def clean_campd_frame(raw: pd.DataFrame, *, facility_level: bool) -> pd.DataFram
             "iso": pd.array([pd.NA] * len(raw), dtype="string"),
             "plant_id": plant_id.to_numpy(),
             "unit_id": unit_id.to_numpy(),
-            "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce").astype("float64"),
-            "heat_input_mmbtu": pd.to_numeric(raw["heatInput"], errors="coerce").astype("float64"),
-            "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce").astype("float64") * SHORT_TON_TO_KG,
-            "nox_kg": pd.to_numeric(raw["noxMass"], errors="coerce").astype("float64") * LB_TO_KG,
-            "so2_kg": pd.to_numeric(raw["so2Mass"], errors="coerce").astype("float64") * LB_TO_KG,
+            "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce").astype(
+                "float64"
+            ),
+            "heat_input_mmbtu": pd.to_numeric(raw["heatInput"], errors="coerce").astype(
+                "float64"
+            ),
+            "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce").astype("float64")
+            * SHORT_TON_TO_KG,
+            "nox_kg": pd.to_numeric(raw["noxMass"], errors="coerce").astype("float64")
+            * LB_TO_KG,
+            "so2_kg": pd.to_numeric(raw["so2Mass"], errors="coerce").astype("float64")
+            * LB_TO_KG,
         }
     )
     # Make interval_start_utc tz-aware UTC (numpy round-trip above drops tz).
@@ -211,9 +261,13 @@ def curate_year(
     unit_paths = sorted(unit_dir.glob(f"*_{year}.parquet")) if unit_dir.is_dir() else []
     fac_paths = sorted(fac_dir.glob(f"*_{year}.parquet")) if fac_dir.is_dir() else []
     if not unit_paths and not fac_paths:
-        raise FileNotFoundError(f"no CAMPD extracts for {year} in {unit_dir} or {fac_dir}")
+        raise FileNotFoundError(
+            f"no CAMPD extracts for {year} in {unit_dir} or {fac_dir}"
+        )
 
-    unit_frames = [clean_campd_frame(pd.read_parquet(p), facility_level=False) for p in unit_paths]
+    unit_frames = [
+        clean_campd_frame(pd.read_parquet(p), facility_level=False) for p in unit_paths
+    ]
     unit_df = (
         pd.concat(unit_frames, ignore_index=True)
         if unit_frames
@@ -249,13 +303,19 @@ def curate_year(
     clean_io.validate_clean(path)
     logger.info(
         "emissions %d: %d rows (%d unit-grain, %d facility-ALL) -> %s",
-        year, len(df), len(unit_df), len(fac_df), path,
+        year,
+        len(df),
+        len(unit_df),
+        len(fac_df),
+        path,
     )
     return path
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Curate CAMPD CEMS into the emissions clean datatype.")
+    parser = argparse.ArgumentParser(
+        description="Curate CAMPD CEMS into the emissions clean datatype."
+    )
     parser.add_argument(
         "--years",
         type=int,

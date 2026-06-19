@@ -76,8 +76,11 @@ class TestStorageUnit(unittest.TestCase):
 
     def test_efficiencies_default_to_lossless(self):
         unit = StorageUnit(
-            unit_id="B1", zone="Z0", tech_name="li_ion_4hr",
-            power_cap_mw=50.0, energy_cap_mwh=200.0,
+            unit_id="B1",
+            zone="Z0",
+            tech_name="li_ion_4hr",
+            power_cap_mw=50.0,
+            energy_cap_mwh=200.0,
         )
         self.assertEqual(unit.eta_charge, 1.0)
         self.assertEqual(unit.eta_discharge, 1.0)
@@ -253,40 +256,32 @@ class TestCapacityValue(unittest.TestCase):
 
     def test_energy_only_market_pays_no_capacity(self):
         # ERCOT is energy-only -- scarcity flows through the energy price.
-        val = estimate_capacity_value(
-            "li_ion_4hr", 0.0, ScenarioConfig(), "ERCOT"
-        )
+        val = estimate_capacity_value("li_ion_4hr", 0.0, ScenarioConfig(), "ERCOT")
         self.assertEqual(val, 0.0)
 
     def test_capacity_market_pays_capacity(self):
-        val = estimate_capacity_value(
-            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
-        )
+        val = estimate_capacity_value("li_ion_4hr", 0.0, ScenarioConfig(), "PJM")
         self.assertGreater(val, 0.0)
 
     def test_capacity_value_declines_with_penetration(self):
         # As storage saturates the peak, marginal capacity value falls.
-        low_pen = estimate_capacity_value(
-            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
-        )
+        low_pen = estimate_capacity_value("li_ion_4hr", 0.0, ScenarioConfig(), "PJM")
         high_pen = estimate_capacity_value(
             "li_ion_4hr", 60_000.0, ScenarioConfig(), "PJM"
         )
         self.assertLess(high_pen, low_pen)
 
     def test_longer_duration_earns_more_capacity_value(self):
-        short = estimate_capacity_value(
-            "li_ion_4hr", 0.0, ScenarioConfig(), "PJM"
-        )
-        long = estimate_capacity_value(
-            "li_ion_12hr", 0.0, ScenarioConfig(), "PJM"
-        )
+        short = estimate_capacity_value("li_ion_4hr", 0.0, ScenarioConfig(), "PJM")
+        long = estimate_capacity_value("li_ion_12hr", 0.0, ScenarioConfig(), "PJM")
         self.assertGreater(long, short)
 
     def test_config_toggle_disables_capacity_value(self):
         val = estimate_capacity_value(
-            "li_ion_4hr", 0.0,
-            ScenarioConfig(storage_capacity_value=False), "PJM",
+            "li_ion_4hr",
+            0.0,
+            ScenarioConfig(storage_capacity_value=False),
+            "PJM",
         )
         self.assertEqual(val, 0.0)
 
@@ -314,20 +309,19 @@ class TestApplyStorageNewEntry(unittest.TestCase):
         result = apply_storage_new_entry(
             existing, self._flat_prices(), 2027, ScenarioConfig(), "ERCOT"
         )
-        self.assertAlmostEqual(
-            self._total_mw(result), self._total_mw(existing)
-        )
+        self.assertAlmostEqual(self._total_mw(result), self._total_mw(existing))
 
     def test_high_spread_triggers_entry(self):
         iso = get_iso_config("ERCOT")
         existing = build_default_storage(iso, ScenarioConfig())
         result = apply_storage_new_entry(
-            existing, self._high_spread_prices(), 2027, ScenarioConfig(),
+            existing,
+            self._high_spread_prices(),
+            2027,
+            ScenarioConfig(),
             "ERCOT",
         )
-        self.assertGreater(
-            self._total_mw(result), self._total_mw(existing)
-        )
+        self.assertGreater(self._total_mw(result), self._total_mw(existing))
 
     def test_annual_cap_binds(self):
         # Even with huge arbitrage margins, a single year cannot build more
@@ -335,7 +329,10 @@ class TestApplyStorageNewEntry(unittest.TestCase):
         iso = get_iso_config("ERCOT")
         existing = build_default_storage(iso, ScenarioConfig())
         result = apply_storage_new_entry(
-            existing, self._high_spread_prices(), 2027, ScenarioConfig(),
+            existing,
+            self._high_spread_prices(),
+            2027,
+            ScenarioConfig(),
             "ERCOT",
         )
         added = self._total_mw(result) - self._total_mw(existing)
@@ -358,7 +355,10 @@ class TestApplyStorageNewEntry(unittest.TestCase):
             )
         ]
         result = apply_storage_new_entry(
-            existing, self._high_spread_prices(), 2027, ScenarioConfig(),
+            existing,
+            self._high_spread_prices(),
+            2027,
+            ScenarioConfig(),
             "ERCOT",
         )
         self.assertLessEqual(self._total_mw(result), ceiling + 1.0)
@@ -370,10 +370,14 @@ class TestApplyStorageNewEntry(unittest.TestCase):
             STORAGE_ANNUAL_BUILD_CAP_MW,
             STORAGE_TECH_BUILD_SHARE_CAP,
         )
+
         iso = get_iso_config("ERCOT")
         existing = build_default_storage(iso, ScenarioConfig())
         result = apply_storage_new_entry(
-            existing, self._high_spread_prices(), 2030, ScenarioConfig(),
+            existing,
+            self._high_spread_prices(),
+            2030,
+            ScenarioConfig(),
             "ERCOT",
         )
         new_by_tech: dict[str, float] = {}
@@ -394,12 +398,13 @@ class TestApplyStorageNewEntry(unittest.TestCase):
         iso = get_iso_config("PJM")
         existing = build_default_storage(iso, ScenarioConfig())
         result = apply_storage_new_entry(
-            existing, self._high_spread_prices(), 2030, ScenarioConfig(),
+            existing,
+            self._high_spread_prices(),
+            2030,
+            ScenarioConfig(),
             "PJM",
         )
-        self.assertGreater(
-            self._total_mw(result), self._total_mw(existing)
-        )
+        self.assertGreater(self._total_mw(result), self._total_mw(existing))
 
     def test_base_fleet_preserved_without_prior_prices(self):
         # With no price spread (the base-year case before any solve) the
@@ -503,11 +508,7 @@ class TestStorageArbitrageDispatch(unittest.TestCase):
         # the final hour, so SOC[0] is SOC[T-1] advanced by hour 0's own
         # charge/discharge -- no "free" unconstrained energy at hour 0.
         eta = self.RTE**0.5
-        wrapped = (
-            self.soc[self.T - 1]
-            + eta * self.charge[0]
-            - self.discharge[0] / eta
-        )
+        wrapped = self.soc[self.T - 1] + eta * self.charge[0] - self.discharge[0] / eta
         self.assertAlmostEqual(self.soc[0], wrapped, places=4)
 
     def test_energy_conservation_through_round_trip(self):
@@ -552,21 +553,31 @@ class TestStorageDailyCycling(unittest.TestCase):
         demand = np.full((1, self.T), 350.0)
         units = [
             StorageUnit(
-                unit_id="B0", zone="Z0", tech_name="li_ion_4hr",
-                power_cap_mw=100.0, energy_cap_mwh=400.0,
-                eta_charge=eta, eta_discharge=eta, zone_idx=0,
+                unit_id="B0",
+                zone="Z0",
+                tech_name="li_ion_4hr",
+                power_cap_mw=100.0,
+                energy_cap_mwh=400.0,
+                eta_charge=eta,
+                eta_discharge=eta,
+                zone_idx=0,
             )
         ]
         arrays = storage_units_to_arrays(units, ["Z0"])
         return solve_dispatch(
-            fleet, demand,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
-            mc=mc, T=self.T,
+            fleet,
+            demand,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            mc=mc,
+            T=self.T,
             storage_power_cap=arrays.power_cap,
             storage_energy_cap=arrays.energy_cap,
             storage_zone_idx=arrays.zone_idx,
-            eta_chg=arrays.eta_chg, eta_dis=arrays.eta_dis,
+            eta_chg=arrays.eta_chg,
+            eta_dis=arrays.eta_dis,
             storage_daily_cycle_hours=cycle_hours,
         )
 
@@ -577,8 +588,9 @@ class TestStorageDailyCycling(unittest.TestCase):
         soc = r.storage_soc[0]
         self.assertGreater(soc[24] - soc[0], 50.0)
         # It charges far more on day 0 than day 1 (banking for the dear day).
-        self.assertGreater(r.storage_charge[0][:24].sum(),
-                           r.storage_charge[0][24:].sum() + 50.0)
+        self.assertGreater(
+            r.storage_charge[0][:24].sum(), r.storage_charge[0][24:].sum() + 50.0
+        )
 
     def test_daily_cap_makes_each_day_energy_neutral(self):
         # With the 24h cap, the day-start SOC is pinned, so the boundary SOC
@@ -595,29 +607,39 @@ class TestStorageDailyCycling(unittest.TestCase):
         mc = np.vstack([np.full(self.T, 20.0), np.empty(self.T)])
         # Each day: cheap first half, dear second half.
         for d in range(2):
-            mc[1, d * 24: d * 24 + 12] = 20.0
-            mc[1, d * 24 + 12: d * 24 + 24] = 80.0
+            mc[1, d * 24 : d * 24 + 12] = 20.0
+            mc[1, d * 24 + 12 : d * 24 + 24] = 80.0
         demand = np.empty((1, self.T))
         for d in range(2):
-            demand[0, d * 24: d * 24 + 12] = 200.0
-            demand[0, d * 24 + 12: d * 24 + 24] = 400.0
+            demand[0, d * 24 : d * 24 + 12] = 200.0
+            demand[0, d * 24 + 12 : d * 24 + 24] = 400.0
         units = [
             StorageUnit(
-                unit_id="B0", zone="Z0", tech_name="li_ion_4hr",
-                power_cap_mw=100.0, energy_cap_mwh=400.0,
-                eta_charge=eta, eta_discharge=eta, zone_idx=0,
+                unit_id="B0",
+                zone="Z0",
+                tech_name="li_ion_4hr",
+                power_cap_mw=100.0,
+                energy_cap_mwh=400.0,
+                eta_charge=eta,
+                eta_discharge=eta,
+                zone_idx=0,
             )
         ]
         arrays = storage_units_to_arrays(units, ["Z0"])
         r = solve_dispatch(
-            fleet, demand,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
-            mc=mc, T=self.T,
+            fleet,
+            demand,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            mc=mc,
+            T=self.T,
             storage_power_cap=arrays.power_cap,
             storage_energy_cap=arrays.energy_cap,
             storage_zone_idx=arrays.zone_idx,
-            eta_chg=arrays.eta_chg, eta_dis=arrays.eta_dis,
+            eta_chg=arrays.eta_chg,
+            eta_dis=arrays.eta_dis,
             storage_daily_cycle_hours=24,
         )
         self.assertGreater(r.storage_discharge[0].sum(), 0.0)
@@ -637,16 +659,21 @@ class TestStorageDischargeCost(unittest.TestCase):
         demand = np.empty((1, self.T))
         demand[0, :12] = 200.0
         demand[0, 12:] = 400.0
-        eta = 0.85 ** 0.5
+        eta = 0.85**0.5
         return solve_dispatch(
-            fleet, demand,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
-            mc=mc, T=self.T,
+            fleet,
+            demand,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+            mc=mc,
+            T=self.T,
             storage_power_cap=np.array([100.0]),
             storage_energy_cap=np.array([400.0]),
             storage_zone_idx=np.array([0]),
-            eta_chg=np.array([eta]), eta_dis=np.array([eta]),
+            eta_chg=np.array([eta]),
+            eta_dis=np.array([eta]),
             storage_discharge_cost=discharge_cost,
         )
 
@@ -733,8 +760,9 @@ class TestEIA860PumpedStorage(unittest.TestCase):
             )
         # Northfield + Bear Swamp aggregate into Central; it is the largest zone.
         central_mw = sum(u.power_cap_mw for u in units if u.zone == "Central")
-        self.assertGreater(central_mw, 1700.0,
-                           msg="Central zone should hold Northfield+Bear Swamp")
+        self.assertGreater(
+            central_mw, 1700.0, msg="Central zone should hold Northfield+Bear Swamp"
+        )
 
 
 class TestNYISOPumpedStorage(unittest.TestCase):
@@ -773,8 +801,13 @@ class TestNYISOPumpedStorage(unittest.TestCase):
     def test_ps_zones_in_nyiso_topology(self):
         # Both zones hosting PS are valid NYISO model zones.
         units = load_eia860_pumped_storage("NYISO", 2023)
-        nyiso_zones = {"Upstate_West", "Capital_Hudson", "Lower_Hudson",
-                       "NYC", "Long_Island"}
+        nyiso_zones = {
+            "Upstate_West",
+            "Capital_Hudson",
+            "Lower_Hudson",
+            "NYC",
+            "Long_Island",
+        }
         for u in units:
             self.assertIn(u.zone, nyiso_zones)
 
@@ -806,23 +839,17 @@ class TestNYISOPumpedStorage(unittest.TestCase):
     def test_ps_dispatch_adder_respects_explicit_override(self):
         # An explicit config override must reach NYISO PS units.
         cfg = ScenarioConfig(pumped_storage_dispatch_adder=7.5)
-        self.assertEqual(
-            resolve_pumped_storage_dispatch_adder("NYISO", cfg), 7.5
-        )
+        self.assertEqual(resolve_pumped_storage_dispatch_adder("NYISO", cfg), 7.5)
         units = load_eia860_pumped_storage("NYISO", 2023, cfg)
         for u in units:
             self.assertEqual(u.vom, 7.5)
 
     def test_pjm_caiso_ps_unchanged_by_nyiso_p4(self):
         # NYISO P4 additions must not alter PJM or CAISO PS fleet totals.
-        pjm_mw = sum(
-            u.power_cap_mw
-            for u in load_eia860_pumped_storage("PJM", 2024)
-        )
+        pjm_mw = sum(u.power_cap_mw for u in load_eia860_pumped_storage("PJM", 2024))
         self.assertGreater(pjm_mw, 4_500.0)
         caiso_mw = sum(
-            u.power_cap_mw
-            for u in load_eia860_pumped_storage("CAISO", 2023)
+            u.power_cap_mw for u in load_eia860_pumped_storage("CAISO", 2023)
         )
         self.assertGreater(caiso_mw, 1_900.0)
 
@@ -867,23 +894,15 @@ class TestPumpedStorageDispatchAdder(unittest.TestCase):
             self.assertEqual(u.vom, 0.0)
 
     def test_no_config_falls_back_to_per_iso_default(self):
-        self.assertEqual(
-            resolve_pumped_storage_dispatch_adder("PJM", None), 10.0
-        )
-        self.assertEqual(
-            resolve_pumped_storage_dispatch_adder("CAISO", None), 0.0
-        )
+        self.assertEqual(resolve_pumped_storage_dispatch_adder("PJM", None), 10.0)
+        self.assertEqual(resolve_pumped_storage_dispatch_adder("CAISO", None), 0.0)
 
     def test_explicit_value_overrides_every_iso(self):
         cfg = ScenarioConfig(pumped_storage_dispatch_adder=5.0)
         for iso in ("PJM", "CAISO", "ERCOT"):
-            self.assertEqual(
-                resolve_pumped_storage_dispatch_adder(iso, cfg), 5.0
-            )
+            self.assertEqual(resolve_pumped_storage_dispatch_adder(iso, cfg), 5.0)
         zero = ScenarioConfig(pumped_storage_dispatch_adder=0.0)
-        self.assertEqual(
-            resolve_pumped_storage_dispatch_adder("PJM", zero), 0.0
-        )
+        self.assertEqual(resolve_pumped_storage_dispatch_adder("PJM", zero), 0.0)
 
 
 class TestBatteryDispatchAdder(unittest.TestCase):
@@ -897,9 +916,7 @@ class TestBatteryDispatchAdder(unittest.TestCase):
             self.assertEqual(u.vom, 0.0)
 
     def test_adder_carried_on_battery_vom_only(self):
-        cfg = ScenarioConfig(iso="PJM").with_overrides(
-            battery_dispatch_adder=17.5
-        )
+        cfg = ScenarioConfig(iso="PJM").with_overrides(battery_dispatch_adder=17.5)
         units = load_eia860_storage("PJM", 2024, cfg)
         for u in units:
             if u.tech_name == "pumped_storage":
@@ -913,13 +930,9 @@ class TestBatteryDispatchAdder(unittest.TestCase):
                 self.assertEqual(u.vom, 17.5)
 
     def test_adder_reaches_storage_arrays(self):
-        cfg = ScenarioConfig(iso="ERCOT").with_overrides(
-            battery_dispatch_adder=12.0
-        )
+        cfg = ScenarioConfig(iso="ERCOT").with_overrides(battery_dispatch_adder=12.0)
         units = load_eia860_storage("ERCOT", 2024, cfg)
-        arrays = storage_units_to_arrays(
-            units, [u.zone for u in units]
-        )
+        arrays = storage_units_to_arrays(units, [u.zone for u in units])
         self.assertTrue((arrays.vom == 12.0).all())
 
 
@@ -960,26 +973,29 @@ class TestEIA860CAISOBatteryFleet(unittest.TestCase):
         df = pd.read_parquet(path)
         df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
         power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
-        energy = pd.to_numeric(
-            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
-        )
+        energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
         op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
-        in_iso = df["Plant Code"].map(
-            lambda c: c == c and lookup.get(int(c)) is not None
-        ).astype(bool)
+        in_iso = (
+            df["Plant Code"]
+            .map(lambda c: c == c and lookup.get(int(c)) is not None)
+            .astype(bool)
+        )
 
         for year in (2023, 2024):
             online = in_iso & power.notna() & (power > 0) & ~(op_year > year)
             expected_mw = float(power[online].sum())
             expected_mwh = float(energy[online].sum())
-            units = _battery_units(load_eia860_storage(
-                "CAISO", year, ScenarioConfig(iso="CAISO")
-            ))
-            self.assertAlmostEqual(
-                sum(u.power_cap_mw for u in units), expected_mw, delta=1.0,
+            units = _battery_units(
+                load_eia860_storage("CAISO", year, ScenarioConfig(iso="CAISO"))
             )
             self.assertAlmostEqual(
-                sum(u.energy_cap_mwh for u in units), expected_mwh,
+                sum(u.power_cap_mw for u in units),
+                expected_mw,
+                delta=1.0,
+            )
+            self.assertAlmostEqual(
+                sum(u.energy_cap_mwh for u in units),
+                expected_mwh,
                 delta=1.0,
             )
 
@@ -990,9 +1006,8 @@ class TestEIA860CAISOBatteryFleet(unittest.TestCase):
         units = _battery_units(
             load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
         )
-        duration = (
-            sum(u.energy_cap_mwh for u in units)
-            / sum(u.power_cap_mw for u in units)
+        duration = sum(u.energy_cap_mwh for u in units) / sum(
+            u.power_cap_mw for u in units
         )
         self.assertGreater(duration, 3.0)
         self.assertLess(duration, 4.0)
@@ -1008,9 +1023,7 @@ class TestStorageVintageRamp(unittest.TestCase):
         # on, January online capacity must sit well below December, and the
         # monthly profile must be nondecreasing with December equal to the
         # year-end scalar caps.
-        units = _battery_units(
-            load_eia860_storage("CAISO", 2024, self.RAMP_CONFIG)
-        )
+        units = _battery_units(load_eia860_storage("CAISO", 2024, self.RAMP_CONFIG))
         ramped = [u for u in units if u.monthly_power_mw is not None]
         self.assertTrue(ramped)
         jan = sum(u.monthly_power_mw[0] for u in ramped)
@@ -1027,9 +1040,7 @@ class TestStorageVintageRamp(unittest.TestCase):
 
     def test_cap_profiles_expand_to_hours(self):
         units = load_eia860_storage("CAISO", 2024, self.RAMP_CONFIG)
-        arrays = storage_units_to_arrays(
-            units, get_iso_config("CAISO").zone_names
-        )
+        arrays = storage_units_to_arrays(units, get_iso_config("CAISO").zone_names)
         power, energy = storage_cap_profiles(units, arrays, 8760)
         self.assertEqual(power.shape, (arrays.n_storage, 8760))
         self.assertEqual(energy.shape, (arrays.n_storage, 8760))
@@ -1043,9 +1054,7 @@ class TestStorageVintageRamp(unittest.TestCase):
         # Ramp off: the static 1-D arrays pass through untouched, so the
         # LP bounds (and every existing backcast) are bit-identical.
         units = load_eia860_storage("CAISO", 2024, ScenarioConfig(iso="CAISO"))
-        arrays = storage_units_to_arrays(
-            units, get_iso_config("CAISO").zone_names
-        )
+        arrays = storage_units_to_arrays(units, get_iso_config("CAISO").zone_names)
         power, energy = storage_cap_profiles(units, arrays, 8760)
         self.assertIs(power, arrays.power_cap)
         self.assertIs(energy, arrays.energy_cap)
@@ -1123,13 +1132,13 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
         df = pd.read_parquet(path)
         df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
         power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
-        energy = pd.to_numeric(
-            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
-        )
+        energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
         op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
-        in_iso = df["Plant Code"].map(
-            lambda c: c == c and lookup.get(int(c)) is not None
-        ).astype(bool)
+        in_iso = (
+            df["Plant Code"]
+            .map(lambda c: c == c and lookup.get(int(c)) is not None)
+            .astype(bool)
+        )
         online = in_iso & power.notna() & (power > 0) & ~(op_year > year)
         return float(power[online].sum()), float(energy[online].sum())
 
@@ -1143,12 +1152,16 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
                 load_eia860_storage("NYISO", year, ScenarioConfig(iso="NYISO"))
             )
             self.assertAlmostEqual(
-                sum(u.power_cap_mw for u in units), expected_mw, delta=1.0,
-                msg=f"NYISO {year} MW mismatch"
+                sum(u.power_cap_mw for u in units),
+                expected_mw,
+                delta=1.0,
+                msg=f"NYISO {year} MW mismatch",
             )
             self.assertAlmostEqual(
-                sum(u.energy_cap_mwh for u in units), expected_mwh, delta=1.0,
-                msg=f"NYISO {year} MWh mismatch"
+                sum(u.energy_cap_mwh for u in units),
+                expected_mwh,
+                delta=1.0,
+                msg=f"NYISO {year} MWh mismatch",
             )
 
     def test_fleet_nonzero(self):
@@ -1168,8 +1181,7 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
         )
         total_mw = sum(u.power_cap_mw for u in units)
         downstate_mw = sum(
-            u.power_cap_mw for u in units
-            if u.zone in ("NYC", "Long_Island")
+            u.power_cap_mw for u in units if u.zone in ("NYC", "Long_Island")
         )
         self.assertGreater(total_mw, 0.0)
         # Downstate carries a nonzero but not dominant share (~15-35% of fleet)
@@ -1181,8 +1193,7 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
         adder = 5.0
         units = _battery_units(
             load_eia860_storage(
-                "NYISO", 2024,
-                ScenarioConfig(iso="NYISO", battery_dispatch_adder=adder)
+                "NYISO", 2024, ScenarioConfig(iso="NYISO", battery_dispatch_adder=adder)
             )
         )
         for u in units:
@@ -1212,16 +1223,20 @@ class TestEIA860NYISOBatteryFleet(unittest.TestCase):
             units_before = load_eia860_storage(iso, 2024, cfg)
             # Re-import to guarantee the lookup cache hasn't been poisoned.
             from market_sim.data.zone_assignment import build_zone_lookup
+
             build_zone_lookup(iso)  # warm cache
             units_after = load_eia860_storage(iso, 2024, cfg)
             self.assertEqual(
-                len(units_before), len(units_after),
-                msg=f"{iso} unit count changed after NYISO supplement was added"
+                len(units_before),
+                len(units_after),
+                msg=f"{iso} unit count changed after NYISO supplement was added",
             )
             for u_b, u_a in zip(units_before, units_after):
                 self.assertAlmostEqual(
-                    u_b.power_cap_mw, u_a.power_cap_mw, places=6,
-                    msg=f"{iso} unit {u_b.unit_id} power changed"
+                    u_b.power_cap_mw,
+                    u_a.power_cap_mw,
+                    places=6,
+                    msg=f"{iso} unit {u_b.unit_id} power changed",
                 )
 
 
@@ -1265,16 +1280,12 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
         df = pd.read_parquet(path)
         df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
         power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
-        energy = pd.to_numeric(
-            df["Nameplate Energy Capacity (MWh)"], errors="coerce"
-        )
+        energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
         op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
 
         # Keep rows: ISNE BA, op_year <= year, positive power, zone found.
         mask = (
-            df["Plant Code"].apply(
-                lambda c: pd.notna(c) and int(c) in isne_oris
-            )
+            df["Plant Code"].apply(lambda c: pd.notna(c) and int(c) in isne_oris)
             & power.notna()
             & (power > 0)
             & ~(op_year > year)
@@ -1342,15 +1353,9 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
             load_eia860_storage("NEISO", 2024, ScenarioConfig(iso="NEISO"))
         )
         self.assertTrue(units)
-        ma_mw = sum(
-            u.power_cap_mw
-            for u in units
-            if u.zone in {"Boston", "Central"}
-        )
+        ma_mw = sum(u.power_cap_mw for u in units if u.zone in {"Boston", "Central"})
         other_mw = sum(
-            u.power_cap_mw
-            for u in units
-            if u.zone in {"North", "Connecticut"}
+            u.power_cap_mw for u in units if u.zone in {"North", "Connecticut"}
         )
         self.assertGreater(ma_mw, other_mw)
 
@@ -1405,9 +1410,7 @@ class TestEIA860NEISOBatteryFleet(unittest.TestCase):
         # When non-null data exists, values must be non-negative (net
         # discharge can be zero but not negative in the fueltype column).
         if nonnull > 0:
-            non_null_vals = bat_2024.loc[
-                bat_2024["value_mwh"].notna(), "value_mwh"
-            ]
+            non_null_vals = bat_2024.loc[bat_2024["value_mwh"].notna(), "value_mwh"]
             self.assertTrue((non_null_vals >= 0).all())
 
 

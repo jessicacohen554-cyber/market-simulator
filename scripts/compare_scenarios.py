@@ -62,15 +62,22 @@ def main() -> None:
     """Build the three cross-scenario comparison CSVs."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--scenario-dirs", type=Path, nargs="+", required=True,
+        "--scenario-dirs",
+        type=Path,
+        nargs="+",
+        required=True,
         help="Two or more report directories to compare.",
     )
     parser.add_argument(
-        "--labels", nargs="+", required=True,
+        "--labels",
+        nargs="+",
+        required=True,
         help="A human-readable label per scenario directory.",
     )
     parser.add_argument(
-        "--output-dir", type=Path, default=REPO / "reports" / "comparison",
+        "--output-dir",
+        type=Path,
+        default=REPO / "reports" / "comparison",
     )
     args = parser.parse_args()
 
@@ -93,13 +100,10 @@ def main() -> None:
         plant = _load_yearly(scenario_dir, "plant_annual")
 
         if not company.empty:
-            agg = (
-                company.groupby("parent_company", as_index=False)
-                .agg(
-                    revenue=("owned_revenue", "sum"),
-                    emissions_tco2=("owned_co2_emissions_tons", "sum"),
-                    generation_mwh=("owned_generation_mwh", "sum"),
-                )
+            agg = company.groupby("parent_company", as_index=False).agg(
+                revenue=("owned_revenue", "sum"),
+                emissions_tco2=("owned_co2_emissions_tons", "sum"),
+                generation_mwh=("owned_generation_mwh", "sum"),
             )
             company_frames.append(agg.assign(scenario=label))
             emissions_frames.append(
@@ -111,32 +115,35 @@ def main() -> None:
         if not plant.empty:
             # Generation-weighted average captured price per zone.
             plant = plant.assign(
-                _rev=plant["avg_price_captured"].fillna(0.0)
-                * plant["generation_mwh"]
+                _rev=plant["avg_price_captured"].fillna(0.0) * plant["generation_mwh"]
             )
-            zone_price = (
-                plant.groupby("zone", as_index=False)
-                .agg(_rev=("_rev", "sum"), gen=("generation_mwh", "sum"))
+            zone_price = plant.groupby("zone", as_index=False).agg(
+                _rev=("_rev", "sum"), gen=("generation_mwh", "sum")
             )
-            zone_price["avg_price_per_mwh"] = (
-                zone_price["_rev"] / zone_price["gen"].where(zone_price["gen"] > 0)
-            )
+            zone_price["avg_price_per_mwh"] = zone_price["_rev"] / zone_price[
+                "gen"
+            ].where(zone_price["gen"] > 0)
             price_frames.append(
                 zone_price[["zone", "avg_price_per_mwh"]].assign(scenario=label)
             )
 
     _write_comparison(
         args.output_dir / "company_comparison.csv",
-        company_frames, index=["parent_company"],
+        company_frames,
+        index=["parent_company"],
         value_cols=["revenue", "emissions_tco2", "generation_mwh"],
     )
     _write_comparison(
         args.output_dir / "price_comparison.csv",
-        price_frames, index=["zone"], value_cols=["avg_price_per_mwh"],
+        price_frames,
+        index=["zone"],
+        value_cols=["avg_price_per_mwh"],
     )
     _write_comparison(
         args.output_dir / "emissions_comparison.csv",
-        emissions_frames, index=["year"], value_cols=["total_emissions_tco2"],
+        emissions_frames,
+        index=["year"],
+        value_cols=["total_emissions_tco2"],
     )
     logger.info("Wrote comparison CSVs → %s", args.output_dir)
 
@@ -157,15 +164,11 @@ def _write_comparison(
         return
 
     combined = pd.concat(frames, ignore_index=True)
-    wide = combined.pivot_table(
-        index=index, columns="scenario", values=value_cols
-    )
+    wide = combined.pivot_table(index=index, columns="scenario", values=value_cols)
     scenarios = list(combined["scenario"].drop_duplicates())
     if len(scenarios) == 2:
         for col in value_cols:
-            wide[(col, "delta")] = (
-                wide[(col, scenarios[1])] - wide[(col, scenarios[0])]
-            )
+            wide[(col, "delta")] = wide[(col, scenarios[1])] - wide[(col, scenarios[0])]
     wide.columns = ["_".join(str(c) for c in col) for col in wide.columns]
     wide.reset_index().to_csv(path, index=False)
     logger.info("Wrote %s", path)

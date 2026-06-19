@@ -99,8 +99,7 @@ def load_reported_curtailment_hourly(
     df = pd.read_excel(
         path,
         sheet_name="Curtailments",
-        usecols=["Date", "Hour", "Interval", "Wind Curtailment",
-                 "Solar Curtailment"],
+        usecols=["Date", "Hour", "Interval", "Wind Curtailment", "Solar Curtailment"],
     )
     df = df.dropna(subset=["Date"])
     dates = pd.to_datetime(df["Date"])
@@ -118,9 +117,7 @@ def load_reported_curtailment_hourly(
     last_month = int(month.max())
     keep = ~((month == 2) & (day == 29))
     month, day, hour = month[keep], day[keep], hour[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[month - 1] + (day - 1) * 24 + (hour - 1)
-    )
+    hoy = np.array(_MONTH_START_HOUR)[month - 1] + (day - 1) * 24 + (hour - 1)
 
     out = {}
     for column in ("Wind Curtailment", "Solar Curtailment"):
@@ -183,9 +180,7 @@ def print_validation(year: int, df: pd.DataFrame) -> None:
             f"  ({curt_pct:.2f}% of potential)"
         )
 
-    month_of_hour = np.repeat(
-        np.arange(1, 13), np.array(_MONTH_DAYS) * 24
-    )
+    month_of_hour = np.repeat(np.arange(1, 13), np.array(_MONTH_DAYS) * 24)
     print("\nMonthly reported curtailment (GWh):")
     print(f"  {'month':>5} {'wind':>8} {'solar':>8}")
     for month in range(1, 13):
@@ -220,16 +215,16 @@ def main() -> None:
                     "potential (delivered + reported curtailment, the HSL "
                     "analogue) and delivered generation."
                 ),
-                "units": (
-                    "MW (hourly-average; numerically equal to MWh per hour)"
-                ),
+                "units": ("MW (hourly-average; numerically equal to MWh per hour)"),
                 "year": str(year),
             }
         )
         out_file = OUT_DIR / f"caiso_{year}_hsl_hourly.parquet"
         pq.write_table(table, out_file)
-        print(f"\nWrote {out_file.relative_to(REPO_ROOT)} "
-              f"({out_file.stat().st_size / 1024:.1f} KiB)")
+        print(
+            f"\nWrote {out_file.relative_to(REPO_ROOT)} "
+            f"({out_file.stat().st_size / 1024:.1f} KiB)"
+        )
 
 
 if __name__ == "__main__":

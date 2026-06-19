@@ -25,6 +25,7 @@ structural finding to surface, not something to fit away.
 Usage:
     python scripts/validate_neighbor_price.py --iso PJM --years 2023 2024 2025
 """
+
 from __future__ import annotations
 
 import argparse
@@ -63,8 +64,10 @@ def _actual_lmp(iso: str, year: int) -> np.ndarray | None:
 
 
 def _direction_score(
-    iso_price: np.ndarray, neighbor_price: np.ndarray,
-    hurdle: float, net_export: np.ndarray,
+    iso_price: np.ndarray,
+    neighbor_price: np.ndarray,
+    hurdle: float,
+    net_export: np.ndarray,
 ) -> tuple[float, float, float, float]:
     """Return (export-share measured, predicted, hit-rate, spread-corr)."""
     direction = seam_flow_direction(iso_price, neighbor_price, hurdle)
@@ -84,29 +87,28 @@ def validate(iso: str, years: list[int]) -> None:
         return
     hurdle = neighbors[0].hurdle  # uniform across the registry today
     ba = _ISO_BA.get(iso)
-    print(f"\n=== Reference-price validation: {iso} "
-          f"(hurdle ${hurdle:.0f}/MWh) ===")
+    print(f"\n=== Reference-price validation: {iso} (hurdle ${hurdle:.0f}/MWh) ===")
 
     for year in years:
         res = interface_reference_prices(iso, year, HOURS)
         agg = res.aggregate()
         if agg is None:
-            print(f"\n{year}: no neighbor prices resolved "
-                  f"(missing {res.missing}).")
+            print(f"\n{year}: no neighbor prices resolved (missing {res.missing}).")
             continue
         print(f"\n--- {year} ---")
         print(f"resolved: {list(res.per_neighbor)}  missing: {res.missing}")
 
         # 1. Per-neighbor price level + shape vs actual neighbor LMP.
         for name, price in res.per_neighbor.items():
-            line = (f"  {name:10s} ba={res.ba_used[name]:5s} "
-                    f"mean ${price.mean():6.2f}")
+            line = f"  {name:10s} ba={res.ba_used[name]:5s} mean ${price.mean():6.2f}"
             lmp_iso = _NEIGHBOR_LMP_ISO.get(name)
             actual = _actual_lmp(lmp_iso, year) if lmp_iso else None
             if actual is not None:
                 corr = float(np.corrcoef(price, actual)[0, 1])
-                line += (f"  | actual {name} LMP ${actual.mean():6.2f} "
-                         f"shape-corr {corr:+.2f}")
+                line += (
+                    f"  | actual {name} LMP ${actual.mean():6.2f} "
+                    f"shape-corr {corr:+.2f}"
+                )
             print(line)
 
         # 2 & 3. Seam direction vs measured net interchange, both framings.
@@ -115,25 +117,27 @@ def validate(iso: str, years: list[int]) -> None:
             print("  (no measured net interchange — skipping direction score)")
             continue
         iso_actual = _actual_lmp(iso, year)
-        print(f"  measured net export: mean {net_export.mean():7.1f} MW  "
-              f"({net_export.sum() / 1e6:+.2f} TWh)  "
-              f"export-hours {float((net_export > 0).mean()):.2f}")
+        print(
+            f"  measured net export: mean {net_export.mean():7.1f} MW  "
+            f"({net_export.sum() / 1e6:+.2f} TWh)  "
+            f"export-hours {float((net_export > 0).mean()):.2f}"
+        )
         if iso_actual is None:
             print("  (no actual ISO LMP — skipping direction score)")
             continue
-        mexp, pexp, hit, corr = _direction_score(
-            iso_actual, agg, hurdle, net_export)
-        print(f"    [actual-LMP] {iso} mean ${iso_actual.mean():6.2f} "
-              f"vs neigh ${agg.mean():6.2f}  "
-              f"meas export-share {mexp:.2f}  pred {pexp:.2f}  "
-              f"dir hit-rate {hit:.2f}  corr(spread,-netexp) {corr:+.2f}")
+        mexp, pexp, hit, corr = _direction_score(iso_actual, agg, hurdle, net_export)
+        print(
+            f"    [actual-LMP] {iso} mean ${iso_actual.mean():6.2f} "
+            f"vs neigh ${agg.mean():6.2f}  "
+            f"meas export-share {mexp:.2f}  pred {pexp:.2f}  "
+            f"dir hit-rate {hit:.2f}  corr(spread,-netexp) {corr:+.2f}"
+        )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iso", default="PJM")
-    parser.add_argument("--years", type=int, nargs="+",
-                        default=[2023, 2024, 2025])
+    parser.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     args = parser.parse_args()
     validate(args.iso, args.years)
 

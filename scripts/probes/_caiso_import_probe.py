@@ -8,10 +8,12 @@ only. The grounded keeper prices imports at measured Malin/Palo-Verde intertie
 LMPs (separate workstream). Usage:
     python scripts/probes/_caiso_import_probe.py <out_dir> [--shift -15]
 """
+
 from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import market_sim.config.constants as C
 from scripts.run_calibration_full import solve_and_persist
@@ -21,8 +23,12 @@ from scripts.run_calibration import _load_reference
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("out_dir", type=Path)
-    ap.add_argument("--shift", type=float, default=-15.0,
-                    help="$/MWh shift applied to the marginal (non-scarcity) import blocks")
+    ap.add_argument(
+        "--shift",
+        type=float,
+        default=-15.0,
+        help="$/MWh shift applied to the marginal (non-scarcity) import blocks",
+    )
     ap.add_argument("--year", type=int, default=2024)
     args = ap.parse_args()
 
@@ -41,10 +47,16 @@ def main() -> None:
     ref = _load_reference()
 
     solve_and_persist(
-        years=[args.year], iso="CAISO", hours=8760, reference=ref,
-        commitment=True, screen_coal=True, run_dir=args.out_dir,
+        years=[args.year],
+        iso="CAISO",
+        hours=8760,
+        reference=ref,
+        commitment=True,
+        screen_coal=True,
+        run_dir=args.out_dir,
         priced_interchange=True,
-        hydro_backfill_year=2024, hydro_eia930_monthly=True,
+        hydro_backfill_year=2024,
+        hydro_eia930_monthly=True,
         outage_source="historic",
     )
 

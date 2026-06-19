@@ -4,6 +4,7 @@ The network call (``_get``) is mocked; this exercises the citygate $/Mcf ->
 $/MMBtu conversion, the basis = citygate - Henry Hub computation, and the merge
 that preserves existing measured rows (e.g. NEISO's licensed AGT index).
 """
+
 from __future__ import annotations
 
 import csv
@@ -28,11 +29,13 @@ class TestCitygateBasis(unittest.TestCase):
         feg.GAS_DIR.mkdir()
         feg.BASIS_PATH = d / "gas_basis_by_iso_month.csv"
         (feg.GAS_DIR / "henry_hub_monthly.csv").write_text(
-            "year,month,price_usd_mmbtu\n2024,1,3.00\n2024,2,2.50\n")
+            "year,month,price_usd_mmbtu\n2024,1,3.00\n2024,2,2.50\n"
+        )
         # An existing measured row that must survive the merge.
         feg.BASIS_PATH.write_text(
             "iso,year,month,hub,basis_usd_mmbtu,source\n"
-            "NEISO,2024,1,Algonquin (measured),1.46,licensed\n")
+            "NEISO,2024,1,Algonquin (measured),1.46,licensed\n"
+        )
         # $/Mcf citygate values chosen so basis lands on $1.00 after conversion.
         feg._get = lambda route, params, key, s: [
             {"period": "2024-01", "value": "4.144"},  # /1.036 = 4.00 ; -3.00 = 1.00
@@ -48,8 +51,11 @@ class TestCitygateBasis(unittest.TestCase):
 
     def test_basis_conversion_and_value(self):
         feg.fetch_citygate("key", ["CAISO"], 2024, 0)
-        caiso = {(int(r["year"]), int(r["month"])): float(r["basis_usd_mmbtu"])
-                 for r in self._rows() if r["iso"] == "CAISO"}
+        caiso = {
+            (int(r["year"]), int(r["month"])): float(r["basis_usd_mmbtu"])
+            for r in self._rows()
+            if r["iso"] == "CAISO"
+        }
         self.assertAlmostEqual(caiso[(2024, 1)], 1.00, places=2)
         self.assertAlmostEqual(caiso[(2024, 2)], 1.00, places=2)
 

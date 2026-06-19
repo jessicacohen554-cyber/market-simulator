@@ -48,6 +48,7 @@ ScenarioConfig fields with the published post-Uri values as defaults — a
 PUCT cap change (e.g. pre-Uri $9,000 VOLL) is a runnable scenario, never a
 code edit. Nothing here is fitted to price residuals.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -84,8 +85,18 @@ QUICK_START_FUEL_TYPES: frozenset[str] = frozenset({"gas_ct", "oil"})
 # ERCOT ORDC seasons (calendar quarters of the LOLP statistics): winter =
 # Dec-Feb, spring = Mar-May, summer = Jun-Aug, fall = Sep-Nov.
 _SEASON_OF_MONTH: tuple[str, ...] = (
-    "winter", "winter", "spring", "spring", "spring", "summer",
-    "summer", "summer", "fall", "fall", "fall", "winter",
+    "winter",
+    "winter",
+    "spring",
+    "spring",
+    "spring",
+    "summer",
+    "summer",
+    "summer",
+    "fall",
+    "fall",
+    "fall",
+    "winter",
 )
 
 # Non-leap dispatch calendar (matches market_sim.data.campd conventions).
@@ -95,8 +106,7 @@ _MONTH_START_HOUR = np.cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])
 
 def _month_of_hour(hours: np.ndarray) -> np.ndarray:
     """Map non-leap hour-of-year indices to months 1-12."""
-    return np.searchsorted(
-        _MONTH_START_HOUR, hours, side="right").clip(1, 12)
+    return np.searchsorted(_MONTH_START_HOUR, hours, side="right").clip(1, 12)
 
 
 def tod_block_of_hour(hours: np.ndarray) -> np.ndarray:
@@ -132,22 +142,23 @@ def load_lolp_params(
     df = pd.read_csv(path)
     need = {"season", "tod_block", "mu_mw", "sigma_mw"}
     if not need.issubset(df.columns):
-        raise ValueError(
-            f"LOLP params CSV {path} must have columns {sorted(need)}")
-    key = {(str(r.season).lower(), int(r.tod_block)): (r.mu_mw, r.sigma_mw)
-           for r in df.itertuples()}
+        raise ValueError(f"LOLP params CSV {path} must have columns {sorted(need)}")
+    key = {
+        (str(r.season).lower(), int(r.tod_block)): (r.mu_mw, r.sigma_mw)
+        for r in df.itertuples()
+    }
     hour_idx = np.arange(hours)
     seasons = season_of_hour(hour_idx)
     blocks = tod_block_of_hour(hour_idx)
     missing = {(s, int(b)) for s, b in zip(seasons, blocks)} - set(key)
     if missing:
         raise ValueError(
-            f"LOLP params CSV {path} missing (season, block) pairs: "
-            f"{sorted(missing)}")
-    mu = np.array([key[(s, int(b))][0] for s, b in zip(seasons, blocks)],
-                  dtype=float)
-    sigma = np.array([key[(s, int(b))][1] for s, b in zip(seasons, blocks)],
-                     dtype=float)
+            f"LOLP params CSV {path} missing (season, block) pairs: {sorted(missing)}"
+        )
+    mu = np.array([key[(s, int(b))][0] for s, b in zip(seasons, blocks)], dtype=float)
+    sigma = np.array(
+        [key[(s, int(b))][1] for s, b in zip(seasons, blocks)], dtype=float
+    )
     return mu, sigma
 
 
@@ -176,7 +187,8 @@ def lolp(
     """
     r = np.asarray(reserves_mw, dtype=float)
     mu_eff = np.asarray(mu_mw, dtype=float) + shift_sigma * np.asarray(
-        sigma_mw, dtype=float)
+        sigma_mw, dtype=float
+    )
     sigma = np.broadcast_to(np.asarray(sigma_mw, dtype=float), r.shape)
     z = (r - mcl_mw - mu_eff) / np.where(sigma > 0, sigma, 1.0)
     out = 1.0 - ndtr(z)
@@ -232,14 +244,14 @@ def ordc_adder(
 
     r_full = np.asarray(reserves_mw, dtype=float)
     r_online = (
-        r_full if reserves_online_mw is None
+        r_full
+        if reserves_online_mw is None
         else np.asarray(reserves_online_mw, dtype=float)
     )
     mu = np.asarray(mu_mw, dtype=float)
     sigma = np.asarray(sigma_mw, dtype=float)
     lolp_full = lolp(r_full, mu, sigma, mcl_mw, shift_sigma)
-    lolp_half = lolp(
-        r_online, mu / 2.0, sigma / np.sqrt(2.0), mcl_mw, shift_sigma)
+    lolp_half = lolp(r_online, mu / 2.0, sigma / np.sqrt(2.0), mcl_mw, shift_sigma)
     adder = 0.5 * headroom_to_cap * (lolp_full + lolp_half)
 
     if multistep_floor:
@@ -333,8 +345,7 @@ def reserve_headroom(
         Tuple ``(r_online, r_offline)`` of ``(T,)`` MW arrays. ``r_online`` may
         go negative under deep scarcity; the LOLP pins to 1 below the MCL.
     """
-    fuel_names = np.array(
-        [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     thermal = np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
     quick = np.isin(fuel_names, sorted(QUICK_START_FUEL_TYPES))
 
@@ -350,8 +361,7 @@ def reserve_headroom(
 
     cap = np.asarray(storage_power_cap, dtype=float)
     storage_headroom = (
-        cap.sum(axis=0) if cap.ndim == 2
-        else np.full(r_online_thermal.shape, cap.sum())
+        cap.sum(axis=0) if cap.ndim == 2 else np.full(r_online_thermal.shape, cap.sum())
     )
     if storage_discharge is not None and np.size(storage_discharge):
         storage_headroom = (
@@ -360,7 +370,8 @@ def reserve_headroom(
             + np.asarray(storage_charge, dtype=float).sum(axis=0)
         )
     as_arr = np.broadcast_to(
-        np.asarray(as_plan_mw, dtype=float), r_online_thermal.shape)
+        np.asarray(as_plan_mw, dtype=float), r_online_thermal.shape
+    )
     r_online = r_online_thermal + storage_headroom - as_arr
     if renewable_headroom is not None:
         r_online = r_online + np.asarray(renewable_headroom, dtype=float)
@@ -398,8 +409,8 @@ def ercot_market_regime(year: int, config) -> str:
         return "rtcb"
     if design != "auto":
         raise ValueError(
-            f"ercot_market_design must be 'auto', 'ordc' or 'rtcb', "
-            f"got {design!r}")
+            f"ercot_market_design must be 'auto', 'ordc' or 'rtcb', got {design!r}"
+        )
     return "ordc" if year < _RTCB_FIRST_FULL_YEAR else "rtcb"
 
 
@@ -427,8 +438,7 @@ def ercot_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     units split capacity between energy and upward reserve, so a unit must be
     eligible to part-load against the reserve requirement.
     """
-    fuel_names = np.array(
-        [FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     return np.isin(fuel_names, sorted(RESERVE_FUEL_TYPES))
 
 
@@ -482,11 +492,10 @@ def ercot_ordc_demand_steps(
     # at which that band starts clearing), so penalties ascend as reserves fall
     # — cheapest (outermost, highest-reserve) band first.
     grid = np.linspace(req_total, 0.0, int(n_steps) + 1)
-    widths = grid[:-1] - grid[1:]            # (n_steps,), positive
-    r_edge = grid[1:]                        # lower reserve edge of each band
+    widths = grid[:-1] - grid[1:]  # (n_steps,), positive
+    r_edge = grid[1:]  # lower reserve edge of each band
     lolp_full = lolp(r_edge, mu_mw, sigma_mw, mcl_mw, shift_sigma)
-    lolp_half = lolp(
-        r_edge, mu_mw / 2.0, sigma_mw / np.sqrt(2.0), mcl_mw, shift_sigma)
+    lolp_half = lolp(r_edge, mu_mw / 2.0, sigma_mw / np.sqrt(2.0), mcl_mw, shift_sigma)
     penalties = 0.5 * float(voll) * (lolp_full + lolp_half)
     if multistep_floor:
         # OBDRR048 RTORPA floor (>= $20 at reserves <= 6,500 MW, >= $10 at
@@ -595,10 +604,12 @@ def ercot_reserve_coopt_inputs(
         # count. Clipped to the MCL floor so the curve's steep tail is preserved.
         load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
-    if (getattr(config, "ercot_storage_as_reserve", False)
-            and getattr(config, "storage_as_commitment", False)
-            and int(config.weather_year)
-            >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))):
+    if (
+        getattr(config, "ercot_storage_as_reserve", False)
+        and getattr(config, "storage_as_commitment", False)
+        and int(config.weather_year)
+        >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
+    ):
         # Credit the measured battery-provided AS (RegUp/RRS/ECRS) back into the
         # reserve balance. storage_as_commitment subtracts this same MW from the
         # storage power cap, and the reserve block derives a unit's reserve room
@@ -634,10 +645,8 @@ def ercot_reserve_coopt_inputs(
         # 2024 probe was indistinguishable from credit-only, ~$0.1 on system LMP).
         # Here the credit is gated to the year the residual is reserve-accounting
         # only.
-        storage_as_mw = ercot_storage_as_reserve_mw(
-            int(config.weather_year), hours)
-        requirement = np.maximum(
-            requirement - storage_as_mw, float(config.ordc_mcl_mw))
+        storage_as_mw = ercot_storage_as_reserve_mw(int(config.weather_year), hours)
+        requirement = np.maximum(requirement - storage_as_mw, float(config.ordc_mcl_mw))
     eligible = ercot_reserve_eligible(fleet_arrays)
     return requirement, eligible, penalties, widths
 
@@ -661,20 +670,19 @@ def scarcity_prices(
     point price).
     """
     hours = len(np.asarray(reserves_mw))
-    online = (
-        reserves_mw if reserves_online_mw is None else reserves_online_mw
-    )
+    online = reserves_mw if reserves_online_mw is None else reserves_online_mw
     mu, sigma = resolve_lolp_params(config, hours)
     adder = ordc_adder(
-        reserves_mw, system_lambda,
+        reserves_mw,
+        system_lambda,
         voll=config.ordc_voll,
         mcl_mw=config.ordc_mcl_mw,
-        mu_mw=mu, sigma_mw=sigma,
+        mu_mw=mu,
+        sigma_mw=sigma,
         shift_sigma=config.ordc_lolp_shift_sigma,
         multistep_floor=config.ordc_multistep_floor,
         floor_active=(
-            floor_active_mask(year, hours) if config.mode == "backcast"
-            else True
+            floor_active_mask(year, hours) if config.mode == "backcast" else True
         ),
         reserves_online_mw=online,
     )
@@ -682,8 +690,8 @@ def scarcity_prices(
         "reserves_mw": np.asarray(reserves_mw, dtype=float),
         "reserves_online_mw": np.asarray(online, dtype=float),
         "lolp": lolp(
-            reserves_mw, mu, sigma, config.ordc_mcl_mw,
-            config.ordc_lolp_shift_sigma),
+            reserves_mw, mu, sigma, config.ordc_mcl_mw, config.ordc_lolp_shift_sigma
+        ),
         "scarcity_adder": adder,
     }
 
@@ -729,9 +737,9 @@ def scarcity_prices(
 # nested requirement shadow prices (Manual 11 sec 4.4.1). Keys are the data
 # `service` codes in reserve_market_results_*.parquet.
 PJM_RESERVE_CASCADE: dict[str, tuple[str, ...]] = {
-    "SR": ("Synchronized", "Primary", "Secondary"),   # SRMCP  = SP_SR+SP_PR+SP_30
-    "PR": ("Primary", "Secondary"),                    # NSRMCP =       SP_PR+SP_30
-    "30MIN": ("Secondary",),                           # SecMCP =             SP_30
+    "SR": ("Synchronized", "Primary", "Secondary"),  # SRMCP  = SP_SR+SP_PR+SP_30
+    "PR": ("Primary", "Secondary"),  # NSRMCP =       SP_PR+SP_30
+    "30MIN": ("Secondary",),  # SecMCP =             SP_30
 }
 
 
@@ -754,13 +762,13 @@ def load_pjm_ordc_curve(
     df = pd.read_csv(path, comment="#")
     need = {"service", "locale", "breakpoint_offset_mw", "penalty_factor"}
     if not need.issubset(df.columns):
-        raise ValueError(
-            f"PJM ORDC curve {path} must have columns {sorted(need)}")
+        raise ValueError(f"PJM ORDC curve {path} must have columns {sorted(need)}")
     out: dict[tuple[str, str], list[tuple[float, float]]] = {}
     for (svc, loc), grp in df.groupby(["service", "locale"]):
         steps = sorted(
             (float(r.breakpoint_offset_mw), float(r.penalty_factor))
-            for r in grp.itertuples())
+            for r in grp.itertuples()
+        )
         out[(str(svc), str(loc))] = steps
     return out
 
@@ -824,8 +832,10 @@ def pjm_reserve_cascade_mcp(
     """
     sp = {
         prod: pjm_reserve_demand_price(
-            reserves_by_product[prod], requirements_by_product[prod],
-            curve_by_product[prod])
+            reserves_by_product[prod],
+            requirements_by_product[prod],
+            curve_by_product[prod],
+        )
         for prod in ("Synchronized", "Primary", "Secondary")
     }
     out: dict[str, np.ndarray] = {}
@@ -899,7 +909,9 @@ _PJM_AS_DIR = RAW_DATA_DIR / "PJM-AS"
 
 
 def load_pjm_measured_reserve_requirement(
-    year: int, hours: int = 8760, data_dir: Path = _PJM_AS_DIR,
+    year: int,
+    hours: int = 8760,
+    data_dir: Path = _PJM_AS_DIR,
 ) -> np.ndarray | None:
     """Return the measured PJM_RTO Primary Reserve requirement (MW), hourly.
 

@@ -35,6 +35,7 @@ plant the bundle resolved. Capacity normalization matches the ``[7b]`` panel
 (the larger of the model and CAMPD per-plant peaks) so the bands line up with
 the calibration tables.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -53,6 +54,7 @@ from market_sim.results.calibration import (  # noqa: E402
     check_cf_band_occupancy,
 )
 
+
 # CEMS reports a split plant (coal + gas-steam under one stack) as a single
 # parent id; the model carries synthetic ``parent*10+digit`` child codes. Fold
 # children back onto the parent before comparing, mirroring
@@ -65,20 +67,19 @@ def _model_series_by_plant(
 
     def _to_cems(code: int) -> int:
         code = int(code)
-        return code // 10 if (code not in cems_ids
-                              and code // 10 in cems_ids) else code
+        return code // 10 if (code not in cems_ids and code // 10 in cems_ids) else code
 
     d["plant_code"] = d["plant_code"].map(_to_cems)
     piv = (
-        d.groupby(["plant_code", "hour"], observed=True)["mw"].sum()
-        .unstack("plant_code", fill_value=0.0).sort_index()
+        d.groupby(["plant_code", "hour"], observed=True)["mw"]
+        .sum()
+        .unstack("plant_code", fill_value=0.0)
+        .sort_index()
     )
     return {int(c): piv[c].to_numpy(dtype=float) for c in piv.columns}
 
 
-def _svg_histogram(
-    bands: list[dict], title: str, sub: str, band_width: float
-) -> str:
+def _svg_histogram(bands: list[dict], title: str, sub: str, band_width: float) -> str:
     """Render one plant-year model-vs-CAMPD CF histogram as inline SVG.
 
     Side-by-side bars per CF band: CAMPD (blue) and model (orange). The y-axis
@@ -104,25 +105,34 @@ def _svg_histogram(
     # y gridlines + labels
     for frac in (0.0, 0.25, 0.5, 0.75, 1.0):
         yy = TT + ph - frac * ph
-        parts.append(f'<line x1="{L}" y1="{yy:.1f}" x2="{W - R}" '
-                     f'y2="{yy:.1f}" class="grid"/>')
-        parts.append(f'<text x="{L - 6}" y="{yy + 4:.1f}" '
-                     f'class="yl">{int(frac * ymax)}</text>')
+        parts.append(
+            f'<line x1="{L}" y1="{yy:.1f}" x2="{W - R}" y2="{yy:.1f}" class="grid"/>'
+        )
+        parts.append(
+            f'<text x="{L - 6}" y="{yy + 4:.1f}" class="yl">{int(frac * ymax)}</text>'
+        )
     for i, b in enumerate(bands):
         x0 = L + i * slot + slot / 2
         ch, mh = b["actual_hours"], b["model_hours"]
-        parts.append(f'<rect x="{x0 - bw:.1f}" y="{y(ch):.1f}" '
-                     f'width="{bw:.1f}" height="{TT + ph - y(ch):.1f}" '
-                     f'class="campd"><title>CAMPD {ch} h</title></rect>')
-        parts.append(f'<rect x="{x0:.1f}" y="{y(mh):.1f}" '
-                     f'width="{bw:.1f}" height="{TT + ph - y(mh):.1f}" '
-                     f'class="model"><title>model {mh} h</title></rect>')
+        parts.append(
+            f'<rect x="{x0 - bw:.1f}" y="{y(ch):.1f}" '
+            f'width="{bw:.1f}" height="{TT + ph - y(ch):.1f}" '
+            f'class="campd"><title>CAMPD {ch} h</title></rect>'
+        )
+        parts.append(
+            f'<rect x="{x0:.1f}" y="{y(mh):.1f}" '
+            f'width="{bw:.1f}" height="{TT + ph - y(mh):.1f}" '
+            f'class="model"><title>model {mh} h</title></rect>'
+        )
         if i % max(1, round(0.10 / band_width)) == 0:
-            parts.append(f'<text x="{x0:.1f}" y="{TT + ph + 16:.0f}" '
-                         f'class="xl">{b["lo"] * 100:.0f}</text>')
-    parts.append(f'<text x="{L + pw / 2:.0f}" y="{H - 8}" '
-                 f'class="ax">capacity factor (%)</text>')
-    parts.append('</svg>')
+            parts.append(
+                f'<text x="{x0:.1f}" y="{TT + ph + 16:.0f}" '
+                f'class="xl">{b["lo"] * 100:.0f}</text>'
+            )
+    parts.append(
+        f'<text x="{L + pw / 2:.0f}" y="{H - 8}" class="ax">capacity factor (%)</text>'
+    )
+    parts.append("</svg>")
     return "".join(parts)
 
 
@@ -153,12 +163,18 @@ _PAGE = """<!doctype html><meta charset=utf-8>
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", type=Path, help="calibration bundle directory")
-    ap.add_argument("--plants", default="",
-                    help="comma-separated EIA plant codes (default: all)")
-    ap.add_argument("--years", default="",
-                    help="comma-separated years (default: all in the bundle)")
-    ap.add_argument("--band-width", type=float, default=0.05,
-                    help="CF band width as a fraction (default 0.05 = 5%%)")
+    ap.add_argument(
+        "--plants", default="", help="comma-separated EIA plant codes (default: all)"
+    )
+    ap.add_argument(
+        "--years", default="", help="comma-separated years (default: all in the bundle)"
+    )
+    ap.add_argument(
+        "--band-width",
+        type=float,
+        default=0.05,
+        help="CF band width as a fraction (default 0.05 = 5%%)",
+    )
     ap.add_argument("--out", type=Path, default=Path("/tmp/cf_histogram.html"))
     args = ap.parse_args()
 
@@ -166,12 +182,12 @@ def main() -> None:
     campd = pd.read_parquet(bundle_input_path(bundle, "campd"))
     cems_ids = set(int(p) for p in campd["plant_id"].unique())
     want_plants = (
-        {int(p) for p in args.plants.split(",") if p.strip()}
-        if args.plants else None
+        {int(p) for p in args.plants.split(",") if p.strip()} if args.plants else None
     )
     want_years = (
         [int(y) for y in args.years.split(",") if y.strip()]
-        if args.years else sorted(int(y) for y in campd["year"].unique())
+        if args.years
+        else sorted(int(y) for y in campd["year"].unique())
     )
     names = _plant_names(bundle)
 
@@ -184,35 +200,34 @@ def main() -> None:
             int(pid): g.sort_values("hour")["net_mw"].to_numpy(dtype=float)
             for pid, g in cy.groupby("plant_id", observed=True)
         }
-        codes = sorted(want_plants & model.keys()) if want_plants \
-            else sorted(model.keys())
+        codes = (
+            sorted(want_plants & model.keys()) if want_plants else sorted(model.keys())
+        )
         for code in codes:
             m, o = model.get(code), obs.get(code)
             if m is None or o is None:
                 continue
             T = min(m.shape[0], o.shape[0])
             try:
-                occ = check_cf_band_occupancy(
-                    m[:T], o[:T], band_width=args.band_width
-                )
+                occ = check_cf_band_occupancy(m[:T], o[:T], band_width=args.band_width)
             except ValueError:
                 continue
             m_gwh, c_gwh = m.sum() / 1e3, o.sum() / 1e3
-            hi = sum(b["model_hours"] for b in occ["bands"]
-                     if b["lo"] >= 0.90 - 1e-9)
-            chi = sum(b["actual_hours"] for b in occ["bands"]
-                      if b["lo"] >= 0.90 - 1e-9)
+            hi = sum(b["model_hours"] for b in occ["bands"] if b["lo"] >= 0.90 - 1e-9)
+            chi = sum(b["actual_hours"] for b in occ["bands"] if b["lo"] >= 0.90 - 1e-9)
             title = f"{names.get(code, code)} ({code}) — {year}"
-            sub = (f"model {m_gwh:,.0f} GWh / CAMPD {c_gwh:,.0f} GWh"
-                   f" &nbsp;|&nbsp; hours ≥90% CF: model {hi:,} / "
-                   f"CAMPD {chi:,} &nbsp;|&nbsp; cap {occ['capacity_mw']:,.0f} MW")
-            cards.append('<div class=card>'
-                         + _svg_histogram(occ["bands"], title, sub,
-                                          args.band_width)
-                         + '</div>')
+            sub = (
+                f"model {m_gwh:,.0f} GWh / CAMPD {c_gwh:,.0f} GWh"
+                f" &nbsp;|&nbsp; hours ≥90% CF: model {hi:,} / "
+                f"CAMPD {chi:,} &nbsp;|&nbsp; cap {occ['capacity_mw']:,.0f} MW"
+            )
+            cards.append(
+                "<div class=card>"
+                + _svg_histogram(occ["bands"], title, sub, args.band_width)
+                + "</div>"
+            )
 
-    html = _PAGE.format(bw=args.band_width, bundle=bundle.name,
-                        cards="\n".join(cards))
+    html = _PAGE.format(bw=args.band_width, bundle=bundle.name, cards="\n".join(cards))
     args.out.write_text(html)
     print(f"wrote {args.out}  ({len(cards)} plant-year charts)")
 
@@ -222,9 +237,9 @@ def _plant_names(bundle: Path) -> dict[int, str]:
     try:
         from market_sim.config.scenarios import ScenarioConfig
         from market_sim.data.fleet import load_campd_bins
+
         bins = load_campd_bins(ScenarioConfig().campd_bins_path)
-        return dict(zip(bins["Plant_Code"].astype(int),
-                        bins["Plant_Name"].astype(str)))
+        return dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"].astype(str)))
     except Exception:
         return {}
 

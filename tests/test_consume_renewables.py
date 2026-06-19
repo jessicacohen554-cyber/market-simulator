@@ -48,8 +48,7 @@ def test_clean_hsl_matches_raw_loader(monkeypatch: pytest.MonkeyPatch) -> None:
     """Clean-backed GEN/HSL equals the raw loader for one ISO/year."""
     if not _raw_hsl_present(PARITY_ISO, PARITY_YEAR):
         pytest.skip(
-            f"raw HSL parquet absent for {PARITY_ISO} {PARITY_YEAR}; "
-            "nothing to compare"
+            f"raw HSL parquet absent for {PARITY_ISO} {PARITY_YEAR}; nothing to compare"
         )
     if not _clean_present(PARITY_ISO, PARITY_YEAR):
         pytest.skip(
@@ -100,7 +99,10 @@ def test_clean_hsl_potential_matches_raw_loader(
         clean_mw = renewables.hsl_potential_mw(PARITY_ISO, PARITY_YEAR, fuel)
         assert raw_mw is not None and clean_mw is not None
         np.testing.assert_allclose(
-            clean_mw, raw_mw, atol=_TOL_MW, rtol=0.0,
+            clean_mw,
+            raw_mw,
+            atol=_TOL_MW,
+            rtol=0.0,
             err_msg=f"{PARITY_ISO} {PARITY_YEAR} {fuel}: hsl_potential_mw mismatch",
         )
 

@@ -36,9 +36,9 @@ def _raw_unit() -> pd.DataFrame:
             "opTime": [1.0, 1.0],
             "grossLoad": [100.0, 50.0],
             "steamLoad": [None, None],
-            "so2Mass": [10.0, 4.0],   # pounds
-            "co2Mass": [2.0, 1.0],    # short tons
-            "noxMass": [6.0, 2.0],    # pounds
+            "so2Mass": [10.0, 4.0],  # pounds
+            "co2Mass": [2.0, 1.0],  # short tons
+            "noxMass": [6.0, 2.0],  # pounds
             "heatInput": [900.0, 450.0],
             "primaryFuelInfo": ["Pipeline Natural Gas", "Pipeline Natural Gas"],
             "unitType": ["Combustion turbine", "Combustion turbine"],
@@ -105,7 +105,9 @@ class TestCleanFrame(unittest.TestCase):
         self.assertAlmostEqual(r["heat_input_mmbtu"], 900.0)
         self.assertAlmostEqual(r["gross_mw"], 100.0)
         # CT is Eastern: 00:00 LST -> 05:00 UTC; local wall-clock carried naive.
-        self.assertEqual(r["interval_start_utc"], pd.Timestamp("2023-06-01 05:00", tz="UTC"))
+        self.assertEqual(
+            r["interval_start_utc"], pd.Timestamp("2023-06-01 05:00", tz="UTC")
+        )
         self.assertEqual(r["interval_start_local"], pd.Timestamp("2023-06-01 00:00"))
         self.assertTrue(df["iso"].isna().all())
 
@@ -120,7 +122,11 @@ class TestCleanFrame(unittest.TestCase):
         raw = _raw_unit().assign(stateCode=["TX", "TX"])
         df = clean_campd_frame(raw, facility_level=False)
         # TX is Central: 00:00 LST -> 06:00 UTC.
-        self.assertTrue((df["interval_start_utc"] == pd.Timestamp("2023-06-01 06:00", tz="UTC")).all())
+        self.assertTrue(
+            (
+                df["interval_start_utc"] == pd.Timestamp("2023-06-01 06:00", tz="UTC")
+            ).all()
+        )
 
     def test_unknown_state_raises(self):
         raw = _raw_unit().assign(stateCode=["ZZ", "ZZ"])
@@ -149,7 +155,9 @@ class TestCurateYear(CleanDirRedirectMixin):
         # No facility "ALL" row leaked in for the unit-covered plant.
         self.assertFalse(((df["plant_id"] == 544) & (df["unit_id"] == "ALL")).any())
         # Keys are unique.
-        self.assertFalse(df.duplicated(subset=["plant_id", "unit_id", "interval_start_utc"]).any())
+        self.assertFalse(
+            df.duplicated(subset=["plant_id", "unit_id", "interval_start_utc"]).any()
+        )
 
     def test_idempotent_rerun(self):
         unit_dir, fac_dir = _write_fixture(self.root / "raw")

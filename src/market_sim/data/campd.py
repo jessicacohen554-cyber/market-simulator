@@ -60,6 +60,7 @@ def _use_clean() -> bool:
     """Whether the clean-backed emissions read path is enabled (env-gated, default OFF)."""
     return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _TRUTHY
 
+
 # Unit conversions to kilograms (the canonical mass unit for derived rates).
 SHORT_TON_TO_KG: float = 907.18474
 LB_TO_KG: float = 0.45359237
@@ -70,7 +71,18 @@ KG_PER_TONNE: float = 1000.0
 # Hours in the model's fixed (non-leap) dispatch calendar.
 HOURS_PER_YEAR: int = 8760
 _DAYS_IN_MONTH: tuple[int, ...] = (
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    31,
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
 )
 # Cumulative hours before the first of each 1-based month, non-leap calendar.
 _MONTH_START_HOUR: tuple[int, ...] = tuple(
@@ -100,8 +112,20 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     # NC is retained for completeness though no qualifying PJM-fleet plant
     # currently sits there.
     "PJM": (
-        "PA", "NJ", "MD", "DE", "IL", "OH", "IN", "KY", "WV", "VA", "NC",
-        "TN", "MI", "DC",
+        "PA",
+        "NJ",
+        "MD",
+        "DE",
+        "IL",
+        "OH",
+        "IN",
+        "KY",
+        "WV",
+        "VA",
+        "NC",
+        "TN",
+        "MI",
+        "DC",
     ),
     # Full MISO footprint. The MISO fleet (EIA-860 BA ``MISO``) carries
     # qualifying plants across all of these states, and unit-level CAMPD
@@ -110,8 +134,20 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     # PJM (IL, IN, KY, MI) and ERCOT (TX, MISO South / Entergy Texas); the
     # per-ISO fleet filter keeps each ISO's windows to its own plants.
     "MISO": (
-        "AR", "IA", "IL", "IN", "KY", "LA", "MI", "MN", "MO", "MS", "ND",
-        "SD", "TX", "WI",
+        "AR",
+        "IA",
+        "IL",
+        "IN",
+        "KY",
+        "LA",
+        "MI",
+        "MN",
+        "MO",
+        "MS",
+        "ND",
+        "SD",
+        "TX",
+        "WI",
     ),
     # SPP fleet spans AR, IA, KS, LA, MN, MO, ND, NE, NM, OK, SD, TX, but SPP
     # is not yet stood up as a calibration target and has no consumed
@@ -130,16 +166,14 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
 # (the unit-level extracts); the facility-level loader substitutes the
 # unit-level rows for these facilities so the split holds there too.
 CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
-    (315, "CT1"): 62115,   # AES Alamitos Energy Center (CC_REGULAR)
+    (315, "CT1"): 62115,  # AES Alamitos Energy Center (CC_REGULAR)
     (315, "CT2"): 62115,
-    (335, "CT1"): 62116,   # AES Huntington Beach Energy Project (CC_REGULAR)
+    (335, "CT1"): 62116,  # AES Huntington Beach Energy Project (CC_REGULAR)
     (335, "CT2"): 62116,
 }
 
 # Facilities with at least one remapped unit (split facilities).
-CAMPD_SPLIT_FACILITIES: frozenset[int] = frozenset(
-    f for f, _ in CAMPD_UNIT_PLANT_REMAP
-)
+CAMPD_SPLIT_FACILITIES: frozenset[int] = frozenset(f for f, _ in CAMPD_UNIT_PLANT_REMAP)
 
 # EIA-923 ``fuel_type`` codes burned by coal-class units.
 _COAL_EIA_FUELS: frozenset[str] = frozenset(
@@ -149,9 +183,20 @@ _COAL_EIA_FUELS: frozenset[str] = frozenset(
 # EIA-923 ``fuel_type`` codes that are NOT stack-monitored combustion fuels,
 # excluded when summing the net generation that CAMPD's gross output should
 # reconcile against (renewables, nuclear, hydro, storage, purchases).
-_NON_COMBUSTION_FUELS: frozenset[str] = frozenset({
-    "WND", "SUN", "WAT", "NUC", "MWH", "GEO", "PUR", "OTH", "WH", "HPS",
-})
+_NON_COMBUSTION_FUELS: frozenset[str] = frozenset(
+    {
+        "WND",
+        "SUN",
+        "WAT",
+        "NUC",
+        "MWH",
+        "GEO",
+        "PUR",
+        "OTH",
+        "WH",
+        "HPS",
+    }
+)
 
 # Plausible band for a net/gross parasitic factor. Outside this, the CAMPD
 # gross and EIA-923 net almost certainly cover different unit sets at the
@@ -191,7 +236,9 @@ def states_for_iso(iso: str) -> tuple[str, ...]:
     return ISO_STATES.get(iso.upper(), ())
 
 
-def _hour_index_8760(month: np.ndarray, day: np.ndarray, hour: np.ndarray) -> np.ndarray:
+def _hour_index_8760(
+    month: np.ndarray, day: np.ndarray, hour: np.ndarray
+) -> np.ndarray:
     """Map ``(month, day, hour)`` to a non-leap hour-of-year index.
 
     Returns an int array in ``[0, 8760)``; Feb 29 maps to ``-1`` so callers
@@ -229,18 +276,24 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
     """
     fname = f"{state}_{year}.parquet"
     path = next(
-        (p for p in (
-            raw_dir / "campd-facility-level" / fname,
-            raw_dir / "campd-unit-level" / fname,
-            raw_dir / fname,  # legacy flat layout (tests / old data)
-        ) if p.exists()),
+        (
+            p
+            for p in (
+                raw_dir / "campd-facility-level" / fname,
+                raw_dir / "campd-unit-level" / fname,
+                raw_dir / fname,  # legacy flat layout (tests / old data)
+            )
+            if p.exists()
+        ),
         None,
     )
     if path is None:
         logger.warning(
             "CAMPD extract not found for %s %d (looked in %s/"
             "campd-facility-level, /campd-unit-level, and the flat dir)",
-            state, year, raw_dir,
+            state,
+            year,
+            raw_dir,
         )
         return None
     raw = pd.read_parquet(path)
@@ -259,8 +312,7 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
             if unit_path.exists():
                 unit_raw = pd.read_parquet(unit_path)
                 unit_raw = unit_raw[
-                    pd.to_numeric(unit_raw["facilityId"], errors="coerce")
-                    .isin(split)
+                    pd.to_numeric(unit_raw["facilityId"], errors="coerce").isin(split)
                 ]
                 out = pd.concat(
                     [
@@ -273,7 +325,9 @@ def _read_one(state: str, year: int, raw_dir: Path) -> pd.DataFrame | None:
                 logger.warning(
                     "CAMPD %s %d: split facilities %s have no unit-level "
                     "extract; their units stay summed under the legacy code",
-                    state, year, split,
+                    state,
+                    year,
+                    split,
                 )
     return out
 
@@ -289,26 +343,26 @@ def _normalize_campd(raw: pd.DataFrame, year: int) -> pd.DataFrame:
     if "unitId" in raw.columns and len(raw):
         fac = plant_id.fillna(-1).astype(int).to_numpy()
         uid = raw["unitId"].astype(str).to_numpy()
-        remapped = [
-            CAMPD_UNIT_PLANT_REMAP.get((f, u), f) for f, u in zip(fac, uid)
-        ]
-        plant_id = pd.Series(
-            remapped, index=raw.index, dtype=float
-        ).where(plant_id.notna())
-    out = pd.DataFrame({
-        "plant_id": plant_id,
-        "facility_name": raw["facilityName"].astype(str),
-        "state": raw["stateCode"].astype(str),
-        "year": np.int16(year),
-        "date": pd.to_datetime(raw["date"]),
-        "hour": pd.to_numeric(raw["hour"], errors="coerce").astype("Int64"),
-        "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce"),
-        "steam_load": pd.to_numeric(raw["steamLoad"], errors="coerce"),
-        "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce") * SHORT_TON_TO_KG,
-        "nox_kg": pd.to_numeric(raw["noxMass"], errors="coerce") * LB_TO_KG,
-        "so2_kg": pd.to_numeric(raw["so2Mass"], errors="coerce") * LB_TO_KG,
-        "heat_mmbtu": pd.to_numeric(raw["heatInput"], errors="coerce"),
-    })
+        remapped = [CAMPD_UNIT_PLANT_REMAP.get((f, u), f) for f, u in zip(fac, uid)]
+        plant_id = pd.Series(remapped, index=raw.index, dtype=float).where(
+            plant_id.notna()
+        )
+    out = pd.DataFrame(
+        {
+            "plant_id": plant_id,
+            "facility_name": raw["facilityName"].astype(str),
+            "state": raw["stateCode"].astype(str),
+            "year": np.int16(year),
+            "date": pd.to_datetime(raw["date"]),
+            "hour": pd.to_numeric(raw["hour"], errors="coerce").astype("Int64"),
+            "gross_mw": pd.to_numeric(raw["grossLoad"], errors="coerce"),
+            "steam_load": pd.to_numeric(raw["steamLoad"], errors="coerce"),
+            "co2_kg": pd.to_numeric(raw["co2Mass"], errors="coerce") * SHORT_TON_TO_KG,
+            "nox_kg": pd.to_numeric(raw["noxMass"], errors="coerce") * LB_TO_KG,
+            "so2_kg": pd.to_numeric(raw["so2Mass"], errors="coerce") * LB_TO_KG,
+            "heat_mmbtu": pd.to_numeric(raw["heatInput"], errors="coerce"),
+        }
+    )
     out = out.dropna(subset=["plant_id", "hour"])
     out["plant_id"] = out["plant_id"].astype(int)
     out["hour"] = out["hour"].astype(int)
@@ -347,20 +401,22 @@ def _clean_to_model_frame(clean: pd.DataFrame, year: int) -> pd.DataFrame:
     ``steam_load`` — are filled with empty/NaN placeholders.
     """
     local = pd.to_datetime(clean["interval_start_local"])
-    out = pd.DataFrame({
-        "plant_id": pd.to_numeric(clean["plant_id"], errors="coerce"),
-        "facility_name": "",
-        "state": "",
-        "year": np.int16(year),
-        "date": local.dt.normalize(),
-        "hour": local.dt.hour.astype("Int64"),
-        "gross_mw": pd.to_numeric(clean["gross_mw"], errors="coerce"),
-        "steam_load": np.nan,
-        "co2_kg": pd.to_numeric(clean["co2_kg"], errors="coerce"),
-        "nox_kg": pd.to_numeric(clean["nox_kg"], errors="coerce"),
-        "so2_kg": pd.to_numeric(clean["so2_kg"], errors="coerce"),
-        "heat_mmbtu": pd.to_numeric(clean["heat_input_mmbtu"], errors="coerce"),
-    })
+    out = pd.DataFrame(
+        {
+            "plant_id": pd.to_numeric(clean["plant_id"], errors="coerce"),
+            "facility_name": "",
+            "state": "",
+            "year": np.int16(year),
+            "date": local.dt.normalize(),
+            "hour": local.dt.hour.astype("Int64"),
+            "gross_mw": pd.to_numeric(clean["gross_mw"], errors="coerce"),
+            "steam_load": np.nan,
+            "co2_kg": pd.to_numeric(clean["co2_kg"], errors="coerce"),
+            "nox_kg": pd.to_numeric(clean["nox_kg"], errors="coerce"),
+            "so2_kg": pd.to_numeric(clean["so2_kg"], errors="coerce"),
+            "heat_mmbtu": pd.to_numeric(clean["heat_input_mmbtu"], errors="coerce"),
+        }
+    )
     out = out.dropna(subset=["plant_id", "hour", "date"])
     out["plant_id"] = out["plant_id"].astype(int)
     out["hour"] = out["hour"].astype(int)
@@ -485,9 +541,7 @@ def annual_plant_totals(df: pd.DataFrame) -> pd.DataFrame:
         .rename("op_hours")
         .reset_index()
     )
-    return out.merge(op, on=["plant_id", "year"], how="left").fillna(
-        {"op_hours": 0}
-    )
+    return out.merge(op, on=["plant_id", "year"], how="left").fillna({"op_hours": 0})
 
 
 def compute_parasitic_factors(
@@ -534,9 +588,7 @@ def compute_parasitic_factors(
         raw = net / gross if gross > 0.0 and net > 0.0 else float("nan")
         group = groups.get(int(plant_id), "")
         if np.isnan(raw) or raw < _PARASITIC_MIN or raw > _PARASITIC_MAX:
-            pct = DEFAULT_PARASITIC_LOAD_PCT.get(
-                group, _DEFAULT_PARASITIC_LOAD_PCT
-            )
+            pct = DEFAULT_PARASITIC_LOAD_PCT.get(group, _DEFAULT_PARASITIC_LOAD_PCT)
             factor = 1.0 - pct
             source = "class_default"
             flag = "no_net" if np.isnan(raw) else "out_of_band"
@@ -569,12 +621,20 @@ def compute_parasitic_factors(
         rows.append(rec)
 
     cols = [
-        "plant_id", "year", "gross_mwh", "net_mwh", "parasitic_factor",
-        "parasitic_load_pct", "source", "flag",
+        "plant_id",
+        "year",
+        "gross_mwh",
+        "net_mwh",
+        "parasitic_factor",
+        "parasitic_load_pct",
+        "source",
+        "flag",
     ]
-    return pd.DataFrame(rows, columns=cols).sort_values(
-        ["plant_id", "year"]
-    ).reset_index(drop=True)
+    return (
+        pd.DataFrame(rows, columns=cols)
+        .sort_values(["plant_id", "year"])
+        .reset_index(drop=True)
+    )
 
 
 def pooled_factor_map(parasitic: pd.DataFrame) -> dict[int, float]:
@@ -608,7 +668,9 @@ def _full_hourly_grid(sub: pd.DataFrame) -> pd.DataFrame:
     """
     by_hour = (
         sub.assign(ts=sub["date"] + pd.to_timedelta(sub["hour"], unit="h"))
-        .groupby("ts", as_index=True)[["gross_mw", "co2_kg", "nox_kg", "so2_kg", "heat_mmbtu"]]
+        .groupby("ts", as_index=True)[
+            ["gross_mw", "co2_kg", "nox_kg", "so2_kg", "heat_mmbtu"]
+        ]
         .sum()
         .sort_index()
     )
@@ -616,9 +678,7 @@ def _full_hourly_grid(sub: pd.DataFrame) -> pd.DataFrame:
     return by_hour.reindex(full, fill_value=0.0)
 
 
-def plant_hourly_grid(
-    df: pd.DataFrame, plant_id: int, year: int
-) -> pd.DataFrame:
+def plant_hourly_grid(df: pd.DataFrame, plant_id: int, year: int) -> pd.DataFrame:
     """Return one plant-year's unit-summed hourly series on a gap-free clock.
 
     Off-hours that CAMPD omits are reconstructed as zeros over the contiguous
@@ -655,8 +715,10 @@ def _startup_factors(grid: pd.DataFrame) -> dict[str, float]:
     if online.sum() < 3:
         return {
             "starts": 0,
-            "startup_co2_kg": 0.0, "startup_nox_kg": 0.0,
-            "startup_so2_kg": 0.0, "startup_heat_mmbtu": 0.0,
+            "startup_co2_kg": 0.0,
+            "startup_nox_kg": 0.0,
+            "startup_so2_kg": 0.0,
+            "startup_heat_mmbtu": 0.0,
         }
     prev = np.concatenate([[False], online[:-1]])
     start_mask = online & ~prev
@@ -664,8 +726,10 @@ def _startup_factors(grid: pd.DataFrame) -> dict[str, float]:
 
     out: dict[str, float] = {"starts": int(start_mask.sum())}
     for col, key in (
-        ("co2_kg", "startup_co2_kg"), ("nox_kg", "startup_nox_kg"),
-        ("so2_kg", "startup_so2_kg"), ("heat_mmbtu", "startup_heat_mmbtu"),
+        ("co2_kg", "startup_co2_kg"),
+        ("nox_kg", "startup_nox_kg"),
+        ("so2_kg", "startup_so2_kg"),
+        ("heat_mmbtu", "startup_heat_mmbtu"),
     ):
         mass = grid[col].to_numpy()
         a, b = _ols_intercept_slope(gross[non_start_op], mass[non_start_op])
@@ -678,9 +742,7 @@ def _startup_factors(grid: pd.DataFrame) -> dict[str, float]:
     return out
 
 
-def plant_emission_rates(
-    df: pd.DataFrame, factors: dict[int, float]
-) -> pd.DataFrame:
+def plant_emission_rates(df: pd.DataFrame, factors: dict[int, float]) -> pd.DataFrame:
     """Return per-plant emission rates and start/stop factors.
 
     For each ``(plant_id, year)`` and a pooled ``year == 0`` row:
@@ -741,22 +803,26 @@ def plant_emission_rates(
             "co2_source": co2_source,
         }
         op = sub[sub["gross_mw"] > 0.0]
-        a, b = _ols_intercept_slope(
-            op["gross_mw"].to_numpy(), op["co2_kg"].to_numpy()
-        )
+        a, b = _ols_intercept_slope(op["gross_mw"].to_numpy(), op["co2_kg"].to_numpy())
         rec["co2_marginal_kg_per_mwh_gross"] = round(b, 6) if not np.isnan(b) else 0.0
         rec["co2_noload_kg_per_hr"] = round(a, 4) if not np.isnan(a) else 0.0
         for col, mwh_key, marg_key, nl_key in (
-            ("nox_kg", "nox_kg_per_mwh_net", "nox_marginal_kg_per_mwh_gross",
-             "nox_noload_kg_per_hr"),
-            ("so2_kg", "so2_kg_per_mwh_net", "so2_marginal_kg_per_mwh_gross",
-             "so2_noload_kg_per_hr"),
+            (
+                "nox_kg",
+                "nox_kg_per_mwh_net",
+                "nox_marginal_kg_per_mwh_gross",
+                "nox_noload_kg_per_hr",
+            ),
+            (
+                "so2_kg",
+                "so2_kg_per_mwh_net",
+                "so2_marginal_kg_per_mwh_gross",
+                "so2_noload_kg_per_hr",
+            ),
         ):
             total = float(sub[col].sum())
             rec[mwh_key] = round(total / net_mwh, 6) if net_mwh > 0 else 0.0
-            a, b = _ols_intercept_slope(
-                op["gross_mw"].to_numpy(), op[col].to_numpy()
-            )
+            a, b = _ols_intercept_slope(op["gross_mw"].to_numpy(), op[col].to_numpy())
             rec[marg_key] = round(b, 6) if not np.isnan(b) else 0.0
             rec[nl_key] = round(a, 4) if not np.isnan(a) else 0.0
         return rec
@@ -764,7 +830,8 @@ def plant_emission_rates(
     rows: list[dict] = []
     for (plant_id, year), sub in df.groupby(["plant_id", "year"], observed=True):
         rec = {
-            "plant_id": int(plant_id), "year": int(year),
+            "plant_id": int(plant_id),
+            "year": int(year),
             "facility_name": str(sub["facility_name"].iloc[0]),
         }
         rec.update(_rates(sub, plant_id))
@@ -773,7 +840,8 @@ def plant_emission_rates(
 
     for plant_id, sub in df.groupby("plant_id", observed=True):
         rec = {
-            "plant_id": int(plant_id), "year": 0,
+            "plant_id": int(plant_id),
+            "year": 0,
             "facility_name": str(sub["facility_name"].iloc[0]),
         }
         rec.update(_rates(sub, plant_id))
@@ -783,15 +851,17 @@ def plant_emission_rates(
             for _, s in sub.groupby("year", observed=True)
         ]
         rec["starts"] = int(sum(p["starts"] for p in per_year))
-        for k in ("startup_co2_kg", "startup_nox_kg", "startup_so2_kg",
-                  "startup_heat_mmbtu"):
+        for k in (
+            "startup_co2_kg",
+            "startup_nox_kg",
+            "startup_so2_kg",
+            "startup_heat_mmbtu",
+        ):
             vals = [p[k] for p in per_year if p["starts"] > 0]
             rec[k] = round(float(np.mean(vals)), 4) if vals else 0.0
         rows.append(rec)
 
-    return pd.DataFrame(rows).sort_values(["plant_id", "year"]).reset_index(
-        drop=True
-    )
+    return pd.DataFrame(rows).sort_values(["plant_id", "year"]).reset_index(drop=True)
 
 
 def plant_hourly_net(
@@ -850,13 +920,13 @@ def coal_share_by_plant(
     is_coal = g["fuel_type"].astype(str).str.upper().isin(_COAL_EIA_FUELS)
     total = g.groupby("plant_id")["netgen_annual_mwh"].sum()
     coal = (
-        g[is_coal].groupby("plant_id")["netgen_annual_mwh"].sum()
-        .reindex(total.index).fillna(0.0)
+        g[is_coal]
+        .groupby("plant_id")["netgen_annual_mwh"]
+        .sum()
+        .reindex(total.index)
+        .fillna(0.0)
     )
-    return {
-        int(p): float(coal[p] / total[p])
-        for p in total.index if total[p] > 0
-    }
+    return {int(p): float(coal[p] / total[p]) for p in total.index if total[p] > 0}
 
 
 def eia923_combustion_net(generation: pd.DataFrame) -> pd.DataFrame:
@@ -877,9 +947,7 @@ def eia923_combustion_net(generation: pd.DataFrame) -> pd.DataFrame:
     fuels = generation["fuel_type"].astype(str).str.upper()
     combustion = generation[~fuels.isin(_NON_COMBUSTION_FUELS)]
     out = (
-        combustion.groupby(["plant_id", "year"], observed=True)[
-            "netgen_annual_mwh"
-        ]
+        combustion.groupby(["plant_id", "year"], observed=True)["netgen_annual_mwh"]
         .sum()
         .rename("net_mwh")
         .reset_index()

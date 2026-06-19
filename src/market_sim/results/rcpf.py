@@ -56,6 +56,7 @@ on top of the system-wide NYCA tier. This is how the model reproduces the
 measured upstate→NYC reserve-price cascade and the downstate scarcity tail
 the NYCA-aggregate energy LP cannot see.
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -96,8 +97,8 @@ def reserve_demand_price(
     span = requirement_mw - critical_mw
     if span <= 0:
         raise ValueError(
-            f"requirement_mw ({requirement_mw}) must exceed critical_mw "
-            f"({critical_mw})")
+            f"requirement_mw ({requirement_mw}) must exceed critical_mw ({critical_mw})"
+        )
     frac = np.clip((requirement_mw - r) / span, 0.0, 1.0)
     return frac * max_penalty
 
@@ -141,14 +142,12 @@ def rcpf_adder(
     """
     if products is None:
         products = (
-            resolve_rcpf_products(config) if config is not None
-            else NYISO_RCPF_PRODUCTS
+            resolve_rcpf_products(config) if config is not None else NYISO_RCPF_PRODUCTS
         )
     r = np.asarray(reserves_mw, dtype=float)
     adder = np.zeros_like(r)
     for _name, requirement, critical, max_penalty in products:
-        adder = adder + reserve_demand_price(
-            r, requirement, critical, max_penalty)
+        adder = adder + reserve_demand_price(r, requirement, critical, max_penalty)
     return adder
 
 
@@ -164,8 +163,7 @@ def rcpf_product_prices(
     """
     if products is None:
         products = (
-            resolve_rcpf_products(config) if config is not None
-            else NYISO_RCPF_PRODUCTS
+            resolve_rcpf_products(config) if config is not None else NYISO_RCPF_PRODUCTS
         )
     r = np.asarray(reserves_mw, dtype=float)
     out: dict[str, np.ndarray] = {}
@@ -217,7 +215,8 @@ def locational_zone_adders(
     """
     if regions is None:
         regions = (
-            resolve_rcpf_locational(config) if config is not None
+            resolve_rcpf_locational(config)
+            if config is not None
             else NYISO_RCPF_LOCATIONAL
         )
     zr = {z: np.asarray(r, dtype=float) for z, r in zone_reserves.items()}

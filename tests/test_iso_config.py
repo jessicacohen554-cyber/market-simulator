@@ -14,8 +14,15 @@ class TestISOConfig(unittest.TestCase):
         self.assertEqual(ercot.n_zones, 7)
         self.assertEqual(
             set(ercot.zone_names),
-            {"West", "Panhandle", "North", "Northeast", "Houston",
-             "South_Central", "South"},
+            {
+                "West",
+                "Panhandle",
+                "North",
+                "Northeast",
+                "Houston",
+                "South_Central",
+                "South",
+            },
         )
 
     def test_ercot_has_nine_links(self):
@@ -27,7 +34,8 @@ class TestISOConfig(unittest.TestCase):
         """The NE_LOB Northeast<->North export link is present at ~1,300 MW."""
         ercot = get_iso_config("ERCOT")
         ne = [
-            link for link in ercot.links
+            link
+            for link in ercot.links
             if {link.from_zone, link.to_zone} == {"Northeast", "North"}
         ]
         self.assertEqual(len(ne), 1)
@@ -43,9 +51,7 @@ class TestISOConfig(unittest.TestCase):
         """CAISO defines three trading zones plus the WECC import node."""
         caiso = get_iso_config("CAISO")
         self.assertEqual(caiso.n_zones, 4)
-        self.assertEqual(
-            set(caiso.zone_names), {"NP15", "ZP26", "SP15", "WECC_import"}
-        )
+        self.assertEqual(set(caiso.zone_names), {"NP15", "ZP26", "SP15", "WECC_import"})
 
     def test_caiso_validates(self):
         """CAISO topology passes the consistency check."""
@@ -98,8 +104,7 @@ class TestISOConfig(unittest.TestCase):
         rdt = [
             link
             for link in miso.links
-            if {link.from_zone, link.to_zone}
-            == {"MISO-Central", "MISO-South"}
+            if {link.from_zone, link.to_zone} == {"MISO-Central", "MISO-South"}
         ]
         self.assertEqual(len(rdt), 1)
         self.assertEqual(rdt[0].ttc_mw, 3000.0)
@@ -110,8 +115,7 @@ class TestISOConfig(unittest.TestCase):
         corridor = [
             link
             for link in miso.links
-            if {link.from_zone, link.to_zone}
-            == {"MISO-North", "MISO-Central"}
+            if {link.from_zone, link.to_zone} == {"MISO-North", "MISO-Central"}
         ]
         self.assertEqual(len(corridor), 1)
 
@@ -127,8 +131,14 @@ class TestISOConfig(unittest.TestCase):
         self.assertEqual(
             set(pjm.zone_names),
             {
-                "PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI", "PJM_West_APS",
-                "PJM_Central_PA", "PJM_Dominion", "PJM_EMAAC", "PJM_SWMAAC",
+                "PJM_ComEd",
+                "PJM_AEP_Ohio",
+                "PJM_ATSI",
+                "PJM_West_APS",
+                "PJM_Central_PA",
+                "PJM_Dominion",
+                "PJM_EMAAC",
+                "PJM_SWMAAC",
             },
         )
 

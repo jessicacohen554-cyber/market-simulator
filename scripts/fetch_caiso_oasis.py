@@ -60,7 +60,11 @@ DATASETS: dict[str, dict] = {
         "per_node": True,
     },
     "rtm": {
-        "params": {"queryname": "PRC_INTVL_LMP", "market_run_id": "RTM", "version": "2"},
+        "params": {
+            "queryname": "PRC_INTVL_LMP",
+            "market_run_id": "RTM",
+            "version": "2",
+        },
         "out_dir": REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO",
         "per_node": True,
     },
@@ -82,8 +86,12 @@ def _stamp(day: dt.date) -> str:
 
 
 def _url(params: dict, start: dt.date, end: dt.date, node: str | None) -> str:
-    parts = {"resultformat": "6", **params,
-             "startdatetime": _stamp(start), "enddatetime": _stamp(end)}
+    parts = {
+        "resultformat": "6",
+        **params,
+        "startdatetime": _stamp(start),
+        "enddatetime": _stamp(end),
+    }
     if node:
         parts["node"] = node
     return BASE + "?" + "&".join(f"{k}={v}" for k, v in parts.items())
@@ -103,8 +111,11 @@ def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
             with urllib.request.urlopen(url, timeout=60) as resp:
                 return resp.read()
         except Exception as exc:  # noqa: BLE001 - network errors of any shape
-            print(f"    attempt {attempt + 1}/{retries} failed: {exc}",
-                  file=sys.stderr, flush=True)
+            print(
+                f"    attempt {attempt + 1}/{retries} failed: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
             if attempt < retries - 1:
                 time.sleep(delay)
                 delay *= 2
@@ -117,8 +128,7 @@ def _oasis_error(payload: bytes) -> str:
         with zipfile.ZipFile(io.BytesIO(payload)) as zf:
             for name in zf.namelist():
                 if name.lower().endswith(".xml"):
-                    m = re.search(rb"<m:ERR_DESC>([^<]*)</m:ERR_DESC>",
-                                  zf.read(name))
+                    m = re.search(rb"<m:ERR_DESC>([^<]*)</m:ERR_DESC>", zf.read(name))
                     if m:
                         return m.group(1).decode(errors="replace")
     except Exception:  # noqa: BLE001 - diagnostic only
@@ -178,8 +188,9 @@ def _aggregate_covered_days(out_dir: Path, key: str, node: str | None) -> set[st
                 y, mo, d, h = (int(g) for g in m.groups())
                 # Aggregate timestamps are GMT; shift back to the PST trade
                 # date the fetch windows are expressed in.
-                trade = (dt.datetime(y, mo, d, h)
-                         - dt.timedelta(hours=UTC_OFFSET_HOURS)).date()
+                trade = (
+                    dt.datetime(y, mo, d, h) - dt.timedelta(hours=UTC_OFFSET_HOURS)
+                ).date()
                 counts[trade] = counts.get(trade, 0) + 1
     return {str(day) for day, n in counts.items() if n >= 23}
 
@@ -245,44 +256,62 @@ def fetch_dataset(
             elif size > 1:
                 size = max(1, size // 2)
                 reason = (
-                    "no response" if payload is None
-                    else f"OASIS: {_oasis_error(payload)}" if result is None
+                    "no response"
+                    if payload is None
+                    else f"OASIS: {_oasis_error(payload)}"
+                    if result is None
                     else f"{len(got)}/{len(need)} days"
                 )
-                print(f"    incomplete ({reason}) — halving window to "
-                      f"{size}d", flush=True)
+                print(
+                    f"    incomplete ({reason}) — halving window to {size}d", flush=True
+                )
             else:
                 # Single-day window still failing: skip the day. Persistent
                 # runs of these at the start of the range usually mean the
                 # data has aged out of OASIS retention (~39 months).
                 reason = (
-                    "no response" if payload is None
-                    else f"OASIS: {_oasis_error(payload)}" if result is None
+                    "no response"
+                    if payload is None
+                    else f"OASIS: {_oasis_error(payload)}"
+                    if result is None
                     else "wrong days returned"
                 )
-                print(f"    FAILED single-day window {cur} ({reason}) — "
-                      f"skipping", file=sys.stderr, flush=True)
+                print(
+                    f"    FAILED single-day window {cur} ({reason}) — skipping",
+                    file=sys.stderr,
+                    flush=True,
+                )
                 cur = win_end
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--datasets", nargs="+", default=["dam", "rtm", "load"],
-                        choices=list(DATASETS))
-    parser.add_argument("--years", nargs="+", type=int,
-                        default=[2023, 2024, 2025])
-    parser.add_argument("--window", type=int, default=25,
-                        help="initial window size in days (adaptively halved)")
-    parser.add_argument("--sleep", type=float, default=5.0,
-                        help="seconds between OASIS requests")
-    parser.add_argument("--deadline-minutes", type=float, default=None,
-                        help="stop fetching cleanly after this many minutes "
-                             "(for CI jobs with a hard timeout)")
+    parser.add_argument(
+        "--datasets", nargs="+", default=["dam", "rtm", "load"], choices=list(DATASETS)
+    )
+    parser.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    parser.add_argument(
+        "--window",
+        type=int,
+        default=25,
+        help="initial window size in days (adaptively halved)",
+    )
+    parser.add_argument(
+        "--sleep", type=float, default=5.0, help="seconds between OASIS requests"
+    )
+    parser.add_argument(
+        "--deadline-minutes",
+        type=float,
+        default=None,
+        help="stop fetching cleanly after this many minutes "
+        "(for CI jobs with a hard timeout)",
+    )
     args = parser.parse_args()
 
     deadline = (
         time.monotonic() + args.deadline_minutes * 60.0
-        if args.deadline_minutes else None
+        if args.deadline_minutes
+        else None
     )
     for key in args.datasets:
         print(f"=== {key} ({DATASETS[key]['params']['queryname']}) ===")

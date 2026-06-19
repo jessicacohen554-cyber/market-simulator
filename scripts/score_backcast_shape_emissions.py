@@ -37,6 +37,7 @@ Usage:
         results/calibration/statmode_d1 \
         --baseline results/calibration/run115b_ccduct_prb73_relief06
 """
+
 from __future__ import annotations
 
 import argparse
@@ -50,12 +51,12 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 # Absolute CO2 gates (audit §D3 / peer-review §D.3).
-CO2_TOTAL_BAND = 0.05      # system fossil total
-CO2_CLASS_BAND = 0.07      # per fuel class
+CO2_TOTAL_BAND = 0.05  # system fossil total
+CO2_CLASS_BAND = 0.07  # per fuel class
 # Regression-gate margins for the shape metrics (seeded at the baseline's
 # best-achieved value; a small slack absorbs solver noise).
 DEFAULT_EMD_MARGIN = 0.02  # cf_emd may rise at most this much vs baseline
-DEFAULT_R_MARGIN = 0.02    # pearson_r may fall at most this much vs baseline
+DEFAULT_R_MARGIN = 0.02  # pearson_r may fall at most this much vs baseline
 
 _BIN_SHEET = REPO / "inputs" / "custom-bin-assignments.csv"
 _RATES = REPO / "inputs" / "processed" / "plant_emission_rates.parquet"
@@ -120,15 +121,19 @@ def _co2_row(year, label, g, band):
     m, a = g["model_co2_kt"].sum(), g["actual_co2_kt"].sum()
     err = (m - a) / a if a else float("nan")
     return {
-        "year": year, "fuel": label,
-        "model_ktCO2": round(m, 1), "actual_ktCO2": round(a, 1),
-        "err_pct": round(100 * err, 1), "band_pct": round(100 * band, 1),
+        "year": year,
+        "fuel": label,
+        "model_ktCO2": round(m, 1),
+        "actual_ktCO2": round(a, 1),
+        "err_pct": round(100 * err, 1),
+        "band_pct": round(100 * band, 1),
         "gate": "PASS" if abs(err) <= band else "FAIL",
     }
 
 
-def shape_table(df: pd.DataFrame, base: pd.DataFrame | None,
-                emd_margin: float, r_margin: float) -> pd.DataFrame:
+def shape_table(
+    df: pd.DataFrame, base: pd.DataFrame | None, emd_margin: float, r_margin: float
+) -> pd.DataFrame:
     """Generation-weighted per-class cf_emd & pearson_r, with regression gates."""
     rows = []
     base_lookup = {}
@@ -137,9 +142,13 @@ def shape_table(df: pd.DataFrame, base: pd.DataFrame | None,
             base_lookup[(y, grp)] = (_wmean(g, "cf_emd"), _wmean(g, "pearson_r"))
     for (year, grp), g in df.groupby(["year", "group"]):
         emd, r = _wmean(g, "cf_emd"), _wmean(g, "pearson_r")
-        row = {"year": year, "class": grp,
-               "model_gwh": round(g["model_gwh"].sum(), 0),
-               "cf_emd": round(emd, 3), "pearson_r": round(r, 3)}
+        row = {
+            "year": year,
+            "class": grp,
+            "model_gwh": round(g["model_gwh"].sum(), 0),
+            "cf_emd": round(emd, 3),
+            "pearson_r": round(r, 3),
+        }
         if (year, grp) in base_lookup:
             b_emd, b_r = base_lookup[(year, grp)]
             row["base_emd"] = round(b_emd, 3)
@@ -159,11 +168,16 @@ def _wmean(g: pd.DataFrame, col: str) -> float:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("bundle", type=Path)
-    p.add_argument("--baseline", type=Path, default=None,
-                   help="Keeper bundle for the cf_emd/pearson_r regression gates.")
+    p.add_argument(
+        "--baseline",
+        type=Path,
+        default=None,
+        help="Keeper bundle for the cf_emd/pearson_r regression gates.",
+    )
     p.add_argument("--emd-margin", type=float, default=DEFAULT_EMD_MARGIN)
     p.add_argument("--r-margin", type=float, default=DEFAULT_R_MARGIN)
     args = p.parse_args()
@@ -176,18 +190,24 @@ def main() -> None:
     print("\n[CO2] carbon-weighted fossil CO2 (kilotonnes), model vs CAMPD-actual")
     print(co2.to_string(index=False))
     n_fail = (co2["gate"] == "FAIL").sum()
-    print(f"CO2 gates: {len(co2) - n_fail}/{len(co2)} PASS "
-          f"(total +/-{int(CO2_TOTAL_BAND*100)}%, class +/-{int(CO2_CLASS_BAND*100)}%)")
+    print(
+        f"CO2 gates: {len(co2) - n_fail}/{len(co2)} PASS "
+        f"(total +/-{int(CO2_TOTAL_BAND * 100)}%, class +/-{int(CO2_CLASS_BAND * 100)}%)"
+    )
 
     shape = shape_table(df, base, args.emd_margin, args.r_margin)
-    print("\n[SHAPE] generation-weighted per-class operating-shape metrics"
-          + (f"  (regression gate vs {args.baseline.name})" if base is not None else ""))
+    print(
+        "\n[SHAPE] generation-weighted per-class operating-shape metrics"
+        + (f"  (regression gate vs {args.baseline.name})" if base is not None else "")
+    )
     print(shape.sort_values(["year", "class"]).to_string(index=False))
     if base is not None and "emd_gate" in shape.columns:
         ef = (shape["emd_gate"] == "FAIL").sum()
         rf = (shape["r_gate"] == "FAIL").sum()
-        print(f"Shape regression gates: cf_emd {len(shape)-ef}/{len(shape)} PASS, "
-              f"pearson_r {len(shape)-rf}/{len(shape)} PASS")
+        print(
+            f"Shape regression gates: cf_emd {len(shape) - ef}/{len(shape)} PASS, "
+            f"pearson_r {len(shape) - rf}/{len(shape)} PASS"
+        )
 
 
 if __name__ == "__main__":

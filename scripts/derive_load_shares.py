@@ -81,17 +81,20 @@ ZONES = ["West", "Panhandle", "North", "Houston", "South_Central", "South"]
 
 CAISO_ZONES = ["NP15", "ZP26", "SP15"]
 
-NYISO_ZONES = [
-    "Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"
-]
+NYISO_ZONES = ["Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"]
 
 # ISO-NE 8 load zones -> 4 model transmission zones (same mapping as
 # eia_loader._NEISO_LOAD_ZONE_GROUPS).
 NEISO_ZONE_MAP: dict[str, str] = {
-    "ME": "North", "NH": "North", "VT": "North",
-    "NEMA": "Boston", ".H.NEMA": "Boston",
-    "SEMASS": "Central", ".H.SEMASS": "Central",
-    "WCMASS": "Central", ".H.WCMASS": "Central",
+    "ME": "North",
+    "NH": "North",
+    "VT": "North",
+    "NEMA": "Boston",
+    ".H.NEMA": "Boston",
+    "SEMASS": "Central",
+    ".H.SEMASS": "Central",
+    "WCMASS": "Central",
+    ".H.WCMASS": "Central",
     "RI": "Central",
     "CT": "Connecticut",
 }
@@ -228,8 +231,12 @@ def derive_nyiso() -> None:
         df = pd.read_csv(f)
         # Flexible column detection to match NYISO OASIS CSV naming variants.
         ts_col = next(
-            (c for c in df.columns if c.lower().replace(" ", "_") in
-             ("time_stamp", "timestamp", "datetime", "date_time")),
+            (
+                c
+                for c in df.columns
+                if c.lower().replace(" ", "_")
+                in ("time_stamp", "timestamp", "datetime", "date_time")
+            ),
             None,
         )
         zone_col = next(
@@ -246,11 +253,13 @@ def derive_nyiso() -> None:
                 f"(need timestamp, zone-name, MW); skipping"
             )
             continue
-        sub = pd.DataFrame({
-            "ts": pd.to_datetime(df[ts_col], errors="coerce"),
-            "zone": df[zone_col].astype(str).str.strip(),
-            "mw": pd.to_numeric(df[load_col], errors="coerce"),
-        }).dropna()
+        sub = pd.DataFrame(
+            {
+                "ts": pd.to_datetime(df[ts_col], errors="coerce"),
+                "zone": df[zone_col].astype(str).str.strip(),
+                "mw": pd.to_numeric(df[load_col], errors="coerce"),
+            }
+        ).dropna()
         if sub["ts"].dt.tz is not None:
             sub["ts"] = sub["ts"].dt.tz_localize(None)
         frames.append(sub)
@@ -285,10 +294,7 @@ def derive_nyiso() -> None:
     hdr = "day".ljust(12) + "".join(z[:9].rjust(12) for z in NYISO_ZONES)
     print(hdr)
     for day, row in shares.iterrows():
-        print(
-            day.ljust(12)
-            + "".join(f"{row[z]:11.1%} " for z in NYISO_ZONES)
-        )
+        print(day.ljust(12) + "".join(f"{row[z]:11.1%} " for z in NYISO_ZONES))
 
     avg = shares.mean()
     print("\n=== Model-zone load_share (averaged; paste into iso_configs) ===")
@@ -327,12 +333,9 @@ def derive_neiso() -> None:
     for f in files:
         df = pd.read_csv(f)
         df.columns = [str(c).strip() for c in df.columns]
-        date_col = next(
-            (c for c in df.columns if c.upper().startswith("DATE")), None
-        )
+        date_col = next((c for c in df.columns if c.upper().startswith("DATE")), None)
         he_col = next(
-            (c for c in df.columns
-             if "HOUR" in c.upper() and "END" in c.upper()), None
+            (c for c in df.columns if "HOUR" in c.upper() and "END" in c.upper()), None
         )
         if date_col is None or he_col is None:
             print(f"  WARNING: {f.name} missing Date / Hour Ending columns, skipped")
@@ -399,7 +402,9 @@ def derive_neiso() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "iso", nargs="?", default="ercot",
+        "iso",
+        nargs="?",
+        default="ercot",
         choices=("ercot", "caiso", "nyiso", "neiso"),
         help="which ISO's per-zone load archive to derive shares from",
     )

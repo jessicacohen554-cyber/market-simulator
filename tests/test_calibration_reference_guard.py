@@ -8,6 +8,7 @@ telemetry) per fuel when EIA-923 under-counts them, and stamps the year block
 tests pin that logic (synthetic, source-independent) plus the live CAISO/ERCOT
 behaviour against the committed data.
 """
+
 import importlib.util
 import unittest
 from pathlib import Path
@@ -16,7 +17,8 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location(
-    "bcr", str(REPO / "scripts" / "build_calibration_reference.py"))
+    "bcr", str(REPO / "scripts" / "build_calibration_reference.py")
+)
 bcr = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(bcr)
 
@@ -28,7 +30,10 @@ class TestIncompleteRenewableFuels(unittest.TestCase):
         self._orig = bcr._eia930_annual_by_fuel
         # EIA-930 grid truth used for every case below.
         bcr._eia930_annual_by_fuel = lambda iso, year: {
-            "wind": 20.0, "solar": 50.0, "net_gen": 200.0}
+            "wind": 20.0,
+            "solar": 50.0,
+            "net_gen": 200.0,
+        }
 
     def tearDown(self):
         bcr._eia930_annual_by_fuel = self._orig
@@ -38,19 +43,18 @@ class TestIncompleteRenewableFuels(unittest.TestCase):
         self.assertEqual(bcr._incomplete_renewable_fuels("X", 2024, raw), [])
 
     def test_under_counted_wind_only(self):
-        raw = {"wind": 4.0, "solar": 49.0}        # wind 20% of 930, solar fine
-        self.assertEqual(bcr._incomplete_renewable_fuels("X", 2025, raw),
-                         ["wind"])
+        raw = {"wind": 4.0, "solar": 49.0}  # wind 20% of 930, solar fine
+        self.assertEqual(bcr._incomplete_renewable_fuels("X", 2025, raw), ["wind"])
 
     def test_under_counted_solar_only(self):
-        raw = {"wind": 19.5, "solar": 30.0}       # solar 60% of 930
-        self.assertEqual(bcr._incomplete_renewable_fuels("X", 2025, raw),
-                         ["solar"])
+        raw = {"wind": 19.5, "solar": 30.0}  # solar 60% of 930
+        self.assertEqual(bcr._incomplete_renewable_fuels("X", 2025, raw), ["solar"])
 
     def test_both_under_counted(self):
         raw = {"wind": 4.0, "solar": 30.0}
-        self.assertEqual(set(bcr._incomplete_renewable_fuels("X", 2025, raw)),
-                         {"wind", "solar"})
+        self.assertEqual(
+            set(bcr._incomplete_renewable_fuels("X", 2025, raw)), {"wind", "solar"}
+        )
 
     def test_missing_vintage_flags_nothing(self):
         """No EIA-923 at all (empty raw) is left missing, not fabricated."""
@@ -63,7 +67,10 @@ class TestGuardOverride(unittest.TestCase):
     def setUp(self):
         self._orig = bcr._eia930_annual_by_fuel
         bcr._eia930_annual_by_fuel = lambda iso, year: {
-            "wind": 20.0, "solar": 50.0, "net_gen": 200.0}
+            "wind": 20.0,
+            "solar": 50.0,
+            "net_gen": 200.0,
+        }
 
     def tearDown(self):
         bcr._eia930_annual_by_fuel = self._orig
@@ -71,9 +78,9 @@ class TestGuardOverride(unittest.TestCase):
     def test_overrides_only_the_under_counted_fuel(self):
         raw = {"wind": 4.0, "solar": 49.0, "gas_cc": 60.0, "gas_ct": 8.0}
         out = bcr._guard_incomplete_eia923("X", 2025, raw)
-        self.assertEqual(out["wind"], 20.0)        # swapped to EIA-930
-        self.assertEqual(out["solar"], 49.0)       # left on EIA-923
-        self.assertEqual(out["gas_cc"], 60.0)      # thermal untouched
+        self.assertEqual(out["wind"], 20.0)  # swapped to EIA-930
+        self.assertEqual(out["solar"], 49.0)  # left on EIA-923
+        self.assertEqual(out["gas_cc"], 60.0)  # thermal untouched
         self.assertEqual(out["gas_ct"], 8.0)
 
     def test_complete_vintage_is_byte_identical(self):
@@ -99,8 +106,9 @@ class TestVintageIncompleteFlag(unittest.TestCase):
         bcr._eia930_annual_by_fuel = self._e930
 
     def _frame_with_total_twh(self, twh):
-        return pd.DataFrame({"net_gen": [twh * bcr._MWH_PER_TWH],
-                             "pm": ["CA"], "fc": ["NG"]})
+        return pd.DataFrame(
+            {"net_gen": [twh * bcr._MWH_PER_TWH], "pm": ["CA"], "fc": ["NG"]}
+        )
 
     def test_full_vintage_not_flagged(self):
         bcr._eia923_ba_frame = lambda iso, year: self._frame_with_total_twh(195.0)
@@ -124,7 +132,7 @@ class TestLiveData(unittest.TestCase):
         guarded = bcr._eia923_generation("CAISO", 2025)
         if not raw:
             self.skipTest("no CAISO 2025 EIA-923 vintage in this checkout")
-        self.assertLess(raw["wind"], 10.0)         # truncated survey
+        self.assertLess(raw["wind"], 10.0)  # truncated survey
         self.assertGreater(guarded["wind"], 15.0)  # EIA-930 grid total
         self.assertTrue(bcr._eia923_is_incomplete("CAISO", 2025))
 

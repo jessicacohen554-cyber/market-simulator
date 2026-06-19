@@ -52,28 +52,24 @@ def find_completed_scenarios(results_root: Path) -> list[tuple[str, str]]:
 
     years = range(START_YEAR, END_YEAR + 1)
     for iso_dir in sorted(p for p in results_root.iterdir() if p.is_dir()):
-        for scenario_dir in sorted(
-            p for p in iso_dir.iterdir() if p.is_dir()
-        ):
+        for scenario_dir in sorted(p for p in iso_dir.iterdir() if p.is_dir()):
             if not (scenario_dir / "config.yaml").exists():
                 continue
             complete = all(
-                (scenario_dir / f"year_{year}.parquet").exists()
-                for year in years
+                (scenario_dir / f"year_{year}.parquet").exists() for year in years
             )
             if complete:
                 pairs.append((iso_dir.name, scenario_dir.name))
             else:
                 logger.warning(
                     "skipping incomplete scenario %s/%s",
-                    iso_dir.name, scenario_dir.name,
+                    iso_dir.name,
+                    scenario_dir.name,
                 )
     return pairs
 
 
-def export_all(
-    results_root: Path, output_dir: Path, index_path: Path
-) -> list[dict]:
+def export_all(results_root: Path, output_dir: Path, index_path: Path) -> list[dict]:
     """Export every completed scenario and write the ``scenarios.json`` index.
 
     Args:
@@ -121,15 +117,21 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Export completed cached scenarios to frontend JSON.",
     )
     parser.add_argument(
-        "--results-root", type=Path, default=DEFAULT_RESULTS_ROOT,
+        "--results-root",
+        type=Path,
+        default=DEFAULT_RESULTS_ROOT,
         help="Cache root directory to scan (default: results/).",
     )
     parser.add_argument(
-        "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR,
+        "--output-dir",
+        type=Path,
+        default=DEFAULT_OUTPUT_DIR,
         help="Directory for per-scenario JSON (default: frontend/data/results/).",
     )
     parser.add_argument(
-        "--index", type=Path, default=DEFAULT_INDEX_PATH,
+        "--index",
+        type=Path,
+        default=DEFAULT_INDEX_PATH,
         help="Path of the scenarios.json index (default: frontend/data/scenarios.json).",
     )
     return parser

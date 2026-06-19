@@ -45,6 +45,7 @@ economically), so plants whose model bin is ``CT_PEAKER`` — and the
 :data:`market_sim.data.outages.ST_GAS_PEAKER_PLANTS` — are skipped, matching the
 overlay's convention.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -149,9 +150,7 @@ def unit_capacity_mw(
     return observed_peak, "observed_peak"
 
 
-def _unit_year_grid(
-    sub: pd.DataFrame, year: int, col: str = "grossLoad"
-) -> np.ndarray:
+def _unit_year_grid(sub: pd.DataFrame, year: int, col: str = "grossLoad") -> np.ndarray:
     """Return one unit-year's hourly gross on the full calendar-year clock.
 
     CAMPD omits non-operating hours, so the unit's reported hours are placed on
@@ -174,8 +173,16 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
         return pd.DataFrame()
     df = pd.read_parquet(
         path,
-        columns=["facilityId", "facilityName", "unitId", "date", "hour",
-                 "grossLoad", "opTime", "primaryFuelInfo"],
+        columns=[
+            "facilityId",
+            "facilityName",
+            "unitId",
+            "date",
+            "hour",
+            "grossLoad",
+            "opTime",
+            "primaryFuelInfo",
+        ],
     )
     df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
     df = df.dropna(subset=["facilityId"])
@@ -193,25 +200,30 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins",
+        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
     )
     ap.add_argument(
         "--eia860",
-        default=str(REPO / "inputs" / "raw-data" / "eia-860" / "eia860_generators.parquet"),
+        default=str(
+            REPO / "inputs" / "raw-data" / "eia-860" / "eia860_generators.parquet"
+        ),
         help="EIA-860 generator parquet, for per-unit nameplate capacity.",
     )
     ap.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
-             "(ERCOT) or campd-unit-outages-{ISO}.csv.",
+        "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     args = ap.parse_args()
     min_outage_hours = int(round(args.min_outage_days * 24))
     iso = args.iso.upper()
     if args.out is None:
         fname = (
-            "campd-unit-outages.csv" if iso == "ERCOT"
+            "campd-unit-outages.csv"
+            if iso == "ERCOT"
             else f"campd-unit-outages-{iso}.csv"
         )
         args.out = str(REPO / "inputs" / "raw-data" / fname)
@@ -232,8 +244,7 @@ def main() -> None:
     if iso == "ERCOT":
         bins = pd.read_csv(args.bins)
         group_by_code = {
-            int(c): str(g)
-            for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
+            int(c): str(g) for c, g in zip(bins["Plant_Code"], bins["Plant_Group"])
         }
     else:
         from market_sim.config.iso_configs import get_iso_config
@@ -241,14 +252,14 @@ def main() -> None:
             load_fleet_from_csv,
             load_retired_within_window,
         )
+
         iso_config = get_iso_config(iso)
         group_by_code = {}
         # Within-window plant exits dispatch in the backcast fleet too, so they
         # need their observed CEMS outage windows derived — else an injected
         # retiree (e.g. Mystic) runs uncapped at its full economic merit.
-        fleet = (
-            load_fleet_from_csv(iso, iso_config)
-            + load_retired_within_window(iso, iso_config)
+        fleet = load_fleet_from_csv(iso, iso_config) + load_retired_within_window(
+            iso, iso_config
         )
         for g in fleet:
             if int(g.plant_code) > 0 and g.plant_group:
@@ -261,7 +272,6 @@ def main() -> None:
         for c in set(campd.CAMPD_UNIT_PLANT_REMAP.values())
         if c in name_by_code
     }
-
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
     npl_by_plant = plant_nameplate_index(Path(args.eia860))
@@ -277,8 +287,11 @@ def main() -> None:
             df = _load_unit_year(state, year)
             if df.empty:
                 continue
-            for fac_id, has in df.groupby("facilityId", observed=True)[
-                    "grossLoad"].apply(lambda s: s.notna().any()).items():
+            for fac_id, has in (
+                df.groupby("facilityId", observed=True)["grossLoad"]
+                .apply(lambda s: s.notna().any())
+                .items()
+            ):
                 if has:
                     campd_gross_seen.add((int(fac_id), year))
             # CEMS->EIA split-plant remap (campd.CAMPD_UNIT_PLANT_REMAP):
@@ -289,9 +302,7 @@ def main() -> None:
             # exclusion does not swallow them.
             df["facilityId"] = [
                 campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
-                for f, u in zip(
-                    df["facilityId"].astype(int), df["unitId"].astype(str)
-                )
+                for f, u in zip(df["facilityId"].astype(int), df["unitId"].astype(str))
             ]
             for fac_id, fac in df.groupby("facilityId", observed=True):
                 group = group_by_code.get(int(fac_id))
@@ -342,16 +353,21 @@ def main() -> None:
                 if iso != "ERCOT" and all(p <= 0.0 for p in peaks.values()):
                     npl = npl_by_plant.get(int(fac_id), 0.0)
                     ot_units = {
-                        uid: u for uid, u in fac.groupby("unitId", observed=True)
-                        if float(pd.to_numeric(u["opTime"], errors="coerce")
-                                 .fillna(0.0).max()) > 0.0
+                        uid: u
+                        for uid, u in fac.groupby("unitId", observed=True)
+                        if float(
+                            pd.to_numeric(u["opTime"], errors="coerce")
+                            .fillna(0.0)
+                            .max()
+                        )
+                        > 0.0
                     }
                     if npl > 0.0 and ot_units:
                         share = npl / len(ot_units)
                         units = {
                             uid: np.where(
-                                _unit_year_grid(u, year, col="opTime") > 0.0,
-                                share, 0.0)
+                                _unit_year_grid(u, year, col="opTime") > 0.0, share, 0.0
+                            )
                             for uid, u in ot_units.items()
                         }
                         peaks = {uid: float(g.max()) for uid, g in units.items()}
@@ -387,30 +403,37 @@ def main() -> None:
                         last = clock[e - 1]
                         duration_days = round((e - s) / 24.0, 1)
                         out_days += duration_days
-                        peers = sum(
-                            1 for o in ran if o != uid
+                        peers = sum(1 for o in ran if o != uid)
+                        rows.append(
+                            {
+                                "facility_name": fac_name,
+                                "facility_id": int(fac_id),
+                                "unit_id": uid,
+                                "unit_capacity_mw": round(cap, 1),
+                                "plant_capacity_mw": round(fac_cap, 1),
+                                "unit_pct_of_plant": (
+                                    round(100.0 * cap / fac_cap, 1) if fac_cap else None
+                                ),
+                                "plant_group": group,
+                                "capacity_source": cap_src,
+                                "outage_start": start.strftime("%Y-%m-%d"),
+                                "outage_end": last.strftime("%Y-%m-%d"),
+                                "duration_days": duration_days,
+                                "peer_units_online": peers,
+                                "total_units_at_plant": len(units),
+                            }
                         )
-                        rows.append({
-                            "facility_name": fac_name,
-                            "facility_id": int(fac_id),
-                            "unit_id": uid,
-                            "unit_capacity_mw": round(cap, 1),
-                            "plant_capacity_mw": round(fac_cap, 1),
-                            "unit_pct_of_plant": (
-                                round(100.0 * cap / fac_cap, 1) if fac_cap else None
-                            ),
-                            "plant_group": group,
-                            "capacity_source": cap_src,
-                            "outage_start": start.strftime("%Y-%m-%d"),
-                            "outage_end": last.strftime("%Y-%m-%d"),
-                            "duration_days": duration_days,
-                            "peer_units_online": peers,
-                            "total_units_at_plant": len(units),
-                        })
                     if out_days > 0:
                         summary.append(
-                            (int(fac_id), fac_name, uid, group, year,
-                             len(windows), out_days)
+                            (
+                                int(fac_id),
+                                fac_name,
+                                uid,
+                                group,
+                                year,
+                                len(windows),
+                                out_days,
+                            )
                         )
 
     # Net-zero-to-grid years (non-ERCOT). A fleet plant that reported real
@@ -428,8 +451,7 @@ def main() -> None:
             REPO / "inputs" / "processed" / "eia923_monthly_generation.parquet",
             columns=["plant_id", "netgen_annual_mwh", "year"],
         )
-        tot = e923.groupby(["plant_id", "year"])["netgen_annual_mwh"] \
-                  .sum(min_count=1)
+        tot = e923.groupby(["plant_id", "year"])["netgen_annual_mwh"].sum(min_count=1)
         years_in_923 = sorted(e923["year"].unique())
         for fac_id, group in sorted(group_by_code.items()):
             if group not in QUALIFYING_PLANT_GROUPS:
@@ -443,44 +465,59 @@ def main() -> None:
                 if year not in years_in_923:
                     continue
                 t = tot.get((fac_id, year))
-                prior = [
-                    tot.get((fac_id, y)) for y in years_in_923 if y < year
-                ]
-                ran_before = any(p is not None and not pd.isna(p)
-                                 and p > 10_000.0 for p in prior)
+                prior = [tot.get((fac_id, y)) for y in years_in_923 if y < year]
+                ran_before = any(
+                    p is not None and not pd.isna(p) and p > 10_000.0 for p in prior
+                )
                 filed = t is not None and not pd.isna(t)
-                zero_now = (
-                    (filed and t < 1_000.0)
-                    or (not filed
-                        and (int(fac_id), year) not in campd_gross_seen)
+                zero_now = (filed and t < 1_000.0) or (
+                    not filed and (int(fac_id), year) not in campd_gross_seen
                 )
                 if not (ran_before and zero_now):
                     continue
-                rows.append({
-                    "facility_name": name_by_code.get(int(fac_id), ""),
-                    "facility_id": int(fac_id),
-                    "unit_id": "NET0-923",
-                    "unit_capacity_mw": round(npl, 1),
-                    "plant_capacity_mw": round(npl, 1),
-                    "unit_pct_of_plant": 100.0,
-                    "plant_group": group,
-                    "capacity_source": "eia923_netzero",
-                    "outage_start": f"{year}-01-01",
-                    "outage_end": f"{year}-12-31",
-                    "duration_days": 365.0,
-                    "peer_units_online": 0,
-                    "total_units_at_plant": 1,
-                })
+                rows.append(
+                    {
+                        "facility_name": name_by_code.get(int(fac_id), ""),
+                        "facility_id": int(fac_id),
+                        "unit_id": "NET0-923",
+                        "unit_capacity_mw": round(npl, 1),
+                        "plant_capacity_mw": round(npl, 1),
+                        "unit_pct_of_plant": 100.0,
+                        "plant_group": group,
+                        "capacity_source": "eia923_netzero",
+                        "outage_start": f"{year}-01-01",
+                        "outage_end": f"{year}-12-31",
+                        "duration_days": 365.0,
+                        "peer_units_online": 0,
+                        "total_units_at_plant": 1,
+                    }
+                )
                 summary.append(
-                    (int(fac_id), name_by_code.get(int(fac_id), ""),
-                     "NET0-923", group, year, 1, 365.0)
+                    (
+                        int(fac_id),
+                        name_by_code.get(int(fac_id), ""),
+                        "NET0-923",
+                        group,
+                        year,
+                        1,
+                        365.0,
+                    )
                 )
 
     cols = [
-        "facility_name", "facility_id", "unit_id", "unit_capacity_mw",
-        "plant_capacity_mw", "unit_pct_of_plant", "plant_group",
-        "capacity_source", "outage_start", "outage_end", "duration_days",
-        "peer_units_online", "total_units_at_plant",
+        "facility_name",
+        "facility_id",
+        "unit_id",
+        "unit_capacity_mw",
+        "plant_capacity_mw",
+        "unit_pct_of_plant",
+        "plant_group",
+        "capacity_source",
+        "outage_start",
+        "outage_end",
+        "duration_days",
+        "peer_units_online",
+        "total_units_at_plant",
     ]
     out = pd.DataFrame(rows, columns=cols).sort_values(
         ["facility_id", "unit_id", "outage_start"]
@@ -488,8 +525,10 @@ def main() -> None:
     out.to_csv(args.out, index=False)
 
     print(f"\nwrote {len(out)} unit-outage windows to {args.out}\n")
-    print(f"{'code':>6} {'plant':<24}{'unit':<8}{'group':<11}{'yr':>5}"
-          f"{'#win':>5}{'out d':>8}")
+    print(
+        f"{'code':>6} {'plant':<24}{'unit':<8}{'group':<11}{'yr':>5}"
+        f"{'#win':>5}{'out d':>8}"
+    )
     for code, nm, uid, g, yr, n, td in sorted(
         summary, key=lambda r: (r[0], str(r[2]), r[4])
     ):
