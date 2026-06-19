@@ -1221,6 +1221,7 @@ def solve_and_persist(
     negative_renewable_offers: bool | None = None,
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
+    caiso_import_hub_prices: bool | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1332,6 +1333,7 @@ def solve_and_persist(
             negative_renewable_offers=negative_renewable_offers,
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
+            caiso_import_hub_prices=caiso_import_hub_prices,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1475,6 +1477,7 @@ def solve_and_persist(
         "negative_renewable_offers": negative_renewable_offers,
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
+        "caiso_import_hub_prices": caiso_import_hub_prices,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
@@ -1567,6 +1570,9 @@ def solve_and_persist(
     if caiso_gas_floor_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_gas_floor_frac=caiso_gas_floor_frac)
+    if caiso_import_hub_prices is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_import_hub_prices=caiso_import_hub_prices)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -3447,6 +3453,21 @@ def build_parser() -> argparse.ArgumentParser:
              "at frac 0.80), off elsewhere; --no-caiso-gas-commitment-floor "
              "forces it off (the no-floor baseline probe).")
     parser.add_argument(
+        "--caiso-import-hub-prices", action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Price the CAISO priced-import tranches at the MEASURED WECC "
+             "neighbor-hub LMP each proxies (Mid-C/Malin for the PNW blocks, "
+             "Palo Verde for the desert-SW blocks), by hour, instead of the "
+             "static bundle-fitted ladder in IMPORT_TRANCHES['CAISO']. The real "
+             "delivered cost of the imported energy: seasonal (spring-runoff "
+             "crash) and negative in the desert-SW solar glut, so it lowers the "
+             "over-high body AND reproduces the negative midday tail "
+             "(DIAGNOSIS-caiso-import-ladder-2026-06-19). CAISO-only; no-op "
+             "(byte-identical) without the measured intertie parquet "
+             "(data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet, "
+             "fetched by the fetch-caiso-oasis workflow). Default (unset) keeps "
+             "the base config value (currently off pending the measured data).")
+    parser.add_argument(
         "--caiso-gas-floor-frac", type=float, default=None,
         help="Fraction of the measured EIA-930 NG: NG (month x hour-of-day "
              "median) the --caiso-gas-commitment-floor targets. Default (unset) "
@@ -3644,6 +3665,7 @@ def main() -> None:
         negative_renewable_offers=args.negative_renewable_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
+        caiso_import_hub_prices=args.caiso_import_hub_prices,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
