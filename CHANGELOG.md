@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-06-19 (NEISO — ISO-NE RCPF scarcity-pricing lever, mirroring NYISO)
+
+Adds an ISO-NE Reserve Constraint Penalty Factor (RCPF) scarcity overlay, the
+NEISO analogue of the NYISO RCPF lever. Post-solve only (never an LP input):
+volumes, dispatch and emissions are untouched, and the adder is $0 whenever
+reserves clear the requirement. ISO-NE recovers fixed cost through the Forward
+Capacity Market, so the lever owns the price **tail** only — it is for
+forward/scarcity scenarios, not a backcast adjustment. Additive and gated; no
+existing keeper moves.
+
+- **Sourced curve, nothing fitted.** `constants.NEISO_RCPF_PRODUCTS`: three
+  nested products (TMSR ⊂ total-10-min ⊂ total-30-min). Requirements from
+  ISO-NE OP-8 (TMSR = ½·first contingency; total-10-min = first contingency;
+  total-30-min = first + ½·second) with a documented 1,200 MW contingency
+  estimate (`TODO(NE-contingency)`); penalties are the sourced tariff RCPFs
+  (TMSR $50, TMNSR $1,500, TMOR $1,000/MWh). Linear demand-curve stand-in
+  between sourced anchors, same convention as the NYISO products.
+- **Wiring.** `results.rcpf.resolve_rcpf_products` is now ISO-aware (NEISO →
+  ISO-NE table, every other ISO unchanged); `ScenarioConfig.neiso_rcpf_enabled`
+  / `neiso_rcpf_products` mirror the NYISO flags; the shared reserve/headroom
+  machinery is reused (ISO-NE reserve fuels = gas + oil, the same set).
+- **New overlay script** `scripts/derive_neiso_rcpf_overlay.py` (system-wide;
+  local reserve zones NEMA/Boston/CT/SWCT deferred to a locational follow-up,
+  as for NYISO).
+- **Verified dormant in the backcast.** On the `neiso_monthly_keeper` bundle
+  the adder is **$0 in every hour of 2023–25** (tightest-hour reserve headroom
+  ~6,900 MW vs the 1,800 MW requirement), so the keeper's LMP/scoring is
+  unchanged; the curve produces the expected stacked tail ($2,550/MWh at zero
+  reserves) only when reserves collapse. New tests in `tests/test_rcpf.py`.
+
 ## 2026-06-17 (NEISO — backcast fleet made year-correct: within-window plant exits)
 
 The COD ramp can only age out a unit that is **in the fleet snapshot**, but the
