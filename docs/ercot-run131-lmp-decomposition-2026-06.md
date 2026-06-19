@@ -195,18 +195,32 @@ on `storage_as_commitment` (off → the full cap is already in the reserve block
 **Scoped to `weather_year >= ercot_storage_as_reserve_from_year` (default
 2025) — a labeled modeling choice, not a measured one.** The credit is
 physically correct in *every* year, but a global probe (credit on for 2023–25)
-**over-cools the calibrated keepers**: 2023 collapses (Aug model $74 vs actual
-$217; tail 88→27 >$500) and 2024 over-cools (avg 26.7→21.1). The reason is
-structural, not a fit: in **2023** the model's ORDC tail is a deliberate keeper
-standing in for the documented **out-of-market** scarcity (ERCOT's 2023
-RTORDPA / ECRS-conservatism, IMM-estimated >$12B) that an ORDC-only model
-cannot otherwise reproduce — crediting storage AS there correctly removes the
-reserve over-fire but leaves that scarcity unmodeled. **2025 is the lone year
-whose residual is purely the reserve-accounting over-fire** (reserves were
-genuinely fat, no large uncompensated out-of-market component), so the measured
-credit closes it cleanly. The physically-pure global path needs 2023/2024
-out-of-market scarcity modeled separately (the deprecated RTORDPA
-reliability-deployment overlay) — out of scope here.
+**over-cools the calibrated keepers**, and the reason is structural, not a fit:
+in 2023 and 2024 the model can only reach the year's *genuine* scarcity tail
+*through* the reserve over-fire, so crediting the battery AS makes reserves look
+adequate on days that were actually tight and the model loses the real tail.
+
+- **2023** collapses (Aug model $74 vs actual $217; tail 88→27 >$500). Its tail
+  is the documented **out-of-market** scarcity (ERCOT's 2023 RTORDPA /
+  ECRS-conservatism, IMM-estimated >$12B; the >$200 hours are **47% of the
+  year's total $**) that an ORDC-only model cannot otherwise reproduce.
+- **2024** over-cools too, and a dedicated single-year probe quantifies it:
+  crediting 2024 drops avg **29.0 → 21.2** (actual 26.8), **worsens MAE
+  10.5 → 12.7**, and collapses the tail **49 → 7 hours >$200** (actual 53; the
+  year really had 8 hours >$1000). So 2024's exclusion is **not** "lower storage
+  penetration" — it is measured: 2024 carries real tight-day scarcity (14% of
+  total $) that the ORDC model only produces via the over-fire.
+- **2025 is the lone year whose residual is purely the reserve-accounting
+  over-fire** (tail = 4% of total $, reserves genuinely fat, no large
+  uncompensated out-of-market component), so the measured credit closes it
+  cleanly. Forecast years inherit it under the reformed RTC+B fleet regime.
+
+The physically-pure global path therefore needs 2023/2024 scarcity modeled by a
+genuine **ORDC scarcity-price** mechanism — *not* the reliability-deployment
+overlay. That overlay is an energy/congestion **min-gen floor**: a credit+overlay
+probe on 2024 was indistinguishable from credit-only (21.1 vs 21.2 avg), because
+forcing pocket-thermal output adds supply at the hub and moves system LMP by
+~$0.1 (if anything down). Out of scope here.
 
 ### Gate (same-extract run131 baseline → run132)
 
