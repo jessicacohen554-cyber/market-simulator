@@ -500,6 +500,36 @@ def ercot_ordc_demand_steps(
     return req_total, penalties.astype(float), widths.astype(float)
 
 
+_ERCOT_AS_DIR = RAW_DATA_DIR / "ercot-AS"
+
+
+def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
+    """ERCOT's measured hourly Load-Resource responsive-reserve MW for ``year``.
+
+    Reads the ``rrsufr_mw`` column of ``ercot_<year>_as_up_mw.parquet`` (built by
+    ``scripts/build_ercot_as_withholding.py`` from the NP3-911 cleared-DAM-AS
+    reports): RRS-UFR is the Responsive Reserve provided by **Load Resources**
+    via high-set under-frequency relays — by ERCOT protocol an exclusively
+    load-side service (~0.8–0.9 GW mean, capped ~1.4 GW). This is reserve supply
+    the co-opt LP otherwise omits (it counts only thermal headroom + storage),
+    so the model clears reserve lower on the ORDC curve than reality and prices a
+    scarcity adder in non-scarce hours.
+
+    Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file is
+    absent** — the cleared-AS archive begins 2023-12-10, so 2023 gets no credit
+    and its genuine scarcity tail is left untouched.
+    """
+    path = _ERCOT_AS_DIR / f"ercot_{year}_as_up_mw.parquet"
+    if not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    series = pd.read_parquet(path)["rrsufr_mw"].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(int(hours) - len(series))])
+    return series[: int(hours)]
+
+
 def ercot_reserve_coopt_inputs(
     config, fleet_arrays: FleetArrays, hours: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -526,6 +556,15 @@ def ercot_reserve_coopt_inputs(
         multistep_floor=config.ordc_multistep_floor,
     )
     requirement = np.full(int(hours), req_total, dtype=float)
+    if getattr(config, "ercot_load_resource_reserve", False):
+        # Credit ERCOT's measured Load-Resource responsive reserve (RRS-UFR) the
+        # co-opt LP otherwise omits. Lowering the balance-RHS by load_mw(t) is
+        # equivalent to adding load_mw of $0 reserve supply: because the ORDC
+        # steps are priced by absolute reserve level, the marginal step then
+        # prices at total reserve R_gen + load_mw — physically exact, no double
+        # count. Clipped to the MCL floor so the curve's steep tail is preserved.
+        load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
+        requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
     eligible = ercot_reserve_eligible(fleet_arrays)
     return requirement, eligible, penalties, widths
 
