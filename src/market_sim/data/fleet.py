@@ -40,6 +40,7 @@ from market_sim.config.paths import (
 )
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
+    COAL_CODE_TO_SUPPLY,
     COAL_SUPPLY_TO_CLASS,
     OIL_ENERGY_SOURCES,
     classify_plant,
@@ -2966,18 +2967,66 @@ def _derived_coal_supply() -> dict[int, str]:
     return out
 
 
+@lru_cache(maxsize=1)
+def _eia860_retiree_coal_supply() -> dict[int, str]:
+    """Return ``{plant_code: supply_class}`` for mid-backcast coal retirees.
+
+    The narrow tertiary coal-rank fallback (after the curated and EIA-923-receipt
+    maps): a retiring plant's coal rank read from its EIA-860 ``energy_source``
+    code (``BIT`` → bituminous, ``SUB`` → PRB, ``LIG`` → lignite, ``WC`` →
+    waste), via :data:`plant_taxonomy.COAL_CODE_TO_SUPPLY`. This is the same
+    fuel-code fallback the EIA-923 calibration benchmark already applies
+    (``classify_plant``'s ``coal_code_to_class``), so the model resolves these
+    plants to the SAME class the benchmark does instead of leaving them in the
+    unranked ``COAL`` bucket.
+
+    Scope is deliberately limited to the **retired-within-window** EIA-860
+    vintage (:data:`EIA_860_RETIRED_WINDOW_PARQUET_NAME`) — the structural gap
+    the receipt-based :func:`_derived_coal_supply` map cannot cover, because a
+    plant that retired mid-backcast (e.g. W H Sammis, Homer City, AES Warrior
+    Run — all bituminous) has no recent burned-fuel receipts to derive a rank
+    from. Operable coal is intentionally NOT read here: an unresolved operable
+    plant means its ISO's receipt map was never derived (e.g. MISO/SPP), a
+    separate, deliberate piece of work — not something a retiree fallback should
+    silently reprice. The model rank sets the dispatch coal-supply passthrough
+    and the reporting class, so an unranked retiree otherwise bids generic
+    full-cost fuel AND shows up as a spurious generic ``COAL`` row the EIA-923
+    benchmark never has.
+    """
+    path = EIA_860_DIR / EIA_860_RETIRED_WINDOW_PARQUET_NAME
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=["plant_id", "energy_source"])
+    out: dict[int, str] = {}
+    for code, src in zip(df["plant_id"], df["energy_source"]):
+        supply = COAL_CODE_TO_SUPPLY.get(str(src).strip().upper())
+        if supply:
+            out.setdefault(int(code), supply)  # first coal energy_source wins
+    return out
+
+
 def coal_supply_class(plant_code: int) -> str:
     """Return a plant's coal supply class, or ``""`` if unclassified.
 
-    The hand-curated ERCOT :data:`COAL_PLANT_SUPPLY` takes precedence (it
-    encodes contract knowledge EIA-923 ranks miss, e.g. Limestone burning PRB
-    despite its lignite history); other ISOs fall back to the EIA-923-derived
-    map (:func:`_derived_coal_supply`).
+    Resolution order, most authoritative first:
+
+    1. The hand-curated ERCOT :data:`COAL_PLANT_SUPPLY` (encodes contract
+       knowledge EIA-923 ranks miss, e.g. Limestone burning PRB despite its
+       lignite history).
+    2. The EIA-923 fuel-receipt-derived per-ISO map (:func:`_derived_coal_supply`).
+    3. The EIA-860 ``energy_source`` rank of a mid-backcast retiree
+       (:func:`_eia860_retiree_coal_supply`) — the fuel-code fallback the
+       EIA-923 benchmark already applies, covering coal plants that retired
+       with no recent receipts so they are ranked rather than left in the
+       generic ``COAL`` bucket.
     """
     base = COAL_PLANT_SUPPLY.get(int(plant_code))
     if base:
         return base
-    return _derived_coal_supply().get(int(plant_code), "")
+    derived = _derived_coal_supply().get(int(plant_code))
+    if derived:
+        return derived
+    return _eia860_retiree_coal_supply().get(int(plant_code), "")
 
 
 def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
