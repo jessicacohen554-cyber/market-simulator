@@ -570,6 +570,36 @@ class ScenarioConfig:
     # scripts/build_ercot_as_withholding.py (rrsufr_mw); 2023 has no archive
     # coverage so its scarcity tail is untouched. GATED — alters dispatch
     # volumes, re-run the volume calibration. Default off; ERCOT co-opt only.
+    ercot_storage_as_reserve: bool = False  # ERCOT co-opt: credit the measured
+    # battery-provided AS (RegUp/RRS/ECRS, the storage column of the per-resource-
+    # type 60-Day DAM AS awards; ~0.8 GW 2023 → ~2.8 GW 2025) back into the co-opt
+    # reserve balance. storage_as_commitment subtracts this same MW from the
+    # storage power cap, and the reserve block derives reserve room from that
+    # reduced cap — so the committed battery AS is dropped from energy (correct)
+    # AND from reserve supply (incorrect: it is held responsive reserve, in
+    # ERCOT's RTOLCAP/RTOFFCAP). This credits it back, like the load-resource
+    # credit, so the LP stops pricing a scarcity adder in non-scarce hours.
+    # GUARDED on storage_as_commitment (off → the full cap is already reserve, no
+    # credit). Self-targeting: negligible in 2023, largest in 2025 where the
+    # residual co-opt overshoot lives. GATED — re-run the volume calibration.
+    # Default off; ERCOT co-opt only.
+    ercot_storage_as_reserve_from_year: int = 2025  # First weather year the
+    # storage-AS reserve credit applies to. A modeling scope (not a measured
+    # fact): the credit is physically correct every year, but 2023 and 2024 each
+    # carry genuine scarcity the ORDC-only model can only reach THROUGH the
+    # reserve over-fire, so crediting the battery AS removes the mechanism and
+    # the model under-produces their real tails. 2023 is the documented
+    # out-of-market year (tail = 47% of total $; ERCOT RTORDPA / ECRS
+    # conservatism an ORDC model can't reproduce). 2024 has real tight-day
+    # scarcity (53 h >$200, 8 h >$1000); a single-year probe crediting 2024
+    # cooled avg 29.0->21.2 (actual 26.8), WORSENED MAE 10.5->12.7, and
+    # collapsed the tail 49->7 h >$200 — confirmed empirically, not assumed from
+    # "lower storage penetration". 2025 is the lone year whose residual is purely
+    # the reserve-accounting over-fire (tail = 4% of $, reserves genuinely fat),
+    # so the credit is gated to 2025+ (forecast years inherit it under the
+    # reformed RTC+B fleet regime). NB: the reliability-deployment overlay does
+    # NOT re-warm credited backcast years — it is an energy/congestion min-gen
+    # floor (near-no-op on system LMP), not an ORDC scarcity-price mechanism.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -1527,6 +1557,8 @@ TIER_TAGS: dict[str, int] = {
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
     "ercot_load_resource_reserve": 1,
+    "ercot_storage_as_reserve": 1,
+    "ercot_storage_as_reserve_from_year": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
