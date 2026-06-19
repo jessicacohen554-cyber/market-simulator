@@ -43,11 +43,18 @@ jobs:
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
         run: |
+          # Prefer the repo secret; fall back to the key committed in .env (the
+          # EIA key is free, read-only and rate-limited, and this repo is private,
+          # so committing it is an accepted trade-off here — rotate at
+          # https://www.eia.gov/opendata/register.php if that ever changes).
+          if [ -z "$EIA_API_KEY" ] && [ -f .env ]; then
+            EIA_API_KEY="$(grep -E '^EIA_API_KEY=' .env | head -1 | cut -d= -f2- | tr -d '\r\n ')"
+          fi
           if [ -z "$EIA_API_KEY" ]; then
-            echo "::error::EIA_API_KEY secret is not set (https://www.eia.gov/opendata/register.php)"
+            echo "::error::no EIA_API_KEY (set the repo secret or the .env key)"
             exit 1
           fi
-          python scripts/fetch_eia_gas_prices.py \
+          EIA_API_KEY="$EIA_API_KEY" python scripts/fetch_eia_gas_prices.py \
             --datasets ${{ github.event.inputs.datasets || 'henry-hub citygate' }} \
             --isos ${{ github.event.inputs.isos || 'CAISO ERCOT PJM MISO SPP NYISO NEISO' }} \
             --start-year ${{ github.event.inputs.start_year || '2015' }}
