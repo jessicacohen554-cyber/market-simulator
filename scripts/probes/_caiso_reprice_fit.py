@@ -51,7 +51,9 @@ def border_carbon(year: int) -> float:
     return CARB_UNSPECIFIED_IMPORT_EF * STATE_CARBON_PRICE_BY_ISO["CAISO"][year]
 
 
-def _pooled(bundle: Path, years: list[int]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _pooled(
+    bundle: Path, years: list[int]
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return (raw modeled price, carbon-shifted price P-border(y), net export),
     each pooled hour-by-hour across ``years``."""
     raw, shifted, nxs = [], [], []
@@ -79,7 +81,7 @@ def _edge_midpoints() -> tuple[list[tuple[str, float]], list[tuple[str, float]]]
         running -= cap
         sink_edges.append((name, (prev + running) / 2.0))
     import_edges = []
-    for name, cap, _ in imports:                            # cheapest activates first
+    for name, cap, _ in imports:  # cheapest activates first
         prev = running
         running -= cap
         import_edges.append((name, (prev + running) / 2.0))
@@ -107,8 +109,7 @@ def reprice(bundle: Path, years: list[int] | int) -> tuple[list[float], list[flo
     return imp_out, exp_out
 
 
-def score(bundle: Path, imp: list[float], exp: list[float],
-          years: list[int]) -> None:
+def score(bundle: Path, imp: list[float], exp: list[float], years: list[int]) -> None:
     """Offline-score candidate constants against ``bundle``'s solved price.
 
     Approximate (the price shifts once the node is repriced and re-solved) but a
@@ -122,36 +123,42 @@ def score(bundle: Path, imp: list[float], exp: list[float],
         n = min(p.shape[0], x.shape[0])
         p, x = p[:n], x[:n]
         bc = border_carbon(year)
-        model = (
-            sum(c * (p < pr) for (_, c, _), pr in zip(sinks, exp))
-            - sum(c * (p > pr + bc) for (_, c, _), pr in zip(imports, imp))
+        model = sum(c * (p < pr) for (_, c, _), pr in zip(sinks, exp)) - sum(
+            c * (p > pr + bc) for (_, c, _), pr in zip(imports, imp)
         )
         pct = 100.0 * model.sum() / x.sum()
         rmse = float(np.sqrt(((np.sort(model) - np.sort(x)) ** 2).mean()))
-        print(f"  {year}: model {model.sum() / 1e6:+.1f} TWh vs "
-              f"{x.sum() / 1e6:+.1f} ({pct:.0f}%), import "
-              f"{100.0 * (model < 0).mean():.1f}% vs "
-              f"{100.0 * (x < 0).mean():.1f}%, dur RMSE {rmse:.0f} MW, "
-              f"export p99 {np.quantile(model, 0.99):+.0f} MW")
+        print(
+            f"  {year}: model {model.sum() / 1e6:+.1f} TWh vs "
+            f"{x.sum() / 1e6:+.1f} ({pct:.0f}%), import "
+            f"{100.0 * (model < 0).mean():.1f}% vs "
+            f"{100.0 * (x < 0).mean():.1f}%, dur RMSE {rmse:.0f} MW, "
+            f"export p99 {np.quantile(model, 0.99):+.0f} MW"
+        )
 
 
 def main() -> None:
-    bundle = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
-        "results/calibration/caiso_1_priced_ix")
+    bundle = (
+        Path(sys.argv[1])
+        if len(sys.argv) > 1
+        else Path("results/calibration/caiso_1_priced_ix")
+    )
     arg_years = [int(a) for a in sys.argv[2:]]
     imports = IMPORT_TRANCHES["CAISO"]
     sinks = EXPORT_TRANCHES["CAISO"]
     print(f"bundle={bundle}")
 
     # Per-year fits (diagnostic) then the pooled fit (what gets written).
-    for year in (arg_years or [2023, 2024, 2025]):
+    for year in arg_years or [2023, 2024, 2025]:
         imp, exp = reprice(bundle, [year])
         bc = border_carbon(year)
         print(f"\n=== {year} (border carbon ${bc:.2f}/MWh) ===")
         print("  IMPORT (stored | effective=stored+border):")
         for (name, cap, old), new in zip(imports, imp):
-            print(f"    {name:16s} {cap:6.0f} MW  ${old:6.1f} -> ${new:6.1f} "
-                  f"(eff ${new + bc:6.1f})")
+            print(
+                f"    {name:16s} {cap:6.0f} MW  ${old:6.1f} -> ${new:6.1f} "
+                f"(eff ${new + bc:6.1f})"
+            )
         print("  EXPORT:")
         for (name, cap, old), new in zip(sinks, exp):
             print(f"    {name:16s} {cap:6.0f} MW  ${old:6.1f} -> ${new:6.1f}")

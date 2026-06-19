@@ -11,6 +11,7 @@ stdlib only (http.server + threads), so the bootstrap needs nothing beyond the
 model's own dependencies. Launched by run-simulator.bat (Windows) /
 run-simulator.sh; or directly: ``python tools/launcher.py``.
 """
+
 from __future__ import annotations
 
 import json
@@ -33,9 +34,13 @@ JOB: dict = {"state": "idle", "log": [], "results_ready": False, "label": ""}
 _LOCK = threading.Lock()
 
 _CONTENT_TYPES = {
-    ".html": "text/html; charset=utf-8", ".js": "text/javascript",
-    ".css": "text/css", ".csv": "text/csv", ".json": "application/json",
-    ".svg": "image/svg+xml", ".png": "image/png",
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript",
+    ".css": "text/css",
+    ".csv": "text/csv",
+    ".json": "application/json",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
 }
 
 
@@ -59,9 +64,13 @@ def _list_configs() -> list[dict]:
             # Distinctive columns of the export_tranche_config schema (the old
             # custom-bin-assignments.csv has Pct_Committed but not these).
             if "HR_Mult_Econ_Low" in header and "Pct_Econ_Low" in header:
-                out.append({"path": str(p.relative_to(REPO)),
-                            "name": p.name,
-                            "size_kb": round(p.stat().st_size / 1024, 1)})
+                out.append(
+                    {
+                        "path": str(p.relative_to(REPO)),
+                        "name": p.name,
+                        "size_kb": round(p.stat().st_size / 1024, 1),
+                    }
+                )
     return out
 
 
@@ -69,8 +78,7 @@ def _run_job(csv_rel: str, years: list[int], label: str) -> None:
     """Worker: run the backcast with the chosen sheet, then render the report."""
     try:
         with _LOCK:
-            JOB.update(state="running", log=[], results_ready=False,
-                       label=label)
+            JOB.update(state="running", log=[], results_ready=False, label=label)
         csv_path = (REPO / csv_rel).resolve()
         if REPO not in csv_path.parents or not csv_path.is_file():
             raise FileNotFoundError(f"config not found: {csv_rel}")
@@ -78,22 +86,30 @@ def _run_job(csv_rel: str, years: list[int], label: str) -> None:
         out_dir = REPO / "results" / "calibration" / f"ui_{stamp}"
         yrs = [str(y) for y in years]
         run_cmd = [
-            sys.executable, str(REPO / "scripts" / "run_calibration_full.py"),
-            "--year", *yrs,
-            "--plant-tranche-config", str(csv_path),
-            "--out-dir", str(out_dir),
-            "--note", f"UI run from {csv_rel}",
+            sys.executable,
+            str(REPO / "scripts" / "run_calibration_full.py"),
+            "--year",
+            *yrs,
+            "--plant-tranche-config",
+            str(csv_path),
+            "--out-dir",
+            str(out_dir),
+            "--note",
+            f"UI run from {csv_rel}",
         ]
         _log(f"$ {' '.join(run_cmd)}")
         if _stream(run_cmd) != 0:
             raise RuntimeError("dispatch run failed (see log above)")
 
         render_cmd = [
-            sys.executable, str(REPO / "scripts" / "render_backcast.py"),
+            sys.executable,
+            str(REPO / "scripts" / "render_backcast.py"),
             f"run10 baseline={BASELINE_BUNDLE}",
             f"{label}={out_dir}",
-            "--years", *yrs,
-            "--out", str(REPO / "backcast-results.html"),
+            "--years",
+            *yrs,
+            "--out",
+            str(REPO / "backcast-results.html"),
         ]
         _log("")
         _log(f"$ {' '.join(render_cmd)}")
@@ -112,8 +128,12 @@ def _run_job(csv_rel: str, years: list[int], label: str) -> None:
 def _stream(cmd: list[str]) -> int:
     """Run ``cmd`` from the repo root, streaming each output line to the log."""
     proc = subprocess.Popen(
-        cmd, cwd=str(REPO), stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT, text=True, bufsize=1,
+        cmd,
+        cwd=str(REPO),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
     )
     assert proc.stdout is not None
     for line in proc.stdout:
@@ -140,13 +160,19 @@ class Handler(BaseHTTPRequestHandler):
         if path in ("/", "/index.html"):
             self._send(200, PAGE.encode(), "text/html; charset=utf-8")
         elif path == "/api/configs":
-            self._json({"configs": _list_configs(),
-                        "baseline": BASELINE_BUNDLE.is_dir()})
+            self._json(
+                {"configs": _list_configs(), "baseline": BASELINE_BUNDLE.is_dir()}
+            )
         elif path == "/api/status":
             with _LOCK:
-                self._json({"state": JOB["state"], "label": JOB["label"],
-                            "results_ready": JOB["results_ready"],
-                            "log": "\n".join(JOB["log"])})
+                self._json(
+                    {
+                        "state": JOB["state"],
+                        "label": JOB["label"],
+                        "results_ready": JOB["results_ready"],
+                        "log": "\n".join(JOB["log"]),
+                    }
+                )
         else:
             self._serve_static(path)
 
@@ -170,8 +196,9 @@ class Handler(BaseHTTPRequestHandler):
         if not csv_rel:
             self._json({"error": "no config selected"}, 400)
             return
-        threading.Thread(target=_run_job, args=(csv_rel, years, label),
-                         daemon=True).start()
+        threading.Thread(
+            target=_run_job, args=(csv_rel, years, label), daemon=True
+        ).start()
         self._json({"ok": True})
 
     def _serve_static(self, path: str) -> None:

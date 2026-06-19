@@ -16,6 +16,7 @@ Note: mixed coal/gas facilities (W A Parish, Barney M Davis) report one
 combined CEMS facility series, so a coal-unit outage is masked by the gas
 units and will not be detected — same limitation noted in the manual analysis.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -53,9 +54,7 @@ ST_GAS_MIN_OUTAGE_HOURS: int = 120
 # Plant groups whose outages we derive (coal + combined cycle + gas steam).
 # Peaker-class ST_GAS plants are emitted here but excluded at overlay time
 # (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
-GROUPS = frozenset(
-    {"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}
-)
+GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"})
 
 
 def _runs(mask: np.ndarray):
@@ -84,13 +83,13 @@ def detect_outages(
     for s, e in _runs(running):
         if e - s >= MIN_REAL_RUN_HOURS:
             real[s:e] = True
-    return [
-        (s, e) for s, e in _runs(~real) if e - s >= min_outage_hours
-    ]
+    return [(s, e) for s, e in _runs(~real) if e - s >= min_outage_hours]
 
 
 def detect_outages_eventbased(
-    gross: np.ndarray, nameplate: float, min_outage_hours: int,
+    gross: np.ndarray,
+    nameplate: float,
+    min_outage_hours: int,
     cf_peak: float = ST_GAS_CF_PEAK,
 ) -> list[tuple[int, int]]:
     """Event-based outage windows ``[(start, stop_exclusive), ...]``.
@@ -121,22 +120,16 @@ def _nameplate_groups(
     if iso.upper() == "ERCOT":
         bins = load_campd_bins(bins_path)
         coalcc = bins[bins["Plant_Group"].isin(GROUPS)]
-        nameplate = dict(
-            zip(coalcc["Plant_Code"].astype(int), coalcc["capacity_mw"])
-        )
+        nameplate = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["capacity_mw"]))
         name = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Name"]))
-        group = dict(
-            zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Group"])
-        )
+        group = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Group"]))
         return nameplate, name, group
 
     from collections import defaultdict
 
     from market_sim.data.fleet import load_fleet_from_csv
 
-    cap_by_group: dict[int, dict[str, float]] = defaultdict(
-        lambda: defaultdict(float)
-    )
+    cap_by_group: dict[int, dict[str, float]] = defaultdict(lambda: defaultdict(float))
     names: dict[int, str] = {}
     for g in load_fleet_from_csv(iso):
         if g.plant_group not in GROUPS:
@@ -164,18 +157,16 @@ def main() -> None:
         "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
     )
     ap.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Output CSV. Defaults to data/raw/campd-outages.csv for "
-             "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
+        "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
     )
     args = ap.parse_args()
     min_outage_hours = int(round(args.min_outage_days * 24))
     iso = args.iso.upper()
     if args.out is None:
-        fname = (
-            "campd-outages.csv" if iso == "ERCOT"
-            else f"campd-outages-{iso}.csv"
-        )
+        fname = "campd-outages.csv" if iso == "ERCOT" else f"campd-outages-{iso}.csv"
         args.out = str(REPO / "inputs" / "raw-data" / fname)
 
     nameplate, pname, grp = _nameplate_groups(iso, args.bins)
@@ -197,43 +188,68 @@ def main() -> None:
             # than zero. Reindex to the whole year and zero-fill — missing = no
             # activity = offline — so the shutdown is caught for every group.
             full = pd.date_range(
-                f"{yr}-01-01", f"{yr}-12-31 23:00:00", freq="h", tz=grid.index.tz,
+                f"{yr}-01-01",
+                f"{yr}-12-31 23:00:00",
+                freq="h",
+                tz=grid.index.tz,
             )
             gross = grid["gross_mw"].reindex(full).fillna(0.0).to_numpy(dtype=float)
             ts = full
             if grp[code] == "ST_GAS":
                 windows = detect_outages_eventbased(
-                    gross, npl, ST_GAS_MIN_OUTAGE_HOURS, ST_GAS_CF_PEAK,
+                    gross,
+                    npl,
+                    ST_GAS_MIN_OUTAGE_HOURS,
+                    ST_GAS_CF_PEAK,
                 )
             else:
                 windows = detect_outages(gross, npl, min_outage_hours)
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:
-                summary.append((code, pname[code], grp[code], yr,
-                                len(windows), tot_days,
-                                max(e - s for s, e in windows) / 24.0))
+                summary.append(
+                    (
+                        code,
+                        pname[code],
+                        grp[code],
+                        yr,
+                        len(windows),
+                        tot_days,
+                        max(e - s for s, e in windows) / 24.0,
+                    )
+                )
             for s, e in windows:
                 start = ts[s]
                 stop = ts[e - 1] + pd.Timedelta(hours=1)
-                rows.append({
-                    "oris_code": code,
-                    "plant_name": pname[code],
-                    "unit": 1,
-                    "outage_start": start.strftime("%Y-%m-%d %H:00:00"),
-                    "outage_stop": stop.strftime("%Y-%m-%d %H:00:00"),
-                    "duration_hours": int((stop - start).total_seconds() // 3600),
-                })
+                rows.append(
+                    {
+                        "oris_code": code,
+                        "plant_name": pname[code],
+                        "unit": 1,
+                        "outage_start": start.strftime("%Y-%m-%d %H:00:00"),
+                        "outage_stop": stop.strftime("%Y-%m-%d %H:00:00"),
+                        "duration_hours": int((stop - start).total_seconds() // 3600),
+                    }
+                )
 
-    out = pd.DataFrame(rows, columns=[
-        "oris_code", "plant_name", "unit", "outage_start", "outage_stop",
-        "duration_hours",
-    ]).sort_values(["oris_code", "outage_start"])
+    out = pd.DataFrame(
+        rows,
+        columns=[
+            "oris_code",
+            "plant_name",
+            "unit",
+            "outage_start",
+            "outage_stop",
+            "duration_hours",
+        ],
+    ).sort_values(["oris_code", "outage_start"])
     out.to_parquet  # noqa: B018  (silence linters; we write CSV)
     out.to_csv(args.out, index=False)
 
     print(f"wrote {len(out)} outage windows to {args.out}\n")
-    print(f"{'code':>6} {'plant':<26}{'group':<12}{'yr':>5}{'#win':>5}"
-          f"{'out d':>8}{'maxwin d':>9}")
+    print(
+        f"{'code':>6} {'plant':<26}{'group':<12}{'yr':>5}{'#win':>5}"
+        f"{'out d':>8}{'maxwin d':>9}"
+    )
     for code, nm, g, yr, n, td, mx in sorted(summary, key=lambda r: (r[0], r[3])):
         print(f"{code:>6} {nm[:25]:<26}{g:<12}{yr:>5}{n:>5}{td:>8.0f}{mx:>9.0f}")
 

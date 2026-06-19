@@ -7,10 +7,12 @@ blocks lower, to see whether the body collapses toward the actual ~$34 median
 This is a sensitivity test, NOT a grounded keeper. Usage:
     python scripts/probes/_caiso_srmc_probe.py <out_dir> [--import-shift -15]
 """
+
 from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import market_sim.config.constants as C
 from scripts.run_calibration_full import solve_and_persist
@@ -27,7 +29,11 @@ def main() -> None:
     # 1) imports: lower the marginal blocks
     base = C.IMPORT_TRANCHES["CAISO"]
     C.IMPORT_TRANCHES["CAISO"] = [
-        (n, c, p if n in ("DSW_CT", "WECC_scarcity") else max(0.0, p + args.import_shift))
+        (
+            n,
+            c,
+            p if n in ("DSW_CT", "WECC_scarcity") else max(0.0, p + args.import_shift),
+        )
         for n, c, p in base
     ]
 
@@ -35,7 +41,8 @@ def main() -> None:
     #    keep the committed band slightly below cost (must-run willingness).
     flat = {"committed": 0.95, "econ_low": 1.0, "econ_high": 1.0}
     overrides = {
-        "CC_REGULAR": flat, "CC_CHP": flat,
+        "CC_REGULAR": flat,
+        "CC_CHP": flat,
         "CT_PEAKER": {"committed": 1.0, "econ_low": 1.0, "econ_high": 1.05},
         "ST_GAS": flat,
     }
@@ -43,10 +50,18 @@ def main() -> None:
     print("PROBE gas offer overrides:", overrides)
 
     solve_and_persist(
-        years=[args.year], iso="CAISO", hours=8760, reference=_load_reference(),
-        commitment=True, screen_coal=True, run_dir=args.out_dir,
-        priced_interchange=True, hydro_backfill_year=2024, hydro_eia930_monthly=True,
-        outage_source="historic", offer_curve_overrides=overrides,
+        years=[args.year],
+        iso="CAISO",
+        hours=8760,
+        reference=_load_reference(),
+        commitment=True,
+        screen_coal=True,
+        run_dir=args.out_dir,
+        priced_interchange=True,
+        hydro_backfill_year=2024,
+        hydro_eia930_monthly=True,
+        outage_source="historic",
+        offer_curve_overrides=overrides,
     )
 
 

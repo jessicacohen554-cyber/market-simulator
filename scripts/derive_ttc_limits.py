@@ -37,8 +37,7 @@ SEARCH_DIRS = (
     Path("data/raw/iso-specific-transmission"),
     Path("data/reference"),
 )
-_USECOLS = ["SCEDTimeStamp", "ConstraintName", "ShadowPrice", "Limit",
-            "FromStation"]
+_USECOLS = ["SCEDTimeStamp", "ConstraintName", "ShadowPrice", "Limit", "FromStation"]
 
 # WESTEX is one aggregate GTC; the model splits West export into two links
 # (West->North and West->South_Central) in this ratio.
@@ -76,8 +75,11 @@ def _read_month(path: Path) -> pd.DataFrame:
                 # abort the whole month.
                 try:
                     frames.append(
-                        pd.read_csv(io.BytesIO(inner.read(csv_name)),
-                                    usecols=_USECOLS, encoding="latin-1")
+                        pd.read_csv(
+                            io.BytesIO(inner.read(csv_name)),
+                            usecols=_USECOLS,
+                            encoding="latin-1",
+                        )
                     )
                 except (ValueError, UnicodeDecodeError):
                     continue
@@ -109,8 +111,7 @@ def main() -> None:
         print(f"  {path.name}: {df['SCEDTimeStamp'].nunique()} intervals")
 
     print(f"\nTotal SCED intervals: {total_intervals}\n")
-    print(f"{'GTC':12s} {'binds %':>8s} {'limit_mean':>11s} "
-          f"{'limit@bind':>11s}")
+    print(f"{'GTC':12s} {'binds %':>8s} {'limit_mean':>11s} {'limit@bind':>11s}")
     for name in sorted(bind_iv, key=lambda n: -bind_iv[n]):
         pct = 100.0 * bind_iv[name] / total_intervals
         lim = limit_sum[name] / max(limit_n[name], 1)

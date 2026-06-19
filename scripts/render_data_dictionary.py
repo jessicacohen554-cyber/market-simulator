@@ -212,9 +212,7 @@ are described in [`../README.md`](../README.md) and are never modified in place.
 # ---------------------------------------------------------------------------
 def _para(text: str) -> str:
     """Wrap a paragraph at 79 cols without splitting links or hyphenated tokens."""
-    return textwrap.fill(
-        text, width=79, break_long_words=False, break_on_hyphens=False
-    )
+    return textwrap.fill(text, width=79, break_long_words=False, break_on_hyphens=False)
 
 
 def _bullet(label: str, text: str) -> str:
@@ -288,9 +286,7 @@ def enumerate_coverage() -> tuple[
     * ``national_years[datatype]`` -> set of years (datatypes with no ``iso``),
     * ``iso_datatypes`` -> the set of datatypes that carry any ``iso``.
     """
-    iso_years: dict[str, dict[str, set[int]]] = defaultdict(
-        lambda: defaultdict(set)
-    )
+    iso_years: dict[str, dict[str, set[int]]] = defaultdict(lambda: defaultdict(set))
     national_years: dict[str, set[int]] = defaultdict(set)
     iso_datatypes: set[str] = set()
 
@@ -366,7 +362,9 @@ def coverage_section() -> str:
             continue
         years = national_years.get(datatype, set())
         years_cell = _fmt_years(years) if years else NA
-        out.append(f"| {datatype} | {NATIONAL_SCOPE.get(datatype, NONE_CELL)} | {years_cell} |")
+        out.append(
+            f"| {datatype} | {NATIONAL_SCOPE.get(datatype, NONE_CELL)} | {years_cell} |"
+        )
     return "\n".join(out)
 
 

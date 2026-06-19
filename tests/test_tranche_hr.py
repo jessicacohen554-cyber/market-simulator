@@ -83,8 +83,7 @@ class TestWeightedAverageHeatRate(unittest.TestCase):
         self.assertAlmostEqual(econ.heat_rate, 6.72, places=6)
 
         weighted = (
-            committed.pmax_mw * committed.heat_rate
-            + econ.pmax_mw * econ.heat_rate
+            committed.pmax_mw * committed.heat_rate + econ.pmax_mw * econ.heat_rate
         ) / (committed.pmax_mw + econ.pmax_mw)
         # (400 x 8.61 + 600 x 6.72) / 1000 = 7.476 -- intentionally above
         # the 7.0 nameplate: nameplate is a full-load rating, and real
@@ -104,11 +103,15 @@ class TestTrancheMeritOrder(unittest.TestCase):
         config = ScenarioConfig()
         bins = _bins(
             _bin_row(
-                Bin_Number=1, Bin_Label="A", Plant_Code=1001,
+                Bin_Number=1,
+                Bin_Label="A",
+                Plant_Code=1001,
                 hr_weighted=6.0,
             ),
             _bin_row(
-                Bin_Number=2, Bin_Label="B", Plant_Code=1002,
+                Bin_Number=2,
+                Bin_Label="B",
+                Plant_Code=1002,
                 hr_weighted=10.0,
             ),
         )
@@ -133,7 +136,10 @@ class TestTrancheMeritOrder(unittest.TestCase):
         demand[zone, :] = 800.0
 
         result = solve_dispatch(
-            arrays, demand, mc=mc, T=T,
+            arrays,
+            demand,
+            mc=mc,
+            T=T,
             wind_cf=np.zeros((len(ZONE_NAMES), T)),
             wind_cap=np.zeros(len(ZONE_NAMES)),
             solar_cf=np.zeros((len(ZONE_NAMES), T)),
@@ -143,9 +149,7 @@ class TestTrancheMeritOrder(unittest.TestCase):
         # The cheap econ tranche serves load; the pricey committed tranche
         # stays idle -- A_econ is dispatched before B_committed.
         self.assertTrue(np.all(result.dispatch[a_econ] > 1.0))
-        self.assertTrue(
-            np.allclose(result.dispatch[b_committed], 0.0, atol=1e-6)
-        )
+        self.assertTrue(np.allclose(result.dispatch[b_committed], 0.0, atol=1e-6))
 
 
 class TestCommitmentCoupling(unittest.TestCase):
@@ -153,20 +157,15 @@ class TestCommitmentCoupling(unittest.TestCase):
 
     def test_econ_tranche_follows_committed_decommit(self):
         config = ScenarioConfig()
-        fleet, arrays = bins_to_fleet(
-            _bins(_bin_row()), ZONE_NAMES, config
-        )
+        fleet, arrays = bins_to_fleet(_bins(_bin_row()), ZONE_NAMES, config)
         n_gen = len(fleet)
         T = 12
         arrays = generators_to_fleet_arrays(fleet, ZONE_NAMES, hours=T)
 
         committed_i = next(
-            i for i, g in enumerate(fleet)
-            if g.unit_id.endswith("_committed")
+            i for i, g in enumerate(fleet) if g.unit_id.endswith("_committed")
         )
-        econ_i = next(
-            i for i, g in enumerate(fleet) if g.unit_id.endswith("_econ")
-        )
+        econ_i = next(i for i, g in enumerate(fleet) if g.unit_id.endswith("_econ"))
 
         # Commitment screen runs on the committed tranche only; the econ
         # tranche's own mask is all-committed (it is never screened).
@@ -221,11 +220,17 @@ class TestCoalPaths(unittest.TestCase):
         # CSV-driven HRs: COAL HR_Mult_Committed=1.15, HR_Mult_Economic=1.0
         # for the latest bin file.
         fleet, _ = bins_to_fleet(
-            _bins(_bin_row(
-                Plant_Group="COAL", hr_weighted=9.5,
-                hr_mc=9.5 * 1.15, hr_econ=9.5, hr_peak=9.5 * 1.05,
-            )),
-            ZONE_NAMES, config,
+            _bins(
+                _bin_row(
+                    Plant_Group="COAL",
+                    hr_weighted=9.5,
+                    hr_mc=9.5 * 1.15,
+                    hr_econ=9.5,
+                    hr_peak=9.5 * 1.05,
+                )
+            ),
+            ZONE_NAMES,
+            config,
         )
         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
@@ -237,8 +242,13 @@ class TestCoalPaths(unittest.TestCase):
     def test_legacy_coal_tranches_unchanged(self):
         config = ScenarioConfig()
         coal = Generator(
-            unit_id="legacy_coal", name="legacy coal", zone="Houston",
-            fuel_type="coal", pmax_mw=1000.0, pmin_mw=0.0, heat_rate=10.0,
+            unit_id="legacy_coal",
+            name="legacy coal",
+            zone="Houston",
+            fuel_type="coal",
+            pmax_mw=1000.0,
+            pmin_mw=0.0,
+            heat_rate=10.0,
         )
         expanded, _ = split_coal_tranches([coal], config)
         # Three take-or-pay tranches, every one at the unmodified heat rate

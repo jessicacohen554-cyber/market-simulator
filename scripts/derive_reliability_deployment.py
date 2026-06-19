@@ -48,6 +48,7 @@ coincide.
 CEMS by zone/class WITHOUT writing the artifact, so the wedge can be checked
 against the measured ~2.7/3.7/4.8 TWh before it is committed.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -107,8 +108,12 @@ _CLASS_VOM: dict[str, float] = {
 
 
 def _out_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
-            / f"reliability_deployment_floor_{iso.upper()}.parquet")
+    return (
+        REPO
+        / "inputs"
+        / "calibration"
+        / f"reliability_deployment_floor_{iso.upper()}.parquet"
+    )
 
 
 def _plant_meta(bins_path: Path, classes: set[str], zones: set[str]) -> dict:
@@ -139,13 +144,13 @@ def _plant_meta(bins_path: Path, classes: set[str], zones: set[str]) -> dict:
         # in the ERCOT bin sheet; keep the first seen).
         meta.setdefault(pc, (r.Plant_Group, r.ERCOT_Zone))
     return {
-        pc: (meta[pc][0], meta[pc][1], num[pc] / den[pc])
-        for pc in num if den[pc] > 0.0
+        pc: (meta[pc][0], meta[pc][1], num[pc] / den[pc]) for pc in num if den[pc] > 0.0
     }
 
 
-def _fuel_price(plant_group: str, plant_code: int, year: int,
-                gas_price: dict[int, float]) -> float:
+def _fuel_price(
+    plant_group: str, plant_code: int, year: int, gas_price: dict[int, float]
+) -> float:
     """Delivered fuel price ($/MMBtu) the marginal-cost threshold uses.
 
     Gas classes bid against the backcast Henry Hub annual; coal plants bid
@@ -184,63 +189,78 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins",
+        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
         help="ERCOT per-plant bin CSV; supplies the in-scope plant set, zones "
-             "and heat rates.",
+        "and heat rates.",
     )
     ap.add_argument(
-        "--lmp", default=str(REPO / "inputs" / "calibration"
-                             / "actual_lmp_zonal_ERCOT.parquet"),
+        "--lmp",
+        default=str(REPO / "inputs" / "calibration" / "actual_lmp_zonal_ERCOT.parquet"),
         help="Zonal LMP parquet (year, hour, settlement_point, rt, da). The rt "
-             "series of the plant's load zone and HB_HUBAVG are the local / hub "
-             "out-of-merit reference prices.",
+        "series of the plant's load zone and HB_HUBAVG are the local / hub "
+        "out-of-merit reference prices.",
     )
     ap.add_argument(
-        "--classes", nargs="+", default=list(DEFAULT_CLASSES),
+        "--classes",
+        nargs="+",
+        default=list(DEFAULT_CLASSES),
         help="Bin-sheet Plant_Group classes to scope (default the load-pocket "
-             "thermal fleet).",
+        "thermal fleet).",
     )
     ap.add_argument(
-        "--zones", nargs="+", default=list(DEFAULT_ZONES),
+        "--zones",
+        nargs="+",
+        default=list(DEFAULT_ZONES),
         help="ERCOT zones to scope (default the under-running pockets).",
     )
     ap.add_argument(
-        "--hr-mult", type=float, default=1.0,
+        "--hr-mult",
+        type=float,
+        default=1.0,
         help="Heat-rate multiplier on the plant average for the marginal-cost "
-             "threshold (1.0 = the economic-tranche heat rate). Lower tightens "
-             "the out-of-merit test (fewer hours, less energy).",
+        "threshold (1.0 = the economic-tranche heat rate). Lower tightens "
+        "the out-of-merit test (fewer hours, less energy).",
     )
     ap.add_argument(
-        "--min-mw", type=float, default=1.0,
+        "--min-mw",
+        type=float,
+        default=1.0,
         help="Net-MW floor below which an hour is treated as noise/off.",
     )
     ap.add_argument(
-        "--gas-price", nargs="*", default=None,
+        "--gas-price",
+        nargs="*",
+        default=None,
         help="Override annual gas price as YEAR:PRICE pairs (default the "
-             "backcast Henry Hub actuals).",
+        "backcast Henry Hub actuals).",
     )
     ap.add_argument("--hours", type=int, default=HOURS_PER_YEAR)
     ap.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Output parquet path (long: year, plant_code, hour, floor_mw). "
-             "Defaults to reliability_deployment_floor_<ISO>.parquet.",
+        "Defaults to reliability_deployment_floor_<ISO>.parquet.",
     )
     ap.add_argument(
-        "--report", action="store_true",
+        "--report",
+        action="store_true",
         help="Measure and print the deployment wedge by zone/class without "
-             "writing the artifact (the quantification check).",
+        "writing the artifact (the quantification check).",
     )
     ap.add_argument(
-        "--mode", choices=["congestion", "full"], default="congestion",
+        "--mode",
+        choices=["congestion", "full"],
+        default="congestion",
         help="Scoping of the floor. 'congestion' (default): the load-zone "
-             "congestion subset (ran AND LZ_price > MC AND HB_HUBAVG < MC) — the "
-             "price-recoverable wedge the single-price view misses (run118: the "
-             "7-zone LP already dispatches most of it, so it is near-no-op). "
-             "'full': floor every running hour to the plant's realized CEMS net "
-             "(the top-down zone floor) — a min-gen bound that binds only where "
-             "the model under-dispatches the pocket plant, forcing local "
-             "generation to the realized level and pulling the over-running "
-             "exporting zone down. Size with --floor at run time.",
+        "congestion subset (ran AND LZ_price > MC AND HB_HUBAVG < MC) — the "
+        "price-recoverable wedge the single-price view misses (run118: the "
+        "7-zone LP already dispatches most of it, so it is near-no-op). "
+        "'full': floor every running hour to the plant's realized CEMS net "
+        "(the top-down zone floor) — a min-gen bound that binds only where "
+        "the model under-dispatches the pocket plant, forcing local "
+        "generation to the realized level and pulling the over-running "
+        "exporting zone down. Size with --floor at run time.",
     )
     args = ap.parse_args()
 
@@ -259,15 +279,16 @@ def main() -> None:
     states = campd.states_for_iso(iso)
     par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
     factors = (
-        campd.pooled_factor_map(pd.read_parquet(par_path))
-        if par_path.exists() else {}
+        campd.pooled_factor_map(pd.read_parquet(par_path)) if par_path.exists() else {}
     )
 
     rows: list[dict] = []
     # Aggregators for the report.
     by_zone_class: dict[tuple[int, str, str], list[float]] = {}
-    print(f"{'year':>5} {'gas':>6} {'#plnt':>6} {'#hrs':>9} "
-          f"{'CEMS TWh':>9} {'deploy TWh':>11} {'share':>7}")
+    print(
+        f"{'year':>5} {'gas':>6} {'#plnt':>6} {'#hrs':>9} "
+        f"{'CEMS TWh':>9} {'deploy TWh':>11} {'share':>7}"
+    )
     for year in args.years:
         if year not in gas_price:
             print(f"  (no gas price for {year}; skipped)")
@@ -276,7 +297,8 @@ def main() -> None:
         lmp_y = lmp[lmp["year"] == year]
         hub = (
             lmp_y[lmp_y["settlement_point"] == HUB_POINT]
-            .set_index("hour")["rt"].reindex(range(args.hours))
+            .set_index("hour")["rt"]
+            .reindex(range(args.hours))
             .to_numpy(dtype=float)
         )
         lz_cache: dict[str, np.ndarray] = {
@@ -293,8 +315,9 @@ def main() -> None:
             series = net.get(code)
             if series is None:
                 continue
-            mc = hr * args.hr_mult * _fuel_price(grp, code, year, gas_price) \
-                + _CLASS_VOM.get(grp, 0.0)
+            mc = hr * args.hr_mult * _fuel_price(
+                grp, code, year, gas_price
+            ) + _CLASS_VOM.get(grp, 0.0)
             ran = series > args.min_mw
             if not ran.any():
                 continue
@@ -321,34 +344,37 @@ def main() -> None:
             by_zone_class[(year, zone, grp)][0] += e
             by_zone_class[(year, zone, grp)][1] += float(series[ran].sum())
             for h in np.flatnonzero(deploy):
-                rows.append({
-                    "year": int(year),
-                    "plant_code": int(code),
-                    "hour": int(h),
-                    "floor_mw": float(series[h]),
-                })
+                rows.append(
+                    {
+                        "year": int(year),
+                        "plant_code": int(code),
+                        "hour": int(h),
+                        "floor_mw": float(series[h]),
+                    }
+                )
         share = deploy_total / cems_total if cems_total > 0 else 0.0
-        print(f"{year:>5} {gp:>6.2f} {n_plants:>6} {n_hours:>9} "
-              f"{cems_total / 1e6:>9.2f} {deploy_total / 1e6:>11.2f} "
-              f"{share:>6.1%}")
+        print(
+            f"{year:>5} {gp:>6.2f} {n_plants:>6} {n_hours:>9} "
+            f"{cems_total / 1e6:>9.2f} {deploy_total / 1e6:>11.2f} "
+            f"{share:>6.1%}"
+        )
 
     if by_zone_class:
         print("\nby zone/class (deploy TWh / share of covered CEMS):")
-        print(f"{'year':>5} {'zone':>14} {'class':>11} "
-              f"{'deploy TWh':>11} {'share':>7}")
-        for (year, zone, grp) in sorted(by_zone_class):
+        print(f"{'year':>5} {'zone':>14} {'class':>11} {'deploy TWh':>11} {'share':>7}")
+        for year, zone, grp in sorted(by_zone_class):
             dep, cems = by_zone_class[(year, zone, grp)]
             sh = dep / cems if cems > 0 else 0.0
-            print(f"{year:>5} {zone:>14} {grp:>11} "
-                  f"{dep / 1e6:>11.2f} {sh:>6.1%}")
+            print(f"{year:>5} {zone:>14} {grp:>11} {dep / 1e6:>11.2f} {sh:>6.1%}")
 
-    out = pd.DataFrame(
-        rows, columns=["year", "plant_code", "hour", "floor_mw"]
-    ).astype({"year": "int16", "plant_code": "int32",
-              "hour": "int32", "floor_mw": "float32"})
+    out = pd.DataFrame(rows, columns=["year", "plant_code", "hour", "floor_mw"]).astype(
+        {"year": "int16", "plant_code": "int32", "hour": "int32", "floor_mw": "float32"}
+    )
     if args.report:
-        print(f"\n[report] {iso}: {len(out)} deployment-hour floors "
-              f"({out['plant_code'].nunique()} plants) — NOT written")
+        print(
+            f"\n[report] {iso}: {len(out)} deployment-hour floors "
+            f"({out['plant_code'].nunique()} plants) — NOT written"
+        )
         return
     out.to_parquet(out_path, index=False)
     print(f"\nwrote {len(out)} deployment-hour floors to {out_path}")

@@ -46,8 +46,9 @@ CAISO_TACS = ("CA ISO-TAC", "PGE-TAC", "SCE-TAC", "SDGE-TAC", "VEA-TAC")
 _FETCH_NAME = re.compile(r"^(dam|rtm|load)_.+_\d{8}_\d{8}\.csv$")
 
 
-def _merge_write(per_year: dict[int, pd.DataFrame], out_dir: Path,
-                 stem: str, keys: list[str]) -> None:
+def _merge_write(
+    per_year: dict[int, pd.DataFrame], out_dir: Path, stem: str, keys: list[str]
+) -> None:
     """Merge new per-year frames into the existing aggregates and rewrite."""
     for year, frame in sorted(per_year.items()):
         path = out_dir / f"{stem}_{year}.csv"
@@ -94,10 +95,7 @@ def _lmp_frames(paths: list[Path], hourly_mean: bool) -> dict[int, pd.DataFrame]
         year = (wide["interval_start_gmt"] - pd.Timedelta(hours=8)).dt.year
         for y, chunk in wide.groupby(year):
             per_year.setdefault(int(y), []).append(chunk)
-    return {
-        y: pd.concat(chunks, ignore_index=True)
-        for y, chunks in per_year.items()
-    }
+    return {y: pd.concat(chunks, ignore_index=True) for y, chunks in per_year.items()}
 
 
 def _load_frames(paths: list[Path]) -> dict[int, pd.DataFrame]:
@@ -118,10 +116,7 @@ def _load_frames(paths: list[Path]) -> dict[int, pd.DataFrame]:
         year = (tidy["interval_start_gmt"] - pd.Timedelta(hours=8)).dt.year
         for y, chunk in tidy.groupby(year):
             per_year.setdefault(int(y), []).append(chunk)
-    return {
-        y: pd.concat(chunks, ignore_index=True)
-        for y, chunks in per_year.items()
-    }
+    return {y: pd.concat(chunks, ignore_index=True) for y, chunks in per_year.items()}
 
 
 def _stage(paths: list[Path], stage_dir: Path | None) -> None:
@@ -136,21 +131,32 @@ def _stage(paths: list[Path], stage_dir: Path | None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--stage-dir", type=Path, default=None,
-                        help="move processed fetch-script raws here "
-                             "(left in place when omitted)")
+    parser.add_argument(
+        "--stage-dir",
+        type=Path,
+        default=None,
+        help="move processed fetch-script raws here (left in place when omitted)",
+    )
     args = parser.parse_args()
 
     dam = sorted(LMP_DIR.glob("dam_*.csv"))
     if dam:
-        _merge_write(_lmp_frames(dam, hourly_mean=False), LMP_DIR,
-                     "CAISO_dam_hourly", ["interval_start_gmt", "node"])
+        _merge_write(
+            _lmp_frames(dam, hourly_mean=False),
+            LMP_DIR,
+            "CAISO_dam_hourly",
+            ["interval_start_gmt", "node"],
+        )
         _stage(dam, args.stage_dir)
 
     rtm = sorted(LMP_DIR.glob("rtm_*.csv"))
     if rtm:
-        _merge_write(_lmp_frames(rtm, hourly_mean=True), LMP_DIR,
-                     "CAISO_rtm_hourly", ["interval_start_gmt", "node"])
+        _merge_write(
+            _lmp_frames(rtm, hourly_mean=True),
+            LMP_DIR,
+            "CAISO_rtm_hourly",
+            ["interval_start_gmt", "node"],
+        )
         _stage(rtm, args.stage_dir)
 
     # Fetch-script load windows plus any hand-downloaded SLD_FCST CSVs.
@@ -158,8 +164,12 @@ def main() -> None:
         LOAD_DIR.glob("*_SLD_FCST_*.csv")
     )
     if load:
-        _merge_write(_load_frames(load), LOAD_DIR,
-                     "CAISO_tac_load_hourly", ["interval_start_gmt", "tac_area"])
+        _merge_write(
+            _load_frames(load),
+            LOAD_DIR,
+            "CAISO_tac_load_hourly",
+            ["interval_start_gmt", "tac_area"],
+        )
         _stage(load, args.stage_dir)  # hand-downloaded names are left in place
 
     if not (dam or rtm or load):

@@ -37,8 +37,9 @@ from market_sim.policy.ira import apply_ira_credits_to_lcoe, ira_phaseout_fracti
 from market_sim.policy.rps import get_rps_target
 
 
-def _gen(unit_id, fuel_type, pmax=100.0, heat_rate=10.0, zone="Z0",
-         retirement_year=None):
+def _gen(
+    unit_id, fuel_type, pmax=100.0, heat_rate=10.0, zone="Z0", retirement_year=None
+):
     """Build a Generator with the attributes the retirement logic reads."""
     return Generator(
         unit_id=unit_id,
@@ -198,8 +199,14 @@ class TestEconomicRetirements(unittest.TestCase):
         mc = np.full((1, self.T), 50.0)
         dispatch = self._dispatch_result(1, 100.0)
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {"S0": 1},
-            peak_demand=0.0, mc=mc,
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {"S0": 1},
+            peak_demand=0.0,
+            mc=mc,
         )
         self.assertEqual([g.unit_id for g in fleet1], ["S0"])
         self.assertEqual(losses1["S0"], 0)
@@ -209,8 +216,16 @@ class TestEconomicRetirements(unittest.TestCase):
         # fossil class and nuclear can retire on economics. A deeply
         # unprofitable unit of each accumulates a loss year (is screened).
         from market_sim.model.capacity import _THERMAL_FOM
-        for fuel in ("coal", "gas_cc", "gas_ct", "gas_st", "gas_cc_ccs",
-                     "oil", "nuclear"):
+
+        for fuel in (
+            "coal",
+            "gas_cc",
+            "gas_ct",
+            "gas_st",
+            "gas_cc_ccs",
+            "oil",
+            "nuclear",
+        ):
             self.assertIn(fuel, _THERMAL_FOM, fuel)
         config = ScenarioConfig()
         for fuel in ("oil", "nuclear", "gas_cc_ccs"):
@@ -219,7 +234,13 @@ class TestEconomicRetirements(unittest.TestCase):
             prices = np.full((1, self.T), 1.0)  # far below any fixed cost
             dispatch = self._dispatch_result(1, 1.0)
             _, losses = apply_economic_retirements(
-                fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+                fleet,
+                arrays,
+                dispatch,
+                prices,
+                config,
+                {},
+                peak_demand=0.0,
                 mc=np.zeros((1, self.T)),
             )
             self.assertEqual(losses.get("U0"), 1, f"{fuel} not screened")
@@ -244,7 +265,12 @@ class TestEconomicRetirements(unittest.TestCase):
         gas = [_gen("G0", "gas_cc", pmax=100.0)]
         arrays_gas = generators_to_fleet_arrays(gas, ["Z0"], hours=self.T)
         fleet2, losses2 = apply_economic_retirements(
-            gas, arrays_gas, dispatch, prices, config, {"G0": 2},
+            gas,
+            arrays_gas,
+            dispatch,
+            prices,
+            config,
+            {"G0": 2},
             peak_demand=0.0,
         )
         self.assertEqual([g.unit_id for g in fleet2], ["G0"])
@@ -273,9 +299,7 @@ class TestEconomicRetirements(unittest.TestCase):
         # 10 coal units (10000 MW) kept to clear the 9200 MW floor.
         self.assertEqual(len(coal_survivors), 10)
         # The most efficient (lowest heat-rate) units are the ones kept.
-        retired_hr = {
-            g.heat_rate for g in coal
-        } - {g.heat_rate for g in coal_survivors}
+        retired_hr = {g.heat_rate for g in coal} - {g.heat_rate for g in coal_survivors}
         survivor_hr = {g.heat_rate for g in coal_survivors}
         self.assertTrue(min(retired_hr) > max(survivor_hr))
 
@@ -332,13 +356,16 @@ class TestReserveMarginBuild(unittest.TestCase):
 
     def test_firm_capacity_accredits_by_resource(self):
         from market_sim.model.capacity import accredited_firm_capacity_mw
+
         fleet = [
-            _gen("cc", "gas_cc", pmax=1000.0),   # eford default 0.05 in Generator
+            _gen("cc", "gas_cc", pmax=1000.0),  # eford default 0.05 in Generator
             _gen("n", "nuclear", pmax=1000.0),
         ]
         # Thermal nets to UCAP (1 - eford); pool renewables to their credit.
         firm = accredited_firm_capacity_mw(
-            fleet, wind_pool_mw=1000.0, solar_pool_mw=1000.0,
+            fleet,
+            wind_pool_mw=1000.0,
+            solar_pool_mw=1000.0,
             storage_firm_mw=500.0,
         )
         # 500 storage + 160 wind + 180 solar + thermal UCAP (both < nameplate).
@@ -347,31 +374,31 @@ class TestReserveMarginBuild(unittest.TestCase):
 
     def test_backstop_builds_to_meet_margin(self):
         from market_sim.model.capacity import apply_reserve_margin_build
+
         config = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
         fleet = [_gen("cc", "gas_cc", pmax=1000.0)]
         new_fleet, built = apply_reserve_margin_build(
-            fleet, firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-            year=2030, config=config, iso="ERCOT",
+            fleet,
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=config,
+            iso="ERCOT",
         )
         # required = 8000 * 1.1375 = 9100; gap = 4100 firm -> >0 nameplate.
         self.assertGreater(built, 0.0)
-        self.assertTrue(
-            any(g.unit_id == "gas_ct_adequacy_2030" for g in new_fleet)
-        )
+        self.assertTrue(any(g.unit_id == "gas_ct_adequacy_2030" for g in new_fleet))
 
     def test_backstop_noop_when_disabled_or_adequate(self):
         from market_sim.model.capacity import apply_reserve_margin_build
+
         # Disabled: no build even when short.
         off = ScenarioConfig(iso="ERCOT")
-        _, b0 = apply_reserve_margin_build(
-            [], 0.0, 8000.0, 2030, off, "ERCOT"
-        )
+        _, b0 = apply_reserve_margin_build([], 0.0, 8000.0, 2030, off, "ERCOT")
         self.assertEqual(b0, 0.0)
         # Enabled but already adequate: no build.
         on = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
-        _, b1 = apply_reserve_margin_build(
-            [], 9999.0, 8000.0, 2030, on, "ERCOT"
-        )
+        _, b1 = apply_reserve_margin_build([], 9999.0, 8000.0, 2030, on, "ERCOT")
         self.assertEqual(b1, 0.0)
 
     def test_ercot_parity_with_scalar_default(self):
@@ -382,6 +409,7 @@ class TestReserveMarginBuild(unittest.TestCase):
         byte-identical to the pre-registry behavior (the parity guard).
         """
         from market_sim.model.capacity import apply_reserve_margin_build
+
         # Registry parity: ERCOT's entry is exactly the old scalar default.
         self.assertEqual(PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"], 0.1375)
         self.assertEqual(
@@ -390,18 +418,24 @@ class TestReserveMarginBuild(unittest.TestCase):
         )
         config = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
         _, built_registry = apply_reserve_margin_build(
-            [_gen("cc", "gas_cc", pmax=1000.0)], firm_capacity_mw=5000.0,
-            peak_demand_mw=8000.0, year=2030, config=config, iso="ERCOT",
+            [_gen("cc", "gas_cc", pmax=1000.0)],
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=config,
+            iso="ERCOT",
         )
         # Drop ERCOT from the registry so the scalar fallback (0.1375) is used
         # instead; the resolved margin -- and the build -- must be identical.
-        with mock.patch.dict(
-            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
-        ) as registry:
+        with mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry:
             del registry["ERCOT"]
             _, built_scalar = apply_reserve_margin_build(
-                [_gen("cc", "gas_cc", pmax=1000.0)], firm_capacity_mw=5000.0,
-                peak_demand_mw=8000.0, year=2030, config=config, iso="ERCOT",
+                [_gen("cc", "gas_cc", pmax=1000.0)],
+                firm_capacity_mw=5000.0,
+                peak_demand_mw=8000.0,
+                year=2030,
+                config=config,
+                iso="ERCOT",
             )
         self.assertGreater(built_registry, 0.0)
         self.assertEqual(built_registry, built_scalar)
@@ -414,6 +448,7 @@ class TestReserveMarginBuild(unittest.TestCase):
         strictly more gas_ct in PJM than it would at ERCOT's margin.
         """
         from market_sim.model.capacity import apply_reserve_margin_build
+
         self.assertGreater(
             PLANNING_RESERVE_MARGIN_BY_ISO["PJM"],
             PLANNING_RESERVE_MARGIN_BY_ISO["ERCOT"],
@@ -422,12 +457,20 @@ class TestReserveMarginBuild(unittest.TestCase):
         # Identical firm/peak; only the resolved per-ISO margin differs. The
         # gap stays well under each ISO's queue cap so neither is clipped.
         _, built_ercot = apply_reserve_margin_build(
-            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-            year=2030, config=config, iso="ERCOT",
+            [],
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=config,
+            iso="ERCOT",
         )
         _, built_pjm = apply_reserve_margin_build(
-            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-            year=2030, config=config, iso="PJM",
+            [],
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=config,
+            iso="PJM",
         )
         self.assertGreater(built_ercot, 0.0)
         self.assertGreater(built_pjm, built_ercot)
@@ -440,22 +483,30 @@ class TestReserveMarginBuild(unittest.TestCase):
         more than the registry target it replaces.
         """
         from market_sim.model.capacity import apply_reserve_margin_build
+
         # Registry PJM target (~0.178) vs an explicit, higher override (0.30).
         registry_config = ScenarioConfig(reserve_margin_build_enabled=True)
         _, built_registry = apply_reserve_margin_build(
-            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-            year=2030, config=registry_config, iso="PJM",
+            [],
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=registry_config,
+            iso="PJM",
         )
         override_config = ScenarioConfig(
-            reserve_margin_build_enabled=True, planning_reserve_margin=0.30,
+            reserve_margin_build_enabled=True,
+            planning_reserve_margin=0.30,
         )
-        with mock.patch.dict(
-            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
-        ) as registry:
+        with mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry:
             del registry["PJM"]
             _, built_override = apply_reserve_margin_build(
-                [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-                year=2030, config=override_config, iso="PJM",
+                [],
+                firm_capacity_mw=5000.0,
+                peak_demand_mw=8000.0,
+                year=2030,
+                config=override_config,
+                iso="PJM",
             )
         self.assertGreater(built_override, built_registry)
 
@@ -467,20 +518,27 @@ class TestReserveMarginBuild(unittest.TestCase):
         result as the ERCOT (registry) build at firm/peak parity.
         """
         from market_sim.model.capacity import apply_reserve_margin_build
+
         config = ScenarioConfig(reserve_margin_build_enabled=True)
         self.assertEqual(config.planning_reserve_margin, 0.1375)
-        with mock.patch.dict(
-            PLANNING_RESERVE_MARGIN_BY_ISO, clear=False
-        ) as registry:
+        with mock.patch.dict(PLANNING_RESERVE_MARGIN_BY_ISO, clear=False) as registry:
             del registry["PJM"]
             _, built_fallback = apply_reserve_margin_build(
-                [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-                year=2030, config=config, iso="PJM",
+                [],
+                firm_capacity_mw=5000.0,
+                peak_demand_mw=8000.0,
+                year=2030,
+                config=config,
+                iso="PJM",
             )
         # Same scalar (0.1375) applied to the same firm/peak as ERCOT.
         _, built_ercot = apply_reserve_margin_build(
-            [], firm_capacity_mw=5000.0, peak_demand_mw=8000.0,
-            year=2030, config=config, iso="ERCOT",
+            [],
+            firm_capacity_mw=5000.0,
+            peak_demand_mw=8000.0,
+            year=2030,
+            config=config,
+            iso="ERCOT",
         )
         self.assertGreater(built_fallback, 0.0)
         self.assertEqual(built_fallback, built_ercot)
@@ -512,7 +570,13 @@ class TestRetirementMargin(unittest.TestCase):
         # the point is margin = 0 regardless of how large gross gets.
         config, fleet, arrays, dispatch, prices, mc = self._setup(50.0, 50.0)
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
             mc=mc,
         )
         self.assertEqual(losses1["G0"], 1)
@@ -521,11 +585,15 @@ class TestRetirementMargin(unittest.TestCase):
         # going_forward_cost = 12 $/kW-yr * 1.0 * 100 MW * 1000 = 1_200_000.
         # margin/h = (1250 - 50) $/MWh * 100 MW = 120_000; over 10 h
         # = 1_200_000 -- exactly the fixed cost, so not a loss year.
-        config, fleet, arrays, dispatch, prices, mc = self._setup(
-            1250.0, 50.0
-        )
+        config, fleet, arrays, dispatch, prices, mc = self._setup(1250.0, 50.0)
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
             mc=mc,
         )
         self.assertEqual(losses1["G0"], 0)
@@ -536,11 +604,15 @@ class TestRetirementMargin(unittest.TestCase):
         # gross/h = 1250 * 100 = 125_000; over 10 h >> 1_200_000? No:
         # 1_250_000 > 1_200_000, so no loss year -- the old (buggy)
         # behavior, preserved only as an explicit fallback.
-        config, fleet, arrays, dispatch, prices, _ = self._setup(
-            1250.0, 1250.0
-        )
+        config, fleet, arrays, dispatch, prices, _ = self._setup(1250.0, 1250.0)
         fleet1, losses1 = apply_economic_retirements(
-            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0,
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
         )
         self.assertEqual(losses1["G0"], 0)
 
@@ -553,15 +625,17 @@ class TestRetirementMargin(unittest.TestCase):
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
         prior = {
             "fleet_arrays": arrays,
-            "dispatch_result": SimpleNamespace(
-                dispatch=np.full((1, self.T), 100.0)
-            ),
+            "dispatch_result": SimpleNamespace(dispatch=np.full((1, self.T), 100.0)),
             "prices": np.full((1, self.T), 100000.0),
             "mc_cost": np.full((1, self.T), 100000.0),
             "peak_demand": 0.0,
         }
         fleet1, tracker, _, _ = evolve_fleet(
-            fleet, prior, 2030, config, {},
+            fleet,
+            prior,
+            2030,
+            config,
+            {},
         )
         self.assertNotIn("C0", [g.unit_id for g in fleet1])
 
@@ -588,7 +662,11 @@ class TestQueueCapCoverage(unittest.TestCase):
         try:
             with self.assertRaises(KeyError):
                 apply_economic_new_entry(
-                    [], prices, 2030, ScenarioConfig(iso="PJM"), "PJM",
+                    [],
+                    prices,
+                    2030,
+                    ScenarioConfig(iso="PJM"),
+                    "PJM",
                 )
         finally:
             QUEUE_CAP_GW["PJM"] = removed
@@ -598,7 +676,11 @@ class TestQueueCapCoverage(unittest.TestCase):
         # screening happened; now it must at least screen and build.
         prices = np.full((1, 10), 200.0)  # rich prices: something builds
         fleet, additions = apply_economic_new_entry(
-            [], prices, 2030, ScenarioConfig(iso="PJM"), "PJM",
+            [],
+            prices,
+            2030,
+            ScenarioConfig(iso="PJM"),
+            "PJM",
             gas_price_per_mmbtu=3.5,
         )
         built_mw = sum(g.pmax_mw for g in fleet) + sum(
@@ -645,9 +727,7 @@ class TestComputeCleanShare(unittest.TestCase):
 
     def test_renewable_cap_only_is_fully_clean(self):
         # An empty fleet whose only capacity is zonal renewables is 100% clean.
-        self.assertAlmostEqual(
-            compute_clean_share([], renewable_cap_mw=5000.0), 1.0
-        )
+        self.assertAlmostEqual(compute_clean_share([], renewable_cap_mw=5000.0), 1.0)
 
 
 class TestWrightCost(unittest.TestCase):
@@ -666,9 +746,7 @@ class TestWrightCost(unittest.TestCase):
         self.assertAlmostEqual(cost, 80.0)
 
     def test_two_doublings_compound(self):
-        self.assertAlmostEqual(
-            wright_cost(100.0, 400.0, 100.0, 0.2), 100.0 * 0.8 ** 2
-        )
+        self.assertAlmostEqual(wright_cost(100.0, 400.0, 100.0, 0.2), 100.0 * 0.8**2)
 
     def test_non_positive_capacity_returns_base(self):
         self.assertEqual(wright_cost(100.0, 0.0, 100.0, 0.2), 100.0)
@@ -713,11 +791,15 @@ class TestComputeLCOE(unittest.TestCase):
         # so the learning curve must work for it too.
         config = ScenarioConfig()
         at_ref = compute_lcoe(
-            "nuclear_smr", 2030, config,
+            "nuclear_smr",
+            2030,
+            config,
             cumulative_gw=WRIGHT_REFERENCE_GW["nuclear_smr"],
         )
         grown = compute_lcoe(
-            "nuclear_smr", 2030, config,
+            "nuclear_smr",
+            2030,
+            config,
             cumulative_gw=2 * WRIGHT_REFERENCE_GW["nuclear_smr"],
         )
         self.assertGreater(at_ref, 0.0)
@@ -733,16 +815,14 @@ class TestComputeLCOE(unittest.TestCase):
         # never discounts fixed O&M. The ITC-adjusted LCOE is therefore
         # higher than naively scaling the raw LCOE by (1 - itc).
         config = ScenarioConfig()  # ira_itc_solar = 0.30
-        with_itc = compute_lcoe("solar", 2027, config)   # ITC active
-        raw = compute_lcoe("solar", 2040, config)        # ITC expired
+        with_itc = compute_lcoe("solar", 2027, config)  # ITC active
+        raw = compute_lcoe("solar", 2040, config)  # ITC expired
         self.assertLess(with_itc, raw)
         self.assertGreater(with_itc, raw * 0.70)
 
         # Verify the exact split: only capex * (1 - itc) is annualized.
         costs = NEW_ENTRY_COSTS["solar"]
-        crf = _capital_recovery_factor(
-            config.real_discount_rate, costs["lifetime_yr"]
-        )
+        crf = _capital_recovery_factor(config.real_discount_rate, costs["lifetime_yr"])
         gen_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
         expected = (
             costs["capex_per_kw"] * (1.0 - config.ira_itc_solar) * crf
@@ -773,9 +853,7 @@ class TestCumulativeDeployment(unittest.TestCase):
         cumulative.advance_year({"wind": 10.0})
         self.assertAlmostEqual(
             cumulative.get("wind"),
-            WRIGHT_REFERENCE_GW["wind"]
-            + GLOBAL_ANNUAL_DEPLOYMENT_GW["wind"]
-            + 10.0,
+            WRIGHT_REFERENCE_GW["wind"] + GLOBAL_ANNUAL_DEPLOYMENT_GW["wind"] + 10.0,
         )
 
     def test_get_untracked_technology_is_none(self):
@@ -789,7 +867,9 @@ class TestStorageLearningCurve(unittest.TestCase):
         config = ScenarioConfig()
         base = compute_storage_annual_cost("li_ion_4hr", 2030, config)
         learned = compute_storage_annual_cost(
-            "li_ion_4hr", 2030, config,
+            "li_ion_4hr",
+            2030,
+            config,
             cumulative_gw=2 * WRIGHT_REFERENCE_GW["li_ion"],
         )
         self.assertLess(learned, base)
@@ -799,7 +879,9 @@ class TestStorageLearningCurve(unittest.TestCase):
         config = ScenarioConfig()
         base = compute_storage_annual_cost("li_ion_8hr", 2030, config)
         learned = compute_storage_annual_cost(
-            "li_ion_8hr", 2030, config,
+            "li_ion_8hr",
+            2030,
+            config,
             cumulative_gw=2 * WRIGHT_REFERENCE_GW["li_ion"],
         )
         self.assertLess(learned, base)
@@ -828,9 +910,7 @@ class TestIRACreditsToLCOE(unittest.TestCase):
             apply_ira_credits_to_lcoe("wind", 50.0, 2027, config), 24.0
         )
         # The year after the cliff leaves LCOE untouched.
-        self.assertEqual(
-            apply_ira_credits_to_lcoe("wind", 50.0, 2028, config), 50.0
-        )
+        self.assertEqual(apply_ira_credits_to_lcoe("wind", 50.0, 2028, config), 50.0)
 
     def test_ira_phaseout_fraction(self):
         config = ScenarioConfig()  # defaults: last_full=2028, end=2033
@@ -885,8 +965,11 @@ class TestEconomicNewEntry(unittest.TestCase):
         # total while the per-tech caps bind each technology individually.
         # Emerging techs are pushed out so this exercises the classic four.
         config = ScenarioConfig(
-            iso="ERCOT", h2_available_year=2099, ccs_available_year=2099,
-            egs_available_year=2099, offshore_wind_available_year=2099,
+            iso="ERCOT",
+            h2_available_year=2099,
+            ccs_available_year=2099,
+            egs_available_year=2099,
+            offshore_wind_available_year=2099,
         )
         prices = np.full(8760, 250.0)  # high prices make entry profitable
         new_fleet, additions = apply_economic_new_entry(
@@ -910,9 +993,7 @@ class TestEconomicNewEntry(unittest.TestCase):
         # caps, so a lower-margin tech is squeezed below its own cap.
         self.assertLess(by_tech.get("solar", 0.0), caps["solar"] * 1000.0)
         # Wind and solar are routed to the renewable pools, not the fleet.
-        self.assertFalse(
-            any(g.fuel_type in ("wind", "solar") for g in new_fleet)
-        )
+        self.assertFalse(any(g.fuel_type in ("wind", "solar") for g in new_fleet))
 
     def test_per_tech_cap_binds_below_iso_cap(self):
         # CAISO per-tech caps sum to 9 GW, above the 8 GW ISO cap, so at
@@ -1073,9 +1154,7 @@ class TestRPSShadowPriceInNewEntry(unittest.TestCase):
         _, no_rps = apply_economic_new_entry(
             [], prices, 2030, config, "ERCOT", rps_shadow_price=0.0
         )
-        without = sum(
-            mw for by_fuel in no_rps.values() for mw in by_fuel.values()
-        )
+        without = sum(mw for by_fuel in no_rps.values() for mw in by_fuel.values())
         self.assertEqual(without, 0.0)
 
         # An RPS shadow price lifts wind and solar over the LCOE hurdle:
@@ -1095,12 +1174,14 @@ class TestRPSShadowPriceInNewEntry(unittest.TestCase):
         builds = []
         for rps_shadow_price in (0.0, 100.0, 300.0):
             _, additions = apply_economic_new_entry(
-                [], prices, 2030, config, "ERCOT",
+                [],
+                prices,
+                2030,
+                config,
+                "ERCOT",
                 rps_shadow_price=rps_shadow_price,
             )
-            builds.append(
-                sum(mw for by in additions.values() for mw in by.values())
-            )
+            builds.append(sum(mw for by in additions.values() for mw in by.values()))
         self.assertLessEqual(builds[0], builds[1])
         self.assertLessEqual(builds[1], builds[2])
 
@@ -1112,16 +1193,20 @@ class TestEvolveFleet(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         old = _gen("OLD", "coal", retirement_year=2030)
         new = Generator(
-            unit_id="NEW", name="NEW", zone="North", fuel_type="wind",
-            pmax_mw=100.0, online_year=2030,
+            unit_id="NEW",
+            name="NEW",
+            zone="North",
+            fuel_type="wind",
+            pmax_mw=100.0,
+            online_year=2030,
         )
         prior = SimpleNamespace(
-            fleet_arrays=None, dispatch_result=None, prices=None,
+            fleet_arrays=None,
+            dispatch_result=None,
+            prices=None,
             planned_additions=[new],
         )
-        fleet, tracker, _, _ = evolve_fleet(
-            [old], prior, 2030, config, {}
-        )
+        fleet, tracker, _, _ = evolve_fleet([old], prior, 2030, config, {})
         # OLD retires this year; NEW comes online this year.
         self.assertEqual([g.unit_id for g in fleet], ["NEW"])
         self.assertIsInstance(tracker, dict)
@@ -1138,17 +1223,13 @@ class TestEvolveFleet(unittest.TestCase):
             planned_additions=[],
         )
         # Counter already at 1; a second loss year this step triggers retirement.
-        fleet, tracker, _, _ = evolve_fleet(
-            [coal], prior, 2031, config, {"C0": 1}
-        )
+        fleet, tracker, _, _ = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
         self.assertEqual(fleet, [])
         self.assertNotIn("C0", tracker)
 
     def test_returns_fleet_tracker_and_additions_tuple(self):
         config = ScenarioConfig(iso="ERCOT")
-        result = evolve_fleet(
-            [_gen("G0", "gas_cc")], None, 2030, config, {}
-        )
+        result = evolve_fleet([_gen("G0", "gas_cc")], None, 2030, config, {})
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 4)
         self.assertIsInstance(result[0], list)
@@ -1238,7 +1319,9 @@ class TestStateCarbonProgram(unittest.TestCase):
 
     def test_state_carbon_pricing_flag_disables(self):
         config = ScenarioConfig(
-            iso="CAISO", mode="backcast", weather_year=2024,
+            iso="CAISO",
+            mode="backcast",
+            weather_year=2024,
             state_carbon_pricing=False,
         )
         self.assertEqual(resolve_carbon_price(config, 2024), 0.0)
@@ -1266,6 +1349,7 @@ class TestPolicyConstraints(unittest.TestCase):
 
 
 # --- Integration-test helpers ---------------------------------------------
+
 
 def _zone_names(iso="ERCOT"):
     """Return the zone names of an ISO."""
@@ -1304,8 +1388,9 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.2 * i)
             for i in range(5)
         ]
-        retiring = _gen("C_RET", "coal", pmax=1000.0, heat_rate=8.0,
-                        retirement_year=2026)
+        retiring = _gen(
+            "C_RET", "coal", pmax=1000.0, heat_rate=8.0, retirement_year=2026
+        )
         fleet, tracker, additions, _ = evolve_fleet(
             coal + [retiring], None, 2026, config, {}
         )
@@ -1324,12 +1409,9 @@ class TestEvolveFleetEdgeCases(unittest.TestCase):
     def test_empty_fleet_after_retirements_is_refilled(self):
         # The whole fleet retires on schedule; new entry fills the gap.
         config = ScenarioConfig(iso="ERCOT")
-        coal = _gen("C0", "coal", pmax=100.0, zone="North",
-                    retirement_year=2027)
+        coal = _gen("C0", "coal", pmax=100.0, zone="North", retirement_year=2027)
         prior = _make_prior([coal], _zone_names(), price=60.0)
-        fleet, tracker, _, _ = evolve_fleet(
-            [coal], prior, 2027, config, {}
-        )
+        fleet, tracker, _, _ = evolve_fleet([coal], prior, 2027, config, {})
 
         # Known retirement empties the fleet, then economic new entry refills.
         self.assertNotIn("C0", {g.unit_id for g in fleet})
@@ -1351,16 +1433,20 @@ class TestCapacityIntegration(unittest.TestCase):
             _gen("G0", "gas_cc", pmax=100.0, zone="North", heat_rate=7.0),
             _gen("W0", "wind", pmax=100.0, zone="North"),
             _gen("W1", "wind", pmax=100.0, zone="North"),
-            _gen("C_RET", "coal", pmax=100.0, zone="North", heat_rate=9.0,
-                 retirement_year=2026),
+            _gen(
+                "C_RET",
+                "coal",
+                pmax=100.0,
+                zone="North",
+                heat_rate=9.0,
+                retirement_year=2026,
+            ),
         ]
         snapshots = [frozenset(g.unit_id for g in fleet)]
         tracker: dict[str, int] = {}
         prior = None
         for year in (2026, 2027, 2028):
-            fleet, tracker, _, _ = evolve_fleet(
-                fleet, prior, year, config, tracker
-            )
+            fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
             snapshots.append(frozenset(g.unit_id for g in fleet))
             prior = _make_prior(fleet, _zone_names(), price=10.0)
 
@@ -1377,14 +1463,16 @@ class TestCapacityIntegration(unittest.TestCase):
             # gas_ct peakers run at a thin, marginally profitable margin --
             # depressed revenue tips them into economic retirement.
             gas = [
-                _gen(f"G{i}", "gas_ct", pmax=100.0, zone="North",
-                     heat_rate=6.5 + 0.05 * i)
+                _gen(
+                    f"G{i}",
+                    "gas_ct",
+                    pmax=100.0,
+                    zone="North",
+                    heat_rate=6.5 + 0.05 * i,
+                )
                 for i in range(20)
             ]
-            wind = [
-                _gen(f"W{i}", "wind", pmax=100.0, zone="North")
-                for i in range(4)
-            ]
+            wind = [_gen(f"W{i}", "wind", pmax=100.0, zone="North") for i in range(4)]
             return gas + wind
 
         def _run(gas_price_path):
@@ -1397,13 +1485,9 @@ class TestCapacityIntegration(unittest.TestCase):
             prior = None
             yearly = {}
             for year in (2026, 2027, 2028):
-                fleet, tracker, _, _ = evolve_fleet(
-                    fleet, prior, year, config, tracker
-                )
+                fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
                 yearly[year] = fleet
-                prior = _make_prior(
-                    fleet, _zone_names(), price=15.0, gas_cf=gas_cf
-                )
+                prior = _make_prior(fleet, _zone_names(), price=15.0, gas_cf=gas_cf)
             return yearly
 
         low = _run("low")
@@ -1429,8 +1513,14 @@ class TestCapacityIntegration(unittest.TestCase):
         # A coal unit with retirement_year=2027 is present in 2026, gone after.
         config = ScenarioConfig(iso="ERCOT")
         fleet = [
-            _gen("C_RET", "coal", pmax=100.0, zone="North", heat_rate=8.0,
-                 retirement_year=2027),
+            _gen(
+                "C_RET",
+                "coal",
+                pmax=100.0,
+                zone="North",
+                heat_rate=8.0,
+                retirement_year=2027,
+            ),
             _gen("C_A", "coal", pmax=100.0, zone="North", heat_rate=11.0),
             _gen("C_B", "coal", pmax=100.0, zone="North", heat_rate=10.5),
             _gen("W0", "wind", pmax=100.0, zone="North"),
@@ -1438,14 +1528,10 @@ class TestCapacityIntegration(unittest.TestCase):
         ]
         tracker: dict[str, int] = {}
 
-        fleet, tracker, _, _ = evolve_fleet(
-            fleet, None, 2026, config, tracker
-        )
+        fleet, tracker, _, _ = evolve_fleet(fleet, None, 2026, config, tracker)
         self.assertIn("C_RET", {g.unit_id for g in fleet})
 
-        fleet, tracker, _, _ = evolve_fleet(
-            fleet, None, 2027, config, tracker
-        )
+        fleet, tracker, _, _ = evolve_fleet(fleet, None, 2027, config, tracker)
         self.assertNotIn("C_RET", {g.unit_id for g in fleet})
 
     def test_fleet_capacity_never_zero_over_five_years(self):
@@ -1460,11 +1546,10 @@ class TestCapacityIntegration(unittest.TestCase):
         tracker: dict[str, int] = {}
         prior = None
         for year in range(2026, 2031):
-            fleet, tracker, _, _ = evolve_fleet(
-                fleet, prior, year, config, tracker
-            )
+            fleet, tracker, _, _ = evolve_fleet(fleet, prior, year, config, tracker)
             self.assertGreater(
-                sum(g.pmax_mw for g in fleet), 0.0,
+                sum(g.pmax_mw for g in fleet),
+                0.0,
                 f"fleet capacity hit zero in {year}",
             )
             prior = _make_prior(fleet, _zone_names(), price=60.0)
@@ -1475,8 +1560,11 @@ class TestCapacityIntegration(unittest.TestCase):
         # to the renewable pools rather than the thermal fleet. Emerging
         # techs are pushed out so this exercises the classic four.
         config = ScenarioConfig(
-            iso="ERCOT", h2_available_year=2099, ccs_available_year=2099,
-            egs_available_year=2099, offshore_wind_available_year=2099,
+            iso="ERCOT",
+            h2_available_year=2099,
+            ccs_available_year=2099,
+            egs_available_year=2099,
+            offshore_wind_available_year=2099,
         )
         prices = np.full(8760, 250.0)
         # Expensive gas suppresses the dispatchable gas candidates (their
@@ -1493,9 +1581,7 @@ class TestCapacityIntegration(unittest.TestCase):
         self.assertGreater(by_tech.get("wind", 0.0), 0.0)
         self.assertGreater(by_tech.get("solar", 0.0), 0.0)
         # Neither leaked into the thermal fleet as a Generator.
-        self.assertFalse(
-            any(g.fuel_type in ("wind", "solar") for g in new_fleet)
-        )
+        self.assertFalse(any(g.fuel_type in ("wind", "solar") for g in new_fleet))
         # Neither exceeds its per-tech cap.
         self.assertLessEqual(by_tech["wind"], caps["wind"] * 1000.0 + 1e-6)
         self.assertLessEqual(by_tech["solar"], caps["solar"] * 1000.0 + 1e-6)

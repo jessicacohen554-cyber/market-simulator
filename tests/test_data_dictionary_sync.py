@@ -36,9 +36,7 @@ def _coverage_check_enabled() -> bool:
 class DataDictionarySyncTest(unittest.TestCase):
     def test_doc_exists(self):
         """The committed data dictionary is present."""
-        self.assertTrue(
-            render.DOC_PATH.is_file(), f"missing {render.DOC_PATH}"
-        )
+        self.assertTrue(render.DOC_PATH.is_file(), f"missing {render.DOC_PATH}")
 
     def test_per_column_tables_match_schemas(self):
         """Every datatype's per-column table matches a fresh schema render.

@@ -225,8 +225,12 @@ _SOLAR_SIGNATURES = ("STPPF", "PVGRPP")
 
 # Candidate single-column interval timestamps (5-minute report family).
 _TIMESTAMP_COLUMNS = (
-    "SCED_TIMESTAMP", "SCED_TIME_STAMP", "INTERVAL_ENDING", "TIME_STAMP",
-    "TIMESTAMP", "DATETIME",
+    "SCED_TIMESTAMP",
+    "SCED_TIME_STAMP",
+    "INTERVAL_ENDING",
+    "TIME_STAMP",
+    "TIMESTAMP",
+    "DATETIME",
 )
 
 
@@ -254,8 +258,7 @@ def _read_csvs(path: Path) -> list[tuple[str, pd.DataFrame]]:
                 continue
             with zf.open(info) as fh:
                 out.append(
-                    (f"{path.name}:{info.filename}",
-                     pd.read_csv(io.BytesIO(fh.read())))
+                    (f"{path.name}:{info.filename}", pd.read_csv(io.BytesIO(fh.read())))
                 )
     return out
 
@@ -305,10 +308,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
         date = pd.to_datetime(df["DELIVERY_DATE"])
         # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
-        he = (
-            df["HOUR_ENDING"].astype(str).str.split(":").str[0]
-            .astype(int)
-        )
+        he = df["HOUR_ENDING"].astype(str).str.split(":").str[0].astype(int)
         ts = date + pd.to_timedelta(he - 1, unit="h")
     else:
         ts_col = next((c for c in _TIMESTAMP_COLUMNS if c in columns), None)
@@ -325,10 +325,9 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
             ts = ts - pd.Timedelta(seconds=1)
         ts = ts.dt.floor("h")
 
-    gen_col = (
-        _pick_column(columns, ("ACTUAL", "SYSTEM"), exclude=("HSL",))
-        or _pick_column(columns, ("SYSTEM_WIDE",), exclude=("HSL",))
-    )
+    gen_col = _pick_column(
+        columns, ("ACTUAL", "SYSTEM"), exclude=("HSL",)
+    ) or _pick_column(columns, ("SYSTEM_WIDE",), exclude=("HSL",))
     hsl_col = (
         _pick_column(columns, ("ACTUAL", "SYSTEM", "HSL"))
         or _pick_column(columns, ("SYSTEM", "HSL"))
@@ -336,15 +335,16 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     )
     if gen_col is None or hsl_col is None:
         raise ValueError(
-            f"{name}: could not locate system-wide GEN/HSL columns "
-            f"(columns: {columns})"
+            f"{name}: could not locate system-wide GEN/HSL columns (columns: {columns})"
         )
 
-    out = pd.DataFrame({
-        "ts": ts,
-        "gen_mw": pd.to_numeric(df[gen_col], errors="coerce"),
-        "hsl_mw": pd.to_numeric(df[hsl_col], errors="coerce"),
-    })
+    out = pd.DataFrame(
+        {
+            "ts": ts,
+            "gen_mw": pd.to_numeric(df[gen_col], errors="coerce"),
+            "hsl_mw": pd.to_numeric(df[hsl_col], errors="coerce"),
+        }
+    )
     # Forecast-only rows (the rolling future window of the hourly reports)
     # carry no actuals; drop them rather than treating them as telemetry.
     return out.dropna(subset=["gen_mw", "hsl_mw"])
@@ -366,9 +366,9 @@ def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
     ts = rows["ts"]
     keep = (ts.dt.year == year) & ~((ts.dt.month == 2) & (ts.dt.day == 29))
     rows = rows[keep]
-    grouped = rows.groupby(
-        [ts[keep].dt.month, ts[keep].dt.day, ts[keep].dt.hour]
-    )[["gen_mw", "hsl_mw"]].mean()
+    grouped = rows.groupby([ts[keep].dt.month, ts[keep].dt.day, ts[keep].dt.hour])[
+        ["gen_mw", "hsl_mw"]
+    ].mean()
     grouped.index.names = ["month", "day", "hour"]
 
     calendar = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
@@ -418,7 +418,8 @@ def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
     if missing:
         np6 = (
             NP6_DIR.relative_to(REPO_ROOT)
-            if NP6_DIR.is_relative_to(REPO_ROOT) else NP6_DIR
+            if NP6_DIR.is_relative_to(REPO_ROOT)
+            else NP6_DIR
         )
         print(
             f"\n{year}: no NP6 {'/'.join(missing)} report data found under "
@@ -457,7 +458,9 @@ def _eia_reference_twh(year: int) -> tuple[dict[str, float], str] | None:
     if REFERENCE_PATH.exists():
         ref = json.loads(REFERENCE_PATH.read_text())
         gen = (
-            ref.get("isos", {}).get("ERCOT", {}).get(str(year), {})
+            ref.get("isos", {})
+            .get("ERCOT", {})
+            .get(str(year), {})
             .get("generation_twh", {})
         )
         if "wind" in gen and "solar" in gen:
@@ -506,8 +509,10 @@ def print_validation(df: pd.DataFrame, year: int) -> None:
 
     reference = _eia_reference_twh(year)
     if reference is None:
-        print("\nEIA cross-check skipped: no reference totals for "
-              f"{year} (see data/raw/_validation-source/calibration_reference.json).")
+        print(
+            "\nEIA cross-check skipped: no reference totals for "
+            f"{year} (see data/raw/_validation-source/calibration_reference.json)."
+        )
         return
     totals, source = reference
     print(f"\nEIA cross-check (delivered generation, vs {source}):")
@@ -578,8 +583,7 @@ def build_year(year: int) -> bool:
     print_validation(df, year)
 
     table = pa.Table.from_pandas(
-        df[["hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw",
-            "solar_hsl_mw"]],
+        df[["hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw", "solar_hsl_mw"]],
         preserve_index=False,
     )
     table = table.replace_schema_metadata(
@@ -592,8 +596,9 @@ def build_year(year: int) -> bool:
     )
     path = out_file(year)
     pq.write_table(table, path)
-    print(f"\nWrote {path.relative_to(REPO_ROOT)} "
-          f"({path.stat().st_size / 1024:.1f} KiB)")
+    print(
+        f"\nWrote {path.relative_to(REPO_ROOT)} ({path.stat().st_size / 1024:.1f} KiB)"
+    )
     return True
 
 
@@ -602,13 +607,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="build_ercot_hsl",
         description="Build ERCOT hourly wind/solar HSL (uncurtailed "
-                    "potential) parquets.",
+        "potential) parquets.",
     )
     parser.add_argument(
-        "--year", type=int, nargs="+", default=list(DEFAULT_YEARS),
+        "--year",
+        type=int,
+        nargs="+",
+        default=list(DEFAULT_YEARS),
         help="Years to build (default: %(default)s). 2023 downloads the "
-             "UMass dataset; later years need NP6 report uploads under "
-             "data/raw/ercot-hsl/np6/.",
+        "UMass dataset; later years need NP6 report uploads under "
+        "data/raw/ercot-hsl/np6/.",
     )
     args = parser.parse_args(argv)
 

@@ -16,6 +16,7 @@ outage from CF alone, so other CC plants are excluded until confirmed.
 
 Writes ``data/raw/campd-partial-outages.csv``.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -26,6 +27,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 import sys
+
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.data import campd  # noqa: E402
@@ -35,11 +37,11 @@ from market_sim.data.fleet import load_campd_bins  # noqa: E402
 # nothing) and CC_REGULAR. The baseload-CF filter below excludes cyclic units
 # where a depressed CF ceiling is economic part-load rather than an outage.
 _DETECT_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR"})
-_BASELOAD_CF = 0.55      # only plants that normally run near their ceiling
-_MIN_DAYS = 5            # sustained plateau length
-_SMOOTH_DAYS = 7         # rolling-median window to ride through recovery blips
-_CEILING_FRAC = 0.65     # daily max below this fraction of the normal ceiling
-_RUN_FLOOR_CF = 0.06     # daily mean above this = running (not a full outage)
+_BASELOAD_CF = 0.55  # only plants that normally run near their ceiling
+_MIN_DAYS = 5  # sustained plateau length
+_SMOOTH_DAYS = 7  # rolling-median window to ride through recovery blips
+_CEILING_FRAC = 0.65  # daily max below this fraction of the normal ceiling
+_RUN_FLOOR_CF = 0.06  # daily mean above this = running (not a full outage)
 
 
 def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
@@ -47,7 +49,7 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
     nd = cf.shape[0] // 24
     if nd == 0:
         return []
-    day = cf[:nd * 24].reshape(nd, 24)
+    day = cf[: nd * 24].reshape(nd, 24)
     dmax, dmean = day.max(1), day.mean(1)
     running = dmean > _RUN_FLOOR_CF
     ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
@@ -56,8 +58,12 @@ def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
     # Smooth the daily-max ceiling with a centered rolling median so brief
     # recovery blips (a unit cycling back for a day or two) don't break an
     # otherwise sustained partial outage.
-    sm = pd.Series(dmax).rolling(
-        _SMOOTH_DAYS, center=True, min_periods=4).median().to_numpy()
+    sm = (
+        pd.Series(dmax)
+        .rolling(_SMOOTH_DAYS, center=True, min_periods=4)
+        .median()
+        .to_numpy()
+    )
     partial = running & (sm < _CEILING_FRAC * ref)
     out, i = [], 0
     while i < nd:
@@ -80,8 +86,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
-    ap.add_argument("--out", default=str(
-        REPO / "inputs" / "raw-data" / "campd-partial-outages.csv"))
+    ap.add_argument(
+        "--out", default=str(REPO / "inputs" / "raw-data" / "campd-partial-outages.csv")
+    )
     args = ap.parse_args()
 
     bins = load_campd_bins("data/raw/reference/custom-bin-assignments.csv")
@@ -98,8 +105,9 @@ def main() -> None:
             g = campd.plant_hourly_grid(df, code, yr)
             if g.empty or cap[code] <= 0:
                 continue
-            cf = (g["gross_mw"].reindex(full).fillna(0.0)
-                  / cap[code]).to_numpy(dtype=float)
+            cf = (g["gross_mw"].reindex(full).fillna(0.0) / cap[code]).to_numpy(
+                dtype=float
+            )
             # Coal is all-or-nothing per unit, and a derate cap only binds when
             # the model wants to run above the observed ceiling, so it is safe
             # to detect even on cyclic coal. CC part-loads economically, so its
@@ -107,25 +115,38 @@ def main() -> None:
             if group.get(code) == "CC_REGULAR" and cf.mean() < _BASELOAD_CF:
                 continue
             for s, e, factor in _detect(cf):
-                rows.append({
-                    "oris_code": code,
-                    "plant_name": name.get(code, code),
-                    "plant_group": group.get(code, ""),
-                    "year": yr,
-                    "outage_start": full[s * 24].strftime("%Y-%m-%d %H:00:00"),
-                    "outage_stop": (full[min(e * 24, len(full) - 1)]
-                                    ).strftime("%Y-%m-%d %H:00:00"),
-                    "derate_factor": factor,
-                })
-    out = pd.DataFrame(rows, columns=[
-        "oris_code", "plant_name", "plant_group", "year",
-        "outage_start", "outage_stop", "derate_factor",
-    ]).sort_values(["year", "oris_code", "outage_start"])
+                rows.append(
+                    {
+                        "oris_code": code,
+                        "plant_name": name.get(code, code),
+                        "plant_group": group.get(code, ""),
+                        "year": yr,
+                        "outage_start": full[s * 24].strftime("%Y-%m-%d %H:00:00"),
+                        "outage_stop": (full[min(e * 24, len(full) - 1)]).strftime(
+                            "%Y-%m-%d %H:00:00"
+                        ),
+                        "derate_factor": factor,
+                    }
+                )
+    out = pd.DataFrame(
+        rows,
+        columns=[
+            "oris_code",
+            "plant_name",
+            "plant_group",
+            "year",
+            "outage_start",
+            "outage_stop",
+            "derate_factor",
+        ],
+    ).sort_values(["year", "oris_code", "outage_start"])
     out.to_csv(args.out, index=False)
     print(f"wrote {len(out)} partial-outage windows to {args.out}")
     for yr in args.years:
-        print(f"  {yr}: {(out['year'] == yr).sum()} windows, "
-              f"{out[out['year'] == yr]['oris_code'].nunique()} plants")
+        print(
+            f"  {yr}: {(out['year'] == yr).sum()} windows, "
+            f"{out[out['year'] == yr]['oris_code'].nunique()} plants"
+        )
 
 
 if __name__ == "__main__":

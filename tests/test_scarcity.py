@@ -1,4 +1,5 @@
 """Tests for the ERCOT ORDC scarcity-pricing overlay (results.scarcity)."""
+
 import numpy as np
 import pytest
 
@@ -27,8 +28,12 @@ def test_market_regime_auto_gates_at_rtcb_golive():
 
 
 def test_market_regime_explicit_override():
-    assert ercot_market_regime(2030, ScenarioConfig(ercot_market_design="ordc")) == "ordc"
-    assert ercot_market_regime(2023, ScenarioConfig(ercot_market_design="rtcb")) == "rtcb"
+    assert (
+        ercot_market_regime(2030, ScenarioConfig(ercot_market_design="ordc")) == "ordc"
+    )
+    assert (
+        ercot_market_regime(2023, ScenarioConfig(ercot_market_design="rtcb")) == "rtcb"
+    )
     with pytest.raises(ValueError):
         ercot_market_regime(2030, ScenarioConfig(ercot_market_design="bogus"))
 
@@ -71,8 +76,14 @@ def test_adder_pins_to_voll_minus_lambda_below_mcl():
     r = np.array([1000.0])
     lam = np.array([80.0])
     adder = ordc_adder(
-        r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
-        multistep_floor=False)
+        r,
+        lam,
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=1400.0,
+        multistep_floor=False,
+    )
     # Both half-hour LOLP terms are 1 below the MCL -> full VOLL - lambda.
     assert adder[0] == pytest.approx(5000.0 - 80.0)
 
@@ -80,20 +91,30 @@ def test_adder_pins_to_voll_minus_lambda_below_mcl():
 def test_adder_capped_so_price_never_exceeds_voll():
     r = np.array([0.0])
     lam = np.array([4900.0])
-    adder = ordc_adder(
-        r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0)
+    adder = ordc_adder(r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0)
     assert adder[0] <= 100.0 + 1e-9
     # lambda above VOLL (LP slack hour): adder clamps to zero, not negative.
     adder2 = ordc_adder(
-        np.array([0.0]), np.array([6000.0]), voll=5000.0, mcl_mw=3000.0,
-        mu_mw=0.0, sigma_mw=1400.0)
+        np.array([0.0]),
+        np.array([6000.0]),
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=1400.0,
+    )
     assert adder2[0] == 0.0
 
 
 def test_adder_near_zero_at_comfortable_reserves():
     adder = ordc_adder(
-        np.array([20000.0]), np.array([25.0]), voll=5000.0, mcl_mw=3000.0,
-        mu_mw=0.0, sigma_mw=1400.0, multistep_floor=False)
+        np.array([20000.0]),
+        np.array([25.0]),
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=1400.0,
+        multistep_floor=False,
+    )
     assert adder[0] < 0.01
 
 
@@ -101,16 +122,30 @@ def test_multistep_floor_steps_and_gating():
     lam = np.zeros(3)
     r = np.array([6400.0, 6900.0, 7500.0])
     adder = ordc_adder(
-        r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=100.0,
-        multistep_floor=True, floor_active=True)
+        r,
+        lam,
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=100.0,
+        multistep_floor=True,
+        floor_active=True,
+    )
     # sigma tiny -> unfloored adder ~0; the OBDRR048 steps must hold.
     assert adder[0] == pytest.approx(20.0)
     assert adder[1] == pytest.approx(10.0)
     assert adder[2] == pytest.approx(0.0, abs=1e-9)
     # Floor inactive (pre-2023-11-01 hours) -> no floor.
     adder_off = ordc_adder(
-        r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=100.0,
-        multistep_floor=True, floor_active=False)
+        r,
+        lam,
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=100.0,
+        multistep_floor=True,
+        floor_active=False,
+    )
     assert adder_off[0] == pytest.approx(0.0, abs=1e-9)
 
 
@@ -125,19 +160,31 @@ def test_voll_scenario_moves_tail_up():
     """A $9,000 pre-Uri VOLL must scale the deep-scarcity adder up."""
     r = np.array([2500.0, 5000.0])
     lam = np.array([100.0, 100.0])
-    a5 = ordc_adder(r, lam, voll=5000.0, mcl_mw=3000.0, mu_mw=0.0,
-                    sigma_mw=1400.0, multistep_floor=False)
-    a9 = ordc_adder(r, lam, voll=9000.0, mcl_mw=3000.0, mu_mw=0.0,
-                    sigma_mw=1400.0, multistep_floor=False)
+    a5 = ordc_adder(
+        r,
+        lam,
+        voll=5000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=1400.0,
+        multistep_floor=False,
+    )
+    a9 = ordc_adder(
+        r,
+        lam,
+        voll=9000.0,
+        mcl_mw=3000.0,
+        mu_mw=0.0,
+        sigma_mw=1400.0,
+        multistep_floor=False,
+    )
     assert (a9 > a5).all()
 
 
 def test_season_and_tod_blocks():
     hours = np.array([0, 23, 31 * 24, 181 * 24 + 14])  # Jan, Jan, Feb, Jul
-    assert list(season_of_hour(hours)) == [
-        "winter", "winter", "winter", "summer"]
-    assert list(tod_block_of_hour(np.array([0, 3, 4, 12, 23]))) == [
-        1, 1, 2, 4, 6]
+    assert list(season_of_hour(hours)) == ["winter", "winter", "winter", "summer"]
+    assert list(tod_block_of_hour(np.array([0, 3, 4, 12, 23]))) == [1, 1, 2, 4, 6]
 
 
 def test_load_lolp_params_roundtrip(tmp_path):
@@ -172,10 +219,13 @@ def _toy_fleet_arrays(t: int = 4) -> FleetArrays:
         nox_rate=np.zeros(3),
         so2_rate=np.zeros(3),
         zone_idx=np.zeros(3, dtype=int),
-        fuel_type_idx=np.array([
-            FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["coal"],
-            FUEL_TYPE_MAP["hydro"],  # excluded from reserves
-        ]),
+        fuel_type_idx=np.array(
+            [
+                FUEL_TYPE_MAP["gas_cc"],
+                FUEL_TYPE_MAP["coal"],
+                FUEL_TYPE_MAP["hydro"],  # excluded from reserves
+            ]
+        ),
         availability=avail,
         unit_ids=["g1", "g2", "h1"],
         efficiency_bin=np.zeros(3),
@@ -193,8 +243,14 @@ def test_reserve_headroom_composition():
     chg = np.array([[10.0, 0.0, 0.0, 0.0]])
     dis = np.array([[0.0, 0.0, 20.0, 0.0]])
     r_online, r_offline = reserve_headroom(
-        fa, dispatch, cap, chg, dis, as_plan_mw=10.0,
-        renewable_headroom=np.array([0.0, 0.0, 0.0, 5.0]))
+        fa,
+        dispatch,
+        cap,
+        chg,
+        dis,
+        as_plan_mw=10.0,
+        renewable_headroom=np.array([0.0, 0.0, 0.0, 5.0]),
+    )
     # g1 (gas_cc) and g2 (coal) are dispatched every hour, so both are online
     # and neither is quick-start (only gas_ct/oil are) — the offline (non-spin)
     # tier is zero throughout and r_online matches the old single-tier sum.
@@ -221,8 +277,7 @@ def _split_fleet_arrays(t: int = 2) -> FleetArrays:
         nox_rate=np.zeros(2),
         so2_rate=np.zeros(2),
         zone_idx=np.zeros(2, dtype=int),
-        fuel_type_idx=np.array(
-            [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]]),
+        fuel_type_idx=np.array([FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]]),
         availability=np.ones((2, t)),
         unit_ids=["cc", "ct"],
         efficiency_bin=np.zeros(2),
@@ -236,7 +291,8 @@ def test_online_offline_split_excludes_cold_slowstart():
     dispatch = np.array([[0.0, 60.0], [0.0, 10.0]])
     cap = np.zeros(0)  # no storage
     r_online, r_offline = reserve_headroom(
-        fa, dispatch, cap, None, None, as_plan_mw=0.0)
+        fa, dispatch, cap, None, None, as_plan_mw=0.0
+    )
     # Hour 0: gas_cc offline+slow-start -> excluded entirely; gas_ct offline
     # but quick-start -> its 40 MW backs the offline (non-spin) tier only.
     assert r_online[0] == pytest.approx(0.0)
@@ -252,10 +308,10 @@ def test_offline_split_raises_adder_vs_legacy_single_tier():
     r_online = np.array([3500.0])
     r_offline = np.array([4000.0])
     lam = np.array([100.0])
-    kw = dict(voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
-              multistep_floor=False)
-    split = ordc_adder(r_online + r_offline, lam,
-                       reserves_online_mw=r_online, **kw)
+    kw = dict(
+        voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0, multistep_floor=False
+    )
+    split = ordc_adder(r_online + r_offline, lam, reserves_online_mw=r_online, **kw)
     legacy = ordc_adder(r_online + r_offline, lam, **kw)  # both tiers = full
     # The first-half term sees only the tight online tier, so the split adder
     # is strictly higher than treating all reserve as online (RTOFFCAP=0).
@@ -266,8 +322,8 @@ def test_reserve_headroom_accepts_hourly_as_plan():
     fa = _split_fleet_arrays()
     dispatch = np.array([[60.0, 60.0], [10.0, 10.0]])
     r_online, _ = reserve_headroom(
-        fa, dispatch, np.zeros(0), None, None,
-        as_plan_mw=np.array([0.0, 50.0]))
+        fa, dispatch, np.zeros(0), None, None, as_plan_mw=np.array([0.0, 50.0])
+    )
     # Spinning headroom 70 both hours; hour 1 nets a 50 MW hourly AS plan.
     assert r_online[0] == pytest.approx(70.0)
     assert r_online[1] == pytest.approx(20.0)
@@ -275,8 +331,8 @@ def test_reserve_headroom_accepts_hourly_as_plan():
 
 def test_scarcity_prices_wrapper_backcast_floor_gating():
     cfg = ScenarioConfig(
-        mode="backcast", scarcity_pricing_enabled=True,
-        ordc_lolp_sigma_mw=100.0)
+        mode="backcast", scarcity_pricing_enabled=True, ordc_lolp_sigma_mw=100.0
+    )
     t = 8760
     reserves = np.full(t, 6900.0)
     lam = np.zeros(t)
@@ -285,5 +341,4 @@ def test_scarcity_prices_wrapper_backcast_floor_gating():
     # Before Nov 1 2023 no floor; after, the $10 step at 6,900 MW.
     assert adder[0] == pytest.approx(0.0, abs=1e-6)
     assert adder[304 * 24] == pytest.approx(10.0)
-    assert set(out) == {
-        "reserves_mw", "reserves_online_mw", "lolp", "scarcity_adder"}
+    assert set(out) == {"reserves_mw", "reserves_online_mw", "lolp", "scarcity_adder"}

@@ -96,9 +96,7 @@ def main() -> None:
             continue
 
         attributed = attribute_emissions(dispatch_path, parent_df, year)
-        out_path = (
-            output_dir / f"emissions_by_owner_{scenario_hash}_{year}.parquet"
-        )
+        out_path = output_dir / f"emissions_by_owner_{scenario_hash}_{year}.parquet"
         attributed.to_parquet(out_path, index=False)
         logger.info("Wrote %s", out_path)
 

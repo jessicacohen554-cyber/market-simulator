@@ -147,7 +147,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     logger.info(
         "run_scenario_iso start: iso=%s cache_key=%s config=%s",
-        iso, cache_key, asdict(config),
+        iso,
+        cache_key,
+        asdict(config),
     )
 
     iso_config = get_iso_config(iso)
@@ -170,10 +172,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # blocks are gas-priced, so a backcast pins the ladder to the simulated
     # (weather) year. Forecasts pass weather_year too, but un-tabulated years
     # fall back to the static ladder inside build_import_generators.
-    import_generators = (
-        build_import_generators(iso, border_carbon, year=config.weather_year)
-        + build_export_sinks(iso)
-    )
+    import_generators = build_import_generators(
+        iso, border_carbon, year=config.weather_year
+    ) + build_export_sinks(iso)
     if import_generators:
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
@@ -192,10 +193,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # here, before any load. None (forecast, or no committed vintage dir) resets
     # to the canonical snapshot. See config.paths.set_eia860_vintage.
     from market_sim.config.paths import set_eia860_vintage
+
     set_eia860_vintage(
-        config.eia860_vintage_year if config.mode == "backcast" else None)
+        config.eia860_vintage_year if config.mode == "backcast" else None
+    )
     base_demand = load_demand(
-        iso, config.weather_year, iso_config,
+        iso,
+        config.weather_year,
+        iso_config,
         td_loss_factor=config.td_loss_factor,
         include_interchange=not import_generators,
     )
@@ -204,9 +209,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     )
     # Trim profiles to config.hours when running a sub-annual horizon.
     if config.hours < base_demand.shape[1]:
-        base_demand = base_demand[:, :config.hours]
-        wind_cf = wind_cf[:, :config.hours]
-        solar_cf = solar_cf[:, :config.hours]
+        base_demand = base_demand[:, : config.hours]
+        wind_cf = wind_cf[:, : config.hours]
+        solar_cf = solar_cf[:, : config.hours]
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = get_ttc_array(iso_config.links)
 
@@ -244,16 +249,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     if config.use_campd_bins and iso in CAMPD_BINNING_ISOS:
         if iso == "ERCOT":
             campd_bins = load_campd_bins(
-                config.campd_bins_path, year=START_YEAR,
+                config.campd_bins_path,
+                year=START_YEAR,
                 capacity_reconcile_path=(
                     config.cc_capacity_reconcile_path
-                    if config.cc_capacity_reconcile else None
+                    if config.cc_capacity_reconcile
+                    else None
                 ),
             )
         else:
             campd_bins = fleet_to_bins(
                 load_fleet_from_csv(iso, iso_config) + retired_within_window,
-                iso, config,
+                iso,
+                config,
             )
             if campd_bins.empty:
                 campd_bins = None
@@ -305,8 +313,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     # fleet; nuclear (and any other non-aggregatable unit)
                     # still comes from EIA-860 so it stays in the dispatch LP.
                     non_thermal = [
-                        g for g in all_gens
-                        if g.fuel_type not in _AGGREGATABLE_FUELS
+                        g for g in all_gens if g.fuel_type not in _AGGREGATABLE_FUELS
                     ]
                 else:
                     # The synthesized bins cover exactly the thermal
@@ -316,12 +323,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     # on the exact binned set -- rather than a fuel allow-list
                     # -- avoids dropping or double-counting any plant (the bin
                     # groups include gas_st, which is not an aggregatable fuel).
-                    binned = set(zip(
-                        campd_bins["Plant_Code"].astype(int),
-                        campd_bins["Plant_Group"],
-                    ))
+                    binned = set(
+                        zip(
+                            campd_bins["Plant_Code"].astype(int),
+                            campd_bins["Plant_Group"],
+                        )
+                    )
                     non_thermal = [
-                        g for g in all_gens
+                        g
+                        for g in all_gens
                         if (int(g.plant_code), g.plant_group) not in binned
                     ]
                 fleet = non_thermal + campd_fleet
@@ -338,7 +348,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             if due:
                 logger.info(
                     "year %d: %d planned additions already due (%.0f MW)",
-                    year, len(due), sum(g.pmax_mw for g in due),
+                    year,
+                    len(due),
+                    sum(g.pmax_mw for g in due),
                 )
                 fleet = fleet + due
         else:
@@ -354,7 +366,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             gas_price_year = resolve_annual_gas_price(config, year)
             carbon_price_year = resolve_carbon_price(config, year)
             fleet, loss_tracker, renewable_additions, retrofit_log = evolve_fleet(
-                fleet, prior_results, year, config, loss_tracker,
+                fleet,
+                prior_results,
+                year,
+                config,
+                loss_tracker,
                 rps_shadow_price=prior_rps_shadow,
                 cumulative=cumulative,
                 gas_price_per_mmbtu=gas_price_year,
@@ -367,7 +383,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 ) / len(retrofit_log)
                 logger.info(
                     "Year %d: %d CCS retrofits, %.0f $/MW-yr avg savings",
-                    year, len(retrofit_log), avg_savings,
+                    year,
+                    len(retrofit_log),
+                    avg_savings,
                 )
             # New wind/solar grow the zonal capacity pools that bound the
             # W[z,t] and S[z,t] dispatch variables -- they are not added as
@@ -382,7 +400,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         prior_storage_ids = {u.unit_id for u in storage_units}
         if prior_results is not None:
             storage_units = apply_storage_new_entry(
-                storage_units, prior_results["prices"], year, config, iso,
+                storage_units,
+                prior_results["prices"],
+                year,
+                config,
+                iso,
                 cumulative=cumulative,
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
@@ -395,7 +417,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 local_builds[fuel] = local_builds.get(fuel, 0.0) + mw / 1000.0
         for g in fleet:
             if g.online_year == year and g.fuel_type in (
-                "gas_cc", "nuclear", "gas_cc_ccs"
+                "gas_cc",
+                "nuclear",
+                "gas_cc_ccs",
             ):
                 local_builds[g.fuel_type] = (
                     local_builds.get(g.fuel_type, 0.0) + g.pmax_mw / 1000.0
@@ -431,8 +455,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # convention pre-refactor.
             fuel_fracs = [
                 campd_tranche_fuel_frac(
-                    g, {"prb": config.coal_prb_passthrough,
-                        "subbituminous": config.coal_prb_passthrough}
+                    g,
+                    {
+                        "prb": config.coal_prb_passthrough,
+                        "subbituminous": config.coal_prb_passthrough,
+                    },
                 )
                 for g in dispatch_fleet
             ]
@@ -444,9 +471,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # ones for generators pinned to a single plant, so emission prices
         # bite at each plant's measured per-MWh-net intensity.
         if config.use_plant_emission_rates:
-            apply_plant_emission_rates(
-                dispatch_fleet, config.plant_emission_rates_path
-            )
+            apply_plant_emission_rates(dispatch_fleet, config.plant_emission_rates_path)
         # Resolve the historic (facility-summed) outage overlay per ISO. The
         # facility overlay is the primary layer only for facility-summed ISOs
         # (ERCOT); ISOs whose unit-level file is the complete CAMPD-derived
@@ -464,8 +489,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             else replace(config, historic_outage_overlay=outage_overlay)
         )
         fleet_arrays = generators_to_fleet_arrays(
-            dispatch_fleet, zone_names, hours=config.hours, iso=iso,
-            config=fleet_config, load_shape=base_demand.sum(axis=0),
+            dispatch_fleet,
+            zone_names,
+            hours=config.hours,
+            iso=iso,
+            config=fleet_config,
+            load_shape=base_demand.sum(axis=0),
             year=year,
         )
         # Replace flat offshore-wind availability with a derived hourly
@@ -478,9 +507,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
         # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
         # lignite vs PRB by rail); no-op for the legacy fleet.
-        apply_coal_supply_pricing(
-            fuel_prices, dispatch_fleet, config, year
-        )
+        apply_coal_supply_pricing(fuel_prices, dispatch_fleet, config, year)
         carbon_price = resolve_carbon_price(config, year)
         # Full variable cost: fuel + VOM + carbon + NOx + SO2 -- computed
         # even on cached years because next year's economic retirement
@@ -490,7 +517,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # double-count) and the take-or-pay tranche discount (sunk fuel is
         # avoidable on a retirement horizon, where contracts lapse).
         mc_cost = assemble_mc(
-            fleet_arrays, fuel_prices, carbon_price, config.nox_price,
+            fleet_arrays,
+            fuel_prices,
+            carbon_price,
+            config.nox_price,
             so2=(fleet_arrays.so2_rate, config.so2_price),
         )
 
@@ -498,7 +528,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             result = load_result(iso, cache_key, year)
             logger.info(
                 "year %d: cached, skipped (%.3fs)",
-                year, time.perf_counter() - year_start,
+                year,
+                time.perf_counter() - year_start,
             )
         else:
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
@@ -559,7 +590,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # gated, recalibration-requiring change. See docs/ordc-overlay.md.
             if getattr(config, "energy_reserve_coopt", False) and iso == "ERCOT":
                 (
-                    coopt_req, coopt_elig, coopt_pens, coopt_widths,
+                    coopt_req,
+                    coopt_elig,
+                    coopt_pens,
+                    coopt_widths,
                 ) = ercot_reserve_coopt_inputs(config, fleet_arrays, config.hours)
                 dispatch_kwargs.update(
                     reserve_requirement=coopt_req,
@@ -582,8 +616,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
             )
             context = FleetContext.from_arrays(
-                fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf,
-                solar_cap, storage.energy_cap,
+                fleet_arrays,
+                iso_config,
+                wind_cf,
+                wind_cap,
+                solar_cf,
+                solar_cap,
+                storage.energy_cap,
             )
             result = p1_result
 
@@ -594,11 +633,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # commitment disabled only P1 is solved and it is the primary.
             if config.commitment_enabled:
                 save_result(
-                    p1_result, config, iso, year, context=context,
+                    p1_result,
+                    config,
+                    iso,
+                    year,
+                    context=context,
                     pass_label="p1",
                 )
                 committed = compute_commitment(
-                    p1_result.prices, mc_base, dispatch_fleet, fleet_arrays,
+                    p1_result.prices,
+                    mc_base,
+                    dispatch_fleet,
+                    fleet_arrays,
                     config,
                     storage_charge=p1_result.storage_charge,
                     storage_discharge=p1_result.storage_discharge,
@@ -606,7 +652,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     demand=year_demand,
                 )
                 fleet_arrays_p2 = apply_commitment_with_coal_pin(
-                    fleet_arrays, committed, p1_result.dispatch, dispatch_fleet,
+                    fleet_arrays,
+                    committed,
+                    p1_result.dispatch,
+                    dispatch_fleet,
                     screen_coal=config.commitment_screen_coal,
                 )
                 result = solve_dispatch(
@@ -615,7 +664,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             save_result(result, config, iso, year, context=context)
             logger.info(
                 "year %d: solved and cached (%.3fs)",
-                year, time.perf_counter() - year_start,
+                year,
+                time.perf_counter() - year_start,
             )
 
         # CHP must-run post-processing: non-coal must-run capacity is
@@ -623,14 +673,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # not the grid), so add its generation and emissions back here
         # for asset-level emissions trajectories.
         if campd_bins is not None:
-            mr = compute_must_run_emissions(
-                campd_bins, year, config.must_run_cf
-            )
+            mr = compute_must_run_emissions(campd_bins, year, config.must_run_cf)
             if not mr.empty:
                 logger.info(
                     "year %d: CHP must-run post-processing -- %d bins, "
                     "%.0f GWh, %.0f kt CO2 (asset-level, outside the LP)",
-                    year, len(mr), mr["mr_gen_mwh"].sum() / 1000.0,
+                    year,
+                    len(mr),
+                    mr["mr_gen_mwh"].sum() / 1000.0,
                     mr["mr_co2_tons"].sum() / 1000.0,
                 )
 
@@ -650,12 +700,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # carries the scarcity lift via the reserve clearing price, so the
         # post-solve adder is skipped to avoid double-counting.
         econ_prices = result.prices
-        if (config.scarcity_pricing_enabled and iso == "ERCOT"
-                and not getattr(config, "energy_reserve_coopt", False)):
+        if (
+            config.scarcity_pricing_enabled
+            and iso == "ERCOT"
+            and not getattr(config, "energy_reserve_coopt", False)
+        ):
             ren_headroom = (
                 wind_cf * np.asarray(wind_cap)[:, None]
                 + solar_cf * np.asarray(solar_cap)[:, None]
-                - result.wind_dispatched - result.solar_dispatched
+                - result.wind_dispatched
+                - result.solar_dispatched
             ).sum(axis=0)
             # Online/offline reserve split (results.scarcity): only responsive
             # capacity backs the ORDC curve — a cold slow-start unit the
@@ -665,8 +719,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # NOT netting the AS plan — ERCOT's RTOLCAP already counts online
             # AS-held capacity as reserve, so subtracting it double-counts).
             r_online, r_offline = reserve_headroom(
-                fleet_arrays, result.dispatch, storage.power_cap,
-                result.storage_charge, result.storage_discharge,
+                fleet_arrays,
+                result.dispatch,
+                storage.power_cap,
+                result.storage_charge,
+                result.storage_discharge,
                 effective_reliability_deployment_mw(year, config),
                 renewable_headroom=ren_headroom,
             )
@@ -678,13 +735,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 result.prices.mean(axis=0),
             )
             adder = scarcity_prices(
-                config, year, r_online + r_offline, lam,
-                reserves_online_mw=r_online)["scarcity_adder"]
+                config, year, r_online + r_offline, lam, reserves_online_mw=r_online
+            )["scarcity_adder"]
             econ_prices = result.prices + adder[None, :]
             logger.info(
                 "year %d: ORDC scarcity adder for capacity economics — "
                 "mean $%.2f/MWh, >$10 in %d h, max $%.0f",
-                year, float(adder.mean()), int((adder > 10).sum()),
+                year,
+                float(adder.mean()),
+                int((adder > 10).sum()),
                 float(adder.max()),
             )
 
@@ -706,13 +765,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # year's reserve-margin adequacy backstop.
             "wind_cap_mw": float(np.sum(wind_cap)),
             "solar_cap_mw": float(np.sum(solar_cap)),
-            "storage_firm_mw": float(sum(
-                u.power_cap_mw * _elcc_for_duration(
-                    u.energy_cap_mwh / u.power_cap_mw
-                    if u.power_cap_mw > 0 else 0.0
+            "storage_firm_mw": float(
+                sum(
+                    u.power_cap_mw
+                    * _elcc_for_duration(
+                        u.energy_cap_mwh / u.power_cap_mw if u.power_cap_mw > 0 else 0.0
+                    )
+                    for u in storage_units
                 )
-                for u in storage_units
-            )),
+            ),
         }
 
     logger.info("run_scenario_iso done: iso=%s cache_key=%s", iso, cache_key)
@@ -725,9 +786,7 @@ def _run_pair(pair: tuple[ScenarioConfig, str]) -> str:
     return run_scenario_iso(config, iso)
 
 
-def run_sweep(
-    sweep_def: SweepDefinition, workers: int | None = None
-) -> list[str]:
+def run_sweep(sweep_def: SweepDefinition, workers: int | None = None) -> list[str]:
     """Expand a sweep into configs and run every ``(config, iso)`` pair.
 
     Args:
@@ -747,7 +806,8 @@ def run_sweep(
 
     logger.info(
         "run_sweep start: %d (config, iso) pairs across %d worker(s)",
-        len(pairs), workers,
+        len(pairs),
+        workers,
     )
 
     if workers == 1:
@@ -770,18 +830,19 @@ def _build_parser() -> argparse.ArgumentParser:
         "--config", required=True, help="Path to a scenario YAML file."
     )
     run_parser.add_argument(
-        "--iso", default=None,
+        "--iso",
+        default=None,
         help="ISO to run; defaults to the config's own ISO.",
     )
 
-    sweep_parser = subparsers.add_parser(
-        "sweep", help="Run a parameter sweep."
-    )
+    sweep_parser = subparsers.add_parser("sweep", help="Run a parameter sweep.")
     sweep_parser.add_argument(
         "--sweep", required=True, help="Path to a sweep YAML file."
     )
     sweep_parser.add_argument(
-        "--workers", type=int, default=None,
+        "--workers",
+        type=int,
+        default=None,
         help="Worker processes; defaults to cpu_count - 1.",
     )
 

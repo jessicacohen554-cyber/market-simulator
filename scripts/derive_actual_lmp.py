@@ -63,6 +63,7 @@ partial data drop still produces a valid reference.
 Usage:
     python scripts/derive_actual_lmp.py [--years 2023 2024 2025]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -84,14 +85,20 @@ DEFAULT_YEARS = (2023, 2024, 2025)
 
 PJM_SRC = "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
 ERCOT_SRC = "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)"
-CAISO_SRC = ("CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), "
-             "load-weighted across TH_NP15/TH_ZP26/TH_SP15")
-NYISO_SRC = ("NYISO zonal LBMP (DAM hourly / RTD 5-min averaged to the hour); "
-             "hub is the simple mean of the 11 internal zones, model zones the "
-             "simple mean of their constituent NYISO zones")
-NEISO_SRC = ("ISO-NE SMD hourly DA_LMP / RT_LMP; hub is the .H.INTERNAL_HUB "
-             "(ISO NE CA sheet), model zones the simple mean of their "
-             "constituent SMD load zones")
+CAISO_SRC = (
+    "CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), "
+    "load-weighted across TH_NP15/TH_ZP26/TH_SP15"
+)
+NYISO_SRC = (
+    "NYISO zonal LBMP (DAM hourly / RTD 5-min averaged to the hour); "
+    "hub is the simple mean of the 11 internal zones, model zones the "
+    "simple mean of their constituent NYISO zones"
+)
+NEISO_SRC = (
+    "ISO-NE SMD hourly DA_LMP / RT_LMP; hub is the .H.INTERNAL_HUB "
+    "(ISO NE CA sheet), model zones the simple mean of their "
+    "constituent SMD load zones"
+)
 
 # CAISO has no single system hub; the comparable-to-the-model "system price"
 # is the three trading hubs load-weighted by their zone shares (the same
@@ -116,8 +123,7 @@ _PCT_LEVELS = (1, 5, 10, 25, 50, 75, 90, 95, 99)
 # market_sim.data.campd: Feb 29 is dropped, hours are local clock).
 _HOURS_PER_YEAR = 8760
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-_MONTH_START_HOUR = tuple(
-    int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(12))
+_MONTH_START_HOUR = tuple(int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(12))
 
 
 def _by_month(values, months) -> list:
@@ -135,8 +141,11 @@ def _by_month(values, months) -> list:
 
 def _hour_index(ts: pd.Series) -> np.ndarray:
     """Map local timestamps to the fixed non-leap hour-of-year, Feb 29 -> -1."""
-    idx = (np.asarray([_MONTH_START_HOUR[m - 1] for m in ts.dt.month])
-           + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy())
+    idx = (
+        np.asarray([_MONTH_START_HOUR[m - 1] for m in ts.dt.month])
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
     return np.where((ts.dt.month == 2) & (ts.dt.day == 29), -1, idx)
 
 
@@ -157,18 +166,24 @@ def _hub_mean_hourly(df: pd.DataFrame, year: int) -> pd.DataFrame:
     local calendar: Feb 29 is dropped, the duplicated DST fall-back hour
     averages its two instances, and the missing spring-forward hour is NaN.
     """
-    ts = pd.to_datetime(df["datetime_beginning_ept"],
-                        format="%m/%d/%Y %I:%M:%S %p", errors="coerce")
-    g = (df.assign(hour=_hour_index(ts))
-           .query("hour >= 0")
-           .groupby("hour")[["total_lmp_rt", "total_lmp_da"]].mean())
+    ts = pd.to_datetime(
+        df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
+    )
+    g = (
+        df.assign(hour=_hour_index(ts))
+        .query("hour >= 0")
+        .groupby("hour")[["total_lmp_rt", "total_lmp_da"]]
+        .mean()
+    )
     dense = g.reindex(range(_HOURS_PER_YEAR))
-    return pd.DataFrame({
-        "year": np.int16(year),
-        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
-        "rt": dense["total_lmp_rt"].to_numpy(np.float32),
-        "da": dense["total_lmp_da"].to_numpy(np.float32),
-    })
+    return pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+            "rt": dense["total_lmp_rt"].to_numpy(np.float32),
+            "da": dense["total_lmp_da"].to_numpy(np.float32),
+        }
+    )
 
 
 def _pjm(year: int) -> tuple[dict, pd.DataFrame] | None:
@@ -181,10 +196,11 @@ def _pjm(year: int) -> tuple[dict, pd.DataFrame] | None:
     if not f.exists():
         return None
     df = pd.read_csv(
-        f, usecols=["datetime_beginning_ept", "total_lmp_rt", "total_lmp_da"])
-    mon = pd.to_datetime(df["datetime_beginning_ept"],
-                         format="%m/%d/%Y %I:%M:%S %p",
-                         errors="coerce").dt.month
+        f, usecols=["datetime_beginning_ept", "total_lmp_rt", "total_lmp_da"]
+    )
+    mon = pd.to_datetime(
+        df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
+    ).dt.month
     hourly = _hub_mean_hourly(df, year)
     rec = {
         "da": round(float(df["total_lmp_da"].mean()), 2),
@@ -213,8 +229,9 @@ def _caiso_system_series(name: str, year: int) -> pd.Series | None:
     if not path.exists():
         return None
     df = pd.read_csv(path, usecols=["interval_start_gmt", "node", "LMP"])
-    wide = df.pivot_table(index="interval_start_gmt", columns="node",
-                          values="LMP", aggfunc="mean")
+    wide = df.pivot_table(
+        index="interval_start_gmt", columns="node", values="LMP", aggfunc="mean"
+    )
     if not set(CAISO_HUB_WEIGHTS) <= set(wide.columns):
         return None
     wide = wide[list(CAISO_HUB_WEIGHTS)].dropna()
@@ -248,8 +265,10 @@ def _caiso(year: int) -> tuple[dict, pd.DataFrame] | None:
     independently, so a year present in DAM but not RTM still produces a
     record (as ERCOT 2025 does with RT only).
     """
-    series = {"da": _caiso_system_series("dam", year),
-              "rt": _caiso_system_series("rtm", year)}
+    series = {
+        "da": _caiso_system_series("dam", year),
+        "rt": _caiso_system_series("rtm", year),
+    }
     if series["da"] is None and series["rt"] is None:
         return None
     parts: dict = {}
@@ -261,18 +280,22 @@ def _caiso(year: int) -> tuple[dict, pd.DataFrame] | None:
         d = _caiso_densify(ser)
         dense[key] = d
         parts[key] = round(float(ser.mean()), 2)
-        parts[f"{key}_mon"] = _by_month(ser.to_numpy(),
-                                        pd.Series(ser.index).dt.month)
+        parts[f"{key}_mon"] = _by_month(ser.to_numpy(), pd.Series(ser.index).dt.month)
         parts[f"{key}_pct"] = _pct(d)
-    rec = {k: parts[k] for k in
-           ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct") if k in parts}
+    rec = {
+        k: parts[k]
+        for k in ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct")
+        if k in parts
+    }
     rec["src"] = CAISO_SRC
-    hourly = pd.DataFrame({
-        "year": np.int16(year),
-        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
-        "rt": dense["rt"].astype(np.float32),
-        "da": dense["da"].astype(np.float32),
-    })
+    hourly = pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+            "rt": dense["rt"].astype(np.float32),
+            "da": dense["da"].astype(np.float32),
+        }
+    )
     return rec, hourly
 
 
@@ -301,8 +324,9 @@ def _month_day(v) -> tuple[int, int] | None:
         return None
 
 
-def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int,
-                  hod_col: int, hod_kind: str) -> dict | None:
+def _ercot_hubavg(
+    zip_glob: str, name_col: int, price_col: int, hod_col: int, hod_kind: str
+) -> dict | None:
     """``HB_HUBAVG`` annual/monthly means + dense hourly series for a workbook.
 
     Args:
@@ -357,8 +381,11 @@ def _ercot_hubavg(zip_glob: str, name_col: int, price_col: int,
                 m, d = md
                 if m == 2 and d == 29:  # model calendar drops Feb 29
                     continue
-                hod = (int(str(r[hod_col]).split(":")[0]) - 1
-                       if hod_kind == "he" else int(r[hod_col]) - 1)
+                hod = (
+                    int(str(r[hod_col]).split(":")[0]) - 1
+                    if hod_kind == "he"
+                    else int(r[hod_col]) - 1
+                )
                 hoy = _MONTH_START_HOUR[m - 1] + (d - 1) * 24 + hod
                 if 0 <= hoy < _HOURS_PER_YEAR:
                     hsum[hoy] += price
@@ -396,12 +423,14 @@ def _ercot(year: int) -> tuple[dict, pd.DataFrame] | None:
     if rt is not None:
         out["rt"], out["rt_mon"] = round(rt["ann"], 2), rt["mon"]
         out["rt_pct"] = _pct(rt_h)
-    hourly = pd.DataFrame({
-        "year": np.int16(year),
-        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
-        "rt": rt_h.astype(np.float32),
-        "da": da_h.astype(np.float32),
-    })
+    hourly = pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+            "rt": rt_h.astype(np.float32),
+            "da": da_h.astype(np.float32),
+        }
+    )
     return out, hourly
 
 
@@ -410,8 +439,19 @@ def _ercot(year: int) -> tuple[dict, pd.DataFrame] | None:
 # external-proxy buses (H Q Hydro-Québec, NPX New England, O H Ontario, PJM)
 # are excluded from the internal-zone system price — they are import nodes, not
 # NY load zones (they can sanity-check the P9 import tie, out of scope here).
-NYISO_INTERNAL = ("WEST", "GENESE", "CENTRL", "NORTH", "MHK VL", "CAPITL",
-                  "HUD VL", "MILLWD", "DUNWOD", "N.Y.C.", "LONGIL")
+NYISO_INTERNAL = (
+    "WEST",
+    "GENESE",
+    "CENTRL",
+    "NORTH",
+    "MHK VL",
+    "CAPITL",
+    "HUD VL",
+    "MILLWD",
+    "DUNWOD",
+    "N.Y.C.",
+    "LONGIL",
+)
 NYISO_ZONE_MAP: dict[str, list[str]] = {
     "Upstate_West": ["WEST", "GENESE", "CENTRL", "NORTH", "MHK VL"],
     "Capital_Hudson": ["CAPITL"],
@@ -464,15 +504,20 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
                 if not (base.startswith(str(year)) and "damlbmp_zone" in base):
                     continue
                 with zipfile.ZipFile(io.BytesIO(outer.read(name))) as inner:
-                    frames += [_read_nyiso_csv(inner.read(dn))
-                               for dn in inner.namelist() if dn.endswith(".csv")]
+                    frames += [
+                        _read_nyiso_csv(inner.read(dn))
+                        for dn in inner.namelist()
+                        if dn.endswith(".csv")
+                    ]
     else:
         fmt = "%m/%d/%Y %H:%M:%S"
-        for path in sorted(
-                (LMP_DIR / "NYISO").glob(f"{year}*realtime_zone_csv.zip")):
+        for path in sorted((LMP_DIR / "NYISO").glob(f"{year}*realtime_zone_csv.zip")):
             with zipfile.ZipFile(path) as z:
-                frames += [_read_nyiso_csv(z.read(dn))
-                           for dn in z.namelist() if dn.endswith(".csv")]
+                frames += [
+                    _read_nyiso_csv(z.read(dn))
+                    for dn in z.namelist()
+                    if dn.endswith(".csv")
+                ]
     if not frames:
         return None
     df = pd.concat(frames, ignore_index=True)
@@ -481,8 +526,7 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     df = df.assign(ts=ts.dt.floor("h")).dropna(subset=["ts"])
     # pivot_table mean folds the RT 5-minute intervals and the DST fall-back
     # hour's two instances into one value per zone per wall-clock hour.
-    return df.pivot_table(index="ts", columns="Name", values="lmp",
-                          aggfunc="mean")
+    return df.pivot_table(index="ts", columns="Name", values="lmp", aggfunc="mean")
 
 
 def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
@@ -496,8 +540,10 @@ def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
     wide = _nyiso_wide(year, kind)
     if wide is None:
         return None
-    cols = {z: wide[[c for c in members if c in wide.columns]].mean(axis=1)
-            for z, members in NYISO_ZONE_MAP.items()}
+    cols = {
+        z: wide[[c for c in members if c in wide.columns]].mean(axis=1)
+        for z, members in NYISO_ZONE_MAP.items()
+    }
     present = [z for z in NYISO_INTERNAL if z in wide.columns]
     cols["hub"] = wide[present].mean(axis=1)
     return pd.DataFrame(cols)
@@ -525,8 +571,10 @@ def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
         da.append(r[NEISO_DA_COL])
         rt.append(r[NEISO_RT_COL])
     index = pd.DatetimeIndex(idx)
-    return {"da": pd.Series(pd.to_numeric(da, errors="coerce"), index=index),
-            "rt": pd.Series(pd.to_numeric(rt, errors="coerce"), index=index)}
+    return {
+        "da": pd.Series(pd.to_numeric(da, errors="coerce"), index=index),
+        "rt": pd.Series(pd.to_numeric(rt, errors="coerce"), index=index),
+    }
 
 
 def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
@@ -542,8 +590,9 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
         return None
     needed = {NEISO_HUB_SHEET, *(s for ss in NEISO_ZONE_MAP.values() for s in ss)}
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    raw = {sh: _neiso_sheet_series(wb, sh)[kind]
-           for sh in wb.sheetnames if sh in needed}
+    raw = {
+        sh: _neiso_sheet_series(wb, sh)[kind] for sh in wb.sheetnames if sh in needed
+    }
     wb.close()
     cols: dict[str, pd.Series] = {}
     for z, sheets in NEISO_ZONE_MAP.items():
@@ -555,8 +604,9 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
     return pd.DataFrame(cols) if cols else None
 
 
-def _assemble_zonal(frames: dict[str, pd.DataFrame | None], year: int,
-                    src: str) -> tuple[dict, pd.DataFrame]:
+def _assemble_zonal(
+    frames: dict[str, pd.DataFrame | None], year: int, src: str
+) -> tuple[dict, pd.DataFrame]:
     """Build the JSON record + dense hourly frame from model-zone/hub frames.
 
     ``frames`` maps ``"da"`` / ``"rt"`` to a model-zone-plus-``hub`` frame (or
@@ -587,18 +637,22 @@ def _assemble_zonal(frames: dict[str, pd.DataFrame | None], year: int,
             entry = zones_out.setdefault(z, {})
             entry[kind] = round(float(ser.mean()), 2)
             entry[f"{kind}_mon"] = _by_month(ser.to_numpy(), months)
-    rec = {k: parts[k] for k in
-           ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct") if k in parts}
+    rec = {
+        k: parts[k]
+        for k in ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct")
+        if k in parts
+    }
     order = ("da", "rt", "da_mon", "rt_mon")
-    rec["zones"] = {z: {k: e[k] for k in order if k in e}
-                    for z, e in zones_out.items()}
+    rec["zones"] = {z: {k: e[k] for k in order if k in e} for z, e in zones_out.items()}
     rec["src"] = src
-    hourly = pd.DataFrame({
-        "year": np.int16(year),
-        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
-        "rt": dense["rt"].astype(np.float32),
-        "da": dense["da"].astype(np.float32),
-    })
+    hourly = pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+            "rt": dense["rt"].astype(np.float32),
+            "da": dense["da"].astype(np.float32),
+        }
+    )
     return rec, hourly
 
 
@@ -618,8 +672,13 @@ def _neiso(year: int) -> tuple[dict, pd.DataFrame] | None:
     return _assemble_zonal(frames, year, NEISO_SRC)
 
 
-BUILDERS = {"ERCOT": _ercot, "PJM": _pjm, "CAISO": _caiso,
-            "NYISO": _nyiso, "NEISO": _neiso}
+BUILDERS = {
+    "ERCOT": _ercot,
+    "PJM": _pjm,
+    "CAISO": _caiso,
+    "NYISO": _nyiso,
+    "NEISO": _neiso,
+}
 
 
 def build(years) -> tuple[dict, dict]:
@@ -643,8 +702,9 @@ def build(years) -> tuple[dict, dict]:
                 hourly.setdefault(iso, []).append(hr)
             means = ", ".join(f"{k} ${rec[k]}" for k in ("da", "rt") if k in rec)
             print(f"  {iso} {year}: {means}")
-    return table, {iso: pd.concat(frames, ignore_index=True)
-                   for iso, frames in hourly.items()}
+    return table, {
+        iso: pd.concat(frames, ignore_index=True) for iso, frames in hourly.items()
+    }
 
 
 def main() -> None:
@@ -657,8 +717,7 @@ def main() -> None:
     for iso, frame in hourly.items():
         p = HOURLY_OUT / f"actual_lmp_hourly_{iso}.parquet"
         frame.to_parquet(p, index=False)
-        print(f"wrote {p} ({len(frame)} hours, "
-              f"{frame['year'].nunique()} years)")
+        print(f"wrote {p} ({len(frame)} hours, {frame['year'].nunique()} years)")
 
 
 if __name__ == "__main__":

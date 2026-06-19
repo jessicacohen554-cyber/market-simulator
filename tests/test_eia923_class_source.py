@@ -85,7 +85,9 @@ class TestEia923Override(unittest.TestCase):
             derived = self.dominant.get(int(code))
             if derived in _GAS_BIN_GROUPS and derived != group:
                 mismatches.append((int(code), group, derived))
-        self.assertEqual(mismatches, [], f"gas bins disagree with EIA-923: {mismatches}")
+        self.assertEqual(
+            mismatches, [], f"gas bins disagree with EIA-923: {mismatches}"
+        )
 
     def test_known_drifted_plants_resolve_automatically(self):
         """The three historically hand-fixed plants come out right unhardcoded.
@@ -96,12 +98,12 @@ class TestEia923Override(unittest.TestCase):
         """
         expected = {
             55154: "CC_REGULAR",  # Lost Pines 1 Power Project
-            7325: "CT_PEAKER",    # San Jacinto Steam Electric Station
-            50150: "CT_CHP",      # Union Carbide Seadrift Cogen
+            7325: "CT_PEAKER",  # San Jacinto Steam Electric Station
+            50150: "CT_CHP",  # Union Carbide Seadrift Cogen
         }
-        by_code = dict(zip(
-            self.bins["Plant_Code"].astype(int), self.bins["Plant_Group"]
-        ))
+        by_code = dict(
+            zip(self.bins["Plant_Code"].astype(int), self.bins["Plant_Group"])
+        )
         for code, want in expected.items():
             self.assertEqual(by_code.get(code), want, f"plant {code}")
             # And it falls straight out of the EIA-923 dominant class.

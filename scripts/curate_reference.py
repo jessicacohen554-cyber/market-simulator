@@ -78,7 +78,13 @@ def curate_plant_registry(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, str]:
     # CHP indicator arrives as "Yes" / NaN — coerce to a real boolean flag
     # (blank/NaN means "not flagged" -> False, so the column carries no nulls).
     df["chp_flag"] = (
-        df["chp_flag"].astype("string").str.strip().str.lower().eq("yes").fillna(False).astype(bool)
+        df["chp_flag"]
+        .astype("string")
+        .str.strip()
+        .str.lower()
+        .eq("yes")
+        .fillna(False)
+        .astype(bool)
     )
 
     df["plant_id"] = df["plant_id"].astype("int64")

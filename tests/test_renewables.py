@@ -69,9 +69,7 @@ def test_zone_distribution_from_eia860():
     assert wind_cf.shape == (iso_config.n_zones, HOURS_PER_YEAR)
 
     # The full ISO fleet is spread across every zone, not parked in one.
-    np.testing.assert_allclose(
-        wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"]
-    )
+    np.testing.assert_allclose(wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"])
     np.testing.assert_allclose(
         solar_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["solar"]
     )
@@ -140,7 +138,9 @@ def test_calibration_backcast_uses_eia860_actual_capacity():
     """
     iso_config = get_iso_config("ERCOT")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="ERCOT", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="ERCOT",
+        mode="backcast",
         gas_price_override=2.54,
     )
     _, wind_cap, _, solar_cap = load_renewable_profiles(
@@ -173,9 +173,7 @@ def test_forward_run_uses_renewable_installed_mw():
     np.testing.assert_allclose(
         solar_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["solar"]
     )
-    np.testing.assert_allclose(
-        wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"]
-    )
+    np.testing.assert_allclose(wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"])
 
 
 def test_caiso_solar_allocated_to_trading_zones_not_import():
@@ -185,9 +183,7 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
     _, _, solar_cf, solar_cap = load_renewable_profiles(
         "CAISO", _TEST_YEAR, iso_config, config
     )
-    trading = [
-        iso_config.zone_names.index(z) for z in ("NP15", "ZP26", "SP15")
-    ]
+    trading = [iso_config.zone_names.index(z) for z in ("NP15", "ZP26", "SP15")]
     wecc = iso_config.zone_names.index("WECC_import")
 
     # Solar capacity spreads across the trading zones (eGRID geography puts
@@ -216,7 +212,9 @@ def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
     """
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="CAISO", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="CAISO",
+        mode="backcast",
         gas_price_override=3.0,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
@@ -238,13 +236,9 @@ def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
         # Capacity-weighted CF across zones reconstructs the uncurtailed
         # hourly MW (zero-floored): same annual energy, same chronological
         # shape, and at or above the delivered series everywhere.
-        potential = np.maximum(
-            hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float), 0.0
-        )
+        potential = np.maximum(hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float), 0.0)
         reconstructed = (cap[:, None] * cf).sum(axis=0)
-        np.testing.assert_allclose(
-            reconstructed.sum(), potential.sum(), rtol=0.01
-        )
+        np.testing.assert_allclose(reconstructed.sum(), potential.sum(), rtol=0.01)
         assert np.corrcoef(reconstructed, potential)[0, 1] > 0.999
         assert np.all(reconstructed >= gen[fuel] - 1e-6)
 
@@ -269,7 +263,8 @@ def test_caiso_hsl_parquet_uncurtailed_at_least_delivered():
     multi-TWh wedge.
     """
     covered = [
-        year for year in (2023, 2024, 2025)
+        year
+        for year in (2023, 2024, 2025)
         if load_hsl_hourly("CAISO", year) is not None
     ]
     assert 2023 in covered and 2024 in covered
@@ -282,9 +277,7 @@ def test_caiso_hsl_parquet_uncurtailed_at_least_delivered():
             assert np.all(hsl >= gen - 1e-6), (
                 f"CAISO {year} {fuel}: HSL below delivered"
             )
-        solar_curt_twh = (
-            df["solar_hsl_mw"].sum() - df["solar_gen_mw"].sum()
-        ) / 1e6
+        solar_curt_twh = (df["solar_hsl_mw"].sum() - df["solar_gen_mw"].sum()) / 1e6
         assert 1.0 < solar_curt_twh < 6.0
 
 
@@ -300,7 +293,9 @@ def test_ercot_2023_hsl_path_untouched_by_caiso_wiring():
 
     iso_config = get_iso_config("ERCOT")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="ERCOT", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="ERCOT",
+        mode="backcast",
         gas_price_override=2.54,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
@@ -390,7 +385,9 @@ def test_neiso_backcast_eia930_zone_distribution():
     """
     iso_config = get_iso_config("NEISO")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="NEISO", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="NEISO",
+        mode="backcast",
         gas_price_override=3.0,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
@@ -433,7 +430,9 @@ def test_neiso_backcast_eia930_zone_distribution():
     # normalized distribution, so the mean won't be algebraically exact.
     mean_wind_cf = wind_mw.mean() / wind_cap.sum()
     np.testing.assert_allclose(
-        mean_wind_cf, RENEWABLE_AVG_CF["NEISO"]["wind"], atol=0.10,
+        mean_wind_cf,
+        RENEWABLE_AVG_CF["NEISO"]["wind"],
+        atol=0.10,
         err_msg="NEISO wind mean CF too far from EIA-923 fleet average",
     )
 
@@ -456,6 +455,7 @@ def test_neiso_backcast_eia930_zone_distribution():
 # ---------------------------------------------------------------------------
 # NYISO renewable profile tests (EIA-930 NYIS delivered-distribution path)
 # ---------------------------------------------------------------------------
+
 
 def test_nyiso_hsl_returns_none():
     """NYISO has no HSL parquet — curtailment path is stubbed.
@@ -487,7 +487,9 @@ def test_nyiso_backcast_cf_profile_mean_matches_eia923():
     """
     iso_config = get_iso_config("NYISO")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="NYISO", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="NYISO",
+        mode="backcast",
         gas_price_override=2.54,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
@@ -515,7 +517,9 @@ def test_nyiso_backcast_cf_profile_mean_matches_eia923():
         # solar mean ≈ 0.15 (EIA-930 distribution fallback, flat shape) vs 0.15.
         benchmark = RENEWABLE_AVG_CF["NYISO"][fuel]
         np.testing.assert_allclose(
-            weighted_mean, benchmark, rtol=0.50,
+            weighted_mean,
+            benchmark,
+            rtol=0.50,
             err_msg=(
                 f"NYISO {fuel} backcast mean CF {weighted_mean:.3f} is outside "
                 f"±50 % of EIA-923 benchmark {benchmark:.3f}"
@@ -533,12 +537,12 @@ def test_nyiso_wind_concentrates_upstate():
     """
     iso_config = get_iso_config("NYISO")
     config = ScenarioConfig(
-        weather_year=_CAL_YEAR, iso="NYISO", mode="backcast",
+        weather_year=_CAL_YEAR,
+        iso="NYISO",
+        mode="backcast",
         gas_price_override=2.54,
     )
-    _, wind_cap, _, _ = load_renewable_profiles(
-        "NYISO", _CAL_YEAR, iso_config, config
-    )
+    _, wind_cap, _, _ = load_renewable_profiles("NYISO", _CAL_YEAR, iso_config, config)
 
     zone_names = iso_config.zone_names
     upstate_west = zone_names.index("Upstate_West")
@@ -553,7 +557,7 @@ def test_nyiso_wind_concentrates_upstate():
     for zone in ("Lower_Hudson", "NYC", "Long_Island"):
         idx = zone_names.index(zone)
         assert wind_cap[idx] / total < 0.05, (
-            f"{zone} wind share {wind_cap[idx]/total:.1%} exceeds 5 % — "
+            f"{zone} wind share {wind_cap[idx] / total:.1%} exceeds 5 % — "
             "unexpected downstate wind concentration"
         )
 

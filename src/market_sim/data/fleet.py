@@ -156,18 +156,39 @@ EIA_860_MULTIFUEL_PARQUET_NAME: str = "eia860_multifuel_operable.parquet"
 # Columns of the cached plant-level binned-fleet parquet, one row per
 # physical generator with its loader-assigned efficiency bin and attributes.
 BINNED_FLEET_COLUMNS: list[str] = [
-    "plant_id", "plant_name", "fuel_type", "efficiency_bin", "zone",
-    "pmax_mw", "pmin_mw", "heat_rate", "vom", "emission_rate_co2",
-    "nox_rate", "eford", "online_year", "retirement_year",
+    "plant_id",
+    "plant_name",
+    "fuel_type",
+    "efficiency_bin",
+    "zone",
+    "pmax_mw",
+    "pmin_mw",
+    "heat_rate",
+    "vom",
+    "emission_rate_co2",
+    "nox_rate",
+    "eford",
+    "online_year",
+    "retirement_year",
 ]
 
 # Canonical column order of the EIA-860 generator extract consumed by the
 # fleet loader, produced by ``scripts/process_eia860.py``.
 EIA_860_CSV_COLUMNS: list[str] = [
-    "plant_id", "generator_id", "plant_name", "state",
-    "balancing_authority_code", "technology", "energy_source", "prime_mover",
-    "nameplate_capacity_mw", "net_summer_capacity_mw", "operating_year",
-    "planned_retirement_year", "status", "heat_rate",
+    "plant_id",
+    "generator_id",
+    "plant_name",
+    "state",
+    "balancing_authority_code",
+    "technology",
+    "energy_source",
+    "prime_mover",
+    "nameplate_capacity_mw",
+    "net_summer_capacity_mw",
+    "operating_year",
+    "planned_retirement_year",
+    "status",
+    "heat_rate",
 ]
 
 # EIA-930 balancing-authority code → ISO name, for the seven wholesale
@@ -197,14 +218,14 @@ FUEL_TYPE_MAP: dict[str, int] = {
     "solar": 5,
     "hydro": 6,
     "import": 7,
-    "hydrogen_ct": 8,     # simple-cycle H2 turbine (peaker)
-    "hydrogen_ccgt": 9,   # combined-cycle H2 turbine (mid-merit/baseload)
-    "gas_cc_ccs": 10,     # gas CCGT with 90% post-combustion carbon capture
-    "oil": 11,            # oil-fired peaker/steam (distillate + residual fuel oil)
-    "geothermal": 12,     # enhanced geothermal systems (EGS)
+    "hydrogen_ct": 8,  # simple-cycle H2 turbine (peaker)
+    "hydrogen_ccgt": 9,  # combined-cycle H2 turbine (mid-merit/baseload)
+    "gas_cc_ccs": 10,  # gas CCGT with 90% post-combustion carbon capture
+    "oil": 11,  # oil-fired peaker/steam (distillate + residual fuel oil)
+    "geothermal": 12,  # enhanced geothermal systems (EGS)
     "offshore_wind": 13,  # offshore wind (fixed-bottom and floating)
-    "gas_st": 14,         # legacy natural-gas steam boiler (conventional ST)
-    "biomass": 15,        # biomass / wood / MSW / landfill-gas thermal steam
+    "gas_st": 14,  # legacy natural-gas steam boiler (conventional ST)
+    "biomass": 15,  # biomass / wood / MSW / landfill-gas thermal steam
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.
@@ -247,23 +268,23 @@ class Generator(BaseModel):
     # carry the per-bin commitment parameters and must-run accounting that
     # used to live in lookup-table constants.
     is_campd_bin: bool = False
-    plant_group: str = ""           # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP
-    bin_label: str = ""             # human-readable bin id, e.g. H_CC1
-    min_run_hours: int = 0          # minimum committed run length
-    min_down_hours: int = 0         # minimum downtime between runs
+    plant_group: str = ""  # CC_CHP, CC_REGULAR, COAL, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP
+    bin_label: str = ""  # human-readable bin id, e.g. H_CC1
+    min_run_hours: int = 0  # minimum committed run length
+    min_down_hours: int = 0  # minimum downtime between runs
     startup_cost_per_mw: float = 0.0  # $/MW per start, for the bid markup
-    must_run_pct: float = 0.0       # MR% of the bin's nameplate (CHP steam)
-    bin_nameplate_mw: float = 0.0   # bin total nameplate, for MR reconstruction
-    coal_supply: str = ""           # "lignite" (mine-mouth) or "prb" (rail);
+    must_run_pct: float = 0.0  # MR% of the bin's nameplate (CHP steam)
+    bin_nameplate_mw: float = 0.0  # bin total nameplate, for MR reconstruction
+    coal_supply: str = ""  # "lignite" (mine-mouth) or "prb" (rail);
     #                                 drives plant-specific coal fuel pricing
-    plant_code: int = 0             # EIA plant code, when the tranche maps
+    plant_code: int = 0  # EIA plant code, when the tranche maps
     #                                 to a single physical plant; drives the
     #                                 F923 monthly fuel-cost lookup.
-    state: str = ""                 # USPS state code (EIA-860). Drives the
+    state: str = ""  # USPS state code (EIA-860). Drives the
     #                                 fuel-cost resolver's state-level
     #                                 "nearby plant" fallback; "" for fleets
     #                                 (e.g. ERCOT bins) that do not set it.
-    chp_grid_pmin_mw: float = 0.0   # grid-delivered steam-following floor (MW)
+    chp_grid_pmin_mw: float = 0.0  # grid-delivered steam-following floor (MW)
     #                                 forced on flat via FleetArrays.min_gen for
     #                                 CC_CHP cogens (config.chp_steam_following).
 
@@ -360,8 +381,10 @@ _SUMMER_WEFOR_SHARE: float = 0.30
 # simple-cycle CTs than combined-cycle). Applied on top of the age-based
 # availability for these classes only; coal and gas steam are unaffected.
 _SUMMER_CLASS_DERATE: dict[str, float] = {
-    "CC_REGULAR": 0.10, "CC_CHP": 0.10,
-    "CT_PEAKER": 0.125, "CT_CHP": 0.125,
+    "CC_REGULAR": 0.10,
+    "CC_CHP": 0.10,
+    "CT_PEAKER": 0.125,
+    "CT_CHP": 0.125,
 }
 
 # Non-coal thermal classes whose statistical planned-outage factor (POF) is
@@ -380,7 +403,7 @@ _POF_DROP_GROUPS: frozenset[str] = frozenset(
 # Applied as an availability ceiling year-round.
 COAL_MAX_CF_BY_PLANT: dict[int, float] = {
     6180: 0.90,  # Oak Grove
-    298:  0.80,  # Limestone
+    298: 0.80,  # Limestone
     6178: 0.99,  # Coleto Creek
     6183: 0.90,  # San Miguel
     6179: 0.89,  # Fayette (Sam Seymour)
@@ -406,9 +429,9 @@ def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     three are additive — availability is ``1 - WEFOR - derate`` flat
     year-round, less ``POF`` in the shoulder months.
     """
-    pof, w_base, w_rate, w_onset, d_base, d_rate, d_onset = (
-        THERMAL_AVAILABILITY[category]
-    )
+    pof, w_base, w_rate, w_onset, d_base, d_rate, d_onset = THERMAL_AVAILABILITY[
+        category
+    ]
     wefor = w_base + max(0.0, age - w_onset) * w_rate
     derate = d_base + max(0.0, age - d_onset) * d_rate
     return pof, wefor, derate
@@ -418,9 +441,17 @@ def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
 # can therefore withhold energy when they do (gas CC/CT/ST + coal, incl. their
 # CHP variants). Storage, renewables, nuclear and hydro are excluded from the
 # AS-reserve-withholding pool.
-_AS_THERMAL_GROUPS: frozenset[str] = frozenset({
-    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP", "COAL",
-})
+_AS_THERMAL_GROUPS: frozenset[str] = frozenset(
+    {
+        "CC_REGULAR",
+        "CC_CHP",
+        "CT_PEAKER",
+        "CT_CHP",
+        "ST_GAS",
+        "ST_CHP",
+        "COAL",
+    }
+)
 
 # AS-withholding pool: gas thermal only. Baseload coal is self-committed and
 # runs flat for energy, carrying little upward AS in ERCOT (reserve sits on
@@ -482,7 +513,10 @@ _CAISO_MSSC_EXCLUDE_FUELS: frozenset[str] = frozenset({"import", "wind", "solar"
 # upward energy offer — and is excluded, exactly as the raw withholding builders
 # do). Their sum reproduces the raw ``as_up_mw`` series for ERCOT.
 _CLEAN_AS_UP_MW_COLS: tuple[str, ...] = (
-    "reg_up_mw", "spin_mw", "nonspin_mw", "supp_30min_mw",
+    "reg_up_mw",
+    "spin_mw",
+    "nonspin_mw",
+    "supp_30min_mw",
 )
 
 # The fixed non-leap 8760-hour model calendar (representative year 2023), shared
@@ -528,7 +562,10 @@ def _clean_as_reserve_withholding_mw(
     except FileNotFoundError:
         logger.warning(
             "as_reserve_withholding(clean) on but no clean AS partition for "
-            "%s %s %d; withholding skipped", iso, market, year,
+            "%s %s %d; withholding skipped",
+            iso,
+            market,
+            year,
         )
         return None
     if "zone" in df.columns:
@@ -595,7 +632,9 @@ def load_as_reserve_withholding_mw(
     if not path.exists():
         logger.warning(
             "as_reserve_withholding on but %s is missing; AS withholding "
-            "skipped for %d", path, year,
+            "skipped for %d",
+            path,
+            year,
         )
         return None
     series = pd.read_parquet(path)["as_up_mw"].to_numpy(dtype=float)
@@ -604,9 +643,7 @@ def load_as_reserve_withholding_mw(
     return series[:hours]
 
 
-def load_as_thermal_withholding(
-    year: int, hours: int
-) -> dict[str, np.ndarray] | None:
+def load_as_thermal_withholding(year: int, hours: int) -> dict[str, np.ndarray] | None:
     """Load ERCOT's measured per-thermal-class hourly AS-up MW for ``year``.
 
     Reads ``ercot_<year>_as_by_restype_hourly.parquet`` — the per-resource
@@ -686,7 +723,8 @@ def _withdraw_top_of_merit(
     with np.errstate(divide="ignore", invalid="ignore"):
         availability[order, :] = np.where(
             pmax[order, np.newaxis] > 0.0,
-            (caps - removed) / pmax[order, np.newaxis], 0.0,
+            (caps - removed) / pmax[order, np.newaxis],
+            0.0,
         )
     unmet = float(np.maximum(as_series - caps.sum(axis=0), 0.0).sum())
     return float(removed.sum()), unmet
@@ -730,9 +768,7 @@ def generators_to_fleet_arrays(
     )
 
     eford = np.array([g.eford for g in generators], dtype=float)
-    availability = np.broadcast_to(
-        (1.0 - eford)[:, np.newaxis], (n_gen, hours)
-    ).copy()
+    availability = np.broadcast_to((1.0 - eford)[:, np.newaxis], (n_gen, hours)).copy()
 
     # Apply nuclear monthly availability factors (refueling outages, planned
     # maintenance). NUCLEAR_MONTHLY_CF holds 12 monthly capacity-factor caps
@@ -764,14 +800,10 @@ def generators_to_fleet_arrays(
     # return-to-service year. Forecast runs keep the unit — in backcast mode
     # weather_year is the calendar year; in forecast it is only a weather
     # shape, so the comparison would be meaningless there.
-    if (
-        _yr is not None
-        and getattr(config, "mode", "forecast") == "backcast"
-    ):
+    if _yr is not None and getattr(config, "mode", "forecast") == "backcast":
         for g_idx, gen in enumerate(generators):
-            if (
-                gen.fuel_type == "nuclear"
-                and _yr < NUCLEAR_DORMANT_UNTIL.get(int(gen.plant_code), 0)
+            if gen.fuel_type == "nuclear" and _yr < NUCLEAR_DORMANT_UNTIL.get(
+                int(gen.plant_code), 0
             ):
                 availability[g_idx, :] = 0.0
 
@@ -830,9 +862,7 @@ def generators_to_fleet_arrays(
         and getattr(config, "mode", "forecast") == "backcast"
         and _yr is not None
     ):
-        ct_deploy_frac = float(
-            getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0
-        )
+        ct_deploy_frac = float(getattr(config, "ct_deployment_floor_frac", 1.0) or 0.0)
         if ct_deploy_frac > 0.0:
             ct_deploy_floor = ct_deployment_floor_for_year(
                 int(_yr), hours, _iso or "ERCOT"
@@ -897,14 +927,16 @@ def generators_to_fleet_arrays(
             # (CT keeps the full statistical model — no CAMPD coverage).
             _relief_groups = getattr(config, "wefor_residual_groups", None)
             _covered = (
-                gen.plant_group in _relief_groups if _relief_groups
-                else (gen.fuel_type == "coal"
-                      or gen.plant_group in _POF_DROP_GROUPS)
+                gen.plant_group in _relief_groups
+                if _relief_groups
+                else (gen.fuel_type == "coal" or gen.plant_group in _POF_DROP_GROUPS)
             )
             if wefor_res is not None and _covered:
                 wefor = min(wefor, wefor_res)
-            if (gen.plant_group == "CT_PEAKER"
-                    and int(gen.plant_code) in ct_floor_plants):
+            if (
+                gen.plant_group == "CT_PEAKER"
+                and int(gen.plant_code) in ct_floor_plants
+            ):
                 # Reliability must-run floor unit: WEFOR and the planned-outage
                 # (maintenance) derate do not apply — the floor injected below is
                 # observed EIA-923 generation, which already embeds every real
@@ -923,29 +955,25 @@ def generators_to_fleet_arrays(
             else:
                 summer_wefor = _SUMMER_WEFOR_SHARE * wefor
                 shoulder_wefor = (
-                    wefor
-                    + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
+                    wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder
                 )
                 # Drop the shoulder POF for the historic-overlay classes (CC /
                 # ST + their CHP) so it does not double-count the actual planned
                 # outages from the overlay + unit derate; CTs keep POF.
                 pof_eff = (
-                    0.0 if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
+                    0.0
+                    if drop_coal_pof and gen.plant_group in _POF_DROP_GROUPS
                     else pof
                 )
                 # Default (winter): flat WEFOR, no POF. Then override summer
                 # and shoulder.
                 availability[g_idx, :] = 1.0 - wefor - derate
                 availability[g_idx, summer] = 1.0 - summer_wefor - derate
-                availability[g_idx, shoulder] = (
-                    1.0 - shoulder_wefor - derate - pof_eff
-                )
+                availability[g_idx, shoulder] = 1.0 - shoulder_wefor - derate - pof_eff
             # Per-bin forced derates for confirmed unit losses (e.g. a
             # multi-unit plant losing one boiler to a fire). Applied as a
             # flat multiplier on top of the age-based availability.
-            forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(
-                run_year
-            )
+            forced = BIN_FORCED_DERATE_BY_YEAR.get(gen.bin_label, {}).get(run_year)
             if forced is not None:
                 availability[g_idx, :] *= forced
             # Summer ambient-temperature derate for CC / CT classes.
@@ -960,8 +988,7 @@ def generators_to_fleet_arrays(
                     (_pc, run_year), COAL_MAX_CF_BY_PLANT.get(_pc)
                 )
                 if cap is not None:
-                    np.minimum(availability[g_idx, :], cap,
-                               out=availability[g_idx, :])
+                    np.minimum(availability[g_idx, :], cap, out=availability[g_idx, :])
                 scap = COAL_SUMMER_MAX_CF.get(_pc)
                 if scap is not None:
                     availability[g_idx, summer] = np.minimum(
@@ -976,9 +1003,10 @@ def generators_to_fleet_arrays(
     # statistical (outage_source == "statistical", the default). The per-bin
     # group filter restricts zeroing to the plant's coal/CC bins, so a plant
     # carrying both a CC and a non-CC bin only has its CC bin outaged.
-    if config is not None and getattr(
-        config, "outage_source", "statistical"
-    ) == "historic":
+    if (
+        config is not None
+        and getattr(config, "outage_source", "statistical") == "historic"
+    ):
         # ERCOT reads the legacy campd-outages.csv intersected with its bin
         # CSV; every other ISO reads its own campd-outages-{ISO}.csv (already
         # coal/CC only, so no bin intersection). The per-bin gen.plant_group
@@ -995,10 +1023,12 @@ def generators_to_fleet_arrays(
                 outages_path=default_outages_path(_iso),
                 bins_path=(
                     getattr(
-                        config, "campd_bins_path",
+                        config,
+                        "campd_bins_path",
                         str(CAMPD_BINS_CSV),
                     )
-                    if is_ercot else None
+                    if is_ercot
+                    else None
                 ),
             )
             if getattr(config, "historic_outage_overlay", True)
@@ -1017,7 +1047,10 @@ def generators_to_fleet_arrays(
             logger.info(
                 "historic outage overlay (%s %d): zeroed %d coal/CC "
                 "bin-tranches across %d plant(s)",
-                _iso or "ERCOT", config.weather_year, applied, len(masks),
+                _iso or "ERCOT",
+                config.weather_year,
+                applied,
+                len(masks),
             )
         # Unit-level outage derate (backcast): partial availability cut per
         # unit outage >= 5 days, sized by the unit's share of its plant's
@@ -1029,9 +1062,9 @@ def generators_to_fleet_arrays(
         # unit-outage file get an empty derate (no effect). Multiplies the
         # availability already set above.
         ufac = unit_outage_derate_factors(
-            config.weather_year, hours,
-            getattr(config, "campd_bins_path",
-                    str(CAMPD_BINS_CSV)),
+            config.weather_year,
+            hours,
+            getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
             iso=_iso or "ERCOT",
         )
         if ufac:
@@ -1043,7 +1076,9 @@ def generators_to_fleet_arrays(
                     applied_u += 1
             logger.info(
                 "unit-outage derate (%s %d): %d plant-tranches derated",
-                _iso or "ERCOT", config.weather_year, applied_u,
+                _iso or "ERCOT",
+                config.weather_year,
+                applied_u,
             )
         if not masks and not ufac:
             # A backcast year with no measured windows in either layer (e.g.
@@ -1053,7 +1088,8 @@ def generators_to_fleet_arrays(
             logger.warning(
                 "outage_source='historic' but no outage windows cover %s %d; "
                 "availability is statistical-only for this year",
-                _iso or "ERCOT", config.weather_year,
+                _iso or "ERCOT",
+                config.weather_year,
             )
         # The partial-outage derate below is an ERCOT-only extract (CAMPD
         # CF-ceiling plateaus keyed to ERCOT plant codes); other ISOs carry no
@@ -1073,7 +1109,8 @@ def generators_to_fleet_arrays(
                         applied_p += 1
                 logger.info(
                     "partial-outage derate (%d): %d bin-tranches derated",
-                    config.weather_year, applied_p,
+                    config.weather_year,
+                    applied_p,
                 )
 
     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
@@ -1083,9 +1120,7 @@ def generators_to_fleet_arrays(
     # high-econ end of the offer curve while the cheap committed floor keeps
     # its level — matching how a multi-train CC sheds its least-efficient
     # increments first and runs the surviving train near full load.
-    if config is not None and getattr(
-        config, "cc_outage_derate_from_top", False
-    ):
+    if config is not None and getattr(config, "cc_outage_derate_from_top", False):
         cc_by_plant: dict[int, list[int]] = {}
         for g_idx, gen in enumerate(generators):
             if gen.plant_group == "CC_REGULAR" and int(gen.plant_code) > 0:
@@ -1102,14 +1137,15 @@ def generators_to_fleet_arrays(
             cum_below = np.concatenate(([0.0], np.cumsum(caps[:-1])))
             bounds = np.clip(
                 avail_mw[np.newaxis, :] - cum_below[:, np.newaxis],
-                0.0, caps[:, np.newaxis],
+                0.0,
+                caps[:, np.newaxis],
             )
             availability[order, :] = bounds / caps[:, np.newaxis]
             realloc_plants += 1
         if realloc_plants:
             logger.info(
-                "CC_REGULAR outage derate reallocated top-of-stack for %d "
-                "plant(s)", realloc_plants,
+                "CC_REGULAR outage derate reallocated top-of-stack for %d plant(s)",
+                realloc_plants,
             )
 
     # Seasonal ST_GAS reliability must-run floor: a hard minimum-generation
@@ -1119,18 +1155,20 @@ def generators_to_fleet_arrays(
     # economic; capped by availability.
     min_gen = None
     st_mr_frac = (
-        getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None
-        else 0.0
+        getattr(config, "gas_st_summer_mustrun", 0.0) if config is not None else 0.0
     )
     st_off_frac = (
-        getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None
-        else 0.0
+        getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None else 0.0
     )
-    chp_pmin_any = any(
-        getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators
-    )
-    if (st_mr_frac > 0.0 or st_off_frac > 0.0 or chp_pmin_any
-            or ct_floor_plants or ct_deploy_plants or rd_deploy_plants):
+    chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
+    if (
+        st_mr_frac > 0.0
+        or st_off_frac > 0.0
+        or chp_pmin_any
+        or ct_floor_plants
+        or ct_deploy_plants
+        or rd_deploy_plants
+    ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
         # (build_variable_bounds), so export sinks (pmin < 0, absorption
@@ -1140,14 +1178,17 @@ def generators_to_fleet_arrays(
         if neg_pmin.any():
             min_gen[neg_pmin, :] = pmin[neg_pmin, np.newaxis]
         if st_mr_frac > 0.0 or st_off_frac > 0.0:
-            summer_mask = np.isin(_hour_to_month_index(hours) + 1,
-                                  list(_GAS_ST_SUMMER_MONTHS))
+            summer_mask = np.isin(
+                _hour_to_month_index(hours) + 1, list(_GAS_ST_SUMMER_MONTHS)
+            )
             # Reliability (non-peaker) ST_GAS held at the summer / off-summer
             # floor; peaker-class ST_GAS run purely economically (no floor).
             for g_idx, gen in enumerate(generators):
-                if (gen.plant_group == "ST_GAS"
-                        and not gen.unit_id.endswith("_peak")
-                        and gen.plant_code not in ST_GAS_PEAKER_PLANTS):
+                if (
+                    gen.plant_group == "ST_GAS"
+                    and not gen.unit_id.endswith("_peak")
+                    and gen.plant_code not in ST_GAS_PEAKER_PLANTS
+                ):
                     min_gen[g_idx, summer_mask] = st_mr_frac * pmax[g_idx]
                     min_gen[g_idx, ~summer_mask] = st_off_frac * pmax[g_idx]
         # CHP grid-delivered steam-following floor: the cogen's steady export
@@ -1181,8 +1222,10 @@ def generators_to_fleet_arrays(
             )
             ct_tranches: dict[int, list[int]] = {}
             for g_idx, gen in enumerate(generators):
-                if (gen.plant_group == "CT_PEAKER"
-                        and int(gen.plant_code) in ct_floor_plants):
+                if (
+                    gen.plant_group == "CT_PEAKER"
+                    and int(gen.plant_code) in ct_floor_plants
+                ):
                     ct_tranches.setdefault(int(gen.plant_code), []).append(g_idx)
             # System-load fallback weights (per month, summing to 1.0):
             # max(load - median, 0) concentrates energy in the peak hours.
@@ -1222,7 +1265,9 @@ def generators_to_fleet_arrays(
                         # so the floor genuinely stops there.
                         cs = np.nan_to_num(
                             np.asarray(campd_shape, dtype=float)[hmask],
-                            nan=0.0, posinf=0.0, neginf=0.0,
+                            nan=0.0,
+                            posinf=0.0,
+                            neginf=0.0,
                         )
                         cs = np.maximum(cs, 0.0)
                         if cs.sum() > 0.0:
@@ -1251,10 +1296,11 @@ def generators_to_fleet_arrays(
         if ct_deploy_plants:
             ct_d_tranches: dict[int, list[int]] = {}
             for g_idx, gen in enumerate(generators):
-                if (gen.plant_group == "CT_PEAKER"
-                        and int(gen.plant_code) in ct_deploy_plants):
-                    ct_d_tranches.setdefault(
-                        int(gen.plant_code), []).append(g_idx)
+                if (
+                    gen.plant_group == "CT_PEAKER"
+                    and int(gen.plant_code) in ct_deploy_plants
+                ):
+                    ct_d_tranches.setdefault(int(gen.plant_code), []).append(g_idx)
             deploy_mwh = 0.0
             for pc, idxs in ct_d_tranches.items():
                 idxs.sort(key=lambda i: heat_rate[i])
@@ -1268,8 +1314,11 @@ def generators_to_fleet_arrays(
             logger.info(
                 "CT deployment overlay (%s %s): floored %d peaker(s), "
                 "%.2f TWh of out-of-merit energy (frac %.2f)",
-                _iso or "ERCOT", _yr, len(ct_d_tranches),
-                deploy_mwh / 1e6, ct_deploy_frac,
+                _iso or "ERCOT",
+                _yr,
+                len(ct_d_tranches),
+                deploy_mwh / 1e6,
+                ct_deploy_frac,
             )
         # Per-plant spatial reliability-deployment hourly floor: in each
         # load-pocket plant's measured congestion-subset hours (economic at its
@@ -1299,8 +1348,11 @@ def generators_to_fleet_arrays(
             logger.info(
                 "reliability deployment overlay (%s %s): floored %d "
                 "pocket plant(s), %.2f TWh of congestion energy (frac %.2f)",
-                _iso or "ERCOT", _yr, len(rd_tranches),
-                rd_mwh / 1e6, rd_deploy_frac,
+                _iso or "ERCOT",
+                _yr,
+                len(rd_tranches),
+                rd_mwh / 1e6,
+                rd_deploy_frac,
             )
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
@@ -1322,21 +1374,27 @@ def generators_to_fleet_arrays(
     # plant-level online reserve over the same thermal fleet. Applied last,
     # after every outage/derate; floored back up to any must-run min_gen.
     # Down-AS (Reg-Down) is excluded upstream — it removes no upward offer.
-    if (config is not None
-            and getattr(config, "as_reserve_withholding", False)
-            and _iso in _AS_WITHHOLDING):
+    if (
+        config is not None
+        and getattr(config, "as_reserve_withholding", False)
+        and _iso in _AS_WITHHOLDING
+    ):
         _yr_as = getattr(config, "weather_year", 0)
         pool_groups = _AS_WITHHOLDING[_iso][2]
         withdrawn = unmet = 0.0
         # Per-resource-type split is ERCOT-only (no PJM per-type AS file);
         # every other ISO uses the system-total measured series on its pool.
-        by_class = (load_as_thermal_withholding(_yr_as, hours)
-                    if _iso == "ERCOT" else None)
+        by_class = (
+            load_as_thermal_withholding(_yr_as, hours) if _iso == "ERCOT" else None
+        )
         if by_class is not None:
             for col, series in by_class.items():
                 pool = np.array(
-                    [i for i, g in enumerate(generators)
-                     if g.plant_group in _AS_RESTYPE_TO_GROUPS[col]],
+                    [
+                        i
+                        for i, g in enumerate(generators)
+                        if g.plant_group in _AS_RESTYPE_TO_GROUPS[col]
+                    ],
                     dtype=int,
                 )
                 w, u = _withdraw_top_of_merit(
@@ -1348,26 +1406,36 @@ def generators_to_fleet_arrays(
         else:
             as_mw = load_as_reserve_withholding_mw(_yr_as, hours, iso=_iso)
             pool = np.array(
-                [i for i, g in enumerate(generators)
-                 if g.plant_group in pool_groups],
+                [i for i, g in enumerate(generators) if g.plant_group in pool_groups],
                 dtype=int,
             )
             if as_mw is not None:
                 withdrawn, unmet = _withdraw_top_of_merit(
                     availability, pmax, heat_rate, pool, as_mw
                 )
-            source = ("measured PR requirement" if _iso == "PJM"
-                      else "system-total upper bound")
+            source = (
+                "measured PR requirement"
+                if _iso == "PJM"
+                else "system-total upper bound"
+            )
         if min_gen is not None:
             floor_frac = np.zeros_like(availability)
-            np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
-                      where=pmax[:, np.newaxis] > 0.0)
+            np.divide(
+                min_gen,
+                pmax[:, np.newaxis],
+                out=floor_frac,
+                where=pmax[:, np.newaxis] > 0.0,
+            )
             np.maximum(availability, floor_frac, out=availability)
         np.clip(availability, 0.0, 1.0, out=availability)
         logger.info(
             "AS reserve withholding (%s %s, %s): withdrew %.1f GWh-equiv "
             "from thermal top-of-merit (%.1f GWh unmet by headroom)",
-            _iso, _yr_as, source, withdrawn / 1e3, unmet / 1e3,
+            _iso,
+            _yr_as,
+            source,
+            withdrawn / 1e3,
+            unmet / 1e3,
         )
 
     # CAISO formula-based operating-reserve withholding (default off; the
@@ -1378,19 +1446,25 @@ def generators_to_fleet_arrays(
     # the measured ERCOT/PJM path above — lifting the tight-hour / evening-tail
     # price. Coal/nuclear baseload is left out of the pool, and the midday floor
     # (a separate longness/marginal-offer problem) is untouched.
-    if (config is not None
-            and getattr(config, "as_reserve_formula", False)
-            and _iso == "CAISO"
-            and load_shape is not None):
+    if (
+        config is not None
+        and getattr(config, "as_reserve_formula", False)
+        and _iso == "CAISO"
+        and load_shape is not None
+    ):
         mssc_mw = float(
-            max((pmax[i] for i, g in enumerate(generators)
-                 if g.fuel_type not in _CAISO_MSSC_EXCLUDE_FUELS),
-                default=0.0)
+            max(
+                (
+                    pmax[i]
+                    for i, g in enumerate(generators)
+                    if g.fuel_type not in _CAISO_MSSC_EXCLUDE_FUELS
+                ),
+                default=0.0,
+            )
         )
         r_mw = caiso_operating_reserve_mw(load_shape, mssc_mw, hours)
         pool = np.array(
-            [i for i, g in enumerate(generators)
-             if g.plant_group in _AS_GAS_GROUPS],
+            [i for i, g in enumerate(generators) if g.plant_group in _AS_GAS_GROUPS],
             dtype=int,
         )
         withdrawn, unmet = _withdraw_top_of_merit(
@@ -1398,16 +1472,24 @@ def generators_to_fleet_arrays(
         )
         if min_gen is not None:
             floor_frac = np.zeros_like(availability)
-            np.divide(min_gen, pmax[:, np.newaxis], out=floor_frac,
-                      where=pmax[:, np.newaxis] > 0.0)
+            np.divide(
+                min_gen,
+                pmax[:, np.newaxis],
+                out=floor_frac,
+                where=pmax[:, np.newaxis] > 0.0,
+            )
             np.maximum(availability, floor_frac, out=availability)
         np.clip(availability, 0.0, 1.0, out=availability)
         logger.info(
             "CAISO operating-reserve withholding (formula, %s): MSSC %.0f MW, "
             "R(t) mean %.0f / max %.0f MW; withdrew %.1f GWh-equiv from gas "
             "top-of-merit (%.1f GWh unmet by headroom)",
-            getattr(config, "weather_year", 0), mssc_mw,
-            float(r_mw.mean()), float(r_mw.max()), withdrawn / 1e3, unmet / 1e3,
+            getattr(config, "weather_year", 0),
+            mssc_mw,
+            float(r_mw.mean()),
+            float(r_mw.max()),
+            withdrawn / 1e3,
+            unmet / 1e3,
         )
 
     # Commercial-operation-date (COD) vintage ramp — the single COD mechanism
@@ -1425,16 +1507,22 @@ def generators_to_fleet_arrays(
     # backcasts (config.cod_ramp_enabled); forecast runs pass an explicit
     # calendar ``year`` to engage it.
     _cod_year = year if year is not None else getattr(config, "weather_year", None)
-    if (config is not None
-            and getattr(config, "cod_ramp_enabled", True)
-            and getattr(config, "mode", "forecast") == "backcast"
-            and _cod_year is not None):
+    if (
+        config is not None
+        and getattr(config, "cod_ramp_enabled", True)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _cod_year is not None
+    ):
         cod_map = load_cod_map()
         online_mask = np.ones((n_gen, 12), dtype=float)
         for g_idx, gen in enumerate(generators):
             oy, om, ry, rm = effective_cod(
-                int(gen.plant_code), gen.online_year, gen.online_month,
-                gen.retirement_year, gen.retirement_month, cod_map,
+                int(gen.plant_code),
+                gen.online_year,
+                gen.online_month,
+                gen.retirement_year,
+                gen.retirement_month,
+                cod_map,
             )
             online_mask[g_idx] = monthly_online_mask(oy, om, ry, rm, _cod_year)
         if (online_mask < 1.0).any():
@@ -1449,7 +1537,10 @@ def generators_to_fleet_arrays(
                 "COD ramp (%s %s): %d unit-months masked offline "
                 "(mid-year COD / retirement), %d unit(s) fully not-yet-built/"
                 "retired",
-                _iso, _cod_year, offline, dropped,
+                _iso,
+                _cod_year,
+                offline,
+                dropped,
             )
 
     return FleetArrays(
@@ -1464,16 +1555,10 @@ def generators_to_fleet_arrays(
         fuel_type_idx=fuel_type_idx,
         availability=availability,
         unit_ids=[g.unit_id for g in generators],
-        efficiency_bin=np.array(
-            [g.efficiency_bin for g in generators], dtype=str
-        ),
-        plant_code=np.array(
-            [int(g.plant_code) for g in generators], dtype=int
-        ),
+        efficiency_bin=np.array([g.efficiency_bin for g in generators], dtype=str),
+        plant_code=np.array([int(g.plant_code) for g in generators], dtype=int),
         state=np.array([g.state for g in generators], dtype=object),
-        plant_group=np.array(
-            [g.plant_group for g in generators], dtype=object
-        ),
+        plant_group=np.array([g.plant_group for g in generators], dtype=object),
         min_gen=min_gen,
     )
 
@@ -1537,9 +1622,7 @@ def _aggregate_with_predefined_bins(
                 # Preserve the bin's vintage (see aggregate_fleet) so the
                 # CCS-retrofit remaining-life screen and learning
                 # attribution survive re-aggregation.
-                online_year=int(
-                    round(_capacity_weighted(units, "online_year"))
-                ),
+                online_year=int(round(_capacity_weighted(units, "online_year"))),
             )
         )
     return result
@@ -1623,9 +1706,7 @@ def aggregate_fleet_by_efficiency(
                 # default (2000) makes every aggregated CC look near
                 # end-of-life, silently disqualifying the whole bin from
                 # the CCS-retrofit screen and from learning attribution.
-                online_year=int(
-                    round(_capacity_weighted(bin_gens, "online_year"))
-                ),
+                online_year=int(round(_capacity_weighted(bin_gens, "online_year"))),
             )
         )
     return result
@@ -1709,17 +1790,13 @@ def aggregate_fleet(
                     # Preserve the bin's vintage (see the per-efficiency
                     # aggregator) so retrofit screens and learning
                     # attribution survive re-aggregation.
-                    online_year=int(
-                        round(_capacity_weighted(units, "online_year"))
-                    ),
+                    online_year=int(round(_capacity_weighted(units, "online_year"))),
                 )
             )
     else:
         for key in sorted(groups):
             fuel_type, zone = key
-            for rep in aggregate_fleet_by_efficiency(
-                groups[key], fuel_type, n_bins
-            ):
+            for rep in aggregate_fleet_by_efficiency(groups[key], fuel_type, n_bins):
                 # The per-efficiency aggregator names bins within one zone;
                 # qualify the id with the zone so cross-zone bins stay unique.
                 rep.unit_id = f"{rep.unit_id}_{zone}"
@@ -1902,12 +1979,16 @@ def split_gas_tranches(
         for suffix, share, hr_mult in bands:
             if share <= 0.0:
                 continue
-            expanded.append(gen.model_copy(update={
-                "unit_id": f"{gen.unit_id}_{suffix}",
-                "pmax_mw": gen.pmax_mw * share,
-                "pmin_mw": 0.0,
-                "heat_rate": gen.heat_rate * hr_mult,
-            }))
+            expanded.append(
+                gen.model_copy(
+                    update={
+                        "unit_id": f"{gen.unit_id}_{suffix}",
+                        "pmax_mw": gen.pmax_mw * share,
+                        "pmin_mw": 0.0,
+                        "heat_rate": gen.heat_rate * hr_mult,
+                    }
+                )
+            )
             out_fracs.append(1.0)
     return expanded, out_fracs
 
@@ -1937,9 +2018,7 @@ def campd_tranche_fuel_frac(
     if gen.unit_id.endswith("_mustrun"):
         return 0.0
     if gen.fuel_type == "coal" and passthrough_by_supply:
-        return passthrough_by_supply.get(
-            getattr(gen, "coal_supply", ""), 1.0
-        )
+        return passthrough_by_supply.get(getattr(gen, "coal_supply", ""), 1.0)
     return 1.0
 
 
@@ -1996,55 +2075,102 @@ def apply_coal_tranches(
 # eGRID plant/unit files.
 _COLUMN_ALIASES: dict[str, set[str]] = {
     "plant_id": {
-        "plant_id", "plantid", "plant_code", "plantcode", "oris", "orispl",
-        "plant_id_eia", "plantid_eia",
+        "plant_id",
+        "plantid",
+        "plant_code",
+        "plantcode",
+        "oris",
+        "orispl",
+        "plant_id_eia",
+        "plantid_eia",
     },
     "generator_id": {
-        "generator_id", "generatorid", "gen_id", "genid", "unit_id", "unitid",
+        "generator_id",
+        "generatorid",
+        "gen_id",
+        "genid",
+        "unit_id",
+        "unitid",
     },
     "plant_name": {"plant_name", "plantname", "pname", "name"},
     "state": {"state", "plant_state", "plantstate", "pstatabb", "plstatabb"},
     "balancing_authority_code": {
-        "balancing_authority_code", "balancingauthoritycode", "bacode",
-        "ba_code", "balancing_authority", "ba",
+        "balancing_authority_code",
+        "balancingauthoritycode",
+        "bacode",
+        "ba_code",
+        "balancing_authority",
+        "ba",
     },
     "technology": {
-        "technology", "technology_description", "technologydescription", "tech",
+        "technology",
+        "technology_description",
+        "technologydescription",
+        "tech",
     },
     "energy_source": {
-        "energy_source", "energy_source_code", "energy_source_code_1",
-        "energysourcecode", "fuel", "plprmfl", "plfuelct", "fuel_type",
+        "energy_source",
+        "energy_source_code",
+        "energy_source_code_1",
+        "energysourcecode",
+        "fuel",
+        "plprmfl",
+        "plfuelct",
+        "fuel_type",
     },
     "prime_mover": {
-        "prime_mover", "prime_mover_code", "primemover", "primemovercode",
+        "prime_mover",
+        "prime_mover_code",
+        "primemover",
+        "primemovercode",
     },
     "nameplate_capacity_mw": {
-        "nameplate_capacity_mw", "nameplate_capacity", "nameplatecapacity",
-        "namepcap", "capacity_mw", "capacity",
+        "nameplate_capacity_mw",
+        "nameplate_capacity",
+        "nameplatecapacity",
+        "namepcap",
+        "capacity_mw",
+        "capacity",
     },
     "net_summer_capacity_mw": {
-        "net_summer_capacity_mw", "net_summer_capacity", "netsummercapacity",
-        "summer_capacity_mw", "summercapacity",
+        "net_summer_capacity_mw",
+        "net_summer_capacity",
+        "netsummercapacity",
+        "summer_capacity_mw",
+        "summercapacity",
     },
     "operating_year": {
-        "operating_year", "operatingyear", "opyr", "operating_date",
+        "operating_year",
+        "operatingyear",
+        "opyr",
+        "operating_date",
         "operatingdate",
     },
     "operating_month": {
-        "operating_month", "operatingmonth", "opmonth",
+        "operating_month",
+        "operatingmonth",
+        "opmonth",
     },
     "planned_retirement_year": {
-        "planned_retirement_year", "plannedretirementyear",
-        "planned_retirement_date", "plannedretirement", "retirement_year",
+        "planned_retirement_year",
+        "plannedretirementyear",
+        "planned_retirement_date",
+        "plannedretirement",
+        "retirement_year",
         "retirementyear",
     },
     "planned_retirement_month": {
-        "planned_retirement_month", "plannedretirementmonth",
-        "retirement_month", "retirementmonth",
+        "planned_retirement_month",
+        "plannedretirementmonth",
+        "retirement_month",
+        "retirementmonth",
     },
     "status": {"status", "statusdescription", "status_description"},
     "heat_rate": {
-        "heat_rate", "heatrate", "plhtrt", "heat_rate_mmbtu_mwh",
+        "heat_rate",
+        "heatrate",
+        "plhtrt",
+        "heat_rate_mmbtu_mwh",
         "unit_heat_rate",
     },
 }
@@ -2243,9 +2369,7 @@ def _nuclear_zone_override(plant_name: str) -> str | None:
     return None
 
 
-def _zone_for_index(
-    index: int, n: int, zone_shares: list[tuple[str, float]]
-) -> str:
+def _zone_for_index(index: int, n: int, zone_shares: list[tuple[str, float]]) -> str:
     """Pick a zone for generator ``index`` of ``n`` by cumulative load share."""
     pos = (index + 0.5) / n
     cumulative = 0.0
@@ -2283,9 +2407,7 @@ def _assign_zones(
     # (e.g. units commissioned after the eGRID 2023 vintage): the ISO's
     # largest-load-share zone.
     if iso_config is not None and iso_config.zones:
-        fallback_zone = max(
-            iso_config.zones, key=lambda z: z.load_share
-        ).name
+        fallback_zone = max(iso_config.zones, key=lambda z: z.load_share).name
     else:
         fallback_zone = iso
 
@@ -2346,9 +2468,7 @@ def _assign_zones_proportional(
     valid_zones = {name for name, _ in zone_shares}
     largest_zone = max(zone_shares, key=lambda item: item[1])[0]
 
-    non_nuclear = [
-        i for i, rec in enumerate(records) if rec["fuel_type"] != "nuclear"
-    ]
+    non_nuclear = [i for i, rec in enumerate(records) if rec["fuel_type"] != "nuclear"]
     zones: list[str | None] = [None] * len(records)
     for position, idx in enumerate(non_nuclear):
         zones[idx] = _zone_for_index(position, len(non_nuclear), zone_shares)
@@ -2439,8 +2559,10 @@ def _rows_to_generators(
             group = "COAL"
         elif fuel_type in ("gas_cc", "gas_cc_ccs", "gas_ct"):
             group = classify_plant(
-                data.get("energy_source"), data.get("prime_mover"),
-                chp_flag, plant_code,
+                data.get("energy_source"),
+                data.get("prime_mover"),
+                chp_flag,
+                plant_code,
             )
             if group not in _EIA860_GAS_GROUPS:
                 # Non-NG gas code (e.g. blast-furnace / other gas) the canonical
@@ -2522,10 +2644,7 @@ def _chp_by_plant(eia860_dir: Path, year: int | None = None) -> "pd.Series":
         return pd.Series(dtype="object")
     raw = pd.read_parquet(path, columns=["Plant Code", col])
     is_y = raw[col].astype(str).str.strip().str.upper().str.startswith("Y")
-    return (
-        is_y.groupby(raw["Plant Code"]).any()
-        .map({True: "Y", False: "N"})
-    )
+    return is_y.groupby(raw["Plant Code"]).any().map({True: "Y", False: "N"})
 
 
 def dual_fuel_plant_groups(
@@ -2538,7 +2657,8 @@ def dual_fuel_plant_groups(
     directory-keyed cache below.
     """
     return _dual_fuel_plant_groups(
-        Path(eia860_dir) if eia860_dir is not None else active_eia860_dir())
+        Path(eia860_dir) if eia860_dir is not None else active_eia860_dir()
+    )
 
 
 @lru_cache(maxsize=4)
@@ -2566,14 +2686,20 @@ def _dual_fuel_plant_groups(
     if not path.exists():
         return frozenset()
     try:
-        raw = pd.read_parquet(path, columns=[
-            "Plant Code", "Energy Source 1", "Prime Mover",
-            "Switch Between Oil and Natural Gas?",
-        ])
+        raw = pd.read_parquet(
+            path,
+            columns=[
+                "Plant Code",
+                "Energy Source 1",
+                "Prime Mover",
+                "Switch Between Oil and Natural Gas?",
+            ],
+        )
     except Exception:
         logger.warning(
             "EIA-860 multifuel parquet at %s is unreadable — "
-            "no dual-fuel units flagged", path,
+            "no dual-fuel units flagged",
+            path,
         )
         return frozenset()
 
@@ -2608,7 +2734,9 @@ def _dual_fuel_plant_groups(
 
 
 def _load_fleet_from_parquet(
-    parquet_path: Path, iso: str, iso_config: ISOConfig | None,
+    parquet_path: Path,
+    iso: str,
+    iso_config: ISOConfig | None,
     year: int | None = None,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
@@ -2632,9 +2760,7 @@ def _load_fleet_from_parquet(
     # ``year`` selects that vintage's CHP designation when the per-year lookup
     # is available (else the latest committed snapshot).
     df = df.copy()
-    df["chp"] = (
-        df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
-    )
+    df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
 
     generators = _rows_to_generators(df, iso, iso_config)
     if not generators:
@@ -2735,12 +2861,16 @@ def _load_fleet_from_clean(
     normalized = _clean_fleet_to_normalized(df.copy(), data_dir, year)
     generators = _rows_to_generators(normalized, iso, iso_config)
     if not generators:
-        logger.warning("clean fleet (year %d) has no generators for %s", partition_year, iso)
+        logger.warning(
+            "clean fleet (year %d) has no generators for %s", partition_year, iso
+        )
         return None
 
     logger.info(
         "Loaded %s fleet from clean fleet registry, vintage %d (%d generators)",
-        iso, partition_year, len(generators),
+        iso,
+        partition_year,
+        len(generators),
     )
     return generators
 
@@ -2773,9 +2903,7 @@ def _binned_fleet_frame(generators: list[Generator]) -> pd.DataFrame:
         for g in generators
     ]
     df = pd.DataFrame(rows, columns=BINNED_FLEET_COLUMNS)
-    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce").astype(
-        "Int64"
-    )
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce").astype("Int64")
     df["retirement_year"] = df["retirement_year"].astype("Int64")
     return df
 
@@ -2915,9 +3043,7 @@ def load_fleet_from_csv(
         return from_clean
     else:
         parquet_path = data_dir / EIA_860_PARQUET_NAME
-        from_parquet = _load_fleet_from_parquet(
-            parquet_path, iso, iso_config, year
-        )
+        from_parquet = _load_fleet_from_parquet(parquet_path, iso, iso_config, year)
         if from_parquet is None:
             raise FileNotFoundError(
                 f"No EIA-860 data for {iso}: expected a per-ISO override "
@@ -2991,7 +3117,8 @@ def load_retired_within_window(
     if generators:
         logger.info(
             "loaded %d within-window retiree units for %s (%.0f MW, plants %s)",
-            len(generators), iso,
+            len(generators),
+            iso,
             sum(g.pmax_mw for g in generators),
             sorted({int(g.plant_code) for g in generators}),
         )
@@ -3073,8 +3200,7 @@ def load_planned_additions(
         logger.warning(
             "planned additions unavailable for %s: missing %s",
             iso,
-            proposed_path.name if not proposed_path.exists()
-            else plant_path.name,
+            proposed_path.name if not proposed_path.exists() else plant_path.name,
         )
         return []
 
@@ -3097,9 +3223,9 @@ def load_planned_additions(
         {
             # Integer plant codes: the raw column arrives as float and
             # would otherwise render as "66335.0" inside unit ids.
-            "plant_id": pd.to_numeric(
-                df["Plant Code"], errors="coerce"
-            ).astype("Int64"),
+            "plant_id": pd.to_numeric(df["Plant Code"], errors="coerce").astype(
+                "Int64"
+            ),
             "generator_id": df["Generator ID"],
             "plant_name": df["Plant Name"],
             "state": df["State"],
@@ -3108,9 +3234,7 @@ def load_planned_additions(
             "prime_mover": df["Prime Mover"],
             "nameplate_capacity_mw": df["Nameplate Capacity (MW)"],
             "net_summer_capacity_mw": df["Summer Capacity (MW)"],
-            "operating_year": pd.to_numeric(
-                df["Effective Year"], errors="coerce"
-            ),
+            "operating_year": pd.to_numeric(df["Effective Year"], errors="coerce"),
             "chp": df["Associated with Combined Heat and Power System"],
         }
     )
@@ -3122,9 +3246,7 @@ def load_planned_additions(
     from market_sim.data.zone_assignment import assign_zone_by_coords
 
     coords: dict[int, tuple[float, float]] = {}
-    for row in df[["Plant Code", "Latitude", "Longitude"]].itertuples(
-        index=False
-    ):
+    for row in df[["Plant Code", "Latitude", "Longitude"]].itertuples(index=False):
         code = _to_float(row[0])
         lat = _to_float(row[1])
         lon = _to_float(row[2])
@@ -3147,7 +3269,9 @@ def load_planned_additions(
     generators.sort(key=lambda g: (g.online_year, g.unit_id))
     logger.info(
         "%s planned additions: %d units, %.0f MW, %d-%d",
-        iso, len(generators), sum(g.pmax_mw for g in generators),
+        iso,
+        len(generators),
+        sum(g.pmax_mw for g in generators),
         min(g.online_year for g in generators),
         max(g.online_year for g in generators),
     )
@@ -3201,16 +3325,16 @@ BIN_STARTUP_COST_PER_MW: dict[str, float] = {
 # differ by ~$13/MWh in fuel cost, enough to swing merit order against gas
 # CC when gas is cheap. Drives fuel.apply_coal_supply_pricing.
 COAL_PLANT_SUPPLY: dict[int, str] = {
-    6180: "lignite",   # Oak Grove — Kosse mine
-    298: "prb",        # Limestone — now PRB by rail (switched off local lignite)
-    6146: "prb",       # Martin Lake — now PRB by rail (was East Texas lignite)
-    6183: "lignite",   # San Miguel — adjacent lignite mine
-    7030: "lignite",   # Major Oak Power
-    6178: "prb",       # Coleto Creek — PRB by rail
-    6179: "prb",       # Fayette / Sam Seymour — PRB by rail
-    7097: "prb",       # J K Spruce — PRB by rail
-    56611: "prb",      # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
-    3470: "prb",       # W A Parish (coal units 5-8, subbituminous) — PRB by rail
+    6180: "lignite",  # Oak Grove — Kosse mine
+    298: "prb",  # Limestone — now PRB by rail (switched off local lignite)
+    6146: "prb",  # Martin Lake — now PRB by rail (was East Texas lignite)
+    6183: "lignite",  # San Miguel — adjacent lignite mine
+    7030: "lignite",  # Major Oak Power
+    6178: "prb",  # Coleto Creek — PRB by rail
+    6179: "prb",  # Fayette / Sam Seymour — PRB by rail
+    7097: "prb",  # J K Spruce — PRB by rail
+    56611: "prb",  # Sandy Creek — PRB by rail (EIA-923 plant id 56611)
+    3470: "prb",  # W A Parish (coal units 5-8, subbituminous) — PRB by rail
 }
 
 
@@ -3305,8 +3429,11 @@ def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
     code and finally the bare ``COAL`` class. Mirrors the calibration
     benchmark's coal resolver so the model and benchmark split coal identically.
     """
-    return (COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)))
-            or coal_code_to_class(fuel_code) or "COAL")
+    return (
+        COAL_SUPPLY_TO_CLASS.get(coal_supply_class(int(plant_code)))
+        or coal_code_to_class(fuel_code)
+        or "COAL"
+    )
 
 
 # The gas dispatch classes the EIA-923 override may assign to an ERCOT bin.
@@ -3340,11 +3467,17 @@ def _eia923_plant_class_totals(year: int) -> dict[int, dict[str, float]]:
 
     totals: dict[int, dict[str, float]] = {}
     for pid, pm, fuel, chp, mwh in zip(
-        df["plant_id"], df["prime_mover"], df["fuel_type"],
-        df["chp"], df["netgen_annual_mwh"],
+        df["plant_id"],
+        df["prime_mover"],
+        df["fuel_type"],
+        df["chp"],
+        df["netgen_annual_mwh"],
     ):
         klass = classify_plant(
-            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
+            fuel,
+            pm,
+            str(chp).strip().upper().startswith("Y"),
+            int(pid),
             coal_class_resolver=_coal_class_for,
         )
         totals.setdefault(int(pid), {})
@@ -3375,9 +3508,16 @@ def eia923_dominant_class_by_plant(year: int) -> dict[int, str]:
 # units), and the dominant-share floor below which the plant is treated as
 # genuinely mixed — no single class earns the bin, so collapsing it to one class
 # is a coin-flip that can flip year-to-year (e.g. Dansby 50/50 ST/CT).
-_GAS_THERMAL_SCORING_CLASSES: frozenset[str] = frozenset({
-    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP",
-})
+_GAS_THERMAL_SCORING_CLASSES: frozenset[str] = frozenset(
+    {
+        "CC_REGULAR",
+        "CC_CHP",
+        "CT_PEAKER",
+        "CT_CHP",
+        "ST_GAS",
+        "ST_CHP",
+    }
+)
 OTHER_FOSSIL_CLASS: str = "OTHER_FOSSIL"
 OTHER_FOSSIL_MIN_DOMINANT_FRAC: float = 0.60
 
@@ -3413,8 +3553,10 @@ def mixed_fossil_plants(year: int) -> frozenset[int]:
 
 
 def apply_other_fossil_scoring(
-    df: pd.DataFrame, year: int,
-    plant_col: str = "plant_code", class_col: str = "klass",
+    df: pd.DataFrame,
+    year: int,
+    plant_col: str = "plant_code",
+    class_col: str = "klass",
 ) -> pd.DataFrame:
     """Re-bucket genuinely-mixed plants' gas-thermal rows into ``OTHER_FOSSIL``.
 
@@ -3441,7 +3583,6 @@ def apply_other_fossil_scoring(
             out[class_col] = out[class_col].cat.add_categories([OTHER_FOSSIL_CLASS])
     out.loc[mask, class_col] = OTHER_FOSSIL_CLASS
     return out
-
 
 
 def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
@@ -3472,11 +3613,18 @@ def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
         return {}
     is_ct = [
         classify_plant(
-            fuel, pm, str(chp).strip().upper().startswith("Y"), int(pid),
+            fuel,
+            pm,
+            str(chp).strip().upper().startswith("Y"),
+            int(pid),
             coal_class_resolver=_coal_class_for,
-        ) == "CT_PEAKER"
+        )
+        == "CT_PEAKER"
         for pm, fuel, chp, pid in zip(
-            df["prime_mover"], df["fuel_type"], df["chp"], df["plant_id"],
+            df["prime_mover"],
+            df["fuel_type"],
+            df["chp"],
+            df["plant_id"],
         )
     ]
     sub = df[pd.Series(is_ct, index=df.index)]
@@ -3484,10 +3632,7 @@ def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
         return {}
     cols = monthly_netgen_columns()
     grouped = sub.groupby("plant_id")[cols].sum()
-    return {
-        int(pid): row.to_numpy(dtype=float)
-        for pid, row in grouped.iterrows()
-    }
+    return {int(pid): row.to_numpy(dtype=float) for pid, row in grouped.iterrows()}
 
 
 # ERCOT coal-unit commission year by EIA plant code — the in-service year
@@ -3495,15 +3640,15 @@ def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
 # mixed plants like W A Parish). Drives the age-based coal availability
 # model in :func:`generators_to_fleet_arrays`.
 COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
-    298: 1985,    # Limestone
-    3470: 1977,   # W A Parish (coal units 5-8)
-    6146: 1977,   # Martin Lake
-    6178: 1980,   # Coleto Creek
-    6179: 1979,   # Fayette / Sam Seymour
-    6180: 2010,   # Oak Grove
-    6183: 1982,   # San Miguel
-    7030: 1990,   # Major Oak Power
-    7097: 1992,   # J K Spruce
+    298: 1985,  # Limestone
+    3470: 1977,  # W A Parish (coal units 5-8)
+    6146: 1977,  # Martin Lake
+    6178: 1980,  # Coleto Creek
+    6179: 1979,  # Fayette / Sam Seymour
+    6180: 2010,  # Oak Grove
+    6183: 1982,  # San Miguel
+    7030: 1990,  # Major Oak Power
+    7097: 1992,  # J K Spruce
     56257: 2013,  # Sandy Creek
 }
 
@@ -3516,15 +3661,15 @@ COAL_PLANT_COMMISSION_YEAR: dict[int, int] = {
 # mouth units carry high floors (take-or-pay, baseload); PRB rail units that
 # cycle hard (J K Spruce, W A Parish) carry low floors.
 COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
-    6180: 45.0,   # Oak Grove (lignite) — 12d planned block, otherwise baseload
-    7030: 45.0,   # Major Oak (lignite) — 99.2% online, EAF only
-    6183: 55.0,   # San Miguel (lignite) — large spring + fall blocks, ~38% off
-    298: 20.0,    # Limestone (PRB) — recurring Feb winter + variable spring
-    6146: 20.0,   # Martin Lake (PRB) — no systematic pattern, EAF
-    6178: 30.0,   # Coleto Creek (PRB) — large spring block (shortening)
-    6179: 30.0,   # Fayette (PRB) — zero outage events across 3 years
-    7097: 12.0,   # J K Spruce (PRB) — scattered short shoulder events
-    3470: 15.0,   # W A Parish (PRB) — mixed facility, coal outages undetectable
+    6180: 45.0,  # Oak Grove (lignite) — 12d planned block, otherwise baseload
+    7030: 45.0,  # Major Oak (lignite) — 99.2% online, EAF only
+    6183: 55.0,  # San Miguel (lignite) — large spring + fall blocks, ~38% off
+    298: 20.0,  # Limestone (PRB) — recurring Feb winter + variable spring
+    6146: 20.0,  # Martin Lake (PRB) — no systematic pattern, EAF
+    6178: 30.0,  # Coleto Creek (PRB) — large spring block (shortening)
+    6179: 30.0,  # Fayette (PRB) — zero outage events across 3 years
+    7097: 12.0,  # J K Spruce (PRB) — scattered short shoulder events
+    3470: 15.0,  # W A Parish (PRB) — mixed facility, coal outages undetectable
     56611: 40.0,  # Sandy Creek (PRB) — annual spring block, length varies
 }
 
@@ -3537,21 +3682,49 @@ COAL_MUSTRUN_BY_PLANT: dict[int, float] = {
 # is added back in the report data-driven (EIA-923 net minus grid dispatch), so
 # this only sizes how much grid-facing capacity the LP can dispatch.
 CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
-    10154: "industrial", 10243: "industrial",
-    10261: "industrial", 10298: "industrial", 10418: "industrial",
-    10436: "industrial", 10554: "industrial", 10692: "industrial",
-    10790: "industrial", 50026: "industrial", 50043: "industrial",
-    50054: "commercial", 50118: "commercial", 50150: "industrial",
-    50229: "industrial", 50475: "industrial", 50815: "merchant",
-    52088: "merchant", 52120: "industrial", 52132: "industrial",
-    52176: "merchant", 54330: "industrial", 54520: "commercial",
-    54676: "merchant", 55015: "merchant", 55047: "merchant",
-    55187: "merchant", 55206: "merchant",
-    55299: "merchant", 55311: "industrial", 55313: "industrial",
-    55327: "merchant", 55464: "merchant", 55470: "industrial",
-    56152: "industrial", 56374: "merchant", 57322: "industrial",
-    57504: "commercial", 58151: "commercial", 58378: "merchant",
-    59145: "industrial", 59381: "commercial", 62762: "merchant",
+    10154: "industrial",
+    10243: "industrial",
+    10261: "industrial",
+    10298: "industrial",
+    10418: "industrial",
+    10436: "industrial",
+    10554: "industrial",
+    10692: "industrial",
+    10790: "industrial",
+    50026: "industrial",
+    50043: "industrial",
+    50054: "commercial",
+    50118: "commercial",
+    50150: "industrial",
+    50229: "industrial",
+    50475: "industrial",
+    50815: "merchant",
+    52088: "merchant",
+    52120: "industrial",
+    52132: "industrial",
+    52176: "merchant",
+    54330: "industrial",
+    54520: "commercial",
+    54676: "merchant",
+    55015: "merchant",
+    55047: "merchant",
+    55187: "merchant",
+    55206: "merchant",
+    55299: "merchant",
+    55311: "industrial",
+    55313: "industrial",
+    55327: "merchant",
+    55464: "merchant",
+    55470: "industrial",
+    56152: "industrial",
+    56374: "merchant",
+    57322: "industrial",
+    57504: "commercial",
+    58151: "commercial",
+    58378: "merchant",
+    59145: "industrial",
+    59381: "commercial",
+    62762: "merchant",
     66992: "merchant",
 }
 # Shares trimmed (merchant 40->35, industrial/commercial 60->50) after the
@@ -3560,7 +3733,9 @@ CHP_SECTOR_CLASS_BY_PLANT: dict[int, str] = {
 # the pull-out left too little dispatchable capacity for the fleet's observed
 # high-load excursions, and the flat report add-back cannot carry shape.
 CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
-    "merchant": 35.0, "industrial": 50.0, "commercial": 50.0,
+    "merchant": 35.0,
+    "industrial": 50.0,
+    "commercial": 50.0,
 }
 CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-full BTM
 
@@ -3570,9 +3745,19 @@ CHP_ST_BTM_PCT: float = 90.0  # ST_CHP group (tiny chemical host-steam): near-fu
 # CAMPD coverage have a value (Baytown ~28%, ~the 27% target); absent => no
 # floor, dispatched purely economically.
 CHP_PMIN_CF_BY_PLANT: dict[int, float] = {
-    10298: 65.3, 50815: 36.7, 52088: 26.0, 52176: 0.0,
-    55015: 49.7, 55047: 25.0, 55187: 64.2, 55206: 25.8,
-    55299: 33.1, 55327: 28.2, 55464: 33.8, 55470: 20.9, 58378: 88.8,
+    10298: 65.3,
+    50815: 36.7,
+    52088: 26.0,
+    52176: 0.0,
+    55015: 49.7,
+    55047: 25.0,
+    55187: 64.2,
+    55206: 25.8,
+    55299: 33.1,
+    55327: 28.2,
+    55464: 33.8,
+    55470: 20.9,
+    58378: 88.8,
 }
 
 # Petra Nova carbon-capture cogen (EIA 58378): classified on its own, outside
@@ -3603,13 +3788,13 @@ PETRA_NOVA_MIN_CF: float = 0.92
 # difference so each plant's tranche split still sums to 100%. Plants without
 # CAMPD coverage (7512, 50127, 55545, 56233) keep the CSV value.
 CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
-    3441: 11.5,   # Nueces Bay (online 0.41)
-    3443: 44.7,   # Victoria (online 0.28)
-    3469: 8.4,    # T H Wharton (online 0.22)
-    3631: 8.1,    # Sam Rayburn (online 0.39)
-    4937: 33.3,   # Thomas C Ferguson (online 0.89)
-    4939: 7.7,    # Barney M Davis [CC] (online 0.46)
-    7900: 17.9,   # Sand Hill (online 0.87)
+    3441: 11.5,  # Nueces Bay (online 0.41)
+    3443: 44.7,  # Victoria (online 0.28)
+    3469: 8.4,  # T H Wharton (online 0.22)
+    3631: 8.1,  # Sam Rayburn (online 0.39)
+    4937: 33.3,  # Thomas C Ferguson (online 0.89)
+    4939: 7.7,  # Barney M Davis [CC] (online 0.46)
+    7900: 17.9,  # Sand Hill (online 0.87)
     50109: 28.8,  # Paris Energy Center (online 0.47)
     54817: 36.7,  # Johnson County (online 0.54)
     55062: 25.7,  # Tenaska Frontier (online 0.86)
@@ -3683,7 +3868,8 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
         if pd.isna(pmin) and sector is None:
             continue
         out[int(r.plant_code)] = (
-            None if pd.isna(pmin) else float(pmin), sector,
+            None if pd.isna(pmin) else float(pmin),
+            sector,
         )
     return out
 
@@ -3701,8 +3887,8 @@ def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
     if sector is None:
         sector = CHP_SECTOR_CLASS_BY_PLANT.get(int(plant_code))
     if sector is None:
-        return CHP_ST_BTM_PCT if group == "ST_CHP" else (
-            CHP_BTM_PCT_BY_SECTOR["merchant"]
+        return (
+            CHP_ST_BTM_PCT if group == "ST_CHP" else (CHP_BTM_PCT_BY_SECTOR["merchant"])
         )
     if group == "ST_CHP" and iso.upper() == "ERCOT":
         return CHP_ST_BTM_PCT
@@ -3719,6 +3905,7 @@ def chp_pmin_cf(plant_code: int, iso: str = "ERCOT") -> float | None:
     if pmin is not None:
         return pmin
     return CHP_PMIN_CF_BY_PLANT.get(int(plant_code))
+
 
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
@@ -3757,7 +3944,10 @@ BIN_GROUP_HR_DEFAULT: dict[str, float] = {
 # is NOT unique — labels such as "S_CC1" or "CT1 (8-9)" recur across zones —
 # so the group, zone and bin number are all part of the key.
 _BIN_KEY_COLUMNS: list[str] = [
-    "Plant_Group", "ERCOT_Zone", "Bin_Number", "Bin_Label",
+    "Plant_Group",
+    "ERCOT_Zone",
+    "Bin_Number",
+    "Bin_Label",
 ]
 
 
@@ -3805,9 +3995,7 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
 
 # Default location of the CAMPD-derived per-plant emission-rate artifact
 # (scripts/derive_plant_emissions.py), resolved relative to the repo root.
-PLANT_EMISSION_RATES_PATH: Path = (
-    PROCESSED_DIR / "plant_emission_rates.parquet"
-)
+PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
 
 # kg -> metric tonnes, the model's internal emission-rate mass unit.
 _KG_PER_TONNE: float = 1000.0
@@ -3914,19 +4102,17 @@ def _fill_hr_multiplier(value: float | None, default: float) -> float:
 # for each group so a sensitivity run that turns on a zero-share tranche
 # still produces a reasonable heat rate.
 _DEFAULT_HR_MULT_BY_GROUP: dict[str, dict[str, float]] = {
-    "CC_CHP":     {"mr": 1.05, "mc": 1.05, "econ": 1.00, "peak": 1.45},
+    "CC_CHP": {"mr": 1.05, "mc": 1.05, "econ": 1.00, "peak": 1.45},
     "CC_REGULAR": {"mr": 1.10, "mc": 1.08, "econ": 1.00, "peak": 1.55},
-    "CT_CHP":     {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.15},
-    "CT_PEAKER":  {"mr": 1.05, "mc": 1.12, "econ": 1.00, "peak": 1.10},
-    "ST_GAS":     {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10},
-    "ST_CHP":     {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.10},
-    "COAL":       {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
+    "CT_CHP": {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.15},
+    "CT_PEAKER": {"mr": 1.05, "mc": 1.12, "econ": 1.00, "peak": 1.10},
+    "ST_GAS": {"mr": 1.10, "mc": 1.15, "econ": 1.00, "peak": 1.10},
+    "ST_CHP": {"mr": 1.05, "mc": 1.10, "econ": 1.00, "peak": 1.10},
+    "COAL": {"mr": 1.00, "mc": 1.15, "econ": 1.00, "peak": 1.05},
 }
 
 
-def _override_bin_class_from_eia923(
-    bins: pd.DataFrame, year: int
-) -> pd.DataFrame:
+def _override_bin_class_from_eia923(bins: pd.DataFrame, year: int) -> pd.DataFrame:
     """Override each gas bin's ``Plant_Group`` with its EIA-923 dominant class.
 
     For every bin whose curated class is one of the gas classes, replace it with
@@ -3942,9 +4128,7 @@ def _override_bin_class_from_eia923(
 
     new_groups = bins["Plant_Group"].astype(str).tolist()
     changed: list[tuple[str, str, str]] = []
-    for i, (code, curated) in enumerate(
-        zip(bins["Plant_Code"], new_groups)
-    ):
+    for i, (code, curated) in enumerate(zip(bins["Plant_Code"], new_groups)):
         if curated not in _GAS_BIN_GROUPS:
             continue  # coal (and any non-gas bin) keeps its curated class
         derived = dominant.get(int(code))
@@ -3961,7 +4145,10 @@ def _override_bin_class_from_eia923(
     for name, was, now in changed:
         logger.info(
             "EIA-923 %d: reclassified %s  %s -> %s (curated bin drifted)",
-            year, name, was, now,
+            year,
+            name,
+            was,
+            now,
         )
     return bins
 
@@ -3991,23 +4178,28 @@ def _reconcile_cc_capacity(
         zip(table["plant_code"].astype(int), table["reconciled_mw"].astype(float))
     )
     old_cap = bins["capacity_mw"].astype(float).to_numpy()
-    new_cap = np.array([
-        max(float(cur), recon.get(int(code), 0.0))
-        for code, cur in zip(bins["Plant_Code"].astype(int), old_cap)
-    ])
+    new_cap = np.array(
+        [
+            max(float(cur), recon.get(int(code), 0.0))
+            for code, cur in zip(bins["Plant_Code"].astype(int), old_cap)
+        ]
+    )
     raised = int((new_cap > old_cap + 1e-6).sum())
     bins = bins.copy()
     bins["capacity_mw"] = new_cap
     logger.info(
         "CC capacity reconcile: raised %d plant(s) to demonstrated peak "
         "(+%.0f MW total) from %s",
-        raised, float((new_cap - old_cap).sum()), path.name,
+        raised,
+        float((new_cap - old_cap).sum()),
+        path.name,
     )
     return bins
 
 
 def load_campd_bins(
-    csv_path: str | Path, year: int | None = None,
+    csv_path: str | Path,
+    year: int | None = None,
     capacity_reconcile_path: str | Path | None = None,
 ) -> pd.DataFrame:
     """Load the CAMPD bin assignments, one row per plant.
@@ -4086,9 +4278,7 @@ def load_campd_bins(
     # ``bins_to_fleet`` regardless of the resulting HR.
     plant_hr = [
         _fill_plant_hr(hr, grp)
-        for hr, grp in zip(
-            detail["Plant_Avg_HR_MMBtu_MWh"], detail["Plant_Group"]
-        )
+        for hr, grp in zip(detail["Plant_Avg_HR_MMBtu_MWh"], detail["Plant_Group"])
     ]
     defaults_by_idx = [
         _DEFAULT_HR_MULT_BY_GROUP.get(grp, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"])
@@ -4100,29 +4290,29 @@ def load_campd_bins(
         "econ": "HR_Mult_Economic",
         "peak": "HR_Mult_Peaking",
     }
-    bins = pd.DataFrame({
-        "Plant_Group": detail["Plant_Group"].astype(str),
-        "ERCOT_Zone": detail["ERCOT_Zone"].astype(str),
-        "Bin_Number": detail["Bin_Number"].astype(int),
-        "Bin_Label": detail["Bin_Label"].astype(str),
-        "Plant_Code": detail["Plant_Code"].astype(int),
-        "Plant_Name": detail["Plant_Name"].astype(str),
-        "Turbine_Class": detail["Turbine_Class"].astype(str),
-        "capacity_mw": detail["Nameplate_MW"].astype(float),
-        "hr_weighted": plant_hr,
-        "pct_mr": detail["Pct_Must_Run"].astype(float),
-        "pct_mc": detail["Pct_Committed"].astype(float),
-        "pct_econ": detail["Pct_Economic"].astype(float),
-        "pct_peak": detail["Pct_Peaking"].astype(float),
-        "min_run": detail["Min_Run_Hours"].astype(int),
-        "min_down": detail["Min_Down_Hours"].astype(int),
-    })
+    bins = pd.DataFrame(
+        {
+            "Plant_Group": detail["Plant_Group"].astype(str),
+            "ERCOT_Zone": detail["ERCOT_Zone"].astype(str),
+            "Bin_Number": detail["Bin_Number"].astype(int),
+            "Bin_Label": detail["Bin_Label"].astype(str),
+            "Plant_Code": detail["Plant_Code"].astype(int),
+            "Plant_Name": detail["Plant_Name"].astype(str),
+            "Turbine_Class": detail["Turbine_Class"].astype(str),
+            "capacity_mw": detail["Nameplate_MW"].astype(float),
+            "hr_weighted": plant_hr,
+            "pct_mr": detail["Pct_Must_Run"].astype(float),
+            "pct_mc": detail["Pct_Committed"].astype(float),
+            "pct_econ": detail["Pct_Economic"].astype(float),
+            "pct_peak": detail["Pct_Peaking"].astype(float),
+            "min_run": detail["Min_Run_Hours"].astype(int),
+            "min_down": detail["Min_Down_Hours"].astype(int),
+        }
+    )
     for short, col in mult_columns.items():
         bins[f"hr_{short}"] = [
             hr * _fill_hr_multiplier(mult, defaults[short])
-            for hr, mult, defaults in zip(
-                plant_hr, detail[col], defaults_by_idx
-            )
+            for hr, mult, defaults in zip(plant_hr, detail[col], defaults_by_idx)
         ]
     bins["plant_count"] = 1
     bins["plant_codes"] = [[int(c)] for c in detail["Plant_Code"]]
@@ -4143,7 +4333,9 @@ def load_campd_bins(
 
     logger.info(
         "Loaded %d per-plant CAMPD bins from %s (%.1f GW)",
-        len(bins), csv_path, bins["capacity_mw"].sum() / 1000.0,
+        len(bins),
+        csv_path,
+        bins["capacity_mw"].sum() / 1000.0,
     )
     return bins
 
@@ -4156,12 +4348,12 @@ def load_campd_bins(
 # residual. Peakers carry no committed band; coal carries a baseload floor.
 _DEFAULT_TRANCHE_PCT_BY_GROUP: dict[str, tuple[float, float, float]] = {
     "CC_REGULAR": (0.0, 45.0, 8.0),
-    "CC_CHP":     (0.0, 45.0, 8.0),   # must-run set to host steam in bins_to_fleet
-    "CT_PEAKER":  (0.0, 0.0, 7.0),
-    "CT_CHP":     (0.0, 30.0, 7.0),
-    "ST_GAS":     (0.0, 30.0, 15.0),
-    "ST_CHP":     (0.0, 30.0, 15.0),
-    "COAL":       (45.0, 5.0, 2.0),
+    "CC_CHP": (0.0, 45.0, 8.0),  # must-run set to host steam in bins_to_fleet
+    "CT_PEAKER": (0.0, 0.0, 7.0),
+    "CT_CHP": (0.0, 30.0, 7.0),
+    "ST_GAS": (0.0, 30.0, 15.0),
+    "ST_CHP": (0.0, 30.0, 15.0),
+    "COAL": (45.0, 5.0, 2.0),
 }
 
 
@@ -4187,7 +4379,8 @@ def thermal_tranche_overrides(
         if str(getattr(r, "status", "ok")) != "ok":
             continue
         out[(int(r.plant_code), str(r.plant_group))] = (
-            float(r.committed_pct), float(r.mustrun_pct),
+            float(r.committed_pct),
+            float(r.mustrun_pct),
         )
     return out
 
@@ -4243,10 +4436,16 @@ def cc_duct_peaking_pct() -> dict[int, float]:
     path = active_eia860_dir() / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
-    df = pd.read_parquet(path, columns=[
-        "Plant Code", "Technology", "Duct Burners",
-        "Nameplate Capacity (MW)", "Summer Capacity (MW)",
-    ])
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Duct Burners",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
     df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
     cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"].copy()
     if cc.empty:
@@ -4261,9 +4460,7 @@ def cc_duct_peaking_pct() -> dict[int, float]:
             continue
         if (grp["Duct Burners"].astype(str).str.strip() == "Y").any():
             ns_sum = float(grp["ns"].sum())
-            out[int(code)] = round(
-                100.0 * max(0.0, np_sum - ns_sum) / np_sum, 1
-            )
+            out[int(code)] = round(100.0 * max(0.0, np_sum - ns_sum) / np_sum, 1)
         else:
             out[int(code)] = 0.0
     return out
@@ -4301,9 +4498,15 @@ def fleet_to_bins(
         if code <= 0:
             continue
         key = (code, g.plant_group)
-        a = agg.setdefault(key, {
-            "cap": 0.0, "hr_cap": 0.0, "name": g.name, "zone": g.zone,
-        })
+        a = agg.setdefault(
+            key,
+            {
+                "cap": 0.0,
+                "hr_cap": 0.0,
+                "name": g.name,
+                "zone": g.zone,
+            },
+        )
         a["cap"] += float(g.pmax_mw)
         a["hr_cap"] += float(g.pmax_mw) * float(g.heat_rate)
 
@@ -4313,9 +4516,7 @@ def fleet_to_bins(
         if cap <= 0.0:
             continue
         base_hr = a["hr_cap"] / cap if cap > 0 else _fill_plant_hr(None, group)
-        d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(
-            group, (0.0, 30.0, 8.0)
-        )
+        d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
         pct_mc = committed
         pct_mr = mustrun if group == "COAL" else d_mr
@@ -4329,36 +4530,59 @@ def fleet_to_bins(
         mults = _DEFAULT_HR_MULT_BY_GROUP.get(
             group, _DEFAULT_HR_MULT_BY_GROUP["CC_REGULAR"]
         )
-        rows.append({
-            "Plant_Group": group,
-            "ERCOT_Zone": a["zone"],
-            "Bin_Number": 1,
-            "Bin_Label": a["name"],
-            "Plant_Code": code,
-            "Plant_Name": a["name"],
-            "Turbine_Class": "",
-            "capacity_mw": cap,
-            "hr_weighted": base_hr,
-            "pct_mr": pct_mr,
-            "pct_mc": pct_mc,
-            "pct_econ": pct_econ,
-            "pct_peak": pct_peak,
-            "min_run": 0,
-            "min_down": 0,
-            "hr_mr": base_hr * mults["mr"],
-            "hr_mc": base_hr * mults["mc"],
-            "hr_econ": base_hr * mults["econ"],
-            "hr_peak": base_hr * mults["peak"],
-            "plant_count": 1,
-            "plant_codes": [code],
-            "fuel": BIN_GROUP_TO_FUEL[group],
-        })
-    return pd.DataFrame(rows, columns=[
-        "Plant_Group", "ERCOT_Zone", "Bin_Number", "Bin_Label", "Plant_Code",
-        "Plant_Name", "Turbine_Class", "capacity_mw", "hr_weighted", "pct_mr",
-        "pct_mc", "pct_econ", "pct_peak", "min_run", "min_down", "hr_mr",
-        "hr_mc", "hr_econ", "hr_peak", "plant_count", "plant_codes", "fuel",
-    ])
+        rows.append(
+            {
+                "Plant_Group": group,
+                "ERCOT_Zone": a["zone"],
+                "Bin_Number": 1,
+                "Bin_Label": a["name"],
+                "Plant_Code": code,
+                "Plant_Name": a["name"],
+                "Turbine_Class": "",
+                "capacity_mw": cap,
+                "hr_weighted": base_hr,
+                "pct_mr": pct_mr,
+                "pct_mc": pct_mc,
+                "pct_econ": pct_econ,
+                "pct_peak": pct_peak,
+                "min_run": 0,
+                "min_down": 0,
+                "hr_mr": base_hr * mults["mr"],
+                "hr_mc": base_hr * mults["mc"],
+                "hr_econ": base_hr * mults["econ"],
+                "hr_peak": base_hr * mults["peak"],
+                "plant_count": 1,
+                "plant_codes": [code],
+                "fuel": BIN_GROUP_TO_FUEL[group],
+            }
+        )
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "Plant_Group",
+            "ERCOT_Zone",
+            "Bin_Number",
+            "Bin_Label",
+            "Plant_Code",
+            "Plant_Name",
+            "Turbine_Class",
+            "capacity_mw",
+            "hr_weighted",
+            "pct_mr",
+            "pct_mc",
+            "pct_econ",
+            "pct_peak",
+            "min_run",
+            "min_down",
+            "hr_mr",
+            "hr_mc",
+            "hr_econ",
+            "hr_peak",
+            "plant_count",
+            "plant_codes",
+            "fuel",
+        ],
+    )
 
 
 # Combined-cycle duct-burner (peaking) heat-rate multiplier by turbine class,
@@ -4369,8 +4593,8 @@ def fleet_to_bins(
 # tune.
 CC_DUCT_BURNER_PEAK_MULT: dict[str, float] = {
     "advanced": 2.50,  # G/H-class
-    "f": 2.25,         # F-class incl. E/F
-    "older": 2.00,     # E-class, legacy
+    "f": 2.25,  # F-class incl. E/F
+    "older": 2.00,  # E-class, legacy
 }
 
 
@@ -4415,8 +4639,9 @@ def _offer_curve_for_group(
     curves = getattr(config, "offer_curve_by_group", None) or {}
     if group == "COAL":
         key = _COAL_SUPPLY_TO_CURVE.get(coal_supply_class(int(plant_code)))
-        return (curves.get(key) if key and curves.get(key)
-                else curves.get("COAL")) or None
+        return (
+            curves.get(key) if key and curves.get(key) else curves.get("COAL")
+        ) or None
     if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
         return None
     return curves.get(group) or None
@@ -4451,11 +4676,15 @@ def _econ_split_for_group(
 # columns in the sheet (names, group, config, turbine class …) are reference
 # only and ignored by the loader.
 PLANT_TRANCHE_OVERRIDE_FIELDS: dict[str, str] = {
-    "pct_mr": "Pct_Must_Run", "pct_mc": "Pct_Committed",
-    "pct_lo": "Pct_Econ_Low", "pct_hi": "Pct_Econ_High",
+    "pct_mr": "Pct_Must_Run",
+    "pct_mc": "Pct_Committed",
+    "pct_lo": "Pct_Econ_Low",
+    "pct_hi": "Pct_Econ_High",
     "pct_pk": "Pct_Peaking",
-    "hr_mr": "HR_Mult_Must_Run", "hr_mc": "HR_Mult_Committed",
-    "hr_lo": "HR_Mult_Econ_Low", "hr_hi": "HR_Mult_Econ_High",
+    "hr_mr": "HR_Mult_Must_Run",
+    "hr_mc": "HR_Mult_Committed",
+    "hr_lo": "HR_Mult_Econ_Low",
+    "hr_hi": "HR_Mult_Econ_High",
     "hr_pk": "HR_Mult_Peaking",
 }
 
@@ -4472,8 +4701,7 @@ def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
     any required column are skipped (so a partially edited sheet still loads).
     """
     df = pd.read_csv(path)
-    missing = [c for c in PLANT_TRANCHE_OVERRIDE_FIELDS.values()
-               if c not in df.columns]
+    missing = [c for c in PLANT_TRANCHE_OVERRIDE_FIELDS.values() if c not in df.columns]
     if "Plant_Code" not in df.columns or missing:
         raise ValueError(
             f"tranche-config sheet {path} missing columns: "
@@ -4482,8 +4710,10 @@ def load_plant_tranche_config(path: str | Path) -> dict[int, dict[str, float]]:
     out: dict[int, dict[str, float]] = {}
     for _, row in df.iterrows():
         try:
-            rec = {key: float(row[col])
-                   for key, col in PLANT_TRANCHE_OVERRIDE_FIELDS.items()}
+            rec = {
+                key: float(row[col])
+                for key, col in PLANT_TRANCHE_OVERRIDE_FIELDS.items()
+            }
             code = int(row["Plant_Code"])
         except (TypeError, ValueError):
             continue
@@ -4535,7 +4765,7 @@ def _econ_curve_steps(
         if mid is not None:
             f = 2.0 * mid * t if t <= 0.5 else mid + (1.0 - mid) * (2.0 * t - 1.0)
         else:
-            f = t ** exp
+            f = t**exp
         mult = lo_mult + (pk_mult - lo_mult) * f
         steps.append((f"econc{k:02d}", slice_cap, base_hr * mult, 1.0, 0, 0, 0.0))
     return steps
@@ -4631,14 +4861,14 @@ def bins_to_fleet(
         if fuel == "coal":
             _pc = int(b["Plant_Code"])
             _supply = COAL_PLANT_SUPPLY.get(_pc, "")
-            if (config.coal_mustrun_per_plant
-                    and _pc in COAL_MUSTRUN_BY_PLANT):
+            if config.coal_mustrun_per_plant and _pc in COAL_MUSTRUN_BY_PLANT:
                 pct_mr = COAL_MUSTRUN_BY_PLANT[_pc]
-            elif (_supply == "lignite"
-                    and config.coal_lignite_mustrun_override is not None):
+            elif (
+                _supply == "lignite"
+                and config.coal_lignite_mustrun_override is not None
+            ):
                 pct_mr = config.coal_lignite_mustrun_override
-            elif (_supply == "prb"
-                    and config.coal_prb_mustrun_override is not None):
+            elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
                 pct_mr = config.coal_prb_mustrun_override
         # Steam-following cogen treatment: a CC_CHP bin's behind-the-meter host
         # self-supply (removed from the grid, added back in the report) is
@@ -4646,13 +4876,15 @@ def bins_to_fleet(
         # split. Overriding pct_mr here shrinks the removed share and grows the
         # grid-facing capacity, which the steam floor + expensive load-following
         # below then shape into base + dispatchable rather than a flat slab.
-        chp_following = (
-            str(b["Plant_Group"]) in ("CC_CHP", "CT_CHP", "ST_CHP")
-            and getattr(config, "chp_steam_following", False)
-        )
+        chp_following = str(b["Plant_Group"]) in (
+            "CC_CHP",
+            "CT_CHP",
+            "ST_CHP",
+        ) and getattr(config, "chp_steam_following", False)
         if chp_following:
             pct_mr = chp_btm_pct(
-                int(b["Plant_Code"]), str(b["Plant_Group"]),
+                int(b["Plant_Code"]),
+                str(b["Plant_Group"]),
                 iso=getattr(config, "iso", "ERCOT"),
             )
         # Petra Nova runs on its own classification (see PETRA_NOVA_* above):
@@ -4718,9 +4950,11 @@ def bins_to_fleet(
         pct_mc = float(b["pct_mc"])
         if offer is not None and "pct_committed" in offer:
             pct_mc = float(offer["pct_committed"])
-        if (group == "CC_REGULAR"
-                and getattr(config, "cc_committed_per_plant", False)
-                and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
+        if (
+            group == "CC_REGULAR"
+            and getattr(config, "cc_committed_per_plant", False)
+            and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT
+        ):
             pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[plant_code]
         # Peaking %: the offer curve may override the CSV value before the
         # residual is split into the two economic steps (residual = 100 -
@@ -4729,7 +4963,8 @@ def bins_to_fleet(
         if offer is not None and "pct_peaking" in offer:
             pct_peak = float(offer["pct_peaking"])
         if group in ("CC_REGULAR", "CC_CHP") and getattr(
-                config, "cc_peaking_per_plant", False):
+            config, "cc_peaking_per_plant", False
+        ):
             # Per-plant CAMPD-derived duct-firing share from the ISO's
             # thermal-tranche artifact (thermal_tranche_peaking), superseding
             # the offer curve's class-wide pct_peaking; the hand-set ERCOT
@@ -4740,7 +4975,8 @@ def bins_to_fleet(
             if _pk is not None:
                 pct_peak = _pk
         if group in ("CC_REGULAR", "CC_CHP") and getattr(
-                config, "cc_duct_peaking", False):
+            config, "cc_duct_peaking", False
+        ):
             # Per-plant EIA-860 duct-burner peaking share: duct-fired plants
             # get their capability gap, non-duct CCs get 0 (no phantom
             # scarcity band). Supersedes the class-wide pct_peaking and the
@@ -4749,9 +4985,11 @@ def bins_to_fleet(
             _dpk = cc_duct_peaking_pct().get(plant_code)
             if _dpk is not None:
                 pct_peak = _dpk
-        if (group == "CC_REGULAR"
-                and getattr(config, "cc_peaking_per_plant", False)
-                and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+        if (
+            group == "CC_REGULAR"
+            and getattr(config, "cc_peaking_per_plant", False)
+            and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT
+        ):
             pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
         if ov is not None:
             pct_mc, pct_peak = ov["pct_mc"], ov["pct_pk"]
@@ -4805,9 +5043,7 @@ def bins_to_fleet(
             if "peak" in offer:
                 peak_hr = base_hr * float(offer["peak"])
             elif group in ("CC_REGULAR", "CC_CHP"):
-                peak_hr = base_hr * cc_duct_burner_peak_mult(
-                    b.get("Turbine_Class")
-                )
+                peak_hr = base_hr * cc_duct_burner_peak_mult(b.get("Turbine_Class"))
             else:
                 peak_hr = base_hr * float(offer["peak"])
         else:
@@ -4817,15 +5053,14 @@ def bins_to_fleet(
             cc_mc = getattr(config, "cc_committed_hr_override", None)
             if group in ("CC_REGULAR", "CC_CHP") and cc_mc is not None:
                 committed_hr = base_hr * cc_mc
-                econ_hr = base_hr * float(
-                    getattr(config, "cc_econ_hr_override", 1.2)
-                )
-                peak_hr = base_hr * float(
-                    getattr(config, "cc_peak_hr_override", 1.8)
-                )
+                econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
+                peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
             st_mc = getattr(config, "gas_st_committed_hr_override", None)
-            if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
-                    and st_mc is not None):
+            if (
+                group == "ST_GAS"
+                and plant_code not in ST_GAS_PEAKER_PLANTS
+                and st_mc is not None
+            ):
                 committed_hr = base_hr * st_mc
                 econ_hr = base_hr * float(
                     getattr(config, "gas_st_econ_hr_override", 1.0)
@@ -4836,12 +5071,8 @@ def bins_to_fleet(
             ct_mc = getattr(config, "ct_committed_hr_override", None)
             if group == "CT_CHP" and ct_mc is not None:
                 committed_hr = base_hr * ct_mc
-                econ_hr = base_hr * float(
-                    getattr(config, "ct_econ_hr_override", 1.1)
-                )
-                peak_hr = base_hr * float(
-                    getattr(config, "ct_peak_hr_override", 1.3)
-                )
+                econ_hr = base_hr * float(getattr(config, "ct_econ_hr_override", 1.1))
+                peak_hr = base_hr * float(getattr(config, "ct_peak_hr_override", 1.3))
         if ov is not None:
             # Per-plant sheet wins: all band heat rates are base_HR x the sheet's
             # multipliers (econ-low/-high set in the econ split below).
@@ -4863,9 +5094,7 @@ def bins_to_fleet(
         # surplus only.
         chp_pmin_mw = 0.0
         if chp_following:
-            pmin_cf = chp_pmin_cf(
-                plant_code, iso=getattr(config, "iso", "ERCOT")
-            )
+            pmin_cf = chp_pmin_cf(plant_code, iso=getattr(config, "iso", "ERCOT"))
             if pmin_cf is not None:
                 grid_mr_cf = max(0.0, pmin_cf * (1.0 - pct_mr / 100.0))
                 floor_mw = grid_mr_cf / 100.0 * nameplate
@@ -4903,46 +5132,94 @@ def bins_to_fleet(
             curve_pct = ov["pct_lo"] + ov["pct_hi"]
             if n_curve > 0 and curve_pct > 0.0 and pk_m > lo_m:
                 econ_steps = _econ_curve_steps(
-                    base_hr, lo_m, pk_m,
-                    nameplate * curve_pct / 100.0, n_curve, curve_exp,
+                    base_hr,
+                    lo_m,
+                    pk_m,
+                    nameplate * curve_pct / 100.0,
+                    n_curve,
+                    curve_exp,
                     curve_mid,
                 )
             else:
                 econ_steps = [
-                    ("econlo", nameplate * ov["pct_lo"] / 100.0,
-                     base_hr * ov["hr_lo"], 1.0, 0, 0, 0.0),
-                    ("econhi", nameplate * ov["pct_hi"] / 100.0,
-                     base_hr * ov["hr_hi"], 1.0, 0, 0, 0.0),
+                    (
+                        "econlo",
+                        nameplate * ov["pct_lo"] / 100.0,
+                        base_hr * ov["hr_lo"],
+                        1.0,
+                        0,
+                        0,
+                        0.0,
+                    ),
+                    (
+                        "econhi",
+                        nameplate * ov["pct_hi"] / 100.0,
+                        base_hr * ov["hr_hi"],
+                        1.0,
+                        0,
+                        0,
+                        0.0,
+                    ),
                 ]
         elif offer is not None:
             lo_m = float(offer["econ_low"])
             pk_m = float(offer["econ_high"])
             if n_curve > 0 and econ_cap > 0.0 and pk_m > lo_m:
                 econ_steps = _econ_curve_steps(
-                    base_hr, lo_m, pk_m, econ_cap, n_curve, curve_exp,
+                    base_hr,
+                    lo_m,
+                    pk_m,
+                    econ_cap,
+                    n_curve,
+                    curve_exp,
                     curve_mid,
                 )
             else:
                 share = float(offer["econ_low_share"])
                 econ_steps = [
-                    ("econlo", econ_cap * share, base_hr * lo_m,
-                     1.0, 0, 0, 0.0),
-                    ("econhi", econ_cap * (1.0 - share),
-                     base_hr * float(offer["econ_high"]), 1.0, 0, 0, 0.0),
+                    ("econlo", econ_cap * share, base_hr * lo_m, 1.0, 0, 0, 0.0),
+                    (
+                        "econhi",
+                        econ_cap * (1.0 - share),
+                        base_hr * float(offer["econ_high"]),
+                        1.0,
+                        0,
+                        0,
+                        0.0,
+                    ),
                 ]
         elif (split := _econ_split_for_group(group, plant_code, config)) is not None:
             split_frac, lo_mult, hi_mult = split
             if n_curve > 0 and econ_cap > 0.0 and hi_mult > lo_mult:
                 econ_steps = _econ_curve_steps(
-                    base_hr, lo_mult, hi_mult, econ_cap, n_curve, curve_exp,
+                    base_hr,
+                    lo_mult,
+                    hi_mult,
+                    econ_cap,
+                    n_curve,
+                    curve_exp,
                     curve_mid,
                 )
             else:
                 econ_steps = [
-                    ("econlo", econ_cap * split_frac, base_hr * lo_mult,
-                     1.0, 0, 0, 0.0),
-                    ("econhi", econ_cap * (1.0 - split_frac), base_hr * hi_mult,
-                     1.0, 0, 0, 0.0),
+                    (
+                        "econlo",
+                        econ_cap * split_frac,
+                        base_hr * lo_mult,
+                        1.0,
+                        0,
+                        0,
+                        0.0,
+                    ),
+                    (
+                        "econhi",
+                        econ_cap * (1.0 - split_frac),
+                        base_hr * hi_mult,
+                        1.0,
+                        0,
+                        0,
+                        0.0,
+                    ),
                 ]
         else:
             econ_steps = [("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0)]
@@ -4984,26 +5261,40 @@ def bins_to_fleet(
         # the must_run_pct / bin_nameplate tags — so commitment coupling and
         # the BTM add-back are unaffected.
         cr_spread = float(getattr(config, "committed_ramp_spread", 0.0) or 0.0)
-        if cr_spread > 0.0 and committed_cap > 0.5 and n_curve > 0 \
-                and base_hr > 0.0:
+        if cr_spread > 0.0 and committed_cap > 0.5 and n_curve > 0 and base_hr > 0.0:
             cmt_mult = committed_hr / base_hr
             cmt_steps = _econ_curve_steps(
-                base_hr, cmt_mult * (1.0 - cr_spread),
+                base_hr,
+                cmt_mult * (1.0 - cr_spread),
                 cmt_mult * (1.0 + cr_spread),
-                committed_cap, n_curve, curve_exp, curve_mid,
+                committed_cap,
+                n_curve,
+                curve_exp,
+                curve_mid,
             )
             committed_tranches = [
-                (("committed" if i == 0 else f"committed{i:02d}"),
-                 _cap, _hr, 1.0,
-                 int(b["min_run"]) if i == 0 else 0,
-                 int(b["min_down"]) if i == 0 else 0,
-                 startup if i == 0 else 0.0)
+                (
+                    ("committed" if i == 0 else f"committed{i:02d}"),
+                    _cap,
+                    _hr,
+                    1.0,
+                    int(b["min_run"]) if i == 0 else 0,
+                    int(b["min_down"]) if i == 0 else 0,
+                    startup if i == 0 else 0.0,
+                )
                 for i, (_s, _cap, _hr, *_r) in enumerate(cmt_steps)
             ]
         else:
             committed_tranches = [
-                ("committed", committed_cap, committed_hr, 1.0,
-                 int(b["min_run"]), int(b["min_down"]), startup),
+                (
+                    "committed",
+                    committed_cap,
+                    committed_hr,
+                    1.0,
+                    int(b["min_run"]),
+                    int(b["min_down"]),
+                    startup,
+                ),
             ]
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
@@ -5011,9 +5302,7 @@ def bins_to_fleet(
             *econ_steps,
             ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
         ]
-        for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in (
-            tranches
-        ):
+        for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
                 continue
             fleet.append(
@@ -5038,9 +5327,7 @@ def bins_to_fleet(
                     min_down_hours=min_down,
                     startup_cost_per_mw=tr_startup,
                     must_run_pct=pct_mr if suffix == "committed" else 0.0,
-                    bin_nameplate_mw=(
-                        nameplate if suffix == "committed" else 0.0
-                    ),
+                    bin_nameplate_mw=(nameplate if suffix == "committed" else 0.0),
                     coal_supply=coal_supply,
                     plant_code=plant_code,
                     chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
@@ -5048,7 +5335,11 @@ def bins_to_fleet(
             )
 
     fleet_arrays = generators_to_fleet_arrays(
-        fleet, zone_names, hours=config.hours, iso=config.iso, config=config,
+        fleet,
+        zone_names,
+        hours=config.hours,
+        iso=config.iso,
+        config=config,
         year=config.weather_year,
     )
     return fleet, fleet_arrays
@@ -5073,15 +5364,19 @@ def _bands_from_shares(
         cursor = hi
         if pct <= 0.5:
             continue
-        bands.append({"name": name, "cf_lo": round(lo, 1),
-                      "cf_hi": round(hi, 1), "mult": round(mult, 3),
-                      "vom": vom})
+        bands.append(
+            {
+                "name": name,
+                "cf_lo": round(lo, 1),
+                "cf_hi": round(hi, 1),
+                "mult": round(mult, 3),
+                "vom": vom,
+            }
+        )
     return bands
 
 
-def plant_tranche_bands(
-    b: "pd.Series | dict", config: ScenarioConfig
-) -> list[dict]:
+def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[dict]:
     """Return one plant's offer-curve tranche bands on the capacity-factor axis.
 
     Mirrors the tranche capacity and per-band heat-rate resolution in
@@ -5120,24 +5415,33 @@ def plant_tranche_bands(
         ov = load_plant_tranche_config(_ov_path).get(plant_code)
         if ov is not None:
             return _bands_from_shares(
-                [("must-run", ov["pct_mr"], ov["hr_mr"], True),
-                 ("committed", ov["pct_mc"], ov["hr_mc"], False),
-                 ("econ-lo", ov["pct_lo"], ov["hr_lo"], False),
-                 ("econ-hi", ov["pct_hi"], ov["hr_hi"], False),
-                 ("peak", ov["pct_pk"], ov["hr_pk"], False)],
+                [
+                    ("must-run", ov["pct_mr"], ov["hr_mr"], True),
+                    ("committed", ov["pct_mc"], ov["hr_mc"], False),
+                    ("econ-lo", ov["pct_lo"], ov["hr_lo"], False),
+                    ("econ-hi", ov["pct_hi"], ov["hr_hi"], False),
+                    ("peak", ov["pct_pk"], ov["hr_pk"], False),
+                ],
                 is_coal=(fuel == "coal"),
             )
 
     # Petra Nova (own classification, see PETRA_NOVA_* constants): one band
     # forced to PETRA_NOVA_MIN_CF of net capacity whenever available.
-    if (plant_code == PETRA_NOVA_PLANT_CODE
-            and group == "CT_CHP"
-            and getattr(config, "chp_steam_following", False)):
+    if (
+        plant_code == PETRA_NOVA_PLANT_CODE
+        and group == "CT_CHP"
+        and getattr(config, "chp_steam_following", False)
+    ):
         net_pct = 100.0 - PETRA_NOVA_PARASITIC_PCT
-        return [{
-            "name": "ccs must-run", "cf_lo": 0.0,
-            "cf_hi": round(net_pct, 1), "mult": 1.0, "vom": False,
-        }]
+        return [
+            {
+                "name": "ccs must-run",
+                "cf_lo": 0.0,
+                "cf_hi": round(net_pct, 1),
+                "mult": 1.0,
+                "vom": False,
+            }
+        ]
 
     offer = _offer_curve_for_group(group, plant_code, config)
 
@@ -5149,36 +5453,36 @@ def plant_tranche_bands(
         _supply = COAL_PLANT_SUPPLY.get(plant_code, "")
         if config.coal_mustrun_per_plant and plant_code in COAL_MUSTRUN_BY_PLANT:
             pct_mr = COAL_MUSTRUN_BY_PLANT[plant_code]
-        elif (_supply == "lignite"
-                and config.coal_lignite_mustrun_override is not None):
+        elif _supply == "lignite" and config.coal_lignite_mustrun_override is not None:
             pct_mr = config.coal_lignite_mustrun_override
-        elif (_supply == "prb"
-                and config.coal_prb_mustrun_override is not None):
+        elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
             pct_mr = config.coal_prb_mustrun_override
-    if (group in ("CC_CHP", "CT_CHP", "ST_CHP")
-            and getattr(config, "chp_steam_following", False)):
-        pct_mr = chp_btm_pct(
-            plant_code, group, iso=getattr(config, "iso", "ERCOT")
-        )
+    if group in ("CC_CHP", "CT_CHP", "ST_CHP") and getattr(
+        config, "chp_steam_following", False
+    ):
+        pct_mr = chp_btm_pct(plant_code, group, iso=getattr(config, "iso", "ERCOT"))
     pct_mc = float(b["pct_mc"])
     if offer is not None and "pct_committed" in offer:
         pct_mc = float(offer["pct_committed"])
-    if (group == "CC_REGULAR"
-            and getattr(config, "cc_committed_per_plant", False)
-            and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT):
+    if (
+        group == "CC_REGULAR"
+        and getattr(config, "cc_committed_per_plant", False)
+        and plant_code in CC_REGULAR_COMMITTED_PCT_BY_PLANT
+    ):
         pct_mc = CC_REGULAR_COMMITTED_PCT_BY_PLANT[plant_code]
     pct_peak = float(b["pct_peak"])
     if offer is not None and "pct_peaking" in offer:
         pct_peak = float(offer["pct_peaking"])
-    if group in ("CC_REGULAR", "CC_CHP") and getattr(
-            config, "cc_duct_peaking", False):
+    if group in ("CC_REGULAR", "CC_CHP") and getattr(config, "cc_duct_peaking", False):
         # Per-plant EIA-860 duct-burner peaking share (see bins_to_fleet).
         _dpk = cc_duct_peaking_pct().get(plant_code)
         if _dpk is not None:
             pct_peak = _dpk
-    if (group == "CC_REGULAR"
-            and getattr(config, "cc_peaking_per_plant", False)
-            and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT):
+    if (
+        group == "CC_REGULAR"
+        and getattr(config, "cc_peaking_per_plant", False)
+        and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT
+    ):
         pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
 
     if fuel == "coal":
@@ -5214,13 +5518,14 @@ def plant_tranche_bands(
             econ_hr = base_hr * float(getattr(config, "cc_econ_hr_override", 1.2))
             peak_hr = base_hr * float(getattr(config, "cc_peak_hr_override", 1.8))
         st_mc = getattr(config, "gas_st_committed_hr_override", None)
-        if (group == "ST_GAS" and plant_code not in ST_GAS_PEAKER_PLANTS
-                and st_mc is not None):
+        if (
+            group == "ST_GAS"
+            and plant_code not in ST_GAS_PEAKER_PLANTS
+            and st_mc is not None
+        ):
             committed_hr = base_hr * st_mc
-            econ_hr = base_hr * float(
-                getattr(config, "gas_st_econ_hr_override", 1.0))
-            peak_hr = base_hr * float(
-                getattr(config, "gas_st_peak_hr_override", 1.5))
+            econ_hr = base_hr * float(getattr(config, "gas_st_econ_hr_override", 1.0))
+            peak_hr = base_hr * float(getattr(config, "gas_st_peak_hr_override", 1.5))
         ct_mc = getattr(config, "ct_committed_hr_override", None)
         if group == "CT_CHP" and ct_mc is not None:
             committed_hr = base_hr * ct_mc
@@ -5231,8 +5536,7 @@ def plant_tranche_bands(
         share = float(offer["econ_low_share"])
         econ_steps = [
             ("econ-lo", econ_cap * share, base_hr * float(offer["econ_low"])),
-            ("econ-hi", econ_cap * (1.0 - share),
-             base_hr * float(offer["econ_high"])),
+            ("econ-hi", econ_cap * (1.0 - share), base_hr * float(offer["econ_high"])),
         ]
     elif (split := _econ_split_for_group(group, plant_code, config)) is not None:
         split_frac, lo_mult, hi_mult = split
@@ -5256,11 +5560,13 @@ def plant_tranche_bands(
         cursor = hi
         if cap <= 0.5:  # dropped from the LP in bins_to_fleet
             continue
-        bands.append({
-            "name": name,
-            "cf_lo": round(lo / nameplate * 100.0, 1),
-            "cf_hi": round(hi / nameplate * 100.0, 1),
-            "mult": round(hr / base_hr, 3) if base_hr > 0.0 else None,
-            "vom": vom_only,
-        })
+        bands.append(
+            {
+                "name": name,
+                "cf_lo": round(lo / nameplate * 100.0, 1),
+                "cf_hi": round(hi / nameplate * 100.0, 1),
+                "mult": round(hr / base_hr, 3) if base_hr > 0.0 else None,
+                "vom": vom_only,
+            }
+        )
     return bands

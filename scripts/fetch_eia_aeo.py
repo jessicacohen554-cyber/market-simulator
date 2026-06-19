@@ -54,8 +54,7 @@ def fetch_aeo_gas_prices(api_key: str, aeo_year: int = 2025) -> dict:
     # The exact facet values depend on the AEO release. Query the facets
     # endpoint first to discover available cases and series.
     facets_url = (
-        f"{base_url}/{aeo_year}/data/?api_key={api_key}"
-        "&frequency=annual&length=5000"
+        f"{base_url}/{aeo_year}/data/?api_key={api_key}&frequency=annual&length=5000"
     )
     print(f"\nFetching data: {facets_url}")
 
@@ -94,8 +93,8 @@ def print_constants(data: dict, aeo_year: int) -> None:
     case_mapping = {
         "ref": "mid",
         "reference": "mid",
-        "highogs": "low",   # High supply = low price
-        "lowogs": "high",   # Low supply = high price
+        "highogs": "low",  # High supply = low price
+        "lowogs": "high",  # Low supply = high price
     }
 
     print("\n\n# === PASTE INTO constants.py ===")
@@ -124,12 +123,8 @@ def print_constants(data: dict, aeo_year: int) -> None:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Fetch EIA AEO gas price trajectories"
-    )
-    parser.add_argument(
-        "--aeo-year", type=int, default=2025, help="AEO release year"
-    )
+    parser = argparse.ArgumentParser(description="Fetch EIA AEO gas price trajectories")
+    parser.add_argument("--aeo-year", type=int, default=2025, help="AEO release year")
     args = parser.parse_args()
 
     api_key = os.environ.get("EIA_API_KEY")

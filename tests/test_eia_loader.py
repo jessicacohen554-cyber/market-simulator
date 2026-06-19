@@ -157,9 +157,7 @@ class TestEIALoader(unittest.TestCase):
     def test_load_demand_meta_keys(self):
         """Demand metadata exposes the expected summary statistics."""
         meta = load_demand_meta("ERCOT", _TEST_YEAR)
-        self.assertEqual(
-            set(meta), {"peak_mw", "min_mw", "avg_mw", "total_annual_mwh"}
-        )
+        self.assertEqual(set(meta), {"peak_mw", "min_mw", "avg_mw", "total_annual_mwh"})
         self.assertGreater(meta["peak_mw"], meta["avg_mw"])
         self.assertGreater(meta["avg_mw"], meta["min_mw"])
 
@@ -214,9 +212,7 @@ class TestNYISODemand(unittest.TestCase):
 
     def test_nyiso_demand_no_nan(self):
         """NYISO zonal demand contains no NaN values."""
-        self.assertFalse(
-            np.isnan(load_demand("NYISO", _NYISO_TEST_YEAR)).any()
-        )
+        self.assertFalse(np.isnan(load_demand("NYISO", _NYISO_TEST_YEAR)).any())
 
     def test_nyiso_zone_shares_sum_to_one(self):
         """Static NYISO zone load shares sum to exactly 1.0.
@@ -234,9 +230,7 @@ class TestNYISODemand(unittest.TestCase):
         nyiso = get_iso_config("NYISO")
         demand = load_demand("NYISO", _NYISO_TEST_YEAR, nyiso)
         nonzero = [
-            (i, z.load_share)
-            for i, z in enumerate(nyiso.zones)
-            if z.load_share > 0.0
+            (i, z.load_share) for i, z in enumerate(nyiso.zones) if z.load_share > 0.0
         ]
         system = demand[nonzero[0][0]] / nonzero[0][1]
         for i, share in nonzero:
@@ -292,9 +286,7 @@ class TestInterchangeEnvelope(unittest.TestCase):
         self.assertLess(exp[night].mean(), 50.0)
 
     def test_forecast_year_returns_none(self):
-        self.assertIsNone(
-            measured_interchange_envelope("CAISO", 2030, HOURS_PER_YEAR)
-        )
+        self.assertIsNone(measured_interchange_envelope("CAISO", 2030, HOURS_PER_YEAR))
 
 
 class TestGasFloorProfile(unittest.TestCase):
@@ -306,6 +298,7 @@ class TestGasFloorProfile(unittest.TestCase):
         self.assertEqual(prof.shape, (HOURS_PER_YEAR,))
         self.assertTrue((prof >= 0).all())
         import pandas as pd
+
         cal = pd.date_range("2024-01-01", periods=HOURS_PER_YEAR, freq="h")
         hod = cal.hour.to_numpy()
         month = cal.month.to_numpy()
@@ -321,14 +314,10 @@ class TestGasFloorProfile(unittest.TestCase):
         self.assertTrue((hi >= lo - 1e-6).all())
 
     def test_forecast_year_returns_none(self):
-        self.assertIsNone(
-            measured_gas_floor_profile("CAISO", 2030, HOURS_PER_YEAR)
-        )
+        self.assertIsNone(measured_gas_floor_profile("CAISO", 2030, HOURS_PER_YEAR))
 
     def test_unmapped_iso_returns_none(self):
-        self.assertIsNone(
-            measured_gas_floor_profile("ZZZ", 2024, HOURS_PER_YEAR)
-        )
+        self.assertIsNone(measured_gas_floor_profile("ZZZ", 2024, HOURS_PER_YEAR))
 
 
 class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
@@ -350,9 +339,7 @@ class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             frame.to_parquet(Path(tmp) / "CISO hourly.parquet", index=False)
-            with mock.patch.object(
-                eia_loader, "EIA_HOURLY_DIR", Path(tmp)
-            ):
+            with mock.patch.object(eia_loader, "EIA_HOURLY_DIR", Path(tmp)):
                 return eia_loader.load_eia_hourly_benchmark("CAISO", 2023)
 
     @staticmethod
@@ -360,12 +347,14 @@ class TestHourlyBenchmarkBatteryColumns(unittest.TestCase):
         import pandas as pd
 
         times = pd.date_range("2023-01-01", periods=48, freq="h")
-        frame = pd.DataFrame({
-            "UTC time": times,
-            "Local date": times,
-            "NG: SUN": np.linspace(0.0, 470.0, 48),
-            "Net generation": np.full(48, 1_000.0),
-        })
+        frame = pd.DataFrame(
+            {
+                "UTC time": times,
+                "Local date": times,
+                "NG: SUN": np.linspace(0.0, 470.0, 48),
+                "Net generation": np.full(48, 1_000.0),
+            }
+        )
         if with_battery:
             # Net series: negative = charging (midday), positive =
             # discharging (evening).

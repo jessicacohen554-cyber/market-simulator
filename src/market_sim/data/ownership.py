@@ -63,10 +63,14 @@ _GENERATOR_ALIASES: dict[str, set[str]] = {
     "owner_utility_id": {"utility_id", "operator_id", "owner_utility_id"},
     "owner_name": {"utility_name", "operator_name", "owner_name"},
     "nameplate_capacity_mw": {
-        "nameplate_capacity_mw", "nameplate_capacity", "namepcap",
+        "nameplate_capacity_mw",
+        "nameplate_capacity",
+        "namepcap",
     },
     "energy_source_code": {
-        "energy_source_code", "energy_source_1", "energy_source",
+        "energy_source_code",
+        "energy_source_1",
+        "energy_source",
     },
     "prime_mover_code": {"prime_mover_code", "prime_mover"},
     "state": {"state", "plant_state"},
@@ -77,7 +81,9 @@ _OWNER_ALIASES: dict[str, set[str]] = {
     "plant_code": {"plant_code", "plant_id", "oris_code"},
     "generator_id": {"generator_id", "gen_id", "unit_id"},
     "owner_utility_id": {
-        "owner_utility_id", "ownership_id", "owner_id",
+        "owner_utility_id",
+        "ownership_id",
+        "owner_id",
     },
     "owner_name": {"owner_name", "ownership_name"},
     "percent_owned": {"percent_owned", "percent_ownership", "ownership_pct"},
@@ -88,7 +94,9 @@ _OWNER_ALIASES: dict[str, set[str]] = {
 _PLANT_ALIASES: dict[str, set[str]] = {
     "plant_code": {"plant_code", "plant_id", "oris_code"},
     "balancing_authority_code": {
-        "balancing_authority_code", "ba_code", "balancing_authority",
+        "balancing_authority_code",
+        "ba_code",
+        "balancing_authority",
     },
     "state": {"state", "plant_state"},
 }
@@ -165,9 +173,7 @@ def _read_eia860_sheet(
         )
 
     with zipfile.ZipFile(path) as zf:
-        name = next(
-            (n for n in zf.namelist() if workbook_marker in n), None
-        )
+        name = next((n for n in zf.namelist() if workbook_marker in n), None)
         if name is None:
             raise FileNotFoundError(
                 f"no EIA-860 workbook matching '{workbook_marker}' in {path}"
@@ -198,21 +204,19 @@ def load_eia860_ownership(eia860_path: Path, year: int) -> pd.DataFrame:
 
     generators = _rename_to_canonical(
         _read_eia860_sheet(
-            eia860_path, "Generator_Y", "Operable",
+            eia860_path,
+            "Generator_Y",
+            "Operable",
             ["eia860_generator_operable.parquet", "eia860_generator.parquet"],
         ),
         _GENERATOR_ALIASES,
     )
     owners = _rename_to_canonical(
-        _read_eia860_sheet(
-            eia860_path, "Owner_Y", "Owner", ["eia860_owner.parquet"]
-        ),
+        _read_eia860_sheet(eia860_path, "Owner_Y", "Owner", ["eia860_owner.parquet"]),
         _OWNER_ALIASES,
     )
     plants = _rename_to_canonical(
-        _read_eia860_sheet(
-            eia860_path, "Plant_Y", "Plant", ["eia860_plant.parquet"]
-        ),
+        _read_eia860_sheet(eia860_path, "Plant_Y", "Plant", ["eia860_plant.parquet"]),
         _PLANT_ALIASES,
     )
 
@@ -221,10 +225,9 @@ def load_eia860_ownership(eia860_path: Path, year: int) -> pd.DataFrame:
     plants = _coerce_keys(plants)
 
     # Plant-level balancing authority and state, joined onto both schedules.
-    ba_by_plant = (
-        plants.drop_duplicates("plant_code")
-        .set_index("plant_code")[["balancing_authority_code", "state"]]
-    )
+    ba_by_plant = plants.drop_duplicates("plant_code").set_index("plant_code")[
+        ["balancing_authority_code", "state"]
+    ]
 
     # Schedule 3 baseline: operator as the implicit 100% owner.
     base = generators.copy()
@@ -232,9 +235,7 @@ def load_eia860_ownership(eia860_path: Path, year: int) -> pd.DataFrame:
     if "owner_utility_id" not in base.columns:
         base["owner_utility_id"] = pd.NA
 
-    base_keys = set(
-        zip(base["plant_code"], base["generator_id"], strict=True)
-    )
+    base_keys = set(zip(base["plant_code"], base["generator_id"], strict=True))
 
     # Schedule 4 owner rows replace the operator row for the generators they
     # cover. ``percent_owned`` from EIA is already a 0–1 decimal.
@@ -243,9 +244,7 @@ def load_eia860_ownership(eia860_path: Path, year: int) -> pd.DataFrame:
         owners["percent_owned"] = pd.to_numeric(
             owners["percent_owned"], errors="coerce"
         )
-        owned_keys = set(
-            zip(owners["plant_code"], owners["generator_id"], strict=True)
-        )
+        owned_keys = set(zip(owners["plant_code"], owners["generator_id"], strict=True))
         # Generator attributes (capacity, fuel, mover) come from Schedule 3.
         gen_attrs = generators.drop_duplicates(["plant_code", "generator_id"])
         attr_cols = [
@@ -324,9 +323,7 @@ def _coerce_keys(df: pd.DataFrame) -> pd.DataFrame:
         df = df[df["plant_code"].notna()]
         df["plant_code"] = df["plant_code"].astype("int64")
     if "generator_id" in df.columns:
-        df["generator_id"] = (
-            df["generator_id"].astype("string").str.strip()
-        )
+        df["generator_id"] = df["generator_id"].astype("string").str.strip()
     return df.reset_index(drop=True)
 
 
@@ -415,15 +412,12 @@ def build_parent_mapping(
             continue
         mask = _overlay_mask(df, overlay)
         if mask.any():
-            df.loc[mask, "pending_change"] = (
-                f"{overlay.status}: {overlay.description}"
-            )
+            df.loc[mask, "pending_change"] = f"{overlay.status}: {overlay.description}"
 
     # Step 4 — ownership-weighted capacity.
-    df["ownership_mw"] = (
-        pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce")
-        * pd.to_numeric(df["percent_owned"], errors="coerce")
-    )
+    df["ownership_mw"] = pd.to_numeric(
+        df["nameplate_capacity_mw"], errors="coerce"
+    ) * pd.to_numeric(df["percent_owned"], errors="coerce")
     return df
 
 
@@ -470,9 +464,7 @@ def summarize_fleet_by_parent(
         )
         .reset_index()
     )
-    return summary.sort_values("ownership_mw", ascending=False).reset_index(
-        drop=True
-    )
+    return summary.sort_values("ownership_mw", ascending=False).reset_index(drop=True)
 
 
 def attribute_emissions(
@@ -517,18 +509,12 @@ def attribute_emissions(
     owners["plant_code"] = owners["plant_code"].astype("int64")
     owners["generator_id"] = owners["generator_id"].astype("string").str.strip()
 
-    merged = dispatch.merge(
-        owners, on=["plant_code", "generator_id"], how="left"
-    )
+    merged = dispatch.merge(owners, on=["plant_code", "generator_id"], how="left")
     merged["parent_company"] = merged["parent_company"].fillna(UNKNOWN_PARENT)
     merged["percent_owned"] = merged["percent_owned"].fillna(1.0)
 
-    merged["owned_generation_mwh"] = (
-        merged["dispatch_mw"] * merged["percent_owned"]
-    )
-    merged["owned_emissions_tco2"] = (
-        merged["owned_generation_mwh"] * merged[rate_col]
-    )
+    merged["owned_generation_mwh"] = merged["dispatch_mw"] * merged["percent_owned"]
+    merged["owned_emissions_tco2"] = merged["owned_generation_mwh"] * merged[rate_col]
     # Hour-of-year → calendar month (Jan = month 1), via the year's calendar.
     hour_index = pd.to_datetime(f"{year}-01-01") + pd.to_timedelta(
         merged["hour"], unit="h"
@@ -557,11 +543,9 @@ def attribute_emissions(
         frames.append(agg)
 
     out = pd.concat(frames, ignore_index=True)
-    out["emissions_intensity_tco2_per_mwh"] = (
-        out["emissions_tco2"] / out["generation_mwh"].where(
-            out["generation_mwh"] > 0.0
-        )
-    )
+    out["emissions_intensity_tco2_per_mwh"] = out["emissions_tco2"] / out[
+        "generation_mwh"
+    ].where(out["generation_mwh"] > 0.0)
     return out[
         [
             "parent_company",

@@ -42,7 +42,13 @@ def _synthetic_generators() -> pd.DataFrame:
             "Winter Capacity (MW)": ["205", "150", "47", "25", None],
             "Operating Year": [2015.0, 1980.0, 2021.0, 2023.0, None],
             "Energy Source 1": ["NG", "SUB", "SUN", "MWH", None],
-            "Associated with Combined Heat and Power System": ["N", "N", "N", "N", None],
+            "Associated with Combined Heat and Power System": [
+                "N",
+                "N",
+                "N",
+                "N",
+                None,
+            ],
         }
     )
 
@@ -101,7 +107,9 @@ class TestBuildFleetFrame(unittest.TestCase):
         # Storage energy capacity joined onto the battery unit only.
         battery = df[df["unit_id"] == "BA1"].iloc[0]
         self.assertAlmostEqual(float(battery["energy_capacity_mwh"]), 100.0)
-        self.assertTrue(pd.isna(df[df["unit_id"] == "GT1"].iloc[0]["energy_capacity_mwh"]))
+        self.assertTrue(
+            pd.isna(df[df["unit_id"] == "GT1"].iloc[0]["energy_capacity_mwh"])
+        )
 
     def test_iso_enrichment_from_map(self):
         df = curate_fleet.build_fleet_frame(
@@ -123,12 +131,8 @@ class TestCurateEndToEnd(unittest.TestCase):
         self.raw = Path(self._tmp.name) / "eia-860"
         for sub in (self.raw, self.raw / "vintage_2024"):
             sub.mkdir(parents=True, exist_ok=True)
-            _synthetic_generators().to_parquet(
-                sub / curate_fleet.GENERATOR_OPERABLE
-            )
-            _synthetic_storage().to_parquet(
-                sub / curate_fleet.ENERGY_STORAGE_OPERABLE
-            )
+            _synthetic_generators().to_parquet(sub / curate_fleet.GENERATOR_OPERABLE)
+            _synthetic_storage().to_parquet(sub / curate_fleet.ENERGY_STORAGE_OPERABLE)
 
     def tearDown(self):
         clean_io.paths.CLEAN_DIR = self._orig_clean

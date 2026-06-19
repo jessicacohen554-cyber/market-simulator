@@ -10,6 +10,7 @@ CAMPD plants to their ERCOT zone via the bin sheet, and prints:
 
 Used to quantify the spatial reliability-deployment overlay's before/after.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -23,8 +24,7 @@ sys.path.insert(0, str(REPO))
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 # CEMS-covered thermal classes (the dispatch klass / bin-sheet Plant_Group).
-THERMAL = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP",
-           "COAL"}
+THERMAL = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP", "COAL"}
 
 
 def _zone_map(bins_path: Path) -> tuple[dict[int, str], dict[int, str]]:
@@ -44,7 +44,8 @@ def main() -> None:
     ap.add_argument("bundle")
     ap.add_argument("--year", type=int, default=2025)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"))
+        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
+    )
     args = ap.parse_args()
     bundle = Path(args.bundle)
     year = args.year
@@ -64,8 +65,10 @@ def main() -> None:
     # Model thermal gen by zone.
     th = disp[disp["klass"].isin(THERMAL)]
     model_th = th.groupby("zone", observed=True)["mw"].sum() / 1e6
-    model_cc = (disp[disp["klass"] == "CC_REGULAR"]
-                .groupby("zone", observed=True)["mw"].sum() / 1e6)
+    model_cc = (
+        disp[disp["klass"] == "CC_REGULAR"].groupby("zone", observed=True)["mw"].sum()
+        / 1e6
+    )
 
     # CAMPD thermal by zone (map plant -> zone/class via bin sheet; keep only
     # plants whose bin-sheet class is thermal).
@@ -73,25 +76,30 @@ def main() -> None:
     campd["zone"] = campd["plant_id"].map(zone_of)
     campd["klass"] = campd["plant_id"].map(klass_of)
     campd_th = campd[campd["klass"].isin(THERMAL)]
-    actual_th = (campd_th.groupby("zone", observed=True)["net_mw"].sum() / 1e6)
+    actual_th = campd_th.groupby("zone", observed=True)["net_mw"].sum() / 1e6
     campd_cc = campd[campd["klass"] == "CC_REGULAR"]
-    actual_cc = (campd_cc.groupby("zone", observed=True)["net_mw"].sum() / 1e6)
+    actual_cc = campd_cc.groupby("zone", observed=True)["net_mw"].sum() / 1e6
 
     zones = ["North", "South_Central", "West", "Northeast", "Houston", "South"]
     print(f"\n=== {bundle.name}  year {year} ===")
-    print(f"{'zone':>14} {'net_exp':>9} {'mdl_th':>8} {'act_th':>8} "
-          f"{'th_miss':>8} {'cc_miss':>8}")
+    print(
+        f"{'zone':>14} {'net_exp':>9} {'mdl_th':>8} {'act_th':>8} "
+        f"{'th_miss':>8} {'cc_miss':>8}"
+    )
     for z in zones:
         ne = net_export.get(z, float("nan"))
         mt = model_th.get(z, 0.0)
         at = actual_th.get(z, 0.0)
         mc = model_cc.get(z, 0.0)
         ac = actual_cc.get(z, 0.0)
-        print(f"{z:>14} {ne:>9.1f} {mt:>8.1f} {at:>8.1f} "
-              f"{mt - at:>8.1f} {mc - ac:>8.1f}")
-    print(f"{'TOTAL thermal miss':>14} "
-          f"{'':>9} {model_th.sum():>8.1f} {actual_th.sum():>8.1f} "
-          f"{model_th.sum() - actual_th.sum():>8.1f}")
+        print(
+            f"{z:>14} {ne:>9.1f} {mt:>8.1f} {at:>8.1f} {mt - at:>8.1f} {mc - ac:>8.1f}"
+        )
+    print(
+        f"{'TOTAL thermal miss':>14} "
+        f"{'':>9} {model_th.sum():>8.1f} {actual_th.sum():>8.1f} "
+        f"{model_th.sum() - actual_th.sum():>8.1f}"
+    )
 
 
 if __name__ == "__main__":

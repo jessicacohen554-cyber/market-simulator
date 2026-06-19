@@ -69,15 +69,11 @@ class ISOConfig(BaseModel):
                     f"Link references unknown from_zone '{link.from_zone}'"
                 )
             if link.to_zone not in valid_zones:
-                raise ValueError(
-                    f"Link references unknown to_zone '{link.to_zone}'"
-                )
+                raise ValueError(f"Link references unknown to_zone '{link.to_zone}'")
 
         total_share = sum(zone.load_share for zone in self.zones)
         if abs(total_share - 1.0) > _LOAD_SHARE_TOL:
-            raise ValueError(
-                f"Zone load shares sum to {total_share}, expected 1.0"
-            )
+            raise ValueError(f"Zone load shares sum to {total_share}, expected 1.0")
 
 
 def _ercot_config() -> ISOConfig:
@@ -161,12 +157,8 @@ def _ercot_config() -> ISOConfig:
         TransferLink(from_zone="Northeast", to_zone="North", ttc_mw=1300.0),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
         TransferLink(from_zone="North", to_zone="South_Central", ttc_mw=5000.0),
-        TransferLink(
-            from_zone="South_Central", to_zone="South", ttc_mw=3000.0
-        ),
-        TransferLink(
-            from_zone="South_Central", to_zone="Houston", ttc_mw=4000.0
-        ),
+        TransferLink(from_zone="South_Central", to_zone="South", ttc_mw=3000.0),
+        TransferLink(from_zone="South_Central", to_zone="Houston", ttc_mw=4000.0),
         TransferLink(from_zone="South", to_zone="Houston", ttc_mw=2000.0),
     ]
     # ERCOT VOLL: $5,000/MWh — matches the day-ahead system-wide offer cap.
@@ -287,12 +279,8 @@ def _miso_config() -> ISOConfig:
     # (calibration) — verify against MISO OASIS transfer capabilities and
     # binding-frequency from MISO market/congestion data.
     links = [
-        TransferLink(
-            from_zone="MISO-North", to_zone="MISO-Central", ttc_mw=12000.0
-        ),
-        TransferLink(
-            from_zone="MISO-Central", to_zone="MISO-South", ttc_mw=3000.0
-        ),
+        TransferLink(from_zone="MISO-North", to_zone="MISO-Central", ttc_mw=12000.0),
+        TransferLink(from_zone="MISO-Central", to_zone="MISO-South", ttc_mw=3000.0),
     ]
     # MISO energy offer cap is $2,000/MWh: FERC Order 831 sets a $2,000/MWh
     # hard cap on incremental energy offers across all RTOs/ISOs (offers above
@@ -497,12 +485,8 @@ def _nyiso_config() -> ISOConfig:
     # Tier 3 (calibration) — verify against NYISO operating-limit postings
     # and binding-frequency from NYISO congestion data.
     links = [
-        TransferLink(
-            from_zone="Upstate_West", to_zone="Capital_Hudson", ttc_mw=2850.0
-        ),
-        TransferLink(
-            from_zone="Capital_Hudson", to_zone="Lower_Hudson", ttc_mw=5150.0
-        ),
+        TransferLink(from_zone="Upstate_West", to_zone="Capital_Hudson", ttc_mw=2850.0),
+        TransferLink(from_zone="Capital_Hudson", to_zone="Lower_Hudson", ttc_mw=5150.0),
         TransferLink(from_zone="Lower_Hudson", to_zone="NYC", ttc_mw=3900.0),
         TransferLink(from_zone="NYC", to_zone="Long_Island", ttc_mw=1650.0),
     ]
@@ -641,9 +625,7 @@ def get_iso_config(iso_name: str) -> ISOConfig:
     builder = _ISO_BUILDERS.get(iso_name.upper())
     if builder is None:
         supported = ", ".join(sorted(_ISO_BUILDERS))
-        raise ValueError(
-            f"Unknown ISO '{iso_name}'. Supported ISOs: {supported}"
-        )
+        raise ValueError(f"Unknown ISO '{iso_name}'. Supported ISOs: {supported}")
     config = builder()
     config.validate_topology()
     return config

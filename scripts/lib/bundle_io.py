@@ -53,9 +53,7 @@ def content_hash(df: pd.DataFrame) -> str:
     return h.hexdigest()[:12]
 
 
-def write_shared_input(
-    df: pd.DataFrame, name: str, iso: str, run_dir: Path
-) -> str:
+def write_shared_input(df: pd.DataFrame, name: str, iso: str, run_dir: Path) -> str:
     """Write ``df`` to the content-addressed shared store; return its reference.
 
     The reference is the store path **relative to** ``run_dir`` (so the bundle
@@ -83,11 +81,7 @@ def bundle_input_path(run_dir: Path, name: str) -> Path | None:
     meta_path = run_dir / "meta.json"
     if meta_path.exists():
         try:
-            ref = (
-                json.loads(meta_path.read_text())
-                .get("shared_inputs", {})
-                .get(name)
-            )
+            ref = json.loads(meta_path.read_text()).get("shared_inputs", {}).get(name)
         except (json.JSONDecodeError, OSError):
             ref = None
         if ref:

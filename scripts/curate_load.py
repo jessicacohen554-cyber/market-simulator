@@ -112,9 +112,7 @@ def _caiso_forecast(zones: set[str]) -> pd.DataFrame:
             )
         )
     if not frames:
-        return pd.DataFrame(
-            columns=["interval_start_utc", "zone", "load_forecast_mw"]
-        )
+        return pd.DataFrame(columns=["interval_start_utc", "zone", "load_forecast_mw"])
     out = pd.concat(frames, ignore_index=True)
     # Collapse any duplicate (zone, hour) DAM rows to a single forecast value.
     return out.groupby(["zone", "interval_start_utc"], as_index=False)[
