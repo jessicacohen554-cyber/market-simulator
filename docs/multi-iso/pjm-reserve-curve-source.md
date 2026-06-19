@@ -1,7 +1,7 @@
 # PJM ORDC curve — parameter provenance
 
-Every value in `inputs/calibration/pjm_ordc_curve.csv` traced to its primary
-source. Source PDFs are committed in `inputs/raw-data/PJM-AS/`. Nothing here is
+Every value in `data/raw/_validation-source/pjm_ordc_curve.csv` traced to its primary
+source. Source PDFs are committed in `data/raw/PJM-AS/`. Nothing here is
 fitted to a price residual (claude.md #4).
 
 ## The in-force curve (2023–2025 backcast)
@@ -22,7 +22,7 @@ which reserves will not be procured" (Manual 11, sec 4.3.3).
 
 ### Per-value citations
 
-| value | source (PDF in `inputs/raw-data/PJM-AS/`) | exact location |
+| value | source (PDF in `data/raw/PJM-AS/`) | exact location |
 |---|---|---|
 | Step 1 penalty = $850/MWh | `m11.pdf` (Rev 136, 2025-10-01) | sec 4.3.3 "Step 1: Penalty Factor = $850/MWh; Desired Reserve MW = locational Reliability Requirement" |
 | Step 2 penalty = $300/MWh | `m11.pdf` | sec 4.3.3 "Step 2: Penalty Factor = $300/MWh; Desired Reserve MW = … Requirement … plus 190 MW …" |

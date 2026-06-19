@@ -121,7 +121,7 @@ Extend `scripts/build_calibration_reference.py` to emit, per ISO-year:
 EIA-860 renewable capacity (year-end totals, zone shares, monthly ramp),
 measured Henry Hub (or basis-adjusted regional gas) price, EIA-930 demand
 totals, and an eGRID generation/emissions benchmark. Output lands in
-`inputs/calibration/{ISO}_{year}_renewable_capacity.csv` and
+`data/raw/_validation-source/{ISO}_{year}_renewable_capacity.csv` and
 `calibration_reference.json`.
 
 ### Stage F — Market-design module wiring

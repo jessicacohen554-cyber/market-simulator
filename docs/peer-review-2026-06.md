@@ -313,7 +313,7 @@ entry screen. AEO2026 is out; ingest the table and deflate consistently.
    (CHP split, EIA-930 reconciliation, per-class vs 923, monthly bias,
    hourly r/NRMSE, 11-plant panel, per-plant CAMPD fit) — **zero pass/fail
    logic anywhere in 1,924 lines**.
-3. **Dashboard** (`scripts/_backcast_shell.py:141,655`): the operative
+3. **Dashboard** (`scripts/probes/_backcast_shell.py:141,655`): the operative
    tolerance. Per class: **pass** = (|err| ≤ 5 % OR |miss| ≤ 1.0 TWh) AND
    |share Δ| ≤ 1.5 pp; **ok** = within 2× (≤10 % / 2 TWh / 3 pp). Heatmap
    deadband ±2 % per zone-month. LMP shown but labeled "Diagnostic only —

@@ -8,7 +8,7 @@ description: Register new backcast calibration runs on the deployable results da
 Register calibration runs on the JSON-driven backcast results dashboard. The
 page is a static shell (`backcast-results.html`) that loads run data from
 `frontend/data/backcast/` and is served by GitHub Pages. Full generator:
-`scripts/render_backcast.py` (data + shell) and `scripts/_backcast_shell.py`
+`scripts/render_backcast.py` (data + shell) and `scripts/probes/_backcast_shell.py`
 (the UI). The standalone embedded report (`scripts/render_calibration_html.py`)
 is retained only for one-off self-contained sends; the dashboard is the
 standard format.
@@ -25,12 +25,15 @@ payload, so they appear automatically for every newly pushed bundle.
 ## How publishing works (conflict-free by construction)
 
 The shared dashboard files — `backcast-results.html`,
-`frontend/data/backcast/manifest.js`, `benchmark.js` — are **generated and
-gitignored. NEVER commit them** (git won't let you). They are assembled from
-the committed per-run files by the stdlib-only `scripts/build_manifest.py`:
-locally for preview, and by the "Deploy site to GitHub Pages" workflow at
-deploy time (the only workflow; it runs in under a minute on every merge to
-main).
+`frontend/data/backcast/manifest.js`, `benchmark.js` — are assembled from the
+committed per-run files by the stdlib-only `scripts/build_manifest.py`. They ARE
+committed (so a raw-branch GitHub Pages build serves the dashboard too, not just
+the Actions deploy — that is what fixed the recurring 404), **but you must never
+hand-commit them.** The "Deploy site to GitHub Pages" workflow is their single
+writer: on every merge to main it regenerates them and commits them back (with
+`GITHUB_TOKEN`, which does not re-trigger the deploy). Run
+`scripts/build_manifest.py` locally only to *preview* — leave the resulting
+changes to those three files uncommitted; the deploy reconciles them.
 
 Each run commits ONLY files in its own namespace, so any number of parallel
 sessions — same ISO or different ISOs — merge to main without conflicts or

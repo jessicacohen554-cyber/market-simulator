@@ -6,9 +6,9 @@ online reserve + published step curve), a published rule for the forecast.
 **Zero parameters fitted to the price residual.**
 **Code:** `src/market_sim/results/scarcity.py` (PJM section),
 `scripts/derive_pjm_ordc_overlay.py`.
-**Curve (cited):** `inputs/calibration/pjm_ordc_curve.csv` +
+**Curve (cited):** `data/raw/_validation-source/pjm_ordc_curve.csv` +
 `docs/multi-iso/pjm-reserve-curve-source.md`.
-**Data:** `inputs/raw-data/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
+**Data:** `data/raw/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
 2023–2025 + `pjm_<yr>_as_up_mw.parquet`, the withholding series from
 `scripts/build_pjm_as_withholding.py`). **Bundles:** `results/calibration/pjm_26`
 (keeper), `results/calibration/pjm_27_aswh` (reserve-withholding probe — see
@@ -180,7 +180,7 @@ series is the **measured RT Primary Reserve requirement** (`as_req_mw`, service
 `PR`, locale `PJM_RTO`, the binding upward 10-min product that nests
 Synchronized — Manual 11 sec 4.4.1), 5-min→hourly on the non-leap 8760 clock,
 ~3 GW/yr, written by `scripts/build_pjm_as_withholding.py` to
-`inputs/raw-data/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
+`data/raw/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
 Data Miner reserve-market parquets cited in `pjm-reserve-curve-source.md`. DA
 (`da_reserve_market_results`) was considered as the basis for our single-clearing
 (day-ahead-style) model: the Primary requirement is a reliability quantity
@@ -245,7 +245,7 @@ price-formation structure the energy-only LP lacks, built in sequence (not by
 fitting an adder or a haircut to the residual).
 
 **Targeting (Jul/Aug afternoon peak, 2024, from `pjm_27_aswh`, via
-`scripts/_pjm_online_headroom_breakdown.py`).** Online plants are already ~91%
+`scripts/probes/_pjm_online_headroom_breakdown.py`).** Online plants are already ~91%
 loaded; the 13.4 GW of online headroom is CT_PEAKER 4.8 (75% loaded) + COAL 3.4 +
 CC_REGULAR 2.9 + baseload 1.8 + ST_GAS 0.5. Two findings reframe the build:
 
@@ -342,10 +342,10 @@ python scripts/analyze_lmp_residual.py results/calibration/pjm_26 \
 python scripts/build_pjm_as_withholding.py            # 2023 2024 2025
 # 2. Re-solve the keeper config + withholding, one year per parallel job
 #    (claude.md #45; cap ~2 concurrent — 2 PJM plant-level solves peak >15 GB):
-python scripts/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
-python scripts/_pjm_aswh_run.py 2024 results/calibration/pjm_27_aswh_2024
-python scripts/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
-python scripts/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
+python scripts/probes/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
+python scripts/probes/_pjm_aswh_run.py 2024 results/calibration/pjm_27_aswh_2024
+python scripts/probes/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
+python scripts/probes/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
     results/calibration/pjm_27_aswh_202{3,4,5}
 # 3. Re-derive + re-check the residual (result: ~inert — see section above):
 python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_27_aswh --diagnostic

@@ -43,10 +43,13 @@ individually with no code change.
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 
 import numpy as np
+import pandas as pd
 
+from market_sim.config import paths
 from market_sim.config.constants import (
     HENRY_HUB_TRAJECTORIES,
     INTERFACE_NEIGHBORS,
@@ -352,3 +355,152 @@ def seam_flow_direction(
     direction[spread > hurdle] = 1.0
     direction[spread < -hurdle] = -1.0
     return direction
+
+
+# ---------------------------------------------------------------------------
+# Neighbor LMP loading (realized hourly system price for a modeled neighbor)
+# ---------------------------------------------------------------------------
+# A neighbor that is itself a modeled ISO (PJM's NYISO neighbor, NYISO's/NEISO's
+# PJM neighbor) carries a *realized* hourly LMP the constructed reference price
+# is anchored to and validated against (scripts.validate_neighbor_price; the
+# convexity fit in scripts.derive_neighbor_convexity). That series has always
+# been read from the committed realized-LMP product under
+# ``paths.CALIBRATION_DIR`` (``actual_lmp_hourly_<ISO>.parquet``: a hub-mean of
+# the ISO's trading hubs on the model's fixed non-leap 8760-hour local calendar).
+#
+# This block adds a second backend that sources the same series from the curated
+# ``data/clean`` tree — ``clean_io.read_clean("lmp", iso=..., market=...,
+# year=...)``, the canonical per-node total + components frame — and reduces it
+# to the identical hub-mean-on-8760 series. The backend is selected by the
+# ``MARKET_SIM_USE_CLEAN`` environment flag and defaults OFF, so the raw path is
+# unchanged until the clean tree is explicitly opted into.
+
+# Environment flag gating the clean-backed read path (default OFF).
+USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+
+# Market run -> clean ``market`` partition key. ``run`` mirrors the realized
+# product's ``rt`` / ``da`` columns; the clean tree keys on RTM / DAM.
+_RUN_TO_MARKET: dict[str, str] = {"rt": "RTM", "da": "DAM"}
+
+# The model's fixed non-leap dispatch calendar (matches scripts.derive_actual_lmp
+# and market_sim.data.campd): Feb 29 dropped, hours on the local wall clock.
+_LMP_HOURS_PER_YEAR: int = 8760
+_DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+_MONTH_START_HOUR: tuple[int, ...] = tuple(
+    int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(12)
+)
+
+
+def _use_clean() -> bool:
+    """Whether the clean-backed read path is enabled via ``MARKET_SIM_USE_CLEAN``."""
+    return os.environ.get(USE_CLEAN_ENV, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _hour_of_year(local_ts: pd.Series) -> np.ndarray:
+    """Map tz-naive local timestamps to the fixed non-leap hour-of-year (Feb 29 -> -1).
+
+    Mirror of ``scripts.derive_actual_lmp._hour_index`` so the clean-backed
+    series lands on byte-identical hour slots to the realized product.
+    """
+    month = local_ts.dt.month.to_numpy()
+    day = local_ts.dt.day.to_numpy()
+    hour = local_ts.dt.hour.to_numpy()
+    starts = np.array([_MONTH_START_HOUR[m - 1] for m in month])
+    idx = starts + (day - 1) * 24 + hour
+    return np.where((month == 2) & (day == 29), -1, idx)
+
+
+def _fill_hourly(series: np.ndarray) -> np.ndarray:
+    """Interpolate then back/forward-fill a dense 8760 series (gap-free output).
+
+    The fixed calendar leaves the spring-forward hour empty (and a sparse source
+    leaves further gaps); this fills them so downstream arithmetic sees no NaN —
+    identical treatment to ``scripts.validate_neighbor_price._actual_lmp``.
+    """
+    return pd.Series(series).interpolate().bfill().ffill().to_numpy(dtype=float)
+
+
+def _neighbor_lmp_raw(iso: str, year: int, run: str) -> np.ndarray | None:
+    """Read a neighbor's realized hourly LMP from the committed raw product.
+
+    The existing path: ``paths.CALIBRATION_DIR/actual_lmp_hourly_<iso>.parquet``
+    (columns ``year``, ``hour``, ``rt``, ``da`` on the 8760 calendar). Returns
+    the ``run`` column for ``year`` as a gap-filled ``(8760,)`` array, or
+    ``None`` when the product or the year is absent.
+    """
+    path = paths.CALIBRATION_DIR / f"actual_lmp_hourly_{iso}.parquet"
+    if not path.is_file():
+        return None
+    df = pd.read_parquet(path)
+    rows = df[df["year"] == year].sort_values("hour")
+    if len(rows) != _LMP_HOURS_PER_YEAR or run not in rows.columns:
+        return None
+    return _fill_hourly(rows[run].to_numpy(dtype=float))
+
+
+def _neighbor_lmp_clean(iso: str, year: int, run: str, market: str | None) -> np.ndarray | None:
+    """Read a neighbor's realized hourly LMP from the curated clean tree.
+
+    Loads the canonical per-node LMP frame (total + components) via
+    ``clean_io.read_clean("lmp", iso=iso, market=market, year=year)``, takes the
+    hub mean of ``lmp_usd_per_mwh`` per local wall-clock hour, and places it on
+    the model's fixed non-leap 8760 calendar — the same reduction the realized
+    product was built with, so the two backends agree within float tolerance.
+    Returns ``None`` when the clean partition is absent (regenerate from raw with
+    ``python scripts/regenerate_clean.py lmp``).
+    """
+    # Lazy import: the clean read seam lives under scripts/, off the model
+    # package, so importing it eagerly would couple package import to repo-root
+    # being on sys.path. The raw (default) path never needs it.
+    from scripts.lib.clean_io import clean_exists, read_clean
+
+    market = market or _RUN_TO_MARKET[run]
+    if not clean_exists("lmp", iso=iso, market=market, year=year):
+        return None
+    df = read_clean(
+        "lmp",
+        iso=iso,
+        market=market,
+        year=year,
+        columns=["interval_start_local", "node", "lmp_usd_per_mwh"],
+    )
+    local = pd.to_datetime(df["interval_start_local"])
+    hub_mean = (
+        df.assign(_hoy=_hour_of_year(local))
+        .query("_hoy >= 0")
+        .groupby("_hoy")["lmp_usd_per_mwh"]
+        .mean()
+    )
+    dense = hub_mean.reindex(range(_LMP_HOURS_PER_YEAR)).to_numpy(dtype=float)
+    return _fill_hourly(dense)
+
+
+def neighbor_lmp_hourly(
+    iso: str, year: int, run: str = "rt", *, market: str | None = None
+) -> np.ndarray | None:
+    """Return a modeled neighbor's realized hourly system LMP ($/MWh), or ``None``.
+
+    The neighbor-LMP loading the validation and convexity steps anchor to. Reads
+    the realized hub-mean series on the model's fixed non-leap 8760-hour local
+    calendar for the given ISO and ``run`` (``"rt"`` real-time / ``"da"``
+    day-ahead). Two interchangeable backends produce the same series:
+
+    * the committed realized-LMP product under ``paths.CALIBRATION_DIR`` (the
+      default, unchanged path); and
+    * the curated ``data/clean`` LMP tree via :func:`clean_io.read_clean`,
+      selected when the ``MARKET_SIM_USE_CLEAN`` environment flag is set.
+
+    Args:
+        iso: Modeled-ISO code whose realized LMP is sought (e.g. ``"PJM"``).
+        year: Calendar year.
+        run: ``"rt"`` (real-time) or ``"da"`` (day-ahead).
+        market: Clean ``market`` partition override; defaults to RTM/DAM per
+            ``run`` (only consulted on the clean-backed path).
+
+    Returns:
+        A gap-filled ``(8760,)`` $/MWh array, or ``None`` when neither the
+        requested year nor the partition is available on the active backend.
+    """
+    if _use_clean():
+        return _neighbor_lmp_clean(iso, year, run, market)
+    return _neighbor_lmp_raw(iso, year, run)

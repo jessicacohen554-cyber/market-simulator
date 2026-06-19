@@ -148,7 +148,7 @@ shipped extract — reproduces the documented gate exactly: 2023 MAE 10.5 / tail
 
 ### First-hour diagnostic (where the 2025 adder over-fires)
 
-`scripts/_ercot_2025_adder_diag.py` on the regenerated run131, demand-weighted
+`scripts/probes/_ercot_2025_adder_diag.py` on the regenerated run131, demand-weighted
 model price vs actual RTSPP:
 
 - **The +$11.2 overshoot is entirely the deep tail.** Decomposed by model price
@@ -257,3 +257,94 @@ returned `{}`, and no `avgLMP` was attached (the page's `actualLMP(yr)` then
 returned null). Fixed to read `CALIBRATION_DIR` (old path kept as fallback);
 the ERCOT bench parts repopulate on the run132 render. The same fix repopulates
 the other ISOs on their next render.
+
+## Global storage-AS credit — investigated, BLOCKED on a scarcity-price model
+
+**Date:** 2026-06-19. **Branch:** `claude/ercot-storage-as-global-m8wjqo`.
+**Question:** make the run132 storage-AS reserve credit *global* (on for
+2023–2025 and forecast) instead of `weather_year >= 2025`, without regressing the
+calibrated backcast. **Outcome:** kept run132's 2025+ scope. The global credit is
+blocked, and the block is now sharper than "it over-cools" — it is two
+independent, structural obstacles, neither closable with a measured input here.
+
+### The credit *anti*-targets the 2024 tail (new measured diagnostic)
+
+The scope comment said crediting 2024 "makes reserves look adequate on days that
+were actually tight." The hourly measurement is stronger than that. The credit
+subtracts the **measured hourly** battery up-AS (`storage` column,
+`ercot_2024_as_by_restype_hourly.parquet`) from the reserve-balance RHS. On 2024:
+
+| 2024 battery up-AS | all hours | actual >$200 (53 h) | >$500 (16 h) | >$1000 (8 h) |
+|---|---|---|---|---|
+| mean MW | 2045 | **2618** | **2920** | 2904 |
+
+On the genuinely scarce hours ERCOT held **~28–43% *more* battery AS** than the
+annual mean — physically sensible (more reserve procured into a tight grid), but
+it means the credit removes the **most** reserve-balance MW *exactly* on the
+hours the model's tail must survive. The credit does not merely fail to
+self-target away from scarcity; it is anti-targeted. (corr(AS, RTSPP)≈0.08 — the
+AS held carries no negative scarcity signal the credit could exploit.)
+
+This is why the model's 2024 tail collapses under the credit, and it confirms the
+tail is an **ORDC accounting over-fire**, not a physical reserve-margin signal:
+ERCOT priced scarcity on those hours *with* 2.6–2.9 GW of battery AS still held,
+because the energy was scarce (net-load peak, thermal maxed), not because total
+reserve sat at MCL. The model has no such energy-scarcity driver, so removing the
+over-fire removes the only thing producing the tail.
+
+### Reproduced on the current extract (new `--ercot-storage-as-reserve-from-year` flag)
+
+Single-year 2024, keeper recipe + `--ercot-storage-as-reserve
+--ercot-storage-as-reserve-from-year 2023` (credit on for the backcast):
+
+| 2024 | avg (act 26.8) | MAE | >$200 (act 53) | >$500 (act 16) |
+|---|---|---|---|---|
+| keeper (credit off) | 29.0 | **10.5** | 49 | 28 |
+| global credit (this run) | 21.2 | **12.7** | **7** | 4 |
+
+Byte-for-byte the handoff's documented 2024 probe, now reproduced on the shipped
+extract and through the new CLI plumbing — the credit-only global path fails 2024
+on every gate axis (avg, MAE, both tails).
+
+### Why no measured mechanism closes it (the two structural blocks)
+
+1. **2024 — the in-LP ORDC curve is hour-invariant.** In the co-opt path
+   `ercot_reserve_coopt_inputs` reduces any seasonal/TOD LOLP table *to its mean*
+   (`mu_s = float(np.mean(mu))`) and the requirement RHS is flat; the only hourly
+   signal is fleet availability + the hourly credit. So **direction 1**
+   (re-derive the LOLP curve) cannot make the credit self-target — a higher/steeper
+   knee shifts *every* hour and re-inflates the 2025 keeper that run132 just
+   closed. The available measured table
+   (`data/raw/_validation-source/ercot_ordc_lolp_params.csv`) is itself near-flat
+   (µ≈904–947, σ≈1333–1367) and offers no tight-day-specific lift. Tuning µ per
+   year to restore the tail would be a fit to actuals — barred by the repo's
+   no-pinning rule.
+2. **2023 — the tail is out-of-market and un-modelable by any ORDC/LOLP curve.**
+   2023's >$200 hours are **47% of the year's total $** and are documented
+   *administrative* scarcity (ERCOT RTORDPA / ECRS conservatism, IMM-estimated
+   >$12B), not a loss-of-load-probability event. No re-derived demand curve can
+   reproduce administrative withholding. **Direction 2** (a regime-gated
+   out-of-market 2023 adder) is the only mechanism that could, but it needs a
+   *defensible measured* MW/$-withheld source; obtaining the IMM withholding
+   series needs egress not available here, and inventing the magnitude would be a
+   markup — also barred.
+
+A truly global credit therefore needs **two** independent scarcity-price
+mechanisms (an hour-resolved net-load/LOLP driver for 2024 *and* an out-of-market
+adder for 2023), each blocked on inputs we cannot source without violating the
+no-markup / no-fit rule. The reliability-deployment overlay does not help (it is
+an energy/congestion min-gen floor, ~$0.1 on system LMP — measured last session).
+
+**Decision:** keep run132's `ercot_storage_as_reserve_from_year=2025` scope. This
+is the handoff's sanctioned honest stopping point: the global credit is blocked on
+a scarcity-price model, not on the credit (which is the measured battery AS and
+physically correct in every year).
+
+### Deliverable — CLI plumbing for future global probing
+
+Added `--ercot-storage-as-reserve-from-year` (default **2025**, so the keeper is
+unchanged) threaded `run_calibration_full.py` → `run_calibration.run_year` →
+`with_overrides`. The handoff noted there was no CLI flag for the scope and that
+testing a backcast credit required temporarily editing the config default; the
+flag removes that footgun. Set it to 2023 to probe a global credit *once a genuine
+scarcity-price mechanism exists* to pair with it.

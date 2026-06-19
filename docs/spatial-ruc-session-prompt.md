@@ -14,10 +14,10 @@ generalization of the CT deployment overlay (`scripts/derive_ct_deployment.py`,
 Read docs/calibration-best-so-far.md + docs/calibration-log.md first.
 
 DATA (already processed — artifact committed; do NOT reprocess)
-- `inputs/calibration/actual_lmp_zonal_ERCOT.parquet` is committed
+- `data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet` is committed
   (`year, hour, settlement_point, rt, da`, 8760-hour clock, 15 hub/load-zone points,
   2023-2025). It was built by `scripts/derive_ercot_zonal_lmp.py` from the committed
-  ERCOT SPP archives in `inputs/raw-data/lmp-data/` (`*RTMLZHBSPP_<year>.zip` RTM
+  ERCOT SPP archives in `data/raw/lmp-data/` (`*RTMLZHBSPP_<year>.zip` RTM
   15-min averaged to hourly, `*DAMLZHBSPP_<year>.zip` DAM hourly; each zip = one
   .xlsx with 12 monthly sheets). The deriver is there only to regenerate if needed —
   use the committed parquet directly. (Ignore the `*realtime_zone_csv.zip` /
@@ -100,7 +100,7 @@ REPRODUCE THE KEEPER (then add `--reliability-deployment`)
       --wefor-residual 0.06 --wefor-relief-groups ST_GAS,ST_CHP
 Single year ≈ 5 min; 15 GB / 4 cores ⇒ run ≤2 years concurrently (3 OOMs).
 The prior session's merit-axis fix (CC econ-ramp restoration) is the artifact
-`inputs/calibration/offer_curve_deltas_cc_merit_ramp.json` (CC_REGULAR econ_low
+`data/raw/_validation-source/offer_curve_deltas_cc_merit_ramp.json` (CC_REGULAR econ_low
 −0.24 / econ_high −0.20; fixes the flat-band cycling). Keep it; this overlay is the
 orthogonal spatial axis. Fold both into a clean-gate keeper at the end.
 

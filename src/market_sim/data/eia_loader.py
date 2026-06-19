@@ -9,6 +9,7 @@ normalized per-fuel distributions.
 from __future__ import annotations
 
 import logging
+import os
 from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
@@ -185,6 +186,199 @@ _ERCO_HOURLY_FILE: Path = EIA_HOURLY_DIR / "ERCO hourly.parquet"
 
 # Column names in the demand-meta parquet that make up the returned metadata.
 _META_FIELDS = ("peak_mw", "min_mw", "avg_mw", "total_annual_mwh")
+
+
+# ---------------------------------------------------------------------------
+# Clean-data consumption seam (gated behind MARKET_SIM_USE_CLEAN, default OFF)
+# ---------------------------------------------------------------------------
+# The standardization contract curates the raw EIA-930 feeds into the canonical
+# ``load`` / ``generation`` datatypes under ``data/clean`` (one Parquet per
+# ``(iso, year)``), read back through the frozen ``scripts.lib.clean_io`` seam.
+# When ``MARKET_SIM_USE_CLEAN`` is truthy these helpers source the system demand
+# and per-fuel generation from that clean tree instead of the raw extracts; the
+# default-OFF gate keeps every existing raw path byte-identical. Parity between
+# the clean-backed and raw series is asserted in
+# ``tests/test_consume_load_generation.py``.
+
+# Truthy values for the opt-in environment flag.
+_CLEAN_FLAG_TRUE = frozenset({"1", "true", "yes", "on"})
+
+# IANA timezone per ISO whose clean feed is reconstructed onto the model's
+# fixed non-leap local-year 8760 clock. The clean ``load`` feed for these BAs
+# carries no local-time column, so the model clock is rebuilt from the tz-aware
+# UTC timestamps via this zone (verified to reproduce each BA's parquet "Local
+# time" exactly). MISO is intentionally absent: its EIA-930 extract stamps a
+# fixed-offset local clock that no single IANA zone reproduces.
+_ISO_LOCAL_TZ: dict[str, str] = {
+    "CAISO": "America/Los_Angeles",
+    "ERCOT": "America/Chicago",
+    "NEISO": "America/New_York",
+    "NYISO": "America/New_York",
+    "SPP": "America/Chicago",
+}
+
+# ISOs whose clean ``load`` dataset reconstructs the *system* demand series the
+# model uses today (the EIA-930 ``<BA> hourly`` Demand, summed over the clean
+# zones). Restricted to the ISOs whose model demand already comes from that same
+# ``<BA> hourly`` extract: CAISO/NYISO read native zonal feeds into clean (a
+# different series from the CISO/NYIS BA demand the model serves), and
+# MISO/PJM/SPP serve the demand-profiles parquet, so their clean override is
+# left off to avoid silently swapping the source under the flag.
+_CLEAN_DEMAND_ISOS: frozenset[str] = frozenset({"ERCOT", "NEISO"})
+
+# Clean ``generation`` fuel bucket -> model benchmark series name, restricted to
+# the buckets that map 1:1 onto a single EIA-930 ``NG: <CODE>`` column (and so
+# equal the raw benchmark within tolerance). The storage family (clean ``storage``
+# folds EIA BAT/PS/UES/...; the benchmark keeps ``battery`` / ``pumped_storage``
+# split) and the catch-all ``other`` / ``geothermal`` buckets aggregate
+# differently and are deliberately not overridden from clean here.
+_CLEAN_GEN_FUEL_TO_BENCHMARK: dict[str, str] = {
+    "coal": "coal",
+    "gas": "gas",
+    "nuclear": "nuclear",
+    "hydro": "hydro",
+    "solar": "solar",
+    "wind": "wind",
+    "oil": "oil",
+}
+
+
+def _use_clean() -> bool:
+    """Whether the clean-data consumption seam is enabled (default OFF)."""
+    return os.environ.get("MARKET_SIM_USE_CLEAN", "").strip().lower() in _CLEAN_FLAG_TRUE
+
+
+def _read_clean_seam() -> tuple[Callable[..., pd.DataFrame], Callable[..., bool]] | None:
+    """Return ``(read_clean, clean_exists)`` from the frozen seam, or ``None``.
+
+    The seam lives under ``scripts/`` (not the installed model package), so the
+    import is lazy and failure-tolerant: a missing module simply disables the
+    clean path and the caller falls back to the raw extracts.
+    """
+    try:
+        from scripts.lib.clean_io import clean_exists, read_clean
+    except Exception:  # pragma: no cover - only when scripts/ is off sys.path
+        logger.debug("scripts.lib.clean_io unavailable; using raw data paths")
+        return None
+    return read_clean, clean_exists
+
+
+def _clean_local_year_rows(
+    df: pd.DataFrame, iso: str, year: int
+) -> pd.DataFrame | None:
+    """Restrict a clean frame to the model's non-leap local-year rows, UTC-sorted.
+
+    Mirrors :func:`_eia_hourly_frame`'s row selection (rows whose EIA-930 "Local
+    date" falls in ``year``, local Feb 29 dropped, ordered by UTC) but rebuilt
+    from the clean dataset's tz-aware ``interval_start_utc``. EIA-930 stamps
+    hours as *hour-ending*, so a row belongs to the local date one hour before
+    its (hour-ending) local timestamp; the hour-ending basis is applied before
+    the year / Feb-29 filter. Returns ``None`` when the ISO has no known zone.
+    """
+    tz = _ISO_LOCAL_TZ.get(iso)
+    if tz is None:
+        return None
+    utc = pd.DatetimeIndex(df["interval_start_utc"])
+    local = utc.tz_convert(tz).tz_localize(None)
+    hour_ending_date = local - pd.Timedelta(hours=1)
+    keep = (
+        (hour_ending_date.year == year)
+        & ~((hour_ending_date.month == 2) & (hour_ending_date.day == 29))
+    )
+    out = df.loc[keep].copy()
+    return out.sort_values("interval_start_utc")
+
+
+def _read_clean_iso_year(
+    datatype: str, iso: str, year: int
+) -> pd.DataFrame | None:
+    """Read the clean ``datatype`` rows covering the model's local ``year``.
+
+    A local year straddles two UTC-partitioned clean files (the BA's UTC offset
+    pushes the year's tail hours into ``year + 1``), so both partitions are read
+    when present and concatenated before the local-year window is cut out by
+    :func:`_clean_local_year_rows`. Returns ``None`` when the seam is
+    unavailable, no partition exists, or the ISO's clock cannot be rebuilt.
+    """
+    seam = _read_clean_seam()
+    if seam is None:
+        return None
+    read_clean, clean_exists = seam
+    frames = [
+        read_clean(datatype, iso=iso, year=y, validate=False)
+        for y in (year, year + 1)
+        if clean_exists(datatype, iso=iso, year=y)
+    ]
+    if not frames:
+        return None
+    rows = _clean_local_year_rows(pd.concat(frames, ignore_index=True), iso, year)
+    if rows is None or rows.empty:
+        return None
+    return rows
+
+
+def _clean_system_demand(iso: str, year: int) -> np.ndarray | None:
+    """Return the clean-backed system demand (MW) on the model clock, or ``None``.
+
+    Sums the clean ``load`` zones per hour into the ISO-wide system series the
+    raw demand path produces. Returns ``None`` (caller falls back to the raw
+    extract) when the ISO is unsupported, the clean partition is absent, or the
+    reconstructed series is not a clean, gap-free full year — matching the strict
+    8760-hour requirement of :func:`_eia_hourly_frame`.
+    """
+    if iso not in _CLEAN_DEMAND_ISOS:
+        return None
+    rows = _read_clean_iso_year("load", iso, year)
+    if rows is None:
+        return None
+    system = (
+        rows.groupby("interval_start_utc", as_index=False)["load_mw"]
+        .sum()
+        .sort_values("interval_start_utc")
+    )
+    mw = system["load_mw"].to_numpy(dtype=float)
+    if mw.shape[0] != HOURS_PER_YEAR or np.isnan(mw).any():
+        return None
+    return mw
+
+
+def _clean_generation_by_fuel(iso: str, year: int) -> dict[str, np.ndarray] | None:
+    """Return clean-backed per-fuel hourly generation (MW), keyed by benchmark name.
+
+    Reshapes the long-form clean ``generation`` (one row per ``(zone, fuel,
+    hour)``) into the wide per-fuel arrays the model benchmark expects, summing
+    the clean zones per ``(fuel, hour)`` and placing each fuel on the model's
+    8760-hour clock. Only the buckets that map 1:1 onto a single EIA-930 fuel
+    column (:data:`_CLEAN_GEN_FUEL_TO_BENCHMARK`) are returned. Per-fuel NaN
+    holes are gap-filled exactly as :func:`load_eia_hourly_benchmark` does.
+    Returns ``None`` when the ISO is unsupported, the partition is absent, or the
+    reconstructed grid is not a clean full year.
+    """
+    if iso not in _ISO_LOCAL_TZ:
+        return None
+    rows = _read_clean_iso_year("generation", iso, year)
+    if rows is None:
+        return None
+    wide = (
+        rows.pivot_table(
+            index="interval_start_utc",
+            columns="fuel",
+            values="generation_mw",
+            aggfunc="sum",
+        )
+        .sort_index()
+    )
+    if wide.shape[0] != HOURS_PER_YEAR:
+        return None
+    out: dict[str, np.ndarray] = {}
+    for clean_fuel, bench_name in _CLEAN_GEN_FUEL_TO_BENCHMARK.items():
+        if clean_fuel not in wide.columns:
+            continue
+        series = wide[clean_fuel].interpolate().bfill().ffill().to_numpy(dtype=float)
+        if np.isnan(series).any():
+            continue
+        out[bench_name] = series
+    return out or None
 
 
 def _eia_hourly_path(ba_code: str) -> Path:
@@ -748,6 +942,15 @@ def load_eia_hourly_benchmark(
         interchange = df["Total interchange"].interpolate().bfill().ffill()
         if not interchange.isna().any():
             out["interchange"] = _pad_to_year(interchange.to_numpy(dtype=float))
+
+    # Clean-data seam (gated, default OFF): override the per-fuel generation
+    # with the curated clean ``generation`` dataset for the 1:1-mapped fuels
+    # (parity-checked in tests). The aggregate ``net_gen`` / ``interchange`` and
+    # any non-overridden fuels keep their raw values.
+    if _use_clean():
+        clean_fuels = _clean_generation_by_fuel(iso, year)
+        if clean_fuels:
+            out.update(clean_fuels)
     return out or None
 
 
@@ -1606,6 +1809,16 @@ def load_demand(
         raw_mw = _load_nyiso_hourly_demand(year)
     elif iso == "NEISO":
         raw_mw = _load_neiso_hourly_demand(year)
+    # Clean-data seam (gated, default OFF): source the system demand from the
+    # curated clean ``load`` dataset for the ISOs whose clean feed reconstructs
+    # the raw EIA-930 series exactly (parity-checked in tests). Only the demand
+    # magnitude is swapped; the interchange / zonal-share / loss logic below is
+    # unchanged. A missing or incomplete clean partition returns ``None`` and
+    # leaves the raw series (or the profiles-parquet fallback) in place.
+    if _use_clean():
+        clean_mw = _clean_system_demand(iso, year)
+        if clean_mw is not None:
+            raw_mw = clean_mw
     if raw_mw is None:
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")

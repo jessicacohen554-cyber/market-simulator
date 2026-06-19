@@ -20,13 +20,13 @@ are first-class.
 
 Written artifacts:
 
-- `inputs/calibration/calibration_reference.json` — NEISO blocks for
+- `data/raw/_validation-source/calibration_reference.json` — NEISO blocks for
   2023/2024/2025: EIA-930 demand stats (`data/eia_hourly/ISNE hourly.parquet`),
   measured Henry Hub, EIA-923 by-fuel `generation_twh` (now including **hydro**
   and the **oil** columns — ISO-NE burns real oil in winter — see §1a), EIA-860
   wind/solar December totals + 4-zone shares + monthly ramps, and the eGRID
   2023 `BACODE=ISNE` generation/emissions benchmark.
-- `inputs/calibration/NEISO_{2023,2024,2025}_renewable_capacity.csv` —
+- `data/raw/_validation-source/NEISO_{2023,2024,2025}_renewable_capacity.csv` —
   per-zone, per-month EIA-860 operable wind/solar capacity.
 
 Headline reference values:
@@ -303,7 +303,7 @@ red-flag test passes. It sits ~37% under the EIA target partly because gas_cc
 over-runs in this pre-calibration smoke (69.3 vs 54.3 TWh; cheap gas displaces
 oil at the margin), so oil should rise toward 0.39 TWh once the offer-curve /
 import / gas-basis knobs are tuned in P11/P12. Citation target: the per-year
-EIA-923 oil column in `inputs/calibration/calibration_reference.json`
+EIA-923 oil column in `data/raw/_validation-source/calibration_reference.json`
 (`isos.NEISO.<year>.generation_twh.oil` = 0.39 / 0.31 / 0.91 TWh for
 2023/24/25).
 
@@ -315,7 +315,7 @@ unit (ORIS 2364, Bow NH; Granite Shore Power) previously carried `supply = ''`
 cost and offer-curve key. `scripts/derive_coal_supply.py --iso NEISO` — the same
 EIA-923 Schedule-5 receipts machinery already used for PJM — sums the plant's
 coal receipts (54,050 tons 2023-2025) and finds them **100 % bituminous**,
-writing `inputs/processed/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
+writing `data/raw/_processed-legacy/coal_supply_NEISO.csv` (`2364,bituminous,receipts`).
 `fleet.coal_supply_class(2364)` now returns `bituminous`, so the dispatch class,
 `offer_curve_by_group` key, and `_coal_supply_class` scorecard label all resolve
 to **`COAL_BIT`**; the delivered cost stays `COAL_PRICE_BASE["NEISO"]` = 3.0 (the
@@ -354,7 +354,7 @@ the cheapest gas, ~95 % of the EIA-923 prime-mover split); the CT_PEAKER (~2 TWh
 **CT_PEAKER reserve recovered via the ct_deployment overlay (keeper neiso 16).**
 The one sanctioned lever for the CT gap — the targeted `ct_deployment` overlay
 (`scripts/derive_ct_deployment.py --iso NEISO` →
-`inputs/calibration/ct_deployment_floor_NEISO.parquet`, wedge 0.08/0.04/0.05 TWh)
+`data/raw/_validation-source/ct_deployment_floor_NEISO.parquet`, wedge 0.08/0.04/0.05 TWh)
 — floored CT correctly in P1 but was **stripped by the P2 commitment screen**
 because `commitment.apply_commitment_with_coal_pin` rebuilt the P2 fleet without
 `min_gen`. Fixed by carrying `min_gen` through P2 under a `preserve_min_gen` gate
@@ -370,7 +370,7 @@ calibration-log 2026-06-17.
 ## 3. CEMS coverage
 
 Distinct states of NEISO-fleet **fossil** plants and the diff against
-`inputs/raw-data/campd-unit-level/<ST>_<year>.parquet`:
+`data/raw/campd-unit-level/<ST>_<year>.parquet`:
 
 | State | Plants | MW | CEMS present | Missing |
 |---|---|---|---|---|
@@ -396,13 +396,13 @@ Distinct states of NEISO-fleet **fossil** plants and the diff against
 
 | # | Item | Destination | Status |
 |---|------|-------------|--------|
-| U1 | CAMPD unit-level `NH_2025.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only 2025 CEMS gap; CT/MA/ME/RI/VT 2025 + all 2023/2024 present |
-| U2 | DA+RT hourly Hub + zonal LMP (NEMA/Boston, CT, SEMA, ME) 2023–2025 | `inputs/raw-data/lmp-data/NEISO/` | **missing** — needed by P10; price calibration is level-only without it |
-| U3 | Zonal hourly load (8 ISO-NE zones) 2023–2025 | `inputs/raw-data/zone-specific-demand/NEISO/` | **missing** — zonal load stays on static RSP shares (0.20/0.30/0.21/0.29) until landed (P8) |
-| U4 | Algonquin Citygate (AGT) delivered gas basis 2023–2025 | cite into `constants.py` / gas path | **partial (done as available)** — per doc-08 §P7, the ISO-NE MA gas index satisfies 35/36 months 2023–2025 in `inputs/raw-data/gas_basis_by_iso_month.csv` (Aug-2025 missing upstream, falls back to 923/shaped). The single most important NEISO upload — drives winter spikes + the dual-fuel switch (P13) |
+| U1 | CAMPD unit-level `NH_2025.parquet` | `data/raw/campd-unit-level/` | **missing** — the only 2025 CEMS gap; CT/MA/ME/RI/VT 2025 + all 2023/2024 present |
+| U2 | DA+RT hourly Hub + zonal LMP (NEMA/Boston, CT, SEMA, ME) 2023–2025 | `data/raw/lmp-data/NEISO/` | **missing** — needed by P10; price calibration is level-only without it |
+| U3 | Zonal hourly load (8 ISO-NE zones) 2023–2025 | `data/raw/zone-specific-demand/NEISO/` | **missing** — zonal load stays on static RSP shares (0.20/0.30/0.21/0.29) until landed (P8) |
+| U4 | Algonquin Citygate (AGT) delivered gas basis 2023–2025 | cite into `constants.py` / gas path | **partial (done as available)** — per doc-08 §P7, the ISO-NE MA gas index satisfies 35/36 months 2023–2025 in `data/raw/gas_basis_by_iso_month.csv` (Aug-2025 missing upstream, falls back to 923/shaped). The single most important NEISO upload — drives winter spikes + the dual-fuel switch (P13) |
 | U5 | RGGI allowance prices 2023–2025 (optional) | cite into `STATE_CARBON_PRICE_BY_ISO` | **satisfied (web-search)** — done by P7: `STATE_CARBON_PRICE_BY_ISO["NEISO"]` active default-on |
-| U6 | North–South / Boston-Import / CT-Import interface flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/NEISO/` | **missing** — TTCs stay on Tier-3 RSP seeds (P10 validation) |
-| U7 | HQ Phase II HVDC + Highgate + Cross-Sound scheduled flows (optional) | `inputs/raw-data/iso-specific-transmission/NEISO/` | **missing** — EIA-930 carries net interchange; priced-node refinement only (P9) |
+| U6 | North–South / Boston-Import / CT-Import interface flows + limits (optional) | `data/raw/iso-specific-transmission/NEISO/` | **missing** — TTCs stay on Tier-3 RSP seeds (P10 validation) |
+| U7 | HQ Phase II HVDC + Highgate + Cross-Sound scheduled flows (optional) | `data/raw/iso-specific-transmission/NEISO/` | **missing** — EIA-930 carries net interchange; priced-node refinement only (P9) |
 
 U2 unblocks price calibration; U4 (largely landed) + P13 are the winter
 make-or-break. The Stage-E reference and fleet/CEMS audit are complete now.
