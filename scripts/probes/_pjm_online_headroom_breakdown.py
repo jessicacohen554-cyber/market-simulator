@@ -5,7 +5,7 @@ honesty gate shows ~14 GW of plant-level online headroom vs PJM's ~3 GW. This
 breaks that headroom down by class and by how loaded online plants are, in the
 summer afternoon peak, so the commitment build targets the real cause.
 
-Usage: python scripts/_pjm_online_headroom_breakdown.py [year]
+Usage: python scripts/probes/_pjm_online_headroom_breakdown.py [year]
 """
 import sys
 from pathlib import Path
@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import json
 
 from derive_pjm_ordc_overlay import _run_year_kwargs  # noqa: E402

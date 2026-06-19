@@ -8,7 +8,7 @@ description: Register new backcast calibration runs on the deployable results da
 Register calibration runs on the JSON-driven backcast results dashboard. The
 page is a static shell (`backcast-results.html`) that loads run data from
 `frontend/data/backcast/` and is served by GitHub Pages. Full generator:
-`scripts/render_backcast.py` (data + shell) and `scripts/_backcast_shell.py`
+`scripts/render_backcast.py` (data + shell) and `scripts/probes/_backcast_shell.py`
 (the UI). The standalone embedded report (`scripts/render_calibration_html.py`)
 is retained only for one-off self-contained sends; the dashboard is the
 standard format.

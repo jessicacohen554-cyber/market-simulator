@@ -1,6 +1,6 @@
 """Diagnostic: where does the 2025 co-opt LMP overshoot live?
 
-Usage: uv run python scripts/_ercot_2025_adder_diag.py <bundle>
+Usage: uv run python scripts/probes/_ercot_2025_adder_diag.py <bundle>
 
 Uses the model demand-weighted system price (co-opt LMP, already scarcity-
 inclusive) vs actual ERCOT RTSPP. Answers the handoff's first-hour questions:
@@ -15,8 +15,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
-ACTUAL = (Path(__file__).resolve().parents[1] / "data" / "raw"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
+ACTUAL = (Path(__file__).resolve().parents[2] / "data" / "raw"
           / "_validation-source" / "actual_lmp_hourly_ERCOT.parquet")
 
 _MONTH_HOURS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

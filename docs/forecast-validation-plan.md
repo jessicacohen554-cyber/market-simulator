@@ -410,7 +410,7 @@ contribution (report-only), CO2 total ±5% and per-class ±7% vs CAMPD/eGRID,
 hourly pearson-r/NRMSE regression gates seeded from the current best run's
 values, and unserved-energy==0 as a hard gate. Wire this evaluator into
 scripts/run_calibration_full.py (print PASS/FAIL summary) and
-scripts/_backcast_shell.py so the dashboard's pass logic reads the same
+scripts/probes/_backcast_shell.py so the dashboard's pass logic reads the same
 table (replace the inline SUM_TOL_* constants). Mark "ok" tier as explicitly
 non-passing for sign-off. Add emissions actuals loading (CAMPD CO2 already
 in the data layer; eGRID totals for the system check) — if an actuals file
