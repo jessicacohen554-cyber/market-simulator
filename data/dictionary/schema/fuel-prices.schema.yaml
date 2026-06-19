@@ -1,0 +1,46 @@
+# Canonical schema: fuel prices
+#
+# Reconciles the fuel-price sources (data/raw/gas-prices):
+#   henry_hub_daily.csv : date, price_usd_mmbtu
+#   citygate / basis    : date, hub, price (per-region gas benchmarks)
+#   coal / oil          : delivered fuel price benchmarks
+#
+# Reconciliation: the per-file price column (price_usd_mmbtu) becomes the
+# canonical price_usd_per_mmbtu; `hub` and `fuel` distinguish the benchmark.
+# Daily series carry interval_start_utc at 00:00 UTC of the price date.
+datatype: fuel-prices
+schema_version: 1
+title: Fuel prices
+description: >-
+  Delivered fuel price benchmarks (gas, coal, oil) by hub/region and date,
+  in $/MMBtu.
+
+key_columns: [fuel, hub, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the price period (00:00 UTC of the date for daily series).
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local date/time.
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: Fuel type (gas, coal, oil).
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pricing hub / region (e.g. henry_hub, socal_citygate).
+  - name: price_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Delivered fuel price (henry_hub_daily price_usd_mmbtu).
