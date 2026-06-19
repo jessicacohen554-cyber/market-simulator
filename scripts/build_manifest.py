@@ -184,7 +184,7 @@ def main() -> None:
         "window.BC=window.BC||{};window.BC.benchGz="
         + json.dumps({i: _gzb64(b) for i, b in bench_by_iso.items()}) + ";")
 
-    from scripts._backcast_shell import SHELL
+    from scripts.probes._backcast_shell import SHELL
     shell = (SHELL
              .replace("__SITECSS__",
                       '<link rel=stylesheet href="frontend/css/style.css">')

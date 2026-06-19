@@ -1,6 +1,6 @@
 """Session helper: PJM tolerance scorecard for a calibration bundle.
 
-Usage: python scripts/_pjm_score.py <bundle> [<bundle> ...]
+Usage: python scripts/probes/_pjm_score.py <bundle> [<bundle> ...]
 
 Per year scores gas/nuclear/wind/solar from the payload fuelRows (m vs b),
 COAL_BIT/PRB/WC from gmModel vs bench[year].classFull, coal-total as the sum
@@ -11,10 +11,10 @@ bench[year].avgLMP["rt"].  Tolerance: |model-actual| <= 1 TWh when actual
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from render_calibration_html import build_payload  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 COAL = ["COAL_BIT", "COAL_PRB", "COAL_WC"]
 
 

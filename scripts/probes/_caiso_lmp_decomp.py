@@ -2,7 +2,7 @@
 """Decompose the CAISO model-vs-actual LMP error by month, hour-of-day and
 marginal resource. Read-only analysis over a finished bundle. Not a keeper tool.
 
-Usage: python scripts/_caiso_lmp_decomp.py results/calibration/<bundle> [--year 2024]
+Usage: python scripts/probes/_caiso_lmp_decomp.py results/calibration/<bundle> [--year 2024]
 """
 from __future__ import annotations
 import argparse, json
@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[2]
 ACT = REPO / "data/raw/_validation-source/actual_lmp.json"
 ACT_HOURLY = REPO / "data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet"
 
