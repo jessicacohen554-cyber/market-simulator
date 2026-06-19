@@ -900,6 +900,7 @@ def run_year(
     as_reserve_withholding: bool = False,
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
+    ercot_load_resource_reserve: bool = False,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -1023,6 +1024,12 @@ def run_year(
     # PJM-gated in _run_dispatch. Replaces the post-solve ORDC overlay.
     if energy_reserve_coopt:
         config = config.with_overrides(energy_reserve_coopt=True)
+    # ERCOT load-resource reserve credit (run_calibration_full
+    # --ercot-load-resource-reserve): credit measured RRS-UFR (load-side
+    # responsive reserve) into the co-opt reserve balance. GATED — alters
+    # dispatch volumes. ERCOT co-opt only; a no-op otherwise.
+    if ercot_load_resource_reserve:
+        config = config.with_overrides(ercot_load_resource_reserve=True)
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).

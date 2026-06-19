@@ -50,7 +50,7 @@ import pyarrow.parquet as pq
 
 HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AS_DIR = REPO_ROOT / "inputs" / "raw-data" / "ercot-AS"
+AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
 
 # Years built when --year is not given. The cleared-AS archive begins
 # 2023-12-10, so 2023 has no usable coverage and is omitted.
