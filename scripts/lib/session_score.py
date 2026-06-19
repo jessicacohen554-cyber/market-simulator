@@ -21,10 +21,10 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 CLASSES = ["CC_REGULAR", "CC_CHP", "COAL_PRB", "ST_GAS", "COAL_LIGNITE",
            "CT_PEAKER", "CT_CHP"]
 GUARD_PLANTS = {6146: "Martin Lake", 298: "Limestone"}
