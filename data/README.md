@@ -54,3 +54,16 @@ validate_clean(path)   # round-trip check against the embedded schema
 `paths.clean_path(...)`, and embeds the schema version + source provenance in
 the file metadata. See [`dictionary/data-dictionary.md`](dictionary/data-dictionary.md)
 for the per-datatype schemas, conventions and ISO coverage matrix.
+
+### What gets committed
+
+`data/clean/` is **gitignored** — the curated parquet is derived output, not a
+source artifact. A curation session commits its `scripts/curate_<datatype>.py`
+and `tests/test_curate_<datatype>.py`; anyone regenerates the parquet by
+re-running the script. The contract under `data/dictionary/` (schema YAMLs +
+this dictionary) and `scripts/lib/clean_io.py` **are** committed.
+
+`scripts/lib/clean_io.py` is the shared, frozen seam: curation scripts import
+it but must not edit it. If a datatype can't be expressed within the current
+schema/writer, raise it as a contract change rather than patching the writer in
+a curation branch — that keeps the parallel sessions conflict-free.
