@@ -66,12 +66,12 @@ Before any build work, one session runs a **data audit** for the ISO:
 - Confirm fleet assembly: `get_iso_config("<ISO>")` + BA filter → plant
   count and capacity vs the ISO's published fleet totals (±few %).
 - Enumerate CEMS state coverage needed: assemble the fleet, list distinct
-  plant states, diff against `inputs/raw-data/campd-unit-level/<ST>_<year>.parquet`
+  plant states, diff against `data/raw/campd-unit-level/<ST>_<year>.parquet`
   present. Output the missing `<ST>_<year>` list.
 - Verify the EIA-930 hourly parquet (`data/eia_hourly/<BA> hourly.parquet`)
   spans the target years with demand + per-fuel generation (+ interchange,
   + battery columns where the BA reports them).
-- Check `inputs/calibration/calibration_reference.json` and
+- Check `data/raw/_validation-source/calibration_reference.json` and
   `actual_lmp.json` for the ISO; extend `build_calibration_reference.py`.
 - Emit a written gap report → the upload manifest for the user.
 
@@ -102,15 +102,15 @@ all-BA; the per-ISO burden is families 6–10):
 | # | Family | Repo location | Per-ISO action |
 |---|---|---|---|
 | 1 | EIA-930 hourly (all BAs) | `data/eia_hourly/<BA> hourly.parquet` | present for all 7 ISOs + neighbors |
-| 2 | EIA-860 (incl. storage, enviro, cogen tables) | `inputs/raw-data/eia-860/` | none (national) |
-| 3 | EIA-923 monthly gen + fuel cost | `inputs/raw-data/f923_*.zip`, `inputs/processed/` | none (national) |
-| 4 | eGRID 2023/2024 | `inputs/raw-data/egrid2024_data.xlsx` etc. | none (national) |
-| 5 | Henry Hub daily/monthly | `inputs/raw-data/gas-prices/` | none |
-| 6 | CAMPD CEMS unit-level | `inputs/raw-data/campd-unit-level/<ST>_<year>.parquet` | upload missing state-years from data audit |
-| 7 | Hourly hub/zonal LMP | `inputs/raw-data/lmp-data/` | upload from ISO portal (DA + RT, all backcast years) |
-| 8 | Zonal hourly load | `inputs/raw-data/zone-specific-demand/` | upload (multi-zone ISOs) |
-| 9 | TTC / interface limits + flows | `inputs/raw-data/iso-specific-transmission/` | upload postings or binding-constraint archive |
-| 10 | Curtailment / uncurtailed potential | per-ISO dir under `inputs/raw-data/` | upload where published (CAISO, SPP, MISO); else EIA-930 fallback |
+| 2 | EIA-860 (incl. storage, enviro, cogen tables) | `data/raw/eia-860/` | none (national) |
+| 3 | EIA-923 monthly gen + fuel cost | `data/raw/f923_*.zip`, `data/raw/_processed-legacy/` | none (national) |
+| 4 | eGRID 2023/2024 | `data/raw/egrid2024_data.xlsx` etc. | none (national) |
+| 5 | Henry Hub daily/monthly | `data/raw/gas-prices/` | none |
+| 6 | CAMPD CEMS unit-level | `data/raw/campd-unit-level/<ST>_<year>.parquet` | upload missing state-years from data audit |
+| 7 | Hourly hub/zonal LMP | `data/raw/lmp-data/` | upload from ISO portal (DA + RT, all backcast years) |
+| 8 | Zonal hourly load | `data/raw/zone-specific-demand/` | upload (multi-zone ISOs) |
+| 9 | TTC / interface limits + flows | `data/raw/iso-specific-transmission/` | upload postings or binding-constraint archive |
+| 10 | Curtailment / uncurtailed potential | per-ISO dir under `data/raw/` | upload where published (CAISO, SPP, MISO); else EIA-930 fallback |
 
 Gas basis: prefer **measured EIA-923 per-plant monthly** (family 3, already
 national) over hub-basis series. Only ISOs whose marginal winter pricing is
@@ -255,7 +255,7 @@ calibration metric, not a residual.
 ### 8.4 Storage fleets
 
 Grid batteries come from the EIA-860 energy-storage tables
-(`inputs/raw-data/eia-860/eia860_energy_storage_operable.parquet`):
+(`data/raw/eia-860/eia860_energy_storage_operable.parquet`):
 power, energy (duration), COD for mid-year capacity ramps, zone via plant
 coords. Hybrid/co-located solar+storage stays two resources. Where the BA
 reports battery charge/discharge in EIA-930, use it as the cycling
@@ -268,7 +268,7 @@ to stop the LP over-cycling vs observed (ERCOT PS and PJM PS precedent).
   commit at the pack boundary, full test suite + regression guard.
 - Waves: packs within a wave are independent (different files/data) and
   can run in parallel sessions; waves are sequential.
-- Derived-data packs (pure `scripts/` + `inputs/` output) parallelize
+- Derived-data packs (pure `scripts/` + `data/` output) parallelize
   safely; config/LP packs that touch shared modules run sequentially.
 
 ---
