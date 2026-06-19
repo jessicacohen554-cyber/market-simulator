@@ -31,7 +31,9 @@ def score(run_dir: Path, which_pass: str = "P2") -> None:
         yr = str(year)
         if yr not in actual:
             continue
-        act = {z: actual[yr]["zones"][z]["rt"] for z in ZONES if z in actual[yr]["zones"]}
+        act = {
+            z: actual[yr]["zones"][z]["rt"] for z in ZONES if z in actual[yr]["zones"]
+        }
         print(f"\n=== {year} (pass {which_pass}) ===")
         print(f"  {'zone':14} {'model':>7} {'actual':>7} {'err':>7}")
         errs = []
@@ -45,7 +47,9 @@ def score(run_dir: Path, which_pass: str = "P2") -> None:
         m_sp = model.loc[year, "Capital_Hudson"] - model.loc[year, "Upstate_West"]
         a_sp = act["Capital_Hudson"] - act["Upstate_West"]
         print(f"  {'MAE':14} {mae:7.2f}")
-        print(f"  spread Cap-Up: model {m_sp:+.1f}  actual {a_sp:+.1f}  err {m_sp - a_sp:+.1f}")
+        print(
+            f"  spread Cap-Up: model {m_sp:+.1f}  actual {a_sp:+.1f}  err {m_sp - a_sp:+.1f}"
+        )
 
 
 if __name__ == "__main__":

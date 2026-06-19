@@ -171,16 +171,12 @@ def _resolve_pace(config: ScenarioConfig) -> str:
     """
     if config.iso not in STORAGE_BASE_FLEET_MW:
         supported = ", ".join(sorted(STORAGE_BASE_FLEET_MW))
-        raise ValueError(
-            f"Unknown iso '{config.iso}'. Supported: {supported}"
-        )
+        raise ValueError(f"Unknown iso '{config.iso}'. Supported: {supported}")
     paces = STORAGE_BASE_FLEET_MW[config.iso]
     pace = config.storage_deployment
     if pace not in paces:
         supported = ", ".join(sorted(paces))
-        raise ValueError(
-            f"Unknown storage_deployment '{pace}'. Supported: {supported}"
-        )
+        raise ValueError(f"Unknown storage_deployment '{pace}'. Supported: {supported}")
     return pace
 
 
@@ -207,9 +203,7 @@ def build_default_storage(
         ValueError: if ``config.storage_deployment`` is not a known pace.
     """
     pace = _resolve_pace(config)
-    return _distribute_storage(
-        iso, config, STORAGE_BASE_FLEET_MW[config.iso][pace]
-    )
+    return _distribute_storage(iso, config, STORAGE_BASE_FLEET_MW[config.iso][pace])
 
 
 # Duration (hours) assumed for an EIA-860 storage unit whose energy
@@ -285,9 +279,7 @@ def load_eia860_storage(
     df = pd.read_parquet(path)
     df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
     power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
-    energy = pd.to_numeric(
-        df["Nameplate Energy Capacity (MWh)"], errors="coerce"
-    )
+    energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
     op_month = pd.to_numeric(df["Operating Month"], errors="coerce")
 
@@ -346,12 +338,8 @@ def load_eia860_storage(
                 eta_discharge=eta,
                 zone_idx=z_idx,
                 vom=adder,
-                monthly_power_mw=(
-                    [float(x) for x in monthly_p] if ramped else None
-                ),
-                monthly_energy_mwh=(
-                    [float(x) for x in monthly_e] if ramped else None
-                ),
+                monthly_power_mw=([float(x) for x in monthly_p] if ramped else None),
+                monthly_energy_mwh=([float(x) for x in monthly_e] if ramped else None),
             )
         )
     units.extend(load_eia860_pumped_storage(iso, year, config))
@@ -371,7 +359,8 @@ def resolve_pumped_storage_dispatch_adder(
     """
     explicit = (
         getattr(config, "pumped_storage_dispatch_adder", None)
-        if config is not None else None
+        if config is not None
+        else None
     )
     if explicit is not None:
         return float(explicit)
@@ -411,9 +400,7 @@ def storage_cap_profiles(
         if unit.monthly_power_mw is None:
             continue
         power[s] = np.asarray(unit.monthly_power_mw, dtype=float)[month_idx]
-        energy[s] = np.asarray(unit.monthly_energy_mwh, dtype=float)[
-            month_idx
-        ]
+        energy[s] = np.asarray(unit.monthly_energy_mwh, dtype=float)[month_idx]
     return power, energy
 
 
@@ -450,16 +437,12 @@ def reserve_storage_as_power(
         return power_cap
     as_storage = pd.read_parquet(path)["storage"].to_numpy(dtype=float)
     if len(as_storage) < hours:
-        as_storage = np.concatenate(
-            [as_storage, np.zeros(hours - len(as_storage))]
-        )
+        as_storage = np.concatenate([as_storage, np.zeros(hours - len(as_storage))])
     as_storage = as_storage[:hours]
-    pc2 = (np.repeat(pc[:, np.newaxis], hours, axis=1)
-           if pc.ndim == 1 else pc.copy())
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
     total = pc2.sum(axis=0)  # (hours,) fleet power available
     with np.errstate(divide="ignore", invalid="ignore"):
-        weight = np.where(total[np.newaxis, :] > 0.0,
-                          pc2 / total[np.newaxis, :], 0.0)
+        weight = np.where(total[np.newaxis, :] > 0.0, pc2 / total[np.newaxis, :], 0.0)
     return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
@@ -521,7 +504,7 @@ def load_eia860_pumped_storage(
             continue
         per_zone_power[zone] = per_zone_power.get(zone, 0.0) + float(p_mw)
 
-    eta = PUMPED_STORAGE_RTE ** 0.5
+    eta = PUMPED_STORAGE_RTE**0.5
     adder = resolve_pumped_storage_dispatch_adder(iso, config)
     return [
         StorageUnit(
@@ -529,9 +512,7 @@ def load_eia860_pumped_storage(
             zone=zone,
             tech_name="pumped_storage",
             power_cap_mw=per_zone_power[zone],
-            energy_cap_mwh=(
-                per_zone_power[zone] * PUMPED_STORAGE_DURATION_HOURS
-            ),
+            energy_cap_mwh=(per_zone_power[zone] * PUMPED_STORAGE_DURATION_HOURS),
             eta_charge=eta,
             eta_discharge=eta,
             zone_idx=z_idx,
@@ -616,18 +597,18 @@ def estimate_storage_revenue(
         return 0.0
 
     # Reshape to (n_zones, n_blocks, block_hours) and sort each window.
-    block = price_arr[:, :n_blocks * block_hours].reshape(
+    block = price_arr[:, : n_blocks * block_hours].reshape(
         n_zones, n_blocks, block_hours
     )
     ordered = np.sort(block, axis=2)
 
     # Cheapest d hours (charge) and most expensive d hours (discharge).
-    charge_avg = ordered[:, :, :d].mean(axis=2)       # (n_zones, n_blocks)
-    discharge_avg = ordered[:, :, -d:].mean(axis=2)   # (n_zones, n_blocks)
+    charge_avg = ordered[:, :, :d].mean(axis=2)  # (n_zones, n_blocks)
+    discharge_avg = ordered[:, :, -d:].mean(axis=2)  # (n_zones, n_blocks)
 
     # For each window, pick the zone with the widest spread.
-    spread = discharge_avg - charge_avg               # (n_zones, n_blocks)
-    best_zone = np.argmax(spread, axis=0)             # (n_blocks,)
+    spread = discharge_avg - charge_avg  # (n_zones, n_blocks)
+    best_zone = np.argmax(spread, axis=0)  # (n_blocks,)
     blocks_idx = np.arange(n_blocks)
 
     margin = (
@@ -666,9 +647,7 @@ def _degradation_cost_per_mwh(tech_name: str, config: ScenarioConfig) -> float:
     if cycles <= 0.0:
         return 0.0
     capex_per_mwh = float(tech["capex_per_kwh"]) * 1000.0
-    return (
-        capex_per_mwh / cycles * STORAGE_DEGRADATION_REPLACEMENT_FRACTION
-    )
+    return capex_per_mwh / cycles * STORAGE_DEGRADATION_REPLACEMENT_FRACTION
 
 
 def estimate_capacity_value(
@@ -707,7 +686,9 @@ def estimate_capacity_value(
 
 
 def compute_storage_annual_cost(
-    tech_name: str, year: int, config: ScenarioConfig,
+    tech_name: str,
+    year: int,
+    config: ScenarioConfig,
     cumulative_gw: float | None = None,
 ) -> float:
     """Annualized storage cost per MW-yr.
@@ -733,9 +714,7 @@ def compute_storage_annual_cost(
     frac = ira_phaseout_fraction(year, config)
     if frac > 0.0:
         capex_per_kw *= 1.0 - config.ira_itc_storage * frac
-    crf = _capital_recovery_factor(
-        config.real_discount_rate, _STORAGE_ECONOMIC_LIFE_YR
-    )
+    crf = _capital_recovery_factor(config.real_discount_rate, _STORAGE_ECONOMIC_LIFE_YR)
     annual_cost_per_kw = capex_per_kw * crf + float(tech["fom_per_kw_yr"])
     return annual_cost_per_kw * 1000.0
 
@@ -826,13 +805,9 @@ def apply_storage_new_entry(
             prices,
             int(tech["duration_hr"]),
             _storage_rte(tech_name, config),
-            degradation_cost_per_mwh=_degradation_cost_per_mwh(
-                tech_name, config
-            ),
+            degradation_cost_per_mwh=_degradation_cost_per_mwh(tech_name, config),
         )
-        capacity_value = estimate_capacity_value(
-            tech_name, existing_mw, config, iso
-        )
+        capacity_value = estimate_capacity_value(tech_name, existing_mw, config, iso)
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
         # 2023 battery revenue and absent from the energy-arbitrage + capacity
         # value stack above. Saturates on the existing storage fleet, so each
@@ -859,8 +834,6 @@ def apply_storage_new_entry(
         build_mw = min(remaining, per_tech_cap)
         remaining -= build_mw
         fleet.extend(
-            _build_new_storage_units(
-                iso_config, tech_name, config, build_mw, year, seq
-            )
+            _build_new_storage_units(iso_config, tech_name, config, build_mw, year, seq)
         )
     return fleet

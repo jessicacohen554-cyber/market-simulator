@@ -60,9 +60,13 @@ DEFAULT_YEARS: tuple[int, ...] = (2024, 2025)
 # Reg-Down (regdn) is deliberately excluded — see module docstring.
 _UP_SERVICE_TAGS: tuple[str, ...] = (
     "regup",
-    "rrspfr", "rrsffr", "rrsufr",
-    "ecrss", "ecrsm",
-    "nspin", "nspnm",
+    "rrspfr",
+    "rrsffr",
+    "rrsufr",
+    "ecrss",
+    "ecrsm",
+    "nspin",
+    "nspnm",
 )
 
 # Largest hole (hours) interpolated when placing a service on the 8760-hour
@@ -147,16 +151,20 @@ def build_year(year: int) -> bool:
         series = _to_model_clock(_read_service(tag), year)
         per_service[tag] = series
         if series.any():
-            print(f"  {tag:7s}: mean {series.mean():7.1f} MW   "
-                  f"peak {series.max() / 1000:5.2f} GW")
+            print(
+                f"  {tag:7s}: mean {series.mean():7.1f} MW   "
+                f"peak {series.max() / 1000:5.2f} GW"
+            )
     total = np.sum(list(per_service.values()), axis=0)
     if not total.any():
         print(f"  {year}: no up-AS coverage — skipping.")
         return False
 
-    print(f"\n  TOTAL up-AS: mean {total.mean() / 1000:5.2f} GW   "
-          f"peak {total.max() / 1000:5.2f} GW   "
-          f"min {total.min() / 1000:5.2f} GW")
+    print(
+        f"\n  TOTAL up-AS: mean {total.mean() / 1000:5.2f} GW   "
+        f"peak {total.max() / 1000:5.2f} GW   "
+        f"min {total.min() / 1000:5.2f} GW"
+    )
 
     frame = pd.DataFrame({"hour": np.arange(HOURS_PER_YEAR, dtype="int64")})
     for tag, series in per_service.items():
@@ -164,20 +172,21 @@ def build_year(year: int) -> bool:
     frame["as_up_mw"] = total
 
     table = pa.Table.from_pandas(frame, preserve_index=False)
-    table = table.replace_schema_metadata({
-        "source": "ERCOT 2-Day Cleared DAM Ancillary Service reports "
-                  "(NP3-911-ER), data/raw/ercot-AS/",
-        "description": f"ERCOT {year} system-wide hourly cleared DAM upward "
-                       "ancillary-service MW (RegUp + RRS + ECRS + NonSpin; "
-                       "Reg-Down excluded), on the non-leap 8760-hour "
-                       "ERCOT-local clock.",
-        "units": "MW (cleared capacity per hour)",
-        "year": str(year),
-    })
+    table = table.replace_schema_metadata(
+        {
+            "source": "ERCOT 2-Day Cleared DAM Ancillary Service reports "
+            "(NP3-911-ER), data/raw/ercot-AS/",
+            "description": f"ERCOT {year} system-wide hourly cleared DAM upward "
+            "ancillary-service MW (RegUp + RRS + ECRS + NonSpin; "
+            "Reg-Down excluded), on the non-leap 8760-hour "
+            "ERCOT-local clock.",
+            "units": "MW (cleared capacity per hour)",
+            "year": str(year),
+        }
+    )
     out = AS_DIR / f"ercot_{year}_as_up_mw.parquet"
     pq.write_table(table, out)
-    print(f"  Wrote {out.relative_to(REPO_ROOT)} "
-          f"({out.stat().st_size / 1024:.1f} KiB)")
+    print(f"  Wrote {out.relative_to(REPO_ROOT)} ({out.stat().st_size / 1024:.1f} KiB)")
     return True
 
 
@@ -186,10 +195,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="build_ercot_as_withholding",
         description="Build ERCOT hourly cleared DAM up-AS (withholding MW) "
-                    "parquets from the NP3-911 cleared-AS reports.",
+        "parquets from the NP3-911 cleared-AS reports.",
     )
     parser.add_argument(
-        "--year", type=int, nargs="+", default=list(DEFAULT_YEARS),
+        "--year",
+        type=int,
+        nargs="+",
+        default=list(DEFAULT_YEARS),
         help="Years to build (default: %(default)s).",
     )
     args = parser.parse_args(argv)

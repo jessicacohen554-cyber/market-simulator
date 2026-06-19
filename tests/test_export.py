@@ -78,8 +78,9 @@ class TestExportScenarioJson(unittest.TestCase):
     def _run_and_export(self, end_year=2028):
         """Run and cache an ERCOT scenario, then export it; return the path."""
         config = ScenarioConfig(iso="ERCOT")
-        with patch.object(runner, "END_YEAR", end_year), patch.object(
-            runner, "solve_dispatch", side_effect=_fake_solve
+        with (
+            patch.object(runner, "END_YEAR", end_year),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
@@ -104,8 +105,13 @@ class TestExportScenarioJson(unittest.TestCase):
 
         summary = json.loads(path.read_text())["years"]["2026"]
         for field in (
-            "generation_twh", "emissions_mt", "avg_price", "peak_price",
-            "curtailment_twh", "capacity_gw", "storage_cycles",
+            "generation_twh",
+            "emissions_mt",
+            "avg_price",
+            "peak_price",
+            "curtailment_twh",
+            "capacity_gw",
+            "storage_cycles",
         ):
             self.assertIn(field, summary)
 

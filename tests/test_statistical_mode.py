@@ -6,6 +6,7 @@ off the historic outage overlay, the CT and spatial deployment floors, the ST
 WEFOR-residual relief, and per-plant monthly coal pricing — while leaving the
 structural levers alone.
 """
+
 import argparse
 import importlib.util
 from pathlib import Path
@@ -59,9 +60,11 @@ def test_ercot_calibration_enables_storage_vintage_ramp():
     """ERCOT (and CAISO) backcast configs ramp storage by COD; PJM stays flat."""
     import importlib.util
     from pathlib import Path
+
     spec = importlib.util.spec_from_file_location(
         "run_calibration",
-        Path(__file__).resolve().parents[1] / "scripts" / "run_calibration.py")
+        Path(__file__).resolve().parents[1] / "scripts" / "run_calibration.py",
+    )
     rc = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(rc)
     assert rc._calibration_config(2024, "ERCOT", 8760, 2.19).storage_vintage_ramp

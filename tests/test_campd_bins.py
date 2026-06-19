@@ -86,8 +86,10 @@ class TestLoadCampdBins(unittest.TestCase):
 
     def test_tranches_sum_to_100(self):
         total = (
-            self.bins["pct_mr"] + self.bins["pct_mc"]
-            + self.bins["pct_econ"] + self.bins["pct_peak"]
+            self.bins["pct_mr"]
+            + self.bins["pct_mc"]
+            + self.bins["pct_econ"]
+            + self.bins["pct_peak"]
         )
         self.assertTrue((total == 100).all())
 
@@ -108,9 +110,7 @@ class TestBinsToFleet(unittest.TestCase):
     def setUpClass(cls):
         cls.config = ScenarioConfig()
         cls.bins = load_campd_bins(BINS_CSV)
-        cls.fleet, cls.arrays = bins_to_fleet(
-            cls.bins, ZONE_NAMES, cls.config
-        )
+        cls.fleet, cls.arrays = bins_to_fleet(cls.bins, ZONE_NAMES, cls.config)
 
     def test_chp_mr_derate_removes_must_run_capacity(self):
         # CC_CHP must-run is 60% (host steam obligation, served off-grid),
@@ -118,13 +118,11 @@ class TestBinsToFleet(unittest.TestCase):
         # tranche appears in the LP.
         cc_chp = self.bins[self.bins["Plant_Group"] == "CC_CHP"]
         nameplate = cc_chp["capacity_mw"].sum()
-        grid = sum(
-            g.pmax_mw for g in self.fleet
-            if g.plant_group == "CC_CHP"
-        )
+        grid = sum(g.pmax_mw for g in self.fleet if g.plant_group == "CC_CHP")
         self.assertAlmostEqual(grid, nameplate * 0.40, places=3)
         mustrun = [
-            g for g in self.fleet
+            g
+            for g in self.fleet
             if g.plant_group == "CC_CHP" and g.unit_id.endswith("_mustrun")
         ]
         self.assertEqual(mustrun, [])
@@ -135,13 +133,11 @@ class TestBinsToFleet(unittest.TestCase):
         # its full nameplate.
         coal = self.bins[self.bins["Plant_Group"] == "COAL"]
         nameplate = coal["capacity_mw"].sum()
-        lp_total = sum(
-            g.pmax_mw for g in self.fleet
-            if g.plant_group == "COAL"
-        )
+        lp_total = sum(g.pmax_mw for g in self.fleet if g.plant_group == "COAL")
         self.assertAlmostEqual(lp_total, nameplate, places=3)
         mustrun = [
-            g for g in self.fleet
+            g
+            for g in self.fleet
             if g.plant_group == "COAL" and g.unit_id.endswith("_mustrun")
         ]
         self.assertGreater(len(mustrun), 0)
@@ -152,29 +148,26 @@ class TestBinsToFleet(unittest.TestCase):
         b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         grid_cap = sum(g.pmax_mw for g in fleet)
-        committed = next(
-            g for g in fleet if g.unit_id.endswith("_committed")
-        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.50, places=6)
         self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
 
     def test_coal_committed_tranche_is_40pct_grid_cap(self):
         # CAMPD coal MC% is 40: the _committed tranche is 40% of grid cap.
         b = _synthetic_bin(
-            Plant_Group="COAL", pct_mc=40, pct_econ=45, pct_peak=15,
+            Plant_Group="COAL",
+            pct_mc=40,
+            pct_econ=45,
+            pct_peak=15,
         )
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
         grid_cap = sum(g.pmax_mw for g in fleet)
-        committed = next(
-            g for g in fleet if g.unit_id.endswith("_committed")
-        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         self.assertAlmostEqual(committed.pmax_mw, grid_cap * 0.40, places=6)
         self.assertTrue(all(g.pmin_mw == 0.0 for g in fleet))
 
     def test_each_bin_splits_into_three_stepped_tranches(self):
-        committed = [
-            g for g in self.fleet if g.unit_id.endswith("_committed")
-        ]
+        committed = [g for g in self.fleet if g.unit_id.endswith("_committed")]
         econ = [g for g in self.fleet if g.unit_id.endswith("_econ")]
         peak = [g for g in self.fleet if g.unit_id.endswith("_peak")]
         self.assertGreater(len(committed), 80)
@@ -190,9 +183,7 @@ class TestBinsToFleet(unittest.TestCase):
         # HR_Mult_<tranche>`` assembled in ``load_campd_bins``.
         b = _synthetic_bin(hr_mc=7.5, hr_econ=6.4, hr_peak=10.2)
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
-        committed = next(
-            g for g in fleet if g.unit_id.endswith("_committed")
-        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         econ = next(g for g in fleet if g.unit_id.endswith("_econ"))
         peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
         self.assertAlmostEqual(committed.heat_rate, 7.5, places=6)
@@ -207,9 +198,7 @@ class TestBinsToFleet(unittest.TestCase):
         # plant's measured heat rate.
         b = _synthetic_bin()
         fleet, _ = bins_to_fleet(b, ZONE_NAMES, self.config)
-        committed = next(
-            g for g in fleet if g.unit_id.endswith("_committed")
-        )
+        committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
         self.assertAlmostEqual(committed.heat_rate, 6.6, places=6)
 
     def test_unknown_zone_defaults(self):
@@ -267,8 +256,13 @@ class TestUnifiedOfferCurve(unittest.TestCase):
         # CC ramps econ_low (1.0) -> econ_high (1.3); the duct-burner peak
         # (F-class default 2.25x) is a separate band ABOVE the ramp, not its
         # top. Pre-change, the ramp ran straight up to 2.25 and emitted no peak.
-        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
-                 "econ_low_share": 0.5, "pct_peaking": 10.0}
+        offer = {
+            "committed": 0.9,
+            "econ_low": 1.0,
+            "econ_high": 1.3,
+            "econ_low_share": 0.5,
+            "pct_peaking": 10.0,
+        }
         fleet = self._build("CC_REGULAR", offer)
         econ = [g for g in fleet if "_econc" in g.unit_id]
         peak = [g for g in fleet if g.unit_id.endswith("_peak")]
@@ -282,17 +276,28 @@ class TestUnifiedOfferCurve(unittest.TestCase):
 
     def test_cc_peak_mult_is_configurable(self):
         # An explicit "peak" key overrides the per-class duct-burner default.
-        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
-                 "peak": 1.8, "econ_low_share": 0.5, "pct_peaking": 10.0}
+        offer = {
+            "committed": 0.9,
+            "econ_low": 1.0,
+            "econ_high": 1.3,
+            "peak": 1.8,
+            "econ_low_share": 0.5,
+            "pct_peaking": 10.0,
+        }
         fleet = self._build("CC_CHP", offer)
         peak = next(g for g in fleet if g.unit_id.endswith("_peak"))
         self.assertAlmostEqual(peak.heat_rate, self.BASE_HR * 1.8, places=6)
 
     def test_pct_committed_is_configurable(self):
         # "pct_committed" overrides the CSV Pct_Committed (here 50 -> 30).
-        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
-                 "pct_committed": 30.0, "econ_low_share": 0.5,
-                 "pct_peaking": 10.0}
+        offer = {
+            "committed": 0.9,
+            "econ_low": 1.0,
+            "econ_high": 1.3,
+            "pct_committed": 30.0,
+            "econ_low_share": 0.5,
+            "pct_peaking": 10.0,
+        }
         fleet = self._build("CC_REGULAR", offer)
         grid_cap = sum(g.pmax_mw for g in fleet)
         committed = next(g for g in fleet if g.unit_id.endswith("_committed"))
@@ -302,15 +307,21 @@ class TestUnifiedOfferCurve(unittest.TestCase):
         # offer_curve_smoothing_mid = 0.25 sags the ramp below linear in the
         # bottom half and concentrates the rise in the top slices, while the
         # endpoints (econ_low / econ_high reach) are unchanged.
-        offer = {"committed": 0.9, "econ_low": 1.0, "econ_high": 1.3,
-                 "econ_low_share": 0.5, "pct_peaking": 10.0}
-        lin = sorted(g.heat_rate for g in self._build("CC_REGULAR", offer)
-                     if "_econc" in g.unit_id)
+        offer = {
+            "committed": 0.9,
+            "econ_low": 1.0,
+            "econ_high": 1.3,
+            "econ_low_share": 0.5,
+            "pct_peaking": 10.0,
+        }
+        lin = sorted(
+            g.heat_rate
+            for g in self._build("CC_REGULAR", offer)
+            if "_econc" in g.unit_id
+        )
         mid = sorted(
             g.heat_rate
-            for g in self._build(
-                "CC_REGULAR", offer, offer_curve_smoothing_mid=0.25
-            )
+            for g in self._build("CC_REGULAR", offer, offer_curve_smoothing_mid=0.25)
             if "_econc" in g.unit_id
         )
         self.assertEqual(len(mid), 6)
@@ -330,9 +341,7 @@ class TestCommitmentParams(unittest.TestCase):
         self.fleet, _ = bins_to_fleet(
             _synthetic_bin(min_run=12, min_down=6), ZONE_NAMES, self.config
         )
-        self.committed = next(
-            g for g in self.fleet if g.unit_id.endswith("_committed")
-        )
+        self.committed = next(g for g in self.fleet if g.unit_id.endswith("_committed"))
         self.econ = next(g for g in self.fleet if g.unit_id.endswith("_econ"))
         self.peak = next(g for g in self.fleet if g.unit_id.endswith("_peak"))
 
@@ -367,9 +376,7 @@ class TestCommitmentParams(unittest.TestCase):
             self.assertIsNone(_commitment_params(g, g.heat_rate))
 
     def test_startup_cost_only_on_committed_tranche(self):
-        self.assertGreater(
-            _startup_cost(self.committed, self.committed.heat_rate), 0.0
-        )
+        self.assertGreater(_startup_cost(self.committed, self.committed.heat_rate), 0.0)
         self.assertEqual(_startup_cost(self.econ, self.econ.heat_rate), 0.0)
         self.assertEqual(_startup_cost(self.peak, self.peak.heat_rate), 0.0)
 
@@ -385,8 +392,14 @@ class TestCommitmentParams(unittest.TestCase):
         # A large gas unit in the same zone, committed every hour, covers the
         # zone's P1 thermal load so decommitting coal creates no shortfall.
         gas = Generator(
-            unit_id="GAS", name="GAS", zone=base.zone, fuel_type="gas_cc",
-            pmax_mw=base.pmax_mw * 5.0, pmin_mw=0.0, heat_rate=7.0, eford=0.0,
+            unit_id="GAS",
+            name="GAS",
+            zone=base.zone,
+            fuel_type="gas_cc",
+            pmax_mw=base.pmax_mw * 5.0,
+            pmin_mw=0.0,
+            heat_rate=7.0,
+            eford=0.0,
         )
         gens = [base, gas]
         arrays = generators_to_fleet_arrays(gens, ZONE_NAMES, hours=8)
@@ -432,9 +445,7 @@ class TestMustRunEmissions(unittest.TestCase):
         # bins.
         chp = bins[(bins["pct_mr"] > 0) & (bins["fuel"] != "coal")]
         expected = chp["capacity_mw"] * chp["pct_mr"] / 100.0
-        self.assertAlmostEqual(
-            mr["mr_mw"].sum(), expected.sum(), places=3
-        )
+        self.assertAlmostEqual(mr["mr_mw"].sum(), expected.sum(), places=3)
 
     def test_must_run_emissions_empty_without_chp(self):
         bins = load_campd_bins(BINS_CSV)

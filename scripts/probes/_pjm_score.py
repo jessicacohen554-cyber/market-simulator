@@ -8,6 +8,7 @@ of the COAL_* classes, and LMP as the load-weighted model price vs
 bench[year].avgLMP["rt"].  Tolerance: |model-actual| <= 1 TWh when actual
 < 20 TWh, else <= 5% of actual.
 """
+
 import sys
 from pathlib import Path
 
@@ -38,7 +39,10 @@ def score(bundle: str) -> int:
         b = bench[year]
         rows = []
         for fr in y["fuelRows"]:
-            if fr["fuel"] in ("gas", "nuclear", "wind", "solar") and fr["b"] is not None:
+            if (
+                fr["fuel"] in ("gas", "nuclear", "wind", "solar")
+                and fr["b"] is not None
+            ):
                 rows.append((fr["fuel"], float(fr["m"]), float(fr["b"])))
         ctot_m = ctot_a = 0.0
         for cls in COAL:
@@ -52,16 +56,19 @@ def score(bundle: str) -> int:
             d, v = verdict(m, a)
             if v == "FAIL":
                 fails += 1
-            print(f"{year:>4} {name:<10} {m:>8.2f} {a:>8.2f} {d:>+7.2f} "
-                  f"{100 * d / a if a else float('nan'):>+6.1f}%  {v}")
+            print(
+                f"{year:>4} {name:<10} {m:>8.2f} {a:>8.2f} {d:>+7.2f} "
+                f"{100 * d / a if a else float('nan'):>+6.1f}%  {v}"
+            )
         # Net interchange (informational, no tolerance gate; net-export
         # positive). Present only for priced-interchange bundles.
-        ix = next((fr for fr in y["fuelRows"]
-                   if fr["fuel"] == "interchange"), None)
+        ix = next((fr for fr in y["fuelRows"] if fr["fuel"] == "interchange"), None)
         if ix is not None and ix["b"]:
             im, ib = float(ix["m"]), float(ix["b"])
-            print(f"{year:>4} {'interchg':<10} {im:>8.2f} {ib:>8.2f} "
-                  f"{im - ib:>+7.2f} {100 * (im - ib) / ib:>+6.1f}%  (info)")
+            print(
+                f"{year:>4} {'interchg':<10} {im:>8.2f} {ib:>8.2f} "
+                f"{im - ib:>+7.2f} {100 * (im - ib) / ib:>+6.1f}%  (info)"
+            )
         # LMP (informational, no tolerance gate)
         lmp = y["lmp"]
         pd_sum = sum(z["p"] * z["d"] for z in lmp.values())
@@ -69,8 +76,10 @@ def score(bundle: str) -> int:
         mp = pd_sum / d_sum if d_sum else float("nan")
         rt = (b.get("avgLMP") or {}).get("rt")
         if rt:
-            print(f"{year:>4} {'LMP':<10} {mp:>8.2f} {rt:>8.2f} "
-                  f"{mp - rt:>+7.2f} {100 * (mp - rt) / rt:>+6.1f}%  (info)")
+            print(
+                f"{year:>4} {'LMP':<10} {mp:>8.2f} {rt:>8.2f} "
+                f"{mp - rt:>+7.2f} {100 * (mp - rt) / rt:>+6.1f}%  (info)"
+            )
         else:
             print(f"{year:>4} {'LMP':<10} {mp:>8.2f} {'n/a':>8}")
     print(f"in-tolerance fails: {fails}")

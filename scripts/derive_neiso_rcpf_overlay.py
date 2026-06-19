@@ -26,6 +26,7 @@ Usage:
     python scripts/derive_neiso_rcpf_overlay.py results/calibration/neiso_monthly_keeper
         [--years 2023 2024 2025] [--tag scenarioX] [--rebuild-availability]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -65,8 +66,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", type=Path)
     ap.add_argument("--years", nargs="+", type=int, default=None)
-    ap.add_argument("--tag", default=None,
-                    help="write scarcity_<tag>.parquet (scenario runs)")
+    ap.add_argument(
+        "--tag", default=None, help="write scarcity_<tag>.parquet (scenario runs)"
+    )
     ap.add_argument("--rebuild-availability", action="store_true")
     args = ap.parse_args()
 
@@ -78,17 +80,18 @@ def main() -> None:
     hours = meta["hours"]
     pass_label = _final_pass(meta.get("passes", ["P1"]))
 
-    config = ScenarioConfig(
-        iso="NEISO", mode="backcast", neiso_rcpf_enabled=True)
+    config = ScenarioConfig(iso="NEISO", mode="backcast", neiso_rcpf_enabled=True)
     products = resolve_rcpf_products(config)
     print(f"bundle {bundle.name}: years {years}, reported pass {pass_label}")
     print("ISO-NE RCPF products (name, requirement_MW, critical_MW, max_$/MWh):")
     for prod in products:
-        print(f"  {prod[0]}: req {prod[1]:,.0f}  crit {prod[2]:,.0f}  "
-              f"max ${prod[3]:,.0f}")
+        print(
+            f"  {prod[0]}: req {prod[1]:,.0f}  crit {prod[2]:,.0f}  max ${prod[3]:,.0f}"
+        )
 
     avail = build_availability(
-        bundle, years, meta, pass_label, force=args.rebuild_availability)
+        bundle, years, meta, pass_label, force=args.rebuild_availability
+    )
 
     frames = []
     for year in years:
@@ -116,21 +119,22 @@ def main() -> None:
         frames.append(pd.DataFrame(frame))
 
         w = _demand_weights(bundle, year, hours, pass_label)
-        print(f"\n{year}: adder>$1 in {int((adder > 1).sum())} h, >$50 in "
-              f"{int((adder > 50).sum())} h, >$200 in "
-              f"{int((adder > 200).sum())} h, max ${adder.max():,.0f}; "
-              f"mean ${adder.mean():.2f}")
-        print(f"  reserves (MW) p1/p5/p50 = "
-              f"{np.percentile(reserves, [1, 5, 50]).round(0)}  "
-              f"(min req {products[-1][1]:,.0f})")
+        print(
+            f"\n{year}: adder>$1 in {int((adder > 1).sum())} h, >$50 in "
+            f"{int((adder > 50).sum())} h, >$200 in "
+            f"{int((adder > 200).sum())} h, max ${adder.max():,.0f}; "
+            f"mean ${adder.mean():.2f}"
+        )
+        print(
+            f"  reserves (MW) p1/p5/p50 = "
+            f"{np.percentile(reserves, [1, 5, 50]).round(0)}  "
+            f"(min req {products[-1][1]:,.0f})"
+        )
         md0, md1 = _dist(lam), _dist(lam + adder)
         cols = ["min", "p50", "p95", "p99", "max"]
-        print("  model price ($/MWh)    " +
-              "  ".join(f"{c:>7}" for c in cols))
-        print("    energy-only          " +
-              "  ".join(f"{md0[c]:7.0f}" for c in cols))
-        print("    + RCPF scarcity      " +
-              "  ".join(f"{md1[c]:7.0f}" for c in cols))
+        print("  model price ($/MWh)    " + "  ".join(f"{c:>7}" for c in cols))
+        print("    energy-only          " + "  ".join(f"{md0[c]:7.0f}" for c in cols))
+        print("    + RCPF scarcity      " + "  ".join(f"{md1[c]:7.0f}" for c in cols))
         # Demand-weighted mean price shift the overlay introduces (the body of
         # the distribution must be untouched: this should be ~0 in the calm
         # backcast and only grows in tight forward scenarios).

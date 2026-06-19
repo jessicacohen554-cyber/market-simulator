@@ -27,7 +27,14 @@ from dataclasses import dataclass
 # EIA-930 "net generation by energy source" reporting buckets. Model classes
 # roll up to exactly one of these (PlantClass.fuel930).
 EIA930_FUELS: tuple[str, ...] = (
-    "coal", "gas", "nuclear", "hydro", "wind", "solar", "oil", "other",
+    "coal",
+    "gas",
+    "nuclear",
+    "hydro",
+    "wind",
+    "solar",
+    "oil",
+    "other",
     "storage",
 )
 
@@ -36,10 +43,10 @@ EIA930_FUELS: tuple[str, ...] = (
 class PlantClass:
     """One model plant class and how it maps to reporting and display."""
 
-    key: str        # dispatch klass / Plant_Group string
-    fuel930: str    # EIA-930 bucket it rolls up to (must be in EIA930_FUELS)
-    label: str      # dashboard / report display label
-    fossil: bool    # shown in the fossil class tables and capture metrics
+    key: str  # dispatch klass / Plant_Group string
+    fuel930: str  # EIA-930 bucket it rolls up to (must be in EIA930_FUELS)
+    label: str  # dashboard / report display label
+    fossil: bool  # shown in the fossil class tables and capture metrics
 
 
 # Canonical class list. Tuple order is the canonical display / iteration order
@@ -47,29 +54,29 @@ class PlantClass:
 # consumer that derives from the helpers below updates automatically.
 PLANT_CLASSES: tuple[PlantClass, ...] = (
     # Coal — generic, ERCOT supply classes, and EIA-923-derived ranks.
-    PlantClass("COAL",          "coal",    "Coal",            True),
-    PlantClass("COAL_LIGNITE",  "coal",    "Coal Lignite",    True),
-    PlantClass("COAL_PRB",      "coal",    "Coal PRB",        True),
-    PlantClass("COAL_BIT",      "coal",    "Coal Bituminous", True),
-    PlantClass("COAL_WC",       "coal",    "Coal Waste",      True),
+    PlantClass("COAL", "coal", "Coal", True),
+    PlantClass("COAL_LIGNITE", "coal", "Coal Lignite", True),
+    PlantClass("COAL_PRB", "coal", "Coal PRB", True),
+    PlantClass("COAL_BIT", "coal", "Coal Bituminous", True),
+    PlantClass("COAL_WC", "coal", "Coal Waste", True),
     # Gas — combined cycle / combustion turbine / steam, merchant and CHP.
-    PlantClass("CC_REGULAR",    "gas",     "CC Regular",      True),
-    PlantClass("CC_CHP",        "gas",     "CC CHP",          True),
-    PlantClass("CT_PEAKER",     "gas",     "CT Peaker",       True),
-    PlantClass("CT_CHP",        "gas",     "CT CHP",          True),
-    PlantClass("ST_GAS",        "gas",     "Steam Gas",       True),
-    PlantClass("ST_CHP",        "gas",     "Steam CHP",       True),
+    PlantClass("CC_REGULAR", "gas", "CC Regular", True),
+    PlantClass("CC_CHP", "gas", "CC CHP", True),
+    PlantClass("CT_PEAKER", "gas", "CT Peaker", True),
+    PlantClass("CT_CHP", "gas", "CT CHP", True),
+    PlantClass("ST_GAS", "gas", "Steam Gas", True),
+    PlantClass("ST_CHP", "gas", "Steam CHP", True),
     # Non-fossil.
-    PlantClass("nuclear",       "nuclear", "Nuclear",         False),
-    PlantClass("hydro",         "hydro",   "Hydro",           False),
-    PlantClass("wind",          "wind",    "Wind",            False),
-    PlantClass("offshore_wind", "wind",    "Offshore Wind",   False),
-    PlantClass("solar",         "solar",   "Solar",           False),
-    PlantClass("oil",           "oil",     "Oil",             False),
-    PlantClass("biomass",       "other",   "Biomass",         False),
-    PlantClass("geothermal",    "other",   "Geothermal",      False),
-    PlantClass("storage",       "storage", "Storage",         False),
-    PlantClass("OTHER",         "other",   "Other",           False),
+    PlantClass("nuclear", "nuclear", "Nuclear", False),
+    PlantClass("hydro", "hydro", "Hydro", False),
+    PlantClass("wind", "wind", "Wind", False),
+    PlantClass("offshore_wind", "wind", "Offshore Wind", False),
+    PlantClass("solar", "solar", "Solar", False),
+    PlantClass("oil", "oil", "Oil", False),
+    PlantClass("biomass", "other", "Biomass", False),
+    PlantClass("geothermal", "other", "Geothermal", False),
+    PlantClass("storage", "storage", "Storage", False),
+    PlantClass("OTHER", "other", "Other", False),
 )
 
 _BY_KEY: dict[str, PlantClass] = {c.key: c for c in PLANT_CLASSES}
@@ -126,7 +133,7 @@ COAL_CODE_TO_SUPPLY: dict[str, str] = {
     "BIT": "bituminous",
     "SUB": "prb",
     "LIG": "lignite",
-    "WC": "waste",       # waste coal: culm, gob, mine refuse
+    "WC": "waste",  # waste coal: culm, gob, mine refuse
     "RC": "bituminous",  # refined coal
     "ANT": "bituminous",
     "SC": "bituminous",
@@ -165,11 +172,11 @@ NG_CT_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
 # Oil = distillate (DFO), residual (RFO), jet (JF), kerosene (KER), waste oil
 # (WO). Petroleum coke (PC) is deliberately excluded so it falls to the residual
 # OTHER must-run bucket rather than the dispatchable oil-peaker fleet.
-OIL_ENERGY_SOURCES: frozenset[str] = frozenset(
-    {"DFO", "RFO", "JF", "KER", "WO"})
+OIL_ENERGY_SOURCES: frozenset[str] = frozenset({"DFO", "RFO", "JF", "KER", "WO"})
 # Biomass = wood/refuse solids, landfill gas and the other biogenic streams.
 BIOMASS_ENERGY_SOURCES: frozenset[str] = frozenset(
-    {"WDS", "AB", "MSW", "LFG", "BLQ", "OBG", "OBL", "OBS", "WDL", "SLW", "DG"})
+    {"WDS", "AB", "MSW", "LFG", "BLQ", "OBG", "OBL", "OBS", "WDL", "SLW", "DG"}
+)
 # Hydro: fuel code WAT or a hydraulic-turbine prime mover (HY / HA). Pumped
 # storage (PS) is left to OTHER — it is a storage resource, not a generator.
 HYDRO_PRIME_MOVERS: frozenset[str] = frozenset({"HY", "HA"})

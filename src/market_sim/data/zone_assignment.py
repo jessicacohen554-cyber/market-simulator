@@ -42,6 +42,7 @@ def _use_clean() -> bool:
         "on",
     }
 
+
 # eGRID 2023 plant-level workbook (from the central path registry).
 _EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
 
@@ -99,11 +100,11 @@ HOUSTON_COUNTIES: frozenset[int] = frozenset(
     {
         201,  # Harris
         157,  # Fort Bend
-        39,   # Brazoria
+        39,  # Brazoria
         167,  # Galveston
         339,  # Montgomery
         291,  # Liberty
-        71,   # Chambers
+        71,  # Chambers
         245,  # Jefferson
         361,  # Orange
         473,  # Waller
@@ -153,16 +154,16 @@ CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
 #   - NJ/DE are the EMAAC eastern load pocket; DC is SWMAAC (PEPCO);
 #   - VA/NC are Dominion; TN is the AEP/EKPC edge.
 _PJM_STATE_ZONES: dict[int, str] = {
-    17: "PJM_ComEd",       # IL  (ComEd)
-    18: "PJM_AEP_Ohio",    # IN  (AEP / Duke / OVEC Clifty Creek)
-    26: "PJM_AEP_Ohio",    # MI  (AEP)
-    21: "PJM_AEP_Ohio",    # KY  (EKPC / Duke KY / AEP KY)
-    34: "PJM_EMAAC",       # NJ  (PSEG / JCPL / AECO / RECO)
-    10: "PJM_EMAAC",       # DE  (DPL)
-    11: "PJM_SWMAAC",      # DC  (PEPCO)
-    51: "PJM_Dominion",    # VA  (DOM)
-    37: "PJM_Dominion",    # NC  (DOM)
-    47: "PJM_AEP_Ohio",    # TN  (AEP / EKPC edge)
+    17: "PJM_ComEd",  # IL  (ComEd)
+    18: "PJM_AEP_Ohio",  # IN  (AEP / Duke / OVEC Clifty Creek)
+    26: "PJM_AEP_Ohio",  # MI  (AEP)
+    21: "PJM_AEP_Ohio",  # KY  (EKPC / Duke KY / AEP KY)
+    34: "PJM_EMAAC",  # NJ  (PSEG / JCPL / AECO / RECO)
+    10: "PJM_EMAAC",  # DE  (DPL)
+    11: "PJM_SWMAAC",  # DC  (PEPCO)
+    51: "PJM_Dominion",  # VA  (DOM)
+    37: "PJM_Dominion",  # NC  (DOM)
+    47: "PJM_AEP_Ohio",  # TN  (AEP / EKPC edge)
 }
 
 # FIPS state codes for the PJM states that straddle model zones.
@@ -189,10 +190,10 @@ _PJM_WV_NORTH_LAT: float = 39.0
 PJM_PHILLY_COUNTIES: frozenset[int] = frozenset(
     {
         101,  # Philadelphia
-        45,   # Delaware
-        91,   # Montgomery
-        17,   # Bucks
-        29,   # Chester
+        45,  # Delaware
+        91,  # Montgomery
+        17,  # Bucks
+        29,  # Chester
     }
 )
 _PJM_PA_WEST_LON: float = -79.0
@@ -208,21 +209,21 @@ _PJM_MD_WEST_LON: float = -78.5
 # carries a FIPS state for every MISO plant, so the state map is authoritative;
 # the latitude fallback below only handles the rare coords-only caller.
 _MISO_STATE_ZONES: dict[int, str] = {
-    27: "MISO-North",     # MN
-    19: "MISO-North",     # IA
-    55: "MISO-North",     # WI
-    38: "MISO-North",     # ND
-    46: "MISO-North",     # SD
-    30: "MISO-North",     # MT
-    17: "MISO-Central",   # IL
-    18: "MISO-Central",   # IN
-    26: "MISO-Central",   # MI
-    29: "MISO-Central",   # MO
-    21: "MISO-Central",   # KY
-    5: "MISO-South",      # AR
-    22: "MISO-South",     # LA
-    28: "MISO-South",     # MS
-    48: "MISO-South",     # TX (MISO East Texas / Entergy, not ERCOT)
+    27: "MISO-North",  # MN
+    19: "MISO-North",  # IA
+    55: "MISO-North",  # WI
+    38: "MISO-North",  # ND
+    46: "MISO-North",  # SD
+    30: "MISO-North",  # MT
+    17: "MISO-Central",  # IL
+    18: "MISO-Central",  # IN
+    26: "MISO-Central",  # MI
+    29: "MISO-Central",  # MO
+    21: "MISO-Central",  # KY
+    5: "MISO-South",  # AR
+    22: "MISO-South",  # LA
+    28: "MISO-South",  # MS
+    48: "MISO-South",  # TX (MISO East Texas / Entergy, not ERCOT)
 }
 
 # Latitude bands for the coords-only MISO fallback (no FIPS state). The
@@ -242,18 +243,18 @@ _NEW_YORK_FIPS: int = 36
 # NYC (zone J) — the five boroughs.
 NYISO_NYC_COUNTIES: frozenset[int] = frozenset(
     {
-        5,    # Bronx
-        47,   # Kings (Brooklyn)
-        61,   # New York (Manhattan)
-        81,   # Queens
-        85,   # Richmond (Staten Island)
+        5,  # Bronx
+        47,  # Kings (Brooklyn)
+        61,  # New York (Manhattan)
+        81,  # Queens
+        85,  # Richmond (Staten Island)
     }
 )
 
 # Long Island (zone K).
 NYISO_LONG_ISLAND_COUNTIES: frozenset[int] = frozenset(
     {
-        59,   # Nassau
+        59,  # Nassau
         103,  # Suffolk
     }
 )
@@ -263,7 +264,7 @@ NYISO_LONG_ISLAND_COUNTIES: frozenset[int] = frozenset(
 NYISO_LOWER_HUDSON_COUNTIES: frozenset[int] = frozenset(
     {
         119,  # Westchester (Con Ed — zones H and I)
-        79,   # Putnam
+        79,  # Putnam
     }
 )
 
@@ -273,18 +274,18 @@ NYISO_LOWER_HUDSON_COUNTIES: frozenset[int] = frozenset(
 # Niagara (zone A) and St. Lawrence (zone D) hydro upstate.
 NYISO_CAPITAL_HUDSON_COUNTIES: frozenset[int] = frozenset(
     {
-        1,    # Albany (F)
-        21,   # Columbia (F)
-        39,   # Greene (F)
-        83,   # Rensselaer (F)
-        91,   # Saratoga (F)
-        93,   # Schenectady (F)
-        95,   # Schoharie (F)
+        1,  # Albany (F)
+        21,  # Columbia (F)
+        39,  # Greene (F)
+        83,  # Rensselaer (F)
+        91,  # Saratoga (F)
+        93,  # Schenectady (F)
+        95,  # Schoharie (F)
         113,  # Warren (F)
         115,  # Washington (F)
-        27,   # Dutchess (G)
-        71,   # Orange (G)
-        87,   # Rockland (G)
+        27,  # Dutchess (G)
+        71,  # Orange (G)
+        87,  # Rockland (G)
         105,  # Sullivan (G)
         111,  # Ulster (G)
     }
@@ -311,11 +312,11 @@ _NYISO_LONG_ISLAND_LON: float = -73.5
 # plant, so the state map is authoritative; the lat/lon fallback only handles
 # the rare coords-only caller and out-of-footprint (e.g. NY-FIPS) attributions.
 _NEISO_STATE_ZONES: dict[int, str] = {
-    23: "North",        # ME
-    33: "North",        # NH
-    50: "North",        # VT
-    9: "Connecticut",   # CT
-    44: "Central",      # RI (part of the WCMA/SEMA/RI aggregate)
+    23: "North",  # ME
+    33: "North",  # NH
+    50: "North",  # VT
+    9: "Connecticut",  # CT
+    44: "Central",  # RI (part of the WCMA/SEMA/RI aggregate)
 }
 
 # FIPS state code for Massachusetts; its three ISO-NE load zones (NEMA/Boston,
@@ -331,7 +332,7 @@ NEMA_BOSTON_COUNTIES: frozenset[int] = frozenset(
     {
         25,  # Suffolk (Boston)
         17,  # Middlesex (Mystic / Lowell)
-        9,   # Essex (Salem Harbor)
+        9,  # Essex (Salem Harbor)
         21,  # Norfolk (Fore River / Boston south suburbs)
     }
 )
@@ -359,19 +360,19 @@ _NEISO_BOSTON_LON: float = -71.3
 # eGRID carries a FIPS state for every SWPP plant, so the state map is
 # authoritative; the latitude fallback only handles the rare coords-only caller.
 _SPP_STATE_ZONES: dict[int, str] = {
-    20: "SPP-North",   # KS
-    31: "SPP-North",   # NE
-    19: "SPP-North",   # IA
-    27: "SPP-North",   # MN
-    46: "SPP-North",   # SD
-    38: "SPP-North",   # ND
-    30: "SPP-North",   # MT (far-eastern Montana: Basin Electric / WAPA UGP)
-    8: "SPP-North",    # CO (Denver-metro & southeastern-Colorado SPP load)
-    40: "SPP-South",   # OK
-    48: "SPP-South",   # TX (panhandle: Xcel SPS / Southwestern Public Service)
-    35: "SPP-South",   # NM (eastern New Mexico: Xcel SPS)
-    22: "SPP-South",   # LA (northwest Louisiana: SWEPCO)
-    5: "SPP-South",    # AR (Arkansas SPP: SWEPCO / AECC)
+    20: "SPP-North",  # KS
+    31: "SPP-North",  # NE
+    19: "SPP-North",  # IA
+    27: "SPP-North",  # MN
+    46: "SPP-North",  # SD
+    38: "SPP-North",  # ND
+    30: "SPP-North",  # MT (far-eastern Montana: Basin Electric / WAPA UGP)
+    8: "SPP-North",  # CO (Denver-metro & southeastern-Colorado SPP load)
+    40: "SPP-South",  # OK
+    48: "SPP-South",  # TX (panhandle: Xcel SPS / Southwestern Public Service)
+    35: "SPP-South",  # NM (eastern New Mexico: Xcel SPS)
+    22: "SPP-South",  # LA (northwest Louisiana: SWEPCO)
+    5: "SPP-South",  # AR (Arkansas SPP: SWEPCO / AECC)
 }
 
 # Missouri straddles the SPP north–south divide. The Kansas-City metro
@@ -391,7 +392,9 @@ _SPP_NORTH_LAT: float = 37.0
 # Cached parsed eGRID DataFrame and derived ORIS→location lookup, so the
 # 21 MB workbook is read at most once per process.
 _PLNT23_CACHE: pd.DataFrame | None = None
-_ORIS_TO_LOCATION: dict[int, tuple[float | None, float | None, int | None, int | None]] | None = None
+_ORIS_TO_LOCATION: (
+    dict[int, tuple[float | None, float | None, int | None, int | None]] | None
+) = None
 
 
 def _to_float(value: object) -> float | None:
@@ -495,12 +498,7 @@ def _ercot_zone(
         if lat is not None and lat >= 33.5:
             return "Panhandle"
         return "West"
-    if (
-        lat is not None
-        and lon is not None
-        and lat >= 31.0
-        and -99.5 <= lon < -95.5
-    ):
+    if lat is not None and lon is not None and lat >= 31.0 and -99.5 <= lon < -95.5:
         return "North"
     # Houston-area fallback for east-coast plants without a FIPS county match.
     if lat is not None and lon is not None and lon >= -96.0 and lat < 31.0:
@@ -816,7 +814,9 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # eGRID 2023), NYISO third (2024+ downstate battery fleet), NEISO fourth
 # (2022-2024 MA batteries: 29 plants / ~44 MW absent from eGRID 2023, rising
 # to 346 MW with the 2025 Cranberry Point and Cross Town BESS additions).
-_EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO", "NYISO", "NEISO"})
+_EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "NYISO", "NEISO"}
+)
 
 
 def _eia860_ba_zones(iso: str) -> dict[int, str]:

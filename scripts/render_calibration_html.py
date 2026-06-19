@@ -31,6 +31,7 @@ Usage:
     # each BUNDLE is one config (may hold several years); LABEL overrides the
     # run name shown in the toggle (default: the bundle directory name).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -47,22 +48,30 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
-    "rcf", str(REPO / "scripts" / "run_calibration_full.py"))
-rcf = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rcf)
+    "rcf", str(REPO / "scripts" / "run_calibration_full.py")
+)
+rcf = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rcf)
 # The ORDC scarcity overlay deriver supplies the reference monthly-MAE /
 # actual-RT / demand-weight implementations; the dashboard's display-only
 # overlay series reuses them verbatim so its numbers match the deriver's
 # stdout report (docs/ordc-overlay.md, "Reliability-deployment overlay").
 _spec_ordc = importlib.util.spec_from_file_location(
-    "ordc_overlay", str(REPO / "scripts" / "derive_ordc_overlay.py"))
+    "ordc_overlay", str(REPO / "scripts" / "derive_ordc_overlay.py")
+)
 ordc = importlib.util.module_from_spec(_spec_ordc)
 _spec_ordc.loader.exec_module(ordc)
 
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
-    LABELS, class_label, classes_for_fuel930, fossil_classes, nonfossil_classes,
+    LABELS,
+    class_label,
+    classes_for_fuel930,
+    fossil_classes,
+    nonfossil_classes,
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
@@ -72,7 +81,8 @@ from market_sim.data.fleet import (  # noqa: E402
     plant_tranche_bands,
 )
 from market_sim.results.calibration import (  # noqa: E402
-    actuals_source, signed_volume_error,
+    actuals_source,
+    signed_volume_error,
 )
 
 # All class groupings derive from the canonical taxonomy
@@ -80,7 +90,7 @@ from market_sim.results.calibration import (  # noqa: E402
 # plant classes to EIA-930 fuel buckets and labels. Adding a class there flows
 # through every table here automatically (no hardcoded class lists). The
 # per-ISO filter (in build_payload) keeps only the classes an ISO dispatches.
-_group_label = class_label                  # known canonical name, else humanized
+_group_label = class_label  # known canonical name, else humanized
 GROUP_LABEL = dict(LABELS)
 _NONFOSSIL_KLASS = nonfossil_classes()
 # OTHER_FOSSIL: the scoring bucket for genuinely-mixed gas-thermal plants
@@ -104,8 +114,7 @@ def _b64(cf: np.ndarray) -> str:
 
 def _monthly_gwh(mw: np.ndarray) -> list[float]:
     """Return 12 monthly GWh totals from an hourly MW series."""
-    return [round(float(mw[_CUM[m]:_CUM[m + 1]].sum()) / 1e3, 2)
-            for m in range(12)]
+    return [round(float(mw[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
 
 
 def _vol_err(model_twh: float, actual_twh: float) -> float | None:
@@ -134,8 +143,10 @@ def _actual_lmp_table() -> dict:
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
-    for p in (CALIBRATION_DIR / "actual_lmp.json",
-              REPO / "inputs" / "calibration" / "actual_lmp.json"):
+    for p in (
+        CALIBRATION_DIR / "actual_lmp.json",
+        REPO / "inputs" / "calibration" / "actual_lmp.json",
+    ):
         if p.exists():
             return json.loads(p.read_text())
     return {}
@@ -153,7 +164,8 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
 
 
 def _pearson(m: np.ndarray, o: np.ndarray) -> float:
-    m = m - m.mean(); o = o - o.mean()
+    m = m - m.mean()
+    o = o - o.mean()
     d = float(np.sqrt((m * m).sum() * (o * o).sum()))
     return float((m * o).sum() / d) if d > 0 else 0.0
 
@@ -182,6 +194,7 @@ def _btm_share(plant_id: int, group: str, iso: str = "ERCOT") -> float:
     if group not in ("CC_CHP", "CT_CHP", "ST_CHP"):
         return 0.0
     from market_sim.data.fleet import chp_btm_pct
+
     return chp_btm_pct(int(plant_id), group, iso=iso) / 100.0
 
 
@@ -194,6 +207,7 @@ def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
     CAMPD bin sheet — still get a real capacity and label in the dashboard.
     """
     from market_sim.data.fleet import EIA_860_DIR, EIA_860_PARQUET_NAME
+
     path = EIA_860_DIR / EIA_860_PARQUET_NAME
     if not path.exists():
         return {}, {}
@@ -203,16 +217,17 @@ def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
     df["plant_id"] = df["plant_id"].astype(int)
     npl = df.groupby("plant_id")["nameplate_capacity_mw"].sum().to_dict()
     nm = df.groupby("plant_id")["plant_name"].first().to_dict()
-    return ({int(k): float(v) for k, v in npl.items()},
-            {int(k): str(v) for k, v in nm.items()})
+    return (
+        {int(k): float(v) for k, v in npl.items()},
+        {int(k): str(v) for k, v in nm.items()},
+    )
 
 
 def _nameplates() -> dict[int, float]:
     """Plant nameplate MW: ERCOT bin sheet first, EIA-860 fleet for the rest."""
     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
     out = dict(_eia860_plant_info()[0])
-    out.update(zip(bins["Plant_Code"].astype(int),
-                   bins["Nameplate_MW"].astype(float)))
+    out.update(zip(bins["Plant_Code"].astype(int), bins["Nameplate_MW"].astype(float)))
     return out
 
 
@@ -220,8 +235,7 @@ def _plant_names() -> dict[int, str]:
     """Plant names: ERCOT bin sheet first, EIA-860 fleet for the rest."""
     bins = pd.read_csv(ScenarioConfig().campd_bins_path)
     out = dict(_eia860_plant_info()[1])
-    out.update(zip(bins["Plant_Code"].astype(int),
-                   bins["Plant_Name"].astype(str)))
+    out.update(zip(bins["Plant_Code"].astype(int), bins["Plant_Name"].astype(str)))
     return out
 
 
@@ -295,13 +309,17 @@ def _load_scarcity_overlay(bdir: Path, year: int, hours: int) -> dict | None:
         lmp[hh] = df["lmp"].to_numpy(float)
         lmp_scar[hh] = df["lmp_scarcity"].to_numpy(float)
         m = re.search(r"reldeploy(\d+)", name)
-        return {"adder": adder, "lmp": lmp, "lmp_scarcity": lmp_scar,
-                "series": name, "reldeploy": float(m.group(1)) if m else 0.0}
+        return {
+            "adder": adder,
+            "lmp": lmp,
+            "lmp_scarcity": lmp_scar,
+            "series": name,
+            "reldeploy": float(m.group(1)) if m else 0.0,
+        }
     return None
 
 
-def build_payload(runs: list[tuple[str, Path]],
-                  years: set[int] | None = None) -> dict:
+def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -> dict:
     """Assemble the embedded data for every run, with a shared CAMPD benchmark.
 
     Returns a dict with: groups / labels / zones / years; ``bench`` (per year:
@@ -319,8 +337,8 @@ def build_payload(runs: list[tuple[str, Path]],
     zones_set: set[str] = set()
     groups_set: set[str] = set()
 
-    bench: dict[int, dict] = {}          # year -> benchmark payload
-    model_runs: list[dict] = []          # per run -> {year -> payload}
+    bench: dict[int, dict] = {}  # year -> benchmark payload
+    model_runs: list[dict] = []  # per run -> {year -> payload}
 
     for label, bdir in runs:
         meta = json.loads((bdir / "meta.json").read_text())
@@ -333,8 +351,11 @@ def build_payload(runs: list[tuple[str, Path]],
         # Behind-the-meter must-run per (year, pass, class) — the same off-grid
         # CHP host self-supply the LP held out, as the calibration report uses
         # it (run_calibration_full). Drives the system-wide generation mix.
-        btm_all = (pd.read_parquet(bdir / "btm.parquet")
-                   if (bdir / "btm.parquet").exists() else None)
+        btm_all = (
+            pd.read_parquet(bdir / "btm.parquet")
+            if (bdir / "btm.parquet").exists()
+            else None
+        )
         for year in meta["years"]:
             if years is not None and int(year) not in years:
                 continue
@@ -345,22 +366,27 @@ def build_payload(runs: list[tuple[str, Path]],
             # (a scoring transform — dispatch itself is unchanged).
             disp = apply_other_fossil_scoring(
                 pd.read_parquet(bdir / "dispatch" / f"{year}_P1.parquet"),
-                year, plant_col="plant_code",
+                year,
+                plant_col="plant_code",
             )
             e923 = apply_other_fossil_scoring(
-                e923_all[e923_all["year"] == year], year, plant_col="plant_id",
+                e923_all[e923_all["year"] == year],
+                year,
+                plant_col="plant_id",
             )
             e930 = e930_all[e930_all["year"] == year]
             campd = campd_all[campd_all["year"] == year]
 
             # Model hourly MW per (fossil) plant, with its zone and class.
-            dm = disp[(disp["plant_code"] > 0)
-                      & (disp["klass"].isin(FOSSIL_GROUPS))]
+            dm = disp[(disp["plant_code"] > 0) & (disp["klass"].isin(FOSSIL_GROUPS))]
             mw_p, zone_p, grp_p = {}, {}, {}
-            for (code, klass), g in dm.groupby(["plant_code", "klass"],
-                                               observed=True):
-                arr = (g.groupby("hour")["mw"].sum()
-                       .reindex(range(_T), fill_value=0.0).to_numpy(float))
+            for (code, klass), g in dm.groupby(["plant_code", "klass"], observed=True):
+                arr = (
+                    g.groupby("hour")["mw"]
+                    .sum()
+                    .reindex(range(_T), fill_value=0.0)
+                    .to_numpy(float)
+                )
                 mw_p[int(code)] = arr
                 zone_p[int(code)] = str(g["zone"].iloc[0])
                 grp_p[int(code)] = str(klass)
@@ -370,16 +396,17 @@ def build_payload(runs: list[tuple[str, Path]],
             # CAMPD net hourly per plant (benchmark — built once on run 0).
             cn_p: dict[int, np.ndarray] = {}
             for code, g in campd.groupby("plant_id", observed=True):
-                a = np.nan_to_num(g.sort_values("hour")["net_mw"]
-                                  .to_numpy(float))
+                a = np.nan_to_num(g.sort_values("hour")["net_mw"].to_numpy(float))
                 cn_p[int(code)] = np.concatenate(
-                    [a, np.zeros(max(0, _T - a.shape[0]))])[:_T]
+                    [a, np.zeros(max(0, _T - a.shape[0]))]
+                )[:_T]
 
             e923_ann = e923.groupby("plant_id")["annual_mwh"].sum().to_dict()
             mcols = [f"m{i:02d}" for i in range(1, 13)]
-            e923_mon = {int(i): (row.to_numpy(float) / 1e3)
-                        for i, row in e923.groupby("plant_id")[mcols]
-                        .sum().iterrows()}
+            e923_mon = {
+                int(i): (row.to_numpy(float) / 1e3)
+                for i, row in e923.groupby("plant_id")[mcols].sum().iterrows()
+            }
 
             # ---- benchmark payload (newest bundle wins) ----
             # Rebuilt for every run, so the LAST run in the id-sorted registry
@@ -400,7 +427,8 @@ def build_payload(runs: list[tuple[str, Path]],
                 bplants[str(code)] = {
                     "name": pnames.get(code, str(code)),
                     "zone": zone_p.get(code, "?"),
-                    "group": grp, "npl": round(cap),
+                    "group": grp,
+                    "npl": round(cap),
                     # No usable CAMPD hourly series (plant absent from CEMS
                     # or all-NaN, e.g. some waste-coal units): flagged so the
                     # charts show the model without a misleading flat-zero
@@ -411,13 +439,14 @@ def build_payload(runs: list[tuple[str, Path]],
                     "c_mon": _monthly_gwh(cn),
                     "e_ann": round(e_ann, 4),
                     "btm": round(
-                        e_ann * _btm_share(code, grp,
-                                           meta.get("iso", "ERCOT")), 4),
-                    "e_mon": [round(x, 2) for x in e923_mon.get(code,
-                              np.zeros(12))],
+                        e_ann * _btm_share(code, grp, meta.get("iso", "ERCOT")), 4
+                    ),
+                    "e_mon": [round(x, 2) for x in e923_mon.get(code, np.zeros(12))],
                 }
-            e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
-                 .to_numpy(float) for s in e930["series"].unique()}
+            e = {
+                s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
+                for s in e930["series"].unique()
+            }
             # Full EIA-923 net generation per fossil class (TWh) — every
             # 923 plant of the class, NOT just the ones the model matches.
             # This is the true class total the generation-mix benchmark and
@@ -432,8 +461,7 @@ def build_payload(runs: list[tuple[str, Path]],
             # ISOs without a btm.parquet (no CHP split) keep full 923.
             btm_cls = {}
             if btm_all is not None:
-                _by = btm_all[(btm_all["year"] == year)
-                              & (btm_all["pass"] == "P1")]
+                _by = btm_all[(btm_all["year"] == year) & (btm_all["pass"] == "P1")]
                 btm_cls = dict(zip(_by["klass"], _by["btm_twh"]))
             # Every actual class is kept (not just the hardcoded MIX_GROUPS)
             # so the model's real plant classification — e.g. EIA-923-derived
@@ -442,14 +470,14 @@ def build_payload(runs: list[tuple[str, Path]],
             groups_set.update(str(g) for g in e923_cls.index)
             bench[int(year)] = {
                 "plants": bplants,
-                "e930": {f: round(float(e.get(f, np.zeros(1)).sum())
-                                  / 1e6, 3)
-                         for f in ("gas", "coal", "nuclear", "wind",
-                                   "solar")},
-                "classFull": {str(g): round(float(v) / 1e6
-                                            - float(btm_cls.get(str(g), 0.0)),
-                                            4)
-                              for g, v in e923_cls.items()},
+                "e930": {
+                    f: round(float(e.get(f, np.zeros(1)).sum()) / 1e6, 3)
+                    for f in ("gas", "coal", "nuclear", "wind", "solar")
+                },
+                "classFull": {
+                    str(g): round(float(v) / 1e6 - float(btm_cls.get(str(g), 0.0)), 4)
+                    for g, v in e923_cls.items()
+                },
             }
             # Actual historical avg LMP ($/MWh), system hub-average, for the
             # summary page's model-vs-actual price comparison. Absent for an
@@ -471,7 +499,8 @@ def build_payload(runs: list[tuple[str, Path]],
                 # correlation-invariant (it corrects the level, not the shape).
                 if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
                     btm_mwh = float(e923_ann.get(code, 0.0)) * _btm_share(
-                        code, grp, meta.get("iso", "ERCOT"))
+                        code, grp, meta.get("iso", "ERCOT")
+                    )
                     if btm_mwh > 0.0:
                         mw = mw + btm_mwh / float(_T)
                 cn = cn_p.get(code)
@@ -486,7 +515,9 @@ def build_payload(runs: list[tuple[str, Path]],
                     "m": _b64(100.0 * mw / cap),
                     "m_ann": round(float(mw.sum()) / 1e6, 4),
                     "m_mon": _monthly_gwh(mw),
-                    "r": r, "nrmse": nr, "cap": cap_pct,
+                    "r": r,
+                    "nrmse": nr,
+                    "cap": cap_pct,
                 }
                 if code in tr_bands:
                     mplants[str(code)]["tr"] = tr_bands[code]
@@ -497,10 +528,11 @@ def build_payload(runs: list[tuple[str, Path]],
                 nf[f] = round(float(s["mw"].sum()) / 1e6, 3)
             # System fuel-vs-EIA-930 table (all zones; 930 is not zonal).
             mh = rcf._class_hourly(disp)
-            e = {s: e930[e930["series"] == s].sort_values("hour")["mw"]
-                 .to_numpy(float) for s in e930["series"].unique()}
-            _CHP = tuple(c for c in classes_for_fuel930("gas")
-                         if c.endswith("_CHP"))
+            e = {
+                s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
+                for s in e930["series"].unique()
+            }
+            _CHP = tuple(c for c in classes_for_fuel930("gas") if c.endswith("_CHP"))
             chp_flat = sum(mh.get(c, np.zeros(_T)).sum() for c in _CHP) / _T
             fuel_rows = []
             # Each EIA-930 fuel row sums the model classes that roll up to it
@@ -511,23 +543,34 @@ def build_payload(runs: list[tuple[str, Path]],
                 for fuel in ("gas", "coal", "nuclear", "wind", "solar")
             ]
             for fuel, classes, ob, is_gas in specs:
-                ms = sum((mh.get(c, np.zeros(_T)) for c in classes),
-                         np.zeros(_T))
+                ms = sum((mh.get(c, np.zeros(_T)) for c in classes), np.zeros(_T))
                 # gas: compare the non-CHP model grid to (930 gas - model CHP).
                 if is_gas:
-                    ms = sum((mh.get(c, np.zeros(_T))
-                              for c in ("CC_REGULAR", "CT_PEAKER", "ST_GAS")),
-                             np.zeros(_T))
+                    ms = sum(
+                        (
+                            mh.get(c, np.zeros(_T))
+                            for c in ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+                        ),
+                        np.zeros(_T),
+                    )
                     ob = ob - chp_flat if ob is not None else None
                 m_twh = float(ms.sum()) / 1e6
                 b_twh = float(ob.sum()) / 1e6 if ob is not None else None
-                r2 = (round(_pearson(ms, ob), 3)
-                      if ob is not None and ob.std() > 0 else None)
-                n2 = (round(_nrmse(ms, ob), 3) if ob is not None else None)
-                fuel_rows.append({
-                    "fuel": fuel, "m": round(m_twh, 2),
-                    "b": round(b_twh, 2) if b_twh is not None else None,
-                    "r": r2, "nrmse": n2})
+                r2 = (
+                    round(_pearson(ms, ob), 3)
+                    if ob is not None and ob.std() > 0
+                    else None
+                )
+                n2 = round(_nrmse(ms, ob), 3) if ob is not None else None
+                fuel_rows.append(
+                    {
+                        "fuel": fuel,
+                        "m": round(m_twh, 2),
+                        "b": round(b_twh, 2) if b_twh is not None else None,
+                        "r": r2,
+                        "nrmse": n2,
+                    }
+                )
             # Net interchange (net-export positive, the EIA-930 sign
             # convention): model = -(priced import/export node dispatch:
             # import tranches positive, export sinks negative), actual = the
@@ -540,16 +583,25 @@ def build_payload(runs: list[tuple[str, Path]],
             imp = disp[disp["klass"] == "import"]
             ob_ix = e.get("interchange")
             if not imp.empty and ob_ix is not None:
-                ms_ix = -(imp.groupby("hour")["mw"].sum()
-                          .reindex(range(_T), fill_value=0.0)
-                          .to_numpy(float))
-                fuel_rows.append({
-                    "fuel": "interchange",
-                    "m": round(float(ms_ix.sum()) / 1e6, 2),
-                    "b": round(float(ob_ix.sum()) / 1e6, 2),
-                    "r": (round(_pearson(ms_ix, ob_ix), 3)
-                          if ob_ix.std() > 0 else None),
-                    "nrmse": round(_nrmse(ms_ix, ob_ix), 3)})
+                ms_ix = -(
+                    imp.groupby("hour")["mw"]
+                    .sum()
+                    .reindex(range(_T), fill_value=0.0)
+                    .to_numpy(float)
+                )
+                fuel_rows.append(
+                    {
+                        "fuel": "interchange",
+                        "m": round(float(ms_ix.sum()) / 1e6, 2),
+                        "b": round(float(ob_ix.sum()) / 1e6, 2),
+                        "r": (
+                            round(_pearson(ms_ix, ob_ix), 3)
+                            if ob_ix.std() > 0
+                            else None
+                        ),
+                        "nrmse": round(_nrmse(ms_ix, ob_ix), 3),
+                    }
+                )
             # Per-zone average LMP (load-weighted) from the system duals, for
             # the dashboard's average-LMP KPI. P1 pass; the shell averages over
             # the selected zones, weighting by demand. ``pMon``/``dMon`` carry
@@ -565,8 +617,11 @@ def build_payload(runs: list[tuple[str, Path]],
             # and is byte-identical; ``lmpScar`` is purely additive (the
             # system-wide adder added uniformly to each zone) and never re-gated.
             hours = int(meta.get("hours", _T))
-            scar = (_load_scarcity_overlay(bdir, int(year), hours)
-                    if meta.get("iso") == "ERCOT" else None)
+            scar = (
+                _load_scarcity_overlay(bdir, int(year), hours)
+                if meta.get("iso") == "ERCOT"
+                else None
+            )
             lmp = {}
             lmp_scar: dict[str, dict] = {}
             for zone, zg in sy.groupby("zone", observed=True):
@@ -574,8 +629,11 @@ def build_payload(runs: list[tuple[str, Path]],
                 dem = zg["demand"].to_numpy(float)
                 hr = zg["hour"].to_numpy()
                 d_tot = float(dem.sum())
-                p = (float((price * dem).sum()) / d_tot
-                     if d_tot > 0 else float(price.mean()))
+                p = (
+                    float((price * dem).sum()) / d_tot
+                    if d_tot > 0
+                    else float(price.mean())
+                )
                 # hour 0-8759 -> month 0-11 via the cumulative month-hour edges.
                 midx = np.clip(np.searchsorted(_CUM, hr, side="right") - 1, 0, 11)
                 p_mon: list = [None] * 12
@@ -591,15 +649,24 @@ def build_payload(runs: list[tuple[str, Path]],
                     if not sel.any():
                         continue
                     dd = float(dem[sel].sum())
-                    p_mon[m] = round(float((price[sel] * dem[sel]).sum()) / dd, 2) \
-                        if dd > 0 else round(float(price[sel].mean()), 2)
+                    p_mon[m] = (
+                        round(float((price[sel] * dem[sel]).sum()) / dd, 2)
+                        if dd > 0
+                        else round(float(price[sel].mean()), 2)
+                    )
                     d_mon[m] = round(dd / 1e6, 4)
                     if op is not None:
-                        p_mon_scar[m] = round(
-                            float((op[sel] * dem[sel]).sum()) / dd, 2) \
-                            if dd > 0 else round(float(op[sel].mean()), 2)
-                lmp[str(zone)] = {"p": round(p, 2), "d": round(d_tot / 1e6, 4),
-                                  "pMon": p_mon, "dMon": d_mon}
+                        p_mon_scar[m] = (
+                            round(float((op[sel] * dem[sel]).sum()) / dd, 2)
+                            if dd > 0
+                            else round(float(op[sel].mean()), 2)
+                        )
+                lmp[str(zone)] = {
+                    "p": round(p, 2),
+                    "d": round(d_tot / 1e6, 4),
+                    "pMon": p_mon,
+                    "dMon": d_mon,
+                }
                 if scar is not None:
                     lmp_scar[str(zone)] = {"pMonScar": p_mon_scar}
             # System-wide generation mix per fossil class (TWh), GRID-DELIVERED:
@@ -635,20 +702,21 @@ def build_payload(runs: list[tuple[str, Path]],
                 if grp is None or zone is None:
                     continue
                 cell = vol_err.setdefault(
-                    grp, {"src": actuals_source(grp), "zoneMon": {}})
+                    grp, {"src": actuals_source(grp), "zoneMon": {}}
+                )
                 zc = cell["zoneMon"].setdefault(
-                    zone, {"m": [0.0] * 12, "a": [0.0] * 12})
-                m_mon = mplants[str(code)]["m_mon"]          # model GWh
-                a_mon = e923_mon.get(code, np.zeros(12))      # EIA-923 GWh
+                    zone, {"m": [0.0] * 12, "a": [0.0] * 12}
+                )
+                m_mon = mplants[str(code)]["m_mon"]  # model GWh
+                a_mon = e923_mon.get(code, np.zeros(12))  # EIA-923 GWh
                 for mo in range(12):
-                    zc["m"][mo] += float(m_mon[mo]) / 1e3     # GWh -> TWh
+                    zc["m"][mo] += float(m_mon[mo]) / 1e3  # GWh -> TWh
                     zc["a"][mo] += float(a_mon[mo]) / 1e3
             for cell in vol_err.values():
                 for zc in cell["zoneMon"].values():
                     zc["m"] = [round(x, 4) for x in zc["m"]]
                     zc["a"] = [round(x, 4) for x in zc["a"]]
-                    zc["e"] = [_vol_err(m, a)
-                               for m, a in zip(zc["m"], zc["a"])]
+                    zc["e"] = [_vol_err(m, a) for m, a in zip(zc["m"], zc["a"])]
             # Variable renewables: EIA-930 system annual baseline (no zone/month
             # breakdown — 930 is neither zonal nor split into model classes
             # here). Both solar and wind route to EIA-930 via actuals_source
@@ -667,8 +735,13 @@ def build_payload(runs: list[tuple[str, Path]],
                         },
                     }
             run_years[int(year)] = {
-                "plants": mplants, "nonfossil": nf, "fuelRows": fuel_rows,
-                "gmModel": gm_model, "lmp": lmp, "volErr": vol_err}
+                "plants": mplants,
+                "nonfossil": nf,
+                "fuelRows": fuel_rows,
+                "gmModel": gm_model,
+                "lmp": lmp,
+                "volErr": vol_err,
+            }
             # Year-level scarcity-overlay summary (display-only): demand-weighted
             # monthly LMP MAE vs actual RT for the energy-only and overlaid
             # series, and tail-hour counts. Reuses the deriver's _monthly_mae /
@@ -686,13 +759,16 @@ def build_payload(runs: list[tuple[str, Path]],
                     "hoursGt200": {
                         "actual": int(np.nansum(rt > 200)),
                         "model": int(np.nansum(lam > 200)),
-                        "overlay": int(np.nansum(lam_s > 200))},
+                        "overlay": int(np.nansum(lam_s > 200)),
+                    },
                     "hoursGt500": {
                         "actual": int(np.nansum(rt > 500)),
                         "model": int(np.nansum(lam > 500)),
-                        "overlay": int(np.nansum(lam_s > 500))},
+                        "overlay": int(np.nansum(lam_s > 500)),
+                    },
                     "series": scar["series"],
-                    "reldeployMw": scar["reldeploy"]}
+                    "reldeployMw": scar["reldeploy"],
+                }
         model_runs.append({"label": label, "years": run_years})
 
     # Only the fossil classes actually present in this ISO's dispatch, in the
@@ -703,9 +779,7 @@ def build_payload(runs: list[tuple[str, Path]],
     # canonical order first then any extra (auto-wired) classes sorted — so a
     # new classification like the EIA-923 coal ranks shows up for every ISO
     # without being hardcoded here. Non-fossil classes are excluded.
-    fossil_present = {
-        g for g in groups_set if g not in _NONFOSSIL_KLASS
-    }
+    fossil_present = {g for g in groups_set if g not in _NONFOSSIL_KLASS}
     groups = [g for g in FOSSIL_GROUPS if g in fossil_present] + sorted(
         fossil_present - set(FOSSIL_GROUPS)
     )
@@ -713,42 +787,52 @@ def build_payload(runs: list[tuple[str, Path]],
     return {
         "groups": groups,
         "groupLabel": {g: _group_label(g) for g in groups},
-        "zones": sorted(zones_set), "years": sorted(years_set),
-        "runLabels": labels, "bench": bench, "model": model_runs,
+        "zones": sorted(zones_set),
+        "years": sorted(years_set),
+        "runLabels": labels,
+        "bench": bench,
+        "model": model_runs,
     }
 
 
 def main() -> None:
     """Render the multi-run report from one or more bundles."""
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("bundles", nargs="+",
-                    help="[LABEL=]BUNDLE_DIR for each run/config")
-    ap.add_argument("--out", default=str(
-        REPO / "results" / "calibration" / "calibration-report.html"))
+    ap.add_argument("bundles", nargs="+", help="[LABEL=]BUNDLE_DIR for each run/config")
+    ap.add_argument(
+        "--out",
+        default=str(REPO / "results" / "calibration" / "calibration-report.html"),
+    )
     args = ap.parse_args()
     runs: list[tuple[str, Path]] = []
     for spec in args.bundles:
         if "=" in spec:
             lab, _, d = spec.partition("=")
         else:
-            d = spec; lab = Path(spec).name
+            d = spec
+            lab = Path(spec).name
         runs.append((lab, Path(d)))
     payload = build_payload(runs)
     # Gzip + base64 the payload (CF series compress ~5x); the browser inflates
     # it with DecompressionStream. Keeps the self-contained file small enough
     # for mobile and version control.
     import gzip
+
     gz = gzip.compress(json.dumps(payload).encode(), compresslevel=9)
     b64 = base64.b64encode(gz).decode()
     out = Path(args.out)
     out.write_text(
-        TEMPLATE
-        .replace("__B64__", b64)
-        .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M")))
-    n_series = sum(len(y["plants"]) for r in payload["model"]
-                   for y in r["years"].values())
-    print(f"wrote {out}  ({out.stat().st_size / 1e6:.1f} MB, "
-          f"{len(runs)} runs, {n_series} model series)")
+        TEMPLATE.replace("__B64__", b64).replace(
+            "__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M")
+        )
+    )
+    n_series = sum(
+        len(y["plants"]) for r in payload["model"] for y in r["years"].values()
+    )
+    print(
+        f"wrote {out}  ({out.stat().st_size / 1e6:.1f} MB, "
+        f"{len(runs)} runs, {n_series} model series)"
+    )
 
 
 TEMPLATE = r"""PLACEHOLDER_TEMPLATE_BODY"""

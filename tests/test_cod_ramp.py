@@ -6,6 +6,7 @@ resolver, and the EIA-860 plant-code map) and its application inside
 retirement masking, the ERCOT CAMPD-bin coverage path (a bin gets its COD from
 the plant-code map), and the must-run-floor (min_gen) zeroing in offline months.
 """
+
 import unittest
 from unittest import mock
 
@@ -134,21 +135,28 @@ class TestCodRampInFleetArrays(unittest.TestCase):
 
     # 1-based month -> cumulative hour boundary for a 2023 non-leap year.
     _starts = np.cumsum(
-        [0] + [d * 24 for d in
-               (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
+        [0] + [d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
     )
 
     def _coal_gen(self, **kw) -> Generator:
         base = dict(
-            unit_id="c1", name="Test Coal", zone="North", fuel_type="coal",
-            pmax_mw=500.0, pmin_mw=0.0, heat_rate=10.0, eford=0.05,
+            unit_id="c1",
+            name="Test Coal",
+            zone="North",
+            fuel_type="coal",
+            pmax_mw=500.0,
+            pmin_mw=0.0,
+            heat_rate=10.0,
+            eford=0.05,
         )
         base.update(kw)
         return Generator(**base)
 
     def _fa(self, enabled: bool, cod_map=None, mode="backcast", **gen_kw):
         cfg = ScenarioConfig(
-            mode=mode, weather_year=2024, cod_ramp_enabled=enabled,
+            mode=mode,
+            weather_year=2024,
+            cod_ramp_enabled=enabled,
         )
         # Patch the EIA-860 map so the unit tests are hermetic and fast; the
         # individual coal gens carry plant_code 0, so they fall back to their
@@ -157,7 +165,10 @@ class TestCodRampInFleetArrays(unittest.TestCase):
             "market_sim.data.fleet.load_cod_map", return_value=cod_map or {}
         ):
             return generators_to_fleet_arrays(
-                [self._coal_gen(**gen_kw)], ["North"], config=cfg, year=2024,
+                [self._coal_gen(**gen_kw)],
+                ["North"],
+                config=cfg,
+                year=2024,
             )
 
     def test_disabled_flag_ignores_midyear_online(self):
@@ -176,20 +187,19 @@ class TestCodRampInFleetArrays(unittest.TestCase):
         on = self._fa(True, online_year=2024, online_month=6)
         jun = self._starts[5]  # first June hour
         self.assertEqual(on.availability[0, :jun].max(), 0.0)
-        np.testing.assert_allclose(
-            on.availability[0, jun:], off.availability[0, jun:]
-        )
+        np.testing.assert_allclose(on.availability[0, jun:], off.availability[0, jun:])
 
     def test_midyear_retirement_masks_post_months(self):
         """A March retirement keeps Jan-Mar and zeros Apr-Dec."""
         off = self._fa(False, online_year=2000)
         on = self._fa(
-            True, online_year=2000, retirement_year=2024, retirement_month=3,
+            True,
+            online_year=2000,
+            retirement_year=2024,
+            retirement_month=3,
         )
         apr = self._starts[3]  # first April hour
-        np.testing.assert_allclose(
-            on.availability[0, :apr], off.availability[0, :apr]
-        )
+        np.testing.assert_allclose(on.availability[0, :apr], off.availability[0, :apr])
         self.assertEqual(on.availability[0, apr:].max(), 0.0)
 
     def test_full_year_unit_unaffected(self):
@@ -212,8 +222,13 @@ class TestCodRampInFleetArrays(unittest.TestCase):
         """
         cod_map = {4242: (2024, 9, None, None)}
         on = self._fa(
-            True, cod_map=cod_map, is_campd_bin=True, plant_code=4242,
-            plant_group="CC_REGULAR", online_year=2010, online_month=1,
+            True,
+            cod_map=cod_map,
+            is_campd_bin=True,
+            plant_code=4242,
+            plant_group="CC_REGULAR",
+            online_year=2010,
+            online_month=1,
         )
         jun = self._starts[5]
         self.assertEqual(on.availability[0, :jun].max(), 0.0)
@@ -222,17 +237,30 @@ class TestCodRampInFleetArrays(unittest.TestCase):
     def test_min_gen_zeroed_in_offline_months(self):
         """The hard must-run floor cannot force a not-yet-built unit to run."""
         cfg = ScenarioConfig(
-            mode="backcast", weather_year=2024, cod_ramp_enabled=True,
+            mode="backcast",
+            weather_year=2024,
+            cod_ramp_enabled=True,
             gas_st_summer_mustrun=0.3,
         )
         gen = Generator(
-            unit_id="s1", name="ST", zone="North", fuel_type="gas_st",
-            pmax_mw=300.0, pmin_mw=0.0, heat_rate=11.0, eford=0.05,
-            plant_group="ST_GAS", online_year=2024, online_month=8,
+            unit_id="s1",
+            name="ST",
+            zone="North",
+            fuel_type="gas_st",
+            pmax_mw=300.0,
+            pmin_mw=0.0,
+            heat_rate=11.0,
+            eford=0.05,
+            plant_group="ST_GAS",
+            online_year=2024,
+            online_month=8,
         )
         with mock.patch("market_sim.data.fleet.load_cod_map", return_value={}):
             fa = generators_to_fleet_arrays(
-                [gen], ["North"], config=cfg, year=2024,
+                [gen],
+                ["North"],
+                config=cfg,
+                year=2024,
                 load_shape=np.ones(8760) * 1000.0,
             )
         # ST_GAS summer must-run (May-Sep) would otherwise floor Jul; the unit
@@ -310,25 +338,31 @@ class TestNeisoWithinWindowRetireeFleetPath(unittest.TestCase):
         cls.has_mystic = any(int(g.plant_code) == 1588 for g in retirees)
         # 1-based month -> cumulative hour boundary (non-leap year).
         cls.month_start = np.cumsum(
-            [0] + [d * 24 for d in
-                   (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
+            [0] + [d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
         )
 
     def _arrays(self, year):
         cfg = ScenarioConfig(
-            mode="backcast", weather_year=year, cod_ramp_enabled=True,
+            mode="backcast",
+            weather_year=year,
+            cod_ramp_enabled=True,
             plant_level_fleet=True,
         )
         return generators_to_fleet_arrays(
-            self.fleet, self.zone_names, hours=8760, iso="NEISO",
-            config=cfg, year=year,
+            self.fleet,
+            self.zone_names,
+            hours=8760,
+            iso="NEISO",
+            config=cfg,
+            year=year,
         )
 
     def _mystic_mw_by_month(self, fa):
         idx = self.np.where(fa.plant_code == 1588)[0]
         return [
-            float(sum(fa.pmax[i] * fa.availability[i, self.month_start[m]]
-                      for i in idx))
+            float(
+                sum(fa.pmax[i] * fa.availability[i, self.month_start[m]] for i in idx)
+            )
             for m in range(12)
         ]
 
@@ -343,8 +377,8 @@ class TestNeisoWithinWindowRetireeFleetPath(unittest.TestCase):
 
     def test_mystic_retires_mid_2024(self):
         mw = self._mystic_mw_by_month(self._arrays(2024))
-        self.assertTrue(all(m > 0 for m in mw[:5]), mw)   # online Jan-May
-        self.assertEqual(max(mw[6:]), 0.0, mw)            # gone by July
+        self.assertTrue(all(m > 0 for m in mw[:5]), mw)  # online Jan-May
+        self.assertEqual(max(mw[6:]), 0.0, mw)  # gone by July
 
     def test_mystic_absent_in_2025(self):
         mw = self._mystic_mw_by_month(self._arrays(2025))
@@ -355,9 +389,11 @@ class TestNeisoWithinWindowRetireeFleetPath(unittest.TestCase):
             fa = self._arrays(year)
             on = fa.availability.max(axis=1) > 0
             return {
-                int(c) for c, g, o in zip(fa.plant_code, self.fleet, on)
+                int(c)
+                for c, g, o in zip(fa.plant_code, self.fleet, on)
                 if g.plant_group == "CC_REGULAR" and o
             }
+
         c23, c25 = cc_codes(2023), cc_codes(2025)
         self.assertIn(1588, c23)
         self.assertNotIn(1588, c25)

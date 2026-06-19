@@ -27,6 +27,7 @@ rebuilds the preview after any run is added/removed:
 Output is byte-deterministic (gzip mtime=0) apart from the page's generated-at
 stamp.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -46,15 +47,23 @@ RUNS_DIR = DATA / "runs"
 BENCH_DIR = DATA / "bench"
 
 # Manifest-entry fields the shell consumes (everything but the bundle path).
-ENTRY_FIELDS = ("id", "label", "date", "shorthand", "definition", "years",
-                "iso", "file")
+ENTRY_FIELDS = (
+    "id",
+    "label",
+    "date",
+    "shorthand",
+    "definition",
+    "years",
+    "iso",
+    "file",
+)
 
 
 def _gzb64(obj) -> str:
     """gzip+base64 a JSON-serializable object, byte-deterministically."""
     return base64.b64encode(
-        gzip.compress(json.dumps(obj).encode(), compresslevel=9,
-                      mtime=0)).decode()
+        gzip.compress(json.dumps(obj).encode(), compresslevel=9, mtime=0)
+    ).decode()
 
 
 def _load_entries() -> list[dict]:
@@ -79,8 +88,7 @@ def _load_entries() -> list[dict]:
             if rec is None:
                 continue
         if not (RUNS_DIR / f"{rec['id']}.js").exists():
-            print(f"  skip {path.name}: runs/{rec['id']}.js missing",
-                  file=sys.stderr)
+            print(f"  skip {path.name}: runs/{rec['id']}.js missing", file=sys.stderr)
             continue
         entries.append({k: rec[k] for k in ENTRY_FIELDS})
     entries.sort(key=lambda e: (e["id"], e["label"]))
@@ -92,9 +100,12 @@ def _upgrade_skinny(rec: dict, path: Path) -> dict | None:
     bundle = REPO / rec.get("bundle", "")
     meta_file = bundle / "meta.json"
     if not meta_file.exists():
-        print(f"  skip {path.name}: old sidecar format and bundle "
-              f"{rec.get('bundle')} not in this checkout — re-register with "
-              "scripts/dashboard_add_run.py", file=sys.stderr)
+        print(
+            f"  skip {path.name}: old sidecar format and bundle "
+            f"{rec.get('bundle')} not in this checkout — re-register with "
+            "scripts/dashboard_add_run.py",
+            file=sys.stderr,
+        )
         return None
     # Mirrors render_backcast._run_meta for the fields the shell displays.
     meta = json.loads(meta_file.read_text())
@@ -105,8 +116,10 @@ def _upgrade_skinny(rec: dict, path: Path) -> dict | None:
     rid = rec["id"]
     shorthand = rid[11:] if len(rid) > 11 else rid  # strip YYYY-MM-DD- prefix
     return {
-        "id": rid, "label": shorthand.replace("-", " "),
-        "date": rid[:10], "shorthand": shorthand,
+        "id": rid,
+        "label": shorthand.replace("-", " "),
+        "date": rid[:10],
+        "shorthand": shorthand,
         "definition": note.strip() or f"Calibration run {rec.get('label')}.",
         "years": meta.get("years", []),
         "iso": rec.get("iso", meta.get("iso", "ERCOT")),
@@ -130,11 +143,14 @@ def _assemble_benchmark() -> tuple[dict, dict]:
         parts = []
         for f in sorted(iso_dir.glob("*.json.gz"), reverse=True):
             try:
-                parts.append((int(f.stem.split(".")[0]),
-                              json.loads(gzip.decompress(f.read_bytes()))))
+                parts.append(
+                    (
+                        int(f.stem.split(".")[0]),
+                        json.loads(gzip.decompress(f.read_bytes())),
+                    )
+                )
             except (ValueError, OSError, json.JSONDecodeError) as exc:
-                print(f"  skip bench part {iso}/{f.name}: {exc}",
-                      file=sys.stderr)
+                print(f"  skip bench part {iso}/{f.name}: {exc}", file=sys.stderr)
         if not parts:
             continue
         groups: list[str] = []
@@ -142,7 +158,7 @@ def _assemble_benchmark() -> tuple[dict, dict]:
         zones: set[str] = set()
         years: set[int] = set()
         bench: dict[str, dict] = {}
-        for year, part in parts:                      # newest year first
+        for year, part in parts:  # newest year first
             m = part["meta"]
             groups += [g for g in m["groups"] if g not in groups]
             for g, lab in m["groupLabel"].items():
@@ -150,54 +166,76 @@ def _assemble_benchmark() -> tuple[dict, dict]:
             zones.update(m["zones"])
             years.add(year)
             bench[str(year)] = part["bench"]
-        meta_by_iso[iso] = {"groups": groups, "groupLabel": group_label,
-                            "zones": sorted(zones), "years": sorted(years)}
+        meta_by_iso[iso] = {
+            "groups": groups,
+            "groupLabel": group_label,
+            "zones": sorted(zones),
+            "years": sorted(years),
+        }
         bench_by_iso[iso] = {str(y): bench[str(y)] for y in sorted(years)}
     return meta_by_iso, bench_by_iso
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--site-dir", default=str(REPO),
-                    help="Root to write into (repo root for the local "
-                         "preview, the Pages staging dir for deploys).")
+    ap.add_argument(
+        "--site-dir",
+        default=str(REPO),
+        help="Root to write into (repo root for the local "
+        "preview, the Pages staging dir for deploys).",
+    )
     args = ap.parse_args()
     site = Path(args.site_dir)
 
     entries = _load_entries()
     if not entries:
-        sys.exit("registry is empty (no usable runs); refusing to write an "
-                 "empty dashboard.")
+        sys.exit(
+            "registry is empty (no usable runs); refusing to write an empty dashboard."
+        )
     meta_by_iso, bench_by_iso = _assemble_benchmark()
     for iso in sorted({e["iso"] for e in entries} - set(meta_by_iso)):
-        print(f"  WARNING: runs registered for {iso} but no bench parts under "
-              f"{BENCH_DIR}/{iso}/ — its runs will not be selectable",
-              file=sys.stderr)
+        print(
+            f"  WARNING: runs registered for {iso} but no bench parts under "
+            f"{BENCH_DIR}/{iso}/ — its runs will not be selectable",
+            file=sys.stderr,
+        )
 
     out_data = site / "frontend" / "data" / "backcast"
     out_data.mkdir(parents=True, exist_ok=True)
     (out_data / "manifest.js").write_text(
         "window.BC=window.BC||{};window.BC.meta="
-        + json.dumps(meta_by_iso) + ";window.BC.manifest="
-        + json.dumps(entries) + ";")
+        + json.dumps(meta_by_iso)
+        + ";window.BC.manifest="
+        + json.dumps(entries)
+        + ";"
+    )
     (out_data / "benchmark.js").write_text(
         "window.BC=window.BC||{};window.BC.benchGz="
-        + json.dumps({i: _gzb64(b) for i, b in bench_by_iso.items()}) + ";")
+        + json.dumps({i: _gzb64(b) for i, b in bench_by_iso.items()})
+        + ";"
+    )
 
     from scripts.probes._backcast_shell import SHELL
-    shell = (SHELL
-             .replace("__SITECSS__",
-                      '<link rel=stylesheet href="frontend/css/style.css">')
-             .replace("__DATASCRIPTS__",
-                      '<script src="frontend/data/backcast/manifest.js">'
-                      '</script>'
-                      '<script src="frontend/data/backcast/benchmark.js">'
-                      '</script>')
-             .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M")))
+
+    shell = (
+        SHELL.replace(
+            "__SITECSS__", '<link rel=stylesheet href="frontend/css/style.css">'
+        )
+        .replace(
+            "__DATASCRIPTS__",
+            '<script src="frontend/data/backcast/manifest.js">'
+            "</script>"
+            '<script src="frontend/data/backcast/benchmark.js">'
+            "</script>",
+        )
+        .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M"))
+    )
     (site / "backcast-results.html").write_text(shell)
-    print(f"assembled dashboard at {site}: {len(entries)} runs, ISOs "
-          f"{sorted(meta_by_iso)} (years per ISO: "
-          f"{ {i: m['years'] for i, m in meta_by_iso.items()} })")
+    print(
+        f"assembled dashboard at {site}: {len(entries)} runs, ISOs "
+        f"{sorted(meta_by_iso)} (years per ISO: "
+        f"{ {i: m['years'] for i, m in meta_by_iso.items()} })"
+    )
 
 
 if __name__ == "__main__":

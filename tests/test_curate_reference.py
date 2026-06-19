@@ -75,8 +75,9 @@ class TestCurateReference(unittest.TestCase):
         self.assertIn("plant_id", df.columns)
         self.assertNotIn("plantid", df.columns)
         self.assertTrue(df["key"].is_unique)
-        self.assertEqual(df.loc[df["plant_id"] == 10154, "key"].iloc[0],
-                         "plant-registry:10154")
+        self.assertEqual(
+            df.loc[df["plant_id"] == 10154, "key"].iloc[0], "plant-registry:10154"
+        )
 
         # Unit suffixes added; original unsuffixed names gone.
         self.assertIn("annual_heat_rate_mmbtu_per_mwh", df.columns)
@@ -98,8 +99,9 @@ class TestCurateReference(unittest.TestCase):
         self.assertNotIn("Plant_Code", df.columns)
         self.assertEqual(set(df["zone"]), {"Houston", "South"})
         self.assertEqual(set(df["iso"]), {"ERCOT"})
-        self.assertEqual(df.loc[df["plant_id"] == 56152, "key"].iloc[0],
-                         "bin-assignments:56152")
+        self.assertEqual(
+            df.loc[df["plant_id"] == 56152, "key"].iloc[0], "bin-assignments:56152"
+        )
 
         # Table-specific columns renamed with explicit unit suffixes.
         self.assertIn("plant_avg_heat_rate_mmbtu_per_mwh", df.columns)
