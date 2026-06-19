@@ -86,6 +86,9 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # CAISO AS operating-reserve formula before/after bundles (regenerable via
 # run_config.json; the before/after is reported, the parquet is scratch).
 /results/calibration/caiso_asformula_*/
+# PJM coal-rank retiree-fallback per-year solve dirs: intermediate single-year
+# bundles merged into the committed pjm_34_coalbit bundle by _pjm_aswh_merge.py.
+/results/calibration/pjm_34_coalbit_20*/
 
 # Forecast / scenario run caches: transient per-ISO LP outputs keyed by
 # cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles
