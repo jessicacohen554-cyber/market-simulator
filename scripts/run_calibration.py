@@ -903,6 +903,7 @@ def run_year(
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_storage_as_reserve: bool = False,
+    ercot_storage_as_reserve_from_year: int = 2025,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -1046,7 +1047,11 @@ def run_year(
     # reserve cap, so the committed battery AS would otherwise be dropped from
     # reserve supply. GATED; ERCOT co-opt + storage_as_commitment only.
     if ercot_storage_as_reserve:
-        config = config.with_overrides(ercot_storage_as_reserve=True)
+        config = config.with_overrides(
+            ercot_storage_as_reserve=True,
+            ercot_storage_as_reserve_from_year=int(
+                ercot_storage_as_reserve_from_year),
+        )
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).
