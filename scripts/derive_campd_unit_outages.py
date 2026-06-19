@@ -60,6 +60,12 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import (  # noqa: E402
+    CAMPD_BINS_CSV,
+    EIA_860_DIR,
+    PROCESSED_DIR,
+    RAW_DATA_DIR,
+)
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.outages import (  # noqa: E402
     QUALIFYING_PLANT_GROUPS,
@@ -73,7 +79,7 @@ from scripts.derive_campd_outages import (  # noqa: E402
 
 # CAMPD unit-level extracts live in their own subdirectory; the flat raw-data
 # files are facility-summed and carry no unitId.
-UNIT_LEVEL_DIR: Path = REPO / "inputs" / "raw-data" / "campd-unit-level"
+UNIT_LEVEL_DIR: Path = RAW_DATA_DIR / "campd-unit-level"
 
 
 def _norm_unit_id(uid: object) -> str:
@@ -81,35 +87,110 @@ def _norm_unit_id(uid: object) -> str:
     return re.sub(r"[^0-9A-Za-z]", "", str(uid)).upper()
 
 
+# EIA-860 prime movers for the combined-cycle steam coupling. A combined
+# cycle's combustion turbines (``CT``) exhaust into a heat-recovery boiler that
+# drives a separate steam turbine, reported as its own ``CA`` generator. The
+# steam turbine burns no fuel, so it has no CAMPD CEMS series and can never be
+# detected as an outage on its own — yet when a feeding CT goes down it loses
+# that CT's share of steam. Single-shaft combined cycles (``CS``) put the CT and
+# its steam turbine on one shaft under a single generator id whose nameplate
+# already includes the steam, so they carry no orphaned ``CA`` and must NOT be
+# augmented (that would double-count their steam).
+_CC_COMBUSTION_PM: str = "CT"
+_CC_STEAM_PM: str = "CA"
+
+
+# A capacity-index entry: ``(detect_mw, derate_mw, cc_augmented)``. ``detect_mw``
+# is the unit's own physical nameplate — the CF denominator the outage detector
+# thresholds on, so detection is unchanged by the steam coupling. ``derate_mw``
+# is the unit's block share written to the CSV (steam-augmented for CC CTs), the
+# numerator the availability derate divides into the model bin. They differ only
+# for a combined-cycle combustion turbine, where ``derate_mw`` folds in steam.
+CapEntry = tuple[float, float, bool]
+
+
 def build_capacity_index(
     eia860_path: Path,
-) -> tuple[dict[tuple[int, str], float], dict[tuple[int, str], list[float]]]:
-    """Return ``(exact, by_digits)`` EIA-860 nameplate lookups.
+) -> tuple[
+    dict[tuple[int, str], CapEntry],
+    dict[tuple[int, str], list[CapEntry]],
+]:
+    """Return ``(exact, by_digits)`` EIA-860 capacity lookups.
 
     CAMPD unit ids and EIA-860 generator ids label the same units differently
     (CAMPD ``WAP5`` vs EIA ``5``; CAMPD ``1`` vs EIA ``OG1``), so two lookups
-    are built keyed by EIA plant code:
+    are built keyed by EIA plant code, each mapping to a :data:`CapEntry`
+    ``(detect_mw, derate_mw, cc_augmented)``:
 
-    * ``exact``: ``(plant, NORMALISED_ID) -> nameplate_mw`` — a direct hit when
-      the ids already agree once punctuation/case are normalised.
-    * ``by_digits``: ``(plant, DIGITS) -> [nameplate_mw, ...]`` — matched only
-      when a single generator at the plant carries those trailing digits, so
+    * ``exact``: ``(plant, NORMALISED_ID) -> CapEntry`` — a direct hit when the
+      ids already agree once punctuation/case are normalised.
+    * ``by_digits``: ``(plant, DIGITS) -> [CapEntry, ...]`` — matched only when
+      a single generator at the plant carries those trailing digits, so
       ``WAP5``/``5`` and ``1``/``OG1`` join without colliding.
+
+    **Combined-cycle steam coupling.** ``detect_mw`` is always the EIA-860
+    nameplate (the CF basis for the detector — detection is *not* changed by
+    this fix). ``derate_mw`` equals the nameplate too, except a combined-cycle
+    combustion turbine (``prime_mover == CT``) at a plant that also carries
+    combined-cycle steam (``prime_mover == CA``) is *augmented* by its pro-rata
+    share of that steam:
+
+        derate_mw = CT_nameplate * (1 + Σ CA_nameplate / Σ CT_nameplate)
+
+    so the plant's CT shares sum back to the full block (CT + steam) — the same
+    basis as the model bin denominator the derate divides into — and one CT out
+    derates its turbine *plus* the steam it fed, not the CT alone. The steam
+    sums are taken per plant over ``CT``/``CA`` prime movers, so the allocation
+    never crosses a split facility (W A Parish's coal/gas ``ST`` units and
+    Barney M Davis's gas-steam ``ST`` unit are not ``CT``/``CA`` and neither
+    receive nor donate steam) and single-shaft (``CS``) blocks — which carry no
+    separate ``CA`` — are left at their steam-inclusive nameplate. The boolean
+    flags the augmented entries so :func:`unit_capacity_mw` can label them.
     """
     gens = pd.read_parquet(
-        eia860_path, columns=["plant_id", "generator_id", "nameplate_capacity_mw"]
+        eia860_path,
+        columns=["plant_id", "generator_id", "nameplate_capacity_mw", "prime_mover"],
     ).dropna(subset=["generator_id"])
-    exact: dict[tuple[int, str], float] = {}
-    by_digits: dict[tuple[int, str], list[float]] = {}
-    for plant_id, gen_id, cap in gens.itertuples(index=False):
-        if pd.isna(cap) or float(cap) <= 0.0:
-            continue
+    gens = gens.copy()
+    gens["nameplate_capacity_mw"] = pd.to_numeric(
+        gens["nameplate_capacity_mw"], errors="coerce"
+    )
+    gens = gens[gens["nameplate_capacity_mw"] > 0.0]
+    # Per-plant combined-cycle steam-allocation factor (1 + ΣCA/ΣCT), built only
+    # where the plant carries both a combustion turbine and a distinct steam
+    # turbine; absent (factor 1.0) for pure-CT, single-shaft (CS) and non-CC
+    # plants.
+    ct_sum = (
+        gens[gens["prime_mover"] == _CC_COMBUSTION_PM]
+        .groupby("plant_id")["nameplate_capacity_mw"]
+        .sum()
+    )
+    ca_sum = (
+        gens[gens["prime_mover"] == _CC_STEAM_PM]
+        .groupby("plant_id")["nameplate_capacity_mw"]
+        .sum()
+    )
+    steam_factor: dict[int, float] = {}
+    for plant_id, cts in ct_sum.items():
+        cas = float(ca_sum.get(plant_id, 0.0))
+        if float(cts) > 0.0 and cas > 0.0:
+            steam_factor[int(plant_id)] = 1.0 + cas / float(cts)
+
+    exact: dict[tuple[int, str], CapEntry] = {}
+    by_digits: dict[tuple[int, str], list[CapEntry]] = {}
+    for plant_id, gen_id, cap, pm in gens[
+        ["plant_id", "generator_id", "nameplate_capacity_mw", "prime_mover"]
+    ].itertuples(index=False):
         pid = int(plant_id)
+        nameplate = float(cap)
+        factor = steam_factor.get(pid, 1.0) if str(pm) == _CC_COMBUSTION_PM else 1.0
+        augmented = factor > 1.0
+        value: CapEntry = (nameplate, nameplate * factor, augmented)
         full = _norm_unit_id(gen_id)
-        exact[(pid, full)] = float(cap)
+        exact[(pid, full)] = value
         digits = re.sub(r"\D", "", full)
         if digits:
-            by_digits.setdefault((pid, digits), []).append(float(cap))
+            by_digits.setdefault((pid, digits), []).append(value)
     return exact, by_digits
 
 
@@ -128,26 +209,34 @@ def plant_nameplate_index(eia860_path: Path) -> dict[int, float]:
 def unit_capacity_mw(
     plant_id: int,
     unit_id: object,
-    exact: dict[tuple[int, str], float],
-    by_digits: dict[tuple[int, str], list[float]],
+    exact: dict[tuple[int, str], CapEntry],
+    by_digits: dict[tuple[int, str], list[CapEntry]],
     observed_peak: float,
-) -> tuple[float, str]:
-    """Return ``(capacity_mw, source)`` for a CAMPD unit.
+) -> tuple[float, float, str]:
+    """Return ``(detect_mw, derate_mw, source)`` for a CAMPD unit.
 
-    Prefers the EIA-860 nameplate (exact id match, then a unique trailing-digit
-    match) so the derate denominator is on the same nameplate basis as the
-    model bin; falls back to the unit's observed CAMPD peak gross when no
-    generator matches.
+    Prefers the EIA-860 capacity (exact id match, then a unique trailing-digit
+    match); falls back to the unit's observed CAMPD peak gross when no generator
+    matches. ``detect_mw`` is the unit's own nameplate — the CF denominator the
+    outage detector thresholds on (unchanged by the steam fix) — and
+    ``derate_mw`` is the block share written to the CSV. They differ only for a
+    combined-cycle combustion turbine, whose ``derate_mw`` folds in its allocated
+    steam (see :func:`build_capacity_index`); those rows are labelled
+    ``eia_exact_cc`` / ``eia_digits_cc`` so the steam-coupled derates are
+    auditable. The observed-peak fallback already folds the CT's steam into its
+    CAMPD gross, so its detect and derate capacities are the same.
     """
     full = _norm_unit_id(unit_id)
     if (plant_id, full) in exact:
-        return exact[(plant_id, full)], "eia_exact"
+        detect, derate, augmented = exact[(plant_id, full)]
+        return detect, derate, "eia_exact_cc" if augmented else "eia_exact"
     digits = re.sub(r"\D", "", full)
     if digits:
         hits = by_digits.get((plant_id, digits))
         if hits and len(hits) == 1:
-            return hits[0], "eia_digits"
-    return observed_peak, "observed_peak"
+            detect, derate, augmented = hits[0]
+            return detect, derate, "eia_digits_cc" if augmented else "eia_digits"
+    return observed_peak, observed_peak, "observed_peak"
 
 
 def _unit_year_grid(sub: pd.DataFrame, year: int, col: str = "grossLoad") -> np.ndarray:
@@ -201,14 +290,12 @@ def main() -> None:
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
         "--bins",
-        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        default=str(CAMPD_BINS_CSV),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
     )
     ap.add_argument(
         "--eia860",
-        default=str(
-            REPO / "inputs" / "raw-data" / "eia-860" / "eia860_generators.parquet"
-        ),
+        default=str(EIA_860_DIR / "eia860_generators.parquet"),
         help="EIA-860 generator parquet, for per-unit nameplate capacity.",
     )
     ap.add_argument(
@@ -226,7 +313,7 @@ def main() -> None:
             if iso == "ERCOT"
             else f"campd-unit-outages-{iso}.csv"
         )
-        args.out = str(REPO / "inputs" / "raw-data" / fname)
+        args.out = str(RAW_DATA_DIR / fname)
 
     # Each facility's model plant group (the LP bin the derate routes into).
     # Split facilities (W A Parish 3470, Barney M Davis 4939) carry their
@@ -328,10 +415,11 @@ def main() -> None:
                     in ("coal", "coal refuse")
                     for uid, u in fac.groupby("unitId", observed=True)
                 }
-                # Per-unit nameplate (EIA-860, peak fallback) and the facility
-                # nameplate total for the informational pct column.
+                # Per-unit (detect_mw, derate_mw, source) — the detector's CF
+                # basis and the CSV's block share — plus the facility derate
+                # total for the informational pct column.
                 peaks = {uid: float(g.max()) for uid, g in units.items()}
-                caps: dict[object, tuple[float, str]] = {
+                caps: dict[object, tuple[float, float, str]] = {
                     uid: unit_capacity_mw(
                         int(fac_id), uid, exact, by_digits, peaks[uid]
                     )
@@ -371,26 +459,29 @@ def main() -> None:
                             for uid, u in ot_units.items()
                         }
                         peaks = {uid: float(g.max()) for uid, g in units.items()}
-                        caps = {uid: (share, "optime_proxy") for uid in units}
-                fac_cap = sum(c for c, _ in caps.values()) or 0.0
+                        caps = {uid: (share, share, "optime_proxy") for uid in units}
+                fac_cap = sum(derate for _, derate, _ in caps.values()) or 0.0
                 ran = {uid for uid, pk in peaks.items() if pk > 0.0}
                 for uid, gross in units.items():
-                    cap, cap_src = caps[uid]
+                    detect_cap, derate_cap, cap_src = caps[uid]
                     # A unit that never reported gross output this year is
                     # left to the statistical/facility layers — we cannot
                     # distinguish a real full-year outage from a unit monitored
                     # under another id, and have no capacity basis for it.
-                    if peaks[uid] <= 0.0 or cap <= 0.0:
+                    if peaks[uid] <= 0.0 or derate_cap <= 0.0:
                         continue
                     # Coal (baseload): a sustained low-output gap is an outage.
                     # Everything else (load-following CC / gas-steam): only a
                     # genuine dead span — no output at all — counts, via the
                     # event-based rule, so economic idleness is not over-flagged.
+                    # The detector thresholds on the unit's own nameplate
+                    # (detect_cap), so the CC steam allocation — which lifts only
+                    # the derate share — leaves every detected window unchanged.
                     if unit_is_coal[uid]:
-                        windows = detect_outages(gross, cap, min_outage_hours)
+                        windows = detect_outages(gross, detect_cap, min_outage_hours)
                     else:
                         windows = detect_outages_eventbased(
-                            gross, cap, min_outage_hours, ST_GAS_CF_PEAK
+                            gross, detect_cap, min_outage_hours, ST_GAS_CF_PEAK
                         )
                     if not windows:
                         continue
@@ -409,10 +500,12 @@ def main() -> None:
                                 "facility_name": fac_name,
                                 "facility_id": int(fac_id),
                                 "unit_id": uid,
-                                "unit_capacity_mw": round(cap, 1),
+                                "unit_capacity_mw": round(derate_cap, 1),
                                 "plant_capacity_mw": round(fac_cap, 1),
                                 "unit_pct_of_plant": (
-                                    round(100.0 * cap / fac_cap, 1) if fac_cap else None
+                                    round(100.0 * derate_cap / fac_cap, 1)
+                                    if fac_cap
+                                    else None
                                 ),
                                 "plant_group": group,
                                 "capacity_source": cap_src,
@@ -448,7 +541,7 @@ def main() -> None:
     # genuinely serve the grid. One full-year window per plant-year.
     if iso != "ERCOT":
         e923 = pd.read_parquet(
-            REPO / "inputs" / "processed" / "eia923_monthly_generation.parquet",
+            PROCESSED_DIR / "eia923_monthly_generation.parquet",
             columns=["plant_id", "netgen_annual_mwh", "year"],
         )
         tot = e923.groupby(["plant_id", "year"])["netgen_annual_mwh"].sum(min_count=1)
