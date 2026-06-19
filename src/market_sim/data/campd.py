@@ -1,6 +1,6 @@
 """EPA CAMPD (CEMS) hourly emissions and gross-generation loader.
 
-The uploaded ``inputs/raw-data/{STATE}_{YEAR}.parquet`` files are EPA Clean
+The uploaded ``data/raw/{STATE}_{YEAR}.parquet`` files are EPA Clean
 Air Markets Program Data hourly extracts, one row per
 ``(facility, unit-hour)`` with columns:
 

@@ -1,6 +1,6 @@
 """Loaders for EIA-930 hourly demand and generation series.
 
-Reads the EIA-930 parquet extracts shipped under ``inputs/raw-data/eia-930``
+Reads the EIA-930 parquet extracts shipped under ``data/raw/eia-930``
 and shapes them for the dispatch model: hourly ISO demand is allocated to
 zones by each zone's load share, and generation profiles are returned as
 normalized per-fuel distributions.
@@ -1146,7 +1146,7 @@ def nyiso_zonal_load_shares(
     level stays tied to the existing demand series.
 
     **Expected CSV format (upload U3):** ``NYISO_load_actuals_<year>.csv``
-    under ``inputs/raw-data/zone-specific-demand/NYISO/``, with columns
+    under ``data/raw/zone-specific-demand/NYISO/``, with columns
     ``Time Stamp`` (Eastern local, hour-beginning), ``Name`` (NYISO zone name
     CAPITL/CENTRL/… or letter A–K), and ``Load`` (MW). Files are sourced from
     the NYISO OASIS "pal" actual-load endpoint (hourly integrated, all eleven
@@ -1237,7 +1237,7 @@ def neiso_zonal_load_shares(
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NEISO load shares, or ``None``.
 
     Reads the ISO-NE hourly load-zone net energy for load (upload U3:
-    ``inputs/raw-data/zone-specific-demand/NEISO/NEISO_load_hourly_{year}.csv``)
+    ``data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_{year}.csv``)
     and maps the eight ISO-NE load zones onto the four model zones via
     :data:`_NEISO_LOAD_ZONE_GROUPS`:
 
@@ -1266,7 +1266,7 @@ def neiso_zonal_load_shares(
     the static per-zone ``load_share`` (the current RSP-seeded
     0.20/0.30/0.21/0.29 split). **Refresh path (U3):** upload the ISO-NE
     hourly load-zone NEL file for 2023–2025 to
-    ``inputs/raw-data/zone-specific-demand/NEISO/`` and run
+    ``data/raw/zone-specific-demand/NEISO/`` and run
     ``scripts/derive_load_shares.py neiso`` to re-derive the annual shares
     and replace the static Tier-3 values.
     """
@@ -1275,7 +1275,7 @@ def neiso_zonal_load_shares(
         logger.warning(
             "NEISO zonal load file not found (%s); using static "
             "load_share split. Refresh path: upload U3 (ISO-NE hourly_load "
-            "SMD CSV for %d) to inputs/raw-data/zone-specific-demand/NEISO/",
+            "SMD CSV for %d) to data/raw/zone-specific-demand/NEISO/",
             path, year,
         )
         return None

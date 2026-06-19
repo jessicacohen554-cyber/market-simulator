@@ -1,6 +1,6 @@
 """
 Fetch EIA Form 860 plant/generator data via EIA API v2 and save to
-inputs/raw-data/eia-860/.
+data/raw/eia-860/.
 
 Usage:
     python scripts/fetch_eia860.py [--scope full|markets]
@@ -10,9 +10,9 @@ Scopes:
     markets Pull only generators in ERCOT, PJM, CAISO, NEISO, NYISO, SPP
 
 Outputs (CSV, one file per scope/BA):
-    inputs/raw-data/eia-860/generators_us.csv          (full scope)
-    inputs/raw-data/eia-860/generators_<BA>.csv        (markets scope, per BA)
-    inputs/raw-data/eia-860/metadata.json              (column/facet reference)
+    data/raw/eia-860/generators_us.csv          (full scope)
+    data/raw/eia-860/generators_<BA>.csv        (markets scope, per BA)
+    data/raw/eia-860/metadata.json              (column/facet reference)
 """
 
 import argparse

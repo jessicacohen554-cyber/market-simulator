@@ -165,7 +165,7 @@ def main() -> None:
     )
     ap.add_argument(
         "--out", default=None,
-        help="Output CSV. Defaults to inputs/raw-data/campd-outages.csv for "
+        help="Output CSV. Defaults to data/raw/campd-outages.csv for "
              "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
     )
     args = ap.parse_args()

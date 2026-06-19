@@ -37,7 +37,7 @@ Two regressors are reported per neighbor:
 
 DATA AVAILABILITY (the binding constraint): a realized hourly LMP extract is
 shipped only for the organized markets ERCOT / PJM / CAISO / NYISO / NEISO
-(``inputs/calibration/actual_lmp_hourly_<ISO>.parquet``). Of PJM's three
+(``data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet``). Of PJM's three
 neighbors that means **only NYISO** can have its convexity self-derived here.
 MISO publishes LMP but no extract is in the repo, and the Carolinas/Southeast
 is not an organized market (no LMP at all). Those two are reported as
@@ -64,7 +64,7 @@ from market_sim.config.constants import INTERFACE_NEIGHBORS
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 
 # PJM neighbor name -> realized-LMP parquet key (the
-# inputs/calibration/actual_lmp_hourly_<KEY>.parquet stem). NYISO ships in the
+# data/raw/_validation-source/actual_lmp_hourly_<KEY>.parquet stem). NYISO ships in the
 # repo; MISO (Indiana Hub ex-post LMP) and Carolinas (Duke FERC-714 system
 # lambda) are fetched by scripts/fetch_neighbor_lmp.py via the
 # fetch-neighbor-lmp workflow. A neighbor whose parquet is absent is reported

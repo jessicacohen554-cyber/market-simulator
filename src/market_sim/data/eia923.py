@@ -1,7 +1,7 @@
 """Monthly per-plant delivered fuel-cost lookup from EIA-923 Schedule 5.
 
 Provides :func:`load_monthly_fuel_costs`, which returns the cached
-``inputs/processed/eia923_monthly_fuel_costs.parquet`` produced by
+``data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`` produced by
 :mod:`scripts.process_f923_fuel_costs`, and :func:`plant_month_price_grid`,
 which reshapes that table into a ``(plant_id, fuel_group) -> (12,)`` price
 array keyed lookup for the fuel-cost resolver.
