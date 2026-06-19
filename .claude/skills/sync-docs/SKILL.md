@@ -110,7 +110,7 @@ items parked for later. Do not commit/push unless the user asks.
 | `results/calibration.py`, `scripts/run_calibration*.py` | `docs/calibration-log.md`, `docs/calibration-session-log.md`, `docs/calibration-report.md`, `docs/calibration-best-so-far.md`, `results/calibration/SUMMARY-*.md` |
 | `results/cache.py`, `results/export.py`, `results/outputs.py` | `docs/data-dictionary.md` |
 | `data/ownership.py`, `data/ownership_config.py` | `us-gen-ownership.md` |
-| `frontend/`, `dashboard/`, `*.html` | `docs/DESIGN_SYSTEM.md` |
+| `frontend/`, `*.html` (color palettes) | `docs/DESIGN_SYSTEM.md` |
 | anything | `CHANGELOG.md` (always append), `README.md` (only if the elevator pitch changed) |
 
 Keep this map current: when a new doc or major module is added, add the row
