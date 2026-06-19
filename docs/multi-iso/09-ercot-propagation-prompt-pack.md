@@ -87,7 +87,7 @@ This is the real work. Each becomes a prompt below.
 | **G2** | Per-plant CAMPD offer-curve binning (`use_campd_bins`) is hard-gated to ERCOT even though `bin_assignments_<ISO>.csv` / `thermal_tranches_<ISO>.csv` already exist for CAISO/NEISO/NYISO/PJM. | `runner.py:207` (`use_campd_bins and iso == "ERCOT"`) | Generalize the gate to any ISO with a bin artifact; clean legacy-binning fallback for ISOs without one (MISO/SPP). → **W1b** |
 | **G3** | `historic_outage_overlay = True` is the right ERCOT default but wrong for ISOs that derive unit-level outages fresh (e.g. PJM) — stacking double-counts. | `scenarios.py:199`, `runner.py` | Make the default per-ISO (`HISTORIC_OUTAGE_OVERLAY_BY_ISO`), keyed to whether the ISO has a complete unit-level file. → **W1b** (same files/area) |
 | **G4** | ERCOT-only curated fleet dicts (`COAL_COMMISSION_YEAR`, `CC_REGULAR_COMMITTED_PCT_BY_PLANT`, `CHP_PMIN_CF_BY_PLANT`) override generic classification for ERCOT plants only. | `data/fleet.py` | Generalize each to read a per-ISO artifact (mirror the `coal_supply_<ISO>.csv` pattern); ERCOT dict stays precedence. → **W2a** |
-| **G5** | `thermal_tranches_<ISO>.csv` (per-plant committed/peaking tranches) missing for **MISO & SPP**. | `inputs/processed/`, `scripts/` | Derive the artifact for MISO/SPP (needs their CAMPD/EIA-860). Folds into their Pack J. → **W2b** |
+| **G5** | `thermal_tranches_<ISO>.csv` (per-plant committed/peaking tranches) missing for **MISO & SPP**. | `data/raw/_processed-legacy/`, `scripts/` | Derive the artifact for MISO/SPP (needs their CAMPD/EIA-860). Folds into their Pack J. → **W2b** |
 | **G6** | Uncurtailed-HSL renewable potential built only for ERCOT/CAISO (+NYISO partial); PJM/NEISO/MISO/SPP fall back to pre-curtailed EIA-930. | `data/renewables.py` (`_hsl_file` markers), `scripts/build_*_hsl.py` | Build per-ISO HSL parquets following `build_caiso_hsl.py`. Data task; folds into Pack J. → **W3** |
 
 ### 1D. Decision items (need a human call)
@@ -262,7 +262,7 @@ same per-ISO-artifact pattern already used for coal supply class.
 **Files:**
 - `src/market_sim/data/fleet.py` — for `COAL_COMMISSION_YEAR`,
   `CC_REGULAR_COMMITTED_PCT_BY_PLANT`, `CHP_PMIN_CF_BY_PLANT`: add a loader that
-  reads `inputs/processed/<name>_<ISO>.csv` and merges under the ERCOT
+  reads `data/raw/_processed-legacy/<name>_<ISO>.csv` and merges under the ERCOT
   hand-curated dict (ERCOT precedence preserved). No values change for ERCOT.
 - `scripts/` — extend/author the per-ISO derivers that emit those CSVs from
   CAMPD/EIA-860 (parallel to the existing thermal-tranche/coal-supply derivers).
@@ -286,7 +286,7 @@ existing `thermal_tranches_<ISO>.csv` schema and the deriver used for
 CAISO/NEISO/NYISO/PJM.
 
 **Files:** `scripts/` deriver run for MISO and SPP; outputs to
-`inputs/processed/`. Register the two ISOs in `CAMPD_BINNING_ISOS` from W1b.
+`data/raw/_processed-legacy/`. Register the two ISOs in `CAMPD_BINNING_ISOS` from W1b.
 
 **Acceptance:** MISO/SPP build per-plant tranche offer curves; plant count &
 capacity sanity-checked vs ISO published totals; ERCOT untouched.

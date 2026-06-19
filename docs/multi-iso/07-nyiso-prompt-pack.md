@@ -74,13 +74,13 @@ offer-curve tranche derivation; CHP identification; nuclear monthly CF.
 
 | # | Item | Source | Destination | Needed by |
 |---|------|--------|-------------|-----------|
-| U1 | CAMPD unit-level `NY_2024.parquet` (hourly CEMS, same schema as `NY_2023`) — unblocks the 2024 backcast year and 2024 outage windows | EPA CAMPD bulk download | `inputs/raw-data/campd-unit-level/` | P0/P1 (2024 only) |
-| U2 | DA + RT hourly LMPs at NYISO zonal reference buses / trading zones (esp. ZONE A WEST, ZONE F CAPITL, ZONE J N.Y.C., ZONE K LONGIL) 2023–2025 | NYISO OASIS / DAM & RTD LBMP CSVs | `inputs/raw-data/lmp-data/NYISO/` | P10 |
-| U3 | Zonal hourly actual load by NYISO zone A–K 2023–2025 | NYISO Load Data / OASIS `pal` (Palisades) actual-load CSVs | `inputs/raw-data/zone-specific-demand/NYISO/` | P8 |
+| U1 | CAMPD unit-level `NY_2024.parquet` (hourly CEMS, same schema as `NY_2023`) — unblocks the 2024 backcast year and 2024 outage windows | EPA CAMPD bulk download | `data/raw/campd-unit-level/` | P0/P1 (2024 only) |
+| U2 | DA + RT hourly LMPs at NYISO zonal reference buses / trading zones (esp. ZONE A WEST, ZONE F CAPITL, ZONE J N.Y.C., ZONE K LONGIL) 2023–2025 | NYISO OASIS / DAM & RTD LBMP CSVs | `data/raw/lmp-data/NYISO/` | P10 |
+| U3 | Zonal hourly actual load by NYISO zone A–K 2023–2025 | NYISO Load Data / OASIS `pal` (Palisades) actual-load CSVs | `data/raw/zone-specific-demand/NYISO/` | P8 |
 | U4 | *(critical for price level)* Transco Z6 NY / Iroquois zone daily or monthly delivered gas basis 2023–2025 (winter spikes exceed plant-average 923) | ICE / Platts / EIA NG Weekly (paywalled — web-search may yield monthly) | cite into `constants.py` / gas path | P7 |
-| U5 | *(optional)* Niagara / St-Lawrence + Blenheim-Gilboa monthly generation if EIA-923 monthly hydro looks coarse | NYPA reports / EIA-923 (923 is in-repo) | `inputs/raw-data/nyiso-hydro/` | P4 (refinement) |
+| U5 | *(optional)* Niagara / St-Lawrence + Blenheim-Gilboa monthly generation if EIA-923 monthly hydro looks coarse | NYPA reports / EIA-923 (923 is in-repo) | `data/raw/nyiso-hydro/` | P4 (refinement) |
 | U6 | *(optional)* RGGI allowance clearing prices 2023–2025 | RGGI Inc. auction results (public — web-search likely suffices) | cite into `STATE_CARBON_PRICE_BY_ISO` | P7 |
-| U7 | *(optional)* Central-East / Total-East / Dunwoodie-South interface hourly flows + limits | NYISO OASIS interface-flow / operating-limit postings | `inputs/raw-data/iso-specific-transmission/NYISO/` | P10 (TTC validation) |
+| U7 | *(optional)* Central-East / Total-East / Dunwoodie-South interface hourly flows + limits | NYISO OASIS interface-flow / operating-limit postings | `data/raw/iso-specific-transmission/NYISO/` | P10 (TTC validation) |
 
 U2–U4 unblock the full pack. Without U2 the backcast runs but price
 calibration is level-only; without U3 zonal load stays on the static Gold-Book
@@ -165,7 +165,7 @@ scripts/build_calibration_reference.py.
    generation_twh (note the large hydro and the oil column); measured Henry
    Hub; eGRID NYISO generation/emissions benchmark; EIA-860 year-end +
    monthly wind/solar capacity with the 5-zone shares. Emit
-   inputs/calibration/NYISO_{year}_renewable_capacity.csv and the
+   data/raw/_validation-source/NYISO_{year}_renewable_capacity.csv and the
    calibration_reference.json blocks. ERCOT/PJM/CAISO outputs byte-identical.
 2. Fleet sanity: assemble the NYISO fleet via get_iso_config("NYISO") + the
    NYIS BA filter; report plant count, capacity by class (flag oil and
@@ -187,7 +187,7 @@ pass; audit doc committed.
 ```
 NYISO backcast: verify/refresh measured unit-outage windows. Read
 docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
-NOTE: inputs/raw-data/campd-unit-outages-NYISO.csv already exists for 2023 +
+NOTE: data/raw/campd-unit-outages-NYISO.csv already exists for 2023 +
 2025 — this pack VERIFIES it and adds 2024 only if NY_2024 landed.
 
 1. If campd-unit-level/NY_2024.parquet exists (upload U1), regenerate the CSV
@@ -223,7 +223,7 @@ the CHP/dual-fuel tags from the P3/P13 sessions.
 3. No coal must-run: confirm zero COAL rows; the inflexible layer is CHP BTM
    (P3), nuclear, hydro min-flows, and any RMR/reliability-must-run units
    (web-search NYISO RMR designations; cite).
-4. Produce NYISO rows for inputs/custom-bin-assignments.csv (or the per-ISO
+4. Produce NYISO rows for data/raw/reference/custom-bin-assignments.csv (or the per-ISO
    equivalent): Plant_Code, Plant_Group, Pct_Must_Run/Committed/Economic/
    Peaking, measured where CAMPD supports it, class defaults elsewhere; tag
    each row's source. Mixed/dual-fuel facilities split per Plant_Group.
@@ -289,7 +289,7 @@ STORAGE_* entries, the CAISO P5 implementation (battery COD ramp +
 battery_dispatch_adder), and playbook §8.4.
 
 1. Build the NYISO BESS fleet from
-   inputs/raw-data/eia-860/eia860_energy_storage_operable.parquet: power MW,
+   data/raw/eia-860/eia860_energy_storage_operable.parquet: power MW,
    energy MWh, COD month (intra-year ramp), zone via plant coords. NYISO BESS
    is smaller than CAISO but concentrated downstate (NYC/Long Island) — verify
    the zone split. Keep co-located solar+storage separate.
@@ -358,7 +358,7 @@ NYISO backcast: demand series and zonal disaggregation. Read data/eia_loader.py
 
 1. System demand: EIA-930 NYIS hourly (td_loss_factor convention per ERCOT).
    Document that NYISO demand is net of BTM PV (front-of-meter only).
-2. If inputs/raw-data/zone-specific-demand/NYISO/ has zonal load (upload U3):
+2. If data/raw/zone-specific-demand/NYISO/ has zonal load (upload U3):
    derive measured load shares + hourly zonal shapes for the 5 model zones
    (map A–K → Upstate-West/Capital-Hudson/Lower-Hudson/NYC/Long-Island;
    document the mapping) via the generalized derive_load_shares.py, replacing
@@ -404,9 +404,9 @@ cited Tier 3; ERCOT/PJM/CAISO unchanged.
 
 ```
 NYISO backcast: price benchmarks and the 5-zone adequacy test. Read
-scripts/derive_actual_lmp.py and inputs/calibration/actual_lmp.json.
+scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
-1. From inputs/raw-data/lmp-data/NYISO/ (upload U2): build NYISO 2023–2025
+1. From data/raw/lmp-data/NYISO/ (upload U2): build NYISO 2023–2025
    entries in actual_lmp.json (DA + RT annual/monthly zonal LBMP averages,
    esp. WEST/CAPITL/N.Y.C./LONGIL) and an hourly series file for duration
    overlays, following the ERCOT/PJM/CAISO format.

@@ -22,13 +22,13 @@ override only when that lands, matching doc-07 §2.
 
 Written artifacts:
 
-- `inputs/calibration/calibration_reference.json` — NYISO blocks for
+- `data/raw/_validation-source/calibration_reference.json` — NYISO blocks for
   2023/2025: EIA-930 demand stats (`data/eia_hourly/NYIS hourly.parquet`),
   measured Henry Hub, EIA-923 by-fuel `generation_twh` (now including the
   **large hydro** and the **oil** columns — see §1a), EIA-860 wind/solar
   December totals + 5-zone shares + monthly ramps, and the eGRID 2023
   `BACODE=NYIS` generation/emissions benchmark.
-- `inputs/calibration/NYISO_{2023,2025}_renewable_capacity.csv` — per-zone,
+- `data/raw/_validation-source/NYISO_{2023,2025}_renewable_capacity.csv` — per-zone,
   per-month EIA-860 operable wind/solar capacity.
 
 Headline reference values:
@@ -163,7 +163,7 @@ EPA fleet benchmark.
 
 `states_for_iso("NYISO")` is **NY only**, so every NYISO-fleet fossil plant
 that carries Part-75 CEMS reports under a NY state-year extract. Diff against
-`inputs/raw-data/campd-unit-level/NY_<year>.parquet`:
+`data/raw/campd-unit-level/NY_<year>.parquet`:
 
 | State-year | Unit-level extract | Notes |
 |---|---|---|
@@ -299,7 +299,7 @@ scalar flattens, and the gas-side input the dual-fuel switch (P13) keys off.
 
 ### Winter basis (U4) — NOT landed; falls back to 923
 
-`inputs/raw-data/gas_basis_by_iso_month.csv` is still the **header-only
+`data/raw/gas_basis_by_iso_month.csv` is still the **header-only
 template** (zero rows) — the named-hub (Transco Z6 NY / Iroquois) leg is a
 paywalled ICE/Platts product (see `data-acquisition-report.md` §1c), so **U4
 has not landed.** `data.fuel.load_winter_gas_basis()` is wired and tested to
@@ -327,13 +327,13 @@ stay carbon-free and CAISO keeps its CARB prices — all unchanged.
 
 | # | Item | Destination | Status |
 |---|------|-------------|--------|
-| U1 | CAMPD unit-level `NY_2024.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — gates the 2024 backcast year + 2024 outage windows; 2023/2025 present |
-| U2 | DA+RT hourly zonal LBMP (WEST/CAPITL/N.Y.C./LONGIL) 2023–2025 | `inputs/raw-data/lmp-data/NYISO/` | **missing** — needed by P10; price calibration is level-only without it |
-| U3 | Zonal hourly load A–K 2023–2025 | `inputs/raw-data/zone-specific-demand/NYISO/` | **missing** — zonal load stays on static Gold-Book shares (0.365/0.175/0.06/0.28/0.12) until landed (P8) |
+| U1 | CAMPD unit-level `NY_2024.parquet` | `data/raw/campd-unit-level/` | **missing** — gates the 2024 backcast year + 2024 outage windows; 2023/2025 present |
+| U2 | DA+RT hourly zonal LBMP (WEST/CAPITL/N.Y.C./LONGIL) 2023–2025 | `data/raw/lmp-data/NYISO/` | **missing** — needed by P10; price calibration is level-only without it |
+| U3 | Zonal hourly load A–K 2023–2025 | `data/raw/zone-specific-demand/NYISO/` | **missing** — zonal load stays on static Gold-Book shares (0.365/0.175/0.06/0.28/0.12) until landed (P8) |
 | U4 | Transco Z6 NY / Iroquois delivered gas basis 2023–2025 | cite into `constants.py` / gas path | **missing** — `gas_basis_by_iso_month.csv` is header-only; gas falls back to measured EIA-923 (see §4). Downstate winter spike not yet fully captured (P7/P13) |
-| U5 | Niagara/St-Lawrence + Blenheim-Gilboa monthly generation (optional) | `inputs/raw-data/nyiso-hydro/` | **not needed yet** — EIA-923 monthly hydro is in-repo (P4 refinement only) |
+| U5 | Niagara/St-Lawrence + Blenheim-Gilboa monthly generation (optional) | `data/raw/nyiso-hydro/` | **not needed yet** — EIA-923 monthly hydro is in-repo (P4 refinement only) |
 | U6 | RGGI allowance prices 2023–2025 (optional) | cite into `STATE_CARBON_PRICE_BY_ISO` | **satisfied (web-search)** — RGGI auction clearing prices cited; active default-on (see §4) |
-| U7 | Central-East / Total-East / Dunwoodie-South interface flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/NYISO/` | **missing** — TTCs stay on Tier-3 Gold-Book seeds (P10 validation) |
+| U7 | Central-East / Total-East / Dunwoodie-South interface flows + limits (optional) | `data/raw/iso-specific-transmission/NYISO/` | **missing** — TTCs stay on Tier-3 Gold-Book seeds (P10 validation) |
 
 U2–U4 unblock the full pack; the Stage-E reference and fleet/CEMS audit are
 complete without them.
@@ -362,7 +362,7 @@ fuel-price array, which `assemble_mc` multiplies by the unit's (gas) heat rate.
 ### Detection — NYISO dual-fuel units (EIA-860 Multifuel schedule)
 
 `dual_fuel_plant_groups()` reads the committed EIA-860 Multifuel schedule
-(`inputs/raw-data/eia-860/eia860_multifuel_operable.parquet`), flagging every
+(`data/raw/eia-860/eia860_multifuel_operable.parquet`), flagging every
 gas-primary (`Energy Source 1 = NG`) operable unit whose **"Switch Between Oil
 and Natural Gas?" = Y** field is set, classed with the same canonical
 `classify_plant` the fleet loaders use. Intersected with the NYISO model fleet
