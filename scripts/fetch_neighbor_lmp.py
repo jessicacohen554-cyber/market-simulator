@@ -5,7 +5,7 @@
 hourly price on its own load to recover the ``load_shape_exponent`` (claude.md
 rule #11 — a measured, regenerable market quantity, never tuned to PJM's
 net-MWh target). NYISO's realized LMP is already shipped
-(``inputs/calibration/actual_lmp_hourly_NYISO.parquet``), but MISO and the
+(``data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet``), but MISO and the
 Carolinas are not, so this script downloads them into the same schema
 (``year``, ``hour``, ``rt``, ``da`` on the model's dense 8760-hour local
 calendar). It is the data-acquisition half of the convexity step; it needs open
@@ -22,7 +22,7 @@ Sources (both public, both regenerable for a forward year):
   PJM-border price the ComEd/AEP-Ohio/ATSI seam clears against. EST hours are
   carried through UTC into the model's US/Central MISO clock so they align
   hour-for-hour with the ``MISO`` EIA-930 load the convexity regresses on.
-  -> ``inputs/calibration/actual_lmp_hourly_MISO.parquet``
+  -> ``data/raw/_validation-source/actual_lmp_hourly_MISO.parquet``
 
 * **Carolinas (best-effort)** — the Southeast is not an organized market, so
   there is no LMP; the measured marginal-price proxy is the FERC Form 714
@@ -33,7 +33,7 @@ Sources (both public, both regenerable for a forward year):
   — convexity is a shape, not a level, so that is still valid for the forward
   seam. This fetch scrapes the FERC data page for the database zip and is
   allowed to fail without blocking the MISO fetch.
-  -> ``inputs/calibration/actual_lmp_hourly_Carolinas.parquet``
+  -> ``data/raw/_validation-source/actual_lmp_hourly_Carolinas.parquet``
 
 Run (from the repo root)::
 
@@ -67,8 +67,13 @@ from scripts.derive_actual_lmp import (  # noqa: E402
     _HOURS_PER_YEAR,
     _hour_index,
 )
+from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 
-OUT_DIR = REPO / "inputs" / "calibration"
+# Write alongside the other realized-LMP parquets (actual_lmp_hourly_<ISO>.parquet),
+# which the W1 relocation moved from inputs/calibration/ to data/raw/_validation-source/
+# — the path derive_neighbor_convexity.py reads. Routed through the registry so the
+# two stay in lockstep if the location moves again.
+OUT_DIR = CALIBRATION_DIR
 
 MISO_REPORTS = "https://docs.misoenergy.org/marketreports"
 MISO_HUB = "INDIANA.HUB"  # the PJM-border MISO hub (ComEd/AEP-Ohio/ATSI seam)
