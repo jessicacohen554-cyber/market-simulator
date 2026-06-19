@@ -311,9 +311,22 @@ def enumerate_coverage() -> tuple[
     return iso_years, national_years, iso_datatypes
 
 
+def _iso_partitioned(datatype: str) -> bool:
+    """Whether a datatype is ISO-partitioned, per its schema.
+
+    Classification is schema-driven (``iso`` is a key column) rather than
+    derived from whichever files happen to exist in ``data/clean``. This keeps
+    :func:`coverage_section` deterministic and crash-free when the (gitignored)
+    clean tree is absent, while reproducing the data-driven partition for the
+    actually-curated datatypes.
+    """
+    return "iso" in clean_io.load_schema(datatype).key_columns
+
+
 def coverage_section() -> str:
     """Render the ISO x year matrix and the national-datatype table."""
-    iso_years, national_years, iso_datatypes = enumerate_coverage()
+    iso_years, national_years, _ = enumerate_coverage()
+    iso_datatypes = {d for d in DATATYPE_ORDER if _iso_partitioned(d)}
 
     out: list[str] = ["## ISO coverage matrix", ""]
     out.append(
@@ -353,7 +366,7 @@ def coverage_section() -> str:
             continue
         years = national_years.get(datatype, set())
         years_cell = _fmt_years(years) if years else NA
-        out.append(f"| {datatype} | {NATIONAL_SCOPE[datatype]} | {years_cell} |")
+        out.append(f"| {datatype} | {NATIONAL_SCOPE.get(datatype, NONE_CELL)} | {years_cell} |")
     return "\n".join(out)
 
 
