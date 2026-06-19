@@ -19,6 +19,7 @@ import pandas as pd
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
 from market_sim.config.paths import (
+    CALIBRATION_DIR,
     EIA_930_DIR,
     EIA_HOURLY_DIR,
     ISO_TRANSMISSION_DIR,
@@ -442,6 +443,71 @@ def measured_gas_floor_profile(
     rh = clock.hour.to_numpy()
     out = tab[rm, rh]
     return out if np.any(out > 0.0) else None
+
+
+# CAISO priced-import tranche -> WECC neighbor hub whose measured intertie LMP is
+# the tranche's real delivered energy cost. The PNW blocks (firm hydro + Mid-C
+# shoulder) clear against the Malin / COI-PDCI ties; the desert-SW blocks (solar +
+# Palo Verde nuclear, then SW gas) clear against the Palo Verde / Path-46 ties.
+# WECC_scarcity (west-wide peak economy energy) also tracks Palo Verde at its peak.
+_CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
+    "PNW_hydro_base": "MALIN",
+    "PNW_midC": "MALIN",
+    "DSW_solar_PV": "PALOVRDE",
+    "DSW_CCGT": "PALOVRDE",
+    "DSW_CT": "PALOVRDE",
+    "WECC_scarcity": "PALOVRDE",
+}
+
+
+def measured_import_hub_prices(
+    iso: str, year: int, hours: int
+) -> dict[str, np.ndarray] | None:
+    """Return each CAISO import tranche's measured hourly neighbor-hub price.
+
+    Reads the measured WECC intertie scheduling-point LMP energy component
+    (``wecc_intertie_lmp_hourly_<ISO>.parquet`` under the calibration source
+    dir: columns ``year``, ``hour`` [0..hours-1, local calendar], ``hub``
+    [``MALIN`` / ``PALOVRDE``], ``price`` [$/MWh, the energy/MCE component of the
+    CAISO intertie LMP]) and maps each hub to the import tranches it prices via
+    :data:`_CAISO_IMPORT_TRANCHE_HUB`.
+
+    These are the *actual delivered energy cost of the imported power* — the
+    neighbor hub's own marginal price at the CA border, which crashes in the
+    spring PNW runoff (the real reason CAISO Apr/May RT is ~$11-14) and can go
+    negative in the desert-SW solar glut (the real reason CAISO has ~870
+    negative-price hours). They replace the static, bundle-fitted ladder in
+    ``IMPORT_TRANCHES["CAISO"]`` when ``config.caiso_import_hub_prices`` is on;
+    see :func:`market_sim.model.transmission.inject_caiso_import_hub_prices`.
+    The price is the energy component only; the per-tranche CARB border carbon is
+    re-added by the injector (so a clean hydro/solar tranche still pays none),
+    matching the static-ladder carbon treatment.
+
+    Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
+    measured series, or ``None`` when the ISO is not CAISO, the parquet is
+    absent (forecast years / before the OASIS fetch lands), or the year is
+    uncovered — in which case the caller keeps the static ladder (byte-identical).
+    """
+    if iso.upper() != "CAISO":
+        return None
+    path = CALIBRATION_DIR / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[frame["year"] == year]
+    if frame.empty:
+        return None
+
+    out: dict[str, np.ndarray] = {}
+    for hub, sub in frame.groupby("hub"):
+        series = sub.sort_values("hour")
+        price = pd.to_numeric(series["price"], errors="coerce").to_numpy(dtype=float)
+        if price.shape[0] < hours or not np.all(np.isfinite(price[:hours])):
+            continue  # incomplete hub series — leave its tranches on the ladder
+        for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
+            if mapped_hub == hub:
+                out[tranche] = price[:hours]
+    return out or None
 
 
 @lru_cache(maxsize=8)
