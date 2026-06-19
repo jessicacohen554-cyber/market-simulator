@@ -17,7 +17,7 @@ dispatch units, replacing the earlier equal-width heat-rate binning of
 
 Bins are derived from EPA CAMPD gross generation for 2023-2024,
 cross-referenced with eGRID net generation and EIA-860 plant
-characteristics. Each row in `inputs/custom-bin-assignments.csv` is one
+characteristics. Each row in `data/raw/reference/custom-bin-assignments.csv` is one
 EIA plant and one operational bin in the LP — **every plant gets its
 own discrete bin**, with a unique LP unit id keyed on its plant code.
 The zone-and-bin-number grouping in the CSV (e.g. `H_CC1`, `N_CT2
@@ -50,12 +50,12 @@ coverage.
 
 Non-ERCOT ISOs have no curated bin CSV: `fleet_to_bins` synthesizes the
 same per-plant frame from the EIA-860 fleet plus the CAMPD-derived
-`inputs/processed/thermal_tranches_<ISO>.csv` (committed %, coal must-run %,
+`data/raw/_processed-legacy/thermal_tranches_<ISO>.csv` (committed %, coal must-run %,
 and — where the artifact carries `peaking_pct` (CAISO onward) — a measured
 per-plant CC duct-firing share, applied via `fleet.thermal_tranche_peaking`
 under `cc_peaking_per_plant` and superseding the offer curve's class-wide
 `pct_peaking`). The resulting assignments are committed for review as
-`inputs/processed/bin_assignments_<ISO>.csv`
+`data/raw/_processed-legacy/bin_assignments_<ISO>.csv`
 (`scripts/export_iso_bin_assignments.py`), one row per
 `(Plant_Code, Plant_Group)` with a source tag per derived quantity
 (`campd` vs `class_default`; CHP must-run carries its floor provenance).
@@ -216,7 +216,7 @@ committed/peaking dicts. For calibration we sometimes need to shape an
 **individual** plant's offer curve without disturbing its class — so a
 plant can be steered to match its own observed CF behaviour while the class
 total stays on target. That is the job of the optional per-plant
-tranche-config sheet (`inputs/plant-tranche-config.csv`, pointed at by
+tranche-config sheet (`data/raw/reference/plant-tranche-config.csv`, pointed at by
 `ScenarioConfig.plant_tranche_config_path`; **off by default**).
 
 The sheet refines the four tranches into a **five-slice rising offer
@@ -296,7 +296,7 @@ cost (`coal_plant_monthly_pricing`, on by default), broadcast to the hourly
 horizon; months with no reported cost, and plants outside the sample, fall
 back to the per-year coal supply-class trajectory.
 `scripts/process_f923_fuel_costs.py` builds
-`inputs/processed/eia923_monthly_fuel_costs.parquet`.
+`data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`.
 
 The same resolver runs both backcasts and forward projections; in a forward
 year the F923 lookup finds nothing and every plant falls through to the

@@ -73,7 +73,7 @@ states, regional gas basis).
   HSL data exists for the ISO).
 - `scripts/build_calibration_reference.py` — extend the per-ISO-year emitter
   (demand stats, generation_twh by fuel, gas price, wind/solar capacity with
-  zone_shares + monthly_ramp). Output `inputs/calibration/{ISO}_{year}_*.csv`
+  zone_shares + monthly_ramp). Output `data/raw/_validation-source/{ISO}_{year}_*.csv`
   and append to `calibration_reference.json`.
 - `scripts/derive_load_shares.py` — generalize to take an ISO + zonal-load file
   (multi-zone ISOs).

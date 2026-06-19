@@ -5,7 +5,7 @@
 **Code:** `src/market_sim/results/scarcity.py`, `scripts/derive_ordc_overlay.py`,
 runner wiring in `src/market_sim/runner.py` (capacity-economics prices).
 **Validated against:** `results/calibration/run92_kiamichi` vs
-`inputs/calibration/actual_lmp_hourly_ERCOT.parquet`.
+`data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`.
 
 ## Why
 
@@ -70,7 +70,7 @@ minimum contingency level X, where the adder pins to VOLL - lambda.
 seasonal/TOD-block reserve-error statistics in NP6-576-ER (ercot.com is
 egress-blocked from this execution environment, so the user fetched the
 2025-06-13 and 2025-09-12 postings of report 13233 directly). The converted
-table is committed at `inputs/calibration/ercot_ordc_lolp_params.csv`
+table is committed at `data/raw/_validation-source/ercot_ordc_lolp_params.csv`
 (values are season-constant across TOD blocks in these vintages: summer
 904/1333, fall 917/1340, winter 930/1351, spring 947/1368 MW μ/σ). Two
 findings: (1) the published σ ≈ 1,332–1,368 MW lands within 5% of the
@@ -258,7 +258,7 @@ carries an overlay, falling back to energy-only only for runs/ISOs with none.
 Comparing the energy-only price against scarcity-inclusive actuals was
 apples-to-oranges and overstated the gap (e.g. run115b 2023 annual Δ vs DA
 −59% energy-only → −9% overlay; 2024 −30% → −22%). This is a display change in
-`scripts/_backcast_shell.py` only: the energy-only series is still shown and
+`scripts/probes/_backcast_shell.py` only: the energy-only series is still shown and
 remains the gated metric, the overlay is never a gate, and no run payload
 changed (the overlay numbers were already baked into the `lmpScar`/`ordc`
 keys). The residual under-bias in the milder years (2024/2025) is the known

@@ -349,7 +349,7 @@ reliability" (2024).
 NEISO's committed / peaking tranche shares are derived per plant from the
 **2023 + 2024 + 2025** NE-state facility-level CEMS (`ME, NH, MA, CT, RI, VT`),
 the same `derive_thermal_tranches.py` machinery used for the other ISOs, and
-emitted with per-row source tags as `inputs/processed/bin_assignments_NEISO.csv`.
+emitted with per-row source tags as `data/raw/_processed-legacy/bin_assignments_NEISO.csv`.
 The pooled three-year window gives strong CAMPD coverage of the dispatchable
 fleet: **100%** of CC_REGULAR capacity (≈ 12.8 GW), **≈ 87%** of CC_CHP, and
 **≈ 89%** of CT_PEAKER capacity carry a *measured* committed share; the rest —
@@ -367,7 +367,7 @@ operating across the whole 2023-2025 window and the larger unit 2 (345.6 MW,
 is a low-CF winter-peaking run, not zero and not a baseload. Its **coal rank is
 derived, not assumed**: `scripts/derive_coal_supply.py --iso NEISO` sums the
 plant's EIA-923 Schedule-5 fuel receipts (54,050 tons 2023-2025, **100 %
-bituminous**) and writes `inputs/processed/coal_supply_NEISO.csv`, which
+bituminous**) and writes `data/raw/_processed-legacy/coal_supply_NEISO.csv`, which
 `fleet.coal_supply_class` merges on top of the curated ERCOT map. Merrimack
 therefore resolves to the **`COAL_BIT`** dispatch class, offer curve, and
 delivered-cost path (`COAL_PRICE_BASE["NEISO"]` = 3.0, the bituminous-by-rail

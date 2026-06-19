@@ -18,6 +18,7 @@ is unchanged, so the module is purely additive (default off).
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -35,6 +36,24 @@ from market_sim.data.fleet import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _use_clean() -> bool:
+    """Whether to read curated clean parquet instead of the raw inputs.
+
+    Gated by the ``MARKET_SIM_USE_CLEAN`` environment variable, **default OFF**.
+    When unset or falsey the module reads raw inputs exactly as before; when
+    truthy the plant-registry reference lookup is read through the frozen clean
+    seam (:func:`scripts.lib.clean_io.read_clean`). The flag only chooses the
+    data *source* — the clean table is curated from the same raw file, so the
+    resolved lookup is identical either way.
+    """
+    return os.environ.get("MARKET_SIM_USE_CLEAN", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 # EIA prime-mover code for conventional (inflow) hydro. Pumped storage is
 # ``PS`` and is deliberately excluded — it is a storage unit, not an
@@ -191,6 +210,46 @@ def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
     return agg[agg[mcols].sum(axis=1) > 0.0].reset_index(drop=True)
 
 
+def load_reference_hydro_nameplate(iso: str) -> dict[int, float]:
+    """Return ``{plant_id: nameplate_mw}`` for the ISO's conventional-hydro
+    plants from the plant-registry reference table.
+
+    Reads the curated clean parquet when ``MARKET_SIM_USE_CLEAN`` is set
+    (``read_clean("reference", market="plant-registry")``) and the raw
+    ``master-plant-registry.csv`` otherwise; both backends yield the same map
+    (the clean table is curated from that CSV). The rows are filtered to the
+    ISO's balancing authority and prime mover ``HY`` — pumped storage (``PS``)
+    is excluded, mirroring :func:`_load_hydro_nameplate`. Returns an empty dict
+    when the source is absent or the ISO has no balancing-authority code.
+    """
+    ba_code = ISO_TO_BA_CODE.get(iso.upper())
+    if ba_code is None:
+        return {}
+
+    cols = ["plant_id", "ba_code", "prime_mover", "nameplate_capacity_mw"]
+    if _use_clean():
+        from scripts.lib.clean_io import read_clean
+
+        df = read_clean("reference", market="plant-registry", columns=cols)
+    else:
+        from market_sim.config.paths import PLANT_REGISTRY_CSV
+
+        if not PLANT_REGISTRY_CSV.exists():
+            return {}
+        df = pd.read_csv(
+            PLANT_REGISTRY_CSV,
+            usecols=["plantid", "ba_code", "prime_mover", "nameplate_capacity_mw"],
+        ).rename(columns={"plantid": "plant_id"})
+
+    sub = df[(df["prime_mover"] == HYDRO_PRIME_MOVER) & (df["ba_code"] == ba_code)]
+    out: dict[int, float] = {}
+    for pid, mw in zip(sub["plant_id"], sub["nameplate_capacity_mw"]):
+        if pid != pid or mw != mw:  # NaN plant_id / nameplate
+            continue
+        out[int(pid)] = float(mw)
+    return out
+
+
 def _load_hydro_nameplate(iso: str) -> dict[int, float]:
     """Return ``{plant_id: total nameplate MW}`` for the ISO's hydro plants.
 
@@ -198,20 +257,29 @@ def _load_hydro_nameplate(iso: str) -> dict[int, float]:
     hydro (prime mover ``HY``) in the ISO's balancing authority, and sums
     nameplate capacity across a plant's hydro units. Pumped storage
     (``PS``) is excluded.
+
+    When ``MARKET_SIM_USE_CLEAN`` is set (default OFF), the plant-registry
+    reference table supplements any plant the EIA-860 file missed; EIA-860
+    stays authoritative (``setdefault``). With the flag off the supplement is
+    skipped, so the default raw behaviour is unchanged.
     """
     parquet_path = Path(EIA_860_DIR) / EIA_860_PARQUET_NAME
-    if not parquet_path.exists():
-        return {}
-    df = pd.read_parquet(parquet_path)
-    ba_code = ISO_TO_BA_CODE.get(iso.upper())
-    mask = df["prime_mover"] == HYDRO_PRIME_MOVER
-    if ba_code is not None and "balancing_authority_code" in df.columns:
-        mask &= df["balancing_authority_code"] == ba_code
-    hydro = df[mask]
-    if hydro.empty:
-        return {}
-    totals = hydro.groupby("plant_id")["nameplate_capacity_mw"].sum()
-    return {int(pid): float(mw) for pid, mw in totals.items()}
+    out: dict[int, float] = {}
+    if parquet_path.exists():
+        df = pd.read_parquet(parquet_path)
+        ba_code = ISO_TO_BA_CODE.get(iso.upper())
+        mask = df["prime_mover"] == HYDRO_PRIME_MOVER
+        if ba_code is not None and "balancing_authority_code" in df.columns:
+            mask &= df["balancing_authority_code"] == ba_code
+        hydro = df[mask]
+        if not hydro.empty:
+            totals = hydro.groupby("plant_id")["nameplate_capacity_mw"].sum()
+            out = {int(pid): float(mw) for pid, mw in totals.items()}
+
+    if _use_clean():
+        for pid, mw in load_reference_hydro_nameplate(iso).items():
+            out.setdefault(pid, mw)
+    return out
 
 
 def _zone_lookup(iso: str) -> dict[int, str]:

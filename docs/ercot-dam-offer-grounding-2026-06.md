@@ -6,9 +6,9 @@ CT/CC/ST band SHAPE is defensible but the HEIGHTS are fitted, not validated agai
 the real offer distribution."*
 **Deliverables:** `scripts/parse_ercot_dam_offers.py` (wide→tidy parser),
 `scripts/analyze_dam_offer_multipliers.py` (offer→multiplier overlay),
-`inputs/processed/ercot_dam_offers.parquet` (canonical tidy offers, regenerable),
-`inputs/processed/ercot_resource_settlement_crosswalk.csv`,
-`inputs/processed/ercot_offer_multiplier_summary.csv`.
+`data/raw/_processed-legacy/ercot_dam_offers.parquet` (canonical tidy offers, regenerable),
+`data/raw/_processed-legacy/ercot_resource_settlement_crosswalk.csv`,
+`data/raw/_processed-legacy/ercot_offer_multiplier_summary.csv`.
 **Status:** ANALYSIS / ingestion only — **no model change, no calibration run is
 gated on it.** It identifies *one* defensible re-derivation target (the CT econ
 ramp), which — per the guardrails — is a SEPARATE, gated change.
@@ -159,7 +159,7 @@ re-derivation is pursued.
 cap-weighted base_hr, not each unit's own heat rate, because the
 `resource_name → EIA-plant` join does not yet exist. The parser emits the
 resource→settlement-point half
-(`inputs/processed/ercot_resource_settlement_crosswalk.csv`, 385 resources), which
+(`data/raw/_processed-legacy/ercot_resource_settlement_crosswalk.csv`, 385 resources), which
 also seeds the nodal-pocket session's resource→pocket map; the EIA-plant join
 (settlement point + EIA-860 plant names) is the remaining step for per-plant
 grounding and is scoped, not done.
@@ -178,5 +178,5 @@ python scripts/analyze_dam_offer_multipliers.py --committed-only   # online-only
 ```
 
 The canonical `ercot_dam_offers.parquet` (160 MB) is regenerable and therefore
-git-ignored under the `inputs/processed/*.parquet` rule; the small CSV summaries
+git-ignored under the `data/raw/_processed-legacy/*.parquet` rule; the small CSV summaries
 and the crosswalk are committed.

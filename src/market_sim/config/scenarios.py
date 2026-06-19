@@ -600,6 +600,12 @@ class ScenarioConfig:
     # reformed RTC+B fleet regime). NB: the reliability-deployment overlay does
     # NOT re-warm credited backcast years — it is an energy/congestion min-gen
     # floor (near-no-op on system LMP), not an ORDC scarcity-price mechanism.
+    # Settable from the CLI via --ercot-storage-as-reserve-from-year (set to 2023
+    # to probe a global credit). Going global is BLOCKED on a scarcity-price model:
+    # the in-LP ORDC curve is hour-invariant so a re-derived LOLP can't self-target
+    # 2024's tail, and 2023's tail is out-of-market (administrative, un-modelable by
+    # any LOLP curve). See docs/ercot-run131-lmp-decomposition-2026-06.md
+    # ("Global storage-AS credit — investigated, BLOCKED").
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -1416,7 +1422,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # toward EIA-930 in every year — 2024 (cheapest gas, $2.19) -8.1% -> -5.8%,
     # 2023 -4.7% -> -2.7%, 2025 (dear gas, near gas_mid) -1.7% -> -1.0%; gas
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
-    # and leaves the dear-gas ceiling untouched. (scripts/_pjm_bit_floor_probe.)
+    # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
     ("PJM", "bituminous"): {
         "floor": 0.76, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
     # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first

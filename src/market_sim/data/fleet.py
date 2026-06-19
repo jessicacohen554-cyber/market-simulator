@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import calendar
 import logging
+import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
@@ -64,6 +65,65 @@ from market_sim.data.outages import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# data/clean consumption seam (opt-in)
+# ---------------------------------------------------------------------------
+# Opt-in switch that routes the fleet + AS-withholding reads through the curated
+# ``data/clean`` tree (the frozen ``scripts.lib.clean_io.read_clean`` seam)
+# instead of ``data/raw``. Default OFF: with the variable unset the model reads
+# raw byte-for-byte as before. The clean tree is gitignored/derived, so
+# regenerate it first:
+#   python scripts/regenerate_clean.py fleet ancillary-services
+# This is a parity/migration seam, not a behavior change — see
+# ``tests/test_consume_fleet.py`` for the raw<->clean parity checks.
+USE_CLEAN_ENV: str = "MARKET_SIM_USE_CLEAN"
+_USE_CLEAN_TRUTHY: frozenset[str] = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether reads should be sourced from ``data/clean`` (opt-in).
+
+    Controlled by the :data:`USE_CLEAN_ENV` environment variable; any of
+    ``1/true/yes/on`` (case-insensitive) turns the clean seam on. Unset/anything
+    else keeps the default raw read path.
+    """
+    return os.environ.get(USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
+
+
+def _read_clean(*args, **kwargs):
+    """Lazy proxy to :func:`scripts.lib.clean_io.read_clean`.
+
+    Imported lazily (and only on the opt-in clean path) because ``scripts`` is a
+    repo-root package, not part of the installed ``market_sim`` distribution, so
+    it must not be required for a normal raw-path import.
+    """
+    from scripts.lib import clean_io
+
+    return clean_io.read_clean(*args, **kwargs)
+
+
+def _clean_fleet_year(data_dir: Path) -> int:
+    """Map an active EIA-860 vintage directory to its clean ``fleet`` partition.
+
+    The clean ``fleet`` datatype is partitioned by EIA-860 vintage year
+    (``data/clean/fleet/fleet_<year>.parquet``): a ``vintage_<year>/`` directory
+    curates to ``year`` and the top-level snapshot curates to
+    :data:`EIA860_OPERABLE_VINTAGE`. Resolving the active dir
+    (:func:`paths.active_eia860_dir`, which honors a
+    ``ScenarioConfig.eia860_vintage_year`` switch) to that year is what lets the
+    clean fleet read preserve the EIA-860 vintage behavior of the raw loaders —
+    selecting ``vintage_2023`` routes the clean read to ``fleet_2023``.
+    """
+    name = Path(data_dir).name
+    if name.startswith("vintage_"):
+        try:
+            return int(name.split("_", 1)[1])
+        except ValueError:
+            pass
+    return EIA860_OPERABLE_VINTAGE
+
 
 # Location of the EIA-860 / eGRID CSV extracts. Re-exported from the central
 # path registry (other data modules import EIA_860_DIR from fleet).
@@ -417,6 +477,94 @@ _CAISO_REG_UP_LOAD_FRAC = 0.01
 _CAISO_MSSC_EXCLUDE_FUELS: frozenset[str] = frozenset({"import", "wind", "solar"})
 
 
+# Clean ``ancillary-services`` cleared-MW columns that make up the *upward*
+# reserve held out of energy (Reg-Down is a downward product — it removes no
+# upward energy offer — and is excluded, exactly as the raw withholding builders
+# do). Their sum reproduces the raw ``as_up_mw`` series for ERCOT.
+_CLEAN_AS_UP_MW_COLS: tuple[str, ...] = (
+    "reg_up_mw", "spin_mw", "nonspin_mw", "supp_30min_mw",
+)
+
+# The fixed non-leap 8760-hour model calendar (representative year 2023), shared
+# with :mod:`scripts.build_ercot_as_withholding`. Clean AS rows (UTC, with a
+# wall-clock ``interval_start_local``) are folded onto this (month, day, hour)
+# grid so the reconstructed series lands on the same clock as the fleet.
+_AS_MODEL_CALENDAR = pd.date_range("2023-01-01", periods=8760, freq="h")
+_AS_MODEL_INDEX = pd.MultiIndex.from_arrays(
+    [_AS_MODEL_CALENDAR.month, _AS_MODEL_CALENDAR.day, _AS_MODEL_CALENDAR.hour],
+    names=["month", "day", "hour"],
+)
+# Largest hole (hours) interpolated when placing a series on the 8760-hour clock
+# (the DST spring-forward gap is 1h); bigger holes are partial-year coverage and
+# are zero-filled rather than interpolated. Mirrors build_ercot_as_withholding.
+_AS_MAX_GAP_HOURS = 24
+
+
+def _clean_as_reserve_withholding_mw(
+    year: int, hours: int, iso: str, market: str = "DAM"
+) -> np.ndarray | None:
+    """Reconstruct ``iso``'s hourly upward-AS withholding MW from data/clean.
+
+    Reads the curated AS clearing table
+    (``read_clean("ancillary-services", iso=iso, market=market, year=year)``),
+    sums the system-wide (``zone == "SYSTEM"``) upward cleared-MW products
+    (:data:`_CLEAN_AS_UP_MW_COLS`) and folds them onto the fleet's non-leap
+    8760-hour clock by the local wall-clock ``(month, day, hour)`` — the same
+    reduction :mod:`scripts.build_ercot_as_withholding` applies to the raw
+    cleared-DAM-AS reports, so for ERCOT this reproduces the raw ``as_up_mw``
+    series exactly (see ``tests/test_consume_fleet.py``). Returns ``None`` when
+    the clean partition is absent or carries no cleared MW (the feature then
+    no-ops, matching the raw "missing parquet -> None" behavior).
+
+    NOTE: this is faithful for ERCOT (its raw withholding *is* the cleared DAM
+    up-AS). PJM's raw withholding is a different quantity (the RT Primary Reserve
+    requirement, which the clean AS schema intentionally does not carry), so the
+    clean reconstruction is not a like-for-like substitute there — surfacing the
+    PJM Primary Reserve through the clean seam would need an AS-schema contract
+    change (raise one rather than editing the frozen YAML).
+    """
+    try:
+        df = _read_clean("ancillary-services", iso=iso, market=market, year=year)
+    except FileNotFoundError:
+        logger.warning(
+            "as_reserve_withholding(clean) on but no clean AS partition for "
+            "%s %s %d; withholding skipped", iso, market, year,
+        )
+        return None
+    if "zone" in df.columns:
+        df = df[df["zone"].astype("string").str.strip() == "SYSTEM"]
+    present = [c for c in _CLEAN_AS_UP_MW_COLS if c in df.columns]
+    if df.empty or not present:
+        return None
+    up = df[present].sum(axis=1, min_count=1)
+    covered = df.loc[df[present].notna().any(axis=1)].copy()
+    if covered.empty:
+        return None
+
+    local = pd.to_datetime(covered["interval_start_local"])
+    work = pd.DataFrame({"ts": local, "mw": up.loc[covered.index].to_numpy(float)})
+    keep = (work["ts"].dt.year == year) & ~(
+        (work["ts"].dt.month == 2) & (work["ts"].dt.day == 29)
+    )
+    work = work[keep]
+    if work.empty:
+        return None
+    grouped = work.groupby(
+        [work["ts"].dt.month, work["ts"].dt.day, work["ts"].dt.hour]
+    )["mw"].mean()
+    grouped.index.names = ["month", "day", "hour"]
+    aligned = grouped.reindex(_AS_MODEL_INDEX)
+    missing = int(aligned.isna().sum())
+    if 0 < missing <= _AS_MAX_GAP_HOURS:
+        aligned = aligned.interpolate(limit_direction="both")
+    # A larger hole is partial-year coverage; leave it as 0 (no fabricated
+    # reserve) so callers using the covered hours still get exact values.
+    series = aligned.fillna(0.0).to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(hours - len(series))])
+    return series[:hours]
+
+
 @lru_cache(maxsize=8)
 def load_as_reserve_withholding_mw(
     year: int, hours: int, iso: str = "ERCOT"
@@ -431,7 +579,14 @@ def load_as_reserve_withholding_mw(
     sits on the same non-leap 8760-hour clock as the fleet, so it is returned
     as-is when ``hours == 8760``; other horizons take the leading ``hours``
     values.
+
+    When the clean seam is on (:func:`_use_clean`), the series is instead
+    reconstructed from the curated ``ancillary-services`` clearing table
+    (:func:`_clean_as_reserve_withholding_mw`) — for ERCOT this matches the raw
+    ``as_up_mw`` series exactly.
     """
+    if _use_clean():
+        return _clean_as_reserve_withholding_mw(year, hours, (iso or "ERCOT").upper())
     spec = _AS_WITHHOLDING.get((iso or "ERCOT").upper())
     if spec is None:
         return None
@@ -2494,6 +2649,102 @@ def _load_fleet_from_parquet(
     return generators
 
 
+# The clean ``fleet`` schema folds the raw EIA-860 energy-source code into the
+# canonical ``fuel`` bucket (coal/gas/nuclear/oil/biomass/hydro/wind/solar/...).
+# :func:`_map_fuel_type` and :func:`classify_plant` still want an energy-source
+# *code* to split NG into CC/CT/ST and to confirm coal/nuclear/oil/biomass, so we
+# round-trip the bucket back to a representative code. The exact sub-code does
+# not matter: it only has to land each unit in the right model class (coal rank,
+# for instance, is re-derived downstream from the plant code, not this proxy).
+# NOTE: the dropped energy-source code is one of several attributes the frozen
+# clean fleet schema does not carry (alongside the CHP flag, operating *month*,
+# planned retirement, state and unit heat rate). The CHP flag is bridged from the
+# raw EIA-860 operable sheet below exactly as the raw parquet loader does; the
+# rest fall back to model defaults. Recovering them through the clean seam would
+# need a fleet-schema contract change (raise one — do not edit the frozen YAML).
+_CLEAN_FUEL_TO_ENERGY_SOURCE: dict[str, str] = {
+    "gas": "NG",
+    "coal": "BIT",
+    "nuclear": "NUC",
+    "oil": "DFO",
+    "biomass": "WDS",
+    "hydro": "WAT",
+    "wind": "WND",
+    "solar": "SUN",
+}
+
+
+def _clean_fleet_to_normalized(
+    df_clean: pd.DataFrame, eia860_dir: Path, year: int | None
+) -> pd.DataFrame:
+    """Adapt a clean ``fleet`` frame to the raw loader's normalized columns.
+
+    Maps the canonical schema columns (``unit_id`` -> ``generator_id``,
+    ``summer_capacity_mw`` -> ``net_summer_capacity_mw``, ``fuel`` ->
+    a representative ``energy_source`` code) onto exactly the columns
+    :func:`_rows_to_generators` consumes, so the clean and raw paths share the
+    *same* Generator-construction logic (and therefore agree by construction —
+    see ``tests/test_consume_fleet.py``). The clean fleet is operable-only, so
+    ``status`` is synthesized as ``"OP"``; the plant-level CHP flag (not in the
+    clean schema) is joined from the raw EIA-860 operable sheet via
+    :func:`_chp_by_plant`, matching the raw parquet loader.
+    """
+    df = pd.DataFrame(
+        {
+            "plant_id": df_clean["plant_id"],
+            "generator_id": df_clean["unit_id"].astype("string"),
+            "plant_name": df_clean["plant_name"],
+            "technology": df_clean["technology"],
+            "prime_mover": df_clean["prime_mover"],
+            "energy_source": df_clean["fuel"].map(_CLEAN_FUEL_TO_ENERGY_SOURCE),
+            "nameplate_capacity_mw": df_clean["nameplate_capacity_mw"],
+            "net_summer_capacity_mw": df_clean["summer_capacity_mw"],
+            "operating_year": df_clean["operating_year"],
+            "status": "OP",
+        }
+    )
+    df["chp"] = df["plant_id"].map(_chp_by_plant(eia860_dir, year)).fillna("N")
+    return df
+
+
+def _load_fleet_from_clean(
+    iso: str,
+    iso_config: ISOConfig | None,
+    data_dir: Path,
+    year: int | None = None,
+) -> list[Generator] | None:
+    """Load an ISO's fleet from the curated clean ``fleet`` registry.
+
+    The clean counterpart of :func:`_load_fleet_from_parquet`: reads
+    ``clean_io.read_clean("fleet", year=<vintage>)`` for the vintage the active
+    EIA-860 directory selects (:func:`_clean_fleet_year`), filters to the ISO via
+    the curated ``iso`` column, adapts the canonical columns to the loader's
+    normalized frame and runs the shared :func:`_rows_to_generators`. Returns
+    ``None`` when the slice yields no thermal generators. Raises
+    ``FileNotFoundError`` (with a regenerate hint) if the clean partition is
+    absent — regenerate it with ``scripts/regenerate_clean.py fleet``.
+    """
+    partition_year = _clean_fleet_year(data_dir)
+    df = _read_clean("fleet", year=partition_year)
+    if "iso" in df.columns:
+        df = df[df["iso"].astype("string").str.strip() == iso]
+    if df.empty:
+        logger.warning("clean fleet (year %d) has no rows for %s", partition_year, iso)
+        return None
+
+    normalized = _clean_fleet_to_normalized(df.copy(), data_dir, year)
+    generators = _rows_to_generators(normalized, iso, iso_config)
+    if not generators:
+        logger.warning("clean fleet (year %d) has no generators for %s", partition_year, iso)
+        return None
+
+    logger.info(
+        "Loaded %s fleet from clean fleet registry, vintage %d (%d generators)",
+        iso, partition_year, len(generators),
+    )
+    return generators
+
+
 def _binned_fleet_frame(generators: list[Generator]) -> pd.DataFrame:
     """Return the plant-level binned fleet as a DataFrame.
 
@@ -2639,6 +2890,8 @@ def load_fleet_from_csv(
     csv_path = data_dir / f"generators_{iso.lower()}.csv"
     source: Path | None
     if csv_path.exists():
+        # Per-ISO override CSV always wins (an explicit manual escape hatch),
+        # regardless of the clean seam.
         df = _normalize_columns(pd.read_csv(csv_path))
         generators = _rows_to_generators(df, iso, iso_config)
         source = csv_path
@@ -2647,6 +2900,19 @@ def load_fleet_from_csv(
             iso,
             len(generators),
         )
+    elif _use_clean():
+        # Opt-in clean seam: source fleet attributes from data/clean instead of
+        # the raw generator parquet. ``source`` is left None so the
+        # data/raw/_processed-legacy binned-fleet side cache is NOT written here
+        # (the clean path must not mutate data/raw).
+        from_clean = _load_fleet_from_clean(iso, iso_config, data_dir, year)
+        if from_clean is None:
+            raise FileNotFoundError(
+                f"No clean fleet generators for {iso} "
+                f"(vintage {_clean_fleet_year(data_dir)}); regenerate with "
+                "`python scripts/regenerate_clean.py fleet`"
+            )
+        return from_clean
     else:
         parquet_path = data_dir / EIA_860_PARQUET_NAME
         from_parquet = _load_fleet_from_parquet(

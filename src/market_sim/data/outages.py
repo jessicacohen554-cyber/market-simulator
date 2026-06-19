@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import calendar
 import logging
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -31,6 +32,68 @@ from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import CALIBRATION_DIR, CAMPD_BINS_CSV, RAW_DATA_DIR
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Clean-data read seam (MARKET_SIM_USE_CLEAN, default OFF)
+# ---------------------------------------------------------------------------
+# When this env flag is set, the facility-outage overlay sources its windows
+# from the curated clean tree (data/clean/outages, written by
+# scripts/curate_outages.py through the frozen scripts/lib/clean_io.py seam)
+# instead of re-deriving them from raw here. The raw/derive path below stays the
+# default and is left fully intact; the flag is a migration gate, not a switch
+# we flip in code. See data/README.md and data/dictionary/schema/outages.schema.yaml.
+_USE_CLEAN_ENV = "MARKET_SIM_USE_CLEAN"
+_TRUTHY = frozenset({"1", "true", "yes", "on"})
+
+
+def _use_clean() -> bool:
+    """Whether to read outages from the clean tree (MARKET_SIM_USE_CLEAN)."""
+    return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _TRUTHY
+
+
+def _clean_io():
+    """Import the frozen clean-data read seam (``scripts/lib/clean_io.py``).
+
+    The model package does not put the repo root — where the ``scripts``
+    package lives — on ``sys.path``, so add it before importing. This module is
+    the contract; we only ever read through it (never edit it).
+    """
+    try:
+        import scripts.lib.clean_io as clean_io
+    except ModuleNotFoundError:
+        import sys
+
+        from market_sim.config import paths
+
+        repo = str(paths.REPO_ROOT)
+        if repo not in sys.path:
+            sys.path.insert(0, repo)
+        import scripts.lib.clean_io as clean_io
+    return clean_io
+
+
+def read_clean_outages(
+    year: int, *, columns: list[str] | None = None, validate: bool = True
+) -> pd.DataFrame:
+    """Load per-unit hourly availability for ``year`` from the clean tree.
+
+    The clean-backed read seam (gated by :func:`_use_clean`). Returns the
+    per-``(plant_id, unit_id)`` hourly outage / availability rows curated by
+    ``scripts/curate_outages.py`` and validated against
+    ``data/dictionary/schema/outages.schema.yaml`` — ``outage_mw`` is the
+    capacity offline during the interval and ``available_mw`` the capacity
+    available (plant nameplate minus that). Facility-grain rows carry
+    ``unit_id == "ALL"``.
+
+    Reads through :func:`scripts.lib.clean_io.read_clean`, which raises
+    :class:`FileNotFoundError` (with a regenerate hint) when the partition is
+    absent. The clean tree is gitignored, so regenerate it from raw with
+    ``python scripts/regenerate_clean.py outages`` first.
+    """
+    clean_io = _clean_io()
+    return clean_io.read_clean(
+        "outages", year=int(year), columns=columns, validate=validate
+    )
 
 # Default ERCOT historic-outage extract, resolved relative to the repository
 # root (this file lives at src/market_sim/data/outages.py). One row per
@@ -219,6 +282,62 @@ def _build_outage_masks(
     return masks
 
 
+@lru_cache(maxsize=4)
+def _clean_outage_masks_for_year(
+    year: int, hours: int, bins_path: str
+) -> dict[int, np.ndarray]:
+    """Build ``{plant_code: bool mask}`` from the clean tree's facility rows.
+
+    The clean-backed equivalent of :func:`_build_outage_masks` for the
+    facility-summed layer: every ``unit_id == "ALL"`` row marks the whole plant
+    offline for its interval. Rows are mapped from their ERCOT-local wall-clock
+    stamp (``interval_start_local``) onto the model's fixed 8760-hour clock with
+    the same :func:`_hour_of_year` mapping the raw path uses, and restricted to
+    the qualifying coal/CC (non-peaker) plants via ``bins_path`` so the result
+    matches the raw derive within tolerance.
+
+    The clean datatype is partitioned by **UTC** year, while the model clock is
+    keyed to the ERCOT-local calendar year. A window's local hours straddle the
+    UTC-year boundary by the fixed 6-hour offset, so we read ``year`` and
+    ``year + 1`` and keep the rows whose local stamp falls in ``year`` — exactly
+    the local calendar year the raw path clips each window to. No explicit span
+    filter is needed: the facility ``"ALL"`` rows come from ``campd-outages.csv``
+    (>10-day windows), so every contiguous run already exceeds
+    :data:`MIN_OUTAGE_SPAN_HOURS`. Cached read-only like the raw builder.
+    """
+    clean_io = _clean_io()
+    cols = ["interval_start_local", "plant_id", "unit_id"]
+    frames = [
+        read_clean_outages(y, columns=cols, validate=False)
+        for y in (year, year + 1)
+        if clean_io.clean_exists("outages", year=y)
+    ]
+    if not frames:
+        return {}
+    df = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
+
+    fac = df[df["unit_id"] == "ALL"]
+    local = pd.to_datetime(fac["interval_start_local"])
+    in_year = local.dt.year == year
+    fac, local = fac[in_year], local[in_year]
+    if bins_path:
+        codes = _qualifying_plant_codes(bins_path)
+        keep = fac["plant_id"].astype("int64").isin(codes)
+        fac, local = fac[keep], local[keep]
+
+    masks: dict[int, np.ndarray] = {}
+    plant_codes = fac["plant_id"].astype("int64")
+    for code, idx in plant_codes.groupby(plant_codes).groups.items():
+        mask = np.zeros(hours, dtype=bool)
+        for ts in local.loc[idx]:
+            h = _hour_of_year(ts.month, ts.day, ts.hour)
+            if 0 <= h < hours:
+                mask[h] = True
+        if mask.any():
+            masks[int(code)] = mask
+    return masks
+
+
 def outage_masks_for_year(
     year: int,
     hours: int = HOURS_PER_YEAR,
@@ -235,8 +354,27 @@ def outage_masks_for_year(
 
     ``bins_path`` is the coal/CC bin CSV used to restrict the extract (ERCOT).
     Pass ``None``/empty for a per-ISO extract that is already coal/CC only.
+
+    When ``MARKET_SIM_USE_CLEAN`` is set (default OFF), the ERCOT overlay sources
+    these windows from the curated clean tree via :func:`read_clean_outages`
+    instead of re-deriving them from ``outages_path``; it falls back to the raw
+    derive when no clean partition exists. The clean tree is ERCOT-only, so the
+    clean path is taken only for the default ERCOT extract — other ISOs always
+    use the raw per-ISO ``campd-outages-{ISO}.csv``.
     """
     outages_path = Path(outages_path)
+    if _use_clean() and outages_path == Path(OUTAGES_CSV):
+        clean_io = _clean_io()
+        if clean_io.clean_exists("outages", year=int(year)):
+            return dict(
+                _clean_outage_masks_for_year(
+                    int(year), int(hours), str(bins_path) if bins_path else ""
+                )
+            )
+        logger.warning(
+            "%s set but no clean outages for %d; falling back to raw derive at %s",
+            _USE_CLEAN_ENV, year, outages_path,
+        )
     if not outages_path.exists():
         logger.warning(
             "historic outage extract not found at %s; "
