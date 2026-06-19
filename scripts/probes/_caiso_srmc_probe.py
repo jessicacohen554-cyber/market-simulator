@@ -8,7 +8,8 @@ This is a sensitivity test, NOT a grounded keeper. Usage:
     python scripts/probes/_caiso_srmc_probe.py <out_dir> [--import-shift -15]
 """
 from __future__ import annotations
-import argparse, sys
+import argparse
+import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import market_sim.config.constants as C

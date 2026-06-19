@@ -98,7 +98,7 @@ def fetch_all(facet_filters: dict | None = None) -> list[dict]:
         "length": PAGE_SIZE,
     }
     for col in DATA_COLS:
-        base_params[f"data[]"] = col  # last one wins in requests; use list form below
+        base_params["data[]"] = col  # last one wins in requests; use list form below
 
     # Build data[] as list
     data_list = DATA_COLS

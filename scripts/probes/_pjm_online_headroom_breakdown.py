@@ -17,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import json
 
 from derive_pjm_ordc_overlay import _run_year_kwargs  # noqa: E402
-from market_sim.data.fleet import FUEL_TYPE_NAMES  # noqa: E402
 
 BUNDLE = Path("results/calibration/pjm_27_aswh")
 
