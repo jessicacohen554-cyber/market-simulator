@@ -138,8 +138,35 @@ def _probe(route: str, params: dict, key: str, label: str) -> bool:
     return True
 
 
+def _facet_values(route: str, facet: str, key: str) -> list[tuple[str, str]]:
+    """Return (id, name) for every value of a route's facet (EIA metadata).
+
+    ``GET /v2/<route>/facet/<facet>/`` lists the valid ids — the authoritative
+    way to discover, e.g., the real citygate ``series`` ids without guessing.
+    """
+    url = f"{BASE}/{route}/facet/{facet}/?api_key={key}"
+    try:
+        with urlopen(url, timeout=60) as fh:
+            import json
+            payload = json.loads(fh.read().decode())
+    except (HTTPError, URLError) as exc:
+        print(f"  facet metadata FAIL ({route}/{facet}): {exc}")
+        return []
+    facets = payload.get("response", {}).get("facets", [])
+    out = []
+    for f in facets:
+        out.append((f.get("id", ""), f.get("name") or f.get("alias") or ""))
+    return out
+
+
 def dry_run(key: str, isos: list[str]) -> int:
-    """Validate every series id with one small call each. Returns exit code."""
+    """Validate Henry Hub series and DISCOVER the citygate series ids.
+
+    HH is probed (it already works). For citygate the current ``N3050<ST>3``
+    guess returned +0 rows in the first workflow run, so this prints EIA's own
+    list of citygate series ids (from the series-facet metadata) — copy the right
+    ids into ``ISO_CITYGATE`` / the citygate query. Returns an exit code.
+    """
     ok = True
     print("=== Henry Hub ===")
     ok &= _probe(HH_ROUTE, {"frequency": "monthly",
@@ -148,14 +175,29 @@ def dry_run(key: str, isos: list[str]) -> int:
     ok &= _probe(HH_ROUTE, {"frequency": "daily",
                             "facets[series][]": HH_DAILY_SERIES}, key,
                  f"{HH_DAILY_SERIES} (HH daily)")
-    print("=== Citygate (per ISO) ===")
+
+    print("=== Citygate: current guesses ===")
+    states = {ISO_CITYGATE[i][0] for i in isos}
     for iso in isos:
         state, _ = ISO_CITYGATE[iso]
-        series = f"N3050{state}3"
-        ok &= _probe(CITYGATE_ROUTE, {"frequency": "monthly",
-                                      "facets[series][]": series}, key,
-                     f"{series} ({iso})")
-    print("dry-run complete." if ok else "dry-run: one or more series FAILED.")
+        _probe(CITYGATE_ROUTE, {"frequency": "monthly",
+                                "facets[series][]": f"N3050{state}3"}, key,
+               f"N3050{state}3 ({iso})")
+
+    print(f"=== Citygate: EIA's actual series ids matching 'Citygate' "
+          f"(route {CITYGATE_ROUTE}) ===")
+    found = [(sid, name) for sid, name in _facet_values(CITYGATE_ROUTE, "series", key)
+             if "citygate" in name.lower()]
+    if not found:
+        print("  none found on this route — citygate may live on a different "
+              "route (try natural-gas/pri/sum vs a state route); inspect "
+              f"{BASE}/{CITYGATE_ROUTE}/facet/series/")
+        ok = False
+    for sid, name in sorted(found):
+        flag = " <-- one of our states" if any(
+            f" {s} " in f" {name} " or name.startswith(s) for s in states) else ""
+        print(f"  {sid}: {name}{flag}")
+    print("dry-run complete — set ISO_CITYGATE/query from the list above.")
     return 0 if ok else 1
 
 
