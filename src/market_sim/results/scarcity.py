@@ -615,21 +615,25 @@ def ercot_reserve_coopt_inputs(
         # SCOPED to weather_year >= ercot_storage_as_reserve_from_year (default
         # 2025), which is a *modeling* choice, not a measured one (say so): the
         # credit is physically correct in every year (~0.8 GW 2023 → ~2.8 GW
-        # 2025), but in 2023/2024 the model's ORDC tail is a deliberate keeper
-        # standing in for the documented *out-of-market* scarcity (ERCOT's 2023
-        # RTORDPA / ECRS-conservatism, IMM-estimated >$12B; genuine 2024 tight
-        # days) that an ORDC-only model cannot otherwise reproduce. Crediting the
-        # storage AS there correctly removes the reserve over-fire but leaves that
-        # out-of-market scarcity unmodeled, so 2023 Aug collapses (model $74 vs
-        # actual $217) — a regression against the keepers. 2025 is the lone year
-        # whose residual is *purely* this reserve over-fire (reserves were
-        # genuinely fat: solar+storage buildout largest, no large uncompensated
-        # out-of-market component), so the measured credit closes it cleanly
-        # (2025 LMP MAE 11.3 → 2.7; gas/coal split unchanged). The physically-
-        # pure global path needs 2023/2024 out-of-market scarcity modeled
-        # separately (the deprecated RTORDPA reliability-deployment overlay) —
-        # out of scope; here the credit is gated to the year the residual is
-        # reserve-accounting only.
+        # 2025), but in 2023/2024 the model can only reach the year's *genuine*
+        # scarcity tail THROUGH the reserve over-fire, so crediting the battery
+        # AS makes reserves look adequate on days that were actually tight and the
+        # model loses the real tail. 2023's tail is documented *out-of-market*
+        # scarcity (ERCOT's RTORDPA / ECRS-conservatism, IMM >$12B; the >$200
+        # hours are 47% of the year's $) an ORDC model can't reproduce, so it
+        # collapses (Aug model $74 vs actual $217). 2024's is real tight-day
+        # scarcity (53 h >$200, 8 h >$1000); a single-year probe crediting 2024
+        # cooled avg 29.0→21.2 (actual 26.8), WORSENED MAE 10.5→12.7 and
+        # collapsed the tail 49→7 h >$200 — measured, not "lower penetration".
+        # 2025 is the lone year whose residual is *purely* this reserve over-fire
+        # (tail = 4% of $, reserves genuinely fat), so the measured credit closes
+        # it cleanly (2025 LMP MAE 11.3 → 2.7; gas/coal split unchanged).
+        # The physically-pure global path needs 2023/2024 scarcity modeled by a
+        # genuine ORDC scarcity-price mechanism — NOT the reliability-deployment
+        # overlay, which is an energy/congestion min-gen floor (a credit+overlay
+        # 2024 probe was indistinguishable from credit-only, ~$0.1 on system LMP).
+        # Here the credit is gated to the year the residual is reserve-accounting
+        # only.
         storage_as_mw = ercot_storage_as_reserve_mw(
             int(config.weather_year), hours)
         requirement = np.maximum(
