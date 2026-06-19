@@ -138,3 +138,122 @@ like a ~$1 lever only because they were compared against the decomposition's
 cuts 2025 LMP MAE by a third. 2025 still runs ~$11 hot (residual co-opt
 overshoot) — a real but separate problem, not closable by pushing CT/ST below
 the measured offer curve (that would be a markup).
+
+## run132 — the residual 2025 overshoot is the storage-AS reserve omission
+
+**Date:** 2026-06-19. **Branch:** `claude/ercot-2025-lmp-overshoot-dxet66`.
+**Baseline-to-beat:** run131 (`ercot_dam_lrcredit_3yr`, regenerated on the
+shipped extract — reproduces the documented gate exactly: 2023 MAE 10.5 / tail
+151/88; 2024 10.5 / 49/28; 2025 11.3 / avg 43.7 vs 32.5 / tail 60/39).
+
+### First-hour diagnostic (where the 2025 adder over-fires)
+
+`scripts/_ercot_2025_adder_diag.py` on the regenerated run131, demand-weighted
+model price vs actual RTSPP:
+
+- **The +$11.2 overshoot is entirely the deep tail.** Decomposed by model price
+  band, the **39 hours the model prices >$500 contribute +$10.4** of the +$11.2
+  demand-weighted gap; the <$200 body nets to ~0. The mean overshoot *is* the
+  VOLL-anchored top steps firing ~13× too often (39 model vs 3 actual >$500).
+- **In those 39 model-scarcity hours actual RTSPP had median $90** (mean $172,
+  inflated by 2 genuinely-scarce hours); only 2 of 39 truly exceeded $500 and 7
+  were under $50. The model invents scarcity reality didn't have.
+- Concentrated in **summer (Jul +21.9, Aug +33.4, Sep +15.3)** plus spring
+  (Mar–May) and Jan — exactly when 2025's solar+storage buildout made reserves
+  fat.
+- **The fleet is not undersized** (the most-measured suspect, checked first):
+  EIA-860 ERCOT storage reaches **13.7 GW by end-2025** (8.1 GW end-2024) and
+  the run carries the full year-end fleet (`storage_vintage_ramp` off); solar is
+  vintage-ramped to 29 GW by Dec. So the residual is reserve **supply**, not a
+  thin fleet.
+
+### Mechanism — `storage_as_commitment` double-removes the battery AS
+
+`--storage-as-commitment` (run127+) subtracts ERCOT's *measured* hourly battery
+up-AS (the `storage` column of `ercot_<year>_as_by_restype_hourly.parquet`;
+~0.8 GW 2023 → 2.0 GW 2024 → **2.8 GW 2025**) from the storage **power cap**
+(`storage.reserve_storage_as_power`). The co-opt reserve block then derives a
+unit's reserve room from that **reduced** cap (`reserve_storage_power_cap =
+storage_power_cap`, `dispatch._coopt_rows`: `R_z <= thermal + (cap − dis +
+chg)`). So the committed battery RRS/ECRS is removed from energy (**correct** —
+it can't also arbitrage) *and* from reserve supply (**a bug** — that committed
+AS *is* responsive reserve, counted in ERCOT's RTOLCAP/RTOFFCAP that drive the
+ORDC adder). The model clears reserve ~2.8 GW lower on the ORDC curve than
+reality and prices a scarcity adder in non-scarce hours — biggest in 2025,
+where the battery-AS fleet is largest. This is the **same omission class** as
+the run131 load-resource credit (787 MW of RRS-UFR); the storage piece is ~3.5×
+larger and uncredited.
+
+### Lever (measured, GATED) — `--ercot-storage-as-reserve`, scoped to 2025
+
+`scarcity.ercot_reserve_coopt_inputs` now credits the measured storage-AS MW
+back into the reserve-balance RHS (`requirement -= storage_as_mw`, clipped at
+MCL), exactly as the load credit does — physically exact, no double count (the
+reserve room from the reduced cap is the disjoint arbitrage headroom). Guarded
+on `storage_as_commitment` (off → the full cap is already in the reserve block).
+
+**Scoped to `weather_year >= ercot_storage_as_reserve_from_year` (default
+2025) — a labeled modeling choice, not a measured one.** The credit is
+physically correct in *every* year, but a global probe (credit on for 2023–25)
+**over-cools the calibrated keepers**, and the reason is structural, not a fit:
+in 2023 and 2024 the model can only reach the year's *genuine* scarcity tail
+*through* the reserve over-fire, so crediting the battery AS makes reserves look
+adequate on days that were actually tight and the model loses the real tail.
+
+- **2023** collapses (Aug model $74 vs actual $217; tail 88→27 >$500). Its tail
+  is the documented **out-of-market** scarcity (ERCOT's 2023 RTORDPA /
+  ECRS-conservatism, IMM-estimated >$12B; the >$200 hours are **47% of the
+  year's total $**) that an ORDC-only model cannot otherwise reproduce.
+- **2024** over-cools too, and a dedicated single-year probe quantifies it:
+  crediting 2024 drops avg **29.0 → 21.2** (actual 26.8), **worsens MAE
+  10.5 → 12.7**, and collapses the tail **49 → 7 hours >$200** (actual 53; the
+  year really had 8 hours >$1000). So 2024's exclusion is **not** "lower storage
+  penetration" — it is measured: 2024 carries real tight-day scarcity (14% of
+  total $) that the ORDC model only produces via the over-fire.
+- **2025 is the lone year whose residual is purely the reserve-accounting
+  over-fire** (tail = 4% of total $, reserves genuinely fat, no large
+  uncompensated out-of-market component), so the measured credit closes it
+  cleanly. Forecast years inherit it under the reformed RTC+B fleet regime.
+
+The physically-pure global path therefore needs 2023/2024 scarcity modeled by a
+genuine **ORDC scarcity-price** mechanism — *not* the reliability-deployment
+overlay. That overlay is an energy/congestion **min-gen floor**: a credit+overlay
+probe on 2024 was indistinguishable from credit-only (21.1 vs 21.2 avg), because
+forcing pocket-thermal output adds supply at the hub and moves system LMP by
+~$0.1 (if anything down). Out of scope here.
+
+### Gate (same-extract run131 baseline → run132)
+
+| year | LMP MAE | avg (act) | >$200 (act) | >$500 (act) |
+|---|---|---|---|---|
+| 2023 | 10.5 → **10.5** | 46.7 → 46.7 (48.1) | 151 → 151 (181) | 88 → 88 (104) |
+| 2024 | 10.5 → **10.5** | 29.0 → 29.0 (26.7) | 49 → 49 (53) | 28 → 28 (16) |
+| 2025 | 11.3 → **2.7** | 43.7 → **33.9** (32.5) | 60 → **8** (31) | 39 → **6** (3) |
+
+2023 and 2024 are **byte-identical** to run131 (the credit is off for those
+years — keepers protected by construction). 2025's +$11 overshoot closes to
++$1.4 and the >$500 over-fire drops 39→6 (actual 3); every 2025 month lands
+within ~$6, most within $1–2. **Volumes unchanged** (`DAM−BASE ≈ 0` — a
+price-only reserve-clearing lever). Judged on the 2025 benchmarks (EIA-923 2025
+is an incomplete vintage and is not used): the **gas/coal split is 76.4% model
+vs 76.0% actual** (EIA-930; gas 203.9 vs 200.2 TWh, coal 62.9 vs 63.4) and the
+LMP lands on actual. Honest caveat: the credit slightly *under*-counts the
+moderate $200–500 tail incidence (8 vs 31 >$200) while the mean and MAE land on
+actual — the reserve credit relieves the over-fire broadly.
+
+**Measured (no markup on the credit magnitude — it is the measured battery AS);
+the 2025 *scope* is a labeled modeling choice, justified above, not dressed as
+measured.** Keeper: `2026-06-19-run132-storage-as-reserve`, bundle
+`ercot_dam_storageas_3yr`.
+
+### Dashboard fix (incidental, found this session)
+
+The backcast HTML had stopped drawing the actual ERCOT LMP line. Cause: the W1
+data relocation moved `actual_lmp.json` to `data/raw/_validation-source/`
+(`paths.CALIBRATION_DIR`), and commit 01a5882 fixed that stale path everywhere
+*except* `render_calibration_html.py:_actual_lmp_table`, which builds the
+dashboard's per-(ISO,year) bench `avgLMP` block — so it read the missing path,
+returned `{}`, and no `avgLMP` was attached (the page's `actualLMP(yr)` then
+returned null). Fixed to read `CALIBRATION_DIR` (old path kept as fallback);
+the ERCOT bench parts repopulate on the run132 render. The same fix repopulates
+the other ISOs on their next render.
