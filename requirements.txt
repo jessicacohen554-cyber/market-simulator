@@ -1,2 +1,62 @@
-requests>=2.31.0
-openpyxl>=3.1
+# requirements.txt — pip fallback ONLY. NOT the source of truth.
+#
+# The single source of truth for dependencies is pyproject.toml, with exact
+# versions pinned in uv.lock. Develop with uv:  uv sync  (see README Quickstart).
+#
+# This file is a GENERATED, fully-pinned export of the runtime dependencies
+# (no dev extras) for environments where uv is unavailable and plain pip must
+# be used. Regenerate after changing pyproject.toml / uv.lock with:
+#
+#     uv export --format requirements-txt --no-dev --no-emit-project --no-hashes > requirements.txt
+#
+# Then re-add this header. Do NOT hand-edit the pins below.
+# ---------------------------------------------------------------------------
+annotated-types==0.7.0
+    # via pydantic
+certifi==2026.5.20
+    # via requests
+charset-normalizer==3.4.7
+    # via requests
+et-xmlfile==2.0.0
+    # via openpyxl
+highspy==1.14.0
+    # via market-sim
+idna==3.18
+    # via requests
+numpy==2.4.6
+    # via
+    #   highspy
+    #   market-sim
+    #   pandas
+    #   scipy
+openpyxl==3.1.5
+    # via market-sim
+pandas==3.0.3
+    # via market-sim
+pyarrow==24.0.0
+    # via market-sim
+pydantic==2.13.4
+    # via market-sim
+pydantic-core==2.46.4
+    # via pydantic
+python-dateutil==2.9.0.post0
+    # via pandas
+pyyaml==6.0.3
+    # via market-sim
+requests==2.34.2
+    # via market-sim
+scipy==1.17.1
+    # via market-sim
+six==1.17.0
+    # via python-dateutil
+typing-extensions==4.15.0
+    # via
+    #   pydantic
+    #   pydantic-core
+    #   typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
+tzdata==2026.2 ; sys_platform == 'emscripten' or sys_platform == 'win32'
+    # via pandas
+urllib3==2.7.0
+    # via requests

@@ -284,7 +284,7 @@ Branch: claude/data-finalize. Commit + push.
 
 ## Handoff: documentation session (next, separate)
 
-After W5, a **separate documentation session** reconciles prose with the new reality using the existing `sync-docs` skill. Scope to flag for that session (from the staleness audit): `market-sim-build-plan.md` data-layout section (now wrong), `claude.md` architecture diagram (`data/ → ...` paths moved), README has **no install/run instructions**, `requirements.txt` vs `pyproject.toml` ambiguity, empty `context/` folder referenced as if populated, and pointing all data references at the new `data/clean` + `data/dictionary/data-dictionary.md`. That session should also delete/retire the obsolete `inputs/`-based descriptions.
+After W5, a **separate documentation session** reconciles prose with the new reality using the existing `sync-docs` skill. Scope to flag for that session (from the staleness audit): `market-sim-build-plan.md` data-layout section (now wrong), `claude.md` architecture diagram (`data/ → ...` paths moved), and pointing all data references at the new `data/clean` + `data/dictionary/data-dictionary.md`. That session should also delete/retire the obsolete `inputs/`-based descriptions. (Resolved separately on `claude/docs-entrypoint`: the README now carries a Quickstart + install/run instructions; `pyproject.toml` + `uv.lock` are the single dependency source of truth, with `requirements.txt` reduced to a clearly-labelled generated pip fallback; and the empty `context/` folder is now documented by `context/README.md` rather than referenced as if populated.)
 
 ## Risks & mitigations
 
