@@ -19,6 +19,7 @@ independent; a failure in one is reported but does not stop the others.
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -57,7 +58,16 @@ def regenerate(datatypes: list[str]) -> int:
             failed += 1
             continue
         print(f"[run ] {datatype}: {script.name}")
-        result = subprocess.run([sys.executable, str(script)], cwd=SCRIPTS_DIR.parent)
+        # Run with the repo root on PYTHONPATH so the curation scripts'
+        # `import scripts.lib.clean_io` resolves. Invoking a script by path puts
+        # its own dir (scripts/) on sys.path, not the repo root, so without this
+        # the scripts that import the shared writer fail with ModuleNotFoundError.
+        repo_root = SCRIPTS_DIR.parent
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.pathsep.join(
+            [str(repo_root), env["PYTHONPATH"]] if env.get("PYTHONPATH") else [str(repo_root)]
+        )
+        result = subprocess.run([sys.executable, str(script)], cwd=repo_root, env=env)
         if result.returncode != 0:
             print(f"[FAIL] {datatype}: exit {result.returncode}", file=sys.stderr)
             failed += 1
