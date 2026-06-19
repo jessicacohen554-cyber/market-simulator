@@ -7,13 +7,15 @@ them ON for CAISO and leaves every other ISO untouched. The CLI flags are
 tri-state (``None`` = keep the base default; explicit ``True``/``False``
 overrides), so a no-floor baseline probe stays possible.
 """
+
 import importlib.util
 import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location(
-    "run_calibration", str(REPO / "scripts" / "run_calibration.py"))
+    "run_calibration", str(REPO / "scripts" / "run_calibration.py")
+)
 rc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rc)
 
@@ -34,7 +36,8 @@ class TestCaisoKeeperDefaults(unittest.TestCase):
 
     def test_explicit_override_can_disable_for_a_baseline_probe(self):
         c = rc._calibration_config(2024, "CAISO", 8760, 3.0).with_overrides(
-            caiso_gas_commitment_floor=False, negative_renewable_offers=False)
+            caiso_gas_commitment_floor=False, negative_renewable_offers=False
+        )
         self.assertFalse(c.caiso_gas_commitment_floor)
         self.assertFalse(c.negative_renewable_offers)
 

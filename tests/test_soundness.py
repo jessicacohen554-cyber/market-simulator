@@ -58,6 +58,7 @@ from market_sim.results import cache
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_fleet(zone_specs, zone_names, T=24):
     """Build a minimal fleet from (zone, pmax, mc) tuples."""
     gens = [
@@ -79,7 +80,9 @@ def _make_fleet(zone_specs, zone_names, T=24):
     return gens, fleet, mc_arr
 
 
-def _energy_balance_residual(result, fleet, demand, incidence=None, storage_arrays=None):
+def _energy_balance_residual(
+    result, fleet, demand, incidence=None, storage_arrays=None
+):
     """Return per-zone per-hour residual: supply - demand.  Should be ~0."""
     T = demand.shape[1]
     n_zones = demand.shape[0]
@@ -96,14 +99,23 @@ def _energy_balance_residual(result, fleet, demand, incidence=None, storage_arra
             chg[storage_arrays.zone_idx[s]] += result.storage_charge[s]
             dis[storage_arrays.zone_idx[s]] += result.storage_discharge[s]
     dump = result.dump if result.dump is not None else np.zeros_like(result.slack)
-    supply = (gen_by_zone + result.wind_dispatched + result.solar_dispatched
-              + dis - chg + net_flow + result.slack - dump)
+    supply = (
+        gen_by_zone
+        + result.wind_dispatched
+        + result.solar_dispatched
+        + dis
+        - chg
+        + net_flow
+        + result.slack
+        - dump
+    )
     return supply - demand
 
 
 # ===================================================================
 # LAYER 1: Spec Compliance (Static Checks)
 # ===================================================================
+
 
 class TestSpecCompliance(unittest.TestCase):
     """Verify the codebase follows methodology-spec rules at the source level."""
@@ -116,24 +128,31 @@ class TestSpecCompliance(unittest.TestCase):
             source = py.read_text()
             for mod in forbidden:
                 self.assertNotIn(
-                    f"import {mod}", source,
-                    f"Forbidden import '{mod}' found in {py.relative_to(src_root)}"
+                    f"import {mod}",
+                    source,
+                    f"Forbidden import '{mod}' found in {py.relative_to(src_root)}",
                 )
             self.assertNotIn(
-                "from scipy.optimize", source,
-                f"Forbidden 'scipy.optimize' import in {py.relative_to(src_root)}"
+                "from scipy.optimize",
+                source,
+                f"Forbidden 'scipy.optimize' import in {py.relative_to(src_root)}",
             )
 
     def test_no_hour_loops_in_dispatch_builder(self):
         """dispatch.py must not loop over hours in constraint/bound/cost assembly."""
         dispatch_path = (
             Path(__file__).parent.parent
-            / "src" / "market_sim" / "model" / "dispatch.py"
+            / "src"
+            / "market_sim"
+            / "model"
+            / "dispatch.py"
         )
         source = dispatch_path.read_text()
         tree = ast.parse(source)
         builder_funcs = {
-            "build_constraints", "build_variable_bounds", "build_cost_vector",
+            "build_constraints",
+            "build_variable_bounds",
+            "build_cost_vector",
         }
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef) and node.name in builder_funcs:
@@ -141,8 +160,9 @@ class TestSpecCompliance(unittest.TestCase):
                     if isinstance(child, ast.For):
                         iter_src = ast.dump(child.iter)
                         self.assertNotIn(
-                            "8760", iter_src,
-                            f"Hour-loop in {node.name}: range(8760) detected"
+                            "8760",
+                            iter_src,
+                            f"Hour-loop in {node.name}: range(8760) detected",
                         )
                         if "Call" in iter_src and "range" in iter_src:
                             if "'T'" in iter_src or "layout.T" in iter_src:
@@ -153,6 +173,7 @@ class TestSpecCompliance(unittest.TestCase):
     def test_scenario_config_is_plain_dataclass(self):
         """ScenarioConfig must be a plain @dataclass, NOT Pydantic."""
         import dataclasses
+
         self.assertTrue(dataclasses.is_dataclass(ScenarioConfig))
         mro = [cls.__name__ for cls in ScenarioConfig.__mro__]
         self.assertNotIn("BaseModel", mro)
@@ -166,9 +187,7 @@ class TestSpecCompliance(unittest.TestCase):
 
         caiso = get_iso_config("CAISO")
         self.assertEqual(len(caiso.zones), 4)
-        self.assertAlmostEqual(
-            sum(z.load_share for z in caiso.zones), 1.0, places=6
-        )
+        self.assertAlmostEqual(sum(z.load_share for z in caiso.zones), 1.0, places=6)
         wecc = [z for z in caiso.zones if "WECC" in z.name][0]
         self.assertEqual(wecc.load_share, 0.0)
 
@@ -183,23 +202,18 @@ class TestSpecCompliance(unittest.TestCase):
 
     def test_no_pickle_or_csv_in_results(self):
         """Result storage must use Parquet only."""
-        results_root = (
-            Path(__file__).parent.parent
-            / "src" / "market_sim" / "results"
-        )
+        results_root = Path(__file__).parent.parent / "src" / "market_sim" / "results"
         for py in results_root.rglob("*.py"):
             source = py.read_text()
-            self.assertNotIn("pickle.dump", source,
-                             f"pickle.dump found in {py.name}")
-            self.assertNotIn(".to_csv(", source,
-                             f".to_csv found in {py.name}")
-            self.assertNotIn(".to_hdf(", source,
-                             f".to_hdf found in {py.name}")
+            self.assertNotIn("pickle.dump", source, f"pickle.dump found in {py.name}")
+            self.assertNotIn(".to_csv(", source, f".to_csv found in {py.name}")
+            self.assertNotIn(".to_hdf(", source, f".to_hdf found in {py.name}")
 
 
 # ===================================================================
 # LAYER 2: LP Invariants
 # ===================================================================
+
 
 class TestLPInvariants(unittest.TestCase):
     """Core LP properties that must hold regardless of inputs."""
@@ -223,13 +237,17 @@ class TestLPInvariants(unittest.TestCase):
     def test_price_equals_marginal_unit_cost(self):
         """With 2 gens and demand between them, price = expensive gen's MC."""
         zone_names = ["Z0"]
-        _, fleet, mc = _make_fleet(
-            [("Z0", 60, 30), ("Z0", 60, 70)], zone_names, T=24
-        )
+        _, fleet, mc = _make_fleet([("Z0", 60, 30), ("Z0", 60, 70)], zone_names, T=24)
         demand = np.full((1, 24), 90.0)
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc, T=24
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            T=24,
         )
         np.testing.assert_allclose(result.prices[0], 70.0, atol=0.5)
 
@@ -240,8 +258,15 @@ class TestLPInvariants(unittest.TestCase):
         demand = np.full((1, 24), 100.0)
         voll = 5000.0
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc, voll=voll, T=24
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            voll=voll,
+            T=24,
         )
         self.assertTrue(np.all(result.slack > 0))
         np.testing.assert_allclose(result.prices[0], voll, atol=1.0)
@@ -255,8 +280,14 @@ class TestLPInvariants(unittest.TestCase):
         demand = np.full((1, 24), 120.0)
 
         result = solve_dispatch(
-            fleet, demand, wind_cf, wind_cap,
-            np.zeros((1, 24)), np.zeros(1), mc=mc, T=24
+            fleet,
+            demand,
+            wind_cf,
+            wind_cap,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            T=24,
         )
         np.testing.assert_allclose(result.wind_dispatched[0], 40.0, atol=0.1)
         np.testing.assert_allclose(result.dispatch.sum(axis=0), 80.0, atol=0.1)
@@ -272,8 +303,14 @@ class TestLPInvariants(unittest.TestCase):
         demand = np.full((1, 24), 100.0)
 
         result = solve_dispatch(
-            fleet, demand, wind_cf, wind_cap,
-            np.zeros((1, 24)), np.zeros(1), mc=mc, T=24
+            fleet,
+            demand,
+            wind_cf,
+            wind_cap,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            T=24,
         )
         available = wind_cf * wind_cap[:, None]
         curtailment = available - result.wind_dispatched
@@ -283,13 +320,18 @@ class TestLPInvariants(unittest.TestCase):
         """Price = MC of marginal generator, verified by complementary slackness."""
         zone_names = ["Z0"]
         _, fleet, mc = _make_fleet(
-            [("Z0", 50, 20), ("Z0", 50, 50), ("Z0", 50, 80)],
-            zone_names, T=24
+            [("Z0", 50, 20), ("Z0", 50, 50), ("Z0", 50, 80)], zone_names, T=24
         )
         demand = np.full((1, 24), 60.0)
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc, T=24
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            T=24,
         )
         np.testing.assert_allclose(result.prices[0], 50.0, atol=0.5)
         np.testing.assert_allclose(result.dispatch[0], 50.0, atol=0.1)
@@ -301,32 +343,45 @@ class TestLPInvariants(unittest.TestCase):
 # LAYER 3: Physics Conservation
 # ===================================================================
 
+
 class TestPhysicsConservation(unittest.TestCase):
     """Physical invariants: SOC cyclic, RTE losses, flow limits."""
 
     def _run_storage_case(self, T=48):
         """Return a dispatch result with one storage unit, peak/off-peak demand."""
         zone_names = ["Z0"]
-        _, fleet, mc = _make_fleet(
-            [("Z0", 200, 20), ("Z0", 200, 80)], zone_names, T=T
-        )
+        _, fleet, mc = _make_fleet([("Z0", 200, 20), ("Z0", 200, 80)], zone_names, T=T)
         demand = np.zeros((1, T))
         for h in range(T):
             demand[0, h] = 100 if (h % 24) < 12 else 300
 
-        eta = 0.85 ** 0.5
-        units = [StorageUnit(
-            unit_id="STO", zone="Z0", tech_name="li_ion_4hr",
-            power_cap_mw=100, energy_cap_mwh=400,
-            eta_charge=eta, eta_discharge=eta,
-        )]
+        eta = 0.85**0.5
+        units = [
+            StorageUnit(
+                unit_id="STO",
+                zone="Z0",
+                tech_name="li_ion_4hr",
+                power_cap_mw=100,
+                energy_cap_mwh=400,
+                eta_charge=eta,
+                eta_discharge=eta,
+            )
+        ]
         sa = storage_units_to_arrays(units, zone_names)
 
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, T)), np.zeros(1),
-            np.zeros((1, T)), np.zeros(1), mc=mc,
-            storage_power_cap=sa.power_cap, storage_energy_cap=sa.energy_cap,
-            storage_zone_idx=sa.zone_idx, eta_chg=sa.eta_chg, eta_dis=sa.eta_dis,
+            fleet,
+            demand,
+            np.zeros((1, T)),
+            np.zeros(1),
+            np.zeros((1, T)),
+            np.zeros(1),
+            mc=mc,
+            storage_power_cap=sa.power_cap,
+            storage_energy_cap=sa.energy_cap,
+            storage_zone_idx=sa.zone_idx,
+            eta_chg=sa.eta_chg,
+            eta_dis=sa.eta_dis,
             T=T,
         )
         return result, sa
@@ -335,9 +390,10 @@ class TestPhysicsConservation(unittest.TestCase):
         """SOC[0] = SOC[T-1] — the cyclic constraint holds."""
         result, _ = self._run_storage_case(T=48)
         np.testing.assert_allclose(
-            result.storage_soc[0, 0], result.storage_soc[0, -1],
+            result.storage_soc[0, 0],
+            result.storage_soc[0, -1],
             atol=1e-3,
-            err_msg="SOC cyclic boundary violated"
+            err_msg="SOC cyclic boundary violated",
         )
 
     def test_rte_losses(self):
@@ -347,8 +403,11 @@ class TestPhysicsConservation(unittest.TestCase):
         total_discharge = result.storage_discharge[0].sum()
         if total_charge > 1.0:
             rte_effective = total_discharge / total_charge
-            self.assertLess(rte_effective, 1.0,
-                            "Discharge exceeds charge — energy created from nothing")
+            self.assertLess(
+                rte_effective,
+                1.0,
+                "Discharge exceeds charge — energy created from nothing",
+            )
             self.assertAlmostEqual(rte_effective, 0.85, delta=0.05)
 
     def test_soc_dynamics_hour_by_hour(self):
@@ -364,8 +423,7 @@ class TestPhysicsConservation(unittest.TestCase):
             prev = soc[t - 1]  # wraps around for t=0
             expected = prev + eta_c * chg[t] - dis[t] / eta_d
             self.assertAlmostEqual(
-                soc[t], expected, places=3,
-                msg=f"SOC dynamics violated at hour {t}"
+                soc[t], expected, places=3, msg=f"SOC dynamics violated at hour {t}"
             )
 
     def test_transmission_flow_within_ttc(self):
@@ -374,23 +432,37 @@ class TestPhysicsConservation(unittest.TestCase):
         iso = get_iso_config("ERCOT")
         zone_names = iso.zone_names
         _, fleet, mc = _make_fleet(
-            [("North", 5000, 30), ("South", 2000, 50),
-             ("West", 1000, 70), ("Houston", 3000, 45)],
-            zone_names, T=T,
+            [
+                ("North", 5000, 30),
+                ("South", 2000, 50),
+                ("West", 1000, 70),
+                ("Houston", 3000, 45),
+            ],
+            zone_names,
+            T=T,
         )
-        demand = np.array([z.load_share for z in iso.zones])[:, None] * np.full(T, 6000.0)
+        demand = np.array([z.load_share for z in iso.zones])[:, None] * np.full(
+            T, 6000.0
+        )
         incidence = build_incidence_matrix(iso.links, zone_names)
         ttc = get_ttc_array(iso.links)
 
         n_zones = len(zone_names)
         result = solve_dispatch(
-            fleet, demand, np.zeros((n_zones, T)), np.zeros(n_zones),
-            np.zeros((n_zones, T)), np.zeros(n_zones), mc=mc,
-            incidence=incidence, ttc=ttc, T=T,
+            fleet,
+            demand,
+            np.zeros((n_zones, T)),
+            np.zeros(n_zones),
+            np.zeros((n_zones, T)),
+            np.zeros(n_zones),
+            mc=mc,
+            incidence=incidence,
+            ttc=ttc,
+            T=T,
         )
         self.assertTrue(
             np.all(np.abs(result.flows) <= ttc[:, None] + 1e-4),
-            "Flow exceeds TTC on at least one link"
+            "Flow exceeds TTC on at least one link",
         )
 
     def test_emissions_equal_dispatch_times_rate(self):
@@ -399,10 +471,26 @@ class TestPhysicsConservation(unittest.TestCase):
 
         zone_names = ["Z0"]
         gens = [
-            Generator(unit_id="G0", name="G0", zone="Z0", fuel_type="gas_cc",
-                      pmax_mw=200, heat_rate=7.0, vom=0, emission_rate_co2=0.4),
-            Generator(unit_id="G1", name="G1", zone="Z0", fuel_type="coal",
-                      pmax_mw=200, heat_rate=10.0, vom=0, emission_rate_co2=0.9),
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=200,
+                heat_rate=7.0,
+                vom=0,
+                emission_rate_co2=0.4,
+            ),
+            Generator(
+                unit_id="G1",
+                name="G1",
+                zone="Z0",
+                fuel_type="coal",
+                pmax_mw=200,
+                heat_rate=10.0,
+                vom=0,
+                emission_rate_co2=0.9,
+            ),
         ]
         fleet = generators_to_fleet_arrays(gens, zone_names, hours=24)
         dispatch = np.array([[100.0] * 24, [50.0] * 24])
@@ -416,6 +504,7 @@ class TestPhysicsConservation(unittest.TestCase):
 # LAYER 4: Economic Logic
 # ===================================================================
 
+
 class TestEconomicLogic(unittest.TestCase):
     """Merit order, carbon pricing, storage arbitrage behave correctly."""
 
@@ -424,12 +513,19 @@ class TestEconomicLogic(unittest.TestCase):
         zone_names = ["Z0"]
         _, fleet, mc = _make_fleet(
             [("Z0", 100, 10), ("Z0", 100, 40), ("Z0", 100, 70), ("Z0", 100, 100)],
-            zone_names, T=24,
+            zone_names,
+            T=24,
         )
         demand = np.full((1, 24), 250.0)
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc, T=24,
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            T=24,
         )
         np.testing.assert_allclose(result.dispatch[0], 100.0, atol=0.1)
         np.testing.assert_allclose(result.dispatch[1], 100.0, atol=0.1)
@@ -440,10 +536,26 @@ class TestEconomicLogic(unittest.TestCase):
         """A carbon price makes high-emission units more expensive, reordering dispatch."""
         zone_names = ["Z0"]
         gens = [
-            Generator(unit_id="GAS", name="Gas", zone="Z0", fuel_type="gas_cc",
-                      pmax_mw=100, heat_rate=0, vom=30, emission_rate_co2=0.4),
-            Generator(unit_id="COAL", name="Coal", zone="Z0", fuel_type="coal",
-                      pmax_mw=100, heat_rate=0, vom=25, emission_rate_co2=1.0),
+            Generator(
+                unit_id="GAS",
+                name="Gas",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=100,
+                heat_rate=0,
+                vom=30,
+                emission_rate_co2=0.4,
+            ),
+            Generator(
+                unit_id="COAL",
+                name="Coal",
+                zone="Z0",
+                fuel_type="coal",
+                pmax_mw=100,
+                heat_rate=0,
+                vom=25,
+                emission_rate_co2=1.0,
+            ),
         ]
         fleet = generators_to_fleet_arrays(gens, zone_names, hours=24)
 
@@ -451,43 +563,74 @@ class TestEconomicLogic(unittest.TestCase):
         mc_no_carbon = np.array([[30.0] * 24, [25.0] * 24])
         demand = np.full((1, 24), 80.0)
         r1 = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc_no_carbon, T=24
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc_no_carbon,
+            T=24,
         )
-        self.assertGreater(r1.dispatch[1].mean(), r1.dispatch[0].mean(),
-                           "Coal should dispatch more when cheaper")
+        self.assertGreater(
+            r1.dispatch[1].mean(),
+            r1.dispatch[0].mean(),
+            "Coal should dispatch more when cheaper",
+        )
 
         # With $50/ton carbon: coal = 25+50=75, gas = 30+20=50
         mc_carbon = np.array([[50.0] * 24, [75.0] * 24])
         r2 = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc_carbon, T=24
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc_carbon,
+            T=24,
         )
-        self.assertGreater(r2.dispatch[0].mean(), r2.dispatch[1].mean(),
-                           "Gas should dispatch more when carbon makes coal expensive")
+        self.assertGreater(
+            r2.dispatch[0].mean(),
+            r2.dispatch[1].mean(),
+            "Gas should dispatch more when carbon makes coal expensive",
+        )
 
     def test_storage_arbitrages_peak_offpeak(self):
         """Storage charges when prices are low and discharges when high."""
         zone_names = ["Z0"]
-        _, fleet, mc = _make_fleet(
-            [("Z0", 200, 20), ("Z0", 200, 80)], zone_names, T=24
-        )
+        _, fleet, mc = _make_fleet([("Z0", 200, 20), ("Z0", 200, 80)], zone_names, T=24)
         demand = np.zeros((1, 24))
         for h in range(24):
             demand[0, h] = 100 if h < 12 else 250
 
         eta = 0.9
-        units = [StorageUnit(
-            unit_id="S0", zone="Z0", tech_name="li_ion_8hr", power_cap_mw=50,
-            energy_cap_mwh=200, eta_charge=eta, eta_discharge=eta,
-        )]
+        units = [
+            StorageUnit(
+                unit_id="S0",
+                zone="Z0",
+                tech_name="li_ion_8hr",
+                power_cap_mw=50,
+                energy_cap_mwh=200,
+                eta_charge=eta,
+                eta_discharge=eta,
+            )
+        ]
         sa = storage_units_to_arrays(units, zone_names)
 
         result = solve_dispatch(
-            fleet, demand, np.zeros((1, 24)), np.zeros(1),
-            np.zeros((1, 24)), np.zeros(1), mc=mc,
-            storage_power_cap=sa.power_cap, storage_energy_cap=sa.energy_cap,
-            storage_zone_idx=sa.zone_idx, eta_chg=sa.eta_chg, eta_dis=sa.eta_dis,
+            fleet,
+            demand,
+            np.zeros((1, 24)),
+            np.zeros(1),
+            np.zeros((1, 24)),
+            np.zeros(1),
+            mc=mc,
+            storage_power_cap=sa.power_cap,
+            storage_energy_cap=sa.energy_cap,
+            storage_zone_idx=sa.zone_idx,
+            eta_chg=sa.eta_chg,
+            eta_dis=sa.eta_dis,
             T=24,
         )
         chg_offpeak = result.storage_charge[0, :12].sum()
@@ -502,6 +645,7 @@ class TestEconomicLogic(unittest.TestCase):
 # ===================================================================
 # LAYER 5: End-to-End Pipeline
 # ===================================================================
+
 
 class TestEndToEnd(unittest.TestCase):
     """Full-pipeline tests using the real runner and solver."""
@@ -569,8 +713,9 @@ class TestEndToEnd(unittest.TestCase):
         result_high = cache.load_result("ERCOT", key_high, 2026)
 
         self.assertGreater(
-            result_high.prices.mean(), result_low.prices.mean(),
-            "High gas scenario should have higher average prices"
+            result_high.prices.mean(),
+            result_low.prices.mean(),
+            "High gas scenario should have higher average prices",
         )
 
     def test_capacity_evolution_changes_fleet(self):
@@ -586,13 +731,13 @@ class TestEndToEnd(unittest.TestCase):
         wind_2026 = r2026.wind_dispatched.sum()
         wind_2028 = r2028.wind_dispatched.sum()
 
-        changed = (
-            n_gen_2026 != n_gen_2028
-            or not np.isclose(wind_2026, wind_2028, rtol=0.01)
+        changed = n_gen_2026 != n_gen_2028 or not np.isclose(
+            wind_2026, wind_2028, rtol=0.01
         )
-        self.assertTrue(changed,
+        self.assertTrue(
+            changed,
             f"Fleet should evolve: n_gen 2026={n_gen_2026} vs 2028={n_gen_2028}, "
-            f"wind 2026={wind_2026:.0f} vs 2028={wind_2028:.0f}"
+            f"wind 2026={wind_2026:.0f} vs 2028={wind_2028:.0f}",
         )
 
     def test_caiso_with_wecc_imports(self):
@@ -603,13 +748,13 @@ class TestEndToEnd(unittest.TestCase):
         result = cache.load_result("CAISO", key, 2026)
         self.assertEqual(result.status, "Optimal")
         price_std = result.prices[0].std()
-        self.assertGreater(price_std, 0.1,
-                           "CAISO prices should not be perfectly flat")
+        self.assertGreater(price_std, 0.1, "CAISO prices should not be perfectly flat")
 
 
 # ===================================================================
 # LAYER 6: Performance
 # ===================================================================
+
 
 class TestPerformance(unittest.TestCase):
     """Verify the model meets its performance targets."""
@@ -623,22 +768,31 @@ class TestPerformance(unittest.TestCase):
         zones_cycle = zone_names * 50
         gens = [
             Generator(
-                unit_id=f"G{i}", name=f"G{i}", zone=zones_cycle[i],
-                fuel_type="gas_cc", pmax_mw=100, pmin_mw=0,
-                heat_rate=0, vom=15 + 75 * i / 200, eford=0,
+                unit_id=f"G{i}",
+                name=f"G{i}",
+                zone=zones_cycle[i],
+                fuel_type="gas_cc",
+                pmax_mw=100,
+                pmin_mw=0,
+                heat_rate=0,
+                vom=15 + 75 * i / 200,
+                eford=0,
             )
             for i in range(200)
         ]
         fleet = generators_to_fleet_arrays(gens, zone_names, hours=T)
         mc = np.array([[g.vom] * T for g in gens], dtype=float)
 
-        eta = 0.85 ** 0.5
+        eta = 0.85**0.5
         units = [
             StorageUnit(
-                unit_id=f"STO{i}", zone=zone_names[i % 4],
+                unit_id=f"STO{i}",
+                zone=zone_names[i % 4],
                 tech_name="li_ion_4hr",
-                power_cap_mw=100, energy_cap_mwh=400,
-                eta_charge=eta, eta_discharge=eta,
+                power_cap_mw=100,
+                energy_cap_mwh=400,
+                eta_charge=eta,
+                eta_discharge=eta,
             )
             for i in range(5)
         ]
@@ -660,26 +814,39 @@ class TestPerformance(unittest.TestCase):
         wind_cap = np.zeros(n_zones)
         wind_cap[west] = 2000.0
         solar_cf = np.zeros((n_zones, T))
-        solar_cf[south_central] = np.clip(
-            0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1
-        )
+        solar_cf[south_central] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
         solar_cap = np.zeros(n_zones)
         solar_cap[south_central] = 1500.0
 
         result = solve_dispatch(
-            fleet, demand, wind_cf, wind_cap, solar_cf, solar_cap, mc=mc,
-            incidence=incidence, ttc=ttc,
-            storage_power_cap=sa.power_cap, storage_energy_cap=sa.energy_cap,
-            storage_zone_idx=sa.zone_idx, eta_chg=sa.eta_chg, eta_dis=sa.eta_dis,
+            fleet,
+            demand,
+            wind_cf,
+            wind_cap,
+            solar_cf,
+            solar_cap,
+            mc=mc,
+            incidence=incidence,
+            ttc=ttc,
+            storage_power_cap=sa.power_cap,
+            storage_energy_cap=sa.energy_cap,
+            storage_zone_idx=sa.zone_idx,
+            eta_chg=sa.eta_chg,
+            eta_dis=sa.eta_dis,
         )
 
-        print(f"\nPerformance: build={result.build_time:.2f}s "
-              f"solve={result.solve_time:.2f}s "
-              f"total={result.build_time + result.solve_time:.2f}s")
+        print(
+            f"\nPerformance: build={result.build_time:.2f}s "
+            f"solve={result.solve_time:.2f}s "
+            f"total={result.build_time + result.solve_time:.2f}s"
+        )
 
         self.assertLess(result.build_time, 3.0, "Matrix build exceeds 3s target")
-        self.assertLess(result.build_time + result.solve_time, 30.0,
-                        "Total dispatch time exceeds 30s budget")
+        self.assertLess(
+            result.build_time + result.solve_time,
+            30.0,
+            "Total dispatch time exceeds 30s budget",
+        )
 
         residual = _energy_balance_residual(result, fleet, demand, incidence, sa)
         np.testing.assert_allclose(residual, 0, atol=1e-3)
@@ -689,20 +856,24 @@ class TestPerformance(unittest.TestCase):
 # LAYER 7: Sweep and Config Integrity
 # ===================================================================
 
+
 class TestSweepIntegrity(unittest.TestCase):
     """Sweep system produces correct, unique configurations."""
 
     def test_factorial_sweep_counts(self):
         """3x3 sweep produces exactly 9 unique configs."""
-        sweep = SweepDefinition(sweep={
-            "gas_price_path": ["low", "mid", "high"],
-            "carbon_price": [0.0, 25.0, 50.0],
-        })
+        sweep = SweepDefinition(
+            sweep={
+                "gas_price_path": ["low", "mid", "high"],
+                "carbon_price": [0.0, 25.0, 50.0],
+            }
+        )
         configs = sweep.generate()
         self.assertEqual(len(configs), 9)
         keys = [c.cache_key() for c in configs]
-        self.assertEqual(len(set(keys)), 9,
-                         "All 9 configs should have unique cache keys")
+        self.assertEqual(
+            len(set(keys)), 9, "All 9 configs should have unique cache keys"
+        )
 
     def test_cache_key_sensitive_to_every_tier1_param(self):
         """Changing any single Tier 1 parameter changes the cache key."""
@@ -720,8 +891,9 @@ class TestSweepIntegrity(unittest.TestCase):
         for param, val in tier1_changes.items():
             modified = base.with_overrides(**{param: val})
             self.assertNotEqual(
-                modified.cache_key(), base_key,
-                f"Changing {param} should change cache_key"
+                modified.cache_key(),
+                base_key,
+                f"Changing {param} should change cache_key",
             )
 
 

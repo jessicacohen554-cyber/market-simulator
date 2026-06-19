@@ -119,9 +119,7 @@ def _read_sheet(data: bytes, sheet: str) -> pd.DataFrame:
     header row is found by scanning for the first row containing a known
     anchor column ("Utility ID" / "Plant Code") rather than hardcoding it.
     """
-    probe = pd.read_excel(
-        io.BytesIO(data), sheet_name=sheet, header=None, nrows=6
-    )
+    probe = pd.read_excel(io.BytesIO(data), sheet_name=sheet, header=None, nrows=6)
     header_row = 1  # final-release default: one title line
     for i in range(len(probe)):
         cells = {str(c).strip() for c in probe.iloc[i].tolist()}
@@ -175,14 +173,11 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
         pd.to_numeric(generator["Plant Code"], errors="coerce").notna()
     ]
 
-    ba_by_plant = (
-        plant.drop_duplicates("Plant Code")
-        .set_index("Plant Code")["Balancing Authority Code"]
-    )
+    ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+        "Balancing Authority Code"
+    ]
 
-    df = generator[list(_GENERATOR_COLUMN_MAP)].rename(
-        columns=_GENERATOR_COLUMN_MAP
-    )
+    df = generator[list(_GENERATOR_COLUMN_MAP)].rename(columns=_GENERATOR_COLUMN_MAP)
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
@@ -243,7 +238,8 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
 # month-precise fields the COD ramp reads (the loader only requires
 # ``operating_month`` / ``planned_retirement_month`` when present).
 _RETIRED_COLUMNS: list[str] = EIA_860_CSV_COLUMNS + [
-    "operating_month", "planned_retirement_month",
+    "operating_month",
+    "planned_retirement_month",
 ]
 
 
@@ -278,7 +274,9 @@ def build_within_window_retirees(
         op = pd.read_parquet(operable_parquet, columns=["Plant Code"])
         operable_plant_ids = set(
             pd.to_numeric(op["Plant Code"], errors="coerce")
-            .dropna().astype(int).tolist()
+            .dropna()
+            .astype(int)
+            .tolist()
         )
 
     frames: list[pd.DataFrame] = []
@@ -289,20 +287,18 @@ def build_within_window_retirees(
             plant = _read_sheet(zf.read(plant_name), "Plant")
             retired = _read_sheet(zf.read(gen_name), "Retired and Canceled")
 
-        retired = retired[
-            pd.to_numeric(retired["Plant Code"], errors="coerce").notna()
-        ]
+        retired = retired[pd.to_numeric(retired["Plant Code"], errors="coerce").notna()]
         plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
-        ba_by_plant = (
-            plant.drop_duplicates("Plant Code")
-            .set_index("Plant Code")["Balancing Authority Code"]
-        )
+        ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+            "Balancing Authority Code"
+        ]
 
         # The retired sheet carries ACTUAL "Retirement Year/Month" rather than
         # the operable sheet's "Planned Retirement Year" -- map every shared
         # column, then fill the planned_retirement_* fields from the actuals.
         shared = {
-            k: v for k, v in _GENERATOR_COLUMN_MAP.items()
+            k: v
+            for k, v in _GENERATOR_COLUMN_MAP.items()
             if k in retired.columns and k != "Planned Retirement Year"
         }
         df = retired[list(shared)].rename(columns=shared)
@@ -442,9 +438,7 @@ def _build_retired_window(zip_paths: list[Path], out_dir: Path) -> None:
         out_path.name,
     )
     by_iso = (
-        retired.assign(
-            iso=retired["balancing_authority_code"].map(BA_CODE_TO_ISO)
-        )
+        retired.assign(iso=retired["balancing_authority_code"].map(BA_CODE_TO_ISO))
         .groupby("iso")
         .agg(
             units=("generator_id", "size"),
@@ -455,7 +449,10 @@ def _build_retired_window(zip_paths: list[Path], out_dir: Path) -> None:
     for iso, row in by_iso.iterrows():
         logger.info(
             "  %-6s %4d units / %3d plants  %6.2f GW",
-            iso, int(row["units"]), int(row["plants"]), row["nameplate_gw"],
+            iso,
+            int(row["units"]),
+            int(row["plants"]),
+            row["nameplate_gw"],
         )
 
 

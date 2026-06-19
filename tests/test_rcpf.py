@@ -1,5 +1,6 @@
 """Tests for the NYISO RCPF reserve-demand-curve scarcity overlay
 (results.rcpf)."""
+
 import numpy as np
 import pytest
 
@@ -22,23 +23,26 @@ from market_sim.results.rcpf import (
 def test_reserve_demand_price_zero_above_requirement():
     # No shortage -> no penalty.
     r = np.array([3000.0, 2620.0, 5000.0])
-    p = reserve_demand_price(r, requirement_mw=2620.0, critical_mw=1965.0,
-                             max_penalty=750.0)
+    p = reserve_demand_price(
+        r, requirement_mw=2620.0, critical_mw=1965.0, max_penalty=750.0
+    )
     assert np.allclose(p, 0.0)
 
 
 def test_reserve_demand_price_max_at_or_below_critical():
     r = np.array([1965.0, 1000.0, 0.0, -500.0])
-    p = reserve_demand_price(r, requirement_mw=2620.0, critical_mw=1965.0,
-                             max_penalty=750.0)
+    p = reserve_demand_price(
+        r, requirement_mw=2620.0, critical_mw=1965.0, max_penalty=750.0
+    )
     assert np.allclose(p, 750.0)
 
 
 def test_reserve_demand_price_linear_between_anchors():
     # Halfway between requirement (2620) and critical (1965) -> half max.
     mid = (2620.0 + 1965.0) / 2.0
-    p = reserve_demand_price(np.array([mid]), requirement_mw=2620.0,
-                             critical_mw=1965.0, max_penalty=750.0)
+    p = reserve_demand_price(
+        np.array([mid]), requirement_mw=2620.0, critical_mw=1965.0, max_penalty=750.0
+    )
     assert p[0] == pytest.approx(375.0)
 
 
@@ -51,8 +55,12 @@ def test_reserve_demand_price_monotonic_decreasing_in_reserves():
 
 def test_reserve_demand_price_rejects_bad_span():
     with pytest.raises(ValueError):
-        reserve_demand_price(np.array([100.0]), requirement_mw=1000.0,
-                             critical_mw=1000.0, max_penalty=750.0)
+        reserve_demand_price(
+            np.array([100.0]),
+            requirement_mw=1000.0,
+            critical_mw=1000.0,
+            max_penalty=750.0,
+        )
 
 
 def test_adder_zero_when_reserves_ample():
@@ -114,14 +122,13 @@ def test_config_flag_defaults_off():
 
 # --- NEISO (ISO-NE) RCPF: ISO-aware product resolution ---------------------
 
+
 def test_resolve_products_neiso_uses_isone_table():
     """A NEISO config resolves to the ISO-NE products; other ISOs unchanged."""
-    assert (resolve_rcpf_products(ScenarioConfig(iso="NEISO"))
-            == NEISO_RCPF_PRODUCTS)
+    assert resolve_rcpf_products(ScenarioConfig(iso="NEISO")) == NEISO_RCPF_PRODUCTS
     # The default (no iso / NYISO) path is untouched.
     assert resolve_rcpf_products(ScenarioConfig()) == NYISO_RCPF_PRODUCTS
-    assert (resolve_rcpf_products(ScenarioConfig(iso="NYISO"))
-            == NYISO_RCPF_PRODUCTS)
+    assert resolve_rcpf_products(ScenarioConfig(iso="NYISO")) == NYISO_RCPF_PRODUCTS
     # A NEISO override flows through the resolver and the adder.
     custom = (("ne_test", 1000.0, 0.0, 250.0),)
     cfg = ScenarioConfig(iso="NEISO", neiso_rcpf_products=custom)
@@ -182,8 +189,9 @@ def test_locational_cascade_membership():
     # NYC: East + SENY + NYC (deepest in the cascade).
     assert adders["NYC"][0] == pytest.approx(east_max + seny_max + nyc_max)
     # The cascade is strictly increasing downstate.
-    assert (adders["NYC"][0] > adders["Lower_Hudson"][0]
-            > adders["Capital_Hudson"][0] > 0.0)
+    assert (
+        adders["NYC"][0] > adders["Lower_Hudson"][0] > adders["Capital_Hudson"][0] > 0.0
+    )
 
 
 def test_locational_region_headroom_is_summed_over_member_zones():
@@ -209,8 +217,7 @@ def test_locational_region_headroom_is_summed_over_member_zones():
 
 def test_locational_resolve_default_and_override():
     assert resolve_rcpf_locational(ScenarioConfig()) is NYISO_RCPF_LOCATIONAL
-    custom = {"NYC": {"zones": ("NYC",),
-                      "products": (("z", 500.0, 0.0, 999.0),)}}
+    custom = {"NYC": {"zones": ("NYC",), "products": (("z", 500.0, 0.0, 999.0),)}}
     cfg = ScenarioConfig(nyiso_rcpf_locational=custom)
     assert resolve_rcpf_locational(cfg) is custom
     a = locational_zone_adders({"NYC": np.zeros(1)}, config=cfg)
@@ -221,6 +228,7 @@ def test_locational_empty_products_region_is_noop():
     # A region with no products must not raise or contribute.
     regions = {"Empty": {"zones": ("NYC", "Long_Island"), "products": ()}}
     a = locational_zone_adders(
-        {"NYC": np.zeros(1), "Long_Island": np.zeros(1)}, regions=regions)
+        {"NYC": np.zeros(1), "Long_Island": np.zeros(1)}, regions=regions
+    )
     for v in a.values():
         assert np.allclose(v, 0.0)

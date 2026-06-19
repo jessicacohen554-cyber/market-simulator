@@ -165,9 +165,9 @@ def _finalize(df: pd.DataFrame) -> pd.DataFrame:
     out = pd.DataFrame(
         {
             "interval_start_utc": pd.to_datetime(df["interval_start_utc"], utc=True),
-            "interval_start_local": pd.to_datetime(
-                df["interval_start_local"]
-            ).astype("datetime64[ns]"),
+            "interval_start_local": pd.to_datetime(df["interval_start_local"]).astype(
+                "datetime64[ns]"
+            ),
             "iso": df["iso"].astype("string"),
             "zone": df["zone"].astype("string"),
             "fuel": df["fuel"].astype("string"),
@@ -175,9 +175,11 @@ def _finalize(df: pd.DataFrame) -> pd.DataFrame:
             "is_renewable": df["is_renewable"].astype("boolean"),
         }
     )
-    return out[_COLUMNS].sort_values(
-        ["interval_start_utc", "iso", "zone", "fuel"]
-    ).reset_index(drop=True)
+    return (
+        out[_COLUMNS]
+        .sort_values(["interval_start_utc", "iso", "zone", "fuel"])
+        .reset_index(drop=True)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +193,7 @@ def curate_eia930_ba(path: Path, iso: str) -> pd.DataFrame:
     clock is carried as ``interval_start_local``.
     """
     raw = pd.read_parquet(path)
-    fuel_cols = {c: c[len("NG: "):] for c in raw.columns if c.startswith("NG: ")}
+    fuel_cols = {c: c[len("NG: ") :] for c in raw.columns if c.startswith("NG: ")}
     _map_or_raise(set(fuel_cols.values()), EIA_FUEL_MAP, source=f"EIA-930 {path.name}")
 
     base = pd.DataFrame(
@@ -299,9 +301,7 @@ def main() -> None:
             continue
         print(f"[EIA-930] {ba} -> {iso}: {path}")
         df = curate_eia930_ba(path, iso)
-        written += write_by_year(
-            df, iso, source=str(path.relative_to(paths.REPO_ROOT))
-        )
+        written += write_by_year(df, iso, source=str(path.relative_to(paths.REPO_ROOT)))
 
     # PJM from its dedicated gen-by-fuel feed (carries is_renewable).
     pjm_csvs = sorted(PJM_GEN_DIR.glob("PJM_*_gen_by_fuel.csv"))

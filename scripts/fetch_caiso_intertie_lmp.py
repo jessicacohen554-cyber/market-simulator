@@ -25,6 +25,7 @@ Usage:
     python scripts/fetch_caiso_intertie_lmp.py --probe --years 2024
     python scripts/fetch_caiso_intertie_lmp.py --years 2023 2024 2025
 """
+
 from __future__ import annotations
 
 import argparse
@@ -45,8 +46,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scripts.fetch_caiso_oasis import _extract_csv, _fetch, _url, _windows
 
 REPO = Path(__file__).resolve().parent.parent
-OUT_PARQUET = REPO / "data" / "raw" / "_validation-source" / \
-    "wecc_intertie_lmp_hourly_CAISO.parquet"
+OUT_PARQUET = (
+    REPO
+    / "data"
+    / "raw"
+    / "_validation-source"
+    / "wecc_intertie_lmp_hourly_CAISO.parquet"
+)
 
 PRC_LMP_DAM = {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"}
 
@@ -75,8 +81,9 @@ def _hour_index(ts: pd.Series) -> np.ndarray:
     return np.where((ts.dt.month == 2) & (ts.dt.day == 29), -1, idx)
 
 
-def _fetch_node_year(node: str, year: int, window: int, sleep_s: float,
-                     deadline: float | None) -> pd.DataFrame | None:
+def _fetch_node_year(
+    node: str, year: int, window: int, sleep_s: float, deadline: float | None
+) -> pd.DataFrame | None:
     """Fetch one node's DAM LMP for a year; return raw rows or None."""
     frames = []
     for cur, win_end in _windows(dt.date(year, 1, 1), dt.date(year + 1, 1, 1), window):
@@ -90,6 +97,7 @@ def _fetch_node_year(node: str, year: int, window: int, sleep_s: float,
         if result is None:
             continue
         import io
+
         frames.append(pd.read_csv(io.BytesIO(result[1])))
     if not frames:
         return None
@@ -127,7 +135,11 @@ def probe(years: list[int], sleep_s: float) -> int:
             n = len(pd.read_csv(io.BytesIO(result[1])))
             print(f"  {hub:9s} {node}: OK — {n} rows for {year}-06-01")
             ok_any = True
-    print("probe complete." if ok_any else "probe: NO node returned data — fix INTERTIE_NODES.")
+    print(
+        "probe complete."
+        if ok_any
+        else "probe: NO node returned data — fix INTERTIE_NODES."
+    )
     return 0 if ok_any else 1
 
 
@@ -136,16 +148,22 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--window", type=int, default=25, help="window size in days")
     ap.add_argument("--sleep", type=float, default=5.0)
-    ap.add_argument("--probe", action="store_true",
-                    help="validate the intertie node names with one cheap call each")
+    ap.add_argument(
+        "--probe",
+        action="store_true",
+        help="validate the intertie node names with one cheap call each",
+    )
     ap.add_argument("--deadline-minutes", type=float, default=None)
     args = ap.parse_args()
 
     if args.probe:
         sys.exit(probe(args.years, args.sleep))
 
-    deadline = (time.monotonic() + args.deadline_minutes * 60.0
-                if args.deadline_minutes else None)
+    deadline = (
+        time.monotonic() + args.deadline_minutes * 60.0
+        if args.deadline_minutes
+        else None
+    )
 
     existing = pd.read_parquet(OUT_PARQUET) if OUT_PARQUET.exists() else None
     records = []
@@ -162,14 +180,22 @@ def main() -> None:
                 if hourly is not None:
                     series.append(hourly)
             if not series:
-                print(f"  {hub} {year}: no node resolved — hub left to the "
-                      f"static ladder", file=sys.stderr)
+                print(
+                    f"  {hub} {year}: no node resolved — hub left to the static ladder",
+                    file=sys.stderr,
+                )
                 continue
             price = np.nanmean(np.vstack(series), axis=0)
             for h in range(_HOURS_PER_YEAR):
                 if np.isfinite(price[h]):
-                    records.append({"year": year, "hour": h, "hub": hub,
-                                    "price": round(float(price[h]), 4)})
+                    records.append(
+                        {
+                            "year": year,
+                            "hour": h,
+                            "hub": hub,
+                            "price": round(float(price[h]), 4),
+                        }
+                    )
 
     if not records:
         print("no intertie data fetched — nothing written.", file=sys.stderr)
@@ -178,14 +204,17 @@ def main() -> None:
     if existing is not None:
         # Replace only the (year, hub) pairs we just fetched; keep the rest.
         fetched = set(zip(out["year"], out["hub"]))
-        keep = existing[~existing.apply(
-            lambda r: (r["year"], r["hub"]) in fetched, axis=1)]
+        keep = existing[
+            ~existing.apply(lambda r: (r["year"], r["hub"]) in fetched, axis=1)
+        ]
         out = pd.concat([keep, out], ignore_index=True)
     out = out.sort_values(["year", "hub", "hour"]).reset_index(drop=True)
     OUT_PARQUET.parent.mkdir(parents=True, exist_ok=True)
     out.to_parquet(OUT_PARQUET, index=False)
-    print(f"wrote {OUT_PARQUET.relative_to(REPO)} ({len(out)} rows, "
-          f"hubs {sorted(out['hub'].unique())})")
+    print(
+        f"wrote {OUT_PARQUET.relative_to(REPO)} ({len(out)} rows, "
+        f"hubs {sorted(out['hub'].unique())})"
+    )
 
 
 if __name__ == "__main__":

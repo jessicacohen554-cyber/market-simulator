@@ -29,6 +29,7 @@ Usage:
         [--months 7 8] [--years 2023 2024] [--out FILE.md]
         [--with-scarcity]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -43,10 +44,21 @@ CAL_DIR = REPO / "inputs" / "calibration"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd).
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-_MONTH_START_HOUR = tuple(
-    int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(13))
-_MONTH_NAMES = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+_MONTH_START_HOUR = tuple(int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(13))
+_MONTH_NAMES = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)
 
 # Duration-curve percentile levels reported in the overlay tables.
 _PCT_LEVELS = (50, 75, 90, 95, 99)
@@ -71,54 +83,62 @@ def _model_system_price(bundle: Path) -> pd.DataFrame:
         sy = sy[sy["pass"] == "P1"]
     sy = sy.assign(pd_=sy["price"] * sy["demand"])
     g = sy.groupby(["year", "hour"], observed=True).agg(
-        pd_=("pd_", "sum"), d=("demand", "sum"), p=("price", "mean"))
+        pd_=("pd_", "sum"), d=("demand", "sum"), p=("price", "mean")
+    )
     price = np.where(g["d"] > 0, g["pd_"] / g["d"], g["p"])
-    return (g.assign(price=price).reset_index()
-            [["year", "hour", "price"]])
+    return g.assign(price=price).reset_index()[["year", "hour", "price"]]
 
 
 def _actual_hourly(iso: str) -> pd.DataFrame:
     """Load the actual hub-mean hourly series for ``iso`` (must exist)."""
     p = CAL_DIR / f"actual_lmp_hourly_{iso}.parquet"
     if not p.exists():
-        raise SystemExit(
-            f"missing {p} — run scripts/derive_actual_lmp.py first")
+        raise SystemExit(f"missing {p} — run scripts/derive_actual_lmp.py first")
     return pd.read_parquet(p)
 
 
 def _pct_row(values: np.ndarray) -> list[float]:
     """Mean + percentile levels + max of a price series (NaNs ignored)."""
-    return ([float(np.nanmean(values))]
-            + [float(np.nanpercentile(values, p)) for p in _PCT_LEVELS]
-            + [float(np.nanmax(values))])
+    return (
+        [float(np.nanmean(values))]
+        + [float(np.nanpercentile(values, p)) for p in _PCT_LEVELS]
+        + [float(np.nanmax(values))]
+    )
 
 
 def _md_table(header: list[str], rows: list[list]) -> list[str]:
     """Render a small markdown table; floats to 2 decimals."""
+
     def cell(v):
         if v is None:
             return "—"
         if isinstance(v, float):
             return f"{v:,.2f}"
         return str(v)
-    out = ["| " + " | ".join(header) + " |",
-           "|" + "|".join("---" for _ in header) + "|"]
+
+    out = [
+        "| " + " | ".join(header) + " |",
+        "|" + "|".join("---" for _ in header) + "|",
+    ]
     out += ["| " + " | ".join(cell(v) for v in r) + " |" for r in rows]
     return out
 
 
-def _duration_section(model: np.ndarray, actual: np.ndarray,
-                      label: str) -> list[str]:
+def _duration_section(model: np.ndarray, actual: np.ndarray, label: str) -> list[str]:
     """Duration-curve overlay table (model vs actual RT) for one window."""
-    header = (["series", "mean"] + [f"p{p}" for p in _PCT_LEVELS] + ["max"])
+    header = ["series", "mean"] + [f"p{p}" for p in _PCT_LEVELS] + ["max"]
     m, a = _pct_row(model), _pct_row(actual)
-    rows = [["model"] + m, ["actual RT"] + a,
-            ["residual"] + [x - y for x, y in zip(m, a)]]
+    rows = [
+        ["model"] + m,
+        ["actual RT"] + a,
+        ["residual"] + [x - y for x, y in zip(m, a)],
+    ]
     return [f"**Duration curve — {label}**", ""] + _md_table(header, rows)
 
 
-def _hour_of_day_section(model: np.ndarray, actual: np.ndarray,
-                         hours: np.ndarray) -> list[str]:
+def _hour_of_day_section(
+    model: np.ndarray, actual: np.ndarray, hours: np.ndarray
+) -> list[str]:
     """Mean residual by hour-of-day over the focus window."""
     hod = hours % 24
     rows = []
@@ -129,8 +149,9 @@ def _hour_of_day_section(model: np.ndarray, actual: np.ndarray,
             continue
         am, mm = float(actual[ok].mean()), float(model[ok].mean())
         rows.append([h, mm, am, mm - am])
-    return (["**Residual by hour-of-day (focus window)**", ""]
-            + _md_table(["hour", "model", "actual RT", "residual"], rows))
+    return ["**Residual by hour-of-day (focus window)**", ""] + _md_table(
+        ["hour", "model", "actual RT", "residual"], rows
+    )
 
 
 def _band_section(model: np.ndarray, actual: np.ndarray) -> list[str]:
@@ -145,30 +166,56 @@ def _band_section(model: np.ndarray, actual: np.ndarray) -> list[str]:
             continue
         gap = float((model[sel] - actual[sel]).sum())
         share = gap / total_gap if total_gap else np.nan
-        lab = (f"<{hi:g}" if not np.isfinite(lo)
-               else f">={lo:g}" if not np.isfinite(hi) else f"{lo:g}-{hi:g}")
-        rows.append([lab, int(sel.sum()), float(actual[sel].mean()),
-                     float(model[sel].mean()),
-                     float((model[sel] - actual[sel]).mean()),
-                     f"{share:+.0%}"])
-    rows.append(["total", len(actual), float(actual.mean()),
-                 float(model.mean()), float((model - actual).mean()), "100%"])
-    return (["**Residual by actual-price band (focus window)** — `share` is "
-             "the band's share of the total $·h gap", ""]
-            + _md_table(["actual $/MWh", "hours", "actual RT", "model",
-                         "residual", "share"], rows))
+        lab = (
+            f"<{hi:g}"
+            if not np.isfinite(lo)
+            else f">={lo:g}"
+            if not np.isfinite(hi)
+            else f"{lo:g}-{hi:g}"
+        )
+        rows.append(
+            [
+                lab,
+                int(sel.sum()),
+                float(actual[sel].mean()),
+                float(model[sel].mean()),
+                float((model[sel] - actual[sel]).mean()),
+                f"{share:+.0%}",
+            ]
+        )
+    rows.append(
+        [
+            "total",
+            len(actual),
+            float(actual.mean()),
+            float(model.mean()),
+            float((model - actual).mean()),
+            "100%",
+        ]
+    )
+    return [
+        "**Residual by actual-price band (focus window)** — `share` is "
+        "the band's share of the total $·h gap",
+        "",
+    ] + _md_table(
+        ["actual $/MWh", "hours", "actual RT", "model", "residual", "share"], rows
+    )
 
 
 def _threshold_section(model: np.ndarray, actual: np.ndarray) -> list[str]:
     """High-price hour counts, model vs actual (focus window)."""
-    rows = [[f">${t}", int(np.nansum(actual > t)), int(np.nansum(model > t))]
-            for t in (75, 100, 200, 500)]
-    return (["**High-price hours (focus window)**", ""]
-            + _md_table(["threshold", "actual RT", "model"], rows))
+    rows = [
+        [f">${t}", int(np.nansum(actual > t)), int(np.nansum(model > t))]
+        for t in (75, 100, 200, 500)
+    ]
+    return ["**High-price hours (focus window)**", ""] + _md_table(
+        ["threshold", "actual RT", "model"], rows
+    )
 
 
-def _year_report(year: int, model_y: pd.DataFrame, act_y: pd.DataFrame,
-                 months: list[int]) -> list[str]:
+def _year_report(
+    year: int, model_y: pd.DataFrame, act_y: pd.DataFrame, months: list[int]
+) -> list[str]:
     """Full markdown section for one bundle-year."""
     T = len(act_y)
     model = np.full(T, np.nan)
@@ -198,8 +245,9 @@ def _year_report(year: int, model_y: pd.DataFrame, act_y: pd.DataFrame,
             continue
         mm, am = float(model[sel].mean()), float(rt[sel].mean())
         rows.append([_MONTH_NAMES[m - 1], mm, am, mm - am])
-    lines += (["**Monthly mean LMP (model vs actual RT)**", ""]
-              + _md_table(["month", "model", "actual RT", "residual"], rows))
+    lines += ["**Monthly mean LMP (model vs actual RT)**", ""] + _md_table(
+        ["month", "model", "actual RT", "residual"], rows
+    )
     lines += [""] + _duration_section(model, rt, f"{year} full year") + [""]
     lines += _duration_section(model[focus], rt[focus], f"{year} {win}") + [""]
     lines += _hour_of_day_section(model[focus], rt[focus], hours[focus]) + [""]
@@ -212,16 +260,19 @@ def _apply_scarcity(model: pd.DataFrame, bundle: Path) -> pd.DataFrame:
     """Add the bundle's ORDC scarcity adder to the model price series."""
     p = bundle / "scarcity.parquet"
     if not p.exists():
-        raise SystemExit(
-            f"missing {p} — run scripts/derive_ordc_overlay.py first")
+        raise SystemExit(f"missing {p} — run scripts/derive_ordc_overlay.py first")
     sc = pd.read_parquet(p)[["year", "hour", "scarcity_adder"]]
     out = model.merge(sc, on=["year", "hour"], how="left")
     out["price"] = out["price"] + out["scarcity_adder"].fillna(0.0)
     return out[["year", "hour", "price"]]
 
 
-def report(bundles: list[Path], months: list[int],
-           years: list[int] | None, with_scarcity: bool = False) -> str:
+def report(
+    bundles: list[Path],
+    months: list[int],
+    years: list[int] | None,
+    with_scarcity: bool = False,
+) -> str:
     """Build the markdown residual report across ``bundles``."""
     title = "# Hourly LMP residual localization"
     if with_scarcity:
@@ -240,23 +291,42 @@ def report(bundles: list[Path], months: list[int],
         lines += [f"## {bundle.name} ({iso})", ""]
         for y in got_years:
             lines += _year_report(
-                y, model[model["year"] == y],
-                actual[actual["year"] == y].sort_values("hour"), months)
+                y,
+                model[model["year"] == y],
+                actual[actual["year"] == y].sort_values("hour"),
+                months,
+            )
     return "\n".join(lines) + "\n"
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("bundles", nargs="+", type=Path,
-                    help="calibration bundle directories (with system.parquet)")
-    ap.add_argument("--months", nargs="+", type=int, default=[7, 8],
-                    help="focus window months, 1-12 (default Jul/Aug)")
+    ap.add_argument(
+        "bundles",
+        nargs="+",
+        type=Path,
+        help="calibration bundle directories (with system.parquet)",
+    )
+    ap.add_argument(
+        "--months",
+        nargs="+",
+        type=int,
+        default=[7, 8],
+        help="focus window months, 1-12 (default Jul/Aug)",
+    )
     ap.add_argument("--years", nargs="+", type=int, default=None)
-    ap.add_argument("--out", type=Path, default=None,
-                    help="write the markdown report here (default: stdout)")
-    ap.add_argument("--with-scarcity", action="store_true",
-                    help="overlay the ORDC scarcity adder (scarcity.parquet)"
-                         " on the model price series")
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="write the markdown report here (default: stdout)",
+    )
+    ap.add_argument(
+        "--with-scarcity",
+        action="store_true",
+        help="overlay the ORDC scarcity adder (scarcity.parquet)"
+        " on the model price series",
+    )
     args = ap.parse_args()
     md = report(args.bundles, args.months, args.years, args.with_scarcity)
     if args.out:

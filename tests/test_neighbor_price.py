@@ -7,6 +7,7 @@ synthetic load frame (monkeypatched loader) so they run with no data files;
 an integration case validates the PJM registry against the real EIA-930
 neighbor extracts when they are present.
 """
+
 import unittest
 
 import numpy as np
@@ -55,9 +56,7 @@ class _FakeFrames:
     def __init__(self, loads: dict[str, np.ndarray]):
         import pandas as pd
 
-        self._frames = {
-            ba: pd.DataFrame({"Demand": arr}) for ba, arr in loads.items()
-        }
+        self._frames = {ba: pd.DataFrame({"Demand": arr}) for ba, arr in loads.items()}
 
     def __call__(self, ba_code: str, year: int):
         return self._frames.get(ba_code)
@@ -125,9 +124,7 @@ class TestLoadShape(unittest.TestCase):
         load = np.array([50.0, 100.0, 150.0] * 8, dtype=float)
         np_mod._eia_hourly_frame_filled = _FakeFrames({"TEST_BA": load})
         try:
-            shape, _ = neighbor_load_shape(
-                _spec(load_shape_exponent=2.0), 2023, _HOURS
-            )
+            shape, _ = neighbor_load_shape(_spec(load_shape_exponent=2.0), 2023, _HOURS)
         finally:
             np_mod._eia_hourly_frame_filled = _eia_hourly_frame_filled
         # Convex shape lifts the mean above 1 and the peak above linear.
@@ -175,9 +172,7 @@ class TestInterfacePricesAndAggregate(unittest.TestCase):
         np.testing.assert_allclose(agg, w)
 
     def test_aggregate_none_when_empty(self):
-        self.assertIsNone(
-            InterfacePrices(iso="PJM", year=2023, hours=2).aggregate()
-        )
+        self.assertIsNone(InterfacePrices(iso="PJM", year=2023, hours=2).aggregate())
 
     def test_unregistered_iso_is_empty(self):
         res = interface_reference_prices("NONEXISTENT", 2023, _HOURS)
@@ -242,9 +237,11 @@ class TestReferencePriceNode(unittest.TestCase):
         self.assertEqual(len(miso_imp), SEAM_FLOW_TRANCHES)
         for g in miso_imp:
             self.assertAlmostEqual(
-                g.pmax_mw, miso.interface_limit_mw / SEAM_FLOW_TRANCHES)
+                g.pmax_mw, miso.interface_limit_mw / SEAM_FLOW_TRANCHES
+            )
         self.assertAlmostEqual(
-            sum(g.pmax_mw for g in miso_imp), miso.interface_limit_mw)
+            sum(g.pmax_mw for g in miso_imp), miso.interface_limit_mw
+        )
 
     def test_unregistered_iso_node_is_empty(self):
         from market_sim.model.transmission import build_reference_price_node
@@ -278,8 +275,7 @@ class TestReferencePriceNode(unittest.TestCase):
                 tag = uid.rsplit(mark, 1)[1]
                 name, _, k_str = tag.partition("#")
                 k = int(k_str) - 1
-                spec = next(n for n in INTERFACE_NEIGHBORS["PJM"]
-                            if n.name == name)
+                spec = next(n for n in INTERFACE_NEIGHBORS["PJM"] if n.name == name)
                 if name not in cache:
                     cache[name] = seam_tranche_prices(spec, 2023, 8760)
                 export_p, import_p, _ = cache[name]
@@ -291,7 +287,9 @@ class TestReferencePriceNode(unittest.TestCase):
         # band is strictly below the first — the self-limiting slope.
         miso_exp = sorted(
             (int(uid.rsplit("#", 1)[1]), r)
-            for r, uid in enumerate(unit_ids) if "_refexp_MISO#" in uid)
+            for r, uid in enumerate(unit_ids)
+            if "_refexp_MISO#" in uid
+        )
         first = mc[miso_exp[0][1]]
         last = mc[miso_exp[-1][1]]
         self.assertTrue(np.all(last <= first + 1e-9))

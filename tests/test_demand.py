@@ -48,9 +48,7 @@ def test_pjm_demand_can_exclude_interchange():
     """
     pjm = get_iso_config("PJM")
     with_ix = load_demand("PJM", _TEST_YEAR, pjm).sum(axis=0)
-    without = load_demand(
-        "PJM", _TEST_YEAR, pjm, include_interchange=False
-    ).sum(axis=0)
+    without = load_demand("PJM", _TEST_YEAR, pjm, include_interchange=False).sum(axis=0)
     # load_demand applies the per-border-zone attribution, so the uplift it
     # removes is the zonal series (which, unlike the scalar, leaves the DST
     # gap hour at zero).
@@ -91,9 +89,9 @@ def test_nyiso_demand_serves_measured_import_by_default():
     """
     nyiso = get_iso_config("NYISO")
     with_ix = load_demand("NYISO", _TEST_YEAR, nyiso).sum(axis=0)
-    without = load_demand(
-        "NYISO", _TEST_YEAR, nyiso, include_interchange=False
-    ).sum(axis=0)
+    without = load_demand("NYISO", _TEST_YEAR, nyiso, include_interchange=False).sum(
+        axis=0
+    )
     ix = nyiso_net_interchange(_TEST_YEAR)
     # The default path serves *less* than internal load by the import wedge.
     assert with_ix.sum() < without.sum()
@@ -104,9 +102,7 @@ def test_neiso_demand_serves_measured_import_by_default():
     """NEISO demand nets the measured import wedge, lowering served load."""
     neiso = get_iso_config("NEISO")
     with_ix = load_demand("NEISO", 2024, neiso).sum(axis=0)
-    without = load_demand(
-        "NEISO", 2024, neiso, include_interchange=False
-    ).sum(axis=0)
+    without = load_demand("NEISO", 2024, neiso, include_interchange=False).sum(axis=0)
     ix = neiso_net_interchange(2024)
     assert with_ix.sum() < without.sum()
     np.testing.assert_allclose(with_ix - without, ix, atol=1e-6)

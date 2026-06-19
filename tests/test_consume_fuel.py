@@ -17,6 +17,7 @@ it) and skipped when the raw ``henry_hub_daily.csv`` is absent. The clean slice
 is built into a redirected, temporary ``CLEAN_DIR`` so the test never writes the
 repo's gitignored ``data/clean`` tree.
 """
+
 from __future__ import annotations
 
 import numpy as np

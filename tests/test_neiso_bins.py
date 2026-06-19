@@ -52,20 +52,20 @@ _COAL_CODE = 2364
 # Mixed facilities: one EIA code spanning several fuel classes, split per
 # Plant_Group into distinct LP bins (no cross-fuel re-key needed — all gas).
 _MIXED = {
-    52061: {"CC_CHP", "CT_CHP"},        # Hartford Hospital Cogeneration
-    58084: {"CC_CHP", "CT_CHP"},        # Kimberly Clark
-    52026: {"CC_REGULAR", "CT_PEAKER"}, # Dartmouth Power Associates
-    10883: {"CT_CHP", "ST_CHP"},        # Medical Area Total Energy Plant
+    52061: {"CC_CHP", "CT_CHP"},  # Hartford Hospital Cogeneration
+    58084: {"CC_CHP", "CT_CHP"},  # Kimberly Clark
+    52026: {"CC_REGULAR", "CT_PEAKER"},  # Dartmouth Power Associates
+    10883: {"CT_CHP", "ST_CHP"},  # Medical Area Total Energy Plant
 }
 
 # Gas-primary oil-switching units the P13 EIA-860 multifuel tags flag as
 # dual-fuel and that land in the NEISO offer-curve peaker / steam band. Montville
 # is the ST_OIL-capable steamer; the rest are CT peakers.
 _DUAL_FUEL_PEAKERS = {
-    (546, "ST_GAS"),       # Montville Station
-    (1660, "CT_PEAKER"),   # Potter Station 2
-    (1678, "CT_PEAKER"),   # Waters River
-    (6635, "CT_PEAKER"),   # A L Pierce
+    (546, "ST_GAS"),  # Montville Station
+    (1660, "CT_PEAKER"),  # Potter Station 2
+    (1678, "CT_PEAKER"),  # Waters River
+    (6635, "CT_PEAKER"),  # A L Pierce
     (50243, "CT_PEAKER"),  # Bucksport Generation
     (56629, "CT_PEAKER"),  # Waterbury Generation
     (59882, "CT_PEAKER"),  # Exelon West Medway II
@@ -139,7 +139,8 @@ class TestNeisoBinAssignments(unittest.TestCase):
         for frame in (regen, committed):
             frame["Mixed_Facility"] = frame["Mixed_Facility"].fillna("")
         pd.testing.assert_frame_equal(
-            regen.reset_index(drop=True), committed.reset_index(drop=True),
+            regen.reset_index(drop=True),
+            committed.reset_index(drop=True),
             check_dtype=False,
         )
 
@@ -158,8 +159,14 @@ class TestNeisoBinAssignments(unittest.TestCase):
         )
         self.assertLessEqual(
             set(self.bins["Must_Run_Source"]),
-            {"chp_campd_p2", "chp_eia923_cf", "chp_sector_default",
-             "campd", "class_default", "none"},
+            {
+                "chp_campd_p2",
+                "chp_eia923_cf",
+                "chp_sector_default",
+                "campd",
+                "class_default",
+                "none",
+            },
         )
         # The bulk of CC_REGULAR capacity carries measured committed shares.
         cc = self.bins[self.bins["Plant_Group"] == "CC_REGULAR"]
@@ -205,8 +212,7 @@ class TestNeisoDualFuelPeakers(unittest.TestCase):
         for code, group in _DUAL_FUEL_PEAKERS:
             self.assertIn((code, group), bin_keys, f"{code} {group} missing")
             row = self.bins[
-                (self.bins["Plant_Code"] == code)
-                & (self.bins["Plant_Group"] == group)
+                (self.bins["Plant_Code"] == code) & (self.bins["Plant_Group"] == group)
             ]
             self.assertEqual(float(row["Pct_Must_Run"].iloc[0]), 0.0)
             self.assertEqual(row["Must_Run_Source"].iloc[0], "none")
@@ -219,14 +225,17 @@ class TestNeisoFleetBuild(unittest.TestCase):
     def setUpClass(cls):
         cls.gens = load_fleet_from_csv("NEISO", get_iso_config("NEISO"))
         cls.config = ScenarioConfig(
-            iso="NEISO", chp_steam_following=True, cc_peaking_per_plant=True,
+            iso="NEISO",
+            chp_steam_following=True,
+            cc_peaking_per_plant=True,
         )
         cls.synth = fleet_to_bins(cls.gens, "NEISO", cls.config)
         cls.fleet, _ = bins_to_fleet(cls.synth, ZONES, cls.config)
 
     def _group_lp_mw(self, code: int, group: str) -> float:
         return sum(
-            g.pmax_mw for g in self.fleet
+            g.pmax_mw
+            for g in self.fleet
             if g.plant_code == code and g.plant_group == group
         )
 
@@ -237,9 +246,7 @@ class TestNeisoFleetBuild(unittest.TestCase):
     def test_chp_btm_removed_from_lp_capacity(self):
         """Every CHP (plant, group)'s LP capacity excludes its BTM host
         share — the behind-the-meter steam load never enters the dispatch."""
-        chp = self.synth[
-            self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])
-        ]
+        chp = self.synth[self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])]
         self.assertGreater(len(chp), 20)
         for _, b in chp.iterrows():
             code, group = int(b["Plant_Code"]), str(b["Plant_Group"])
@@ -247,7 +254,8 @@ class TestNeisoFleetBuild(unittest.TestCase):
             btm = chp_btm_pct(code, group, iso="NEISO")
             grid = nameplate * (1.0 - btm / 100.0)
             self.assertLessEqual(
-                self._group_lp_mw(code, group), grid + 0.6,
+                self._group_lp_mw(code, group),
+                grid + 0.6,
                 f"plant {code} {group}: LP capacity exceeds grid share "
                 f"(nameplate {nameplate}, BTM {btm}%)",
             )
@@ -257,8 +265,12 @@ class TestNeisoFleetBuild(unittest.TestCase):
         config = self.config.with_overrides(
             offer_curve_by_group={
                 "CC_REGULAR": {
-                    "committed": 0.92, "econ_low": 1.06, "econ_high": 1.27,
-                    "peak": 2.25, "econ_low_share": 0.5, "pct_peaking": 8.0,
+                    "committed": 0.92,
+                    "econ_low": 1.06,
+                    "econ_high": 1.27,
+                    "peak": 2.25,
+                    "econ_low_share": 0.5,
+                    "pct_peaking": 8.0,
                 },
             },
         )
@@ -269,13 +281,12 @@ class TestNeisoFleetBuild(unittest.TestCase):
             self.synth[self.synth["Plant_Code"] == code]["capacity_mw"].iloc[0]
         )
         peak = [
-            g for g in fleet
-            if g.plant_code == code and g.unit_id.endswith("_peak")
+            g for g in fleet if g.plant_code == code and g.unit_id.endswith("_peak")
         ]
         self.assertEqual(len(peak), 1)
-        expected = nameplate * thermal_tranche_peaking("NEISO")[
-            (code, "CC_REGULAR")
-        ] / 100.0
+        expected = (
+            nameplate * thermal_tranche_peaking("NEISO")[(code, "CC_REGULAR")] / 100.0
+        )
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
 
 

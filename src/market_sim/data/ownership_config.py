@@ -78,57 +78,57 @@ UNKNOWN_PARENT = "Other/Unknown"
 # table is still complete in coverage and explicit about its gaps.
 PARENT_COMPANY_LOOKUP: dict[int, str] = {
     # --- Southern Company -------------------------------------------------
-    195: SOUTHERN,    # Alabama Power Co
-    7140: SOUTHERN,   # Georgia Power Co
+    195: SOUTHERN,  # Alabama Power Co
+    7140: SOUTHERN,  # Georgia Power Co
     12686: SOUTHERN,  # Mississippi Power Co
     # TODO: verify utility_id from EIA-860 — Southern Power Co (competitive)
     # --- NextEra Energy ---------------------------------------------------
-    6452: NEXTERA,    # Florida Power & Light Co (FPL; absorbed Gulf Power 2021)
+    6452: NEXTERA,  # Florida Power & Light Co (FPL; absorbed Gulf Power 2021)
     # TODO: verify utility_id from EIA-860 — NextEra Energy Resources LLC subs
     # --- Duke Energy ------------------------------------------------------
-    5416: DUKE,       # Duke Energy Carolinas LLC
-    3046: DUKE,       # Duke Energy Progress LLC (ex-Carolina Power & Light)
-    6455: DUKE,       # Duke Energy Florida LLC (ex-Florida Power Corp)
-    15470: DUKE,      # Duke Energy Indiana LLC (ex-PSI Energy)
+    5416: DUKE,  # Duke Energy Carolinas LLC
+    3046: DUKE,  # Duke Energy Progress LLC (ex-Carolina Power & Light)
+    6455: DUKE,  # Duke Energy Florida LLC (ex-Florida Power Corp)
+    15470: DUKE,  # Duke Energy Indiana LLC (ex-PSI Energy)
     # TODO: verify utility_id from EIA-860 — Duke Energy Ohio / Kentucky
     # --- Dominion Energy --------------------------------------------------
     19876: DOMINION,  # Virginia Electric & Power Co (VEPCO)
     17539: DOMINION,  # Dominion Energy South Carolina (ex-SCANA / SCE&G)
     # --- American Electric Power -----------------------------------------
-    733: AEP,         # Appalachian Power Co (APCo)
-    9324: AEP,        # Indiana Michigan Power Co (I&M)
-    15474: AEP,       # Public Service Co of Oklahoma (PSO)
-    17683: AEP,       # Southwestern Electric Power Co (SWEPCo)
-    10434: AEP,       # Kentucky Power Co
-    14015: AEP,       # Ohio Power Co (AEP Ohio generation lineage)
+    733: AEP,  # Appalachian Power Co (APCo)
+    9324: AEP,  # Indiana Michigan Power Co (I&M)
+    15474: AEP,  # Public Service Co of Oklahoma (PSO)
+    17683: AEP,  # Southwestern Electric Power Co (SWEPCo)
+    10434: AEP,  # Kentucky Power Co
+    14015: AEP,  # Ohio Power Co (AEP Ohio generation lineage)
     # Note: AEP Texas is T&D-only in ERCOT and is intentionally NOT mapped
     # as a generation owner.
     # --- Entergy ----------------------------------------------------------
-    814: ENTERGY,     # Entergy Arkansas LLC
-    12465: ENTERGY,   # Entergy Louisiana LLC
-    12685: ENTERGY,   # Entergy Mississippi LLC
-    13478: ENTERGY,   # Entergy New Orleans LLC
+    814: ENTERGY,  # Entergy Arkansas LLC
+    12465: ENTERGY,  # Entergy Louisiana LLC
+    12685: ENTERGY,  # Entergy Mississippi LLC
+    13478: ENTERGY,  # Entergy New Orleans LLC
     # TODO: verify utility_id from EIA-860 — Entergy Texas Inc (MISO South)
     # --- Berkshire Hathaway Energy ---------------------------------------
-    14354: BHE,       # PacifiCorp (Pacific Power + Rocky Mountain Power)
-    11208: BHE,       # MidAmerican Energy Co
-    13407: BHE,       # Nevada Power Co (NV Energy)
-    17166: BHE,       # Sierra Pacific Power Co (NV Energy)
+    14354: BHE,  # PacifiCorp (Pacific Power + Rocky Mountain Power)
+    11208: BHE,  # MidAmerican Energy Co
+    13407: BHE,  # Nevada Power Co (NV Energy)
+    17166: BHE,  # Sierra Pacific Power Co (NV Energy)
     # TODO: verify utility_id from EIA-860 — BHE Renewables LLC subs
     # --- Xcel Energy ------------------------------------------------------
-    15466: XCEL,      # Public Service Co of Colorado (PSCo)
-    13781: XCEL,      # Northern States Power Co - Minnesota (NSP-MN)
-    17698: XCEL,      # Southwestern Public Service Co (SPS)
+    15466: XCEL,  # Public Service Co of Colorado (PSCo)
+    13781: XCEL,  # Northern States Power Co - Minnesota (NSP-MN)
+    17698: XCEL,  # Southwestern Public Service Co (SPS)
     # TODO: verify utility_id from EIA-860 — Northern States Power Co - Wisconsin
     # --- TVA --------------------------------------------------------------
-    18642: TVA,       # Tennessee Valley Authority
+    18642: TVA,  # Tennessee Valley Authority
     # --- PSEG -------------------------------------------------------------
-    15270: PSEG,      # Public Service Electric & Gas Co
+    15270: PSEG,  # Public Service Electric & Gas Co
     # TODO: verify utility_id from EIA-860 — PSEG Nuclear LLC
     # --- PG&E -------------------------------------------------------------
-    14328: PGE,       # Pacific Gas & Electric Co
+    14328: PGE,  # Pacific Gas & Electric Co
     # --- Edison International / SCE --------------------------------------
-    17609: EDISON,    # Southern California Edison Co
+    17609: EDISON,  # Southern California Edison Co
     # --- Constellation Energy (post-2022 Exelon Generation spin-off) ------
     # TODO: verify utility_id from EIA-860 — Constellation Energy Generation LLC
     # TODO: verify utility_id from EIA-860 — Calpine LLC subs (post 2026-01-07)

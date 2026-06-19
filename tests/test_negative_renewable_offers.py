@@ -43,9 +43,7 @@ class TestNegativeRenewableOfferFloor(unittest.TestCase):
     def test_off_is_identity(self):
         """Flag off leaves wind/solar offers untouched (byte-identical)."""
         config = ScenarioConfig(negative_renewable_offers=False)
-        wind_mc, solar_mc = apply_negative_renewable_offer_floor(
-            -26.0, 0.0, config
-        )
+        wind_mc, solar_mc = apply_negative_renewable_offer_floor(-26.0, 0.0, config)
         self.assertEqual(wind_mc, -26.0)
         self.assertEqual(solar_mc, 0.0)
 
@@ -80,9 +78,7 @@ class TestNegativeRenewableOfferFloor(unittest.TestCase):
             negative_renewable_offers=True, renewable_keep_running_value=20.0
         )
         solar_mc = np.array([0.0, -30.0, -5.0])
-        _, floored = apply_negative_renewable_offer_floor(
-            np.zeros(3), solar_mc, config
-        )
+        _, floored = apply_negative_renewable_offer_floor(np.zeros(3), solar_mc, config)
         np.testing.assert_array_equal(floored, np.array([-20.0, -30.0, -20.0]))
 
 
@@ -102,7 +98,10 @@ class TestNegativeRenewablePriceFormation(unittest.TestCase):
         mc = np.full((1, self.T), 50.0)
         demand = np.full((1, self.T), 80.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             wind_cf=np.zeros((1, self.T)),
             wind_cap=np.zeros(1),
             solar_cf=np.full((1, self.T), 1.0),
@@ -139,18 +138,28 @@ class TestNegativeRenewablePriceFormation(unittest.TestCase):
         is $0; once it saturates, the marginal resource is curtailed solar at
         -$20 and the price drops below the sink floor.
         """
+
         # One $0 export sink in zone Z0: pmax 0, can absorb down to -sink_cap.
         def _solve(sink_cap):
             sink = Generator(
-                unit_id="SINK", name="SINK", zone="Z0", fuel_type="import",
-                pmax_mw=0.0, pmin_mw=-sink_cap, eford=0.0,
+                unit_id="SINK",
+                name="SINK",
+                zone="Z0",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-sink_cap,
+                eford=0.0,
             )
             fleet = generators_to_fleet_arrays([sink], ["Z0"], hours=self.T)
             mc = np.zeros((1, self.T))  # sink offers at $0
             demand = np.full((1, self.T), 80.0)
             return solve_dispatch(
-                fleet, demand, mc=mc, T=self.T,
-                wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
+                fleet,
+                demand,
+                mc=mc,
+                T=self.T,
+                wind_cf=np.zeros((1, self.T)),
+                wind_cap=np.zeros(1),
                 solar_cf=np.full((1, self.T), 1.0),
                 solar_cap=np.array([200.0]),  # 120 MW surplus over the 80 load
                 solar_mc=-20.0,
