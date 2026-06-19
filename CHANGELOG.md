@@ -1,5 +1,58 @@
 # Changelog
 
+## 2026-06-19 (combined-cycle steam-turbine outage coupling — all ISOs)
+
+The CAMPD unit-outage overlay only ever flagged combustion turbines: a combined
+cycle's steam turbine (EIA-860 `prime_mover = CA`) burns no fuel, has no CEMS
+series, and so was never detected or derated. When a feeding CT went down for an
+extended period the model kept the plant's steam turbine fully online even
+though it physically loses that CT's share of HRSG steam — an under-derate of
+the orphaned steam. At Wolf Hollow II (59812, 2×CT 360 MW + 1×CA steam 511 MW)
+the 90-day 2025 CGT5 outage derated the bin by only `360/1231 = 29%`, leaving
+the plant ~71% available when reality was ~50%. Across the six consumed
+unit-outage CSVs, 43 of 46 ERCOT CC plants (and the CC fleets of every other
+ISO) carried this orphaned steam — ~12.7 GW of CC steam absent from every
+outage derate.
+
+- **Fix** (`scripts/derive_campd_unit_outages.py::build_capacity_index`). A
+  combined-cycle combustion turbine's CSV `unit_capacity_mw` is now its full
+  block share — `CT_nameplate × (1 + Σ CA_nameplate / Σ CT_nameplate)` over the
+  plant's `CT`/`CA` prime movers — so the plant's CT shares sum back to the full
+  block (CT + steam, the same basis as the model-bin denominator) and one CT out
+  derates its turbine *plus* the steam it fed. Wolf Hollow II's CTs go 360 →
+  615.6 MW each (sum 1231.2 = the bin), so the CGT5 outage now derates 50%.
+- **Detection is unchanged.** A new `(detect_mw, derate_mw, cc_augmented)`
+  capacity entry separates the CF denominator the outage *detector* thresholds
+  on (the CT's own nameplate — untouched) from the steam-augmented *derate*
+  share written to the CSV. Verified window-neutral: every committed outage
+  window is preserved across all six ISOs (0 lost), non-CC capacities are
+  byte-identical, and the only added windows (PJM +64, CAISO +26) are
+  `observed_peak` rows from newly-landed CAMPD extracts, not the steam fix.
+- **Edge cases.** Single-shaft CC (`CS`) carries no separate `CA` and keeps its
+  steam-inclusive nameplate (no double count). The per-plant `CT`/`CA` sums keep
+  the allocation inside the CC, so the W A Parish (3470, coal/gas `ST`) and
+  Barney M Davis (4939, gas-steam `ST` unit 1 vs CC) splits never cross — the
+  steam stays on the CC CTs. CT/ST peakers remain excluded. The concurrent-CT
+  clip in `unit_outage_derate_factors` still holds: two CTs out sum to exactly
+  full derate (0.5 + 0.5 → clip 1.0), not an overshoot. The cosmetic
+  `plant_capacity_mw` column now equals the bin (Wolf Hollow II 720 → 1231.2).
+- **Regenerated all six consumed unit-outage CSVs** with
+  `scripts/derive_campd_unit_outages.py --iso <ISO>`. CC-augmented rows
+  (`eia_*_cc` source): ERCOT 1272, PJM 1102, NYISO 497, NEISO 541, CAISO 719,
+  MISO 764. Window-set deltas are input-data drift only (`observed_peak` rows
+  from newly-landed extracts): PJM 4594→4658, CAISO 1961→1987, MISO 3767→3806;
+  ERCOT/NYISO/NEISO window counts unchanged. Also repointed the script's stale
+  `inputs/raw-data/...` path defaults
+  (UNIT_LEVEL_DIR, `--bins`, `--eia860`, `--out`, the F923 parquet) to their
+  post-W1 `data/raw/...` homes via `market_sim.config.paths`, so it runs again.
+- **GATED** (derate → dispatch → volumes). ERCOT 3-yr co-opt keeper recipe
+  re-run (`ercot_dam_ccsteam_3yr`): the [7c] operating-shape regression gate
+  PASSES every class/year (CC_REGULAR/CC_CHP cf_emd held or improved — the
+  steam-coupled derate does not distort CC shape), and the per-class TWh volume
+  gate holds. The deeper CC derate lifts scarcity in the outage windows (2023
+  >$200 tail 151→171, toward the 181 actual); 2024/2025 LMP is being re-gated
+  against a same-recipe baseline A/B before adoption.
+
 ## 2026-06-19 (PJM — coal-rank fallback for mid-backcast retirees; coal-over de-masked)
 
 Three retiring PJM coal plants — **W H Sammis** (OH), **Homer City** (PA) and
