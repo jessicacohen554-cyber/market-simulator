@@ -1,0 +1,60 @@
+# Canonical schema: generator outages / available capacity
+#
+# Reconciles the outage sources, which are derived rather than published:
+#   CAMPD-derived : zero-gross-load hours read as unit downtime
+#                   (scripts/derive_campd_outages.py, derive_campd_unit_outages.py)
+#   ERCOT         : tx-jan-aug23-unit-outages.csv (curated unit outage list)
+#
+# Reconciliation: every source resolves to a per-unit hourly availability row —
+# capacity offline (outage_mw) vs available (available_mw) against nameplate.
+# plant_id/unit_id mirror the emissions and fleet schemas so the three join.
+datatype: outages
+schema_version: 1
+title: Generator outages
+description: >-
+  Hourly (or interval) generator outage and available capacity by plant/unit.
+
+key_columns: [plant_id, unit_id, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the outage interval.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local interval start.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: true
+    description: ISO/RTO the unit is assigned to, when mapped.
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant / facility identifier.
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Generating-unit identifier (use "ALL" for plant-grain rows).
+  - name: outage_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Capacity offline (unavailable) during the interval.
+  - name: available_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Capacity available during the interval (nameplate minus outage).
+  - name: outage_type
+    dtype: string
+    unit: none
+    nullable: true
+    description: Outage classification (planned, forced, derate) when known.

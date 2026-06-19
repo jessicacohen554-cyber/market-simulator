@@ -1,0 +1,62 @@
+# Canonical schema: renewable output, availability and curtailment
+#
+# Reconciles the renewable-availability sources:
+#   CAISO HSL    : hour, wind_gen_mw, wind_hsl_mw, solar_gen_mw, solar_hsl_mw
+#   ERCOT HSL    : wind/solar generation vs high-sustainable-limit
+#   CAISO curtailment : 5-minute solar/wind curtailment (production & curtailment)
+#
+# Reconciliation: the per-technology wide HSL columns (wind_gen_mw/wind_hsl_mw,
+# solar_gen_mw/solar_hsl_mw) are unpivoted to long form keyed on `fuel`, with
+# generation_mw (actual), hsl_mw (available / high sustainable limit) and
+# curtailment_mw (hsl_mw - generation_mw, where reported).
+datatype: renewables
+schema_version: 1
+title: Renewable output and curtailment
+description: >-
+  Hourly renewable generation, available output (high sustainable limit) and
+  curtailment (MW) by ISO, zone and fuel, in long form.
+
+key_columns: [iso, zone, fuel, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local hour start.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Reporting zone (use "SYSTEM" for ISO-wide totals).
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: Renewable fuel/technology (wind, solar, ...).
+  - name: generation_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Actual renewable generation over the hour (*_gen_mw).
+  - name: hsl_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Available output / high sustainable limit (*_hsl_mw).
+  - name: curtailment_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Curtailed renewable energy (hsl_mw - generation_mw), when reported.
