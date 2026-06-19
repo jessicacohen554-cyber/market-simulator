@@ -187,7 +187,7 @@ winter capacity corroborates it (Freestone 1095, Hays 1048, Lamar 1149, Forney
 1966 MW — all above their bin nameplate). `scripts/derive_cc_capacity_reconcile.py`
 writes a **raise-only** reconciliation —
 `cap = max(nameplate, demonstrated CAMPD p99.9 peak)` — committed as
-`inputs/processed/cc_capacity_reconcile_ERCOT.csv` and applied in
+`data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv` and applied in
 `load_campd_bins` under `ScenarioConfig.cc_capacity_reconcile` (default off,
 ERCOT backcast). It raises 8 CC_REGULAR plants by 1.5–11% (+377 MW total) and
 never lowers one — CB EC (bin 654 = EIA-860 nameplate 654; over-runs on the

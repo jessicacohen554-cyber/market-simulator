@@ -8,7 +8,7 @@
 > (2025) of their power as ancillary services (RegUp+RRS+ECRS); that power is
 > committed and cannot also arbitrage energy. `--storage-as-commitment` subtracts
 > the measured per-resource-type storage-AS MW
-> (`inputs/raw-data/ercot-AS/ercot_<yr>_as_by_restype_hourly.parquet`, `storage`
+> (`data/raw/ercot-AS/ercot_<yr>_as_by_restype_hourly.parquet`, `storage`
 > column; Reg-Down and offline Non-Spin excluded) from the battery dispatch power
 > cap, pro-rata by available power. **Adopted for ACCURACY, not fit** (claude.md:
 > prefer measured/defensible over what fits) — the energy-only LP otherwise dumps
@@ -52,7 +52,7 @@
 > ```
 > python scripts/run_calibration_full.py --year 2023 2024 2025 \
 >     --storage-daily-cycling --battery-adder 10 --storage-as-commitment \
->     --offer-curve-delta-json inputs/calibration/offer_curve_deltas_cc_merit_ramp.json \
+>     --offer-curve-delta-json data/raw/_validation-source/offer_curve_deltas_cc_merit_ramp.json \
 >     --coal-lignite-sigmoid --lignite-floor 0.675 --lignite-ceil 1.00 \
 >     --prb-floor 0.73 --prb-follower-floor 0.63 \
 >     --curve-mid 0.35 --btm-backfill-year 2024 --cc-duct-peaking \
@@ -131,7 +131,7 @@
 
 > **CANDIDATE KEEPER (2026-06-16, audit follow-up D4): merit-ramp CC shape fix.**
 > `results/calibration/d4a_meritramp` = run 115b **+ the CC_REGULAR merit-ramp
-> econ deltas** (`inputs/calibration/offer_curve_deltas_cc_merit_ramp.json`:
+> econ deltas** (`data/raw/_validation-source/offer_curve_deltas_cc_merit_ramp.json`:
 > econ_low −0.24 / econ_high −0.20, restoring a rising econ ramp). It **fixes
 > the CC_REGULAR operating-shape failure** (the missed >90% CF hours): per-class
 > cf_emd 0.099/0.105/0.113 → 0.088/0.098/0.101 and hourly r 0.74 → 0.76, with
@@ -200,7 +200,7 @@ re-threaded for the new equilibrium:
   Measured 1.34/1.88/2.22 TWh out-of-merit (29.9/35.0/42.5% of covered CT CEMS
   energy). In-merit hours stay economic (CT not floored to full CEMS); a pure LP
   min-gen bound (no MIP — prices stay LP duals). Built by
-  `scripts/derive_ct_deployment.py` → `inputs/calibration/
+  `scripts/derive_ct_deployment.py` → `data/raw/_validation-source/
   ct_deployment_floor_ERCOT.parquet`.
 
 Reproduce with:
@@ -378,7 +378,7 @@ residual), CT runs deep (above), and PRB's multi-year mean sits at −3.3%
   canonical) are committed in the bundle. 2023 energy-only LMP MAE 32.3 → 29.3
   with the adder (8% of the summer gap, 22 h >$200 vs 0); 2024/2025 hold the
   ±$1 gate (7.8 → 7.5, 2.1 → 2.1). The published NP6-576-ER seasonal μ/σ table
-  (`inputs/calibration/ercot_ordc_lolp_params.csv`, user-fetched 2026-06-13)
+  (`data/raw/_validation-source/ercot_ordc_lolp_params.csv`, user-fetched 2026-06-13)
   is used with `ordc_lolp_shift_sigma = 0` (the published Average embeds the
   PUCT 0.5σ shift; μ/σ ≈ 0.68 in every season).
 

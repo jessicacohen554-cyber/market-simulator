@@ -286,7 +286,7 @@ Build the capacity-hindcast harness per docs/forecast-validation-plan.md
 Phase 2a. New script scripts/run_capacity_hindcast.py: arguments --iso
 --start-year 2018 --end-year 2025 --fuel-variant {realized,asknown}.
 It must (1) initialize the fleet from EIA-860 as of the start year — check
-what 860 vintages exist under inputs/ and data/; if 2017/2018 files are
+what 860 vintages exist under data/raw/; if 2017/2018 files are
 absent, stop and list exactly what I need to download rather than
 substituting today's fleet; (2) restrict the known pipeline to what EIA-860
 reported as planned in the start-year vintage (no leakage from later

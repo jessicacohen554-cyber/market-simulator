@@ -6,7 +6,7 @@
 `scripts/derive_nyiso_rcpf_overlay.py`,
 constants `NYISO_RCPF_PRODUCTS` (`src/market_sim/config/constants.py`).
 **Validated against:** `results/calibration/nyiso_cal_{2023,2024,2025}` vs
-`inputs/calibration/actual_lmp_hourly_NYISO.parquet` (NYCA-hub RT).
+`data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet` (NYCA-hub RT).
 
 ## Why
 
@@ -165,7 +165,7 @@ away, rather than hiding it.
 
 The published `NYISO_RCPF_PRODUCTS` curve values are not taken on faith. NYISO
 OASIS real-time ancillary-service prices (`rtasp`, processed by
-`scripts/process_nyiso_as.py` into `inputs/calibration/actual_as_reserve_NYISO.parquet`)
+`scripts/process_nyiso_as.py` into `data/raw/_validation-source/actual_as_reserve_NYISO.parquet`)
 give the **measured** per-zone reserve clearing prices — the empirical RCPF
 realization — and the overlay report compares the model adder against them.
 
@@ -201,5 +201,5 @@ thermal dispatch and storage cap), writes `scarcity_locational.parquet` (long,
 per (year, hour, zone): `reserves_mw`, `nyca_adder`, `locational_adder`,
 `scarcity_adder`, `lmp`, `lmp_scarcity`), and prints each model zone's modeled
 adder against the measured per-zone RT reserve price
-(`inputs/raw-data/NYISO-AS/NYISO_as_rt_<year>.csv`). The LP is untouched — the
+(`data/raw/NYISO-AS/NYISO_as_rt_<year>.csv`). The LP is untouched — the
 adder is post-solve, stacked onto the persisted zonal LBMP.
