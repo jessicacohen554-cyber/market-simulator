@@ -1207,6 +1207,7 @@ def solve_and_persist(
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_storage_as_reserve: bool = False,
+    ercot_storage_as_reserve_from_year: int = 2025,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
@@ -1321,6 +1322,7 @@ def solve_and_persist(
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
+            ercot_storage_as_reserve_from_year=ercot_storage_as_reserve_from_year,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
@@ -1469,6 +1471,7 @@ def solve_and_persist(
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
+        "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
@@ -1548,7 +1551,9 @@ def solve_and_persist(
             ercot_load_resource_reserve=True)
     if ercot_storage_as_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
-            ercot_storage_as_reserve=True)
+            ercot_storage_as_reserve=True,
+            ercot_storage_as_reserve_from_year=int(
+                ercot_storage_as_reserve_from_year))
     if as_reserve_formula:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
@@ -3297,6 +3302,17 @@ def main() -> None:
              "volumes. Off = no storage-AS credit (default).",
     )
     parser.add_argument(
+        "--ercot-storage-as-reserve-from-year", type=int, default=2025,
+        help="First weather year the --ercot-storage-as-reserve credit applies "
+             "to (default 2025). A modeling scope, not a measured fact: the "
+             "credit is physically correct every year, but 2023/2024 each carry "
+             "genuine scarcity the ORDC-only model can only reach THROUGH the "
+             "reserve over-fire, so crediting them collapses their real tail "
+             "(2024 probe: tail 49→7 h >$200, MAE 10.5→12.7). Set to 2023 only "
+             "to probe a global credit alongside a genuine scarcity-price "
+             "mechanism (see docs/ercot-run131-lmp-decomposition-2026-06.md).",
+    )
+    parser.add_argument(
         "--as-reserve-formula", action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
              "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
@@ -3676,6 +3692,8 @@ def main() -> None:
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_storage_as_reserve=args.ercot_storage_as_reserve,
+        ercot_storage_as_reserve_from_year=(
+            args.ercot_storage_as_reserve_from_year),
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
