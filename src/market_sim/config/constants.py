@@ -1607,30 +1607,52 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
 # (so forecast years and un-tabulated ISOs are unchanged). Used by
 # transmission.build_import_generators(iso, year=...).
 #
-# NYISO 2024/2025: the priced node's marginal blocks proxy gas-priced
-# neighbor hubs, so each block is scaled off the 2023 base ladder by the
-# measured neighbor-hub RT-LMP ratio vs 2023 (data/raw/_validation-source/actual_lmp.json,
-# rt_mon means): PJM West $28.4→$29.5→$42.9 (×1.04, ×1.51) prices the
-# PJM_west and Ontario blocks; ISO-NE Mass Hub $35.9→$39.4→$66.2 (×1.10, ×1.84)
-# prices the ISONE_tie and import_scarcity blocks. HQ hydro is mostly
-# gas-insensitive (HQ SRMC ≈ 0), so it rises at ~half the PJM ratio. Capacities
-# are unchanged — the duration-curve fit (scripts/derive_import_tranches.py) is
-# capacity-keyed; only the price ladder tracks the year. Tier 3 (calibration).
+# NYISO (Step 4, "import discipline") — the priced node's blocks proxy
+# gas-priced neighbor hubs, so the ladder is DERIVED from the measured
+# neighbor-hub RT LMP each year (data/raw/_validation-source/actual_lmp.json,
+# rt / rt_pct) instead of being hand-set or ratio-scaled, anchored on each
+# tie's ROLE in the merit order:
+#   marginal gas ties = neighbor hub p75[y] + 1.5 — PJM_west (clears ~50% of
+#     hours) and ISONE_tie (~20%) clear only in NYISO's upper-price hours, so
+#     the neighbor price *given NYISO imports through that seam* is the
+#     neighbor's upper quartile (anchoring on the annual mean over-cheapens the
+#     deep imports and pulls the high-gas year below actual). p75:
+#       PJM Western Hub  32.7 / 33.9 / 47.9  -> PJM_west
+#       ISO-NE Mass Hub  38.4 / 43.4 / 81.1  -> ISONE_tie
+#   baseload ties = home base + 1.5 + linkage*Δ(PJM mean) — HQ (~zero-SRMC
+#     hydro, 100% of hours) and Ontario (surplus nuclear/hydro, ~70-97%) are
+#     always-on and gas-insensitive; they anchor on their own home price (HQ
+#     economy energy ~$11.5; Ontario HOEP 2023 ~US$21) and rise only with
+#     export opportunity cost (HQ 0.5x, Ontario 1.0x the PJM annual increment).
+#   import_scarcity = mean(PJM p95, Mass Hub p95)[y] — the neighbors' peak
+#     economy energy in NYISO's tightest hours, which falls in the low-gas
+#     year instead of sitting stale-expensive at the old hand-set $75.
+# The 1.5 adder is NYISO import marginal losses + the seam transaction margin.
+# Capacities are unchanged — the duration-curve fit (derive_import_tranches.py)
+# is capacity-keyed; only the price ladder tracks the year. Regenerate with
+# scripts/derive_nyiso_import_ladder.py. Tier 3 (calibration).
 IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = {
     "NYISO": {
+        2023: [
+            ("HQ_hydro", 900.0, 13.0),
+            ("IESO_Ontario", 1200.0, 22.5),
+            ("PJM_west", 1100.0, 34.2),
+            ("ISONE_tie", 800.0, 39.9),
+            ("import_scarcity", 1900.0, 68.4),
+        ],
         2024: [
-            ("HQ_hydro", 900.0, 14.0),
-            ("IESO_Ontario", 1200.0, 25.0),
-            ("PJM_west", 1100.0, 35.0),
-            ("ISONE_tie", 800.0, 48.0),
-            ("import_scarcity", 1900.0, 82.0),
+            ("HQ_hydro", 900.0, 13.5),
+            ("IESO_Ontario", 1200.0, 23.6),
+            ("PJM_west", 1100.0, 35.4),
+            ("ISONE_tie", 800.0, 44.9),
+            ("import_scarcity", 1900.0, 79.7),
         ],
         2025: [
-            ("HQ_hydro", 900.0, 18.0),
-            ("IESO_Ontario", 1200.0, 36.0),
-            ("PJM_west", 1100.0, 51.0),
-            ("ISONE_tie", 800.0, 81.0),
-            ("import_scarcity", 1900.0, 138.0),
+            ("HQ_hydro", 900.0, 20.2),
+            ("IESO_Ontario", 1200.0, 37.0),
+            ("PJM_west", 1100.0, 49.4),
+            ("ISONE_tie", 800.0, 82.6),
+            ("import_scarcity", 1900.0, 135.2),
         ],
     },
 }
