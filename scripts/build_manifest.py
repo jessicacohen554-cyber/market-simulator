@@ -1,8 +1,11 @@
 """Assemble the backcast dashboard's shared files from committed parts.
 
 The dashboard's shared files — ``frontend/data/backcast/manifest.js``,
-``benchmark.js`` and the ``backcast-results.html`` shell — are GENERATED, never
-committed. Every calibration run commits only files in its own namespace:
+``benchmark.js`` and the ``backcast-results.html`` shell — are GENERATED from the
+committed parts by this script. They ARE committed (so a raw-branch GitHub Pages
+build serves the dashboard too), but only the Pages deploy workflow refreshes them
+on main — it is their single writer. Every calibration run commits only files in
+its own namespace:
 
   * ``frontend/data/backcast/registry/<id>.json`` — the run's complete manifest
     entry (id, label, date, shorthand, definition, years, iso, file, bundle).
