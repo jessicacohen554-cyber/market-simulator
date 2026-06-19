@@ -6,9 +6,9 @@ online reserve + published step curve), a published rule for the forecast.
 **Zero parameters fitted to the price residual.**
 **Code:** `src/market_sim/results/scarcity.py` (PJM section),
 `scripts/derive_pjm_ordc_overlay.py`.
-**Curve (cited):** `inputs/calibration/pjm_ordc_curve.csv` +
+**Curve (cited):** `data/raw/_validation-source/pjm_ordc_curve.csv` +
 `docs/multi-iso/pjm-reserve-curve-source.md`.
-**Data:** `inputs/raw-data/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
+**Data:** `data/raw/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
 2023–2025 + `pjm_<yr>_as_up_mw.parquet`, the withholding series from
 `scripts/build_pjm_as_withholding.py`). **Bundles:** `results/calibration/pjm_26`
 (keeper), `results/calibration/pjm_27_aswh` (reserve-withholding probe — see
@@ -180,7 +180,7 @@ series is the **measured RT Primary Reserve requirement** (`as_req_mw`, service
 `PR`, locale `PJM_RTO`, the binding upward 10-min product that nests
 Synchronized — Manual 11 sec 4.4.1), 5-min→hourly on the non-leap 8760 clock,
 ~3 GW/yr, written by `scripts/build_pjm_as_withholding.py` to
-`inputs/raw-data/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
+`data/raw/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
 Data Miner reserve-market parquets cited in `pjm-reserve-curve-source.md`. DA
 (`da_reserve_market_results`) was considered as the basis for our single-clearing
 (day-ahead-style) model: the Primary requirement is a reliability quantity

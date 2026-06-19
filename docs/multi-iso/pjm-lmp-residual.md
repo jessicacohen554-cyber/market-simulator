@@ -1,10 +1,10 @@
 # PJM hourly LMP overlay — localizing the summer scarcity residual (J3a)
 
 **Date:** 2026-06-11.
-**Data:** `inputs/calibration/actual_lmp_hourly_PJM.parquet` (hub-mean hourly
+**Data:** `data/raw/_validation-source/actual_lmp_hourly_PJM.parquet` (hub-mean hourly
 RT/DA LMP across the 12 PJM trading hubs, 2023–2025, fixed 8760-hour local
 calendar), built by `scripts/derive_actual_lmp.py` from the hourly Data Miner
-exports in `inputs/raw-data/lmp-data/PJM_{year}_rt_da_monthly_lmps.csv`
+exports in `data/raw/lmp-data/PJM_{year}_rt_da_monthly_lmps.csv`
 (hourly despite the filename — 12 hubs × 8,760 local hours per file).
 **Runs:** `pjm_9_chp_solar` (2023+2024) and `pjm_10d_chp` (2024 re-solve);
 the two agree to ~$0.01 on every 2024 statistic below.
@@ -75,7 +75,7 @@ months are on or slightly above actuals (Jan +2.8, Dec +1.2).
 
 ## J3b status (CAMPD unit-level coverage)
 
-Blocked on uploads: `inputs/raw-data/campd-unit-level/` still has **no
+Blocked on uploads: `data/raw/campd-unit-level/` still has **no
 MD/DE/NC/TN extracts and only MI 2024**. TN is now in
 `campd.ISO_STATES["PJM"]`, so once `{MD,DE,NC,TN,MI}_{year}.parquet` land,
 regenerate with:

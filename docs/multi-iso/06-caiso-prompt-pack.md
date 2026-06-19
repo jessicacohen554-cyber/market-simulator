@@ -26,7 +26,7 @@ Already in repo — do not re-acquire:
   `scripts/derive_import_tranches.py` to fit them — needs calibration,
   not construction. The runner now also wires the CAISO export sink in.
 - `data/eia_hourly/CISO hourly.parquet` (EIA-930 demand/fuel/interchange).
-- `inputs/raw-data/CISO_fueltype.parquet`, `CISO_region.parquet`.
+- `data/raw/CISO_fueltype.parquet`, `CISO_region.parquet`.
 - CAMPD unit-level CA **2023, 2024, 2025**
   (`campd-unit-level/CA_{2023,2024,2025}.parquet`); facility-level CA
   2023–2025; derived `campd-unit-outages-CAISO.csv` (2023–2025 windows,
@@ -47,13 +47,13 @@ default-on, CARB allowance in MC, border carbon on import tranches).
 
 | # | Item | Source | Destination | Needed by |
 |---|---|---|---|---|
-| U1 | CAMPD unit-level `CA_2023.parquet` (hourly CEMS, same schema as CA_2024) — **done (2026-06-11)**: landed and `derive_campd_unit_outages.py --iso CAISO` regenerated `campd-unit-outages-CAISO.csv` (612 new 2023 windows; 2024/2025 byte-identical) | EPA CAMPD bulk download | `inputs/raw-data/campd-unit-level/` | P1 (only for the 2023 year) |
-| U2 | DA + RT hourly LMPs at TH_NP15, TH_SP15, TH_ZP26 (gen hubs), 2023–2025 | CAISO OASIS `PRC_LMP` (DAM) + `PRC_INTVL_LMP` (RTM, hourly-averaged) | `inputs/raw-data/lmp-data/CAISO/` | P10 |
-| U3 | Wind & Solar Production-and-Curtailment data, 2023–2025 (hourly or 5-min) | CAISO "Managing Oversupply" / daily curtailment reports | `inputs/raw-data/caiso-curtailment/` | P6 |
-| U4 | TAC-area actual hourly load (PGE/SCE/SDGE TACs), 2023–2025 | CAISO OASIS `SLD_FCST` with `market_run_id=ACTUAL` (monthly loops; ≥5 s between calls) | `inputs/raw-data/zone-specific-demand/CAISO/` | P8 |
-| U5 | *(optional)* Path 15 / Path 26 hourly flows + limits | CAISO OASIS transmission-interface usage reports | `inputs/raw-data/iso-specific-transmission/CAISO/` | P10 (TTC validation) |
+| U1 | CAMPD unit-level `CA_2023.parquet` (hourly CEMS, same schema as CA_2024) — **done (2026-06-11)**: landed and `derive_campd_unit_outages.py --iso CAISO` regenerated `campd-unit-outages-CAISO.csv` (612 new 2023 windows; 2024/2025 byte-identical) | EPA CAMPD bulk download | `data/raw/campd-unit-level/` | P1 (only for the 2023 year) |
+| U2 | DA + RT hourly LMPs at TH_NP15, TH_SP15, TH_ZP26 (gen hubs), 2023–2025 | CAISO OASIS `PRC_LMP` (DAM) + `PRC_INTVL_LMP` (RTM, hourly-averaged) | `data/raw/lmp-data/CAISO/` | P10 |
+| U3 | Wind & Solar Production-and-Curtailment data, 2023–2025 (hourly or 5-min) | CAISO "Managing Oversupply" / daily curtailment reports | `data/raw/caiso-curtailment/` | P6 |
+| U4 | TAC-area actual hourly load (PGE/SCE/SDGE TACs), 2023–2025 | CAISO OASIS `SLD_FCST` with `market_run_id=ACTUAL` (monthly loops; ≥5 s between calls) | `data/raw/zone-specific-demand/CAISO/` | P8 |
+| U5 | *(optional)* Path 15 / Path 26 hourly flows + limits | CAISO OASIS transmission-interface usage reports | `data/raw/iso-specific-transmission/CAISO/` | P10 (TTC validation) |
 | U6 | *(optional)* CARB cap-and-trade auction settlement prices 2023–2025 | CARB auction results (public PDFs/CSV; web-search may suffice) | cite into `constants.py` | P7 |
-| U7 | *(optional, forecast module)* CA BTM PV + storage capacity by year | EIA-861 small-scale PV / CEC tracking | `inputs/raw-data/caiso-btm/` | P13 |
+| U7 | *(optional, forecast module)* CA BTM PV + storage capacity by year | EIA-861 small-scale PV / CEC tracking | `data/raw/caiso-btm/` | P13 |
 
 U1–U4 unblock the full pack. Without U2 the backcast still runs but price
 calibration is level-only; without U3 renewables fall back to the EIA-930
@@ -131,7 +131,7 @@ and scripts/build_calibration_reference.py.
    demand stats from data/eia_hourly/CISO hourly.parquet; EIA-923 by-fuel
    generation_twh; measured Henry Hub; eGRID CAISO generation/emissions
    benchmark; EIA-860 year-end + monthly wind/solar capacity with
-   NP15/ZP26/SP15 zone shares. Emit inputs/calibration/CAISO_{year}_renewable_capacity.csv
+   NP15/ZP26/SP15 zone shares. Emit data/raw/_validation-source/CAISO_{year}_renewable_capacity.csv
    and the calibration_reference.json blocks. ERCOT/PJM outputs must be
    byte-identical.
 2. Fleet sanity: assemble the CAISO fleet via get_iso_config("CAISO") +
@@ -139,7 +139,7 @@ and scripts/build_calibration_reference.py.
    distribution vs CAISO published fleet totals (web-search for the NQC
    list / CAISO annual report figures; cite). Flag unassigned plants.
 3. CEMS coverage: list distinct states of CAISO-fleet fossil plants, diff
-   against inputs/raw-data/campd-unit-level/<ST>_<year>.parquet. Expected
+   against data/raw/campd-unit-level/<ST>_<year>.parquet. Expected
    gap: CA_2023. Confirm whether any non-CA plants in the CISO BA carry
    CEMS obligations worth covering.
 4. Write docs/multi-iso/caiso-data-audit.md: what is present, what is
@@ -155,10 +155,10 @@ blocks; tests pass; audit doc committed.
 CAISO backcast: regenerate measured unit-outage windows. Read
 docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
 
-1. If inputs/raw-data/campd-unit-level/CA_2023.parquet exists (upload U1),
+1. If data/raw/campd-unit-level/CA_2023.parquet exists (upload U1),
    include 2023; otherwise run 2024–2025 and note 2023 as statistical-
    availability-only in the run config.
-2. Regenerate inputs/raw-data/campd-unit-outages-CAISO.csv for all
+2. Regenerate data/raw/campd-unit-outages-CAISO.csv for all
    available years. CAISO's fossil fleet is load-following gas (CC/ST/CT,
    essentially no coal): verify the event-based rule (every-hour CF < 2%,
    ≥ 120 h) is what fires; confirm the coal real-run rule has no CAISO
@@ -191,7 +191,7 @@ and the CHP tags from the P3 session (CC_CHP/CT_CHP assignments).
    peaker-style spiky runners for the exclusion list.
 3. No coal must-run: confirm zero COAL rows; the must-run layer is CHP
    BTM (P3), nuclear, hydro min-flows.
-4. Produce the CAISO rows for inputs/custom-bin-assignments.csv (or the
+4. Produce the CAISO rows for data/raw/reference/custom-bin-assignments.csv (or the
    per-ISO equivalent the loader expects): Plant_Code, Plant_Group,
    Pct_Must_Run/Committed/Economic/Peaking, using measured values where
    CAMPD supports them and class defaults elsewhere; tag each row's
@@ -260,12 +260,12 @@ CAISO backcast: the grid-battery fleet. Read model/storage.py,
 constants.py STORAGE_* entries, and playbook §8.4.
 
 1. Build the CAISO BESS fleet from
-   inputs/raw-data/eia-860/eia860_energy_storage_operable.parquet: power
+   data/raw/eia-860/eia860_energy_storage_operable.parquet: power
    MW, energy MWh (duration), COD month (CAISO added GWs mid-year every
    year — model the intra-year capacity ramp, not just year-end), zone
    via plant coords. Keep co-located solar+storage as separate resources.
 2. Benchmark: check data/eia_hourly/CISO hourly.parquet and
-   inputs/raw-data/CISO_fueltype.parquet for the EIA-930 battery
+   data/raw/CISO_fueltype.parquet for the EIA-930 battery
    charge/discharge columns; if present, add battery throughput and the
    evening-discharge shape to the CAISO calibration comparison.
 3. Add a cycling/throughput cost knob (cite degradation-cost literature,
@@ -284,7 +284,7 @@ benchmark columns wired if present.
 CAISO backcast: uncurtailed renewable potential (the HSL analogue). Read
 data/renewables.py, scripts/build_ercot_hsl.py, playbook §8.3.
 
-1. If inputs/raw-data/caiso-curtailment/ exists (upload U3): build hourly
+1. If data/raw/caiso-curtailment/ exists (upload U3): build hourly
    uncurtailed wind/solar = EIA-930 delivered + reported curtailment,
    zone-shaped by EIA-860 capacity shares; emit a CAISO HSL-style parquet
    mirroring ercot-hsl/ and teach load_renewable_profiles() to use it for
@@ -341,7 +341,7 @@ scripts/derive_load_shares.py, playbook §8.1.
    demand is net of ~15+ GW BTM PV and that backcasts model front-of-
    meter resources only (net-load convention) — this is the convention
    note future ISOs will copy.
-2. If inputs/raw-data/zone-specific-demand/CAISO/ has TAC-area load
+2. If data/raw/zone-specific-demand/CAISO/ has TAC-area load
    (upload U4): derive measured load shares + hourly zonal shapes
    (PGE-TAC→NP15+ZP26 split, SCE+SDGE→SP15; document the mapping) via a
    generalized derive_load_shares.py, replacing the static 0.43/0.07/0.50.
@@ -404,9 +404,9 @@ a CAISO bundle with the priced node on.
 
 ```
 CAISO backcast: price benchmarks and the 3-zone adequacy test. Read
-scripts/derive_actual_lmp.py and inputs/calibration/actual_lmp.json.
+scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
-1. From inputs/raw-data/lmp-data/CAISO/ (upload U2): build CAISO
+1. From data/raw/lmp-data/CAISO/ (upload U2): build CAISO
    2023–2025 entries in actual_lmp.json (DA + RT annual/monthly hub
    averages) and an hourly series file for duration-curve overlays,
    following the ERCOT/PJM format.
@@ -484,7 +484,7 @@ and design decision 1 in doc 06.
    BTM PV output (capacity trajectory × a solar shape from the ISO's
    utility-scale profile, derated; document the method).
 2. Carry a per-ISO BTM PV + BTM storage capacity trajectory input
-   (inputs/raw-data/caiso-btm/ from upload U7; EIA-861/CEC cited), and
+   (data/raw/caiso-btm/ from upload U7; EIA-861/CEC cited), and
    re-net demand at simulation time so forecast BTM growth deepens the
    duck curve instead of being frozen into the historical net shape.
 3. Represent BTM storage / VPP programs as a load-modifying profile or a
@@ -552,7 +552,7 @@ to matter.
 
 *Status 2026-06: code landed.* `build_ercot_hsl.py` builds any year —
 2024/2025 ingest ERCOT MIS wind/solar production reports (system-wide
-GEN + actual HSL) from `inputs/raw-data/ercot-hsl/np6/` once uploaded;
+GEN + actual HSL) from `data/raw/ercot-hsl/np6/` once uploaded;
 the HSL profile path in `renewables.py` is per-year; and both
 calibration reports print the modeled-vs-reported curtailment headline
 (annual TWh/% + monthly shape). **Open: the NP6 report uploads for
