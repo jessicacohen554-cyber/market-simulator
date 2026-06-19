@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import argparse
 
-from _zonal_sufficiency import analyze, render_concentration, render_table
+from lib.zonal_sufficiency import analyze, render_concentration, render_table
 from derive_actual_lmp import nyiso_zone_hourly
 
 # (zone_a, zone_b, label) — the prompt's J−A / K−A / Capital−A spreads in

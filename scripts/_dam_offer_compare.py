@@ -103,10 +103,10 @@ def main() -> None:
 
     print("\n=== [3] Per-class generation TWh (DAM vs BASE vs EIA-923) ===")
     try:
-        from scripts._session_score import class_table
+        from scripts.lib.session_score import class_table
     except Exception:
         sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-        from scripts._session_score import class_table
+        from scripts.lib.session_score import class_table
     td = class_table(dam).rename(columns={"model": "DAM"})
     tb = class_table(base).rename(columns={"model": "BASE"})
     t = td.merge(tb[["year", "class", "BASE"]], on=["year", "class"])
