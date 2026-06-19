@@ -48,9 +48,7 @@ def _write_caiso(caiso_dir: Path) -> None:
             "TAC_AREA_NAME": ["CA ISO-TAC", "CA ISO-TAC"],
             "MW": [105, 999],
         }
-    ).to_csv(
-        caiso_dir / "20230601_20230701_SLD_FCST_ACTUAL_test_v1.csv", index=False
-    )
+    ).to_csv(caiso_dir / "20230601_20230701_SLD_FCST_ACTUAL_test_v1.csv", index=False)
 
 
 def _write_nyiso(nyiso_dir: Path) -> None:
@@ -142,9 +140,7 @@ class TestCurateLoad(unittest.TestCase):
         self.assertEqual(
             str(df["interval_start_utc"].iloc[0]), "2023-01-01 05:00:00+00:00"
         )
-        self.assertEqual(
-            str(df["interval_start_local"].iloc[0]), "2023-01-01 00:00:00"
-        )
+        self.assertEqual(str(df["interval_start_local"].iloc[0]), "2023-01-01 00:00:00")
         self.assertEqual(str(df["interval_start_utc"].dt.tz), "UTC")
         self.assertEqual(df["load_mw"].tolist(), [1000.0, 1010.0])
 

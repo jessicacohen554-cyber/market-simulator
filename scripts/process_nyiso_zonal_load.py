@@ -24,6 +24,7 @@ two passes merge into one row (one hour/year, back-filled downstream).
 
 Run: ``python scripts/process_nyiso_zonal_load.py [--years 2023 2024 2025]``
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,8 +40,17 @@ RAW_DIR = NYISO_DIR / "raw"
 
 # The eleven NYISO settlement-zone names as they appear in the pal CSVs.
 NYISO_ZONES = (
-    "WEST", "GENESE", "CENTRL", "NORTH", "MHK VL", "CAPITL", "HUD VL",
-    "MILLWD", "DUNWOD", "N.Y.C.", "LONGIL",
+    "WEST",
+    "GENESE",
+    "CENTRL",
+    "NORTH",
+    "MHK VL",
+    "CAPITL",
+    "HUD VL",
+    "MILLWD",
+    "DUNWOD",
+    "N.Y.C.",
+    "LONGIL",
 )
 
 
@@ -52,10 +62,12 @@ def _read_zip(path: Path) -> pd.DataFrame:
             if not name.lower().endswith(".csv"):
                 continue
             with zf.open(name) as fh:
-                frames.append(pd.read_csv(
-                    io.BytesIO(fh.read()),
-                    usecols=["Time Stamp", "Name", "Load"],
-                ))
+                frames.append(
+                    pd.read_csv(
+                        io.BytesIO(fh.read()),
+                        usecols=["Time Stamp", "Name", "Load"],
+                    )
+                )
     if not frames:
         return pd.DataFrame(columns=["Time Stamp", "Name", "Load"])
     return pd.concat(frames, ignore_index=True)
@@ -92,16 +104,17 @@ def process_year(year: int) -> Path | None:
     n_zone = hourly["Name"].nunique()
     n_hours = hourly["Time Stamp"].nunique()
     sys_mean = hourly.groupby("Time Stamp")["Load"].sum().mean()
-    print(f"  {year}: {len(zips)} zips -> {len(hourly):,} rows "
-          f"({n_zone} zones x {n_hours:,} hours), system mean "
-          f"{sys_mean:,.0f} MW -> {out_path.name}")
+    print(
+        f"  {year}: {len(zips)} zips -> {len(hourly):,} rows "
+        f"({n_zone} zones x {n_hours:,} hours), system mean "
+        f"{sys_mean:,.0f} MW -> {out_path.name}"
+    )
     return out_path
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--years", nargs="+", type=int,
-                    default=[2023, 2024, 2025])
+    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     args = ap.parse_args()
     print(f"processing NYISO pal zonal load from {RAW_DIR}")
     for year in args.years:

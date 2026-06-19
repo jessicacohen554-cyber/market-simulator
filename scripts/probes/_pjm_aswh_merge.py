@@ -7,6 +7,7 @@ the per-year dispatch files, and merges meta.json / run_config.json.
 
 Usage: python scripts/probes/_pjm_aswh_merge.py <out_bundle> <year_dir> [<year_dir> ...]
 """
+
 import json
 import shutil
 import sys
@@ -48,7 +49,9 @@ def main(out: Path, year_dirs: list[Path]) -> None:
     for d in year_dirs:
         for f in (d / "dispatch").glob("*.parquet"):
             shutil.copy2(f, out / "dispatch" / f.name)
-    print(f"  dispatch: {[f.name for f in sorted((out/'dispatch').glob('*.parquet'))]}")
+    print(
+        f"  dispatch: {[f.name for f in sorted((out / 'dispatch').glob('*.parquet'))]}"
+    )
 
     # meta.json: take the first, merge years + gas_prices across all.
     metas = [json.loads((d / "meta.json").read_text()) for d in year_dirs]

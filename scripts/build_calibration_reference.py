@@ -168,8 +168,7 @@ def _eia860_renewables(iso: str, year: int) -> dict:
                 for z in range(len(zone_names))
             },
             "monthly_ramp": [
-                round(float(iso_monthly[m] / iso_monthly[-1]), 6)
-                for m in range(12)
+                round(float(iso_monthly[m] / iso_monthly[-1]), 6) for m in range(12)
             ],
             "monthly_capacity_mw": {
                 zone_names[z]: [round(float(monthly[z, m]), 2) for m in range(12)]
@@ -241,9 +240,7 @@ def _egrid_benchmark(iso: str) -> dict:
             fuel = _classify_gas(hr)
         else:
             fuel = EGRID_FUEL_MAP.get(cat, "other")
-        generation_twh[fuel] = (
-            generation_twh.get(fuel, 0.0) + float(gen) / _MWH_PER_TWH
-        )
+        generation_twh[fuel] = generation_twh.get(fuel, 0.0) + float(gen) / _MWH_PER_TWH
         co2_mt[fuel] = (
             co2_mt.get(fuel, 0.0)
             + float(co2) * SHORT_TON_TO_METRIC_TONNE / _MWH_PER_TWH
@@ -300,9 +297,7 @@ _EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"}
 # EIA-923 reported fuel-type codes that count as oil (distillate, residual,
 # kerosene, jet, waste oil, petroleum coke) — the dual-fuel winter switch fuel
 # in NYISO/NEISO. Any prime mover counts; the fuel code alone classifies oil.
-_EIA923_OIL_FUELS: frozenset[str] = frozenset(
-    {"DFO", "RFO", "JF", "KER", "WO", "PC"}
-)
+_EIA923_OIL_FUELS: frozenset[str] = frozenset({"DFO", "RFO", "JF", "KER", "WO", "PC"})
 # ISO identifier -> EIA balancing-authority code.
 _ISO_BA_CODE: dict[str, str] = {
     "ERCOT": "ERCO",
@@ -331,8 +326,7 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
     partial current-year survey). See :func:`_eia923_generation_raw` for the
     raw extraction and :func:`_guard_incomplete_eia923` for the guard.
     """
-    return _guard_incomplete_eia923(
-        iso, year, _eia923_generation_raw(iso, year))
+    return _guard_incomplete_eia923(iso, year, _eia923_generation_raw(iso, year))
 
 
 @lru_cache(maxsize=None)
@@ -348,9 +342,7 @@ def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
     ba = _ISO_BA_CODE.get(iso)
     if ba is None:
         return None
-    matches = sorted(
-        (REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip")
-    )
+    matches = sorted((REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip"))
     if not matches:
         return None
     with zipfile.ZipFile(matches[0]) as zf:
@@ -365,12 +357,15 @@ def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
             )
     df.columns = [str(c).replace("\n", " ").strip() for c in df.columns]
     df = df[df["Balancing Authority Code"].astype(str).str.strip() == ba]
-    return pd.DataFrame({
-        "net_gen": pd.to_numeric(
-            df["Net Generation (Megawatthours)"], errors="coerce").fillna(0.0),
-        "pm": df["Reported Prime Mover"].astype(str).str.strip(),
-        "fc": df["Reported Fuel Type Code"].astype(str).str.strip(),
-    })
+    return pd.DataFrame(
+        {
+            "net_gen": pd.to_numeric(
+                df["Net Generation (Megawatthours)"], errors="coerce"
+            ).fillna(0.0),
+            "pm": df["Reported Prime Mover"].astype(str).str.strip(),
+            "fc": df["Reported Fuel Type Code"].astype(str).str.strip(),
+        }
+    )
 
 
 def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
@@ -425,8 +420,7 @@ def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
     if not bench:
         return {}
     return {
-        fuel: round(float(np.nansum(np.asarray(arr, dtype=float)))
-                    / _MWH_PER_TWH, 4)
+        fuel: round(float(np.nansum(np.asarray(arr, dtype=float))) / _MWH_PER_TWH, 4)
         for fuel, arr in bench.items()
     }
 
@@ -475,7 +469,12 @@ def _guard_incomplete_eia923(
     for fuel in _incomplete_renewable_fuels(iso, year, gen):
         logger.info(
             "%s %s: EIA-923 %s %.2f TWh is incomplete; using EIA-930 %.2f TWh",
-            iso, year, fuel, patched.get(fuel, 0.0), e930[fuel])
+            iso,
+            year,
+            fuel,
+            patched.get(fuel, 0.0),
+            e930[fuel],
+        )
         patched[fuel] = e930[fuel]
     return patched
 
@@ -543,9 +542,7 @@ def build_reference() -> Path:
         ),
         "calibration_years": list(CALIBRATION_YEARS),
         "henry_hub_actual": {str(y): p for y, p in HENRY_HUB_ACTUAL.items()},
-        "egrid_benchmark": {
-            iso: _egrid_benchmark(iso) for iso in CALIBRATION_ISOS
-        },
+        "egrid_benchmark": {iso: _egrid_benchmark(iso) for iso in CALIBRATION_ISOS},
         "isos": isos,
     }
 

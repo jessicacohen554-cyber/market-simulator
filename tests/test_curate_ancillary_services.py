@@ -29,8 +29,12 @@ def _write_nyiso(raw_root: Path) -> None:
     # Two zones, two hours, day-ahead. Eastern wall-clock hour-beginning.
     pd.DataFrame(
         {
-            "Time Stamp": ["2024-06-01 00:00:00", "2024-06-01 00:00:00",
-                           "2024-06-01 01:00:00", "2024-06-01 01:00:00"],
+            "Time Stamp": [
+                "2024-06-01 00:00:00",
+                "2024-06-01 00:00:00",
+                "2024-06-01 01:00:00",
+                "2024-06-01 01:00:00",
+            ],
             "Name": ["CAPITL", "N.Y.C.", "CAPITL", "N.Y.C."],
             "spin_10": [1.0, 2.0, 3.0, 4.0],
             "nonsync_10": [0.5, 0.6, 0.7, 0.8],
@@ -51,7 +55,7 @@ def _write_pjm(raw_root: Path) -> None:
             "ancillary_service": [
                 "PJM RTO Synchronized Reserve",
                 "PJM RTO Thirty Minutes Reserve",
-                "PJM RTO Primary Reserve",        # aggregate -> intentionally dropped
+                "PJM RTO Primary Reserve",  # aggregate -> intentionally dropped
                 "Mid-Atlantic/Dominion Synchronized Reserve",
             ],
             "unit": ["price", "price", "price", "price"],
@@ -68,7 +72,7 @@ def _write_pjm(raw_root: Path) -> None:
             "ancillary_service": [
                 "RTO Regulation Capability",
                 "RTO Non-Synchronized Reserve",
-                "RTO Mileage Ratio",              # unit Ratio -> dropped
+                "RTO Mileage Ratio",  # unit Ratio -> dropped
             ],
             "unit": ["Price", "Price", "Ratio"],
             "value": [22.0, 1.5, 3.4],
@@ -95,7 +99,9 @@ def _write_ercot(raw_root: Path) -> None:
     asd = raw_root / "ercot-AS"
     asd.mkdir(parents=True, exist_ok=True)
     fields = [
-        {"name": "deliveryDate"}, {"name": "hourEnding"}, {"name": "ASType"},
+        {"name": "deliveryDate"},
+        {"name": "hourEnding"},
+        {"name": "ASType"},
         {"name": "MCPC"},
     ]
     # Two QSEs share the uniform MCPC for each (date, hour, ASType).
@@ -163,7 +169,9 @@ class CurateAncillaryTest(unittest.TestCase):
         self.assertEqual(
             row["interval_start_utc"], pd.Timestamp("2024-06-01 04:00:00", tz="UTC")
         )
-        self.assertEqual(row["interval_start_local"], pd.Timestamp("2024-06-01 00:00:00"))
+        self.assertEqual(
+            row["interval_start_local"], pd.Timestamp("2024-06-01 00:00:00")
+        )
 
     def test_pjm_pivot_zones_and_dropped_products(self):
         cas.curate(raw_root=self.raw, isos=["PJM"])

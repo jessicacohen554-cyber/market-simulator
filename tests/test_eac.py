@@ -81,9 +81,7 @@ class TestApplyEacToMc(unittest.TestCase):
 
     def test_other_fuels_untouched(self):
         # Coal and gas_ct earn no EAC.
-        config = ScenarioConfig(
-            eac_price_nuclear=17.0, eac_price_gas_cc_ccs=10.0
-        )
+        config = ScenarioConfig(eac_price_nuclear=17.0, eac_price_gas_cc_ccs=10.0)
         fleet = _fleet(["coal", "gas_ct"])
         mc = np.full((2, 4), 40.0)
         apply_eac_to_mc(mc, fleet, config)
@@ -122,9 +120,7 @@ class TestStorageDischargeCredit(unittest.TestCase):
         )
         block = cost.reshape(layout.T, layout.vars_per_hour)
         dis_slots = block[:, layout._dis_off : layout._soc_off]
-        self.assertTrue(
-            np.allclose(dis_slots, STORAGE_TIEBREAKER_EPSILON - 5.0)
-        )
+        self.assertTrue(np.allclose(dis_slots, STORAGE_TIEBREAKER_EPSILON - 5.0))
         # Charge slots stay at the plain cycling penalty.
         chg_slots = block[:, layout._chg_off : layout._dis_off]
         self.assertTrue(np.allclose(chg_slots, STORAGE_TIEBREAKER_EPSILON))
@@ -153,7 +149,11 @@ class TestOffshoreWindEac(unittest.TestCase):
 
         demand = np.full((1, T), 80.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, voll=5000.0,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            voll=5000.0,
             **_no_renewables(1, T),
         )
         self.assertEqual(result.status, "Optimal")
@@ -182,7 +182,11 @@ class TestGeothermalEac(unittest.TestCase):
 
         demand = np.full((1, T), 80.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, voll=5000.0,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            voll=5000.0,
             **_no_renewables(1, T),
         )
         self.assertEqual(result.status, "Optimal")
@@ -269,15 +273,9 @@ class TestNewEntryAttributeRevenue(unittest.TestCase):
     """Exogenous EAC raising new-entry expected revenue, using max()."""
 
     def test_eac_for_offshore_wind_and_geothermal(self):
-        config = ScenarioConfig(
-            eac_price_offshore_wind=30.0, eac_price_geothermal=12.0
-        )
-        self.assertEqual(
-            get_eac_price_for_new_entry("offshore_wind", config), 30.0
-        )
-        self.assertEqual(
-            get_eac_price_for_new_entry("geothermal", config), 12.0
-        )
+        config = ScenarioConfig(eac_price_offshore_wind=30.0, eac_price_geothermal=12.0)
+        self.assertEqual(get_eac_price_for_new_entry("offshore_wind", config), 30.0)
+        self.assertEqual(get_eac_price_for_new_entry("geothermal", config), 12.0)
 
     def test_gas_cc_ccs_credit_flips_margin(self):
         # gas_cc_ccs LCOE $45/MWh, energy revenue $35/MWh: negative margin.
@@ -323,9 +321,7 @@ class TestNewEntryAttributeRevenue(unittest.TestCase):
         self.assertLess(energy_revenue + no_eac, lcoe)
 
         # EAC $0, RPS shadow $8 -> attribute = 8, total $33 > $30: builds.
-        high_rps = max(
-            get_eac_price_for_new_entry("solar", ScenarioConfig()), 8.0
-        )
+        high_rps = max(get_eac_price_for_new_entry("solar", ScenarioConfig()), 8.0)
         self.assertEqual(energy_revenue + high_rps, 33.0)
         self.assertGreater(energy_revenue + high_rps, lcoe)
 
@@ -343,17 +339,12 @@ class TestZeroEacRegression(unittest.TestCase):
 
     def test_dispatch_credits_all_zero(self):
         config = ScenarioConfig()
-        self.assertEqual(
-            compute_eac_dispatch_credits(config), (0.0, 0.0, 0.0)
-        )
+        self.assertEqual(compute_eac_dispatch_credits(config), (0.0, 0.0, 0.0))
 
     def test_revenue_and_new_entry_zero(self):
         config = ScenarioConfig()
-        self.assertEqual(
-            compute_attribute_revenue("nuclear", 4e6, eac_price=0.0), 0.0
-        )
-        for tech in ("wind", "solar", "gas_cc_ccs", "offshore_wind",
-                     "geothermal"):
+        self.assertEqual(compute_attribute_revenue("nuclear", 4e6, eac_price=0.0), 0.0)
+        for tech in ("wind", "solar", "gas_cc_ccs", "offshore_wind", "geothermal"):
             self.assertEqual(get_eac_price_for_new_entry(tech, config), 0.0)
 
     def test_cost_vector_unchanged_with_zero_credit(self):
@@ -364,9 +355,7 @@ class TestZeroEacRegression(unittest.TestCase):
         cost = build_cost_vector(layout, mc, voll=5000.0)
         block = cost.reshape(layout.T, layout.vars_per_hour)
         dis_slots = block[:, layout._dis_off : layout._soc_off]
-        self.assertTrue(
-            np.allclose(dis_slots, STORAGE_TIEBREAKER_EPSILON)
-        )
+        self.assertTrue(np.allclose(dis_slots, STORAGE_TIEBREAKER_EPSILON))
 
     def test_zero_eac_dispatch_matches_no_eac_module(self):
         # Running the EAC pipeline with all-zero prices yields a dispatch
@@ -378,7 +367,11 @@ class TestZeroEacRegression(unittest.TestCase):
         demand = np.full((1, T), 150.0)
 
         plain = solve_dispatch(
-            fleet, demand, mc=base_mc.copy(), T=T, voll=5000.0,
+            fleet,
+            demand,
+            mc=base_mc.copy(),
+            T=T,
+            voll=5000.0,
             **_no_renewables(1, T),
         )
 
@@ -386,9 +379,15 @@ class TestZeroEacRegression(unittest.TestCase):
         apply_eac_to_mc(eac_mc, fleet, config)
         wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
         with_eac = solve_dispatch(
-            fleet, demand, mc=eac_mc, T=T, voll=5000.0,
-            wind_mc=0.0 - wind_eac, solar_mc=0.0 - solar_eac,
-            storage_discharge_eac=storage_eac, **_no_renewables(1, T),
+            fleet,
+            demand,
+            mc=eac_mc,
+            T=T,
+            voll=5000.0,
+            wind_mc=0.0 - wind_eac,
+            solar_mc=0.0 - solar_eac,
+            storage_discharge_eac=storage_eac,
+            **_no_renewables(1, T),
         )
 
         np.testing.assert_allclose(with_eac.dispatch, plain.dispatch)
@@ -411,9 +410,7 @@ class TestDumpCostSafety(unittest.TestCase):
     def test_dump_cost_accounts_for_storage_credit(self):
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=1, n_links=0, T=3)
         mc = np.zeros((1, 3))
-        cost = build_cost_vector(
-            layout, mc, voll=5000.0, storage_discharge_eac=30.0
-        )
+        cost = build_cost_vector(layout, mc, voll=5000.0, storage_discharge_eac=30.0)
         block = cost.reshape(layout.T, layout.vars_per_hour)
         dump_slots = block[:, layout._dump_off :]
         self.assertTrue(np.all(dump_slots > 30.0))

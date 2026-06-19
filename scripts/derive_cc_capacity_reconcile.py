@@ -21,6 +21,7 @@ reconciled_mw, delta_pct, source`), consumed by `load_campd_bins` under
     uv run python scripts/derive_cc_capacity_reconcile.py \
         --campd results/calibration/run115b_ccduct_prb73_relief06/campd.parquet
 """
+
 from __future__ import annotations
 
 import argparse
@@ -37,13 +38,18 @@ _MIN_DELTA = 0.01
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
-        "--campd", type=Path,
-        default=REPO / "results/calibration/run115b_ccduct_prb73_relief06"
+        "--campd",
+        type=Path,
+        default=REPO
+        / "results/calibration/run115b_ccduct_prb73_relief06"
         / "campd.parquet",
-        help="a calibration bundle's campd.parquet (CEMS net MW, all years)")
+        help="a calibration bundle's campd.parquet (CEMS net MW, all years)",
+    )
     ap.add_argument(
-        "--out", type=Path,
-        default=REPO / "data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv")
+        "--out",
+        type=Path,
+        default=REPO / "data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+    )
     args = ap.parse_args()
 
     csv = pd.read_csv(REPO / "data/raw/reference/custom-bin-assignments.csv")
@@ -55,10 +61,10 @@ def main() -> None:
     # gets credited for it.
     p999 = campd.groupby("plant_id")["net_mw"].quantile(0.999)
 
-    e860 = pd.read_parquet(
-        REPO / "data/raw/eia-860/eia860_generator_operable.parquet")
+    e860 = pd.read_parquet(REPO / "data/raw/eia-860/eia860_generator_operable.parquet")
     e860["Winter Capacity (MW)"] = pd.to_numeric(
-        e860["Winter Capacity (MW)"], errors="coerce")
+        e860["Winter Capacity (MW)"], errors="coerce"
+    )
     winter = e860.groupby("Plant Code")["Winter Capacity (MW)"].sum()
 
     rows = []
@@ -73,16 +79,18 @@ def main() -> None:
         delta = (reconciled - cur) / cur
         if delta < _MIN_DELTA:  # raise-only; skip no-ops and (never) cuts
             continue
-        rows.append({
-            "plant_code": code,
-            "plant_name": str(r["Plant_Name"]),
-            "current_mw": round(cur, 1),
-            "campd_p999_mw": round(peak, 1),
-            "eia860_winter_mw": round(win, 1) if not np.isnan(win) else "",
-            "reconciled_mw": round(reconciled, 1),
-            "delta_pct": round(100 * delta, 1),
-            "source": "campd_demonstrated_peak",
-        })
+        rows.append(
+            {
+                "plant_code": code,
+                "plant_name": str(r["Plant_Name"]),
+                "current_mw": round(cur, 1),
+                "campd_p999_mw": round(peak, 1),
+                "eia860_winter_mw": round(win, 1) if not np.isnan(win) else "",
+                "reconciled_mw": round(reconciled, 1),
+                "delta_pct": round(100 * delta, 1),
+                "source": "campd_demonstrated_peak",
+            }
+        )
 
     out = pd.DataFrame(rows).sort_values("delta_pct", ascending=False)
     args.out.parent.mkdir(parents=True, exist_ok=True)

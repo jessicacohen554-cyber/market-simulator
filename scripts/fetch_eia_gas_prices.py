@@ -36,6 +36,7 @@ Usage:
     EIA_API_KEY=... python scripts/fetch_eia_gas_prices.py --datasets citygate \
         --isos CAISO NYISO --start-year 2022
 """
+
 from __future__ import annotations
 
 import argparse
@@ -76,9 +77,9 @@ MMBTU_PER_MCF = 1.036
 ISO_CITYGATE: dict[str, tuple[str, str]] = {
     "CAISO": ("CA", "SoCal / PG&E Citygate (EIA CA citygate proxy)"),
     "ERCOT": ("TX", "Houston Ship Channel region (EIA TX citygate proxy)"),
-    "PJM":   ("PA", "Transco Z6 / Appalachia (EIA PA citygate proxy)"),
-    "MISO":  ("IL", "Chicago Citygate (EIA IL citygate proxy)"),
-    "SPP":   ("OK", "Panhandle / OK (EIA OK citygate proxy)"),
+    "PJM": ("PA", "Transco Z6 / Appalachia (EIA PA citygate proxy)"),
+    "MISO": ("IL", "Chicago Citygate (EIA IL citygate proxy)"),
+    "SPP": ("OK", "Panhandle / OK (EIA OK citygate proxy)"),
     "NYISO": ("NY", "Transco Z6 NY / Iroquois (EIA NY citygate proxy)"),
     "NEISO": ("MA", "Algonquin Citygate (EIA MA citygate proxy)"),
 }
@@ -101,6 +102,7 @@ def _get(route: str, params: dict, key: str, sleep_s: float) -> list[dict]:
         try:
             with urlopen(url, timeout=60) as fh:
                 import json
+
                 payload = json.loads(fh.read().decode())
         except (HTTPError, URLError) as exc:
             raise RuntimeError(f"EIA request failed ({route}): {exc}") from exc
@@ -121,6 +123,7 @@ def _probe(route: str, params: dict, key: str, label: str) -> bool:
     try:
         with urlopen(url, timeout=60) as fh:
             import json
+
             payload = json.loads(fh.read().decode())
     except (HTTPError, URLError) as exc:
         print(f"  {label}: FAIL — {exc}")
@@ -129,13 +132,17 @@ def _probe(route: str, params: dict, key: str, label: str) -> bool:
     rows = resp.get("data", [])
     total = resp.get("total", "?")
     if not rows:
-        print(f"  {label}: EMPTY — series id likely wrong "
-              f"(warning: {payload.get('response', {}).get('warnings')})")
+        print(
+            f"  {label}: EMPTY — series id likely wrong "
+            f"(warning: {payload.get('response', {}).get('warnings')})"
+        )
         return False
     units = rows[0].get("units", "?")
     periods = [r.get("period") for r in rows]
-    print(f"  {label}: OK — {total} rows total, units={units}, "
-          f"sample periods {periods[0]}..{periods[-1]}")
+    print(
+        f"  {label}: OK — {total} rows total, units={units}, "
+        f"sample periods {periods[0]}..{periods[-1]}"
+    )
     return True
 
 
@@ -149,6 +156,7 @@ def _facet_values(route: str, facet: str, key: str) -> list[tuple[str, str]]:
     try:
         with urlopen(url, timeout=60) as fh:
             import json
+
             payload = json.loads(fh.read().decode())
     except (HTTPError, URLError) as exc:
         print(f"  facet metadata FAIL ({route}/{facet}): {exc}")
@@ -170,30 +178,46 @@ def dry_run(key: str, isos: list[str]) -> int:
     """
     ok = True
     print("=== Henry Hub (monthly is derived from daily) ===")
-    ok &= _probe(HH_ROUTE, {"frequency": "daily",
-                            "facets[series][]": HH_DAILY_SERIES}, key,
-                 f"{HH_DAILY_SERIES} (HH daily)")
+    ok &= _probe(
+        HH_ROUTE,
+        {"frequency": "daily", "facets[series][]": HH_DAILY_SERIES},
+        key,
+        f"{HH_DAILY_SERIES} (HH daily)",
+    )
 
     print("=== Citygate: current guesses ===")
     states = {ISO_CITYGATE[i][0] for i in isos}
     for iso in isos:
         state, _ = ISO_CITYGATE[iso]
-        _probe(CITYGATE_ROUTE, {"frequency": "monthly",
-                                "facets[series][]": f"N3050{state}3"}, key,
-               f"N3050{state}3 ({iso})")
+        _probe(
+            CITYGATE_ROUTE,
+            {"frequency": "monthly", "facets[series][]": f"N3050{state}3"},
+            key,
+            f"N3050{state}3 ({iso})",
+        )
 
-    print(f"=== Citygate: EIA's actual series ids matching 'Citygate' "
-          f"(route {CITYGATE_ROUTE}) ===")
-    found = [(sid, name) for sid, name in _facet_values(CITYGATE_ROUTE, "series", key)
-             if "citygate" in name.lower()]
+    print(
+        f"=== Citygate: EIA's actual series ids matching 'Citygate' "
+        f"(route {CITYGATE_ROUTE}) ==="
+    )
+    found = [
+        (sid, name)
+        for sid, name in _facet_values(CITYGATE_ROUTE, "series", key)
+        if "citygate" in name.lower()
+    ]
     if not found:
-        print("  none found on this route — citygate may live on a different "
-              "route (try natural-gas/pri/sum vs a state route); inspect "
-              f"{BASE}/{CITYGATE_ROUTE}/facet/series/")
+        print(
+            "  none found on this route — citygate may live on a different "
+            "route (try natural-gas/pri/sum vs a state route); inspect "
+            f"{BASE}/{CITYGATE_ROUTE}/facet/series/"
+        )
         ok = False
     for sid, name in sorted(found):
-        flag = " <-- one of our states" if any(
-            f" {s} " in f" {name} " or name.startswith(s) for s in states) else ""
+        flag = (
+            " <-- one of our states"
+            if any(f" {s} " in f" {name} " or name.startswith(s) for s in states)
+            else ""
+        )
         print(f"  {sid}: {name}{flag}")
     print("dry-run complete — set ISO_CITYGATE/query from the list above.")
     return 0 if ok else 1
@@ -209,12 +233,18 @@ def fetch_henry_hub(key: str, sleep_s: float) -> None:
     """
     GAS_DIR.mkdir(parents=True, exist_ok=True)
 
-    daily = _get(HH_ROUTE, {"frequency": "daily",
-                            "facets[series][]": HH_DAILY_SERIES}, key, sleep_s)
-    drows = sorted((r["period"], round(float(r["value"]), 4))
-                   for r in daily if r.get("value") not in (None, ""))
-    _write_csv(GAS_DIR / "henry_hub_daily.csv",
-               ["date", "price_usd_mmbtu"], drows)
+    daily = _get(
+        HH_ROUTE,
+        {"frequency": "daily", "facets[series][]": HH_DAILY_SERIES},
+        key,
+        sleep_s,
+    )
+    drows = sorted(
+        (r["period"], round(float(r["value"]), 4))
+        for r in daily
+        if r.get("value") not in (None, "")
+    )
+    _write_csv(GAS_DIR / "henry_hub_daily.csv", ["date", "price_usd_mmbtu"], drows)
     print(f"  henry_hub_daily.csv: {len(drows)} rows")
 
     # Monthly = mean of the daily spot in each calendar month.
@@ -222,15 +252,14 @@ def fetch_henry_hub(key: str, sleep_s: float) -> None:
     for date, val in drows:
         y, m = (int(x) for x in date.split("-")[:2])
         buckets.setdefault((y, m), []).append(val)
-    mrows = sorted((y, m, round(sum(v) / len(v), 4))
-                   for (y, m), v in buckets.items())
-    _write_csv(GAS_DIR / "henry_hub_monthly.csv",
-               ["year", "month", "price_usd_mmbtu"], mrows)
+    mrows = sorted((y, m, round(sum(v) / len(v), 4)) for (y, m), v in buckets.items())
+    _write_csv(
+        GAS_DIR / "henry_hub_monthly.csv", ["year", "month", "price_usd_mmbtu"], mrows
+    )
     print(f"  henry_hub_monthly.csv: {len(mrows)} rows (derived from daily)")
 
 
-def fetch_citygate(key: str, isos: list[str], start_year: int,
-                   sleep_s: float) -> None:
+def fetch_citygate(key: str, isos: list[str], start_year: int, sleep_s: float) -> None:
     """Add per-ISO citygate-minus-Henry-Hub basis rows (preserving existing)."""
     hh = _henry_hub_monthly_map()
     existing, header = _read_basis()
@@ -240,8 +269,12 @@ def fetch_citygate(key: str, isos: list[str], start_year: int,
         state, hub = ISO_CITYGATE[iso]
         series = f"N3050{state}3"
         try:
-            data = _get(CITYGATE_ROUTE, {"frequency": "monthly",
-                                         "facets[series][]": series}, key, sleep_s)
+            data = _get(
+                CITYGATE_ROUTE,
+                {"frequency": "monthly", "facets[series][]": series},
+                key,
+                sleep_s,
+            )
         except RuntimeError as exc:
             print(f"  {iso} ({series}): SKIP — {exc}", file=sys.stderr)
             continue
@@ -257,12 +290,17 @@ def fetch_citygate(key: str, isos: list[str], start_year: int,
                 continue
             citygate_mmbtu = float(r["value"]) / MMBTU_PER_MCF
             basis = round(citygate_mmbtu - hh_price, 4)
-            existing.append({
-                "iso": iso, "year": y, "month": m, "hub": hub,
-                "basis_usd_mmbtu": basis,
-                "source": f"EIA {series} citygate - Henry Hub ({HH_DAILY_SERIES} "
-                          f"monthly mean)",
-            })
+            existing.append(
+                {
+                    "iso": iso,
+                    "year": y,
+                    "month": m,
+                    "hub": hub,
+                    "basis_usd_mmbtu": basis,
+                    "source": f"EIA {series} citygate - Henry Hub ({HH_DAILY_SERIES} "
+                    f"monthly mean)",
+                }
+            )
             have.add((iso, y, m))
             n += 1
         added += n
@@ -280,7 +318,8 @@ def _henry_hub_monthly_map() -> dict[tuple[int, int], float]:
         with path.open() as fh:
             for row in csv.DictReader(fh):
                 out[(int(row["year"]), int(row["month"]))] = float(
-                    row["price_usd_mmbtu"])
+                    row["price_usd_mmbtu"]
+                )
     return out
 
 
@@ -309,23 +348,38 @@ def _write_dictcsv(path: Path, header: list[str], rows: list[dict]) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--datasets", nargs="+", default=["henry-hub", "citygate"],
-                    choices=["henry-hub", "citygate"])
-    ap.add_argument("--isos", nargs="+", default=list(ISO_CITYGATE),
-                    choices=list(ISO_CITYGATE))
-    ap.add_argument("--start-year", type=int, default=2015,
-                    help="earliest citygate-basis year to add (default 2015)")
-    ap.add_argument("--sleep", type=float, default=1.0,
-                    help="seconds between EIA requests")
-    ap.add_argument("--dry-run", action="store_true",
-                    help="validate every series id with one cheap call each and "
-                         "print row counts; write nothing")
+    ap.add_argument(
+        "--datasets",
+        nargs="+",
+        default=["henry-hub", "citygate"],
+        choices=["henry-hub", "citygate"],
+    )
+    ap.add_argument(
+        "--isos", nargs="+", default=list(ISO_CITYGATE), choices=list(ISO_CITYGATE)
+    )
+    ap.add_argument(
+        "--start-year",
+        type=int,
+        default=2015,
+        help="earliest citygate-basis year to add (default 2015)",
+    )
+    ap.add_argument(
+        "--sleep", type=float, default=1.0, help="seconds between EIA requests"
+    )
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="validate every series id with one cheap call each and "
+        "print row counts; write nothing",
+    )
     args = ap.parse_args()
 
     key = os.environ.get("EIA_API_KEY")
     if not key:
-        print("ERROR: set EIA_API_KEY (free: https://www.eia.gov/opendata/register.php)",
-              file=sys.stderr)
+        print(
+            "ERROR: set EIA_API_KEY (free: https://www.eia.gov/opendata/register.php)",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     if args.dry_run:

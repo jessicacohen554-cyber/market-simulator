@@ -53,6 +53,7 @@ Run from the repo root::
     python scripts/derive_neighbor_convexity.py
     python scripts/derive_neighbor_convexity.py --check   # assert constants match
 """
+
 from __future__ import annotations
 
 import argparse
@@ -183,9 +184,7 @@ def _gross_net_load(
     return None
 
 
-def _loglog_xy(
-    load: np.ndarray, lmp: np.ndarray
-) -> tuple[np.ndarray, np.ndarray]:
+def _loglog_xy(load: np.ndarray, lmp: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Return the cleaned ``(log(load/mean), log(lmp))`` regression pair.
 
     Hours with a non-positive LMP (negative-price / log-undefined) or a missing
@@ -209,9 +208,7 @@ def _fit_xy(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
     return float(coef[0]), float(r2)
 
 
-def _derive_one(
-    lmp_key: str, ba_code: str, proxy_ba: str | None
-) -> dict | None:
+def _derive_one(lmp_key: str, ba_code: str, proxy_ba: str | None) -> dict | None:
     """Regress one market's realized LMP on its load, per year and pooled.
 
     Returns a dict with per-year and pooled gross/net exponents, or ``None``
@@ -260,23 +257,32 @@ def _derive_one(
     return {"rows": rows, "pooled_gross": pooled_gross, "pooled_net": pooled_net}
 
 
-def _report(title: str, name: str, lmp_key: str, ba: str, proxy: str | None) -> dict | None:
+def _report(
+    title: str, name: str, lmp_key: str, ba: str, proxy: str | None
+) -> dict | None:
     res = _derive_one(lmp_key, ba, proxy)
-    print(f"\n{title}: {name}  (LMP={lmp_key}, load={ba}"
-          f"{'' if proxy is None else f'/{proxy}'})")
+    print(
+        f"\n{title}: {name}  (LMP={lmp_key}, load={ba}"
+        f"{'' if proxy is None else f'/{proxy}'})"
+    )
     if res is None:
         print("  no realized LMP + load overlap — exponent not self-derivable")
         return None
-    print(f"  {'year':>5s} {'exp_gross':>9s} {'R2g':>5s} "
-          f"{'exp_net':>8s} {'R2n':>5s} {'meanLMP':>8s} {'n':>6s}")
+    print(
+        f"  {'year':>5s} {'exp_gross':>9s} {'R2g':>5s} "
+        f"{'exp_net':>8s} {'R2n':>5s} {'meanLMP':>8s} {'n':>6s}"
+    )
     for r in res["rows"]:
-        print(f"  {r['year']:>5d} {r['exp_gross']:9.2f} {r['r2_gross']:5.2f} "
-              f"{r['exp_net']:8.2f} {r['r2_net']:5.2f} {r['mean_lmp']:8.1f} "
-              f"{r['n']:6d}")
+        print(
+            f"  {r['year']:>5d} {r['exp_gross']:9.2f} {r['r2_gross']:5.2f} "
+            f"{r['exp_net']:8.2f} {r['r2_net']:5.2f} {r['mean_lmp']:8.1f} "
+            f"{r['n']:6d}"
+        )
     pg, pgr = res["pooled_gross"]
     pn, pnr = res["pooled_net"]
-    print(f"  POOLED  gross exp={pg:.2f} (R2={pgr:.2f}) | "
-          f"net exp={pn:.2f} (R2={pnr:.2f})")
+    print(
+        f"  POOLED  gross exp={pg:.2f} (R2={pgr:.2f}) | net exp={pn:.2f} (R2={pnr:.2f})"
+    )
     return res
 
 
@@ -289,27 +295,36 @@ def derive() -> tuple[dict[str, float], dict[str, float]]:
     """
     derived: dict[str, float] = {}
     derived_hr: dict[str, float] = {}
-    print("Neighbor price-vs-load convexity from realized RT LMP "
-          f"(log-log, pooled {YEARS}):")
+    print(
+        "Neighbor price-vs-load convexity from realized RT LMP "
+        f"(log-log, pooled {YEARS}):"
+    )
 
     for neighbor in INTERFACE_NEIGHBORS.get("PJM", []):
         key = NEIGHBOR_LMP_KEY.get(neighbor.name)
         if key is None:
-            print(f"\nNEIGHBOR: {neighbor.name}  (load={neighbor.ba_code}"
-                  f"{'' if neighbor.proxy_ba is None else f'/{neighbor.proxy_ba}'})")
-            print("  no realized LMP extract in repo — exponent not "
-                  "self-derivable (source by decision)")
+            print(
+                f"\nNEIGHBOR: {neighbor.name}  (load={neighbor.ba_code}"
+                f"{'' if neighbor.proxy_ba is None else f'/{neighbor.proxy_ba}'})"
+            )
+            print(
+                "  no realized LMP extract in repo — exponent not "
+                "self-derivable (source by decision)"
+            )
             continue
-        res = _report("NEIGHBOR", neighbor.name, key,
-                      neighbor.ba_code, neighbor.proxy_ba)
+        res = _report(
+            "NEIGHBOR", neighbor.name, key, neighbor.ba_code, neighbor.proxy_ba
+        )
         if res is not None:
             derived[neighbor.name] = round(res["pooled_gross"][0], 2)
         hr = _implied_heat_rate(key, neighbor.gas_basis)
         if hr is not None:
             derived_hr[neighbor.name] = round(hr, 1)
-            print(f"  implied marginal HR (realized LMP / delivered gas, "
-                  f"basis {neighbor.gas_basis:+.2f}) = {hr:.2f} MMBtu/MWh "
-                  f"[registry {neighbor.marginal_heat_rate}]")
+            print(
+                f"  implied marginal HR (realized LMP / delivered gas, "
+                f"basis {neighbor.gas_basis:+.2f}) = {hr:.2f} MMBtu/MWh "
+                f"[registry {neighbor.marginal_heat_rate}]"
+            )
 
     for iso, ba in CROSSCHECK.items():
         _report("CROSS-CHECK", iso, iso, ba, None)
@@ -319,8 +334,11 @@ def derive() -> tuple[dict[str, float], dict[str, float]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--check", action="store_true",
-                    help="assert the committed exponents match the data")
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="assert the committed exponents match the data",
+    )
     args = ap.parse_args()
 
     derived, derived_hr = derive()
@@ -329,16 +347,21 @@ def main() -> None:
         if not COMMITTED_EXPONENT and not COMMITTED_HEAT_RATE:
             print("\n(no COMMITTED_EXPONENT / COMMITTED_HEAT_RATE — nothing to check)")
             return
-        bad_exp = {n: (derived.get(n), COMMITTED_EXPONENT[n])
-                   for n in COMMITTED_EXPONENT
-                   if derived.get(n) != COMMITTED_EXPONENT[n]}
-        bad_hr = {n: (derived_hr.get(n), COMMITTED_HEAT_RATE[n])
-                  for n in COMMITTED_HEAT_RATE
-                  if derived_hr.get(n) != COMMITTED_HEAT_RATE[n]}
+        bad_exp = {
+            n: (derived.get(n), COMMITTED_EXPONENT[n])
+            for n in COMMITTED_EXPONENT
+            if derived.get(n) != COMMITTED_EXPONENT[n]
+        }
+        bad_hr = {
+            n: (derived_hr.get(n), COMMITTED_HEAT_RATE[n])
+            for n in COMMITTED_HEAT_RATE
+            if derived_hr.get(n) != COMMITTED_HEAT_RATE[n]
+        }
         if bad_exp or bad_hr:
             raise SystemExit(
                 f"neighbor constants drifted from the data — "
-                f"exponents: {bad_exp or 'ok'}; heat rates: {bad_hr or 'ok'}")
+                f"exponents: {bad_exp or 'ok'}; heat rates: {bad_hr or 'ok'}"
+            )
         print("\nOK: derived exponents + heat rates match the committed constants.")
 
 

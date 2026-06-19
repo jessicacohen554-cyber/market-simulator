@@ -14,6 +14,7 @@ fall back to the configured defaults.
 Usage:
     python scripts/export_tranche_config.py [--out data/raw/reference/plant-tranche-config.csv]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,25 +25,44 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
-    "rc", str(REPO / "scripts" / "run_calibration.py"))
-rc = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rc)
+    "rc", str(REPO / "scripts" / "run_calibration.py")
+)
+rc = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rc)
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
-    BIN_GROUP_TO_FUEL, COAL_PLANT_SUPPLY, bins_to_fleet, load_campd_bins,
+    BIN_GROUP_TO_FUEL,
+    COAL_PLANT_SUPPLY,
+    bins_to_fleet,
+    load_campd_bins,
 )
 
 # Output column order: reference metadata first, then the editable tranche
 # shares (% of nameplate) and per-tranche HR multipliers.
 COLUMNS = [
-    "Plant_Code", "Plant_Name", "Plant_Group", "Coal_Supply", "Config",
-    "Turbine_Class", "ERCOT_Zone", "Nameplate_MW", "Base_HR_MMBtu_MWh",
-    "Pct_Must_Run", "Pct_Committed", "Pct_Econ_Low", "Pct_Econ_High",
+    "Plant_Code",
+    "Plant_Name",
+    "Plant_Group",
+    "Coal_Supply",
+    "Config",
+    "Turbine_Class",
+    "ERCOT_Zone",
+    "Nameplate_MW",
+    "Base_HR_MMBtu_MWh",
+    "Pct_Must_Run",
+    "Pct_Committed",
+    "Pct_Econ_Low",
+    "Pct_Econ_High",
     "Pct_Peaking",
-    "HR_Mult_Must_Run", "HR_Mult_Committed", "HR_Mult_Econ_Low",
-    "HR_Mult_Econ_High", "HR_Mult_Peaking",
+    "HR_Mult_Must_Run",
+    "HR_Mult_Committed",
+    "HR_Mult_Econ_Low",
+    "HR_Mult_Econ_High",
+    "HR_Mult_Peaking",
 ]
 
 # LP unit-id suffix -> the export's (pct column, hr-mult column) pair. The
@@ -84,22 +104,26 @@ def build_rows(year: int = 2023) -> pd.DataFrame:
             continue
         group = str(b["Plant_Group"])
         row = {c: 0.0 for c in COLUMNS}
-        row.update({
-            "Plant_Code": code,
-            "Plant_Name": str(b.get("Plant_Name") or code),
-            "Plant_Group": group,
-            "Coal_Supply": COAL_PLANT_SUPPLY.get(code, ""),
-            "Config": str(b.get("Config", "")),
-            "Turbine_Class": str(b.get("Turbine_Class", "")),
-            "ERCOT_Zone": str(b.get("ERCOT_Zone", "")),
-            "Nameplate_MW": round(nameplate, 1),
-            "Base_HR_MMBtu_MWh": round(base_hr, 3),
-            # Default HR mults so an unused tranche still carries a sane value if
-            # the user later gives it capacity.
-            "HR_Mult_Must_Run": 1.0, "HR_Mult_Committed": 1.0,
-            "HR_Mult_Econ_Low": 1.0, "HR_Mult_Econ_High": 1.0,
-            "HR_Mult_Peaking": 1.0,
-        })
+        row.update(
+            {
+                "Plant_Code": code,
+                "Plant_Name": str(b.get("Plant_Name") or code),
+                "Plant_Group": group,
+                "Coal_Supply": COAL_PLANT_SUPPLY.get(code, ""),
+                "Config": str(b.get("Config", "")),
+                "Turbine_Class": str(b.get("Turbine_Class", "")),
+                "ERCOT_Zone": str(b.get("ERCOT_Zone", "")),
+                "Nameplate_MW": round(nameplate, 1),
+                "Base_HR_MMBtu_MWh": round(base_hr, 3),
+                # Default HR mults so an unused tranche still carries a sane value if
+                # the user later gives it capacity.
+                "HR_Mult_Must_Run": 1.0,
+                "HR_Mult_Committed": 1.0,
+                "HR_Mult_Econ_Low": 1.0,
+                "HR_Mult_Econ_High": 1.0,
+                "HR_Mult_Peaking": 1.0,
+            }
+        )
         for gen in gens:
             suffix = gen.unit_id.rsplit("_", 1)[-1]
             band = _SUFFIX_TO_BAND.get(suffix)
@@ -111,14 +135,28 @@ def build_rows(year: int = 2023) -> pd.DataFrame:
         # Non-coal host-steam must-run is removed before tranche creation, so it
         # is the share of nameplate not covered by the grid tranches.
         if BIN_GROUP_TO_FUEL[group] != "coal":
-            grid = (row["Pct_Committed"] + row["Pct_Econ_Low"]
-                    + row["Pct_Econ_High"] + row["Pct_Peaking"])
+            grid = (
+                row["Pct_Committed"]
+                + row["Pct_Econ_Low"]
+                + row["Pct_Econ_High"]
+                + row["Pct_Peaking"]
+            )
             row["Pct_Must_Run"] = max(0.0, 100.0 - grid)
-        for c in ("Pct_Must_Run", "Pct_Committed", "Pct_Econ_Low",
-                  "Pct_Econ_High", "Pct_Peaking"):
+        for c in (
+            "Pct_Must_Run",
+            "Pct_Committed",
+            "Pct_Econ_Low",
+            "Pct_Econ_High",
+            "Pct_Peaking",
+        ):
             row[c] = round(row[c], 3)
-        for c in ("HR_Mult_Must_Run", "HR_Mult_Committed", "HR_Mult_Econ_Low",
-                  "HR_Mult_Econ_High", "HR_Mult_Peaking"):
+        for c in (
+            "HR_Mult_Must_Run",
+            "HR_Mult_Committed",
+            "HR_Mult_Econ_Low",
+            "HR_Mult_Econ_High",
+            "HR_Mult_Peaking",
+        ):
             row[c] = round(row[c], 4)
         rows.append(row)
 
@@ -128,11 +166,14 @@ def build_rows(year: int = 2023) -> pd.DataFrame:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default=str(REPO / "inputs"
-                                         / "plant-tranche-config.csv"))
-    ap.add_argument("--year", type=int, default=2023,
-                    help="Calibration year whose resolved config to export "
-                         "(default 2023; the offer curve is year-independent).")
+    ap.add_argument("--out", default=str(REPO / "inputs" / "plant-tranche-config.csv"))
+    ap.add_argument(
+        "--year",
+        type=int,
+        default=2023,
+        help="Calibration year whose resolved config to export "
+        "(default 2023; the offer curve is year-independent).",
+    )
     args = ap.parse_args()
     df = build_rows(args.year)
     out = Path(args.out)

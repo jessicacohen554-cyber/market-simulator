@@ -63,15 +63,20 @@ ERCOT_GAS_BASIS = -0.5  # GAS_BASIS_DIFFERENTIAL['ERCOT'], $/MMBtu over Henry Hu
 # master-plant-registry cap-weighted annual_heat_rate.
 CLASS_PARAMS = {
     "CT_PEAKER": {"base_hr": 10.65, "vom": 3.5},
-    "CC":        {"base_hr": 7.16,  "vom": 2.0},
-    "ST_GAS":    {"base_hr": 10.75, "vom": 4.0},
+    "CC": {"base_hr": 7.16, "vom": 2.0},
+    "ST_GAS": {"base_hr": 10.75, "vom": 4.0},
 }
 
 # run124 effective offer-curve band multipliers (the keeper under test).
 MODEL_BANDS = {
-    "CT_PEAKER": {"committed": 1.14, "econ_low": 1.27, "econ_high": 2.18, "peak": 13.15},
-    "CC":        {"committed": 0.92, "econ_low": 1.16, "econ_high": 1.41, "peak": 2.25},
-    "ST_GAS":    {"committed": 0.91, "econ_low": 1.15, "econ_high": 1.55, "peak": 4.20},
+    "CT_PEAKER": {
+        "committed": 1.14,
+        "econ_low": 1.27,
+        "econ_high": 2.18,
+        "peak": 13.15,
+    },
+    "CC": {"committed": 0.92, "econ_low": 1.16, "econ_high": 1.41, "peak": 2.25},
+    "ST_GAS": {"committed": 0.91, "econ_low": 1.15, "econ_high": 1.55, "peak": 4.20},
 }
 
 # Typical online run length per start (hours) for amortizing the startup cost
@@ -83,16 +88,27 @@ OFFER_CAP = 4900.0  # treat curve points at/above this as the offer-cap price wa
 
 
 def load_offers(committed_only: bool) -> pd.DataFrame:
-    cols = ["delivery_date", "model_class", "resource_name", "committed",
-            "hsl", "lsl", "curve_mw", "curve_price", "min_gen_cost",
-            "startup_cold", "startup_hot"]
+    cols = [
+        "delivery_date",
+        "model_class",
+        "resource_name",
+        "committed",
+        "hsl",
+        "lsl",
+        "curve_mw",
+        "curve_price",
+        "min_gen_cost",
+        "startup_cold",
+        "startup_hot",
+    ]
     df = pd.read_parquet(OFFERS, columns=cols)
     df = df[df["model_class"].isin(CLASS_PARAMS)].copy()
     if committed_only:
         df = df[df["committed"]].copy()
     # Delivery-date Henry Hub + ERCOT basis -> delivered gas $/MMBtu.
     hh = pd.read_csv(HENRY_HUB, parse_dates=["date"]).rename(
-        columns={"price_usd_mmbtu": "hh"})
+        columns={"price_usd_mmbtu": "hh"}
+    )
     hh = hh.set_index("date")["hh"].sort_index()
     # Forward-fill weekends/holidays to a daily series, then map by date.
     daily = hh.reindex(pd.date_range(hh.index.min(), hh.index.max())).ffill()
@@ -111,8 +127,9 @@ def econ_band_distribution(df: pd.DataFrame) -> pd.DataFrame:
     d = df[(df["hsl"] > 0) & (df["curve_price"] < OFFER_CAP)].copy()
     d["load_frac"] = d["curve_mw"] / d["hsl"]
     d["lsl_frac"] = (d["lsl"] / d["hsl"]).clip(0, 0.99)
-    d["mult"] = [_mult(p, c, g) for p, c, g in
-                 zip(d["curve_price"], d["model_class"], d["gas"])]
+    d["mult"] = [
+        _mult(p, c, g) for p, c, g in zip(d["curve_price"], d["model_class"], d["gas"])
+    ]
 
     # Band by position in the LSL->HSL operating range.
     #   econ_low  : the bottom third above LSL
@@ -121,19 +138,28 @@ def econ_band_distribution(df: pd.DataFrame) -> pd.DataFrame:
     above = (d["load_frac"] - d["lsl_frac"]).clip(lower=0)
     span = (1.0 - d["lsl_frac"]).clip(lower=0.05)
     rel = above / span  # 0 at LSL, 1 at HSL
-    d["band"] = pd.cut(rel, [-0.01, 0.33, 0.90, 1.01],
-                       labels=["econ_low", "econ_mid", "econ_high"])
+    d["band"] = pd.cut(
+        rel, [-0.01, 0.33, 0.90, 1.01], labels=["econ_low", "econ_mid", "econ_high"]
+    )
 
     # Each resource contributes its median multiplier per band (so a few
     # high-frequency QSEs don't dominate), then describe across resources.
-    permed = (d.groupby(["model_class", "band", "resource_name"], observed=True)
-              ["mult"].median().reset_index())
+    permed = (
+        d.groupby(["model_class", "band", "resource_name"], observed=True)["mult"]
+        .median()
+        .reset_index()
+    )
     rows = []
     for (cls, band), g in permed.groupby(["model_class", "band"], observed=True):
         q = g["mult"].quantile(PCTS)
-        rows.append({"model_class": cls, "band": str(band),
-                     "n_resources": g["resource_name"].nunique(),
-                     **{f"p{int(p*100)}": round(q[p], 3) for p in PCTS}})
+        rows.append(
+            {
+                "model_class": cls,
+                "band": str(band),
+                "n_resources": g["resource_name"].nunique(),
+                **{f"p{int(p * 100)}": round(q[p], 3) for p in PCTS},
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -142,20 +168,33 @@ def peak_band_distribution(df: pd.DataFrame) -> pd.DataFrame:
     d = df[df["hsl"] > 0].copy()
     # Top economic curve point per (resource, date, hour-ish) below the cap.
     sub = d[d["curve_price"] < OFFER_CAP]
-    top = (sub.groupby(["model_class", "resource_name"], observed=True)
-           .agg(top_price=("curve_price", "max"), gas=("gas", "median")).reset_index())
-    top["mult"] = [_mult(p, c, g) for p, c, g in
-                   zip(top["top_price"], top["model_class"], top["gas"])]
+    top = (
+        sub.groupby(["model_class", "resource_name"], observed=True)
+        .agg(top_price=("curve_price", "max"), gas=("gas", "median"))
+        .reset_index()
+    )
+    top["mult"] = [
+        _mult(p, c, g)
+        for p, c, g in zip(top["top_price"], top["model_class"], top["gas"])
+    ]
     # Share of a class's offer rows that sit at the offer-cap price wall.
-    capshare = (d.assign(at_cap=d["curve_price"] >= OFFER_CAP)
-                .groupby("model_class", observed=True)["at_cap"].mean())
+    capshare = (
+        d.assign(at_cap=d["curve_price"] >= OFFER_CAP)
+        .groupby("model_class", observed=True)["at_cap"]
+        .mean()
+    )
     rows = []
     for cls, g in top.groupby("model_class", observed=True):
         q = g["mult"].quantile(PCTS)
-        rows.append({"model_class": cls, "band": "peak_econ_top",
-                     "n_resources": g["resource_name"].nunique(),
-                     "offer_cap_share": round(float(capshare.get(cls, 0)), 3),
-                     **{f"p{int(p*100)}": round(q[p], 3) for p in PCTS}})
+        rows.append(
+            {
+                "model_class": cls,
+                "band": "peak_econ_top",
+                "n_resources": g["resource_name"].nunique(),
+                "offer_cap_share": round(float(capshare.get(cls, 0)), 3),
+                **{f"p{int(p * 100)}": round(q[p], 3) for p in PCTS},
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -163,11 +202,17 @@ def committed_band_distribution(df: pd.DataFrame) -> pd.DataFrame:
     """Committed-band multiplier from Min Gen Cost +/- amortized startup."""
     # One row per resource: median Min Gen Cost, LSL, startup, gas.
     d = df[(df["min_gen_cost"].notna()) & (df["lsl"] > 0)].copy()
-    res = (d.groupby(["model_class", "resource_name"], observed=True)
-           .agg(min_gen=("min_gen_cost", "median"), lsl=("lsl", "median"),
-                startup_cold=("startup_cold", "median"),
-                startup_hot=("startup_hot", "median"),
-                gas=("gas", "median")).reset_index())
+    res = (
+        d.groupby(["model_class", "resource_name"], observed=True)
+        .agg(
+            min_gen=("min_gen_cost", "median"),
+            lsl=("lsl", "median"),
+            startup_cold=("startup_cold", "median"),
+            startup_hot=("startup_hot", "median"),
+            gas=("gas", "median"),
+        )
+        .reset_index()
+    )
     rows = []
     for cls, g in res.groupby("model_class", observed=True):
         out = {"model_class": cls, "n_resources": len(g)}
@@ -185,23 +230,31 @@ def committed_band_distribution(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--committed-only", action="store_true",
-                    help="restrict to online/committed status rows")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--committed-only",
+        action="store_true",
+        help="restrict to online/committed status rows",
+    )
     args = ap.parse_args()
 
     df = load_offers(args.committed_only)
-    print(f"Loaded {len(df):,} offer point rows "
-          f"({df['delivery_date'].min().date()} -> {df['delivery_date'].max().date()})"
-          f"{'  [committed only]' if args.committed_only else ''}\n")
+    print(
+        f"Loaded {len(df):,} offer point rows "
+        f"({df['delivery_date'].min().date()} -> {df['delivery_date'].max().date()})"
+        f"{'  [committed only]' if args.committed_only else ''}\n"
+    )
 
     econ = econ_band_distribution(df)
     peak = peak_band_distribution(df)
     comm = committed_band_distribution(df)
 
     pd.set_option("display.width", 200)
-    print("=== ENERGY-CURVE econ-band multiplier distribution (per-resource median) ===")
+    print(
+        "=== ENERGY-CURVE econ-band multiplier distribution (per-resource median) ==="
+    )
     print(econ.to_string(index=False))
     print("\n=== PEAK band: top economic curve point + offer-cap incidence ===")
     print(peak.to_string(index=False))
@@ -216,27 +269,36 @@ def main() -> None:
         eh = econ[(econ.model_class == cls) & (econ.band == "econ_high")]
         pk = peak[peak.model_class == cls]
         cm = comm[comm.model_class == cls]
-        overlay_rows.append({
-            "class": cls,
-            "committed_model": mb["committed"],
-            "committed_meas_mingen": float(cm["mingen_only_p50"].iloc[0]),
-            "committed_meas_+startup": float(cm["committed_longrun_p50"].iloc[0]),
-            "econ_low_model": mb["econ_low"],
-            "econ_low_meas_p50": float(el["p50"].iloc[0]) if len(el) else np.nan,
-            "econ_high_model": mb["econ_high"],
-            "econ_high_meas_p50": float(eh["p50"].iloc[0]) if len(eh) else np.nan,
-            "peak_model": mb["peak"],
-            "peak_meas_econtop_p50": float(pk["p50"].iloc[0]) if len(pk) else np.nan,
-            "peak_meas_capshare": float(pk["offer_cap_share"].iloc[0]) if len(pk) else np.nan,
-        })
+        overlay_rows.append(
+            {
+                "class": cls,
+                "committed_model": mb["committed"],
+                "committed_meas_mingen": float(cm["mingen_only_p50"].iloc[0]),
+                "committed_meas_+startup": float(cm["committed_longrun_p50"].iloc[0]),
+                "econ_low_model": mb["econ_low"],
+                "econ_low_meas_p50": float(el["p50"].iloc[0]) if len(el) else np.nan,
+                "econ_high_model": mb["econ_high"],
+                "econ_high_meas_p50": float(eh["p50"].iloc[0]) if len(eh) else np.nan,
+                "peak_model": mb["peak"],
+                "peak_meas_econtop_p50": float(pk["p50"].iloc[0])
+                if len(pk)
+                else np.nan,
+                "peak_meas_capshare": float(pk["offer_cap_share"].iloc[0])
+                if len(pk)
+                else np.nan,
+            }
+        )
     overlay = pd.DataFrame(overlay_rows)
     print(overlay.to_string(index=False))
 
     # Persist the tidy summary (econ + peak + committed long-form).
     econ_l = econ.assign(kind="econ")
     peak_l = peak.assign(kind="peak")
-    comm_l = comm.melt(id_vars=["model_class", "n_resources"], var_name="metric",
-                       value_name="multiplier").assign(kind="committed", band="committed")
+    comm_l = comm.melt(
+        id_vars=["model_class", "n_resources"],
+        var_name="metric",
+        value_name="multiplier",
+    ).assign(kind="committed", band="committed")
     summary = pd.concat([econ_l, peak_l, comm_l], ignore_index=True)
     summary.to_csv(OUT_SUMMARY, index=False)
     print(f"\nWrote {OUT_SUMMARY}")

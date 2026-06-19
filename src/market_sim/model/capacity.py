@@ -174,10 +174,7 @@ def apply_known_retirements(fleet: list[Generator], year: int) -> list[Generator
         A new list excluding generators whose ``retirement_year`` is set
         and not later than ``year``.
     """
-    return [
-        g for g in fleet
-        if g.retirement_year is None or g.retirement_year > year
-    ]
+    return [g for g in fleet if g.retirement_year is None or g.retirement_year > year]
 
 
 def compute_clean_share(
@@ -210,9 +207,7 @@ def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
         return [direct]
     if gen.fuel_type == "coal":
         return [
-            idx_of[key]
-            for t in (1, 2, 3)
-            if (key := f"{gen.unit_id}_t{t}") in idx_of
+            idx_of[key] for t in (1, 2, 3) if (key := f"{gen.unit_id}_t{t}") in idx_of
         ]
     return []
 
@@ -338,9 +333,7 @@ def apply_economic_retirements(
         # Gross revenue alone would let a unit "cover" fixed cost with
         # money it spent on fuel.
         if mc is None:
-            net_revenue = float(
-                sum(np.dot(prices[zone], dispatch[i]) for i in rows)
-            )
+            net_revenue = float(sum(np.dot(prices[zone], dispatch[i]) for i in rows))
         else:
             net_revenue = float(
                 sum(np.dot(prices[zone] - mc[i], dispatch[i]) for i in rows)
@@ -353,9 +346,7 @@ def apply_economic_retirements(
         # clean fuels.
         annual_gen_mwh = float(sum(np.sum(dispatch[i]) for i in rows))
         eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
-        rps_for_unit = (
-            rps_shadow_price if g.fuel_type in _CLEAN_FUELS else 0.0
-        )
+        rps_for_unit = rps_shadow_price if g.fuel_type in _CLEAN_FUELS else 0.0
         net_revenue += compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
         )
@@ -364,9 +355,7 @@ def apply_economic_retirements(
         # ISO-NE/CAISO a unit earns a capacity revenue stream that can cover
         # fixed cost even when energy margin is negative, so omitting it
         # over-retires thermal capacity there. Zero in energy-only ERCOT.
-        net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
-            config.iso, g.eford
-        )
+        net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(config.iso, g.eford)
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
         # income stream the energy-only LP cannot produce. Zero unless
@@ -400,9 +389,7 @@ def apply_economic_retirements(
 
     # Reliability floor: never strip thermal capacity below the reserve
     # margin over peak net demand, net of firm clean (nuclear/hydro).
-    firm_clean = sum(
-        g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS
-    )
+    firm_clean = sum(g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS)
     floor = (peak_demand - firm_clean) * (1.0 + config.retirement_reserve_margin)
     thermal_after = sum(
         g.pmax_mw
@@ -430,7 +417,11 @@ def apply_economic_retirements(
 # are costed from NEW_ENTRY_COSTS; emerging technologies are handled
 # separately (see _EMERGING_AVAILABLE_YEAR below).
 _NEW_ENTRY_TECHS: tuple[str, ...] = (
-    "wind", "solar", "gas_cc", "gas_ct", "nuclear_smr",
+    "wind",
+    "solar",
+    "gas_cc",
+    "gas_ct",
+    "nuclear_smr",
 )
 
 # Fuels whose new builds increment the zonal wind_cap/solar_cap pools (and
@@ -464,7 +455,7 @@ _QUEUE_CAP_GROUP: dict[str, str] = {
 # economic new-entry LCOE comparison. Hydrogen turbines run as peakers /
 # mid-merit units; geothermal and offshore wind use their resource CFs.
 _EMERGING_SCREEN_CF: dict[str, float] = {
-    "hydrogen_ct": 0.10,    # simple-cycle H2 peaker duty cycle
+    "hydrogen_ct": 0.10,  # simple-cycle H2 peaker duty cycle
     "hydrogen_ccgt": 0.45,  # combined-cycle H2 mid-merit duty cycle
 }
 
@@ -496,9 +487,7 @@ def _emerging_screen_cf(tech: str, iso: str, config: ScenarioConfig) -> float:
     raise KeyError(f"no screen capacity factor for emerging tech {tech!r}")
 
 
-def _new_entry_candidates(
-    year: int, config: ScenarioConfig, iso: str
-) -> list[str]:
+def _new_entry_candidates(year: int, config: ScenarioConfig, iso: str) -> list[str]:
     """Return the technologies eligible for economic new entry this year.
 
     The four classic technologies are always eligible. Each emerging
@@ -510,10 +499,7 @@ def _new_entry_candidates(
     for tech, year_field in _EMERGING_AVAILABLE_YEAR.items():
         if year < getattr(config, year_field):
             continue
-        if (
-            tech == "offshore_wind"
-            and iso not in config.offshore_wind_eligible_isos
-        ):
+        if tech == "offshore_wind" and iso not in config.offshore_wind_eligible_isos:
             continue
         candidates.append(tech)
     return candidates
@@ -561,9 +547,7 @@ def _emerging_lcoe(
     if tech in ("hydrogen_ct", "hydrogen_ccgt"):
         key = "h2_ct" if tech == "hydrogen_ct" else "h2_ccgt"
         params = HYDROGEN_TURBINE_PARAMS[key]
-        crf = _capital_recovery_factor(
-            config.real_discount_rate, params["lifetime_yr"]
-        )
+        crf = _capital_recovery_factor(config.real_discount_rate, params["lifetime_yr"])
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         h2_cost = compute_h2_fuel_cost(year, config, iso)
         h2_cost = max(0.0, h2_cost - h2_45v_credit_per_mmbtu(year, config))
@@ -572,9 +556,7 @@ def _emerging_lcoe(
 
     if tech == "gas_cc_ccs":
         ccs = CCUS_PARAMS["gas_cc_ccs_90"]
-        crf = _capital_recovery_factor(
-            config.real_discount_rate, ccs["lifetime_yr"]
-        )
+        crf = _capital_recovery_factor(config.real_discount_rate, ccs["lifetime_yr"])
         fixed = ccs["capex_kw"] * crf + ccs["fom_kw_yr"]
         base_hr = min(HEAT_RATE_BINS["gas_cc"].values())
         base_co2 = min(CO2_RATES["gas_cc"].values())
@@ -582,7 +564,8 @@ def _emerging_lcoe(
         residual = base_co2 * (1.0 - config.ccs_capture_rate)
         variable = (
             base_hr * ccs["heat_rate_penalty"] * gas_price_per_mmbtu
-            + VOM.get("gas_cc", 0.0) + ccs["vom_adder"]
+            + VOM.get("gas_cc", 0.0)
+            + ccs["vom_adder"]
             + captured * config.co2_transport_storage_cost
             + residual * carbon_price
             - ccus_45q_credit_per_mwh(captured, year, config)
@@ -591,18 +574,14 @@ def _emerging_lcoe(
 
     if tech == "geothermal":
         egs = GEOTHERMAL_PARAMS["egs"]
-        crf = _capital_recovery_factor(
-            config.real_discount_rate, egs["lifetime_yr"]
-        )
+        crf = _capital_recovery_factor(config.real_discount_rate, egs["lifetime_yr"])
         fixed = egs["capex_kw"] * crf + egs["fom_kw_yr"]
         lcoe = fixed / annual_mwh_per_kw + egs["vom"]
         return apply_ira_credits_to_lcoe("geothermal", lcoe, year, config)
 
     if tech == "offshore_wind":
         params = _offshore_wind_params(iso, config)
-        crf = _capital_recovery_factor(
-            config.real_discount_rate, params["lifetime_yr"]
-        )
+        crf = _capital_recovery_factor(config.real_discount_rate, params["lifetime_yr"])
         fixed = params["capex_kw"] * crf + params["fom_kw_yr"]
         return fixed / annual_mwh_per_kw
 
@@ -999,15 +978,18 @@ def apply_economic_new_entry(
         if tech in _EMERGING_AVAILABLE_YEAR:
             cf = _emerging_screen_cf(tech, iso_config.name, config)
             lcoe = _emerging_lcoe(
-                tech, year, config, iso_config.name, cf,
-                gas_price_per_mmbtu, carbon_price,
+                tech,
+                year,
+                config,
+                iso_config.name,
+                cf,
+                gas_price_per_mmbtu,
+                carbon_price,
             )
             revenue = estimate_expected_revenue(prices, cf)
             # Emerging clean resources also earn an attribute payment: the
             # higher of their exogenous EAC and the RPS shadow price.
-            rps_for_tech = (
-                rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
-            )
+            rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
             effective_attribute_price = max(
                 get_eac_price_for_new_entry(tech, config), rps_for_tech
             )
@@ -1045,9 +1027,7 @@ def apply_economic_new_entry(
                 if np.asarray(prices).ndim > 1
                 else np.asarray(prices, dtype=float)
             )
-            energy_margin = float(
-                np.maximum(price_hourly - var_cost, 0.0).sum()
-            )
+            energy_margin = float(np.maximum(price_hourly - var_cost, 0.0).sum())
             # Annualized fixed cost ($/MW-yr): Wright-adjusted capex annuity +
             # FOM. Thermal carries no IRA ITC/PTC, so this is the clean CONE.
             costs = NEW_ENTRY_COSTS[tech]
@@ -1065,9 +1045,7 @@ def apply_economic_new_entry(
             # same streams credited in the retirement screen above.
             effective_revenue = (
                 energy_margin
-                + capacity_revenue_per_mw_yr(
-                    iso_config.name, EFORD.get(tech, 0.05)
-                )
+                + capacity_revenue_per_mw_yr(iso_config.name, EFORD.get(tech, 0.05))
                 + as_revenue_per_mw_yr(tech, storage_power_mw, config)
             )
             margin = effective_revenue - fixed_cost
@@ -1081,16 +1059,12 @@ def apply_economic_new_entry(
         # higher, never stacked) lift RPS-eligible renewables.
         lcoe = compute_lcoe(tech, year, config, cumulative_gw=cum_gw)
         effective_revenue = estimate_expected_revenue(prices, base_cf)
-        rps_for_tech = (
-            rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
-        )
+        rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
         effective_attribute_price = max(
             get_eac_price_for_new_entry(tech, config), rps_for_tech
         )
         if effective_attribute_price > 0.0:
-            effective_revenue += (
-                effective_attribute_price * base_cf * HOURS_PER_YEAR
-            )
+            effective_revenue += effective_attribute_price * base_cf * HOURS_PER_YEAR
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
         margin = effective_revenue - annual_cost
         if margin > 0.0:
@@ -1200,8 +1174,9 @@ def apply_reserve_margin_build(
     nameplate_needed = firm_gap / credit if credit > 0.0 else firm_gap
     iso_config = get_iso_config(iso)
     queue_cap_mw = QUEUE_CAP_GW.get(iso_config.name, 0.0) * 1000.0
-    build_mw = min(nameplate_needed, queue_cap_mw) if queue_cap_mw > 0.0 \
-        else nameplate_needed
+    build_mw = (
+        min(nameplate_needed, queue_cap_mw) if queue_cap_mw > 0.0 else nameplate_needed
+    )
     if build_mw <= 0.0:
         return fleet, 0.0
 
@@ -1214,9 +1189,7 @@ def apply_reserve_margin_build(
     return fleet + [unit], build_mw
 
 
-def _adjust_retrofit_capex(
-    base_capex_kw: float, cumulative_gw: float | None
-) -> float:
+def _adjust_retrofit_capex(base_capex_kw: float, cumulative_gw: float | None) -> float:
     """Apply Wright's Law to CCS retrofit capex.
 
     Uses the same learning rate and reference GW as new-build CCS --
@@ -1335,9 +1308,7 @@ def apply_ccs_retrofit(
         eac_revenue = eac_price_ccs * cf * hours
         margin_loss = (new_hr - old_hr) * gas_price_per_mmbtu * cf * hours
         vom_increase = config.ccs_retrofit_vom_adder * cf * hours
-        annual_net_savings = (
-            carbon_avoided + eac_revenue - margin_loss - vom_increase
-        )
+        annual_net_savings = carbon_avoided + eac_revenue - margin_loss - vom_increase
         if annual_net_savings <= 0.0:
             continue
 
@@ -1410,9 +1381,7 @@ def evolve_fleet(
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
     eac_price_ccs: float = 0.0,
-) -> tuple[
-    list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]
-]:
+) -> tuple[list[Generator], dict[str, int], dict[str, dict[str, float]], list[dict]]:
     """Advance the fleet by one simulation year.
 
     The five capacity mechanisms are applied in a fixed order:
@@ -1483,22 +1452,21 @@ def evolve_fleet(
     planned = _prior_attr(prior_results, "planned_additions", []) or []
     mc_cost = _prior_attr(prior_results, "mc_cost")
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
-    storage_power_mw = float(
-        _prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0
-    )
+    storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
 
     # 1. Known retirements.
     fleet = apply_known_retirements(fleet, year)
 
     # 2. Economic retirements (needs the prior-year dispatch).
-    if (
-        fleet_arrays is not None
-        and dispatch_result is not None
-        and prices is not None
-    ):
+    if fleet_arrays is not None and dispatch_result is not None and prices is not None:
         fleet, loss_tracker = apply_economic_retirements(
-            fleet, fleet_arrays, dispatch_result, prices, config,
-            loss_tracker, peak_demand,
+            fleet,
+            fleet_arrays,
+            dispatch_result,
+            prices,
+            config,
+            loss_tracker,
+            peak_demand,
             rps_shadow_price=rps_shadow_price,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
@@ -1510,7 +1478,11 @@ def evolve_fleet(
     # 4. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
     # before new entry so retrofits displace some new-build CCS demand.
     fleet, retrofit_log = apply_ccs_retrofit(
-        fleet, prices, year, config, config.iso,
+        fleet,
+        prices,
+        year,
+        config,
+        config.iso,
         gas_price_per_mmbtu=gas_price_per_mmbtu,
         carbon_price=carbon_price,
         eac_price_ccs=eac_price_ccs,
@@ -1521,7 +1493,11 @@ def evolve_fleet(
     # the prior year's RPS shadow price as additional expected revenue.
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
-            fleet, prices, year, config, config.iso,
+            fleet,
+            prices,
+            year,
+            config,
+            config.iso,
             rps_shadow_price=rps_shadow_price,
             cumulative=cumulative,
             gas_price_per_mmbtu=gas_price_per_mmbtu,
@@ -1537,9 +1513,7 @@ def evolve_fleet(
     # (threaded via prior_results). No-op unless reserve_margin_build_enabled.
     if config.reserve_margin_build_enabled and peak_demand > 0.0:
         wind_pool_mw = float(_prior_attr(prior_results, "wind_cap_mw", 0.0) or 0.0)
-        solar_pool_mw = float(
-            _prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0
-        )
+        solar_pool_mw = float(_prior_attr(prior_results, "solar_cap_mw", 0.0) or 0.0)
         storage_firm_mw = float(
             _prior_attr(prior_results, "storage_firm_mw", 0.0) or 0.0
         )
@@ -1558,7 +1532,10 @@ def evolve_fleet(
             logger.info(
                 "year %d: reserve-margin backstop built %.0f MW gas_ct "
                 "(firm %.0f MW vs peak %.0f MW x %.3f margin)",
-                year, adequacy_mw, firm_mw, peak_demand,
+                year,
+                adequacy_mw,
+                firm_mw,
+                peak_demand,
                 1.0 + resolved_margin,
             )
 

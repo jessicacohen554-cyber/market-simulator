@@ -65,7 +65,9 @@ def regenerate(datatypes: list[str]) -> int:
         repo_root = SCRIPTS_DIR.parent
         env = dict(os.environ)
         env["PYTHONPATH"] = os.pathsep.join(
-            [str(repo_root), env["PYTHONPATH"]] if env.get("PYTHONPATH") else [str(repo_root)]
+            [str(repo_root), env["PYTHONPATH"]]
+            if env.get("PYTHONPATH")
+            else [str(repo_root)]
         )
         result = subprocess.run([sys.executable, str(script)], cwd=repo_root, env=env)
         if result.returncode != 0:

@@ -20,12 +20,21 @@ from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
 CLASSES = [
-    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS",
-    "COAL_LIGNITE", "COAL_PRB",
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+    "CT_CHP",
+    "ST_GAS",
+    "COAL_LIGNITE",
+    "COAL_PRB",
 ]
 PLANTS = {
-    55015: "Sweeny Cogen", 10298: "Bayou Cogen", 58378: "Petra Nova",
-    55464: "Deer Park", 55327: "Baytown", 3470: "W A Parish 5-8",
+    55015: "Sweeny Cogen",
+    10298: "Bayou Cogen",
+    58378: "Petra Nova",
+    55464: "Deer Park",
+    55327: "Baytown",
+    3470: "W A Parish 5-8",
 }
 
 
@@ -41,18 +50,19 @@ def class_table(run: str) -> pd.DataFrame:
         grid = disp.groupby("klass")["mw"].sum() / 1e6  # TWh
         b = btm[(btm["year"] == year) & (btm["pass"] == "P1")]
         bt = dict(zip(b["klass"], b["btm_twh"]))
-        bench = (
-            e923[e923["year"] == year].groupby("klass")["annual_mwh"].sum()
-            / 1e6
-        )
+        bench = e923[e923["year"] == year].groupby("klass")["annual_mwh"].sum() / 1e6
         for cls in CLASSES:
             m = grid.get(cls, 0.0) + bt.get(cls, 0.0)
             a = bench.get(cls, 0.0)
-            rows.append({
-                "year": year, "class": cls, f"{run} TWh": round(m, 2),
-                "EIA-923": round(a, 2),
-                f"{run} %": round((m - a) / a * 100, 1) if a else None,
-            })
+            rows.append(
+                {
+                    "year": year,
+                    "class": cls,
+                    f"{run} TWh": round(m, 2),
+                    "EIA-923": round(a, 2),
+                    f"{run} %": round((m - a) / a * 100, 1) if a else None,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -82,7 +92,8 @@ def main(runs: list[str]) -> None:
     for r in runs[1:]:
         pbase = pbase.merge(
             plant_table(r).drop(columns=["campd_gwh"]),
-            on=["year", "plant"], how="outer",
+            on=["year", "plant"],
+            how="outer",
         )
     print(pbase.sort_values(["plant", "year"]).to_string(index=False))
 

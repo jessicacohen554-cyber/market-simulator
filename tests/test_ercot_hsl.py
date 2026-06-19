@@ -83,9 +83,7 @@ def test_hsl_potential_reconciles_2023_coverage():
     # Reconciled to the EIA-930 footprint at the dataset's own curtailment ratio.
     np.testing.assert_allclose(pot.sum(), delivered / (src_gen / src_hsl), rtol=1e-9)
     # Curtailment ratio (delivered/HSL) preserved by the level-only scaling.
-    np.testing.assert_allclose(
-        delivered / pot.sum(), src_gen / src_hsl, rtol=1e-9
-    )
+    np.testing.assert_allclose(delivered / pot.sum(), src_gen / src_hsl, rtol=1e-9)
 
 
 def test_hsl_potential_unmapped_iso_returns_none():
@@ -109,9 +107,7 @@ def test_hsl_cf_profile_covers_new_year(tmp_path, monkeypatch):
 
     # Two zones, online all year, comfortably above the peak HSL so the CF
     # clip at 1.0 never engages and the round-trip is exact.
-    monthly_capacity = np.tile(
-        np.array([[7000.0], [5000.0]]), (1, 12)
-    )
+    monthly_capacity = np.tile(np.array([[7000.0], [5000.0]]), (1, 12))
     cf = _hsl_cf_profile("ERCOT", year, "wind", monthly_capacity)
     assert cf is not None
     np.testing.assert_allclose(cf * 12000.0, series["wind_hsl_mw"])
@@ -129,14 +125,16 @@ def test_hsl_cf_profile_covers_new_year(tmp_path, monkeypatch):
 
 def _hourly_report_frame(dates: pd.DatetimeIndex) -> pd.DataFrame:
     """Return an NP4-732-style hourly report frame for the given local hours."""
-    return pd.DataFrame({
-        "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
-        "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
-        "ACTUAL_SYSTEM_WIDE": 5000.0 + np.arange(len(dates)) % 100,
-        "ACTUAL_SYSTEM_WIDE_HSL": 6000.0 + np.arange(len(dates)) % 100,
-        "COP_HSL_SYSTEM_WIDE": 9999.0,  # must NOT be picked over the actual
-        "STWPF_SYSTEM_WIDE": 5500.0,
-    })
+    return pd.DataFrame(
+        {
+            "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
+            "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
+            "ACTUAL_SYSTEM_WIDE": 5000.0 + np.arange(len(dates)) % 100,
+            "ACTUAL_SYSTEM_WIDE_HSL": 6000.0 + np.arange(len(dates)) % 100,
+            "COP_HSL_SYSTEM_WIDE": 9999.0,  # must NOT be picked over the actual
+            "STWPF_SYSTEM_WIDE": 5500.0,
+        }
+    )
 
 
 def test_parse_report_hourly_layout_prefers_actual_hsl():
@@ -161,11 +159,13 @@ def test_parse_report_drops_forecast_only_rows():
 def test_parse_report_five_minute_interval_ending():
     """5-minute interval-ending stamps land in the hour they cover."""
     ts = pd.date_range("2024-06-01 00:05", periods=24, freq="5min")
-    df = pd.DataFrame({
-        "SCED_TIMESTAMP": ts.strftime("%m/%d/%Y %H:%M:%S"),
-        "SYSTEM_WIDE": 100.0,
-        "SYSTEM_WIDE_HSL": 120.0,
-    })
+    df = pd.DataFrame(
+        {
+            "SCED_TIMESTAMP": ts.strftime("%m/%d/%Y %H:%M:%S"),
+            "SYSTEM_WIDE": 100.0,
+            "SYSTEM_WIDE_HSL": 120.0,
+        }
+    )
     parsed = hsl_script._parse_report("solar.csv", df)
     # Intervals ending 00:05..01:00 cover hour 0; 01:05..02:00 cover hour 1.
     assert (parsed["ts"].iloc[:12] == pd.Timestamp("2024-06-01 00:00")).all()
@@ -185,11 +185,13 @@ def test_to_model_clock_drops_leap_day_and_fills_dst_gap():
     """A leap-year series lands on the fixed 8760 clock, Feb 29 dropped."""
     ts = pd.date_range("2024-01-01", "2024-12-31 23:00", freq="h")
     assert len(ts) == 8784  # leap year
-    rows = pd.DataFrame({
-        "ts": ts,
-        "gen_mw": np.full(len(ts), 100.0),
-        "hsl_mw": np.full(len(ts), 150.0),
-    })
+    rows = pd.DataFrame(
+        {
+            "ts": ts,
+            "gen_mw": np.full(len(ts), 100.0),
+            "hsl_mw": np.full(len(ts), 150.0),
+        }
+    )
     # Mark Feb 29 with a sentinel that must not survive, and knock out the
     # DST spring-forward hour (2024-03-10 02:00) to exercise interpolation.
     feb29 = (ts.month == 2) & (ts.day == 29)
@@ -216,14 +218,16 @@ def test_aggregate_np6_hourly_end_to_end(tmp_path, monkeypatch):
     year = 2025
     ts = pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
     for fuel, sig in (("wind", "STWPF"), ("solar", "STPPF")):
-        pd.DataFrame({
-            "DELIVERY_DATE": ts.strftime("%m/%d/%Y"),
-            "HOUR_ENDING": [f"{h + 1}:00" for h in ts.hour],
-            "ACTUAL_SYSTEM_WIDE": 1000.0,
-            # GEN a shade above HSL in one column tests the HSL >= GEN floor.
-            "ACTUAL_SYSTEM_WIDE_HSL": 990.0 if fuel == "wind" else 1200.0,
-            f"{sig}_SYSTEM_WIDE": 1100.0,
-        }).to_csv(tmp_path / f"{fuel}_{year}.csv", index=False)
+        pd.DataFrame(
+            {
+                "DELIVERY_DATE": ts.strftime("%m/%d/%Y"),
+                "HOUR_ENDING": [f"{h + 1}:00" for h in ts.hour],
+                "ACTUAL_SYSTEM_WIDE": 1000.0,
+                # GEN a shade above HSL in one column tests the HSL >= GEN floor.
+                "ACTUAL_SYSTEM_WIDE_HSL": 990.0 if fuel == "wind" else 1200.0,
+                f"{sig}_SYSTEM_WIDE": 1100.0,
+            }
+        ).to_csv(tmp_path / f"{fuel}_{year}.csv", index=False)
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path)
 
     df = hsl_script.aggregate_np6_hourly(year)
@@ -236,9 +240,9 @@ def test_aggregate_np6_hourly_end_to_end(tmp_path, monkeypatch):
     np.testing.assert_allclose(df["solar_hsl_mw"], 1200.0)
 
 
-def test_aggregate_np6_hourly_missing_uploads_returns_none(tmp_path,
-                                                           monkeypatch,
-                                                           capsys):
+def test_aggregate_np6_hourly_missing_uploads_returns_none(
+    tmp_path, monkeypatch, capsys
+):
     """No uploads -> None with a data-needed message, never fabricated."""
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path / "absent")
     assert hsl_script.aggregate_np6_hourly(2024) is None
@@ -256,8 +260,10 @@ def _flat_dispatch_frame(mw: float) -> pd.DataFrame:
     """Return a minimal bundle dispatch frame with flat wind/solar output."""
     hours = np.arange(HOURS_PER_YEAR, dtype=np.int32)
     return pd.concat(
-        [pd.DataFrame({"fuel": fuel, "hour": hours, "mw": float(mw)})
-         for fuel in ("wind", "solar")],
+        [
+            pd.DataFrame({"fuel": fuel, "hour": hours, "mw": float(mw)})
+            for fuel in ("wind", "solar")
+        ],
         ignore_index=True,
     )
 
@@ -273,9 +279,7 @@ def test_curtailment_table_uses_consumed_potential(capsys):
     """
     from scripts.run_calibration_full import _print_curtailment_vs_reported
 
-    _print_curtailment_vs_reported(
-        2023, "ERCOT", _flat_dispatch_frame(0.0), label="3e"
-    )
+    _print_curtailment_vs_reported(2023, "ERCOT", _flat_dispatch_frame(0.0), label="3e")
     out = capsys.readouterr().out
     assert "[3e] Renewable curtailment" in out
     wind_row = next(

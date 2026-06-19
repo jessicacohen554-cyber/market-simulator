@@ -90,9 +90,7 @@ def _merge_runs(
     return merged
 
 
-def _commitment_params(
-    gen: Generator, heat_rate: float
-) -> dict[str, float] | None:
+def _commitment_params(gen: Generator, heat_rate: float) -> dict[str, float] | None:
     """Return startup/min-run params for a generator, or ``None`` to skip.
 
     ``None`` means the generator is never commitment-screened (always
@@ -203,10 +201,7 @@ def compute_monthly_markup(
     def _amortized(g, h_start, h_end, startup, threshold):
         """Startup / mean run length over ``[h_start, h_end)`` for gen ``g``."""
         runs = find_runs(dispatch[g, h_start:h_end] > threshold)
-        avg_run = (
-            float(np.mean([end - start for start, end in runs])) if runs
-            else 0.0
-        )
+        avg_run = float(np.mean([end - start for start, end in runs])) if runs else 0.0
         return startup / max(avg_run, 1.0)
 
     for g, gen in enumerate(generators):
@@ -215,7 +210,9 @@ def compute_monthly_markup(
         # is incurred for steam regardless of the energy market), so its
         # energy bid carries no startup amortization.
         if chp_startup_covered and gen.plant_group in (
-            "CC_CHP", "CT_CHP", "ST_CHP",
+            "CC_CHP",
+            "CT_CHP",
+            "ST_CHP",
         ):
             continue
         # Warm-boiler exemption: a CAMPD coal bin with a must-run floor
@@ -226,8 +223,11 @@ def compute_monthly_markup(
         # band ABOVE the econ ramp top (Parish 2024: committed cleared
         # only at LMP >= ~$20 vs econ from ~$13 — the run-97b inversion),
         # turning the design's cheap base band into a near-peak band.
-        if (coal_warm_committed and gen.fuel_type == "coal"
-                and getattr(gen, "must_run_pct", 0.0) > 0.0):
+        if (
+            coal_warm_committed
+            and gen.fuel_type == "coal"
+            and getattr(gen, "must_run_pct", 0.0) > 0.0
+        ):
             continue
         startup = _startup_cost(gen, float(fleet_arrays.heat_rate[g]))
         if startup == 0.0:
@@ -242,9 +242,7 @@ def compute_monthly_markup(
         for h_start, h_end in month_bounds:
             if st_spread and h_start >= s_lo and h_end <= s_hi:
                 continue  # inside the season window, already handled
-            markup[g, h_start:h_end] = _amortized(
-                g, h_start, h_end, startup, threshold
-            )
+            markup[g, h_start:h_end] = _amortized(g, h_start, h_end, startup, threshold)
     return markup
 
 
@@ -282,14 +280,11 @@ def _storage_commitment_weight(
         return ones
 
     # Aggregate every storage unit's net charge into its zone row.
-    net_charge_unit = (
-        np.asarray(storage_charge, dtype=float)
-        - np.asarray(storage_discharge, dtype=float)
+    net_charge_unit = np.asarray(storage_charge, dtype=float) - np.asarray(
+        storage_discharge, dtype=float
     )
     zone_net_charge = np.zeros((n_zones, T), dtype=float)
-    np.add.at(
-        zone_net_charge, np.asarray(storage_zone_idx, dtype=int), net_charge_unit
-    )
+    np.add.at(zone_net_charge, np.asarray(storage_zone_idx, dtype=int), net_charge_unit)
 
     # Only net-charging hours discount; net-discharge hours keep weight 1.
     net_charge = np.maximum(zone_net_charge, 0.0)
@@ -298,15 +293,15 @@ def _storage_commitment_weight(
 
 
 def compute_commitment(
-    p1_prices: np.ndarray,         # (n_zones, T) — from the P1 solve
-    base_mc: np.ndarray,           # (n_gen, T) — fuel + VOM, NO markup
-    generators: list[Generator],   # fleet list aligned with base_mc rows
-    fleet_arrays: FleetArrays,     # for zone_idx, heat_rate
+    p1_prices: np.ndarray,  # (n_zones, T) — from the P1 solve
+    base_mc: np.ndarray,  # (n_gen, T) — fuel + VOM, NO markup
+    generators: list[Generator],  # fleet list aligned with base_mc rows
+    fleet_arrays: FleetArrays,  # for zone_idx, heat_rate
     config: ScenarioConfig,
-    storage_charge: np.ndarray | None = None,     # (n_storage, T), P1 solve
+    storage_charge: np.ndarray | None = None,  # (n_storage, T), P1 solve
     storage_discharge: np.ndarray | None = None,  # (n_storage, T), P1 solve
-    storage_zone_idx: np.ndarray | None = None,   # (n_storage,)
-    demand: np.ndarray | None = None,             # (n_zones, T)
+    storage_zone_idx: np.ndarray | None = None,  # (n_storage,)
+    demand: np.ndarray | None = None,  # (n_zones, T)
 ) -> np.ndarray:
     """Return ``(n_gen, T)`` boolean mask: ``True`` = committed.
 
@@ -358,16 +353,19 @@ def compute_commitment(
     committed = np.ones((n_gen, T), dtype=bool)
 
     storage_weight = _storage_commitment_weight(
-        n_zones, T, storage_charge, storage_discharge, storage_zone_idx,
-        demand, config.commitment_storage_weight,
+        n_zones,
+        T,
+        storage_charge,
+        storage_discharge,
+        storage_zone_idx,
+        demand,
+        config.commitment_storage_weight,
     )
 
     for g, gen in enumerate(generators):
         if gen.fuel_type == "coal" and not config.commitment_screen_coal:
             continue  # coal exempt from the screen — stays committed everywhere
-        params = _commitment_params(
-            gen, float(fleet_arrays.heat_rate[g])
-        )
+        params = _commitment_params(gen, float(fleet_arrays.heat_rate[g]))
         if params is None:
             continue  # coal, nuclear, non-thermal: always committed
 
@@ -401,9 +399,9 @@ def compute_commitment(
 
 def apply_commitment_with_coal_pin(
     fleet_arrays: FleetArrays,
-    committed: np.ndarray,          # (n_gen, T) boolean
-    p1_dispatch: np.ndarray,        # (n_gen, T) from the P1 solve
-    generators: list[Generator],    # fleet list aligned with committed rows
+    committed: np.ndarray,  # (n_gen, T) boolean
+    p1_dispatch: np.ndarray,  # (n_gen, T) from the P1 solve
+    generators: list[Generator],  # fleet list aligned with committed rows
     screen_coal: bool = True,
     preserve_min_gen: bool = False,
 ) -> FleetArrays:
@@ -459,7 +457,8 @@ def apply_commitment_with_coal_pin(
         if pin_to_p1:
             p1_frac = np.clip(
                 p1_dispatch[g, :] / max(float(fleet_arrays.pmax[g]), 1.0),
-                0.0, 1.0,
+                0.0,
+                1.0,
             )
             avail[g, :] = np.maximum(p1_frac, 1e-6)
         else:
@@ -480,9 +479,7 @@ def apply_commitment_with_coal_pin(
         if suffix == "committed":
             bin_tranches.setdefault(bin_id, {})["committed"] = g
         elif suffix.startswith("econ"):
-            bin_tranches.setdefault(bin_id, {}).setdefault(
-                "econ", []
-            ).append(g)
+            bin_tranches.setdefault(bin_id, {}).setdefault("econ", []).append(g)
 
     for pair in bin_tranches.values():
         c_idx = pair.get("committed")
@@ -501,9 +498,7 @@ def apply_commitment_with_coal_pin(
     # solution stays feasible and P2 can never invent new unmet demand.
     pmax = fleet_arrays.pmax
     zone_idx = fleet_arrays.zone_idx
-    p1_frac = np.clip(
-        p1_dispatch / np.maximum(pmax[:, None], 1.0), 0.0, 1.0
-    )
+    p1_frac = np.clip(p1_dispatch / np.maximum(pmax[:, None], 1.0), 0.0, 1.0)
     cap = avail * pmax[:, None]
     for z in np.unique(zone_idx):
         rows = zone_idx == z
@@ -531,12 +526,17 @@ def apply_commitment_with_coal_pin(
             avail = np.where(floored, np.maximum(avail, need), avail)
 
     return FleetArrays(
-        pmax=fleet_arrays.pmax, pmin=fleet_arrays.pmin.copy(),
-        heat_rate=fleet_arrays.heat_rate, vom=fleet_arrays.vom,
-        emission_rate=fleet_arrays.emission_rate, nox_rate=fleet_arrays.nox_rate,
+        pmax=fleet_arrays.pmax,
+        pmin=fleet_arrays.pmin.copy(),
+        heat_rate=fleet_arrays.heat_rate,
+        vom=fleet_arrays.vom,
+        emission_rate=fleet_arrays.emission_rate,
+        nox_rate=fleet_arrays.nox_rate,
         so2_rate=fleet_arrays.so2_rate,
-        zone_idx=fleet_arrays.zone_idx, fuel_type_idx=fleet_arrays.fuel_type_idx,
-        availability=avail, unit_ids=fleet_arrays.unit_ids,
+        zone_idx=fleet_arrays.zone_idx,
+        fuel_type_idx=fleet_arrays.fuel_type_idx,
+        availability=avail,
+        unit_ids=fleet_arrays.unit_ids,
         efficiency_bin=fleet_arrays.efficiency_bin,
         plant_code=fleet_arrays.plant_code,
         min_gen=p2_min_gen,

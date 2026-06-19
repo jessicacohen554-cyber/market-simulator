@@ -102,11 +102,9 @@ def _bin_dispatch_frame(
             "dispatch_mw": dispatch.ravel(),
         }
     )
-    bin_dispatch = (
-        gen_df.groupby(["bin_label", "zone", "hour"], as_index=False)[
-            "dispatch_mw"
-        ].sum()
-    )
+    bin_dispatch = gen_df.groupby(["bin_label", "zone", "hour"], as_index=False)[
+        "dispatch_mw"
+    ].sum()
 
     prices = np.asarray(result.prices, dtype=float)  # (n_zones, T)
     n_zones = prices.shape[0]
@@ -152,10 +150,17 @@ def main() -> None:
     parser.add_argument("--iso", required=True)
     parser.add_argument("--output-dir", type=Path, default=REPO / "reports")
     parser.add_argument("--years", default="2026-2050")
-    parser.add_argument("--discount-rate", type=float, default=None,
-                        help="Overrides ScenarioConfig.real_discount_rate.")
-    parser.add_argument("--include-hourly", action="store_true",
-                        help="Also write the (large) per-year hourly parquet.")
+    parser.add_argument(
+        "--discount-rate",
+        type=float,
+        default=None,
+        help="Overrides ScenarioConfig.real_discount_rate.",
+    )
+    parser.add_argument(
+        "--include-hourly",
+        action="store_true",
+        help="Also write the (large) per-year hourly parquet.",
+    )
     args = parser.parse_args()
 
     if not args.results_dir.is_dir():
@@ -200,9 +205,7 @@ def main() -> None:
         result = DispatchResult.from_parquet(cache_path)
         context = read_fleet_context(cache_path)
 
-        bin_dispatch, zonal_prices = _bin_dispatch_frame(
-            result, context, zone_names
-        )
+        bin_dispatch, zonal_prices = _bin_dispatch_frame(result, context, zone_names)
         hours = int(bin_dispatch["hour"].max()) + 1
         fuel_prices = _fuel_price_frame(config, year, hours)
         carbon_price = resolve_carbon_price(config, year)
@@ -210,24 +213,30 @@ def main() -> None:
 
         plant_dispatch = disaggregate_dispatch(bin_dispatch, plant_map)
         hourly = compute_plant_hourly_financials(
-            plant_dispatch, zonal_prices, fuel_prices,
-            carbon_price, nox_price, plant_map,
-            discount_rate=discount_rate, year=year, base_year=base_year,
+            plant_dispatch,
+            zonal_prices,
+            fuel_prices,
+            carbon_price,
+            nox_price,
+            plant_map,
+            discount_rate=discount_rate,
+            year=year,
+            base_year=base_year,
         )
         if args.include_hourly:
-            hourly.to_parquet(out_dir / f"plant_hourly_{year}.parquet",
-                              index=False)
+            hourly.to_parquet(out_dir / f"plant_hourly_{year}.parquet", index=False)
 
         annual = compute_plant_annual_summary(
-            hourly, plant_map, discount_rate=discount_rate,
-            year=year, base_year=base_year,
+            hourly,
+            plant_map,
+            discount_rate=discount_rate,
+            year=year,
+            base_year=base_year,
         )
         annual.to_parquet(out_dir / f"plant_annual_{year}.parquet", index=False)
         del hourly  # release the large hourly frame before the next year
 
-        company_total, company_by_fuel = compute_company_summary(
-            annual, ownership_df
-        )
+        company_total, company_by_fuel = compute_company_summary(annual, ownership_df)
         company_total.to_parquet(
             out_dir / f"company_annual_{year}.parquet", index=False
         )
@@ -238,8 +247,9 @@ def main() -> None:
         annual_summaries.append(annual)
         company_summaries.append(company_total.assign(year=year))
         used_years.append(year)
-        logger.info("year %d: %d plants, %d companies", year,
-                    len(annual), len(company_total))
+        logger.info(
+            "year %d: %d plants, %d companies", year, len(annual), len(company_total)
+        )
 
     if not used_years:
         raise SystemExit("no cached dispatch years found — nothing to report")
@@ -252,9 +262,7 @@ def main() -> None:
     company_traj = compute_trajectory_npv(
         company_summaries, used_years, discount_rate, base_year
     )
-    company_traj.to_parquet(
-        out_dir / "trajectory_company_npv.parquet", index=False
-    )
+    company_traj.to_parquet(out_dir / "trajectory_company_npv.parquet", index=False)
 
     # Human-readable CSV reports (exception to the parquet-only rule).
     _write_csv_reports(out_dir, company_summaries, used_years, plant_traj)
@@ -286,8 +294,10 @@ def _write_csv_reports(
     )
 
     emissions = all_company.pivot_table(
-        index="parent_company", columns="year",
-        values="owned_co2_emissions_tons", aggfunc="sum",
+        index="parent_company",
+        columns="year",
+        values="owned_co2_emissions_tons",
+        aggfunc="sum",
     ).reset_index()
     emissions.to_csv(out_dir / "emissions_by_company.csv", index=False)
 

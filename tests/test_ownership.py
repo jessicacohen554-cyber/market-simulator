@@ -77,9 +77,7 @@ class TestSparseOwnershipJoin(unittest.TestCase):
         plant_200 = df[df["plant_code"] == 200]
         self.assertEqual(len(plant_200), 2)
         self.assertAlmostEqual(plant_200["percent_owned"].sum(), 1.0)
-        self.assertEqual(
-            set(plant_200["owner_utility_id"]), {5416, 19876}
-        )
+        self.assertEqual(set(plant_200["owner_utility_id"]), {5416, 19876})
 
     def test_schedule_4_generator_inherits_schedule_3_capacity(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -88,9 +86,7 @@ class TestSparseOwnershipJoin(unittest.TestCase):
 
         plant_200 = df[df["plant_code"] == 200]
         # Nameplate from Schedule 3 flows onto every Schedule 4 owner row.
-        self.assertTrue(
-            (plant_200["nameplate_capacity_mw"] == 1000.0).all()
-        )
+        self.assertTrue((plant_200["nameplate_capacity_mw"] == 1000.0).all())
 
 
 class TestMnaOverlay(unittest.TestCase):
@@ -133,9 +129,7 @@ class TestMnaOverlay(unittest.TestCase):
             parent_lookup=self.lookup,
             mna_overlays=[self.overlay],
         )
-        self.assertEqual(
-            result.iloc[0]["parent_company"], "Constellation Energy"
-        )
+        self.assertEqual(result.iloc[0]["parent_company"], "Constellation Energy")
 
     def test_pending_deal_flags_without_reassigning(self):
         pending = OwnershipChange(
@@ -248,9 +242,7 @@ class TestAttributeEmissions(unittest.TestCase):
             dispatch.to_parquet(path, index=False)
             result = attribute_emissions(path, parent_df, year=2026)
 
-        annual = result[result["granularity"] == "annual"].set_index(
-            "parent_company"
-        )
+        annual = result[result["granularity"] == "annual"].set_index("parent_company")
         # A: plant 1 = 2×10×0.5 = 10; plant 2 = 2×20×1.0×0.5 = 20 → 30 tCO2.
         self.assertAlmostEqual(annual.loc["Company A", "emissions_tco2"], 30.0)
         # B: plant 2 only = 2×20×1.0×0.5 = 20 tCO2.
@@ -282,13 +274,9 @@ class TestAttributeEmissions(unittest.TestCase):
             result = attribute_emissions(path, parent_df, year=2026)
 
         annual = result[result["granularity"] == "annual"].iloc[0]
-        self.assertAlmostEqual(
-            annual["emissions_intensity_tco2_per_mwh"], 0.4
-        )
+        self.assertAlmostEqual(annual["emissions_intensity_tco2_per_mwh"], 0.4)
         # Hourly and monthly granularities are also present.
-        self.assertEqual(
-            set(result["granularity"]), {"hourly", "monthly", "annual"}
-        )
+        self.assertEqual(set(result["granularity"]), {"hourly", "monthly", "annual"})
 
 
 if __name__ == "__main__":

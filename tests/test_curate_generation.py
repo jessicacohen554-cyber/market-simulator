@@ -29,9 +29,7 @@ def _synthetic_eia930(path: Path) -> None:
     Includes a storage pair (BAT + PS -> one ``storage`` bucket), a geothermal
     code, and a NaN coal value that must be dropped rather than written.
     """
-    utc = pd.to_datetime(
-        ["2024-06-01 00:00", "2024-06-01 01:00", "2025-06-01 00:00"]
-    )
+    utc = pd.to_datetime(["2024-06-01 00:00", "2024-06-01 01:00", "2025-06-01 00:00"])
     local = utc - pd.Timedelta(hours=7)  # arbitrary naive local wall clock
     df = pd.DataFrame(
         {
@@ -94,8 +92,10 @@ class CurateGenerationTest(unittest.TestCase):
         written = cg.write_by_year(df, "CAISO", source=str(raw))
 
         # Partitioned into 2024 and 2025 files, both schema-valid round-trips.
-        self.assertEqual({p.name for p in written},
-                         {"generation_2024.parquet", "generation_2025.parquet"})
+        self.assertEqual(
+            {p.name for p in written},
+            {"generation_2024.parquet", "generation_2025.parquet"},
+        )
         for p in written:
             self.assertEqual(validate_clean(p).datatype, "generation")
 
@@ -109,14 +109,18 @@ class CurateGenerationTest(unittest.TestCase):
         self.assertTrue(set(g2024["fuel"]).issubset(set(cg.EIA_FUEL_MAP.values())))
 
         # Hour 0: storage = BAT(1) + PS(4) = 5; geothermal present.
-        h0 = g2024[g2024["interval_start_utc"] == pd.Timestamp("2024-06-01 00:00", tz="UTC")]
+        h0 = g2024[
+            g2024["interval_start_utc"] == pd.Timestamp("2024-06-01 00:00", tz="UTC")
+        ]
         by_fuel = dict(zip(h0["fuel"], h0["generation_mw"]))
         self.assertEqual(by_fuel["storage"], 5.0)
         self.assertEqual(by_fuel["geothermal"], 5.0)
         self.assertEqual(by_fuel["coal"], 100.0)
 
         # Hour 1 had NaN coal -> no coal row that hour (dropped, not zero/null).
-        h1 = g2024[g2024["interval_start_utc"] == pd.Timestamp("2024-06-01 01:00", tz="UTC")]
+        h1 = g2024[
+            g2024["interval_start_utc"] == pd.Timestamp("2024-06-01 01:00", tz="UTC")
+        ]
         self.assertNotIn("coal", set(h1["fuel"]))
         self.assertEqual(dict(zip(h1["fuel"], h1["generation_mw"]))["storage"], 7.0)
 
@@ -127,8 +131,12 @@ class CurateGenerationTest(unittest.TestCase):
         raw = self.tmp / "BAD hourly.parquet"
         pd.DataFrame(
             {
-                "UTC time": pd.to_datetime(["2024-06-01 00:00"]).astype("datetime64[us]"),
-                "Local time": pd.to_datetime(["2024-05-31 17:00"]).astype("datetime64[us]"),
+                "UTC time": pd.to_datetime(["2024-06-01 00:00"]).astype(
+                    "datetime64[us]"
+                ),
+                "Local time": pd.to_datetime(["2024-05-31 17:00"]).astype(
+                    "datetime64[us]"
+                ),
                 "NG: ZZZ": [1.0],  # no canonical home
             }
         ).to_parquet(raw)

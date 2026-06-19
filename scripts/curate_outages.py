@@ -138,15 +138,16 @@ def load_unit_windows(csv_path: Path) -> list[pd.DataFrame]:
             plant_cap = getattr(r, "plant_capacity_mw", None)
             n_units = getattr(r, "total_units_at_plant", None)
             if (
-                plant_cap is not None and pd.notna(plant_cap)
-                and n_units is not None and pd.notna(n_units) and int(n_units) > 0
+                plant_cap is not None
+                and pd.notna(plant_cap)
+                and n_units is not None
+                and pd.notna(n_units)
+                and int(n_units) > 0
             ):
                 cap = float(plant_cap) / int(n_units)
             else:
                 continue
-        hours = _expand_daily(
-            pd.Timestamp(r.outage_start), pd.Timestamp(r.outage_end)
-        )
+        hours = _expand_daily(pd.Timestamp(r.outage_start), pd.Timestamp(r.outage_end))
         if len(hours) == 0:
             continue
         parts.append(
@@ -199,9 +200,7 @@ def load_facility_windows(
 # ---------------------------------------------------------------------------
 # Reconciliation
 # ---------------------------------------------------------------------------
-def reconcile(
-    parts: list[pd.DataFrame], nameplate: dict[int, float]
-) -> pd.DataFrame:
+def reconcile(parts: list[pd.DataFrame], nameplate: dict[int, float]) -> pd.DataFrame:
     """Combine expanded window frames into the canonical outages frame.
 
     De-duplicates on the schema key ``(plant_id, unit_id, interval_start_utc)``
@@ -235,8 +234,8 @@ def reconcile(
         }
     )
     nameplate_mw = out["plant_id"].map(nameplate)
-    out["available_mw"] = (nameplate_mw - out["outage_mw"]).clip(lower=0.0).astype(
-        "float64"
+    out["available_mw"] = (
+        (nameplate_mw - out["outage_mw"]).clip(lower=0.0).astype("float64")
     )
     # No source classifies planned/forced/derate, so outage_type stays null.
     out["outage_type"] = pd.array([pd.NA] * len(df), dtype="string")

@@ -27,8 +27,15 @@ HOURS = 8760
 
 def _gen(uid: str, group: str, fuel: str, pmax: float, code: int) -> Generator:
     return Generator(
-        unit_id=uid, name=uid, plant_group=group, fuel_type=fuel,
-        pmax_mw=pmax, heat_rate=8.0, zone="Z0", eford=0.0, plant_code=code,
+        unit_id=uid,
+        name=uid,
+        plant_group=group,
+        fuel_type=fuel,
+        pmax_mw=pmax,
+        heat_rate=8.0,
+        zone="Z0",
+        eford=0.0,
+        plant_code=code,
     )
 
 
@@ -72,28 +79,30 @@ class TestWithholding:
     def test_on_withholds_measured_per_class(self):
         """Each thermal class is cut by its own measured AS; wind untouched."""
         off = self._fleet(ScenarioConfig(iso="ERCOT", weather_year=2024))
-        on = self._fleet(ScenarioConfig(
-            iso="ERCOT", weather_year=2024, as_reserve_withholding=True))
+        on = self._fleet(
+            ScenarioConfig(iso="ERCOT", weather_year=2024, as_reserve_withholding=True)
+        )
         by_class = load_as_thermal_withholding(2024, HOURS)
         # Single-unit pool per class -> exact cut of class_mw / pmax.
         np.testing.assert_allclose(
-            on.availability[0], off.availability[0] - by_class["gas_cc"] / 60_000.0,
+            on.availability[0],
+            off.availability[0] - by_class["gas_cc"] / 60_000.0,
             atol=1e-9,
         )
         np.testing.assert_allclose(
-            on.availability[1], off.availability[1] - by_class["coal"] / 30_000.0,
+            on.availability[1],
+            off.availability[1] - by_class["coal"] / 30_000.0,
             atol=1e-9,
         )
         np.testing.assert_allclose(on.availability[2], off.availability[2])
 
     def test_unconfigured_iso_unaffected(self):
         """The withholding is scoped to ISOs with an AS series; others no-op."""
-        off = self._fleet(
-            ScenarioConfig(iso="MISO", weather_year=2024), iso="MISO")
+        off = self._fleet(ScenarioConfig(iso="MISO", weather_year=2024), iso="MISO")
         on = self._fleet(
-            ScenarioConfig(iso="MISO", weather_year=2024,
-                           as_reserve_withholding=True),
-            iso="MISO")
+            ScenarioConfig(iso="MISO", weather_year=2024, as_reserve_withholding=True),
+            iso="MISO",
+        )
         np.testing.assert_allclose(on.availability[0], off.availability[0])
 
     def test_never_below_zero(self):
@@ -108,7 +117,6 @@ class TestWithholding:
         )
         assert fa.availability.min() >= 0.0
         assert fa.availability.max() <= 1.0
-
 
 
 class TestPjmWithholding:
@@ -134,12 +142,21 @@ class TestPjmWithholding:
         ]
         gens[1].heat_rate = 12.0  # oil dearer than gas (8.0) -> withdrawn first
         off = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="PJM",
-            config=ScenarioConfig(iso="PJM", weather_year=2024))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="PJM",
+            config=ScenarioConfig(iso="PJM", weather_year=2024),
+        )
         on = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="PJM",
-            config=ScenarioConfig(iso="PJM", weather_year=2024,
-                                  as_reserve_withholding=True))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="PJM",
+            config=ScenarioConfig(
+                iso="PJM", weather_year=2024, as_reserve_withholding=True
+            ),
+        )
         # Coal and wind never lose headroom.
         np.testing.assert_allclose(on.availability[2], off.availability[2])
         np.testing.assert_allclose(on.availability[3], off.availability[3])
@@ -190,8 +207,15 @@ class TestCaisoReserveFormula:
 
     def _gen(self, uid, group, fuel, pmax, code, hr=8.0):
         return Generator(
-            unit_id=uid, name=uid, plant_group=group, fuel_type=fuel,
-            pmax_mw=pmax, heat_rate=hr, zone="Z0", eford=0.0, plant_code=code,
+            unit_id=uid,
+            name=uid,
+            plant_group=group,
+            fuel_type=fuel,
+            pmax_mw=pmax,
+            heat_rate=hr,
+            zone="Z0",
+            eford=0.0,
+            plant_code=code,
         )
 
     def test_withholds_gas_not_coal_nuclear_wind(self):
@@ -206,11 +230,16 @@ class TestCaisoReserveFormula:
         ]
         kw = dict(hours=HOURS, iso="CAISO", load_shape=load)
         off = generators_to_fleet_arrays(
-            gens, ["Z0"], config=ScenarioConfig(iso="CAISO", weather_year=2024),
-            **kw)
+            gens, ["Z0"], config=ScenarioConfig(iso="CAISO", weather_year=2024), **kw
+        )
         on = generators_to_fleet_arrays(
-            gens, ["Z0"], config=ScenarioConfig(
-                iso="CAISO", weather_year=2024, as_reserve_formula=True), **kw)
+            gens,
+            ["Z0"],
+            config=ScenarioConfig(
+                iso="CAISO", weather_year=2024, as_reserve_formula=True
+            ),
+            **kw,
+        )
         # MSSC = largest non-(import/wind/solar) unit = 20 GW gas here (the test
         # fleet has no separate single-unit cap); R = max(20000, 0.067*30000) +
         # 0.01*30000 = 20000 + 300 = 20300 MW. Withdrawn from the dearer gas (ct
@@ -232,26 +261,47 @@ class TestCaisoReserveFormula:
         load = np.full(HOURS, 30_000.0)
         gens = [self._gen("cc1", "CC_REGULAR", "gas_cc", 20_000.0, 1)]
         base = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="CAISO", load_shape=load,
-            config=ScenarioConfig(iso="CAISO", weather_year=2024))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="CAISO",
+            load_shape=load,
+            config=ScenarioConfig(iso="CAISO", weather_year=2024),
+        )
         flagged_off = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="CAISO", load_shape=load,
-            config=ScenarioConfig(iso="CAISO", weather_year=2024,
-                                  as_reserve_formula=False))
-        np.testing.assert_array_equal(
-            base.availability, flagged_off.availability)
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="CAISO",
+            load_shape=load,
+            config=ScenarioConfig(
+                iso="CAISO", weather_year=2024, as_reserve_formula=False
+            ),
+        )
+        np.testing.assert_array_equal(base.availability, flagged_off.availability)
 
     def test_other_iso_unaffected(self):
         """The formula is CAISO-scoped; other ISOs no-op even with the flag."""
         load = np.full(HOURS, 30_000.0)
         gens = [self._gen("cc1", "CC_REGULAR", "gas_cc", 20_000.0, 1)]
         off = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="MISO", load_shape=load,
-            config=ScenarioConfig(iso="MISO", weather_year=2024))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="MISO",
+            load_shape=load,
+            config=ScenarioConfig(iso="MISO", weather_year=2024),
+        )
         on = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="MISO", load_shape=load,
-            config=ScenarioConfig(iso="MISO", weather_year=2024,
-                                  as_reserve_formula=True))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="MISO",
+            load_shape=load,
+            config=ScenarioConfig(
+                iso="MISO", weather_year=2024, as_reserve_formula=True
+            ),
+        )
         np.testing.assert_array_equal(on.availability, off.availability)
 
     def test_availability_stays_in_unit_interval(self):
@@ -259,9 +309,15 @@ class TestCaisoReserveFormula:
         load = np.full(HOURS, 30_000.0)
         gens = [self._gen("cc1", "CC_REGULAR", "gas_cc", 500.0, 1)]
         fa = generators_to_fleet_arrays(
-            gens, ["Z0"], hours=HOURS, iso="CAISO", load_shape=load,
-            config=ScenarioConfig(iso="CAISO", weather_year=2024,
-                                  as_reserve_formula=True))
+            gens,
+            ["Z0"],
+            hours=HOURS,
+            iso="CAISO",
+            load_shape=load,
+            config=ScenarioConfig(
+                iso="CAISO", weather_year=2024, as_reserve_formula=True
+            ),
+        )
         assert fa.availability.min() >= 0.0
         assert fa.availability.max() <= 1.0
 
@@ -285,22 +341,35 @@ class TestCaisoReserveFormula:
         ]
         # Marginal costs decoupled from heat rate so the clearing order is
         # explicit: cc 20 < ct_mid 50 < ct_exp 100 < coal 200.
-        mc = np.array([
-            [20.0, 20.0], [50.0, 50.0], [100.0, 100.0], [200.0, 200.0],
-        ])
+        mc = np.array(
+            [
+                [20.0, 20.0],
+                [50.0, 50.0],
+                [100.0, 100.0],
+                [200.0, 200.0],
+            ]
+        )
         renew = dict(
-            wind_cf=np.zeros((1, T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, T)), solar_cap=np.zeros(1),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
         )
 
         def _solve(formula: bool):
             fa = generators_to_fleet_arrays(
-                gens, ["Z0"], hours=T, iso="CAISO", load_shape=load_shape,
-                config=ScenarioConfig(iso="CAISO", weather_year=2024,
-                                      as_reserve_formula=formula))
+                gens,
+                ["Z0"],
+                hours=T,
+                iso="CAISO",
+                load_shape=load_shape,
+                config=ScenarioConfig(
+                    iso="CAISO", weather_year=2024, as_reserve_formula=formula
+                ),
+            )
             return solve_dispatch(fa, demand, mc=mc, T=T, **renew)
 
-        off = _solve(False).prices[0]   # (T,) zone-0 prices
+        off = _solve(False).prices[0]  # (T,) zone-0 prices
         on = _solve(True).prices[0]
         # Off: tight hour clears on ct_exp (100); slack hour on cheap CC (20).
         np.testing.assert_allclose(off[0], 100.0)
@@ -320,6 +389,7 @@ class TestStorageAsCommitment:
     def test_reserves_as_pro_rata(self):
         from market_sim.model.storage import reserve_storage_as_power
         import pandas as pd
+
         asr = pd.read_parquet(
             RAW_DATA_DIR / "ercot-AS" / "ercot_2024_as_by_restype_hourly.parquet"
         )["storage"].to_numpy(dtype=float)
@@ -338,6 +408,7 @@ class TestStorageAsCommitment:
 
     def test_missing_year_passthrough(self):
         from market_sim.model.storage import reserve_storage_as_power
+
         pc = np.array([4000.0, 2500.0])
         out = reserve_storage_as_power(pc, 1999, HOURS)
         np.testing.assert_array_equal(out, pc)

@@ -175,8 +175,14 @@ class TestCaisoCurtailmentCrossCheck(unittest.TestCase):
         ws = wb.active
         ws.title = "Curtailments"
         ws.append(
-            ["Date", "Hour", "Interval", "Wind Curtailment",
-             "Solar Curtailment", "Reason"]
+            [
+                "Date",
+                "Hour",
+                "Interval",
+                "Wind Curtailment",
+                "Solar Curtailment",
+                "Reason",
+            ]
         )
         # Single 5-min interval of curtailment at hour-of-year 0 (Jan 1, Hour 1,
         # Interval 1): the loader averages over 12 intervals/hour, so 24 -> 2.0.
@@ -200,9 +206,7 @@ class TestCaisoCurtailmentCrossCheck(unittest.TestCase):
             # Build a wide frame whose hsl - gen equals the workbook curtailment.
             wide = _synthetic_wide(2023)
             for fuel in FUELS:
-                wide[f"{fuel}_hsl_mw"] = (
-                    wide[f"{fuel}_gen_mw"] + expected[fuel]
-                )
+                wide[f"{fuel}_hsl_mw"] = wide[f"{fuel}_gen_mw"] + expected[fuel]
             long = unpivot_to_long(wide, "CAISO", 2023, std_offset_hours=8)
 
             # Consistent frame: cross-check passes silently.

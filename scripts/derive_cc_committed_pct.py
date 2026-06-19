@@ -103,8 +103,9 @@ def main() -> None:
     for code, cap in sorted(nameplate.items()):
         series = net.get(code)
         if series is None:
-            rows.append({"plant_code": code, "name": names.get(code, ""),
-                         "status": "no_campd"})
+            rows.append(
+                {"plant_code": code, "name": names.get(code, ""), "status": "no_campd"}
+            )
             continue
         net_win = series[:_WINDOW_END_HOUR]
         avail_mult = derate.get((code, "CC_REGULAR"), np.ones(len(series)))
@@ -116,29 +117,36 @@ def main() -> None:
         online = (avail_cap > 0.0) & (net_win > _ONLINE_FRAC * avail_cap)
         n_online = int(online.sum())
         if n_online < 24:  # under a day of run time — no reliable floor
-            rows.append({"plant_code": code, "name": names.get(code, ""),
-                         "status": "rarely_online", "online_hours": n_online,
-                         "window_hours": _WINDOW_END_HOUR})
+            rows.append(
+                {
+                    "plant_code": code,
+                    "name": names.get(code, ""),
+                    "status": "rarely_online",
+                    "online_hours": n_online,
+                    "window_hours": _WINDOW_END_HOUR,
+                }
+            )
             continue
         acf_on = acf[online]
-        pctiles = {p: float(np.percentile(acf_on, p))
-                   for p in (0, 1, 5, 10, 25, 50)}
-        rows.append({
-            "plant_code": code,
-            "name": names.get(code, ""),
-            "status": "ok",
-            "nameplate_mw": round(cap, 1),
-            "online_hours": n_online,
-            "window_hours": _WINDOW_END_HOUR,
-            "online_frac": round(n_online / _WINDOW_END_HOUR, 3),
-            "p0": round(100 * pctiles[0], 1),
-            "p1": round(100 * pctiles[1], 1),
-            "p5": round(100 * pctiles[5], 1),
-            "p10": round(100 * pctiles[10], 1),
-            "p25": round(100 * pctiles[25], 1),
-            "median": round(100 * pctiles[50], 1),
-            "committed_pct": round(100 * pctiles[_FLOOR_PCTILE], 1),
-        })
+        pctiles = {p: float(np.percentile(acf_on, p)) for p in (0, 1, 5, 10, 25, 50)}
+        rows.append(
+            {
+                "plant_code": code,
+                "name": names.get(code, ""),
+                "status": "ok",
+                "nameplate_mw": round(cap, 1),
+                "online_hours": n_online,
+                "window_hours": _WINDOW_END_HOUR,
+                "online_frac": round(n_online / _WINDOW_END_HOUR, 3),
+                "p0": round(100 * pctiles[0], 1),
+                "p1": round(100 * pctiles[1], 1),
+                "p5": round(100 * pctiles[5], 1),
+                "p10": round(100 * pctiles[10], 1),
+                "p25": round(100 * pctiles[25], 1),
+                "median": round(100 * pctiles[50], 1),
+                "committed_pct": round(100 * pctiles[_FLOOR_PCTILE], 1),
+            }
+        )
 
     out = pd.DataFrame(rows)
     ok = out[out["status"] == "ok"].sort_values("plant_code")
@@ -148,17 +156,32 @@ def main() -> None:
     pd.set_option("display.width", 200)
     pd.set_option("display.max_columns", 30)
     pd.set_option("display.max_rows", 100)
-    print(f"\nCC_REGULAR committed-tranche % derivation — Jan-July {_YEAR} "
-          f"(CAMPD net vs available capacity)\n")
-    cols = ["plant_code", "name", "nameplate_mw", "online_frac",
-            "p0", "p1", "p5", "p10", "p25", "median", "committed_pct"]
+    print(
+        f"\nCC_REGULAR committed-tranche % derivation — Jan-July {_YEAR} "
+        f"(CAMPD net vs available capacity)\n"
+    )
+    cols = [
+        "plant_code",
+        "name",
+        "nameplate_mw",
+        "online_frac",
+        "p0",
+        "p1",
+        "p5",
+        "p10",
+        "p25",
+        "median",
+        "committed_pct",
+    ]
     print(ok[cols].to_string(index=False))
     skipped = out[out["status"] != "ok"]
     if len(skipped):
         print("\nskipped plants (keep CSV Pct_Committed):")
         print(skipped[["plant_code", "name", "status"]].to_string(index=False))
-    print(f"\ncommitted % = P{_FLOOR_PCTILE} of available-CF over committed "
-          f"hours (committed = net > {_ONLINE_FRAC:.0%} of available capacity)")
+    print(
+        f"\ncommitted % = P{_FLOOR_PCTILE} of available-CF over committed "
+        f"hours (committed = net > {_ONLINE_FRAC:.0%} of available capacity)"
+    )
     print(f"wrote {_OUT_CSV}")
 
 

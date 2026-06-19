@@ -92,7 +92,10 @@ def test_clean_generation_matches_raw_benchmark(monkeypatch):
     assert compared, "no overlapping fuels between clean and raw benchmark"
     for fuel in compared:
         np.testing.assert_allclose(
-            clean_fuels[fuel], raw[fuel], rtol=0.0, atol=_TOL,
+            clean_fuels[fuel],
+            raw[fuel],
+            rtol=0.0,
+            atol=_TOL,
             err_msg=f"clean generation_mw mismatch for fuel {fuel!r}",
         )
 

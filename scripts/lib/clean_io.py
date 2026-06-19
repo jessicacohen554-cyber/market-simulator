@@ -195,7 +195,9 @@ def _dtype_ok(series: pd.Series, declared: str) -> tuple[bool, str]:
 # ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------
-def validate_df(df: pd.DataFrame, datatype: str, *, schema: Schema | None = None) -> Schema:
+def validate_df(
+    df: pd.DataFrame, datatype: str, *, schema: Schema | None = None
+) -> Schema:
     """Validate ``df`` against the canonical schema for ``datatype``.
 
     Checks, in order: column naming (lower_snake_case), no unexpected columns
@@ -220,7 +222,9 @@ def validate_df(df: pd.DataFrame, datatype: str, *, schema: Schema | None = None
             problems.append(f"unexpected columns not in schema: {sorted(extra)}")
 
     # 3. Required columns present: keys plus any non-nullable declared column.
-    required = set(schema.key_columns) | {c.name for c in schema.columns if not c.nullable}
+    required = set(schema.key_columns) | {
+        c.name for c in schema.columns if not c.nullable
+    }
     missing = [c for c in sorted(required) if c not in df.columns]
     if missing:
         problems.append(f"missing required columns: {missing}")
@@ -361,7 +365,9 @@ def read_clean_metadata(path: str | Path) -> dict[str, str]:
     for k, v in md.items():
         key = k.decode() if isinstance(k, bytes) else str(k)
         if key.startswith(_META_PREFIX):
-            out[key[len(_META_PREFIX):]] = v.decode() if isinstance(v, bytes) else str(v)
+            out[key[len(_META_PREFIX) :]] = (
+                v.decode() if isinstance(v, bytes) else str(v)
+            )
     return out
 
 

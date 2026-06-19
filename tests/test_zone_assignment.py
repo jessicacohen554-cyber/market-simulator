@@ -65,7 +65,7 @@ def test_ercot_south_zone():
 
 def test_pjm_state_mapping():
     """States that fall cleanly inside one PJM zone map by FIPS state code."""
-    assert assign_zone_by_fips("17", None, "PJM") == "PJM_ComEd"     # IL ComEd
+    assert assign_zone_by_fips("17", None, "PJM") == "PJM_ComEd"  # IL ComEd
     assert assign_zone_by_fips("18", None, "PJM") == "PJM_AEP_Ohio"  # IN AEP
     assert assign_zone_by_fips("26", None, "PJM") == "PJM_AEP_Ohio"  # MI AEP
     assert assign_zone_by_fips("21", None, "PJM") == "PJM_AEP_Ohio"  # KY EKPC
@@ -73,10 +73,10 @@ def test_pjm_state_mapping():
     assert assign_zone_by_fips("39", None, "PJM") == "PJM_AEP_Ohio"  # OH
     assert assign_zone_by_fips("54", None, "PJM") == "PJM_AEP_Ohio"  # WV
     # EMAAC — the eastern NJ/DE/Philadelphia load pocket.
-    assert assign_zone_by_fips("34", None, "PJM") == "PJM_EMAAC"     # NJ PSEG
-    assert assign_zone_by_fips("10", None, "PJM") == "PJM_EMAAC"     # DE DPL
+    assert assign_zone_by_fips("34", None, "PJM") == "PJM_EMAAC"  # NJ PSEG
+    assert assign_zone_by_fips("10", None, "PJM") == "PJM_EMAAC"  # DE DPL
     # SWMAAC — Baltimore/DC.
-    assert assign_zone_by_fips("11", None, "PJM") == "PJM_SWMAAC"    # DC PEPCO
+    assert assign_zone_by_fips("11", None, "PJM") == "PJM_SWMAAC"  # DC PEPCO
     # Dominion (DOM).
     assert assign_zone_by_fips("51", None, "PJM") == "PJM_Dominion"  # VA DOM
     assert assign_zone_by_fips("37", None, "PJM") == "PJM_Dominion"  # NC DOM
@@ -119,16 +119,16 @@ def test_pjm_known_plants_resolve_to_expected_zones():
     eGRID 2023 PLNT23 (BACODE == PJM).
     """
     cases = {
-        6023: "PJM_ComEd",       # Byron nuclear (IL, ComEd)
-        6149: "PJM_ATSI",        # Davis-Besse nuclear (northern OH, FirstEnergy)
-        6040: "PJM_West_APS",    # Beaver Valley nuclear (western PA, lon -80.4)
-        3118: "PJM_West_APS",    # Conemaugh coal (Indiana County PA, lon -79.1)
+        6023: "PJM_ComEd",  # Byron nuclear (IL, ComEd)
+        6149: "PJM_ATSI",  # Davis-Besse nuclear (northern OH, FirstEnergy)
+        6040: "PJM_West_APS",  # Beaver Valley nuclear (western PA, lon -80.4)
+        3118: "PJM_West_APS",  # Conemaugh coal (Indiana County PA, lon -79.1)
         6103: "PJM_Central_PA",  # Susquehanna nuclear (central PA, PPL)
-        6105: "PJM_EMAAC",       # Limerick nuclear (Montgomery County, Philly)
-        2410: "PJM_EMAAC",       # Salem nuclear (NJ, PSEG)
-        602:  "PJM_SWMAAC",      # Brandon Shores (Anne Arundel County MD, BGE)
-        6168: "PJM_Dominion",    # North Anna nuclear (VA, Dominion)
-        3806: "PJM_Dominion",    # Surry nuclear (VA, Dominion)
+        6105: "PJM_EMAAC",  # Limerick nuclear (Montgomery County, Philly)
+        2410: "PJM_EMAAC",  # Salem nuclear (NJ, PSEG)
+        602: "PJM_SWMAAC",  # Brandon Shores (Anne Arundel County MD, BGE)
+        6168: "PJM_Dominion",  # North Anna nuclear (VA, Dominion)
+        3806: "PJM_Dominion",  # Surry nuclear (VA, Dominion)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "PJM") == expected, f"ORIS {oris}"
@@ -182,15 +182,15 @@ def test_caiso_known_plants_resolve_to_expected_zones():
     """Named California plants land in their real CAISO trading zones."""
     # ORIS codes from eGRID 2023 PLNT23 (BACODE == CISO).
     cases = {
-        260: "NP15",     # Moss Landing (Monterey)
-        286: "NP15",     # Geysers geothermal (Sonoma)
-        52169: "ZP26",   # Midway Sunset Cogen (Kern)
-        55151: "ZP26",   # La Paloma Generating Plant (Kern)
-        302: "SP15",     # Encina / Cabrillo (San Diego)
-        350: "SP15",     # Ormond Beach (Ventura)
-        6099: "NP15",    # Diablo Canyon (San Luis Obispo, central-coast rule)
-        57373: "SP15",   # Agua Caliente Solar (Arizona)
-        52015: "NP15",   # Dixie Valley geothermal (northern Nevada)
+        260: "NP15",  # Moss Landing (Monterey)
+        286: "NP15",  # Geysers geothermal (Sonoma)
+        52169: "ZP26",  # Midway Sunset Cogen (Kern)
+        55151: "ZP26",  # La Paloma Generating Plant (Kern)
+        302: "SP15",  # Encina / Cabrillo (San Diego)
+        350: "SP15",  # Ormond Beach (Ventura)
+        6099: "NP15",  # Diablo Canyon (San Luis Obispo, central-coast rule)
+        57373: "SP15",  # Agua Caliente Solar (Arizona)
+        52015: "NP15",  # Dixie Valley geothermal (northern Nevada)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "CAISO") == expected, f"ORIS {oris}"
@@ -211,15 +211,15 @@ def test_caiso_every_plant_resolves():
 
 def test_miso_state_mapping():
     """MISO regions follow state boundaries (FIPS state is authoritative)."""
-    assert assign_zone_by_fips("27", None, "MISO") == "MISO-North"    # MN
-    assert assign_zone_by_fips("19", None, "MISO") == "MISO-North"    # IA
-    assert assign_zone_by_fips("46", None, "MISO") == "MISO-North"    # SD
+    assert assign_zone_by_fips("27", None, "MISO") == "MISO-North"  # MN
+    assert assign_zone_by_fips("19", None, "MISO") == "MISO-North"  # IA
+    assert assign_zone_by_fips("46", None, "MISO") == "MISO-North"  # SD
     assert assign_zone_by_fips("26", None, "MISO") == "MISO-Central"  # MI
     assert assign_zone_by_fips("18", None, "MISO") == "MISO-Central"  # IN
     assert assign_zone_by_fips("17", None, "MISO") == "MISO-Central"  # IL
-    assert assign_zone_by_fips("22", None, "MISO") == "MISO-South"    # LA
-    assert assign_zone_by_fips("5", None, "MISO") == "MISO-South"     # AR
-    assert assign_zone_by_fips("48", None, "MISO") == "MISO-South"    # TX (Entergy)
+    assert assign_zone_by_fips("22", None, "MISO") == "MISO-South"  # LA
+    assert assign_zone_by_fips("5", None, "MISO") == "MISO-South"  # AR
+    assert assign_zone_by_fips("48", None, "MISO") == "MISO-South"  # TX (Entergy)
 
 
 def test_miso_unmapped_state_falls_back_to_central():
@@ -242,16 +242,16 @@ def test_miso_known_plants_resolve_to_expected_zones():
     """Named MISO plants land in their real sub-regions."""
     # ORIS codes from eGRID 2023 PLNT23 (BACODE == MISO).
     cases = {
-        6090: "MISO-North",     # Sherburne County / Sherco (Minnesota)
-        1925: "MISO-North",     # Prairie Island nuclear (Minnesota)
-        6098: "MISO-North",     # Big Stone (South Dakota)
-        6254: "MISO-North",     # Ottumwa (Iowa)
-        1733: "MISO-Central",   # Monroe (Michigan)
-        6034: "MISO-Central",   # Belle River (Michigan)
-        6113: "MISO-Central",   # Gibson (Indiana)
-        4270: "MISO-South",     # Waterford 3 nuclear (Louisiana)
-        8055: "MISO-South",     # Arkansas Nuclear One (Arkansas)
-        6072: "MISO-South",     # Grand Gulf nuclear (Mississippi)
+        6090: "MISO-North",  # Sherburne County / Sherco (Minnesota)
+        1925: "MISO-North",  # Prairie Island nuclear (Minnesota)
+        6098: "MISO-North",  # Big Stone (South Dakota)
+        6254: "MISO-North",  # Ottumwa (Iowa)
+        1733: "MISO-Central",  # Monroe (Michigan)
+        6034: "MISO-Central",  # Belle River (Michigan)
+        6113: "MISO-Central",  # Gibson (Indiana)
+        4270: "MISO-South",  # Waterford 3 nuclear (Louisiana)
+        8055: "MISO-South",  # Arkansas Nuclear One (Arkansas)
+        6072: "MISO-South",  # Grand Gulf nuclear (Mississippi)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "MISO") == expected, f"ORIS {oris}"
@@ -294,7 +294,7 @@ def test_nyiso_upstate_west_by_coords():
 
 def test_nyiso_county_fips_mapping():
     """NY county FIPS codes map to the aggregated NYISO zones."""
-    assert assign_zone_by_fips("36", "61", "NYISO") == "NYC"          # Manhattan
+    assert assign_zone_by_fips("36", "61", "NYISO") == "NYC"  # Manhattan
     assert assign_zone_by_fips("36", "103", "NYISO") == "Long_Island"  # Suffolk
     assert assign_zone_by_fips("36", "119", "NYISO") == "Lower_Hudson"  # Westchester
     assert assign_zone_by_fips("36", "1", "NYISO") == "Capital_Hudson"  # Albany
@@ -322,15 +322,15 @@ def test_nyiso_known_plants_resolve_to_expected_zones():
     in the J/K pockets behind the import interfaces.
     """
     cases = {
-        2693: "Upstate_West",    # Robert Moses Niagara hydro (Niagara, zone A)
-        2694: "Upstate_West",    # Robert Moses St. Lawrence hydro (zone D)
-        2500: "NYC",             # Ravenswood (Queens, zone J)
-        2516: "Long_Island",     # Northport (Suffolk, zone K)
-        2511: "Long_Island",     # E F Barrett (Nassau, zone K)
+        2693: "Upstate_West",  # Robert Moses Niagara hydro (Niagara, zone A)
+        2694: "Upstate_West",  # Robert Moses St. Lawrence hydro (zone D)
+        2500: "NYC",  # Ravenswood (Queens, zone J)
+        2516: "Long_Island",  # Northport (Suffolk, zone K)
+        2511: "Long_Island",  # E F Barrett (Nassau, zone K)
         55405: "Capital_Hudson",  # Athens Generating (Greene, zone F)
         2539: "Capital_Hudson",  # Bethlehem Energy Center (Albany, zone F)
         8006: "Capital_Hudson",  # Roseton (Orange, zone G)
-        50882: "Lower_Hudson",   # Wheelabrator Westchester (zone H/I)
+        50882: "Lower_Hudson",  # Wheelabrator Westchester (zone H/I)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "NYISO") == expected, f"ORIS {oris}"
@@ -356,11 +356,11 @@ def test_nyiso_every_plant_resolves():
 
 def test_neiso_state_mapping():
     """NEISO zones follow state boundaries (FIPS state is authoritative)."""
-    assert assign_zone_by_fips("23", None, "NEISO") == "North"        # ME
-    assert assign_zone_by_fips("33", None, "NEISO") == "North"        # NH
-    assert assign_zone_by_fips("50", None, "NEISO") == "North"        # VT
-    assert assign_zone_by_fips("9", None, "NEISO") == "Connecticut"   # CT
-    assert assign_zone_by_fips("44", None, "NEISO") == "Central"      # RI
+    assert assign_zone_by_fips("23", None, "NEISO") == "North"  # ME
+    assert assign_zone_by_fips("33", None, "NEISO") == "North"  # NH
+    assert assign_zone_by_fips("50", None, "NEISO") == "North"  # VT
+    assert assign_zone_by_fips("9", None, "NEISO") == "Connecticut"  # CT
+    assert assign_zone_by_fips("44", None, "NEISO") == "Central"  # RI
 
 
 def test_neiso_massachusetts_county_split():
@@ -373,13 +373,13 @@ def test_neiso_massachusetts_county_split():
     # NEMA/Boston metro counties -> Boston.
     assert assign_zone_by_fips("25", "25", "NEISO") == "Boston"  # Suffolk
     assert assign_zone_by_fips("25", "17", "NEISO") == "Boston"  # Middlesex
-    assert assign_zone_by_fips("25", "9", "NEISO") == "Boston"   # Essex
+    assert assign_zone_by_fips("25", "9", "NEISO") == "Boston"  # Essex
     assert assign_zone_by_fips("25", "21", "NEISO") == "Boston"  # Norfolk
     # WCMA / SEMA counties -> Central.
     assert assign_zone_by_fips("25", "27", "NEISO") == "Central"  # Worcester (WCMA)
     assert assign_zone_by_fips("25", "13", "NEISO") == "Central"  # Hampden (WCMA)
-    assert assign_zone_by_fips("25", "1", "NEISO") == "Central"   # Barnstable (SEMA)
-    assert assign_zone_by_fips("25", "5", "NEISO") == "Central"   # Bristol (SEMA)
+    assert assign_zone_by_fips("25", "1", "NEISO") == "Central"  # Barnstable (SEMA)
+    assert assign_zone_by_fips("25", "5", "NEISO") == "Central"  # Bristol (SEMA)
 
 
 def test_neiso_unmapped_state_falls_back_to_central():
@@ -397,7 +397,7 @@ def test_neiso_coords_fallback_bands():
     # Eastern Massachusetts coast (Boston metro) -> Boston.
     assert assign_zone_by_coords(42.4, -71.07, "NEISO") == "Boston"
     # SE Mass / Rhode Island -> Central.
-    assert assign_zone_by_coords(41.77, -70.5, "NEISO") == "Central"   # Cape Cod
+    assert assign_zone_by_coords(41.77, -70.5, "NEISO") == "Central"  # Cape Cod
     assert assign_zone_by_coords(41.82, -71.39, "NEISO") == "Central"  # Providence RI
 
 
@@ -405,17 +405,17 @@ def test_neiso_known_plants_resolve_to_expected_zones():
     """Named ISO-NE plants land in their real aggregated zones."""
     # ORIS codes from eGRID 2023 PLNT23 (BACODE == ISNE).
     cases = {
-        1507: "North",         # William F Wyman (Maine)
-        6115: "North",         # Seabrook nuclear (New Hampshire)
-        589: "North",          # J C McNeil (Vermont)
-        566: "Connecticut",    # Millstone nuclear (CT, New London)
-        562: "Connecticut",    # Middletown (CT)
-        3236: "Central",       # Manchester Street Station (Rhode Island)
-        1588: "Boston",        # Mystic (MA, Middlesex — NEMA)
-        55317: "Boston",       # Fore River Energy Center (MA, Norfolk — NEMA)
-        60903: "Boston",       # Salem Harbor NGCC (MA, Essex — NEMA)
-        1599: "Central",       # Canal Station (MA, Barnstable — SEMA)
-        547: "Central",        # Northfield Mountain (MA, Franklin — WCMA)
+        1507: "North",  # William F Wyman (Maine)
+        6115: "North",  # Seabrook nuclear (New Hampshire)
+        589: "North",  # J C McNeil (Vermont)
+        566: "Connecticut",  # Millstone nuclear (CT, New London)
+        562: "Connecticut",  # Middletown (CT)
+        3236: "Central",  # Manchester Street Station (Rhode Island)
+        1588: "Boston",  # Mystic (MA, Middlesex — NEMA)
+        55317: "Boston",  # Fore River Energy Center (MA, Norfolk — NEMA)
+        60903: "Boston",  # Salem Harbor NGCC (MA, Essex — NEMA)
+        1599: "Central",  # Canal Station (MA, Barnstable — SEMA)
+        547: "Central",  # Northfield Mountain (MA, Franklin — WCMA)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "NEISO") == expected, f"ORIS {oris}"
@@ -439,12 +439,12 @@ def test_spp_state_mapping():
     assert assign_zone_by_fips("20", None, "SPP") == "SPP-North"  # KS
     assert assign_zone_by_fips("31", None, "SPP") == "SPP-North"  # NE
     assert assign_zone_by_fips("46", None, "SPP") == "SPP-North"  # SD
-    assert assign_zone_by_fips("8", None, "SPP") == "SPP-North"   # CO
+    assert assign_zone_by_fips("8", None, "SPP") == "SPP-North"  # CO
     assert assign_zone_by_fips("40", None, "SPP") == "SPP-South"  # OK
     assert assign_zone_by_fips("48", None, "SPP") == "SPP-South"  # TX panhandle
     assert assign_zone_by_fips("35", None, "SPP") == "SPP-South"  # NM
     assert assign_zone_by_fips("22", None, "SPP") == "SPP-South"  # LA
-    assert assign_zone_by_fips("5", None, "SPP") == "SPP-South"   # AR
+    assert assign_zone_by_fips("5", None, "SPP") == "SPP-South"  # AR
 
 
 def test_spp_unmapped_state_falls_back_to_north():
@@ -469,17 +469,17 @@ def test_spp_known_plants_resolve_to_expected_zones():
     """
     # ORIS codes from eGRID 2023 PLNT23 (BACODE == SWPP).
     cases = {
-        210: "SPP-North",    # Wolf Creek nuclear (Kansas)
-        6068: "SPP-North",   # Jeffrey Energy Center (Kansas)
-        6077: "SPP-North",   # Gerald Gentleman Station (Nebraska)
-        8036: "SPP-North",   # Cooper Nuclear Station (Nebraska)
-        6065: "SPP-North",   # Iatan (Kansas-City-metro Missouri)
-        165: "SPP-South",    # Grand River Dam Authority (Oklahoma)
-        8059: "SPP-South",   # Comanche (Oklahoma)
-        6194: "SPP-South",   # Tolk Station (Texas panhandle)
-        6193: "SPP-South",   # Harrington Station (Texas panhandle)
-        2454: "SPP-South",   # Cunningham (eastern New Mexico)
-        6195: "SPP-South",   # John Twitty Energy Center (southwest Missouri)
+        210: "SPP-North",  # Wolf Creek nuclear (Kansas)
+        6068: "SPP-North",  # Jeffrey Energy Center (Kansas)
+        6077: "SPP-North",  # Gerald Gentleman Station (Nebraska)
+        8036: "SPP-North",  # Cooper Nuclear Station (Nebraska)
+        6065: "SPP-North",  # Iatan (Kansas-City-metro Missouri)
+        165: "SPP-South",  # Grand River Dam Authority (Oklahoma)
+        8059: "SPP-South",  # Comanche (Oklahoma)
+        6194: "SPP-South",  # Tolk Station (Texas panhandle)
+        6193: "SPP-South",  # Harrington Station (Texas panhandle)
+        2454: "SPP-South",  # Cunningham (eastern New Mexico)
+        6195: "SPP-South",  # John Twitty Energy Center (southwest Missouri)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "SPP") == expected, f"ORIS {oris}"

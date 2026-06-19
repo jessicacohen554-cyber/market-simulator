@@ -55,6 +55,7 @@ def _use_clean() -> bool:
         "on",
     }
 
+
 # EIA prime-mover code for conventional (inflow) hydro. Pumped storage is
 # ``PS`` and is deliberately excluded — it is a storage unit, not an
 # energy-limited inflow resource, and is modeled via the storage block.
@@ -174,9 +175,9 @@ def hours_per_month(hours: int = 8760) -> np.ndarray:
     """
     from market_sim.data.fleet import _hour_to_month_index
 
-    return np.bincount(
-        _hour_to_month_index(hours), minlength=_MONTHS_PER_YEAR
-    ).astype(int)
+    return np.bincount(_hour_to_month_index(hours), minlength=_MONTHS_PER_YEAR).astype(
+        int
+    )
 
 
 def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
@@ -190,10 +191,7 @@ def _load_hydro_generation(iso: str, year: int) -> pd.DataFrame:
     """
     ba_code = ISO_TO_BA_CODE.get(iso.upper())
     gen = load_monthly_generation()
-    subset = gen[
-        (gen["prime_mover"] == HYDRO_PRIME_MOVER)
-        & (gen["year"] == year)
-    ]
+    subset = gen[(gen["prime_mover"] == HYDRO_PRIME_MOVER) & (gen["year"] == year)]
     if ba_code is not None and "ba_code" in subset.columns:
         subset = subset[subset["ba_code"] == ba_code]
     if subset.empty:
@@ -367,8 +365,11 @@ def load_hydro_budget(
             logger.info(
                 "%s %d hydro budget: backfilled %d non-reporting plants "
                 "(%.1f GWh) from %d",
-                iso, year, len(fill),
-                fill[mcols].sum().sum() / 1000.0, backfill_year,
+                iso,
+                year,
+                len(fill),
+                fill[mcols].sum().sum() / 1000.0,
+                backfill_year,
             )
             gen = pd.concat([gen, fill], ignore_index=True)
     if gen.empty:
@@ -389,7 +390,10 @@ def load_hydro_budget(
     hpm = hours_per_month().astype(float)  # standard 8760-hour calendar
     peak_avg_mw = (monthly_energy / hpm[np.newaxis, :]).max(axis=1)
     max_mw = np.array(
-        [nameplate.get(int(pid), float(peak_avg_mw[i])) for i, pid in enumerate(plant_ids)],
+        [
+            nameplate.get(int(pid), float(peak_avg_mw[i]))
+            for i, pid in enumerate(plant_ids)
+        ],
         dtype=float,
     )
     # Per-plant min-flow: take the max of the global floor and any
@@ -397,8 +401,10 @@ def load_hydro_budget(
     # a higher global floor set by the caller.
     if per_plant_min_flow:
         fracs = np.array(
-            [max(float(min_flow_fraction), per_plant_min_flow.get(int(pid), 0.0))
-             for pid in plant_ids],
+            [
+                max(float(min_flow_fraction), per_plant_min_flow.get(int(pid), 0.0))
+                for pid in plant_ids
+            ],
             dtype=float,
         )
         min_mw = fracs * max_mw
@@ -425,13 +431,19 @@ def load_hydro_budget(
         logger.info(
             "%s %d hydro budget pinned to measured monthly total %.1f GWh "
             "(was %.1f GWh)",
-            iso, year, target.sum() / 1000.0, col_sums.sum() / 1000.0,
+            iso,
+            year,
+            target.sum() / 1000.0,
+            col_sums.sum() / 1000.0,
         )
 
     logger.info(
         "Loaded %s %d hydro budget: %d plants, %.1f GWh annual, %.0f MW nameplate",
-        iso, year, len(plant_ids),
-        monthly_energy.sum() / 1000.0, max_mw.sum(),
+        iso,
+        year,
+        len(plant_ids),
+        monthly_energy.sum() / 1000.0,
+        max_mw.sum(),
     )
     return HydroBudget(
         plant_ids=plant_ids,

@@ -8,6 +8,7 @@ the afternoon LMP shape.
 
 Usage: python scripts/probes/_pjm_interchange_ab.py {priced|measured}
 """
+
 import json
 import sys
 from pathlib import Path
@@ -28,7 +29,10 @@ def main(mode: str) -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     solve_and_persist(
-        [2024], "PJM", 8760, _load_reference(),
+        [2024],
+        "PJM",
+        8760,
+        _load_reference(),
         commitment=cf["commitment"],
         screen_coal=cf["commitment_screen_coal"],
         run_dir=out,
@@ -46,9 +50,11 @@ def main(mode: str) -> None:
         gas_monthly_actuals=cf["gas_monthly_actuals"],
         offer_curve_overrides=cf["offer_curve_overrides"],
         offer_curve_deltas=cf["offer_curve_deltas"],
-        curve_smoothing={"offer_curve_smoothing_n": None,
-                         "offer_curve_smoothing_exp": None,
-                         "offer_curve_smoothing_mid": 0.45},
+        curve_smoothing={
+            "offer_curve_smoothing_n": None,
+            "offer_curve_smoothing_exp": None,
+            "offer_curve_smoothing_mid": 0.45,
+        },
         priced_interchange=priced,
         note=f"interchange A/B ({mode}) — keeper pjm_26 config, 2024 only",
     )

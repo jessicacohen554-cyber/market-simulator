@@ -16,6 +16,7 @@ single new run, use ``scripts/dashboard_add_run.py`` instead.
 Usage:
     python scripts/regen_dashboard.py [--registry-dir DIR] [--years 2023 2024]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,10 +26,13 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
-    "render_backcast", str(REPO / "scripts" / "render_backcast.py"))
-rb = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rb)
+    "render_backcast", str(REPO / "scripts" / "render_backcast.py")
+)
+rb = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rb)
 
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 
@@ -48,11 +52,17 @@ def _load_registry(registry_dir: Path) -> list[dict]:
         except json.JSONDecodeError as exc:
             print(f"  skip {path.name}: invalid JSON ({exc})", file=sys.stderr)
             continue
-        bundle = REPO / rec["bundle"] if not Path(rec["bundle"]).is_absolute() \
+        bundle = (
+            REPO / rec["bundle"]
+            if not Path(rec["bundle"]).is_absolute()
             else Path(rec["bundle"])
+        )
         if not (bundle / "meta.json").exists():
-            print(f"  skip {path.name}: bundle {rec['bundle']} not found "
-                  "(missing meta.json)", file=sys.stderr)
+            print(
+                f"  skip {path.name}: bundle {rec['bundle']} not found "
+                "(missing meta.json)",
+                file=sys.stderr,
+            )
             continue
         entries.append({**rec, "_bundle_path": bundle})
     entries.sort(key=lambda e: (e.get("id", ""), e.get("label", "")))
@@ -63,24 +73,28 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--registry-dir", default=str(REGISTRY_DIR))
     ap.add_argument("--out", default=str(REPO / "backcast-results.html"))
-    ap.add_argument("--years", nargs="+", type=int, default=None,
-                    help="Restrict to these calendar years (default: all).")
+    ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        default=None,
+        help="Restrict to these calendar years (default: all).",
+    )
     args = ap.parse_args()
 
     registry_dir = Path(args.registry_dir)
     if not registry_dir.exists():
-        sys.exit(f"registry dir {registry_dir} does not exist; nothing to "
-                 "regenerate.")
+        sys.exit(f"registry dir {registry_dir} does not exist; nothing to regenerate.")
     entries = _load_registry(registry_dir)
     if not entries:
-        sys.exit("registry is empty (no usable bundles); refusing to wipe the "
-                 "dashboard.")
+        sys.exit(
+            "registry is empty (no usable bundles); refusing to wipe the dashboard."
+        )
     runs = [(e["label"], e["_bundle_path"]) for e in entries]
     print(f"regenerating dashboard from {len(runs)} registry entries:")
     for e in entries:
         print(f"  - {e['label']!r} <- {e['bundle']}")
-    rb.generate(runs, Path(args.out),
-                years=set(args.years) if args.years else None)
+    rb.generate(runs, Path(args.out), years=set(args.years) if args.years else None)
 
 
 if __name__ == "__main__":
