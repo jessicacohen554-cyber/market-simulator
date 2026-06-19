@@ -3555,7 +3555,7 @@ omitted CC_REGULAR 2.83 + CT_PEAKER/San Jacinto 0.71 BTM).**
 
 **The fix: gate on grid-delivered accuracy.** The LP holds the BTM host steam
 OUT of the grid solve, so crediting the model for it scores generation the
-model never optimized. Now everywhere — `scripts/_session_score.py`, the
+model never optimized. Now everywhere — `scripts/lib/session_score.py`, the
 dashboard class/system scorecard + mix table (`render_calibration_html
 .build_payload`: `gmModel` grid-only, `classFull` = EIA-923 − per-class
 `btm.parquet`) — model = grid LP dispatch, actual = EIA-923 whole-plant minus
