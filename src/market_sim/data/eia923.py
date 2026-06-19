@@ -10,6 +10,15 @@ A plant-month without a reported delivered cost is absent from the table
 (EIA suppresses the field for many records). The resolver fills those
 gaps with the existing AEO Henry Hub / coal trajectories so the dispatch
 LP never sees a NaN fuel price.
+
+Clean-data status: this per-plant EIA-923 Schedule-5 fuel-cost series is **not
+yet a clean datatype** — there is no ``data/dictionary/schema`` contract for a
+per-plant, per-month delivered fuel cost (the ``fuel-prices`` schema is national
+hub benchmarks keyed by ``(fuel, hub, interval_start_utc)``, with no plant grain
+or quantity weight). So this loader stays on the raw
+``data/raw/_processed-legacy`` parquet; it is intentionally left outside the
+``MARKET_SIM_USE_CLEAN`` read path. Migrating it is a contract change (a new
+``fuel-costs`` / EIA-923 schema), raised rather than invented here.
 """
 
 from __future__ import annotations
