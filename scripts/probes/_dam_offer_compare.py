@@ -21,10 +21,12 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
+# W1 relocation: inputs/calibration -> data/raw/_validation-source.
 ACTUAL = (
     Path(__file__).resolve().parents[2]
-    / "inputs"
-    / "calibration"
+    / "data"
+    / "raw"
+    / "_validation-source"
     / "actual_lmp_hourly_ERCOT.parquet"
 )
 
