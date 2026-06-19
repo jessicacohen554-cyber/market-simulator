@@ -1513,7 +1513,12 @@ def run_year(
         wind_cap=wind_cap,
         solar_cf=solar_cf,
         solar_cap=solar_cap,
-        voll=config.voll,
+        # Load-shed penalty = the ISO's own energy bid cap (ISOConfig.voll),
+        # not the ERCOT-flavored ScenarioConfig default ($5,000). NYISO/CAISO/
+        # MISO/PJM cap verifiable energy offers at $2,000 (FERC Order 831);
+        # ERCOT at $5,000. Using the per-ISO cap makes scarcity hours price at
+        # the ceiling the market actually clears against.
+        voll=iso_config.voll,
         incidence=incidence,
         ttc=ttc,
         storage_power_cap=storage_power_cap,
