@@ -13,7 +13,6 @@ emissions``), so it skips cleanly when either input is absent.
 
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 import pytest
 

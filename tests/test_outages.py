@@ -16,7 +16,6 @@ from market_sim.data.outages import (
     _qualifying_plant_codes,
     outage_hour_mask,
     outage_masks_for_year,
-    unit_outage_csv_for_iso,
     unit_outage_derate_factors,
 )
 

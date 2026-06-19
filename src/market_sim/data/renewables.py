@@ -89,7 +89,6 @@ from market_sim.data.eia_loader import (
     load_generation_profiles,
 )
 from market_sim.data.fleet import (
-    EIA_860_DIR,
     FUEL_TYPE_MAP,
     FleetArrays,
     _hour_to_month_index,
@@ -173,7 +172,7 @@ _PROPOSED_HIGH_CONFIDENCE: frozenset[str] = frozenset({"U", "V", "TS", "P"})
 # with an ``Effective Year`` strictly greater than this are pulled in as
 # augmentations to the operable schedule. Single source of truth lives in
 # data/fleet.py next to the thermal planned-additions loader.
-from market_sim.data.fleet import EIA860_OPERABLE_VINTAGE as _EIA860_OPERABLE_VINTAGE  # noqa: E501
+from market_sim.data.fleet import EIA860_OPERABLE_VINTAGE as _EIA860_OPERABLE_VINTAGE  # noqa: E402, E501
 
 _TECHNOLOGY_TO_FUEL: dict[str, str] = {
     "Solar Photovoltaic": "solar",
