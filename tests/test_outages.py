@@ -67,9 +67,7 @@ class OutageHourMaskTest(unittest.TestCase):
         m25 = outage_hour_mask(start, stop, 2025)
         # 2024 portion runs from the start hour through year end.
         self.assertTrue(m24[-1])
-        self.assertEqual(
-            int(m24.sum()), HOURS_PER_YEAR - _hour_of_year(12, 16, 9)
-        )
+        self.assertEqual(int(m24.sum()), HOURS_PER_YEAR - _hour_of_year(12, 16, 9))
         # 2025 portion runs from year start up to the stop hour (exclusive).
         self.assertTrue(m25[0])
         self.assertEqual(int(m25.sum()), _hour_of_year(1, 3, 11))
@@ -155,8 +153,10 @@ class BuildMasksFilterTest(unittest.TestCase):
                 "11,Over,1,2023-01-01 00:00:00,2023-01-03 00:00:00,1\n"  # 48h
             )
             masks = outage_masks_for_year(
-                2023, HOURS_PER_YEAR,
-                outages_path=str(outages), bins_path=str(bins),
+                2023,
+                HOURS_PER_YEAR,
+                outages_path=str(outages),
+                bins_path=str(bins),
             )
         self.assertNotIn(10, masks)
         self.assertIn(11, masks)
@@ -164,8 +164,10 @@ class BuildMasksFilterTest(unittest.TestCase):
 
     def test_missing_extract_returns_empty(self):
         masks = outage_masks_for_year(
-            2023, HOURS_PER_YEAR,
-            outages_path="/no/such/outages.csv", bins_path=BINS_CSV,
+            2023,
+            HOURS_PER_YEAR,
+            outages_path="/no/such/outages.csv",
+            bins_path=BINS_CSV,
         )
         self.assertEqual(masks, {})
 
@@ -186,16 +188,20 @@ class RealDataIntegrationTest(unittest.TestCase):
         self.assertIn(6183, _qualifying_plant_codes(BINS_CSV))
         for year in (2023, 2024):
             masks = outage_masks_for_year(
-                year, HOURS_PER_YEAR,
-                outages_path=OUTAGES_CSV, bins_path=BINS_CSV,
+                year,
+                HOURS_PER_YEAR,
+                outages_path=OUTAGES_CSV,
+                bins_path=BINS_CSV,
             )
             self.assertIn(6183, masks)
             self.assertGreaterEqual(int(masks[6183].sum()), MIN_OUTAGE_SPAN_HOURS)
 
     def test_coleto_2023_outage_lands_in_winter_spring(self):
         masks = outage_masks_for_year(
-            2023, HOURS_PER_YEAR,
-            outages_path=OUTAGES_CSV, bins_path=BINS_CSV,
+            2023,
+            HOURS_PER_YEAR,
+            outages_path=OUTAGES_CSV,
+            bins_path=BINS_CSV,
         )
         self.assertIn(6178, masks)
         coleto = masks[6178]
@@ -208,8 +214,10 @@ class RealDataIntegrationTest(unittest.TestCase):
         # Bacliff (60264) is a peaker present in the outage CSV but not
         # coal/CC, so it never appears in the masks.
         masks = outage_masks_for_year(
-            2023, HOURS_PER_YEAR,
-            outages_path=OUTAGES_CSV, bins_path=BINS_CSV,
+            2023,
+            HOURS_PER_YEAR,
+            outages_path=OUTAGES_CSV,
+            bins_path=BINS_CSV,
         )
         self.assertNotIn(60264, masks)
         self.assertNotIn(60264, _qualifying_plant_codes(BINS_CSV))
@@ -219,8 +227,7 @@ class RealDataIntegrationTest(unittest.TestCase):
         # carry the historic overlay; CT_PEAKER does not (no overlay coverage).
         self.assertEqual(
             QUALIFYING_PLANT_GROUPS,
-            frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP",
-                       "ST_GAS", "ST_CHP"}),
+            frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}),
         )
         self.assertNotIn("CT_PEAKER", QUALIFYING_PLANT_GROUPS)
 
@@ -272,7 +279,8 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
             for yr in ("2023", "2024", "2025")
         }
         self.assertGreater(
-            min(len(s) for s in facs.values()), 20,
+            min(len(s) for s in facs.values()),
+            20,
             "all three backcast years should be broadly covered",
         )
         self.assertIn(2364, facs["2023"], "Merrimack (NH coal) present in 2023")
@@ -284,11 +292,13 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
     def test_event_based_rule_dominates_plant_group_mix(self):
         # CC_REGULAR + CC_CHP + ST_GAS + CT_CHP (all event-based) > COAL rows.
         df = self._df()
-        event_based = df["plant_group"].isin(
-            {"CC_REGULAR", "CC_CHP", "ST_GAS", "CT_CHP"}
-        ).sum()
+        event_based = (
+            df["plant_group"].isin({"CC_REGULAR", "CC_CHP", "ST_GAS", "CT_CHP"}).sum()
+        )
         coal = (df["plant_group"] == "COAL").sum()
-        self.assertGreater(event_based, coal * 10, "event-based rows should heavily dominate")
+        self.assertGreater(
+            event_based, coal * 10, "event-based rows should heavily dominate"
+        )
 
     def test_coal_target_is_merrimack_only_in_2023_2024(self):
         # Merrimack (2364, NH) is the single NEISO coal facility.
@@ -308,9 +318,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         # Kleen Energy (56798, Southington CT) is a CC_REGULAR plant with
         # multiple sustained outage windows across all three years.
         df = self._df()
-        kleen = df[
-            (df["facility_id"] == 56798) & (df["plant_group"] == "CC_REGULAR")
-        ]
+        kleen = df[(df["facility_id"] == 56798) & (df["plant_group"] == "CC_REGULAR")]
         self.assertFalse(kleen.empty, "Kleen Energy CC windows must be in CSV")
         for yr in ("2023", "2024", "2025"):
             self.assertTrue(
@@ -322,9 +330,7 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         # Bridgeport Harbor (568, CT) is a single-unit CC; outage windows
         # appear in every backcast year.
         df = self._df()
-        bh = df[
-            (df["facility_id"] == 568) & (df["plant_group"] == "CC_REGULAR")
-        ]
+        bh = df[(df["facility_id"] == 568) & (df["plant_group"] == "CC_REGULAR")]
         self.assertFalse(bh.empty, "Bridgeport Harbor CC windows must be in CSV")
 
     def test_derate_factors_load_for_2023_and_2024(self):
@@ -333,7 +339,8 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         for year in (2023, 2024):
             factors = unit_outage_derate_factors(year, iso="NEISO")
             self.assertGreater(
-                len(factors), 0,
+                len(factors),
+                0,
                 f"NEISO derate factors empty for {year}",
             )
             for key, arr in factors.items():
@@ -350,7 +357,9 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         # test_merrimack_coal_in_derate_2023_not_2025 and
         # test_no_coal_in_neiso_for_2025 — not as a lower overall factor count.
         factors = unit_outage_derate_factors(2025, iso="NEISO")
-        self.assertGreater(len(factors), 0, "NEISO 2025 derate factors must be non-empty")
+        self.assertGreater(
+            len(factors), 0, "NEISO 2025 derate factors must be non-empty"
+        )
 
     def test_merrimack_coal_in_derate_2023_not_2025(self):
         # Merrimack coal (2364) is in 2023/2024 derate but absent from 2025
@@ -379,12 +388,14 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         for year in (2023, 2024):
             factors = unit_outage_derate_factors(year, iso="NEISO")
             self.assertIn(
-                key, factors,
+                key,
+                factors,
                 f"Mystic derate missing for {year} — retiree not in capacity "
                 "denominator or outage windows not derived",
             )
             self.assertLess(
-                float(factors[key].mean()), 0.5,
+                float(factors[key].mean()),
+                0.5,
                 f"Mystic {year} availability ceiling too high — over-dispatch",
             )
 
@@ -395,16 +406,20 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
         # CC_REGULAR bin, so concurrent unit outages clip to full derate).
         for year in (2023, 2024, 2025):
             for key, arr in unit_outage_derate_factors(year, iso="NEISO").items():
-                self.assertGreaterEqual(float(arr.min()), 0.0,
-                    f"Negative availability for {key} in {year}")
-                self.assertLessEqual(float(arr.max()), 1.0,
-                    f"Availability > 1 for {key} in {year}")
+                self.assertGreaterEqual(
+                    float(arr.min()), 0.0, f"Negative availability for {key} in {year}"
+                )
+                self.assertLessEqual(
+                    float(arr.max()), 1.0, f"Availability > 1 for {key} in {year}"
+                )
 
     def test_no_coal_in_neiso_for_2025(self):
         # With NH_2025 missing, there must be zero COAL derate entries in 2025.
         factors_2025 = unit_outage_derate_factors(2025, iso="NEISO")
         coal_keys = [k for k in factors_2025 if k[1] == "COAL"]
-        self.assertEqual(coal_keys, [], "No COAL derate entries expected for NEISO 2025")
+        self.assertEqual(
+            coal_keys, [], "No COAL derate entries expected for NEISO 2025"
+        )
 
     def test_other_iso_unit_outage_csvs_untouched(self):
         # The NEISO P1 work must not alter ERCOT, PJM, or CAISO unit-outage CSVs.

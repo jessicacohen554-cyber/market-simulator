@@ -110,6 +110,8 @@ def set_eia860_vintage(year: int | None) -> Path:
         candidate = EIA_860_DIR / f"vintage_{int(year)}"
         _ACTIVE_EIA_860_DIR = candidate if candidate.is_dir() else EIA_860_DIR
     return _ACTIVE_EIA_860_DIR
+
+
 EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"

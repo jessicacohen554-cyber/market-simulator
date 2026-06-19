@@ -153,8 +153,9 @@ def harvest_comments(path: Path) -> tuple[dict[int, str], set[int]]:
     return inline, standalone
 
 
-def _block_before(lineno: int, inline: dict[int, str], standalone: set[int],
-                  raw: list[str]) -> str:
+def _block_before(
+    lineno: int, inline: dict[int, str], standalone: set[int], raw: list[str]
+) -> str:
     """Concatenate the run of comment-only lines immediately above ``lineno``."""
     out: list[str] = []
     n = lineno - 1
@@ -187,14 +188,20 @@ def _scenario_field_lines(path: Path) -> dict[str, int]:
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef) and node.name == "ScenarioConfig":
             for stmt in node.body:
-                if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
+                if isinstance(stmt, ast.AnnAssign) and isinstance(
+                    stmt.target, ast.Name
+                ):
                     out[stmt.target.id] = stmt.lineno
     return out
 
 
 def _source_for_constant_leaf(
-    pid: str, name_map: dict[str, str], ranges: dict[str, tuple[int, int]],
-    inline: dict[int, str], standalone: set[int], raw: list[str],
+    pid: str,
+    name_map: dict[str, str],
+    ranges: dict[str, tuple[int, int]],
+    inline: dict[int, str],
+    standalone: set[int],
+    raw: list[str],
 ) -> str:
     """Best-effort citation text for a constants.py param_id."""
     root_lower = pid.split(".")[0]
@@ -211,7 +218,9 @@ def _source_for_constant_leaf(
     for ln in range(lo, hi + 1):
         text = raw[ln - 1] if ln - 1 < len(raw) else ""
         stripped = text.strip()
-        if any(stripped.startswith(p) for p in pats) or any(p in stripped for p in pats[:2]):
+        if any(stripped.startswith(p) for p in pats) or any(
+            p in stripped for p in pats[:2]
+        ):
             if ln in inline:
                 return inline[ln].strip()
     return block.strip()
@@ -240,7 +249,7 @@ def _make_entry(pid: str, value: object, source: str, tier: int) -> dict:
         "page_or_table": "",
         "url": "",
         "notes": "Auto-generated entry; citation harvested from the constant's "
-                 "inline comment. Verify and complete before relying on it.",
+        "inline comment. Verify and complete before relying on it.",
         "old_repo_location": "",
         "last_verified": "",
         "flags": flags,
@@ -267,7 +276,7 @@ def _json_safe(value: object) -> object:
 
 def _tier_for(pid: str) -> int:
     if pid.startswith("scenario."):
-        return TIER_TAGS.get(pid[len("scenario."):], 2)
+        return TIER_TAGS.get(pid[len("scenario.") :], 2)
     # Structural-ish constants default to Tier 0; everything else Tier 2.
     low = pid
     if any(low.startswith(p) for p in ("hours", "voll", "iso", "zone")):
@@ -304,15 +313,17 @@ def build_registry() -> tuple[dict, dict]:
             continue
         # Missing — harvest a citation and synthesize an entry.
         if pid.startswith("scenario."):
-            fname = pid[len("scenario."):]
+            fname = pid[len("scenario.") :]
             ln = scen_field_lines.get(fname)
             source = ""
             if ln:
-                source = (scen_inline.get(ln)
-                          or _block_before(ln, scen_inline, scen_standalone, scen_raw))
+                source = scen_inline.get(ln) or _block_before(
+                    ln, scen_inline, scen_standalone, scen_raw
+                )
         else:
             source = _source_for_constant_leaf(
-                pid, name_map, const_ranges, const_inline, const_standalone, const_raw)
+                pid, name_map, const_ranges, const_inline, const_standalone, const_raw
+            )
         entry = _make_entry(pid, jvalue, source, _tier_for(pid))
         by_id[pid] = entry
         entries.append(entry)
@@ -321,8 +332,10 @@ def build_registry() -> tuple[dict, dict]:
     # Re-key into a deterministic order: existing curated ids first (original
     # order), then newly added ids sorted by param_id.
     existing_order = [e for e in entries if "auto-generated" not in e.get("flags", [])]
-    added = sorted((e for e in entries if "auto-generated" in e.get("flags", [])),
-                   key=lambda e: e["param_id"])
+    added = sorted(
+        (e for e in entries if "auto-generated" in e.get("flags", [])),
+        key=lambda e: e["param_id"],
+    )
     ordered = existing_order + added
 
     out = registry if isinstance(registry, dict) else {"parameters": ordered}
@@ -372,8 +385,9 @@ def render_markdown(registry: dict) -> str:
     parts = [_MD_HEADER.format(date=TODAY)]
     total = len(entries)
     needs = sum(1 for e in entries if "needs-citation" in e.get("flags", []))
-    parts.append(f"**{total} parameters registered** "
-                 f"({needs} flagged `needs-citation`).\n")
+    parts.append(
+        f"**{total} parameters registered** ({needs} flagged `needs-citation`).\n"
+    )
     for domain in sorted(by_domain):
         rows = sorted(by_domain[domain], key=lambda e: e["param_id"])
         parts.append(f"\n## {domain}\n")
@@ -389,8 +403,8 @@ def render_markdown(registry: dict) -> str:
                 src = src[:67] + "…"
             flags = ", ".join(e.get("flags", []))
             parts.append(
-                f"| `{e['param_id']}` | {vstr} | {e.get('tier','')} | "
-                f"{src} | {e.get('source_date','')} | {flags} |"
+                f"| `{e['param_id']}` | {vstr} | {e.get('tier', '')} | "
+                f"{src} | {e.get('source_date', '')} | {flags} |"
             )
     return "\n".join(parts) + "\n"
 
@@ -401,13 +415,16 @@ def main(argv: list[str]) -> int:
     CITATIONS_MD.write_text(render_markdown(registry))
 
     print(f"Registry written: {REGISTRY_PATH.relative_to(REPO)}")
-    print(f"  preserved {stats['existing']} existing "
-          f"(value-refreshed {stats['value_fixed']}), added {stats['added']} new")
+    print(
+        f"  preserved {stats['existing']} existing "
+        f"(value-refreshed {stats['value_fixed']}), added {stats['added']} new"
+    )
     print(f"Citations rendered: {CITATIONS_MD.relative_to(REPO)}")
 
     if "--check" in argv:
         print("\n--- validate_parameters.py ---")
         from validate_parameters import main as validate
+
         return validate()
     return 0
 

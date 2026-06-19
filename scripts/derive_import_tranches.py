@@ -94,10 +94,8 @@ def bundle_price(bundle: Path, year: int) -> np.ndarray:
         raise SystemExit(f"{bundle} has no year {year}")
     last_pass = sorted(g["pass"].unique())[-1]
     g = g[g["pass"] == last_pass]
-    p = g.pivot_table(index="hour", columns="zone", values="price",
-                      observed=True)
-    d = g.pivot_table(index="hour", columns="zone", values="demand",
-                      observed=True)
+    p = g.pivot_table(index="hour", columns="zone", values="price", observed=True)
+    d = g.pivot_table(index="hour", columns="zone", values="demand", observed=True)
     return ((p * d).sum(axis=1) / d.sum(axis=1)).to_numpy(dtype=float)
 
 
@@ -117,9 +115,7 @@ def fit_blocks(
     mids += [(bps[-1] + 1.0) / 2.0]
     levels = [float(np.quantile(net_export, 1.0 - m)) for m in mids]
     prices = [float(np.quantile(price, b)) for b in bps]
-    return [
-        (prices[i], levels[i] - levels[i + 1]) for i in range(len(bps))
-    ], levels
+    return [(prices[i], levels[i] - levels[i + 1]) for i in range(len(bps))], levels
 
 
 def model_levels(iso: str) -> np.ndarray:
@@ -149,9 +145,7 @@ def model_levels(iso: str) -> np.ndarray:
     return np.array(sorted(levels), dtype=float)
 
 
-def _place_on_levels(
-    levels: np.ndarray, net_export: np.ndarray
-) -> np.ndarray:
+def _place_on_levels(levels: np.ndarray, net_export: np.ndarray) -> np.ndarray:
     """Map each measured hour to its nearest achievable model level.
 
     Both the sorted duration curve and ``levels`` are monotone, so nearest-
@@ -179,14 +173,19 @@ def evaluate_measured(iso: str, net_export: np.ndarray) -> None:
     dur_m = np.sort(placed)
     dur_a = np.sort(net_export)
     rmse = float(np.sqrt(((dur_m - dur_a) ** 2).mean()))
-    print(f"  achievable net-export levels (MW): "
-          f"{'/'.join(f'{v:+.0f}' for v in levels)}")
-    print(f"  annual: best-case {placed.sum() / 1e6:+.1f} TWh vs "
-          f"actual {net_export.sum() / 1e6:+.1f} TWh "
-          f"({100.0 * placed.sum() / net_export.sum():.0f}%)")
+    print(
+        f"  achievable net-export levels (MW): {'/'.join(f'{v:+.0f}' for v in levels)}"
+    )
+    print(
+        f"  annual: best-case {placed.sum() / 1e6:+.1f} TWh vs "
+        f"actual {net_export.sum() / 1e6:+.1f} TWh "
+        f"({100.0 * placed.sum() / net_export.sum():.0f}%)"
+    )
     print(f"  duration RMSE (optimal placement, lower bound): {rmse:.0f} MW")
-    print(f"  import hours: best-case {100.0 * (placed < 0).mean():.1f}% vs "
-          f"actual {100.0 * (net_export < 0).mean():.1f}%")
+    print(
+        f"  import hours: best-case {100.0 * (placed < 0).mean():.1f}% vs "
+        f"actual {100.0 * (net_export < 0).mean():.1f}%"
+    )
 
 
 def fit_levels_measured(
@@ -210,17 +209,14 @@ def fit_levels_measured(
     return out
 
 
-def evaluate(
-    iso: str, price: np.ndarray, net_export: np.ndarray
-) -> None:
+def evaluate(iso: str, price: np.ndarray, net_export: np.ndarray) -> None:
     """Score the current constants entries against the measured series."""
     sinks = EXPORT_TRANCHES.get(iso, [])
     imports = IMPORT_TRANCHES.get(iso, [])
     n = min(price.shape[0], net_export.shape[0])
     p, nx = price[:n], net_export[:n]
-    model = (
-        sum(c * (p < pi) for _, c, pi in sinks)
-        - sum(c * (p > pi) for _, c, pi in imports)
+    model = sum(c * (p < pi) for _, c, pi in sinks) - sum(
+        c * (p > pi) for _, c, pi in imports
     )
     if np.isscalar(model):
         print(f"  no IMPORT_TRANCHES/EXPORT_TRANCHES entries for {iso}")
@@ -228,12 +224,16 @@ def evaluate(
     rmse = float(np.sqrt(((np.sort(model) - np.sort(nx)) ** 2).mean()))
     d24m = model[: n - n % 24].reshape(-1, 24).mean(axis=0)
     d24a = nx[: n - n % 24].reshape(-1, 24).mean(axis=0)
-    print(f"  annual: model {model.sum() / 1e6:+.1f} TWh vs "
-          f"actual {nx.sum() / 1e6:+.1f} TWh "
-          f"({100.0 * model.sum() / nx.sum():.0f}%)")
+    print(
+        f"  annual: model {model.sum() / 1e6:+.1f} TWh vs "
+        f"actual {nx.sum() / 1e6:+.1f} TWh "
+        f"({100.0 * model.sum() / nx.sum():.0f}%)"
+    )
     print(f"  duration RMSE: {rmse:.0f} MW")
-    print(f"  import hours: model {100.0 * (model < 0).mean():.1f}% vs "
-          f"actual {100.0 * (nx < 0).mean():.1f}%")
+    print(
+        f"  import hours: model {100.0 * (model < 0).mean():.1f}% vs "
+        f"actual {100.0 * (nx < 0).mean():.1f}%"
+    )
     print(f"  diurnal corr: {np.corrcoef(d24m, d24a)[0, 1]:.2f}")
 
 
@@ -242,14 +242,19 @@ def main() -> None:
     parser.add_argument("--iso", default="PJM")
     parser.add_argument("--year", type=int, default=2023)
     parser.add_argument(
-        "--bundle", default=None,
+        "--bundle",
+        default=None,
         help="calibration bundle supplying the price duration curve for the "
-             "bundle-mode fit (e.g. results/calibration/pjm_6_ccpeak). Omit "
-             "for the offline measured-only fit (NYISO/NEISO P9).")
+        "bundle-mode fit (e.g. results/calibration/pjm_6_ccpeak). Omit "
+        "for the offline measured-only fit (NYISO/NEISO P9).",
+    )
     parser.add_argument(
-        "--steps", type=int, default=6,
+        "--steps",
+        type=int,
+        default=6,
         help="number of equal-population blocks for the measured-only fit "
-             "suggestion (default 6).")
+        "suggestion (default 6).",
+    )
     args = parser.parse_args()
     iso = args.iso.upper()
 
@@ -258,18 +263,24 @@ def main() -> None:
     if args.bundle is None:
         # Offline measured-only mode: fit and score on the EIA-930 duration
         # curve, no LP run (P9).
-        print(f"{iso} {args.year}: measured net export "
-              f"{nx.sum() / 1e6:+.1f} TWh ({nx.mean():+.0f} MW avg), "
-              f"import {100.0 * (nx < 0).mean():.0f}% of hours "
-              f"[measured-only fit, no bundle]")
+        print(
+            f"{iso} {args.year}: measured net export "
+            f"{nx.sum() / 1e6:+.1f} TWh ({nx.mean():+.0f} MW avg), "
+            f"import {100.0 * (nx < 0).mean():.0f}% of hours "
+            f"[measured-only fit, no bundle]"
+        )
         caps = fit_levels_measured(nx, args.steps)
-        print(f"\nSuggested {args.steps}-block capacities from the measured "
-              f"duration curve, deepest-import first:")
+        print(
+            f"\nSuggested {args.steps}-block capacities from the measured "
+            f"duration curve, deepest-import first:"
+        )
         for cap, is_import in caps:
             kind = "import tranche" if is_import else "export sink"
             print(f"  {kind:14s}: {cap:6.0f} MW")
-        print("Price each block at its neighbor-hub proxy (cite the source), "
-              "imports above every sink.")
+        print(
+            "Price each block at its neighbor-hub proxy (cite the source), "
+            "imports above every sink."
+        )
         print(f"\nCurrent constants entries for {iso}:")
         evaluate_measured(iso, nx)
         return
@@ -278,20 +289,26 @@ def main() -> None:
     n = min(price.shape[0], nx.shape[0])
     price, nx = price[:n], nx[:n]
 
-    print(f"{iso} {args.year}: measured net export "
-          f"{nx.sum() / 1e6:+.1f} TWh ({nx.mean():+.0f} MW avg), "
-          f"hourly corr(price, net export) "
-          f"{np.corrcoef(price, nx)[0, 1]:+.2f}")
+    print(
+        f"{iso} {args.year}: measured net export "
+        f"{nx.sum() / 1e6:+.1f} TWh ({nx.mean():+.0f} MW avg), "
+        f"hourly corr(price, net export) "
+        f"{np.corrcoef(price, nx)[0, 1]:+.2f}"
+    )
 
     blocks, levels = fit_blocks(price, nx)
-    print(f"\nFitted blocks (boundary price $/MWh, capacity MW); "
-          f"segment net-export levels {np.round(levels, -2)}:")
+    print(
+        f"\nFitted blocks (boundary price $/MWh, capacity MW); "
+        f"segment net-export levels {np.round(levels, -2)}:"
+    )
     for boundary, cap in blocks:
         kind = "export sink" if cap > 0 else "import tranche"
         print(f"  {kind:14s} @ ${boundary:5.1f}: {abs(cap):6.0f} MW")
-    print("Round these into constants.EXPORT_TRANCHES[iso] (sink price = "
-          "its boundary) and constants.IMPORT_TRANCHES[iso] (price above "
-          "every sink).")
+    print(
+        "Round these into constants.EXPORT_TRANCHES[iso] (sink price = "
+        "its boundary) and constants.IMPORT_TRANCHES[iso] (price above "
+        "every sink)."
+    )
 
     print(f"\nCurrent constants entries for {iso}:")
     evaluate(iso, price, nx)

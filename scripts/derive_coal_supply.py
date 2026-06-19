@@ -52,9 +52,7 @@ logger = logging.getLogger("derive_coal_supply")
 _COAL_SOURCE_TO_SUPPLY = COAL_CODE_TO_SUPPLY
 
 
-def _dominant_class(
-    grp: pd.DataFrame, code: int, weight: str, source: str
-) -> dict:
+def _dominant_class(grp: pd.DataFrame, code: int, weight: str, source: str) -> dict:
     """Return one classification row: the weight-dominant supply class."""
     by_class = grp.groupby("supply_class")[weight].sum()
     total = by_class.sum()
@@ -102,14 +100,13 @@ def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     # Primary: fuel receipts, dominant rank by delivered tons.
     receipts = pd.concat(rframes, ignore_index=True)
     receipts["plant_id"] = pd.to_numeric(receipts["plant_id"], errors="coerce")
-    receipts["quantity"] = pd.to_numeric(
-        receipts["quantity"], errors="coerce"
-    ).fillna(0.0)
+    receipts["quantity"] = pd.to_numeric(receipts["quantity"], errors="coerce").fillna(
+        0.0
+    )
     receipts = receipts.dropna(subset=["plant_id"])
     receipts["plant_id"] = receipts["plant_id"].astype(int)
     coal = receipts[
-        (receipts["fuel_group"] == "Coal")
-        & (receipts["plant_id"].isin(coal_codes))
+        (receipts["fuel_group"] == "Coal") & (receipts["plant_id"].isin(coal_codes))
     ].copy()
     coal["supply_class"] = coal["energy_source"].map(_COAL_SOURCE_TO_SUPPLY)
     coal = coal.dropna(subset=["supply_class"])
@@ -144,7 +141,10 @@ def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     if missing:
         logger.info(
             "%d %s coal plants had no EIA-923 coal receipts or generation "
-            "(kept generic COAL): %s", len(missing), iso, missing,
+            "(kept generic COAL): %s",
+            len(missing),
+            iso,
+            missing,
         )
     return out
 
@@ -155,7 +155,10 @@ def main() -> None:
     )
     parser.add_argument("--iso", required=True, help="ISO (e.g. PJM).")
     parser.add_argument(
-        "--year", type=int, nargs="*", default=None,
+        "--year",
+        type=int,
+        nargs="*",
+        default=None,
         help="Restrict to these EIA-923 release years (default: all).",
     )
     parser.add_argument("--out-dir", default="data/raw/_processed-legacy")
@@ -170,7 +173,9 @@ def main() -> None:
     counts = table["supply_class"].value_counts().to_dict()
     logger.info(
         "wrote %s: %d plants — %s",
-        out_path, len(table), counts,
+        out_path,
+        len(table),
+        counts,
     )
 
 

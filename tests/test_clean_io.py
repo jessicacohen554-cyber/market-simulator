@@ -181,7 +181,11 @@ class TestWriteRoundTrip(CleanIORedirectMixin):
 
     def test_metadata_embedded(self):
         path = write_clean(
-            _good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM",
+            _good_lmp(),
+            "lmp",
+            iso="CAISO",
+            year=2024,
+            market="DAM",
             source="raw/lmp.csv",
         )
         meta = read_clean_metadata(path)
@@ -221,8 +225,12 @@ class TestReadClean(CleanIORedirectMixin):
     def test_read_clean_column_projection(self):
         write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
         df = read_clean(
-            "lmp", iso="CAISO", year=2024, market="DAM",
-            validate=False, columns=["interval_start_utc", "lmp_usd_per_mwh"],
+            "lmp",
+            iso="CAISO",
+            year=2024,
+            market="DAM",
+            validate=False,
+            columns=["interval_start_utc", "lmp_usd_per_mwh"],
         )
         self.assertEqual(list(df.columns), ["interval_start_utc", "lmp_usd_per_mwh"])
 

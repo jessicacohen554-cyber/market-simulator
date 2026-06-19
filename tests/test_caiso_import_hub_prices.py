@@ -5,6 +5,7 @@ model's own solved price; ``caiso_import_hub_prices`` replaces it with the
 measured WECC neighbor-hub LMP each tranche proxies (Mid-C / Palo Verde). See
 ``results/calibration/DIAGNOSIS-caiso-import-ladder-2026-06-19.md``.
 """
+
 from __future__ import annotations
 
 import unittest
@@ -38,14 +39,15 @@ class TestMeasuredImportHubPrices(unittest.TestCase):
 
     def test_non_caiso_and_missing_file_are_none(self):
         self.assertIsNone(eia_loader.measured_import_hub_prices("PJM", 2024, 48))
-        with mock.patch.object(eia_loader, "CALIBRATION_DIR",
-                               eia_loader.CALIBRATION_DIR / "does-not-exist"):
-            self.assertIsNone(
-                eia_loader.measured_import_hub_prices("CAISO", 2024, 48))
+        with mock.patch.object(
+            eia_loader, "CALIBRATION_DIR", eia_loader.CALIBRATION_DIR / "does-not-exist"
+        ):
+            self.assertIsNone(eia_loader.measured_import_hub_prices("CAISO", 2024, 48))
 
     def test_maps_hubs_to_tranches(self):
         import tempfile
         from pathlib import Path
+
         with tempfile.TemporaryDirectory() as d:
             tmp = Path(d)
             self._write_fixture(tmp)
@@ -61,13 +63,15 @@ class TestMeasuredImportHubPrices(unittest.TestCase):
     def test_incomplete_series_skipped(self):
         import tempfile
         from pathlib import Path
+
         with tempfile.TemporaryDirectory() as d:
             tmp = Path(d)
             self._write_fixture(tmp, hours=48)
             with mock.patch.object(eia_loader, "CALIBRATION_DIR", tmp):
                 # ask for more hours than the fixture covers -> None (no partial)
                 self.assertIsNone(
-                    eia_loader.measured_import_hub_prices("CAISO", 2024, 8760))
+                    eia_loader.measured_import_hub_prices("CAISO", 2024, 8760)
+                )
 
 
 class TestInjectCaisoImportHubPrices(unittest.TestCase):
@@ -84,8 +88,9 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         fa, gens = self._caiso_fleet(hours)
         mc = np.full((len(gens), hours), 99.0)
         before = mc.copy()
-        with mock.patch.object(eia_loader, "measured_import_hub_prices",
-                               return_value=None):
+        with mock.patch.object(
+            eia_loader, "measured_import_hub_prices", return_value=None
+        ):
             applied = inject_caiso_import_hub_prices(fa, mc, "CAISO", 2024, 35.23)
         self.assertFalse(applied)
         np.testing.assert_array_equal(mc, before)
@@ -99,8 +104,9 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
             "DSW_solar_PV": np.full(hours, 30.0),
             "DSW_CCGT": np.full(hours, 40.0),
         }
-        with mock.patch.object(eia_loader, "measured_import_hub_prices",
-                               return_value=hub):
+        with mock.patch.object(
+            eia_loader, "measured_import_hub_prices", return_value=hub
+        ):
             applied = inject_caiso_import_hub_prices(fa, mc, "CAISO", 2024, 35.23)
         self.assertTrue(applied)
         zone = IMPORT_ZONE["CAISO"]
@@ -115,6 +121,7 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         r = row_by_uid[f"{zone}_DSW_CCGT"]
         from market_sim.model.transmission import wecc_border_carbon_adder
         from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+
         border = wecc_border_carbon_adder(35.23)
         expected = 40.0 + border * (ef["DSW_CCGT"] / CARB_UNSPECIFIED_IMPORT_EF)
         self.assertAlmostEqual(mc[r, 0], expected, places=3)

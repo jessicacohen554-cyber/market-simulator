@@ -38,6 +38,7 @@ Usage:
     python scripts/render_backcast.py [ID=]BUNDLE ... [--out backcast-results.html]
     # each BUNDLE is one run/config (may hold several years)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -51,10 +52,13 @@ from datetime import datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
-    "rch", str(REPO / "scripts" / "render_calibration_html.py"))
-rch = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rch)
+    "rch", str(REPO / "scripts" / "render_calibration_html.py")
+)
+rch = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rch)
 
 DATA_DIR = REPO / "frontend" / "data" / "backcast"
 RUNS_DIR = DATA_DIR / "runs"
@@ -64,15 +68,29 @@ BENCH_DIR = DATA_DIR / "bench"
 def _gzb64(obj) -> str:
     """Return gzip+base64 of a JSON-serializable object (byte-deterministic)."""
     return base64.b64encode(
-        gzip.compress(json.dumps(obj).encode(), compresslevel=9,
-                      mtime=0)).decode()
+        gzip.compress(json.dumps(obj).encode(), compresslevel=9, mtime=0)
+    ).decode()
 
 
 def _slug(text: str) -> str:
     """Return a short kebab shorthand from free text (<= 4 words)."""
     words = re.findall(r"[A-Za-z0-9]+", text.lower())
-    stop = {"the", "a", "an", "of", "to", "with", "and", "for", "re", "solve",
-            "run", "calibration", "task", "ercot"}
+    stop = {
+        "the",
+        "a",
+        "an",
+        "of",
+        "to",
+        "with",
+        "and",
+        "for",
+        "re",
+        "solve",
+        "run",
+        "calibration",
+        "task",
+        "ercot",
+    }
     keep = [w for w in words if w not in stop][:4]
     return "-".join(keep) or "run"
 
@@ -91,8 +109,10 @@ def _run_meta(bundle: Path, fallback_id: str) -> dict:
     return {
         "id": f"{date}-{shorthand}",
         "label": shorthand.replace("-", " "),
-        "date": date, "shorthand": shorthand,
-        "definition": definition, "years": meta["years"],
+        "date": date,
+        "shorthand": shorthand,
+        "definition": definition,
+        "years": meta["years"],
     }
 
 
@@ -104,14 +124,12 @@ def manifest_entry(label: str, bundle: Path) -> dict:
     sidecars alone — without bundle access, pandas, or the model package.
     """
     rm = _run_meta(bundle, _slug(label))
-    rm["iso"] = json.loads((bundle / "meta.json").read_text()).get("iso",
-                                                                   "ERCOT")
+    rm["iso"] = json.loads((bundle / "meta.json").read_text()).get("iso", "ERCOT")
     rm["file"] = f"frontend/data/backcast/runs/{rm['id']}.js"
     return rm
 
 
-def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict
-                      ) -> Path:
+def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict) -> Path:
     """Write the per-(ISO, year) benchmark part file (deterministic gzip).
 
     The part carries the year's benchmark payload plus the ISO display meta
@@ -124,14 +142,16 @@ def _write_bench_part(iso: str, year: int, meta: dict, bench_year: dict
     part_dir.mkdir(parents=True, exist_ok=True)
     part = {"meta": {**meta, "years": [int(year)]}, "bench": bench_year}
     path = part_dir / f"{year}.json.gz"
-    path.write_bytes(gzip.compress(json.dumps(part).encode(),
-                                   compresslevel=9, mtime=0))
+    path.write_bytes(gzip.compress(json.dumps(part).encode(), compresslevel=9, mtime=0))
     return path
 
 
-def generate(runs: list[tuple[str, Path]], out: Path,
-             standalone: Path | None = None,
-             years: set[int] | None = None) -> None:
+def generate(
+    runs: list[tuple[str, Path]],
+    out: Path,
+    standalone: Path | None = None,
+    years: set[int] | None = None,
+) -> None:
     """Write the data files + the static shell for the given runs.
 
     Always writes the deployable split files (data under
@@ -150,13 +170,15 @@ def generate(runs: list[tuple[str, Path]], out: Path,
         by_iso.setdefault(iso, []).append((rid_hint, bundle))
 
     meta_by_iso: dict[str, dict] = {}
-    bench_by_iso: dict[str, str] = {}      # iso -> gzip+base64 benchmark
+    bench_by_iso: dict[str, str] = {}  # iso -> gzip+base64 benchmark
     manifest, run_js = [], []
     for iso, iso_runs in by_iso.items():
         D = rch.build_payload(iso_runs, years=years)
         meta_by_iso[iso] = {
-            "groups": D["groups"], "groupLabel": D["groupLabel"],
-            "zones": D["zones"], "years": D["years"],
+            "groups": D["groups"],
+            "groupLabel": D["groupLabel"],
+            "zones": D["zones"],
+            "years": D["years"],
         }
         bench_by_iso[iso] = _gzb64(D["bench"])
         for year, bench_year in D["bench"].items():
@@ -169,72 +191,103 @@ def generate(runs: list[tuple[str, Path]], out: Path,
             rid = rm["id"]
             model = D["model"][i]
             model["label"] = rm["label"]
-            js = ("window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
-                  f"window.BC.runGz[{json.dumps(rid)}]="
-                  + json.dumps(_gzb64(model)) + ";")
+            js = (
+                "window.BC=window.BC||{};window.BC.runGz=window.BC.runGz||{};"
+                f"window.BC.runGz[{json.dumps(rid)}]=" + json.dumps(_gzb64(model)) + ";"
+            )
             (RUNS_DIR / f"{rid}.js").write_text(js)
             run_js.append(js)
             rm["file"] = f"frontend/data/backcast/runs/{rid}.js"
             manifest.append(rm)
 
-    bench_js = ("window.BC=window.BC||{};window.BC.benchGz="
-                + json.dumps(bench_by_iso) + ";")
+    bench_js = (
+        "window.BC=window.BC||{};window.BC.benchGz=" + json.dumps(bench_by_iso) + ";"
+    )
     (DATA_DIR / "benchmark.js").write_text(bench_js)
 
-    manifest_js = ("window.BC=window.BC||{};window.BC.meta="
-                   + json.dumps(meta_by_iso) + ";window.BC.manifest="
-                   + json.dumps(manifest) + ";")
+    manifest_js = (
+        "window.BC=window.BC||{};window.BC.meta="
+        + json.dumps(meta_by_iso)
+        + ";window.BC.manifest="
+        + json.dumps(manifest)
+        + ";"
+    )
     (DATA_DIR / "manifest.js").write_text(manifest_js)
 
     gen = datetime.now().strftime("%Y-%m-%d %H:%M")
     link_css = '<link rel=stylesheet href="frontend/css/style.css">'
     # Deployable shell: load data via <script src> (Pages auto-pickup); the
     # repo stylesheet is linked (it sits at frontend/css/style.css).
-    src_tags = ('<script src="frontend/data/backcast/manifest.js"></script>'
-                '<script src="frontend/data/backcast/benchmark.js"></script>')
-    out.write_text(SHELL.replace("__SITECSS__", link_css)
-                   .replace("__DATASCRIPTS__", src_tags)
-                   .replace("__GEN__", gen))
+    src_tags = (
+        '<script src="frontend/data/backcast/manifest.js"></script>'
+        '<script src="frontend/data/backcast/benchmark.js"></script>'
+    )
+    out.write_text(
+        SHELL.replace("__SITECSS__", link_css)
+        .replace("__DATASCRIPTS__", src_tags)
+        .replace("__GEN__", gen)
+    )
     sz = sum(f.stat().st_size for f in DATA_DIR.rglob("*.js")) / 1e6
-    print(f"wrote {out} + {len(manifest)} run data files "
-          f"({sz:.1f} MB data, ids: {[m['id'] for m in manifest]})")
+    print(
+        f"wrote {out} + {len(manifest)} run data files "
+        f"({sz:.1f} MB data, ids: {[m['id'] for m in manifest]})"
+    )
 
     if standalone is not None:
         # Self-contained: inline the repo stylesheet (so the design tokens
         # resolve with no external file) and the data.
         css_path = REPO / "frontend" / "css" / "style.css"
-        site_css = ("<style>" + css_path.read_text() + "</style>"
-                    if css_path.exists() else link_css)
-        inline = "".join(f"<script>{s}</script>"
-                         for s in [manifest_js, bench_js, *run_js])
-        standalone.write_text(SHELL.replace("__SITECSS__", site_css)
-                              .replace("__DATASCRIPTS__", inline)
-                              .replace("__GEN__", gen))
-        print(f"wrote standalone {standalone} "
-              f"({standalone.stat().st_size / 1e6:.1f} MB)")
+        site_css = (
+            "<style>" + css_path.read_text() + "</style>"
+            if css_path.exists()
+            else link_css
+        )
+        inline = "".join(
+            f"<script>{s}</script>" for s in [manifest_js, bench_js, *run_js]
+        )
+        standalone.write_text(
+            SHELL.replace("__SITECSS__", site_css)
+            .replace("__DATASCRIPTS__", inline)
+            .replace("__GEN__", gen)
+        )
+        print(
+            f"wrote standalone {standalone} ({standalone.stat().st_size / 1e6:.1f} MB)"
+        )
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundles", nargs="+", help="[LABEL=]BUNDLE_DIR per run")
     ap.add_argument("--out", default=str(REPO / "backcast-results.html"))
-    ap.add_argument("--standalone", default=None,
-                    help="Also write a single self-contained HTML (data "
-                         "inlined) at this path, for sending/offline viewing.")
-    ap.add_argument("--years", nargs="+", type=int, default=None,
-                    help="Restrict to these calendar years (e.g. 2023 2024); "
-                         "default = all years in each bundle.")
+    ap.add_argument(
+        "--standalone",
+        default=None,
+        help="Also write a single self-contained HTML (data "
+        "inlined) at this path, for sending/offline viewing.",
+    )
+    ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        default=None,
+        help="Restrict to these calendar years (e.g. 2023 2024); "
+        "default = all years in each bundle.",
+    )
     args = ap.parse_args()
     runs = []
     for spec in args.bundles:
         if "=" in spec:
             lab, _, d = spec.partition("=")
         else:
-            d = spec; lab = Path(spec).name
+            d = spec
+            lab = Path(spec).name
         runs.append((lab, Path(d)))
-    generate(runs, Path(args.out),
-             Path(args.standalone) if args.standalone else None,
-             years=set(args.years) if args.years else None)
+    generate(
+        runs,
+        Path(args.out),
+        Path(args.standalone) if args.standalone else None,
+        years=set(args.years) if args.years else None,
+    )
 
 
 # The static shell HTML/JS is defined in the companion module to keep this file

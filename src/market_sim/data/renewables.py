@@ -202,7 +202,11 @@ _ERCOT_HSL_DIR: Path = ERCOT_HSL_DIR
 
 # Columns every per-year HSL parquet must carry (hourly MW series).
 _HSL_COLUMNS: tuple[str, ...] = (
-    "hour", "wind_gen_mw", "wind_hsl_mw", "solar_gen_mw", "solar_hsl_mw",
+    "hour",
+    "wind_gen_mw",
+    "wind_hsl_mw",
+    "solar_gen_mw",
+    "solar_hsl_mw",
 )
 
 # CAISO uncurtailed renewable potential (the HSL analogue: EIA-930 delivered
@@ -248,6 +252,7 @@ def _hsl_file(iso: str, year: int) -> Path | None:
     # scripts/build_caiso_hsl.py and wire a ``_NEISO_HSL_DIR`` constant above.
     # data-needed: requires ISO-NE to publish granular curtailment data.
     return None
+
 
 # An HSL parquet records the hourly *uncurtailed potential* (HSL >= delivered);
 # the dispatch curtails endogenously from it and the modeled-vs-reported
@@ -419,9 +424,7 @@ def _eia860_monthly_capacity(
     monthly = np.zeros((len(zone_names), _MONTHS_PER_YEAR), dtype=float)
 
     plant_code = df["Plant Code"].to_numpy()
-    capacity = pd.to_numeric(
-        df["Nameplate Capacity (MW)"], errors="coerce"
-    ).to_numpy()
+    capacity = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce").to_numpy()
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce").to_numpy()
     op_month = pd.to_numeric(df["Operating Month"], errors="coerce").to_numpy()
 
@@ -443,7 +446,7 @@ def _eia860_monthly_capacity(
         if cal_year is not None and operating_year == cal_year:
             month = _as_int(om) or 1
             start = min(max(month, 1), _MONTHS_PER_YEAR)
-            monthly[z_idx, start - 1:] += cap
+            monthly[z_idx, start - 1 :] += cap
         else:
             monthly[z_idx, :] += cap
 
@@ -454,9 +457,7 @@ def _eia860_monthly_capacity(
     # the eGRID ORIS lookup, which doesn't cover newly-assigned plant
     # codes) to assign each plant to a model zone.
     if cal_year is not None and cal_year > _EIA860_OPERABLE_VINTAGE:
-        _add_proposed_capacity(
-            monthly, iso, fuel, zone_to_idx, cal_year, data_dir
-        )
+        _add_proposed_capacity(monthly, iso, fuel, zone_to_idx, cal_year, data_dir)
 
     if monthly.sum() <= 0.0:
         return None
@@ -535,7 +536,7 @@ def _add_proposed_capacity(
             continue
         month = _as_int(row["Effective Month"]) or 1
         start = min(max(month, 1), _MONTHS_PER_YEAR)
-        monthly[z_idx, start - 1:] += cap
+        monthly[z_idx, start - 1 :] += cap
 
 
 def _eia860_zone_shares(
@@ -563,10 +564,7 @@ def _eia860_zone_shares(
     total = december.sum()
     if total <= 0.0:
         return {}
-    return {
-        zone_names[i]: float(december[i] / total)
-        for i in range(len(zone_names))
-    }
+    return {zone_names[i]: float(december[i] / total) for i in range(len(zone_names))}
 
 
 def get_renewable_zone(iso: str, fuel: str) -> str:
@@ -590,9 +588,7 @@ def get_renewable_zone(iso: str, fuel: str) -> str:
     return RENEWABLE_ZONE_ALLOCATION[iso][fuel]
 
 
-def derive_cf_profile(
-    generation_values: np.ndarray, avg_cf: float
-) -> np.ndarray:
+def derive_cf_profile(generation_values: np.ndarray, avg_cf: float) -> np.ndarray:
     """Convert an EIA generation distribution into an hourly CF profile.
 
     The EIA ``value`` series is a probability distribution summing to ~1.0
@@ -614,9 +610,7 @@ def derive_cf_profile(
     return np.clip(cf, _CF_MIN, _CF_MAX)
 
 
-def _mw_to_cf(
-    hourly_mw: np.ndarray, monthly_capacity: np.ndarray
-) -> np.ndarray:
+def _mw_to_cf(hourly_mw: np.ndarray, monthly_capacity: np.ndarray) -> np.ndarray:
     """Convert an hourly system-wide MW series into a CF profile.
 
     Each hour's MW is divided by the capacity online in that hour's month
@@ -625,11 +619,11 @@ def _mw_to_cf(
     the vintage ramp, this reproduces the system MW total exactly while
     distributing it across zones by each zone's month-by-month capacity.
     """
-    online_cap = monthly_capacity.sum(axis=0)[
-        _hour_to_month_index(HOURS_PER_YEAR)
-    ]
+    online_cap = monthly_capacity.sum(axis=0)[_hour_to_month_index(HOURS_PER_YEAR)]
     cf = np.divide(
-        hourly_mw, online_cap, out=np.zeros_like(hourly_mw),
+        hourly_mw,
+        online_cap,
+        out=np.zeros_like(hourly_mw),
         where=online_cap > 0.0,
     )
     return np.clip(cf, _CF_MIN, _CF_MAX)
@@ -863,8 +857,7 @@ def _allocate_to_zones(
     """
     if target_zone not in zone_names:
         raise ValueError(
-            f"Allocation target zone '{target_zone}' not in ISO zones "
-            f"{zone_names}"
+            f"Allocation target zone '{target_zone}' not in ISO zones {zone_names}"
         )
     n_zones = len(zone_names)
     cf = np.zeros((n_zones, HOURS_PER_YEAR), dtype=float)
@@ -1018,9 +1011,7 @@ def load_renewable_profiles(
             if is_backcast:
                 measured_cf = _hsl_cf_profile(iso, year, fuel, monthly)
                 if measured_cf is None:
-                    measured_cf = _eia_hourly_cf_profile(
-                        iso, year, fuel, monthly
-                    )
+                    measured_cf = _eia_hourly_cf_profile(iso, year, fuel, monthly)
             if measured_cf is not None:
                 cf_profile = measured_cf
                 vintage_ramp = True

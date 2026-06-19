@@ -34,9 +34,7 @@ from market_sim.config.paths import PROCESSED_DIR
 logger = logging.getLogger(__name__)
 
 # Default location of the processed F923 monthly cost parquet (central registry).
-EIA923_MONTHLY_COSTS_PATH: Path = (
-    PROCESSED_DIR / "eia923_monthly_fuel_costs.parquet"
-)
+EIA923_MONTHLY_COSTS_PATH: Path = PROCESSED_DIR / "eia923_monthly_fuel_costs.parquet"
 
 # Default location of the processed F923 Page-1 generation parquet, with
 # one row per ``(year, plant_id, prime_mover, fuel_type, chp)``.
@@ -45,8 +43,18 @@ EIA923_MONTHLY_GENERATION_PATH: Path = (
 )
 
 _MONTHS_SHORT: tuple[str, ...] = (
-    "january", "february", "march", "april", "may", "june",
-    "july", "august", "september", "october", "november", "december",
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
 )
 
 # Number of calendar months in a year — the price grid is always 12 entries
@@ -82,7 +90,9 @@ def load_monthly_fuel_costs(
 
 
 def plant_month_price_grid(
-    costs: pd.DataFrame, year: int, fuel_group: str,
+    costs: pd.DataFrame,
+    year: int,
+    fuel_group: str,
 ) -> dict[int, np.ndarray]:
     """Return ``{plant_id: (12,) price array}`` for one year and fuel group.
 
@@ -130,15 +140,13 @@ def plant_state_map(costs: pd.DataFrame) -> dict[int, str]:
     if "state" not in costs.columns:
         return {}
     sub = costs[["plant_id", "state"]].dropna()
-    return {
-        int(p): str(s)
-        for p, s in zip(sub["plant_id"], sub["state"])
-        if str(s)
-    }
+    return {int(p): str(s) for p, s in zip(sub["plant_id"], sub["state"]) if str(s)}
 
 
 def state_month_price_grid(
-    costs: pd.DataFrame, year: int, fuel_group: str,
+    costs: pd.DataFrame,
+    year: int,
+    fuel_group: str,
 ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
     """Return per-state quantity-weighted monthly price and reporter counts.
 
@@ -207,9 +215,7 @@ def load_monthly_generation(
     Raises:
         FileNotFoundError: When the parquet has not yet been generated.
     """
-    resolved = (
-        Path(path) if path is not None else EIA923_MONTHLY_GENERATION_PATH
-    )
+    resolved = Path(path) if path is not None else EIA923_MONTHLY_GENERATION_PATH
     if not resolved.exists():
         raise FileNotFoundError(
             f"F923 monthly-generation parquet not found at {resolved!s}; "

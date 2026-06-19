@@ -75,13 +75,16 @@ class PlantBinAssignment:
 def _plant_map_frame(plant_map: list[PlantBinAssignment]) -> pd.DataFrame:
     """Return a :class:`PlantBinAssignment` list as a DataFrame."""
     return pd.DataFrame(
-        [{f.name: getattr(p, f.name) for f in fields(PlantBinAssignment)}
-         for p in plant_map]
+        [
+            {f.name: getattr(p, f.name) for f in fields(PlantBinAssignment)}
+            for p in plant_map
+        ]
     )
 
 
-def _heat_rate_bin(fuel_type: str, heat_rate_btu_kwh: float,
-                   bin_definitions: dict) -> str:
+def _heat_rate_bin(
+    fuel_type: str, heat_rate_btu_kwh: float, bin_definitions: dict
+) -> str:
     """Return the efficiency-bin name for a plant given its heat rate.
 
     The plant is placed in whichever bin of ``bin_definitions[fuel_type]``
@@ -208,8 +211,14 @@ def disaggregate_dispatch(
         ValueError: When ``method`` is not a recognized disaggregation method.
     """
     plants = _plant_map_frame(plant_map)[
-        ["plant_code", "generator_id", "bin_label", "zone",
-         "nameplate_mw", "heat_rate_btu_kwh"]
+        [
+            "plant_code",
+            "generator_id",
+            "bin_label",
+            "zone",
+            "nameplate_mw",
+            "heat_rate_btu_kwh",
+        ]
     ]
     if method == "pro_rata_capacity":
         out = _disaggregate_pro_rata(bin_dispatch, plants)
@@ -229,9 +238,7 @@ def _disaggregate_pro_rata(
     group = ["bin_label", "zone"]
     cap_total = plants.groupby(group)["nameplate_mw"].transform("sum")
     plants = plants.assign(
-        cap_share=np.where(
-            cap_total > 0.0, plants["nameplate_mw"] / cap_total, 0.0
-        )
+        cap_share=np.where(cap_total > 0.0, plants["nameplate_mw"] / cap_total, 0.0)
     )
     merged = plants.merge(bin_dispatch, on=group, how="inner")
     merged["dispatch_mw"] = merged["dispatch_mw"] * merged["cap_share"]
@@ -270,9 +277,7 @@ def _disaggregate_merit_order(
         bin_mw = bd["dispatch_mw"].to_numpy(dtype=float)
 
         # (n_plant, n_hour): each plant's headroom-clipped fill.
-        filled = np.clip(
-            bin_mw[None, :] - cumcap_before[:, None], 0.0, cap[:, None]
-        )
+        filled = np.clip(bin_mw[None, :] - cumcap_before[:, None], 0.0, cap[:, None])
         block = grp[["plant_code", "generator_id", "bin_label", "zone"]].copy()
         block = block.loc[block.index.repeat(len(hours))].reset_index(drop=True)
         block["hour"] = np.tile(hours, len(grp))
@@ -281,15 +286,19 @@ def _disaggregate_merit_order(
 
     if not results:
         return pd.DataFrame(
-            columns=["plant_code", "generator_id", "bin_label", "zone",
-                     "hour", "dispatch_mw"]
+            columns=[
+                "plant_code",
+                "generator_id",
+                "bin_label",
+                "zone",
+                "hour",
+                "dispatch_mw",
+            ]
         )
     return pd.concat(results, ignore_index=True)
 
 
-def _broadcast_hourly_price(
-    price: "np.ndarray | float", hours: pd.Series
-) -> pd.Series:
+def _broadcast_hourly_price(price: "np.ndarray | float", hours: pd.Series) -> pd.Series:
     """Map a scalar or ``(8760,)`` price array onto a Series of hour indices."""
     arr = np.asarray(price, dtype=float)
     if arr.ndim == 0:
@@ -333,14 +342,17 @@ def compute_plant_hourly_financials(
     del discount_rate, year, base_year  # not needed for hourly quantities
 
     attr_cols = [
-        "plant_code", "generator_id", "fuel_type", "heat_rate_btu_kwh",
-        "vom_per_mwh", "emission_rate_tco2_mwh", "nox_rate_lb_mwh",
+        "plant_code",
+        "generator_id",
+        "fuel_type",
+        "heat_rate_btu_kwh",
+        "vom_per_mwh",
+        "emission_rate_tco2_mwh",
+        "nox_rate_lb_mwh",
     ]
     attrs = _plant_map_frame(plant_map)[attr_cols]
 
-    df = plant_dispatch.merge(
-        attrs, on=["plant_code", "generator_id"], how="left"
-    )
+    df = plant_dispatch.merge(attrs, on=["plant_code", "generator_id"], how="left")
     df = df.merge(zonal_prices, on=["zone", "hour"], how="left")
     df = df.merge(fuel_prices, on=["fuel_type", "hour"], how="left")
 
@@ -354,25 +366,32 @@ def compute_plant_hourly_financials(
     )
     df["fuel_cost"] = df["fuel_mmbtu"] * df["price_per_mmbtu"]
     df["vom_cost"] = df["generation_mwh"] * df["vom_per_mwh"]
-    df["carbon_cost"] = (
-        df["generation_mwh"] * df["emission_rate_tco2_mwh"] * carbon
-    )
+    df["carbon_cost"] = df["generation_mwh"] * df["emission_rate_tco2_mwh"] * carbon
     df["nox_cost"] = df["generation_mwh"] * df["nox_rate_lb_mwh"] * nox
     df["total_variable_cost"] = (
         df["fuel_cost"] + df["vom_cost"] + df["carbon_cost"] + df["nox_cost"]
     )
     df["gross_margin"] = df["revenue"] - df["total_variable_cost"]
-    df["co2_emissions_tons"] = (
-        df["generation_mwh"] * df["emission_rate_tco2_mwh"]
-    )
+    df["co2_emissions_tons"] = df["generation_mwh"] * df["emission_rate_tco2_mwh"]
     df["nox_emissions_lbs"] = df["generation_mwh"] * df["nox_rate_lb_mwh"]
 
     return df[
         [
-            "plant_code", "generator_id", "zone", "hour",
-            "generation_mwh", "revenue", "fuel_mmbtu", "fuel_cost",
-            "vom_cost", "carbon_cost", "nox_cost", "total_variable_cost",
-            "gross_margin", "co2_emissions_tons", "nox_emissions_lbs",
+            "plant_code",
+            "generator_id",
+            "zone",
+            "hour",
+            "generation_mwh",
+            "revenue",
+            "fuel_mmbtu",
+            "fuel_cost",
+            "vom_cost",
+            "carbon_cost",
+            "nox_cost",
+            "total_variable_cost",
+            "gross_margin",
+            "co2_emissions_tons",
+            "nox_emissions_lbs",
         ]
     ]
 
@@ -400,9 +419,17 @@ def compute_plant_annual_summary(
         with zero annual generation (no division by zero).
     """
     sum_cols = [
-        "generation_mwh", "revenue", "fuel_mmbtu", "fuel_cost", "vom_cost",
-        "carbon_cost", "nox_cost", "total_variable_cost", "gross_margin",
-        "co2_emissions_tons", "nox_emissions_lbs",
+        "generation_mwh",
+        "revenue",
+        "fuel_mmbtu",
+        "fuel_cost",
+        "vom_cost",
+        "carbon_cost",
+        "nox_cost",
+        "total_variable_cost",
+        "gross_margin",
+        "co2_emissions_tons",
+        "nox_emissions_lbs",
     ]
     annual = (
         hourly.groupby(["plant_code", "generator_id"], dropna=False)[sum_cols]
@@ -411,8 +438,16 @@ def compute_plant_annual_summary(
     )
 
     attrs = _plant_map_frame(plant_map)[
-        ["plant_code", "generator_id", "zone", "fuel_type", "bin_label",
-         "nameplate_mw", "heat_rate_btu_kwh", "fom_per_kw_yr"]
+        [
+            "plant_code",
+            "generator_id",
+            "zone",
+            "fuel_type",
+            "bin_label",
+            "nameplate_mw",
+            "heat_rate_btu_kwh",
+            "fom_per_kw_yr",
+        ]
     ]
     annual = annual.merge(attrs, on=["plant_code", "generator_id"], how="left")
 
@@ -444,13 +479,32 @@ def compute_plant_annual_summary(
 
     return annual[
         [
-            "plant_code", "generator_id", "zone", "fuel_type", "bin_label",
-            "year", "nameplate_mw", "generation_mwh", "capacity_factor",
-            "revenue", "fuel_mmbtu", "fuel_cost", "vom_cost", "carbon_cost",
-            "nox_cost", "total_variable_cost", "gross_margin", "fom_cost",
-            "net_operating_income", "avg_price_captured", "avg_marginal_cost",
-            "spark_spread", "co2_emissions_tons", "co2_intensity",
-            "nox_emissions_lbs", "discount_factor",
+            "plant_code",
+            "generator_id",
+            "zone",
+            "fuel_type",
+            "bin_label",
+            "year",
+            "nameplate_mw",
+            "generation_mwh",
+            "capacity_factor",
+            "revenue",
+            "fuel_mmbtu",
+            "fuel_cost",
+            "vom_cost",
+            "carbon_cost",
+            "nox_cost",
+            "total_variable_cost",
+            "gross_margin",
+            "fom_cost",
+            "net_operating_income",
+            "avg_price_captured",
+            "avg_marginal_cost",
+            "spark_spread",
+            "co2_emissions_tons",
+            "co2_intensity",
+            "nox_emissions_lbs",
+            "discount_factor",
             "npv_net_operating_income",
         ]
     ]
@@ -460,10 +514,21 @@ def compute_plant_annual_summary(
 # company aggregation. Every dollar and MWh quantity that touches ownership
 # must be scaled (build-prompt rule).
 _OWNED_SCALE_COLUMNS: tuple[str, ...] = (
-    "nameplate_mw", "generation_mwh", "revenue", "fuel_mmbtu", "fuel_cost",
-    "vom_cost", "carbon_cost", "nox_cost", "total_variable_cost",
-    "gross_margin", "fom_cost", "net_operating_income",
-    "co2_emissions_tons", "nox_emissions_lbs", "npv_net_operating_income",
+    "nameplate_mw",
+    "generation_mwh",
+    "revenue",
+    "fuel_mmbtu",
+    "fuel_cost",
+    "vom_cost",
+    "carbon_cost",
+    "nox_cost",
+    "total_variable_cost",
+    "gross_margin",
+    "fom_cost",
+    "net_operating_income",
+    "co2_emissions_tons",
+    "nox_emissions_lbs",
+    "npv_net_operating_income",
 )
 
 
@@ -504,9 +569,7 @@ def compute_company_summary(
         plant_annual["generator_id"].astype("string").str.strip()
     )
 
-    merged = plant_annual.merge(
-        owners, on=["plant_code", "generator_id"], how="left"
-    )
+    merged = plant_annual.merge(owners, on=["plant_code", "generator_id"], how="left")
     merged["parent_company"] = merged["parent_company"].fillna("Other/Unknown")
     merged["percent_owned"] = merged["percent_owned"].fillna(1.0)
 
@@ -514,35 +577,25 @@ def compute_company_summary(
         merged[f"owned_{col}"] = merged[col] * merged["percent_owned"]
 
     company_total = _aggregate_company(merged, ["parent_company"])
-    company_by_fuel = _aggregate_company(
-        merged, ["parent_company", "fuel_type"]
-    )
+    company_by_fuel = _aggregate_company(merged, ["parent_company", "fuel_type"])
     return company_total, company_by_fuel
 
 
-def _aggregate_company(
-    merged: pd.DataFrame, keys: list[str]
-) -> pd.DataFrame:
+def _aggregate_company(merged: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     """Aggregate ownership-scaled plant rows and derive portfolio metrics."""
     agg = (
         merged.groupby(keys, dropna=False)
-        .agg(**{
-            f"owned_{c}": (f"owned_{c}", "sum") for c in _OWNED_SCALE_COLUMNS
-        })
+        .agg(**{f"owned_{c}": (f"owned_{c}", "sum") for c in _OWNED_SCALE_COLUMNS})
         .reset_index()
     )
 
     gen = agg["owned_generation_mwh"]
     gen_nz = gen.where(gen > 0.0)
-    nameplate_nz = agg["owned_nameplate_mw"].where(
-        agg["owned_nameplate_mw"] > 0.0
-    )
+    nameplate_nz = agg["owned_nameplate_mw"].where(agg["owned_nameplate_mw"] > 0.0)
 
     # Portfolio metrics — computed only after aggregation.
     agg["portfolio_avg_price_captured"] = agg["owned_revenue"] / gen_nz
-    agg["portfolio_emissions_intensity"] = (
-        agg["owned_co2_emissions_tons"] / gen_nz
-    )
+    agg["portfolio_emissions_intensity"] = agg["owned_co2_emissions_tons"] / gen_nz
     agg["portfolio_capacity_factor"] = gen / (nameplate_nz * HOURS_PER_YEAR)
     agg["portfolio_gross_margin_per_mwh"] = agg["owned_gross_margin"] / gen_nz
     agg["total_npv_net_operating_income"] = agg["owned_npv_net_operating_income"]
@@ -587,19 +640,21 @@ def compute_trajectory_npv(
         )
     if not annual_summaries:
         return pd.DataFrame(
-            columns=["cumulative_npv_noi", "cumulative_generation_mwh",
-                     "cumulative_co2_tons", "avg_annual_margin"]
+            columns=[
+                "cumulative_npv_noi",
+                "cumulative_generation_mwh",
+                "cumulative_co2_tons",
+                "avg_annual_margin",
+            ]
         )
 
     sample = annual_summaries[0]
     is_company = "parent_company" in sample.columns
-    keys = (
-        ["parent_company"]
-        if is_company
-        else ["plant_code", "generator_id"]
-    )
+    keys = ["parent_company"] if is_company else ["plant_code", "generator_id"]
     # Company summaries carry ``owned_*`` columns; plant summaries do not.
-    noi_col = "total_npv_net_operating_income" if is_company else "npv_net_operating_income"
+    noi_col = (
+        "total_npv_net_operating_income" if is_company else "npv_net_operating_income"
+    )
     gen_col = "owned_generation_mwh" if is_company else "generation_mwh"
     co2_col = "owned_co2_emissions_tons" if is_company else "co2_emissions_tons"
     margin_col = "owned_gross_margin" if is_company else "gross_margin"
@@ -626,6 +681,4 @@ def compute_trajectory_npv(
     out["avg_annual_margin"] = out["_total_margin"] / len(years)
     out = out.drop(columns="_total_margin")
     del discount_rate, base_year  # discounting already applied per-year
-    return out.sort_values("cumulative_npv_noi", ascending=False).reset_index(
-        drop=True
-    )
+    return out.sort_values("cumulative_npv_noi", ascending=False).reset_index(drop=True)

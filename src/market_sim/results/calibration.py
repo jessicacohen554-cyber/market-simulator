@@ -118,8 +118,7 @@ def actuals_source(klass: str) -> str:
         :data:`EIA930_SOURCE` for the variable renewables (solar, wind),
         :data:`EIA923_SOURCE` for every other class.
     """
-    return (EIA930_SOURCE if str(klass).lower() in _EIA930_CLASSES
-            else EIA923_SOURCE)
+    return EIA930_SOURCE if str(klass).lower() in _EIA930_CLASSES else EIA923_SOURCE
 
 
 def signed_volume_error(model_twh: float, actual_twh: float) -> float:
@@ -185,9 +184,7 @@ def check_generation_mix(
     benchmark = {str(k): float(v) for k, v in dict(benchmark).items()}
     fuels = sorted(set(model_mix) | set(benchmark))
     return {
-        fuel: _compare(
-            model_mix.get(fuel, 0.0), benchmark.get(fuel, 0.0), tolerance
-        )
+        fuel: _compare(model_mix.get(fuel, 0.0), benchmark.get(fuel, 0.0), tolerance)
         for fuel in fuels
     }
 
@@ -307,9 +304,7 @@ def check_hourly_dispatch_correlation(
         out[fuel] = {
             "pearson_r": round(_pearson_r(m, a), 4),
             "nrmse": (
-                round(rmse / mean_a, 4)
-                if abs(mean_a) > _ZERO_TOL
-                else float("inf")
+                round(rmse / mean_a, 4) if abs(mean_a) > _ZERO_TOL else float("inf")
             ),
             "model_twh": round(float(m.sum()) / 1e6, 2),
             "eia_twh": round(float(a.sum()) / 1e6, 2),
@@ -370,8 +365,7 @@ def check_cf_band_occupancy(
     a = np.asarray(actual_mw, dtype=float).ravel()
     if m.shape != a.shape:
         raise ValueError(
-            f"model series length {m.size} does not match "
-            f"actual series length {a.size}"
+            f"model series length {m.size} does not match actual series length {a.size}"
         )
     if m.size == 0:
         raise ValueError("series are empty")
@@ -501,9 +495,7 @@ def _gen_mix_diagnostic(summary: dict, benchmarks: Mapping, tolerance: float):
     mix = check_generation_mix(
         summary["generation_twh"], benchmarks["generation_twh"], tolerance
     )
-    status = (
-        PASS if all(v["pass_fail"] == PASS for v in mix.values()) else FAIL
-    )
+    status = PASS if all(v["pass_fail"] == PASS for v in mix.values()) else FAIL
     return DiagnosticResult("generation_mix", status, mix)
 
 
@@ -515,9 +507,7 @@ def _pdc_diagnostic(result, benchmarks: Mapping, tolerance: float):
     system_price = np.asarray(result.prices, dtype=float).mean(axis=0)
     pdc = check_price_duration_curve(system_price, benchmarks["prices"])
     status = (
-        PASS
-        if all(abs(v["pct_diff"]) <= tolerance for v in pdc.values())
-        else FAIL
+        PASS if all(abs(v["pct_diff"]) <= tolerance for v in pdc.values()) else FAIL
     )
     return DiagnosticResult("price_duration_curve", status, pdc)
 
@@ -541,9 +531,7 @@ def _capacity_factor_diagnostic(
         fuel: _compare(model_cf.get(fuel, 0.0), bench_cf, tolerance)
         for fuel, bench_cf in benchmarks["capacity_factors"].items()
     }
-    status = (
-        PASS if all(v["pass_fail"] == PASS for v in detail.values()) else FAIL
-    )
+    status = PASS if all(v["pass_fail"] == PASS for v in detail.values()) else FAIL
     return DiagnosticResult("capacity_factors", status, detail)
 
 

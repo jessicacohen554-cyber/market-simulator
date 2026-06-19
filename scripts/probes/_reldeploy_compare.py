@@ -7,6 +7,7 @@ Given a baseline and a treatment bundle (same year), prints:
 
 ISO annual generation (TWh) for the 0.33%/0.5% gate denominators.
 """
+
 from __future__ import annotations
 
 import sys
@@ -31,10 +32,14 @@ def zonal(bundle: Path, year: int):
     sysd = sysd[(sysd["year"] == year) & (sysd["pass"] == "P1")]
     gen = disp.groupby("zone", observed=True)["mw"].sum() / 1e6
     dem = sysd.groupby("zone", observed=True)["demand"].sum() / 1e6
-    th = (disp[disp["klass"].isin(THERMAL)]
-          .groupby("zone", observed=True)["mw"].sum() / 1e6)
-    cc = (disp[disp["klass"] == "CC_REGULAR"]
-          .groupby("zone", observed=True)["mw"].sum() / 1e6)
+    th = (
+        disp[disp["klass"].isin(THERMAL)].groupby("zone", observed=True)["mw"].sum()
+        / 1e6
+    )
+    cc = (
+        disp[disp["klass"] == "CC_REGULAR"].groupby("zone", observed=True)["mw"].sum()
+        / 1e6
+    )
     return (gen - dem), th, cc
 
 
@@ -46,14 +51,20 @@ def main() -> None:
     nb, tb, cb = zonal(base, year)
     nt, tt, ct = zonal(treat, year)
     print(f"\n=== zonal before -> after (year {year}) ===")
-    print(f"{'zone':>14} | {'net-export':>20} | {'model thermal':>20} | "
-          f"{'CC_REGULAR':>20}")
-    print(f"{'':>14} | {'base':>9} {'rd':>9} | {'base':>9} {'rd':>9} | "
-          f"{'base':>9} {'rd':>9}")
+    print(
+        f"{'zone':>14} | {'net-export':>20} | {'model thermal':>20} | "
+        f"{'CC_REGULAR':>20}"
+    )
+    print(
+        f"{'':>14} | {'base':>9} {'rd':>9} | {'base':>9} {'rd':>9} | "
+        f"{'base':>9} {'rd':>9}"
+    )
     for z in ZONES:
-        print(f"{z:>14} | {nb.get(z, 0):>9.1f} {nt.get(z, 0):>9.1f} | "
-              f"{tb.get(z, 0):>9.1f} {tt.get(z, 0):>9.1f} | "
-              f"{cb.get(z, 0):>9.1f} {ct.get(z, 0):>9.1f}")
+        print(
+            f"{z:>14} | {nb.get(z, 0):>9.1f} {nt.get(z, 0):>9.1f} | "
+            f"{tb.get(z, 0):>9.1f} {tt.get(z, 0):>9.1f} | "
+            f"{cb.get(z, 0):>9.1f} {ct.get(z, 0):>9.1f}"
+        )
 
     # Class gate.
     croot = (REPO / "results" / "calibration").resolve()
@@ -63,10 +74,10 @@ def main() -> None:
     ctt = ctt[ctt["year"] == year].set_index("class")
     g033 = 0.0033 * ISO_GEN[year]
     g050 = 0.005 * ISO_GEN[year]
-    print(f"\n=== class gate (year {year}; 0.33%={g033:.2f} 0.5%={g050:.2f} "
-          f"TWh) ===")
-    print(f"{'class':>13} {'bench':>7} {'base_d':>8} {'rd_d':>8} "
-          f"{'g033':>6} {'g050':>6}")
+    print(f"\n=== class gate (year {year}; 0.33%={g033:.2f} 0.5%={g050:.2f} TWh) ===")
+    print(
+        f"{'class':>13} {'bench':>7} {'base_d':>8} {'rd_d':>8} {'g033':>6} {'g050':>6}"
+    )
     for cls in cbt.index:
         bench = cbt.loc[cls, "bench"]
         bd = cbt.loc[cls, "model"] - bench
@@ -74,8 +85,7 @@ def main() -> None:
         excl = cls == "CT_CHP"
         v033 = "excl" if excl else ("PASS" if abs(rd) <= g033 else "FAIL")
         v050 = "excl" if excl else ("PASS" if abs(rd) <= g050 else "FAIL")
-        print(f"{cls:>13} {bench:>7.1f} {bd:>8.2f} {rd:>8.2f} "
-              f"{v033:>6} {v050:>6}")
+        print(f"{cls:>13} {bench:>7.1f} {bd:>8.2f} {rd:>8.2f} {v033:>6} {v050:>6}")
 
 
 if __name__ == "__main__":

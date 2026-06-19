@@ -57,20 +57,30 @@ CALIB_ROOT = REPO / "results" / "calibration"
 # Dispatch classes whose annual energy is regressed. Wind/solar/nuclear are
 # excluded (no offer curve); OTHER/pseudo classes carry no curve either.
 _RESPONSE_CLASSES: tuple[str, ...] = (
-    "CC_REGULAR", "CC_CHP", "CT_PEAKER", "ST_GAS",
-    "COAL_LIGNITE", "COAL_PRB", "COAL_BIT",
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+    "ST_GAS",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "COAL_BIT",
 )
 
 # Curve bands considered as predictors (per class, when they vary).
 _BANDS: tuple[str, ...] = (
-    "committed", "econ_low", "econ_high", "peak", "pct_peaking",
+    "committed",
+    "econ_low",
+    "econ_high",
+    "peak",
+    "pct_peaking",
 )
 
 _MWH_PER_TWH = 1.0e6
 
 
 def _load_bundles(
-    prefixes: list[str] | None, years: list[int],
+    prefixes: list[str] | None,
+    years: list[int],
 ) -> list[tuple[str, dict, Path]]:
     """Return ``(name, offer_curve, dispatch_dir)`` for matching ERCOT bundles.
 
@@ -81,9 +91,7 @@ def _load_bundles(
     """
     out = []
     for d in sorted(CALIB_ROOT.iterdir()):
-        if prefixes and not any(
-            d.name.lower().startswith(p.lower()) for p in prefixes
-        ):
+        if prefixes and not any(d.name.lower().startswith(p.lower()) for p in prefixes):
             continue
         rc, meta_p = d / "run_config.json", d / "meta.json"
         if not (rc.exists() and meta_p.exists() and (d / "dispatch").exists()):
@@ -91,9 +99,7 @@ def _load_bundles(
         meta = json.loads(meta_p.read_text())
         if meta.get("iso", "ERCOT") != "ERCOT":
             continue
-        if not all(
-            (d / "dispatch" / f"{y}_P1.parquet").exists() for y in years
-        ):
+        if not all((d / "dispatch" / f"{y}_P1.parquet").exists() for y in years):
             continue
         curve = (
             json.loads(rc.read_text())
@@ -107,9 +113,7 @@ def _load_bundles(
 
 def _class_twh(dispatch_dir: Path, year: int) -> dict[str, float]:
     """Return annual TWh by dispatch class from a bundle-year P1 parquet."""
-    df = pd.read_parquet(
-        dispatch_dir / f"{year}_P1.parquet", columns=["klass", "mw"]
-    )
+    df = pd.read_parquet(dispatch_dir / f"{year}_P1.parquet", columns=["klass", "mw"])
     twh = df.groupby("klass", observed=True)["mw"].sum() / _MWH_PER_TWH
     return {k: float(twh.get(k, 0.0)) for k in _RESPONSE_CLASSES}
 
@@ -129,7 +133,8 @@ def _varying_features(
 
 
 def build_design(
-    bundles: list[tuple[str, dict, Path]], years: list[int],
+    bundles: list[tuple[str, dict, Path]],
+    years: list[int],
 ) -> tuple[pd.DataFrame, list[tuple[str, str]]]:
     """Assemble the observation frame: one row per (bundle, year).
 
@@ -152,7 +157,9 @@ def build_design(
 
 
 def fit_jacobian(
-    obs: pd.DataFrame, feats: list[tuple[str, str]], ridge: float,
+    obs: pd.DataFrame,
+    feats: list[tuple[str, str]],
+    ridge: float,
 ) -> pd.DataFrame:
     """Ridge-regress within-year-demeaned class TWh on demeaned band values.
 
@@ -173,12 +180,10 @@ def fit_jacobian(
         # Ridge: (X'X + a I)^-1 X'y, a scaled to the feature variance so the
         # penalty is comparable across bands measured in different units.
         a = ridge * np.trace(X.T @ X) / max(X.shape[1], 1)
-        beta = np.linalg.solve(
-            X.T @ X + a * np.eye(X.shape[1]), X.T @ y
-        )
+        beta = np.linalg.solve(X.T @ X + a * np.eye(X.shape[1]), X.T @ y)
         pred = X @ beta
         ss_res = float(((y - pred) ** 2).sum())
-        ss_tot = float((y ** 2).sum())
+        ss_tot = float((y**2).sum())
         r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan")
         rows[klass] = dict(zip(cols, beta * 0.01), r2=r2, n=len(y))
     return pd.DataFrame(rows).T
@@ -198,13 +203,15 @@ def pair_diffs(pairs: list[str], years: list[int]) -> None:
         a, b = pair.split(":")
         cfg = {}
         for name in (a, b):
-            cfg[name] = json.loads(
-                (CALIB_ROOT / name / "run_config.json").read_text()
-            )["scenario_config"]["offer_curve_by_group"]
+            cfg[name] = json.loads((CALIB_ROOT / name / "run_config.json").read_text())[
+                "scenario_config"
+            ]["offer_curve_by_group"]
         diffs = {
             f"{cls}.{band}": round(cfg[b][cls][band] - cfg[a][cls][band], 4)
-            for cls in cfg[a] for band in cfg[a][cls]
-            if cls in cfg[b] and band in cfg[b][cls]
+            for cls in cfg[a]
+            for band in cfg[a][cls]
+            if cls in cfg[b]
+            and band in cfg[b][cls]
             and abs(cfg[b][cls][band] - cfg[a][cls][band]) > 1e-9
         }
         print(f"\n{a} -> {b}")
@@ -212,26 +219,37 @@ def pair_diffs(pairs: list[str], years: list[int]) -> None:
         for y in years:
             ta = _class_twh(CALIB_ROOT / a / "dispatch", y)
             tb = _class_twh(CALIB_ROOT / b / "dispatch", y)
-            d = {k: round(tb[k] - ta[k], 2) for k in ta
-                 if abs(tb[k] - ta[k]) > 0.05}
+            d = {k: round(tb[k] - ta[k], 2) for k in ta if abs(tb[k] - ta[k]) > 0.05}
             print(f"  dTWh {y}: {d}")
 
 
 def main() -> None:
     """CLI entry point."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--runs", nargs="*", default=None, metavar="PREFIX",
-                    help="Bundle-name prefixes to include (default: all "
-                         "ERCOT bundles covering the years).")
+    ap.add_argument(
+        "--runs",
+        nargs="*",
+        default=None,
+        metavar="PREFIX",
+        help="Bundle-name prefixes to include (default: all "
+        "ERCOT bundles covering the years).",
+    )
     ap.add_argument("--years", nargs="*", type=int, default=[2023, 2024, 2025])
-    ap.add_argument("--ridge", type=float, default=0.1,
-                    help="Ridge penalty scale (default 0.1).")
-    ap.add_argument("--out", default=None, metavar="CSV",
-                    help="Write the tidy Jacobian to CSV.")
-    ap.add_argument("--pairs", nargs="*", default=None, metavar="A:B",
-                    help="Sharp one-move sensitivities: print curve-band "
-                         "diffs and per-class dTWh for each bundle pair "
-                         "(e.g. Run-71:Run-72). Skips the regression.")
+    ap.add_argument(
+        "--ridge", type=float, default=0.1, help="Ridge penalty scale (default 0.1)."
+    )
+    ap.add_argument(
+        "--out", default=None, metavar="CSV", help="Write the tidy Jacobian to CSV."
+    )
+    ap.add_argument(
+        "--pairs",
+        nargs="*",
+        default=None,
+        metavar="A:B",
+        help="Sharp one-move sensitivities: print curve-band "
+        "diffs and per-class dTWh for each bundle pair "
+        "(e.g. Run-71:Run-72). Skips the regression.",
+    )
     args = ap.parse_args()
 
     if args.pairs:
@@ -252,23 +270,28 @@ def main() -> None:
         print(f"  {col:28s} {obs[col].min():.3f} – {obs[col].max():.3f}")
 
     jac = fit_jacobian(obs, feats, args.ridge)
-    print(f"\nJacobian — TWh per +0.01 band multiplier "
-          f"(ridge={args.ridge}, year fixed effects):")
+    print(
+        f"\nJacobian — TWh per +0.01 band multiplier "
+        f"(ridge={args.ridge}, year fixed effects):"
+    )
     body = jac.drop(columns=["r2", "n"]).T  # rows = bands, cols = classes
-    with pd.option_context("display.width", 200,
-                           "display.float_format", "{:+.3f}".format):
+    with pd.option_context(
+        "display.width", 200, "display.float_format", "{:+.3f}".format
+    ):
         print(body)
         print("\nfit quality (in-sample, demeaned):")
         print(jac[["r2", "n"]])
-    print("\nRead magnitudes as relative leverage, not exact derivatives: "
-          "the run history moves several bands at once (collinear design) "
-          "and bundles also differ in non-curve changes.")
+    print(
+        "\nRead magnitudes as relative leverage, not exact derivatives: "
+        "the run history moves several bands at once (collinear design) "
+        "and bundles also differ in non-curve changes."
+    )
 
     if args.out:
         tidy = (
-            jac.drop(columns=["r2", "n"]).reset_index(names="response_class")
-            .melt(id_vars="response_class", var_name="band",
-                  value_name="twh_per_0p01")
+            jac.drop(columns=["r2", "n"])
+            .reset_index(names="response_class")
+            .melt(id_vars="response_class", var_name="band", value_name="twh_per_0p01")
         )
         tidy.to_csv(args.out, index=False)
         print(f"\nwrote {args.out}")

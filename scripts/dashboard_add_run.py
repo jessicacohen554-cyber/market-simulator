@@ -26,6 +26,7 @@ Usage:
     python scripts/dashboard_add_run.py --label "ct sweep 1.5" \
         --bundle results/calibration/ct_sweep_15
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,20 +36,25 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "src"))
 _spec = importlib.util.spec_from_file_location(
-    "render_backcast", str(REPO / "scripts" / "render_backcast.py"))
-rb = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(rb)
+    "render_backcast", str(REPO / "scripts" / "render_backcast.py")
+)
+rb = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rb)
 
 REGISTRY_DIR = REPO / "frontend" / "data" / "backcast" / "registry"
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--label", required=True,
-                    help="Dashboard display label / shorthand source.")
-    ap.add_argument("--bundle", required=True,
-                    help="Bundle dir, e.g. results/calibration/<name>.")
+    ap.add_argument(
+        "--label", required=True, help="Dashboard display label / shorthand source."
+    )
+    ap.add_argument(
+        "--bundle", required=True, help="Bundle dir, e.g. results/calibration/<name>."
+    )
     args = ap.parse_args()
 
     bundle = Path(args.bundle)
@@ -70,8 +76,7 @@ def main() -> None:
 
     REGISTRY_DIR.mkdir(parents=True, exist_ok=True)
     sidecar = REGISTRY_DIR / f"{rid}.json"
-    sidecar.write_text(json.dumps({**entry, "bundle": rel_bundle},
-                                  indent=2) + "\n")
+    sidecar.write_text(json.dumps({**entry, "bundle": rel_bundle}, indent=2) + "\n")
 
     # Render this single run: writes its runs/<id>.js + the bench/<ISO>/<year>
     # parts for its years, and refreshes the LOCAL (gitignored) preview shell +

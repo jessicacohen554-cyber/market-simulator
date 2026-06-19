@@ -35,10 +35,7 @@ class TestCurateFuelPrices(unittest.TestCase):
         self.gas_dir = self.root / "raw" / "gas-prices"
         self.gas_dir.mkdir(parents=True)
         (self.gas_dir / "henry_hub_daily.csv").write_text(
-            "date,price_usd_mmbtu\n"
-            "2024-01-01,2.50\n"
-            "2024-01-02,2.75\n"
-            "2024-01-03,3.1\n"
+            "date,price_usd_mmbtu\n2024-01-01,2.50\n2024-01-02,2.75\n2024-01-03,3.1\n"
         )
 
     def tearDown(self):
@@ -56,7 +53,11 @@ class TestCurateFuelPrices(unittest.TestCase):
 
     def test_reconciliation_is_correct(self):
         out = curate_fuel_prices.curate(gas_dir=self.gas_dir)
-        df = pd.read_parquet(out).sort_values("interval_start_utc").reset_index(drop=True)
+        df = (
+            pd.read_parquet(out)
+            .sort_values("interval_start_utc")
+            .reset_index(drop=True)
+        )
 
         # One row per (fuel, hub, interval_start_utc); all three synthetic dates.
         self.assertEqual(len(df), 3)

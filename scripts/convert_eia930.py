@@ -46,15 +46,15 @@ OUTPUT_DIR = REPO_ROOT / "data" / "eia_hourly"
 # the BAs uploaded so far.
 # Source: EIA Hourly Electric Grid Monitor, BA reference table.
 BA_TIMEZONES: dict[str, str] = {
-    "ERCO": "US/Central",   # ERCOT (Texas)
-    "CISO": "US/Pacific",   # CAISO (California)
-    "PJM": "US/Eastern",    # PJM Interconnection
-    "NYIS": "US/Eastern",   # NYISO (New York)
-    "MISO": "US/Central",   # Midcontinent ISO
-    "SWPP": "US/Central",   # Southwest Power Pool
-    "ISNE": "US/Eastern",   # ISO New England
-    "FLA": "US/Eastern",    # Florida (FPL)
-    "SOCO": "US/Central",   # Southern Company
+    "ERCO": "US/Central",  # ERCOT (Texas)
+    "CISO": "US/Pacific",  # CAISO (California)
+    "PJM": "US/Eastern",  # PJM Interconnection
+    "NYIS": "US/Eastern",  # NYISO (New York)
+    "MISO": "US/Central",  # Midcontinent ISO
+    "SWPP": "US/Central",  # Southwest Power Pool
+    "ISNE": "US/Eastern",  # ISO New England
+    "FLA": "US/Eastern",  # Florida (FPL)
+    "SOCO": "US/Central",  # Southern Company
 }
 
 # EIA-930 region ``type`` code -> wide demand-family column name.
@@ -77,8 +77,20 @@ _REGION_COLUMN_ORDER: tuple[str, ...] = (
 # existing ``ERCO hourly`` extract; any fuel code not listed here is appended
 # alphabetically so new BAs with extra fuels still convert.
 _FUEL_CODE_ORDER: tuple[str, ...] = (
-    "COL", "NG", "NUC", "WAT", "SUN", "WND",
-    "GEO", "OIL", "BAT", "PS", "SNB", "UES", "OES", "OTH",
+    "COL",
+    "NG",
+    "NUC",
+    "WAT",
+    "SUN",
+    "WND",
+    "GEO",
+    "OIL",
+    "BAT",
+    "PS",
+    "SNB",
+    "UES",
+    "OES",
+    "OTH",
 )
 
 _TIME_COLUMNS: tuple[str, ...] = ("UTC time", "Local date", "Hour", "Local time")
@@ -187,7 +199,7 @@ def convert_ba(ba: str, input_dir: Path) -> pd.DataFrame:
     time_df = _build_time_columns(period, timezone)
 
     region_cols = [c for c in _REGION_COLUMN_ORDER if c in wide.columns]
-    fuel_codes = [c[len("NG: "):] for c in wide.columns if c.startswith("NG: ")]
+    fuel_codes = [c[len("NG: ") :] for c in wide.columns if c.startswith("NG: ")]
     fuel_cols = _ordered_fuel_columns(fuel_codes)
 
     value_cols = region_cols + fuel_cols
@@ -229,7 +241,8 @@ def main(argv: list[str] | None = None) -> int:
         "bas", nargs="*", help="BA codes to convert (default: all present)"
     )
     parser.add_argument(
-        "--force", action="store_true",
+        "--force",
+        action="store_true",
         help="regenerate even if the output parquet already exists",
     )
     parser.add_argument("--input-dir", type=Path, default=INPUT_DIR)
@@ -248,7 +261,9 @@ def main(argv: list[str] | None = None) -> int:
             continue
         out_path = args.output_dir / f"{ba} hourly.parquet"
         if out_path.exists() and not args.force:
-            print(f"  {ba}: {out_path.name} already exists; skipping (--force to rebuild)")
+            print(
+                f"  {ba}: {out_path.name} already exists; skipping (--force to rebuild)"
+            )
             continue
 
         df = convert_ba(ba, args.input_dir)

@@ -96,16 +96,14 @@ class TestDisaggregation(unittest.TestCase):
         bin_mw = np.array([50.0, 100.0, 150.0])
         bd = _bin_dispatch("gas_cc_h_class", "North", bin_mw)
 
-        plant_dispatch = disaggregate_dispatch(
-            bd, plant_map, "merit_order_within_bin"
-        )
+        plant_dispatch = disaggregate_dispatch(bd, plant_map, "merit_order_within_bin")
 
         per_hour = plant_dispatch.groupby("hour")["dispatch_mw"].sum()
         np.testing.assert_allclose(per_hour.to_numpy(), bin_mw)
         # The efficient plant (plant 1) fills first.
-        hour0 = plant_dispatch[plant_dispatch["hour"] == 0].set_index(
-            "plant_code"
-        )["dispatch_mw"]
+        hour0 = plant_dispatch[plant_dispatch["hour"] == 0].set_index("plant_code")[
+            "dispatch_mw"
+        ]
         self.assertAlmostEqual(hour0.loc[1], 50.0)
         self.assertAlmostEqual(hour0.loc[2], 0.0)
 
@@ -139,8 +137,7 @@ class TestHourlyFinancials(unittest.TestCase):
             {"zone": plant.zone, "hour": hours, "price_per_mwh": price}
         )
         fuel_prices = pd.DataFrame(
-            {"fuel_type": plant.fuel_type, "hour": hours,
-             "price_per_mmbtu": fuel}
+            {"fuel_type": plant.fuel_type, "hour": hours, "price_per_mmbtu": fuel}
         )
         return plant_dispatch, zonal_prices, fuel_prices, [plant]
 
@@ -203,8 +200,12 @@ class TestHeatRateMatters(unittest.TestCase):
         plant_map = [efficient, inefficient]
 
         hourly = compute_plant_hourly_financials(
-            plant_dispatch, zonal_prices, fuel_prices,
-            carbon_price=0.0, nox_price=0.0, plant_map=plant_map,
+            plant_dispatch,
+            zonal_prices,
+            fuel_prices,
+            carbon_price=0.0,
+            nox_price=0.0,
+            plant_map=plant_map,
         )
         annual = compute_plant_annual_summary(hourly, plant_map)
         eff = annual[annual["plant_code"] == 1].iloc[0]
@@ -224,9 +225,12 @@ class TestAnnualSummary(unittest.TestCase):
         hours = np.arange(len(dispatch_mw))
         plant_dispatch = pd.DataFrame(
             {
-                "plant_code": 1, "generator_id": "1", "hour": hours,
+                "plant_code": 1,
+                "generator_id": "1",
+                "hour": hours,
                 "dispatch_mw": np.asarray(dispatch_mw, dtype=float),
-                "bin_label": plant.bin_label, "zone": plant.zone,
+                "bin_label": plant.bin_label,
+                "zone": plant.zone,
             }
         )
         zonal_prices = pd.DataFrame(
@@ -236,9 +240,14 @@ class TestAnnualSummary(unittest.TestCase):
             {"fuel_type": "gas_cc", "hour": hours, "price_per_mmbtu": 3.0}
         )
         hourly = compute_plant_hourly_financials(
-            plant_dispatch, zonal_prices, fuel_prices,
-            carbon_price=0.0, nox_price=0.0, plant_map=[plant],
-            year=year, base_year=base_year,
+            plant_dispatch,
+            zonal_prices,
+            fuel_prices,
+            carbon_price=0.0,
+            nox_price=0.0,
+            plant_map=[plant],
+            year=year,
+            base_year=base_year,
         )
         return compute_plant_annual_summary(
             hourly, [plant], year=year, base_year=base_year
@@ -251,7 +260,7 @@ class TestAnnualSummary(unittest.TestCase):
     def test_discount_factor_compounds_over_ten_years(self):
         annual = self._annual(np.full(24, 50.0), year=2036, base_year=2026)
         self.assertAlmostEqual(
-            annual.iloc[0]["discount_factor"], 1.0 / 1.08 ** 10, places=6
+            annual.iloc[0]["discount_factor"], 1.0 / 1.08**10, places=6
         )
         self.assertAlmostEqual(annual.iloc[0]["discount_factor"], 0.46319, places=4)
 
@@ -337,15 +346,20 @@ class TestCompanySummary(unittest.TestCase):
     def test_portfolio_metrics_computed_after_aggregation(self):
         # 3 plants, 2 companies, plant 3 jointly owned A/B.
         plant_annual = self._plant_annual(
-            [1, 2, 3], [1000.0, 2000.0, 3000.0],
-            [100.0, 200.0, 300.0], [40.0, 80.0, 120.0],
+            [1, 2, 3],
+            [1000.0, 2000.0, 3000.0],
+            [100.0, 200.0, 300.0],
+            [40.0, 80.0, 120.0],
         )
         ownership = pd.DataFrame(
             {
                 "plant_code": [1, 2, 3, 3],
                 "generator_id": ["1", "1", "1", "1"],
                 "parent_company": [
-                    "Company A", "Company B", "Company A", "Company B",
+                    "Company A",
+                    "Company B",
+                    "Company A",
+                    "Company B",
                 ],
                 "percent_owned": [1.0, 1.0, 0.5, 0.5],
             }
@@ -360,12 +374,8 @@ class TestCompanySummary(unittest.TestCase):
         exp_gen = 100.0 + 0.5 * 300.0
         self.assertAlmostEqual(a["owned_revenue"], exp_rev)
         self.assertAlmostEqual(a["owned_generation_mwh"], exp_gen)
-        self.assertAlmostEqual(
-            a["portfolio_avg_price_captured"], exp_rev / exp_gen
-        )
-        self.assertEqual(
-            set(company_by_fuel["fuel_type"]), {"gas_cc"}
-        )
+        self.assertAlmostEqual(a["portfolio_avg_price_captured"], exp_rev / exp_gen)
+        self.assertEqual(set(company_by_fuel["fuel_type"]), {"gas_cc"})
 
 
 class TestTrajectoryNpv(unittest.TestCase):

@@ -51,8 +51,13 @@ from market_sim.policy.ira import (
 def _gen(unit_id, fuel_type, pmax, **kw):
     """Build a Generator with explicit, outage-free attributes for tests."""
     return Generator(
-        unit_id=unit_id, name=unit_id, zone="Z0", fuel_type=fuel_type,
-        pmax_mw=pmax, eford=kw.pop("eford", 0.0), **kw,
+        unit_id=unit_id,
+        name=unit_id,
+        zone="Z0",
+        fuel_type=fuel_type,
+        pmax_mw=pmax,
+        eford=kw.pop("eford", 0.0),
+        **kw,
     )
 
 
@@ -104,9 +109,7 @@ class TestH2TurbineMarginalCost(unittest.TestCase):
 
     def test_h2_ct_and_ccgt_marginal_cost(self):
         config = ScenarioConfig(iso="ERCOT")
-        ct = _make_new_generator(
-            "hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT"
-        )
+        ct = _make_new_generator("hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT")
         ccgt = _make_new_generator(
             "hydrogen_ccgt", 100.0, "Z0", 2035, 1, config, "ERCOT"
         )
@@ -118,9 +121,7 @@ class TestH2TurbineMarginalCost(unittest.TestCase):
 
     def test_ccgt_cheaper_than_ct(self):
         config = ScenarioConfig(iso="ERCOT")
-        ct = _make_new_generator(
-            "hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT"
-        )
+        ct = _make_new_generator("hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT")
         ccgt = _make_new_generator(
             "hydrogen_ccgt", 100.0, "Z0", 2035, 1, config, "ERCOT"
         )
@@ -129,9 +130,7 @@ class TestH2TurbineMarginalCost(unittest.TestCase):
 
     def test_nox_cost_enters_marginal_cost(self):
         config = ScenarioConfig(iso="ERCOT")
-        ct = _make_new_generator(
-            "hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT"
-        )
+        ct = _make_new_generator("hydrogen_ct", 100.0, "Z0", 2035, 0, config, "ERCOT")
         params = HYDROGEN_TURBINE_PARAMS["h2_ct"]
         mc = self._mc([ct], 11.0, nox_price=10000.0)
         expected = 9.5 * 11.0 + 4.0 + params["nox_rate"] * 10000.0
@@ -170,9 +169,7 @@ class TestCCUSMarginalCost(unittest.TestCase):
 
     def test_ccs_cheaper_at_high_carbon_price(self):
         # At $100/tCO2 capture avoids most of the carbon cost.
-        mc = self._mc(
-            [self.unabated, self.ccs], gas_price=4.0, carbon_price=100.0
-        )
+        mc = self._mc([self.unabated, self.ccs], gas_price=4.0, carbon_price=100.0)
         self.assertLess(mc[1, 0], mc[0, 0])
 
     def test_carbon_price_crossover_exists(self):
@@ -181,7 +178,8 @@ class TestCCUSMarginalCost(unittest.TestCase):
         crossover = None
         for carbon in range(0, 101):
             mc = self._mc(
-                [self.unabated, self.ccs], gas_price=4.0,
+                [self.unabated, self.ccs],
+                gas_price=4.0,
                 carbon_price=float(carbon),
             )
             if mc[1, 0] < mc[0, 0]:
@@ -262,9 +260,7 @@ class TestOffshoreWindDispatch(unittest.TestCase):
         gas = _gen("GAS", "gas_ct", 300.0)
         fleet = generators_to_fleet_arrays([ow, gas], ["Z0"], hours=hours)
         config = ScenarioConfig(iso="ERCOT")
-        inject_offshore_wind_availability(
-            fleet, self._onshore(hours), config, "ERCOT"
-        )
+        inject_offshore_wind_availability(fleet, self._onshore(hours), config, "ERCOT")
         avail = fleet.availability[0]
         self.assertGreater(avail.std(), 0.0)
         target = OFFSHORE_WIND_PARAMS["fixed_bottom"]["base_cf"]
@@ -280,9 +276,7 @@ class TestOffshoreWindDispatch(unittest.TestCase):
         gas = _gen("GAS", "gas_ct", 300.0)
         fleet = generators_to_fleet_arrays([ow, gas], ["Z0"], hours=hours)
         config = ScenarioConfig(iso="ERCOT")
-        inject_offshore_wind_availability(
-            fleet, self._onshore(hours), config, "ERCOT"
-        )
+        inject_offshore_wind_availability(fleet, self._onshore(hours), config, "ERCOT")
         mc = np.tile(np.array([[0.0], [70.0]]), (1, hours))
         demand = np.full((1, hours), 300.0)
         zeros = np.zeros((1, hours))
@@ -331,12 +325,14 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
     def test_h2_absent_before_available_year(self):
         config = ScenarioConfig(iso="ERCOT")  # h2_available_year = 2035
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 250.0), 2030, config, "ERCOT",
+            [],
+            np.full(8760, 250.0),
+            2030,
+            config,
+            "ERCOT",
             gas_price_per_mmbtu=3.5,
         )
-        self.assertFalse(
-            any("hydrogen" in g.fuel_type for g in fleet)
-        )
+        self.assertFalse(any("hydrogen" in g.fuel_type for g in fleet))
 
     def test_h2_builds_after_available_year_when_economic(self):
         # Year 2027: gas is expensive and carbon is high, so unabated gas
@@ -345,12 +341,15 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         # credit window with H2 turbines made available a year earlier.
         config = ScenarioConfig(iso="ERCOT", h2_available_year=2026)
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 100.0), 2027, config, "ERCOT",
-            gas_price_per_mmbtu=12.0, carbon_price=150.0,
+            [],
+            np.full(8760, 100.0),
+            2027,
+            config,
+            "ERCOT",
+            gas_price_per_mmbtu=12.0,
+            carbon_price=150.0,
         )
-        self.assertTrue(
-            any("hydrogen" in g.fuel_type for g in fleet)
-        )
+        self.assertTrue(any("hydrogen" in g.fuel_type for g in fleet))
         self.assertFalse(any(g.fuel_type == "gas_cc" for g in fleet))
 
     def test_ccus_needs_high_carbon_price(self):
@@ -364,31 +363,45 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
         )
         # Year 2032 is the last year the §45Q credit is available (OBBBA).
         cheap_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 67.5), 2032, config, "ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=0.0,
+            [],
+            np.full(8760, 67.5),
+            2032,
+            config,
+            "ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=0.0,
         )
-        self.assertFalse(
-            any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon)
-        )
+        self.assertFalse(any(g.fuel_type == "gas_cc_ccs" for g in cheap_carbon))
         dear_carbon, _ = apply_economic_new_entry(
-            [], np.full(8760, 67.5), 2032, config, "ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=200.0,
+            [],
+            np.full(8760, 67.5),
+            2032,
+            config,
+            "ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=200.0,
         )
-        self.assertTrue(
-            any(g.fuel_type == "gas_cc_ccs" for g in dear_carbon)
-        )
+        self.assertTrue(any(g.fuel_type == "gas_cc_ccs" for g in dear_carbon))
 
     def test_geothermal_absent_in_ercot_before_egs_year(self):
         config = ScenarioConfig(iso="ERCOT")  # egs_available_year = 2030
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 250.0), 2029, config, "ERCOT",
+            [],
+            np.full(8760, 250.0),
+            2029,
+            config,
+            "ERCOT",
         )
         self.assertFalse(any(g.fuel_type == "geothermal" for g in fleet))
 
     def test_geothermal_builds_in_ercot_after_egs_year(self):
         config = ScenarioConfig(iso="ERCOT")
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 250.0), 2035, config, "ERCOT",
+            [],
+            np.full(8760, 250.0),
+            2035,
+            config,
+            "ERCOT",
         )
         geo = [g for g in fleet if g.fuel_type == "geothermal"]
         self.assertEqual(len(geo), 1)
@@ -398,37 +411,38 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
     def test_offshore_wind_candidate_only_in_eligible_iso(self):
         # Offshore wind joins the candidate pool in CAISO but not ERCOT.
         config = ScenarioConfig()
-        self.assertIn(
-            "offshore_wind", _new_entry_candidates(2035, config, "CAISO")
-        )
-        self.assertNotIn(
-            "offshore_wind", _new_entry_candidates(2035, config, "ERCOT")
-        )
+        self.assertIn("offshore_wind", _new_entry_candidates(2035, config, "CAISO"))
+        self.assertNotIn("offshore_wind", _new_entry_candidates(2035, config, "ERCOT"))
 
     def test_offshore_wind_not_built_in_ineligible_iso(self):
         # ERCOT is not in offshore_wind_eligible_isos by default, so no
         # offshore-wind generator can enter there.
         config = ScenarioConfig(iso="ERCOT")
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 250.0), 2035, config, "ERCOT",
+            [],
+            np.full(8760, 250.0),
+            2035,
+            config,
+            "ERCOT",
         )
-        self.assertFalse(
-            any(g.fuel_type == "offshore_wind" for g in fleet)
-        )
+        self.assertFalse(any(g.fuel_type == "offshore_wind" for g in fleet))
 
     def test_offshore_wind_built_in_eligible_iso(self):
         # In CAISO, with geothermal pushed out and a strong offshore
         # resource (CF override), offshore wind clears the screen.
         config = ScenarioConfig(
-            iso="CAISO", egs_available_year=2099,
+            iso="CAISO",
+            egs_available_year=2099,
             offshore_wind_cf_override=0.75,
         )
         fleet, _ = apply_economic_new_entry(
-            [], np.full(8760, 250.0), 2035, config, "CAISO",
+            [],
+            np.full(8760, 250.0),
+            2035,
+            config,
+            "CAISO",
         )
-        self.assertTrue(
-            any(g.fuel_type == "offshore_wind" for g in fleet)
-        )
+        self.assertTrue(any(g.fuel_type == "offshore_wind" for g in fleet))
 
     def test_queue_caps_bind_total_additions(self):
         # Every technology is wildly profitable; total build still cannot
@@ -437,7 +451,11 @@ class TestEmergingCapacityEvolution(unittest.TestCase):
 
         config = ScenarioConfig(iso="CAISO")
         fleet, additions = apply_economic_new_entry(
-            [], np.full(8760, 500.0), 2035, config, "CAISO",
+            [],
+            np.full(8760, 500.0),
+            2035,
+            config,
+            "CAISO",
         )
         built = sum(g.pmax_mw for g in fleet)
         built += sum(mw for by in additions.values() for mw in by.values())
@@ -504,9 +522,7 @@ class TestElectrolyzerEfficiencyInterpolation(unittest.TestCase):
         config = ScenarioConfig()
         # 2030 sits 4/9 of the way from 2026 (0.65) to 2035 (0.72).
         expected = 0.65 + (0.72 - 0.65) * (2030 - 2026) / (2035 - 2026)
-        self.assertAlmostEqual(
-            get_electrolyzer_efficiency(2030, config), expected
-        )
+        self.assertAlmostEqual(get_electrolyzer_efficiency(2030, config), expected)
 
     def test_late_year_capped_at_2045_value(self):
         config = ScenarioConfig()

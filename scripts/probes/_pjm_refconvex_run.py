@@ -18,6 +18,7 @@ separate out-dirs (claude.md #45); merge with scripts/probes/_pjm_aswh_merge.py.
 
 Usage: python scripts/probes/_pjm_refconvex_run.py <year> <out_dir>
 """
+
 import json
 import sys
 from pathlib import Path
@@ -36,7 +37,10 @@ def main(year: int, out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     solve_and_persist(
-        [year], "PJM", 8760, _load_reference(),
+        [year],
+        "PJM",
+        8760,
+        _load_reference(),
         commitment=cf["commitment"],
         screen_coal=cf["commitment_screen_coal"],
         run_dir=out,
@@ -54,17 +58,19 @@ def main(year: int, out: Path) -> None:
         gas_monthly_actuals=cf["gas_monthly_actuals"],
         offer_curve_overrides=cf["offer_curve_overrides"],
         offer_curve_deltas=cf["offer_curve_deltas"],
-        curve_smoothing={"offer_curve_smoothing_n": None,
-                         "offer_curve_smoothing_exp": None,
-                         "offer_curve_smoothing_mid": 0.45},
-        priced_interchange=True,            # implied by the reference seam
+        curve_smoothing={
+            "offer_curve_smoothing_n": None,
+            "offer_curve_smoothing_exp": None,
+            "offer_curve_smoothing_mid": 0.45,
+        },
+        priced_interchange=True,  # implied by the reference seam
         reference_price_interface=True,
         as_reserve_withholding=cf.get("as_reserve_withholding", False),
         note=f"pjm_32_refconvex: keeper pjm_28 config + forecast-grade "
-             f"reference-price interchange seam with neighbor price-vs-load "
-             f"convexity (load_shape_exponent 1.63, self-derived from NYISO's "
-             f"own realized LMP; MISO/Carolinas adopt it pending own-LMP fetch) "
-             f"to self-limit the over-export, {year} only",
+        f"reference-price interchange seam with neighbor price-vs-load "
+        f"convexity (load_shape_exponent 1.63, self-derived from NYISO's "
+        f"own realized LMP; MISO/Carolinas adopt it pending own-LMP fetch) "
+        f"to self-limit the over-export, {year} only",
     )
     print(f"DONE {year} -> {out}")
 

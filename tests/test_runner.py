@@ -61,9 +61,10 @@ class TestRunScenarioIso(RunnerTestBase):
 
     def test_three_years_create_three_cache_files(self):
         config = ScenarioConfig(iso="ERCOT")
-        with patch.object(runner, "END_YEAR", 2028), patch.object(
-            runner, "solve_dispatch", side_effect=_fake_solve
-        ) as solve:
+        with (
+            patch.object(runner, "END_YEAR", 2028),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve) as solve,
+        ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
         # Two solves per simulated year (P0 base-cost, P1 bid-cost),
@@ -72,16 +73,15 @@ class TestRunScenarioIso(RunnerTestBase):
         for year in (2026, 2027, 2028):
             self.assertTrue(cache.is_cached("ERCOT", key, year))
 
-        parquets = sorted(
-            (cache.CACHE_ROOT / "ERCOT" / key).glob("year_*.parquet")
-        )
+        parquets = sorted((cache.CACHE_ROOT / "ERCOT" / key).glob("year_*.parquet"))
         self.assertEqual(len(parquets), 3)
 
     def test_rerun_skips_all_cached_years(self):
         config = ScenarioConfig(iso="ERCOT")
-        with patch.object(runner, "END_YEAR", 2028), patch.object(
-            runner, "solve_dispatch", side_effect=_fake_solve
-        ) as solve:
+        with (
+            patch.object(runner, "END_YEAR", 2028),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve) as solve,
+        ):
             runner.run_scenario_iso(config, "ERCOT")
             # Two solves (P0, P1) per year, 2026-2028.
             self.assertEqual(solve.call_count, 6)
@@ -93,8 +93,9 @@ class TestRunScenarioIso(RunnerTestBase):
 
     def test_iso_argument_overrides_config_iso(self):
         config = ScenarioConfig(iso="CAISO")
-        with patch.object(runner, "END_YEAR", 2026), patch.object(
-            runner, "solve_dispatch", side_effect=_fake_solve
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
@@ -109,17 +110,16 @@ class TestRunSweep(RunnerTestBase):
 
     def test_two_configs_create_two_cache_dirs(self):
         sweep = SweepDefinition(sweep={"carbon_price": [0.0, 50.0]})
-        with patch.object(runner, "END_YEAR", 2027), patch.object(
-            runner, "solve_dispatch", side_effect=_fake_solve
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             keys = runner.run_sweep(sweep, workers=1)
 
         self.assertEqual(len(keys), 2)
         self.assertEqual(len(set(keys)), 2)
 
-        cache_dirs = [
-            d for d in (cache.CACHE_ROOT / "ERCOT").iterdir() if d.is_dir()
-        ]
+        cache_dirs = [d for d in (cache.CACHE_ROOT / "ERCOT").iterdir() if d.is_dir()]
         self.assertEqual(len(cache_dirs), 2)
         self.assertEqual({d.name for d in cache_dirs}, set(keys))
 
@@ -185,9 +185,7 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         rec["bins_source"] = "synth"
         # A non-empty frame carrying the columns the runner's binned-set
         # filter reads, so the synthesized CAMPD path is taken.
-        return pd.DataFrame(
-            {"Plant_Code": [1], "Plant_Group": ["CC_REGULAR"]}
-        )
+        return pd.DataFrame({"Plant_Code": [1], "Plant_Group": ["CC_REGULAR"]})
 
     def fake_bins_to_fleet(*_a, **_k):
         rec["builder"] = "campd"
@@ -197,34 +195,34 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         rec["builder"] = "legacy"
         return []
 
-    def fake_fleet_arrays(_dispatch_fleet, _zone_names, *, hours, iso,
-                          config, load_shape, year=None):
+    def fake_fleet_arrays(
+        _dispatch_fleet, _zone_names, *, hours, iso, config, load_shape, year=None
+    ):
         rec["overlay"] = config.historic_outage_overlay
         raise _StopAfterFleetArrays
 
-    config = ScenarioConfig(
-        iso=iso, hours=8, historic_outage_overlay=historic_overlay
-    )
-    with patch.object(runner, "load_demand", side_effect=fake_demand), \
-            patch.object(runner, "load_renewable_profiles",
-                         side_effect=fake_renewables), \
-            patch.object(runner, "load_planned_additions", return_value=[]), \
-            patch.object(runner, "load_fleet_from_csv", return_value=[]), \
-            patch.object(runner, "build_default_storage", return_value=[]), \
-            patch.object(runner, "load_campd_bins",
-                         side_effect=fake_load_campd_bins), \
-            patch.object(runner, "fleet_to_bins",
-                         side_effect=fake_fleet_to_bins), \
-            patch.object(runner, "bins_to_fleet",
-                         side_effect=fake_bins_to_fleet), \
-            patch.object(runner, "aggregate_fleet",
-                         side_effect=fake_aggregate_fleet), \
-            patch.object(runner, "campd_tranche_fuel_frac", return_value=1.0), \
-            patch.object(runner, "split_coal_tranches",
-                         side_effect=lambda f, c: (list(f), [1.0] * len(f))), \
-            patch.object(runner, "apply_plant_emission_rates"), \
-            patch.object(runner, "generators_to_fleet_arrays",
-                         side_effect=fake_fleet_arrays):
+    config = ScenarioConfig(iso=iso, hours=8, historic_outage_overlay=historic_overlay)
+    with (
+        patch.object(runner, "load_demand", side_effect=fake_demand),
+        patch.object(runner, "load_renewable_profiles", side_effect=fake_renewables),
+        patch.object(runner, "load_planned_additions", return_value=[]),
+        patch.object(runner, "load_fleet_from_csv", return_value=[]),
+        patch.object(runner, "build_default_storage", return_value=[]),
+        patch.object(runner, "load_campd_bins", side_effect=fake_load_campd_bins),
+        patch.object(runner, "fleet_to_bins", side_effect=fake_fleet_to_bins),
+        patch.object(runner, "bins_to_fleet", side_effect=fake_bins_to_fleet),
+        patch.object(runner, "aggregate_fleet", side_effect=fake_aggregate_fleet),
+        patch.object(runner, "campd_tranche_fuel_frac", return_value=1.0),
+        patch.object(
+            runner,
+            "split_coal_tranches",
+            side_effect=lambda f, c: (list(f), [1.0] * len(f)),
+        ),
+        patch.object(runner, "apply_plant_emission_rates"),
+        patch.object(
+            runner, "generators_to_fleet_arrays", side_effect=fake_fleet_arrays
+        ),
+    ):
         try:
             runner.run_scenario_iso(config, iso)
         except _StopAfterFleetArrays:
@@ -262,6 +260,7 @@ class TestCampdBinningGate(unittest.TestCase):
 
     def test_gate_membership(self):
         from market_sim.config.constants import CAMPD_BINNING_ISOS
+
         for iso in ("ERCOT", "CAISO", "NEISO", "NYISO", "PJM"):
             self.assertIn(iso, CAMPD_BINNING_ISOS)
         for iso in ("MISO", "SPP"):
@@ -282,12 +281,8 @@ class TestHistoricOutageOverlayDefault(unittest.TestCase):
 
     def test_unlisted_iso_uses_config_flag(self):
         # An ISO absent from the registry keeps the explicit config flag.
-        self.assertTrue(
-            _trace_fleet_build("MISO", historic_overlay=True)["overlay"]
-        )
-        self.assertFalse(
-            _trace_fleet_build("MISO", historic_overlay=False)["overlay"]
-        )
+        self.assertTrue(_trace_fleet_build("MISO", historic_overlay=True)["overlay"])
+        self.assertFalse(_trace_fleet_build("MISO", historic_overlay=False)["overlay"])
 
 
 class TestDemandGrowth(unittest.TestCase):
@@ -310,7 +305,8 @@ class TestDemandGrowth(unittest.TestCase):
     def test_flat_override_when_no_structured_path(self):
         # An ISO/path with no structured rates falls back to the scalar.
         config = ScenarioConfig(
-            iso="ERCOT", demand_growth_path="nonexistent",
+            iso="ERCOT",
+            demand_growth_path="nonexistent",
             demand_growth_rate=0.07,
         )
         self.assertAlmostEqual(runner._get_growth_rate(config, 2028), 0.07)
@@ -325,17 +321,15 @@ class TestDemandGrowth(unittest.TestCase):
         base = np.full((1, 8), 100.0)
         # 2026: two near-rate years of growth (2024, 2025).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2026), base * 1.05 ** 2
+            runner._scale_demand(base, config, 2026), base * 1.05**2
         )
         # 2028: four years of the near rate (2024-2027).
         np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2028), base * 1.05 ** 4
+            runner._scale_demand(base, config, 2028), base * 1.05**4
         )
         # 2032: seven near years (2024-2030) then one long year (2031).
-        expected = base * 1.05 ** 7 * 1.025 ** 1
-        np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2032), expected
-        )
+        expected = base * 1.05**7 * 1.025**1
+        np.testing.assert_allclose(runner._scale_demand(base, config, 2032), expected)
 
     def test_scale_demand_backcast_year_is_unscaled(self):
         # A backcast solves the weather year itself: factor exactly 1.
@@ -343,9 +337,7 @@ class TestDemandGrowth(unittest.TestCase):
             iso="ERCOT", weather_year=2023, demand_growth_path="mid"
         )
         base = np.full((1, 8), 100.0)
-        np.testing.assert_allclose(
-            runner._scale_demand(base, config, 2023), base
-        )
+        np.testing.assert_allclose(runner._scale_demand(base, config, 2023), base)
 
 
 if __name__ == "__main__":

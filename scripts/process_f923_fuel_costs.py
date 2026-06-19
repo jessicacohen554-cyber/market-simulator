@@ -52,8 +52,18 @@ _PAGE_5_SHEET: str = "Page 5 Fuel Receipts and Costs"
 _PAGE_1_SHEET: str = "Page 1 Generation and Fuel Data"
 
 _MONTH_NAMES: tuple[str, ...] = (
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
 )
 
 # Columns we keep from the raw receipts sheet, normalised to short names.
@@ -102,10 +112,10 @@ _CENTS_PER_DOLLAR: float = 100.0
 _MIN_DOLLARS_PER_MMBTU: float = -10.0
 _MAX_DOLLARS_PER_MMBTU_DEFAULT: float = 200.0
 _MAX_DOLLARS_PER_MMBTU_BY_FUEL: dict[str, float] = {
-    "Natural Gas": 200.0,    # real max ~$118 (constrained winter)
-    "Petroleum": 120.0,      # real max ~$59 (spike-priced distillate)
+    "Natural Gas": 200.0,  # real max ~$118 (constrained winter)
+    "Petroleum": 120.0,  # real max ~$59 (spike-priced distillate)
     "Petroleum Coke": 60.0,  # a cheap residual; real max well under $30
-    "Coal": 60.0,            # real max ~$27
+    "Coal": 60.0,  # real max ~$27
 }
 
 # Fuel-group strings we keep. Everything else (waste fuels, biomass) is
@@ -127,14 +137,12 @@ def _extract_schedules_xlsx(zip_path: Path) -> bytes:
     """Return the bytes of the Schedules 2-3-4-5 workbook in ``zip_path``."""
     with zipfile.ZipFile(zip_path) as zf:
         members = [
-            name for name in zf.namelist()
-            if re.search(r"Schedules_2_3_4_5", name)
-            and name.lower().endswith(".xlsx")
+            name
+            for name in zf.namelist()
+            if re.search(r"Schedules_2_3_4_5", name) and name.lower().endswith(".xlsx")
         ]
         if not members:
-            raise FileNotFoundError(
-                f"No Schedules 2-3-4-5 workbook in {zip_path.name}"
-            )
+            raise FileNotFoundError(f"No Schedules 2-3-4-5 workbook in {zip_path.name}")
         return zf.read(members[0])
 
 
@@ -157,9 +165,7 @@ def _find_header_row(xlsx_bytes: bytes, sheet_name: str, key: str) -> int:
     for idx, value in enumerate(probe.iloc[:, 0]):
         if isinstance(value, str) and value.strip().upper() == target:
             return idx
-    raise ValueError(
-        f"Could not locate {key!r} header row on {sheet_name!r}"
-    )
+    raise ValueError(f"Could not locate {key!r} header row on {sheet_name!r}")
 
 
 def _load_receipts(zip_path: Path) -> pd.DataFrame:
@@ -211,9 +217,7 @@ def _load_generation(zip_path: Path, year: int) -> pd.DataFrame:
             df[f"Netgen\n{m}"], errors="coerce"
         )
         df = df.drop(columns=[f"Netgen\n{m}"])
-    df["netgen_annual_mwh"] = pd.to_numeric(
-        df["netgen_annual_mwh"], errors="coerce"
-    )
+    df["netgen_annual_mwh"] = pd.to_numeric(df["netgen_annual_mwh"], errors="coerce")
     df["year"] = year
     return df
 
@@ -256,8 +260,10 @@ def aggregate_monthly_fuel_costs(
     # per-fuel delivered-cost band so a single bad record cannot skew a
     # plant's quantity-weighted monthly cost or a nearby-plant average.
     dollars = df["fuel_cost_cents_per_mmbtu"] / _CENTS_PER_DOLLAR
-    ceiling = df["fuel_group"].map(_MAX_DOLLARS_PER_MMBTU_BY_FUEL).fillna(
-        _MAX_DOLLARS_PER_MMBTU_DEFAULT
+    ceiling = (
+        df["fuel_group"]
+        .map(_MAX_DOLLARS_PER_MMBTU_BY_FUEL)
+        .fillna(_MAX_DOLLARS_PER_MMBTU_DEFAULT)
     )
     n_before = len(df)
     df = df[(dollars >= _MIN_DOLLARS_PER_MMBTU) & (dollars <= ceiling)]
@@ -266,7 +272,8 @@ def aggregate_monthly_fuel_costs(
         logger.info(
             "dropped %d anomalous fuel receipts outside the per-fuel "
             "plausibility band (floor $%.0f/MMBtu)",
-            n_dropped, _MIN_DOLLARS_PER_MMBTU,
+            n_dropped,
+            _MIN_DOLLARS_PER_MMBTU,
         )
 
     if ba_code is not None:
@@ -302,10 +309,17 @@ def aggregate_monthly_fuel_costs(
     grouped["year"] = grouped["year"].astype(int)
     grouped["month"] = grouped["month"].astype(int)
     grouped["state"] = grouped["plant_id"].map(plant_state).fillna("")
-    return grouped[[
-        "year", "month", "plant_id", "state", "fuel_group",
-        "price_per_mmbtu", "quantity",
-    ]]
+    return grouped[
+        [
+            "year",
+            "month",
+            "plant_id",
+            "state",
+            "fuel_group",
+            "price_per_mmbtu",
+            "quantity",
+        ]
+    ]
 
 
 def aggregate_monthly_generation(
@@ -358,11 +372,12 @@ def main() -> None:
         help="Directory for the output parquet.",
     )
     parser.add_argument(
-        "--ba", default="",
+        "--ba",
+        default="",
         help="Balancing-authority filter (e.g. ERCO); blank (the default) "
-             "keeps every BA so multi-ISO runs (PJM, etc.) find their "
-             "plants. Pass --ba ERCO to reproduce the legacy ERCOT-only "
-             "table.",
+        "keeps every BA so multi-ISO runs (PJM, etc.) find their "
+        "plants. Pass --ba ERCO to reproduce the legacy ERCOT-only "
+        "table.",
     )
     args = parser.parse_args()
 
@@ -377,7 +392,10 @@ def main() -> None:
     costs.to_parquet(cost_path, index=False)
     logger.info(
         "wrote %s (%d plant-months across %d years, BA filter=%s)",
-        cost_path, len(costs), costs["year"].nunique(), ba or "ALL",
+        cost_path,
+        len(costs),
+        costs["year"].nunique(),
+        ba or "ALL",
     )
 
     generation = aggregate_monthly_generation(zips, ba_code=ba)
@@ -385,7 +403,10 @@ def main() -> None:
     generation.to_parquet(gen_path, index=False)
     logger.info(
         "wrote %s (%d plant-rows across %d years, BA filter=%s)",
-        gen_path, len(generation), generation["year"].nunique(), ba or "ALL",
+        gen_path,
+        len(generation),
+        generation["year"].nunique(),
+        ba or "ALL",
     )
 
 

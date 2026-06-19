@@ -117,7 +117,9 @@ def _localize(naive: pd.Series, tz: ZoneInfo, ambiguous=True) -> pd.Series:
     spring-forward hour forward.
     """
     s = pd.to_datetime(naive)
-    return s.dt.tz_localize(tz, ambiguous=ambiguous, nonexistent="shift_forward").dt.tz_convert("UTC")
+    return s.dt.tz_localize(
+        tz, ambiguous=ambiguous, nonexistent="shift_forward"
+    ).dt.tz_convert("UTC")
 
 
 def _frame(source: Path, n: int, **cols) -> pd.DataFrame:
@@ -218,7 +220,9 @@ def parse_nyiso_zip(path: Path) -> pd.DataFrame:
                         "hour_begin": hour_begin,
                         "lmp_usd_per_mwh": d["LBMP ($/MWHr)"],
                         "loss_usd_per_mwh": d["Marginal Cost Losses ($/MWHr)"],
-                        "congestion_usd_per_mwh": d["Marginal Cost Congestion ($/MWHr)"],
+                        "congestion_usd_per_mwh": d[
+                            "Marginal Cost Congestion ($/MWHr)"
+                        ],
                     }
                 )
             )
@@ -273,10 +277,18 @@ def parse_neiso_file(path: Path) -> pd.DataFrame:
                     market=market,
                     node=sheet,
                     zone=sheet,
-                    lmp_usd_per_mwh=pd.to_numeric(d[f"{prefix}_LMP"], errors="coerce").to_numpy(),
-                    energy_usd_per_mwh=pd.to_numeric(d[f"{prefix}_EC"], errors="coerce").to_numpy(),
-                    congestion_usd_per_mwh=pd.to_numeric(d[f"{prefix}_CC"], errors="coerce").to_numpy(),
-                    loss_usd_per_mwh=pd.to_numeric(d[f"{prefix}_MLC"], errors="coerce").to_numpy(),
+                    lmp_usd_per_mwh=pd.to_numeric(
+                        d[f"{prefix}_LMP"], errors="coerce"
+                    ).to_numpy(),
+                    energy_usd_per_mwh=pd.to_numeric(
+                        d[f"{prefix}_EC"], errors="coerce"
+                    ).to_numpy(),
+                    congestion_usd_per_mwh=pd.to_numeric(
+                        d[f"{prefix}_CC"], errors="coerce"
+                    ).to_numpy(),
+                    loss_usd_per_mwh=pd.to_numeric(
+                        d[f"{prefix}_MLC"], errors="coerce"
+                    ).to_numpy(),
                 )
             )
     if not frames:
@@ -295,9 +307,9 @@ def finalize(df: pd.DataFrame) -> pd.DataFrame:
     ``lmp_usd_per_mwh``), and derives ``_year`` from the local wall clock.
     """
     df = df.copy()
-    df["interval_start_utc"] = pd.to_datetime(df["interval_start_utc"], utc=True).astype(
-        "datetime64[ns, UTC]"
-    )
+    df["interval_start_utc"] = pd.to_datetime(
+        df["interval_start_utc"], utc=True
+    ).astype("datetime64[ns, UTC]")
     df["interval_start_local"] = pd.to_datetime(df["interval_start_local"]).astype(
         "datetime64[ns]"
     )
@@ -336,7 +348,12 @@ def write_all(df: pd.DataFrame) -> list[Path]:
         out_df = grp.drop(columns=["_source_file", "_year"]).reset_index(drop=True)
         out_df = out_df[list(SCHEMA_COLS)]
         path = write_clean(
-            out_df, "lmp", iso=str(iso), market=str(market), year=int(year), source=source
+            out_df,
+            "lmp",
+            iso=str(iso),
+            market=str(market),
+            year=int(year),
+            source=source,
         )
         validate_clean(path)
         written.append(path)

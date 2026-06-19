@@ -61,7 +61,10 @@ from market_sim.config.constants import (  # noqa: E402
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import CALIBRATION_DIR, PROCESSED_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
-    classes_for_fuel930, classify_plant, coal_code_to_class, fossil_classes,
+    classes_for_fuel930,
+    classify_plant,
+    coal_code_to_class,
+    fossil_classes,
 )
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
@@ -106,11 +109,32 @@ logger = logging.getLogger("calibration_full")
 _MWH_PER_TWH: float = 1.0e6
 _HOURS_PER_YEAR: int = 8760
 _DAYS_IN_MONTH: tuple[int, ...] = (
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    31,
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
 )
 _MONTH_NAMES: tuple[str, ...] = (
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
 )
 
 # Fuel codes that EIA-923 reports for coal-class units.
@@ -120,16 +144,12 @@ _GAS_CLASSES: tuple[str, ...] = classes_for_fuel930("gas")
 _COAL_CLASSES: tuple[str, ...] = classes_for_fuel930("coal")
 # CHP classes — reported in their own dedicated table and excluded from every
 # other comparison.
-_CHP_CLASSES: tuple[str, ...] = tuple(
-    c for c in _GAS_CLASSES if c.endswith("_CHP"))
-_NONCHP_GAS: tuple[str, ...] = tuple(
-    c for c in _GAS_CLASSES if not c.endswith("_CHP"))
+_CHP_CLASSES: tuple[str, ...] = tuple(c for c in _GAS_CLASSES if c.endswith("_CHP"))
+_NONCHP_GAS: tuple[str, ...] = tuple(c for c in _GAS_CLASSES if not c.endswith("_CHP"))
 # All thermal classes the [3b] / [4] tables iterate over. OTHER_FOSSIL holds the
 # genuinely-mixed gas-thermal plants pulled out of the clean CC/CT/ST classes by
 # apply_other_fossil_scoring (a scoring bucket only — dispatch is unchanged).
-_THERMAL_CLASSES: tuple[str, ...] = (
-    *_GAS_CLASSES, OTHER_FOSSIL_CLASS, *_COAL_CLASSES
-)
+_THERMAL_CLASSES: tuple[str, ...] = (*_GAS_CLASSES, OTHER_FOSSIL_CLASS, *_COAL_CLASSES)
 
 # Representative plants for the plant-level report. The user picks these
 # because they span every operational class the per-plant binning resolves
@@ -137,14 +157,14 @@ _THERMAL_CLASSES: tuple[str, ...] = (
 _PLANT_PANEL: tuple[tuple[int, str], ...] = (
     (60122, "Colorado Bend II"),
     (59812, "Wolf Hollow II"),
-    (3491,  "Handley"),
+    (3491, "Handley"),
     (55464, "Deer Park Energy Center"),
     (55327, "Baytown Energy Center"),
     (55545, "Hidalgo Energy Center"),
-    (298,   "Limestone (coal)"),
-    (3470,  "W A Parish (coal units 5-8)"),
-    (3504,  "Stryker Creek (gas steam)"),
-    (3492,  "Morgan Creek (CT peaker)"),
+    (298, "Limestone (coal)"),
+    (3470, "W A Parish (coal units 5-8)"),
+    (3504, "Stryker Creek (gas steam)"),
+    (3492, "Morgan Creek (CT peaker)"),
     (63688, "Topaz Generating (CT peaker)"),
 )
 
@@ -161,6 +181,7 @@ _CF_BAND_WIDTH: float = 0.10
 # ---------------------------------------------------------------------------
 # Classification helpers
 # ---------------------------------------------------------------------------
+
 
 def _coal_supply_class(plant_code: int, fuel_code: str = "") -> str:
     """Return the coal supply class (``COAL_BIT`` / ``COAL_WC`` /
@@ -216,9 +237,7 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
     return "OTHER"
 
 
-def _classify_f923(
-    fuel: str, pm: str, chp: bool, plant_id: int
-) -> str:
+def _classify_f923(fuel: str, pm: str, chp: bool, plant_id: int) -> str:
     """Bucket one EIA-923 Page-1 row into a model class.
 
     Thin wrapper over the canonical
@@ -274,9 +293,7 @@ def _hour_to_month(hours: int) -> np.ndarray:
 def _hourly_to_monthly(hourly_mw: np.ndarray) -> np.ndarray:
     """Return ``(12,) MWh`` for a length-8760 hourly MW array."""
     months = _hour_to_month(hourly_mw.shape[0])
-    return np.array(
-        [hourly_mw[months == m].sum() for m in range(1, 13)], dtype=float
-    )
+    return np.array([hourly_mw[months == m].sum() for m in range(1, 13)], dtype=float)
 
 
 def _pearson_r(model: np.ndarray, observed: np.ndarray) -> float:
@@ -306,8 +323,13 @@ def _print_table(rows: list[tuple]) -> None:
 # Persistence — build the parquet bundle from a solved dispatch
 # ---------------------------------------------------------------------------
 
+
 def _dispatch_frame(
-    year: int, pass_label: str, result, context, zone_names: list[str],
+    year: int,
+    pass_label: str,
+    result,
+    context,
+    zone_names: list[str],
     iso: str = "ERCOT",
     must_run: dict[str, np.ndarray] | None = None,
     oil_switch_mask: "np.ndarray | None" = None,
@@ -327,9 +349,7 @@ def _dispatch_frame(
     zones = list(context.zones)
     pgroups = list(getattr(context, "plant_groups", []) or [])
     is_ercot = iso == "ERCOT"
-    plant_codes = _plant_codes_from_unit_ids(
-        unit_ids, numeric_head=not is_ercot
-    )
+    plant_codes = _plant_codes_from_unit_ids(unit_ids, numeric_head=not is_ercot)
 
     klass = []
     supply = []
@@ -378,20 +398,25 @@ def _dispatch_frame(
         fuel_col = np.asarray(fuel_col, dtype=object)
         klass_col[flat] = "oil"
         fuel_col[flat] = "oil"
-    frames = [pd.DataFrame({
-        "unit_id": rep(unit_ids),
-        "plant_code": np.repeat(plant_codes.astype(np.int32), T),
-        "klass": klass_col,
-        "fuel": fuel_col,
-        "supply": rep(supply),
-        "zone": rep(zones),
-        "hour": hours,
-        "mw": disp.reshape(-1),
-        "lmp": prices[gen_zidx, :].reshape(-1),
-    })]
+    frames = [
+        pd.DataFrame(
+            {
+                "unit_id": rep(unit_ids),
+                "plant_code": np.repeat(plant_codes.astype(np.int32), T),
+                "klass": klass_col,
+                "fuel": fuel_col,
+                "supply": rep(supply),
+                "zone": rep(zones),
+                "hour": hours,
+                "mw": disp.reshape(-1),
+                "lmp": prices[gen_zidx, :].reshape(-1),
+            }
+        )
+    ]
 
     pseudo = [
-        ("wind", result.wind_dispatched), ("solar", result.solar_dispatched),
+        ("wind", result.wind_dispatched),
+        ("solar", result.solar_dispatched),
     ]
     # Injected must-run residual classes (biomass / hydro / OTHER), re-added per
     # zone so total model generation reconciles to load (they were netted out of
@@ -402,13 +427,21 @@ def _dispatch_frame(
         a = np.asarray(arr, dtype=np.float32)[:, :T]
         for z in range(a.shape[0]):
             zone = zone_names[z]
-            frames.append(pd.DataFrame({
-                "unit_id": f"{name.upper()}_{zone}",
-                "plant_code": np.int32(0),
-                "klass": name, "fuel": name, "supply": "",
-                "zone": zone, "hour": np.arange(T, dtype=np.int32), "mw": a[z],
-                "lmp": prices[z],
-            }))
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "unit_id": f"{name.upper()}_{zone}",
+                        "plant_code": np.int32(0),
+                        "klass": name,
+                        "fuel": name,
+                        "supply": "",
+                        "zone": zone,
+                        "hour": np.arange(T, dtype=np.int32),
+                        "mw": a[z],
+                        "lmp": prices[z],
+                    }
+                )
+            )
 
     df = pd.concat(frames, ignore_index=True)
     df.insert(0, "pass", pass_label)
@@ -421,7 +454,10 @@ def _dispatch_frame(
 
 
 def _system_frame(
-    year: int, pass_label: str, result, demand: np.ndarray,
+    year: int,
+    pass_label: str,
+    result,
+    demand: np.ndarray,
     zone_names: list[str],
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame."""
@@ -430,16 +466,27 @@ def _system_frame(
     n_zones, T = prices.shape
     rows = []
     for z in range(n_zones):
-        rows.append(pd.DataFrame({
-            "year": np.int16(year), "pass": pass_label, "zone": zone_names[z],
-            "hour": np.arange(T, dtype=np.int32),
-            "price": prices[z], "slack": slack[z], "demand": demand[z, :T],
-        }))
+        rows.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "pass": pass_label,
+                    "zone": zone_names[z],
+                    "hour": np.arange(T, dtype=np.int32),
+                    "price": prices[z],
+                    "slack": slack[z],
+                    "demand": demand[z, :T],
+                }
+            )
+        )
     return pd.concat(rows, ignore_index=True)
 
 
 def _storage_frame(
-    year: int, pass_label: str, result, storage_units,
+    year: int,
+    pass_label: str,
+    result,
+    storage_units,
 ) -> pd.DataFrame | None:
     """Return the long per-storage-unit hourly charge/discharge frame.
 
@@ -455,14 +502,16 @@ def _storage_frame(
     n_storage, T = dis.shape
     hours = np.tile(np.arange(T, dtype=np.int32), n_storage)
     rep = lambda vals: np.repeat(np.asarray(vals, dtype=object), T)  # noqa: E731
-    df = pd.DataFrame({
-        "unit_id": rep([u.unit_id for u in storage_units]),
-        "tech": rep([u.tech_name for u in storage_units]),
-        "zone": rep([u.zone for u in storage_units]),
-        "hour": hours,
-        "charge_mw": chg.reshape(-1),
-        "discharge_mw": dis.reshape(-1),
-    })
+    df = pd.DataFrame(
+        {
+            "unit_id": rep([u.unit_id for u in storage_units]),
+            "tech": rep([u.tech_name for u in storage_units]),
+            "zone": rep([u.zone for u in storage_units]),
+            "hour": hours,
+            "charge_mw": chg.reshape(-1),
+            "discharge_mw": dis.reshape(-1),
+        }
+    )
     df.insert(0, "pass", pass_label)
     df.insert(0, "year", np.int16(year))
     for col in ("pass", "unit_id", "tech", "zone"):
@@ -494,8 +543,11 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     # net generation = Demand + Interchange = load_demand with no gross-up.
     net_gen = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum(axis=0)
     series = {
-        "gas": fossil["gas"], "coal": fossil["coal"],
-        "wind": renew["wind"], "solar": renew["solar"], "net_gen": net_gen,
+        "gas": fossil["gas"],
+        "coal": fossil["coal"],
+        "wind": renew["wind"],
+        "solar": renew["solar"],
+        "net_gen": net_gen,
     }
     if nuclear is not None:
         series["nuclear"] = nuclear
@@ -504,10 +556,16 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     out = []
     for name, arr in series.items():
         a = np.asarray(arr, dtype=float)
-        out.append(pd.DataFrame({
-            "year": np.int16(year), "series": name,
-            "hour": np.arange(a.shape[0], dtype=np.int32), "mw": a,
-        }))
+        out.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "series": name,
+                    "hour": np.arange(a.shape[0], dtype=np.int32),
+                    "mw": a,
+                }
+            )
+        )
     return pd.concat(out, ignore_index=True)
 
 
@@ -523,10 +581,16 @@ def _eia930_frame_generic(year: int, iso: str) -> pd.DataFrame | None:
     out = []
     for name, arr in bench.items():
         a = np.asarray(arr, dtype=float)
-        out.append(pd.DataFrame({
-            "year": np.int16(year), "series": name,
-            "hour": np.arange(a.shape[0], dtype=np.int32), "mw": a,
-        }))
+        out.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "series": name,
+                    "hour": np.arange(a.shape[0], dtype=np.int32),
+                    "mw": a,
+                }
+            )
+        )
     return pd.concat(out, ignore_index=True)
 
 
@@ -566,7 +630,10 @@ def _fleet_group_by_code(
 
 
 def _campd_hourly_frame(
-    year: int, iso: str, factors: dict[int, float], hours: int,
+    year: int,
+    iso: str,
+    factors: dict[int, float],
+    hours: int,
 ) -> pd.DataFrame | None:
     """Return the per-plant 8760-hour CAMPD **net** generation frame.
 
@@ -584,12 +651,14 @@ def _campd_hourly_frame(
     if not net:
         return None
     frames = [
-        pd.DataFrame({
-            "year": np.int16(year),
-            "plant_id": np.int32(plant_id),
-            "hour": np.arange(series.shape[0], dtype=np.int32),
-            "net_mw": series.astype(np.float32),
-        })
+        pd.DataFrame(
+            {
+                "year": np.int16(year),
+                "plant_id": np.int32(plant_id),
+                "hour": np.arange(series.shape[0], dtype=np.int32),
+                "net_mw": series.astype(np.float32),
+            }
+        )
         for plant_id, series in net.items()
     ]
     return pd.concat(frames, ignore_index=True)
@@ -607,7 +676,9 @@ def _iso_plant_ids(iso: str) -> frozenset[int]:
 
 
 def _eia923_frame(
-    year: int, generation: pd.DataFrame, iso: str = "ERCOT",
+    year: int,
+    generation: pd.DataFrame,
+    iso: str = "ERCOT",
 ) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly.
 
@@ -669,7 +740,10 @@ def _pumped_storage_plant_ids() -> frozenset[int]:
 
 
 def _must_run_profiles(
-    year: int, generation: pd.DataFrame, iso: str, demand: np.ndarray,
+    year: int,
+    generation: pd.DataFrame,
+    iso: str,
+    demand: np.ndarray,
     skip_classes: frozenset[str] = frozenset(),
 ) -> dict[str, np.ndarray]:
     """Per-zone hourly must-run MW for each injected residual class.
@@ -686,12 +760,10 @@ def _must_run_profiles(
     n_zones, hours = demand.shape
     e923 = _eia923_frame(year, generation, iso=iso)
     months = _hour_months(year, hours)
-    hours_per_month = np.array(
-        [(months == m).sum() for m in range(1, 13)], dtype=float)
+    hours_per_month = np.array([(months == m).sum() for m in range(1, 13)], dtype=float)
     zone_tot = demand.sum(axis=1)
     grand = zone_tot.sum()
-    zone_share = (zone_tot / grand) if grand > 0 \
-        else np.full(n_zones, 1.0 / n_zones)
+    zone_share = (zone_tot / grand) if grand > 0 else np.full(n_zones, 1.0 / n_zones)
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     out: dict[str, np.ndarray] = {}
     for klass in _INJECTED_MUSTRUN_CLASSES:
@@ -707,8 +779,7 @@ def _must_run_profiles(
         if monthly.sum() <= 0:
             monthly = hours_per_month.copy()  # no monthly detail -> flat
         with np.errstate(divide="ignore", invalid="ignore"):
-            mw_by_month = np.where(
-                hours_per_month > 0, monthly / hours_per_month, 0.0)
+            mw_by_month = np.where(hours_per_month > 0, monthly / hours_per_month, 0.0)
         prof = mw_by_month[months - 1]
         psum = float(prof.sum())
         if psum <= 0:
@@ -730,8 +801,10 @@ _BACKFILL_GROUPS: frozenset[str] = frozenset(
 
 
 def _backfill_eia923_with_campd(
-    e923: pd.DataFrame, campd_year: pd.DataFrame | None,
-    group_by_code: dict[int, str], year: int,
+    e923: pd.DataFrame,
+    campd_year: pd.DataFrame | None,
+    group_by_code: dict[int, str],
+    year: int,
 ) -> pd.DataFrame:
     """Backfill EIA-923 with CAMPD net for model plants it under-reports.
 
@@ -762,8 +835,7 @@ def _backfill_eia923_with_campd(
         if float(cur["annual_mwh"].sum()) >= _CAMPD_BACKFILL_MIN_MWH:
             continue  # EIA-923 reports it adequately
         monthly = {
-            mcols[m]: float(net[month1[:len(net)] == m + 1].sum())
-            for m in range(12)
+            mcols[m]: float(net[month1[: len(net)] == m + 1].sum()) for m in range(12)
         }
         if len(cur):
             i = cur.index[0]
@@ -772,14 +844,23 @@ def _backfill_eia923_with_campd(
                 e923.at[i, k] = v
             n_repl += 1
         else:
-            add.append({
-                "year": np.int16(year), "plant_id": int(pid), "klass": klass,
-                "annual_mwh": float(net.sum()), **monthly,
-            })
+            add.append(
+                {
+                    "year": np.int16(year),
+                    "plant_id": int(pid),
+                    "klass": klass,
+                    "annual_mwh": float(net.sum()),
+                    **monthly,
+                }
+            )
     if add or n_repl:
         logger.info(
             "EIA-923 %d: CAMPD-backfilled %d under-reported plants "
-            "(%d replaced, %d added)", year, n_repl + len(add), n_repl, len(add),
+            "(%d replaced, %d added)",
+            year,
+            n_repl + len(add),
+            n_repl,
+            len(add),
         )
     if add:
         e923 = pd.concat([e923, pd.DataFrame(add)], ignore_index=True)
@@ -801,7 +882,9 @@ _EIA923_VINTAGE_COMPLETENESS_FRACTION: float = 0.90
 
 
 def _e930_series_annual_monthly(
-    e930: pd.DataFrame | None, series: str, year: int,
+    e930: pd.DataFrame | None,
+    series: str,
+    year: int,
 ) -> tuple[float, list[float]]:
     """Return ``(annual_mwh, [m01..m12])`` for one EIA-930 long-format series."""
     if e930 is None:
@@ -811,16 +894,16 @@ def _e930_series_annual_monthly(
         return 0.0, [0.0] * 12
     arr = sub.sort_values("hour")["mw"].to_numpy(dtype=float)
     months = _hour_months(year, len(arr))
-    monthly = [
-        float(np.clip(arr[months == m], 0.0, None).sum())
-        for m in range(1, 13)
-    ]
+    monthly = [float(np.clip(arr[months == m], 0.0, None).sum()) for m in range(1, 13)]
     return float(sum(monthly)), monthly
 
 
 def _replace_class_total(
-    e923: pd.DataFrame, klass: str, year: int,
-    annual: float, monthly: list[float],
+    e923: pd.DataFrame,
+    klass: str,
+    year: int,
+    annual: float,
+    monthly: list[float],
 ) -> pd.DataFrame:
     """Drop ``klass``'s per-plant rows and insert one synthetic class-total row.
 
@@ -832,7 +915,9 @@ def _replace_class_total(
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     kept = e923[e923["klass"] != klass].copy()
     row = {
-        "year": np.int16(year), "plant_id": 0, "klass": klass,
+        "year": np.int16(year),
+        "plant_id": 0,
+        "klass": klass,
         "annual_mwh": float(annual),
         **{c: float(monthly[i]) for i, c in enumerate(mcols)},
     }
@@ -840,7 +925,10 @@ def _replace_class_total(
 
 
 def _vintage_completeness(
-    year: int, generation: pd.DataFrame, iso: str, e930: pd.DataFrame | None,
+    year: int,
+    generation: pd.DataFrame,
+    iso: str,
+    e930: pd.DataFrame | None,
 ) -> float:
     """ISO EIA-923 total net gen as a fraction of the EIA-930 grid net_gen.
 
@@ -859,8 +947,11 @@ def _vintage_completeness(
 
 
 def _backfill_renewables_eia930(
-    e923: pd.DataFrame, year: int, iso: str,
-    generation: pd.DataFrame, e930: pd.DataFrame | None,
+    e923: pd.DataFrame,
+    year: int,
+    iso: str,
+    generation: pd.DataFrame,
+    e930: pd.DataFrame | None,
 ) -> pd.DataFrame:
     """Source under-counted renewables from EIA-930 and biomass from a prior year.
 
@@ -891,8 +982,11 @@ def _backfill_renewables_eia930(
         if cur < _EIA923_RENEWABLE_COMPLETENESS_FRACTION * ann930:
             logger.info(
                 "EIA-923 %d %s %.2f TWh under-counts EIA-930 %.2f TWh; "
-                "using EIA-930 grid total", year, klass,
-                cur / _MWH_PER_TWH, ann930 / _MWH_PER_TWH,
+                "using EIA-930 grid total",
+                year,
+                klass,
+                cur / _MWH_PER_TWH,
+                ann930 / _MWH_PER_TWH,
             )
             e923 = _replace_class_total(e923, klass, year, ann930, mon930)
 
@@ -908,35 +1002,48 @@ def _backfill_renewables_eia930(
             prior_mon = prior_bio[mcols].sum().to_numpy(dtype=float)
             psum = float(prior_mon.sum())
             monthly = (
-                (prior_mon * (est / psum)).tolist() if psum > 0
-                else [est / 12.0] * 12
+                (prior_mon * (est / psum)).tolist() if psum > 0 else [est / 12.0] * 12
             )
             logger.info(
                 "EIA-923 %d biomass %.2f TWh incomplete (vintage %.0f%%); "
                 "carrying %d biomass %.2f TWh x completeness -> %.2f TWh",
-                year, cur_bio / _MWH_PER_TWH, completeness * 100.0,
-                year - 1, prior_ann / _MWH_PER_TWH, est / _MWH_PER_TWH,
+                year,
+                cur_bio / _MWH_PER_TWH,
+                completeness * 100.0,
+                year - 1,
+                prior_ann / _MWH_PER_TWH,
+                est / _MWH_PER_TWH,
             )
             e923 = _replace_class_total(e923, "biomass", year, est, monthly)
     return e923
 
 
 def _benchmark_eia923_frame(
-    year: int, generation: pd.DataFrame, iso: str,
-    campd_year: pd.DataFrame | None, group_by_code: dict[int, str],
+    year: int,
+    generation: pd.DataFrame,
+    iso: str,
+    campd_year: pd.DataFrame | None,
+    group_by_code: dict[int, str],
     e930: pd.DataFrame | None,
 ) -> pd.DataFrame:
     """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
     EIA-930 renewable / prior-year biomass repair for incomplete vintages.
     """
     e923 = _backfill_eia923_with_campd(
-        _eia923_frame(year, generation, iso), campd_year, group_by_code, year,
+        _eia923_frame(year, generation, iso),
+        campd_year,
+        group_by_code,
+        year,
     )
     return _backfill_renewables_eia930(e923, year, iso, generation, e930)
 
 
 def _btm_frame(
-    year: int, pass_label: str, result, context, generation: pd.DataFrame,
+    year: int,
+    pass_label: str,
+    result,
+    context,
+    generation: pd.DataFrame,
     btm_backfill_year: int | None = None,
     campd_active: set[int] | None = None,
 ) -> pd.DataFrame:
@@ -963,9 +1070,7 @@ def _btm_frame(
     for g in range(dispatch.shape[0]):
         pc = int(plant_codes[g])
         if pc > 0:
-            grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(
-                dispatch[g].sum()
-            )
+            grid_by_plant[pc] = grid_by_plant.get(pc, 0.0) + float(dispatch[g].sum())
     # The EIA-923 bins carry the 923-dominant class for the year, so the bin's
     # class is what the plant actually burned (no curated drift).
     bins = load_campd_bins(ScenarioConfig().campd_bins_path, year=year)
@@ -990,12 +1095,13 @@ def _btm_frame(
         donor["klass"] = [
             _classify_f923(f, pm, str(c).upper().startswith("Y"), pid)
             for f, pm, c, pid in zip(
-                donor["fuel_type"], donor["prime_mover"], donor["chp"],
+                donor["fuel_type"],
+                donor["prime_mover"],
+                donor["chp"],
                 donor["plant_id"],
             )
         ]
-        donor_total = donor.groupby(
-            ["plant_id", "klass"])["netgen_annual_mwh"].sum()
+        donor_total = donor.groupby(["plant_id", "klass"])["netgen_annual_mwh"].sum()
         for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"]):
             code = int(code)
             if total_by_plant.get(code, 0.0) > 0.0:
@@ -1008,26 +1114,38 @@ def _btm_frame(
                 logging.info(
                     "BTM 923 backfill %s: plant %s %s carries %s class "
                     "netgen %.0f MWh (missing from the %s vintage, CAMPD "
-                    "active)", year, code, grp, btm_backfill_year, carried,
+                    "active)",
+                    year,
+                    code,
+                    grp,
+                    btm_backfill_year,
+                    carried,
                     year,
                 )
     mr = compute_must_run_emissions(
-        bins, year, total_gen_by_plant=total_by_plant,
+        bins,
+        year,
+        total_gen_by_plant=total_by_plant,
         grid_gen_by_plant=grid_by_plant,
     )
     if mr.empty:
         return pd.DataFrame(columns=["year", "pass", "klass", "btm_twh"])
     by_class = mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
-    return pd.DataFrame({
-        "year": np.int16(year), "pass": pass_label,
-        "klass": by_class.index, "btm_twh": by_class.to_numpy(),
-    })
+    return pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "pass": pass_label,
+            "klass": by_class.index,
+            "btm_twh": by_class.to_numpy(),
+        }
+    )
 
 
 def _highspy_version() -> str:
     """Return the installed highspy version, or '' if unavailable."""
     try:
         from importlib.metadata import version
+
         return version("highspy")
     except Exception:
         return ""
@@ -1051,8 +1169,10 @@ def _git_sha() -> str:
     """Return the current git short SHA, or '' if unavailable."""
     try:
         return subprocess.check_output(
-            ["git", "rev-parse", "--short", "HEAD"], cwd=REPO,
-            text=True, stderr=subprocess.DEVNULL,
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=REPO,
+            text=True,
+            stderr=subprocess.DEVNULL,
         ).strip()
     except Exception:
         return ""
@@ -1062,7 +1182,10 @@ def _git(*args: str) -> str:
     """Run a git command in REPO and return stripped stdout (or '')."""
     try:
         return subprocess.check_output(
-            ["git", *args], cwd=REPO, text=True, stderr=subprocess.DEVNULL,
+            ["git", *args],
+            cwd=REPO,
+            text=True,
+            stderr=subprocess.DEVNULL,
         ).strip()
     except Exception:
         return ""
@@ -1092,7 +1215,9 @@ def _git_state() -> dict:
     }
 
 
-def _parse_offer_curve_json(raw: str | None, flag: str = "--offer-curve-json") -> dict | None:
+def _parse_offer_curve_json(
+    raw: str | None, flag: str = "--offer-curve-json"
+) -> dict | None:
     """Parse an offer-curve JSON argument, failing fast on bad input.
 
     Accepts an inline JSON object, a path to a ``.json`` file, or ``None``.
@@ -1114,11 +1239,13 @@ def _parse_offer_curve_json(raw: str | None, flag: str = "--offer-curve-json") -
     except json.JSONDecodeError as exc:
         raise SystemExit(
             f"{flag}: invalid JSON ({exc}). Expected an object "
-            'like {"CT_PEAKER":{"committed":1.40,"econ_low":1.27}}.')
+            'like {"CT_PEAKER":{"committed":1.40,"econ_low":1.27}}.'
+        )
     if not isinstance(parsed, dict):
         raise SystemExit(
             f"{flag}: top level must be a JSON object keyed by "
-            f"fleet class, got {type(parsed).__name__}.")
+            f"fleet class, got {type(parsed).__name__}."
+        )
     valid_classes = set(fossil_classes())
     for cls, bands in parsed.items():
         # Fail loudly on a class key the offer-curve router will never read
@@ -1128,16 +1255,16 @@ def _parse_offer_curve_json(raw: str | None, flag: str = "--offer-curve-json") -
             raise SystemExit(
                 f"{flag}: unknown fleet class {cls!r} — the offer-curve "
                 f"router only reads {sorted(valid_classes)}. (Sub-bituminous "
-                "coal is COAL_PRB; COAL_SUB no longer exists.)")
+                "coal is COAL_PRB; COAL_SUB no longer exists.)"
+            )
         if not isinstance(bands, dict):
             raise SystemExit(
                 f"{flag}: value for {cls!r} must be an object of "
-                f"band->number, got {type(bands).__name__}.")
+                f"band->number, got {type(bands).__name__}."
+            )
         for band, val in bands.items():
             if not isinstance(val, (int, float)) or isinstance(val, bool):
-                raise SystemExit(
-                    f"{flag}: {cls}.{band} must be a number, got "
-                    f"{val!r}.")
+                raise SystemExit(f"{flag}: {cls}.{band} must be a number, got {val!r}.")
     return parsed
 
 
@@ -1158,18 +1285,34 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
         "git": git,
         "model_changes_note": note,
         "calibration_flags": {
-            k: meta.get(k) for k in (
-                "iso", "years", "hours", "passes", "commitment",
-                "commitment_screen_coal", "gas_prices", "outage_source",
-                "coal_lignite_mustrun", "coal_prb_mustrun",
-                "coal_prb_passthrough", "coal_prb_passthrough_sigmoid",
-                "coal_mustrun_per_plant", "ct_mustrun_per_plant",
-                "ct_mustrun_floor_frac", "coal_drop_pof",
-                "coal_prb_passthrough_tiered", "coal_prb_sigmoid_overrides",
-                "coal_bit_passthrough_sigmoid", "coal_bit_sigmoid_overrides",
+            k: meta.get(k)
+            for k in (
+                "iso",
+                "years",
+                "hours",
+                "passes",
+                "commitment",
+                "commitment_screen_coal",
+                "gas_prices",
+                "outage_source",
+                "coal_lignite_mustrun",
+                "coal_prb_mustrun",
+                "coal_prb_passthrough",
+                "coal_prb_passthrough_sigmoid",
+                "coal_mustrun_per_plant",
+                "ct_mustrun_per_plant",
+                "ct_mustrun_floor_frac",
+                "coal_drop_pof",
+                "coal_prb_passthrough_tiered",
+                "coal_prb_sigmoid_overrides",
+                "coal_bit_passthrough_sigmoid",
+                "coal_bit_sigmoid_overrides",
                 "coal_plant_monthly_pricing",
-                "td_loss_factor", "offer_curve_overrides",
-                "offer_curve_deltas", "priced_interchange", "git_sha",
+                "td_loss_factor",
+                "offer_curve_overrides",
+                "offer_curve_deltas",
+                "priced_interchange",
+                "git_sha",
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
@@ -1184,8 +1327,13 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
 
 
 def solve_and_persist(
-    years: list[int], iso: str, hours: int, reference: dict,
-    commitment: bool, screen_coal: bool, run_dir: Path,
+    years: list[int],
+    iso: str,
+    hours: int,
+    reference: dict,
+    commitment: bool,
+    screen_coal: bool,
+    run_dir: Path,
     coal_lignite_mustrun: float | None = None,
     coal_prb_mustrun: float | None = None,
     coal_prb_passthrough: float = 1.0,
@@ -1259,10 +1407,9 @@ def solve_and_persist(
     if is_ercot:
         from market_sim.config.scenarios import ScenarioConfig
         from market_sim.data.fleet import load_campd_bins
+
         _bins = load_campd_bins(ScenarioConfig().campd_bins_path)
-        group_by_code = dict(
-            zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"])
-        )
+        group_by_code = dict(zip(_bins["Plant_Code"].astype(int), _bins["Plant_Group"]))
     system_frames, eia930_frames, eia923_frames, btm_frames = [], [], [], []
     campd_frames: list[pd.DataFrame] = []
     storage_frames: list[pd.DataFrame] = []
@@ -1276,7 +1423,10 @@ def solve_and_persist(
             group_by_code = _fleet_group_by_code(iso, iso_config, year)
         cfg = _calibration_config(year, iso, hours, gas_price)
         demand = load_demand(
-            iso, year, iso_config, td_loss_factor=cfg.td_loss_factor,
+            iso,
+            year,
+            iso_config,
+            td_loss_factor=cfg.td_loss_factor,
             include_interchange=not priced_interchange,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
@@ -1289,19 +1439,29 @@ def solve_and_persist(
         # ISO keeps biomass as raw LP units. Hydro is an LP resource for all
         # ISOs (budget hydro + pumped storage), never injected.
         must_run = _must_run_profiles(
-            year, generation, iso, demand,
+            year,
+            generation,
+            iso,
+            demand,
             skip_classes=frozenset() if is_ercot else frozenset({"biomass"}),
         )
-        must_run_total = (
-            np.sum(list(must_run.values()), axis=0) if must_run else None
-        )
+        must_run_total = np.sum(list(must_run.values()), axis=0) if must_run else None
         logger.info(
             "solving %s %d (hours=%d, Henry Hub=$%.2f/MMBtu, commitment=%s)",
-            iso, year, hours, gas_price, commitment,
+            iso,
+            year,
+            hours,
+            gas_price,
+            commitment,
         )
         result, context, result_p1, p2_state = run_year(
-            year, iso, hours, gas_price, ttc_overrides={},
-            commitment_enabled=commitment, commitment_screen_coal=screen_coal,
+            year,
+            iso,
+            hours,
+            gas_price,
+            ttc_overrides={},
+            commitment_enabled=commitment,
+            commitment_screen_coal=screen_coal,
             coal_lignite_mustrun=coal_lignite_mustrun,
             coal_prb_mustrun=coal_prb_mustrun,
             coal_prb_passthrough=coal_prb_passthrough,
@@ -1355,7 +1515,8 @@ def solve_and_persist(
         # it depends only on the year, not the solve result.
         campd_year = (
             _campd_hourly_frame(year, iso, parasitic_factors, hours)
-            if has_campd else None
+            if has_campd
+            else None
         )
         campd_active: set[int] | None = None
         if campd_year is not None:
@@ -1365,24 +1526,27 @@ def solve_and_persist(
         for label, res in labelled:
             passes_seen.add(label)
             _dispatch_frame(
-                year, label, res, context, zone_names, iso=iso,
+                year,
+                label,
+                res,
+                context,
+                zone_names,
+                iso=iso,
                 must_run=must_run,
                 oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
-            ).to_parquet(
-                run_dir / "dispatch" / f"{year}_{label}.parquet", index=False
-            )
-            system_frames.append(
-                _system_frame(year, label, res, demand, zone_names)
-            )
-            storage_frame = _storage_frame(
-                year, label, res, p2_state["storage_units"]
-            )
+            ).to_parquet(run_dir / "dispatch" / f"{year}_{label}.parquet", index=False)
+            system_frames.append(_system_frame(year, label, res, demand, zone_names))
+            storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
             if is_ercot:
                 btm_frames.append(
                     _btm_frame(
-                        year, label, res, context, generation,
+                        year,
+                        label,
+                        res,
+                        context,
+                        generation,
                         btm_backfill_year=btm_backfill_year,
                         campd_active=campd_active,
                     )
@@ -1394,7 +1558,12 @@ def solve_and_persist(
         if has_campd:
             eia923_frames.append(
                 _benchmark_eia923_frame(
-                    year, generation, iso, campd_year, group_by_code, e930,
+                    year,
+                    generation,
+                    iso,
+                    campd_year,
+                    group_by_code,
+                    e930,
                 )
             )
             if campd_year is not None:
@@ -1439,9 +1608,13 @@ def solve_and_persist(
         )
     meta = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "iso": iso, "years": years, "hours": hours,
-        "passes": sorted(passes_seen), "commitment": commitment,
-        "commitment_screen_coal": screen_coal, "gas_prices": gas_prices,
+        "iso": iso,
+        "years": years,
+        "hours": hours,
+        "passes": sorted(passes_seen),
+        "commitment": commitment,
+        "commitment_screen_coal": screen_coal,
+        "gas_prices": gas_prices,
         "coal_lignite_mustrun": coal_lignite_mustrun,
         "coal_prb_mustrun": coal_prb_mustrun,
         "coal_prb_passthrough": coal_prb_passthrough,
@@ -1502,12 +1675,17 @@ def solve_and_persist(
         # bundle can be traced to a solver upgrade.
         "highspy_version": _highspy_version(),
     }
-    (run_dir / "meta.json").write_text(json.dumps(meta, indent=2, default=_json_default))
+    (run_dir / "meta.json").write_text(
+        json.dumps(meta, indent=2, default=_json_default)
+    )
     # Rebuild the recorded config WITH the same overrides + deltas applied, so
     # run_config.json's scenario_config.offer_curve_by_group is the exact
     # merged curve the LP solved against (not the bare defaults).
     recorded_cfg = _calibration_config(
-        years[0], iso, hours, gas_prices[years[0]],
+        years[0],
+        iso,
+        hours,
+        gas_prices[years[0]],
         commitment_screen_coal=screen_coal,
         coal_prb_passthrough=coal_prb_passthrough,
         outage_source=outage_source,
@@ -1530,16 +1708,18 @@ def solve_and_persist(
     )
     if prb_overrides:
         recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in prb_overrides.items() if v is not None})
+            **{k: v for k, v in prb_overrides.items() if v is not None}
+        )
     if coal_bit_sigmoid:
-        recorded_cfg = recorded_cfg.with_overrides(
-            coal_bit_passthrough_sigmoid=True)
+        recorded_cfg = recorded_cfg.with_overrides(coal_bit_passthrough_sigmoid=True)
     if bit_overrides:
         recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in bit_overrides.items() if v is not None})
+            **{k: v for k, v in bit_overrides.items() if v is not None}
+        )
     if plant_tranche_config:
         recorded_cfg = recorded_cfg.with_overrides(
-            plant_tranche_config_path=plant_tranche_config)
+            plant_tranche_config_path=plant_tranche_config
+        )
     if storage_daily_cycling:
         recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
     if as_reserve_withholding:
@@ -1547,56 +1727,61 @@ def solve_and_persist(
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if ercot_load_resource_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_load_resource_reserve=True)
+        recorded_cfg = recorded_cfg.with_overrides(ercot_load_resource_reserve=True)
     if ercot_storage_as_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_storage_as_reserve=True,
-            ercot_storage_as_reserve_from_year=int(
-                ercot_storage_as_reserve_from_year))
+            ercot_storage_as_reserve_from_year=int(ercot_storage_as_reserve_from_year),
+        )
     if as_reserve_formula:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
         recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
     if battery_dispatch_adder:
         recorded_cfg = recorded_cfg.with_overrides(
-            battery_dispatch_adder=battery_dispatch_adder)
+            battery_dispatch_adder=battery_dispatch_adder
+        )
     if gas_offer_curve:
         recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
     if gas_monthly_actuals:
         recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
     if curve_smoothing:
         recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in curve_smoothing.items() if v is not None})
+            **{k: v for k, v in curve_smoothing.items() if v is not None}
+        )
     if cc_derate_from_top:
-        recorded_cfg = recorded_cfg.with_overrides(
-            cc_outage_derate_from_top=True)
+        recorded_cfg = recorded_cfg.with_overrides(cc_outage_derate_from_top=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
         recorded_cfg = recorded_cfg.with_overrides(
-            interchange_shaping=True, interchange_shaping_export_only=True)
+            interchange_shaping=True, interchange_shaping_export_only=True
+        )
     if reference_price_interface:
-        recorded_cfg = recorded_cfg.with_overrides(
-            reference_price_interface=True)
+        recorded_cfg = recorded_cfg.with_overrides(reference_price_interface=True)
     # Tri-state floor / negative-offer overrides — mirror run_year so
     # run_config.json records what the LP solved with (None = the per-ISO base
     # default baked in _calibration_config: CAISO floor+negative ON at 0.80).
     if negative_renewable_offers is not None:
         recorded_cfg = recorded_cfg.with_overrides(
-            negative_renewable_offers=negative_renewable_offers)
+            negative_renewable_offers=negative_renewable_offers
+        )
     if caiso_gas_commitment_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(
-            caiso_gas_commitment_floor=caiso_gas_commitment_floor)
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor
+        )
     if caiso_gas_floor_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
-            caiso_gas_floor_frac=caiso_gas_floor_frac)
+            caiso_gas_floor_frac=caiso_gas_floor_frac
+        )
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
-            caiso_import_hub_prices=caiso_import_hub_prices)
+            caiso_import_hub_prices=caiso_import_hub_prices
+        )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
-            gas_hub_basis_overlay=gas_hub_basis_overlay)
+            gas_hub_basis_overlay=gas_hub_basis_overlay
+        )
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -1606,11 +1791,14 @@ def solve_and_persist(
 # Report — computed entirely from the persisted bundle
 # ---------------------------------------------------------------------------
 
+
 def _class_hourly(dispatch: pd.DataFrame) -> dict[str, np.ndarray]:
     """Return ``{class: (T,) MW}`` from a year-pass dispatch frame."""
     piv = (
-        dispatch.groupby(["klass", "hour"], observed=True)["mw"].sum()
-        .unstack("klass", fill_value=0.0).sort_index()
+        dispatch.groupby(["klass", "hour"], observed=True)["mw"]
+        .sum()
+        .unstack("klass", fill_value=0.0)
+        .sort_index()
     )
     return {cls: piv[cls].to_numpy(dtype=float) for cls in piv.columns}
 
@@ -1630,8 +1818,10 @@ def _e923_monthly(e923: pd.DataFrame) -> dict[str, np.ndarray]:
 
 def _print_chp(year, model_twh, btm, e923_annual) -> float:
     """[1] The one table where CHP appears. Returns CHP grid-delivered TWh."""
-    print(f"\n  [1] CHP — {year}  (model grid LP + behind-meter must-run "
-          "vs EIA-923 total)")
+    print(
+        f"\n  [1] CHP — {year}  (model grid LP + behind-meter must-run "
+        "vs EIA-923 total)"
+    )
     rows = [("class", "grid LP", "BTM-MR", "model tot", "EIA-923", "diff %")]
     tg = tb = te = 0.0
     for cls in _CHP_CLASSES:
@@ -1640,22 +1830,45 @@ def _print_chp(year, model_twh, btm, e923_annual) -> float:
         m = grid + b
         e = e923_annual.get(cls, 0.0)
         diff = 100.0 * (m - e) / e if e else float("nan")
-        rows.append((cls, f"{grid:7.2f}", f"{b:6.2f}", f"{m:8.2f}",
-                     f"{e:7.2f}", f"{diff:+6.1f}" if e else "    —"))
+        rows.append(
+            (
+                cls,
+                f"{grid:7.2f}",
+                f"{b:6.2f}",
+                f"{m:8.2f}",
+                f"{e:7.2f}",
+                f"{diff:+6.1f}" if e else "    —",
+            )
+        )
         tg += grid
         tb += b
         te += e
     tm = tg + tb
-    rows.append(("TOTAL", f"{tg:7.2f}", f"{tb:6.2f}", f"{tm:8.2f}",
-                 f"{te:7.2f}", f"{100.0 * (tm - te) / te:+6.1f}" if te else "—"))
+    rows.append(
+        (
+            "TOTAL",
+            f"{tg:7.2f}",
+            f"{tb:6.2f}",
+            f"{tm:8.2f}",
+            f"{te:7.2f}",
+            f"{100.0 * (tm - te) / te:+6.1f}" if te else "—",
+        )
+    )
     _print_table(rows)
-    print("    (BTM-MR = behind-the-meter must-run, off-grid. CHP is excluded "
-          "from every table below.)")
+    print(
+        "    (BTM-MR = behind-the-meter must-run, off-grid. CHP is excluded "
+        "from every table below.)"
+    )
     return tg
 
 
 def _print_reconciliation(
-    year, net_gen, model_target, model_grid, unserved, btm_total,
+    year,
+    net_gen,
+    model_target,
+    model_grid,
+    unserved,
+    btm_total,
 ) -> None:
     """[2] Grid generation reconciliation — model grid vs EIA-930 net gen."""
     gap = model_grid - net_gen
@@ -1666,8 +1879,10 @@ def _print_reconciliation(
         ("Model grid generation (LP)", f"{model_grid:7.2f} TWh"),
         ("Gap (model grid − EIA-930 net gen)", f"{gap:+7.2f} TWh"),
         ("Unserved energy / load slack (should be 0)", f"{unserved:7.4f} TWh"),
-        ("Behind-meter CHP must-run (off-grid; table [1] only)",
-         f"{btm_total:7.2f} TWh"),
+        (
+            "Behind-meter CHP must-run (off-grid; table [1] only)",
+            f"{btm_total:7.2f} TWh",
+        ),
     ]
     width = max(len(r[0]) for r in rows)
     for label, val in rows:
@@ -1676,12 +1891,13 @@ def _print_reconciliation(
 
 def _print_nonchp_grid(year, model_hourly, e930, chp_grid_twh) -> None:
     """[3] Non-CHP grid generation vs EIA-930 (CHP excluded both sides)."""
-    coal_m = sum(
-        model_hourly.get(c, np.zeros(1)).sum() for c in _COAL_CLASSES
-    ) / _MWH_PER_TWH
-    gas_m = sum(
-        model_hourly.get(c, np.zeros(1)).sum() for c in _NONCHP_GAS
-    ) / _MWH_PER_TWH
+    coal_m = (
+        sum(model_hourly.get(c, np.zeros(1)).sum() for c in _COAL_CLASSES)
+        / _MWH_PER_TWH
+    )
+    gas_m = (
+        sum(model_hourly.get(c, np.zeros(1)).sum() for c in _NONCHP_GAS) / _MWH_PER_TWH
+    )
     nuc_m = model_hourly.get("nuclear", np.zeros(1)).sum() / _MWH_PER_TWH
     wind_m = model_hourly.get("wind", np.zeros(1)).sum() / _MWH_PER_TWH
     solar_m = model_hourly.get("solar", np.zeros(1)).sum() / _MWH_PER_TWH
@@ -1695,25 +1911,46 @@ def _print_nonchp_grid(year, model_hourly, e930, chp_grid_twh) -> None:
     ]
     model_total = sum(m for _, m, _ in series)
     eia_total = sum(b for _, _, b in series)
-    print(f"\n  [3] Non-CHP grid generation — {year}  (model LP vs EIA-930, "
-          "CHP excluded)")
+    print(
+        f"\n  [3] Non-CHP grid generation — {year}  (model LP vs EIA-930, CHP excluded)"
+    )
     rows = [("fuel", "model TWh", "model %", "EIA-930 TWh", "EIA-930 %", "Δpp")]
     for fuel, m, b in series:
         mp = 100.0 * m / model_total if model_total else 0.0
         bp = 100.0 * b / eia_total if eia_total else 0.0
-        rows.append((fuel, f"{m:8.2f}", f"{mp:6.1f}", f"{b:8.2f}",
-                     f"{bp:6.1f}", f"{mp - bp:+6.1f}"))
-    rows.append(("TOTAL", f"{model_total:8.2f}", " 100.0",
-                 f"{eia_total:8.2f}", " 100.0", "      "))
+        rows.append(
+            (
+                fuel,
+                f"{m:8.2f}",
+                f"{mp:6.1f}",
+                f"{b:8.2f}",
+                f"{bp:6.1f}",
+                f"{mp - bp:+6.1f}",
+            )
+        )
+    rows.append(
+        (
+            "TOTAL",
+            f"{model_total:8.2f}",
+            " 100.0",
+            f"{eia_total:8.2f}",
+            " 100.0",
+            "      ",
+        )
+    )
     _print_table(rows)
-    print(f"    (EIA-930 non-CHP gas = EIA-930 all-gas − {chp_grid_twh:.1f} TWh "
-          "model CHP grid-delivered.)")
+    print(
+        f"    (EIA-930 non-CHP gas = EIA-930 all-gas − {chp_grid_twh:.1f} TWh "
+        "model CHP grid-delivered.)"
+    )
 
 
 def _print_thermal_annual(year, model_twh, btm, e923_annual) -> None:
     """[3b] Every thermal class (coal split) — model + BTM vs EIA-923."""
-    print(f"\n  [3b] Thermal by class — {year}  (model grid LP + behind-meter "
-          "must-run vs EIA-923 total; coal split lignite/PRB)")
+    print(
+        f"\n  [3b] Thermal by class — {year}  (model grid LP + behind-meter "
+        "must-run vs EIA-923 total; coal split lignite/PRB)"
+    )
     rows = [("class", "grid LP", "BTM-MR", "model tot", "EIA-923", "diff %")]
     tg = tb = tm = te = 0.0
     for cls in _THERMAL_CLASSES:
@@ -1722,14 +1959,30 @@ def _print_thermal_annual(year, model_twh, btm, e923_annual) -> None:
         m = grid + b
         e = e923_annual.get(cls, 0.0)
         diff = 100.0 * (m - e) / e if e else float("nan")
-        rows.append((cls, f"{grid:7.2f}", f"{b:6.2f}", f"{m:8.2f}",
-                     f"{e:7.2f}", f"{diff:+6.1f}" if e else "    —"))
+        rows.append(
+            (
+                cls,
+                f"{grid:7.2f}",
+                f"{b:6.2f}",
+                f"{m:8.2f}",
+                f"{e:7.2f}",
+                f"{diff:+6.1f}" if e else "    —",
+            )
+        )
         tg += grid
         tb += b
         tm += m
         te += e
-    rows.append(("TOTAL", f"{tg:7.2f}", f"{tb:6.2f}", f"{tm:8.2f}",
-                 f"{te:7.2f}", f"{100.0 * (tm - te) / te:+6.1f}" if te else "—"))
+    rows.append(
+        (
+            "TOTAL",
+            f"{tg:7.2f}",
+            f"{tb:6.2f}",
+            f"{tm:8.2f}",
+            f"{te:7.2f}",
+            f"{100.0 * (tm - te) / te:+6.1f}" if te else "—",
+        )
+    )
     _print_table(rows)
 
 
@@ -1740,20 +1993,27 @@ _NONFOSSIL_REPORT_CLASSES: tuple[str, ...] = ("oil", "biomass", "hydro", "OTHER"
 
 def _print_nonfossil_annual(year, model_twh, e923_annual) -> None:
     """[3c] Oil / biomass / hydro / residual OTHER — model vs EIA-923."""
-    print(f"\n  [3c] Non-fossil & residual by class — {year}  (oil = LP peaker; "
-          "biomass / hydro / OTHER = must-run injected; vs EIA-923 total)")
+    print(
+        f"\n  [3c] Non-fossil & residual by class — {year}  (oil = LP peaker; "
+        "biomass / hydro / OTHER = must-run injected; vs EIA-923 total)"
+    )
     rows = [("class", "model", "EIA-923", "diff %")]
     tm = te = 0.0
     for cls in _NONFOSSIL_REPORT_CLASSES:
         m = model_twh.get(cls, 0.0)
         e = e923_annual.get(cls, 0.0)
         diff = 100.0 * (m - e) / e if e else float("nan")
-        rows.append((cls, f"{m:7.2f}", f"{e:7.2f}",
-                     f"{diff:+6.1f}" if e else "    —"))
+        rows.append((cls, f"{m:7.2f}", f"{e:7.2f}", f"{diff:+6.1f}" if e else "    —"))
         tm += m
         te += e
-    rows.append(("TOTAL", f"{tm:7.2f}", f"{te:7.2f}",
-                 f"{100.0 * (tm - te) / te:+6.1f}" if te else "—"))
+    rows.append(
+        (
+            "TOTAL",
+            f"{tm:7.2f}",
+            f"{te:7.2f}",
+            f"{100.0 * (tm - te) / te:+6.1f}" if te else "—",
+        )
+    )
     _print_table(rows)
 
 
@@ -1767,11 +2027,14 @@ def _print_storage(year, storage_df, e930) -> None:
     """
     if storage_df is None or storage_df.empty:
         return
-    by_tech = storage_df.groupby("tech", observed=True)[
-        ["discharge_mw", "charge_mw"]
-    ].sum() / _MWH_PER_TWH
-    print(f"\n  [3d] Storage throughput — {year}  (model LP vs EIA-930 "
-          "battery series where reported)")
+    by_tech = (
+        storage_df.groupby("tech", observed=True)[["discharge_mw", "charge_mw"]].sum()
+        / _MWH_PER_TWH
+    )
+    print(
+        f"\n  [3d] Storage throughput — {year}  (model LP vs EIA-930 "
+        "battery series where reported)"
+    )
     rows = [("tech", "dis TWh", "chg TWh")]
     for tech, r in by_tech.iterrows():
         rows.append((tech, f"{r['discharge_mw']:7.2f}", f"{r['charge_mw']:7.2f}"))
@@ -1786,28 +2049,44 @@ def _print_storage(year, storage_df, e930) -> None:
     coverage = 100.0 * reported.sum() / len(bench_dis)
     # Model battery (non-PS) discharge summed over the benchmark's window.
     batt = storage_df[storage_df["tech"] != "pumped_storage"]
-    hourly = batt.groupby("hour", observed=True)[
-        ["discharge_mw", "charge_mw"]
-    ].sum().reindex(np.arange(len(bench_dis)), fill_value=0.0)
+    hourly = (
+        batt.groupby("hour", observed=True)[["discharge_mw", "charge_mw"]]
+        .sum()
+        .reindex(np.arange(len(bench_dis)), fill_value=0.0)
+    )
     m_dis = hourly["discharge_mw"].to_numpy()[reported].sum() / _MWH_PER_TWH
     m_chg = hourly["charge_mw"].to_numpy()[reported].sum() / _MWH_PER_TWH
     a_dis = np.nansum(bench_dis) / _MWH_PER_TWH
-    a_chg = (np.nansum(bench_chg) / _MWH_PER_TWH
-             if bench_chg is not None else float("nan"))
-    rows = [("battery (930 window)", "model", "EIA-930", "diff %"),
-            ("discharge TWh", f"{m_dis:7.2f}", f"{a_dis:7.2f}",
-             f"{100.0 * (m_dis - a_dis) / a_dis:+6.1f}" if a_dis else "—"),
-            ("charge TWh", f"{m_chg:7.2f}", f"{a_chg:7.2f}",
-             f"{100.0 * (m_chg - a_chg) / a_chg:+6.1f}" if a_chg else "—")]
+    a_chg = (
+        np.nansum(bench_chg) / _MWH_PER_TWH if bench_chg is not None else float("nan")
+    )
+    rows = [
+        ("battery (930 window)", "model", "EIA-930", "diff %"),
+        (
+            "discharge TWh",
+            f"{m_dis:7.2f}",
+            f"{a_dis:7.2f}",
+            f"{100.0 * (m_dis - a_dis) / a_dis:+6.1f}" if a_dis else "—",
+        ),
+        (
+            "charge TWh",
+            f"{m_chg:7.2f}",
+            f"{a_chg:7.2f}",
+            f"{100.0 * (m_chg - a_chg) / a_chg:+6.1f}" if a_chg else "—",
+        ),
+    ]
     _print_table(rows)
     print(f"    benchmark coverage: {coverage:.0f}% of hours reported")
 
 
-def _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
-                   btm, e923_annual) -> None:
+def _print_monthly(
+    year, model_hourly, e923_monthly, e930_solar_monthly, btm, e923_annual
+) -> None:
     """[4] Monthly +/- % bias vs EIA-923 (coal split; solar vs EIA-930)."""
-    print(f"\n  [4] Monthly bias — {year}   (% of EIA-923 per month; coal split; "
-          "CHP incl. behind-meter)")
+    print(
+        f"\n  [4] Monthly bias — {year}   (% of EIA-923 per month; coal split; "
+        "CHP incl. behind-meter)"
+    )
     rows = [("class",) + _MONTH_NAMES]
 
     def _row(label, model_monthly, bench_monthly):
@@ -1820,7 +2099,9 @@ def _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
         rows.append((label,) + tuple(cells))
 
     for cls in _THERMAL_CLASSES:
-        grid_monthly = _hourly_to_monthly(model_hourly.get(cls, np.zeros(_HOURS_PER_YEAR)))
+        grid_monthly = _hourly_to_monthly(
+            model_hourly.get(cls, np.zeros(_HOURS_PER_YEAR))
+        )
         bench = e923_monthly.get(cls, np.zeros(12))
         btm_annual = btm.get(cls, 0.0) * _MWH_PER_TWH
         if btm_annual > 0 and bench.sum() > 0:
@@ -1828,14 +2109,21 @@ def _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
         else:
             model_monthly = grid_monthly
         _row(cls, model_monthly, bench)
-    _row("wind", _hourly_to_monthly(model_hourly.get("wind", np.zeros(_HOURS_PER_YEAR))),
-         e923_monthly.get("wind", np.zeros(12)))
-    _row("solar (930)",
-         _hourly_to_monthly(model_hourly.get("solar", np.zeros(_HOURS_PER_YEAR))),
-         e930_solar_monthly)
-    _row("nuclear",
-         _hourly_to_monthly(model_hourly.get("nuclear", np.zeros(_HOURS_PER_YEAR))),
-         e923_monthly.get("nuclear", np.zeros(12)))
+    _row(
+        "wind",
+        _hourly_to_monthly(model_hourly.get("wind", np.zeros(_HOURS_PER_YEAR))),
+        e923_monthly.get("wind", np.zeros(12)),
+    )
+    _row(
+        "solar (930)",
+        _hourly_to_monthly(model_hourly.get("solar", np.zeros(_HOURS_PER_YEAR))),
+        e930_solar_monthly,
+    )
+    _row(
+        "nuclear",
+        _hourly_to_monthly(model_hourly.get("nuclear", np.zeros(_HOURS_PER_YEAR))),
+        e923_monthly.get("nuclear", np.zeros(12)),
+    )
     _print_table(rows)
 
 
@@ -1849,8 +2137,9 @@ def _print_hourly_fit(year, model_hourly, e930, chp_grid_twh) -> None:
     # still reports a fit instead of crashing on a shape mismatch; for a full
     # year model and observed lengths match and the slices are no-ops.
     obs_T = e930["gas"].shape[0]
-    model_T = next((v.shape[0] for v in model_hourly.values()
-                    if hasattr(v, "shape")), obs_T)
+    model_T = next(
+        (v.shape[0] for v in model_hourly.values() if hasattr(v, "shape")), obs_T
+    )
     T = min(model_T, obs_T)
     gas_m = sum(model_hourly.get(c, np.zeros(T))[:T] for c in _NONCHP_GAS)
     coal_m = sum(model_hourly.get(c, np.zeros(T))[:T] for c in _COAL_CLASSES)
@@ -1859,28 +2148,37 @@ def _print_hourly_fit(year, model_hourly, e930, chp_grid_twh) -> None:
     pairs = [
         ("gas (non-CHP)", gas_m, e930["gas"][:T] - flat_chp),
         ("coal", coal_m, e930["coal"][:T]),
-        ("nuclear", model_hourly.get("nuclear", np.zeros(T))[:T],
-         None if nuclear_o is None else nuclear_o[:T]),
+        (
+            "nuclear",
+            model_hourly.get("nuclear", np.zeros(T))[:T],
+            None if nuclear_o is None else nuclear_o[:T],
+        ),
         ("solar", model_hourly.get("solar", np.zeros(T))[:T], e930["solar"][:T]),
         ("wind", model_hourly.get("wind", np.zeros(T))[:T], e930["wind"][:T]),
     ]
     for fuel, m, o in pairs:
         if o is None:
             continue
-        rows.append((fuel, f"{_pearson_r(m, o):.3f}", f"{_nrmse(m, o):.3f}",
-                     f"{m.sum() / _MWH_PER_TWH:8.2f}",
-                     f"{o.sum() / _MWH_PER_TWH:8.2f}"))
+        rows.append(
+            (
+                fuel,
+                f"{_pearson_r(m, o):.3f}",
+                f"{_nrmse(m, o):.3f}",
+                f"{m.sum() / _MWH_PER_TWH:8.2f}",
+                f"{o.sum() / _MWH_PER_TWH:8.2f}",
+            )
+        )
     _print_table(rows)
 
 
 def _print_plant_level(year, dispatch, e923) -> None:
     """[6] Per-plant model vs EIA-923 annual generation for the panel."""
-    model_by_plant = (
-        dispatch.groupby("plant_code", observed=True)["mw"].sum().to_dict()
-    )
+    model_by_plant = dispatch.groupby("plant_code", observed=True)["mw"].sum().to_dict()
     class_by_plant = (
         dispatch[dispatch["plant_code"] > 0]
-        .groupby("plant_code", observed=True)["klass"].first().to_dict()
+        .groupby("plant_code", observed=True)["klass"]
+        .first()
+        .to_dict()
     )
     f923_by_plant = e923.groupby("plant_id")["annual_mwh"].sum().to_dict()
     print(f"\n  [6] Plant-level annual generation — {year} (EIA-923)")
@@ -1889,9 +2187,16 @@ def _print_plant_level(year, dispatch, e923) -> None:
         model_gwh = model_by_plant.get(code, 0.0) / 1e3
         eia_gwh = f923_by_plant.get(code, 0.0) / 1e3
         diff = 100.0 * (model_gwh - eia_gwh) / eia_gwh if eia_gwh else float("nan")
-        rows.append((label, str(code), f"{model_gwh:9.0f}", f"{eia_gwh:9.0f}",
-                     f"{diff:+6.1f}" if eia_gwh else "    —",
-                     str(class_by_plant.get(code, "—"))))
+        rows.append(
+            (
+                label,
+                str(code),
+                f"{model_gwh:9.0f}",
+                f"{eia_gwh:9.0f}",
+                f"{diff:+6.1f}" if eia_gwh else "    —",
+                str(class_by_plant.get(code, "—")),
+            )
+        )
     _print_table(rows)
 
 
@@ -1908,8 +2213,11 @@ def _chp_btm_mw_map() -> dict[int, float]:
     """
     from market_sim.config.scenarios import ScenarioConfig
     from market_sim.data.fleet import (
-        PETRA_NOVA_PLANT_CODE, chp_btm_pct, load_campd_bins,
+        PETRA_NOVA_PLANT_CODE,
+        chp_btm_pct,
+        load_campd_bins,
     )
+
     bins = load_campd_bins(ScenarioConfig().campd_bins_path)
     chp = bins[bins["Plant_Group"].isin(("CC_CHP", "CT_CHP", "ST_CHP"))]
     out: dict[int, float] = {}
@@ -1923,7 +2231,10 @@ def _chp_btm_mw_map() -> dict[int, float]:
 
 
 def _plant_hourly_fit(
-    year: int, dispatch: pd.DataFrame, campd_year: pd.DataFrame, hours: int,
+    year: int,
+    dispatch: pd.DataFrame,
+    campd_year: pd.DataFrame,
+    hours: int,
     btm_mw_by_plant: dict[int, float] | None = None,
     band_width: float = _CF_BAND_WIDTH,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -1959,14 +2270,17 @@ def _plant_hourly_fit(
     # coal+gas CEMS stack, inventing a multi-TWh phantom under-run (the
     # run-97b/98 Parish chase).
     cems_ids = set(int(p) for p in campd_year["plant_id"].unique())
+
     def _to_cems(code: int) -> int:
         code = int(code)
-        return code // 10 if (code not in cems_ids
-                              and code // 10 in cems_ids) else code
+        return code // 10 if (code not in cems_ids and code // 10 in cems_ids) else code
+
     model["plant_code"] = model["plant_code"].map(_to_cems)
     piv = (
-        model.groupby(["plant_code", "hour"], observed=True)["mw"].sum()
-        .unstack("plant_code", fill_value=0.0).sort_index()
+        model.groupby(["plant_code", "hour"], observed=True)["mw"]
+        .sum()
+        .unstack("plant_code", fill_value=0.0)
+        .sort_index()
     )
     obs = {
         int(pid): g.sort_values("hour")["net_mw"].to_numpy(dtype=float)
@@ -1988,28 +2302,32 @@ def _plant_hourly_fit(
             occ = check_cf_band_occupancy(m, o, band_width=band_width)
         except ValueError:  # both series identically zero
             occ = None
-        rows.append({
-            "year": np.int16(year),
-            "plant_code": int(plant_code),
-            "pearson_r": round(_pearson_r(m, o), 4),
-            "nrmse": round(_nrmse(m, o), 4),
-            "model_gwh": round(float(m.sum()) / 1e3, 1),
-            "campd_gwh": round(float(o.sum()) / 1e3, 1),
-            "campd_op_hours": int((o > 0).sum()),
-            "cf_band_overlap": occ["band_overlap"] if occ else float("nan"),
-            "cf_emd": occ["cf_emd"] if occ else float("nan"),
-            "cap_mw": occ["capacity_mw"] if occ else float("nan"),
-        })
+        rows.append(
+            {
+                "year": np.int16(year),
+                "plant_code": int(plant_code),
+                "pearson_r": round(_pearson_r(m, o), 4),
+                "nrmse": round(_nrmse(m, o), 4),
+                "model_gwh": round(float(m.sum()) / 1e3, 1),
+                "campd_gwh": round(float(o.sum()) / 1e3, 1),
+                "campd_op_hours": int((o > 0).sum()),
+                "cf_band_overlap": occ["band_overlap"] if occ else float("nan"),
+                "cf_emd": occ["cf_emd"] if occ else float("nan"),
+                "cap_mw": occ["capacity_mw"] if occ else float("nan"),
+            }
+        )
         if occ:
             for band in occ["bands"]:
-                band_rows.append({
-                    "year": np.int16(year),
-                    "plant_code": int(plant_code),
-                    "cf_lo": band["lo"],
-                    "cf_hi": band["hi"],
-                    "model_hours": np.int32(band["model_hours"]),
-                    "campd_hours": np.int32(band["actual_hours"]),
-                })
+                band_rows.append(
+                    {
+                        "year": np.int16(year),
+                        "plant_code": int(plant_code),
+                        "cf_lo": band["lo"],
+                        "cf_hi": band["hi"],
+                        "model_hours": np.int32(band["model_hours"]),
+                        "campd_hours": np.int32(band["actual_hours"]),
+                    }
+                )
     fit = pd.DataFrame(rows)
     fit = fit.sort_values("pearson_r").reset_index(drop=True) if len(fit) else fit
     return fit, pd.DataFrame(band_rows)
@@ -2018,24 +2336,59 @@ def _plant_hourly_fit(
 def _print_plant_hourly_fit(year: int, fit: pd.DataFrame) -> None:
     """[7] Per-plant hourly dispatch fit vs CAMPD net — representative panel."""
     by_code = fit.set_index("plant_code") if len(fit) else fit
-    print(f"\n  [7] Per-plant hourly dispatch fit — {year} "
-          "(model vs CAMPD net; representative panel)")
-    rows = [("plant", "EIA code", "Pearson r", " NRMSE", "model GWh",
-             "CAMPD GWh", "op hrs", "band ovlp", "CF EMD")]
+    print(
+        f"\n  [7] Per-plant hourly dispatch fit — {year} "
+        "(model vs CAMPD net; representative panel)"
+    )
+    rows = [
+        (
+            "plant",
+            "EIA code",
+            "Pearson r",
+            " NRMSE",
+            "model GWh",
+            "CAMPD GWh",
+            "op hrs",
+            "band ovlp",
+            "CF EMD",
+        )
+    ]
     for code, label in _PLANT_PANEL:
         if len(by_code) and code in by_code.index:
             r = by_code.loc[code]
-            rows.append((label, str(code), f"{r['pearson_r']:.3f}",
-                         f"{r['nrmse']:.3f}", f"{r['model_gwh']:9.0f}",
-                         f"{r['campd_gwh']:9.0f}", str(int(r['campd_op_hours'])),
-                         f"{r['cf_band_overlap']:.3f}", f"{r['cf_emd']:.3f}"))
+            rows.append(
+                (
+                    label,
+                    str(code),
+                    f"{r['pearson_r']:.3f}",
+                    f"{r['nrmse']:.3f}",
+                    f"{r['model_gwh']:9.0f}",
+                    f"{r['campd_gwh']:9.0f}",
+                    str(int(r["campd_op_hours"])),
+                    f"{r['cf_band_overlap']:.3f}",
+                    f"{r['cf_emd']:.3f}",
+                )
+            )
         else:
-            rows.append((label, str(code), "    —", "    —", "    —",
-                         "    —", "  —", "    —", "    —"))
+            rows.append(
+                (
+                    label,
+                    str(code),
+                    "    —",
+                    "    —",
+                    "    —",
+                    "    —",
+                    "  —",
+                    "    —",
+                    "    —",
+                )
+            )
     _print_table(rows)
     if len(fit):
-        print(f"    (full per-plant fit for all {len(fit)} resolved plants "
-              "written to plant_hourly_fit.parquet)")
+        print(
+            f"    (full per-plant fit for all {len(fit)} resolved plants "
+            "written to plant_hourly_fit.parquet)"
+        )
 
 
 def _print_plant_cf_bands(year: int, bands: pd.DataFrame) -> None:
@@ -2052,21 +2405,20 @@ def _print_plant_cf_bands(year: int, bands: pd.DataFrame) -> None:
     # Band width comes from the data, not the module default, so the header
     # is correct whatever --cf-band-width the run used.
     width = float((bands["cf_hi"] - bands["cf_lo"]).median())
-    print(f"\n  [7b] Hours per {width:.0%} CF band — {year} "
-          "(model / CAMPD net; representative panel)")
+    print(
+        f"\n  [7b] Hours per {width:.0%} CF band — {year} "
+        "(model / CAMPD net; representative panel)"
+    )
     grouped = bands.groupby("plant_code", observed=True)
     edges = sorted(bands["cf_lo"].unique())
-    header = ("plant", "", *(f"{lo:.0%}-{lo + width:.0%}"
-                             for lo in edges))
+    header = ("plant", "", *(f"{lo:.0%}-{lo + width:.0%}" for lo in edges))
     rows = [header]
     for code, label in _PLANT_PANEL:
         if code not in grouped.groups:
             continue
         g = grouped.get_group(code).sort_values("cf_lo")
-        rows.append((label, "model",
-                     *(str(int(h)) for h in g["model_hours"])))
-        rows.append(("", "CAMPD",
-                     *(str(int(h)) for h in g["campd_hours"])))
+        rows.append((label, "model", *(str(int(h)) for h in g["model_hours"])))
+        rows.append(("", "CAMPD", *(str(int(h)) for h in g["campd_hours"])))
     _print_table(rows)
 
 
@@ -2094,7 +2446,8 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
     if not states:
         logger.error(
             "no p2_state pickles in %s — re-run the bundle with "
-            "--persist-p2-state first", bundle / "p2_state",
+            "--persist-p2-state first",
+            bundle / "p2_state",
         )
         return
 
@@ -2104,35 +2457,41 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             state = pickle.load(fh)
         year = int(state["year"])
         cfg = state["config"].with_overrides(
-            commitment_enabled=True, commitment_screen_coal=screen_coal,
+            commitment_enabled=True,
+            commitment_screen_coal=screen_coal,
         )
         logger.info("P2 post-process %d (screen_coal=%s)", year, screen_coal)
         result = _commitment_pass(state, cfg)
         ctx = state["context"]
         must_run = _must_run_profiles(
-            year, generation, meta["iso"], state["demand"],
-            skip_classes=(frozenset() if meta["iso"] == "ERCOT"
-                          else frozenset({"biomass"})),
+            year,
+            generation,
+            meta["iso"],
+            state["demand"],
+            skip_classes=(
+                frozenset() if meta["iso"] == "ERCOT" else frozenset({"biomass"})
+            ),
         )
         _dispatch_frame(
-            year, "P2", result, ctx, zone_names, iso=meta["iso"],
+            year,
+            "P2",
+            result,
+            ctx,
+            zone_names,
+            iso=meta["iso"],
             must_run=must_run,
-        ).to_parquet(
-            bundle / "dispatch" / f"{year}_P2.parquet", index=False
-        )
-        system_p2.append(
-            _system_frame(year, "P2", result, state["demand"], zone_names)
-        )
+        ).to_parquet(bundle / "dispatch" / f"{year}_P2.parquet", index=False)
+        system_p2.append(_system_frame(year, "P2", result, state["demand"], zone_names))
         btm_p2.append(_btm_frame(year, "P2", result, ctx, generation))
         # Older p2_state pickles predate the storage frame; skip them.
-        storage_frame = _storage_frame(
-            year, "P2", result, state.get("storage_units")
-        )
+        storage_frame = _storage_frame(year, "P2", result, state.get("storage_units"))
         if storage_frame is not None:
             storage_p2.append(storage_frame)
 
     for name, frames in (
-        ("system", system_p2), ("btm", btm_p2), ("storage", storage_p2),
+        ("system", system_p2),
+        ("btm", btm_p2),
+        ("storage", storage_p2),
     ):
         if not frames:
             continue
@@ -2154,7 +2513,14 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
 _MODEL_GAS_FUELS: frozenset[str] = frozenset({"gas_cc", "gas_ct", "gas_st"})
 # Canonical fuel order for the generic fuel-mix table.
 _GENERIC_FUEL_ORDER: tuple[str, ...] = (
-    "coal", "gas", "nuclear", "wind", "solar", "hydro", "oil", "biomass",
+    "coal",
+    "gas",
+    "nuclear",
+    "wind",
+    "solar",
+    "hydro",
+    "oil",
+    "biomass",
     "other",
 )
 
@@ -2240,10 +2606,12 @@ def _print_curtailment_vs_reported(
     hsl = load_hsl_hourly(iso, year)
     if hsl is None:
         if _hsl_file(iso, year) is not None:
-            print(f"\n  [{label}] Renewable curtailment — {year}: no {iso} "
-                  "HSL parquet; build with scripts/build_"
-                  f"{iso.lower()}_hsl.py (ERCOT 2024+ needs the NP6 report "
-                  "uploads under data/raw/ercot-hsl/np6/)")
+            print(
+                f"\n  [{label}] Renewable curtailment — {year}: no {iso} "
+                "HSL parquet; build with scripts/build_"
+                f"{iso.lower()}_hsl.py (ERCOT 2024+ needs the NP6 report "
+                "uploads under data/raw/ercot-hsl/np6/)"
+            )
         return
 
     modeled = {}
@@ -2252,29 +2620,38 @@ def _print_curtailment_vs_reported(
         if rows.empty:
             return
         modeled[fuel] = (
-            rows.groupby("hour", observed=True)["mw"].sum()
-            .sort_index().to_numpy(dtype=float)
+            rows.groupby("hour", observed=True)["mw"]
+            .sum()
+            .sort_index()
+            .to_numpy(dtype=float)
         )
 
     T = min(_HOURS_PER_YEAR, *(len(v) for v in modeled.values()))
-    print(f"\n  [{label}] Renewable curtailment — {year} "
-          "(model re-curtailment vs ISO-reported; potential = uncurtailed "
-          "HSL)")
+    print(
+        f"\n  [{label}] Renewable curtailment — {year} "
+        "(model re-curtailment vs ISO-reported; potential = uncurtailed "
+        "HSL)"
+    )
     if T < _HOURS_PER_YEAR:
         print(f"    NOTE: {T}-hour run — reported series truncated to match.")
-    rows_out: list[tuple] = [(
-        "fuel", "potential TWh", "model TWh", "model curt", "model %",
-        "reported curt", "reported %",
-    )]
+    rows_out: list[tuple] = [
+        (
+            "fuel",
+            "potential TWh",
+            "model TWh",
+            "model curt",
+            "model %",
+            "reported curt",
+            "reported %",
+        )
+    ]
     monthly: dict[str, dict[str, np.ndarray]] = {}
     for fuel in ("wind", "solar"):
         # The potential the LP saw is the CF-floored, per-year-rescaled HSL
         # (negative EIA-930 night-time values clamp to zero in the profile),
         # so floor the consumed series here too; otherwise modeled
         # curtailment picks up phantom night-time slack.
-        potential = np.maximum(
-            hsl_potential_mw(iso, year, fuel)[:T], 0.0
-        )
+        potential = np.maximum(hsl_potential_mw(iso, year, fuel)[:T], 0.0)
         reported_potential = np.maximum(
             hsl[f"{fuel}_hsl_mw"].to_numpy(dtype=float)[:T], 0.0
         )
@@ -2286,30 +2663,43 @@ def _print_curtailment_vs_reported(
         reported_curt = reported_potential - delivered
         monthly[fuel] = {"model": model_curt, "reported": reported_curt}
         pot_twh = potential.sum() / _MWH_PER_TWH
-        rows_out.append((
-            fuel,
-            f"{pot_twh:.2f}",
-            f"{modeled[fuel][:T].sum() / _MWH_PER_TWH:.2f}",
-            f"{model_curt.sum() / _MWH_PER_TWH:.3f}",
-            f"{100.0 * model_curt.sum() / potential.sum():.2f}",
-            f"{reported_curt.sum() / _MWH_PER_TWH:.3f}",
-            f"{100.0 * reported_curt.sum() / reported_potential.sum():.2f}",
-        ))
+        rows_out.append(
+            (
+                fuel,
+                f"{pot_twh:.2f}",
+                f"{modeled[fuel][:T].sum() / _MWH_PER_TWH:.2f}",
+                f"{model_curt.sum() / _MWH_PER_TWH:.3f}",
+                f"{100.0 * model_curt.sum() / potential.sum():.2f}",
+                f"{reported_curt.sum() / _MWH_PER_TWH:.3f}",
+                f"{100.0 * reported_curt.sum() / reported_potential.sum():.2f}",
+            )
+        )
     _print_table(rows_out)
 
     month_idx = _hour_to_month(T)
-    month_rows: list[tuple] = [(
-        "month", "wind mdl", "wind rep", "solar mdl", "solar rep",
-    )]
+    month_rows: list[tuple] = [
+        (
+            "month",
+            "wind mdl",
+            "wind rep",
+            "solar mdl",
+            "solar rep",
+        )
+    ]
     for m in range(1, 13):
         sel = month_idx == m
         if not sel.any():
             break
-        month_rows.append((
-            _MONTH_NAMES[m - 1],
-            *(f"{monthly[fuel][kind][sel].sum() / 1e3:.1f}"
-              for fuel in ("wind", "solar") for kind in ("model", "reported")),
-        ))
+        month_rows.append(
+            (
+                _MONTH_NAMES[m - 1],
+                *(
+                    f"{monthly[fuel][kind][sel].sum() / 1e3:.1f}"
+                    for fuel in ("wind", "solar")
+                    for kind in ("model", "reported")
+                ),
+            )
+        )
     print("\n    Monthly curtailment (GWh):")
     _print_table(month_rows)
 
@@ -2332,7 +2722,9 @@ def _evening_share_pct(discharge: np.ndarray) -> float:
 
 
 def _print_storage_cycling(
-    year: int, storage: pd.DataFrame, e930: dict | None,
+    year: int,
+    storage: pd.DataFrame,
+    e930: dict | None,
 ) -> None:
     """[2b] Battery throughput + evening-discharge shape vs EIA-930.
 
@@ -2346,17 +2738,13 @@ def _print_storage_cycling(
     batt = storage[storage["tech"] != "pumped_storage"]
     if batt.empty:
         return
-    hourly = (
-        batt.groupby("hour")[["charge_mw", "discharge_mw"]]
-        .sum().sort_index()
-    )
+    hourly = batt.groupby("hour")[["charge_mw", "discharge_mw"]].sum().sort_index()
     dis = hourly["discharge_mw"].to_numpy(dtype=float)
     chg = hourly["charge_mw"].to_numpy(dtype=float)
     obs = e930.get("battery") if e930 is not None else None
 
     lo, hi = _EVENING_HOURS
-    print(f"\n  [2b] Battery cycling — {year} (model EIA-860 fleet vs "
-          "EIA-930 BAT)")
+    print(f"\n  [2b] Battery cycling — {year} (model EIA-860 fleet vs EIA-930 BAT)")
     rows: list[tuple] = [("metric", "model", "EIA-930")]
     if obs is not None:
         T = min(dis.shape[0], obs.shape[0])
@@ -2364,25 +2752,44 @@ def _print_storage_cycling(
         # EIA-930 BAT is a net series: + = discharging, - = charging.
         o_dis = np.clip(obs, 0.0, None)
         o_chg = np.clip(-obs, 0.0, None)
-        rows.append(("discharge TWh", f"{dis.sum() / _MWH_PER_TWH:.2f}",
-                     f"{o_dis.sum() / _MWH_PER_TWH:.2f}"))
-        rows.append(("charge TWh", f"{chg.sum() / _MWH_PER_TWH:.2f}",
-                     f"{o_chg.sum() / _MWH_PER_TWH:.2f}"))
-        rows.append((f"evening (h{lo}-{hi}) discharge share %",
-                     f"{_evening_share_pct(dis):.1f}",
-                     f"{_evening_share_pct(o_dis):.1f}"))
-        rows.append(("hourly net Pearson r",
-                     f"{_pearson_r(dis - chg, obs):.3f}", ""))
+        rows.append(
+            (
+                "discharge TWh",
+                f"{dis.sum() / _MWH_PER_TWH:.2f}",
+                f"{o_dis.sum() / _MWH_PER_TWH:.2f}",
+            )
+        )
+        rows.append(
+            (
+                "charge TWh",
+                f"{chg.sum() / _MWH_PER_TWH:.2f}",
+                f"{o_chg.sum() / _MWH_PER_TWH:.2f}",
+            )
+        )
+        rows.append(
+            (
+                f"evening (h{lo}-{hi}) discharge share %",
+                f"{_evening_share_pct(dis):.1f}",
+                f"{_evening_share_pct(o_dis):.1f}",
+            )
+        )
+        rows.append(("hourly net Pearson r", f"{_pearson_r(dis - chg, obs):.3f}", ""))
     else:
-        rows.append(("discharge TWh",
-                     f"{dis.sum() / _MWH_PER_TWH:.2f}", "—"))
+        rows.append(("discharge TWh", f"{dis.sum() / _MWH_PER_TWH:.2f}", "—"))
         rows.append(("charge TWh", f"{chg.sum() / _MWH_PER_TWH:.2f}", "—"))
-        rows.append((f"evening (h{lo}-{hi}) discharge share %",
-                     f"{_evening_share_pct(dis):.1f}", "—"))
+        rows.append(
+            (
+                f"evening (h{lo}-{hi}) discharge share %",
+                f"{_evening_share_pct(dis):.1f}",
+                "—",
+            )
+        )
     _print_table(rows)
     if obs is None:
-        print("    (no EIA-930 battery series in this BA extract — model "
-              "throughput reported alone)")
+        print(
+            "    (no EIA-930 battery series in this BA extract — model "
+            "throughput reported alone)"
+        )
 
     ps = storage[storage["tech"] == "pumped_storage"]
     if not ps.empty:
@@ -2390,14 +2797,17 @@ def _print_storage_cycling(
         ps_obs = e930.get("pumped_storage") if e930 is not None else None
         bench = (
             f"{np.clip(ps_obs, 0.0, None).sum() / _MWH_PER_TWH:.2f}"
-            if ps_obs is not None else "—"
+            if ps_obs is not None
+            else "—"
         )
-        print(f"    pumped-storage discharge: model {ps_dis:.2f} TWh; "
-              f"EIA-930 {bench}")
+        print(f"    pumped-storage discharge: model {ps_dis:.2f} TWh; EIA-930 {bench}")
 
 
 def _report_generic(
-    run_dir: Path, iso: str, meta: dict, system: pd.DataFrame,
+    run_dir: Path,
+    iso: str,
+    meta: dict,
+    system: pd.DataFrame,
     e930_all: pd.DataFrame | None,
 ) -> None:
     """Print the generic energy-only calibration report for a non-ERCOT ISO.
@@ -2411,9 +2821,7 @@ def _report_generic(
     """
     reference = _load_reference()
     storage_path = run_dir / "storage.parquet"
-    storage_all = (
-        pd.read_parquet(storage_path) if storage_path.exists() else None
-    )
+    storage_all = pd.read_parquet(storage_path) if storage_path.exists() else None
     for year in meta["years"]:
         ref_year = reference.get("isos", {}).get(iso, {}).get(str(year), {})
         ref_gen = _aggregate_twh(ref_year.get("generation_twh", {}))
@@ -2439,9 +2847,7 @@ def _report_generic(
         if not disp_path.exists():
             continue
         dispatch = pd.read_parquet(disp_path)
-        sysd = system[
-            (system["year"] == year) & (system["pass"] == pass_label)
-        ]
+        sysd = system[(system["year"] == year) & (system["pass"] == pass_label)]
 
         print(f"\n{'=' * 80}\n  {iso} {year} BACKCAST  (energy-only)\n{'=' * 80}")
 
@@ -2456,11 +2862,15 @@ def _report_generic(
         # category below the total (net interchange-served energy), as well as
         # in the [2] net-interchange reconciliation.
         import_net_twh = model.pop("import", None)
-        e930_twh = {
-            f: float(e930[f].sum()) / _MWH_PER_TWH
-            for f in _GENERIC_FUEL_ORDER
-            if e930 is not None and f in e930
-        } if e930 is not None else {}
+        e930_twh = (
+            {
+                f: float(e930[f].sum()) / _MWH_PER_TWH
+                for f in _GENERIC_FUEL_ORDER
+                if e930 is not None and f in e930
+            }
+            if e930 is not None
+            else {}
+        )
         model_total = sum(model.values())
         e930_total = sum(e930_twh.values()) if e930_twh else None
         ref_total = sum(ref_gen.values()) if ref_gen else None
@@ -2472,8 +2882,10 @@ def _report_generic(
             return "    —" if not v or not total else f"{100 * v / total:5.1f}"
 
         print("\n  [1] Generation by fuel (TWh; share of own total)")
-        print(f"    {'fuel':<9} {'model':>7} {'mdl%':>5} "
-              f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}")
+        print(
+            f"    {'fuel':<9} {'model':>7} {'mdl%':>5} "
+            f"{'EIA-930':>7} {'930%':>5} {'EIA-923':>7} {'923%':>5}"
+        )
         for fuel in _GENERIC_FUEL_ORDER:
             m, g, r = model.get(fuel), e930_twh.get(fuel), ref_gen.get(fuel)
             # Solar/wind compared vs EIA-930 only (see note above); blank the
@@ -2482,12 +2894,16 @@ def _report_generic(
                 r = None
             if m is None and g is None and r is None:
                 continue
-            print(f"    {fuel:<9} {_twh(m)} {_pct(m, model_total)} "
-                  f"{_twh(g)} {_pct(g, e930_total)} "
-                  f"{_twh(r)} {_pct(r, ref_total)}")
-        print(f"    {'TOTAL':<9} {_twh(model_total)} {'100.0':>5} "
-              f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
-              f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}")
+            print(
+                f"    {fuel:<9} {_twh(m)} {_pct(m, model_total)} "
+                f"{_twh(g)} {_pct(g, e930_total)} "
+                f"{_twh(r)} {_pct(r, ref_total)}"
+            )
+        print(
+            f"    {'TOTAL':<9} {_twh(model_total)} {'100.0':>5} "
+            f"{_twh(e930_total)} {'100.0' if e930_total else '    —':>5} "
+            f"{_twh(ref_total)} {'100.0' if ref_total else '    —':>5}"
+        )
 
         # Imports as their own category: net interchange-served energy (+ = net
         # import into the ISO), shown below the generation total since it serves
@@ -2502,14 +2918,15 @@ def _report_generic(
         if import_net_twh is not None or import_net_930 is not None:
             served_m = model_total + (import_net_twh or 0.0)
             served_g = (
-                e930_total + (import_net_930 or 0.0)
-                if e930_total is not None else None
+                e930_total + (import_net_930 or 0.0) if e930_total is not None else None
             )
-            print(f"    {'import':<9} {_twh(import_net_twh)} "
-                  f"{_pct(import_net_twh, served_m)} "
-                  f"{_twh(import_net_930)} {_pct(import_net_930, served_g)} "
-                  f"{_twh(None)} {_pct(None, None)}"
-                  "   (net; serves load, not in generation total)")
+            print(
+                f"    {'import':<9} {_twh(import_net_twh)} "
+                f"{_pct(import_net_twh, served_m)} "
+                f"{_twh(import_net_930)} {_pct(import_net_930, served_g)} "
+                f"{_twh(None)} {_pct(None, None)}"
+                "   (net; serves load, not in generation total)"
+            )
 
         # --- [1b] Curtailment: model re-curtailment vs ISO-reported ---
         _print_curtailment_vs_reported(year, iso, dispatch)
@@ -2519,8 +2936,7 @@ def _report_generic(
             ix = e930["interchange"]
             ix_twh = float(ix.sum()) / _MWH_PER_TWH
             print("\n  [2] Net interchange (EIA sign: + = net export)")
-            print(f"    actual (EIA-930): {ix_twh:+.2f} TWh "
-                  f"({ix.mean():+.0f} MW avg)")
+            print(f"    actual (EIA-930): {ix_twh:+.2f} TWh ({ix.mean():+.0f} MW avg)")
             # Offline priced-node fit RMSE (the P9 deliverable): the lowest
             # duration-curve RMSE the configured tranche capacities can reach
             # against this measured series, free of the modeled price. The
@@ -2529,8 +2945,10 @@ def _report_generic(
             # tranche capacities, is off.
             fit_rmse = _priced_node_fit_rmse(iso, np.asarray(ix, dtype=float))
             if fit_rmse is not None:
-                print(f"    priced-node fit  : duration RMSE {fit_rmse:.0f} MW "
-                      "(offline tranche fit, optimal placement; P9)")
+                print(
+                    f"    priced-node fit  : duration RMSE {fit_rmse:.0f} MW "
+                    "(offline tranche fit, optimal placement; P9)"
+                )
             # Three interchange representations, in order of preference:
             # the priced import/export node when its units are in the
             # dispatch (net export = -(import tranches + export sinks));
@@ -2539,8 +2957,10 @@ def _report_generic(
             node = dispatch[dispatch["fuel"] == "import"]
             if len(node):
                 model_ix = -(
-                    node.groupby("hour", observed=True)["mw"].sum()
-                    .sort_index().to_numpy(dtype=float)
+                    node.groupby("hour", observed=True)["mw"]
+                    .sum()
+                    .sort_index()
+                    .to_numpy(dtype=float)
                 )
                 how = "priced import/export node"
             else:
@@ -2558,8 +2978,10 @@ def _report_generic(
                 how = "served as a scheduled interchange added to demand"
             if model_ix is not None:
                 m_twh = float(model_ix.sum()) / _MWH_PER_TWH
-                print(f"    model            : {m_twh:+.2f} TWh "
-                      f"({model_ix.mean():+.0f} MW avg; {how})")
+                print(
+                    f"    model            : {m_twh:+.2f} TWh "
+                    f"({model_ix.mean():+.0f} MW avg; {how})"
+                )
                 n = min(model_ix.shape[0], ix.shape[0])
                 dur_m = np.sort(model_ix[:n])
                 dur_a = np.sort(np.asarray(ix, dtype=float)[:n])
@@ -2567,15 +2989,19 @@ def _report_generic(
                 pcts = [1, 10, 50, 90, 99]
                 qm = np.percentile(model_ix[:n], pcts)
                 qa = np.percentile(np.asarray(ix, dtype=float)[:n], pcts)
-                print(f"    duration curve   : RMSE {rmse:.0f} MW; "
-                      "p01/p10/p50/p90/p99 model "
-                      + "/".join(f"{v:+.0f}" for v in qm)
-                      + " vs actual "
-                      + "/".join(f"{v:+.0f}" for v in qa))
-                print(f"    import hours     : model "
-                      f"{100.0 * float((model_ix[:n] < 0).mean()):.1f}% vs "
-                      f"actual "
-                      f"{100.0 * float((np.asarray(ix)[:n] < 0).mean()):.1f}%")
+                print(
+                    f"    duration curve   : RMSE {rmse:.0f} MW; "
+                    "p01/p10/p50/p90/p99 model "
+                    + "/".join(f"{v:+.0f}" for v in qm)
+                    + " vs actual "
+                    + "/".join(f"{v:+.0f}" for v in qa)
+                )
+                print(
+                    f"    import hours     : model "
+                    f"{100.0 * float((model_ix[:n] < 0).mean()):.1f}% vs "
+                    f"actual "
+                    f"{100.0 * float((np.asarray(ix)[:n] < 0).mean()):.1f}%"
+                )
                 # Diurnal shape: the average 24-hour net-interchange profile.
                 # The duration curve scores the magnitude distribution; the
                 # diurnal correlation scores whether the model imports/exports
@@ -2584,21 +3010,25 @@ def _report_generic(
                 whole = n - n % 24
                 if whole >= 24:
                     d24m = model_ix[:whole].reshape(-1, 24).mean(axis=0)
-                    d24a = (np.asarray(ix, dtype=float)[:whole]
-                            .reshape(-1, 24).mean(axis=0))
+                    d24a = (
+                        np.asarray(ix, dtype=float)[:whole].reshape(-1, 24).mean(axis=0)
+                    )
                     corr = float(np.corrcoef(d24m, d24a)[0, 1])
-                    print(f"    diurnal shape    : corr {corr:+.2f}; "
-                          f"model peak->trough {d24m.max() - d24m.min():.0f} MW "
-                          f"vs actual {d24a.max() - d24a.min():.0f} MW")
+                    print(
+                        f"    diurnal shape    : corr {corr:+.2f}; "
+                        f"model peak->trough {d24m.max() - d24m.min():.0f} MW "
+                        f"vs actual {d24a.max() - d24a.min():.0f} MW"
+                    )
             else:
-                print("    model            :    0.00 TWh "
-                      "(energy-only; no external interchange node)")
+                print(
+                    "    model            :    0.00 TWh "
+                    "(energy-only; no external interchange node)"
+                )
 
         # --- [2b] Battery cycling: throughput + evening-discharge shape ---
         if storage_all is not None:
             s = storage_all[
-                (storage_all["year"] == year)
-                & (storage_all["pass"] == pass_label)
+                (storage_all["year"] == year) & (storage_all["pass"] == pass_label)
             ]
             if not s.empty:
                 _print_storage_cycling(year, s, e930)
@@ -2610,14 +3040,14 @@ def _report_generic(
         for zone in zones:
             zp = sysd[sysd["zone"] == zone]["price"].to_numpy()
             print(f"    {zone:<14} {zp.mean():8.2f} {int((zp < 0).sum()):>8}")
-        sysprice = (
-            sysd.groupby("hour")["price"].mean().sort_index().to_numpy()
-        )
+        sysprice = sysd.groupby("hour")["price"].mean().sort_index().to_numpy()
         pct = np.percentile(sysprice, [100, 90, 50, 10, 0])
         print("\n  [3] System price duration ($/MWh)")
-        print(f"    avg {sysprice.mean():8.2f}   max {pct[0]:8.2f}   "
-              f"p90 {pct[1]:7.2f}   p50 {pct[2]:7.2f}   "
-              f"p10 {pct[3]:7.2f}   min {pct[4]:8.2f}")
+        print(
+            f"    avg {sysprice.mean():8.2f}   max {pct[0]:8.2f}   "
+            f"p90 {pct[1]:7.2f}   p50 {pct[2]:7.2f}   "
+            f"p10 {pct[3]:7.2f}   min {pct[4]:8.2f}"
+        )
         print(f"    negative-price hours: {int((sysprice < 0).sum())}")
 
 
@@ -2627,8 +3057,8 @@ def _report_generic(
 # is the keeper of record's per-class best-achieved value; a tuning run FAILS
 # if it degrades shape beyond the margins. Pure post-processing over the fit
 # frame — never gates volumes.
-CF_EMD_GATE_MARGIN = 0.02   # cf_emd may rise at most this much vs baseline
-CF_R_GATE_MARGIN = 0.02     # pearson_r may fall at most this much vs baseline
+CF_EMD_GATE_MARGIN = 0.02  # cf_emd may rise at most this much vs baseline
+CF_R_GATE_MARGIN = 0.02  # pearson_r may fall at most this much vs baseline
 
 
 def _cf_emd_baseline_path(iso: str) -> Path:
@@ -2645,8 +3075,10 @@ def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
     """
     path = _cf_emd_baseline_path(iso)
     if not path.exists():
-        print(f"\n  [7c] operating-shape gate (cf_emd / r): SKIPPED — no "
-              f"baseline at {path.relative_to(REPO)}")
+        print(
+            f"\n  [7c] operating-shape gate (cf_emd / r): SKIPPED — no "
+            f"baseline at {path.relative_to(REPO)}"
+        )
         return
     base = json.loads(path.read_text()).get("classes", {})
 
@@ -2659,10 +3091,14 @@ def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
     fit["group"] = fit["plant_code"].astype(int).map(cmap)
     fit = fit[fit["group"].notna()]
 
-    print("\n  [7c] operating-shape regression gate vs keeper baseline "
-          f"(cf_emd <= base+{CF_EMD_GATE_MARGIN}; r >= base-{CF_R_GATE_MARGIN})")
-    print(f"  {'class':<12} {'year':>4}  {'cf_emd':>7} {'base':>6} {'gate':>5}"
-          f"  {'r':>6} {'base':>6} {'gate':>5}")
+    print(
+        "\n  [7c] operating-shape regression gate vs keeper baseline "
+        f"(cf_emd <= base+{CF_EMD_GATE_MARGIN}; r >= base-{CF_R_GATE_MARGIN})"
+    )
+    print(
+        f"  {'class':<12} {'year':>4}  {'cf_emd':>7} {'base':>6} {'gate':>5}"
+        f"  {'r':>6} {'base':>6} {'gate':>5}"
+    )
     n_fail = 0
     for (grp, year), g in fit.groupby(["group", "year"]):
         b = base.get(str(grp), {}).get(str(int(year)))
@@ -2672,9 +3108,11 @@ def _print_cf_emd_gate(fit: pd.DataFrame, iso: str) -> None:
         emd_ok = emd <= b["cf_emd"] + CF_EMD_GATE_MARGIN
         r_ok = r >= b["pearson_r"] - CF_R_GATE_MARGIN
         n_fail += (not emd_ok) + (not r_ok)
-        print(f"  {grp:<12} {int(year):>4}  {emd:>7.3f} {b['cf_emd']:>6.3f} "
-              f"{'PASS' if emd_ok else 'FAIL':>5}  {r:>6.3f} "
-              f"{b['pearson_r']:>6.3f} {'PASS' if r_ok else 'FAIL':>5}")
+        print(
+            f"  {grp:<12} {int(year):>4}  {emd:>7.3f} {b['cf_emd']:>6.3f} "
+            f"{'PASS' if emd_ok else 'FAIL':>5}  {r:>6.3f} "
+            f"{b['pearson_r']:>6.3f} {'PASS' if r_ok else 'FAIL':>5}"
+        )
     verdict = "PASS" if n_fail == 0 else f"{n_fail} regression(s)"
     print(f"  [7c] operating-shape gate: {verdict}")
 
@@ -2685,6 +3123,7 @@ def _class_map_for_gate(iso: str) -> dict[int, str]:
         return {}
     from market_sim.config.scenarios import ScenarioConfig
     from market_sim.data.fleet import load_campd_bins
+
     b = load_campd_bins(ScenarioConfig().campd_bins_path)
     return dict(zip(b["Plant_Code"].astype(int), b["Plant_Group"].astype(str)))
 
@@ -2707,8 +3146,10 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     e930_all = pd.read_parquet(e930_path) if e930_path is not None else None
 
     print(f"\n{'=' * 80}")
-    print(f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
-          f"git {meta.get('git_sha', '?')})")
+    print(
+        f"  CALIBRATION REPORT  ({iso}; run {meta['timestamp']}; "
+        f"git {meta.get('git_sha', '?')})"
+    )
     print(f"  bundle: {run_dir}")
     print(f"{'=' * 80}")
 
@@ -2722,7 +3163,8 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
     campd_all = pd.read_parquet(campd_path) if campd_path is not None else None
     storage_all = (
         pd.read_parquet(run_dir / "storage.parquet")
-        if (run_dir / "storage.parquet").exists() else None
+        if (run_dir / "storage.parquet").exists()
+        else None
     )
     plant_fit_frames: list[pd.DataFrame] = []
     plant_band_frames: list[pd.DataFrame] = []
@@ -2759,10 +3201,16 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
                 pd.read_parquet(disp_path), year, plant_col="plant_code"
             )
             sysd = system[(system["year"] == year) & (system["pass"] == pass_label)]
-            btm = dict(zip(
-                btm_all[(btm_all["year"] == year) & (btm_all["pass"] == pass_label)]["klass"],
-                btm_all[(btm_all["year"] == year) & (btm_all["pass"] == pass_label)]["btm_twh"],
-            ))
+            btm = dict(
+                zip(
+                    btm_all[
+                        (btm_all["year"] == year) & (btm_all["pass"] == pass_label)
+                    ]["klass"],
+                    btm_all[
+                        (btm_all["year"] == year) & (btm_all["pass"] == pass_label)
+                    ]["btm_twh"],
+                )
+            )
             model_hourly = _class_hourly(dispatch)
             model_twh = {k: v.sum() / _MWH_PER_TWH for k, v in model_hourly.items()}
 
@@ -2770,13 +3218,19 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
 
             model_grid = dispatch["mw"].sum() / _MWH_PER_TWH
             net_gen = (
-                e930["net_gen"].sum() / _MWH_PER_TWH if e930 is not None
+                e930["net_gen"].sum() / _MWH_PER_TWH
+                if e930 is not None
                 else float("nan")
             )
             model_target = sysd["demand"].sum() / _MWH_PER_TWH
             unserved = sysd["slack"].sum() / _MWH_PER_TWH
             _print_reconciliation(
-                year, net_gen, model_target, model_grid, unserved, sum(btm.values()),
+                year,
+                net_gen,
+                model_target,
+                model_grid,
+                unserved,
+                sum(btm.values()),
             )
             if e930 is not None:
                 _print_nonchp_grid(year, model_hourly, e930, chp_grid_twh)
@@ -2785,13 +3239,16 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
             if storage_all is not None:
                 _print_storage(
                     year,
-                    storage_all[(storage_all["year"] == year)
-                                & (storage_all["pass"] == pass_label)],
+                    storage_all[
+                        (storage_all["year"] == year)
+                        & (storage_all["pass"] == pass_label)
+                    ],
                     e930,
                 )
             _print_curtailment_vs_reported(year, iso, dispatch, label="3e")
-            _print_monthly(year, model_hourly, e923_monthly, e930_solar_monthly,
-                           btm, e923_annual)
+            _print_monthly(
+                year, model_hourly, e923_monthly, e930_solar_monthly, btm, e923_annual
+            )
             if e930 is not None:
                 _print_hourly_fit(year, model_hourly, e930, chp_grid_twh)
             _print_plant_level(year, dispatch, e923)
@@ -2801,7 +3258,11 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
                     hours = int(dispatch["hour"].max()) + 1
                     btm_mw_map = _chp_btm_mw_map() if iso == "ERCOT" else None
                     fit, cf_bands = _plant_hourly_fit(
-                        year, dispatch, campd_year, hours, btm_mw_map,
+                        year,
+                        dispatch,
+                        campd_year,
+                        hours,
+                        btm_mw_map,
                         band_width=band_width,
                     )
                     _print_plant_hourly_fit(year, fit)
@@ -2851,9 +3312,7 @@ def rebuild_benchmark(bundle: Path) -> None:
     group_by_code: dict[int, str] = {}
     if is_ercot:
         bins = load_campd_bins(ScenarioConfig().campd_bins_path)
-        group_by_code = dict(
-            zip(bins["Plant_Code"].astype(int), bins["Plant_Group"])
-        )
+        group_by_code = dict(zip(bins["Plant_Code"].astype(int), bins["Plant_Group"]))
 
     e923f, e930f, campdf = [], [], []
     for year in years:
@@ -2863,7 +3322,12 @@ def rebuild_benchmark(bundle: Path) -> None:
         e930 = _eia930_frame(year, iso, iso_config)
         e923f.append(
             _benchmark_eia923_frame(
-                year, generation, iso, campd_year, group_by_code, e930,
+                year,
+                generation,
+                iso,
+                campd_year,
+                group_by_code,
+                e930,
             )
         )
         if e930 is not None:
@@ -2920,645 +3384,849 @@ def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
         description="Calibration backcast (ERCOT full; other ISOs energy-only): "
-                    "solve, persist, report."
+        "solve, persist, report."
     )
     parser.add_argument("--year", nargs="+", type=int, default=[2023, 2024])
     parser.add_argument(
-        "--iso", default="ERCOT",
+        "--iso",
+        default="ERCOT",
         help="ISO to backcast. ERCOT runs the full plant-level diagnostic; "
-             "other ISOs (e.g. PJM) run energy-only (generic fuel-mix / price "
-             "/ interchange report; ERCOT-only steps skipped).",
+        "other ISOs (e.g. PJM) run energy-only (generic fuel-mix / price "
+        "/ interchange report; ERCOT-only steps skipped).",
     )
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
     parser.add_argument(
-        "--cf-band-width", type=float, default=_CF_BAND_WIDTH,
+        "--cf-band-width",
+        type=float,
+        default=_CF_BAND_WIDTH,
         help="CF-band width for the [7b] per-plant operating-level histogram "
-             "and plant_cf_bands.parquet, as a fraction of capacity "
-             f"(default {_CF_BAND_WIDTH}). Use 0.05 for twenty bands of 5 "
-             "points each to see where an efficient CC loses its high-CF hours.",
+        "and plant_cf_bands.parquet, as a fraction of capacity "
+        f"(default {_CF_BAND_WIDTH}). Use 0.05 for twenty bands of 5 "
+        "points each to see where an efficient CC loses its high-CF hours.",
     )
     parser.add_argument(
-        "--commitment", action="store_true",
+        "--commitment",
+        action="store_true",
         help="Run the P2 unit-commitment pass after P1; both are persisted.",
     )
     parser.add_argument(
-        "--no-coal-p2", action="store_true",
+        "--no-coal-p2",
+        action="store_true",
         help="Pin coal to its P1 dispatch in P2 (coal gains no new P2 gen).",
     )
     parser.add_argument(
-        "--coal-lignite-mustrun", type=float, default=None,
+        "--coal-lignite-mustrun",
+        type=float,
+        default=None,
         help="Override mine-mouth lignite coal must-run %% (sweep knob).",
     )
     parser.add_argument(
-        "--coal-prb-mustrun", type=float, default=None,
+        "--coal-prb-mustrun",
+        type=float,
+        default=None,
         help="Override PRB coal must-run %% (sweep knob).",
     )
     parser.add_argument(
-        "--coal-prb-passthrough", type=float, default=1.0,
+        "--coal-prb-passthrough",
+        type=float,
+        default=1.0,
         help="PRB above-must-run fuel passthrough (1.0 = off).",
     )
     parser.add_argument(
-        "--outage-source", choices=["historic", "statistical"],
+        "--outage-source",
+        choices=["historic", "statistical"],
         default="historic",
         help="Coal/CC availability: 'historic' overlays actual >10-day ERCOT "
-             "outages (default backcast); 'statistical' uses WEFOR/POF only.",
+        "outages (default backcast); 'statistical' uses WEFOR/POF only.",
     )
     # Locked calibration config ("tier pass 2"): per-plant CAMPD coal must-run,
     # gas-keyed PRB passthrough sigmoid (tiered baseload/follower), POF dropped
     # on coal. All on by default; use the --no-* form to disable.
     parser.add_argument(
-        "--coal-prb-sigmoid", "--prb-passthrough-sigmoid",
+        "--coal-prb-sigmoid",
+        "--prb-passthrough-sigmoid",
         action=argparse.BooleanOptionalAction,
-        default=True, dest="coal_prb_sigmoid",
+        default=True,
+        dest="coal_prb_sigmoid",
         help="Gas-key the PRB passthrough: a logistic of the monthly gas "
-             "price replaces the flat --coal-prb-passthrough (deep discount "
-             "when gas is cheap, none/markup when dear). Params resolve "
-             "from the per-ISO COAL_SIGMOID_DEFAULTS curve; no curve for "
-             "the ISO = flat passthrough. (--prb-passthrough-sigmoid is "
-             "the legacy spelling.)",
+        "price replaces the flat --coal-prb-passthrough (deep discount "
+        "when gas is cheap, none/markup when dear). Params resolve "
+        "from the per-ISO COAL_SIGMOID_DEFAULTS curve; no curve for "
+        "the ISO = flat passthrough. (--prb-passthrough-sigmoid is "
+        "the legacy spelling.)",
     )
     parser.add_argument(
-        "--coal-mustrun-per-plant", action=argparse.BooleanOptionalAction,
+        "--coal-mustrun-per-plant",
+        action=argparse.BooleanOptionalAction,
         default=True,
         help="Use per-plant CAMPD-derived coal must-run floors "
-             "(fleet.COAL_MUSTRUN_BY_PLANT) instead of uniform lignite/PRB "
-             "must-run overrides.",
+        "(fleet.COAL_MUSTRUN_BY_PLANT) instead of uniform lignite/PRB "
+        "must-run overrides.",
     )
     parser.add_argument(
-        "--ct-mustrun-per-plant", action=argparse.BooleanOptionalAction,
+        "--ct-mustrun-per-plant",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Inject a per-plant CT_PEAKER reliability must-run floor from each "
-             "peaker's observed EIA-923 monthly net generation "
-             "(fleet.ct_mustrun_floor_mwh_by_plant). The energy-only LP prices "
-             "simple-cycle peakers out (~0% CF) where the actuals show a ~4% "
-             "reserve/reliability run; the floor recovers that energy. WEFOR and "
-             "the planned-outage derate are exempt for floor units (the floor is "
-             "observed generation and already nets out real outages). Backcast-"
-             "only; off by default.",
+        "peaker's observed EIA-923 monthly net generation "
+        "(fleet.ct_mustrun_floor_mwh_by_plant). The energy-only LP prices "
+        "simple-cycle peakers out (~0% CF) where the actuals show a ~4% "
+        "reserve/reliability run; the floor recovers that energy. WEFOR and "
+        "the planned-outage derate are exempt for floor units (the floor is "
+        "observed generation and already nets out real outages). Backcast-"
+        "only; off by default.",
     )
     parser.add_argument(
-        "--ct-mustrun-floor-frac", type=float, default=1.0,
+        "--ct-mustrun-floor-frac",
+        type=float,
+        default=1.0,
         help="Fraction of observed monthly CT_PEAKER net generation forced as "
-             "the reliability floor (default 1.0 = full observed energy). "
-             "Requires --ct-mustrun-per-plant.",
+        "the reliability floor (default 1.0 = full observed energy). "
+        "Requires --ct-mustrun-per-plant.",
     )
     parser.add_argument(
-        "--ct-deployment", action=argparse.BooleanOptionalAction, default=False,
+        "--ct-deployment",
+        action=argparse.BooleanOptionalAction,
+        default=False,
         help="Inject the per-plant CT_PEAKER AS/RUC-deployment hourly floor "
-             "(outages.ct_deployment_floor_for_year, built by "
-             "scripts/derive_ct_deployment.py): in the measured out-of-merit "
-             "hours where the RT price was below a peaker's marginal cost, floor "
-             "it to its observed CEMS output, recovering the ~1.4-2.3 TWh/yr of "
-             "AS/reliability deployment energy the energy-only LP omits — WITHOUT "
-             "flooring CT to its full CEMS output (in-merit hours stay "
-             "economic). A pure LP min-gen bound (no MIP). Backcast-only; off by "
-             "default.",
+        "(outages.ct_deployment_floor_for_year, built by "
+        "scripts/derive_ct_deployment.py): in the measured out-of-merit "
+        "hours where the RT price was below a peaker's marginal cost, floor "
+        "it to its observed CEMS output, recovering the ~1.4-2.3 TWh/yr of "
+        "AS/reliability deployment energy the energy-only LP omits — WITHOUT "
+        "flooring CT to its full CEMS output (in-merit hours stay "
+        "economic). A pure LP min-gen bound (no MIP). Backcast-only; off by "
+        "default.",
     )
     parser.add_argument(
-        "--ct-deployment-floor-frac", type=float, default=1.0,
+        "--ct-deployment-floor-frac",
+        type=float,
+        default=1.0,
         help="Fraction of the measured deployment energy forced (default 1.0). "
-             "Lower it if a year would overshoot its CT class bar. Requires "
-             "--ct-deployment.",
+        "Lower it if a year would overshoot its CT class bar. Requires "
+        "--ct-deployment.",
     )
     parser.add_argument(
-        "--reliability-deployment", action=argparse.BooleanOptionalAction,
+        "--reliability-deployment",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Inject the spatial reliability-deployment hourly floor "
-             "(outages.reliability_deployment_floor_for_year, built by "
-             "scripts/derive_reliability_deployment.py): the generalization of "
-             "--ct-deployment to the load-pocket thermal fleet "
-             "(CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast). "
-             "In the hours where a pocket plant was economic at its LOCAL "
-             "load-zone price yet out of merit at the system hub, floor it to "
-             "its observed CEMS output, recovering the ~2.7-5.2 TWh/yr of "
-             "intra-zonal congestion energy the single-system-price LP omits — "
-             "reducing the North over-run and the SC/West/NE under-run WITHOUT "
-             "flooring to full CEMS. A pure LP min-gen bound (no MIP). "
-             "Backcast-only; off by default.",
+        "(outages.reliability_deployment_floor_for_year, built by "
+        "scripts/derive_reliability_deployment.py): the generalization of "
+        "--ct-deployment to the load-pocket thermal fleet "
+        "(CC_REGULAR/COAL/ST_GAS/CC_CHP in South_Central/West/Northeast). "
+        "In the hours where a pocket plant was economic at its LOCAL "
+        "load-zone price yet out of merit at the system hub, floor it to "
+        "its observed CEMS output, recovering the ~2.7-5.2 TWh/yr of "
+        "intra-zonal congestion energy the single-system-price LP omits — "
+        "reducing the North over-run and the SC/West/NE under-run WITHOUT "
+        "flooring to full CEMS. A pure LP min-gen bound (no MIP). "
+        "Backcast-only; off by default.",
     )
     parser.add_argument(
-        "--reliability-deployment-floor-frac", type=float, default=1.0,
+        "--reliability-deployment-floor-frac",
+        type=float,
+        default=1.0,
         help="Fraction of the measured congestion energy forced (default 1.0). "
-             "Lower it if a year would overshoot a pocket class bar. Requires "
-             "--reliability-deployment.",
+        "Lower it if a year would overshoot a pocket class bar. Requires "
+        "--reliability-deployment.",
     )
     parser.add_argument(
-        "--statistical-mode", action="store_true",
+        "--statistical-mode",
+        action="store_true",
         help="Out-of-sample (forecast-machinery) backcast: disable every "
-             "per-hour / per-year answer-injection overlay in one switch — "
-             "historic outage overlay (->statistical WEFOR/POF), the CT "
-             "AS/RUC-deployment floor, the spatial reliability-deployment "
-             "floor, the ST WEFOR-residual relief, and per-plant EIA-923 "
-             "monthly coal pricing (->fall back to the supply-class "
-             "trajectory). Keeps the STRUCTURAL model (per-plant heat rates, "
-             "committed floors, offer curves, gas-keyed coal passthrough "
-             "sigmoids, cc-duct band, storage daily cycling) and the realized "
-             "annual Henry Hub gas price (the 'realized-fuel' variant, "
-             "isolating dispatch machinery from fuel-forecast error). "
-             "Residual backcast devices that have no clean toggle and stay on "
-             "(documented small-order): the 2023-only ERCOT wind HSL rescale, "
-             "the nuclear monthly-CF overlay, and per-plant CEMS emission "
-             "rates (the latter does not affect dispatch at carbon_price=0). "
-             "Overrides any conflicting overlay flag.",
+        "per-hour / per-year answer-injection overlay in one switch — "
+        "historic outage overlay (->statistical WEFOR/POF), the CT "
+        "AS/RUC-deployment floor, the spatial reliability-deployment "
+        "floor, the ST WEFOR-residual relief, and per-plant EIA-923 "
+        "monthly coal pricing (->fall back to the supply-class "
+        "trajectory). Keeps the STRUCTURAL model (per-plant heat rates, "
+        "committed floors, offer curves, gas-keyed coal passthrough "
+        "sigmoids, cc-duct band, storage daily cycling) and the realized "
+        "annual Henry Hub gas price (the 'realized-fuel' variant, "
+        "isolating dispatch machinery from fuel-forecast error). "
+        "Residual backcast devices that have no clean toggle and stay on "
+        "(documented small-order): the 2023-only ERCOT wind HSL rescale, "
+        "the nuclear monthly-CF overlay, and per-plant CEMS emission "
+        "rates (the latter does not affect dispatch at carbon_price=0). "
+        "Overrides any conflicting overlay flag.",
     )
     parser.add_argument(
-        "--no-coal-monthly-pricing", dest="no_coal_monthly_pricing",
+        "--no-coal-monthly-pricing",
+        dest="no_coal_monthly_pricing",
         action="store_true",
         help="Disable per-plant EIA-923 monthly delivered coal pricing "
-             "(coal_plant_monthly_pricing) so every coal plant falls back to "
-             "its supply-class trajectory. A single-overlay ablation knob "
-             "(implied by --statistical-mode).",
+        "(coal_plant_monthly_pricing) so every coal plant falls back to "
+        "its supply-class trajectory. A single-overlay ablation knob "
+        "(implied by --statistical-mode).",
     )
     parser.add_argument(
-        "--coal-drop-pof", action=argparse.BooleanOptionalAction, default=True,
+        "--coal-drop-pof",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help="Drop the statistical planned-outage (POF) derate on coal "
-             "(planned maintenance comes from the historic outage overlay); "
-             "keep WEFOR in non-summer months and the derate all year.",
+        "(planned maintenance comes from the historic outage overlay); "
+        "keep WEFOR in non-summer months and the derate all year.",
     )
     parser.add_argument(
-        "--wefor-residual", type=float, default=None,
+        "--wefor-residual",
+        type=float,
+        default=None,
         help="Historic-backcast WEFOR residual: cap the statistical "
-             "forced-outage rate of the overlay-covered classes (coal + "
-             "CC_REGULAR/CC_CHP/ST_GAS/ST_CHP) at this short-outage floor "
-             "(e.g. 0.015) — the CAMPD overlay + unit derate already carry "
-             "every >=5-day outage, so the full WEFOR double-counts them. "
-             "Default None keeps the full statistical WEFOR (prior "
-             "behavior). CTs are unaffected.",
+        "forced-outage rate of the overlay-covered classes (coal + "
+        "CC_REGULAR/CC_CHP/ST_GAS/ST_CHP) at this short-outage floor "
+        "(e.g. 0.015) — the CAMPD overlay + unit derate already carry "
+        "every >=5-day outage, so the full WEFOR double-counts them. "
+        "Default None keeps the full statistical WEFOR (prior "
+        "behavior). CTs are unaffected.",
     )
     parser.add_argument(
-        "--prb-sigmoid-tiered", action=argparse.BooleanOptionalAction,
+        "--prb-sigmoid-tiered",
+        action=argparse.BooleanOptionalAction,
         default=True,
         help="Use a separate follower-tier PRB passthrough sigmoid for "
-             "low-must-run load-follower plants (coal_prb_follower_*).",
+        "low-must-run load-follower plants (coal_prb_follower_*).",
     )
     parser.add_argument(
-        "--report", metavar="DIR", default=None,
+        "--report",
+        metavar="DIR",
+        default=None,
         help="Skip solving; print the report from an existing bundle directory.",
     )
     parser.add_argument(
-        "--rebuild-benchmark", metavar="DIR", default=None,
+        "--rebuild-benchmark",
+        metavar="DIR",
+        default=None,
         help="Rebuild a bundle's benchmark parquets (EIA-923 w/ CAMPD "
-             "backfill, EIA-930, CAMPD) off its meta and re-report — no "
-             "dispatch re-solve.",
+        "backfill, EIA-930, CAMPD) off its meta and re-report — no "
+        "dispatch re-solve.",
     )
     parser.add_argument(
-        "--persist-p2-state", action="store_true",
+        "--persist-p2-state",
+        action="store_true",
         help="Pickle each year's P1 inputs (large) so P2 can be re-run via "
-             "--run-p2 without re-solving P0/P1.",
+        "--run-p2 without re-solving P0/P1.",
     )
     parser.add_argument(
-        "--run-p2", metavar="DIR", default=None,
+        "--run-p2",
+        metavar="DIR",
+        default=None,
         help="Run the P2 commitment pass from a bundle's cached P1 state "
-             "(one LP solve, no re-solve). Honours --no-coal-p2.",
+        "(one LP solve, no re-solve). Honours --no-coal-p2.",
     )
     parser.add_argument(
-        "--out-dir", default=None,
+        "--out-dir",
+        default=None,
         help="Bundle root (default results/calibration/<iso>/<timestamp>).",
     )
     parser.add_argument(
-        "--note", default="",
+        "--note",
+        default="",
         help="Free-text note describing pre-run model changes; recorded in "
-             "the bundle's run_config.json alongside the full config and git "
-             "provenance.",
+        "the bundle's run_config.json alongside the full config and git "
+        "provenance.",
     )
     # PRB passthrough sigmoid floor/ceiling tune (baseload + follower tiers).
     # None leaves the ScenarioConfig default in place.
-    parser.add_argument("--prb-floor", type=float, default=None,
-                        help="Baseload PRB sigmoid cheap-gas floor.")
-    parser.add_argument("--prb-ceil", type=float, default=None,
-                        help="Baseload PRB sigmoid dear-gas ceiling.")
+    parser.add_argument(
+        "--prb-floor",
+        type=float,
+        default=None,
+        help="Baseload PRB sigmoid cheap-gas floor.",
+    )
+    parser.add_argument(
+        "--prb-ceil",
+        type=float,
+        default=None,
+        help="Baseload PRB sigmoid dear-gas ceiling.",
+    )
     # Gas-keyed bituminous passthrough sigmoid (PJM coal fleet). Off by
     # default — turning it on replaces full fuel cost on bituminous
     # above-must-run tranches with a logistic of the monthly delivered gas
     # price (the measured EIA-923 series when --gas-monthly-actuals is on).
     parser.add_argument(
-        "--coal-bit-sigmoid", action=argparse.BooleanOptionalAction,
+        "--coal-bit-sigmoid",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Gas-key the bituminous coal passthrough: above-must-run bit "
-             "tranches get a fuel discount when gas is cheap and a markup "
-             "when dear (coal_bit_passthrough_* params), tracking the "
-             "bit-vs-gas-CC merit-order crossover. Off = full fuel cost.")
-    parser.add_argument("--bit-floor", type=float, default=None,
-                        help="Bit sigmoid cheap-gas floor.")
-    parser.add_argument("--bit-ceil", type=float, default=None,
-                        help="Bit sigmoid dear-gas ceiling.")
-    parser.add_argument("--bit-gas-mid", type=float, default=None,
-                        help="Bit sigmoid logistic midpoint ($/MMBtu).")
-    parser.add_argument("--bit-gas-slope", type=float, default=None,
-                        help="Bit sigmoid logistic slope (per $/MMBtu).")
+        "tranches get a fuel discount when gas is cheap and a markup "
+        "when dear (coal_bit_passthrough_* params), tracking the "
+        "bit-vs-gas-CC merit-order crossover. Off = full fuel cost.",
+    )
+    parser.add_argument(
+        "--bit-floor", type=float, default=None, help="Bit sigmoid cheap-gas floor."
+    )
+    parser.add_argument(
+        "--bit-ceil", type=float, default=None, help="Bit sigmoid dear-gas ceiling."
+    )
+    parser.add_argument(
+        "--bit-gas-mid",
+        type=float,
+        default=None,
+        help="Bit sigmoid logistic midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--bit-gas-slope",
+        type=float,
+        default=None,
+        help="Bit sigmoid logistic slope (per $/MMBtu).",
+    )
     # Gas-keyed lignite passthrough sigmoid (ERCOT mine-mouth fleet). Off by
     # default — turning it on replaces full fuel cost on lignite
     # above-must-run tranches with a logistic of the monthly delivered gas
     # price (the bid discounts; the measured ~$1.45/MMBtu delivered price
     # stays the full-cost anchor).
     parser.add_argument(
-        "--coal-lignite-sigmoid", action=argparse.BooleanOptionalAction,
+        "--coal-lignite-sigmoid",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Gas-key the lignite coal passthrough: above-must-run lignite "
-             "tranches get a fuel discount when gas is cheap (mine-mouth "
-             "take-or-pay fixed costs are sunk) rising to full cost when "
-             "dear (coal_lignite_passthrough_* params), tracking the "
-             "lignite-vs-gas-CC merit-order crossover. Off = full fuel cost.")
-    parser.add_argument("--lignite-floor", type=float, default=None,
-                        help="Lignite sigmoid cheap-gas floor.")
-    parser.add_argument("--lignite-ceil", type=float, default=None,
-                        help="Lignite sigmoid dear-gas ceiling.")
-    parser.add_argument("--lignite-gas-mid", type=float, default=None,
-                        help="Lignite sigmoid logistic midpoint ($/MMBtu).")
-    parser.add_argument("--lignite-gas-slope", type=float, default=None,
-                        help="Lignite sigmoid logistic slope (per $/MMBtu).")
+        "tranches get a fuel discount when gas is cheap (mine-mouth "
+        "take-or-pay fixed costs are sunk) rising to full cost when "
+        "dear (coal_lignite_passthrough_* params), tracking the "
+        "lignite-vs-gas-CC merit-order crossover. Off = full fuel cost.",
+    )
+    parser.add_argument(
+        "--lignite-floor",
+        type=float,
+        default=None,
+        help="Lignite sigmoid cheap-gas floor.",
+    )
+    parser.add_argument(
+        "--lignite-ceil",
+        type=float,
+        default=None,
+        help="Lignite sigmoid dear-gas ceiling.",
+    )
+    parser.add_argument(
+        "--lignite-gas-mid",
+        type=float,
+        default=None,
+        help="Lignite sigmoid logistic midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--lignite-gas-slope",
+        type=float,
+        default=None,
+        help="Lignite sigmoid logistic slope (per $/MMBtu).",
+    )
     # Subbituminous passthrough sigmoid: the derived EIA-923 rank tag
     # (e.g. PJM's two PRB-by-rail plants delivered into PJM market
     # conditions) — a separate supply chain from the curated ERCOT "prb"
     # tag, with its own per-ISO curve. Off by default = full fuel cost.
     parser.add_argument(
-        "--coal-sub-sigmoid", action=argparse.BooleanOptionalAction,
+        "--coal-sub-sigmoid",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Gas-key the subbituminous coal passthrough on its own curve "
-             "(coal_sub_passthrough_* params / per-ISO defaults). "
-             "Off = full fuel cost.")
-    parser.add_argument("--sub-floor", type=float, default=None,
-                        help="Subbituminous sigmoid cheap-gas floor.")
-    parser.add_argument("--sub-ceil", type=float, default=None,
-                        help="Subbituminous sigmoid dear-gas ceiling.")
-    parser.add_argument("--sub-gas-mid", type=float, default=None,
-                        help="Subbituminous sigmoid logistic midpoint "
-                             "($/MMBtu).")
-    parser.add_argument("--sub-gas-slope", type=float, default=None,
-                        help="Subbituminous sigmoid logistic slope "
-                             "(per $/MMBtu).")
+        "(coal_sub_passthrough_* params / per-ISO defaults). "
+        "Off = full fuel cost.",
+    )
+    parser.add_argument(
+        "--sub-floor",
+        type=float,
+        default=None,
+        help="Subbituminous sigmoid cheap-gas floor.",
+    )
+    parser.add_argument(
+        "--sub-ceil",
+        type=float,
+        default=None,
+        help="Subbituminous sigmoid dear-gas ceiling.",
+    )
+    parser.add_argument(
+        "--sub-gas-mid",
+        type=float,
+        default=None,
+        help="Subbituminous sigmoid logistic midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--sub-gas-slope",
+        type=float,
+        default=None,
+        help="Subbituminous sigmoid logistic slope (per $/MMBtu).",
+    )
     # Waste-coal passthrough sigmoid (culm/gob, the PJM COAL_WC class).
     # Near-free reclamation fuel: no cheap-gas discount, only a dear-gas
     # bid markup to suppress high-gas-year over-run. Off by default =
     # full fuel cost.
     parser.add_argument(
-        "--coal-waste-sigmoid", action=argparse.BooleanOptionalAction,
+        "--coal-waste-sigmoid",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Gas-key the waste-coal passthrough on its own curve "
-             "(coal_waste_passthrough_* params / per-ISO defaults). "
-             "Off = full fuel cost.")
-    parser.add_argument("--waste-floor", type=float, default=None,
-                        help="Waste-coal sigmoid cheap-gas floor.")
-    parser.add_argument("--waste-ceil", type=float, default=None,
-                        help="Waste-coal sigmoid dear-gas ceiling.")
-    parser.add_argument("--waste-gas-mid", type=float, default=None,
-                        help="Waste-coal sigmoid logistic midpoint "
-                             "($/MMBtu).")
-    parser.add_argument("--waste-gas-slope", type=float, default=None,
-                        help="Waste-coal sigmoid logistic slope "
-                             "(per $/MMBtu).")
-    parser.add_argument("--prb-follower-floor", type=float, default=None,
-                        help="Follower-tier PRB sigmoid floor.")
-    parser.add_argument("--prb-follower-ceil", type=float, default=None,
-                        help="Follower-tier PRB sigmoid ceiling.")
-    parser.add_argument("--prb-gas-mid", type=float, default=None,
-                        help="Baseload PRB sigmoid gas-price midpoint "
-                             "($/MMBtu).")
-    parser.add_argument("--prb-gas-slope", type=float, default=None,
-                        help="Baseload PRB sigmoid slope (per $/MMBtu).")
-    parser.add_argument("--prb-follower-gas-mid", type=float, default=None,
-                        help="Follower-tier PRB sigmoid gas-price midpoint "
-                             "($/MMBtu).")
-    parser.add_argument("--prb-follower-gas-slope", type=float, default=None,
-                        help="Follower-tier PRB sigmoid slope (per $/MMBtu).")
+        "(coal_waste_passthrough_* params / per-ISO defaults). "
+        "Off = full fuel cost.",
+    )
     parser.add_argument(
-        "--chp-startup-covered", action="store_true",
+        "--waste-floor",
+        type=float,
+        default=None,
+        help="Waste-coal sigmoid cheap-gas floor.",
+    )
+    parser.add_argument(
+        "--waste-ceil",
+        type=float,
+        default=None,
+        help="Waste-coal sigmoid dear-gas ceiling.",
+    )
+    parser.add_argument(
+        "--waste-gas-mid",
+        type=float,
+        default=None,
+        help="Waste-coal sigmoid logistic midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--waste-gas-slope",
+        type=float,
+        default=None,
+        help="Waste-coal sigmoid logistic slope (per $/MMBtu).",
+    )
+    parser.add_argument(
+        "--prb-follower-floor",
+        type=float,
+        default=None,
+        help="Follower-tier PRB sigmoid floor.",
+    )
+    parser.add_argument(
+        "--prb-follower-ceil",
+        type=float,
+        default=None,
+        help="Follower-tier PRB sigmoid ceiling.",
+    )
+    parser.add_argument(
+        "--prb-gas-mid",
+        type=float,
+        default=None,
+        help="Baseload PRB sigmoid gas-price midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--prb-gas-slope",
+        type=float,
+        default=None,
+        help="Baseload PRB sigmoid slope (per $/MMBtu).",
+    )
+    parser.add_argument(
+        "--prb-follower-gas-mid",
+        type=float,
+        default=None,
+        help="Follower-tier PRB sigmoid gas-price midpoint ($/MMBtu).",
+    )
+    parser.add_argument(
+        "--prb-follower-gas-slope",
+        type=float,
+        default=None,
+        help="Follower-tier PRB sigmoid slope (per $/MMBtu).",
+    )
+    parser.add_argument(
+        "--chp-startup-covered",
+        action="store_true",
         help="Exempt CHP classes (CC_CHP/CT_CHP/ST_CHP) from the P1 startup"
-             "-amortization markup: a steam-host-obligated cogen never pays "
-             "a cold start on its own account, so its energy bid carries no "
-             "startup component.",
+        "-amortization markup: a steam-host-obligated cogen never pays "
+        "a cold start on its own account, so its energy bid carries no "
+        "startup component.",
     )
     parser.add_argument(
-        "--wefor-relief-groups", default=None,
+        "--wefor-relief-groups",
+        default=None,
         help="Comma-separated plant groups the --wefor-residual cap applies "
-             "to (e.g. 'ST_GAS,ST_CHP'). Default (unset) keeps the legacy "
-             "scope: every CAMPD-covered class (coal + CC/ST + CHP). Use to "
-             "relieve only the class with a measured availability deficit "
-             "(ST_GAS) while leaving CC/coal on the full statistical model.")
+        "to (e.g. 'ST_GAS,ST_CHP'). Default (unset) keeps the legacy "
+        "scope: every CAMPD-covered class (coal + CC/ST + CHP). Use to "
+        "relieve only the class with a measured availability deficit "
+        "(ST_GAS) while leaving CC/coal on the full statistical model.",
+    )
     parser.add_argument(
-        "--committed-ramp-spread", type=float, default=None,
+        "--committed-ramp-spread",
+        type=float,
+        default=None,
         help="Render the per-plant committed band as an n-slice rising ramp "
-             "spanning committed_mult x (1 +/- this fraction) instead of one "
-             "flat block, so a plant clears its committed capacity "
-             "progressively with price rather than snapping to the full "
-             "committed share in one hour. Targets the under-populated "
-             "mid-CF-band (bimodal dispatch). Mean bid unchanged. Unset = "
-             "flat block (no change).")
+        "spanning committed_mult x (1 +/- this fraction) instead of one "
+        "flat block, so a plant clears its committed capacity "
+        "progressively with price rather than snapping to the full "
+        "committed share in one hour. Targets the under-populated "
+        "mid-CF-band (bimodal dispatch). Mean bid unchanged. Unset = "
+        "flat block (no change).",
+    )
     parser.add_argument(
-        "--coal-warm-committed", action="store_true",
+        "--coal-warm-committed",
+        action="store_true",
         help="Exempt CAMPD coal committed tranches from the P1 startup"
-             "-amortization markup when the plant has a must-run floor: the "
-             "mustrun tranche keeps the boiler online, so committed-band "
-             "dispatch is a hot-unit ramp, not a cold start. Off (default) "
-             "keeps the legacy $100/MW coal start markup, which prices the "
-             "committed band above the econ ramp (the run-97b inversion).",
+        "-amortization markup when the plant has a must-run floor: the "
+        "mustrun tranche keeps the boiler online, so committed-band "
+        "dispatch is a hot-unit ramp, not a cold start. Off (default) "
+        "keeps the legacy $100/MW coal start markup, which prices the "
+        "committed band above the econ ramp (the run-97b inversion).",
     )
     parser.add_argument(
-        "--storage-daily-cycling", action="store_true",
+        "--storage-daily-cycling",
+        action="store_true",
         help="Cap storage to within-day arbitrage: each unit's SOC must "
-             "return to its day-start level every 24h (bounds the single-LP "
-             "perfect-foresight advantage). Off = annual-cyclic (default).",
+        "return to its day-start level every 24h (bounds the single-LP "
+        "perfect-foresight advantage). Off = annual-cyclic (default).",
     )
     parser.add_argument(
-        "--as-reserve-withholding", action="store_true",
+        "--as-reserve-withholding",
+        action="store_true",
         help="ERCOT upper-bound probe: remove the hourly cleared DAM up-AS MW "
-             "(RegUp/RRS/ECRS/Non-Spin, from "
-             "scripts/build_ercot_as_withholding.py) from thermal headroom "
-             "before the supply curve clears. Books all AS to thermal (no "
-             "storage/load split). Off = no withholding (default).",
+        "(RegUp/RRS/ECRS/Non-Spin, from "
+        "scripts/build_ercot_as_withholding.py) from thermal headroom "
+        "before the supply curve clears. Books all AS to thermal (no "
+        "storage/load split). Off = no withholding (default).",
     )
     parser.add_argument(
-        "--energy-reserve-coopt", action="store_true",
+        "--energy-reserve-coopt",
+        action="store_true",
         help="PJM energy+reserve co-optimization inside the LP: add a per-unit "
-             "reserve variable sharing each unit's headroom with energy, a "
-             "reserve-balance constraint at the structural 1.5x-MSSC Primary "
-             "Reserve requirement, and the published two-step ORDC demand curve "
-             "as priced shortfall steps, so the reserve clearing price emerges "
-             "as a dual and lifts the energy LMP. Replaces the post-solve ORDC "
-             "overlay. PJM-only. Off = energy-only LP (default).",
+        "reserve variable sharing each unit's headroom with energy, a "
+        "reserve-balance constraint at the structural 1.5x-MSSC Primary "
+        "Reserve requirement, and the published two-step ORDC demand curve "
+        "as priced shortfall steps, so the reserve clearing price emerges "
+        "as a dual and lifts the energy LMP. Replaces the post-solve ORDC "
+        "overlay. PJM-only. Off = energy-only LP (default).",
     )
     parser.add_argument(
-        "--ercot-load-resource-reserve", action="store_true",
+        "--ercot-load-resource-reserve",
+        action="store_true",
         help="ERCOT energy+reserve co-opt only: credit the measured "
-             "Load-Resource responsive reserve (RRS-UFR, the under-frequency-"
-             "relay RRS only Load Resources provide; ~0.8-0.9 GW, "
-             "build_ercot_as_withholding.py) into the reserve balance by "
-             "lowering its RHS, so the LP stops pricing a scarcity adder in "
-             "non-scarce hours from omitting load-side reserve. 2023 has no "
-             "archive coverage (tail untouched). GATED: alters volumes. "
-             "Off = no load credit (default).",
+        "Load-Resource responsive reserve (RRS-UFR, the under-frequency-"
+        "relay RRS only Load Resources provide; ~0.8-0.9 GW, "
+        "build_ercot_as_withholding.py) into the reserve balance by "
+        "lowering its RHS, so the LP stops pricing a scarcity adder in "
+        "non-scarce hours from omitting load-side reserve. 2023 has no "
+        "archive coverage (tail untouched). GATED: alters volumes. "
+        "Off = no load credit (default).",
     )
     parser.add_argument(
-        "--ercot-storage-as-reserve", action="store_true",
+        "--ercot-storage-as-reserve",
+        action="store_true",
         help="ERCOT energy+reserve co-opt + --storage-as-commitment only: credit "
-             "the measured battery-provided AS (RegUp/RRS/ECRS, the storage "
-             "column of the per-resource-type 60-Day DAM AS awards; ~0.8 GW 2023 "
-             "→ ~2.8 GW 2025) back into the reserve balance. --storage-as-"
-             "commitment subtracts this MW from the storage power cap and the "
-             "reserve block derives reserve room from that reduced cap, so the "
-             "committed battery AS is otherwise dropped from reserve supply even "
-             "though it is held responsive reserve (in ERCOT's RTOLCAP/RTOFFCAP). "
-             "Self-targeting (negligible 2023, largest 2025). GATED: alters "
-             "volumes. Off = no storage-AS credit (default).",
+        "the measured battery-provided AS (RegUp/RRS/ECRS, the storage "
+        "column of the per-resource-type 60-Day DAM AS awards; ~0.8 GW 2023 "
+        "→ ~2.8 GW 2025) back into the reserve balance. --storage-as-"
+        "commitment subtracts this MW from the storage power cap and the "
+        "reserve block derives reserve room from that reduced cap, so the "
+        "committed battery AS is otherwise dropped from reserve supply even "
+        "though it is held responsive reserve (in ERCOT's RTOLCAP/RTOFFCAP). "
+        "Self-targeting (negligible 2023, largest 2025). GATED: alters "
+        "volumes. Off = no storage-AS credit (default).",
     )
     parser.add_argument(
-        "--ercot-storage-as-reserve-from-year", type=int, default=2025,
+        "--ercot-storage-as-reserve-from-year",
+        type=int,
+        default=2025,
         help="First weather year the --ercot-storage-as-reserve credit applies "
-             "to (default 2025). A modeling scope, not a measured fact: the "
-             "credit is physically correct every year, but 2023/2024 each carry "
-             "genuine scarcity the ORDC-only model can only reach THROUGH the "
-             "reserve over-fire, so crediting them collapses their real tail "
-             "(2024 probe: tail 49→7 h >$200, MAE 10.5→12.7). Set to 2023 only "
-             "to probe a global credit alongside a genuine scarcity-price "
-             "mechanism (see docs/ercot-run131-lmp-decomposition-2026-06.md).",
+        "to (default 2025). A modeling scope, not a measured fact: the "
+        "credit is physically correct every year, but 2023/2024 each carry "
+        "genuine scarcity the ORDC-only model can only reach THROUGH the "
+        "reserve over-fire, so crediting them collapses their real tail "
+        "(2024 probe: tail 49→7 h >$200, MAE 10.5→12.7). Set to 2023 only "
+        "to probe a global credit alongside a genuine scarcity-price "
+        "mechanism (see docs/ercot-run131-lmp-decomposition-2026-06.md).",
     )
     parser.add_argument(
-        "--as-reserve-formula", action="store_true",
+        "--as-reserve-formula",
+        action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
-             "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
-             "1%% regulation-up; fleet.caiso_operating_reserve_mw) from the gas "
-             "top-of-merit headroom before the supply curve clears, lifting the "
-             "evening tail. CAISO-only, no-fitted-constants scaffold until OASIS "
-             "cleared-AS data can be pulled. Off = no withholding (default).",
+        "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
+        "1%% regulation-up; fleet.caiso_operating_reserve_mw) from the gas "
+        "top-of-merit headroom before the supply curve clears, lifting the "
+        "evening tail. CAISO-only, no-fitted-constants scaffold until OASIS "
+        "cleared-AS data can be pulled. Off = no withholding (default).",
     )
     parser.add_argument(
-        "--storage-as-commitment", action="store_true",
+        "--storage-as-commitment",
+        action="store_true",
         help="ERCOT: reserve the measured hourly storage up-AS MW from the "
-             "battery dispatch power cap (per-resource-type series), so AS-"
-             "committed capacity cannot also arbitrage energy. Off (default).",
+        "battery dispatch power cap (per-resource-type series), so AS-"
+        "committed capacity cannot also arbitrage energy. Off (default).",
     )
     parser.add_argument(
-        "--battery-adder", type=float, default=0.0,
+        "--battery-adder",
+        type=float,
+        default=0.0,
         help="Grid-battery throughput/cycling cost in $/MWh discharged "
-             "(ScenarioConfig.battery_dispatch_adder): degradation + "
-             "ancillary-service opportunity cost the energy-only LP "
-             "otherwise ignores, taming BESS over-cycling. 0 = off "
-             "(default; pumped storage keeps its own adder).",
+        "(ScenarioConfig.battery_dispatch_adder): degradation + "
+        "ancillary-service opportunity cost the energy-only LP "
+        "otherwise ignores, taming BESS over-cycling. 0 = off "
+        "(default; pumped storage keeps its own adder).",
     )
     parser.add_argument(
-        "--gas-offer-curve", action="store_true",
+        "--gas-offer-curve",
+        action="store_true",
         help="Give the non-ERCOT per-plant gas fleet a stepped offer curve "
-             "(committed/economic/peaking heat-rate bands) via "
-             "split_gas_tranches, instead of a single flat block. Off by "
-             "default.",
+        "(committed/economic/peaking heat-rate bands) via "
+        "split_gas_tranches, instead of a single flat block. Off by "
+        "default.",
     )
     parser.add_argument(
-        "--gas-monthly-actuals", action="store_true",
+        "--gas-monthly-actuals",
+        action="store_true",
         help="Price gas at the ISO's measured EIA-923 monthly volume-weighted "
-             "delivered cost (one hub-level price per month) instead of the "
-             "annual Henry Hub + basis x generic seasonality shape, so real "
-             "winter gas events reach the merit order. Off by default.",
+        "delivered cost (one hub-level price per month) instead of the "
+        "annual Henry Hub + basis x generic seasonality shape, so real "
+        "winter gas events reach the merit order. Off by default.",
     )
     parser.add_argument(
-        "--gas-hub-basis-daily", action="store_true",
+        "--gas-hub-basis-daily",
+        action="store_true",
         help="NEISO diagnostic (off by default): replace the flat monthly "
-             "Algonquin Citygate hub-basis overlay with a daily within-month "
-             "shape (demand^AGT_DAILY_BASIS_CONVEXITY, mean-preserving) and "
-             "re-attribute dual-fuel switched MWh to oil. Builds the winter "
-             ">$200 LMP tail / oil burn the monthly plateau can't, but the "
-             "convexity is fitted to the backcast (not forecast-grade) and the "
-             "daily AGT spot it proxies (U4) is unavailable, so it is opt-in "
-             "and the keepers stay on the measured monthly overlay.",
+        "Algonquin Citygate hub-basis overlay with a daily within-month "
+        "shape (demand^AGT_DAILY_BASIS_CONVEXITY, mean-preserving) and "
+        "re-attribute dual-fuel switched MWh to oil. Builds the winter "
+        ">$200 LMP tail / oil burn the monthly plateau can't, but the "
+        "convexity is fitted to the backcast (not forecast-grade) and the "
+        "daily AGT spot it proxies (U4) is unavailable, so it is opt-in "
+        "and the keepers stay on the measured monthly overlay.",
     )
-    parser.add_argument("--plant-tranche-config", default=None,
-                        help="Per-plant tranche-config CSV (one row per plant "
-                             "with its tranche shares + per-band HR mults). "
-                             "Each listed plant's offer comes from the sheet, "
-                             "bypassing offer_curve_by_group. Generate/edit "
-                             "with scripts/export_tranche_config.py.")
     parser.add_argument(
-        "--offer-curve-json", default=None, metavar="JSON",
+        "--plant-tranche-config",
+        default=None,
+        help="Per-plant tranche-config CSV (one row per plant "
+        "with its tranche shares + per-band HR mults). "
+        "Each listed plant's offer comes from the sheet, "
+        "bypassing offer_curve_by_group. Generate/edit "
+        "with scripts/export_tranche_config.py.",
+    )
+    parser.add_argument(
+        "--offer-curve-json",
+        default=None,
+        metavar="JSON",
         help="Per-class/per-band heat-rate multiplier overrides as a JSON "
-             "object, deep-merged onto the calibrated offer_curve_by_group "
-             "defaults. Each top-level key is a fleet class (CC_REGULAR, "
-             "CC_CHP, CT_PEAKER, ST_GAS, ST_CHP, COAL_LIGNITE, COAL_PRB); the "
-             "nested object overrides only the named bands (committed, "
-             "econ_low, econ_high, peak, econ_low_share, pct_peaking). "
-             'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
-             '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
-             ".json file. The merged curve is recorded in run_config.json.")
+        "object, deep-merged onto the calibrated offer_curve_by_group "
+        "defaults. Each top-level key is a fleet class (CC_REGULAR, "
+        "CC_CHP, CT_PEAKER, ST_GAS, ST_CHP, COAL_LIGNITE, COAL_PRB); the "
+        "nested object overrides only the named bands (committed, "
+        "econ_low, econ_high, peak, econ_low_share, pct_peaking). "
+        'E.g. \'{"CT_PEAKER":{"committed":1.40,"econ_low":1.27},'
+        '"COAL_PRB":{"committed":0.95}}\'. May also be a path to a '
+        ".json file. The merged curve is recorded in run_config.json.",
+    )
     parser.add_argument(
-        "--cc-derate-from-top", action="store_true",
+        "--cc-derate-from-top",
+        action="store_true",
         help="Reallocate CC_REGULAR outage derates top-of-stack: a partial "
-             "outage truncates the duct-fire/high-econ end of the plant's "
-             "offer curve instead of scaling every tranche (incl. the cheap "
-             "committed floor) pro-rata. Plant hourly available MW unchanged.")
+        "outage truncates the duct-fire/high-econ end of the plant's "
+        "offer curve instead of scaling every tranche (incl. the cheap "
+        "committed floor) pro-rata. Plant hourly available MW unchanged.",
+    )
     parser.add_argument(
-        "--cc-duct-peaking", action=argparse.BooleanOptionalAction,
+        "--cc-duct-peaking",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Size each CC plant's peaking (duct-burner) tranche from its "
-             "EIA-860 nameplate-vs-net-summer capability gap (duct-fired "
-             "plants only; non-duct CCs get no peak band) — a per-plant, "
-             "manufacturer-spec share replacing the class-wide pct_peaking AND "
-             "the 4-plant hardcoded ERCOT override (sets cc_duct_peaking on, "
-             "cc_peaking_per_plant off). fleet.cc_duct_peaking_pct.")
+        "EIA-860 nameplate-vs-net-summer capability gap (duct-fired "
+        "plants only; non-duct CCs get no peak band) — a per-plant, "
+        "manufacturer-spec share replacing the class-wide pct_peaking AND "
+        "the 4-plant hardcoded ERCOT override (sets cc_duct_peaking on, "
+        "cc_peaking_per_plant off). fleet.cc_duct_peaking_pct.",
+    )
     parser.add_argument(
-        "--curve-n", type=int, default=None,
+        "--curve-n",
+        type=int,
+        default=None,
         help="Override offer_curve_smoothing_n (default 6): the number of "
-             "equal-capacity slices the econ ramp is rendered into. Sweep "
-             "knob for testing finer offer-curve granularity (e.g. 12).")
+        "equal-capacity slices the econ ramp is rendered into. Sweep "
+        "knob for testing finer offer-curve granularity (e.g. 12).",
+    )
     parser.add_argument(
-        "--curve-mid", type=float, default=None,
+        "--curve-mid",
+        type=float,
+        default=None,
         help="Override offer_curve_smoothing_mid: fraction of the econ "
-             "ramp's lo->pk rise reached at its capacity midpoint "
-             "(piecewise-linear shape anchor; <0.5 = cheap middle, steep "
-             "top). Unset keeps the t**exp power shape.")
+        "ramp's lo->pk rise reached at its capacity midpoint "
+        "(piecewise-linear shape anchor; <0.5 = cheap middle, steep "
+        "top). Unset keeps the t**exp power shape.",
+    )
     parser.add_argument(
-        "--curve-exp", type=float, default=None,
+        "--curve-exp",
+        type=float,
+        default=None,
         help="Override offer_curve_smoothing_exp (default 1.0 = linear "
-             "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
-             "(cheap-bottomed), <1 concave (cheap mid/top).")
+        "ramp): exponent of the econ-ramp heat-rate rise. >1 convex "
+        "(cheap-bottomed), <1 concave (cheap mid/top).",
+    )
     parser.add_argument(
-        "--priced-interchange", action=argparse.BooleanOptionalAction,
+        "--priced-interchange",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Serve interchange through the priced import/export node "
-             "(import tranches + export sinks in the ISO's external zone, "
-             "the forward-scenario mechanism) instead of the measured "
-             "schedule added to demand. Used to validate the node's tranche "
-             "calibration against the EIA-930 net-interchange duration "
-             "curve. Default per ISO: on for "
-             f"{', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
-             "(no measured-schedule mode), off elsewhere; pass "
-             "--no-priced-interchange to force the measured schedule.")
+        "(import tranches + export sinks in the ISO's external zone, "
+        "the forward-scenario mechanism) instead of the measured "
+        "schedule added to demand. Used to validate the node's tranche "
+        "calibration against the EIA-930 net-interchange duration "
+        "curve. Default per ISO: on for "
+        f"{', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+        "(no measured-schedule mode), off elsewhere; pass "
+        "--no-priced-interchange to force the measured schedule.",
+    )
     parser.add_argument(
-        "--hydro-backfill-year", type=int, default=None,
+        "--hydro-backfill-year",
+        type=int,
+        default=None,
         help="Carry conventional-hydro plants that reported in this prior "
-             "year but not in the backcast year at their prior-year monthly "
-             "net generation (load_hydro_budget early-release path). The most "
-             "recent EIA-923 vintage is a monthly-survey-only release that "
-             "under-counts hydro until the final annual file lands (NEISO "
-             "2025: 5 of ~166 plants, 0.09 of ~6 TWh), and the missing inflow "
-             "is otherwise served by gas, inflating the modeled gas level. "
-             "Unset (default) loads the backcast year exactly as reported and "
-             "changes no existing run.")
+        "year but not in the backcast year at their prior-year monthly "
+        "net generation (load_hydro_budget early-release path). The most "
+        "recent EIA-923 vintage is a monthly-survey-only release that "
+        "under-counts hydro until the final annual file lands (NEISO "
+        "2025: 5 of ~166 plants, 0.09 of ~6 TWh), and the missing inflow "
+        "is otherwise served by gas, inflating the modeled gas level. "
+        "Unset (default) loads the backcast year exactly as reported and "
+        "changes no existing run.",
+    )
     parser.add_argument(
-        "--hydro-eia930-monthly", action="store_true",
+        "--hydro-eia930-monthly",
+        action="store_true",
         help="Repin the conventional-hydro monthly energy budget to the "
-             "measured EIA-930 NG: WAT monthly total for the ISO/year "
-             "(per-plant within-month shares preserved). Corrects both the "
-             "level and the monthly shape when the backfilled early-release "
-             "923 vintage misstates an off-inflow year (NEISO 2025: the 2024 "
-             "backfill yields 6.65 TWh, flat, vs measured 5.12 TWh). No-op "
-             "when EIA-930 hydro for the ISO/year is unavailable. Off "
-             "(default) changes no existing run. Pairs with "
-             "--hydro-backfill-year, which supplies the per-plant coverage.")
+        "measured EIA-930 NG: WAT monthly total for the ISO/year "
+        "(per-plant within-month shares preserved). Corrects both the "
+        "level and the monthly shape when the backfilled early-release "
+        "923 vintage misstates an off-inflow year (NEISO 2025: the 2024 "
+        "backfill yields 6.65 TWh, flat, vs measured 5.12 TWh). No-op "
+        "when EIA-930 hydro for the ISO/year is unavailable. Off "
+        "(default) changes no existing run. Pairs with "
+        "--hydro-backfill-year, which supplies the per-plant coverage.",
+    )
     parser.add_argument(
-        "--interchange-shaping", action="store_true",
+        "--interchange-shaping",
+        action="store_true",
         help="Shape the priced import/export node by the measured EIA-930 "
-             "month x hour-of-day net-interchange envelope, so it imports "
-             "overnight and EXPORTS the midday solar glut instead of clearing "
-             "a flat all-hours import. Targets CAISO's over-priced midday "
-             "floor. Requires --priced-interchange; no-op without a measured "
-             "envelope. Off (default) changes no existing run.")
+        "month x hour-of-day net-interchange envelope, so it imports "
+        "overnight and EXPORTS the midday solar glut instead of clearing "
+        "a flat all-hours import. Targets CAISO's over-priced midday "
+        "floor. Requires --priced-interchange; no-op without a measured "
+        "envelope. Off (default) changes no existing run.",
+    )
     parser.add_argument(
-        "--interchange-shaping-export-only", action="store_true",
+        "--interchange-shaping-export-only",
+        action="store_true",
         help="Like --interchange-shaping but shapes ONLY the export side, "
-             "leaving every import tranche available in every hour. The full "
-             "both-sided shape caps gross import availability to the net-import "
-             "envelope (net << gross), starving baseload imports and "
-             "substituting gas (inflating gas TWh and the mean LMP); export-only "
-             "keeps just the midday-export cap (surplus beyond the measured "
-             "export curtails and prices negative) without that regression. "
-             "Implies --interchange-shaping. Requires --priced-interchange; off "
-             "(default) changes no existing run.")
+        "leaving every import tranche available in every hour. The full "
+        "both-sided shape caps gross import availability to the net-import "
+        "envelope (net << gross), starving baseload imports and "
+        "substituting gas (inflating gas TWh and the mean LMP); export-only "
+        "keeps just the midday-export cap (surplus beyond the measured "
+        "export curtails and prices negative) without that regression. "
+        "Implies --interchange-shaping. Requires --priced-interchange; off "
+        "(default) changes no existing run.",
+    )
     parser.add_argument(
-        "--reference-price-interface", action="store_true",
+        "--reference-price-interface",
+        action="store_true",
         help="Serve the priced-interchange seam through the forecast-grade "
-             "reference-price interface (per-neighbor gas x heat-rate x "
-             "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
-             "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
-             "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
-             "See docs/reference-price-interface.md.")
+        "reference-price interface (per-neighbor gas x heat-rate x "
+        "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
+        "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
+        "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
+        "See docs/reference-price-interface.md.",
+    )
     parser.add_argument(
-        "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
+        "--negative-renewable-offers",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
-             "keep-running (REC/PTC) value (ScenarioConfig."
-             "renewable_keep_running_value, default $20/MWh) so curtailed "
-             "renewables set a sub-$0 marginal price in oversupply, "
-             "reproducing CAISO's negative midday LMPs. Pushes the floor below "
-             "the existing $0 export/curtailment sink; only bites once the "
-             "model is long midday (the RA must-offer commitment workstream). "
-             "Default (unset) keeps the per-ISO base config value — ON for "
-             "CAISO (the keeper), off elsewhere; --no-negative-renewable-offers "
-             "forces it off (e.g. a baseline probe).")
+        "keep-running (REC/PTC) value (ScenarioConfig."
+        "renewable_keep_running_value, default $20/MWh) so curtailed "
+        "renewables set a sub-$0 marginal price in oversupply, "
+        "reproducing CAISO's negative midday LMPs. Pushes the floor below "
+        "the existing $0 export/curtailment sink; only bites once the "
+        "model is long midday (the RA must-offer commitment workstream). "
+        "Default (unset) keeps the per-ISO base config value — ON for "
+        "CAISO (the keeper), off elsewhere; --no-negative-renewable-offers "
+        "forces it off (e.g. a baseline probe).",
+    )
     parser.add_argument(
-        "--caiso-gas-commitment-floor", action=argparse.BooleanOptionalAction,
+        "--caiso-gas-commitment-floor",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="CAISO Resource-Adequacy must-offer floor: hold the gas fleet "
-             "(gas_cc/gas_ct/gas_st) online over the midday solar-glut window "
-             "at the measured EIA-930 NG: NG profile (scaled by "
-             "--caiso-gas-floor-frac), via FleetArrays.min_gen. RA gas can't "
-             "economically cycle off for the evening ramp, so it over-generates "
-             "midday and CAISO exports/curtails the surplus at ~$0; the floor "
-             "makes the model LONG midday so its surplus prices at ~$0 "
-             "(collapsing the over-priced spring-midday LMP floor). CAISO-only; "
-             "pair with --interchange-shaping (export side). Default (unset) "
-             "keeps the per-ISO base config value — ON for CAISO (the keeper "
-             "at frac 0.80), off elsewhere; --no-caiso-gas-commitment-floor "
-             "forces it off (the no-floor baseline probe).")
+        "(gas_cc/gas_ct/gas_st) online over the midday solar-glut window "
+        "at the measured EIA-930 NG: NG profile (scaled by "
+        "--caiso-gas-floor-frac), via FleetArrays.min_gen. RA gas can't "
+        "economically cycle off for the evening ramp, so it over-generates "
+        "midday and CAISO exports/curtails the surplus at ~$0; the floor "
+        "makes the model LONG midday so its surplus prices at ~$0 "
+        "(collapsing the over-priced spring-midday LMP floor). CAISO-only; "
+        "pair with --interchange-shaping (export side). Default (unset) "
+        "keeps the per-ISO base config value — ON for CAISO (the keeper "
+        "at frac 0.80), off elsewhere; --no-caiso-gas-commitment-floor "
+        "forces it off (the no-floor baseline probe).",
+    )
     parser.add_argument(
-        "--caiso-import-hub-prices", action=argparse.BooleanOptionalAction,
+        "--caiso-import-hub-prices",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Price the CAISO priced-import tranches at the MEASURED WECC "
-             "neighbor-hub LMP each proxies (Mid-C/Malin for the PNW blocks, "
-             "Palo Verde for the desert-SW blocks), by hour, instead of the "
-             "static bundle-fitted ladder in IMPORT_TRANCHES['CAISO']. The real "
-             "delivered cost of the imported energy: seasonal (spring-runoff "
-             "crash) and negative in the desert-SW solar glut, so it lowers the "
-             "over-high body AND reproduces the negative midday tail "
-             "(DIAGNOSIS-caiso-import-ladder-2026-06-19). CAISO-only; no-op "
-             "(byte-identical) without the measured intertie parquet "
-             "(data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet, "
-             "fetched by the fetch-caiso-oasis workflow). Default (unset) keeps "
-             "the base config value (currently off pending the measured data).")
+        "neighbor-hub LMP each proxies (Mid-C/Malin for the PNW blocks, "
+        "Palo Verde for the desert-SW blocks), by hour, instead of the "
+        "static bundle-fitted ladder in IMPORT_TRANCHES['CAISO']. The real "
+        "delivered cost of the imported energy: seasonal (spring-runoff "
+        "crash) and negative in the desert-SW solar glut, so it lowers the "
+        "over-high body AND reproduces the negative midday tail "
+        "(DIAGNOSIS-caiso-import-ladder-2026-06-19). CAISO-only; no-op "
+        "(byte-identical) without the measured intertie parquet "
+        "(data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet, "
+        "fetched by the fetch-caiso-oasis workflow). Default (unset) keeps "
+        "the base config value (currently off pending the measured data).",
+    )
     parser.add_argument(
-        "--gas-hub-basis-overlay", action=argparse.BooleanOptionalAction,
+        "--gas-hub-basis-overlay",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Reprice gas at the measured trading-hub spot (Henry Hub month + "
-             "the ISO's citygate basis from data/raw/gas_basis_by_iso_month.csv) "
-             "instead of the EIA-923 ISO-month DELIVERED cost. The marginal "
-             "commodity a dispatched CC bids is the hub spot; the firm pipeline "
-             "reservation in the delivered cost is sunk (DIAGNOSIS-caiso-import-"
-             "ladder-2026-06-19 lever B). The citygate basis for all ISOs is "
-             "refreshed by the fetch-eia-gas-prices workflow. On by default only "
-             "for NEISO (the keeper); use this to validate CAISO (or others) once "
-             "the fetched citygate basis lands — it is a keeper-changing run, so "
-             "validate before flipping the _calibration_config default. No-op "
-             "(byte-identical) for any ISO/year with no basis rows.")
+        "the ISO's citygate basis from data/raw/gas_basis_by_iso_month.csv) "
+        "instead of the EIA-923 ISO-month DELIVERED cost. The marginal "
+        "commodity a dispatched CC bids is the hub spot; the firm pipeline "
+        "reservation in the delivered cost is sunk (DIAGNOSIS-caiso-import-"
+        "ladder-2026-06-19 lever B). The citygate basis for all ISOs is "
+        "refreshed by the fetch-eia-gas-prices workflow. On by default only "
+        "for NEISO (the keeper); use this to validate CAISO (or others) once "
+        "the fetched citygate basis lands — it is a keeper-changing run, so "
+        "validate before flipping the _calibration_config default. No-op "
+        "(byte-identical) for any ISO/year with no basis rows.",
+    )
     parser.add_argument(
-        "--caiso-gas-floor-frac", type=float, default=None,
+        "--caiso-gas-floor-frac",
+        type=float,
+        default=None,
         help="Fraction of the measured EIA-930 NG: NG (month x hour-of-day "
-             "median) the --caiso-gas-commitment-floor targets. Default (unset) "
-             "keeps the base config value (0.80 for CAISO = EIA-923 gas / "
-             "EIA-930 NG: NG, stripping geo+bio). Lower keeps modeled gas TWh "
-             "nearer EIA-923 — forcing commitment can inflate gas, and the "
-             "surplus must export/curtail, not pad the mix.")
+        "median) the --caiso-gas-commitment-floor targets. Default (unset) "
+        "keeps the base config value (0.80 for CAISO = EIA-923 gas / "
+        "EIA-930 NG: NG, stripping geo+bio). Lower keeps modeled gas TWh "
+        "nearer EIA-923 — forcing commitment can inflate gas, and the "
+        "surplus must export/curtail, not pad the mix.",
+    )
     parser.add_argument(
-        "--btm-backfill-year", type=int, default=None,
+        "--btm-backfill-year",
+        type=int,
+        default=None,
         help="Carry a plant's behind-the-meter (must-run share) EIA-923 "
-             "class netgen from this prior year when the backcast year's "
-             "923 vintage has no row for the plant AND CAMPD shows it "
-             "generating — the early monthly-survey-only 923 release "
-             "otherwise zeroes the model-side add-back while the class "
-             "benchmark keeps the plant via the CAMPD backfill (e.g. San "
-             "Jacinto 7325 in 2025). Unset (default) changes no existing "
-             "run.")
+        "class netgen from this prior year when the backcast year's "
+        "923 vintage has no row for the plant AND CAMPD shows it "
+        "generating — the early monthly-survey-only 923 release "
+        "otherwise zeroes the model-side add-back while the class "
+        "benchmark keeps the plant via the CAMPD backfill (e.g. San "
+        "Jacinto 7325 in 2025). Unset (default) changes no existing "
+        "run.",
+    )
     parser.add_argument(
-        "--offer-curve-delta-json", default=None, metavar="JSON",
+        "--offer-curve-delta-json",
+        default=None,
+        metavar="JSON",
         help="Like --offer-curve-json but each value is ADDED to the current "
-             "band rather than replacing it, so a re-tune need not restate the "
-             "prior absolute. Same shape (class -> band -> number); the number "
-             'is a signed delta. E.g. \'{"CT_PEAKER":{"committed":0.05},'
-             '"COAL_PRB":{"committed":-0.05}}\' nudges committed +0.05 / -0.05. '
-             "Applied on top of --offer-curve-json when both are given. The "
-             "resolved absolute curve is recorded in run_config.json.")
+        "band rather than replacing it, so a re-tune need not restate the "
+        "prior absolute. Same shape (class -> band -> number); the number "
+        'is a signed delta. E.g. \'{"CT_PEAKER":{"committed":0.05},'
+        '"COAL_PRB":{"committed":-0.05}}\' nudges committed +0.05 / -0.05. '
+        "Applied on top of --offer-curve-json when both are given. The "
+        "resolved absolute curve is recorded in run_config.json.",
+    )
     args = parser.parse_args()
     apply_statistical_mode(args)
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
     offer_curve_deltas = _parse_offer_curve_json(
-        args.offer_curve_delta_json, flag="--offer-curve-delta-json")
+        args.offer_curve_delta_json, flag="--offer-curve-delta-json"
+    )
 
     if args.report:
         report_run(Path(args.report), band_width=args.cf_band_width)
@@ -3580,7 +4248,8 @@ def main() -> None:
             "skipped; per-plant CAMPD + EIA-923 benchmark %s; the report "
             "compares fuel mix, prices and net interchange.",
             iso,
-            "built for the covered states" if has_campd
+            "built for the covered states"
+            if has_campd
             else "skipped (no CAMPD coverage)",
         )
     reference = _load_reference()
@@ -3600,8 +4269,12 @@ def main() -> None:
         if run_dir.exists():
             run_dir = run_dir.with_name(f"{ts}-{os.getpid()}")
     run_dir = solve_and_persist(
-        args.year, iso, args.hours, reference,
-        commitment=args.commitment, screen_coal=not args.no_coal_p2,
+        args.year,
+        iso,
+        args.hours,
+        reference,
+        commitment=args.commitment,
+        screen_coal=not args.no_coal_p2,
         run_dir=run_dir,
         coal_lignite_mustrun=args.coal_lignite_mustrun,
         coal_prb_mustrun=args.coal_prb_mustrun,
@@ -3627,9 +4300,7 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "gas_hub_basis_daily": True if args.gas_hub_basis_daily else None,
-            "dual_fuel_oil_reattribution": (
-                True if args.gas_hub_basis_daily else None
-            ),
+            "dual_fuel_oil_reattribution": (True if args.gas_hub_basis_daily else None),
             "chp_startup_covered": True if args.chp_startup_covered else None,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
@@ -3646,11 +4317,13 @@ def main() -> None:
             ),
             "reliability_deployment_floor_frac": (
                 args.reliability_deployment_floor_frac
-                if args.reliability_deployment else None
+                if args.reliability_deployment
+                else None
             ),
             "wefor_residual_groups": (
                 frozenset(g.strip() for g in args.wefor_relief_groups.split(","))
-                if args.wefor_relief_groups else None
+                if args.wefor_relief_groups
+                else None
             ),
             "wefor_residual": args.wefor_residual,
             # Backcast-only per-plant F923 coal price: off in statistical mode
@@ -3659,20 +4332,19 @@ def main() -> None:
             "coal_plant_monthly_pricing": (
                 False if args.no_coal_monthly_pricing else None
             ),
-            "coal_lignite_passthrough_sigmoid":
-                True if args.coal_lignite_sigmoid else None,
+            "coal_lignite_passthrough_sigmoid": True
+            if args.coal_lignite_sigmoid
+            else None,
             "coal_lignite_passthrough_floor": args.lignite_floor,
             "coal_lignite_passthrough_ceil": args.lignite_ceil,
             "coal_lignite_passthrough_gas_mid": args.lignite_gas_mid,
             "coal_lignite_passthrough_gas_slope": args.lignite_gas_slope,
-            "coal_sub_passthrough_sigmoid":
-                True if args.coal_sub_sigmoid else None,
+            "coal_sub_passthrough_sigmoid": True if args.coal_sub_sigmoid else None,
             "coal_sub_passthrough_floor": args.sub_floor,
             "coal_sub_passthrough_ceil": args.sub_ceil,
             "coal_sub_passthrough_gas_mid": args.sub_gas_mid,
             "coal_sub_passthrough_gas_slope": args.sub_gas_slope,
-            "coal_waste_passthrough_sigmoid":
-                True if args.coal_waste_sigmoid else None,
+            "coal_waste_passthrough_sigmoid": True if args.coal_waste_sigmoid else None,
             "coal_waste_passthrough_floor": args.waste_floor,
             "coal_waste_passthrough_ceil": args.waste_ceil,
             "coal_waste_passthrough_gas_mid": args.waste_gas_mid,
@@ -3692,8 +4364,7 @@ def main() -> None:
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
         ercot_storage_as_reserve=args.ercot_storage_as_reserve,
-        ercot_storage_as_reserve_from_year=(
-            args.ercot_storage_as_reserve_from_year),
+        ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
@@ -3707,9 +4378,10 @@ def main() -> None:
         },
         cc_derate_from_top=args.cc_derate_from_top,
         priced_interchange=(
-            True if args.reference_price_interface
-            and args.priced_interchange is not False
-            else resolve_priced_interchange(args.priced_interchange, iso)),
+            True
+            if args.reference_price_interface and args.priced_interchange is not False
+            else resolve_priced_interchange(args.priced_interchange, iso)
+        ),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
         interchange_shaping=args.interchange_shaping,

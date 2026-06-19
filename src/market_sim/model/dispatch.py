@@ -282,11 +282,13 @@ def build_cost_vector(
     if layout.n_ordc_steps > 0:
         if ordc_penalties is None:
             raise ValueError(
-                "build_cost_vector: n_ordc_steps > 0 requires ordc_penalties")
+                "build_cost_vector: n_ordc_steps > 0 requires ordc_penalties"
+            )
         pen = np.asarray(ordc_penalties, dtype=float)
         if pen.shape != (layout.n_ordc_steps,):
             raise ValueError(
-                f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)")
+                f"ordc_penalties shape {pen.shape} != ({layout.n_ordc_steps},)"
+            )
         block[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = pen
 
     return cost
@@ -540,28 +542,29 @@ def _build_reserve_rows(
     cols: list[np.ndarray] = []
     vals: list[np.ndarray] = []
     # eligible thermal P columns
-    rows.append(zone_idx[e_idx]); cols.append(e_idx)
+    rows.append(zone_idx[e_idx])
+    cols.append(e_idx)
     vals.append(np.ones(e_idx.size))
     # reserve columns (one per zone)
     z_all = np.arange(n_zones)
-    rows.append(z_all); cols.append(layout._reserve_off + z_all)
+    rows.append(z_all)
+    cols.append(layout._reserve_off + z_all)
     vals.append(np.ones(n_zones))
 
     use_storage = (
-        n_storage > 0
-        and storage_zone_idx is not None
-        and storage_power_cap is not None
+        n_storage > 0 and storage_zone_idx is not None and storage_power_cap is not None
     )
     if use_storage:
         s_zone = np.asarray(storage_zone_idx, dtype=int)
         s_idx = np.arange(n_storage)
-        rows.append(s_zone); cols.append(layout._dis_off + s_idx)
-        vals.append(np.ones(n_storage))            # +Dis
-        rows.append(s_zone); cols.append(layout._chg_off + s_idx)
-        vals.append(-np.ones(n_storage))           # -Chg
+        rows.append(s_zone)
+        cols.append(layout._dis_off + s_idx)
+        vals.append(np.ones(n_storage))  # +Dis
+        rows.append(s_zone)
+        cols.append(layout._chg_off + s_idx)
+        vals.append(-np.ones(n_storage))  # -Chg
     headroom_per_hour = sp.coo_matrix(
-        (np.concatenate(vals),
-         (np.concatenate(rows), np.concatenate(cols))),
+        (np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
         shape=(n_zones, layout.vars_per_hour),
     ).tocsr()
     headroom = sp.kron(sp.eye(T, format="csr"), headroom_per_hour, format="csr")
@@ -572,7 +575,7 @@ def _build_reserve_rows(
         spc = np.asarray(storage_power_cap, dtype=float)
         zone_storage = _build_zone_storage_map(s_zone, n_zones, n_storage)
         if spc.ndim == 2:
-            zone_cap = zone_cap + (zone_storage @ spc)        # (n_zones, T)
+            zone_cap = zone_cap + (zone_storage @ spc)  # (n_zones, T)
         else:
             zone_cap = zone_cap + (zone_storage @ spc)[:, None]
     hr_upper = zone_cap.T.ravel()
@@ -710,15 +713,15 @@ def build_constraints(
     # P | W | S | Chg | Dis | SOC | Flow | Slack | Dump.
     per_hour = sp.hstack(
         [
-            zone_gen,                            # thermal generation
-            eye_z,                               # wind
-            eye_z,                               # solar
-            -zone_storage,                       # charge (withdrawal)
-            zone_storage,                        # discharge (injection)
+            zone_gen,  # thermal generation
+            eye_z,  # wind
+            eye_z,  # solar
+            -zone_storage,  # charge (withdrawal)
+            zone_storage,  # discharge (injection)
             sp.csr_matrix((n_zones, n_storage)),  # SOC: no balance contribution
-            flow_block,                          # transmission flow
-            eye_z,                               # load slack (+)
-            -eye_z,                              # overgeneration dump (-)
+            flow_block,  # transmission flow
+            eye_z,  # load slack (+)
+            -eye_z,  # overgeneration dump (-)
             # Co-opt reserve/ORDC columns do not appear in the energy balance
             # (zero blocks); empty when off, keeping per_hour width == vph.
             sp.csr_matrix((n_zones, layout.n_reserve)),
@@ -774,22 +777,22 @@ def build_constraints(
                 dyn_rows.ravel(),  # SOC[s,t-1]
                 dyn_rows.ravel(),  # Chg[s,t]
                 dyn_rows.ravel(),  # Dis[s,t]
-                cyc_rows,          # cyclic: SOC[s,0]
-                cyc_rows,          # cyclic: SOC[s,T-1]
-                cyc_rows,          # cyclic: Chg[s,0]
-                cyc_rows,          # cyclic: Dis[s,0]
+                cyc_rows,  # cyclic: SOC[s,0]
+                cyc_rows,  # cyclic: SOC[s,T-1]
+                cyc_rows,  # cyclic: Chg[s,0]
+                cyc_rows,  # cyclic: Dis[s,0]
             ]
         )
         all_cols = np.concatenate(
             [
-                all_soc_cols[:, 1:].ravel(),   # SOC[s,t]
+                all_soc_cols[:, 1:].ravel(),  # SOC[s,t]
                 all_soc_cols[:, :-1].ravel(),  # SOC[s,t-1]
-                all_chg_cols[:, 1:].ravel(),   # Chg[s,t]
-                all_dis_cols[:, 1:].ravel(),   # Dis[s,t]
-                all_soc_cols[:, 0],            # cyclic: SOC[s,0]
-                all_soc_cols[:, -1],           # cyclic: SOC[s,T-1]
-                all_chg_cols[:, 0],            # cyclic: Chg[s,0]
-                all_dis_cols[:, 0],            # cyclic: Dis[s,0]
+                all_chg_cols[:, 1:].ravel(),  # Chg[s,t]
+                all_dis_cols[:, 1:].ravel(),  # Dis[s,t]
+                all_soc_cols[:, 0],  # cyclic: SOC[s,0]
+                all_soc_cols[:, -1],  # cyclic: SOC[s,T-1]
+                all_chg_cols[:, 0],  # cyclic: Chg[s,0]
+                all_dis_cols[:, 0],  # cyclic: Dis[s,0]
             ]
         )
         all_data = np.concatenate(
@@ -870,7 +873,10 @@ def build_constraints(
             else np.asarray(reserve_eligible, dtype=bool)
         )
         res_block, res_lower, res_upper = _build_reserve_rows(
-            layout, fleet, reserve_requirement, elig,
+            layout,
+            fleet,
+            reserve_requirement,
+            elig,
             storage_zone_idx=storage_zone_idx,
             storage_power_cap=reserve_storage_power_cap,
         )
@@ -963,13 +969,9 @@ def build_variable_bounds(
     # the latter so capacity commissioned mid-year is offline before COD.
     if layout.n_storage:
         power_cap = np.asarray(storage_power_cap, dtype=float)
-        power_cap = (
-            power_cap.T if power_cap.ndim == 2 else power_cap[np.newaxis, :]
-        )
+        power_cap = power_cap.T if power_cap.ndim == 2 else power_cap[np.newaxis, :]
         energy_cap = np.asarray(storage_energy_cap, dtype=float)
-        energy_cap = (
-            energy_cap.T if energy_cap.ndim == 2 else energy_cap[np.newaxis, :]
-        )
+        energy_cap = energy_cap.T if energy_cap.ndim == 2 else energy_cap[np.newaxis, :]
         col_upper[:, layout._chg_off : layout._dis_off] = power_cap
         col_upper[:, layout._dis_off : layout._soc_off] = power_cap
         col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
@@ -1012,15 +1014,16 @@ def build_variable_bounds(
     if layout.n_ordc_steps > 0:
         if ordc_step_widths is None:
             raise ValueError(
-                "build_variable_bounds: n_ordc_steps > 0 requires "
-                "ordc_step_widths")
+                "build_variable_bounds: n_ordc_steps > 0 requires ordc_step_widths"
+            )
         widths = np.asarray(ordc_step_widths, dtype=float)
         if widths.shape != (layout.n_ordc_steps,):
             raise ValueError(
-                f"ordc_step_widths shape {widths.shape} != "
-                f"({layout.n_ordc_steps},)")
-        col_upper[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] \
-            = widths[np.newaxis, :]
+                f"ordc_step_widths shape {widths.shape} != ({layout.n_ordc_steps},)"
+            )
+        col_upper[:, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps] = (
+            widths[np.newaxis, :]
+        )
 
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen
@@ -1078,8 +1081,8 @@ class DispatchResult:
     emissions: np.ndarray | None = None
     rps_shadow_price: float | None = None
     # Energy+reserve co-optimization outputs (None unless co-opt is on).
-    reserve_dispatch: np.ndarray | None = None   # (n_zones, T) upward reserve MW
-    reserve_price: np.ndarray | None = None       # (T,) reserve clearing $/MWh
+    reserve_dispatch: np.ndarray | None = None  # (n_zones, T) upward reserve MW
+    reserve_price: np.ndarray | None = None  # (T,) reserve clearing $/MWh
 
 
 class DispatchModel:
@@ -1149,13 +1152,16 @@ class DispatchModel:
         # step.
         coopt = reserve_requirement is not None
         n_reserve = n_zones if coopt else 0
-        n_ordc_steps = (
-            0 if not coopt or ordc_penalties is None else len(ordc_penalties)
-        )
+        n_ordc_steps = 0 if not coopt or ordc_penalties is None else len(ordc_penalties)
 
         layout = VariableLayout(
-            n_gen=n_gen, n_zones=n_zones, n_storage=n_storage,
-            n_links=n_links, T=T, n_reserve=n_reserve, n_ordc_steps=n_ordc_steps,
+            n_gen=n_gen,
+            n_zones=n_zones,
+            n_storage=n_storage,
+            n_links=n_links,
+            T=T,
+            n_reserve=n_reserve,
+            n_ordc_steps=n_ordc_steps,
         )
 
         A, row_lower, row_upper = build_constraints(
@@ -1174,8 +1180,7 @@ class DispatchModel:
             storage_daily_cycle_hours=storage_daily_cycle_hours,
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
-            reserve_storage_power_cap=(
-                storage_power_cap if reserve_storage else None),
+            reserve_storage_power_cap=(storage_power_cap if reserve_storage else None),
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1297,13 +1302,20 @@ class DispatchModel:
         layout = self.layout
         if mc is None:
             mc = assemble_mc(
-                self.fleet, fuel_prices, carbon_price, nox_price,
+                self.fleet,
+                fuel_prices,
+                carbon_price,
+                nox_price,
                 so2=(self.fleet.so2_rate, so2_price),
             )
         mc = np.asarray(mc, dtype=float)
 
         cost = build_cost_vector(
-            layout, mc, self.voll, wind_mc=self.wind_mc, solar_mc=self.solar_mc,
+            layout,
+            mc,
+            self.voll,
+            wind_mc=self.wind_mc,
+            solar_mc=self.solar_mc,
             storage_discharge_eac=self.storage_discharge_eac,
             storage_discharge_cost=self.storage_discharge_cost,
             ordc_penalties=self.ordc_penalties,

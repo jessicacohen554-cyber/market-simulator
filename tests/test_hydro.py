@@ -33,16 +33,31 @@ def _hydro_fleet(hours, hydro_pmax=50.0, hydro_pmin=0.0):
     """
     gens = [
         Generator(
-            unit_id="H0", name="H0", zone="Z", fuel_type="hydro",
-            pmax_mw=hydro_pmax, pmin_mw=hydro_pmin, eford=0.0,
+            unit_id="H0",
+            name="H0",
+            zone="Z",
+            fuel_type="hydro",
+            pmax_mw=hydro_pmax,
+            pmin_mw=hydro_pmin,
+            eford=0.0,
         ),
         Generator(
-            unit_id="C0", name="C0", zone="Z", fuel_type="gas_cc",
-            pmax_mw=50.0, pmin_mw=0.0, eford=0.0,
+            unit_id="C0",
+            name="C0",
+            zone="Z",
+            fuel_type="gas_cc",
+            pmax_mw=50.0,
+            pmin_mw=0.0,
+            eford=0.0,
         ),
         Generator(
-            unit_id="E0", name="E0", zone="Z", fuel_type="gas_ct",
-            pmax_mw=200.0, pmin_mw=0.0, eford=0.0,
+            unit_id="E0",
+            name="E0",
+            zone="Z",
+            fuel_type="gas_ct",
+            pmax_mw=200.0,
+            pmin_mw=0.0,
+            eford=0.0,
         ),
     ]
     return generators_to_fleet_arrays(gens, ["Z"], hours=hours)
@@ -51,9 +66,7 @@ def _hydro_fleet(hours, hydro_pmax=50.0, hydro_pmin=0.0):
 # Marginal cost: hydro free, cheap thermal $10, peaking thermal $100.
 def _mc(hours):
     """Return the ``(3, hours)`` marginal-cost array for ``_hydro_fleet``."""
-    return np.array(
-        [[0.0] * hours, [10.0] * hours, [100.0] * hours], dtype=float
-    )
+    return np.array([[0.0] * hours, [10.0] * hours, [100.0] * hours], dtype=float)
 
 
 class TestHydroConstraintFamily(unittest.TestCase):
@@ -90,8 +103,11 @@ class TestHydroConstraintFamily(unittest.TestCase):
     def test_family_adds_one_row_per_gen_month(self):
         a0, _, _ = build_constraints(self.layout, self.fleet, self.demand)
         a1, _, _ = build_constraints(
-            self.layout, self.fleet, self.demand,
-            hydro_monthly_energy=self.budget, hydro_month_index=self.month_idx,
+            self.layout,
+            self.fleet,
+            self.demand,
+            hydro_monthly_energy=self.budget,
+            hydro_month_index=self.month_idx,
         )
         # 1 hydro gen x 2 months = 2 new rows.
         self.assertEqual(a1.shape[0], a0.shape[0] + 2)
@@ -99,10 +115,13 @@ class TestHydroConstraintFamily(unittest.TestCase):
     def test_row_columns_match_hydro_p_slots_by_month(self):
         a0, _, _ = build_constraints(self.layout, self.fleet, self.demand)
         a1, lo, hi = build_constraints(
-            self.layout, self.fleet, self.demand,
-            hydro_monthly_energy=self.budget, hydro_month_index=self.month_idx,
+            self.layout,
+            self.fleet,
+            self.demand,
+            hydro_monthly_energy=self.budget,
+            hydro_month_index=self.month_idx,
         )
-        rows = a1[a0.shape[0]:].toarray()
+        rows = a1[a0.shape[0] :].toarray()
         # Hydro is generator 0; its P columns are p_col(0, t).
         month0_cols = sorted(self.layout.p_col(0, t) for t in (0, 1))
         month1_cols = sorted(self.layout.p_col(0, t) for t in (2, 3))
@@ -116,16 +135,22 @@ class TestHydroConstraintFamily(unittest.TestCase):
     def test_gen_idx_auto_derived_from_fuel_type(self):
         # Explicit hydro_gen_idx and the auto-derived subset agree.
         auto_a, _, auto_hi = build_constraints(
-            self.layout, self.fleet, self.demand,
-            hydro_monthly_energy=self.budget, hydro_month_index=self.month_idx,
+            self.layout,
+            self.fleet,
+            self.demand,
+            hydro_monthly_energy=self.budget,
+            hydro_month_index=self.month_idx,
         )
         hydro_idx = np.flatnonzero(
             np.asarray(self.fleet.fuel_type_idx) == FUEL_TYPE_MAP["hydro"]
         )
         self.assertEqual(list(hydro_idx), [0])
         expl_a, _, expl_hi = build_constraints(
-            self.layout, self.fleet, self.demand,
-            hydro_monthly_energy=self.budget, hydro_month_index=self.month_idx,
+            self.layout,
+            self.fleet,
+            self.demand,
+            hydro_monthly_energy=self.budget,
+            hydro_month_index=self.month_idx,
             hydro_gen_idx=hydro_idx,
         )
         self.assertEqual((auto_a != expl_a).nnz, 0)
@@ -134,8 +159,11 @@ class TestHydroConstraintFamily(unittest.TestCase):
         # The min-flow floor lands on the row lower bounds.
         monthly_min = np.array([[20.0, 30.0]])
         _, lo, hi = build_constraints(
-            self.layout, self.fleet, self.demand,
-            hydro_monthly_energy=self.budget, hydro_month_index=self.month_idx,
+            self.layout,
+            self.fleet,
+            self.demand,
+            hydro_monthly_energy=self.budget,
+            hydro_month_index=self.month_idx,
             hydro_monthly_min=monthly_min,
         )
         np.testing.assert_array_equal(lo[-2:], [20.0, 30.0])
@@ -146,17 +174,22 @@ class TestHydroConstraintFamily(unittest.TestCase):
         # array is passed (the auto-derived subset is empty).
         gens = [
             Generator(
-                unit_id="C0", name="C0", zone="Z", fuel_type="gas_cc",
-                pmax_mw=50.0, pmin_mw=0.0, eford=0.0,
+                unit_id="C0",
+                name="C0",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=50.0,
+                pmin_mw=0.0,
+                eford=0.0,
             )
         ]
         fleet = generators_to_fleet_arrays(gens, ["Z"], hours=self.T)
-        layout = VariableLayout(
-            n_gen=1, n_zones=1, n_storage=0, n_links=0, T=self.T
-        )
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=self.T)
         a0, _, _ = build_constraints(layout, fleet, self.demand)
         a1, _, _ = build_constraints(
-            layout, fleet, self.demand,
+            layout,
+            fleet,
+            self.demand,
             hydro_monthly_energy=np.empty((0, 2)),
             hydro_month_index=self.month_idx,
         )
@@ -177,8 +210,15 @@ class TestHydroDispatch(unittest.TestCase):
 
     def _solve(self, **kwargs):
         return solve_dispatch(
-            self.fleet, self.demand, self.wind_cf, self.cap,
-            self.solar_cf, self.cap, mc=self.mc, voll=5000.0, **kwargs,
+            self.fleet,
+            self.demand,
+            self.wind_cf,
+            self.cap,
+            self.solar_cf,
+            self.cap,
+            mc=self.mc,
+            voll=5000.0,
+            **kwargs,
         )
 
     def test_budget_respected_and_shifts_to_high_price_hours(self):
@@ -186,9 +226,7 @@ class TestHydroDispatch(unittest.TestCase):
         # (cheap thermal marginal) and $100 in hours 2-3 (peaker marginal).
         month_idx = np.zeros(self.T, dtype=int)
         budget = np.array([[60.0]])
-        res = self._solve(
-            hydro_monthly_energy=budget, hydro_month_index=month_idx
-        )
+        res = self._solve(hydro_monthly_energy=budget, hydro_month_index=month_idx)
         hydro = res.dispatch[0]
         # Budget is binding and respected.
         self.assertAlmostEqual(hydro.sum(), 60.0, places=4)
@@ -226,7 +264,8 @@ class TestHydroDispatch(unittest.TestCase):
         budget = np.array([[100.0, 100.0]])
         monthly_min = np.array([[30.0, 0.0]])
         res = self._solve(
-            hydro_monthly_energy=budget, hydro_month_index=month_idx,
+            hydro_monthly_energy=budget,
+            hydro_month_index=month_idx,
             hydro_monthly_min=monthly_min,
         )
         cheap_month = res.dispatch[0][:2].sum()
@@ -291,15 +330,15 @@ class TestHydroBudgetLoader(unittest.TestCase):
         bare = load_hydro_budget("NEISO", 2025)
         filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
         self.assertGreater(filled.n_hydro, bare.n_hydro)
-        self.assertGreater(
-            filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum())
+        self.assertGreater(filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum())
         # The plants that DID report 2025 keep their as-reported budget — the
         # backfill only adds the missing ones, never overwrites a filer.
         for pid in bare.plant_ids:
             i_bare = list(bare.plant_ids).index(int(pid))
             i_full = list(filled.plant_ids).index(int(pid))
             np.testing.assert_allclose(
-                filled.monthly_energy[i_full], bare.monthly_energy[i_bare])
+                filled.monthly_energy[i_full], bare.monthly_energy[i_bare]
+            )
 
     def test_backfill_none_is_identical_to_current_build(self):
         # The default (no backfill) must be byte-for-byte the prior behaviour,
@@ -376,9 +415,7 @@ class TestCAISOHydroBudget(unittest.TestCase):
         total = filled.monthly_energy.sum() / 1e6
         self.assertLess(abs(total - 21.35) / 21.35, 0.10)
         # Reporters keep their 2025 budgets — only non-reporters are filled.
-        self.assertGreater(
-            filled.monthly_energy.sum(), bare.monthly_energy.sum()
-        )
+        self.assertGreater(filled.monthly_energy.sum(), bare.monthly_energy.sum())
 
     def test_measured_monthly_hydro_repins_incomplete_2025(self):
         # measured_monthly_hydro exists to repin the incomplete 2025 EIA-923
@@ -423,25 +460,42 @@ class TestCAISOHydroBudget(unittest.TestCase):
 
         gens = [
             Generator(
-                unit_id=f"H{i}", name=f"H{i}", zone="Z", fuel_type="hydro",
-                pmax_mw=float(pmax[i]), pmin_mw=0.0, eford=0.0,
+                unit_id=f"H{i}",
+                name=f"H{i}",
+                zone="Z",
+                fuel_type="hydro",
+                pmax_mw=float(pmax[i]),
+                pmin_mw=0.0,
+                eford=0.0,
             )
             for i in range(3)
         ]
         peak_demand = float(pmax.sum()) + 500.0
         gens.append(
             Generator(
-                unit_id="G0", name="G0", zone="Z", fuel_type="gas_cc",
-                pmax_mw=peak_demand + 100.0, pmin_mw=0.0, eford=0.0,
+                unit_id="G0",
+                name="G0",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=peak_demand + 100.0,
+                pmin_mw=0.0,
+                eford=0.0,
             )
         )
         fleet = generators_to_fleet_arrays(gens, ["Z"], hours=T)
         demand = np.full((1, T), peak_demand)
         mc = np.vstack([np.zeros((3, T)), np.full((1, T), 50.0)])
         res = solve_dispatch(
-            fleet, demand, np.zeros((1, T)), np.zeros(1),
-            np.zeros((1, T)), np.zeros(1), mc=mc, voll=5000.0,
-            hydro_monthly_energy=budget, hydro_month_index=month_idx,
+            fleet,
+            demand,
+            np.zeros((1, T)),
+            np.zeros(1),
+            np.zeros((1, T)),
+            np.zeros(1),
+            mc=mc,
+            voll=5000.0,
+            hydro_monthly_energy=budget,
+            hydro_month_index=month_idx,
         )
         for g in range(3):
             for m in range(2):
@@ -491,8 +545,9 @@ class TestNEISOHydroBudget(unittest.TestCase):
         for year, expected in self.EIA923_TWH.items():
             hb = load_hydro_budget("NEISO", year)
             total = hb.monthly_energy.sum() / 1e6
-            self.assertAlmostEqual(total, expected, delta=0.01 * expected,
-                                   msg=f"NEISO {year} TWh")
+            self.assertAlmostEqual(
+                total, expected, delta=0.01 * expected, msg=f"NEISO {year} TWh"
+            )
 
     def test_totals_within_15pct_of_eia930_wat(self):
         # EIA-923 HY vs EIA-930 WAT sanity cross-check. 2023 is within 3%;
@@ -503,7 +558,8 @@ class TestNEISOHydroBudget(unittest.TestCase):
             hb = load_hydro_budget("NEISO", year)
             total = hb.monthly_energy.sum() / 1e6
             self.assertLess(
-                abs(total - ref) / ref, 0.15,
+                abs(total - ref) / ref,
+                0.15,
                 msg=f"NEISO {year} EIA-923 {total:.3f} TWh vs EIA-930 {ref:.3f} TWh",
             )
 
@@ -516,7 +572,8 @@ class TestNEISOHydroBudget(unittest.TestCase):
             north_e = hb.monthly_energy[zones == "North"].sum()
             total_e = hb.monthly_energy.sum()
             self.assertGreater(
-                north_e / total_e, 0.70,
+                north_e / total_e,
+                0.70,
                 msg=f"NEISO {year} North zone fraction",
             )
 
@@ -541,20 +598,19 @@ class TestNEISOHydroBudget(unittest.TestCase):
         # Backfilling non-reporters from 2024 recovers the fleet to the
         # 2024 level (~166 plants) and the TWh to within 5% of 2024.
         bare = load_hydro_budget("NEISO", 2025)
-        self.assertLess(bare.n_hydro, 20,
-                        msg="2025 bare should be survey-only subset")
+        self.assertLess(bare.n_hydro, 20, msg="2025 bare should be survey-only subset")
         filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
-        self.assertGreater(filled.n_hydro, 100,
-                           msg="backfill should recover near-full fleet")
+        self.assertGreater(
+            filled.n_hydro, 100, msg="backfill should recover near-full fleet"
+        )
         total_twh = filled.monthly_energy.sum() / 1e6
         ref_twh = self.EIA923_TWH[2024]
         self.assertLess(
-            abs(total_twh - ref_twh) / ref_twh, 0.05,
+            abs(total_twh - ref_twh) / ref_twh,
+            0.05,
             msg=f"2025 backfilled {total_twh:.3f} TWh vs 2024 {ref_twh:.3f} TWh",
         )
-        self.assertGreater(
-            filled.monthly_energy.sum(), bare.monthly_energy.sum()
-        )
+        self.assertGreater(filled.monthly_energy.sum(), bare.monthly_energy.sum())
 
     def test_2025_eia930_monthly_pin(self):
         # Pinning the backfilled 2025 budget to the measured EIA-930 NG: WAT
@@ -566,13 +622,12 @@ class TestNEISOHydroBudget(unittest.TestCase):
         self.assertEqual(target.shape, (12,))
         backfilled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
         pinned = load_hydro_budget(
-            "NEISO", 2025, backfill_year=2024, monthly_target_mwh=target)
+            "NEISO", 2025, backfill_year=2024, monthly_target_mwh=target
+        )
         # Monthly totals now equal the measured series, and annual ~5.12 TWh.
         np.testing.assert_allclose(pinned.monthly_energy.sum(axis=0), target)
-        self.assertAlmostEqual(pinned.monthly_energy.sum() / 1e6, 5.12,
-                               delta=0.1)
-        self.assertLess(pinned.monthly_energy.sum(),
-                        backfilled.monthly_energy.sum())
+        self.assertAlmostEqual(pinned.monthly_energy.sum() / 1e6, 5.12, delta=0.1)
+        self.assertLess(pinned.monthly_energy.sum(), backfilled.monthly_energy.sum())
         # Power caps untouched; same plant set.
         np.testing.assert_allclose(pinned.max_mw, backfilled.max_mw)
         self.assertEqual(pinned.n_hydro, backfilled.n_hydro)
@@ -583,8 +638,9 @@ class TestNEISOHydroBudget(unittest.TestCase):
 
     def test_eia930_monthly_pin_wrong_length_raises(self):
         with self.assertRaises(ValueError):
-            load_hydro_budget("NEISO", 2025, backfill_year=2024,
-                              monthly_target_mwh=np.ones(11))
+            load_hydro_budget(
+                "NEISO", 2025, backfill_year=2024, monthly_target_mwh=np.ones(11)
+            )
 
     def test_measured_monthly_hydro_unknown_iso_is_none(self):
         self.assertIsNone(measured_monthly_hydro("NOT_AN_ISO", 2024))
@@ -596,23 +652,17 @@ class TestOtherISOBudgetsUnchanged(unittest.TestCase):
     def test_pjm_2023_budget_regression(self):
         hb = load_hydro_budget("PJM", 2023)
         self.assertEqual(hb.n_hydro, 72)
-        self.assertAlmostEqual(
-            hb.monthly_energy.sum() / 1e6, 8.976, delta=0.05
-        )
+        self.assertAlmostEqual(hb.monthly_energy.sum() / 1e6, 8.976, delta=0.05)
         self.assertAlmostEqual(hb.max_mw.sum(), 3288.0, delta=20.0)
 
     def test_ercot_2023_budget_regression(self):
         hb = load_hydro_budget("ERCOT", 2023)
         self.assertEqual(hb.n_hydro, 14)
-        self.assertAlmostEqual(
-            hb.monthly_energy.sum() / 1e6, 0.350, delta=0.005
-        )
+        self.assertAlmostEqual(hb.monthly_energy.sum() / 1e6, 0.350, delta=0.005)
 
     def test_caiso_2023_budget_regression(self):
         hb = load_hydro_budget("CAISO", 2023)
-        self.assertAlmostEqual(
-            hb.monthly_energy.sum() / 1e6, 23.90, delta=0.01 * 23.90
-        )
+        self.assertAlmostEqual(hb.monthly_energy.sum() / 1e6, 23.90, delta=0.01 * 23.90)
 
     def test_per_plant_min_flow_none_is_identical_to_existing(self):
         # Passing per_plant_min_flow=None must reproduce the exact same
@@ -620,6 +670,7 @@ class TestOtherISOBudgetsUnchanged(unittest.TestCase):
         base = load_hydro_budget("PJM", 2023)
         explicit_none = load_hydro_budget("PJM", 2023, per_plant_min_flow=None)
         import numpy as np
+
         np.testing.assert_array_equal(base.plant_ids, explicit_none.plant_ids)
         np.testing.assert_array_equal(base.min_mw, explicit_none.min_mw)
         np.testing.assert_array_equal(base.max_mw, explicit_none.max_mw)
@@ -683,10 +734,13 @@ class TestNYISOHydroBudget(unittest.TestCase):
             hb = load_hydro_budget("NYISO", year)
             monthly = hb.monthly_energy.sum(axis=0)
             spring = monthly[2:5].sum()  # March, April, May
-            fall = monthly[8:11].sum()   # September, October, November
-            self.assertGreater(spring, fall,
-                msg=f"NYISO {year}: spring {spring/1e6:.2f} TWh should "
-                    f"exceed fall {fall/1e6:.2f} TWh")
+            fall = monthly[8:11].sum()  # September, October, November
+            self.assertGreater(
+                spring,
+                fall,
+                msg=f"NYISO {year}: spring {spring / 1e6:.2f} TWh should "
+                f"exceed fall {fall / 1e6:.2f} TWh",
+            )
 
     def test_nameplate_dominated_by_niagara(self):
         # Niagara (plant 2693, Robert Moses Niagara, ~2,429 MW) accounts
@@ -707,8 +761,10 @@ class TestNYISOHydroBudget(unittest.TestCase):
         # appears in the downstate zones (Lower_Hudson, NYC, Long_Island).
         hb = load_hydro_budget("NYISO", 2023)
         zone_set = set(hb.zones) - {""}
-        self.assertTrue(zone_set <= {"Upstate_West", "Capital_Hudson"},
-            msg=f"Unexpected zones: {zone_set - {'Upstate_West', 'Capital_Hudson'}}")
+        self.assertTrue(
+            zone_set <= {"Upstate_West", "Capital_Hudson"},
+            msg=f"Unexpected zones: {zone_set - {'Upstate_West', 'Capital_Hudson'}}",
+        )
         self.assertIn("Upstate_West", zone_set)
 
     def test_upstate_west_dominates_by_nameplate(self):
@@ -758,26 +814,42 @@ class TestNYISOHydroBudget(unittest.TestCase):
 
         gens = [
             Generator(
-                unit_id=f"H{i}", name=f"H{i}", zone="Z",
-                fuel_type="hydro", pmax_mw=float(pmax[i]),
-                pmin_mw=0.0, eford=0.0,
+                unit_id=f"H{i}",
+                name=f"H{i}",
+                zone="Z",
+                fuel_type="hydro",
+                pmax_mw=float(pmax[i]),
+                pmin_mw=0.0,
+                eford=0.0,
             )
             for i in range(len(top))
         ]
         peak_demand = float(pmax.sum()) + 500.0
         gens.append(
             Generator(
-                unit_id="G0", name="G0", zone="Z", fuel_type="gas_cc",
-                pmax_mw=peak_demand + 100.0, pmin_mw=0.0, eford=0.0,
+                unit_id="G0",
+                name="G0",
+                zone="Z",
+                fuel_type="gas_cc",
+                pmax_mw=peak_demand + 100.0,
+                pmin_mw=0.0,
+                eford=0.0,
             )
         )
         fleet = generators_to_fleet_arrays(gens, ["Z"], hours=T)
         demand = np.full((1, T), peak_demand)
         mc = np.vstack([np.zeros((len(top), T)), np.full((1, T), 50.0)])
         res = solve_dispatch(
-            fleet, demand, np.zeros((1, T)), np.zeros(1),
-            np.zeros((1, T)), np.zeros(1), mc=mc, voll=5000.0,
-            hydro_monthly_energy=budget, hydro_month_index=month_idx,
+            fleet,
+            demand,
+            np.zeros((1, T)),
+            np.zeros(1),
+            np.zeros((1, T)),
+            np.zeros(1),
+            mc=mc,
+            voll=5000.0,
+            hydro_monthly_energy=budget,
+            hydro_month_index=month_idx,
         )
         for g in range(len(top)):
             for m in range(2):
@@ -807,6 +879,7 @@ class TestNYISOTreatyMinFlows(unittest.TestCase):
 
     def setUp(self):
         from market_sim.config.constants import NYISO_HYDRO_TREATY_MIN_FLOW
+
         self.treaty = NYISO_HYDRO_TREATY_MIN_FLOW
         self.hb_no_floor = load_hydro_budget("NYISO", 2023)
         self.hb_treaty = load_hydro_budget(
@@ -835,9 +908,7 @@ class TestNYISOTreatyMinFlows(unittest.TestCase):
 
     def test_st_lawrence_min_mw_applied(self):
         # With treaty floors, Power Dam's min_mw is 50% of its max_mw.
-        sl_idx = np.flatnonzero(
-            self.hb_treaty.plant_ids == self.ST_LAWRENCE_PLANT_ID
-        )
+        sl_idx = np.flatnonzero(self.hb_treaty.plant_ids == self.ST_LAWRENCE_PLANT_ID)
         self.assertEqual(len(sl_idx), 1)
         i = sl_idx[0]
         expected_min = 0.50 * self.hb_treaty.max_mw[i]
@@ -845,19 +916,16 @@ class TestNYISOTreatyMinFlows(unittest.TestCase):
 
     def test_without_treaty_floors_min_mw_is_zero(self):
         # Default (no per-plant floor, min_flow_fraction=0) has no minimum.
-        n_idx = np.flatnonzero(
-            self.hb_no_floor.plant_ids == self.NIAGARA_PLANT_ID
-        )
-        sl_idx = np.flatnonzero(
-            self.hb_no_floor.plant_ids == self.ST_LAWRENCE_PLANT_ID
-        )
+        n_idx = np.flatnonzero(self.hb_no_floor.plant_ids == self.NIAGARA_PLANT_ID)
+        sl_idx = np.flatnonzero(self.hb_no_floor.plant_ids == self.ST_LAWRENCE_PLANT_ID)
         self.assertEqual(self.hb_no_floor.min_mw[n_idx[0]], 0.0)
         self.assertEqual(self.hb_no_floor.min_mw[sl_idx[0]], 0.0)
 
     def test_non_treaty_plants_use_global_floor(self):
         # Other plants (not in the treaty dict) use the global min_flow_fraction.
         hb_global = load_hydro_budget(
-            "NYISO", 2023,
+            "NYISO",
+            2023,
             min_flow_fraction=0.10,
             per_plant_min_flow=self.treaty,
         )
@@ -872,13 +940,12 @@ class TestNYISOTreatyMinFlows(unittest.TestCase):
         # A global min_flow_fraction lower than the treaty value must not
         # override the treaty floor (the max() rule applies).
         hb_low_global = load_hydro_budget(
-            "NYISO", 2023,
+            "NYISO",
+            2023,
             min_flow_fraction=0.10,
             per_plant_min_flow=self.treaty,
         )
-        n_idx = np.flatnonzero(
-            hb_low_global.plant_ids == self.NIAGARA_PLANT_ID
-        )
+        n_idx = np.flatnonzero(hb_low_global.plant_ids == self.NIAGARA_PLANT_ID)
         i = n_idx[0]
         # Treaty says 0.25 > global 0.10, so treaty wins.
         self.assertAlmostEqual(

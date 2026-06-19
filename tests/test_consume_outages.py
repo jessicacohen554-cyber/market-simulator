@@ -46,18 +46,19 @@ _RAW_REGISTRY = paths.RAW_DATA_DIR / "reference" / "master-plant-registry.csv"
 
 
 def _raw_inputs_present() -> bool:
-    return _RAW_FACILITY.is_file() and _RAW_REGISTRY.is_file() and CAMPD_BINS_CSV.is_file()
+    return (
+        _RAW_FACILITY.is_file() and _RAW_REGISTRY.is_file() and CAMPD_BINS_CSV.is_file()
+    )
 
 
 def _registry_nameplate() -> dict[int, float]:
     """``plant_id -> nameplate_capacity_mw`` from the raw plant registry."""
-    reg = pd.read_csv(
-        _RAW_REGISTRY, usecols=["plantid", "nameplate_capacity_mw"]
-    )
+    reg = pd.read_csv(_RAW_REGISTRY, usecols=["plantid", "nameplate_capacity_mw"])
     return {
         int(r.plantid): float(r.nameplate_capacity_mw)
         for r in reg.itertuples(index=False)
-        if pd.notna(r.plantid) and pd.notna(r.nameplate_capacity_mw)
+        if pd.notna(r.plantid)
+        and pd.notna(r.nameplate_capacity_mw)
         and float(r.nameplate_capacity_mw) > 0.0
     }
 
@@ -79,9 +80,11 @@ class CleanBackedOutageParity(unittest.TestCase):
         clean_io = O._clean_io()
         cls.year = None
         for path in written:
-            year = int(pd.read_parquet(path, columns=["interval_start_utc"])[
-                "interval_start_utc"
-            ].dt.year.iloc[0])
+            year = int(
+                pd.read_parquet(path, columns=["interval_start_utc"])[
+                    "interval_start_utc"
+                ].dt.year.iloc[0]
+            )
             if clean_io.clean_exists("outages", year=year) and O.outage_masks_for_year(
                 year, HOURS, bins_path=str(CAMPD_BINS_CSV)
             ):
@@ -143,7 +146,8 @@ class CleanBackedOutageParity(unittest.TestCase):
 
         # A plant covered by both layers that has a registry nameplate.
         candidates = [
-            c for c in raw
+            c
+            for c in raw
             if c in set(all_rows["plant_id"].astype("int64")) and c in nameplate
         ]
         self.assertTrue(candidates, "no shared facility plant with a nameplate")
@@ -157,7 +161,9 @@ class CleanBackedOutageParity(unittest.TestCase):
         clean_outage = np.zeros(HOURS)
         clean_avail = np.full(HOURS, np.nan)
         for ts, o_mw, a_mw in zip(
-            sub_local, sub["outage_mw"].to_numpy(float), sub["available_mw"].to_numpy(float)
+            sub_local,
+            sub["outage_mw"].to_numpy(float),
+            sub["available_mw"].to_numpy(float),
         ):
             h = O._hour_of_year(ts.month, ts.day, ts.hour)
             if 0 <= h < HOURS:

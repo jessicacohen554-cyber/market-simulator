@@ -45,9 +45,7 @@ from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 from market_sim.data.fleet import COAL_PLANT_SUPPLY  # noqa: E402
 
 # EIA-923 fuel codes burned by coal-class units.
-_COAL_FUELS: frozenset[str] = frozenset(
-    {"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"}
-)
+_COAL_FUELS: frozenset[str] = frozenset({"SUB", "BIT", "LIG", "ANT", "RC", "WC", "SC"})
 # A plant below this coal share of net generation, or with a non-steam prime
 # mover (a co-located gas turbine / CC), is "mixed": facility-level CEMS sums
 # its non-coal units into the gross load, so its coal must-run floor cannot be
@@ -62,10 +60,18 @@ REGISTRY_PATH = REPO / "inputs" / "master-plant-registry.csv"
 
 # Model seasons (1-based months); mirrors fleet._SUMMER_MONTHS / _CC_SHOULDER.
 _SEASON_OF_MONTH: dict[int, str] = {
-    12: "winter", 1: "winter", 2: "winter",
-    3: "shoulder", 4: "shoulder", 5: "shoulder",
-    6: "summer", 7: "summer", 8: "summer", 9: "summer",
-    10: "shoulder", 11: "shoulder",
+    12: "winter",
+    1: "winter",
+    2: "winter",
+    3: "shoulder",
+    4: "shoulder",
+    5: "shoulder",
+    6: "summer",
+    7: "summer",
+    8: "summer",
+    9: "summer",
+    10: "shoulder",
+    11: "shoulder",
 }
 _SEASON_ORDER: tuple[str, ...] = ("winter", "shoulder", "summer")
 
@@ -81,7 +87,9 @@ def _print_table(rows: list[tuple]) -> None:
 
 
 def _outage_events(
-    grid: pd.DataFrame, online_mw: float, min_days: float,
+    grid: pd.DataFrame,
+    online_mw: float,
+    min_days: float,
 ) -> list[dict]:
     """Return multi-day offline events for one plant-year's hourly grid.
 
@@ -104,18 +112,22 @@ def _outage_events(
             j += 1
         if (j - i) >= min_hours:
             mid = ts[i + (j - i) // 2]
-            events.append({
-                "start": ts[i].date().isoformat(),
-                "end": ts[j - 1].date().isoformat(),
-                "days": round((j - i) / 24.0, 1),
-                "season": _season(mid.month),
-            })
+            events.append(
+                {
+                    "start": ts[i].date().isoformat(),
+                    "end": ts[j - 1].date().isoformat(),
+                    "days": round((j - i) / 24.0, 1),
+                    "season": _season(mid.month),
+                }
+            )
         i = j
     return events
 
 
 def _must_run_stats(
-    grid: pd.DataFrame, nameplate: float, online_mw: float,
+    grid: pd.DataFrame,
+    nameplate: float,
+    online_mw: float,
 ) -> dict:
     """Return committed-hour CF percentiles and min-stable-load metrics."""
     gross = grid["gross_mw"].to_numpy()
@@ -132,9 +144,9 @@ def _must_run_stats(
         "cf_p10": round(float(np.percentile(cf, 10)), 3),
         "cf_p50": round(float(np.percentile(cf, 50)), 3),
         "cf_p95": round(float(np.percentile(cf, 95)), 3),
-        "minload_pct_of_max": round(
-            float(np.percentile(committed, 10)) / p95_out, 3
-        ) if p95_out > 0 else 0.0,
+        "minload_pct_of_max": round(float(np.percentile(committed, 10)) / p95_out, 3)
+        if p95_out > 0
+        else 0.0,
     }
 
 
@@ -153,8 +165,12 @@ def _coal_mix(generation: pd.DataFrame, years: list[int]) -> dict[int, dict]:
             continue
         is_coal = grp["fuel_type"].astype(str).str.upper().isin(_COAL_FUELS)
         coal_gen = float(grp[is_coal]["netgen_annual_mwh"].sum())
-        pms = sorted(grp.loc[grp["netgen_annual_mwh"] != 0, "prime_mover"]
-                     .astype(str).str.upper().unique())
+        pms = sorted(
+            grp.loc[grp["netgen_annual_mwh"] != 0, "prime_mover"]
+            .astype(str)
+            .str.upper()
+            .unique()
+        )
         share = coal_gen / total
         out[int(code)] = {
             "coal_share": round(share, 3),
@@ -165,8 +181,11 @@ def _coal_mix(generation: pd.DataFrame, years: list[int]) -> dict[int, dict]:
 
 
 def _analyze(
-    df: pd.DataFrame, years: list[int], supply_types: list[str],
-    online_frac: float, min_days: float,
+    df: pd.DataFrame,
+    years: list[int],
+    supply_types: list[str],
+    online_frac: float,
+    min_days: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return ``(floors, events)`` frames for the requested coal supply types."""
     reg = pd.read_csv(REGISTRY_PATH).set_index("plantid")
@@ -175,11 +194,12 @@ def _analyze(
     event_rows: list[dict] = []
 
     plants = [
-        (code, sup) for code, sup in COAL_PLANT_SUPPLY.items()
-        if sup in supply_types
+        (code, sup) for code, sup in COAL_PLANT_SUPPLY.items() if sup in supply_types
     ]
     for code, supply in sorted(plants, key=lambda x: (x[1], x[0])):
-        name = str(reg.loc[code, "plant_name"]) if code in reg.index else f"plant {code}"
+        name = (
+            str(reg.loc[code, "plant_name"]) if code in reg.index else f"plant {code}"
+        )
         nameplate = (
             float(reg.loc[code, "nameplate_capacity_mw"])
             if code in reg.index and pd.notna(reg.loc[code, "nameplate_capacity_mw"])
@@ -192,15 +212,22 @@ def _analyze(
             grid = campd.plant_hourly_grid(df, code, year)
             if grid.empty:
                 continue
-            np_used = nameplate if nameplate > 0 else float(
-                np.percentile(grid["gross_mw"], 99)
+            np_used = (
+                nameplate
+                if nameplate > 0
+                else float(np.percentile(grid["gross_mw"], 99))
             )
             online_mw = max(1.0, online_frac * np_used)
             for ev in _outage_events(grid, online_mw, min_days):
-                event_rows.append({
-                    "plant_code": code, "name": name, "supply": supply,
-                    "year": year, **ev,
-                })
+                event_rows.append(
+                    {
+                        "plant_code": code,
+                        "name": name,
+                        "supply": supply,
+                        "year": year,
+                        **ev,
+                    }
+                )
             pooled_grids.append((grid, np_used, online_mw))
 
         if not pooled_grids:
@@ -209,23 +236,31 @@ def _analyze(
         np_used = pooled_grids[0][1]
         online_mw = pooled_grids[0][2]
         stats = _must_run_stats(combined, np_used, online_mw)
-        m = mix.get(code, {"coal_share": float("nan"), "prime_movers": "?",
-                           "mixed": False})
-        floors_rows.append({
-            "plant_code": code, "name": name, "supply": supply,
-            "nameplate_mw": round(nameplate, 1),
-            "cap_mw_used": round(np_used, 1),
-            "nameplate_source": "registry" if nameplate > 0 else "p99_observed",
-            "coal_share": m["coal_share"], "prime_movers": m["prime_movers"],
-            "mixed": m["mixed"],
-            **stats,
-        })
+        m = mix.get(
+            code, {"coal_share": float("nan"), "prime_movers": "?", "mixed": False}
+        )
+        floors_rows.append(
+            {
+                "plant_code": code,
+                "name": name,
+                "supply": supply,
+                "nameplate_mw": round(nameplate, 1),
+                "cap_mw_used": round(np_used, 1),
+                "nameplate_source": "registry" if nameplate > 0 else "p99_observed",
+                "coal_share": m["coal_share"],
+                "prime_movers": m["prime_movers"],
+                "mixed": m["mixed"],
+                **stats,
+            }
+        )
 
     return pd.DataFrame(floors_rows), pd.DataFrame(event_rows)
 
 
 def _print_report(
-    floors: pd.DataFrame, events: pd.DataFrame, years: list[int],
+    floors: pd.DataFrame,
+    events: pd.DataFrame,
+    years: list[int],
 ) -> None:
     """Print must-run floors, seasonal outage totals, and recurring rules."""
     for supply in ("lignite", "prb"):
@@ -233,50 +268,90 @@ def _print_report(
         if fl.empty:
             continue
         label = "MINE-MOUTH LIGNITE" if supply == "lignite" else "PRB (railed)"
-        print(f"\n{'=' * 78}\n  {label} COAL — must-run floor "
-              f"({', '.join(map(str, years))})\n{'=' * 78}")
-        rows = [("plant", "code", "MW", "coal%", "pm", "online%", "CF P5",
-                 "CF P10", "CF P50", "minLoad%max")]
-        for _, r in fl.sort_values(["mixed", "cap_mw_used"],
-                                   ascending=[True, False]).iterrows():
-            cap = (f"{r['nameplate_mw']:.0f}" if r["nameplate_source"] == "registry"
-                   else f"~{r['cap_mw_used']:.0f}")
+        print(
+            f"\n{'=' * 78}\n  {label} COAL — must-run floor "
+            f"({', '.join(map(str, years))})\n{'=' * 78}"
+        )
+        rows = [
+            (
+                "plant",
+                "code",
+                "MW",
+                "coal%",
+                "pm",
+                "online%",
+                "CF P5",
+                "CF P10",
+                "CF P50",
+                "minLoad%max",
+            )
+        ]
+        for _, r in fl.sort_values(
+            ["mixed", "cap_mw_used"], ascending=[True, False]
+        ).iterrows():
+            cap = (
+                f"{r['nameplate_mw']:.0f}"
+                if r["nameplate_source"] == "registry"
+                else f"~{r['cap_mw_used']:.0f}"
+            )
             name = r["name"][:24] + (" *" if r["mixed"] else "")
-            rows.append((
-                name, str(r["plant_code"]), cap,
-                f"{r['coal_share'] * 100:.0f}", r["prime_movers"],
-                f"{r.get('online_share', 0) * 100:.0f}",
-                f"{r.get('cf_p5', float('nan')):.2f}",
-                f"{r.get('cf_p10', float('nan')):.2f}",
-                f"{r.get('cf_p50', float('nan')):.2f}",
-                f"{r.get('minload_pct_of_max', float('nan')):.2f}",
-            ))
+            rows.append(
+                (
+                    name,
+                    str(r["plant_code"]),
+                    cap,
+                    f"{r['coal_share'] * 100:.0f}",
+                    r["prime_movers"],
+                    f"{r.get('online_share', 0) * 100:.0f}",
+                    f"{r.get('cf_p5', float('nan')):.2f}",
+                    f"{r.get('cf_p10', float('nan')):.2f}",
+                    f"{r.get('cf_p50', float('nan')):.2f}",
+                    f"{r.get('minload_pct_of_max', float('nan')):.2f}",
+                )
+            )
         _print_table(rows)
         reliable = fl[~fl["mixed"]]
         if len(reliable):
-            print(f"    coal-only median: CF P10={reliable['cf_p10'].median():.2f}, "
-                  f"minLoad%max={reliable['minload_pct_of_max'].median():.2f}  "
-                  f"(CF P10 of committed hours = candidate true must-run %)")
+            print(
+                f"    coal-only median: CF P10={reliable['cf_p10'].median():.2f}, "
+                f"minLoad%max={reliable['minload_pct_of_max'].median():.2f}  "
+                f"(CF P10 of committed hours = candidate true must-run %)"
+            )
         if fl["mixed"].any():
-            print("    * mixed plant (co-located gas units in facility CEMS) — "
-                  "coal floor not isolable from this extract; excluded from median.")
+            print(
+                "    * mixed plant (co-located gas units in facility CEMS) — "
+                "coal floor not isolable from this extract; excluded from median."
+            )
 
     if events.empty:
         print("\n  No multi-day outage events detected.")
         return
 
-    print(f"\n{'=' * 78}\n  SEASONAL OUTAGE PATTERN — multi-day offline events"
-          f"\n{'=' * 78}")
+    print(
+        f"\n{'=' * 78}\n  SEASONAL OUTAGE PATTERN — multi-day offline events"
+        f"\n{'=' * 78}"
+    )
     rows = [("plant", "supply", "year", "season", "start", "end", "days")]
     for _, e in events.sort_values(["supply", "plant_code", "start"]).iterrows():
-        rows.append((e["name"][:24], e["supply"], str(e["year"]),
-                     e["season"], e["start"], e["end"], f"{e['days']:.0f}"))
+        rows.append(
+            (
+                e["name"][:24],
+                e["supply"],
+                str(e["year"]),
+                e["season"],
+                e["start"],
+                e["end"],
+                f"{e['days']:.0f}",
+            )
+        )
     _print_table(rows)
 
     # Universal-rule candidates: a plant with a multi-day outage in the same
     # season in every analyzed year.
-    print(f"\n{'=' * 78}\n  RECURRING SEASONAL OUTAGES (universal-rule candidates)"
-          f"\n{'=' * 78}")
+    print(
+        f"\n{'=' * 78}\n  RECURRING SEASONAL OUTAGES (universal-rule candidates)"
+        f"\n{'=' * 78}"
+    )
     n_years = len({e for e in years})
     found = False
     for (code, season), grp in events.groupby(["plant_code", "season"]):
@@ -290,12 +365,16 @@ def _print_report(
         def _per_year(y: int) -> str:
             gy = grp[grp.year == y]
             top = gy.loc[gy["days"].idxmax()]
-            return (f"{y}: {gy['days'].sum():.0f}d total, "
-                    f"longest {top['start']}→{top['end']}")
+            return (
+                f"{y}: {gy['days'].sum():.0f}d total, "
+                f"longest {top['start']}→{top['end']}"
+            )
 
         spans = "; ".join(_per_year(y) for y in yrs)
-        print(f"    • {name} ({code}, {grp['supply'].iloc[0]}): ~{avg_days:.0f} "
-              f"days offline every {season} season  [{spans}]")
+        print(
+            f"    • {name} ({code}, {grp['supply'].iloc[0]}): ~{avg_days:.0f} "
+            f"days offline every {season} season  [{spans}]"
+        )
     if not found:
         print("    (none recur in the same season across all analyzed years)")
 
@@ -306,15 +385,21 @@ def main() -> None:
     parser.add_argument("--states", nargs="+", default=None)
     parser.add_argument("--years", nargs="+", type=int, required=True)
     parser.add_argument(
-        "--supply", choices=["lignite", "prb", "all"], default="all",
+        "--supply",
+        choices=["lignite", "prb", "all"],
+        default="all",
         help="Coal supply type(s) to report (default all).",
     )
     parser.add_argument(
-        "--online-frac", type=float, default=0.05,
+        "--online-frac",
+        type=float,
+        default=0.05,
         help="Gross load below this fraction of capacity counts as offline.",
     )
     parser.add_argument(
-        "--min-outage-days", type=float, default=2.0,
+        "--min-outage-days",
+        type=float,
+        default=2.0,
         help="Minimum contiguous offline span (days) to log as an outage.",
     )
     parser.add_argument("--no-csv", action="store_true")
@@ -323,9 +408,7 @@ def main() -> None:
     states = args.states or list(campd.states_for_iso(args.iso or ""))
     if not states:
         parser.error("supply --states or an --iso with a known state mapping")
-    supply_types = (
-        ["lignite", "prb"] if args.supply == "all" else [args.supply]
-    )
+    supply_types = ["lignite", "prb"] if args.supply == "all" else [args.supply]
 
     df = campd.load_campd_hourly(states, args.years)
     if df.empty:

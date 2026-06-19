@@ -4,6 +4,7 @@ System price = mean-across-zones of system.parquet price, grouped by hour
 (mirrors run_calibration_full's [3] price-level diagnostic). Confirms the
 evening tail lifts toward rt_mon while the midday floor is unchanged.
 """
+
 from __future__ import annotations
 
 import json
@@ -13,9 +14,9 @@ import numpy as np
 import pandas as pd
 
 YEAR = 2024
-RT_MON = json.load(open("data/raw/_validation-source/actual_lmp.json"))["CAISO"]["2024"][
-    "rt_mon"
-]
+RT_MON = json.load(open("data/raw/_validation-source/actual_lmp.json"))["CAISO"][
+    "2024"
+]["rt_mon"]
 
 
 def sys_hourly(run_dir: str) -> np.ndarray:
@@ -50,12 +51,15 @@ def main(base: str, on: str) -> None:
     for m in range(12):
         mask = mi == m
         b, o = pb[mask].mean(), po[mask].mean()
-        print(f"{m+1:>3} {RT_MON[m]:8.2f} {b:8.2f} {o:8.2f} {o-b:+7.2f}")
-    print(f"{'ann':>3} {np.mean(RT_MON):8.2f} {pb.mean():8.2f} "
-          f"{po.mean():8.2f} {po.mean()-pb.mean():+7.2f}")
+        print(f"{m + 1:>3} {RT_MON[m]:8.2f} {b:8.2f} {o:8.2f} {o - b:+7.2f}")
+    print(
+        f"{'ann':>3} {np.mean(RT_MON):8.2f} {pb.mean():8.2f} "
+        f"{po.mean():8.2f} {po.mean() - pb.mean():+7.2f}"
+    )
 
     def err(p):
         return np.mean([abs(p[mi == m].mean() - RT_MON[m]) for m in range(12)])
+
     print(f"\nMAE vs rt_mon  base {err(pb):.2f}  formula {err(po):.2f}")
     print(f"max LMP        base {pb.max():.2f}  formula {po.max():.2f}")
 
@@ -69,13 +73,17 @@ def main(base: str, on: str) -> None:
             tag = "  <- midday floor"
         if 17 <= h <= 21:
             tag = "  <- evening tail"
-        print(f"{h:>3} {b:8.2f} {o:8.2f} {o-b:+7.2f}{tag}")
+        print(f"{h:>3} {b:8.2f} {o:8.2f} {o - b:+7.2f}{tag}")
     midday = (hod >= 10) & (hod <= 15)
     evening = (hod >= 17) & (hod <= 21)
-    print(f"\nmidday  (hr10-15) base {pb[midday].mean():.2f}  "
-          f"formula {po[midday].mean():.2f}  d {po[midday].mean()-pb[midday].mean():+.2f}")
-    print(f"evening (hr17-21) base {pb[evening].mean():.2f}  "
-          f"formula {po[evening].mean():.2f}  d {po[evening].mean()-pb[evening].mean():+.2f}")
+    print(
+        f"\nmidday  (hr10-15) base {pb[midday].mean():.2f}  "
+        f"formula {po[midday].mean():.2f}  d {po[midday].mean() - pb[midday].mean():+.2f}"
+    )
+    print(
+        f"evening (hr17-21) base {pb[evening].mean():.2f}  "
+        f"formula {po[evening].mean():.2f}  d {po[evening].mean() - pb[evening].mean():+.2f}"
+    )
 
 
 if __name__ == "__main__":

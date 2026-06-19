@@ -128,7 +128,12 @@ class TestTransmissionDispatch(unittest.TestCase):
         ttc = get_ttc_array(links)
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
             **_no_renewables(2),
         )
 
@@ -147,21 +152,31 @@ class TestTransmissionDispatch(unittest.TestCase):
         # import vs export ratings. Here B is cheap and A needs power, so the
         # economic flow would be B->A; the one-way A->B link must block it.
         from market_sim.model.transmission import get_link_bidirectional_array
+
         zone_names = ["A", "B"]
         fleet = _fleet([("A", 500.0), ("B", 500.0)], zone_names)
         mc = np.vstack([np.full(T, 80.0), np.full(T, 30.0)])  # B cheap, A dear
         demand = np.vstack([np.full(T, 300.0), np.full(T, 0.0)])  # load in A
 
-        links = [TransferLink(
-            from_zone="A", to_zone="B", ttc_mw=1000.0, is_bidirectional=False)]
+        links = [
+            TransferLink(
+                from_zone="A", to_zone="B", ttc_mw=1000.0, is_bidirectional=False
+            )
+        ]
         incidence = build_incidence_matrix(links, zone_names)
         ttc = get_ttc_array(links)
         bidir = get_link_bidirectional_array(links)
         self.assertFalse(bool(bidir[0]))
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
-            link_bidirectional=bidir, **_no_renewables(2),
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
+            link_bidirectional=bidir,
+            **_no_renewables(2),
         )
         # Reverse (B->A) flow is forbidden: flow floored at 0, so A serves its
         # own load with the dear local gen and B's cheap gen can't reach it.
@@ -180,7 +195,12 @@ class TestTransmissionDispatch(unittest.TestCase):
         ttc = np.zeros(1)  # TTC=0: TransferLink itself forbids ttc_mw=0
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
             **_no_renewables(2),
         )
 
@@ -209,9 +229,16 @@ class TestTransmissionDispatch(unittest.TestCase):
         ttc = get_ttc_array(links)
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
-            wind_cf=wind_cf, wind_cap=wind_cap,
-            solar_cf=np.zeros((2, T)), solar_cap=np.zeros(2),
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
+            wind_cf=wind_cf,
+            wind_cap=wind_cap,
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
         )
 
         # Flow equals min(zone-A surplus, TTC); here the link is saturated.
@@ -235,10 +262,10 @@ class TestTransmissionDispatch(unittest.TestCase):
         )
         mc = np.vstack(
             [
-                np.full(T, 25.0),   # North: cheapest
-                np.full(T, 45.0),   # South
-                np.full(T, 60.0),   # West
-                np.full(T, 70.0),   # Houston: most expensive
+                np.full(T, 25.0),  # North: cheapest
+                np.full(T, 45.0),  # South
+                np.full(T, 60.0),  # West
+                np.full(T, 70.0),  # Houston: most expensive
             ]
         )
         demand = np.vstack(
@@ -263,7 +290,12 @@ class TestTransmissionDispatch(unittest.TestCase):
         self.assertEqual(incidence.shape, (4, 6))
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
             **_no_renewables(4),
         )
 
@@ -305,9 +337,7 @@ class TestWeccImportModel(unittest.TestCase):
         zone_names = ["CAISO_main", "WECC_import"]
         fleet = generators_to_fleet_arrays(generators, zone_names, hours=T)
         links = [
-            TransferLink(
-                from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=15000.0
-            )
+            TransferLink(from_zone="WECC_import", to_zone="CAISO_main", ttc_mw=15000.0)
         ]
         incidence = build_incidence_matrix(links, zone_names)
         ttc = get_ttc_array(links)
@@ -443,8 +473,7 @@ class TestInterchangeShaping(unittest.TestCase):
         H = 8760
         fa, gens, month, hod = self._caiso_node_fleet(H)
         avail_before = fa.availability.copy()
-        applied = inject_interchange_shape(
-            fa, "CAISO", 2024, export_only=True)
+        applied = inject_interchange_shape(fa, "CAISO", 2024, export_only=True)
         self.assertTrue(applied)
 
         imp = np.array([g.pmax_mw > 0 for g in gens])
@@ -452,8 +481,7 @@ class TestInterchangeShaping(unittest.TestCase):
         spring_mid = (np.isin(month, [4, 5])) & (hod >= 12) & (hod <= 15)
 
         # Imports are untouched (the regression half is skipped).
-        np.testing.assert_array_equal(
-            fa.availability[imp], avail_before[imp])
+        np.testing.assert_array_equal(fa.availability[imp], avail_before[imp])
         # Export floor still opens midday (the half that unlocks negatives).
         self.assertIsNotNone(fa.min_gen)
         self.assertLess(fa.min_gen[exp][:, spring_mid].mean(), -100.0)
@@ -463,8 +491,12 @@ class TestInterchangeShaping(unittest.TestCase):
         # leaves availability untouched (byte-identical).
         gens = [
             Generator(
-                unit_id="g1", name="g1", zone="NP15", fuel_type="gas_cc",
-                pmax_mw=400.0, pmin_mw=0.0,
+                unit_id="g1",
+                name="g1",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=400.0,
+                pmin_mw=0.0,
             )
         ]
         fa = generators_to_fleet_arrays(gens, ["NP15"], hours=48)
@@ -490,14 +522,40 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         # NG: NG (6-9 GW midday) so the clamp path is exercised; pass a large
         # cap to leave the floor unclamped.
         gens = [
-            Generator(unit_id="cc", name="cc", zone="NP15", fuel_type="gas_cc",
-                      pmax_mw=cc_mw, pmin_mw=0.0, heat_rate=7.0),
-            Generator(unit_id="ct", name="ct", zone="SP15", fuel_type="gas_ct",
-                      pmax_mw=ct_mw, pmin_mw=0.0, heat_rate=10.0),
-            Generator(unit_id="imp", name="imp", zone="WECC_import",
-                      fuel_type="import", pmax_mw=5000.0, pmin_mw=0.0),
-            Generator(unit_id="exp", name="exp", zone="WECC_import",
-                      fuel_type="import", pmax_mw=0.0, pmin_mw=-3000.0),
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=cc_mw,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="SP15",
+                fuel_type="gas_ct",
+                pmax_mw=ct_mw,
+                pmin_mw=0.0,
+                heat_rate=10.0,
+            ),
+            Generator(
+                unit_id="imp",
+                name="imp",
+                zone="WECC_import",
+                fuel_type="import",
+                pmax_mw=5000.0,
+                pmin_mw=0.0,
+            ),
+            Generator(
+                unit_id="exp",
+                name="exp",
+                zone="WECC_import",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-3000.0,
+            ),
         ]
         zone_names = ["NP15", "SP15", "WECC_import"]
         fa = generators_to_fleet_arrays(gens, zone_names, hours=hours)
@@ -512,9 +570,7 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         self.assertTrue(applied)
         self.assertIsNotNone(fa.min_gen)
 
-        is_gas = np.array(
-            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
-        )
+        is_gas = np.array([g.fuel_type in ("gas_cc", "gas_ct") for g in gens])
         gas_floor = fa.min_gen[is_gas].sum(axis=0)
         lo, hi = CAISO_GAS_FLOOR_HOURS
         midday = (hod >= lo) & (hod < hi)
@@ -532,9 +588,7 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         H = 8760
         fa, gens, _, _ = self._gas_fleet(H)
         inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
-        is_gas = np.array(
-            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
-        )
+        is_gas = np.array([g.fuel_type in ("gas_cc", "gas_ct") for g in gens])
         cap = (fa.pmax[is_gas, None] * fa.availability[is_gas]).sum(axis=0)
         floor = fa.min_gen[is_gas].sum(axis=0)
         self.assertTrue(bool((floor <= cap + 1e-6).all()))
@@ -558,9 +612,7 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         fa, gens, _, _ = self._gas_fleet(48)
         inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
         exp_row = [g.unit_id for g in gens].index("exp")
-        np.testing.assert_array_equal(
-            fa.min_gen[exp_row], fa.pmin[exp_row]
-        )
+        np.testing.assert_array_equal(fa.min_gen[exp_row], fa.pmin[exp_row])
 
     def test_non_caiso_is_no_op(self):
         fa, _, _, _ = self._gas_fleet(48)
@@ -573,14 +625,27 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         # floor must land only on the flexible CC/CT fleet, never on gas_st.
         H = 8760
         gens = [
-            Generator(unit_id="cc", name="cc", zone="NP15", fuel_type="gas_cc",
-                      pmax_mw=20000.0, pmin_mw=0.0, heat_rate=7.0),
-            Generator(unit_id="st", name="st", zone="SP15", fuel_type="gas_st",
-                      pmax_mw=5000.0, pmin_mw=0.0, heat_rate=11.0),
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="NP15",
+                fuel_type="gas_cc",
+                pmax_mw=20000.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+            ),
+            Generator(
+                unit_id="st",
+                name="st",
+                zone="SP15",
+                fuel_type="gas_st",
+                pmax_mw=5000.0,
+                pmin_mw=0.0,
+                heat_rate=11.0,
+            ),
         ]
         fa = generators_to_fleet_arrays(gens, ["NP15", "SP15"], hours=H)
-        self.assertTrue(
-            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0))
+        self.assertTrue(inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0))
         st_row = np.array([g.fuel_type == "gas_st" for g in gens])
         self.assertEqual(float(fa.min_gen[st_row].sum()), 0.0)
         # The CC (the flexible fleet) still carries the whole midday floor.
@@ -589,29 +654,29 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
 
     def test_nonpositive_frac_is_no_op(self):
         fa, _, _, _ = self._gas_fleet(48)
-        self.assertFalse(
-            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 0.0)
-        )
+        self.assertFalse(inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 0.0))
         self.assertIsNone(fa.min_gen)
 
     def test_forecast_year_is_no_op(self):
         # No EIA-930 NG: NG profile for a forecast year -> no floor.
         fa, _, _, _ = self._gas_fleet(48)
-        self.assertFalse(
-            inject_caiso_gas_commitment_floor(fa, "CAISO", 2030, 1.0)
-        )
+        self.assertFalse(inject_caiso_gas_commitment_floor(fa, "CAISO", 2030, 1.0))
         self.assertIsNone(fa.min_gen)
 
     def test_no_gas_units_is_no_op(self):
         # An all-import fleet (no gas rows) -> no floor.
         gens = [
-            Generator(unit_id="imp", name="imp", zone="WECC_import",
-                      fuel_type="import", pmax_mw=5000.0, pmin_mw=0.0),
+            Generator(
+                unit_id="imp",
+                name="imp",
+                zone="WECC_import",
+                fuel_type="import",
+                pmax_mw=5000.0,
+                pmin_mw=0.0,
+            ),
         ]
         fa = generators_to_fleet_arrays(gens, ["WECC_import"], hours=48)
-        self.assertFalse(
-            inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0)
-        )
+        self.assertFalse(inject_caiso_gas_commitment_floor(fa, "CAISO", 2024, 1.0))
         self.assertIsNone(fa.min_gen)
 
     def test_frac_scales_the_floor(self):
@@ -622,9 +687,7 @@ class TestCaisoGasCommitmentFloor(unittest.TestCase):
         fa_half, _, _, _ = self._gas_fleet(H, cc_mw=30000.0)
         inject_caiso_gas_commitment_floor(fa_full, "CAISO", 2024, 1.0)
         inject_caiso_gas_commitment_floor(fa_half, "CAISO", 2024, 0.3)
-        is_gas = np.array(
-            [g.fuel_type in ("gas_cc", "gas_ct") for g in gens]
-        )
+        is_gas = np.array([g.fuel_type in ("gas_cc", "gas_ct") for g in gens])
         full = fa_full.min_gen[is_gas].sum(axis=0)
         half = fa_half.min_gen[is_gas].sum(axis=0)
         lo, hi = CAISO_GAS_FLOOR_HOURS
@@ -640,9 +703,7 @@ class TestGenericImportNode(unittest.TestCase):
     def test_wecc_wrappers_match_generic_builders(self):
         wrapped = build_wecc_import_generators()
         generic = build_import_generators("CAISO")
-        self.assertEqual(
-            [g.unit_id for g in wrapped], [g.unit_id for g in generic]
-        )
+        self.assertEqual([g.unit_id for g in wrapped], [g.unit_id for g in generic])
         sink = build_wecc_export_sink()
         self.assertEqual(sink.zone, "WECC_import")
         self.assertEqual(sink.pmax_mw, 0.0)
@@ -673,12 +734,8 @@ class TestGenericImportNode(unittest.TestCase):
     def test_extend_with_import_node_appends_pjm_external(self):
         base = get_iso_config("PJM")
         extended = extend_with_import_node(base)
-        self.assertEqual(
-            extended.zone_names, [*base.zone_names, "PJM_external"]
-        )
-        self.assertEqual(
-            extended.n_links, base.n_links + len(IMPORT_NODE_LINKS["PJM"])
-        )
+        self.assertEqual(extended.zone_names, [*base.zone_names, "PJM_external"])
+        self.assertEqual(extended.n_links, base.n_links + len(IMPORT_NODE_LINKS["PJM"]))
         # The external zone carries no load and the result still validates.
         self.assertEqual(extended.zones[-1].load_share, 0.0)
         extended.validate_topology()
@@ -717,9 +774,7 @@ class TestGenericImportNode(unittest.TestCase):
     def test_extend_with_import_node_appends_nyiso_external(self):
         base = get_iso_config("NYISO")
         extended = extend_with_import_node(base)
-        self.assertEqual(
-            extended.zone_names, [*base.zone_names, "NYISO_external"]
-        )
+        self.assertEqual(extended.zone_names, [*base.zone_names, "NYISO_external"])
         self.assertEqual(
             extended.n_links, base.n_links + len(IMPORT_NODE_LINKS["NYISO"])
         )
@@ -745,27 +800,32 @@ class TestPjmImportNodeDispatch(unittest.TestCase):
         """Solve a 2-zone PJM-like dispatch; returns (result, units)."""
         zone_names = ["PJM_main", "PJM_external"]
         internal = Generator(
-            unit_id="PJM_gas", name="PJM_gas", zone="PJM_main",
-            fuel_type="gas_cc", pmax_mw=150000.0, pmin_mw=0.0,
-            heat_rate=0.0, vom=internal_mc, eford=0.0,
+            unit_id="PJM_gas",
+            name="PJM_gas",
+            zone="PJM_main",
+            fuel_type="gas_cc",
+            pmax_mw=150000.0,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=internal_mc,
+            eford=0.0,
         )
-        units = (
-            [internal]
-            + build_import_generators("PJM")
-            + build_export_sinks("PJM")
-        )
+        units = [internal] + build_import_generators("PJM") + build_export_sinks("PJM")
         fleet = generators_to_fleet_arrays(units, zone_names, hours=T)
         links = [
-            TransferLink(
-                from_zone="PJM_external", to_zone="PJM_main", ttc_mw=30000.0
-            )
+            TransferLink(from_zone="PJM_external", to_zone="PJM_main", ttc_mw=30000.0)
         ]
         incidence = build_incidence_matrix(links, zone_names)
         ttc = get_ttc_array(links)
         mc = assemble_mc(fleet, np.zeros((len(units), T)), carbon_price=0.0)
         demand = np.vstack([np.full(T, demand_mw), np.zeros(T)])
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
+            fleet,
+            demand,
+            mc=mc,
+            T=T,
+            incidence=incidence,
+            ttc=ttc,
             **_no_renewables(2),
         )
         return result, units
@@ -775,15 +835,11 @@ class TestPjmImportNodeDispatch(unittest.TestCase):
         # at full capacity and the system exports their sum.
         result, units = self._solve(internal_mc=10.0, demand_mw=80000.0)
         sink_cap = sum(c for _, c, _ in EXPORT_TRANCHES["PJM"])
-        exports = -result.dispatch[1 + len(IMPORT_TRANCHES["PJM"]):].sum(
-            axis=0
-        )
+        exports = -result.dispatch[1 + len(IMPORT_TRANCHES["PJM"]) :].sum(axis=0)
         np.testing.assert_allclose(exports, sink_cap, atol=1e-5)
         # Imports stay off: every tranche costs more than internal supply.
         n_imp = len(IMPORT_TRANCHES["PJM"])
-        np.testing.assert_allclose(
-            result.dispatch[1:1 + n_imp], 0.0, atol=1e-6
-        )
+        np.testing.assert_allclose(result.dispatch[1 : 1 + n_imp], 0.0, atol=1e-6)
 
     def test_sink_survives_min_gen_floor_fleet(self):
         # A CHP steam-following floor anywhere in the fleet activates the
@@ -792,14 +848,19 @@ class TestPjmImportNodeDispatch(unittest.TestCase):
         # pinned to a zero floor (the PJM calibration fleet always carries
         # CHP floors, so without this the node could never export).
         chp = Generator(
-            unit_id="PJM_chp", name="PJM_chp", zone="PJM_main",
-            fuel_type="gas_ct", pmax_mw=500.0, pmin_mw=0.0,
-            heat_rate=0.0, vom=12.0, eford=0.0, chp_grid_pmin_mw=200.0,
+            unit_id="PJM_chp",
+            name="PJM_chp",
+            zone="PJM_main",
+            fuel_type="gas_ct",
+            pmax_mw=500.0,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=12.0,
+            eford=0.0,
+            chp_grid_pmin_mw=200.0,
         )
         units = [chp] + build_export_sinks("PJM")
-        fleet = generators_to_fleet_arrays(
-            units, ["PJM_main", "PJM_external"], hours=T
-        )
+        fleet = generators_to_fleet_arrays(units, ["PJM_main", "PJM_external"], hours=T)
         self.assertIsNotNone(fleet.min_gen)
         # The CHP floor binds; each sink keeps its negative lower bound.
         np.testing.assert_allclose(fleet.min_gen[0], 200.0)
@@ -812,12 +873,10 @@ class TestPjmImportNodeDispatch(unittest.TestCase):
         result, units = self._solve(internal_mc=50.0, demand_mw=80000.0)
         tranches = IMPORT_TRANCHES["PJM"]
         self.assertEqual(tranches[0][2], 46.0)
-        np.testing.assert_allclose(
-            result.dispatch[1], tranches[0][1], atol=1e-5
-        )
+        np.testing.assert_allclose(result.dispatch[1], tranches[0][1], atol=1e-5)
         np.testing.assert_allclose(result.dispatch[2], 0.0, atol=1e-6)
         # The richest sink pays $42 < $50: no exports.
-        exports = result.dispatch[1 + len(tranches):]
+        exports = result.dispatch[1 + len(tranches) :]
         np.testing.assert_allclose(exports, 0.0, atol=1e-6)
 
 
@@ -826,9 +885,7 @@ class TestWeccBorderCarbon(unittest.TestCase):
 
     def test_adder_is_unspecified_ef_times_allowance_price(self):
         # CARB MRR default EF for unspecified imports: 0.428 tCO2e/MWh.
-        self.assertAlmostEqual(
-            wecc_border_carbon_adder(35.0), 0.428 * 35.0
-        )
+        self.assertAlmostEqual(wecc_border_carbon_adder(35.0), 0.428 * 35.0)
         self.assertAlmostEqual(wecc_border_carbon_adder(0.0), 0.0)
 
     def test_default_build_carries_no_border_carbon(self):
@@ -852,8 +909,9 @@ class TestWeccBorderCarbon(unittest.TestCase):
             self.assertEqual(gen.emission_rate_co2, 0.0)
         # Clean blocks pay nothing; the unspecified block pays the full adder.
         self.assertAlmostEqual(generators[0].vom, IMPORT_TRANCHES["CAISO"][0][2])
-        self.assertAlmostEqual(generators[-1].vom,
-                               IMPORT_TRANCHES["CAISO"][-1][2] + adder)
+        self.assertAlmostEqual(
+            generators[-1].vom, IMPORT_TRANCHES["CAISO"][-1][2] + adder
+        )
         # ~$15/MWh at the 2024 average allowance price.
         self.assertGreater(adder, 14.0)
         self.assertLess(adder, 16.0)

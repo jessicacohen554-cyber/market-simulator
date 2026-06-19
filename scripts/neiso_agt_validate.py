@@ -7,6 +7,7 @@ discriminating winter-tail metrics for the NEISO AGT calibration.
 
 Usage: uv run python scripts/neiso_agt_validate.py <run_dir> [<run_dir> ...]
 """
+
 from __future__ import annotations
 
 import sys
@@ -25,16 +26,26 @@ def _final_pass(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def report(run_dir: Path) -> None:
-    disp = _final_pass(pd.read_parquet(run_dir / "dispatch" /
-                                       sorted(p.name for p in (run_dir / "dispatch").glob("*.parquet"))[-1]))
+    disp = _final_pass(
+        pd.read_parquet(
+            run_dir
+            / "dispatch"
+            / sorted(p.name for p in (run_dir / "dispatch").glob("*.parquet"))[-1]
+        )
+    )
     year = int(disp["year"].iloc[0])
     oil_twh = disp.loc[disp["fuel"] == "oil", "mw"].sum() / 1e6
-    gas_twh = disp.loc[disp["fuel"].str.contains("gas", case=False, na=False), "mw"].sum() / 1e6
+    gas_twh = (
+        disp.loc[disp["fuel"].str.contains("gas", case=False, na=False), "mw"].sum()
+        / 1e6
+    )
 
     sysdf = _final_pass(pd.read_parquet(run_dir / "system.parquet"))
     # Load-weighted hub price across zones, per hour.
     g = sysdf.groupby("hour")
-    price = g.apply(lambda d: np.average(d["price"], weights=d["demand"].clip(lower=1e-6)))
+    price = g.apply(
+        lambda d: np.average(d["price"], weights=d["demand"].clip(lower=1e-6))
+    )
     price = price.to_numpy()
     over100 = int((price > 100).sum())
     over200 = int((price > 200).sum())

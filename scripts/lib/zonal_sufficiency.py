@@ -13,15 +13,26 @@ Usage (per-ISO scripts):
     python scripts/nyiso_zonal_sufficiency.py [--years ...] [--kind da|rt] [--md]
     python scripts/neiso_zonal_sufficiency.py [--years ...] [--kind da|rt] [--md]
 """
+
 from __future__ import annotations
 
 import pandas as pd
 
 # Calendar season of each month, for "where does the separation concentrate".
-_SEASONS = {12: "Winter", 1: "Winter", 2: "Winter",
-            3: "Spring", 4: "Spring", 5: "Spring",
-            6: "Summer", 7: "Summer", 8: "Summer",
-            9: "Fall", 10: "Fall", 11: "Fall"}
+_SEASONS = {
+    12: "Winter",
+    1: "Winter",
+    2: "Winter",
+    3: "Spring",
+    4: "Spring",
+    5: "Spring",
+    6: "Summer",
+    7: "Summer",
+    8: "Summer",
+    9: "Fall",
+    10: "Fall",
+    11: "Fall",
+}
 _SEASON_ORDER = ("Winter", "Spring", "Summer", "Fall")
 
 # $/MWh threshold defining a "separated" hour for the concentration analysis
@@ -61,8 +72,9 @@ def concentration(spread: pd.Series) -> dict:
         return {"n": 0}
     months = pd.DatetimeIndex(wide.index).month
     seasons = pd.Series(months).map(_SEASONS)
-    season_share = {s: round(100.0 * float((seasons == s).mean()), 1)
-                    for s in _SEASON_ORDER}
+    season_share = {
+        s: round(100.0 * float((seasons == s).mean()), 1) for s in _SEASON_ORDER
+    }
     hod = pd.Series(pd.DatetimeIndex(wide.index).hour).value_counts()
     return {
         "n": n,
@@ -72,8 +84,7 @@ def concentration(spread: pd.Series) -> dict:
     }
 
 
-def analyze(frame_for, years: list[int], pairs, kind: str
-            ) -> tuple[dict, dict]:
+def analyze(frame_for, years: list[int], pairs, kind: str) -> tuple[dict, dict]:
     """Run the spread test for ``years``.
 
     Args:
@@ -110,16 +121,31 @@ def render_table(stats: dict, markdown: bool) -> str:
     bar = "| " if markdown else ""
     sep = " | " if markdown else "  "
     end = " |" if markdown else ""
-    head = ["year", "spread", "signed mean", "|s| p50", "|s| p90", "|s| p99",
-            "% |s|>$5", "% |s|>$20"]
+    head = [
+        "year",
+        "spread",
+        "signed mean",
+        "|s| p50",
+        "|s| p90",
+        "|s| p99",
+        "% |s|>$5",
+        "% |s|>$20",
+    ]
     lines = [bar + sep.join(head) + end]
     if markdown:
         lines.append("|" + "|".join("---" for _ in head) + "|")
     for year, pairs in stats.items():
         for label, s in pairs.items():
-            row = [str(year), label, f"{s['signed_mean']:+.2f}",
-                   f"{s['p50']:.2f}", f"{s['p90']:.2f}", f"{s['p99']:.2f}",
-                   f"{s['pct_gt_5']:.1f}%", f"{s['pct_gt_20']:.1f}%"]
+            row = [
+                str(year),
+                label,
+                f"{s['signed_mean']:+.2f}",
+                f"{s['p50']:.2f}",
+                f"{s['p90']:.2f}",
+                f"{s['p99']:.2f}",
+                f"{s['pct_gt_5']:.1f}%",
+                f"{s['pct_gt_20']:.1f}%",
+            ]
             lines.append(bar + sep.join(row) + end)
     return "\n".join(lines)
 
@@ -136,5 +162,6 @@ def render_concentration(conc: dict) -> str:
             hod = ", ".join(f"{h:02d}:00" for h in c["top_hod"])
             lines.append(
                 f"{year} {label}: {c['n']} wide hours, {c['pos_share']:.0f}% "
-                f"first-zone-dear; by season [{seasons}]; top HB hours [{hod}]")
+                f"first-zone-dear; by season [{seasons}]; top HB hours [{hod}]"
+            )
     return "\n".join(lines)

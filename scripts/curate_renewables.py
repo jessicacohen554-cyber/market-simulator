@@ -120,10 +120,7 @@ class IsoSource:
     def curtailment_path(self, year: int) -> Path | None:
         if self.curtailment_dir is None:
             return None
-        return (
-            self.curtailment_dir
-            / f"productionandcurtailmentsdata_{year}.xlsx"
-        )
+        return self.curtailment_dir / f"productionandcurtailmentsdata_{year}.xlsx"
 
 
 ISO_SOURCES: tuple[IsoSource, ...] = (
@@ -224,9 +221,7 @@ def unpivot_to_long(
     return pd.concat(frames, ignore_index=True)
 
 
-def reconcile_caiso_curtailment(
-    long: pd.DataFrame, workbook: Path, year: int
-) -> None:
+def reconcile_caiso_curtailment(long: pd.DataFrame, workbook: Path, year: int) -> None:
     """Cross-check ``hsl_mw - generation_mw`` against the 5-minute workbook.
 
     Re-aggregates CAISO's ``productionandcurtailmentsdata_<year>.xlsx`` to the
@@ -251,9 +246,7 @@ def reconcile_caiso_curtailment(
 
     reported = {"wind": wind_curt, "solar": solar_curt}
     for fuel in FUELS:
-        derived = (
-            long.loc[long["fuel"] == fuel, "curtailment_mw"].to_numpy(dtype=float)
-        )
+        derived = long.loc[long["fuel"] == fuel, "curtailment_mw"].to_numpy(dtype=float)
         max_diff = float(np.abs(derived - reported[fuel]).max())
         if max_diff > _CURTAILMENT_RECONCILE_TOL_MW:
             raise AssertionError(

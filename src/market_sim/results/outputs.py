@@ -123,6 +123,7 @@ class FleetContext:
             ),
         )
 
+
 # Per-hour list-valued columns and whether each is optional. Optional
 # columns are omitted entirely when their source array is ``None``.
 _ARRAY_COLUMNS: tuple[tuple[str, str, bool], ...] = (
@@ -151,15 +152,11 @@ def _list_column(array: np.ndarray) -> pa.Array:
     arr = np.ascontiguousarray(np.asarray(array).T, dtype=np.float64)
     T, n_entity = arr.shape
     flat = pa.array(arr.ravel(), type=pa.float64())
-    offsets = pa.array(
-        np.arange(0, (T + 1) * n_entity, n_entity, dtype=np.int32)
-    )
+    offsets = pa.array(np.arange(0, (T + 1) * n_entity, n_entity, dtype=np.int32))
     return pa.ListArray.from_arrays(offsets, flat)
 
 
-def to_parquet(
-    self: DispatchResult, path, context: FleetContext | None = None
-) -> Path:
+def to_parquet(self: DispatchResult, path, context: FleetContext | None = None) -> Path:
     """Write this dispatch result to a Parquet file at ``path``.
 
     Args:
@@ -174,9 +171,7 @@ def to_parquet(
     path.parent.mkdir(parents=True, exist_ok=True)
 
     T = self.dispatch.shape[1]  # T: number of hours
-    columns: dict[str, pa.Array] = {
-        "hour": pa.array(np.arange(T), type=pa.int32())
-    }
+    columns: dict[str, pa.Array] = {"hour": pa.array(np.arange(T), type=pa.int32())}
     for col_name, attr, _optional in _ARRAY_COLUMNS:
         value = getattr(self, attr)
         if value is not None:
@@ -198,9 +193,7 @@ def to_parquet(
 
     schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
     if context is not None:
-        schema_metadata[_FLEET_METADATA_KEY] = json.dumps(
-            asdict(context)
-        ).encode()
+        schema_metadata[_FLEET_METADATA_KEY] = json.dumps(asdict(context)).encode()
 
     table = pa.table(columns).replace_schema_metadata(schema_metadata)
     pq.write_table(table, path)

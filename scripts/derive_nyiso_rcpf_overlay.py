@@ -30,6 +30,7 @@ Usage:
         [--years 2023 2024 2025] [--tag scenarioX] [--rebuild-availability]
         [--diagnostic]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -93,14 +94,12 @@ def _run_year_kwargs(meta: dict) -> dict:
         coal_prb_mustrun=meta.get("coal_prb_mustrun"),
         coal_prb_passthrough=meta.get("coal_prb_passthrough", 1.0),
         outage_source=meta.get("outage_source", "historic"),
-        coal_prb_passthrough_sigmoid=meta.get(
-            "coal_prb_passthrough_sigmoid", False),
+        coal_prb_passthrough_sigmoid=meta.get("coal_prb_passthrough_sigmoid", False),
         coal_mustrun_per_plant=meta.get("coal_mustrun_per_plant", False),
         ct_mustrun_per_plant=meta.get("ct_mustrun_per_plant", False),
         ct_mustrun_floor_frac=meta.get("ct_mustrun_floor_frac", 1.0),
         coal_drop_pof=meta.get("coal_drop_pof", False),
-        coal_prb_passthrough_tiered=meta.get(
-            "coal_prb_passthrough_tiered", False),
+        coal_prb_passthrough_tiered=meta.get("coal_prb_passthrough_tiered", False),
         prb_overrides=meta.get("coal_prb_sigmoid_overrides") or None,
         coal_bit_sigmoid=meta.get("coal_bit_passthrough_sigmoid", False),
         bit_overrides=meta.get("coal_bit_sigmoid_overrides") or None,
@@ -119,8 +118,9 @@ def _run_year_kwargs(meta: dict) -> dict:
     )
 
 
-def build_availability(bundle: Path, years: list[int], meta: dict,
-                       pass_label: str, force: bool = False) -> pd.DataFrame:
+def build_availability(
+    bundle: Path, years: list[int], meta: dict, pass_label: str, force: bool = False
+) -> pd.DataFrame:
     """Reconstruct (or load) hourly reserve-fleet availability for the bundle.
 
     Returns a frame with columns ``year``, ``hour``, ``thermal_avail_mw``
@@ -141,8 +141,11 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
     frames = []
     for year in years:
         state = run_year(
-            year, meta["iso"], meta["hours"],
-            meta["gas_prices"][str(year)], **_run_year_kwargs(meta),
+            year,
+            meta["iso"],
+            meta["hours"],
+            meta["gas_prices"][str(year)],
+            **_run_year_kwargs(meta),
         )
         fa = state["fleet_arrays"]
         fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fa.fuel_type_idx])
@@ -150,30 +153,35 @@ def build_availability(bundle: Path, years: list[int], meta: dict,
         avail = (fa.pmax[thermal, None] * fa.availability[thermal]).sum(axis=0)
         thermal_units = set(np.asarray(fa.unit_ids, dtype=object)[thermal])
 
-        disp = pd.read_parquet(
-            bundle / "dispatch" / f"{year}_{pass_label}.parquet")
+        disp = pd.read_parquet(bundle / "dispatch" / f"{year}_{pass_label}.parquet")
         disp_t = (
             disp[disp["unit_id"].astype(str).isin(thermal_units)]
-            .groupby("hour")["mw"].sum()
+            .groupby("hour")["mw"]
+            .sum()
             .reindex(range(meta["hours"]), fill_value=0.0)
             .to_numpy()
         )
 
         cap = np.asarray(state["storage_power_cap"], dtype=float)
-        cap_t = (cap.sum(axis=0) if cap.ndim == 2
-                 else np.full(meta["hours"], cap.sum()))
+        cap_t = cap.sum(axis=0) if cap.ndim == 2 else np.full(meta["hours"], cap.sum())
 
-        frames.append(pd.DataFrame({
-            "year": np.int16(year),
-            "hour": np.arange(meta["hours"], dtype=np.int32),
-            "thermal_avail_mw": avail.astype(np.float32),
-            "thermal_dispatch_mw": disp_t.astype(np.float32),
-            "storage_power_cap_mw": cap_t.astype(np.float32),
-        }))
-        print(f"  {year}: reserve-fleet avail mean {avail.mean():,.0f} MW, "
-              f"dispatch mean {disp_t.mean():,.0f} MW, headroom mean "
-              f"{(avail - disp_t).mean():,.0f} MW, storage cap mean "
-              f"{cap_t.mean():,.0f} MW")
+        frames.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "hour": np.arange(meta["hours"], dtype=np.int32),
+                    "thermal_avail_mw": avail.astype(np.float32),
+                    "thermal_dispatch_mw": disp_t.astype(np.float32),
+                    "storage_power_cap_mw": cap_t.astype(np.float32),
+                }
+            )
+        )
+        print(
+            f"  {year}: reserve-fleet avail mean {avail.mean():,.0f} MW, "
+            f"dispatch mean {disp_t.mean():,.0f} MW, headroom mean "
+            f"{(avail - disp_t).mean():,.0f} MW, storage cap mean "
+            f"{cap_t.mean():,.0f} MW"
+        )
     df = pd.concat(frames, ignore_index=True)
     df.to_parquet(out_path, index=False)
     print(f"wrote {out_path}")
@@ -190,15 +198,16 @@ def _model_zone_names(meta: dict) -> list[str]:
     """
     from market_sim.config.iso_configs import get_iso_config
     from market_sim.model.transmission import extend_with_import_node
+
     cfg = get_iso_config(meta["iso"])
     if meta.get("priced_interchange"):
         cfg = extend_with_import_node(cfg)
     return list(cfg.zone_names)
 
 
-def build_zonal_availability(bundle: Path, years: list[int], meta: dict,
-                             pass_label: str,
-                             force: bool = False) -> pd.DataFrame:
+def build_zonal_availability(
+    bundle: Path, years: list[int], meta: dict, pass_label: str, force: bool = False
+) -> pd.DataFrame:
     """Reconstruct (or load) per-model-zone hourly reserve-fleet availability.
 
     The locational analogue of :func:`build_availability`: a long frame with
@@ -220,19 +229,22 @@ def build_zonal_availability(bundle: Path, years: list[int], meta: dict,
     frames = []
     for year in years:
         state = run_year(
-            year, meta["iso"], meta["hours"],
-            meta["gas_prices"][str(year)], **_run_year_kwargs(meta),
+            year,
+            meta["iso"],
+            meta["hours"],
+            meta["gas_prices"][str(year)],
+            **_run_year_kwargs(meta),
         )
         fa = state["fleet_arrays"]
         fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fa.fuel_type_idx])
         thermal = np.isin(fuel_names, sorted(NYISO_RESERVE_FUEL_TYPES))
         zidx = np.asarray(fa.zone_idx)
 
-        disp = pd.read_parquet(
-            bundle / "dispatch" / f"{year}_{pass_label}.parquet")
+        disp = pd.read_parquet(bundle / "dispatch" / f"{year}_{pass_label}.parquet")
         disp_t = disp[disp["fuel"].astype(str).isin(NYISO_RESERVE_FUEL_TYPES)]
         disp_by_zone = (
-            disp_t.groupby(["zone", "hour"])["mw"].sum()
+            disp_t.groupby(["zone", "hour"])["mw"]
+            .sum()
             .unstack(fill_value=0.0)
             .reindex(columns=range(meta["hours"]), fill_value=0.0)
         )
@@ -244,34 +256,48 @@ def build_zonal_availability(bundle: Path, years: list[int], meta: dict,
         for i, unit in enumerate(storage_units):
             z = getattr(unit, "zone", None)
             row = cap[i] if cap.ndim == 2 else np.full(meta["hours"], cap[i])
-            cap_by_zone[z] = cap_by_zone.get(
-                z, np.zeros(meta["hours"])) + row
+            cap_by_zone[z] = cap_by_zone.get(z, np.zeros(meta["hours"])) + row
 
         for zi, zone in enumerate(zone_names):
             sel = thermal & (zidx == zi)
-            avail = ((fa.pmax[sel, None] * fa.availability[sel]).sum(axis=0)
-                     if sel.any() else np.zeros(meta["hours"]))
-            disp_z = (disp_by_zone.loc[zone].to_numpy()
-                      if zone in disp_by_zone.index
-                      else np.zeros(meta["hours"]))
-            frames.append(pd.DataFrame({
-                "year": np.int16(year),
-                "hour": np.arange(meta["hours"], dtype=np.int32),
-                "zone": zone,
-                "thermal_avail_mw": avail.astype(np.float32),
-                "thermal_dispatch_mw": disp_z.astype(np.float32),
-                "storage_power_cap_mw": cap_by_zone.get(
-                    zone, np.zeros(meta["hours"])).astype(np.float32),
-            }))
+            avail = (
+                (fa.pmax[sel, None] * fa.availability[sel]).sum(axis=0)
+                if sel.any()
+                else np.zeros(meta["hours"])
+            )
+            disp_z = (
+                disp_by_zone.loc[zone].to_numpy()
+                if zone in disp_by_zone.index
+                else np.zeros(meta["hours"])
+            )
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "year": np.int16(year),
+                        "hour": np.arange(meta["hours"], dtype=np.int32),
+                        "zone": zone,
+                        "thermal_avail_mw": avail.astype(np.float32),
+                        "thermal_dispatch_mw": disp_z.astype(np.float32),
+                        "storage_power_cap_mw": cap_by_zone.get(
+                            zone, np.zeros(meta["hours"])
+                        ).astype(np.float32),
+                    }
+                )
+            )
     df = pd.concat(frames, ignore_index=True)
     df.to_parquet(out_path, index=False)
     print(f"wrote {out_path}")
     return df
 
 
-def _storage_headroom(bundle: Path, year: int, hours: int, pass_label: str,
-                      cap_t: np.ndarray,
-                      zone: "str | None" = None) -> np.ndarray:
+def _storage_headroom(
+    bundle: Path,
+    year: int,
+    hours: int,
+    pass_label: str,
+    cap_t: np.ndarray,
+    zone: "str | None" = None,
+) -> np.ndarray:
     """Storage headroom: power cap - discharge + charge (ESR convention).
 
     System-wide when ``zone`` is None; otherwise restricted to one model zone.
@@ -285,28 +311,34 @@ def _storage_headroom(bundle: Path, year: int, hours: int, pass_label: str,
         st = st[st["pass"] == pass_label]
     if zone is not None:
         st = st[st["zone"] == zone]
-    g = st.groupby("hour")[["charge_mw", "discharge_mw"]].sum().reindex(
-        range(hours), fill_value=0.0)
+    g = (
+        st.groupby("hour")[["charge_mw", "discharge_mw"]]
+        .sum()
+        .reindex(range(hours), fill_value=0.0)
+    )
     return cap_t - g["discharge_mw"].to_numpy() + g["charge_mw"].to_numpy()
 
 
-def _system_lambda(bundle: Path, year: int, hours: int,
-                   pass_label: str) -> np.ndarray:
+def _system_lambda(bundle: Path, year: int, hours: int, pass_label: str) -> np.ndarray:
     """Demand-weighted hourly system price — the NYCA-hub model price."""
     sy = pd.read_parquet(bundle / "system.parquet")
     sy = sy[sy["year"] == year]
     if "pass" in sy.columns and (sy["pass"] == pass_label).any():
         sy = sy[sy["pass"] == pass_label]
-    g = sy.assign(pd_=sy["price"] * sy["demand"]).groupby("hour").agg(
-        pd_=("pd_", "sum"), d=("demand", "sum"), p=("price", "mean"))
+    g = (
+        sy.assign(pd_=sy["price"] * sy["demand"])
+        .groupby("hour")
+        .agg(pd_=("pd_", "sum"), d=("demand", "sum"), p=("price", "mean"))
+    )
     lam = np.where(g["d"] > 0, g["pd_"] / g["d"], g["p"])
     out = np.full(hours, np.nan)
     out[g.index.to_numpy()] = lam
     return out
 
 
-def _zonal_lambda(bundle: Path, year: int, hours: int,
-                  pass_label: str) -> dict[str, np.ndarray]:
+def _zonal_lambda(
+    bundle: Path, year: int, hours: int, pass_label: str
+) -> dict[str, np.ndarray]:
     """Per-model-zone hourly energy price (the zonal LBMP the LP solved)."""
     sy = pd.read_parquet(bundle / "system.parquet")
     sy = sy[sy["year"] == year]
@@ -320,8 +352,7 @@ def _zonal_lambda(bundle: Path, year: int, hours: int,
     return out
 
 
-def _demand_weights(bundle: Path, year: int, hours: int,
-                    pass_label: str) -> np.ndarray:
+def _demand_weights(bundle: Path, year: int, hours: int, pass_label: str) -> np.ndarray:
     """Hourly total demand, the weight series for demand-weighted MAE."""
     sy = pd.read_parquet(bundle / "system.parquet")
     sy = sy[sy["year"] == year]
@@ -412,19 +443,25 @@ def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     df, ts = df[keep], ts[keep]
     hoy = (
         _MONTH_START_HOUR[ts.dt.month.to_numpy() - 1]
-        + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy()
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
     )
     df = df.assign(hour=hoy)
     out: dict[str, np.ndarray] = {}
     for model_zone, ny_zone in _MODEL_ZONE_TO_NYISO_AS.items():
-        s = (df[df["Name"] == ny_zone].groupby("hour")["stack"].max()
-             .reindex(range(hours)))
+        s = (
+            df[df["Name"] == ny_zone]
+            .groupby("hour")["stack"]
+            .max()
+            .reindex(range(hours))
+        )
         out[model_zone] = s.to_numpy(dtype=float)
     return out
 
 
-def _mae(model: np.ndarray, actual: np.ndarray,
-         weights: np.ndarray | None = None) -> float:
+def _mae(
+    model: np.ndarray, actual: np.ndarray, weights: np.ndarray | None = None
+) -> float:
     """Weighted mean absolute error, NaNs dropped."""
     ok = np.isfinite(model) & np.isfinite(actual)
     if weights is None:
@@ -433,8 +470,7 @@ def _mae(model: np.ndarray, actual: np.ndarray,
     return float(np.sum(np.abs(model[ok] - actual[ok]) * w) / w.sum())
 
 
-def _monthly_mae(model: np.ndarray, rt: np.ndarray,
-                 demand: np.ndarray) -> float:
+def _monthly_mae(model: np.ndarray, rt: np.ndarray, demand: np.ndarray) -> float:
     """Monthly demand-weighted LMP MAE (the calibration gate metric)."""
     mon = _month_of_hour(np.arange(len(model)))
     diffs, weights = [], []
@@ -474,13 +510,20 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("bundle", type=Path)
     ap.add_argument("--years", nargs="+", type=int, default=None)
-    ap.add_argument("--tag", default=None,
-                    help="write scarcity_<tag>.parquet (scenario runs)")
-    ap.add_argument("--diagnostic", action="store_true",
-                    help="print headroom-vs-actual-tail localization only")
-    ap.add_argument("--locational", action="store_true",
-                    help="per-zone locational reserve overlay (East/SENY/NYC) "
-                         "validated against the measured per-zone RT reserve")
+    ap.add_argument(
+        "--tag", default=None, help="write scarcity_<tag>.parquet (scenario runs)"
+    )
+    ap.add_argument(
+        "--diagnostic",
+        action="store_true",
+        help="print headroom-vs-actual-tail localization only",
+    )
+    ap.add_argument(
+        "--locational",
+        action="store_true",
+        help="per-zone locational reserve overlay (East/SENY/NYC) "
+        "validated against the measured per-zone RT reserve",
+    )
     ap.add_argument("--rebuild-availability", action="store_true")
     args = ap.parse_args()
 
@@ -492,22 +535,30 @@ def main() -> None:
     hours = meta["hours"]
     pass_label = _final_pass(meta.get("passes", ["P1"]))
 
-    config = ScenarioConfig(
-        iso="NYISO", mode="backcast", nyiso_rcpf_enabled=True)
+    config = ScenarioConfig(iso="NYISO", mode="backcast", nyiso_rcpf_enabled=True)
     products = resolve_rcpf_products(config)
     print(f"bundle {bundle.name}: years {years}, reported pass {pass_label}")
     print("RCPF products (name, requirement_MW, critical_MW, max_$/MWh):")
     for prod in products:
-        print(f"  {prod[0]}: req {prod[1]:,.0f}  crit {prod[2]:,.0f}  "
-              f"max ${prod[3]:,.0f}")
+        print(
+            f"  {prod[0]}: req {prod[1]:,.0f}  crit {prod[2]:,.0f}  max ${prod[3]:,.0f}"
+        )
 
     if args.locational:
-        locational(bundle, years, meta, pass_label, config, args.tag,
-                   force=args.rebuild_availability)
+        locational(
+            bundle,
+            years,
+            meta,
+            pass_label,
+            config,
+            args.tag,
+            force=args.rebuild_availability,
+        )
         return
 
     avail = build_availability(
-        bundle, years, meta, pass_label, force=args.rebuild_availability)
+        bundle, years, meta, pass_label, force=args.rebuild_availability
+    )
 
     if args.diagnostic:
         diagnostic(avail, bundle, years, hours, pass_label)
@@ -543,31 +594,38 @@ def main() -> None:
         w = _demand_weights(bundle, year, hours, pass_label)
         mae0 = _monthly_mae(lam, rt, w)
         mae1 = _monthly_mae(lam + adder, rt, w)
-        print(f"\n{year}: adder>$1 in {int((adder > 1).sum())} h, >$50 in "
-              f"{int((adder > 50).sum())} h, >$200 in "
-              f"{int((adder > 200).sum())} h, max ${adder.max():,.0f}; "
-              f"mean ${adder.mean():.2f}")
-        print(f"  reserves (MW) p1/p5/p50 = "
-              f"{np.percentile(reserves, [1, 5, 50]).round(0)}")
-        print(f"  monthly LMP MAE (gate) {mae0:.1f} -> {mae1:.1f} $/MWh; "
-              f"hourly dw-MAE {_mae(lam, rt, w):.1f} -> "
-              f"{_mae(lam + adder, rt, w):.1f}")
+        print(
+            f"\n{year}: adder>$1 in {int((adder > 1).sum())} h, >$50 in "
+            f"{int((adder > 50).sum())} h, >$200 in "
+            f"{int((adder > 200).sum())} h, max ${adder.max():,.0f}; "
+            f"mean ${adder.mean():.2f}"
+        )
+        print(
+            f"  reserves (MW) p1/p5/p50 = "
+            f"{np.percentile(reserves, [1, 5, 50]).round(0)}"
+        )
+        print(
+            f"  monthly LMP MAE (gate) {mae0:.1f} -> {mae1:.1f} $/MWh; "
+            f"hourly dw-MAE {_mae(lam, rt, w):.1f} -> "
+            f"{_mae(lam + adder, rt, w):.1f}"
+        )
         for thr in (100, 200, 500):
-            print(f"  hours >${thr}: actual {int(np.nansum(rt > thr))}, "
-                  f"model {int(np.nansum(lam > thr))} -> "
-                  f"{int(np.nansum((lam + adder) > thr))}")
+            print(
+                f"  hours >${thr}: actual {int(np.nansum(rt > thr))}, "
+                f"model {int(np.nansum(lam > thr))} -> "
+                f"{int(np.nansum((lam + adder) > thr))}"
+            )
         md0, md1 = _dist(lam), _dist(lam + adder)
         ad = _actual_dist(year)
         cols = ["min", "p50", "p95", "p99", "max"]
-        print("  distribution ($/MWh)   " +
-              "  ".join(f"{c:>7}" for c in cols))
-        print("    model energy-only    " +
-              "  ".join(f"{md0[c]:7.0f}" for c in cols))
-        print("    model + RCPF         " +
-              "  ".join(f"{md1[c]:7.0f}" for c in cols))
+        print("  distribution ($/MWh)   " + "  ".join(f"{c:>7}" for c in cols))
+        print("    model energy-only    " + "  ".join(f"{md0[c]:7.0f}" for c in cols))
+        print("    model + RCPF         " + "  ".join(f"{md1[c]:7.0f}" for c in cols))
         if ad:
-            print("    actual RT            " +
-                  "  ".join(f"{ad.get(c, float('nan')):7.0f}" for c in cols))
+            print(
+                "    actual RT            "
+                + "  ".join(f"{ad.get(c, float('nan')):7.0f}" for c in cols)
+            )
 
         # Validate the model adder against the MEASURED RT reserve price
         # (process_nyiso_as.py): the system-wide overlay targets the NYCA
@@ -576,15 +634,19 @@ def main() -> None:
         # check that keeps the curve honest rather than a magic number.
         meas = _actual_as_reserve(year, hours)
         if np.isfinite(meas["nyca"]).any():
-            for label, key in (("NYCA (system-wide)", "nyca"),
-                               ("NYC  (downstate)", "nyc")):
+            for label, key in (
+                ("NYCA (system-wide)", "nyca"),
+                ("NYC  (downstate)", "nyc"),
+            ):
                 m = meas[key]
                 ok = np.isfinite(m)
-                print(f"  measured RT reserve adder {label}: >$0 in "
-                      f"{int((m[ok] > 0).sum()):,} h, >$50 in "
-                      f"{int((m[ok] > 50).sum()):,} h, max ${np.nanmax(m):,.0f}, "
-                      f"mean ${np.nanmean(m):.2f}  (model adder mean "
-                      f"${adder.mean():.2f})")
+                print(
+                    f"  measured RT reserve adder {label}: >$0 in "
+                    f"{int((m[ok] > 0).sum()):,} h, >$50 in "
+                    f"{int((m[ok] > 50).sum()):,} h, max ${np.nanmax(m):,.0f}, "
+                    f"mean ${np.nanmean(m):.2f}  (model adder mean "
+                    f"${adder.mean():.2f})"
+                )
 
     out = pd.concat(frames, ignore_index=True)
     name = f"scarcity_{args.tag}.parquet" if args.tag else "scarcity.parquet"
@@ -592,8 +654,15 @@ def main() -> None:
     print(f"\nwrote {bundle / name}")
 
 
-def locational(bundle: Path, years: list[int], meta: dict, pass_label: str,
-               config, tag: "str | None", force: bool = False) -> None:
+def locational(
+    bundle: Path,
+    years: list[int],
+    meta: dict,
+    pass_label: str,
+    config,
+    tag: "str | None",
+    force: bool = False,
+) -> None:
     """Per-zone locational RCPF overlay: stack East/SENY/NYC reserve adders.
 
     Builds per-model-zone reserve headroom (build_zonal_availability), then
@@ -611,12 +680,15 @@ def locational(bundle: Path, years: list[int], meta: dict, pass_label: str,
     print("\nlocational reserve regions (region: zones | products):")
     for name, reg in regions.items():
         members = [z for z in reg["zones"] if z in zone_names]
-        prods = ", ".join(f"{p[0]}(req {p[1]:,.0f}, max ${p[3]:,.0f})"
-                          for p in reg["products"]) or "(scaffolded, empty)"
+        prods = (
+            ", ".join(
+                f"{p[0]}(req {p[1]:,.0f}, max ${p[3]:,.0f})" for p in reg["products"]
+            )
+            or "(scaffolded, empty)"
+        )
         print(f"  {name}: {'+'.join(members)} | {prods}")
 
-    zavail = build_zonal_availability(
-        bundle, years, meta, pass_label, force=force)
+    zavail = build_zonal_availability(bundle, years, meta, pass_label, force=force)
 
     frames = []
     for year in years:
@@ -629,8 +701,9 @@ def locational(bundle: Path, years: list[int], meta: dict, pass_label: str,
             zone_reserves[zone] = (
                 z["thermal_avail_mw"].to_numpy(float)
                 - z["thermal_dispatch_mw"].to_numpy(float)
-                + _storage_headroom(bundle, year, meta["hours"], pass_label,
-                                    cap_t, zone=zone)
+                + _storage_headroom(
+                    bundle, year, meta["hours"], pass_label, cap_t, zone=zone
+                )
             )
         # System-wide NYCA adder (same for every zone) + locational adders.
         system_reserves = sum(zone_reserves.values())
@@ -639,51 +712,87 @@ def locational(bundle: Path, years: list[int], meta: dict, pass_label: str,
         lam = _zonal_lambda(bundle, year, meta["hours"], pass_label)
         meas = _actual_zone_reserve(year, meta["hours"])
 
-        print(f"\n=== {year} per-zone locational adder vs measured RT reserve "
-              f"(NYISO zone) ===")
-        hdr = ("  %-15s %-7s  %8s %8s %8s   %8s %8s %8s" %
-               ("model zone", "NYISO", "mdl>$0h", "mdl_mean", "mdl_max",
-                "meas>$0h", "meas_mean", "meas_max"))
+        print(
+            f"\n=== {year} per-zone locational adder vs measured RT reserve "
+            f"(NYISO zone) ==="
+        )
+        hdr = "  %-15s %-7s  %8s %8s %8s   %8s %8s %8s" % (
+            "model zone",
+            "NYISO",
+            "mdl>$0h",
+            "mdl_mean",
+            "mdl_max",
+            "meas>$0h",
+            "meas_mean",
+            "meas_max",
+        )
         print(hdr)
         for zone in zone_names:
             adder = nyca + loc.get(zone, np.zeros(meta["hours"]))
-            frames.append(pd.DataFrame({
-                "year": np.int16(year),
-                "hour": np.arange(meta["hours"], dtype=np.int32),
-                "zone": zone,
-                "reserves_mw": zone_reserves[zone].astype(np.float32),
-                "nyca_adder": nyca.astype(np.float32),
-                "locational_adder": loc.get(
-                    zone, np.zeros(meta["hours"])).astype(np.float32),
-                "scarcity_adder": adder.astype(np.float32),
-                "lmp": lam.get(zone, np.full(meta["hours"], np.nan)
-                               ).astype(np.float32),
-                "lmp_scarcity": (lam.get(
-                    zone, np.full(meta["hours"], np.nan)) + adder
-                ).astype(np.float32),
-            }))
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "year": np.int16(year),
+                        "hour": np.arange(meta["hours"], dtype=np.int32),
+                        "zone": zone,
+                        "reserves_mw": zone_reserves[zone].astype(np.float32),
+                        "nyca_adder": nyca.astype(np.float32),
+                        "locational_adder": loc.get(
+                            zone, np.zeros(meta["hours"])
+                        ).astype(np.float32),
+                        "scarcity_adder": adder.astype(np.float32),
+                        "lmp": lam.get(zone, np.full(meta["hours"], np.nan)).astype(
+                            np.float32
+                        ),
+                        "lmp_scarcity": (
+                            lam.get(zone, np.full(meta["hours"], np.nan)) + adder
+                        ).astype(np.float32),
+                    }
+                )
+            )
             m = meas.get(zone)
             ny = _MODEL_ZONE_TO_NYISO_AS.get(zone, "")
             if m is not None and np.isfinite(m).any():
                 ok = np.isfinite(m)
-                print("  %-15s %-7s  %8d %8.2f %8.0f   %8d %8.2f %8.0f" % (
-                    zone, ny, int((adder > 0).sum()), float(adder.mean()),
-                    float(adder.max()), int((m[ok] > 0).sum()),
-                    float(np.nanmean(m)), float(np.nanmax(m))))
+                print(
+                    "  %-15s %-7s  %8d %8.2f %8.0f   %8d %8.2f %8.0f"
+                    % (
+                        zone,
+                        ny,
+                        int((adder > 0).sum()),
+                        float(adder.mean()),
+                        float(adder.max()),
+                        int((m[ok] > 0).sum()),
+                        float(np.nanmean(m)),
+                        float(np.nanmax(m)),
+                    )
+                )
             else:
-                print("  %-15s %-7s  %8d %8.2f %8.0f   %8s %8s %8s" % (
-                    zone, ny, int((adder > 0).sum()), float(adder.mean()),
-                    float(adder.max()), "-", "-", "-"))
+                print(
+                    "  %-15s %-7s  %8d %8.2f %8.0f   %8s %8s %8s"
+                    % (
+                        zone,
+                        ny,
+                        int((adder > 0).sum()),
+                        float(adder.mean()),
+                        float(adder.max()),
+                        "-",
+                        "-",
+                        "-",
+                    )
+                )
 
     out = pd.concat(frames, ignore_index=True)
-    name = (f"scarcity_locational_{tag}.parquet" if tag
-            else "scarcity_locational.parquet")
+    name = (
+        f"scarcity_locational_{tag}.parquet" if tag else "scarcity_locational.parquet"
+    )
     out.to_parquet(bundle / name, index=False)
     print(f"\nwrote {bundle / name}")
 
 
-def diagnostic(avail: pd.DataFrame, bundle: Path, years: list[int],
-               hours: int, pass_label: str) -> None:
+def diagnostic(
+    avail: pd.DataFrame, bundle: Path, years: list[int], hours: int, pass_label: str
+) -> None:
     """Print actual-tail localization vs model headroom (pre-adder gate).
 
     If the model is NOT thin (low headroom) in the hours reality priced
@@ -708,8 +817,10 @@ def diagnostic(avail: pd.DataFrame, bundle: Path, years: list[int],
             if not sel.any():
                 continue
             hr = headroom[sel]
-            print(f"  actual RT {lab:>9}: {int(sel.sum()):5d} h, headroom "
-                  f"p5/p25/p50 = {np.percentile(hr, [5, 25, 50]).round(0)} MW")
+            print(
+                f"  actual RT {lab:>9}: {int(sel.sum()):5d} h, headroom "
+                f"p5/p25/p50 = {np.percentile(hr, [5, 25, 50]).round(0)} MW"
+            )
 
 
 if __name__ == "__main__":
