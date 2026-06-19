@@ -143,3 +143,20 @@ re-gate each ISO whose CC plants the fix touches.
   only its magnitude (the orphaned steam), not a missing window.
 - The CT-only `eia_exact` matching itself is fine for pure CT/coal/ST units; it's
   specifically the CC CT→steam coupling that needs the allocation.
+
+## Resolution (2026-06-19)
+
+Implemented the candidate fix in `build_capacity_index` /
+`unit_capacity_mw`: a combined-cycle CT's `unit_capacity_mw` is now its full
+block share `CT_nameplate × (1 + Σ CA / Σ CT)` over the plant's `CT`/`CA` prime
+movers, so the CT shares reconstitute the bin and one CT out derates its
+turbine + its steam fraction. A `(detect_mw, derate_mw, cc_augmented)` capacity
+entry keeps the *detector's* CF denominator on the CT's own nameplate, so the
+steam allocation changes derate magnitude only — **detection is unchanged**
+(verified window-neutral: 0 windows lost across all six ISOs; the only added
+windows are `observed_peak` rows from newly-landed CAMPD extracts, independent
+of this fix). Wolf Hollow II's CTs go 360 → 615.6 MW (sum 1231.2 = the bin); the
+CGT5 90-day outage now derates 50%, and the cosmetic `plant_capacity_mw` column
+equals the bin. CS single-shaft blocks, the W A Parish / Barney M Davis splits,
+the peaker exclusions, and the concurrent-CT clip all behave (see CHANGELOG
+2026-06-19). All six unit-outage CSVs regenerated; ERCOT 3-yr keeper re-gated.
