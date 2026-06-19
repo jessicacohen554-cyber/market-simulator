@@ -50,13 +50,14 @@ OUT_PARQUET = REPO / "data" / "raw" / "_validation-source" / \
 
 PRC_LMP_DAM = {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"}
 
-# model hub -> candidate OASIS intertie APNodes (averaged within a hub). These are
-# CAISO's major import scheduling points; names vary by registry vintage, so a node
-# that returns nothing is skipped (see --probe). MALIN = COI/PDCI Pacific-NW;
-# PALOVRDE = Path-46 desert-SW.
+# model hub -> OASIS intertie APNodes (averaged within a hub), confirmed by the
+# mode=probe run on 2024-06-01: MALIN_5_N101, CAPTJACK_5_N003 and
+# PALOVRDE_ASR-APND resolve in the current registry vintage; NOB_2_N101 and
+# MEAD_2_N501 return no data and are dropped (each hub still resolves via its
+# remaining node). MALIN = COI/PDCI Pacific-NW; PALOVRDE = Path-46 desert-SW.
 INTERTIE_NODES: dict[str, list[str]] = {
-    "MALIN": ["MALIN_5_N101", "CAPTJACK_5_N003", "NOB_2_N101"],
-    "PALOVRDE": ["PALOVRDE_ASR-APND", "MEAD_2_N501"],
+    "MALIN": ["MALIN_5_N101", "CAPTJACK_5_N003"],
+    "PALOVRDE": ["PALOVRDE_ASR-APND"],
 }
 
 CAISO_TZ = "America/Los_Angeles"
