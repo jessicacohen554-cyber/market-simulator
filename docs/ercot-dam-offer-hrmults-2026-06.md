@@ -113,7 +113,7 @@ isolates exactly the measured swap):
 Bundles: `results/calibration/ercot_baseline_3yr` (chosen curve) vs
 `results/calibration/ercot_dam_offers_3yr` (measured override). Everything
 identical except the measured override layer.
-`scripts/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_3yr`.
+`scripts/probes/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_3yr`.
 
 **[1] Monthly LMP MAE vs actual RTSPP ($/MWh, demand-weighted system price):**
 
@@ -228,5 +228,5 @@ python scripts/run_calibration_full.py --year 2023 2024 2025 \
 #     --out-dir results/calibration/ercot_dam_offers_3yr  for the DAM run
 
 # 3. compare
-python scripts/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_3yr
+python scripts/probes/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_3yr
 ```

@@ -1,28 +1,23 @@
-"""PJM energy+reserve co-optimization run: one year -> its own bundle dir.
+"""PJM reserve-withholding recalibration: one year -> its own bundle dir.
 
-Reproduces the pjm_28 keeper's exact calibration_flags but swaps the
-reduced-form reserve *withholding* (``as_reserve_withholding``) for the in-LP
-energy+reserve *co-optimization* (``energy_reserve_coopt``): the structural
-1.5x-MSSC Primary Reserve requirement + the published ORDC demand curve clear
-inside the LP, so the reserve clearing price emerges as a dual and lifts the
-energy LMP endogenously (it also replaces the post-solve ORDC overlay). The two
-reserve mechanisms are mutually exclusive (running both double-counts), so
-withholding is turned off here.
+Reproduces the pjm_26 keeper's exact calibration_flags (read from its
+run_config.json, the same path the validated scripts/probes/_pjm_interchange_ab.py
+uses) and flips ONLY ``as_reserve_withholding`` on. One year per invocation so
+the three years run as parallel background jobs to separate out-dirs
+(claude.md #45); merge into a single bundle afterwards with
+scripts/probes/_pjm_aswh_merge.py.
 
-One year per invocation so the three years run as parallel background jobs to
-separate out-dirs (claude.md #45); merge with scripts/_pjm_aswh_merge.py.
-
-Usage: python scripts/_pjm_coopt_run.py <year> <out_dir>
+Usage: python scripts/probes/_pjm_aswh_run.py <year> <out_dir>
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
-KEEPER = ROOT / "pjm_28"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
+KEEPER = ROOT / "pjm_26"
 
 
 def main(year: int, out: Path) -> None:
@@ -54,10 +49,8 @@ def main(year: int, out: Path) -> None:
                          "offer_curve_smoothing_exp": None,
                          "offer_curve_smoothing_mid": 0.45},
         priced_interchange=cf["priced_interchange"],
-        as_reserve_withholding=False,   # replaced by in-LP co-optimization
-        energy_reserve_coopt=True,
-        note=f"pjm_29_coopt: keeper pjm_28 config + in-LP energy+reserve "
-             f"co-optimization (replaces withholding + ORDC overlay), "
+        as_reserve_withholding=True,
+        note=f"pjm_27_aswh: keeper pjm_26 config + AS reserve-withholding, "
              f"{year} only",
     )
     print(f"DONE {year} -> {out}")
