@@ -17,8 +17,8 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 
-from _session_score import class_table  # noqa: E402
-from _reldeploy_zonal_report import THERMAL  # noqa: E402
+from lib.session_score import class_table  # noqa: E402
+from lib.reldeploy_zonal_report import THERMAL  # noqa: E402
 
 ISO_GEN = {2023: 446.0, 2024: 463.0, 2025: 488.0}
 ZONES = ["North", "South_Central", "West", "Northeast", "Houston", "South"]
