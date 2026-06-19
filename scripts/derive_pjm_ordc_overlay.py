@@ -4,7 +4,7 @@ Post-solve only, mirroring ``scripts/derive_ordc_overlay.py`` (ERCOT). Reads a
 persisted PJM calibration bundle, reconstructs the hourly fleet availability the
 LP solved against (same config / outage overlay — no LP re-solve), measures the
 PLANT-LEVEL online (synchronized-basis) reserve, applies PJM's published two-step
-ORDC cascade (market_sim.results.scarcity + inputs/calibration/pjm_ordc_curve.csv)
+ORDC cascade (market_sim.results.scarcity + data/raw/_validation-source/pjm_ordc_curve.csv)
 against the MEASURED reserve requirement (``as_req_mw`` from the PJM-AS parquets),
 adds the binding reserve price to the energy LMP, and writes ``scarcity.parquet``.
 Dispatch/system parquets are untouched; volumes are never gated on the adder.
@@ -19,7 +19,7 @@ Modes:
 
 Usage:
     python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26
-        [--years 2023 2024 2025] [--curve inputs/calibration/pjm_ordc_curve.csv]
+        [--years 2023 2024 2025] [--curve data/raw/_validation-source/pjm_ordc_curve.csv]
         [--as-plan MW] [--diagnostic] [--validate-mcp] [--rebuild-availability]
 """
 from __future__ import annotations

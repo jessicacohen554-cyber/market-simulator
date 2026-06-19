@@ -21,7 +21,7 @@ longer spans multiple fuel classes is left untouched.
 
 Usage:
     python scripts/tag_mixed_plants.py
-    python scripts/tag_mixed_plants.py --bins inputs/custom-bin-assignments.csv
+    python scripts/tag_mixed_plants.py --bins data/raw/reference/custom-bin-assignments.csv
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 
 NYISO posts the day-ahead Total Transfer Capability (TTC) for every internal
 interface hour by hour (MIS ``ATC_TTC`` files, mirrored here in
-``inputs/raw-data/NYISO/ATC_TTC.zip`` — one nested monthly zip per month, each
+``data/raw/NYISO/ATC_TTC.zip`` — one nested monthly zip per month, each
 holding daily CSVs). The ``CENT EAST`` interface is the west->east Central-East
 limit the model represents as the ``Upstate_West -> Capital_Hudson`` link.
 
@@ -24,7 +24,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-ZIP_PATH = Path("inputs/raw-data/NYISO/ATC_TTC.zip")
+ZIP_PATH = Path("data/raw/NYISO/ATC_TTC.zip")
 INTERFACE = "CENT EAST"
 YEARS = (2023, 2024, 2025)
 ROUND_TO = 25  # MW — postings are 5 MW granular; 25 MW avoids false precision.

@@ -382,7 +382,7 @@ def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
     """Measured per-model-zone stacked RT reserve price, NaN-padded.
 
     Prefers the committed compact reference
-    (``inputs/calibration/actual_as_reserve_NYISO.parquet``, which carries one
+    (``data/raw/_validation-source/actual_as_reserve_NYISO.parquet``, which carries one
     ``reserve_<model_zone>`` column per model zone, built by
     scripts/process_nyiso_as.py); falls back to the raw per-zone RT CSV. The
     value is the stacked reserve price (10-min spin + 10-min non-sync + 30-min

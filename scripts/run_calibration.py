@@ -242,7 +242,7 @@ def _apply_offer_curve_deltas(
 
 # Calibrated PJM thermal offer curve (per-class band heat-rate multipliers on
 # AHR x delivered fuel price). Tuned against the 2023 & 2024 EIA-930 fuel mix
-# and PJM hub-average LMP (inputs/calibration). Built in two stages, mirroring
+# and PJM hub-average LMP (data/raw/_validation-source). Built in two stages, mirroring
 # the operator workflow:
 #   1. SHAPE — relative band multipliers set the generation mix: coal vs gas,
 #      and the CC / CT / gas-steam split. With PJM delivered gas ~ $3.21/MMBtu
@@ -363,7 +363,7 @@ def _calibration_config(
         # Transco Z6 NY in the city), so the east marginal gas is persistently
         # dearer than the west — the structural source of the upstate-cheap /
         # east-dear LMP gradient the ISO-month average flattens. Measured from
-        # the NYISO State-of-the-Market reports (inputs/raw-data/
+        # the NYISO State-of-the-Market reports (data/raw/
         # nyiso_zonal_gas_hub.csv); see fuel.apply_nyiso_zonal_gas_basis.
         nyiso_zonal_gas_basis=(iso.upper() == "NYISO"),
         # Daily Henry Hub within-month shape on top of the measured monthly
@@ -389,7 +389,7 @@ def _calibration_config(
         #   Doc-08 NEISO design decision 1: the marginal NEISO gas unit
         #   prices off Algonquin Citygate spot, whose Dec-Feb basis blows out
         #   to +$4-13/MMBtu (measured ISO-NE MA gas index 2023-2025,
-        #   inputs/raw-data/gas_basis_by_iso_month.csv). The overlay replaces
+        #   data/raw/gas_basis_by_iso_month.csv). The overlay replaces
         #   the gas price with HH-month + measured AGT basis in covered
         #   months — THE ISO-NE winter price driver and the dual-fuel switch
         #   trigger (P13). No basis rows exist for other ISOs (the NYISO
