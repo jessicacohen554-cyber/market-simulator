@@ -530,6 +530,36 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     return series[: int(hours)]
 
 
+def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
+    """ERCOT's measured hourly storage-provided AS-up MW for ``year``.
+
+    Reads the ``storage`` column of ``ercot_<year>_as_by_restype_hourly.parquet``
+    (the per-resource-type 60-Day DAM AS awards): the RegUp/RRS/ECRS cleared by
+    **batteries** (~0.8 GW in 2023 → ~2.0 GW 2024 → ~2.8 GW 2025 as the fleet
+    grew). This is responsive reserve ERCOT's RTOLCAP/RTOFFCAP count toward the
+    ORDC adder, but which the co-opt LP drops when ``storage_as_commitment`` is
+    on: that flag subtracts this same MW from the storage *power cap*, and the
+    reserve block computes a unit's reserve room off that reduced cap — so the
+    AS-committed battery capacity is removed from energy (correct, it can't also
+    arbitrage) *and* from reserve supply (incorrect, it is held reserve). The
+    model then clears reserve lower on the ORDC curve than reality and prices a
+    scarcity adder in non-scarce hours — biggest in 2025, where the battery AS
+    fleet is largest.
+
+    Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file is
+    absent**. Same non-leap 8760-hour clock as the fleet.
+    """
+    path = _ERCOT_AS_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    if not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    series = pd.read_parquet(path)["storage"].to_numpy(dtype=float)
+    if len(series) < hours:
+        series = np.concatenate([series, np.zeros(int(hours) - len(series))])
+    return series[: int(hours)]
+
+
 def ercot_reserve_coopt_inputs(
     config, fleet_arrays: FleetArrays, hours: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -565,6 +595,49 @@ def ercot_reserve_coopt_inputs(
         # count. Clipped to the MCL floor so the curve's steep tail is preserved.
         load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
+    if (getattr(config, "ercot_storage_as_reserve", False)
+            and getattr(config, "storage_as_commitment", False)
+            and int(config.weather_year)
+            >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))):
+        # Credit the measured battery-provided AS (RegUp/RRS/ECRS) back into the
+        # reserve balance. storage_as_commitment subtracts this same MW from the
+        # storage power cap, and the reserve block derives a unit's reserve room
+        # from that reduced cap — so without this credit the committed battery AS
+        # is dropped from both energy (correct) and reserve supply (incorrect: it
+        # IS held responsive reserve, counted in ERCOT's RTOLCAP/RTOFFCAP). As a
+        # fixed AS commitment it is held in every committed hour regardless of the
+        # battery's energy dispatch, so it credits the balance RHS unconditionally
+        # — exactly like the load-resource credit, and with no double count (the
+        # reserve room from the reduced cap is the disjoint arbitrage headroom).
+        # GUARDED on storage_as_commitment: with it off the full cap is already in
+        # the reserve block and crediting here would double-count.
+        #
+        # SCOPED to weather_year >= ercot_storage_as_reserve_from_year (default
+        # 2025), which is a *modeling* choice, not a measured one (say so): the
+        # credit is physically correct in every year (~0.8 GW 2023 → ~2.8 GW
+        # 2025), but in 2023/2024 the model can only reach the year's *genuine*
+        # scarcity tail THROUGH the reserve over-fire, so crediting the battery
+        # AS makes reserves look adequate on days that were actually tight and the
+        # model loses the real tail. 2023's tail is documented *out-of-market*
+        # scarcity (ERCOT's RTORDPA / ECRS-conservatism, IMM >$12B; the >$200
+        # hours are 47% of the year's $) an ORDC model can't reproduce, so it
+        # collapses (Aug model $74 vs actual $217). 2024's is real tight-day
+        # scarcity (53 h >$200, 8 h >$1000); a single-year probe crediting 2024
+        # cooled avg 29.0→21.2 (actual 26.8), WORSENED MAE 10.5→12.7 and
+        # collapsed the tail 49→7 h >$200 — measured, not "lower penetration".
+        # 2025 is the lone year whose residual is *purely* this reserve over-fire
+        # (tail = 4% of $, reserves genuinely fat), so the measured credit closes
+        # it cleanly (2025 LMP MAE 11.3 → 2.7; gas/coal split unchanged).
+        # The physically-pure global path needs 2023/2024 scarcity modeled by a
+        # genuine ORDC scarcity-price mechanism — NOT the reliability-deployment
+        # overlay, which is an energy/congestion min-gen floor (a credit+overlay
+        # 2024 probe was indistinguishable from credit-only, ~$0.1 on system LMP).
+        # Here the credit is gated to the year the residual is reserve-accounting
+        # only.
+        storage_as_mw = ercot_storage_as_reserve_mw(
+            int(config.weather_year), hours)
+        requirement = np.maximum(
+            requirement - storage_as_mw, float(config.ordc_mcl_mw))
     eligible = ercot_reserve_eligible(fleet_arrays)
     return requirement, eligible, penalties, widths
 
