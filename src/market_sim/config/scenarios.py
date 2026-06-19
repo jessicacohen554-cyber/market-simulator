@@ -600,6 +600,12 @@ class ScenarioConfig:
     # reformed RTC+B fleet regime). NB: the reliability-deployment overlay does
     # NOT re-warm credited backcast years — it is an energy/congestion min-gen
     # floor (near-no-op on system LMP), not an ORDC scarcity-price mechanism.
+    # Settable from the CLI via --ercot-storage-as-reserve-from-year (set to 2023
+    # to probe a global credit). Going global is BLOCKED on a scarcity-price model:
+    # the in-LP ORDC curve is hour-invariant so a re-derived LOLP can't self-target
+    # 2024's tail, and 2023's tail is out-of-market (administrative, un-modelable by
+    # any LOLP curve). See docs/ercot-run131-lmp-decomposition-2026-06.md
+    # ("Global storage-AS credit — investigated, BLOCKED").
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
