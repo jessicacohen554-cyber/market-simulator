@@ -61,6 +61,7 @@ from __future__ import annotations
 import numpy as np
 
 from market_sim.config.constants import (
+    NEISO_RCPF_PRODUCTS,
     NYISO_RCPF_LOCATIONAL,
     NYISO_RCPF_PRODUCTS,
 )
@@ -104,7 +105,16 @@ def reserve_demand_price(
 def resolve_rcpf_products(
     config,
 ) -> tuple[tuple[str, float, float, float], ...]:
-    """Return the RCPF product table for a config (override or default)."""
+    """Return the RCPF product table for a config (override or default).
+
+    ISO-aware: NEISO uses the ISO-NE reserve products
+    (``constants.NEISO_RCPF_PRODUCTS``, overridable via ``neiso_rcpf_products``);
+    every other ISO uses the NYISO table (the original behaviour). Both default
+    tables follow the same nested-product, piecewise-linear convention.
+    """
+    if getattr(config, "iso", None) == "NEISO":
+        products = getattr(config, "neiso_rcpf_products", None)
+        return tuple(products) if products else NEISO_RCPF_PRODUCTS
     products = getattr(config, "nyiso_rcpf_products", None)
     return tuple(products) if products else NYISO_RCPF_PRODUCTS
 
