@@ -39,10 +39,16 @@ permissions:
   pages: write
   id-token: write
 
-# One in-flight deploy at a time; let a newer merge supersede an older run.
+# One in-flight deploy at a time. Do NOT cancel an in-progress run: a Pages
+# publish that is interrupted partway can leave the live site in a broken /
+# partial state (a hard 404 on freshly-generated files) even though the
+# cancelled workflow reports success. When two merges land seconds apart the
+# newer run queues behind the in-flight publish and supersedes any other queued
+# run instead of killing the one that is mid-publish. This matches GitHub's
+# official Pages deploy template.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
