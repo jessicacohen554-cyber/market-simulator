@@ -21,6 +21,10 @@ on:
         description: "Earliest citygate-basis year to add"
         default: "2015"
         type: string
+      dry_run:
+        description: "Validate series ids only (lists EIA's citygate ids); writes nothing"
+        default: false
+        type: boolean
   schedule:
     # 06:10 UTC on the 8th of each month — EIA citygate lags ~2 months, HH is current.
     - cron: "10 6 8 * *"
@@ -54,7 +58,9 @@ jobs:
             echo "::error::no EIA_API_KEY (set the repo secret or the .env key)"
             exit 1
           fi
-          EIA_API_KEY="$EIA_API_KEY" python scripts/fetch_eia_gas_prices.py \
+          DRY=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY="--dry-run"; fi
+          EIA_API_KEY="$EIA_API_KEY" python scripts/fetch_eia_gas_prices.py $DRY \
             --datasets ${{ github.event.inputs.datasets || 'henry-hub citygate' }} \
             --isos ${{ github.event.inputs.isos || 'CAISO ERCOT PJM MISO SPP NYISO NEISO' }} \
             --start-year ${{ github.event.inputs.start_year || '2015' }}
