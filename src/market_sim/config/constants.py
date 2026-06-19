@@ -1965,11 +1965,17 @@ class NeighborInterface:
 # Effective marginal heat rate per neighbor is calibrated so gas x HR reproduces
 # the neighbor's OWN realized annual LMP (rule #11: anchor to the neighbor's
 # measured price formation, never to PJM's flow); the year-to-year level then
-# rides on the Henry Hub trajectory, so it is forecast-native. The ratio is
-# empirically stable because LMP tracks gas: MISO ~$36/$2.54 (2023) ~= $31/$2.19
-# (2024) ~= 14.2 MMBtu/MWh both years.
-#   - MISO (basis ~0, Chicago Citygate ~flat to HH): HR 14.2, anchored to the
-#     MISO IMM RT LMP / Henry Hub ratio (stable 2023-24).
+# rides on the Henry Hub trajectory, so it is forecast-native.
+#   - MISO (basis ~0, Chicago Citygate ~flat to HH): HR 12.9, anchored to MISO's
+#     OWN realized Indiana-Hub RT LMP / Henry Hub. This REPLACES the prior 14.2
+#     ESTIMATE (rule #12: measured data over an estimate). 14.2 came from the IMM
+#     State-of-the-Market ~$36 all-MISO-footprint average; the seam actually
+#     clears against the PJM-border INDIANA.HUB, whose measured RT LMP is
+#     $31.8/$30.8/$42.85 (2023-25, the fetched docs.misoenergy.org ex-post
+#     extract), i.e. LMP/HH = 12.5/14.1/12.2, mean 12.9. The old 14.2 over-priced
+#     the border hub by +13% (2023) / +17% (2025), inflating the PJM->MISO spread
+#     and over-exporting; 12.9 is the like-for-like measured ratio. Regenerate
+#     with scripts/derive_neighbor_convexity.py (reports the implied HR).
 #   - NYISO (basis +0.55, EIA-923 delivered): HR 13.1, anchored to the actual
 #     NYISO RT LMP $36 (2024) / delivered gas $2.74. CAVEAT: NYISO downstate is
 #     congestion/scarcity-dominated, so its implied ratio is NOT stable (9.8 in
@@ -2022,17 +2028,20 @@ class NeighborInterface:
 #     load (gross-load regressor — the series the model multiplies), pooled
 #     2023-24, R2 0.36, stable by year (1.64/1.63). This is the model-consistent
 #     anchor.
-#   - MISO / Carolinas: 1.63, adopted as the organized-market thermal-neighbor
-#     convexity pending each one's OWN realized-LMP fetch (MISO Indiana Hub /
-#     Duke FERC-714 via .github/workflows/fetch-neighbor-lmp.yml -> then
-#     self-derive and override here). This is "sourced by decision and
-#     documented", NOT silently invented: 1.63 is the value three independent
-#     organized markets' own price-load regressions cluster on for low-renewables
-#     THERMAL fleets in the same structural class as MISO and the Carolinas —
-#     NYISO 1.63 (self), NEISO gross 2.04, ERCOT net 1.47 — and it is the
-#     conservative (lowest, least self-limiting) end of that cluster. It is NOT a
-#     PJM-flow fit: the value comes entirely from the neighbors' own LMP-vs-load
-#     elasticity, blind to PJM's net export. (CAISO's gross exponent collapses to
+#   - MISO: 1.60, SELF-DERIVED from MISO's own realized Indiana-Hub RT LMP (the
+#     fetched docs.misoenergy.org extract) vs its EIA-930 load, pooled 2023-25,
+#     R2 0.24, by year 1.42/1.80/1.60. This REPLACES the borrowed 1.63 with the
+#     measured value (rule #12) — and confirms the borrow was sound (MISO's own
+#     convexity ~= NYISO's), so it is NOT what drove the pjm_32 over-export; the
+#     MISO-level (heat-rate) re-anchor above is.
+#   - Carolinas: 1.60, still borrowed (no organized-market LMP — Duke FERC-714
+#     hourly-lambda reshape is a verified follow-up) but now set to the MEASURED
+#     thermal-neighbor value: MISO 1.60 and NYISO 1.63 self-derive to the same
+#     ~1.6, cross-validated by NEISO 2.04 / ERCOT-net 1.47. Carolinas is the
+#     smallest seam and a net IMPORT path (PJM exports over it ~17% of hours), so
+#     its exponent barely moves the result. Not a PJM-flow fit: the value comes
+#     from the neighbors' own LMP-vs-load elasticity, blind to PJM's net export.
+#     (CAISO's gross exponent collapses to
 #     0.47 under heavy solar, which is exactly why gross-load convexity is used
 #     ONLY for these low-solar thermal neighbors; CAISO net-load holds at 1.00.)
 INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
@@ -2041,11 +2050,11 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             name="MISO",
             ba_code="MISO",
             gas_basis=0.0,
-            marginal_heat_rate=14.2,
+            marginal_heat_rate=12.9,
             hurdle=2.0,
             interface_limit_mw=7300.0,
             border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI"),
-            load_shape_exponent=1.63,
+            load_shape_exponent=1.60,
         ),
         NeighborInterface(
             name="NYISO",
@@ -2066,7 +2075,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hurdle=2.0,
             interface_limit_mw=2400.0,
             border_zones=("PJM_Dominion",),
-            load_shape_exponent=1.63,
+            load_shape_exponent=1.60,
         ),
     ],
 }
