@@ -1,0 +1,69 @@
+# Canonical schema: calibration / validation reference targets
+#
+# Reconciles the heterogeneous validation-source files (data/raw/_validation-source),
+# each of which carries a different aggregate metric:
+#   *_renewable_capacity.csv : iso, year, fuel, zone, month, capacity_mw
+#   (plus annual generation, emissions and price benchmarks the backcast
+#    calibrates against)
+#
+# Reconciliation: rather than one schema per benchmark file, all validation
+# targets collapse to a tidy (dimensions -> metric, value, unit) long form so a
+# single contract covers capacity, generation, emissions and price references.
+datatype: validation
+schema_version: 1
+title: Calibration / validation reference targets
+description: >-
+  Tidy long-form reference values the historical backcast calibrates against,
+  keyed on iso/zone/year/month/fuel and a named metric.
+
+key_columns: [iso, zone, year, month, fuel, metric]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Zone the target applies to (use "SYSTEM" for ISO-wide totals).
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar year of the reference value.
+  - name: month
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar month 1-12, or 0 for annual (non-monthly) targets.
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: Fuel/technology the metric applies to (use "ALL" when not fuel-specific).
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Named reference metric (e.g. capacity_mw, generation_mwh, co2_kg,
+      avg_price_usd_per_mwh).
+  - name: value
+    dtype: float64
+    unit: none
+    nullable: false
+    description: Reference value; physical unit carried in the `unit` column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: Unit of `value` (mw, mwh, kg, usd_per_mwh, ...).
+  - name: source
+    dtype: string
+    unit: none
+    nullable: true
+    description: Provenance of the reference value (publisher / dataset).

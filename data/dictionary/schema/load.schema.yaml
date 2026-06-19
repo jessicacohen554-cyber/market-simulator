@@ -1,0 +1,59 @@
+# Canonical schema: electricity demand / load
+#
+# Reconciles the per-ISO demand layouts:
+#   CAISO  : interval_start_gmt, tac_area, mw (TAC-area hourly load); the raw
+#            SLD_FCST files also carry LOAD_TYPE (actual vs forecast) + MW
+#   NYISO  : Time Stamp, Name (zone), Load
+#   EIA-930: "UTC time", "Demand", "Demand forecast", "Net generation" by BA
+#   ERCOT  : hourly load by weather zone
+#
+# Reconciliation: actual vs forecast (CAISO LOAD_TYPE, EIA-930 Demand vs
+# Demand forecast) become the `load_mw` and `load_forecast_mw` columns rather
+# than a row-type discriminator. Per-ISO zone/area names (tac_area, NYISO
+# Name, EIA BA) all map to the `zone` key.
+datatype: load
+schema_version: 1
+title: Electricity demand (load)
+description: >-
+  Hourly metered load and forecast by ISO and load zone, plus optional
+  net load (load minus variable renewable output).
+
+key_columns: [iso, zone, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local hour start in the ISO's prevailing zone.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Load zone / TAC area / balancing authority the load is reported for.
+  - name: load_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Actual metered load for the hour (CAISO mw, NYISO Load, EIA-930 Demand).
+  - name: load_forecast_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Day-ahead / short-term load forecast (CAISO forecast LOAD_TYPE, EIA Demand forecast).
+  - name: net_load_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Net load — load minus wind and solar output, when derivable.
