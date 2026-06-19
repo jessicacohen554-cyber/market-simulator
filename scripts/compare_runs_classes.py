@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
 CLASSES = [
