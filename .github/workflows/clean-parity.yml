@@ -40,27 +40,16 @@ jobs:
         run: uv sync --extra dev
 
       - name: Regenerate data/clean from raw
-        id: regen
-        run: |
-          # Best-effort: a datatype whose raw inputs are missing in the runner
-          # should not block the contract/parity signal for the rest. Record
-          # whether ALL datatypes regenerated so the coverage-matrix check only
-          # runs against a complete tree.
-          if uv run python scripts/regenerate_clean.py ${{ github.event.inputs.datatypes }}; then
-            echo "full=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::regenerate_clean did not fully succeed — coverage-matrix check will be skipped"
-            echo "full=0" >> "$GITHUB_OUTPUT"
-          fi
+        # Must fully succeed: if a datatype fails to regenerate, its parity test
+        # would silently skip and the job would go falsely green. regenerate_clean
+        # exits non-zero if any datatype fails, which fails the job here.
+        run: uv run python scripts/regenerate_clean.py ${{ github.event.inputs.datatypes }}
 
-      - name: Contract + parity + coverage tests
+      - name: Contract + parity tests
         env:
           # Opt the model's data/clean read paths on, so the parity tests
           # actually compare clean-backed vs raw loaders instead of skipping.
           MARKET_SIM_USE_CLEAN: "1"
-          # Only check the full data-dictionary coverage matrix when the whole
-          # tree regenerated (see test_data_dictionary_sync).
-          MARKET_SIM_CHECK_DICT_COVERAGE: ${{ steps.regen.outputs.full }}
         run: |
           uv run python -m pytest \
             tests/test_clean_io.py \
