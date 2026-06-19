@@ -3,7 +3,7 @@
 > **Update 2026-06-10:** partially stale. §2 is resolved — EIA-930 hourly
 > parquets now exist for all seven ISOs (`data/eia_hourly/`). §3's CEMS
 > table predates the unit-level extracts in
-> `inputs/raw-data/campd-unit-level/` (PJM coal states OH/WV/IN/KY/VA/DC
+> `data/raw/campd-unit-level/` (PJM coal states OH/WV/IN/KY/VA/DC
 > and CA 2024–2025 are now present; PJM still lacks MD/DE/NC/TN
 > unit-level). §4 gas basis is largely superseded for *backcasts* by
 > measured per-plant EIA-923 monthly costs (`gas_monthly_actuals`, PJM
@@ -26,7 +26,7 @@ Target backcast years follow ERCOT: **2021–2025** (some series only run
 
 The ERCOT backcast is driven by six data families. Each new ISO needs the same
 six. The calibration-reference schema (per ISO-year, in
-`inputs/calibration/calibration_reference.json`) makes the requirement exact:
+`data/raw/_validation-source/calibration_reference.json`) makes the requirement exact:
 
 ```
 isos.<ISO>.<year> = {
@@ -44,10 +44,10 @@ isos.<ISO>.<year> = {
 | # | Data family | Source | Granularity | Repo location | Drives |
 |---|-------------|--------|-------------|---------------|--------|
 | 1 | **EIA-930 hourly** (demand + generation-by-fuel) | EIA Hourly Electric Grid Monitor | hourly, per BA | `data/eia_hourly/<BA> hourly.parquet` | demand series, renewable CF shaping, fuel-mix benchmark |
-| 2 | **EIA-860** generator inventory | EIA-860 annual | annual, national | `inputs/raw-data/eia-860/`, `eia8602024.zip` | fleet, plant coords, BA codes, renewable capacity |
-| 3 | **EIA-923** monthly gen + fuel cost | EIA-923 annual | monthly, national | `inputs/raw-data/f923_*.zip`, `inputs/processed/eia923_*.parquet` | fuel costs, generation reconciliation |
-| 4 | **CAMPD / CEMS hourly** emissions | EPA CAMPD | hourly, per unit, downloaded **per state-year** | `inputs/raw-data/<ST>_<year>.parquet` | emission rates, heat-rate bins, coal must-run calibration |
-| 5 | **eGRID** plant database | EPA eGRID | annual, national | `data/fleet/egrid2023_data_rev2 2.xlsx`, `inputs/raw-data/egrid2024_data.xlsx` | plant→zone (lat/lon/FIPS/BA), emissions benchmark |
+| 2 | **EIA-860** generator inventory | EIA-860 annual | annual, national | `data/raw/eia-860/`, `eia8602024.zip` | fleet, plant coords, BA codes, renewable capacity |
+| 3 | **EIA-923** monthly gen + fuel cost | EIA-923 annual | monthly, national | `data/raw/f923_*.zip`, `data/raw/_processed-legacy/eia923_*.parquet` | fuel costs, generation reconciliation |
+| 4 | **CAMPD / CEMS hourly** emissions | EPA CAMPD | hourly, per unit, downloaded **per state-year** | `data/raw/<ST>_<year>.parquet` | emission rates, heat-rate bins, coal must-run calibration |
+| 5 | **eGRID** plant database | EPA eGRID | annual, national | `data/fleet/egrid2023_data_rev2 2.xlsx`, `data/raw/egrid2024_data.xlsx` | plant→zone (lat/lon/FIPS/BA), emissions benchmark |
 | 6 | **Gas price** (Henry Hub + regional basis) | EIA / ICE | annual scalar (+ monthly shape) | `calibration_reference.json` | marginal cost of gas units |
 
 Families 2, 3, 5 are **national** files already in the repo — they cover all
@@ -170,7 +170,7 @@ ISO-specific is the **uncurtailed potential profile (HSL)**:
   power-production reports (NP4-732-CD / NP4-737-CD hourly actuals, or
   NP4-733-CD / NP4-738-CD 5-minute actuals — both carry system-wide actual
   GEN and actual HSL), dropped as csv/zip under
-  `inputs/raw-data/ercot-hsl/np6/`, then re-run the script. Years with a
+  `data/raw/ercot-hsl/np6/`, then re-run the script. Years with a
   built parquet also get the modeled-vs-reported curtailment headline table
   in the calibration reports (the CAISO P6 pattern).
 - Other ISOs' HSL analogues, and hydro, are detailed in
@@ -205,12 +205,12 @@ market-design module — see doc 02 §6 and doc 03 Pack E.
 ```
 MUST UPLOAD (per ISO):
 [ ] EIA-930 hourly parquet            data/eia_hourly/<BA> hourly.parquet
-[ ] Missing-state CEMS parquets       inputs/raw-data/<ST>_<year>.parquet
+[ ] Missing-state CEMS parquets       data/raw/<ST>_<year>.parquet
 [ ] Regional gas basis series         (NE/NY critical)
 [ ] Zonal hourly load (multi-zone)    for load_share + zonal shape
 [ ] TTC / interface limits            see doc 04 (multi-zone)
 [ ] Renewable HSL / uncurtailed       see doc 04 (where available)
-[ ] ERCOT NP6 HSL reports 2024-2025   inputs/raw-data/ercot-hsl/np6/
+[ ] ERCOT NP6 HSL reports 2024-2025   data/raw/ercot-hsl/np6/
 [ ] Hydro monthly energy budget       (NYISO, CAISO, ISO-NE esp.)
 
 ALREADY NATIONAL / NO UPLOAD:

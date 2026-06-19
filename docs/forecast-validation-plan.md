@@ -286,7 +286,7 @@ Build the capacity-hindcast harness per docs/forecast-validation-plan.md
 Phase 2a. New script scripts/run_capacity_hindcast.py: arguments --iso
 --start-year 2018 --end-year 2025 --fuel-variant {realized,asknown}.
 It must (1) initialize the fleet from EIA-860 as of the start year — check
-what 860 vintages exist under inputs/ and data/; if 2017/2018 files are
+what 860 vintages exist under data/raw/; if 2017/2018 files are
 absent, stop and list exactly what I need to download rather than
 substituting today's fleet; (2) restrict the known pipeline to what EIA-860
 reported as planned in the start-year vintage (no leakage from later
@@ -410,7 +410,7 @@ contribution (report-only), CO2 total ±5% and per-class ±7% vs CAMPD/eGRID,
 hourly pearson-r/NRMSE regression gates seeded from the current best run's
 values, and unserved-energy==0 as a hard gate. Wire this evaluator into
 scripts/run_calibration_full.py (print PASS/FAIL summary) and
-scripts/_backcast_shell.py so the dashboard's pass logic reads the same
+scripts/probes/_backcast_shell.py so the dashboard's pass logic reads the same
 table (replace the inline SUM_TOL_* constants). Mark "ok" tier as explicitly
 non-passing for sign-off. Add emissions actuals loading (CAMPD CO2 already
 in the data layer; eGRID totals for the system check) — if an actuals file

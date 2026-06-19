@@ -16,12 +16,12 @@ ERCOT/PJM. CAISO uses a per-ISO year override (`CALIBRATION_YEARS_BY_ISO`,
 
 Written artifacts:
 
-- `inputs/calibration/calibration_reference.json` — CAISO blocks for
+- `data/raw/_validation-source/calibration_reference.json` — CAISO blocks for
   2023/2024/2025: EIA-930 demand stats (from `data/eia_hourly/CISO
   hourly.parquet`), measured Henry Hub, EIA-923 by-fuel `generation_twh`,
   EIA-860 wind/solar December totals + NP15/ZP26/SP15 zone shares + monthly
   ramps, and the eGRID 2023 `BACODE=CISO` generation/emissions benchmark.
-- `inputs/calibration/CAISO_{2023,2024,2025}_renewable_capacity.csv` —
+- `data/raw/_validation-source/CAISO_{2023,2024,2025}_renewable_capacity.csv` —
   per-zone, per-month EIA-860 operable wind/solar capacity.
 
 Headline reference values:
@@ -203,7 +203,7 @@ Distinct states of CAISO-fleet fossil plants: **CA** (259 plants,
 31.4 GW) and **NV** (1 plant: Desert Star, 310 MW summer / ~480 MW
 nameplate gas-CC).
 
-Diff against `inputs/raw-data/campd-unit-level/<ST>_<year>.parquet`:
+Diff against `data/raw/campd-unit-level/<ST>_<year>.parquet`:
 
 | State-year | Unit-level | Facility-level | Notes |
 |---|---|---|---|
@@ -275,7 +275,7 @@ as above.
 **P1-2023 resolution (2026-06-11): U1 landed, 2023 windows derived.**
 `CA_2023.parquet` (245 units across 109 facilities; all gas/wood, zero
 coal — same fuel mix as 2024/2025) is now in
-`inputs/raw-data/campd-unit-level/`, and `derive_campd_unit_outages.py
+`data/raw/campd-unit-level/`, and `derive_campd_unit_outages.py
 --iso CAISO --years 2023 2024 2025` regenerated
 `campd-unit-outages-CAISO.csv` to **1,933 windows (612 in 2023, 620 in
 2024, 701 in 2025; 37 plants)**. The 2024 and 2025 rows regenerate
@@ -300,18 +300,18 @@ measured unit-outage availability rather than statistical-only.
 
 | # | Item | Destination | Status |
 |---|---|---|---|
-| U1 | CAMPD unit-level `CA_2023.parquet` | `inputs/raw-data/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
-| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `inputs/raw-data/lmp-data/CAISO/` | **done (as available)** — see §4a. DA 2024+2025 and RT 2024+2025 are full years × 3 hubs; the `actual_lmp.json` CAISO block + `actual_lmp_hourly_CAISO.parquet` and the zonal-sufficiency test are built. **Gaps:** DA 2023 is a ~3-trade-date stub (OASIS ~39-month retention aged it out before the mid-2026 pull) and RT 2023 was never fetched, so there is no usable 2023 price year. OASIS gotcha (2026-06-11): multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) and `scripts/postprocess_oasis_downloads.py` folds the raw windows into the committed hourly aggregates |
-| U3 | Wind & solar production-and-curtailment, 2023–2025 | `inputs/raw-data/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
-| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `inputs/raw-data/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
-| U5 | Path 15/26 hourly flows + limits (optional) | `inputs/raw-data/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
+| U1 | CAMPD unit-level `CA_2023.parquet` | `data/raw/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
+| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `data/raw/lmp-data/CAISO/` | **done (as available)** — see §4a. DA 2024+2025 and RT 2024+2025 are full years × 3 hubs; the `actual_lmp.json` CAISO block + `actual_lmp_hourly_CAISO.parquet` and the zonal-sufficiency test are built. **Gaps:** DA 2023 is a ~3-trade-date stub (OASIS ~39-month retention aged it out before the mid-2026 pull) and RT 2023 was never fetched, so there is no usable 2023 price year. OASIS gotcha (2026-06-11): multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) and `scripts/postprocess_oasis_downloads.py` folds the raw windows into the committed hourly aggregates |
+| U3 | Wind & solar production-and-curtailment, 2023–2025 | `data/raw/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
+| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `data/raw/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
+| U5 | Path 15/26 hourly flows + limits (optional) | `data/raw/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
 | U6 | CARB cap-and-trade auction prices 2023–2025 (optional) | cite into `constants.py` | **not yet in repo** — public auction results are web-searchable from this environment, so P7 can self-serve; no upload strictly required |
-| U7 | CA BTM PV + storage trajectory (optional, forecast P13) | `inputs/raw-data/caiso-btm/` | **missing** — backcast unaffected (net-load convention) |
+| U7 | CA BTM PV + storage trajectory (optional, forecast P13) | `data/raw/caiso-btm/` | **missing** — backcast unaffected (net-load convention) |
 
 Additional gap found (not in the original manifest):
 
 - **U8: EIA-930 six-month BALANCE parquets — complete.** All six halves
-  (2023/2024/2025) in `inputs/raw-data/eia-930/`, validated 2026-06-11:
+  (2023/2024/2025) in `data/raw/eia-930/`, validated 2026-06-11:
   CISO demand reconciles with `data/eia_hourly/CISO hourly.parquet`
   (2023: 218.13 vs 218.14 TWh; 2024: 222.87 vs 224.03 — raw vs adjusted
   demand plus 48 NaN raw hours; same pattern 2025). EIA switched schema
@@ -352,12 +352,12 @@ by zone share** (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, the
 `config.iso_configs` `load_share` values), reindexed onto the Pacific
 prevailing-time dispatch clock. Written:
 
-- `inputs/calibration/actual_lmp.json` CAISO block — DA + RT **2024 & 2025**
+- `data/raw/_validation-source/actual_lmp.json` CAISO block — DA + RT **2024 & 2025**
   annual/monthly means + `da_pct`/`rt_pct` duration-curve percentiles
   (2024 DA $35.81 / RT $32.94; 2025 DA $34.62 / RT $33.63). 2023 is omitted:
   a full-year gate (`CAISO_MIN_HOURS`) rejects the DAM stub, and RT 2023 is
   absent.
-- `inputs/calibration/actual_lmp_hourly_CAISO.parquet` — the dense
+- `data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet` — the dense
   fixed-8760 system DA/RT series (2 years) for the duration-curve overlay
   (`scripts/analyze_lmp_residual.py`).
 
@@ -376,7 +376,7 @@ zones.
 
 - `data/eia_hourly/CISO hourly.parquet` — 2023-01-01 → 2025-12-31, demand
   + forecast + net gen + total interchange + 9 fuel columns (incl. GEO).
-- `inputs/raw-data/CISO_fueltype.parquet`, `CISO_region.parquet`.
+- `data/raw/CISO_fueltype.parquet`, `CISO_region.parquet`.
 - EIA-860 2025 ER parquets (incl. energy-storage tables), EIA-923 zips
   2023/2024/2025, eGRID 2023 + 2024 workbooks, Henry Hub series.
 - CAMPD: unit-level CA 2024/2025, facility-level CA 2023–2025, derived

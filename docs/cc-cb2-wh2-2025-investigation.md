@@ -46,7 +46,7 @@ nothing there and instead piles into 0.8–1.0. That pile is the over-run.
 
 CB2 and WH2 carry the **two lowest base heat rates in the entire CC_REGULAR
 fleet**: 6.57 and 6.65 MMBtu/MWh against a fleet median of 7.39 and mean of 8.10
-(min 6.52, max 15.4 — `inputs/custom-bin-assignments.csv`). At 2025 gas $3.52
+(min 6.52, max 15.4 — `data/raw/reference/custom-bin-assignments.csv`). At 2025 gas $3.52
 their econ-tranche marginal cost is ≈ 6.6 × ~1.0 × 3.52 + VOM ≈ **$25/MWh**, the
 cheapest gas in ERCOT; the fleet-mean CC sits at ≈ $28.5 and the worst at ≈ $54.
 
@@ -62,7 +62,7 @@ The intra-zone signature confirms it: **Houston is balanced at the zone level
 cheapest Houston unit (CB2) flat-out and backs its Houston neighbours down to
 compensate; reality spreads the duty (AS, local limits, commitment rotation).
 
-- **Evidence:** `inputs/custom-bin-assignments.csv` (base_hr fleet-min);
+- **Evidence:** `data/raw/reference/custom-bin-assignments.csv` (base_hr fleet-min);
   `plant_cf_bands.parquet` (flat pin vs CAMPD cycling); `meta.json` gas $3.52;
   the year-gradient table above.
 - **Tunable?** Partly. D4 (`docs/audit-followup-tests-2026-06.md`) showed the

@@ -1,31 +1,27 @@
-"""PJM reference-price interface + neighbor convexity run: one year -> bundle.
+"""PJM energy+reserve co-optimization run: one year -> its own bundle dir.
 
-Reproduces the pjm_28 keeper's calibration_flags but serves the interchange
-seam through the forecast-grade reference-price interface
-(``reference_price_interface=True``, which implies ``priced_interchange=True``)
-WITH each neighbor's price-vs-load convexity wired in
-(``INTERFACE_NEIGHBORS["PJM"][*].load_shape_exponent = 1.63``, self-derived from
-NYISO's own realized RT LMP, adopted for MISO/Carolinas as the organized-thermal
-convexity pending their own LMP fetch — see the registry comment).
-
-This is the structural successor to pjm_30/pjm_31 (flat-slope reference seam,
-which over-exported +78-89 TWh): the convex neighbor supply curve steepens the
-seam's self-limiting so the export settles nearer the measured net flow, with
-nothing tuned to PJM's net-MWh target (claude.md rule #11).
+Reproduces the pjm_28 keeper's exact calibration_flags but swaps the
+reduced-form reserve *withholding* (``as_reserve_withholding``) for the in-LP
+energy+reserve *co-optimization* (``energy_reserve_coopt``): the structural
+1.5x-MSSC Primary Reserve requirement + the published ORDC demand curve clear
+inside the LP, so the reserve clearing price emerges as a dual and lifts the
+energy LMP endogenously (it also replaces the post-solve ORDC overlay). The two
+reserve mechanisms are mutually exclusive (running both double-counts), so
+withholding is turned off here.
 
 One year per invocation so the three years run as parallel background jobs to
-separate out-dirs (claude.md #45); merge with scripts/_pjm_aswh_merge.py.
+separate out-dirs (claude.md #45); merge with scripts/probes/_pjm_aswh_merge.py.
 
-Usage: python scripts/_pjm_refconvex_run.py <year> <out_dir>
+Usage: python scripts/probes/_pjm_coopt_run.py <year> <out_dir>
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 KEEPER = ROOT / "pjm_28"
 
 
@@ -57,14 +53,12 @@ def main(year: int, out: Path) -> None:
         curve_smoothing={"offer_curve_smoothing_n": None,
                          "offer_curve_smoothing_exp": None,
                          "offer_curve_smoothing_mid": 0.45},
-        priced_interchange=True,            # implied by the reference seam
-        reference_price_interface=True,
-        as_reserve_withholding=cf.get("as_reserve_withholding", False),
-        note=f"pjm_32_refconvex: keeper pjm_28 config + forecast-grade "
-             f"reference-price interchange seam with neighbor price-vs-load "
-             f"convexity (load_shape_exponent 1.63, self-derived from NYISO's "
-             f"own realized LMP; MISO/Carolinas adopt it pending own-LMP fetch) "
-             f"to self-limit the over-export, {year} only",
+        priced_interchange=cf["priced_interchange"],
+        as_reserve_withholding=False,   # replaced by in-LP co-optimization
+        energy_reserve_coopt=True,
+        note=f"pjm_29_coopt: keeper pjm_28 config + in-LP energy+reserve "
+             f"co-optimization (replaces withholding + ORDC overlay), "
+             f"{year} only",
     )
     print(f"DONE {year} -> {out}")
 

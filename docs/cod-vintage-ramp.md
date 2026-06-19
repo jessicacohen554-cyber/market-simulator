@@ -131,7 +131,7 @@ sit in the snapshot's `retired_and_canceled` file, so the ramp cannot re-add
 them).
 
 `ScenarioConfig.eia860_vintage_year` (default `None`, backcast-only) opts in:
-set it to a year with a committed `inputs/raw-data/eia-860/vintage_<year>/`
+set it to a year with a committed `data/raw/eia-860/vintage_<year>/`
 (2023, 2024 ship today) and every EIA-860 loader — fleet, COD map,
 wind/solar/storage, dual-fuel/CHP — reads the native release instead.
 Mechanically it is a process-global active directory
@@ -143,7 +143,7 @@ serve a stale-vintage map. `vintage_<year>/` holds only the loader-consumed
 parquets (generators, generator/storage operable + proposed, wind/solar
 operable, multifuel, plant, owner), regenerated from the committed annual zip by
 `scripts/process_eia860.py --zip eia860<year>.zip --out-dir
-inputs/raw-data/eia-860/vintage_<year>`.
+data/raw/eia-860/vintage_<year>`.
 
 **Measured effect is small — this is a correctness/provenance refinement, not a
 scarcity driver.** The COD-ramped 2025ER fleet already reproduces the native
