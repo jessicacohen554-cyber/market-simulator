@@ -105,6 +105,9 @@ data/raw/NYISO-AS/raw/
 # Intermediate per-year reference-price+convexity (pjm_32) run bundles; only the
 # merged 3-year results/calibration/pjm_32 is committed.
 /results/calibration/pjm_32_20*/
+# Intermediate per-year MISO-reanchored seam (pjm_33) run bundles; only the
+# merged 3-year results/calibration/pjm_33 is committed.
+/results/calibration/pjm_33_20*/
 
 # Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
 # still records the pre-W1-relocation inputs/ paths in old bundle configs can

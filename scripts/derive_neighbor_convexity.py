@@ -86,15 +86,28 @@ CROSSCHECK: dict[str, str] = {
 
 YEARS = (2023, 2024, 2025)
 
+# Henry Hub annual price ($/MMBtu) the PJM backcast prices off (matches each
+# bundle's meta.json gas_prices). Used to recover each neighbor's implied
+# marginal heat rate = realized annual LMP / delivered gas (HH + the neighbor's
+# gas_basis), the level anchor that sits beside the convexity (shape) exponent.
+BACKCAST_HENRY_HUB: dict[int, float] = {2023: 2.54, 2024: 2.19, 2025: 3.52}
+
+# Marginal heat rates this script anchors, committed to INTERFACE_NEIGHBORS so
+# --check asserts the registry still matches each neighbor's OWN realized LMP
+# after a data refresh. Only neighbors with basis 0 (delivered gas == Henry Hub)
+# and a realized-LMP extract are guarded here; NYISO carries a gas_basis and a
+# documented congestion-driven instability, so its anchor is not auto-checked.
+COMMITTED_HEAT_RATE: dict[str, float] = {"MISO": 12.9}
+
 # Exponents this script derives, committed to INTERFACE_NEIGHBORS["PJM"]. Kept
 # here so --check can assert the registry still matches the regression after a
 # data refresh. Filled in once the derivation + sourcing decision is settled.
 # NYISO is the only PJM neighbor with a realized-LMP extract in the repo, so it
-# is the only one whose exponent is self-derived and guarded here. MISO and the
-# Carolinas adopt this same value as the organized-thermal-neighbor convexity
-# (see INTERFACE_NEIGHBORS comment) until their own LMP is fetched; they are not
-# listed here because --check can only assert a SELF-derived value.
-COMMITTED_EXPONENT: dict[str, float] = {"NYISO": 1.63}
+# is self-derived and guarded here. MISO's Indiana-Hub extract is now in the repo
+# (fetch-neighbor-lmp), so MISO is self-derived and guarded too. The Carolinas
+# still adopt the measured thermal-neighbor value (~1.6) until a Duke LMP lands;
+# it is not listed here because --check can only assert a SELF-derived value.
+COMMITTED_EXPONENT: dict[str, float] = {"NYISO": 1.63, "MISO": 1.60}
 
 
 def _realized_rt_lmp(lmp_key: str, year: int) -> np.ndarray | None:
@@ -115,6 +128,28 @@ def _realized_rt_lmp(lmp_key: str, year: int) -> np.ndarray | None:
     if sub.empty:
         return None
     return sub.sort_values("hour")["rt"].to_numpy(dtype=float)
+
+
+def _implied_heat_rate(lmp_key: str, gas_basis: float) -> float | None:
+    """Return the neighbor's implied marginal heat rate from its realized LMP.
+
+    ``HR = mean_y(realized annual-mean RT LMP / (Henry Hub[y] + gas_basis))`` over
+    the years with an extract — the level anchor that ``gas x HR`` reproduces
+    (rule #11: the neighbor's OWN measured price formation, never PJM's flow). The
+    arithmetic annual mean is used (not the convexity fit's geometric mean) so it
+    matches "gas x HR reproduces the realized ANNUAL LMP". ``None`` when no year
+    has a realized LMP.
+    """
+    ratios: list[float] = []
+    for year in YEARS:
+        lmp = _realized_rt_lmp(lmp_key, year)
+        if lmp is None:
+            continue
+        finite = lmp[np.isfinite(lmp)]
+        if finite.size == 0:
+            continue
+        ratios.append(float(finite.mean()) / (BACKCAST_HENRY_HUB[year] + gas_basis))
+    return float(np.mean(ratios)) if ratios else None
 
 
 def _gross_net_load(
@@ -245,9 +280,15 @@ def _report(title: str, name: str, lmp_key: str, ba: str, proxy: str | None) -> 
     return res
 
 
-def derive() -> dict[str, float]:
-    """Print the convexity table and return the derived gross exponents."""
+def derive() -> tuple[dict[str, float], dict[str, float]]:
+    """Print the convexity + heat-rate table; return derived exponents and HRs.
+
+    Returns ``(exponents, heat_rates)`` keyed by neighbor name — the pooled
+    gross-load convexity and the implied marginal heat rate (realized LMP /
+    delivered gas), both rounded to the registry's precision.
+    """
     derived: dict[str, float] = {}
+    derived_hr: dict[str, float] = {}
     print("Neighbor price-vs-load convexity from realized RT LMP "
           f"(log-log, pooled {YEARS}):")
 
@@ -263,11 +304,17 @@ def derive() -> dict[str, float]:
                       neighbor.ba_code, neighbor.proxy_ba)
         if res is not None:
             derived[neighbor.name] = round(res["pooled_gross"][0], 2)
+        hr = _implied_heat_rate(key, neighbor.gas_basis)
+        if hr is not None:
+            derived_hr[neighbor.name] = round(hr, 1)
+            print(f"  implied marginal HR (realized LMP / delivered gas, "
+                  f"basis {neighbor.gas_basis:+.2f}) = {hr:.2f} MMBtu/MWh "
+                  f"[registry {neighbor.marginal_heat_rate}]")
 
     for iso, ba in CROSSCHECK.items():
         _report("CROSS-CHECK", iso, iso, ba, None)
 
-    return derived
+    return derived, derived_hr
 
 
 def main() -> None:
@@ -276,19 +323,23 @@ def main() -> None:
                     help="assert the committed exponents match the data")
     args = ap.parse_args()
 
-    derived = derive()
+    derived, derived_hr = derive()
 
     if args.check:
-        if not COMMITTED_EXPONENT:
-            print("\n(no COMMITTED_EXPONENT yet — nothing to check)")
+        if not COMMITTED_EXPONENT and not COMMITTED_HEAT_RATE:
+            print("\n(no COMMITTED_EXPONENT / COMMITTED_HEAT_RATE — nothing to check)")
             return
-        bad = {n: (derived.get(n), COMMITTED_EXPONENT[n])
-               for n in COMMITTED_EXPONENT
-               if derived.get(n) != COMMITTED_EXPONENT[n]}
-        if bad:
+        bad_exp = {n: (derived.get(n), COMMITTED_EXPONENT[n])
+                   for n in COMMITTED_EXPONENT
+                   if derived.get(n) != COMMITTED_EXPONENT[n]}
+        bad_hr = {n: (derived_hr.get(n), COMMITTED_HEAT_RATE[n])
+                  for n in COMMITTED_HEAT_RATE
+                  if derived_hr.get(n) != COMMITTED_HEAT_RATE[n]}
+        if bad_exp or bad_hr:
             raise SystemExit(
-                f"neighbor exponents drifted from committed constants: {bad}")
-        print("\nOK: derived exponents match COMMITTED_EXPONENT.")
+                f"neighbor constants drifted from the data — "
+                f"exponents: {bad_exp or 'ok'}; heat rates: {bad_hr or 'ok'}")
+        print("\nOK: derived exponents + heat rates match the committed constants.")
 
 
 if __name__ == "__main__":
