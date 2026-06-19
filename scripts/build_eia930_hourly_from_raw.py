@@ -78,8 +78,14 @@ def build(ba: str) -> pd.DataFrame:
 
     ng_cols = sorted(c for c in out.columns if c.startswith("NG: "))
     lead = [
-        "UTC time", "Local date", "Hour", "Local time",
-        "Demand forecast", "Demand", "Net generation", "Total interchange",
+        "UTC time",
+        "Local date",
+        "Hour",
+        "Local time",
+        "Demand forecast",
+        "Demand",
+        "Net generation",
+        "Total interchange",
     ]
     return out[[c for c in lead if c in out.columns] + ng_cols]
 
