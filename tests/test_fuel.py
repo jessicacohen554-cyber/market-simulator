@@ -159,8 +159,8 @@ def test_seasonality_winter_premium():
     fleet = _sample_fleet()
     prices = resolve_fuel_prices(_config(gas_seasonality=True), fleet, 2030)
     gas_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["gas_cc"])[0][0]
-    jan_avg = prices[gas_idx, 0:744].mean()       # hours 0-743 = January
-    may_avg = prices[gas_idx, 2880:3624].mean()   # hours 2880-3623 = May
+    jan_avg = prices[gas_idx, 0:744].mean()  # hours 0-743 = January
+    may_avg = prices[gas_idx, 2880:3624].mean()  # hours 2880-3623 = May
     assert jan_avg > may_avg
 
 
@@ -236,9 +236,7 @@ def test_capacity_gas_lcoe_uses_trajectory():
     """
     config = _config(gas_price_path="mid")
     year = 2035
-    expected_gas = (
-        HENRY_HUB_TRAJECTORIES["mid"][year] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
-    )
+    expected_gas = HENRY_HUB_TRAJECTORIES["mid"][year] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
     assert resolve_annual_gas_price(config, year) == expected_gas
 
     # Dispatch with seasonality off resolves to the same annual price.
@@ -275,8 +273,13 @@ def test_nox_price_passes_through_from_config():
 def _coal_gen(supply: str) -> Generator:
     """Return a coal generator tagged with a fuel-supply type."""
     return Generator(
-        unit_id=f"COAL_{supply or 'none'}", name="Coal", zone="north",
-        fuel_type="coal", pmax_mw=500.0, heat_rate=10.0, coal_supply=supply,
+        unit_id=f"COAL_{supply or 'none'}",
+        name="Coal",
+        zone="north",
+        fuel_type="coal",
+        pmax_mw=500.0,
+        heat_rate=10.0,
+        coal_supply=supply,
     )
 
 
@@ -292,9 +295,7 @@ def test_coal_supply_pricing_uses_year_trajectory():
     # series (January, for a 24-hour horizon), take-or-pay discounted. With
     # no F923 parquet shipped the flat annual trajectory is the fallback.
     monthly = _prb_monthly_actuals().get(2024)
-    expected_prb = (
-        monthly[0] if monthly is not None else COAL_PRICE_PRB_BY_YEAR[2024]
-    )
+    expected_prb = monthly[0] if monthly is not None else COAL_PRICE_PRB_BY_YEAR[2024]
     assert np.allclose(
         fuel_prices[1],
         expected_prb * config.coal_prb_contract_passthrough,
@@ -348,21 +349,40 @@ def test_coal_supply_pricing_year_outside_trajectory():
 
 # --- Oil and biomass fuel pricing & dispatch ------------------------------
 
+
 def _oil_biomass_fleet(hours: int = 24):
     """Return a fleet with gas CC, an oil peaker and a biomass unit."""
     generators = [
         Generator(
-            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
-            pmax_mw=300.0, heat_rate=7.0, vom=2.0, eford=0.0,
-        ),
-        Generator(
-            unit_id="OIL", name="Oil Peaker", zone="north", fuel_type="oil",
-            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            unit_id="GAS_CC",
+            name="CC",
+            zone="north",
+            fuel_type="gas_cc",
+            pmax_mw=300.0,
+            heat_rate=7.0,
+            vom=2.0,
             eford=0.0,
         ),
         Generator(
-            unit_id="BIO", name="Biomass", zone="south", fuel_type="biomass",
-            pmax_mw=80.0, heat_rate=13.5, vom=5.0, emission_rate_co2=0.0,
+            unit_id="OIL",
+            name="Oil Peaker",
+            zone="north",
+            fuel_type="oil",
+            pmax_mw=100.0,
+            heat_rate=13.5,
+            vom=4.5,
+            emission_rate_co2=1.0,
+            eford=0.0,
+        ),
+        Generator(
+            unit_id="BIO",
+            name="Biomass",
+            zone="south",
+            fuel_type="biomass",
+            pmax_mw=80.0,
+            heat_rate=13.5,
+            vom=5.0,
+            emission_rate_co2=0.0,
             eford=0.0,
         ),
     ]
@@ -398,26 +418,43 @@ def test_oil_priced_above_gas_and_biomass():
 
 # --- Dual-fuel switching (doc 03 Pack G) -----------------------------------
 
-_DF_PLANT = 1234           # dual-fuel capable plant (monkeypatched lookup)
-_PLAIN_PLANT = 5678        # gas-only plant
+_DF_PLANT = 1234  # dual-fuel capable plant (monkeypatched lookup)
+_PLAIN_PLANT = 5678  # gas-only plant
 
 
 def _dual_fuel_fleet(hours: int = 24):
     """Return a fleet with a dual-fuel CT, a gas-only CT and an oil unit."""
     generators = [
         Generator(
-            unit_id="CT_DUAL", name="Dual-Fuel CT", zone="north",
-            fuel_type="gas_ct", pmax_mw=100.0, heat_rate=11.0, eford=0.0,
-            plant_code=_DF_PLANT, plant_group="CT_PEAKER",
+            unit_id="CT_DUAL",
+            name="Dual-Fuel CT",
+            zone="north",
+            fuel_type="gas_ct",
+            pmax_mw=100.0,
+            heat_rate=11.0,
+            eford=0.0,
+            plant_code=_DF_PLANT,
+            plant_group="CT_PEAKER",
         ),
         Generator(
-            unit_id="CT_PLAIN", name="Gas-Only CT", zone="north",
-            fuel_type="gas_ct", pmax_mw=100.0, heat_rate=11.0, eford=0.0,
-            plant_code=_PLAIN_PLANT, plant_group="CT_PEAKER",
+            unit_id="CT_PLAIN",
+            name="Gas-Only CT",
+            zone="north",
+            fuel_type="gas_ct",
+            pmax_mw=100.0,
+            heat_rate=11.0,
+            eford=0.0,
+            plant_code=_PLAIN_PLANT,
+            plant_group="CT_PEAKER",
         ),
         Generator(
-            unit_id="OIL", name="Oil Peaker", zone="south", fuel_type="oil",
-            pmax_mw=50.0, heat_rate=13.5, eford=0.0,
+            unit_id="OIL",
+            name="Oil Peaker",
+            zone="south",
+            fuel_type="oil",
+            pmax_mw=50.0,
+            heat_rate=13.5,
+            eford=0.0,
         ),
     ]
     return generators_to_fleet_arrays(generators, _ZONE_NAMES, hours=hours)
@@ -438,25 +475,32 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
     # Delivered gas = 25 + PJM basis, far above the flat oil price (forward
     # year: no F923 petroleum data, so oil parity is OIL_PRICE_PER_MMBTU).
     config = ScenarioConfig(
-        iso="PJM", hours=24, gas_seasonality=False,
-        gas_price_override=25.0, dual_fuel_switching=True,
+        iso="PJM",
+        hours=24,
+        gas_seasonality=False,
+        gas_price_override=25.0,
+        dual_fuel_switching=True,
     )
     prices = resolve_fuel_prices(config, fleet, 2030)
     delivered_gas = resolve_annual_gas_price(config, 2030)
     assert delivered_gas > OIL_PRICE_PER_MMBTU
     np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched
-    np.testing.assert_allclose(prices[1], delivered_gas)        # gas-only
+    np.testing.assert_allclose(prices[1], delivered_gas)  # gas-only
     np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
 
 
 def test_dual_fuel_switch_mask_marks_only_switched_capable_units(monkeypatch):
     """The mask flags the dual-fuel unit's switched hours, nothing else."""
     from market_sim.data.fuel import dual_fuel_switch_mask
+
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet(hours=24)
     config = ScenarioConfig(
-        iso="PJM", hours=24, gas_seasonality=False,
-        gas_price_override=25.0, dual_fuel_switching=True,
+        iso="PJM",
+        hours=24,
+        gas_seasonality=False,
+        gas_price_override=25.0,
+        dual_fuel_switching=True,
     )
     # Pre-min gas price array (what run_year passes before the dual-fuel cap).
     gas_prices = resolve_fuel_prices(config, fleet, 2030, apply_monthly=False)
@@ -482,8 +526,11 @@ def test_dual_fuel_no_switch_below_parity(monkeypatch):
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet()
     config = ScenarioConfig(
-        iso="PJM", hours=24, gas_seasonality=False,
-        gas_price_override=2.0, dual_fuel_switching=True,
+        iso="PJM",
+        hours=24,
+        gas_seasonality=False,
+        gas_price_override=2.0,
+        dual_fuel_switching=True,
     )
     prices = resolve_fuel_prices(config, fleet, 2030)
     delivered_gas = resolve_annual_gas_price(config, 2030)
@@ -497,7 +544,10 @@ def test_dual_fuel_off_by_default_ercot_unchanged(monkeypatch):
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet()
     base = ScenarioConfig(
-        iso="ERCOT", hours=24, gas_seasonality=False, gas_price_override=25.0,
+        iso="ERCOT",
+        hours=24,
+        gas_seasonality=False,
+        gas_price_override=25.0,
     )
     assert base.dual_fuel_switching is False
     prices = resolve_fuel_prices(base, fleet, 2030)
@@ -513,7 +563,9 @@ def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet(hours=4)
     config = ScenarioConfig(
-        iso="PJM", hours=4, dual_fuel_switching=True,
+        iso="PJM",
+        hours=4,
+        dual_fuel_switching=True,
     )
     gas = np.array([3.0, 30.0, 17.9, 50.0])
     fuel_prices = np.vstack([gas, gas, np.full(4, OIL_PRICE_PER_MMBTU)])
@@ -535,14 +587,17 @@ def test_dual_fuel_nyiso_switches_on_parity(monkeypatch):
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet()
     config = ScenarioConfig(
-        iso="NYISO", hours=24, gas_seasonality=False,
-        gas_price_override=25.0, dual_fuel_switching=True,
+        iso="NYISO",
+        hours=24,
+        gas_seasonality=False,
+        gas_price_override=25.0,
+        dual_fuel_switching=True,
     )
     prices = resolve_fuel_prices(config, fleet, 2030)
     delivered_gas = resolve_annual_gas_price(config, 2030)
     assert delivered_gas > OIL_PRICE_PER_MMBTU
     np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched to oil
-    np.testing.assert_allclose(prices[1], delivered_gas)        # gas-only
+    np.testing.assert_allclose(prices[1], delivered_gas)  # gas-only
     np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # pure-oil unit
 
 
@@ -572,12 +627,24 @@ def test_oil_peaker_dispatches_only_at_high_prices():
     hours = 2
     generators = [
         Generator(
-            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
-            pmax_mw=300.0, heat_rate=7.0, vom=2.0, eford=0.0,
+            unit_id="GAS_CC",
+            name="CC",
+            zone="north",
+            fuel_type="gas_cc",
+            pmax_mw=300.0,
+            heat_rate=7.0,
+            vom=2.0,
+            eford=0.0,
         ),
         Generator(
-            unit_id="OIL", name="Oil Peaker", zone="north", fuel_type="oil",
-            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            unit_id="OIL",
+            name="Oil Peaker",
+            zone="north",
+            fuel_type="oil",
+            pmax_mw=100.0,
+            heat_rate=13.5,
+            vom=4.5,
+            emission_rate_co2=1.0,
             eford=0.0,
         ),
     ]
@@ -588,9 +655,14 @@ def test_oil_peaker_dispatches_only_at_high_prices():
 
     demand = np.array([[80.0, 350.0]])  # low-demand then high-demand hour
     result = solve_dispatch(
-        fleet, demand, mc=mc, T=hours,
-        wind_cf=np.zeros((1, hours)), wind_cap=np.zeros(1),
-        solar_cf=np.zeros((1, hours)), solar_cap=np.zeros(1),
+        fleet,
+        demand,
+        mc=mc,
+        T=hours,
+        wind_cf=np.zeros((1, hours)),
+        wind_cap=np.zeros(1),
+        solar_cf=np.zeros((1, hours)),
+        solar_cap=np.zeros(1),
     )
     oil_idx = np.where(fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"])[0][0]
     # Idle in the cheap hour, dispatched in the scarce hour.
@@ -612,8 +684,14 @@ def _cc_fleet(heat_rate: float = 7.0, hours: int = 24):
     """
     generators = [
         Generator(
-            unit_id="GAS_CC", name="CC", zone="north", fuel_type="gas_cc",
-            pmax_mw=400.0, heat_rate=heat_rate, vom=2.0, eford=0.0,
+            unit_id="GAS_CC",
+            name="CC",
+            zone="north",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+            heat_rate=heat_rate,
+            vom=2.0,
+            eford=0.0,
             emission_rate_co2=get_emission_rate("gas_cc", heat_rate),
         ),
     ]
@@ -625,8 +703,11 @@ def test_caiso_backcast_gas_mc_includes_carbon():
     hours = 24
     fleet = _cc_fleet(hours=hours)
     caiso = ScenarioConfig(
-        iso="CAISO", mode="backcast", weather_year=2024,
-        gas_seasonality=False, hours=hours,
+        iso="CAISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
     )
     fuel_prices = resolve_fuel_prices(caiso, fleet, 2024)
     carbon = resolve_carbon_price(caiso, 2024)
@@ -641,8 +722,11 @@ def test_caiso_backcast_gas_mc_includes_carbon():
     # ERCOT and PJM backcasts resolve to a zero carbon price: identical MC.
     for iso in ("ERCOT", "PJM"):
         other = ScenarioConfig(
-            iso=iso, mode="backcast", weather_year=2024,
-            gas_seasonality=False, hours=hours,
+            iso=iso,
+            mode="backcast",
+            weather_year=2024,
+            gas_seasonality=False,
+            hours=hours,
         )
         assert resolve_carbon_price(other, 2024) == 0.0
 
@@ -668,16 +752,15 @@ def test_nyiso_backcast_years_pay_rggi_allowance_price():
     assert resolve_carbon_price(config, 2024) == 20.71
     assert resolve_carbon_price(config, 2025) == 22.09
     # RGGI rose 2023->2025; the price level moves with it.
-    assert (
-        resolve_carbon_price(config, 2023)
-        < resolve_carbon_price(config, 2025)
-    )
+    assert resolve_carbon_price(config, 2023) < resolve_carbon_price(config, 2025)
 
 
 def test_nyiso_rggi_off_with_state_carbon_pricing_flag():
     """The state_carbon_pricing toggle disables RGGI for NYISO."""
     config = ScenarioConfig(
-        iso="NYISO", mode="backcast", weather_year=2024,
+        iso="NYISO",
+        mode="backcast",
+        weather_year=2024,
         state_carbon_pricing=False,
     )
     assert resolve_carbon_price(config, 2024) == 0.0
@@ -688,8 +771,11 @@ def test_nyiso_backcast_gas_mc_includes_rggi():
     hours = 24
     fleet = _cc_fleet(hours=hours)
     nyiso = ScenarioConfig(
-        iso="NYISO", mode="backcast", weather_year=2024,
-        gas_seasonality=False, hours=hours,
+        iso="NYISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
     )
     fuel_prices = resolve_fuel_prices(nyiso, fleet, 2024)
     carbon = resolve_carbon_price(nyiso, 2024)
@@ -704,8 +790,11 @@ def test_nyiso_backcast_gas_mc_includes_rggi():
     # NYISO addition leaves every other ISO's resolved carbon price unchanged.
     for iso in ("ERCOT", "PJM"):
         other = ScenarioConfig(
-            iso=iso, mode="backcast", weather_year=2024,
-            gas_seasonality=False, hours=hours,
+            iso=iso,
+            mode="backcast",
+            weather_year=2024,
+            gas_seasonality=False,
+            hours=hours,
         )
         assert resolve_carbon_price(other, 2024) == 0.0
     caiso = ScenarioConfig(iso="CAISO", mode="backcast", weather_year=2024)
@@ -727,18 +816,19 @@ def test_neiso_backcast_gas_mc_includes_rggi():
     expected_by_year = {2023: 14.87, 2024: 22.83, 2025: 24.35}
     for year, expected in expected_by_year.items():
         neiso = ScenarioConfig(
-            iso="NEISO", mode="backcast", weather_year=year,
-            gas_seasonality=False, hours=hours,
+            iso="NEISO",
+            mode="backcast",
+            weather_year=year,
+            gas_seasonality=False,
+            hours=hours,
         )
         carbon = resolve_carbon_price(neiso, year)
         assert carbon == expected
         zero_fuel = np.zeros((fleet.n_gen, hours))  # isolate the carbon term
-        uplift = assemble_mc(
-            fleet, zero_fuel, carbon_price=carbon
-        ) - assemble_mc(fleet, zero_fuel, carbon_price=0.0)
-        np.testing.assert_allclose(
-            uplift, get_emission_rate("gas_cc", 7.0) * carbon
+        uplift = assemble_mc(fleet, zero_fuel, carbon_price=carbon) - assemble_mc(
+            fleet, zero_fuel, carbon_price=0.0
         )
+        np.testing.assert_allclose(uplift, get_emission_rate("gas_cc", 7.0) * carbon)
         # First-order but below the CAISO CARB wedge: $5-11/MWh on a CC.
         assert 5.0 < uplift[0, 0] < 11.0
     # 2023 specifically lands in the doc-08 $5-7/MWh band.
@@ -753,13 +843,19 @@ def test_neiso_backcast_gas_mc_includes_rggi():
     # ERCOT/PJM stay at zero; the CAISO CARB series is untouched.
     for iso in ("ERCOT", "PJM"):
         other = ScenarioConfig(
-            iso=iso, mode="backcast", weather_year=2024,
-            gas_seasonality=False, hours=hours,
+            iso=iso,
+            mode="backcast",
+            weather_year=2024,
+            gas_seasonality=False,
+            hours=hours,
         )
         assert resolve_carbon_price(other, 2024) == 0.0
     caiso = ScenarioConfig(
-        iso="CAISO", mode="backcast", weather_year=2024,
-        gas_seasonality=False, hours=hours,
+        iso="CAISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
     )
     assert resolve_carbon_price(caiso, 2024) == 35.23
 
@@ -805,8 +901,8 @@ def test_winter_gas_basis_loads_when_present(tmp_path):
     config = ScenarioConfig(iso="NYISO", mode="backcast", weather_year=2023)
     basis = load_winter_gas_basis(config, 2023, path=csv)
     assert basis is not None
-    assert basis[0] == 6.50   # January winter spike
-    assert basis[1] == 4.20   # February
+    assert basis[0] == 6.50  # January winter spike
+    assert basis[1] == 4.20  # February
     assert basis[6] == -0.30  # July shoulder discount
     assert np.isnan(basis[3])  # April unreported -> NaN (caller fills from 923)
     # A year with no rows for this ISO falls back to None.
@@ -826,22 +922,29 @@ def test_hub_basis_overlay_replaces_covered_months(tmp_path):
     """
     basis_csv = tmp_path / "basis.csv"
     basis_csv.write_text(
-        "iso,year,month,hub,basis_usd_mmbtu,source\n"
-        "NEISO,2024,1,AGT,10.0,test\n"
+        "iso,year,month,hub,basis_usd_mmbtu,source\nNEISO,2024,1,AGT,10.0,test\n"
     )
     hours = 31 * 24 + 28 * 24  # January + February 2024
     fleet = _sample_fleet(hours=hours)
     config = ScenarioConfig(
-        iso="NEISO", mode="backcast", weather_year=2024,
-        gas_seasonality=False, hours=hours, gas_hub_basis_overlay=True,
+        iso="NEISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
+        gas_hub_basis_overlay=True,
     )
     fuel_prices = np.full((fleet.n_gen, hours), 4.0)
     before = fuel_prices.copy()
     apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
 
-    gas_rows = np.isin(fleet.fuel_type_idx, (
-        FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"],
-    ))
+    gas_rows = np.isin(
+        fleet.fuel_type_idx,
+        (
+            FUEL_TYPE_MAP["gas_cc"],
+            FUEL_TYPE_MAP["gas_ct"],
+        ),
+    )
     jan = slice(0, 31 * 24)
     feb = slice(31 * 24, hours)
     np.testing.assert_allclose(fuel_prices[gas_rows, jan], 3.18 + 10.0)
@@ -852,8 +955,11 @@ def test_hub_basis_overlay_replaces_covered_months(tmp_path):
     # Flag off: byte-identical no-op.
     off = before.copy()
     apply_hub_basis_overlay(
-        off, fleet, config.with_overrides(gas_hub_basis_overlay=False),
-        2024, basis_path=basis_csv,
+        off,
+        fleet,
+        config.with_overrides(gas_hub_basis_overlay=False),
+        2024,
+        basis_path=basis_csv,
     )
     np.testing.assert_array_equal(off, before)
 
@@ -867,16 +973,21 @@ def test_neiso_hub_basis_overlay_winter_blowout_real_data():
     blows out well above plant-average levels — the ISO-NE price driver.
     """
     config = ScenarioConfig(
-        iso="NEISO", mode="backcast", weather_year=2025,
-        gas_price_override=3.53, hours=_HOURS, gas_hub_basis_overlay=True,
+        iso="NEISO",
+        mode="backcast",
+        weather_year=2025,
+        gas_price_override=3.53,
+        hours=_HOURS,
+        gas_hub_basis_overlay=True,
     )
     monthly = iso_hub_monthly_gas_prices(config, 2025)
     if monthly is None:
         import pytest
+
         pytest.skip("gas_basis_by_iso_month.csv has no NEISO rows")
     # Jan/Feb/Dec 2025 reconstruct the measured ISO-NE index blowout.
-    assert monthly[0] > 15.0   # Jan-25: 4.13 HH + 12.79 basis = 16.92
-    assert monthly[1] > 13.0   # Feb-25: 14.62
+    assert monthly[0] > 15.0  # Jan-25: 4.13 HH + 12.79 basis = 16.92
+    assert monthly[1] > 13.0  # Feb-25: 14.62
     assert monthly[11] > 13.0  # Dec-25: 14.90
     assert np.isnan(monthly[7])  # Aug-25 missing upstream: falls back
     assert np.nanmin(monthly) < 3.0  # shoulder months stay cheap
@@ -918,8 +1029,12 @@ def test_neiso_hub_overlay_drives_dual_fuel_switch(monkeypatch):
     hours = 31 * 24 + 28 * 24 + 31 * 24  # Jan-Mar, enough to span the spike
     fleet = _dual_fuel_fleet(hours=hours)
     config = ScenarioConfig(
-        iso="NEISO", mode="backcast", weather_year=2030, hours=hours,
-        gas_seasonality=False, gas_hub_basis_overlay=True,
+        iso="NEISO",
+        mode="backcast",
+        weather_year=2030,
+        hours=hours,
+        gas_seasonality=False,
+        gas_hub_basis_overlay=True,
         dual_fuel_switching=True,
     )
     # 2030: no F923 petroleum data, so oil parity is the flat default.
@@ -954,12 +1069,17 @@ def test_neiso_monthly_agt_basis_stays_below_distillate_parity():
     """
     for year in (2023, 2024, 2025):
         config = ScenarioConfig(
-            iso="NEISO", mode="backcast", weather_year=year, hours=_HOURS,
-            gas_price_override=3.0, gas_hub_basis_overlay=True,
+            iso="NEISO",
+            mode="backcast",
+            weather_year=year,
+            hours=_HOURS,
+            gas_price_override=3.0,
+            gas_hub_basis_overlay=True,
         )
         monthly = iso_hub_monthly_gas_prices(config, year)
         if monthly is None:
             import pytest
+
             pytest.skip("gas_basis_by_iso_month.csv has no NEISO rows")
         # Winter months blow out well above the shoulder, but the monthly
         # average never reaches distillate parity.
@@ -982,8 +1102,7 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     """
     basis_csv = tmp_path / "basis.csv"
     basis_csv.write_text(
-        "iso,year,month,hub,basis_usd_mmbtu,source\n"
-        "NEISO,2024,1,AGT,10.0,test\n"
+        "iso,year,month,hub,basis_usd_mmbtu,source\nNEISO,2024,1,AGT,10.0,test\n"
     )
     hours = 31 * 24  # January 2024 only
     # Synthetic daily demand: flat with one cold-day peak on day 15.
@@ -995,16 +1114,24 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     )
     fleet = _sample_fleet(hours=hours)
     config = ScenarioConfig(
-        iso="NEISO", mode="backcast", weather_year=2024,
-        gas_seasonality=False, hours=hours,
-        gas_hub_basis_overlay=True, gas_hub_basis_daily=True,
+        iso="NEISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
+        gas_hub_basis_overlay=True,
+        gas_hub_basis_daily=True,
     )
     fuel_prices = np.full((fleet.n_gen, hours), 4.0)
     apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
 
-    gas_rows = np.isin(fleet.fuel_type_idx, (
-        FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"],
-    ))
+    gas_rows = np.isin(
+        fleet.fuel_type_idx,
+        (
+            FUEL_TYPE_MAP["gas_cc"],
+            FUEL_TYPE_MAP["gas_ct"],
+        ),
+    )
     gas_jan = fuel_prices[gas_rows]  # (n_gas, 744)
     # Mean over the month is exactly the flat monthly hub (mean-preserving).
     np.testing.assert_allclose(gas_jan.mean(axis=1), 3.18 + 10.0, rtol=1e-6)
@@ -1034,8 +1161,11 @@ def test_hub_basis_overlay_noop_for_other_isos():
     fleet = _sample_fleet(hours=24)
     for iso in ("ERCOT", "PJM", "CAISO"):
         base = ScenarioConfig(
-            iso=iso, mode="backcast", weather_year=2024,
-            gas_seasonality=False, hours=24,
+            iso=iso,
+            mode="backcast",
+            weather_year=2024,
+            gas_seasonality=False,
+            hours=24,
         )
         default = resolve_fuel_prices(base, fleet, 2024)
         forced = resolve_fuel_prices(
@@ -1057,6 +1187,7 @@ def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
     )
     if measured is None:
         import pytest
+
         pytest.skip("EIA-923 monthly fuel cost parquet not available")
     assert measured.shape == (12,)
     assert np.isfinite(measured).all()  # every month has gas receipts
@@ -1066,8 +1197,11 @@ def test_caiso_gas_monthly_actuals_uses_measured_iso_month_series():
     hours = 8760
     fleet = _cc_fleet(hours=hours)
     base = ScenarioConfig(
-        iso="CAISO", mode="backcast", weather_year=2023,
-        gas_price_override=2.54, hours=hours,
+        iso="CAISO",
+        mode="backcast",
+        weather_year=2023,
+        gas_price_override=2.54,
+        hours=hours,
     )
     shaped = resolve_fuel_prices(base, fleet, 2023)
     actuals = resolve_fuel_prices(
@@ -1172,12 +1306,13 @@ def test_nyiso_monthly_ttc_expands_to_seasonal_envelope():
     assert out.ndim == 2 and out.shape == (hours, len(cfg.links))
     profile = NYISO_INTERFACE_TTC_BY_MONTH[2023][("Upstate_West", "Capital_Hudson")]
     ce = next(
-        i for i, link in enumerate(cfg.links)
+        i
+        for i, link in enumerate(cfg.links)
         if (link.from_zone, link.to_zone) == ("Upstate_West", "Capital_Hudson")
     )
-    assert out[0, ce] == profile[0]      # Jan hour 0 -> Jan limit
+    assert out[0, ce] == profile[0]  # Jan hour 0 -> Jan limit
     assert out[hours - 1, ce] == profile[11]  # Dec last hour -> Dec limit
-    assert out[31 * 24, ce] == profile[1]     # first Feb hour -> Feb limit
+    assert out[31 * 24, ce] == profile[1]  # first Feb hour -> Feb limit
     # The Dec post-upgrade limit is well above the shoulder-season floor.
     assert profile[11] > profile[3]
 
@@ -1192,12 +1327,13 @@ def test_nyiso_monthly_ttc_leap_year_hours():
     ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
     out = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2024, 8784)
     ce = next(
-        i for i, link in enumerate(cfg.links)
+        i
+        for i, link in enumerate(cfg.links)
         if (link.from_zone, link.to_zone) == ("Upstate_West", "Capital_Hudson")
     )
     profile = NYISO_INTERFACE_TTC_BY_MONTH[2024][("Upstate_West", "Capital_Hudson")]
     assert out.shape == (8784, len(cfg.links))
-    assert out[8784 - 1, ce] == profile[11]   # last hour is still December
+    assert out[8784 - 1, ce] == profile[11]  # last hour is still December
 
 
 def test_monthly_ttc_noop_for_other_isos_and_untabulated_years():

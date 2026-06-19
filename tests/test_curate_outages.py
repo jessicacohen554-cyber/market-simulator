@@ -200,12 +200,12 @@ class TestCurateOutages(unittest.TestCase):
         first = self._curate()
         second = self._curate()
         pd.testing.assert_frame_equal(
-            first.sort_values(["plant_id", "unit_id", "interval_start_utc"]).reset_index(
-                drop=True
-            ),
-            second.sort_values(["plant_id", "unit_id", "interval_start_utc"]).reset_index(
-                drop=True
-            ),
+            first.sort_values(
+                ["plant_id", "unit_id", "interval_start_utc"]
+            ).reset_index(drop=True),
+            second.sort_values(
+                ["plant_id", "unit_id", "interval_start_utc"]
+            ).reset_index(drop=True),
         )
 
 

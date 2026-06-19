@@ -33,6 +33,7 @@ Duplicate downloads (``... (1).zip``) are skipped in favour of the canonical
 file for that date. Run:
 ``python scripts/process_nyiso_as.py [--years 2023 2024 2025] [--market rt da]``
 """
+
 from __future__ import annotations
 
 import argparse
@@ -63,10 +64,22 @@ def _ensure_raw() -> None:
     with zipfile.ZipFile(OUTER_ZIP) as zf:
         zf.extractall(RAW_DIR)
 
-NYISO_ZONES = frozenset({
-    "WEST", "GENESE", "CENTRL", "NORTH", "MHK VL", "CAPITL", "HUD VL",
-    "MILLWD", "DUNWOD", "N.Y.C.", "LONGIL",
-})
+
+NYISO_ZONES = frozenset(
+    {
+        "WEST",
+        "GENESE",
+        "CENTRL",
+        "NORTH",
+        "MHK VL",
+        "CAPITL",
+        "HUD VL",
+        "MILLWD",
+        "DUNWOD",
+        "N.Y.C.",
+        "LONGIL",
+    }
+)
 
 # Source column (case-insensitive substring) -> tidy output name.
 _PRICE_COLS = {
@@ -155,17 +168,20 @@ def process(market: str, year: int) -> Path | None:
     n_hours = hourly["Time Stamp"].nunique()
     # NYCA-max 30-min reserve price (the scarcity signal) across zones/hour.
     op30_by_hour = hourly.groupby("Time Stamp")["op_30"].max()
-    print(f"  {market} {year}: {len(zips)} zips -> {len(hourly):,} rows "
-          f"({hourly['Name'].nunique()} zones x {n_hours:,} h); "
-          f"30-min reserve $>0 in {int((op30_by_hour > 0).sum()):,} h, "
-          f"$>50 in {int((op30_by_hour > 50).sum()):,} h, "
-          f"max ${op30_by_hour.max():,.0f} -> {out_path.name}")
+    print(
+        f"  {market} {year}: {len(zips)} zips -> {len(hourly):,} rows "
+        f"({hourly['Name'].nunique()} zones x {n_hours:,} h); "
+        f"30-min reserve $>0 in {int((op30_by_hour > 0).sum()):,} h, "
+        f"$>50 in {int((op30_by_hour > 50).sum()):,} h, "
+        f"max ${op30_by_hour.max():,.0f} -> {out_path.name}"
+    )
     return out_path
 
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-_MONTH_START_HOUR = list(__import__("numpy").cumsum(
-    [0] + [d * 24 for d in _DAYS_IN_MONTH]))
+_MONTH_START_HOUR = list(
+    __import__("numpy").cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])
+)
 
 # NYISO zones whose stacked reserve price tracks each model series: WEST
 # carries only the NYCA-wide requirement (the system-wide component every
@@ -218,14 +234,20 @@ def build_reference(years: list[int]) -> Path | None:
         df, ts = df[keep], ts[keep]
         hoy = (
             np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
-            + (ts.dt.day.to_numpy() - 1) * 24 + ts.dt.hour.to_numpy()
+            + (ts.dt.day.to_numpy() - 1) * 24
+            + ts.dt.hour.to_numpy()
         )
         df = df.assign(hour=hoy)
         out = {"year": np.int16(year), "hour": np.arange(8760, dtype=np.int32)}
         # One groupby per settlement zone reused across its column aliases.
         for zone in set(columns.values()):
-            s = (df[df["Name"] == zone].groupby("hour")["stack"].max()
-                 .reindex(range(8760)).to_numpy(dtype=np.float32))
+            s = (
+                df[df["Name"] == zone]
+                .groupby("hour")["stack"]
+                .max()
+                .reindex(range(8760))
+                .to_numpy(dtype=np.float32)
+            )
             for col, z in columns.items():
                 if z == zone:
                     out[col] = s
@@ -235,23 +257,28 @@ def build_reference(years: list[int]) -> Path | None:
     ref = pd.concat(frames, ignore_index=True)
     out_path = CAL_DIR / "actual_as_reserve_NYISO.parquet"
     ref.to_parquet(out_path, index=False)
-    print(f"  reference: {out_path.name} — per-(year,hour) stacked RT reserve "
-          f"for {len(_MODEL_ZONE_REF)} model zones + NYCA/NYC aliases:")
+    print(
+        f"  reference: {out_path.name} — per-(year,hour) stacked RT reserve "
+        f"for {len(_MODEL_ZONE_REF)} model zones + NYCA/NYC aliases:"
+    )
     for col in ("nyca_reserve_adder", *_MODEL_ZONE_REF):
         s = ref[col]
-        print(f"    {col:28s} >$0 in {int((s > 0).sum()):,} h, "
-              f"mean ${np.nanmean(s):.2f}, max ${np.nanmax(s):,.0f}")
+        print(
+            f"    {col:28s} >$0 in {int((s > 0).sum()):,} h, "
+            f"mean ${np.nanmean(s):.2f}, max ${np.nanmax(s):,.0f}"
+        )
     return out_path
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--years", nargs="+", type=int,
-                    default=[2023, 2024, 2025])
-    ap.add_argument("--market", nargs="+", default=["rt", "da"],
-                    choices=["rt", "da"])
-    ap.add_argument("--no-reference", action="store_true",
-                    help="skip the calibration-reference parquet")
+    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    ap.add_argument("--market", nargs="+", default=["rt", "da"], choices=["rt", "da"])
+    ap.add_argument(
+        "--no-reference",
+        action="store_true",
+        help="skip the calibration-reference parquet",
+    )
     args = ap.parse_args()
     _ensure_raw()
     print(f"processing NYISO ancillary-service prices from {RAW_DIR}")

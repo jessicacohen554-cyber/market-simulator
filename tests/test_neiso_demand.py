@@ -105,9 +105,7 @@ def test_neiso_zonal_demand_reconciles_to_system_series():
     net-import wedge that otherwise shifts the system total).
     """
     neiso = get_iso_config("NEISO")
-    demand = load_demand(
-        "NEISO", _TEST_YEAR, neiso, include_interchange=False
-    )
+    demand = load_demand("NEISO", _TEST_YEAR, neiso, include_interchange=False)
     system = _load_neiso_hourly_demand(_TEST_YEAR)
     if system is None:
         pytest.skip("ISNE hourly parquet not available for year")
@@ -124,9 +122,7 @@ def test_neiso_demand_uses_static_share_split_without_zonal_file():
     demand = load_demand("NEISO", _TEST_YEAR, neiso)
     # Collect non-zero zones (HQ_import is excluded).
     nonzero = [
-        (i, z.load_share)
-        for i, z in enumerate(neiso.zones)
-        if z.load_share > 0.0
+        (i, z.load_share) for i, z in enumerate(neiso.zones) if z.load_share > 0.0
     ]
     # All non-zero zones should be constant multiples of the first.
     ref_row = demand[nonzero[0][0]] / nonzero[0][1]
@@ -163,18 +159,20 @@ def _build_synthetic_neiso_csv(path: Path, year: int) -> None:
             if month == 2 and day == 29:
                 continue
             for he in range(1, 25):
-                rows.append({
-                    "Date": f"{month:02d}/{day:02d}/{year}",
-                    "Hour Ending": he,
-                    "CT": 3000.0,
-                    "ME": 500.0,
-                    "NH": 600.0,
-                    "RI": 400.0,
-                    "VT": 200.0,
-                    "NEMA": 1500.0,
-                    "SEMASS": 800.0,
-                    "WCMASS": 1000.0,
-                })
+                rows.append(
+                    {
+                        "Date": f"{month:02d}/{day:02d}/{year}",
+                        "Hour Ending": he,
+                        "CT": 3000.0,
+                        "ME": 500.0,
+                        "NH": 600.0,
+                        "RI": 400.0,
+                        "VT": 200.0,
+                        "NEMA": 1500.0,
+                        "SEMASS": 800.0,
+                        "WCMASS": 1000.0,
+                    }
+                )
     pd.DataFrame(rows).to_csv(path, index=False)
 
 
@@ -238,7 +236,9 @@ def test_neiso_zonal_load_shares_expected_values():
     for zone, exp_share in expected.items():
         idx = zone_names.index(zone)
         np.testing.assert_allclose(
-            shares[idx], exp_share, atol=1e-9,
+            shares[idx],
+            exp_share,
+            atol=1e-9,
             err_msg=f"{zone} share mismatch",
         )
 
@@ -261,8 +261,6 @@ def test_neiso_zonal_demand_reconciles_with_synthetic_file():
             neiso_dir / f"NEISO_load_hourly_{_TEST_YEAR}.csv", _TEST_YEAR
         )
         with mock.patch.object(eia_loader, "_ZONAL_LOAD_DIR", Path(tmp)):
-            demand = load_demand(
-                "NEISO", _TEST_YEAR, neiso, include_interchange=False
-            )
+            demand = load_demand("NEISO", _TEST_YEAR, neiso, include_interchange=False)
 
     np.testing.assert_allclose(demand.sum(axis=0), system, rtol=1e-9)

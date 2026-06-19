@@ -47,9 +47,7 @@ def _raw_fleet_present() -> bool:
 
 
 def _raw_as_present() -> bool:
-    return (
-        RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet"
-    ).is_file()
+    return (RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet").is_file()
 
 
 # ---------------------------------------------------------------------------
@@ -87,9 +85,7 @@ def test_fleet_nameplate_and_fuel_parity(monkeypatch):
         u for u in common if abs(raw[u].pmax_mw - clean[u].pmax_mw) > 1e-6
     ]
     fuel_mismatch = [u for u in common if raw[u].fuel_type != clean[u].fuel_type]
-    group_mismatch = [
-        u for u in common if raw[u].plant_group != clean[u].plant_group
-    ]
+    group_mismatch = [u for u in common if raw[u].plant_group != clean[u].plant_group]
     assert not nameplate_mismatch, f"nameplate differs for {nameplate_mismatch[:5]}"
     assert not fuel_mismatch, f"fuel_type differs for {fuel_mismatch[:5]}"
     assert not group_mismatch, f"plant_group differs for {group_mismatch[:5]}"
@@ -105,7 +101,9 @@ def _model_clock_fold(local_ts: pd.Series, values: np.ndarray, year: int) -> np.
     — used here to place a single raw product column on the clock for a per-
     product comparison.
     """
-    work = pd.DataFrame({"ts": pd.to_datetime(local_ts), "mw": np.asarray(values, float)})
+    work = pd.DataFrame(
+        {"ts": pd.to_datetime(local_ts), "mw": np.asarray(values, float)}
+    )
     keep = (work["ts"].dt.year == year) & ~(
         (work["ts"].dt.month == 2) & (work["ts"].dt.day == 29)
     )
@@ -176,12 +174,10 @@ def test_as_single_product_spin_parity():
     raw = pd.read_parquet(
         RAW_DATA_DIR / "ercot-AS" / f"ercot_{_AS_YEAR}_as_up_mw.parquet"
     )
-    raw_spin = (
-        raw["rrspfr_mw"] + raw["rrsffr_mw"] + raw["rrsufr_mw"]
-    ).to_numpy(dtype=float)
+    raw_spin = (raw["rrspfr_mw"] + raw["rrsffr_mw"] + raw["rrsufr_mw"]).to_numpy(
+        dtype=float
+    )
 
     hours = ~np.isnan(clean_spin)
     assert hours.sum() >= 24
-    np.testing.assert_allclose(
-        clean_spin[hours], raw_spin[hours], rtol=1e-6, atol=1e-3
-    )
+    np.testing.assert_allclose(clean_spin[hours], raw_spin[hours], rtol=1e-6, atol=1e-3)

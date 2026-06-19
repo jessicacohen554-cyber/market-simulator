@@ -28,6 +28,7 @@ Usage:
     python scripts/neiso_zonal_sufficiency.py [--years 2023 2024 2025]
                                               [--kind da|rt] [--md]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -49,8 +50,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--kind", choices=("da", "rt"), default="da")
-    ap.add_argument("--md", action="store_true",
-                    help="emit a markdown table (for the adequacy doc)")
+    ap.add_argument(
+        "--md", action="store_true", help="emit a markdown table (for the adequacy doc)"
+    )
     args = ap.parse_args()
     stats, conc = analyze(neiso_zone_hourly, args.years, PAIRS, args.kind)
     if stats:

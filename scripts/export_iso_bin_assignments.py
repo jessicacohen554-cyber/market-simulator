@@ -123,35 +123,35 @@ def build_bin_assignments(iso: str) -> pd.DataFrame:
             pct_mc = min(pct_mc, grid)
             pct_peak = max(0.0, min(pct_peak, grid - pct_mc))
             pct_econ = max(0.0, grid - pct_mc - pct_peak)
-            mr_src = _floor_tag.get(
-                floor_status.get(code, ""), "chp_sector_default"
-            )
+            mr_src = _floor_tag.get(floor_status.get(code, ""), "chp_sector_default")
         elif group == "COAL":
             mr_src = "campd" if key in measured else "class_default"
         else:
             mr_src = "none"
         mixed = tags_by_code.get(code, set())
-        rows.append({
-            "Plant_Code": code,
-            "Plant_Name": str(b["Plant_Name"]),
-            "Plant_Group": group,
-            "Zone": str(b["ERCOT_Zone"]),
-            "Nameplate_MW": round(float(b["capacity_mw"]), 1),
-            "Plant_Avg_HR_MMBtu_MWh": round(float(b["hr_weighted"]), 3),
-            "Pct_Must_Run": round(pct_mr, 1),
-            "Pct_Committed": round(pct_mc, 1),
-            "Pct_Economic": round(pct_econ, 1),
-            "Pct_Peaking": round(pct_peak, 1),
-            "Must_Run_Source": mr_src,
-            "Committed_Source": committed_src,
-            "Peaking_Source": peaking_src,
-            "Mixed_Facility": (
-                "+".join(sorted(mixed)) if len(mixed) > 1 else ""
-            ),
-        })
-    out = pd.DataFrame(rows).sort_values(
-        ["Plant_Group", "Plant_Code"]
-    ).reset_index(drop=True)
+        rows.append(
+            {
+                "Plant_Code": code,
+                "Plant_Name": str(b["Plant_Name"]),
+                "Plant_Group": group,
+                "Zone": str(b["ERCOT_Zone"]),
+                "Nameplate_MW": round(float(b["capacity_mw"]), 1),
+                "Plant_Avg_HR_MMBtu_MWh": round(float(b["hr_weighted"]), 3),
+                "Pct_Must_Run": round(pct_mr, 1),
+                "Pct_Committed": round(pct_mc, 1),
+                "Pct_Economic": round(pct_econ, 1),
+                "Pct_Peaking": round(pct_peak, 1),
+                "Must_Run_Source": mr_src,
+                "Committed_Source": committed_src,
+                "Peaking_Source": peaking_src,
+                "Mixed_Facility": ("+".join(sorted(mixed)) if len(mixed) > 1 else ""),
+            }
+        )
+    out = (
+        pd.DataFrame(rows)
+        .sort_values(["Plant_Group", "Plant_Code"])
+        .reset_index(drop=True)
+    )
     # chp_overrides is keyed per ISO and cached; touch it so a stale artifact
     # fails loudly here rather than at dispatch time.
     chp_overrides(iso)
@@ -164,19 +164,24 @@ def main() -> None:
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     iso = args.iso.upper()
-    out_path = Path(args.out) if args.out else (
-        REPO / "inputs" / "processed" / f"bin_assignments_{iso}.csv"
+    out_path = (
+        Path(args.out)
+        if args.out
+        else (REPO / "inputs" / "processed" / f"bin_assignments_{iso}.csv")
     )
 
     out = build_bin_assignments(iso)
     bad = out[
-        (out[["Pct_Must_Run", "Pct_Committed", "Pct_Economic", "Pct_Peaking"]]
-         .sum(axis=1) - 100.0).abs() > 0.25
+        (
+            out[["Pct_Must_Run", "Pct_Committed", "Pct_Economic", "Pct_Peaking"]].sum(
+                axis=1
+            )
+            - 100.0
+        ).abs()
+        > 0.25
     ]
     if len(bad):
-        raise SystemExit(
-            f"tranche shares do not sum to 100 for:\n{bad.to_string()}"
-        )
+        raise SystemExit(f"tranche shares do not sum to 100 for:\n{bad.to_string()}")
     out.to_csv(out_path, index=False)
 
     pd.set_option("display.width", 200)
@@ -185,23 +190,33 @@ def main() -> None:
     for col in ("Committed_Source", "Peaking_Source", "Must_Run_Source"):
         parts = []
         for src, sub in out.groupby(col):
-            parts.append(
-                f"{src}: {len(sub)} / {sub['Nameplate_MW'].sum():,.0f} MW"
-            )
+            parts.append(f"{src}: {len(sub)} / {sub['Nameplate_MW'].sum():,.0f} MW")
         print(f"  {col:<17} {';  '.join(parts)}")
-    print("\nby group (capacity-weighted, % of group MW with measured "
-          "committed):")
+    print("\nby group (capacity-weighted, % of group MW with measured committed):")
     for g, sub in out.groupby("Plant_Group"):
         m = sub[sub["Committed_Source"] == "campd"]["Nameplate_MW"].sum()
         t = sub["Nameplate_MW"].sum()
-        print(f"  {g:<12} n={len(sub):>3}  {t:>9,.0f} MW  "
-              f"measured committed {100.0 * m / t if t else 0.0:5.1f}%")
+        print(
+            f"  {g:<12} n={len(sub):>3}  {t:>9,.0f} MW  "
+            f"measured committed {100.0 * m / t if t else 0.0:5.1f}%"
+        )
     mixed = out[out["Mixed_Facility"] != ""]
     if len(mixed):
-        print("\nmixed facilities (split per Plant_Group; no re-key needed — "
-              "same fuel class data):")
-        print(mixed[["Plant_Code", "Plant_Name", "Plant_Group",
-                     "Nameplate_MW", "Mixed_Facility"]].to_string(index=False))
+        print(
+            "\nmixed facilities (split per Plant_Group; no re-key needed — "
+            "same fuel class data):"
+        )
+        print(
+            mixed[
+                [
+                    "Plant_Code",
+                    "Plant_Name",
+                    "Plant_Group",
+                    "Nameplate_MW",
+                    "Mixed_Facility",
+                ]
+            ].to_string(index=False)
+        )
 
 
 if __name__ == "__main__":

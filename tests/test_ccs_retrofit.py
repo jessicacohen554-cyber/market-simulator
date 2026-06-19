@@ -82,8 +82,13 @@ class TestRetrofitCarbonThreshold(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         fleet = [_gas_cc("G0", heat_rate=6.9, emission_rate=0.37, pmax=500.0)]
         return apply_ccs_retrofit(
-            fleet, prices=None, year=2030, config=config, iso="ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=carbon_price,
+            fleet,
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=carbon_price,
         )
 
     def test_zero_carbon_no_retrofit(self):
@@ -114,8 +119,13 @@ class TestRetrofitHeatRatePenalty(unittest.TestCase):
         h_class = _gas_cc("H", heat_rate=6.3, emission_rate=0.36)
         older = _gas_cc("O", heat_rate=7.5, emission_rate=0.43)
         fleet, log = apply_ccs_retrofit(
-            [h_class, older], prices=None, year=2030, config=config,
-            iso="ERCOT", gas_price_per_mmbtu=4.0, carbon_price=120.0,
+            [h_class, older],
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=120.0,
         )
         self.assertEqual(len(log), 2)
         # Each unit keeps its individual penalized heat rate (×1.12).
@@ -135,8 +145,13 @@ class TestRetrofitEfficientFirst(unittest.TestCase):
         g_mid = _gas_cc("MID", heat_rate=6.9, emission_rate=0.40)
         g_old = _gas_cc("OLD", heat_rate=7.5, emission_rate=0.40)
         _, log = apply_ccs_retrofit(
-            [g_old, g_mid, g_eff], prices=None, year=2030, config=config,
-            iso="ERCOT", gas_price_per_mmbtu=4.0, carbon_price=120.0,
+            [g_old, g_mid, g_eff],
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=120.0,
         )
         retrofitted = {entry["unit_id"] for entry in log}
         self.assertEqual(retrofitted, {"EFF", "MID"})
@@ -150,14 +165,17 @@ class TestRetrofitMinRemainingLife(unittest.TestCase):
 
     def test_old_unit_skipped_young_unit_eligible(self):
         # available_year lowered so the 2025 screen year passes the gate.
-        config = ScenarioConfig(
-            iso="ERCOT", ccs_retrofit_available_year=2020
-        )
+        config = ScenarioConfig(iso="ERCOT", ccs_retrofit_available_year=2020)
         near_eol = _gas_cc("OLD", heat_rate=6.9, online_year=1990)
         young = _gas_cc("YOUNG", heat_rate=6.9, online_year=2005)
         _, log = apply_ccs_retrofit(
-            [near_eol, young], prices=None, year=2025, config=config,
-            iso="ERCOT", gas_price_per_mmbtu=4.0, carbon_price=150.0,
+            [near_eol, young],
+            prices=None,
+            year=2025,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=150.0,
         )
         retrofitted = {entry["unit_id"] for entry in log}
         self.assertEqual(retrofitted, {"YOUNG"})
@@ -172,15 +190,18 @@ class TestRetrofitFlowsIntoLP(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         gen = _gas_cc("G0", heat_rate=6.9, emission_rate=0.37, vom=2.0)
         fleet, log = apply_ccs_retrofit(
-            [gen], prices=None, year=2030, config=config, iso="ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=100.0,
+            [gen],
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=100.0,
         )
         self.assertEqual(len(log), 1)
 
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=1)
-        self.assertEqual(
-            arrays.fuel_type_idx[0], FUEL_TYPE_MAP["gas_cc_ccs"]
-        )
+        self.assertEqual(arrays.fuel_type_idx[0], FUEL_TYPE_MAP["gas_cc_ccs"])
         self.assertAlmostEqual(arrays.heat_rate[0], 6.9 * 1.12, places=6)
         self.assertAlmostEqual(arrays.emission_rate[0], 0.37 * 0.10, places=6)
         self.assertAlmostEqual(arrays.vom[0], 2.0 + 8.0, places=6)
@@ -200,8 +221,13 @@ class TestRetrofitEacStacks(unittest.TestCase):
         config = ScenarioConfig(iso="ERCOT")
         fleet = [_gas_cc("G0", heat_rate=6.9, emission_rate=0.37)]
         return apply_ccs_retrofit(
-            fleet, prices=None, year=2030, config=config, iso="ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=40.0,
+            fleet,
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=40.0,
             eac_price_ccs=eac_price,
         )
 
@@ -250,13 +276,10 @@ class TestConfigurableBinCount(unittest.TestCase):
         bin_width = (hr_max - hr_min) / 10
         for i, rep in enumerate(result):
             members = [
-                g for g in fleet
-                if min(int((g.heat_rate - hr_min) / bin_width), 9) == i
+                g for g in fleet if min(int((g.heat_rate - hr_min) / bin_width), 9) == i
             ]
             total = sum(g.pmax_mw for g in members)
-            expected = sum(
-                g.heat_rate * g.pmax_mw for g in members
-            ) / total
+            expected = sum(g.heat_rate * g.pmax_mw for g in members) / total
             self.assertAlmostEqual(rep.heat_rate, expected, places=6)
 
     def test_none_uses_predefined_bins(self):
@@ -282,8 +305,14 @@ class TestZeroCarbonNoRetrofit(unittest.TestCase):
             _gas_cc("G2", heat_rate=7.5),
         ]
         result, log = apply_ccs_retrofit(
-            fleet, prices=None, year=2030, config=config, iso="ERCOT",
-            gas_price_per_mmbtu=4.0, carbon_price=0.0, eac_price_ccs=0.0,
+            fleet,
+            prices=None,
+            year=2030,
+            config=config,
+            iso="ERCOT",
+            gas_price_per_mmbtu=4.0,
+            carbon_price=0.0,
+            eac_price_ccs=0.0,
         )
         self.assertEqual(log, [])
         self.assertTrue(all(g.fuel_type == "gas_cc" for g in result))
@@ -297,16 +326,27 @@ class TestRetrofitOrderingInEvolveFleet(unittest.TestCase):
         # RETIRED would otherwise be a strong retrofit candidate, but its
         # scheduled retirement removes it before the retrofit screen runs.
         retired = _gas_cc(
-            "RETIRED", heat_rate=6.5, zone="North", online_year=2020,
+            "RETIRED",
+            heat_rate=6.5,
+            zone="North",
+            online_year=2020,
         )
         retired.retirement_year = 2029
         survivor = _gas_cc(
-            "SURVIVOR", heat_rate=6.9, zone="North", online_year=2020,
+            "SURVIVOR",
+            heat_rate=6.9,
+            zone="North",
+            online_year=2020,
         )
 
         fleet, _tracker, _additions, retrofit_log = evolve_fleet(
-            [retired, survivor], None, 2030, config, {},
-            gas_price_per_mmbtu=4.0, carbon_price=80.0,
+            [retired, survivor],
+            None,
+            2030,
+            config,
+            {},
+            gas_price_per_mmbtu=4.0,
+            carbon_price=80.0,
         )
 
         unit_ids = {g.unit_id for g in fleet}
@@ -333,7 +373,8 @@ class TestCcsLearningCurve(unittest.TestCase):
         )
         # LCOE decline tracks the capex decline; assert at least 15%.
         self.assertLess(
-            lcoe_2050, lcoe_2026 * 0.85,
+            lcoe_2050,
+            lcoe_2026 * 0.85,
             "CCS LCOE should decline at least 15%",
         )
 
@@ -361,15 +402,18 @@ class TestRetrofitCapexLearning(unittest.TestCase):
         adjusted_early = _adjust_retrofit_capex(base, cumulative_gw=4.0)
         adjusted_late = _adjust_retrofit_capex(base, cumulative_gw=32.0)
         self.assertLess(
-            adjusted_early, base,
+            adjusted_early,
+            base,
             "Retrofit capex should decline after 1 doubling",
         )
         self.assertLess(
-            adjusted_late, adjusted_early,
+            adjusted_late,
+            adjusted_early,
             "More deployment = lower capex",
         )
         self.assertGreater(
-            adjusted_late, base * 0.5,
+            adjusted_late,
+            base * 0.5,
             "Decline shouldn't exceed 50% at 4 doublings with lr=0.10",
         )
 
@@ -394,8 +438,13 @@ class TestRetrofitsAddToCumulative(unittest.TestCase):
             for i in range(4)
         ]
         fleet, _tracker, _additions, retrofit_log = evolve_fleet(
-            fleet, None, 2030, config, {},
-            carbon_price=100.0, gas_price_per_mmbtu=4.0,
+            fleet,
+            None,
+            2030,
+            config,
+            {},
+            carbon_price=100.0,
+            gas_price_per_mmbtu=4.0,
             cumulative=cumulative,
         )
         self.assertEqual(len(retrofit_log), 4)
@@ -403,12 +452,8 @@ class TestRetrofitsAddToCumulative(unittest.TestCase):
         self.assertAlmostEqual(after - before, 2.0, places=6)
 
         # The updated cumulative lowers next year's new-build CCS LCOE.
-        lcoe_before = compute_lcoe(
-            "gas_cc_ccs", 2031, config, cumulative_gw=before
-        )
-        lcoe_after = compute_lcoe(
-            "gas_cc_ccs", 2031, config, cumulative_gw=after
-        )
+        lcoe_before = compute_lcoe("gas_cc_ccs", 2031, config, cumulative_gw=before)
+        lcoe_after = compute_lcoe("gas_cc_ccs", 2031, config, cumulative_gw=after)
         self.assertLess(lcoe_after, lcoe_before)
 
 

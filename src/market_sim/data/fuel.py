@@ -178,7 +178,7 @@ def _seasonal_factors(hours: int) -> np.ndarray:
     hour = 0
     for month in range(1, 13):
         hours_in_month = _DAYS_IN_MONTH[month - 1] * 24
-        full_year[hour:hour + hours_in_month] = GAS_MONTHLY_SEASONALITY[month]
+        full_year[hour : hour + hours_in_month] = GAS_MONTHLY_SEASONALITY[month]
         hour += hours_in_month
     if hours <= HOURS_PER_YEAR:
         return full_year[:hours]
@@ -202,9 +202,7 @@ _COAL_SIGMOID_FIELD_STEM: dict[str, str] = {
 _COAL_SIGMOID_PARAMS = ("floor", "ceil", "gas_mid", "gas_slope")
 
 
-def coal_sigmoid_params(
-    config: ScenarioConfig, supply: str
-) -> dict[str, float] | None:
+def coal_sigmoid_params(config: ScenarioConfig, supply: str) -> dict[str, float] | None:
     """Resolve the sigmoid params for one ``(config.iso, supply)`` pair.
 
     Starts from the region-dependent ``COAL_SIGMOID_DEFAULTS`` entry for the
@@ -216,9 +214,7 @@ def coal_sigmoid_params(
     another region's economics.
     """
     stem = _COAL_SIGMOID_FIELD_STEM[supply]
-    params = dict(
-        COAL_SIGMOID_DEFAULTS.get((config.iso.upper(), supply), {})
-    )
+    params = dict(COAL_SIGMOID_DEFAULTS.get((config.iso.upper(), supply), {}))
     for p in _COAL_SIGMOID_PARAMS:
         v = getattr(config, f"coal_{stem}_{p}", None)
         if v is not None:
@@ -256,8 +252,10 @@ def coal_passthrough_series(
         return flat
     return _sigmoid_passthrough(
         _gas_series(config, year, hours),
-        params["floor"], params["ceil"],
-        params["gas_mid"], params["gas_slope"],
+        params["floor"],
+        params["ceil"],
+        params["gas_mid"],
+        params["gas_slope"],
     )
 
 
@@ -273,8 +271,7 @@ def coal_passthrough_by_supply(
     """
     return {
         supply: coal_passthrough_series(config, year, hours, supply)
-        for supply in (
-            "prb", "subbituminous", "bituminous", "lignite", "waste")
+        for supply in ("prb", "subbituminous", "bituminous", "lignite", "waste")
     }
 
 
@@ -296,8 +293,10 @@ def prb_follower_passthrough_series(
         return coal_passthrough_series(config, year, hours, "prb")
     return _sigmoid_passthrough(
         _gas_series(config, year, hours),
-        params["floor"], params["ceil"],
-        params["gas_mid"], params["gas_slope"],
+        params["floor"],
+        params["ceil"],
+        params["gas_mid"],
+        params["gas_slope"],
     )
 
 
@@ -323,9 +322,7 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
             hourly_measured = _expand_monthly_to_hourly(
                 np.asarray(measured, dtype=float), hours
             )
-            series = np.where(
-                np.isnan(hourly_measured), series, hourly_measured
-            )
+            series = np.where(np.isnan(hourly_measured), series, hourly_measured)
     series = _hub_overlay_series(series, config, year, hours)
     if getattr(config, "gas_daily_shape", False):
         # Inject the within-month daily commodity swing onto the correctly-
@@ -338,9 +335,7 @@ def _sigmoid_passthrough(
     gas_series: np.ndarray, floor: float, ceil: float, mid: float, slope: float
 ) -> np.ndarray:
     """Logistic passthrough rising from ``floor`` to ``ceil`` in gas price."""
-    return floor + (ceil - floor) / (
-        1.0 + np.exp(-slope * (gas_series - mid))
-    )
+    return floor + (ceil - floor) / (1.0 + np.exp(-slope * (gas_series - mid)))
 
 
 _F923_FUEL_GROUP_BY_FUEL: dict[str, str] = {
@@ -362,7 +357,7 @@ def _month_index(hours: int) -> np.ndarray:
     hour = 0
     for month_idx, days in enumerate(_DAYS_IN_MONTH):
         hours_in_month = days * 24
-        full[hour:hour + hours_in_month] = month_idx
+        full[hour : hour + hours_in_month] = month_idx
         hour += hours_in_month
     if hours <= HOURS_PER_YEAR:
         return full[:hours]
@@ -390,15 +385,15 @@ def _load_monthly_cache(path: Path | None) -> pd.DataFrame | None:
     return frame
 
 
-def _expand_monthly_to_hourly(
-    monthly: np.ndarray, hours: int
-) -> np.ndarray:
+def _expand_monthly_to_hourly(monthly: np.ndarray, hours: int) -> np.ndarray:
     """Broadcast a length-12 monthly price array onto the hourly horizon."""
     return monthly[_month_index(hours)]
 
 
 def _iso_monthly_fuel_prices(
-    config: ScenarioConfig, year: int, fuel_group: str,
+    config: ScenarioConfig,
+    year: int,
+    fuel_group: str,
     monthly_costs_path: Path | None = None,
 ) -> np.ndarray | None:
     """Measured ISO-month delivered price ($/MMBtu) for one F923 fuel group.
@@ -437,7 +432,8 @@ def _iso_monthly_fuel_prices(
 
 
 def iso_monthly_gas_prices(
-    config: ScenarioConfig, year: int,
+    config: ScenarioConfig,
+    year: int,
     monthly_costs_path: Path | None = None,
 ) -> np.ndarray | None:
     """Measured ISO-month delivered gas price ($/MMBtu), or ``None``.
@@ -456,7 +452,8 @@ def iso_monthly_gas_prices(
 
 
 def iso_monthly_oil_prices(
-    config: ScenarioConfig, year: int,
+    config: ScenarioConfig,
+    year: int,
     monthly_costs_path: Path | None = None,
 ) -> np.ndarray | None:
     """Measured ISO-month delivered oil price ($/MMBtu), or ``None``.
@@ -588,7 +585,9 @@ def _load_winter_basis_frame(path: Path | None) -> pd.DataFrame | None:
 
 
 def load_winter_gas_basis(
-    config: ScenarioConfig, year: int, path: Path | None = None,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
 ) -> np.ndarray | None:
     """Measured monthly delivered gas basis ($/MMBtu over Henry Hub), or ``None``.
 
@@ -669,9 +668,9 @@ def _henry_hub_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     if resolved.exists():
         frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
         for r in frame.itertuples():
-            out.setdefault(r.date.year, {}).setdefault(
-                r.date.month, []
-            ).append(float(r.price_usd_mmbtu))
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, []).append(
+                float(r.price_usd_mmbtu)
+            )
     _HH_DAILY_CACHE[resolved] = out
     return out
 
@@ -712,13 +711,14 @@ def gas_daily_shape_factors(
                     arr / mean,
                 )
                 shaped = np.repeat(day_factor, 24)[: max(0, hours - hour)]
-                factors[hour:hour + len(shaped)] = shaped
+                factors[hour : hour + len(shaped)] = shaped
         hour += month_hours
     return factors
 
 
 def iso_hub_monthly_gas_prices(
-    config: ScenarioConfig, year: int,
+    config: ScenarioConfig,
+    year: int,
     basis_path: Path | None = None,
     henry_hub_path: Path | None = None,
 ) -> np.ndarray | None:
@@ -784,7 +784,8 @@ def _neiso_daily_demand(year: int, hours: int) -> np.ndarray | None:
 
 
 def iso_hub_daily_gas_prices(
-    config: ScenarioConfig, year: int,
+    config: ScenarioConfig,
+    year: int,
     basis_path: Path | None = None,
     henry_hub_path: Path | None = None,
 ) -> np.ndarray | None:
@@ -855,7 +856,7 @@ def iso_hub_daily_gas_prices(
             # Daily AGT basis leg: convex demand redistribution of the measured
             # monthly mean (mean over the month's days stays exactly b_m), only
             # in positive-basis winter months; shoulder months stay flat.
-            seg = demand_daily[day0:day0 + n_days]
+            seg = demand_daily[day0 : day0 + n_days]
             if b_m > 0 and seg.size == n_days:
                 w = np.power(seg, p)
                 wbar = float(w.mean())
@@ -864,7 +865,7 @@ def iso_hub_daily_gas_prices(
                 day_basis = np.full(n_days, b_m)
             day_hub = day_hh + day_basis  # monthly mean == hh_m + b_m
             shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
-            out[hour:hour + len(shaped)] = shaped
+            out[hour : hour + len(shaped)] = shaped
         hour += month_hours
         day0 += n_days
     if np.isnan(out).all():
@@ -939,8 +940,12 @@ def apply_hub_basis_overlay(
     logger.info(
         "hub-basis overlay (%s %d, %s): %d gas generators repriced at the "
         "measured hub spot in %d/12 months (winter max %.2f $/MMBtu)",
-        config.iso, year, "daily" if daily else "monthly", gas_rows.size,
-        covered_months, float(np.nanmax(hourly)),
+        config.iso,
+        year,
+        "daily" if daily else "monthly",
+        gas_rows.size,
+        covered_months,
+        float(np.nanmax(hourly)),
     )
 
 
@@ -1041,7 +1046,10 @@ def apply_nyiso_zonal_gas_basis(
     logger.info(
         "NYISO zonal gas basis (%d): %d gas units shifted by zone hub offset "
         "(min %.2f, max %.2f $/MMBtu vs %s)",
-        year, gas_rows.size, float(gen_offset.min()), float(gen_offset.max()),
+        year,
+        gas_rows.size,
+        float(gen_offset.min()),
+        float(gen_offset.max()),
         NYISO_GAS_HUB_REFERENCE_ZONE,
     )
 
@@ -1066,7 +1074,9 @@ def _hub_overlay_series(
 
 
 def resolve_fuel_prices(
-    config: ScenarioConfig, fleet: FleetArrays, year: int,
+    config: ScenarioConfig,
+    fleet: FleetArrays,
+    year: int,
     apply_monthly: bool = True,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` delivered fuel price array for the fleet.
@@ -1143,9 +1153,9 @@ def resolve_fuel_prices(
     if getattr(config, "gas_daily_shape", False):
         gas_price_hourly = gas_price_hourly * gas_daily_shape_factors(year, T)
 
-    coal_price = COAL_PRICE_BASE[config.iso] * (
-        1.0 + COAL_PRICE_ESCALATION
-    ) ** (year - START_YEAR)
+    coal_price = COAL_PRICE_BASE[config.iso] * (1.0 + COAL_PRICE_ESCALATION) ** (
+        year - START_YEAR
+    )
 
     fuel_type_idx = fleet.fuel_type_idx
     fuel_prices = np.zeros((fleet.n_gen, T), dtype=float)
@@ -1186,7 +1196,8 @@ def resolve_fuel_prices(
 
 
 def dual_fuel_oil_price_series(
-    config: ScenarioConfig, year: int,
+    config: ScenarioConfig,
+    year: int,
     monthly_costs_path: Path | None = None,
 ) -> np.ndarray:
     """Return the ``(T,)`` delivered oil price ($/MMBtu) for dual-fuel parity.
@@ -1269,7 +1280,10 @@ def apply_dual_fuel_pricing(
         logger.info(
             "dual-fuel switching (%s %d): %d gas tranches (%.0f MW) capped "
             "at the delivered oil price",
-            config.iso, year, n_capped, mw_capped,
+            config.iso,
+            year,
+            n_capped,
+            mw_capped,
         )
 
 
@@ -1437,7 +1451,9 @@ def apply_plant_monthly_fuel_prices(
         logger.info(
             "F923 fuel costs for %d: %d generators priced from their own "
             "plant, %d gap-filled from nearby (state/zone) plants",
-            year, n_overwrites, n_nearby,
+            year,
+            n_overwrites,
+            n_nearby,
         )
 
 
@@ -1460,9 +1476,7 @@ class _NearbyFuelPrices:
         config: ScenarioConfig,
     ) -> None:
         self._year = year
-        self._min_state = int(
-            getattr(config, "nearby_fuel_price_min_state_plants", 2)
-        )
+        self._min_state = int(getattr(config, "nearby_fuel_price_min_state_plants", 2))
         iso_plants = {int(p) for p in fleet.plant_code if int(p) > 0}
         self._plant_to_zone = {
             int(p): int(z)
@@ -1480,9 +1494,7 @@ class _NearbyFuelPrices:
         if cached is not None:
             return cached
         sub = self._iso_costs[self._iso_costs["fuel_group"] == fuel_group]
-        state_price, state_count = state_month_price_grid(
-            sub, self._year, fuel_group
-        )
+        state_price, state_count = state_month_price_grid(sub, self._year, fuel_group)
         zone_price: dict[int, np.ndarray] = {}
         if not sub.empty:
             z = sub.assign(
@@ -1498,24 +1510,23 @@ class _NearbyFuelPrices:
                         wsum[m] += float(row["weighted"])
                         qsum[m] += float(row["quantity"])
                 with np.errstate(invalid="ignore", divide="ignore"):
-                    zone_price[int(zone)] = np.where(
-                        qsum > 0.0, wsum / qsum, np.nan
-                    )
+                    zone_price[int(zone)] = np.where(qsum > 0.0, wsum / qsum, np.nan)
         result = (state_price, state_count, zone_price)
         self._cache[fuel_group] = result
         return result
 
-    def month_prices(
-        self, fuel_group: str, state: str, zone_idx: int
-    ) -> np.ndarray:
+    def month_prices(self, fuel_group: str, state: str, zone_idx: int) -> np.ndarray:
         """Return a length-12 fill price array (NaN where no nearby data)."""
         state_price, state_count, zone_price = self._grids(fuel_group)
         out = np.full(12, np.nan, dtype=float)
         sp = state_price.get(state)
         if sp is not None:
             sc = state_count.get(state)
-            ok = (sc >= self._min_state) & ~np.isnan(sp) if sc is not None \
+            ok = (
+                (sc >= self._min_state) & ~np.isnan(sp)
+                if sc is not None
                 else ~np.isnan(sp)
+            )
             out[ok] = sp[ok]
         zp = zone_price.get(int(zone_idx))
         if zp is not None:
@@ -1527,6 +1538,7 @@ class _NearbyFuelPrices:
 def _fuel_name(fuel_idx: int) -> str:
     """Return the fuel-type name for a fuel-type index, or ``""``."""
     from market_sim.data.fleet import FUEL_TYPE_NAMES
+
     idx = int(fuel_idx)
     if 0 <= idx < len(FUEL_TYPE_NAMES):
         return FUEL_TYPE_NAMES[idx]
@@ -1547,7 +1559,7 @@ _PRB_PRICE_CALIBRATION: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
 _PRB_COMMODITY_SHARE: float = 0.42
 _PRB_RAIL_DIESEL_SHARE: float = 0.12
 _PRB_RAIL_NONDIESEL_SHARE: float = 0.46
-_PRB_COMMODITY_DECLINE: float = 0.015      # annual, from 2031 as demand falls
+_PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
 _PRB_COMMODITY_FLAT_THROUGH: int = 2030
 
 
@@ -1561,28 +1573,22 @@ def _build_coal_price_trajectories() -> tuple[dict[int, float], dict[int, float]
 
     avg_prb = sum(_PRB_PRICE_CALIBRATION.values()) / 3.0
     commodity_base = _PRB_COMMODITY_SHARE * avg_prb
-    rail_diesel = _PRB_RAIL_DIESEL_SHARE * avg_prb        # held flat forward
+    rail_diesel = _PRB_RAIL_DIESEL_SHARE * avg_prb  # held flat forward
     rail_nondiesel_base = _PRB_RAIL_NONDIESEL_SHARE * avg_prb
     for y in range(2026, END_YEAR + 1):
-        lignite[y] = (
-            _LIGNITE_PRICE_2023_25 * (1.0 + INFLATION_RATE) ** (y - 2025)
-        )
+        lignite[y] = _LIGNITE_PRICE_2023_25 * (1.0 + INFLATION_RATE) ** (y - 2025)
         if y <= _PRB_COMMODITY_FLAT_THROUGH:
             commodity = commodity_base
         else:
             commodity = commodity_base * (1.0 - _PRB_COMMODITY_DECLINE) ** (
                 y - _PRB_COMMODITY_FLAT_THROUGH
             )
-        rail_nondiesel = (
-            rail_nondiesel_base * (1.0 + INFLATION_RATE) ** (y - 2026)
-        )
+        rail_nondiesel = rail_nondiesel_base * (1.0 + INFLATION_RATE) ** (y - 2026)
         prb[y] = commodity + rail_diesel + rail_nondiesel
     return lignite, prb
 
 
-COAL_PRICE_LIGNITE_BY_YEAR, COAL_PRICE_PRB_BY_YEAR = (
-    _build_coal_price_trajectories()
-)
+COAL_PRICE_LIGNITE_BY_YEAR, COAL_PRICE_PRB_BY_YEAR = _build_coal_price_trajectories()
 
 
 @lru_cache(maxsize=1)
@@ -1605,6 +1611,7 @@ def _prb_monthly_actuals() -> dict[int, np.ndarray]:
     if costs is None:
         return {}
     from market_sim.data.fleet import COAL_PLANT_SUPPLY
+
     prb_plants = {p for p, s in COAL_PLANT_SUPPLY.items() if s == "prb"}
     sub = costs[
         costs["plant_id"].isin(prb_plants)
@@ -1616,9 +1623,9 @@ def _prb_monthly_actuals() -> dict[int, np.ndarray]:
     for year, rows in sub.groupby("year"):
         monthly = np.full(12, np.nan)
         for month, mrows in rows.groupby("month"):
-            monthly[int(month) - 1] = float(np.average(
-                mrows["price_per_mmbtu"], weights=mrows["quantity"]
-            ))
+            monthly[int(month) - 1] = float(
+                np.average(mrows["price_per_mmbtu"], weights=mrows["quantity"])
+            )
         if np.isnan(monthly).all():
             continue
         monthly[np.isnan(monthly)] = np.nanmean(monthly)

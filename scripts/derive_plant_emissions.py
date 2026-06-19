@@ -51,8 +51,13 @@ PARASITIC_PATH = PROCESSED_DIR / "parasitic_load_factors.parquet"
 
 # Per-MWh-net rate columns mirrored into the registry.
 _REGISTRY_RATE_COLS: tuple[str, ...] = (
-    "co2_kg_per_mwh_net", "nox_kg_per_mwh_net", "so2_kg_per_mwh_net",
-    "startup_co2_kg", "startup_nox_kg", "startup_so2_kg", "starts_per_year",
+    "co2_kg_per_mwh_net",
+    "nox_kg_per_mwh_net",
+    "so2_kg_per_mwh_net",
+    "startup_co2_kg",
+    "startup_nox_kg",
+    "startup_so2_kg",
+    "starts_per_year",
 )
 
 
@@ -108,9 +113,11 @@ def main() -> None:
     # applied to their separate coal and gas dispatch bins.
     shares = campd.coal_share_by_plant(load_monthly_generation(), args.years)
     rates["coal_share"] = rates["plant_id"].map(shares).round(3)
-    rates["mixed"] = rates["coal_share"].between(
-        _MIXED_COAL_SHARE_LO, _MIXED_COAL_SHARE_HI, inclusive="neither"
-    ).fillna(False)
+    rates["mixed"] = (
+        rates["coal_share"]
+        .between(_MIXED_COAL_SHARE_LO, _MIXED_COAL_SHARE_HI, inclusive="neither")
+        .fillna(False)
+    )
     n_mixed = rates[rates["year"] == 0]["mixed"].sum()
     if n_mixed:
         logger.info(
@@ -130,8 +137,10 @@ def main() -> None:
         "pooled rates over %d plants: CO2 mean=%.1f median=%.1f kg/MWh-net; "
         "NOx mean=%.3f; SO2 mean=%.3f kg/MWh-net",
         len(pooled),
-        pooled["co2_kg_per_mwh_net"].mean(), pooled["co2_kg_per_mwh_net"].median(),
-        pooled["nox_kg_per_mwh_net"].mean(), pooled["so2_kg_per_mwh_net"].mean(),
+        pooled["co2_kg_per_mwh_net"].mean(),
+        pooled["co2_kg_per_mwh_net"].median(),
+        pooled["nox_kg_per_mwh_net"].mean(),
+        pooled["so2_kg_per_mwh_net"].mean(),
     )
 
     if not args.no_registry and REGISTRY_PATH.exists():

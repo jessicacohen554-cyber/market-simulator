@@ -9,27 +9,27 @@ from market_sim.config.paths import CALIBRATION_DIR
 # Source: EIA Table 8 (Average Tested Heat Rates by Prime Mover and Fuel Type).
 HEAT_RATE_BINS: dict[str, dict[str, float]] = {
     "gas_cc": {
-        "h_class": 6.3,   # EIA Table 8 — newest H-class combined-cycle units
-        "f_class": 6.7,   # EIA Table 8 — F-class combined-cycle units
-        "older": 7.5,     # EIA Table 8 — legacy combined-cycle units
+        "h_class": 6.3,  # EIA Table 8 — newest H-class combined-cycle units
+        "f_class": 6.7,  # EIA Table 8 — F-class combined-cycle units
+        "older": 7.5,  # EIA Table 8 — legacy combined-cycle units
     },
     "gas_ct": {
-        "aero": 9.0,      # EIA Table 8 — aeroderivative combustion turbines
-        "frame": 10.5,    # EIA Table 8 — heavy-frame combustion turbines
-        "older": 11.5,    # EIA Table 8 — legacy combustion turbines
+        "aero": 9.0,  # EIA Table 8 — aeroderivative combustion turbines
+        "frame": 10.5,  # EIA Table 8 — heavy-frame combustion turbines
+        "older": 11.5,  # EIA Table 8 — legacy combustion turbines
     },
     "coal": {
-        "supercritical": 8.8,   # EIA Table 8 — supercritical steam units
-        "subcritical": 10.0,    # EIA Table 8 — subcritical steam units
-        "older": 10.8,          # EIA Table 8 — legacy subcritical steam units
+        "supercritical": 8.8,  # EIA Table 8 — supercritical steam units
+        "subcritical": 10.0,  # EIA Table 8 — subcritical steam units
+        "older": 10.8,  # EIA Table 8 — legacy subcritical steam units
     },
     # Oil and biomass classify into a single "default" bin (the EIA-source
     # classifier carries no vintage sub-bins for them, see fleet._efficiency_bin).
     "oil": {
-        "default": 13.5,        # EIA Table 8 — petroleum-fired GT/steam (oil peaker)
+        "default": 13.5,  # EIA Table 8 — petroleum-fired GT/steam (oil peaker)
     },
     "biomass": {
-        "default": 13.5,        # EIA Table 8 — wood/biomass steam (low-efficiency)
+        "default": 13.5,  # EIA Table 8 — wood/biomass steam (low-efficiency)
     },
 }
 
@@ -51,15 +51,18 @@ CCS_RETROFIT_HR_PENALTY_REFERENCE: dict[str, object] = {
 # hours justifies a physical startup.
 
 CC_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
-    (6.5, {"startup_per_mw": 63.8, "min_run_hours": 10, "min_down_hours": 8}),  # h-class
-    (7.5, {"startup_per_mw": 48.6, "min_run_hours": 8,  "min_down_hours": 6}),  # f-class
-    (99., {"startup_per_mw": 24.1, "min_run_hours": 5,  "min_down_hours": 4}),  # older
+    (
+        6.5,
+        {"startup_per_mw": 63.8, "min_run_hours": 10, "min_down_hours": 8},
+    ),  # h-class
+    (7.5, {"startup_per_mw": 48.6, "min_run_hours": 8, "min_down_hours": 6}),  # f-class
+    (99.0, {"startup_per_mw": 24.1, "min_run_hours": 5, "min_down_hours": 4}),  # older
 ]
 
 CT_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
-    (10., {"startup_per_mw": 12.3, "min_run_hours": 1, "min_down_hours": 1}),  # aero
-    (11., {"startup_per_mw": 24.5, "min_run_hours": 1, "min_down_hours": 1}),  # frame
-    (99., {"startup_per_mw": 19.0, "min_run_hours": 1, "min_down_hours": 1}),  # older
+    (10.0, {"startup_per_mw": 12.3, "min_run_hours": 1, "min_down_hours": 1}),  # aero
+    (11.0, {"startup_per_mw": 24.5, "min_run_hours": 1, "min_down_hours": 1}),  # frame
+    (99.0, {"startup_per_mw": 19.0, "min_run_hours": 1, "min_down_hours": 1}),  # older
 ]
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
@@ -69,14 +72,14 @@ CT_COMMITMENT_PARAMS: list[tuple[float, dict[str, float]]] = [
 # above marginal cost to recover startup_cost / expected_run_length.
 # Source: NREL/SR-5500-55433 (Kumar et al. 2012).
 CC_STARTUP_PARAMS: list[tuple[float, float]] = [
-    (6.5, 63.8),   # h-class
-    (7.5, 48.6),   # f-class
-    (99., 24.1),   # older
+    (6.5, 63.8),  # h-class
+    (7.5, 48.6),  # f-class
+    (99.0, 24.1),  # older
 ]
 CT_STARTUP_PARAMS: list[tuple[float, float]] = [
-    (10., 12.3),   # aero
-    (11., 24.5),   # frame
-    (99., 19.0),   # older
+    (10.0, 12.3),  # aero
+    (11.0, 24.5),  # frame
+    (99.0, 19.0),  # older
 ]
 
 # Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_passthrough).
@@ -99,26 +102,26 @@ CO2_RATES: dict[str, dict[str, float]] = {
     "gas_cc": {
         "h_class": 0.36,  # EPA eGRID 2022 — H-class combined-cycle units
         "f_class": 0.38,  # EPA eGRID 2022 — F-class combined-cycle units
-        "older": 0.43,    # EPA eGRID 2022 — legacy combined-cycle units
+        "older": 0.43,  # EPA eGRID 2022 — legacy combined-cycle units
     },
     "gas_ct": {
-        "aero": 0.51,     # EPA eGRID 2022 — aeroderivative combustion turbines
-        "frame": 0.60,    # EPA eGRID 2022 — heavy-frame combustion turbines
-        "older": 0.65,    # EPA eGRID 2022 — legacy combustion turbines
+        "aero": 0.51,  # EPA eGRID 2022 — aeroderivative combustion turbines
+        "frame": 0.60,  # EPA eGRID 2022 — heavy-frame combustion turbines
+        "older": 0.65,  # EPA eGRID 2022 — legacy combustion turbines
     },
     "coal": {
         "supercritical": 0.88,  # EPA eGRID 2022 — supercritical steam units
-        "subcritical": 1.00,    # EPA eGRID 2022 — subcritical steam units
-        "older": 1.08,          # EPA eGRID 2022 — legacy subcritical steam units
+        "subcritical": 1.00,  # EPA eGRID 2022 — subcritical steam units
+        "older": 1.08,  # EPA eGRID 2022 — legacy subcritical steam units
     },
     # Oil ≈ heat_rate(13.5) × distillate/residual factor(0.074) ≈ 1.0 tCO2/MWh.
     "oil": {
-        "default": 1.00,        # EPA eGRID 2022 — petroleum-fired units
+        "default": 1.00,  # EPA eGRID 2022 — petroleum-fired units
     },
     # Biomass biogenic CO2 is treated as carbon-neutral (not counted under
     # EPA/RGGI accounting), so its modeled CO2 rate is zero.
     "biomass": {
-        "default": 0.0,         # EPA/RGGI — biogenic CO2 carbon-neutral
+        "default": 0.0,  # EPA/RGGI — biogenic CO2 carbon-neutral
     },
 }
 
@@ -128,8 +131,8 @@ NOX_RATES: dict[str, float] = {
     "gas_cc": 0.00008,  # was 0.0001. EPA CEMS 2023 — SCR-equipped fleet average.
     "gas_ct": 0.00025,  # was 0.0003. EPA CEMS 2023 — mix of SCR/non-SCR CTs.
     "gas_st": 0.00025,  # EPA CEMS 2023 — legacy gas steam boilers, mostly non-SCR.
-    "coal": 0.0012,     # was 0.0015. EPA CEMS 2023 — post-CSAPR compliance.
-    "oil": 0.0004,      # EPA CEMS 2023 — oil-fired peakers/steam, mostly non-SCR.
+    "coal": 0.0012,  # was 0.0015. EPA CEMS 2023 — post-CSAPR compliance.
+    "oil": 0.0004,  # EPA CEMS 2023 — oil-fired peakers/steam, mostly non-SCR.
     "biomass": 0.0010,  # EPA CEMS 2023 — biomass combustion, high NOx per MWh.
 }
 
@@ -145,9 +148,9 @@ FUEL_CO2_FACTOR_PER_MMBTU: dict[str, float] = {
     "gas_cc": 0.057,  # natural gas — implied by EPA eGRID 2022 gas CC rates
     "gas_ct": 0.057,  # natural gas — same fuel as gas CC
     "gas_st": 0.057,  # natural gas — legacy gas steam boilers
-    "coal": 0.100,    # coal — implied by EPA eGRID 2022 coal steam rates
-    "oil": 0.074,     # distillate/residual fuel oil — EPA emission factors
-    "biomass": 0.0,   # biogenic CO2 carbon-neutral under EPA/RGGI accounting
+    "coal": 0.100,  # coal — implied by EPA eGRID 2022 coal steam rates
+    "oil": 0.074,  # distillate/residual fuel oil — EPA emission factors
+    "biomass": 0.0,  # biogenic CO2 carbon-neutral under EPA/RGGI accounting
 }
 
 # All monetary values in this model are in constant 2026 real USD.
@@ -164,16 +167,16 @@ INFLATION_RATE = 0.022
 # Variable O&M ($/MWh) by fuel type.
 # Source: NREL ATB 2024.
 VOM: dict[str, float] = {
-    "gas_cc": 2.0,   # NREL ATB 2024 — combined-cycle gas
-    "gas_ct": 3.5,   # NREL ATB 2024 — combustion turbine gas
-    "gas_st": 4.0,   # NREL ATB 2024 — legacy gas steam (higher O&M than CC)
-    "coal": 4.5,     # NREL ATB 2024 — coal steam
+    "gas_cc": 2.0,  # NREL ATB 2024 — combined-cycle gas
+    "gas_ct": 3.5,  # NREL ATB 2024 — combustion turbine gas
+    "gas_st": 4.0,  # NREL ATB 2024 — legacy gas steam (higher O&M than CC)
+    "coal": 4.5,  # NREL ATB 2024 — coal steam
     "nuclear": 2.5,  # NREL ATB 2024 — nuclear
-    "wind": 0.0,     # NREL ATB 2024 — onshore wind
-    "solar": 0.0,    # NREL ATB 2024 — utility-scale solar PV
-    "oil": 4.5,      # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
+    "wind": 0.0,  # NREL ATB 2024 — onshore wind
+    "solar": 0.0,  # NREL ATB 2024 — utility-scale solar PV
+    "oil": 4.5,  # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
     "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
-    "hydro": 1.4,    # NREL ATB 2024 — conventional hydropower
+    "hydro": 1.4,  # NREL ATB 2024 — conventional hydropower
 }
 
 # Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage
@@ -223,7 +226,7 @@ NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
 GAS_AVAILABILITY_FACTOR: dict[str, float] = {
     "ERCOT": 0.85,  # was 0.83. NERC GADS 2019-2023, ERCOT fleet.
     "CAISO": 0.89,  # was 0.88. NERC GADS 2019-2023, CAISO fleet.
-    "PJM": 0.87,    # NERC GADS 2019-2023, PJM fleet. TODO: verify
+    "PJM": 0.87,  # NERC GADS 2019-2023, PJM fleet. TODO: verify
     "NYISO": 0.86,  # NERC GADS 2019-2023, NYISO fleet. TODO: verify
     "NEISO": 0.85,  # NERC GADS 2019-2023, ISO-NE fleet. TODO: verify
 }
@@ -238,7 +241,7 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     # Tier: 3 (calibration)
     "ERCOT": [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, 0.95, 0.96, 0.95, 0.72, 0.83, 0.99],
     "CAISO": [1.00, 0.99, 0.96, 0.95, 0.97, 1.00, 1.00, 1.00, 0.98, 0.95, 0.97, 1.00],
-    "PJM":   [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "PJM": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
     "NYISO": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
     "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
 }
@@ -349,12 +352,12 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
 # Equivalent forced outage rate (demand) by technology class.
 # Source: NERC GADS.
 EFORD: dict[str, float] = {
-    "gas_cc": 0.05,   # NERC GADS — combined-cycle gas
-    "gas_ct": 0.06,   # NERC GADS — combustion turbine gas
-    "gas_st": 0.07,   # NERC GADS — legacy gas steam (older, higher outage rate)
-    "coal": 0.08,     # NERC GADS — coal steam
+    "gas_cc": 0.05,  # NERC GADS — combined-cycle gas
+    "gas_ct": 0.06,  # NERC GADS — combustion turbine gas
+    "gas_st": 0.07,  # NERC GADS — legacy gas steam (older, higher outage rate)
+    "coal": 0.08,  # NERC GADS — coal steam
     "nuclear": 0.03,  # NERC GADS — nuclear
-    "oil": 0.10,      # NERC GADS — oil peakers (infrequent run, higher EFOR)
+    "oil": 0.10,  # NERC GADS — oil peakers (infrequent run, higher EFOR)
     "biomass": 0.08,  # NERC GADS — biomass steam
 }
 
@@ -364,34 +367,34 @@ EFORD: dict[str, float] = {
 # Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.
 DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
     "ERCOT": {
-        "low":  {"near": 0.03, "long": 0.015},
-        "mid":  {"near": 0.05, "long": 0.025},
+        "low": {"near": 0.03, "long": 0.015},
+        "mid": {"near": 0.05, "long": 0.025},
         "high": {"near": 0.08, "long": 0.04},
     },
     "CAISO": {
-        "low":  {"near": 0.005, "long": 0.005},
-        "mid":  {"near": 0.015, "long": 0.010},
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
         "high": {"near": 0.025, "long": 0.018},
     },
     # PJM Fleet Parameters — Source: PJM Load Forecast Report 2024, Table B-1.
     # Tier: 2. TODO: verify
     "PJM": {
-        "low":  {"near": 0.020, "long": 0.010},
-        "mid":  {"near": 0.035, "long": 0.018},
+        "low": {"near": 0.020, "long": 0.010},
+        "mid": {"near": 0.035, "long": 0.018},
         "high": {"near": 0.060, "long": 0.030},
     },
     # NYISO Fleet Parameters — Source: NYISO Gold Book 2024, Table I-3.
     # Tier: 2. TODO: verify
     "NYISO": {
-        "low":  {"near": 0.005, "long": 0.005},
-        "mid":  {"near": 0.015, "long": 0.010},
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
         "high": {"near": 0.025, "long": 0.018},
     },
     # NEISO Fleet Parameters — Source: ISO-NE CELT Report 2024.
     # Tier: 2. TODO: verify
     "NEISO": {
-        "low":  {"near": 0.005, "long": 0.005},
-        "mid":  {"near": 0.015, "long": 0.010},
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
         "high": {"near": 0.025, "long": 0.018},
     },
 }
@@ -441,33 +444,96 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
     # AEO High Oil and Gas Supply case -> model "low" gas price path.
     # Higher resource recovery + faster tech improvement = lower prices.
     "low": {
-        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88, 2026: 2.70, 2027: 2.55, 2028: 2.50, 2029: 2.48,
-        2030: 2.45, 2031: 2.43, 2032: 2.42, 2033: 2.41, 2034: 2.40,
-        2035: 2.40, 2036: 2.42, 2037: 2.45, 2038: 2.48, 2039: 2.52,
-        2040: 2.55, 2041: 2.60, 2042: 2.65, 2043: 2.70, 2044: 2.75,
-        2045: 2.80, 2046: 2.85, 2047: 2.90, 2048: 2.95, 2049: 3.00,
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 2.88,
+        2026: 2.70,
+        2027: 2.55,
+        2028: 2.50,
+        2029: 2.48,
+        2030: 2.45,
+        2031: 2.43,
+        2032: 2.42,
+        2033: 2.41,
+        2034: 2.40,
+        2035: 2.40,
+        2036: 2.42,
+        2037: 2.45,
+        2038: 2.48,
+        2039: 2.52,
+        2040: 2.55,
+        2041: 2.60,
+        2042: 2.65,
+        2043: 2.70,
+        2044: 2.75,
+        2045: 2.80,
+        2046: 2.85,
+        2047: 2.90,
+        2048: 2.95,
+        2049: 3.00,
         2050: 3.05,
     },
     # AEO Reference case -> model "mid" gas price path.
     "mid": {
-        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88, 2026: 3.40, 2027: 3.20, 2028: 3.30, 2029: 3.40,
-        2030: 3.50, 2031: 3.55, 2032: 3.60, 2033: 3.65, 2034: 3.70,
-        2035: 3.80, 2036: 3.90, 2037: 4.00, 2038: 4.05, 2039: 4.10,
-        2040: 4.15, 2041: 4.20, 2042: 4.25, 2043: 4.30, 2044: 4.40,
-        2045: 4.45, 2046: 4.50, 2047: 4.55, 2048: 4.65, 2049: 4.70,
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 2.88,
+        2026: 3.40,
+        2027: 3.20,
+        2028: 3.30,
+        2029: 3.40,
+        2030: 3.50,
+        2031: 3.55,
+        2032: 3.60,
+        2033: 3.65,
+        2034: 3.70,
+        2035: 3.80,
+        2036: 3.90,
+        2037: 4.00,
+        2038: 4.05,
+        2039: 4.10,
+        2040: 4.15,
+        2041: 4.20,
+        2042: 4.25,
+        2043: 4.30,
+        2044: 4.40,
+        2045: 4.45,
+        2046: 4.50,
+        2047: 4.55,
+        2048: 4.65,
+        2049: 4.70,
         2050: 4.80,
     },
     # AEO Low Oil and Gas Supply case -> model "high" gas price path.
     # Lower resource recovery + slower tech = higher prices.
     "high": {
-        2023: 2.54, 2024: 2.19,  # EIA Henry Hub spot annual average (historical)
-        2025: 2.88, 2026: 3.60, 2027: 3.80, 2028: 4.10, 2029: 4.40,
-        2030: 4.70, 2031: 4.90, 2032: 5.10, 2033: 5.30, 2034: 5.50,
-        2035: 5.70, 2036: 5.90, 2037: 6.10, 2038: 6.30, 2039: 6.50,
-        2040: 6.70, 2041: 6.90, 2042: 7.10, 2043: 7.30, 2044: 7.50,
-        2045: 7.70, 2046: 7.90, 2047: 8.10, 2048: 8.30, 2049: 8.50,
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 2.88,
+        2026: 3.60,
+        2027: 3.80,
+        2028: 4.10,
+        2029: 4.40,
+        2030: 4.70,
+        2031: 4.90,
+        2032: 5.10,
+        2033: 5.30,
+        2034: 5.50,
+        2035: 5.70,
+        2036: 5.90,
+        2037: 6.10,
+        2038: 6.30,
+        2039: 6.50,
+        2040: 6.70,
+        2041: 6.90,
+        2042: 7.10,
+        2043: 7.30,
+        2044: 7.50,
+        2045: 7.70,
+        2046: 7.90,
+        2047: 8.10,
+        2048: 8.30,
+        2049: 8.50,
         2050: 8.70,
     },
 }
@@ -536,11 +602,11 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #
 # Delivered price = Henry Hub + basis differential
 GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
-    "ERCOT": -0.50,   # Waha discount; EIA NG Weekly, 2024 avg
-    "CAISO": 1.20,    # SoCal Citygate premium; EIA NG Weekly, 2024 avg
-    "PJM": 0.67,      # EIA-923 delivered-gas basis (see below)
-    "NYISO": 0.55,    # EIA-923 delivered-gas basis (see below)
-    "NEISO": 1.10,    # EIA-923 delivered-gas basis, normal-year (see below)
+    "ERCOT": -0.50,  # Waha discount; EIA NG Weekly, 2024 avg
+    "CAISO": 1.20,  # SoCal Citygate premium; EIA NG Weekly, 2024 avg
+    "PJM": 0.67,  # EIA-923 delivered-gas basis (see below)
+    "NYISO": 0.55,  # EIA-923 delivered-gas basis (see below)
+    "NEISO": 1.10,  # EIA-923 delivered-gas basis, normal-year (see below)
 }
 
 # --- Monthly Gas Price Seasonality Factors ---
@@ -551,15 +617,15 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
 #   shoulder-season discount. Applied as multiplicative factors to the
 #   annual trajectory price. Sum of factors / 12 = 1.0 (budget-neutral).
 GAS_MONTHLY_SEASONALITY: dict[int, float] = {
-    1: 1.15,   # January — winter heating demand peak
-    2: 1.10,   # February
-    3: 1.02,   # March — shoulder
-    4: 0.92,   # April — injection season begins
-    5: 0.90,   # May
-    6: 0.93,   # June — cooling demand starts
-    7: 0.95,   # July
-    8: 0.95,   # August
-    9: 0.90,   # September — low demand
+    1: 1.15,  # January — winter heating demand peak
+    2: 1.10,  # February
+    3: 1.02,  # March — shoulder
+    4: 0.92,  # April — injection season begins
+    5: 0.90,  # May
+    6: 0.93,  # June — cooling demand starts
+    7: 0.95,  # July
+    8: 0.95,  # August
+    9: 0.90,  # September — low demand
     10: 0.95,  # October — pre-winter
     11: 1.05,  # November — heating season starts
     12: 1.18,  # December — winter peak
@@ -570,7 +636,7 @@ GAS_MONTHLY_SEASONALITY: dict[int, float] = {
 COAL_PRICE_BASE: dict[str, float] = {
     "ERCOT": 2.0,  # EIA AEO 2024 — delivered coal price
     "CAISO": 2.5,  # EIA AEO 2024 — delivered coal price
-    "PJM": 2.3,    # Central/Northern Appalachian bituminous + PRB-by-rail
+    "PJM": 2.3,  # Central/Northern Appalachian bituminous + PRB-by-rail
     #   delivered blend. Source: EIA AEO 2024 delivered coal price; refined
     #   per-plant by the EIA-923 monthly fuel-cost overlay where reported.
     "NYISO": 2.3,  # NY's grid coal fleet is retired (Somerset/Cayuga, 2020),
@@ -659,26 +725,26 @@ BIOMASS_PRICE_PER_MMBTU: float = 2.5
 # Each entry is (POF, WEFOR_base, WEFOR_rate, WEFOR_onset, DERATE_base,
 # DERATE_rate, DERATE_onset). Source: NERC GADS by unit type and age.
 THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
-    "CC_CHP":     (0.05, 0.04, 0.002, 20, 0.02, 0.001, 25),
+    "CC_CHP": (0.05, 0.04, 0.002, 20, 0.02, 0.001, 25),
     "CC_REGULAR": (0.05, 0.05, 0.002, 20, 0.02, 0.001, 25),
-    "CT_CHP":     (0.03, 0.05, 0.002, 20, 0.03, 0.001, 20),
-    "CT_PEAKER":  (0.03, 0.07, 0.003, 20, 0.05, 0.002, 20),
-    "ST_GAS":     (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
-    "ST_CHP":     (0.05, 0.08, 0.002, 25, 0.03, 0.0015, 25),
-    "COAL":       (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    "CT_CHP": (0.03, 0.05, 0.002, 20, 0.03, 0.001, 20),
+    "CT_PEAKER": (0.03, 0.07, 0.003, 20, 0.05, 0.002, 20),
+    "ST_GAS": (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
+    "ST_CHP": (0.05, 0.08, 0.002, 25, 0.03, 0.0015, 25),
+    "COAL": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
     # Oil and biomass entries apply when a unit carries a matching plant-group
     # tag; EIA-classified oil/biomass units (no plant_group) fall back to the
     # flat 1 - EFORD derate. Source: NERC GADS by unit type and age.
-    "OIL":        (0.06, 0.10, 0.003, 30, 0.04, 0.002, 30),
-    "BIOMASS":    (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
+    "OIL": (0.06, 0.10, 0.003, 30, 0.04, 0.002, 30),
+    "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
 }
 
 # Carbon price trajectories ($/tCO2) by scenario path and year.
 # Source: RFF / state programs.
 CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
-    "zero": {2026: 0, 2030: 0, 2040: 0, 2050: 0},     # RFF — no carbon price
-    "low": {2026: 0, 2030: 8, 2040: 18, 2050: 25},    # RFF — low carbon price path
-    "mid": {2026: 0, 2030: 15, 2040: 35, 2050: 50},   # RFF — mid carbon price path
+    "zero": {2026: 0, 2030: 0, 2040: 0, 2050: 0},  # RFF — no carbon price
+    "low": {2026: 0, 2030: 8, 2040: 18, 2050: 25},  # RFF — low carbon price path
+    "mid": {2026: 0, 2030: 15, 2040: 35, 2050: 50},  # RFF — mid carbon price path
     "high": {2026: 0, 2030: 30, 2040: 70, 2050: 110},  # RFF — high carbon price path
 }
 
@@ -759,18 +825,18 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
         "duration_hr": 4,
         "rte": 0.86,
         "cycles": 5000,
-        "capex_per_kw": 1140.0,    # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
-        "capex_per_kwh": 285.0,    # was 345. LFP pack costs ~$100/kWh + BOS.
-        "fom_per_kw_yr": 30.0,     # was 34.5.
+        "capex_per_kw": 1140.0,  # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
+        "capex_per_kwh": 285.0,  # was 345. LFP pack costs ~$100/kWh + BOS.
+        "fom_per_kw_yr": 30.0,  # was 34.5.
         "learning_rate": 0.18,
     },
     "li_ion_8hr": {  # NREL ATB 2024 — 8-hour lithium-ion battery
         "duration_hr": 8,
         "rte": 0.86,
         "cycles": 5000,
-        "capex_per_kw": 2280.0,    # was 2760. $285/kWh × 8hr.
-        "capex_per_kwh": 285.0,    # was 345.
-        "fom_per_kw_yr": 48.0,     # was 55.2.
+        "capex_per_kw": 2280.0,  # was 2760. $285/kWh × 8hr.
+        "capex_per_kwh": 285.0,  # was 345.
+        "fom_per_kw_yr": 48.0,  # was 55.2.
         "learning_rate": 0.18,
     },
     "iron_air": {  # DOE LDES Liftoff — 100-hour iron-air battery
@@ -787,18 +853,18 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     # matching the convention of the li-ion / iron-air entries above.
     "li_ion_12hr": {  # NREL ATB 2024 — 12-hour lithium-ion battery
         "duration_hr": 12,
-        "rte": 0.78,            # lower RTE at longer duration. NREL ATB 2024
+        "rte": 0.78,  # lower RTE at longer duration. NREL ATB 2024
         "cycles": 4000,
         "capex_per_kw": 3100.0,  # was 3560. $240/kWh × 12hr + $220/kW.
         "capex_per_kwh": 240.0,  # was 280.
-        "fom_per_kw_yr": 10.0,   # was 12.0.
-        "learning_rate": 0.15,   # BNEF lithium-ion learning curve 2024
+        "fom_per_kw_yr": 10.0,  # was 12.0.
+        "learning_rate": 0.15,  # BNEF lithium-ion learning curve 2024
         "lifetime_yr": 20,
     },
     "flow_battery": {  # PNNL 2023 — vanadium redox flow battery
         "duration_hr": 10,
-        "rte": 0.70,             # vanadium redox. PNNL 2023 flow battery review
-        "cycles": 15000,         # long cycle life — major advantage. PNNL 2023
+        "rte": 0.70,  # vanadium redox. PNNL 2023 flow battery review
+        "cycles": 15000,  # long cycle life — major advantage. PNNL 2023
         "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW. PNNL 2023
         "capex_per_kwh": 350.0,
         "fom_per_kw_yr": 15.0,
@@ -807,13 +873,13 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
     },
     "compressed_air": {  # NREL ATB 2024 — adiabatic compressed-air storage
         "duration_hr": 8,
-        "rte": 0.55,             # adiabatic CAES. NREL ATB 2024
+        "rte": 0.55,  # adiabatic CAES. NREL ATB 2024
         "cycles": 10000,
         "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW. NREL ATB 2024
         "capex_per_kwh": 150.0,
         "fom_per_kw_yr": 10.0,
-        "learning_rate": 0.05,   # mature concept, limited recent deployment
-        "lifetime_yr": 40,       # Huntorf plant operating since 1978
+        "learning_rate": 0.05,  # mature concept, limited recent deployment
+        "lifetime_yr": 40,  # Huntorf plant operating since 1978
     },
 }
 
@@ -859,7 +925,7 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
 STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     "ERCOT": 45_000.0,  # ~53% of ~85 GW peak. Source: ERCOT CDR
     "CAISO": 25_000.0,  # ~52% of ~48 GW peak. Source: CAISO IEPR
-    "PJM": 75_000.0,    # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
+    "PJM": 75_000.0,  # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
     "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
     "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
 }
@@ -869,7 +935,7 @@ STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
 STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     "ERCOT": 5_000.0,
     "CAISO": 3_000.0,
-    "PJM": 4_000.0,    # large queue but slower interconnection. Source: PJM queue 2024
+    "PJM": 4_000.0,  # large queue but slower interconnection. Source: PJM queue 2024
     "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
     "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
 }
@@ -1116,7 +1182,7 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
 # Source: ERCOT CDR, CAISO TPP.
 QUEUE_CAP_GW: dict[str, float] = {
     "ERCOT": 12,  # ERCOT CDR — annual queue throughput cap
-    "CAISO": 8,   # CAISO TPP — annual queue throughput cap
+    "CAISO": 8,  # CAISO TPP — annual queue throughput cap
     # Eastern-ISO caps are Tier 3 approximations of recent annual
     # commercial-operation throughput (not queue *requests*, which run far
     # higher). Source: LBNL "Queued Up" 2024 completion-rate analysis; ISO
@@ -1134,41 +1200,69 @@ QUEUE_CAP_GW: dict[str, float] = {
 # The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
 QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
     "ERCOT": {
-        "wind": 5.0, "solar": 5.0, "gas_cc": 3.0, "gas_ct": 3.0, "nuclear": 2.0,
-        "geothermal": 2.0,      # engineering judgment, EGS resource potential
-        "offshore_wind": 0.0,   # Gulf coast not yet leased. Source: BOEM
+        "wind": 5.0,
+        "solar": 5.0,
+        "gas_cc": 3.0,
+        "gas_ct": 3.0,
+        "nuclear": 2.0,
+        "geothermal": 2.0,  # engineering judgment, EGS resource potential
+        "offshore_wind": 0.0,  # Gulf coast not yet leased. Source: BOEM
     },
     "CAISO": {
-        "wind": 3.0, "solar": 4.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 1.0,
-        "geothermal": 3.0,      # CA geothermal resource assessment
-        "offshore_wind": 3.0,   # BOEM Pacific lease areas, CAISO TPP
+        "wind": 3.0,
+        "solar": 4.0,
+        "gas_cc": 2.0,
+        "gas_ct": 1.0,
+        "nuclear": 1.0,
+        "geothermal": 3.0,  # CA geothermal resource assessment
+        "offshore_wind": 3.0,  # BOEM Pacific lease areas, CAISO TPP
     },
     # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
     # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
     "PJM": {
-        "wind": 1.5, "solar": 6.0, "gas_cc": 4.0, "gas_ct": 2.0, "nuclear": 1.0,
-        "geothermal": 0.0,      # no utility-scale resource in footprint
-        "offshore_wind": 2.0,   # NJ/MD/DE BOEM lease areas
+        "wind": 1.5,
+        "solar": 6.0,
+        "gas_cc": 4.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
+        "geothermal": 0.0,  # no utility-scale resource in footprint
+        "offshore_wind": 2.0,  # NJ/MD/DE BOEM lease areas
     },
     "MISO": {
-        "wind": 4.0, "solar": 6.0, "gas_cc": 3.0, "gas_ct": 2.0, "nuclear": 1.0,
+        "wind": 4.0,
+        "solar": 6.0,
+        "gas_cc": 3.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
         "geothermal": 0.0,
-        "offshore_wind": 0.0,   # Great Lakes not leased
+        "offshore_wind": 0.0,  # Great Lakes not leased
     },
     "SPP": {
-        "wind": 4.0, "solar": 3.0, "gas_cc": 2.0, "gas_ct": 1.0, "nuclear": 0.5,
+        "wind": 4.0,
+        "solar": 3.0,
+        "gas_cc": 2.0,
+        "gas_ct": 1.0,
+        "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 0.0,
     },
     "NYISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
         "geothermal": 0.0,
-        "offshore_wind": 1.5,   # NY Bight BOEM lease areas
+        "offshore_wind": 1.5,  # NY Bight BOEM lease areas
     },
     "NEISO": {
-        "wind": 1.0, "solar": 2.0, "gas_cc": 1.0, "gas_ct": 0.5, "nuclear": 0.5,
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
         "geothermal": 0.0,
-        "offshore_wind": 2.0,   # MA/RI BOEM lease areas
+        "offshore_wind": 2.0,  # MA/RI BOEM lease areas
     },
 }
 # Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not
@@ -1225,20 +1319,20 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
         "lifetime_yr": 60,
     },
     "gas_cc_ccs": {
-        "capex_per_kw": 2300.0,    # $/kW total plant cost (host CCGT + capture island).
-                                    # Source: NETL Cost & Performance Baseline Rev 4, 2021.
-                                    # Reflects 90% capture, amine-based post-combustion.
-        "fom_per_kw_yr": 45.0,     # $/kW-yr. Source: NETL Rev 4.
-        "learning_rate": 0.10,     # 10% cost reduction per doubling of cumulative deployment.
-                                    # Source: Rubin et al. (2015) "The cost of CO2 capture
-                                    # and storage", Int J Greenhouse Gas Control.
-                                    # Range in literature: 0.08–0.12 for first-of-a-kind
-                                    # industrial process technologies.
-                                    # CCS is early on its deployment curve (~2 GW base),
-                                    # so each doubling comes quickly and has large effect.
-        "base_cf": 0.80,           # Lower than unabated CC (0.85) due to higher MC
-                                    # pushing it later in merit order at low carbon prices.
-        "lifetime_yr": 30,         # Same as gas CC host plant.
+        "capex_per_kw": 2300.0,  # $/kW total plant cost (host CCGT + capture island).
+        # Source: NETL Cost & Performance Baseline Rev 4, 2021.
+        # Reflects 90% capture, amine-based post-combustion.
+        "fom_per_kw_yr": 45.0,  # $/kW-yr. Source: NETL Rev 4.
+        "learning_rate": 0.10,  # 10% cost reduction per doubling of cumulative deployment.
+        # Source: Rubin et al. (2015) "The cost of CO2 capture
+        # and storage", Int J Greenhouse Gas Control.
+        # Range in literature: 0.08–0.12 for first-of-a-kind
+        # industrial process technologies.
+        # CCS is early on its deployment curve (~2 GW base),
+        # so each doubling comes quickly and has large effect.
+        "base_cf": 0.80,  # Lower than unabated CC (0.85) due to higher MC
+        # pushing it later in merit order at low carbon prices.
+        "lifetime_yr": 30,  # Same as gas CC host plant.
     },
 }
 
@@ -1252,24 +1346,24 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
 # :mod:`market_sim.data.hydrogen`) rather than an exogenous price path.
 HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
     "h2_ct": {  # simple-cycle H2 turbine (peaker)
-        "heat_rate": 9.5,          # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
-        "vom": 4.0,                # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
+        "heat_rate": 9.5,  # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
+        "vom": 4.0,  # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
         "emission_rate_co2": 0.0,  # tCO2/MWh — zero direct CO2 (green H2)
-        "nox_rate": 0.00015,       # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
-        "eford": 0.06,             # above gas CT — immature fleet. Engineering judgment
-        "capex_kw": 1400.0,        # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
-        "fom_kw_yr": 12.0,         # $/kW-yr. NREL ATB 2024
+        "nox_rate": 0.00015,  # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
+        "eford": 0.06,  # above gas CT — immature fleet. Engineering judgment
+        "capex_kw": 1400.0,  # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
+        "fom_kw_yr": 12.0,  # $/kW-yr. NREL ATB 2024
         "lifetime_yr": 30,
-        "learning_rate": 0.10,     # analogy to gas CT maturation
+        "learning_rate": 0.10,  # analogy to gas CT maturation
     },
     "h2_ccgt": {  # combined-cycle H2 turbine (mid-merit/baseload)
-        "heat_rate": 6.9,          # MMBtu/MWh. DOE H2 Turbine Program 2023
-        "vom": 3.5,                # $/MWh. NREL ATB 2024
+        "heat_rate": 6.9,  # MMBtu/MWh. DOE H2 Turbine Program 2023
+        "vom": 3.5,  # $/MWh. NREL ATB 2024
         "emission_rate_co2": 0.0,
-        "nox_rate": 0.00012,       # DOE/NETL 2023
+        "nox_rate": 0.00012,  # DOE/NETL 2023
         "eford": 0.06,
-        "capex_kw": 1800.0,        # $/kW — premium over gas CCGT. NREL ATB 2024
-        "fom_kw_yr": 15.0,         # $/kW-yr. NREL ATB 2024
+        "capex_kw": 1800.0,  # $/kW — premium over gas CCGT. NREL ATB 2024
+        "fom_kw_yr": 15.0,  # $/kW-yr. NREL ATB 2024
         "lifetime_yr": 30,
         "learning_rate": 0.10,
     },
@@ -1280,18 +1374,18 @@ HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
 # linearly between the 2026 base, 2035 and 2045 milestone years.
 ELECTROLYZER_PARAMS: dict[str, dict[str, float]] = {
     "pem": {
-        "efficiency": 0.65,        # base year. Source: IRENA Green H2 2023
-        "efficiency_2035": 0.72,   # DOE Hydrogen Shot targets
-        "efficiency_2045": 0.76,   # DOE long-term targets
-        "capex_kw": 1200.0,        # $/kW — for LCOH if needed. BNEF 2024
-        "learning_rate": 0.18,     # aggressive — early on curve. IRENA 2023
+        "efficiency": 0.65,  # base year. Source: IRENA Green H2 2023
+        "efficiency_2035": 0.72,  # DOE Hydrogen Shot targets
+        "efficiency_2045": 0.76,  # DOE long-term targets
+        "capex_kw": 1200.0,  # $/kW — for LCOH if needed. BNEF 2024
+        "learning_rate": 0.18,  # aggressive — early on curve. IRENA 2023
     },
     "alkaline": {
-        "efficiency": 0.63,        # Source: IRENA Green H2 2023
+        "efficiency": 0.63,  # Source: IRENA Green H2 2023
         "efficiency_2035": 0.68,
         "efficiency_2045": 0.72,
         "capex_kw": 800.0,
-        "learning_rate": 0.12,     # more mature technology. IRENA 2023
+        "learning_rate": 0.12,  # more mature technology. IRENA 2023
     },
 }
 
@@ -1305,14 +1399,14 @@ MMBTU_PER_MWH: float = 3.412
 # for the captured CO2.
 CCUS_PARAMS: dict[str, dict[str, float]] = {
     "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
-        "heat_rate_penalty": 1.16,      # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
-        "vom_adder": 8.0,               # $/MWh — amine solvent, maintenance. NETL 2022
-        "capture_rate": 0.90,           # fraction of CO2 captured. NETL 2022 Case B31B
+        "heat_rate_penalty": 1.16,  # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
+        "vom_adder": 8.0,  # $/MWh — amine solvent, maintenance. NETL 2022
+        "capture_rate": 0.90,  # fraction of CO2 captured. NETL 2022 Case B31B
         "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
-        "capex_kw": 2500.0,             # $/kW installed. NREL ATB 2024
-        "fom_kw_yr": 22.0,              # $/kW-yr. NREL ATB 2024
+        "capex_kw": 2500.0,  # $/kW installed. NREL ATB 2024
+        "fom_kw_yr": 22.0,  # $/kW-yr. NREL ATB 2024
         "lifetime_yr": 30,
-        "learning_rate": 0.05,          # slow — limited deployment. Global CCS Institute 2024
+        "learning_rate": 0.05,  # slow — limited deployment. Global CCS Institute 2024
     },
 }
 
@@ -1321,17 +1415,17 @@ CCUS_PARAMS: dict[str, dict[str, float]] = {
 # ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
 GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
     "egs": {
-        "capacity_factor": 0.90,   # high availability. DOE GeoVision 2019
-        "vom": 1.0,                # $/MWh — minimal, no fuel. NREL ATB 2024
+        "capacity_factor": 0.90,  # high availability. DOE GeoVision 2019
+        "vom": 1.0,  # $/MWh — minimal, no fuel. NREL ATB 2024
         "emission_rate_co2": 0.0,  # zero direct emissions
         "nox_rate": 0.0,
-        "eford": 0.05,             # comparable to nuclear. DOE GeoVision 2019
-        "pmin_fraction": 0.20,     # turn down to 20% for flexibility. Fervo 2024
-        "capex_kw": 5000.0,        # $/kW — high upfront, early-stage. NREL ATB 2024
-        "fom_kw_yr": 0.0,          # $/kW-yr — captured in VOM. NREL ATB 2024
+        "eford": 0.05,  # comparable to nuclear. DOE GeoVision 2019
+        "pmin_fraction": 0.20,  # turn down to 20% for flexibility. Fervo 2024
+        "capex_kw": 5000.0,  # $/kW — high upfront, early-stage. NREL ATB 2024
+        "fom_kw_yr": 0.0,  # $/kW-yr — captured in VOM. NREL ATB 2024
         "lifetime_yr": 30,
-        "learning_rate": 0.15,     # steep — analogous to early solar. Fervo, ARPA-E
-        "heat_rate": 0.0,          # no fuel
+        "learning_rate": 0.15,  # steep — analogous to early solar. Fervo, ARPA-E
+        "heat_rate": 0.0,  # no fuel
     },
 }
 
@@ -1339,18 +1433,18 @@ GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
 # higher and less variable capacity factors, higher costs, distinct zones.
 OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
     "fixed_bottom": {
-        "base_cf": 0.45,           # annual average. NREL ATB 2024
-        "capex_kw": 4200.0,        # $/kW. NREL ATB 2024
-        "fom_kw_yr": 80.0,         # $/kW-yr — marine access premium. NREL ATB 2024
+        "base_cf": 0.45,  # annual average. NREL ATB 2024
+        "capex_kw": 4200.0,  # $/kW. NREL ATB 2024
+        "fom_kw_yr": 80.0,  # $/kW-yr — marine access premium. NREL ATB 2024
         "lifetime_yr": 30,
-        "learning_rate": 0.08,     # NREL ATB 2024, IRENA 2024
+        "learning_rate": 0.08,  # NREL ATB 2024, IRENA 2024
     },
     "floating": {
-        "base_cf": 0.48,           # deeper water, better resource. NREL ATB 2024
-        "capex_kw": 5500.0,        # $/kW — early stage. NREL ATB 2024
+        "base_cf": 0.48,  # deeper water, better resource. NREL ATB 2024
+        "capex_kw": 5500.0,  # $/kW — early stage. NREL ATB 2024
         "fom_kw_yr": 95.0,
         "lifetime_yr": 30,
-        "learning_rate": 0.12,     # steeper — less mature. NREL ATB 2024
+        "learning_rate": 0.12,  # steeper — less mature. NREL ATB 2024
     },
 }
 
@@ -1358,28 +1452,30 @@ OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
 # is derived from the onshore wind profile by a centered rolling-mean smoothing
 # window plus a minimum CF floor (see :mod:`market_sim.data.renewables`).
 # Source: NREL offshore wind variability studies, Musial et al. 2022.
-OFFSHORE_WIND_SMOOTHING_HOURS: int = 6  # rolling-mean window — ocean fetch reduces gustiness
-OFFSHORE_WIND_MIN_CF: float = 0.08      # minimum hourly CF — offshore rarely drops to zero
+OFFSHORE_WIND_SMOOTHING_HOURS: int = (
+    6  # rolling-mean window — ocean fetch reduces gustiness
+)
+OFFSHORE_WIND_MIN_CF: float = 0.08  # minimum hourly CF — offshore rarely drops to zero
 
 # Wright's Law reference cumulative installed capacity (GW global).
 # Source: IRENA 2025, IEA WEO 2025, IAEA PRIS 2025, BNEF 2025, DOE LDES.
 WRIGHT_REFERENCE_GW: dict[str, float] = {
-    "wind": 1150.0,    # was 1020. IRENA 2025.
-    "solar": 1800.0,   # was 1420. IRENA 2025.
-    "li_ion": 130.0,   # was 90. BNEF 2025.
+    "wind": 1150.0,  # was 1020. IRENA 2025.
+    "solar": 1800.0,  # was 1420. IRENA 2025.
+    "li_ion": 130.0,  # was 90. BNEF 2025.
     "gas_cc": 1220.0,  # was 1200. IEA WEO 2025.
     "nuclear": 445.0,  # was 440. IAEA PRIS 2025.
-    "nuclear_smr": 445.0,    # shares global nuclear fleet
+    "nuclear_smr": 445.0,  # shares global nuclear fleet
     "nuclear_large": 445.0,
-    "iron_air": 1.0,   # was 0.5. DOE LDES.
-    "flow_battery": 3.0,    # GW global installed vanadium-redox flow. Source: PNNL 2023,
-                            # BNEF LDES tracker 2024 (China VRFB buildout dominates).
+    "iron_air": 1.0,  # was 0.5. DOE LDES.
+    "flow_battery": 3.0,  # GW global installed vanadium-redox flow. Source: PNNL 2023,
+    # BNEF LDES tracker 2024 (China VRFB buildout dominates).
     "compressed_air": 1.5,  # GW global adiabatic/diabatic CAES — Huntorf, McIntosh,
-                            # Zhangjiakou, Jintan. Source: NREL ATB 2024, IEA 2024.
-    "gas_cc_ccs": 2.0,   # GW global installed power-sector CCS as of 2024.
-                          # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
-                          # Petra Nova mothballed 2020, excluded.
-                          # Source: Global CCS Institute Global Status Report 2024.
+    # Zhangjiakou, Jintan. Source: NREL ATB 2024, IEA 2024.
+    "gas_cc_ccs": 2.0,  # GW global installed power-sector CCS as of 2024.
+    # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
+    # Petra Nova mothballed 2020, excluded.
+    # Source: Global CCS Institute Global Status Report 2024.
 }
 
 # Annual global deployment (GW/yr) by technology, used to project cumulative
@@ -1387,21 +1483,21 @@ WRIGHT_REFERENCE_GW: dict[str, float] = {
 # worldwide market, not just the modeled ISO.
 # Source: IRENA 2025, IEA WEO 2025, BNEF 2025, IAEA 2025.
 GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
-    "wind": 130.0,     # was 120. IRENA 2025.
-    "solar": 400.0,    # was 350. IRENA 2025.
-    "li_ion": 50.0,    # was 30. BNEF 2025.
-    "gas_cc": 20.0,    # was 25. IEA WEO 2025.
-    "nuclear": 10.0,   # was 8. IAEA 2025.
+    "wind": 130.0,  # was 120. IRENA 2025.
+    "solar": 400.0,  # was 350. IRENA 2025.
+    "li_ion": 50.0,  # was 30. BNEF 2025.
+    "gas_cc": 20.0,  # was 25. IEA WEO 2025.
+    "nuclear": 10.0,  # was 8. IAEA 2025.
     "nuclear_smr": 5.0,
     "nuclear_large": 5.0,
-    "iron_air": 1.0,   # was 0.5.
-    "flow_battery": 0.8,    # GW/yr global VRFB additions. Source: BNEF LDES tracker 2024.
+    "iron_air": 1.0,  # was 0.5.
+    "flow_battery": 0.8,  # GW/yr global VRFB additions. Source: BNEF LDES tracker 2024.
     "compressed_air": 0.3,  # GW/yr global CAES additions. Source: IEA 2024 pipeline.
-    "gas_cc_ccs": 1.5,   # GW/yr global CCS additions on power plants.
-                          # Based on announced project pipeline (DOE OCED awards,
-                          # UK cluster sequencing, EU Innovation Fund).
-                          # Optimistic but reflects policy momentum.
-                          # Source: Global CCS Institute project database 2024.
+    "gas_cc_ccs": 1.5,  # GW/yr global CCS additions on power plants.
+    # Based on announced project pipeline (DOE OCED awards,
+    # UK cluster sequencing, EU Innovation Fund).
+    # Optimistic but reflects policy momentum.
+    # Source: Global CCS Institute project database 2024.
 }
 
 # Annual-average renewable capacity factors (fraction) by ISO and technology.
@@ -1435,11 +1531,11 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
 # Source: ERCOT CDR Dec 2024, CAISO annual report 2024.
 RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "ERCOT": {
-        "wind": 42000.0,   # was 40000. Source: ERCOT CDR Dec 2024.
+        "wind": 42000.0,  # was 40000. Source: ERCOT CDR Dec 2024.
         "solar": 38000.0,  # was 25000. Source: EIA Hourly Grid Monitor Oct 2025.
     },
     "CAISO": {
-        "wind": 7000.0,    # unchanged. Source: CAISO annual report 2024.
+        "wind": 7000.0,  # unchanged. Source: CAISO annual report 2024.
         "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
     },
     # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
@@ -1513,12 +1609,12 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # Source: EIA-930 CISO net-interchange 2023-2025; CAISO OASIS path ratings;
     # solved bundle results/calibration/caiso_reprice_pass4.
     "CAISO": [
-        ("PNW_hydro_base", 800.0, 28.0),    # COI firm PNW hydro — baseload
-        ("PNW_midC", 1800.0, 36.0),         # Mid-C hydro/wind shoulder
-        ("DSW_solar_PV", 1800.0, 48.0),     # Desert SW solar + Palo Verde
-        ("DSW_CCGT", 1800.0, 68.0),         # Desert SW combined-cycle gas
-        ("DSW_CT", 2200.0, 110.0),          # Desert SW combustion turbine
-        ("WECC_scarcity", 3000.0, 180.0),   # Peak west-wide scarcity energy
+        ("PNW_hydro_base", 800.0, 28.0),  # COI firm PNW hydro — baseload
+        ("PNW_midC", 1800.0, 36.0),  # Mid-C hydro/wind shoulder
+        ("DSW_solar_PV", 1800.0, 48.0),  # Desert SW solar + Palo Verde
+        ("DSW_CCGT", 1800.0, 68.0),  # Desert SW combined-cycle gas
+        ("DSW_CT", 2200.0, 110.0),  # Desert SW combustion turbine
+        ("WECC_scarcity", 3000.0, 180.0),  # Peak west-wide scarcity energy
     ],
     # PJM scarcity imports (MISO / NYISO / the Carolinas selling into PJM
     # when PJM prices spike). Total capacity bounds the deepest measured
@@ -1673,8 +1769,8 @@ EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # sinks brings the joint duration-curve RMSE to ~560 MW and annual net
     # interchange to ~100% of measured. Source: EIA-930 CISO net interchange.
     "CAISO": [
-        ("export_solar", 2500.0, 8.0),     # midday surplus sold to WECC
-        ("export_curtail", 4000.0, 0.0),   # deep oversupply curtailment floor
+        ("export_solar", 2500.0, 8.0),  # midday surplus sold to WECC
+        ("export_curtail", 4000.0, 0.0),  # deep oversupply curtailment floor
     ],
     # PJM was a ~40 TWh / +4,564 MW-avg net exporter in 2023, easing to
     # +32.7 TWh in 2024 and +18.0 TWh in 2025 (EIA-930). Blocks proxy the
@@ -1759,6 +1855,7 @@ def resolve_priced_interchange(flag: bool | None, iso: str) -> bool:
     if flag is not None:
         return flag
     return iso in PRICED_INTERCHANGE_DEFAULT_ISOS
+
 
 # Name of each ISO's external import/export zone. CAISO's is baked into its
 # topology (_caiso_config); PJM's is appended on demand by
@@ -1867,16 +1964,56 @@ NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
 # Central-East envelope instead of one annual value. Regenerate with
 # scripts/derive_nyiso_central_east_ttc.py after refreshing the postings.
 NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
-    2023: {("Upstate_West", "Capital_Hudson"): [
-        1950.0, 1875.0, 1550.0, 1450.0, 1600.0, 1900.0,
-        1775.0, 1650.0, 1550.0, 1575.0, 1525.0, 2725.0]},
-    2024: {("Upstate_West", "Capital_Hudson"): [
-        3050.0, 3075.0, 3000.0, 2875.0, 2825.0, 2750.0,
-        2800.0, 2700.0, 2525.0, 2825.0, 2750.0, 3075.0]},
-    2025: {("Upstate_West", "Capital_Hudson"): [
-        3175.0, 3075.0, 2725.0, 2500.0, 2525.0, 2925.0,
-        3025.0, 3000.0, 2850.0, 2850.0, 2725.0, 2900.0]},
+    2023: {
+        ("Upstate_West", "Capital_Hudson"): [
+            1950.0,
+            1875.0,
+            1550.0,
+            1450.0,
+            1600.0,
+            1900.0,
+            1775.0,
+            1650.0,
+            1550.0,
+            1575.0,
+            1525.0,
+            2725.0,
+        ]
+    },
+    2024: {
+        ("Upstate_West", "Capital_Hudson"): [
+            3050.0,
+            3075.0,
+            3000.0,
+            2875.0,
+            2825.0,
+            2750.0,
+            2800.0,
+            2700.0,
+            2525.0,
+            2825.0,
+            2750.0,
+            3075.0,
+        ]
+    },
+    2025: {
+        ("Upstate_West", "Capital_Hudson"): [
+            3175.0,
+            3075.0,
+            2725.0,
+            2500.0,
+            2525.0,
+            2925.0,
+            3025.0,
+            3000.0,
+            2850.0,
+            2850.0,
+            2725.0,
+            2900.0,
+        ]
+    },
 }
+
 
 # --- Forecast-grade reference-price interface (multi-ISO, ISO-agnostic) ---
 # The fitted IMPORT_TRANCHES/EXPORT_TRANCHES above are a backcast fit: their
@@ -2110,11 +2247,11 @@ IMPORT_EFORD: dict[str, float] = {
 # without an entry). Gas EFs ≈ heat rate × 0.0531 tCO2/MMBtu (CCGT ~7, CT ~10.4).
 IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
     "CAISO": {
-        "PNW_hydro_base": 0.0,   # firm Pacific-NW hydro — specified, zero-EF
-        "PNW_midC": 0.0,         # Mid-Columbia hydro/wind
-        "DSW_solar_PV": 0.0,     # desert-SW solar + Palo Verde nuclear
-        "DSW_CCGT": 0.37,        # desert-SW combined-cycle gas (~7 HR)
-        "DSW_CT": 0.55,          # desert-SW combustion turbine (~10.4 HR)
+        "PNW_hydro_base": 0.0,  # firm Pacific-NW hydro — specified, zero-EF
+        "PNW_midC": 0.0,  # Mid-Columbia hydro/wind
+        "DSW_solar_PV": 0.0,  # desert-SW solar + Palo Verde nuclear
+        "DSW_CCGT": 0.37,  # desert-SW combined-cycle gas (~7 HR)
+        "DSW_CT": 0.55,  # desert-SW combustion turbine (~10.4 HR)
         "WECC_scarcity": CARB_UNSPECIFIED_IMPORT_EF,  # unspecified west-wide
     },
 }
@@ -2333,7 +2470,9 @@ NEISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
 )
 
 # Model-wide constants.
-STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
+STORAGE_TIEBREAKER_EPSILON: float = (
+    0.001  # $/MWh — prevents degenerate charge/discharge
+)
 HOURS_PER_YEAR: int = 8760
 START_YEAR: int = 2026
 END_YEAR: int = 2050

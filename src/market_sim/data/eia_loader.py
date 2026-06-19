@@ -50,10 +50,13 @@ _PJM_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR
 # aggregation in scripts/derive_load_shares.py that seeded the load_share values.
 _ERCOT_LOAD_ZONE_GROUPS: dict[str, str] = {
     "COAST": "Houston",
-    "EAST": "Northeast", "NORTH": "North", "NCENT": "North",
+    "EAST": "Northeast",
+    "NORTH": "North",
+    "NCENT": "North",
     "SCENT": "South_Central",
     "SOUTH": "South",
-    "FWEST": "West", "WEST": "West",
+    "FWEST": "West",
+    "WEST": "West",
 }
 
 # CAISO TAC-area actual hourly load (upload U4: OASIS SLD_FCST with
@@ -85,27 +88,38 @@ _CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
 #              K          → Long_Island    (Long Island / LIPA territory)
 _NYISO_LOAD_ZONE_GROUPS: dict[str, str] = {
     # Zone A — West (Niagara frontier)
-    "A": "Upstate_West", "WEST": "Upstate_West",
+    "A": "Upstate_West",
+    "WEST": "Upstate_West",
     # Zone B — Genesee
-    "B": "Upstate_West", "GENESE": "Upstate_West",
+    "B": "Upstate_West",
+    "GENESE": "Upstate_West",
     # Zone C — Central
-    "C": "Upstate_West", "CENTRL": "Upstate_West",
+    "C": "Upstate_West",
+    "CENTRL": "Upstate_West",
     # Zone D — North
-    "D": "Upstate_West", "NORTH": "Upstate_West",
+    "D": "Upstate_West",
+    "NORTH": "Upstate_West",
     # Zone E — Mohawk Valley
-    "E": "Upstate_West", "MHK VL": "Upstate_West",
+    "E": "Upstate_West",
+    "MHK VL": "Upstate_West",
     # Zone F — Capital District
-    "F": "Capital_Hudson", "CAPITL": "Capital_Hudson",
+    "F": "Capital_Hudson",
+    "CAPITL": "Capital_Hudson",
     # Zone G — Hudson Valley
-    "G": "Capital_Hudson", "HUD VL": "Capital_Hudson",
+    "G": "Capital_Hudson",
+    "HUD VL": "Capital_Hudson",
     # Zone H — Millwood (Lower Hudson)
-    "H": "Lower_Hudson", "MILLWD": "Lower_Hudson",
+    "H": "Lower_Hudson",
+    "MILLWD": "Lower_Hudson",
     # Zone I — Dunwoodie (Lower Hudson)
-    "I": "Lower_Hudson", "DUNWOD": "Lower_Hudson",
+    "I": "Lower_Hudson",
+    "DUNWOD": "Lower_Hudson",
     # Zone J — New York City
-    "J": "NYC", "N.Y.C.": "NYC",
+    "J": "NYC",
+    "N.Y.C.": "NYC",
     # Zone K — Long Island
-    "K": "Long_Island", "LONGIL": "Long_Island",
+    "K": "Long_Island",
+    "LONGIL": "Long_Island",
 }
 
 # Directory for NYISO zonal actual-load CSVs (upload U3). Absent until the
@@ -118,10 +132,15 @@ _NYISO_ZONAL_LOAD_DIR: Path = _ZONAL_LOAD_DIR / "NYISO"
 # variants the SMD downloads sometimes carry are accepted alongside the bare
 # names. ``HQ_import`` is a priced node, not a load zone, so it is absent here.
 _NEISO_LOAD_ZONE_GROUPS: dict[str, str] = {
-    "ME": "North", "NH": "North", "VT": "North",
-    "NEMA": "Boston", ".H.NEMA": "Boston",
-    "SEMASS": "Central", ".H.SEMASS": "Central",
-    "WCMASS": "Central", ".H.WCMASS": "Central",
+    "ME": "North",
+    "NH": "North",
+    "VT": "North",
+    "NEMA": "Boston",
+    ".H.NEMA": "Boston",
+    "SEMASS": "Central",
+    ".H.SEMASS": "Central",
+    "WCMASS": "Central",
+    ".H.WCMASS": "Central",
     "RI": "Central",
     "CT": "Connecticut",
 }
@@ -140,16 +159,26 @@ _PJM_INTERCHANGE_DIR: Path = ISO_TRANSMISSION_DIR
 # iso_configs._pjm_config). ``RTO`` is the system total and is dropped.
 _PJM_LOAD_ZONE_GROUPS: dict[str, str] = {
     "CE": "PJM_ComEd",
-    "AEP": "PJM_AEP_Ohio", "DAY": "PJM_AEP_Ohio", "DEOK": "PJM_AEP_Ohio",
+    "AEP": "PJM_AEP_Ohio",
+    "DAY": "PJM_AEP_Ohio",
+    "DEOK": "PJM_AEP_Ohio",
     "OVEC": "PJM_AEP_Ohio",
     "ATSI": "PJM_ATSI",
-    "AP": "PJM_West_APS", "DUQ": "PJM_West_APS",
-    "PL": "PJM_Central_PA", "PN": "PJM_Central_PA", "ME": "PJM_Central_PA",
+    "AP": "PJM_West_APS",
+    "DUQ": "PJM_West_APS",
+    "PL": "PJM_Central_PA",
+    "PN": "PJM_Central_PA",
+    "ME": "PJM_Central_PA",
     "EKPC": "PJM_Central_PA",
     "DOM": "PJM_Dominion",
-    "PS": "PJM_EMAAC", "JC": "PJM_EMAAC", "PE": "PJM_EMAAC",
-    "DPL": "PJM_EMAAC", "AE": "PJM_EMAAC", "RECO": "PJM_EMAAC",
-    "BC": "PJM_SWMAAC", "PEP": "PJM_SWMAAC",
+    "PS": "PJM_EMAAC",
+    "JC": "PJM_EMAAC",
+    "PE": "PJM_EMAAC",
+    "DPL": "PJM_EMAAC",
+    "AE": "PJM_EMAAC",
+    "RECO": "PJM_EMAAC",
+    "BC": "PJM_SWMAAC",
+    "PEP": "PJM_SWMAAC",
 }
 
 # Cumulative hours before the first of each 1-based month, non-leap calendar,
@@ -245,10 +274,14 @@ _CLEAN_GEN_FUEL_TO_BENCHMARK: dict[str, str] = {
 
 def _use_clean() -> bool:
     """Whether the clean-data consumption seam is enabled (default OFF)."""
-    return os.environ.get("MARKET_SIM_USE_CLEAN", "").strip().lower() in _CLEAN_FLAG_TRUE
+    return (
+        os.environ.get("MARKET_SIM_USE_CLEAN", "").strip().lower() in _CLEAN_FLAG_TRUE
+    )
 
 
-def _read_clean_seam() -> tuple[Callable[..., pd.DataFrame], Callable[..., bool]] | None:
+def _read_clean_seam() -> (
+    tuple[Callable[..., pd.DataFrame], Callable[..., bool]] | None
+):
     """Return ``(read_clean, clean_exists)`` from the frozen seam, or ``None``.
 
     The seam lives under ``scripts/`` (not the installed model package), so the
@@ -281,17 +314,14 @@ def _clean_local_year_rows(
     utc = pd.DatetimeIndex(df["interval_start_utc"])
     local = utc.tz_convert(tz).tz_localize(None)
     hour_ending_date = local - pd.Timedelta(hours=1)
-    keep = (
-        (hour_ending_date.year == year)
-        & ~((hour_ending_date.month == 2) & (hour_ending_date.day == 29))
+    keep = (hour_ending_date.year == year) & ~(
+        (hour_ending_date.month == 2) & (hour_ending_date.day == 29)
     )
     out = df.loc[keep].copy()
     return out.sort_values("interval_start_utc")
 
 
-def _read_clean_iso_year(
-    datatype: str, iso: str, year: int
-) -> pd.DataFrame | None:
+def _read_clean_iso_year(datatype: str, iso: str, year: int) -> pd.DataFrame | None:
     """Read the clean ``datatype`` rows covering the model's local ``year``.
 
     A local year straddles two UTC-partitioned clean files (the BA's UTC offset
@@ -359,15 +389,12 @@ def _clean_generation_by_fuel(iso: str, year: int) -> dict[str, np.ndarray] | No
     rows = _read_clean_iso_year("generation", iso, year)
     if rows is None:
         return None
-    wide = (
-        rows.pivot_table(
-            index="interval_start_utc",
-            columns="fuel",
-            values="generation_mw",
-            aggfunc="sum",
-        )
-        .sort_index()
-    )
+    wide = rows.pivot_table(
+        index="interval_start_utc",
+        columns="fuel",
+        values="generation_mw",
+        aggfunc="sum",
+    ).sort_index()
     if wide.shape[0] != HOURS_PER_YEAR:
         return None
     out: dict[str, np.ndarray] = {}
@@ -405,8 +432,7 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     df = pd.read_parquet(path)
     local = df["Local date"]
     df = df[
-        (local.dt.year == year)
-        & ~((local.dt.month == 2) & (local.dt.day == 29))
+        (local.dt.year == year) & ~((local.dt.month == 2) & (local.dt.day == 29))
     ].sort_values("UTC time")
     if len(df) != HOURS_PER_YEAR:
         return None
@@ -458,9 +484,7 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     utc = pd.DatetimeIndex(df["UTC time"])
     loc = pd.DatetimeIndex(df["Local time"])
     utc_start = utc[0] - (loc[0] - pd.Timestamp(year=year, month=1, day=1))
-    utc_end = utc[-1] + (
-        pd.Timestamp(year=year, month=12, day=31, hour=23) - loc[-1]
-    )
+    utc_end = utc[-1] + (pd.Timestamp(year=year, month=12, day=31, hour=23) - loc[-1])
     full = pd.date_range(utc_start, utc_end, freq="h")
     # Drop the local Feb 29 of a leap year; February is on standard time, so
     # the January 1st offset maps UTC to local exactly there.
@@ -508,9 +532,7 @@ def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
         return None
     months = frame["Local date"].dt.month.to_numpy()
     wat = pd.to_numeric(frame["NG: WAT"], errors="coerce").to_numpy()
-    out = np.array(
-        [np.nansum(wat[months == m]) for m in range(1, 13)], dtype=float
-    )
+    out = np.array([np.nansum(wat[months == m]) for m in range(1, 13)], dtype=float)
     return out if out.sum() > 0.0 else None
 
 
@@ -732,13 +754,9 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     # desynchronizes demand from the wind/solar/benchmark series read off the
     # same rows (the 2025 backcast served its evening demand peak ~2h after
     # sunset, manufacturing scarcity).
-    demand = (
-        frame["Demand"].interpolate().bfill().ffill()
-        .to_numpy(dtype=float)
-    )
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     interchange = (
-        frame["Total interchange"].interpolate().bfill().ffill()
-        .to_numpy(dtype=float)
+        frame["Total interchange"].interpolate().bfill().ffill().to_numpy(dtype=float)
     )
     if np.isnan(demand).any() or np.isnan(interchange).any():
         return None
@@ -890,9 +908,7 @@ def _pad_to_year(series: np.ndarray) -> np.ndarray:
     return np.concatenate([series, pad])
 
 
-def load_eia_hourly_benchmark(
-    iso: str, year: int
-) -> dict[str, np.ndarray] | None:
+def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | None:
     """Return the EIA-930 hourly benchmark series for any ISO's BA, full year.
 
     Generalizes the ERCOT-only :func:`load_ercot_fossil_gen` /
@@ -919,8 +935,7 @@ def load_eia_hourly_benchmark(
     df = pd.read_parquet(path)
     local = df["Local date"]
     df = df[
-        (local.dt.year == year)
-        & ~((local.dt.month == 2) & (local.dt.day == 29))
+        (local.dt.year == year) & ~((local.dt.month == 2) & (local.dt.day == 29))
     ].sort_values("UTC time")
     if df.empty:
         return None
@@ -954,9 +969,7 @@ def load_eia_hourly_benchmark(
     return out or None
 
 
-def load_eia_hourly_renewable_gen(
-    iso: str, year: int
-) -> dict[str, np.ndarray] | None:
+def load_eia_hourly_renewable_gen(iso: str, year: int) -> dict[str, np.ndarray] | None:
     """Return hourly wind/solar net generation (MW) for an ISO's EIA-930 BA.
 
     Resolves the ISO to its EIA-930 BA code (see :data:`_ISO_TO_HOURLY_BA`)
@@ -1129,9 +1142,7 @@ def _hourly_shares_from_groups(
     return grid / col_tot[None, :]
 
 
-def pjm_zonal_load_shares(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def pjm_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly PJM load shares, or ``None``.
 
     Reads PJM's hourly metered-load file for ``year``, aggregates the 20 real
@@ -1149,8 +1160,8 @@ def pjm_zonal_load_shares(
     path = _ZONAL_LOAD_DIR / f"PJM{year}_hrl_load_metered.csv"
     if not path.exists():
         logger.warning(
-            "PJM zonal metered-load file not found (%s); using static "
-            "load_share split", path,
+            "PJM zonal metered-load file not found (%s); using static load_share split",
+            path,
         )
         return None
     df = pd.read_csv(path, usecols=["datetime_beginning_ept", "zone", "mw"])
@@ -1160,15 +1171,15 @@ def pjm_zonal_load_shares(
         missing = sorted(df.loc[df["mzone"].isna(), "zone"].unique())
         logger.warning("PJM load zones not mapped to a model zone: %s", missing)
         df = df.dropna(subset=["mzone"])
-    ts = pd.to_datetime(
-        df["datetime_beginning_ept"], format="mixed", errors="coerce"
-    )
+    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
     file_year = int(ts.dt.year.mode().iat[0])
     if file_year != year:
         logger.warning(
             "PJM%d_hrl_load_metered.csv actually contains %d data; using its "
             "zonal *shape* (stable year-to-year) against %d system demand",
-            year, file_year, year,
+            year,
+            file_year,
+            year,
         )
     keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
     df, ts = df[keep], ts[keep]
@@ -1177,9 +1188,7 @@ def pjm_zonal_load_shares(
     )
 
 
-def ercot_zonal_load_shares(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def ercot_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly ERCOT load shares, or ``None``.
 
     Reads ERCOT's hourly *Actual System Load by Weather Zone* (NP3-565-CD;
@@ -1202,8 +1211,8 @@ def ercot_zonal_load_shares(
     path = _ZONAL_LOAD_DIR / f"ERCOT_Native_Load_{year}.xlsx"
     if not path.exists():
         logger.warning(
-            "ERCOT native-load file not found (%s); using static load_share "
-            "split", path,
+            "ERCOT native-load file not found (%s); using static load_share split",
+            path,
         )
         return None
     df = pd.read_excel(path)
@@ -1228,22 +1237,19 @@ def ercot_zonal_load_shares(
     if missing_cols:
         logger.warning(
             "ERCOT native-load weather zones absent from %s: %s",
-            path.name, missing_cols,
+            path.name,
+            missing_cols,
         )
     mzone = pd.concat(
         [pd.Series([_ERCOT_LOAD_ZONE_GROUPS[c]] * len(df)) for c in wz_cols],
         ignore_index=True,
     )
     hoy_long = np.tile(hoy, len(wz_cols))
-    mw = pd.concat(
-        [df[c].reset_index(drop=True) for c in wz_cols], ignore_index=True
-    )
+    mw = pd.concat([df[c].reset_index(drop=True) for c in wz_cols], ignore_index=True)
     return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
 
 
-def caiso_zonal_load_shares(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def caiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly CAISO load shares, or ``None``.
 
     Reads CAISO's TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
@@ -1274,8 +1280,8 @@ def caiso_zonal_load_shares(
     path = _ZONAL_LOAD_DIR / "CAISO" / f"CAISO_tac_load_hourly_{year}.csv"
     if not path.exists():
         logger.warning(
-            "CAISO TAC-area load file not found (%s); using static "
-            "load_share split", path,
+            "CAISO TAC-area load file not found (%s); using static load_share split",
+            path,
         )
         return None
     df = pd.read_csv(path, parse_dates=["interval_start_gmt"])
@@ -1290,15 +1296,12 @@ def caiso_zonal_load_shares(
     df, ts = df[keep], ts[keep]
     if df.empty:
         logger.warning(
-            "CAISO TAC-area load file %s has no %d rows; using static "
-            "load_share split", path.name, year,
+            "CAISO TAC-area load file %s has no %d rows; using static load_share split",
+            path.name,
+            year,
         )
         return None
-    hoy = (
-        np.array(_MONTH_START_HOUR)[ts.month - 1]
-        + (ts.day - 1) * 24
-        + ts.hour
-    )
+    hoy = np.array(_MONTH_START_HOUR)[ts.month - 1] + (ts.day - 1) * 24 + ts.hour
     zone_idx = {z: i for i, z in enumerate(zone_names)}
     grid = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
     mw = df["mw"].to_numpy(dtype=float)
@@ -1316,7 +1319,9 @@ def caiso_zonal_load_shares(
         logger.warning(
             "CAISO TAC-area load for %d covers only %d hours "
             "(< %d required); using static load_share split",
-            year, n_covered, _CAISO_TAC_MIN_HOURS,
+            year,
+            n_covered,
+            _CAISO_TAC_MIN_HOURS,
         )
         return None
     shares = np.empty_like(grid)
@@ -1328,14 +1333,14 @@ def caiso_zonal_load_shares(
             "CAISO TAC-area load for %d covers %d/%d hours; uncovered hours "
             "use the sample-average zone shares (refresh: complete the U4 "
             "monthly OASIS pulls)",
-            year, n_covered, HOURS_PER_YEAR,
+            year,
+            n_covered,
+            HOURS_PER_YEAR,
         )
     return shares
 
 
-def nyiso_zonal_load_shares(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def nyiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NYISO load shares, or ``None``.
 
     Reads NYISO actual zonal hourly load (upload U3: NYISO OASIS ``pal``
@@ -1368,15 +1373,20 @@ def nyiso_zonal_load_shares(
     if not path.exists():
         logger.warning(
             "NYISO zonal load file not found (%s); using static load_share "
-            "split (Tier 3 — upload U3 to refresh)", path,
+            "split (Tier 3 — upload U3 to refresh)",
+            path,
         )
         return None
     df = pd.read_csv(path)
     # Flexible column detection: NYISO OASIS downloads use "Time Stamp" for
     # the timestamp and "Name" for the zone; tolerate minor naming variants.
     ts_col = next(
-        (c for c in df.columns if c.lower().replace(" ", "_") in
-         ("time_stamp", "timestamp", "datetime", "date_time")),
+        (
+            c
+            for c in df.columns
+            if c.lower().replace(" ", "_")
+            in ("time_stamp", "timestamp", "datetime", "date_time")
+        ),
         None,
     )
     zone_col = next(
@@ -1400,8 +1410,7 @@ def nyiso_zonal_load_shares(
     if ts.dt.tz is not None:
         ts = ts.dt.tz_convert("America/New_York")
     else:
-        ts = ts.dt.tz_localize("America/New_York", ambiguous="NaT",
-                               nonexistent="NaT")
+        ts = ts.dt.tz_localize("America/New_York", ambiguous="NaT", nonexistent="NaT")
     ts_local = ts.dt.tz_localize(None)
     keep = (
         (ts_local.dt.year == year)
@@ -1413,7 +1422,9 @@ def nyiso_zonal_load_shares(
     if df.empty:
         logger.warning(
             "NYISO zonal load file %s has no %d data after filtering; "
-            "using static shares", path.name, year,
+            "using static shares",
+            path.name,
+            year,
         )
         return None
     hoy = (
@@ -1425,18 +1436,14 @@ def nyiso_zonal_load_shares(
     unmapped = df["_mzone"].isna()
     if unmapped.any():
         missing = sorted(df.loc[unmapped, zone_col].unique())
-        logger.warning(
-            "NYISO load zones not mapped to a model zone: %s", missing
-        )
+        logger.warning("NYISO load zones not mapped to a model zone: %s", missing)
         df = df[~unmapped]
         hoy = hoy[~unmapped.to_numpy()]
     mw = pd.to_numeric(df[load_col], errors="coerce").to_numpy(dtype=float)
     return _hourly_shares_from_groups(df["_mzone"], hoy, pd.Series(mw), zone_names)
 
 
-def neiso_zonal_load_shares(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def neiso_zonal_load_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return ``(n_zones, HOURS_PER_YEAR)`` hourly NEISO load shares, or ``None``.
 
     Reads the ISO-NE hourly load-zone net energy for load (upload U3:
@@ -1479,22 +1486,21 @@ def neiso_zonal_load_shares(
             "NEISO zonal load file not found (%s); using static "
             "load_share split. Refresh path: upload U3 (ISO-NE hourly_load "
             "SMD CSV for %d) to data/raw/zone-specific-demand/NEISO/",
-            path, year,
+            path,
+            year,
         )
         return None
     df = pd.read_csv(path)
     df.columns = [str(c).strip() for c in df.columns]
-    date_col = next(
-        (c for c in df.columns if c.upper().startswith("DATE")), None
-    )
+    date_col = next((c for c in df.columns if c.upper().startswith("DATE")), None)
     he_col = next(
-        (c for c in df.columns
-         if "HOUR" in c.upper() and "END" in c.upper()), None
+        (c for c in df.columns if "HOUR" in c.upper() and "END" in c.upper()), None
     )
     if date_col is None or he_col is None:
         logger.warning(
             "NEISO zonal load file %s missing Date / Hour Ending columns; "
-            "using static load_share split", path.name,
+            "using static load_share split",
+            path.name,
         )
         return None
     date = pd.to_datetime(df[date_col], format="mixed", errors="coerce")
@@ -1510,21 +1516,20 @@ def neiso_zonal_load_shares(
     keep = ~((month == 2) & (day == 29))
     df = df[keep]
     month, day, hour_of_day = month[keep], day[keep], hour_of_day[keep]
-    hoy = (
-        np.array(_MONTH_START_HOUR)[month - 1]
-        + (day - 1) * 24
-        + hour_of_day
-    )
+    hoy = np.array(_MONTH_START_HOUR)[month - 1] + (day - 1) * 24 + hour_of_day
     zone_cols = [c for c in _NEISO_LOAD_ZONE_GROUPS if c in df.columns]
     missing_cols = sorted(set(_NEISO_LOAD_ZONE_GROUPS) - set(df.columns))
     if missing_cols:
         logger.warning(
-            "NEISO load zones absent from %s: %s", path.name, missing_cols,
+            "NEISO load zones absent from %s: %s",
+            path.name,
+            missing_cols,
         )
     if not zone_cols:
         logger.warning(
             "NEISO zonal load file %s has no recognised zone columns; "
-            "using static load_share split", path.name,
+            "using static load_share split",
+            path.name,
         )
         return None
     mzone = pd.concat(
@@ -1533,8 +1538,10 @@ def neiso_zonal_load_shares(
     )
     hoy_long = np.tile(hoy, len(zone_cols))
     mw = pd.concat(
-        [pd.to_numeric(df[c], errors="coerce").reset_index(drop=True)
-         for c in zone_cols],
+        [
+            pd.to_numeric(df[c], errors="coerce").reset_index(drop=True)
+            for c in zone_cols
+        ],
         ignore_index=True,
     )
     return _hourly_shares_from_groups(mzone, hoy_long, mw, zone_names)
@@ -1556,18 +1563,11 @@ def pjm_net_interchange(year: int) -> np.ndarray | None:
     back to zero interchange. The series is placed on the model's fixed non-leap
     8760-hour clock (Feb 29 dropped); the lone DST gap is back-filled.
     """
-    path = (
-        _PJM_INTERCHANGE_DIR
-        / f"PJM_{year}_import_export_act_sch_interchange.csv"
-    )
+    path = _PJM_INTERCHANGE_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
     if not path.exists():
         return None
-    df = pd.read_csv(
-        path, usecols=["datetime_beginning_ept", "actual_flow"]
-    )
-    ts = pd.to_datetime(
-        df["datetime_beginning_ept"], format="mixed", errors="coerce"
-    )
+    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "actual_flow"])
+    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
     keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
     df, ts = df[keep], ts[keep]
     hoy = (
@@ -1596,15 +1596,28 @@ def pjm_net_interchange(year: int) -> np.ndarray | None:
 # Carolinas/Duke/TVA ties on Dominion. Tier 3 (calibration) — approximate
 # pending PJM's authoritative tie-to-zone assignment.
 _PJM_TIE_ZONE: dict[str, str] = {
-    "NYIS": "PJM_EMAAC", "NEPT": "PJM_EMAAC", "HUDS": "PJM_EMAAC",
+    "NYIS": "PJM_EMAAC",
+    "NEPT": "PJM_EMAAC",
+    "HUDS": "PJM_EMAAC",
     "LIND": "PJM_EMAAC",
-    "AMIL": "PJM_ComEd", "ALTE": "PJM_ComEd", "ALTW": "PJM_ComEd",
-    "CWLP": "PJM_ComEd", "MEC": "PJM_ComEd", "WEC": "PJM_ComEd",
-    "MDU": "PJM_ComEd", "LAGN": "PJM_ComEd",
-    "CIN": "PJM_AEP_Ohio", "IPL": "PJM_AEP_Ohio", "NIPS": "PJM_AEP_Ohio",
-    "SIGE": "PJM_AEP_Ohio", "LGEE": "PJM_AEP_Ohio", "OVEC": "PJM_AEP_Ohio",
+    "AMIL": "PJM_ComEd",
+    "ALTE": "PJM_ComEd",
+    "ALTW": "PJM_ComEd",
+    "CWLP": "PJM_ComEd",
+    "MEC": "PJM_ComEd",
+    "WEC": "PJM_ComEd",
+    "MDU": "PJM_ComEd",
+    "LAGN": "PJM_ComEd",
+    "CIN": "PJM_AEP_Ohio",
+    "IPL": "PJM_AEP_Ohio",
+    "NIPS": "PJM_AEP_Ohio",
+    "SIGE": "PJM_AEP_Ohio",
+    "LGEE": "PJM_AEP_Ohio",
+    "OVEC": "PJM_AEP_Ohio",
     "MECS": "PJM_ATSI",
-    "CPLE": "PJM_Dominion", "CPLW": "PJM_Dominion", "DUK": "PJM_Dominion",
+    "CPLE": "PJM_Dominion",
+    "CPLW": "PJM_Dominion",
+    "DUK": "PJM_Dominion",
     "TVA": "PJM_Dominion",
 }
 # Border zone that absorbs any tie not in the map above (keeps total export
@@ -1612,9 +1625,7 @@ _PJM_TIE_ZONE: dict[str, str] = {
 _PJM_TIE_ZONE_DEFAULT: str = "PJM_ComEd"
 
 
-def pjm_zonal_interchange(
-    year: int, zone_names: list[str]
-) -> np.ndarray | None:
+def pjm_zonal_interchange(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Return PJM's hourly net export by model zone (``(n_zones, T)``, MW).
 
     Like :func:`pjm_net_interchange`, but attributes each tie's net export to
@@ -1625,18 +1636,13 @@ def pjm_zonal_interchange(
     inter-zone congestion. Row order matches ``zone_names``; the column sum
     equals :func:`pjm_net_interchange`. ``None`` when the file is absent.
     """
-    path = (
-        _PJM_INTERCHANGE_DIR
-        / f"PJM_{year}_import_export_act_sch_interchange.csv"
-    )
+    path = _PJM_INTERCHANGE_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
     if not path.exists():
         return None
     df = pd.read_csv(
         path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
     )
-    ts = pd.to_datetime(
-        df["datetime_beginning_ept"], format="mixed", errors="coerce"
-    )
+    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
     keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
     df, ts = df[keep], ts[keep]
     hoy = (
@@ -1647,9 +1653,11 @@ def pjm_zonal_interchange(
     zone_idx = {z: i for i, z in enumerate(zone_names)}
     out = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
     flow = df["actual_flow"].to_numpy(dtype=float)
-    tie_zone = df["tie_line"].map(
-        lambda t: _PJM_TIE_ZONE.get(str(t), _PJM_TIE_ZONE_DEFAULT)
-    ).to_numpy()
+    tie_zone = (
+        df["tie_line"]
+        .map(lambda t: _PJM_TIE_ZONE.get(str(t), _PJM_TIE_ZONE_DEFAULT))
+        .to_numpy()
+    )
     valid = (hoy >= 0) & (hoy < HOURS_PER_YEAR) & ~np.isnan(flow)
     for z, i in zone_idx.items():
         sel = valid & (tie_zone == z)
@@ -1677,8 +1685,7 @@ def _eia930_net_interchange(ba_code: str, year: int) -> np.ndarray | None:
     if frame is None or "Total interchange" not in frame.columns:
         return None
     interchange = (
-        frame["Total interchange"].interpolate().bfill().ffill()
-        .to_numpy(dtype=float)
+        frame["Total interchange"].interpolate().bfill().ffill().to_numpy(dtype=float)
     )
     if np.isnan(interchange).any() or interchange.shape[0] != HOURS_PER_YEAR:
         return None
@@ -1823,8 +1830,7 @@ def load_demand(
         profiles = pd.read_parquet(data_dir / _DEMAND_PROFILES_FILE)
         subset = _filter_iso_year(profiles, iso, year).sort_values("hour")
         assert len(subset) == HOURS_PER_YEAR, (
-            f"Expected {HOURS_PER_YEAR} hours for {iso} {year}, "
-            f"got {len(subset)}"
+            f"Expected {HOURS_PER_YEAR} hours for {iso} {year}, got {len(subset)}"
         )
         raw_mw = subset["raw_mw"].to_numpy(dtype=float)
 
@@ -1852,7 +1858,8 @@ def load_demand(
             logger.info(
                 "PJM net interchange applied for %d: %+.0f MW avg "
                 "(export-positive, per border zone)",
-                year, float(zone_interchange.sum(axis=0).mean()),
+                year,
+                float(zone_interchange.sum(axis=0).mean()),
             )
         else:
             pjm_ix = pjm_net_interchange(year)
@@ -1871,7 +1878,9 @@ def load_demand(
             logger.info(
                 "%s net interchange applied for %d: %+.0f MW avg "
                 "(export-positive, measured EIA-930)",
-                iso, year, float(measured_ix.mean()),
+                iso,
+                year,
+                float(measured_ix.mean()),
             )
 
     # PJM, ERCOT, CAISO, NYISO and NEISO allocate demand by each zone's own

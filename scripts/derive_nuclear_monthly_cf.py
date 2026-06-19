@@ -17,6 +17,7 @@ Run it after a new EIA-923 year lands to extend the constants table, or with
     python scripts/derive_nuclear_monthly_cf.py --isos ERCOT --years 2023 2024 2025
     python scripts/derive_nuclear_monthly_cf.py --isos ERCOT --years 2023 2024 2025 --check
 """
+
 from __future__ import annotations
 
 import argparse
@@ -36,9 +37,7 @@ from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 
-_MONTH_COLS = [
-    f"netgen_{calendar.month_name[m].lower()}_mwh" for m in range(1, 13)
-]
+_MONTH_COLS = [f"netgen_{calendar.month_name[m].lower()}_mwh" for m in range(1, 13)]
 
 
 def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], float]:
@@ -51,15 +50,15 @@ def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], float]:
     """
     cfg = get_iso_config(iso)
     units = [
-        g for g in load_fleet_from_csv(iso, cfg)
-        if g.fuel_type == "nuclear" and g.pmax_mw > 0
+        g
+        for g in load_fleet_from_csv(iso, cfg)
+        if g.fuel_type == "nuclear"
+        and g.pmax_mw > 0
         and year >= NUCLEAR_DORMANT_UNTIL.get(int(g.plant_code), 0)
     ]
     if not units:
         raise SystemExit(f"{iso}: no nuclear units in the model fleet")
-    return sorted({int(g.plant_code) for g in units}), sum(
-        g.pmax_mw for g in units
-    )
+    return sorted({int(g.plant_code) for g in units}), sum(g.pmax_mw for g in units)
 
 
 def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
@@ -90,14 +89,23 @@ def main() -> None:
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    ap.add_argument("--isos", nargs="+", default=["ERCOT"],
-                    help="ISOs to derive (default ERCOT).")
-    ap.add_argument("--years", nargs="+", type=int, required=True,
-                    help="Backcast years with EIA-923 data.")
-    ap.add_argument("--check", action="store_true",
-                    help="Compare against the committed "
-                         "NUCLEAR_MONTHLY_CF_BY_YEAR table and exit nonzero "
-                         "on any mismatch.")
+    ap.add_argument(
+        "--isos", nargs="+", default=["ERCOT"], help="ISOs to derive (default ERCOT)."
+    )
+    ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        required=True,
+        help="Backcast years with EIA-923 data.",
+    )
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="Compare against the committed "
+        "NUCLEAR_MONTHLY_CF_BY_YEAR table and exit nonzero "
+        "on any mismatch.",
+    )
     args = ap.parse_args()
 
     mismatched = False
@@ -116,14 +124,15 @@ def main() -> None:
                     print(f"        # {year}: NOT IN constants table")
                     mismatched = True
                 elif [round(c, 2) for c in committed] != cfs:
-                    print(f"        # {year}: constants table DIFFERS: "
-                          f"{committed}")
+                    print(f"        # {year}: constants table DIFFERS: {committed}")
                     mismatched = True
         print("    },")
     if args.check:
         if mismatched:
-            raise SystemExit("constants table out of date — paste the block "
-                             "above into NUCLEAR_MONTHLY_CF_BY_YEAR")
+            raise SystemExit(
+                "constants table out of date — paste the block "
+                "above into NUCLEAR_MONTHLY_CF_BY_YEAR"
+            )
         print("# --check: committed table matches the EIA-923 derivation")
 
 

@@ -23,8 +23,14 @@ _CONFIG = ScenarioConfig()
 def _single_cc(heat_rate: float = 7.0, hours: int = 24):
     """Return a one-generator gas_cc fleet (list + FleetArrays)."""
     gen = Generator(
-        unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-        pmax_mw=300.0, pmin_mw=0.0, heat_rate=heat_rate, eford=0.0,
+        unit_id="CC",
+        name="CC",
+        zone="z",
+        fuel_type="gas_cc",
+        pmax_mw=300.0,
+        pmin_mw=0.0,
+        heat_rate=heat_rate,
+        eford=0.0,
     )
     return [gen], generators_to_fleet_arrays([gen], ["z"], hours=hours)
 
@@ -32,8 +38,14 @@ def _single_cc(heat_rate: float = 7.0, hours: int = 24):
 def _single_ct(heat_rate: float = 10.5, hours: int = 24):
     """Return a one-generator gas_ct fleet (list + FleetArrays)."""
     gen = Generator(
-        unit_id="CT", name="CT", zone="z", fuel_type="gas_ct",
-        pmax_mw=200.0, pmin_mw=0.0, heat_rate=heat_rate, eford=0.0,
+        unit_id="CT",
+        name="CT",
+        zone="z",
+        fuel_type="gas_ct",
+        pmax_mw=200.0,
+        pmin_mw=0.0,
+        heat_rate=heat_rate,
+        eford=0.0,
     )
     return [gen], generators_to_fleet_arrays([gen], ["z"], hours=hours)
 
@@ -41,8 +53,14 @@ def _single_ct(heat_rate: float = 10.5, hours: int = 24):
 def _single_coal(heat_rate: float = 10.0, hours: int = 24):
     """Return a one-generator coal fleet (list + FleetArrays)."""
     gen = Generator(
-        unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
-        pmax_mw=500.0, pmin_mw=0.0, heat_rate=heat_rate, eford=0.0,
+        unit_id="COAL",
+        name="COAL",
+        zone="z",
+        fuel_type="coal",
+        pmax_mw=500.0,
+        pmin_mw=0.0,
+        heat_rate=heat_rate,
+        eford=0.0,
     )
     return [gen], generators_to_fleet_arrays([gen], ["z"], hours=hours)
 
@@ -155,15 +173,11 @@ class TestComputeCommitment(unittest.TestCase):
         # the margin must use the generator's actual cost.
         gens, arrays = _single_cc(heat_rate=7.0, hours=24)
         prices = np.full((1, 24), 50.0)
-        base_mc = np.full((1, 24), 45.0)   # margin 5 x 24h = 120 > 52
-        bid_mc = np.full((1, 24), 50.0)    # margin 0 -> nothing commits
+        base_mc = np.full((1, 24), 45.0)  # margin 5 x 24h = 120 > 52
+        bid_mc = np.full((1, 24), 50.0)  # margin 0 -> nothing commits
 
-        committed_base = compute_commitment(
-            prices, base_mc, gens, arrays, _CONFIG
-        )
-        committed_bid = compute_commitment(
-            prices, bid_mc, gens, arrays, _CONFIG
-        )
+        committed_base = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
+        committed_bid = compute_commitment(prices, bid_mc, gens, arrays, _CONFIG)
         self.assertTrue(committed_base.all())
         self.assertFalse(committed_bid.any())
 
@@ -188,7 +202,11 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         charge = np.zeros((1, 24))
         charge[0, 5:15] = 200.0
         committed = compute_commitment(
-            prices, base_mc, gens, arrays, _CONFIG,
+            prices,
+            base_mc,
+            gens,
+            arrays,
+            _CONFIG,
             storage_charge=charge,
             storage_discharge=np.zeros((1, 24)),
             storage_zone_idx=np.array([0]),
@@ -203,7 +221,11 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         discharge = np.zeros((1, 24))
         discharge[0, 5:15] = 200.0
         committed = compute_commitment(
-            prices, base_mc, gens, arrays, _CONFIG,
+            prices,
+            base_mc,
+            gens,
+            arrays,
+            _CONFIG,
             storage_charge=np.zeros((1, 24)),
             storage_discharge=discharge,
             storage_zone_idx=np.array([0]),
@@ -219,7 +241,11 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         charge[0, 5:15] = 200.0
         config = ScenarioConfig(commitment_storage_weight=0.0)
         committed = compute_commitment(
-            prices, base_mc, gens, arrays, config,
+            prices,
+            base_mc,
+            gens,
+            arrays,
+            config,
             storage_charge=charge,
             storage_discharge=np.zeros((1, 24)),
             storage_zone_idx=np.array([0]),
@@ -246,8 +272,10 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         charge = np.zeros((1, 24))
         charge[0, 9:13] = 600.0
         kwargs = dict(
-            storage_charge=charge, storage_discharge=np.zeros((1, 24)),
-            storage_zone_idx=np.array([0]), demand=demand,
+            storage_charge=charge,
+            storage_discharge=np.zeros((1, 24)),
+            storage_zone_idx=np.array([0]),
+            demand=demand,
         )
         return gens, arrays, base_mc, prices, kwargs
 
@@ -256,8 +284,7 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         # drops out and the two 4-hour pieces each fall short of the
         # 8-hour min run, so nothing commits.
         gens, arrays, base_mc, prices, kwargs = self._trough_scenario()
-        off = compute_commitment(prices, base_mc, gens, arrays, _CONFIG,
-                                 **kwargs)
+        off = compute_commitment(prices, base_mc, gens, arrays, _CONFIG, **kwargs)
         self.assertTrue(off[0, 5:17].all())
 
         cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
@@ -271,8 +298,7 @@ class TestStorageWeightedCommitment(unittest.TestCase):
         kwargs["storage_charge"] = kwargs["storage_charge"].copy()
         kwargs["storage_charge"][0, 9:13] = 200.0
         cfg = ScenarioConfig(commitment_storage_in_merit_floor=0.5)
-        committed = compute_commitment(prices, base_mc, gens, arrays, cfg,
-                                       **kwargs)
+        committed = compute_commitment(prices, base_mc, gens, arrays, cfg, **kwargs)
         self.assertTrue(committed[0, 5:17].all())
 
 
@@ -281,24 +307,49 @@ class TestCoalAndNuclearAlwaysCommitted(unittest.TestCase):
 
     def test_coal_and_nuclear_stay_committed_at_deep_loss(self):
         gens = [
-            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-                      pmax_mw=300.0, heat_rate=7.0, eford=0.0),
-            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
-                      pmax_mw=500.0, heat_rate=10.0, eford=0.0),
-            Generator(unit_id="NUC", name="NUC", zone="z", fuel_type="nuclear",
-                      pmax_mw=1000.0, heat_rate=10.0, eford=0.0),
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                heat_rate=7.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="COAL",
+                name="COAL",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=500.0,
+                heat_rate=10.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="NUC",
+                name="NUC",
+                zone="z",
+                fuel_type="nuclear",
+                pmax_mw=1000.0,
+                heat_rate=10.0,
+                eford=0.0,
+            ),
         ]
         arrays = generators_to_fleet_arrays(gens, ["z"], hours=24)
         # Price far below every thermal MC.
-        base_mc = np.array([
-            np.full(24, 60.0), np.full(24, 55.0), np.full(24, 10.0),
-        ])
+        base_mc = np.array(
+            [
+                np.full(24, 60.0),
+                np.full(24, 55.0),
+                np.full(24, 10.0),
+            ]
+        )
         prices = np.full((1, 24), 5.0)
         committed = compute_commitment(prices, base_mc, gens, arrays, _CONFIG)
 
         self.assertFalse(committed[0].any())  # CC screened off
-        self.assertTrue(committed[1].all())   # coal always committed
-        self.assertTrue(committed[2].all())   # nuclear always committed
+        self.assertTrue(committed[1].all())  # coal always committed
+        self.assertTrue(committed[2].all())  # nuclear always committed
 
 
 class TestComputeMonthlyMarkup(unittest.TestCase):
@@ -328,7 +379,7 @@ class TestComputeMonthlyMarkup(unittest.TestCase):
         dispatch = np.zeros((1, hours))
         dispatch[0, :744] = 200.0  # month 1: continuous
         for start in range(744, hours, 8):
-            dispatch[0, start:start + 4] = 200.0  # month 2: 4h on / 4h off
+            dispatch[0, start : start + 4] = 200.0  # month 2: 4h on / 4h off
         markup = compute_monthly_markup(gens, arrays, dispatch, hours)
 
         summer = markup[0, 0]
@@ -350,48 +401,70 @@ class TestApplyCommitmentWithCoalPin(unittest.TestCase):
 
     def test_cc_availability_zeroed_only_where_decommitted(self):
         gens = [
-            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-                      pmax_mw=300.0, heat_rate=7.0, eford=0.05),
-            Generator(unit_id="CT", name="CT", zone="z", fuel_type="gas_ct",
-                      pmax_mw=200.0, heat_rate=10.5, eford=0.05),
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                heat_rate=7.0,
+                eford=0.05,
+            ),
+            Generator(
+                unit_id="CT",
+                name="CT",
+                zone="z",
+                fuel_type="gas_ct",
+                pmax_mw=200.0,
+                heat_rate=10.5,
+                eford=0.05,
+            ),
         ]
         arrays = generators_to_fleet_arrays(gens, ["z"], hours=10)
         committed = np.ones((2, 10), dtype=bool)
         committed[0, 3:6] = False
         p1_dispatch = np.zeros((2, 10))
 
-        out = apply_commitment_with_coal_pin(
-            arrays, committed, p1_dispatch, gens
-        )
+        out = apply_commitment_with_coal_pin(arrays, committed, p1_dispatch, gens)
         self.assertTrue((out.availability[0, 3:6] == 0.0).all())
         np.testing.assert_array_equal(
             out.availability[0, :3], arrays.availability[0, :3]
         )
-        np.testing.assert_array_equal(
-            out.availability[1], arrays.availability[1]
-        )
+        np.testing.assert_array_equal(out.availability[1], arrays.availability[1])
         # The input arrays must not be mutated in place.
         self.assertTrue((arrays.availability[0, 3:6] != 0.0).all())
 
     def test_coal_availability_pinned_to_pass1_dispatch(self):
-        coal = Generator(unit_id="COAL", name="COAL", zone="z",
-                         fuel_type="coal", pmax_mw=400.0, pmin_mw=0.0,
-                         heat_rate=10.0, eford=0.0)
+        coal = Generator(
+            unit_id="COAL",
+            name="COAL",
+            zone="z",
+            fuel_type="coal",
+            pmax_mw=400.0,
+            pmin_mw=0.0,
+            heat_rate=10.0,
+            eford=0.0,
+        )
         arrays = generators_to_fleet_arrays([coal], ["z"], hours=4)
         committed = np.ones((1, 4), dtype=bool)
         p1_dispatch = np.array([[400.0, 200.0, 0.0, 100.0]])
 
-        out = apply_commitment_with_coal_pin(
-            arrays, committed, p1_dispatch, [coal]
-        )
+        out = apply_commitment_with_coal_pin(arrays, committed, p1_dispatch, [coal])
         # availability = clip(P1 / Pmax), with a tiny floor for the zero hour.
         np.testing.assert_allclose(out.availability[0], [1.0, 0.5, 1e-6, 0.25])
 
     def test_nuclear_pmin_preserved(self):
         # Nuclear is not screened; its must-run Pmin survives into P2.
-        nuc = Generator(unit_id="NUC", name="NUC", zone="z",
-                        fuel_type="nuclear", pmax_mw=1000.0, pmin_mw=900.0,
-                        heat_rate=10.0, eford=0.0)
+        nuc = Generator(
+            unit_id="NUC",
+            name="NUC",
+            zone="z",
+            fuel_type="nuclear",
+            pmax_mw=1000.0,
+            pmin_mw=900.0,
+            heat_rate=10.0,
+            eford=0.0,
+        )
         arrays = generators_to_fleet_arrays([nuc], ["z"], hours=4)
         out = apply_commitment_with_coal_pin(
             arrays, np.ones((1, 4), dtype=bool), np.zeros((1, 4)), [nuc]
@@ -405,22 +478,41 @@ class TestCoalPinnedInPass2(unittest.TestCase):
     def test_coal_dispatch_pinned_to_pass1_levels(self):
         hours = 12
         gens = [
-            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
-                      pmax_mw=300.0, pmin_mw=0.0, heat_rate=10.0, eford=0.0),
-            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-                      pmax_mw=1000.0, pmin_mw=0.0, heat_rate=7.0, eford=0.0),
+            Generator(
+                unit_id="COAL",
+                name="COAL",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                heat_rate=10.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=1000.0,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                eford=0.0,
+            ),
         ]
         arrays = generators_to_fleet_arrays(gens, ["z"], hours=hours)
         # Coal cheap (20) < CC (50). Demand swings above and below coal Pmax.
         mc = np.array([np.full(hours, 20.0), np.full(hours, 50.0)])
         demand = np.full((1, hours), 250.0)
         demand[0, 3:6] = 500.0  # spikes pull in CC
-        demand[0, 8] = 150.0    # dip below coal Pmax
+        demand[0, 8] = 150.0  # dip below coal Pmax
 
         kwargs = dict(
-            wind_cf=np.zeros((1, hours)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, hours)), solar_cap=np.zeros(1),
-            mc=mc, T=hours,
+            wind_cf=np.zeros((1, hours)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, hours)),
+            solar_cap=np.zeros(1),
+            mc=mc,
+            T=hours,
         )
         pass1 = solve_dispatch(arrays, demand, **kwargs)
 

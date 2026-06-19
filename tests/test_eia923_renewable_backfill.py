@@ -10,6 +10,7 @@ prior complete year scaled by the vintage completeness, so every class keeps a
 full-year benchmark. These tests pin that logic (synthetic) plus the live CAISO
 2025 behaviour against the committed extracts.
 """
+
 import importlib.util
 import unittest
 from pathlib import Path
@@ -19,7 +20,8 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location(
-    "rcf_bk", str(REPO / "scripts" / "run_calibration_full.py"))
+    "rcf_bk", str(REPO / "scripts" / "run_calibration_full.py")
+)
 rcf = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rcf)
 
@@ -28,9 +30,13 @@ _MCOLS = [f"m{i:02d}" for i in range(1, 13)]
 
 def _e923_row(year, plant_id, klass, annual, monthly=None):
     monthly = monthly if monthly is not None else [annual / 12.0] * 12
-    return {"year": np.int16(year), "plant_id": plant_id, "klass": klass,
-            "annual_mwh": float(annual),
-            **{c: float(monthly[i]) for i, c in enumerate(_MCOLS)}}
+    return {
+        "year": np.int16(year),
+        "plant_id": plant_id,
+        "klass": klass,
+        "annual_mwh": float(annual),
+        **{c: float(monthly[i]) for i, c in enumerate(_MCOLS)},
+    }
 
 
 def _e930_long(year, series_totals):
@@ -46,31 +52,51 @@ def _e930_long(year, series_totals):
 
 class TestReplaceClassTotal(unittest.TestCase):
     def test_drops_rows_and_inserts_one_total(self):
-        e923 = pd.DataFrame([
-            _e923_row(2025, 10, "wind", 1.0),
-            _e923_row(2025, 11, "wind", 2.0),
-            _e923_row(2025, 12, "solar", 5.0),
-        ])
-        out = rcf._replace_class_total(
-            e923, "wind", 2025, 30.0, [2.5] * 12)
+        e923 = pd.DataFrame(
+            [
+                _e923_row(2025, 10, "wind", 1.0),
+                _e923_row(2025, 11, "wind", 2.0),
+                _e923_row(2025, 12, "solar", 5.0),
+            ]
+        )
+        out = rcf._replace_class_total(e923, "wind", 2025, 30.0, [2.5] * 12)
         wind = out[out["klass"] == "wind"]
-        self.assertEqual(len(wind), 1)                       # collapsed to one
+        self.assertEqual(len(wind), 1)  # collapsed to one
         self.assertAlmostEqual(float(wind["annual_mwh"].iloc[0]), 30.0)
         self.assertAlmostEqual(float(wind[_MCOLS].sum(axis=1).iloc[0]), 30.0)
         # other classes untouched
         self.assertAlmostEqual(
-            float(out[out["klass"] == "solar"]["annual_mwh"].sum()), 5.0)
+            float(out[out["klass"] == "solar"]["annual_mwh"].sum()), 5.0
+        )
 
 
 class TestRenewableBackfill(unittest.TestCase):
     """``_backfill_renewables_eia930`` swaps only the under-counted classes."""
 
-    _MONTHS = ["january", "february", "march", "april", "may", "june", "july",
-               "august", "september", "october", "november", "december"]
+    _MONTHS = [
+        "january",
+        "february",
+        "march",
+        "april",
+        "may",
+        "june",
+        "july",
+        "august",
+        "september",
+        "october",
+        "november",
+        "december",
+    ]
 
     def _row(self, year, plant_id, pm, fc, annual):
-        r = {"year": year, "plant_id": plant_id, "prime_mover": pm,
-             "fuel_type": fc, "chp": "N", "netgen_annual_mwh": annual}
+        r = {
+            "year": year,
+            "plant_id": plant_id,
+            "prime_mover": pm,
+            "fuel_type": fc,
+            "chp": "N",
+            "netgen_annual_mwh": annual,
+        }
         r.update({f"netgen_{m}_mwh": annual / 12.0 for m in self._MONTHS})
         return r
 
@@ -80,8 +106,7 @@ class TestRenewableBackfill(unittest.TestCase):
         The prior year is complete (full ``iso_total``) so the biomass carry has a
         donor; the current year may be truncated."""
         frames = []
-        for y, tot, bio in ((year - 1, iso_total, biomass),
-                            (year, iso_total, biomass)):
+        for y, tot, bio in ((year - 1, iso_total, biomass), (year, iso_total, biomass)):
             frames.append(self._row(y, 1, "WT", "WND", tot - bio))
             frames.append(self._row(y, 2, "ST", "WDS", bio))
         return pd.DataFrame(frames)
@@ -94,43 +119,47 @@ class TestRenewableBackfill(unittest.TestCase):
         rcf._iso_plant_ids = self._orig_ids
 
     def test_under_counted_renewables_swapped_complete_untouched(self):
-        e923 = pd.DataFrame([
-            _e923_row(2025, 10, "wind", 4.0e6),     # truncated -> swap
-            _e923_row(2025, 11, "solar", 49.0e6),   # above 90% of 50 -> keep
-            _e923_row(2025, 12, "hydro", 12.0e6),   # truncated -> swap
-            _e923_row(2025, 13, "CC_REGULAR", 37.0e6),  # thermal -> keep
-        ])
-        e930 = _e930_long(2025, {
-            "wind": 20.0e6, "solar": 50.0e6, "hydro": 21.0e6,
-            "net_gen": 200.0e6})
-        gen = self._gen(2025, 140.0e6, 1.2e6)       # 140/200 = 70% incomplete
+        e923 = pd.DataFrame(
+            [
+                _e923_row(2025, 10, "wind", 4.0e6),  # truncated -> swap
+                _e923_row(2025, 11, "solar", 49.0e6),  # above 90% of 50 -> keep
+                _e923_row(2025, 12, "hydro", 12.0e6),  # truncated -> swap
+                _e923_row(2025, 13, "CC_REGULAR", 37.0e6),  # thermal -> keep
+            ]
+        )
+        e930 = _e930_long(
+            2025, {"wind": 20.0e6, "solar": 50.0e6, "hydro": 21.0e6, "net_gen": 200.0e6}
+        )
+        gen = self._gen(2025, 140.0e6, 1.2e6)  # 140/200 = 70% incomplete
         out = rcf._backfill_renewables_eia930(e923, 2025, "CAISO", gen, e930)
         by = out.groupby("klass")["annual_mwh"].sum()
-        self.assertAlmostEqual(by["wind"], 20.0e6, delta=1e4)   # -> EIA-930
-        self.assertAlmostEqual(by["solar"], 49.0e6)             # kept
+        self.assertAlmostEqual(by["wind"], 20.0e6, delta=1e4)  # -> EIA-930
+        self.assertAlmostEqual(by["solar"], 49.0e6)  # kept
         self.assertAlmostEqual(by["hydro"], 21.0e6, delta=1e4)  # -> EIA-930
-        self.assertAlmostEqual(by["CC_REGULAR"], 37.0e6)        # thermal kept
+        self.assertAlmostEqual(by["CC_REGULAR"], 37.0e6)  # thermal kept
 
     def test_complete_vintage_renewables_unchanged(self):
-        e923 = pd.DataFrame([
-            _e923_row(2024, 10, "wind", 19.0e6),    # 95% of 930 -> keep
-            _e923_row(2024, 11, "solar", 49.0e6),
-        ])
-        e930 = _e930_long(2024, {
-            "wind": 20.0e6, "solar": 50.0e6, "net_gen": 200.0e6})
-        gen = self._gen(2024, 196.0e6, 4.0e6)       # 98% -> complete
-        out = rcf._backfill_renewables_eia930(
-            e923.copy(), 2024, "CAISO", gen, e930)
+        e923 = pd.DataFrame(
+            [
+                _e923_row(2024, 10, "wind", 19.0e6),  # 95% of 930 -> keep
+                _e923_row(2024, 11, "solar", 49.0e6),
+            ]
+        )
+        e930 = _e930_long(2024, {"wind": 20.0e6, "solar": 50.0e6, "net_gen": 200.0e6})
+        gen = self._gen(2024, 196.0e6, 4.0e6)  # 98% -> complete
+        out = rcf._backfill_renewables_eia930(e923.copy(), 2024, "CAISO", gen, e930)
         by = out.groupby("klass")["annual_mwh"].sum()
-        self.assertAlmostEqual(by["wind"], 19.0e6)   # NOT swapped (complete)
+        self.assertAlmostEqual(by["wind"], 19.0e6)  # NOT swapped (complete)
         self.assertAlmostEqual(by["solar"], 49.0e6)
 
     def test_none_e930_is_noop(self):
         e923 = pd.DataFrame([_e923_row(2025, 10, "wind", 4.0e6)])
         out = rcf._backfill_renewables_eia930(
-            e923.copy(), 2025, "CAISO", self._gen(2025, 140e6, 1e6), None)
+            e923.copy(), 2025, "CAISO", self._gen(2025, 140e6, 1e6), None
+        )
         self.assertAlmostEqual(
-            float(out[out["klass"] == "wind"]["annual_mwh"].sum()), 4.0e6)
+            float(out[out["klass"] == "wind"]["annual_mwh"].sum()), 4.0e6
+        )
 
 
 class TestLiveCaiso2025(unittest.TestCase):
@@ -139,6 +168,7 @@ class TestLiveCaiso2025(unittest.TestCase):
     def test_full_year_per_class_benchmark(self):
         from market_sim.config.iso_configs import get_iso_config
         from market_sim.data.eia923 import load_monthly_generation
+
         generation = load_monthly_generation()
         if 2025 not in set(generation["year"].unique()):
             self.skipTest("no 2025 EIA-923 vintage in this checkout")
@@ -168,6 +198,7 @@ class TestPerYearChp(unittest.TestCase):
     def test_year_selects_vintage_falls_back_to_snapshot(self):
         from market_sim.config.paths import PROCESSED_DIR
         from market_sim.data.fleet import EIA_860_DIR, _chp_by_plant
+
         if not (PROCESSED_DIR / "eia860_chp_by_year.parquet").exists():
             self.skipTest("no per-year CHP lookup in this checkout")
         years = {y: _chp_by_plant(EIA_860_DIR, y) for y in (2023, 2024, 2025)}

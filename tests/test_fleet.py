@@ -112,21 +112,27 @@ class TestNuclearAvailability(unittest.TestCase):
 
     def _nuclear_gen(self) -> Generator:
         return Generator(
-            unit_id="nuc1", name="Test Nuclear", zone="North",
-            fuel_type="nuclear", pmax_mw=1000.0, pmin_mw=900.0,
-            heat_rate=0.0, vom=2.5, emission_rate_co2=0.0,
-            nox_rate=0.0, eford=0.03,
+            unit_id="nuc1",
+            name="Test Nuclear",
+            zone="North",
+            fuel_type="nuclear",
+            pmax_mw=1000.0,
+            pmin_mw=900.0,
+            heat_rate=0.0,
+            vom=2.5,
+            emission_rate_co2=0.0,
+            nox_rate=0.0,
+            eford=0.03,
         )
 
     def test_nuclear_availability_seasonal(self):
         """Nuclear availability reflects monthly CF factors, not flat EFORD."""
-        fa = generators_to_fleet_arrays(
-            [self._nuclear_gen()], ["North"], iso="ERCOT"
-        )
+        fa = generators_to_fleet_arrays([self._nuclear_gen()], ["North"], iso="ERCOT")
 
         # Availability should NOT be flat 0.97.
         self.assertGreater(
-            fa.availability[0].std(), 0.001,
+            fa.availability[0].std(),
+            0.001,
             "Nuclear availability should vary by month",
         )
 
@@ -142,7 +148,8 @@ class TestNuclearAvailability(unittest.TestCase):
         mar_hours = fa.availability[0, 1416:2160]
         jul_hours = fa.availability[0, 4344:5088]
         self.assertLess(
-            mar_hours.mean(), jul_hours.mean(),
+            mar_hours.mean(),
+            jul_hours.mean(),
             "Spring should have lower availability than summer",
         )
 
@@ -154,24 +161,23 @@ class TestNuclearAvailability(unittest.TestCase):
         CF is realized availability, applied directly (no EFORD stacking).
         """
         starts = np.cumsum(
-            [0] + [d * 24 for d in
-                   (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
+            [0] + [d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)]
         )
         cfg23 = ScenarioConfig(mode="backcast", weather_year=2023, iso="CAISO")
         fa23 = generators_to_fleet_arrays(
             [self._nuclear_gen()], ["North"], iso="CAISO", config=cfg23
         )
-        oct23 = fa23.availability[0, starts[9]:starts[10]].mean()
+        oct23 = fa23.availability[0, starts[9] : starts[10]].mean()
         self.assertAlmostEqual(oct23, 0.47, places=2)
 
         cfg24 = ScenarioConfig(mode="backcast", weather_year=2024, iso="CAISO")
         fa24 = generators_to_fleet_arrays(
             [self._nuclear_gen()], ["North"], iso="CAISO", config=cfg24
         )
-        apr24 = fa24.availability[0, starts[3]:starts[4]].mean()
+        apr24 = fa24.availability[0, starts[3] : starts[4]].mean()
         self.assertAlmostEqual(apr24, 0.60, places=2)
         # Full-output months run at the measured ~1.0, not 1 - EFORD.
-        jan24 = fa24.availability[0, starts[0]:starts[1]].mean()
+        jan24 = fa24.availability[0, starts[0] : starts[1]].mean()
         self.assertAlmostEqual(jan24, 1.00, places=2)
 
     def test_no_iso_keeps_flat_availability(self):
@@ -183,8 +189,13 @@ class TestNuclearAvailability(unittest.TestCase):
     def test_non_nuclear_unaffected_by_iso(self):
         """Non-nuclear units keep flat availability even with an ISO."""
         coal = Generator(
-            unit_id="c1", name="Coal", zone="North", fuel_type="coal",
-            pmax_mw=500.0, heat_rate=10.0, eford=0.08,
+            unit_id="c1",
+            name="Coal",
+            zone="North",
+            fuel_type="coal",
+            pmax_mw=500.0,
+            heat_rate=10.0,
+            eford=0.08,
         )
         fa = generators_to_fleet_arrays([coal], ["North"], iso="ERCOT")
         np.testing.assert_allclose(fa.availability[0], 1.0 - coal.eford)
@@ -203,7 +214,8 @@ class TestCaisoChpOverrides(unittest.TestCase):
 
         overrides = chp_overrides("CAISO")
         self.assertGreater(
-            len(overrides), 50,
+            len(overrides),
+            50,
             "CAISO CHP artifact should cover the cogen fleet",
         )
         for code, (pmin, sector) in overrides.items():
@@ -213,9 +225,7 @@ class TestCaisoChpOverrides(unittest.TestCase):
                     f"plant {code} floor {pmin} outside [0, 75]",
                 )
             if sector is not None:
-                self.assertIn(
-                    sector, ("merchant", "industrial", "commercial")
-                )
+                self.assertIn(sector, ("merchant", "industrial", "commercial"))
         # Watson Cogeneration (Torrance refinery host): measured EIA-923
         # monthly floor with an industrial-sector BTM share.
         self.assertEqual(chp_pmin_cf(50216, iso="CAISO"), 31.2)
@@ -234,8 +244,13 @@ class TestThermalAvailability(unittest.TestCase):
 
     def _arrays(self, plant_group, online_year, fuel_type, weather_year=2024):
         gen = Generator(
-            unit_id="g1", name="G", zone="North", fuel_type=fuel_type,
-            pmax_mw=400.0, heat_rate=8.0, online_year=online_year,
+            unit_id="g1",
+            name="G",
+            zone="North",
+            fuel_type=fuel_type,
+            pmax_mw=400.0,
+            heat_rate=8.0,
+            online_year=online_year,
             plant_group=plant_group,
         )
         return generators_to_fleet_arrays(
@@ -285,8 +300,7 @@ class TestThermalAvailability(unittest.TestCase):
         summer_frac = int(summer.sum()) / 8760
         self.assertAlmostEqual(
             fa.availability[0].mean(),
-            self._old_annual_avail(0.05, 0.05, 0.02)
-            - sd * summer_pre * summer_frac,
+            self._old_annual_avail(0.05, 0.05, 0.02) - sd * summer_pre * summer_frac,
             places=4,
         )
 
@@ -304,8 +318,13 @@ class TestThermalAvailability(unittest.TestCase):
     def test_non_thermal_keeps_eford(self):
         # A generator with no plant-group category keeps the 1 - EFORD derate.
         nuc = Generator(
-            unit_id="n1", name="Nuke", zone="North", fuel_type="nuclear",
-            pmax_mw=1000.0, heat_rate=10.0, eford=0.03,
+            unit_id="n1",
+            name="Nuke",
+            zone="North",
+            fuel_type="nuclear",
+            pmax_mw=1000.0,
+            heat_rate=10.0,
+            eford=0.03,
         )
         fa = generators_to_fleet_arrays(
             [nuc], ["North"], config=ScenarioConfig(weather_year=2024)
@@ -320,20 +339,25 @@ class TestCcDerateFromTop(unittest.TestCase):
     def _cc_tranches(eford=0.25):
         """A 2-tranche CC_REGULAR plant: 400 MW committed + 600 MW econ."""
         shared = dict(
-            name="CC", zone="North", fuel_type="gas_cc", online_year=2020,
-            plant_group="CC_REGULAR", plant_code=999, eford=eford,
+            name="CC",
+            zone="North",
+            fuel_type="gas_cc",
+            online_year=2020,
+            plant_group="CC_REGULAR",
+            plant_code=999,
+            eford=eford,
         )
         return [
-            Generator(unit_id="p999_committed", pmax_mw=400.0,
-                      heat_rate=6.0, **shared),
-            Generator(unit_id="p999_econc00", pmax_mw=600.0,
-                      heat_rate=7.5, **shared),
+            Generator(unit_id="p999_committed", pmax_mw=400.0, heat_rate=6.0, **shared),
+            Generator(unit_id="p999_econc00", pmax_mw=600.0, heat_rate=7.5, **shared),
         ]
 
     def test_derate_comes_off_the_top_tranche(self):
         """With the flag on, the committed floor keeps its full level."""
         fa = generators_to_fleet_arrays(
-            self._cc_tranches(), ["North"], hours=24,
+            self._cc_tranches(),
+            ["North"],
+            hours=24,
             config=ScenarioConfig(cc_outage_derate_from_top=True),
         )
         # 1000 MW * availability; committed (400 MW) fills first, the econ
@@ -343,7 +367,9 @@ class TestCcDerateFromTop(unittest.TestCase):
         self.assertTrue(np.all(fa.availability[1] < 1.0))
         # Plant-total available MW must be unchanged by the reallocation.
         fa_off = generators_to_fleet_arrays(
-            self._cc_tranches(), ["North"], hours=24,
+            self._cc_tranches(),
+            ["North"],
+            hours=24,
             config=ScenarioConfig(cc_outage_derate_from_top=False),
         )
         np.testing.assert_allclose(
@@ -354,7 +380,9 @@ class TestCcDerateFromTop(unittest.TestCase):
     def test_deep_outage_reaches_the_committed_tranche(self):
         """When available MW falls below the committed cap, it derates too."""
         fa = generators_to_fleet_arrays(
-            self._cc_tranches(eford=0.70), ["North"], hours=24,
+            self._cc_tranches(eford=0.70),
+            ["North"],
+            hours=24,
             config=ScenarioConfig(cc_outage_derate_from_top=True),
         )
         # 1000 * ~0.3 = ~300 MW available < 400 MW committed: econ zeroed,
@@ -366,7 +394,9 @@ class TestCcDerateFromTop(unittest.TestCase):
     def test_flag_off_keeps_pro_rata(self):
         """Default behavior is unchanged: equal factors on every tranche."""
         fa = generators_to_fleet_arrays(
-            self._cc_tranches(), ["North"], hours=24,
+            self._cc_tranches(),
+            ["North"],
+            hours=24,
             config=ScenarioConfig(),
         )
         np.testing.assert_allclose(fa.availability[0], fa.availability[1])
@@ -394,12 +424,20 @@ class TestAssembleMC(unittest.TestCase):
     def test_two_gens_different_heat_rates(self):
         gens = [
             Generator(
-                unit_id="G1", name="CC", zone="z", fuel_type="gas_cc",
-                pmax_mw=400.0, heat_rate=7.0,
+                unit_id="G1",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=400.0,
+                heat_rate=7.0,
             ),
             Generator(
-                unit_id="G2", name="CT", zone="z", fuel_type="gas_ct",
-                pmax_mw=100.0, heat_rate=11.0,
+                unit_id="G2",
+                name="CT",
+                zone="z",
+                fuel_type="gas_ct",
+                pmax_mw=100.0,
+                heat_rate=11.0,
             ),
         ]
         fleet = generators_to_fleet_arrays(gens, ["z"], hours=3)
@@ -411,8 +449,13 @@ class TestAssembleMC(unittest.TestCase):
 
     def test_carbon_price_scales_with_emission_rate(self):
         gen = Generator(
-            unit_id="G1", name="Coal", zone="z", fuel_type="coal",
-            pmax_mw=600.0, heat_rate=10.0, emission_rate_co2=0.95,
+            unit_id="G1",
+            name="Coal",
+            zone="z",
+            fuel_type="coal",
+            pmax_mw=600.0,
+            heat_rate=10.0,
+            emission_rate_co2=0.95,
         )
         fleet = generators_to_fleet_arrays([gen], ["z"], hours=2)
         fuel_prices = np.full((1, 2), 2.0)
@@ -422,15 +465,21 @@ class TestAssembleMC(unittest.TestCase):
 
     def test_custom_adder(self):
         gen = Generator(
-            unit_id="G1", name="Coal", zone="z", fuel_type="coal",
-            pmax_mw=600.0, heat_rate=10.0,
+            unit_id="G1",
+            name="Coal",
+            zone="z",
+            fuel_type="coal",
+            pmax_mw=600.0,
+            heat_rate=10.0,
         )
         fleet = generators_to_fleet_arrays([gen], ["z"], hours=3)
         fuel_prices = np.full((1, 3), 2.0)
         so2_rate = np.array([0.4])
         so2_price = np.array([10.0, 20.0, 30.0])
         mc = assemble_mc(
-            fleet, fuel_prices, carbon_price=0.0,
+            fleet,
+            fuel_prices,
+            carbon_price=0.0,
             so2=(so2_rate, so2_price),
         )
         expected = 10.0 * 2.0 + 0.4 * so2_price
@@ -438,8 +487,13 @@ class TestAssembleMC(unittest.TestCase):
 
     def test_time_varying_fuel_price(self):
         gen = Generator(
-            unit_id="G1", name="CC", zone="z", fuel_type="gas_cc",
-            pmax_mw=400.0, heat_rate=7.0, vom=2.0,
+            unit_id="G1",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+            heat_rate=7.0,
+            vom=2.0,
         )
         fleet = generators_to_fleet_arrays([gen], ["z"], hours=4)
         fuel_prices = np.array([[3.0, 4.0, 5.0, 6.0]])
@@ -487,9 +541,7 @@ class TestFleetLoader(unittest.TestCase):
         # real heat-rate gradient instead of collapsing onto the three
         # HEAT_RATE_BINS vintage centers.
         fleet = load_fleet_from_csv("ERCOT")
-        cc_hrs = {
-            round(g.heat_rate, 3) for g in fleet if g.fuel_type == "gas_cc"
-        }
+        cc_hrs = {round(g.heat_rate, 3) for g in fleet if g.fuel_type == "gas_cc"}
         bin_centers = set(HEAT_RATE_BINS["gas_cc"].values())
         self.assertGreater(len(cc_hrs), len(bin_centers))
         self.assertTrue(
@@ -589,7 +641,8 @@ class TestAggregateFleet(unittest.TestCase):
         result = aggregate_fleet(gens)
         for rep in result:
             group = [
-                g for g in gens
+                g
+                for g in gens
                 if g.fuel_type == rep.fuel_type
                 and g.efficiency_bin == rep.efficiency_bin
                 and g.zone == rep.zone
@@ -602,28 +655,37 @@ class TestAggregateFleet(unittest.TestCase):
         result = aggregate_fleet(gens)
         for rep in result:
             group = [
-                g for g in gens
+                g
+                for g in gens
                 if g.fuel_type == rep.fuel_type
                 and g.efficiency_bin == rep.efficiency_bin
                 and g.zone == rep.zone
             ]
             total_cap = sum(g.pmax_mw for g in group)
-            expected = (
-                sum(g.heat_rate * g.pmax_mw for g in group) / total_cap
-            )
+            expected = sum(g.heat_rate * g.pmax_mw for g in group) / total_cap
             self.assertAlmostEqual(rep.heat_rate, expected)
 
     def test_nuclear_units_pass_through_unchanged(self):
         nuclear = [
             Generator(
-                unit_id="NUKE1", name="Nuke 1", zone="north",
-                fuel_type="nuclear", pmax_mw=1200.0, pmin_mw=1080.0,
-                heat_rate=10.4, is_must_run=True,
+                unit_id="NUKE1",
+                name="Nuke 1",
+                zone="north",
+                fuel_type="nuclear",
+                pmax_mw=1200.0,
+                pmin_mw=1080.0,
+                heat_rate=10.4,
+                is_must_run=True,
             ),
             Generator(
-                unit_id="NUKE2", name="Nuke 2", zone="south",
-                fuel_type="nuclear", pmax_mw=1350.0, pmin_mw=1215.0,
-                heat_rate=10.4, is_must_run=True,
+                unit_id="NUKE2",
+                name="Nuke 2",
+                zone="south",
+                fuel_type="nuclear",
+                pmax_mw=1350.0,
+                pmin_mw=1215.0,
+                heat_rate=10.4,
+                is_must_run=True,
             ),
         ]
         result = aggregate_fleet(nuclear)
@@ -634,12 +696,21 @@ class TestAggregateFleet(unittest.TestCase):
         # known-retirement mechanism can still apply its scheduled exit.
         gens = [
             Generator(
-                unit_id="C_RET", name="C_RET", zone="north", fuel_type="coal",
-                efficiency_bin="older", pmax_mw=300.0, retirement_year=2030,
+                unit_id="C_RET",
+                name="C_RET",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="older",
+                pmax_mw=300.0,
+                retirement_year=2030,
             ),
             Generator(
-                unit_id="C0", name="C0", zone="north", fuel_type="coal",
-                efficiency_bin="older", pmax_mw=400.0,
+                unit_id="C0",
+                name="C0",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="older",
+                pmax_mw=400.0,
             ),
         ]
         result = aggregate_fleet(gens)
@@ -653,7 +724,9 @@ class TestAggregateFleet(unittest.TestCase):
         # order -- more distinct gas_cc bins than n_bins=3.
         fleet = load_fleet_from_csv("ERCOT")
         cc_3 = [g for g in aggregate_fleet(fleet, n_bins=3) if g.fuel_type == "gas_cc"]
-        cc_10 = [g for g in aggregate_fleet(fleet, n_bins=10) if g.fuel_type == "gas_cc"]
+        cc_10 = [
+            g for g in aggregate_fleet(fleet, n_bins=10) if g.fuel_type == "gas_cc"
+        ]
         self.assertGreater(len(cc_10), len(cc_3))
         hrs_3 = {round(g.heat_rate, 2) for g in cc_3}
         hrs_10 = {round(g.heat_rate, 2) for g in cc_10}
@@ -666,9 +739,7 @@ class TestAggregateFleet(unittest.TestCase):
 
     def test_round_trip_to_fleet_arrays(self):
         aggregated = aggregate_fleet(self._gas_cc_fleet())
-        arrays = generators_to_fleet_arrays(
-            aggregated, ["north", "south"], hours=24
-        )
+        arrays = generators_to_fleet_arrays(aggregated, ["north", "south"], hours=24)
         self.assertEqual(arrays.n_gen, 4)
         self.assertEqual(arrays.pmax.shape, (4,))
         self.assertEqual(arrays.availability.shape, (4, 24))
@@ -686,18 +757,31 @@ class TestAggregationPreservesVintage(unittest.TestCase):
 
     def _two_unit_fleet(self) -> list[Generator]:
         common = dict(
-            zone="north", fuel_type="gas_cc", efficiency_bin="h_class",
-            heat_rate=6.5, vom=3.0, emission_rate_co2=0.36,
-            nox_rate=0.02, eford=0.05,
+            zone="north",
+            fuel_type="gas_cc",
+            efficiency_bin="h_class",
+            heat_rate=6.5,
+            vom=3.0,
+            emission_rate_co2=0.36,
+            nox_rate=0.02,
+            eford=0.05,
         )
         return [
             Generator(
-                unit_id="CC_old", name="CC_old", pmax_mw=100.0,
-                pmin_mw=0.0, online_year=2010, **common,
+                unit_id="CC_old",
+                name="CC_old",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                online_year=2010,
+                **common,
             ),
             Generator(
-                unit_id="CC_new", name="CC_new", pmax_mw=300.0,
-                pmin_mw=0.0, online_year=2020, **common,
+                unit_id="CC_new",
+                name="CC_new",
+                pmax_mw=300.0,
+                pmin_mw=0.0,
+                online_year=2020,
+                **common,
             ),
         ]
 
@@ -716,8 +800,9 @@ class TestLoadPlannedAdditions(unittest.TestCase):
 
     def test_ercot_planned_units(self):
         gens = load_planned_additions("ERCOT")
-        self.assertTrue(gens, "expected planned units in the committed "
-                              "EIA-860 proposed parquet")
+        self.assertTrue(
+            gens, "expected planned units in the committed EIA-860 proposed parquet"
+        )
         for g in gens:
             # Construction-committed, post-snapshot, thermal-only.
             self.assertGreater(g.online_year, EIA860_OPERABLE_VINTAGE)
@@ -754,7 +839,8 @@ class TestLoadRetiredWithinWindow(unittest.TestCase):
             self.assertLess(g.online_year, 2023)
             self.assertGreater(g.pmax_mw, 0.0)
         self.assertGreater(
-            sum(g.pmax_mw for g in mystic), 1_000.0,
+            sum(g.pmax_mw for g in mystic),
+            1_000.0,
             "Mystic CC is ~1.4 GW",
         )
 
@@ -774,37 +860,47 @@ class TestCoalTranches(unittest.TestCase):
 
     def _coal_and_cc(self) -> list[Generator]:
         return [
-            Generator(unit_id="COAL", name="COAL", zone="z", fuel_type="coal",
-                      pmax_mw=1000.0, pmin_mw=400.0, heat_rate=10.0, vom=4.5,
-                      emission_rate_co2=1.0, eford=0.08),
-            Generator(unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-                      pmax_mw=300.0, heat_rate=7.0, vom=2.0, eford=0.05),
+            Generator(
+                unit_id="COAL",
+                name="COAL",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=1000.0,
+                pmin_mw=400.0,
+                heat_rate=10.0,
+                vom=4.5,
+                emission_rate_co2=1.0,
+                eford=0.08,
+            ),
+            Generator(
+                unit_id="CC",
+                name="CC",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=300.0,
+                heat_rate=7.0,
+                vom=2.0,
+                eford=0.05,
+            ),
         ]
 
     def test_split_produces_three_tranches_per_coal_bin(self):
-        fleet, fuel_fracs = split_coal_tranches(
-            self._coal_and_cc(), ScenarioConfig()
-        )
+        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
         # 3 coal tranches + 1 unchanged CC.
         self.assertEqual(len(fleet), 4)
         self.assertEqual(len(fuel_fracs), 4)
 
         coal = [g for g in fleet if g.fuel_type == "coal"]
-        self.assertEqual([g.unit_id for g in coal],
-                         ["COAL_t1", "COAL_t2", "COAL_t3"])
+        self.assertEqual([g.unit_id for g in coal], ["COAL_t1", "COAL_t2", "COAL_t3"])
         # Capacity fractions 0.30 / 0.25 / 0.45 of the 1000 MW bin.
-        np.testing.assert_allclose(
-            [g.pmax_mw for g in coal], [300.0, 250.0, 450.0]
-        )
+        np.testing.assert_allclose([g.pmax_mw for g in coal], [300.0, 250.0, 450.0])
         # Tranches carry no Pmin floor.
         self.assertTrue(all(g.pmin_mw == 0.0 for g in coal))
         # Fuel passthrough: T1 none, T2 partial, T3 full; CC always full.
         np.testing.assert_allclose(fuel_fracs, [0.0, 0.35, 1.0, 1.0])
 
     def test_non_coal_passes_through_unchanged(self):
-        fleet, fuel_fracs = split_coal_tranches(
-            self._coal_and_cc(), ScenarioConfig()
-        )
+        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
         cc = fleet[-1]
         self.assertEqual(cc.unit_id, "CC")
         self.assertEqual(cc.fuel_type, "gas_cc")
@@ -819,17 +915,17 @@ class TestCoalTranches(unittest.TestCase):
         # T1 bids at VOM only; T2 keeps 35% of its fuel cost; T3 unchanged.
         # Fuel cost = heat_rate (10) x fuel_price (2) = 20 $/MWh.
         # Coal MC before tranching = fuel 20 + VOM 4.5 + carbon 30 = 54.5.
-        fleet, fuel_fracs = split_coal_tranches(
-            self._coal_and_cc(), ScenarioConfig()
-        )
+        fleet, fuel_fracs = split_coal_tranches(self._coal_and_cc(), ScenarioConfig())
         arrays = generators_to_fleet_arrays(fleet, ["z"], hours=4)
         fuel_prices = np.array([np.full(4, 2.0)] * len(fleet))
-        mc = np.array([
-            np.full(4, 54.5),  # COAL_t1
-            np.full(4, 54.5),  # COAL_t2
-            np.full(4, 54.5),  # COAL_t3
-            np.full(4, 25.0),  # CC
-        ])
+        mc = np.array(
+            [
+                np.full(4, 54.5),  # COAL_t1
+                np.full(4, 54.5),  # COAL_t2
+                np.full(4, 54.5),  # COAL_t3
+                np.full(4, 25.0),  # CC
+            ]
+        )
 
         apply_coal_tranches(mc, fleet, arrays, fuel_fracs, fuel_prices)
 
@@ -843,14 +939,13 @@ class TestCoalTranches(unittest.TestCase):
 
     def test_tranche_fractions_follow_config(self):
         config = ScenarioConfig(
-            coal_tranche_1_frac=0.50, coal_tranche_2_frac=0.20,
+            coal_tranche_1_frac=0.50,
+            coal_tranche_2_frac=0.20,
             coal_tranche_3_frac=0.30,
         )
         fleet, _ = split_coal_tranches(self._coal_and_cc(), config)
         coal = [g for g in fleet if g.fuel_type == "coal"]
-        np.testing.assert_allclose(
-            [g.pmax_mw for g in coal], [500.0, 200.0, 300.0]
-        )
+        np.testing.assert_allclose([g.pmax_mw for g in coal], [500.0, 200.0, 300.0])
 
 
 class HistoricOutageOverlayTest(unittest.TestCase):
@@ -869,39 +964,61 @@ class HistoricOutageOverlayTest(unittest.TestCase):
         # the plant code is outaged. Plant 99999 is a coal plant with no outage.
         return [
             Generator(
-                unit_id="coleto_coal", name="Coleto coal", zone="z",
-                fuel_type="coal", pmax_mw=600.0, online_year=1980,
-                plant_group="COAL", plant_code=6178,
+                unit_id="coleto_coal",
+                name="Coleto coal",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=600.0,
+                online_year=1980,
+                plant_group="COAL",
+                plant_code=6178,
             ),
             Generator(
-                unit_id="coleto_ctpeaker", name="Coleto peaker", zone="z",
-                fuel_type="gas_ct", pmax_mw=100.0, online_year=1980,
-                plant_group="CT_PEAKER", plant_code=6178,
+                unit_id="coleto_ctpeaker",
+                name="Coleto peaker",
+                zone="z",
+                fuel_type="gas_ct",
+                pmax_mw=100.0,
+                online_year=1980,
+                plant_group="CT_PEAKER",
+                plant_code=6178,
             ),
             Generator(
-                unit_id="other_coal", name="Other coal", zone="z",
-                fuel_type="coal", pmax_mw=500.0, online_year=1990,
-                plant_group="COAL", plant_code=99999,
+                unit_id="other_coal",
+                name="Other coal",
+                zone="z",
+                fuel_type="coal",
+                pmax_mw=500.0,
+                online_year=1990,
+                plant_group="COAL",
+                plant_code=99999,
             ),
         ]
 
     def _outage_hour(self):
         from market_sim.data.outages import outage_masks_for_year
+
         masks = outage_masks_for_year(2023, 8760, bins_path=self._BINS)
         return int(np.argmax(masks[6178]))  # first outaged hour for Coleto
 
     def _config(self, source):
         return ScenarioConfig(
-            weather_year=2023, outage_source=source, campd_bins_path=self._BINS,
+            weather_year=2023,
+            outage_source=source,
+            campd_bins_path=self._BINS,
         )
 
     def _august_hour(self):
         from market_sim.data.outages import _hour_of_year
+
         return _hour_of_year(8, 1, 0)  # summer peak, outside every window
 
     def test_historic_zeros_outaged_coal_bin(self):
         arrays = generators_to_fleet_arrays(
-            self._fleet(), ["z"], hours=8760, iso="ERCOT",
+            self._fleet(),
+            ["z"],
+            hours=8760,
+            iso="ERCOT",
             config=self._config("historic"),
         )
         out_h = self._outage_hour()
@@ -912,7 +1029,10 @@ class HistoricOutageOverlayTest(unittest.TestCase):
 
     def test_group_filter_spares_non_coal_cc_bin(self):
         arrays = generators_to_fleet_arrays(
-            self._fleet(), ["z"], hours=8760, iso="ERCOT",
+            self._fleet(),
+            ["z"],
+            hours=8760,
+            iso="ERCOT",
             config=self._config("historic"),
         )
         out_h = self._outage_hour()
@@ -923,7 +1043,10 @@ class HistoricOutageOverlayTest(unittest.TestCase):
 
     def test_statistical_source_does_not_apply_outages(self):
         arrays = generators_to_fleet_arrays(
-            self._fleet(), ["z"], hours=8760, iso="ERCOT",
+            self._fleet(),
+            ["z"],
+            hours=8760,
+            iso="ERCOT",
             config=self._config("statistical"),
         )
         out_h = self._outage_hour()
@@ -948,7 +1071,8 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
         # Distillate, residual and petroleum coke classify as oil.
         for src in ("DFO", "RFO", "PC"):
             self.assertEqual(
-                _map_fuel_type("Petroleum Liquids", src, "GT"), "oil",
+                _map_fuel_type("Petroleum Liquids", src, "GT"),
+                "oil",
                 f"{src} should classify as oil",
             )
 
@@ -957,7 +1081,8 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
         # all classify as biomass.
         for src in ("WDS", "AB", "MSW", "LFG"):
             self.assertEqual(
-                _map_fuel_type("Wood/Wood Waste Biomass", src, "ST"), "biomass",
+                _map_fuel_type("Wood/Wood Waste Biomass", src, "ST"),
+                "biomass",
                 f"{src} should classify as biomass",
             )
 
@@ -971,8 +1096,14 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
         # Oil burns at a high heat rate and emits CO2, so a carbon price lifts
         # its MC. MC = heat_rate*fuel + vom + emission_rate*carbon.
         gen = Generator(
-            unit_id="OIL", name="Oil", zone="z", fuel_type="oil",
-            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            unit_id="OIL",
+            name="Oil",
+            zone="z",
+            fuel_type="oil",
+            pmax_mw=100.0,
+            heat_rate=13.5,
+            vom=4.5,
+            emission_rate_co2=1.0,
             nox_rate=0.0004,
         )
         fleet = generators_to_fleet_arrays([gen], ["z"], hours=2)
@@ -987,8 +1118,14 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
         # Biomass burns cheap fuel; its biogenic CO2 is carbon-neutral, so a
         # carbon price leaves its MC unchanged.
         gen = Generator(
-            unit_id="BIO", name="Biomass", zone="z", fuel_type="biomass",
-            pmax_mw=100.0, heat_rate=13.5, vom=5.0, emission_rate_co2=0.0,
+            unit_id="BIO",
+            name="Biomass",
+            zone="z",
+            fuel_type="biomass",
+            pmax_mw=100.0,
+            heat_rate=13.5,
+            vom=5.0,
+            emission_rate_co2=0.0,
             nox_rate=0.001,
         )
         fleet = generators_to_fleet_arrays([gen], ["z"], hours=2)
@@ -1002,12 +1139,23 @@ class TestOilBiomassFuelTypes(unittest.TestCase):
         # An oil unit's MC sits well above a gas CC's, putting it at the
         # peaking end of the merit order.
         oil = Generator(
-            unit_id="OIL", name="Oil", zone="z", fuel_type="oil",
-            pmax_mw=100.0, heat_rate=13.5, vom=4.5, emission_rate_co2=1.0,
+            unit_id="OIL",
+            name="Oil",
+            zone="z",
+            fuel_type="oil",
+            pmax_mw=100.0,
+            heat_rate=13.5,
+            vom=4.5,
+            emission_rate_co2=1.0,
         )
         cc = Generator(
-            unit_id="CC", name="CC", zone="z", fuel_type="gas_cc",
-            pmax_mw=100.0, heat_rate=7.0, vom=2.0,
+            unit_id="CC",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=100.0,
+            heat_rate=7.0,
+            vom=2.0,
         )
         fleet = generators_to_fleet_arrays([oil, cc], ["z"], hours=1)
         fuel_prices = np.array([[18.0], [3.0]])
@@ -1030,6 +1178,7 @@ class TestDualFuelPlantGroups(unittest.TestCase):
             EIA_860_MULTIFUEL_PARQUET_NAME,
             dual_fuel_plant_groups,
         )
+
         if not (EIA_860_DIR / EIA_860_MULTIFUEL_PARQUET_NAME).exists():
             self.skipTest("EIA-860 multifuel parquet not present")
         pairs = dual_fuel_plant_groups()
@@ -1043,10 +1192,9 @@ class TestDualFuelPlantGroups(unittest.TestCase):
     def test_missing_parquet_returns_empty(self):
         """A directory without the multifuel extract flags nothing."""
         from market_sim.data.fleet import dual_fuel_plant_groups
+
         with tempfile.TemporaryDirectory() as tmp:
-            self.assertEqual(
-                dual_fuel_plant_groups(Path(tmp)), frozenset()
-            )
+            self.assertEqual(dual_fuel_plant_groups(Path(tmp)), frozenset())
 
 
 class TestLoadPlannedAdditionsNonThermal(unittest.TestCase):
@@ -1077,10 +1225,11 @@ class TestCcCapacityReconcile(unittest.TestCase):
 
     def test_raises_listed_plants_only(self):
         from market_sim.data.fleet import load_campd_bins
+
         off = load_campd_bins(self._BINS).set_index("Plant_Code")["capacity_mw"]
-        on = load_campd_bins(
-            self._BINS, capacity_reconcile_path=self._RECON
-        ).set_index("Plant_Code")["capacity_mw"]
+        on = load_campd_bins(self._BINS, capacity_reconcile_path=self._RECON).set_index(
+            "Plant_Code"
+        )["capacity_mw"]
         table = pd.read_csv(self._RECON)
         listed = set(table["plant_code"].astype(int))
         # Every plant absent from the table is byte-identical.
@@ -1093,6 +1242,7 @@ class TestCcCapacityReconcile(unittest.TestCase):
 
     def test_missing_table_is_noop(self):
         from market_sim.data.fleet import load_campd_bins
+
         off = load_campd_bins(self._BINS)["capacity_mw"].to_numpy()
         on = load_campd_bins(
             self._BINS, capacity_reconcile_path="/nonexistent/recon.csv"
@@ -1104,16 +1254,19 @@ class TestOtherFossilScoring(unittest.TestCase):
     """The OTHER_FOSSIL scoring bucket for genuinely-mixed gas-thermal plants."""
 
     def _frame(self):
-        return pd.DataFrame({
-            "plant_code": [6243, 6243, 298, 4195, 6243],
-            "klass": ["CT_PEAKER", "ST_GAS", "COAL_PRB", "ST_GAS", "nuclear"],
-            "mw": [1.0, 1.0, 1.0, 1.0, 1.0],
-        })
+        return pd.DataFrame(
+            {
+                "plant_code": [6243, 6243, 298, 4195, 6243],
+                "klass": ["CT_PEAKER", "ST_GAS", "COAL_PRB", "ST_GAS", "nuclear"],
+                "mw": [1.0, 1.0, 1.0, 1.0, 1.0],
+            }
+        )
 
     def test_mixed_plants_rebucketed_both_classes(self):
         from unittest import mock
 
         from market_sim.data.fleet import apply_other_fossil_scoring
+
         with mock.patch(
             "market_sim.data.fleet.mixed_fossil_plants",
             return_value=frozenset({6243, 4195}),
@@ -1133,6 +1286,7 @@ class TestOtherFossilScoring(unittest.TestCase):
         from unittest import mock
 
         from market_sim.data.fleet import apply_other_fossil_scoring
+
         df = self._frame()
         with mock.patch(
             "market_sim.data.fleet.mixed_fossil_plants",
@@ -1145,6 +1299,7 @@ class TestOtherFossilScoring(unittest.TestCase):
         from unittest import mock
 
         from market_sim.data.fleet import apply_other_fossil_scoring
+
         df = self._frame()
         df["klass"] = df["klass"].astype("category")
         with mock.patch(
@@ -1157,5 +1312,5 @@ class TestOtherFossilScoring(unittest.TestCase):
     def test_real_eia923_flags_known_mixed_plant(self):
         # Integration: Dansby (6243) is a ~50/50 steam+GT plant in 2023.
         from market_sim.data.fleet import mixed_fossil_plants
-        self.assertIn(6243, mixed_fossil_plants(2023))
 
+        self.assertIn(6243, mixed_fossil_plants(2023))

@@ -5,8 +5,8 @@ from market_sim.config.scenarios import ScenarioConfig
 # IRA §45V clean hydrogen production tax credit. Paid per kilogram of clean
 # hydrogen produced; converted to a $/MMBtu fuel-cost reduction using the
 # lower heating value of hydrogen. Source: IRA §45V.
-H2_45V_CREDIT_PER_KG: float = 3.0      # $/kg, top-tier green-H2 rate
-H2_LHV_MMBTU_PER_KG: float = 0.1137    # MMBtu per kg H2 (lower heating value)
+H2_45V_CREDIT_PER_KG: float = 3.0  # $/kg, top-tier green-H2 rate
+H2_LHV_MMBTU_PER_KG: float = 0.1137  # MMBtu per kg H2 (lower heating value)
 
 # IRA §45Q carbon sequestration credit for CO2 captured and stored.
 # Source: IRA §45Q.

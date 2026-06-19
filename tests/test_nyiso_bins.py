@@ -43,9 +43,9 @@ _RMR_BARGES = {2494, 2499}
 # Mixed facilities: one EIA code spanning several fuel classes, split per
 # Plant_Group into distinct LP bins (no cross-fuel re-key needed).
 _MIXED = {
-    2500: {"CC_REGULAR", "ST_GAS"},      # Ravenswood (gas CC + gas steam)
+    2500: {"CC_REGULAR", "ST_GAS"},  # Ravenswood (gas CC + gas steam)
     50292: {"CC_REGULAR", "CT_PEAKER"},  # Bethpage (gas CC + gas CT)
-    2493: {"CT_CHP", "ST_CHP"},          # East River (Con Ed steam cogen)
+    2493: {"CT_CHP", "ST_CHP"},  # East River (Con Ed steam cogen)
 }
 
 
@@ -116,8 +116,14 @@ class TestNyisoBinAssignments(unittest.TestCase):
         )
         self.assertLessEqual(
             set(self.bins["Must_Run_Source"]),
-            {"chp_campd_p2", "chp_eia923_cf", "chp_sector_default",
-             "campd", "class_default", "none"},
+            {
+                "chp_campd_p2",
+                "chp_eia923_cf",
+                "chp_sector_default",
+                "campd",
+                "class_default",
+                "none",
+            },
         )
         # No coal in NYISO, so every measured must-run source is a CHP floor;
         # no bin carries the coal "campd"/"class_default" must-run tag.
@@ -145,14 +151,17 @@ class TestNyisoFleetBuild(unittest.TestCase):
     def setUpClass(cls):
         cls.gens = load_fleet_from_csv("NYISO", get_iso_config("NYISO"))
         cls.config = ScenarioConfig(
-            iso="NYISO", chp_steam_following=True, cc_peaking_per_plant=True,
+            iso="NYISO",
+            chp_steam_following=True,
+            cc_peaking_per_plant=True,
         )
         cls.synth = fleet_to_bins(cls.gens, "NYISO", cls.config)
         cls.fleet, _ = bins_to_fleet(cls.synth, ZONES, cls.config)
 
     def _group_lp_mw(self, code: int, group: str) -> float:
         return sum(
-            g.pmax_mw for g in self.fleet
+            g.pmax_mw
+            for g in self.fleet
             if g.plant_code == code and g.plant_group == group
         )
 
@@ -163,9 +172,7 @@ class TestNyisoFleetBuild(unittest.TestCase):
     def test_chp_btm_removed_from_lp_capacity(self):
         """Every CHP (plant, group)'s LP capacity excludes its BTM host
         share — the behind-the-meter steam load never enters the dispatch."""
-        chp = self.synth[
-            self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])
-        ]
+        chp = self.synth[self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])]
         self.assertGreater(len(chp), 20)
         for _, b in chp.iterrows():
             code, group = int(b["Plant_Code"]), str(b["Plant_Group"])
@@ -173,7 +180,8 @@ class TestNyisoFleetBuild(unittest.TestCase):
             btm = chp_btm_pct(code, group, iso="NYISO")
             grid = nameplate * (1.0 - btm / 100.0)
             self.assertLessEqual(
-                self._group_lp_mw(code, group), grid + 0.6,
+                self._group_lp_mw(code, group),
+                grid + 0.6,
                 f"plant {code} {group}: LP capacity exceeds grid share "
                 f"(nameplate {nameplate}, BTM {btm}%)",
             )
@@ -200,8 +208,12 @@ class TestNyisoFleetBuild(unittest.TestCase):
         config = self.config.with_overrides(
             offer_curve_by_group={
                 "CC_REGULAR": {
-                    "committed": 0.92, "econ_low": 1.06, "econ_high": 1.27,
-                    "peak": 2.25, "econ_low_share": 0.5, "pct_peaking": 8.0,
+                    "committed": 0.92,
+                    "econ_low": 1.06,
+                    "econ_high": 1.27,
+                    "peak": 2.25,
+                    "econ_low_share": 0.5,
+                    "pct_peaking": 8.0,
                 },
             },
         )
@@ -212,13 +224,12 @@ class TestNyisoFleetBuild(unittest.TestCase):
             self.synth[self.synth["Plant_Code"] == code]["capacity_mw"].iloc[0]
         )
         peak = [
-            g for g in fleet
-            if g.plant_code == code and g.unit_id.endswith("_peak")
+            g for g in fleet if g.plant_code == code and g.unit_id.endswith("_peak")
         ]
         self.assertEqual(len(peak), 1)
-        expected = nameplate * thermal_tranche_peaking("NYISO")[
-            (code, "CC_REGULAR")
-        ] / 100.0
+        expected = (
+            nameplate * thermal_tranche_peaking("NYISO")[(code, "CC_REGULAR")] / 100.0
+        )
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
 
 

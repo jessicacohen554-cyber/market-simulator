@@ -44,7 +44,9 @@ class ScenarioConfig:
     # Tier 1 (scenario levers)
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
     carbon_price: float = 0.0  # $/ton CO2
-    carbon_price_path: str = "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
+    carbon_price_path: str = (
+        "zero"  # "zero", "low", "mid", "high"; used when carbon_price is 0.0
+    )
     state_carbon_pricing: bool = True  # Charge the ISO's state carbon-program
     # allowance cost (CA cap-and-trade for CAISO; STATE_CARBON_PRICE_BY_ISO)
     # when carbon_price is 0.0 and the year has a measured allowance price.
@@ -54,8 +56,12 @@ class ScenarioConfig:
     # See market_sim.policy.carbon.resolve_carbon_price.
     nox_price: float = 0.0  # $/ton NOx
     so2_price: float = 0.0  # $/ton SO2
-    demand_growth_rate: float = 0.01  # flat override used only when no structured rates exist
-    demand_growth_path: str = "mid"  # "low", "mid", "high" — selects from DEMAND_GROWTH_RATES
+    demand_growth_rate: float = (
+        0.01  # flat override used only when no structured rates exist
+    )
+    demand_growth_path: str = (
+        "mid"  # "low", "mid", "high" — selects from DEMAND_GROWTH_RATES
+    )
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
     retirement_aggressiveness: str = "mid"
@@ -64,7 +70,9 @@ class ScenarioConfig:
     eac_price_solar: float = 0.0  # $/MWh
     eac_price_gas_cc_ccs: float = 0.0  # $/MWh, CCS-equipped gas CC only (45Q-linked)
     eac_price_storage: float = 0.0  # $/MWh on discharge
-    eac_price_offshore_wind: float = 0.0  # $/MWh, offshore-specific EAC (may differ from onshore)
+    eac_price_offshore_wind: float = (
+        0.0  # $/MWh, offshore-specific EAC (may differ from onshore)
+    )
     eac_price_geothermal: float = 0.0  # $/MWh, clean firm generation credit
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
@@ -76,9 +84,7 @@ class ScenarioConfig:
     ccs_available_year: int = 2030  # year CCUS enters the candidate pool
     egs_available_year: int = 2030  # year EGS enters the candidate pool
     offshore_wind_available_year: int = 2030
-    offshore_wind_eligible_isos: list[str] = field(
-        default_factory=lambda: ["CAISO"]
-    )
+    offshore_wind_eligible_isos: list[str] = field(default_factory=lambda: ["CAISO"])
 
     # Tier 2 (expert/sensitivity)
     gas_seasonality: bool = True  # Apply monthly Henry Hub seasonality shape
@@ -159,30 +165,36 @@ class ScenarioConfig:
     offshore_wind_cf_override: float | None = None  # overrides OFFSHORE_WIND_PARAMS
 
     # Tier 2 (expert/sensitivity) — CCS retrofit parameters
-    ccs_retrofit_hr_penalty: float = 0.12     # Fractional heat rate increase from capture parasitic load.
-                                               # Applied as: retrofit_hr = base_hr × (1 + penalty).
-                                               # 0.12 = 12% penalty. Source: NETL Cost & Performance
-                                               # Baseline Rev 4, 2021. Range in literature: 0.10–0.18.
-    ccs_retrofit_capex_kw: float = 900.0      # $/kW for post-combustion capture retrofit.
-                                               # Source: NETL 2021, Sargent & Lundy 2022.
-                                               # Lower than greenfield (~$1400/kW) because host plant exists.
-    ccs_retrofit_vom_adder: float = 8.0       # $/MWh additional VOM for capture O&M, solvent, compression.
-                                               # Source: NETL Cost & Performance Baseline Rev 4.
-    ccs_retrofit_capture_rate: float = 0.90   # Fraction of CO2 captured. 0.90 = 90%.
-                                               # Source: NETL design basis for amine scrubbing.
-    ccs_retrofit_available_year: int = 2028   # Earliest year retrofits can occur.
-    ccs_retrofit_max_gw_per_year: float = 3.0 # GW/yr retrofit throughput cap per ISO.
-                                               # Source: engineering judgment — EPC capacity constraint.
-    ccs_retrofit_min_remaining_life: int = 15 # Only retrofit units with ≥ N years remaining useful life.
-                                               # Avoids retrofitting units near retirement.
+    ccs_retrofit_hr_penalty: float = (
+        0.12  # Fractional heat rate increase from capture parasitic load.
+    )
+    # Applied as: retrofit_hr = base_hr × (1 + penalty).
+    # 0.12 = 12% penalty. Source: NETL Cost & Performance
+    # Baseline Rev 4, 2021. Range in literature: 0.10–0.18.
+    ccs_retrofit_capex_kw: float = 900.0  # $/kW for post-combustion capture retrofit.
+    # Source: NETL 2021, Sargent & Lundy 2022.
+    # Lower than greenfield (~$1400/kW) because host plant exists.
+    ccs_retrofit_vom_adder: float = (
+        8.0  # $/MWh additional VOM for capture O&M, solvent, compression.
+    )
+    # Source: NETL Cost & Performance Baseline Rev 4.
+    ccs_retrofit_capture_rate: float = 0.90  # Fraction of CO2 captured. 0.90 = 90%.
+    # Source: NETL design basis for amine scrubbing.
+    ccs_retrofit_available_year: int = 2028  # Earliest year retrofits can occur.
+    ccs_retrofit_max_gw_per_year: float = 3.0  # GW/yr retrofit throughput cap per ISO.
+    # Source: engineering judgment — EPC capacity constraint.
+    ccs_retrofit_min_remaining_life: int = (
+        15  # Only retrofit units with ≥ N years remaining useful life.
+    )
+    # Avoids retrofitting units near retirement.
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
-    heat_rate_bin_count: int | None = None    # Override default bin count per fuel type.
-                                               # None = use HEAT_RATE_BINS defaults (3 bins).
-                                               # Set to 5, 10, etc. for finer granularity.
-                                               # More bins = more LP variables = slower solve.
-                                               # Recommended: 3 (default) for production runs,
-                                               # 5-10 for CCS/carbon sensitivity analysis.
+    heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
+    # None = use HEAT_RATE_BINS defaults (3 bins).
+    # Set to 5, 10, etc. for finer granularity.
+    # More bins = more LP variables = slower solve.
+    # Recommended: 3 (default) for production runs,
+    # 5-10 for CCS/carbon sensitivity analysis.
 
     # Tier 2 (expert/sensitivity) — CAMPD operational binning
     # When True the thermal fleet is built from the CAMPD-derived bin
@@ -245,16 +257,14 @@ class ScenarioConfig:
     # CAMPD-measured CO2/NOx/SO2 rates per MWh net (plant_emission_rates_path)
     # in place of the fuel-class defaults, so emission prices bite per plant.
     use_plant_emission_rates: bool = True
-    plant_emission_rates_path: str = str(
-        PROCESSED_DIR / "plant_emission_rates.parquet"
-    )
+    plant_emission_rates_path: str = str(PROCESSED_DIR / "plant_emission_rates.parquet")
 
     # Tier 3 (calibration) — CAMPD peaking-tranche heat-rate penalties.
     # The top (Peaking) slice of a bin is a separate LP generator whose
     # heat rate is the bin HR scaled by these duct-firing / peaking-increment
     # multipliers, so scarcity output bids above the economic tranche.
-    cc_peak_hr_penalty: float = 1.15    # CC duct-firing increment
-    ct_peak_hr_penalty: float = 1.10    # CT / gas-steam peaking increment
+    cc_peak_hr_penalty: float = 1.15  # CC duct-firing increment
+    ct_peak_hr_penalty: float = 1.10  # CT / gas-steam peaking increment
     coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
 
     # Tier 3 (calibration) — Two-tranche HR multipliers for the committed
@@ -266,21 +276,21 @@ class ScenarioConfig:
     # (upper load range): HR × multiplier < 1.0. Neither tranche carries
     # a Pmin floor. Source: GE/Siemens OEM IO curves; CEMS input-output
     # curve analysis.
-    cc_committed_hr_mult: float = 1.23    # CC part-load penalty ~23%
-    cc_econ_hr_mult: float = 0.96         # CC incremental HR ~4% below avg
-    ct_committed_hr_mult: float = 1.28    # CT part-load penalty ~28%
-    ct_econ_hr_mult: float = 0.97         # CT incremental HR ~3% below avg
+    cc_committed_hr_mult: float = 1.23  # CC part-load penalty ~23%
+    cc_econ_hr_mult: float = 0.96  # CC incremental HR ~4% below avg
+    ct_committed_hr_mult: float = 1.28  # CT part-load penalty ~28%
+    ct_econ_hr_mult: float = 0.97  # CT incremental HR ~3% below avg
     gas_st_committed_hr_mult: float = 1.32  # Gas steam part-load penalty ~32%
-    gas_st_econ_hr_mult: float = 0.97     # Gas steam incremental HR
+    gas_st_econ_hr_mult: float = 0.97  # Gas steam incremental HR
     coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
-    coal_econ_hr_mult: float = 0.97       # Coal incremental HR
+    coal_econ_hr_mult: float = 0.97  # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
 
     # Tier 2 (expert/sensitivity) — Unit commitment heuristic (2-pass)
     commitment_enabled: bool = False  # default off — opt-in for calibration.
-                                       # When True, a price-based commitment
-                                       # filter runs between two LP solves to
-                                       # approximate integer unit commitment.
+    # When True, a price-based commitment
+    # filter runs between two LP solves to
+    # approximate integer unit commitment.
     commitment_irr_hurdle: float = 0.07  # 7% return required on startup cost.
     # A run must generate margin >= startup_per_mw × (1 + irr) to justify
     # the wear and capital risk of a start. Source: operator interviews,
@@ -701,11 +711,11 @@ class ScenarioConfig:
     # higher tranches bid progressively more of full fuel cost. The fractions
     # need not sum to 1.0 but normally do. Source: calibrated to EIA-930
     # 2023-2024 hourly ERCOT coal dispatch and eGRID 2023/2024 actuals.
-    coal_tranche_1_frac: float = 0.30        # Take-or-pay capacity fraction
+    coal_tranche_1_frac: float = 0.30  # Take-or-pay capacity fraction
     coal_tranche_1_fuel_passthrough: float = 0.00  # VOM only — fuel sunk
-    coal_tranche_2_frac: float = 0.25        # Partially contracted
+    coal_tranche_2_frac: float = 0.25  # Partially contracted
     coal_tranche_2_fuel_passthrough: float = 0.35
-    coal_tranche_3_frac: float = 0.45        # Economic dispatch
+    coal_tranche_3_frac: float = 0.45  # Economic dispatch
     coal_tranche_3_fuel_passthrough: float = 1.00  # Full fuel cost
 
     # Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal
@@ -762,7 +772,7 @@ class ScenarioConfig:
     # cycle), not baseload price-takers, so they can want a different curve.
     # Requires coal_prb_passthrough_sigmoid and coal_mustrun_per_plant.
     coal_prb_passthrough_tiered: bool = False
-    coal_prb_follower_mustrun_max: float = 25.0   # MR% <= this -> follower tier
+    coal_prb_follower_mustrun_max: float = 25.0  # MR% <= this -> follower tier
     coal_prb_follower_floor: float | None = None
     coal_prb_follower_ceil: float | None = None
     coal_prb_follower_gas_mid: float | None = None
@@ -1055,9 +1065,7 @@ class ScenarioConfig:
     #                    econ_low/econ_high = residual x econ_low_share/(1-share))
     # ST_GAS peaker plants (fleet.ST_GAS_PEAKER_PLANTS) are excluded (CSV heat
     # rates). Empty (the default) leaves the legacy override / CSV path intact.
-    offer_curve_by_group: dict[str, dict[str, float]] = field(
-        default_factory=dict
-    )
+    offer_curve_by_group: dict[str, dict[str, float]] = field(default_factory=dict)
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
@@ -1331,6 +1339,7 @@ class ScenarioConfig:
     def real_discount_rate(self) -> float:
         """Real discount rate via Fisher equation: (1+nominal)/(1+inflation) - 1."""
         from market_sim.config.constants import INFLATION_RATE
+
         return (1.0 + self.nominal_discount_rate) / (1.0 + INFLATION_RATE) - 1.0
 
     def cache_key(self) -> str:
@@ -1389,15 +1398,22 @@ class ScenarioConfig:
 COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # ERCOT PRB-by-rail (curated COAL_PLANT_SUPPLY tags): per-month
     # PRB-vs-gas-CC breakeven across 2023-2025 (run-70s tuning series).
-    ("ERCOT", "prb"): {
-        "floor": 0.78, "ceil": 1.50, "gas_mid": 2.85, "gas_slope": 2.5},
+    ("ERCOT", "prb"): {"floor": 0.78, "ceil": 1.50, "gas_mid": 2.85, "gas_slope": 2.5},
     ("ERCOT", "prb_follower"): {
-        "floor": 0.68, "ceil": 1.35, "gas_mid": 2.85, "gas_slope": 2.5},
+        "floor": 0.68,
+        "ceil": 1.35,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
     # Safety net for any future ERCOT coal plant that misses the curated map
     # and lands on the derived "subbituminous" rank tag: mirror the prb
     # baseload curve (PRB IS sub-bituminous; same basin economics in ERCOT).
     ("ERCOT", "subbituminous"): {
-        "floor": 0.78, "ceil": 1.50, "gas_mid": 2.85, "gas_slope": 2.5},
+        "floor": 0.78,
+        "ceil": 1.50,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
     # ERCOT mine-mouth lignite, derived from the run-80 flat-reprice
     # anchors: a $1.15/MMBtu flat probe ≈ passthrough 0.79 fixed 2023, a
     # $1.05 ≈ 0.72 fixed 2024, and 2025 wants ~full cost — a sigmoid on the
@@ -1405,7 +1421,11 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # lands all three. The delivered-price constant stays grounded at the
     # measured ~$1.45/MMBtu; this discounts the BID, not the cost.
     ("ERCOT", "lignite"): {
-        "floor": 0.70, "ceil": 1.00, "gas_mid": 2.85, "gas_slope": 2.5},
+        "floor": 0.70,
+        "ceil": 1.00,
+        "gas_mid": 2.85,
+        "gas_slope": 2.5,
+    },
     # PJM bituminous (Appalachian/Illinois Basin): brackets the per-month
     # bit-vs-gas-CC breakeven across PJM 2023-2025 (~0.5 at $2.2/MMBtu gas
     # to ~1.7 at $6.9) conservatively — a moderate pull toward breakeven,
@@ -1424,7 +1444,11 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
     # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
     ("PJM", "bituminous"): {
-        "floor": 0.76, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
+        "floor": 0.76,
+        "ceil": 1.32,
+        "gas_mid": 3.40,
+        "gas_slope": 2.5,
+    },
     # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
     # cut from the run-13 no-sigmoid residuals — over-dispatch grows with
     # the gas price (+5% at $2.2-2.5 HH to +12% at $3.5), so no cheap-gas
@@ -1433,7 +1457,11 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # floor/ceil suppressed these plants 12-21% below actuals (run 14,
     # discarded).
     ("PJM", "subbituminous"): {
-        "floor": 1.00, "ceil": 1.25, "gas_mid": 3.40, "gas_slope": 2.5},
+        "floor": 1.00,
+        "ceil": 1.25,
+        "gas_mid": 3.40,
+        "gas_slope": 2.5,
+    },
     # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
     # fuel, so no cheap-gas discount (floor 1.0) — only a dear-gas markup.
     # Placement from the run-16/17/18 monthly EIA-923 decomposition: the
@@ -1446,8 +1474,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # ~2.1 at Jan-2025's $6.86. Midpoint split: 5.30 would release too
     # much of Feb/Dec-2025 once the run-19 econ-ramp midpoint (curve-mid
     # 0.35) lifts WC mid-band dispatch in both years.
-    ("PJM", "waste"): {
-        "floor": 1.00, "ceil": 2.10, "gas_mid": 5.15, "gas_slope": 3.0},
+    ("PJM", "waste"): {"floor": 1.00, "ceil": 2.10, "gas_mid": 5.15, "gas_slope": 3.0},
 }
 
 

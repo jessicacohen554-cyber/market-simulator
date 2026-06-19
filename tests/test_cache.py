@@ -69,9 +69,7 @@ def _assert_results_match(test, expected, actual):
             test.assertIsNone(act, f"{field} should be None")
         else:
             test.assertIsNotNone(act, f"{field} should not be None")
-            test.assertTrue(
-                np.allclose(exp, act), f"{field} arrays differ"
-            )
+            test.assertTrue(np.allclose(exp, act), f"{field} arrays differ")
     test.assertAlmostEqual(expected.objective_value, actual.objective_value)
     test.assertEqual(expected.status, actual.status)
     test.assertAlmostEqual(expected.build_time, actual.build_time)
@@ -130,9 +128,7 @@ class TestRoundTrip(CacheTestBase):
         _assert_results_match(
             self, p1, cache.load_result("ERCOT", key, 2030, pass_label="p1")
         )
-        _assert_results_match(
-            self, final, cache.load_result("ERCOT", key, 2030)
-        )
+        _assert_results_match(self, final, cache.load_result("ERCOT", key, 2030))
 
 
 class TestIsCached(CacheTestBase):
@@ -178,9 +174,7 @@ def _make_context(n_gen=5):
         fuel_types=["gas_cc", "gas_ct", "coal", "nuclear", "wind"][:n_gen],
         pmax_mw=[400.0, 150.0, 600.0, 1200.0, 300.0][:n_gen],
         emission_rate=[0.38, 0.6, 1.0, 0.0, 0.0][:n_gen],
-        efficiency_bins=["h_class", "aero", "older", "default", "default"][
-            :n_gen
-        ],
+        efficiency_bins=["h_class", "aero", "older", "default", "default"][:n_gen],
         heat_rates=[6.4, 9.8, 10.2, 10.4, 0.0][:n_gen],
         zones=["North", "South", "West", "Houston", "North"][:n_gen],
         unit_ids=["G0", "G1", "G2", "G3", "G4"][:n_gen],
@@ -229,20 +223,28 @@ class TestFleetContextFromArrays(unittest.TestCase):
     def test_maps_fuel_codes_and_sums_resources(self):
         generators = [
             Generator(
-                unit_id="G0", name="G0", zone="North", fuel_type="coal",
-                efficiency_bin="older", pmax_mw=600.0, heat_rate=10.2,
+                unit_id="G0",
+                name="G0",
+                zone="North",
+                fuel_type="coal",
+                efficiency_bin="older",
+                pmax_mw=600.0,
+                heat_rate=10.2,
                 emission_rate_co2=1.0,
             ),
             Generator(
-                unit_id="G1", name="G1", zone="Houston", fuel_type="gas_cc",
-                efficiency_bin="h_class", pmax_mw=400.0, heat_rate=6.4,
+                unit_id="G1",
+                name="G1",
+                zone="Houston",
+                fuel_type="gas_cc",
+                efficiency_bin="h_class",
+                pmax_mw=400.0,
+                heat_rate=6.4,
                 emission_rate_co2=0.38,
             ),
         ]
         iso_config = get_iso_config("ERCOT")
-        fleet = generators_to_fleet_arrays(
-            generators, iso_config.zone_names, hours=4
-        )
+        fleet = generators_to_fleet_arrays(generators, iso_config.zone_names, hours=4)
 
         context = FleetContext.from_arrays(
             fleet,

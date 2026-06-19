@@ -8,6 +8,7 @@ requirement really is a near-constant reliability quantity ~= 1.5 x MSSC, not
 a shape that must be replayed. The measured series is a validation target
 only; it is never an input to the optimization.
 """
+
 import unittest
 
 import numpy as np
@@ -40,16 +41,12 @@ class TestLargestSingleContingency(unittest.TestCase):
         avail = np.empty((2, 24))
         avail[0, :] = 0.5
         avail[1, :] = 1.0
-        self.assertEqual(
-            largest_single_contingency_mw(pmax, availability=avail), 800.0
-        )
+        self.assertEqual(largest_single_contingency_mw(pmax, availability=avail), 800.0)
 
     def test_reserve_mask_excludes_units(self):
         pmax = np.array([2000.0, 600.0])  # largest is reserve-ineligible
         mask = np.array([False, True])
-        self.assertEqual(
-            largest_single_contingency_mw(pmax, reserve_mask=mask), 600.0
-        )
+        self.assertEqual(largest_single_contingency_mw(pmax, reserve_mask=mask), 600.0)
 
     def test_fleet_responsive_drops_with_largest_unit(self):
         full = np.array([1300.0, 900.0, 400.0])
@@ -105,7 +102,7 @@ class TestOrdcShortfallSteps(unittest.TestCase):
     def test_two_step_curve_conversion(self):
         req_total, pens, widths = pjm_ordc_shortfall_steps(self._CURVE, 3000.0)
         self.assertEqual(req_total, 3190.0)  # REQ + max offset
-        np.testing.assert_allclose(pens, [300.0, 850.0])   # cheapest band first
+        np.testing.assert_allclose(pens, [300.0, 850.0])  # cheapest band first
         np.testing.assert_allclose(widths, [190.0, 3000.0])
 
     def test_widths_span_full_requirement_extent(self):
@@ -134,9 +131,7 @@ class TestMeasuredRequirementLoader(unittest.TestCase):
         self.assertTrue(3000.0 < req.mean() < 3700.0)
 
     def test_missing_year_returns_none(self):
-        self.assertIsNone(
-            load_pjm_measured_reserve_requirement(1999, 8760)
-        )
+        self.assertIsNone(load_pjm_measured_reserve_requirement(1999, 8760))
 
 
 class TestMeasuredRequirementHonestyGate(unittest.TestCase):
@@ -154,6 +149,7 @@ class TestMeasuredRequirementHonestyGate(unittest.TestCase):
         if not path.exists():
             return None
         import pandas as pd
+
         return pd.read_parquet(path)["pr_req_mw"].to_numpy()
 
     def test_measured_requirement_is_near_flat(self):
@@ -169,7 +165,8 @@ class TestMeasuredRequirementHonestyGate(unittest.TestCase):
             # shifts seasonally); modest variation around a stable level, so
             # the flat 1.5x-MSSC premise holds as a first-order structural form.
             self.assertLess(
-                cv, 0.20,
+                cv,
+                0.20,
                 f"{year}: Primary Reserve req not near-flat (cv={cv:.3f}); "
                 "the 1.5x-MSSC constant-requirement premise would not hold",
             )
@@ -216,8 +213,14 @@ class TestErcotOrdcDemandSteps(unittest.TestCase):
         from market_sim.results.scarcity import ercot_ordc_demand_steps
 
         params = dict(
-            voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
-            shift_sigma=0.5, n_steps=40, sigma_span=5.0, multistep_floor=False,
+            voll=5000.0,
+            mcl_mw=3000.0,
+            mu_mw=0.0,
+            sigma_mw=1400.0,
+            shift_sigma=0.5,
+            n_steps=40,
+            sigma_span=5.0,
+            multistep_floor=False,
         )
         params.update(kw)
         return ercot_ordc_demand_steps(**params)
@@ -255,8 +258,12 @@ class TestErcotOrdcDemandSteps(unittest.TestCase):
         from market_sim.results.scarcity import ercot_ordc_demand_steps
 
         req_total, pens, widths = ercot_ordc_demand_steps(
-            voll=5000.0, mcl_mw=3000.0, mu_mw=0.0, sigma_mw=1400.0,
-            shift_sigma=0.5, multistep_floor=True,
+            voll=5000.0,
+            mcl_mw=3000.0,
+            mu_mw=0.0,
+            sigma_mw=1400.0,
+            shift_sigma=0.5,
+            multistep_floor=True,
         )
         # Reserve at each band's lower edge, descending from req_total.
         grid = np.linspace(req_total, 0.0, len(widths) + 1)

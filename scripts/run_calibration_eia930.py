@@ -52,7 +52,18 @@ logger = logging.getLogger("calibration_eia930")
 _MWH_PER_TWH: float = 1.0e6
 _HOURS_PER_YEAR: int = 8760
 _DAYS_IN_MONTH: tuple[int, ...] = (
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    31,
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
 )
 
 
@@ -99,7 +110,8 @@ def _nrmse(model: np.ndarray, observed: np.ndarray) -> float:
 
 
 def _build_model_hourly(
-    result, fuels: list[str],
+    result,
+    fuels: list[str],
 ) -> dict[str, np.ndarray]:
     """Return modeled hourly generation (MW) by aggregated fuel class.
 
@@ -128,7 +140,8 @@ def _build_model_hourly(
 
 
 def _print_annual_table(
-    year: int, model_hourly: dict[str, np.ndarray],
+    year: int,
+    model_hourly: dict[str, np.ndarray],
     eia930: dict[str, np.ndarray],
 ) -> None:
     """Print model vs EIA-930 annual generation totals by fuel."""
@@ -141,17 +154,31 @@ def _print_annual_table(
         total_m += m_twh
         total_o += o_twh
         diff = 100.0 * (m_twh - o_twh) / o_twh if o_twh else float("nan")
-        rows.append((
-            fuel, f"{m_twh:7.2f}", f"{o_twh:7.2f}", f"{diff:+6.1f}",
-        ))
+        rows.append(
+            (
+                fuel,
+                f"{m_twh:7.2f}",
+                f"{o_twh:7.2f}",
+                f"{diff:+6.1f}",
+            )
+        )
     nuclear_twh = float(model_hourly["nuclear"].sum()) / _MWH_PER_TWH
-    rows.append((
-        "nuclear (model only)", f"{nuclear_twh:7.2f}", "    —", "    —",
-    ))
-    rows.append((
-        "TOTAL (excl nuclear)", f"{total_m:7.2f}", f"{total_o:7.2f}",
-        f"{100.0 * (total_m - total_o) / total_o:+6.1f}",
-    ))
+    rows.append(
+        (
+            "nuclear (model only)",
+            f"{nuclear_twh:7.2f}",
+            "    —",
+            "    —",
+        )
+    )
+    rows.append(
+        (
+            "TOTAL (excl nuclear)",
+            f"{total_m:7.2f}",
+            f"{total_o:7.2f}",
+            f"{100.0 * (total_m - total_o) / total_o:+6.1f}",
+        )
+    )
     _print_table(rows)
 
 
@@ -174,13 +201,15 @@ def _print_dispatch_fit(
     for fuel in ("coal", "gas"):
         m = model_hourly[fuel]
         o = eia930[fuel]
-        rows.append((
-            fuel,
-            f"{_pearson_r(m, o):.3f}",
-            f"{_nrmse(m, o):.3f}",
-            f"{m.sum() / _MWH_PER_TWH:7.2f}",
-            f"{o.sum() / _MWH_PER_TWH:7.2f}",
-        ))
+        rows.append(
+            (
+                fuel,
+                f"{_pearson_r(m, o):.3f}",
+                f"{_nrmse(m, o):.3f}",
+                f"{m.sum() / _MWH_PER_TWH:7.2f}",
+                f"{o.sum() / _MWH_PER_TWH:7.2f}",
+            )
+        )
     _print_table(rows)
 
 
@@ -193,8 +222,20 @@ def _print_monthly_bias(
     print(f"\n  Monthly bias — {year}   (% of EIA-930 generation per month)")
     months = _hour_to_month(_HOURS_PER_YEAR)
     header = ("fuel",) + tuple(
-        ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+        (
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ),
     )
     rows: list[tuple] = [header]
     for fuel in ("coal", "gas", "wind", "solar"):
@@ -215,7 +256,9 @@ def _print_monthly_bias(
 
 def _worst_cells(
     fuel: str,
-    model: np.ndarray, observed: np.ndarray, top_n: int = 12,
+    model: np.ndarray,
+    observed: np.ndarray,
+    top_n: int = 12,
 ) -> list[tuple[int, int, float, float, float]]:
     """Return the top-``top_n`` (month, hour-of-day) cells by |bias| in MW."""
     months = _hour_to_month(_HOURS_PER_YEAR)
@@ -234,8 +277,11 @@ def _worst_cells(
     bias = avg_model - avg_obs
     # Rank by absolute bias in MW.
     flat = sorted(
-        ((abs(bias[m, h]), m + 1, h, bias[m, h], avg_model[m, h], avg_obs[m, h])
-         for m in range(12) for h in range(24)),
+        (
+            (abs(bias[m, h]), m + 1, h, bias[m, h], avg_model[m, h], avg_obs[m, h])
+            for m in range(12)
+            for h in range(24)
+        ),
         reverse=True,
     )
     return [(mo, hod, b, mw_m, mw_o) for _, mo, hod, b, mw_m, mw_o in flat[:top_n]]
@@ -243,37 +289,48 @@ def _worst_cells(
 
 def _print_worst_cells(year: int, fuel: str, cells) -> None:
     """Print the worst (month, hour) bias cells for one fuel."""
-    print(
-        f"\n  Worst {fuel.upper()} month × hour-of-day cells — {year}"
-    )
+    print(f"\n  Worst {fuel.upper()} month × hour-of-day cells — {year}")
     rows: list[tuple] = [
         ("month", "hour", "bias MW", "model MW", "EIA-930 MW", "bias %"),
     ]
     month_name = (
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     )
     for mo, hod, bias, mw_m, mw_o in cells:
         pct = 100.0 * bias / mw_o if mw_o > 0 else float("nan")
-        rows.append((
-            month_name[mo - 1],
-            f"{hod:02d}",
-            f"{bias:+8.0f}",
-            f"{mw_m:8.0f}",
-            f"{mw_o:8.0f}",
-            f"{pct:+6.1f}",
-        ))
+        rows.append(
+            (
+                month_name[mo - 1],
+                f"{hod:02d}",
+                f"{bias:+8.0f}",
+                f"{mw_m:8.0f}",
+                f"{mw_o:8.0f}",
+                f"{pct:+6.1f}",
+            )
+        )
     _print_table(rows)
 
 
 def _print_monthly_hour_heatmap(
-    year: int, fuel: str,
-    model: np.ndarray, observed: np.ndarray,
+    year: int,
+    fuel: str,
+    model: np.ndarray,
+    observed: np.ndarray,
 ) -> None:
     """Print a 12×24 heatmap of bias % (model − EIA-930) / EIA-930 per cell."""
     print(
-        f"\n  {fuel.upper()} bias heatmap — {year}   "
-        "(% of EIA-930 per (month, hour))"
+        f"\n  {fuel.upper()} bias heatmap — {year}   (% of EIA-930 per (month, hour))"
     )
     months = _hour_to_month(_HOURS_PER_YEAR)
     hods = _hour_of_day(_HOURS_PER_YEAR)
@@ -291,8 +348,18 @@ def _print_monthly_hour_heatmap(
     with np.errstate(divide="ignore", invalid="ignore"):
         bias_pct = np.where(avg_o > 0, 100.0 * (avg_m - avg_o) / avg_o, np.nan)
     month_name = (
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     )
     header = ("month",) + tuple(f"h{h:02d}" for h in range(24))
     rows: list[tuple] = [header]
@@ -306,12 +373,13 @@ def _print_monthly_hour_heatmap(
 
 
 def _run_and_report(
-    year: int, iso: str, hours: int, gas_price: float,
+    year: int,
+    iso: str,
+    hours: int,
+    gas_price: float,
 ) -> None:
     """Run one calibration year and print the EIA-930 comparison report."""
-    result, context, _, _ = run_year(
-        year, iso, hours, gas_price, ttc_overrides={}
-    )
+    result, context, _, _ = run_year(year, iso, hours, gas_price, ttc_overrides={})
 
     print(f"\n{'=' * 72}")
     print(f"  ERCOT {year} BACKCAST   (status: {result.status})")
@@ -325,8 +393,10 @@ def _run_and_report(
 
     # Nuclear is steady but we still report it for completeness.
     eia930: dict[str, np.ndarray] = {
-        "coal": fossil["coal"], "gas": fossil["gas"],
-        "wind": renewables["wind"], "solar": renewables["solar"],
+        "coal": fossil["coal"],
+        "gas": fossil["gas"],
+        "wind": renewables["wind"],
+        "solar": renewables["solar"],
         "nuclear": np.zeros(_HOURS_PER_YEAR),
     }
     model_hourly = _build_model_hourly(result, list(context.fuel_types))
@@ -338,9 +408,7 @@ def _run_and_report(
         cells = _worst_cells(fuel, model_hourly[fuel], eia930[fuel])
         _print_worst_cells(year, fuel, cells)
     for fuel in ("coal", "gas"):
-        _print_monthly_hour_heatmap(
-            year, fuel, model_hourly[fuel], eia930[fuel]
-        )
+        _print_monthly_hour_heatmap(year, fuel, model_hourly[fuel], eia930[fuel])
 
 
 def main() -> None:
@@ -349,7 +417,10 @@ def main() -> None:
         description="Calibration backcast diagnostic vs EIA-930."
     )
     parser.add_argument(
-        "--year", nargs="+", type=int, default=[2023, 2024],
+        "--year",
+        nargs="+",
+        type=int,
+        default=[2023, 2024],
         help="Calibration years to run (default 2023 2024).",
     )
     parser.add_argument("--iso", default="ERCOT")
@@ -361,7 +432,10 @@ def main() -> None:
         gas_price = _henry_hub_actual(reference, year)
         logger.info(
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
-            args.iso, year, args.hours, gas_price,
+            args.iso,
+            year,
+            args.hours,
+            gas_price,
         )
         _run_and_report(year, args.iso, args.hours, gas_price)
 

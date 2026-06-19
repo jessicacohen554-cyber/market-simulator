@@ -101,9 +101,13 @@ _CHP_PMIN_PCTILE: int = 2
 # 5 = commercial cogen, 7 = industrial cogen); non-cogen sectors land on the
 # nearest class so a plant whose 923 rows are mixed still classifies.
 _EIA_SECTOR_CLASS: dict[int, str] = {
-    1: "merchant", 2: "merchant", 3: "merchant",
-    4: "commercial", 5: "commercial",
-    6: "industrial", 7: "industrial",
+    1: "merchant",
+    2: "merchant",
+    3: "merchant",
+    4: "commercial",
+    5: "commercial",
+    6: "industrial",
+    7: "industrial",
 }
 
 
@@ -126,14 +130,14 @@ def _chp_sector_map(years: list[int]) -> dict[int, str]:
             print(f"  (no EIA-923 archive for {year}: {zpath.name})")
             continue
         z = zipfile.ZipFile(zpath)
-        sheet_file = next(
-            (n for n in z.namelist() if "Schedules_2_3_4_5" in n), None
-        )
+        sheet_file = next((n for n in z.namelist() if "Schedules_2_3_4_5" in n), None)
         if sheet_file is None:
             continue
         with z.open(sheet_file) as f:
             df = pd.read_excel(
-                f, sheet_name="Page 1 Generation and Fuel Data", skiprows=5,
+                f,
+                sheet_name="Page 1 Generation and Fuel Data",
+                skiprows=5,
                 usecols=["Plant Id", "EIA Sector Number"],
             )
         df = df.dropna()
@@ -165,7 +169,8 @@ _DAYS_IN_MONTH: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 3
 
 
 def _chp_f923_floor_cf(
-    years: list[int], cap: dict[tuple[int, str], float],
+    years: list[int],
+    cap: dict[tuple[int, str], float],
 ) -> dict[tuple[int, str], float]:
     """Return ``{(code, group): pmin_cf %}`` from EIA-923 monthly generation.
 
@@ -214,6 +219,7 @@ def _chp_f923_floor_cf(
             _CHP_F923_FLOOR_CAP,
         )
     return out
+
 
 # An hour counts as "online / committed" when net output clears this fraction
 # of the hour's available capacity — low enough to admit one unit of a
@@ -323,11 +329,16 @@ def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
             p = dict(
                 p,
                 status="chp_floor_only",
-                committed_pct=None, mustrun_pct=None,
-                p25_cf=None, median_cf=None, online_hours=0,
+                committed_pct=None,
+                mustrun_pct=None,
+                p25_cf=None,
+                median_cf=None,
+                online_hours=0,
             )
-            print(f"  (carrying forward CHP floor for {key[0]} {key[1]}: "
-                  f"CAMPD-visible in the prior window only)")
+            print(
+                f"  (carrying forward CHP floor for {key[0]} {key[1]}: "
+                f"CAMPD-visible in the prior window only)"
+            )
         rows.append(p)
     return rows
 
@@ -338,15 +349,18 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2024])
     ap.add_argument("--out", default=None)
     ap.add_argument(
-        "--chp-floors-from", default=None,
+        "--chp-floors-from",
+        default=None,
         help="Existing artifact whose CHP steam-following floors "
-             "(chp_pmin_cf / chp_sector, incl. eia923_cf rows) are consumed "
-             "verbatim instead of re-derived.",
+        "(chp_pmin_cf / chp_sector, incl. eia923_cf rows) are consumed "
+        "verbatim instead of re-derived.",
     )
     args = ap.parse_args()
     iso = args.iso.upper()
-    out_path = Path(args.out) if args.out else (
-        REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv"
+    out_path = (
+        Path(args.out)
+        if args.out
+        else (REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv")
     )
 
     states = campd.states_for_iso(iso)
@@ -410,11 +424,15 @@ def main() -> None:
         allh = allhr_cf.get((code, group))
         n_online = int(sum(len(a) for a in on)) if on else 0
         if not on or n_online < _MIN_ONLINE_HOURS:
-            rows.append({
-                "plant_code": code, "plant_group": group,
-                "name": names.get(code, ""), "status": "rarely_online",
-                "online_hours": n_online,
-            })
+            rows.append(
+                {
+                    "plant_code": code,
+                    "plant_group": group,
+                    "name": names.get(code, ""),
+                    "status": "rarely_online",
+                    "online_hours": n_online,
+                }
+            )
             continue
         on_cat = np.concatenate(on)
         all_cat = np.concatenate(allh) if allh else on_cat
@@ -428,13 +446,14 @@ def main() -> None:
         # never forced on, so its must-run is recorded as zero even when its
         # high capacity factor would make the all-hours floor look high.
         if group == "COAL":
-            mustrun = min(float(np.percentile(all_cat, _FLOOR_PCTILE)),
-                          _MUSTRUN_CAP)
+            mustrun = min(float(np.percentile(all_cat, _FLOOR_PCTILE)), _MUSTRUN_CAP)
         else:
             mustrun = 0.0
         row = {
-            "plant_code": code, "plant_group": group,
-            "name": names.get(code, ""), "status": "ok",
+            "plant_code": code,
+            "plant_group": group,
+            "name": names.get(code, ""),
+            "status": "ok",
             "nameplate_mw": round(nameplate, 1),
             "online_hours": n_online,
             "committed_pct": round(100.0 * committed, 1),
@@ -452,8 +471,8 @@ def main() -> None:
             mw_base = float(np.percentile(mw, _PEAKING_BASE_PCTILE))
             if mw_max > 0.0:
                 row["peaking_pct"] = round(
-                    min(100.0 * max(0.0, 1.0 - mw_base / mw_max),
-                        _PEAKING_CAP), 1,
+                    min(100.0 * max(0.0, 1.0 - mw_base / mw_max), _PEAKING_CAP),
+                    1,
                 )
         # CHP cogens additionally carry their steam-following total must-run
         # floor (P2 of the all-hours available-CF, the ERCOT
@@ -472,47 +491,74 @@ def main() -> None:
     # measured host-steam obligation. status="eia923_cf" marks the source; the
     # committed/must-run tranche columns stay blank (class defaults apply).
     have_floor = {
-        (r["plant_code"], r["plant_group"]) for r in rows
+        (r["plant_code"], r["plant_group"])
+        for r in rows
         if r["status"] == "ok" and r["plant_group"] in _CHP_GROUPS
     }
     f923_floors = _chp_f923_floor_cf(args.years, cap)
     for (code, group), pmin in sorted(f923_floors.items()):
         if (code, group) in have_floor or primary.get(code) != group:
             continue
-        rows.append({
-            "plant_code": code, "plant_group": group,
-            "name": names.get(code, ""), "status": "eia923_cf",
-            "nameplate_mw": round(cap[(code, group)], 1),
-            "online_hours": 0,
-            "chp_pmin_cf": round(pmin, 1),
-            "chp_sector": chp_sectors.get(code, ""),
-        })
+        rows.append(
+            {
+                "plant_code": code,
+                "plant_group": group,
+                "name": names.get(code, ""),
+                "status": "eia923_cf",
+                "nameplate_mw": round(cap[(code, group)], 1),
+                "online_hours": 0,
+                "chp_pmin_cf": round(pmin, 1),
+                "chp_sector": chp_sectors.get(code, ""),
+            }
+        )
 
     if args.chp_floors_from:
         rows = _consume_chp_floors(rows, pd.read_csv(args.chp_floors_from))
 
     out = pd.DataFrame(rows)
-    ok = out[
-        out["status"].isin(["ok", "eia923_cf", "chp_floor_only"])
-    ].sort_values(["plant_group", "plant_code"])
+    ok = out[out["status"].isin(["ok", "eia923_cf", "chp_floor_only"])].sort_values(
+        ["plant_group", "plant_code"]
+    )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ok.to_csv(out_path, index=False)
 
     pd.set_option("display.width", 200)
     pd.set_option("display.max_rows", 400)
-    print(f"\n{iso} thermal committed / must-run %  —  CAMPD years "
-          f"{args.years} (net vs available capacity)\n")
-    cols = ["plant_code", "plant_group", "name", "nameplate_mw",
-            "online_hours", "committed_pct", "mustrun_pct", "median_cf"]
+    print(
+        f"\n{iso} thermal committed / must-run %  —  CAMPD years "
+        f"{args.years} (net vs available capacity)\n"
+    )
+    cols = [
+        "plant_code",
+        "plant_group",
+        "name",
+        "nameplate_mw",
+        "online_hours",
+        "committed_pct",
+        "mustrun_pct",
+        "median_cf",
+    ]
     campd_ok = ok[ok["status"] == "ok"]
     print(campd_ok[cols].to_string(index=False))
     chp_rows = ok[ok["plant_group"].isin(_CHP_GROUPS)]
     if not chp_rows.empty:
-        print("\nCHP steam-following floors (chp_pmin_cf % of nameplate; "
-              "source: CAMPD p2 where status=ok, EIA-923 CF otherwise):")
-        print(chp_rows[["plant_code", "plant_group", "name", "nameplate_mw",
-                        "status", "chp_pmin_cf", "chp_sector"]]
-              .to_string(index=False))
+        print(
+            "\nCHP steam-following floors (chp_pmin_cf % of nameplate; "
+            "source: CAMPD p2 where status=ok, EIA-923 CF otherwise):"
+        )
+        print(
+            chp_rows[
+                [
+                    "plant_code",
+                    "plant_group",
+                    "name",
+                    "nameplate_mw",
+                    "status",
+                    "chp_pmin_cf",
+                    "chp_sector",
+                ]
+            ].to_string(index=False)
+        )
     print("\nby group (capacity-weighted committed%):")
     for g, sub in campd_ok.groupby("plant_group"):
         w = sub["nameplate_mw"]
@@ -520,8 +566,10 @@ def main() -> None:
         mw = float((sub["mustrun_pct"] * w).sum() / w.sum()) if w.sum() else 0.0
         print(f"  {g:<12} n={len(sub):>3}  committed~{cw:5.1f}%  mustrun~{mw:5.1f}%")
     skipped = out[out["status"] != "ok"]
-    print(f"\nwrote {len(ok)} plant-groups to {out_path} "
-          f"({len(skipped)} skipped: too little run-time)")
+    print(
+        f"\nwrote {len(ok)} plant-groups to {out_path} "
+        f"({len(skipped)} skipped: too little run-time)"
+    )
 
 
 if __name__ == "__main__":

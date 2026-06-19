@@ -73,7 +73,8 @@ def main() -> None:
     parser.add_argument("--states", nargs="+", default=None, help="CAMPD state codes.")
     parser.add_argument("--years", nargs="+", type=int, required=True)
     parser.add_argument(
-        "--no-registry", action="store_true",
+        "--no-registry",
+        action="store_true",
         help="Skip back-filling parasitic_load_pct in the registry.",
     )
     args = parser.parse_args()
@@ -88,8 +89,11 @@ def main() -> None:
         logger.error("no CAMPD extracts found for the requested states/years")
         return
     campd_annual = campd.annual_plant_totals(df)
-    logger.info("CAMPD: %d plant-years across %d plants",
-                len(campd_annual), campd_annual["plant_id"].nunique())
+    logger.info(
+        "CAMPD: %d plant-years across %d plants",
+        len(campd_annual),
+        campd_annual["plant_id"].nunique(),
+    )
 
     generation = load_monthly_generation()
     eia_net = campd.eia923_combustion_net(
@@ -112,7 +116,9 @@ def main() -> None:
     logger.info(
         "pooled factors: %d plants (%d measured, %d class-default); "
         "measured net/gross mean=%.4f median=%.4f",
-        len(pooled), len(measured), len(pooled) - len(measured),
+        len(pooled),
+        len(measured),
+        len(pooled) - len(measured),
         measured["parasitic_factor"].mean() if len(measured) else float("nan"),
         measured["parasitic_factor"].median() if len(measured) else float("nan"),
     )

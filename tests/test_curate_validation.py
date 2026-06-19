@@ -50,8 +50,20 @@ _ACTUAL_LMP = {
         "2023": {
             "src": "ZZ test hub price",
             "da": 40.0,
-            "da_mon": [10.0, 20.0, None, 40.0, 50.0, 60.0,
-                       70.0, 80.0, 90.0, 100.0, 110.0, 120.0],
+            "da_mon": [
+                10.0,
+                20.0,
+                None,
+                40.0,
+                50.0,
+                60.0,
+                70.0,
+                80.0,
+                90.0,
+                100.0,
+                110.0,
+                120.0,
+            ],
         }
     },
     # Price-only ISO-year: no capacity CSV, no calibration block.
@@ -148,8 +160,9 @@ class TestCurateValidation(unittest.TestCase):
 
         # henry hub gas price (fuel=gas).
         hh = one("henry_hub_usd_per_mmbtu")
-        self.assertEqual((hh["value"], hh["fuel"], hh["unit"]),
-                         (2.54, "gas", "usd_per_mmbtu"))
+        self.assertEqual(
+            (hh["value"], hh["fuel"], hh["unit"]), (2.54, "gas", "usd_per_mmbtu")
+        )
 
         # avg_price_usd_per_mwh: annual at month=0 plus the monthly series; the
         # null March (index 3) is dropped, so 1 annual + 11 monthly = 12 rows.
@@ -158,7 +171,9 @@ class TestCurateValidation(unittest.TestCase):
         self.assertEqual(one("avg_price_usd_per_mwh", month=0)["value"], 40.0)
         self.assertEqual(one("avg_price_usd_per_mwh", month=4)["value"], 40.0)
         self.assertTrue((price["source"] == "ZZ test hub price").all())
-        self.assertEqual(sorted(price["month"]), [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+        self.assertEqual(
+            sorted(price["month"]), [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        )
 
     def test_price_only_iso_year(self):
         # QQ-2024 has only the LMP benchmark -> 1 annual + 12 monthly price rows.
@@ -173,7 +188,9 @@ class TestCurateValidation(unittest.TestCase):
         for k in first:
             pd.testing.assert_frame_equal(
                 first[k].sort_values(first[k].columns.tolist()).reset_index(drop=True),
-                second[k].sort_values(second[k].columns.tolist()).reset_index(drop=True),
+                second[k]
+                .sort_values(second[k].columns.tolist())
+                .reset_index(drop=True),
             )
 
 

@@ -45,16 +45,16 @@ def analyze(bundle: Path, year: int) -> dict:
 
     # Gas generation by hour (MW) and annual TWh.
     gas = df[df.fuel.isin(GAS_FUELS)]
-    gas_hourly = gas.groupby("hour")["mw"].sum().reindex(
-        range(hours), fill_value=0.0
-    ).to_numpy()
+    gas_hourly = (
+        gas.groupby("hour")["mw"].sum().reindex(range(hours), fill_value=0.0).to_numpy()
+    )
     gas_twh = float(gas["mw"].sum()) / 1e6
 
     # Net interchange at the priced node: +import / -export (MW/hour).
     imp = df[(df.zone == "WECC_import") & (df.fuel == "import")]
-    net_import = imp.groupby("hour")["mw"].sum().reindex(
-        range(hours), fill_value=0.0
-    ).to_numpy()
+    net_import = (
+        imp.groupby("hour")["mw"].sum().reindex(range(hours), fill_value=0.0).to_numpy()
+    )
 
     spring_mid = np.isin(month, SPRING) & (hod >= MIDDAY[0]) & (hod < MIDDAY[1])
     monthly_lmp = [float(lmp[month == m].mean()) for m in range(1, 13)]
@@ -89,7 +89,9 @@ def main() -> None:
     args = ap.parse_args()
 
     al = json.load(open(REPO / "data/raw/_validation-source/actual_lmp.json"))["CAISO"]
-    cr = json.load(open(REPO / "data/raw/_validation-source/calibration_reference.json"))
+    cr = json.load(
+        open(REPO / "data/raw/_validation-source/calibration_reference.json")
+    )
     ref_gas = sum(
         cr["isos"]["CAISO"][str(args.year)]["generation_twh"].get(f, 0.0)
         for f in GAS_FUELS
@@ -115,8 +117,9 @@ def main() -> None:
     row("export hours %", "export_hours_pct")
     row("spring-mid gas MW", "spring_mid_gas_mw")
     row("spring-mid import MW", "spring_mid_import_mw")
-    print(f"  (EIA-930 spring-mid NG: NG MW: "
-          f"{results[0]['eia930_spring_mid_ng_mw']:.0f})")
+    print(
+        f"  (EIA-930 spring-mid NG: NG MW: {results[0]['eia930_spring_mid_ng_mw']:.0f})"
+    )
     row("LMP mean", "lmp_mean")
     row("LMP min", "lmp_min")
     row("LMP p5", "lmp_p5")
