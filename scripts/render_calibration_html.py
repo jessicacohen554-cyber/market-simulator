@@ -126,9 +126,19 @@ def _actual_lmp_table() -> dict:
 
     Returns an empty dict when the reference is absent, so the dashboard renders
     a model-only price card rather than failing.
+
+    The reference lives under the canonical validation-source dir
+    (``data/raw/_validation-source``, ``paths.CALIBRATION_DIR``) since the W1
+    data relocation; the pre-relocation ``inputs/calibration`` path is kept as a
+    fallback so an older checkout still resolves.
     """
-    p = REPO / "inputs" / "calibration" / "actual_lmp.json"
-    return json.loads(p.read_text()) if p.exists() else {}
+    from market_sim.config.paths import CALIBRATION_DIR
+
+    for p in (CALIBRATION_DIR / "actual_lmp.json",
+              REPO / "inputs" / "calibration" / "actual_lmp.json"):
+        if p.exists():
+            return json.loads(p.read_text())
+    return {}
 
 
 def _actual_avg_lmp(iso: str, year: int) -> dict | None:
