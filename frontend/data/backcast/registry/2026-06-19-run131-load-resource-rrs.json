@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-19-run131-load-resource-rrs",
+  "label": "run131 load resource rrs",
+  "date": "2026-06-19",
+  "shorthand": "run131-load-resource-rrs",
+  "definition": "run129 (CC-only DAM offer curve + energy/reserve co-opt) plus a measured load-resource reserve credit: the cleared RRS-UFR (under-frequency-relay responsive reserve, by ERCOT protocol provided only by Load Resources; ~0.8-0.9 GW) is credited into the co-opt reserve balance by lowering its RHS, since the LP otherwise counts only thermal headroom + storage and so prices an ORDC scarcity adder in non-scarce hours. KEEPER vs run129: cuts monthly LMP MAE toward actual (2024 13.1->10.5, 2025 17.1->11.3; 2025 avg 49.5->43.7 vs 32.5 actual) and pulls the 2024/2025 >$200 tail toward actual (2024 82->49 vs 53; 2025 84->60 vs 31) while per-class TWh are unchanged (DAM-BASE ~ 0 every class/year, so the 12/18 volume keeper and ST_GAS/CT hold exactly). The cleared-AS archive starts 2023-12-10, so 2023 is uncredited: its LMP and the 151/88 scarcity tail are untouched. Measured (no markup); 2025 still runs ~$11 hot (residual co-opt overshoot, not fixable by lowering CT/ST below the measured curve).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-19-run131-load-resource-rrs.js",
+  "bundle": "results/calibration/ercot_dam_lrcredit_3yr"
+}
