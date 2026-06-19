@@ -137,7 +137,7 @@ The Tier-3 envelope limits (MISO 10 / NYISO 3 / Carolinas 3.5 GW) were replaced
 with the **firm continuous transfer capability** of each seam, derived from
 PJM's OWN published per-tie interchange (Data Miner
 `import_export_act_sch_interchange`,
-`inputs/raw-data/iso-specific-transmission/PJM_<year>_*`): each external tie is
+`data/raw/iso-specific-transmission/PJM_<year>_*`): each external tie is
 mapped to its seam, the per-tie hourly actual flow is summed to the
 *simultaneous* seam transfer, and the limit is the **p99.5 of |seam flow|**
 pooled over 2023-25 (the duration curve's upper envelope minus the top ~0.5%

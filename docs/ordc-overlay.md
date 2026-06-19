@@ -5,7 +5,7 @@
 **Code:** `src/market_sim/results/scarcity.py`, `scripts/derive_ordc_overlay.py`,
 runner wiring in `src/market_sim/runner.py` (capacity-economics prices).
 **Validated against:** `results/calibration/run92_kiamichi` vs
-`inputs/calibration/actual_lmp_hourly_ERCOT.parquet`.
+`data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`.
 
 ## Why
 
@@ -70,7 +70,7 @@ minimum contingency level X, where the adder pins to VOLL - lambda.
 seasonal/TOD-block reserve-error statistics in NP6-576-ER (ercot.com is
 egress-blocked from this execution environment, so the user fetched the
 2025-06-13 and 2025-09-12 postings of report 13233 directly). The converted
-table is committed at `inputs/calibration/ercot_ordc_lolp_params.csv`
+table is committed at `data/raw/_validation-source/ercot_ordc_lolp_params.csv`
 (values are season-constant across TOD blocks in these vintages: summer
 904/1333, fall 917/1340, winter 930/1351, spring 947/1368 MW μ/σ). Two
 findings: (1) the published σ ≈ 1,332–1,368 MW lands within 5% of the
