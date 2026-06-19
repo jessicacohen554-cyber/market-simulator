@@ -116,11 +116,8 @@ run131 recipe (regenerates `system.parquet`; ~13–20 min, 3 yr, co-opt LP):
 Your probe = the same line with your change and a fresh
 `--out-dir results/calibration/ercot_dam_<probe>_3yr`. Then gate:
 
-    # one-time path bridge (the compare script's actual-LMP path is stale):
-    mkdir -p inputs/calibration && ln -sfn \
-      ../../data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet \
-      inputs/calibration/actual_lmp_hourly_ERCOT.parquet
-    uv run python scripts/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_lrcredit_3yr
+    # (the compare script reads data/raw/_validation-source/ directly — no path bridge needed post-W1)
+    uv run python scripts/probes/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_lrcredit_3yr
 
 **Watch all three gates together** (the prompt's standing rule):
 - Monthly LMP MAE/avg per year — push **2025** down toward actual, keep **2023
@@ -161,7 +158,7 @@ commits/PRs.
 - The EIA-930 `ERCO hourly.parquet` extract and per-ISO extracts **are committed
   on main now** (the recovery is done) — no offline rebuild needed.
 - Two paths went stale in the data reorg and need bridging/awareness: the compare
-  script's actual-LMP path (`inputs/calibration/…`, bridge as above) — and note
+  script's actual-LMP path (`data/raw/_validation-source/…`, bridge as above) — and note
   `build_ercot_as_withholding.py` was already fixed this session to write the
   canonical `data/raw/ercot-AS`.
 - Actual RTSPP: `data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`

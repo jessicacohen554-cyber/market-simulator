@@ -62,7 +62,7 @@ EIA-923 normal-year seed); RGGI in marginal cost
 (`STATE_CARBON_PRICE_BY_ISO["NEISO"]`, 2023–2025, default-on);
 **Algonquin winter basis** as the `gas_hub_basis_overlay` measured
 hub-month repricing (U4 satisfied via the ISO-NE MA gas index — 35/36
-months 2023–2025 in `inputs/raw-data/gas_basis_by_iso_month.csv`; Aug-2025
+months 2023–2025 in `data/raw/gas_basis_by_iso_month.csv`; Aug-2025
 missing upstream, falls back to EIA-923/shaped); `gas_monthly_actuals`
 default-on for NEISO.
 
@@ -97,13 +97,13 @@ parameter citations. See `docs/calibration-log.md` §NEISO 2 and §NEISO P12.
 
 | # | Item | Source | Destination | Needed by |
 |---|------|--------|-------------|-----------|
-| U1 | CAMPD unit-level `NH_2025.parquet` (hourly CEMS, same schema as `NH_2024`) — closes the only 2025 CEMS gap | EPA CAMPD bulk download | `inputs/raw-data/campd-unit-level/` | P0/P1 (2025 completeness) |
-| U2 | DA + RT hourly LMPs at ISO-NE zonal nodes / Hub (esp. .H.INTERNAL_HUB, NEMA/Boston, CT, SEMA, ME) 2023–2025 | ISO-NE Web Services / `da_lmp` & `rt_lmp` CSVs | `inputs/raw-data/lmp-data/NEISO/` | P10 |
-| U3 | Zonal hourly actual load by ISO-NE load zone (8 zones) 2023–2025 | ISO-NE `hourly_load` / SMD reports | `inputs/raw-data/zone-specific-demand/NEISO/` | P8 |
+| U1 | CAMPD unit-level `NH_2025.parquet` (hourly CEMS, same schema as `NH_2024`) — closes the only 2025 CEMS gap | EPA CAMPD bulk download | `data/raw/campd-unit-level/` | P0/P1 (2025 completeness) |
+| U2 | DA + RT hourly LMPs at ISO-NE zonal nodes / Hub (esp. .H.INTERNAL_HUB, NEMA/Boston, CT, SEMA, ME) 2023–2025 | ISO-NE Web Services / `da_lmp` & `rt_lmp` CSVs | `data/raw/lmp-data/NEISO/` | P10 |
+| U3 | Zonal hourly actual load by ISO-NE load zone (8 zones) 2023–2025 | ISO-NE `hourly_load` / SMD reports | `data/raw/zone-specific-demand/NEISO/` | P8 |
 | U4 | **(critical for price level)** Algonquin Citygate (AGT) daily/monthly delivered gas basis 2023–2025 — ISO-NE winter prices are set by AGT spot blowouts far above plant-average 923 | ICE / Platts / EIA NG Weekly (paywalled — web-search may yield monthly) | cite into `constants.py` / gas path | P7/P13 |
 | U5 | *(optional)* RGGI allowance clearing prices 2023–2025 | RGGI Inc. auction results (public — web-search likely suffices) | cite into `STATE_CARBON_PRICE_BY_ISO` | P7 |
-| U6 | *(optional)* North–South / Boston-Import / CT-Import interface hourly flows + limits | ISO-NE operating-limit postings / RSP | `inputs/raw-data/iso-specific-transmission/NEISO/` | P10 (TTC validation) |
-| U7 | *(optional)* HQ Phase II HVDC + Highgate + Cross-Sound scheduled flows | ISO-NE interchange reports (EIA-930 carries net) | `inputs/raw-data/iso-specific-transmission/NEISO/` | P9 (refinement) |
+| U6 | *(optional)* North–South / Boston-Import / CT-Import interface hourly flows + limits | ISO-NE operating-limit postings / RSP | `data/raw/iso-specific-transmission/NEISO/` | P10 (TTC validation) |
+| U7 | *(optional)* HQ Phase II HVDC + Highgate + Cross-Sound scheduled flows | ISO-NE interchange reports (EIA-930 carries net) | `data/raw/iso-specific-transmission/NEISO/` | P9 (refinement) |
 
 U2–U4 unblock the full pack. **U4 is the single most important upload for
 NEISO** — without the AGT winter basis, ISO-NE's defining January/February
@@ -186,7 +186,7 @@ scripts/build_calibration_reference.py.
    burns real oil in winter); measured Henry Hub; eGRID NEISO
    generation/emissions benchmark; EIA-860 year-end + monthly wind/solar
    capacity with the 4-zone shares. Emit
-   inputs/calibration/NEISO_{year}_renewable_capacity.csv and the
+   data/raw/_validation-source/NEISO_{year}_renewable_capacity.csv and the
    calibration_reference.json blocks. ERCOT/PJM/CAISO outputs byte-identical.
 2. Fleet sanity: assemble the NEISO fleet via get_iso_config("NEISO") + the
    ISNE BA filter; report plant count, capacity by class (flag oil and
@@ -208,7 +208,7 @@ audit doc committed.
 ```
 NEISO backcast: verify/refresh measured unit-outage windows. Read
 docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
-NOTE: inputs/raw-data/campd-unit-outages-NEISO.csv already exists and is
+NOTE: data/raw/campd-unit-outages-NEISO.csv already exists and is
 COMPLETE for 2023+2024+2025 — this pack VERIFIES it (and refreshes 2025 if
 NH_2025 lands).
 
@@ -243,7 +243,7 @@ the CHP/dual-fuel tags from the P3/P13 sessions.
    (winter-only, very low annual CF) for the OIL/peaker band.
 3. No coal must-run: confirm zero COAL rows; the inflexible layer is CHP BTM
    (P3), nuclear, hydro min-flows, and any reliability/cost-of-service units.
-4. Produce NEISO rows for inputs/custom-bin-assignments.csv (or the per-ISO
+4. Produce NEISO rows for data/raw/reference/custom-bin-assignments.csv (or the per-ISO
    equivalent): Plant_Code, Plant_Group, tranche %s, measured where CAMPD
    supports it, class defaults elsewhere; tag each row's source. Dual-fuel
    facilities split/tag per Plant_Group.
@@ -303,7 +303,7 @@ STORAGE_* entries, the CAISO P5 implementation (COD ramp +
 battery_dispatch_adder), playbook §8.4.
 
 1. Build the NEISO BESS fleet from
-   inputs/raw-data/eia-860/eia860_energy_storage_operable.parquet: power MW,
+   data/raw/eia-860/eia860_energy_storage_operable.parquet: power MW,
    energy MWh, COD month, zone via plant coords (MA-heavy). Keep co-located
    solar+storage separate.
 2. Benchmark vs EIA-930 ISNE battery charge/discharge columns if present.
@@ -370,7 +370,7 @@ scripts/derive_load_shares.py, playbook §8.1.
 
 1. System demand: EIA-930 ISNE hourly (td_loss_factor convention). Document
    that NEISO demand is net of BTM PV (front-of-meter only).
-2. If inputs/raw-data/zone-specific-demand/NEISO/ has zonal load (upload U3):
+2. If data/raw/zone-specific-demand/NEISO/ has zonal load (upload U3):
    derive measured load shares + hourly zonal shapes for the 4 model zones
    (map the 8 ISO-NE zones → North/Central/Boston/Connecticut; document the
    mapping) via derive_load_shares.py, replacing the static RSP
@@ -413,9 +413,9 @@ Tier 3; ERCOT/PJM/CAISO unchanged.
 
 ```
 NEISO backcast: price benchmarks and the 4-zone adequacy test. Read
-scripts/derive_actual_lmp.py and inputs/calibration/actual_lmp.json.
+scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
-1. From inputs/raw-data/lmp-data/NEISO/ (upload U2): build NEISO 2023–2025
+1. From data/raw/lmp-data/NEISO/ (upload U2): build NEISO 2023–2025
    entries in actual_lmp.json (DA + RT annual/monthly Hub + zonal averages:
    NEMA/Boston, CT, SEMA, ME) and an hourly series for duration overlays,
    following the ERCOT/PJM/CAISO format.

@@ -29,7 +29,7 @@ At a 35 GW evening load, `R(t) ≈ max(1122, 2345) + 350 ≈ 2.7 GW`.
 
 Baseline: `--commitment --priced-interchange`. On: same + `--as-reserve-formula`.
 System price = mean-across-zones of `system.parquet`, P2 pass
-(`scripts/_caiso_asformula_compare.py`).
+(`scripts/probes/_caiso_asformula_compare.py`).
 
 | metric | base | formula | Δ |
 |---|---|---|---|
