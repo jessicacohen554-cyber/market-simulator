@@ -15,7 +15,7 @@ The most-binding ERCOT GTCs (NE_LOB, VALEXP, EASTEX, TRDWEL) are intra-zone
 pockets the six-zone aggregation cannot represent; they are reported for
 context but do not map to an inter-zone link.
 
-Archives are read from ``inputs/raw-data/iso-specific-transmission`` (the full
+Archives are read from ``data/raw/iso-specific-transmission`` (the full
 2023-2024 monthly set) and, for backward compatibility, ``data/reference``.
 Each ``*SCEDBTCNP686*.zip`` is a month of daily inner zips of CSVs.
 
@@ -34,7 +34,7 @@ import pandas as pd
 # Look for the NP6-86 monthly archives in the bulk upload dir first, then the
 # small curated reference dir.
 SEARCH_DIRS = (
-    Path("inputs/raw-data/iso-specific-transmission"),
+    Path("data/raw/iso-specific-transmission"),
     Path("data/reference"),
 )
 _USECOLS = ["SCEDTimeStamp", "ConstraintName", "ShadowPrice", "Limit",

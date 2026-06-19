@@ -6,10 +6,10 @@ plant/prime-mover/fuel with monthly net generation, fuel consumption
 and the CHP flag) and Page 5 ("Fuel Receipts and Costs" — one row per
 fuel receipt with delivered cost). This script produces two parquets:
 
-  * ``inputs/processed/eia923_monthly_fuel_costs.parquet`` — per-plant
+  * ``data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`` — per-plant
     delivered fuel cost from Page 5 (``$/MMBtu`` after the cents→dollars
     conversion). Consumed by the dispatch fuel-price resolver.
-  * ``inputs/processed/eia923_monthly_generation.parquet`` — per-plant
+  * ``data/raw/_processed-legacy/eia923_monthly_generation.parquet`` — per-plant
     net generation from Page 1 (MWh), keeping the prime-mover, fuel and
     CHP flag for downstream fossil-class breakdowns. Consumed by the
     calibration diagnostic.
@@ -24,7 +24,7 @@ Usage:
     python scripts/process_f923_fuel_costs.py [--out-dir DIR] [--ba ERCO]
 
 Defaults to processing every ``f923_*.zip`` in
-``inputs/raw-data/`` and writing the ERCO-only parquets.
+``data/raw/`` and writing the ERCO-only parquets.
 """
 
 from __future__ import annotations
@@ -343,18 +343,18 @@ def aggregate_monthly_generation(
 
 
 def main() -> None:
-    """Process every ``f923_*.zip`` under inputs/raw-data and write parquet."""
+    """Process every ``f923_*.zip`` under data/raw and write parquet."""
     parser = argparse.ArgumentParser(
         description="Process EIA-923 fuel receipts into a monthly cost table."
     )
     parser.add_argument(
         "--raw-dir",
-        default="inputs/raw-data",
+        default="data/raw",
         help="Directory holding the f923_*.zip releases.",
     )
     parser.add_argument(
         "--out-dir",
-        default="inputs/processed",
+        default="data/raw/_processed-legacy",
         help="Directory for the output parquet.",
     )
     parser.add_argument(

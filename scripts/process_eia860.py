@@ -15,8 +15,8 @@ Usage:
     python scripts/process_eia860.py --zip PATH [--out-dir DIR]
 
 Defaults:
-    --zip      inputs/raw-data/eia-860/eia8602024.zip
-    --out-dir  inputs/raw-data/eia-860
+    --zip      data/raw/eia-860/eia8602024.zip
+    --out-dir  data/raw/eia-860
 """
 
 from __future__ import annotations

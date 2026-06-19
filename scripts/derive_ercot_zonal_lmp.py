@@ -1,10 +1,10 @@
 """Parse ERCOT RTM/DAM Load-Zone-&-Hub Settlement Point Prices into hourly series.
 
-Reads the committed ERCOT SPP archives in ``inputs/raw-data/lmp-data/``
+Reads the committed ERCOT SPP archives in ``data/raw/lmp-data/``
 (``*RTMLZHBSPP_<year>.zip`` real-time 15-min, ``*DAMLZHBSPP_<year>.zip``
 day-ahead hourly). Each zip holds ONE .xlsx with 12 monthly sheets (Jan..Dec);
 read every sheet. RTM is averaged 15-min -> hourly. Writes
-``inputs/calibration/actual_lmp_zonal_ERCOT.parquet``
+``data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet``
 (year, hour, settlement_point, rt, da) on the fixed 8760-hour clock.
 
 This is the per-hub/zone counterpart to the system HB_HUBAVG series in
@@ -26,7 +26,7 @@ import pandas as pd
 KEEP = {'HB_NORTH', 'HB_HOUSTON', 'HB_SOUTH', 'HB_WEST', 'HB_PAN', 'HB_BUSAVG',
         'HB_HUBAVG', 'LZ_NORTH', 'LZ_HOUSTON', 'LZ_SOUTH', 'LZ_WEST', 'LZ_AEN',
         'LZ_CPS', 'LZ_LCRA', 'LZ_RAYBN'}
-LMP_DIR = Path("inputs/raw-data/lmp-data")
+LMP_DIR = Path("data/raw/lmp-data")
 
 
 def _parse(pattern: str, market: str) -> pd.DataFrame:
@@ -63,7 +63,7 @@ def main() -> None:
         df = rt.merge(da, on=["year", "hour", "settlement_point"], how="outer")
     else:
         df = rt
-    out = Path("inputs/calibration/actual_lmp_zonal_ERCOT.parquet")
+    out = Path("data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet")
     df.sort_values(["year", "settlement_point", "hour"]).to_parquet(out, index=False)
     print(f"wrote {out}: {len(df)} rows, years {sorted(df.year.dropna().unique())}, "
           f"points {df.settlement_point.nunique()}")

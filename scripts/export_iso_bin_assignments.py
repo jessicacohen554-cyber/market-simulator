@@ -3,9 +3,9 @@
 Non-ERCOT ISOs have no curated ``custom-bin-assignments.csv``; their
 per-plant bins are synthesized at runtime by ``fleet.fleet_to_bins`` from the
 EIA-860 fleet plus the CAMPD-derived thermal-tranche artifact
-(``inputs/processed/thermal_tranches_<ISO>.csv``). This script writes that
+(``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``). This script writes that
 synthetic frame out as a committed, reviewable artifact —
-``inputs/processed/bin_assignments_<ISO>.csv`` — one row per
+``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` — one row per
 ``(Plant_Code, Plant_Group)`` with the four tranche shares
 (``Pct_Must_Run / Pct_Committed / Pct_Economic / Pct_Peaking``, summing to
 100) and a source tag per derived quantity:
