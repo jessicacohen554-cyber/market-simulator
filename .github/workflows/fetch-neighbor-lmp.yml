@@ -55,8 +55,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/raw/_validation-source/actual_lmp_hourly_MISO.parquet \
-                  data/raw/_validation-source/actual_lmp_hourly_Carolinas.parquet 2>/dev/null || true
+          # Stage each parquet independently: Carolinas is best-effort and is
+          # usually NOT written (its FERC-714 reshape is a verified follow-up),
+          # and `git add fileA fileB` is atomic — a missing pathspec makes it
+          # fail and stage NEITHER, silently dropping the MISO file that DID get
+          # written (the "no new data" false negative seen on runs 2/5/6). Add
+          # one path at a time so a present file always lands.
+          for f in actual_lmp_hourly_MISO.parquet actual_lmp_hourly_Carolinas.parquet; do
+            git add "data/raw/_validation-source/$f" 2>/dev/null || true
+          done
           if git diff --cached --quiet; then
             echo "no new neighbor LMP data to commit"
             exit 0
