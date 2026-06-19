@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-19 (scripts/ — one-off investigation probes corralled into scripts/probes/)
+
+Pure move + import/path fix, no behaviour change. The ~20 manual probe scripts
+(`scripts/_*.py` left after the shared helpers moved to `scripts/lib/`) now live
+in `scripts/probes/` — the `_caiso_*` set, the `_pjm_*` run/probe/score chain,
+`_dam_offer_compare`, `_neiso_probe_compare`, `_reldeploy_compare`,
+`_backcast_shell`, etc. They are the reproducible record behind committed
+findings, so they are moved, never deleted.
+
+- **Imports kept working.** `scripts/probes/` is a namespace package (no
+  `__init__.py`, matching `scripts/`). Each moved probe's `__file__`-relative
+  path math was bumped one level deeper (`parent`/`parents[1]` → `parents[1]`/
+  `parents[2]`) so its `sys.path` shim still points at `scripts/` (for bare
+  `from run_calibration_full import …`) or the repo root (for
+  `from scripts.… import …`), and its output dirs still resolve. `render_backcast`
+  and `build_manifest` now import the shell from `scripts.probes._backcast_shell`.
+- **References refreshed.** Current-usage pointers in `docs/`, `results/`,
+  `.claude/skills/`, `.gitignore`, and a `scenarios.py` comment now point at
+  `scripts/probes/…`. Historical records (prior `CHANGELOG` entries, per-run
+  `run_config.json` provenance, the `code-docs-cleanup-plan` session prompts)
+  stay as-is.
+
 ## 2026-06-19 (NEISO — ISO-NE RCPF scarcity-pricing lever, mirroring NYISO)
 
 Adds an ISO-NE Reserve Constraint Penalty Factor (RCPF) scarcity overlay, the

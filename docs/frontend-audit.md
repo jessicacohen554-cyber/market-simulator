@@ -119,7 +119,7 @@ Per-surface build path:
 | `index.html`, `model-updates.html`, `offer-curve-grounding.html` | Committed static HTML → copied verbatim (`cp ./*.html`). No build. |
 | `frontend/` Results Dashboard | Committed static HTML/JS/CSS → copied. Data is **expected** from `scripts/export_results.py` writing `frontend/data/scenarios.json` + `frontend/data/results/*.json`; that step is unrun, so the dashboard is live-but-empty. |
 | `learning-hub/` | Committed static HTML/JS/CSS → copied. No build. |
-| `backcast-results.html` | **Generated at deploy** by the stdlib-only `scripts/build_manifest.py`, which reduces the committed `frontend/data/backcast/{registry,runs,bench}` parts into `manifest.js`/`benchmark.js` + the shell (shell text from `scripts/_backcast_shell.py`, styled with `frontend/css/style.css`). Gitignored, conflict-free: each run only ADDs its own files. |
+| `backcast-results.html` | **Generated at deploy** by the stdlib-only `scripts/build_manifest.py`, which reduces the committed `frontend/data/backcast/{registry,runs,bench}` parts into `manifest.js`/`benchmark.js` + the shell (shell text from `scripts/probes/_backcast_shell.py`, styled with `frontend/css/style.css`). Gitignored, conflict-free: each run only ADDs its own files. |
 
 Supporting scripts (read for this audit):
 
