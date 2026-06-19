@@ -38,6 +38,10 @@ import numpy as np
 import pandas as pd
 
 # Reuse the proven OASIS request machinery (URL build, zip retry, CSV extract).
+# Running this as ``python scripts/fetch_caiso_intertie_lmp.py`` puts ``scripts/``
+# on sys.path[0], not the repo root, so the sibling import below fails. Put the
+# repo root first so ``scripts`` resolves as a namespace package.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scripts.fetch_caiso_oasis import _extract_csv, _fetch, _url, _windows
 
 REPO = Path(__file__).resolve().parent.parent
