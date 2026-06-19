@@ -15,13 +15,32 @@ regenerated with zone assignments derived from the new data.
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 
 import pandas as pd
 
-from market_sim.config.paths import EIA_860_DIR, FLEET_DIR
+from market_sim.config.paths import CAMPD_BINS_CSV, EIA_860_DIR, FLEET_DIR
 
 logger = logging.getLogger(__name__)
+
+
+def _use_clean() -> bool:
+    """Whether to read curated clean parquet instead of the raw inputs.
+
+    Gated by the ``MARKET_SIM_USE_CLEAN`` environment variable, **default OFF**.
+    When unset or falsey the module reads raw inputs exactly as before; when
+    truthy the reference crosswalks are read through the frozen clean seam
+    (:func:`scripts.lib.clean_io.read_clean`). The flag only chooses the data
+    *source* — the clean table is curated from the same raw file, so the
+    resolved lookup is identical either way (see ``tests/test_consume_reference``).
+    """
+    return os.environ.get("MARKET_SIM_USE_CLEAN", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 # eGRID 2023 plant-level workbook (from the central path registry).
 _EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
@@ -832,6 +851,47 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
     return out
 
 
+# Reference crosswalk: the curated ERCOT plant -> model-zone map. Its raw
+# source is ``data/raw/reference/custom-bin-assignments.csv`` (``Plant_Code`` /
+# ``ERCOT_Zone``), curated to ``data/clean/reference/bin-assignments`` through
+# the clean seam. The table is ERCOT-only, so the crosswalk is empty for every
+# other ISO.
+def load_reference_zone_crosswalk(iso: str = "ERCOT") -> dict[int, str]:
+    """Return ``{plant_id: zone}`` from the bin-assignments reference table.
+
+    Reads the curated clean parquet when ``MARKET_SIM_USE_CLEAN`` is set
+    (``read_clean("reference", market="bin-assignments")``) and the raw
+    ``custom-bin-assignments.csv`` otherwise; both backends yield the same
+    plant->zone map (the clean table is curated from that CSV). Returns an
+    empty dict for non-ERCOT ISOs — the table only covers ERCOT — or when the
+    backing source is absent.
+    """
+    iso = iso.upper()
+    if iso != "ERCOT":
+        return {}
+
+    if _use_clean():
+        from scripts.lib.clean_io import read_clean
+
+        df = read_clean(
+            "reference", market="bin-assignments", columns=["plant_id", "zone"]
+        )
+        pairs = zip(df["plant_id"], df["zone"])
+    else:
+        if not CAMPD_BINS_CSV.exists():
+            return {}
+        raw = pd.read_csv(CAMPD_BINS_CSV, usecols=["Plant_Code", "ERCOT_Zone"])
+        pairs = zip(raw["Plant_Code"], raw["ERCOT_Zone"])
+
+    out: dict[int, str] = {}
+    for code, zone in pairs:
+        oris = _to_int(code)
+        if oris is None or zone is None or zone != zone:  # None / NaN zone
+            continue
+        out[oris] = str(zone)
+    return out
+
+
 def build_zone_lookup(iso: str) -> dict[int, str]:
     """Return ``{oris: zone_name}`` for every plant in the ISO.
 
@@ -868,5 +928,15 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
 
     if iso in _EIA860_SUPPLEMENT_ISOS:
         for oris, zone in _eia860_ba_zones(iso).items():
+            lookup.setdefault(oris, zone)
+
+    # Clean-backed reference crosswalk supplement (default OFF, gated by
+    # MARKET_SIM_USE_CLEAN). When enabled, the curated ERCOT bin-assignments
+    # plant->zone map fills any ORIS the eGRID/EIA-860 geography missed. eGRID
+    # stays authoritative (``setdefault``), and with the flag off this block is
+    # skipped, so the default raw path — and the ERCOT/PJM byte-identical
+    # regression guard — is unchanged.
+    if _use_clean():
+        for oris, zone in load_reference_zone_crosswalk(iso).items():
             lookup.setdefault(oris, zone)
     return lookup
