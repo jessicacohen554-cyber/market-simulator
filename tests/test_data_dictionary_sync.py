@@ -6,21 +6,31 @@ embedded in ``data/clean`` (the ISO x year coverage matrix). These tests assert
 the committed doc has not drifted from a fresh render.
 
 The clean tree is gitignored (derived/disposable), so the full byte-for-byte
-comparison is gated on it being present — regenerate it with
-``python scripts/regenerate_clean.py`` to exercise the coverage matrix. The
-schema-driven per-column tables, by contrast, need no data and are always
-checked, so a schema edit that bypasses a re-render is caught even in CI.
+comparison is opt-in: set ``MARKET_SIM_CHECK_DICT_COVERAGE=1`` after a *full*
+``python scripts/regenerate_clean.py`` (the clean-parity CI job does this). It
+is deliberately NOT gated on "any parquet exists" — other tests (the consume
+parity suite) regenerate partial slices of ``data/clean``, and a partial tree
+would make this compare the full committed doc against an incomplete render and
+spuriously fail. The schema-driven per-column tables, by contrast, need no data
+and are always checked, so a schema edit that bypasses a re-render is caught
+even in ordinary CI.
 """
 
+import os
 import unittest
 
 from scripts import render_data_dictionary as render
 from scripts.lib import clean_io
 
 
-def _clean_tree_populated() -> bool:
-    """Whether any curated clean Parquet exists to build the coverage matrix."""
-    return any(render.paths.CLEAN_DIR.rglob("*.parquet"))
+def _coverage_check_enabled() -> bool:
+    """Whether to run the full coverage-matrix comparison (CI opt-in).
+
+    True only when ``MARKET_SIM_CHECK_DICT_COVERAGE=1``, which the clean-parity
+    workflow sets after a full regenerate. This keeps the check independent of
+    whatever partial ``data/clean`` other tests happen to leave behind.
+    """
+    return os.environ.get("MARKET_SIM_CHECK_DICT_COVERAGE") == "1"
 
 
 class DataDictionarySyncTest(unittest.TestCase):
@@ -62,13 +72,14 @@ class DataDictionarySyncTest(unittest.TestCase):
     def test_committed_doc_matches_fresh_render(self):
         """The whole committed doc equals a fresh render (coverage included).
 
-        Skipped when the clean tree is absent, since the coverage matrix is
-        built from ``data/clean`` provenance and that tree is gitignored.
+        Opt-in: requires a full regenerate plus
+        ``MARKET_SIM_CHECK_DICT_COVERAGE=1`` (see module docstring), so a
+        partial clean tree left by other tests cannot trip it.
         """
-        if not _clean_tree_populated():
+        if not _coverage_check_enabled():
             self.skipTest(
-                "data/clean is empty — run `python scripts/regenerate_clean.py` "
-                "to exercise the coverage matrix"
+                "set MARKET_SIM_CHECK_DICT_COVERAGE=1 after a full "
+                "`python scripts/regenerate_clean.py` to check the coverage matrix"
             )
         self.assertEqual(
             render.DOC_PATH.read_text(),
