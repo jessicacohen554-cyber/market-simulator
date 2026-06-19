@@ -430,6 +430,21 @@ class ScenarioConfig:
     # onto every model zone the region contains, on top of the system-wide
     # NYCA tier (nyiso_rcpf_products); see results.rcpf.locational_zone_adders.
 
+    # NEISO (ISO-NE) RCPF scarcity overlay — the ISO-NE analogue of the NYISO
+    # lever above (post-solve; never an LP input). ISO-NE prices real-time
+    # scarcity through Reserve Constraint Penalty Factors on its nested
+    # operating-reserve products (TMSR ⊂ total 10-min ⊂ total 30-min); the
+    # penalties stack into the LMP in a deepening shortage. ISO-NE recovers
+    # fixed cost through the Forward Capacity Market, so the overlay owns the
+    # price tail only and is $0 in calm hours — a forward/scarcity lever, not a
+    # backcast adjustment. See constants.NEISO_RCPF_PRODUCTS / results.rcpf.
+    neiso_rcpf_enabled: bool = False  # Master flag for the NEISO RCPF overlay.
+    neiso_rcpf_products: tuple | None = None  # Optional override of the ISO-NE
+    # reserve demand-curve table (constants.NEISO_RCPF_PRODUCTS): a tuple of
+    # (name, requirement_mw, critical_mw, max_penalty_$/MWh) products. None uses
+    # the sourced ISO-NE defaults. A forward scenario can widen/tighten the
+    # curves (e.g. a tighter reserve margin) without a code edit.
+
     reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
     # economic new-entry screen, force-build firm (gas_ct) capacity if the
     # system's accredited firm capacity is below peak * (1 + planning reserve
@@ -1521,6 +1536,8 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_rcpf_enabled": 1,
     "nyiso_rcpf_products": 2,
     "nyiso_rcpf_locational": 2,
+    "neiso_rcpf_enabled": 1,
+    "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
     "planning_reserve_margin": 2,
     "cc_peak_hr_penalty": 3,
