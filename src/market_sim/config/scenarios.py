@@ -570,12 +570,21 @@ class ScenarioConfig:
     # Default off; ERCOT co-opt only.
     ercot_storage_as_reserve_from_year: int = 2025  # First weather year the
     # storage-AS reserve credit applies to. A modeling scope (not a measured
-    # fact): the credit is physically correct every year, but 2023/2024 are
-    # keepers whose ORDC tail proxies documented out-of-market scarcity (2023
-    # RTORDPA / ECRS conservatism) an ORDC-only model can't otherwise reproduce,
-    # so crediting storage AS there over-cools them. 2025 is the lone year whose
-    # residual is purely the reserve-accounting over-fire, so the credit is gated
-    # to 2025+ (forecast years inherit it under the reformed RTC+B fleet regime).
+    # fact): the credit is physically correct every year, but 2023 and 2024 each
+    # carry genuine scarcity the ORDC-only model can only reach THROUGH the
+    # reserve over-fire, so crediting the battery AS removes the mechanism and
+    # the model under-produces their real tails. 2023 is the documented
+    # out-of-market year (tail = 47% of total $; ERCOT RTORDPA / ECRS
+    # conservatism an ORDC model can't reproduce). 2024 has real tight-day
+    # scarcity (53 h >$200, 8 h >$1000); a single-year probe crediting 2024
+    # cooled avg 29.0->21.2 (actual 26.8), WORSENED MAE 10.5->12.7, and
+    # collapsed the tail 49->7 h >$200 — confirmed empirically, not assumed from
+    # "lower storage penetration". 2025 is the lone year whose residual is purely
+    # the reserve-accounting over-fire (tail = 4% of $, reserves genuinely fat),
+    # so the credit is gated to 2025+ (forecast years inherit it under the
+    # reformed RTC+B fleet regime). NB: the reliability-deployment overlay does
+    # NOT re-warm credited backcast years — it is an energy/congestion min-gen
+    # floor (near-no-op on system LMP), not an ORDC scarcity-price mechanism.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
