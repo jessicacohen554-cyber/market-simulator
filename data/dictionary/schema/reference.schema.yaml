@@ -1,0 +1,53 @@
+# Canonical schema: reference / crosswalk tables
+#
+# Reference is the catch-all for the curated lookup tables that wire the other
+# datatypes together — they are intrinsically heterogeneous, so this schema
+# enforces *conventions* (lower_snake_case names, explicit unit suffixes,
+# embedded provenance) and a small set of canonical key columns, while allowing
+# table-specific columns through. Source examples (data/raw/reference):
+#   master-plant-registry.csv  : plantid, ba_code, fuel_type, plant_group, ...
+#   custom-bin-assignments.csv : Plant_Group, ERCOT_Zone, Bin_Number, ...
+#   zone / node crosswalks, interface limits, ISO maps
+#
+# Reconciliation: the divergent key names normalize onto the shared keys
+# (plant_id, iso, zone, node); everything else is table-specific and rides
+# through under allow_additional_columns. Per-table column detail is filled in
+# the data dictionary in W5.
+datatype: reference
+schema_version: 1
+title: Reference / crosswalk tables
+description: >-
+  Curated lookup and crosswalk tables. Conventions are enforced (snake_case,
+  unit suffixes, provenance); table-specific columns are permitted.
+
+# `key` is the one guaranteed column — a stable row identifier. Tables that map
+# onto the standard entity keys should also carry plant_id / iso / zone / node.
+key_columns: [key]
+allow_additional_columns: true
+
+columns:
+  - name: key
+    dtype: string
+    unit: none
+    nullable: false
+    description: Stable per-row identifier for the reference table.
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: true
+    description: Plant code, when the table is plant-keyed.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: true
+    description: ISO/RTO code, when applicable.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: true
+    description: Zone, when applicable.
+  - name: node
+    dtype: string
+    unit: none
+    nullable: true
+    description: Pricing node / settlement point, when applicable.
