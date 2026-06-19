@@ -111,7 +111,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 DEFAULT_ROOT = REPO / "results" / "calibration"
 DEFAULT_OUT = REPO / "inputs" / "processed" / "offer_curve_jacobian.csv"
 CACHE_PATH = REPO / "inputs" / "processed" / ".offer_curve_jacobian_cache.json"

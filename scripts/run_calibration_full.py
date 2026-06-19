@@ -88,7 +88,7 @@ from market_sim.data.fleet import (  # noqa: E402
     coal_supply_class,
 )
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
-from scripts._bundle_io import (  # noqa: E402
+from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
     write_shared_input,
 )

@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _bundle_io import (  # noqa: E402
+from lib.bundle_io import (  # noqa: E402
     SHARED_INPUT_NAMES,
     bundle_input_path,
     write_shared_input,

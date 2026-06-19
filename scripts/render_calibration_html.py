@@ -60,7 +60,7 @@ _spec_ordc = importlib.util.spec_from_file_location(
 ordc = importlib.util.module_from_spec(_spec_ordc)
 _spec_ordc.loader.exec_module(ordc)
 
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS, class_label, classes_for_fuel930, fossil_classes, nonfossil_classes,
 )
