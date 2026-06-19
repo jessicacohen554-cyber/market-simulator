@@ -17,7 +17,7 @@ nothing links to and the deploy never stages**:
 | Landing page | `index.html` | Live, hub of the site |
 | Results Dashboard | `frontend/index.html` (+ decisions/parameters) | Live shell, but **data-empty** (no scenarios exported) |
 | Learning Hub | `learning-hub/**` | Live, self-contained |
-| Backcast Results dashboard | `backcast-results.html` (generated at deploy) | Live, the actively-used calibration surface |
+| Backcast Results dashboard | `backcast-results.html` (committed; refreshed at deploy) | Live, the actively-used calibration surface |
 | Model Updates | `model-updates.html` | Live changelog |
 | Offer-Curve Grounding | `offer-curve-grounding.html` | **Orphan** — deployed but linked by nothing |
 | `dashboard/` design system | `dashboard/{js,styles}` | **Orphan** — referenced only by `docs/DESIGN_SYSTEM.md`; no HTML includes it; deploy never stages it |
@@ -38,10 +38,14 @@ Two parallel "design systems" exist and **do not share a single file**: the live
 | `index.html` | Site landing page: 4 cards → Results Dashboard, Learning Hub, Backcast Results, Model Updates. General audience. | `frontend/index.html`, `learning-hub/index.html`, `backcast-results.html`, `model-updates.html` | every `learning-hub/*/index.html` (`← Hub`/footer links resolve to `../index.html` = hub, but the hub links back to root via card hrefs); de-facto root of the site |
 | `model-updates.html` | Hand-written changelog of model improvements with before/after impact tables (e.g. unit-level outages run31 vs run32). Stakeholder/reviewer audience. | `frontend/index.html`, `backcast-results.html`, `model-updates.html`, `index.html` | `index.html` |
 | `offer-curve-grounding.html` | One-off ERCOT deep-dive: 60-Day DAM offers vs run124 offer-curve bands. Calibration/analyst audience. | `frontend/index.html`, `backcast-results.html`, `index.html` | **nothing** (only its own active nav link) — see Orphans |
-| `backcast-results.html` | The calibration comparison dashboard. **Generated at deploy** by `build_manifest.py`; gitignored. Calibration audience — this is the team's working surface. | self-assembled; loads `frontend/data/backcast/{manifest,benchmark}.js` + lazy `runs/<id>.js` | `index.html`, `model-updates.html`, `offer-curve-grounding.html` |
+| `backcast-results.html` | The calibration comparison dashboard. **Committed**, and re-assembled by `build_manifest.py` (the deploy workflow is the single writer that refreshes it on `main`). Calibration audience — this is the team's working surface. | self-assembled; loads `frontend/data/backcast/{manifest,benchmark}.js` + lazy `runs/<id>.js` | `index.html`, `model-updates.html`, `offer-curve-grounding.html` |
 
 Verification: `grep -rn "offer-curve-grounding" *.html` → only `offer-curve-grounding.html`
-line 43 (its own `nav-link active`). `backcast-results.html` is in `.gitignore` (line 35).
+line 43 (its own `nav-link active`). `backcast-results.html` **is committed** (`git ls-files`
+lists it, `git check-ignore` reports it not-ignored): `.gitignore` lines 31–39 are a *comment*
+explaining that these generated files (`backcast-results.html`, `manifest.js`, `benchmark.js`)
+"ARE committed (so GitHub Pages serves the dashboard even on a raw-branch build, not just the
+Actions deploy)", with the deploy workflow as their single writer (pushing via `GITHUB_TOKEN`).
 
 ### `frontend/` — the Scenario Results Dashboard (a 3-page SPA-ish static app)
 
@@ -58,7 +62,7 @@ line 43 (its own `nav-link active`). `backcast-results.html` is in `.gitignore` 
 | `frontend/data/parameters.json` | 516 KB committed citation registry → feeds `parameters.html`. |
 | `frontend/data/scenarios.json` | **Placeholder** index (`"scenarios": []`) → the Results Dashboard renders "No scenarios exported yet". Populated by `scripts/export_results.py` (`DEFAULT_INDEX_PATH = frontend/data/scenarios.json`), which has not been run/committed. |
 | `frontend/data/results/` | Empty (`.gitkeep` only) — per-scenario result JSON would land here. |
-| `frontend/data/backcast/` | Backcast dashboard's committed parts: `registry/<id>.json` sidecars, `runs/<id>.js` payloads, `bench/<ISO>/<year>.json.gz`. ~40+ registered runs present. The generated `manifest.js`/`benchmark.js` here are gitignored. |
+| `frontend/data/backcast/` | Backcast dashboard's committed parts: `registry/<id>.json` sidecars, `runs/<id>.js` payloads, `bench/<ISO>/<year>.json.gz`. ~40+ registered runs present. The generated `manifest.js`/`benchmark.js` here are **also committed** (refreshed only by the deploy workflow, never hand-committed by calibration runs). |
 | `frontend/js/.gitkeep`, `frontend/css/.gitkeep`, `frontend/data/.gitkeep` | placeholders |
 
 ### `learning-hub/` — scrollytelling explainers (self-contained)
@@ -119,7 +123,7 @@ Per-surface build path:
 | `index.html`, `model-updates.html`, `offer-curve-grounding.html` | Committed static HTML → copied verbatim (`cp ./*.html`). No build. |
 | `frontend/` Results Dashboard | Committed static HTML/JS/CSS → copied. Data is **expected** from `scripts/export_results.py` writing `frontend/data/scenarios.json` + `frontend/data/results/*.json`; that step is unrun, so the dashboard is live-but-empty. |
 | `learning-hub/` | Committed static HTML/JS/CSS → copied. No build. |
-| `backcast-results.html` | **Generated at deploy** by the stdlib-only `scripts/build_manifest.py`, which reduces the committed `frontend/data/backcast/{registry,runs,bench}` parts into `manifest.js`/`benchmark.js` + the shell (shell text from `scripts/probes/_backcast_shell.py`, styled with `frontend/css/style.css`). Gitignored, conflict-free: each run only ADDs its own files. |
+| `backcast-results.html` | **Generated at deploy** by the stdlib-only `scripts/build_manifest.py`, which reduces the committed `frontend/data/backcast/{registry,runs,bench}` parts into `manifest.js`/`benchmark.js` + the shell (shell text from `scripts/probes/_backcast_shell.py`, styled with `frontend/css/style.css`). The three shared files are committed but refreshed only by the deploy workflow (single writer); conflict-free because each calibration run only ADDs its own namespace files (`registry/<id>.json`, `runs/<id>.js`, `bench/` parts). |
 
 Supporting scripts (read for this audit):
 
@@ -131,7 +135,8 @@ Supporting scripts (read for this audit):
   "CI never runs it." For full refreshes after relabel/schema change.
 - `scripts/render_backcast.py` — generator behind `regen_dashboard`: writes the deployable
   JSON-driven shell + the gzip+base64 `runs/<id>.js`, `bench/<ISO>/<year>.json.gz` parts. Defines
-  the "newest bundle covering the year wins" rule and the gitignored-generated-files contract.
+  the "newest bundle covering the year wins" rule and the committed-but-deploy-refreshed-files
+  contract (the three shared files are committed; only the deploy workflow rewrites them).
 - `scripts/dashboard_add_run.py` — registers a **single** new run (sidecar + payload + bench part);
   the everyday "add to dashboard" path (per `claude.md` rule 13 / `calibration-report` skill).
 - `scripts/render_calibration_html.py` — **separate, standalone** self-contained calibration report
@@ -217,9 +222,11 @@ JS, all of `learning-hub/`, and every `frontend/data/backcast/**` part are reach
 - **`backcast-results.html` generation chain** (`build_manifest.py` at deploy; `dashboard_add_run.py`
   to add runs; `regen_dashboard.py`/`render_backcast.py` for local full rebuilds). This is the mature,
   conflict-free, well-documented surface; no change recommended.
-  - *Risk if touched:* the gitignored-generated-files + per-run-additive-parts contract is what gives
-    concurrent calibration sessions zero merge conflicts (`claude.md` rule 13). Don't commit
-    `manifest.js`/`benchmark.js`/`backcast-results.html` or move the parts.
+  - *Risk if touched:* the deploy-refreshed-shared-files + per-run-additive-parts contract is what gives
+    concurrent calibration sessions zero merge conflicts (`claude.md` rule 13). The three shared
+    files (`manifest.js`/`benchmark.js`/`backcast-results.html`) are committed but must never be
+    *hand*-committed by a calibration session — only the deploy workflow refreshes them — and the
+    per-run parts must not be moved.
 - **`learning-hub/`** — self-contained, linked, its own `scrollytell.*` design system. Leave it on its
   own CSS; **do not** try to merge it into `frontend/css/style.css` (different visual language, and
   it's working). The one consolidation worth noting is purely conceptual — three CSS systems exist
