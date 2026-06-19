@@ -1,6 +1,6 @@
 """Session helper: compare the measured-DAM-offer run to the baseline.
 
-Usage: python scripts/_dam_offer_compare.py <dam_bundle> <baseline_bundle>
+Usage: python scripts/probes/_dam_offer_compare.py <dam_bundle> <baseline_bundle>
 
 Prints the three gate metrics for the offer-curve swap:
   1. Monthly LMP MAE per year ($/MWh) -- model demand-weighted system price vs
@@ -19,8 +19,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
-ACTUAL = (Path(__file__).resolve().parents[1] / "inputs" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
+ACTUAL = (Path(__file__).resolve().parents[2] / "inputs" / "calibration"
           / "actual_lmp_hourly_ERCOT.parquet")
 
 # Month boundaries in hours (non-leap), cumulative, for hour -> month.
@@ -105,7 +105,7 @@ def main() -> None:
     try:
         from scripts.lib.session_score import class_table
     except Exception:
-        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
         from scripts.lib.session_score import class_table
     td = class_table(dam).rename(columns={"model": "DAM"})
     tb = class_table(base).rename(columns={"model": "BASE"})

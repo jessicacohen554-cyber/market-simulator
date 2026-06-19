@@ -72,7 +72,7 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # CAISO import-ladder diagnosis scratch backcasts (2026-06-19): the keeper-config
 # baseline + import re-price sensitivity probes behind the
 # DIAGNOSIS-caiso-import-ladder doc. Regenerable from run_calibration_full /
-# scripts/_caiso_import_probe.py.
+# scripts/probes/_caiso_import_probe.py.
 /results/calibration/caiso_keeper_*/
 /results/calibration/caiso_probe_*/
 # _shared/ holds the hashed input parquets the scratch calibration runs write

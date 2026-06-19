@@ -245,7 +245,7 @@ price-formation structure the energy-only LP lacks, built in sequence (not by
 fitting an adder or a haircut to the residual).
 
 **Targeting (Jul/Aug afternoon peak, 2024, from `pjm_27_aswh`, via
-`scripts/_pjm_online_headroom_breakdown.py`).** Online plants are already ~91%
+`scripts/probes/_pjm_online_headroom_breakdown.py`).** Online plants are already ~91%
 loaded; the 13.4 GW of online headroom is CT_PEAKER 4.8 (75% loaded) + COAL 3.4 +
 CC_REGULAR 2.9 + baseload 1.8 + ST_GAS 0.5. Two findings reframe the build:
 
@@ -342,10 +342,10 @@ python scripts/analyze_lmp_residual.py results/calibration/pjm_26 \
 python scripts/build_pjm_as_withholding.py            # 2023 2024 2025
 # 2. Re-solve the keeper config + withholding, one year per parallel job
 #    (claude.md #45; cap ~2 concurrent — 2 PJM plant-level solves peak >15 GB):
-python scripts/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
-python scripts/_pjm_aswh_run.py 2024 results/calibration/pjm_27_aswh_2024
-python scripts/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
-python scripts/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
+python scripts/probes/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
+python scripts/probes/_pjm_aswh_run.py 2024 results/calibration/pjm_27_aswh_2024
+python scripts/probes/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
+python scripts/probes/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
     results/calibration/pjm_27_aswh_202{3,4,5}
 # 3. Re-derive + re-check the residual (result: ~inert — see section above):
 python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_27_aswh --diagnostic

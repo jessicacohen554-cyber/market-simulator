@@ -28,7 +28,7 @@ recalibrate/compare on the dashboard, don't silently cut a keeper.
 
 ## The LMP hot bias is NOT (mostly) the CT/ST econ body — decompose first
 
-Measured (`scripts/_dam_offer_compare.py` + a monthly/price-band split):
+Measured (`scripts/probes/_dam_offer_compare.py` + a monthly/price-band split):
 
 - **2024**: concentrated in a few **spike months** (Apr +30, Aug +33, Oct +50);
   median model $18.6 ~ actual $19.8, and the model has *fewer* $40-80 hours
@@ -114,7 +114,7 @@ identical, explicit `--out-dir results/calibration/ercot_dam_<probe>_3yr`:
 Each run ~13 min (3 yr). Env: `uv venv .venv && . .venv/bin/activate && uv pip
 install -e ".[dev]"`. Compare:
 
-    python scripts/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_offers_cconly_3yr
+    python scripts/probes/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_offers_cconly_3yr
 
 Watch all three gates together: monthly LMP MAE/avg per year (push 2024/2025
 DOWN toward actual, keep 2023 ~ flat), the >$200/>$500 tail (stay ~151/88 in

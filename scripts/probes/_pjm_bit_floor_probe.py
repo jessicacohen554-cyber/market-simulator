@@ -6,16 +6,16 @@ cheap gas without regressing 2023/2025. Bit sigmoid is gas-keyed, so a lower
 floor self-targets the cheapest-gas year. Structural grounding: bituminous coal
 bids toward its take-or-pay/avoidable cost to hold merit when gas is cheap.
 
-Usage: python scripts/_pjm_bit_floor_probe.py <year> <floor> <out_dir>
+Usage: python scripts/probes/_pjm_bit_floor_probe.py <year> <floor> <out_dir>
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 KEEPER = ROOT / "pjm_26"
 
 

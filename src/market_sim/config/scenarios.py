@@ -1416,7 +1416,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # toward EIA-930 in every year — 2024 (cheapest gas, $2.19) -8.1% -> -5.8%,
     # 2023 -4.7% -> -2.7%, 2025 (dear gas, near gas_mid) -1.7% -> -1.0%; gas
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
-    # and leaves the dear-gas ceiling untouched. (scripts/_pjm_bit_floor_probe.)
+    # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
     ("PJM", "bituminous"): {
         "floor": 0.76, "ceil": 1.32, "gas_mid": 3.40, "gas_slope": 2.5},
     # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
