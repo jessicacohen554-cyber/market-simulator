@@ -6,16 +6,16 @@ The priced variant validates fidelity against pjm_26 2024; the measured
 variant tests how much the peak-coincident measured tie-line schedule lifts
 the afternoon LMP shape.
 
-Usage: python scripts/_pjm_interchange_ab.py {priced|measured}
+Usage: python scripts/probes/_pjm_interchange_ab.py {priced|measured}
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 KEEPER = ROOT / "pjm_26"
 
 

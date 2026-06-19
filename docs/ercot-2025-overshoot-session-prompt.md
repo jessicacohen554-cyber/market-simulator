@@ -117,7 +117,7 @@ Your probe = the same line with your change and a fresh
 `--out-dir results/calibration/ercot_dam_<probe>_3yr`. Then gate:
 
     # (the compare script reads data/raw/_validation-source/ directly — no path bridge needed post-W1)
-    uv run python scripts/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_lrcredit_3yr
+    uv run python scripts/probes/_dam_offer_compare.py ercot_dam_<probe>_3yr ercot_dam_lrcredit_3yr
 
 **Watch all three gates together** (the prompt's standing rule):
 - Monthly LMP MAE/avg per year — push **2025** down toward actual, keep **2023

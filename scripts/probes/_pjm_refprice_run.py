@@ -1,23 +1,26 @@
-"""PJM reserve-withholding recalibration: one year -> its own bundle dir.
+"""PJM reference-price interface run: one year -> its own bundle dir.
 
-Reproduces the pjm_26 keeper's exact calibration_flags (read from its
-run_config.json, the same path the validated scripts/_pjm_interchange_ab.py
-uses) and flips ONLY ``as_reserve_withholding`` on. One year per invocation so
-the three years run as parallel background jobs to separate out-dirs
-(claude.md #45); merge into a single bundle afterwards with
-scripts/_pjm_aswh_merge.py.
+Reproduces the pjm_28 keeper's calibration_flags but swaps the interchange
+treatment: instead of the measured tie-line schedule (the keeper's
+priced_interchange=False), the seam is served by the forecast-grade
+reference-price interface (reference_price_interface=True, which implies
+priced_interchange=True). Every other offer-curve flag is the keeper's, so the
+only change is the seam, isolating its effect on PJM's net export and LMP.
 
-Usage: python scripts/_pjm_aswh_run.py <year> <out_dir>
+One year per invocation so the three years run as parallel background jobs to
+separate out-dirs (claude.md #45); merge with scripts/probes/_pjm_aswh_merge.py.
+
+Usage: python scripts/probes/_pjm_refprice_run.py <year> <out_dir>
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1] / "results" / "calibration"
-KEEPER = ROOT / "pjm_26"
+ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
+KEEPER = ROOT / "pjm_28"
 
 
 def main(year: int, out: Path) -> None:
@@ -48,10 +51,12 @@ def main(year: int, out: Path) -> None:
         curve_smoothing={"offer_curve_smoothing_n": None,
                          "offer_curve_smoothing_exp": None,
                          "offer_curve_smoothing_mid": 0.45},
-        priced_interchange=cf["priced_interchange"],
-        as_reserve_withholding=True,
-        note=f"pjm_27_aswh: keeper pjm_26 config + AS reserve-withholding, "
-             f"{year} only",
+        priced_interchange=True,            # implied by the reference seam
+        reference_price_interface=True,
+        as_reserve_withholding=cf.get("as_reserve_withholding", False),
+        note=f"pjm_30_refprice: keeper pjm_28 config + forecast-grade "
+             f"reference-price interchange seam (replaces the measured "
+             f"schedule with per-neighbor gas x HR x load-shape), {year} only",
     )
     print(f"DONE {year} -> {out}")
 

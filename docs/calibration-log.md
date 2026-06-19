@@ -2936,7 +2936,7 @@ the committed `neiso-zonal-adequacy.md` table (every pocket-vs-hub median
 <$1/MWh, p90 <$5 except CT-2025, |spread|>$20 hours ≤0.7%). The 4-zone topology
 + RSP Tier-3 TTC seeds carry small, winter-loaded, CT-led separation and do not
 create spurious congestion — load zones and TTC links are sound. Drift-check
-tooling added: `scripts/_neiso_probe_compare.py` (per-class TWh + dw-price diff
+tooling added: `scripts/probes/_neiso_probe_compare.py` (per-class TWh + dw-price diff
 of two bundles) and `scripts/_run_neiso_probe_panel.sh` (panel reproduce
 harness, concurrency-capped at 2 for the multi-GB per-plant LP).
 
