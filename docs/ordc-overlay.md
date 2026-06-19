@@ -258,7 +258,7 @@ carries an overlay, falling back to energy-only only for runs/ISOs with none.
 Comparing the energy-only price against scarcity-inclusive actuals was
 apples-to-oranges and overstated the gap (e.g. run115b 2023 annual Δ vs DA
 −59% energy-only → −9% overlay; 2024 −30% → −22%). This is a display change in
-`scripts/_backcast_shell.py` only: the energy-only series is still shown and
+`scripts/probes/_backcast_shell.py` only: the energy-only series is still shown and
 remains the gated metric, the overlay is never a gate, and no run payload
 changed (the overlay numbers were already baked into the `lmpScar`/`ordc`
 keys). The residual under-bias in the milder years (2024/2025) is the known

@@ -6,13 +6,13 @@ the +$22 body overprice is set by the static import ladder (sensitivity dLMP/dla
 This does NOT ground the prices in measured hub data — it is a sensitivity test
 only. The grounded keeper prices imports at measured Malin/Palo-Verde intertie
 LMPs (separate workstream). Usage:
-    python scripts/_caiso_import_probe.py <out_dir> [--shift -15]
+    python scripts/probes/_caiso_import_probe.py <out_dir> [--shift -15]
 """
 from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import market_sim.config.constants as C
 from scripts.run_calibration_full import solve_and_persist
 from scripts.run_calibration import _load_reference

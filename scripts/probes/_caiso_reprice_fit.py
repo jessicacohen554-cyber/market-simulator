@@ -20,7 +20,7 @@ threshold. Across a multi-year pool border carbon differs by year, so the import
 edges are matched in the per-year carbon-shifted price frame (P - border(y))
 pooled, and the sink edges in the raw price frame P pooled.
 
-Usage: python scripts/_caiso_reprice_fit.py <bundle> [year ...]   (no years => pooled 2023-2025)
+Usage: python scripts/probes/_caiso_reprice_fit.py <bundle> [year ...]   (no years => pooled 2023-2025)
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402

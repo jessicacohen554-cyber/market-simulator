@@ -2,7 +2,7 @@
 probe panel keys on — per-class P1 TWh and the demand-weighted P1 price.
 
 Usage:
-    python scripts/_neiso_probe_compare.py BUNDLE_A BUNDLE_B [--year 2024]
+    python scripts/probes/_neiso_probe_compare.py BUNDLE_A BUNDLE_B [--year 2024]
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 ROOT = REPO / "results" / "calibration"
 
 

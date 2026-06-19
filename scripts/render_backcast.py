@@ -239,7 +239,7 @@ def main() -> None:
 
 # The static shell HTML/JS is defined in the companion module to keep this file
 # focused on data generation; imported lazily so `--help` stays fast.
-from scripts._backcast_shell import SHELL  # noqa: E402
+from scripts.probes._backcast_shell import SHELL  # noqa: E402
 
 if __name__ == "__main__":
     main()
