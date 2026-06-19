@@ -391,3 +391,54 @@ def validate_clean(path: str | Path) -> Schema:
     df = pd.read_parquet(path)
     validate_df(df, datatype, schema=schema)
     return schema
+
+
+# ---------------------------------------------------------------------------
+# Public reader (the consumption seam for the model)
+# ---------------------------------------------------------------------------
+def clean_exists(
+    datatype: str,
+    iso: str | None = None,
+    year: int | None = None,
+    market: str | None = None,
+) -> bool:
+    """Whether the clean Parquet for these partition keys exists on disk.
+
+    The clean tree is gitignored (derived/disposable), so consumers should
+    check this and regenerate from raw — via ``scripts/regenerate_clean.py`` or
+    the datatype's ``scripts/curate_<datatype>.py`` — when it is absent.
+    """
+    return paths.clean_path(datatype, iso=iso, year=year, market=market).is_file()
+
+
+def read_clean(
+    datatype: str,
+    iso: str | None = None,
+    year: int | None = None,
+    market: str | None = None,
+    *,
+    validate: bool = True,
+    columns: list[str] | None = None,
+) -> pd.DataFrame:
+    """Read a curated clean dataset — the single consumption seam for the model.
+
+    Mirror image of :func:`write_clean`: resolves the path via
+    :func:`market_sim.config.paths.clean_path` and returns the Parquet as a
+    DataFrame. By default the frame is re-validated against the embedded
+    schema (a guard against stale clean files written under an older contract);
+    pass ``validate=False`` to skip for hot paths, or ``columns`` to project.
+
+    Raises :class:`FileNotFoundError` (with a regenerate hint) if the partition
+    is absent, and :class:`SchemaError` if a present file no longer conforms.
+    """
+    path = paths.clean_path(datatype, iso=iso, year=year, market=market)
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"no clean {datatype} at {path} — regenerate from raw with "
+            f"`python scripts/curate_{datatype.replace('-', '_')}.py` "
+            f"(or scripts/regenerate_clean.py)"
+        )
+    if validate:
+        # Full round-trip validation (reads the file once); return that frame.
+        validate_clean(path)
+    return pd.read_parquet(path, columns=columns)
