@@ -55,7 +55,6 @@ from derive_nyiso_rcpf_overlay import (  # noqa: E402
     _dist,
     _final_pass,
     _mae,
-    _monthly_mae,
     _storage_headroom,
     _system_lambda,
     build_availability,
