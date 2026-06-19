@@ -4,6 +4,7 @@ probe panel keys on — per-class P1 TWh and the demand-weighted P1 price.
 Usage:
     python scripts/probes/_neiso_probe_compare.py BUNDLE_A BUNDLE_B [--year 2024]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -16,8 +17,9 @@ ROOT = REPO / "results" / "calibration"
 
 
 def class_twh(bundle: str, year: int) -> pd.Series:
-    df = pd.read_parquet(ROOT / bundle / "dispatch" / f"{year}_P1.parquet",
-                         columns=["klass", "mw"])
+    df = pd.read_parquet(
+        ROOT / bundle / "dispatch" / f"{year}_P1.parquet", columns=["klass", "mw"]
+    )
     return df.groupby("klass", observed=True)["mw"].sum() / 1.0e6
 
 
@@ -43,7 +45,9 @@ def main() -> None:
     print(cmp.to_string())
     print(f"\nmax |dTWh| = {cmp['dTWh'].abs().max():.4f}")
     pa, pb = dw_price(args.a, args.year), dw_price(args.b, args.year)
-    print(f"\ndemand-weighted P1 price:  A={pa:.2f}  B={pb:.2f}  d={pb - pa:+.3f} $/MWh")
+    print(
+        f"\ndemand-weighted P1 price:  A={pa:.2f}  B={pb:.2f}  d={pb - pa:+.3f} $/MWh"
+    )
 
 
 if __name__ == "__main__":

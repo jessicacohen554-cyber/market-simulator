@@ -57,7 +57,9 @@ DEFAULT_RAW_DIR: Path = paths.DATA_ROOT / "data" / "raw" / "_validation-source"
 
 CALIBRATION_REFERENCE_JSON = "calibration_reference.json"
 ACTUAL_LMP_JSON = "actual_lmp.json"
-_RENEWABLE_CSV_RE = re.compile(r"^(?P<iso>[A-Z]+)_(?P<year>\d{4})_renewable_capacity\.csv$")
+_RENEWABLE_CSV_RE = re.compile(
+    r"^(?P<iso>[A-Z]+)_(?P<year>\d{4})_renewable_capacity\.csv$"
+)
 
 # Unit conversions. EIA-923/eGRID report TWh and metric "Mt" (million tonnes);
 # the schema standardises on MWh and kg.
@@ -122,8 +124,17 @@ def _capacity_rows(csv_path: Path) -> list[dict]:
     rows: list[dict] = []
     for r in df.itertuples(index=False):
         rows.append(
-            _row(r.iso, r.zone, r.year, r.month, r.fuel,
-                 "capacity_mw", r.capacity_mw, "mw", _SRC_CAPACITY)
+            _row(
+                r.iso,
+                r.zone,
+                r.year,
+                r.month,
+                r.fuel,
+                "capacity_mw",
+                r.capacity_mw,
+                "mw",
+                _SRC_CAPACITY,
+            )
         )
     return rows
 
@@ -133,7 +144,9 @@ def _generation_rows(iso: str, year: int, block: dict) -> list[dict]:
     gen = block.get("generation_twh") or {}
     src = _SRC_GENERATION_PARTIAL if block.get("eia923_incomplete") else _SRC_GENERATION
     return [
-        _row(iso, _SYSTEM, year, 0, fuel, "generation_mwh", twh * _TWH_TO_MWH, "mwh", src)
+        _row(
+            iso, _SYSTEM, year, 0, fuel, "generation_mwh", twh * _TWH_TO_MWH, "mwh", src
+        )
         for fuel, twh in sorted(gen.items())
     ]
 
@@ -144,7 +157,9 @@ def _emissions_rows(iso: str, year: int, egrid: dict) -> list[dict]:
         return []
     co2_mt = egrid.get("co2_mt") or {}
     return [
-        _row(iso, _SYSTEM, year, 0, fuel, "co2_kg", mt * _MT_TO_KG, "kg", _SRC_EMISSIONS)
+        _row(
+            iso, _SYSTEM, year, 0, fuel, "co2_kg", mt * _MT_TO_KG, "kg", _SRC_EMISSIONS
+        )
         for fuel, mt in sorted(co2_mt.items())
     ]
 
@@ -156,7 +171,17 @@ def _demand_rows(iso: str, year: int, block: dict) -> list[dict]:
     for field, (metric, unit) in _DEMAND_METRICS.items():
         if field in demand and not _is_missing(demand[field]):
             rows.append(
-                _row(iso, _SYSTEM, year, 0, _ALL, metric, demand[field], unit, _SRC_DEMAND)
+                _row(
+                    iso,
+                    _SYSTEM,
+                    year,
+                    0,
+                    _ALL,
+                    metric,
+                    demand[field],
+                    unit,
+                    _SRC_DEMAND,
+                )
             )
     return rows
 
@@ -167,8 +192,17 @@ def _henry_hub_rows(iso: str, year: int, block: dict) -> list[dict]:
     if _is_missing(hh):
         return []
     return [
-        _row(iso, _SYSTEM, year, 0, "gas",
-             "henry_hub_usd_per_mmbtu", hh, "usd_per_mmbtu", _SRC_HENRY_HUB)
+        _row(
+            iso,
+            _SYSTEM,
+            year,
+            0,
+            "gas",
+            "henry_hub_usd_per_mmbtu",
+            hh,
+            "usd_per_mmbtu",
+            _SRC_HENRY_HUB,
+        )
     ]
 
 
@@ -183,14 +217,32 @@ def _price_rows(iso: str, year: int, lmp_block: dict) -> list[dict]:
     da = lmp_block.get("da")
     if not _is_missing(da):
         rows.append(
-            _row(iso, _SYSTEM, year, 0, _ALL,
-                 "avg_price_usd_per_mwh", da, "usd_per_mwh", src)
+            _row(
+                iso,
+                _SYSTEM,
+                year,
+                0,
+                _ALL,
+                "avg_price_usd_per_mwh",
+                da,
+                "usd_per_mwh",
+                src,
+            )
         )
     for i, v in enumerate(lmp_block.get("da_mon") or [], start=1):
         if not _is_missing(v):
             rows.append(
-                _row(iso, _SYSTEM, year, i, _ALL,
-                     "avg_price_usd_per_mwh", v, "usd_per_mwh", src)
+                _row(
+                    iso,
+                    _SYSTEM,
+                    year,
+                    i,
+                    _ALL,
+                    "avg_price_usd_per_mwh",
+                    v,
+                    "usd_per_mwh",
+                    src,
+                )
             )
     return rows
 
@@ -230,7 +282,9 @@ def _iso_year_index(raw_dir: Path) -> dict[tuple[str, int], dict]:
     return index
 
 
-def _build_frame(iso: str, year: int, inputs: dict, egrid: dict) -> tuple[pd.DataFrame, list[str]]:
+def _build_frame(
+    iso: str, year: int, inputs: dict, egrid: dict
+) -> tuple[pd.DataFrame, list[str]]:
     """Assemble the long-form frame for one ISO-year and the raw paths it drew on."""
     rows: list[dict] = []
     sources: list[str] = []
@@ -274,7 +328,7 @@ def curate(raw_dir: Path | str = DEFAULT_RAW_DIR) -> list[Path]:
     index = _iso_year_index(raw_dir)
 
     written: list[Path] = []
-    for (iso, year) in sorted(index):
+    for iso, year in sorted(index):
         df, sources = _build_frame(iso, year, index[(iso, year)], egrid)
         if df.empty:
             logger.warning("no validation benchmarks for %s %d; skipping", iso, year)

@@ -50,6 +50,7 @@ full precision; the only added columns are the derived ``interval_start_utc`` /
 Usage:
     python scripts/curate_fuel_prices.py
 """
+
 from __future__ import annotations
 
 import sys
@@ -74,10 +75,10 @@ DATATYPE = "fuel-prices"
 class Benchmark:
     """One raw benchmark file and how it maps onto the canonical schema."""
 
-    filename: str          # file under data/raw/gas-prices
-    fuel: str              # canonical fuel key (gas, coal, oil)
-    hub: str               # canonical hub / region key
-    price_col: str         # the per-file price column (in $/MMBtu)
+    filename: str  # file under data/raw/gas-prices
+    fuel: str  # canonical fuel key (gas, coal, oil)
+    hub: str  # canonical hub / region key
+    price_col: str  # the per-file price column (in $/MMBtu)
     date_col: str = "date"  # the per-file daily price-date column
 
 
@@ -117,7 +118,7 @@ def reconcile_benchmark(path: Path, bench: Benchmark) -> pd.DataFrame:
             f"found {list(raw.columns)}"
         )
 
-    local = pd.to_datetime(raw[bench.date_col])            # tz-naive wall-clock
+    local = pd.to_datetime(raw[bench.date_col])  # tz-naive wall-clock
     out = pd.DataFrame(
         {
             "interval_start_utc": local.dt.tz_localize("UTC"),

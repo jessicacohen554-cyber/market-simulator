@@ -47,7 +47,13 @@ ALL_ISOS = sorted(_ISO_BUILDERS)
 # screen keys off _THERMAL_FOM, so a fuel missing here would be silently
 # un-retirable for *every* ISO.
 THERMAL_FUEL_CLASSES = (
-    "coal", "gas_cc", "gas_ct", "gas_st", "oil", "gas_cc_ccs", "nuclear",
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "oil",
+    "gas_cc_ccs",
+    "nuclear",
 )
 
 
@@ -60,6 +66,7 @@ def test_iso_config_builds(iso):
 
 
 # --- Gas-CT peaker new entry ----------------------------------------------
+
 
 def test_gas_ct_is_new_entry_candidate():
     """gas_ct is a classic new-entry technology for the entry screen."""
@@ -82,6 +89,7 @@ def test_gas_ct_queue_cap_present(iso):
 
 
 # --- Thermal economic-retirement screen -----------------------------------
+
 
 @pytest.mark.parametrize("fuel", THERMAL_FUEL_CLASSES)
 def test_thermal_fuel_in_retirement_screen(fuel):
@@ -113,6 +121,7 @@ def test_retirement_screen_has_no_extra_fuels():
 
 # --- Priced import/export node --------------------------------------------
 
+
 @pytest.mark.parametrize("iso", ALL_ISOS)
 def test_import_node_resolves_where_imports_configured(iso):
     """Where an ISO has import tranches, its import node resolves.
@@ -137,6 +146,7 @@ def test_import_node_resolves_where_imports_configured(iso):
 
 # --- State/regional carbon pricing ----------------------------------------
 
+
 @pytest.mark.parametrize("iso", ALL_ISOS)
 def test_state_carbon_price_resolves(iso):
     """ISOs with a carbon program price a backcast year; others resolve None.
@@ -155,6 +165,7 @@ def test_state_carbon_price_resolves(iso):
 
 
 # --- ERCOT parity guard ----------------------------------------------------
+
 
 def test_ercot_has_no_imports():
     """ERCOT is an electrical island: no import/export node (parity)."""

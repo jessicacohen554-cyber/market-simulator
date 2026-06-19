@@ -62,9 +62,7 @@ class TestCheckGenerationMix(unittest.TestCase):
 
     def test_boundary_deviation_just_inside_tolerance_passes(self):
         """A deviation exactly at the tolerance passes."""
-        result = check_generation_mix(
-            {"coal": 105.0}, {"coal": 100.0}, tolerance=0.05
-        )
+        result = check_generation_mix({"coal": 105.0}, {"coal": 100.0}, tolerance=0.05)
         self.assertEqual(result["coal"]["pass_fail"], PASS)
         self.assertAlmostEqual(result["coal"]["pct_diff"], 0.05)
 
@@ -93,8 +91,14 @@ class TestActualsSourceAuthority(unittest.TestCase):
 
     def test_every_other_class_uses_eia923(self):
         """Fossil and other non-renewable classes use EIA-923 as the baseline."""
-        for klass in ("CC_REGULAR", "COAL_PRB", "CT_PEAKER", "ST_GAS",
-                      "nuclear", "hydro"):
+        for klass in (
+            "CC_REGULAR",
+            "COAL_PRB",
+            "CT_PEAKER",
+            "ST_GAS",
+            "nuclear",
+            "hydro",
+        ):
             self.assertEqual(actuals_source(klass), EIA923_SOURCE, klass)
 
 
@@ -199,9 +203,7 @@ class TestCheckHourlyDispatchCorrelation(unittest.TestCase):
     def test_perfect_match_scores_r_one_and_zero_error(self):
         """Identical hourly series correlate perfectly with no error."""
         series = np.array([100.0, 200.0, 50.0, 300.0, 150.0])
-        stats = check_hourly_dispatch_correlation(
-            {"coal": series}, {"coal": series}
-        )
+        stats = check_hourly_dispatch_correlation({"coal": series}, {"coal": series})
         self.assertAlmostEqual(stats["coal"]["pearson_r"], 1.0)
         self.assertAlmostEqual(stats["coal"]["nrmse"], 0.0)
 
@@ -248,8 +250,7 @@ class TestCheckHourlyDispatchCorrelation(unittest.TestCase):
     def test_only_fuels_in_both_mappings_are_compared(self):
         """A fuel missing from either side is silently dropped."""
         stats = check_hourly_dispatch_correlation(
-            {"coal": np.array([1.0, 2.0, 3.0]),
-             "gas": np.array([1.0, 2.0, 3.0])},
+            {"coal": np.array([1.0, 2.0, 3.0]), "gas": np.array([1.0, 2.0, 3.0])},
             {"coal": np.array([3.0, 1.0, 2.0])},
         )
         self.assertEqual(set(stats), {"coal"})
@@ -271,15 +272,13 @@ class TestCheckCfBandOccupancy(unittest.TestCase):
         """The check is timing-free: permuting hours changes nothing."""
         rng = np.random.default_rng(7)
         mw = rng.uniform(0.0, 100.0, size=200)
-        occ = check_cf_band_occupancy(
-            rng.permutation(mw), mw, capacity_mw=100.0
-        )
+        occ = check_cf_band_occupancy(rng.permutation(mw), mw, capacity_mw=100.0)
         self.assertEqual(occ["band_overlap"], 1.0)
         self.assertEqual(occ["cf_emd"], 0.0)
 
     def test_level_shift_is_caught(self):
         """A model parked one band below the actual scores zero overlap."""
-        model = np.full(100, 75.0)   # 70-80% band
+        model = np.full(100, 75.0)  # 70-80% band
         actual = np.full(100, 95.0)  # 90-100% band
         occ = check_cf_band_occupancy(model, actual, capacity_mw=100.0)
         self.assertEqual(occ["band_overlap"], 0.0)
@@ -288,18 +287,19 @@ class TestCheckCfBandOccupancy(unittest.TestCase):
     def test_emd_scales_with_distance(self):
         """Mass parked further from the observed level costs more EMD."""
         actual = np.full(100, 95.0)
-        near = check_cf_band_occupancy(
-            np.full(100, 85.0), actual, capacity_mw=100.0
-        )["cf_emd"]
-        far = check_cf_band_occupancy(
-            np.full(100, 55.0), actual, capacity_mw=100.0
-        )["cf_emd"]
+        near = check_cf_band_occupancy(np.full(100, 85.0), actual, capacity_mw=100.0)[
+            "cf_emd"
+        ]
+        far = check_cf_band_occupancy(np.full(100, 55.0), actual, capacity_mw=100.0)[
+            "cf_emd"
+        ]
         self.assertLess(near, far)
 
     def test_band_layout_and_top_band_owns_full_cf(self):
         """band_width 0.10 yields ten bands; CF == 1.0 lands in the top."""
         occ = check_cf_band_occupancy(
-            np.array([100.0, 0.0]), np.array([100.0, 0.0]),
+            np.array([100.0, 0.0]),
+            np.array([100.0, 0.0]),
             capacity_mw=100.0,
         )
         self.assertEqual(len(occ["bands"]), 10)
@@ -309,16 +309,16 @@ class TestCheckCfBandOccupancy(unittest.TestCase):
     def test_five_percent_bands(self):
         """band_width 0.05 yields twenty bands."""
         occ = check_cf_band_occupancy(
-            np.array([50.0]), np.array([50.0]),
-            capacity_mw=100.0, band_width=0.05,
+            np.array([50.0]),
+            np.array([50.0]),
+            capacity_mw=100.0,
+            band_width=0.05,
         )
         self.assertEqual(len(occ["bands"]), 20)
 
     def test_default_capacity_is_joint_max(self):
         """Without a nameplate, the larger series maximum sets the CF scale."""
-        occ = check_cf_band_occupancy(
-            np.array([40.0, 80.0]), np.array([50.0, 100.0])
-        )
+        occ = check_cf_band_occupancy(np.array([40.0, 80.0]), np.array([50.0, 100.0]))
         self.assertEqual(occ["capacity_mw"], 100.0)
 
     def test_length_mismatch_raises(self):
@@ -347,14 +347,10 @@ class TestRunCalibrationCheck(unittest.TestCase):
 
         T = 240
         # Two generators: one gas_cc at 100 MW flat, one coal at 50 MW flat.
-        dispatch = np.vstack(
-            [np.full(T, 100.0), np.full(T, 50.0)]
-        )
+        dispatch = np.vstack([np.full(T, 100.0), np.full(T, 50.0)])
         prices = np.full((1, T), 40.0)
         result = _dispatch_result(dispatch, prices)
-        context = _fleet_context(
-            fuel_types=["gas_cc", "coal"], pmax_mw=[100.0, 50.0]
-        )
+        context = _fleet_context(fuel_types=["gas_cc", "coal"], pmax_mw=[100.0, 50.0])
         path = cache.get_cache_path(self.ISO, self.CACHE_KEY, self.YEAR)
         result.to_parquet(path, context=context)
 
@@ -383,9 +379,7 @@ class TestRunCalibrationCheck(unittest.TestCase):
 
     def test_diagnostics_are_in_fixed_order(self):
         """The report exposes diagnostics in the documented order."""
-        report = run_calibration_check(
-            self.CACHE_KEY, self.ISO, {"year": self.YEAR}
-        )
+        report = run_calibration_check(self.CACHE_KEY, self.ISO, {"year": self.YEAR})
         names = [d.name for d in report.diagnostics]
         self.assertEqual(
             names,
@@ -411,9 +405,7 @@ class TestRunCalibrationCheck(unittest.TestCase):
 
     def test_missing_benchmarks_skip_diagnostics(self):
         """Diagnostics with no benchmark are skipped, not failed."""
-        report = run_calibration_check(
-            self.CACHE_KEY, self.ISO, {"year": self.YEAR}
-        )
+        report = run_calibration_check(self.CACHE_KEY, self.ISO, {"year": self.YEAR})
         for diagnostic in report.diagnostics:
             self.assertEqual(diagnostic.status, SKIPPED, diagnostic.name)
         # A run with only skipped diagnostics still passes.

@@ -41,6 +41,7 @@ is neighbor-resolved where the data supports it and gracefully aggregate
 where it does not — add a neighbor's extract later and it lights up
 individually with no code change.
 """
+
 from __future__ import annotations
 
 import os
@@ -133,9 +134,7 @@ def _neighbor_load(
         frame = _eia_hourly_frame_filled(ba, year)
         if frame is None or "Demand" not in frame.columns:
             continue
-        load = (
-            frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
-        )
+        load = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
         # The extract is on the model's 8760 clock; a short-horizon run (hours
         # < 8760) takes the leading window, matching how demand is sliced. A
         # run asking for MORE hours than the extract has is unservable.
@@ -393,7 +392,12 @@ _MONTH_START_HOUR: tuple[int, ...] = tuple(
 
 def _use_clean() -> bool:
     """Whether the clean-backed read path is enabled via ``MARKET_SIM_USE_CLEAN``."""
-    return os.environ.get(USE_CLEAN_ENV, "").strip().lower() in {"1", "true", "yes", "on"}
+    return os.environ.get(USE_CLEAN_ENV, "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 
 def _hour_of_year(local_ts: pd.Series) -> np.ndarray:
@@ -438,7 +442,9 @@ def _neighbor_lmp_raw(iso: str, year: int, run: str) -> np.ndarray | None:
     return _fill_hourly(rows[run].to_numpy(dtype=float))
 
 
-def _neighbor_lmp_clean(iso: str, year: int, run: str, market: str | None) -> np.ndarray | None:
+def _neighbor_lmp_clean(
+    iso: str, year: int, run: str, market: str | None
+) -> np.ndarray | None:
     """Read a neighbor's realized hourly LMP from the curated clean tree.
 
     Loads the canonical per-node LMP frame (total + components) via

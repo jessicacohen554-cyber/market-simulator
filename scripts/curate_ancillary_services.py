@@ -99,10 +99,9 @@ def _to_utc(local_naive: pd.Series, tz: str) -> pd.Series:
     the first (DST) occurrence and spring-forward gaps are shifted forward, so a
     single hour-beginning series localizes without raising.
     """
-    return (
-        local_naive.dt.tz_localize(tz, ambiguous=True, nonexistent="shift_forward")
-        .dt.tz_convert("UTC")
-    )
+    return local_naive.dt.tz_localize(
+        tz, ambiguous=True, nonexistent="shift_forward"
+    ).dt.tz_convert("UTC")
 
 
 def _finalize(df: pd.DataFrame, iso: str, market: str) -> pd.DataFrame:
@@ -210,7 +209,7 @@ def _pjm_classify(service: str) -> tuple[str | None, str | None]:
     rest = service
     for prefix, z in _PJM_ZONE_PREFIX:
         if service.startswith(prefix):
-            zone, rest = z, service[len(prefix):]
+            zone, rest = z, service[len(prefix) :]
             break
     if zone is None:
         return None, None
@@ -228,7 +227,9 @@ def _pjm_classify(service: str) -> tuple[str | None, str | None]:
     return zone, product
 
 
-def _build_pjm_market(files: list[Path], market: str, raw_root: Path) -> Iterator[CuratedFrame]:
+def _build_pjm_market(
+    files: list[Path], market: str, raw_root: Path
+) -> Iterator[CuratedFrame]:
     frames = []
     for f in files:
         raw = pd.read_parquet(f)
@@ -251,7 +252,9 @@ def _build_pjm_market(files: list[Path], market: str, raw_root: Path) -> Iterato
             values="value",
             aggfunc="mean",
         ).reset_index()
-        wide = wide.rename(columns={p: _PRICE_COL[p] for p in _PRICE_COL if p in wide.columns})
+        wide = wide.rename(
+            columns={p: _PRICE_COL[p] for p in _PRICE_COL if p in wide.columns}
+        )
         frames.append(wide)
     if not frames:
         return
@@ -265,7 +268,8 @@ def build_pjm(raw_root: Path) -> Iterator[CuratedFrame]:
     as_dir = raw_root / "PJM-AS"
     da = sorted(as_dir.glob("da_ancillary_services_*.parquet"))
     rt = sorted(
-        p for p in as_dir.glob("ancillary_services_*.parquet")
+        p
+        for p in as_dir.glob("ancillary_services_*.parquet")
         if not p.name.startswith("da_")
     )
     yield from _build_pjm_market(da, "DAM", raw_root)
@@ -295,7 +299,9 @@ _ERCOT_CLEARED_RE = re.compile(
 )
 
 
-def _ercot_local_to_utc(delivery_date: pd.Series, hour_ending: pd.Series) -> tuple[pd.Series, pd.Series]:
+def _ercot_local_to_utc(
+    delivery_date: pd.Series, hour_ending: pd.Series
+) -> tuple[pd.Series, pd.Series]:
     """Build (utc, local) hour-beginning timestamps from ERCOT date + hour-ending."""
     local = pd.to_datetime(delivery_date) + pd.to_timedelta(
         hour_ending.astype(int) - 1, unit="h"
@@ -319,10 +325,9 @@ def _load_ercot_mcpc(raw_root: Path) -> tuple[pd.DataFrame, list[Path]]:
     awards["product"] = awards["ASType"].str.upper().map(_ERCOT_PRODUCT)
     awards = awards[awards["product"].notna()]
     # MCPC is uniform across QSEs for a delivery hour + product; collapse.
-    price = (
-        awards.groupby(["deliveryDate", "hourEnding", "product"], as_index=False)["MCPC"]
-        .mean()
-    )
+    price = awards.groupby(["deliveryDate", "hourEnding", "product"], as_index=False)[
+        "MCPC"
+    ].mean()
     utc, local = _ercot_local_to_utc(price["deliveryDate"], price["hourEnding"])
     price["interval_start_utc"] = utc
     price["interval_start_local"] = local
@@ -332,13 +337,17 @@ def _load_ercot_mcpc(raw_root: Path) -> tuple[pd.DataFrame, list[Path]]:
         values="MCPC",
         aggfunc="mean",
     ).reset_index()
-    wide = wide.rename(columns={p: _PRICE_COL[p] for p in _PRICE_COL if p in wide.columns})
+    wide = wide.rename(
+        columns={p: _PRICE_COL[p] for p in _PRICE_COL if p in wide.columns}
+    )
     return wide, files
 
 
 def _load_ercot_mw(raw_root: Path) -> tuple[pd.DataFrame, list[Path]]:
     """Read cleared MW per product from the 2-day DAM AS disclosure parquets."""
-    files = sorted((raw_root / "ercot").glob("2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet"))
+    files = sorted(
+        (raw_root / "ercot").glob("2_DAY_AS_DISCLOSURE_2d_Cleared_DAM_AS_*.parquet")
+    )
     rows = []
     used = []
     for f in files:
@@ -369,10 +378,9 @@ def _load_ercot_mw(raw_root: Path) -> tuple[pd.DataFrame, list[Path]]:
     long = pd.concat(rows, ignore_index=True)
     # Multiple AS subtypes can map to one product (e.g. RRSPFR/FFR/UFR -> spin);
     # the cleared total for that product is their sum within the delivery hour.
-    agg = (
-        long.groupby(["interval_start_utc", "interval_start_local", "product"], as_index=False)["mw"]
-        .sum()
-    )
+    agg = long.groupby(
+        ["interval_start_utc", "interval_start_local", "product"], as_index=False
+    )["mw"].sum()
     wide = agg.pivot_table(
         index=["interval_start_utc", "interval_start_local"],
         columns="product",

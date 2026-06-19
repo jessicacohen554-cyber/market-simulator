@@ -3,8 +3,8 @@
 # per-file-ignores and E702/E741 carve-outs). `ruff check` is clean against that
 # config today; running it per-PR keeps the baseline from silently rotting.
 #
-# Lightweight on purpose: only installs deps and runs `ruff check`. Formatting is
-# NOT enforced here — the tree is not `ruff format`-clean yet (a separate effort).
+# `ruff format --check` is also enforced: the tree was reformatted in a one-time
+# `ruff format` sweep, and this gate keeps it format-clean going forward.
 name: Lint
 
 on:
@@ -31,3 +31,6 @@ jobs:
 
       - name: Ruff lint
         run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .

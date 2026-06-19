@@ -80,9 +80,7 @@ _ONLINE_YEAR_SENTINEL = 2000
 CodEntry = tuple[int, int, int | None, int | None]
 
 
-def _cod_work_frame(
-    path, columns: dict[str, str]
-) -> "pd.DataFrame | None":
+def _cod_work_frame(path, columns: dict[str, str]) -> "pd.DataFrame | None":
     """Read an EIA-860 generator parquet into the COD reducer's column frame.
 
     ``columns`` maps the reducer's short names (``pc``/``oy``/``om``/``cap``/
@@ -94,10 +92,12 @@ def _cod_work_frame(
     if not path.exists():
         return None
     df = pd.read_parquet(path)
-    frame = pd.DataFrame({
-        short: pd.to_numeric(df.get(src), errors="coerce")
-        for short, src in columns.items()
-    })
+    frame = pd.DataFrame(
+        {
+            short: pd.to_numeric(df.get(src), errors="coerce")
+            for short, src in columns.items()
+        }
+    )
     return frame.dropna(subset=["pc", "oy"])
 
 
@@ -150,14 +150,17 @@ def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
     cod: dict[int, CodEntry] = {}
 
     df = clean_io.read_clean(
-        "fleet", year=partition_year,
+        "fleet",
+        year=partition_year,
         columns=["plant_id", "nameplate_capacity_mw", "operating_year"],
     )
-    work = pd.DataFrame({
-        "pc": pd.to_numeric(df.get("plant_id"), errors="coerce"),
-        "cap": pd.to_numeric(df.get("nameplate_capacity_mw"), errors="coerce"),
-        "oy": pd.to_numeric(df.get("operating_year"), errors="coerce"),
-    }).dropna(subset=["pc", "oy"])
+    work = pd.DataFrame(
+        {
+            "pc": pd.to_numeric(df.get("plant_id"), errors="coerce"),
+            "cap": pd.to_numeric(df.get("nameplate_capacity_mw"), errors="coerce"),
+            "oy": pd.to_numeric(df.get("operating_year"), errors="coerce"),
+        }
+    ).dropna(subset=["pc", "oy"])
 
     if not work.empty:
         # Positive nameplate weights the COD; equal-weight a plant that reports
@@ -168,7 +171,9 @@ def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
             weights = grp["w"].to_numpy()
             if weights.sum() <= 0.0:
                 weights = np.ones(len(grp))
-            online_year = int(round(float(np.average(grp["oy"].to_numpy(), weights=weights))))
+            online_year = int(
+                round(float(np.average(grp["oy"].to_numpy(), weights=weights)))
+            )
             # Month unknown in the clean schema -> mid-year default; no retirement.
             cod[code] = (online_year, COD_FALLBACK_MONTH, None, None)
 
@@ -217,16 +222,28 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
     # dir (which carries its exits in the operable file already), so the union
     # is a no-op there.
     frames = [
-        _cod_work_frame(eia860_dir / "eia860_generator_operable.parquet", {
-            "pc": "Plant Code", "oy": "Operating Year", "om": "Operating Month",
-            "cap": "Nameplate Capacity (MW)", "ry": "Planned Retirement Year",
-            "rm": "Planned Retirement Month",
-        }),
-        _cod_work_frame(eia860_dir / _RETIRED_WINDOW_NAME, {
-            "pc": "plant_id", "oy": "operating_year", "om": "operating_month",
-            "cap": "nameplate_capacity_mw", "ry": "planned_retirement_year",
-            "rm": "planned_retirement_month",
-        }),
+        _cod_work_frame(
+            eia860_dir / "eia860_generator_operable.parquet",
+            {
+                "pc": "Plant Code",
+                "oy": "Operating Year",
+                "om": "Operating Month",
+                "cap": "Nameplate Capacity (MW)",
+                "ry": "Planned Retirement Year",
+                "rm": "Planned Retirement Month",
+            },
+        ),
+        _cod_work_frame(
+            eia860_dir / _RETIRED_WINDOW_NAME,
+            {
+                "pc": "plant_id",
+                "oy": "operating_year",
+                "om": "operating_month",
+                "cap": "nameplate_capacity_mw",
+                "ry": "planned_retirement_year",
+                "rm": "planned_retirement_month",
+            },
+        ),
     ]
     frames = [f for f in frames if f is not None]
     work = pd.concat(frames, ignore_index=True) if frames else None
@@ -254,9 +271,7 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
             if len(ret) == len(grp) and len(ret) > 0:
                 last = ret.sort_values(["ry", "rm"]).iloc[-1]
                 ret_year = int(last["ry"])
-                ret_month = (
-                    int(last["rm"]) if pd.notna(last["rm"]) else 12
-                )
+                ret_month = int(last["rm"]) if pd.notna(last["rm"]) else 12
             cod[code] = (online_year, online_month, ret_year, ret_month)
 
     # Registry-only back-fill (year-only -> mid-year default), never overriding

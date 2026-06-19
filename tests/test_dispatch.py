@@ -90,8 +90,13 @@ class TestVariableLayout(unittest.TestCase):
         """n_reserve/n_ordc_steps default to 0 -> byte-identical layout."""
         base = VariableLayout(n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10)
         coopt0 = VariableLayout(
-            n_gen=3, n_zones=2, n_storage=4, n_links=2, T=10,
-            n_reserve=0, n_ordc_steps=0,
+            n_gen=3,
+            n_zones=2,
+            n_storage=4,
+            n_links=2,
+            T=10,
+            n_reserve=0,
+            n_ordc_steps=0,
         )
         self.assertEqual(base.vars_per_hour, coopt0.vars_per_hour)
         self.assertEqual(base.total_columns, coopt0.total_columns)
@@ -100,8 +105,13 @@ class TestVariableLayout(unittest.TestCase):
     def test_reserve_coopt_columns_when_enabled(self):
         """Reserve/ORDC blocks append after dump; indices stay unique."""
         layout = VariableLayout(
-            n_gen=3, n_zones=2, n_storage=1, n_links=1, T=5,
-            n_reserve=3, n_ordc_steps=2,
+            n_gen=3,
+            n_zones=2,
+            n_storage=1,
+            n_links=1,
+            T=5,
+            n_reserve=3,
+            n_ordc_steps=2,
         )
         # vars_per_hour = 3 + 4*2 + 3*1 + 1 + 3 + 2 = 20
         self.assertEqual(layout.vars_per_hour, 20)
@@ -113,11 +123,14 @@ class TestVariableLayout(unittest.TestCase):
             cols.append(layout.p_col(g, 2))
             cols.append(layout.r_col(g, 2))
         for z in range(2):
-            cols += [layout.w_col(z, 2), layout.s_col(z, 2),
-                     layout.slack_col(z, 2), layout.dump_col(z, 2)]
+            cols += [
+                layout.w_col(z, 2),
+                layout.s_col(z, 2),
+                layout.slack_col(z, 2),
+                layout.dump_col(z, 2),
+            ]
         for s in range(1):
-            cols += [layout.chg_col(s, 2), layout.dis_col(s, 2),
-                     layout.soc_col(s, 2)]
+            cols += [layout.chg_col(s, 2), layout.dis_col(s, 2), layout.soc_col(s, 2)]
         cols.append(layout.flow_col(0, 2))
         for k in range(2):
             cols.append(layout.ordc_col(k, 2))
@@ -129,9 +142,7 @@ class TestVariableLayout(unittest.TestCase):
 
     def test_columns_advance_by_vars_per_hour(self):
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=8)
-        self.assertEqual(
-            layout.p_col(1, 3) - layout.p_col(1, 2), layout.vars_per_hour
-        )
+        self.assertEqual(layout.p_col(1, 3) - layout.p_col(1, 2), layout.vars_per_hour)
 
     def test_p_cols_gen_selects_all_hours(self):
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=6)
@@ -145,12 +156,8 @@ class TestBuildCostVector(unittest.TestCase):
     """Tests for ``build_cost_vector`` objective assembly."""
 
     def setUp(self):
-        self.layout = VariableLayout(
-            n_gen=2, n_zones=1, n_storage=1, n_links=0, T=4
-        )
-        self.mc = np.array(
-            [[10.0, 11.0, 12.0, 13.0], [20.0, 21.0, 22.0, 23.0]]
-        )
+        self.layout = VariableLayout(n_gen=2, n_zones=1, n_storage=1, n_links=0, T=4)
+        self.mc = np.array([[10.0, 11.0, 12.0, 13.0], [20.0, 21.0, 22.0, 23.0]])
         self.voll = 9000.0
         self.cost = build_cost_vector(
             self.layout, self.mc, self.voll, storage_epsilon=0.001
@@ -162,9 +169,7 @@ class TestBuildCostVector(unittest.TestCase):
     def test_thermal_costs_in_correct_positions(self):
         for g in range(2):  # g: thermal generator index
             for t in range(self.layout.T):  # t: hour index
-                self.assertEqual(
-                    self.cost[self.layout.p_col(g, t)], self.mc[g, t]
-                )
+                self.assertEqual(self.cost[self.layout.p_col(g, t)], self.mc[g, t])
 
     def test_renewables_are_zero_cost(self):
         for t in range(self.layout.T):  # t: hour index
@@ -187,14 +192,10 @@ class TestBuildCostVector(unittest.TestCase):
     def test_round_trip_cost_matches_mc(self):
         for g in range(2):  # g: thermal generator index
             for t in range(self.layout.T):  # t: hour index
-                self.assertEqual(
-                    self.cost[self.layout.p_col(g, t)], self.mc[g, t]
-                )
+                self.assertEqual(self.cost[self.layout.p_col(g, t)], self.mc[g, t])
 
     def test_flow_is_zero_cost(self):
-        layout = VariableLayout(
-            n_gen=1, n_zones=1, n_storage=0, n_links=2, T=3
-        )
+        layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=2, T=3)
         mc = np.full((1, 3), 5.0)
         cost = build_cost_vector(layout, mc, voll=1000.0)
         for ln in range(2):  # ln: transmission link index
@@ -391,8 +392,10 @@ class TestBuildVariableBounds(unittest.TestCase):
         layout = VariableLayout(n_gen=1, n_zones=2, n_storage=0, n_links=1, T=4)
         fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=4)
         kwargs = dict(
-            wind_cf=np.zeros((2, 4)), wind_cap=np.zeros(2),
-            solar_cf=np.zeros((2, 4)), solar_cap=np.zeros(2),
+            wind_cf=np.zeros((2, 4)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, 4)),
+            solar_cap=np.zeros(2),
         )
         lo1, up1 = build_variable_bounds(layout, fleet, ttc=np.array([300.0]), **kwargs)
         lo2, up2 = build_variable_bounds(
@@ -418,7 +421,9 @@ class TestSolveDispatch(unittest.TestCase):
 
     def test_single_marginal_generator_sets_price(self):
         # 1 gen, MC=50, pmax=100; flat demand 80 -> price 50, dispatch 80.
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 50.0)
         demand = np.full((1, self.T), 80.0)
         result = solve_dispatch(
@@ -512,7 +517,7 @@ class TestDispatchPerformance(unittest.TestCase):
         # Sinusoidal demand peaking at 80% of total installed capacity.
         peak = 0.8 * total_cap  # 16_000 MW
         hours = np.arange(T)
-        demand = (0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T))
+        demand = 0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T)
         demand = demand.reshape(1, T)
 
         # Flat wind; solar follows a daily bell curve (0 at night, 0.6 midday).
@@ -560,12 +565,17 @@ class TestNegativePricing(unittest.TestCase):
 
     def test_ptc_wind_creates_negative_prices(self):
         """Wind with PTC at -26 $/MWh sets price negative when at margin."""
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 50.0)  # thermal at $50
         demand = np.full((1, self.T), 80.0)
         # Wind capacity exceeds demand — wind is marginal
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             wind_cf=np.full((1, self.T), 1.0),
             wind_cap=np.array([200.0]),  # 200 MW available, only 80 needed
             solar_cf=np.zeros((1, self.T)),
@@ -579,11 +589,16 @@ class TestNegativePricing(unittest.TestCase):
 
     def test_zero_mc_wind_without_ptc(self):
         """Without PTC, wind at margin gives price=0 (backward compatible)."""
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 50.0)
         demand = np.full((1, self.T), 80.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             wind_cf=np.full((1, self.T), 1.0),
             wind_cap=np.array([200.0]),
             solar_cf=np.zeros((1, self.T)),
@@ -596,6 +611,7 @@ class TestNegativePricing(unittest.TestCase):
         """After IRA expiry, wind reverts to MC=0."""
         from market_sim.policy.ira import compute_dispatch_credits
         from market_sim.config.scenarios import ScenarioConfig
+
         config = ScenarioConfig(ira_ptc_wind=26.0, ira_wind_solar_last_year=2035)
         w_mc, s_mc = compute_dispatch_credits(config, year=2036)
         self.assertEqual(w_mc, 0.0)
@@ -607,6 +623,7 @@ class TestNegativePricing(unittest.TestCase):
         """Wind/solar dispatch credits vanish after the OBBBA 2027 cliff."""
         from market_sim.policy.ira import compute_dispatch_credits
         from market_sim.config.scenarios import ScenarioConfig
+
         config = ScenarioConfig()
         w_mc, _ = compute_dispatch_credits(config, 2027)
         self.assertEqual(w_mc, -26.0)
@@ -621,14 +638,21 @@ class TestOvergeneration(unittest.TestCase):
 
     def test_must_run_exceeds_demand_uses_dump(self):
         """Nuclear pmin=800 MW, demand=500 MW — dump absorbs 300 MW."""
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
-                            pmax=1000.0, pmin=800.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=1000.0, pmin=800.0, eford=0.0
+        )
         mc = np.full((1, self.T), 5.0)
         demand = np.full((1, self.T), 500.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
         self.assertEqual(result.status, "Optimal")
         np.testing.assert_allclose(result.dispatch[0], 800.0, atol=1.0)
         np.testing.assert_allclose(result.dump[0], 300.0, atol=1.0)
@@ -636,26 +660,40 @@ class TestOvergeneration(unittest.TestCase):
 
     def test_no_dump_when_balanced(self):
         """Normal operation: dump is zero."""
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
-                            pmax=200.0, pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 50.0)
         demand = np.full((1, self.T), 80.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
         np.testing.assert_allclose(result.dump, 0.0, atol=1e-6)
 
     def test_energy_balance_with_dump(self):
         """Supply - dump + slack = demand for every hour."""
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T,
-                            pmax=1000.0, pmin=800.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=1000.0, pmin=800.0, eford=0.0
+        )
         mc = np.full((1, self.T), 5.0)
         demand = np.full((1, self.T), 500.0)
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1))
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
         supply = result.dispatch.sum(axis=0) + result.slack[0] - result.dump[0]
         np.testing.assert_allclose(supply, demand[0], atol=1e-4)
 
@@ -678,12 +716,22 @@ class TestRPSConstraint(unittest.TestCase):
         """A two-unit fleet: one nuclear unit, one gas unit, both in Z0."""
         generators = [
             Generator(
-                unit_id="N0", name="N0", zone="Z0", fuel_type="nuclear",
-                pmax_mw=100.0, pmin_mw=0.0, eford=0.0,
+                unit_id="N0",
+                name="N0",
+                zone="Z0",
+                fuel_type="nuclear",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
             ),
             Generator(
-                unit_id="G0", name="G0", zone="Z0", fuel_type="gas_cc",
-                pmax_mw=100.0, pmin_mw=0.0, eford=0.0,
+                unit_id="G0",
+                name="G0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
             ),
         ]
         return generators_to_fleet_arrays(generators, ["Z0"], hours=self.T)
@@ -701,7 +749,11 @@ class TestRPSConstraint(unittest.TestCase):
             fleet, demand, mc=mc, T=self.T, **self._no_renewables(1)
         )
         with_none = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T, rps_target=None,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=None,
             **self._no_renewables(1),
         )
         np.testing.assert_allclose(with_none.prices, baseline.prices)
@@ -715,13 +767,15 @@ class TestRPSConstraint(unittest.TestCase):
         # constraint binds and its dual (the RPS shadow price) is positive.
         fleet = self._nuclear_gas_fleet()
         # Row 0 is nuclear (expensive), row 1 is gas (cheap).
-        mc = np.vstack(
-            [np.full(self.T, 100.0), np.full(self.T, 20.0)]
-        )
+        mc = np.vstack([np.full(self.T, 100.0), np.full(self.T, 20.0)])
         demand = np.full((1, self.T), 80.0)
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T, rps_target=0.5,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=0.5,
             **self._no_renewables(1),
         )
         self.assertEqual(result.status, "Optimal")
@@ -731,9 +785,7 @@ class TestRPSConstraint(unittest.TestCase):
         # an extra MWh of clean swaps 1 MWh gas (20) for nuclear (100).
         self.assertAlmostEqual(result.rps_shadow_price, 80.0, delta=0.5)
         # Nuclear is pushed up to supply at least half of total demand.
-        self.assertGreaterEqual(
-            result.dispatch[0].sum(), 0.5 * demand.sum() - 1.0
-        )
+        self.assertGreaterEqual(result.dispatch[0].sum(), 0.5 * demand.sum() - 1.0)
 
     def test_rps_non_binding_with_enough_wind(self):
         # Cheap wind already supplies more than the RPS floor, so the
@@ -745,7 +797,11 @@ class TestRPSConstraint(unittest.TestCase):
         demand = np.full((1, self.T), 80.0)
 
         result = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T, rps_target=0.5,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=0.5,
             wind_cf=np.full((1, self.T), 0.5),
             wind_cap=np.array([100.0]),  # 50 MW available vs 80 MW demand
             solar_cf=np.zeros((1, self.T)),
@@ -767,7 +823,11 @@ class TestRPSConstraint(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             solve_dispatch(
-                fleet, demand, mc=mc, T=self.T, rps_target=1.0,
+                fleet,
+                demand,
+                mc=mc,
+                T=self.T,
+                rps_target=1.0,
                 **self._no_renewables(1),
             )
 
@@ -861,9 +921,7 @@ def _solve_with_highs_options(
         np.array([], dtype=np.int32),
         np.array([], dtype=np.float64),
     )
-    h.addRows(
-        A.shape[0], row_lower, row_upper, A.nnz, starts, indices, values
-    )
+    h.addRows(A.shape[0], row_lower, row_upper, A.nnz, starts, indices, values)
     build_time = time.perf_counter() - build_start
 
     solve_start = time.perf_counter()
@@ -885,16 +943,12 @@ def _make_200gen_1zone_problem():
     pmax = 100.0
     total_cap = n_gen * pmax
 
-    fleet = _make_fleet(
-        ["Z0"] * n_gen, ["Z0"], hours=T, pmax=pmax, pmin=0.0, eford=0.0
-    )
+    fleet = _make_fleet(["Z0"] * n_gen, ["Z0"], hours=T, pmax=pmax, pmin=0.0, eford=0.0)
     mc = np.tile(np.linspace(20.0, 80.0, n_gen)[:, np.newaxis], (1, T))
 
     peak = 0.8 * total_cap
     hours = np.arange(T)
-    demand = (0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T)).reshape(
-        1, T
-    )
+    demand = (0.7 * peak + 0.3 * peak * np.sin(2 * np.pi * hours / T)).reshape(1, T)
 
     wind_cf = np.full((1, T), 0.35)
     hour_of_day = hours % 24
@@ -976,9 +1030,7 @@ def _make_4zone_storage_problem():
     wind_cap[west] = 2000.0
 
     solar_cf = np.zeros((n_zones, T))
-    solar_cf[south_central] = np.clip(
-        0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1
-    )
+    solar_cf[south_central] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
     solar_cap = np.zeros(n_zones)
     solar_cap[south_central] = 1500.0
 
@@ -1061,14 +1113,10 @@ class TestSolverBenchmark(unittest.TestCase):
             )
 
     def test_solver_method_benchmark(self):
-        print(
-            "\n[solver bench] 200 gens x 8760h -- 1 zone, no storage/transmission"
-        )
+        print("\n[solver bench] 200 gens x 8760h -- 1 zone, no storage/transmission")
         self._run_benchmark(_make_200gen_1zone_problem())
 
-        print(
-            "[solver bench] 200 gens x 8760h -- 4 zones + storage + transmission"
-        )
+        print("[solver bench] 200 gens x 8760h -- 4 zones + storage + transmission")
         self._run_benchmark(_make_4zone_storage_problem())
 
 
@@ -1096,12 +1144,16 @@ class TestReserveCoOptimization(unittest.TestCase):
     def test_reserve_met_from_free_headroom_no_price_lift(self):
         # 1 gen 100 MW @ $20, demand 80 -> 20 MW free headroom. Reserve req 10
         # < 20: met for free, reserve price 0, energy LMP stays $20.
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
-                            pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 20.0)
         demand = np.full((1, self.T), 80.0)
         res = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             reserve_requirement=np.full(self.T, 10.0),
             reserve_eligible=np.array([True]),
             ordc_penalties=np.array([1000.0]),
@@ -1117,12 +1169,16 @@ class TestReserveCoOptimization(unittest.TestCase):
         # Same gen, reserve req 30 > 20 free headroom: 10 MW short, priced at
         # the $1000 ORDC step. The shared-headroom constraint binds (P+R=100),
         # transferring the reserve price into the energy LMP: $20 + $1000.
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
-                            pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 20.0)
         demand = np.full((1, self.T), 80.0)
         res = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             reserve_requirement=np.full(self.T, 30.0),
             reserve_eligible=np.array([True]),
             ordc_penalties=np.array([1000.0]),
@@ -1140,12 +1196,16 @@ class TestReserveCoOptimization(unittest.TestCase):
         # reserve req 50. Cheap serves the 80 energy; the zone has 120 MW of
         # headroom (200 cap - 80 dispatched), far above the 50 MW requirement,
         # so reserve clears free -> reserve price 0, LMP stays $20.
-        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0,
-                            pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
         mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 90.0)])
         demand = np.full((1, self.T), 80.0)
         res = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
             reserve_requirement=np.full(self.T, 50.0),
             reserve_eligible=np.array([True, True]),
             ordc_penalties=np.array([1000.0]),
@@ -1165,8 +1225,9 @@ class TestReserveCoOptimization(unittest.TestCase):
         # (idle) supplies the rest only when reserve_storage=True, so the
         # requirement clears and the reserve price stays at 0; without it, the
         # 20 MW shortfall would price at the $1000 ORDC step.
-        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=100.0,
-                            pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=100.0, pmin=0.0, eford=0.0
+        )
         mc = np.full((1, self.T), 20.0)
         demand = np.full((1, self.T), 90.0)
         kw = dict(
@@ -1179,10 +1240,12 @@ class TestReserveCoOptimization(unittest.TestCase):
             storage_zone_idx=np.array([0]),
             **self._no_renewables(1),
         )
-        without = solve_dispatch(fleet, demand, mc=mc, T=self.T,
-                                 reserve_storage=False, **kw)
-        with_stor = solve_dispatch(fleet, demand, mc=mc, T=self.T,
-                                   reserve_storage=True, **kw)
+        without = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, reserve_storage=False, **kw
+        )
+        with_stor = solve_dispatch(
+            fleet, demand, mc=mc, T=self.T, reserve_storage=True, **kw
+        )
         # Thermal-only: 10 MW headroom < 30 req -> 20 MW priced at $1000.
         self.assertTrue((without.reserve_price > 100.0).all())
         # Storage room covers the gap -> requirement met free, no price lift.
@@ -1191,14 +1254,18 @@ class TestReserveCoOptimization(unittest.TestCase):
 
     def test_off_path_matches_energy_only(self):
         # No reserve_requirement -> co-opt columns absent; identical result.
-        fleet = _make_fleet(["Z0", "Z0"], ["Z0"], hours=self.T, pmax=60.0,
-                            pmin=0.0, eford=0.0)
+        fleet = _make_fleet(
+            ["Z0", "Z0"], ["Z0"], hours=self.T, pmax=60.0, pmin=0.0, eford=0.0
+        )
         mc = np.vstack([np.full(self.T, 25.0), np.full(self.T, 55.0)])
         demand = np.full((1, self.T), 70.0)
-        base = solve_dispatch(fleet, demand, mc=mc, T=self.T,
-                              **self._no_renewables(1))
+        base = solve_dispatch(fleet, demand, mc=mc, T=self.T, **self._no_renewables(1))
         coopt_off = solve_dispatch(
-            fleet, demand, mc=mc, T=self.T, reserve_requirement=None,
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            reserve_requirement=None,
             **self._no_renewables(1),
         )
         np.testing.assert_allclose(base.dispatch, coopt_off.dispatch)

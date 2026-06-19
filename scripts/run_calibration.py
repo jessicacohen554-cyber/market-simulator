@@ -203,7 +203,8 @@ def _deep_merge_offer_curve(
         if not isinstance(bands, dict):
             raise ValueError(
                 f"offer-curve override for {cls!r} must be an object of "
-                f"band->multiplier, got {type(bands).__name__}")
+                f"band->multiplier, got {type(bands).__name__}"
+            )
         merged.setdefault(cls, {}).update(bands)
     return merged
 
@@ -226,16 +227,19 @@ def _apply_offer_curve_deltas(
         if cls not in merged:
             raise ValueError(
                 f"offer-curve delta for unknown class {cls!r}; valid classes: "
-                f"{', '.join(sorted(merged))}")
+                f"{', '.join(sorted(merged))}"
+            )
         if not isinstance(bands, dict):
             raise ValueError(
                 f"offer-curve delta for {cls!r} must be an object of "
-                f"band->delta, got {type(bands).__name__}")
+                f"band->delta, got {type(bands).__name__}"
+            )
         for band, delta in bands.items():
             if band not in merged[cls]:
                 raise ValueError(
                     f"offer-curve delta for unknown band {cls}.{band!r}; "
-                    f"{cls} bands: {', '.join(sorted(merged[cls]))}")
+                    f"{cls} bands: {', '.join(sorted(merged[cls]))}"
+                )
             merged[cls][band] = merged[cls][band] + delta
     return merged
 
@@ -264,38 +268,88 @@ def _apply_offer_curve_deltas(
 # sits ~10% under EIA-930 because PJM's distributed/BTM solar never reaches the
 # wholesale grid the LP dispatches.
 _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
-    "CC_REGULAR": {"committed": 0.6624, "econ_low": 0.7344,
-                   "econ_high": 0.8928, "peak": 1.62,
-                   "econ_low_share": 0.50, "pct_peaking": 8.0},
-    "CC_CHP": {"committed": 0.6624, "econ_low": 0.684,
-               "econ_high": 0.8208, "peak": 1.62,
-               "econ_low_share": 0.50, "pct_peaking": 8.0},
-    "CT_CHP": {"committed": 0.864, "econ_low": 0.864,
-               "econ_high": 0.864, "peak": 1.008, "econ_low_share": 0.50},
-    "CT_PEAKER": {"committed": 0.8784, "econ_low": 0.9792,
-                  "econ_high": 1.4256, "peak": 4.0,
-                  "econ_low_share": 0.526, "pct_peaking": 7.0},
-    "ST_GAS": {"committed": 0.4752, "econ_low": 0.6552,
-               "econ_high": 0.90, "peak": 3.024,
-               "econ_low_share": 0.50, "pct_peaking": 15.0},
-    "COAL_LIGNITE": {"committed": 0.684, "econ_low": 0.8208,
-                     "econ_high": 0.828, "peak": 1.116,
-                     "econ_low_share": 0.556},
-    "COAL_PRB": {"committed": 0.684, "econ_low": 0.5544,
-                 "econ_high": 0.8568, "peak": 1.0656,
-                 "econ_low_share": 0.556},
-    "COAL_BIT": {"committed": 0.648, "econ_low": 0.7056,
-                 "econ_high": 0.8064, "peak": 1.044, "econ_low_share": 0.55},
-    "COAL_WC": {"committed": 0.612, "econ_low": 0.648,
-                "econ_high": 0.7344, "peak": 0.864, "econ_low_share": 0.55},
-    "COAL": {"committed": 0.648, "econ_low": 0.684,
-             "econ_high": 0.792, "peak": 1.044, "econ_low_share": 0.55},
+    "CC_REGULAR": {
+        "committed": 0.6624,
+        "econ_low": 0.7344,
+        "econ_high": 0.8928,
+        "peak": 1.62,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CC_CHP": {
+        "committed": 0.6624,
+        "econ_low": 0.684,
+        "econ_high": 0.8208,
+        "peak": 1.62,
+        "econ_low_share": 0.50,
+        "pct_peaking": 8.0,
+    },
+    "CT_CHP": {
+        "committed": 0.864,
+        "econ_low": 0.864,
+        "econ_high": 0.864,
+        "peak": 1.008,
+        "econ_low_share": 0.50,
+    },
+    "CT_PEAKER": {
+        "committed": 0.8784,
+        "econ_low": 0.9792,
+        "econ_high": 1.4256,
+        "peak": 4.0,
+        "econ_low_share": 0.526,
+        "pct_peaking": 7.0,
+    },
+    "ST_GAS": {
+        "committed": 0.4752,
+        "econ_low": 0.6552,
+        "econ_high": 0.90,
+        "peak": 3.024,
+        "econ_low_share": 0.50,
+        "pct_peaking": 15.0,
+    },
+    "COAL_LIGNITE": {
+        "committed": 0.684,
+        "econ_low": 0.8208,
+        "econ_high": 0.828,
+        "peak": 1.116,
+        "econ_low_share": 0.556,
+    },
+    "COAL_PRB": {
+        "committed": 0.684,
+        "econ_low": 0.5544,
+        "econ_high": 0.8568,
+        "peak": 1.0656,
+        "econ_low_share": 0.556,
+    },
+    "COAL_BIT": {
+        "committed": 0.648,
+        "econ_low": 0.7056,
+        "econ_high": 0.8064,
+        "peak": 1.044,
+        "econ_low_share": 0.55,
+    },
+    "COAL_WC": {
+        "committed": 0.612,
+        "econ_low": 0.648,
+        "econ_high": 0.7344,
+        "peak": 0.864,
+        "econ_low_share": 0.55,
+    },
+    "COAL": {
+        "committed": 0.648,
+        "econ_low": 0.684,
+        "econ_high": 0.792,
+        "peak": 1.044,
+        "econ_low_share": 0.55,
+    },
 }
 
 
-
 def _calibration_config(
-    year: int, iso: str, hours: int, gas_price: float,
+    year: int,
+    iso: str,
+    hours: int,
+    gas_price: float,
     coal_passthrough: float | None = None,
     commitment_enabled: bool = False,
     commitment_screen_coal: bool = True,
@@ -479,10 +533,10 @@ def _calibration_config(
         # CC and ST_GAS supply curves now come from the unified offer curve
         # below (offer_curve_by_group), so their legacy override triples are
         # left unset. CT_CHP keeps its legacy override (not in the offer curve).
-        cc_committed_per_plant=True,   # ground each CC_REGULAR committed % in
+        cc_committed_per_plant=True,  # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
-        cc_peaking_per_plant=True,     # the four F-class(late) 2x1 CCs (CBII,
+        cc_peaking_per_plant=True,  # the four F-class(late) 2x1 CCs (CBII,
         #   WH2, Rayburn, Temple) move the duct-burner peak band start to 85%
         #   (pct_peaking 15) so the expensive band bites earlier and they back
         #   down out of the 80-90% CF range (fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT).
@@ -495,8 +549,8 @@ def _calibration_config(
         #   72% CF mass point (fleet.cc_duct_peaking_pct). ERCOT keeps its
         #   CAMPD-fitted class curve + hand-set per-plant map.
         ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
-        ct_econ_hr_override=1.2,        # BTM + steam-following floor; raised in
-        ct_peak_hr_override=1.4,        # run9 (CT_CHP was running too much).
+        ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
+        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much).
         # Unified thermal offer curve (operator-supplied band multipliers on
         # AHR x fuel_price; VOM constant across bands). The economic block is a
         # rising ramp from econ_low to econ_high (its slope set by those two
@@ -524,20 +578,26 @@ def _calibration_config(
             # ERCOT econ bands fold in the run57 baseline (econ_low 1.06->1.16,
             # econ_high 1.27->1.41) so a no-tweak ERCOT run reproduces run57 and
             # workflow tweaks are +/- relative to it. PJM / other ISOs unchanged.
-            "CC_REGULAR": {"committed": 0.92,
-                           "econ_low": 1.20 if iso == "PJM" else (
-                               1.16 if iso == "ERCOT" else 1.06),
-                           "econ_high": 1.49 if iso == "PJM" else (
-                               1.41 if iso == "ERCOT" else 1.27),
-                           "peak": 2.25,
-                           "econ_low_share": 0.50,
-                           "pct_peaking": 8.0},
-            "CC_CHP": {"committed": 0.92,
-                       "econ_low": 0.95 if iso == "PJM" else 0.96,
-                       "econ_high": 1.14 if iso == "PJM" else 1.12,
-                       "peak": 2.25,
-                       "econ_low_share": 0.50,
-                       "pct_peaking": 8.0},
+            "CC_REGULAR": {
+                "committed": 0.92,
+                "econ_low": 1.20
+                if iso == "PJM"
+                else (1.16 if iso == "ERCOT" else 1.06),
+                "econ_high": 1.49
+                if iso == "PJM"
+                else (1.41 if iso == "ERCOT" else 1.27),
+                "peak": 2.25,
+                "econ_low_share": 0.50,
+                "pct_peaking": 8.0,
+            },
+            "CC_CHP": {
+                "committed": 0.92,
+                "econ_low": 0.95 if iso == "PJM" else 0.96,
+                "econ_high": 1.14 if iso == "PJM" else 1.12,
+                "peak": 2.25,
+                "econ_low_share": 0.50,
+                "pct_peaking": 8.0,
+            },
             # CT_CHP cogens: previously driven by the legacy ct_*_hr_override
             # triple (committed 1.10 / econ 1.20 / peak 1.40). Now expressed as
             # an offer curve so the econ ramp and peak are tweakable like every
@@ -546,10 +606,13 @@ def _calibration_config(
             # pull them apart to create a slope. Peaking % stays the CSV value
             # (no pct_peaking key). The ct_*_hr_override fields above are now
             # inert for CT_CHP.
-            "CT_CHP": {"committed": 1.20 if iso == "PJM" else 1.10,
-                       "econ_low": 1.20,
-                       "econ_high": 1.20, "peak": 1.40,
-                       "econ_low_share": 0.50},
+            "CT_CHP": {
+                "committed": 1.20 if iso == "PJM" else 1.10,
+                "econ_low": 1.20,
+                "econ_high": 1.20,
+                "peak": 1.40,
+                "econ_low_share": 0.50,
+            },
             # CT/ST committed band raised as a P1 startup-cost proxy: the
             # part-load committed slice only clears when price is high, so
             # peakers stop parking at ~20% CF for hundreds of hours. CT hurdle
@@ -559,35 +622,48 @@ def _calibration_config(
             # its own validated CT curve (committed 1.10, econ_low 1.32,
             # peak 13.0).
             # ERCOT committed folds in the run57 baseline (1.55 -> 1.48).
-            "CT_PEAKER": {"committed": 1.10 if iso == "PJM" else (
-                              1.48 if iso == "ERCOT" else 1.55),
-                          "econ_low": 1.20 if iso == "PJM" else 1.27,
-                          "econ_high": 1.98,
-                          "peak": 13.0 if iso == "PJM" else 13.15,
-                          "econ_low_share": 0.526, "pct_peaking": 7.0},
+            "CT_PEAKER": {
+                "committed": 1.10
+                if iso == "PJM"
+                else (1.48 if iso == "ERCOT" else 1.55),
+                "econ_low": 1.20 if iso == "PJM" else 1.27,
+                "econ_high": 1.98,
+                "peak": 13.0 if iso == "PJM" else 13.15,
+                "econ_low_share": 0.526,
+                "pct_peaking": 7.0,
+            },
             # ERCOT bands fold in the run57 baseline (committed 0.81->0.91,
             # econ_low 1.05->1.15, econ_high 1.40->1.55). Other ISOs unchanged.
-            "ST_GAS": {"committed": 0.91 if iso == "ERCOT" else 0.81,
-                       "econ_low": 1.15 if iso == "ERCOT" else 1.05,
-                       "econ_high": 1.55 if iso == "ERCOT" else 1.40,
-                       "peak": 4.20,
-                       "econ_low_share": 0.500, "pct_peaking": 15.0},
+            "ST_GAS": {
+                "committed": 0.91 if iso == "ERCOT" else 0.81,
+                "econ_low": 1.15 if iso == "ERCOT" else 1.05,
+                "econ_high": 1.55 if iso == "ERCOT" else 1.40,
+                "peak": 4.20,
+                "econ_low_share": 0.500,
+                "pct_peaking": 15.0,
+            },
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
             # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
             # lower econ-low start, slightly higher econ-high.
-            "COAL_LIGNITE": {"committed": 0.95, "econ_low": 1.14,
-                             "econ_high": 1.15, "peak": 1.55,
-                             "econ_low_share": 0.556},
+            "COAL_LIGNITE": {
+                "committed": 0.95,
+                "econ_low": 1.14,
+                "econ_high": 1.15,
+                "peak": 1.55,
+                "econ_low_share": 0.556,
+            },
             # ERCOT econ bands fold in the run57 baseline (econ_low 0.77->0.70,
             # econ_high 1.19->0.94). Other ISOs keep the prior PRB curve.
             # PRB committed-band tuning is applied per-run as an offer-curve
             # delta (e.g. Run-60 -0.05, Run-61 -0.20), not baked in here, so the
             # baseline stays at run57 and every run's tweak is delta-from-run57.
-            "COAL_PRB": {"committed": 0.95,
-                         "econ_low": 0.70 if iso == "ERCOT" else 0.77,
-                         "econ_high": 0.94 if iso == "ERCOT" else 1.19,
-                         "peak": 1.48,
-                         "econ_low_share": 0.556},
+            "COAL_PRB": {
+                "committed": 0.95,
+                "econ_low": 0.70 if iso == "ERCOT" else 0.77,
+                "econ_high": 0.94 if iso == "ERCOT" else 1.19,
+                "peak": 1.48,
+                "econ_low_share": 0.556,
+            },
             # Non-ERCOT coal by EIA-923 fuel rank (scripts/derive_coal_supply.py;
             # routes via fleet._COAL_SUPPLY_TO_CURVE). PJM 2024: 25 bituminous,
             # 8 waste, 2 sub-bituminous plants. Per-plant delivered fuel cost
@@ -599,17 +675,29 @@ def _calibration_config(
             #    its non-ERCOT band variants live on the COAL_PRB entry above.
             #  - COAL_WC: waste coal/culm (subsidised remediation fluidised-bed)
             #    — runs flat baseload, almost never peaks (low peak band).
-            "COAL_BIT": {"committed": 0.90, "econ_low": 0.95,
-                         "econ_high": 1.10, "peak": 1.45,
-                         "econ_low_share": 0.55},
-            "COAL_WC": {"committed": 0.85, "econ_low": 0.90,
-                        "econ_high": 1.02, "peak": 1.20,
-                        "econ_low_share": 0.55},
+            "COAL_BIT": {
+                "committed": 0.90,
+                "econ_low": 0.95,
+                "econ_high": 1.10,
+                "peak": 1.45,
+                "econ_low_share": 0.55,
+            },
+            "COAL_WC": {
+                "committed": 0.85,
+                "econ_low": 0.90,
+                "econ_high": 1.02,
+                "peak": 1.20,
+                "econ_low_share": 0.55,
+            },
             # Generic fallback for coal plants with no EIA-923 receipts / rank
             # (and ISOs not yet derived). Flat baseload curve.
-            "COAL": {"committed": 0.90, "econ_low": 0.95,
-                     "econ_high": 1.10, "peak": 1.45,
-                     "econ_low_share": 0.55},
+            "COAL": {
+                "committed": 0.90,
+                "econ_low": 0.95,
+                "econ_high": 1.10,
+                "peak": 1.45,
+                "econ_low_share": 0.55,
+            },
         },
         chp_steam_following=True,  # model CC/CT/ST_CHP as steam-host cogens:
         #   a per-plant sector-keyed BTM pull-out (fleet.chp_btm_pct) plus a
@@ -656,12 +744,11 @@ def _calibration_config(
         logger.warning(
             "ScenarioConfig has no gas_price_override field; "
             "year %d falls back to the '%s' gas-price trajectory",
-            year, config.gas_price_path,
+            year,
+            config.gas_price_path,
         )
     if coal_passthrough is not None:
-        config = config.with_overrides(
-            coal_prb_contract_passthrough=coal_passthrough
-        )
+        config = config.with_overrides(coal_prb_contract_passthrough=coal_passthrough)
     # PJM uses its own price-calibrated offer curve (the per-class block above
     # carries ERCOT-fitted values for the shared classes). Replacing the whole
     # dict keeps the calibrated PJM curve in one place (_PJM_OFFER_CURVE) and
@@ -670,9 +757,7 @@ def _calibration_config(
     # calibrated PJM curve.
     if iso.upper() == "PJM":
         config = config.with_overrides(
-            offer_curve_by_group={
-                k: dict(v) for k, v in _PJM_OFFER_CURVE.items()
-            }
+            offer_curve_by_group={k: dict(v) for k, v in _PJM_OFFER_CURVE.items()}
         )
     # Operator-supplied per-class/per-band heat-rate multiplier overrides
     # (run_calibration_full --offer-curve-json) deep-merged onto the calibrated
@@ -720,7 +805,9 @@ def _apply_ttc_overrides(
             if frozenset({link.from_zone, link.to_zone}) == target:
                 logger.info(
                     "override %s link TTC: %.0f -> %.0f MW",
-                    "-".join(sorted(target)), ttc[i], value,
+                    "-".join(sorted(target)),
+                    ttc[i],
+                    value,
                 )
                 ttc[i] = value
     return ttc
@@ -749,7 +836,11 @@ def _apply_iso_year_ttc(iso_config, iso: str, year: int):
             logger.info(
                 "NYISO %d interface TTC: %s->%s %.0f -> %.0f MW "
                 "(AC Transmission year-varying limit)",
-                year, link.from_zone, link.to_zone, link.ttc_mw, new_ttc,
+                year,
+                link.from_zone,
+                link.to_zone,
+                link.ttc_mw,
+                new_ttc,
             )
             links.append(link.model_copy(update={"ttc_mw": new_ttc}))
         else:
@@ -776,11 +867,10 @@ def _apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
     if not monthly:
         return ttc
     leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-    days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30,
-                      31, 31, 30, 31, 30, 31]
-    month_of_hour = np.repeat(
-        np.arange(1, 13), [d * 24 for d in days_per_month]
-    )[:hours]
+    days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    month_of_hour = np.repeat(np.arange(1, 13), [d * 24 for d in days_per_month])[
+        :hours
+    ]
     ttc_t = np.broadcast_to(ttc, (hours, len(ttc))).copy()
     for i, link in enumerate(iso_config.links):
         profile = monthly.get((link.from_zone, link.to_zone))
@@ -791,13 +881,19 @@ def _apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
         logger.info(
             "NYISO %d %s->%s monthly TTC envelope: %.0f-%.0f MW "
             "(measured Central-East DAM postings)",
-            year, link.from_zone, link.to_zone, prof.min(), prof.max(),
+            year,
+            link.from_zone,
+            link.to_zone,
+            prof.min(),
+            prof.max(),
         )
     return ttc_t
 
 
 def _hydro_fleet(
-    iso: str, year: int, zone_names: list[str],
+    iso: str,
+    year: int,
+    zone_names: list[str],
     backfill_year: int | None = None,
     eia930_monthly: bool = False,
 ) -> tuple[list[Generator], np.ndarray | None]:
@@ -836,7 +932,8 @@ def _hydro_fleet(
     target = measured_monthly_hydro(iso, year) if eia930_monthly else None
     try:
         budget = load_hydro_budget(
-            iso, year, backfill_year=backfill_year, monthly_target_mwh=target)
+            iso, year, backfill_year=backfill_year, monthly_target_mwh=target
+        )
     except (FileNotFoundError, ValueError):
         return [], None
     units: list[Generator] = []
@@ -847,17 +944,19 @@ def _hydro_fleet(
         energy = np.asarray(budget.monthly_energy[i], dtype=float)
         if zone not in zone_names or cap <= 0.0 or energy.sum() <= 0.0:
             continue
-        units.append(Generator(
-            unit_id=f"{int(pid)}_hydro",
-            name=budget.plant_names[i],
-            zone=zone,
-            fuel_type="hydro",
-            pmax_mw=cap,
-            vom=VOM["hydro"],
-            eford=0.0,  # availability is captured by the energy budget
-            plant_group="hydro",
-            plant_code=int(pid),
-        ))
+        units.append(
+            Generator(
+                unit_id=f"{int(pid)}_hydro",
+                name=budget.plant_names[i],
+                zone=zone,
+                fuel_type="hydro",
+                pmax_mw=cap,
+                vom=VOM["hydro"],
+                eford=0.0,  # availability is captured by the energy budget
+                plant_group="hydro",
+                plant_code=int(pid),
+            )
+        )
         monthly.append(energy)
     if not units:
         return [], None
@@ -955,13 +1054,23 @@ def run_year(
         :func:`_commitment_pass` (the P2 post-process) consumes.
     """
     config = _calibration_config(
-        year, iso, hours, gas_price, coal_passthrough,
-        commitment_enabled, commitment_screen_coal,
-        coal_lignite_mustrun, coal_prb_mustrun,
-        coal_prb_passthrough, outage_source,
-        coal_prb_passthrough_sigmoid, coal_mustrun_per_plant,
-        ct_mustrun_per_plant, ct_mustrun_floor_frac,
-        coal_drop_pof, coal_prb_passthrough_tiered,
+        year,
+        iso,
+        hours,
+        gas_price,
+        coal_passthrough,
+        commitment_enabled,
+        commitment_screen_coal,
+        coal_lignite_mustrun,
+        coal_prb_mustrun,
+        coal_prb_passthrough,
+        outage_source,
+        coal_prb_passthrough_sigmoid,
+        coal_mustrun_per_plant,
+        ct_mustrun_per_plant,
+        ct_mustrun_floor_frac,
+        coal_drop_pof,
+        coal_prb_passthrough_tiered,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
     )
@@ -969,7 +1078,8 @@ def run_year(
         config = config.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
         config = config.with_overrides(
-            interchange_shaping=True, interchange_shaping_export_only=True)
+            interchange_shaping=True, interchange_shaping_export_only=True
+        )
     if reference_price_interface:
         config = config.with_overrides(reference_price_interface=True)
     # Tri-state overrides: None = keep the per-ISO base default from
@@ -978,23 +1088,24 @@ def run_year(
     # no-floor baseline probe is --no-caiso-gas-commitment-floor).
     if negative_renewable_offers is not None:
         config = config.with_overrides(
-            negative_renewable_offers=negative_renewable_offers)
+            negative_renewable_offers=negative_renewable_offers
+        )
     if caiso_gas_commitment_floor is not None:
         config = config.with_overrides(
-            caiso_gas_commitment_floor=caiso_gas_commitment_floor)
+            caiso_gas_commitment_floor=caiso_gas_commitment_floor
+        )
     if caiso_gas_floor_frac is not None:
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
     if caiso_import_hub_prices is not None:
-        config = config.with_overrides(
-            caiso_import_hub_prices=caiso_import_hub_prices)
+        config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
     if gas_hub_basis_overlay is not None:
-        config = config.with_overrides(
-            gas_hub_basis_overlay=gas_hub_basis_overlay)
+        config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
         config = config.with_overrides(
-            **{k: v for k, v in prb_overrides.items() if v is not None})
+            **{k: v for k, v in prb_overrides.items() if v is not None}
+        )
     # Gas-keyed coal passthrough sigmoids per supply chain. The bit family
     # has its own flag/overrides; the sub/lignite enables and all their
     # tuning params ride the generic prb_overrides ScenarioConfig override
@@ -1005,13 +1116,13 @@ def run_year(
         config = config.with_overrides(coal_bit_passthrough_sigmoid=True)
     if bit_overrides:
         config = config.with_overrides(
-            **{k: v for k, v in bit_overrides.items() if v is not None})
+            **{k: v for k, v in bit_overrides.items() if v is not None}
+        )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
     # multipliers come straight from the CSV, bypassing the offer curve.
     if plant_tranche_config:
-        config = config.with_overrides(
-            plant_tranche_config_path=plant_tranche_config)
+        config = config.with_overrides(plant_tranche_config_path=plant_tranche_config)
     # Daily SOC-cycling cap (run_calibration_full --storage-daily-cycling):
     # bounds storage perfect foresight to within-day arbitrage.
     if storage_daily_cycling:
@@ -1049,8 +1160,7 @@ def run_year(
     if ercot_storage_as_reserve:
         config = config.with_overrides(
             ercot_storage_as_reserve=True,
-            ercot_storage_as_reserve_from_year=int(
-                ercot_storage_as_reserve_from_year),
+            ercot_storage_as_reserve_from_year=int(ercot_storage_as_reserve_from_year),
         )
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
@@ -1060,8 +1170,7 @@ def run_year(
     # Battery throughput/cycling cost (run_calibration_full --battery-adder):
     # per-MWh-discharged adder that tames LP over-cycling of the BESS fleet.
     if battery_dispatch_adder:
-        config = config.with_overrides(
-            battery_dispatch_adder=battery_dispatch_adder)
+        config = config.with_overrides(battery_dispatch_adder=battery_dispatch_adder)
     if gas_offer_curve:
         config = config.with_overrides(gas_offer_curve=True)
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
@@ -1072,7 +1181,8 @@ def run_year(
     # the ScenarioConfig defaults.
     if curve_smoothing:
         config = config.with_overrides(
-            **{k: v for k, v in curve_smoothing.items() if v is not None})
+            **{k: v for k, v in curve_smoothing.items() if v is not None}
+        )
     # Top-of-stack outage allocation for CC_REGULAR (run_calibration_full
     # --cc-derate-from-top): partial outages truncate the expensive end of
     # the offer curve instead of scaling every tranche pro-rata.
@@ -1083,8 +1193,10 @@ def run_year(
     # COD ramp filters to the solved year). Must precede every fleet / storage /
     # renewable / COD-map load below so they all read the same vintage.
     from market_sim.config.paths import set_eia860_vintage
+
     set_eia860_vintage(
-        config.eia860_vintage_year if config.mode == "backcast" else None)
+        config.eia860_vintage_year if config.mode == "backcast" else None
+    )
     iso_config = get_iso_config(iso)
     # Year-varying interface limits (e.g. NYISO Central-East jumps with the AC
     # Transmission project in service Dec 2023) — applied before the import
@@ -1103,7 +1215,8 @@ def run_year(
         # backcast year's carbon price (each calibration solve is single-year).
         border_carbon = (
             wecc_border_carbon_adder(resolve_carbon_price(config, year))
-            if iso == "CAISO" else 0.0
+            if iso == "CAISO"
+            else 0.0
         )
         # Year-grounded import ladder: the priced node's neighbor-hub blocks
         # are gas-priced, so each single-year calibration solve pins the ladder
@@ -1120,24 +1233,26 @@ def run_year(
         ):
             import_generators = build_reference_price_node(iso)
         else:
-            import_generators = (
-                build_import_generators(iso, border_carbon, year=year)
-                + build_export_sinks(iso)
-            )
+            import_generators = build_import_generators(
+                iso, border_carbon, year=year
+            ) + build_export_sinks(iso)
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
 
     demand = load_demand(
-        iso, year, iso_config, td_loss_factor=config.td_loss_factor,
+        iso,
+        year,
+        iso_config,
+        td_loss_factor=config.td_loss_factor,
         include_interchange=not priced_interchange,
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
     )
     if config.hours < demand.shape[1]:
-        demand = demand[:, :config.hours]
-        wind_cf = wind_cf[:, :config.hours]
-        solar_cf = solar_cf[:, :config.hours]
+        demand = demand[:, : config.hours]
+        wind_cf = wind_cf[:, : config.hours]
+        solar_cf = solar_cf[:, : config.hours]
 
     # Must-run "other" resources (biomass, process gas, ...) serve load
     # exogenously — they run for industrial/process reasons, not LP economics —
@@ -1146,7 +1261,7 @@ def run_year(
     if must_run_mw is not None:
         mr = np.asarray(must_run_mw, dtype=float)
         if mr.shape[1] > config.hours:
-            mr = mr[:, :config.hours]
+            mr = mr[:, : config.hours]
         demand = np.maximum(demand - mr, 0.0)
 
     incidence = build_incidence_matrix(iso_config.links, zone_names)
@@ -1177,7 +1292,8 @@ def run_year(
     # so this returns nothing there (no double-count).
     retired_units = (
         load_retired_within_window(iso, iso_config, year=year)
-        if config.mode == "backcast" else []
+        if config.mode == "backcast"
+        else []
     )
 
     # Build the dispatch fleet the same way the runner does: CAMPD
@@ -1186,10 +1302,12 @@ def run_year(
     # equal-width heat-rate binning otherwise.
     campd_bins = (
         load_campd_bins(
-            config.campd_bins_path, year=year,
+            config.campd_bins_path,
+            year=year,
             capacity_reconcile_path=(
                 config.cc_capacity_reconcile_path
-                if config.cc_capacity_reconcile else None
+                if config.cc_capacity_reconcile
+                else None
             ),
         )
         if config.use_campd_bins and iso == "ERCOT"
@@ -1203,8 +1321,8 @@ def run_year(
         # scarcity peaker it is (its fuel price / heat rate come from constants).
         _campd_binned_or_injected = {"gas_cc", "gas_ct", "coal", "biomass"}
         non_thermal = [
-            g for g in (load_fleet_from_csv(iso, iso_config, year=year)
-                        + retired_units)
+            g
+            for g in (load_fleet_from_csv(iso, iso_config, year=year) + retired_units)
             if g.fuel_type not in _campd_binned_or_injected
         ]
         fleet = non_thermal + campd_fleet
@@ -1216,30 +1334,28 @@ def run_year(
         # the merit order instead of being priced out by cheap gas.
         # apply_coal_tranches applies the discounts/markups.
         pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
-        if (config.coal_prb_passthrough_sigmoid
-                and config.coal_prb_passthrough_tiered):
+        if config.coal_prb_passthrough_sigmoid and config.coal_prb_passthrough_tiered:
             # Tiered PRB (ERCOT): low-must-run "prb" load-followers swap
             # the baseload prb curve for the follower-tier one. The tier
             # split is specific to the curated ERCOT prb supply.
-            foll = {**pt_by_supply,
-                    "prb": prb_follower_passthrough_series(
-                        config, year, config.hours)}
+            foll = {
+                **pt_by_supply,
+                "prb": prb_follower_passthrough_series(config, year, config.hours),
+            }
             thr = config.coal_prb_follower_mustrun_max
 
             def _pt_for(g):
-                if (g.fuel_type == "coal"
-                        and getattr(g, "coal_supply", "") == "prb"
-                        and COAL_MUSTRUN_BY_PLANT.get(
-                            g.plant_code, 100.0) <= thr):
+                if (
+                    g.fuel_type == "coal"
+                    and getattr(g, "coal_supply", "") == "prb"
+                    and COAL_MUSTRUN_BY_PLANT.get(g.plant_code, 100.0) <= thr
+                ):
                     return foll
                 return pt_by_supply
-            fuel_fracs = [
-                campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet
-            ]
+
+            fuel_fracs = [campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet]
         else:
-            fuel_fracs = [
-                campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet
-            ]
+            fuel_fracs = [campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet]
     else:
         # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
         # unit as its own LP column so plant_code / plant_group / state carry
@@ -1254,35 +1370,32 @@ def run_year(
         # and route it through bins_to_fleet, with every non-binned generator
         # (nuclear, oil, biomass, hydro, ...) kept as its own raw LP unit. The
         # binned-keys exclusion guarantees no double-count and no dropped unit.
-        if (getattr(config, "plant_level_fleet", False)
-                and thermal_tranche_overrides(iso)):
-            all_gens = (
-                load_fleet_from_csv(iso, iso_config, year=year) + retired_units
-            )
+        if getattr(config, "plant_level_fleet", False) and thermal_tranche_overrides(
+            iso
+        ):
+            all_gens = load_fleet_from_csv(iso, iso_config, year=year) + retired_units
             synth = fleet_to_bins(all_gens, iso, config)
             if not synth.empty:
-                binned = set(zip(
-                    synth["Plant_Code"].astype(int), synth["Plant_Group"]
-                ))
+                binned = set(zip(synth["Plant_Code"].astype(int), synth["Plant_Group"]))
                 thermal_fleet, _ = bins_to_fleet(synth, zone_names, config)
                 non_binned = [
-                    g for g in all_gens
+                    g
+                    for g in all_gens
                     if (int(g.plant_code), g.plant_group) not in binned
                 ]
                 fleet = non_binned + thermal_fleet
-                pt_by_supply = coal_passthrough_by_supply(
-                    config, year, config.hours
-                )
-                fuel_fracs = [
-                    campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet
-                ]
+                pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
+                fuel_fracs = [campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet]
             else:
                 fleet, fuel_fracs = split_coal_tranches(
                     aggregate_fleet(all_gens, n_bins=0), config
                 )
         else:
-            n_bins = 0 if getattr(config, "plant_level_fleet", False) \
+            n_bins = (
+                0
+                if getattr(config, "plant_level_fleet", False)
                 else config.heat_rate_bin_count
+            )
             fleet_base = aggregate_fleet(
                 load_fleet_from_csv(iso, iso_config, year=year) + retired_units,
                 n_bins=n_bins,
@@ -1298,18 +1411,22 @@ def run_year(
     # budget rows. Replaces the flat-monthly must-run injection (which could
     # not peak-shave) and leaves ISOs without hydro data unchanged.
     hydro_units, hydro_monthly_energy = _hydro_fleet(
-        iso, year, zone_names, backfill_year=hydro_backfill_year,
-        eia930_monthly=hydro_eia930_monthly)
+        iso,
+        year,
+        zone_names,
+        backfill_year=hydro_backfill_year,
+        eia930_monthly=hydro_eia930_monthly,
+    )
     hydro_gen_idx = None
     if hydro_units:
-        hydro_gen_idx = np.arange(
-            len(fleet), len(fleet) + len(hydro_units), dtype=int
-        )
+        hydro_gen_idx = np.arange(len(fleet), len(fleet) + len(hydro_units), dtype=int)
         fleet = fleet + hydro_units
         fuel_fracs = list(fuel_fracs) + [1.0] * len(hydro_units)
         logger.info(
             "%s %d: %d hydro plants in LP (%.0f MW, %.2f TWh monthly budget)",
-            iso, year, len(hydro_units),
+            iso,
+            year,
+            len(hydro_units),
             sum(g.pmax_mw for g in hydro_units),
             hydro_monthly_energy.sum() / 1e6,
         )
@@ -1319,7 +1436,8 @@ def run_year(
         logger.info(
             "%s %d: priced import/export node — %d import tranches "
             "(%.0f MW), %d export sinks (%.0f MW)",
-            iso, year,
+            iso,
+            year,
             sum(1 for g in import_generators if g.pmax_mw > 0),
             sum(g.pmax_mw for g in import_generators),
             sum(1 for g in import_generators if g.pmin_mw < 0),
@@ -1333,6 +1451,7 @@ def run_year(
     ct_campd_shape = None
     if getattr(config, "ct_mustrun_per_plant", False):
         from market_sim.data import campd as _campd
+
         _states = _campd.states_for_iso(iso)
         if _states:
             _cdf = _campd.load_campd_hourly(_states, [config.weather_year])
@@ -1341,8 +1460,13 @@ def run_year(
                     _cdf, {}, config.weather_year, hours=config.hours
                 )
     fleet_arrays = generators_to_fleet_arrays(
-        fleet, zone_names, hours=config.hours, iso=iso, config=config,
-        load_shape=demand.sum(axis=0), ct_campd_shape=ct_campd_shape,
+        fleet,
+        zone_names,
+        hours=config.hours,
+        iso=iso,
+        config=config,
+        load_shape=demand.sum(axis=0),
+        ct_campd_shape=ct_campd_shape,
         year=config.weather_year,
     )
     inject_offshore_wind_availability(fleet_arrays, wind_cf, config, iso)
@@ -1353,14 +1477,16 @@ def run_year(
     # envelope; otherwise the static node is unchanged.
     if priced_interchange and getattr(config, "interchange_shaping", False):
         from market_sim.model.transmission import inject_interchange_shape
-        export_only = getattr(
-            config, "interchange_shaping_export_only", False)
-        if inject_interchange_shape(
-                fleet_arrays, iso, year, export_only=export_only):
+
+        export_only = getattr(config, "interchange_shaping_export_only", False)
+        if inject_interchange_shape(fleet_arrays, iso, year, export_only=export_only):
             logger.info(
                 "%s %d: priced node shaped by measured EIA-930 interchange "
-                "envelope (%s)", iso, year,
-                "export midday only — imports uncapped" if export_only
+                "envelope (%s)",
+                iso,
+                year,
+                "export midday only — imports uncapped"
+                if export_only
                 else "import overnight / export midday",
             )
     # CAISO RA must-offer floor: hold the gas fleet online midday at the
@@ -1370,21 +1496,22 @@ def run_year(
         from market_sim.model.transmission import (
             inject_caiso_gas_commitment_floor,
         )
+
         frac = float(getattr(config, "caiso_gas_floor_frac", 1.0))
         if inject_caiso_gas_commitment_floor(fleet_arrays, iso, year, frac):
             logger.info(
                 "%s %d: RA must-offer floor — gas fleet held online midday at "
                 "%.2f x measured EIA-930 NG: NG (long-midday floor)",
-                iso, year, frac,
+                iso,
+                year,
+                frac,
             )
 
     # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
     # (our costs), then the actual EIA-923 monthly per-plant delivered cost
     # on top — so measured monthly cost takes precedence and the supply
     # trajectory is only the base/fallback for plant-months without data.
-    fuel_prices = resolve_fuel_prices(
-        config, fleet_arrays, year, apply_monthly=False
-    )
+    fuel_prices = resolve_fuel_prices(config, fleet_arrays, year, apply_monthly=False)
     if config.coal_supply_repricing:
         apply_coal_supply_pricing(fuel_prices, fleet, config, year)
     apply_plant_monthly_fuel_prices(fuel_prices, fleet_arrays, config, year)
@@ -1424,9 +1551,7 @@ def run_year(
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
     # then the coal take-or-pay tranche discount. No startup-cost markup.
-    mc_base = assemble_mc(
-        fleet_arrays, fuel_prices, carbon_price, config.nox_price
-    )
+    mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices)
     # Reference-price seam: overwrite each neighbor pseudo-gen's mc row with its
@@ -1443,7 +1568,9 @@ def run_year(
             logger.info(
                 "%s %d: reference-price interface — %d neighbor seams priced "
                 "from gas x heat-rate x load-shape (hurdle in $/MWh)",
-                iso, year, len(INTERFACE_NEIGHBORS.get(iso, [])),
+                iso,
+                year,
+                len(INTERFACE_NEIGHBORS.get(iso, [])),
             )
     # CAISO measured-hub import pricing: overwrite each priced-import tranche's mc
     # row with the measured WECC neighbor-hub LMP it proxies (Mid-C/Malin for the
@@ -1455,13 +1582,15 @@ def run_year(
     # caiso_import_hub_prices is on AND the measured intertie parquet is present.
     if getattr(config, "caiso_import_hub_prices", False):
         from market_sim.model.transmission import inject_caiso_import_hub_prices
+
         if inject_caiso_import_hub_prices(
             fleet_arrays, mc_base, iso, year, carbon_price
         ):
             logger.info(
                 "%s %d: import tranches repriced to measured WECC intertie "
                 "hub LMPs (Mid-C / Palo Verde) — static ladder bypassed",
-                iso, year,
+                iso,
+                year,
             )
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
@@ -1472,9 +1601,7 @@ def run_year(
     # config.negative_renewable_offers is on; the floor is the more-negative of
     # the existing offer and -renewable_keep_running_value (so wind's PTC is not
     # double-counted). See market_sim.policy.eac.
-    wind_mc, solar_mc = apply_negative_renewable_offer_floor(
-        wind_mc, solar_mc, config
-    )
+    wind_mc, solar_mc = apply_negative_renewable_offer_floor(wind_mc, solar_mc, config)
 
     storage_units = load_eia860_storage(iso, year, config)
     storage = storage_units_to_arrays(storage_units, zone_names)
@@ -1503,8 +1630,10 @@ def run_year(
             "storage_units": storage_units,
             "storage": storage,
             "storage_power_cap": storage_power_cap,
-            "wind_cf": wind_cf, "wind_cap": wind_cap,
-            "solar_cf": solar_cf, "solar_cap": solar_cap,
+            "wind_cf": wind_cf,
+            "wind_cap": wind_cap,
+            "solar_cf": solar_cf,
+            "solar_cap": solar_cap,
             "demand": demand,
         }
 
@@ -1565,8 +1694,11 @@ def run_year(
         logger.info(
             "energy+reserve co-opt (ERCOT): VOLL-anchored ORDC demand, "
             "req top %.0f MW, %d steps ($%.0f-$%.0f), %d reserve-eligible units",
-            float(coopt_req[0]), len(coopt_pen), float(coopt_pen.min()),
-            float(coopt_pen.max()), int(coopt_elig.sum()),
+            float(coopt_req[0]),
+            len(coopt_pen),
+            float(coopt_pen.min()),
+            float(coopt_pen.max()),
+            int(coopt_elig.sum()),
         )
     elif getattr(config, "energy_reserve_coopt", False) and config.iso == "PJM":
         from market_sim.config.constants import PJM_ORDC_CURVE_PATH
@@ -1579,13 +1711,18 @@ def run_year(
             pjm_ordc_shortfall_steps,
             pjm_primary_reserve_requirement,
         )
+
         elig = np.array(
-            [FUEL_TYPE_NAMES[i] in RESERVE_FUEL_TYPES
-             for i in fleet_arrays.fuel_type_idx],
+            [
+                FUEL_TYPE_NAMES[i] in RESERVE_FUEL_TYPES
+                for i in fleet_arrays.fuel_type_idx
+            ],
             dtype=bool,
         )
         lsc = largest_single_contingency_mw(
-            fleet_arrays.pmax, fleet_arrays.availability, elig,
+            fleet_arrays.pmax,
+            fleet_arrays.availability,
+            elig,
             plant_code=fleet_arrays.plant_code,
         )
         # Backcast: use the measured PJM Primary Reserve requirement (a reliability
@@ -1594,7 +1731,8 @@ def run_year(
         # LMP; the fleet MSSC is logged either way for the forecast cross-check.
         measured = (
             load_pjm_measured_reserve_requirement(config.weather_year, config.hours)
-            if config.mode == "backcast" else None
+            if config.mode == "backcast"
+            else None
         )
         if measured is not None:
             req_hourly = measured
@@ -1617,7 +1755,11 @@ def run_year(
         logger.info(
             "energy+reserve co-opt (PJM): MSSC %.0f MW (formula req %.0f), using "
             "%s req mean %.0f MW (+%.0f ORDC shoulder), %d reserve-eligible units",
-            lsc, 1.5 * lsc, req_src, float(req_hourly.mean()), max_offset,
+            lsc,
+            1.5 * lsc,
+            req_src,
+            float(req_hourly.mean()),
+            max_offset,
             int(elig.sum()),
         )
 
@@ -1641,7 +1783,10 @@ def run_year(
         r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
     # P1: solve with bid MC = base MC + monthly startup amortization.
     markup = compute_monthly_markup(
-        fleet, fleet_arrays, r0.dispatch, config.hours,
+        fleet,
+        fleet_arrays,
+        r0.dispatch,
+        config.hours,
         gas_st_season_spread=config.gas_st_startup_spread,
         chp_startup_covered=getattr(config, "chp_startup_covered", False),
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
@@ -1653,17 +1798,29 @@ def run_year(
         result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
 
     context = FleetContext.from_arrays(
-        fleet_arrays, iso_config, wind_cf, wind_cap, solar_cf, solar_cap,
+        fleet_arrays,
+        iso_config,
+        wind_cf,
+        wind_cap,
+        solar_cf,
+        solar_cap,
         storage.energy_cap,
     )
     # Everything the P2 commitment pass needs, kept so P2 can be re-run as a
     # post-process (see _commitment_pass / run_p2) without re-solving P0/P1.
     p2_state = {
-        "year": year, "iso": iso, "fleet": fleet,
-        "fleet_arrays": fleet_arrays, "mc_base": mc_base, "mc_bid": mc_bid,
-        "p1_result": result, "demand": demand,
-        "dispatch_kwargs": dispatch_kwargs, "config": config,
-        "context": context, "storage_units": storage_units,
+        "year": year,
+        "iso": iso,
+        "fleet": fleet,
+        "fleet_arrays": fleet_arrays,
+        "mc_base": mc_base,
+        "mc_bid": mc_bid,
+        "p1_result": result,
+        "demand": demand,
+        "dispatch_kwargs": dispatch_kwargs,
+        "config": config,
+        "context": context,
+        "storage_units": storage_units,
         "dual_fuel_oil_mask": dual_fuel_oil_mask,
     }
 
@@ -1691,10 +1848,15 @@ def _commitment_pass(state: dict, config=None):
     p1 = state["p1_result"]
     dk = state["dispatch_kwargs"]
     committed = compute_commitment(
-        p1.prices, state["mc_base"], fleet, fa, cfg,
+        p1.prices,
+        state["mc_base"],
+        fleet,
+        fa,
+        cfg,
         storage_charge=p1.storage_charge,
         storage_discharge=p1.storage_discharge,
-        storage_zone_idx=dk["storage_zone_idx"], demand=state["demand"],
+        storage_zone_idx=dk["storage_zone_idx"],
+        demand=state["demand"],
     )
     # A reserve / AS-deployment floor (ct_deployment / reliability_deployment)
     # must survive the economic commitment screen — those units ran for
@@ -1707,7 +1869,10 @@ def _commitment_pass(state: dict, config=None):
         or getattr(cfg, "caiso_gas_commitment_floor", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(
-        fa, committed, p1.dispatch, fleet,
+        fa,
+        committed,
+        p1.dispatch,
+        fleet,
         screen_coal=cfg.commitment_screen_coal,
         preserve_min_gen=preserve_min_gen,
     )
@@ -1720,12 +1885,12 @@ def _generation_twh(result, context: FleetContext) -> dict[str, float]:
     twh: dict[str, float] = {}
     for g, fuel in enumerate(context.fuel_types):
         twh[fuel] = twh.get(fuel, 0.0) + float(gen_per_unit[g]) / _MWH_PER_TWH
-    twh["wind"] = twh.get("wind", 0.0) + float(
-        result.wind_dispatched.sum()
-    ) / _MWH_PER_TWH
-    twh["solar"] = twh.get("solar", 0.0) + float(
-        result.solar_dispatched.sum()
-    ) / _MWH_PER_TWH
+    twh["wind"] = (
+        twh.get("wind", 0.0) + float(result.wind_dispatched.sum()) / _MWH_PER_TWH
+    )
+    twh["solar"] = (
+        twh.get("solar", 0.0) + float(result.solar_dispatched.sum()) / _MWH_PER_TWH
+    )
     return twh
 
 
@@ -1738,8 +1903,9 @@ def _print_table(title: str, rows: list[tuple]) -> None:
         print("    " + "  ".join(cells))
 
 
-def _report_year(year: int, iso: str, result, context: FleetContext,
-                  reference: dict, label: str = "") -> None:
+def _report_year(
+    year: int, iso: str, result, context: FleetContext, reference: dict, label: str = ""
+) -> None:
     """Print the calibration diagnostics for one solved ISO-year."""
     tag = f"  [{label}]" if label else ""
     print(f"\n{'=' * 64}")
@@ -1752,9 +1918,7 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     # authority's actual net generation. Compared only for a full 8760-hour
     # run; a sub-annual horizon (--hours) is a smoke test, not a backcast.
     full_year = result.dispatch.shape[1] >= HOURS_PER_YEAR
-    year_ref = (
-        reference.get("isos", {}).get(iso, {}).get(str(year), {})
-    )
+    year_ref = reference.get("isos", {}).get(iso, {}).get(str(year), {})
     bench_twh = year_ref.get("generation_twh", {}) if full_year else {}
     if not full_year:
         print(
@@ -1789,11 +1953,14 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
             gen_rows.append((fuel, f"{m:.2f}", f"{b:.2f}", f"{diff:+.1f}"))
     total_m = sum(model_twh.values())
     total_b = sum(bench_twh.values()) if bench_twh else None
-    gen_rows.append((
-        "TOTAL", f"{total_m:.2f}",
-        f"{total_b:.2f}" if total_b else "—",
-        f"{100.0 * (total_m - total_b) / total_b:+.1f}" if total_b else "—",
-    ))
+    gen_rows.append(
+        (
+            "TOTAL",
+            f"{total_m:.2f}",
+            f"{total_b:.2f}" if total_b else "—",
+            f"{100.0 * (total_m - total_b) / total_b:+.1f}" if total_b else "—",
+        )
+    )
     _print_table("Generation by fuel", gen_rows)
 
     emissions_t = float(
@@ -1807,17 +1974,21 @@ def _report_year(year: int, iso: str, result, context: FleetContext,
     iso_config = get_iso_config(iso)
     for z, zone in enumerate(iso_config.zone_names):
         zone_price = result.prices[z]
-        price_rows.append((
-            zone,
-            f"{zone_price.mean():.2f}",
-            str(int((zone_price < 0.0).sum())),
-        ))
+        price_rows.append(
+            (
+                zone,
+                f"{zone_price.mean():.2f}",
+                str(int((zone_price < 0.0).sum())),
+            )
+        )
     system_price = result.prices.mean(axis=0)
-    price_rows.append((
-        "SYSTEM",
-        f"{system_price.mean():.2f}",
-        str(int((system_price < 0.0).sum())),
-    ))
+    price_rows.append(
+        (
+            "SYSTEM",
+            f"{system_price.mean():.2f}",
+            str(int((system_price < 0.0).sum())),
+        )
+    )
     _print_table("Zonal prices", price_rows)
 
     _report_curtailment(year, iso, result, context, full_year)
@@ -1853,33 +2024,39 @@ def _report_curtailment(
         "solar": np.asarray(result.solar_dispatched, dtype=float).sum(axis=0),
     }
 
-    rows: list[tuple] = [(
-        "resource", "installed GW", "potential TWh",
-        "model TWh", "model %", "reported TWh", "reported %",
-    )]
+    rows: list[tuple] = [
+        (
+            "resource",
+            "installed GW",
+            "potential TWh",
+            "model TWh",
+            "model %",
+            "reported TWh",
+            "reported %",
+        )
+    ]
     for fuel in ("wind", "solar"):
         pot_mwh = potential[fuel]
         curt_mwh = max(pot_mwh - float(dispatched[fuel].sum()), 0.0)
         reported_twh = reported_pct = "—"
         if compare:
             rep_curt = float(
-                (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"])
-                .clip(lower=0.0).sum()
+                (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"]).clip(lower=0.0).sum()
             )
             rep_pot = float(hsl[f"{fuel}_hsl_mw"].sum())
             reported_twh = f"{rep_curt / _MWH_PER_TWH:.2f}"
-            reported_pct = (
-                f"{100.0 * rep_curt / rep_pot:.1f}" if rep_pot > 0 else "—"
+            reported_pct = f"{100.0 * rep_curt / rep_pot:.1f}" if rep_pot > 0 else "—"
+        rows.append(
+            (
+                fuel,
+                f"{caps[fuel] / 1e3:.2f}",
+                f"{pot_mwh / _MWH_PER_TWH:.2f}",
+                f"{curt_mwh / _MWH_PER_TWH:.2f}",
+                f"{100.0 * curt_mwh / pot_mwh:.1f}" if pot_mwh > 0 else "—",
+                reported_twh,
+                reported_pct,
             )
-        rows.append((
-            fuel,
-            f"{caps[fuel] / 1e3:.2f}",
-            f"{pot_mwh / _MWH_PER_TWH:.2f}",
-            f"{curt_mwh / _MWH_PER_TWH:.2f}",
-            f"{100.0 * curt_mwh / pot_mwh:.1f}" if pot_mwh > 0 else "—",
-            reported_twh,
-            reported_pct,
-        ))
+        )
     _print_table("Renewable curtailment — modeled vs reported", rows)
     if hsl is None:
         print(
@@ -1889,8 +2066,7 @@ def _report_curtailment(
         )
         return
     if not compare:
-        print("    (reported comparison suppressed -- full 8760h run "
-              "required)")
+        print("    (reported comparison suppressed -- full 8760h run required)")
         return
 
     # Monthly shape: model re-curtailment vs reported, GWh per month. The
@@ -1904,25 +2080,28 @@ def _report_curtailment(
         model_curt = np.clip(pot_mw - dispatched[fuel][:HOURS_PER_YEAR], 0.0, None)
         rep_curt = (
             (hsl[f"{fuel}_hsl_mw"] - hsl[f"{fuel}_gen_mw"])
-            .clip(lower=0.0).to_numpy(dtype=float)
+            .clip(lower=0.0)
+            .to_numpy(dtype=float)
         )
-        monthly[f"{fuel}_model"] = np.bincount(
-            month_idx, weights=model_curt, minlength=12
-        ) / 1e3
-        monthly[f"{fuel}_reported"] = np.bincount(
-            month_idx, weights=rep_curt, minlength=12
-        ) / 1e3
+        monthly[f"{fuel}_model"] = (
+            np.bincount(month_idx, weights=model_curt, minlength=12) / 1e3
+        )
+        monthly[f"{fuel}_reported"] = (
+            np.bincount(month_idx, weights=rep_curt, minlength=12) / 1e3
+        )
     monthly_rows: list[tuple] = [
         ("month", "wind model", "wind rptd", "solar model", "solar rptd"),
     ]
     for m in range(12):
-        monthly_rows.append((
-            str(m + 1),
-            f"{monthly['wind_model'][m]:.0f}",
-            f"{monthly['wind_reported'][m]:.0f}",
-            f"{monthly['solar_model'][m]:.0f}",
-            f"{monthly['solar_reported'][m]:.0f}",
-        ))
+        monthly_rows.append(
+            (
+                str(m + 1),
+                f"{monthly['wind_model'][m]:.0f}",
+                f"{monthly['wind_reported'][m]:.0f}",
+                f"{monthly['solar_model'][m]:.0f}",
+                f"{monthly['solar_reported'][m]:.0f}",
+            )
+        )
     _print_table("Monthly curtailment (GWh)", monthly_rows)
 
 
@@ -1940,8 +2119,10 @@ def _report_hourly_correlation(
         return
     eia_hourly = load_ercot_fossil_gen(year)
     if eia_hourly is None:
-        print("\n  Hourly dispatch correlation\n    (no EIA-930 fossil "
-              f"series for {year})")
+        print(
+            "\n  Hourly dispatch correlation\n    (no EIA-930 fossil "
+            f"series for {year})"
+        )
         return
 
     coal = np.zeros(result.dispatch.shape[1])
@@ -1952,18 +2133,19 @@ def _report_hourly_correlation(
         elif fuel in _GAS_FUEL_TYPES:
             gas += result.dispatch[g]
 
-    stats = check_hourly_dispatch_correlation(
-        {"coal": coal, "gas": gas}, eia_hourly
-    )
-    rows: list[tuple] = [
-        ("fuel", "pearson r", "nrmse", "model TWh", "EIA TWh")
-    ]
+    stats = check_hourly_dispatch_correlation({"coal": coal, "gas": gas}, eia_hourly)
+    rows: list[tuple] = [("fuel", "pearson r", "nrmse", "model TWh", "EIA TWh")]
     for fuel in ("coal", "gas"):
         s = stats[fuel]
-        rows.append((
-            fuel, f"{s['pearson_r']:.3f}", f"{s['nrmse']:.3f}",
-            f"{s['model_twh']:.2f}", f"{s['eia_twh']:.2f}",
-        ))
+        rows.append(
+            (
+                fuel,
+                f"{s['pearson_r']:.3f}",
+                f"{s['nrmse']:.3f}",
+                f"{s['model_twh']:.2f}",
+                f"{s['eia_twh']:.2f}",
+            )
+        )
     _print_table("Hourly dispatch correlation (vs EIA-930)", rows)
 
 
@@ -1974,70 +2156,90 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Run dispatch for calibration years and compare to EIA.",
     )
     parser.add_argument(
-        "--year", type=int, nargs="+", required=True,
+        "--year",
+        type=int,
+        nargs="+",
+        required=True,
         help="One or more calibration years (2021-2024).",
     )
     parser.add_argument(
-        "--iso", default="ERCOT", help="ISO to calibrate (default ERCOT).",
+        "--iso",
+        default="ERCOT",
+        help="ISO to calibrate (default ERCOT).",
     )
     parser.add_argument(
-        "--hours", type=int, default=8760,
+        "--hours",
+        type=int,
+        default=8760,
         help="Dispatch horizon in hours (default 8760; 168 for a quick test).",
     )
     parser.add_argument(
-        "--ttc-wn", type=float, default=None,
+        "--ttc-wn",
+        type=float,
+        default=None,
         help="Override the West<->North transfer capability (MW).",
     )
     parser.add_argument(
-        "--ttc-wsc", type=float, default=None,
+        "--ttc-wsc",
+        type=float,
+        default=None,
         help="Override the West<->South_Central transfer capability (MW).",
     )
     parser.add_argument(
-        "--ttc-pn", type=float, default=None,
+        "--ttc-pn",
+        type=float,
+        default=None,
         help="Override the Panhandle<->North transfer capability (MW).",
     )
     parser.add_argument(
-        "--coal-passthrough", type=float, default=None,
+        "--coal-passthrough",
+        type=float,
+        default=None,
         help="Override coal_prb_contract_passthrough (PRB take-or-pay "
-             "fuel-cost fraction); 1.0 disables the discount.",
+        "fuel-cost fraction); 1.0 disables the discount.",
     )
     parser.add_argument(
-        "--commitment", action="store_true",
+        "--commitment",
+        action="store_true",
         help="Run the P2 unit-commitment pass after P1; both are reported.",
     )
     parser.add_argument(
-        "--no-coal-p2", action="store_true",
+        "--no-coal-p2",
+        action="store_true",
         help="Pin coal to its P1 dispatch in P2 instead of screening it: "
-             "coal gains no new generation in P2 (P1 locks it). Only "
-             "meaningful with --commitment.",
+        "coal gains no new generation in P2 (P1 locks it). Only "
+        "meaningful with --commitment.",
     )
     parser.add_argument(
-        "--priced-interchange", action=argparse.BooleanOptionalAction,
+        "--priced-interchange",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Serve interchange through the priced import/export node "
-             "(import tranches + export sinks in the ISO's external zone) "
-             "instead of the measured schedule added to demand. Default per "
-             f"ISO: on for {', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
-             "(no measured-schedule mode), off elsewhere; pass "
-             "--no-priced-interchange to force the measured schedule.",
+        "(import tranches + export sinks in the ISO's external zone) "
+        "instead of the measured schedule added to demand. Default per "
+        f"ISO: on for {', '.join(sorted(PRICED_INTERCHANGE_DEFAULT_ISOS))} "
+        "(no measured-schedule mode), off elsewhere; pass "
+        "--no-priced-interchange to force the measured schedule.",
     )
     parser.add_argument(
-        "--reference-price-interface", action="store_true",
+        "--reference-price-interface",
+        action="store_true",
         help="Serve the priced-interchange seam through the forecast-grade "
-             "reference-price interface (per-neighbor gas x heat-rate x "
-             "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
-             "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
-             "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
-             "See docs/reference-price-interface.md.",
+        "reference-price interface (per-neighbor gas x heat-rate x "
+        "load-shape, cleared on the spread vs the ISO LMP with a hurdle) "
+        "instead of the fitted IMPORT_TRANCHES/EXPORT_TRANCHES. Implies "
+        "--priced-interchange; gated to ISOs in INTERFACE_NEIGHBORS (PJM). "
+        "See docs/reference-price-interface.md.",
     )
     parser.add_argument(
-        "--negative-renewable-offers", action=argparse.BooleanOptionalAction,
+        "--negative-renewable-offers",
+        action=argparse.BooleanOptionalAction,
         default=None,
         help="Floor the curtailable wind/solar dispatch offer at the negative "
-             "keep-running (REC/PTC) value so curtailed renewables set a "
-             "sub-$0 marginal price in oversupply (CAISO negative midday "
-             "LMPs). Default (unset) keeps the per-ISO base config value (ON "
-             "for CAISO); --no-negative-renewable-offers forces it off.",
+        "keep-running (REC/PTC) value so curtailed renewables set a "
+        "sub-$0 marginal price in oversupply (CAISO negative midday "
+        "LMPs). Default (unset) keeps the per-ISO base config value (ON "
+        "for CAISO); --no-negative-renewable-offers forces it off.",
     )
     return parser
 
@@ -2050,8 +2252,7 @@ def main(argv: list[str] | None = None) -> None:
     """
     args = _build_parser().parse_args(argv)
     iso = args.iso.upper()
-    priced_interchange = resolve_priced_interchange(
-        args.priced_interchange, iso)
+    priced_interchange = resolve_priced_interchange(args.priced_interchange, iso)
     # The reference-price interface serves the seam through the priced node, so
     # it implies priced interchange (unless explicitly turned off on the CLI).
     if args.reference_price_interface and args.priced_interchange is not False:
@@ -2067,10 +2268,17 @@ def main(argv: list[str] | None = None) -> None:
         gas_price = _henry_hub_actual(reference, year)
         logger.info(
             "running %s %d (hours=%d, Henry Hub=$%.2f/MMBtu)",
-            iso, year, args.hours, gas_price,
+            iso,
+            year,
+            args.hours,
+            gas_price,
         )
         result, context, result_p1, _ = run_year(
-            year, iso, args.hours, gas_price, ttc_overrides,
+            year,
+            iso,
+            args.hours,
+            gas_price,
+            ttc_overrides,
             args.coal_passthrough,
             commitment_enabled=args.commitment,
             commitment_screen_coal=not args.no_coal_p2,

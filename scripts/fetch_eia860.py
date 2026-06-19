@@ -45,7 +45,7 @@ PAGE_SIZE = 5000  # max rows per request
 # Balancing authority codes for the seven major wholesale markets
 MARKETS = {
     "ERCO": "ERCOT",
-    "PJM":  "PJM",
+    "PJM": "PJM",
     "CISO": "CAISO",
     "ISNE": "NEISO",
     "NYIS": "NYISO",
@@ -64,6 +64,7 @@ DATA_COLS = [
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _get(params: dict, retries: int = 4) -> dict:
     params["api_key"] = API_KEY
     for attempt in range(retries):
@@ -74,7 +75,7 @@ def _get(params: dict, retries: int = 4) -> dict:
         except requests.RequestException as exc:
             if attempt == retries - 1:
                 raise
-            wait = 2 ** attempt
+            wait = 2**attempt
             print(f"  Retry {attempt + 1}/{retries} after {wait}s: {exc}")
             time.sleep(wait)
 
@@ -111,7 +112,10 @@ def fetch_all(facet_filters: dict | None = None) -> list[dict]:
                     if isinstance(base_params[f"facets[{facet_key}][]"], list):
                         base_params[f"facets[{facet_key}][]"].append(v)
                     else:
-                        base_params[f"facets[{facet_key}][]"] = [base_params[f"facets[{facet_key}][]"], v]
+                        base_params[f"facets[{facet_key}][]"] = [
+                            base_params[f"facets[{facet_key}][]"],
+                            v,
+                        ]
             else:
                 base_params[f"facets[{facet_key}][]"] = values
 
@@ -156,6 +160,7 @@ def fetch_all(facet_filters: dict | None = None) -> list[dict]:
 
 def rows_to_csv(rows: list[dict], path: Path) -> None:
     import csv
+
     if not rows:
         print(f"  No data — skipping {path.name}")
         return
@@ -172,6 +177,7 @@ def rows_to_csv(rows: list[dict], path: Path) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -183,9 +189,7 @@ def main():
     args = parser.parse_args()
 
     if not API_KEY:
-        raise SystemExit(
-            "EIA_API_KEY not found. Set the env var or add it to .env"
-        )
+        raise SystemExit("EIA_API_KEY not found. Set the env var or add it to .env")
 
     # Save metadata for reference
     print("Fetching API metadata…")

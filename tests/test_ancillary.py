@@ -1,4 +1,5 @@
 """ERCOT ancillary-service revenue: gating, calibration, saturation."""
+
 import unittest
 
 from market_sim.config.scenarios import ScenarioConfig
@@ -28,7 +29,8 @@ class TestASRevenue(unittest.TestCase):
         # storage earns the full $169/kW-yr ($169,000/MW-yr) anchor.
         self.assertAlmostEqual(
             as_revenue_per_mw_yr("storage", 4000.0, self._cfg()),
-            169_000.0, places=0,
+            169_000.0,
+            places=0,
         )
 
     def test_saturation_falls_with_a_growing_fleet(self):
@@ -47,7 +49,8 @@ class TestASRevenue(unittest.TestCase):
         # the base rate.
         self.assertEqual(as_saturation_factor(1_000.0), 1.0)
         self.assertAlmostEqual(
-            as_revenue_per_mw_yr("storage", 0.0, self._cfg()), 169_000.0,
+            as_revenue_per_mw_yr("storage", 0.0, self._cfg()),
+            169_000.0,
             places=0,
         )
 

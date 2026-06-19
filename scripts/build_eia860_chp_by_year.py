@@ -51,10 +51,12 @@ def _chp_from_generator_sheet(gen: pd.DataFrame) -> pd.DataFrame:
     gen["plant_id"] = code[code.notna()].astype(int)
     is_y = gen[_CHP_COL].astype(str).str.strip().str.upper().str.startswith("Y")
     by_plant = is_y.groupby(gen["plant_id"]).any()
-    return pd.DataFrame({
-        "plant_id": by_plant.index.astype(int),
-        "chp": by_plant.map({True: "Y", False: "N"}).to_numpy(),
-    })
+    return pd.DataFrame(
+        {
+            "plant_id": by_plant.index.astype(int),
+            "chp": by_plant.map({True: "Y", False: "N"}).to_numpy(),
+        }
+    )
 
 
 def _year_from_zip_name(name: str) -> int | None:
@@ -71,9 +73,7 @@ def build() -> Path:
         if year is None:
             continue
         with zipfile.ZipFile(zip_path) as zf:
-            gen_name = next(
-                (n for n in zf.namelist() if "Generator_Y" in n), None
-            )
+            gen_name = next((n for n in zf.namelist() if "Generator_Y" in n), None)
             if gen_name is None:
                 logger.warning("no Generator workbook in %s", zip_path.name)
                 continue
@@ -86,7 +86,10 @@ def build() -> Path:
         frames.append(frame)
         logger.info(
             "%s -> year %d: %d plants (%d CHP)",
-            zip_path.name, year, len(frame), int((frame["chp"] == "Y").sum()),
+            zip_path.name,
+            year,
+            len(frame),
+            int((frame["chp"] == "Y").sum()),
         )
 
     if not frames:
@@ -100,7 +103,9 @@ def build() -> Path:
     out.to_parquet(_OUT_PATH, index=False)
     logger.info(
         "wrote %s (%d rows, years %s)",
-        _OUT_PATH, len(out), sorted(out["year"].unique()),
+        _OUT_PATH,
+        len(out),
+        sorted(out["year"].unique()),
     )
     return _OUT_PATH
 

@@ -69,9 +69,7 @@ class TestCaisoTrancheArtifact(unittest.TestCase):
 
     def test_no_coal_rows(self):
         """No coal must-run layer: the artifact derives zero COAL rows."""
-        df = pd.read_csv(
-            PROCESSED_DIR / "thermal_tranches_CAISO.csv"
-        )
+        df = pd.read_csv(PROCESSED_DIR / "thermal_tranches_CAISO.csv")
         self.assertEqual(len(df[df["plant_group"] == "COAL"]), 0)
 
     def test_peaking_shares_bounded(self):
@@ -115,8 +113,14 @@ class TestCaisoBinAssignments(unittest.TestCase):
         )
         self.assertLessEqual(
             set(self.bins["Must_Run_Source"]),
-            {"chp_campd_p2", "chp_eia923_cf", "chp_sector_default",
-             "campd", "class_default", "none"},
+            {
+                "chp_campd_p2",
+                "chp_eia923_cf",
+                "chp_sector_default",
+                "campd",
+                "class_default",
+                "none",
+            },
         )
         # The bulk of CC_REGULAR capacity carries measured committed shares.
         cc = self.bins[self.bins["Plant_Group"] == "CC_REGULAR"]
@@ -126,9 +130,7 @@ class TestCaisoBinAssignments(unittest.TestCase):
     def test_mixed_facility_split_per_group(self):
         """Glenarm (422) appears once per Plant_Group, flagged as mixed."""
         glenarm = self.bins[self.bins["Plant_Code"] == 422]
-        self.assertEqual(
-            set(glenarm["Plant_Group"]), {"CC_REGULAR", "CT_PEAKER"}
-        )
+        self.assertEqual(set(glenarm["Plant_Group"]), {"CC_REGULAR", "CT_PEAKER"})
         self.assertEqual(set(glenarm["Mixed_Facility"]), {"CC+CT"})
 
 
@@ -139,15 +141,15 @@ class TestCaisoFleetBuild(unittest.TestCase):
     def setUpClass(cls):
         cls.gens = load_fleet_from_csv("CAISO", get_iso_config("CAISO"))
         cls.config = ScenarioConfig(
-            iso="CAISO", chp_steam_following=True, cc_peaking_per_plant=True,
+            iso="CAISO",
+            chp_steam_following=True,
+            cc_peaking_per_plant=True,
         )
         cls.synth = fleet_to_bins(cls.gens, "CAISO", cls.config)
         cls.fleet, _ = bins_to_fleet(cls.synth, ZONES, cls.config)
 
     def _plant_lp_mw(self, code: int) -> float:
-        return sum(
-            g.pmax_mw for g in self.fleet if g.plant_code == code
-        )
+        return sum(g.pmax_mw for g in self.fleet if g.plant_code == code)
 
     def test_synthetic_bins_load(self):
         self.assertGreater(len(self.synth), 200)
@@ -155,16 +157,15 @@ class TestCaisoFleetBuild(unittest.TestCase):
 
     def test_chp_btm_removed_from_lp_capacity(self):
         """Every CHP plant's LP capacity excludes its BTM host share."""
-        chp = self.synth[
-            self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])
-        ]
+        chp = self.synth[self.synth["Plant_Group"].isin(["CC_CHP", "CT_CHP", "ST_CHP"])]
         for _, b in chp.iterrows():
             code = int(b["Plant_Code"])
             nameplate = float(b["capacity_mw"])
             btm = chp_btm_pct(code, str(b["Plant_Group"]), iso="CAISO")
             grid = nameplate * (1.0 - btm / 100.0)
             self.assertLessEqual(
-                self._plant_lp_mw(code), grid + 0.6,
+                self._plant_lp_mw(code),
+                grid + 0.6,
                 f"plant {code}: LP capacity exceeds grid share "
                 f"(nameplate {nameplate}, BTM {btm}%)",
             )
@@ -173,8 +174,7 @@ class TestCaisoFleetBuild(unittest.TestCase):
         """Measured committed (70%) + BTM (35%) clamps, no LP overcount."""
         lp = self._plant_lp_mw(55400)
         nameplate = float(
-            self.synth[self.synth["Plant_Code"] == 55400]["capacity_mw"]
-            .iloc[0]
+            self.synth[self.synth["Plant_Code"] == 55400]["capacity_mw"].iloc[0]
         )
         self.assertLessEqual(lp, nameplate * 0.65 + 0.6)
         self.assertGreater(lp, nameplate * 0.60)
@@ -184,21 +184,24 @@ class TestCaisoFleetBuild(unittest.TestCase):
         config = self.config.with_overrides(
             offer_curve_by_group={
                 "CC_REGULAR": {
-                    "committed": 0.92, "econ_low": 1.06, "econ_high": 1.27,
-                    "peak": 2.25, "econ_low_share": 0.5, "pct_peaking": 8.0,
+                    "committed": 0.92,
+                    "econ_low": 1.06,
+                    "econ_high": 1.27,
+                    "peak": 2.25,
+                    "econ_low_share": 0.5,
+                    "pct_peaking": 8.0,
                 },
             },
         )
         fleet, _ = bins_to_fleet(self.synth, ZONES, config)
         # Malburg (56041): measured peaking 25% of its 139 MW nameplate.
         peak = [
-            g for g in fleet
-            if g.plant_code == 56041 and g.unit_id.endswith("_peak")
+            g for g in fleet if g.plant_code == 56041 and g.unit_id.endswith("_peak")
         ]
         self.assertEqual(len(peak), 1)
-        expected = 139.0 * thermal_tranche_peaking("CAISO")[
-            (56041, "CC_REGULAR")
-        ] / 100.0
+        expected = (
+            139.0 * thermal_tranche_peaking("CAISO")[(56041, "CC_REGULAR")] / 100.0
+        )
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
 
 

@@ -47,6 +47,7 @@ derive_import_tranches.py is capacity-keyed); only the price ladder moves.
 Usage:
     uv run python scripts/derive_nyiso_import_ladder.py
 """
+
 import json
 
 ACTUAL = json.load(open("data/raw/_validation-source/actual_lmp.json"))
@@ -105,7 +106,9 @@ def main() -> None:
         rows = []
         for tie in ["HQ_hydro", "IESO_Ontario"]:
             base, link = BASELOAD_TIE[tie]
-            price = base + WHEEL + link * (hub_mean("PJM", year) - hub_mean("PJM", 2023))
+            price = (
+                base + WHEEL + link * (hub_mean("PJM", year) - hub_mean("PJM", 2023))
+            )
             rows.append((tie, CAP[tie], round(price, 1)))
         for tie in ["PJM_west", "ISONE_tie"]:
             price = hub_pct(GAS_TIE[tie], year, "p75") + WHEEL

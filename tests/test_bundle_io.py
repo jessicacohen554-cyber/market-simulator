@@ -62,9 +62,7 @@ class TestSharedInputStore(unittest.TestCase):
             df.to_parquet(run / "campd.parquet", index=False)
             (run / "meta.json").write_text(json.dumps({"iso": "CAISO"}))
             # No shared ref -> resolves the in-bundle file.
-            self.assertEqual(
-                bundle_input_path(run, "campd"), run / "campd.parquet"
-            )
+            self.assertEqual(bundle_input_path(run, "campd"), run / "campd.parquet")
             # Absent input -> None (caller can branch on it).
             self.assertIsNone(bundle_input_path(run, "eia930"))
 

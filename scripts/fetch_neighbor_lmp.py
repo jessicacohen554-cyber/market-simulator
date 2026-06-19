@@ -41,6 +41,7 @@ Run (from the repo root)::
     python scripts/fetch_neighbor_lmp.py --source carolinas
     python scripts/fetch_neighbor_lmp.py --source all
 """
+
 from __future__ import annotations
 
 import argparse
@@ -95,7 +96,8 @@ def _session() -> requests.Session:
     """A requests session with polite retries/backoff for flaky public hosts."""
     sess = requests.Session()
     retry = Retry(
-        total=5, backoff_factor=1.5,
+        total=5,
+        backoff_factor=1.5,
         status_forcelist=(429, 500, 502, 503, 504),
         allowed_methods=("GET",),
     )
@@ -178,8 +180,10 @@ def _fetch_miso_series(
                 pd.DatetimeIndex(stamps).tz_localize("UTC"),
                 np.asarray(prices, dtype=float),
             )
-            print(f"  MISO {kind} {year}: {len(stamps)} hours "
-                  f"({missing} day-files missing)")
+            print(
+                f"  MISO {kind} {year}: {len(stamps)} hours "
+                f"({missing} day-files missing)"
+            )
     return out
 
 
@@ -209,16 +213,26 @@ def fetch_miso(years: tuple[int, ...]) -> Path:
     for year in years:
         if year not in rt and year not in da:
             continue
-        rt_h = (_densify_central(*rt[year], year) if year in rt
-                else np.full(_HOURS_PER_YEAR, np.nan))
-        da_h = (_densify_central(*da[year], year) if year in da
-                else np.full(_HOURS_PER_YEAR, np.nan))
-        frames.append(pd.DataFrame({
-            "year": np.int16(year),
-            "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
-            "rt": rt_h.astype(np.float32),
-            "da": da_h.astype(np.float32),
-        }))
+        rt_h = (
+            _densify_central(*rt[year], year)
+            if year in rt
+            else np.full(_HOURS_PER_YEAR, np.nan)
+        )
+        da_h = (
+            _densify_central(*da[year], year)
+            if year in da
+            else np.full(_HOURS_PER_YEAR, np.nan)
+        )
+        frames.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+                    "rt": rt_h.astype(np.float32),
+                    "da": da_h.astype(np.float32),
+                }
+            )
+        )
     if not frames:
         raise SystemExit("MISO: no data fetched (all day-files missing?)")
     out = OUT_DIR / "actual_lmp_hourly_MISO.parquet"
@@ -256,49 +270,64 @@ def fetch_carolinas() -> Path | None:
     sess = _session()
     zip_url = _find_714_zip(sess)
     if zip_url is None:
-        print("  Carolinas: could not locate FERC-714 zip on the data page; "
-              "skipping (source it manually — see module docstring)")
+        print(
+            "  Carolinas: could not locate FERC-714 zip on the data page; "
+            "skipping (source it manually — see module docstring)"
+        )
         return None
     resp = sess.get(zip_url, timeout=300)
     if resp.status_code != 200:
-        print(f"  Carolinas: FERC-714 zip {zip_url} -> {resp.status_code}; "
-              "skipping")
+        print(f"  Carolinas: FERC-714 zip {zip_url} -> {resp.status_code}; skipping")
         return None
     with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
         names = zf.namelist()
         lambda_csv = next(
-            (n for n in names if re.search(r"lambda", n, re.I)
-             or re.search(r"part\s*2.*sched.*6", n, re.I)), None)
-        ids_csv = next((n for n in names if re.search(r"respondent", n, re.I)),
-                       None)
+            (
+                n
+                for n in names
+                if re.search(r"lambda", n, re.I)
+                or re.search(r"part\s*2.*sched.*6", n, re.I)
+            ),
+            None,
+        )
+        ids_csv = next((n for n in names if re.search(r"respondent", n, re.I)), None)
         if lambda_csv is None or ids_csv is None:
-            print(f"  Carolinas: system-lambda/respondent CSV not found in zip "
-                  f"(have {names[:8]}...); skipping")
+            print(
+                f"  Carolinas: system-lambda/respondent CSV not found in zip "
+                f"(have {names[:8]}...); skipping"
+            )
             return None
         lam = pd.read_csv(zf.open(lambda_csv))
         ids = pd.read_csv(zf.open(ids_csv))
-    print(f"  Carolinas: parsed {lambda_csv} ({len(lam)} rows) — "
-          "Duke respondent extraction is best-effort; verify before use")
+    print(
+        f"  Carolinas: parsed {lambda_csv} ({len(lam)} rows) — "
+        "Duke respondent extraction is best-effort; verify before use"
+    )
     # Layout varies across vintages; do not guess silently if the expected
     # respondent/name columns are absent.
     name_col = next((c for c in ids.columns if "name" in c.lower()), None)
-    rid_col = next((c for c in ids.columns if "respondent" in c.lower()
-                    and "id" in c.lower()), None)
+    rid_col = next(
+        (c for c in ids.columns if "respondent" in c.lower() and "id" in c.lower()),
+        None,
+    )
     if name_col is None or rid_col is None:
         print("  Carolinas: respondent id/name columns not recognised; skipping")
         return None
     duke = ids[ids[name_col].astype(str).str.contains(DUKE_RESPONDENT_RE)]
-    print(f"  Carolinas: matched Duke respondents -> "
-          f"{duke[[rid_col, name_col]].to_dict('records')}")
-    print("  Carolinas: hourly-lambda reshape to 8760 is vintage-specific and "
-          "left for a verified follow-up; not writing a parquet blind")
+    print(
+        f"  Carolinas: matched Duke respondents -> "
+        f"{duke[[rid_col, name_col]].to_dict('records')}"
+    )
+    print(
+        "  Carolinas: hourly-lambda reshape to 8760 is vintage-specific and "
+        "left for a verified follow-up; not writing a parquet blind"
+    )
     return None
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--source", choices=("miso", "carolinas", "all"),
-                    default="all")
+    ap.add_argument("--source", choices=("miso", "carolinas", "all"), default="all")
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     args = ap.parse_args()
     years = tuple(args.years)

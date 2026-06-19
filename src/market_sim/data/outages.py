@@ -95,6 +95,7 @@ def read_clean_outages(
         "outages", year=int(year), columns=columns, validate=validate
     )
 
+
 # Default ERCOT historic-outage extract, resolved relative to the repository
 # root (this file lives at src/market_sim/data/outages.py). One row per
 # outage event: oris_code, plant_name, unit, outage_start, outage_stop,
@@ -128,6 +129,7 @@ def default_outages_path(iso: str | None) -> Path:
         return OUTAGES_CSV
     return _OUTAGES_DIR / f"campd-outages-{iso.upper()}.csv"
 
+
 # Plant groups whose sustained outages are overlaid: coal and combined cycle
 # (regular and CHP). A plant qualifies if it has any bin in this set; the
 # per-bin group filter at overlay time then restricts the zeroing to those
@@ -142,25 +144,27 @@ QUALIFYING_PLANT_GROUPS: frozenset[str] = frozenset(
 # fleet.generators_to_fleet_arrays) — they dispatch purely economically. The
 # remaining ST_GAS units run sustained idling / drag patterns and DO get the
 # outage + reliability treatment. Excluded from the overlay below.
-ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset({
-    # ERCOT
-    3504,   # Stryker Creek
-    3453,   # Mountain Creek
-    3490,   # Graham
-    3507,   # Trinidad (TX)
-    3576,   # Ray Olinger
-    4266,   # Spencer
-    # CAISO — the last once-through-cooling steamers, kept on OTC compliance
-    # extensions as RMR-style reliability units. CAMPD 2024-25 shows them
-    # online only 0.4-2.5% of hours (spiky, run-when-called), so the
-    # event-based outage rule would flood them with economic-idleness
-    # windows; they dispatch purely economically instead.
-    315,    # AES Alamitos LLC units 3-5 (legacy boilers; the colocated
-            #   CCGT reports under this ORIS too but is remapped to EIA
-            #   62115 — campd.CAMPD_UNIT_PLANT_REMAP)
-    335,    # AES Huntington Beach LLC unit 2 (CCGT remapped to 62116)
-    350,    # Ormond Beach units 1-2
-})
+ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset(
+    {
+        # ERCOT
+        3504,  # Stryker Creek
+        3453,  # Mountain Creek
+        3490,  # Graham
+        3507,  # Trinidad (TX)
+        3576,  # Ray Olinger
+        4266,  # Spencer
+        # CAISO — the last once-through-cooling steamers, kept on OTC compliance
+        # extensions as RMR-style reliability units. CAMPD 2024-25 shows them
+        # online only 0.4-2.5% of hours (spiky, run-when-called), so the
+        # event-based outage rule would flood them with economic-idleness
+        # windows; they dispatch purely economically instead.
+        315,  # AES Alamitos LLC units 3-5 (legacy boilers; the colocated
+        #   CCGT reports under this ORIS too but is remapped to EIA
+        #   62115 — campd.CAMPD_UNIT_PLANT_REMAP)
+        335,  # AES Huntington Beach LLC unit 2 (CCGT remapped to 62116)
+        350,  # Ormond Beach units 1-2
+    }
+)
 
 # Minimum outage span to overlay, in hours (>= 2 days). The CAMPD detector
 # (scripts/derive_campd_outages.py) already defines an outage as a sustained
@@ -213,14 +217,8 @@ def outage_hour_mask(
     stop = pd.Timestamp(stop)
     if stop <= start or start.year > year or stop.year < year:
         return mask
-    lo = (
-        0 if start.year < year
-        else _hour_of_year(start.month, start.day, start.hour)
-    )
-    hi = (
-        hours if stop.year > year
-        else _hour_of_year(stop.month, stop.day, stop.hour)
-    )
+    lo = 0 if start.year < year else _hour_of_year(start.month, start.day, start.hour)
+    hi = hours if stop.year > year else _hour_of_year(stop.month, stop.day, stop.hour)
     lo = max(0, min(lo, hours))
     hi = max(0, min(hi, hours))
     if hi > lo:
@@ -256,9 +254,7 @@ def _build_outage_masks(
     the per-ISO ``campd-outages-{ISO}.csv`` extracts, which are already
     coal/CC/gas-steam only by construction (the derivation's GROUPS filter).
     """
-    df = pd.read_csv(
-        outages_path, parse_dates=["outage_start", "outage_stop"]
-    )
+    df = pd.read_csv(outages_path, parse_dates=["outage_start", "outage_stop"])
     if bins_path:
         df = df[df["oris_code"].isin(_qualifying_plant_codes(bins_path))]
 
@@ -373,7 +369,9 @@ def outage_masks_for_year(
             )
         logger.warning(
             "%s set but no clean outages for %d; falling back to raw derive at %s",
-            _USE_CLEAN_ENV, year, outages_path,
+            _USE_CLEAN_ENV,
+            year,
+            outages_path,
         )
     if not outages_path.exists():
         logger.warning(
@@ -386,9 +384,7 @@ def outage_masks_for_year(
         str(outages_path), str(bins_path) if bins_path else "", hours
     )
     return {
-        code: by_year[year]
-        for code, by_year in all_masks.items()
-        if year in by_year
+        code: by_year[year] for code, by_year in all_masks.items() if year in by_year
     }
 
 
@@ -426,7 +422,11 @@ def _unit_outage_target(
     asset-class bin (coal vs the gas-steam split code 34702 / 49392). A blank
     or ``OTHER`` group is treated as gas steam.
     """
-    g = "" if group is None or (isinstance(group, float) and np.isnan(group)) else str(group)
+    g = (
+        ""
+        if group is None or (isinstance(group, float) and np.isnan(group))
+        else str(group)
+    )
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
     if facility_id == 3470:  # W A Parish: coal units vs gas-steam (code 34702)
@@ -448,7 +448,11 @@ def _generic_unit_outage_target(
     excluded from the derate (they dispatch economically), matching the
     ERCOT convention.
     """
-    g = "" if group is None or (isinstance(group, float) and np.isnan(group)) else str(group)
+    g = (
+        ""
+        if group is None or (isinstance(group, float) and np.isnan(group))
+        else str(group)
+    )
     if g in ("CT_PEAKER", "CT_CHP"):
         return None
     if not g or g == "OTHER":
@@ -487,9 +491,8 @@ def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
     # capacity must be in the derate denominator — else their unit-outage rows
     # route to a (plant_code, plant_group) absent from this map and are skipped,
     # leaving the injected retiree (e.g. Mystic) un-capped.
-    fleet = (
-        load_fleet_from_csv(iso, iso_config)
-        + load_retired_within_window(iso, iso_config)
+    fleet = load_fleet_from_csv(iso, iso_config) + load_retired_within_window(
+        iso, iso_config
     )
     cap: dict[tuple[int, str], float] = {}
     for g in fleet:
@@ -562,7 +565,8 @@ def unit_outage_derate_factors(
         mask = outage_hour_mask(
             r.outage_start,
             pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
-            year, hours,
+            year,
+            hours,
         )
         if not mask.any():
             continue
@@ -650,7 +654,9 @@ def ct_deployment_floor_for_year(
         logger.warning(
             "CT deployment-floor artifact not found at %s; "
             "the CT deployment overlay is a no-op for %s %d",
-            path, iso.upper(), year,
+            path,
+            iso.upper(),
+            year,
         )
         return {}
     df = pd.read_parquet(path)
@@ -700,7 +706,9 @@ def reliability_deployment_floor_for_year(
         logger.warning(
             "reliability deployment-floor artifact not found at %s; "
             "the reliability deployment overlay is a no-op for %s %d",
-            path, iso.upper(), year,
+            path,
+            iso.upper(),
+            year,
         )
         return {}
     df = pd.read_parquet(path)

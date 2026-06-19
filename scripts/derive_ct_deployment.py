@@ -50,6 +50,7 @@ class by the dominant-class override, flat ~50% CF, already restored by the
 ``--btm-backfill-year`` add-back) are excluded by default (``--exclude-plants``)
 so the deployment floor does not double-count the BTM backfill.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -78,14 +79,15 @@ DEFAULT_GAS_PRICE: dict[int, float] = {2023: 2.54, 2024: 2.19, 2025: 3.52}
 # deployment floor here would double-count the backfill. Excluded by default.
 DEFAULT_EXCLUDE: frozenset[int] = frozenset({7325})
 
+
 def _out_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
-            / f"ct_deployment_floor_{iso.upper()}.parquet")
+    return (
+        REPO / "inputs" / "calibration" / f"ct_deployment_floor_{iso.upper()}.parquet"
+    )
 
 
 def _lmp_default(iso: str) -> Path:
-    return (REPO / "inputs" / "calibration"
-            / f"actual_lmp_hourly_{iso.upper()}.parquet")
+    return REPO / "inputs" / "calibration" / f"actual_lmp_hourly_{iso.upper()}.parquet"
 
 
 def _ct_peaker_heat_rates(bins_path: Path) -> dict[int, float]:
@@ -136,53 +138,67 @@ def main() -> None:
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
+        "--bins",
+        default=str(REPO / "inputs" / "custom-bin-assignments.csv"),
         help="ERCOT per-plant bin CSV; supplies the CT_PEAKER plant set + heat "
-             "rates for ERCOT. Ignored for other ISOs (heat rates come from the "
-             "ISO's EIA-860 fleet via load_fleet_from_csv).",
+        "rates for ERCOT. Ignored for other ISOs (heat rates come from the "
+        "ISO's EIA-860 fleet via load_fleet_from_csv).",
     )
     ap.add_argument(
-        "--lmp", default=None,
+        "--lmp",
+        default=None,
         help="Actual hourly LMP parquet (year, hour, rt, da); the rt series is "
-             "the out-of-merit reference price. Defaults to "
-             "actual_lmp_hourly_<ISO>.parquet.",
+        "the out-of-merit reference price. Defaults to "
+        "actual_lmp_hourly_<ISO>.parquet.",
     )
     ap.add_argument(
-        "--hr-mult", type=float, default=1.0,
+        "--hr-mult",
+        type=float,
+        default=1.0,
         help="Heat-rate multiplier on the plant average for the marginal-cost "
-             "threshold (1.0 = the plant's economic-tranche heat rate). Lower "
-             "tightens the out-of-merit test (fewer hours, less energy).",
+        "threshold (1.0 = the plant's economic-tranche heat rate). Lower "
+        "tightens the out-of-merit test (fewer hours, less energy).",
     )
     ap.add_argument(
-        "--vom", type=float, default=VOM["gas_ct"],
+        "--vom",
+        type=float,
+        default=VOM["gas_ct"],
         help="CT variable O&M added to fuel cost ($/MWh; default the model's "
-             "gas_ct VOM).",
+        "gas_ct VOM).",
     )
     ap.add_argument(
-        "--min-mw", type=float, default=1.0,
+        "--min-mw",
+        type=float,
+        default=1.0,
         help="Net-MW floor below which an hour is treated as noise/off (not a "
-             "deployment hour even if priced out of merit).",
+        "deployment hour even if priced out of merit).",
     )
     ap.add_argument(
-        "--gas-price", nargs="*", default=None,
+        "--gas-price",
+        nargs="*",
+        default=None,
         help="Override annual gas price as YEAR:PRICE pairs (default the "
-             "backcast Henry Hub actuals).",
+        "backcast Henry Hub actuals).",
     )
     ap.add_argument(
-        "--exclude-plants", nargs="*", type=int, default=sorted(DEFAULT_EXCLUDE),
-        help="EIA plant codes to exclude (default San Jacinto 7325, a BTM "
-             "cogen).",
+        "--exclude-plants",
+        nargs="*",
+        type=int,
+        default=sorted(DEFAULT_EXCLUDE),
+        help="EIA plant codes to exclude (default San Jacinto 7325, a BTM cogen).",
     )
     ap.add_argument("--hours", type=int, default=HOURS_PER_YEAR)
     ap.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Output parquet path (long: year, plant_code, hour, floor_mw). "
-             "Defaults to ct_deployment_floor_<ISO>.parquet.",
+        "Defaults to ct_deployment_floor_<ISO>.parquet.",
     )
     ap.add_argument(
-        "--report", action="store_true",
+        "--report",
+        action="store_true",
         help="Measure and print the deployment wedge without writing the "
-             "artifact (the quantification check).",
+        "artifact (the quantification check).",
     )
     args = ap.parse_args()
 
@@ -213,13 +229,14 @@ def main() -> None:
     states = campd.states_for_iso(iso)
     par_path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
     factors = (
-        campd.pooled_factor_map(pd.read_parquet(par_path))
-        if par_path.exists() else {}
+        campd.pooled_factor_map(pd.read_parquet(par_path)) if par_path.exists() else {}
     )
 
     rows: list[dict] = []
-    print(f"{'year':>5} {'gas':>6} {'#plnt':>6} {'#hrs':>9} "
-          f"{'CEMS TWh':>9} {'deploy TWh':>11} {'share':>7}")
+    print(
+        f"{'year':>5} {'gas':>6} {'#plnt':>6} {'#hrs':>9} "
+        f"{'CEMS TWh':>9} {'deploy TWh':>11} {'share':>7}"
+    )
     for year in args.years:
         if year not in gas_price:
             print(f"  (no gas price for {year}; skipped)")
@@ -234,7 +251,7 @@ def main() -> None:
         df = campd.load_campd_hourly(states, [year])
         net = campd.plant_hourly_net(df, factors, year, hours=args.hours)
 
-        cems_total = 0.0   # covered CT_PEAKER CEMS energy (MWh)
+        cems_total = 0.0  # covered CT_PEAKER CEMS energy (MWh)
         deploy_total = 0.0  # out-of-merit subset (MWh)
         n_plants = 0
         n_hours = 0
@@ -256,24 +273,29 @@ def main() -> None:
             n_hours += int(deploy.sum())
             deploy_total += float(series[deploy].sum())
             for h in np.flatnonzero(deploy):
-                rows.append({
-                    "year": int(year),
-                    "plant_code": int(code),
-                    "hour": int(h),
-                    "floor_mw": float(series[h]),
-                })
+                rows.append(
+                    {
+                        "year": int(year),
+                        "plant_code": int(code),
+                        "hour": int(h),
+                        "floor_mw": float(series[h]),
+                    }
+                )
         share = deploy_total / cems_total if cems_total > 0 else 0.0
-        print(f"{year:>5} {gp:>6.2f} {n_plants:>6} {n_hours:>9} "
-              f"{cems_total / 1e6:>9.2f} {deploy_total / 1e6:>11.2f} "
-              f"{share:>6.1%}")
+        print(
+            f"{year:>5} {gp:>6.2f} {n_plants:>6} {n_hours:>9} "
+            f"{cems_total / 1e6:>9.2f} {deploy_total / 1e6:>11.2f} "
+            f"{share:>6.1%}"
+        )
 
-    out = pd.DataFrame(
-        rows, columns=["year", "plant_code", "hour", "floor_mw"]
-    ).astype({"year": "int16", "plant_code": "int32",
-              "hour": "int32", "floor_mw": "float32"})
+    out = pd.DataFrame(rows, columns=["year", "plant_code", "hour", "floor_mw"]).astype(
+        {"year": "int16", "plant_code": "int32", "hour": "int32", "floor_mw": "float32"}
+    )
     if args.report:
-        print(f"\n[report] {iso}: {len(out)} deployment-hour floors "
-              f"({out['plant_code'].nunique()} plants) — NOT written")
+        print(
+            f"\n[report] {iso}: {len(out)} deployment-hour floors "
+            f"({out['plant_code'].nunique()} plants) — NOT written"
+        )
         return
     out.to_parquet(out_path, index=False)
     print(f"\nwrote {len(out)} deployment-hour floors to {out_path}")

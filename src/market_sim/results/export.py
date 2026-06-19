@@ -98,9 +98,7 @@ def _summarize_year(result, context) -> dict:
         generation_twh[fuel] = (
             generation_twh.get(fuel, 0.0) + float(gen_per_unit[g]) / _MWH_PER_TWH
         )
-        capacity_gw[fuel] = (
-            capacity_gw.get(fuel, 0.0) + context.pmax_mw[g] / _MW_PER_GW
-        )
+        capacity_gw[fuel] = capacity_gw.get(fuel, 0.0) + context.pmax_mw[g] / _MW_PER_GW
 
     # Zonal capacity-factor wind and solar are modeled outside the thermal
     # fleet, so fold their dispatched energy and nameplate in separately.
@@ -124,22 +122,16 @@ def _summarize_year(result, context) -> dict:
     )
 
     curtailed_mwh = float(
-        compute_curtailment(
-            context.wind_potential_mwh, result.wind_dispatched.sum()
-        )
+        compute_curtailment(context.wind_potential_mwh, result.wind_dispatched.sum())
         + compute_curtailment(
             context.solar_potential_mwh, result.solar_dispatched.sum()
         )
     )
 
     storage_cycles = 0.0
-    if (
-        result.storage_discharge is not None
-        and context.storage_energy_cap_mwh > 0.0
-    ):
+    if result.storage_discharge is not None and context.storage_energy_cap_mwh > 0.0:
         storage_cycles = (
-            float(result.storage_discharge.sum())
-            / context.storage_energy_cap_mwh
+            float(result.storage_discharge.sum()) / context.storage_energy_cap_mwh
         )
 
     return {
@@ -176,9 +168,7 @@ def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
     iso = iso.upper()
     output_dir = Path(output_dir)
 
-    config = ScenarioConfig.from_yaml(
-        cache.get_config_path(iso, cache_key, START_YEAR)
-    )
+    config = ScenarioConfig.from_yaml(cache.get_config_path(iso, cache_key, START_YEAR))
 
     years: dict[str, dict] = {}
     for year in range(START_YEAR, END_YEAR + 1):
@@ -200,8 +190,7 @@ def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
     size = out_path.stat().st_size
     if size > MAX_FILE_BYTES:
         raise ValueError(
-            f"{out_path} is {size} bytes, exceeding the "
-            f"{MAX_FILE_BYTES}-byte limit"
+            f"{out_path} is {size} bytes, exceeding the {MAX_FILE_BYTES}-byte limit"
         )
     logger.info("exported %s (%d bytes)", out_path, size)
     return out_path

@@ -64,7 +64,7 @@ def _write_nyiso(raw_dir: Path) -> None:
         '"Marginal Cost Losses ($/MWHr)","Marginal Cost Congestion ($/MWHr)"'
     ]
     for i in range(1, 13):  # 00:05, 00:10, ... 01:00
-        ts = f"01/15/2024 00:{5*i:02d}:00" if i < 12 else "01/15/2024 01:00:00"
+        ts = f"01/15/2024 00:{5 * i:02d}:00" if i < 12 else "01/15/2024 01:00:00"
         lbmp = 10.0 if i % 2 else 20.0
         lines.append(f'"{ts}","CAPITL",61757,{lbmp},1.0,0.0')
     csv_bytes = ("\n".join(lines) + "\n").encode()
@@ -128,7 +128,9 @@ class TestCurateLmp(unittest.TestCase):
         for k, v in keys.items():
             mask &= df[k].astype(str) == str(v)
         sub = df[mask]
-        self.assertEqual(len(sub), 1, f"expected exactly one row for {keys}, got {len(sub)}")
+        self.assertEqual(
+            len(sub), 1, f"expected exactly one row for {keys}, got {len(sub)}"
+        )
         return sub.iloc[0]
 
     def test_all_partitions_schema_valid(self):
@@ -151,18 +153,27 @@ class TestCurateLmp(unittest.TestCase):
 
     def test_caiso_components_and_market(self):
         df, _ = self._run()
-        r = self._row(df, iso="CAISO", market="DAM", node="TH_SP15_GEN-APND",
-                      interval_start_utc="2024-01-15 08:00:00+00:00")
+        r = self._row(
+            df,
+            iso="CAISO",
+            market="DAM",
+            node="TH_SP15_GEN-APND",
+            interval_start_utc="2024-01-15 08:00:00+00:00",
+        )
         self.assertAlmostEqual(r["lmp_usd_per_mwh"], 31.2)
-        self.assertAlmostEqual(r["energy_usd_per_mwh"], 30.0)      # MCE
-        self.assertAlmostEqual(r["congestion_usd_per_mwh"], 1.0)   # MCC
-        self.assertAlmostEqual(r["loss_usd_per_mwh"], 0.2)         # MCL
-        self.assertAlmostEqual(r["ghg_usd_per_mwh"], 0.0)          # MGHG
+        self.assertAlmostEqual(r["energy_usd_per_mwh"], 30.0)  # MCE
+        self.assertAlmostEqual(r["congestion_usd_per_mwh"], 1.0)  # MCC
+        self.assertAlmostEqual(r["loss_usd_per_mwh"], 0.2)  # MCL
+        self.assertAlmostEqual(r["ghg_usd_per_mwh"], 0.0)  # MGHG
         # local wall clock is PST midnight (UTC-8).
         self.assertEqual(str(r["interval_start_local"]), "2024-01-15 00:00:00")
         # dam vs rtm split into the market key (rtm row present at same instant).
-        rt = self._row(df, iso="CAISO", market="RTM",
-                       interval_start_utc="2024-01-15 08:00:00+00:00")
+        rt = self._row(
+            df,
+            iso="CAISO",
+            market="RTM",
+            interval_start_utc="2024-01-15 08:00:00+00:00",
+        )
         self.assertAlmostEqual(rt["lmp_usd_per_mwh"], 40.0)
         # the embedded mid-file header row was dropped (only 2 dam hours remain).
         self.assertEqual(len(df[(df["iso"] == "CAISO") & (df["market"] == "DAM")]), 2)
@@ -183,10 +194,10 @@ class TestCurateLmp(unittest.TestCase):
     def test_nyiso_hourly_mean_and_components(self):
         df, _ = self._run()
         r = self._row(df, iso="NYISO", market="RTM", node="CAPITL")
-        self.assertAlmostEqual(r["lmp_usd_per_mwh"], 15.0)         # mean of 10/20
+        self.assertAlmostEqual(r["lmp_usd_per_mwh"], 15.0)  # mean of 10/20
         self.assertAlmostEqual(r["loss_usd_per_mwh"], 1.0)
         self.assertAlmostEqual(r["congestion_usd_per_mwh"], 0.0)
-        self.assertTrue(pd.isna(r["energy_usd_per_mwh"]))         # not published
+        self.assertTrue(pd.isna(r["energy_usd_per_mwh"]))  # not published
         self.assertTrue(pd.isna(r["ghg_usd_per_mwh"]))
         self.assertEqual(r["zone"], "CAPITL")
         # 12 five-minute intervals collapse to ONE hourly row (hour-beginning).
@@ -196,10 +207,20 @@ class TestCurateLmp(unittest.TestCase):
 
     def test_neiso_da_rt_split(self):
         df, _ = self._run()
-        da = self._row(df, iso="NEISO", market="DAM", node="CT",
-                       interval_start_local="2024-01-15 00:00:00")
-        rt = self._row(df, iso="NEISO", market="RTM", node="CT",
-                       interval_start_local="2024-01-15 00:00:00")
+        da = self._row(
+            df,
+            iso="NEISO",
+            market="DAM",
+            node="CT",
+            interval_start_local="2024-01-15 00:00:00",
+        )
+        rt = self._row(
+            df,
+            iso="NEISO",
+            market="RTM",
+            node="CT",
+            interval_start_local="2024-01-15 00:00:00",
+        )
         self.assertAlmostEqual(da["lmp_usd_per_mwh"], 30.0)
         self.assertAlmostEqual(da["energy_usd_per_mwh"], 29.0)
         self.assertAlmostEqual(da["loss_usd_per_mwh"], 1.0)

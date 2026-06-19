@@ -69,7 +69,7 @@ def expected_param_ids() -> dict[str, object]:
 def _value_at(root: object, param_id: str, root_name: str) -> object:
     """Walk the dotted ``param_id`` into ``root`` and return the leaf value."""
     node = root
-    for key in param_id[len(root_name):].split(".")[1:]:
+    for key in param_id[len(root_name) :].split(".")[1:]:
         node = node[key]
     return node
 
@@ -104,13 +104,13 @@ def main() -> int:
         if entry is None:
             continue
         if _normalize(entry["value"]) != _normalize(code_value):
-            mismatched.append(
-                f"{pid}: code={code_value!r} registry={entry['value']!r}"
-            )
+            mismatched.append(f"{pid}: code={code_value!r} registry={entry['value']!r}")
 
     print(f"Registry:    {len(by_id)} entries in {REGISTRY_PATH.name}")
-    print(f"Code:        {len(expected)} parameters "
-          f"(constants.py + ScenarioConfig defaults)")
+    print(
+        f"Code:        {len(expected)} parameters "
+        f"(constants.py + ScenarioConfig defaults)"
+    )
     print()
 
     if missing:
@@ -126,28 +126,32 @@ def main() -> int:
         print()
 
     if mismatched:
-        print(f"WARNING — {len(mismatched)} value mismatch(es) between code and registry:")
+        print(
+            f"WARNING — {len(mismatched)} value mismatch(es) between code and registry:"
+        )
         for line in sorted(mismatched):
             print(f"  - {line}")
         print()
 
     modeled = sorted(e["param_id"] for e in entries if "modeled" in e.get("flags", []))
     if modeled:
-        print(f"FLAG — {len(modeled)} parameter(s) sourced from a model, not "
-              "empirical data (review the assumption):")
+        print(
+            f"FLAG — {len(modeled)} parameter(s) sourced from a model, not "
+            "empirical data (review the assumption):"
+        )
         for pid in modeled:
             print(f"  - {pid}  [{by_id[pid]['source']}]")
         print()
 
-    cutoff = (dt.date.today()
-              - dt.timedelta(days=365 * STALE_YEARS)).strftime("%Y-%m")
+    cutoff = (dt.date.today() - dt.timedelta(days=365 * STALE_YEARS)).strftime("%Y-%m")
     stale = sorted(
-        e["param_id"] for e in entries
-        if str(e.get("source_date", "")) < cutoff
+        e["param_id"] for e in entries if str(e.get("source_date", "")) < cutoff
     )
     if stale:
-        print(f"FLAG — {len(stale)} parameter(s) with a primary source older "
-              f"than {STALE_YEARS} years (refresh review, cutoff {cutoff}):")
+        print(
+            f"FLAG — {len(stale)} parameter(s) with a primary source older "
+            f"than {STALE_YEARS} years (refresh review, cutoff {cutoff}):"
+        )
         for pid in stale:
             print(f"  - {pid}  [{by_id[pid]['source']}, {by_id[pid]['source_date']}]")
         print()

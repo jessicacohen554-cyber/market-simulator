@@ -165,11 +165,25 @@ def _parse_one_file(path: str, keep_classes: set[str]) -> pd.DataFrame:
     tidy = tidy[tidy["curve_mw"].notna() & tidy["curve_price"].notna()].copy()
 
     # Compact dtypes so the multi-year canonical parquet stays small.
-    for col in ("hsl", "lsl", "awarded_qty", "min_gen_cost", "startup_hot",
-                "startup_inter", "startup_cold", "spp", "curve_mw", "curve_price",
-                "regup_awarded", "regdown_awarded", "rrspfr_awarded",
-                "rrsffr_awarded", "rrsufr_awarded", "ecrs_awarded",
-                "nonspin_awarded"):
+    for col in (
+        "hsl",
+        "lsl",
+        "awarded_qty",
+        "min_gen_cost",
+        "startup_hot",
+        "startup_inter",
+        "startup_cold",
+        "spp",
+        "curve_mw",
+        "curve_price",
+        "regup_awarded",
+        "regdown_awarded",
+        "rrspfr_awarded",
+        "rrsffr_awarded",
+        "rrsufr_awarded",
+        "ecrs_awarded",
+        "nonspin_awarded",
+    ):
         tidy[col] = pd.to_numeric(tidy[col], downcast="float")
     tidy["hour_ending"] = pd.to_numeric(tidy["hour_ending"], downcast="integer")
     tidy["point"] = tidy["point"].astype("int8")
@@ -177,19 +191,41 @@ def _parse_one_file(path: str, keep_classes: set[str]) -> pd.DataFrame:
     # write, so the multi-year file compresses just as well as categoricals
     # without the cross-file category-union headache when streaming row groups.
     _COLUMN_ORDER = [
-        "delivery_date", "hour_ending", "qse", "resource_name", "resource_type",
-        "model_class", "resource_status", "committed", "settlement_point",
-        "hsl", "lsl", "awarded_qty", "min_gen_cost", "startup_hot",
-        "startup_inter", "startup_cold", "spp", "point", "curve_mw",
-        "curve_price", "regup_awarded", "regdown_awarded", "rrspfr_awarded",
-        "rrsffr_awarded", "rrsufr_awarded", "ecrs_awarded", "nonspin_awarded",
+        "delivery_date",
+        "hour_ending",
+        "qse",
+        "resource_name",
+        "resource_type",
+        "model_class",
+        "resource_status",
+        "committed",
+        "settlement_point",
+        "hsl",
+        "lsl",
+        "awarded_qty",
+        "min_gen_cost",
+        "startup_hot",
+        "startup_inter",
+        "startup_cold",
+        "spp",
+        "point",
+        "curve_mw",
+        "curve_price",
+        "regup_awarded",
+        "regdown_awarded",
+        "rrspfr_awarded",
+        "rrsffr_awarded",
+        "rrsufr_awarded",
+        "ecrs_awarded",
+        "nonspin_awarded",
         "source_file",
     ]
     return tidy[_COLUMN_ORDER]
 
 
-def parse_to_parquet(paths: list[str], keep_classes: set[str],
-                     out_parquet: Path) -> int:
+def parse_to_parquet(
+    paths: list[str], keep_classes: set[str], out_parquet: Path
+) -> int:
     """Stream each file's tidy rows into ``out_parquet``; return total rows."""
     writer = None
     total = 0
@@ -202,8 +238,7 @@ def parse_to_parquet(paths: list[str], keep_classes: set[str],
                 continue
             table = pa.Table.from_pandas(t, preserve_index=False)
             if writer is None:
-                writer = pq.ParquetWriter(out_parquet, table.schema,
-                                          compression="zstd")
+                writer = pq.ParquetWriter(out_parquet, table.schema, compression="zstd")
             writer.write_table(table)
             total += rows
     finally:
@@ -217,8 +252,10 @@ def parse_to_parquet(paths: list[str], keep_classes: set[str],
 def build_crosswalk(tidy: pd.DataFrame) -> pd.DataFrame:
     """Unique resource_name -> settlement_point table with observed envelope."""
     g = (
-        tidy.groupby(["resource_name", "model_class", "resource_type",
-                      "settlement_point"], observed=True)
+        tidy.groupby(
+            ["resource_name", "model_class", "resource_type", "settlement_point"],
+            observed=True,
+        )
         .agg(
             n_offer_rows=("curve_mw", "size"),
             hsl_max=("hsl", "max"),
@@ -235,15 +272,20 @@ def build_crosswalk(tidy: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--input-dir", default=str(DEFAULT_INPUT_DIR))
-    ap.add_argument("--glob", default=DEFAULT_GLOB,
-                    help="filename glob within --input-dir")
+    ap.add_argument(
+        "--glob", default=DEFAULT_GLOB, help="filename glob within --input-dir"
+    )
     ap.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     ap.add_argument("--output-name", default="ercot_dam_offers.parquet")
-    ap.add_argument("--all-classes", action="store_true",
-                    help="keep non-thermal resources too (default: thermal only)")
+    ap.add_argument(
+        "--all-classes",
+        action="store_true",
+        help="keep non-thermal resources too (default: thermal only)",
+    )
     args = ap.parse_args()
 
     paths = glob.glob(os.path.join(args.input_dir, args.glob))
@@ -261,9 +303,18 @@ def main() -> None:
 
     # Second pass over the written file for the crosswalk + summary (cheap; the
     # crosswalk reads only the columns it needs).
-    xwalk_cols = ["resource_name", "model_class", "resource_type",
-                  "settlement_point", "hsl", "lsl", "min_gen_cost",
-                  "startup_cold", "curve_mw", "delivery_date"]
+    xwalk_cols = [
+        "resource_name",
+        "model_class",
+        "resource_type",
+        "settlement_point",
+        "hsl",
+        "lsl",
+        "min_gen_cost",
+        "startup_cold",
+        "curve_mw",
+        "delivery_date",
+    ]
     crosswalk = build_crosswalk(pd.read_parquet(out_parquet, columns=xwalk_cols))
     out_xwalk = out_dir / "ercot_resource_settlement_crosswalk.csv"
     crosswalk.to_csv(out_xwalk, index=False)
@@ -273,8 +324,10 @@ def main() -> None:
     print(f"Wrote {out_xwalk}  ({len(crosswalk):,} resources)")
     print("\nClass coverage (tidy point rows):")
     print(summary.groupby("model_class", observed=True).size().to_string())
-    print(f"\nDate span: {summary['delivery_date'].min().date()} "
-          f"-> {summary['delivery_date'].max().date()}")
+    print(
+        f"\nDate span: {summary['delivery_date'].min().date()} "
+        f"-> {summary['delivery_date'].max().date()}"
+    )
 
 
 if __name__ == "__main__":

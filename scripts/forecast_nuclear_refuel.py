@@ -19,6 +19,7 @@ Examples::
     python scripts/forecast_nuclear_refuel.py --isos ERCOT CAISO PJM \
         --years 2026 2027 --cycle-years 2 --out data/raw/reference/nuclear-refuel-forecast.csv
 """
+
 from __future__ import annotations
 
 import argparse
@@ -70,7 +71,7 @@ def forecast_refuel_blocks(
     for iso in isos:
         units = _nuclear_units(iso)
         for i, (code, name, unit, cap) in enumerate(units):
-            phase = i % cycle_years          # which year within the cycle
+            phase = i % cycle_years  # which year within the cycle
             season = "spring" if i % 2 == 0 else "fall"
             mo, day = _SHOULDER_START[season]
             for year in years:
@@ -78,39 +79,69 @@ def forecast_refuel_blocks(
                     continue
                 start = pd.Timestamp(year=year, month=mo, day=day)
                 end = start + pd.Timedelta(days=outage_days)
-                rows.append({
-                    "iso": iso,
-                    "plant_code": code,
-                    "plant_name": name,
-                    "unit": unit,
-                    "capacity_mw": round(cap, 1),
-                    "outage_start": start.strftime("%Y-%m-%d"),
-                    "outage_end": end.strftime("%Y-%m-%d"),
-                    "duration_days": outage_days,
-                    "season": season,
-                    "cycle_years": cycle_years,
-                })
-    return pd.DataFrame(rows, columns=[
-        "iso", "plant_code", "plant_name", "unit", "capacity_mw",
-        "outage_start", "outage_end", "duration_days", "season", "cycle_years",
-    ]).sort_values(["iso", "outage_start", "plant_code"]).reset_index(drop=True)
+                rows.append(
+                    {
+                        "iso": iso,
+                        "plant_code": code,
+                        "plant_name": name,
+                        "unit": unit,
+                        "capacity_mw": round(cap, 1),
+                        "outage_start": start.strftime("%Y-%m-%d"),
+                        "outage_end": end.strftime("%Y-%m-%d"),
+                        "duration_days": outage_days,
+                        "season": season,
+                        "cycle_years": cycle_years,
+                    }
+                )
+    return (
+        pd.DataFrame(
+            rows,
+            columns=[
+                "iso",
+                "plant_code",
+                "plant_name",
+                "unit",
+                "capacity_mw",
+                "outage_start",
+                "outage_end",
+                "duration_days",
+                "season",
+                "cycle_years",
+            ],
+        )
+        .sort_values(["iso", "outage_start", "plant_code"])
+        .reset_index(drop=True)
+    )
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--isos", nargs="+", default=["ERCOT"],
-                    help="ISOs to forecast (default ERCOT).")
-    ap.add_argument("--years", nargs="+", type=int, required=True,
-                    help="Forecast years.")
-    ap.add_argument("--cycle-years", type=int, default=2,
-                    help="Refuel cadence: 2 = biannual (default), 3 = 3-year.")
-    ap.add_argument("--outage-days", type=int, default=_DEFAULT_OUTAGE_DAYS,
-                    help="Refueling outage length in days (default 35).")
-    ap.add_argument("--base-year", type=int, default=2024,
-                    help="Phase anchor year (default 2024).")
-    ap.add_argument("--out", default=None,
-                    help="CSV output path; prints to stdout when omitted.")
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument(
+        "--isos", nargs="+", default=["ERCOT"], help="ISOs to forecast (default ERCOT)."
+    )
+    ap.add_argument(
+        "--years", nargs="+", type=int, required=True, help="Forecast years."
+    )
+    ap.add_argument(
+        "--cycle-years",
+        type=int,
+        default=2,
+        help="Refuel cadence: 2 = biannual (default), 3 = 3-year.",
+    )
+    ap.add_argument(
+        "--outage-days",
+        type=int,
+        default=_DEFAULT_OUTAGE_DAYS,
+        help="Refueling outage length in days (default 35).",
+    )
+    ap.add_argument(
+        "--base-year", type=int, default=2024, help="Phase anchor year (default 2024)."
+    )
+    ap.add_argument(
+        "--out", default=None, help="CSV output path; prints to stdout when omitted."
+    )
     args = ap.parse_args()
 
     df = forecast_refuel_blocks(

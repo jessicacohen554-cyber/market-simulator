@@ -18,7 +18,11 @@ def _check_energy_balance(result, fleet, demand, incidence, storage_arrays, atol
     gen_by_zone = np.zeros((n_zones, T))
     for g in range(fleet.n_gen):
         gen_by_zone[fleet.zone_idx[g]] += result.dispatch[g]
-    net_flow = incidence.toarray() @ result.flows if result.flows is not None else np.zeros((n_zones, T))
+    net_flow = (
+        incidence.toarray() @ result.flows
+        if result.flows is not None
+        else np.zeros((n_zones, T))
+    )
     chg_by_zone = np.zeros((n_zones, T))
     dis_by_zone = np.zeros((n_zones, T))
     if storage_arrays is not None and result.storage_charge is not None:
@@ -26,8 +30,16 @@ def _check_energy_balance(result, fleet, demand, incidence, storage_arrays, atol
             chg_by_zone[storage_arrays.zone_idx[s]] += result.storage_charge[s]
             dis_by_zone[storage_arrays.zone_idx[s]] += result.storage_discharge[s]
     dump = result.dump if result.dump is not None else np.zeros_like(result.slack)
-    supply = (gen_by_zone + result.wind_dispatched + result.solar_dispatched
-              + dis_by_zone - chg_by_zone + net_flow + result.slack - dump)
+    supply = (
+        gen_by_zone
+        + result.wind_dispatched
+        + result.solar_dispatched
+        + dis_by_zone
+        - chg_by_zone
+        + net_flow
+        + result.slack
+        - dump
+    )
     np.testing.assert_allclose(supply, demand, atol=atol)
 
 
@@ -94,7 +106,9 @@ class TestErcotIntegration(unittest.TestCase):
         hour_of_day = hours % 24
         daily_shape = 0.6 + 0.4 * np.sin(np.pi * (hour_of_day - 6) / 12)
         total_demand = 10000 * daily_shape
-        demand = np.array([z.load_share for z in iso.zones])[:, None] * total_demand[None, :]
+        demand = (
+            np.array([z.load_share for z in iso.zones])[:, None] * total_demand[None, :]
+        )
 
         n_zones = len(zone_names)
         west = zone_names.index("West")
@@ -215,9 +229,7 @@ class TestFullYearPerformance(unittest.TestCase):
         wind_cap[west] = 2000.0
 
         solar_cf = np.zeros((n_zones, T))
-        solar_cf[south_central] = np.clip(
-            0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1
-        )
+        solar_cf[south_central] = np.clip(0.6 * np.sin(np.pi * (hod - 6) / 12), 0, 1)
         solar_cap = np.zeros(n_zones)
         solar_cap[south_central] = 1500.0
 
@@ -252,8 +264,7 @@ class TestFullYearPerformance(unittest.TestCase):
 
         # e) report timings
         print(
-            f"8760h perf: build={result.build_time:.2f}s "
-            f"solve={result.solve_time:.2f}s"
+            f"8760h perf: build={result.build_time:.2f}s solve={result.solve_time:.2f}s"
         )
 
 

@@ -259,14 +259,12 @@ def build_fleet_frame(
     for col in ("summer_capacity_mw", "winter_capacity_mw"):
         df[col] = pd.to_numeric(df.get(col), errors="coerce").astype("float64")
     df["nameplate_capacity_mw"] = df["nameplate_capacity_mw"].astype("float64")
-    df["operating_year"] = (
-        pd.to_numeric(df.get("operating_year"), errors="coerce").astype("Int64")
-    )
+    df["operating_year"] = pd.to_numeric(
+        df.get("operating_year"), errors="coerce"
+    ).astype("Int64")
 
     # Storage energy capacity joined on the unit key.
-    df["energy_capacity_mwh"] = pd.Series(
-        float("nan"), index=df.index, dtype="float64"
-    )
+    df["energy_capacity_mwh"] = pd.Series(float("nan"), index=df.index, dtype="float64")
     if storage_df is not None and len(storage_df):
         s = storage_df.rename(
             columns={
@@ -379,9 +377,7 @@ def curate(
     """Curate every EIA-860 vintage found under ``eia860_root``."""
     vintages = discover_vintages(eia860_root)
     if not vintages:
-        raise FileNotFoundError(
-            f"no {GENERATOR_OPERABLE} found under {eia860_root}"
-        )
+        raise FileNotFoundError(f"no {GENERATOR_OPERABLE} found under {eia860_root}")
     written: list[Path] = []
     for year in sorted(vintages):
         _, out = curate_vintage(
@@ -399,11 +395,14 @@ def curate(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--eia860-root", type=Path, default=paths.EIA_860_DIR,
+        "--eia860-root",
+        type=Path,
+        default=paths.EIA_860_DIR,
         help="EIA-860 root directory (default: the canonical data/raw/eia-860).",
     )
     parser.add_argument(
-        "--no-write", action="store_true",
+        "--no-write",
+        action="store_true",
         help="Build the frames but do not write parquet (dry run).",
     )
     args = parser.parse_args(argv)
@@ -411,8 +410,10 @@ def main(argv: list[str] | None = None) -> int:
 
     written = curate(eia860_root=args.eia860_root, write=not args.no_write)
     if args.no_write:
-        logger.info("dry run: %d vintage(s) built, nothing written", len(
-            discover_vintages(args.eia860_root)))
+        logger.info(
+            "dry run: %d vintage(s) built, nothing written",
+            len(discover_vintages(args.eia860_root)),
+        )
     else:
         logger.info("curated %d fleet vintage(s)", len(written))
     return 0

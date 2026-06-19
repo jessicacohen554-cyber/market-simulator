@@ -74,9 +74,16 @@ def _solve_caiso(internal, demand_by_zone, with_import_node=True):
     )
     n = len(zone_names)
     result = solve_dispatch(
-        fleet, demand, mc=mc, T=T, incidence=incidence, ttc=ttc,
-        wind_cf=np.zeros((n, T)), wind_cap=np.zeros(n),
-        solar_cf=np.zeros((n, T)), solar_cap=np.zeros(n),
+        fleet,
+        demand,
+        mc=mc,
+        T=T,
+        incidence=incidence,
+        ttc=ttc,
+        wind_cf=np.zeros((n, T)),
+        wind_cap=np.zeros(n),
+        solar_cf=np.zeros((n, T)),
+        solar_cap=np.zeros(n),
     )
     return result, fleet, config
 
@@ -131,9 +138,7 @@ class TestCaisoTopologyInvariants(unittest.TestCase):
             self.assertIn(link.to_zone, names)
 
     def test_import_node_links_into_north_and_south(self):
-        by_pair = {
-            (l.from_zone, l.to_zone): l.ttc_mw for l in self.config.links
-        }
+        by_pair = {(l.from_zone, l.to_zone): l.ttc_mw for l in self.config.links}
         # Path 66 / COI into NP15 and Path 46 / WOR into SP15.
         self.assertEqual(by_pair[(IMPORT_ZONE, "NP15")], 4800.0)
         self.assertEqual(by_pair[(IMPORT_ZONE, "SP15")], 10623.0)
@@ -214,8 +219,8 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         # gas to the margin, so both bottleneck links saturate and ZP26 prices
         # above NP15 — all without the solve falling over.
         internal = [
-            _internal_gen("NP15", 30000.0, 25.0),   # abundant cheap northern gas
-            _internal_gen("ZP26", 6000.0, 90.0),     # expensive local backstop
+            _internal_gen("NP15", 30000.0, 25.0),  # abundant cheap northern gas
+            _internal_gen("ZP26", 6000.0, 90.0),  # expensive local backstop
         ]
         demand = {"NP15": 2000.0, "ZP26": 12000.0}
         result, fleet, config = _solve_caiso(internal, demand, with_import_node=False)
@@ -230,7 +235,10 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         # Every flow still respects its TTC.
         self.assertTrue(np.all(np.abs(result.flows) <= ttc[:, None] + 1e-6))
         # Congestion separates the hub prices: ZP26 clears above NP15.
-        i_np15, i_zp26 = config.zone_names.index("NP15"), config.zone_names.index("ZP26")
+        i_np15, i_zp26 = (
+            config.zone_names.index("NP15"),
+            config.zone_names.index("ZP26"),
+        )
         self.assertTrue(np.all(result.prices[i_zp26] > result.prices[i_np15] + 1.0))
 
     def test_no_unserved_energy_when_capacity_is_adequate(self):
