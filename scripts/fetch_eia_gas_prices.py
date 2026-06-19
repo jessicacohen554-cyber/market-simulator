@@ -58,7 +58,8 @@ BASE = "https://api.eia.gov/v2"
 # Spot and Futures Prices (NYMEX)" dataset. RNGWHHD = daily, RNGWHHM = monthly.
 HH_ROUTE = "natural-gas/pri/fut"
 HH_DAILY_SERIES = "RNGWHHD"
-HH_MONTHLY_SERIES = "RNGWHHM"
+# NOTE: the monthly Henry Hub series (RNGWHHM) returns EMPTY on this route
+# (confirmed by --dry-run), so the monthly average is derived from RNGWHHD.
 
 # State citygate price series (Dollars per Thousand Cubic Feet), EIA "Natural Gas
 # Prices" summary dataset. Series id N3050<state>3 = citygate price, monthly.
@@ -168,10 +169,7 @@ def dry_run(key: str, isos: list[str]) -> int:
     ids into ``ISO_CITYGATE`` / the citygate query. Returns an exit code.
     """
     ok = True
-    print("=== Henry Hub ===")
-    ok &= _probe(HH_ROUTE, {"frequency": "monthly",
-                            "facets[series][]": HH_MONTHLY_SERIES}, key,
-                 f"{HH_MONTHLY_SERIES} (HH monthly)")
+    print("=== Henry Hub (monthly is derived from daily) ===")
     ok &= _probe(HH_ROUTE, {"frequency": "daily",
                             "facets[series][]": HH_DAILY_SERIES}, key,
                  f"{HH_DAILY_SERIES} (HH daily)")
@@ -202,21 +200,14 @@ def dry_run(key: str, isos: list[str]) -> int:
 
 
 def fetch_henry_hub(key: str, sleep_s: float) -> None:
-    """Refresh henry_hub_monthly.csv and henry_hub_daily.csv (full history)."""
-    GAS_DIR.mkdir(parents=True, exist_ok=True)
+    """Refresh henry_hub_daily.csv, and henry_hub_monthly.csv derived from it.
 
-    monthly = _get(HH_ROUTE, {"frequency": "monthly",
-                              "facets[series][]": HH_MONTHLY_SERIES}, key, sleep_s)
-    rows = []
-    for r in monthly:
-        if r.get("value") in (None, ""):
-            continue
-        y, m = r["period"].split("-")[:2]
-        rows.append((int(y), int(m), round(float(r["value"]), 4)))
-    rows.sort()
-    _write_csv(GAS_DIR / "henry_hub_monthly.csv",
-               ["year", "month", "price_usd_mmbtu"], rows)
-    print(f"  henry_hub_monthly.csv: {len(rows)} rows")
+    The daily spot series (RNGWHHD) returns full history; the monthly series
+    (RNGWHHM) comes back EMPTY on this route (confirmed by --dry-run), so the
+    monthly average is derived from the daily series — a defensible monthly value
+    and exactly what the citygate basis join needs.
+    """
+    GAS_DIR.mkdir(parents=True, exist_ok=True)
 
     daily = _get(HH_ROUTE, {"frequency": "daily",
                             "facets[series][]": HH_DAILY_SERIES}, key, sleep_s)
@@ -225,6 +216,17 @@ def fetch_henry_hub(key: str, sleep_s: float) -> None:
     _write_csv(GAS_DIR / "henry_hub_daily.csv",
                ["date", "price_usd_mmbtu"], drows)
     print(f"  henry_hub_daily.csv: {len(drows)} rows")
+
+    # Monthly = mean of the daily spot in each calendar month.
+    buckets: dict[tuple[int, int], list[float]] = {}
+    for date, val in drows:
+        y, m = (int(x) for x in date.split("-")[:2])
+        buckets.setdefault((y, m), []).append(val)
+    mrows = sorted((y, m, round(sum(v) / len(v), 4))
+                   for (y, m), v in buckets.items())
+    _write_csv(GAS_DIR / "henry_hub_monthly.csv",
+               ["year", "month", "price_usd_mmbtu"], mrows)
+    print(f"  henry_hub_monthly.csv: {len(mrows)} rows (derived from daily)")
 
 
 def fetch_citygate(key: str, isos: list[str], start_year: int,
@@ -258,7 +260,8 @@ def fetch_citygate(key: str, isos: list[str], start_year: int,
             existing.append({
                 "iso": iso, "year": y, "month": m, "hub": hub,
                 "basis_usd_mmbtu": basis,
-                "source": f"EIA {series} citygate - Henry Hub {HH_MONTHLY_SERIES}",
+                "source": f"EIA {series} citygate - Henry Hub ({HH_DAILY_SERIES} "
+                          f"monthly mean)",
             })
             have.add((iso, y, m))
             n += 1
