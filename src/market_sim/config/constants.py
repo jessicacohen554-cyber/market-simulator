@@ -2256,6 +2256,51 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     },
 }
 
+# --- NEISO (ISO-NE) RCPF (Reserve Constraint Penalty Factor) scarcity overlay -
+# ISO-NE, like NYISO and unlike ERCOT, prices real-time scarcity through
+# Reserve Constraint Penalty Factors rather than an ORDC/LOLP curve. When
+# dispatchable headroom falls below an operating-reserve requirement, the
+# reserve-constraint penalty sets the reserve clearing price, and through
+# energy/reserve co-optimization that shadow price flows into the LMP. The
+# three products are nested (TMSR ⊂ total 10-minute ⊂ total 30-minute), so in
+# a deepening shortage the penalties STACK into the energy price. ISO-NE is a
+# capacity-market region (FCM), so in calm hours fixed cost is recovered
+# through capacity, not energy — the overlay owns the price TAIL only and is
+# $0 whenever reserves clear the requirement (the vast majority of backcast
+# hours; this lever matters for forward/scarcity scenarios, not the calm
+# 2023-25 backcast). Mirrors NYISO_RCPF_PRODUCTS; same post-solve, LP-untouched
+# convention (results.rcpf / docs/nyiso-rcpf-overlay.md).
+#
+# Each product is (name, requirement_mw, critical_mw, max_penalty_$/MWh).
+#
+# Requirements (ISO-NE OP-8, "Operating Reserve and Regulation"):
+#   * Total 10-minute reserve (TMSR + TMNSR) = the largest First Contingency.
+#   * TMSR (ten-minute spinning)             = 1/2 of the First Contingency.
+#   * Total 30-minute reserve (+ TMOR)       = First Contingency
+#                                              + 1/2 of the Second Contingency.
+# First/Second Contingency magnitude: ISO-NE's largest single contingencies
+# are the big nuclear units / major imports (Millstone 3 ~1,205 MW, Seabrook
+# ~1,245 MW). DOCUMENTED ESTIMATE 1,200 MW each pending the exact OP-8 posted
+# values -> TMSR 600, 10-min-total 1,200, 30-min-total 1,800 MW.
+# TODO(NE-contingency): replace 1,200 MW with the posted OP-8 First/Second
+# Contingency once sourced; the magnitude is the only estimated input.
+#
+# Penalties (RCPF, ISO-NE Tariff Market Rule 1 / DA-AS settlement reference):
+# TMSR $50/MWh, TMNSR (total 10-min) $1,500/MWh, TMOR (total 30-min)
+# $1,000/MWh. These are SOURCED tariff values, not fitted. critical_mw = 0
+# for every product (the demand curve ramps linearly from $0 at the
+# requirement to the max penalty at zero reserves — the documented
+# piecewise-linear stand-in for the posted stepped curve, the same convention
+# as the NYISO 10-minute products). Local Reserve Zone (NEMA/Boston, CT, SWCT)
+# second-contingency reserves carry a $250/MWh TMOR RCPF; like NYISO's
+# locational tier they need per-zone headroom and are deferred to a locational
+# follow-up — this system-wide overlay matches the pool RT price.
+NEISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
+    ("ne_30min_total", 1800.0, 0.0, 1000.0),
+    ("ne_10min_total", 1200.0, 0.0, 1500.0),
+    ("ne_10min_spin", 600.0, 0.0, 50.0),
+)
+
 # Model-wide constants.
 STORAGE_TIEBREAKER_EPSILON: float = 0.001  # $/MWh — prevents degenerate charge/discharge
 HOURS_PER_YEAR: int = 8760

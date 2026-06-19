@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from market_sim.config.constants import (
+    NEISO_RCPF_PRODUCTS,
     NYISO_RCPF_LOCATIONAL,
     NYISO_RCPF_PRODUCTS,
 )
@@ -109,6 +110,38 @@ def test_config_flag_defaults_off():
     assert ScenarioConfig().nyiso_rcpf_enabled is False
     assert ScenarioConfig().nyiso_rcpf_products is None
     assert ScenarioConfig().nyiso_rcpf_locational is None
+
+
+# --- NEISO (ISO-NE) RCPF: ISO-aware product resolution ---------------------
+
+def test_resolve_products_neiso_uses_isone_table():
+    """A NEISO config resolves to the ISO-NE products; other ISOs unchanged."""
+    assert (resolve_rcpf_products(ScenarioConfig(iso="NEISO"))
+            == NEISO_RCPF_PRODUCTS)
+    # The default (no iso / NYISO) path is untouched.
+    assert resolve_rcpf_products(ScenarioConfig()) == NYISO_RCPF_PRODUCTS
+    assert (resolve_rcpf_products(ScenarioConfig(iso="NYISO"))
+            == NYISO_RCPF_PRODUCTS)
+    # A NEISO override flows through the resolver and the adder.
+    custom = (("ne_test", 1000.0, 0.0, 250.0),)
+    cfg = ScenarioConfig(iso="NEISO", neiso_rcpf_products=custom)
+    assert resolve_rcpf_products(cfg) == custom
+    assert rcpf_adder(np.array([0.0]), cfg)[0] == pytest.approx(250.0)
+
+
+def test_neiso_adder_dormant_above_requirement_and_stacks_below():
+    """$0 when reserves clear the requirement; full stack at zero reserves."""
+    cfg = ScenarioConfig(iso="NEISO")
+    # Above the largest requirement (1,800 MW) -> dormant.
+    assert rcpf_adder(np.array([2500.0]), cfg)[0] == pytest.approx(0.0)
+    # At zero reserves -> the three penalties stack ($50 + $1,500 + $1,000).
+    expected = sum(p[3] for p in NEISO_RCPF_PRODUCTS)
+    assert rcpf_adder(np.array([0.0]), cfg)[0] == pytest.approx(expected)
+
+
+def test_neiso_config_flag_defaults_off():
+    assert ScenarioConfig().neiso_rcpf_enabled is False
+    assert ScenarioConfig().neiso_rcpf_products is None
 
 
 # --- locational (zonal) reserve cascade ------------------------------------
