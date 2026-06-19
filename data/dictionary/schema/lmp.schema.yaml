@@ -1,0 +1,86 @@
+# Canonical schema: locational marginal prices (LMP)
+#
+# ONE schema reconciling the divergent per-ISO source layouts into a single
+# clean contract. Source columns observed in data/raw/lmp-data and friends:
+#   CAISO  : interval_start_gmt, node, LMP, MCC, MCE, MCL, MGHG
+#   PJM    : DA_LMP / RT_LMP (separate day-ahead vs real-time price columns)
+#   ERCOT  : settlement-point price (LMP) by node/hub, DAM + RTM
+#   NYISO  : LBMP plus marginal-cost-of-losses / -congestion components
+#   NEISO  : day-ahead / real-time hub LMP from the SMD hourly workbooks
+#
+# Reconciliation: the day-ahead vs real-time split (PJM DA_LMP/RT_LMP,
+# CAISO dam/rtm files, ERCOT DAM/RTM) becomes the `market` key rather than
+# separate columns. The CAISO component decomposition (MCE/MCC/MCL/MGHG)
+# becomes the canonical energy/congestion/loss/ghg component columns; ISOs
+# that publish only a total LMP leave the components null.
+datatype: lmp
+schema_version: 1
+title: Locational marginal prices
+description: >-
+  Hourly locational marginal price and its components by ISO, market
+  (day-ahead vs real-time) and pricing node/zone.
+
+# Standard key columns (iso/zone/node + UTC interval). One row per key tuple.
+key_columns: [iso, market, node, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the settlement interval (hour beginning).
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: >-
+      Optional wall-clock local interval start in the ISO's prevailing zone
+      (informational; UTC is authoritative for joins).
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (ERCOT, CAISO, PJM, MISO, SPP, NYISO, NEISO).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market run — "DAM" (day-ahead) or "RTM" (real-time).
+  - name: node
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Pricing node / settlement point / hub identifier. Use the ISO's native
+      node id; zone-level series use the zone name here.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: true
+    description: Load/reporting zone the node rolls up to, when known.
+  - name: lmp_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: false
+    description: Total locational marginal price (CAISO LMP, PJM DA/RT_LMP, NYISO LBMP).
+  - name: energy_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: System energy (marginal energy) component — CAISO MCE.
+  - name: congestion_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Marginal congestion component — CAISO MCC, NYISO MCC.
+  - name: loss_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Marginal loss component — CAISO MCL, NYISO MCL.
+  - name: ghg_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Greenhouse-gas adder component — CAISO MGHG (other ISOs null).

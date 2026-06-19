@@ -1,0 +1,109 @@
+# Canonical schema: ancillary-services market clearing
+#
+# Reconciles the strongly divergent per-ISO AS layouts into ONE wide schema
+# keyed on a standard product taxonomy. Source columns observed:
+#   NYISO : spin_10, nonsync_10, op_30, reg_cap         (clearing prices, $/MW)
+#   PJM   : ancillary_service, value (long/tall format; product in a column)
+#   ERCOT : REGUP / REGDN / RRS / ECRS / NSPIN MCPC + MW (DAM AS disclosure)
+#   CAISO : RU / RD / SR / NR by region
+#
+# Reconciliation onto a common product set (regulation up/down, spinning,
+# non-spinning, 30-minute supplemental):
+#   NYISO spin_10  -> spin_*            NYISO nonsync_10 -> nonspin_*
+#   NYISO op_30    -> supp_30min_*      NYISO reg_cap    -> reg_up_*
+#   PJM  REG       -> reg_up_* ;  SR/SYNC -> spin_* ;  NSR -> nonspin_*
+#   ERCOT REGUP/REGDN -> reg_up_/reg_down_* ; RRS/SR -> spin_* ;
+#         NSPIN -> nonspin_* ; ECRS -> supp_30min_*
+# PJM's long format is pivoted product -> column on the way in.
+#
+# Note on units: AS products are capacity reservations, so clearing prices are
+# $/MW (usd_per_mw), distinct from energy LMP ($/MWh). Cleared MW quantities
+# use the *_mw suffix. ISOs that do not run a given product leave it null.
+datatype: ancillary-services
+schema_version: 1
+title: Ancillary-services market clearing
+description: >-
+  Hourly ancillary-services clearing prices ($/MW) and cleared quantities (MW)
+  by ISO, zone and market run, on a reconciled common product taxonomy.
+
+key_columns: [iso, zone, market, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local hour start.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: AS reserve zone / region (use "SYSTEM" for system-wide products).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market run — "DAM" (day-ahead) or "RTM" (real-time).
+  # --- clearing prices (capacity reservation, $/MW) ---
+  - name: reg_up_price_usd_per_mw
+    dtype: float64
+    unit: usd_per_mw
+    nullable: true
+    description: Regulation-up (and combined regulation capacity) clearing price.
+  - name: reg_down_price_usd_per_mw
+    dtype: float64
+    unit: usd_per_mw
+    nullable: true
+    description: Regulation-down clearing price.
+  - name: spin_price_usd_per_mw
+    dtype: float64
+    unit: usd_per_mw
+    nullable: true
+    description: Spinning / 10-minute synchronized reserve clearing price.
+  - name: nonspin_price_usd_per_mw
+    dtype: float64
+    unit: usd_per_mw
+    nullable: true
+    description: Non-spinning / 10-minute non-synchronized reserve clearing price.
+  - name: supp_30min_price_usd_per_mw
+    dtype: float64
+    unit: usd_per_mw
+    nullable: true
+    description: 30-minute operating / supplemental reserve (incl. ERCOT ECRS) clearing price.
+  # --- cleared quantities (MW) ---
+  - name: reg_up_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Cleared regulation-up requirement.
+  - name: reg_down_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Cleared regulation-down requirement.
+  - name: spin_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Cleared spinning / synchronized reserve.
+  - name: nonspin_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Cleared non-spinning reserve.
+  - name: supp_30min_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Cleared 30-minute supplemental reserve.
