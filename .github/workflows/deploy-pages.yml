@@ -33,9 +33,11 @@ on:
     workflows: ["Calibration run", "Bulk-merge auto runs"]
     types: [completed]
 
-# Least-privilege token scoped for the official Pages deployment flow.
+# Token scoped for the official Pages deployment flow, plus contents:write so
+# the deploy can commit the refreshed dashboard files (manifest.js / benchmark.js
+# / backcast-results.html) back to main — it is their single writer.
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -92,6 +94,37 @@ jobs:
           set -euo pipefail
           python3 scripts/build_manifest.py --site-dir _site
           echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+
+      - name: Refresh the committed dashboard files on main
+        # The dashboard's shared files are committed so a raw-branch Pages build
+        # serves a real page too (not a 404), but only THIS workflow writes them:
+        # it is the single writer on main, so calibration-run PRs never touch them
+        # and merge conflict-free. Regenerate into the working tree (repo root)
+        # and commit only when the data (manifest/benchmark) actually changed —
+        # the per-deploy timestamp in the HTML alone is not worth a commit. A push
+        # by GITHUB_TOKEN does not re-trigger this workflow (GitHub's recursion
+        # guard), so there is no deploy loop.
+        run: |
+          set -euo pipefail
+          python3 scripts/build_manifest.py
+          if git diff --quiet -- frontend/data/backcast/manifest.js \
+                                 frontend/data/backcast/benchmark.js; then
+            echo "Dashboard data unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backcast-results.html \
+                  frontend/data/backcast/manifest.js \
+                  frontend/data/backcast/benchmark.js
+          git commit -m "dashboard: refresh generated files [skip ci]"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main \
+              && git push origin "HEAD:main" && exit 0
+            echo "push attempt $i failed; retrying in $((i*5))s"; sleep $((i*5))
+          done
+          echo "Could not push refreshed dashboard files after retries." >&2
+          exit 1
 
       - name: Configure Pages
         # enablement:true turns Pages on (source = GitHub Actions) if it isn't
