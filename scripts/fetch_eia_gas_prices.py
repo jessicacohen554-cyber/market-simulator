@@ -112,6 +112,53 @@ def _get(route: str, params: dict, key: str, sleep_s: float) -> list[dict]:
     return rows
 
 
+def _probe(route: str, params: dict, key: str, label: str) -> bool:
+    """One cheap EIA call (length=5) to validate a series id. Returns True if it
+    returned rows. Prints a one-line summary; never writes files."""
+    q = {"api_key": key, "data[0]": "value", "length": 5, "offset": 0, **params}
+    url = f"{BASE}/{route}/data/?{urlencode(q, doseq=True)}"
+    try:
+        with urlopen(url, timeout=60) as fh:
+            import json
+            payload = json.loads(fh.read().decode())
+    except (HTTPError, URLError) as exc:
+        print(f"  {label}: FAIL — {exc}")
+        return False
+    resp = payload.get("response", {})
+    rows = resp.get("data", [])
+    total = resp.get("total", "?")
+    if not rows:
+        print(f"  {label}: EMPTY — series id likely wrong "
+              f"(warning: {payload.get('response', {}).get('warnings')})")
+        return False
+    units = rows[0].get("units", "?")
+    periods = [r.get("period") for r in rows]
+    print(f"  {label}: OK — {total} rows total, units={units}, "
+          f"sample periods {periods[0]}..{periods[-1]}")
+    return True
+
+
+def dry_run(key: str, isos: list[str]) -> int:
+    """Validate every series id with one small call each. Returns exit code."""
+    ok = True
+    print("=== Henry Hub ===")
+    ok &= _probe(HH_ROUTE, {"frequency": "monthly",
+                            "facets[series][]": HH_MONTHLY_SERIES}, key,
+                 f"{HH_MONTHLY_SERIES} (HH monthly)")
+    ok &= _probe(HH_ROUTE, {"frequency": "daily",
+                            "facets[series][]": HH_DAILY_SERIES}, key,
+                 f"{HH_DAILY_SERIES} (HH daily)")
+    print("=== Citygate (per ISO) ===")
+    for iso in isos:
+        state, _ = ISO_CITYGATE[iso]
+        series = f"N3050{state}3"
+        ok &= _probe(CITYGATE_ROUTE, {"frequency": "monthly",
+                                      "facets[series][]": series}, key,
+                     f"{series} ({iso})")
+    print("dry-run complete." if ok else "dry-run: one or more series FAILED.")
+    return 0 if ok else 1
+
+
 def fetch_henry_hub(key: str, sleep_s: float) -> None:
     """Refresh henry_hub_monthly.csv and henry_hub_daily.csv (full history)."""
     GAS_DIR.mkdir(parents=True, exist_ok=True)
@@ -225,6 +272,9 @@ def main() -> None:
                     help="earliest citygate-basis year to add (default 2015)")
     ap.add_argument("--sleep", type=float, default=1.0,
                     help="seconds between EIA requests")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="validate every series id with one cheap call each and "
+                         "print row counts; write nothing")
     args = ap.parse_args()
 
     key = os.environ.get("EIA_API_KEY")
@@ -232,6 +282,9 @@ def main() -> None:
         print("ERROR: set EIA_API_KEY (free: https://www.eia.gov/opendata/register.php)",
               file=sys.stderr)
         sys.exit(1)
+
+    if args.dry_run:
+        sys.exit(dry_run(key, args.isos))
 
     if "henry-hub" in args.datasets:
         print("=== Henry Hub spot (RNGWHHM / RNGWHHD) ===")
