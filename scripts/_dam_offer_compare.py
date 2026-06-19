@@ -4,7 +4,7 @@ Usage: python scripts/_dam_offer_compare.py <dam_bundle> <baseline_bundle>
 
 Prints the three gate metrics for the offer-curve swap:
   1. Monthly LMP MAE per year ($/MWh) -- model demand-weighted system price vs
-     the actual ERCOT RTSPP (inputs/calibration/actual_lmp_hourly_ERCOT.parquet),
+     the actual ERCOT RTSPP (data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet),
      for both bundles. The energy+reserve co-opt price already carries the
      reserve lift, so the model 'price' is the RTSPP analogue.
   2. High-price tail: hours > $200 and > $500 per year (model demand-weighted

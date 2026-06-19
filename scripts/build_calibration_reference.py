@@ -7,7 +7,7 @@ constants), the measured Henry Hub gas price, and a generation/emissions
 benchmark to compare against.
 
 This script extracts that reference data once and writes it under
-``inputs/calibration/`` so :mod:`scripts.run_calibration` (and any other
+``data/raw/_validation-source/`` so :mod:`scripts.run_calibration` (and any other
 consumer) can read pre-computed values rather than re-deriving them:
 
 * ``calibration_reference.json`` — the full reference: per ISO and year, the
@@ -339,7 +339,7 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
 def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
     """Return the EIA-923 Schedule-5 rows for an ISO's balancing authority.
 
-    Reads the ``f923_{year}`` zip under ``inputs/raw-data``, keeps the rows in
+    Reads the ``f923_{year}`` zip under ``data/raw``, keeps the rows in
     the ISO's balancing authority, and returns a frame with ``net_gen`` (MWh),
     ``pm`` (prime mover) and ``fc`` (fuel code). ``None`` when no zip exists for
     the year (2021/2022) or the ISO has no balancing-authority mapping. Cached

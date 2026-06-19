@@ -1,7 +1,7 @@
 """Convert long-format EIA-930 uploads into the wide per-BA hourly parquet.
 
 The EIA Hourly Electric Grid Monitor bulk download ships two long (tidy)
-parquet files per balancing authority in ``inputs/raw-data``:
+parquet files per balancing authority in ``data/raw``:
 
 * ``<BA>_fueltype.parquet`` -- one row per ``(period, fueltype)`` with the
   net generation by fuel code in ``value_mwh`` (period is UTC, tz-aware).

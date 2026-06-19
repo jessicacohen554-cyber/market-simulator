@@ -88,8 +88,8 @@ def main() -> None:
     ap.add_argument("--year", type=int, default=2024)
     args = ap.parse_args()
 
-    al = json.load(open(REPO / "inputs/calibration/actual_lmp.json"))["CAISO"]
-    cr = json.load(open(REPO / "inputs/calibration/calibration_reference.json"))
+    al = json.load(open(REPO / "data/raw/_validation-source/actual_lmp.json"))["CAISO"]
+    cr = json.load(open(REPO / "data/raw/_validation-source/calibration_reference.json"))
     ref_gas = sum(
         cr["isos"]["CAISO"][str(args.year)]["generation_twh"].get(f, 0.0)
         for f in GAS_FUELS

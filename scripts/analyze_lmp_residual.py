@@ -4,7 +4,7 @@ Compares a calibration bundle's hourly system price (the dispatch LP's
 energy-balance duals, demand-weighted across zones — the dashboard's
 average-LMP convention) against the actual hub-mean hourly LMP series
 produced by ``scripts/derive_actual_lmp.py``
-(``inputs/calibration/actual_lmp_hourly_{ISO}.parquet``).
+(``data/raw/_validation-source/actual_lmp_hourly_{ISO}.parquet``).
 
 The point is diagnosis, not a score: before reaching for structural fixes
 (reserves/ORDC, scarcity adders) the monthly residual must be localized.

@@ -40,7 +40,7 @@ status code, because the QSE-submitted curve is the offer **regardless of award*
 distribution is exactly what we want to characterize. Downstream analysis filters
 on ``committed`` where committed-band economics specifically want online units.
 
-Outputs (under ``inputs/processed/`` by default):
+Outputs (under ``data/raw/_processed-legacy/`` by default):
 
   * ``ercot_dam_offers.parquet`` — the tidy long offer table.
   * ``ercot_resource_settlement_crosswalk.csv`` — the unique

@@ -18,7 +18,7 @@ Method (measured, NOT fit to the LMP residual)
    ``fuel_price_day`` is the delivery-date Henry Hub daily price plus the ERCOT
    gas basis (``GAS_BASIS_DIFFERENTIAL['ERCOT']`` = -0.5 $/MMBtu). ``base_HR`` is
    the class cap-weighted ``Plant_Avg_HR_MMBtu_MWh`` taken straight from the model
-   fleet (``inputs/custom-bin-assignments.csv``), so the heat rate we DIVIDE by is
+   fleet (``data/raw/reference/custom-bin-assignments.csv``), so the heat rate we DIVIDE by is
    the same one the model later MULTIPLIES each plant's own heat rate by. No VOM
    is subtracted (the task formula is ``price / fuel / HR``); VOM is a constant
    $2-4/MWh adder the model re-applies on top, so the recovered offer is the
@@ -59,10 +59,10 @@ either way; only the **peak** band differs:
 
 Outputs
 -------
-* ``inputs/processed/ercot_dam_offer_hrmult_summary.csv`` -- the full measured
+* ``data/raw/_processed-legacy/ercot_dam_offer_hrmult_summary.csv`` -- the full measured
   distribution (committed / econ_low / econ_high / peak-body + near-cap incidence)
   per class, always written.
-* ``inputs/calibration/offer_curve_dam_hrmults.json`` -- the override curve
+* ``data/raw/_validation-source/offer_curve_dam_hrmults.json`` -- the override curve
   (mirrors ``offer_curve_deltas_cc_merit_ramp.json``: class -> band -> value),
   written only with ``--write-json`` once the peak mode is chosen, and fed to the
   run via ``--offer-curve-override-json``.
