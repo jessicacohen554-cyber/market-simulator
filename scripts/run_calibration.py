@@ -909,6 +909,7 @@ def run_year(
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
+    gas_hub_basis_overlay: bool | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
@@ -982,6 +983,9 @@ def run_year(
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(
             caiso_import_hub_prices=caiso_import_hub_prices)
+    if gas_hub_basis_overlay is not None:
+        config = config.with_overrides(
+            gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
