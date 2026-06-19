@@ -2,7 +2,7 @@
 
 Reads ``<run_dir>/system.parquet`` (the per-zone hourly clearing price the
 calibration writes) and compares the P2 annual-mean price per zone to
-``inputs/calibration/actual_lmp.json["NYISO"][year]["zones"][zone]["rt"]``.
+``data/raw/_validation-source/actual_lmp.json["NYISO"][year]["zones"][zone]["rt"]``.
 Highlights the Capital_Hudson - Upstate_West congestion spread that the
 Central-East interface governs.
 
@@ -18,7 +18,7 @@ from pathlib import Path
 import pandas as pd
 
 ZONES = ["Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"]
-ACTUAL = Path("inputs/calibration/actual_lmp.json")
+ACTUAL = Path("data/raw/_validation-source/actual_lmp.json")
 
 
 def score(run_dir: Path, which_pass: str = "P2") -> None:

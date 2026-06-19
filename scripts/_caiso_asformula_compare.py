@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 YEAR = 2024
-RT_MON = json.load(open("inputs/calibration/actual_lmp.json"))["CAISO"]["2024"][
+RT_MON = json.load(open("data/raw/_validation-source/actual_lmp.json"))["CAISO"]["2024"][
     "rt_mon"
 ]
 

@@ -11,7 +11,7 @@ observable.
 This reads the ``f923_*.zip`` releases, sums each plant's coal receipts by
 ``ENERGY_SOURCE`` (by delivered tons), and assigns the plant the supply class
 of its dominant rank. The result is written to
-``inputs/processed/coal_supply_<ISO>.csv`` (one row per coal plant), which
+``data/raw/_processed-legacy/coal_supply_<ISO>.csv`` (one row per coal plant), which
 :func:`market_sim.data.fleet.coal_supply_class` merges on top of the ERCOT
 base map — so adding an ISO is just running this script.
 
@@ -158,7 +158,7 @@ def main() -> None:
         "--year", type=int, nargs="*", default=None,
         help="Restrict to these EIA-923 release years (default: all).",
     )
-    parser.add_argument("--out-dir", default="inputs/processed")
+    parser.add_argument("--out-dir", default="data/raw/_processed-legacy")
     args = parser.parse_args()
 
     table = _coal_supply_table(args.iso.upper(), args.year)

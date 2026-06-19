@@ -266,7 +266,7 @@ class TestNYISODemand(unittest.TestCase):
         Without the NYISO OASIS pal actual-load files, the loader must fall
         back to the static Gold-Book shares rather than raising an error.
         Refresh path: upload U3 (NYISO_load_actuals_<year>.csv) to
-        inputs/raw-data/zone-specific-demand/NYISO/.
+        data/raw/zone-specific-demand/NYISO/.
         """
         zone_names = get_iso_config("NYISO").zone_names
         self.assertIsNone(nyiso_zonal_load_shares(_NYISO_TEST_YEAR, zone_names))

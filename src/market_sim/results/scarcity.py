@@ -706,7 +706,7 @@ def scarcity_prices(
 # The penalty factor enters the energy LMP because energy and reserves are
 # co-optimized: relieving the reserve constraint by backing down a marginal
 # energy unit transfers the constraint's shadow price into the price of energy.
-# Parameters live in inputs/calibration/pjm_ordc_curve.csv (cited in
+# Parameters live in data/raw/_validation-source/pjm_ordc_curve.csv (cited in
 # docs/multi-iso/pjm-reserve-curve-source.md); nothing here is fitted to a
 # price residual.
 #
@@ -740,7 +740,7 @@ def load_pjm_ordc_curve(
 ) -> dict[tuple[str, str], list[tuple[float, float]]]:
     """Load the cited PJM ORDC step curve keyed by (service, locale).
 
-    Reads inputs/calibration/pjm_ordc_curve.csv (columns ``service``,
+    Reads data/raw/_validation-source/pjm_ordc_curve.csv (columns ``service``,
     ``locale``, ``step``, ``breakpoint_offset_mw``, ``penalty_factor``) and
     returns, per (service, locale), the step list ``[(offset_mw, penalty), ...]``
     sorted by ascending offset. ``offset_mw`` is measured from the reserve
@@ -904,7 +904,7 @@ def load_pjm_measured_reserve_requirement(
     """Return the measured PJM_RTO Primary Reserve requirement (MW), hourly.
 
     The published reserve requirement (``pr_req_mw`` in
-    ``inputs/raw-data/PJM-AS/pjm_<year>_as_up_mw.parquet``, derived by
+    ``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet``, derived by
     ``scripts/build_pjm_as_withholding.py`` from PJM Data Miner) is a measured
     *reliability* quantity — the capacity PJM holds against its most-severe
     single contingency, set by a published market-design formula (Manual 13),
@@ -952,7 +952,7 @@ def pjm_primary_reserve_requirement(
     measured PJM_RTO ``pr_req_mw`` varies only ~+/-15% around its mean and RT/DA
     agree within ~3%). ``lsc_mw`` from :func:`largest_single_contingency_mw`
     keeps it fleet-responsive; the measured series
-    (``inputs/raw-data/PJM-AS``) is a backcast honesty gate only, never an LP
+    (``data/raw/PJM-AS``) is a backcast honesty gate only, never an LP
     input.
 
     Args:
