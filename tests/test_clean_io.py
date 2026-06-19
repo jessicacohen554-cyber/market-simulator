@@ -15,7 +15,9 @@ import pandas as pd
 from scripts.lib import clean_io
 from scripts.lib.clean_io import (
     SchemaError,
+    clean_exists,
     load_schema,
+    read_clean,
     read_clean_metadata,
     validate_clean,
     validate_df,
@@ -207,6 +209,47 @@ class TestWriteRoundTrip(CleanIORedirectMixin):
         pq.write_table(table.replace_schema_metadata(md), path)
         with self.assertRaises(SchemaError):
             validate_clean(path)
+
+
+class TestReadClean(CleanIORedirectMixin):
+    def test_read_clean_round_trips_frame(self):
+        write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
+        self.assertTrue(clean_exists("lmp", iso="CAISO", year=2024, market="DAM"))
+        df = read_clean("lmp", iso="CAISO", year=2024, market="DAM")
+        pd.testing.assert_frame_equal(df, _good_lmp())
+
+    def test_read_clean_column_projection(self):
+        write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
+        df = read_clean(
+            "lmp", iso="CAISO", year=2024, market="DAM",
+            validate=False, columns=["interval_start_utc", "lmp_usd_per_mwh"],
+        )
+        self.assertEqual(list(df.columns), ["interval_start_utc", "lmp_usd_per_mwh"])
+
+    def test_read_clean_missing_raises_with_hint(self):
+        self.assertFalse(clean_exists("lmp", iso="CAISO", year=1999, market="DAM"))
+        with self.assertRaises(FileNotFoundError) as ctx:
+            read_clean("lmp", iso="CAISO", year=1999, market="DAM")
+        self.assertIn("curate_lmp.py", str(ctx.exception))
+
+    def test_read_clean_validates_by_default(self):
+        path = write_clean(_good_lmp(), "lmp", iso="CAISO", year=2024, market="DAM")
+        # Corrupt the embedded version so default-validating read rejects it.
+        import pyarrow.parquet as pq
+
+        table = pq.read_table(path)
+        md = dict(table.schema.metadata or {})
+        md[b"market_sim.schema_version"] = b"999"
+        pq.write_table(table.replace_schema_metadata(md), path)
+        with self.assertRaises(SchemaError):
+            read_clean("lmp", iso="CAISO", year=2024, market="DAM")
+
+
+class TestRegenerateEntrypoint(unittest.TestCase):
+    def test_datatype_list_matches_schemas(self):
+        from scripts.regenerate_clean import DATATYPES
+
+        self.assertEqual(sorted(DATATYPES), sorted(ALL_DATATYPES))
 
 
 if __name__ == "__main__":
