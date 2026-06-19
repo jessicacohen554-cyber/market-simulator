@@ -546,6 +546,15 @@ class ScenarioConfig:
     # CHANGE — it alters dispatch volumes (units part-load for reserve), so it is
     # NOT byte-identical and the volume calibration must be re-run before a
     # keeper. Default off. See docs/ordc-overlay.md (energy+reserve co-opt).
+    ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
+    # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
+    # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
+    # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
+    # scarcity adder in non-scarce hours from omitting load-side reserve supply
+    # (it already counts thermal headroom + storage). Built by
+    # scripts/build_ercot_as_withholding.py (rrsufr_mw); 2023 has no archive
+    # coverage so its scarcity tail is untouched. GATED — alters dispatch
+    # volumes, re-run the volume calibration. Default off; ERCOT co-opt only.
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -1517,6 +1526,7 @@ TIER_TAGS: dict[str, int] = {
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
+    "ercot_load_resource_reserve": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
