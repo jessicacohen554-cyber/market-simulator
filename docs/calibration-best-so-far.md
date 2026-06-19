@@ -266,7 +266,7 @@ crediting the model for it would score generation the model never optimized.
 (The absolute TWh miss is identical to the old whole-plant basis — the BTM
 cancels — so the ±1 TWh classes are unchanged; only the ±5% denominators are
 now honest grid-delivered sizes.) The dashboard's class/system scorecard + mix
-table use the same basis (`scripts/_session_score.py`, `render_calibration_html
+table use the same basis (`scripts/lib/session_score.py`, `render_calibration_html
 .build_payload`); only the per-plant heatmaps stay whole-plant, because CEMS —
 their comparison series — is itself whole-plant.
 
