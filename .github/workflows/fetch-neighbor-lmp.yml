@@ -55,8 +55,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add inputs/calibration/actual_lmp_hourly_MISO.parquet \
-                  inputs/calibration/actual_lmp_hourly_Carolinas.parquet 2>/dev/null || true
+          git add data/raw/_validation-source/actual_lmp_hourly_MISO.parquet \
+                  data/raw/_validation-source/actual_lmp_hourly_Carolinas.parquet 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no new neighbor LMP data to commit"
             exit 0
