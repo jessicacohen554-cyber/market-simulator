@@ -117,6 +117,12 @@ data/raw/NYISO-AS/raw/
 # matching the registered bundles (e.g. ercot_dam_offers_cconly_3yr).
 results/calibration/*/dispatch/
 results/calibration/*/system.parquet
+# Storage series and the post-solve RCPF/scarcity overlay outputs (availability
+# reconstruction + scarcity adder) are regenerable from the bundle via
+# scripts/derive_*_rcpf_overlay.py — scratch, never committed.
+results/calibration/*/storage.parquet
+results/calibration/*/availability_rcpf*.parquet
+results/calibration/*/scarcity*.parquet
 # run131 same-extract baseline re-run: gate-only scratch, not registered.
 results/calibration/ercot_dam_cconly_rerun_3yr/
 # Shared input cache written by calibration runs (scratch).
