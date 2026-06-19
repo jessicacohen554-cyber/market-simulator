@@ -2899,8 +2899,8 @@ def apply_statistical_mode(args) -> None:
     args.no_coal_monthly_pricing = True
 
 
-def build_parser() -> argparse.ArgumentParser:
-    """Construct the calibration CLI parser (separated out for unit testing)."""
+def main() -> None:
+    """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
         description="Calibration backcast (ERCOT full; other ISOs energy-only): "
                     "solve, persist, report."
@@ -3319,19 +3319,6 @@ def build_parser() -> argparse.ArgumentParser:
              "daily AGT spot it proxies (U4) is unavailable, so it is opt-in "
              "and the keepers stay on the measured monthly overlay.",
     )
-    parser.add_argument(
-        "--gas-hub-basis-daily-convexity", type=float, default=None,
-        metavar="EXPONENT",
-        help="Damp the --gas-hub-basis-daily cold-day spike: override the "
-             "demand convexity exponent (default constants."
-             "AGT_DAILY_BASIS_CONVEXITY=7.0, fitted to the backcast). A lower "
-             "value flattens the daily AGT basis so fewer cold-day hours cross "
-             "dual-fuel oil parity, damping the NEISO oil over-dispatch (the "
-             "full convexity over-builds 2025 oil to ~2.1 TWh vs the ~1.2 TWh "
-             "EIA-930 NG:OIL target). Mean-preserving at the monthly hub level, "
-             "so the annual gas burn is unchanged. Requires "
-             "--gas-hub-basis-daily; unset keeps the fitted constant.",
-    )
     parser.add_argument("--plant-tranche-config", default=None,
                         help="Per-plant tranche-config CSV (one row per plant "
                              "with its tranche shares + per-band HR mults). "
@@ -3511,12 +3498,6 @@ def build_parser() -> argparse.ArgumentParser:
              '"COAL_PRB":{"committed":-0.05}}\' nudges committed +0.05 / -0.05. '
              "Applied on top of --offer-curve-json when both are given. The "
              "resolved absolute curve is recorded in run_config.json.")
-    return parser
-
-
-def main() -> None:
-    """Solve + persist a timestamped bundle and report it, or report an old one."""
-    parser = build_parser()
     args = parser.parse_args()
     apply_statistical_mode(args)
 
@@ -3591,10 +3572,6 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "gas_hub_basis_daily": True if args.gas_hub_basis_daily else None,
-            "gas_hub_basis_daily_convexity": (
-                args.gas_hub_basis_daily_convexity
-                if args.gas_hub_basis_daily else None
-            ),
             "dual_fuel_oil_reattribution": (
                 True if args.gas_hub_basis_daily else None
             ),
