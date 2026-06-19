@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import argparse
 
-from _zonal_sufficiency import analyze, render_concentration, render_table
+from lib.zonal_sufficiency import analyze, render_concentration, render_table
 from derive_actual_lmp import neiso_zone_hourly
 
 # (zone_a, zone_b, label) — the prompt's Boston−Hub / CT−Hub / ME−Hub spreads.
