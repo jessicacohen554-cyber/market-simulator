@@ -109,8 +109,32 @@ re-run 3yr and hold run129's volume gate (≥12/18, no ST_GAS crater / CT over-r
 keep the 2023 >$200/>$500 tail (~151/88), and pull 2024/2025 monthly-LMP MAE
 *down* toward actual. Implementation + 3-year gate is the next step.
 
-## Status
+## Status — run131 keeper landed
 
-- Faithful run129 reproduction + this 2025 decomposition: **done** (single-year).
-- Load-resource credit implementation + 3-year re-gate + dashboard registration:
-  **pending** (the gated step).
+- Faithful run129 reproduction + this 2025 decomposition: **done**.
+- Load-resource credit implemented (`--ercot-load-resource-reserve`, gated;
+  measured RRS-UFR — the under-frequency-relay RRS only Load Resources provide,
+  ~0.8–0.9 GW — credited into the co-opt reserve balance), 3-year run, gated, and
+  registered: **done** (`2026-06-19-run131-load-resource-rrs`, bundle
+  `ercot_dam_lrcredit_3yr`).
+
+**Gate (same-extract baseline re-run of the run129 recipe, current extract):**
+
+| year | LMP MAE base→r131 | avg base→r131 (act) | >$200 base→r131 (act) |
+|---|---|---|---|
+| 2023 | 10.5 → 10.5 | 46.7 → 46.7 (48.1) | 151 → 151 (181) |
+| 2024 | 13.1 → **10.5** | 34.7 → 29.0 (26.7) | 82 → 49 (53) |
+| 2025 | 17.1 → **11.3** | 49.5 → 43.7 (32.5) | 84 → 60 (31) |
+
+Per-class TWh: **DAM−BASE ≈ 0.00 every class/year** — the credit moves the
+reserve clearing *price*, not dispatch, so the 12/18 volume keeper and the
+ST_GAS/CT classes hold exactly. 2023 is uncredited (archive starts 2023-12-10),
+so its LMP and the 151/88 scarcity tail are untouched — the keeper is protected
+by construction, not by tuning. **Measured (no markup).**
+
+A note correcting an interim read: the standalone run131 numbers first looked
+like a ~$1 lever only because they were compared against the decomposition's
+*offline-rebuild* baseline; against the **same-extract** baseline the credit
+cuts 2025 LMP MAE by a third. 2025 still runs ~$11 hot (residual co-opt
+overshoot) — a real but separate problem, not closable by pushing CT/ST below
+the measured offer curve (that would be a markup).
