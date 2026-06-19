@@ -371,6 +371,53 @@ def inject_reference_price_mc(
     return applied
 
 
+def inject_caiso_import_hub_prices(
+    fleet_arrays, mc: np.ndarray, iso: str, year: int, carbon_price: float,
+) -> bool:
+    """Overwrite the CAISO import tranche rows of ``mc`` with measured hub prices.
+
+    Mirrors :func:`inject_reference_price_mc` (post-assembly cost overwrite), but
+    for the static priced-import node: each import tranche's marginal cost is set
+    to the **measured hourly WECC neighbor-hub LMP** it proxies
+    (:func:`market_sim.data.eia_loader.measured_import_hub_prices`) plus its CARB
+    border-carbon adder, instead of the static bundle-fitted ladder value carried
+    in the tranche ``vom``.
+
+    Why: ``DIAGNOSIS-caiso-import-ladder-2026-06-19`` — the static ladder was
+    re-fit against the model's own (too-high) solved price, so the import blocks
+    that set the CAISO LMP in its cheaper hours sit ~$15-20 above the real
+    delivered cost, and never go negative; the measured intertie price is the
+    actual delivered energy cost (seasonal spring-runoff crash, negative
+    desert-SW solar glut), which both lowers the body and reproduces the negative
+    midday tail. The per-tranche border carbon is re-added here (clean
+    hydro/solar tranches pay none) so the carbon treatment matches the static
+    ladder; the measured ``price`` is the energy component only.
+
+    Returns ``True`` when at least one import tranche row was repriced, ``False``
+    when CAISO has no measured hub series (so the run keeps the static ladder and
+    is byte-identical).
+    """
+    from market_sim.data.eia_loader import measured_import_hub_prices
+
+    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
+    if not prices:
+        return False
+    zone = IMPORT_ZONE.get(iso)
+    border = wecc_border_carbon_adder(carbon_price)
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if zone is None or not uid.startswith(f"{zone}_"):
+            continue
+        tranche = uid[len(zone) + 1:]
+        hub_price = prices.get(tranche)
+        if hub_price is None:
+            continue  # tranche with no measured hub series stays on the ladder
+        ef = IMPORT_TRANCHE_EF.get(iso, {}).get(tranche, CARB_UNSPECIFIED_IMPORT_EF)
+        mc[row, :] = hub_price + border * (ef / CARB_UNSPECIFIED_IMPORT_EF)
+        applied = True
+    return applied
+
+
 def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     """Return ``iso_config`` with its external import/export zone appended.
 
