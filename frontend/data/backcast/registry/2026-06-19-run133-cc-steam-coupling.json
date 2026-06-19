@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-19-run133-cc-steam-coupling",
+  "label": "run133 cc steam coupling",
+  "date": "2026-06-19",
+  "shorthand": "run133-cc-steam-coupling",
+  "definition": "run131 keeper recipe re-run with the combined-cycle steam-turbine outage coupling: a CC combustion turbine's unit-outage derate now carries its allocated HRSG-steam share (CT_nameplate*(1+sumCA/sumCT)) so a downed CT derates its turbine plus the steam it fed, instead of leaving the CA steam turbine orphaned and fully online. Detection is window-neutral (same outage windows; only the derate magnitude deepens, e.g. Wolf Hollow II 29%->50%). [7c] operating-shape gate PASSES every class/year and per-class TWh holds; the deeper derate lifts the 2023 >$200 tail toward actual but raises 2024/2025 annual LMP ~$5-6 vs run131 (partly offsetting the load-resource credit) — under review before adoption. (PROBE)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-19-run133-cc-steam-coupling.js",
+  "bundle": "results/calibration/ercot_dam_ccsteam_3yr"
+}
