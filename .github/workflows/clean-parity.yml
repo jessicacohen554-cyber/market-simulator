@@ -1,0 +1,69 @@
+# Clean-data contract + parity. The model's data/clean read paths are gated
+# behind MARKET_SIM_USE_CLEAN (default OFF) and their parity tests skip unless
+# the (gitignored) clean tree is regenerated — so they never run in ordinary
+# CI. This workflow regenerates data/clean from data/raw and runs the full
+# contract + clean-vs-raw parity + data-dictionary coverage suite, giving the
+# signal needed before anyone flips a MARKET_SIM_USE_CLEAN default.
+#
+# Manual + weekly (not a per-PR gate): a full regenerate is heavy and depends on
+# the raw inputs being present in the checkout. Promote to pull_request once the
+# regenerate is known-stable in CI.
+name: Clean-data contract + parity
+
+on:
+  workflow_dispatch:
+    inputs:
+      datatypes:
+        description: "Datatypes to regenerate (space-separated; empty = all)"
+        default: ""
+        type: string
+  schedule:
+    # 05:30 UTC every Monday.
+    - cron: "30 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Regenerate data/clean from raw
+        id: regen
+        run: |
+          # Best-effort: a datatype whose raw inputs are missing in the runner
+          # should not block the contract/parity signal for the rest. Record
+          # whether ALL datatypes regenerated so the coverage-matrix check only
+          # runs against a complete tree.
+          if uv run python scripts/regenerate_clean.py ${{ github.event.inputs.datatypes }}; then
+            echo "full=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::regenerate_clean did not fully succeed — coverage-matrix check will be skipped"
+            echo "full=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Contract + parity + coverage tests
+        env:
+          # Opt the model's data/clean read paths on, so the parity tests
+          # actually compare clean-backed vs raw loaders instead of skipping.
+          MARKET_SIM_USE_CLEAN: "1"
+          # Only check the full data-dictionary coverage matrix when the whole
+          # tree regenerated (see test_data_dictionary_sync).
+          MARKET_SIM_CHECK_DICT_COVERAGE: ${{ steps.regen.outputs.full }}
+        run: |
+          uv run python -m pytest \
+            tests/test_clean_io.py \
+            tests/test_consume_*.py \
+            tests/test_data_dictionary_sync.py \
+            --strict-markers -v
