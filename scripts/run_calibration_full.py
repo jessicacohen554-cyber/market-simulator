@@ -1206,6 +1206,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
+    ercot_storage_as_reserve: bool = False,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
@@ -1318,6 +1319,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
+            ercot_storage_as_reserve=ercot_storage_as_reserve,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
@@ -1464,6 +1466,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
+        "ercot_storage_as_reserve": ercot_storage_as_reserve,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
@@ -1540,6 +1543,9 @@ def solve_and_persist(
     if ercot_load_resource_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_load_resource_reserve=True)
+    if ercot_storage_as_reserve:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_storage_as_reserve=True)
     if as_reserve_formula:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
@@ -3272,6 +3278,19 @@ def main() -> None:
              "Off = no load credit (default).",
     )
     parser.add_argument(
+        "--ercot-storage-as-reserve", action="store_true",
+        help="ERCOT energy+reserve co-opt + --storage-as-commitment only: credit "
+             "the measured battery-provided AS (RegUp/RRS/ECRS, the storage "
+             "column of the per-resource-type 60-Day DAM AS awards; ~0.8 GW 2023 "
+             "→ ~2.8 GW 2025) back into the reserve balance. --storage-as-"
+             "commitment subtracts this MW from the storage power cap and the "
+             "reserve block derives reserve room from that reduced cap, so the "
+             "committed battery AS is otherwise dropped from reserve supply even "
+             "though it is held responsive reserve (in ERCOT's RTOLCAP/RTOFFCAP). "
+             "Self-targeting (negligible 2023, largest 2025). GATED: alters "
+             "volumes. Off = no storage-AS credit (default).",
+    )
+    parser.add_argument(
         "--as-reserve-formula", action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
              "R(t) = max(MSSC, 0.067*load) + 0.01*load (WECC MORC contingency + "
@@ -3636,6 +3655,7 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
+        ercot_storage_as_reserve=args.ercot_storage_as_reserve,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
