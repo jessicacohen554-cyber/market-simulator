@@ -14,8 +14,18 @@ from pathlib import Path
 
 import pandas as pd
 
-# Year-tagged parquets that concatenate across bundles.
-_CONCAT = ["system", "eia930", "eia923", "storage", "campd", "btm"]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _bundle_io import (  # noqa: E402
+    SHARED_INPUT_NAMES,
+    bundle_input_path,
+    write_shared_input,
+)
+
+# Year-tagged parquets that concatenate across bundles. The benchmark/input
+# frames (eia930/eia923/campd) now live in the content-addressed shared store
+# referenced from meta.json, not in-bundle, so they are reconciled separately
+# (see below) rather than concatenated as loose files here.
+_CONCAT = ["system", "storage", "btm"]
 
 
 def main(out: Path, year_dirs: list[Path]) -> None:
@@ -49,6 +59,29 @@ def main(out: Path, year_dirs: list[Path]) -> None:
         gas_prices.update(m["gas_prices"])
     meta["years"] = sorted(set(years))
     meta["gas_prices"] = gas_prices
+
+    # Reconcile the content-addressed shared inputs: each per-year bundle
+    # references a single-year eia930/eia923/campd in the shared store, so the
+    # merged bundle must concatenate all years and re-reference the combined
+    # frame (otherwise the dashboard/scorer only sees the first year's bench).
+    iso = meta.get("iso", "PJM")
+    shared_refs: dict[str, str] = {}
+    for name in SHARED_INPUT_NAMES:
+        frames = []
+        for d in year_dirs:
+            p = bundle_input_path(d, name)
+            if p is not None:
+                frames.append(pd.read_parquet(p))
+        if frames:
+            df = pd.concat(frames, ignore_index=True)
+            if "year" in df.columns:
+                df = df.sort_values("year").reset_index(drop=True)
+            shared_refs[name] = write_shared_input(df, name, iso, out)
+            yrs = sorted(df["year"].unique()) if "year" in df.columns else "n/a"
+            print(f"  {name}: {df.shape} years {yrs}")
+    if shared_refs:
+        meta["shared_inputs"] = shared_refs
+
     (out / "meta.json").write_text(json.dumps(meta, indent=2))
     print(f"  meta: years {meta['years']} gas {meta['gas_prices']}")
 
@@ -59,10 +92,13 @@ def main(out: Path, year_dirs: list[Path]) -> None:
         rc = json.loads(rc_path.read_text())
         rc.setdefault("calibration_flags", {})["years"] = meta["years"]
         rc["calibration_flags"]["gas_prices"] = gas_prices
+        # Preserve the per-year solve's own note (set via the runner's --note),
+        # appending the merge provenance rather than overwriting with a
+        # run-specific string.
+        base_note = rc.get("model_changes_note", "")
         rc["model_changes_note"] = (
-            "pjm_27_aswh: keeper pjm_26 config + AS reserve-withholding "
-            "(PJM Primary Reserve requirement), 2023-25 merged from parallel "
-            "per-year solves.")
+            f"{base_note} [merged 2023-25 from parallel per-year solves]"
+        ).strip()
         (out / "run_config.json").write_text(json.dumps(rc, indent=2))
     print(f"merged -> {out}")
 
