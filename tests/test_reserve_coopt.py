@@ -9,7 +9,6 @@ a shape that must be replayed. The measured series is a validation target
 only; it is never an input to the optimization.
 """
 import unittest
-from pathlib import Path
 
 import numpy as np
 

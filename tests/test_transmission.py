@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import (
-    CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_NODE_LINKS,
     IMPORT_TRANCHE_EF,
