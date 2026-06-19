@@ -93,3 +93,14 @@ data/raw/NYISO-AS/raw/
 # Intermediate per-year reference-price (pjm_30) run bundles; only the merged
 # 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
 /results/calibration/pjm_30_20*/
+
+# Calibration bundles are committed slim (input/summary parquets only): the
+# per-hour dispatch dir and system.parquet are large regenerable intermediates
+# (the dashboard bakes their metrics into frontend/data/backcast/runs/<id>.js),
+# matching the registered bundles (e.g. ercot_dam_offers_cconly_3yr).
+results/calibration/*/dispatch/
+results/calibration/*/system.parquet
+# run131 same-extract baseline re-run: gate-only scratch, not registered.
+results/calibration/ercot_dam_cconly_rerun_3yr/
+# Shared input cache written by calibration runs (scratch).
+/results/calibration/_shared/
