@@ -1,0 +1,74 @@
+# Canonical schema: hourly unit/facility emissions (CAMPD / CEMS)
+#
+# Reconciles the EPA CAMPD layouts:
+#   facility-level : stateCode, facilityId, date, hour, grossLoad, steamLoad,
+#                    so2Mass, co2Mass, noxMass, heatInput
+#   unit-level     : adds unitId, opTime, primaryFuelInfo, unitType
+#
+# Reconciliation: CAMPD reports mass in short tons (SO2/NOx) and co2Mass in
+# short tons; the clean contract standardizes ALL emission masses to kilograms
+# (*_kg) and heat input to MMBtu. `date`+`hour` collapse into interval_start_utc.
+# facilityId -> plant_id, unitId -> unit_id (null at facility grain).
+datatype: emissions
+schema_version: 1
+title: Hourly emissions (CEMS / CAMPD)
+description: >-
+  Hourly gross load, heat input and CO2/NOx/SO2 emissions by plant (and unit,
+  where available), with masses standardized to kilograms.
+
+key_columns: [plant_id, unit_id, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour (from CAMPD date + hour).
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Optional wall-clock local hour start.
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: true
+    description: ISO/RTO the plant is assigned to, when mapped.
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Plant / facility identifier (CAMPD facilityId).
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Generating-unit identifier (CAMPD unitId). Use "ALL" for facility-grain
+      rows so the key stays non-null.
+  - name: gross_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Gross electrical load over the hour (CAMPD grossLoad).
+  - name: heat_input_mmbtu
+    dtype: float64
+    unit: mmbtu
+    nullable: true
+    description: Heat input over the hour (CAMPD heatInput).
+  - name: co2_kg
+    dtype: float64
+    unit: kg
+    nullable: true
+    description: CO2 mass emitted over the hour (CAMPD co2Mass, converted to kg).
+  - name: nox_kg
+    dtype: float64
+    unit: kg
+    nullable: true
+    description: NOx mass emitted over the hour (CAMPD noxMass, converted to kg).
+  - name: so2_kg
+    dtype: float64
+    unit: kg
+    nullable: true
+    description: SO2 mass emitted over the hour (CAMPD so2Mass, converted to kg).
