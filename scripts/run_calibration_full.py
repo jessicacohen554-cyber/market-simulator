@@ -1224,6 +1224,7 @@ def solve_and_persist(
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
+    gas_hub_basis_overlay: bool | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
 ) -> Path:
@@ -1337,6 +1338,7 @@ def solve_and_persist(
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_import_hub_prices=caiso_import_hub_prices,
+            gas_hub_basis_overlay=gas_hub_basis_overlay,
         )
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
@@ -1482,6 +1484,7 @@ def solve_and_persist(
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_import_hub_prices": caiso_import_hub_prices,
+        "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
         "git_sha": _git_sha(),
@@ -1580,6 +1583,9 @@ def solve_and_persist(
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_import_hub_prices=caiso_import_hub_prices)
+    if gas_hub_basis_overlay is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            gas_hub_basis_overlay=gas_hub_basis_overlay)
     write_run_config(run_dir, recorded_cfg, meta, note)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -3472,6 +3478,20 @@ def main() -> None:
              "fetched by the fetch-caiso-oasis workflow). Default (unset) keeps "
              "the base config value (currently off pending the measured data).")
     parser.add_argument(
+        "--gas-hub-basis-overlay", action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Reprice gas at the measured trading-hub spot (Henry Hub month + "
+             "the ISO's citygate basis from data/raw/gas_basis_by_iso_month.csv) "
+             "instead of the EIA-923 ISO-month DELIVERED cost. The marginal "
+             "commodity a dispatched CC bids is the hub spot; the firm pipeline "
+             "reservation in the delivered cost is sunk (DIAGNOSIS-caiso-import-"
+             "ladder-2026-06-19 lever B). The citygate basis for all ISOs is "
+             "refreshed by the fetch-eia-gas-prices workflow. On by default only "
+             "for NEISO (the keeper); use this to validate CAISO (or others) once "
+             "the fetched citygate basis lands — it is a keeper-changing run, so "
+             "validate before flipping the _calibration_config default. No-op "
+             "(byte-identical) for any ISO/year with no basis rows.")
+    parser.add_argument(
         "--caiso-gas-floor-frac", type=float, default=None,
         help="Fraction of the measured EIA-930 NG: NG (month x hour-of-day "
              "median) the --caiso-gas-commitment-floor targets. Default (unset) "
@@ -3661,6 +3681,7 @@ def main() -> None:
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
+        gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
     )
