@@ -47,7 +47,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 from market_sim.results.calibration import (  # noqa: E402
     check_cf_band_occupancy,

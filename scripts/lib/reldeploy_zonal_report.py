@@ -18,9 +18,9 @@ from pathlib import Path
 
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
-from scripts._bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
 
 # CEMS-covered thermal classes (the dispatch klass / bin-sheet Plant_Group).
 THERMAL = {"CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP",

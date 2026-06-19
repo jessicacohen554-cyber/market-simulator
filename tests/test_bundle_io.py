@@ -1,4 +1,4 @@
-"""Tests for the content-addressed shared-input store (scripts/_bundle_io.py)."""
+"""Tests for the content-addressed shared-input store (scripts/lib/bundle_io.py)."""
 
 import json
 import unittest
@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts._bundle_io import (
+from scripts.lib.bundle_io import (
     bundle_input_path,
     content_hash,
     read_bundle_input,
