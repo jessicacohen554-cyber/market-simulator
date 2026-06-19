@@ -105,8 +105,8 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         self.assertTrue(applied)
         zone = IMPORT_ZONE["CAISO"]
         ef = IMPORT_TRANCHE_EF["CAISO"]
-        carbon = 15.0  # border adder at carbon 35.23: 0.428*35.23 ~ 15.08, but
-        # the injector recomputes it; assert the clean blocks pay none.
+        # border adder at carbon 35.23 would be 0.428*35.23 ~ 15.08, but the
+        # injector recomputes it; assert the clean blocks pay none.
         row_by_uid = {uid: r for r, uid in enumerate(fa.unit_ids)}
         # PNW_hydro_base: EF 0 -> price only, no carbon
         r = row_by_uid[f"{zone}_PNW_hydro_base"]

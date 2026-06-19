@@ -44,6 +44,32 @@ markers = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+# Pin ruff's historical default ruleset (pyflakes F + pycodestyle E4/E7/E9) so
+# the baseline is explicit and stable across ruff upgrades. CI can now enforce
+# `ruff check` against this config.
+select = ["E4", "E7", "E9", "F"]
+ignore = [
+    # Compact one-line statements are a deliberate idiom here: `import sys;
+    # sys.path.insert(...)` bootstrap headers and dispatch.py's paired
+    # rows/cols COO appends read better together than split. Not worth churning
+    # working code for.
+    "E702",
+    # Single-letter `l` is used only in established math/loop contexts where a
+    # rename buys nothing.
+    "E741",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Loose scripts and tests deliberately manipulate sys.path before importing the
+# package (and many carry inline `# noqa: E402`); the package import cannot
+# precede that bootstrap, so import-not-at-top is expected and intentional here.
+"scripts/**" = ["E402"]
+"tests/**" = ["E402"]
+
 [dependency-groups]
 dev = [
     "pytest",

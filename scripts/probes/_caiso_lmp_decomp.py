@@ -5,7 +5,8 @@ marginal resource. Read-only analysis over a finished bundle. Not a keeper tool.
 Usage: python scripts/probes/_caiso_lmp_decomp.py results/calibration/<bundle> [--year 2024]
 """
 from __future__ import annotations
-import argparse, json
+import argparse
+import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -60,26 +61,24 @@ def main() -> None:
     act_rt = ah["rt"].to_numpy()
 
     # month index (model uses local 8760 calendar; approx via hour//730 fallback)
-    hours_per_month = [31,29,30,31,30,31,31,30,31,30,31,31]  # 2024 leap; sums 366? adjust
     # build month index over 8760 by day-of-year using non-leap mapping for hours align
     import calendar
     days = [31,29 if calendar.isleap(yr) else 28,31,30,31,30,31,31,30,31,30,31]
     midx = np.repeat(np.arange(12), [d*24 for d in days])[:8760]
 
-    print(f"\n=== Annual (load-weighted system) ===")
+    print("\n=== Annual (load-weighted system) ===")
     mmean = float(np.average(model_h, weights=load_by_hour.to_numpy()) if load_by_hour is not None else model_h.mean())
     print(f"model mean {mmean:6.2f} | actual rt mean {rt_mon.mean():6.2f} | resid {mmean-rt_mon.mean():+6.2f}")
 
-    print(f"\n=== Monthly mean LMP (model vs actual rt_mon) ===")
+    print("\n=== Monthly mean LMP (model vs actual rt_mon) ===")
     print(f"{'mon':>3} {'model':>7} {'actual':>7} {'resid':>7}")
     for m in range(12):
         mm = model_h[midx == m].mean()
         print(f"{m+1:>3} {mm:7.1f} {rt_mon[m]:7.1f} {mm-rt_mon[m]:+7.1f}")
 
-    print(f"\n=== Hour-of-day mean LMP, by season (model | actual) ===")
+    print("\n=== Hour-of-day mean LMP, by season (model | actual) ===")
     hod = hours % 24
     seasons = {"winter(DJF)":[11,0,1],"spring(MAM)":[2,3,4],"summer(JJA)":[5,6,7],"fall(SON)":[8,9,10]}
-    act_hod_all = (act_rt % 1)  # placeholder
     for sname, mons in seasons.items():
         sel = np.isin(midx, mons)
         print(f"\n{sname}: hour  model  actual  resid")
@@ -89,7 +88,7 @@ def main() -> None:
             aa = act_rt[hsel].mean()
             print(f"   {h:2d}  {mm:6.1f}  {aa:6.1f}  {mm-aa:+6.1f}")
 
-    print(f"\n=== Duration curve (model vs actual rt) ===")
+    print("\n=== Duration curve (model vs actual rt) ===")
     print(f"{'pct':>5} {'model':>8} {'actual':>8}")
     for p in [0,1,5,10,25,50,75,90,95,99,100]:
         mv = np.percentile(model_h, p)
