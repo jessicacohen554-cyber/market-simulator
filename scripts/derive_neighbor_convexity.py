@@ -89,7 +89,12 @@ YEARS = (2023, 2024, 2025)
 # Exponents this script derives, committed to INTERFACE_NEIGHBORS["PJM"]. Kept
 # here so --check can assert the registry still matches the regression after a
 # data refresh. Filled in once the derivation + sourcing decision is settled.
-COMMITTED_EXPONENT: dict[str, float] = {}
+# NYISO is the only PJM neighbor with a realized-LMP extract in the repo, so it
+# is the only one whose exponent is self-derived and guarded here. MISO and the
+# Carolinas adopt this same value as the organized-thermal-neighbor convexity
+# (see INTERFACE_NEIGHBORS comment) until their own LMP is fetched; they are not
+# listed here because --check can only assert a SELF-derived value.
+COMMITTED_EXPONENT: dict[str, float] = {"NYISO": 1.63}
 
 
 def _realized_rt_lmp(lmp_key: str, year: int) -> np.ndarray | None:
