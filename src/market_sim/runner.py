@@ -186,7 +186,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # measured schedule stays out of demand (it would double-count the
     # export); forward years have no measured schedule anyway.
     # Year-matched EIA-860 vintage (backcast scenario knob): point the fleet /
-    # storage / renewable / COD-map loaders at inputs/raw-data/eia-860/
+    # storage / renewable / COD-map loaders at data/raw/eia-860/
     # vintage_<year>/ when requested, else the canonical 2025ER snapshot. The
     # weather-year inputs are fixed across the run, so the vintage is set once
     # here, before any load. None (forecast, or no committed vintage dir) resets

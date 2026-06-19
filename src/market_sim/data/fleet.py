@@ -2343,7 +2343,7 @@ def _chp_by_plant(eia860_dir: Path, year: int | None = None) -> "pd.Series":
     """Return ``{plant_id: "Y"/"N"}`` plant-level CHP flag from EIA-860.
 
     With ``year`` set and the per-year lookup
-    (:data:`EIA_860_CHP_BY_YEAR_NAME`, under ``inputs/processed``) present, the
+    (:data:`EIA_860_CHP_BY_YEAR_NAME`, under ``data/raw/_processed-legacy``) present, the
     flag is read from THAT year's EIA-860 release, so a 3-year backcast does not
     classify 2023/2024 with the latest snapshot's cogen status. Falls back to
     the single committed operable-generator sheet (the most recent vintage) when
@@ -2563,7 +2563,7 @@ def _cache_binned_fleet(
 def load_binned_fleet(iso: str) -> pd.DataFrame:
     """Return the cached plant-level binned fleet for an ISO.
 
-    Reads ``inputs/processed/{iso}_fleet_binned.parquet`` written by
+    Reads ``data/raw/_processed-legacy/{iso}_fleet_binned.parquet`` written by
     :func:`load_fleet_from_csv`, exposing the efficiency-bin assignment of
     every physical generator for analysis without re-parsing the raw
     EIA-860 data.
@@ -2603,7 +2603,7 @@ def load_fleet_from_csv(
     Wind, solar and hydro are skipped (handled by ``renewables.py``).
 
     As a side output, the plant-level binned fleet is cached to
-    ``inputs/processed/{iso}_fleet_binned.parquet`` for later inspection
+    ``data/raw/_processed-legacy/{iso}_fleet_binned.parquet`` for later inspection
     (see :func:`load_binned_fleet`); it is not consumed by dispatch.
 
     Args:
@@ -2612,7 +2612,7 @@ def load_fleet_from_csv(
             ``None``, it is fetched via :func:`get_iso_config` when the ISO
             is known; ISOs without a config get a single ISO-named zone.
         data_dir: Directory holding the EIA-860 data. Defaults to
-            ``inputs/raw-data/eia-860``.
+            ``data/raw/eia-860``.
         year: Optional backcast year. When set and the per-year CHP lookup is
             present, gas cogens are bucketed with THAT year's EIA-860 CHP
             designation rather than the latest committed snapshot's (see
@@ -2951,7 +2951,7 @@ COAL_PLANT_SUPPLY: dict[int, str] = {
 def _derived_coal_supply() -> dict[int, str]:
     """Return ``{plant_code: supply_class}`` from derived per-ISO CSVs.
 
-    Loads every ``inputs/processed/coal_supply_<ISO>.csv`` written by
+    Loads every ``data/raw/_processed-legacy/coal_supply_<ISO>.csv`` written by
     ``scripts/derive_coal_supply.py`` (EIA-923 fuel-receipt coal ranks:
     ``bituminous`` / ``subbituminous`` / ``waste`` / ``lignite``). EIA plant
     codes are national so the per-ISO files never collide. This generalises the
@@ -3278,11 +3278,11 @@ PETRA_NOVA_MIN_CF: float = 0.92
 
 # Per-plant CC_REGULAR committed-tranche % (minimum stable load once started),
 # keyed by EIA plant code. Derived from EPA CAMPD/CEMS TX 2023 hourly gross
-# output over Jan-July (the window inputs/tx-jan-aug23-unit-outages.csv covers,
+# output over Jan-July (the window data/raw/reference/tx-jan-aug23-unit-outages.csv covers,
 # so available capacity is known): the P5 of each plant's net capacity factor
 # over its committed (online) hours, normalized by the unit-outage-adjusted
 # available capacity. See scripts/derive_cc_committed_pct.py and
-# inputs/processed/cc_committed_pct.csv for the full percentile distribution.
+# data/raw/_processed-legacy/cc_committed_pct.csv for the full percentile distribution.
 # Replaces the coarse assumed CSV Pct_Committed (clustered at 20/25/45/55) when
 # config.cc_committed_per_plant is set; the economic tranche absorbs the
 # difference so each plant's tranche split still sums to 100%. Plants without
@@ -3345,7 +3345,7 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
     """Return ``{plant_code: (chp_pmin_cf, sector_class)}`` for an ISO.
 
     The per-ISO CHP steam-following data from
-    ``inputs/processed/thermal_tranches_<ISO>.csv`` (written by
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
     ``scripts/derive_thermal_tranches.py``): the plant's total must-run floor
     (CAMPD p2 available-CF where CEMS covers the plant, EIA-923 class CF
     otherwise — see the row's ``status``) and its EIA-923 sector class
@@ -3857,7 +3857,7 @@ def thermal_tranche_overrides(
     """Return ``{(plant_code, group): (committed_pct, mustrun_pct)}`` for an ISO.
 
     Loads the per-plant CAMPD-derived committed and must-run tranche shares
-    from ``inputs/processed/thermal_tranches_<ISO>.csv`` (written by
+    from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
     ``scripts/derive_thermal_tranches.py``). Empty when the ISO has no
     artifact, so the caller falls back to the group default. This is the
     general, ISO-agnostic replacement for the hardcoded ERCOT
@@ -3882,7 +3882,7 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, group): peaking_pct}`` for an ISO's CC plants.
 
     The CAMPD-derived duct-firing / scarcity share from
-    ``inputs/processed/thermal_tranches_<ISO>.csv`` (``peaking_pct``, written
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``peaking_pct``, written
     by ``scripts/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
     share of the plant's demonstrated sustained maximum it clears in fewer
     than 5% of its online hours. Empty when the ISO has no artifact or it

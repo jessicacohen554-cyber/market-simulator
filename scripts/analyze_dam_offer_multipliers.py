@@ -34,7 +34,7 @@ The three-part ERCOT offer maps onto the model tranches as:
     scarcity-capable hours; the normal-hours deep top is masked by ERCOT).
 
 Outputs a per-class x band multiplier-distribution CSV
-(``inputs/processed/ercot_offer_multiplier_summary.csv``) and prints the overlay
+(``data/raw/_processed-legacy/ercot_offer_multiplier_summary.csv``) and prints the overlay
 tables used in the writeup.
 
 Usage::

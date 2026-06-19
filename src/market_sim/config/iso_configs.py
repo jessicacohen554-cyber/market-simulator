@@ -95,7 +95,7 @@ def _ercot_config() -> ISOConfig:
     zone and therefore currently lands in the West transmission zone.
 
     These static ``load_share`` values are now only a fallback: when the
-    ERCOT native-load file is present (``inputs/raw-data/zone-specific-demand/
+    ERCOT native-load file is present (``data/raw/zone-specific-demand/
     ERCOT_Native_Load_<year>.xlsx``), :func:`eia_loader.load_demand` gives each
     zone its *own* measured hourly demand shape via
     :func:`eia_loader.ercot_zonal_load_shares` (zones peak at different hours),
@@ -389,7 +389,7 @@ def _pjm_config() -> ISOConfig:
     price gradient (across AP-South / Bedington-BlackOak) that binds most.
 
     Load shares are the eight groups' shares of metered net energy for load
-    from the PJM hourly metered-load file (``inputs/raw-data/
+    from the PJM hourly metered-load file (``data/raw/
     zone-specific-demand/PJM2023_hrl_load_metered.csv``, the 20 real zones
     summed over their load areas). Backcasts use that file's *hourly* per-zone
     shape directly (see ``eia_loader``); these annual shares are the fallback /
@@ -408,7 +408,7 @@ def _pjm_config() -> ISOConfig:
     ]
     # Inter-zone TTCs and the link topology trace PJM's real binding interfaces,
     # seeded from the 2024 transfer-limits/flows postings
-    # (``inputs/raw-data/iso-specific-transmission/
+    # (``data/raw/iso-specific-transmission/
     # PJM_2024_transfer_limits_and_flows.csv``): the most-binding interfaces
     # are AP-South (~3,870-4,453 MW), Bedington-BlackOak (~1,714-1,947 MW) and
     # AEP/DOM (~4,069 MW), all carrying the west/central → east and west →
@@ -462,7 +462,7 @@ def _nyiso_config() -> ISOConfig:
     structure has to carry that load behind the import interfaces. Source:
     NYISO Load & Capacity Data ("Gold Book"), zonal energy/peak by load
     zone. **Tier 3 (calibration)** — static Gold-Book shares are the fallback
-    pending upload U3. When ``inputs/raw-data/zone-specific-demand/NYISO/
+    pending upload U3. When ``data/raw/zone-specific-demand/NYISO/
     NYISO_load_actuals_<year>.csv`` is present, :func:`eia_loader.load_demand`
     gives each zone its own measured hourly shape via
     :func:`eia_loader.nyiso_zonal_load_shares` (zones peak at different hours),
@@ -539,7 +539,7 @@ def _neiso_config() -> ISOConfig:
     Report and RSP zonal load data. Source: ISO-NE zonal net energy for load by
     load zone. Tier 3 (calibration). **Refresh path (U3):** upload the ISO-NE
     hourly load-zone NEL SMD CSV for 2023–2025 to
-    ``inputs/raw-data/zone-specific-demand/NEISO/`` and run
+    ``data/raw/zone-specific-demand/NEISO/`` and run
     ``scripts/derive_load_shares.py neiso`` to derive measured shares and hourly
     zonal shapes. These static shares are then the fallback for years without a
     zonal file.

@@ -5,12 +5,12 @@ unit at a plant into one CEMS series, so a single-unit outage at a multi-unit
 plant — and, critically, a *coal*-unit outage at a mixed coal/gas facility
 (W A Parish, Barney M Davis) — is masked by the units that keep running and is
 never detected. This script reads the per-unit CAMPD extracts in
-``inputs/raw-data/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
+``data/raw/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
 ``unit``-hour, carrying ``unitId``) and detects an outage for each *unit*
 independently, on the unit's own gross output.
 
 For every sustained unit outage (>= ``--min-outage-days``) it writes one row to
-``inputs/raw-data/campd-unit-outages.csv`` in the schema the unit-level derate
+``data/raw/campd-unit-outages.csv`` in the schema the unit-level derate
 overlay (:func:`market_sim.data.outages.unit_outage_derate_factors`) consumes:
 each row removes the unit's capacity share of its model bin from availability
 over the outage window. The unit's capacity is the EIA-860 generator nameplate
@@ -203,7 +203,7 @@ def main() -> None:
     )
     ap.add_argument(
         "--out", default=None,
-        help="Output CSV; defaults to inputs/raw-data/campd-unit-outages.csv "
+        help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
              "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     args = ap.parse_args()

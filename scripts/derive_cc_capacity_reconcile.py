@@ -13,7 +13,7 @@ glitches). It never lowers a nameplate — a plant that simply never dispatched
 to its rating keeps it; only demonstrated, measured headroom is added. EIA-860
 winter capacity is carried alongside as corroborating provenance.
 
-Output: `inputs/processed/cc_capacity_reconcile_ERCOT.csv`
+Output: `data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv`
 (`plant_code, plant_name, current_mw, campd_p999_mw, eia860_winter_mw,
 reconciled_mw, delta_pct, source`), consumed by `load_campd_bins` under
 `ScenarioConfig.cc_capacity_reconcile`.
@@ -43,10 +43,10 @@ def main() -> None:
         help="a calibration bundle's campd.parquet (CEMS net MW, all years)")
     ap.add_argument(
         "--out", type=Path,
-        default=REPO / "inputs/processed/cc_capacity_reconcile_ERCOT.csv")
+        default=REPO / "data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv")
     args = ap.parse_args()
 
-    csv = pd.read_csv(REPO / "inputs/custom-bin-assignments.csv")
+    csv = pd.read_csv(REPO / "data/raw/reference/custom-bin-assignments.csv")
     cc = csv[csv["Plant_Group"] == "CC_REGULAR"]
 
     campd = pd.read_parquet(args.campd)
@@ -56,7 +56,7 @@ def main() -> None:
     p999 = campd.groupby("plant_id")["net_mw"].quantile(0.999)
 
     e860 = pd.read_parquet(
-        REPO / "inputs/raw-data/eia-860/eia860_generator_operable.parquet")
+        REPO / "data/raw/eia-860/eia860_generator_operable.parquet")
     e860["Winter Capacity (MW)"] = pd.to_numeric(
         e860["Winter Capacity (MW)"], errors="coerce")
     winter = e860.groupby("Plant Code")["Winter Capacity (MW)"].sum()

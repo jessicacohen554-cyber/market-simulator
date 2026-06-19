@@ -1,6 +1,6 @@
 """Historic generator-outage overlay for ERCOT calibration backcasts.
 
-Reads the committed ERCOT outage extract (``inputs/raw-data/ercot-outages.csv``)
+Reads the committed ERCOT outage extract (``data/raw/ercot-outages.csv``)
 and turns sustained coal / combined-cycle outages into per-plant hourly
 availability masks on the model's fixed 8760-hour clock. The masks are applied
 by :func:`market_sim.data.fleet.generators_to_fleet_arrays` only when a
@@ -261,7 +261,7 @@ def outage_masks_for_year(
 # Default source is the CAMPD-derived unit-outage extract
 # (scripts/derive_campd_unit_outages.py): outages detected on each *unit's*
 # own CAMPD gross output for the full year, both 2023 and 2024. This replaces
-# the hand-maintained inputs/tx-jan-aug23-unit-outages.csv (kept in the repo
+# the hand-maintained data/raw/reference/tx-jan-aug23-unit-outages.csv (kept in the repo
 # for reference), which covered only Jan-Aug 2023. The unit-level layer's
 # unique job is to catch single-unit outages the facility-summed overlay
 # hides: a coal-unit outage at a mixed coal/gas facility (W A Parish 5-8), or

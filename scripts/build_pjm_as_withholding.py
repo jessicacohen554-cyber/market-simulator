@@ -1,7 +1,7 @@
 """Build PJM hourly ancillary-service (reserve-withholding) MW series.
 
 For each requested year this writes
-``inputs/raw-data/PJM-AS/pjm_<year>_as_up_mw.parquet`` — a single system-wide
+``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet`` — a single system-wide
 hourly MW series of the reserve capacity PJM holds *out* of the energy market,
 mirroring the ERCOT withholding layout (``ercot_<year>_as_up_mw.parquet``,
 column ``as_up_mw``). The backcast's reserve-withholding probe
@@ -47,7 +47,7 @@ one ~24 h data hole each year are interpolated (linear, both directions) rather
 than zero-filled.
 
 Source: PJM Data Miner 2 "Ancillary Services Market Results — Reserve Market
-Results" (RT), inputs/raw-data/PJM-AS/reserve_market_results_<year>.parquet;
+Results" (RT), data/raw/PJM-AS/reserve_market_results_<year>.parquet;
 provenance for the curve/products in docs/multi-iso/pjm-reserve-curve-source.md.
 
 Run:
@@ -170,7 +170,7 @@ def build_year(year: int) -> bool:
     table = pa.Table.from_pandas(frame, preserve_index=False)
     table = table.replace_schema_metadata({
         "source": "PJM Data Miner 2 Reserve Market Results (RT), "
-                  "inputs/raw-data/PJM-AS/reserve_market_results_"
+                  "data/raw/PJM-AS/reserve_market_results_"
                   f"{year}.parquet; locale PJM_RTO, service PR (Primary "
                   "Reserve), column as_req_mw.",
         "description": f"PJM {year} system-wide hourly reserve-withholding MW "
