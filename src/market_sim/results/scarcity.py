@@ -524,9 +524,14 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     so the model clears reserve lower on the ORDC curve than reality and prices a
     scarcity adder in non-scarce hours.
 
-    Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file is
-    absent** — the cleared-AS archive begins 2023-12-10, so 2023 gets no credit
-    and its genuine scarcity tail is left untouched.
+    Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file
+    is absent**. ``ercot_2023_as_up_mw.parquet`` is not yet built — the NP3-911
+    *2-Day* cleared-DAM-AS reports under ``data/raw/ercot-AS/`` only reach back
+    to 2023-12-10 — but full-year 2023 Load-Resource AS coverage IS in the repo
+    via the 60-Day DAM Disclosure (``data/raw/ercot/`` :
+    ``60_DAY_DAM_DISCLOSURE_60d_DAM_Load_Resource_ASOffers_2023.parquet`` plus
+    the cleared aggregate ``DAMASAGGNP419_2023.parquet``), so 2023 can be
+    credited once that series is built from those sources.
     """
     path = _ERCOT_AS_DIR / f"ercot_{year}_as_up_mw.parquet"
     if not path.exists():
