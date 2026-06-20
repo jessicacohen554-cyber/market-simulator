@@ -431,17 +431,21 @@ def inject_caiso_import_hub_prices(
     return applied
 
 
-# Natural-gas combustion CO2 factor (tCO2/MMBtu): the IMPORT_TRANCHE_EF entries
-# are heat rate x this factor (see constants.py), so a tranche's heat rate is
-# recovered as EF / this constant (DSW_CCGT 0.37 -> ~6.97, DSW_CT 0.55 -> ~10.4).
-_NG_CO2_T_PER_MMBTU: float = 0.0531
-
-# Desert-SW import tranches that are gas-set (priced at CA-gas-equivalent +
-# wheeling in the static ladder). These are the blocks in-state gas competes
-# with, so they must track the same measured commodity gas when the hub-basis
-# overlay reprices in-state gas. PNW (hydro) and DSW_solar_PV / WECC_scarcity
-# (zero-EF hydro/solar, or unspecified peak energy) are not gas-coupled.
-_CAISO_GAS_COUPLED_TRANCHES: tuple[str, ...] = ("DSW_CCGT", "DSW_CT")
+# Representative desert-SW heat rates (MMBtu/MWh) for the price COUPLING — the
+# Palo Verde / Path-46 import blocks whose *price-setting* marginal unit is
+# SW gas, so their level tracks the measured commodity gas. DSW_CCGT / DSW_CT
+# match their carbon EF / 0.0531 (the EIA gas CO2 factor: EF = heat rate x
+# 0.0531). DSW_solar_PV is the desert-SW daytime marginal block: it carries a
+# zero CARBON EF (specified solar/nuclear, no border carbon) but its $48
+# price-setting *level* is gas-set (DIAGNOSIS-caiso-import-ladder: it sets the
+# CAISO price in ~21% of hours, mapped to the gas-influenced Palo Verde hub),
+# so the coupling uses a representative SW CCGT heat rate for its price only.
+# PNW (hydro) and WECC_scarcity (unspecified peak energy) are not gas-coupled.
+_CAISO_IMPORT_COUPLE_HR: dict[str, float] = {
+    "DSW_solar_PV": 7.0,  # SW daytime marginal (Palo Verde CCGT-equivalent)
+    "DSW_CCGT": 0.37 / 0.0531,  # ~6.97, matches IMPORT_TRANCHE_EF
+    "DSW_CT": 0.55 / 0.0531,  # ~10.36, matches IMPORT_TRANCHE_EF
+}
 
 
 def inject_caiso_import_gas_coupling(
@@ -451,25 +455,28 @@ def inject_caiso_import_gas_coupling(
 
     Forecast-consistent, no-OASIS replacement for the desert-SW leg of lever A
     (``PLAN-caiso-gas-coupled-imports-2026-06-20``). The static
-    ``IMPORT_TRANCHES["CAISO"]`` desert-SW gas blocks (DSW_CCGT, DSW_CT) are
-    priced "at CA-gas-equivalent + wheeling", but their *level* was fitted
-    against the F923 **delivered** gas world. When ``--gas-hub-basis-overlay``
-    reprices in-state gas to the measured **commodity spot** (Henry Hub month +
-    measured CA citygate basis), those import blocks must move by the same
-    per-MMBtu shift, or cheaper in-state gas undercuts them and steals their
-    share (gas TWh over-runs ~+12%, RESULTS-caiso-leverB-citygate). This adds,
-    per gas-EF tranche::
+    ``IMPORT_TRANCHES["CAISO"]`` desert-SW blocks (DSW_solar_PV, DSW_CCGT,
+    DSW_CT) are the Palo Verde / Path-46 import whose price-setting marginal unit
+    is SW gas, but their *level* was fitted against the F923 **delivered** gas
+    world. When ``--gas-hub-basis-overlay`` reprices in-state gas to the measured
+    **commodity spot** (Henry Hub month + measured CA citygate basis), those
+    import blocks must move by the same per-MMBtu shift, or cheaper in-state gas
+    undercuts them and steals their share (gas TWh over-runs ~+12%,
+    RESULTS-caiso-leverB-citygate — the share lost is the DSW_solar_PV block).
+    This adds, per coupled tranche::
 
         mc[row] += (commodity_spot_gas[m] - F923_delivered_gas[m]) x HR_tranche
 
-    with ``HR_tranche = IMPORT_TRANCHE_EF / _NG_CO2_T_PER_MMBTU`` and the two
-    measured monthly gas series from :func:`market_sim.data.fuel
-    .iso_hub_monthly_gas_prices` / :func:`~market_sim.data.fuel
-    .iso_monthly_gas_prices`. The shift is ~0 at the baseline (un-overlaid) gas
-    level, so the validated import volume is preserved -- only the
-    gas-sensitivity is coupled in, with no new fitted constant. Designed to pair
-    with ``--gas-hub-basis-overlay`` (both legs then price off the same
-    commodity gas, keeping the in-state-gas / SW-import merit order consistent).
+    with ``HR_tranche`` the representative desert-SW heat rate
+    (:data:`_CAISO_IMPORT_COUPLE_HR`) and the two measured monthly gas series
+    from :func:`market_sim.data.fuel.iso_hub_monthly_gas_prices` /
+    :func:`~market_sim.data.fuel.iso_monthly_gas_prices`. The shift is ~0 at the
+    baseline (un-overlaid) gas level, so the validated import volume is preserved
+    -- only the gas-sensitivity is coupled in, with no new fitted constant. The
+    border CARBON stays on its own per-tranche EF (DSW_solar_PV pays none), so
+    only the *energy* level is gas-coupled. Designed to pair with
+    ``--gas-hub-basis-overlay`` (both legs then price off the same commodity gas,
+    keeping the in-state-gas / SW-import merit order consistent).
 
     Returns ``True`` when at least one tranche row was shifted, ``False``
     (byte-identical) when the measured gas series are unavailable (forecast
@@ -494,18 +501,15 @@ def inject_caiso_import_gas_coupling(
     if not np.any(delta_m):
         return False
     delta_h = _expand_monthly_to_hourly(delta_m, int(mc.shape[1]))
-    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    couple_hr = _CAISO_IMPORT_COUPLE_HR if iso.upper() == "CAISO" else {}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
         if not uid.startswith(f"{zone}_"):
             continue
         tranche = uid[len(zone) + 1 :]
-        if tranche not in _CAISO_GAS_COUPLED_TRANCHES:
+        heat_rate = couple_hr.get(tranche)
+        if not heat_rate:
             continue
-        ef = ef_map.get(tranche)
-        if not ef:
-            continue
-        heat_rate = ef / _NG_CO2_T_PER_MMBTU
         mc[row, :] = mc[row, :] + delta_h * heat_rate
         applied = True
     return applied
