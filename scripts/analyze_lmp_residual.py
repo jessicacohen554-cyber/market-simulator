@@ -40,7 +40,9 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-CAL_DIR = REPO / "inputs" / "calibration"
+# Validation source (actual_lmp_hourly_{ISO}.parquet) relocated from the old
+# inputs/calibration tree to data/raw/_validation-source (paths.CALIBRATION_DIR).
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 # Fixed non-leap dispatch calendar (matches market_sim.data.campd).
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
