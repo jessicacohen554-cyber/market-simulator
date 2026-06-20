@@ -431,6 +431,90 @@ def inject_caiso_import_hub_prices(
     return applied
 
 
+# Representative desert-SW heat rates (MMBtu/MWh) for the price COUPLING — the
+# Palo Verde / Path-46 import blocks whose *price-setting* marginal unit is
+# SW gas, so their level tracks the measured commodity gas. DSW_CCGT / DSW_CT
+# match their carbon EF / 0.0531 (the EIA gas CO2 factor: EF = heat rate x
+# 0.0531). DSW_solar_PV is the desert-SW daytime marginal block: it carries a
+# zero CARBON EF (specified solar/nuclear, no border carbon) but its $48
+# price-setting *level* is gas-set (DIAGNOSIS-caiso-import-ladder: it sets the
+# CAISO price in ~21% of hours, mapped to the gas-influenced Palo Verde hub),
+# so the coupling uses a representative SW CCGT heat rate for its price only.
+# PNW (hydro) and WECC_scarcity (unspecified peak energy) are not gas-coupled.
+_CAISO_IMPORT_COUPLE_HR: dict[str, float] = {
+    "DSW_solar_PV": 7.0,  # SW daytime marginal (Palo Verde CCGT-equivalent)
+    "DSW_CCGT": 0.37 / 0.0531,  # ~6.97, matches IMPORT_TRANCHE_EF
+    "DSW_CT": 0.55 / 0.0531,  # ~10.36, matches IMPORT_TRANCHE_EF
+}
+
+
+def inject_caiso_import_gas_coupling(
+    fleet_arrays, mc: np.ndarray, config, year: int
+) -> bool:
+    """Shift the gas-set CAISO import tranches by the measured commodity-gas delta.
+
+    Forecast-consistent, no-OASIS replacement for the desert-SW leg of lever A
+    (``PLAN-caiso-gas-coupled-imports-2026-06-20``). The static
+    ``IMPORT_TRANCHES["CAISO"]`` desert-SW blocks (DSW_solar_PV, DSW_CCGT,
+    DSW_CT) are the Palo Verde / Path-46 import whose price-setting marginal unit
+    is SW gas, but their *level* was fitted against the F923 **delivered** gas
+    world. When ``--gas-hub-basis-overlay`` reprices in-state gas to the measured
+    **commodity spot** (Henry Hub month + measured CA citygate basis), those
+    import blocks must move by the same per-MMBtu shift, or cheaper in-state gas
+    undercuts them and steals their share (gas TWh over-runs ~+12%,
+    RESULTS-caiso-leverB-citygate — the share lost is the DSW_solar_PV block).
+    This adds, per coupled tranche::
+
+        mc[row] += (commodity_spot_gas[m] - F923_delivered_gas[m]) x HR_tranche
+
+    with ``HR_tranche`` the representative desert-SW heat rate
+    (:data:`_CAISO_IMPORT_COUPLE_HR`) and the two measured monthly gas series
+    from :func:`market_sim.data.fuel.iso_hub_monthly_gas_prices` /
+    :func:`~market_sim.data.fuel.iso_monthly_gas_prices`. The shift is ~0 at the
+    baseline (un-overlaid) gas level, so the validated import volume is preserved
+    -- only the gas-sensitivity is coupled in, with no new fitted constant. The
+    border CARBON stays on its own per-tranche EF (DSW_solar_PV pays none), so
+    only the *energy* level is gas-coupled. Designed to pair with
+    ``--gas-hub-basis-overlay`` (both legs then price off the same commodity gas,
+    keeping the in-state-gas / SW-import merit order consistent).
+
+    Returns ``True`` when at least one tranche row was shifted, ``False``
+    (byte-identical) when the measured gas series are unavailable (forecast
+    years) or the import node is absent.
+    """
+    from market_sim.data.fuel import (
+        _expand_monthly_to_hourly,
+        iso_hub_monthly_gas_prices,
+        iso_monthly_gas_prices,
+    )
+
+    iso = config.iso
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return False
+    spot = iso_hub_monthly_gas_prices(config, year)
+    f923 = iso_monthly_gas_prices(config, year)
+    if spot is None or f923 is None:
+        return False
+    delta_m = spot - f923  # $/MMBtu; NaN in months either series does not cover
+    delta_m = np.where(np.isfinite(delta_m), delta_m, 0.0)
+    if not np.any(delta_m):
+        return False
+    delta_h = _expand_monthly_to_hourly(delta_m, int(mc.shape[1]))
+    couple_hr = _CAISO_IMPORT_COUPLE_HR if iso.upper() == "CAISO" else {}
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if not uid.startswith(f"{zone}_"):
+            continue
+        tranche = uid[len(zone) + 1 :]
+        heat_rate = couple_hr.get(tranche)
+        if not heat_rate:
+            continue
+        mc[row, :] = mc[row, :] + delta_h * heat_rate
+        applied = True
+    return applied
+
+
 def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     """Return ``iso_config`` with its external import/export zone appended.
 
