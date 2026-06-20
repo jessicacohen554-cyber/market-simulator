@@ -155,3 +155,7 @@ results/calibration/ercot_dam_cconly_rerun_3yr/
 # test, never the generated parquet. The schema YAMLs and the data dictionary
 # under data/dictionary/ ARE committed (they are the contract, not output).
 /data/clean/
+
+# NEISO CC-steam investigation scratch bundles (regenerable; superseded by neiso_ccsteam_keeper_3yr)
+results/calibration/neiso_ccsteam_3yr/
+results/calibration/neiso_oldoutage_2025/
