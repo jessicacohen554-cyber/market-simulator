@@ -166,3 +166,15 @@ results/calibration/ercot_dam_cconly_rerun_3yr/
 # NEISO CC-steam investigation scratch bundles (regenerable; superseded by neiso_ccsteam_keeper_3yr)
 results/calibration/neiso_ccsteam_3yr/
 results/calibration/neiso_oldoutage_2025/
+# CAISO gas-coupled import lever scratch runs (2026-06-20 session; reproducible)
+/results/calibration/caiso_base_2024/
+/results/calibration/caiso_B_shape_2024/
+/results/calibration/caiso_B_shapeexp_2024/
+/results/calibration/caiso_shape_2024/
+/results/calibration/caiso_Balone_2024/
+/results/calibration/caiso_Bcouple_2024/
+/results/calibration/caiso_base_2023/
+/results/calibration/caiso_base_2025/
+/results/calibration/caiso_Bcouple_2023/
+/results/calibration/caiso_Bcouple_2025/
+/results/calibration/caiso_Bcoupneg_2024/
