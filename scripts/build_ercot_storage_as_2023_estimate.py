@@ -1,13 +1,19 @@
 """Build an ESTIMATED 2023 ERCOT storage-AS series by intensity transfer.
 
-This estimate predates wiring up the 2023 60-Day DAM Disclosure: real 2023
-per-resource AS data IS in the repo (``data/raw/ercot/`` — the per-generation-
-resource ``60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_*.parquet``
-carry battery AS awards, with the ``DAMASAGGNP419_2023.parquet`` cleared
-aggregate and ``ASPLANNP433_2023.parquet`` plan as cross-checks); only the
-NP3-911 *2-Day* feed in ``data/raw/ercot-AS/`` begins ~Dec-2023. Prefer
-building the measured 2023 storage-AS series from the Gen Resource Data over
-this transfer. The estimate is retained as a sensitivity:
+SUPERSEDED — use ``scripts/build_ercot_as_by_restype_from_60day.py``, which
+writes the MEASURED 2023 storage-AS series from the in-repo 60-Day DAM
+Disclosure Gen Resource Data (battery awards). That measured series means
+~1249 MW; this transfer estimate meant only ~832 MW — it undercounts real 2023
+battery AS by ~50%, because 2023's AS-per-GW intensity was well above the
+2024/2025 anchors it assumes. This script is retained only as a documented
+sensitivity / fallback.
+
+The premise it was written under was wrong: real 2023 per-resource AS data IS
+in the repo (``data/raw/ercot/`` — the per-generation-resource
+``60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_*.parquet`` carry
+battery AS awards, with ``DAMASAGGNP419_2023.parquet`` and
+``ASPLANNP433_2023.parquet`` as cross-checks); only the NP3-911 *2-Day* feed in
+``data/raw/ercot-AS/`` begins ~Dec-2023. The intensity transfer assumes
 storage AS *per GW of battery fleet* is empirically stable in
 the years we do have (2024: 2045 MW / ~6.5 GW = 0.31; 2025: 2824 / ~10 = 0.28),
 so we transfer it: the 2023 battery fleet power is known (EIA-860 COD ramp,
