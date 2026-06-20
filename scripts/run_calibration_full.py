@@ -1374,6 +1374,7 @@ def solve_and_persist(
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
+    caiso_import_gas_coupling: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
@@ -1502,6 +1503,7 @@ def solve_and_persist(
             caiso_gas_commitment_floor=caiso_gas_commitment_floor,
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_import_hub_prices=caiso_import_hub_prices,
+            caiso_import_gas_coupling=caiso_import_gas_coupling,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
         )
         if persist_p2_state:
@@ -1663,6 +1665,7 @@ def solve_and_persist(
         "caiso_gas_commitment_floor": caiso_gas_commitment_floor,
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_import_hub_prices": caiso_import_hub_prices,
+        "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -1777,6 +1780,10 @@ def solve_and_persist(
     if caiso_import_hub_prices is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_import_hub_prices=caiso_import_hub_prices
+        )
+    if caiso_import_gas_coupling is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_import_gas_coupling=caiso_import_gas_coupling
         )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4169,6 +4176,22 @@ def main() -> None:
         "the base config value (currently off pending the measured data).",
     )
     parser.add_argument(
+        "--caiso-import-gas-coupling",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Shift the gas-set CAISO import tranches (DSW_CCGT, DSW_CT) by the "
+        "measured commodity-gas delta (Henry Hub month + CA citygate basis, less "
+        "the EIA-923 delivered gas) x heat rate, so the desert-SW gas imports "
+        "track the same commodity spot --gas-hub-basis-overlay applies to "
+        "in-state gas. Forecast-consistent, no-OASIS replacement for the "
+        "desert-SW leg of --caiso-import-hub-prices (lever A): keeps imports "
+        "competitive when the overlay cheapens in-state gas, so gas TWh stays "
+        "disciplined instead of over-running ~+12% (PLAN-caiso-gas-coupled-"
+        "imports-2026-06-20). CAISO-only; pair with --gas-hub-basis-overlay; "
+        "no-op (byte-identical) for forecast years (no measured gas basis). "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4391,6 +4414,7 @@ def main() -> None:
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
+        caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
