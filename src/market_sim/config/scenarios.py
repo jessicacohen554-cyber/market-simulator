@@ -553,7 +553,19 @@ class ScenarioConfig:
     # (transmission.inject_caiso_import_gas_coupling). Default off
     # (byte-identical); CAISO-only; pairs with --gas-hub-basis-overlay; no-op for
     # forecast years (no measured gas basis). Does NOT address the negative
-    # midday tail (desert-SW solar diurnal — separate, no in-repo SW solar data).
+    # midday tail — that is caiso_import_solar_shape below.
+    caiso_import_solar_shape: bool = False  # Restore the CAISO negative midday
+    # tail. The desert-SW solar import block (DSW_solar_PV / Palo Verde hub) is
+    # the marginal CAISO import midday, but its level is priced flat (gas-coupled
+    # ~$48), so the model floors at ~$0 midday (14 hrs <=$0 vs actual ~868, 2024).
+    # This collapses that block's per-hour offer toward -renewable_keep_running_
+    # value as CAISO net load (load less utility solar/wind) drops into its annual
+    # belly, so the marginal desert-SW solar import bids negative in the spring
+    # solar glut and sets a sub-$0 LMP. Net-load-gated (fires spring-midday, not
+    # summer-midday); depth is the existing REC/PTC keep-running constant (no new
+    # fitted price level). Carried via a post-assembly mc shift
+    # (transmission.inject_caiso_import_solar_shape); applies on top of the gas
+    # coupling. Default off (byte-identical); CAISO-only.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
