@@ -1,0 +1,42 @@
+{
+ "CC_REGULAR": {
+  "committed": -0.1,
+  "econ_low": -0.28,
+  "econ_high": -0.3,
+  "peak": 0.32
+ },
+ "CC_CHP": {
+  "committed": -0.05,
+  "econ_low": -0.05,
+  "econ_high": 0.1,
+  "peak": -0.5,
+  "pct_peaking": -4.0
+ },
+ "CT_CHP": {
+  "committed": -0.2,
+  "econ_low": -0.08,
+  "econ_high": 0.1,
+  "peak": -0.08
+ },
+ "CT_PEAKER": {
+  "committed": -0.34,
+  "econ_high": 0.2
+ },
+ "ST_GAS": {
+  "committed": -0.385,
+  "econ_low": -0.13,
+  "econ_high": -0.35,
+  "peak": -1.0
+ },
+ "COAL_PRB": {
+  "committed": -0.04,
+  "econ_low": -0.3,
+  "econ_high": 0.44,
+  "peak": 0.082
+ },
+ "COAL_LIGNITE": {
+  "committed": -0.07,
+  "econ_low": 0.076,
+  "econ_high": -0.037
+ }
+}
