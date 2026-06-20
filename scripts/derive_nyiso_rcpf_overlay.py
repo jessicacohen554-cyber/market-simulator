@@ -55,7 +55,11 @@ from market_sim.results.rcpf import (  # noqa: E402
     resolve_rcpf_products,
 )
 
-CAL_DIR = REPO / "inputs" / "calibration"
+# Validation source (actual_lmp_hourly / actual_as_reserve / actual_lmp.json)
+# relocated from the old inputs/calibration tree to data/raw/_validation-source
+# (paths.CALIBRATION_DIR). The stale path silently NaN-filled the measured
+# columns, so the overlay's measured-vs-model validation printed "--".
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 # Dispatchable fossil fuel types that carry NYISO operating reserve. Nuclear
 # is baseload (no reserve; its headroom is ~0 anyway), coal is retired in NY,
@@ -433,7 +437,7 @@ def _actual_zone_reserve(year: int, hours: int) -> dict[str, np.ndarray]:
                 arr[rf["hour"].to_numpy()] = rf[col].to_numpy()
                 out[zone] = arr
             return out
-    p = REPO / "inputs" / "raw-data" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
+    p = REPO / "data" / "raw" / "NYISO-AS" / f"NYISO_as_rt_{year}.csv"
     if not p.exists():
         return {}
     df = pd.read_csv(p)
