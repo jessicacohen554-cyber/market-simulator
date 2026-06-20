@@ -131,6 +131,10 @@ data/raw/NYISO-AS/raw/
 # Intermediate per-year CC-steam-derate re-baseline (pjm_35) run bundles; only
 # the merged 3-year results/calibration/pjm_35 is committed.
 /results/calibration/pjm_35_20*/
+# Intermediate per-year retiree-thread (pjm_36 / pjm_37) run bundles; only the
+# merged 3-year results/calibration/pjm_36 (and pjm_37) is committed.
+/results/calibration/pjm_36_20*/
+/results/calibration/pjm_37_20*/
 # Session scratch: background-solve driver/per-year logs.
 /logs/
 
