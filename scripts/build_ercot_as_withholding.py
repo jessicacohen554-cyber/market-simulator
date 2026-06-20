@@ -52,8 +52,14 @@ HOURS_PER_YEAR = 8760
 REPO_ROOT = Path(__file__).resolve().parents[1]
 AS_DIR = REPO_ROOT / "data" / "raw" / "ercot-AS"
 
-# Years built when --year is not given. The cleared-AS archive begins
-# 2023-12-10, so 2023 has no usable coverage and is omitted.
+# Years built when --year is not given. The NP3-911 *2-Day* cleared-DAM-AS
+# reports under data/raw/ercot-AS/ only reach back to 2023-12-10, so THIS
+# builder omits 2023. That is a limitation of the 2-Day source, not the
+# archive: full-year 2023 AS data is in the repo via the 60-Day DAM Disclosure
+# (data/raw/ercot/DAMASAGGNP419_2023.parquet, ASPLANNP433_2023.parquet,
+# 60_DAY_DAM_DISCLOSURE_60d_DAM_Load_Resource_ASOffers_2023.parquet,
+# 60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_*.parquet) and 2023 can
+# be built from those.
 DEFAULT_YEARS: tuple[int, ...] = (2024, 2025)
 
 # Up-reserve service report tags (the ``2d_cleared_dam_as_<tag>`` suffix).
