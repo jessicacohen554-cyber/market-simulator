@@ -1,7 +1,14 @@
 """Build an ESTIMATED 2023 ERCOT storage-AS series by intensity transfer.
 
-No per-resource AS data exists for 2023 (the 60-Day DAM archive begins
-~Dec-2023). But storage AS *per GW of battery fleet* is empirically stable in
+This estimate predates wiring up the 2023 60-Day DAM Disclosure: real 2023
+per-resource AS data IS in the repo (``data/raw/ercot/`` — the per-generation-
+resource ``60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_*.parquet``
+carry battery AS awards, with the ``DAMASAGGNP419_2023.parquet`` cleared
+aggregate and ``ASPLANNP433_2023.parquet`` plan as cross-checks); only the
+NP3-911 *2-Day* feed in ``data/raw/ercot-AS/`` begins ~Dec-2023. Prefer
+building the measured 2023 storage-AS series from the Gen Resource Data over
+this transfer. The estimate is retained as a sensitivity:
+storage AS *per GW of battery fleet* is empirically stable in
 the years we do have (2024: 2045 MW / ~6.5 GW = 0.31; 2025: 2824 / ~10 = 0.28),
 so we transfer it: the 2023 battery fleet power is known (EIA-860 COD ramp,
 already in the model), and 2023 storage AS is the measured 2024 series rescaled
