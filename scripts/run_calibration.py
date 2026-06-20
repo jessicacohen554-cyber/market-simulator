@@ -1013,6 +1013,7 @@ def run_year(
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
+    caiso_import_solar_shape: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -1102,6 +1103,10 @@ def run_year(
     if caiso_import_gas_coupling is not None:
         config = config.with_overrides(
             caiso_import_gas_coupling=caiso_import_gas_coupling
+        )
+    if caiso_import_solar_shape is not None:
+        config = config.with_overrides(
+            caiso_import_solar_shape=caiso_import_solar_shape
         )
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
@@ -1614,6 +1619,32 @@ def run_year(
                 iso,
                 year,
             )
+
+    # CAISO desert-SW solar-shaped import offer: collapse the DSW_solar_PV block
+    # toward the negative keep-running floor in the net-load belly so the marginal
+    # midday import bids sub-$0 (Palo Verde spring solar glut), restoring the
+    # CAISO negative midday tail. No-op unless caiso_import_solar_shape is on;
+    # applies on top of the gas coupling. Net load is the LP-served load (net of
+    # must-run) less utility solar/wind generation.
+    if getattr(config, "caiso_import_solar_shape", False):
+        from market_sim.model.transmission import inject_caiso_import_solar_shape
+
+        net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        if inject_caiso_import_solar_shape(
+            fleet_arrays, mc_base, config, net_load
+        ):
+            logger.info(
+                "%s %d: desert-SW solar import (DSW_solar_PV) offer collapsed "
+                "toward the negative keep-running floor in the net-load belly "
+                "(negative midday tail)",
+                iso,
+                year,
+            )
+
     wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
     wind_mc -= wind_eac
     solar_mc -= solar_eac
