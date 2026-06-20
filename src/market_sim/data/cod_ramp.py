@@ -337,9 +337,24 @@ def effective_cod(
     generator's own ``online_year`` / ``online_month`` apply, with the model's
     ``2000`` sentinel treated as "vintage unknown" so a real pre-existing unit
     is never dropped.
+
+    The plant map supplies the **online** date, but its retirement is a
+    plant-level reduction: ``_load_cod_map`` collapses a plant's heterogeneous
+    unit retirements to the **latest** one, which keeps a winding-down plant
+    fully online past the months its earlier units actually left (e.g. Homer
+    City, plant 3122 — its three coal units retired 2023-07 / 2023-08 / 2024-04,
+    yet the collapse held all 2012 MW online through 2024-04, ~2 GW of phantom
+    H2-2023 capacity the cost-based LP then dispatched as baseload). So when the
+    generator carries its **own** per-unit retirement, prefer it over the
+    plant-collapsed date — each within-window retiree unit ages out on its true
+    EIA-860 retirement month. The ERCOT CAMPD bins carry no retirement, so they
+    keep the plant-map record unchanged.
     """
     entry = cod_map.get(int(plant_code)) if plant_code else None
     if entry is not None:
+        if retirement_year is not None:
+            entry_oy, entry_om, _, _ = entry
+            return (entry_oy, entry_om, retirement_year, retirement_month)
         return entry
     oy = online_year if online_year > _ONLINE_YEAR_SENTINEL else None
     return (oy, online_month, retirement_year, retirement_month)

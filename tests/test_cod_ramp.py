@@ -88,6 +88,25 @@ class TestEffectiveCod(unittest.TestCase):
             (2015, 1, None, None),
         )
 
+    def test_own_per_unit_retirement_overrides_plant_collapse(self):
+        # The plant map collapses heterogeneous unit retirements to the LATEST
+        # (2024-04). A generator carrying its OWN earlier retirement (2023-08)
+        # must age out on its true date — keeping the online date from the map.
+        cod_map = {3122: (1972, 5, 2024, 4)}
+        self.assertEqual(
+            effective_cod(3122, 1969, 8, 2023, 8, cod_map),
+            (1972, 5, 2023, 8),
+        )
+
+    def test_no_own_retirement_keeps_plant_map_record(self):
+        # ERCOT CAMPD bins carry no retirement -> the plant-map record is kept
+        # verbatim (the online-date contract for build-date-less bins).
+        cod_map = {3122: (1972, 5, 2024, 4)}
+        self.assertEqual(
+            effective_cod(3122, 2010, 1, None, None, cod_map),
+            (1972, 5, 2024, 4),
+        )
+
 
 class TestLoadCodMap(unittest.TestCase):
     """The EIA-860 plant-code COD map (integration: reads the committed file)."""
