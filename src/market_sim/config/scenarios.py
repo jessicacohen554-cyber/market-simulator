@@ -831,6 +831,17 @@ class ScenarioConfig:
     # the CSV value. The historic outage overlay still applies on top.
     coal_mustrun_per_plant: bool = False
 
+    # When True, each within-window retiree plant (fleet.load_retired_within_
+    # window) is capped to its measured monthly CAMPD CEMS envelope
+    # (outages.retiree_availability_caps): a winding-down retiree the cost-based
+    # LP would hold at its coal must-run floor as baseload is limited to the
+    # peak output it actually demonstrated each month (zero after it stops),
+    # honestly reflecting the out-of-market retirement economics the merit order
+    # cannot see. Scoped to the within-window retirees (the bulk fleet keeps its
+    # cost-based dispatch); backcast-only (historic outage source). Off by
+    # default; enabled per ISO once its retiree-keeper effect is scored.
+    retiree_cems_cap: bool = False
+
     # When True, simple-cycle peakers (CT_PEAKER) carry a per-plant monthly
     # reliability must-run floor equal to their observed EIA-923 net generation
     # (fleet.ct_mustrun_floor_mwh_by_plant), injected as a minimum-generation
