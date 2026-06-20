@@ -538,6 +538,22 @@ class ScenarioConfig:
     # CAISO-only; no-op without the measured intertie parquet (data/raw/
     # _validation-source/wecc_intertie_lmp_hourly_CAISO.parquet), fetched from
     # CAISO OASIS by the fetch-caiso-oasis workflow (open-egress runner).
+    caiso_import_gas_coupling: bool = False  # Shift the gas-set CAISO import
+    # tranches (DSW_CCGT, DSW_CT) by the measured commodity-gas delta
+    # (iso_hub_monthly_gas_prices - iso_monthly_gas_prices) x heat rate, so the
+    # desert-SW gas imports track the same commodity spot the hub-basis overlay
+    # applies to in-state gas. Forecast-consistent, no-OASIS replacement for the
+    # desert-SW leg of lever A (PLAN-caiso-gas-coupled-imports-2026-06-20): when
+    # --gas-hub-basis-overlay cheapens in-state gas, uncoupled fitted import
+    # blocks get undercut and gas TWh over-runs (+12%, RESULTS-caiso-leverB-
+    # citygate); coupling moves both legs together so imports hold their share
+    # and gas stays disciplined while the body still drops. The shift is ~0 at
+    # the baseline gas level (preserves validated import volume); no new fitted
+    # constant. Carried via a post-assembly mc shift
+    # (transmission.inject_caiso_import_gas_coupling). Default off
+    # (byte-identical); CAISO-only; pairs with --gas-hub-basis-overlay; no-op for
+    # forecast years (no measured gas basis). Does NOT address the negative
+    # midday tail (desert-SW solar diurnal — separate, no in-repo SW solar data).
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from

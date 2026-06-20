@@ -1012,6 +1012,7 @@ def run_year(
     caiso_gas_commitment_floor: bool | None = None,
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
+    caiso_import_gas_coupling: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     fleet_only: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
@@ -1098,6 +1099,10 @@ def run_year(
         config = config.with_overrides(caiso_gas_floor_frac=caiso_gas_floor_frac)
     if caiso_import_hub_prices is not None:
         config = config.with_overrides(caiso_import_hub_prices=caiso_import_hub_prices)
+    if caiso_import_gas_coupling is not None:
+        config = config.with_overrides(
+            caiso_import_gas_coupling=caiso_import_gas_coupling
+        )
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -1589,6 +1594,23 @@ def run_year(
             logger.info(
                 "%s %d: import tranches repriced to measured WECC intertie "
                 "hub LMPs (Mid-C / Palo Verde) — static ladder bypassed",
+                iso,
+                year,
+            )
+
+    # CAISO gas-coupled imports: shift the desert-SW gas import tranches
+    # (DSW_CCGT, DSW_CT) by the measured commodity-gas delta so they track the
+    # same Henry-Hub-plus-citygate-basis spot the hub-basis overlay applies to
+    # in-state gas (PLAN-caiso-gas-coupled-imports-2026-06-20). No-op unless
+    # caiso_import_gas_coupling is on AND the measured gas series are available;
+    # pairs with --gas-hub-basis-overlay so both legs price off the same gas.
+    if getattr(config, "caiso_import_gas_coupling", False):
+        from market_sim.model.transmission import inject_caiso_import_gas_coupling
+
+        if inject_caiso_import_gas_coupling(fleet_arrays, mc_base, config, year):
+            logger.info(
+                "%s %d: desert-SW gas import tranches (DSW_CCGT/DSW_CT) coupled "
+                "to the measured commodity-gas delta (tracks --gas-hub-basis-overlay)",
                 iso,
                 year,
             )
