@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-20-run135-offer-cooldown",
+  "label": "run135 offer-cooldown",
+  "date": "2026-06-20",
+  "shorthand": "run135-offer-cooldown",
+  "definition": "run134 config (run132 keeper recipe on the new CC steam-coupled outages) + a CC-body offer cooldown, attempting to trim the demand-weighted system-LMP overshoot the deeper CC derates leave on top of the run132 keeper. Lever: a new additive merit-delta JSON (offer_curve_deltas_cc_offercool.json) lowering only the CC body bands vs run134's deltas — CC_REGULAR committed -0.05->-0.10, econ_low -0.24->-0.28, econ_high -0.20->-0.30; CC_CHP econ_high +0.43->+0.10, committed 0->-0.05, econ_low 0->-0.05. The measured 60-Day-DAM hrmult override (offer_curve_dam_hrmults_cconly.json) is untouched, CT/ST_GAS/coal deltas unchanged, and peak left alone (the scarcity tail is reserve-driven, not offer-driven). Gate vs run134 (BASE->DAM, actual in parens): 2023 MAE 11.90->11.72, avg 49.83->49.30 (48.13, +1.2), tail >200/>500 171/94->171/94 (181/104); 2024 MAE 13.17->13.16, avg 33.74->33.32 (26.72, +6.6), tail 69/43->69/43 (53/16); 2025 MAE 6.48->5.96, avg 37.92->36.86 (32.47, +4.4), tail 18/9->18/9 (31/3). FINDING: the offer-body lever cools the mean only ~$0.5/0.4/1.1 (2023/24/25) and the high-price tails are byte-identical every year — the run134 overshoot is the ORDC reserve tail (the deeper CC derates tighten supply, so the adder over-fires: 2024 tail 69/43 vs actual 53/16), which the offer body cannot reach. A 3x-deeper probe cooled 2024 only $0.65 more while cratering COAL_PRB to -10.7% and driving CC_REGULAR econ_high 0.45 below the measured DAM p50 — a markup, not a fix. So a single global body cut cannot close 2024/2025 without pushing 2023 under or hitting the measured-curve floor (caveat 2 confirmed empirically). Volumes: CC_CHP improves to ~bench (+0.5/0.7/3.9% from -7.9/-6.9/-4.0%); CC_REGULAR +0.8-1.5 TWh; ST_GAS trims toward bench (14.6/8.9/20.6 -> 10.7/5.6/14.9%, no crater); CT_PEAKER not over-run (stays under bench); COAL_PRB shifts -1.6/-1.9/-2.5 TWh as CC enters merit ahead of PRB (2024 to -8.3%). MEASURED-CURVE FLAG: the cooldown's CC_REGULAR econ bands sit 0.28/0.30 below the measured 60-Day-DAM p50 (econ_low 0.68 vs 0.96, econ_high 1.15 vs 1.45) vs 0.24/0.20 already in the keeper delta — an incremental ~0.04/0.10-mult markup below measured (~$1-2/MWh on CC-econ-marginal hours); committed 0.95 is 0.10 below p50 but within the measured spread (p25 0.35); CC_CHP stays at/above measured. Net: 2023 correctly held near actual (+1.2, not pushed under) and 2025 cooled ~$1, but the 2024/2025 overshoot is not closable by offers. Registered as the honest characterization; the CC steam-turbine outage coupling stays unadopted and run132 remains the ERCOT keeper. (PROBE)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-20-run135-offer-cooldown.js",
+  "bundle": "results/calibration/ercot_dam_offercool_3yr"
+}
