@@ -16,10 +16,10 @@ from unittest import mock
 import numpy as np
 
 import market_sim.data.fuel as fuel
-from market_sim.config.constants import IMPORT_TRANCHE_EF, IMPORT_ZONE
+from market_sim.config.constants import IMPORT_ZONE
 from market_sim.data.fleet import generators_to_fleet_arrays
 from market_sim.model.transmission import (
-    _NG_CO2_T_PER_MMBTU,
+    _CAISO_IMPORT_COUPLE_HR,
     build_import_generators,
     inject_caiso_import_gas_coupling,
 )
@@ -46,14 +46,13 @@ class TestInjectCaisoImportGasCoupling(unittest.TestCase):
                 applied = inject_caiso_import_gas_coupling(fa, mc, self._config(), 2024)
         self.assertTrue(applied)
         zone = IMPORT_ZONE["CAISO"]
-        ef = IMPORT_TRANCHE_EF["CAISO"]
         row = {uid: r for r, uid in enumerate(fa.unit_ids)}
-        # DSW_CCGT / DSW_CT shifted by delta(-1.0) * (EF / NG_CO2_factor)
-        for tr in ("DSW_CCGT", "DSW_CT"):
-            hr = ef[tr] / _NG_CO2_T_PER_MMBTU
+        # desert-SW blocks shifted by delta(-1.0) * representative SW heat rate
+        for tr in ("DSW_solar_PV", "DSW_CCGT", "DSW_CT"):
+            hr = _CAISO_IMPORT_COUPLE_HR[tr]
             self.assertAlmostEqual(mc[row[f"{zone}_{tr}"], 0], 99.0 - hr, places=4)
-        # zero-EF / non-gas tranches untouched
-        for tr in ("PNW_hydro_base", "PNW_midC", "DSW_solar_PV", "WECC_scarcity"):
+        # PNW (hydro) and WECC_scarcity (peak) not gas-coupled -> untouched
+        for tr in ("PNW_hydro_base", "PNW_midC", "WECC_scarcity"):
             self.assertEqual(mc[row[f"{zone}_{tr}"], 0], 99.0)
 
     def test_missing_series_is_noop(self):
