@@ -3791,3 +3791,35 @@ non-offer-recoverable reserve / winter-monthly-data limit — not chased here.
 keeper (neiso 14 stays the offer-curve-only predecessor). Regression guard:
 ERCOT/PJM/CAISO byte-identical (the `preserve_min_gen` gate is off for them;
 the coal CSV is additive); only NEISO `bench` + the new code path move.
+
+## NEISO — CC steam-turbine outage derate integrated; backcast-calibration re-confirmed (2026-06-19, keeper `neiso_ccsteam_keeper_3yr`)
+
+Re-ran the `neiso_monthly_keeper` (neiso 21) config on current main to fold in
+the combined-cycle steam-turbine unit-outage coupling (`eia_*_cc` capacity rows
+in `campd-unit-outages-NEISO.csv`, derivation-script level, no magic numbers; the
+fitted daily-AGT convexity stays rejected). Command identical to the keeper:
+`--commitment --ct-deployment --hydro-backfill-year 2024 --hydro-eia930-monthly`,
+2023–2025, 8760 h.
+
+**The derate is a near-no-op for NEISO.** Controlled A/B on 2025 (only the outage
+CSV swapped): CC_REGULAR −0.02 TWh, gas −0.06 TWh, LW price +$0.9. NEISO's CC
+fleet has the headroom to absorb it; adopt for cross-ISO consistency, but it
+neither fixes nor harms the calibration. CC_REGULAR (52.30/56.51/57.76)
+reproduces the keeper (52.31/56.48/57.75) within ±0.03 TWh.
+
+**Surfaced and fixed a poisoned gas-basis cell** (NOT the derate): the 15:46
+`fetch-eia-gas-prices` refresh (postdates the keeper) wrote a +$13.46/MMBtu AGT
+basis for **Aug-2025** from the EIA MA citygate proxy — a winter-level blowout in
+a low-load summer month (LDC citygate fixed-cost recovery, not the marginal AGT
+spot). It drove modeled Aug-2025 LMP to $167 vs the actual $45.6 DA. Fixed in
+`aa62655` (Jul/Sep interpolation +0.04; preserve-existing keeps it across
+re-fetch). With it fixed, 2025 LW returns to $71.2 (vs actual DA $67.9, +4.9%)
+and the monthly DA shape tracks actual within a few $/MWh every month.
+
+**Verdict: NEISO is backcast-calibrated** (gas within ~1% EIA-930 all years;
+price level/shape on target; nuclear/hydro/interchange near-exact). No further
+structural dispatch refinement or magic numbers needed for the backcast. Before a
+**forecast** run it needs the neighbor-convexity priced-import node (the seam is a
+fixed measured schedule today; a forecast has none) and, when U4 daily-AGT lands,
+the *derived* winter-oil convexity. Full writeup:
+`results/calibration/DIAGNOSIS-neiso-ccsteam-2026-06-19.md`.
