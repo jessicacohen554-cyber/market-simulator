@@ -65,6 +65,15 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # nyiso_cal_* until the structure is green and keepers are regenerated last).
 /results/calibration/nyiso_u3_*/
 /results/calibration/caiso_ixshape*/
+# CAISO body-overprice campaign (2026-06-21) scratch backcasts: keeper repro and
+# the PNW_hydro_base / solar-shape-band probes, plus the per-run logs. Regenerable
+# from run_calibration_full.py; only the registered runs' force-added meta/
+# run_config + dashboard sidecars are committed (see DIAGNOSIS-caiso-body-
+# overprice-2026-06-21.md).
+/results/calibration/caiso_keeper_repro*/
+/results/calibration/caiso_pnwhydro*/
+/results/calibration/caiso_ssband*/
+/results/calibration/logs/
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
 # CAISO RA must-offer gas-floor scratch backcasts (Session A frac sweep +
