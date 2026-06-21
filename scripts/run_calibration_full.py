@@ -1395,6 +1395,8 @@ def solve_and_persist(
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
+    ercot_ecrs_requirement: bool = False,
+    ercot_ecrs_requirement_from_year: int = 2023,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
@@ -1526,6 +1528,8 @@ def solve_and_persist(
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
             ercot_storage_as_reserve_from_year=ercot_storage_as_reserve_from_year,
+            ercot_ecrs_requirement=ercot_ecrs_requirement,
+            ercot_ecrs_requirement_from_year=ercot_ecrs_requirement_from_year,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
@@ -1698,6 +1702,8 @@ def solve_and_persist(
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
+        "ercot_ecrs_requirement": ercot_ecrs_requirement,
+        "ercot_ecrs_requirement_from_year": ercot_ecrs_requirement_from_year,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
@@ -1793,6 +1799,11 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_storage_as_reserve=True,
             ercot_storage_as_reserve_from_year=int(ercot_storage_as_reserve_from_year),
+        )
+    if ercot_ecrs_requirement:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_ecrs_requirement=True,
+            ercot_ecrs_requirement_from_year=int(ercot_ecrs_requirement_from_year),
         )
     if as_reserve_formula:
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
@@ -4004,6 +4015,26 @@ def main() -> None:
         "mechanism (see docs/ercot-run131-lmp-decomposition-2026-06.md).",
     )
     parser.add_argument(
+        "--ercot-ecrs-requirement",
+        action="store_true",
+        help="ERCOT energy+reserve co-opt only: ADD the measured ECRS "
+        "procurement (~2 GW from 2023-06-10, ASPLANNP433 ECRS rows) to the "
+        "reserve-balance requirement. The co-opt models one contingency-reserve "
+        "product and never grew when ECRS launched mid-2023, so it under-prices "
+        "the broad mid-range across 2023-H2 and 2024/25 (bimodal monthly shape: "
+        "VOLL spikes over, moderate months under). Demand-side mirror of the "
+        "load/storage supply credits; exogenous ERCOT quantity, NOT a price fit; "
+        "the June-2023 onset is carried by the data. GATED: tightens every active "
+        "hour, watch the tail. Off (default) = no ECRS requirement.",
+    )
+    parser.add_argument(
+        "--ercot-ecrs-requirement-from-year",
+        type=int,
+        default=2023,
+        help="First weather year the --ercot-ecrs-requirement applies to "
+        "(default 2023 = launch year; the data zeroes pre-June-2023 hours).",
+    )
+    parser.add_argument(
         "--as-reserve-formula",
         action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
@@ -4479,6 +4510,8 @@ def main() -> None:
         ),
         ercot_storage_as_reserve=args.ercot_storage_as_reserve,
         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
+        ercot_ecrs_requirement=args.ercot_ecrs_requirement,
+        ercot_ecrs_requirement_from_year=(args.ercot_ecrs_requirement_from_year),
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
