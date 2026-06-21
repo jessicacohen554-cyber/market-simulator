@@ -370,6 +370,44 @@ clean fix is the **Transco-Z6/Iroquois trading-hub spot**, a third series
 distinct from both repo proxies — receipts (winter-high) and EIA citygate
 (summer-high) bracket it. Registered as `nyiso 13 citygate-gas (PROBE)`.
 
+## 4c. Tested this session — SOM-anchored gas (mechanism D) → confirms diagnosis, not a clean fix
+
+After the question "isn't the monthly citygate data already in the repo?", a
+third construction was built from **only sourced data**: the gas level = Henry
+Hub **monthly** shape (the uploaded EIA RNGWHHDm) re-levelled to the **SOM
+marginal-hub annual** (`nyiso_zonal_gas_hub.csv`, Iroquois Z2 at the Capital
+reference), with the zonal basis spreading the rest. This replaces both the
+winter-high receipts and the summer-high citygate with NYISO's own *marginal*
+hub level. Probe `nyiso 14 som-anchored-gas`:
+
+| metric | year | keeper | + SOM-anchored | verdict |
+|---|---|---|---|---|
+| **Jan-2023 residual** | 2023 | **+44** | **+4** | **artifact fixed** |
+| Feb-2023 residual | 2023 | +11 | −4 | fixed |
+| gas vs EIA-923 | 2023 | −0.5% | **−2.8%** | in band |
+| monthly LMP MAE | 2023 | 8.0 | 9.3 | ~flat (slightly worse) |
+| | 2024 | 4.3 | 9.0 | worse |
+| | 2025 | 6.3 | **18.7** | far worse |
+
+**This is the decisive result for mechanism D.** It *confirms the diagnosis* —
+Jan-2023 collapses from +44 to **+4** once the $10.02 receipt artifact is
+replaced, proving the winter over-price is the gas series. But it is **not a
+clean fix**, because the SOM anchor is **annual-only**: a flat annual level ×
+Henry Hub's (nearly flat) monthly shape cannot reproduce a *winter-weighted*
+hub. So the non-winter months are over-levelled (+~10/month in 2023), and in
+**2025** — whose SOM annual ($6.02) is dominated by the January cold-snap
+blowout — that annual number smears across the summer and the MAE explodes to
+18.7. Net worse; rejected.
+
+**Conclusion: the repo's two monthly proxies (receipts, citygate) and its annual
+SOM hub bracket the truth but none is it; the clean fix genuinely requires the
+*monthly* (or daily) Transco-Z6 NY / Iroquois-Z2 trading-hub spot.** The three
+tests pin the prize precisely: fixing Jan-2023 alone is worth ~$3.7 of the 8.0
+MAE, and it is achievable the moment a real monthly hub series lands. EIA does
+not publish it (the free NY series, N3050NY3, is an LDC *citygate* in $/Mcf that
+*peaks in summer* — the wrong shape); the source is NGI/ICE/Platts or the NYISO
+reference-level gas prices.
+
 ## 5. What changed in code this session
 
 - **Fixed** the stale validation path in `scripts/derive_nyiso_rcpf_overlay.py`
