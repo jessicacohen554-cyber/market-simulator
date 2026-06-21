@@ -605,9 +605,19 @@ class ScenarioConfig:
     # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
     # scarcity adder in non-scarce hours from omitting load-side reserve supply
     # (it already counts thermal headroom + storage). Built by
-    # scripts/build_ercot_as_withholding.py (rrsufr_mw); 2023 has no archive
-    # coverage so its scarcity tail is untouched. GATED — alters dispatch
-    # volumes, re-run the volume calibration. Default off; ERCOT co-opt only.
+    # scripts/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
+    # scripts/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
+    # re-run the volume calibration. Default off; ERCOT co-opt only.
+    ercot_load_resource_reserve_from_year: int = 2024  # First weather year the
+    # load-resource RRS-UFR credit applies to. Mirrors the storage-AS scope and
+    # for the SAME reason, now confirmed with the MEASURED 2023 series (run136):
+    # crediting the measured ~884 MW of 2023 load reserve cools 2023 49.8->43.1
+    # avg and collapses the tail 171/94->129/73 — UNDER actual 48.4 (181/104) —
+    # because the co-opt model reaches 2023's out-of-market (RTORDPA / ECRS-
+    # conservatism) tail only through the reserve over-fire the credit removes.
+    # So 2023 is left uncredited (default 2024), preserving run134's physics-
+    # correct 2023; 2024/2025 keep the credit. Settable via
+    # --ercot-load-resource-reserve-from-year (set 2023 to probe a global credit).
     ercot_storage_as_reserve: bool = False  # ERCOT co-opt: credit the measured
     # battery-provided AS (RegUp/RRS/ECRS, the storage column of the per-resource-
     # type 60-Day DAM AS awards; ~0.8 GW 2023 → ~2.8 GW 2025) back into the co-opt
@@ -1629,6 +1639,7 @@ TIER_TAGS: dict[str, int] = {
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
     "ercot_load_resource_reserve": 1,
+    "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
     "ercot_storage_as_reserve_from_year": 1,
     "storage_as_commitment": 1,
