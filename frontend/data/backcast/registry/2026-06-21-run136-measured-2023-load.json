@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-21-run136-measured-2023-load",
+  "label": "run136 measured 2023 load",
+  "date": "2026-06-21",
+  "shorthand": "run136-measured-2023-load",
+  "definition": "Step 1 of the ORDC tail re-fit: run134's exact recipe re-solved now that the MEASURED 2023 load-resource RRS-UFR series is built (scripts/build_ercot_as_2023.py, ~884 MW), so the co-opt load-resource credit (ercot_load_resource_reserve) is active for 2023 for the first time (storage-AS still scoped from 2025). 2024/2025 reproduce run134 exactly (33.8/38.0, parity check), confirming the only change is the 2023 credit. Finding: crediting measured 2023 reserves COOLS 2023 49.8->43.1 avg (tail 171/94->129/73) — UNDER actual 48.4 (181/104) — because the co-opt model reaches 2023's real out-of-market (RTORDPA/ECRS-conservatism) tail only through the reserve over-fire the credit removes. Confirms with measured (not estimated) 2023 data the documented rationale for scoping the reserve credits off in 2023.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-21-run136-measured-2023-load.js",
+  "bundle": "results/calibration/ercot_dam_2023as_keeper"
+}
