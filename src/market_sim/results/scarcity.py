@@ -611,17 +611,18 @@ def ercot_reserve_coopt_inputs(
     requirement = np.full(int(hours), req_total, dtype=float)
     if getattr(config, "ercot_load_resource_reserve", False) and int(
         config.weather_year
-    ) >= int(getattr(config, "ercot_load_resource_reserve_from_year", 2024)):
+    ) >= int(getattr(config, "ercot_load_resource_reserve_from_year", 2023)):
         # Credit ERCOT's measured Load-Resource responsive reserve (RRS-UFR) the
         # co-opt LP otherwise omits. Lowering the balance-RHS by load_mw(t) is
         # equivalent to adding load_mw of $0 reserve supply: because the ORDC
         # steps are priced by absolute reserve level, the marginal step then
         # prices at total reserve R_gen + load_mw — physically exact, no double
         # count. Clipped to the MCL floor so the curve's steep tail is preserved.
-        # SCOPED to weather_year >= ercot_load_resource_reserve_from_year (default
-        # 2024) for the same reason as the storage-AS credit: crediting the
-        # measured 2023 load reserve over-cools the year whose tail is
-        # out-of-market scarcity the ORDC model can't reproduce (run136).
+        # Credited every year by default (ercot_load_resource_reserve_from_year
+        # = 2023): on the measured-storage baseline (storage_as_commitment over-
+        # tightens 2023) the measured 2023 load credit corrects the 2023 MAE
+        # 16.0->12.1 (run139) — unlike the storage-AS *reserve* credit, which
+        # stays scoped off 2023/2024 (it would double-relax, run137).
         load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
     if (
