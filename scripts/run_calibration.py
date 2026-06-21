@@ -359,6 +359,7 @@ def _calibration_config(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    retiree_cems_cap: bool = False,
     ct_mustrun_per_plant: bool = False,
     ct_mustrun_floor_frac: float = 1.0,
     coal_drop_pof: bool = False,
@@ -521,6 +522,8 @@ def _calibration_config(
         #   PRB passthrough when set; else the flat coal_prb_passthrough.
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
         #   must-run floors when set; else the uniform lignite/PRB overrides.
+        retiree_cems_cap=retiree_cems_cap,  # cap within-window retirees to their
+        #   measured monthly CAMPD CEMS envelope (backcast) when set.
         ct_mustrun_per_plant=ct_mustrun_per_plant,  # per-plant EIA-923 CT_PEAKER
         #   reliability must-run floor (WEFOR/POF exempt) when set.
         ct_mustrun_floor_frac=ct_mustrun_floor_frac,
@@ -978,6 +981,7 @@ def run_year(
     outage_source: str = "historic",
     coal_prb_passthrough_sigmoid: bool = False,
     coal_mustrun_per_plant: bool = False,
+    retiree_cems_cap: bool = False,
     ct_mustrun_per_plant: bool = False,
     ct_mustrun_floor_frac: float = 1.0,
     coal_drop_pof: bool = False,
@@ -1069,6 +1073,7 @@ def run_year(
         outage_source,
         coal_prb_passthrough_sigmoid,
         coal_mustrun_per_plant,
+        retiree_cems_cap,
         ct_mustrun_per_plant,
         ct_mustrun_floor_frac,
         coal_drop_pof,
