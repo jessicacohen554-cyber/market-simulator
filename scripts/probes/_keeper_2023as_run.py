@@ -37,6 +37,7 @@ RUN134 = REPO / "results" / "calibration" / "ercot_dam_storageas_ccsteam_regen"
 def main(argv: list[str]) -> int:
     out_subdir = argv[0]
     from_year = int(argv[1]) if len(argv) > 1 else 2025
+    load_from_year = int(argv[2]) if len(argv) > 2 else 2024
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
 
@@ -68,6 +69,7 @@ def main(argv: list[str]) -> int:
         as_reserve_withholding=False,
         energy_reserve_coopt=True,
         ercot_load_resource_reserve=True,
+        ercot_load_resource_reserve_from_year=load_from_year,
         ercot_storage_as_reserve=True,
         ercot_storage_as_reserve_from_year=from_year,
         as_reserve_formula=False,
@@ -85,7 +87,7 @@ def main(argv: list[str]) -> int:
         priced_interchange=False,
         btm_backfill_year=cfg.get("btm_backfill_year"),
         note=f"run134 recipe re-solved with measured 2023 AS; "
-        f"storage-AS-from-year={from_year}",
+        f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}",
     )
     report_run(run_dir)
     print(f"\nBundle: {run_dir}")
