@@ -56,6 +56,64 @@ ST_GAS_MIN_OUTAGE_HOURS: int = 120
 # (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
 GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"})
 
+# Revealed-availability filter (shared by the unit-level detector) -----------
+# A sustained CF<threshold span is detected as an "outage", but for a
+# dispatchable coal/CC unit that span is ambiguous: a mechanical outage vs
+# economic idling (out of merit, e.g. cheap-gas shoulder season). From CEMS
+# alone the two are indistinguishable, and the rules below mislabel the second
+# as the first — removing ~40-80 GW of economically-idle coal/CC in low-demand
+# SHOULDER/winter months, which the energy+reserve co-opt then reads as a
+# reserve shortfall and prices to VOLL (model Oct-2024 17 h>$200 at 73 GW peak
+# vs the genuinely loose actual Oct $23.8/4 h; the over-fire the 2024/25 keeper
+# could never shake). The fix is a revealed-availability test keyed on EXOGENOUS
+# system load: a down span is a real (binding) outage only if the unit stayed
+# down through the system's HIGH-LOAD hours, when a coal/CC unit would be called.
+# A span entirely within low-load hours is economic idling — the unit is left
+# AVAILABLE (capacity not removed) so the co-opt keeps it in the reserve pool.
+# Real outages coincide with the peak band (summer) and are kept (Aug/Jul GW
+# unchanged; Jan/Apr/Oct/Nov cut to ~summer levels). The signal is the model's
+# own historical demand (load_demand) — a backcast INPUT, not a solved output,
+# so no circularity with the LMP and no price target fitted. A relative LOAD
+# PERCENTILE (per ISO-year) self-scales across ISOs/years; p85 is the knee.
+HIGH_LOAD_PCTL: float = 0.85
+# A down span must overlap at least this many high-load hours to be kept as a
+# real (binding) outage; fewer ⇒ economic idle, unit left available.
+MIN_INMERIT_HOURS: int = 24
+
+
+def high_load_mask(
+    iso: str, year: int, n_hours: int, pctl: float = HIGH_LOAD_PCTL
+) -> np.ndarray | None:
+    """Boolean ``(n_hours,)`` mask: was the system in its high-load band that hour?
+
+    Uses the model's exogenous historical demand (``load_demand``), flags hours
+    above the year's ``pctl`` load percentile, and maps that non-leap series onto
+    the detector's calendar-year clock by ``(month, day, hour)`` (Feb-29 borrows
+    Feb-28) so it aligns for leap years. Returns ``None`` when demand is
+    unavailable (filter becomes a no-op, every window kept).
+    """
+    try:
+        from market_sim.data.eia_loader import load_demand
+
+        dem = np.asarray(load_demand(iso, year), dtype=float)
+    except Exception:
+        return None
+    if dem.ndim > 1:
+        dem = dem.sum(axis=0)
+    if dem.size == 0:
+        return None
+    thresh = float(np.quantile(dem, pctl))
+    nl = pd.date_range("2023-01-01", periods=dem.size, freq="h")
+    key = {(t.month, t.day, t.hour): dem[i] > thresh for i, t in enumerate(nl)}
+    clock = pd.date_range(f"{year}-01-01", periods=n_hours, freq="h")
+    out = np.zeros(n_hours, dtype=bool)
+    for i, t in enumerate(clock):
+        v = key.get((t.month, t.day, t.hour))
+        if v is None and t.month == 2 and t.day == 29:
+            v = key.get((2, 28, t.hour))
+        out[i] = bool(v)
+    return out
+
 
 def _runs(mask: np.ndarray):
     """Yield (start, stop_exclusive) for each maximal True run in ``mask``."""
@@ -154,7 +212,8 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=2.0)
     ap.add_argument(
-        "--bins", default=str(REPO / "inputs" / "custom-bin-assignments.csv")
+        "--bins",
+        default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"),
     )
     ap.add_argument(
         "--out",
@@ -162,8 +221,29 @@ def main() -> None:
         help="Output CSV. Defaults to data/raw/campd-outages.csv for "
         "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
     )
+    ap.add_argument(
+        "--no-inmerit-filter",
+        action="store_true",
+        help="Disable the revealed-availability (high-load) filter — keep every "
+        "detected down span (pre-fix behaviour).",
+    )
+    ap.add_argument(
+        "--high-load-pctl",
+        type=float,
+        default=HIGH_LOAD_PCTL,
+        help=f"System-load percentile above which an hour is 'high load' "
+        f"(default {HIGH_LOAD_PCTL}).",
+    )
+    ap.add_argument(
+        "--min-inmerit-hours",
+        type=int,
+        default=MIN_INMERIT_HOURS,
+        help=f"High-load hours a span must overlap to be a real outage "
+        f"(default {MIN_INMERIT_HOURS}).",
+    )
     args = ap.parse_args()
     min_outage_hours = int(round(args.min_outage_days * 24))
+    inmerit_cache: dict[int, np.ndarray | None] = {}
     iso = args.iso.upper()
     if args.out is None:
         fname = "campd-outages.csv" if iso == "ERCOT" else f"campd-outages-{iso}.csv"
@@ -204,6 +284,21 @@ def main() -> None:
                 )
             else:
                 windows = detect_outages(gross, npl, min_outage_hours)
+            # Revealed-availability filter: drop down spans that never overlap a
+            # high-load (system-needed) hour — economic idling, not outage — so
+            # the unit stays available and the co-opt keeps it as reserve.
+            if windows and not args.no_inmerit_filter:
+                if yr not in inmerit_cache:
+                    inmerit_cache[yr] = high_load_mask(
+                        iso, yr, len(ts), args.high_load_pctl
+                    )
+                mask = inmerit_cache[yr]
+                if mask is not None:
+                    windows = [
+                        (s, e)
+                        for s, e in windows
+                        if mask[s:e].sum() >= args.min_inmerit_hours
+                    ]
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:
                 summary.append(
