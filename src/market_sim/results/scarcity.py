@@ -549,8 +549,11 @@ def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
 
     Reads the ``storage`` column of ``ercot_<year>_as_by_restype_hourly.parquet``
     (the per-resource-type 60-Day DAM AS awards): the RegUp/RRS/ECRS cleared by
-    **batteries** (~0.8 GW in 2023 → ~2.0 GW 2024 → ~2.8 GW 2025 as the fleet
-    grew). This is responsive reserve ERCOT's RTOLCAP/RTOFFCAP count toward the
+    **batteries** (~1.25 GW in 2023 → ~2.0 GW 2024 → ~2.8 GW 2025 as the fleet
+    grew; all three measured from the Gen Resource Data awards, the 2023 series
+    built by ``scripts/build_ercot_as_by_restype_from_60day.py``, save an
+    Oct-2023 disclosure-file gap that zero-fills). This is responsive reserve
+    ERCOT's RTOLCAP/RTOFFCAP count toward the
     ORDC adder, but which the co-opt LP drops when ``storage_as_commitment`` is
     on: that flag subtracts this same MW from the storage *power cap*, and the
     reserve block computes a unit's reserve room off that reduced cap — so the
