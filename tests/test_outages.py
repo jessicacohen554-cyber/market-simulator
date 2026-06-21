@@ -10,7 +10,6 @@ import pandas as pd
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import CAMPD_BINS_CSV, RAW_DATA_DIR
 from market_sim.data.outages import (
-    CAMPD_UNIT_LEVEL_DIR,
     MIN_OUTAGE_SPAN_HOURS,
     QUALIFYING_PLANT_GROUPS,
     _hour_of_year,
@@ -448,12 +447,20 @@ class RetireeCemsEnvelopeTest(unittest.TestCase):
             rows = []
             for h in range(24):
                 rows.append(
-                    {"facilityId": "999", "date": "2023-01-15", "hour": h,
-                     "grossLoad": 100.0}
+                    {
+                        "facilityId": "999",
+                        "date": "2023-01-15",
+                        "hour": h,
+                        "grossLoad": 100.0,
+                    }
                 )
                 rows.append(
-                    {"facilityId": "999", "date": "2023-02-15", "hour": h,
-                     "grossLoad": 50.0}
+                    {
+                        "facilityId": "999",
+                        "date": "2023-02-15",
+                        "hour": h,
+                        "grossLoad": 50.0,
+                    }
                 )
             self._write_extract(d, rows)
             import market_sim.data.outages as O
@@ -478,8 +485,15 @@ class RetireeCemsEnvelopeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
             self._write_extract(
-                d, [{"facilityId": "111", "date": "2023-01-01", "hour": 0,
-                     "grossLoad": 10.0}]
+                d,
+                [
+                    {
+                        "facilityId": "111",
+                        "date": "2023-01-01",
+                        "hour": 0,
+                        "grossLoad": 10.0,
+                    }
+                ],
             )
             import market_sim.data.outages as O
 
