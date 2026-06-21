@@ -37,7 +37,7 @@ RUN134 = REPO / "results" / "calibration" / "ercot_dam_storageas_ccsteam_regen"
 def main(argv: list[str]) -> int:
     out_subdir = argv[0]
     from_year = int(argv[1]) if len(argv) > 1 else 2025
-    load_from_year = int(argv[2]) if len(argv) > 2 else 2024
+    load_from_year = int(argv[2]) if len(argv) > 2 else 2023
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
 
