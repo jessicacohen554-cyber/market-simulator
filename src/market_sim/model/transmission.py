@@ -515,6 +515,75 @@ def inject_caiso_import_gas_coupling(
     return applied
 
 
+# Net-load percentile band over which the desert-SW solar import offer collapses
+# from its (gas-coupled) level toward the negative keep-running floor. The Palo
+# Verde / Path-46 desert-SW hub price collapses to sub-$0 midday in the spring
+# belly (the regional AZ/NV solar glut), so the marginal desert-SW SOLAR import
+# bids negative and can set a sub-$0 CAISO LMP — the model otherwise prices that
+# marginal block flat ($48, gas-coupled), so its midday floor never goes
+# negative (model 14 hrs <=$0 vs actual ~868, 2024). The collapse is gated on
+# CAISO net load (load less utility solar/wind) so it fires spring-midday (deep
+# belly) and not summer-midday (high net load): full collapse at the annual
+# net-load floor, none above the low decile. Depth is the same REC/PTC
+# keep-running constant the in-state negative_renewable_offers floor uses
+# (renewable_keep_running_value) — no new fitted price constant. Only the SOLAR
+# import block is shaped; the desert-SW gas blocks (DSW_CCGT/DSW_CT) keep their
+# positive gas SRMC.
+_CAISO_SOLAR_SHAPE_NL_HI_PCT = 10.0  # net-load pct where the collapse begins (s=0)
+_CAISO_SOLAR_SHAPE_NL_LO_PCT = 1.0  # net-load pct of full collapse (s=1)
+_CAISO_SOLAR_SHAPE_TRANCHE = "DSW_solar_PV"
+
+
+def inject_caiso_import_solar_shape(
+    fleet_arrays, mc: np.ndarray, config, net_load: np.ndarray
+) -> bool:
+    """Collapse the desert-SW solar import offer toward the negative floor in the belly.
+
+    Forecast-/no-OASIS-consistent restoration of the CAISO negative midday tail.
+    The desert-SW solar import block (``DSW_solar_PV``, mapped to the Palo Verde
+    hub) is the marginal CAISO import in the midday hours, but its price-setting
+    *level* is priced flat (gas-coupled ~$48), so it can never set the sub-$0 LMP
+    that the real Palo Verde hub prints in the spring solar glut. This shifts its
+    per-hour offer from that level toward ``-renewable_keep_running_value`` as
+    CAISO net load drops into its annual belly::
+
+        s(t) = clip((nl_hi - net_load[t]) / (nl_hi - nl_lo), 0, 1)
+        mc[DSW_solar_PV, t] = base(t) * (1 - s(t)) + floor * s(t)
+
+    with ``nl_hi`` / ``nl_lo`` the :data:`_CAISO_SOLAR_SHAPE_NL_HI_PCT` /
+    ``_LO_PCT`` percentiles of the year's net load and ``floor =
+    -renewable_keep_running_value``. Net-load-gated so the negative offer fires
+    in the deep (spring-midday) belly and stays at the gas-coupled level off the
+    belly (nights, summer peak). Applies on top of the gas coupling (so ``base``
+    already carries the commodity-gas shift). Returns ``True`` when the block was
+    shaped, ``False`` (byte-identical) for non-CAISO ISOs, a missing import node,
+    a length mismatch, or a degenerate (flat) net-load band.
+    """
+    iso = config.iso
+    if iso.upper() != "CAISO":
+        return False
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return False
+    nl = np.asarray(net_load, dtype=float).reshape(-1)
+    if nl.size != mc.shape[1]:
+        return False
+    nl_hi = float(np.percentile(nl, _CAISO_SOLAR_SHAPE_NL_HI_PCT))
+    nl_lo = float(np.percentile(nl, _CAISO_SOLAR_SHAPE_NL_LO_PCT))
+    if not (nl_hi > nl_lo):
+        return False
+    s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
+    floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
+    target = f"{zone}_{_CAISO_SOLAR_SHAPE_TRANCHE}"
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if uid != target:
+            continue
+        mc[row, :] = mc[row, :] * (1.0 - s) + floor * s
+        applied = True
+    return applied
+
+
 def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     """Return ``iso_config`` with its external import/export zone appended.
 
