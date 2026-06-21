@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-21-run137-credit-2023-load",
+  "label": "run137 credit 2023 load+storage (PROBE)",
+  "date": "2026-06-21",
+  "shorthand": "run137-credit-2023-load",
+  "definition": "(PROBE — REJECTED) Step 2b: the maximal global-credit test — run134 recipe with BOTH measured 2023 reserve credits on (load all years + storage from 2023, which also turns on the 2024 storage credit). Over-cools the out-of-market years catastrophically: 2023 avg 49.8->27.0 (tail 171/94->33/15 vs actual 181/104), 2024 33.8->22.5 (tail 69->13 vs actual 53) — because the co-opt model reaches 2023/2024's genuine tails only through the reserve over-fire the credits remove. Confirms with MEASURED 2023 data the keeper scoping: leave both reserve credits off the out-of-market years (load from 2024, storage from 2025). 2025 unchanged (already credited).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-21-run137-credit-2023-load.js",
+  "bundle": "results/calibration/ercot_dam_2023as_stor2023"
+}

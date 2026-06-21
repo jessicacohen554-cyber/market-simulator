@@ -1356,6 +1356,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
+    ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
     as_reserve_formula: bool = False,
@@ -1486,6 +1487,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
+            ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
             ercot_storage_as_reserve_from_year=ercot_storage_as_reserve_from_year,
             as_reserve_formula=as_reserve_formula,
@@ -1651,6 +1653,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
+        "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
         "as_reserve_formula": as_reserve_formula,
@@ -1738,7 +1741,12 @@ def solve_and_persist(
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if ercot_load_resource_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_load_resource_reserve=True)
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_load_resource_reserve=True,
+            ercot_load_resource_reserve_from_year=int(
+                ercot_load_resource_reserve_from_year
+            ),
+        )
     if ercot_storage_as_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_storage_as_reserve=True,
@@ -3909,11 +3917,22 @@ def main() -> None:
         help="ERCOT energy+reserve co-opt only: credit the measured "
         "Load-Resource responsive reserve (RRS-UFR, the under-frequency-"
         "relay RRS only Load Resources provide; ~0.8-0.9 GW, "
-        "build_ercot_as_withholding.py) into the reserve balance by "
-        "lowering its RHS, so the LP stops pricing a scarcity adder in "
-        "non-scarce hours from omitting load-side reserve. 2023 has no "
-        "archive coverage (tail untouched). GATED: alters volumes. "
-        "Off = no load credit (default).",
+        "build_ercot_as_withholding.py for 2024/2025, build_ercot_as_2023.py "
+        "for 2023) into the reserve balance by lowering its RHS, so the LP "
+        "stops pricing a scarcity adder in non-scarce hours from omitting "
+        "load-side reserve. 2023 is now covered (~884 MW). GATED: alters "
+        "volumes. Off = no load credit (default).",
+    )
+    parser.add_argument(
+        "--ercot-load-resource-reserve-from-year",
+        type=int,
+        default=2023,
+        help="First weather year the --ercot-load-resource-reserve credit "
+        "applies to (default 2023 = every backcast year). The measured load "
+        "reserve is real supply the co-opt LP omits, correct every year; on "
+        "the measured-storage baseline (storage_as_commitment over-tightens "
+        "2023 to 58.4 uncredited) the ~884 MW 2023 load credit corrects the "
+        "2023 MAE 16.0->12.1 (run139). Raise it to exclude early years.",
     )
     parser.add_argument(
         "--ercot-storage-as-reserve",
@@ -4413,6 +4432,9 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
+        ercot_load_resource_reserve_from_year=(
+            args.ercot_load_resource_reserve_from_year
+        ),
         ercot_storage_as_reserve=args.ercot_storage_as_reserve,
         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
         as_reserve_formula=args.as_reserve_formula,
