@@ -1375,6 +1375,7 @@ def solve_and_persist(
     caiso_gas_floor_frac: float | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
+    caiso_import_solar_shape: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
@@ -1504,6 +1505,7 @@ def solve_and_persist(
             caiso_gas_floor_frac=caiso_gas_floor_frac,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
+            caiso_import_solar_shape=caiso_import_solar_shape,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
         )
         if persist_p2_state:
@@ -1666,6 +1668,7 @@ def solve_and_persist(
         "caiso_gas_floor_frac": caiso_gas_floor_frac,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
+        "caiso_import_solar_shape": caiso_import_solar_shape,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -1784,6 +1787,10 @@ def solve_and_persist(
     if caiso_import_gas_coupling is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_import_gas_coupling=caiso_import_gas_coupling
+        )
+    if caiso_import_solar_shape is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_import_solar_shape=caiso_import_solar_shape
         )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4192,6 +4199,21 @@ def main() -> None:
         "Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--caiso-import-solar-shape",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Restore the CAISO negative midday tail: collapse the desert-SW "
+        "solar import block (DSW_solar_PV / Palo Verde hub) — the marginal CAISO "
+        "import midday — from its flat gas-coupled level toward "
+        "-renewable_keep_running_value as CAISO net load (load less utility "
+        "solar/wind) drops into its annual belly, so the marginal import bids "
+        "sub-$0 in the spring solar glut and sets a negative LMP (model ~14 hrs "
+        "<=$0 vs actual ~868, 2024). Net-load-gated (spring-midday, not summer); "
+        "depth is the existing REC/PTC keep-running constant (no new fitted price "
+        "level). CAISO-only; applies on top of the gas coupling. Default (unset) "
+        "keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4415,6 +4437,7 @@ def main() -> None:
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
+        caiso_import_solar_shape=args.caiso_import_solar_shape,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
