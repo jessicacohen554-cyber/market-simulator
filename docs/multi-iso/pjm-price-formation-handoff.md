@@ -8,6 +8,47 @@ because it is the most STRUCTURALLY FAITHFUL, not because it has the lowest MAE.
 the objective** (this is the user's stated methodology for price formation, per
 `docs/multi-iso/pjm-reserve-ordc.md` §"Campaign").
 
+## STEP 0 — DO THIS FIRST: re-gate the keeper on net-load-filtered outages
+**This is a prerequisite, not optional.** The price-formation work below builds
+on the *current* keeper, and the outage input under it just changed. Commit
+`b0c41cb` (branch `claude/ercot-scarcity-tuning-handoff-nl1y3m`) regenerated
+PJM's outage CSVs on the revealed-availability (high-NET-LOAD) filter:
+capacity-weighted outage GW-days fell **~46%** (37,889→20,304), concentrated in
+shoulder months (Apr −68k / Oct −63k outage-hrs), **summer binding outages
+preserved** (Jul −728). Every PJM keeper was scored against the *pre-fix,
+over-stated* outages. Fewer outages ⇒ more available coal/CC in the stack ⇒
+**expect cooler shoulder/winter prices** — which directly moves the LMP residual
+this session targets, so it must be settled before the co-opt build.
+**Read `docs/multi-iso/cross-iso-outage-regate-handoff-2026-06.md` first**
+(it lives on branch `claude/ercot-scarcity-tuning-handoff-nl1y3m`; on a stale
+checkout: `git show origin/claude/ercot-scarcity-tuning-handoff-nl1y3m:docs/multi-iso/cross-iso-outage-regate-handoff-2026-06.md`).
+
+- PJM consumes **BOTH** regenerated files: `data/raw/campd-outages-PJM.csv`
+  (facility — PJM is the only non-ERCOT ISO with one) and
+  `data/raw/campd-unit-outages-PJM.csv` (unit). Both are picked up automatically
+  from `data/raw/` — **no flag change**, change ONLY the outage input.
+- **Keeper to re-gate (reconcile this — the source prompt is stale):** the
+  cross-ISO prompt names `pjm-35` ("cc-steam", `results/calibration/pjm_35`), but
+  the registry's newest non-PROBE PJM entry is **`pjm-36` retiree-cems = bundle
+  `results/calibration/pjm_37`** (this session's baseline: `pjm_35` config + the
+  per-unit retiree COD fix + the within-window retiree CEMS cap). The registry is
+  the source of truth — **re-gate from `pjm_37`** (retain the retiree fixes:
+  re-solve via `_pjm_retiree_run.py`, `retiree_cems_cap=True`), not the older
+  `pjm_35`. Confirm against `frontend/data/backcast/registry/` +
+  `docs/calibration-best-so-far*.md` before solving.
+- **Re-solve byte-faithfully** from the keeper's `run_config.json` (driver
+  `scripts/run_calibration_full.py --iso PJM --year 2023 2024 2025`), changing
+  ONLY the outage input. Don't re-tune offers/curves in the same step — isolate
+  the outage effect. **Gate all 3 years AND the tail vs actuals**; report
+  old-keeper vs new (mean, load-wtd LMP MAE, hrs>$200) per year. **PJM's coal
+  over-run is a separate, settled issue — don't chase it here**
+  (`pjm-coal-mustrun-floor.md`).
+- Register on the dashboard (`calibration-report` skill, top-10 PJM retention);
+  **make it the keeper only if it gates clean**, and update
+  `docs/calibration-best-so-far*.md` if so. Then the price-formation work below
+  proceeds on the re-gated keeper (bundle `pjm_38`).
+- Memory/run guardrails are the same as below (one year at a time).
+
 ## WHY THIS SESSION (what the coal probe settled)
 The prior branch (`claude/pjm-coal-mustrun-floor-clzoxa`) attacked the coal-over
 and **refuted the coal must-run floor as the lever** — see
@@ -215,11 +256,14 @@ with **two measured structures**, NOT commitment (ERCOT keepers run
 
 ## FIRST STEPS
 1. `git fetch origin`; recreate branch from `origin/main`; set git identity; make
-   the symlinks; `uv sync`. Re-score `pjm_37` (or re-solve one year — keeper
-   bundle is slim) to confirm the baseline.
-2. **Read `docs/multi-iso/pjm-reserve-ordc.md` end to end** — it is the campaign
+   the symlinks; `uv sync`. Confirm `b0c41cb`'s regenerated PJM outage CSVs are in
+   `data/raw/` (they're on main).
+2. **STEP 0 — the outage re-gate (prerequisite, above).** Re-gate `pjm_37` on the
+   net-load-filtered outages, all 3 years + tail; register; promote to keeper only
+   if clean. The price-formation work then builds on whatever keeper this yields.
+3. **Read `docs/multi-iso/pjm-reserve-ordc.md` end to end** — it is the campaign
    spec; this handoff is its execution plan with the ERCOT machinery mapped.
-3. Probe #2 FIRST (the bind gate, one year, cheap): instrument whether the
+4. Probe #2 FIRST (the bind gate, one year, cheap): instrument whether the
    measured PJM Primary requirement binds on deliverable headroom in the afternoon
    under the existing `_build_reserve_rows`. Decide if the 10-min ramp cap is
    needed.
