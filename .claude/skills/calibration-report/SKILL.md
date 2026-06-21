@@ -55,12 +55,12 @@ rebasing:
 Run id = `<bundle date>-<shorthand>`; shorthand + the 1-3 sentence definition
 are auto-derived from each bundle's `run_config.json` model-changes note.
 
-**Retention rule (2026-06-17, user-set; supersedes the 5-run rule of
-2026-06-11): the dashboard keeps the top 10 runs per ISO.** Register EVERY
+**Retention rule (2026-06-21, user-set; supersedes the 10-run rule of
+2026-06-17): the dashboard keeps the top 15 runs per ISO.** Register EVERY
 completed run — keeper or probe alike (mark rejected probes "(PROBE)" in the
 sidecar definition). **Do not run a probe bundle without registering it** —
 the dashboard is the only way the user sees results; an unregistered /tmp
-probe leaves them flying blind. When over the 10-run limit, delete the
+probe leaves them flying blind. When over the 15-run limit, delete the
 displaced **oldest** runs' sidecar (`registry/<id>.json`) and payload
 (`runs/<id>.js`) in the same commit — drop the oldest even when an old run
 scored better, because the model design evolves and only the prior keeper
