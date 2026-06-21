@@ -529,21 +529,46 @@ def inject_caiso_import_gas_coupling(
 # (renewable_keep_running_value) — no new fitted price constant. Only the SOLAR
 # import block is shaped; the desert-SW gas blocks (DSW_CCGT/DSW_CT) keep their
 # positive gas SRMC.
-_CAISO_SOLAR_SHAPE_NL_HI_PCT = 10.0  # net-load pct where the collapse begins (s=0)
-_CAISO_SOLAR_SHAPE_NL_LO_PCT = 1.0  # net-load pct of full collapse (s=1)
-_CAISO_SOLAR_SHAPE_TRANCHE = "DSW_solar_PV"
+import os as _os
+
+# Net-load band over which the offer collapses. Full collapse (s=1) at/below the
+# LO percentile, none above HI. The LO percentile is anchored to the observed
+# CAISO negative-price prevalence (~9% of hours, 2024 DA/RT) so the deepest
+# net-load belly hours — the regional glut — price negative; HI sets the ramp
+# above it. Validated against actual hourly LMP (precision ~100% — every modeled
+# negative hour is a real negative hour). Overridable via env for sweeps.
+_CAISO_SOLAR_SHAPE_NL_HI_PCT = float(_os.environ.get("CAISO_SS_NL_HI", "25.0"))
+_CAISO_SOLAR_SHAPE_NL_LO_PCT = float(_os.environ.get("CAISO_SS_NL_LO", "8.0"))
+# Marginal CAISO import blocks set by *long WECC neighbors* in the midday belly:
+# the desert-SW solar/Palo Verde hub and the Mid-C (Pacific NW) hub, both of
+# which print sub-$0 in the regional spring solar/hydro glut. The firm baseload
+# hydro block (PNW_hydro_base) is NOT collapsed — it is the cheap must-take floor,
+# not a glut-priced marginal block. Collapsing the two marginal blocks fills the
+# (aggregate path-constrained) import lane and pushes the $28 firm-hydro block
+# out of the margin, so the price-setting import bids sub-$0.
+_CAISO_SOLAR_SHAPE_TRANCHES = ("DSW_solar_PV", "PNW_midC")
+# Export sinks (EXPORT_TRANCHES["CAISO"]): the neighbors' willingness-to-pay for
+# CAISO surplus. Off the belly that is positive (export_solar $8 / export_curtail
+# $0), but in the midday belly the neighbors are long too, so CAISO must PAY them
+# to take the surplus — the export price collapses sub-$0 on the same signal. This
+# floors a *long* CAISO at the negative export price (instead of +$8), so the
+# belly LMP follows the in-state negative_renewable_offers / negative export down
+# rather than pinning at the export sink. Only bites when CAISO is long (the sink
+# is idle otherwise), so it is self-limiting on the price body.
+_CAISO_SOLAR_SHAPE_EXPORT_TRANCHES = ("export_solar", "export_curtail")
 
 
 def inject_caiso_import_solar_shape(
     fleet_arrays, mc: np.ndarray, config, net_load: np.ndarray
 ) -> bool:
-    """Collapse the desert-SW solar import offer toward the negative floor in the belly.
+    """Collapse the marginal long-neighbor import offers toward the negative floor in the belly.
 
     Forecast-/no-OASIS-consistent restoration of the CAISO negative midday tail.
-    The desert-SW solar import block (``DSW_solar_PV``, mapped to the Palo Verde
-    hub) is the marginal CAISO import in the midday hours, but its price-setting
-    *level* is priced flat (gas-coupled ~$48), so it can never set the sub-$0 LMP
-    that the real Palo Verde hub prints in the spring solar glut. This shifts its
+    The marginal CAISO imports midday are the desert-SW solar (``DSW_solar_PV``,
+    Palo Verde hub) and Mid-C (``PNW_midC``, Pacific-NW hub) blocks
+    (:data:`_CAISO_SOLAR_SHAPE_TRANCHES`), but their price-setting *level* is
+    priced flat (gas-coupled ~$48 / $36), so they can never set the sub-$0 LMP
+    those hubs print in the regional spring solar/hydro glut. This shifts their
     per-hour offer from that level toward ``-renewable_keep_running_value`` as
     CAISO net load drops into its annual belly::
 
@@ -574,10 +599,13 @@ def inject_caiso_import_solar_shape(
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
     floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
-    target = f"{zone}_{_CAISO_SOLAR_SHAPE_TRANCHE}"
+    targets = {
+        f"{zone}_{t}"
+        for t in (*_CAISO_SOLAR_SHAPE_TRANCHES, *_CAISO_SOLAR_SHAPE_EXPORT_TRANCHES)
+    }
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
-        if uid != target:
+        if uid not in targets:
             continue
         mc[row, :] = mc[row, :] * (1.0 - s) + floor * s
         applied = True
