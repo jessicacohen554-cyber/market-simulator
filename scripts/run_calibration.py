@@ -1005,6 +1005,7 @@ def run_year(
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
+    ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
     storage_as_commitment: bool = False,
@@ -1166,7 +1167,12 @@ def run_year(
     # responsive reserve) into the co-opt reserve balance. GATED — alters
     # dispatch volumes. ERCOT co-opt only; a no-op otherwise.
     if ercot_load_resource_reserve:
-        config = config.with_overrides(ercot_load_resource_reserve=True)
+        config = config.with_overrides(
+            ercot_load_resource_reserve=True,
+            ercot_load_resource_reserve_from_year=int(
+                ercot_load_resource_reserve_from_year
+            ),
+        )
     # ERCOT storage-AS reserve credit (run_calibration_full
     # --ercot-storage-as-reserve): credit the measured battery-provided AS back
     # into the co-opt reserve balance — storage_as_commitment removes it from the
@@ -1639,9 +1645,7 @@ def run_year(
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
-        if inject_caiso_import_solar_shape(
-            fleet_arrays, mc_base, config, net_load
-        ):
+        if inject_caiso_import_solar_shape(fleet_arrays, mc_base, config, net_load):
             logger.info(
                 "%s %d: desert-SW solar import (DSW_solar_PV) offer collapsed "
                 "toward the negative keep-running floor in the net-load belly "

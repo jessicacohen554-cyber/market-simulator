@@ -605,9 +605,23 @@ class ScenarioConfig:
     # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
     # scarcity adder in non-scarce hours from omitting load-side reserve supply
     # (it already counts thermal headroom + storage). Built by
-    # scripts/build_ercot_as_withholding.py (rrsufr_mw); 2023 has no archive
-    # coverage so its scarcity tail is untouched. GATED — alters dispatch
-    # volumes, re-run the volume calibration. Default off; ERCOT co-opt only.
+    # scripts/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
+    # scripts/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
+    # re-run the volume calibration. Default off; ERCOT co-opt only.
+    ercot_load_resource_reserve_from_year: int = 2023  # First weather year the
+    # load-resource RRS-UFR credit applies to. Default 2023 = credit every
+    # backcast year (the measured load reserve is real reserve supply the co-opt
+    # LP omits, physically correct in every year). The knob exists as an optional
+    # exclusion lever, NOT a default-off scope — UNLIKE the storage-AS credit,
+    # because the two measured 2023 inputs interact: storage_as_commitment caps
+    # battery dispatch by the MEASURED 2023 storage-AS (~1.25 GW, vs the old
+    # 0.83 GW estimate) for ALL years, which over-tightens 2023 (uncredited
+    # 49.8->58.4, tail over actual at 210/130 vs 181/104, run138). The measured
+    # ~884 MW load credit corrects it — best 2023 monthly MAE 16.0->12.1, avg
+    # 58.4->43.1 (run139). So with BOTH measured 2023 inputs + the run133/134
+    # derate fix, crediting 2023 load is the "measured reserves + correct
+    # derates" combination; leaving it off over-tightens. Settable via
+    # --ercot-load-resource-reserve-from-year (raise it to exclude early years).
     ercot_storage_as_reserve: bool = False  # ERCOT co-opt: credit the measured
     # battery-provided AS (RegUp/RRS/ECRS, the storage column of the per-resource-
     # type 60-Day DAM AS awards; ~0.8 GW 2023 → ~2.8 GW 2025) back into the co-opt
@@ -1629,6 +1643,7 @@ TIER_TAGS: dict[str, int] = {
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
     "ercot_load_resource_reserve": 1,
+    "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
     "ercot_storage_as_reserve_from_year": 1,
     "storage_as_commitment": 1,

@@ -36,10 +36,16 @@ Model mapping (documented approximations, see docs/ordc-overlay.md):
   charge), minus ERCOT's ancillary-service plan (``ordc_as_plan_mw``). The
   AS netting stands in for capacity the real market withholds from energy
   but the energy-only LP dispatches freely.
-* All netted reserves are treated as on-line (RTOFFCAP = 0): the LP has no
-  commitment state, so the on-line/off-line split is unobservable. Both
-  LOLP terms are evaluated at the same R, which *understates* the adder
-  relative to a real split (the first-half term would see fewer reserves).
+* Reserves are split into an on-line (spinning) and an off-line (30-minute
+  non-spin, RTOFFCAP) tier by :func:`reserve_headroom` (the legacy "all
+  on-line / RTOFFCAP = 0" shortcut is gone): on-line = headroom on running
+  plants + storage + curtailed renewables, off-line = available capacity on
+  *quick-start* (gas-CT / oil) units whose plant is idle; a cold slow-start
+  unit backs neither. :func:`ordc_adder` evaluates the full-hour LOLP term on
+  ``online + offline`` and the first-half term on ``online`` alone, the
+  published RTOLCAP / RTOFFCAP structure. (Off by default in the co-opt keeper,
+  which prices scarcity in the LP instead — see the co-opt section in
+  docs/ordc-overlay.md.)
 * lambda = the hourly demand-weighted system price (the LP's energy dual),
   the model analogue of ERCOT's system lambda.
 
@@ -525,13 +531,14 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     scarcity adder in non-scarce hours.
 
     Returns ``(hours,)`` MW, zero-padded if short and **all-zero when the file
-    is absent**. ``ercot_2023_as_up_mw.parquet`` is not yet built — the NP3-911
-    *2-Day* cleared-DAM-AS reports under ``data/raw/ercot-AS/`` only reach back
-    to 2023-12-10 — but full-year 2023 Load-Resource AS coverage IS in the repo
-    via the 60-Day DAM Disclosure (``data/raw/ercot/`` :
-    ``60_DAY_DAM_DISCLOSURE_60d_DAM_Load_Resource_ASOffers_2023.parquet`` plus
-    the cleared aggregate ``DAMASAGGNP419_2023.parquet``), so 2023 can be
-    credited once that series is built from those sources.
+    is absent**. ``ercot_2023_as_up_mw.parquet`` is built by
+    ``scripts/build_ercot_as_2023.py`` from the 60-Day DAM Disclosure: its
+    ``rrsufr_mw`` is the measured 2023 load-side RRS *shape* (RRS_req minus
+    cleared generator PFR/FFR), level-anchored to the measured cleared RRS-UFR
+    (NP3-911 Dec-2023 = 896 MW; 2024/2025 = 904 / 787 MW), with the Dec tail
+    taken directly from the NP3-911 2-Day feed. The 60-Day Load_Resource file is
+    *offers* (~1.5 GW, ~2x cleared), so the cleared level is cross-source
+    calibrated rather than read directly — see that script's docstring.
     """
     path = _ERCOT_AS_DIR / f"ercot_{year}_as_up_mw.parquet"
     if not path.exists():
@@ -547,7 +554,6 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
 def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
     """ERCOT's measured hourly storage-provided AS-up MW for ``year``.
 
-    Reads the ``storage`` column of ``ercot_<year>_as_by_restype_hourly.parquet``
     (the per-resource-type 60-Day DAM AS awards): the RegUp/RRS/ECRS cleared by
     **batteries** (~1.25 GW in 2023 → ~2.0 GW 2024 → ~2.8 GW 2025 as the fleet
     grew; all three measured from the Gen Resource Data awards, the 2023 series
@@ -603,13 +609,20 @@ def ercot_reserve_coopt_inputs(
         multistep_floor=config.ordc_multistep_floor,
     )
     requirement = np.full(int(hours), req_total, dtype=float)
-    if getattr(config, "ercot_load_resource_reserve", False):
+    if getattr(config, "ercot_load_resource_reserve", False) and int(
+        config.weather_year
+    ) >= int(getattr(config, "ercot_load_resource_reserve_from_year", 2023)):
         # Credit ERCOT's measured Load-Resource responsive reserve (RRS-UFR) the
         # co-opt LP otherwise omits. Lowering the balance-RHS by load_mw(t) is
         # equivalent to adding load_mw of $0 reserve supply: because the ORDC
         # steps are priced by absolute reserve level, the marginal step then
         # prices at total reserve R_gen + load_mw — physically exact, no double
         # count. Clipped to the MCL floor so the curve's steep tail is preserved.
+        # Credited every year by default (ercot_load_resource_reserve_from_year
+        # = 2023): on the measured-storage baseline (storage_as_commitment over-
+        # tightens 2023) the measured 2023 load credit corrects the 2023 MAE
+        # 16.0->12.1 (run139) — unlike the storage-AS *reserve* credit, which
+        # stays scoped off 2023/2024 (it would double-relax, run137).
         load_mw = ercot_load_resource_reserve_mw(int(config.weather_year), hours)
         requirement = np.maximum(requirement - load_mw, float(config.ordc_mcl_mw))
     if (
