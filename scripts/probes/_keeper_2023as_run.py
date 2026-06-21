@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -47,6 +48,17 @@ def main(argv: list[str]) -> int:
     # under-price). Off by default = the run143 keeper.
     ercot_ecrs = len(argv) > 4 and argv[4].lower() in ("1", "true", "ecrs", "on")
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
+    # Optional env overrides for cheap single-lever probes (don't disturb argv):
+    #   KEEPER_YEARS="2024"   -> solve only those years
+    #   KEEPER_COMMIT=1       -> enable the P2 unit-commitment screen (the keeper
+    #                            is dispatch-only; this tests commitment price
+    #                            formation for the loose-month under-price).
+    years = cfg["years"]
+    if os.environ.get("KEEPER_YEARS"):
+        years = [int(y) for y in os.environ["KEEPER_YEARS"].split(",")]
+    commitment = cfg["commitment"]
+    if os.environ.get("KEEPER_COMMIT"):
+        commitment = os.environ["KEEPER_COMMIT"].lower() in ("1", "true", "on")
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
     for grp, bands in delta_override.items():
@@ -55,11 +67,11 @@ def main(argv: list[str]) -> int:
     run_dir = REPO / "results" / "calibration" / out_subdir
     reference = _load_reference()
     run_dir = solve_and_persist(
-        cfg["years"],
+        years,
         cfg["iso"],
         cfg["hours"],
         reference,
-        commitment=cfg["commitment"],
+        commitment=commitment,
         screen_coal=cfg["commitment_screen_coal"],
         run_dir=run_dir,
         coal_lignite_mustrun=cfg.get("coal_lignite_mustrun"),
