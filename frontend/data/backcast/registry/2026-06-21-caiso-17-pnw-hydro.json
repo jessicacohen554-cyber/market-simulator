@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-21-caiso-17-pnw-hydro",
+  "label": "caiso 17 pnw-hydro-collapse (PROBE)",
+  "date": "2026-06-21",
+  "shorthand": "caiso-17-pnw-hydro",
+  "definition": "(PROBE — structural correction, NOT adopted as default.) Adds PNW_hydro_base to the --caiso-import-solar-shape collapse set. The solved dispatch shows PNW_hydro_base (the COI firm-hydro import block, $28) is the 72%-loaded MARGINAL setter of the flat $28 midday floor — once DSW_solar_PV/PNW_midC collapse they load first and leave it as the margin — so its prior 'must-take, do-not-collapse' exclusion was empirically wrong. Collapsing it lowers the midday floor $28->$25 (h12 resid +12.9->+10.7) and improves the negative tail toward actual (count 407->593 vs 755, recall 50->67%), but moves the MEAN only 42.0->41.28 and drops neg precision 92->85% (and over-counts <=$5: 1034 vs 923). The full -$20 collapse overshoots the moderate summer/winter midday (reality there is low-but-positive ~$15-30, not negative); a tighter band (24/8) only recovers precision to 87%. Reverted from the default: it fails the >=90% precision guardrail and does not close the body. p50/p95 unchanged (peaks safe).",
+  "years": [
+    2024
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-21-caiso-17-pnw-hydro.js",
+  "bundle": "results/calibration/caiso_pnwhydro_collapse_2024"
+}
