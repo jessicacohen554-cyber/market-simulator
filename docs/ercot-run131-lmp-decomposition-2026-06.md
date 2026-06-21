@@ -348,3 +348,194 @@ unchanged) threaded `run_calibration_full.py` → `run_calibration.run_year` →
 testing a backcast credit required temporarily editing the config default; the
 flag removes that footgun. Set it to 2023 to probe a global credit *once a genuine
 scarcity-price mechanism exists* to pair with it.
+
+## 2023 tail decomposition against the MEASURED 2023 storage-AS series (2026-06-21)
+
+**Date:** 2026-06-21. **Branch:** `claude/ercot-scarcity-decomposition-2023-o4sck1`.
+**Baseline:** the committed `ercot_dam_storageas_ccsteam_regen` = run132 keeper
+(storage-AS reserve credit, 2025-scoped) + run133's CC steam-turbine outage
+coupling. **Data unlock:** commit `93b879a` replaced the 2023 storage-AS column
+(the `storage` column of `ercot_2023_as_by_restype_hourly.parquet`) with a
+**measured** series rebuilt from the in-repo 60-Day DAM Gen Resource Data
+(`scripts/build_ercot_as_by_restype_from_60day.py`): **1249 MW mean vs the prior
+832 MW intensity-transfer estimate** (the estimate undercounted real 2023 battery
+AS by ~50%). The committed keeper bundle was solved at sha `8d4a852`, which
+**predates** the data unlock, so its recorded 2023 numbers (avg 49.8, tail 171/94)
+are on the *old estimate*. This section re-solves on the measured series.
+
+Per the handoff: this is a **diagnostic, no keeper change**. The 2023 *storage-reserve*
+credit is turned on here only to decompose the tail — *not* adopted. `scenarios.py`
+and the "Global storage-AS credit — BLOCKED" section above document why a global
+storage-reserve flip is wrong; the evidence below re-confirms it against measured
+reserves.
+
+> **Reconciliation note (a parallel session landed the keeper while this branch
+> was open).** An independently-merged ERCOT session (`run136`–`run139` on `main`)
+> reached the same measured-2023 data unlock and went one step further: **run138**
+> independently reproduces this section's baseline finding (measured storage
+> over-tightens 2023, 49.8 → 58.4, tail 210/130 over actual), and **run139 is now
+> the keeper** — it keeps the storage-*reserve* credit scoped from 2025 (the global
+> flip stays rejected, confirmed by its run137: load+storage credit over-cools 2023
+> to 27.0 / tail 33/15) but **adopts a measured 2023 *load*-resource RRS-UFR credit
+> (884 MW, `ercot_load_resource_reserve_from_year=2023`)**, which corrects the
+> over-tightening to the best 2023 MAE (12.1). So the priority-3 "is any 2023 slice
+> reserve-addressable?" question was answered *yes, on the load side* (not storage).
+> This decomposition still stands as the formal 3-way attribution and the
+> measured-reserve quantification of the "47% out-of-market" claim; the probe below
+> is registered as **run140** (storage-credit isolation), distinct from main's
+> run137/138. Where this section originally said "keeper stays run132", read
+> **"keeper is now run139"**; the storage-reserve conclusion is unchanged.
+
+### Method
+
+Three single-year-2023 ERCOT solves, identical config to the keeper bundle
+(offer curves, gas prices, outage data, `storage_as_commitment` on), differing
+only as labelled. Demand-weighted hourly system price (co-opt LMP, already
+scarcity-inclusive) vs actual RTSPP; `avg` = simple mean over hours (the registry
+convention; actual 2023 = 48.4), tail = count of hours whose system price exceeds
+the threshold. Probe: `scripts/probes/_ercot_2023_decomp.py`. The
+"no-ccsteam" point swaps in the pre-coupling ERCOT outage CSV (`46acbc7^`) and is
+otherwise byte-identical — isolating run133's derate on the *same measured AS
+data*.
+
+| 2023 series (measured AS data) | avg | >$200 | >$500 | >$1000 |
+|---|---|---|---|---|
+| 1. no-ccsteam, no credit (run132-equiv) | 54.1 | 188 | 115 | 79 |
+| 2. + ccsteam derate, no credit (run134-equiv) | **58.4** | **210** | **130** | 98 |
+| 3. + ccsteam + **measured-2023 reserve credit** | **31.6** | **61** | **34** | 21 |
+| 4. actual RTSPP | 48.4 | 181 | 104 | 61 |
+
+### Three-way attribution of the 2023 tail
+
+* **(a) physical missing-derate (1 → 2): +22 / +15 hours (>$200 / >$500), +$4.3
+  avg.** run133's CC steam-turbine outage coupling deepens CC derates (e.g. Wolf
+  Hollow II 29% → 50%), tightening peak supply. On the measured AS data it lifts
+  the tail toward — and slightly past — actual incidence. (Consistent with the
+  old-data run132→run134 lift of +20/+6.)
+* **(b) reserve-accounting over-fire removed by the measured credit (2 → 3): −149
+  / −96 hours, −$26.8 avg.** Crediting the measured 1249 MW of battery AS back
+  into the co-opt reserve balance (undoing the `storage_as_commitment`
+  double-removal) collapses the ORDC tail from 210/130 to **61/34**. This is the
+  *physically-correct reserve accounting*, and it shows how much of the
+  uncredited tail was the accounting over-fire rather than genuine LOLP scarcity.
+* **(c) residual out-of-market administrative (3 → 4): +120 / +70 hours, +$16.8
+  avg.** Even with correct measured reserve accounting *and* the derate fix, the
+  ORDC/LOLP model reproduces only **61 of actual's 181 >$200 hours (34%)** and
+  **34 of 104 >$500 (33%)**. The remaining two-thirds is administrative scarcity
+  (2023 RTORDPA / ECRS conservatism, IMM-estimated >$12B) that no
+  loss-of-load-probability curve can produce.
+
+### The "47% out-of-market" claim, now against measured reserves
+
+The prior claim ("the 2023 >$200 hours are 47% of the year's total $, mostly
+out-of-market") rested on an *estimated* AS series. On the measured series, the
+$-decomposition (price × demand) is:
+
+| share of total 2023 energy $ | from >$200 h | from >$500 h |
+|---|---|---|
+| actual | 55.4% | 49.2% |
+| uncredited keeper (run134-equiv) | 67.0% | 61.8% |
+| **credited (correct reserve accounting)** | **30.1%** | **26.0%** |
+
+The credited ORDC model carries only **~31% of the tail $ (price × demand) actual
+priced in those hours**. Its total energy-$ shortfall vs actual is **42% of the
+year's total energy $, 94% of it concentrated in actual's >$200 hours.** So with
+measured reserves the un-modelable administrative slice is ~**42–67%** of the 2023
+tail (by total-$ shortfall and by tail-$ share / hour-incidence respectively) —
+squarely on the IMM's ~47% magnitude, now grounded in measured AS rather than an
+estimate.
+
+### Two reframings the measured data forces
+
+1. **The data unlock does NOT improve the uncredited keeper's 2023 — it sharpens
+   the over-fire.** The larger measured battery AS (1249 vs 832 MW) makes
+   `storage_as_commitment` withhold ~50% more battery energy in 2023, tightening
+   peak supply, so the uncredited 2023 tail *rises* from the old-estimate 171/94
+   to **210/130** — now *over* actual 181/104 (run132-equiv likewise 151/88 →
+   188/115). The keeper's good-looking 2023 tail was partly the estimate
+   undercounting the withholding.
+2. **The uncredited keeper reaches the 2023 tail "for the wrong reason."** Two
+   errors partly cancel: the reserve-accounting over-fire (double-removing battery
+   AS from reserve *supply*) compensates for the *missing* out-of-market
+   mechanism. Apply the physically-correct credit and the ORDC tail collapses to
+   34% of actual; the over-fire was standing in for the administrative scarcity.
+
+### Bounding the reserve-addressable slice (priority-3 evidence)
+
+The handoff asks whether *any* 2023 slice is reserve-addressable (a partial/capped
+credit). The bracket is now measured for the **storage-reserve** credit: the
+**uncredited** keeper *over*-produces incidence (+29 h >$200 vs actual), the **full
+measured storage credit** *under*-produces badly (−120 h). So the genuinely
+storage-reserve-addressable over-fire in 2023 is **small — bounded by the +29-hour
+over-incidence** — while the dominant residual (~120 h) is administrative scarcity
+the ORDC model only reaches *through* the over-fire. A **full storage-reserve** 2023
+credit is therefore quantitatively wrong (it cools avg to 31.6 vs actual 48.4 and
+the tail to a third of actual): the storage-reserve global flip stays rejected.
+
+**But a different 2023 slice *is* reserve-addressable — on the load side.** The
+parallel run139 keeper showed the measured 2023 **load-resource RRS-UFR** credit
+(884 MW) corrects the *storage-commitment over-tightening* (58.4 → 43.1, MAE
+16.0 → 12.1) without the storage-reserve credit's over-cool, because the two
+measured effects bracket actual rather than both relaxing the same reserve. So
+priority-3 resolves as: **keep the storage-reserve credit scoped from 2025 (this
+decomposition), and adopt the measured 2023 load credit (run139)** — not a global
+storage flip. The decomposition leads; the addressable slice was the load credit,
+not the storage one.
+
+### Reproduce
+
+```bash
+# common keeper config (single-year 2023), resolved offer curves from the bundle:
+python - <<'PY'  # write resolved offer JSONs from the keeper bundle meta
+import json; m=json.load(open('results/calibration/ercot_dam_storageas_ccsteam_regen/meta.json'))
+json.dump(m['offer_curve_overrides'], open('/tmp/ovr.json','w'))
+json.dump(m['offer_curve_deltas'], open('/tmp/delta.json','w'))
+PY
+ARGS="--year 2023 --iso ERCOT --storage-daily-cycling --battery-adder 10 \
+  --storage-as-commitment --offer-curve-json /tmp/ovr.json \
+  --offer-curve-delta-json /tmp/delta.json --coal-lignite-sigmoid \
+  --lignite-floor 0.675 --lignite-ceil 1.00 --prb-floor 0.73 \
+  --prb-follower-floor 0.63 --curve-mid 0.35 --btm-backfill-year 2024 \
+  --cc-duct-peaking --wefor-residual 0.06 --wefor-relief-groups ST_CHP,ST_GAS \
+  --energy-reserve-coopt --ercot-load-resource-reserve --ercot-storage-as-reserve"
+# 2 = run134-equiv (no 2023 credit):
+python scripts/run_calibration_full.py $ARGS --ercot-storage-as-reserve-from-year 2025 \
+  --out-dir results/calibration/_decomp_2023_base
+# 3 = + measured-2023 credit:
+python scripts/run_calibration_full.py $ARGS --ercot-storage-as-reserve-from-year 2023 \
+  --out-dir results/calibration/_decomp_2023_credit
+# 1 = no-ccsteam: as `2` but with `git show 46acbc7^:data/raw/campd-unit-outages.csv`
+#     swapped in for data/raw/campd-unit-outages.csv (restore after the solve loads it).
+python scripts/probes/_ercot_2023_decomp.py _decomp_2023_base _decomp_2023_credit
+```
+
+### Still missing from the repo (handoff)
+
+* ~~60-Day DAM Load Resource Data (AWARDS) blocks a measured 2023 load credit~~ —
+  **RESOLVED by the parallel session:** the 2023 load-resource RRS-UFR was instead
+  derived from the in-repo 60-Day DAM Gen Resource Data + ASPLANNP433 (NP3-911 Dec
+  tail) via `scripts/build_ercot_as_2023.py` (884 MW), and adopted in the run139
+  keeper. The dedicated Load Resource AWARDS file would still let a future build
+  cross-check it directly.
+* **Oct-2023 (10-02..11-01) Gen Resource Data disclosure file** — absent, so 2023
+  storage AS zero-fills those hours (2023 otherwise covers 335/365 delivery-days).
+  Dropping it in extends coverage.
+
+### Priority-2 handoff — 2024/2025 ORDC-mapping re-fit (the real accuracy lever)
+
+Independent of 2023 and **not started here** (it is a large, GATED change the
+`AS netting — investigated and rejected` section of `docs/ordc-overlay.md` flags
+as regression-prone: netting the full AS plan out of reserves drove 2023 MAE
+32→512). The inputs are now confirmed in-repo for a *careful* per-type re-fit:
+
+* `data/raw/ercot/ASPLANNP433_{2023,2024,2025}.parquet` hold the **measured AS
+  plan MW by type by hour** (`AncillaryType` ∈ {REGUP, REGDN, RRS, ECRS, NSPIN, …},
+  `Quantity` MW) — *not* tuned to a price target. Set `ordc_as_plan_mw` per year
+  from these, and evaluate a **grounded `RTOFFCAP` > 0** from the plan's offline
+  Non-Spin / ECRS share (`scarcity.py` currently treats all netted reserves as
+  on-line, `RTOFFCAP = 0`, which its own docstring flags as understating the
+  adder — `scarcity.py:39`).
+* Gate the steam-derate fix as the physical baseline first, then re-gate all
+  three years vs actuals (the AS-netting caution means 2023 must NOT blow up).
+  Lead with this before revisiting any 2023 credit scope (priority 3).
+
