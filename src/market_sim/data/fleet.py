@@ -61,6 +61,7 @@ from market_sim.data.outages import (
     outage_masks_for_year,
     partial_outage_derate_factors,
     reliability_deployment_floor_for_year,
+    retiree_availability_caps,
     unit_outage_derate_factors,
 )
 
@@ -1080,6 +1081,37 @@ def generators_to_fleet_arrays(
                 config.weather_year,
                 applied_u,
             )
+        # Within-window retiree measured-availability cap (CAMPD unit-level):
+        # a unit winding down to retirement is held at its coal must-run floor
+        # by the cost-based LP while reality barely ran it (out-of-market
+        # retirement economics the merit order cannot see, and the per-plant
+        # binning collapses the per-unit COD before the ramp). Cap each retiree
+        # plant's availability to its measured monthly CEMS envelope. Applied
+        # before min_gen is built so the must-run floor (clamped to availability)
+        # scales down with it. Plant-keyed (reaches every binned tranche),
+        # scoped to the within-window retirees; the bulk fleet keeps its
+        # cost-based dispatch. Gated to the validated ISO (config flag).
+        if getattr(config, "retiree_cems_cap", False):
+            rcaps = retiree_availability_caps(
+                _iso or "ERCOT", config.weather_year, hours
+            )
+            if rcaps:
+                applied_r = 0
+                for g_idx, gen in enumerate(generators):
+                    cap = rcaps.get(int(gen.plant_code))
+                    if cap is not None:
+                        np.minimum(
+                            availability[g_idx, :], cap, out=availability[g_idx, :]
+                        )
+                        applied_r += 1
+                logger.info(
+                    "retiree CEMS availability cap (%s %d): %d tranche(s) across "
+                    "%d retiree plant(s) capped to measured envelope",
+                    _iso or "ERCOT",
+                    config.weather_year,
+                    applied_r,
+                    len(rcaps),
+                )
         if not masks and not ufac:
             # A backcast year with no measured windows in either layer (e.g.
             # CAISO 2023: no CA unit-level CEMS extract until upload U1 lands)
