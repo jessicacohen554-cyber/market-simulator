@@ -1356,7 +1356,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
-    ercot_load_resource_reserve_from_year: int = 2024,
+    ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
     as_reserve_formula: bool = False,
@@ -3926,14 +3926,13 @@ def main() -> None:
     parser.add_argument(
         "--ercot-load-resource-reserve-from-year",
         type=int,
-        default=2024,
+        default=2023,
         help="First weather year the --ercot-load-resource-reserve credit "
-        "applies to (default 2024). Mirrors the storage-AS scope: crediting "
-        "the measured 2023 load reserve (~884 MW) over-cools 2023 49.8->43.1 "
-        "and collapses its 171/94 tail to 129/73 (under actual 48.4/181/104), "
-        "because the co-opt model reaches 2023's out-of-market tail only "
-        "through the reserve over-fire the credit removes (run136). Set to "
-        "2023 to probe a global credit.",
+        "applies to (default 2023 = every backcast year). The measured load "
+        "reserve is real supply the co-opt LP omits, correct every year; on "
+        "the measured-storage baseline (storage_as_commitment over-tightens "
+        "2023 to 58.4 uncredited) the ~884 MW 2023 load credit corrects the "
+        "2023 MAE 16.0->12.1 (run139). Raise it to exclude early years.",
     )
     parser.add_argument(
         "--ercot-storage-as-reserve",
