@@ -537,8 +537,8 @@ import os as _os
 # net-load belly hours — the regional glut — price negative; HI sets the ramp
 # above it. Validated against actual hourly LMP (precision ~100% — every modeled
 # negative hour is a real negative hour). Overridable via env for sweeps.
-_CAISO_SOLAR_SHAPE_NL_HI_PCT = float(_os.environ.get("CAISO_SS_NL_HI", "25.0"))
-_CAISO_SOLAR_SHAPE_NL_LO_PCT = float(_os.environ.get("CAISO_SS_NL_LO", "8.0"))
+_CAISO_SOLAR_SHAPE_NL_HI_PCT = float(_os.environ.get("CAISO_SS_NL_HI", "30.0"))
+_CAISO_SOLAR_SHAPE_NL_LO_PCT = float(_os.environ.get("CAISO_SS_NL_LO", "10.0"))
 # Marginal CAISO import blocks set by *long WECC neighbors* in the midday belly:
 # the desert-SW solar/Palo Verde hub and the Mid-C (Pacific NW) hub, both of
 # which print sub-$0 in the regional spring solar/hydro glut. The firm baseload
