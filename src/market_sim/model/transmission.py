@@ -539,6 +539,15 @@ _CAISO_SOLAR_SHAPE_NL_LO_PCT = 1.0  # net-load pct of full collapse (s=1)
 # (aggregate path-constrained) import lane and pushes the $28 firm-hydro block
 # out of the margin, so the price-setting import bids sub-$0.
 _CAISO_SOLAR_SHAPE_TRANCHES = ("DSW_solar_PV", "PNW_midC")
+# Export sinks (EXPORT_TRANCHES["CAISO"]): the neighbors' willingness-to-pay for
+# CAISO surplus. Off the belly that is positive (export_solar $8 / export_curtail
+# $0), but in the midday belly the neighbors are long too, so CAISO must PAY them
+# to take the surplus — the export price collapses sub-$0 on the same signal. This
+# floors a *long* CAISO at the negative export price (instead of +$8), so the
+# belly LMP follows the in-state negative_renewable_offers / negative export down
+# rather than pinning at the export sink. Only bites when CAISO is long (the sink
+# is idle otherwise), so it is self-limiting on the price body.
+_CAISO_SOLAR_SHAPE_EXPORT_TRANCHES = ("export_solar", "export_curtail")
 
 
 def inject_caiso_import_solar_shape(
@@ -582,7 +591,10 @@ def inject_caiso_import_solar_shape(
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
     floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
-    targets = {f"{zone}_{t}" for t in _CAISO_SOLAR_SHAPE_TRANCHES}
+    targets = {
+        f"{zone}_{t}"
+        for t in (*_CAISO_SOLAR_SHAPE_TRANCHES, *_CAISO_SOLAR_SHAPE_EXPORT_TRANCHES)
+    }
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
         if uid not in targets:
