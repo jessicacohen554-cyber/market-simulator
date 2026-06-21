@@ -523,6 +523,17 @@ python scripts/probes/_ercot_2023_decomp.py _decomp_2023_base _decomp_2023_credi
 
 ### Priority-2 handoff — 2024/2025 ORDC-mapping re-fit (the real accuracy lever)
 
+> **SUPERSEDED (2026-06-21, run142/143).** This section's premise — that the
+> 2024/25 over-fire is an ORDC/`ordc_as_plan_mw`/`RTOFFCAP` mapping problem — was
+> wrong. `ordc_as_plan_mw` and `RTOFFCAP` are **post-solve-overlay** params and
+> are **inert in the co-opt keeper** (`ercot_reserve_coopt_inputs` builds the
+> requirement from `ordc_mcl_mw` + LOLP, netted only by the load/storage credits),
+> and the published seasonal LOLP table is ~flat (no signal to exploit). The
+> over-fire was the **CAMPD outage over-statement** (40–80 GW of economic-idle
+> coal/CC removed in low-demand months → false VOLL in Oct/Apr), fixed by the
+> net-load revealed-availability outage filter (run142/143). Do **not** spend time
+> on the ASPLAN/RTOFFCAP re-fit. See the next section for what priority-2 now is.
+
 Independent of 2023 and **not started here** (it is a large, GATED change the
 `AS netting — investigated and rejected` section of `docs/ordc-overlay.md` flags
 as regression-prone: netting the full AS plan out of reserves drove 2023 MAE
@@ -538,4 +549,60 @@ as regression-prone: netting the full AS plan out of reserves drove 2023 MAE
 * Gate the steam-derate fix as the physical baseline first, then re-gate all
   three years vs actuals (the AS-netting caution means 2023 must NOT blow up).
   Lead with this before revisiting any 2023 credit scope (priority 3).
+
+## Priority-2 (current) — the winter-tail under-fire is out-of-market, not an outage knob (2026-06-21)
+
+**Date:** 2026-06-21. **Keeper:** run143 (net-load outage filter). After the
+outage fix cooled the 2024/25 shoulder over-fire, the residual ERCOT miss is a
+**thin moderate/winter tail**: 2024 model 22 vs actual 53 h>$200; 2025 1 vs 31;
+the Jan-2024 winter storm $22/3 h vs actual $44/19 h. Net load (run143) ≈ load-p85
+(run142) within noise and did **not** recover the Jan storm. The handoff's
+candidate (a) was "a less-aggressive net-load percentile (p80) trades a touch of
+over-fire for fatter tails — sweep the monthly outage-GW offline first (it's
+cheap)."
+
+### Offline percentile sweep (the mandated pre-solve step) — p80 rejected
+
+Regenerated the ERCOT outages at `--high-load-pctl 0.80` vs the keeper's `0.85`
+and compared capacity-weighted unit-level outage GW-hrs/1000 by month (no solve —
+`scripts/derive_campd_unit_outages.py --iso ERCOT --high-load-pctl {0.80,0.85}`):
+
+| band | months (Δ at p80) | Σ Δ GW-hrs/1000 |
+|---|---|---|
+| **winter tail** (want fatter) | Dec +7.5, Feb +3.6, Jan +2.5 | **+13.6** |
+| **shoulder over-fire** (must NOT re-inflate) | Nov +7.3, May +6.9, Oct +3.9, Apr +3.7 | **+21.7** |
+| summer (preserved either way) | Jul +0.3, Aug +0.03 | ~0 |
+
+A global p80 **re-inflates the Oct/Apr/Nov shoulder over-fire by more than it
+fattens the winter tail (+21.7 vs +13.6)** — i.e. it re-introduces exactly the
+false-VOLL the run142/143 filter removed. The percentile is a single global knob;
+because winter-tail hours and shoulder-idle hours both sit below the summer
+raw-load peak, no global threshold separates them. **p80 is rejected offline; no
+solve spent** (it would have regressed the 2024/25 average).
+
+### Why no outage knob is the right instrument
+
+A calendar-winter (Dec/Jan/Feb) p80 carve-out *would* add the +13.6 winter mass
+at zero shoulder cost — but it is **selection-on-residual** (choosing the lever
+and its season *because* we know winter is under), barred by the repo's
+no-fit-to-residuals rule. More fundamentally, the diagnosis says the winter-tail
+miss is **not a supply-availability problem at all**: it is the same class as the
+2023 tail above — **out-of-market extreme-weather / administrative scarcity**
+(ERCOT RTORDPA / ECRS conservatism) that an ORDC/LOLP availability model
+structurally cannot produce, which is why net load didn't recover the Jan storm.
+The only mechanism that could reach it is the handoff's **candidate (b): a
+regime-gated, *exogenously-keyed* extreme-weather scarcity-price adder** — and it
+is blocked on the same no-markup / no-fit constraint as the 2023 administrative
+adder (Direction 2 above): a defensible *measured* MW/$-withheld source, not a
+fitted magnitude.
+
+**Decision:** documented and left; the run143 keeper stands. The winter tail joins
+the 2023 administrative slice as a known, bounded, out-of-market residual outside
+an ORDC/LOLP model's reach — not a knob to chase. Reproduce the sweep:
+
+```bash
+uv run python scripts/derive_campd_unit_outages.py --iso ERCOT \
+  --high-load-pctl 0.80 --out /tmp/ercot-unit-p80.csv   # vs the committed 0.85 file
+# then bucket unit_capacity_mw × duration over each window's calendar months.
+```
 
