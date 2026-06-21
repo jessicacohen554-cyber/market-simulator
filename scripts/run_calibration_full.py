@@ -1356,6 +1356,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     ercot_load_resource_reserve: bool = False,
+    ercot_load_resource_reserve_from_year: int = 2024,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
     as_reserve_formula: bool = False,
@@ -1486,6 +1487,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
+            ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
             ercot_storage_as_reserve=ercot_storage_as_reserve,
             ercot_storage_as_reserve_from_year=ercot_storage_as_reserve_from_year,
             as_reserve_formula=as_reserve_formula,
@@ -1651,6 +1653,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
+        "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
         "ercot_storage_as_reserve": ercot_storage_as_reserve,
         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
         "as_reserve_formula": as_reserve_formula,
@@ -1738,7 +1741,12 @@ def solve_and_persist(
     if energy_reserve_coopt:
         recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
     if ercot_load_resource_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_load_resource_reserve=True)
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_load_resource_reserve=True,
+            ercot_load_resource_reserve_from_year=int(
+                ercot_load_resource_reserve_from_year
+            ),
+        )
     if ercot_storage_as_reserve:
         recorded_cfg = recorded_cfg.with_overrides(
             ercot_storage_as_reserve=True,
@@ -3916,6 +3924,18 @@ def main() -> None:
         "volumes. Off = no load credit (default).",
     )
     parser.add_argument(
+        "--ercot-load-resource-reserve-from-year",
+        type=int,
+        default=2024,
+        help="First weather year the --ercot-load-resource-reserve credit "
+        "applies to (default 2024). Mirrors the storage-AS scope: crediting "
+        "the measured 2023 load reserve (~884 MW) over-cools 2023 49.8->43.1 "
+        "and collapses its 171/94 tail to 129/73 (under actual 48.4/181/104), "
+        "because the co-opt model reaches 2023's out-of-market tail only "
+        "through the reserve over-fire the credit removes (run136). Set to "
+        "2023 to probe a global credit.",
+    )
+    parser.add_argument(
         "--ercot-storage-as-reserve",
         action="store_true",
         help="ERCOT energy+reserve co-opt + --storage-as-commitment only: credit "
@@ -4413,6 +4433,9 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         ercot_load_resource_reserve=args.ercot_load_resource_reserve,
+        ercot_load_resource_reserve_from_year=(
+            args.ercot_load_resource_reserve_from_year
+        ),
         ercot_storage_as_reserve=args.ercot_storage_as_reserve,
         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
         as_reserve_formula=args.as_reserve_formula,
