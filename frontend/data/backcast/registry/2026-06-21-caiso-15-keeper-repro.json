@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-21-caiso-15-keeper-repro",
+  "label": "caiso 15 keeper-repro baseline",
+  "date": "2026-06-21",
+  "shorthand": "caiso-15-keeper-repro",
+  "definition": "Diagnostic baseline: exact reproduction of the all-flags-on keeper (commitment, priced-interchange, 2024 hydro repin + EIA-930 monthly, gas-hub-basis overlay, import gas-coupling, import solar-shape). Validated mean 42.0 / p50 46.8 / p95 63.7 / neg 407 vs actual DA mean 35.85. Residual decomposition localizes the +$6.15 body overprice to midday h08-14 (+60% of the $.h gap; model net-imports ~4 GW midday every month while real CAISO exports the solar glut, so a positive import block sets the midday floor) and overnight (+44%, gas body), partly offset by the under-priced evening peak (-21%). Renewable volume (solar +3 TWh over) and import scarcity (imports +2.7 TWh over) are refuted.",
+  "years": [
+    2024
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-21-caiso-15-keeper-repro.js",
+  "bundle": "results/calibration/caiso_keeper_repro_2024"
+}
