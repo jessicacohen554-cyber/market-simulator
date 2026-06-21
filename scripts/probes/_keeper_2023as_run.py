@@ -1,0 +1,96 @@
+"""Re-solve the run134 keeper recipe from its saved run_config.json.
+
+Reconstructs the ERCOT keeper (run134 = ``ercot_dam_storageas_ccsteam_regen``)
+by reading that bundle's ``run_config.json`` ``calibration_flags`` and calling
+:func:`run_calibration_full.solve_and_persist` with the same kwargs — so the
+*only* input that differs is whatever this campaign changed (the measured 2023
+AS series now on disk, and the ``--from-year`` scope below). This avoids
+hand-rebuilding the ~30-flag CLI and guarantees 2024/2025 parity with run134
+(their AS files are unchanged), isolating the measured-2023 effect.
+
+Usage:
+    python scripts/probes/_keeper_2023as_run.py <out_subdir> [storage_as_from_year]
+
+    out_subdir            results/calibration/<out_subdir>
+    storage_as_from_year  --ercot-storage-as-reserve-from-year (default 2025,
+                          the run134 scope; pass 2023 for the Step-2b probe).
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "scripts"))
+
+from run_calibration_full import (  # noqa: E402
+    _load_reference,
+    report_run,
+    solve_and_persist,
+)
+
+RUN134 = REPO / "results" / "calibration" / "ercot_dam_storageas_ccsteam_regen"
+
+
+def main(argv: list[str]) -> int:
+    out_subdir = argv[0]
+    from_year = int(argv[1]) if len(argv) > 1 else 2025
+    cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
+    sm = cfg.get("coal_prb_sigmoid_overrides", {})
+
+    run_dir = REPO / "results" / "calibration" / out_subdir
+    reference = _load_reference()
+    run_dir = solve_and_persist(
+        cfg["years"],
+        cfg["iso"],
+        cfg["hours"],
+        reference,
+        commitment=cfg["commitment"],
+        screen_coal=cfg["commitment_screen_coal"],
+        run_dir=run_dir,
+        coal_lignite_mustrun=cfg.get("coal_lignite_mustrun"),
+        coal_prb_mustrun=cfg.get("coal_prb_mustrun"),
+        coal_prb_passthrough=cfg["coal_prb_passthrough"],
+        outage_source=cfg["outage_source"],
+        coal_prb_passthrough_sigmoid=cfg["coal_prb_passthrough_sigmoid"],
+        coal_mustrun_per_plant=cfg["coal_mustrun_per_plant"],
+        ct_mustrun_per_plant=cfg["ct_mustrun_per_plant"],
+        ct_mustrun_floor_frac=cfg["ct_mustrun_floor_frac"],
+        coal_drop_pof=cfg["coal_drop_pof"],
+        coal_prb_passthrough_tiered=cfg["coal_prb_passthrough_tiered"],
+        prb_overrides=sm,
+        coal_bit_sigmoid=cfg["coal_bit_passthrough_sigmoid"],
+        bit_overrides=cfg.get("coal_bit_sigmoid_overrides") or None,
+        storage_daily_cycling=True,
+        battery_dispatch_adder=10.0,
+        as_reserve_withholding=False,
+        energy_reserve_coopt=True,
+        ercot_load_resource_reserve=True,
+        ercot_storage_as_reserve=True,
+        ercot_storage_as_reserve_from_year=from_year,
+        as_reserve_formula=False,
+        storage_as_commitment=True,
+        gas_offer_curve=False,
+        gas_monthly_actuals=False,
+        offer_curve_overrides=cfg.get("offer_curve_overrides"),
+        offer_curve_deltas=cfg.get("offer_curve_deltas"),
+        curve_smoothing={
+            "offer_curve_smoothing_n": None,
+            "offer_curve_smoothing_exp": None,
+            "offer_curve_smoothing_mid": 0.35,
+        },
+        cc_derate_from_top=False,
+        priced_interchange=False,
+        btm_backfill_year=cfg.get("btm_backfill_year"),
+        note=f"run134 recipe re-solved with measured 2023 AS; "
+        f"storage-AS-from-year={from_year}",
+    )
+    report_run(run_dir)
+    print(f"\nBundle: {run_dir}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

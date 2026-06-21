@@ -3909,11 +3909,11 @@ def main() -> None:
         help="ERCOT energy+reserve co-opt only: credit the measured "
         "Load-Resource responsive reserve (RRS-UFR, the under-frequency-"
         "relay RRS only Load Resources provide; ~0.8-0.9 GW, "
-        "build_ercot_as_withholding.py) into the reserve balance by "
-        "lowering its RHS, so the LP stops pricing a scarcity adder in "
-        "non-scarce hours from omitting load-side reserve. 2023 has no "
-        "archive coverage (tail untouched). GATED: alters volumes. "
-        "Off = no load credit (default).",
+        "build_ercot_as_withholding.py for 2024/2025, build_ercot_as_2023.py "
+        "for 2023) into the reserve balance by lowering its RHS, so the LP "
+        "stops pricing a scarcity adder in non-scarce hours from omitting "
+        "load-side reserve. 2023 is now covered (~884 MW). GATED: alters "
+        "volumes. Off = no load credit (default).",
     )
     parser.add_argument(
         "--ercot-storage-as-reserve",
