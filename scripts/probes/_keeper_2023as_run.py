@@ -38,8 +38,15 @@ def main(argv: list[str]) -> int:
     out_subdir = argv[0]
     from_year = int(argv[1]) if len(argv) > 1 else 2025
     load_from_year = int(argv[2]) if len(argv) > 2 else 2023
+    # Optional argv[3]: JSON of {group: {band: delta}} that OVERWRITES entries in
+    # run134's offer_curve_deltas (e.g. '{"ST_GAS": {"committed": 0.0}}' to undo
+    # the over-cooled ST_GAS committed offer that over-commits gas steam, run141).
+    delta_override = json.loads(argv[3]) if len(argv) > 3 else {}
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
+    deltas = cfg.get("offer_curve_deltas") or {}
+    for grp, bands in delta_override.items():
+        deltas.setdefault(grp, {}).update(bands)
 
     run_dir = REPO / "results" / "calibration" / out_subdir
     reference = _load_reference()
@@ -77,7 +84,7 @@ def main(argv: list[str]) -> int:
         gas_offer_curve=False,
         gas_monthly_actuals=False,
         offer_curve_overrides=cfg.get("offer_curve_overrides"),
-        offer_curve_deltas=cfg.get("offer_curve_deltas"),
+        offer_curve_deltas=deltas,
         curve_smoothing={
             "offer_curve_smoothing_n": None,
             "offer_curve_smoothing_exp": None,
