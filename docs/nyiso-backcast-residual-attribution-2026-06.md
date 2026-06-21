@@ -139,12 +139,16 @@ exactly as the monthly spike fades. A real January daily gas basis prices ~25
 mild days at ~$3–5 (CC ≈ $30/MWh, matching actual ~$28–35) and ~5 cold days at
 $20–40; the monthly mean smears the 5 cold days across the 25 mild ones.
 
-**This is a documented data block, not a tuning miss.** The fix is the U4 daily
-Transco-Z6 / Iroquois gas basis, which is **not uploaded for NYISO** (only the
-NEISO/Algonquin leg is filled — see `docs/calibration-best-so-far-nyiso.md`
-P13). It must **not** be papered over by lowering the monthly gas (that would
-break the gas-volume basis and the winter mix). **Seed the daily basis, or
-leave the documented over-price and attribute it to D.**
+**This is a *gas-series* artifact, and the fix is NOT simply "upload daily
+data" — see §4b.** The keeper burns the EIA-923 monthly **receipt** cost
+(`iso_monthly_gas_prices`), which is plant-average *delivered* cost (firm
+pipeline + storage), winter-inflated and summer-deflated. Jan-2023's $10.02 is
+the single worst month: it is **+$4.4 above** the EIA NY-citygate proxy already
+in the repo (`gas_basis_by_iso_month.csv`, HH + N3050NY3 basis = **$5.60**),
+consistent with late-Dec Winter Storm Elliott gas billed/stored into the January
+receipt average (Feb's receipt−citygate gap is only +$0.28). It must **not** be
+papered over by lowering the monthly gas uniformly — see the tested-and-rejected
+citygate swap in §4b, which shows why.
 
 ### A — Import-node discipline: real, but bounded by an EIA-930/923 basis tension
 
@@ -254,14 +258,18 @@ nuclear exact. None of these move the price residual — confirmed not drivers.
 
 ## 3. Ranked structural fixes
 
-1. **D — upload the U4 daily Transco-Z6 / Iroquois gas basis (data, not code).**
-   Highest single-$ item (the 2023 winter +44/+11/+12). Replaces the monthly-gas
-   smear with a daily basis so mild January days price at ~$3–5 gas (CC ≈ $30,
-   matching actual) and only the genuine cold snaps spike. **Measured input,
-   zero tuning.** Blocked purely on the upload (same gate as NEISO already has
-   for Algonquin). Until then the 2023 winter over-price is correctly
-   attributed to D and **left in place** — do not lower the monthly gas to hide
-   it (that breaks the gas-volume/winter-mix basis).
+1. **D — source the Transco-Z6 NY / Iroquois Z2 *trading-hub spot* (monthly is
+   enough), NOT the EIA citygate proxy.** Highest single-$ item (2023 winter
+   +44/+11/+12). The two monthly series already in the repo bracket the truth
+   but neither is it: EIA-923 **receipts** are winter-high (Jan $10.02), EIA
+   **N3050NY3 citygate** is summer-high ($6.6 Jul → blows up summer, §4b). The
+   marginal-spot index sits between them — low-$3–5 mild winter days, modest
+   ~$1 summer basis. A monthly Transco-Z6/Iroquois spot (or its daily form for
+   the cold-snap shape) fixes winter **without** the citygate's summer
+   regression. **Measured input, zero tuning.** Until it lands, the Jan-2023
+   over-price is correctly attributed to D and left in place — do **not** swap
+   the whole series to the citygate proxy (§4b) and do **not** hand-edit single
+   months.
 
 2. **A — shape the priced node to the measured EIA-930 diurnal envelope
    (`--interchange-shaping`), then re-anchor the deep tranches.** The static node
@@ -329,6 +337,39 @@ plus an economic remainder — so the deep, price-insensitive baseload import is
 modeled as firm rather than as $68 scarcity that won't clear. Both are bounded
 by the EIA-923 gas band (§2.A) and need their own guarded run.
 
+## 4b. Tested this session — citygate hub-basis swap (mechanism D) → REJECTED
+
+Probe `_cg_nyiso_citygate` = keeper **+ `--gas-hub-basis-overlay`**: replace the
+EIA-923 receipt series with the monthly **EIA NY-citygate** level (HH +
+N3050NY3 basis, `gas_basis_by_iso_month.csv`), zonal spread + dual-fuel cap
+applied on top as before. Directly tests "use the monthly citygate data we
+already have."
+
+| metric | year | keeper (receipts) | + citygate | verdict |
+|---|---|---|---|---|
+| Jan resid | 2023 | **+44** | **+14** | winter fixed |
+| Feb resid | 2023 | +11 | +10 | held |
+| Jul resid | 2023 | +4 | **+46** | **summer blows up** |
+| Aug resid | 2023 | +2 | **+42** | **summer blows up** |
+| monthly LMP MAE | 2023 | 8.0 | **21.5** | far worse |
+| | 2025 | 6.3 | **24.2** | far worse |
+| gas vs EIA-923 | 2023 | −0.5% | **−9.4%** | **band broken** |
+| gas vs EIA-930 | 2025 | −6.4% | **−13.4%** | **band broken** |
+| net interchange | 2023 | 76.5% (OUT) | 97% (in) | (incidental) |
+
+The citygate **nails the winter** (Jan CC cost $39 vs actual $38; the receipt
+series' $10.02 was the artifact — the user's diagnosis is correct) **but
+over-states summer by ~$10–13/MWh** (Jul citygate $6.6 → CC $46 vs actual
+$36), because EIA's N3050NY3 "citygate" is an LDC/utility delivered price
+carrying summer demand charges — **not** the power-plant marginal spot. Swapping
+the whole series trades the winter over-price for a worse summer one (MAE 8→21)
+and pushes gas out of the ±5% band. **Rejected per the volume-band + don't-trade
+guardrail; keeper stands.** The finding refines mechanism D: the winter residual
+*is* a gas-series artifact (not U4-daily-blocked as first written), but the
+clean fix is the **Transco-Z6/Iroquois trading-hub spot**, a third series
+distinct from both repo proxies — receipts (winter-high) and EIA citygate
+(summer-high) bracket it. Registered as `nyiso 13 citygate-gas (PROBE)`.
+
 ## 5. What changed in code this session
 
 - **Fixed** the stale validation path in `scripts/derive_nyiso_rcpf_overlay.py`
@@ -343,8 +384,11 @@ by the EIA-923 gas band (§2.A) and need their own guarded run.
 
 ## 6. Still-blocked / not-done (honest ledger)
 
-- **U4 daily Transco-Z6 / Iroquois gas basis** — not uploaded for NYISO; gates
-  the dominant 2023-winter D residual. Top data ask.
+- **Transco-Z6 NY / Iroquois Z2 trading-hub spot gas (monthly or daily)** —
+  gates the dominant 2023-winter D residual. The repo's two monthly proxies are
+  *not* it (receipts winter-high, EIA N3050NY3 citygate summer-high; §4b), so
+  this is a genuine new data ask — a marginal-spot index, not the EIA citygate.
+  Top data ask.
 - **`TODO(SENY-MW)`** — the SENY 30-min reserve requirement is still a 1,100 MW
   placeholder (bracket midpoint East 1,200 ⊇ SENY ⊇ NYC 1,000). The published
   Rate Schedule 4 value requires the NYISO Ancillary Services Manual / RS4 PDF,
