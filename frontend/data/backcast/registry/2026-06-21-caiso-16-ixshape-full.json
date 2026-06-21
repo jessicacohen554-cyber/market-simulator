@@ -1,0 +1,13 @@
+{
+  "id": "2026-06-21-caiso-16-ixshape-full",
+  "label": "caiso 16 ixshape-full (PROBE)",
+  "date": "2026-06-21",
+  "shorthand": "caiso-16-ixshape-full",
+  "definition": "(PROBE — REJECTED, regression.) Keeper + full --interchange-shaping (cap import availability by the measured EIA-930 month x hour net-interchange envelope). Tests the confirmed root cause: the static import node imports a flat ~4 GW every hour, but real CAISO net imports follow a strong diurnal shape (5.2-5.6 GW overnight vs 1.0-1.6 GW midday). RESULT: mean 42.0 -> 51.3, p50 46.8 -> 53.8, neg 407 -> 88 (recall 12%) — a hard regression. The availability cap is a fraction of TOTAL tranche capacity (11.4 GW), so even overnight (where the envelope is high) the cheap baseload imports are starved and gas substitutes in EVERY hour (+15 across the board). The export-only variant was a byte-identical no-op (model is short midday, no surplus to export). Conclusion: an availability cap is the wrong instrument; the diurnal miss needs a measured diurnal import PRICE shape, not a capacity cap.",
+  "years": [
+    2024
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-21-caiso-16-ixshape-full.js",
+  "bundle": "results/calibration/caiso_ixshape_full_2024"
+}
