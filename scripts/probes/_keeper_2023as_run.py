@@ -42,6 +42,10 @@ def main(argv: list[str]) -> int:
     # run134's offer_curve_deltas (e.g. '{"ST_GAS": {"committed": 0.0}}' to undo
     # the over-cooled ST_GAS committed offer that over-commits gas steam, run141).
     delta_override = json.loads(argv[3]) if len(argv) > 3 else {}
+    # Optional argv[4]: enable the measured ECRS reserve requirement (the
+    # demand-side fix for the bimodal monthly shape / 2023-H2 + 2024 mid-range
+    # under-price). Off by default = the run143 keeper.
+    ercot_ecrs = len(argv) > 4 and argv[4].lower() in ("1", "true", "ecrs", "on")
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
@@ -79,6 +83,8 @@ def main(argv: list[str]) -> int:
         ercot_load_resource_reserve_from_year=load_from_year,
         ercot_storage_as_reserve=True,
         ercot_storage_as_reserve_from_year=from_year,
+        ercot_ecrs_requirement=ercot_ecrs,
+        ercot_ecrs_requirement_from_year=2023,
         as_reserve_formula=False,
         storage_as_commitment=True,
         gas_offer_curve=False,
@@ -94,7 +100,8 @@ def main(argv: list[str]) -> int:
         priced_interchange=False,
         btm_backfill_year=cfg.get("btm_backfill_year"),
         note=f"run134 recipe re-solved with measured 2023 AS; "
-        f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}",
+        f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}; "
+        f"ecrs-requirement={ercot_ecrs}",
     )
     report_run(run_dir)
     print(f"\nBundle: {run_dir}")
