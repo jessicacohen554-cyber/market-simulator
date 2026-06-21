@@ -30,6 +30,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
+from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
 
@@ -99,13 +100,18 @@ def high_load_mask(
 ) -> np.ndarray | None:
     """Boolean ``(n_hours,)`` mask: was the system in its high-NET-LOAD band?
 
-    Net load = measured EIA-930 ``Adjusted demand − Adjusted WND Gen − Adjusted
-    SUN Gen`` (data/raw/eia-930-hourly/``<BA> hourly.parquet``). Flags hours above
-    the year's ``pctl`` net-load percentile and maps them onto the detector's
-    calendar clock by ``(month, day, hour)`` (the EIA-930 file is itself calendar/
-    leap-aware, so alignment is exact). Net load (not raw load) so winter-storm /
-    VRE-drought tightness — high-net-load hours below the summer raw-load peak —
-    is caught. Returns ``None`` when the BA file/year is unavailable (no-op).
+    Net load = measured EIA-930 ``demand − wind gen − solar gen``
+    (data/raw/eia-930-hourly/``<BA> hourly.parquet``). ERCOT's file carries EIA's
+    reconciled ``Adjusted demand``/``Adjusted WND Gen``/``Adjusted SUN Gen``
+    series; the other BA extracts only carry the raw ``Demand``/``NG: WND``/
+    ``NG: SUN`` columns, so we fall back to those when the Adjusted ones are
+    absent (the raw series is an equally exogenous net-load proxy). Flags hours
+    above the year's ``pctl`` net-load percentile and maps them onto the
+    detector's calendar clock by ``(month, day, hour)`` (the EIA-930 file is
+    itself calendar/leap-aware, so alignment is exact). Net load (not raw load)
+    so winter-storm / VRE-drought tightness — high-net-load hours below the
+    summer raw-load peak — is caught. Returns ``None`` when the BA file/year is
+    unavailable, or the demand column is missing (no-op).
     """
     ba = _ISO_TO_BA.get(iso.upper())
     if ba is None:
@@ -120,9 +126,19 @@ def high_load_mask(
     df["dt"] = pd.to_datetime(df["Local date"]) + pd.to_timedelta(
         df["Hour"].astype(int) - 1, unit="h"
     )
-    dem = df["Adjusted demand"].to_numpy(dtype=float)
-    wnd = np.nan_to_num(df["Adjusted WND Gen"].to_numpy(dtype=float))
-    sun = np.nan_to_num(df["Adjusted SUN Gen"].to_numpy(dtype=float))
+
+    def _col(*names: str) -> np.ndarray:
+        """First present column among ``names`` as float, else all-zeros."""
+        for nm in names:
+            if nm in df.columns:
+                return df[nm].to_numpy(dtype=float)
+        return np.zeros(len(df), dtype=float)
+
+    dem = _col("Adjusted demand", "Demand")
+    if not np.isfinite(dem).any():
+        return None
+    wnd = np.nan_to_num(_col("Adjusted WND Gen", "NG: WND"))
+    sun = np.nan_to_num(_col("Adjusted SUN Gen", "NG: SUN"))
     net = dem - wnd - sun
     thresh = float(np.nanquantile(net, pctl))
     key = {
@@ -271,7 +287,7 @@ def main() -> None:
     iso = args.iso.upper()
     if args.out is None:
         fname = "campd-outages.csv" if iso == "ERCOT" else f"campd-outages-{iso}.csv"
-        args.out = str(REPO / "inputs" / "raw-data" / fname)
+        args.out = str(RAW_DATA_DIR / fname)
 
     nameplate, pname, grp = _nameplate_groups(iso, args.bins)
 
