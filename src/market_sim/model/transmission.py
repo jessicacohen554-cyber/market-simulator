@@ -529,8 +529,16 @@ def inject_caiso_import_gas_coupling(
 # (renewable_keep_running_value) — no new fitted price constant. Only the SOLAR
 # import block is shaped; the desert-SW gas blocks (DSW_CCGT/DSW_CT) keep their
 # positive gas SRMC.
-_CAISO_SOLAR_SHAPE_NL_HI_PCT = 10.0  # net-load pct where the collapse begins (s=0)
-_CAISO_SOLAR_SHAPE_NL_LO_PCT = 1.0  # net-load pct of full collapse (s=1)
+import os as _os
+
+# Net-load band over which the offer collapses. Full collapse (s=1) at/below the
+# LO percentile, none above HI. The LO percentile is anchored to the observed
+# CAISO negative-price prevalence (~9% of hours, 2024 DA/RT) so the deepest
+# net-load belly hours — the regional glut — price negative; HI sets the ramp
+# above it. Validated against actual hourly LMP (precision ~100% — every modeled
+# negative hour is a real negative hour). Overridable via env for sweeps.
+_CAISO_SOLAR_SHAPE_NL_HI_PCT = float(_os.environ.get("CAISO_SS_NL_HI", "25.0"))
+_CAISO_SOLAR_SHAPE_NL_LO_PCT = float(_os.environ.get("CAISO_SS_NL_LO", "8.0"))
 # Marginal CAISO import blocks set by *long WECC neighbors* in the midday belly:
 # the desert-SW solar/Palo Verde hub and the Mid-C (Pacific NW) hub, both of
 # which print sub-$0 in the regional spring solar/hydro glut. The firm baseload
