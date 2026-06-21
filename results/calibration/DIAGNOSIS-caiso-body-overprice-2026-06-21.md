@@ -101,3 +101,60 @@ not (caiso 16).
 
 Note the evening ramp (−21%) is *under*-priced and helping the mean — a diurnal
 reshape must avoid lifting it, or the mean gap widens.
+
+## What set the midday floor, and the precision wall (update)
+
+The midday floor is **PNW_hydro_base ($28)**, not the gas-coupled DSW_solar/
+PNW_midC blocks. The solved dispatch is decisive: in the 184 midday hours at the
+~$28 floor, DSW_solar_PV and PNW_midC are **98% maxed (inframarginal)** while
+PNW_hydro_base is **72% loaded — the marginal setter**. The existing
+`--caiso-import-solar-shape` collapses DSW_solar/PNW_midC toward −$20, which
+makes them load *first*, leaving the still-flat $28 PNW_hydro_base as the margin.
+So solar-shape lowers the *deep-belly* negatives but cannot lower the *broad*
+midday floor — its design comment ("PNW_hydro_base is the must-take floor, do
+not collapse") is empirically wrong: it is the glut-priced marginal block.
+
+| probe | lever | mean | p50 | p95 | neg | prec | recall | ≤$5 |
+|---|---|---|---|---|---|---|---|---|
+| keeper | (2-block collapse) | 42.0 | 46.8 | 63.7 | 407 | **92%** | 50% | 922 |
+| HI=50 band | widen net-load band only | 41.84 | 46.8 | 63.7 | 407 | 92% | 50% | 927 |
+| +PNW_hydro 30/10 | add PNW_hydro_base to collapse | 41.28 | 46.8 | 63.7 | 593 | 85% | 67% | 1034 |
+| +PNW_hydro 24/8 | …with a tighter band | 41.54 | 46.8 | 63.7 | 576 | 87% | 66% | 971 |
+
+- **Widening the band alone is a no-op** (HI=50): the blocks it shapes are
+  already maxed midday, so collapsing their *price* does not move the marginal
+  PNW_hydro_base floor.
+- **Adding PNW_hydro_base to the collapse set is a real structural correction**
+  (lowers the floor $28→$25, improves the negative-tail completeness toward the
+  actual 755), **but it is precision-capped at ~85–87%** regardless of band: the
+  block is marginal in many *moderate* midday hours (summer/winter) where reality
+  is low-but-**positive** (~$15–30), and a −$20 collapse overshoots them into
+  false negatives. It also moves the **mean only −0.7** — it does not close the
+  body. **Reverted** (fails the ≥90% precision guardrail; does not serve the body
+  goal). The finding is preserved as caiso-17 (PROBE).
+
+## Conclusion — the keeper is near a structural floor
+
+No grounded **single** lever closes the body to 35.8 without breaking discipline:
+
+- **Midday (+60%)** can be nudged (PNW_hydro_base is genuinely the floor-setter),
+  but the only in-repo tool (collapse-toward-−$20) overshoots the
+  moderate-positive midday and hits an ~85% precision wall. Matching the real
+  *positive* midday level (~$15–30, season-varying) needs the **measured
+  neighbor-hub diurnal price** (Mid-C / Palo Verde hourly) — OASIS-blocked in
+  this environment — or a new positive per-block floor constant (a fitted number,
+  declined).
+- **Overnight (+44%)** is gas-cost-bound (established in the 2026-06-19 ladder
+  diagnosis) *and* import-scarce (model under-imports 1.2–1.6 GW overnight vs
+  EIA-930). Lowering it needs either more cheap overnight import depth (a new
+  net-load-gated mechanism) or lower measured gas inputs (forbidden).
+- **Evening (−21%)** is *under*-priced and offsetting; it must not be lifted.
+
+The disciplined outcome: **keep the keeper (42.0, 92% precision)**. The campaign's
+result is the localization above — the +$6 is a flat-import-diurnal artifact split
+between a precision-capped midday and a gas-bound overnight — plus the ruled-out
+levers (both `--interchange-shaping` variants; band-only; the PNW_hydro_base
+collapse). The clear next build, when measured WECC hub prices are available, is a
+**diurnal import *price* shape** (cheap-but-positive midday, cheap overnight),
+which is the only lever that can lower midday *and* overnight without the −$20
+overshoot or the availability-cap starvation.
