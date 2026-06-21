@@ -531,19 +531,27 @@ def inject_caiso_import_gas_coupling(
 # positive gas SRMC.
 _CAISO_SOLAR_SHAPE_NL_HI_PCT = 10.0  # net-load pct where the collapse begins (s=0)
 _CAISO_SOLAR_SHAPE_NL_LO_PCT = 1.0  # net-load pct of full collapse (s=1)
-_CAISO_SOLAR_SHAPE_TRANCHE = "DSW_solar_PV"
+# Marginal CAISO import blocks set by *long WECC neighbors* in the midday belly:
+# the desert-SW solar/Palo Verde hub and the Mid-C (Pacific NW) hub, both of
+# which print sub-$0 in the regional spring solar/hydro glut. The firm baseload
+# hydro block (PNW_hydro_base) is NOT collapsed — it is the cheap must-take floor,
+# not a glut-priced marginal block. Collapsing the two marginal blocks fills the
+# (aggregate path-constrained) import lane and pushes the $28 firm-hydro block
+# out of the margin, so the price-setting import bids sub-$0.
+_CAISO_SOLAR_SHAPE_TRANCHES = ("DSW_solar_PV", "PNW_midC")
 
 
 def inject_caiso_import_solar_shape(
     fleet_arrays, mc: np.ndarray, config, net_load: np.ndarray
 ) -> bool:
-    """Collapse the desert-SW solar import offer toward the negative floor in the belly.
+    """Collapse the marginal long-neighbor import offers toward the negative floor in the belly.
 
     Forecast-/no-OASIS-consistent restoration of the CAISO negative midday tail.
-    The desert-SW solar import block (``DSW_solar_PV``, mapped to the Palo Verde
-    hub) is the marginal CAISO import in the midday hours, but its price-setting
-    *level* is priced flat (gas-coupled ~$48), so it can never set the sub-$0 LMP
-    that the real Palo Verde hub prints in the spring solar glut. This shifts its
+    The marginal CAISO imports midday are the desert-SW solar (``DSW_solar_PV``,
+    Palo Verde hub) and Mid-C (``PNW_midC``, Pacific-NW hub) blocks
+    (:data:`_CAISO_SOLAR_SHAPE_TRANCHES`), but their price-setting *level* is
+    priced flat (gas-coupled ~$48 / $36), so they can never set the sub-$0 LMP
+    those hubs print in the regional spring solar/hydro glut. This shifts their
     per-hour offer from that level toward ``-renewable_keep_running_value`` as
     CAISO net load drops into its annual belly::
 
@@ -574,10 +582,10 @@ def inject_caiso_import_solar_shape(
         return False
     s = np.clip((nl_hi - nl) / (nl_hi - nl_lo), 0.0, 1.0)
     floor = -float(getattr(config, "renewable_keep_running_value", 20.0))
-    target = f"{zone}_{_CAISO_SOLAR_SHAPE_TRANCHE}"
+    targets = {f"{zone}_{t}" for t in _CAISO_SOLAR_SHAPE_TRANCHES}
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
-        if uid != target:
+        if uid not in targets:
             continue
         mc[row, :] = mc[row, :] * (1.0 - s) + floor * s
         applied = True
