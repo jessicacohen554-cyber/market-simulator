@@ -1008,6 +1008,8 @@ def run_year(
     ercot_load_resource_reserve_from_year: int = 2023,
     ercot_storage_as_reserve: bool = False,
     ercot_storage_as_reserve_from_year: int = 2025,
+    ercot_ecrs_requirement: bool = False,
+    ercot_ecrs_requirement_from_year: int = 2023,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -1182,6 +1184,11 @@ def run_year(
         config = config.with_overrides(
             ercot_storage_as_reserve=True,
             ercot_storage_as_reserve_from_year=int(ercot_storage_as_reserve_from_year),
+        )
+    if ercot_ecrs_requirement:
+        config = config.with_overrides(
+            ercot_ecrs_requirement=True,
+            ercot_ecrs_requirement_from_year=int(ercot_ecrs_requirement_from_year),
         )
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
