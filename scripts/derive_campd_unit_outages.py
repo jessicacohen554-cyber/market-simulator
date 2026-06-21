@@ -72,14 +72,21 @@ from market_sim.data.outages import (  # noqa: E402
     ST_GAS_PEAKER_PLANTS,
 )
 from scripts.derive_campd_outages import (  # noqa: E402
+    HIGH_LOAD_PCTL,
+    MIN_INMERIT_HOURS,
     ST_GAS_CF_PEAK,
     detect_outages,
     detect_outages_eventbased,
+    high_load_mask,
 )
 
 # CAMPD unit-level extracts live in their own subdirectory; the flat raw-data
 # files are facility-summed and carry no unitId.
 UNIT_LEVEL_DIR: Path = RAW_DATA_DIR / "campd-unit-level"
+
+# The revealed-availability (high-load) filter and its constants
+# (HIGH_LOAD_PCTL, MIN_INMERIT_HOURS, high_load_mask) are shared with the
+# facility-level detector — imported above from scripts.derive_campd_outages.
 
 
 def _norm_unit_id(uid: object) -> str:
@@ -289,6 +296,26 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
+        "--no-inmerit-filter",
+        action="store_true",
+        help="Disable the revealed-availability filter (keep every detected "
+        "down span as an outage, the pre-fix behaviour).",
+    )
+    ap.add_argument(
+        "--high-load-pctl",
+        type=float,
+        default=HIGH_LOAD_PCTL,
+        help=f"System-load percentile above which an hour is 'high load' (a "
+        f"down unit was needed) (default {HIGH_LOAD_PCTL}).",
+    )
+    ap.add_argument(
+        "--min-inmerit-hours",
+        type=int,
+        default=MIN_INMERIT_HOURS,
+        help=f"High-load hours a span must overlap to count as a real outage "
+        f"(default {MIN_INMERIT_HOURS}).",
+    )
+    ap.add_argument(
         "--bins",
         default=str(CAMPD_BINS_CSV),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
@@ -366,6 +393,8 @@ def main() -> None:
     states = campd.states_for_iso(iso)
     rows: list[dict] = []
     summary: list[tuple] = []
+    # year -> in-merit (system-tight) hour mask, built once per year.
+    inmerit_cache: dict[int, np.ndarray | None] = {}
     # (facility, year) -> any non-null CAMPD grossLoad seen; feeds the
     # net-zero-to-grid rule below (mirrors the benchmark's CAMPD backfill).
     campd_gross_seen: set[tuple[int, int]] = set()
@@ -488,6 +517,26 @@ def main() -> None:
                     clock = pd.date_range(
                         f"{year}-01-01", f"{year}-12-31 23:00:00", freq="h"
                     )
+                    # Revealed-availability filter: drop down spans that never
+                    # overlap an in-merit (system-tight) hour — those are
+                    # economic idling, not mechanical outages, so the unit is
+                    # left available (not removed from energy or the co-opt
+                    # reserve pool). Real outages coincide with tight hours and
+                    # survive. No-op when --no-inmerit-filter or no price file.
+                    if not args.no_inmerit_filter:
+                        if year not in inmerit_cache:
+                            inmerit_cache[year] = high_load_mask(
+                                iso, year, len(clock), args.high_load_pctl
+                            )
+                        mask = inmerit_cache[year]
+                        if mask is not None:
+                            windows = [
+                                (s, e)
+                                for s, e in windows
+                                if mask[s:e].sum() >= args.min_inmerit_hours
+                            ]
+                            if not windows:
+                                continue
                     out_days = 0.0
                     for s, e in windows:
                         start = clock[s]
