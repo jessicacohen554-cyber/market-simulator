@@ -66,45 +66,69 @@ GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"
 # reserve shortfall and prices to VOLL (model Oct-2024 17 h>$200 at 73 GW peak
 # vs the genuinely loose actual Oct $23.8/4 h; the over-fire the 2024/25 keeper
 # could never shake). The fix is a revealed-availability test keyed on EXOGENOUS
-# system load: a down span is a real (binding) outage only if the unit stayed
-# down through the system's HIGH-LOAD hours, when a coal/CC unit would be called.
-# A span entirely within low-load hours is economic idling — the unit is left
-# AVAILABLE (capacity not removed) so the co-opt keeps it in the reserve pool.
-# Real outages coincide with the peak band (summer) and are kept (Aug/Jul GW
-# unchanged; Jan/Apr/Oct/Nov cut to ~summer levels). The signal is the model's
-# own historical demand (load_demand) — a backcast INPUT, not a solved output,
-# so no circularity with the LMP and no price target fitted. A relative LOAD
-# PERCENTILE (per ISO-year) self-scales across ISOs/years; p85 is the knee.
+# NET LOAD (demand − wind − solar): a down span is a real (binding) outage only
+# if the unit stayed down through the system's HIGH-NET-LOAD hours, when a coal/
+# CC unit would be called. NET load (not raw load) so WINTER-STORM and VRE-
+# drought tightness — high-net-load hours that sit below the summer-dominated
+# raw-load peak — is caught (a raw-load percentile over-cuts winter outages and
+# under-fires winter storms). A span entirely within low-net-load hours is
+# economic idling — the unit is left AVAILABLE (capacity not removed) so the
+# co-opt keeps it in the reserve pool. Real outages coincide with the net-load
+# peak band and are kept. The signal is measured EIA-930 demand/wind/solar (a
+# backcast INPUT, not a solved output) — no circularity with the LMP, no price
+# target fitted. A relative NET-LOAD PERCENTILE (per ISO-year) self-scales.
 HIGH_LOAD_PCTL: float = 0.85
 # A down span must overlap at least this many high-load hours to be kept as a
 # real (binding) outage; fewer ⇒ economic idle, unit left available.
 MIN_INMERIT_HOURS: int = 24
 
 
+# EIA-930 balancing-authority code per model ISO (the eia-930-hourly file stem).
+_ISO_TO_BA: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "PJM": "PJM",
+    "NYISO": "NYIS",
+    "NEISO": "ISNE",
+    "MISO": "MISO",
+}
+
+
 def high_load_mask(
     iso: str, year: int, n_hours: int, pctl: float = HIGH_LOAD_PCTL
 ) -> np.ndarray | None:
-    """Boolean ``(n_hours,)`` mask: was the system in its high-load band that hour?
+    """Boolean ``(n_hours,)`` mask: was the system in its high-NET-LOAD band?
 
-    Uses the model's exogenous historical demand (``load_demand``), flags hours
-    above the year's ``pctl`` load percentile, and maps that non-leap series onto
-    the detector's calendar-year clock by ``(month, day, hour)`` (Feb-29 borrows
-    Feb-28) so it aligns for leap years. Returns ``None`` when demand is
-    unavailable (filter becomes a no-op, every window kept).
+    Net load = measured EIA-930 ``Adjusted demand − Adjusted WND Gen − Adjusted
+    SUN Gen`` (data/raw/eia-930-hourly/``<BA> hourly.parquet``). Flags hours above
+    the year's ``pctl`` net-load percentile and maps them onto the detector's
+    calendar clock by ``(month, day, hour)`` (the EIA-930 file is itself calendar/
+    leap-aware, so alignment is exact). Net load (not raw load) so winter-storm /
+    VRE-drought tightness — high-net-load hours below the summer raw-load peak —
+    is caught. Returns ``None`` when the BA file/year is unavailable (no-op).
     """
-    try:
-        from market_sim.data.eia_loader import load_demand
-
-        dem = np.asarray(load_demand(iso, year), dtype=float)
-    except Exception:
+    ba = _ISO_TO_BA.get(iso.upper())
+    if ba is None:
         return None
-    if dem.ndim > 1:
-        dem = dem.sum(axis=0)
-    if dem.size == 0:
+    path = REPO / "data" / "raw" / "eia-930-hourly" / f"{ba} hourly.parquet"
+    if not path.exists():
         return None
-    thresh = float(np.quantile(dem, pctl))
-    nl = pd.date_range("2023-01-01", periods=dem.size, freq="h")
-    key = {(t.month, t.day, t.hour): dem[i] > thresh for i, t in enumerate(nl)}
+    df = pd.read_parquet(path)
+    df = df[pd.to_datetime(df["Local date"]).dt.year == year].copy()
+    if df.empty:
+        return None
+    df["dt"] = pd.to_datetime(df["Local date"]) + pd.to_timedelta(
+        df["Hour"].astype(int) - 1, unit="h"
+    )
+    dem = df["Adjusted demand"].to_numpy(dtype=float)
+    wnd = np.nan_to_num(df["Adjusted WND Gen"].to_numpy(dtype=float))
+    sun = np.nan_to_num(df["Adjusted SUN Gen"].to_numpy(dtype=float))
+    net = dem - wnd - sun
+    thresh = float(np.nanquantile(net, pctl))
+    key = {
+        (t.month, t.day, t.hour): bool(np.isfinite(v) and v > thresh)
+        for t, v in zip(df["dt"], net)
+    }
     clock = pd.date_range(f"{year}-01-01", periods=n_hours, freq="h")
     out = np.zeros(n_hours, dtype=bool)
     for i, t in enumerate(clock):
