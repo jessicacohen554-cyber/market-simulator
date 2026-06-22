@@ -123,10 +123,6 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  .ctl{justify-content:space-between;flex-wrap:wrap}.ctlwide{min-width:0}
  .seg{flex:1;flex-wrap:wrap}.seg button{flex:1}.bc-top select{flex:1}
  .kpigrid,.yeargrid,.lmpgrid{grid-template-columns:1fr}.svgbox{margin:0 -4px}}
-.deepdive{display:inline-block;margin:0 0 var(--space-sm);font-size:var(--fs-sm);font-weight:600;
- color:var(--iso-ercot,var(--accent,#1a6dd0));text-decoration:none;border:1px solid var(--border);
- border-radius:var(--radius-md,8px);padding:6px 12px;background:#fbfcfd}
-.deepdive:hover{background:#f0f3f6;text-decoration:underline}
 /* ===== Calibration Status view (all-ISO summary) ===== */
 .mute{color:var(--ink-faint)}
 .cs-legend{display:flex;flex-wrap:wrap;gap:16px;font-size:var(--fs-xs);color:var(--ink-muted);margin-top:8px;line-height:1.5}
@@ -172,27 +168,47 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
 .cs-method .m{border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-md);background:#fbfcfd}
 .cs-method .m h4{font-size:var(--fs-sm);margin:0 0 6px}
 .cs-method .m p{font-size:var(--fs-sm);color:var(--ink);line-height:1.55;margin:0}
+/* Top-level left-panel menu (Dashboard vs Calibration Status). */
+.bc-nav{display:flex;flex-direction:column;gap:4px;margin-bottom:var(--space-md);padding-bottom:var(--space-md);border-bottom:1px solid var(--border)}
+.bc-nav button{text-align:left;border:1px solid transparent;background:transparent;padding:9px 11px;border-radius:var(--radius-md);font-size:var(--fs-sm);font-weight:700;color:var(--ink-muted);cursor:pointer;display:flex;align-items:center;gap:8px}
+.bc-nav button .ic{font-size:14px;line-height:1}
+.bc-nav button:hover{background:#eef3f9;color:var(--ink)}
+.bc-nav button.on{background:var(--accent);color:#fff}
+/* Tiles are clickable (select a market → its full results render below). */
+.cs-card{cursor:pointer;transition:box-shadow .12s,border-color .12s}
+.cs-card:hover{box-shadow:var(--shadow-md)}
+.cs-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cs-card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset,var(--shadow-md)}
+.cs-open{margin-top:10px;font-size:var(--fs-xs);font-weight:700;color:var(--accent-deep)}
+.cs-card.sel .cs-open{color:var(--accent-deep)}
+.cs-reshd{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.cs-reshd .cs-iso{font-size:var(--fs-lg)}
 @media(max-width:640px){.cs-grid,.cs-method{grid-template-columns:1fr}}
 </style></head><body>
 <nav class=nav><a class="nav-brand" href="index.html"><span class="nav-brand-mark">&#9650;</span> Market Simulator</a></nav>
 <div id=bctip></div>
 <div class=bc-wrap>
  <aside class=bc-side>
-  <h3>Market (ISO)</h3><div class=isoselwrap id=isoWrap><span class=dot></span><select class=isosel id=isoSel aria-label="Market (ISO)"></select></div>
-  <p class=isohint id=isoHint></p>
-  <h3>Run</h3><div class=runlist id=runList></div>
-  <p class=isohint>Click a run id for its definition. Newest first.</p>
+  <nav class=bc-nav id=bcNav>
+   <button data-v=dash class=on><span class=ic>&#128202;</span> Backcast Dashboard</button>
+   <button data-v=calib><span class=ic>&#9678;</span> Calibration Status</button>
+  </nav>
+  <div id=dashSide>
+   <h3>Market (ISO)</h3><div class=isoselwrap id=isoWrap><span class=dot></span><select class=isosel id=isoSel aria-label="Market (ISO)"></select></div>
+   <p class=isohint id=isoHint></p>
+   <h3>Run</h3><div class=runlist id=runList></div>
+   <p class=isohint>Click a run id for its definition. Newest first.</p>
+  </div>
  </aside>
  <main class=bc-main>
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 2px">
    <h1 style="font-size:var(--fs-xl);margin:0">Backcast Results</h1>
    <span id=isoBadge class=isobadge></span></div>
   <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated __GEN__</p>
-  <a class=deepdive href="offer-curve-grounding.html">&#128202; Deep dive: ERCOT offer-curve grounding — measured DAM offers vs the run124 bands &rarr;</a>
   <div id=diag>Loading run data…</div>
-  <div class=bc-top>
+  <div class=bc-top id=bcTop>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
-    <button data-p=report class=on>Run report</button><button data-p=charts>Charts</button><button data-p=tables>Tables</button><button data-p=calib>Calibration Status</button></span></div>
+    <button data-p=report class=on>Run report</button><button data-p=charts>Charts</button><button data-p=tables>Tables</button></span></div>
    <div class=ctl id=ctlYear><span class=lab>Year</span><span class=seg id=yearSel></span></div>
    <div class=ctl id=ctlClass><span class=lab>Class</span><select id=classSel></select></div>
    <div class="ctl ctlwide" id=ctlZone><span class=lab>Zones</span><span class=chips id=zoneSel></span></div>
@@ -1066,24 +1082,35 @@ function csDetailRows(v){return CS_ORDER.map(cid=>{const c=v.criteria[cid];if(!c
   }).join("");}
  return `<tr><td>${csEsc(c.label)}</td><td class=cs-gate>${c.hard?"HARD":"soft"}</td><td class="cs-st ${CS_CLS[c.status]||"mute"}">${CS_MARK[c.status]||"·"}</td><td>${body}</td></tr>`;
 }).join("");}
+let csSel=0;  // index of the keeper tile whose full results are shown
+// One keeper's full C1–C6 results block (heading + per-year matrix).
+function csResultsBlock(v){const det=CS_DET[v.determination]||"det-not";
+ const blocked=v.data_blocked_years&&v.data_blocked_years.length?` · <span class=bad>blocked ${v.data_blocked_years.join(", ")}</span>`:"";
+ return `<div class=cs-reshd>
+   <span class=cs-iso>${csEsc(v.iso)}</span>
+   <span class="cs-badge ${det}">${csEsc(v.determination)}</span>
+   <span class="cs-keeper rid" style="margin:0">${csEsc(v.label)} · years ${csYears(v.target_years)}${blocked}</span></div>
+  <p class=cs-reason style="margin:0 0 var(--space-md)">${csEsc(csReason(v))}</p>
+  <div class=tablewrap><table class=cs-matrix><thead><tr><th>Criterion</th><th>Gate</th><th>Status</th><th>Per-year detail · classification</th></tr></thead>
+  <tbody>${csDetailRows(v)}</tbody></table></div>`;}
+// Repaint the tile highlight + the results block for the selected keeper.
+function csShow(i){const S=window.BC.status;if(!S||!S.keepers[i])return;csSel=i;
+ document.querySelectorAll("#csGrid .cs-card").forEach(c=>c.classList.toggle("sel",+c.dataset.i===i));
+ const host=document.getElementById("csResults");if(host)host.innerHTML=csResultsBlock(S.keepers[i]);}
 function renderCalibStatus(){
  const S=window.BC&&window.BC.status,host=document.getElementById("content");
  if(!S||!S.keepers||!S.keepers.length){
   host.innerHTML='<div class=panel><h2>Calibration Status</h2><p class=psub>Status data is unavailable — <code>frontend/data/backcast/status.js</code> did not load. Re-run <code>python scripts/build_status.py</code> so the all-ISO verdicts are emitted.</p></div>';return;}
- const cards=S.keepers.map(v=>{const det=CS_DET[v.determination]||"det-not";
+ if(csSel>=S.keepers.length)csSel=0;
+ const cards=S.keepers.map((v,i)=>{const det=CS_DET[v.determination]||"det-not";
   const blocked=v.data_blocked_years&&v.data_blocked_years.length?` · <span class=bad>blocked ${v.data_blocked_years.join(", ")}</span>`:"";
-  return `<article class="cs-card ${det}">
+  return `<article class="cs-card ${det} ${i===csSel?"sel":""}" data-i=${i} tabindex=0 role=button aria-pressed="${i===csSel}">
    <div class=cs-cardhd><span class=cs-iso>${csEsc(v.iso)}</span><span class="cs-badge ${det}">${csEsc(v.determination)}</span></div>
    <div class=cs-keeper><span class=rid>${csEsc(v.label)}</span> · years ${csYears(v.target_years)}${blocked}</div>
    <p class=cs-reason>${csEsc(csReason(v))}</p>
    <div class=cs-marks>${csCardMarks(v)}</div>
+   <div class=cs-open>View full results &rarr;</div>
   </article>`;}).join("");
- const details=S.keepers.map((v,i)=>{const det=CS_DET[v.determination]||"det-not";
-  return `<details class=cs-detail ${i===0?"open":""}>
-   <summary><span class=cs-iso style="font-size:var(--fs-base)">${csEsc(v.iso)}</span> <span class="cs-keeper rid" style="margin:0">${csEsc(v.label)}</span><span class="cs-badge ${det}">${csEsc(v.determination)}</span></summary>
-   <div class=tablewrap><table class=cs-matrix><thead><tr><th>Criterion</th><th>Gate</th><th>Status</th><th>Per-year detail · classification</th></tr></thead>
-   <tbody>${csDetailRows(v)}</tbody></table></div>
-  </details>`;}).join("");
  const tests=(S.rubric||[]).map(r=>`<tr><td>${csEsc(r.label)}</td><td>${csEsc(r.measures)}</td><td>${csEsc(r.source)}</td><td>${csEsc(r.tol)}</td></tr>`).join("");
  const method=(S.methodology||[]).map(m=>`<div class=m><h4>${csEsc(m.head)}</h4><p>${csEsc(m.body)}</p></div>`).join("");
  host.innerHTML=`
@@ -1095,12 +1122,13 @@ function renderCalibStatus(){
     <span><i class="cs-dot dot-cav"></i> <b>CALIBRATED-WITH-CAVEATS</b> — only ledgered measured-input limitations / unscored soft criteria</span>
     <span><i class="cs-dot dot-not"></i> <b>NOT-YET</b> — an undocumented out-of-tolerance criterion (a model miss to fix)</span>
    </div>
-   <div class=cs-grid style="margin-top:var(--space-md)">${cards}</div>
+   <p class=psub style="margin:var(--space-md) 0 var(--space-sm)">Click a market tile to see its full C1–C6 results below.</p>
+   <div class=cs-grid id=csGrid>${cards}</div>
   </div>
   <div class=panel>
    <h2>C1–C6 status matrix</h2>
-   <p class=psub>${csGlyph("PASS")} pass · ${csGlyph("CAVEAT")} caveat (ledgered limitation) · ${csGlyph("FAIL")} fail (model miss) · ${csGlyph("SKIPPED")} skipped (not scored). Expand a market for the per-year magnitudes and the MODEL-MISS vs ACCEPTED-LIMITATION classification.</p>
-   ${details}
+   <p class=psub>${csGlyph("PASS")} pass · ${csGlyph("CAVEAT")} caveat (ledgered limitation) · ${csGlyph("FAIL")} fail (model miss) · ${csGlyph("SKIPPED")} skipped (not scored). Per-year magnitudes and the MODEL-MISS vs ACCEPTED-LIMITATION classification for the selected market.</p>
+   <div id=csResults></div>
   </div>
   <div class=panel>
    <h2>Tests conducted</h2>
@@ -1112,14 +1140,29 @@ function renderCalibStatus(){
    <p class=psub>Why these determinations are what they are, grounded in energy-modeling best practice.</p>
    <div class=cs-method>${method}</div>
   </div>`;
+ const grid=document.getElementById("csGrid");
+ grid.querySelectorAll(".cs-card").forEach(c=>{
+  c.onclick=()=>csShow(+c.dataset.i);
+  c.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();csShow(+c.dataset.i);}};});
+ csShow(csSel);
  if(typeof wireTips==="function")wireTips(host);
 }
+// Top-level destination switch (left-panel menu): the per-run dashboard vs the
+// all-ISO Calibration Status page. They are mutually exclusive — Calibration
+// Status hides the ISO/run selectors and the per-run control bar entirely.
+function setView(v){
+ st.view=v;
+ document.querySelectorAll("#bcNav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+ const calib=v==="calib",show=(id,on)=>{const el=document.getElementById(id);if(el)el.style.display=on?"":"none";};
+ show("dashSide",!calib);show("bcTop",!calib);show("isoBadge",!calib);
+ if(calib){
+  document.getElementById("diag").style.display="none";
+  document.getElementById("pageSub").textContent="Determinations for every ISO's current keeper · scored by scripts/calibration_verdict.py";
+  renderCalibStatus();
+ }else{updateIsoChrome(st.iso);render();}
+}
 // ---- shell render ----
-function render(){
- // Calibration Status is an all-ISO summary independent of the selected run/ISO,
- // so it renders straight from window.BC.status before the run-required guard.
- if(st.page==="calib"){syncTopbar();renderCalibStatus();return;}
- const id=st.run;if(!id){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
+function render(){const id=st.run;if(!id){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
  ensureRuns([id]).then(()=>{
   if(!MODEL[id]){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Run data failed to load.</p></div>';return;}
   // year/class clamps when the run or ISO changed under the current selection
@@ -1134,12 +1177,8 @@ function render(){
 // year at once, so they hide there to keep the bar clean (zones stay — every
 // zone-aware metric honors them on all pages).
 function syncTopbar(){
- const calib=st.page==="calib";
- // Calibration Status spans every ISO, so the per-run year/class/zone steerers
- // are hidden there (they only steer the per-run views).
- document.getElementById("ctlYear").style.display=(calib||st.page==="report")?"none":"";
- document.getElementById("ctlClass").style.display=(!calib&&st.page==="charts")?"":"none";
- const cz=document.getElementById("ctlZone");if(cz)cz.style.display=calib?"none":"";
+ document.getElementById("ctlYear").style.display=st.page==="report"?"none":"";
+ document.getElementById("ctlClass").style.display=st.page==="charts"?"":"none";
  const ys=st.run?runYears(st.run):[];
  const ysel=document.getElementById("yearSel");
  ysel.innerHTML=ys.map(y=>`<button data-y=${y} class=${y===st.year?"on":""}>${y}</button>`).join("");}
@@ -1224,7 +1263,8 @@ async function boot(){try{
   isoSel.innerHTML=isos.map(i=>{const n=isoRunCount(i);
     return `<option value="${i}">${i} · ${n} run${n===1?"":"s"}</option>`;}).join("");
   isoSel.onchange=()=>{if(isoSel.value!==st.iso)selectIso(isoSel.value);};
-  st={run:null,year:0,zones:new Set(),page:"report",klass:"",plant:"agg",iso:null,cfMode:"bins"};
+  document.getElementById("bcNav").onclick=e=>{const b=e.target.closest("button");if(b&&b.dataset.v)setView(b.dataset.v);};
+  st={run:null,year:0,zones:new Set(),page:"report",klass:"",plant:"agg",iso:null,cfMode:"bins",view:"dash"};
   SUB_BASE=document.getElementById("pageSub").textContent;
   document.getElementById("diag").style.display="none";
   await selectIso(isos.includes("ERCOT")?"ERCOT":isos[0]);

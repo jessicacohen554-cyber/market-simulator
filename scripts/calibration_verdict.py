@@ -58,9 +58,19 @@ COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
 FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
 
 # --- tolerances (rubric §1) -------------------------------------------------
-FUELMIX_BIG_TWH = 20.0  # class actual >= this -> percent band, else absolute band
-FUELMIX_BIG_TOL = 0.05  # +/-5% for >= 20 TWh classes
-FUELMIX_SMALL_ABS = 1.0  # +/-1 TWh for < 20 TWh classes
+# C1 fuel-mix — the 2026-06-15 universal class gate (mirrors
+# scripts/probes/_backcast_shell.classInTol, supersedes the old ±5%/±1 TWh
+# size-tiered band): a class passes iff BOTH (a) its grid-delivered volume miss
+# |model−actual| is within 0.5% of ISO annual generation, AND (b) its share of
+# total generation is within 1.5 percentage points of the actual share. The
+# volume band scales with system size (~2.3 TWh on ERCOT, the structural-noise
+# floor) and is applied uniformly across classes and ISOs; the share band stops
+# a class passing on volume alone while still misrepresenting the mix.
+FUELMIX_VOL_GEN_FRAC = 0.005  # volume band = 0.5% of ISO annual generation
+FUELMIX_SHARE_PP = 1.5  # +/-1.5 share percentage points of total generation
+# Non-fossil fuels whose grid actual comes from EIA-930 (not 923) for the
+# system-total used by the share/volume bands (matches _backcast_shell.totalGen).
+NONFOSSIL_FUELS = ("nuclear", "wind", "solar")
 SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered
 SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 # absolute band governs it, so the ±2.5% system-volume gate is N/A (e.g. NEISO
@@ -267,27 +277,62 @@ def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
 # ---------------------------------------------------------------------------
 # Per-criterion scoring (one record per criterion-year, pre-ledger)
 # ---------------------------------------------------------------------------
+def _gen_totals(ypay: dict, ybench: dict) -> tuple[float, float]:
+    """System model/actual TOTAL generation (TWh), grid-delivered.
+
+    Mirrors ``_backcast_shell.totalGen``/``genMixData`` exactly so the verdict's
+    C1 bands match the dashboard scorecard: actual = Σ ``classFull`` (EIA-923 −
+    BTM, every benchmarked class) + EIA-930 nuclear/wind/solar; model = Σ
+    ``gmModel`` over those same class keys + model non-fossil nuclear/wind/solar.
+    """
+    gm = ypay.get("gmModel", {})
+    nf = ypay.get("nonfossil", {})
+    cf = ybench.get("classFull", {})
+    e930 = ybench.get("e930", {})
+    a_fos = sum(float(v) for v in cf.values())
+    a_gen = a_fos + sum(float(e930.get(k, 0.0)) for k in NONFOSSIL_FUELS)
+    m_fos = sum(float(gm.get(g, 0.0)) for g in cf)  # over the classFull keys
+    m_gen = m_fos + sum(float(nf.get(k, 0.0)) for k in NONFOSSIL_FUELS)
+    return m_gen, a_gen
+
+
 def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
-    """C1 — tiered per-class grid-delivered fuel-mix (gmModel vs classFull)."""
+    """C1 — per-class grid-delivered fuel-mix, the 2026-06-15 universal gate.
+
+    A class passes iff BOTH its grid-delivered volume miss is within 0.5% of ISO
+    annual generation AND its share of total generation is within 1.5 pp of
+    actual (``_backcast_shell.classInTol`` on the gmModel/classFull basis).
+    """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
+    m_gen, a_gen = _gen_totals(ypay, ybench)
+    vol_band = FUELMIX_VOL_GEN_FRAC * a_gen
     out = []
     classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
     for c in classes:
         a = cf.get(c)
         if a is None:
             continue  # class not benchmarked for this ISO-year
+        a = float(a)
         m = float(gm.get(c, 0.0))
-        if a >= FUELMIX_BIG_TWH:
-            err = _pct(m, a)
-            ok = err is not None and abs(err) <= FUELMIX_BIG_TOL
-            mag = f"{err * 100:+.1f}%" if err is not None else "n/a"
-            tol = f"±{FUELMIX_BIG_TOL * 100:.0f}%"
+        d = m - a
+        vol_ok = a_gen > 0 and abs(d) <= vol_band
+        if m_gen > 0 and a_gen > 0:
+            share_pp = 100.0 * m / m_gen - 100.0 * a / a_gen
+            share_ok = abs(share_pp) <= FUELMIX_SHARE_PP
         else:
-            d = m - a
-            ok = abs(d) <= FUELMIX_SMALL_ABS
-            mag = f"{d:+.2f} TWh"
-            tol = f"±{FUELMIX_SMALL_ABS:.0f} TWh"
+            share_pp, share_ok = None, True
+        ok = vol_ok and share_ok
+        mag = f"{d:+.2f} TWh"
+        if share_pp is not None:
+            mag += f", share {share_pp:+.1f}pp"
+        if not ok:
+            breach = "/".join(
+                lab
+                for lab, good in (("volume", vol_ok), ("share", share_ok))
+                if not good
+            )
+            mag += f" ({breach} out of band)"
         out.append(
             {
                 "criterion": "fuelmix",
@@ -295,10 +340,14 @@ def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
                 "year": year,
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
-                "metric": f"{c} grid-delivered TWh",
+                "metric": f"{c} grid-delivered TWh + share of generation",
                 "model": round(m, 3),
                 "actual": round(a, 3),
-                "tol": tol,
+                "share_pp": round(share_pp, 2) if share_pp is not None else None,
+                "tol": (
+                    f"±{FUELMIX_VOL_GEN_FRAC * 100:.1f}% ISO-gen "
+                    f"(±{vol_band:.2f} TWh) & ±{FUELMIX_SHARE_PP:g}pp share"
+                ),
                 "magnitude": mag,
             }
         )
