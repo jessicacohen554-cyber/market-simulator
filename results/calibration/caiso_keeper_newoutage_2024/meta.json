@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-21T19:32:41",
+  "timestamp": "2026-06-21T06:31:07",
   "iso": "CAISO",
   "years": [
     2024
@@ -38,6 +38,9 @@
   "ercot_load_resource_reserve_from_year": 2023,
   "ercot_storage_as_reserve": false,
   "ercot_storage_as_reserve_from_year": 2025,
+  "ercot_ecrs_requirement": false,
+  "ercot_ecrs_requirement_from_year": 2023,
+  "ordc_lolp_params_path": null,
   "as_reserve_formula": false,
   "storage_as_commitment": false,
   "gas_offer_curve": false,
@@ -69,6 +72,6 @@
     "eia923": "../_shared/CAISO/eia923-34fc43c01031.parquet",
     "campd": "../_shared/CAISO/campd-f25e712fca16.parquet"
   },
-  "git_sha": "19cba89",
+  "git_sha": "5138d78",
   "highspy_version": "1.14.0"
 }
