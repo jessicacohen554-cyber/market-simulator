@@ -606,3 +606,120 @@ uv run python scripts/derive_campd_unit_outages.py --iso ERCOT \
 # then bucket unit_capacity_mw × duration over each window's calendar months.
 ```
 
+## Monthly-SHAPE design diagnosis — the ORDC reserve curve is a cliff (2026-06-21)
+
+**Date:** 2026-06-21. **Keeper:** run143. **Trigger:** the run143 *annual* averages
+are close (2024 23.2 vs 26.8; 2025 31.4 vs 32.5) but the *monthly shape* is wrong —
+the model is **bimodal** (1–2 VOLL-spike months too high, the broad mid-range
+months too low), worst in 2023/2024. Mean |monthly model−actual| (lower = better):
+2023 **11.2**, 2024 **10.2**, 2025 **3.0** (2025 was already fine; 2023/24 are the
+problem). Two grounded probes were run to find the lever; **both over-fired**,
+which together triangulate the cause.
+
+### Probe 1 — ECRS as a measured reserve *requirement* (demand side)
+
+The co-opt models one contingency-reserve product and never grew when ERCOT
+launched ECRS (2023-06-10, ~2 GW). Added the measured ECRS plan
+(`ASPLANNP433`) to the reserve-balance RHS (`ercot_ecrs_requirement`, default off).
+Result — mean |monthly gap|: 2023 11.2→**57.7**, 2024 10.2→**17.6**, 2025 3.0→3.3.
+It could **not** lift the loose months (May-2024 17.7→19.0 vs actual 38: +1.75 GW of
+requirement moved it $1, because reserves are loose there and the ORDC curve is flat)
+and it **detonated** the tight months (Aug-2023 158→**570**, Aug-2024 69→**157**),
+where the added requirement lands on the steep $5000 tail.
+
+### Probe 2 — unit commitment (the industry-standard energy-side mechanism)
+
+The ERCOT keeper is uniquely **dispatch-only** (`commitment=False`); every other ISO
+keeper runs `--commitment`. Production-cost models (PLEXOS/Aurora/PROMOD/SERVM/…)
+all run chronological SCUC+SCED, where startup / min-load costs of cycling CTs set
+above-marginal-cost shoulder prices. Enabled the P2 commitment screen for 2024
+(`KEEPER_COMMIT=1`). Result: avg **44.6** (actual 26.8), tail **239** h>$200
+(actual 53), mean |monthly gap| **18.9** — a worse over-fire than ECRS (May 71,
+Jul 66, Aug 74, Oct 71). Decommitting uneconomic CC/CT tightens the reserve balance
+and the same cliff explodes.
+
+### Triangulated conclusion
+
+Adding reserve **demand** (ECRS) → tight months explode. Cutting reserve **supply**
+(commitment) → everything explodes. Loose months stay under-priced in **both**. The
+common cause is the **ORDC reserve-demand curve shape**: built from `ordc_voll`
+5000 / `ordc_mcl_mw` 3000 / `ordc_lolp_sigma_mw` 1400 with `ordc_lolp_mu_mw` 0, and
+— critically — **reduced to a flat hourly mean** in `ercot_reserve_coopt_inputs`
+(`mu_s = float(np.mean(mu))`, "the demand curve is constant across hours"). The
+adder is therefore a **cliff**: ~$0 when the fleet is comfortable (so the broad
+"tight-but-not-scarce" $25–40 band that sets real shoulder prices is missing), then
+VOLL the instant anything tightens (so every supply-tightening lever over-fires).
+There is no smooth middle — which is the entire shape error.
+
+This **supersedes** the earlier "the loose-month / winter residual is out-of-market,
+un-modelable" framing *for the shape*: the mid-range gap is not administrative
+withholding, it is a **mis-shaped reserve demand curve**, which IS modelable. (The
+2023 *tail*-$ administrative slice above still stands; that is a separate, smaller
+residual.)
+
+### The grounded fix (scoped, not yet done)
+
+Re-ground the in-LP reserve demand curve in **ERCOT's published ORDC** as a
+*continuous, hour-resolved* curve rather than a flat mean — so it adds modest $
+across the moderate-reserve band (lifting loose months) and ramps gradually instead
+of cliff-to-VOLL (taming the over-fire). The published seasonal/TOD LOLP table
+(`data/raw/_validation-source/ercot_ordc_lolp_params.csv`, NP6-576-ER µ/σ) and the
+ERCOT ORDC methodology are the grounding source — **no fit to the LMP residual**.
+This needs the co-opt LP to accept an hour-varying reserve requirement / demand
+curve (today `req_total` is a scalar broadcast to all hours), so it is an
+architectural change to `ercot_reserve_coopt_inputs` + the reserve block, gated vs
+all 3 years + the tail. Probes reproduce via:
+
+```bash
+# ECRS-requirement probe (over-fire):
+python scripts/probes/_keeper_2023as_run.py ecrs_probe 2025 2023 '{"ST_GAS":{"committed":0.0}}' ecrs
+# commitment probe (over-fire), single year:
+KEEPER_YEARS=2024 KEEPER_COMMIT=1 python scripts/probes/_keeper_2023as_run.py commit_probe 2025 2023 '{"ST_GAS":{"committed":0.0}}'
+```
+
+### Step 1 done — published ORDC curve (grounded, NP6-576-ER): the right direction (2026-06-22)
+
+The keeper's curve uses the **ungrounded neutral fallback µ=0, σ=1400** (the
+`ScenarioConfig` comments say so explicitly), while ERCOT *publishes* the LOLP
+table (`ercot_ordc_lolp_params.csv`, µ≈924/σ≈1348). The fallback prices reserve
+~920 MW *too low*, so the adder stays $0 across the moderate band. Wired
+`--ordc-lolp-params-path` (threaded `run_calibration_full` → `run_year` →
+`config.ordc_lolp_params_path`; default off, baseline byte-identical) and re-solved
+the run143 recipe with the **published** table — purely the published rule, no fit.
+
+Result (dashboard `2026-06-22-published-ordc-curve-np6`, PROBE) — demand-wtd
+avg / h>$200 / h>$500 vs actual, run143 → published:
+
+| year | avg (143→pub / act) | h>$200 (143→pub / act) |
+|---|---|---|
+| 2023 | 36.5 → **45.3** / 48.4 | 104 → **156** / 181 |
+| 2024 | 23.2 → **25.2** / 26.8 | 22 → **34** / 53 |
+| 2025 | 31.4 → 31.5 / 32.5 | 1 → 4 / 31 |
+
+A **single grounded curve moves all three years' average and scarcity-hour
+frequency toward actual at once** — the structural (non-fit) test — without
+over-inflating the already-good 2025 or exploding (unlike the ECRS / commitment
+over-fires). The extreme tail (P99, max) is about right.
+
+**Residual — the duration curve localizes what's left.** The model is still hollow
+in the **P90–P99 "moderately scarce" band** (2024 model P95 **27.9** vs actual
+**61.4**; P90 24.8 vs 42.4) and slightly over-shoots P99.9 in 2023/24. The median is
+fine. So the curve grounding was necessary but not sufficient: the model's reserves
+rarely tighten into the band where even the published curve prices the P90–P95 hours.
+That points the **next grounded lever at the reserve-*supply* definition** —
+`ercot_reserve_eligible` counts ~all dispatchable thermal headroom as reserve, vs
+ERCOT's ORDC reserve = online responsive capability (RTOLCAP); over-counting supply
+keeps reserves artificially abundant in the moderate-scarce hours. This is an
+exogenous physical/rule distinction (online vs offline/slow-start), not a fit.
+
+```bash
+# published-ORDC probe (this step):
+KEEPER_ORDC_TABLE=data/raw/_validation-source/ercot_ordc_lolp_params.csv \
+  python scripts/probes/_keeper_2023as_run.py ordc_pub 2025 2023 '{"ST_GAS":{"committed":0.0}}'
+```
+
+**Status:** the published curve is the grounded improvement and a keeper candidate
+*after a volume re-gate* (the operating-shape gate flagged 19 regressions; the
+fuel-mix split must be re-confirmed before it replaces run143). The reserve-supply
+definition is the next step on the same no-fit basis.
+
