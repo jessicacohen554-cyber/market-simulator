@@ -1,0 +1,94 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "run144 local-band-outages session 2026-06-22",
+    "note": "Byte-faithful re-solve of the run143 keeper recipe (results/calibration/ercot_dam_2023as_netload; reproduce driver scripts/probes/_keeper_2023as_run.py, storage-AS-from-year 2025, load-RRS-from-year 2023, ST_GAS committed delta restored to 0.0, ECRS off). The ONLY changed input is the regenerated ERCOT outage CSVs (data/raw/campd-outages.csv + campd-unit-outages.csv), now on the LOCAL (seasonal) net-load band: high_load_mask compares each hour to a centered rolling +/-30-day net-load percentile instead of the single annual percentile (commit 152bb99). The outage filter keys on EXOGENOUS net load (EIA-930 demand - wind - solar), never on the LMP. Active levers all trace to measured inputs: CAMPD unit/facility outage windows (local-band-filtered), measured 2023 storage-AS (build_ercot_as_by_restype_from_60day.py) + load-RRS-UFR credit (build_ercot_as_2023.py, DAMASAGG-reconciled), EIA-860 BTM CHP host steam pulled out of the LP (btm.parquet), per-plant F923 monthly delivered gas, published NP6-576-ER ORDC params. No adder/haircut/sigmoid was tuned to the price or volume residual; no unit pinned to its observed CEMS generation; no input rescaled so the model output lands on actuals."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2023,
+      "magnitude": "-2.52 TWh (model grid 4.33 vs grid-delivered ~6.85)",
+      "reason": "~1.0-1.2 TWh/yr of CT_PEAKER benchmark sits in non-CEMS small peakers (Ector County, Permian Basin, Pearsall) with no hourly CEMS for the deployment overlay to key off and no merit-order path in an energy-only LP. Documented structural miss (docs/calibration-best-so-far.md). ACCEPTED MEASURED-INPUT LIMITATION, not a merit-order defect."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2024,
+      "magnitude": "-3.17 TWh (model grid 4.18 vs grid-delivered ~7.36)",
+      "reason": "Same non-CEMS small-peaker wedge as 2023; the energy-only LP cannot dispatch out-of-merit AS/RUC peaker energy and there is no defensible forward way to add it. Documented structural miss (docs/calibration-best-so-far.md). ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2025,
+      "magnitude": "-2.24 TWh (model grid 5.13 vs grid-delivered ~7.11)",
+      "reason": "Same non-CEMS small-peaker wedge; energy-only LP merit-order cannot reach it. ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2024,
+      "magnitude": "+10.0% (model tot 159.80 vs grid-delivered 145.41 TWh)",
+      "reason": "The residual CC_REGULAR over-run is the documented NODAL-congestion residual: 94% of SCED binding-constraint rent is on <200 kV local pockets that a zonal LP cannot resolve, so the displaced low-merit energy lands on CC rather than being constrained off. Measured NO-GO for finer-zone topology (2026-06-17 nodal-pockets session: no unmodelled aggregate GTC isolates the North over-run). The local-band outages REDUCE this over-run vs the prior keeper (run143 grid 160.42 -> 157.80 TWh). ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md, docs/audit-followup-tests-2026-06.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2025,
+      "magnitude": "+5.5% (model tot 155.20 vs grid-delivered 142.11 TWh)",
+      "reason": "Same nodal-congestion residual as 2024; not zonal-LP closable. ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2023,
+      "magnitude": "-4.40 TWh (model grid 12.30 vs grid-delivered 16.70 TWh)",
+      "reason": "Gas-steam availability the energy-only LP cannot reach: ST_GAS carries committed/AS-held capacity (the CPS steamers, Cedar Bayou) whose out-of-merit operation has no forward-defensible LP path. The local band IMPROVES ST_GAS toward bench vs the prior keeper (run143 grid 10.46 -> 12.30 TWh). ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2024,
+      "magnitude": "-6.72 TWh (model grid 11.38 vs grid-delivered 18.10 TWh)",
+      "reason": "Same committed/AS-held gas-steam structural wedge; the CC nodal over-run also displaces ST_GAS in the zonal merit order. Local band improves ST_GAS toward bench vs run143 (grid 9.33 -> 11.38 TWh). ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2025,
+      "magnitude": "-5.41 TWh (model grid 9.95 vs grid-delivered 14.81 TWh)",
+      "reason": "Same gas-steam structural wedge; improves toward bench vs run143 (grid 8.61 -> 9.95 TWh). ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "coal",
+      "year": 2024,
+      "magnitude": "-2.7% vs grid-delivered (923-BTM); +0.1pp vs EIA-930 grid",
+      "reason": "The documented cheap-gas year-gradient residual: in 2024 ($2.19 gas) the LP correctly idles loss-making self-committed/contracted PRB/lignite that ran 40-52% CF below marginal cost. The 2024 coal split is justified-lumpy and the multi-year PRB mean is centered (the run-90 gradient finding); vs EIA-930 grid the same coal sits +0.1pp. ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md, COAL_PRB carve-out)."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "magnitude": "mean LMP -11.7% (model 35.2 vs actual 48.4 $/MWh)",
+      "reason": "2023 is structurally out-of-market: ~42% of 2023 dollars are out-of-market scarcity (RTORDPA/ECRS-conservative deployments, ERCOT 2023 reserve practice) an ORDC-only energy+reserve co-opt cannot reproduce (run140 decomposition). No outage or ORDC lever reaches it without fitting to the residual. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2023,
+      "magnitude": "NRMSE 0.399",
+      "reason": "Driven by the same 2023 out-of-market scarcity gap (run140): the model reproduces the energy-and-reserve price formation but not the ~42% out-of-market component, thinning the summer tail. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2024,
+      "magnitude": "NRMSE 0.397",
+      "reason": "Mild-tail under-capture: the energy-only co-opt fires the genuine summer scarcity (Aug max $5000) but under-counts the count of mild >$200 hours the actual market cleared via out-of-market reserve deployments. The local band firms the 2024 tail TOWARD actual (h>$200 22->33 vs actual 53; mean MAE 9.6->7.1) without re-inflating the shoulder VOLL over-fire. ACCEPTED MEASURED-INPUT LIMITATION."
+    }
+  ]
+}
