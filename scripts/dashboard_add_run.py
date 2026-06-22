@@ -87,6 +87,18 @@ def main() -> None:
     print(f"registered {rid!r} (iso={iso}, bundle={rel_bundle})")
     print(f"RUN_ID={rid}")
 
+    # Re-determination trigger (docs/calibration-determination-rubric.md §6):
+    # registering a run re-runs the scorer on its freshly-written committed
+    # artifacts, so every registered run prints its calibration determination.
+    # Best-effort — a scorer error must never block registration.
+    try:
+        sys.path.insert(0, str(REPO / "scripts"))
+        import calibration_verdict as cv
+
+        print(cv.headline(cv.determine(rid)))
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"determination: unavailable ({exc})")
+
 
 if __name__ == "__main__":
     main()
