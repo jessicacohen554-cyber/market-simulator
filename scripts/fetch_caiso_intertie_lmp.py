@@ -15,11 +15,11 @@ dense 8760-hour local (Pacific) calendar:
     columns: year, hour (0..8759), hub in {MALIN, PALOVRDE}, price ($/MWh, the
              MCE energy component of the intertie LMP)
 
-Runs on a GitHub runner with open egress (the Claude remote env blocks
-oasis.caiso.com); see .github/workflows/fetch-caiso-intertie-lmp.yml. The intertie
-APNode names below are CAISO's published scheduling points but vary by registry
-vintage — run ``--probe`` first (one 1-day call per node) to confirm which resolve
-before the full pull, exactly like fetch_caiso_oasis's "validate on first run".
+oasis.caiso.com is reachable from the remote Claude env (verified 2026-06-22);
+it can also run on a GitHub runner — see .github/workflows/fetch-caiso-intertie-lmp.yml.
+The intertie APNode names below are CAISO's published scheduling points but vary by
+registry vintage — run ``--probe`` first (one 1-day call per node) to confirm which
+resolve before the full pull, exactly like fetch_caiso_oasis's "validate on first run".
 
 Usage:
     python scripts/fetch_caiso_intertie_lmp.py --probe --years 2024
@@ -72,6 +72,10 @@ CAISO_TZ = "America/Los_Angeles"
 _DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 _MONTH_START_HOUR = (np.cumsum([0, *_DAYS[:-1]]) * 24).tolist()
 _HOURS_PER_YEAR = 8760
+# OASIS PRC_LMP DAM retention boundary (probed 2026-06-22): data is aged out
+# before ~2023-03-10 (ERR 1000) and available from then on. 2024/2025 start at
+# Jan 1 as usual; only 2023 is clamped.
+_OASIS_RETENTION_START = dt.date(2023, 3, 10)
 
 
 def _hour_index(ts: pd.Series) -> np.ndarray:
@@ -96,7 +100,10 @@ def _fetch_node_year(
     """
     frames: list[pd.DataFrame] = []
     end = min(dt.date(year + 1, 1, 1), dt.date.today())
-    cur = dt.date(year, 1, 1)
+    # OASIS PRC_LMP retention aged out everything before ~2023-03-10 (ERR 1000);
+    # start there for 2023 instead of crawling ~10 weeks of dead Jan-Feb days
+    # one-at-a-time (the old start at Jan 1 looked hung for many minutes).
+    cur = max(dt.date(year, 1, 1), _OASIS_RETENTION_START)
     size = window
     while cur < end:
         if deadline is not None and time.monotonic() > deadline:
@@ -109,6 +116,8 @@ def _fetch_node_year(
         result = _extract_csv(payload) if payload is not None else None
         if result is not None:
             frames.append(pd.read_csv(io.BytesIO(result[1])))
+            # Log every success — the loop is otherwise silent and looks hung.
+            print(f"    {node} {cur:%Y-%m-%d}..{win_end:%Y-%m-%d}: ok", flush=True)
             cur = win_end
         elif size > 1:
             size = max(1, size // 2)
