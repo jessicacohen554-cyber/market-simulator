@@ -82,11 +82,14 @@ def rubric() -> list[dict]:
         row(
             "fuelmix",
             "Annual generation by model plant-class, on the grid-delivered basis "
-            "(grid LP dispatch, no behind-the-meter CHP add-back).",
+            "(grid LP dispatch, no behind-the-meter CHP add-back), as both a volume "
+            "and a share-of-generation check.",
             "EIA-923 Schedule-5 net generation minus that class's behind-the-meter "
             "CHP host supply (btm.parquet) — grid-delivered TWh by class.",
-            f"±{cv.FUELMIX_BIG_TOL * 100:.0f}% for classes ≥ {cv.FUELMIX_BIG_TWH:.0f} TWh; "
-            f"±{cv.FUELMIX_SMALL_ABS:.0f} TWh absolute below that.",
+            f"volume miss within ±{cv.FUELMIX_VOL_GEN_FRAC * 100:.1f}% of ISO annual "
+            f"generation AND share of total generation within ±{cv.FUELMIX_SHARE_PP:g} pp "
+            "(the 2026-06-15 universal class gate — scales with system size, applied "
+            "uniformly across classes and ISOs).",
         ),
         row(
             "sysvol",
