@@ -1010,6 +1010,7 @@ def run_year(
     ercot_storage_as_reserve_from_year: int = 2025,
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
+    ordc_lolp_params_path: str | None = None,
     storage_as_commitment: bool = False,
     hydro_eia930_monthly: bool = False,
     interchange_shaping: bool = False,
@@ -1190,6 +1191,12 @@ def run_year(
             ercot_ecrs_requirement=True,
             ercot_ecrs_requirement_from_year=int(ercot_ecrs_requirement_from_year),
         )
+    # Published ORDC LOLP table (run_calibration_full --ordc-lolp-params-path):
+    # replace the neutral flat fallback (mu=0) with ERCOT's published NP6-576-ER
+    # seasonal/TOD mu/sigma so the co-opt reserve demand curve sits at the real
+    # reserve level the adder begins to bite. Grounded input, not a price fit.
+    if ordc_lolp_params_path:
+        config = config.with_overrides(ordc_lolp_params_path=str(ordc_lolp_params_path))
     # Storage AS commitment (run_calibration_full --storage-as-commitment):
     # ERCOT-only reservation of measured storage up-AS MW from the battery
     # dispatch power cap (applied after storage_cap_profiles below).

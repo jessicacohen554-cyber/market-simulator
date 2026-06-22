@@ -1397,6 +1397,7 @@ def solve_and_persist(
     ercot_storage_as_reserve_from_year: int = 2025,
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
+    ordc_lolp_params_path: str | None = None,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
     gas_offer_curve: bool = False,
@@ -1530,6 +1531,7 @@ def solve_and_persist(
             ercot_storage_as_reserve_from_year=ercot_storage_as_reserve_from_year,
             ercot_ecrs_requirement=ercot_ecrs_requirement,
             ercot_ecrs_requirement_from_year=ercot_ecrs_requirement_from_year,
+            ordc_lolp_params_path=ordc_lolp_params_path,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
             gas_offer_curve=gas_offer_curve,
@@ -1704,6 +1706,7 @@ def solve_and_persist(
         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
         "ercot_ecrs_requirement": ercot_ecrs_requirement,
         "ercot_ecrs_requirement_from_year": ercot_ecrs_requirement_from_year,
+        "ordc_lolp_params_path": ordc_lolp_params_path,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
         "gas_offer_curve": gas_offer_curve,
@@ -4035,6 +4038,16 @@ def main() -> None:
         "(default 2023 = launch year; the data zeroes pre-June-2023 hours).",
     )
     parser.add_argument(
+        "--ordc-lolp-params-path",
+        default=None,
+        help="Path to ERCOT's published NP6-576-ER LOLP table (season/tod_block/"
+        "mu_mw/sigma_mw CSV, e.g. data/raw/_validation-source/"
+        "ercot_ordc_lolp_params.csv). Replaces the neutral flat fallback "
+        "(mu=0, sigma=1400) in the co-opt ORDC demand curve with the published "
+        "mu/sigma. Grounded input, not fitted; the curve then begins pricing "
+        "reserve at the real reserve level rather than ~920 MW too low.",
+    )
+    parser.add_argument(
         "--as-reserve-formula",
         action="store_true",
         help="CAISO formula-based operating-reserve withholding: remove "
@@ -4512,6 +4525,7 @@ def main() -> None:
         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
         ercot_ecrs_requirement=args.ercot_ecrs_requirement,
         ercot_ecrs_requirement_from_year=(args.ercot_ecrs_requirement_from_year),
+        ordc_lolp_params_path=args.ordc_lolp_params_path,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
         gas_offer_curve=args.gas_offer_curve,
