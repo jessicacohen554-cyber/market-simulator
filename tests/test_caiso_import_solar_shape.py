@@ -72,7 +72,9 @@ class TestInjectCaisoImportSolarShape(unittest.TestCase):
         row = {uid: r for r, uid in enumerate(fa.unit_ids)}
         # Firm baseload hydro and peak scarcity are NOT collapsed.
         for tr in ("PNW_hydro_base", "WECC_scarcity"):
-            np.testing.assert_array_equal(mc[row[f"{zone}_{tr}"]], base[row[f"{zone}_{tr}"]])
+            np.testing.assert_array_equal(
+                mc[row[f"{zone}_{tr}"]], base[row[f"{zone}_{tr}"]]
+            )
 
     def test_non_caiso_is_noop(self):
         hours = 50
