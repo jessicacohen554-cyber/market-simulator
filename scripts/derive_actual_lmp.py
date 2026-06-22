@@ -69,6 +69,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import sys
 import zipfile
 from pathlib import Path
 
@@ -77,9 +78,15 @@ import openpyxl
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-LMP_DIR = REPO / "inputs" / "raw-data" / "lmp-data"
-OUT = REPO / "inputs" / "calibration" / "actual_lmp.json"
-HOURLY_OUT = REPO / "inputs" / "calibration"  # actual_lmp_hourly_{ISO}.parquet
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config import paths  # noqa: E402  (resolves the data root)
+
+# Paths resolve through config/paths.py (CLAUDE.md: never hardcode the legacy
+# inputs/ tree — the W1 relocation collapsed inputs/raw-data -> data/raw and
+# inputs/calibration -> data/raw/_validation-source).
+LMP_DIR = paths.RAW_DATA_DIR / "lmp-data"
+OUT = paths.CALIBRATION_DIR / "actual_lmp.json"
+HOURLY_OUT = paths.CALIBRATION_DIR  # actual_lmp_hourly_{ISO}.parquet
 
 DEFAULT_YEARS = (2023, 2024, 2025)
 
@@ -111,10 +118,13 @@ CAISO_HUB_WEIGHTS = {
 # CISO localizes to Pacific prevailing time, like the model's dispatch clock
 # (``scripts/convert_eia930.py`` BA_TIMEZONES["CISO"], ``eia_loader``).
 CAISO_TZ = "America/Los_Angeles"
-# Minimum valid system-hours to emit a CAISO year. Guards against the
-# retention-aged 2023 DAM stub (OASIS keeps ~39 months, so by mid-2026 only
-# the last few Feb-2023 trade dates survive) and the never-fetched 2023 RTM.
-CAISO_MIN_HOURS = 8000
+# Minimum valid system-hours to emit a CAISO year. OASIS's ~39-month retention
+# aged out CAISO DAM/RTM before ~2023-03-10 (probed 2026-06-22: ERR 1000 before
+# Mar 10, data from Mar 10 on), so the deepest 2023 reference we can fetch is
+# Mar-Dec (~7.1k DAM / ~7.3k RTM hours). The guard sits below that span so the
+# partial-but-substantial 2023 year scores (Jan-Feb stay NaN in the dense
+# series and simply don't contribute), while still rejecting a true stub.
+CAISO_MIN_HOURS = 6500
 
 # Duration-curve percentile levels for the ``da_pct`` / ``rt_pct`` records.
 _PCT_LEVELS = (1, 5, 10, 25, 50, 75, 90, 95, 99)
@@ -681,8 +691,16 @@ BUILDERS = {
 }
 
 
-def build(years) -> tuple[dict, dict]:
+def build(years, isos=None) -> tuple[dict, dict]:
     """Build the JSON reference and per-ISO hourly frames for ``years``.
+
+    Args:
+        years: Calendar years to (re)derive.
+        isos: Optional subset of ISO keys to build; ``None`` builds all. Use a
+            subset to refresh one ISO without depending on the others' raws
+            (ERCOT/NYISO DA source zips are staged out of the repo, so building
+            them on a fresh checkout would otherwise drop or degrade them — the
+            committed reference is the durable record, and ``main`` merges).
 
     Returns:
         ``(table, hourly)`` — the ``{iso: {year: record}}`` JSON table, and
@@ -692,6 +710,8 @@ def build(years) -> tuple[dict, dict]:
     table: dict[str, dict] = {}
     hourly: dict[str, list] = {}
     for iso, fn in BUILDERS.items():
+        if isos is not None and iso not in isos:
+            continue
         for year in years:
             got = fn(int(year))
             if got is None:
@@ -710,10 +730,26 @@ def build(years) -> tuple[dict, dict]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=list(DEFAULT_YEARS))
+    ap.add_argument(
+        "--isos",
+        nargs="+",
+        default=None,
+        help="Subset of ISOs to (re)derive; default all. Only the built ISOs "
+        "are updated — others keep their committed entry/parquet (their raws "
+        "may be staged out of the repo).",
+    )
     args = ap.parse_args()
-    table, hourly = build(args.years)
-    OUT.write_text(json.dumps(table, indent=2) + "\n")
-    print(f"wrote {OUT} ({sum(len(v) for v in table.values())} iso-years)")
+    table, hourly = build(args.years, isos=args.isos)
+    # Merge into the committed reference rather than overwriting: ISOs not built
+    # this run (or whose source raws are staged out) keep their durable entry.
+    merged: dict[str, dict] = {}
+    if OUT.exists():
+        merged = json.loads(OUT.read_text())
+    for iso, years in table.items():
+        merged.setdefault(iso, {}).update(years)
+    OUT.write_text(json.dumps(merged, indent=2) + "\n")
+    print(f"wrote {OUT} ({sum(len(v) for v in merged.values())} iso-years)")
+    # Only rewrite parquets for ISOs actually built this run.
     for iso, frame in hourly.items():
         p = HOURLY_OUT / f"actual_lmp_hourly_{iso}.parquet"
         frame.to_parquet(p, index=False)
