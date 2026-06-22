@@ -17,17 +17,49 @@ cores/16 GB if parallel); 3-yr ~13 min. Push to a fresh branch.
 
 ---
 
-## The question
+## The question — and why it is likely the SAME problem as the within-gas miss
 
 The CC_REGULAR class over-runs **+2.7% / +10.3% / +8.8%** (2023/24/25, model vs
 CAMPD GWh) — but the over-run is **NOT spread across the fleet**. It is
 concentrated in a handful of **North/Northeast (DFW-area) plants**, while
-**West / South_Central (Permian, San-Antonio-area) CC plants under-run**. The net
-class over-run is a **spatial reallocation**: the zonal LP puts too much CC
-generation in the North and too little in the West/South. Figure out **why those
-specific North plants over-run**, decide whether it is a fixable
-zonal/transfer/availability miss or a genuinely sub-zonal (nodal) limitation that
-must be **ledgered** (the rubric's documented zonal-LP limitation), and do not fit
+**West / South_Central / Houston (Permian, San-Antonio, coastal) CC plants
+under-run**. The net class over-run is a **spatial reallocation**: the zonal LP
+puts too much CC generation in the North and too little in the load pockets.
+
+**This is very likely the same phenomenon as the within-gas ST_GAS/CT under-run,
+NOT a separate problem.** (Earlier framing called the within-gas swap "settled and
+ledgered" — that was too strong: it only established that *lowering* ST_GAS/CT
+offers to force them on is a markup (barred). It did NOT establish the volume miss
+is irreducible.) The under-runners across **all three gas classes cluster in the
+same load-pocket zones** the spatial finding starves:
+
+- **CC under-runners (2024):** Guadalupe (−20%, SC/San Antonio), Quail Run (−25%,
+  W/Permian), Odessa-Ector (−10%, W/Permian), Rio Nogales (−15%, SC), Cedar Bayou 4
+  (Houston).
+- **CT_PEAKER under-runners:** Permian Basin & Ector County (W/Permian), HO Clarke
+  & Greens Bayou & Braes Bayou (Houston), Decker Creek (SC/Austin), Victoria (South).
+- **ST_GAS under-runners** = the very steamers the keeper ledger named: **Cedar
+  Bayou** steam (Houston) and **CPS Energy's O W Sommers / V H Braunig** (SC/San
+  Antonio). (These map to `plant_group=OTHER` in the per-plant CEMS fit; the ST_GAS
+  C1 benchmark comes from the curated bin sheet.)
+
+So the model **floods the North with cheap CC (Midlothian, Wolf Hollow I) and
+starves the Houston / San-Antonio / Permian load pockets**, where in reality local
+**CT, ST_GAS, and local CC run behind transmission constraints to serve local
+load**. The offer-stack result is the *other half* of the same story: ST_GAS/CT
+genuinely offer **above** CC on energy (min-gen ST_GAS $47–71, CT $22–38 vs CC
+$7–20), so they only ever run when a **local transmission constraint binds and
+forces local generation** — exactly the constraint a 7-zone LP with too-loose
+inter-zone transfer limits fails to represent. Re-derive the spatial
+representation and **both** the North CC over-run **and** the load-pocket
+ST_GAS/CT/CC under-run should shrink **together, from one measured lever** — no
+offer markup. The CC-North over-run investigation below IS the within-gas
+investigation.
+
+Figure out **why those specific North plants over-run** (= why the load pockets
+under-run), decide whether it is a fixable zonal/transfer/availability miss or a
+genuinely sub-zonal (nodal) limitation that must be **ledgered** (the rubric's
+documented zonal-LP limitation), and do not fit
 to the per-plant residual.
 
 ### The miss, per plant (run145, model vs CAMPD GWh — verified, this is the target)
@@ -108,11 +140,13 @@ to the per-plant residual.
   CSC/TTC limits, F923 delivered gas), not be dialed until Midlothian = 6.3 TWh.
 - **Re-gate the whole fleet, not just these plants.** A zonal-demand or interface
   change moves *every* zone's dispatch — re-solve 3-yr and confirm C1/C2 across all
-  classes and the LMP/duration curve do not regress (the keeper's pre-existing
-  within-gas ledger must stay the same shape, ST_GAS/CT_PEAKER/CC_REGULAR).
-- **Spatial check, not just total.** Success = the North/NE over-run AND the
-  West/SC under-run both shrink (the reallocation closes), not just the net class
-  total. Score per-plant with the diagnostic below.
+  classes and the LMP/duration curve do not regress. The intended direction is that
+  CC_REGULAR / ST_GAS / CT_PEAKER all move *toward* bench together (the within-gas
+  ledger entries shrink); watch that other classes (coal, CC_CHP) don't regress as
+  the spatial reallocation unwinds.
+- **Spatial check, not just total.** Success = the North/NE CC over-run AND the
+  load-pocket (Houston/SC/West) CC+CT+ST_GAS under-run both shrink (the reallocation
+  closes), not just the net class total. Score per-plant with the diagnostic below.
 
 ## Reproduce / score
 
@@ -141,9 +175,19 @@ python scripts/probes/_ercot_lmp_shape_score.py results/calibration/<out>
 # register every run (calibration-report skill, top-15 ERCOT).
 ```
 
+## Relationship to the within-gas ledger (corrected)
+- The offer-stack finding stands and stays in force: ST_GAS/CT genuinely offer
+  **above** CC on energy, so **lowering their offers to force them on is a markup
+  (barred)**. That bars the *offer-curve* lever only.
+- It does **NOT** mean the within-gas volume miss is settled. The spatial/zonal
+  lever in this doc is the open, measured candidate that plausibly explains **both**
+  the CC over-run and the ST_GAS/CT under-run at once (they sit in opposite zones).
+  The keeper's current ST_GAS/CT/CC_REGULAR ledger entries are an **interim** accept
+  pending this spatial investigation — if the spatial lever closes the gap, those
+  entries should be *removed*, not kept; if it proves the residual is truly
+  sub-zonal/nodal (un-representable by any zonal topology), the ledger reason should
+  be **updated** to cite the spatial decomposition rather than "AS commitment."
+
 ## Out of scope / parallel
-- The within-gas merit order (CC vs ST_GAS/CT) is **settled and ledgered**
-  (offer-stack-grounded) — this track is **within CC_REGULAR**, a spatial question,
-  independent of that.
 - The 2023 out-of-market price tail (RTORDPA overlay + the deferred reserve-supply
   lever) and the 2024-Jan winter tail stay as documented.
