@@ -500,6 +500,17 @@ NYISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "nyiso_zonal_gas_hub.csv"
 # already-calibrated east level untouched while opening the west-to-east spread.
 NYISO_GAS_HUB_REFERENCE_ZONE: str = "Capital_Hudson"
 
+# ERCOT per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. West /
+# Panhandle price off Waha (the takeaway-constrained Permian discount),
+# North / Northeast off the North/East-Texas complex (~Henry Hub, measured from
+# EIA-923 Schedule-5 receipts), Houston off the Houston Ship Channel (~HH), and
+# South_Central / South off the South-Texas hubs (a modest HH premium, also
+# EIA-923-measured). Unlike the NYISO table this is anchored to a
+# gas-capacity-weighted mean of zero (not a single reference zone), so the
+# calibrated ERCOT fleet-aggregate gas level is preserved and only the
+# cross-zonal split moves. Consumed by :func:`apply_ercot_zonal_gas_basis`.
+ERCOT_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
+
 # Measured Henry Hub monthly spot averages (EIA RNGWHHDm via the
 # datasets/natural-gas public-domain mirror; see
 # docs/multi-iso/data-acquisition-report.md Step 1a). The hub-basis overlay
@@ -1175,6 +1186,118 @@ def apply_nyiso_zonal_gas_basis(
     )
 
 
+_ERCOT_ZONAL_HUB_CACHE: dict[Path, pd.DataFrame | None] = {}
+
+
+def _load_ercot_zonal_gas_hub(path: Path | None) -> pd.DataFrame | None:
+    """Load the ERCOT per-zone annual gas-basis table, or ``None`` if absent."""
+    resolved = Path(path) if path else ERCOT_ZONAL_GAS_HUB_PATH
+    if resolved in _ERCOT_ZONAL_HUB_CACHE:
+        return _ERCOT_ZONAL_HUB_CACHE[resolved]
+    frame: pd.DataFrame | None = None
+    if resolved.exists():
+        loaded = pd.read_csv(resolved)
+        if not loaded.empty:
+            frame = loaded
+    _ERCOT_ZONAL_HUB_CACHE[resolved] = frame
+    return frame
+
+
+def ercot_zonal_gas_basis_by_zone(
+    year: int, path: Path | None = None
+) -> dict[str, float] | None:
+    """Return ``{zone: basis vs Henry Hub ($/MMBtu)}`` for ERCOT, or None.
+
+    The raw measured per-zone basis (West/Panhandle on Waha, North/Northeast on
+    the North/East-Texas complex, Houston on the Houston Ship Channel,
+    South_Central/South on the South-Texas hubs;
+    :data:`ERCOT_ZONAL_GAS_HUB_PATH`). The mean-zero re-centring that preserves
+    the calibrated fleet-aggregate level is done in
+    :func:`apply_ercot_zonal_gas_basis`, which weights by each zone's gas
+    capacity. Returns ``None`` when the table is missing or has no rows for
+    ``year`` (e.g. a forward year).
+    """
+    frame = _load_ercot_zonal_gas_hub(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
+
+
+def apply_ercot_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Shift each ERCOT gas unit's price by its zone's measured hub basis.
+
+    ERCOT's model zones buy gas off structurally different regional hubs (Waha
+    in the West/Panhandle, the North/East-Texas complex in North/Northeast, the
+    Houston Ship Channel in Houston, the South-Texas hubs in
+    South_Central/South). The single ERCOT scalar basis
+    (:data:`~market_sim.config.constants.GAS_BASIS_DIFFERENTIAL`, the Waha
+    discount applied fleet-wide) flattens this gradient, so the merit order
+    prices DFW/North CCs on the same cheap gas as Permian CCs — over-running
+    North/Northeast CCs and under-running West/Permian and South CCs.
+
+    This adds each zone's measured basis vs Henry Hub
+    (:func:`ercot_zonal_gas_basis_by_zone`), **re-centred to a gas-capacity-
+    weighted mean of zero** so the calibrated fleet-aggregate gas level (and the
+    within-gas ST_GAS/CT/CC ledger, which sees the same per-zone shift on every
+    gas fuel type) is preserved and only the cross-zonal split moves. The shift
+    is floored at a small positive so a deep negative Waha basis cannot drive
+    the delivered price below zero. Runs after the F923 plant-monthly overwrite
+    and before :func:`apply_dual_fuel_pricing`, so oil parity still caps any
+    winter spike.
+
+    Gated on ``config.ercot_zonal_gas_basis`` and ``config.iso == "ERCOT"``
+    (off by default; the calibration harness enables it for ERCOT), so every
+    other ISO and all forecasts are byte-identical. Mutates ``fuel_prices`` in
+    place; idempotent given the same inputs.
+    """
+    if not getattr(config, "ercot_zonal_gas_basis", False):
+        return
+    if config.iso != "ERCOT":
+        return
+    basis = ercot_zonal_gas_basis_by_zone(year, path)
+    if basis is None:
+        return
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    if gas_rows.size == 0:
+        return
+    # Per-generator raw basis from its zone (0.0 for any zone absent from the
+    # table); gas-capacity-weighted mean across the gas fleet anchors the
+    # re-centring so the aggregate gas level is preserved.
+    basis_by_zone_idx = np.array(
+        [basis.get(name, 0.0) for name in zone_names], dtype=float
+    )
+    gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
+    weights = fleet.pmax[gas_rows]
+    total_w = float(weights.sum())
+    weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
+    gen_offset = gen_basis - weighted_mean
+    floored = np.maximum(
+        fuel_prices[gas_rows, :] + gen_offset[:, np.newaxis], _GAS_PRICE_FLOOR
+    )
+    fuel_prices[gas_rows, :] = floored
+    logger.info(
+        "ERCOT zonal gas basis (%d): %d gas units shifted by zone hub basis "
+        "(mean-zero anchored at cap-wtd mean %.2f; offsets %.2f..%.2f $/MMBtu)",
+        year,
+        gas_rows.size,
+        weighted_mean,
+        float(gen_offset.min()),
+        float(gen_offset.max()),
+    )
+
+
 def _hub_overlay_series(
     series: np.ndarray, config: ScenarioConfig, year: int, hours: int
 ) -> np.ndarray:
@@ -1311,6 +1434,12 @@ def resolve_fuel_prices(
         # source of the upstate-cheap / east-dear LMP spread). Before dual-fuel
         # so oil parity still caps any winter blowout.
         apply_nyiso_zonal_gas_basis(fuel_prices, fleet, config, year)
+        # ERCOT: shift each gas unit to its zone's measured regional hub basis
+        # (Waha-cheap West/Permian, dearer North/East-Texas and South) so the
+        # merit order stops over-running DFW/North CCs on flat Waha-discounted
+        # gas. Mean-zero anchored, so the aggregate gas level is unchanged.
+        # Before dual-fuel so oil parity still caps any winter blowout.
+        apply_ercot_zonal_gas_basis(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices
