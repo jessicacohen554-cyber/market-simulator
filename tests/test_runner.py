@@ -43,6 +43,27 @@ def _fake_solve(fleet, demand, *args, **kwargs):
     )
 
 
+class _FakeDispatchModel:
+    """Counting stand-in for the build-once / re-cost ``DispatchModel``.
+
+    The runner's default P0/P1 path builds one model per year and re-costs it
+    (intra-year warm-start), so the orchestration tests mock the model rather
+    than the one-shot ``solve_dispatch``. Each ``solve`` returns a synthetic
+    result sized to the fleet/demand and bumps a class counter so a test can
+    assert "two solves (P0, P1) per simulated year".
+    """
+
+    n_solves = 0
+
+    def __init__(self, fleet, demand, **kwargs):
+        self._fleet = fleet
+        self._demand = demand
+
+    def solve(self, mc=None, **kwargs):
+        type(self).n_solves += 1
+        return _fake_solve(self._fleet, self._demand)
+
+
 class RunnerTestBase(unittest.TestCase):
     """Base fixture redirecting the cache root to a temp directory."""
 
@@ -50,6 +71,7 @@ class RunnerTestBase(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self._original_root = cache.CACHE_ROOT
         cache.CACHE_ROOT = Path(self._tmp.name)
+        _FakeDispatchModel.n_solves = 0
 
     def tearDown(self):
         cache.CACHE_ROOT = self._original_root
@@ -63,13 +85,14 @@ class TestRunScenarioIso(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2028),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve) as solve,
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
 
-        # Two solves per simulated year (P0 base-cost, P1 bid-cost),
-        # 2026-2028. P2 commitment is off by default.
-        self.assertEqual(solve.call_count, 6)
+        # Two solves per simulated year (P0 base-cost, P1 bid-cost warm-started
+        # off P0), 2026-2028. P2 commitment is off by default.
+        self.assertEqual(_FakeDispatchModel.n_solves, 6)
         for year in (2026, 2027, 2028):
             self.assertTrue(cache.is_cached("ERCOT", key, year))
 
@@ -80,21 +103,23 @@ class TestRunScenarioIso(RunnerTestBase):
         config = ScenarioConfig(iso="ERCOT")
         with (
             patch.object(runner, "END_YEAR", 2028),
-            patch.object(runner, "solve_dispatch", side_effect=_fake_solve) as solve,
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
+            patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             runner.run_scenario_iso(config, "ERCOT")
             # Two solves (P0, P1) per year, 2026-2028.
-            self.assertEqual(solve.call_count, 6)
+            self.assertEqual(_FakeDispatchModel.n_solves, 6)
 
             # Re-running the identical scenario solves nothing new: every
             # year is loaded from the cache instead.
             runner.run_scenario_iso(config, "ERCOT")
-            self.assertEqual(solve.call_count, 6)
+            self.assertEqual(_FakeDispatchModel.n_solves, 6)
 
     def test_iso_argument_overrides_config_iso(self):
         config = ScenarioConfig(iso="CAISO")
         with (
             patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             key = runner.run_scenario_iso(config, "ERCOT")
@@ -112,6 +137,7 @@ class TestRunSweep(RunnerTestBase):
         sweep = SweepDefinition(sweep={"carbon_price": [0.0, 50.0]})
         with (
             patch.object(runner, "END_YEAR", 2027),
+            patch.object(runner, "DispatchModel", _FakeDispatchModel),
             patch.object(runner, "solve_dispatch", side_effect=_fake_solve),
         ):
             keys = runner.run_sweep(sweep, workers=1)

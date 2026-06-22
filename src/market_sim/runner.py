@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, replace
@@ -61,7 +62,7 @@ from market_sim.model.commitment import (
     compute_commitment,
     compute_monthly_markup,
 )
-from market_sim.model.dispatch import solve_dispatch
+from market_sim.model.dispatch import DispatchModel, solve_dispatch
 from market_sim.model.storage import (
     _elcc_for_duration,
     apply_storage_new_entry,
@@ -607,19 +608,39 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )
-            # P0: solve with base MC to extract per-month run lengths.
-            r0 = solve_dispatch(
-                fleet_arrays, year_demand, mc=mc_base, **dispatch_kwargs
+            # P0 and P1 solve the *same* LP -- identical constraint matrix and
+            # bounds -- and differ only in the objective (P1 = base MC + startup
+            # markup). Build the model once and warm-start P1 from P0's optimal
+            # basis (changeColsCost in place): this skips the second matrix build
+            # and converges in far fewer simplex iterations, the ~5x the
+            # calibration path already banks. The LP optimum is basis-
+            # independent, so prices and generation are unchanged. Set
+            # MARKET_SIM_WARMSTART=0 to fall back to two independent cold solves.
+            _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
+            model = (
+                DispatchModel(fleet_arrays, year_demand, **dispatch_kwargs)
+                if _warm
+                else None
             )
+            # P0: solve with base MC to extract per-month run lengths.
+            if _warm:
+                r0 = model.solve(mc=mc_base)
+            else:
+                r0 = solve_dispatch(
+                    fleet_arrays, year_demand, mc=mc_base, **dispatch_kwargs
+                )
             # P1: solve with bid MC = base MC + monthly startup amortization,
             # so clearing prices reflect CC/CT cycling costs.
             markup = compute_monthly_markup(
                 dispatch_fleet, fleet_arrays, r0.dispatch, config.hours
             )
             mc_bid = mc_base + markup
-            p1_result = solve_dispatch(
-                fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
-            )
+            if _warm:
+                p1_result = model.solve(mc=mc_bid)
+            else:
+                p1_result = solve_dispatch(
+                    fleet_arrays, year_demand, mc=mc_bid, **dispatch_kwargs
+                )
             context = FleetContext.from_arrays(
                 fleet_arrays,
                 iso_config,
