@@ -1,6 +1,38 @@
 # PJM outage re-gate — net-load-filtered outages (2026-06)
 
-**Status:** done. **New keeper `results/calibration/pjm_38`** (dashboard label
+> **Update 2026-06-22 (`claude/cross-iso-outage-local-band-yhyu1f`): LOCAL
+> (seasonal) net-load band — new keeper `results/calibration/pjm_39` (dashboard
+> `pjm 39 local-band outage`), supersedes pjm 38.** The annual band below
+> over-cut genuine multi-week shoulder CCGT maintenance; `high_load_mask` now
+> measures the high-load percentile over a centered rolling ±30-day window
+> (commit `152bb99`; see `docs/ercot-outage-sensitivity-middle-ground-2026-06.md`).
+> The pjm-38 config was re-solved **byte-faithfully** (same probe scripts,
+> `retiree_cems_cap=True`) on the regenerated local-band PJM outages — **only the
+> outage input changed**. Recovering shoulder outages puts MORE coal/CC offline
+> in shoulder months, so the local band partially UNWINDS the annual band's
+> over-availability: it is a **strict improvement over pjm 38 on every axis.**
+>
+> | metric (model vs actual RT) | 2023 | 2024 | 2025 |
+> |---|---|---|---|
+> | LMP demand-wtd mean: pjm38 → **pjm39** (actual) | 28.12 → **28.29** (28.44) | 26.17 → **26.12** (29.53) | 34.63 → **35.01** (42.89) |
+> | hourly hub MAE: pjm38 → **pjm39** | 8.12 → **7.94** | 10.49 → **9.75** | 15.82 → **13.37** |
+> | coal-tot resid: pjm38 → **pjm39** | +17.3% → **+11.4%** | +13.9% → **+3.0%** | +22.8% → **+11.1%** |
+> | net-export resid: pjm38 → **pjm39** | +69% → **+31%** | +65% → **+17.5%** | +204% → **+93%** |
+> | hrs >$200 (model / actual) | 0 / 6 | 0 / 18 | 0 / 59 |
+> | in-tolerance fails: pjm38 → **pjm39** | **11 → 7** | | |
+>
+> Tail unchanged (model still does not fire PJM's scarcity tail — the documented
+> separate coal-cost/offer issue, neither collapsed nor re-inflated); summer not
+> under-fired (2023 Jul/Aug model 29.1 vs actual 31.8). The residual coal
+> over-run + over-export is PJM's forecast-native coal issue
+> (`pjm-coal-mustrun-floor.md`), here made **less** visible than the annual band,
+> not newly introduced — still the next frontier (offer-curve / coal-cost
+> retune), not chased in the outage step. Reproduce: identical to the pjm 38
+> commands below (the local-band outages are the committed state of
+> `data/raw/campd-*-PJM.csv`); merged into `results/calibration/pjm_39`.
+
+**Status (annual band — superseded 2026-06-22, see above):** done. **Keeper was
+`results/calibration/pjm_38`** (dashboard label
 `pjm 38 outage-regate`), promoted from the prior keeper
 `pjm_37` / `pjm-36-retiree-cems`.
 **Trigger:** commit `b0c41cb` (branch `claude/ercot-scarcity-tuning-handoff-nl1y3m`),
