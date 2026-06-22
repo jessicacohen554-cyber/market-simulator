@@ -50,21 +50,46 @@ def class_table(run: str) -> pd.DataFrame:
         b = btm[(btm["year"] == year) & (btm["pass"] == "P1")]
         bt = dict(zip(b["klass"], b["btm_twh"]))
         bench = e923[e923["year"] == year].groupby("klass")["annual_mwh"].sum() / 1e6
+        # System grid-delivered totals for the 2026-06-15 universal class gate:
+        # model = Σ grid-LP over every class; actual = Σ (EIA-923 − BTM). (The
+        # authoritative gate, scripts/calibration_verdict.py, takes non-fossil
+        # nuclear/wind/solar from EIA-930; this diagnostic stays on the 923 basis
+        # it already loads — a sub-percent difference in the system total.)
+        m_tot = float(grid.sum())
+        a_tot = float(bench.sum()) - sum(bt.values())
         for cls in CLASSES:
             # Grid-delivered: model = grid LP only; actual = 923 whole-plant
             # minus the class's BTM host supply.
             m = grid.get(cls, 0.0)
             a = bench.get(cls, 0.0) - bt.get(cls, 0.0)
-            rows.append({"year": year, "class": cls, "model": m, "bench": a})
+            rows.append(
+                {
+                    "year": year,
+                    "class": cls,
+                    "model": m,
+                    "bench": a,
+                    "m_tot": m_tot,
+                    "a_tot": a_tot,
+                }
+            )
     return pd.DataFrame(rows)
+
+
+# C1 fuel-mix — the 2026-06-15 universal class gate (matches
+# calibration_verdict.score_fuelmix and _backcast_shell.classInTol): a class
+# passes iff BOTH its grid-delivered volume miss is within 0.5% of ISO annual
+# generation AND its share of total generation is within 1.5 pp of actual.
+VOL_GEN_FRAC = 0.005
+SHARE_PP = 1.5
 
 
 def judge(row) -> str:
     if row["class"] == "CT_CHP":
         return "excl"
-    if row["bench"] >= 20.0:
-        return "PASS" if abs(row["model"] / row["bench"] - 1) <= 0.05 else "FAIL"
-    return "PASS" if abs(row["model"] - row["bench"]) <= 1.0 else "FAIL"
+    vol_ok = abs(row["model"] - row["bench"]) <= VOL_GEN_FRAC * row["a_tot"]
+    share_pp = 100.0 * row["model"] / row["m_tot"] - 100.0 * row["bench"] / row["a_tot"]
+    share_ok = abs(share_pp) <= SHARE_PP
+    return "PASS" if vol_ok and share_ok else "FAIL"
 
 
 def main() -> None:

@@ -70,10 +70,18 @@ hard-gate budget) or **SOFT** (a documented out-of-tolerance becomes a `CAVEAT`)
   **minus** that class's behind-the-meter CHP host supply (`btm.parquet`), i.e.
   grid-delivered generation by class. (Solar/wind are *not* in this gate — see
   C-VRE note; they route to EIA-930 per `calibration.actuals_source`.)
-- **Per-year tolerance (tiered):**
-  - class actual **≥ 20 TWh** → within **±5%**;
-  - class actual **< 20 TWh** → within **±1 TWh absolute** (a percent band on a
-    small class is noise; the absolute band is the meaningful one).
+- **Per-year tolerance (the 2026-06-15 universal class gate).** A class passes iff
+  **both** bands hold (mirrors `scripts/probes/_backcast_shell.py:classInTol`, so
+  the determination and the dashboard scorecard agree):
+  - **Volume:** the grid-delivered miss `|model − actual|` is within **0.5% of ISO
+    annual generation** (`SUM_TOL_GEN_FRAC = 0.005` of the system total — model
+    grid-LP + non-fossil vs (EIA-923 − BTM) + EIA-930 nuclear/wind/solar). The
+    band scales with system size (~2.3 TWh on ERCOT, the structural-noise floor)
+    and is applied uniformly across classes and ISOs — it **supersedes the old
+    ±5% OR ±1 TWh size-tiered bar**, which let large classes drift several TWh.
+  - **Share:** the class's **share of total generation** is within **1.5
+    percentage points** of the actual share (`SUM_TOL_SHARE_PP = 1.5`) — so a
+    class cannot pass on volume alone while still misrepresenting the mix.
 - **Excluded / again-excluded classes (each justified):**
   - **`CT_CHP` — excluded, every ISO.** A behind-the-meter cogeneration peaker
     whose output follows host steam demand and is held out of the grid LP; its
