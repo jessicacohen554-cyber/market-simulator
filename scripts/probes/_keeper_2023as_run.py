@@ -59,6 +59,17 @@ def main(argv: list[str]) -> int:
     commitment = cfg["commitment"]
     if os.environ.get("KEEPER_COMMIT"):
         commitment = os.environ["KEEPER_COMMIT"].lower() in ("1", "true", "on")
+    #   KEEPER_PERSIST_P2=1 -> persist each year's P1 state to <bundle>/p2_state/
+    #                          so the P2 commitment screen can be run (and
+    #                          re-tuned) modularly later via
+    #                          run_calibration_full.py --run-p2 <bundle>, with no
+    #                          P0/P1 re-solve. Off by default (the keeper is
+    #                          dispatch-only and does not need it).
+    persist_p2_state = os.environ.get("KEEPER_PERSIST_P2", "").lower() in (
+        "1",
+        "true",
+        "on",
+    )
     #   KEEPER_ORDC_TABLE=<csv> -> use ERCOT's published NP6-576-ER LOLP table in
     #                             the co-opt ORDC curve (grounds mu/sigma; the
     #                             keeper uses the neutral mu=0 fallback).
@@ -90,6 +101,7 @@ def main(argv: list[str]) -> int:
         commitment=commitment,
         screen_coal=cfg["commitment_screen_coal"],
         run_dir=run_dir,
+        persist_p2_state=persist_p2_state,
         coal_lignite_mustrun=cfg.get("coal_lignite_mustrun"),
         coal_prb_mustrun=cfg.get("coal_prb_mustrun"),
         coal_prb_passthrough=cfg["coal_prb_passthrough"],
