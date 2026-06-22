@@ -1346,7 +1346,12 @@ class ScenarioConfig:
     # measured basis vs Henry Hub (data/raw/ercot_zonal_gas_hub.csv), re-centred
     # to a gas-capacity-weighted mean of zero so the calibrated fleet-aggregate
     # gas level (and the within-gas ST_GAS/CT/CC ledger) is preserved and only
-    # the cross-zonal split moves. DEFAULT-OFF DIAGNOSTIC — not a keeper lever:
+    # the cross-zonal split moves; the level is anchored on the measured TX
+    # delivered-to-electric-power gas price (EIA N3045TX3) rather than the flat
+    # -0.50 Waha scalar, and the EIA-923 receipts supply only the (mean-zero)
+    # zonal spread (so their regulated-utility level bias is dropped). NOT the TX
+    # city-gate price (N3050TX3), which carries the LDC distribution margin
+    # (~+$1.3/MMBtu) generators do not pay. DEFAULT-OFF DIAGNOSTIC — not a keeper lever:
     # the basis is measured and correct, but a 7-zone LP cannot model the
     # intra-Permian (<200 kV) transmission that, in reality, traps the cheap
     # Waha generation. Enabling it shrinks the North CC over-run (2024 +13.2 ->
