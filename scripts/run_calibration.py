@@ -429,9 +429,12 @@ def _calibration_config(
         # West/Permian and South CCs. Measured per-zone basis from EIA-923
         # Schedule-5 receipts + published Waha/HSC annual averages
         # (data/raw/ercot_zonal_gas_hub.csv), mean-zero anchored so the
-        # aggregate gas level is unchanged. Gated on the ERCOT_ZONAL_GAS env
-        # flag so the keeper baseline stays byte-identical until enabled. See
-        # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+        # aggregate gas level is unchanged. DEFAULT-OFF DIAGNOSTIC: enabling it
+        # confirms the gas-basis mechanism (shrinks the North CC over-run) but
+        # relocates the residual onto West/Permian CT peakers the zonal LP can't
+        # trap (see the docstring on ScenarioConfig.ercot_zonal_gas_basis), so
+        # it is kept off in the keeper. Gated on the ERCOT_ZONAL_GAS env flag.
+        # See market_sim.data.fuel.apply_ercot_zonal_gas_basis.
         ercot_zonal_gas_basis=(
             iso.upper() == "ERCOT"
             and os.environ.get("ERCOT_ZONAL_GAS", "").lower() in ("1", "true", "on")
