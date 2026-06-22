@@ -2003,6 +2003,8 @@ def _commitment_pass(state: dict, config=None):
         getattr(cfg, "ct_deployment_overlay", False)
         or getattr(cfg, "reliability_deployment_overlay", False)
         or getattr(cfg, "caiso_gas_commitment_floor", False)
+        or getattr(cfg, "nyiso_local_selfsupply", False)
+        or getattr(cfg, "nyiso_firm_imports", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(
         fa,
