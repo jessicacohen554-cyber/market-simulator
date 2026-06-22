@@ -183,6 +183,25 @@ def _nrmse(m: np.ndarray, o: np.ndarray) -> float:
     return float(np.sqrt(((m - o) ** 2).mean()) / den) if den > 0 else 9.9
 
 
+def _fossil_co2(
+    class_twh: dict[str, float], intensity: dict[str, float]
+) -> tuple[float, dict[str, float]]:
+    """Return ``(total Mt CO2, {class: Mt})`` for fossil classes.
+
+    A class's generation (TWh) times its CO2 intensity (metric tonnes / MWh,
+    from :func:`market_sim.data.egrid.class_co2_intensity`) is metric tonnes of
+    CO2 expressed in Mt (1 TWh = 1e6 MWh, 1 Mt = 1e6 t, so TWh × t/MWh = Mt).
+    Only classes with a positive intensity contribute, so non-fossil classes
+    (no intensity) are dropped.
+    """
+    by = {
+        k: round(class_twh[k] * intensity[k], 4)
+        for k in class_twh
+        if intensity.get(k, 0.0) > 0.0
+    }
+    return round(sum(by.values()), 3), by
+
+
 def _capture(r: float, nrmse: float, dev: float) -> float:
     """Geometric-mean capture% from r, NRMSE and annual fractional deviation."""
     rs = max(0.0, r)
@@ -513,6 +532,45 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             if actual_lmp:
                 bench[int(year)]["avgLMP"] = actual_lmp
 
+            # Actual fossil CO2 (Mt), the calibration-page emissions metric.
+            # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
+            # only source spanning the small non-CEMS units — overridden by the
+            # CAMPD-measured intensity where it exists; the rates are net-gen-
+            # weighted within each class to a tonnes/MWh intensity, then applied
+            # to the same grid-delivered class totals (``classFull``) the
+            # generation-mix benchmark uses. So the actual is what the fossil
+            # fleet emitted delivering the grid energy the model is scored on.
+            e_fossil = e923[e923["klass"].isin(FOSSIL_GROUPS)]
+            co2_rate = egrid.fossil_co2_rate_map(int(year))
+            co2_intensity = egrid.class_co2_intensity(
+                e_fossil,
+                co2_rate,
+                plant_col="plant_id",
+                klass_col="klass",
+                gen_col="annual_mwh",
+            )
+            actual_co2_mt, actual_co2_by = _fossil_co2(
+                bench[int(year)]["classFull"], co2_intensity
+            )
+            # Share of fossil-class EIA-923 generation carrying a plant rate —
+            # the class intensity is extrapolated to the small remainder.
+            _frate = e_fossil.assign(
+                rate=e_fossil["plant_id"].astype(int).map(co2_rate)
+            )
+            _gcov = float(_frate.loc[_frate["rate"].notna(), "annual_mwh"].sum())
+            _gall = float(_frate["annual_mwh"].sum())
+            # Key the scalar actual "egrid" — the name calibration_verdict's
+            # C5a gate (score_co2) reads — so committing this benchmark part
+            # activates the CO2 verdict that has been SKIPPED for want of an
+            # actual. ("eGRID" names the fleet-wide base; CAMPD overrides the
+            # large plants.) byClass / intensity / covPct drive the panel.
+            bench[int(year)]["co2"] = {
+                "egrid": actual_co2_mt,
+                "byClass": actual_co2_by,
+                "intensity": {k: round(v, 5) for k, v in co2_intensity.items()},
+                "covPct": round(100.0 * _gcov / _gall, 1) if _gall > 0 else 0.0,
+            }
+
             # ---- model payload (per run) ----
             mplants: dict[str, dict] = {}
             for code, mw in mw_p.items():
@@ -712,6 +770,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # unchanged run must not show up as a git diff).
                 for g in sorted(set(MIX_GROUPS) | set(mh))
             }
+            # Model fossil CO2 (Mt): the model's grid-delivered class totals
+            # (gm_model) times the SAME per-class CO2 intensity the benchmark
+            # used. The comparison is therefore the model's generation mix
+            # re-weighted by measured carbon intensity — an independent check on
+            # the coal/gas split that a pure MWh volume gate is blind to.
+            model_co2_mt, model_co2_by = _fossil_co2(
+                gm_model, bench[int(year)]["co2"]["intensity"]
+            )
             # ---- signed volume error per (class, zone, month) ----
             # Model monthly TWh vs the authoritative actuals source for each
             # class (EIA-923 for every class except solar -> EIA-930; the rule
@@ -768,6 +834,8 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "gmModel": gm_model,
                 "lmp": lmp,
                 "volErr": vol_err,
+                # Scalar keyed "model" for calibration_verdict's C5a gate.
+                "co2": {"model": model_co2_mt, "byClass": model_co2_by},
             }
             # Year-level scarcity-overlay summary (display-only): demand-weighted
             # monthly LMP MAE vs actual RT for the energy-only and overlaid
