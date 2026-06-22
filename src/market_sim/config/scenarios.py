@@ -1044,6 +1044,28 @@ class ScenarioConfig:
     # get neither floor and run purely economically.
     gas_st_offsummer_mustrun: float = 0.0
 
+    # Net-load-indexed ST_GAS reliability-drag floor — the endogenous,
+    # weather-driven replacement for the blunt seasonal gas_st_summer_mustrun
+    # calendar fraction. ERCOT holds legacy gas-steam committed at minimum load
+    # for local/system reliability (RUC); the held fraction is not a fixed
+    # season but rises with system net-load (load - wind - solar), the
+    # operational proxy for reserve tightness RUC keys off. When
+    # gas_st_netload_drag is True, each non-peaker ST_GAS unit carries a per-hour
+    # min-gen floor of clip(slope*netload_GW + intercept, 0, cap) x capacity,
+    # over which the LP dispatches economically. The defaults are the CAMPD
+    # overnight (low-price) ST_GAS capacity factor regressed on contemporaneous
+    # system net-load, 2023-2025 (docs/ercot-st-gas-netload-drag-2026-06.md);
+    # the relationship is year-stable, so a single curve regenerates for a
+    # forward year (which has a load forecast and wind/solar build -> net-load)
+    # and responds to changed conditions (more VRE -> lower net-load -> less
+    # drag). That forward-derivability + condition-response makes it a
+    # legitimate input in both backcast and forecast (CLAUDE.md #10), unlike a
+    # fixed seasonal fraction or an offer markdown tuned to the ST_GAS residual.
+    gas_st_netload_drag: bool = False
+    gas_st_drag_slope_per_gw: float = 0.00906  # overnight CF per GW net-load
+    gas_st_drag_intercept: float = -0.1376  # floor zero-crossing ~15.2 GW
+    gas_st_drag_cap: float = 0.34  # max observed overnight floor fraction (~50 GW)
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
@@ -1813,6 +1835,10 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_summer_mustrun": 3,
     "gas_st_startup_spread": 3,
     "gas_st_offsummer_mustrun": 3,
+    "gas_st_netload_drag": 3,
+    "gas_st_drag_slope_per_gw": 3,
+    "gas_st_drag_intercept": 3,
+    "gas_st_drag_cap": 3,
     "cc_committed_hr_override": 3,
     "cc_econ_hr_override": 3,
     "cc_peak_hr_override": 3,
