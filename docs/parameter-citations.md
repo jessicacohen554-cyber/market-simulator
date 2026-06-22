@@ -262,6 +262,7 @@ inline comment and still need a dated primary source — search the table for
 | `eac_price_reference.eac_wind.mid` | 8.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `gas_basis_differential.CAISO` | 1.2 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
 | `gas_basis_differential.ERCOT` | -0.5 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
+| `gas_basis_differential.MISO` | 0.3 | 2 | Chicago Citygate footprint blend to Henry Hub. EIA Illinois citygate (n3050il3m) 2024 avg $3.495/Mcf = $3.37/MMBtu vs Henry Hub $2.22 → raw +$1.15, reconciled down to +0.30 (LDC-citygate is an upper bound; trading hub ≈ HH parity, southern MISO ≈ HH). https://www.eia.gov/dnav/ng/hist/n3050il3m.htm (accessed 2026-06-22) | 2024 |  |
 | `gas_basis_differential.NEISO` | 1.1 | 2 | EIA-923 Schedule 5 fuel receipts: quantity-weighted delivered gas t… | 2026-06 |  |
 | `gas_basis_differential.NYISO` | 0.55 | 2 | EIA-923 delivered-gas basis (see below) |  | auto-generated, needs-citation |
 | `gas_basis_differential.PJM` | 0.67 | 2 | TETCO M3 / Transco Z6 / Dominion South blend; Tier 3 — verify |  | auto-generated, needs-citation |
@@ -361,6 +362,7 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `market_design.CAISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
 | `market_design.ERCOT` | {"capacity_market": false, "net_cone_… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
+| `market_design.MISO` | {"capacity_market": true, "net_cone_per_kw_yr": 80.0} | 2 | MISO seasonal Planning Resource Auction (PRA), anchored on Net-CONE (not the volatile clearing price). Advanced-CT reference; gross CONE PY2024/25 ~$330/MW-day (×365/1000 = $120.45/kW-yr); North/Central avg Net-CONE ~$79.8k/MW-yr = $79.8/kW-yr → 80.0. MISO RASC "CONE and Net CONE Update" 2024-09-23 + PRA Results PY2024/25, PY2025/26. https://cdn.misoenergy.org/20240923%20RASC%20Item%2003%20CONE%20and%20Net%20CONE%20Update649247.pdf (accessed 2026-06-22) | 2024-09-23 |  |
 | `market_design.NEISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
 | `market_design.NYISO` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
 | `market_design.PJM` | {"capacity_market": true, "net_cone_p… | 2 | Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARK… |  | auto-generated, needs-citation |
