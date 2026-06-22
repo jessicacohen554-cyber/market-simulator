@@ -96,6 +96,68 @@ MIN_INMERIT_HOURS: int = 24
 # net-load cycle. Still net-load-keyed (exogenous input, no LMP / price fit).
 WINDOW_DAYS: int = 30
 
+# Full-stop duration+depth override (shared, all ISOs) -----------------------
+# The net-load revealed-availability test above can still DROP a genuine
+# MECHANICAL outage as "economic idle" when the down span sits just below the
+# high-net-load band — e.g. a 14-20 day continuous full stop of a baseload coal
+# unit whose span happens to overlap only ~17-22 of the required 24 high-load
+# hours (a STEP-1 audit found ~1.7 GW-thousand-days of such spans pooled across
+# the six ISOs, 98% of them dead stops, concentrated right at the 24 h gate
+# margin). Economic idling backs DOWN but rarely fully STOPS for weeks: a coal
+# baseload unit out of merit cycles or returns the moment any local peak hits, so
+# a sustained, weeks-long CF≈0 dead stop is the mechanical-outage signature
+# regardless of net-load overlap. So a down span is ALSO kept if it is a full
+# stop — mean CF below FULL_STOP_OVERRIDE_CF — lasting at least
+# FULL_STOP_OVERRIDE_DAYS continuous days. Keyed ONLY on measured CAMPD
+# operation (CF) + EIA-930 net load (the mask) — no LMP / price / MWh-residual
+# input (claude.md #11). N=14 d is the measured-anchored knee: at >=14 d the
+# dropped spans are ~98% full stops and ~zero partial backdown, while 21 d / 28 d
+# recover almost nothing the local band does not already keep. Set
+# FULL_STOP_OVERRIDE_DAYS very large (or pass --no-fullstop-override) to disable.
+FULL_STOP_OVERRIDE_DAYS: int = 14
+FULL_STOP_OVERRIDE_CF: float = 0.02
+
+
+def filter_revealed_outages(
+    windows: list[tuple[int, int]],
+    mask: np.ndarray | None,
+    cf: np.ndarray,
+    min_inmerit_hours: int,
+    override_days: int = FULL_STOP_OVERRIDE_DAYS,
+    override_cf: float = FULL_STOP_OVERRIDE_CF,
+) -> list[tuple[int, int]]:
+    """Apply the revealed-availability filter with the full-stop duration override.
+
+    Shared by the facility- and unit-level detectors so the gate is one filter
+    for every ISO. A detected down span ``(s, e)`` is kept when EITHER
+
+    * it overlaps at least ``min_inmerit_hours`` high-NET-LOAD hours (the
+      local-band revealed-availability test — ``mask`` is :func:`high_load_mask`),
+      OR
+    * it is a sustained **full stop** — mean capacity factor over the span below
+      ``override_cf`` — lasting at least ``override_days`` continuous days (the
+      mechanical-outage signature; economic idling backs down but does not fully
+      stop for weeks).
+
+    ``cf`` is the unit/plant hourly capacity factor (gross / nameplate) on the
+    same clock as ``mask``. Both inputs are exogenous measured quantities (CAMPD
+    operation + EIA-930 net load) — no LMP / price / MWh-residual. ``mask`` None
+    (no net-load file) ⇒ every span kept (the original no-op behaviour). Pass
+    ``override_days`` ≥ the year length to disable only the override.
+    """
+    if mask is None:
+        return list(windows)
+    kept: list[tuple[int, int]] = []
+    for s, e in windows:
+        if mask[s:e].sum() >= min_inmerit_hours:
+            kept.append((s, e))
+            continue
+        dur_days = (e - s) / 24.0
+        span_cf = float(cf[s:e].mean()) if e > s else 1.0
+        if dur_days >= override_days and span_cf < override_cf:
+            kept.append((s, e))
+    return kept
+
 
 # EIA-930 balancing-authority code per model ISO (the eia-930-hourly file stem).
 _ISO_TO_BA: dict[str, str] = {
@@ -332,7 +394,30 @@ def main() -> None:
         f"— the LOCAL/seasonal band that keeps real shoulder outages. 0 = legacy "
         f"single-annual percentile (default {WINDOW_DAYS}).",
     )
+    ap.add_argument(
+        "--fullstop-override-days",
+        type=int,
+        default=FULL_STOP_OVERRIDE_DAYS,
+        help=f"A sustained full-stop (CF<override-cf) lasting >= this many days is "
+        f"kept as a mechanical outage regardless of net-load overlap "
+        f"(default {FULL_STOP_OVERRIDE_DAYS}).",
+    )
+    ap.add_argument(
+        "--fullstop-override-cf",
+        type=float,
+        default=FULL_STOP_OVERRIDE_CF,
+        help=f"Span mean-CF below which the full-stop override treats a long down "
+        f"span as a mechanical outage (default {FULL_STOP_OVERRIDE_CF}).",
+    )
+    ap.add_argument(
+        "--no-fullstop-override",
+        action="store_true",
+        help="Disable the full-stop duration override (keep only the net-load "
+        "revealed-availability test).",
+    )
     args = ap.parse_args()
+    if args.no_fullstop_override:
+        args.fullstop_override_days = 10**9
     min_outage_hours = int(round(args.min_outage_days * 24))
     inmerit_cache: dict[int, np.ndarray | None] = {}
     iso = args.iso.upper()
@@ -377,7 +462,9 @@ def main() -> None:
                 windows = detect_outages(gross, npl, min_outage_hours)
             # Revealed-availability filter: drop down spans that never overlap a
             # high-load (system-needed) hour — economic idling, not outage — so
-            # the unit stays available and the co-opt keeps it as reserve.
+            # the unit stays available and the co-opt keeps it as reserve. The
+            # full-stop duration override (filter_revealed_outages) re-keeps a
+            # sustained weeks-long CF≈0 dead stop even below the high-load band.
             if windows and not args.no_inmerit_filter:
                 if yr not in inmerit_cache:
                     inmerit_cache[yr] = high_load_mask(
@@ -388,12 +475,15 @@ def main() -> None:
                         args.high_load_window_days,
                     )
                 mask = inmerit_cache[yr]
-                if mask is not None:
-                    windows = [
-                        (s, e)
-                        for s, e in windows
-                        if mask[s:e].sum() >= args.min_inmerit_hours
-                    ]
+                cf = gross / npl if npl > 0 else np.zeros_like(gross)
+                windows = filter_revealed_outages(
+                    windows,
+                    mask,
+                    cf,
+                    args.min_inmerit_hours,
+                    args.fullstop_override_days,
+                    args.fullstop_override_cf,
+                )
             tot_days = sum(e - s for s, e in windows) / 24.0
             if windows:
                 summary.append(
