@@ -202,6 +202,32 @@ class TestPlantHourlyNet(unittest.TestCase):
         self.assertAlmostEqual(series[6], 100.0 * 0.9)  # first on-hour, scaled
         self.assertAlmostEqual(series.sum(), 42 * 100.0 * 0.9)
 
+    def test_nan_unit_hour_does_not_poison_multi_unit_plant(self):
+        """An offline unit (NaN gross) must not zero a multi-unit plant-hour.
+
+        Regression: ``np.add.at`` propagates NaN, so on the unit-level extracts
+        a single down unit (NaN gross) used to poison the whole plant-hour and
+        then vanish downstream, undercounting multi-unit coal plants ~2x. NaN
+        gross must be floored to 0 MW before accumulation so the running unit's
+        output still counts.
+        """
+        # One plant (1001), two units sharing hour-of-year 0 and 1: in hour 0
+        # unit B is offline (NaN gross) while unit A runs; both run in hour 1.
+        df = pd.DataFrame(
+            {
+                "plant_id": [1001, 1001, 1001, 1001],
+                "year": np.int16(2023),
+                "hour_of_year": [0, 0, 1, 1],
+                "gross_mw": [100.0, np.nan, 100.0, 50.0],
+            }
+        )
+        net = campd.plant_hourly_net(df, {1001: 1.0}, 2023, hours=8760)
+        series = net[1001]
+        self.assertAlmostEqual(series[0], 100.0)  # unit A counts despite B NaN
+        self.assertAlmostEqual(series[1], 150.0)  # both units sum
+        self.assertAlmostEqual(series.sum(), 250.0)  # no NaN leaked into total
+        self.assertFalse(np.isnan(series).any())
+
 
 class TestPlantHourlyGrid(unittest.TestCase):
     """``plant_hourly_grid`` gap-fills offline hours on a contiguous clock."""
