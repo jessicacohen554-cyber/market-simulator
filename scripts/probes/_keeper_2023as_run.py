@@ -63,6 +63,18 @@ def main(argv: list[str]) -> int:
     #                             the co-opt ORDC curve (grounds mu/sigma; the
     #                             keeper uses the neutral mu=0 fallback).
     ordc_lolp_params_path = os.environ.get("KEEPER_ORDC_TABLE") or None
+    #   KEEPER_RTORDPA=1     -> add the measured, regime-gated RTORDPA
+    #                          (reliability-deployment price adder) to the model
+    #                          system price as a post-solve, additive overlay
+    #                          (Track 2: the grounded 2023 market-design adder;
+    #                          near-inert in 2024/25). Read per-year from
+    #                          data/raw/ercot/ercot_<year>_ordc_reserves_hourly
+    #                          .parquet — backcast-able, never a 2023 hard-code.
+    ercot_rtordpa_overlay = os.environ.get("KEEPER_RTORDPA", "").lower() in (
+        "1",
+        "true",
+        "on",
+    )
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
     for grp, bands in delta_override.items():
@@ -101,6 +113,7 @@ def main(argv: list[str]) -> int:
         ercot_storage_as_reserve_from_year=from_year,
         ercot_ecrs_requirement=ercot_ecrs,
         ercot_ecrs_requirement_from_year=2023,
+        ercot_rtordpa_overlay=ercot_rtordpa_overlay,
         ordc_lolp_params_path=ordc_lolp_params_path,
         as_reserve_formula=False,
         storage_as_commitment=True,
