@@ -1040,6 +1040,8 @@ def run_year(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
+    nyiso_local_selfsupply: bool | None = None,
+    nyiso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
@@ -1136,6 +1138,10 @@ def run_year(
         config = config.with_overrides(
             caiso_import_solar_shape=caiso_import_solar_shape
         )
+    if nyiso_local_selfsupply is not None:
+        config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
+    if nyiso_firm_imports is not None:
+        config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -1559,6 +1565,35 @@ def run_year(
                 iso,
                 year,
                 frac,
+            )
+
+    # NYISO firm import baseload: HQ/Ontario flow firm regardless of NY's hourly
+    # price, so floor the matching priced-node rows at their firm fraction
+    # (transmission.inject_nyiso_firm_imports). Only fires with priced
+    # interchange + the flag + a matching import row.
+    if priced_interchange and getattr(config, "nyiso_firm_imports", False):
+        from market_sim.model.transmission import inject_nyiso_firm_imports
+
+        if inject_nyiso_firm_imports(fleet_arrays, iso, year):
+            logger.info(
+                "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
+                iso,
+                year,
+            )
+
+    # NYISO Long Island local self-supply floor: force the cable-islanded LI
+    # pocket to meet a forward fraction of its own load with in-zone thermal
+    # generation rather than importing cheap NYC gas (transmission.
+    # inject_nyiso_local_selfsupply). NYISO-only; scales with load.
+    if getattr(config, "nyiso_local_selfsupply", False):
+        from market_sim.model.transmission import inject_nyiso_local_selfsupply
+
+        if inject_nyiso_local_selfsupply(fleet_arrays, iso, demand, zone_names):
+            logger.info(
+                "%s %d: local self-supply floor applied to downstate pocket(s) "
+                "(LMIC / cable-islanded local reliability)",
+                iso,
+                year,
             )
 
     # Fuel prices: gas/coal base, then the lignite/PRB supply base for coal
@@ -1994,6 +2029,8 @@ def _commitment_pass(state: dict, config=None):
         getattr(cfg, "ct_deployment_overlay", False)
         or getattr(cfg, "reliability_deployment_overlay", False)
         or getattr(cfg, "caiso_gas_commitment_floor", False)
+        or getattr(cfg, "nyiso_local_selfsupply", False)
+        or getattr(cfg, "nyiso_firm_imports", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(
         fa,

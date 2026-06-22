@@ -33,6 +33,8 @@ from market_sim.config.constants import (
     IMPORT_TRANCHES,
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_ZONE,
+    NYISO_FIRM_IMPORT_FLOOR_FRAC,
+    NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
 from market_sim.config.iso_configs import ISOConfig, TransferLink, Zone
 from market_sim.data.fleet import Generator
@@ -852,3 +854,165 @@ def inject_caiso_gas_commitment_floor(
         np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
         remaining = remaining - take
     return True
+
+
+# Dispatchable thermal fuels eligible to carry a local self-supply floor — the
+# in-zone gas / oil / coal fleet, excluding non-dispatchable / energy-limited /
+# must-run resources (wind, solar, hydro, nuclear, geothermal, biomass) and the
+# import pseudo-generators, which cannot stand in for local reliability units.
+def _dispatchable_thermal_codes() -> list[int]:
+    from market_sim.data.fleet import FUEL_TYPE_MAP
+
+    names = (
+        "gas_cc",
+        "gas_ct",
+        "gas_st",
+        "oil",
+        "coal",
+        "gas_cc_ccs",
+        "hydrogen_ct",
+        "hydrogen_ccgt",
+    )
+    return [FUEL_TYPE_MAP[n] for n in names if n in FUEL_TYPE_MAP]
+
+
+def inject_nyiso_local_selfsupply(
+    fleet_arrays,
+    iso: str,
+    demand: np.ndarray,
+    zone_names: list[str],
+) -> bool:
+    """Floor a NYISO downstate load pocket's in-zone thermal self-supply.
+
+    Models NYISO's locational-minimum-installed-capacity (LMIC) /
+    local-reliability rules for the cable-islanded Long Island pocket (zone K):
+    a fraction of the zone's own load must be met by IN-ZONE dispatchable
+    thermal generation rather than imported across the limited NYC->LI cables.
+    The economic LP, lacking the rule, floods cheap NYC gas into LI and
+    under-runs the LI fleet (model 3.7 vs EIA-923 8.52 TWh, 2023;
+    docs/nyiso-dispatch-validation-2026-06.md).
+
+    For each pocket zone in
+    :data:`~market_sim.config.constants.NYISO_LOCAL_SELFSUPPLY_FRAC`, the hourly
+    in-zone target is ``frac × demand[zone, t]``, distributed over the zone's
+    dispatchable thermal generators **cheapest-first** (by heat rate) and each
+    capped at its available capacity — the same hour-varying
+    ``FleetArrays.min_gen`` lower bound the CHP / CT reliability floors use, and
+    composed with any floor already present via ``maximum``. The target is
+    clipped to the zone fleet's available capacity each hour so a feasible LP
+    solution always exists (the floor can never manufacture unmet load).
+
+    The floor is **forward-reproducible** (it scales with load and responds to
+    changed conditions) and grounded in NYISO market design — it is NOT a pin to
+    measured LI generation (CLAUDE.md rule #12).
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when ``iso`` is not NYISO, no pocket
+    fraction is configured, or no eligible in-zone thermal capacity exists.
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place).
+        iso: ISO identifier; only ``"NYISO"`` applies a floor.
+        demand: Zonal demand of shape ``(n_zones, T)`` in MW.
+        zone_names: Zone names ordered to match ``demand``'s rows.
+
+    Returns:
+        ``True`` if any pocket floor was applied, else ``False``.
+    """
+    if iso != "NYISO" or not NYISO_LOCAL_SELFSUPPLY_FRAC:
+        return False
+
+    thermal_codes = _dispatchable_thermal_codes()
+    is_thermal = np.isin(fleet_arrays.fuel_type_idx, thermal_codes)
+    zone_to_idx = {z: i for i, z in enumerate(zone_names)}
+    demand = np.asarray(demand, dtype=float)
+    hours = int(fleet_arrays.availability.shape[1])
+
+    applied = False
+    for zone, frac in NYISO_LOCAL_SELFSUPPLY_FRAC.items():
+        if frac <= 0.0 or zone not in zone_to_idx:
+            continue
+        z_idx = zone_to_idx[zone]
+        in_zone = (fleet_arrays.zone_idx == z_idx) & is_thermal
+        rows = np.flatnonzero(in_zone & (fleet_arrays.pmax > 0.0))
+        if rows.size == 0:
+            continue
+
+        target = frac * demand[z_idx, :hours]
+        avail_cap = (
+            fleet_arrays.pmax[rows, np.newaxis] * fleet_arrays.availability[rows, :]
+        )
+        # Never demand more than the in-zone fleet can supply that hour.
+        np.minimum(target, avail_cap.sum(axis=0), out=target)
+
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+
+        order = rows[np.argsort(fleet_arrays.heat_rate[rows], kind="stable")]
+        remaining = target.copy()
+        for r in order:
+            cap = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+            take = np.minimum(remaining, cap)
+            np.maximum(fleet_arrays.min_gen[r, :], take, out=fleet_arrays.min_gen[r, :])
+            remaining = remaining - take
+        applied = True
+    return applied
+
+
+def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
+    """Floor NYISO's firm (must-flow) import baseload at the priced node.
+
+    Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
+    long-term scheduled hydro/nuclear baseload that flows regardless of NY's
+    hourly price. The priced node prices them as economic tranches (clearing
+    only when NYISO's price exceeds the tranche cost), which backs them off in
+    cheap-overnight hours / low-price years even though the real schedule keeps
+    flowing. For each tranche in
+    :data:`~market_sim.config.constants.NYISO_FIRM_IMPORT_FLOOR_FRAC`, this sets
+    a constant hourly ``min_gen`` floor of ``frac × tranche capacity`` on the
+    matching import row (capped at the row's available capacity), so the firm
+    baseload flows every hour. The configured fractions keep the total firm
+    floor below the measured lightest-import hour, so it can never force a
+    phantom over-import.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
+    applied, ``False`` (byte-identical) when ``iso`` is not NYISO, no fraction
+    is configured, or no matching import row is present (e.g. the served-wedge
+    path without a priced node).
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place).
+        iso: ISO identifier; only ``"NYISO"`` applies a floor.
+        year: Backcast year (unused today; carried for parity with the other
+            priced-node injectors and future per-year firm schedules).
+
+    Returns:
+        ``True`` if any firm-import floor was applied, else ``False``.
+    """
+    if iso != "NYISO" or not NYISO_FIRM_IMPORT_FLOOR_FRAC:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    unit_ids = list(fleet_arrays.unit_ids)
+    applied = False
+    for name, frac in NYISO_FIRM_IMPORT_FLOOR_FRAC.items():
+        if frac <= 0.0:
+            continue
+        rows = [i for i, uid in enumerate(unit_ids) if uid.endswith(f"_{name}")]
+        for r in rows:
+            if fleet_arrays.pmax[r] <= 0.0:
+                continue
+            floor = frac * fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+            if fleet_arrays.min_gen is None:
+                fleet_arrays.min_gen = np.broadcast_to(
+                    fleet_arrays.pmin[:, np.newaxis],
+                    (fleet_arrays.pmin.size, hours),
+                ).copy()
+            np.maximum(
+                fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :]
+            )
+            applied = True
+    return applied

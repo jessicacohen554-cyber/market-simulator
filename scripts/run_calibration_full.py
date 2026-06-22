@@ -1484,6 +1484,8 @@ def solve_and_persist(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
+    nyiso_local_selfsupply: bool | None = None,
+    nyiso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     btm_backfill_year: int | None = None,
     note: str = "",
@@ -1619,6 +1621,8 @@ def solve_and_persist(
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
+            nyiso_local_selfsupply=nyiso_local_selfsupply,
+            nyiso_firm_imports=nyiso_firm_imports,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
         )
         if persist_p2_state:
@@ -1804,6 +1808,8 @@ def solve_and_persist(
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
+        "nyiso_local_selfsupply": nyiso_local_selfsupply,
+        "nyiso_firm_imports": nyiso_firm_imports,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -1937,6 +1943,14 @@ def solve_and_persist(
     if caiso_import_solar_shape is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_import_solar_shape=caiso_import_solar_shape
+        )
+    if nyiso_local_selfsupply is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_local_selfsupply=nyiso_local_selfsupply
+        )
+    if nyiso_firm_imports is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_firm_imports=nyiso_firm_imports
         )
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4417,6 +4431,31 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nyiso-local-selfsupply",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO Long Island (zone K) local self-supply floor: force the "
+        "cable-islanded LI pocket to meet a forward fraction of its own hourly "
+        "load (NYISO_LOCAL_SELFSUPPLY_FRAC) with in-zone dispatchable thermal "
+        "generation rather than importing the full cable rating of cheap NYC "
+        "gas — NYISO's LMIC / local-reliability rule. Recovers the under-run LI "
+        "fleet (model 3.7 vs EIA-923 8.52 TWh, 2023) and separates the LI "
+        "premium. Scales with load (forward-reproducible), NOT pinned to "
+        "measured generation. NYISO-only. Default (unset) keeps the base config "
+        "value (off).",
+    )
+    parser.add_argument(
+        "--nyiso-firm-imports",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO firm import baseload: floor the cheap Hydro-Québec / Ontario "
+        "priced-node tranches (NYISO_FIRM_IMPORT_FLOOR_FRAC) as must-flow, "
+        "price-insensitive baseload that flows regardless of NY's hourly price, "
+        "instead of pricing them as economy energy that backs off in cheap "
+        "hours/years. Requires --priced-interchange; no-op on the served-wedge "
+        "path. NYISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4648,6 +4687,8 @@ def main() -> None:
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
+        nyiso_local_selfsupply=args.nyiso_local_selfsupply,
+        nyiso_firm_imports=args.nyiso_firm_imports,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
