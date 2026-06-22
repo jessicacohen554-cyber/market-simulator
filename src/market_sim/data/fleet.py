@@ -1193,6 +1193,18 @@ def generators_to_fleet_arrays(
         getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None else 0.0
     )
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
+    # Nuclear runs flat as must-run baseload — it physically cannot load-follow
+    # on price, so it must not back down to a part-load pmin in CAISO's many
+    # negative/near-zero midday hours (the ~1 TWh Diablo Canyon under-run). Pin
+    # it at its hourly availability cap (the refuel-schedule-driven monthly CF
+    # already set in ``availability``), which is a forward-derivable physical
+    # input, not a price/volume fit. Backcast only (forecast keeps the cap as a
+    # planned-outage ceiling, not a floor).
+    nuclear_flat = (
+        config is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+        and any(g.fuel_type == "nuclear" for g in generators)
+    )
     if (
         st_mr_frac > 0.0
         or st_off_frac > 0.0
@@ -1200,6 +1212,7 @@ def generators_to_fleet_arrays(
         or ct_floor_plants
         or ct_deploy_plants
         or rd_deploy_plants
+        or nuclear_flat
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
@@ -1209,6 +1222,13 @@ def generators_to_fleet_arrays(
         neg_pmin = pmin < 0.0
         if neg_pmin.any():
             min_gen[neg_pmin, :] = pmin[neg_pmin, np.newaxis]
+        if nuclear_flat:
+            # Flat must-run: floor == availability cap, so nuclear holds its
+            # available output through the solar-glut belly instead of cycling
+            # to a 0.9*pmax part-load when the midday price falls below its VOM.
+            for g_idx, gen in enumerate(generators):
+                if gen.fuel_type == "nuclear":
+                    min_gen[g_idx, :] = availability[g_idx, :] * pmax[g_idx]
         if st_mr_frac > 0.0 or st_off_frac > 0.0:
             summer_mask = np.isin(
                 _hour_to_month_index(hours) + 1, list(_GAS_ST_SUMMER_MONTHS)
