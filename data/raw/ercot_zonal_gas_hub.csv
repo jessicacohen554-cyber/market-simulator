@@ -1,0 +1,22 @@
+zone,year,basis_vs_hh_usd_mmbtu,hub,source
+West,2023,-0.72,Waha,Waha annual avg $1.82 (NGI/EIA NG Weekly) minus Henry Hub $2.54 (on-disk henry_hub_monthly)
+West,2024,-2.19,Waha,Waha annual avg ~$0.00 (record low; NGI/EIA - negative 42% of days) minus HH $2.19
+West,2025,-2.38,Waha,Waha annual avg $1.15 (NGI/EIA) minus HH $3.53
+Panhandle,2023,-0.72,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
+Panhandle,2024,-2.19,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
+Panhandle,2025,-2.38,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
+North,2023,0.13,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 60M MMBtu)
+North,2024,0.21,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 66M MMBtu)
+North,2025,0.43,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 60M MMBtu)
+Northeast,2023,0.13,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
+Northeast,2024,0.21,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
+Northeast,2025,0.43,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
+Houston,2023,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
+Houston,2024,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
+Houston,2025,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
+South_Central,2023,0.56,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 172M MMBtu)
+South_Central,2024,0.45,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 182M MMBtu)
+South_Central,2025,-0.12,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (7 plants 120M MMBtu)
+South,2023,1.23,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 9M MMBtu)
+South,2024,0.63,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 33M MMBtu)
+South,2025,0.59,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 29M MMBtu)

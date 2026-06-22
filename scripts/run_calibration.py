@@ -80,6 +80,7 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
+    apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
     apply_nyiso_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
@@ -421,6 +422,23 @@ def _calibration_config(
         # the NYISO State-of-the-Market reports (data/raw/
         # nyiso_zonal_gas_hub.csv); see fuel.apply_nyiso_zonal_gas_basis.
         nyiso_zonal_gas_basis=(iso.upper() == "NYISO"),
+        # ERCOT prices gas off structurally different regional hubs by zone
+        # (deeply-discounted Waha in the West/Permian, ~Henry-Hub North/East
+        # Texas and Houston Ship Channel, a South-Texas premium), so the flat
+        # fleet-wide Waha scalar over-runs DFW/North CCs and under-runs
+        # West/Permian and South CCs. Measured per-zone basis from EIA-923
+        # Schedule-5 receipts + published Waha/HSC annual averages
+        # (data/raw/ercot_zonal_gas_hub.csv), mean-zero anchored so the
+        # aggregate gas level is unchanged. DEFAULT-OFF DIAGNOSTIC: enabling it
+        # confirms the gas-basis mechanism (shrinks the North CC over-run) but
+        # relocates the residual onto West/Permian CT peakers the zonal LP can't
+        # trap (see the docstring on ScenarioConfig.ercot_zonal_gas_basis), so
+        # it is kept off in the keeper. Gated on the ERCOT_ZONAL_GAS env flag.
+        # See market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+        ercot_zonal_gas_basis=(
+            iso.upper() == "ERCOT"
+            and os.environ.get("ERCOT_ZONAL_GAS", "").lower() in ("1", "true", "on")
+        ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is
@@ -1568,6 +1586,14 @@ def run_year(
     # hub overlay, before the dual-fuel min so oil parity still caps any winter
     # spike. No-op unless nyiso_zonal_gas_basis is set (NYISO only).
     apply_nyiso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # ERCOT per-zone gas-hub basis: shift each gas unit to its zone's measured
+    # regional hub (Waha-cheap West/Permian, dearer North/East-Texas and South)
+    # so the merit order stops over-running DFW/North CCs on flat Waha-discounted
+    # gas. Mean-zero anchored so the aggregate gas level is preserved. Same order
+    # as the resolve_fuel_prices apply_monthly=True branch: after the
+    # plant-monthly / hub overlay, before the dual-fuel min. No-op unless
+    # ercot_zonal_gas_basis is set (ERCOT only).
+    apply_ercot_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
     # Capture which dual-fuel generator-hours will switch to oil (gas price >
     # oil parity) BEFORE the min-cap below overwrites the gas price, so the
     # dispatch re-attribution can count their MWh as petroleum, not gas (the
