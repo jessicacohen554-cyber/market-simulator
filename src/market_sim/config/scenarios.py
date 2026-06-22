@@ -516,6 +516,34 @@ class ScenarioConfig:
     # measured profile; lower keeps modeled gas TWh nearer EIA-923 (forcing
     # commitment can inflate gas — the surplus must export/curtail, not pad the
     # mix). Only used when caiso_gas_commitment_floor is on.
+    nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
+    # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
+    # external ties) and carries NYISO locational-minimum-installed-capacity
+    # (LMIC) / local-reliability rules that keep its own older, costlier
+    # gas-steam + peaker fleet running rather than importing the full cable
+    # rating of cheap NYC gas. The economic LP, lacking that rule, floods cheap
+    # NYC power across the 1,650 MW link and under-runs the LI fleet (model 3.7
+    # vs EIA-923 8.52 TWh, 2023; docs/nyiso-dispatch-validation-2026-06). This
+    # forces in-zone dispatchable thermal generation >= NYISO_LOCAL_SELFSUPPLY_
+    # FRAC[zone] x zonal load each hour, via the hour-varying FleetArrays.min_gen
+    # lower bound (transmission.inject_nyiso_local_selfsupply), distributed over
+    # the zone's thermal tranches cheapest-first and capped at availability (so
+    # it can never manufacture unmet load). FORWARD-REPRODUCIBLE (scales with
+    # load, responds to conditions) and grounded in NYISO market design — NOT a
+    # pin to measured LI generation (CLAUDE.md rule #12). Default off
+    # (byte-identical); NYISO-only.
+    nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
+    # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
+    # long-term scheduled hydro/nuclear baseload that flows regardless of NY's
+    # hourly price — not price-responsive economy energy. The priced node prices
+    # them as economic tranches (clear only when NYISO price > tranche cost),
+    # backing them off in cheap-overnight hours / low-price years even though the
+    # real schedule keeps flowing. This sets a must-flow floor (NYISO_FIRM_
+    # IMPORT_FLOOR_FRAC x tranche capacity) on those rows via FleetArrays.min_gen
+    # (transmission.inject_nyiso_firm_imports). The floor stays below the
+    # measured lightest-import hour (NY imported >=922 MW in 98% of 2023 hours)
+    # so it never forces a phantom over-import. FORWARD-REPRODUCIBLE (a firm
+    # schedule reproduces for any year); Tier 3. Default off; NYISO-only.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -1689,6 +1717,8 @@ TIER_TAGS: dict[str, int] = {
     "reference_price_interface": 1,
     "caiso_gas_commitment_floor": 1,
     "caiso_gas_floor_frac": 3,
+    "nyiso_local_selfsupply": 1,
+    "nyiso_firm_imports": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,
