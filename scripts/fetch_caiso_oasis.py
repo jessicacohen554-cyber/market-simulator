@@ -1,8 +1,11 @@
 """Fetch CAISO OASIS data for the backcast uploads (U2 hub LMPs, U4 TAC load).
 
-The remote Claude environment cannot reach ``oasis.caiso.com`` (egress
-allowlist), and hand-tapping hundreds of OASIS links is impractical, so this
-script is meant to be run by the user from an unrestricted machine:
+``oasis.caiso.com`` IS reachable from the remote Claude environment (verified
+2026-06-22: PRC_LMP/PRC_INTVL_LMP SingleZip queries return data; the bare
+endpoint 403s only because it needs query params). The practical limits are
+OASIS's strict rate limiting (HTTP 429/403 under bursts — keep ``--sleep`` high
+and back off) and its ~39-month retention: as of mid-2026 DAM/RTM before
+~2023-03-10 is aged out (ERR 1000), so 2023 is only fetchable Mar-Dec. Run:
 
     python scripts/fetch_caiso_oasis.py                 # everything, 2023-2025
     python scripts/fetch_caiso_oasis.py --datasets dam load
@@ -49,6 +52,13 @@ from pathlib import Path
 
 BASE = "https://oasis.caiso.com/oasisapi/SingleZip"
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config import paths  # noqa: E402  (resolves the data root)
+
+# Paths resolve through config/paths.py — the W1 relocation collapsed the legacy
+# inputs/raw-data tree into data/raw.
+_LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"
+_LOAD_DIR = paths.RAW_DATA_DIR / "zone-specific-demand" / "CAISO"
 
 HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
 
@@ -56,7 +66,7 @@ HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
 DATASETS: dict[str, dict] = {
     "dam": {
         "params": {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"},
-        "out_dir": REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO",
+        "out_dir": _LMP_DIR,
         "per_node": True,
     },
     "rtm": {
@@ -65,12 +75,12 @@ DATASETS: dict[str, dict] = {
             "market_run_id": "RTM",
             "version": "2",
         },
-        "out_dir": REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO",
+        "out_dir": _LMP_DIR,
         "per_node": True,
     },
     "load": {
         "params": {"queryname": "SLD_FCST", "market_run_id": "ACTUAL", "version": "1"},
-        "out_dir": REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO",
+        "out_dir": _LOAD_DIR,
         "per_node": False,
     },
 }
