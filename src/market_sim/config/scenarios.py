@@ -1346,9 +1346,17 @@ class ScenarioConfig:
     # measured basis vs Henry Hub (data/raw/ercot_zonal_gas_hub.csv), re-centred
     # to a gas-capacity-weighted mean of zero so the calibrated fleet-aggregate
     # gas level (and the within-gas ST_GAS/CT/CC ledger) is preserved and only
-    # the cross-zonal split moves. Off by default so other ISOs and all
-    # forecasts are byte-identical; the calibration harness enables it for
-    # ERCOT. Backcast-only (no hub rows in forward years). See
+    # the cross-zonal split moves. DEFAULT-OFF DIAGNOSTIC — not a keeper lever:
+    # the basis is measured and correct, but a 7-zone LP cannot model the
+    # intra-Permian (<200 kV) transmission that, in reality, traps the cheap
+    # Waha generation. Enabling it shrinks the North CC over-run (2024 +13.2 ->
+    # +3.7 TWh) and fixes the West CC under-run, but RELOCATES the same
+    # unmodelable nodal residual onto West/Permian CT peakers, which run
+    # baseload on ~$0 Waha gas (2024 West CT +9.9 TWh) with no LMP gain — a CC
+    # -> CT swap within the gas family, not a fit. So it is kept off in the
+    # keeper (see docs/ercot-zonal-gas-basis-ct-relocation-2026-06.md). Off by
+    # default so other ISOs and all forecasts are byte-identical. Backcast-only
+    # (no hub rows in forward years). See
     # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
     ercot_zonal_gas_basis: bool = False
 
