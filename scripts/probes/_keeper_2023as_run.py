@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -42,7 +43,26 @@ def main(argv: list[str]) -> int:
     # run134's offer_curve_deltas (e.g. '{"ST_GAS": {"committed": 0.0}}' to undo
     # the over-cooled ST_GAS committed offer that over-commits gas steam, run141).
     delta_override = json.loads(argv[3]) if len(argv) > 3 else {}
+    # Optional argv[4]: enable the measured ECRS reserve requirement (the
+    # demand-side fix for the bimodal monthly shape / 2023-H2 + 2024 mid-range
+    # under-price). Off by default = the run143 keeper.
+    ercot_ecrs = len(argv) > 4 and argv[4].lower() in ("1", "true", "ecrs", "on")
     cfg = json.loads((RUN134 / "run_config.json").read_text())["calibration_flags"]
+    # Optional env overrides for cheap single-lever probes (don't disturb argv):
+    #   KEEPER_YEARS="2024"   -> solve only those years
+    #   KEEPER_COMMIT=1       -> enable the P2 unit-commitment screen (the keeper
+    #                            is dispatch-only; this tests commitment price
+    #                            formation for the loose-month under-price).
+    years = cfg["years"]
+    if os.environ.get("KEEPER_YEARS"):
+        years = [int(y) for y in os.environ["KEEPER_YEARS"].split(",")]
+    commitment = cfg["commitment"]
+    if os.environ.get("KEEPER_COMMIT"):
+        commitment = os.environ["KEEPER_COMMIT"].lower() in ("1", "true", "on")
+    #   KEEPER_ORDC_TABLE=<csv> -> use ERCOT's published NP6-576-ER LOLP table in
+    #                             the co-opt ORDC curve (grounds mu/sigma; the
+    #                             keeper uses the neutral mu=0 fallback).
+    ordc_lolp_params_path = os.environ.get("KEEPER_ORDC_TABLE") or None
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
     for grp, bands in delta_override.items():
@@ -51,11 +71,11 @@ def main(argv: list[str]) -> int:
     run_dir = REPO / "results" / "calibration" / out_subdir
     reference = _load_reference()
     run_dir = solve_and_persist(
-        cfg["years"],
+        years,
         cfg["iso"],
         cfg["hours"],
         reference,
-        commitment=cfg["commitment"],
+        commitment=commitment,
         screen_coal=cfg["commitment_screen_coal"],
         run_dir=run_dir,
         coal_lignite_mustrun=cfg.get("coal_lignite_mustrun"),
@@ -79,6 +99,9 @@ def main(argv: list[str]) -> int:
         ercot_load_resource_reserve_from_year=load_from_year,
         ercot_storage_as_reserve=True,
         ercot_storage_as_reserve_from_year=from_year,
+        ercot_ecrs_requirement=ercot_ecrs,
+        ercot_ecrs_requirement_from_year=2023,
+        ordc_lolp_params_path=ordc_lolp_params_path,
         as_reserve_formula=False,
         storage_as_commitment=True,
         gas_offer_curve=False,
@@ -94,7 +117,8 @@ def main(argv: list[str]) -> int:
         priced_interchange=False,
         btm_backfill_year=cfg.get("btm_backfill_year"),
         note=f"run134 recipe re-solved with measured 2023 AS; "
-        f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}",
+        f"load-RRS-from-year={load_from_year}; storage-AS-from-year={from_year}; "
+        f"ecrs-requirement={ercot_ecrs}",
     )
     report_run(run_dir)
     print(f"\nBundle: {run_dir}")

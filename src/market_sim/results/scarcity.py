@@ -583,6 +583,61 @@ def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
     return series[: int(hours)]
 
 
+_ERCOT_ASPLAN_DIR = RAW_DATA_DIR / "ercot"
+
+
+def ercot_ecrs_requirement_mw(year: int, hours: int) -> np.ndarray:
+    """ERCOT's measured hourly **ECRS** reserve-plan MW for ``year``.
+
+    ECRS (ERCOT Contingency Reserve Service) launched **2023-06-10** and procures
+    ~2 GW of additional responsive reserve that is held *out of the energy stack*
+    every hour it is active. The co-opt LP models a single contingency-reserve
+    product (the ORDC demand curve from ``ordc_mcl_mw`` + LOLP); it never grew
+    when ECRS was introduced, so it under-states the reserve the market actually
+    holds in every hour from mid-2023 on and under-prices the broad
+    "tight-but-not-scarce" mid-range (2023-H2 + all of 2024/25). Adding this MW to
+    the reserve-balance RHS is the demand-side mirror of the load/storage *supply*
+    credits: it raises the absolute reserve level the ORDC steps are priced at, so
+    the marginal step prices higher across moderate-headroom hours.
+
+    The series is the ``ECRS`` rows of the measured ERCOT AS plan
+    ``data/raw/ercot/ASPLANNP433_<year>.parquet`` (``AncillaryType``/``Quantity``
+    by ``DeliveryDate``/``HourEnding``) — an ERCOT-published procurement quantity,
+    **not** fitted to any price target. The file's real June-2023 onset is
+    preserved automatically (pre-onset hours have no ECRS rows → 0 MW), so no
+    start date is hard-coded. Mapped onto the fleet's non-leap 8760-hour calendar
+    clock (Feb-29 dropped); DST fall-back duplicate hours are averaged. Returns
+    ``(hours,)`` MW, **all-zero when the file is absent** (no-op).
+    """
+    path = _ERCOT_ASPLAN_DIR / f"ASPLANNP433_{year}.parquet"
+    if not path.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    df = df[df["AncillaryType"] == "ECRS"].copy()
+    if df.empty:
+        return np.zeros(int(hours), dtype=float)
+    dt = pd.to_datetime(df["DeliveryDate"])
+    df = df[dt.dt.year == int(year)]  # the file spills a few days into year+1
+    if df.empty:
+        return np.zeros(int(hours), dtype=float)
+    dt = pd.to_datetime(df["DeliveryDate"])
+    hod = df["HourEnding"].str.slice(0, 2).astype(int) - 1  # HE 01:00→0 … 24:00→23
+    key = df.groupby([dt.dt.month, dt.dt.day, hod])["Quantity"].mean().to_dict()
+    out = np.zeros(int(hours), dtype=float)
+    i = 0
+    for day in pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D"):
+        if day.month == 2 and day.day == 29:
+            continue  # fleet clock is non-leap
+        for h in range(24):
+            if i >= hours:
+                break
+            out[i] = float(key.get((day.month, day.day, h), 0.0))
+            i += 1
+    return out
+
+
 def ercot_reserve_coopt_inputs(
     config, fleet_arrays: FleetArrays, hours: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -609,6 +664,19 @@ def ercot_reserve_coopt_inputs(
         multistep_floor=config.ordc_multistep_floor,
     )
     requirement = np.full(int(hours), req_total, dtype=float)
+    if getattr(config, "ercot_ecrs_requirement", False) and int(
+        config.weather_year
+    ) >= int(getattr(config, "ercot_ecrs_requirement_from_year", 2023)):
+        # ADD ERCOT's measured ECRS procurement (~2 GW from 2023-06-10) to the
+        # reserve-balance RHS. The co-opt models one contingency-reserve product
+        # and never grew when ECRS launched, so it holds too little reserve and
+        # under-prices the broad mid-range from mid-2023 on (the demand-side
+        # mirror of the load/storage *supply* credits below, which subtract).
+        # Exogenous ERCOT-published quantity (ASPLANNP433), not a price fit; its
+        # June-2023 onset is carried by the data, so 2023-H1 is unaffected.
+        requirement = requirement + ercot_ecrs_requirement_mw(
+            int(config.weather_year), hours
+        )
     if getattr(config, "ercot_load_resource_reserve", False) and int(
         config.weather_year
     ) >= int(getattr(config, "ercot_load_resource_reserve_from_year", 2023)):
