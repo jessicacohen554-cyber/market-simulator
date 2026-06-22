@@ -1,5 +1,56 @@
 # ERCOT calibration — best config so far
 
+> **STATUS (2026-06-22): NEW KEEPER — run144 = run143 re-solved on the LOCAL
+> (seasonal) net-load outage band.** `results/calibration/ercot_dam_2023as_localband`
+> (dashboard `run144 local-band outages`). This is a **byte-faithful re-solve of
+> run143** (the reproduce driver `scripts/probes/_keeper_2023as_run.py`: measured-
+> 2023 storage-AS commitment + load-RRS-UFR credit, ST_GAS committed delta restored
+> to 0.0, storage-AS-from-year 2025, ECRS off) changing **nothing but the outage
+> input**. The ERCOT outage CSVs (`data/raw/campd-outages.csv`,
+> `campd-unit-outages.csv`) were regenerated (commit `152bb99`) on the LOCAL
+> seasonal net-load band — `high_load_mask` now compares each hour to a centered
+> rolling ±30-day net-load percentile instead of the single annual percentile,
+> which **restores the real multi-week shoulder CCGT maintenance** the over-tight
+> annual band wrongly dropped as economic idle (ERCOT CC outage GW-days **2906 →
+> 5997**, still −36% vs unfiltered; short economic-idle still dropped; summer
+> preserved). See `docs/ercot-outage-sensitivity-middle-ground-2026-06.md` and the
+> non-negotiable rules in `docs/multi-iso/cross-iso-outage-regate-handoff-2026-06.md`.
+>
+> **Gated CLEAN vs run143 (demand-weighted system LMP; act in parens):**
+>
+> | year | run143 avg→new | run143 MAE→new | h>$200 143→new (act) | h>$500 143→new (act) |
+> |---|---|---|---|---|
+> | 2023 | 36.5 → 35.2 | 12.0 → 14.0 | 104 → 89 (181) | 56 → 51 (104) |
+> | 2024 | 23.2 → 25.4 | 9.6 → **7.1** | 22 → 33 (53) | 16 → 23 (16) |
+> | 2025 | 31.4 → 32.5 | 2.9 → **2.0** | 1 → 1 (31) | 0 → 0 (3) |
+>
+> Mean monthly demand-weighted LMP MAE **8.2 → 7.7**. The **expected direction
+> holds**: more shoulder CC offline → CC_REGULAR grid −2.6 TWh in 2024 (160.42 →
+> 157.80), displaced to ST_GAS (+2.0, toward bench) and CT_PEAKER (+0.8); 2024/2025
+> shoulder prices firm modestly toward actual but stay **cooler than the pre-fix
+> VOLL over-fire** (Oct-2024 model $22 vs actual $24 — no shoulder over-fire). Summer
+> roughly preserved. **One honest flag:** the 2024 summer tail firms (h>$500 16 →
+> 23 vs actual 16) — a modest firming in real scarcity months (Aug max $5000), **not**
+> the shoulder economic-idle re-inflation the exercise guards against; the tail did
+> not collapse. 2023 monthly MAE rises +2.0 from a deeper summer under-fire — 2023 is
+> structurally out-of-market (~42% of 2023 $, run140), no outage lever reaches it.
+> **No class regresses** (every in-scope fail moves toward bench); **fuel split passes
+> all 3 years** (2023 gas −1.5%/coal +0.3%; 2024 +1.3%/−0.6%; 2025 +0.6%/+0.1% vs
+> EIA-930). Adopted on the more physically-correct outage input (claude.md: prefer
+> measured/defensible over what-fits) **and** it gates a touch better.
+>
+> **Determination (`scripts/calibration_verdict.py`): NOT-YET.** C6 governance
+> **attested PASS** (`calibration_attestation.json` committed in the bundle: byte-
+> faithful, exogenous net-load outage filter, no residual fit, no pinning). The
+> run stays NOT-YET only because the documented structural ERCOT misses exceed the
+> hard caveat budget (2 hard criteria caveated vs 1 allowed) — CT non-CEMS peakers,
+> the CC nodal-congestion residual (measured zonal-LP NO-GO), the ST_GAS committed/
+> AS-held wedge, the cheap-gas 2024 coal split, and 2023's out-of-market tail, all
+> ledgered as ACCEPTED MEASURED-INPUT LIMITATIONS. **Same lineage status as run143**
+> (which carried these too, un-attested); the rubric is built to fail a keeper that
+> still carries documented structural limitations. Supersedes run143; everything
+> below (the run-115b→run143 lineage and the success bar) is retained as history.
+
 > **STATUS (2026-06-17): NEW KEEPER — run 124 = run 121 + `--storage-as-commitment`
 > (the measured storage AS-aware design).** `results/calibration/run124_storage_as_keeper`
 > = run 121's exact config (CT deployment OFF, `battery_dispatch_adder=10`,
