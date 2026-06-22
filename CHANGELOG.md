@@ -1,5 +1,55 @@
 # Changelog
 
+## 2026-06-22 (PJM energy+reserve co-optimization — built, wired, and the bind-gate result)
+
+The in-LP energy+reserve co-optimization the PJM price-formation campaign
+(`docs/multi-iso/pjm-reserve-ordc.md`) named as the lever for the missing
+$75–200 afternoon regime is now built and wired, and the bind gate it hinges on
+is answered. `scarcity.pjm_reserve_coopt_inputs` assembles the co-opt inputs (the
+PJM analogue of `ercot_reserve_coopt_inputs`): the **measured** PJM_RTO Primary
+Reserve requirement (`pr_req_mw`, ~3.4 GW, +190 MW ORDC shoulder) as the
+reserve-balance RHS, the **published** vertical two-step ORDC (`Primary/RTO`,
+`$850/$300/+190 MW`) as ascending shortfall steps (`[300, 850]`, widths
+`[190, REQ_max]`), and the generic `RESERVE_FUEL_TYPES` thermal eligibility
+mask. `runner.py` gains the `iso == "PJM"` co-opt branch (thermal-only reserve;
+no storage-as-reserve), and `_system_frame` now persists the reserve clearing
+price (`reserve_price`, the balance-row dual) so the residual analysis can split
+the energy and reserve components. **Nothing is fitted to the LMP residual**
+(claude.md #11): the requirement is measured, the curve is the cited market
+design. Tests in `tests/test_reserve_coopt.py`; the mechanism is unit-validated
+(slack headroom → reserve price $0; tight headroom → $300 lifting the energy LMP
++$300).
+
+**PROBE #2 (the bind gate), empirical on the `pjm_38` keeper, 2024**
+(`scripts/probes/_pjm_coopt_bindgate.py`, no LP re-solve): the as-built
+zone-aggregate `dispatch._build_reserve_rows` caps a zone's reserve at its
+**total** eligible thermal headroom (idle units included) and the balance row is
+system-wide (reserve fungible across zones), so the requirement clears at **$0 in
+all 8,760 hours** — system-wide eligible headroom is **min 7.34 GW** (p50
+50.5 GW), a minimum **1.9×** the 3.6 GW requirement, never below it. The
+published vertical step never fires; the energy LMP gets no lift. This confirms
+finding #2: the perfect-foresight LP holds far more idle eligible headroom than
+PJM's reserve product, so co-optimization *as-built* cannot price the residual.
+
+**Finding #3 (the ramp cap), analytic on the same dispatch:** restricting reserve
+to **plant-level online** headroom thins it to a 21.6 GW median (binds in 16 h);
+adding a **10-minute ramp cap** (per-fuel engineering ramp fractions: CT/oil
+~100%, CC 60%, ST 30%, coal 15%, nuclear 0% — not fitted) thins it to a **median
+10.3 GW (still 2.9× the requirement)**, crossing below the requirement in only
+**49 h/yr**. Those 49 h bind at the **penalty** step ($300–850), the shortage
+regime that *overshoots* the $75–200 band; the broad afternoon band still sits on
+free deliverable headroom. So the ramp cap makes the scarcity *tail* fire but does
+**not** populate the $75–200 **opportunity-cost** middle — that needs the per-gen
+`R[g] ≤ ramp10[g]` co-opt LP *and* a tighter commitment posture (Phase 1: the
+model keeps ~10 GW of fast deliverable headroom synchronized and idle). The
+per-gen build is memory-infeasible on the 15 GB box (the zone-aggregate co-opt
+already OOMs at ~16 GB; per-gen reserve vars at PJM plant scale are far heavier)
+and is blocked on ramp-rate data absent from `FleetArrays`. Per claude.md #11
+this is reported, not papered over: the breakpoint is not lowered and the penalty
+is not inflated. The diagnosis points at **commitment posture** (and the coupled
+cheap-marginal-coal suppression) as the prerequisite lever, exactly the campaign
+sequence.
+
 ## 2026-06-19 (combined-cycle steam-turbine outage coupling — all ISOs)
 
 The CAMPD unit-outage overlay only ever flagged combustion turbines: a combined
