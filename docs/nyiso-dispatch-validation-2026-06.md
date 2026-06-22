@@ -77,3 +77,41 @@ node would otherwise back the baseload off.
 The original "NYC in-city minimum-generation must-run" is **dropped**: the data
 shows NYC over-, not under-generates. Imposing it would chase the peaker symptom
 with the wrong (and non-physical-for-NYC) mechanism.
+
+## Result of fixes #1 + #2 (2023 P2, both flags on)
+
+`--nyiso-local-selfsupply --nyiso-firm-imports` on the keeper config, P2 (scored
+pass; `min_gen` now preserved through commitment):
+
+| zone | base TWh | + floors | real | verdict |
+|---|---|---|---|---|
+| Long_Island | 3.70 | **9.27** | 8.52 | **dispatch error fixed** (−4.8 → +0.75) |
+| NYC | 39.97 | 38.37 | 29.07 | eased toward real (still over — import/peaker) |
+| Capital_Hudson | 19.54 | 16.42 | 20.75 | drifted (floor pulled gen from Capital) |
+
+LI fleet now runs its real mix — ST_GAS 0.4→2.5, CC 2.5→4.5, **oil 0→1.36 TWh**
+(the dual-fuel LI units fire, as they do in reality). Firm imports were the
+predicted near-no-op in 2023 (node 16.56→15.75 TWh).
+
+**Honest trade-offs (rule #1 — the structural mechanism stays):**
+
+- **Price MAE 7.90 → 8.16** (slightly worse). Forcing LI self-supply makes the
+  system *longer*, pushing the already-under-priced downstate level down ~$3 (all
+  four downstate zones 38.66 → 35.76). The **LI premium does not appear**: a
+  `min_gen` floor makes the LI units *inframarginal*, so they set no price.
+  Recovering the premium needs the LI cables to **bind** (local gas marginal),
+  and the deeper under-pricing points straight at the **missing scarcity tail
+  (fix #3 / RCPF)** — the floor sharpens, not solves, that need.
+- **LI oil 1.36 TWh overshoots** the EIA-923 NYISO oil total (0.42); the 0.45
+  fraction lands LI +9% over real. Both are second-order tunes (fraction /
+  dual-fuel relabel), not reasons to revert the mechanism.
+
+## Fix #3 status (NYC peaker / scarcity tail)
+
+NYC peakers stay idle and the price tail stays missing. The RCPF overlay
+(`nyiso_rcpf_enabled`) is a **post-hoc LMP price-adder**, so it cannot *dispatch*
+the idle peakers — making them run requires in-LP **reserve co-optimization**
+(the `energy_reserve_coopt` machinery, ERCOT-proven), holding NYC peakers for
+locational 10/30-min reserves so they clear and set a scarcity price. That is a
+larger build than #1/#2 and is the next step; it is **not** an energy must-run
+(NYC over-generates already).
