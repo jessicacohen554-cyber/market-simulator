@@ -116,6 +116,24 @@ def _klass(unit_type: str) -> str:
     return "STEAM"
 
 
+def _model_klass_bucket(klass: str) -> str:
+    """Map a model dispatch class to the bare CC/CT cycler bucket.
+
+    The dispatch frame carries the full model taxonomy (``CC_REGULAR``,
+    ``CC_CHP``, ``CT_PEAKER``, ``CT_CHP``, ``ST_GAS``, ``COAL_*``, ``oil`` ...),
+    while the historic side keys startup cost off the bare ``CC`` / ``CT``
+    classes. Combined-cycle and combustion-turbine variants collapse to ``CC`` /
+    ``CT``; every non-cycler (gas/coal steam, oil, nuclear, hydro, wind, solar)
+    passes through unchanged and is dropped by the CC/CT filter downstream.
+    """
+    k = (klass or "").upper()
+    if "CC" in k:
+        return "CC"
+    if "CT" in k:
+        return "CT"
+    return k
+
+
 def _starts_from_online(online: np.ndarray) -> int:
     """Count off->on transitions in a boolean online series."""
     if online.sum() < 1:
@@ -177,6 +195,62 @@ def historic_starts(states: tuple[str, ...], year: int) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def historic_plant_starts(states: tuple[str, ...], year: int) -> pd.DataFrame:
+    """Per-PLANT plant-aggregate historic CC/CT starts (like-for-like grain).
+
+    ``historic_starts`` counts each *unit's* off->on and sums the counts to the
+    plant; a four-CT plant whose units stagger so the plant never fully shuts
+    racks up four units' worth of starts. The model, by contrast, dispatches
+    each plant as a single aggregated offer curve (its ``unit_id`` tranches are
+    points on that curve, not physical units), so it can only register a
+    plant-aggregate cycle -- the whole plant's summed MW going off->on.
+
+    To compare the two on the same footing this sums every CC/CT unit's gross
+    load to the plant first, then counts plant-aggregate off->on with the same
+    ``_ONLINE_MW`` threshold the modeled side uses on summed dispatched MW.
+    Returns one row per ``facilityId`` with ``klass`` (majority CC/CT vote),
+    ``starts`` and ``cap_mw`` (sum of per-unit max gross load).
+    """
+    rows: list[dict] = []
+    for st in states:
+        path = f"data/raw/campd-unit-level/{st}_{year}.parquet"
+        if not os.path.exists(path):
+            continue
+        df = pd.read_parquet(
+            path,
+            columns=["facilityId", "unitId", "date", "hour", "grossLoad", "unitType"],
+        )
+        df["klass"] = df["unitType"].map(_klass)
+        df = df[df["klass"].isin(["CC", "CT"])].copy()
+        if df.empty:
+            continue
+        df["ts"] = pd.to_datetime(df["date"]) + pd.to_timedelta(df["hour"], unit="h")
+        # Plant-aggregate online series: sum every CC/CT unit's gross load per
+        # hour, online when the plant puts >_ONLINE_MW on the grid -- the same
+        # rule the modeled side applies to summed dispatched MW.
+        plant = df.groupby(["facilityId", "ts"], as_index=False)["grossLoad"].sum()
+        klass_by_fac = df.groupby("facilityId")["klass"].agg(
+            lambda s: s.value_counts().idxmax()
+        )
+        cap_by_fac = (
+            df.groupby(["facilityId", "unitId"])["grossLoad"]
+            .max()
+            .groupby("facilityId")
+            .sum()
+        )
+        for fid, g in plant.sort_values(["facilityId", "ts"]).groupby("facilityId"):
+            online = g["grossLoad"].to_numpy() > _ONLINE_MW
+            rows.append(
+                {
+                    "plant_code": int(fid),
+                    "klass": str(klass_by_fac.get(fid, "")),
+                    "starts": _starts_from_online(online),
+                    "cap_mw": float(cap_by_fac.get(fid, 0.0)),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def modeled_starts(bundle: str, year: int, pass_label: str) -> pd.DataFrame:
     """Per-plant modeled start counts from a run bundle's dispatch parquet.
 
@@ -192,16 +266,24 @@ def modeled_starts(bundle: str, year: int, pass_label: str) -> pd.DataFrame:
         )
     d = pd.read_parquet(path)
     # _dispatch_frame columns: year, pass, unit_id, plant_code, klass, fuel,
-    # supply, zone, hour, mw, lmp.
+    # supply, zone, hour, mw, lmp. The model taxonomy (CC_REGULAR, CT_PEAKER,
+    # CC_CHP, ...) is collapsed to the bare CC/CT bucket the historic side and
+    # the NREL startup tables key off.
+    d = d.copy()
+    d["bucket"] = d["klass"].map(_model_klass_bucket)
     plant = d.groupby(["plant_code", "hour"], as_index=False)["mw"].sum()
     rows: list[dict] = []
-    klass_by_plant = d.groupby("plant_code")["klass"].first()
+    # A plant's bucket is the cycler class most of its tranches carry (plants in
+    # the ERCOT fleet are single-group, so this is just that group).
+    bucket_by_plant = d.groupby("plant_code")["bucket"].agg(
+        lambda s: s.value_counts().idxmax()
+    )
     for pc, g in plant.sort_values(["plant_code", "hour"]).groupby("plant_code"):
         online = g["mw"].to_numpy() > _ONLINE_MW
         rows.append(
             {
                 "plant_code": int(pc) if str(pc).isdigit() else pc,
-                "klass": str(klass_by_plant.get(pc, "")).upper(),
+                "klass": str(bucket_by_plant.get(pc, "")),
                 "starts": _starts_from_online(online),
                 "cap_mw": float(g["mw"].max()),
             }
@@ -298,18 +380,26 @@ def main() -> None:
     print(f"Total CC/CT starts: {int(modc['starts'].sum()):,}")
     print(f"Total annual startup O&M: ${modc['annual_om'].sum():,.0f}")
 
-    # Plant-level delta. Historic is per-unit; sum to plant grain to match the
-    # modeled per-plant_code dispatch.
-    hp = (
-        cyc.groupby("facilityId")
-        .agg(
-            hist_starts=("starts", "sum"),
-            hist_om=("annual_om", "sum"),
-            cap_mw=("cap_mw", "sum"),
-        )
-        .reset_index()
-        .rename(columns={"facilityId": "plant_code"})
+    # Like-for-like delta. The model dispatches each plant as a single
+    # aggregated offer curve, so it can only register a plant-aggregate cycle
+    # (whole-plant summed MW off->on). Comparing that to the unit-grain headline
+    # above (which sums each unit's starts) is apples-to-oranges -- a multi-unit
+    # plant whose units stagger never zeroes the plant sum, so unit-grain counts
+    # several starts where the model (and the grid) sees one. The delta therefore
+    # rebuilds the HISTORIC side on the same plant-aggregate grain.
+    histp = historic_plant_starts(states, args.year)
+    histp["annual_om"] = annual_om(histp, args.cc_rate, args.ct_rate)
+    histpc = histp[histp["klass"].isin(["CC", "CT"])]
+    print(
+        f"\n=== Historic plant-aggregate (like-for-like grain) -- {label} "
+        f"{args.year} ({len(histpc)} CC/CT plants) ==="
     )
+    print(f"Total CC/CT starts: {int(histpc['starts'].sum()):,}")
+    print(f"Total annual startup O&M: ${histpc['annual_om'].sum():,.0f}")
+
+    hp = histpc.rename(columns={"starts": "hist_starts", "annual_om": "hist_om"})[
+        ["plant_code", "hist_starts", "hist_om"]
+    ]
     mp = modc.rename(columns={"starts": "mod_starts", "annual_om": "mod_om"})
     j = hp.merge(
         mp[["plant_code", "mod_starts", "mod_om"]], on="plant_code", how="outer"
