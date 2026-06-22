@@ -674,6 +674,18 @@ def _campd_hourly_frame(
     df = campd.load_campd_hourly(states, [year])
     if df.empty:
         return None
+    # PJM: reconstruct hourly net MW for grossLoad-blank coal units (CFB /
+    # waste-coal / coal cogen — Virginia City, Seward, the PA culm fleet, ...)
+    # from their measured heatInput and an EIA-923-anchored effective heat rate.
+    # These units report heatInput + steamLoad but no grossLoad, so they would
+    # otherwise look offline all year. The proxy is anchored to EIA-923 net
+    # generation, so the filled series is already net — those plants take a
+    # parasitic factor of 1.0 (gross == net), overriding the class default the
+    # zero-gross plant would otherwise pick up.
+    if iso == "PJM":
+        df, proxy_ids = campd.fill_heatinput_proxy(df, load_monthly_generation(), year)
+        if proxy_ids:
+            factors = {**factors, **{pid: 1.0 for pid in proxy_ids}}
     net = campd.plant_hourly_net(df, factors, year, hours=hours)
     if not net:
         return None
@@ -1101,7 +1113,12 @@ def _btm_frame(
     flat-CF / CO2 estimates, never ``btm_twh``.
     """
     from market_sim.config.scenarios import ScenarioConfig
-    from market_sim.data.fleet import BIN_GROUP_TO_FUEL, load_campd_bins
+    from market_sim.data.fleet import (
+        CHP_BTM_PCT_BY_SECTOR,
+        BIN_GROUP_TO_FUEL,
+        coal_chp_overrides,
+        load_campd_bins,
+    )
     from market_sim.results.emissions import compute_must_run_emissions
 
     is_ercot = iso == "ERCOT"
@@ -1191,15 +1208,35 @@ def _btm_frame(
         total_gen_by_plant=total_by_plant,
         grid_gen_by_plant=grid_by_plant,
     )
-    if mr.empty:
+    btm_by_class: dict[str, float] = {}
+    if not mr.empty:
+        for grp, twh in (
+            mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
+        ).items():
+            btm_by_class[str(grp)] = btm_by_class.get(str(grp), 0.0) + float(twh)
+    # Coal cogen (PJM): host self-supply held out of the LP is chp_btm_pct of the
+    # plant's measured EIA-923 coal-class net generation, booked under the coal
+    # class so render subtracts it from classFull on both sides — the same
+    # behind-the-meter treatment the gas cogens get, extended to the chemical /
+    # culm coal hosts the dispatch now removes from the economic stack.
+    coal_chp = coal_chp_overrides(iso, year) if not is_ercot else {}
+    if coal_chp:
+        for (pid, klass), tot in class_total.items():
+            if int(pid) not in coal_chp or not str(klass).startswith("COAL"):
+                continue
+            _, sector = coal_chp[int(pid)]
+            pct = CHP_BTM_PCT_BY_SECTOR.get(sector, CHP_BTM_PCT_BY_SECTOR["merchant"])
+            btm_by_class[str(klass)] = btm_by_class.get(str(klass), 0.0) + (
+                float(tot) * pct / 100.0 / _MWH_PER_TWH
+            )
+    if not btm_by_class:
         return pd.DataFrame(columns=["year", "pass", "klass", "btm_twh"])
-    by_class = mr.groupby("Plant_Group")["mr_gen_mwh"].sum() / _MWH_PER_TWH
     return pd.DataFrame(
         {
             "year": np.int16(year),
             "pass": pass_label,
-            "klass": by_class.index,
-            "btm_twh": by_class.to_numpy(),
+            "klass": list(btm_by_class.keys()),
+            "btm_twh": list(btm_by_class.values()),
         }
     )
 
