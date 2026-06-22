@@ -59,6 +59,8 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # regenerable; the keeper is regenerated last once the overlay is signed off).
 /results/calibration/_cg_base_*
 /results/calibration/_cg_ovl_*
+# Throwaway single-year diagnostic probes (rule #14): never registered keepers.
+/results/calibration/_diag_*
 /results/calibration/_cold_2023/
 /results/calibration/_warm_2023/
 /results/calibration/caiso_reprice_pass*/
