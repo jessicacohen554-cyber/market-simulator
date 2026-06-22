@@ -460,10 +460,24 @@ def _system_frame(
     demand: np.ndarray,
     zone_names: list[str],
 ) -> pd.DataFrame:
-    """Return the per-zone hourly price / slack / demand frame."""
+    """Return the per-zone hourly price / slack / demand frame.
+
+    When energy+reserve co-optimization is on, ``result.reserve_price`` is the
+    reserve-balance-row dual (the reserve clearing price already folded into the
+    energy ``price`` via the shared-headroom constraint); it is persisted as a
+    system-wide column (broadcast across zones, matching PJM's RTO-wide reserve
+    clearing price) so the residual analysis can separate the energy and reserve
+    components. Energy-only runs write 0.0.
+    """
     prices = np.asarray(result.prices, dtype=float)
     slack = np.asarray(result.slack, dtype=float)
     n_zones, T = prices.shape
+    reserve_price = getattr(result, "reserve_price", None)
+    rp = (
+        np.zeros(T, dtype=float)
+        if reserve_price is None
+        else np.asarray(reserve_price, dtype=float).ravel()[:T]
+    )
     rows = []
     for z in range(n_zones):
         rows.append(
@@ -476,6 +490,7 @@ def _system_frame(
                     "price": prices[z],
                     "slack": slack[z],
                     "demand": demand[z, :T],
+                    "reserve_price": rp,
                 }
             )
         )
