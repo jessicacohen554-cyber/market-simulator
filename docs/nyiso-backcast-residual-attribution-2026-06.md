@@ -258,21 +258,26 @@ nuclear exact. None of these move the price residual — confirmed not drivers.
 
 ## 3. Ranked structural fixes
 
-1. **D — DAILY Transco-Z6 NY / Iroquois Z2 spot (the monthly series is now in,
-   §4d; daily is the remaining lever).** The real **monthly** Transco-Z6 NY
-   spot has landed (EIA NG Weekly, §4d) and *proves* mechanism D: Jan-2023
-   +44 → +7.4, 2023 MAE 8.0 → 5.6. But monthly is **not** clean — the monthly
-   mean of extreme-cold months smears the spike across the mild hours
-   (Jan-2025 resid **+39**), the *same* artifact class the receipts had. The
-   remaining fix is **daily resolution** (`gas_hub_basis_daily` +
-   `iso_hub_daily_gas_prices`, today AGT-only — extend to a NYISO Transco daily
-   series; the daily quotes are already scraped into
-   `transco_z6_iroquois_monthly.csv`'s source pages). Pair it with a **real
-   monthly Iroquois Z2** (the §4d reconstruction uses a *flat annual* spread
-   that over-levels summer; the true spread is winter-concentrated). EIA's free
-   table does **not** carry Iroquois (NGI/ICE/Platts or NYISO reference-level
-   gas needed). **Measured input, zero tuning.** Do **not** accept the monthly
-   probe (§4d) — it breaks the 2025 interchange band; keeper stands.
+1. **D — DAILY Transco-Z6 NY spot is now IN and validated (§4e); the remaining
+   D lever is a REAL monthly Iroquois Z2.** Sub-task **(a) daily resolution is
+   DONE** (§4e): the real EIA NG Weekly Transco-Z6 NY **daily** spot was scraped
+   (`scripts/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
+   674 trading days) and `iso_hub_daily_gas_prices` extended off AGT-only to
+   NYISO (`_nyiso_hub_daily_gas_prices`, the measured Transco daily within-month
+   shape on the monthly Iroquois level, **exactly mean-preserving**). It does
+   what the monthly probe (§4d) could not: **Jan-2025 +39.3 → −1.97** (the
+   within-month smear is gone), 2025 MAE 7.5 → **5.05**, and it **restores the
+   2025 interchange band the monthly overlay broke** (117.5% OUT → 109.8% IN).
+   Net MAE 5.1/5.7/5.1 — the best NYISO average, and it breaks **no** volume band
+   the keeper holds (§4e). Sub-task **(b) a real monthly Iroquois Z2 is still
+   open** — the §4d/§4e reconstruction uses a *flat annual* Transco-Iroquois
+   spread that over-levels summer (2023/24 Jul/Aug +10), a data artifact the
+   daily lever cannot touch (it is a zonal-spread, not a within-month, issue).
+   EIA's free table does **not** carry Iroquois (NGI/ICE/Platts or NYISO
+   reference-level gas needed). **Measured input, zero tuning.** The daily run is
+   gated behind (b) the real Iroquois (to remove the summer over-level) **and**
+   mechanism B (to fill the now-unmasked Dec-2024 tail) before it supersedes the
+   keeper; keeper `nyiso 11` stands for now (§4e).
 
 2. **A — shape the priced node to the measured EIA-930 diurnal envelope
    (`--interchange-shaping`), then re-anchor the deep tranches.** The static node
@@ -471,6 +476,70 @@ harmless to the keeper (`--gas-hub-basis-overlay` is off by default for NYISO)
 and ready for the daily follow-on. Registered as `nyiso 15 transco-z6-gas
 (PROBE)`; **keeper `nyiso 11` stands.**
 
+## 4e. Tested this session — REAL DAILY Transco-Z6 NY spot (mechanism D #1(a)) → validated, holds every volume band, keeper still gated on #1(b)+B
+
+Fix #1(a) from §3. The EIA NG Weekly **archive** "New York" (Transco Z6 NY)
+**daily** spot was scraped across all 146 weekly pages of 2023-2025
+(`scripts/fetch_transco_daily_spot.py` → `data/raw/gas-prices/transco_z6_ny_daily.csv`,
+674 trading days; the only gaps are holiday weeks EIA does not archive).
+Two independent cross-checks confirm the scrape: the daily monthly means
+reproduce the §4d monthly file to **<$0.06** in every fully-covered month, and
+the captured Henry Hub column matches EIA RNGWHHD to **$0.02** mean.
+`iso_hub_daily_gas_prices` was extended off its NEISO-only (AGT demand-convexity
+proxy) form to NYISO via `_nyiso_hub_daily_gas_prices`: the **measured Transco
+daily within-month shape** scaled onto the correct monthly Iroquois-Z2 hub level,
+with the calendar-day factors renormalized to mean 1.0 so it is **exactly
+mean-preserving** (0.0000% monthly drift — the annual gas burn and fuel mix are
+unchanged; only the within-month *shape* moves). Run
+`_cg_nyiso_transco_daily` = §4d config **+ `--gas-hub-basis-daily`** (the ONE new
+lever vs the monthly overlay nyiso 15):
+
+| metric | year | keeper 11 | monthly 15 | **+ daily** | verdict |
+|---|---|---|---|---|---|
+| **Jan-2025 residual** | 2025 | — | **+39.3** | **−1.97** | **smear fixed** |
+| Jul-2025 residual | 2025 | −10 | — | **−1.08** | summer tail lifted |
+| monthly-LMP MAE | 2023 | 8.0 | 5.6 | **5.13** | best |
+| | 2024 | **4.3** | 5.9 | 5.65 | mech-B (Dec −27.5) |
+| | 2025 | 6.3 | 7.5 | **5.05** | **best** |
+| gas vs EIA-923 | 2023 | −0.5% | −0.6% | **−0.2%** | in band |
+| gas vs EIA-930 | 2024 | **−8.8%** | — | −9.8% | same floor (§2.A) |
+| | 2025 | −6.4% | — | −6.2% | same floor |
+| net interchange (% meas) | 2023 | 76.5% OUT | 76.2% OUT | 74.2% OUT | same floor |
+| | 2024 | 106.3% in | 112.1% in | **109.0% in** | held |
+| | 2025 | 114.5% in | **117.5% OUT** | **109.8% in** | **band restored** |
+| 2025 import diurnal corr | 2025 | −0.86 | — | −0.87 | unchanged (mech A) |
+
+**The daily lever does exactly what #1(a) promised and is a strict improvement
+over the monthly overlay on every axis** — it fixes the within-month smear the
+monthly mean could not (Jan-2025 +39.3 → −1.97), lifts the 2025 summer
+under-price (Jul −10 → −1.08), gives the best NYISO MAE on 2023 and 2025 and the
+best average (5.1/5.7/5.1 vs keeper 8.0/4.3/6.3), and **restores the 2025
+interchange band that the monthly overlay broke** (117.5% OUT → 109.8% IN — the
+mean-preserving daily shape no longer pushes the annual import level out). It
+**breaks no volume band the keeper holds**: every band where the keeper is in,
+daily is in (and 2025 interchange is improved); every band where daily is out
+(2024/25 gas, 2023 interchange) the **keeper is out by the same margin** — these
+are the documented EIA-930/923 basis floor and import wedge (§2.A), not a new
+trade. So unlike the §4d monthly probe this is **not** a rejected band-breaker.
+
+Two things still keep the keeper standing, and **neither is the daily lever's**:
+
+1. **The flat-annual Iroquois-Transco spread over-levels summer** (2023/24
+   Jul/Aug +10) — the §4d/§4e *reconstructed* Iroquois, fix **#1(b)**, still
+   data-blocked (EIA free has no Iroquois). This is a zonal-spread artifact the
+   within-month daily lever cannot touch; it is the reason 2023's MAE win is
+   "winter fixed, summer slightly worse" rather than clean.
+2. **Dec-2024 −27.5 (mechanism B).** Removing the receipt winter-inflation
+   unmasks the missing RCPF scarcity tail (actual RT Dec-2024 $67.8), exactly as
+   §4d.3 predicted — this is the entire 2024 MAE regression (4.3 → 5.65) and is
+   **mechanism B**, not D.
+
+**Verdict: keeper `nyiso 11` stands, but the daily lever is VALIDATED and kept
+in code (off by default).** It supersedes the keeper the moment a real monthly
+Iroquois lands (#1(b), removing the summer over-level) and mechanism B fills the
+winter tail — at which point the daily-resolved overlay is the cleanest NYISO gas
+path on both price and volumes. Registered as `nyiso 16 transco-daily-gas`.
+
 ## 5. What changed in code this session
 
 - **Fixed** the stale validation path in `scripts/derive_nyiso_rcpf_overlay.py`
@@ -487,23 +556,33 @@ and ready for the daily follow-on. Registered as `nyiso 15 transco-z6-gas
   rejected §4b citygate basis. No model/dispatch **code** changed; the basis is
   consumed only under `--gas-hub-basis-overlay` (off by default for NYISO), so
   the keeper is byte-identical.
+- **Data + code (this session, §4e — fix #1(a)):** added
+  `scripts/fetch_transco_daily_spot.py` (scrapes the EIA NG Weekly archive "New
+  York"/Transco-Z6 NY **daily** spot, 2023-2025) and its output
+  `data/raw/gas-prices/transco_z6_ny_daily.csv` (674 trading days). Extended
+  `iso_hub_daily_gas_prices` off its NEISO-only form to NYISO via the new
+  `_nyiso_hub_daily_gas_prices` (measured Transco daily within-month shape on the
+  monthly Iroquois level, exactly mean-preserving), and broadened the
+  `--gas-hub-basis-daily` help to cover the NYISO (real Transco) vs NEISO (proxy)
+  legs. The daily leg is gated under `--gas-hub-basis-overlay --gas-hub-basis-daily`
+  (both off by default for NYISO), so the keeper is byte-identical.
 - **No tuning.** No offer band, gas price, ladder, requirement or demand curve
-  was hand-fit; every §4d value is seeded from the EIA NG Weekly spot or the
+  was hand-fit; every §4d/§4e value is seeded from the EIA NG Weekly spot or the
   NYISO SOM annual hub and cited. The keeper `nyiso 11 cc-steam rebaseline`
   remains the keeper.
 
 ## 6. Still-blocked / not-done (honest ledger)
 
-- **Transco-Z6 NY monthly spot — LANDED (§4d), monthly is insufficient.** The
-  real EIA NG Weekly Transco-Z6 NY monthly spot is now in
-  (`data/raw/gas-prices/transco_z6_iroquois_monthly.csv`) and fixes Jan-2023
-  (+44 → +7.4), but the monthly mean smears within-month cold spikes (Jan-2025
-  +39) and the run breaks the 2025 interchange band — rejected, keeper stands.
-  Two still-open data/code asks: (a) **DAILY** Transco resolution (the daily
-  quotes are on the scraped EIA weekly pages; needs `iso_hub_daily_gas_prices`
-  extended off AGT to NYISO); (b) a **real monthly Iroquois Z2** (EIA free does
-  not carry it — §4d uses a flat-annual-spread reconstruction that over-levels
-  summer; NGI/ICE/Platts or NYISO reference-level needed). Top data ask.
+- **Transco-Z6 NY daily spot — LANDED + VALIDATED (§4e). (a) DAILY resolution is
+  DONE;** the daily Transco series is scraped
+  (`data/raw/gas-prices/transco_z6_ny_daily.csv`) and wired into NYISO, fixing
+  the Jan-2025 within-month smear (+39 → −2) and restoring the 2025 interchange
+  band — it holds every volume band the keeper holds. **(b) a real monthly
+  Iroquois Z2 is the one remaining D data ask:** EIA free does not carry it, so
+  §4d/§4e use a flat-annual Transco-Iroquois spread that over-levels summer
+  (Jul/Aug +10). NGI/ICE/Platts or NYISO reference-level gas needed. Until (b)
+  lands and mechanism B fills the unmasked Dec-2024 tail, the validated daily run
+  (`nyiso 16`) stays a documented best-on-price result and `nyiso 11` is keeper.
 - **`TODO(SENY-MW)`** — the SENY 30-min reserve requirement is still a 1,100 MW
   placeholder (bracket midpoint East 1,200 ⊇ SENY ⊇ NYC 1,000). The published
   Rate Schedule 4 value requires the NYISO Ancillary Services Manual / RS4 PDF,
