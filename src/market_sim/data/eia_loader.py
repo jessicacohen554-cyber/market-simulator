@@ -717,7 +717,15 @@ def measured_import_hub_prices(
     out: dict[str, np.ndarray] = {}
     for hub, sub in frame.groupby("hub"):
         series = sub.sort_values("hour")
-        price = pd.to_numeric(series["price"], errors="coerce").to_numpy(dtype=float)
+        # Interpolate the isolated DST spring-forward gap (1 interior NaN on the
+        # fixed non-leap calendar that every hourly series carries); ``limit=2``
+        # leaves a genuine multi-week gap (2023 Jan-Feb, aged out of OASIS
+        # retention) NaN so that year still falls back to the static ladder.
+        price = (
+            pd.to_numeric(series["price"], errors="coerce")
+            .interpolate(limit=2)
+            .to_numpy(dtype=float)
+        )
         if price.shape[0] < hours or not np.all(np.isfinite(price[:hours])):
             continue  # incomplete hub series — leave its tranches on the ladder
         for tranche, mapped_hub in _CAISO_IMPORT_TRANCHE_HUB.items():
