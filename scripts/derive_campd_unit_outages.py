@@ -75,6 +75,7 @@ from scripts.derive_campd_outages import (  # noqa: E402
     HIGH_LOAD_PCTL,
     MIN_INMERIT_HOURS,
     ST_GAS_CF_PEAK,
+    WINDOW_DAYS,
     detect_outages,
     detect_outages_eventbased,
     high_load_mask,
@@ -316,6 +317,14 @@ def main() -> None:
         f"(default {MIN_INMERIT_HOURS}).",
     )
     ap.add_argument(
+        "--high-load-window-days",
+        type=int,
+        default=WINDOW_DAYS,
+        help=f"Centered window (days) the high-load percentile is measured over "
+        f"— the LOCAL/seasonal band that keeps real shoulder outages. 0 = legacy "
+        f"single-annual percentile (default {WINDOW_DAYS}).",
+    )
+    ap.add_argument(
         "--bins",
         default=str(CAMPD_BINS_CSV),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
@@ -526,7 +535,11 @@ def main() -> None:
                     if not args.no_inmerit_filter:
                         if year not in inmerit_cache:
                             inmerit_cache[year] = high_load_mask(
-                                iso, year, len(clock), args.high_load_pctl
+                                iso,
+                                year,
+                                len(clock),
+                                args.high_load_pctl,
+                                args.high_load_window_days,
                             )
                         mask = inmerit_cache[year]
                         if mask is not None:

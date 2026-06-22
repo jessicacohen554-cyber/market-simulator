@@ -82,6 +82,19 @@ HIGH_LOAD_PCTL: float = 0.85
 # A down span must overlap at least this many high-load hours to be kept as a
 # real (binding) outage; fewer ⇒ economic idle, unit left available.
 MIN_INMERIT_HOURS: int = 24
+# Width (days) of the centered window the high-load band is measured over. A
+# *single annual* percentile makes "high load" mean only the summer/winter peak,
+# so a genuine multi-week SHOULDER maintenance outage — which by definition never
+# spans an annual-top-15% hour — is wrongly dropped as economic idle (ERCOT CC:
+# 69% of outage GW-days cut, incl. 90-day continuous outages like T H Wharton).
+# A LOCAL (seasonal) percentile over a rolling +/-WINDOW_DAYS band instead asks
+# "did the unit stay down through the high-net-load hours of ITS OWN period?":
+# the real shoulder outage spans that period's local peaks and is kept, while
+# the short economic-idle gap returns to service during those same local peaks
+# and is still dropped. Set 0 to fall back to the legacy single-annual
+# percentile (the over-tight behaviour). 30 days = ~one maintenance season's
+# net-load cycle. Still net-load-keyed (exogenous input, no LMP / price fit).
+WINDOW_DAYS: int = 30
 
 
 # EIA-930 balancing-authority code per model ISO (the eia-930-hourly file stem).
@@ -96,7 +109,11 @@ _ISO_TO_BA: dict[str, str] = {
 
 
 def high_load_mask(
-    iso: str, year: int, n_hours: int, pctl: float = HIGH_LOAD_PCTL
+    iso: str,
+    year: int,
+    n_hours: int,
+    pctl: float = HIGH_LOAD_PCTL,
+    win_days: int = WINDOW_DAYS,
 ) -> np.ndarray | None:
     """Boolean ``(n_hours,)`` mask: was the system in its high-NET-LOAD band?
 
@@ -105,13 +122,22 @@ def high_load_mask(
     reconciled ``Adjusted demand``/``Adjusted WND Gen``/``Adjusted SUN Gen``
     series; the other BA extracts only carry the raw ``Demand``/``NG: WND``/
     ``NG: SUN`` columns, so we fall back to those when the Adjusted ones are
-    absent (the raw series is an equally exogenous net-load proxy). Flags hours
-    above the year's ``pctl`` net-load percentile and maps them onto the
-    detector's calendar clock by ``(month, day, hour)`` (the EIA-930 file is
-    itself calendar/leap-aware, so alignment is exact). Net load (not raw load)
-    so winter-storm / VRE-drought tightness — high-net-load hours below the
-    summer raw-load peak — is caught. Returns ``None`` when the BA file/year is
-    unavailable, or the demand column is missing (no-op).
+    absent (the raw series is an equally exogenous net-load proxy).
+
+    An hour is "high load" if its net load exceeds the ``pctl`` percentile of a
+    centered rolling ``+/- win_days`` net-load window (the LOCAL / seasonal band)
+    — so a unit that stays down through the high-net-load hours of its own period
+    is caught even where those hours sit below the summer/winter annual peak. The
+    real multi-week shoulder maintenance outage spans its period's local peaks
+    (kept); a short economic-idle gap returns to service during those same local
+    peaks (still dropped). Set ``win_days <= 0`` to fall back to a single annual
+    percentile (the legacy over-tight band that cut genuine shoulder outages).
+
+    Results map onto the detector's calendar clock by ``(month, day, hour)`` (the
+    EIA-930 file is itself calendar/leap-aware, so alignment is exact). Net load
+    (not raw load) so winter-storm / VRE-drought tightness — high-net-load hours
+    below the summer raw-load peak — is caught. Returns ``None`` when the BA
+    file/year is unavailable, or the demand column is missing (no-op).
     """
     ba = _ISO_TO_BA.get(iso.upper())
     if ba is None:
@@ -140,10 +166,27 @@ def high_load_mask(
     wnd = np.nan_to_num(_col("Adjusted WND Gen", "NG: WND"))
     sun = np.nan_to_num(_col("Adjusted SUN Gen", "NG: SUN"))
     net = dem - wnd - sun
-    thresh = float(np.nanquantile(net, pctl))
+    if win_days and win_days > 0:
+        # Local (seasonal) band: per-hour threshold = the pctl percentile of a
+        # centered +/- win_days net-load window. Sort to chronological order for
+        # the rolling quantile, then scatter the thresholds back to the file's
+        # native row order so the (month, day, hour) key below stays aligned.
+        dt = df["dt"].to_numpy()
+        order = np.argsort(dt, kind="stable")
+        ser = pd.Series(net[order], index=dt[order])
+        w = int(win_days) * 24
+        roll = (
+            ser.rolling(w, center=True, min_periods=max(1, w // 2))
+            .quantile(pctl)
+            .to_numpy()
+        )
+        thresh = np.full(len(net), np.nan)
+        thresh[order] = roll
+    else:
+        thresh = np.full(len(net), float(np.nanquantile(net, pctl)))
     key = {
-        (t.month, t.day, t.hour): bool(np.isfinite(v) and v > thresh)
-        for t, v in zip(df["dt"], net)
+        (t.month, t.day, t.hour): bool(np.isfinite(v) and np.isfinite(th) and v > th)
+        for t, v, th in zip(df["dt"], net, thresh)
     }
     clock = pd.date_range(f"{year}-01-01", periods=n_hours, freq="h")
     out = np.zeros(n_hours, dtype=bool)
@@ -281,6 +324,14 @@ def main() -> None:
         help=f"High-load hours a span must overlap to be a real outage "
         f"(default {MIN_INMERIT_HOURS}).",
     )
+    ap.add_argument(
+        "--high-load-window-days",
+        type=int,
+        default=WINDOW_DAYS,
+        help=f"Centered window (days) the high-load percentile is measured over "
+        f"— the LOCAL/seasonal band that keeps real shoulder outages. 0 = legacy "
+        f"single-annual percentile (default {WINDOW_DAYS}).",
+    )
     args = ap.parse_args()
     min_outage_hours = int(round(args.min_outage_days * 24))
     inmerit_cache: dict[int, np.ndarray | None] = {}
@@ -330,7 +381,11 @@ def main() -> None:
             if windows and not args.no_inmerit_filter:
                 if yr not in inmerit_cache:
                     inmerit_cache[yr] = high_load_mask(
-                        iso, yr, len(ts), args.high_load_pctl
+                        iso,
+                        yr,
+                        len(ts),
+                        args.high_load_pctl,
+                        args.high_load_window_days,
                     )
                 mask = inmerit_cache[yr]
                 if mask is not None:
