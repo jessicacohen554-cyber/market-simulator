@@ -236,6 +236,7 @@ Glenarm,422,GT5,87.0,208.0,41.8,CC_REGULAR,eia_exact_cc,2025-11-25,2025-12-30,35
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-04-20,2024-05-02,11.6,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-05-09,2024-07-02,53.9,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-08-07,2024-09-04,27.5,0,1
+"Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-09-09,2024-09-24,14.5,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-10-10,2024-10-26,15.5,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-10-26,2024-12-04,39.0,0,1
 "Calpine Gilroy Cogen, LP",10034,S-100,111.0,111.0,100.0,CC_CHP,observed_peak,2024-12-04,2024-12-31,27.0,0,1
@@ -375,6 +376,7 @@ King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-04-20,
 King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-07-12,2024-07-22,9.7,1,2
 King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-07,2024-08-26,18.3,1,2
 King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-08-26,2024-09-04,9.0,1,2
+King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-09-09,2024-09-24,14.6,1,2
 King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-10-09,2024-12-11,62.8,1,2
 King City Power Plant,10294,GTG,133.2,180.2,73.9,CC_CHP,eia_exact_cc,2024-12-17,2024-12-31,14.1,1,2
 King City Power Plant,10294,GTG,133.2,179.2,74.3,CC_CHP,eia_exact_cc,2025-01-01,2025-02-04,34.1,1,2
@@ -441,6 +443,7 @@ Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-04-05
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-07-13,2024-07-22,8.8,0,1
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-07,2024-08-20,12.9,0,1
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-08-21,2024-09-03,13.8,0,1
+Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-09-09,2024-09-24,14.6,0,1
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-10,2024-10-30,19.1,0,1
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-10-30,2024-11-05,6.4,0,1
 Kingsburg Cogen Facility,10405,1,36.2,36.2,100.0,CC_CHP,eia_digits_cc,2024-11-07,2024-11-14,6.6,0,1
@@ -533,6 +536,7 @@ McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-02-14,2024-0
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-03-22,2024-07-03,103.0,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-07-12,2024-07-22,9.8,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-08-14,2024-09-03,20.4,0,1
+McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-09-09,2024-09-24,14.6,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2024-10-07,2024-12-31,85.1,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-01,2025-01-10,9.6,0,1
 McKittrick Limited,50612,GT1,46.0,46.0,100.0,CT_CHP,eia_digits,2025-01-10,2025-03-03,52.0,0,1
