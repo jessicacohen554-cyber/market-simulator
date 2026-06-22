@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-21T19:17:33",
+  "timestamp": "2026-06-21T06:52:20",
   "iso": "NYISO",
   "years": [
     2023,
@@ -42,6 +42,9 @@
   "ercot_load_resource_reserve_from_year": 2023,
   "ercot_storage_as_reserve": false,
   "ercot_storage_as_reserve_from_year": 2025,
+  "ercot_ecrs_requirement": false,
+  "ercot_ecrs_requirement_from_year": 2023,
+  "ordc_lolp_params_path": null,
   "as_reserve_formula": false,
   "storage_as_commitment": false,
   "gas_offer_curve": false,
@@ -73,6 +76,6 @@
     "eia923": "../_shared/NYISO/eia923-267e5d625954.parquet",
     "campd": "../_shared/NYISO/campd-ec35185bdf75.parquet"
   },
-  "git_sha": "f121861",
+  "git_sha": "1d58645",
   "highspy_version": "1.14.0"
 }

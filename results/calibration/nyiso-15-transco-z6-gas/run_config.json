@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-06-21T19:17:33",
+  "timestamp": "2026-06-22T06:52:20",
   "git": {
-    "sha": "f121861",
-    "branch": "claude/nyiso-backcast-diagnostic-m4s50y-48zkc4",
+    "sha": "1d58645",
+    "branch": "claude/iso-keeper-calibration-w37679",
     "dirty": true,
     "changed_files": [
-      "ata/raw/gas_basis_by_iso_month.csv",
-      "data/raw/gas-prices/transco_z6_iroquois_monthly.csv",
-      "data/raw/gas_basis_by_iso_month.csv.bak"
+      "ackcast-results.html",
+      "frontend/data/backcast/benchmark.js",
+      "frontend/data/backcast/manifest.js"
     ],
-    "diffstat": "data/raw/gas_basis_by_iso_month.csv | 1876 +++++++++++++++++------------------\n 1 file changed, 938 insertions(+), 938 deletions(-)"
+    "diffstat": "backcast-results.html               | 2 +-\n frontend/data/backcast/benchmark.js | 2 +-\n frontend/data/backcast/manifest.js  | 2 +-\n 3 files changed, 3 insertions(+), 3 deletions(-)"
   },
-  "model_changes_note": "",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "calibration_flags": {
     "iso": "NYISO",
     "years": [
@@ -50,7 +50,7 @@
     "offer_curve_overrides": {},
     "offer_curve_deltas": {},
     "priced_interchange": true,
-    "git_sha": "f121861"
+    "git_sha": "1d58645"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -198,6 +198,8 @@
     "ercot_load_resource_reserve_from_year": 2023,
     "ercot_storage_as_reserve": false,
     "ercot_storage_as_reserve_from_year": 2025,
+    "ercot_ecrs_requirement": false,
+    "ercot_ecrs_requirement_from_year": 2023,
     "as_reserve_formula": false,
     "storage_as_commitment": false,
     "negative_renewable_offers": false,

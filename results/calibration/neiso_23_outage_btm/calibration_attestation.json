@@ -6,7 +6,8 @@
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
     "attested_by": "neiso-23 outage-btm session 2026-06-21",
-    "note": "Active levers all trace to measured inputs: CAMPD unit-level outage windows (net-load-filtered campd-unit-outages-NEISO.csv, an exogenous availability event), EIA-860 cogen-flagged BTM CHP host steam pulled out of the LP (btm.parquet), measured F923 monthly delivered gas, measured EIA-930 interchange schedule. No adder/haircut/sigmoid tuned to the price or volume residual; no unit pinned to its observed CEMS generation; no input rescaled so the model output lands on actuals."
+    "note": "Active levers all trace to measured inputs: CAMPD unit-level outage windows (net-load-filtered campd-unit-outages-NEISO.csv, an exogenous availability event), EIA-860 cogen-flagged BTM CHP host steam pulled out of the LP (btm.parquet), measured F923 monthly delivered gas, measured EIA-930 interchange schedule. No adder/haircut/sigmoid tuned to the price or volume residual; no unit pinned to its observed CEMS generation; no input rescaled so the model output lands on actuals.",
+    "data_blocked_soft_criteria": "C3c price tail, C5a CO2, C5b storage throughput are SKIPPED (not out of tolerance): their model+actual series are not emitted by the current reporting pipeline (build_payload has no non-ERCOT scarcity-ordc / co2 / storage blocks). Recorded as legitimately data-blocked-in-payload; surfacing them is a separate shared-render workstream. This caps the grade at CALIBRATED-WITH-CAVEATS, the rubric-intended cap. Net-load-outage cooling checked: C3a still PASS all years (2023 -4.6%, 2024 -1.3%, 2025 +5.6% vs actual RT)."
   },
   "exceptions": []
 }

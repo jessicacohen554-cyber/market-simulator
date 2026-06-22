@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-21T19:15:02",
+  "timestamp": "2026-06-21T07:19:49",
   "iso": "PJM",
   "years": [
     2023,
@@ -46,6 +46,9 @@
   "ercot_load_resource_reserve_from_year": 2023,
   "ercot_storage_as_reserve": false,
   "ercot_storage_as_reserve_from_year": 2025,
+  "ercot_ecrs_requirement": false,
+  "ercot_ecrs_requirement_from_year": 2023,
+  "ordc_lolp_params_path": null,
   "as_reserve_formula": false,
   "storage_as_commitment": false,
   "gas_offer_curve": false,
@@ -148,10 +151,10 @@
   "gas_hub_basis_overlay": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "campd": "../_shared/PJM/campd-c730c6e4a285.parquet",
-    "eia930": "../_shared/PJM/eia930-29e193326726.parquet",
-    "eia923": "../_shared/PJM/eia923-d37396507ec3.parquet"
+    "eia930": "../_shared/PJM/eia930-29de9de7cf21.parquet",
+    "eia923": "../_shared/PJM/eia923-752edd2ae9c5.parquet",
+    "campd": "../_shared/PJM/campd-845d8ebadd72.parquet"
   },
-  "git_sha": "19cba89",
+  "git_sha": "3796c23",
   "highspy_version": "1.14.0"
 }

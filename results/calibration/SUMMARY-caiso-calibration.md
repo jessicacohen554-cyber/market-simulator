@@ -120,3 +120,17 @@ now beat domestic gas midday as they should). **LMP 58.0→53.5** (spring −$4-
 
 Commit discipline: scratch bundles gitignored; commit only code/constants/offer-curve
 changes, the re-derived Jacobian CSV, and a final registered keeper.
+
+## Determination status — caiso-18 outage-regate BTM re-solve (2026-06-22)
+
+**DETERMINATION: NOT-YET** (scorer: `python scripts/calibration_verdict.py
+--run-id 2026-06-21-caiso-18-outage-regate`). C6 governance now PASS (truthful
+`calibration_attestation.json` added). BTM regen done: byte-faithful re-solve
+(gmModel reproduces the keeper exactly) + `btm.parquet` (CC_CHP 4.26, CT_CHP
+1.77 TWh host steam). CC_CHP residual −7.07→−2.82 TWh, and **+0.48 TWh PASS vs
+raw EIA-923−BTM** — the over-statement was the BTM artifact the re-gate targeted.
+Deciding fails are genuine **MODEL MISSes** (not ledgerable): C2 gas −15.8% vs
+the authoritative EIA-930 grid total (CAISO EIA-923 under-reports gas ~25%:
+raw923 68.3 / 923−BTM 62.3 / e930 85.4 TWh), and the CC-over / CT-under merit
+split — the doc-06 structural midday-import/solar-glut + import/BTM wedge, the
+dominant remaining lever. Not chased here (BTM-attestation scope).

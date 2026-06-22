@@ -1,13 +1,17 @@
 {
-  "timestamp": "2026-06-21T19:15:02",
+  "timestamp": "2026-06-22T07:19:49",
   "git": {
-    "sha": "19cba89",
-    "branch": "claude/pjm-outage-regate-price-fce78t",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "3796c23",
+    "branch": "claude/iso-keeper-calibration-w37679",
+    "dirty": true,
+    "changed_files": [
+      "ackcast-results.html",
+      "frontend/data/backcast/benchmark.js",
+      "frontend/data/backcast/manifest.js"
+    ],
+    "diffstat": "backcast-results.html               | 2 +-\n frontend/data/backcast/benchmark.js | 2 +-\n frontend/data/backcast/manifest.js  | 2 +-\n 3 files changed, 3 insertions(+), 3 deletions(-)"
   },
-  "model_changes_note": "pjm_37_retiree: pjm_36 refconvex config + within-window retiree CEMS measured-availability cap (retiree_cems_cap=True) — each retiree plant limited to its measured monthly CAMPD envelope, closing the Homer City phantom-baseload over without tuning to the coal target, 2023 only [merged 2023-25 from parallel per-year solves]",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "calibration_flags": {
     "iso": "PJM",
     "years": [
@@ -125,7 +129,7 @@
     },
     "offer_curve_deltas": {},
     "priced_interchange": true,
-    "git_sha": "19cba89"
+    "git_sha": "3796c23"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -273,6 +277,8 @@
     "ercot_load_resource_reserve_from_year": 2023,
     "ercot_storage_as_reserve": false,
     "ercot_storage_as_reserve_from_year": 2025,
+    "ercot_ecrs_requirement": false,
+    "ercot_ecrs_requirement_from_year": 2023,
     "as_reserve_formula": false,
     "storage_as_commitment": false,
     "negative_renewable_offers": false,
