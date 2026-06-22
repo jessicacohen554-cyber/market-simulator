@@ -892,7 +892,17 @@ def plant_hourly_net(
     for plant_id, sub in yr.groupby("plant_id", observed=True):
         series = np.zeros(hours, dtype=float)
         hoy = sub["hour_of_year"].to_numpy()
-        gross = sub["gross_mw"].to_numpy()
+        # NaN gross == an offline unit-hour (CAMPD writes NaN, not 0, for a
+        # non-operating unit on the *unit*-level extracts). It must be treated
+        # as zero MW BEFORE accumulation: np.add.at propagates NaN, so a single
+        # offline unit at a multi-unit plant would poison the whole hour, and
+        # the NaN then vanishes downstream (groupby.sum skips it, the bundle's
+        # nan_to_num floors it to 0) — silently dropping every hour any unit was
+        # down. That undercounts multi-unit coal plants ~2x (e.g. PJM Gavin,
+        # Amos, Cardinal on the OH/WV/IN unit-level files), wrecking the per-
+        # class CAMPD r / NRMSE. Facility-level ISOs (ERCOT) pre-sum units so
+        # never hit it; nansum at the annual aggregates already did the same.
+        gross = np.nan_to_num(sub["gross_mw"].to_numpy(), nan=0.0)
         valid = (hoy >= 0) & (hoy < hours)
         np.add.at(series, hoy[valid], gross[valid])
         out[int(plant_id)] = series * float(factors.get(int(plant_id), 1.0))
