@@ -72,12 +72,15 @@ from market_sim.data.outages import (  # noqa: E402
     ST_GAS_PEAKER_PLANTS,
 )
 from scripts.derive_campd_outages import (  # noqa: E402
+    FULL_STOP_OVERRIDE_CF,
+    FULL_STOP_OVERRIDE_DAYS,
     HIGH_LOAD_PCTL,
     MIN_INMERIT_HOURS,
     ST_GAS_CF_PEAK,
     WINDOW_DAYS,
     detect_outages,
     detect_outages_eventbased,
+    filter_revealed_outages,
     high_load_mask,
 )
 
@@ -325,6 +328,27 @@ def main() -> None:
         f"single-annual percentile (default {WINDOW_DAYS}).",
     )
     ap.add_argument(
+        "--fullstop-override-days",
+        type=int,
+        default=FULL_STOP_OVERRIDE_DAYS,
+        help=f"A sustained full-stop (CF<override-cf) lasting >= this many days is "
+        f"kept as a mechanical outage regardless of net-load overlap "
+        f"(default {FULL_STOP_OVERRIDE_DAYS}).",
+    )
+    ap.add_argument(
+        "--fullstop-override-cf",
+        type=float,
+        default=FULL_STOP_OVERRIDE_CF,
+        help=f"Span mean-CF below which the full-stop override treats a long down "
+        f"span as a mechanical outage (default {FULL_STOP_OVERRIDE_CF}).",
+    )
+    ap.add_argument(
+        "--no-fullstop-override",
+        action="store_true",
+        help="Disable the full-stop duration override (keep only the net-load "
+        "revealed-availability test).",
+    )
+    ap.add_argument(
         "--bins",
         default=str(CAMPD_BINS_CSV),
         help="Per-plant bin CSV; supplies each facility's model plant group.",
@@ -341,6 +365,8 @@ def main() -> None:
         "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     args = ap.parse_args()
+    if args.no_fullstop_override:
+        args.fullstop_override_days = 10**9
     min_outage_hours = int(round(args.min_outage_days * 24))
     iso = args.iso.upper()
     if args.out is None:
@@ -542,14 +568,21 @@ def main() -> None:
                                 args.high_load_window_days,
                             )
                         mask = inmerit_cache[year]
-                        if mask is not None:
-                            windows = [
-                                (s, e)
-                                for s, e in windows
-                                if mask[s:e].sum() >= args.min_inmerit_hours
-                            ]
-                            if not windows:
-                                continue
+                        cf = (
+                            gross / detect_cap
+                            if detect_cap > 0
+                            else np.zeros_like(gross)
+                        )
+                        windows = filter_revealed_outages(
+                            windows,
+                            mask,
+                            cf,
+                            args.min_inmerit_hours,
+                            args.fullstop_override_days,
+                            args.fullstop_override_cf,
+                        )
+                        if not windows:
+                            continue
                     out_days = 0.0
                     for s, e in windows:
                         start = clock[s]
