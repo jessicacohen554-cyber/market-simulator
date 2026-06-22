@@ -87,7 +87,18 @@ keeps its `runNN` scheme.
        --bundle results/calibration/Run-73
    ```
    Writes the sidecar + `runs/<id>.js` + the bench parts for its ISO/years,
-   and refreshes the local (gitignored) preview. Prints `RUN_ID=<id>`.
+   and refreshes the local (gitignored) preview. Prints `RUN_ID=<id>` **and the
+   run's calibration determination** (`DETERMINATION: CALIBRATED |
+   CALIBRATED-WITH-CAVEATS | NOT-YET`) — `scripts/calibration_verdict.py` scores
+   the just-written committed artifacts against
+   `docs/calibration-determination-rubric.md` (the re-determination trigger:
+   every registered run re-runs the scorer). Re-print any run's determination
+   with `python scripts/calibration_verdict.py results/calibration/<name>`
+   (add `--json` for the machine verdict). A `NOT-YET` with an out-of-tolerance
+   criterion is real — either it is a `MODEL MISS` to fix, or it is an accepted
+   measured-input limitation that must be recorded in the bundle's
+   `calibration_attestation.json` exceptions ledger (governance attestation +
+   per-caveat metric/year/magnitude/reason) before it can become a `CAVEAT`.
 
 3. **Preview locally** (assembles the full dashboard from ALL registered runs,
    instant, no bundle access):
@@ -109,10 +120,14 @@ keeps its `runNN` scheme.
    git commit -m "results: <label> — <one-line what changed>"
    ```
    Merging to main auto-deploys (single Pages workflow, <1 min). Report the
-   headline as the run scorecard shows it: classes in tolerance per year,
-   system volume error, fleet dispatch r, LMP Δ vs actual, and the worst-
-   offending classes (with the dashboard's diagnostics pointer for each, e.g.
-   "summer-concentrated, peak tranche").
+   headline **led by the calibration determination** (CALIBRATED /
+   CALIBRATED-WITH-CAVEATS / NOT-YET and, when not CALIBRATED, the deciding
+   criterion), then the run scorecard: classes in tolerance per year, system
+   volume error, fleet dispatch r, LMP Δ vs actual, and the worst-offending
+   classes (with the dashboard's diagnostics pointer for each, e.g.
+   "summer-concentrated, peak tranche"). Commit the bundle's
+   `calibration_attestation.json` alongside the other per-run files whenever it
+   exists or is added.
 
 After bulk changes (deleting/relabelling bundles, payload schema changes), do
 a full rebuild with `python scripts/regen_dashboard.py` (re-renders every
