@@ -87,6 +87,7 @@ from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     effective_reliability_deployment_mw,
     ercot_reserve_coopt_inputs,
+    pjm_reserve_coopt_inputs,
     reserve_headroom,
     scarcity_prices,
 )
@@ -605,6 +606,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     reserve_requirement=coopt_req,
                     reserve_eligible=coopt_elig,
                     reserve_storage=True,
+                    ordc_penalties=coopt_pens,
+                    ordc_step_widths=coopt_widths,
+                )
+            # PJM analogue: the measured PJM_RTO Primary Reserve requirement
+            # (~3.4 GW) clears against the published vertical two-step ORDC
+            # (Primary/RTO, $850/$300/+190 MW) inside the LP, so the reserve
+            # clearing price emerges as the balance-row dual and lifts the energy
+            # LMP (PJM RT = LMP + reserve price). Withholding is its pre-condition
+            # (and mutually exclusive with the post-solve ORDC overlay). See
+            # docs/multi-iso/pjm-reserve-ordc.md.
+            elif getattr(config, "energy_reserve_coopt", False) and iso == "PJM":
+                (
+                    coopt_req,
+                    coopt_elig,
+                    coopt_pens,
+                    coopt_widths,
+                ) = pjm_reserve_coopt_inputs(config, fleet_arrays, config.hours)
+                dispatch_kwargs.update(
+                    reserve_requirement=coopt_req,
+                    reserve_eligible=coopt_elig,
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )

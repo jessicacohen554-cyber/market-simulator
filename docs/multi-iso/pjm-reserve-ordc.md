@@ -278,6 +278,40 @@ pre-solve withholding only approximated; withholding is its pre-condition.)
 Note: adds `R` columns for the reserve pool — memory-heavy at PJM plant-level
 (energy-only already nears the box limit), so solve serially / profile first.
 
+**Phase 2 build status & the bind gate (2026-06-22).** The co-opt inputs and the
+runner branch are built (`scarcity.pjm_reserve_coopt_inputs`, the PJM analogue of
+`ercot_reserve_coopt_inputs`: measured `pr_req_mw`+190 RHS, published Primary/RTO
+two-step curve, generic thermal eligibility; `runner.py` `iso=="PJM"` branch;
+`reserve_price` persisted in `system.parquet`; `tests/test_reserve_coopt.py`). The
+mechanism is unit-validated (slack headroom → reserve $0; tight → $300 lifting the
+energy LMP +$300). **But the as-built reserve rows reuse the existing
+zone-aggregate `dispatch._build_reserve_rows`, which caps a zone's reserve at its
+TOTAL eligible thermal headroom — and that is the measure the honesty gate already
+showed is ~38 GW, far above the ~3.3 GW step.** The bind-gate probe
+(`scripts/probes/_pjm_coopt_bindgate.py`, no LP re-solve — it reads the
+energy-only `pjm_38` dispatch) confirms it empirically for 2024:
+
+| reserve measure (2024) | system-wide GW, min / p50 | hours < req (3.6 GW) | verdict |
+|---|---|---|---|
+| zone-aggregate total headroom (as-built) | 7.34 / 50.5 | 0 / 8760 | clears at **$0** every hour |
+| plant-level online headroom | 0.81 / 21.6 | 16 | tail only |
+| online + 10-min ramp-deliverable | 0.54 / 10.3 | 49 | tail only, at penalty |
+
+So the published vertical step **never fires** under the as-built co-opt (finding
+#2: idle eligible headroom ≫ requirement). A deliverable/ramp cap (finding #3)
+thins reserve enough to cross the requirement in only ~49 h/yr — and those bind at
+the **penalty** step ($300–850), the shortage regime that *overshoots* the $75–200
+band, while the broad afternoon band still sits on free deliverable headroom
+(median 10.3 GW, 2.9× the requirement). The $75–200 **opportunity-cost** middle
+therefore needs the *per-gen* `R[g] ≤ ramp10[g]` reserve rows (so reserve competes
+with energy on the marginal unit) **plus** the Phase-1 commitment tightening — not
+the ramp cap alone. The per-gen build is **memory-infeasible on the 15 GB box**
+(the zone-aggregate co-opt already OOMs at ~16 GB; per-gen reserve vars at PJM
+plant scale are heavier) and is **blocked on ramp-rate data absent from
+`FleetArrays`**. Reported per claude.md #11 — breakpoint not lowered, penalty not
+inflated. Commitment posture (Phase 1) is the prerequisite lever, coupled with the
+cheap-marginal-coal suppression (`docs/multi-iso/pjm-coal-offer-handoff-2026-06.md`).
+
 **Phase 3 — retune offer curves** to the corrected structure (the level), only
 after phases 1–2 are in.
 
