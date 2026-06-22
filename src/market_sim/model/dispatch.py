@@ -479,6 +479,8 @@ def _build_reserve_rows(
     reserve_eligible: np.ndarray,
     storage_zone_idx: np.ndarray | None = None,
     storage_power_cap: np.ndarray | float | None = None,
+    balance_zone_mask: np.ndarray | None = None,
+    balance_ordc_counts: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
 
@@ -493,16 +495,30 @@ def _build_reserve_rows(
       ``sum_{eligible g in z} P[g,t] + R_z[z,t] <= sum_{eligible g in z}
       cap[g,t]``. The zone's thermal capacity is split between energy and upward
       reserve, so committing energy consumes reserve headroom and vice-versa.
-    * **Reserve balance** -- for each hour ``t``:
-      ``sum_z R_z[z,t] + sum_k ORDC_k[t] >= requirement[t]``. The ORDC shortfall
-      steps let the requirement go unmet at the published penalty price, so the
-      balance-row dual is the reserve clearing price.
+    * **Reserve balance** -- one row per *reserve family* ``f`` and hour ``t``:
+      ``sum_{z in family f} R_z[z,t] + sum_{k in family f} ORDC_k[t]
+      >= requirement[f,t]``. The ORDC shortfall steps let the requirement go
+      unmet at the published penalty price, so the binding family's balance-row
+      dual is that family's reserve clearing price.
+
+    A *family* is one (region, reserve-product) balance constraint. ERCOT and
+    PJM run a single system-wide family (every zone, every ORDC step), which is
+    the default when ``balance_zone_mask`` is ``None`` and reproduces the
+    legacy single-row LP byte-identically. NYISO runs nested *locational*
+    families (NYCA ⊃ East ⊃ SENY ⊃ NYC): the shared per-zone ``R_z`` variables
+    feed every family that contains the zone, so a downstate reserve shortage
+    stacks the East/SENY/NYC family penalties into the downstate zonal LMP even
+    when the system is long on reserves — the locational scarcity the
+    NYCA-aggregate curve never sees. ``balance_zone_mask[f]`` selects family
+    ``f``'s member zones and ``balance_ordc_counts[f]`` its slice of the
+    family-major ORDC block.
 
     Args:
         layout: Variable layout (must have ``n_reserve == n_zones``).
         fleet: Fleet arrays supplying ``pmax``, ``(n_gen, T)`` availability and
             per-generator ``zone_idx``.
-        reserve_requirement: ``(T,)`` hourly reserve requirement in MW.
+        reserve_requirement: ``(T,)`` (single system-wide family) or
+            ``(n_families, T)`` hourly reserve requirement in MW.
         reserve_eligible: ``(n_gen,)`` boolean of reserve-eligible generators.
         storage_zone_idx: ``(n_storage,)`` zone of each storage unit. When given
             (with ``storage_power_cap``), storage backs upward reserve too —
@@ -510,11 +526,19 @@ def _build_reserve_rows(
             them understates reserve supply and overstates scarcity.
         storage_power_cap: ``(n_storage,)`` or ``(n_storage, T)`` MW power cap;
             a unit's upward reserve room is ``cap - discharge + charge``.
+        balance_zone_mask: ``(n_families, n_zones)`` boolean — member zones of
+            each reserve family. ``None`` builds a single system-wide family
+            spanning every zone (the legacy ERCOT/PJM behaviour).
+        balance_ordc_counts: ``(n_families,)`` number of ORDC shortfall steps
+            owned by each family; they partition the family-major ORDC block
+            and must sum to ``layout.n_ordc_steps``. ``None`` assigns every step
+            to the single system-wide family.
 
     Returns:
         ``(block, row_lower, row_upper)``: the stacked headroom + balance rows
         and their bounds. Headroom rows are ``<=`` (lower ``-inf``); balance
-        rows are ``>=`` (upper ``+inf``).
+        rows are ``>=`` (upper ``+inf``). Balance rows are family-major within
+        each hour (row ``t*n_families + f``).
     """
     T = layout.T
     n_zones = layout.n_zones
@@ -581,16 +605,47 @@ def _build_reserve_rows(
     hr_upper = zone_cap.T.ravel()
     hr_lower = np.full(n_zones * T, -np.inf)
 
-    # --- Reserve-balance per-hour row, (1, vph): 1 on every reserve and ORDC
-    # column. sum_z R_z + sum_k ORDC_k >= requirement.
-    bal_row = sp.lil_matrix((1, layout.vars_per_hour))
-    for z in range(n_zones):
-        bal_row[0, layout._reserve_off + z] = 1.0
-    for k in range(layout.n_ordc_steps):
-        bal_row[0, layout._ordc_off + k] = 1.0
-    balance = sp.kron(sp.eye(T, format="csr"), bal_row.tocsr(), format="csr")
-    bal_lower = np.asarray(reserve_requirement, dtype=float).ravel()
-    bal_upper = np.full(T, np.inf)
+    # --- Reserve-balance per-hour block, (n_families, vph): for family f a +1
+    # on its member zones' reserve columns and a +1 on its slice of the ORDC
+    # block. Row f reads sum_{z in f} R_z + sum_{k in f} ORDC_k >= req[f].
+    # Single-family default (mask None) is one row over every zone/step — the
+    # legacy ERCOT/PJM LP, byte-identical.
+    if balance_zone_mask is None:
+        zmask = np.ones((1, n_zones), dtype=bool)
+        req2d = np.asarray(reserve_requirement, dtype=float).reshape(1, T)
+        ordc_counts = np.array([layout.n_ordc_steps], dtype=int)
+    else:
+        zmask = np.asarray(balance_zone_mask, dtype=bool)
+        req2d = np.asarray(reserve_requirement, dtype=float).reshape(zmask.shape[0], T)
+        ordc_counts = np.asarray(balance_ordc_counts, dtype=int)
+    n_fam = zmask.shape[0]
+    brows: list[np.ndarray] = []
+    bcols: list[np.ndarray] = []
+    bvals: list[np.ndarray] = []
+    # reserve columns, family-by-family (vectorized within each family)
+    for f in range(n_fam):
+        zsel = np.flatnonzero(zmask[f])
+        brows.append(np.full(zsel.size, f))
+        bcols.append(layout._reserve_off + zsel)
+        bvals.append(np.ones(zsel.size))
+    # ORDC columns: family-major block, family f owns the next ordc_counts[f]
+    off = 0
+    for f in range(n_fam):
+        k = int(ordc_counts[f])
+        if k:
+            idx = np.arange(off, off + k)
+            brows.append(np.full(k, f))
+            bcols.append(layout._ordc_off + idx)
+            bvals.append(np.ones(k))
+            off += k
+    bal_per_hour = sp.coo_matrix(
+        (np.concatenate(bvals), (np.concatenate(brows), np.concatenate(bcols))),
+        shape=(n_fam, layout.vars_per_hour),
+    ).tocsr()
+    balance = sp.kron(sp.eye(T, format="csr"), bal_per_hour, format="csr")
+    # Hour-major RHS (row t*n_fam + f): req2d is (n_fam, T) -> transpose -> ravel.
+    bal_lower = req2d.T.ravel()
+    bal_upper = np.full(n_fam * T, np.inf)
 
     block = sp.vstack([headroom, balance], format="csr")
     row_lower = np.concatenate([hr_lower, bal_lower])
@@ -615,6 +670,8 @@ def build_constraints(
     reserve_requirement: np.ndarray | None = None,
     reserve_eligible: np.ndarray | None = None,
     reserve_storage_power_cap: np.ndarray | float | None = None,
+    reserve_balance_zone_mask: np.ndarray | None = None,
+    reserve_balance_ordc_counts: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -879,6 +936,8 @@ def build_constraints(
             elig,
             storage_zone_idx=storage_zone_idx,
             storage_power_cap=reserve_storage_power_cap,
+            balance_zone_mask=reserve_balance_zone_mask,
+            balance_ordc_counts=reserve_balance_ordc_counts,
         )
         A = sp.vstack([A, res_block], format="csr")
         row_lower = np.concatenate([row_lower, res_lower])
@@ -1183,6 +1242,8 @@ class DispatchModel:
         reserve_storage: bool = False,
         ordc_penalties: np.ndarray | None = None,
         ordc_step_widths: np.ndarray | None = None,
+        reserve_balance_zone_mask: np.ndarray | None = None,
+        reserve_balance_ordc_counts: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -1204,6 +1265,14 @@ class DispatchModel:
         coopt = reserve_requirement is not None
         n_reserve = n_zones if coopt else 0
         n_ordc_steps = 0 if not coopt or ordc_penalties is None else len(ordc_penalties)
+        # Reserve families: one system-wide balance row (ERCOT/PJM) by default,
+        # or n locational families when a per-family zone mask is supplied
+        # (NYISO nested reserve regions).
+        n_families = (
+            1
+            if not coopt or reserve_balance_zone_mask is None
+            else int(np.asarray(reserve_balance_zone_mask).shape[0])
+        )
 
         layout = VariableLayout(
             n_gen=n_gen,
@@ -1232,6 +1301,8 @@ class DispatchModel:
             reserve_requirement=reserve_requirement,
             reserve_eligible=reserve_eligible,
             reserve_storage_power_cap=(storage_power_cap if reserve_storage else None),
+            reserve_balance_zone_mask=reserve_balance_zone_mask,
+            reserve_balance_ordc_counts=reserve_balance_ordc_counts,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -1315,8 +1386,10 @@ class DispatchModel:
         self._coopt = coopt
         self.ordc_penalties = ordc_penalties
         # Reserve block = per-zone shared-headroom rows (n_zones*T) + reserve-
-        # balance rows (T), appended last; the balance rows are the final T.
-        self._n_reserve_rows = (n_zones * T + T) if coopt else 0
+        # balance rows (n_families*T), appended last; the balance rows are the
+        # final n_families*T (family-major within each hour).
+        self._n_families = n_families
+        self._n_reserve_rows = (n_zones * T + n_families * T) if coopt else 0
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
         # year_basis). Generator add/retire changes only columns -- capacity is a
@@ -1448,7 +1521,15 @@ class DispatchModel:
         reserve_dispatch = reserve_price = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
-            reserve_price = row_dual[-T:].reshape(T)
+            # Balance rows are the final n_families*T, family-major per hour.
+            # Report the per-hour SUM across families as the (T,) reserve price:
+            # for a single system family this is exactly the legacy balance dual;
+            # for NYISO's nested families it is the total stacked reserve shadow
+            # price (the locational per-zone components are already folded into
+            # each zone's energy LMP via the shared-headroom dual).
+            n_fam = self._n_families
+            balance_duals = row_dual[-(n_fam * T) :].reshape(T, n_fam)
+            reserve_price = balance_duals.sum(axis=1)
 
         return DispatchResult(
             dispatch=dispatch,
@@ -1677,6 +1758,8 @@ def solve_dispatch(
     reserve_storage: bool = False,
     ordc_penalties: np.ndarray | None = None,
     ordc_step_widths: np.ndarray | None = None,
+    reserve_balance_zone_mask: np.ndarray | None = None,
+    reserve_balance_ordc_counts: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -1774,6 +1857,8 @@ def solve_dispatch(
         reserve_storage=reserve_storage,
         ordc_penalties=ordc_penalties,
         ordc_step_widths=ordc_step_widths,
+        reserve_balance_zone_mask=reserve_balance_zone_mask,
+        reserve_balance_ordc_counts=reserve_balance_ordc_counts,
         link_bidirectional=link_bidirectional,
         T=T,
     )
