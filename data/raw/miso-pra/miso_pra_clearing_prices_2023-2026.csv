@@ -1,0 +1,18 @@
+planning_year,season,zone_scope,clearing_price_usd_per_mw_day,note,source
+2023-24,Summer,system (all LRZ),10,first seasonal PRA; uniform across footprint,utilitydive-650727
+2023-24,Fall,system (all LRZ except 9),15,,utilitydive-650727
+2023-24,Fall,LRZ 9 (LA/E.TX - South),59,locational separation,utilitydive-650727
+2023-24,Winter,system (all LRZ except 9),2,,utilitydive-650727
+2023-24,Winter,LRZ 9 (LA/E.TX - South),19,locational separation,utilitydive-650727
+2023-24,Spring,system (all LRZ),10,,utilitydive-650727
+2024-25,Summer,system (all LRZ),30.00,,enelnorthamerica-2024;utilitydive-714403
+2024-25,Fall,system (all LRZ except 5),15.00,,enelnorthamerica-2024
+2024-25,Fall,LRZ 5 (Missouri - Central),719.81,cleared at seasonal CONE; 872 MW deficit,enelnorthamerica-2024;utilitydive-714403
+2024-25,Winter,system (all LRZ),0.75,,enelnorthamerica-2024
+2024-25,Spring,system (all LRZ except 5),34.10,,enelnorthamerica-2024
+2024-25,Spring,LRZ 5 (Missouri - Central),719.81,cleared at seasonal CONE; 872 MW deficit,enelnorthamerica-2024;utilitydive-714403
+2025-26,Summer,system (all LRZ),666.50,record high; ~22x prior summer,utilitydive-746576;enelnorthamerica-2025
+2025-26,Fall,North/Central subregion,91.60,,utilitydive-746576;enelnorthamerica-2025
+2025-26,Fall,South subregion,74.09,,utilitydive-746576;enelnorthamerica-2025
+2025-26,Winter,system (all LRZ),33.20,,enelnorthamerica-2025
+2025-26,Spring,system (all LRZ),69.88,,enelnorthamerica-2025
