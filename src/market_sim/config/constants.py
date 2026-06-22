@@ -1754,6 +1754,45 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
 }
 
 
+# NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
+# gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
+# zone, the fraction of that zone's hourly load that must be met by IN-ZONE
+# dispatchable thermal generation. Long Island (zone K) is cable-islanded and
+# carries NYISO locational-minimum-installed-capacity (LMIC) / local-reliability
+# rules that keep its own gas-steam + peaker fleet running rather than importing
+# the full cable rating of cheap NYC gas. The economic LP under-runs the LI
+# fleet (model 3.7 vs EIA-923 8.52 TWh, 2023). The fraction is anchored on the
+# 2023 realized LI self-supply share (8.52 TWh gen / ~17.6 TWh load = 0.48),
+# which is what the LMIC requirement enforces — a load-scaling, forward-
+# reproducible rule, NOT a pin to measured generation (CLAUDE.md rule #12). Set
+# a touch below the realized share so the floor never over-forces. NYC (zone J)
+# is deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh
+# (it cannot import enough, so it self-supplies) — its idle peakers are a
+# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# Source: NYISO Locational Installed Capacity Requirements (Gold Book); EIA-923
+# zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
+NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
+    "Long_Island": 0.45,
+}
+
+# NYISO firm (must-flow) import baseload (transmission.inject_nyiso_firm_imports,
+# gated on ScenarioConfig.nyiso_firm_imports). Per priced-node import tranche,
+# the fraction of its capacity that flows as FIRM, price-insensitive baseload
+# (the long-term Hydro-Québec / Ontario schedules that flow regardless of NY's
+# hourly price), set as an hourly min_gen floor on that import row. HQ is firm
+# economy hydro that already clears ~100% of 2023 hours, so flooring it is
+# structurally faithful and never binds tighter than reality; Ontario is left
+# economic (0.0) so the firm floor stays below the measured lightest-import hour
+# (NY imported >=922 MW in 98% of 2023 hours) and cannot force a phantom
+# over-import. The lever's real value is cheap-overnight hours and lower-price
+# years (2024) where the economic node would otherwise back the baseload off.
+# FORWARD-REPRODUCIBLE (a firm schedule reproduces for any year); Tier 3.
+NYISO_FIRM_IMPORT_FLOOR_FRAC: dict[str, float] = {
+    "HQ_hydro": 1.0,
+    "IESO_Ontario": 0.0,
+}
+
+
 EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # CAISO midday solar-oversupply exports. Tier 3 (calibration) — fitted
     # alongside the import tranches to the pooled 2023-2025 CISO
