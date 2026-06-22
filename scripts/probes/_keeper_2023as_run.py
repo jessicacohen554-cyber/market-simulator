@@ -59,6 +59,10 @@ def main(argv: list[str]) -> int:
     commitment = cfg["commitment"]
     if os.environ.get("KEEPER_COMMIT"):
         commitment = os.environ["KEEPER_COMMIT"].lower() in ("1", "true", "on")
+    #   KEEPER_ORDC_TABLE=<csv> -> use ERCOT's published NP6-576-ER LOLP table in
+    #                             the co-opt ORDC curve (grounds mu/sigma; the
+    #                             keeper uses the neutral mu=0 fallback).
+    ordc_lolp_params_path = os.environ.get("KEEPER_ORDC_TABLE") or None
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
     for grp, bands in delta_override.items():
@@ -97,6 +101,7 @@ def main(argv: list[str]) -> int:
         ercot_storage_as_reserve_from_year=from_year,
         ercot_ecrs_requirement=ercot_ecrs,
         ercot_ecrs_requirement_from_year=2023,
+        ordc_lolp_params_path=ordc_lolp_params_path,
         as_reserve_formula=False,
         storage_as_commitment=True,
         gas_offer_curve=False,
