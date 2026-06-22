@@ -134,6 +134,34 @@ a full rebuild with `python scripts/regen_dashboard.py` (re-renders every
 registered run from its bundle) and commit any changed `runs/*.js`, sidecars
 and bench parts.
 
+## Calibration Status page (all-ISO summary)
+
+The dashboard's top-level **Calibration Status** view (the 4th View tab) is a
+one-page, every-ISO summary of each market's current keeper: the headline
+determination, the C1–C6 status matrix with per-year magnitudes and the
+MODEL-MISS vs ACCEPTED-LIMITATION classification, the tests conducted, and the
+best-practice justification. It renders client-side from
+`frontend/data/backcast/status.js` (`window.BC.status`).
+
+Unlike manifest.js/benchmark.js, **status.js is a committed file** (built where
+the bundles live, not at deploy time): the C6 governance verdict reads each
+bundle's `calibration_attestation.json`, which the Pages deploy's sparse
+checkout does not fetch. So when a keeper changes:
+
+1. Update the current keeper run id for that ISO in
+   `frontend/data/backcast/keepers.json`.
+2. Regenerate + commit the status data (re-runs `calibration_verdict.py` for
+   every keeper, so the page can never disagree with the gate):
+   ```bash
+   python scripts/build_status.py
+   git add frontend/data/backcast/keepers.json frontend/data/backcast/status.js
+   ```
+   `python scripts/build_status.py --check` fails (exit 1) if status.js is stale
+   vs the current verdicts — a cheap CI/pre-commit guard.
+
+`build_manifest.py` only wires the committed status.js into the shell; it never
+regenerates it. Leave backcast-results.html uncommitted as always.
+
 ## Notes
 
 - The dashboard fetches data via `<script src>` + `DecompressionStream`, which
