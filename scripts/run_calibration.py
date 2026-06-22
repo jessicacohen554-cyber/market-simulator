@@ -1689,6 +1689,20 @@ def run_year(
                 iso,
                 year,
             )
+        # Symmetric export side of the same bidirectional intertie: price the
+        # neighbor-export sink at the measured hub too, so CAISO exports its
+        # midday glut whenever its internal price drops below the neighbor's
+        # (the static $8 block only bit near $0; the model was stuck importing
+        # 100% of hours and never reversing to the measured +3.5 GW export).
+        from market_sim.model.transmission import inject_caiso_export_hub_prices
+
+        if inject_caiso_export_hub_prices(fleet_arrays, mc_base, iso, year):
+            logger.info(
+                "%s %d: neighbor-export sink repriced to the measured WECC "
+                "intertie hub LMP — intertie can reverse to export",
+                iso,
+                year,
+            )
 
     # CAISO gas-coupled imports: shift the desert-SW gas import tranches
     # (DSW_CCGT, DSW_CT) by the measured commodity-gas delta so they track the
