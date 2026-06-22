@@ -18,6 +18,8 @@ the same machinery now serves PJM (and is data-driven, so NYISO/NEISO only
 need constants entries).
 """
 
+import os as _os
+
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
@@ -529,7 +531,6 @@ def inject_caiso_import_gas_coupling(
 # (renewable_keep_running_value) — no new fitted price constant. Only the SOLAR
 # import block is shaped; the desert-SW gas blocks (DSW_CCGT/DSW_CT) keep their
 # positive gas SRMC.
-import os as _os
 
 # Net-load band over which the offer collapses. Full collapse (s=1) at/below the
 # LO percentile, none above HI. The LO percentile is anchored to the observed
