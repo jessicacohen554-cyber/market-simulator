@@ -1,5 +1,19 @@
 # NYISO calibration — best config so far
 
+> **DETERMINATION (2026-06-22, scorer): NOT-YET** for the registered keeper
+> `nyiso-15-transco-z6` (`python scripts/calibration_verdict.py --run-id
+> 2026-06-21-nyiso-15-transco-z6`). BTM regen done — byte-faithful re-solve
+> (gmModel reproduces the keeper to <0.1%) + `btm.parquet`, scoring CHP classes
+> on the grid-delivered basis; **2024 CC_CHP clears** (was −2.93 TWh). C6
+> governance now PASS (truthful attestation added). Deciding fails are genuine
+> **MODEL MISSes** (not ledgerable per rubric §3): C1 CC_REGULAR −7.1/−13.3/−7.9%
+> under-dispatch (no BTM component — gas-basis / interchange-wedge merit issue,
+> the Transco-Z6/Iroquois overlay is already in the keeper), gas family
+> +5.4/−10.6/−7.3%, and ST_GAS ±2–4 TWh; 2023/2025 CC_CHP +2.3/+2.9 TWh is model
+> over-run of some CC-CHP plants above their measured EIA-923 grid output. The
+> CC_REGULAR/interchange merit split is the next model-side frontier, not chased
+> in this BTM-attestation pass.
+
 Keeper: **`nyiso p11 smoke 2023` config (P9b served-interchange defaults),
 promoted to the P12 sign-off keeper** (2026-06-12, bundle
 `results/calibration/nyiso_smoke_2023`, highspy 1.x). P12 ran the offer-curve /
