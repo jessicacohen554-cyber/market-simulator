@@ -127,6 +127,52 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
  color:var(--iso-ercot,var(--accent,#1a6dd0));text-decoration:none;border:1px solid var(--border);
  border-radius:var(--radius-md,8px);padding:6px 12px;background:#fbfcfd}
 .deepdive:hover{background:#f0f3f6;text-decoration:underline}
+/* ===== Calibration Status view (all-ISO summary) ===== */
+.mute{color:var(--ink-faint)}
+.cs-legend{display:flex;flex-wrap:wrap;gap:16px;font-size:var(--fs-xs);color:var(--ink-muted);margin-top:8px;line-height:1.5}
+.cs-legend span{display:inline-flex;align-items:center;gap:6px}
+.cs-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.dot-cal{background:var(--success)}.dot-cav{background:#cf9a1e}.dot-not{background:var(--danger)}
+.cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-md)}
+.cs-card{border:1px solid var(--border);border-left-width:5px;border-radius:var(--radius-md);padding:var(--space-md);background:var(--bg-surface);box-shadow:var(--shadow-sm)}
+.cs-card.det-cal{border-left-color:var(--success)}
+.cs-card.det-cav{border-left-color:#cf9a1e}
+.cs-card.det-not{border-left-color:var(--danger)}
+.cs-cardhd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.cs-iso{font-weight:800;font-size:var(--fs-lg)}
+.cs-badge{font-size:var(--fs-xs);font-weight:800;letter-spacing:.02em;color:#fff;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.cs-badge.det-cal{background:var(--success)}.cs-badge.det-cav{background:#cf9a1e}.cs-badge.det-not{background:var(--danger)}
+.cs-keeper{font-size:var(--fs-sm);color:var(--ink-muted);margin-bottom:8px;line-height:1.5}
+.cs-keeper .rid{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--accent-deep)}
+.cs-reason{font-size:var(--fs-sm);line-height:1.5;margin:0 0 10px}
+.cs-marks{display:flex;flex-wrap:wrap;gap:5px}
+.cs-mk{display:inline-flex;flex-direction:column;align-items:center;min-width:34px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;background:#fbfcfd}
+.cs-mk .code{font-size:9px;letter-spacing:.02em;color:var(--ink-muted);font-weight:700}
+.cs-mk .glyph{font-size:14px;font-weight:800;line-height:1.15}
+.cs-detail{border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:10px;background:var(--bg-surface);overflow:hidden}
+.cs-detail>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:700;background:#f7f9fb}
+.cs-detail>summary::-webkit-details-marker{display:none}
+.cs-detail>summary::before{content:"\25B8";color:var(--ink-muted);font-size:12px;flex:0 0 auto}
+.cs-detail[open]>summary::before{content:"\25BE"}
+.cs-detail>summary .cs-badge{margin-left:auto}
+.cs-st{font-weight:800;text-align:center;font-size:var(--fs-base)}
+.cs-gate{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.04em;color:var(--ink-muted)}
+.cs-matrix td,.cs-tests td{white-space:normal;vertical-align:top}
+.cs-matrix td:first-child{font-weight:600}
+.cs-tests td:first-child{font-weight:700;white-space:nowrap}
+.cs-rec{padding:2px 0;font-size:var(--fs-sm);line-height:1.5}
+.cs-rec .mk{font-weight:800;margin-right:5px}
+.cs-rec b{font-weight:700}
+.cs-allok{color:var(--ink-muted);font-size:var(--fs-sm)}
+.cs-tag{display:inline-block;font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:1px;white-space:nowrap}
+.tag-miss{background:#fdecea;color:#b32218}
+.tag-lim{background:#fef6e7;color:#8a6400}
+.cs-ledger{font-size:var(--fs-xs);color:var(--ink-muted);line-height:1.5;margin:3px 0 5px 20px;padding-left:8px;border-left:2px solid var(--border)}
+.cs-method{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-md)}
+.cs-method .m{border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-md);background:#fbfcfd}
+.cs-method .m h4{font-size:var(--fs-sm);margin:0 0 6px}
+.cs-method .m p{font-size:var(--fs-sm);color:var(--ink);line-height:1.55;margin:0}
+@media(max-width:640px){.cs-grid,.cs-method{grid-template-columns:1fr}}
 </style></head><body>
 <nav class=nav><a class="nav-brand" href="index.html"><span class="nav-brand-mark">&#9650;</span> Market Simulator</a></nav>
 <div id=bctip></div>
@@ -146,10 +192,10 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div id=diag>Loading run data…</div>
   <div class=bc-top>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
-    <button data-p=report class=on>Run report</button><button data-p=charts>Charts</button><button data-p=tables>Tables</button></span></div>
+    <button data-p=report class=on>Run report</button><button data-p=charts>Charts</button><button data-p=tables>Tables</button><button data-p=calib>Calibration Status</button></span></div>
    <div class=ctl id=ctlYear><span class=lab>Year</span><span class=seg id=yearSel></span></div>
    <div class=ctl id=ctlClass><span class=lab>Class</span><select id=classSel></select></div>
-   <div class="ctl ctlwide"><span class=lab>Zones</span><span class=chips id=zoneSel></span></div>
+   <div class="ctl ctlwide" id=ctlZone><span class=lab>Zones</span><span class=chips id=zoneSel></span></div>
   </div>
   <div id=content></div>
  </main>
@@ -985,8 +1031,95 @@ function tablesHTML(id,yr){
  return h;}
 function renderTables(){const id=st.run,yr=st.year;
  document.getElementById("content").innerHTML=tablesHTML(id,yr);wireTips(document.getElementById("content"));}
+// ===== Calibration Status (all-ISO summary, driven by window.BC.status) =====
+// status.js embeds the FULL machine verdict from scripts/calibration_verdict.py
+// for each ISO's current keeper, so everything here is presentation only — no
+// tolerance or determination is recomputed in JS (the page can never disagree
+// with the gate).
+const CS_ORDER=["fuelmix","sysvol","price_mean","price_shape","price_tail","dispatch_corr","co2","storage","governance"];
+const CS_CODE={fuelmix:"C1",sysvol:"C2",price_mean:"C3a",price_shape:"C3b",price_tail:"C3c",dispatch_corr:"C4",co2:"C5a",storage:"C5b",governance:"C6"};
+const CS_MARK={PASS:"✓",CAVEAT:"~",FAIL:"✗",SKIPPED:"·",UNATTESTED:"?"};
+const CS_CLS={PASS:"good",CAVEAT:"ok",FAIL:"bad",SKIPPED:"mute",UNATTESTED:"bad"};
+const CS_DET={CALIBRATED:"det-cal","CALIBRATED-WITH-CAVEATS":"det-cav","NOT-YET":"det-not"};
+function csEsc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function csYears(ys){if(!ys||!ys.length)return"—";const a=ys.slice().sort((x,y)=>x-y);
+ let cont=a.length>1;for(let i=1;i<a.length;i++)if(a[i]!==a[i-1]+1)cont=false;
+ return cont?`${a[0]}–${a[a.length-1]}`:a.join(", ");}
+function csGlyph(status){return `<span class="glyph ${CS_CLS[status]||"mute"}">${CS_MARK[status]||"·"}</span>`;}
+function csCardMarks(v){return CS_ORDER.map(cid=>{const c=v.criteria[cid];const s=c?c.status:"SKIPPED";
+ return `<span class=cs-mk title="${csEsc((c&&c.label)||cid)} — ${s}"><span class=code>${CS_CODE[cid]}</span>${csGlyph(s)}</span>`;}).join("");}
+function csReason(v){return v.reasons&&v.reasons.length?v.reasons.join("; "):"All criteria pass; governance attested.";}
+function csDetailRows(v){return CS_ORDER.map(cid=>{const c=v.criteria[cid];if(!c)return"";
+ let body;
+ if(cid==="governance"){const g=(c.records&&c.records[0])||{};
+  body=`<div class=cs-rec><span class="mk ${CS_CLS[c.status]||"mute"}">${CS_MARK[c.status]||"·"}</span>${csEsc(g.magnitude||c.status)}</div>`;}
+ else{const notable=(c.records||[]).filter(r=>r.status!=="PASS");
+  if(!notable.length)body=`<span class=cs-allok>all scorable years within tolerance</span>`;
+  else body=notable.map(r=>{
+   const yr=r.year?`${r.year} `:"";const key=r.key?`${csEsc(r.key)} `:"";
+   const tol=r.tol?` <span class=cs-gate>(tol ${csEsc(r.tol)})</span>`:"";
+   let tag="";
+   if(r.classification==="ACCEPTED MEASURED-INPUT LIMITATION")tag=`<span class="cs-tag tag-lim">ACCEPTED LIMITATION</span>`;
+   else if(r.classification==="MODEL MISS")tag=`<span class="cs-tag tag-miss">MODEL MISS</span>`;
+   const led=r.ledger_reason?`<div class=cs-ledger>${csEsc(r.ledger_reason)}</div>`:"";
+   return `<div class=cs-rec><span class="mk ${CS_CLS[r.status]||"mute"}">${CS_MARK[r.status]||"·"}</span><b>${yr}${key}</b>${csEsc(r.magnitude)}${tol}${tag}${led}</div>`;
+  }).join("");}
+ return `<tr><td>${csEsc(c.label)}</td><td class=cs-gate>${c.hard?"HARD":"soft"}</td><td class="cs-st ${CS_CLS[c.status]||"mute"}">${CS_MARK[c.status]||"·"}</td><td>${body}</td></tr>`;
+}).join("");}
+function renderCalibStatus(){
+ const S=window.BC&&window.BC.status,host=document.getElementById("content");
+ if(!S||!S.keepers||!S.keepers.length){
+  host.innerHTML='<div class=panel><h2>Calibration Status</h2><p class=psub>Status data is unavailable — <code>frontend/data/backcast/status.js</code> did not load. Re-run <code>python scripts/build_status.py</code> so the all-ISO verdicts are emitted.</p></div>';return;}
+ const cards=S.keepers.map(v=>{const det=CS_DET[v.determination]||"det-not";
+  const blocked=v.data_blocked_years&&v.data_blocked_years.length?` · <span class=bad>blocked ${v.data_blocked_years.join(", ")}</span>`:"";
+  return `<article class="cs-card ${det}">
+   <div class=cs-cardhd><span class=cs-iso>${csEsc(v.iso)}</span><span class="cs-badge ${det}">${csEsc(v.determination)}</span></div>
+   <div class=cs-keeper><span class=rid>${csEsc(v.label)}</span> · years ${csYears(v.target_years)}${blocked}</div>
+   <p class=cs-reason>${csEsc(csReason(v))}</p>
+   <div class=cs-marks>${csCardMarks(v)}</div>
+  </article>`;}).join("");
+ const details=S.keepers.map((v,i)=>{const det=CS_DET[v.determination]||"det-not";
+  return `<details class=cs-detail ${i===0?"open":""}>
+   <summary><span class=cs-iso style="font-size:var(--fs-base)">${csEsc(v.iso)}</span> <span class="cs-keeper rid" style="margin:0">${csEsc(v.label)}</span><span class="cs-badge ${det}">${csEsc(v.determination)}</span></summary>
+   <div class=tablewrap><table class=cs-matrix><thead><tr><th>Criterion</th><th>Gate</th><th>Status</th><th>Per-year detail · classification</th></tr></thead>
+   <tbody>${csDetailRows(v)}</tbody></table></div>
+  </details>`;}).join("");
+ const tests=(S.rubric||[]).map(r=>`<tr><td>${csEsc(r.label)}</td><td>${csEsc(r.measures)}</td><td>${csEsc(r.source)}</td><td>${csEsc(r.tol)}</td></tr>`).join("");
+ const method=(S.methodology||[]).map(m=>`<div class=m><h4>${csEsc(m.head)}</h4><p>${csEsc(m.body)}</p></div>`).join("");
+ host.innerHTML=`
+  <div class=panel>
+   <h2>Calibration Status — every ISO's current keeper</h2>
+   <p class=psub>Headline determination for each market's newest keeper, scored from committed artifacts by <code>scripts/calibration_verdict.py</code> against the calibration-determination rubric — so this page can never disagree with the gate. Generated ${csEsc(S.generated||"")}.</p>
+   <div class=cs-legend>
+    <span><i class="cs-dot dot-cal"></i> <b>CALIBRATED</b> — every criterion passes, governance attested</span>
+    <span><i class="cs-dot dot-cav"></i> <b>CALIBRATED-WITH-CAVEATS</b> — only ledgered measured-input limitations / unscored soft criteria</span>
+    <span><i class="cs-dot dot-not"></i> <b>NOT-YET</b> — an undocumented out-of-tolerance criterion (a model miss to fix)</span>
+   </div>
+   <div class=cs-grid style="margin-top:var(--space-md)">${cards}</div>
+  </div>
+  <div class=panel>
+   <h2>C1–C6 status matrix</h2>
+   <p class=psub>${csGlyph("PASS")} pass · ${csGlyph("CAVEAT")} caveat (ledgered limitation) · ${csGlyph("FAIL")} fail (model miss) · ${csGlyph("SKIPPED")} skipped (not scored). Expand a market for the per-year magnitudes and the MODEL-MISS vs ACCEPTED-LIMITATION classification.</p>
+   ${details}
+  </div>
+  <div class=panel>
+   <h2>Tests conducted</h2>
+   <p class=psub>What each criterion measures, its authoritative actual source, and its tolerance (read straight off the scorer's constants).</p>
+   <div class=tablewrap><table class=cs-tests><thead><tr><th>Criterion</th><th>What it measures</th><th>Authoritative actual</th><th>Tolerance</th></tr></thead><tbody>${tests}</tbody></table></div>
+  </div>
+  <div class=panel>
+   <h2>Justification — methodology &amp; best-practice grounding</h2>
+   <p class=psub>Why these determinations are what they are, grounded in energy-modeling best practice.</p>
+   <div class=cs-method>${method}</div>
+  </div>`;
+ if(typeof wireTips==="function")wireTips(host);
+}
 // ---- shell render ----
-function render(){const id=st.run;if(!id){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
+function render(){
+ // Calibration Status is an all-ISO summary independent of the selected run/ISO,
+ // so it renders straight from window.BC.status before the run-required guard.
+ if(st.page==="calib"){syncTopbar();renderCalibStatus();return;}
+ const id=st.run;if(!id){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Select a run.</p></div>';return;}
  ensureRuns([id]).then(()=>{
   if(!MODEL[id]){document.getElementById("content").innerHTML='<div class=panel><p class=psub>Run data failed to load.</p></div>';return;}
   // year/class clamps when the run or ISO changed under the current selection
@@ -1001,8 +1134,12 @@ function render(){const id=st.run;if(!id){document.getElementById("content").inn
 // year at once, so they hide there to keep the bar clean (zones stay — every
 // zone-aware metric honors them on all pages).
 function syncTopbar(){
- document.getElementById("ctlYear").style.display=st.page==="report"?"none":"";
- document.getElementById("ctlClass").style.display=st.page==="charts"?"":"none";
+ const calib=st.page==="calib";
+ // Calibration Status spans every ISO, so the per-run year/class/zone steerers
+ // are hidden there (they only steer the per-run views).
+ document.getElementById("ctlYear").style.display=(calib||st.page==="report")?"none":"";
+ document.getElementById("ctlClass").style.display=(!calib&&st.page==="charts")?"":"none";
+ const cz=document.getElementById("ctlZone");if(cz)cz.style.display=calib?"none":"";
  const ys=st.run?runYears(st.run):[];
  const ysel=document.getElementById("yearSel");
  ysel.innerHTML=ys.map(y=>`<button data-y=${y} class=${y===st.year?"on":""}>${y}</button>`).join("");}
