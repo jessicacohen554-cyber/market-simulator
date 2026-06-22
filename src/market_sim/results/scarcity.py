@@ -65,6 +65,7 @@ from scipy.special import ndtr
 from market_sim.config.constants import (
     ORDC_FLOOR_START_HOUR_2023,
     ORDC_FLOOR_STEPS,
+    PJM_ORDC_CURVE_PATH,
     PJM_PRIMARY_RESERVE_LSC_FACTOR,
 )
 from market_sim.config.paths import RAW_DATA_DIR
@@ -1158,3 +1159,70 @@ def pjm_online_reserve(
     online = plant_disp > 0.5  # plant synchronized this hour
     reserve = np.where(online, plant_avail - plant_disp, 0.0).sum(axis=0)
     return reserve - np.asarray(as_plan_mw, dtype=float)
+
+
+def pjm_reserve_coopt_inputs(
+    config, fleet_arrays: FleetArrays, hours: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Assemble the PJM energy+reserve co-optimization inputs for ``solve_dispatch``.
+
+    The PJM analogue of :func:`ercot_reserve_coopt_inputs`, but built on PJM's
+    *published vertical two-step ORDC* (``data/raw/_validation-source/
+    pjm_ordc_curve.csv``, the ``(Primary, RTO)`` curve ``[(0, 850), (190, 300)]``)
+    rather than a VOLL-anchored LOLP curve, and on the **measured** PJM_RTO
+    Primary Reserve requirement (``pr_req_mw``, ~3.4 GW) rather than a derived
+    demand-curve top. Nothing here is fitted to the LMP residual — the
+    requirement is a measured reliability quantity and the curve is the cited
+    market design (``docs/multi-iso/pjm-reserve-ordc.md``).
+
+    Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
+    ordc_step_widths)``:
+
+    * ``reserve_requirement`` — the hourly reserve-balance RHS = measured Primary
+      requirement ``REQ(t)`` + 190 MW (the curve's outer breakpoint), so the
+      balance row reads ``sum_z R_z + sum_k shortfall_k >= REQ(t) + 190``.
+    * ``reserve_eligible`` — the generic :data:`RESERVE_FUEL_TYPES` thermal mask
+      (:func:`ercot_reserve_eligible`, ISO-agnostic).
+    * ``ordc_penalties`` / ``ordc_step_widths`` — the published step curve as
+      ascending shortfall steps, cheapest band first: penalties ``[300, 850]``
+      $/MWh with widths ``[190, REQ_max]``. The first 190 MW of shortfall
+      (reserves between ``REQ`` and ``REQ+190``) prices at $300, the rest
+      (reserves below ``REQ``) at $850. The inner $850 band's width is the
+      requirement itself (``REQ``, which varies hourly), but the LP layout needs
+      a **constant** width vector, so it is set to ``max_t REQ(t)`` — large enough
+      to absorb the full shortfall in the tightest hour, while the hourly balance
+      RHS (``REQ(t)+190``) caps how much shortfall the LP can actually use.
+
+    The forecast path (no measured parquet) falls back to the structural
+    1.5×-MSSC formula (:func:`pjm_primary_reserve_requirement` on
+    :func:`largest_single_contingency_mw`).
+    """
+    year = int(config.weather_year)
+    req = load_pjm_measured_reserve_requirement(year, hours)
+    if req is None:
+        # Forecast / no measured series: the fleet-responsive 1.5×-MSSC formula.
+        lsc = largest_single_contingency_mw(
+            fleet_arrays.pmax,
+            availability=fleet_arrays.availability,
+            reserve_mask=ercot_reserve_eligible(fleet_arrays),
+            plant_code=fleet_arrays.plant_code,
+        )
+        req = pjm_primary_reserve_requirement(lsc, hours)
+    req = np.asarray(req, dtype=float)
+
+    steps = load_pjm_ordc_curve(PJM_ORDC_CURVE_PATH)[("Primary", "RTO")]
+    outer_offset = float(max(o for o, _ in steps))  # 190 MW (Step-2 breakpoint)
+    # Convert the published curve to ascending shortfall steps. Only the
+    # penalties and the OUTER band width (the constant breakpoint offset) are
+    # requirement-independent; the INNER band width returned here is the nominal
+    # requirement, which we overwrite with max_t REQ(t) so the constant width
+    # vector covers the tightest hour.
+    _req_total_nom, penalties, widths = pjm_ordc_shortfall_steps(
+        steps, float(np.mean(req))
+    )
+    widths = np.asarray(widths, dtype=float).copy()
+    widths[-1] = float(np.max(req))  # inner ($850) band spans [0, REQ_max)
+
+    requirement = req + outer_offset
+    eligible = ercot_reserve_eligible(fleet_arrays)
+    return requirement, eligible, penalties.astype(float), widths.astype(float)
