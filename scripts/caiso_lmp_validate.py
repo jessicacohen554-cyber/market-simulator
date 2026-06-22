@@ -85,7 +85,6 @@ def main() -> None:
     av = pd.read_parquet(VAL)
     av = av[av["year"] == args.year].sort_values("hour")
 
-    T = min(len(av), 8760)
     model = np.full(8760, np.nan)
     model[m["hour"].to_numpy()] = m["price"].to_numpy(float)
     actual = np.full(8760, np.nan)

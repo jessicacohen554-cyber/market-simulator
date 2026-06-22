@@ -1151,6 +1151,66 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     np.testing.assert_allclose(flat[gas_rows], 13.18)
 
 
+def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
+    """NYISO's daily overlay takes its within-month shape from the measured
+    Transco Z6 NY daily spot, mean-preserving on the monthly Iroquois hub.
+
+    Unlike the NEISO leg (a demand-convexity proxy), the NYISO leg
+    (``_nyiso_hub_daily_gas_prices``) is driven by the real daily series: the
+    flat monthly hub (HH $3 + basis $10 = $13) is replaced by a daily series
+    whose mean over the month is still exactly $13 (annual burn unchanged) while
+    the cold day carrying the high Transco quote is repriced above it — the
+    cold-snap spike a monthly mean smears flat (the Jan-2025 case in the doc).
+    """
+    basis_csv = tmp_path / "basis.csv"
+    basis_csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\nNYISO,2024,1,Transco,10.0,test\n"
+    )
+    hours = 31 * 24  # January 2024 only
+    monkeypatch.setattr(
+        "market_sim.data.fuel._henry_hub_monthly", lambda path: {(2024, 1): 3.0}
+    )
+    # Synthetic daily Transco: flat $2 with one cold-day spike to $8 on day 15.
+    daily_quotes = [2.0] * 31
+    daily_quotes[14] = 8.0
+    monkeypatch.setattr(
+        "market_sim.data.fuel._transco_z6_daily",
+        lambda path: {2024: {1: daily_quotes}},
+    )
+    fleet = _sample_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="NYISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
+        gas_hub_basis_overlay=True,
+        gas_hub_basis_daily=True,
+    )
+    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
+
+    gas_rows = np.isin(
+        fleet.fuel_type_idx,
+        (FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]),
+    )
+    gas_jan = fuel_prices[gas_rows]
+    # Mean over the month is exactly the flat monthly hub (mean-preserving).
+    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.0 + 10.0, rtol=1e-6)
+    # Daily resolution: not flat, and the cold day (day 15, the Transco spike)
+    # is the most expensive day, repriced above the $13 monthly mean.
+    daily = gas_jan[0].reshape(31, 24).mean(axis=1)
+    assert daily.std() > 0.5
+    assert daily[14] == daily.max()
+    assert daily[14] > 13.0
+
+    # No daily Transco quotes -> the month keeps the flat monthly hub level.
+    monkeypatch.setattr("market_sim.data.fuel._transco_z6_daily", lambda path: {})
+    flat = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
+    np.testing.assert_allclose(flat[gas_rows], 13.0)
+
+
 def test_hub_basis_overlay_noop_for_other_isos():
     """ERCOT/PJM/CAISO fuel prices are unchanged by the overlay machinery.
 

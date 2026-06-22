@@ -167,6 +167,7 @@ results/calibration/*/system.parquet
 # reconstruction + scarcity adder) are regenerable from the bundle via
 # scripts/derive_*_rcpf_overlay.py — scratch, never committed.
 results/calibration/*/storage.parquet
+results/calibration/*/btm.parquet
 results/calibration/*/availability_rcpf*.parquet
 results/calibration/*/scarcity*.parquet
 # run131 same-extract baseline re-run: gate-only scratch, not registered.
