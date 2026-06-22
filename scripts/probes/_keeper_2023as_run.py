@@ -86,6 +86,23 @@ def main(argv: list[str]) -> int:
         "true",
         "on",
     )
+    #   KEEPER_STGAS_DRAG=1 -> enable the net-load-indexed ST_GAS reliability-
+    #                          drag min-gen floor (the endogenous, weather-driven
+    #                          replacement for the seasonal gas_st_summer_mustrun;
+    #                          see fleet.apply_gas_st_netload_drag_floor). Optional
+    #                          KEEPER_STGAS_DRAG_PARAMS='{"gas_st_drag_slope_per_gw":
+    #                          ..., "gas_st_drag_intercept": ..., "gas_st_drag_cap":
+    #                          ...}' overrides the CAMPD-fitted curve coefficients.
+    gas_st_netload_drag = os.environ.get("KEEPER_STGAS_DRAG", "").lower() in (
+        "1",
+        "true",
+        "on",
+    )
+    gas_st_drag_overrides = (
+        json.loads(os.environ["KEEPER_STGAS_DRAG_PARAMS"])
+        if os.environ.get("KEEPER_STGAS_DRAG_PARAMS")
+        else None
+    )
     sm = cfg.get("coal_prb_sigmoid_overrides", {})
     deltas = cfg.get("offer_curve_deltas") or {}
     for grp, bands in delta_override.items():
@@ -126,6 +143,8 @@ def main(argv: list[str]) -> int:
         ercot_ecrs_requirement=ercot_ecrs,
         ercot_ecrs_requirement_from_year=2023,
         ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+        gas_st_netload_drag=gas_st_netload_drag,
+        gas_st_drag_overrides=gas_st_drag_overrides,
         ordc_lolp_params_path=ordc_lolp_params_path,
         as_reserve_formula=False,
         storage_as_commitment=True,
