@@ -191,6 +191,43 @@ _ISO_HOME_STATES: dict[str, frozenset[str]] = {
 
 _MONTHS_PER_YEAR: int = 12
 
+# ISOs whose solar capacity is spread across geographically distinct zones
+# with materially different tracking mixes, so a single ISO-wide hourly solar
+# SHAPE applied to every zone is wrong (see :func:`_solar_zone_clearsky_shapes`
+# and the CAISO NP15/ZP26/SP15 spread documented there). Gated per ISO so the
+# per-zone redistribution cannot move any other ISO's derived outputs; every
+# ISO not listed keeps the legacy single-shape behaviour. Solar only — wind is
+# already zone-shaped by capacity share and its inter-zone diurnal differences
+# are small.
+_SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
+
+# EIA-860 solar tracking-technology flag columns (Generator_Operable solar
+# schedule), each a ``Y``/``N`` indicator. A plant's nameplate capacity is
+# attributed to the first flag it sets; the per-zone capacity-weighted mix of
+# these three classes drives that zone's clear-sky solar SHAPE.
+# Source: EIA-860 2024, Solar_Operable sheet.
+_SOLAR_TRACKING_FLAGS: tuple[str, str, str] = (
+    "Single-Axis Tracking?",
+    "Fixed Tilt?",
+    "Dual-Axis Tracking?",
+)
+
+# --- Clear-sky solar geometry (numpy-only, reproducible astronomy) ----------
+# Standard textbook solar-position and clear-sky formulae (Cooper declination,
+# Meinel clear-sky beam attenuation, isotropic-sky transposition). These derive
+# only the RELATIVE hourly SHAPE difference between zones with different
+# tracking mixes — never the absolute energy level, which always comes from the
+# measured EIA-930 cf_profile via the aggregate-reconciliation step in
+# :func:`_distribute_by_eia860`. Forward-valid: the same geometry regenerates
+# for any future year and responds to a changed tracking mix.
+_DECLINATION_MAX_DEG: float = 23.45  # Earth axial tilt — Cooper declination model
+_CLEARSKY_TRANSMITTANCE: float = 0.7  # Meinel sea-level clear-sky beam transmittance
+_CLEARSKY_AM_EXPONENT: float = 0.678  # Meinel air-mass exponent (Kasten form)
+_DIFFUSE_FRACTION: float = (
+    0.10  # isotropic clear-sky diffuse as a fraction of beam-horizontal
+)
+_COS_ZENITH_FLOOR: float = 1.0e-3  # guards the 1/cos(zenith) air-mass at the horizon
+
 # ERCOT uncurtailed renewable potential (High Sustained Limit), one parquet
 # per backcast year (``ercot_<year>_hsl_hourly.parquet``). When a year's file
 # is present, the ERCOT backcast builds its CF profiles from the hourly HSL
@@ -868,11 +905,333 @@ def _allocate_to_zones(
     return cf, cap
 
 
+def _clearsky_geometry(
+    lat_deg: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return hourly clear-sky solar geometry at one latitude.
+
+    Computes, for each of the ``HOURS_PER_YEAR`` hours, the solar declination,
+    hour angle, cosine of the zenith angle, and a normalized clear-sky beam
+    (DNI) series at the representative latitude ``lat_deg``. Standard formulae:
+    Cooper's declination, the geometric hour angle about mid-hour solar noon,
+    and the Meinel clear-sky beam attenuation ``τ**(AM**0.678)`` with a simple
+    ``1/cos(zenith)`` air mass. The DNI is normalized to 1.0 at zenith and
+    zeroed whenever the sun is below the horizon.
+
+    Longitude/equation-of-time corrections are deliberately omitted: the SHAPE
+    is only ever used *relatively* between zones at the same hour (the
+    aggregate-reconciliation in :func:`_distribute_by_eia860` divides by the
+    capacity-weighted mean shape), so a constant timing offset shared by all
+    zones cancels. Latitude — which genuinely differs zone to zone — is kept.
+
+    Args:
+        lat_deg: Representative latitude in degrees north.
+
+    Returns:
+        ``(decl, omega, cos_zen, dni)`` each a ``(HOURS_PER_YEAR,)`` array:
+        declination (rad), hour angle (rad), cosine of the zenith angle, and
+        the normalized clear-sky beam.
+    """
+    hours = np.arange(HOURS_PER_YEAR)
+    day_of_year = hours // 24 + 1  # 1..365
+    solar_time = (hours % 24).astype(float) + 0.5  # mid-hour local solar time
+
+    decl = np.deg2rad(_DECLINATION_MAX_DEG) * np.sin(
+        2.0 * np.pi * (284 + day_of_year) / 365.0
+    )
+    omega = np.deg2rad(15.0 * (solar_time - 12.0))  # 15 deg per hour from noon
+    phi = np.deg2rad(lat_deg)
+
+    cos_zen = np.sin(phi) * np.sin(decl) + np.cos(phi) * np.cos(decl) * np.cos(omega)
+    sun_up = cos_zen > 0.0
+
+    air_mass = 1.0 / np.maximum(cos_zen, _COS_ZENITH_FLOOR)
+    dni = _CLEARSKY_TRANSMITTANCE ** (air_mass**_CLEARSKY_AM_EXPONENT)
+    dni = np.where(sun_up, dni, 0.0)
+    return decl, omega, cos_zen, dni
+
+
+def _clearsky_poa_by_tech(lat_deg: float) -> dict[str, np.ndarray]:
+    """Return per-technology clear-sky plane-of-array output at one latitude.
+
+    Builds a normalized hourly POA series (per MW of nameplate, in consistent
+    clear-sky-DNI units) for the three EIA-860 solar tracking classes at
+    ``lat_deg``:
+
+    * **single_axis** — horizontal N–S axis tracker, ``cosθ = √(cos²z +
+      cos²δ·sin²ω)`` (no backtracking): a wide midday plateau;
+    * **fixed** — south-facing array tilted at the latitude,
+      ``cosθ = cosδ·cosω``: a peaky midday cosine;
+    * **dual_axis** — always normal to the sun, ``cosθ = 1``: the full DNI
+      envelope, the broadest shape.
+
+    Each adds a small isotropic clear-sky diffuse term so shoulder hours are
+    non-zero. The three are intentionally *not* renormalized to equal annual
+    energy — a tracker genuinely delivers more shoulder energy per nameplate
+    MW than a fixed panel, and that physical difference is exactly what makes a
+    high-tracking zone's shape flatter than a high-fixed-tilt zone's.
+
+    Args:
+        lat_deg: Representative latitude in degrees north.
+
+    Returns:
+        ``{tech: poa}`` where ``tech`` is one of ``single_axis`` / ``fixed`` /
+        ``dual_axis`` and ``poa`` is a ``(HOURS_PER_YEAR,)`` array.
+    """
+    decl, omega, cos_zen, dni = _clearsky_geometry(lat_deg)
+    sun_up = cos_zen > 0.0
+    diffuse = _DIFFUSE_FRACTION * dni * np.maximum(cos_zen, 0.0)
+
+    # Fixed tilt at latitude, south-facing: cosθ = cosδ·cosω (φ − β = 0).
+    cos_aoi_fixed = np.cos(decl) * np.cos(omega)
+    fixed = dni * np.maximum(cos_aoi_fixed, 0.0) + diffuse
+
+    # Horizontal N–S single-axis tracker (ideal, no backtracking).
+    cos_aoi_sat = np.sqrt(
+        np.maximum(cos_zen, 0.0) ** 2 + np.cos(decl) ** 2 * np.sin(omega) ** 2
+    )
+    single_axis = dni * cos_aoi_sat + diffuse
+
+    # Dual-axis: panel normal always tracks the sun (cosθ = 1).
+    dual_axis = dni + diffuse
+
+    return {
+        "single_axis": np.where(sun_up, single_axis, 0.0),
+        "fixed": np.where(sun_up, fixed, 0.0),
+        "dual_axis": np.where(sun_up, dual_axis, 0.0),
+    }
+
+
+def _eia860_zone_solar_geometry(
+    iso: str,
+    zone_names: list[str],
+    cal_year: int | None,
+    data_dir: Path | None = None,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return per-zone solar tracking mix and capacity-weighted centroids.
+
+    Reads the EIA-860 operable solar schedule, assigns each plant to a model
+    zone (eGRID/EIA-860 ORIS→zone lookup, the same geography as
+    :func:`_eia860_monthly_capacity`), and aggregates, weighted by nameplate
+    capacity and restricted to plants online by ``cal_year``:
+
+    * the tracking mix — the capacity fraction in each of single-axis / fixed /
+      dual-axis (the three :data:`_SOLAR_TRACKING_FLAGS`); and
+    * the representative latitude/longitude — the capacity-weighted centroid of
+      the zone's plant coordinates (from ``eia860_plant.parquet``).
+
+    Both are real, reproducible EIA-860 inputs that would regenerate for a
+    forward year and respond to a changed fleet (rule #12).
+
+    Args:
+        iso: ISO identifier (only multi-zone solar ISOs are meaningful).
+        zone_names: Ordered model-zone names of the ISO.
+        cal_year: Calibration year; only plants online by its end are counted.
+            ``None`` counts every operable plant.
+        data_dir: EIA-860 directory; resolved from config when ``None``.
+
+    Returns:
+        ``(mix, centroid)`` where ``mix`` is ``(n_zones, 3)`` capacity
+        fractions (single-axis, fixed, dual-axis) and ``centroid`` is
+        ``(n_zones, 2)`` lat/lon, or ``None`` when the EIA-860 solar data or
+        the ISO zone geography is unavailable.
+    """
+    file_name = _EIA860_OPERABLE_FILES.get("solar")
+    if file_name is None:
+        return None
+    if data_dir is None:
+        from market_sim.config.paths import active_eia860_dir
+
+        data_dir = active_eia860_dir()
+    path = Path(data_dir) / file_name
+    plant_path = Path(data_dir) / "eia860_plant.parquet"
+    if not path.exists() or not plant_path.exists():
+        return None
+
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return None
+    if not zone_lookup:
+        return None
+
+    df = pd.read_parquet(path)
+    df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    if cal_year is not None:
+        op_year = pd.to_numeric(df["Operating Year"], errors="coerce")
+        df = df[~(op_year > cal_year)]
+    cap = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+
+    plants = pd.read_parquet(plant_path)[
+        ["Plant Code", "Latitude", "Longitude"]
+    ].drop_duplicates("Plant Code")
+    lat = pd.to_numeric(
+        df["Plant Code"].map(plants.set_index("Plant Code")["Latitude"]),
+        errors="coerce",
+    )
+    lon = pd.to_numeric(
+        df["Plant Code"].map(plants.set_index("Plant Code")["Longitude"]),
+        errors="coerce",
+    )
+    zone = df["Plant Code"].map(
+        lambda c: zone_lookup.get(_as_int(c)) if c == c else None
+    )
+
+    n_zones = len(zone_names)
+    zone_to_idx = {name: i for i, name in enumerate(zone_names)}
+    mix = np.zeros((n_zones, len(_SOLAR_TRACKING_FLAGS)), dtype=float)
+    centroid = np.zeros((n_zones, 2), dtype=float)
+
+    flags = {
+        f: df[f].astype(str).str.strip().str.upper() == "Y"
+        for f in _SOLAR_TRACKING_FLAGS
+    }
+    cap_arr = cap.to_numpy()
+    lat_arr = lat.to_numpy()
+    lon_arr = lon.to_numpy()
+    zone_idx = np.array(
+        [zone_to_idx.get(z, -1) if z is not None else -1 for z in zone], dtype=int
+    )
+    flag_cols = np.column_stack([flags[f].to_numpy() for f in _SOLAR_TRACKING_FLAGS])
+
+    geo_weight = np.zeros(n_zones, dtype=float)  # capacity with valid lat/lon
+    for z in range(n_zones):
+        sel = zone_idx == z
+        if not sel.any():
+            continue
+        zc = np.where(np.isnan(cap_arr[sel]), 0.0, cap_arr[sel])
+        # Tracking mix: attribute each plant's capacity to the first flag set.
+        for k in range(len(_SOLAR_TRACKING_FLAGS)):
+            mix[z, k] = (zc * flag_cols[sel, k]).sum()
+        # Capacity-weighted centroid over plants with coordinates.
+        ll_ok = sel & ~np.isnan(lat_arr) & ~np.isnan(lon_arr) & ~np.isnan(cap_arr)
+        w = np.where(np.isnan(cap_arr[ll_ok]), 0.0, cap_arr[ll_ok])
+        if w.sum() > 0.0:
+            centroid[z, 0] = np.average(lat_arr[ll_ok], weights=w)
+            centroid[z, 1] = np.average(lon_arr[ll_ok], weights=w)
+            geo_weight[z] = w.sum()
+
+    # Normalize the tracking mix to fractions per zone (rows that have any
+    # classified capacity); leave all-zero rows untouched (no solar there).
+    row_sum = mix.sum(axis=1, keepdims=True)
+    np.divide(mix, row_sum, out=mix, where=row_sum > 0.0)
+    return mix, centroid
+
+
+def _solar_zone_clearsky_shapes(
+    iso: str,
+    fuel: str,
+    zone_names: list[str],
+    cal_year: int | None,
+    data_dir: Path | None = None,
+) -> np.ndarray | None:
+    """Return a per-zone clear-sky solar SHAPE matrix, or ``None`` (no-op).
+
+    For a gated multi-zone solar ISO (see :data:`_SOLAR_ZONE_SHAPE_ISOS`) this
+    blends the three clear-sky tracking-class shapes (see
+    :func:`_clearsky_poa_by_tech`) at each zone's representative latitude by
+    that zone's EIA-860 tracking mix (see
+    :func:`_eia860_zone_solar_geometry`), giving each zone its own hourly solar
+    SHAPE. The absolute level is irrelevant — the caller reconciles these
+    shapes to the measured ISO-wide ``cf_profile`` — only the inter-zone
+    differences (a higher-fixed-tilt zone peaks more sharply than a
+    higher-tracking zone) survive.
+
+    Returns ``None`` — signalling the caller to keep the legacy single-shape
+    behaviour — for wind, for ISOs not in :data:`_SOLAR_ZONE_SHAPE_ISOS`, and
+    whenever the EIA-860 tracking/geometry data is unavailable.
+
+    Args:
+        iso: ISO identifier.
+        fuel: Renewable fuel; only ``"solar"`` is shaped.
+        zone_names: Ordered model-zone names of the ISO.
+        cal_year: Calibration year for the EIA-860 fleet snapshot.
+        data_dir: EIA-860 directory; resolved from config when ``None``.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` clear-sky SHAPE array, or ``None``.
+    """
+    if fuel != "solar" or iso not in _SOLAR_ZONE_SHAPE_ISOS:
+        return None
+    geometry = _eia860_zone_solar_geometry(iso, zone_names, cal_year, data_dir)
+    if geometry is None:
+        return None
+    mix, centroid = geometry
+
+    n_zones = len(zone_names)
+    shapes = np.zeros((n_zones, HOURS_PER_YEAR), dtype=float)
+    # Cache POA by rounded latitude — neighbouring zones often share one.
+    poa_cache: dict[float, dict[str, np.ndarray]] = {}
+    tech_order = ("single_axis", "fixed", "dual_axis")
+    for z in range(n_zones):
+        if mix[z].sum() <= 0.0 or centroid[z, 0] == 0.0:
+            continue  # no classified solar / no coordinates in this zone
+        lat_key = round(float(centroid[z, 0]), 2)
+        poa = poa_cache.get(lat_key)
+        if poa is None:
+            poa = _clearsky_poa_by_tech(lat_key)
+            poa_cache[lat_key] = poa
+        shapes[z] = sum(mix[z, k] * poa[tech_order[k]] for k in range(len(tech_order)))
+    if not shapes.any():
+        return None
+    return shapes
+
+
+def _redistribute_preserving_total(
+    cf_profile: np.ndarray,
+    cap: np.ndarray,
+    ramp_t: np.ndarray,
+    zone_shapes: np.ndarray,
+) -> np.ndarray:
+    """Re-split the flat system solar series across zones by clear-sky shape.
+
+    The flat path puts ``cf_profile · ramp_z`` on every online zone, for a
+    system series ``M(t) = Σ_z cap_z·cf_profile·ramp_z``. This keeps that exact
+    ``M(t)`` but re-splits it across zones in proportion to each zone's
+    clear-sky MW potential ``cap_z·ramp_z·SHAPE_z(t)``::
+
+        m_z(t)  = M(t) · (cap_z·ramp_z·SHAPE_z) / Σ_k(cap_k·ramp_k·SHAPE_k)
+        cf_z(t) = m_z(t) / cap_z
+
+    so the capacity-weighted aggregate ``Σ_z cap_z·cf_z`` is byte-identical to
+    the flat path every hour (annual energy and the system duck curve
+    unchanged) while a high-fixed-tilt zone (NP15) now peaks more sharply than
+    a high-tracking zone (SP15). Dark hours — no clear-sky potential anywhere —
+    fall back to the flat split, which preserves the same total.
+
+    Args:
+        cf_profile: ``(HOURS_PER_YEAR,)`` ISO-wide hourly CF series.
+        cap: ``(n_zones,)`` December nameplate capacity (MW) per zone.
+        ramp_t: ``(n_zones, HOURS_PER_YEAR)`` online-capacity fraction per
+            zone-hour (the vintage ramp; all ones when the ramp is off).
+        zone_shapes: ``(n_zones, HOURS_PER_YEAR)`` relative clear-sky SHAPE.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` per-zone CF array.
+    """
+    cap_present = cap[:, None] * ramp_t  # online MW per zone-hour
+    system_mw = cf_profile * cap_present.sum(axis=0)  # M(t) to distribute
+    weight = cap_present * zone_shapes  # clear-sky MW potential per zone
+    wsum = weight.sum(axis=0)
+
+    cf = cf_profile[None, :] * ramp_t  # flat fallback (also preserves M)
+    lit = wsum > 0.0
+    zone_mw = np.zeros_like(weight)
+    zone_mw[:, lit] = system_mw[lit] * weight[:, lit] / wsum[lit]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        shaped = np.where(cap[:, None] > 0.0, zone_mw / cap[:, None], 0.0)
+    cf[:, lit] = shaped[:, lit]
+    return np.clip(cf, _CF_MIN, _CF_MAX)
+
+
 def _distribute_by_eia860(
     cf_profile: np.ndarray,
     installed_mw: float,
     monthly_capacity: np.ndarray,
     vintage_capacity_ramp: bool,
+    zone_shapes: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Spread one ISO-wide CF profile across zones using EIA-860 capacity.
 
@@ -881,21 +1240,30 @@ def _distribute_by_eia860(
     :func:`_eia860_monthly_capacity`); that December split is returned as the
     static per-zone capacity array.
 
-    When ``vintage_capacity_ramp`` is ``True`` the shared CF profile is
-    scaled, per zone and per month, by the fraction of year-end capacity
-    that was online that month::
+    When ``vintage_capacity_ramp`` is ``True`` the shared profile is scaled,
+    per zone and per month, by the fraction of year-end capacity online that
+    month (``monthly_cap[z, month(t)] / december_cap[z]``), so a zone's modeled
+    output ramps up as its plants reach commercial operation; when ``False``
+    every zone with capacity uses the flat year-end profile.
 
-        effective_cf[z, t] = cf_profile[t] * monthly_cap[z, month(t)]
-                                            / december_cap[z]
+    The shared ``cf_profile`` is placed on each zone in one of two ways:
 
-    so a zone's modeled output ramps up as its plants reach commercial
-    operation. When ``False`` every zone with capacity uses the flat profile.
+    * **flat** (default) — every online zone uses the identical ISO-wide
+      profile (times its ramp); or
+    * **shape-redistributed** — when ``zone_shapes`` is supplied, the same
+      hourly system total is re-split across zones by their relative clear-sky
+      shapes (see :func:`_redistribute_preserving_total`), giving e.g. CAISO's
+      NP15 a sharper midday solar peak than the more-tracking SP15 *without*
+      changing the validated capacity-weighted system series.
 
     Args:
         cf_profile: A ``(HOURS_PER_YEAR,)`` ISO-wide hourly CF series.
         installed_mw: Total ISO installed nameplate capacity (MW).
         monthly_capacity: ``(n_zones, 12)`` operable capacity by month.
         vintage_capacity_ramp: Whether to apply the monthly capacity ramp.
+        zone_shapes: Optional ``(n_zones, HOURS_PER_YEAR)`` relative per-zone
+            SHAPE; when given, the profile is spatially redistributed (system
+            series preserved exactly) instead of applied flat.
 
     Returns:
         A tuple ``(cf, cap)`` where ``cf`` is ``(n_zones, HOURS_PER_YEAR)``
@@ -906,18 +1274,24 @@ def _distribute_by_eia860(
     december = monthly_capacity[:, -1]
     cap = installed_mw * december / december.sum()
 
-    cf = np.zeros((n_zones, hours), dtype=float)
+    # Per-zone, per-hour online-capacity fraction (the vintage ramp). With the
+    # ramp off every zone with capacity is online all year (fraction 1); zones
+    # with no year-end capacity stay at 0. n_zones is small (<= ~6) — this is
+    # not an hour loop.
+    online = (december > 0.0).astype(float)
     if vintage_capacity_ramp:
         month_idx = _hour_to_month_index(hours)
-        for z in range(n_zones):
-            if december[z] <= 0.0:
-                continue
-            ramp = monthly_capacity[z] / december[z]
-            cf[z] = cf_profile * ramp[month_idx]
-    else:
+        ramp_t = np.zeros((n_zones, hours), dtype=float)
         for z in range(n_zones):
             if december[z] > 0.0:
-                cf[z] = cf_profile
+                ramp_t[z] = (monthly_capacity[z] / december[z])[month_idx]
+    else:
+        ramp_t = np.tile(online[:, None], (1, hours))
+
+    if zone_shapes is not None:
+        cf = _redistribute_preserving_total(cf_profile, cap, ramp_t, zone_shapes)
+    else:
+        cf = cf_profile[None, :] * ramp_t
     return cf, cap
 
 
@@ -944,8 +1318,13 @@ def load_renewable_profiles(
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
     with the same ISO-wide CF profile applied to every zone holding
-    capacity. When ``config.vintage_capacity_ramp`` is enabled, that profile
-    is additionally scaled month-by-month so a zone's output ramps up as its
+    capacity — except solar in the gated multi-zone ISOs (CAISO today), where
+    each zone instead gets its own clear-sky-derived solar SHAPE driven by its
+    EIA-860 tracking mix and latitude (see :func:`_solar_zone_clearsky_shapes`).
+    That redistribution preserves the measured ISO aggregate exactly, so annual
+    energy and the system duck curve are unchanged. When
+    ``config.vintage_capacity_ramp`` is enabled, the per-zone profile is
+    additionally scaled month-by-month so a zone's output ramps up as its
     plants reach their EIA-860 commercial-operation dates. For ISOs without
     EIA-860 geographic data the loader falls back to the single-zone
     :data:`RENEWABLE_ZONE_ALLOCATION` mapping. Zones with no capacity —
@@ -1018,8 +1397,17 @@ def load_renewable_profiles(
             else:
                 cf_profile = _eia930_cf(fuel)
                 vintage_ramp = config.vintage_capacity_ramp
+            # Multi-zone solar ISOs (gated, CAISO today) get a per-zone solar
+            # SHAPE so geographically distinct zones with different tracking
+            # mixes no longer share one ISO-wide hourly profile. This is a
+            # pure spatial redistribution: the capacity-weighted zone sum still
+            # equals the measured cf_profile every hour (aggregate preserved),
+            # so the validated system duck curve and annual energy are
+            # unchanged — only NP15-vs-SP15 differ, which matters in forecast
+            # years as CAISO solar grows and congestion/entry signals bite.
+            zone_shapes = _solar_zone_clearsky_shapes(iso, fuel, zone_names, year)
             allocated[fuel] = _distribute_by_eia860(
-                cf_profile, installed_mw, monthly, vintage_ramp
+                cf_profile, installed_mw, monthly, vintage_ramp, zone_shapes
             )
         else:
             allocated[fuel] = _allocate_to_zones(
