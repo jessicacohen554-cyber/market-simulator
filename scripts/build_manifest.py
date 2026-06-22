@@ -226,6 +226,14 @@ def main() -> None:
             '<script src="frontend/data/backcast/manifest.js">'
             "</script>"
             '<script src="frontend/data/backcast/benchmark.js">'
+            "</script>"
+            # status.js (window.BC.status) drives the all-ISO Calibration Status
+            # view. Unlike manifest/benchmark it is a COMMITTED file (built by
+            # scripts/build_status.py where the bundles live, since the C6
+            # governance verdict needs each bundle's attestation, which the Pages
+            # deploy's sparse checkout omits). We only wire it in here; the view
+            # degrades gracefully if it is absent.
+            '<script src="frontend/data/backcast/status.js">'
             "</script>",
         )
         .replace("__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M"))
