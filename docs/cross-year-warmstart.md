@@ -75,11 +75,76 @@ year once, then times cold vs cross-year-warm). Full output in
 `results/warmstart_xyear_bench.txt`.
 
 <!-- RESULTS:BEGIN -->
-_(filled from the benchmark run — see results/warmstart_xyear_bench.txt)_
+The captured backcast LP is large — ~1.48k thermal units × 7 zones × 8760 h — and
+the **solve dominates**: a cold P0 is ~135–153 s while the matrix build is ~1–2 s.
+So P0 is exactly where cross-year warm-start should pay off.
+
+**Speedup (P0 is the solve cross-year warm-start changes):**
+
+| year | P0 cold | P0 warm | P0 iters cold → warm | P0× | wall cold | wall warm | wall× |
+|-----:|--------:|--------:|---------------------:|----:|----------:|----------:|------:|
+| 2023 | 134.8 s | 136.4 s | 190,893 → 190,893 (cold: first year, no prior basis) | 0.99 | 163.7 s | 164.6 s | 0.99 |
+| 2024 | 135.2 s |  63.2 s | 198,046 → 79,999     | **2.14** | 165.6 s |  93.4 s | 1.77 |
+| 2025 | 152.8 s |  60.6 s | 223,856 → 66,712     | **2.52** | 180.9 s |  89.8 s | 2.01 |
+| **total** | 422.8 s | 260.1 s | | **1.63** | 510.3 s | 347.8 s | **1.47** |
+
+The first year has no predecessor so it solves cold either way; the benefit
+accrues from year 2 onward. Across the **warm years only** (2024–25) P0 is **2.3×**
+faster (288 s → 124 s) and wall-clock **1.9×** (347 s → 183 s) — and that is the
+steady state a longer backcast (2019–2025, the forecast horizon) spends almost
+all its time in.
+
+**Peak memory:** 7.34 GB (cold) → 7.62 GB (cross-year-warm), **+0.28 GB (~4%)** —
+just the carried `int8` status vectors and the held basis. Option (c) adds no
+matrix. For contrast, the option-(a) superset would carry the **union of 1505
+units** in every hour vs the largest single year's 1481, i.e. only ~1.6% wider
+here, but it inflates *every* year's matrix (including the smaller early years)
+permanently and must pre-scan all years to build the union — so (c) gives the
+same speedup strictly cheaper.
+
+**Neutrality (P1 cold vs P1 cross-year-warm):**
+
+| year | objective relΔ | max \|Δ zonal price\| | max per-plant \|Δ annual MWh\| | total gen Δ |
+|-----:|---------------:|----------------------:|-------------------------------:|------------:|
+| 2023 | 0           | 0            | 0       | 0 |
+| 2024 | 1.6e-15     | 9.1e-13 $/MWh | 546 MWh | 0 |
+| 2025 | 6.5e-16     | 5.7e-14 $/MWh | 1009 MWh | 0 |
+
+The objective, every zonal price, and total generation are **bit-identical**; the
+only movement is alternate-optima reshuffling among plants tied at the marginal
+price (≤ ~1 GWh/yr on the single largest mover, with an exactly offsetting −Δ on
+another tied plant — `total gen Δ = 0`). This is the same degenerate
+tie-breaking the intra-year warm-start already exhibits and the LP is genuinely
+indifferent to; price formation and the system cost are untouched.
+
+_Caveat measured separately:_ this bench fixes the P1 cost vector (captured
+`mc_bid`) to isolate the P1 LP, so it proves the **solver path** is neutral.
+In the full pipeline P0's (degenerate) dispatch feeds `compute_monthly_markup`,
+so a complete end-to-end A/B is `run_calibration --year 2023 2024 2025` with the
+flag off vs on, diffed by `scripts/diff_warmstart_bundles.py` — recommended
+before flipping the flag on by default.
 <!-- RESULTS:END -->
 
 ## Recommendation
 
 <!-- RECO:BEGIN -->
-_(filled below from the measured speedup / drift)_
+**Ship behind the flag (`MARKET_SIM_WARMSTART_XYEAR=1`), default off for now.**
+
+- **Worth it.** The remaining cold cost after intra-year warm-start is P0, and
+  cross-year warm-start cuts it **~2.3× in steady state** (every year after the
+  first), for **~1.9× wall-clock per warm year**. On a 7-year forecast backcast
+  that is most of the run. The mechanism is option (c) — remap the basis, do not
+  grow the LP — so it costs **+4% peak RSS** and nothing structural.
+- **Neutral by construction.** The LP optimum is basis-independent: objective,
+  prices and total generation are bit-identical, with only the same marginal-tie
+  reshuffling intra-year warm-start already ships. No recalibration.
+- **Why not (a) superset:** same speedup but a permanently larger matrix for
+  every year and an all-years pre-scan to build the union; strictly dominated by
+  (c) here. **Why not (b) unchanged-fleet-only:** the ERCOT fleet changes every
+  year, so it would essentially never fire.
+- **Default-off until** a full-pipeline A/B (`run_calibration` flag off vs on,
+  diffed by `diff_warmstart_bundles.py`) confirms the markup-propagation path
+  (P0's degenerate vertex → monthly markup → P1) leaves the calibration score
+  unchanged. Once that passes, flip the default on — there is no downside beyond
+  the negligible memory.
 <!-- RECO:END -->
