@@ -20,6 +20,7 @@ from market_sim.results.scarcity import (
     load_pjm_measured_reserve_requirement,
     pjm_ordc_shortfall_steps,
     pjm_primary_reserve_requirement,
+    pjm_reserve_coopt_inputs,
 )
 
 _PJM_AS_DIR = RAW_DATA_DIR / "PJM-AS"
@@ -204,6 +205,68 @@ class TestMeasuredRequirementHonestyGate(unittest.TestCase):
         mssc = mean_req / PJM_PRIMARY_RESERVE_LSC_FACTOR
         formula = pjm_primary_reserve_requirement(mssc, len(pr))
         self.assertAlmostEqual(formula[0], mean_req, delta=0.03 * mean_req)
+
+
+class TestPjmReserveCooptInputs(unittest.TestCase):
+    """The solve_dispatch input assembler (measured requirement + published ORDC)."""
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        # One gas-CC (reserve-eligible) + one wind (not) generator.
+        gas_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        wind_idx = FUEL_TYPE_NAMES.index("wind")
+        n, T = 2, 8760
+        return FleetArrays(
+            pmax=np.array([400.0, 200.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0]),
+            fuel_type_idx=np.array([gas_idx, wind_idx]),
+            availability=np.ones((n, T)),
+            unit_ids=["g0", "w1"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 200]),
+        )
+
+    def _config(self, year=2024):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(weather_year=year)
+
+    def test_measured_year_shapes_and_values(self):
+        if load_pjm_measured_reserve_requirement(2024, 8760) is None:
+            self.skipTest("PJM-AS 2024 parquet not present")
+        req, elig, pens, widths = pjm_reserve_coopt_inputs(
+            self._config(2024), self._fleet(), 8760
+        )
+        # Balance RHS = measured Primary requirement + 190 MW (Step-2 offset).
+        self.assertEqual(req.shape, (8760,))
+        self.assertTrue(3000.0 < (req - 190.0).mean() < 3700.0)
+        # Published two-step curve, cheapest band first.
+        np.testing.assert_allclose(pens, [300.0, 850.0])
+        self.assertAlmostEqual(widths[0], 190.0)
+        # Inner ($850) band spans the tightest hour's full requirement.
+        self.assertAlmostEqual(widths[1], float((req - 190.0).max()))
+        # Only the gas unit is reserve-eligible.
+        np.testing.assert_array_equal(elig, [True, False])
+
+    def test_forecast_fallback_uses_formula(self):
+        # A future year with no measured parquet falls back to 1.5x-MSSC; the
+        # requirement is then flat (formula) and strictly positive.
+        if load_pjm_measured_reserve_requirement(1999, 24) is not None:
+            self.skipTest("1999 parquet unexpectedly present")
+        req, _, pens, _ = pjm_reserve_coopt_inputs(
+            self._config(1999), self._fleet(), 24
+        )
+        self.assertEqual(req.shape, (24,))
+        self.assertTrue((req > 0).all())
+        self.assertAlmostEqual(req.std(), 0.0)  # flat formula requirement
+        np.testing.assert_allclose(pens, [300.0, 850.0])
 
 
 class TestErcotOrdcDemandSteps(unittest.TestCase):
