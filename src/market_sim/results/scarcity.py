@@ -399,6 +399,68 @@ def resolve_lolp_params(
 # years from 2026 are RTC+B; 2023-2025 are the ORDC + RTORDPA design.
 _RTCB_FIRST_FULL_YEAR: int = 2026
 
+# Non-leap hour-of-year index of 2025-12-05 00:00 (RTC+B go-live), the end of
+# the ORDC/RTORPA/RTORDPA regime. Jan-Nov = 334 days, so Dec 5 00:00 = 338*24
+# = 8112 — exactly where the measured 2025 reserves series stops (its tail is
+# preserved NaN past go-live, not fabricated). On the fixed non-leap clock this
+# index is the same calendar instant in every year, so the within-2025 cut is a
+# calendar gate, not a hard-coded 2025 special case.
+RTCB_GOLIVE_HOUR: int = 338 * 24  # 8112
+
+# Per-year measured ORDC / reserves series (scripts/fetch_ercot_ordc_reserves.py).
+_ERCOT_ORDC_RESERVES_TMPL = "ercot_{year}_ordc_reserves_hourly.parquet"
+
+
+def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarray:
+    """Measured RTORDPA, regime-gated, as a post-solve $/MWh system-price overlay.
+
+    RTORDPA is ERCOT's published **Real-Time ORDC + Reliability-Deployment Price
+    Adder** — the reliability-deployment component of the real-time reserve
+    price the co-opt LP has no mechanism for (it endogenously produces an ORDC
+    adder ≈ RTORPA via the reserve-balance dual, but not the out-of-market
+    reliability-deployment slice ERCOT ran conservatively in 2023-H2). Adding
+    the measured ``rtordpa`` to the model system price is therefore **additive,
+    not double-counting RTORPA**; verify against the run's ``reserve_price``
+    (≈ RTORPA) before/after.
+
+    Read **per year** from
+    ``data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`` (the ``rtordpa``
+    column) — never a 2023 hard-code, which is exactly what makes the overlay
+    backcast-able on any year incl. 2022. It is an **exogenous measured series,
+    never fit to LMP**.
+
+    Regime gate (pre-RTC+B only; RTC+B retired the adders on 2025-12-05):
+      * year <= 2024 — fully pre-RTC+B, the whole-year measured series applies;
+      * year == 2025 — pre-RTC+B only through Dec 4: hours >= RTCB_GOLIVE_HOUR
+        zeroed (the measured series is already NaN there);
+      * year >= 2026 (or an explicit ``ercot_market_design='rtcb'``) — RTC+B,
+        the overlay is inert (zeros).
+    Missing files and NaN adder hours map to 0 (no overlay), never fabricated.
+    """
+    out = np.zeros(int(hours), dtype=float)
+    regime_ordc = (
+        ercot_market_regime(year, config) == "ordc"
+        if config is not None
+        else year < _RTCB_FIRST_FULL_YEAR
+    )
+    if not regime_ordc:
+        return out
+    path = RAW_DATA_DIR / "ercot" / _ERCOT_ORDC_RESERVES_TMPL.format(year=year)
+    if not path.exists():
+        return out
+    import pandas as pd
+
+    df = pd.read_parquet(path, columns=["hour", "rtordpa"])
+    s = df.set_index("hour")["rtordpa"].reindex(range(int(hours)))
+    vals = np.nan_to_num(s.to_numpy(dtype=float), nan=0.0)
+    n = min(len(vals), len(out))
+    out[:n] = vals[:n]
+    # Within-2025 calendar cut at the RTC+B go-live (belt-and-suspenders: the
+    # measured 2025 series is already NaN from this hour onward).
+    if year == _RTCB_FIRST_FULL_YEAR - 1:
+        out[RTCB_GOLIVE_HOUR:] = 0.0
+    return out
+
 
 def ercot_market_regime(year: int, config) -> str:
     """Return the ERCOT scarcity-pricing regime for a year: 'ordc' or 'rtcb'.

@@ -1,0 +1,244 @@
+diff --git a/scripts/probes/_keeper_2023as_run.py b/scripts/probes/_keeper_2023as_run.py
+index 5211ecd..d011d83 100644
+--- a/scripts/probes/_keeper_2023as_run.py
++++ b/scripts/probes/_keeper_2023as_run.py
+@@ -63,6 +63,18 @@ def main(argv: list[str]) -> int:
+     #                             the co-opt ORDC curve (grounds mu/sigma; the
+     #                             keeper uses the neutral mu=0 fallback).
+     ordc_lolp_params_path = os.environ.get("KEEPER_ORDC_TABLE") or None
++    #   KEEPER_RTORDPA=1     -> add the measured, regime-gated RTORDPA
++    #                          (reliability-deployment price adder) to the model
++    #                          system price as a post-solve, additive overlay
++    #                          (Track 2: the grounded 2023 market-design adder;
++    #                          near-inert in 2024/25). Read per-year from
++    #                          data/raw/ercot/ercot_<year>_ordc_reserves_hourly
++    #                          .parquet — backcast-able, never a 2023 hard-code.
++    ercot_rtordpa_overlay = os.environ.get("KEEPER_RTORDPA", "").lower() in (
++        "1",
++        "true",
++        "on",
++    )
+     sm = cfg.get("coal_prb_sigmoid_overrides", {})
+     deltas = cfg.get("offer_curve_deltas") or {}
+     for grp, bands in delta_override.items():
+@@ -101,6 +113,7 @@ def main(argv: list[str]) -> int:
+         ercot_storage_as_reserve_from_year=from_year,
+         ercot_ecrs_requirement=ercot_ecrs,
+         ercot_ecrs_requirement_from_year=2023,
++        ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+         ordc_lolp_params_path=ordc_lolp_params_path,
+         as_reserve_formula=False,
+         storage_as_commitment=True,
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 4d3d2ac..8706701 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -459,6 +459,8 @@ def _system_frame(
+     result,
+     demand: np.ndarray,
+     zone_names: list[str],
++    iso: str | None = None,
++    ercot_rtordpa_overlay: bool = False,
+ ) -> pd.DataFrame:
+     """Return the per-zone hourly price / slack / demand frame.
+ 
+@@ -468,6 +470,12 @@ def _system_frame(
+     system-wide column (broadcast across zones, matching PJM's RTO-wide reserve
+     clearing price) so the residual analysis can separate the energy and reserve
+     components. Energy-only runs write 0.0.
++
++    ``ercot_rtordpa_overlay`` adds the measured, regime-gated RTORDPA
++    (reliability-deployment price adder) to the energy ``price`` for every zone
++    — a post-solve, additive price overlay (no dispatch / volume change), with
++    the raw added series persisted in a ``rtordpa_overlay`` column for audit.
++    See ``market_sim.results.scarcity.ercot_rtordpa_overlay_series``.
+     """
+     prices = np.asarray(result.prices, dtype=float)
+     slack = np.asarray(result.slack, dtype=float)
+@@ -478,22 +486,26 @@ def _system_frame(
+         if reserve_price is None
+         else np.asarray(reserve_price, dtype=float).ravel()[:T]
+     )
++    overlay = None
++    if ercot_rtordpa_overlay and iso == "ERCOT":
++        from market_sim.results.scarcity import ercot_rtordpa_overlay_series
++
++        overlay = ercot_rtordpa_overlay_series(year, T)
+     rows = []
+     for z in range(n_zones):
+-        rows.append(
+-            pd.DataFrame(
+-                {
+-                    "year": np.int16(year),
+-                    "pass": pass_label,
+-                    "zone": zone_names[z],
+-                    "hour": np.arange(T, dtype=np.int32),
+-                    "price": prices[z],
+-                    "slack": slack[z],
+-                    "demand": demand[z, :T],
+-                    "reserve_price": rp,
+-                }
+-            )
+-        )
++        cols = {
++            "year": np.int16(year),
++            "pass": pass_label,
++            "zone": zone_names[z],
++            "hour": np.arange(T, dtype=np.int32),
++            "price": prices[z] + (overlay if overlay is not None else 0.0),
++            "slack": slack[z],
++            "demand": demand[z, :T],
++            "reserve_price": rp,
++        }
++        if overlay is not None:
++            cols["rtordpa_overlay"] = overlay
++        rows.append(pd.DataFrame(cols))
+     return pd.concat(rows, ignore_index=True)
+ 
+ 
+@@ -1364,6 +1376,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
+                 "offer_curve_overrides",
+                 "offer_curve_deltas",
+                 "priced_interchange",
++                "ercot_rtordpa_overlay",
+                 "git_sha",
+             )
+         },
+@@ -1412,6 +1425,7 @@ def solve_and_persist(
+     ercot_storage_as_reserve_from_year: int = 2025,
+     ercot_ecrs_requirement: bool = False,
+     ercot_ecrs_requirement_from_year: int = 2023,
++    ercot_rtordpa_overlay: bool = False,
+     ordc_lolp_params_path: str | None = None,
+     as_reserve_formula: bool = False,
+     storage_as_commitment: bool = False,
+@@ -1601,7 +1615,17 @@ def solve_and_persist(
+                 must_run=must_run,
+                 oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
+             ).to_parquet(run_dir / "dispatch" / f"{year}_{label}.parquet", index=False)
+-            system_frames.append(_system_frame(year, label, res, demand, zone_names))
++            system_frames.append(
++                _system_frame(
++                    year,
++                    label,
++                    res,
++                    demand,
++                    zone_names,
++                    iso=iso,
++                    ercot_rtordpa_overlay=ercot_rtordpa_overlay,
++                )
++            )
+             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
+             if storage_frame is not None:
+                 storage_frames.append(storage_frame)
+@@ -1721,6 +1745,7 @@ def solve_and_persist(
+         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
+         "ercot_ecrs_requirement": ercot_ecrs_requirement,
+         "ercot_ecrs_requirement_from_year": ercot_ecrs_requirement_from_year,
++        "ercot_rtordpa_overlay": ercot_rtordpa_overlay,
+         "ordc_lolp_params_path": ordc_lolp_params_path,
+         "as_reserve_formula": as_reserve_formula,
+         "storage_as_commitment": storage_as_commitment,
+@@ -4052,6 +4077,21 @@ def main() -> None:
+         help="First weather year the --ercot-ecrs-requirement applies to "
+         "(default 2023 = launch year; the data zeroes pre-June-2023 hours).",
+     )
++    parser.add_argument(
++        "--ercot-rtordpa-overlay",
++        action="store_true",
++        help="ERCOT only: add the measured, regime-gated RTORDPA (Real-Time ORDC "
++        "+ Reliability-Deployment Price Adder) to the model system price as a "
++        "post-solve, additive overlay (no dispatch/volume change). Read PER YEAR "
++        "from data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet (rtordpa "
++        "column) — never a 2023 hard-code, so it is backcast-able on any year. "
++        "The co-opt already produces an ORDC adder ≈ RTORPA; RTORDPA is the "
++        "reliability-deployment component the model has no mechanism for, so it "
++        "is additive, not double-counting. Gated to the pre-RTC+B regime "
++        "(<= 2025-12-04); near-inert in 2024/25 (tiny measured rtordpa), lifts "
++        "2023's out-of-market tail toward actual. Exogenous, NOT a price fit. "
++        "Off (default) = byte-identical baseline.",
++    )
+     parser.add_argument(
+         "--ordc-lolp-params-path",
+         default=None,
+@@ -4541,6 +4581,7 @@ def main() -> None:
+         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
+         ercot_ecrs_requirement=args.ercot_ecrs_requirement,
+         ercot_ecrs_requirement_from_year=(args.ercot_ecrs_requirement_from_year),
++        ercot_rtordpa_overlay=args.ercot_rtordpa_overlay,
+         ordc_lolp_params_path=args.ordc_lolp_params_path,
+         as_reserve_formula=args.as_reserve_formula,
+         storage_as_commitment=args.storage_as_commitment,
+diff --git a/src/market_sim/results/scarcity.py b/src/market_sim/results/scarcity.py
+index 0e66b87..fbd93f2 100644
+--- a/src/market_sim/results/scarcity.py
++++ b/src/market_sim/results/scarcity.py
+@@ -399,6 +399,68 @@ def resolve_lolp_params(
+ # years from 2026 are RTC+B; 2023-2025 are the ORDC + RTORDPA design.
+ _RTCB_FIRST_FULL_YEAR: int = 2026
+ 
++# Non-leap hour-of-year index of 2025-12-05 00:00 (RTC+B go-live), the end of
++# the ORDC/RTORPA/RTORDPA regime. Jan-Nov = 334 days, so Dec 5 00:00 = 338*24
++# = 8112 — exactly where the measured 2025 reserves series stops (its tail is
++# preserved NaN past go-live, not fabricated). On the fixed non-leap clock this
++# index is the same calendar instant in every year, so the within-2025 cut is a
++# calendar gate, not a hard-coded 2025 special case.
++RTCB_GOLIVE_HOUR: int = 338 * 24  # 8112
++
++# Per-year measured ORDC / reserves series (scripts/fetch_ercot_ordc_reserves.py).
++_ERCOT_ORDC_RESERVES_TMPL = "ercot_{year}_ordc_reserves_hourly.parquet"
++
++
++def ercot_rtordpa_overlay_series(year: int, hours: int, config=None) -> np.ndarray:
++    """Measured RTORDPA, regime-gated, as a post-solve $/MWh system-price overlay.
++
++    RTORDPA is ERCOT's published **Real-Time ORDC + Reliability-Deployment Price
++    Adder** — the reliability-deployment component of the real-time reserve
++    price the co-opt LP has no mechanism for (it endogenously produces an ORDC
++    adder ≈ RTORPA via the reserve-balance dual, but not the out-of-market
++    reliability-deployment slice ERCOT ran conservatively in 2023-H2). Adding
++    the measured ``rtordpa`` to the model system price is therefore **additive,
++    not double-counting RTORPA**; verify against the run's ``reserve_price``
++    (≈ RTORPA) before/after.
++
++    Read **per year** from
++    ``data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`` (the ``rtordpa``
++    column) — never a 2023 hard-code, which is exactly what makes the overlay
++    backcast-able on any year incl. 2022. It is an **exogenous measured series,
++    never fit to LMP**.
++
++    Regime gate (pre-RTC+B only; RTC+B retired the adders on 2025-12-05):
++      * year <= 2024 — fully pre-RTC+B, the whole-year measured series applies;
++      * year == 2025 — pre-RTC+B only through Dec 4: hours >= RTCB_GOLIVE_HOUR
++        zeroed (the measured series is already NaN there);
++      * year >= 2026 (or an explicit ``ercot_market_design='rtcb'``) — RTC+B,
++        the overlay is inert (zeros).
++    Missing files and NaN adder hours map to 0 (no overlay), never fabricated.
++    """
++    out = np.zeros(int(hours), dtype=float)
++    regime_ordc = (
++        ercot_market_regime(year, config) == "ordc"
++        if config is not None
++        else year < _RTCB_FIRST_FULL_YEAR
++    )
++    if not regime_ordc:
++        return out
++    path = RAW_DATA_DIR / "ercot" / _ERCOT_ORDC_RESERVES_TMPL.format(year=year)
++    if not path.exists():
++        return out
++    import pandas as pd
++
++    df = pd.read_parquet(path, columns=["hour", "rtordpa"])
++    s = df.set_index("hour")["rtordpa"].reindex(range(int(hours)))
++    vals = np.nan_to_num(s.to_numpy(dtype=float), nan=0.0)
++    n = min(len(vals), len(out))
++    out[:n] = vals[:n]
++    # Within-2025 calendar cut at the RTC+B go-live (belt-and-suspenders: the
++    # measured 2025 series is already NaN from this hour onward).
++    if year == _RTCB_FIRST_FULL_YEAR - 1:
++        out[RTCB_GOLIVE_HOUR:] = 0.0
++    return out
++
+ 
+ def ercot_market_regime(year: int, config) -> str:
+     """Return the ERCOT scarcity-pricing regime for a year: 'ordc' or 'rtcb'.

@@ -1,0 +1,102 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "rtordpa-overlay session 2026-06-22 (Track 1 ledger + Track 2 RTORDPA overlay) on the run143_redo re-baseline",
+    "note": "Byte-faithful re-solve of the run143 keeper recipe (results/calibration/run143_redo / ercot_dam_2023as_netload; driver scripts/probes/_keeper_2023as_run.py, storage-AS-from-year 2025, load-RRS-from-year 2023, ST_GAS committed delta restored to 0.0, ECRS off, local-band outages) plus ONE new lever: a regime-gated, post-solve, ADDITIVE RTORDPA price overlay (--ercot-rtordpa-overlay / KEEPER_RTORDPA=1). The overlay adds the measured rtordpa (Real-Time ORDC + Reliability-Deployment Price Adder) read PER YEAR from data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet (exogenous ERCOT series, NEVER fit to LMP), gated to the pre-RTC+B regime (<= 2025-12-04). Because it is post-solve it changes NO dispatch/volume: every C1/C2 class is byte-identical to run143_redo (verify DAM-vs-overlay below). TRACK 1 (within-gas merit order) is LEDGERED, not tuned: the measured ERCOT DAM energy offers (scripts/probes/_ercot_offer_stack_meritorder.py over scripts/parse_ercot_dam_offers.py on the 60-Day DAM Gen Resource Data) order CC CHEAPEST on energy at every band in all 3 shoulder years (2024 min-gen CC $7.3 < CT $22.4 < ST $47.1; econ_low CC 12.3 < CT 20.8 < ST 24.8) because CC's heat rate (7.16) beats CT/ST (~10.7) at any gas price — so the energy-only LP is CORRECT to clear CC first and pushing ST_GAS/CT below their measured curve would be a markup (barred). The CC over-run / ST_GAS+CT under-run is the energy-only-LP local-reliability/AS-commitment limitation, ledgered below. Active levers all trace to measured inputs: CAMPD net-load-filtered outage windows, measured 2023 storage-AS + load-RRS-UFR credits, EIA-860 BTM CHP host steam out of the LP, per-plant F923 delivered gas, published NP6-576-ER ORDC params, measured RTORDPA overlay. No adder/haircut/sigmoid tuned to a residual; no unit pinned to CEMS; no input rescaled to land on actuals.",
+    "track2_rtordpa_overlay": "Measured RTORDPA overlay (rtordpa ONLY, not rtorpa/rtoffpa). No double-count: the co-opt LP already produces an endogenous ORDC adder via the reserve-balance dual (reserve_price, mean $12.4/5.6/0.03 in 2023/24/25) that stands in for RTORPA (measured all-hours mean $0.95/0.20/0.07); rtordpa is the DISTINCT reliability-deployment component the model has no mechanism for, so adding it is additive. In the 181 actual-2023-tail hours the measured reserve-adder stack is rtorpa $36.7 + rtoffpa $26.4 + rtordpa $21.7 = ~$85/h; this overlay adds only the rtordpa slice (~$21.7/h in the tail, demand-wtd $0.75/h annually) — the prompt scopes out rtoffpa (offline) and rtorpa (≈ the co-opt's own adder). Effect: 2023 avg 35.2->35.9, h>$200 89->91, h>$500 51->53 (toward actual 48.4 / 181 / 104); 2024/25 near-inert (+$0.23/+$0.37, tail unchanged) as their measured rtordpa is tiny — confirming the regime-gated overlay generalizes without distorting the comfortable years. Backcast-able: scripts/fetch_ercot_ordc_reserves.py --years 2022 built ercot_2022_ordc_reserves_hourly.parquet (8760/8760) and the loader applies to 2022 unchanged ($1.73/h, 12 h>$200) — validated as DATA only, NOT added to the solve set. The residual 2023 gap (avg toward 48.4, tail toward 181) is the energy-scarcity base (~$138/h), the SEPARATE deferred reserve-supply lever (online RTOLCAP re-scope), stated and not papered over by the overlay."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2023,
+      "magnitude": "-2.52 TWh (model grid 4.33 vs grid-delivered ~6.85)",
+      "reason": "Within-gas merit-order limitation, GROUNDED in the measured DAM offers (scripts/probes/_ercot_offer_stack_meritorder.py): 2023 shoulder CT_PEAKER min-gen $27.0 / econ_low $23.7 offer ABOVE CC ($15.7 / $14.0), so the energy-only LP correctly clears CC first; real CT_PEAKER runs for local-reliability/AS/RUC commitment (incl. non-CEMS small peakers Ector County, Permian Basin, Pearsall) the energy-only zonal dispatch cannot see. Pushing CT below its measured curve would be a markup (barred). ACCEPTED MEASURED-INPUT LIMITATION, not a merit-order defect."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2024,
+      "magnitude": "-3.17 TWh (model grid 4.18 vs grid-delivered ~7.36)",
+      "reason": "Same limitation; measured 2024 shoulder CT min-gen $22.4 / econ_low $20.8 > CC $7.3 / $12.3, confirming CC is genuinely cheaper on energy. The energy-only LP cannot dispatch out-of-merit AS/RUC peaker energy and there is no forward-defensible measured path to add it. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2025,
+      "magnitude": "-2.24 TWh (model grid 5.13 vs grid-delivered ~7.11)",
+      "reason": "Same limitation; measured 2025 shoulder CT min-gen $38.1 / econ_low $35.4 > CC $20.2 / $19.5. Energy-only LP merit-order cannot reach it. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2023,
+      "magnitude": "+4.19 TWh, share +0.5pp (model vs grid-delivered)",
+      "reason": "Same within-gas conservation-of-energy / energy-only-LP limitation as 2024/25 (the CC over-run offsets the ST_GAS+CT under-run; net gas family volume ~unchanged). Caught by the updated share-based C1 criterion (under the prior percent band 2023 CC was +2.9%, within +/-5%). Measured DAM offers order CC cheapest on energy in 2023 too (shoulder min-gen CC $15.7 < CT $27.0 < ST $52.0), so it is not a measured-offer-fixable merit-order defect. ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-offer-curve-meritorder-2023-adder-2026-06.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2024,
+      "magnitude": "+14.39 TWh, share +2.4pp (model vs grid-delivered)",
+      "reason": "The CC over-run is the conservation-of-energy counterpart of the ST_GAS+CT under-run (net gas family volume ~unchanged → C2 gas passes): the energy-only LP serves the ST/CT reliability-commitment MWh with the genuinely-cheapest unit, CC. Confirmed measured (not an offer markdown): the model's effective CC bands sit at/above the measured CC offer multipliers except CC econ_high (model 1.21 vs measured ~1.68), and raising econ_high to measured keeps CC below CT econ_low/ST min-gen, so it cannot transfer the volume to ST/CT and risks an LMP regression — not a fix. (Also the documented nodal-congestion residual: 94% of SCED binding-constraint rent is on <200 kV local pockets a zonal LP cannot resolve.) ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-offer-curve-meritorder-2023-adder-2026-06.md, docs/calibration-best-so-far.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2025,
+      "magnitude": "+5.5% (model tot 155.20 vs grid-delivered 142.11 TWh)",
+      "reason": "Same conservation-of-energy / nodal-congestion residual as 2024; not zonal-LP closable and not measured-offer-fixable (measured stack already orders CC first). ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2023,
+      "magnitude": "-4.40 TWh (model grid 12.30 vs grid-delivered 16.70 TWh)",
+      "reason": "Gas-steam committed/AS-held capacity (CPS steamers, Cedar Bayou) the energy-only LP cannot reach: measured 2023 shoulder ST_GAS min-gen $52.0 / econ_low $34.2 offer well ABOVE CC ($15.7 / $14.0), so ST_GAS never commits economically in an energy-only dispatch and forcing it on would be a markup. Real out-of-merit operation is local-reliability/AS-driven. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2024,
+      "magnitude": "-6.72 TWh (model grid 11.38 vs grid-delivered 18.10 TWh)",
+      "reason": "Same committed/AS-held gas-steam wedge; measured 2024 ST_GAS min-gen $47.1 >> CC $7.3. The CC nodal over-run also displaces ST_GAS in the zonal merit order. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "ST_GAS",
+      "year": 2025,
+      "magnitude": "-5.41 TWh (model grid 9.95 vs grid-delivered 14.81 TWh)",
+      "reason": "Same gas-steam structural wedge; measured 2025 ST_GAS min-gen $71.0 >> CC $20.2. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "sysvol",
+      "family": "coal",
+      "year": 2024,
+      "magnitude": "-2.7% vs grid-delivered (923-BTM); +0.1pp vs EIA-930 grid",
+      "reason": "Documented cheap-gas year-gradient residual: in 2024 ($2.19 gas) the LP correctly idles loss-making self-committed/contracted PRB/lignite that ran 40-52% CF below marginal cost; vs EIA-930 grid the same coal sits +0.1pp. Out of scope for this session (not within-gas, not the 2023 adder). ACCEPTED MEASURED-INPUT LIMITATION (docs/calibration-best-so-far.md, COAL_PRB carve-out)."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "magnitude": "mean LMP -25.7% (model 35.9 vs actual 48.4 $/MWh, after RTORDPA overlay)",
+      "reason": "2023 is structurally out-of-market. The measured RTORDPA overlay now MODELS the reliability-deployment slice (rtordpa, ~$21.7/h in the 181 tail hours; avg 35.2->35.9), the grounded part of the gap. The residual ~$12.5/h on the annual mean is the energy-scarcity base (the deferred reserve-supply lever: online RTOLCAP re-scope) plus the rtorpa/rtoffpa reserve components the ORDC-only co-opt under-fires — neither closable here without a residual fit. ACCEPTED MEASURED-INPUT LIMITATION (run140 decomposition; docs/ercot-offer-curve-meritorder-2023-adder-2026-06.md)."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2023,
+      "magnitude": "NRMSE ~0.40 (thin deep tail)",
+      "reason": "Same 2023 out-of-market gap: the RTORDPA overlay lifts the tail toward actual (h>$200 89->91, h>$500 51->53) but the bulk of the deep tail is the energy-scarcity base the reserve-supply lever owns. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2024,
+      "magnitude": "NRMSE ~0.40",
+      "reason": "Mild-tail under-capture: the energy-only co-opt fires genuine summer scarcity but under-counts the count of mild >$200 hours the actual market cleared via out-of-market deployments; the regime-gated RTORDPA overlay is near-inert in 2024 (measured rtordpa tiny: +$0.23/h, tail unchanged), correctly. ACCEPTED MEASURED-INPUT LIMITATION."
+    }
+  ]
+}
