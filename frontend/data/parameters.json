@@ -2541,6 +2541,22 @@
       ]
     },
     {
+      "param_id": "gas_basis_differential.MISO",
+      "display_name": "Gas Basis Differential / Miso",
+      "value": 0.3,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Chicago Citygate footprint blend to Henry Hub. EIA Illinois natural-gas citygate series (n3050il3m) 2024 monthly avg = $3.495/Mcf = $3.37/MMBtu (1 Mcf ~ 1.037 MMBtu) vs EIA Henry Hub 2024 spot $2.22/MMBtu -> raw +$1.15/MMBtu. That EIA 'citygate' is the LDC-delivered price (includes full distribution transport), an upper bound that overstates power-plant burn: the Chicago Citygate trading hub traded ~Henry Hub parity in 2024 and southern-MISO (LA/MS/AR) plants price near Henry Hub. Reconciled down to a footprint blend of +0.30 (trading-hub parity + modest northern transport, net of ~$0 southern basis), keeping MISO on the same plant-delivered footing as the PJM/NYISO EIA-923 basis.",
+      "source_date": "2024",
+      "page_or_table": "Series n3050il3m (Illinois citygate); RNGWHHD (Henry Hub)",
+      "url": "https://www.eia.gov/dnav/ng/hist/n3050il3m.htm",
+      "notes": "Footprint-wide proxy; refine with EIA-923 MISO Schedule-5 plant receipts in M8. Accessed 2026-06-22.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-22",
+      "flags": []
+    },
+    {
       "param_id": "gas_basis_differential.NEISO",
       "display_name": "Gas Basis Differential / Neiso",
       "value": 1.1,
@@ -6033,6 +6049,25 @@
         "auto-generated",
         "needs-citation"
       ]
+    },
+    {
+      "param_id": "market_design.MISO",
+      "display_name": "Market Design / Miso",
+      "value": {
+        "capacity_market": true,
+        "net_cone_per_kw_yr": 80.0
+      },
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "MISO seasonal Planning Resource Auction (PRA). Anchored on MISO's published Net-CONE (the sloped demand-curve reference), NOT the volatile PRA clearing price. Reference resource: advanced combustion turbine; gross CONE PY2024/25 ~$330/MW-day (= 330 x 365 / 1000 = $120.45/kW-yr). MISO average Net-CONE for the North/Central region ~$79,800/MW-yr = $79.8/kW-yr (equivalently $79,800/365 = $218.6/MW-day), i.e. gross CONE less ~$40/kW-yr inframarginal E&AS offset. Used 80.0 $/kW-yr. PRA->$/kW-yr: $/MW-day x 365 / 1000. Varies by LRZ (PY25/26 gross CONE $321/MW-day LRZ10 to $373/MW-day LRZ5) and season; single anchor pending M8 seasonal/zonal RA-timing build.",
+      "source_date": "2024-09-23",
+      "page_or_table": "MISO RASC 'CONE and Net CONE Update' (2024-09-23); MISO PRA Results PY2024/25 and PY2025/26",
+      "url": "https://cdn.misoenergy.org/20240923%20RASC%20Item%2003%20CONE%20and%20Net%20CONE%20Update649247.pdf",
+      "notes": "PRA clears seasonally in $/MW-day; convert via x365/1000 to $/kW-yr. PY24/25 annualized clearing ~$21/MW-day vs PY25/26 ~$217/MW-day (summer spike $666.50/MW-day) — net-CONE used as the stable anchor, consistent with PJM/NYISO/NEISO. Accessed 2026-06-22.",
+      "old_repo_location": "",
+      "last_verified": "2026-06-22",
+      "flags": []
     },
     {
       "param_id": "market_design.NEISO",
