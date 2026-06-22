@@ -515,9 +515,20 @@ HENRY_HUB_MONTHLY_PATH: Path = GAS_PRICES_DIR / "henry_hub_monthly.csv"
 # normalized to each month's own daily mean, so they average to 1.0).
 HENRY_HUB_DAILY_PATH: Path = GAS_PRICES_DIR / "henry_hub_daily.csv"
 
+# Measured Transco Zone 6 NY *daily* spot (EIA Natural Gas Weekly Update archive
+# "New York" row, scraped by scripts/fetch_transco_daily_spot.py). The NYISO
+# analogue of HENRY_HUB_DAILY_PATH: used only for its within-month *shape* so the
+# daily hub-basis overlay (:func:`iso_hub_daily_gas_prices`) resolves the real
+# cold-day spike that a monthly mean smears flat, without moving the monthly hub
+# level (the factors normalize to each month's own daily mean). Iroquois Z2 — the
+# NYISO reference zone — is not on EIA's free table, so the Iroquois-priced zones
+# inherit this Transco daily shape (a real daily Iroquois series is the open ask).
+TRANSCO_Z6_NY_DAILY_PATH: Path = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
+
 _WINTER_BASIS_CACHE: dict[Path, pd.DataFrame | None] = {}
 _HH_MONTHLY_CACHE: dict[Path, dict[tuple[int, int], float]] = {}
 _HH_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
+_TRANSCO_DAILY_CACHE: dict[Path, dict[int, dict[int, list[float]]]] = {}
 
 # Clean-data ("data/clean/fuel-prices") consumption. The curated dataset carries
 # the delivered fuel-price benchmarks as ``price_usd_per_mmbtu`` keyed by
@@ -675,6 +686,30 @@ def _henry_hub_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
     return out
 
 
+def _transco_z6_daily(path: Path | None) -> dict[int, dict[int, list[float]]]:
+    """Return ``{year: {month: [daily $/MMBtu, ...]}}`` measured Transco Z6 NY spot.
+
+    The NYISO analogue of :func:`_henry_hub_daily`, reading the scraped EIA NG
+    Weekly archive "New York" (Transco Z6 NY) daily series from
+    :data:`TRANSCO_Z6_NY_DAILY_PATH`. Days are grouped by calendar month in date
+    order; trading-day gaps (weekends, holiday weeks EIA does not archive) simply
+    yield shorter lists, which the mean-preserving shape (normalized to the
+    month's own daily mean) handles gracefully. Cached per path.
+    """
+    resolved = Path(path) if path else TRANSCO_Z6_NY_DAILY_PATH
+    if resolved in _TRANSCO_DAILY_CACHE:
+        return _TRANSCO_DAILY_CACHE[resolved]
+    out: dict[int, dict[int, list[float]]] = {}
+    if resolved.exists():
+        frame = pd.read_csv(resolved, parse_dates=["date"]).sort_values("date")
+        for r in frame.itertuples():
+            out.setdefault(r.date.year, {}).setdefault(r.date.month, []).append(
+                float(r.transco_z6_ny_usd_mmbtu)
+            )
+    _TRANSCO_DAILY_CACHE[resolved] = out
+    return out
+
+
 def gas_daily_shape_factors(
     year: int, hours: int, path: Path | None = None
 ) -> np.ndarray:
@@ -783,6 +818,85 @@ def _neiso_daily_demand(year: int, hours: int) -> np.ndarray | None:
     return result
 
 
+def _nyiso_hub_daily_gas_prices(
+    config: ScenarioConfig,
+    year: int,
+    basis_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+    transco_path: Path | None = None,
+) -> np.ndarray | None:
+    """NYISO daily-resolved reference-hub gas price ($/MMBtu), ``(hours,)``.
+
+    The NYISO leg of :func:`iso_hub_daily_gas_prices`. The monthly reference-zone
+    (Iroquois Z2) hub level is correct (:func:`iso_hub_monthly_gas_prices`,
+    measured Henry Hub month + the Transco/Iroquois basis row); this multiplies in
+    the **measured Transco Z6 NY daily within-month shape** (:func:`_transco_z6_daily`)
+    so each month's flat plateau is replaced by the real day-to-day swing —
+    cheap shoulder days and the cold-snap spike — **mean-preserving** (the daily
+    factors normalize to each month's own daily mean), so the monthly hub level,
+    annual gas burn and fuel mix are unchanged. Unlike the NEISO leg this needs
+    no demand-convexity proxy: NYISO's marginal hub is itself a measured daily
+    series. The per-zone annual offsets (:func:`apply_nyiso_zonal_gas_basis`) are
+    layered on top by the caller exactly as in the monthly path, so the NYC zone
+    still resolves to the measured Transco level and the Iroquois-priced zones to
+    the same daily shape plus their annual spread.
+
+    Iroquois Z2 has no public daily series (EIA's free table carries Transco Z6
+    NY but not Iroquois), so the Transco daily *shape* is applied to the Iroquois
+    monthly level — within a month the two hubs' day-to-day swing is effectively
+    the same (the Iroquois-Transco spread is a slow, winter-concentrated basis,
+    not a daily commodity signal). Months without a basis row, a Henry Hub quote,
+    or any Transco daily quotes keep the flat monthly value (``NaN`` here for the
+    overlay to fall back on), so a holiday-week archive gap never biases a month.
+
+    Returns ``None`` when the monthly hub series is unavailable (forward years,
+    no basis rows), so :func:`apply_hub_basis_overlay` falls back to the flat
+    monthly overlay.
+    """
+    monthly = iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
+    if monthly is None:
+        return None
+    transco_daily = _transco_z6_daily(transco_path).get(year, {})
+    T = config.hours
+    out = np.full(T, np.nan, dtype=float)
+    hour = 0
+    for m in range(12):
+        n_days = _DAYS_IN_MONTH[m]
+        month_hours = n_days * 24
+        hub_m = monthly[m]
+        if not np.isnan(hub_m) and hour < T:
+            quotes = transco_daily.get(m + 1)
+            if quotes:
+                arr = np.asarray(quotes, dtype=float)
+                mean = float(arr.mean())
+                if mean > 0:
+                    # Spread the month's trading-day quotes across its calendar
+                    # days, then renormalize so the calendar-day factors average
+                    # to exactly 1.0 — so scaling the correct monthly hub level by
+                    # them is exactly mean-preserving (annual burn unchanged) even
+                    # when a holiday week leaves the quotes unevenly spaced.
+                    day_factor = np.interp(
+                        np.linspace(0.0, 1.0, n_days),
+                        np.linspace(0.0, 1.0, len(arr)),
+                        arr / mean,
+                    )
+                    fbar = float(day_factor.mean())
+                    if fbar > 0:
+                        day_factor = day_factor / fbar
+                    day_hub = hub_m * day_factor
+                else:
+                    day_hub = np.full(n_days, hub_m)
+            else:
+                # No daily quotes this month: keep the flat monthly hub level.
+                day_hub = np.full(n_days, hub_m)
+            shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
+            out[hour : hour + len(shaped)] = shaped
+        hour += month_hours
+    if np.isnan(out).all():
+        return None
+    return out
+
+
 def iso_hub_daily_gas_prices(
     config: ScenarioConfig,
     year: int,
@@ -816,7 +930,14 @@ def iso_hub_daily_gas_prices(
     builds the ISO-NE winter LMP tail. Returns ``None`` when the monthly basis
     is unavailable (so the caller no-ops) or when the NEISO demand series is
     unavailable (so the caller falls back to the flat monthly overlay).
+
+    **NYISO** uses a different daily leg (:func:`_nyiso_hub_daily_gas_prices`):
+    its marginal hub *is* a measured daily-spot series (Transco Z6 NY, EIA NG
+    Weekly), so the within-month shape is taken straight from the real daily
+    quotes rather than reconstructed from a demand-convexity proxy.
     """
+    if config.iso == "NYISO":
+        return _nyiso_hub_daily_gas_prices(config, year, basis_path, henry_hub_path)
     basis = load_winter_gas_basis(config, year, path=basis_path)
     if basis is None:
         return None
