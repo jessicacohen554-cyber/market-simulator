@@ -108,6 +108,27 @@ ERCOT default is **CAMPD per-plant binning** (`use_campd_bins=True`): one LP uni
 - Single-letter vars only in LP construction: t=hour, g=generator, z=zone, s=storage, with comment.
 - Feature branches: phase-N/description. Commits: imperative present tense.
 
+## Git & Pushing (avoid the 413 push loop)
+
+`git push` over this remote rejects large packs with **HTTP 413** and retries
+just re-fail — do **not** burn turns looping on `git push`. The committed
+dashboard payloads (`frontend/data/backcast/runs/*.js`, `bench/`) plus a stale
+base make the pack too big. Workflow:
+
+1. **Start fresh on main.** `git fetch origin main` then branch/rebase the work
+   onto the latest `origin/main` so the push pack carries *only* your own new
+   objects, not a divergent base.
+2. **Push file-content commits via the GitHub MCP API, not git.** Use
+   `mcp__github__push_files` (one call per logical change, **small commits** —
+   a bundle's slim files + sidecar + run payload + bench in one call, docs/code
+   in another). The API commits server-side and bypasses git's pack
+   negotiation, so it never 413s regardless of payload size.
+3. **Only fall back to `git push` for small, source-only commits** (no
+   `runs/*.js`/bundle payloads). If a `git push` 413s once, switch to
+   `push_files` — never retry the same large `git push` more than once.
+4. Never commit the gitignored deploy files (`backcast-results.html`,
+   `manifest.js`, `benchmark.js`); the Pages deploy regenerates them.
+
 ## Testing Pattern
 
 Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
