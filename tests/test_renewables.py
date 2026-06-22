@@ -11,8 +11,11 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import load_eia_hourly_renewable_gen
 from market_sim.data.renewables import (
+    _distribute_by_eia860,
     _eia860_monthly_capacity,
     _eia860_zone_shares,
+    _redistribute_preserving_total,
+    _solar_zone_clearsky_shapes,
     derive_cf_profile,
     load_hsl_hourly,
     load_renewable_profiles,
@@ -192,6 +195,119 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
     assert solar_cf[trading].sum() > 0.0
     assert np.all(solar_cf[wecc] == 0.0)
     assert solar_cap[wecc] == 0.0
+
+
+def test_caiso_solar_zones_have_distinct_shapes():
+    """Each CAISO solar zone gets its own clear-sky shape from its tracking mix.
+
+    NP15 (NorCal) carries the most fixed-tilt solar and ZP26/SP15 the most
+    tracking, so NP15's diurnal solar profile must peak more sharply (a higher
+    midday peak-to-shoulder ratio) than the more-tracking southern zones — the
+    spatial diversity the single ISO-wide shape erased.
+    """
+    iso_config = get_iso_config("CAISO")
+    zones = iso_config.zone_names
+    shapes = _solar_zone_clearsky_shapes("CAISO", "solar", zones, _TEST_YEAR)
+    assert shapes is not None
+    assert shapes.shape == (len(zones), HOURS_PER_YEAR)
+
+    np15 = zones.index("NP15")
+    sp15 = zones.index("SP15")
+    # The two trading-zone shapes are genuinely different, not a copy.
+    assert not np.allclose(shapes[np15], shapes[sp15])
+
+    def peak_to_shoulder(shape: np.ndarray) -> float:
+        diurnal = shape.reshape(365, 24).mean(axis=0)
+        peak_hour = int(diurnal.argmax())
+        shoulder = diurnal[peak_hour - 3]  # 3h before the midday peak
+        return diurnal[peak_hour] / shoulder
+
+    # More fixed-tilt -> a narrower, peakier midday belly.
+    assert peak_to_shoulder(shapes[np15]) > peak_to_shoulder(shapes[sp15])
+
+
+def test_solar_zone_redistribution_preserves_aggregate():
+    """Per-zone solar shaping is a pure spatial redistribution of the aggregate.
+
+    The capacity-weighted sum of the shaped per-zone CFs must equal the input
+    ISO-wide ``cf_profile`` every hour (to machine precision), so annual energy
+    and the system duck curve are unchanged — only NP15-vs-SP15 differ.
+    """
+    iso_config = get_iso_config("CAISO")
+    zones = iso_config.zone_names
+    monthly = _eia860_monthly_capacity("CAISO", "solar", zones, _TEST_YEAR)
+    assert monthly is not None
+    shapes = _solar_zone_clearsky_shapes("CAISO", "solar", zones, _TEST_YEAR)
+    assert shapes is not None
+
+    # A realistic, sun-correlated CF profile (proportional to the system sun).
+    december = monthly[:, -1]
+    share = december / december.sum()
+    mean_shape = (share[:, None] * shapes).sum(axis=0)
+    cf_profile = mean_shape / mean_shape.max() * 0.75
+    installed = float(december.sum())
+
+    shaped, cap = _distribute_by_eia860(
+        cf_profile, installed, monthly, vintage_capacity_ramp=False, zone_shapes=shapes
+    )
+    flat, _ = _distribute_by_eia860(
+        cf_profile, installed, monthly, vintage_capacity_ramp=False
+    )
+
+    share = cap / cap.sum()
+    agg_shaped = (share[:, None] * shaped).sum(axis=0)
+    # Hour-by-hour aggregate preserved, and annual energy identical to flat.
+    np.testing.assert_allclose(agg_shaped, cf_profile, atol=1e-9)
+    np.testing.assert_allclose(
+        (cap[:, None] * shaped).sum(axis=0),
+        (cap[:, None] * flat).sum(axis=0),
+        atol=1e-9,
+    )
+    # The shaped split actually differs from flat in the trading zones.
+    np15 = zones.index("NP15")
+    assert not np.allclose(shaped[np15], flat[np15])
+
+
+def test_solar_zone_shapes_noop_for_wind_and_single_zone():
+    """Per-zone shaping is a no-op for wind, single-zone ISOs, and non-gated ISOs.
+
+    Only gated multi-zone solar ISOs (CAISO) are reshaped; everything else
+    keeps the legacy single-shape behaviour, returning ``None`` so the flat
+    distribution path is used unchanged.
+    """
+    caiso_zones = get_iso_config("CAISO").zone_names
+    ercot_zones = get_iso_config("ERCOT").zone_names
+    # Wind is never reshaped, even for a gated ISO.
+    assert _solar_zone_clearsky_shapes("CAISO", "wind", caiso_zones, _TEST_YEAR) is None
+    # A non-gated ISO's solar is untouched.
+    assert _solar_zone_clearsky_shapes("ERCOT", "solar", ercot_zones, _CAL_YEAR) is None
+
+
+def test_redistribute_preserving_total_trivial_24h():
+    """A trivial two-zone, 24-hour case preserves the system total exactly.
+
+    One peaky zone and one flat zone split a single midday-bell system series;
+    the capacity-weighted sum must reproduce the input every hour and the two
+    zones must end up with different shapes.
+    """
+    hours = 24
+    cap = np.array([100.0, 100.0])
+    ramp_t = np.ones((2, hours))
+    t = np.arange(hours)
+    # A daytime bell, zero at night.
+    bell = np.clip(np.sin((t - 6) / 12.0 * np.pi), 0.0, None)
+    cf_profile = bell * 0.6
+    # Zone 0 peaky (squared bell), zone 1 flat-ish (bell) -> distinct shapes.
+    shapes = np.vstack([bell**2, bell])
+
+    cf = _redistribute_preserving_total(cf_profile, cap, ramp_t, shapes)
+    share = cap / cap.sum()
+    agg = (share[:, None] * cf).sum(axis=0)
+    np.testing.assert_allclose(agg, cf_profile, atol=1e-12)
+    assert not np.allclose(cf[0], cf[1])
+    # Night hours are zero everywhere (no sun to redistribute).
+    night = bell == 0.0
+    assert np.all(cf[:, night] == 0.0)
 
 
 def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
