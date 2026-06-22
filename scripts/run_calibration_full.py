@@ -4093,14 +4093,15 @@ def main() -> None:
     parser.add_argument(
         "--gas-hub-basis-daily",
         action="store_true",
-        help="NEISO diagnostic (off by default): replace the flat monthly "
-        "Algonquin Citygate hub-basis overlay with a daily within-month "
-        "shape (demand^AGT_DAILY_BASIS_CONVEXITY, mean-preserving) and "
-        "re-attribute dual-fuel switched MWh to oil. Builds the winter "
-        ">$200 LMP tail / oil burn the monthly plateau can't, but the "
-        "convexity is fitted to the backcast (not forecast-grade) and the "
-        "daily AGT spot it proxies (U4) is unavailable, so it is opt-in "
-        "and the keepers stay on the measured monthly overlay.",
+        help="Diagnostic (off by default): replace the flat monthly hub-basis "
+        "overlay with a daily within-month shape, mean-preserving so the "
+        "monthly hub level and annual burn are unchanged. NEISO: the Algonquin "
+        "shape is a demand^AGT_DAILY_BASIS_CONVEXITY proxy (fitted to the "
+        "backcast, the daily AGT spot it proxies is unavailable). NYISO: the "
+        "real measured Transco Z6 NY daily spot (EIA NG Weekly, "
+        "transco_z6_ny_daily.csv) — no proxy — so the cold-day spike a monthly "
+        "mean smears flat (e.g. Jan-2025) reaches the merit order. Pair with "
+        "--gas-hub-basis-overlay.",
     )
     parser.add_argument(
         "--plant-tranche-config",
