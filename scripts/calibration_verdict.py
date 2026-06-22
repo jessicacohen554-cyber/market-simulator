@@ -1,0 +1,836 @@
+"""Reproducible calibration determination for an ISO backcast keeper.
+
+Implements ``docs/calibration-determination-rubric.md``: reads a run's COMMITTED
+artifacts only — the registry sidecar, the run payload, the per-(ISO, year)
+benchmark parts, the bundle config, and the bundle's calibration attestation —
+and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per criterion plus one overall
+determination in ``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. It never
+re-solves the LP and never touches the gitignored ``dispatch``/``system``
+parquets, so re-running it on any keeper reproduces the verdict byte-for-byte.
+
+The model side is the grid-delivered basis (grid LP dispatch, no behind-the-meter
+CHP add-back); the actual side is EIA-923 minus the per-class BTM host supply
+(``classFull``) and EIA-930 grid totals — model-grid vs actual-grid, the same
+numbers the dashboard renders (``scripts/render_calibration_html.py``).
+
+Stdlib-only (json, gzip, base64, re, math) so it runs anywhere the committed
+artifacts are checked out, with no pandas / numpy / model import.
+
+Usage:
+    python scripts/calibration_verdict.py results/calibration/<name>
+    python scripts/calibration_verdict.py --run-id <id>
+    python scripts/calibration_verdict.py --json results/calibration/<name>
+"""
+
+from __future__ import annotations
+
+import argparse
+import base64
+import gzip
+import json
+import math
+import re
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO / "frontend" / "data" / "backcast"
+REGISTRY_DIR = DATA_DIR / "registry"
+RUNS_DIR = DATA_DIR / "runs"
+BENCH_DIR = DATA_DIR / "bench"
+
+# Statuses (per criterion-year and aggregated).
+PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
+# Failure classifications (rubric §1).
+MODEL_MISS = "MODEL MISS"
+MEASURED_LIMIT = "ACCEPTED MEASURED-INPUT LIMITATION"
+# Overall determinations.
+CALIBRATED = "CALIBRATED"
+CALIBRATED_CAVEATS = "CALIBRATED-WITH-CAVEATS"
+NOT_YET = "NOT-YET"
+
+# --- fuel-family class membership (plant_taxonomy.classes_for_fuel930 roll-up) --
+GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
+COAL_CLASSES = ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC", "COAL")
+# Classes excluded from the per-class fuel-mix gate (C1), each justified in the
+# rubric: CT_CHP is a BTM peaker the grid LP zeroes by construction; OTHER /
+# OTHER_FOSSIL are the mixed-plant reconciliation bucket, not merit-order classes.
+FUELMIX_EXCLUDED = frozenset({"CT_CHP", "OTHER", "OTHER_FOSSIL"})
+
+# --- tolerances (rubric §1) -------------------------------------------------
+FUELMIX_BIG_TWH = 20.0  # class actual >= this -> percent band, else absolute band
+FUELMIX_BIG_TOL = 0.05  # +/-5% for >= 20 TWh classes
+FUELMIX_SMALL_ABS = 1.0  # +/-1 TWh for < 20 TWh classes
+SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered
+SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
+# absolute band governs it, so the ±2.5% system-volume gate is N/A (e.g. NEISO
+# coal ~0.3 TWh — a percent band on a near-zero family is pure noise).
+DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
+# coal); the per-class C1 absolute band is the meaningful check, not correlation.
+VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
+PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
+PRICE_MEAN_TOL = 0.08  # +/-8% mean LMP (playbook 5-10%; energy-only dual undershoots)
+PRICE_SHAPE_NRMSE_MAX = 0.20  # monthly load-weighted price NRMSE
+TAIL_LO, TAIL_HI = 0.5, 2.0  # model tail hours must be within [0.5x, 2x] of actual
+DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
+DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
+CO2_TOL = 0.07  # +/-7% vs eGRID
+STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
+VRE_TOL = 0.10  # +/-10% advisory band for solar/wind (report-only)
+
+# Per-ISO scarcity-tail definition (rubric §5): (threshold $/MWh).
+TAIL_THRESHOLD = {
+    "ERCOT": 200.0,
+    "PJM": 200.0,
+    "MISO": 200.0,
+    "SPP": 200.0,
+    "CAISO": 200.0,
+    "NYISO": 300.0,
+    "NEISO": 300.0,
+}
+
+# Governance: outage sources that are exogenous availability events (rubric C6.4).
+EXOGENOUS_OUTAGE_SOURCES = frozenset({"historic", "statistical"})
+# scenario_config flags that, if truthy, indicate a forbidden fitted mechanism
+# (output-pinning / price-residual adder). Curated by exact name to avoid false
+# positives on legitimate structural terms (e.g. wefor_residual, a renewable
+# forecast-error term). Empty today; extend as such a flag is ever introduced.
+FORBIDDEN_FLAGS: tuple[str, ...] = ()
+
+# Caveat budget / quorum (rubric §2).
+MAX_HARD_CAVEATS = 1
+MAX_SOFT_CAVEATS = 3
+
+# Criterion id -> (label, HARD?).
+HARD = True
+SOFT = False
+CRITERIA = {
+    "fuelmix": ("C1 fuel-mix by class (grid-delivered)", HARD),
+    "sysvol": ("C2 system volume (gas/coal families)", HARD),
+    "price_mean": ("C3a mean LMP", SOFT),
+    "price_shape": ("C3b price duration/shape", SOFT),
+    "price_tail": ("C3c price tail / scarcity", SOFT),
+    "dispatch_corr": ("C4 fleet hourly dispatch correlation", SOFT),
+    "co2": ("C5a CO2 vs eGRID", SOFT),
+    "storage": ("C5b storage throughput", SOFT),
+    "governance": ("C6 governance gate", HARD),
+}
+
+
+# ---------------------------------------------------------------------------
+# Artifact loading
+# ---------------------------------------------------------------------------
+def _decode_run_js(text: str) -> dict:
+    """Decode a ``runs/<id>.js`` payload (``window.BC.runGz[..]="<b64>"``)."""
+    m = re.search(r'=\s*"([A-Za-z0-9+/=]+)"', text)
+    if not m:
+        raise ValueError("no gzip+base64 payload found in run js")
+    return json.loads(gzip.decompress(base64.b64decode(m.group(1))))
+
+
+def resolve_run_id(arg: str) -> str:
+    """Return the run id for a CLI arg that is either a run id or a bundle dir.
+
+    A run id resolves when its sidecar exists. Otherwise ``arg`` is treated as a
+    bundle path and matched against each sidecar's stored ``bundle`` field.
+    """
+    if (REGISTRY_DIR / f"{arg}.json").exists():
+        return arg
+    p = Path(arg)
+    cand = {arg, p.name, str(p)}
+    try:
+        cand.add(str(p.resolve().relative_to(REPO)))
+    except ValueError:
+        pass
+    for side in sorted(REGISTRY_DIR.glob("*.json")):
+        rec = json.loads(side.read_text())
+        if rec.get("bundle") in cand or Path(rec.get("bundle", "")).name == p.name:
+            return rec["id"]
+    raise SystemExit(
+        f"could not resolve a registered run from {arg!r} "
+        f"(no registry sidecar and no bundle match)."
+    )
+
+
+def load_artifacts(run_id: str) -> dict:
+    """Load every committed artifact the scorer needs for ``run_id``.
+
+    Returns ``{sidecar, payload, bench, config, attestation}``; ``bench`` is
+    ``{year: bench_payload}`` and missing pieces are ``None`` so the scorer can
+    SKIP rather than crash.
+    """
+    side_path = REGISTRY_DIR / f"{run_id}.json"
+    if not side_path.exists():
+        raise SystemExit(f"no registry sidecar for run id {run_id!r}.")
+    sidecar = json.loads(side_path.read_text())
+    iso = sidecar.get("iso", "ERCOT")
+
+    run_js = RUNS_DIR / f"{run_id}.js"
+    payload = _decode_run_js(run_js.read_text()) if run_js.exists() else None
+
+    bench: dict[int, dict] = {}
+    for part in sorted((BENCH_DIR / iso).glob("*.json.gz")) if iso else []:
+        obj = json.loads(gzip.decompress(part.read_bytes()))
+        for y in obj.get("meta", {}).get("years", []):
+            bench[int(y)] = obj.get("bench", {})
+
+    bundle_dir = REPO / sidecar["bundle"] if sidecar.get("bundle") else None
+    config = None
+    attestation = None
+    if bundle_dir and bundle_dir.exists():
+        rc = bundle_dir / "run_config.json"
+        meta = bundle_dir / "meta.json"
+        config = {
+            "scenario_config": (
+                json.loads(rc.read_text()).get("scenario_config", {})
+                if rc.exists()
+                else {}
+            ),
+            "meta": json.loads(meta.read_text()) if meta.exists() else {},
+        }
+        att = bundle_dir / "calibration_attestation.json"
+        if att.exists():
+            attestation = json.loads(att.read_text())
+    return {
+        "sidecar": sidecar,
+        "payload": payload,
+        "bench": bench,
+        "config": config,
+        "attestation": attestation,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Small numeric helpers (stdlib only)
+# ---------------------------------------------------------------------------
+def _pct(model: float, actual: float) -> float | None:
+    """Signed fractional error ``(model-actual)/actual``; None when undefined."""
+    if actual is None or abs(actual) < 1e-9:
+        return None
+    return (model - actual) / actual
+
+
+def _wmean(pairs: list[tuple[float, float]]) -> float | None:
+    """Demand-weighted mean of ``(value, weight)`` pairs."""
+    w = sum(wt for _, wt in pairs)
+    if w <= 0:
+        return None
+    return sum(v * wt for v, wt in pairs) / w
+
+
+def _nrmse(model: list[float], actual: list[float]) -> float | None:
+    """Normalised RMSE of two equal-length monthly vectors (skip None cells)."""
+    cells = [(m, a) for m, a in zip(model, actual) if m is not None and a is not None]
+    if not cells:
+        return None
+    mean_a = sum(a for _, a in cells) / len(cells)
+    if abs(mean_a) < 1e-9:
+        return None
+    rmse = math.sqrt(sum((m - a) ** 2 for m, a in cells) / len(cells))
+    return rmse / mean_a
+
+
+# ---------------------------------------------------------------------------
+# Ledger
+# ---------------------------------------------------------------------------
+def _ledger_match(exceptions: list[dict], criterion: str, year: int, key: str | None):
+    """Return the ledger entry matching (criterion, year, class/family) or None.
+
+    ``key`` is the class (fuelmix) or family (sysvol/dispatch_corr); criteria
+    without a sub-key match on (criterion, year) alone.
+    """
+    for e in exceptions or []:
+        if e.get("criterion") != criterion or int(e.get("year", -1)) != int(year):
+            continue
+        ekey = e.get("klass") or e.get("family")
+        if key is None or ekey is None or str(ekey) == str(key):
+            return e
+    return None
+
+
+def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
+    """Reclassify an out-of-tolerance result to CAVEAT iff the ledger documents it.
+
+    A FAIL with a matching ledger entry becomes a CAVEAT classified ACCEPTED
+    MEASURED-INPUT LIMITATION; a FAIL without one stays a FAIL (MODEL MISS).
+    """
+    if rec["status"] != FAIL:
+        return rec
+    entry = _ledger_match(exceptions, rec["criterion"], rec["year"], rec.get("key"))
+    if entry:
+        rec["status"] = CAVEAT
+        rec["classification"] = MEASURED_LIMIT
+        rec["ledger_reason"] = entry.get("reason", "")
+    return rec
+
+
+# ---------------------------------------------------------------------------
+# Per-criterion scoring (one record per criterion-year, pre-ledger)
+# ---------------------------------------------------------------------------
+def score_fuelmix(year: int, ypay: dict, ybench: dict) -> list[dict]:
+    """C1 — tiered per-class grid-delivered fuel-mix (gmModel vs classFull)."""
+    gm = ypay.get("gmModel", {})
+    cf = ybench.get("classFull", {})
+    out = []
+    classes = [c for c in (*GAS_CLASSES, *COAL_CLASSES) if c not in FUELMIX_EXCLUDED]
+    for c in classes:
+        a = cf.get(c)
+        if a is None:
+            continue  # class not benchmarked for this ISO-year
+        m = float(gm.get(c, 0.0))
+        if a >= FUELMIX_BIG_TWH:
+            err = _pct(m, a)
+            ok = err is not None and abs(err) <= FUELMIX_BIG_TOL
+            mag = f"{err * 100:+.1f}%" if err is not None else "n/a"
+            tol = f"±{FUELMIX_BIG_TOL * 100:.0f}%"
+        else:
+            d = m - a
+            ok = abs(d) <= FUELMIX_SMALL_ABS
+            mag = f"{d:+.2f} TWh"
+            tol = f"±{FUELMIX_SMALL_ABS:.0f} TWh"
+        out.append(
+            {
+                "criterion": "fuelmix",
+                "key": c,
+                "year": year,
+                "status": PASS if ok else FAIL,
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"{c} grid-delivered TWh",
+                "model": round(m, 3),
+                "actual": round(a, 3),
+                "tol": tol,
+                "magnitude": mag,
+            }
+        )
+    return out
+
+
+def score_sysvol(year: int, ypay: dict, ybench: dict) -> list[dict]:
+    """C2 — gas/coal family system volume (±2.5%), with the 2025 vintage path."""
+    gm = ypay.get("gmModel", {})
+    cf = ybench.get("classFull", {})
+    e930 = ybench.get("e930", {})
+    out = []
+    prelim = year >= PRELIM_923_FROM_YEAR
+    for fam, classes in (("gas", GAS_CLASSES), ("coal", COAL_CLASSES)):
+        m = sum(float(gm.get(c, 0.0)) for c in classes)
+        a923 = sum(float(cf.get(c, 0.0)) for c in classes)
+        a930 = float(e930.get(fam, 0.0)) or None
+        # Immaterial family: the C1 per-class absolute band governs it, so the
+        # percent system-volume gate is not applicable (avoids a meaningless
+        # ±2.5% on a near-zero family like NEISO coal).
+        if max(a923, a930 or 0.0) < SYSVOL_MIN_TWH:
+            out.append(
+                _skip(
+                    "sysvol",
+                    year,
+                    f"{fam} family immaterial (<{SYSVOL_MIN_TWH:g} TWh); "
+                    "governed by the C1 per-class absolute band",
+                    key=fam,
+                )
+            )
+            continue
+        if prelim:
+            # Preliminary EIA-923 vintage: the EIA-930 grid total is the
+            # authoritative actual; record whether the 0.97 reconcile fired.
+            actual, src = a930, "EIA-930 grid (preliminary-923 vintage)"
+            reconciled = bool(a930 and a923 < VINTAGE_RECONCILE_FRAC * a930)
+        else:
+            actual, src = a923, "EIA-923 − BTM (grid-delivered)"
+            reconciled = False
+        err = _pct(m, actual) if actual else None
+        ok = err is not None and abs(err) <= SYSVOL_TOL
+        out.append(
+            {
+                "criterion": "sysvol",
+                "key": fam,
+                "year": year,
+                "status": PASS if ok else (FAIL if err is not None else SKIPPED),
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"{fam} family grid-delivered TWh",
+                "model": round(m, 2),
+                "actual": round(actual, 2) if actual else None,
+                "tol": f"±{SYSVOL_TOL * 100:.1f}%",
+                "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+                "source": src,
+                "vintage_reconciled": reconciled,
+            }
+        )
+    return out
+
+
+def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
+    """C3a — system load-weighted mean LMP vs actual RT (fallback DA)."""
+    lmp = ypay.get("lmp", {})
+    pairs = [
+        (z.get("p"), z.get("d", 0.0)) for z in lmp.values() if z.get("p") is not None
+    ]
+    model = _wmean(pairs) if pairs else None
+    avg = ybench.get("avgLMP") or {}
+    actual = avg.get("rt", avg.get("da"))
+    if model is None or actual is None:
+        return _skip("price_mean", year, "no model or actual mean LMP")
+    err = _pct(model, actual)
+    ok = err is not None and abs(err) <= PRICE_MEAN_TOL
+    return {
+        "criterion": "price_mean",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": "system load-weighted mean LMP $/MWh",
+        "model": round(model, 2),
+        "actual": round(actual, 2),
+        "tol": f"±{PRICE_MEAN_TOL * 100:.0f}%",
+        "magnitude": f"{err * 100:+.1f}%",
+    }
+
+
+def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
+    """C3b — monthly load-weighted price NRMSE (quantitative shape metric)."""
+    lmp = ypay.get("lmp", {})
+    # Model monthly = demand-weighted across zones of pMon by dMon.
+    model_mon: list[float | None] = []
+    for mo in range(12):
+        pairs = []
+        for z in lmp.values():
+            pm = (z.get("pMon") or [None] * 12)[mo]
+            dm = (z.get("dMon") or [0.0] * 12)[mo]
+            if pm is not None:
+                pairs.append((pm, dm))
+        model_mon.append(_wmean(pairs) if pairs else None)
+    avg = ybench.get("avgLMP") or {}
+    actual_mon = avg.get("rt_mon") or avg.get("da_mon")
+    if actual_mon is None or all(v is None for v in model_mon):
+        return _skip("price_shape", year, "no monthly model or actual LMP")
+    nrmse = _nrmse(model_mon, actual_mon)
+    if nrmse is None:
+        return _skip("price_shape", year, "monthly NRMSE undefined")
+    ok = nrmse <= PRICE_SHAPE_NRMSE_MAX
+    return {
+        "criterion": "price_shape",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": "monthly load-weighted price NRMSE",
+        "model": round(nrmse, 3),
+        "actual": None,
+        "tol": f"≤{PRICE_SHAPE_NRMSE_MAX:.2f}",
+        "magnitude": f"NRMSE {nrmse:.3f}",
+    }
+
+
+def score_price_tail(year: int, ypay: dict, iso: str) -> dict:
+    """C3c — scarcity tail hours (model within [0.5x,2x] of actual)."""
+    ordc = ypay.get("ordc")
+    thr = TAIL_THRESHOLD.get(iso, 200.0)
+    if not ordc or "hoursGt200" not in ordc:
+        return _skip(
+            "price_tail",
+            year,
+            f"hourly scarcity series not in committed payload (tail>${thr:.0f})",
+        )
+    h = ordc["hoursGt200"]
+    actual, model = float(h.get("actual", 0)), float(h.get("model", 0))
+    if actual <= 0:
+        # No observed scarcity: a quiet tail can't be over/under-shot meaningfully.
+        ok = model <= 0 or model < 50  # token guard against an invented tail
+        mag = f"model {model:.0f}h vs actual ~0h (>${thr:.0f})"
+    else:
+        ratio = model / actual
+        ok = TAIL_LO <= ratio <= TAIL_HI
+        mag = f"model {model:.0f}h vs actual {actual:.0f}h ({ratio:.2f}×, >${thr:.0f})"
+    return {
+        "criterion": "price_tail",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": f"hours LMP > ${thr:.0f}/MWh",
+        "model": model,
+        "actual": actual,
+        "tol": f"[{TAIL_LO:g}×, {TAIL_HI:g}×]",
+        "magnitude": mag,
+    }
+
+
+def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
+    """C4 — fleet hourly r/NRMSE floors for the gas and coal fleets."""
+    rows = {r.get("fuel"): r for r in ypay.get("fuelRows", [])}
+    out = []
+    for fam in ("gas", "coal"):
+        r = rows.get(fam, {})
+        rr, nr = r.get("r"), r.get("nrmse")
+        if rr is None and nr is None:
+            out.append(
+                _skip("dispatch_corr", year, f"{fam} hourly fit absent", key=fam)
+            )
+            continue
+        # Immaterial fleet: an hourly correlation on a near-zero series is
+        # degenerate (NEISO coal r≈0); C1's per-class band is the real check.
+        twh = max(abs(r.get("m") or 0.0), abs(r.get("b") or 0.0))
+        if twh < DISP_MIN_TWH:
+            out.append(
+                _skip(
+                    "dispatch_corr",
+                    year,
+                    f"{fam} fleet immaterial (<{DISP_MIN_TWH:g} TWh); "
+                    "hourly correlation degenerate",
+                    key=fam,
+                )
+            )
+            continue
+        ok = (rr is not None and rr >= DISP_R_FLOOR) and (
+            nr is not None and nr <= DISP_NRMSE_MAX
+        )
+        out.append(
+            {
+                "criterion": "dispatch_corr",
+                "key": fam,
+                "year": year,
+                "status": PASS if ok else FAIL,
+                "classification": None if ok else MODEL_MISS,
+                "metric": f"{fam} fleet hourly r / NRMSE",
+                "model": f"r={rr} nrmse={nr}",
+                "actual": None,
+                "tol": f"r≥{DISP_R_FLOOR:.2f}, NRMSE≤{DISP_NRMSE_MAX:.2f}",
+                "magnitude": f"r={rr}, NRMSE={nr}",
+            }
+        )
+    return out
+
+
+def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
+    """C5a — CO2 vs eGRID; SKIPPED unless an emissions actual is committed."""
+    model = (ypay.get("co2") or {}).get("model")
+    actual = (ybench.get("co2") or {}).get("egrid")
+    if model is None or actual is None:
+        return _skip("co2", year, "no CO2/eGRID actual in committed artifacts")
+    err = _pct(model, actual)
+    ok = err is not None and abs(err) <= CO2_TOL
+    return {
+        "criterion": "co2",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": "system CO2 vs eGRID",
+        "model": model,
+        "actual": actual,
+        "tol": f"±{CO2_TOL * 100:.0f}%",
+        "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+    }
+
+
+def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
+    """C5b — storage throughput; SKIPPED unless a throughput series is committed."""
+    model = (ypay.get("storage") or {}).get("throughput_twh")
+    actual = (ybench.get("storage") or {}).get("throughput_twh")
+    if model is None or actual is None:
+        return _skip(
+            "storage", year, "no storage-throughput series in committed artifacts"
+        )
+    err = _pct(model, actual)
+    ok = err is not None and abs(err) <= STORAGE_TOL
+    return {
+        "criterion": "storage",
+        "key": None,
+        "year": year,
+        "status": PASS if ok else FAIL,
+        "classification": None if ok else MODEL_MISS,
+        "metric": "storage discharge throughput TWh",
+        "model": model,
+        "actual": actual,
+        "tol": f"±{STORAGE_TOL * 100:.0f}%",
+        "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+    }
+
+
+def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dict:
+    """Build a SKIPPED record (recorded as not-scored, never a silent pass)."""
+    return {
+        "criterion": criterion,
+        "key": key,
+        "year": year,
+        "status": SKIPPED,
+        "classification": None,
+        "metric": CRITERIA[criterion][0],
+        "model": None,
+        "actual": None,
+        "tol": None,
+        "magnitude": reason,
+    }
+
+
+def score_governance(config: dict | None, attestation: dict | None) -> dict:
+    """C6 — governance gate (machine cross-check + required attestation).
+
+    PASS iff config is clean (exogenous outage source, no forbidden flags) AND an
+    attestation is present with all four assertions true. FAIL if the machine
+    check trips or any assertion is false. UNATTESTED (-> NOT-YET) if no
+    attestation file exists — a run cannot be certified unattested.
+    """
+    sc = (config or {}).get("scenario_config", {})
+    meta = (config or {}).get("meta", {})
+    outage = meta.get("outage_source") or sc.get("outage_source")
+    machine_issues = []
+    if outage is not None and outage not in EXOGENOUS_OUTAGE_SOURCES:
+        machine_issues.append(
+            f"outage_source={outage!r} is not an exogenous availability source"
+        )
+    for flag in FORBIDDEN_FLAGS:
+        if sc.get(flag):
+            machine_issues.append(f"forbidden fitted-mechanism flag active: {flag}")
+
+    assertions = [
+        "levers_trace_to_measured_input",
+        "no_fit_to_price_residuals",
+        "no_pinning_to_actuals",
+        "outage_filter_exogenous_net_load",
+    ]
+    if attestation is None:
+        status, detail = "UNATTESTED", "no calibration_attestation.json in bundle"
+    else:
+        gov = attestation.get("governance", {})
+        false_asserts = [a for a in assertions if not gov.get(a, False)]
+        if machine_issues:
+            status, detail = FAIL, "; ".join(machine_issues)
+        elif false_asserts:
+            status, detail = FAIL, "attestation false: " + ", ".join(false_asserts)
+        else:
+            status = PASS
+            detail = gov.get("attested_by", "attested")
+    if attestation is None and machine_issues:
+        detail = "; ".join(machine_issues) + "; and no attestation"
+    return {
+        "criterion": "governance",
+        "key": None,
+        "year": None,
+        "status": status,
+        "classification": None if status == PASS else MODEL_MISS,
+        "metric": "every lever measured; no residual fit / pinning; exogenous outages",
+        "model": None,
+        "actual": None,
+        "tol": "pass/fail",
+        "magnitude": detail,
+        "machine_issues": machine_issues,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Aggregation + determination
+# ---------------------------------------------------------------------------
+def _agg_status(records: list[dict]) -> str:
+    """Aggregate per-year statuses for one criterion (FAIL>CAVEAT>PASS>SKIPPED)."""
+    s = {r["status"] for r in records}
+    if FAIL in s:
+        return FAIL
+    if CAVEAT in s:
+        return CAVEAT
+    if PASS in s:
+        return PASS
+    return SKIPPED
+
+
+def determine(run_id: str) -> dict:
+    """Score one run from its committed artifacts (rubric §2)."""
+    return determine_from_artifacts(run_id, load_artifacts(run_id))
+
+
+def determine_from_artifacts(run_id: str, art: dict) -> dict:
+    """Score one run's loaded artifacts and return the full verdict dict.
+
+    Split out from :func:`determine` so the decision logic can be unit-tested on
+    synthetic artifacts without reading files.
+    """
+    sidecar, payload, bench = art["sidecar"], art["payload"], art["bench"]
+    iso = sidecar.get("iso", "ERCOT")
+    exceptions = (art["attestation"] or {}).get("exceptions", [])
+
+    target_years = [int(y) for y in sidecar.get("years", [])]
+    scorable_years = sorted(int(y) for y in (payload or {}).get("years", {}))
+    data_blocked = sorted(set(target_years) - set(scorable_years))
+
+    # Score every criterion-year.
+    records: list[dict] = []
+    for year in scorable_years:
+        ypay = payload["years"][str(year)]
+        ybench = bench.get(year, {})
+        records += score_fuelmix(year, ypay, ybench)
+        records += score_sysvol(year, ypay, ybench)
+        records.append(score_price_mean(year, ypay, ybench))
+        records.append(score_price_shape(year, ypay, ybench))
+        records.append(score_price_tail(year, ypay, iso))
+        records += score_dispatch_corr(year, ypay)
+        records.append(score_co2(year, ypay, ybench))
+        records.append(score_storage(year, ypay, ybench))
+
+    # Apply the exceptions ledger (FAIL -> CAVEAT where documented).
+    for r in records:
+        _apply_ledger(r, exceptions)
+
+    gov = score_governance(art["config"], art["attestation"])
+
+    # Aggregate per criterion.
+    per_criterion: dict[str, dict] = {}
+    for cid, (label, hard) in CRITERIA.items():
+        if cid == "governance":
+            per_criterion[cid] = {
+                "label": label,
+                "hard": hard,
+                "status": gov["status"],
+                "records": [gov],
+            }
+            continue
+        recs = [r for r in records if r["criterion"] == cid]
+        per_criterion[cid] = {
+            "label": label,
+            "hard": hard,
+            "status": _agg_status(recs) if recs else SKIPPED,
+            "records": recs,
+        }
+
+    # Caveat budget.
+    hard_caveats = [
+        c
+        for cid, c in per_criterion.items()
+        if c["hard"] and cid != "governance" and c["status"] == CAVEAT
+    ]
+    soft_caveats = [
+        c for cid, c in per_criterion.items() if not c["hard"] and c["status"] == CAVEAT
+    ]
+    fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
+    skipped_soft = [
+        cid
+        for cid, c in per_criterion.items()
+        if not c["hard"] and c["status"] == SKIPPED
+    ]
+
+    # Determination (rubric §2).
+    reasons: list[str] = []
+    if gov["status"] != PASS:
+        determination = NOT_YET
+        reasons.append(f"governance gate {gov['status']}: {gov['magnitude']}")
+    elif fails:
+        determination = NOT_YET
+        reasons.append(
+            "undocumented out-of-tolerance (FAIL) criteria: " + ", ".join(fails)
+        )
+    elif len(hard_caveats) > MAX_HARD_CAVEATS or len(soft_caveats) > MAX_SOFT_CAVEATS:
+        determination = NOT_YET
+        reasons.append(
+            f"caveat budget exceeded (hard {len(hard_caveats)}/{MAX_HARD_CAVEATS}, "
+            f"soft {len(soft_caveats)}/{MAX_SOFT_CAVEATS})"
+        )
+    else:
+        n_caveats = len(hard_caveats) + len(soft_caveats)
+        if n_caveats == 0 and not skipped_soft and not data_blocked:
+            determination = CALIBRATED
+        else:
+            determination = CALIBRATED_CAVEATS
+            if n_caveats:
+                reasons.append(f"{n_caveats} documented caveat(s)")
+            if skipped_soft:
+                reasons.append("unscored soft criteria: " + ", ".join(skipped_soft))
+            if data_blocked:
+                reasons.append(
+                    "data-blocked target year(s): " + ", ".join(map(str, data_blocked))
+                )
+
+    return {
+        "run_id": run_id,
+        "iso": iso,
+        "label": sidecar.get("label", run_id),
+        "target_years": target_years,
+        "scorable_years": scorable_years,
+        "data_blocked_years": data_blocked,
+        "determination": determination,
+        "reasons": reasons,
+        "criteria": per_criterion,
+        "caveats": {
+            "hard": [c["label"] for c in hard_caveats],
+            "soft": [c["label"] for c in soft_caveats],
+            "budget": {"hard_max": MAX_HARD_CAVEATS, "soft_max": MAX_SOFT_CAVEATS},
+        },
+        "ledger_entries": exceptions,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Rendering
+# ---------------------------------------------------------------------------
+_MARK = {PASS: "✓", CAVEAT: "~", FAIL: "✗", SKIPPED: "·", "UNATTESTED": "?"}
+
+
+def render_text(v: dict) -> str:
+    """Render the verdict as a compact, auditable text block."""
+    lines = []
+    lines.append("=" * 72)
+    lines.append(f"CALIBRATION DETERMINATION: {v['determination']}")
+    lines.append(f"  run {v['run_id']}  ({v['iso']}: {v['label']})")
+    yrs = ", ".join(map(str, v["scorable_years"])) or "none"
+    lines.append(f"  scorable years: {yrs}")
+    if v["data_blocked_years"]:
+        lines.append(
+            "  data-blocked years: " + ", ".join(map(str, v["data_blocked_years"]))
+        )
+    lines.append("=" * 72)
+    for cid, c in v["criteria"].items():
+        gate = "HARD" if c["hard"] else "soft"
+        lines.append(
+            f"[{_MARK.get(c['status'], '?')}] {c['status']:7s} {gate:4s}  {c['label']}"
+        )
+        for r in c["records"]:
+            if r["status"] == PASS:
+                continue  # keep the block focused on what isn't a clean pass
+            key = f" {r['key']}" if r.get("key") else ""
+            yr = f" {r['year']}" if r.get("year") else ""
+            cls = f"  [{r['classification']}]" if r.get("classification") else ""
+            lines.append(f"        {r['status']:7s}{yr}{key}: {r['magnitude']}{cls}")
+            if r.get("ledger_reason"):
+                lines.append(f"          ledger: {r['ledger_reason']}")
+    lines.append("-" * 72)
+    if v["reasons"]:
+        lines.append("determination basis:")
+        for rsn in v["reasons"]:
+            lines.append(f"  - {rsn}")
+    else:
+        lines.append("determination basis: all criteria pass, governance attested.")
+    lines.append("=" * 72)
+    return "\n".join(lines)
+
+
+def headline(v: dict) -> str:
+    """One-line determination headline for the calibration-report skill output."""
+    extra = f" — {v['reasons'][0]}" if v["reasons"] else ""
+    return f"DETERMINATION: {v['determination']} [{v['iso']} {v['label']}]{extra}"
+
+
+def main() -> None:
+    """CLI: score one run (by bundle dir or run id) and print its determination."""
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "run",
+        nargs="?",
+        help="bundle dir (results/calibration/<name>) or a run id",
+    )
+    ap.add_argument("--run-id", help="run id (alternative to the positional bundle)")
+    ap.add_argument("--json", action="store_true", help="emit the machine verdict JSON")
+    args = ap.parse_args()
+    target = args.run_id or args.run
+    if not target:
+        ap.error("provide a bundle dir or --run-id")
+    run_id = args.run_id or resolve_run_id(target)
+    verdict = determine(run_id)
+    if args.json:
+        print(json.dumps(verdict, indent=2))
+    else:
+        print(render_text(verdict))
+    # Exit nonzero on NOT-YET so a CI gate / the forecast-validation check can
+    # assert on the determination directly.
+    sys.exit(0 if verdict["determination"] != NOT_YET else 1)
+
+
+if __name__ == "__main__":
+    main()
