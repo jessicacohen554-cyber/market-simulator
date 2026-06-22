@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-06-22 (calibration page — fleet-wide fossil CO2 metric, activating the C5a gate)
+
+The dashboard's CO2 verdict (`calibration_verdict.score_co2`, criterion **C5a**)
+has been SKIPPED on every run for want of a committed emissions actual. It now
+has one. `market_sim.data.egrid` derives a **fleet-wide** per-plant fossil CO2
+emission rate (kg CO2 / net MWh): eGRID 2023/2024 (`PLCO2AN` short-tons ×
+907.18474 / `PLNGENAN` net-MWh) is the base — the only source spanning the small
+non-CEMS units — **overridden by the CAMPD-measured intensity**
+(`plant_emission_rates.parquet`) where it exists (eGRID's large-plant CO2 is
+itself CEMS-derived, so the two are consistent). `scripts/derive_fossil_co2_rates.py`
+writes the `fossil_co2_rates.parquet` artifact (2,518 fossil plants for 2023, 131
+CAMPD-measured + the rest eGRID).
+
+`render_calibration_html.build_payload` net-generation-weights those rates within
+each dispatch class to a tonnes/MWh intensity (over the bundle's EIA-923 fossil
+plants, ~98% gen-coverage), then applies it to the same grid-delivered class
+totals the generation-mix benchmark uses: `bench[year].co2.egrid` (actual Mt) and
+`run.years[year].co2.model` (model Mt). So the metric is the model's generation
+mix re-weighted by measured carbon intensity — the independent check on the
+coal/gas split a pure MWh volume gate is blind to (swapping coal MWh for gas MWh
+passes the volume gate but moves total CO2, since coal is ~2× the intensity).
+Sanity: ERCOT 2024 ≈ 172 Mt, PJM 2024 ≈ 276 Mt. The backcast dashboard gains a
+**Fossil CO2 — model vs actual (Mt)** panel (per-class + total, ±7% C5a badge).
+
+**Nothing is pinned to an outcome** (claude.md #11): an emission rate is a
+reproducible physical input that regenerates for a forward year and responds to
+changed conditions — the admissibility test the audit applies to fuel prices and
+outages. The actual is `rate × generation`, not observed CO2 fed back to drive a
+residual. Tests in `tests/test_egrid.py` and `tests/test_co2_metric_payload.py`.
+Existing committed run payloads surface the metric once re-rendered (the model
+side is already in their `gmModel`; the actual needs only the committed
+`eia923.parquet` + the eGRID artifact).
+
 ## 2026-06-22 (PJM energy+reserve co-optimization — built, wired, and the bind-gate result)
 
 The in-LP energy+reserve co-optimization the PJM price-formation campaign
