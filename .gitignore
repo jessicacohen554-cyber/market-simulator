@@ -165,6 +165,8 @@ data/raw/NYISO-AS/raw/
 # matching the registered bundles (e.g. ercot_dam_offers_cconly_3yr).
 results/calibration/*/dispatch/
 results/calibration/*/system.parquet
+# Solve console log — regenerable (the report reproduces via --report DIR); keep bundles slim.
+results/calibration/*/solve.log
 # Storage series and the post-solve RCPF/scarcity overlay outputs (availability
 # reconstruction + scarcity adder) are regenerable from the bundle via
 # scripts/derive_*_rcpf_overlay.py — scratch, never committed.
