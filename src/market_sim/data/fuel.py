@@ -324,6 +324,18 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
             )
             series = np.where(np.isnan(hourly_measured), series, hourly_measured)
     series = _hub_overlay_series(series, config, year, hours)
+    # ERCOT zonal gas basis on: the merit order prices gas at the measured
+    # EP-anchored level (Henry Hub + electric-power basis), not the flat -0.50
+    # scalar (see apply_ercot_zonal_gas_basis). The coal passthrough sigmoid keys
+    # off THIS series to set PRB coal's offer, so it must see the same level —
+    # otherwise PRB coal keeps the deep cheap-gas discount the -0.50 reference
+    # implies while the real gas it competes against is ~$0.4-0.5/MMBtu dearer,
+    # and coal over-runs. Add the (flat) level correction; the per-zone spread is
+    # left out (ERCOT coal is concentrated in the small-spread North/Northeast).
+    if getattr(config, "ercot_zonal_gas_basis", False) and config.iso == "ERCOT":
+        ep_basis = ercot_electric_power_gas_basis(year)
+        if ep_basis is not None:
+            series = series + (ep_basis - GAS_BASIS_DIFFERENTIAL.get("ERCOT", 0.0))
     if getattr(config, "gas_daily_shape", False):
         # Inject the within-month daily commodity swing onto the correctly-
         # levelled monthly series (mean-preserving, so the annual mix holds).
