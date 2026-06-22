@@ -1,0 +1,13 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "run143 keeper net-load outage filter 2026-06-22",
+    "note": "Active levers all trace to measured inputs: CAMPD unit-level net-load-filtered outage windows (campd-unit-outages.csv, exogenous availability keyed on net load, not price), measured ERCOT 60-Day DAM Disclosure AS series driving the energy+reserve co-optimization, measured per-resource-type storage up-AS reservation (storage_as_commitment) and the measured load-resource RRS-UFR credit, EIA-860 BTM CHP host steam pulled out of the LP (btm.parquet), measured F923/Henry-Hub fuel prices. No adder/haircut/sigmoid tuned to the price or volume residual; no unit pinned to its observed CEMS generation; no input rescaled so the model output lands on actuals.",
+    "btm_basis_note": "Bundle already carries btm.parquet (ERCOT was the first ISO on the grid-delivered BTM basis); no re-solve needed. C6 attestation added so the governance gate can score; determination unchanged by this attestation."
+  },
+  "exceptions": []
+}
