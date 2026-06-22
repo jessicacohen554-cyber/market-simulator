@@ -1247,11 +1247,25 @@ async function selectIso(iso){
   updateIsoChrome(iso);
   build();
 }
+// The two data files (manifest.js → window.BC.meta/manifest, benchmark.js →
+// window.BC.benchGz) load via <script src> before boot() runs. A stale CDN /
+// browser cache or an out-of-sync deploy can leave one un-loaded (so meta /
+// benchGz is undefined and the old shell crashed with "undefined is not an
+// object"). Before giving up, re-fetch whichever is missing dynamically with a
+// cache-busting query so the page self-heals instead of blanking.
+async function ensureData(){
+  const cb="?cb="+Date.now(),need=[];
+  if(!window.BC||!window.BC.meta||!window.BC.manifest)
+    need.push("frontend/data/backcast/manifest.js");
+  if(!window.BC||!window.BC.benchGz)
+    need.push("frontend/data/backcast/benchmark.js");
+  for(const src of need){
+    try{await loadScript(src+cb);}
+    catch(e){console.warn("data re-fetch failed: "+((e&&e.message)||e));}
+  }
+}
 async function boot(){try{
-  // The two data files (manifest.js → window.BC.meta/manifest, benchmark.js →
-  // window.BC.benchGz) load via <script src> before this runs. If either is
-  // missing (404 / empty / blocked), surface exactly which one rather than
-  // crashing deep inside selectIso.
+  await ensureData();
   if(!window.BC||!window.BC.meta||!window.BC.manifest)
    throw new Error("manifest data is unavailable — "
     +"frontend/data/backcast/manifest.js did not load.");
