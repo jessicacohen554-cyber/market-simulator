@@ -15,6 +15,39 @@
 > below now picks up the local band automatically on regen. See
 > `docs/ercot-outage-sensitivity-middle-ground-2026-06.md`.
 
+> **DONE 2026-06-22 (`claude/cross-iso-outage-local-band-yhyu1f`): all five
+> non-ERCOT ISOs re-gated onto the LOCAL band.** All outage CSVs regenerated on
+> the default local band (PJM facility + unit; CAISO/NYISO/NEISO/MISO unit). Each
+> keeper re-solved byte-faithfully (only the outage input changed):
+> - **PJM** → new keeper **pjm 39** (supersedes pjm 38). STRICT improvement on
+>   every axis: coal-tot resid +17.3/+13.9/+22.8% → +11.4/+3.0/+11.1%, net-export
+>   +69/+65/+204% → +31/+17.5/+93%, hourly MAE 8.12/10.49/15.82 → 7.94/9.75/13.37,
+>   in-tol fails 11→7; LMP firmer toward actual; tail (hrs>$200 0/0/0) unchanged.
+> - **NEISO** → new keeper **neiso 24** (supersedes neiso 23). Near-no-op
+>   (keeper headroom): CC_REGULAR/gas/LMP ~identical, tail 0/0/13 preserved.
+>   CALIBRATED-WITH-CAVEATS (attestation carried forward).
+> - **CAISO** → **caiso 19** (correct forward input; right-structure-first
+>   keeper). Wash vs caiso 18: body firms marginally 41.17→41.45 (recovered
+>   outages, gas body), neg tail 407 preserved, no scarcity over-fire, mix
+>   marginally better (CC_REGULAR 53.03→52.68). Stays NOT-YET on the documented
+>   body/midday COMMITMENT overprice (orthogonal to outages).
+> - **NYISO** → **nyiso 17** (local-band re-solve of the nyiso-16 daily-Transco
+>   config; keeper ambiguity resolved with the user to the nyiso-16 lineage).
+>   Near-equivalent (keeper headroom): canonical gate vs actual RT 2023 +6.16
+>   (documented winter/shoulder over, fix #1(b) data-blocked), 2024 +1.60 (Dec
+>   -27.18 = the mechanism-B RCPF winter tail), 2025 +0.46; model hrs>$200
+>   1/0/57. NOT-YET, same structural class as nyiso-16. **Keeper-of-record
+>   nyiso 11 still stands**; this run carries the forward-correct local-band
+>   outage CSV into the daily-Transco lineage. A byte-clean A/B vs nyiso-16 is
+>   basis-limited (its bundle parquets are gitignored), so reported on absolute
+>   gate.
+> - **MISO** → CSV regenerated only (no keeper; forward input).
+>
+> All registered on the dashboard (top-15 per ISO honoured). The shared
+> `high_load_mask` change is the same for every ISO; the magnitude of the
+> re-gate scales with each keeper's dispatch headroom (large for PJM, near-zero
+> for NEISO).
+
 ## What changed (read first)
 
 The **revealed-availability (high-NET-LOAD) outage filter** that fixed ERCOT's
