@@ -34,8 +34,15 @@
     {
       "criterion": "fuelmix",
       "klass": "CC_REGULAR",
+      "year": 2023,
+      "magnitude": "+4.19 TWh, share +0.5pp (model vs grid-delivered)",
+      "reason": "Same within-gas conservation-of-energy / energy-only-LP limitation as 2024/25 (the CC over-run offsets the ST_GAS+CT under-run; net gas family volume ~unchanged). Caught by the updated share-based C1 criterion (under the prior percent band 2023 CC was +2.9%, within +/-5%). Measured DAM offers order CC cheapest on energy in 2023 too (shoulder min-gen CC $15.7 < CT $27.0 < ST $52.0), so it is not a measured-offer-fixable merit-order defect. ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-offer-curve-meritorder-2023-adder-2026-06.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
       "year": 2024,
-      "magnitude": "+10.0% (model tot 159.80 vs grid-delivered 145.41 TWh)",
+      "magnitude": "+14.39 TWh, share +2.4pp (model vs grid-delivered)",
       "reason": "The CC over-run is the conservation-of-energy counterpart of the ST_GAS+CT under-run (net gas family volume ~unchanged → C2 gas passes): the energy-only LP serves the ST/CT reliability-commitment MWh with the genuinely-cheapest unit, CC. Confirmed measured (not an offer markdown): the model's effective CC bands sit at/above the measured CC offer multipliers except CC econ_high (model 1.21 vs measured ~1.68), and raising econ_high to measured keeps CC below CT econ_low/ST min-gen, so it cannot transfer the volume to ST/CT and risks an LMP regression — not a fix. (Also the documented nodal-congestion residual: 94% of SCED binding-constraint rent is on <200 kV local pockets a zonal LP cannot resolve.) ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-offer-curve-meritorder-2023-adder-2026-06.md, docs/calibration-best-so-far.md)."
     },
     {
