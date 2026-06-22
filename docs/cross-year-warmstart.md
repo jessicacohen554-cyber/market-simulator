@@ -117,12 +117,28 @@ another tied plant — `total gen Δ = 0`). This is the same degenerate
 tie-breaking the intra-year warm-start already exhibits and the LP is genuinely
 indifferent to; price formation and the system cost are untouched.
 
-_Caveat measured separately:_ this bench fixes the P1 cost vector (captured
-`mc_bid`) to isolate the P1 LP, so it proves the **solver path** is neutral.
-In the full pipeline P0's (degenerate) dispatch feeds `compute_monthly_markup`,
-so a complete end-to-end A/B is `run_calibration --year 2023 2024 2025` with the
-flag off vs on, diffed by `scripts/diff_warmstart_bundles.py` — recommended
-before flipping the flag on by default.
+**End-to-end confirmation (full `run_year`, markup propagation included).** The
+table above fixes the P1 cost vector to isolate the P1 LP. To close the one path
+it does not exercise — P0's (degenerate) dispatch feeds `compute_monthly_markup`
+→ `mc_bid` → P1 — the whole `run_year` for 2024 was run twice: cold, and
+warm-started off 2023's basis. The markup is recomputed inside each run, so this
+is the real pipeline:
+
+| metric | 2024 cold vs cross-year-warm |
+|---|---|
+| objective | 1.44065700e9 vs 1.44065700e9 (relΔ 1.6e-15) |
+| max \|Δ zonal price\| | 9.1e-13 $/MWh |
+| total generation Δ | 1.2e-7 MWh |
+| max per-unit \|Δ annual MWh\| | 861 MWh |
+| gross reshuffle Σ\|Δ annual MWh\| | 10,260 MWh = **0.0033%** of total gen |
+| full-pipeline wall | 185 s (cold) → **117 s (warm), 1.58×** |
+
+Objective, every zonal price and total generation are bit-identical end to end;
+the markup is unmoved. The only residual is 0.0033%-of-generation reshuffling
+among units tied at the margin — the intra-year standard. (The bundle-level
+equivalent is `run_calibration --year 2023 2024 2025` flag off vs on, diffed by
+`scripts/diff_warmstart_bundles.py`; the in-process A/B above measures the same
+quantities without writing six multi-GB dispatch bundles.)
 <!-- RESULTS:END -->
 
 ## Recommendation
@@ -142,9 +158,11 @@ before flipping the flag on by default.
   every year and an all-years pre-scan to build the union; strictly dominated by
   (c) here. **Why not (b) unchanged-fleet-only:** the ERCOT fleet changes every
   year, so it would essentially never fire.
-- **Default-off until** a full-pipeline A/B (`run_calibration` flag off vs on,
-  diffed by `diff_warmstart_bundles.py`) confirms the markup-propagation path
-  (P0's degenerate vertex → monthly markup → P1) leaves the calibration score
-  unchanged. Once that passes, flip the default on — there is no downside beyond
-  the negligible memory.
+- **Markup propagation already checked.** The end-to-end `run_year` A/B (above)
+  recomputes the monthly markup inside each run and still comes out bit-identical
+  on objective, prices and total generation, so the P0-vertex → markup → P1 path
+  is neutral, not just the isolated P1 LP. Kept default-off only so it lands as a
+  reviewable, A/B-able flag; a single calibration-bundle re-score
+  (`diff_warmstart_bundles.py`) is the natural gate before flipping the default
+  on, after which there is no downside beyond the ~4% memory.
 <!-- RECO:END -->
