@@ -955,3 +955,243 @@ def eia923_combustion_net(generation: pd.DataFrame) -> pd.DataFrame:
     out["plant_id"] = out["plant_id"].astype(int)
     out["year"] = out["year"].astype(int)
     return out
+
+
+# --- heat-input -> MWh proxy for grossLoad-blank coal units ------------------
+# CAMPD's ``grossLoad`` column is NaN for circulating-fluidized-bed, waste-coal
+# (culm) and industrial-cogen coal units (Virginia City 56808, Seward 3130, the
+# PA culm fleet, Eastman 50481, ...): they report ``heatInput`` + ``steamLoad``
+# instead. A grossLoad-based hourly series therefore treats them as offline all
+# year. :func:`fill_heatinput_proxy` reconstructs their hourly **net** MW from
+# the measured heat input and a per-plant effective heat rate anchored to
+# EIA-923 net generation — the LEVEL comes from the measured EIA-923 netgen, the
+# SHAPE from the measured hourly heatInput, nothing from the MWh/LMP residual.
+#
+# Twelve calendar-month EIA-923 net-generation column names (the monthly-survey
+# release used to anchor the proxy LEVEL and gate its reconciliation). Kept
+# local so this module does not depend on :mod:`market_sim.data.eia923`.
+_EIA923_MONTH_COLUMNS: tuple[str, ...] = (
+    "netgen_january_mwh",
+    "netgen_february_mwh",
+    "netgen_march_mwh",
+    "netgen_april_mwh",
+    "netgen_may_mwh",
+    "netgen_june_mwh",
+    "netgen_july_mwh",
+    "netgen_august_mwh",
+    "netgen_september_mwh",
+    "netgen_october_mwh",
+    "netgen_november_mwh",
+    "netgen_december_mwh",
+)
+# A reconstructed plant is accepted only when its CAMPD-heat-derived monthly MWh
+# tracks the EIA-923 monthly netgen to within this net-generation-weighted mean
+# absolute error. Plants where the CAMPD stack only partially covers the plant's
+# generation (e.g. Eastman: CAMPD heat present May-Sep only against year-round
+# EIA-923 netgen) blow past this and are left blank (offline, as before) rather
+# than reconstructed wrong.
+HEATPROXY_RECONCILE_TOL: float = 0.15
+# Effective heat rate must be physically plausible (MMBtu per net MWh). A CFB or
+# steam-extraction cogen runs high (Virginia City 11.4, St Nicholas 15.8); below
+# ~6 or above ~40 the EIA-923 netgen and CAMPD heat cover different unit sets and
+# the plant is not reconstructed.
+_HEATPROXY_HR_MIN: float = 6.0
+_HEATPROXY_HR_MAX: float = 40.0
+# Scope guard: the proxy targets grossLoad-blank COAL units (CFB / waste-coal /
+# coal cogen). A plant must burn at least this share of coal (of its EIA-923
+# combustion netgen) to be reconstructed — biomass (WDS) cogens, refinery /
+# petcoke units and other heat-only industrial generators are left blank.
+_HEATPROXY_COAL_MIN: float = 0.50
+
+
+def _eia923_combustion_annual_by_plant(
+    eia_monthly: pd.DataFrame, year: int
+) -> "pd.Series":
+    """Annual EIA-923 combustion net generation (MWh) per plant for ``year``.
+
+    Sums ``netgen_annual_mwh`` over the plant's stack-monitored combustion fuels
+    (drops :data:`_NON_COMBUSTION_FUELS`), so the numerator of the proxy heat
+    rate matches what CAMPD's heat input covers.
+    """
+    df = eia_monthly[eia_monthly["year"] == year]
+    fuels = df["fuel_type"].astype(str).str.upper()
+    df = df[~fuels.isin(_NON_COMBUSTION_FUELS)]
+    return df.groupby("plant_id")["netgen_annual_mwh"].sum()
+
+
+def _eia923_coal_share_by_plant(eia_monthly: pd.DataFrame, year: int) -> "pd.Series":
+    """Coal share of EIA-923 combustion net generation per plant for ``year``.
+
+    Coal-fuel (:data:`_COAL_EIA_FUELS`) netgen over total combustion netgen —
+    the scope guard that keeps the heat-input proxy on coal units.
+    """
+    df = eia_monthly[eia_monthly["year"] == year]
+    fuels = df["fuel_type"].astype(str).str.upper()
+    combustion = df[~fuels.isin(_NON_COMBUSTION_FUELS)]
+    total = combustion.groupby("plant_id")["netgen_annual_mwh"].sum()
+    is_coal = combustion["fuel_type"].astype(str).str.upper().isin(_COAL_EIA_FUELS)
+    coal = (
+        combustion[is_coal]
+        .groupby("plant_id")["netgen_annual_mwh"]
+        .sum()
+        .reindex(total.index)
+        .fillna(0.0)
+    )
+    return (coal / total.where(total != 0.0)).fillna(0.0)
+
+
+def _eia923_combustion_monthly_by_plant(
+    eia_monthly: pd.DataFrame, year: int
+) -> pd.DataFrame:
+    """Monthly EIA-923 combustion net generation per plant, indexed by plant.
+
+    Columns are 1-based calendar months of combustion-fuel netgen for ``year``
+    — the reconciliation target for the monthly proxy gate.
+    """
+    df = eia_monthly[eia_monthly["year"] == year]
+    fuels = df["fuel_type"].astype(str).str.upper()
+    df = df[~fuels.isin(_NON_COMBUSTION_FUELS)]
+    have = [c for c in _EIA923_MONTH_COLUMNS if c in df.columns]
+    monthly = df.groupby("plant_id")[have].sum()
+    monthly.columns = [i + 1 for i, c in enumerate(_EIA923_MONTH_COLUMNS) if c in have]
+    return monthly
+
+
+def heatinput_proxy_report(
+    df: pd.DataFrame,
+    eia_monthly: pd.DataFrame,
+    year: int,
+) -> pd.DataFrame:
+    """Per-plant reconciliation of the heat-input -> MWh proxy for ``year``.
+
+    For every plant that reports ``heatInput`` but no ``grossLoad`` for any
+    hour, computes the effective heat rate (annual EIA-923 combustion netgen /
+    annual CAMPD heat), reconstructs the monthly MWh (annual HR applied to each
+    month's measured heat), and scores it against the EIA-923 monthly netgen.
+
+    Returns one row per candidate plant: ``plant_id``, ``net_mwh`` (EIA-923
+    annual combustion), ``heat_mmbtu`` (CAMPD annual), ``heat_rate``
+    (MMBtu/MWh), ``recon_wmae`` (net-generation-weighted mean absolute monthly
+    error), ``accepted`` (heat rate in band and ``recon_wmae`` within
+    :data:`HEATPROXY_RECONCILE_TOL`) and ``facility_name``. The gate /
+    diagnostic; :func:`fill_heatinput_proxy` applies exactly the accepted rows.
+    """
+    cols = [
+        "plant_id",
+        "net_mwh",
+        "heat_mmbtu",
+        "heat_rate",
+        "coal_share",
+        "recon_wmae",
+        "accepted",
+        "facility_name",
+    ]
+    if df.empty:
+        return pd.DataFrame(columns=cols)
+    yr = df[df["year"] == year]
+    net_annual = _eia923_combustion_annual_by_plant(eia_monthly, year)
+    net_monthly = _eia923_combustion_monthly_by_plant(eia_monthly, year)
+    coal_share = _eia923_coal_share_by_plant(eia_monthly, year)
+    rows: list[dict] = []
+    for plant_id, sub in yr.groupby("plant_id", observed=True):
+        gross = sub["gross_mw"].to_numpy()
+        heat = sub["heat_mmbtu"].to_numpy()
+        # Candidate = reports heat but never gross (the grossLoad-blank fleet).
+        if np.isfinite(gross).any() or not np.nansum(heat) > 0.0:
+            continue
+        pid = int(plant_id)
+        heat_annual = float(np.nansum(heat))
+        net_mwh = float(net_annual.get(pid, 0.0))
+        share = float(coal_share.get(pid, 0.0))
+        hr = heat_annual / net_mwh if net_mwh > 0.0 else float("nan")
+        # Monthly reconciliation: reconstructed month MWh = month heat / HR.
+        months = pd.to_datetime(sub["date"]).dt.month.to_numpy()
+        heat_by_month = pd.Series(heat, dtype=float).groupby(months).sum()
+        recon_wmae = float("nan")
+        if pid in net_monthly.index and np.isfinite(hr) and hr > 0.0:
+            tgt = net_monthly.loc[pid]
+            num = denom = 0.0
+            for m in range(1, 13):
+                net_m = float(tgt.get(m, 0.0))
+                recon_m = float(heat_by_month.get(m, 0.0)) / hr
+                num += abs(recon_m - net_m)
+                denom += abs(net_m)
+            recon_wmae = num / denom if denom > 0.0 else float("nan")
+        accepted = bool(
+            np.isfinite(hr)
+            and _HEATPROXY_HR_MIN <= hr <= _HEATPROXY_HR_MAX
+            and share >= _HEATPROXY_COAL_MIN
+            and np.isfinite(recon_wmae)
+            and recon_wmae <= HEATPROXY_RECONCILE_TOL
+        )
+        rows.append(
+            {
+                "plant_id": pid,
+                "net_mwh": round(net_mwh, 1),
+                "heat_mmbtu": round(heat_annual, 1),
+                "heat_rate": round(hr, 3) if np.isfinite(hr) else float("nan"),
+                "coal_share": round(share, 3),
+                "recon_wmae": round(recon_wmae, 4)
+                if np.isfinite(recon_wmae)
+                else float("nan"),
+                "accepted": accepted,
+                "facility_name": str(sub["facility_name"].iloc[0]),
+            }
+        )
+    return pd.DataFrame(rows, columns=cols)
+
+
+def fill_heatinput_proxy(
+    df: pd.DataFrame,
+    eia_monthly: pd.DataFrame,
+    year: int,
+) -> tuple[pd.DataFrame, set[int]]:
+    """Fill ``gross_mw`` for grossLoad-blank coal units from measured heat input.
+
+    Where a plant reports ``heatInput`` but never ``grossLoad`` and reconciles
+    to EIA-923 (see :func:`heatinput_proxy_report`), each blank-``gross_mw`` hour
+    is filled with ``heat_mmbtu / HR`` — the measured hourly heat shape scaled by
+    the plant's measured effective heat rate. Because ``HR`` is anchored to
+    EIA-923 **net** generation, the reconstructed series is already net, so the
+    caller must treat these plants with a parasitic factor of 1.0 (the returned
+    plant-id set flags them). A ``mw_source`` column is added to the whole frame
+    so downstream can tell measured MW (``"measured"``) from heat-derived MW
+    (``"heat_proxy"``). Rows that already carry ``grossLoad`` are byte-identical.
+
+    Returns ``(filled_df, proxy_plant_ids)``. When no plant qualifies the frame
+    is returned with only the ``mw_source`` column added (all ``"measured"``).
+    """
+    out = df.copy()
+    out["mw_source"] = "measured"
+    if out.empty:
+        return out, set()
+    report = heatinput_proxy_report(out, eia_monthly, year)
+    accepted = report[report["accepted"]] if not report.empty else report
+    proxy_ids: set[int] = set()
+    if accepted.empty:
+        return out, proxy_ids
+    hr_by_plant = dict(zip(accepted["plant_id"].astype(int), accepted["heat_rate"]))
+    is_year = out["year"] == year
+    for pid, hr in hr_by_plant.items():
+        if not (hr and hr > 0.0):
+            continue
+        mask = (
+            is_year
+            & (out["plant_id"] == pid)
+            & out["gross_mw"].isna()
+            & (out["heat_mmbtu"].fillna(0.0) > 0.0)
+        )
+        if not mask.any():
+            continue
+        out.loc[mask, "gross_mw"] = out.loc[mask, "heat_mmbtu"] / float(hr)
+        out.loc[mask, "mw_source"] = "heat_proxy"
+        proxy_ids.add(int(pid))
+    if proxy_ids:
+        logger.info(
+            "CAMPD %d: heat-input MWh proxy applied to %d grossLoad-blank "
+            "coal plant(s): %s",
+            year,
+            len(proxy_ids),
+            sorted(proxy_ids),
+        )
+    return out, proxy_ids

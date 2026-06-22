@@ -3906,6 +3906,137 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None]]:
     return out
 
 
+# EIA-860 "Sector" numbers that designate a combined-heat-and-power host: IPP
+# CHP (3), Commercial CHP (5), Industrial CHP (7). A coal plant in one of these
+# sectors burns coal to follow a host STEAM contract, not the LMP, so it is
+# routed through the same behind-the-meter / steam-following must-run holdout as
+# the gas cogens rather than dispatched as an economic COAL_BIT/WC tranche. The
+# non-CHP coal sectors -- Electric Utility (1) and IPP Non-CHP (2) -- stay
+# economic grid generators (Seward, Virginia City, the merchant culm fleet, and
+# the Spurlock-class utility coal that EIA-923 also flags chp=Y). The class each
+# maps to sizes the host pull-out via :data:`CHP_BTM_PCT_BY_SECTOR`.
+_EIA860_CHP_SECTORS: dict[int, str] = {3: "merchant", 5: "commercial", 7: "industrial"}
+# EIA-923 monthly class CF -> steam-following floor, mirroring
+# derive_thermal_tranches: the plant's minimum monthly coal-class average MW,
+# divided by the coal bin nameplate at build time and scaled / capped, is the
+# grid floor a steady steam host always holds.
+_COAL_CHP_FLOOR_FACTOR: float = 0.85
+_COAL_CHP_FLOOR_CAP_PCT: float = 75.0
+_DAYS_IN_MONTH_NONLEAP: tuple[int, ...] = (
+    31,
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+)
+
+
+@lru_cache(maxsize=8)
+def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
+    """Return ``{plant_code: (steam_floor_min_avg_mw, sector_class)}`` for an
+    ISO's coal cogens for ``year``.
+
+    A coal cogen is a plant whose EIA-923 combustion net generation is
+    predominantly coal (>= :data:`_COAL_CHP_MIN_SHARE`) and whose EIA-860
+    "Sector" is a CHP host (:data:`_EIA860_CHP_SECTORS`). ``steam_floor_min_avg_mw``
+    is the minimum monthly coal-class average MW over the pooled EIA-923 window
+    (the measured floor the host always holds, the same EIA-923-CF measure
+    derive_thermal_tranches uses for CEMS-invisible cogens); the caller divides
+    it by the coal bin nameplate to get a steam-following grid floor. The sector
+    class sizes the behind-the-meter pull-out via :data:`CHP_BTM_PCT_BY_SECTOR`.
+
+    PJM-scope: empty for any other ISO (the coal-cogen routing was identified
+    and validated on PJM's CFB / culm / chemical-host coal units).
+    """
+    if iso.upper() != "PJM":
+        return {}
+    from market_sim.config.plant_taxonomy import classify_plant
+    from market_sim.data.campd import _COAL_EIA_FUELS, _NON_COMBUSTION_FUELS
+    from market_sim.data.eia923 import load_monthly_generation, monthly_netgen_columns
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        gen = load_monthly_generation()
+    except FileNotFoundError:
+        return {}
+    iso_plants = set(build_zone_lookup(iso))
+    if iso_plants:
+        gen = gen[gen["plant_id"].isin(iso_plants)]
+    if gen.empty:
+        return {}
+
+    # Plant sector from EIA-860; only the CHP-host sectors qualify.
+    sector_num = _eia860_plant_sector()
+    fuels = gen["fuel_type"].astype(str).str.upper()
+    combustion = gen[~fuels.isin(_NON_COMBUSTION_FUELS)].copy()
+    combustion["is_coal"] = (
+        combustion["fuel_type"].astype(str).str.upper().isin(_COAL_EIA_FUELS)
+    )
+    # Any CHP-sector plant that generated coal in ``year`` qualifies: its coal
+    # bin is the COAL_BIT/WC tranche that should follow host steam (the
+    # gas/other bins of a multi-fuel chemical host -- Eastman, Covington -- take
+    # the gas CHP path separately). The non-CHP coal sectors are filtered below.
+    yr = combustion[combustion["year"] == year]
+    coal = yr[yr["is_coal"]].groupby("plant_id")["netgen_annual_mwh"].sum()
+    # Pooled minimum monthly coal-class average MW (the steam floor numerator).
+    mcols = monthly_netgen_columns()
+    coal_rows = combustion[combustion["is_coal"]]
+    coal_rows["klass"] = [
+        classify_plant(f, pm, str(c).upper().startswith("Y"), int(pid))
+        for f, pm, c, pid in zip(
+            coal_rows["fuel_type"],
+            coal_rows["prime_mover"],
+            coal_rows["chp"],
+            coal_rows["plant_id"],
+        )
+    ]
+    monthly = coal_rows.groupby(["plant_id", "year"])[mcols].sum()
+    hours_per_month = np.array(_DAYS_IN_MONTH_NONLEAP, dtype=float) * 24.0
+
+    out: dict[int, tuple[float, str]] = {}
+    for pid in coal.index:
+        pid = int(pid)
+        if float(coal.get(pid, 0.0)) <= 0.0:
+            continue
+        sec = sector_num.get(pid)
+        sector_class = _EIA860_CHP_SECTORS.get(int(sec)) if sec is not None else None
+        if sector_class is None:
+            continue
+        # Minimum monthly average MW across the pooled window (months with no
+        # reported class generation are skipped -- the host stood down, not a
+        # binding floor).
+        min_avg_mw = np.inf
+        for (mpid, _y), row in monthly.iterrows():
+            if int(mpid) != pid:
+                continue
+            avg = row.to_numpy(dtype=float) / hours_per_month
+            avg = avg[avg > 0.0]
+            if avg.size:
+                min_avg_mw = min(min_avg_mw, float(avg.min()))
+        if not np.isfinite(min_avg_mw):
+            min_avg_mw = 0.0
+        out[pid] = (min_avg_mw, sector_class)
+    return out
+
+
+@lru_cache(maxsize=1)
+def _eia860_plant_sector() -> dict[int, int]:
+    """Return ``{plant_code: EIA-860 Sector number}`` from the plant table."""
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
+    df = df.dropna(subset=["Plant Code", "Sector"])
+    return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
+
+
 def chp_btm_pct(plant_code: int, group: str, iso: str = "ERCOT") -> float:
     """Behind-the-meter pull-out share (% of nameplate) for a CHP plant.
 
@@ -4881,6 +5012,22 @@ def bins_to_fleet(
             return int(year)
         return 2010
 
+    # Coal cogens (PJM): a coal plant whose EIA-860 sector is a CHP host follows
+    # its host steam contract, not the LMP, so its coal bin is routed through the
+    # same behind-the-meter / steam-following holdout as the gas cogens — host
+    # self-supply removed from the LP, the grid remainder a must-run floor —
+    # rather than dispatched as an economic COAL_BIT/WC tranche. Keyed by plant
+    # code -> (measured min-month avg MW floor, sector class). Empty unless the
+    # CHP machinery is on and the ISO is PJM.
+    coal_chp = (
+        coal_chp_overrides(
+            getattr(config, "iso", "ERCOT"),
+            int(getattr(config, "weather_year", 0) or 0),
+        )
+        if getattr(config, "chp_steam_following", False)
+        else {}
+    )
+
     for _, b in bins.iterrows():
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
@@ -4902,6 +5049,19 @@ def bins_to_fleet(
                 pct_mr = config.coal_lignite_mustrun_override
             elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
                 pct_mr = config.coal_prb_mustrun_override
+        # Coal cogen: a coal bin at a CHP-host plant (Eastman, St Nicholas, John
+        # B Rich, ...) is held out at its sector behind-the-meter share and
+        # carries a measured steam-following grid floor instead of staying in the
+        # LP as economic coal. ``coal_chp_floor_mw`` (measured min-month avg MW)
+        # sizes the floor below; the merchant CFB / culm fleet (sector 1/2) is
+        # absent from ``coal_chp`` and keeps its in-LP coal must-run tranche.
+        coal_chp_floor_mw: float | None = None
+        coal_chp_sector: str | None = None
+        if fuel == "coal" and int(b["Plant_Code"]) in coal_chp:
+            coal_chp_floor_mw, coal_chp_sector = coal_chp[int(b["Plant_Code"])]
+            pct_mr = CHP_BTM_PCT_BY_SECTOR.get(
+                coal_chp_sector, CHP_BTM_PCT_BY_SECTOR["merchant"]
+            )
         # Steam-following cogen treatment: a CC_CHP bin's behind-the-meter host
         # self-supply (removed from the grid, added back in the report) is
         # chp_btm_floor_pct of nameplate, not the CSV Pct_Must_Run merchant
@@ -4958,10 +5118,11 @@ def bins_to_fleet(
             pct_mr = ov["pct_mr"]
         # Coal must-run capacity stays IN the LP as a ``_mustrun`` tranche
         # (its fuel is sunk under take-or-pay; bids at VOM + carbon + NOx
-        # only via the runner). Non-coal bins' must-run share is host
-        # steam cogen and is removed from LP capacity; its generation and
-        # emissions are added back by post-processing.
-        if fuel == "coal":
+        # only via the runner). Non-coal bins' must-run share — and a coal
+        # cogen's host self-supply — is removed from LP capacity; its generation
+        # and emissions are added back by post-processing (the coal cogen via
+        # _btm_frame, the gas CHP via compute_must_run_emissions).
+        if fuel == "coal" and coal_chp_sector is None:
             mustrun_cap = nameplate * pct_mr / 100.0
             grid_cap = nameplate - mustrun_cap
         else:
@@ -5125,22 +5286,31 @@ def bins_to_fleet(
         # hardcoded ERCOT CAMPD map behind it; plants with neither export
         # surplus only.
         chp_pmin_mw = 0.0
+        pmin_cf = None
         if chp_following:
             pmin_cf = chp_pmin_cf(plant_code, iso=getattr(config, "iso", "ERCOT"))
-            if pmin_cf is not None:
-                grid_mr_cf = max(0.0, pmin_cf * (1.0 - pct_mr / 100.0))
-                floor_mw = grid_mr_cf / 100.0 * nameplate
-                # The floor is carried by the econ slices, so it can be no
-                # larger than the econ band. When the committed tranche leaves
-                # too little econ room (CAMPD-grounded committed shares run
-                # 45-65% on cogens), shift the shortfall from committed into
-                # econ — total grid capacity is unchanged, and the always-on
-                # steam base takes priority over how the dispatchable
-                # remainder is banded.
-                shift = min(max(0.0, floor_mw - econ_cap), committed_cap)
-                committed_cap -= shift
-                econ_cap += shift
-                chp_pmin_mw = min(floor_mw, econ_cap)
+        elif coal_chp_sector is not None and coal_chp_floor_mw and nameplate > 0.0:
+            # Coal cogen: the measured min-month average MW as a % of the coal
+            # bin nameplate, scaled and capped the same way derive_thermal_tranches
+            # sizes a CEMS-invisible cogen's EIA-923-CF floor.
+            pmin_cf = min(
+                _COAL_CHP_FLOOR_CAP_PCT,
+                coal_chp_floor_mw / nameplate * 100.0 * _COAL_CHP_FLOOR_FACTOR,
+            )
+        if pmin_cf is not None:
+            grid_mr_cf = max(0.0, pmin_cf * (1.0 - pct_mr / 100.0))
+            floor_mw = grid_mr_cf / 100.0 * nameplate
+            # The floor is carried by the econ slices, so it can be no
+            # larger than the econ band. When the committed tranche leaves
+            # too little econ room (CAMPD-grounded committed shares run
+            # 45-65% on cogens), shift the shortfall from committed into
+            # econ — total grid capacity is unchanged, and the always-on
+            # steam base takes priority over how the dispatchable
+            # remainder is banded.
+            shift = min(max(0.0, floor_mw - econ_cap), committed_cap)
+            committed_cap -= shift
+            econ_cap += shift
+            chp_pmin_mw = min(floor_mw, econ_cap)
 
         # Economic tranche(s). By default one tranche at econ_hr; the offer
         # curve (or the standalone econ split) replaces it with a rising
