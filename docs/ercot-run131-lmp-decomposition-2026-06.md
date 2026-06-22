@@ -677,3 +677,49 @@ python scripts/probes/_keeper_2023as_run.py ecrs_probe 2025 2023 '{"ST_GAS":{"co
 KEEPER_YEARS=2024 KEEPER_COMMIT=1 python scripts/probes/_keeper_2023as_run.py commit_probe 2025 2023 '{"ST_GAS":{"committed":0.0}}'
 ```
 
+### Step 1 done — published ORDC curve (grounded, NP6-576-ER): the right direction (2026-06-22)
+
+The keeper's curve uses the **ungrounded neutral fallback µ=0, σ=1400** (the
+`ScenarioConfig` comments say so explicitly), while ERCOT *publishes* the LOLP
+table (`ercot_ordc_lolp_params.csv`, µ≈924/σ≈1348). The fallback prices reserve
+~920 MW *too low*, so the adder stays $0 across the moderate band. Wired
+`--ordc-lolp-params-path` (threaded `run_calibration_full` → `run_year` →
+`config.ordc_lolp_params_path`; default off, baseline byte-identical) and re-solved
+the run143 recipe with the **published** table — purely the published rule, no fit.
+
+Result (dashboard `2026-06-22-published-ordc-curve-np6`, PROBE) — demand-wtd
+avg / h>$200 / h>$500 vs actual, run143 → published:
+
+| year | avg (143→pub / act) | h>$200 (143→pub / act) |
+|---|---|---|
+| 2023 | 36.5 → **45.3** / 48.4 | 104 → **156** / 181 |
+| 2024 | 23.2 → **25.2** / 26.8 | 22 → **34** / 53 |
+| 2025 | 31.4 → 31.5 / 32.5 | 1 → 4 / 31 |
+
+A **single grounded curve moves all three years' average and scarcity-hour
+frequency toward actual at once** — the structural (non-fit) test — without
+over-inflating the already-good 2025 or exploding (unlike the ECRS / commitment
+over-fires). The extreme tail (P99, max) is about right.
+
+**Residual — the duration curve localizes what's left.** The model is still hollow
+in the **P90–P99 "moderately scarce" band** (2024 model P95 **27.9** vs actual
+**61.4**; P90 24.8 vs 42.4) and slightly over-shoots P99.9 in 2023/24. The median is
+fine. So the curve grounding was necessary but not sufficient: the model's reserves
+rarely tighten into the band where even the published curve prices the P90–P95 hours.
+That points the **next grounded lever at the reserve-*supply* definition** —
+`ercot_reserve_eligible` counts ~all dispatchable thermal headroom as reserve, vs
+ERCOT's ORDC reserve = online responsive capability (RTOLCAP); over-counting supply
+keeps reserves artificially abundant in the moderate-scarce hours. This is an
+exogenous physical/rule distinction (online vs offline/slow-start), not a fit.
+
+```bash
+# published-ORDC probe (this step):
+KEEPER_ORDC_TABLE=data/raw/_validation-source/ercot_ordc_lolp_params.csv \
+  python scripts/probes/_keeper_2023as_run.py ordc_pub 2025 2023 '{"ST_GAS":{"committed":0.0}}'
+```
+
+**Status:** the published curve is the grounded improvement and a keeper candidate
+*after a volume re-gate* (the operating-shape gate flagged 19 regressions; the
+fuel-mix split must be re-confirmed before it replaces run143). The reserve-supply
+definition is the next step on the same no-fit basis.
+
