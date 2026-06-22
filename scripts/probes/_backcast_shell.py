@@ -516,6 +516,25 @@ function singleFossilTable(id,yr){let h='<div class=panel><h2>Fossil classes —
   const dd=m.bench923>0.02?100*(m.mFull-m.bench923)/m.bench923:null;
   h+=`<tr><td>${META.groupLabel[grp]}</td><td class=num>${m.mFull.toFixed(2)}</td><td class=num>${m.bench923.toFixed(2)}</td><td class="num ${dd==null?'':dcls(dd)}">${dd==null?"—":fmtPct(dd)}</td><td class="num ${rcls(m.r)}">${m.r.toFixed(3)}</td><td class=num>${m.nr.toFixed(3)}</td></tr>`;}
  return h+'</tbody></table></div></div>';}
+// Fossil CO2 (Mt), model vs actual. The actual is each fossil plant's CO2 rate
+// (kg/net MWh) from eGRID — overridden by CAMPD where measured — net-gen-
+// weighted to a per-class tonnes/MWh intensity, applied to the same grid-
+// delivered class totals the gen-mix uses; the model side applies that SAME
+// intensity to its dispatched class totals. So the row is the model's mix
+// re-weighted by carbon intensity: an independent check on the coal/gas split a
+// pure MWh gate is blind to (swapping coal MWh for gas MWh moves total CO2).
+const CO2_BAND=7; // ±7% system gate — matches calibration_verdict C5a (CO2_TOL)
+function co2Table(id,yr){const B=(BENCH[yr]||{}).co2,M=(MODEL[id].years[yr]||{}).co2;
+ if(!B||!M)return "";
+ const dT=B.egrid>0?100*(M.model-B.egrid)/B.egrid:null;
+ let h='<div class=panel><h2>Fossil CO2 — model vs actual (Mt) <span class=psub>(eGRID + CAMPD plant rates × grid generation; C5a ±'+CO2_BAND+'% gate)</span></h2><div class=tablewrap><table><thead><tr><th>class</th><th>model Mt</th><th>actual Mt</th><th>Δ</th></tr></thead><tbody>';
+ const mb=M.byClass||{},ab=B.byClass||{};
+ const classes=Array.from(new Set([...Object.keys(ab),...Object.keys(mb)])).sort();
+ for(const c of classes){const m=mb[c]||0,a=ab[c]||0,dc=a>0?100*(m-a)/a:null;
+  h+=`<tr><td>${(META.groupLabel||{})[c]||c}</td><td class=num>${m.toFixed(2)}</td><td class=num>${a.toFixed(2)}</td><td class="num ${dc==null?'':dcls(dc)}">${dc==null?"—":fmtPct(dc)}</td></tr>`;}
+ const gate=dT==null?"":(Math.abs(dT)<=CO2_BAND?'<span class="cs-badge det-cal">PASS</span>':'<span class="cs-badge det-not">FAIL</span>');
+ h+=`<tr><td><b>total</b></td><td class=num><b>${M.model.toFixed(1)}</b></td><td class=num><b>${B.egrid.toFixed(1)}</b></td><td class="num ${dT==null?'':dcls(dT)}"><b>${dT==null?"—":fmtPct(dT)}</b> ${gate}</td></tr>`;
+ return h+`</tbody></table></div><p class=psub style="margin-top:6px">Actual CO2 covers ${B.covPct}% of fossil-class EIA-923 generation by a plant-specific rate; the class intensity stands in for the small remainder. Grid-delivered basis (behind-the-meter CHP excluded, matching the model).</p></div>`;}
 // ---- narrative ----
 function narrative(ids){let h='<div class=narr><h3 style="font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted)">Run definition</h3>';
  for(const id of ids){const m=META_RUN(id);h+=`<div class=ndef>${ridSpan(id)} — ${m.definition}</div>`;}return h+"</div>";}
@@ -1037,7 +1056,7 @@ function renderCharts(){const id=st.run,yr=st.year,grp=st.klass;
  wireTips(document.getElementById("content"));}
 // ============================ TABLES ============================
 function tablesHTML(id,yr){
- let h=genMixPanel(id,yr)+singleFuelTable(id,yr)+singleFossilTable(id,yr)+lmpMonthlyTable(id,yr);
+ let h=genMixPanel(id,yr)+singleFuelTable(id,yr)+singleFossilTable(id,yr)+co2Table(id,yr)+lmpMonthlyTable(id,yr);
  h+='<div class=panel><h2>Per-plant fit vs CAMPD / EIA-923 — '+yr+'</h2><div class=tablewrap><table><thead><tr><th>plant</th><th>class</th><th>zone</th><th>r</th><th>NRMSE</th><th>capture%</th><th>Δ923%</th></tr></thead><tbody>';
  const B=BENCH[yr],M=MODEL[id].years[yr];
  const codes=Object.keys(M.plants).filter(c=>B.plants[c]&&st.zones.has(B.plants[c].zone)).sort((a,b)=>B.plants[a].group.localeCompare(B.plants[b].group)||B.plants[b].npl-B.plants[a].npl);
