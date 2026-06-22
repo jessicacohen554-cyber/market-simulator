@@ -1085,6 +1085,57 @@ class DispatchResult:
     reserve_price: np.ndarray | None = None  # (T,) reserve clearing $/MWh
 
 
+# HiGHS basis-status integer codes (HighsBasisStatus enum), captured once so the
+# per-column status vectors can be carried as compact int8 arrays instead of
+# millions of Python enum objects.
+_BASIS_LOWER = int(highspy.HighsBasisStatus.kLower)
+_BASIS_BASIC = int(highspy.HighsBasisStatus.kBasic)
+
+
+@dataclass
+class CrossYearBasis:
+    """A frozen HiGHS optimal basis plus the identity needed to remap it.
+
+    The calibration solves one ISO-year per :class:`DispatchModel`. Adjacent
+    years share almost all structure -- same zones, same network, mostly the
+    same units -- so a year's optimal basis is a strong warm start for the next
+    year's first (P0) solve, which is otherwise the one remaining cold solve
+    once intra-year warm-start has made P1 cheap.
+
+    HiGHS can only *load* a basis whose dimensions match the target LP, and the
+    fleet changes year to year (retirements/additions) so the column count
+    differs. Rather than grow the LP to a union "superset" fleet (option (a):
+    dimensionally stable but a permanently larger, more memory-hungry matrix),
+    this carries the basis with enough layout identity to *map* it onto the next
+    year's columns and rows (option (c)): surviving units matched by ``unit_id``,
+    index-stable per-hour blocks (wind/solar/storage/slack/dump, keyed by
+    zone/unit position) copied directly, and any genuinely new column/row left
+    nonbasic-at-bound / basic so HiGHS repairs the few inconsistencies. Because
+    an LP's optimum is independent of the starting basis, this can only change
+    the solve *path*, never the cleared prices or generation -- the same
+    neutrality guarantee the intra-year warm-start relies on.
+
+    Attributes:
+        col_status: Per-column HiGHS basis status, ``int8`` of length
+            ``layout.total_columns``.
+        row_status: Per-row HiGHS basis status, ``int8`` of length ``n_rows``.
+        layout: The :class:`VariableLayout` the basis was solved under.
+        unit_ids: Generator unit identifiers in thermal-block column order, used
+            to match surviving units across years.
+        n_rows: Total LP row count.
+        n_energy_rows: Energy-balance row count (``n_zones * T``).
+        n_storage_rows: Storage SOC row count (``n_storage * T``).
+    """
+
+    col_status: np.ndarray
+    row_status: np.ndarray
+    layout: "VariableLayout"
+    unit_ids: list
+    n_rows: int
+    n_energy_rows: int
+    n_storage_rows: int
+
+
 class DispatchModel:
     """A reusable HiGHS dispatch LP whose objective can be re-costed in place.
 
@@ -1267,6 +1318,15 @@ class DispatchModel:
         # balance rows (T), appended last; the balance rows are the final T.
         self._n_reserve_rows = (n_zones * T + T) if coopt else 0
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
+        # Row-layout metadata for cross-year basis transfer (export/apply_cross_
+        # year_basis). Generator add/retire changes only columns -- capacity is a
+        # column bound and generation enters the energy balance via coefficients,
+        # not new rows -- so the energy-balance rows (n_zones*T, hour-major) and
+        # the storage SOC rows (n_storage*T, unit-major) are the two dimensionally
+        # well-defined blocks a prior year's basis maps onto.
+        self._n_rows = A.shape[0]
+        self._n_energy_rows = n_zones * T
+        self._n_storage_rows = n_storage * T
         self.build_time = time.perf_counter() - build_start
         self._n_solves = 0
 
@@ -1409,6 +1469,177 @@ class DispatchModel:
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
         )
+
+    def export_cross_year_basis(self) -> "CrossYearBasis | None":
+        """Snapshot this model's current optimal basis for next year's solve.
+
+        Returns ``None`` when the model has not been solved yet (no basis to
+        export). The status vectors are pulled out of HiGHS once and stored as
+        compact ``int8`` arrays so the carry across years is cheap.
+        """
+        if self._n_solves == 0:
+            return None
+        basis = self._h.getBasis()
+        return CrossYearBasis(
+            col_status=np.asarray(basis.col_status, dtype=np.int8),
+            row_status=np.asarray(basis.row_status, dtype=np.int8),
+            layout=self.layout,
+            unit_ids=list(self.fleet.unit_ids),
+            n_rows=self._n_rows,
+            n_energy_rows=self._n_energy_rows,
+            n_storage_rows=self._n_storage_rows,
+        )
+
+    def apply_cross_year_basis(self, prev: "CrossYearBasis | None") -> bool:
+        """Install a prior year's basis, remapped onto this model's LP.
+
+        Maps ``prev``'s column/row statuses onto this year's column/row set
+        (surviving generators by ``unit_id``; index-stable per-hour blocks and
+        the energy/storage rows by position) and loads the result as an *alien*
+        starting basis so HiGHS repairs the handful of inconsistencies from
+        fleet changes. Must be called before the first :meth:`solve`.
+
+        A wrong or partial mapping only costs solver iterations, never
+        correctness -- the LP optimum is basis-independent. Returns ``True`` when
+        a basis was installed, ``False`` when it was skipped (no prior basis,
+        already solved, or mismatched horizon ``T``).
+        """
+        if prev is None or self._n_solves > 0:
+            return False
+        new_layout = self.layout
+        if prev.layout.T != new_layout.T:
+            # Different horizon -> the hour-blocked column/row strides do not
+            # line up; fall back to a cold solve.
+            return False
+
+        T = new_layout.T
+        old_local, new_local = _cross_year_column_map(
+            prev.layout, prev.unit_ids, new_layout, list(self.fleet.unit_ids)
+        )
+        vph_old = prev.layout.vars_per_hour
+        vph_new = new_layout.vars_per_hour
+
+        # Default every column nonbasic at its lower bound (0 for a dispatch
+        # variable -- a sound guess for a unit absent last year), then stamp the
+        # mapped statuses across all hours in one broadcast.
+        col_status = np.full(new_layout.total_columns, _BASIS_LOWER, dtype=np.int8)
+        hours = np.arange(T)[:, None]
+        new_cols = (hours * vph_new + new_local[None, :]).ravel()
+        old_cols = (hours * vph_old + old_local[None, :]).ravel()
+        col_status[new_cols] = prev.col_status[old_cols]
+
+        # Default every row's slack basic, then copy the two well-defined row
+        # families. Energy-balance rows map 1:1 when the zone count is unchanged
+        # (always, within an ISO); storage SOC rows map positionally for the
+        # units present in both years (unit-major s*T + hour layout).
+        row_status = np.full(self._n_rows, _BASIS_BASIC, dtype=np.int8)
+        if prev.n_energy_rows == self._n_energy_rows:
+            ne = self._n_energy_rows
+            row_status[:ne] = prev.row_status[:ne]
+            ns = min(prev.n_storage_rows, self._n_storage_rows)
+            if ns:
+                row_status[ne : ne + ns] = prev.row_status[
+                    prev.n_energy_rows : prev.n_energy_rows + ns
+                ]
+
+        basis = highspy.HighsBasis()
+        basis.col_status = [highspy.HighsBasisStatus(int(s)) for s in col_status]
+        basis.row_status = [highspy.HighsBasisStatus(int(s)) for s in row_status]
+        basis.alien = True
+        self._h.setBasis(basis)
+        return True
+
+
+def _cross_year_column_map(
+    old_layout: "VariableLayout",
+    old_unit_ids: list,
+    new_layout: "VariableLayout",
+    new_unit_ids: list,
+) -> "tuple[np.ndarray, np.ndarray]":
+    """Pair old/new per-hour column indices for a cross-year basis transfer.
+
+    Returns ``(old_local, new_local)``, two equal-length int arrays of within-
+    hour column offsets whose statuses should be copied old -> new. Generators
+    are matched by ``unit_id`` (so retirements drop out and additions get no
+    mapping); every other per-hour block (wind, solar, storage charge/discharge/
+    SOC, transmission flow, load slack, dump, reserve, ORDC) is index-stable and
+    matched positionally for the units/zones/links present in both years.
+    """
+    old_pairs: list = []
+    new_pairs: list = []
+
+    # Generators: match surviving units by id.
+    old_index = {uid: i for i, uid in enumerate(old_unit_ids)}
+    for new_i, uid in enumerate(new_unit_ids):
+        old_i = old_index.get(uid)
+        if old_i is not None:
+            old_pairs.append(old_layout._p_off + old_i)
+            new_pairs.append(new_layout._p_off + new_i)
+
+    # Index-stable blocks: (old_offset, new_offset, old_count, new_count).
+    blocks = [
+        (old_layout._w_off, new_layout._w_off, old_layout.n_zones, new_layout.n_zones),
+        (old_layout._s_off, new_layout._s_off, old_layout.n_zones, new_layout.n_zones),
+        (
+            old_layout._chg_off,
+            new_layout._chg_off,
+            old_layout.n_storage,
+            new_layout.n_storage,
+        ),
+        (
+            old_layout._dis_off,
+            new_layout._dis_off,
+            old_layout.n_storage,
+            new_layout.n_storage,
+        ),
+        (
+            old_layout._soc_off,
+            new_layout._soc_off,
+            old_layout.n_storage,
+            new_layout.n_storage,
+        ),
+        (
+            old_layout._flow_off,
+            new_layout._flow_off,
+            old_layout.n_links,
+            new_layout.n_links,
+        ),
+        (
+            old_layout._slack_off,
+            new_layout._slack_off,
+            old_layout.n_zones,
+            new_layout.n_zones,
+        ),
+        (
+            old_layout._dump_off,
+            new_layout._dump_off,
+            old_layout.n_zones,
+            new_layout.n_zones,
+        ),
+        (
+            old_layout._reserve_off,
+            new_layout._reserve_off,
+            old_layout.n_reserve,
+            new_layout.n_reserve,
+        ),
+        (
+            old_layout._ordc_off,
+            new_layout._ordc_off,
+            old_layout.n_ordc_steps,
+            new_layout.n_ordc_steps,
+        ),
+    ]
+    for old_off, new_off, old_n, new_n in blocks:
+        k = min(old_n, new_n)
+        if k:
+            rng = np.arange(k)
+            old_pairs.extend((old_off + rng).tolist())
+            new_pairs.extend((new_off + rng).tolist())
+
+    return (
+        np.asarray(old_pairs, dtype=np.int64),
+        np.asarray(new_pairs, dtype=np.int64),
+    )
 
 
 def solve_dispatch(
