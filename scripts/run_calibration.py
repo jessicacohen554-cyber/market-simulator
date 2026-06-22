@@ -1021,6 +1021,7 @@ def run_year(
     caiso_import_solar_shape: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     fleet_only: bool = False,
+    xyear_cache: "list | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -1843,6 +1844,17 @@ def run_year(
     # for an A/B comparison or to isolate a solver issue).
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
+    # Cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1): once intra-year warm-
+    # start has made the P1 second solve cheap, the one remaining cold solve is
+    # each year's P0. Adjacent years share zones, network and most units, so the
+    # prior year's optimal basis -- carried in xyear_cache and remapped onto this
+    # year's fleet (surviving units by unit_id, fleet changes left for HiGHS to
+    # repair) -- is a strong warm start for P0. The LP optimum is basis-
+    # independent, so this only changes the solve path, never the cleared prices
+    # or generation. Off by default; A/B against a cold P0 with the flag.
+    _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
+    if _xwarm and xyear_cache is not None and xyear_cache:
+        model.apply_cross_year_basis(xyear_cache[0])
     # P0: solve with base MC to extract per-month run lengths.
     if _warm:
         r0 = model.solve(mc=mc_base)
@@ -1863,6 +1875,14 @@ def run_year(
         result = model.solve(mc=mc_bid)
     else:
         result = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
+
+    # Hand this year's optimal basis to the next year's P0 (cross-year warm
+    # start). Stored even when the flag is off so a downstream A/B does not
+    # depend on call ordering; only consumed when MARKET_SIM_WARMSTART_XYEAR=1.
+    if _warm and xyear_cache is not None:
+        basis = model.export_cross_year_basis()
+        if basis is not None:
+            xyear_cache[:] = [basis]
 
     context = FleetContext.from_arrays(
         fleet_arrays,
@@ -2331,6 +2351,11 @@ def main(argv: list[str] | None = None) -> None:
         "ttc_pn": args.ttc_pn,
     }
 
+    # Single-element holder carrying the prior year's optimal basis across
+    # run_year calls for cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1).
+    # Years are run in the order requested, so listing them chronologically lets
+    # each P0 warm-start from the adjacent year's basis.
+    xyear_cache: list = []
     for year in args.year:
         gas_price = _henry_hub_actual(reference, year)
         logger.info(
@@ -2352,6 +2377,7 @@ def main(argv: list[str] | None = None) -> None:
             priced_interchange=priced_interchange,
             reference_price_interface=args.reference_price_interface,
             negative_renewable_offers=args.negative_renewable_offers,
+            xyear_cache=xyear_cache,
         )
         if result_p1 is not None:
             _report_year(year, iso, result_p1, context, reference, label="P1")
