@@ -29,13 +29,19 @@ from __future__ import annotations
 import argparse
 import re
 import shutil
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-LMP_DIR = REPO / "inputs" / "raw-data" / "lmp-data" / "CAISO"
-LOAD_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
+sys.path.insert(0, str(REPO / "src"))
+from market_sim.config import paths  # noqa: E402  (resolves the data root)
+
+# Paths resolve through config/paths.py — the W1 relocation collapsed the legacy
+# inputs/raw-data tree into data/raw.
+LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"
+LOAD_DIR = paths.RAW_DATA_DIR / "zone-specific-demand" / "CAISO"
 
 # CAISO TAC areas kept from SLD_FCST (the report also carries the other WECC
 # BAs' system loads, which we drop). VEA is Valley Electric, the small NV
