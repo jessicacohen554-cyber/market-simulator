@@ -435,6 +435,60 @@ def inject_caiso_import_hub_prices(
     return applied
 
 
+# CAISO export sink(s) repriced to the measured neighbor hub — the blocks that
+# carry the neighbors' willingness-to-pay (sold to WECC), NOT the deep in-state
+# curtailment floor (export_curtail stays at its $0 value as the beyond-tie
+# renewable curtailment block).
+_CAISO_HUB_EXPORT_TRANCHES = ("export_solar",)
+
+
+def inject_caiso_export_hub_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+) -> bool:
+    """Reprice CAISO's neighbor-export sink to the measured WECC hub LMP.
+
+    Symmetric to :func:`inject_caiso_import_hub_prices`. CAISO sells its surplus
+    to the WECC neighbor at *that neighbor's* hub price, so the export sink's
+    willingness-to-pay (the value of exported energy, carried in the sink ``mc``)
+    is the measured intertie hub LMP — the energy (MCE) component, no CA carbon
+    (exports carry no in-state compliance cost). Replaces the static
+    ``EXPORT_TRANCHES`` fit ($8 ``export_solar`` / $0 ``export_curtail``), which
+    only let CAISO export when its internal price fell near $0; with the real
+    ~$38 hub the model exports whenever its price drops below the neighbor's —
+    recovering the midday solar-glut export the static blocks could not (the
+    measured 2024 intertie swings to +3.5 GW net export, while the model was
+    stuck importing 100% of hours). Only the neighbor-export block(s) in
+    :data:`_CAISO_HUB_EXPORT_TRANCHES` are repriced; the deep ``export_curtail``
+    block keeps its $0 in-state curtailment floor.
+
+    Returns ``True`` when at least one export sink was repriced, ``False`` when
+    CAISO has no measured hub series (run keeps the static blocks, byte-identical).
+    """
+    from market_sim.data.eia_loader import measured_import_hub_prices
+
+    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
+    if not prices:
+        return False
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return False
+    # The MCE energy component is system-wide (identical at every WECC node), so
+    # any tranche's measured series is the hub energy price; average for safety.
+    hub_price = np.mean(np.vstack(list(prices.values())), axis=0)
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if not uid.startswith(f"{zone}_"):
+            continue
+        name = uid[len(zone) + 1 :]
+        if name in _CAISO_HUB_EXPORT_TRANCHES:
+            mc[row, :] = hub_price
+            applied = True
+    return applied
+
+
 # Representative desert-SW heat rates (MMBtu/MWh) for the price COUPLING — the
 # Palo Verde / Path-46 import blocks whose *price-setting* marginal unit is
 # SW gas, so their level tracks the measured commodity gas. DSW_CCGT / DSW_CT
