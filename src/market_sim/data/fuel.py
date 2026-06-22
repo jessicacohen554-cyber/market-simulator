@@ -511,6 +511,21 @@ NYISO_GAS_HUB_REFERENCE_ZONE: str = "Capital_Hudson"
 # cross-zonal split moves. Consumed by :func:`apply_ercot_zonal_gas_basis`.
 ERCOT_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "ercot_zonal_gas_hub.csv"
 
+# Measured EIA price of natural gas delivered to TX electric-power consumers
+# (series N3045TX3, $/Mcf monthly). This is the gen-weighted ERCOT-wide delivered
+# gas level — the *power-plant* delivered cost, NOT the TX city-gate price
+# (N3050TX3), which carries the LDC distribution margin (~+$1.3/MMBtu over Henry
+# Hub) that generators do not pay. Used by :func:`ercot_electric_power_gas_basis`
+# to anchor the zonal-basis level on measured data instead of the flat -0.50
+# scalar; the EIA-923 per-zone receipts then supply only the (mean-zero) spread.
+ERCOT_ELECTRIC_POWER_GAS_PATH: Path = (
+    RAW_DATA_DIR / "ercot_electric_power_gas_price.csv"
+)
+
+# EIA natural-gas heat content: 1 Mcf ~= 1.036 MMBtu (2023 avg, ~1,036 Btu/cf).
+# Converts the $/Mcf delivered series to the $/MMBtu the merit order prices in.
+_MCF_TO_MMBTU: float = 1.036
+
 # Measured Henry Hub monthly spot averages (EIA RNGWHHDm via the
 # datasets/natural-gas public-domain mirror; see
 # docs/multi-iso/data-acquisition-report.md Step 1a). The hub-basis overlay
@@ -1226,6 +1241,51 @@ def ercot_zonal_gas_basis_by_zone(
     return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
 
 
+_ERCOT_EP_GAS_CACHE: dict[Path, pd.DataFrame | None] = {}
+
+
+def _load_ercot_electric_power_gas(path: Path | None) -> pd.DataFrame | None:
+    """Load the measured TX delivered-to-electric-power gas table, or None."""
+    resolved = Path(path) if path else ERCOT_ELECTRIC_POWER_GAS_PATH
+    if resolved in _ERCOT_EP_GAS_CACHE:
+        return _ERCOT_EP_GAS_CACHE[resolved]
+    frame: pd.DataFrame | None = None
+    if resolved.exists():
+        loaded = pd.read_csv(resolved)
+        if not loaded.empty:
+            frame = loaded
+    _ERCOT_EP_GAS_CACHE[resolved] = frame
+    return frame
+
+
+def ercot_electric_power_gas_basis(
+    year: int, path: Path | None = None, henry_hub_path: Path | None = None
+) -> float | None:
+    """Return the measured TX delivered-to-electric-power gas basis vs Henry Hub.
+
+    The annual mean of the EIA price of gas delivered to TX electric-power
+    consumers (series N3045TX3, :data:`ERCOT_ELECTRIC_POWER_GAS_PATH`, converted
+    $/Mcf -> $/MMBtu) minus the annual-mean measured Henry Hub
+    (:func:`_henry_hub_monthly`). This is the gen-weighted ERCOT-wide *power-plant*
+    delivered gas level, used by :func:`apply_ercot_zonal_gas_basis` to anchor the
+    zonal basis on measured data instead of the flat ``-0.50`` scalar. Returns
+    ``None`` when either series is missing for ``year`` (e.g. a forward year), so
+    the caller falls back to the scalar-anchored mean-zero behaviour.
+    """
+    frame = _load_ercot_electric_power_gas(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    ep_mmbtu = float((sub["price_usd_mcf"] / _MCF_TO_MMBTU).mean())
+    hh = _henry_hub_monthly(henry_hub_path)
+    hh_months = [hh[(year, m)] for m in range(1, 13) if (year, m) in hh]
+    if not hh_months:
+        return None
+    return ep_mmbtu - float(np.mean(hh_months))
+
+
 def apply_ercot_zonal_gas_basis(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -1244,20 +1304,31 @@ def apply_ercot_zonal_gas_basis(
     prices DFW/North CCs on the same cheap gas as Permian CCs — over-running
     North/Northeast CCs and under-running West/Permian and South CCs.
 
-    This adds each zone's measured basis vs Henry Hub
-    (:func:`ercot_zonal_gas_basis_by_zone`), **re-centred to a gas-capacity-
-    weighted mean of zero** so the calibrated fleet-aggregate gas level (and the
-    within-gas ST_GAS/CT/CC ledger, which sees the same per-zone shift on every
-    gas fuel type) is preserved and only the cross-zonal split moves. The shift
-    is floored at a small positive so a deep negative Waha basis cannot drive
-    the delivered price below zero. Runs after the F923 plant-monthly overwrite
-    and before :func:`apply_dual_fuel_pricing`, so oil parity still caps any
-    winter spike.
+    This shifts each gas unit by two measured pieces:
+
+    1. a **level** correction from the flat ``-0.50`` scalar to the measured TX
+       delivered-to-electric-power gas basis (:func:`ercot_electric_power_gas_basis`,
+       EIA series N3045TX3 — the gen-weighted ERCOT-wide power-plant delivered
+       cost; the ``-0.50`` Waha scalar runs ~$0.4-0.5/MMBtu too cheap in 2023/24),
+       applied uniformly so it is a pure re-level, and
+    2. a **mean-zero zonal spread** = each zone's EIA-923 basis
+       (:func:`ercot_zonal_gas_basis_by_zone`) minus its gas-capacity-weighted
+       mean, so the spread moves *only* the cross-zonal split and the EIA-923
+       regulated-utility level bias (its receipts price ~$0.2/MMBtu above the
+       measured electric-power average) is dropped — only its relative shape is kept.
+
+    Net: every gas unit ends near ``Henry Hub + electric_power_basis +
+    zone_spread``. When the electric-power series is unavailable (forward years)
+    the level term is 0 and this degrades to the prior scalar-anchored mean-zero
+    behaviour. The shift is floored at a small positive so a deep negative Waha
+    basis cannot drive the delivered price below zero. Runs after the F923
+    plant-monthly overwrite and before :func:`apply_dual_fuel_pricing`, so oil
+    parity still caps any winter spike.
 
     Gated on ``config.ercot_zonal_gas_basis`` and ``config.iso == "ERCOT"``
-    (off by default; the calibration harness enables it for ERCOT), so every
-    other ISO and all forecasts are byte-identical. Mutates ``fuel_prices`` in
-    place; idempotent given the same inputs.
+    (a default-off diagnostic; see the field docstring on ScenarioConfig), so
+    every other ISO and all forecasts are byte-identical. Mutates ``fuel_prices``
+    in place; idempotent given the same inputs.
     """
     if not getattr(config, "ercot_zonal_gas_basis", False):
         return
@@ -1272,9 +1343,9 @@ def apply_ercot_zonal_gas_basis(
     gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
     if gas_rows.size == 0:
         return
-    # Per-generator raw basis from its zone (0.0 for any zone absent from the
-    # table); gas-capacity-weighted mean across the gas fleet anchors the
-    # re-centring so the aggregate gas level is preserved.
+    # Mean-zero zonal SPREAD: each zone's EIA-923 basis minus the gas-capacity-
+    # weighted mean, so only the cross-zonal shape survives (the EIA-923
+    # regulated-utility level bias is dropped). Zones absent from the table -> 0.
     basis_by_zone_idx = np.array(
         [basis.get(name, 0.0) for name in zone_names], dtype=float
     )
@@ -1282,19 +1353,28 @@ def apply_ercot_zonal_gas_basis(
     weights = fleet.pmax[gas_rows]
     total_w = float(weights.sum())
     weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
-    gen_offset = gen_basis - weighted_mean
+    zone_spread = gen_basis - weighted_mean
+    # LEVEL correction: replace the flat -0.50 scalar already in the price with the
+    # measured TX electric-power delivered basis. 0.0 if the series is unavailable
+    # (forward years) -> pure mean-zero spread, the prior behaviour.
+    ep_basis = ercot_electric_power_gas_basis(year)
+    scalar = GAS_BASIS_DIFFERENTIAL.get("ERCOT", 0.0)
+    level_corr = (ep_basis - scalar) if ep_basis is not None else 0.0
+    gen_offset = level_corr + zone_spread
     floored = np.maximum(
         fuel_prices[gas_rows, :] + gen_offset[:, np.newaxis], _GAS_PRICE_FLOOR
     )
     fuel_prices[gas_rows, :] = floored
     logger.info(
-        "ERCOT zonal gas basis (%d): %d gas units shifted by zone hub basis "
-        "(mean-zero anchored at cap-wtd mean %.2f; offsets %.2f..%.2f $/MMBtu)",
+        "ERCOT zonal gas basis (%d): %d gas units; level %+.2f -> measured EP "
+        "%+.2f (corr %+.2f), zonal spread %.2f..%.2f $/MMBtu",
         year,
         gas_rows.size,
-        weighted_mean,
-        float(gen_offset.min()),
-        float(gen_offset.max()),
+        scalar,
+        (ep_basis if ep_basis is not None else scalar),
+        level_corr,
+        float(zone_spread.min()),
+        float(zone_spread.max()),
     )
 
 
