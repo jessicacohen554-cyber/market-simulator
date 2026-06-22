@@ -629,6 +629,31 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ordc_penalties=coopt_pens,
                     ordc_step_widths=coopt_widths,
                 )
+            # NYISO analogue: nested LOCATIONAL reserve families (NYCA ⊃ East ⊃
+            # SENY ⊃ NYC). Each (region, product) is a balance row over its
+            # member zones, so a downstate reserve shortage stacks the regional
+            # penalties into the downstate zonal LMP — the locational scarcity
+            # the NYCA-aggregate curve never sees. See docs/multi-iso/.
+            elif getattr(config, "energy_reserve_coopt", False) and iso == "NYISO":
+                (
+                    coopt_req,
+                    coopt_elig,
+                    coopt_pens,
+                    coopt_widths,
+                    coopt_mask,
+                    coopt_counts,
+                ) = nyiso_reserve_coopt_inputs(
+                    config, fleet_arrays, config.hours, zone_names
+                )
+                dispatch_kwargs.update(
+                    reserve_requirement=coopt_req,
+                    reserve_eligible=coopt_elig,
+                    reserve_storage=True,
+                    ordc_penalties=coopt_pens,
+                    ordc_step_widths=coopt_widths,
+                    reserve_balance_zone_mask=coopt_mask,
+                    reserve_balance_ordc_counts=coopt_counts,
+                )
             # P0 and P1 solve the *same* LP -- identical constraint matrix and
             # bounds -- and differ only in the objective (P1 = base MC + startup
             # markup). Build the model once and warm-start P1 from P0's optimal
