@@ -312,5 +312,115 @@ class TestApplyPlantEmissionRates(unittest.TestCase):
         self.assertEqual(n, 0)
 
 
+def _heat_only_hourly(plant_id: int, year: int) -> pd.DataFrame:
+    """A grossLoad-blank coal unit: one full year of hourly heat, no gross.
+
+    Heat is a flat 1000 MMBtu/h for 8760 hours, so at heat rate ``hr`` the
+    annual net generation is ``8760 * 1000 / hr`` MWh, spread evenly across
+    the twelve months.
+    """
+    idx = pd.date_range(f"{year}-01-01", periods=8760, freq="h")
+    n = len(idx)
+    df = pd.DataFrame(
+        {
+            "plant_id": plant_id,
+            "facility_name": "CFB Coal",
+            "state": "PA",
+            "year": np.int16(year),
+            "date": idx.normalize(),
+            "hour": idx.hour,
+            "gross_mw": np.full(n, np.nan),
+            "steam_load": np.full(n, 500.0),
+            "co2_kg": np.full(n, 100.0),
+            "nox_kg": np.full(n, 1.0),
+            "so2_kg": np.full(n, 1.0),
+            "heat_mmbtu": np.full(n, 1000.0),
+        }
+    )
+    df["hour_of_year"] = campd._hour_index_8760(
+        df["date"].dt.month, df["date"].dt.day, df["hour"]
+    )
+    return df[df["hour_of_year"] >= 0].reset_index(drop=True)
+
+
+def _eia_monthly_row(plant_id: int, year: int, annual_mwh: float, fuel: str = "BIT"):
+    """One EIA-923 monthly-generation row: ``annual_mwh`` split evenly by month."""
+    per_month = annual_mwh / 12.0
+    row = {
+        "plant_id": plant_id,
+        "fuel_type": fuel,
+        "prime_mover": "ST",
+        "chp": "N",
+        "year": year,
+        "netgen_annual_mwh": annual_mwh,
+    }
+    for c in campd._EIA923_MONTH_COLUMNS:
+        row[c] = per_month
+    return row
+
+
+class TestHeatInputProxy(unittest.TestCase):
+    """The heat-input -> MWh proxy for grossLoad-blank coal units."""
+
+    def setUp(self):
+        self.year = 2023  # non-leap: 8760 hours, no Feb-29 drop
+        # Annual heat = 8760 * 1000 = 8.76e6 MMBtu; pick netgen so HR = 11.0.
+        self.heat_annual = 8760 * 1000.0
+        self.hr = 11.0
+        self.netgen = self.heat_annual / self.hr
+        self.df = _heat_only_hourly(3130, self.year)
+        self.eia = pd.DataFrame([_eia_monthly_row(3130, self.year, self.netgen)])
+
+    def test_report_accepts_reconciling_coal_plant(self):
+        rep = campd.heatinput_proxy_report(self.df, self.eia, self.year)
+        self.assertEqual(len(rep), 1)
+        row = rep.iloc[0]
+        self.assertTrue(bool(row["accepted"]))
+        self.assertAlmostEqual(float(row["heat_rate"]), self.hr, places=2)
+        # Reconciles within tolerance (residual is only month-length variation).
+        self.assertLess(float(row["recon_wmae"]), campd.HEATPROXY_RECONCILE_TOL)
+        self.assertGreaterEqual(float(row["coal_share"]), 0.99)
+
+    def test_fill_reconstructs_net_anchored_mwh(self):
+        filled, ids = campd.fill_heatinput_proxy(self.df, self.eia, self.year)
+        self.assertEqual(ids, {3130})
+        proxy = filled[filled["mw_source"] == "heat_proxy"]
+        self.assertEqual(len(proxy), len(filled))
+        # Annual reconstructed MWh anchors to the EIA-923 netgen (level anchor).
+        self.assertAlmostEqual(
+            float(proxy["gross_mw"].sum()), self.netgen, delta=self.netgen * 1e-6
+        )
+        # Per-hour MW = 1000 / 11.0.
+        self.assertTrue(np.allclose(proxy["gross_mw"], 1000.0 / self.hr))
+
+    def test_non_coal_heat_only_plant_left_blank(self):
+        eia_gas = pd.DataFrame([_eia_monthly_row(3130, self.year, self.netgen, "NG")])
+        filled, ids = campd.fill_heatinput_proxy(self.df, eia_gas, self.year)
+        self.assertEqual(ids, set())
+        self.assertTrue(filled["gross_mw"].isna().all())
+        self.assertTrue((filled["mw_source"] == "measured").all())
+
+    def test_coverage_gap_plant_rejected(self):
+        # CAMPD heat only Jan-Jun, but EIA-923 reports netgen all year: the
+        # annual HR over-reconstructs the covered months and zeros the rest, so
+        # the monthly reconciliation must reject it (the Eastman pattern).
+        gap = self.df.copy()
+        gap.loc[gap["date"].dt.month > 6, "heat_mmbtu"] = 0.0
+        rep = campd.heatinput_proxy_report(gap, self.eia, self.year)
+        self.assertFalse(bool(rep.iloc[0]["accepted"]))
+        filled, ids = campd.fill_heatinput_proxy(gap, self.eia, self.year)
+        self.assertEqual(ids, set())
+
+    def test_measured_gross_untouched(self):
+        # A plant that already reports grossLoad is never a candidate.
+        measured = self.df.copy()
+        measured["gross_mw"] = 90.0
+        rep = campd.heatinput_proxy_report(measured, self.eia, self.year)
+        self.assertEqual(len(rep), 0)
+        filled, ids = campd.fill_heatinput_proxy(measured, self.eia, self.year)
+        self.assertEqual(ids, set())
+        self.assertTrue((filled["gross_mw"] == 90.0).all())
+
+
 if __name__ == "__main__":
     unittest.main()
