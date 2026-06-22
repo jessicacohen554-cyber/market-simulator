@@ -669,6 +669,12 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   premium — a Tier-3 placeholder that only prices a near-idle peaking
     #   coal unit. Refine in NEISO calibration (doc-08 P11/P12) if Merrimack
     #   dispatch is visibly mis-leveled.
+    "MISO": 1.9,  # MISO's coal fleet burns a Powder River Basin sub-bituminous
+    #   (rail-delivered to the upper-Midwest North/Central) + Illinois Basin
+    #   bituminous blend, delivered cheaper than Appalachian (PRB minemouth is
+    #   low-cost; ILB is local to the footprint). EIA AEO 2024 delivered coal
+    #   price, PRB+ILB blend; refined per-plant by the EIA-923 monthly
+    #   fuel-cost overlay where reported (MISO has full CEMS/EIA-923 coverage).
 }
 
 # Annual real escalation rate for coal prices.
