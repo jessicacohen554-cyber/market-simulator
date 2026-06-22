@@ -21,6 +21,13 @@ PR also unifies it onto the build-once / re-cost `DispatchModel` pattern (gated
 by the same `MARKET_SIM_WARMSTART` flag) — the free ~5x that the calibration
 already had.
 
+**Cross-year warm-start is deliberately scoped to the calibration/backcast path
+only** — it is *not* wired into `runner.py`'s forecast loop. The forecast evolves
+the fleet year-by-year, and that feedback loop makes cross-year warm-start
+non-neutral on the forecast trajectory even though it stays bit-neutral within
+each year. See [Why the forecast path is not wired](#why-the-forecast-path-is-not-wired)
+for the investigation and measurements.
+
 ## The hard part: matching LP dimensions
 
 HiGHS can only *load* a basis whose dimensions match the target LP, and the fleet
@@ -166,3 +173,64 @@ quantities without writing six multi-GB dispatch bundles.)
   (`diff_warmstart_bundles.py`) is the natural gate before flipping the default
   on, after which there is no downside beyond the ~4% memory.
 <!-- RECO:END -->
+
+## Why the forecast path is not wired
+
+The natural follow-on is to thread the same `xyear_cache` through `runner.py`'s
+year loop: the forecast (`run_scenario_iso`) runs a long, chronological year
+horizon in one process, so the ~2.3× steady-state P0 speedup would compound far
+more there than in the 1–3 year calibration. This was prototyped and then
+**rejected** — on the forecast path cross-year warm-start is *not* neutral, and
+the speedup is not worth perturbing the forecast trajectory.
+
+**The forecast has a feedback loop the calibration does not.** In the calibration
+each backcast year's fleet is built independently from data, so a year's solve
+never feeds the next year's inputs — the cross-year basis only changes the solve
+path, and the A/Bs above are bit-identical. In the forecast each year's fleet is
+*evolved from the prior year's dispatch*: `capacity.evolve_fleet` runs an economic
+retirement / new-entry screen whose per-unit inputs come from
+`prior_results["dispatch_result"]`. The retirement screen (`capacity.py`) scores
+each unit on its annual energy revenue and inframarginal margin,
+`Σ_t price·dispatch[i]` and `Σ_t (price − mc[i])·dispatch[i]` — both **per-unit
+dispatch volumes**.
+
+**Within-year neutrality does not survive that loop.** Cross-year warm-start is
+still bit-neutral *within* each year — objective, every zonal price and total
+generation are identical — but the one thing it does move, the alternate-optima
+reshuffling among units tied at the marginal price (the same ≤0.0033% churn the
+intra-year warm-start already ships), is exactly the per-unit dispatch the
+retirement screen reads. A reshuffle that the LP is genuinely indifferent to can
+nudge a unit sitting near the retire/keep threshold across it, so the *next*
+year's fleet — and therefore its prices and dispatch — differ.
+
+**Measured (ERCOT, reduced 168 h, `MARKET_SIM_HIGHS_THREADS=1` so the solve is
+deterministic, forecast 2026→2032).** Cold (`MARKET_SIM_WARMSTART_XYEAR=0`) vs
+warm (`=1`), diffing each cached year:
+
+| year | objective relΔ | max \|Δ zonal price\| | note |
+|-----:|---------------:|----------------------:|------|
+| 2026 | 0 | 0 | first year solves cold either way |
+| 2027 | 2.6e-16 | 7.1e-15 $/MWh | within-year neutral; per-unit dispatch reshuffles (~hundreds of MWh on a tied unit) |
+| 2028 | 8.3e-4 | 0.19 $/MWh | reshuffle tipped a 2027 retire/keep decision → different 2028 fleet |
+| 2029 | 4.9e-5 | 0.39 $/MWh | |
+| 2030 | 1.9e-6 | 5.6e-3 $/MWh | |
+| 2031 | 5.6e-16 | 2.1e-14 $/MWh | back to bit-identical |
+| 2032 | 3.1e-4 | 0.20 $/MWh | |
+
+The divergence is **bounded and intermittent**, not compounding (some years
+return to bit-identical, the gen count matches every year), but it is real and
+attributable to the mechanism: the **cold-vs-cold** control at `THREADS=1` is
+bit-identical across all years, so this is the warm-start reshuffle propagating
+through a discrete capacity decision, not solver nondeterminism. (At the default
+multi-threaded setting even cold-vs-cold drifts, because parallel dual simplex
+breaks marginal ties nondeterministically — which is the same class of effect,
+just from a different source.)
+
+**Decision: keep cross-year warm-start to the calibration path only.** Wiring the
+forecast would trade a real (if small, ≤~0.4 $/MWh) change to the forecast
+trajectory for the solve speedup, which is not an acceptable swap for a flag whose
+whole premise is neutrality. Making it neutral would require the capacity screen
+to depend only on the basis-independent quantities (prices, system totals) rather
+than per-unit marginal-tie dispatch — a separate change to the economics that
+needs its own validation, not a warm-start change. Until then the forecast loop
+stays on intra-year warm-start (`MARKET_SIM_WARMSTART`, bit-neutral) only.
