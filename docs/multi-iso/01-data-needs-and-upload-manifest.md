@@ -1,11 +1,12 @@
 # Data Needs & Upload Manifest
 
-> **Update 2026-06-10:** partially stale. §2 is resolved — EIA-930 hourly
-> parquets now exist for all seven ISOs (`data/eia_hourly/`). §3's CEMS
-> table predates the unit-level extracts in
-> `data/raw/campd-unit-level/` (PJM coal states OH/WV/IN/KY/VA/DC
-> and CA 2024–2025 are now present; PJM still lacks MD/DE/NC/TN
-> unit-level). §4 gas basis is largely superseded for *backcasts* by
+> **Update 2026-06-22:** §2 is resolved — EIA-930 hourly parquets now exist for
+> all seven ISOs (`data/eia_hourly/`). §3 is **rewritten below** for the
+> `data/raw/campd-unit-level/` unit-level layout: 34 states × 2023–2025 are
+> present; PJM, MISO and ISO-NE are complete; only SPP's NE/NM/OK/WY remain.
+> MISO's final gap (LA_2023) was filled 2026-06-22 — see
+> `docs/multi-iso/miso-data-audit.md`. §4 gas basis is largely superseded for
+> *backcasts* by
 > measured per-plant EIA-923 monthly costs (`gas_monthly_actuals`, PJM
 > 2026-06); hub-basis series remain relevant for NYISO/NEISO winter
 > spikes and forecasts. Current per-ISO upload lists live in the prompt
@@ -81,35 +82,48 @@ convert to parquet (mirror the ERCO file's columns).
 
 ---
 
-## 3. CAMPD / CEMS hourly — per-state uploads, large gaps
+## 3. CAMPD / CEMS hourly — per-state, now in `campd-unit-level/`
+
+> **Updated 2026-06-22.** This section previously described the old flat
+> `data/raw/<ST>_<year>.parquet` layout and a large MISO/PJM gap that no longer
+> exists. The authoritative **unit-level** CEMS extracts (one row per
+> *unit*-hour, carrying `unitId` — the input the per-unit outage detector
+> `scripts/derive_campd_unit_outages.py` consumes) now live in
+> **`data/raw/campd-unit-level/<ST>_<year>.parquet`**. See
+> `docs/multi-iso/miso-data-audit.md` for the MISO acquisition record.
 
 CEMS is downloaded **by state-year** (`<ST>_<year>.parquet`). A plant counts
 toward an ISO via its BA code (eGRID/EIA-860), so an ISO needs CEMS for **every
 state that contains plants in its BA** — state boundaries don't equal ISO
 boundaries, so several states are shared across ISOs.
 
-**Present today:** `AL, CA, DE, IL, MA, MD, ME, NH, NJ, NY, OR, PA, TX`
-(years 2023–2025; TX also 2023–2024).
+**Present today in `campd-unit-level/` (all years 2023, 2024, 2025):**
+`AR, CA, CT, DC, DE, IA, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT,
+NC, ND, NH, NJ, NY, OH, PA, RI, SD, TN, TX, VA, VT, WI, WV` (34 states).
 
-| ISO | States with plants in footprint (approx.) | Present | **Missing — upload** |
-|-----|-------------------------------------------|---------|----------------------|
+| ISO | States with plants in footprint (approx.) | Present (campd-unit-level, 2023–2025) | **Missing — upload** |
+|-----|-------------------------------------------|---------------------------------------|----------------------|
 | ERCOT | TX | TX | — |
 | CAISO | CA (+ small NV/AZ imports) | CA | (NV, AZ if needed) |
 | NYISO | NY | NY | — |
-| ISO-NE | CT, MA, ME, NH, RI, VT | CT, MA, ME, NH, RI, VT (2023/2024); CT, MA, ME, RI, VT (2025) | **NH_2025 only** (upload U1 from doc-08) |
-| PJM | DE, IL(ComEd), IN, KY, MD, MI, NC, NJ, OH, PA, TN, VA, WV, DC | DE, IL, MD, NJ, PA | **IN, KY, MI, NC, OH, TN, VA, WV, DC** |
-| MISO | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI | IL, (TX) | **AR, IA, IN, KY, LA, MI, MN, MO, MS, ND, SD, WI** |
-| SPP | AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX, WY | (TX) | **AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, WY** |
+| ISO-NE | CT, MA, ME, NH, RI, VT | CT, MA, ME, NH, RI, VT | — |
+| PJM | DE, IL(ComEd), IN, KY, MD, MI, NC, NJ, OH, PA, TN, VA, WV, DC | all 14 | — |
+| MISO | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI | **all 14** | — (LA_2023 was the last gap, filled 2026-06-22) |
+| SPP | AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX, WY | AR, IA, KS, LA, MN, MO, MT, ND, SD, TX | **NE, NM, OK, WY** |
 
 Notes:
+- **MISO is complete:** all 14 footprint states now have 2023–2025 unit-level
+  CEMS. The final gap, `LA_2023`, was downloaded from the EPA CAMPD bulk-files
+  API and written to `data/raw/campd-unit-level/LA_2023.parquet` (schema-
+  identical to `LA_2024.parquet`); re-running the MISO unit-outage derivation
+  added 136 LA-2023 outage windows across 42 units (see the MISO data audit).
 - Shared states (IL, TX, MO, etc.) sit in two ISOs; CEMS is filtered by BA, not
-  state, so one upload serves both — no duplication needed.
-- The **exact** state set per ISO should be derived programmatically after
+  state, so one extract serves both — no duplication needed.
+- **SPP** is the only remaining gap: `NE, NM, OK, WY` (all years) are not yet in
+  `campd-unit-level/`.
+- The **exact** state set per ISO should still be derived programmatically after
   Stage C: assemble the fleet for the BA, list distinct plant states, diff
-  against files present. Add a helper in `scripts/` that prints the missing
-  `<ST>_<year>.parquet` set per ISO.
-- `AL` is present but belongs to Southern Co. (SOCO), outside our six ISOs —
-  likely retained for an emission-rate reference; harmless.
+  against files present in `campd-unit-level/`.
 
 ---
 
