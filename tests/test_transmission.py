@@ -1,6 +1,7 @@
 """Tests for the pipe-and-bubble transmission model."""
 
 import unittest
+import unittest.mock
 
 import numpy as np
 import pandas as pd
@@ -30,6 +31,7 @@ from market_sim.model.transmission import (
     build_wecc_import_generators,
     extend_with_import_node,
     get_ttc_array,
+    inject_caiso_export_hub_prices,
     inject_caiso_gas_commitment_floor,
     inject_interchange_shape,
     wecc_border_carbon_adder,
@@ -952,6 +954,59 @@ class PricedInterchangeDefaultTest(unittest.TestCase):
         # --priced-interchange forces the node on for an ISO that defaults off.
         self.assertFalse(resolve_priced_interchange(False, "CAISO"))
         self.assertTrue(resolve_priced_interchange(True, "ERCOT"))
+
+
+class TestCaisoExportHubPrices(unittest.TestCase):
+    """Neighbor-export sink repriced to the measured WECC hub LMP."""
+
+    def _fleet(self):
+        gens = [
+            Generator(
+                unit_id="WECC_import_export_solar",
+                name="export_solar",
+                zone="WECC_import",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-2500.0,
+                vom=8.0,
+            ),
+            Generator(
+                unit_id="WECC_import_export_curtail",
+                name="export_curtail",
+                zone="WECC_import",
+                fuel_type="import",
+                pmax_mw=0.0,
+                pmin_mw=-4000.0,
+                vom=0.0,
+            ),
+        ]
+        fa = generators_to_fleet_arrays(gens, ["WECC_import"], hours=T)
+        return fa
+
+    def test_reprices_export_solar_to_hub_leaves_curtail(self):
+        fa = self._fleet()
+        mc = np.zeros((2, T))
+        hub = np.full(T, 37.0)
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.measured_import_hub_prices",
+            return_value={"PNW_midC": hub, "DSW_solar_PV": hub},
+        ):
+            applied = inject_caiso_export_hub_prices(fa, mc, "CAISO", 2024)
+        self.assertTrue(applied)
+        # export_solar carries the measured hub price; export_curtail untouched.
+        np.testing.assert_allclose(mc[0], hub)
+        np.testing.assert_array_equal(mc[1], 0.0)
+
+    def test_no_measured_series_is_noop(self):
+        fa = self._fleet()
+        mc = np.zeros((2, T))
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.measured_import_hub_prices",
+            return_value=None,
+        ):
+            applied = inject_caiso_export_hub_prices(fa, mc, "CAISO", 2024)
+        self.assertFalse(applied)
+        np.testing.assert_array_equal(mc, 0.0)
 
 
 if __name__ == "__main__":
