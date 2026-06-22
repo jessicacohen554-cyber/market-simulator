@@ -459,6 +459,8 @@ def _system_frame(
     result,
     demand: np.ndarray,
     zone_names: list[str],
+    iso: str | None = None,
+    ercot_rtordpa_overlay: bool = False,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -468,6 +470,12 @@ def _system_frame(
     system-wide column (broadcast across zones, matching PJM's RTO-wide reserve
     clearing price) so the residual analysis can separate the energy and reserve
     components. Energy-only runs write 0.0.
+
+    ``ercot_rtordpa_overlay`` adds the measured, regime-gated RTORDPA
+    (reliability-deployment price adder) to the energy ``price`` for every zone
+    — a post-solve, additive price overlay (no dispatch / volume change), with
+    the raw added series persisted in a ``rtordpa_overlay`` column for audit.
+    See ``market_sim.results.scarcity.ercot_rtordpa_overlay_series``.
     """
     prices = np.asarray(result.prices, dtype=float)
     slack = np.asarray(result.slack, dtype=float)
@@ -478,22 +486,26 @@ def _system_frame(
         if reserve_price is None
         else np.asarray(reserve_price, dtype=float).ravel()[:T]
     )
+    overlay = None
+    if ercot_rtordpa_overlay and iso == "ERCOT":
+        from market_sim.results.scarcity import ercot_rtordpa_overlay_series
+
+        overlay = ercot_rtordpa_overlay_series(year, T)
     rows = []
     for z in range(n_zones):
-        rows.append(
-            pd.DataFrame(
-                {
-                    "year": np.int16(year),
-                    "pass": pass_label,
-                    "zone": zone_names[z],
-                    "hour": np.arange(T, dtype=np.int32),
-                    "price": prices[z],
-                    "slack": slack[z],
-                    "demand": demand[z, :T],
-                    "reserve_price": rp,
-                }
-            )
-        )
+        cols = {
+            "year": np.int16(year),
+            "pass": pass_label,
+            "zone": zone_names[z],
+            "hour": np.arange(T, dtype=np.int32),
+            "price": prices[z] + (overlay if overlay is not None else 0.0),
+            "slack": slack[z],
+            "demand": demand[z, :T],
+            "reserve_price": rp,
+        }
+        if overlay is not None:
+            cols["rtordpa_overlay"] = overlay
+        rows.append(pd.DataFrame(cols))
     return pd.concat(rows, ignore_index=True)
 
 
@@ -1364,6 +1376,7 @@ def write_run_config(run_dir: Path, cfg, meta: dict, note: str = "") -> None:
                 "offer_curve_overrides",
                 "offer_curve_deltas",
                 "priced_interchange",
+                "ercot_rtordpa_overlay",
                 "git_sha",
             )
         },
@@ -1412,6 +1425,7 @@ def solve_and_persist(
     ercot_storage_as_reserve_from_year: int = 2025,
     ercot_ecrs_requirement: bool = False,
     ercot_ecrs_requirement_from_year: int = 2023,
+    ercot_rtordpa_overlay: bool = False,
     ordc_lolp_params_path: str | None = None,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
@@ -1601,7 +1615,17 @@ def solve_and_persist(
                 must_run=must_run,
                 oil_switch_mask=p2_state.get("dual_fuel_oil_mask"),
             ).to_parquet(run_dir / "dispatch" / f"{year}_{label}.parquet", index=False)
-            system_frames.append(_system_frame(year, label, res, demand, zone_names))
+            system_frames.append(
+                _system_frame(
+                    year,
+                    label,
+                    res,
+                    demand,
+                    zone_names,
+                    iso=iso,
+                    ercot_rtordpa_overlay=ercot_rtordpa_overlay,
+                )
+            )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
@@ -1721,6 +1745,7 @@ def solve_and_persist(
         "ercot_storage_as_reserve_from_year": ercot_storage_as_reserve_from_year,
         "ercot_ecrs_requirement": ercot_ecrs_requirement,
         "ercot_ecrs_requirement_from_year": ercot_ecrs_requirement_from_year,
+        "ercot_rtordpa_overlay": ercot_rtordpa_overlay,
         "ordc_lolp_params_path": ordc_lolp_params_path,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
@@ -4053,6 +4078,21 @@ def main() -> None:
         "(default 2023 = launch year; the data zeroes pre-June-2023 hours).",
     )
     parser.add_argument(
+        "--ercot-rtordpa-overlay",
+        action="store_true",
+        help="ERCOT only: add the measured, regime-gated RTORDPA (Real-Time ORDC "
+        "+ Reliability-Deployment Price Adder) to the model system price as a "
+        "post-solve, additive overlay (no dispatch/volume change). Read PER YEAR "
+        "from data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet (rtordpa "
+        "column) — never a 2023 hard-code, so it is backcast-able on any year. "
+        "The co-opt already produces an ORDC adder ≈ RTORPA; RTORDPA is the "
+        "reliability-deployment component the model has no mechanism for, so it "
+        "is additive, not double-counting. Gated to the pre-RTC+B regime "
+        "(<= 2025-12-04); near-inert in 2024/25 (tiny measured rtordpa), lifts "
+        "2023's out-of-market tail toward actual. Exogenous, NOT a price fit. "
+        "Off (default) = byte-identical baseline.",
+    )
+    parser.add_argument(
         "--ordc-lolp-params-path",
         default=None,
         help="Path to ERCOT's published NP6-576-ER LOLP table (season/tod_block/"
@@ -4541,6 +4581,7 @@ def main() -> None:
         ercot_storage_as_reserve_from_year=(args.ercot_storage_as_reserve_from_year),
         ercot_ecrs_requirement=args.ercot_ecrs_requirement,
         ercot_ecrs_requirement_from_year=(args.ercot_ecrs_requirement_from_year),
+        ercot_rtordpa_overlay=args.ercot_rtordpa_overlay,
         ordc_lolp_params_path=args.ordc_lolp_params_path,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
