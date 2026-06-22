@@ -63,6 +63,8 @@ import numpy as np
 from scipy.special import ndtr
 
 from market_sim.config.constants import (
+    NYISO_RCPF_LOCATIONAL,
+    NYISO_RCPF_PRODUCTS,
     ORDC_FLOOR_START_HOUR_2023,
     ORDC_FLOOR_STEPS,
     PJM_ORDC_CURVE_PATH,
@@ -1288,3 +1290,144 @@ def pjm_reserve_coopt_inputs(
     requirement = req + outer_offset
     eligible = ercot_reserve_eligible(fleet_arrays)
     return requirement, eligible, penalties.astype(float), widths.astype(float)
+
+
+def nyiso_rcpf_product_shortfall_steps(
+    requirement_mw: float,
+    critical_mw: float,
+    max_penalty: float,
+    n_ramp: int = 8,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Discretize one NYISO RCPF reserve demand curve into LP shortfall steps.
+
+    The co-optimization analogue of :func:`rcpf.reserve_demand_price`. The
+    published curve is a piecewise-linear ramp: $0 at reserves ``>= requirement``,
+    rising linearly to ``max_penalty`` at ``critical``, then flat at
+    ``max_penalty`` for reserves below ``critical`` (``critical = 0`` for the
+    locational products, so the ramp runs all the way to zero reserve). A
+    reserve "shortfall" variable measures the unmet requirement; band ``j``
+    covers a slice of shortfall and is priced at the demand-curve value over
+    that slice, ascending cheapest band (smallest shortfall, highest reserve)
+    first — the contract :func:`pjm_ordc_shortfall_steps` produces and
+    ``model.dispatch`` consumes. Total step width is exactly ``requirement_mw``
+    so the balance row stays feasible even at zero reserve.
+
+    Args:
+        requirement_mw: Reserve requirement (curve is $0 at/above it).
+        critical_mw: Reserve level at/below which the maximum penalty applies.
+        max_penalty: Maximum reserve shadow price ($/MWh).
+        n_ramp: Number of equal-width steps discretizing the linear ramp.
+
+    Returns:
+        ``(penalties, widths)`` ascending cheapest-first, each ``(n_steps,)``.
+    """
+    span = float(requirement_mw) - float(critical_mw)
+    if span < 0:
+        raise ValueError(
+            f"requirement_mw ({requirement_mw}) must be >= critical_mw ({critical_mw})"
+        )
+    pens: list[float] = []
+    wids: list[float] = []
+    if span > 0:
+        # Ramp region [critical, requirement]: descending reserve grid so the
+        # shortfall (requirement - reserve) ascends; price each band at the
+        # demand curve evaluated at its lower reserve edge (where it starts to
+        # bind), so penalties ascend toward max_penalty.
+        grid = np.linspace(float(requirement_mw), float(critical_mw), int(n_ramp) + 1)
+        r_edge = grid[1:]  # lower reserve edge of each band
+        pens.extend((max_penalty * (float(requirement_mw) - r_edge) / span).tolist())
+        wids.extend((grid[:-1] - grid[1:]).tolist())
+    if float(critical_mw) > 0:
+        # Flat tail: reserves below critical price at the full penalty.
+        pens.append(float(max_penalty))
+        wids.append(float(critical_mw))
+    return np.asarray(pens, dtype=float), np.asarray(wids, dtype=float)
+
+
+def nyiso_reserve_coopt_inputs(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str],
+    n_ramp: int = 8,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Assemble NYISO's *locational* energy+reserve co-optimization inputs.
+
+    The NYISO analogue of :func:`ercot_reserve_coopt_inputs` /
+    :func:`pjm_reserve_coopt_inputs`, but NYISO's reserve market is *nested and
+    locational*: the system NYCA tier (:data:`NYISO_RCPF_PRODUCTS`) plus the
+    East ⊃ SENY ⊃ NYC regional tiers (:data:`NYISO_RCPF_LOCATIONAL`) each carry
+    their own requirement and demand curve. Each (region, product) pair becomes
+    one *reserve family* — a balance row over that region's member zones,
+    sourced from the published Rate Schedule 4 / FERC ER21-502 anchors (nothing
+    fitted to the LMP residual). Holding the import-constrained downstate pocket
+    (NYC, SENY) to its locational reserve requirement keeps the NYC peaker /
+    quick-start fleet's headroom in reserve, so in tight hours those units clear
+    on energy and the reserve shortfall stacks a scarcity price into the
+    downstate zonal LMP — the locational tail the NYCA-aggregate energy LP and
+    the post-solve RCPF adder cannot dispatch.
+
+    The demand curves are constant across hours; the hourly scarcity *incidence*
+    comes from the hourly fleet availability in the shared-headroom RHS (a tight
+    downstate fleet clears reserve lower on the curve, at a higher price), the
+    same design as the ERCOT/PJM co-opt.
+
+    Returns ``(reserve_requirement, reserve_eligible, ordc_penalties,
+    ordc_step_widths, balance_zone_mask, balance_ordc_counts)``:
+
+    * ``reserve_requirement`` — ``(n_families, T)`` per-family hourly RHS (MW).
+    * ``reserve_eligible`` — the generic :data:`RESERVE_FUEL_TYPES` thermal mask.
+    * ``ordc_penalties`` / ``ordc_step_widths`` — the family-major concatenated
+      shortfall-step penalties ($/MWh) and widths (MW).
+    * ``balance_zone_mask`` — ``(n_families, n_zones)`` boolean of each family's
+      member zones (which zones' reserve feeds the family's balance row).
+    * ``balance_ordc_counts`` — ``(n_families,)`` ORDC steps per family.
+    """
+    T = int(hours)
+    zone_index = {name: i for i, name in enumerate(zone_names)}
+    n_zones = len(zone_names)
+
+    # Build the (region zones, products) family list: the system NYCA tier over
+    # every zone, then each locational region over its member zones. A region
+    # with several nested products (e.g. NYC 30-min and 10-min) contributes one
+    # family per product (different requirement -> different balance row).
+    families: list[tuple[tuple[int, ...], tuple[float, float, float]]] = []
+    nyca_products = tuple(
+        getattr(config, "nyiso_rcpf_products", None) or NYISO_RCPF_PRODUCTS
+    )
+    all_zones = tuple(range(n_zones))
+    for _name, req, crit, pen in nyca_products:
+        families.append((all_zones, (float(req), float(crit), float(pen))))
+    locational = getattr(config, "nyiso_rcpf_locational", None) or NYISO_RCPF_LOCATIONAL
+    for region in locational.values():
+        member_idx = tuple(zone_index[z] for z in region["zones"] if z in zone_index)
+        if not member_idx:
+            continue
+        for _name, req, crit, pen in region["products"]:
+            families.append((member_idx, (float(req), float(crit), float(pen))))
+
+    n_fam = len(families)
+    balance_zone_mask = np.zeros((n_fam, n_zones), dtype=bool)
+    requirement = np.zeros((n_fam, T), dtype=float)
+    pen_list: list[np.ndarray] = []
+    wid_list: list[np.ndarray] = []
+    counts = np.zeros(n_fam, dtype=int)
+    for f, (member_idx, (req, crit, pen)) in enumerate(families):
+        balance_zone_mask[f, list(member_idx)] = True
+        requirement[f, :] = req
+        p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
+        pen_list.append(p)
+        wid_list.append(w)
+        counts[f] = p.size
+
+    ordc_penalties = np.concatenate(pen_list) if pen_list else np.zeros(0)
+    ordc_step_widths = np.concatenate(wid_list) if wid_list else np.zeros(0)
+    eligible = ercot_reserve_eligible(fleet_arrays)
+    return (
+        requirement,
+        eligible,
+        ordc_penalties.astype(float),
+        ordc_step_widths.astype(float),
+        balance_zone_mask,
+        counts,
+    )

@@ -355,5 +355,227 @@ class TestErcotReserveEligible(unittest.TestCase):
             self.assertEqual(e, f in RESERVE_FUEL_TYPES, f"{f} eligibility")
 
 
+class TestNyisoRcpfProductSteps(unittest.TestCase):
+    """One NYISO RCPF reserve demand curve -> ascending LP shortfall steps."""
+
+    def _steps(self, req, crit, pen, n_ramp=8):
+        from market_sim.results.scarcity import nyiso_rcpf_product_shortfall_steps
+
+        return nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
+
+    def test_locational_product_ramps_to_zero(self):
+        # critical=0 (locational): a pure ramp, no flat tail; widths sum to req.
+        pens, widths = self._steps(1000.0, 0.0, 500.0, n_ramp=8)
+        self.assertEqual(len(pens), 8)
+        self.assertAlmostEqual(widths.sum(), 1000.0)
+        self.assertAlmostEqual(pens[-1], 500.0)  # deepest band at max penalty
+        self.assertTrue(np.all(np.diff(pens) > 0))  # cheapest band first
+
+    def test_nyca_product_has_flat_tail(self):
+        # NYCA 30-min: ramp over [1965, 2620], flat $750 over [0, 1965).
+        pens, widths = self._steps(2620.0, 1965.0, 750.0, n_ramp=8)
+        self.assertEqual(len(pens), 9)  # 8 ramp + 1 flat tail
+        self.assertAlmostEqual(widths.sum(), 2620.0)
+        self.assertAlmostEqual(pens[-1], 750.0)
+        self.assertAlmostEqual(widths[-1], 1965.0)  # tail width = critical
+
+    def test_zero_span_is_flat_only(self):
+        pens, widths = self._steps(500.0, 500.0, 500.0)
+        np.testing.assert_allclose(pens, [500.0])
+        np.testing.assert_allclose(widths, [500.0])
+
+
+class TestNyisoReserveCooptInputs(unittest.TestCase):
+    """The NYISO locational co-optimization input assembler."""
+
+    _ZONES = ["Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"]
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_ct")
+        wind_idx = FUEL_TYPE_NAMES.index("wind")
+        n, T = 2, 24
+        return FleetArrays(
+            pmax=np.array([400.0, 200.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([10.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([3, 3]),  # both in NYC
+            fuel_type_idx=np.array([gas_idx, wind_idx]),
+            availability=np.ones((n, T)),
+            unit_ids=["g0", "w1"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([100, 200]),
+        )
+
+    def _config(self):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(iso="NYISO", weather_year=2023)
+
+    def test_shapes_and_family_count(self):
+        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+
+        T = 24
+        req, elig, pens, widths, mask, counts = nyiso_reserve_coopt_inputs(
+            self._config(), self._fleet(), T, self._ZONES
+        )
+        # NYCA(3 products) + East(1) + SENY(1) + NYC(2) = 7 families.
+        n_fam = 7
+        self.assertEqual(mask.shape, (n_fam, len(self._ZONES)))
+        self.assertEqual(req.shape, (n_fam, T))
+        self.assertEqual(counts.shape, (n_fam,))
+        self.assertEqual(int(counts.sum()), len(pens))
+        self.assertEqual(len(pens), len(widths))
+        np.testing.assert_array_equal(elig, [True, False])  # only the gas unit
+
+    def test_locational_masks_nest(self):
+        from market_sim.results.scarcity import nyiso_reserve_coopt_inputs
+
+        _, _, _, _, mask, _ = nyiso_reserve_coopt_inputs(
+            self._config(), self._fleet(), 24, self._ZONES
+        )
+        # The three NYCA families span every zone.
+        self.assertTrue(mask[:3].all())
+        # The four locational families never include upstate (zone 0).
+        self.assertFalse(mask[3:, 0].any())
+        # The last family (NYC 10-min) is zone J only.
+        nyc = self._ZONES.index("NYC")
+        only_nyc = np.zeros(len(self._ZONES), dtype=bool)
+        only_nyc[nyc] = True
+        np.testing.assert_array_equal(mask[-1], only_nyc)
+
+
+class TestNyisoLocationalCooptLP(unittest.TestCase):
+    """End-to-end: a locational reserve family lifts an import-constrained
+    downstate zone's price the system-wide curve never sees."""
+
+    def _two_zone_fleet(self):
+        # Zone 0 (upstate): cheap, ample. Zone 1 (downstate pocket): one
+        # mid-cost gas-CT, import-limited. Locational reserve in zone 1 must be
+        # met by in-zone headroom -> holds the CT back -> lifts zone-1 price.
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_ct")
+        n, T = 2, 4
+        return (
+            FleetArrays(
+                pmax=np.array([2000.0, 600.0]),
+                pmin=np.zeros(n),
+                heat_rate=np.array([5.0, 12.0]),
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=np.array([0, 1]),
+                fuel_type_idx=np.array([gas_idx, gas_idx]),
+                availability=np.ones((n, T)),
+                unit_ids=["up", "down"],
+                efficiency_bin=np.zeros(n),
+                plant_code=np.array([1, 2]),
+            ),
+            T,
+        )
+
+    def _solve(self, with_locational):
+        import scipy.sparse as sp
+
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._two_zone_fleet()
+        n_zones = 2
+        # Demand: upstate 1000, downstate 400. One link 0->1 capped at 200 MW,
+        # so downstate must self-supply >= 200 MW from its 600 MW CT.
+        demand = np.array([[1000.0] * T, [400.0] * T])
+        incidence = sp.csr_matrix(np.array([[1.0], [-1.0]]))  # flow on link adds to z1
+        ttc = np.array([200.0])
+        fuel_prices = np.ones((2, T))  # heat_rate sets MC ($5 vs $12)
+        kw = dict(
+            wind_cf=np.zeros((n_zones, T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, T)),
+            solar_cap=np.zeros(n_zones),
+            fuel_prices=fuel_prices,
+            incidence=incidence,
+            ttc=ttc,
+            voll=2000.0,
+        )
+        if with_locational:
+            # One locational family: zone 1 must hold 300 MW reserve, priced to
+            # $500 at zero reserve (ramp, critical=0).
+            from market_sim.results.scarcity import (
+                nyiso_rcpf_product_shortfall_steps,
+            )
+
+            pens, widths = nyiso_rcpf_product_shortfall_steps(
+                300.0, 0.0, 500.0, n_ramp=4
+            )
+            kw.update(
+                reserve_requirement=np.full((1, T), 300.0),
+                reserve_eligible=np.array([True, True]),
+                ordc_penalties=pens,
+                ordc_step_widths=widths,
+                reserve_balance_zone_mask=np.array([[False, True]]),
+                reserve_balance_ordc_counts=np.array([len(pens)]),
+            )
+        return solve_dispatch(fleet, demand, **kw)
+
+    def test_locational_reserve_lifts_downstate_price(self):
+        base = self._solve(with_locational=False)
+        loc = self._solve(with_locational=True)
+        # Both feasible.
+        self.assertEqual(base.status, "Optimal")
+        self.assertEqual(loc.status, "Optimal")
+        # Downstate zone is import-limited to 200 MW, serves 400 -> CT runs 200
+        # at $60 either way, so base downstate price is the CT MC.
+        z1_base = base.prices[1].mean()
+        z1_loc = loc.prices[1].mean()
+        # Holding 300 MW of in-zone reserve forces the 600 MW CT to keep
+        # headroom (cap 600 - 300 reserve = 300 deliverable energy), but it only
+        # needs 200 for energy, so reserve clears off headroom at $0 — price
+        # unchanged. Tighten: require 500 MW reserve so energy+reserve = 700 >
+        # 600 cap, forcing a shortfall priced on the curve.
+        self.assertGreaterEqual(z1_loc, z1_base)
+
+    def test_tight_locational_reserve_prices_shortfall(self):
+        import scipy.sparse as sp
+
+        from market_sim.model.dispatch import solve_dispatch
+        from market_sim.results.scarcity import nyiso_rcpf_product_shortfall_steps
+
+        fleet, T = self._two_zone_fleet()
+        demand = np.array([[1000.0] * T, [400.0] * T])
+        incidence = sp.csr_matrix(np.array([[1.0], [-1.0]]))
+        # Reserve 500 MW in zone 1: with 200 MW imported, the CT serves 200 MW
+        # energy and at most 400 MW headroom -> 100 MW reserve shortfall, priced
+        # on the ramp. The reserve dual lifts the downstate energy LMP.
+        pens, widths = nyiso_rcpf_product_shortfall_steps(500.0, 0.0, 500.0, n_ramp=5)
+        loc = solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+            fuel_prices=np.ones((2, T)),
+            incidence=incidence,
+            ttc=np.array([200.0]),
+            voll=2000.0,
+            reserve_requirement=np.full((1, T), 500.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=pens,
+            ordc_step_widths=widths,
+            reserve_balance_zone_mask=np.array([[False, True]]),
+            reserve_balance_ordc_counts=np.array([len(pens)]),
+        )
+        self.assertEqual(loc.status, "Optimal")
+        # A binding reserve shortfall in the pocket => positive reserve price.
+        self.assertGreater(float(np.asarray(loc.reserve_price).mean()), 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()

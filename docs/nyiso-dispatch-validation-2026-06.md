@@ -106,12 +106,33 @@ predicted near-no-op in 2023 (node 16.56→15.75 TWh).
   fraction lands LI +9% over real. Both are second-order tunes (fraction /
   dual-fuel relabel), not reasons to revert the mechanism.
 
-## Fix #3 status (NYC peaker / scarcity tail)
+## Fix #3 status (NYC peaker / scarcity tail) — IMPLEMENTED 2026-06
 
-NYC peakers stay idle and the price tail stays missing. The RCPF overlay
-(`nyiso_rcpf_enabled`) is a **post-hoc LMP price-adder**, so it cannot *dispatch*
-the idle peakers — making them run requires in-LP **reserve co-optimization**
-(the `energy_reserve_coopt` machinery, ERCOT-proven), holding NYC peakers for
-locational 10/30-min reserves so they clear and set a scarcity price. That is a
-larger build than #1/#2 and is the next step; it is **not** an energy must-run
-(NYC over-generates already).
+In-LP **locational** reserve co-optimization is now wired for NYISO
+(`energy_reserve_coopt` + `iso == "NYISO"`, default OFF). The existing
+single-system reserve machinery (`model/dispatch._build_reserve_rows`) was
+generalized to **multiple nested balance families**: the system NYCA tier
+(`NYISO_RCPF_PRODUCTS`) plus the East ⊃ SENY ⊃ NYC regional tiers
+(`NYISO_RCPF_LOCATIONAL`), each a balance row over its member zones, sourced
+from the FERC ER21-502 / Rate-Schedule-4 anchors (`results.scarcity.
+nyiso_reserve_coopt_inputs`; the per-zone `R_z` variables feed every family that
+contains the zone, so a downstate shortage stacks the regional penalties into
+the downstate LMP). ERCOT/PJM stay byte-identical (single all-zone family).
+
+**Result (run `nyiso 19 locational-reserve-coopt`, 2023/24/25, registered
+PROBE):** the reserve fires only in genuine summer scarcity (Jul/Aug/Sep;
+reserve price $0 in winter), recovering the scarcity tail the NYCA-aggregate
+curve and the post-solve RCPF adder cannot dispatch. The 2025 summer under-bias
+eases markedly (Jun −30.7 → −14.6, Jul −22.1 → −15.8 vs the LI-floor probe);
+2025 `price_shape` now PASSES (NRMSE 0.16) and 2024 price PASSES outright;
+dispatch r 0.81–0.87 all years; 2023 body unchanged (BASE 12.31 → COOPT 12.27,
+A/B-verified). It is **not** an energy must-run (NYC over-generates already).
+
+**Why it is not yet a keeper — the residual moved to a NEW root cause.** The
+aggregate is now gated by a **pre-existing winter/January downstate
+over-pricing** (2023 `price_mean` +13 %, NRMSE 0.40; downstate zones ~$98 in
+January vs upstate ~$40, actual NYCA RT $37.8). A BASE-vs-COOPT A/B with the
+co-opt OFF reproduced the *identical* January price, so this is **not** caused
+by fix #3 — it is a gas / dual-fuel marginal-unit residual (likely the winter
+NYC delivered-gas basis or the dual-fuel oil-cap level). That is the next
+investigation; the locational-reserve mechanism stays in (rule #1).

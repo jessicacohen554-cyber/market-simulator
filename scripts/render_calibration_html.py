@@ -74,6 +74,7 @@ from market_sim.config.plant_taxonomy import (  # noqa: E402
     nonfossil_classes,
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.data import egrid  # noqa: E402
 from market_sim.data.fleet import (  # noqa: E402
     OTHER_FOSSIL_CLASS,
     apply_other_fossil_scoring,
