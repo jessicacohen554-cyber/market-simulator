@@ -658,6 +658,22 @@ class ScenarioConfig:
     # 2024's tail, and 2023's tail is out-of-market (administrative, un-modelable by
     # any LOLP curve). See docs/ercot-run131-lmp-decomposition-2026-06.md
     # ("Global storage-AS credit — investigated, BLOCKED").
+    ercot_ecrs_requirement: bool = False  # ERCOT co-opt: ADD the measured ECRS
+    # procurement (~2 GW from 2023-06-10, ASPLANNP433 ECRS rows) to the reserve-
+    # balance RHS. The co-opt models a single contingency-reserve product (ORDC
+    # from ordc_mcl_mw + LOLP) and never grew when ECRS launched mid-2023, so it
+    # holds too little reserve and under-prices the broad "tight-but-not-scarce"
+    # mid-range across 2023-H2 and 2024/25 (the bimodal monthly-shape error: rare
+    # VOLL spikes over, the moderate months under). This is the demand-side mirror
+    # of the load/storage *supply* credits — it raises the absolute reserve level
+    # the ORDC steps price at, lifting the marginal step in moderate-headroom
+    # hours. Exogenous ERCOT-published quantity, NOT fitted to price; the real
+    # June-2023 onset is carried by the data (2023-H1 has no ECRS rows → 0 MW), so
+    # no start date is hard-coded. Default off; ERCOT co-opt only. GATED — watch
+    # the tail (it tightens every active hour) and re-gate all years.
+    ercot_ecrs_requirement_from_year: int = 2023  # First weather year the ECRS
+    # requirement applies to (default 2023 = the launch year; the data zeroes the
+    # pre-June-2023 hours itself).
     as_reserve_formula: bool = False  # CAISO backcast: withhold a formula-based
     # upward operating-reserve requirement R(t) = max(MSSC, 0.067*load) +
     # 0.01*load (WECC MORC contingency + 1% regulation-up; see
@@ -1646,6 +1662,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
     "ercot_storage_as_reserve_from_year": 1,
+    "ercot_ecrs_requirement": 1,
+    "ercot_ecrs_requirement_from_year": 1,
     "storage_as_commitment": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
