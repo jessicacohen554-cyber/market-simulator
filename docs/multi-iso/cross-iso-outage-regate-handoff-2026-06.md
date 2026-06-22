@@ -4,6 +4,17 @@
 **Trigger branch:** `claude/ercot-scarcity-tuning-handoff-nl1y3m`, commit
 `b0c41cb` (`outages: apply net-load filter cross-ISO`).
 
+> **Update 2026-06-22 (`claude/ercot-outage-sensitivity-j6a0p5`):** the
+> high-load band described below was a *single annual* net-load percentile, which
+> over-cut — it deleted genuine multi-week CCGT **shoulder** maintenance outages
+> (they never span an annual-top hour). `high_load_mask` now measures the
+> percentile over a **centered rolling ± `WINDOW_DAYS` (30) window** (the LOCAL /
+> seasonal band; `--high-load-window-days 0` restores the annual band). ERCOT was
+> regenerated on it (CC outage GW-days 2906 → 5997, still −36 % vs unfiltered,
+> short economic-idle still dropped, summer preserved). Every per-ISO re-gate
+> below now picks up the local band automatically on regen. See
+> `docs/ercot-outage-sensitivity-middle-ground-2026-06.md`.
+
 ## What changed (read first)
 
 The **revealed-availability (high-NET-LOAD) outage filter** that fixed ERCOT's
