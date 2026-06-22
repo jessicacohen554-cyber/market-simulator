@@ -27,7 +27,6 @@ import datetime as dt
 import json
 import logging
 import sys
-import zipfile
 from functools import lru_cache
 from pathlib import Path
 
@@ -38,6 +37,10 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
+from market_sim.config.paths import CALIBRATION_DIR, FLEET_DIR  # noqa: E402
+from market_sim.data.eia923 import (  # noqa: E402
+    EIA923_MONTHLY_GENERATION_PATH,
+)
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand_meta,
     load_eia_hourly_benchmark,
@@ -68,7 +71,14 @@ logger = logging.getLogger("build_calibration_reference")
 # the ISO's zone topology (zone_names) and balancing-authority code, so adding
 # an ISO is a CALIBRATION_ISOS + BA-code-map change only.
 CALIBRATION_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
-CALIBRATION_ISOS: tuple[str, ...] = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO")
+CALIBRATION_ISOS: tuple[str, ...] = (
+    "ERCOT",
+    "PJM",
+    "CAISO",
+    "NYISO",
+    "NEISO",
+    "MISO",
+)
 
 # Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
 # (doc 06: 2023 = wet hydro + Diablo at full output; 2024/2025 = the
@@ -83,6 +93,10 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     "CAISO": (2023, 2024, 2025),
     "NYISO": (2023, 2025),
     "NEISO": (2023, 2024, 2025),
+    # MISO is the Stage-F addition: the EIA-923/930 by-fuel and demand
+    # extracts all cover 2023-2025 (the 2025 EIA-923 release is the partial
+    # monthly survey, handled by the incomplete-vintage guard).
+    "MISO": (2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -99,7 +113,7 @@ HENRY_HUB_ACTUAL: dict[int, float] = {
 # eGRID benchmark workbook (EPA Emissions & Generation Resource Integrated
 # Database, 2023 data release). The plant-level sheet PLNT23 carries a
 # one-row banner above the header, hence skiprows=1.
-EGRID_PATH: Path = REPO / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
+EGRID_PATH: Path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
 EGRID_SHEET: str = "PLNT23"
 EGRID_SKIPROWS: int = 1
 EGRID_YEAR: int = 2023
@@ -131,7 +145,10 @@ SHORT_TON_TO_METRIC_TONNE: float = 0.90718474
 _MWH_PER_TWH: float = 1.0e6
 _MONTHS: tuple[int, ...] = tuple(range(1, 13))
 
-OUTPUT_DIR: Path = REPO / "inputs" / "calibration"
+# Output goes to the single validation-source root the loaders read from
+# (data/raw/_validation-source). The pre-W1 ``inputs/calibration`` path was
+# collapsed into data/raw/ — see config/paths.py CALIBRATION_DIR.
+OUTPUT_DIR: Path = CALIBRATION_DIR
 
 
 def _eia860_renewables(iso: str, year: int) -> dict:
@@ -224,6 +241,9 @@ def _egrid_benchmark(iso: str) -> dict:
         "CAISO": "CISO",
         "NYISO": "NYIS",
         "NEISO": "ISNE",
+        # eGRID 2023 PLNT23 BACODE for MISO is the bare "MISO" (verified
+        # against the workbook), unlike the EIA-930 abbreviations elsewhere.
+        "MISO": "MISO",
     }[iso]
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
     plants = df[df["BACODE"] == ba_code].copy()
@@ -305,6 +325,7 @@ _ISO_BA_CODE: dict[str, str] = {
     "PJM": "PJM",
     "NYISO": "NYIS",
     "NEISO": "ISNE",
+    "MISO": "MISO",
 }
 
 # Extra EIA-923 by-fuel benchmarks emitted only for the ISOs where they are
@@ -314,9 +335,14 @@ _ISO_BA_CODE: dict[str, str] = {
 # their generation_twh stays byte-identical (hydro/oil are negligible or not
 # benchmarked there). Pumped storage (WAT/PS) is storage, not energy, and is
 # excluded from the hydro total.
+# MISO carries material upper-Midwest conventional hydro (~9 TWh/yr, on par
+# with NEISO's benchmarked hydro) and a non-trivial dual-fuel oil burn
+# (~2-3 TWh/yr, larger than the NYISO/NEISO oil totals already benchmarked),
+# so both are first-order energy classes for its by-fuel benchmark.
 _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
     "NYISO": ("hydro", "oil"),
     "NEISO": ("hydro", "oil"),
+    "MISO": ("hydro", "oil"),
 }
 
 
@@ -329,41 +355,50 @@ def _eia923_generation(iso: str, year: int) -> dict[str, float]:
     return _guard_incomplete_eia923(iso, year, _eia923_generation_raw(iso, year))
 
 
+@lru_cache(maxsize=1)
+def _eia923_generation_table() -> pd.DataFrame:
+    """Return the committed EIA-923 Page-1 net-generation table.
+
+    The raw ``f923_{year}*.zip`` releases are large source downloads that are
+    not carried in a fresh checkout. :mod:`scripts.process_f923_fuel_costs`
+    distils them once into ``eia923_monthly_generation.parquet`` under
+    ``data/raw/_processed-legacy`` — keeping the original Page-1 row grain (one
+    row per plant / prime mover / fuel code), the EIA-930 ``ba_code`` and the
+    annual net generation — so a balancing-authority by-fuel total summed from
+    this parquet is byte-identical to the same total summed from the raw zip.
+    That parquet is the resolved source here.
+    """
+    return pd.read_parquet(EIA923_MONTHLY_GENERATION_PATH)
+
+
 @lru_cache(maxsize=None)
 def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
-    """Return the EIA-923 Schedule-5 rows for an ISO's balancing authority.
+    """Return the EIA-923 Page-1 rows for an ISO's balancing authority.
 
-    Reads the ``f923_{year}`` zip under ``data/raw``, keeps the rows in
-    the ISO's balancing authority, and returns a frame with ``net_gen`` (MWh),
-    ``pm`` (prime mover) and ``fc`` (fuel code). ``None`` when no zip exists for
-    the year (2021/2022) or the ISO has no balancing-authority mapping. Cached
-    so the by-fuel split and the completeness check share a single read.
+    Filters the committed EIA-923 net-generation parquet
+    (:func:`_eia923_generation_table`) to the ISO's balancing authority and
+    year, returning a frame with ``net_gen`` (MWh), ``pm`` (prime mover) and
+    ``fc`` (fuel code). ``None`` when the parquet has no rows for the year
+    (2021/2022, which predate the committed vintage) or the ISO has no
+    balancing-authority mapping. Cached so the by-fuel split and the
+    completeness check share a single read.
     """
     ba = _ISO_BA_CODE.get(iso)
     if ba is None:
         return None
-    matches = sorted((REPO / "inputs" / "raw-data").glob(f"f923_{year}*.zip"))
-    if not matches:
+    table = _eia923_generation_table()
+    df = table[
+        (table["year"] == year) & (table["ba_code"].astype(str).str.strip() == ba)
+    ]
+    if df.empty:
         return None
-    with zipfile.ZipFile(matches[0]) as zf:
-        inner = [n for n in zf.namelist() if "Schedules_2_3_4_5_M" in n]
-        if not inner:
-            return None
-        with zf.open(inner[0]) as handle:
-            df = pd.read_excel(
-                handle,
-                sheet_name="Page 1 Generation and Fuel Data",
-                skiprows=5,
-            )
-    df.columns = [str(c).replace("\n", " ").strip() for c in df.columns]
-    df = df[df["Balancing Authority Code"].astype(str).str.strip() == ba]
     return pd.DataFrame(
         {
-            "net_gen": pd.to_numeric(
-                df["Net Generation (Megawatthours)"], errors="coerce"
-            ).fillna(0.0),
-            "pm": df["Reported Prime Mover"].astype(str).str.strip(),
-            "fc": df["Reported Fuel Type Code"].astype(str).str.strip(),
+            "net_gen": pd.to_numeric(df["netgen_annual_mwh"], errors="coerce")
+            .fillna(0.0)
+            .to_numpy(),
+            "pm": df["prime_mover"].astype(str).str.strip().to_numpy(),
+            "fc": df["fuel_type"].astype(str).str.strip().to_numpy(),
         }
     )
 
