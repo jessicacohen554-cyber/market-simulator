@@ -177,7 +177,7 @@ canvas.heat{width:100%;height:160px;image-rendering:pixelated;border:1px solid v
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 2px">
    <h1 style="font-size:var(--fs-xl);margin:0">Backcast Results</h1>
    <span id=isoBadge class=isobadge></span></div>
-  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-23 22:50</p>
+  <p class=psub id=pageSub>Model vs EPA CAMPD / EIA actuals · generated 2026-06-23 23:46</p>
   <div id=diag>Loading run data…</div>
   <div class=bc-top id=bcTop>
    <div class=ctl><span class=lab>View</span><span class=seg id=pageSel>
@@ -274,6 +274,13 @@ function avgLMPMonScar(id,year){const Y=MODEL[id].years[year]||{},S=Y.lmpScar,L=
 // hour counts + provenance), computed in Python to match derive_ordc_overlay.py
 // exactly; null for runs/years with no overlay.
 function ordcInfo(id,year){return (MODEL[id].years[year]||{}).ordc||null;}
+// The full ERCOT-style ORDC price overlay (demand-weighted MAEs + reliability-
+// deployment MW). Other ISOs (MISO, CAISO per-hub) attach a *lightweight* ordc
+// diagnostic that carries only scarcity-hour counts ({hoursGt200:{model,actual}}),
+// with no price-overlay fields — so gate the overlay UI on the full shape, not on
+// ordc merely being present, or maeEnergyOnly.toFixed() throws and the page fails
+// to load. Returns null for the lightweight shape (overlay panels then omit).
+function ordcOverlay(id,year){const o=ordcInfo(id,year);return o&&o.maeEnergyOnly!=null?o:null;}
 function dcls(d){const a=Math.abs(d);return a<5?"good":a<15?"ok":"bad";}
 function ppcls(d){const a=Math.abs(d);return a<1?"good":a<3?"ok":"bad";}
 // Hourly-r banding for the dispatch-correlation views: the class aggregate is
@@ -659,7 +666,7 @@ function lmpMonthlyTable(id,yr){const mm=avgLMPMon(id,yr);if(!mm)return "";
  h+=`<tr class=sub><td>Annual</td><td class=num>${ann==null?"—":"$"+ann.toFixed(1)}</td>`
    +scarCell(annScar)
    +(da?pair(annD,aL.da):'')+(rt?pair(annD,aL.rt):'')+'</tr>';
- const O=ordcInfo(id,yr);
+ const O=ordcOverlay(id,yr);
  const note=O?` Δ is taken against the <b style="color:${OVERLAY_COLOR}">model + overlay</b> price (energy LMP + ORDC/reliability-deployment adder), since the actuals include the ORDC reserve adder; the overlay is display-only and never gated. Monthly LMP MAE vs actual RT ${O.maeEnergyOnly.toFixed(1)} → ${O.maeOverlay.toFixed(1)}.`:'';
  return h+'</tbody></table></div><p class=psub>Diagnostic only — LMP level is not a calibration target.'+note+'</p></div>';}
 // ============================ RUN REPORT ============================
@@ -755,7 +762,7 @@ function lmpYearCard(id,yr){const mm=avgLMPMon(id,yr),aL=actualLMP(yr)||{};
  if(!mm)return `<div class=ycard>${head}<p class=psub>No monthly model LMP in this payload.</p></div>`;
  // Display-only overlay KPI: the demand-weighted monthly LMP MAE vs actual RT,
  // energy-only → with overlay (system-wide; matches derive_ordc_overlay.py).
- const O=ordcInfo(id,yr);
+ const O=ordcOverlay(id,yr);
  const cap=O?`<p class=psub style="margin:7px 0 0">Monthly LMP MAE vs actual RT: <b>${O.maeEnergyOnly.toFixed(1)}</b> energy-only → <b style="color:${OVERLAY_COLOR}">${O.maeOverlay.toFixed(1)}</b> with overlay <span style="color:${dcls(O.maeOverlay-O.maeEnergyOnly)}">(${O.maeOverlay<=O.maeEnergyOnly?"−":"+"}${Math.abs(O.maeOverlay-O.maeEnergyOnly).toFixed(1)})</span></p>`:"";
  return `<div class=ycard>${head}<div class=svgbox data-lmpyear="${yr}"></div>${cap}</div>`;}
 function mountLmpCharts(id,years){document.querySelectorAll("[data-lmpyear]").forEach(box=>{
@@ -778,7 +785,11 @@ function mountLmpCharts(id,years){document.querySelectorAll("[data-lmpyear]").fo
 // model + overlay — so the remaining tail gap is explicit. Numbers come from
 // the year-level ordc payload (matches derive_ordc_overlay.py). Returns "" when
 // the run carries no overlay.
-function tailHourPanel(id,years){const rows=years.map(yr=>({yr,o:ordcInfo(id,yr)})).filter(x=>x.o);
+function tailHourPanel(id,years){const rows=years.map(yr=>({yr,o:ordcInfo(id,yr)}))
+  // Only the full overlay shape carries both tail bands with a +overlay column;
+  // the lightweight {hoursGt200:{model,actual}} diagnostic (MISO/CAISO per-hub)
+  // has no hoursGt500 / .overlay, so skip it here rather than crash on g5.actual.
+  .filter(x=>x.o&&x.o.hoursGt500&&x.o.hoursGt200&&x.o.hoursGt200.overlay!=null);
  if(!rows.length)return "";
  let h='<h3 style="font-size:var(--fs-base);margin:var(--space-md) 0 6px">Tail hours — actual vs model vs model + overlay</h3>'
   +'<div class=tablewrap><table><thead><tr><th rowspan=2 style="vertical-align:bottom">year</th>'
@@ -927,7 +938,7 @@ function renderReport(){const id=st.run,years=runYears(id);
  h+='<div class=panel><h2>Dispatch correlation by year <span class=psub>(hourly r of each class aggregate vs CAMPD)</span></h2>'
   +'<p class=psub>Green ≥ '+R_GOOD+' (tracking well), amber ≥ '+R_OK+', red below — red cells mean the class runs at the wrong times even if its annual volume is right.</p>'
   +'<div id=corrHeat></div></div>';
- const O0=years.map(yr=>ordcInfo(id,yr)).find(Boolean);
+ const O0=years.map(yr=>ordcOverlay(id,yr)).find(Boolean);
  const ovLeg=O0?`<span><i class=swatch style="border-top-color:${OVERLAY_COLOR}"></i>Model + ORDC overlay</span>`:'';
  const ovNote=O0?` The <b style="color:${OVERLAY_COLOR}">model + ORDC overlay</b> line adds ERCOT's post-solve ORDC + reliability-deployment scarcity adder (reliability-deployment ${Math.round(O0.reldeployMw).toLocaleString()} MW, calibrated to the 2023 stress year; ORDC regime for backcast years ≤ 2025) on top of the energy-only duals. It is <b>display-only</b> — additive, not a calibration target and never gated; the energy-only Model series remains the gated metric.`:'';
  h+='<div class=panel><h2>LMP alignment <span class=psub>(monthly average; model load-weighted over selected zones vs system hub actuals)</span></h2>'
