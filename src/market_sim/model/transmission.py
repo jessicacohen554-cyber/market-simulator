@@ -25,6 +25,7 @@ import pandas as pd
 import scipy.sparse as sp
 
 from market_sim.config.constants import (
+    CAISO_IMPORT_DELIVERY_BASIS,
     CARB_UNSPECIFIED_IMPORT_EF,
     EXPORT_TRANCHES,
     IMPORT_EFORD,
@@ -36,7 +37,12 @@ from market_sim.config.constants import (
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
-from market_sim.config.iso_configs import ISOConfig, TransferLink, Zone
+from market_sim.config.iso_configs import (
+    InterfaceLimit,
+    ISOConfig,
+    TransferLink,
+    Zone,
+)
 from market_sim.data.fleet import Generator
 
 
@@ -79,6 +85,26 @@ def build_incidence_matrix(
 def get_ttc_array(links: list[TransferLink]) -> np.ndarray:
     """Return the ``(n_links,)`` array of total transfer capabilities in MW."""
     return np.array([link.ttc_mw for link in links], dtype=float)
+
+
+def build_interface_groups(
+    links: list[TransferLink], interface_limits: list[InterfaceLimit]
+) -> list[tuple[np.ndarray, float, bool]]:
+    """Resolve aggregate interface limits to LP flow-column groups.
+
+    Maps each :class:`~market_sim.config.iso_configs.InterfaceLimit`'s
+    ``(from_zone, to_zone)`` link references to their indices in ``links`` (the
+    flow-block column order), returning one
+    ``(link_idx, cap_mw, bidirectional)`` tuple per limit for
+    :func:`market_sim.model.dispatch.build_constraints`. Returns an empty list
+    when the ISO declares no interface limits (the LP is then identical).
+    """
+    pair_to_idx = {(ln.from_zone, ln.to_zone): i for i, ln in enumerate(links)}
+    groups: list[tuple[np.ndarray, float, bool]] = []
+    for limit in interface_limits:
+        idx = np.array([pair_to_idx[tuple(pair)] for pair in limit.links], dtype=int)
+        groups.append((idx, float(limit.cap_mw), bool(limit.bidirectional)))
+    return groups
 
 
 def get_link_bidirectional_array(links: list[TransferLink]) -> np.ndarray:
@@ -508,7 +534,19 @@ def inject_caiso_import_hub_prices(
     desert-SW solar glut), which both lowers the body and reproduces the negative
     midday tail. The per-tranche border carbon is re-added here (clean
     hydro/solar tranches pay none) so the carbon treatment matches the static
-    ladder; the measured ``price`` is the energy component only.
+    ladder; the measured ``price`` is the energy (MCE) component only.
+
+    Delivered-cost basis: the measured hub price is the energy component *at the
+    neighbor hub*, so each tranche is delivered to the CAISO border by adding its
+    physical :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS` —
+    a transmission line-loss markup (a fraction of the energy price) plus the
+    OATT point-to-point wheeling charge. This restores the rising delivered
+    merit order the flat MCE collapses (the body over-imported because every
+    non-gas block cleared at the same ~$38 hub energy price); it is a
+    reproducible physical input, not a residual-fitted offset (rule #12). The
+    gas blocks (``DSW_CCGT`` / ``DSW_CT``) carry the basis here but are then
+    overwritten off measured gas by :func:`inject_caiso_import_gas_coupling`, so
+    the basis mainly shapes the non-gas blocks.
 
     Returns ``True`` when at least one import tranche row was repriced, ``False``
     when CAISO has no measured hub series (so the run keeps the static ladder and
@@ -529,8 +567,15 @@ def inject_caiso_import_hub_prices(
         hub_price = prices.get(tranche)
         if hub_price is None:
             continue  # tranche with no measured hub series stays on the ladder
+        # Physical delivered-cost basis over the hub MCE: a line-loss markup
+        # (scales with the energy price) plus the OATT point-to-point wheeling
+        # charge a marketer pays to deliver to the CAISO border. Restores the
+        # rising delivered-import merit order the flat MCE collapses; a
+        # reproducible physical input, not a residual-fitted offset (rule #12).
+        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(tranche, (0.0, 0.0))
+        delivered = hub_price * (1.0 + loss) + wheel
         ef = IMPORT_TRANCHE_EF.get(iso, {}).get(tranche, CARB_UNSPECIFIED_IMPORT_EF)
-        mc[row, :] = hub_price + border * (ef / CARB_UNSPECIFIED_IMPORT_EF)
+        mc[row, :] = delivered + border * (ef / CARB_UNSPECIFIED_IMPORT_EF)
         applied = True
     return applied
 

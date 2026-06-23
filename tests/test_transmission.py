@@ -30,6 +30,7 @@ from market_sim.model.transmission import (
     build_export_sinks,
     build_import_generators,
     build_incidence_matrix,
+    build_interface_groups,
     build_wecc_export_sink,
     build_wecc_import_generators,
     extend_with_import_node,
@@ -1140,6 +1141,37 @@ class TestCaisoBidirIntertie(unittest.TestCase):
         # Directional caps hold.
         self.assertLessEqual(import_mw.max(), CAISO_BIDIR_IMPORT_CAP_MW + 1e-6)
         self.assertLessEqual(export_mw.max(), CAISO_BIDIR_EXPORT_CAP_MW + 1e-6)
+
+
+class TestInterfaceGroups(unittest.TestCase):
+    """Tests for the CAISO aggregate simultaneous-import interface limit."""
+
+    def test_caiso_config_declares_import_cap(self):
+        cfg = get_iso_config("CAISO")
+        cfg.validate_topology()
+        self.assertEqual(len(cfg.interface_limits), 1)
+        limit = cfg.interface_limits[0]
+        # The two WECC import paths share one simultaneous cap below their TTC
+        # sum (4,800 + 10,623 = 15,423 MW).
+        self.assertEqual(
+            set(tuple(p) for p in limit.links),
+            {("WECC_import", "NP15"), ("WECC_import", "SP15")},
+        )
+        self.assertLess(limit.cap_mw, 15_423.0)
+
+    def test_build_interface_groups_resolves_link_indices(self):
+        cfg = get_iso_config("CAISO")
+        groups = build_interface_groups(cfg.links, cfg.interface_limits)
+        self.assertEqual(len(groups), 1)
+        idx, cap, bidir = groups[0]
+        # Path 66 / Path 46 are links 2 and 3 in the CAISO topology.
+        np.testing.assert_array_equal(np.sort(idx), np.array([2, 3]))
+        self.assertEqual(cap, 8300.0)
+        self.assertTrue(bidir)
+
+    def test_no_interface_limits_is_empty(self):
+        cfg = get_iso_config("ERCOT")
+        self.assertEqual(build_interface_groups(cfg.links, cfg.interface_limits), [])
 
 
 if __name__ == "__main__":

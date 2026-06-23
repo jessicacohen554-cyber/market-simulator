@@ -73,6 +73,7 @@ from market_sim.model.transmission import (
     build_incidence_matrix,
     build_export_sinks,
     build_import_generators,
+    build_interface_groups,
     extend_with_import_node,
     get_ttc_array,
     wecc_border_carbon_adder,
@@ -216,6 +217,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         solar_cf = solar_cf[:, : config.hours]
     incidence = build_incidence_matrix(iso_config.links, zone_names)
     ttc = get_ttc_array(iso_config.links)
+    # Aggregate interface limits (CAISO simultaneous WECC import cap): resolved
+    # once to flow-column groups; empty for ISOs without an interface_limits
+    # entry, so the LP is identical there.
+    interface_groups = build_interface_groups(
+        iso_config.links, iso_config.interface_limits
+    )
 
     fleet = None
     loss_tracker: dict[str, int] = {}
@@ -571,6 +578,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 voll=iso_config.voll,
                 incidence=incidence,
                 ttc=ttc,
+                interface_groups=interface_groups or None,
                 storage_power_cap=storage.power_cap,
                 storage_energy_cap=storage.energy_cap,
                 storage_zone_idx=storage.zone_idx,
