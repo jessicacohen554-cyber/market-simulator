@@ -492,8 +492,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 for g in dispatch_fleet
             ]
         else:
+            # Non-CAMPD-binned ISOs (e.g. MISO/SPP) split coal into take-or-pay
+            # tranches here. With coal_takeorpay_from_data the sunk first tranche
+            # uses each plant's MEASURED EIA-923 Schedule-5 contracted share
+            # (CLAUDE.md #11/#12) instead of the uniform 100%-sunk assumption.
+            split_takeorpay = None
+            if getattr(config, "coal_takeorpay_from_data", False):
+                split_takeorpay = {
+                    int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
+                    for g in fleet
+                    if g.fuel_type == "coal"
+                    and coal_takeorpay_share(int(g.plant_code)) is not None
+                }
             dispatch_fleet, fuel_fracs = split_coal_tranches(
-                fleet + import_generators, config
+                fleet + import_generators, config, split_takeorpay
             )
         # Override fuel-class CO2/NOx/SO2 rates with CAMPD plant-specific
         # ones for generators pinned to a single plant, so emission prices

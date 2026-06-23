@@ -2071,7 +2071,9 @@ def _coal_tranches(config: ScenarioConfig) -> list[tuple[float, float]]:
 
 
 def split_coal_tranches(
-    generators: list[Generator], config: ScenarioConfig
+    generators: list[Generator],
+    config: ScenarioConfig,
+    takeorpay_by_plant: "dict[int, float] | None" = None,
 ) -> tuple[list[Generator], list[float]]:
     """Split each coal generator into take-or-pay supply-curve tranches.
 
@@ -2088,6 +2090,17 @@ def split_coal_tranches(
     Args:
         generators: The fleet to expand.
         config: Scenario configuration supplying the ``coal_tranche_*`` fields.
+        takeorpay_by_plant: Optional ``{plant_code: contract_share}`` from the
+            measured EIA-923 Schedule-5 Purchase Type
+            (:func:`coal_takeorpay_share`, set when
+            ``ScenarioConfig.coal_takeorpay_from_data`` is on). When given, the
+            **sunk** first tranche (tranche 1, the must-run / take-or-pay band)
+            passes ``1 - contract_share`` of its fuel instead of the assumed
+            ``coal_tranche_1_fuel_passthrough``: only the measured contracted
+            tonnage is sunk, the spot remainder bids full delivered fuel. This
+            is the split-fleet (non-CAMPD ISO) analogue of the must-run
+            adjustment :func:`campd_tranche_fuel_frac` applies in the binned
+            path. A plant absent from the map keeps the configured passthrough.
 
     Returns:
         A tuple ``(expanded_fleet, fuel_fracs)`` where ``fuel_fracs[g]`` is the
@@ -2103,6 +2116,14 @@ def split_coal_tranches(
             fuel_fracs.append(1.0)
             continue
         for ti, (cap_frac, fuel_frac) in enumerate(tranches):
+            # Measured take-or-pay (CLAUDE.md #11/#12): replace the assumed
+            # 100%-sunk first tranche with the plant's measured contracted
+            # share — only the sunk (tranche-1) band is adjusted, mirroring the
+            # binned path's must-run treatment.
+            if ti == 0 and takeorpay_by_plant is not None:
+                share = takeorpay_by_plant.get(int(gen.plant_code))
+                if share is not None:
+                    fuel_frac = 1.0 - float(share)
             expanded.append(
                 Generator(
                     unit_id=f"{gen.unit_id}_t{ti + 1}",
