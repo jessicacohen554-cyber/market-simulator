@@ -84,6 +84,7 @@ from market_sim.data.fleet import (  # noqa: E402
 from market_sim.data.fuel import (  # noqa: E402
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
+    apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
     apply_nyiso_zonal_gas_basis,
@@ -596,6 +597,28 @@ def _calibration_config(
         # residual adder. See market_sim.data.fleet.oil_primary_bin_plants.
         oil_primary_bin_fuel=(
             os.environ.get("ERCOT_OIL_PRIMARY", "").lower() in ("1", "true", "on")
+        ),
+        # STRUCTURAL net-load-indexed West/Panhandle Waha gas basis: the Waha hub
+        # collapses negative at low demand and firms at high demand, so the basis
+        # is indexed to system net-load (load - wind - solar) instead of a flat
+        # annual scalar. A West peaker (burns only in high-net-load scarcity
+        # hours) then sees firm Waha and idles; a West CC (burns all hours) sees
+        # the blended-cheap annual mean and stays baseload — the peaker/CC split
+        # falls out of WHEN each runs, not a chosen floor. Mean-zero so the
+        # measured annual Waha basis is preserved. ERCOT_WEST_NETLOAD_GAS=1 enables
+        # it (no-op unless ERCOT_ZONAL_GAS is also on, ERCOT only);
+        # ERCOT_WEST_GAS_FIRM_BASIS=<float> overrides the firm (high-demand) Waha
+        # delivered basis the top net-load hours reach (default the cited normal
+        # Waha discount). See market_sim.data.fuel.apply_ercot_west_netload_gas_shape.
+        ercot_west_netload_gas_shape=(
+            iso.upper() == "ERCOT"
+            and os.environ.get("ERCOT_WEST_NETLOAD_GAS", "").lower()
+            in ("1", "true", "on")
+        ),
+        ercot_west_gas_firm_basis=(
+            float(os.environ["ERCOT_WEST_GAS_FIRM_BASIS"])
+            if os.environ.get("ERCOT_WEST_GAS_FIRM_BASIS")
+            else None
         ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
@@ -1914,6 +1937,21 @@ def run_year(
     # plant-monthly / hub overlay, before the dual-fuel min. No-op unless
     # ercot_zonal_gas_basis is set (ERCOT only).
     apply_ercot_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # Net-load-indexed West/Panhandle Waha shape: redistribute the West gas basis
+    # across hours (firm at high net-load, collapsed at low) so peakers — which
+    # burn only in scarcity hours — see firm Waha and idle, while the West CCs on
+    # all-hours blended gas stay baseload. Mean-zero so the annual basis above is
+    # preserved; structural replacement for the flat delivered-floor scalar. No-op
+    # unless ercot_west_netload_gas_shape (+ ercot_zonal_gas_basis) is set, ERCOT.
+    if getattr(config, "ercot_west_netload_gas_shape", False):
+        west_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        apply_ercot_west_netload_gas_shape(
+            fuel_prices, fleet_arrays, config, year, west_net_load
+        )
     # Capture which dual-fuel generator-hours will switch to oil (gas price >
     # oil parity) BEFORE the min-cap below overwrites the gas price, so the
     # dispatch re-attribution can count their MWh as petroleum, not gas (the
