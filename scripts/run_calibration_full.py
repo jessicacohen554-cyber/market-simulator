@@ -56,6 +56,7 @@ sys.path.insert(0, str(REPO))
 
 from market_sim.config.constants import (  # noqa: E402
     PRICED_INTERCHANGE_DEFAULT_ISOS,
+    resolve_miso_firm_imports,
     resolve_priced_interchange,
     resolve_reference_price_interface,
 )
@@ -1491,6 +1492,7 @@ def solve_and_persist(
     caiso_bidir_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
+    miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -1634,6 +1636,7 @@ def solve_and_persist(
             caiso_bidir_intertie=caiso_bidir_intertie,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
+            miso_firm_imports=miso_firm_imports,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -1824,6 +1827,7 @@ def solve_and_persist(
         "caiso_bidir_intertie": caiso_bidir_intertie,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
+        "miso_firm_imports": miso_firm_imports,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "btm_backfill_year": btm_backfill_year,
         "shared_inputs": shared_inputs,
@@ -1970,6 +1974,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_firm_imports=nyiso_firm_imports
         )
+    if miso_firm_imports is not None:
+        recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
     if gas_hub_basis_overlay is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             gas_hub_basis_overlay=gas_hub_basis_overlay
@@ -4492,6 +4498,21 @@ def main() -> None:
         "path. NYISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--miso-firm-imports",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Manitoba Hydro firm-hydro import block: add ~10-15 TWh/yr of FIRM "
+        "contracted hydro into MISO-North as a SEPARATE import block priced as "
+        "firm hydro (a low, near-constant offer reflecting the contract), "
+        "OUTSIDE the gas-margin reference-price seam. Manitoba is MISO's single "
+        "largest import source and the structural reason MISO is a net importer. "
+        "The block lands directly in MISO-North and is floored as must-flow firm "
+        "baseload. Forward-reproducible (the contract regenerates for any year), "
+        "NOT fitted to the net-interchange residual. Requires --priced-interchange. "
+        "MISO-only. Default (unset) = the per-ISO default (ON for MISO via "
+        "constants.resolve_miso_firm_imports).",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4571,6 +4592,10 @@ def main() -> None:
     reference_price_interface = resolve_reference_price_interface(
         args.reference_price_interface, iso
     )
+    # Manitoba firm-hydro import block: explicit CLI flag OR the per-ISO
+    # default-on set (MISO). Activates the separate firm-hydro block for the MISO
+    # backcast without a flag; non-MISO ISOs are byte-identical regardless.
+    miso_firm_imports = resolve_miso_firm_imports(args.miso_firm_imports, iso)
     if iso != "ERCOT":
         has_campd = bool(campd.states_for_iso(iso))
         logger.info(
@@ -4733,6 +4758,7 @@ def main() -> None:
         caiso_bidir_intertie=args.caiso_bidir_intertie,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
+        miso_firm_imports=miso_firm_imports,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         note=args.note,
