@@ -1061,9 +1061,15 @@ class TestCaisoBidirIntertie(unittest.TestCase):
         export_price = mc[is_export].max(axis=0)
         import_price_min = mc[is_import].min(axis=0)
         self.assertTrue(np.all(import_price_min > export_price))
-        # The zero-EF firm hydro/solar legs sit exactly at the hub; the gas legs
-        # carry a strictly positive carbon adder above it.
+        # The zero-EF firm hydro/solar legs sit at hub + delivered-cost basis
+        # (line-loss markup on the positive hub + OATT wheeling); the gas legs
+        # additionally carry a strictly positive carbon adder above it.
         self.assertTrue(np.all(mc[is_import].max(axis=0) > export_price + 1.0))
+        # The delivery basis lifts every import leg strictly above the bare hub
+        # (the wheel adder is >= $2 for every tranche), and never below it even
+        # in the negative-hub hours (the loss is applied to max(hub, 0) only) —
+        # so the single-flow tie can never round-trip wash.
+        np.testing.assert_array_less(hub, mc[is_import].min(axis=0))
 
     def test_no_measured_series_is_noop(self):
         fa, gens = self._fleet()
