@@ -1755,18 +1755,25 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
         "gas_mid": 3.40,
         "gas_slope": 2.5,
     },
-    # PJM subbituminous (two PRB-by-rail plants delivered into PJM): first
-    # cut from the run-13 no-sigmoid residuals — over-dispatch grows with
-    # the gas price (+5% at $2.2-2.5 HH to +12% at $3.5), so no cheap-gas
-    # discount (floor 1.0) and a dear-gas markup, on the PJM delivered-gas
-    # crossover (gas_mid as bituminous). NOT the ERCOT prb curve: that
-    # floor/ceil suppressed these plants 12-21% below actuals (run 14,
-    # discarded).
+    # PJM subbituminous (the two ComEd PRB-by-rail plants 876/879 delivered into
+    # PJM): these are mid-merit PRB CYCLERS, not baseload. Their bare delivered
+    # SRMC (~$2.0/MMBtu PRB x ~10.5 HR ~ $21/MWh) sits below gas CC, so with the
+    # old loose curve (floor 1.00 / ceil 1.25, ~no cheap-gas markup) the model
+    # baseloaded them and over-ran +45% even in the CHEAPEST-gas year (2024:
+    # model 6.41 vs EIA-923 4.41 TWh). The over-run is large at low gas, so the
+    # curve needs a real markup at the FLOOR (not just a dear-gas ceiling): a
+    # cycler's effective offer sits well above bare fuel SRMC (start/min-run +
+    # the fact they are not true baseload). Tuned so the bid is pushed toward /
+    # above the gas-CC crossover across the year (markup ~1.35 cheap-gas months
+    # to ~1.9 in $5+ gas), making subbit cycle to its observed CF instead of
+    # baseloading. Still gas-keyed (more markup when gas is dear) so it does not
+    # over-suppress in cheap hours. PJM-specific (NOT the ERCOT prb/subbit
+    # curve, whose floor/ceil suppressed these plants below actuals — run 14).
     ("PJM", "subbituminous"): {
-        "floor": 1.00,
-        "ceil": 1.25,
-        "gas_mid": 3.40,
-        "gas_slope": 2.5,
+        "floor": 1.35,
+        "ceil": 1.90,
+        "gas_mid": 3.20,
+        "gas_slope": 1.8,
     },
     # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
     # fuel, so no cheap-gas discount (floor 1.0) — only a dear-gas markup.
