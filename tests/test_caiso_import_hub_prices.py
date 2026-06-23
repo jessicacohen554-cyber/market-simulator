@@ -111,19 +111,30 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         self.assertTrue(applied)
         zone = IMPORT_ZONE["CAISO"]
         ef = IMPORT_TRANCHE_EF["CAISO"]
+        from market_sim.config.constants import (
+            CAISO_IMPORT_DELIVERY_BASIS,
+            CARB_UNSPECIFIED_IMPORT_EF,
+        )
+        from market_sim.model.transmission import wecc_border_carbon_adder
+
+        # The injector delivers each hub MCE to the CAISO border: a line-loss
+        # markup (fraction of the energy price) plus an OATT wheeling charge.
         # border adder at carbon 35.23 would be 0.428*35.23 ~ 15.08, but the
         # injector recomputes it; assert the clean blocks pay none.
         row_by_uid = {uid: r for r, uid in enumerate(fa.unit_ids)}
-        # PNW_hydro_base: EF 0 -> price only, no carbon
+        # PNW_hydro_base: EF 0 -> delivered price only, no carbon
+        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["PNW_hydro_base"]
         r = row_by_uid[f"{zone}_PNW_hydro_base"]
-        self.assertAlmostEqual(mc[r, 0], 18.0, places=3)
-        # DSW_CCGT: EF 0.37 -> price + 0.37/0.428 * border
+        self.assertAlmostEqual(mc[r, 0], 18.0 * (1.0 + loss) + wheel, places=3)
+        # DSW_CCGT: EF 0.37 -> delivered price + 0.37/0.428 * border
         r = row_by_uid[f"{zone}_DSW_CCGT"]
-        from market_sim.model.transmission import wecc_border_carbon_adder
-        from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
-
         border = wecc_border_carbon_adder(35.23)
-        expected = 40.0 + border * (ef["DSW_CCGT"] / CARB_UNSPECIFIED_IMPORT_EF)
+        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["DSW_CCGT"]
+        expected = (
+            40.0 * (1.0 + loss)
+            + wheel
+            + border * (ef["DSW_CCGT"] / CARB_UNSPECIFIED_IMPORT_EF)
+        )
         self.assertAlmostEqual(mc[r, 0], expected, places=3)
         # A tranche with no measured series (DSW_CT) keeps its ladder mc (99).
         r = row_by_uid[f"{zone}_DSW_CT"]

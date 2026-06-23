@@ -2483,6 +2483,43 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
     },
 }
 
+# Per-tranche physical delivered-cost basis over the measured WECC neighbor-hub
+# energy price (MCE), for CAISO priced imports under
+# ``--caiso-import-hub-prices``. measured_import_hub_prices returns the energy
+# (MCE) component AT the neighbor hub (Malin / Palo Verde); the *delivered* cost
+# at the CAISO border adds two physical, forward-reproducible terms (NOT a
+# residual-fitted offset — rule #12): a transmission line-loss markup (a
+# fraction of the energy price, so it scales with price and responds to changed
+# conditions) and the point-to-point wheeling/access charge ($/MWh) a marketer
+# pays the intervening BAA(s)' OATT to deliver the power. Together they restore
+# the rising delivered-import merit order that the flat ~$38 MCE collapses
+# (every non-gas block clearing at the same hub energy price): without the basis
+# the import supply curve is flat and a deep slug clears whenever CAISO's price
+# crosses ~$38, over-importing in the body. The gas blocks (DSW_CCGT/CT) are
+# re-priced off measured gas by inject_caiso_import_gas_coupling AFTER this, so
+# the basis mainly shapes the non-gas blocks (PNW_*, DSW_solar_PV).
+#
+# Per tranche/path (loss fraction, wheeling $/MWh):
+#   - PNW_hydro_base: firm COI economy energy, single BPA point-to-point.
+#     ~660-mi AC path, losses ~4%; PTP wheeling ~$2.0/MWh.
+#   - PNW_midC: Mid-Columbia shoulder over COI/PDCI — deeper, multi-BAA wheel
+#     (BPA + PacifiCorp). Losses ~5%; stacked PTP ~$5.0/MWh.
+#   - DSW_solar_PV: Path 46 / West-of-River desert-SW solar + Palo Verde.
+#     ~280-mi path, losses ~3%; WALC/Path-46 PTP ~$4.0/MWh.
+#   - DSW_CCGT / DSW_CT: same Path-46 basis (overwritten by gas coupling).
+#   - WECC_scarcity: peak west-wide economy energy, congested wheel ~$6.0/MWh.
+# Source: WECC transmission loss factors; BPA / PacifiCorp / WALC OATT
+# point-to-point transmission rate schedules. Tier 3 — verify against the
+# posted OATT rates and WECC path loss studies.
+CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
+    "PNW_hydro_base": (0.04, 2.0),
+    "PNW_midC": (0.05, 5.0),
+    "DSW_solar_PV": (0.03, 4.0),
+    "DSW_CCGT": (0.03, 4.0),
+    "DSW_CT": (0.03, 4.0),
+    "WECC_scarcity": (0.03, 6.0),
+}
+
 # Backwards-compatible aliases for the original CAISO-only WECC names.
 WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = IMPORT_TRANCHES["CAISO"]
 WECC_EXPORT_CAP_MW: float = EXPORT_TRANCHES["CAISO"][0][1]
