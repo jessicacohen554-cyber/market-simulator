@@ -633,6 +633,28 @@ class ScenarioConfig:
     # transmission.inject_caiso_bidir_intertie_prices. Default off
     # (byte-identical); CAISO-only; no-op without the measured intertie parquet
     # (2023 falls back to the static ladder, like --caiso-import-hub-prices).
+    caiso_per_hub_intertie: bool = False  # Model CAISO's WECC tie as TWO signed
+    # corridors — COI/Path-66 at the Malin hub into NP15 (north) and Path-46/WOR
+    # at the Palo Verde hub into SP15 (south) — each a single signed flow priced
+    # at its OWN measured intertie hub. The unification of --caiso-bidir-intertie
+    # (single signed flow → per-hub netting, fixes the inverted diurnal sign) and
+    # --caiso-import-hub-prices (per-hub basis, Malin != Palo Verde): the bidir
+    # node had to average the two hubs into one price (discarding the basis), and
+    # the hub-price node kept the basis but pooled both legs onto one bubble (so
+    # the cheap Palo Verde midday block filled the whole 8.3 GW budget and never
+    # netted → over-import + inverted diurnal). Two per-hub signed legs recover
+    # both: each corridor carries one net direction per hour over its own real
+    # link, so the Palo Verde leg reverses to EXPORT in the midday solar glut
+    # instead of over-importing. The 8.3 GW simultaneous-import cap stays as the
+    # WECC_import_simultaneous interface limit, re-homed to the two corridor
+    # links. Supersedes --caiso-import-hub-prices / --caiso-bidir-intertie /
+    # --caiso-import-solar-shape (the measured per-hub Palo Verde price already
+    # prints the negative midday tail solar-shape proxied; --caiso-import-gas-
+    # coupling still applies to the desert-SW gas legs). Carried by
+    # transmission.split_caiso_import_node_per_hub +
+    # transmission.build_caiso_per_hub_intertie +
+    # transmission.inject_caiso_per_hub_intertie_prices. Default off
+    # (byte-identical); CAISO-only; 2023 falls back to the static ladder.
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from

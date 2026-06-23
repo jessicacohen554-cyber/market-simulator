@@ -1490,6 +1490,7 @@ def solve_and_persist(
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
+    caiso_per_hub_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     miso_firm_imports: bool | None = None,
@@ -1507,6 +1508,14 @@ def solve_and_persist(
         # the bundle's zone set and demand frames follow the extended
         # topology so they match run_year's solve.
         iso_config = extend_with_import_node(iso_config)
+        if caiso_per_hub_intertie and iso == "CAISO":
+            # Split WECC_import into the two per-hub corridors so this caller's
+            # zone_names / must-run / report frames match run_year's solve
+            # (run_year applies the same split idempotently). See
+            # transmission.split_caiso_import_node_per_hub.
+            from market_sim.model.transmission import split_caiso_import_node_per_hub
+
+            iso_config = split_caiso_import_node_per_hub(iso_config)
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
@@ -1634,6 +1643,7 @@ def solve_and_persist(
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
             caiso_bidir_intertie=caiso_bidir_intertie,
+            caiso_per_hub_intertie=caiso_per_hub_intertie,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             miso_firm_imports=miso_firm_imports,
@@ -1825,6 +1835,7 @@ def solve_and_persist(
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
         "caiso_bidir_intertie": caiso_bidir_intertie,
+        "caiso_per_hub_intertie": caiso_per_hub_intertie,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "miso_firm_imports": miso_firm_imports,
@@ -1965,6 +1976,10 @@ def solve_and_persist(
     if caiso_bidir_intertie is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_bidir_intertie=caiso_bidir_intertie
+        )
+    if caiso_per_hub_intertie is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_per_hub_intertie=caiso_per_hub_intertie
         )
     if nyiso_local_selfsupply is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4473,6 +4488,29 @@ def main() -> None:
         "base config value (off).",
     )
     parser.add_argument(
+        "--caiso-per-hub-intertie",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Model CAISO's WECC tie as TWO per-hub signed corridors — COI/"
+        "Path-66 at the Malin hub (→ NP15, north) and Path-46/WOR at the Palo "
+        "Verde hub (→ SP15, south) — each a single net direction over its OWN "
+        "real link, priced at its OWN measured intertie hub. The unification of "
+        "--caiso-bidir-intertie (single signed flow → per-hub netting, fixes the "
+        "inverted diurnal sign) and --caiso-import-hub-prices (per-hub basis): "
+        "the bidir node had to average the two hubs into one price; the hub-price "
+        "node kept the basis but pooled both legs onto one bubble (cheap Palo "
+        "Verde midday fills the whole 8.3 GW budget, never nets → over-import + "
+        "inverted diurnal). Two per-hub legs recover both, so the Palo Verde "
+        "corridor reverses to EXPORT midday instead of over-importing. The 8.3 GW "
+        "simultaneous-import cap stays as the WECC_import_simultaneous interface "
+        "limit re-homed to the two links. Supersedes --caiso-import-hub-prices / "
+        "--caiso-bidir-intertie / --caiso-import-solar-shape (measured per-hub "
+        "Palo Verde already prints the negative midday tail); --caiso-import-gas-"
+        "coupling still applies to the desert-SW gas legs. CAISO-only; pure LP; "
+        "2023 falls back to the static ladder. Default (unset) keeps the base "
+        "config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4756,6 +4794,7 @@ def main() -> None:
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
         caiso_bidir_intertie=args.caiso_bidir_intertie,
+        caiso_per_hub_intertie=args.caiso_per_hub_intertie,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         miso_firm_imports=miso_firm_imports,
