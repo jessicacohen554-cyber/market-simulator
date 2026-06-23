@@ -594,6 +594,25 @@ class ScenarioConfig:
     # fitted price level). Carried via a post-assembly mc shift
     # (transmission.inject_caiso_import_solar_shape); applies on top of the gas
     # coupling. Default off (byte-identical); CAISO-only.
+    caiso_bidir_intertie: bool = False  # Model CAISO's WECC tie as a SINGLE
+    # signed flow instead of two independent one-way mechanisms. The legacy node
+    # carries priced import tranches AND separate export sinks on the same
+    # external bubble, so the LP can simultaneously import the cheap midday hub
+    # and stay long on its own solar (2024 diurnal interchange corr −0.65,
+    # anti-correlated with the measured tie). This collapses both legs onto one
+    # net direction over a shared directional cap (import ≤ ~8.3 GW, export ≤
+    # ~3.5 GW), pricing import at hub + per-tranche border carbon and export at
+    # the hub. Because every import leg (hub + carbon) is priced at/above the
+    # export leg (hub) at every hour, the legs are arbitrage-free by construction
+    # — the LP never imports and exports in the same hour, so the tie reverses to
+    # export in the midday solar glut and the diurnal sign tracks the measured
+    # interchange (no MIP, pure LP). Supersedes --caiso-import-hub-prices /
+    # --caiso-import-gas-coupling / --caiso-import-solar-shape (the legacy
+    # two-mechanism injectors) when on. Carried by
+    # transmission.build_caiso_bidir_intertie +
+    # transmission.inject_caiso_bidir_intertie_prices. Default off
+    # (byte-identical); CAISO-only; no-op without the measured intertie parquet
+    # (2023 falls back to the static ladder, like --caiso-import-hub-prices).
     as_reserve_withholding: bool = False  # ERCOT backcast probe: remove the
     # hourly cleared DAM upward-AS MW (RegUp/RRS/ECRS/Non-Spin, built by
     # scripts/build_ercot_as_withholding.py from the NP3-911 reports) from
