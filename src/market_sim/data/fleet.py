@@ -2133,6 +2133,7 @@ def split_gas_tranches(
 def campd_tranche_fuel_frac(
     gen: Generator,
     passthrough_by_supply: "dict[str, float | np.ndarray] | None" = None,
+    takeorpay_by_plant: "dict[int, float] | None" = None,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -2146,13 +2147,25 @@ def campd_tranche_fuel_frac(
     without an entry (e.g. unclassified "") pass full fuel cost
     (``1.0``); :func:`apply_coal_tranches` applies the result.
 
-    Must-run tranches (any fuel) pass ``0.0`` — their fuel is sunk under
-    take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC, so
-    they bid VOM + carbon + NOx only. A passthrough < 1.0 price-takes (an
+    Must-run tranches (any fuel) pass ``0.0`` by default — their fuel is sunk
+    under take-or-pay coal contracts, CHP host-steam obligations or ERCOT RUC,
+    so they bid VOM + carbon + NOx only. A passthrough < 1.0 price-takes (an
     already-online unit bids to clear rather than on full marginal cost);
     > 1.0 marks the bid up to suppress over-dispatch.
+
+    ``takeorpay_by_plant`` (set when ``ScenarioConfig.coal_takeorpay_from_data``
+    is on) maps ``plant_code → measured contract share`` (EIA-923 Schedule-5
+    Purchase Type, :func:`coal_takeorpay_share`). When given, a **coal** must-run
+    tranche passes ``1 - share`` of its fuel instead of ``0.0``: only the
+    contracted (take-or-pay) fraction is sunk, and the spot remainder bids full
+    delivered fuel. ``share = 1.0`` (fully contracted) reproduces the default
+    0.0; a plant absent from the map keeps the default 100%-sunk behaviour.
     """
     if gen.unit_id.endswith("_mustrun"):
+        if takeorpay_by_plant is not None and gen.fuel_type == "coal":
+            share = takeorpay_by_plant.get(int(gen.plant_code))
+            if share is not None:
+                return float(1.0 - share)
         return 0.0
     if gen.fuel_type == "coal" and passthrough_by_supply:
         return passthrough_by_supply.get(getattr(gen, "coal_supply", ""), 1.0)
@@ -3554,6 +3567,37 @@ def coal_supply_class(plant_code: int) -> str:
     if derived:
         return derived
     return _eia860_retiree_coal_supply().get(int(plant_code), "")
+
+
+@lru_cache(maxsize=1)
+def _derived_coal_takeorpay() -> dict[int, float]:
+    """Return ``{plant_code: contract_share}`` from derived per-ISO CSVs.
+
+    Loads every ``data/raw/_processed-legacy/coal_takeorpay_<ISO>.csv`` written
+    by ``scripts/derive_coal_takeorpay.py`` (EIA-923 Schedule-5 Purchase Type:
+    the contracted / take-or-pay share of each coal plant's delivered tonnage).
+    EIA plant codes are national so the per-ISO files never collide.
+    """
+    out: dict[int, float] = {}
+    for path in sorted(PROCESSED_DIR.glob("coal_takeorpay_*.csv")):
+        df = pd.read_csv(path)
+        for code, share in zip(df["plant_code"], df["contract_share"]):
+            out[int(code)] = float(share)
+    return out
+
+
+def coal_takeorpay_share(plant_code: int) -> float | None:
+    """Return a coal plant's measured take-or-pay (contract) share, or ``None``.
+
+    The contracted (sunk, must-burn) fraction of delivered tonnage from
+    EIA-923 Schedule-5 Purchase Type (:func:`_derived_coal_takeorpay`). ``None``
+    when the plant filed no classifiable coal Purchase Type — the caller then
+    keeps the model's default 100%-sunk must-run treatment. Consumed by
+    :func:`campd_tranche_fuel_frac` when ``ScenarioConfig.coal_takeorpay_from_data``
+    is set: the coal must-run tranche's sunk fraction becomes this share instead
+    of the hardcoded 1.0, so the spot remainder ``1 - share`` bids full fuel.
+    """
+    return _derived_coal_takeorpay().get(int(plant_code))
 
 
 def _coal_class_for(plant_code: int, fuel_code: str = "") -> str:
