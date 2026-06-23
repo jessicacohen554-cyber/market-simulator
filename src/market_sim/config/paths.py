@@ -119,6 +119,13 @@ GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 NYISO_HSL_DIR: Path = RAW_DATA_DIR / "nyiso-hsl"
+MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
+# Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
+# per backcast year. Built by scripts/build_miso_wind_shape.py; read by
+# market_sim.data.renewables to give MISO's three regions distinct wind diurnal/
+# seasonal shapes (the upper-plains nocturnal-jet north vs the lower-Midwest
+# central/south) while preserving the EIA-930 MISO-wide aggregate.
+MISO_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "miso-wind-shape"
 
 # Legacy data/ tree, folded into data/raw/ (W1). The directory names were
 # disambiguated on the way in so they don't collide with existing data/raw
