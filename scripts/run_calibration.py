@@ -1248,6 +1248,7 @@ def run_year(
     caiso_import_solar_shape: bool | None = None,
     caiso_bidir_intertie: bool | None = None,
     caiso_per_hub_intertie: bool | None = None,
+    caiso_corridor_flow_limit: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     miso_firm_imports: bool | None = None,
@@ -1373,6 +1374,10 @@ def run_year(
         config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
     if caiso_per_hub_intertie is not None:
         config = config.with_overrides(caiso_per_hub_intertie=caiso_per_hub_intertie)
+    if caiso_corridor_flow_limit is not None:
+        config = config.with_overrides(
+            caiso_corridor_flow_limit=caiso_corridor_flow_limit
+        )
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
     if nyiso_firm_imports is not None:
@@ -1615,6 +1620,35 @@ def run_year(
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # Measured WECC corridor deliverability envelope (CAISO per-hub only): cap
+    # each corridor link's import-direction flow at the per-(month × hour-of-day)
+    # p95 measured net import (an ATC proxy that tightens midday), so the LP can
+    # no longer pull the neighbors' idle thermal tranches over the cheap-priced
+    # hub up to the 8.3 GW simultaneous cap. One-sided hourly upper bounds, added
+    # to the interface groups; export keeps the physical TTC. No-op off the flag
+    # or when the year has no measured interchange (byte-identical).
+    if caiso_per_hub and getattr(config, "caiso_corridor_flow_limit", False):
+        from market_sim.data.eia_loader import measured_corridor_flow_envelope
+        from market_sim.model.transmission import build_caiso_corridor_flow_groups
+
+        corridor_env = measured_corridor_flow_envelope(iso, year, demand.shape[1])
+        if corridor_env:
+            from market_sim.config.constants import CAISO_CORRIDOR_FLOW_PERCENTILE
+
+            corridor_groups = build_caiso_corridor_flow_groups(
+                iso_config.links, corridor_env
+            )
+            interface_groups = interface_groups + corridor_groups
+            logger.info(
+                "%s %d: measured WECC corridor deliverability cap on %d link(s) "
+                "(p%g ATC proxy; median DSW %.1f GW / PNW %.1f GW; midday tighter)",
+                iso,
+                year,
+                len(corridor_groups),
+                CAISO_CORRIDOR_FLOW_PERCENTILE,
+                float(np.median(corridor_env.get("WECC_DSW", [np.nan]))) / 1000.0,
+                float(np.median(corridor_env.get("WECC_PNW", [np.nan]))) / 1000.0,
+            )
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved
