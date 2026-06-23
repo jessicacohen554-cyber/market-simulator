@@ -544,6 +544,26 @@ class ScenarioConfig:
     # measured lightest-import hour (NY imported >=922 MW in 98% of 2023 hours)
     # so it never forces a phantom over-import. FORWARD-REPRODUCIBLE (a firm
     # schedule reproduces for any year); Tier 3. Default off; NYISO-only.
+    miso_firm_imports: bool = False  # Manitoba Hydro firm-hydro import block:
+    # Manitoba Hydro sells ~10-15 TWh/yr of FIRM contracted hydro into MISO-North
+    # over the Manitoba<->US HVDC / 500 kV ties — MISO's single largest import
+    # source and the structural reason MISO is a net IMPORTER (EIA-930 net
+    # interchange -37.9/-23.1/-19.0 TWh, 2023-25). This import sits OUTSIDE the
+    # gas-margin reference-price seam (INTERFACE_NEIGHBORS["MISO"], PJM/SPP/SERC):
+    # firm hydro has no gas x heat-rate price analogue, so it is a SEPARATE block
+    # priced as firm hydro (a low, near-constant energy offer reflecting the
+    # contract, MISO_MANITOBA_FIRM_IMPORT_OFFER), landing directly in MISO-North
+    # (the model zone the ties physically enter) and counted as net interchange
+    # via its fuel_type="import". The block (transmission.build_miso_firm_imports)
+    # is floored as must-flow firm baseload (transmission.inject_miso_firm_imports,
+    # MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC x capacity) so it flows every hour
+    # regardless of MISO's hourly price. Volume is sourced from the Manitoba Hydro
+    # export-contract band, NOT fitted to the net-interchange residual (rule #12:
+    # a firm contract reproduces for any forward year and responds to a changed
+    # contract). Requires --priced-interchange (served by the priced node). MISO-
+    # only; default off here but default-ON for the MISO backcast via
+    # constants.resolve_miso_firm_imports (the firm Manitoba import is the correct
+    # structure for MISO, not a probe). ERCOT byte-identical.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -1901,6 +1921,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_gas_floor_frac": 3,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
+    "miso_firm_imports": 1,
     "as_reserve_withholding": 1,
     "as_reserve_formula": 1,
     "energy_reserve_coopt": 1,

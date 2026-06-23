@@ -1123,6 +1123,7 @@ def run_year(
     caiso_bidir_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
+    miso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -1247,6 +1248,8 @@ def run_year(
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
     if nyiso_firm_imports is not None:
         config = config.with_overrides(nyiso_firm_imports=nyiso_firm_imports)
+    if miso_firm_imports is not None:
+        config = config.with_overrides(miso_firm_imports=miso_firm_imports)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -1410,6 +1413,16 @@ def run_year(
             import_generators = build_import_generators(
                 iso, border_carbon, year=year
             ) + build_export_sinks(iso)
+        # Manitoba Hydro firm-hydro import (MISO only): ~10-15 TWh/yr of firm
+        # contracted hydro into MISO-North, OUTSIDE the gas-margin reference-price
+        # seam. A SEPARATE block priced as firm hydro (low, near-constant offer),
+        # landed directly in MISO-North (build_miso_firm_imports) and ADDED to the
+        # reference node's seam gens. The must-flow firm floor is applied
+        # post-assembly (inject_miso_firm_imports). No-op for non-MISO ISOs.
+        if getattr(config, "miso_firm_imports", False):
+            from market_sim.model.transmission import build_miso_firm_imports
+
+            import_generators = import_generators + build_miso_firm_imports(iso)
         iso_config = extend_with_import_node(iso_config)
     zone_names = iso_config.zone_names
 
@@ -1732,6 +1745,20 @@ def run_year(
         if inject_nyiso_firm_imports(fleet_arrays, iso, year):
             logger.info(
                 "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
+                iso,
+                year,
+            )
+
+    # Manitoba firm-hydro import floor (MISO only): the contracted firm baseload
+    # flows into MISO-North every hour regardless of MISO's hourly price (the
+    # firm-schedule pattern; transmission.inject_miso_firm_imports). Only fires
+    # with priced interchange + the flag + the block in the fleet.
+    if priced_interchange and getattr(config, "miso_firm_imports", False):
+        from market_sim.model.transmission import inject_miso_firm_imports
+
+        if inject_miso_firm_imports(fleet_arrays, iso, year):
+            logger.info(
+                "%s %d: Manitoba firm-hydro import baseload floored (must-flow)",
                 iso,
                 year,
             )
@@ -2265,6 +2292,7 @@ def _commitment_pass(state: dict, config=None):
         or getattr(cfg, "caiso_gas_commitment_floor", False)
         or getattr(cfg, "nyiso_local_selfsupply", False)
         or getattr(cfg, "nyiso_firm_imports", False)
+        or getattr(cfg, "miso_firm_imports", False)
     )
     fa_p2 = apply_commitment_with_coal_pin(
         fa,
