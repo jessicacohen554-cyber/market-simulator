@@ -948,6 +948,29 @@ class ScenarioConfig:
     # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md (Thread D).
     coal_mustrun_online_pmin: bool = False
 
+    # SRMC-priced synchronization tranche (rebuild step 3a). Completes the
+    # three-layer coal structure of Thread D. With this on (it requires
+    # ``coal_mustrun_online_pmin`` so the synchronization band is sized to the
+    # measured online-net-MW Pmin, and pairs with ``coal_takeorpay_from_data``
+    # for the per-plant contract share), the coal min-load band is split into
+    # two *forced-on* layers and held synchronized via FleetArrays.min_gen:
+    #   1. ``_mustrun`` — the contracted (take-or-pay, sunk) share of the
+    #      online Pmin (= online_Pmin x contract_share), bidding fuel-free
+    #      (VOM + carbon + NOx). The genuinely must-burn floor.
+    #   2. ``_sync`` — the spot (avoidable-fuel) remainder of the online Pmin
+    #      (= online_Pmin x (1 - contract_share)), bidding its REAL SRMC (full
+    #      delivered fuel + VOM + reagents; no take-or-pay discount).
+    # Both are forced on (synchronized) so coal HOLDS volume at min-load instead
+    # of price-following all the way down (the step-2 residual: 2024 coal under),
+    # while the full-delivered-cost dispatchable tranches above still back down
+    # in cheap hours so coal price-follows above Pmin (CEMS low/hi ~0.63). The
+    # forced band bids at SRMC rather than fuel-free, so it does not re-suppress
+    # the LMP coal sets when marginal. Forward-reproducible (online Pmin +
+    # measured EIA-923 Sch-5 contract share; CLAUDE.md #11). Default off (keeper
+    # unchanged). See docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
+    # (Thread D, layer 2) and docs/multi-iso/pjm-reserve-ordc.md.
+    coal_sync_srmc_tranche: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
