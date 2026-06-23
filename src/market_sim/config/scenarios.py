@@ -1857,12 +1857,21 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # markup over the 8760 dispatch), so a 2024 mean markup ~1.35 lands the
     # dispatchable bands at ~2.2 TWh on top of the step-3a forced floor (~2.17
     # TWh) ~ the 4.41 TWh actual. floor 1.22 / ceil 1.65 / gas_mid 3.5 / slope
-    # 1.4 gives mean markups ~1.35 (2024) / 1.40 (2023) / 1.47 (2025).
+    # 1.4 gave mean markups ~1.35 (2024) / 1.40 (2023) / 1.47 (2025) — but slope
+    # 1.4 was too gentle for the dear-gas tail: 2025 ($3.95) under-marked and the
+    # dispatchable PRB bands over-ran +36% (round-2). Steepened to floor 1.22 /
+    # ceil 2.10 / gas_mid 3.70 / slope 3.0: holds the cheap-gas floor (annual-mean
+    # markups ~1.29 at 2024 $2.86, ~1.41 at 2023 $3.26) while marking the dear-gas
+    # year up hard (~1.82 at 2025 $3.95) so the dispatchable bands back out of the
+    # over-run. Gas-keyed, so it self-targets 2025 and leaves the cheap-gas floor
+    # put. PJM subbit = 2 plants (876 Kincaid, 879 Powerton); the delivered PRB
+    # price ($2.0/MMBtu, ~defensible for ComEd) is unchanged — this marks the BID,
+    # not the cost.
     ("PJM", "subbituminous"): {
         "floor": 1.22,
-        "ceil": 1.65,
-        "gas_mid": 3.50,
-        "gas_slope": 1.4,
+        "ceil": 2.10,
+        "gas_mid": 3.70,
+        "gas_slope": 3.0,
     },
     # PJM waste coal (culm/gob, the COAL_WC class): near-free reclamation
     # fuel, so no cheap-gas discount (floor 1.0) — only a dear-gas markup.
