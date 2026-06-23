@@ -649,22 +649,16 @@ def inject_caiso_bidir_intertie_prices(
     the SAME measured hub energy series (the MCE component of the CAISO intertie
     LMP, :func:`market_sim.data.eia_loader.measured_import_hub_prices`):
 
-    * each import tranche row →
-      ``hub + max(hub, 0) × loss + wheel + border_carbon × (EF / EF_unspecified)``
-      — the per-tranche delivered-cost basis
-      (:data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS`, line-loss
-      markup + OATT wheeling) plus the per-tranche CARB adder of
-      :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`. The loss applies to
-      the positive part of the hub only, so a negative MCE cannot make the
-      delivered import cheaper than the export leg (see below), and
-    * the single export leg row → ``hub`` (exports owe no CA compliance cost, and
-      no delivery basis — CAISO delivers TO the neighbor at the bare hub).
+    * each import tranche row → ``hub + border_carbon × (EF / EF_unspecified)``
+      (the per-tranche CARB adder of
+      :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`), and
+    * the single export leg row → ``hub`` (exports owe no CA compliance cost).
 
-    The delivery basis restores the rising delivered-import merit order the flat
-    MCE collapses (it is the same physical input the two-mechanism hub injector
-    applies; a reproducible physical input, rule #12, not a residual-fitted
-    offset) without breaking the arbitrage-free ordering (loss, wheel, carbon ≥ 0
-    so every import leg still prices at or above the export leg).
+    PROBE NOTE (caiso 22 bidir+floor-only): the per-tranche delivered-cost basis
+    (:data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS`) is
+    intentionally NOT applied here, to isolate the RA gas-commitment floor as the
+    only level lever on the bidir diurnal-shape mechanism. (The unify variant
+    that adds the basis lives in commit af1e369; the basis-only probe is separate.)
 
     Because the carbon adder is ≥ 0, *every* import leg is priced at or above the
     export leg at every hour, so importing and exporting in the same hour can
@@ -704,24 +698,15 @@ def inject_caiso_bidir_intertie_prices(
             mc[row, :] = hub - eps
             applied = True
         elif name in import_names:
-            # Physical delivered-cost basis over the hub MCE (line-loss markup +
-            # OATT point-to-point wheeling), mirroring
-            # inject_caiso_import_hub_prices: restores the rising delivered-import
-            # merit order the flat MCE collapses (a reproducible physical input,
-            # rule #12, not a residual-fitted offset). The export leg owes none —
-            # CAISO delivers TO the neighbor at the bare hub — so the legs must
-            # stay arbitrage-free (import ≥ export every hour or the single-flow
-            # tie can round-trip wash). The loss is applied to the POSITIVE part
-            # of the hub only: a multiplicative loss on a negative MCE would make
-            # the delivered import *cheaper* than the bare hub (a money-pump below
-            # ~−$50), so on negative-priced energy only the fixed wheel adder
-            # applies — keeping import = hub + max(hub,0)·loss + wheel + carbon + ε
-            # ≥ hub − ε = export at every hour (the two-mechanism node has no
-            # shared cap, so it never needed this guard).
-            loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(name, (0.0, 0.0))
-            delivered = hub + np.maximum(hub, 0.0) * loss + wheel
+            # PROBE (caiso 22 bidir+floor-only): NO delivered-cost basis on the
+            # import legs — they price at the bare measured hub plus only the
+            # per-tranche CARB border adder. This isolates the RA gas-commitment
+            # floor as the sole level lever stacked on the bidir diurnal-shape
+            # mechanism (the delivery basis is the separate basis-only probe).
+            # Import = hub + border·(EF/EF_unspec) + ε ≥ hub − ε = export every
+            # hour (carbon ≥ 0), so the single-flow tie stays arbitrage-free.
             ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
-            mc[row, :] = delivered + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
+            mc[row, :] = hub + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
             applied = True
     return applied
 
