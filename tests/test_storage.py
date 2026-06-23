@@ -785,10 +785,10 @@ class TestNYISOPumpedStorage(unittest.TestCase):
     design.
 
     The PS dispatch adder is default off (0.0) for NYISO: no calibration
-    pass has yet been run to measure the reserve-duty opportunity cost
-    equivalent to PJM's $10/MWh. This is consistent with the per-ISO
-    map in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`, which does not
-    include NYISO.
+    pass has yet measured a reserve-duty opportunity cost for it. This is
+    consistent with the per-ISO map in
+    :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`, which is now empty (PJM's
+    former $10/MWh entry was retired as a mis-measured residual fit).
     """
 
     def test_ps_total_mw_in_range(self):
@@ -857,17 +857,19 @@ class TestNYISOPumpedStorage(unittest.TestCase):
 class TestPumpedStorageDispatchAdder(unittest.TestCase):
     """Per-ISO resolution of the PS dispatch adder (reserve-duty proxy)."""
 
-    def test_pjm_default_is_calibrated_10(self):
-        # PJM's $10/MWh reduced-form reserve duty (calibration-log
-        # 2026-06-10, "pjm 3 ps-adder") flows from the per-ISO default.
+    def test_pjm_default_is_retired_zero(self):
+        # PJM's former $10/MWh adder was RETIRED (pjm-ps-cycling diagnosis
+        # 2026-06): it had been fitted to a mis-measured PS *net*-generation
+        # figure (the round-trip loss), not a real reserve cost, so per
+        # CLAUDE.md #12 it is removed and PJM PS arbitrages on its physical RTE.
         self.assertEqual(
             resolve_pumped_storage_dispatch_adder("PJM", ScenarioConfig()),
-            10.0,
+            0.0,
         )
         units = load_eia860_pumped_storage("PJM", 2024, ScenarioConfig())
         self.assertTrue(units)
         for u in units:
-            self.assertEqual(u.vom, 10.0)
+            self.assertEqual(u.vom, 0.0)
 
     def test_caiso_default_is_off(self):
         # CAISO has no calibrated reserve-duty adder yet: off by default
@@ -894,7 +896,9 @@ class TestPumpedStorageDispatchAdder(unittest.TestCase):
             self.assertEqual(u.vom, 0.0)
 
     def test_no_config_falls_back_to_per_iso_default(self):
-        self.assertEqual(resolve_pumped_storage_dispatch_adder("PJM", None), 10.0)
+        # PJM adder retired -> 0.0 (was 10.0); the empty per-ISO map means
+        # every ISO without an explicit override now falls back to 0.0.
+        self.assertEqual(resolve_pumped_storage_dispatch_adder("PJM", None), 0.0)
         self.assertEqual(resolve_pumped_storage_dispatch_adder("CAISO", None), 0.0)
 
     def test_explicit_value_overrides_every_iso(self):
@@ -920,8 +924,8 @@ class TestBatteryDispatchAdder(unittest.TestCase):
         units = load_eia860_storage("PJM", 2024, cfg)
         for u in units:
             if u.tech_name == "pumped_storage":
-                # PS keeps its own throughput adder (per-ISO resolved:
-                # PJM's calibrated $10), not the battery one.
+                # PS keeps its own throughput adder (per-ISO resolved; PJM's
+                # is now 0.0 after the adder retirement), not the battery one.
                 self.assertEqual(
                     u.vom,
                     resolve_pumped_storage_dispatch_adder("PJM", cfg),
