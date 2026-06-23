@@ -1526,6 +1526,25 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
     ercot_gas_contract_haircut: bool = False
 
+    # Tier 3 (calibration) — MEASURED per-unit fuel correction. A handful of
+    # CAMPD-binned combustion-turbine peakers are EIA-860 *Petroleum-Liquids*
+    # (distillate/DFO) units that the bin sheet routes through the gas CT_PEAKER
+    # class, so the LP prices them on cheap Waha gas and runs them baseload —
+    # most visibly Morgan Creek (3492), an EIA-860 DFO GT the model floats at
+    # ~92% CF against its real 1.6%. When set, every gas-CT bin whose EIA-860
+    # technology is "Petroleum Liquids" is repriced on distillate
+    # (OIL_PRICE_PER_MMBTU) instead of gas — the same oil-primary treatment the
+    # legacy fleet already gives these units (see fleet.dual_fuel_plant_groups,
+    # which excludes oil-primary switchers because "they are already modeled as
+    # oil units"). This is a structural data-correctness fix keyed on the
+    # measured EIA-860 energy source, NOT a residual adder: it regenerates for
+    # any forward year from the same EIA-860 field and tracks the oil-price
+    # trajectory (admissibility test #11/#12). The plant_group (CT_PEAKER) is
+    # untouched, so reserve/must-run/offer-curve logic is unchanged — only the
+    # fuel the unit burns changes. See market_sim.data.fleet.bins_to_fleet and
+    # oil_primary_bin_plants.
+    oil_primary_bin_fuel: bool = False
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -1975,6 +1994,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
+    "oil_primary_bin_fuel": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
