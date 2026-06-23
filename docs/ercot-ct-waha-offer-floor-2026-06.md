@@ -67,14 +67,26 @@ West delivered discount should be `spot_share × hub_basis` — a measured fract
 - `scripts/derive_gas_takeorpay.py` — per-plant gas contract/spot share from
   EIA-923 Schedule-5 **Purchase Type** (C/NC/T = firm, S = spot), mirroring the
   coal take-or-pay deriver → `data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv`.
-- `fuel.ercot_gas_spot_share_by_zone` — aggregate per-plant share to model zones
-  (MMBtu-weighted; zone map from the CAMPD bin sheet's `ERCOT_Zone` column).
-- `fuel.apply_ercot_zonal_gas_basis` — scale each zone's hub basis by its spot
-  share before the mean-zero spread; composes with the floor (haircut shrinks the
-  discount, floor caps the residual tail). Env: `ERCOT_GAS_HAIRCUT=1`.
+- `fuel.ercot_gas_spot_share_by_plant` — each gas plant's own EIA-923 spot share,
+  keyed on `plant_code` (the implementation lever). `ercot_gas_spot_share_by_zone`
+  is kept as the MMBtu-weighted zonal aggregate, now only a diagnostic log.
+- `fuel.apply_ercot_zonal_gas_basis` — scale **each gas unit's** hub basis by **its
+  own plant's** spot share (`gen_basis *= unit_haircut`) before the mean-zero
+  spread; non-reporting units default to 1.0 (full spot exposure). Composes with
+  the floor (haircut shrinks the discount, floor caps the residual tail). Env:
+  `ERCOT_GAS_HAIRCUT=1`.
 
 This makes the depth a measured haircut, not a chosen constant — answering the
 "isn't a floor magic-numbering?" objection.
+
+**Per-PLANT, not zone-average (run153).** Applying each unit's *own* share is both
+more physically faithful and a strictly better fit (#11/#12): a 100%-spot unit
+(Permian Basin, Laredo) keeps the full Waha discount while a 100%-contract unit in
+the *same* zone (Ector County, share 0.0) loses it entirely — the zone mean (0.78)
+smeared one number across both and mis-priced each. Result vs the zone-average
+run152: CT_PEAKER 2023 −17.6% (was −25.9%), **2024 +48.7% (was +68.6%)**, 2025
++62.7% (was +66.8%) — Ector County correctly backing down outweighs the 100%-spot
+Permian peakers staying cheap. LMP MAE 27.8/15.2/11.3 (no regression).
 
 **Measured result (EIA-923 2023–24 Schedule-5, `gas_takeorpay_ERCOT.csv`):** the
 West/Permian gas spot share is **0.78** (MMBtu-weighted), and the biggest CT
@@ -97,22 +109,24 @@ correction (keep it), the floor is the non-physical level patch (drop it once
 direction 3 carries the residual), and the bulk of the CT over-run must close at
 the unit level.
 
-**Data constraint.** The gas share is forward-reproducible but needs the raw
-`f923_*.zip` releases (gitignored, **not present in this environment**; outbound
-EIA fetch is blocked by the network policy — returns the HTML homepage, not the
-zip). The contract-type extraction on `main` is **coal-only**
-(`coal_takeorpay_*.csv`). Morgan Creek / Permian Basin are merchant and file no
-Schedule-5 receipts, so there is no per-plant fallback either. Until
-`gas_takeorpay_ERCOT.csv` is produced (run the deriver where f923 lives), the
-haircut is inert and the cited −0.50 scalar floor applies.
+**Data constraint (RESOLVED).** The gas share is on disk:
+`data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv` (EIA-923 2023–24, committed).
+The f923 zips download from the EIA-923 **archive** path
+(`.../eia923/archive/xls/f923_<year>.zip` — the live `/xls/` path 301-redirects to
+the homepage, which is what blocked the first attempt); they stay gitignored and
+are re-downloadable from the URL recorded in `scripts/derive_gas_takeorpay.py`.
+Morgan Creek / Permian Basin are merchant and file no Schedule-5 gas receipts, so
+they default to spot share 1.0 (full discount) — consistent with the deriver's
+"no classifiable Purchase Type → treated as fully spot".
 
 ## Disposition / next steps
 
-- **Layer 2 (haircut) is the honest, measured gas correction — keep it.** The gas
-  share is on disk (`data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv`, EIA-923
-  2023–24); the haircut is live (`ERCOT_GAS_HAIRCUT=1`). But it is **small** (West
-  is 78% spot) because the measured data says these units really do buy cheap spot
-  Waha gas.
+- **Layer 2 (haircut) is the honest, measured gas correction — keep it.** Live and
+  **per-plant** (`ERCOT_GAS_HAIRCUT=1`, run153 on the dashboard): each gas unit is
+  haircut by its own EIA-923 spot share. It trims the over-run (2024 +82.8% →
+  +48.7%) — chiefly by correctly pricing the 100%-contract Ector County off its
+  discount — but cannot close it, because the dominant over-runners are 100% spot
+  and genuinely buy cheap Waha gas.
 - **Layer 1 (floor −0.50) is now suspect.** The contract data shows the 100%-spot
   over-runners genuinely pay ~$0 spot Waha gas, so the floor overstates their fuel
   and is closer to a fit than a physical correction. Recommend dropping it (or
@@ -125,12 +139,12 @@ haircut is inert and the cited −0.50 scalar floor applies.
   going-forward economics or the P2 commitment screen — the reason they idle in
   reality is peaker economics, not fuel price. See the direction-3 handoff prompt.
 
-Reproduce the measured haircut keeper (gas share already on disk):
+Reproduce the per-plant haircut keeper (run153; gas share already on disk):
 ```bash
 ERCOT_ZONAL_GAS=1 ERCOT_GAS_HAIRCUT=1 KEEPER_RTORDPA=1 \
   KEEPER_PERSIST_P2=1 KEEPER_STGAS_DRAG=1 \
   KEEPER_PRB_PARAMS='{"coal_prb_passthrough_floor":0.78,"coal_prb_follower_floor":0.78}' \
-  python scripts/probes/_keeper_2023as_run.py ctfloor_haircut_3yr 2025 2023 \
+  python scripts/probes/_keeper_2023as_run.py ctharcut_pp_3yr 2025 2023 \
   '{"ST_GAS":{"committed":0.0}}'
 ```
 
