@@ -497,6 +497,13 @@ def _ercot_zone(
         # the CREZ belt / Permian behind its own stability-limited GTC.
         if lat is not None and lat >= 33.5:
             return "Panhandle"
+        # Far_West (Permian Basin): the deep-western Midland/Odessa/Pecos pocket
+        # (lon < -101.0) -- Morgan Creek/Permian Basin, Quail Run, Odessa-Ector,
+        # Midland -- is the import-dependent Permian load node, split from the
+        # CREZ/Abilene/San Angelo West zone (-101.0 <= lon < -99.5) that holds
+        # the wind belt feeding the WESTEX interface.
+        if lon < -101.0:
+            return "Far_West"
         return "West"
     if lat is not None and lon is not None and lat >= 31.0 and -99.5 <= lon < -95.5:
         return "North"
