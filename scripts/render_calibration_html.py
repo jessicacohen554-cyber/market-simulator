@@ -66,6 +66,7 @@ ordc = importlib.util.module_from_spec(_spec_ordc)
 _spec_ordc.loader.exec_module(ordc)
 
 from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
+from scripts.calibration_verdict import TAIL_THRESHOLD  # noqa: E402  # rubric §5 per-ISO tail $
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS,
     class_label,
@@ -180,6 +181,56 @@ def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
         return None
     disch = np.clip(present["mw"].to_numpy(float), 0.0, None).sum() / 1e6
     return round(float(disch), 4) if disch > 1e-6 else None
+
+
+def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -> int:
+    """Count hours whose max zonal LMP across the ISO's zones exceeds ``threshold``.
+
+    The C3c scarcity-tail proxy (rubric §5) is "hours with zonal LMP > threshold".
+    We pin ONE definition and use it identically for model and actual: stack the
+    per-zone hourly price arrays and count an hour once if the **max across zones**
+    is in scarcity, so a localized congestion/scarcity spike in any zone registers
+    the hour (a system-wide proxy would dilute it). NaNs (unpadded/missing hours)
+    are mapped to -inf so they never count. The actual hub series enters as a
+    single "zone", so the same max-across-zones rule reduces to the series itself.
+    """
+    if not price_by_zone_hourly:
+        return 0
+    stack = np.vstack(
+        [np.asarray(v, dtype=float) for v in price_by_zone_hourly.values()]
+    )
+    # NaN = an unpadded/missing hour; map to -inf so an all-missing hour never
+    # registers as scarcity (and ``max`` raises no all-NaN-slice warning).
+    stack = np.nan_to_num(stack, nan=-np.inf)
+    return int((stack.max(axis=0) > threshold).sum())
+
+
+@lru_cache(maxsize=None)
+def _actual_lmp_hourly(iso: str, year: int) -> np.ndarray | None:
+    """Return the actual hourly LMP series ($/MWh) for an ISO-year, or ``None``.
+
+    Loads ``data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet`` — a
+    single hub series with columns ``year, hour, rt, da`` (not zonal). Prefers
+    real-time (``rt``) — the scarcity-relevant series the C3c tail scores — and
+    falls back to day-ahead (``da``) for hours where ``rt`` is NaN (e.g. CAISO,
+    whose ``rt`` column is partly unpopulated), mirroring the rt→da fallback in
+    ``_actual_avg_lmp`` / C3a. Returns ``None`` when the file or the year is
+    absent, so the tail criterion stays SKIPPED rather than scoring against a
+    missing actual. The returned array is sorted by hour.
+    """
+    from market_sim.config.paths import CALIBRATION_DIR
+
+    p = CALIBRATION_DIR / f"actual_lmp_hourly_{iso}.parquet"
+    if not p.exists():
+        return None
+    df = pd.read_parquet(p)
+    df = df[df["year"] == int(year)]
+    if df.empty:
+        return None
+    df = df.sort_values("hour")
+    rt = df["rt"].to_numpy(float)
+    da = df["da"].to_numpy(float) if "da" in df.columns else np.full_like(rt, np.nan)
+    return np.where(np.isnan(rt), da, rt)
 
 
 @lru_cache(maxsize=1)
@@ -774,10 +825,18 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             )
             lmp = {}
             lmp_scar: dict[str, dict] = {}
+            # Per-zone hourly model price (hour-indexed, NaN-padded to ``hours``)
+            # for the C3c scarcity-tail count. The model dual under-shoots
+            # scarcity by construction (energy-only LP), so this tail can collapse
+            # — that is the intended, truthful signal, not a thing to tune.
+            model_price_by_zone: dict[str, np.ndarray] = {}
             for zone, zg in sy.groupby("zone", observed=True):
                 price = zg["price"].to_numpy(float)
                 dem = zg["demand"].to_numpy(float)
                 hr = zg["hour"].to_numpy()
+                full = np.full(hours, np.nan)
+                full[hr] = price
+                model_price_by_zone[str(zone)] = full
                 d_tot = float(dem.sum())
                 p = (
                     float((price * dem).sum()) / d_tot
@@ -935,6 +994,26 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "series": scar["series"],
                     "reldeployMw": scar["reldeploy"],
                 }
+            # Non-ERCOT scarcity tail (C3c): count hours where the max zonal LMP
+            # exceeds the ISO's threshold (rubric §5 — $200, NYISO/NEISO $300),
+            # for the model duals and the actual hub series, stored under the
+            # legacy key "hoursGt200" the scorer reads regardless of threshold.
+            # SEPARATE from the ERCOT ORDC path above (which is byte-identical and
+            # untouched). Emitted only when BOTH series are present; left unset
+            # (→ SKIPPED) when the actual file is missing for this ISO-year. The
+            # energy-only LP under-shoots scarcity, so this may score a collapsed
+            # tail (FAIL) — the truthful, expected outcome, not a thing to tune.
+            iso = meta.get("iso")
+            if iso != "ERCOT":
+                thr = TAIL_THRESHOLD.get(iso, 200.0)
+                actual_hourly = _actual_lmp_hourly(iso, int(year))
+                if actual_hourly is not None and model_price_by_zone:
+                    run_years[int(year)]["ordc"] = {
+                        "hoursGt200": {
+                            "model": _tail_hours(model_price_by_zone, thr),
+                            "actual": _tail_hours({"hub": actual_hourly}, thr),
+                        }
+                    }
         model_runs.append({"label": label, "years": run_years})
 
     # Only the fossil classes actually present in this ISO's dispatch, in the
