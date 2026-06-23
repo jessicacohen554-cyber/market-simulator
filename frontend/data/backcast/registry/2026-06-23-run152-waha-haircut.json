@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-run152-waha-haircut",
+  "label": "run152 waha haircut",
+  "date": "2026-06-23",
+  "shorthand": "run152-waha-haircut",
+  "definition": "run151 coal-keeper recipe + ERCOT zonal gas with the MEASURED contract haircut (each zone's Waha hub basis scaled by its EIA-923 Schedule-5 gas spot share; West 78% spot). This re-grounds the West/Permian delivered-gas depth on measured data instead of the -0.50 scalar floor, which was DROPPED as non-physical: the contract data shows the CT over-runners buy 100% spot Waha gas, i.e. they genuinely see ~$0 gas, so a floor overstates their fuel (CLAUDE.md #11). The haircut is the honest gas-side correction but small (trims CT_PEAKER from +82.8% to +68.6% in 2024). The remaining CT_PEAKER over-run (C1: 2024 +5.63 TWh, 2025 +4.45 TWh) is an open MODEL MISS for direction 3 (peaker cost/classification): Morgan Creek 3492 is a DFO distillate peaker mispriced on gas, and the GT peakers bid baseload on cheap gas because HR*fuel+VOM understates their low-CF startup/non-fuel cost. LMP MAE 27.9/15.2/11.3 (no regression). See docs/ercot-ct-waha-offer-floor-2026-06.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-06-23-run152-waha-haircut.js",
+  "bundle": "results/calibration/ctharcut_3yr"
+}
