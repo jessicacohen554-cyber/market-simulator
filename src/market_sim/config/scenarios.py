@@ -1588,6 +1588,48 @@ class ScenarioConfig:
     # oil_primary_bin_plants.
     oil_primary_bin_fuel: bool = False
 
+    # Tier 3 (calibration) — STRUCTURAL net-load-indexed West/Panhandle Waha gas
+    # basis (the structurally-grounded replacement for the flat
+    # ercot_gas_delivered_floor_basis scalar). The Waha hub is NOT a constant
+    # annual discount: it collapses deeply negative precisely when regional
+    # gas+power demand is LOW (shoulder/overnight oversupply, constrained Permian
+    # takeaway) and firms up toward its normal delivered level when demand is
+    # HIGH — i.e. the basis is anti-correlated with system net-load
+    # (load - wind - solar), exactly the weather/demand driver the ST_GAS
+    # reliability drag keys off (fleet.apply_gas_st_netload_drag_floor). A single
+    # scalar (annual mean, or a chosen floor) flattens this: it prices a West
+    # *peaker* — which burns only in high-net-load scarcity hours, when Waha is
+    # firm — on the same ~$0 annual-mean gas as a West *baseload CC*, which burns
+    # across all hours including the cheap collapse. That collapses the heat-rate
+    # spread and floats the inefficient peakers at baseload (the CT_PEAKER
+    # over-run). When set, the West/Panhandle gas units get a per-hour,
+    # net-load-indexed gas price added on top of the annual zonal basis
+    # (ercot_zonal_gas_basis), MEAN-ZERO over the year so the measured annual Waha
+    # basis (data/raw/ercot_zonal_gas_hub.csv) is preserved exactly — it only
+    # redistributes cost across hours: dearest at the highest-net-load hours
+    # (toward ercot_west_gas_firm_basis), cheapest at the lowest. A peaker running
+    # the top net-load hours then pays firm Waha and idles except in genuine
+    # scarcity (real summer peaking preserved); a CC running all hours pays the
+    # blended annual mean and stays baseload. This is a structural mechanism, not
+    # a residual fit: it is a function of net-load (a load forecast + a VRE build,
+    # so it regenerates for any forward year and responds to changed conditions —
+    # more VRE lowers net-load and shifts the curve, admissibility #10/#12),
+    # anchored on the *measured* annual Waha basis and the cited firm Waha
+    # delivered level. No-op unless ercot_zonal_gas_basis is also on and
+    # iso == ERCOT. See market_sim.data.fuel.apply_ercot_west_netload_gas_shape.
+    ercot_west_netload_gas_shape: bool = False
+
+    # The high-net-load asymptote of the net-load-indexed West basis above: the
+    # Waha *delivered* basis vs Henry Hub during FIRM (high-demand) conditions,
+    # the level a West plant pays in the scarcity hours its peakers actually run.
+    # The one physical anchor of the shape (its amplitude is pinned so the
+    # highest-net-load hour reaches Henry Hub + this basis); the rest of the curve
+    # is fixed by preserving the measured annual mean. Defaults to the cited
+    # normal Waha delivered discount (GAS_BASIS_DIFFERENTIAL["ERCOT"] = -0.50, EIA
+    # NG Weekly) when the shape is on. Not tuned to a CT residual — it is the
+    # firm-demand Waha level, accepted as-is. ERCOT only.
+    ercot_west_gas_firm_basis: float | None = None
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -2051,6 +2093,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
     "oil_primary_bin_fuel": 3,
+    "ercot_west_netload_gas_shape": 3,
+    "ercot_west_gas_firm_basis": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
