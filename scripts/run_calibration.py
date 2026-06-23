@@ -2045,6 +2045,7 @@ def run_year(
             coopt_w,
             coopt_mask,
             coopt_counts,
+            coopt_class,
         ) = nyiso_reserve_coopt_inputs(config, fleet_arrays, config.hours, zone_names)
         dispatch_kwargs.update(
             reserve_requirement=coopt_req,
@@ -2054,15 +2055,22 @@ def run_year(
             ordc_step_widths=coopt_w,
             reserve_balance_zone_mask=coopt_mask,
             reserve_balance_ordc_counts=coopt_counts,
+            reserve_balance_class=coopt_class,
         )
+        import numpy as _np
+
+        _elig2d = _np.atleast_2d(coopt_elig)
         logger.info(
-            "energy+reserve co-opt (NYISO): %d locational reserve families, "
-            "%d ORDC steps ($%.0f-$%.0f), %d reserve-eligible units",
+            "energy+reserve co-opt (NYISO): %d locational reserve families "
+            "(%d 10-min/quick-start), %d ORDC steps ($%.0f-$%.0f), "
+            "%d full-fleet / %d quick-start reserve-eligible units",
             coopt_mask.shape[0],
+            int((_np.asarray(coopt_class) == 1).sum()),
             len(coopt_pen),
             float(coopt_pen.min()) if len(coopt_pen) else 0.0,
             float(coopt_pen.max()) if len(coopt_pen) else 0.0,
-            int(coopt_elig.sum()),
+            int(_elig2d[0].sum()),
+            int(_elig2d[1].sum()) if _elig2d.shape[0] > 1 else 0,
         )
 
     # P0 and P1 solve the *same* LP -- identical constraint matrix and bounds
