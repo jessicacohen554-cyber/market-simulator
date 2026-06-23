@@ -50,6 +50,85 @@ If neither composes, the honest conclusion is that the diurnal fix (bidir) and
 the level fix (keeper's two-mechanism node) are mutually exclusive *by design*
 and the keeper stays as-is until measured WECC hub diurnal prices land (option B).
 
+## DECOMPOSE step 2 — DONE: basis-only is the suppressor (2026-06-23)
+
+Ran item 2 (`bidir + delivery basis only`, **floor explicitly off** via
+`--no-caiso-gas-commitment-floor` — the flag DEFAULTS ON for CAISO, so omitting
+it does *not* disable the floor). Registered PROBE
+`2026-06-23-caiso-23-bidir-basis` (`caiso 23 bidir+basis-only`):
+
+| metric (2024) | keeper import-cap-floor | caiso-21 basis+floor | **basis-only** | actual |
+|---|---|---|---|---|
+| neg-price hours | 815 | 194 | **194** | ~800 |
+| net interchange | −30.4 TWh | −17.68 | **−19.09** | −32.38 |
+| p10 LMP | $1.40 | $33.63 | **$33.63** | — |
+| mean LMP | ~42 | 48.8 | **48.79** | 35.8 |
+| import hours | — | — | **81.8%** | 89.0% |
+| diurnal corr | (poor) | +0.09 | **−0.04** | — |
+
+(2025 net −25.70 vs keeper −38.6 / actual −36.16, corr −0.12; 2023 corr +0.94 but
+the basis is **inactive** in 2023 — no measured hub, the tie keeps its
+static-ladder placeholder — so 2023 is not informative about the basis.)
+
+**Verdict:** basis-only is nearly byte-identical to caiso-21 (basis+floor) on
+every 2024 axis (neg 194=194, mean 48.79≈48.8, p10 33.63=33.63). Dropping the
+floor barely moved anything → **the delivery BASIS, not the gas floor, is the
+import suppressor** on the single-flow bidir node. The multiplicative line-loss
+markup over-prices imports on the already-capped (8.3 GW) bidir leg: it collapses
+the negative tail and net-import magnitude and drags the diurnal correlation the
+standalone bidir keeper (`caiso-20`) flipped positive back to negative.
+
+**Next (grounded, rule #12):** the line-loss markup is multiplicative
+(`hub + max(hub,0)·loss + wheel`); on the capped single-flow node that loss term
+is too aggressive. Try **wheel-only (additive) delivery** or a **smaller, source-
+grounded loss factor** on the bidir import legs — a physical input, NOT a residual
+tune. If even a minimal additive wheel still over-suppresses, the diurnal-shape
+fix (bidir) and the merit-order-restoring basis are mutually exclusive *by design*
+on the capped single-flow node, and the keeper stays as-is until measured WECC hub
+diurnal prices land (option B).
+
+## DECOMPOSE — BOTH halves done; combined verdict (2026-06-23, two parallel sessions)
+
+The parallel session ran step 1 (`bidir + gas floor only`, basis reverted in
+`transmission.py` commit 28574a6 — now main) and registered PROBE
+`2026-06-23-caiso-22-bidir-floor`. Side-by-side, both off the standalone bidir
+keeper (`caiso-20`, which flipped 2024 corr positive with neither lever):
+
+| 2024 | keeper | caiso-21 basis+floor | caiso-22 **floor-only** | caiso-23 **basis-only** | actual |
+|---|---|---|---|---|---|
+| neg-price hrs | 815 | 194 | **221** | 194 | ~800 |
+| net interchange | −30.4 | −17.68 | **−22.36** | −19.09 | −32.38 |
+| mean LMP | ~42 | 48.8 | **46.81** | 48.79 | 35.8 |
+| p10 LMP | $1.40 | 33.63 | **32.24** | 33.63 | — |
+| diurnal corr | poor | +0.09 | **+0.22** | −0.04 | — |
+
+corr by year: floor-only **+0.95/+0.22/+0.11** (positive every year) vs basis-only
+**+0.94/−0.04/−0.12** (negative once the basis is active, i.e. 2024–25).
+
+**Combined conclusion.** Both levers under-import and collapse the negative tail
+on the single-flow node (neither beats the keeper), but they differ on *shape*:
+
+* the **gas floor is diurnal-COMPATIBLE** — the bidir corr survives it positive
+  every year (+0.22 2024); it is only level-antagonistic (forces gas online →
+  fewer imports); and
+* the **delivery basis is the STRONGER suppressor AND diurnal-INCOMPATIBLE** —
+  it imports the least (−19.09), recovers the smallest tail, and its
+  *multiplicative* `loss·max(hub,0)` markup drags corr negative (−0.04). Dropping
+  the basis (floor-only) recovered net −19.09→−22.36, neg 194→221, corr −0.04→+0.22.
+
+So the basis's **multiplicative loss** is the term to fix, and the **floor** is
+the level lever to keep. The unified-keeper hypothesis (next run): **bidir + floor
+0.80 + a WHEEL-ONLY (additive) delivery basis** — apply only the per-tranche
+`wheel` ($2–6/MWh, real OATT PTP charges) and DROP the `loss·max(hub,0)` markup
+(the multiplicative loss double-counts the congestion the 8.3 GW cap already
+prices; physical justification, rule #12, not a residual tune). The additive wheel
+still separates the flat ~$38 MCE into a rising delivered-import merit order
+(PNW_hydro +2, DSW_solar +4, PNW_midC +5, WECC_scarcity +6) without the
+price-scaling explosion that crushes imports midday. If even wheel-only still
+under-imports / loses the tail, the diurnal fix (bidir) and the level fix are
+mutually exclusive by design on the capped node and the keeper stays until
+measured WECC hub diurnal prices land (option B).
+
 ## Original chosen path: UNIFY (superseded by the attempt above)
 
 Bring the bidir-intertie mechanism to keeper parity so ONE keeper has both the
