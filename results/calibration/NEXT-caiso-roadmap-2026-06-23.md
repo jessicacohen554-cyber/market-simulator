@@ -15,7 +15,42 @@ adopted the keeper's level fixes (delivered-cost basis, gas floor 0.80). The two
 import representations are mutually exclusive in code
 (`run_calibration.py` ~1835: bidir supersedes the hub injectors).
 
-## Chosen path: UNIFY (in progress)
+## UNIFY attempt 1 — REJECTED (caiso 21 bidir+floor probe, 2026-06-23)
+
+Ran the unify below (bidir + delivered-cost basis on the bidir import legs + RA
+gas floor 0.80 + interchange shaping + neg offers, 3-yr). **Regressed the keeper
+on every axis** — registered as a PROBE (`2026-06-23-caiso-21-bidir-floor`):
+
+| metric (2024) | keeper import-cap-floor | unify probe | actual |
+|---|---|---|---|
+| neg-price hours | 815 | 194 | ~800 |
+| net interchange | −30.4 TWh | −17.68 | −32.4 |
+| p10 LMP | $1.40 | $33.63 | — |
+| mean LMP | ~42 | 48.8 | 35.8 |
+| diurnal corr | (poor) | +0.09 (2025 −0.12) | — |
+
+**Root cause:** the gas floor (forces gas online) and the delivery basis (raises
+import cost) BOTH suppress imports. On the single-flow bidir node the model
+badly under-imports, and the bidir export leg sells the midday surplus at the
+*positive* hub instead of crashing to negative — so the negative tail the keeper
+relies on disappears, and the floor even drags the bidir diurnal win back toward
+zero. The level levers are **antagonistic with the bidir representation, not
+additive.** The delivery-basis CODE change (transmission.py) is structurally
+sound and stays in (rule #1 — it is a real physical input); it is the *stacking*
+that fails, not the basis itself.
+
+### Refined next step for UNIFY (decompose)
+Isolate which lever is bidir-compatible, one change at a time off the standalone
+bidir keeper (which DID flip the diurnal corr positive without these levers):
+1. **bidir + gas floor only** (no delivery basis) — does the floor alone keep the
+   negative tail under the export-leg competition?
+2. **bidir + delivery basis only** (no gas floor) — does the basis restore the
+   merit order without collapsing imports?
+If neither composes, the honest conclusion is that the diurnal fix (bidir) and
+the level fix (keeper's two-mechanism node) are mutually exclusive *by design*
+and the keeper stays as-is until measured WECC hub diurnal prices land (option B).
+
+## Original chosen path: UNIFY (superseded by the attempt above)
 
 Bring the bidir-intertie mechanism to keeper parity so ONE keeper has both the
 diurnal-shape fix and the price-level fix:
