@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-06-23T05:46:33",
+  "timestamp": "2026-06-23T06:21:10",
   "iso": "CAISO",
   "years": [
-    2024
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +13,9 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2024": 2.19
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -56,7 +60,7 @@
   "priced_interchange": true,
   "hydro_backfill_year": null,
   "hydro_eia930_monthly": true,
-  "interchange_shaping": false,
+  "interchange_shaping": true,
   "interchange_shaping_export_only": false,
   "reference_price_interface": false,
   "negative_renewable_offers": true,
@@ -71,10 +75,10 @@
   "gas_hub_basis_overlay": true,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/CAISO/eia930-cb21de5e6b1b.parquet",
-    "eia923": "../_shared/CAISO/eia923-7e9b10fc5a8f.parquet",
-    "campd": "../_shared/CAISO/campd-8f3e5fad118b.parquet"
+    "eia930": "../_shared/CAISO/eia930-c88970635fce.parquet",
+    "eia923": "../_shared/CAISO/eia923-b95fbbedf1f2.parquet",
+    "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "0b760f7",
+  "git_sha": "3a371de",
   "highspy_version": "1.14.0"
 }
