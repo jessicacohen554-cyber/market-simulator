@@ -64,35 +64,53 @@ def _artifacts(
     }
 
 
+def _pjm_mix(model=None):
+    """Realistic full-PJM fuel mix (TWh) -> ``(ypay, ybench)`` for score_fuelmix.
+
+    The 2026-06-15 universal class gate scales its volume band with the ISO's
+    TOTAL annual generation (``_gen_totals``), so the fixture must carry the
+    whole mix — fossil classes (``classFull``/``gmModel``) plus the EIA-930
+    non-fossil families (nuclear/wind/solar) — not a single class that would
+    collapse ``a_gen`` onto itself. Here a_gen ≈ 721 TWh, so the 0.5%-of-total
+    volume band is ≈ 3.6 TWh. Pass ``model`` to override one or more model
+    classes; everything else is modelled exactly on the actual.
+    """
+    actual = {"CC_REGULAR": 325.0, "CT_PEAKER": 20.0, "ST_GAS": 9.0, "COAL_BIT": 55.0}
+    nonfossil = {"nuclear": 270.0, "wind": 28.0, "solar": 14.0}
+    gm = dict(actual)
+    if model:
+        gm.update(model)
+    ypay = {"gmModel": gm, "nonfossil": dict(nonfossil)}
+    ybench = {"classFull": dict(actual), "e930": dict(nonfossil)}
+    return ypay, ybench
+
+
 class FuelMixTests(unittest.TestCase):
     def test_big_class_percent_band(self):
-        # 325 TWh actual, model 5% over -> FAIL; 3% over -> PASS.
-        rows = cv.score_fuelmix(
-            2024,
-            {"gmModel": {"CC_REGULAR": 341.3}},
-            {"classFull": {"CC_REGULAR": 325.0}},
-        )
+        # CC_REGULAR 325 TWh actual in a ~721 TWh ISO: the universal volume band
+        # is 0.5% of ISO generation (~3.6 TWh). +8 TWh exceeds it -> FAIL on
+        # volume; +3 TWh is inside both the volume and 1.5pp share bands -> PASS.
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 333.0})
+        rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
         self.assertEqual(cc["status"], cv.FAIL)
         self.assertEqual(cc["classification"], cv.MODEL_MISS)
-        rows = cv.score_fuelmix(
-            2024,
-            {"gmModel": {"CC_REGULAR": 334.0}},
-            {"classFull": {"CC_REGULAR": 325.0}},
-        )
+        ypay, ybench = _pjm_mix({"CC_REGULAR": 328.0})
+        rows = cv.score_fuelmix(2024, ypay, ybench)
         cc = [r for r in rows if r["key"] == "CC_REGULAR"][0]
         self.assertEqual(cc["status"], cv.PASS)
 
     def test_small_class_absolute_band(self):
-        # 8.9 TWh actual (<20): +1.26 TWh -> FAIL; +0.5 TWh -> PASS.
-        rows = cv.score_fuelmix(
-            2024, {"gmModel": {"ST_GAS": 10.16}}, {"classFull": {"ST_GAS": 8.9}}
-        )
+        # Small classes get the SAME universal volume band (0.5% of ISO gen,
+        # ~3.6 TWh), not the obsolete ±1 TWh size-tiered bar: ST_GAS 9 TWh actual
+        # with a +1.26 TWh miss now PASSES (the old absolute bar failed it), while
+        # a +5 TWh miss still exceeds the band -> FAIL.
+        ypay, ybench = _pjm_mix({"ST_GAS": 14.0})
+        rows = cv.score_fuelmix(2024, ypay, ybench)
         sg = [r for r in rows if r["key"] == "ST_GAS"][0]
         self.assertEqual(sg["status"], cv.FAIL)
-        rows = cv.score_fuelmix(
-            2024, {"gmModel": {"ST_GAS": 9.4}}, {"classFull": {"ST_GAS": 8.9}}
-        )
+        ypay, ybench = _pjm_mix({"ST_GAS": 10.26})
+        rows = cv.score_fuelmix(2024, ypay, ybench)
         sg = [r for r in rows if r["key"] == "ST_GAS"][0]
         self.assertEqual(sg["status"], cv.PASS)
 
@@ -305,12 +323,20 @@ class LedgerTests(unittest.TestCase):
 
 class DeterminationTests(unittest.TestCase):
     def _clean_year_payload(self):
-        # All scored criteria pass; tail/co2/storage skip (no data).
+        # A full PJM-scale mix (a_gen ≈ 721 TWh) where every fossil class is
+        # within the universal gate (CC +1 TWh, the rest exact): all scored
+        # criteria pass; tail/co2/storage skip (no data).
         return {
-            "gmModel": {"CC_REGULAR": 330.0, "COAL_BIT": 100.0},
+            "gmModel": {
+                "CC_REGULAR": 326.0,
+                "CT_PEAKER": 20.0,
+                "ST_GAS": 9.0,
+                "COAL_BIT": 55.0,
+            },
+            "nonfossil": {"nuclear": 270.0, "wind": 28.0, "solar": 14.0},
             "fuelRows": [
-                {"fuel": "gas", "m": 330, "b": 325, "r": 0.8, "nrmse": 0.15},
-                {"fuel": "coal", "m": 100, "b": 100, "r": 0.9, "nrmse": 0.15},
+                {"fuel": "gas", "m": 355, "b": 354, "r": 0.8, "nrmse": 0.15},
+                {"fuel": "coal", "m": 55, "b": 55, "r": 0.9, "nrmse": 0.15},
             ],
             "lmp": {
                 "Z": {"p": 29.0, "d": 100.0, "pMon": [29] * 12, "dMon": [8.3] * 12}
@@ -319,8 +345,19 @@ class DeterminationTests(unittest.TestCase):
 
     def _clean_bench_args(self):
         return dict(
-            classfull={"CC_REGULAR": 325.0, "COAL_BIT": 100.0},
-            e930={"gas": 325.0, "coal": 100.0},
+            classfull={
+                "CC_REGULAR": 325.0,
+                "CT_PEAKER": 20.0,
+                "ST_GAS": 9.0,
+                "COAL_BIT": 55.0,
+            },
+            e930={
+                "gas": 354.0,
+                "coal": 55.0,
+                "nuclear": 270.0,
+                "wind": 28.0,
+                "solar": 14.0,
+            },
             avg_lmp={"rt": 29.0, "rt_mon": [29] * 12},
         )
 
@@ -350,14 +387,21 @@ class DeterminationTests(unittest.TestCase):
         self.assertEqual(v["determination"], cv.NOT_YET)
 
     def test_documented_fail_within_budget_is_caveats(self):
-        # ST_GAS is small (<20 TWh): a +1.5 TWh per-class miss FAILs C1 but leaves
-        # the gas family within ±2.5% (so C2 still PASSes) -> a single isolated
-        # hard-gate fail, ledgered -> CAVEAT within budget.
+        # ST_GAS (9 TWh actual) overshoots by +5 TWh: that exceeds the universal
+        # volume band (0.5% of the ~721 TWh ISO ≈ 3.6 TWh) so the class FAILs C1,
+        # but the gas family stays within ±2.5% (359 vs 354 = +1.4%) so C2 still
+        # PASSes -> a single isolated hard-gate fail, ledgered -> CAVEAT in budget.
         ypay = {
-            "gmModel": {"CC_REGULAR": 330.0, "ST_GAS": 10.4, "COAL_BIT": 100.0},
+            "gmModel": {
+                "CC_REGULAR": 325.0,
+                "CT_PEAKER": 20.0,
+                "ST_GAS": 14.0,
+                "COAL_BIT": 55.0,
+            },
+            "nonfossil": {"nuclear": 270.0, "wind": 28.0, "solar": 14.0},
             "fuelRows": [
-                {"fuel": "gas", "m": 340, "b": 334, "r": 0.8, "nrmse": 0.15},
-                {"fuel": "coal", "m": 100, "b": 100, "r": 0.9, "nrmse": 0.15},
+                {"fuel": "gas", "m": 359, "b": 354, "r": 0.8, "nrmse": 0.15},
+                {"fuel": "coal", "m": 55, "b": 55, "r": 0.9, "nrmse": 0.15},
             ],
             "lmp": {
                 "Z": {"p": 29.0, "d": 100.0, "pMon": [29] * 12, "dMon": [8.3] * 12}
@@ -369,15 +413,26 @@ class DeterminationTests(unittest.TestCase):
                     "criterion": "fuelmix",
                     "klass": "ST_GAS",
                     "year": 2024,
-                    "magnitude": "+1.5 TWh",
+                    "magnitude": "+5.0 TWh",
                     "reason": "documented measured-input limit",
                 }
             ]
         )
         art = _artifacts(
             ypay,
-            classfull={"CC_REGULAR": 325.0, "ST_GAS": 8.9, "COAL_BIT": 100.0},
-            e930={"gas": 333.9, "coal": 100.0},
+            classfull={
+                "CC_REGULAR": 325.0,
+                "CT_PEAKER": 20.0,
+                "ST_GAS": 9.0,
+                "COAL_BIT": 55.0,
+            },
+            e930={
+                "gas": 354.0,
+                "coal": 55.0,
+                "nuclear": 270.0,
+                "wind": 28.0,
+                "solar": 14.0,
+            },
             avg_lmp={"rt": 29.0, "rt_mon": [29] * 12},
             attestation=att,
         )
