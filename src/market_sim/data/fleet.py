@@ -4305,6 +4305,47 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
     return pd.read_csv(csv_path)
 
 
+# EIA-860 "Technology" string that marks an oil/distillate-fired unit. The
+# energy-source codes that back it (distillate / residual fuel oil) — used to
+# keep the match robust if the technology label is blank but the fuel code is
+# present.
+_OIL_PRIMARY_TECHNOLOGY: str = "petroleum liquids"
+_OIL_PRIMARY_FUEL_CODES: frozenset[str] = frozenset({"DFO", "RFO"})
+
+
+@lru_cache(maxsize=4)
+def _oil_primary_bin_plants(registry_path: str) -> frozenset[int]:
+    """Cached oil-primary plant-code set from one registry CSV path."""
+    reg = pd.read_csv(
+        registry_path, usecols=lambda c: c in ("plantid", "fuel_type", "technology")
+    )
+    tech = reg["technology"].astype(str).str.strip().str.lower()
+    fuel = reg["fuel_type"].astype(str).str.strip().str.upper()
+    is_oil = tech.eq(_OIL_PRIMARY_TECHNOLOGY) | fuel.isin(_OIL_PRIMARY_FUEL_CODES)
+    return frozenset(int(p) for p in reg.loc[is_oil, "plantid"])
+
+
+def oil_primary_bin_plants(registry_path: str | Path) -> frozenset[int]:
+    """Return EIA plant codes whose EIA-860 primary fuel is oil/distillate.
+
+    A plant is oil-primary when its master-registry row (EIA-860 derived)
+    is technology ``Petroleum Liquids`` or its primary energy source
+    (``fuel_type``) is a distillate / residual fuel-oil code
+    (:data:`_OIL_PRIMARY_FUEL_CODES`). These are the combustion-turbine /
+    reciprocating peakers the CAMPD bin sheet routes through the gas
+    ``CT_PEAKER`` class even though they physically burn distillate — e.g.
+    Morgan Creek (3492). :func:`bins_to_fleet` reprices the gas-CT tranches
+    of these plants on oil when ``config.oil_primary_bin_fuel`` is set, the
+    structural counterpart of the oil-primary exclusion in
+    :func:`dual_fuel_plant_groups`.
+
+    The signal is a measured EIA-860 attribute that regenerates for any
+    forward year, so the correction is forward-defensible rather than a
+    fitted per-unit adder.
+    """
+    return _oil_primary_bin_plants(str(registry_path))
+
+
 # Default location of the CAMPD-derived per-plant emission-rate artifact
 # (scripts/derive_plant_emissions.py), resolved relative to the repo root.
 PLANT_EMISSION_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
@@ -5165,6 +5206,19 @@ def bins_to_fleet(
     registry = load_plant_registry(config.plant_registry_path)
     _reg_year = dict(zip(registry["plantid"], registry["year_built"]))
 
+    # Oil-primary fuel correction: EIA-860 Petroleum-Liquids combustion-turbine
+    # peakers (e.g. Morgan Creek 3492) sit in the gas CT_PEAKER class on the bin
+    # sheet but physically burn distillate, so the LP otherwise prices them on
+    # cheap Waha gas and floats them baseload. When enabled, their gas-CT fuel
+    # is overridden to ``oil`` (priced at OIL_PRICE_PER_MMBTU) — a measured
+    # EIA-860 correction, not a residual adder. Restricted to gas_ct so legacy
+    # gas steam/CC bins are never reclassified. See oil_primary_bin_plants.
+    _oil_primary = (
+        oil_primary_bin_plants(config.plant_registry_path)
+        if getattr(config, "oil_primary_bin_fuel", False)
+        else frozenset()
+    )
+
     # Optional per-plant tranche-config override sheet: when set, each listed
     # plant's tranche shares + per-band HR multipliers come straight from the
     # sheet, bypassing the offer curve and the per-plant committed/peaking dicts.
@@ -5200,6 +5254,12 @@ def bins_to_fleet(
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
+        # Reprice EIA-860 oil-primary combustion-turbine peakers on distillate
+        # (only gas_ct bins, so gas steam/CC are untouched and coal can never
+        # flip). plant_group stays CT_PEAKER, so reserve/offer-curve logic is
+        # unchanged — only the burned fuel changes.
+        if fuel == "gas_ct" and int(b["Plant_Code"]) in _oil_primary:
+            fuel = "oil"
         ov = tranche_ov.get(int(b["Plant_Code"]))
         # Coal must-run override (calibration): per-plant CAMPD-derived floor
         # (config.coal_mustrun_per_plant) takes precedence; otherwise the
