@@ -288,6 +288,10 @@ class Generator(BaseModel):
     chp_grid_pmin_mw: float = 0.0  # grid-delivered steam-following floor (MW)
     #                                 forced on flat via FleetArrays.min_gen for
     #                                 CC_CHP cogens (config.chp_steam_following).
+    coal_sync_pmin_mw: float = 0.0  # coal synchronization floor (MW) forced on
+    #                                 flat via FleetArrays.min_gen for the
+    #                                 _mustrun / _sync min-load tranches under
+    #                                 config.coal_sync_srmc_tranche (step 3a).
 
 
 @dataclass
@@ -334,6 +338,16 @@ class FleetArrays:
     # group (CHP vs merchant) rather than collapsing by fuel. ``None`` for
     # fleets that don't set it.
     plant_group: np.ndarray | None = None
+
+    # Optional ``(n_gen,)`` 10-minute deliverable ramp capability (MW) per
+    # generator — the upper bound on the upward operating reserve a unit can
+    # provide (``R[g] <= ramp10[g]``) in the energy+reserve co-optimization
+    # (rebuild step 3b; docs/multi-iso/pjm-reserve-ordc.md Phase 2). Derived
+    # forward-reproducibly from the unit's class ramp rate
+    # (:data:`RAMP10_FRAC_BY_GROUP`) times its capacity, so it regenerates for a
+    # forecast year and responds to fleet changes. ``None`` for fleets/runs that
+    # do not co-optimize reserves.
+    ramp10: np.ndarray | None = None
 
     @property
     def n_gen(self) -> int:
@@ -729,6 +743,56 @@ def _withdraw_top_of_merit(
         )
     unmet = float(np.maximum(as_series - caps.sum(axis=0), 0.0).sum())
     return float(removed.sum()), unmet
+
+
+# Fraction of nameplate a unit can ramp within the 10-minute reserve window,
+# by plant group — the cap on the upward operating reserve a synchronized unit
+# can deliver (``FleetArrays.ramp10 = frac * pmax``; rebuild step 3b,
+# docs/multi-iso/pjm-reserve-ordc.md Phase 2). Class ramp rates (% of capacity
+# per minute, x10 min) from NREL "Western Wind and Solar Integration Study"
+# Phase 2 (NREL/TP-5500-55588, App. H) and EIA generator ramp-rate ranges:
+# subcritical/supercritical coal steam ~1.5 %/min, gas combined cycle ~4 %/min,
+# simple-cycle CT / oil peakers fast-start (full output reachable in <10 min),
+# legacy gas steam ~2 %/min. Nuclear runs baseload (no upward reserve). Keyed by
+# the model plant group; the per-fuel fallback covers non-binned fleets. These
+# depend only on capacity and class, so ramp10 regenerates for a forecast year.
+RAMP10_FRAC_BY_GROUP: dict[str, float] = {
+    "COAL": 0.15,  # steam, ~1.5 %/min
+    "CC_REGULAR": 0.40,  # combined cycle, ~4 %/min
+    "CC_CHP": 0.40,
+    "CT_PEAKER": 1.00,  # simple-cycle fast-start, full in <10 min
+    "CT_CHP": 1.00,
+    "ST_GAS": 0.20,  # legacy gas steam, ~2 %/min
+    "ST_CHP": 0.20,
+}
+# Per-fuel fallback (legacy aggregated fleets without a plant group). Nuclear and
+# the renewables/hydro/storage classes carry no thermal upward reserve here.
+RAMP10_FRAC_BY_FUEL: dict[str, float] = {
+    "coal": 0.15,
+    "gas_cc": 0.40,
+    "gas_cc_ccs": 0.40,
+    "gas_ct": 1.00,
+    "gas_st": 0.20,
+    "oil": 1.00,
+}
+
+
+def _ramp10_capability(generators: list[Generator], pmax: np.ndarray) -> np.ndarray:
+    """Return the ``(n_gen,)`` 10-minute ramp capability (MW) for a fleet.
+
+    ``RAMP10_FRAC_BY_GROUP[plant_group]`` (preferred, the per-plant CAMPD-bin
+    fleets) or :data:`RAMP10_FRAC_BY_FUEL` (legacy aggregated fleets) times the
+    unit's capacity. Generators in neither map (nuclear, hydro, wind, solar,
+    storage, imports) get 0.0 — they provide no thermal upward operating
+    reserve. See :attr:`FleetArrays.ramp10`.
+    """
+    fracs = np.zeros(len(generators), dtype=float)
+    for g_idx, gen in enumerate(generators):
+        frac = RAMP10_FRAC_BY_GROUP.get(getattr(gen, "plant_group", "") or "")
+        if frac is None:
+            frac = RAMP10_FRAC_BY_FUEL.get(gen.fuel_type, 0.0)
+        fracs[g_idx] = frac
+    return fracs * pmax
 
 
 def generators_to_fleet_arrays(
@@ -1193,6 +1257,7 @@ def generators_to_fleet_arrays(
         getattr(config, "gas_st_offsummer_mustrun", 0.0) if config is not None else 0.0
     )
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
+    coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
     # Nuclear runs flat as must-run baseload — it physically cannot load-follow
     # on price, so it must not back down to a part-load pmin in CAISO's many
     # negative/near-zero midday hours (the ~1 TWh Diablo Canyon under-run). Pin
@@ -1213,6 +1278,7 @@ def generators_to_fleet_arrays(
         or ct_deploy_plants
         or rd_deploy_plants
         or nuclear_flat
+        or coal_sync_any
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # min_gen replaces pmin as the LP lower bound for EVERY generator
@@ -1250,6 +1316,18 @@ def generators_to_fleet_arrays(
             pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
             if pmin_mw > 0.0:
                 min_gen[g_idx, :] = pmin_mw
+        # Coal synchronization floor (rebuild step 3a,
+        # config.coal_sync_srmc_tranche): the _mustrun (contracted, fuel-free)
+        # and _sync (spot, SRMC) coal min-load tranches are forced on flat all
+        # year, so the unit holds synchronized at the measured online Pmin
+        # instead of price-following to zero. The floor is the tranche capacity;
+        # min_gen is clipped to pmax*availability below, so an outage hour relaxes
+        # it. np.maximum composes with any other floor already placed.
+        if coal_sync_any:
+            for g_idx, gen in enumerate(generators):
+                pmin_mw = getattr(gen, "coal_sync_pmin_mw", 0.0)
+                if pmin_mw > 0.0:
+                    np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -1612,6 +1690,7 @@ def generators_to_fleet_arrays(
         state=np.array([g.state for g in generators], dtype=object),
         plant_group=np.array([g.plant_group for g in generators], dtype=object),
         min_gen=min_gen,
+        ramp10=_ramp10_capability(generators, pmax),
     )
 
 
@@ -2160,7 +2239,18 @@ def campd_tranche_fuel_frac(
     contracted (take-or-pay) fraction is sunk, and the spot remainder bids full
     delivered fuel. ``share = 1.0`` (fully contracted) reproduces the default
     0.0; a plant absent from the map keeps the default 100%-sunk behaviour.
+
+    The ``_sync`` synchronization tranche (rebuild step 3a,
+    ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
+    delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
+    the spot (avoidable-fuel) share of the forced-on coal min-load; the
+    contracted share is carried by the fuel-free ``_mustrun`` band beside it,
+    sized in :func:`bins_to_fleet` from the same measured contract share (so
+    ``takeorpay_by_plant`` is *not* re-applied to ``_mustrun`` in sync mode —
+    the runner passes ``None`` there and the default 0.0 fuel-free bid stands).
     """
+    if gen.unit_id.endswith("_sync"):
+        return 1.0
     if gen.unit_id.endswith("_mustrun"):
         if takeorpay_by_plant is not None and gen.fuel_type == "coal":
             share = takeorpay_by_plant.get(int(gen.plant_code))
@@ -5372,6 +5462,32 @@ def bins_to_fleet(
         if grid_cap + mustrun_cap <= 0.0:
             continue
 
+        # SRMC-priced synchronization split (rebuild step 3a,
+        # config.coal_sync_srmc_tranche). The coal min-load band (sized to the
+        # measured online Pmin under coal_mustrun_online_pmin) is split by the
+        # measured contract share into a fuel-free contracted floor (_mustrun)
+        # and a spot remainder priced at full SRMC (_sync). BOTH are forced on
+        # below (coal_sync_pmin_mw -> min_gen) so the unit holds synchronized at
+        # min-load instead of price-following to zero, while the dispatchable
+        # tranches above still back down in cheap hours. The split preserves the
+        # total min-load (mr + sync = original mustrun_cap), so grid_cap and the
+        # tranches above are unchanged. Plants absent from the take-or-pay map
+        # are treated as fully contracted (share=1.0): all min-load fuel-free,
+        # no _sync band — the step-2 sizing, now forced on.
+        coal_sync = (
+            fuel == "coal"
+            and coal_chp_sector is None
+            and mustrun_cap > 0.0
+            and getattr(config, "coal_sync_srmc_tranche", False)
+            and getattr(config, "coal_mustrun_online_pmin", False)
+        )
+        sync_cap = 0.0
+        if coal_sync:
+            _share = coal_takeorpay_share(int(b["Plant_Code"]))
+            _share = 1.0 if _share is None else min(1.0, max(0.0, float(_share)))
+            sync_cap = mustrun_cap * (1.0 - _share)  # spot, full SRMC
+            mustrun_cap = mustrun_cap * _share  # contracted, fuel-free
+
         group = str(b["Plant_Group"])
         plant_code = int(b["Plant_Code"])
         offer = _offer_curve_for_group(group, plant_code, config)
@@ -5739,8 +5855,16 @@ def bins_to_fleet(
                     startup,
                 ),
             ]
+        # The _sync (synchronization) tranche bids full SRMC (fuel_frac=1.0 in
+        # campd_tranche_fuel_frac), so it carries no fuel discount; it shares the
+        # min-load heat rate with _mustrun. Only present in step-3a sync mode and
+        # only for plants with a spot (non-contracted) share.
+        sync_tranches = (
+            [("sync", sync_cap, mustrun_hr, 1.0, 0, 0, 0.0)] if sync_cap > 0.5 else []
+        )
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
+            *sync_tranches,
             *committed_tranches,
             *econ_steps,
             ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, 0.0),
@@ -5748,6 +5872,12 @@ def bins_to_fleet(
         for suffix, cap, tr_hr, vom_mult, min_run, min_down, tr_startup in tranches:
             if cap <= 0.5:
                 continue
+            # Step-3a synchronization forcing: the _mustrun (contracted, fuel-
+            # free) and _sync (spot, SRMC) coal min-load tranches are held on at
+            # their full capacity via min_gen, so the unit stays synchronized at
+            # the measured online Pmin. Other tranches (and non-sync runs) keep
+            # the Pmin=0 economic behaviour.
+            sync_floor = cap if (coal_sync and suffix in ("mustrun", "sync")) else 0.0
             fleet.append(
                 Generator(
                     unit_id=f"{bin_id}_{suffix}",
@@ -5774,6 +5904,7 @@ def bins_to_fleet(
                     coal_supply=coal_supply,
                     plant_code=plant_code,
                     chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
+                    coal_sync_pmin_mw=sync_floor,
                 )
             )
 

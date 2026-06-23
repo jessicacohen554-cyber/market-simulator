@@ -1086,6 +1086,7 @@ def run_year(
     bit_overrides: dict | None = None,
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
+    coal_sync_srmc_tranche: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
@@ -1209,6 +1210,13 @@ def run_year(
         # Pmin (thermal_tranches mustrun_online_pct), not the all-hours
         # available-CF floor (rebuild step 2).
         config = config.with_overrides(coal_mustrun_online_pmin=True)
+    if coal_sync_srmc_tranche:
+        # SRMC-priced synchronization tranche (rebuild step 3a): the coal
+        # online-Pmin band is split by the measured contract share into a
+        # fuel-free _mustrun floor and a full-SRMC _sync band, both forced on so
+        # coal holds synchronized at min-load while dispatchable tranches above
+        # price-follow.
+        config = config.with_overrides(coal_sync_srmc_tranche=True)
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
     # validated keeper); an explicit True/False from the CLI overrides it (so a
