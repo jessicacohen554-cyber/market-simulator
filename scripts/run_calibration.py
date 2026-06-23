@@ -1075,6 +1075,7 @@ def run_year(
     coal_bit_sigmoid: bool = False,
     bit_overrides: dict | None = None,
     coal_takeorpay_from_data: bool = False,
+    coal_mustrun_online_pmin: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
     battery_dispatch_adder: float = 0.0,
@@ -1193,6 +1194,11 @@ def run_year(
         # Coal must-run sunk fraction = measured EIA-923 Schedule-5 take-or-pay
         # share per plant (campd_tranche_fuel_frac), not the hardcoded 100%.
         config = config.with_overrides(coal_takeorpay_from_data=True)
+    if coal_mustrun_online_pmin:
+        # Coal must-run band sized to the measured online-net-MW synchronization
+        # Pmin (thermal_tranches mustrun_online_pct), not the all-hours
+        # available-CF floor (rebuild step 2).
+        config = config.with_overrides(coal_mustrun_online_pmin=True)
     # Tri-state overrides: None = keep the per-ISO base default from
     # _calibration_config (CAISO defaults the RA floor + negative offers ON, the
     # validated keeper); an explicit True/False from the CLI overrides it (so a
