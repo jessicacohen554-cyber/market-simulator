@@ -138,6 +138,18 @@ def _takeorpay_table(iso: str, years: list[int] | None) -> pd.DataFrame:
             }
         )
 
+    cols = [
+        "plant_code",
+        "contract_share",
+        "spot_share",
+        "total_tons",
+        "n_receipts",
+        "source",
+        "breakdown",
+    ]
+    if not rows:
+        logger.info("%s: no coal plants with classifiable Purchase Type", iso)
+        return pd.DataFrame(columns=cols)
     out = pd.DataFrame(rows).sort_values("plant_code").reset_index(drop=True)
     missing = sorted(coal_codes - set(out["plant_code"]))
     if missing:
