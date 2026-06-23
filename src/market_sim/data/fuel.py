@@ -534,6 +534,21 @@ ERCOT_ELECTRIC_POWER_GAS_PATH: Path = (
     RAW_DATA_DIR / "ercot_electric_power_gas_price.csv"
 )
 
+# Per-plant natural-gas contract/spot share from EIA-923 Schedule-5 Purchase Type
+# (written by scripts/derive_gas_takeorpay.py). Used by
+# :func:`ercot_gas_spot_share_by_zone` to re-ground the West/Waha delivered-gas
+# floor depth on a MEASURED spot fraction (the firm-contracted gas is insulated
+# from the Waha hub collapse) instead of the cited -0.50 scalar floor.
+ERCOT_GAS_TAKEORPAY_PATH: Path = (
+    RAW_DATA_DIR / "_processed-legacy" / "gas_takeorpay_ERCOT.csv"
+)
+# Authoritative ERCOT thermal plant -> model-zone map (the hard-coded ERCOT_Zone
+# column on the CAMPD bin sheet), used to aggregate the per-plant gas spot share
+# to model zones.
+ERCOT_BIN_ASSIGNMENTS_PATH: Path = (
+    RAW_DATA_DIR / "reference" / "custom-bin-assignments.csv"
+)
+
 # EIA natural-gas heat content: 1 Mcf ~= 1.036 MMBtu (2023 avg, ~1,036 Btu/cf).
 # Converts the $/Mcf delivered series to the $/MMBtu the merit order prices in.
 _MCF_TO_MMBTU: float = 1.036
@@ -1298,6 +1313,54 @@ def ercot_electric_power_gas_basis(
     return ep_mmbtu - float(np.mean(hh_months))
 
 
+_ERCOT_GAS_SPOT_CACHE: dict[tuple[Path, Path], dict[str, float] | None] = {}
+
+
+def ercot_gas_spot_share_by_zone(
+    takeorpay_path: Path | None = None,
+    bin_path: Path | None = None,
+) -> dict[str, float] | None:
+    """Return ``{model_zone: gas spot share}`` for ERCOT, or ``None`` if absent.
+
+    Aggregates the per-plant EIA-923 gas spot share
+    (:data:`ERCOT_GAS_TAKEORPAY_PATH`, written by ``scripts/derive_gas_takeorpay``)
+    to model zones using the CAMPD bin sheet's hard-coded ``ERCOT_Zone`` column
+    (:data:`ERCOT_BIN_ASSIGNMENTS_PATH`), MMBtu-weighted across each zone's
+    reporting gas plants. Zones with no reporting plant are omitted, so the caller
+    leaves their hub basis unchanged (the conservative default — no haircut). The
+    spot share is the avoidable fraction that sees the Waha hub collapse; the
+    complement is firm-contracted and insulated. Returns ``None`` when the receipt
+    table is missing (e.g. f923 not extracted, or a forward year) so the caller
+    falls back to the scalar floor / unhaircut behaviour.
+    """
+    tp = Path(takeorpay_path) if takeorpay_path else ERCOT_GAS_TAKEORPAY_PATH
+    bp = Path(bin_path) if bin_path else ERCOT_BIN_ASSIGNMENTS_PATH
+    key = (tp, bp)
+    if key in _ERCOT_GAS_SPOT_CACHE:
+        return _ERCOT_GAS_SPOT_CACHE[key]
+    result: dict[str, float] | None = None
+    if tp.exists() and bp.exists():
+        top = pd.read_csv(tp)
+        zmap = pd.read_csv(bp)[["Plant_Code", "ERCOT_Zone"]].drop_duplicates(
+            "Plant_Code"
+        )
+        if not top.empty:
+            merged = top.merge(
+                zmap, left_on="plant_code", right_on="Plant_Code", how="inner"
+            )
+            if not merged.empty:
+                # MMBtu-weighted spot share per zone.
+                w = merged["total_mmbtu"].clip(lower=0.0)
+                merged = merged.assign(_w=w, _sw=merged["spot_share"] * w)
+                agg = merged.groupby("ERCOT_Zone")[["_w", "_sw"]].sum()
+                agg = agg[agg["_w"] > 0]
+                result = {
+                    str(z): float(r._sw / r._w) for z, r in agg.iterrows()
+                } or None
+    _ERCOT_GAS_SPOT_CACHE[key] = result
+    return result
+
+
 def apply_ercot_zonal_gas_basis(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
@@ -1372,6 +1435,28 @@ def apply_ercot_zonal_gas_basis(
     basis_by_zone_idx = np.array(
         [basis.get(name, 0.0) for name in zone_names], dtype=float
     )
+    # MEASURED CONTRACT HAIRCUT (re-grounds the floor depth, CLAUDE.md #11/#12):
+    # only the SPOT-purchased fraction of a zone's gas sees the Waha hub collapse;
+    # the firm-contracted fraction is priced off a term index and is insulated.
+    # So scale each zone's hub basis by its EIA-923-measured gas spot share (the
+    # firm complement is priced at the fleet/firm level = 0 zonal discount). This
+    # makes the West delivered discount a *measured* haircut of the hub basis
+    # rather than the cited -0.50 scalar floor below. No-op unless the haircut is
+    # enabled AND the receipt-derived share is on disk (else the scalar floor
+    # alone applies). Composes with the floor: the haircut shrinks the discount,
+    # the floor caps any residual deep tail.
+    if getattr(config, "ercot_gas_contract_haircut", False):
+        spot = ercot_gas_spot_share_by_zone()
+        if spot is not None:
+            haircut = np.array(
+                [spot.get(name, 1.0) for name in zone_names], dtype=float
+            )
+            basis_by_zone_idx = basis_by_zone_idx * haircut
+            logger.info(
+                "ERCOT gas contract haircut (%d): per-zone spot share %s",
+                year,
+                {n: round(spot[n], 2) for n in zone_names if n in spot},
+            )
     gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
     weights = fleet.pmax[gas_rows]
     total_w = float(weights.sum())
