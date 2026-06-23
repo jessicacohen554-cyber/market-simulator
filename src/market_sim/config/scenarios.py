@@ -882,6 +882,20 @@ class ScenarioConfig:
     coal_bit_passthrough_gas_mid: float | None = None
     coal_bit_passthrough_gas_slope: float | None = None
 
+    # Bituminous spot-coal marginal treatment (PJM): unlike PRB/lignite
+    # mine-mouth take-or-pay, PJM bituminous buys coal on spot/market terms, so
+    # it is the marginal, price-responsive swing fuel — it should bid near full
+    # delivered cost and back down when gas is cheap, not run as discounted
+    # baseload. When set, a bituminous-ranked coal plant's per-plant CAMPD
+    # must-run floor is zeroed in bins_to_fleet, so all of its capacity enters
+    # the rising offer-curve tranches (committed/econ/peak) with Pmin=0 and bids
+    # full delivered cost (pair with coal_bit_passthrough_floor=1.0). PRB,
+    # lignite and waste coal keep their take-or-pay must-run floors. This is the
+    # contract-physics structure, not a coal-MWh residual tune (CLAUDE.md
+    # #1/#11): a faithful model holds bit up only when it is economic, so any
+    # under-run it then shows is a price-formation signal, not a coal fault.
+    coal_bit_dispatchable: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
