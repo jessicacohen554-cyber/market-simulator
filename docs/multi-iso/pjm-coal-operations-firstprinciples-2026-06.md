@@ -1,0 +1,243 @@
+# PJM coal operations — first-principles characterization & model audit (2026-06)
+
+**Date:** 2026-06-23. **Type:** characterization + audit (NO LP solve, no keeper).
+**Probe:** `scripts/probes/_pjm_coal_opfingerprint.py` (CAMPD/CEMS hourly + PJM
+hourly hub LMP, reproducible). **Status:** the empirical groundwork the prior
+coal sessions skipped — it refines (does not overturn) the standing conclusion
+that the residual is downstream of price formation, and it pins *exactly* where
+the model's coal representation is unphysical and what a data-grounded rebuild
+looks like.
+
+## TL;DR
+
+1. **PJM bituminous is a synchronized partial price-FOLLOWER, not rigid
+   baseload and not a full-cost swing fuel.** Fleet (24 plants, ~110-133 TWh/yr):
+   annual CF **0.46-0.54**, low-price-quartile / high-price-quartile CF ratio
+   **0.63-0.76**, corr(hourly CF, LMP) **+0.17 to +0.23**, afternoon CF clearly
+   above overnight. It backs down ~30% between cheap and dear hours but **never
+   collapses** — it stays *synchronized* (large units online 80-100% of the year)
+   at a low technical minimum. Year-stable 2023-25.
+2. **The real online minimum (Pmin) is ~15-31% of max**, not the 40-60% the model
+   forces. The model's `mustrun_pct` floor is ~2x the level CEMS shows these units
+   actually hold, and it is **forced on** while **bidding sub-cost** (VOM+carbon
+   only, fuel treated as 100% sunk take-or-pay). That single tranche both
+   over-produces coal volume *and* suppresses the price coal sets when marginal.
+3. **Merit-order inversion (the cross-cutting finding):** in cheap-gas 2024 PJM
+   gas CC is *more* baseload than coal — CC fleet low/hi-price CF ratio **0.86**
+   (corr +0.10) vs coal **0.63** (corr +0.23). Real merit order: cheap CC carries
+   baseload, **coal swings on top**. The model prices coal *below* gas (sub-cost
+   must-run + 0.76 sigmoid discount), inverting this → coal baseloads, both
+   coal and gas flood the over-export, and the LMP is suppressed.
+4. **Part-load heat-rate degradation is small** (Pmin HR penalty 0-8%, often ~0).
+   The offer-curve *slope* is NOT a heat-rate-curve problem; it comes from the
+   take-or-pay/spot fuel split. Do not over-engineer a piecewise HR curve.
+5. **The data-grounded rebuild** (Thread D) replaces the forced sub-cost floor
+   with three physically-sourced layers — a small **take-or-pay sunk floor**
+   (EIA-923 Schedule-5 *Purchase Type*), a **synchronization min-load** that stays
+   online but bids real SRMC, and **full-delivered-cost dispatchable** tranches
+   above. This reproduces the observed "synchronized but price-following" behaviour
+   *endogenously*. It must be co-designed with reserve co-optimization (the
+   afternoon $75-200 price), which carries the LMP level the coal offer alone
+   cannot (coal is sole price-setter only ~9% of hours).
+
+---
+
+## Thread A — how PJM bituminous ACTUALLY operates (CEMS ground truth)
+
+Per-plant fingerprint from EPA CAMPD hourly gross MW + heat input, priced against
+PJM Western Hub RT LMP. Pmax = P99.5 of unit gross; Pmin = P5 of gross over
+online hours. Bituminous = the model's own `coal_supply_PJM.csv` rank.
+
+### 2024 top plants (operation & price response)
+
+| plant | id | Pmax MW | ann CF | online Pmin% | online% | starts | %hrs<40% | CF lowP-q | CF hiP-q | **low/hi** | corr(CF,LMP) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Harrison | 3944 | 2110 | 0.62 | 26 | 100 | 1 | 23 | 0.61 | 0.68 | **0.89** | 0.13 |
+| Gavin | 8102 | 2901 | 0.44 | 24 | 80 | 10 | 22 | 0.28 | 0.56 | **0.50** | 0.24 |
+| Amos | 3935 | 3132 | 0.38 | 15 | 100 | 1 | 64 | 0.33 | 0.49 | **0.66** | 0.39 |
+| Cardinal | 2828 | 1939 | 0.60 | 26 | 99 | 2 | 17 | 0.50 | 0.68 | **0.73** | 0.21 |
+| Spurlock | 6041 | 1483 | 0.65 | 20 | 100 | 1 | 20 | 0.52 | 0.74 | **0.71** | 0.23 |
+| Miami Fort | 2832 | 1121 | 0.62 | 31 | 87 | 8 | 7 | 0.37 | 0.77 | **0.48** | 0.29 |
+| Clifty Creek | 983 | 1310 | 0.50 | 25 | 100 | 1 | 37 | 0.45 | 0.55 | **0.82** | 0.16 |
+| Kyger Creek | 2876* | 1113 | 0.56 | 20 | 96 | 2 | 19 | 0.47 | 0.65 | **0.73** | 0.25 |
+| Rockport | 6166 | 2745 | 0.22 | 20 | 52 | 7 | 23 | 0.14 | 0.35 | **0.39** | 0.29 |
+| Mountaineer | 6264 | 1423 | 0.42 | 54 | 66 | 5 | 1 | 0.41 | 0.49 | **0.84** | 0.09 |
+| Mitchell (WV) | 3948 | 1672 | 0.31 | 18 | 82 | 8 | 50 | 0.26 | 0.38 | **0.68** | 0.23 |
+
+\*`coal_supply_PJM.csv` ranks 2876/879 subbituminous (PRB); shown for the
+named-plant comparison. The Pmax = P99.5-of-gross basis differs from the model's
+nameplate basis, so CF *levels* are not directly comparable to `median_cf`; the
+**ratios and correlations are denominator-free** and are the load-bearing result.
+
+### Fleet aggregate (GWh-weighted), year-stable
+
+| year | plants | TWh | ann CF | online Pmin% | overnight/afternoon CF | **low/hi price ratio** | corr(CF,LMP) |
+|---|---|---|---|---|---|---|---|
+| 2023 | 24 | 110.4 | 0.47 | 27 | 0.42 / 0.51 | **0.76** | 0.17 |
+| 2024 | 24 | 116.8 | 0.46 | 27 | 0.41 / 0.49 | **0.63** | 0.23 |
+| 2025 | 23 | 133.2 | 0.54 | 31 | 0.50 / 0.55 | **0.65** | 0.19 |
+
+**Reading.** A pure baseload price-taker would show low/hi ≈ 1.0 and corr ≈ 0; a
+full-cost merit swing fuel would show low/hi ≪ 0.5 and a steep collapse in cheap
+hours (the pjm_43 outcome, coal -46%). PJM bituminous sits **between** at ~0.63
+with a real positive price correlation: it *does* back down when prices are low
+(refuting "rigid baseload") but *does not* collapse (refuting "full-cost swing").
+There is a **spectrum**: a few large supercritical units are near-baseload
+(Harrison 0.89, Mountaineer 0.84, Clifty 0.82); the rest are moderate swingers
+(Gavin/Miami Fort/Rockport 0.39-0.50). Smaller/older units cycle (Rockport online
+52%, 7 starts; Gavin 10 starts); the big supercriticals stay synchronized
+(Harrison/Amos/Spurlock/Cardinal online 99-100%) but **deeply backed down** (Amos
+online 100% yet <40% of max in 64% of hours).
+
+### Part-load heat rate (CEMS heatInput / gross MW, median by load band)
+
+| plant | 30-45% | 45-60% | 60-80% | 80-100% | Pmin HR penalty |
+|---|---|---|---|---|---|
+| Harrison | 9.35 | 9.28 | 9.32 | 9.32 | ~0% |
+| Amos | 9.87 | 9.57 | 9.40 | 9.32 | +6% |
+| Cardinal | 9.80 | 9.70 | 9.61 | 9.48 | +3% |
+| Clifty Creek | 10.18 | 10.10 | 9.87 | 9.46 | +8% |
+
+The part-load HR penalty is **small** (0-8%). The offer-curve slope is not a
+heat-rate-curve artifact; flat tranche HR multipliers are adequate. The slope
+that matters is the **fuel-cost** split (sunk take-or-pay vs avoidable spot).
+
+---
+
+## Thread B — what drives the offer (mapped to data)
+
+| offer component | reality | data source (forward-reproducible) | in model today |
+|---|---|---|---|
+| delivered fuel | ~$3.0/MMBtu bit 2024; bit SRMC ~$32/MWh (HR ~10.5) | EIA-923 Sch-5 receipts ($/MMBtu) | yes (`derive_coal_supply`/`fuel`) |
+| **take-or-pay vs spot** | the must-burn sunk share that holds coal on below cost | **EIA-923 Sch-5 `Purchase Type`** (Contract/Spot/Tolling) — *available, not yet read* | **assumed** (must-run = 100% sunk) |
+| part-load HR | small (0-8% at Pmin) | CEMS heatInput/gross | flat tranche multipliers — adequate |
+| VOM + reagents (SCR/SNCR, FGD) | modest $/MWh | constants/citations | yes |
+| NOx/SO2 (CSAPR) | allowance $ in SRMC | CSAPR allowance prices | partial (nox_rate) |
+| CO2 | none in PJM (VA left RGGI) | per-state | n/a |
+| start cost / min-run | high coal start cost → self-commit, avoid cold starts | NREL start costs (`BIN_STARTUP_COST_PER_MW` COAL=100) | P1 amortized markup only (no true UC) |
+| **CP must-offer** | Capacity-Performance resources must offer energy + face non-perf penalties → a real reason committed coal stays offered through cheap gas | PJM capacity construct (structural) | not represented (proxied by forced floor) |
+| commitment hysteresis | stay synchronized at min-load rather than two-shift | — (UC economics) | proxied by forced must-run floor |
+
+**The honest reframe (confirmed):** the keeper's "forced must-run floor + 0.76
+sub-cost discount" is a **reduced-form UC + take-or-pay + CP-must-offer proxy**.
+The data shows the proxy is mis-sized in two ways: the floor is **too high**
+(40-60% vs real online Pmin ~25%) and **too rigid** (forced flat, no price
+response, when CEMS shows low/hi 0.63), and its **bid is too cheap** (fuel-free
+when much of the burn is avoidable spot and the unit is often above gas in merit).
+
+---
+
+## Thread C — model representation audit
+
+Source: `scripts/derive_thermal_tranches.py`, `thermal_tranches_PJM.csv`,
+`fleet.apply_coal_tranches`, `COAL_SIGMOID_DEFAULTS[("PJM","bituminous")]`.
+
+**Must-run floor** (`derive_thermal_tranches.py:449`): coal `mustrun_pct` = P5 of
+**all-hours** available-CF (net / nameplate·avail), capped **0.60**. Resulting
+floors: Keystone/Cardinal/Harrison **60**, Conemaugh 58, Spurlock 56, Kyger 48,
+Gavin 48, Mt Storm 44, Mountaineer 40, Rockport 39, Amos ~37. This tranche is
+**forced on** and bids **VOM+carbon+NOx only** (fuel sunk). Two problems vs CEMS:
+- **Level:** the level a unit holds 95% of its *online* time is ~15-31% of max
+  (denominator-adjusted ~20-30% of nameplate), roughly **half** the 40-60% floor.
+  The all-hours-P5-on-nameplate metric reads high because (a) nameplate < CEMS
+  P99.5 gross, (b) outage-derate inflates avail-CF, (c) for an ~always-online unit
+  the all-hours P5 sits in its normal operating band, not its true minimum.
+- **Rigidity + price:** forced + sub-cost = flat cheap baseload. CEMS shows
+  price-following backdown (low/hi 0.63) the forced floor cannot produce, and the
+  sub-cost bid is what suppresses the LMP coal sets when marginal and feeds the
+  over-export.
+
+**Gas-keyed sigmoid** (`COAL_SIGMOID_DEFAULTS` floor 0.76 / ceil 1.32 / mid 3.40):
+discounts above-must-run bit fuel to 76% of delivered when gas is cheap. This is a
+**calibrated discount, not a measured contract share** — the ungrounded knob. It
+exists to hold coal in merit against cheap gas, i.e. it is a *fitted* stand-in for
+take-or-pay + CP-must-offer.
+
+**Commitment:** P0→P1(+amortized startup)→P2 (decommit, **OFF** for PJM). No true
+min-run/min-down, so the synchronization hysteresis that keeps real coal online at
+min-load is carried entirely by the forced floor.
+
+**Net:** both coal layers (forced floor + sigmoid) bid **below cost**, so the
+whole coal stack clears under gas → coal baseloads below gas (merit inversion §E),
+floods the over-export, and suppresses LMP — exactly the keeper's symptom
+(coal +9%, net-export +27/+15/+82%, LMP -3/-8/-15%).
+
+---
+
+## Thread D — the data-grounded rebuild (LP-only, no MIP)
+
+Replace the single forced sub-cost floor with **three physically-sourced layers**,
+each forward-reproducible (CLAUDE.md #11), so the synchronized-but-price-following
+behaviour emerges instead of being forced:
+
+1. **Take-or-pay sunk floor (small).** Size from EIA-923 Schedule-5 `Purchase Type`
+   = the contract (must-burn) share of each plant's annual delivered tonnage. Only
+   that MWh-equivalent bids fuel-free (genuinely sunk). This is the *measured*
+   version of the 0.76 discount and is typically far below 60% of capacity.
+2. **Synchronization min-load.** A low floor (~the CEMS online Pmin, ~20-30%) that
+   keeps the unit online (commitment hysteresis: avoid cold starts) but **bids its
+   real SRMC** (delivered fuel + VOM), *not* zero. It holds volume *and* sets a
+   defensible price when marginal — the key difference from the current floor.
+3. **Full-delivered-cost dispatchable tranches** above the min-load. These follow
+   price (back down in cheap hours), reproducing the observed low/hi 0.63.
+
+Why this avoids both failure modes already on the dashboard:
+- vs **keeper** (floor 0.60 sub-cost): smaller floor → less forced over-volume /
+  over-export; SRMC-priced floor → higher LMP when coal is marginal.
+- vs **pjm_43** (Pmin=0, full cost, collapse to -46%): the synchronization floor +
+  take-or-pay keep units online, so coal does not collapse; pjm_43 failed because
+  it removed *all* floor *and* let units two-shift to zero, which CEMS refutes
+  (large units stay online 99-100%).
+- vs **pjm_44** (dispatchable + keep sigmoid, -21/-28/-13%): replaces the fitted
+  sigmoid with the measured take-or-pay share — same direction, now grounded.
+
+**CP must-offer** can be added as a structural floor-priced-at-min-load obligation
+(a forward-reproducible input from the capacity construct), reinforcing layer 2.
+
+**Co-design with price formation (mandatory).** Coal is the sole price-setter only
+~9% of zone-hours; gas is co-marginal ~50%. So the coal restructure fixes
+**volume + over-export + the price coal sets when marginal**, but the afternoon
+$75-200 LMP level needs the **energy+reserve co-optimization** lever
+(`pjm-reserve-ordc.md` Phase 2: per-gen `R[g]≤ramp10[g]`), currently blocked on
+(a) memory at PJM plant scale and (b) ramp data absent from `FleetArrays`.
+Sequence: build layers 1-3 (structure), then co-opt (price), then retune levels.
+
+**Data dependency for implementation:** the raw `f923_*.zip` archives (Schedule-5
+`Purchase Type`) are **not present in this container** — the take-or-pay deriver
+must run where the EIA-923 zips live. Until then the share is data-blocked; do NOT
+substitute a residual-tuned discount (that is the current sigmoid).
+
+---
+
+## Thread E — CC_REGULAR characterization (parallel)
+
+CEMS gas combined-cycle fleet, PJM 2024 (88 plants, ~455 TWh):
+
+| metric | value | reading |
+|---|---|---|
+| annual CF (GWh-wtd) | 0.71 | high utilization (cheap gas) |
+| %hrs > 80% of own max | 60% | model keeper 74% — only mildly over |
+| **low/hi-price CF ratio** | **0.86** | weak price response — closer to baseload than coal |
+| corr(CF, LMP) | +0.10 | modern H-class CCs run flat (Guernsey/Greensville/Lackawanna lo/hi 0.90-1.00, CF ~0.75) |
+
+**Reading.** The "CC modeled too baseload" symptom is **real but small** (model 74%
+vs CEMS 60% > 80%-of-max) — and partly *correct*: modern PJM CCs genuinely run
+near-baseload in cheap-gas years. The dominant defect is **not** CC being slightly
+too flat; it is the **merit inversion** — coal (lo/hi 0.63) is *more* price-
+responsive than CC (lo/hi 0.86), i.e. coal is the swing fuel above cheap CC. The
+model prices coal below gas, so it baseloads coal and treats CC as the swinger,
+backwards from the data. Fixing coal pricing (Thread D, coal above cheap gas) is
+the lever; a modest CC offer-curve flattening (committed_pct) is secondary.
+
+---
+
+## Reproduce
+
+```bash
+# Bituminous operational fingerprint (no solve; ~1 min/yr):
+.venv/bin/python scripts/probes/_pjm_coal_opfingerprint.py \
+    --rank bituminous --years 2023 2024 2025 --top 12
+# Other ranks: --rank subbituminous | --rank waste
+# CC characterization (Thread E):
+.venv/bin/python scripts/probes/_pjm_coal_opfingerprint.py --cc --years 2024 --top 12
+```
