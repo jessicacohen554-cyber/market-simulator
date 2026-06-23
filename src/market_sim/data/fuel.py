@@ -1314,6 +1314,37 @@ def ercot_electric_power_gas_basis(
 
 
 _ERCOT_GAS_SPOT_CACHE: dict[tuple[Path, Path], dict[str, float] | None] = {}
+_ERCOT_GAS_SPOT_PLANT_CACHE: dict[Path, dict[int, float] | None] = {}
+
+
+def ercot_gas_spot_share_by_plant(
+    takeorpay_path: Path | None = None,
+) -> dict[int, float] | None:
+    """Return ``{plant_code: gas spot share}`` for ERCOT, or ``None`` if absent.
+
+    The per-plant counterpart to :func:`ercot_gas_spot_share_by_zone`: it returns
+    each reporting gas plant's own EIA-923 Schedule-5 spot share, untouched by any
+    zonal aggregation. The haircut applies a unit's *own* measured share, so a
+    plant that buys 100% spot keeps the full Waha hub discount (share 1.0) while a
+    100%-contract plant loses it entirely (share 0.0) — unlike the zone average,
+    which would smear one number across both. Plants that file no classifiable gas
+    receipt are simply absent here, so the caller defaults them to ``1.0`` (full
+    spot exposure, the conservative no-haircut default that matches the deriver's
+    "no classifiable Purchase Type -> treated as fully spot"). Returns ``None``
+    when the receipt table is missing (f923 not extracted, or a forward year).
+    """
+    tp = Path(takeorpay_path) if takeorpay_path else ERCOT_GAS_TAKEORPAY_PATH
+    if tp in _ERCOT_GAS_SPOT_PLANT_CACHE:
+        return _ERCOT_GAS_SPOT_PLANT_CACHE[tp]
+    result: dict[int, float] | None = None
+    if tp.exists():
+        top = pd.read_csv(tp)
+        if not top.empty:
+            result = {
+                int(pc): float(s) for pc, s in zip(top["plant_code"], top["spot_share"])
+            } or None
+    _ERCOT_GAS_SPOT_PLANT_CACHE[tp] = result
+    return result
 
 
 def ercot_gas_spot_share_by_zone(
@@ -1436,28 +1467,42 @@ def apply_ercot_zonal_gas_basis(
         [basis.get(name, 0.0) for name in zone_names], dtype=float
     )
     # MEASURED CONTRACT HAIRCUT (re-grounds the floor depth, CLAUDE.md #11/#12):
-    # only the SPOT-purchased fraction of a zone's gas sees the Waha hub collapse;
+    # only the SPOT-purchased fraction of a unit's gas sees the Waha hub collapse;
     # the firm-contracted fraction is priced off a term index and is insulated.
-    # So scale each zone's hub basis by its EIA-923-measured gas spot share (the
-    # firm complement is priced at the fleet/firm level = 0 zonal discount). This
-    # makes the West delivered discount a *measured* haircut of the hub basis
-    # rather than the cited -0.50 scalar floor below. No-op unless the haircut is
-    # enabled AND the receipt-derived share is on disk (else the scalar floor
-    # alone applies). Composes with the floor: the haircut shrinks the discount,
-    # the floor caps any residual deep tail.
-    if getattr(config, "ercot_gas_contract_haircut", False):
-        spot = ercot_gas_spot_share_by_zone()
-        if spot is not None:
-            haircut = np.array(
-                [spot.get(name, 1.0) for name in zone_names], dtype=float
-            )
-            basis_by_zone_idx = basis_by_zone_idx * haircut
-            logger.info(
-                "ERCOT gas contract haircut (%d): per-zone spot share %s",
-                year,
-                {n: round(spot[n], 2) for n in zone_names if n in spot},
-            )
+    # So scale each gas unit's hub basis by ITS OWN EIA-923-measured plant spot
+    # share (the firm complement is priced at the fleet/firm level = 0 zonal
+    # discount). Per-PLANT, not the zone average: a 100%-spot unit keeps the full
+    # Waha discount (e.g. Permian Basin, Laredo) while a 100%-contract unit in the
+    # same zone loses it entirely (Ector County) — the zone mean would smear one
+    # number across both and mis-price each. This makes the West delivered discount
+    # a *measured* haircut of the hub basis rather than the cited -0.50 scalar floor
+    # below. No-op unless the haircut is enabled AND the receipt-derived share is on
+    # disk (else the scalar floor alone applies). Non-reporting units default to 1.0
+    # (full spot exposure, the conservative no-haircut default). Composes with the
+    # floor: the haircut shrinks the discount, the floor caps any residual deep tail.
     gen_basis = basis_by_zone_idx[fleet.zone_idx[gas_rows]]
+    if getattr(config, "ercot_gas_contract_haircut", False):
+        plant_spot = ercot_gas_spot_share_by_plant()
+        if plant_spot is not None:
+            unit_haircut = np.array(
+                [plant_spot.get(int(pc), 1.0) for pc in fleet.plant_code[gas_rows]],
+                dtype=float,
+            )
+            gen_basis = gen_basis * unit_haircut
+            n_hc = int(np.sum(unit_haircut < 1.0))
+            logger.info(
+                "ERCOT gas contract haircut (%d): per-PLANT spot share, %d/%d gas "
+                "units haircut (mean share %.2f over reporting plants); zone agg %s",
+                year,
+                n_hc,
+                gas_rows.size,
+                (float(np.mean(list(plant_spot.values()))) if plant_spot else 1.0),
+                {
+                    n: round(s, 2)
+                    for n, s in (ercot_gas_spot_share_by_zone() or {}).items()
+                    if n in zone_names
+                },
+            )
     weights = fleet.pmax[gas_rows]
     total_w = float(weights.sum())
     weighted_mean = float((gen_basis * weights).sum() / total_w) if total_w else 0.0
