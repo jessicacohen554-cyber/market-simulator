@@ -2,7 +2,7 @@
   "PJM": "2026-06-23-pjm-47-ps-adder",
   "keepers": [
     "2026-06-23-run151-coal-prb-sigmoid",
-    "2026-06-23-caiso-per-hub-signed",
+    "2026-06-23-caiso-25-corridor-deliverability",
     "2026-06-23-pjm-46-online-pmin",
     "2026-06-23-nyiso-21-family-elig",
     "2026-06-22-neiso-25-fullstop-override"
