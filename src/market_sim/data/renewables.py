@@ -81,7 +81,13 @@ from market_sim.config.constants import (
     RENEWABLE_INSTALLED_MW,
 )
 from market_sim.config.iso_configs import ISOConfig, get_iso_config
-from market_sim.config.paths import CAISO_HSL_DIR, ERCOT_HSL_DIR, NYISO_HSL_DIR
+from market_sim.config.paths import (
+    CAISO_HSL_DIR,
+    ERCOT_HSL_DIR,
+    MISO_HSL_DIR,
+    MISO_WIND_SHAPE_DIR,
+    NYISO_HSL_DIR,
+)
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia_loader import (
     DATA_DIR,
@@ -97,6 +103,11 @@ from market_sim.data.fleet import (
 # Capacity factors are physically bounded to the closed interval [0, 1].
 _CF_MIN: float = 0.0
 _CF_MAX: float = 1.0
+
+# Headroom epsilon (MW) for the capacity-aware per-zone redistribution: a zone
+# whose allocation is within this of its online MW is treated as saturated and
+# drops out of the next spill pass (see :func:`_redistribute_preserving_total`).
+_REDISTRIBUTE_MW_EPS: float = 1.0e-6
 
 # Renewable fuels for which CF profiles are derived, matching the ``fuel``
 # values in the EIA-930 generation-profiles parquet.
@@ -196,10 +207,23 @@ _MONTHS_PER_YEAR: int = 12
 # SHAPE applied to every zone is wrong (see :func:`_solar_zone_clearsky_shapes`
 # and the CAISO NP15/ZP26/SP15 spread documented there). Gated per ISO so the
 # per-zone redistribution cannot move any other ISO's derived outputs; every
-# ISO not listed keeps the legacy single-shape behaviour. Solar only — wind is
-# already zone-shaped by capacity share and its inter-zone diurnal differences
-# are small.
+# ISO not listed keeps the legacy single-shape behaviour.
 _SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
+
+# ISOs whose WIND capacity spans regions with materially different wind regimes,
+# so a single ISO-wide hourly wind SHAPE applied to every zone is wrong. MISO is
+# the case: the upper-plains North (MN/ND/SD/IA) is driven by the nocturnal
+# low-level jet — a pronounced overnight wind maximum — while the lower-Midwest
+# Central and the Entergy South have a flatter, more afternoon-weighted regime,
+# so North's diurnal/seasonal shape differs materially from Central/South's.
+# Each listed ISO gets a per-zone wind SHAPE from MERRA-2 reanalysis wind speed
+# at its EIA-860 wind-plant locations passed through a turbine power curve (see
+# :func:`_wind_zone_reanalysis_shapes` and scripts/build_miso_wind_shape.py),
+# reconciled to the measured EIA-930 ISO-wide series exactly (system total and
+# annual energy unchanged — only the inter-zone split moves). Gated per ISO so
+# the redistribution cannot touch any other ISO's outputs; ISOs not listed keep
+# the legacy single-shape behaviour.
+_WIND_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"MISO"})
 
 # EIA-860 solar tracking-technology flag columns (Generator_Operable solar
 # schedule), each a ``Y``/``N`` indicator. A plant's nameplate capacity is
@@ -264,6 +288,19 @@ _CAISO_HSL_DIR: Path = CAISO_HSL_DIR
 # explicit re-curtailment changes dispatch materially).
 _NYISO_HSL_DIR: Path = NYISO_HSL_DIR
 
+# MISO curtailment parquet directory (reserved for future data).
+# DATA NEEDED: MISO does publish wind & solar curtailment in its Market Reports
+# (Daily/Monthly "Wind & Solar Curtailment" series), but those reports live on
+# misoenergy.org, which is allowlist-blocked from this environment (HTTP 403;
+# see docs/multi-iso/miso-data-audit.md). No granular hourly uncurtailed-
+# potential (HSL) series is reproducible here yet, so this directory is empty
+# and the MISO backcast uses EIA-930 MISO delivered wind/solar generation
+# (which embeds the historical curtailment). When the MISO curtailment reports
+# can be pulled, build one parquet per backcast year (schema: ``_HSL_COLUMNS``,
+# HSL = delivered + reported curtailment) following scripts/build_caiso_hsl.py
+# and this branch will pick it up automatically.
+_MISO_HSL_DIR: Path = MISO_HSL_DIR
+
 
 def _hsl_file(iso: str, year: int) -> Path | None:
     """Return the uncurtailed-potential parquet for ``(iso, year)``, or ``None``.
@@ -282,6 +319,15 @@ def _hsl_file(iso: str, year: int) -> Path | None:
         # EIA-923) and no hourly curtailment series is currently published.
         # The delivered EIA-930 NYIS profile is the documented default.
         candidate = _NYISO_HSL_DIR / f"nyiso_{year}_hsl_hourly.parquet"
+        return candidate if candidate.exists() else None
+    if iso == "MISO":
+        # DATA NEEDED: miso_<year>_hsl_hourly.parquet in _MISO_HSL_DIR. MISO's
+        # wind/solar curtailment reports (misoenergy.org Market Reports) are
+        # allowlist-blocked here (HTTP 403; see _MISO_HSL_DIR and the audit
+        # doc). Until they can be pulled the MISO backcast uses EIA-930 MISO
+        # delivered generation, which embeds the historical curtailment. The
+        # branch picks up the parquet automatically once one is built.
+        candidate = _MISO_HSL_DIR / f"miso_{year}_hsl_hourly.parquet"
         return candidate if candidate.exists() else None
     # NEISO: ISO-NE reported curtailment is sub-1 % of potential — the
     # delivered EIA-930 ISNE series is the documented default; no uncurtailed-
@@ -1179,49 +1225,186 @@ def _solar_zone_clearsky_shapes(
     return shapes
 
 
+# Columns of a per-year MISO wind-shape parquet: the hour index plus one
+# relative-SHAPE column per model zone (the zone's MERRA-2-derived turbine CF on
+# the model's 8760 clock). Absolute level is irrelevant — the caller reconciles
+# these to the measured EIA-930 ISO-wide series — only the inter-zone shape
+# differences survive. Built by scripts/build_miso_wind_shape.py.
+_WIND_SHAPE_HOUR_COLUMN: str = "hour"
+
+
+def _wind_zone_reanalysis_shapes(
+    iso: str,
+    fuel: str,
+    zone_names: list[str],
+    cal_year: int | None,
+    data_dir: Path | None = None,
+) -> np.ndarray | None:
+    """Return a per-zone reanalysis wind SHAPE matrix, or ``None`` (no-op).
+
+    For a gated multi-zone wind ISO (see :data:`_WIND_ZONE_SHAPE_ISOS`) this
+    reads the precomputed per-year wind-shape parquet (built offline by
+    scripts/build_miso_wind_shape.py from MERRA-2 reanalysis wind speed at the
+    ISO's EIA-860 wind-plant locations, run through a turbine power curve) and
+    returns one relative hourly SHAPE per model zone. The absolute level is
+    irrelevant — the caller reconciles these shapes to the measured ISO-wide
+    ``cf_profile`` (see :func:`_redistribute_preserving_total`) — only the
+    inter-zone differences (the upper-plains nocturnal-jet North vs the flatter
+    Central/South) survive.
+
+    Returns ``None`` — signalling the caller to keep the legacy single-shape
+    behaviour — for non-wind fuels, for ISOs not in
+    :data:`_WIND_ZONE_SHAPE_ISOS`, and whenever the parquet is absent or does
+    not carry a column for every model zone.
+
+    Args:
+        iso: ISO identifier.
+        fuel: Renewable fuel; only ``"wind"`` is shaped here.
+        zone_names: Ordered model-zone names of the ISO.
+        cal_year: Calibration year selecting the per-year parquet.
+        data_dir: Wind-shape directory; resolved from config when ``None``.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` relative wind SHAPE array, or ``None``.
+    """
+    if fuel != "wind" or iso not in _WIND_ZONE_SHAPE_ISOS or cal_year is None:
+        return None
+    if data_dir is None:
+        data_dir = MISO_WIND_SHAPE_DIR
+    path = Path(data_dir) / f"{iso.lower()}_{cal_year}_wind_zone_shape.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    if not set(zone_names) <= set(df.columns) or len(df) != HOURS_PER_YEAR:
+        return None
+    # Order columns to match the model zone order; the parquet is hour-sorted.
+    df = df.sort_values(_WIND_SHAPE_HOUR_COLUMN)
+    shapes = df[zone_names].to_numpy(dtype=float).T  # (n_zones, HOURS_PER_YEAR)
+    shapes = np.where(np.isfinite(shapes), shapes, 0.0)
+    shapes = np.clip(shapes, 0.0, None)
+    if not shapes.any():
+        return None
+    return shapes
+
+
+def _zone_renewable_shapes(
+    iso: str,
+    fuel: str,
+    zone_names: list[str],
+    cal_year: int | None,
+) -> np.ndarray | None:
+    """Return the per-zone relative SHAPE for a fuel, or ``None`` (no-op).
+
+    Dispatches to the fuel-appropriate per-zone shaper: a clear-sky geometry
+    SHAPE for solar in the gated solar ISOs (see
+    :func:`_solar_zone_clearsky_shapes`) and a MERRA-2 reanalysis SHAPE for wind
+    in the gated wind ISOs (see :func:`_wind_zone_reanalysis_shapes`). Returns
+    ``None`` for any other (iso, fuel), so the caller keeps the legacy
+    single-ISO-wide-shape behaviour. Both shapers preserve the measured
+    ISO-wide aggregate exactly; only the inter-zone split changes.
+
+    Args:
+        iso: ISO identifier.
+        fuel: Renewable fuel (``"wind"`` or ``"solar"``).
+        zone_names: Ordered model-zone names of the ISO.
+        cal_year: Calibration year for the per-zone snapshot.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` relative SHAPE array, or ``None``.
+    """
+    if fuel == "solar":
+        return _solar_zone_clearsky_shapes(iso, fuel, zone_names, cal_year)
+    if fuel == "wind":
+        return _wind_zone_reanalysis_shapes(iso, fuel, zone_names, cal_year)
+    return None
+
+
 def _redistribute_preserving_total(
     cf_profile: np.ndarray,
     cap: np.ndarray,
     ramp_t: np.ndarray,
     zone_shapes: np.ndarray,
 ) -> np.ndarray:
-    """Re-split the flat system solar series across zones by clear-sky shape.
+    """Re-split the flat system renewable series across zones by relative shape.
 
     The flat path puts ``cf_profile · ramp_z`` on every online zone, for a
     system series ``M(t) = Σ_z cap_z·cf_profile·ramp_z``. This keeps that exact
     ``M(t)`` but re-splits it across zones in proportion to each zone's
-    clear-sky MW potential ``cap_z·ramp_z·SHAPE_z(t)``::
+    shape-weighted online capacity ``cap_z·ramp_z·SHAPE_z(t)``::
 
         m_z(t)  = M(t) · (cap_z·ramp_z·SHAPE_z) / Σ_k(cap_k·ramp_k·SHAPE_k)
         cf_z(t) = m_z(t) / cap_z
 
-    so the capacity-weighted aggregate ``Σ_z cap_z·cf_z`` is byte-identical to
-    the flat path every hour (annual energy and the system duck curve
-    unchanged) while a high-fixed-tilt zone (NP15) now peaks more sharply than
-    a high-tracking zone (SP15). Dark hours — no clear-sky potential anywhere —
-    fall back to the flat split, which preserves the same total.
+    so the capacity-weighted aggregate ``Σ_z cap_z·cf_z`` reproduces the flat
+    path every hour (annual energy and the system shape unchanged) while a
+    high-shape zone (a high-fixed-tilt CAISO zone, or MISO's nocturnal-jet
+    North) peaks at a different time than a low-shape zone. Dark/calm hours —
+    no shape-weighted potential anywhere — fall back to the flat split, which
+    preserves the same total.
+
+    The proportional split alone can drive a small-capacity zone's CF above 1
+    when a large zone is becalmed (its share of ``M(t)`` is forced onto the
+    others) — possible for wind, where zones' instantaneous shapes diverge
+    sharply, but not for solar, where zones co-vary. To keep the aggregate
+    exact *and* every CF ≤ 1, the split is done by capacity-aware water-filling:
+    a zone is never allocated above its online MW (``cap_z·ramp_z``); any
+    overflow spills to zones with remaining headroom over at most ``n_zones``
+    passes. With no overflow (the solar case) the first pass allocates the full
+    proportional split and the result is unchanged.
 
     Args:
         cf_profile: ``(HOURS_PER_YEAR,)`` ISO-wide hourly CF series.
         cap: ``(n_zones,)`` December nameplate capacity (MW) per zone.
         ramp_t: ``(n_zones, HOURS_PER_YEAR)`` online-capacity fraction per
             zone-hour (the vintage ramp; all ones when the ramp is off).
-        zone_shapes: ``(n_zones, HOURS_PER_YEAR)`` relative clear-sky SHAPE.
+        zone_shapes: ``(n_zones, HOURS_PER_YEAR)`` relative per-zone SHAPE.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` per-zone CF array.
     """
     cap_present = cap[:, None] * ramp_t  # online MW per zone-hour
     system_mw = cf_profile * cap_present.sum(axis=0)  # M(t) to distribute
-    weight = cap_present * zone_shapes  # clear-sky MW potential per zone
+    weight = cap_present * zone_shapes  # shape-weighted online MW per zone
     wsum = weight.sum(axis=0)
 
     cf = cf_profile[None, :] * ramp_t  # flat fallback (also preserves M)
     lit = wsum > 0.0
-    zone_mw = np.zeros_like(weight)
-    zone_mw[:, lit] = system_mw[lit] * weight[:, lit] / wsum[lit]
+
+    # Capacity-aware water-filling. n_zones is tiny (<= ~6); each pass spreads
+    # the still-unallocated MW over zones that have not yet hit their online-MW
+    # ceiling, in proportion to their shape weight, and caps each at headroom.
+    # When the shape weight of every zone with headroom is exhausted but MW
+    # remains (a zone with capacity but a near-zero shape that hour, e.g. a
+    # becalmed wind zone), the residual spills by remaining headroom instead —
+    # the measured EIA-930 aggregate is authoritative, so it is placed in the
+    # zones that can physically carry it. One extra pass covers that fallback.
+    n_zones = weight.shape[0]
+    alloc = np.zeros_like(weight)
+    remaining = np.where(lit, system_mw, 0.0)
+    for _ in range(n_zones + 1):  # shape passes + one headroom-fallback pass
+        headroom = cap_present - alloc
+        spill_weight = np.where(headroom > _REDISTRIBUTE_MW_EPS, weight, 0.0)
+        ws = spill_weight.sum(axis=0)
+        # Hours whose shape weight is used up but still owe MW: weight by
+        # remaining headroom so the residual lands where capacity exists.
+        use_headroom = (ws <= 0.0) & (remaining > _REDISTRIBUTE_MW_EPS)
+        spill_weight[:, use_headroom] = np.where(
+            headroom[:, use_headroom] > _REDISTRIBUTE_MW_EPS,
+            headroom[:, use_headroom],
+            0.0,
+        )
+        ws = spill_weight.sum(axis=0)
+        move = (ws > 0.0) & (remaining > _REDISTRIBUTE_MW_EPS)
+        if not move.any():
+            break
+        proposed = np.zeros_like(weight)
+        proposed[:, move] = remaining[move] * spill_weight[:, move] / ws[move]
+        add = np.minimum(proposed, headroom)
+        alloc += add
+        remaining = remaining - add.sum(axis=0)
+
     with np.errstate(divide="ignore", invalid="ignore"):
-        shaped = np.where(cap[:, None] > 0.0, zone_mw / cap[:, None], 0.0)
+        shaped = np.where(cap[:, None] > 0.0, alloc / cap[:, None], 0.0)
     cf[:, lit] = shaped[:, lit]
     return np.clip(cf, _CF_MIN, _CF_MAX)
 
@@ -1318,11 +1501,15 @@ def load_renewable_profiles(
     Each technology's installed capacity is distributed across the ISO's
     zones from EIA-860 plant locations (see :func:`_eia860_zone_shares`),
     with the same ISO-wide CF profile applied to every zone holding
-    capacity — except solar in the gated multi-zone ISOs (CAISO today), where
-    each zone instead gets its own clear-sky-derived solar SHAPE driven by its
-    EIA-860 tracking mix and latitude (see :func:`_solar_zone_clearsky_shapes`).
-    That redistribution preserves the measured ISO aggregate exactly, so annual
-    energy and the system duck curve are unchanged. When
+    capacity — except in the gated multi-zone ISOs, where each zone instead
+    gets its own per-zone SHAPE (see :func:`_zone_renewable_shapes`): solar in
+    CAISO from each zone's EIA-860 tracking mix and latitude
+    (:func:`_solar_zone_clearsky_shapes`), and wind in MISO from MERRA-2
+    reanalysis at each zone's EIA-860 wind-plant locations through a turbine
+    power curve (:func:`_wind_zone_reanalysis_shapes`), so the nocturnal-jet
+    North differs from Central/South. That redistribution preserves the
+    measured ISO aggregate exactly, so annual energy and the system shape are
+    unchanged. When
     ``config.vintage_capacity_ramp`` is enabled, the per-zone profile is
     additionally scaled month-by-month so a zone's output ramps up as its
     plants reach their EIA-860 commercial-operation dates. For ISOs without
@@ -1397,15 +1584,17 @@ def load_renewable_profiles(
             else:
                 cf_profile = _eia930_cf(fuel)
                 vintage_ramp = config.vintage_capacity_ramp
-            # Multi-zone solar ISOs (gated, CAISO today) get a per-zone solar
-            # SHAPE so geographically distinct zones with different tracking
-            # mixes no longer share one ISO-wide hourly profile. This is a
-            # pure spatial redistribution: the capacity-weighted zone sum still
+            # Gated multi-zone ISOs get a per-zone SHAPE so geographically
+            # distinct zones no longer share one ISO-wide hourly profile: solar
+            # in CAISO (clear-sky geometry by tracking mix/latitude) and wind in
+            # MISO (MERRA-2 reanalysis through a turbine power curve, so the
+            # nocturnal-jet North differs from Central/South). This is a pure
+            # spatial redistribution: the capacity-weighted zone sum still
             # equals the measured cf_profile every hour (aggregate preserved),
-            # so the validated system duck curve and annual energy are
-            # unchanged — only NP15-vs-SP15 differ, which matters in forecast
-            # years as CAISO solar grows and congestion/entry signals bite.
-            zone_shapes = _solar_zone_clearsky_shapes(iso, fuel, zone_names, year)
+            # so the validated system shape and annual energy are unchanged —
+            # only the inter-zone split moves, which matters as renewables grow
+            # and congestion/entry signals bite under the transmission limits.
+            zone_shapes = _zone_renewable_shapes(iso, fuel, zone_names, year)
             allocated[fuel] = _distribute_by_eia860(
                 cf_profile, installed_mw, monthly, vintage_ramp, zone_shapes
             )
