@@ -74,8 +74,28 @@ West delivered discount should be `spot_share × hub_basis` — a measured fract
   discount, floor caps the residual tail). Env: `ERCOT_GAS_HAIRCUT=1`.
 
 This makes the depth a measured haircut, not a chosen constant — answering the
-"isn't a floor magic-numbering?" objection. With (e.g.) a 50% West spot share the
-West hub discount halves, lifting CT off the over-suppressed −27.6%.
+"isn't a floor magic-numbering?" objection.
+
+**Measured result (EIA-923 2023–24 Schedule-5, `gas_takeorpay_ERCOT.csv`):** the
+West/Permian gas spot share is **0.78** (MMBtu-weighted), and the biggest CT
+over-runners are **100% spot** — Permian Basin 3494 and Laredo 3439 buy *all*
+their gas spot at Waha (Ector County 58471 is 100% contract; Quail Run 43% spot;
+Odessa-Ector 100% spot and dominates the weighting at 100M MMBtu). So the haircut
+scales the West hub discount by only ~0.78 (−2.19 → −1.71): a **small** correction.
+
+This is the decisive finding, and it cuts against the floor: **the measured data
+shows these merchant peakers genuinely pay cheap spot Waha gas** (they are 100%
+spot, by receipt). The gas price the model gives them is therefore *not* the
+error — the `−0.50` floor (layer 1) overstates their true delivered fuel cost and
+is closer to a fit than a physical correction (CLAUDE.md #11: prefer the measured
+input, find the real root cause). The reason Permian Basin / Laredo run ~2–9% CF
+in reality despite cheap fuel is **peaker economics, not fuel price** — old/low-CF
+GTs with high startup + non-fuel going-forward costs, plus (for Morgan Creek) the
+wrong fuel entirely. That is **direction 3**, and the measured contract data shows
+the gas-side lever is largely exhausted: the haircut is the honest, measured gas
+correction (keep it), the floor is the non-physical level patch (drop it once
+direction 3 carries the residual), and the bulk of the CT over-run must close at
+the unit level.
 
 **Data constraint.** The gas share is forward-reproducible but needs the raw
 `f923_*.zip` releases (gitignored, **not present in this environment**; outbound
@@ -88,24 +108,32 @@ haircut is inert and the cited −0.50 scalar floor applies.
 
 ## Disposition / next steps
 
-- **Layer 1 (floor) is merged and works**, validated 2024 (matched baseline) and
-  3-yr (`results/calibration/ctfloor_3yr`). It over-corrects with the cited −0.50.
-- **Layer 2 (haircut) is wired and tested**, inert until the gas share lands.
-  Reproduce the share + re-grounded keeper:
-  ```bash
-  # where the f923_2023/24/25 zips are under inputs/raw-data/:
-  python scripts/derive_gas_takeorpay.py --iso ERCOT --year 2023 2024 2025
-  ERCOT_ZONAL_GAS=1 ERCOT_GAS_FLOOR=1 ERCOT_GAS_HAIRCUT=1 KEEPER_RTORDPA=1 \
-    KEEPER_PERSIST_P2=1 KEEPER_STGAS_DRAG=1 \
-    KEEPER_PRB_PARAMS='{"coal_prb_passthrough_floor":0.78,"coal_prb_follower_floor":0.78}' \
-    python scripts/probes/_keeper_2023as_run.py ctfloor_haircut_3yr 2025 2023 \
-    '{"ST_GAS":{"committed":0.0}}'
-  ```
-- **Direction 3 (peaker cost / classification)** is the complementary lever for
-  the residual: price Morgan Creek (DFO distillate peaker) on oil not Waha gas,
-  and check the GT-peaker low-CF / startup economics. See the handoff prompt in
-  the session.
+- **Layer 2 (haircut) is the honest, measured gas correction — keep it.** The gas
+  share is on disk (`data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv`, EIA-923
+  2023–24); the haircut is live (`ERCOT_GAS_HAIRCUT=1`). But it is **small** (West
+  is 78% spot) because the measured data says these units really do buy cheap spot
+  Waha gas.
+- **Layer 1 (floor −0.50) is now suspect.** The contract data shows the 100%-spot
+  over-runners genuinely pay ~$0 spot Waha gas, so the floor overstates their fuel
+  and is closer to a fit than a physical correction. Recommend dropping it (or
+  keeping only the haircut) once direction 3 carries the residual. The merged
+  `ercot_gas_delivered_floor_basis` stays in the code as a default-off lever.
+- **Direction 3 (peaker cost / classification) is now the PRIMARY lever**, not the
+  complement: the measured contract data shows the gas-side is largely exhausted.
+  Price Morgan Creek (DFO distillate peaker) on oil not Waha gas; treat the
+  old/low-CF GT peakers (Permian Basin, Laredo) via startup / non-fuel
+  going-forward economics or the P2 commitment screen — the reason they idle in
+  reality is peaker economics, not fuel price. See the direction-3 handoff prompt.
+
+Reproduce the measured haircut keeper (gas share already on disk):
+```bash
+ERCOT_ZONAL_GAS=1 ERCOT_GAS_HAIRCUT=1 KEEPER_RTORDPA=1 \
+  KEEPER_PERSIST_P2=1 KEEPER_STGAS_DRAG=1 \
+  KEEPER_PRB_PARAMS='{"coal_prb_passthrough_floor":0.78,"coal_prb_follower_floor":0.78}' \
+  python scripts/probes/_keeper_2023as_run.py ctfloor_haircut_3yr 2025 2023 \
+  '{"ST_GAS":{"committed":0.0}}'
+```
 
 Do **not** dial the floor depth or any per-unit adder to land CT_PEAKER on 8.21
-(CLAUDE.md #11) — the depth must come from the measured spot share, the residual
-from the per-unit fuel/cost fixes.
+(CLAUDE.md #11) — the gas-side depth comes from the measured spot share (now
+shown to be small), and the residual must close at the unit level (direction 3).
