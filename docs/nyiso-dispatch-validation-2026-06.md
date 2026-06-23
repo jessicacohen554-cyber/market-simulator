@@ -230,3 +230,84 @@ pruned for the 15-run NYISO retention.
   payload omits `ordc.hoursGt200`, so `score_price_tail` SKIPs (both `nyiso 20`
   and `nyiso 21`). The tail must be read off the dispatch parquet / system
   parquet by hand until the NYISO benchmark emits the `>$200` hours block.
+
+## Gas offer curves grounded in the NYISO SOM — `nyiso 22`, and the merit-order fix is gas-TOTAL-blocked in 2024/25
+
+Until now NYISO fell through the generic non-PJM/non-ERCOT branch of
+`offer_curve_by_group{}` (`scripts/run_calibration.py`), carrying ERCOT-fitted
+band multipliers that were **never validated for NYISO** — the root cause of the
+gas-class merit-order substitution error in the `nyiso 21` fuelmix (CC_REGULAR
+under-runs, legacy gas steam over-runs). Added a dedicated, SOM-grounded
+`_NYISO_OFFER_CURVE` (merged on top of that branch, gas classes only):
+
+* **The merit order was physically backwards.** Cap-weighted class heat rates
+  (`bin_assignments_NYISO.csv`): CC_CHP 6.99, CC_REGULAR 7.76, ST_GAS 10.61,
+  CT_PEAKER 11.95 MMBtu/MWh. The generic ST_GAS committed band (0.81×) put the
+  legacy-steam min-load slice at 0.81·10.61 = **8.6 eff HR — *below* the top of
+  CC_REGULAR's econ ramp** (1.27·7.76 = 9.9), so an inefficient steam boiler
+  undercut an efficient CC. Fixes: ST_GAS committed 0.81→**0.97** (steam sits
+  back above CC across its whole range), CC_REGULAR econ 1.06/1.27→**0.95/1.12**
+  (CC marginal HR is ~flat and ~0.95× average — the efficient workhorse runs
+  more), CC_CHP 0.96/1.12→0.98/1.15, CT_PEAKER committed 1.55→1.35.
+* **Grounding (real, forward-reproducible — rule #12, not residual-fitted):**
+  2023 & 2024 Potomac Economics SOM. §VI.A: NYISO is a competitive energy market,
+  output gap 0.05 % at the mitigation threshold (offers ≈ short-run MC → the
+  multipliers encode a near-MC *shape*, not a strategic markup). Figure 2 / §I.B
+  (verbatim, both years): *"Steam turbine units appear to be the most
+  economically challenged… their high operating costs and physical constraints…
+  usually prevent steam units from earning much energy or reserve revenue, except
+  in Long Island"* → steam must sit above CC and run only in high-load hours / on
+  the LI floor. Figure 47: after the 2022 downstate-peaker retirements *"older
+  more outage-prone steam turbines have been scheduled to operate more frequently
+  in high load hours."* §VI.A also grounds the inflexible CC duct-firing peak
+  wall (*"some combined cycles offer inflexibly… to manage… the duct-fired
+  portion"*; duct burners not AGC/10-min capable).
+
+**Result (`nyiso 22 gas-offer-som`, all 3 years, keeper flags).** The grounded
+curve does exactly what offers *can* do, and the fit cleanly separates what they
+*cannot*:
+
+| class (grid-delivered TWh) | 2023 m→a | 2024 m→a | 2025 m→a | vs `nyiso 21` |
+|---|---|---|---|---|
+| CC_REGULAR | 31.81 / 33.01 | 33.23 / 37.35 | 32.80 / 34.78 | **+2.34 / +2.32 / +2.54** (the #1 miss, better every year) |
+| ST_GAS | 11.40 / 8.14 | 9.11 / 10.87 | 11.24 / 15.62 | −2.19 / −2.26 / −2.24 |
+| CC_CHP | 13.06 / 12.12 | 13.84 / 13.91 (PASS) | 15.17 / 13.41 | small |
+| CT_PEAKER | 1.23 / 2.11 | 0.49 / 2.10 | 0.89 / 2.77 | ~flat (reserve/tail, not offers) |
+
+Price/structure **held or improved**: `price_mean` 2023 +18.3 % (was +20.0 %),
+2024 +1.4 % PASS, 2025 +0.6 % PASS; `price_shape` 2023 0.199 PASS / 2025 0.126
+PASS; `dispatch_corr` r = 0.88 / 0.81 / 0.80; `co2` 2023 +4.3 % PASS; `sysvol`
+gas total essentially unchanged (the curve rebalances *within* gas).
+
+**Why full C1 is not reachable here — the binding constraint is the gas TOTAL,
+not the offer curve.** `sysvol` gas: 2023 **+3.0 %** (on), but 2024 **−11.5 %**
+(−7.8 TWh) and 2025 **−9.2 %** (−6.5 TWh). In 2024/25 the *entire* gas total is
+short, so the CC_REGULAR / CT_PEAKER / ST_GAS under-runs sum to the deficit
+(2024: −4.12 −1.61 −1.76 = −7.5 ≈ −7.8) — there is no surplus gas energy for any
+offer-curve rebalance to allocate, by energy-balance. This is the documented
+EIA-930-demand/EIA-923-net-generation **import-basis floor**
+(`docs/calibration-best-so-far-nyiso.md`), explicitly **out of scope** for this
+task (handoff: *"the 2025 body-wide under-level… is an ENERGY/gas… problem, not
+reserve or offer curves"*). 2023, where the gas total is on, is the only year a
+clean rebalance is possible — and there the ST_GAS over-run halves (+5.46→+3.26)
+while CC_REGULAR recovers +2.34.
+
+Two of the four gas classes are therefore **not offer-curve-addressable**:
+* **CT_PEAKER** under-runs every year (−0.9/−1.6/−1.9) — the NYC-peaker **reserve
+  scarcity / tail** gap (mechanism B; lowering the committed band 1.55→1.35 moved
+  it +0.0/+0.1, because peakers are priced far above the downstate clearing
+  price, not because their offer is wrong). Out of scope (the tail follow-on).
+* **ST_GAS** is over in 2023 (+3.26, real, addressable) but under in 2024/25 (the
+  gas-total deficit). A single curve cannot be both too cheap and too dear; the
+  structurally-correct level (steam above CC, near-MC) is kept per rule #1, so the
+  2024 band-loss vs `nyiso 21` is the **removal of the non-physical cheap-steam
+  inversion** (`nyiso 21`'s 2024 ST_GAS PASS came *from* steam bidding below an
+  efficient CC), not a regression to chase back with a fitted adder.
+
+**Status:** `nyiso 22` is registered (rule #13). It is **more structurally
+faithful** than `nyiso 21` (correct CC-above-steam merit order, the dominant
+CC_REGULAR miss improved every year, every multiplier traceable to a SOM
+citation) and holds price/co2/sysvol — but it does **not** meet the handoff's
+literal keeper bar ("all gas classes INTO the C1 band across all 3 years")
+because 2024/25 are gas-TOTAL-blocked (out of scope). The SOM-grounded curve is
+the real deliverable; the residual C1 failures are not offer-curve-addressable.
