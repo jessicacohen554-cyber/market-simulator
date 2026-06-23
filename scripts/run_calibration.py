@@ -42,6 +42,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.constants import (  # noqa: E402
+    GAS_BASIS_DIFFERENTIAL,
     HOURS_PER_YEAR,
     INTERFACE_NEIGHBORS,
     NYISO_INTERFACE_TTC_BY_MONTH,
@@ -467,6 +468,32 @@ def _calibration_config(
         ercot_zonal_gas_basis=(
             iso.upper() == "ERCOT"
             and os.environ.get("ERCOT_ZONAL_GAS", "").lower() in ("1", "true", "on")
+        ),
+        # Delivered-gas floor on the zonal basis above: the West/Panhandle Waha
+        # basis is a *hub* (wellhead) basis that goes deeply negative, but a power
+        # plant pays *delivered* gas (transport + commodity on top) so its discount
+        # has a transport-grounded floor. Without it the West/Permian gas units
+        # offer ~$0/MWh and run baseload (the CT_PEAKER over-run); the measured TX
+        # delivered-to-electric-power level ($2.11/MMBtu, 2024) shows no TX plant
+        # paid near $0 delivered. ERCOT_GAS_FLOOR=1 floors the per-zone delivered
+        # discount at the cited measured Waha delivered basis (-0.50);
+        # ERCOT_GAS_FLOOR_BASIS=<float> overrides the floor depth. ERCOT only, and
+        # only meaningful with ERCOT_ZONAL_GAS on. See
+        # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+        ercot_gas_delivered_floor_basis=(
+            (
+                float(os.environ["ERCOT_GAS_FLOOR_BASIS"])
+                if os.environ.get("ERCOT_GAS_FLOOR_BASIS")
+                else GAS_BASIS_DIFFERENTIAL.get("ERCOT", -0.50)
+            )
+            if (
+                iso.upper() == "ERCOT"
+                and (
+                    os.environ.get("ERCOT_GAS_FLOOR", "").lower() in ("1", "true", "on")
+                    or os.environ.get("ERCOT_GAS_FLOOR_BASIS")
+                )
+            )
+            else None
         ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
