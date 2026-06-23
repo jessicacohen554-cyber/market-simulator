@@ -1042,6 +1042,7 @@ def run_year(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
+    caiso_bidir_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
@@ -1146,6 +1147,8 @@ def run_year(
         config = config.with_overrides(
             caiso_import_solar_shape=caiso_import_solar_shape
         )
+    if caiso_bidir_intertie is not None:
+        config = config.with_overrides(caiso_bidir_intertie=caiso_bidir_intertie)
     if nyiso_local_selfsupply is not None:
         config = config.with_overrides(nyiso_local_selfsupply=nyiso_local_selfsupply)
     if nyiso_firm_imports is not None:
@@ -1296,7 +1299,16 @@ def run_year(
         # inject_reference_price_mc after assembly). Gated to ISOs in
         # INTERFACE_NEIGHBORS; byte-identical (falls through to the fitted node)
         # otherwise. See docs/reference-price-interface.md.
-        if getattr(config, "reference_price_interface", False) and (
+        if getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO":
+            # Single signed WECC intertie: import leg + export leg share one
+            # net direction over a shared directional cap (arbitrage-free hub
+            # pricing applied post-assembly). Replaces the separate import
+            # tranches + export sinks so the LP cannot import-cheap and stay
+            # long in the same hour.
+            from market_sim.model.transmission import build_caiso_bidir_intertie
+
+            import_generators = build_caiso_bidir_intertie(border_carbon)
+        elif getattr(config, "reference_price_interface", False) and (
             iso in INTERFACE_NEIGHBORS
         ):
             import_generators = build_reference_price_node(iso)
@@ -1712,7 +1724,25 @@ def run_year(
     # it both lowers the over-high body and reproduces the negative midday tail
     # (DIAGNOSIS-caiso-import-ladder-2026-06-19). No-op (byte-identical) unless
     # caiso_import_hub_prices is on AND the measured intertie parquet is present.
-    if getattr(config, "caiso_import_hub_prices", False):
+    # Single signed WECC intertie: one arbitrage-free injector reprices both
+    # legs (import = hub + per-tranche carbon, export = hub) off the measured
+    # hub, superseding the separate import-hub / export-hub / gas-coupling /
+    # solar-shape injectors below (those target the legacy two-mechanism node).
+    bidir_intertie = getattr(config, "caiso_bidir_intertie", False) and iso == "CAISO"
+    if bidir_intertie:
+        from market_sim.model.transmission import inject_caiso_bidir_intertie_prices
+
+        if inject_caiso_bidir_intertie_prices(
+            fleet_arrays, mc_base, iso, year, carbon_price
+        ):
+            logger.info(
+                "%s %d: bidirectional WECC intertie — single signed flow on a "
+                "shared cap, both legs priced at the measured hub (import + "
+                "border carbon / export, arbitrage-free, one direction per hour)",
+                iso,
+                year,
+            )
+    if not bidir_intertie and getattr(config, "caiso_import_hub_prices", False):
         from market_sim.model.transmission import inject_caiso_import_hub_prices
 
         if inject_caiso_import_hub_prices(
@@ -1745,7 +1775,7 @@ def run_year(
     # in-state gas (PLAN-caiso-gas-coupled-imports-2026-06-20). No-op unless
     # caiso_import_gas_coupling is on AND the measured gas series are available;
     # pairs with --gas-hub-basis-overlay so both legs price off the same gas.
-    if getattr(config, "caiso_import_gas_coupling", False):
+    if not bidir_intertie and getattr(config, "caiso_import_gas_coupling", False):
         from market_sim.model.transmission import inject_caiso_import_gas_coupling
 
         if inject_caiso_import_gas_coupling(fleet_arrays, mc_base, config, year):
@@ -1762,7 +1792,7 @@ def run_year(
     # CAISO negative midday tail. No-op unless caiso_import_solar_shape is on;
     # applies on top of the gas coupling. Net load is the LP-served load (net of
     # must-run) less utility solar/wind generation.
-    if getattr(config, "caiso_import_solar_shape", False):
+    if not bidir_intertie and getattr(config, "caiso_import_solar_shape", False):
         from market_sim.model.transmission import inject_caiso_import_solar_shape
 
         net_load = (

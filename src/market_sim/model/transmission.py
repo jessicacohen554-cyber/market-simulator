@@ -231,6 +231,106 @@ def build_export_sinks(iso: str) -> list[Generator]:
     ]
 
 
+# Single-signed-flow WECC intertie (``caiso_bidir_intertie``). The legacy
+# representation modeled CAISO's tie as TWO independent one-way mechanisms on
+# the same external node — priced import tranches (:func:`build_import_generators`)
+# and separate export sinks (:func:`build_export_sinks`) — so the LP could
+# simultaneously import the cheap midday hub AND stay long on its own solar (the
+# two never netted: 2024 diurnal interchange corr −0.65, anti-correlated). The
+# bidirectional intertie collapses both legs onto ONE signed flow over a shared
+# directional cap: import (flow into CAISO) priced at hub + per-tranche border
+# carbon, export (flow out of CAISO) priced at the hub (no CA carbon). Because
+# every import leg (hub + carbon, carbon ≥ 0) is priced at or above the export
+# leg (hub) at every hour, the two legs are arbitrage-free *by construction*, so
+# the LP never imports and exports in the same hour — one net direction per hour,
+# no MIP. Caps are the measured directional limits.
+CAISO_BIDIR_IMPORT_CAP_MW = 8300.0  # aggregate simultaneous-import limit (the
+# import-tightening cap: WECC COI/Path 66 + Path 46/WOR deliverable import into
+# CAISO, ~ the deep-import hours of the EIA-930 CISO net-interchange curve).
+CAISO_BIDIR_EXPORT_CAP_MW = 3500.0  # measured export-direction peak (EIA-930
+# CISO 2024 net export reverses to ~+3.5 GW in the midday solar glut).
+_CAISO_BIDIR_EXPORT_NAME = "export_bidir"
+# Intertie throughput tiebreaker (same role/magnitude as the storage ε = 0.001
+# $/MWh in the objective): the cheapest import leg (firm hydro/solar, zero CARB
+# EF) prices exactly at the hub, which is also the export price, so a gross
+# round-trip (import + export in the same hour) is cost-NEUTRAL and the LP is
+# free to return a degenerate wash that inflates the gross interchange. Charging
+# this ε on each direction makes any round-trip strictly cost-positive (2ε), so
+# the tie nets to one direction per hour. Negligible vs the price body; not a
+# fitted level.
+CAISO_INTERTIE_TIEBREAK_EPS = 1e-3
+
+
+def build_caiso_bidir_intertie(border_carbon_per_mwh: float = 0.0) -> list[Generator]:
+    """Return CAISO's WECC tie as a single signed flow (import leg + export leg).
+
+    The structurally-faithful replacement for the separate
+    :func:`build_import_generators` + :func:`build_export_sinks` pair on the
+    ``WECC_import`` node. The import leg keeps the per-tranche supply curve of
+    :data:`~market_sim.config.constants.IMPORT_TRANCHES` (so the rising
+    border-carbon ladder of :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`
+    is preserved — firm hydro/solar pay no CARB adder, unspecified gas pays the
+    full one), but the aggregate import capacity is rescaled to
+    :data:`CAISO_BIDIR_IMPORT_CAP_MW` (the tightened simultaneous-import cap).
+    The export leg is a SINGLE sink bounded at :data:`CAISO_BIDIR_EXPORT_CAP_MW`,
+    the measured export-direction peak.
+
+    Both legs sit in the ISO's external zone and net through the ordinary energy
+    balance + the WECC border links, so the LP's *net* interchange on the tie is
+    one signed quantity. The energy prices are placeholders here — overwritten
+    hour-by-hour by :func:`inject_caiso_bidir_intertie_prices` to the measured
+    hub (import = hub + border carbon, export = hub), which makes the two legs
+    arbitrage-free so only one direction clears per hour.
+
+    Args:
+        border_carbon_per_mwh: Unspecified-import border carbon adjustment
+            ($/MWh); scaled per import tranche by its emission factor. 0 disables.
+
+    Returns:
+        The import tranches (cheapest first) followed by the single export sink.
+    """
+    iso = "CAISO"
+    zone = IMPORT_ZONE[iso]
+    base = IMPORT_TRANCHES.get(iso, [])
+    total = sum(cap for _, cap, _ in base) or 1.0
+    scale = CAISO_BIDIR_IMPORT_CAP_MW / total
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    gens: list[Generator] = []
+    for name, capacity, marginal_cost in base:
+        ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+        tranche_carbon = border_carbon_per_mwh * (ef / CARB_UNSPECIFIED_IMPORT_EF)
+        gens.append(
+            Generator(
+                unit_id=f"{zone}_{name}",
+                name=name,
+                zone=zone,
+                fuel_type="import",
+                pmax_mw=capacity * scale,
+                pmin_mw=0.0,
+                heat_rate=0.0,
+                vom=marginal_cost + tranche_carbon,
+                eford=IMPORT_EFORD.get(iso, 0.0),
+            )
+        )
+    # Single export leg sharing the same signed tie (negative-generation sink;
+    # see build_export_sinks for the sign convention). Priced at the hub (no CA
+    # carbon) by inject_caiso_bidir_intertie_prices.
+    gens.append(
+        Generator(
+            unit_id=f"{zone}_{_CAISO_BIDIR_EXPORT_NAME}",
+            name=_CAISO_BIDIR_EXPORT_NAME,
+            zone=zone,
+            fuel_type="import",
+            pmax_mw=0.0,
+            pmin_mw=-CAISO_BIDIR_EXPORT_CAP_MW,
+            heat_rate=0.0,
+            vom=0.0,
+            eford=0.0,
+        )
+    )
+    return gens
+
+
 # Unit-id markers tagging a reference-price seam pseudo-generator so the
 # post-assembly mc injector (:func:`inject_reference_price_mc`) can find each row
 # and map it back to its neighbor and flow tranche. The id is
@@ -485,6 +585,70 @@ def inject_caiso_export_hub_prices(
         name = uid[len(zone) + 1 :]
         if name in _CAISO_HUB_EXPORT_TRANCHES:
             mc[row, :] = hub_price
+            applied = True
+    return applied
+
+
+def inject_caiso_bidir_intertie_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+    carbon_price: float,
+) -> bool:
+    """Price the single signed WECC intertie at the measured hub (arbitrage-free).
+
+    The unified replacement for :func:`inject_caiso_import_hub_prices` +
+    :func:`inject_caiso_export_hub_prices`, paired with
+    :func:`build_caiso_bidir_intertie`. Both legs of the tie are repriced from
+    the SAME measured hub energy series (the MCE component of the CAISO intertie
+    LMP, :func:`market_sim.data.eia_loader.measured_import_hub_prices`):
+
+    * each import tranche row → ``hub + border_carbon × (EF / EF_unspecified)``
+      (the per-tranche CARB adder of
+      :data:`~market_sim.config.constants.IMPORT_TRANCHE_EF`), and
+    * the single export leg row → ``hub`` (exports owe no CA compliance cost).
+
+    Because the carbon adder is ≥ 0, *every* import leg is priced at or above the
+    export leg at every hour, so importing and exporting in the same hour can
+    never both reduce the objective: the LP carries one net direction per hour
+    over the shared cap (no MIP). The measured hub crashes in the spring PNW
+    runoff and goes negative in the desert-SW solar glut, so the tie reverses to
+    export midday — the diurnal interchange now tracks the measured sign instead
+    of anti-correlating with it.
+
+    Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
+    CAISO has no measured hub series for the year (e.g. 2023's OASIS-retention
+    gap), so the bidir tie keeps its static-ladder placeholder prices.
+    """
+    from market_sim.data.eia_loader import measured_import_hub_prices
+
+    prices = measured_import_hub_prices(iso, year, int(mc.shape[1]))
+    if not prices:
+        return False
+    zone = IMPORT_ZONE.get(iso)
+    if zone is None:
+        return False
+    # The MCE energy component is system-wide (identical at every WECC node);
+    # average for safety -> the single intertie energy price both legs share.
+    hub = np.mean(np.vstack(list(prices.values())), axis=0)
+    border = wecc_border_carbon_adder(carbon_price)
+    ef_map = IMPORT_TRANCHE_EF.get(iso, {})
+    import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
+    eps = CAISO_INTERTIE_TIEBREAK_EPS
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if not uid.startswith(f"{zone}_"):
+            continue
+        name = uid[len(zone) + 1 :]
+        if name == _CAISO_BIDIR_EXPORT_NAME:
+            # Export earns the hub (no CA carbon), less the ε tiebreaker so a
+            # gross round-trip is strictly cost-positive.
+            mc[row, :] = hub - eps
+            applied = True
+        elif name in import_names:
+            ef = ef_map.get(name, CARB_UNSPECIFIED_IMPORT_EF)
+            mc[row, :] = hub + border * (ef / CARB_UNSPECIFIED_IMPORT_EF) + eps
             applied = True
     return applied
 
@@ -768,6 +932,15 @@ def inject_interchange_shape(
     from market_sim.data.eia_loader import measured_interchange_envelope
     from market_sim.data.fleet import FUEL_TYPE_MAP
 
+    # The envelope percentile sets how tightly the measured diurnal interchange
+    # caps the priced node. Under the bidirectional intertie (gross == net), the
+    # net-import envelope IS the deliverable import, so the import cap can ride a
+    # higher percentile (fatter overnight tail) without re-admitting the midday
+    # imports the (near-zero) midday envelope already excludes. Overridable per
+    # direction for the bidir sweep; defaults to the passed ``percentile`` so the
+    # legacy export-only path is byte-identical.
+    import_pct = float(_os.environ.get("INTERCHANGE_SHAPE_IMPORT_PCT", percentile))
+    export_pct = float(_os.environ.get("INTERCHANGE_SHAPE_EXPORT_PCT", percentile))
     import_code = FUEL_TYPE_MAP["import"]
     is_node = fleet_arrays.fuel_type_idx == import_code
     imp_rows = np.flatnonzero(is_node & (fleet_arrays.pmax > 0.0))
@@ -778,10 +951,17 @@ def inject_interchange_shape(
         return False
 
     hours = int(fleet_arrays.availability.shape[1])
-    env = measured_interchange_envelope(iso, year, hours, percentile)
+    env = measured_interchange_envelope(iso, year, hours, import_pct)
     if env is None:
         return False
-    import_cap, export_cap = env
+    import_cap, _ = env
+    if export_pct == import_pct:
+        _, export_cap = env
+    else:
+        env_exp = measured_interchange_envelope(iso, year, hours, export_pct)
+        if env_exp is None:
+            return False
+        _, export_cap = env_exp
 
     if imp_rows.size and not export_only:
         import_total = float(fleet_arrays.pmax[imp_rows].sum())
