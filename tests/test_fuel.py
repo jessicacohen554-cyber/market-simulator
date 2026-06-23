@@ -1096,26 +1096,32 @@ def test_neiso_monthly_agt_basis_stays_below_distillate_parity():
 
 
 def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
-    """The daily overlay keeps the monthly mean but injects a cold-day spike.
+    """The daily overlay keeps the monthly mean but injects the real AGT spike.
 
     With ``gas_hub_basis_daily`` on, January's gas price is no longer the flat
-    monthly hub ($3.1762 HH + $10 basis = $13.1762) but a daily series whose mean
-    over the month still equals $13.1762 (so the annual gas burn is unchanged)
-    while the synthetic cold day (the demand peak) is repriced well above it —
-    the blowout a flat plateau can never produce. The basis redistribution is
-    convex in demand, so the peak day carries the spike.
+    monthly hub ($3.1762 HH + $10 basis = $13.1762) but a daily series anchored to
+    the real Algonquin Citygate daily spot prints (here synthetic: a cold-day
+    print of $25 on day 15) interpolated on their calendar days. Its mean over the
+    month still equals $13.1762 (so the annual gas burn is unchanged) while the
+    cold day carrying the high AGT print is repriced well above it — the blowout a
+    flat plateau can never produce. No demand/oil-tuned proxy is involved.
     """
     basis_csv = tmp_path / "basis.csv"
     basis_csv.write_text(
         "iso,year,month,hub,basis_usd_mmbtu,source\nNEISO,2024,1,AGT,10.0,test\n"
     )
     hours = 31 * 24  # January 2024 only
-    # Synthetic daily demand: flat with one cold-day peak on day 15.
-    demand = np.full(31, 12000.0)
-    demand[14] = 18000.0
+    # Flat monthly Henry Hub, no within-month HH shape (so the basis leg drives
+    # the daily structure): day_hh == hh_m everywhere.
     monkeypatch.setattr(
-        "market_sim.data.fuel._neiso_daily_demand",
-        lambda year, hrs: demand,
+        "market_sim.data.fuel._henry_hub_monthly", lambda path: {(2024, 1): 3.1762}
+    )
+    monkeypatch.setattr("market_sim.data.fuel._henry_hub_daily", lambda path: {})
+    # Real AGT prints: mild shoulders with one cold-day spike on day 15 (>=2 prints
+    # selects the real-AGT-print branch).
+    monkeypatch.setattr(
+        "market_sim.data.fuel._algonquin_daily",
+        lambda path: {2024: {1: {5: 11.0, 15: 25.0, 25: 11.0}}},
     )
     fleet = _sample_fleet(hours=hours)
     config = ScenarioConfig(
@@ -1140,20 +1146,75 @@ def test_hub_basis_daily_is_mean_preserving_and_spikes(tmp_path, monkeypatch):
     gas_jan = fuel_prices[gas_rows]  # (n_gas, 744)
     # Mean over the month is exactly the flat monthly hub (mean-preserving).
     np.testing.assert_allclose(gas_jan.mean(axis=1), 3.1762 + 10.0, rtol=1e-6)
-    # Daily resolution: the series is not flat, and the cold day (day 15)
-    # is repriced above the monthly mean.
+    # Daily resolution: the series is not flat, and the cold day (day 15, the high
+    # AGT print) is repriced above the monthly mean.
     daily = gas_jan[0].reshape(31, 24).mean(axis=1)
     assert daily.std() > 0.5
     assert daily[14] == daily.max()
     assert daily[14] > 13.1762
 
-    # Demand unavailable -> falls back to the flat monthly overlay.
-    monkeypatch.setattr(
-        "market_sim.data.fuel._neiso_daily_demand", lambda year, hrs: None
-    )
+    # No AGT prints and no Transco shape -> falls back to the flat monthly overlay.
+    monkeypatch.setattr("market_sim.data.fuel._algonquin_daily", lambda path: {})
+    monkeypatch.setattr("market_sim.data.fuel._transco_z6_daily", lambda path: {})
     flat = np.full((fleet.n_gen, hours), 4.0)
     apply_hub_basis_overlay(flat, fleet, config, 2024, basis_path=basis_csv)
     np.testing.assert_allclose(flat[gas_rows], 3.1762 + 10.0)
+
+
+def test_hub_basis_daily_transco_fallback_caps_at_agt_ceiling(tmp_path, monkeypatch):
+    """A sparse-print month borrows the Transco shape but caps at AGT's ceiling.
+
+    When a covered month has <2 real AGT prints it borrows the measured Transco
+    Z6 NY daily-basis within-month shape. On the most extreme days NY is more
+    pipeline-constrained than Boston (Transco hit $97.9 in the Jan-2025 vortex
+    while AGT spot never exceeds ~$30), so the borrowed basis is capped at AGT's
+    own measured price ceiling — before the mean-preserving shift, so the monthly
+    mean stays exact. Here the ceiling is $28 (a print in another month) and a
+    synthetic $50 Transco spike must not propagate to a $50 AGT day.
+    """
+    basis_csv = tmp_path / "basis.csv"
+    basis_csv.write_text(
+        "iso,year,month,hub,basis_usd_mmbtu,source\nNEISO,2024,1,AGT,5.0,test\n"
+    )
+    hours = 31 * 24
+    monkeypatch.setattr(
+        "market_sim.data.fuel._henry_hub_monthly", lambda path: {(2024, 1): 3.0}
+    )
+    monkeypatch.setattr("market_sim.data.fuel._henry_hub_daily", lambda path: {})
+    # One print this month (<2 -> Transco branch); a $28 print elsewhere sets the
+    # dataset-wide AGT price ceiling.
+    monkeypatch.setattr(
+        "market_sim.data.fuel._algonquin_daily",
+        lambda path: {2024: {1: {10: 8.0}}, 2023: {2: {2: 28.0}}},
+    )
+    spike = [2.0] * 31
+    spike[14] = 50.0  # extreme Transco day, far above AGT's ceiling
+    monkeypatch.setattr(
+        "market_sim.data.fuel._transco_z6_daily", lambda path: {2024: {1: spike}}
+    )
+    fleet = _sample_fleet(hours=hours)
+    config = ScenarioConfig(
+        iso="NEISO",
+        mode="backcast",
+        weather_year=2024,
+        gas_seasonality=False,
+        hours=hours,
+        gas_hub_basis_overlay=True,
+        gas_hub_basis_daily=True,
+    )
+    fuel_prices = np.full((fleet.n_gen, hours), 4.0)
+    apply_hub_basis_overlay(fuel_prices, fleet, config, 2024, basis_path=basis_csv)
+    gas_rows = np.isin(
+        fleet.fuel_type_idx, (FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"])
+    )
+    gas_jan = fuel_prices[gas_rows]
+    # Mean-preserving even with the cap (cap applied before the shift).
+    np.testing.assert_allclose(gas_jan.mean(axis=1), 3.0 + 5.0, rtol=1e-6)
+    daily = gas_jan[0].reshape(31, 24).mean(axis=1)
+    # The $50 Transco spike is capped near AGT's $28 ceiling (+ the mean shift),
+    # nowhere near the uncapped ~$53 it would otherwise hit.
+    assert daily[14] == daily.max()
+    assert daily.max() < 35.0
 
 
 def test_nyiso_hub_basis_daily_uses_real_transco_shape(tmp_path, monkeypatch):
