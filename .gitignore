@@ -88,6 +88,12 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/calibration/ctfloor_probe_*/
 /results/calibration/ctfloor_baseline_*/
 /results/calibration/ctfloor_3yr/
+# PJM coal rebuild step 3 (SRMC sync tranche + subbit sigmoid tune) scratch:
+# per-year solve dirs (merged into pjm_47_sync_srmc) and curve-calibration
+# probes. Regenerable from scripts/probes/_pjm_sync_srmc_run.py; only the merged
+# keeper bundle's slim files + dashboard sidecars are committed.
+/results/calibration/pjm_47_sync_srmc_20*/
+/results/calibration/pjm_47_cal_*/
 /results/calibration/logs/
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
