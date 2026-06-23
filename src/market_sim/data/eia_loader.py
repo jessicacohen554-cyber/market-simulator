@@ -681,12 +681,15 @@ def measured_import_hub_prices(
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
-    Reads the measured WECC intertie scheduling-point LMP energy component
+    Reads the measured WECC intertie scheduling-point LMP
     (``wecc_intertie_lmp_hourly_<ISO>.parquet`` under the calibration source
     dir: columns ``year``, ``hour`` [0..hours-1, local calendar], ``hub``
-    [``MALIN`` / ``PALOVRDE``], ``price`` [$/MWh, the energy/MCE component of the
-    CAISO intertie LMP]) and maps each hub to the import tranches it prices via
-    :data:`_CAISO_IMPORT_TRANCHE_HUB`.
+    [``MALIN`` / ``PALOVRDE``], ``price`` [$/MWh, the delivered nodal LMP =
+    energy + congestion + loss (MCE+MCC+MCL) of the CAISO intertie LMP, GHG
+    component excluded]) and maps each hub to the import tranches it prices via
+    :data:`_CAISO_IMPORT_TRANCHE_HUB`. The congestion/loss components are what
+    make MALIN (PNW) and PALOVRDE (desert-SW) differ (the energy component alone
+    is system-wide identical at every WECC node).
 
     These are the *actual delivered energy cost of the imported power* — the
     neighbor hub's own marginal price at the CA border, which crashes in the
@@ -695,9 +698,10 @@ def measured_import_hub_prices(
     negative-price hours). They replace the static, bundle-fitted ladder in
     ``IMPORT_TRANCHES["CAISO"]`` when ``config.caiso_import_hub_prices`` is on;
     see :func:`market_sim.model.transmission.inject_caiso_import_hub_prices`.
-    The price is the energy component only; the per-tranche CARB border carbon is
-    re-added by the injector (so a clean hydro/solar tranche still pays none),
-    matching the static-ladder carbon treatment.
+    The price is the delivered nodal LMP (energy+congestion+loss, GHG excluded);
+    the per-tranche CARB border carbon is re-added by the injector (so a clean
+    hydro/solar tranche still pays none), matching the static-ladder carbon
+    treatment.
 
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is

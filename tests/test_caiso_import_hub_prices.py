@@ -117,24 +117,22 @@ class TestInjectCaisoImportHubPrices(unittest.TestCase):
         )
         from market_sim.model.transmission import wecc_border_carbon_adder
 
-        # The injector delivers each hub MCE to the CAISO border: a line-loss
-        # markup (fraction of the energy price) plus an OATT wheeling charge.
+        # The injector delivers each measured nodal hub price to the CAISO
+        # border by adding ONLY the OATT wheeling charge — the modeled line-loss
+        # markup is dropped because the hub price is now the full nodal LMP whose
+        # MCL component already carries the measured loss (see the injector). The
         # border adder at carbon 35.23 would be 0.428*35.23 ~ 15.08, but the
         # injector recomputes it; assert the clean blocks pay none.
         row_by_uid = {uid: r for r, uid in enumerate(fa.unit_ids)}
-        # PNW_hydro_base: EF 0 -> delivered price only, no carbon
-        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["PNW_hydro_base"]
+        # PNW_hydro_base: EF 0 -> hub price + wheel only, no carbon, no loss markup
+        _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["PNW_hydro_base"]
         r = row_by_uid[f"{zone}_PNW_hydro_base"]
-        self.assertAlmostEqual(mc[r, 0], 18.0 * (1.0 + loss) + wheel, places=3)
-        # DSW_CCGT: EF 0.37 -> delivered price + 0.37/0.428 * border
+        self.assertAlmostEqual(mc[r, 0], 18.0 + wheel, places=3)
+        # DSW_CCGT: EF 0.37 -> hub price + wheel + 0.37/0.428 * border
         r = row_by_uid[f"{zone}_DSW_CCGT"]
         border = wecc_border_carbon_adder(35.23)
-        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["DSW_CCGT"]
-        expected = (
-            40.0 * (1.0 + loss)
-            + wheel
-            + border * (ef["DSW_CCGT"] / CARB_UNSPECIFIED_IMPORT_EF)
-        )
+        _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS["DSW_CCGT"]
+        expected = 40.0 + wheel + border * (ef["DSW_CCGT"] / CARB_UNSPECIFIED_IMPORT_EF)
         self.assertAlmostEqual(mc[r, 0], expected, places=3)
         # A tranche with no measured series (DSW_CT) keeps its ladder mc (99).
         r = row_by_uid[f"{zone}_DSW_CT"]
