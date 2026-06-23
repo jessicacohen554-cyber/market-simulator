@@ -4,8 +4,9 @@ Three modes, one per ISO with a per-zone load upload:
 
 ``ercot``
     Reads the ERCOT "Actual System Load by Weather Zone" (NP6-345-CD) daily
-    CSV archives under ``data/reference/`` and aggregates the 8 ERCOT weather
-    zones onto the model's 6 transmission zones.
+    CSV archives under ``data/raw/reference/`` and aggregates the 8 ERCOT
+    weather zones onto the model's 7 transmission zones (EAST → Northeast,
+    matching ``eia_loader._ERCOT_LOAD_ZONE_GROUPS``).
 
 ``caiso``
     Reads the CAISO TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
@@ -58,26 +59,33 @@ from market_sim.data.eia_loader import (  # noqa: E402
     _NYISO_LOAD_ZONE_GROUPS,
 )
 
-REF = REPO / "data" / "reference"
-CAISO_TAC_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "CAISO"
-NYISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NYISO"
-NEISO_DIR = REPO / "inputs" / "raw-data" / "zone-specific-demand" / "NEISO"
+REF = REPO / "data" / "raw" / "reference"
+CAISO_TAC_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "CAISO"
+NYISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NYISO"
+NEISO_DIR = REPO / "data" / "raw" / "zone-specific-demand" / "NEISO"
 
 WZ = ["COAST", "EAST", "FAR_WEST", "NORTH", "NORTH_C", "SOUTHERN", "SOUTH_C", "WEST"]
 
-# ERCOT weather zone -> model transmission zone. ERCOT has no Panhandle
-# weather zone, so the Panhandle transmission zone receives no load here.
+# ERCOT weather zone -> model transmission zone. Mirrors the live mapping in
+# eia_loader._ERCOT_LOAD_ZONE_GROUPS (the NP6-345 archive column names differ
+# from the eia_loader keys: FAR_WEST==FWEST, NORTH_C==NCENT, SOUTH_C==SCENT,
+# SOUTHERN==SOUTH). The EAST weather zone is carved out as its own Northeast
+# model zone (behind the NE_LOB export limit), not folded into North. ERCOT has
+# no Panhandle weather zone, so the Panhandle transmission zone receives no load
+# here (its share stays 0.0). FAR_WEST stays folded into West: the Far_West
+# (Permian) split was investigated and rejected, so the committed topology keeps
+# FAR_WEST in West (see docs/ercot-far-west-zone-split-2026-06.md).
 WZ_TO_ZONE = {
     "COAST": "Houston",
     "NORTH_C": "North",
-    "EAST": "North",
+    "EAST": "Northeast",
     "NORTH": "North",
     "SOUTH_C": "South_Central",
     "SOUTHERN": "South",
     "FAR_WEST": "West",
     "WEST": "West",
 }
-ZONES = ["West", "Panhandle", "North", "Houston", "South_Central", "South"]
+ZONES = ["West", "Panhandle", "North", "Northeast", "Houston", "South_Central", "South"]
 
 CAISO_ZONES = ["NP15", "ZP26", "SP15"]
 
