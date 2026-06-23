@@ -628,6 +628,14 @@ def _calibration_config(
             if os.environ.get("ERCOT_WEST_GAS_COLLAPSE_FREQ")
             else None
         ),
+        # Burner-tip delivered floor for the collapse regime (kills the cheap-hour
+        # magnet that pulls low-HR West CTs into low-demand hours). Physical
+        # transport-bound input; default off keeps the generic gas floor.
+        ercot_west_gas_delivered_floor=(
+            float(os.environ["ERCOT_WEST_GAS_DELIVERED_FLOOR"])
+            if os.environ.get("ERCOT_WEST_GAS_DELIVERED_FLOOR")
+            else None
+        ),
         # Daily Henry Hub within-month shape on top of the measured monthly
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is

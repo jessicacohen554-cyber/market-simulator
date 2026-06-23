@@ -1737,7 +1737,19 @@ def apply_ercot_west_netload_gas_shape(
     if not hh_year:
         return
     hh_mean = float(np.mean(hh_year))
-    firm_price = max(hh_mean + firm_basis, _GAS_PRICE_FLOOR)
+
+    # Burner-tip delivered floor for the COLLAPSE regime. The hub goes to ~$0 (and
+    # negative) on over-supply days, but a power plant's *delivered* gas never does:
+    # intrastate transport + as-burned handling set a positive floor well above the
+    # hub. Flooring the deep regime at the generic _GAS_PRICE_FLOOR (~$0.10, a
+    # hub-like number) creates a perverse "cheap-hour magnet" that pulls low-HR West
+    # CTs into the lowest-demand hours (dispatch anti-correlated with load) — the
+    # delivered burner tip must floor at the transport-bound minimum instead. Config
+    # ercot_west_gas_delivered_floor (env ERCOT_WEST_GAS_DELIVERED_FLOOR); None keeps
+    # the generic floor (legacy behaviour).
+    deliv_floor = getattr(config, "ercot_west_gas_delivered_floor", None)
+    deliv_floor = float(deliv_floor) if deliv_floor is not None else _GAS_PRICE_FLOOR
+    firm_price = max(hh_mean + firm_basis, deliv_floor)
 
     # Split the net-load distribution: the lowest collapse_freq fraction of hours
     # COLLAPSE, the top (1 - collapse_freq) are FIRM. nl_split is the collapse_freq
@@ -1750,12 +1762,12 @@ def apply_ercot_west_netload_gas_shape(
         return  # degenerate net-load distribution; leave the flat basis in place
 
     # Deep collapsed price per unit, forced by the annual-mean constraint
-    # cfrac*deep + ffrac*firm = p_mean, then floored (the burner tip never goes
-    # negative even when the hub does — the floor lift is the realised premium of
-    # delivered over hub).
+    # cfrac*deep + ffrac*firm = p_mean, then floored at the delivered burner-tip
+    # minimum (the burner tip never reaches the hub's negative collapse — the floor
+    # lift is the realised premium of delivered over hub).
     p_mean = fuel_prices[west_rows, :].mean(axis=1)  # (n_west,)
     deep_price = (p_mean - ffrac * firm_price) / cfrac  # (n_west,)
-    deep_price = np.maximum(deep_price, _GAS_PRICE_FLOOR)
+    deep_price = np.maximum(deep_price, deliv_floor)
     shaped = np.where(
         collapse_mask[np.newaxis, :], deep_price[:, np.newaxis], firm_price
     )
@@ -1764,8 +1776,8 @@ def apply_ercot_west_netload_gas_shape(
     logger.info(
         "ERCOT West net-load gas step (%d): %d West/Panhandle gas units; "
         "collapse_freq %.2f (split nl %.0f MW); firm basis %+.2f -> firm $%.2f, "
-        "deep $%.2f..$%.2f; annual gas $%.2f -> $%.2f (floor-lifted from the "
-        "negative hub tail)",
+        "deep $%.2f..$%.2f (deliv floor $%.2f); annual gas $%.2f -> $%.2f "
+        "(floor-lifted from the negative hub tail)",
         year,
         west_rows.size,
         cfrac,
@@ -1774,6 +1786,7 @@ def apply_ercot_west_netload_gas_shape(
         firm_price,
         float(deep_price.min()),
         float(deep_price.max()),
+        deliv_floor,
         float(p_mean.mean()),
         float(realised_mean),
     )
