@@ -1,7 +1,8 @@
 """Offline tests for the CAISO intertie-LMP -> local-8760 conversion.
 
 The OASIS fetch is network-only; this exercises the GMT->Pacific hour mapping and
-the MCE energy-component extraction that feed
+the delivered-nodal-LMP extraction (sum of the MCE energy + MCC congestion + MCL
+loss components, GHG excluded) that feeds
 ``wecc_intertie_lmp_hourly_CAISO.parquet`` (consumed by
 ``eia_loader.measured_import_hub_prices``).
 """
@@ -45,37 +46,51 @@ class TestHourIndex(unittest.TestCase):
         self.assertEqual(h, 8759)
 
 
-class TestToHourlyEnergy(unittest.TestCase):
-    def test_extracts_mce_on_calendar(self):
-        # Two Pacific-midnight hours (Jan 1 and Jan 2) with known MCE values.
-        df = pd.DataFrame(
-            {
-                "interval_start_gmt": [
-                    "2024-01-01 08:00:00+00:00",
-                    "2024-01-02 08:00:00+00:00",
-                ],
-                "MCE": [21.5, -8.0],  # energy component; can be negative (solar glut)
-                "LMP": [35.0, 4.0],
-            }
+def _long_rows(ts: str, comps: dict[str, float]) -> list[dict]:
+    """Build OASIS-style long-format rows (one per LMP_TYPE) for one interval."""
+    return [
+        {"INTERVALSTARTTIME_GMT": ts, "LMP_TYPE": t, "MW": v} for t, v in comps.items()
+    ]
+
+
+class TestToHourlyNodalLmp(unittest.TestCase):
+    def test_sums_energy_congestion_loss_excludes_ghg(self):
+        # Two Pacific-midnight hours (Jan 1 and Jan 2). The delivered nodal price
+        # is MCE+MCC+MCL; MGHG and the redundant LMP total row are ignored.
+        rows = []
+        # hour 0: 21.5 + (-2.0) + 0.5 = 20.0; MGHG 3.0 must NOT be added.
+        rows += _long_rows(
+            "2024-01-01 08:00:00+00:00",
+            {"MCE": 21.5, "MCC": -2.0, "MCL": 0.5, "MGHG": 3.0, "LMP": 23.0},
         )
-        out = fil._to_hourly_energy(df, 2024)
+        # hour 24: -8.0 + 1.0 + (-1.0) = -8.0 (can go negative in the solar glut).
+        rows += _long_rows(
+            "2024-01-02 08:00:00+00:00",
+            {"MCE": -8.0, "MCC": 1.0, "MCL": -1.0, "MGHG": 0.0, "LMP": -8.0},
+        )
+        out = fil._to_hourly_nodal_lmp(pd.DataFrame(rows), 2024)
         self.assertEqual(out.shape, (8760,))
-        self.assertAlmostEqual(out[0], 21.5)
+        self.assertAlmostEqual(out[0], 20.0)
         self.assertAlmostEqual(out[24], -8.0)
         self.assertTrue(np.isnan(out[12]))  # unfilled hour stays NaN
 
-    def test_missing_mce_column_returns_none(self):
+    def test_missing_energy_component_returns_none(self):
+        # No MCE row anywhere -> unusable -> None (year falls back to the ladder).
         df = pd.DataFrame(
-            {"interval_start_gmt": ["2024-01-01 08:00:00+00:00"], "LMP": [35.0]}
+            _long_rows("2024-01-01 08:00:00+00:00", {"MGHG": 3.0, "LMP": 35.0})
         )
-        self.assertIsNone(fil._to_hourly_energy(df, 2024))
+        self.assertIsNone(fil._to_hourly_nodal_lmp(df, 2024))
+
+    def test_unrecognized_schema_returns_none(self):
+        df = pd.DataFrame({"foo": [1], "bar": [2]})
+        self.assertIsNone(fil._to_hourly_nodal_lmp(df, 2024))
 
     def test_output_columns_match_loader_schema(self):
         # The parquet the loader reads is (year, hour, hub, price); a record built
-        # from _to_hourly_energy must carry exactly those keys.
-        out = fil._to_hourly_energy(
+        # from the hourly series must carry exactly those keys.
+        out = fil._to_hourly_nodal_lmp(
             pd.DataFrame(
-                {"interval_start_gmt": ["2024-01-01 08:00:00+00:00"], "MCE": [10.0]}
+                _long_rows("2024-01-01 08:00:00+00:00", {"MCE": 10.0, "MCC": 1.0})
             ),
             2024,
         )
@@ -86,6 +101,7 @@ class TestToHourlyEnergy(unittest.TestCase):
             "price": round(float(out[0]), 4),
         }
         self.assertEqual(set(rec), {"year", "hour", "hub", "price"})
+        self.assertAlmostEqual(out[0], 11.0)  # MCE + MCC, no loss row present
 
 
 class TestNodeMap(unittest.TestCase):

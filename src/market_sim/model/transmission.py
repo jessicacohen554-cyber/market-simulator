@@ -539,19 +539,23 @@ def inject_caiso_import_hub_prices(
     desert-SW solar glut), which both lowers the body and reproduces the negative
     midday tail. The per-tranche border carbon is re-added here (clean
     hydro/solar tranches pay none) so the carbon treatment matches the static
-    ladder; the measured ``price`` is the energy (MCE) component only.
+    ladder; the measured ``price`` is the delivered nodal LMP (energy +
+    congestion + loss = MCE+MCC+MCL), the GHG component excluded so the border
+    carbon is not double-counted.
 
-    Delivered-cost basis: the measured hub price is the energy component *at the
-    neighbor hub*, so each tranche is delivered to the CAISO border by adding its
-    physical :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS` —
-    a transmission line-loss markup (a fraction of the energy price) plus the
-    OATT point-to-point wheeling charge. This restores the rising delivered
-    merit order the flat MCE collapses (the body over-imported because every
-    non-gas block cleared at the same ~$38 hub energy price); it is a
-    reproducible physical input, not a residual-fitted offset (rule #12). The
-    gas blocks (``DSW_CCGT`` / ``DSW_CT``) carry the basis here but are then
-    overwritten off measured gas by :func:`inject_caiso_import_gas_coupling`, so
-    the basis mainly shapes the non-gas blocks.
+    Per-hub basis: the measured hub price is now the FULL nodal LMP *at the
+    neighbor scheduling point* — the congestion (MCC) and loss (MCL) components
+    make MALIN (PNW/Mid-C) and PALOVRDE (desert-SW) diverge, so the PNW and
+    desert-SW tranches no longer clear at the same flat ~$38 system energy price
+    (the gap behind DIAGNOSIS-caiso-body-overprice-2026-06-21). Delivered-cost
+    basis: because the nodal MCL already carries the real loss, only the OATT
+    point-to-point wheeling charge of
+    :data:`~market_sim.config.constants.CAISO_IMPORT_DELIVERY_BASIS` is added
+    (the modeled multiplicative line-loss markup is dropped to avoid
+    double-counting — rules #11/#12). The gas blocks (``DSW_CCGT`` / ``DSW_CT``)
+    carry the wheel here but are then overwritten off measured gas by
+    :func:`inject_caiso_import_gas_coupling`, so the basis mainly shapes the
+    non-gas blocks.
 
     Returns ``True`` when at least one import tranche row was repriced, ``False``
     when CAISO has no measured hub series (so the run keeps the static ladder and
@@ -572,13 +576,18 @@ def inject_caiso_import_hub_prices(
         hub_price = prices.get(tranche)
         if hub_price is None:
             continue  # tranche with no measured hub series stays on the ladder
-        # Physical delivered-cost basis over the hub MCE: a line-loss markup
-        # (scales with the energy price) plus the OATT point-to-point wheeling
-        # charge a marketer pays to deliver to the CAISO border. Restores the
-        # rising delivered-import merit order the flat MCE collapses; a
-        # reproducible physical input, not a residual-fitted offset (rule #12).
-        loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(tranche, (0.0, 0.0))
-        delivered = hub_price * (1.0 + loss) + wheel
+        # Delivered-cost basis over the measured nodal hub price. The hub series
+        # is now the FULL nodal LMP (energy + congestion + loss = MCE+MCC+MCL;
+        # see fetch_caiso_intertie_lmp.py), so the measured MCL already carries
+        # the real marginal loss at the scheduling point. We therefore DROP the
+        # modeled multiplicative line-loss markup (it would double-count the loss
+        # the nodal price now measures) and add only the OATT point-to-point
+        # wheeling charge — a separate commercial charge the intervening BAA(s)
+        # levy that is NOT part of CAISO's nodal LMP. rules #11/#12: prefer the
+        # measured loss, ground the change (a representation reconciliation), not
+        # a residual-fitted offset.
+        _loss, wheel = CAISO_IMPORT_DELIVERY_BASIS.get(tranche, (0.0, 0.0))
+        delivered = hub_price + wheel
         ef = IMPORT_TRANCHE_EF.get(iso, {}).get(tranche, CARB_UNSPECIFIED_IMPORT_EF)
         mc[row, :] = delivered + border * (ef / CARB_UNSPECIFIED_IMPORT_EF)
         applied = True
@@ -625,8 +634,10 @@ def inject_caiso_export_hub_prices(
     zone = IMPORT_ZONE.get(iso)
     if zone is None:
         return False
-    # The MCE energy component is system-wide (identical at every WECC node), so
-    # any tranche's measured series is the hub energy price; average for safety.
+    # The export sink sells into a single blended WECC neighbor, so average the
+    # per-hub nodal series (MALIN/PALOVRDE) into one willingness-to-pay. (The
+    # per-tranche import path keeps them separate; the single export leg does not
+    # distinguish which neighbor buys.)
     hub_price = np.mean(np.vstack(list(prices.values())), axis=0)
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
@@ -691,8 +702,9 @@ def inject_caiso_bidir_intertie_prices(
     zone = IMPORT_ZONE.get(iso)
     if zone is None:
         return False
-    # The MCE energy component is system-wide (identical at every WECC node);
-    # average for safety -> the single intertie energy price both legs share.
+    # The bidir tie is a SINGLE signed node, so collapse the per-hub nodal series
+    # (MALIN/PALOVRDE) into one price both legs share. (The per-tranche import
+    # path keeps the hubs separate; the single tie cannot.)
     hub = np.mean(np.vstack(list(prices.values())), axis=0)
     border = wecc_border_carbon_adder(carbon_price)
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
