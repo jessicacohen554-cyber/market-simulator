@@ -70,6 +70,7 @@ from market_sim.data.fleet import (  # noqa: E402
     assemble_mc,
     bins_to_fleet,
     campd_tranche_fuel_frac,
+    coal_takeorpay_share,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
@@ -165,6 +166,31 @@ _TTC_LINK_ZONES: dict[str, frozenset[str]] = {
     "ttc_wsc": frozenset({"West", "South_Central"}),
     "ttc_pn": frozenset({"Panhandle", "North"}),
 }
+
+
+def _takeorpay_by_plant(fleet, config) -> dict[int, float] | None:
+    """Return ``{plant_code: contract_share}`` for coal plants, or ``None``.
+
+    ``None`` (the default) leaves ``campd_tranche_fuel_frac`` on its hardcoded
+    100%-sunk must-run behaviour. When ``config.coal_takeorpay_from_data`` is
+    set, build the measured EIA-923 Schedule-5 take-or-pay share
+    (:func:`fleet.coal_takeorpay_share`) for every coal plant in the fleet that
+    has a classifiable Purchase Type; plants without one are omitted and keep
+    the default treatment.
+    """
+    if not getattr(config, "coal_takeorpay_from_data", False):
+        return None
+    out: dict[int, float] = {}
+    for g in fleet:
+        if g.fuel_type != "coal":
+            continue
+        code = int(g.plant_code)
+        if code in out:
+            continue
+        share = coal_takeorpay_share(code)
+        if share is not None:
+            out[code] = share
+    return out
 
 
 def _load_reference() -> dict:
@@ -1421,6 +1447,10 @@ def run_year(
         # the merit order instead of being priced out by cheap gas.
         # apply_coal_tranches applies the discounts/markups.
         pt_by_supply = coal_passthrough_by_supply(config, year, config.hours)
+        # Measured take-or-pay (contract) share per coal plant: when on, the
+        # coal must-run tranche's sunk fraction is the EIA-923 Schedule-5
+        # Purchase Type share instead of the hardcoded 100% (campd_tranche_fuel_frac).
+        takeorpay = _takeorpay_by_plant(fleet, config)
         if config.coal_prb_passthrough_sigmoid and config.coal_prb_passthrough_tiered:
             # Tiered PRB (ERCOT): low-must-run "prb" load-followers swap
             # the baseload prb curve for the follower-tier one. The tier
@@ -1440,9 +1470,13 @@ def run_year(
                     return foll
                 return pt_by_supply
 
-            fuel_fracs = [campd_tranche_fuel_frac(g, _pt_for(g)) for g in fleet]
+            fuel_fracs = [
+                campd_tranche_fuel_frac(g, _pt_for(g), takeorpay) for g in fleet
+            ]
         else:
-            fuel_fracs = [campd_tranche_fuel_frac(g, pt_by_supply) for g in fleet]
+            fuel_fracs = [
+                campd_tranche_fuel_frac(g, pt_by_supply, takeorpay) for g in fleet
+            ]
     else:
         # Per-plant calibration fleet (plant_level_fleet) keeps each EIA-860
         # unit as its own LP column so plant_code / plant_group / state carry
