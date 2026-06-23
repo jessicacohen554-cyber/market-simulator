@@ -74,9 +74,14 @@ plant-net-generation total (129.67 TWh). The non-gas classes all match EIA-923,
 so the −5.9 TWh total gap **must** fall on the swing fuel: gas lands at −9.9%.
 
 This gap is **not** closable by any honest dispatch knob:
-- **td_loss gross-up** is ruled out — EIA-930 demand is transmission-metered
-  (generation-side; playbook §8.1), so distribution losses sit below the meter
-  and a gross-up would double-count (the ERCOT `td_loss_factor = 0` convention).
+- **td_loss gross-up** is ruled out — and now **Gold-Book-confirmed** (2026-06,
+  `docs/nyiso-td-loss-resolution-2026-06.md`): NYISO Gold Book Table I-2 (NYCA
+  Annual Energy, Note 1 "include transmission & distribution losses") reports
+  actual 2023 energy = **147,050 GWh = the EIA-930 demand the model serves**, so
+  the served demand is *already* the loss-inclusive net-energy-for-load. A
+  `td_loss_factor > 0` gross-up adds the losses a second time (double-count;
+  rules #11/#12). The reopened gas-total task confirmed this with a 3-year
+  baseline and was closed without a code change.
 - **import scaling** would lift gas (serving e.g. −20 TWh, inside the ±15%
   interchange tolerance, lifts the total to ~127 and gas to ~−4%), but the
   measured EIA-930 interchange is matched **exactly** (duration RMSE 0 MW,
