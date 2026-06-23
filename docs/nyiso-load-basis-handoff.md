@@ -1,5 +1,17 @@
 NYISO load / demand-basis fix — session handoff (the gas-TOTAL deficit)
 
+>>> RESOLVED 2026-06-23 — td_loss STAYS 0; the premise below is REFUTED. <<<
+>>> The NYISO Gold Book Table I-2 actual NYCA Annual Energy (Note 1: includes
+>>> T&D losses) = 147,050 GWh (2023) = the EIA-930 demand the model already
+>>> serves, so the demand is ALREADY loss-inclusive and a td_loss gross-up would
+>>> double-count (rules #11/#12). The handoff's "~6 TWh / 4.5%" mistakenly
+>>> compared to FULL EIA-923 (129.7, incl. BTM CHP) instead of the grid-
+>>> delivered 125.0 the dashboard scores. The residual gas deficit is the
+>>> EIA-923/EIA-930 benchmark-basis reconciliation (1-3%/yr, not a dispatch
+>>> error) plus zero-sum import-node economics. No model change.
+>>> FULL WRITE-UP + 3-year baseline: docs/nyiso-td-loss-resolution-2026-06.md.
+>>> Do NOT reopen the td_loss decision without new evidence against that doc.
+
 CONTEXT
 LP-based electricity-market dispatch simulator. READ CLAUDE.md FIRST — esp. rule
 #1 (right STRUCTURE first; never judge a real mechanism by the fit; NO fitted
