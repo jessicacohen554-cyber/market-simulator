@@ -138,6 +138,14 @@ def _ercot_config() -> ISOConfig:
     # North <- NORTH_C + NORTH; Northeast <- EAST; Houston <- COAST;
     # South_Central <- SOUTH_C; South <- SOUTHERN.
     #
+    # North/Northeast re-derived 2026-06 from a clean one-pass EAST->Northeast
+    # aggregation in scripts/derive_load_shares.py (North 0.3081->0.3064,
+    # Northeast 0.0335->0.0351). The prior values predated the consistent
+    # EAST-carve-out; every other zone already matched the script exactly. The
+    # unrounded vector sums to 1.0; rounding to 4 dp leaves a 0.0001 residual
+    # absorbed into South (true 0.079948 -> 0.0800, largest-remainder) so the
+    # literals still sum to exactly 1.0. Fallback-only, so this is low-risk.
+    #
     # Northeast is split out of the old North zone to capture the NE_LOB generic
     # transmission constraint -- a ~1,300 MW export limit (binds 17.4% of SCED
     # intervals, 2023-24) on a generation-rich lobe of NE Texas (the EAST weather
@@ -149,11 +157,11 @@ def _ercot_config() -> ISOConfig:
     zones = [
         Zone(name="West", iso="ERCOT", load_share=0.1494),
         Zone(name="Panhandle", iso="ERCOT", load_share=0.0),
-        Zone(name="North", iso="ERCOT", load_share=0.3081),
-        Zone(name="Northeast", iso="ERCOT", load_share=0.0335),
+        Zone(name="North", iso="ERCOT", load_share=0.3064),
+        Zone(name="Northeast", iso="ERCOT", load_share=0.0351),
         Zone(name="Houston", iso="ERCOT", load_share=0.2649),
         Zone(name="South_Central", iso="ERCOT", load_share=0.1642),
-        Zone(name="South", iso="ERCOT", load_share=0.0799),
+        Zone(name="South", iso="ERCOT", load_share=0.0800),
     ]
     # ERCOT zonal transfer capabilities at the major congestion interfaces.
     # Data-first (see claude.md): use the measured GTC limits from the full
