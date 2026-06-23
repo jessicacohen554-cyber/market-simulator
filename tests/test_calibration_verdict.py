@@ -159,6 +159,74 @@ class PriceAndDispatchTests(unittest.TestCase):
         r = cv.score_price_tail(2024, ypay, "ERCOT")
         self.assertEqual(r["status"], cv.FAIL)
 
+    def test_tail_within_band_passes(self):
+        # model 130h vs actual 100h = 1.30x, inside [0.5x, 2x] -> PASS.
+        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 130}}}
+        r = cv.score_price_tail(2024, ypay, "NEISO")
+        self.assertEqual(r["status"], cv.PASS)
+        # NEISO tail is the >$300 proxy (rubric §5), surfaced in the metric label.
+        self.assertIn("300", r["metric"])
+
+    def test_tail_over_fired_fails(self):
+        # model 250h vs actual 100h = 2.5x, above 2x ceiling -> FAIL.
+        ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 250}}}
+        r = cv.score_price_tail(2024, ypay, "PJM")
+        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["classification"], cv.MODEL_MISS)
+
+    def test_tail_quiet_actual_passes_when_model_quiet(self):
+        # Actual ~0 scarcity hours: a quiet model tail can't be over/under-shot.
+        ypay = {"ordc": {"hoursGt200": {"actual": 0, "model": 3}}}
+        r = cv.score_price_tail(2024, ypay, "NEISO")
+        self.assertEqual(r["status"], cv.PASS)
+
+    def test_tail_invented_against_quiet_actual_fails(self):
+        # Actual ~0 but the model invents a large tail -> FAIL (token guard).
+        ypay = {"ordc": {"hoursGt200": {"actual": 0, "model": 200}}}
+        r = cv.score_price_tail(2024, ypay, "NEISO")
+        self.assertEqual(r["status"], cv.FAIL)
+
+
+class StorageTests(unittest.TestCase):
+    def test_skipped_without_series(self):
+        # No model and no actual throughput committed -> SKIPPED, never a pass.
+        r = cv.score_storage(2024, {}, {})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_skipped_when_only_model_present(self):
+        # Model emitted but the BA reports no storage breakout (NEISO 2023):
+        # actual absent -> SKIPPED, not scored against a missing actual.
+        r = cv.score_storage(2023, {"storage": {"throughput_twh": 0.34}}, {})
+        self.assertEqual(r["status"], cv.SKIPPED)
+
+    def test_within_band_passes(self):
+        # model 1.15 vs actual 1.0 = +15%, inside +/-30% -> PASS.
+        r = cv.score_storage(
+            2024,
+            {"storage": {"throughput_twh": 1.15}},
+            {"storage": {"throughput_twh": 1.0}},
+        )
+        self.assertEqual(r["status"], cv.PASS)
+
+    def test_over_cycling_fails(self):
+        # model 0.46 vs actual 0.31 = +47% -> FAIL (MODEL MISS, needs an adder).
+        r = cv.score_storage(
+            2024,
+            {"storage": {"throughput_twh": 0.46}},
+            {"storage": {"throughput_twh": 0.31}},
+        )
+        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["classification"], cv.MODEL_MISS)
+
+    def test_under_cycling_fails(self):
+        # model 0.56 vs actual 2.08 = -73% -> FAIL (model under-cycles PS).
+        r = cv.score_storage(
+            2025,
+            {"storage": {"throughput_twh": 0.56}},
+            {"storage": {"throughput_twh": 2.08}},
+        )
+        self.assertEqual(r["status"], cv.FAIL)
+
     def test_dispatch_corr_floor(self):
         ypay = {
             "fuelRows": [{"fuel": "gas", "m": 380, "b": 360, "r": 0.55, "nrmse": 0.16}]
