@@ -2586,6 +2586,50 @@ WECC_IMPORT_TRANCHES: list[tuple[str, float, float]] = IMPORT_TRANCHES["CAISO"]
 WECC_EXPORT_CAP_MW: float = EXPORT_TRANCHES["CAISO"][0][1]
 WECC_IMPORT_EFORD: float = IMPORT_EFORD["CAISO"]
 
+# --- CAISO per-hub signed intertie (the diurnal-shape + per-hub-basis fix) ----
+# CAISO's WECC tie is TWO physically distinct corridors, each terminating at a
+# different neighbor hub: COI / Path 66 (the California–Oregon Intertie, ~Malin /
+# Mid-C) lands in NP15 to the north, and Path 46 / West-of-River (~Palo Verde /
+# desert-SW) lands in SP15 to the south. The keeper pools every import tranche
+# (Malin- AND Palo-Verde-priced) plus one AVERAGED-hub export sink onto a single
+# external bubble, so (a) the cheap midday Palo Verde block can fill the whole
+# 8.3 GW import budget over either link (the priority-1 over-import), and (b) the
+# independent import/export legs never net, so the diurnal interchange sign is
+# inverted (priority-2). The single-flow bidir node fixed the netting but had to
+# AVERAGE the two hubs into one price, discarding the per-hub basis. Splitting
+# the node into the two real corridors — each a SINGLE signed flow priced at its
+# OWN measured hub — recovers BOTH: per-hub basis (Malin != Palo Verde) AND
+# per-hub netting (each corridor carries one net direction per hour, so the
+# Palo-Verde leg reverses to EXPORT in the midday solar glut instead of
+# over-importing). The simultaneous-import cap (8.3 GW) stays as the existing
+# WECC_import_simultaneous interface limit, now spanning the two corridor links.
+# Source: CAISO config COI(NP15)/Path-46(SP15) link ratings (WECC Path Rating
+# Catalog); EIA-930 CISO net-interchange diurnal profile; measured WECC intertie
+# nodal LMP per scheduling point (Malin/Palo Verde).
+#
+# Per-hub external zones and the corridor link each terminates on (the link is
+# re-homed from WECC_import to the hub zone by
+# transmission.split_caiso_import_node_per_hub):
+CAISO_PER_HUB_IMPORT_ZONES: dict[str, str] = {
+    "MALIN": "WECC_PNW",  # COI / Path 66 → NP15 (north)
+    "PALOVRDE": "WECC_DSW",  # Path 46 / West-of-River → SP15 (south)
+}
+# CAISO import tranche → the WECC neighbor hub (and therefore the per-hub zone)
+# whose measured intertie LMP is the tranche's real delivered energy cost. The
+# PNW blocks (firm hydro + Mid-C shoulder) clear over Malin/COI; the desert-SW
+# blocks (solar + Palo Verde nuclear, then SW gas) and the west-wide scarcity
+# block clear over Palo Verde / Path-46. This is the single source of truth for
+# the mapping (eia_loader.measured_import_hub_prices imports it), so the loader
+# and the per-hub builder/injector can never drift apart.
+CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
+    "PNW_hydro_base": "MALIN",
+    "PNW_midC": "MALIN",
+    "DSW_solar_PV": "PALOVRDE",
+    "DSW_CCGT": "PALOVRDE",
+    "DSW_CT": "PALOVRDE",
+    "WECC_scarcity": "PALOVRDE",
+}
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
