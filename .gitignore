@@ -188,6 +188,19 @@ results/calibration/*/storage.parquet
 results/calibration/*/btm.parquet
 results/calibration/*/availability_rcpf*.parquet
 results/calibration/*/scarcity*.parquet
+# ISO-scoped bundle layout (run_calibration_full default out-dir is now
+# results/calibration/<ISO>/<name>/ — one level deeper than the flat bundles
+# above, so the single-* patterns miss it). Mirror the slim-bundle ignores at
+# the two-level depth; only the 4 text files (meta/run_config/SUMMARY/diff) and
+# the dashboard payload are committed, never the regenerable parquets/_shared.
+results/calibration/*/*/dispatch/
+results/calibration/*/*/system.parquet
+results/calibration/*/*/solve.log
+results/calibration/*/*/storage.parquet
+results/calibration/*/*/btm.parquet
+results/calibration/*/*/availability_rcpf*.parquet
+results/calibration/*/*/scarcity*.parquet
+results/calibration/*/_shared/
 # run131 same-extract baseline re-run: gate-only scratch, not registered.
 results/calibration/ercot_dam_cconly_rerun_3yr/
 # Shared input cache written by calibration runs (scratch).
