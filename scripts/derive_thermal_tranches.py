@@ -30,6 +30,18 @@ CT_PEAKER, CT_CHP, ST_GAS, COAL):
      physical must-run of an economically-dispatched plant. The dispatch uses
      this floor only where it is structurally meaningful (coal), so gas values
      are recorded for transparency but generally land near zero.
+
+     **Must-run online % (coal only)** = the P5 of online *net MW* as a
+     fraction of nameplate — the genuine synchronization Pmin (the level the
+     unit holds 95% of the time it is synchronized). The all-hours
+     available-CF must-run above reads ~2x high for an always-online coal unit
+     (its all-hours P5 sits in its normal operating band, and the
+     outage-derate denominator inflates the available-CF), so this online-net
+     floor (~20-30% of nameplate) is the smaller, physically-truer
+     synchronization floor. Written as ``mustrun_online_pct``; selected at
+     runtime over ``mustrun_pct`` by ``ScenarioConfig.coal_mustrun_online_pmin``
+     (rebuild step 2). See
+     docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md.
   5. **Peaking %** (combined cycles only) = the duct-firing / scarcity reach:
      the share of the plant's demonstrated sustained maximum (P99.5 of online
      net MW) that it clears in fewer than 5% of its online hours,
@@ -447,8 +459,28 @@ def main() -> None:
         # high capacity factor would make the all-hours floor look high.
         if group == "COAL":
             mustrun = min(float(np.percentile(all_cat, _FLOOR_PCTILE)), _MUSTRUN_CAP)
+            # Step 2 (synchronization min-load): the net MW the unit holds 95%
+            # of its *online* time, as a fraction of nameplate — the genuine
+            # online Pmin. For an ~always-online coal unit the all-hours
+            # available-CF floor above reads high (its all-hours P5 sits in its
+            # normal operating band, not its true minimum) and on the
+            # outage-adjusted available-CF basis it is ~2x the level CEMS shows
+            # the unit actually holds. This online-net-MW floor (~20-30% of
+            # nameplate) is the synchronization Pmin the dispatch should force
+            # on instead. See
+            # docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
+            # (Thread C/D); selected at runtime by coal_mustrun_online_pmin.
+            mw_on = np.concatenate(online_mw[(code, group)])
+            mustrun_online = (
+                min(
+                    float(np.percentile(mw_on, _FLOOR_PCTILE)) / nameplate, _MUSTRUN_CAP
+                )
+                if nameplate > 0.0
+                else mustrun
+            )
         else:
             mustrun = 0.0
+            mustrun_online = 0.0
         row = {
             "plant_code": code,
             "plant_group": group,
@@ -458,6 +490,7 @@ def main() -> None:
             "online_hours": n_online,
             "committed_pct": round(100.0 * committed, 1),
             "mustrun_pct": round(100.0 * mustrun, 1),
+            "mustrun_online_pct": round(100.0 * mustrun_online, 1),
             "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
             "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
         }
@@ -536,6 +569,7 @@ def main() -> None:
         "online_hours",
         "committed_pct",
         "mustrun_pct",
+        "mustrun_online_pct",
         "median_cf",
     ]
     campd_ok = ok[ok["status"] == "ok"]
@@ -564,7 +598,15 @@ def main() -> None:
         w = sub["nameplate_mw"]
         cw = float((sub["committed_pct"] * w).sum() / w.sum()) if w.sum() else 0.0
         mw = float((sub["mustrun_pct"] * w).sum() / w.sum()) if w.sum() else 0.0
-        print(f"  {g:<12} n={len(sub):>3}  committed~{cw:5.1f}%  mustrun~{mw:5.1f}%")
+        mwo = (
+            float((sub["mustrun_online_pct"] * w).sum() / w.sum())
+            if w.sum() and "mustrun_online_pct" in sub
+            else 0.0
+        )
+        print(
+            f"  {g:<12} n={len(sub):>3}  committed~{cw:5.1f}%  "
+            f"mustrun~{mw:5.1f}%  mustrun_online~{mwo:5.1f}%"
+        )
     skipped = out[out["status"] != "ok"]
     print(
         f"\nwrote {len(ok)} plant-groups to {out_path} "
