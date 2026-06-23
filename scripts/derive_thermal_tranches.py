@@ -239,6 +239,18 @@ def _chp_f923_floor_cf(
 # and the single-hour ramp through zero on start/stop.
 _ONLINE_FRAC: float = 0.05
 
+# Plant-level synchronization-fraction threshold (step-3a online%-scaled
+# forcing). An hour counts toward ``online_frac`` when the plant's net MW
+# clears this fraction of *nameplate* — i.e. ANY unit of the plant is
+# synchronized (producing) rather than fully shut down. Deliberately near zero
+# (not the 5%-of-*available* ``_ONLINE_FRAC`` mask used for the floor
+# percentiles, which under-counts a deeply-backed-down but still-synchronized
+# supercritical): a unit two-shifting to zero reads its true online share while
+# an always-online unit reads ~1.0. Just above CEMS zero-noise so a reported-but-
+# idle hour does not inflate the fraction. See
+# docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md (Thread D).
+_SYNC_MW_NAMEPLATE_FRAC: float = 0.01
+
 # Percentile of the CF distribution taken as the floor. P5 (not the absolute
 # minimum) discards isolated ramp-transient hours while still capturing the
 # minimum stable / baseload load.
@@ -268,7 +280,9 @@ _PEAKING_MAX_PCTILE: float = 99.5
 
 def _parasitic_factor_map() -> dict[int, float]:
     """Return ``{plant_id: net/gross factor}`` from the derived artifact."""
-    path = REPO / "inputs" / "processed" / "parasitic_load_factors.parquet"
+    from market_sim.config.paths import PROCESSED_DIR
+
+    path = PROCESSED_DIR / "parasitic_load_factors.parquet"
     if not path.exists():
         return {}
     return campd.pooled_factor_map(pd.read_parquet(path))
@@ -369,10 +383,10 @@ def main() -> None:
     )
     args = ap.parse_args()
     iso = args.iso.upper()
+    from market_sim.config.paths import PROCESSED_DIR
+
     out_path = (
-        Path(args.out)
-        if args.out
-        else (REPO / "inputs" / "processed" / f"thermal_tranches_{iso}.csv")
+        Path(args.out) if args.out else (PROCESSED_DIR / f"thermal_tranches_{iso}.csv")
     )
 
     states = campd.states_for_iso(iso)
@@ -387,6 +401,9 @@ def main() -> None:
     online_cf: dict[tuple[int, str], list[np.ndarray]] = {}
     allhr_cf: dict[tuple[int, str], list[np.ndarray]] = {}
     online_mw: dict[tuple[int, str], list[np.ndarray]] = {}
+    # Synchronization fraction (step-3a): [synced-hour count, total-hour count]
+    # pooled across years, per (code, group). frac = synced / total, capped 1.0.
+    sync_hours: dict[tuple[int, str], list[int]] = {}
     for year in args.years:
         df = campd.load_campd_hourly(states, [year])
         if df.empty:
@@ -414,6 +431,16 @@ def main() -> None:
             # factor or a CEMS reporting gap) from both samples.
             finite = np.isfinite(acf) & (avail_cap > 0.0)
             online = finite & (series > _ONLINE_FRAC * avail_cap)
+            # Synchronization fraction (coal step-3a online%-scaled forcing):
+            # count hours the plant has ANY unit synchronized on the net-MW
+            # basis (net > 1% of nameplate), against the full year (8760). The
+            # net series is always finite (offline unit-hours are zeros), so the
+            # denominator is the whole year — a plant offline for a stretch
+            # genuinely scores below 1.0. Pooled across years below.
+            sync = series > _SYNC_MW_NAMEPLATE_FRAC * nameplate
+            acc = sync_hours.setdefault((code, group), [0, 0])
+            acc[0] += int(sync.sum())
+            acc[1] += int(len(series))
             allhr_cf.setdefault((code, group), []).append(acf[finite])
             if online.any():
                 online_cf.setdefault((code, group), []).append(acf[online])
@@ -491,6 +518,22 @@ def main() -> None:
             "committed_pct": round(100.0 * committed, 1),
             "mustrun_pct": round(100.0 * mustrun, 1),
             "mustrun_online_pct": round(100.0 * mustrun_online, 1),
+            # Synchronization fraction (coal only): the share of the year the
+            # plant has any unit synchronized. Drives the step-3a online%-scaled
+            # min-load forcing (coal_sync_online_frac): an ~always-online
+            # supercritical (~1.0) is held all 8760 h, a two-shifting cycler is
+            # forced only in its top-load online hours. Coal-only because only
+            # coal carries the forced synchronization band.
+            "online_frac": (
+                round(
+                    min(
+                        1.0, sync_hours[(code, group)][0] / sync_hours[(code, group)][1]
+                    ),
+                    3,
+                )
+                if group == "COAL" and sync_hours.get((code, group), [0, 0])[1] > 0
+                else ""
+            ),
             "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
             "median_cf": round(100.0 * float(np.percentile(on_cat, 50)), 1),
         }
