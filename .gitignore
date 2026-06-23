@@ -80,6 +80,11 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 /results/calibration/caiso_keeper_repro*/
 /results/calibration/caiso_pnwhydro*/
 /results/calibration/caiso_ssband*/
+# ERCOT Waha CT-floor campaign (2026-06): single-year direction probes + matched
+# baseline (regenerable from _keeper_2023as_run.py with ERCOT_GAS_FLOOR/HAIRCUT);
+# the 3-yr keeper (ctfloor_3yr) is registered via its dashboard sidecar only.
+/results/calibration/ctfloor_probe_*/
+/results/calibration/ctfloor_baseline_*/
 /results/calibration/logs/
 # Session B (negative curtailable-renewable offers) scratch backcasts.
 /results/calibration/caiso_negrenew*/
