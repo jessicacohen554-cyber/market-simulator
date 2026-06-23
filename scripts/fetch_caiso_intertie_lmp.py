@@ -6,14 +6,34 @@ The priced-import node prices each tranche at the WECC neighbor hub it proxies
 (DIAGNOSIS-caiso-import-ladder-2026-06-19, lever A). That hub price is the OASIS
 DAM LMP at the **intertie scheduling points** — Malin / Captain Jack / NOB for the
 PNW (Mid-C) blocks, Palo Verde / Mead for the desert-SW blocks. This fetches them
-(same PRC_LMP DAM query the hub fetch already uses, different nodes), takes the
-energy component (MCE — the per-tranche CARB border carbon is re-added by the
-injector), maps the nodes to the two model hubs, and writes them on the model's
-dense 8760-hour local (Pacific) calendar:
+(same PRC_LMP DAM query the hub fetch already uses, different nodes) and writes
+them on the model's dense 8760-hour local (Pacific) calendar:
 
   data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet
     columns: year, hour (0..8759), hub in {MALIN, PALOVRDE}, price ($/MWh, the
-             MCE energy component of the intertie LMP)
+             delivered nodal LMP = energy + congestion + loss; see below)
+
+PRICE IS THE FULL DELIVERED NODAL LMP, NOT JUST ENERGY (changed 2026-06-23,
+claude/caiso-per-hub-intertie-lmp). OASIS PRC_LMP returns the LMP as five rows
+per hour-node (LMP_TYPE in {LMP, MCE, MCC, MCL, MGHG}); we keep the SUM of the
+energy (MCE), congestion (MCC) and marginal-loss (MCL) components — the full
+nodal LMP MINUS the GHG component (MGHG). Why:
+  * The earlier MCE-only fetch made MALIN and PALOVRDE BYTE-IDENTICAL: MCE is the
+    single system marginal energy price, identical at every WECC node by
+    construction, so the model saw a diurnal *level* but no PNW(Mid-C) vs
+    desert-SW(Palo Verde) *basis*. MCC and MCL are exactly the components that
+    differ by node, so summing them in makes MALIN != PALOVRDE (the gap behind
+    DIAGNOSIS-caiso-body-overprice-2026-06-21).
+  * We DROP MGHG because the import injector re-adds the CARB border-carbon adder
+    per tranche (clean hydro/solar pays none); folding MGHG in here would
+    double-count it. At these external intertie scheduling points MGHG is ~0
+    anyway, but excluding it keeps the carbon treatment unambiguous.
+The measured MCL now carries the real marginal loss at the scheduling point, so
+the modeled multiplicative line-loss markup in CAISO_IMPORT_DELIVERY_BASIS is
+dropped in the injector to avoid double-counting (only the OATT wheel, a separate
+external BAA charge not in CAISO's nodal LMP, is still added) — see
+transmission.inject_caiso_import_hub_prices (rules #11/#12: prefer the measured
+loss, ground the change, don't residual-fit).
 
 oasis.caiso.com is reachable from the remote Claude env (verified 2026-06-22);
 it can also run on a GitHub runner — see .github/workflows/fetch-caiso-intertie-lmp.yml.
@@ -65,6 +85,13 @@ INTERTIE_NODES: dict[str, list[str]] = {
     "MALIN": ["MALIN_5_N101", "CAPTJACK_5_N003"],
     "PALOVRDE": ["PALOVRDE_ASR-APND"],
 }
+
+# OASIS PRC_LMP component types whose SUM is the delivered nodal LMP we keep:
+# energy + congestion + marginal-loss. We deliberately omit MGHG (the GHG
+# component) because the import injector re-adds CARB border carbon per tranche.
+# MCE is system-wide identical at every node; MCC/MCL are what differ by node and
+# give MALIN (PNW) vs PALOVRDE (desert-SW) their basis separation.
+_DELIVERED_LMP_COMPONENTS = ("MCE", "MCC", "MCL")
 
 CAISO_TZ = "America/Los_Angeles"
 # Cumulative first-hour-of-year for each month on the fixed NON-leap calendar
@@ -141,30 +168,45 @@ def _fetch_node_year(
     return pd.concat(frames, ignore_index=True)
 
 
-def _to_hourly_energy(df: pd.DataFrame, year: int) -> np.ndarray | None:
-    """Raw OASIS rows -> (8760,) MCE energy component on the local calendar.
+def _to_hourly_nodal_lmp(df: pd.DataFrame, year: int) -> np.ndarray | None:
+    """Raw OASIS PRC_LMP rows -> (8760,) delivered nodal LMP on the local calendar.
 
-    OASIS PRC_LMP DAM CSV is long-format: one row per ``LMP_TYPE``
-    (LMP / MCC / MCE / MCL / MGHG) with the $/MWh value in the (misnamed) ``MW``
-    column and the interval start in ``INTERVALSTARTTIME_GMT``. We keep the MCE
-    energy component (verified: LMP = MCE + MCC + MCL + MGHG); the per-tranche
-    CARB border carbon is re-added by the injector.
+    OASIS returns PRC_LMP in LONG form: one row per (interval, LMP_TYPE) with the
+    value in the ``MW`` column and the timestamp in ``INTERVALSTARTTIME_GMT``. We
+    pivot the component types to columns and SUM the energy (MCE) + congestion
+    (MCC) + loss (MCL) components — the full nodal LMP minus the GHG component
+    (MGHG), which the import injector re-adds as per-tranche CARB border carbon
+    (see the module docstring). MCC/MCL are what make MALIN and PALOVRDE diverge.
     """
-    needed = {"LMP_TYPE", "MW", "INTERVALSTARTTIME_GMT"}
-    if not needed.issubset(df.columns):
+    cols = {c.lower(): c for c in df.columns}
+    ts_col = cols.get("intervalstarttime_gmt") or cols.get("interval_start_gmt")
+    type_col = cols.get("lmp_type")
+    val_col = cols.get("mw")
+    if ts_col is None or type_col is None or val_col is None:
         return None
-    rows = df[df["LMP_TYPE"] == "MCE"]
-    if rows.empty:
+    sub = df[df[type_col].astype(str).isin(_DELIVERED_LMP_COMPONENTS)]
+    if sub.empty:
         return None
-    ts = pd.to_datetime(rows["INTERVALSTARTTIME_GMT"], utc=True).dt.tz_convert(CAISO_TZ)
+    # Pivot to one column per component, indexed by the physical (UTC) interval;
+    # aggfunc="first" collapses any accidental duplicate component rows without
+    # inflating the sum. DST fall-back keeps two distinct UTC intervals here —
+    # they map to the same Pacific hour and are averaged below.
+    wide = sub.pivot_table(
+        index=ts_col, columns=type_col, values=val_col, aggfunc="first"
+    )
+    if "MCE" not in wide.columns:
+        return None  # energy component missing — unusable
+    present = [c for c in _DELIVERED_LMP_COMPONENTS if c in wide.columns]
+    nodal = wide[present].sum(axis=1, skipna=True)  # MCE + MCC + MCL = delivered
+    ts = pd.Series(pd.to_datetime(nodal.index, utc=True)).dt.tz_convert(CAISO_TZ)
     hi = _hour_index(ts)
-    mce = pd.to_numeric(rows["MW"], errors="coerce").to_numpy()
-    keep = (hi >= 0) & (hi < _HOURS_PER_YEAR) & np.isfinite(mce)
+    vals = pd.to_numeric(nodal, errors="coerce").to_numpy()
+    keep = (hi >= 0) & (hi < _HOURS_PER_YEAR) & np.isfinite(vals)
     out = np.full(_HOURS_PER_YEAR, np.nan)
     # Average duplicate (DST fall-back) hours; spring-forward stays NaN.
-    s = pd.Series(mce[keep]).groupby(hi[keep]).mean()
+    s = pd.Series(vals[keep]).groupby(hi[keep]).mean()
     out[s.index.to_numpy()] = s.to_numpy()
-    return out
+    return out if np.any(np.isfinite(out)) else None
 
 
 def probe(years: list[int], sleep_s: float) -> int:
@@ -230,7 +272,7 @@ def main() -> None:
                 if raw is None:
                     print(f"  {node}: no data — skipped", file=sys.stderr)
                     continue
-                hourly = _to_hourly_energy(raw, year)
+                hourly = _to_hourly_nodal_lmp(raw, year)
                 if hourly is not None:
                     series.append(hourly)
             if not series:
@@ -240,20 +282,22 @@ def main() -> None:
                 )
                 continue
             price = np.nanmean(np.vstack(series), axis=0)
-            # Write the full 8760-hour grid, NaN hours included. The consumer
-            # (eia_loader._caiso_import_hub_prices) requires a complete 8760-row
-            # series per (year, hub): it interpolates the lone interior DST
-            # spring-forward NaN but rejects any series shorter than 8760. If we
-            # drop NaN hours, a complete year loses its DST row (8759 rows) and
-            # the whole year falls back onto the static ladder.
+            # Write the DENSE 8760-hour calendar: emit every hour, NaN included.
+            # measured_import_hub_prices expects a dense per-(year,hub) series and
+            # interpolates the lone DST spring-forward gap (limit=2); a SPARSE
+            # parquet (skipping NaN hours) would land at 8759 rows for a clean
+            # year and the loader's length check would reject it, silently
+            # dropping the whole year back to the static ladder. A genuine
+            # multi-week hole (2023 Jan-Feb, aged out of OASIS) stays NaN here and
+            # is left to the ladder by the loader's all-finite gate (intended).
             for h in range(_HOURS_PER_YEAR):
-                v = float(price[h])
+                val = float(price[h])
                 records.append(
                     {
                         "year": year,
                         "hour": h,
                         "hub": hub,
-                        "price": round(v, 4) if np.isfinite(v) else np.nan,
+                        "price": round(val, 4) if np.isfinite(val) else np.nan,
                     }
                 )
 
