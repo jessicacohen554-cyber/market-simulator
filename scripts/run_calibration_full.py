@@ -1485,6 +1485,7 @@ def solve_and_persist(
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
+    caiso_bidir_intertie: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
     nyiso_firm_imports: bool | None = None,
     gas_hub_basis_overlay: bool | None = None,
@@ -1624,6 +1625,7 @@ def solve_and_persist(
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
+            caiso_bidir_intertie=caiso_bidir_intertie,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
             nyiso_firm_imports=nyiso_firm_imports,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
@@ -1813,6 +1815,7 @@ def solve_and_persist(
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
+        "caiso_bidir_intertie": caiso_bidir_intertie,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
         "nyiso_firm_imports": nyiso_firm_imports,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
@@ -1948,6 +1951,10 @@ def solve_and_persist(
     if caiso_import_solar_shape is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_import_solar_shape=caiso_import_solar_shape
+        )
+    if caiso_bidir_intertie is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            caiso_bidir_intertie=caiso_bidir_intertie
         )
     if nyiso_local_selfsupply is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -4436,6 +4443,24 @@ def main() -> None:
         "keeps the base config value (off).",
     )
     parser.add_argument(
+        "--caiso-bidir-intertie",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Model CAISO's WECC tie as a SINGLE signed flow (one net direction "
+        "per hour over a shared directional cap, import ≤ ~8.3 GW / export ≤ "
+        "~3.5 GW) instead of the legacy two independent one-way mechanisms "
+        "(priced import tranches + separate export sinks on the same external "
+        "node, which let the LP import the cheap midday hub AND stay long on its "
+        "own solar — 2024 diurnal interchange corr −0.65). Both legs are priced "
+        "off the same measured hub: import = hub + per-tranche border carbon, "
+        "export = hub, so they are arbitrage-free by construction and the tie "
+        "reverses to export in the midday solar glut (positive diurnal sign). "
+        "Supersedes --caiso-import-hub-prices / --caiso-import-gas-coupling / "
+        "--caiso-import-solar-shape when set. CAISO-only; pure LP; 2023 falls "
+        "back to the static ladder (no measured hub). Default (unset) keeps the "
+        "base config value (off).",
+    )
+    parser.add_argument(
         "--nyiso-local-selfsupply",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -4699,6 +4724,7 @@ def main() -> None:
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,
+        caiso_bidir_intertie=args.caiso_bidir_intertie,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_firm_imports=args.nyiso_firm_imports,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
