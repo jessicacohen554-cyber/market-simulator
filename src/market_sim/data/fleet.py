@@ -5154,6 +5154,19 @@ def bins_to_fleet(
                 pct_mr = config.coal_lignite_mustrun_override
             elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
                 pct_mr = config.coal_prb_mustrun_override
+            # PJM bituminous spot-coal: NOT mine-mouth take-or-pay, so it is the
+            # marginal/price-responsive swing fuel rather than held-flat
+            # baseload. Zeroing its must-run floor moves all of its capacity into
+            # the rising offer-curve tranches (committed/econ/peak, Pmin=0),
+            # which bid full delivered cost (coal_bit_passthrough_floor=1.0) and
+            # back down when gas undercuts them. Faithful to the contract physics
+            # (CLAUDE.md #1/#11), not tuned to a coal-MWh residual; PRB/lignite/
+            # waste keep their take-or-pay floors above.
+            if (
+                getattr(config, "coal_bit_dispatchable", False)
+                and coal_supply_class(_pc) == "bituminous"
+            ):
+                pct_mr = 0.0
         # Coal cogen: a coal bin at a CHP-host plant (Eastman, St Nicholas, John
         # B Rich, ...) is held out at its sector behind-the-meter share and
         # carries a measured steam-following grid floor instead of staying in the
@@ -5764,6 +5777,13 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
             pct_mr = config.coal_lignite_mustrun_override
         elif _supply == "prb" and config.coal_prb_mustrun_override is not None:
             pct_mr = config.coal_prb_mustrun_override
+        # PJM bituminous spot-coal: fully dispatchable, no take-or-pay must-run
+        # floor (mirrors bins_to_fleet so the dashboard CF bands match dispatch).
+        if (
+            getattr(config, "coal_bit_dispatchable", False)
+            and coal_supply_class(plant_code) == "bituminous"
+        ):
+            pct_mr = 0.0
     if group in ("CC_CHP", "CT_CHP", "ST_CHP") and getattr(
         config, "chp_steam_following", False
     ):
