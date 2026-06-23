@@ -1674,6 +1674,16 @@ class ScenarioConfig:
     # firm-demand Waha level, accepted as-is. ERCOT only.
     ercot_west_gas_firm_basis: float | None = None
 
+    # Optional override of the measured Waha negative-price-day frequency that
+    # splits the net-load distribution into the COLLAPSED (lowest-net-load) and
+    # FIRM (highest-net-load) regimes of the two-regime step above. When None (the
+    # default), the per-year measured value is read from the neg_day_freq column of
+    # data/raw/ercot_zonal_gas_hub.csv (2024 EIA-authoritative at 0.42; 2023/2025
+    # NGI counts), falling back to the 2024 record (0.42) for years with no row.
+    # This is the measured *collapse frequency*, not a tuning knob — set it only
+    # for diagnostic probes, never to chase the CT_PEAKER residual. ERCOT only.
+    ercot_west_gas_collapse_freq: float | None = None
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -2150,6 +2160,7 @@ TIER_TAGS: dict[str, int] = {
     "oil_primary_bin_fuel": 3,
     "ercot_west_netload_gas_shape": 3,
     "ercot_west_gas_firm_basis": 3,
+    "ercot_west_gas_collapse_freq": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,

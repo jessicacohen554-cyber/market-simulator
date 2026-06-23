@@ -1,22 +1,22 @@
-zone,year,basis_vs_hh_usd_mmbtu,hub,source
-West,2023,-0.72,Waha,Waha annual avg $1.82 (NGI/EIA NG Weekly) minus Henry Hub $2.54 (on-disk henry_hub_monthly)
-West,2024,-2.19,Waha,Waha annual avg ~$0.00 (record low; NGI/EIA - negative 42% of days) minus HH $2.19
-West,2025,-2.38,Waha,Waha annual avg $1.15 (NGI/EIA) minus HH $3.53
-Panhandle,2023,-0.72,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
-Panhandle,2024,-2.19,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
-Panhandle,2025,-2.38,Waha,proxy->Waha (Permian; carries 0.0 modeled load)
-North,2023,0.13,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 60M MMBtu)
-North,2024,0.21,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 66M MMBtu)
-North,2025,0.43,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 60M MMBtu)
-Northeast,2023,0.13,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
-Northeast,2024,0.21,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
-Northeast,2025,0.43,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone)
-Houston,2023,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
-Houston,2024,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
-Houston,2025,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample
-South_Central,2023,0.56,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 172M MMBtu)
-South_Central,2024,0.45,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 182M MMBtu)
-South_Central,2025,-0.12,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (7 plants 120M MMBtu)
-South,2023,1.23,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 9M MMBtu)
-South,2024,0.63,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 33M MMBtu)
-South,2025,0.59,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 29M MMBtu)
+zone,year,basis_vs_hh_usd_mmbtu,hub,source,neg_day_freq,neg_day_freq_source
+West,2023,-0.72,Waha,Waha annual avg $1.82 (NGI/EIA NG Weekly) minus Henry Hub $2.54 (on-disk henry_hub_monthly),0.03,Waha spot negative ~9 trading days in 2023 (Reuters/NGI) over ~252 trading days; mild collapse year
+West,2024,-2.19,Waha,Waha annual avg ~$0.00 (record low; NGI/EIA - negative 42% of days) minus HH $2.19,0.42,EIA Today-in-Energy id=64445: Waha spot traded below zero on 42% of trading days in 2024 (record)
+West,2025,-2.38,Waha,Waha annual avg $1.15 (NGI/EIA) minus HH $3.53,0.11,Waha 39 negative pricing days in 2025 (NGI/Reuters) over 365; settlement-close basis (lower bound vs EIA any-negative)
+Panhandle,2023,-0.72,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.03,proxy->Waha West 2023
+Panhandle,2024,-2.19,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.42,proxy->Waha West 2024
+Panhandle,2025,-2.38,Waha,proxy->Waha (Permian; carries 0.0 modeled load),0.11,proxy->Waha West 2025
+North,2023,0.13,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 60M MMBtu),,
+North,2024,0.21,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 66M MMBtu),,
+North,2025,0.43,North/East TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 60M MMBtu),,
+Northeast,2023,0.13,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2024,0.21,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Northeast,2025,0.43,North/East TX,proxy->North (East TX; no Sch5 gas receipts reported in zone),,
+Houston,2023,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2024,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+Houston,2025,-0.15,Houston Ship Channel,HSC ~ Henry Hub (Gulf-Coast demand/LNG hub; slight discount; NGI/EIA) - no Sch5 sample,,
+South_Central,2023,0.56,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 172M MMBtu),,
+South_Central,2024,0.45,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (12 plants 182M MMBtu),,
+South_Central,2025,-0.12,South TX,EIA-923 Sch5 qty-weighted delivered gas minus HH (7 plants 120M MMBtu),,
+South,2023,1.23,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 9M MMBtu),,
+South,2024,0.63,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (5 plants 33M MMBtu),,
+South,2025,0.59,South TX/Agua Dulce,EIA-923 Sch5 qty-weighted delivered gas minus HH (3 plants 29M MMBtu),,
