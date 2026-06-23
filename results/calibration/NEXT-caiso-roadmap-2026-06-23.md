@@ -129,6 +129,47 @@ under-imports / loses the tail, the diurnal fix (bidir) and the level fix are
 mutually exclusive by design on the capped node and the keeper stays until
 measured WECC hub diurnal prices land (option B).
 
+## UNIFY attempt 2 — REJECTED (caiso 24 bidir+wheel-only PROBE, 2026-06-23)
+
+Ran the wheel-only unify: bidir + RA gas floor 0.80 + the ADDITIVE per-tranche
+OATT `wheel` term of `CAISO_IMPORT_DELIVERY_BASIS` on the bidir import legs, but
+DROPPING the multiplicative `loss·max(hub,0)` markup (transmission.py
+`inject_caiso_bidir_intertie_prices`). Registered PROBE
+`2026-06-23-caiso-24-bidir-wheel` (`caiso 24 bidir+wheel-only`):
+
+| 2024 | keeper | caiso-22 floor-only | **caiso-24 wheel-only** | caiso-23 basis-only | actual |
+|---|---|---|---|---|---|
+| neg-price hrs | 815 | 221 | **194** | 194 | ~800 |
+| net interchange | −30.4 | −22.36 | **−18.66** | −19.09 | −32.38 |
+| mean LMP | ~42 | 46.81 | **48.34** | 48.79 | 35.8 |
+| p10 LMP | $1.40 | 32.24 | **33.36** | 33.63 | — |
+| diurnal corr | poor | +0.22 | **+0.14** | −0.04 | — |
+
+corr by year wheel-only: **+0.95 / +0.14 / −0.07** (2023 informative-free — basis
+inactive; 2025 negative). 2023 net −19.41, neg 48; 2025 net −26.73, neg 9.
+
+**Verdict — FAILS the keeper gate on every axis, and is mutual-exclusivity
+confirmation, not a level fix.** The minimal additive wheel ($2–6/MWh) still
+over-suppresses: wheel-only lands essentially on **basis-only** (neg 194 = 194,
+net −18.66 ≈ −19.09, mean 48.34 ≈ 48.79, p10 33.36 ≈ 33.63), i.e. dropping the
+multiplicative loss recovered almost nothing — the *wheel itself* is the
+suppressor on the capped single-flow node, not (only) the loss markup. And it is
+**worse than floor-only** on both level (net −22.36, neg 221, mean 46.81) and
+shape (2024 corr +0.14 < +0.22; 2025 −0.07, not positive every year). Any delivery
+adder that separates the flat MCE into a rising delivered-import merit order also
+prices the tie out of the imports that build the negative tail and the positive
+diurnal correlation.
+
+**Conclusion (decompose thread closed).** The bidir diurnal-shape fix and any
+merit-order-restoring delivery basis (multiplicative OR additive) are **mutually
+exclusive by design on the capped 8.3 GW single-flow node**: the cap already
+prices the binding congestion, so any extra delivered-cost adder double-suppresses
+imports. The keeper (`caiso-import-cap-floor` / dashboard `caiso-19-local-band`)
+stays as-is until measured WECC hub *diurnal* prices land (option B) — that is the
+only remaining lever that can fix the shape without an import-suppressing adder.
+The wheel-only transmission.py code change stays in (it is the structurally
+correct additive form, rule #1/#12); only the config stacking is rejected.
+
 ## Original chosen path: UNIFY (superseded by the attempt above)
 
 Bring the bidir-intertie mechanism to keeper parity so ONE keeper has both the
