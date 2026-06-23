@@ -34,6 +34,11 @@ from market_sim.config.constants import (
     IMPORT_TRANCHES,
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_ZONE,
+    MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC,
+    MISO_MANITOBA_FIRM_IMPORT_MW,
+    MISO_MANITOBA_FIRM_IMPORT_NAME,
+    MISO_MANITOBA_FIRM_IMPORT_OFFER,
+    MISO_MANITOBA_FIRM_IMPORT_ZONE,
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
@@ -1318,4 +1323,106 @@ def inject_nyiso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
                 fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :]
             )
             applied = True
+    return applied
+
+
+def _miso_firm_import_uid() -> str:
+    """Return the unit id of the Manitoba firm-hydro import row."""
+    return f"{MISO_MANITOBA_FIRM_IMPORT_ZONE}_{MISO_MANITOBA_FIRM_IMPORT_NAME}"
+
+
+def build_miso_firm_imports(iso: str) -> list[Generator]:
+    """Return Manitoba Hydro's firm-hydro import block for MISO-North.
+
+    Manitoba Hydro is MISO's single largest import source and the structural
+    reason MISO is a net IMPORTER: it sells ~10-15 TWh/yr of FIRM contracted
+    hydro into MISO-North over the Manitoba<->US HVDC / 500 kV ties. This import
+    sits OUTSIDE the gas-margin reference-price seam
+    (:data:`~market_sim.config.constants.INTERFACE_NEIGHBORS`): firm hydro has no
+    gas x heat-rate price analogue, so it is a SEPARATE block priced as firm
+    hydro — a low, near-constant energy offer reflecting the contract.
+
+    The block is a single ``fuel_type="import"`` pseudo-generator landed directly
+    in :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_ZONE`
+    (``MISO-North``, the model zone the ties physically enter), bounded
+    ``[0, MISO_MANITOBA_FIRM_IMPORT_MW]`` and offered at
+    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_OFFER`. Because
+    its ``fuel_type`` is ``"import"`` it is counted as net interchange (not
+    in-state generation), and its must-flow firm floor is applied post-assembly
+    by :func:`inject_miso_firm_imports`. The contract volume is forecast-native
+    (it reproduces for any forward year and responds to a changed contract), NOT
+    fitted to the net-interchange residual (claude.md rule #12).
+
+    Args:
+        iso: ISO identifier; only ``"MISO"`` returns a block.
+
+    Returns:
+        The Manitoba firm-hydro import pseudo-generator (one element), or an
+        empty list for any non-MISO ISO (byte-identical).
+    """
+    if iso != "MISO":
+        return []
+    return [
+        Generator(
+            unit_id=_miso_firm_import_uid(),
+            name=MISO_MANITOBA_FIRM_IMPORT_NAME,
+            zone=MISO_MANITOBA_FIRM_IMPORT_ZONE,
+            fuel_type="import",
+            pmax_mw=MISO_MANITOBA_FIRM_IMPORT_MW,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=MISO_MANITOBA_FIRM_IMPORT_OFFER,
+            eford=0.0,
+        )
+    ]
+
+
+def inject_miso_firm_imports(fleet_arrays, iso: str, year: int) -> bool:
+    """Floor Manitoba Hydro's firm-hydro import block at its contracted baseload.
+
+    The Manitoba contract is firm must-flow energy: it flows into MISO-North
+    every hour regardless of MISO's hourly price (the Hydro-Québec firm-import
+    pattern, :func:`inject_nyiso_firm_imports`). This sets a constant hourly
+    ``min_gen`` floor of
+    :data:`~market_sim.config.constants.MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC` ×
+    the block's available capacity on the Manitoba import row
+    (:func:`build_miso_firm_imports`), so the firm baseload flows even in
+    cheap-overnight hours / low-price years where an unfloored economic offer
+    would otherwise back it off. At floor frac 1.0 the block is near-constant by
+    design — the contracted firm baseload, ~12.3 TWh/yr.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when the floor was
+    applied, ``False`` (byte-identical) when ``iso`` is not MISO, the floor
+    fraction is non-positive, or the Manitoba block is not in the fleet.
+
+    Args:
+        fleet_arrays: Vectorized fleet (modified in place).
+        iso: ISO identifier; only ``"MISO"`` applies a floor.
+        year: Backcast year (unused today; carried for parity with the other
+            firm-import injectors and future per-year firm schedules).
+
+    Returns:
+        ``True`` if the firm-import floor was applied, else ``False``.
+    """
+    if iso != "MISO" or MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC <= 0.0:
+        return False
+
+    hours = int(fleet_arrays.availability.shape[1])
+    target_uid = _miso_firm_import_uid()
+    applied = False
+    for r, uid in enumerate(fleet_arrays.unit_ids):
+        if uid != target_uid or fleet_arrays.pmax[r] <= 0.0:
+            continue
+        floor = (
+            MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC
+            * fleet_arrays.pmax[r]
+            * fleet_arrays.availability[r, :]
+        )
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+        np.maximum(fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :])
+        applied = True
     return applied

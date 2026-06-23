@@ -1847,6 +1847,63 @@ NYISO_FIRM_IMPORT_FLOOR_FRAC: dict[str, float] = {
     "IESO_Ontario": 0.0,
 }
 
+# Manitoba Hydro firm-hydro import into MISO-North (transmission.
+# build_miso_firm_imports / inject_miso_firm_imports, gated on
+# ScenarioConfig.miso_firm_imports). Manitoba Hydro is MISO's single largest
+# import source and the structural reason MISO is a net IMPORTER: it sells
+# ~10-15 TWh/yr of FIRM contracted hydro into MISO-North (Minnesota) over the
+# Manitoba<->US HVDC / 500 kV ties (the Nelson River bipoles deliver to Dorsey,
+# then the international border; the Great Northern Transmission Line, in service
+# 2020, backs the Manitoba Hydro <-> Minnesota Power firm contract). This import
+# sits OUTSIDE the gas-margin reference-price seam (INTERFACE_NEIGHBORS["MISO"],
+# PJM/SPP/SERC): firm hydro has no gas x heat-rate price analogue, so it is a
+# SEPARATE block priced as firm hydro -- a low, near-constant energy offer
+# reflecting the contract -- landing directly in MISO-North (the model zone the
+# ties physically enter; counted as net interchange via its fuel_type="import").
+# Volume is sourced from the Manitoba Hydro export-contract band (~10-15 TWh/yr),
+# NOT fitted to the EIA-930 net-interchange residual (claude.md rule #12): a firm
+# contract reproduces for any forward year and responds to a changed contract.
+#   - MW 1,400: the contracted firm baseload, ~12.3 TWh/yr at constant flow --
+#     the midpoint of Manitoba Hydro's 10-15 TWh/yr US export band. (Manitoba
+#     Hydro generates ~30-37 TWh/yr of hydro and exports a large share south.)
+#   - offer $8/MWh: firm hydro contract energy -- well below MISO's gas-set LMP
+#     (Indiana-Hub RT ~$31-43, so the block clears INFRAMARGINALLY and displaces
+#     marginal gas), above the $0 dump floor (so it never games negative-MC
+#     credits). Tier 3 estimate; the block is firm-floored, so the offer is
+#     inframarginal and does NOT set price -- it only places the block correctly
+#     in the merit order.
+#   - floor frac 1.0: the contract is firm must-flow, so the full block flows
+#     every hour regardless of MISO's hourly price (the Hydro-Quebec firm-import
+#     pattern, NYISO_FIRM_IMPORT_FLOOR_FRAC) -- near-constant by design.
+MISO_MANITOBA_FIRM_IMPORT_MW: float = 1400.0
+MISO_MANITOBA_FIRM_IMPORT_OFFER: float = 8.0
+MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC: float = 1.0
+MISO_MANITOBA_FIRM_IMPORT_ZONE: str = "MISO-North"
+MISO_MANITOBA_FIRM_IMPORT_NAME: str = "Manitoba_firmhydro"
+
+# ISOs whose backcasts enable the Manitoba firm-hydro import block BY DEFAULT
+# (resolve_miso_firm_imports), no --miso-firm-imports flag required. The firm
+# Manitoba contract is the structural reason MISO is a net IMPORTER and sits
+# outside the gas-margin seam, so it is the correct default for the MISO
+# backcast (decided after the miso5_firmhydro solve confirmed it moves net
+# interchange toward EIA-930 actual while leaving the LMP/fuel mix faithful).
+# Every other ISO is byte-identical (the block is MISO-only regardless).
+MISO_FIRM_IMPORT_DEFAULT_ISOS: frozenset[str] = frozenset({"MISO"})
+
+
+def resolve_miso_firm_imports(flag: bool | None, iso: str) -> bool:
+    """Resolve the ``--miso-firm-imports`` tri-state flag for ``iso``.
+
+    ``flag`` is ``True``/``False`` when set explicitly on the CLI
+    (``--miso-firm-imports`` / ``--no-miso-firm-imports``), or ``None`` to fall
+    back to the per-ISO default in :data:`MISO_FIRM_IMPORT_DEFAULT_ISOS`. The
+    block itself is MISO-only downstream (``build_miso_firm_imports`` returns
+    nothing otherwise), so a non-MISO ISO stays byte-identical either way.
+    """
+    if flag is not None:
+        return flag
+    return iso in MISO_FIRM_IMPORT_DEFAULT_ISOS
+
 
 EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     # CAISO midday solar-oversupply exports. Tier 3 (calibration) — fitted
