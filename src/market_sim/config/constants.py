@@ -2541,22 +2541,26 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
 }
 
 # Per-tranche physical delivered-cost basis over the measured WECC neighbor-hub
-# energy price (MCE), for CAISO priced imports under
-# ``--caiso-import-hub-prices``. measured_import_hub_prices returns the energy
-# (MCE) component AT the neighbor hub (Malin / Palo Verde); the *delivered* cost
-# at the CAISO border adds two physical, forward-reproducible terms (NOT a
-# residual-fitted offset — rule #12): a transmission line-loss markup (a
-# fraction of the energy price, so it scales with price and responds to changed
-# conditions) and the point-to-point wheeling/access charge ($/MWh) a marketer
-# pays the intervening BAA(s)' OATT to deliver the power. Together they restore
-# the rising delivered-import merit order that the flat ~$38 MCE collapses
-# (every non-gas block clearing at the same hub energy price): without the basis
-# the import supply curve is flat and a deep slug clears whenever CAISO's price
-# crosses ~$38, over-importing in the body. The gas blocks (DSW_CCGT/CT) are
-# re-priced off measured gas by inject_caiso_import_gas_coupling AFTER this, so
-# the basis mainly shapes the non-gas blocks (PNW_*, DSW_solar_PV).
+# price, for CAISO priced imports under ``--caiso-import-hub-prices``.
+# measured_import_hub_prices now returns the FULL delivered nodal LMP (energy +
+# congestion + loss = MCE+MCC+MCL) AT the neighbor scheduling point (Malin / Palo
+# Verde), so the per-node congestion/loss already separate the PNW and desert-SW
+# hubs (MALIN != PALOVRDE) and the marginal LOSS is measured, not modeled.
 #
-# Per tranche/path (loss fraction, wheeling $/MWh):
+# Each tuple is (loss_fraction, wheeling $/MWh). NOTE: as of the per-hub nodal
+# fetch (2026-06-23), the loss_fraction is RETAINED ONLY FOR DOCUMENTATION /
+# bidir-fallback — inject_caiso_import_hub_prices NO LONGER applies it, because
+# the measured nodal MCL now carries the real loss and the multiplicative markup
+# would double-count it (rules #11/#12: prefer the measured loss, ground the
+# change). Only the wheeling charge is added: the OATT point-to-point
+# wheeling/access charge ($/MWh) a marketer pays the intervening BAA(s) to
+# deliver to the CAISO border — a real commercial charge that is NOT part of
+# CAISO's nodal LMP and is forward-reproducible (NOT a residual-fitted offset,
+# rule #12). The gas blocks (DSW_CCGT/CT) are re-priced off measured gas by
+# inject_caiso_import_gas_coupling AFTER this, so the wheel mainly shapes the
+# non-gas blocks (PNW_*, DSW_solar_PV).
+#
+# Per tranche/path (loss fraction [now documentation-only], wheeling $/MWh):
 #   - PNW_hydro_base: firm COI economy energy, single BPA point-to-point.
 #     ~660-mi AC path, losses ~4%; PTP wheeling ~$2.0/MWh.
 #   - PNW_midC: Mid-Columbia shoulder over COI/PDCI — deeper, multi-BAA wheel
