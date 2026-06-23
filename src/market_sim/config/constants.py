@@ -2577,6 +2577,43 @@ ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
 PJM_ORDC_CURVE_PATH: str = str(CALIBRATION_DIR / "pjm_ordc_curve.csv")
 
+# --- MISO market-wide operating-reserve demand curve (energy+reserve co-opt) -
+# MISO co-optimizes energy with its market-wide operating reserves (Regulating +
+# Contingency = Spinning + Supplemental) against a VOLL-anchored Reliability-Based
+# Demand Curve (RBDC). When cleared market-wide reserves fall below the
+# requirement, the demand curve sets the reserve clearing price, and through
+# energy/reserve co-optimization that shadow price flows into the LMP — the
+# scarcity tail a perfect-foresight energy-only LP cannot produce. This is the
+# MISO analogue of the PJM ORDC / NYISO RCPF co-optimization
+# (:func:`market_sim.results.scarcity.miso_reserve_coopt_inputs`); a single
+# market-wide reserve family (footprint-wide clearing, like PJM's RTO-wide),
+# not locational. Nothing here is fitted to the LMP residual.
+#
+# Requirement basis (MISO BPM-002 "Energy and Operating Reserve Markets" /
+# Schedule 28): the Market-Wide Reserve Requirement = Regulating Reserve +
+# Contingency Reserve, where the Contingency Reserve Requirement is the Most
+# Severe Single Contingency (MSSC) — the largest single resource whose loss must
+# be covered. The MSSC is fleet-derived
+# (:func:`scarcity.largest_single_contingency_mw`), so the requirement responds
+# to the fleet (retire the largest plant and it falls) and is forecast-valid,
+# not a replay of a measured series. The regulation component is a near-constant
+# footprint quantity.
+MISO_REGULATING_RESERVE_MW: float = 400.0  # Market-wide regulating-reserve
+# procurement, MW. MISO procures ~300–500 MW of Regulation footprint-wide
+# (Regulating Reserve, MISO BPM-002 §4 / Schedule 28). Tier-3 (calibration):
+# documented estimate, verify against the posted MISO market-wide regulation
+# requirement; the MSSC contingency term dominates the requirement.
+MISO_RESERVE_DEMAND_CURVE_MAX: float = 3500.0  # $/MWh. Maximum market-wide
+# reserve shadow price = MISO's Value of Lost Load proxy, the anchor of MISO's
+# Reliability-Based Demand Curve for operating reserves (MISO Schedule 28-A;
+# VOLL-anchored RBDC, eff. ~2022). Tier-3 (calibration): verify the exact posted
+# stepped breakpoints; the curve is linearised between sourced anchors below.
+MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW: float = 0.0  # Reserve level (MW) at/below
+# which the maximum penalty applies. 0 → the demand curve ramps linearly from $0
+# at the requirement to MISO_RESERVE_DEMAND_CURVE_MAX at zero cleared reserve —
+# the documented piecewise-linear stand-in for the posted stepped curve, the
+# same convention as the NYISO/NEISO demand curves (NYISO_RCPF_PRODUCTS).
+
 # --- NYISO RCPF (Reserve Constraint Penalty Factor) scarcity overlay -------
 # NYISO does not use an ERCOT-style ORDC/LOLP curve. Real-time scarcity is
 # priced by the Reserve Constraint Penalty Factors: when dispatchable
