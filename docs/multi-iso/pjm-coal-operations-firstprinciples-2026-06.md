@@ -109,7 +109,7 @@ that matters is the **fuel-cost** split (sunk take-or-pay vs avoidable spot).
 | offer component | reality | data source (forward-reproducible) | in model today |
 |---|---|---|---|
 | delivered fuel | ~$3.0/MMBtu bit 2024; bit SRMC ~$32/MWh (HR ~10.5) | EIA-923 Sch-5 receipts ($/MMBtu) | yes (`derive_coal_supply`/`fuel`) |
-| **take-or-pay vs spot** | the must-burn sunk share that holds coal on below cost | **EIA-923 Sch-5 `Purchase Type`** (Contract/Spot/Tolling) — *available, not yet read* | **assumed** (must-run = 100% sunk) |
+| **take-or-pay vs spot** | the must-burn sunk share that holds coal on below cost | **EIA-923 Sch-5 `Purchase Type`** (Contract/Spot/Tolling) — *deriver + wiring now built (default off)* | **assumed** (must-run = 100% sunk) → measured when `coal_takeorpay_from_data` |
 | part-load HR | small (0-8% at Pmin) | CEMS heatInput/gross | flat tranche multipliers — adequate |
 | VOM + reagents (SCR/SNCR, FGD) | modest $/MWh | constants/citations | yes |
 | NOx/SO2 (CSAPR) | allowance $ in SRMC | CSAPR allowance prices | partial (nox_rate) |
@@ -170,10 +170,15 @@ Replace the single forced sub-cost floor with **three physically-sourced layers*
 each forward-reproducible (CLAUDE.md #11), so the synchronized-but-price-following
 behaviour emerges instead of being forced:
 
-1. **Take-or-pay sunk floor (small).** Size from EIA-923 Schedule-5 `Purchase Type`
-   = the contract (must-burn) share of each plant's annual delivered tonnage. Only
-   that MWh-equivalent bids fuel-free (genuinely sunk). This is the *measured*
-   version of the 0.76 discount and is typically far below 60% of capacity.
+1. **Take-or-pay sunk floor (small) — BUILT (default off).** Size from EIA-923
+   Schedule-5 `Purchase Type` = the contract (must-burn) share of each plant's
+   delivered tonnage; only that fraction bids fuel-free. Implemented this session:
+   `scripts/derive_coal_takeorpay.py` writes `coal_takeorpay_<ISO>.csv`,
+   `fleet.coal_takeorpay_share` loads it, and `ScenarioConfig.coal_takeorpay_from_data`
+   makes the coal must-run tranche pass `1 - contract_share` of its fuel instead
+   of the hardcoded 0.0 (`campd_tranche_fuel_frac`). This is the *measured* version
+   of the 0.76 discount. **Remaining:** run the deriver where the raw `f923_*.zip`
+   archives live, then re-solve PJM 2023-25 with the flag on.
 2. **Synchronization min-load.** A low floor (~the CEMS online Pmin, ~20-30%) that
    keeps the unit online (commitment hysteresis: avoid cold starts) but **bids its
    real SRMC** (delivered fuel + VOM), *not* zero. It holds volume *and* sets a
@@ -202,10 +207,15 @@ $75-200 LMP level needs the **energy+reserve co-optimization** lever
 (a) memory at PJM plant scale and (b) ramp data absent from `FleetArrays`.
 Sequence: build layers 1-3 (structure), then co-opt (price), then retune levels.
 
-**Data dependency for implementation:** the raw `f923_*.zip` archives (Schedule-5
-`Purchase Type`) are **not present in this container** — the take-or-pay deriver
-must run where the EIA-923 zips live. Until then the share is data-blocked; do NOT
-substitute a residual-tuned discount (that is the current sigmoid).
+**Data dependency for implementation:** the take-or-pay deriver + scenario wiring
+are now built (`derive_coal_takeorpay.py`, `coal_takeorpay_share`,
+`coal_takeorpay_from_data`, default off; `_RENAME` extended to keep `Purchase
+Type`). The only remaining step is running the deriver where the raw `f923_*.zip`
+archives live (they are **not present in this container**), then re-solving PJM
+2023-25 with the flag on. Until then the share is data-blocked; do NOT substitute
+a residual-tuned discount (that is the current sigmoid). The floor *re-sizing* to
+the CEMS online-Pmin + the SRMC-bid synchronization layer (rebuild steps 2-3)
+remain unbuilt — this session implemented step 1 (take-or-pay) only.
 
 ---
 

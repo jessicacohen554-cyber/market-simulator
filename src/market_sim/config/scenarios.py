@@ -915,6 +915,20 @@ class ScenarioConfig:
     # under-run it then shows is a price-formation signal, not a coal fault.
     coal_bit_dispatchable: bool = False
 
+    # Take-or-pay from data (all coal ranks): replace the hardcoded "must-run
+    # tranche is 100% sunk" assumption with the MEASURED contracted share of
+    # each plant's EIA-923 Schedule-5 fuel receipts (Purchase Type C/NC/T vs
+    # spot S). When set, a coal must-run tranche passes 1 - contract_share of
+    # its fuel into the bid (only the contracted tonnage is sunk; the spot
+    # remainder bids full delivered cost), per
+    # scripts/derive_coal_takeorpay.py → fleet.coal_takeorpay_share. This is
+    # the physically-honest, forward-reproducible version of the calibrated
+    # gas-keyed passthrough discount (CLAUDE.md #11): a plant with no
+    # classifiable Purchase Type keeps the default 100%-sunk treatment. Default
+    # off (the keeper's behaviour is unchanged) until the per-ISO
+    # coal_takeorpay_<ISO>.csv artifact is derived and the run re-solved.
+    coal_takeorpay_from_data: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
