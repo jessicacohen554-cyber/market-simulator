@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-miso4-coal-takeorpay",
+  "label": "miso4 coal takeorpay",
+  "date": "2026-06-23",
+  "shorthand": "miso4-coal-takeorpay",
+  "definition": "(NOT-YET; structurally-correct input, fit-neutral) Replaces MISO's uniform ASSUMED coal take-or-pay with the MEASURED EIA-923 Schedule-5 contracted share per plant (coal_takeorpay_MISO.csv) via coal_takeorpay_from_data, wired into split_coal_tranches (MISO is split-fleet, NOT in CAMPD_BINNING_ISOS, so the task's offer_curve_by_group lever is architecturally inert for MISO — its coal supply curve is t1/t2/t3 from coal_tranche_*_fuel_passthrough). The sunk first tranche now passes 1-contract_share instead of 100%-sunk, mirroring the binned path's campd_tranche_fuel_frac must-run rule. REFUTES the task premise: measured data shows MISO coal is ~97% contract (tonnage-wtd) — MORE take-or-pay than ERCOT (~71%), not market-bought — so the deep sunk tranche is correct and coal offers are NOT the C3a/seam lever. Result is near-baseline (coal 180.9/165.5/231.1 vs miso3 181.2/166.1/231.4; meanLMP 29.25/26.15/37.54 vs 29.15/26.12/37.54 still ~9/15/12% low; net interchange +1.4/-6.6/+46.2 vs miso3 +0.1/-7.5/+45.0, marginally MORE export — vs actual -37.9/-23.1/-19.0). Only the 2 spot-heavy plants (1167 S:100%, 6213 S:47%) bid their first tranche fuller and back down; the 97% contract majority is unchanged. Per CLAUDE.md #1/#12 the measured input stays in even though it doesn't move the residual; the level/import-seam belongs to the firm-hydro (Manitoba) import block (#810) + seam, not the coal curve. ERCOT and the CAMPD-binned ISOs untouched (flag off, byte-identical). energy-reserve-coopt on (inert), import node default-on.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-06-23-miso4-coal-takeorpay.js",
+  "bundle": "results/calibration/miso4_coaltakeorpay"
+}
