@@ -466,7 +466,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # subbituminous mirrors prb here, matching the backcast routing
             # convention pre-refactor.
             takeorpay = None
-            if getattr(config, "coal_takeorpay_from_data", False):
+            # In step-3a sync mode the contract share is consumed in bins_to_fleet
+            # to SIZE the fuel-free _mustrun band vs the SRMC _sync band, so it
+            # must NOT be re-applied here (that would double-discount). The
+            # _mustrun band then keeps its default fully-sunk 0.0 fuel frac and
+            # _sync returns 1.0 (full SRMC) via campd_tranche_fuel_frac.
+            if getattr(config, "coal_takeorpay_from_data", False) and not getattr(
+                config, "coal_sync_srmc_tranche", False
+            ):
                 takeorpay = {
                     int(g.plant_code): coal_takeorpay_share(int(g.plant_code))
                     for g in dispatch_fleet
