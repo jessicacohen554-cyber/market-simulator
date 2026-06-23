@@ -1,0 +1,54 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "coal-prb-sigmoid session 2026-06-23 on the run150 ST_GAS-net-load-drag keeper (which itself sits on run149 zonal-gas-prb / run145 rtordpa / run143_redo). Driver scripts/probes/_keeper_2023as_run.py, KEEPER_STGAS_DRAG=1 KEEPER_RTORDPA=1 ERCOT_ZONAL_GAS=1, storage-AS-from-year 2025, load-RRS-from-year 2023, ST_GAS committed delta 0.0.",
+    "note": "Byte-faithful re-solve of the run150 keeper recipe (run143 lineage + per-year RTORDPA overlay + ERCOT zonal gas basis EP anchor + the PRB gas-ref fix + the ST_GAS net-load reliability-drag min-gen floor) plus ONE new lever this session: the coal PRB passthrough-sigmoid CHEAP-GAS FLOOR restored to its documented breakeven. The keeper had carried a fitted-DOWN PRB floor (baseload 0.73, load-follower tier 0.63) below the documented COAL_SIGMOID_DEFAULTS[(ERCOT,prb)] breakeven of 0.78. Those deeper floors were silently compensating for the pre-drag ST_GAS under-run; once the run150 ST_GAS net-load drag floor pulled gas share back onto ST_GAS, the over-discounted PRB coal over-ran out of merit (+10.6 / +13.2 / +2.2 % in 2023/24/25) and stole the energy that should sit on CC_REGULAR/ST_GAS (CC_REGULAR was left -3.5 / -4.8 / -0.0 %). This session sets BOTH PRB tiers (baseload and load-follower) to the single documented breakeven floor 0.78 (coal_prb_passthrough_floor=0.78, coal_prb_follower_floor=0.78). Physical, not dialed to TWh: 0.78 IS the curated per-month PRB-vs-gas-CC delivered-cost breakeven (run-70s tuning series), and the cheap-gas fuel passthrough of railed PRB is a basin/contract (take-or-pay) property, not a duty-cycle property, so baseload and cycling PRB share the same cheap-gas floor; the follower tier KEEPS its distinct dear-gas ceiling (1.35 vs baseload 1.50), so the cyclers still mark up less than baseload at high gas. The lever is gas-keyed, so it self-targets the cheap-gas year (2024, $2.2 gas) where the over-run is worst and barely moves the dear-gas years. Result: COAL_PRB lands +2.7 / -1.3 / +0.1 % (over-run CLOSED, C2 coal family now PASSES) and the freed MWh conserves to CC_REGULAR (-1.7 / -1.3 / +0.5 %) plus a little ST_GAS, with NO spill onto CT_PEAKER (the pre-existing zonal-gas relocation over-run moves <+0.2 TWh) and NO leakage to slack (system volume conserved). LMP unchanged vs the run150 baseline (MAE 27.9 / 15.3 / 11.4 vs 27.8 / 15.2 / 11.4; duration curves byte-comparable) — the lever rebalances within-thermal volume, not price. No adder/haircut/sigmoid tuned to a price or volume residual; no unit pinned to CEMS; no input rescaled to land on actuals. All active levers trace to measured/physical inputs: CAMPD net-load-filtered outage windows, measured 2023 storage-AS + load-RRS-UFR credits, EIA-860 BTM CHP host steam out of the LP, per-plant F923 delivered fuel, measured EP-anchored zonal gas basis, CAMPD-fitted ST_GAS net-load drag curve, documented PRB-vs-gas-CC breakeven passthrough, published NP6-576-ER ORDC params, measured RTORDPA overlay. Doc: docs/ercot-coal-prb-passthrough-floor-2026-06.md.",
+    "coal_prb_resolved": "The COAL_PRB / coal-family over-run that prior keepers (run145..run150) carried as an ACCEPTED out-of-scope sysvol caveat is RESOLVED by this lever: C2 coal now PASSES (coal family +1.4% in 2024 vs +12.4% at the run150 baseline), so it is no longer in the exceptions ledger.",
+    "stgas_drag_rationale": "ST_GAS C1 now PASSES in all three years (was the chronic under-run -31.6 / -56.8 / -49.1 % before the run150 ST_GAS net-load reliability-drag min-gen floor; doc docs/ercot-st-gas-netload-drag-2026-06.md). The drag floor is a CAMPD-fitted, net-load-indexed reliability-dispatch trigger (a physical availability/reliability event, forward-defensible), not a fit to ST_GAS volume."
+  },
+  "exceptions": [
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2024,
+      "magnitude": "+6.80 TWh, share +1.0pp (model grid 14.15 vs grid-delivered 7.36)",
+      "reason": "Zonal-gas West/Permian sub-zonal relocation over-run: with the measured EP-anchored zonal gas basis applied, West/Permian CT peakers over-dispatch because the reduced zonal LP cannot model the intra-Permian transmission that constrains them in reality. PRE-EXISTING and OUT OF SCOPE for the coal-PRB session (this lever moved CT_PEAKER 2024 by <+0.2 TWh — coal relief did NOT spill onto peakers). ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-zonal-gas-basis-ct-relocation-2026-06.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CT_PEAKER",
+      "year": 2025,
+      "magnitude": "+6.79 TWh, share +1.0pp (model grid 14.16 vs grid-delivered 7.37)",
+      "reason": "Same zonal-gas sub-zonal relocation limitation; the reduced zonal network collapses parallel West/Permian paths the real CT peakers see. PRE-EXISTING, out of scope for this session (coal lever moved it <+0.02 TWh). ACCEPTED MEASURED-INPUT LIMITATION (docs/ercot-zonal-gas-basis-ct-relocation-2026-06.md)."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "CC_REGULAR",
+      "year": 2025,
+      "magnitude": "-4.30 TWh, share -0.5pp (model grid 140.99 vs grid-delivered 145.29)",
+      "reason": "Small residual UNDER-run, the conservation-of-energy counterpart of the CT_PEAKER zonal-gas relocation over-run (the relocated CT MWh come at CC's expense in the zonal merit order). Only -0.5pp of share, caught by the share-based C1 band; the prior keeper carried CC_REGULAR as an OVER-run caveat (+0.5 / +2.4 / +5.5pp) and the coal/drag rebalance pulled CC down to near-actual in all years (-1.7 / -1.3 / -0.5pp), so this is a much-reduced residual, not a regression. Not zonal-LP closable. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "magnitude": "mean LMP +15.6% (model 31.0 vs actual 26.8 $/MWh)",
+      "reason": "Pre-existing energy+reserve co-opt mild-summer over-firing; UNCHANGED by the coal lever (LMP MAE 2024 = 15.3 vs the run150 baseline 15.2). The coal-PRB floor rebalances within-thermal VOLUME, not price. ACCEPTED MEASURED-INPUT LIMITATION (inherited from the run150 baseline)."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2023,
+      "magnitude": "NRMSE 0.328 (thin deep tail)",
+      "reason": "2023 out-of-market deep tail owned by the SEPARATE deferred reserve-supply lever (online RTOLCAP re-scope); the RTORDPA overlay lifts the tail toward actual but the bulk is the energy-scarcity base, not closable here without a residual fit. Unchanged by the coal lever. ACCEPTED MEASURED-INPUT LIMITATION (inherited)."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2024,
+      "magnitude": "NRMSE 0.420 (mild-tail count)",
+      "reason": "Mild-tail count mismatch: the energy-only co-opt fires genuine summer scarcity but mis-counts the mild >$200 hours the actual market cleared via out-of-market deployments. Pre-existing, unchanged by the coal lever. ACCEPTED MEASURED-INPUT LIMITATION (inherited)."
+    }
+  ]
+}
