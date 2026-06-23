@@ -1,0 +1,31 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "pjm-47 ps-cycling session 2026-06-23",
+    "note": "This run RETIRES a fitted lever rather than adding one: the PJM pumped-storage $10/MWh dispatch adder (PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO) is removed. It had been fitted 2026-06-10 to a mis-measured target (the EIA-923 PS *net*-generation magnitude ~2.6 TWh, the round-trip loss, read as gross discharge); per CLAUDE.md #12 a lever tuned to a mis-measured residual with no forward analogue is inadmissible, so it is retired and PJM PS now arbitrages on its physical RTE 0.80 like every other storage resource. Remaining active levers all trace to measured inputs: measured F923 ISO-monthly delivered gas, CAMPD unit-outage overlay (outage_source=historic), EIA-860 fleet + retiree CEMS envelope, measured EIA-923 Sch-5 coal take-or-pay sunk-fuel share, measured online-net-MW coal synchronization Pmin. No residual-tuned adders; no pinning to actuals; PS dispatch is free arbitrage on the physical RTE. See docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md."
+  },
+  "exceptions": [
+    {
+      "criterion": "storage",
+      "year": 2023,
+      "magnitude": "C5b SKIPPED — no EIA-930 PS/BAT series for PJM (PS folded into the positive-only 'Hydro' series); model PS 6.34 TWh agrees with the reconciled actual ~6.5 TWh (PJM Hydro minus EIA-923 conventional HY) to within ~2%.",
+      "reason": "PJM reports no separable pumped-storage/battery net-generation breakout in EIA-930 (or in PJM's own gen-by-fuel, where PS discharge is inseparable from ~3.3 GW conventional hydro). The C5b actual is therefore unobservable in committed artifacts, not a model defect. ACCEPTED MEASURED-INPUT LIMITATION. The reconciled-actual agreement is evidence only and is NOT injected into the scorer as a synthetic actual."
+    },
+    {
+      "criterion": "storage",
+      "year": 2024,
+      "magnitude": "C5b SKIPPED — no EIA-930 PS/BAT series for PJM; model PS 6.69 TWh vs reconciled actual ~7.1 TWh (Hydro minus conventional HY), Δ ~ -6%.",
+      "reason": "Same unobservable-actual limitation as 2023. ACCEPTED MEASURED-INPUT LIMITATION."
+    },
+    {
+      "criterion": "storage",
+      "year": 2025,
+      "magnitude": "C5b SKIPPED — no EIA-930 PS/BAT series for PJM; model PS 7.04 TWh vs reconciled actual ~6.8-10.6 TWh (EIA-923 PS net x RTE; conventional-HY subtraction unreliable in the preliminary 2025 vintage).",
+      "reason": "Same unobservable-actual limitation as 2023/2024. ACCEPTED MEASURED-INPUT LIMITATION."
+    }
+  ]
+}
