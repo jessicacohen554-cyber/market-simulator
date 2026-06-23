@@ -113,6 +113,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_export_sinks,
     build_import_generators,
     build_incidence_matrix,
+    build_interface_groups,
     build_reference_price_node,
     extend_with_import_node,
     get_ttc_array,
@@ -1352,6 +1353,12 @@ def run_year(
     # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
     # for ISOs/years without one.
     ttc = _apply_iso_monthly_ttc(ttc, iso_config, iso, year, demand.shape[1])
+    # Aggregate interface limits (CAISO's simultaneous WECC import cap): resolve
+    # the configured link groups to flow-column indices for the LP. Empty (no
+    # extra rows) for ISOs without an interface_limits entry.
+    interface_groups = build_interface_groups(
+        iso_config.links, iso_config.interface_limits
+    )
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved
@@ -1878,6 +1885,7 @@ def run_year(
         storage_discharge_cost=storage.vom,
         rps_target=None,
         storage_daily_cycle_hours=24 if config.storage_daily_cycling else None,
+        interface_groups=interface_groups or None,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         T=config.hours,
