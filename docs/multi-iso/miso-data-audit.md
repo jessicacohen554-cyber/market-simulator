@@ -17,6 +17,9 @@ fabricated or tuned to any backcast target.
 | 2 | MISO zonal/regional metered load 2023-2025 | EIA-930 Hourly Grid Monitor, sub-BA demand (`region-sub-ba-data`, parent=MISO) | **integrated** | `data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv` | 157,471 hourly rows, 6 MISO sub-BAs. Wired as per-zone hourly shapes; see Item 2 integration outcome below. |
 | 3 | MISO PRA clearing prices PY 2023/24–2025/26 | MISO auction-summary PDFs (cdn.misoenergy.org) | **blocked** (primary) / **got** (secondary) | `data/raw/miso-pra/miso_pra_clearing_prices_2023-2026.csv` (+ `SOURCES.md`) | Primary PDFs return HTTP 403 (allowlist). Values transcribed from public secondary reporting (Utility Dive, Enel); see manual manifest for the primary PDF URLs to replace them. |
 | 4 | Chicago Citygate + MichCon monthly gas 2023-2025 | EIA citygate state series (proxy) | **got** (proxy) / **blocked** (ICE hub) | `data/raw/gas-prices/eia_citygate_IL_MI_monthly_2023-2025.csv` (+ `SOURCES_miso_citygate.md`) | EIA IL citygate = Chicago proxy; MI citygate = MichCon proxy. The ICE daily hub indices are paywalled/off-allowlist (manual manifest). |
+| 5 | Per-zone wind CF shape 2023-2025 | NASA POWER hourly `WS50M` (MERRA-2 reanalysis) at EIA-860 wind-plant locations | **built** | `data/raw/miso-wind-shape/miso_{2023,2024,2025}_wind_zone_shape.parquet` | Distinct North/Central/South wind shapes via turbine power curve; reconciled to EIA-930 MISO-wide aggregate (level not pinned). See model-structure Item 5 below. |
+| 6 | North↔Central corridor + Central↔South RDT asymmetry | MISO/SPP JOA (RDT 3,000/2,500 MW); MTEP/OASIS (N↔C, blocked) | **partial** | `config/iso_configs._miso_config` | RDT now an asymmetric one-way link pair (3,000 N→S / 2,500 S→N). N↔C posted TTC is allowlist-blocked (HTTP 403) — documented reconciled estimate. See model-structure Item 6 below. |
+| 7 | MISO wind/solar curtailment (HSL) 2023-2025 | MISO Market Reports (misoenergy.org) | **blocked** | `data/raw/miso-hsl/` (empty) | misoenergy.org HTTP 403. DATA NEEDED stub wired (`renewables._hsl_file` MISO branch); backcast uses EIA-930 delivered. See model-structure Item 7 below. |
 
 ---
 
@@ -231,6 +234,13 @@ curl -L -o data/raw/miso-pra/2025-26_PRA_Results.pdf \
 #   https://www.ice.com/products/  (Henry/Chicago/MichCon physical gas)
 # Or NGI / Platts daily index archives (subscription).
 # Save under data/raw/gas-prices/
+
+# --- Item 7: MISO wind & solar curtailment (HSL) reports (allowlist-blocked) ---
+# MISO Market Reports — "Wind & Solar Curtailment" (daily/monthly):
+#   https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/
+#   (misoenergy.org currently returns HTTP 403 from this environment)
+# Save under data/raw/miso-hsl/ then build per-year HSL parquets following
+# scripts/build_caiso_hsl.py (HSL = EIA-930 delivered + reported curtailment).
 ```
 
 ### Reproduce the unblocked pulls
@@ -253,4 +263,116 @@ curl -s -H "x-api-key: DEMO_KEY" \
 # Item 4 — EIA citygate proxies (EIA_API_KEY):
 #   GET api.eia.gov/v2/natural-gas/pri/sum/data/
 #     frequency=monthly data[]=value facets[series][]=N3050IL3 facets[series][]=N3050MI3
+
+# Item 5 — MISO per-zone wind SHAPE (EIA_API_KEY for the EIA-930 clock; NASA
+#   POWER is keyless). Builds data/raw/miso-wind-shape/miso_<year>_wind_zone_shape.parquet:
+.venv/bin/python scripts/build_miso_wind_shape.py --years 2023 2024 2025
 ```
+
+---
+
+## Model-structure items (branch `claude/miso-wind-congestion-hsl-*`, 2026-06-23)
+
+These three items fix MISO *market structure*, not raw-data gaps. They follow
+the same admissibility test as the rest of this audit (CLAUDE.md #11/#12): every
+input is a reproducible physical/market quantity that regenerates for a forward
+year and responds to changed conditions — never a value pinned or tuned to a
+backcast residual.
+
+### Item 5 — Per-zone wind CF shape (was: one ISO-wide profile for all zones)
+
+**Problem.** MISO wind used ONE EIA-930 MISO-wide hourly `cf_profile` for all
+three zones, scaled only by EIA-860 capacity share, so every zone shared one
+diurnal/seasonal shape. That is wrong for MISO: the upper-plains **North**
+(MN/ND/SD/IA) is driven by the Great-Plains nocturnal low-level jet (overnight
+wind maximum, strong winter peak) while the lower-Midwest **Central** and the
+Entergy **South** have a flatter, more afternoon-weighted regime.
+
+**Source (forward-admissible).** NASA POWER hourly `WS50M` — 50 m wind speed
+from the **MERRA-2 reanalysis** — at each zone's EIA-860 wind-plant locations:
+`https://power.larc.nasa.gov/api/temporal/hourly/point` (keyless). A reanalysis
+wind field regenerates for any year and responds to changed conditions, so it
+passes the rule #11 test; it enters as a *shape*, never a level. The 50 m speed
+is lifted to each plant's EIA-860 turbine hub height with the standard
+1/7-power-law shear profile and run through a generic IEC-class onshore turbine
+power curve (cut-in 3, rated 12, cut-out 25 m/s) to get an hourly CF.
+
+**Boundary mapping.** Wind plants are assigned to the three model zones with the
+existing `zone_assignment` geography (the sub-BA-aligned `_MISO_STATE_ZONES`):
+North = LRZ 1/3/5 (MN/ND/SD/MT + IA/MO), Central = LRZ 2/4/6/7 (WI/MI + IL +
+IN/KY), South = LRZ 8/9/10 (AR/LA/MS/E.TX). The largest 6 plants by nameplate
+per zone are the capacity-weighted sample points. **MISO-South has no operable
+wind** (the Entergy footprint is ~0 wind capacity) — physically correct; its
+shape is a placeholder (cross-zone mean) that the loader weights by ~0 December
+wind capacity, so it never contributes to the reconciled aggregate.
+
+**Clock.** NASA POWER is queried in UTC and mapped onto the model's fixed
+non-leap 8760-hour clock via the very `UTC time` column the renewable loader
+uses (`_eia_hourly_frame_filled` for the MISO BA), so the shape lines up with
+`cf_profile` hour-for-hour with no timezone guess.
+
+**Reconciliation (level not pinned).** The per-zone shapes are reconciled to the
+measured EIA-930 MISO-wide series by `_redistribute_preserving_total`: the
+capacity-weighted zone sum equals the measured `cf_profile` every hour, so
+annual energy and the system wind series are unchanged — only the North-vs-
+Central split moves. The redistribution is capacity-aware (water-filling): when
+a large zone is becalmed it cannot push another zone's CF above 1; the residual
+spills to zones with headroom. (This generalizes the CAISO solar path, which is
+byte-identical since solar zones co-vary and never overflow.)
+
+**Verification.** Built for 2023/2024/2025. North's night(00-06)/afternoon
+(12-18) wind ratio exceeds Central's every year (2023 0.92 vs 0.86; 2024 0.91 vs
+0.88; 2025 1.00 vs 0.92) — the nocturnal-jet signature, consistent year over
+year.
+
+Files: `scripts/build_miso_wind_shape.py`,
+`data/raw/miso-wind-shape/miso_{2023,2024,2025}_wind_zone_shape.parquet`,
+`renewables._wind_zone_reanalysis_shapes` / `_zone_renewable_shapes` gated by
+`_WIND_ZONE_SHAPE_ISOS = {"MISO"}`, `paths.MISO_WIND_SHAPE_DIR`.
+
+### Item 6 — Congestion-corridor limits (the RDT asymmetry + N↔C corridor)
+
+**(a) MISO-North ↔ MISO-Central wind-export corridor.** There is no single
+posted TTC for this interface: the model's pipe collapses the many parallel
+345 kV ties between the upper Midwest and the lower-Midwest load centers into
+one link, while MISO posts limits at the flowgate level (a zone-boundary
+misalignment, rule #12). The value is kept as a documented reconciled aggregate
+estimate (order-of-magnitude of the summed parallel 345 kV interface, well above
+North's ~16 GW coincident peak so the north's wind surplus can clear south).
+**DATA NEEDED:** the posted MTEP/OASIS firm transfer capability is an
+allowlist-blocked pull (misoenergy.org → HTTP 403); replace the estimate when
+the OASIS/MTEP pull is available. Never tune it to a price residual.
+
+**(b) MISO-Central ↔ MISO-South RDT directional asymmetry.** The Regional
+Directional Transfer contract path (Midwest↔South wheels across SPP) has
+*directional, asymmetric* JOA limits — **3,000 MW north→south vs 2,500 MW
+south→north**. Previously modeled as one symmetric 3,000 MW link, which
+over-stated south→north transfer by 500 MW. Now encoded as a **pair of one-way
+links** (`is_bidirectional=False`, flow in [0, ttc]): Central→South at 3,000 MW
+and South→Central at 2,500 MW; the LP's net Central↔South interchange is the
+difference of the two, reproducing the asymmetry exactly. Source: MISO/SPP Joint
+Operating Agreement, Attach. A — RDT limits; MISO/SPP Coordinated System Plan.
+
+Files: `config/iso_configs._miso_config` (`links` block only),
+`tests/test_iso_config.py::test_miso_rdt_contract_path_present`. The LP support
+for one-way links is `transmission.get_link_bidirectional_array`.
+
+### Item 7 — HSL / curtailment (DATA NEEDED stub)
+
+MISO publishes wind & solar curtailment in its Market Reports, but those live on
+misoenergy.org, which is allowlist-blocked here (HTTP 403). No reproducible
+hourly uncurtailed-potential (HSL) series could be built, so — per the task and
+CLAUDE.md (do not fabricate) — a clearly-labelled **DATA NEEDED** stub is wired,
+mirroring the NYISO stub:
+
+- `paths.MISO_HSL_DIR` (`data/raw/miso-hsl/`, empty) and
+  `renewables._MISO_HSL_DIR`;
+- `renewables._hsl_file` returns the MISO parquet when present, else `None`, so
+  the MISO backcast uses EIA-930 MISO delivered wind/solar generation (which
+  embeds the historical curtailment) until the reports can be pulled.
+
+When the curtailment reports are downloadable, build per-year HSL parquets
+(`HSL = delivered + reported curtailment`, schema `_HSL_COLUMNS`) following
+`scripts/build_caiso_hsl.py`; the branch picks them up automatically. CAMPD
+per-plant binning stays OFF for MISO and `pmax` remains generic EIA-860
+net-summer capacity (unchanged).
