@@ -292,6 +292,12 @@ class Generator(BaseModel):
     #                                 flat via FleetArrays.min_gen for the
     #                                 _mustrun / _sync min-load tranches under
     #                                 config.coal_sync_srmc_tranche (step 3a).
+    coal_sync_online_frac: float = 1.0  # measured share of the year the plant is
+    #                                 synchronized (CEMS online_frac). Scales the
+    #                                 step-3a forcing: ~1.0 (supercritical) holds
+    #                                 the floor all 8760 h; a cycler is forced
+    #                                 only in its top online_frac fraction of
+    #                                 hours by system load (the rest stay Pmin=0).
 
 
 @dataclass
@@ -793,6 +799,16 @@ def _ramp10_capability(generators: list[Generator], pmax: np.ndarray) -> np.ndar
             frac = RAMP10_FRAC_BY_FUEL.get(gen.fuel_type, 0.0)
         fracs[g_idx] = frac
     return fracs * pmax
+
+
+# Coal synchronization online%-scaled forcing (step-3a): a plant whose measured
+# online_frac is at or above this threshold is treated as synchronized ~all year
+# and held at its min-load floor every hour (the always-online supercriticals);
+# below it the floor is placed only in the top-online_frac fraction of hours by
+# system load (a two-shifting cycler). 0.99 keeps the supercriticals on the
+# force-all path (rounding to 8760) while letting the cyclers shed their cheap
+# overnight hours. See generators_to_fleet_arrays / bins_to_fleet.
+_COAL_SYNC_FORCE_ALL: float = 0.99
 
 
 def generators_to_fleet_arrays(
@@ -1318,16 +1334,43 @@ def generators_to_fleet_arrays(
                 min_gen[g_idx, :] = pmin_mw
         # Coal synchronization floor (rebuild step 3a,
         # config.coal_sync_srmc_tranche): the _mustrun (contracted, fuel-free)
-        # and _sync (spot, SRMC) coal min-load tranches are forced on flat all
-        # year, so the unit holds synchronized at the measured online Pmin
-        # instead of price-following to zero. The floor is the tranche capacity;
-        # min_gen is clipped to pmax*availability below, so an outage hour relaxes
-        # it. np.maximum composes with any other floor already placed.
+        # and _sync (spot, SRMC) coal min-load tranches are held on at the
+        # measured online Pmin so the unit stays synchronized instead of
+        # price-following to zero. The forcing is **online%-scaled** (step-3a
+        # full fix): a plant synchronized ~all year (online_frac >=
+        # _COAL_SYNC_FORCE_ALL, the supercriticals) is held every hour; a
+        # two-shifting cycler is held only in the top-online_frac fraction of
+        # hours by *system load* — mirroring the CT must-run load-shaping, so the
+        # floor lands where the cycler actually runs (the load peaks) and relaxes
+        # in the cheap overnight hours it would real-world shut for. The floor is
+        # the tranche capacity; min_gen is clipped to pmax*availability below, so
+        # an outage hour relaxes it. np.maximum composes with any floor already
+        # placed.
         if coal_sync_any:
+            sys_load = (
+                np.asarray(load_shape, dtype=float)
+                if load_shape is not None and len(load_shape) == hours
+                else None
+            )
+            # Hours ranked peak-load first; the top-k carry a cycler's floor.
+            load_rank = (
+                np.argsort(-sys_load, kind="stable") if sys_load is not None else None
+            )
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "coal_sync_pmin_mw", 0.0)
-                if pmin_mw > 0.0:
+                if pmin_mw <= 0.0:
+                    continue
+                frac = float(getattr(gen, "coal_sync_online_frac", 1.0))
+                if frac >= _COAL_SYNC_FORCE_ALL or load_rank is None:
                     np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
+                else:
+                    k = int(round(frac * hours))
+                    if k <= 0:
+                        continue
+                    hrs = load_rank[:k]
+                    # Fancy indexing returns a copy, so out= cannot target it;
+                    # compute the max then assign back via the fancy index.
+                    min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -4892,6 +4935,37 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+@lru_cache(maxsize=8)
+def coal_sync_online_frac(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: online_frac}`` for an ISO's coal plants.
+
+    The CAMPD-derived plant-level synchronization fraction from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
+    written by ``scripts/derive_thermal_tranches.py`` for COAL): the measured
+    share of the year the plant has any unit synchronized. Empty when the ISO
+    has no artifact or it predates the column. Consumed by :func:`bins_to_fleet`
+    under ``config.coal_sync_srmc_tranche`` to scale the step-3a min-load
+    forcing — a unit synchronized ~all year (~1.0) is held on all 8760 hours; a
+    two-shifting cycler is forced only in the top ``online_frac`` fraction of
+    hours by system load. Plants absent from the map keep the force-all default
+    (1.0).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "online_frac" not in df.columns:
+        return {}
+    out: dict[int, float] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok" or str(r.plant_group) != "COAL":
+            continue
+        if pd.isna(r.online_frac):
+            continue
+        out[int(r.plant_code)] = float(r.online_frac)
+    return out
+
+
 @lru_cache(maxsize=1)
 def cc_duct_peaking_pct() -> dict[int, float]:
     """Return ``{plant_code: peaking_pct}`` for every EIA-860 CC plant.
@@ -5503,11 +5577,19 @@ def bins_to_fleet(
             and getattr(config, "coal_mustrun_online_pmin", False)
         )
         sync_cap = 0.0
+        sync_online_frac = 1.0
         if coal_sync:
             _share = coal_takeorpay_share(int(b["Plant_Code"]))
             _share = 1.0 if _share is None else min(1.0, max(0.0, float(_share)))
             sync_cap = mustrun_cap * (1.0 - _share)  # spot, full SRMC
             mustrun_cap = mustrun_cap * _share  # contracted, fuel-free
+            # Online%-scaled forcing: the measured share of the year the plant is
+            # synchronized. ~1.0 (supercritical) -> floor held all 8760 h; a
+            # cycler -> floor held only in its top-load online hours. Plants
+            # absent from the artifact keep the force-all default (1.0).
+            sync_online_frac = coal_sync_online_frac(
+                getattr(config, "iso", "ERCOT") or "ERCOT"
+            ).get(int(b["Plant_Code"]), 1.0)
 
         group = str(b["Plant_Group"])
         plant_code = int(b["Plant_Code"])
@@ -5926,6 +6008,9 @@ def bins_to_fleet(
                     plant_code=plant_code,
                     chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
                     coal_sync_pmin_mw=sync_floor,
+                    coal_sync_online_frac=(
+                        sync_online_frac if sync_floor > 0.0 else 1.0
+                    ),
                 )
             )
 
