@@ -1,0 +1,15 @@
+{
+  "id": "2026-06-23-caiso-import-simul-cap",
+  "label": "caiso import simul cap",
+  "date": "2026-06-23",
+  "shorthand": "caiso-import-simul-cap",
+  "definition": "Calibration run from bundle caiso_import_simul_cap_3yr.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-06-23-caiso-import-simul-cap.js",
+  "bundle": "results/calibration/caiso_import_simul_cap_3yr"
+}

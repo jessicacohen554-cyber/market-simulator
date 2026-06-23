@@ -1,5 +1,56 @@
 # Changelog
 
+## 2026-06-23 (CAISO imports — aggregate simultaneous-import cap + delivered-cost basis)
+
+CAISO's bidirectional priced intertie reversed to export correctly but
+**over-imported** on both the deep tail and the body. Two structural fixes,
+each addressing a distinct cause.
+
+**1. Aggregate WECC→CAISO import cap.** Path 66 / COI (4,800 MW) and Path 46 /
+West-of-River (10,623 MW) carry correct *individual* ratings, but their 15,423
+MW **sum is not the simultaneous import capability** — the two corridors draw on
+overlapping WECC generation and contract paths. With no aggregate limit the
+11.4 GW priced-import supply curve (`IMPORT_TRANCHES["CAISO"]`) cleared its full
+depth in CAISO's tightest hours, putting the modeled deepest-import tail at
+~−11.2 GW versus the EIA-930 CISO measured p01 of ~−8.3 GW. New general
+mechanism: `ISOConfig.interface_limits` (an `InterfaceLimit` groups a set of
+links under one cap), resolved by `transmission.build_interface_groups` and
+enforced as **one LP row per group per hour** (`dispatch.build_constraints`,
+vectorized with `scipy.sparse.kron` — no hour loop) capping the *signed sum* of
+the member links' flow at the simultaneous rating. The component per-link TTCs
+are untouched; the row binds only when several would otherwise load past the
+aggregate. CAISO declares an 8,300 MW `WECC_import` cap (published Maximum
+Import Capability / measured p01); every other ISO declares none, so their LP is
+identical. The rows append after the energy/storage blocks and before
+hydro/RPS/reserve, so the front-anchored energy-balance duals and the
+end-anchored RPS/reserve duals keep their positions. *2024 P1: import tail p01
+−11,172 → −8,300 MW (actual −8,302).*
+
+**2. Per-tranche delivered-cost basis over the measured hub MCE.** The hub-price
+injector priced every import tranche at the neighbor-hub **energy (MCE)
+component only** (~$38, system-wide), flattening the rising delivered merit
+order so a deep slug cleared whenever CAISO's price crossed ~$38 — the body
+over-imported (median −6.1 GW vs actual −4.2). `measured_import_hub_prices`
+returns the energy component *at the neighbor hub*;
+`inject_caiso_import_hub_prices` now **delivers** each tranche to the CA border
+via `constants.CAISO_IMPORT_DELIVERY_BASIS`: a transmission **line-loss markup**
+(a fraction of the energy price, so it scales with price and responds to changed
+conditions) plus the **OATT point-to-point wheeling charge** ($/MWh), keyed by
+import path. A reproducible *physical* input, not a residual-fitted offset
+(claude.md #12). The desert-SW gas blocks carry the basis here but are then
+overwritten off measured gas by `inject_caiso_import_gas_coupling`, so the basis
+mainly shapes the non-gas blocks (`PNW_*`, `DSW_solar_PV`). *2024 P1: body
+median import −6,076 → −4,312 MW (actual −4,183); import hours 83.8% → 86.3%.*
+
+Both mechanisms are structurally correct (a real simultaneous limit; a real
+delivered-import premium) and both nudge the price level *up* slightly; per
+claude.md #1 they stay in regardless — the residual CAISO price-level item is
+pre-existing and separately owned. The diurnal phase error (corr ~−0.69) is the
+separate bidirectional-zone task. Tests: `test_dispatch`
+(`TestInterfaceGroupLimit` — cap binds below the per-link TTC sum, no-op without
+groups), `test_transmission` (`TestInterfaceGroups` — CAISO config + group
+resolution), `test_caiso_import_hub_prices` (delivered-cost basis).
+
 ## 2026-06-22 (calibration page — fleet-wide fossil CO2 metric, activating the C5a gate)
 
 The dashboard's CO2 verdict (`calibration_verdict.score_co2`, criterion **C5a**)
