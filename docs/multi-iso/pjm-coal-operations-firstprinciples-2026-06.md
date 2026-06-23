@@ -179,10 +179,21 @@ behaviour emerges instead of being forced:
    of the hardcoded 0.0 (`campd_tranche_fuel_frac`). This is the *measured* version
    of the 0.76 discount. **Remaining:** run the deriver where the raw `f923_*.zip`
    archives live, then re-solve PJM 2023-25 with the flag on.
-2. **Synchronization min-load.** A low floor (~the CEMS online Pmin, ~20-30%) that
-   keeps the unit online (commitment hysteresis: avoid cold starts) but **bids its
-   real SRMC** (delivered fuel + VOM), *not* zero. It holds volume *and* sets a
-   defensible price when marginal — the key difference from the current floor.
+2. **Synchronization min-load — floor re-sizing BUILT (default off).** The first
+   half (the floor *level*) is implemented this session: the deriver
+   (`derive_thermal_tranches.py`) now also writes per coal plant a
+   `mustrun_online_pct` = P5 of online *net MW* / nameplate — the genuine online
+   Pmin (~20-30%) — alongside the all-hours `mustrun_pct` (~40-60%, which reads
+   high for an always-online unit). `ScenarioConfig.coal_mustrun_online_pmin`
+   (threaded through `thermal_tranche_overrides` → `fleet_to_bins` and the
+   calibration solve path) selects it for coal. In the energy-only LP the coal
+   `_mustrun` band has Pmin=0, so this is not a forced floor but the *size* of
+   the cheap (sunk-fuel) bid band: shrinking it to the online Pmin moves coal
+   capacity into the full-delivered-cost rising tranches, so coal price-follows
+   (backs down in cheap hours) reproducing the observed low/hi 0.63 instead of
+   baseloading flat. **Remaining for layer 2:** the explicit SRMC-priced
+   synchronization tranche (bidding delivered fuel + VOM rather than relying on
+   the shrunken cheap band) is step 3 below, co-designed with reserve co-opt.
 3. **Full-delivered-cost dispatchable tranches** above the min-load. These follow
    price (back down in cheap hours), reproducing the observed low/hi 0.63.
 
@@ -217,9 +228,11 @@ spread the flat sigmoid cannot capture: Gavin/Harrison/Clifty 100% contracted,
 Spurlock 62%, Mt Storm 78%, Miami Fort (2832) **0% (all spot)**. This empirically
 confirms Thread B: PJM bituminous carries more avoidable spot coal, consistent
 with it being the swing fuel. The remaining step is to **re-solve PJM 2023-25**
-with `coal_takeorpay_from_data=True` (paired with the floor re-sizing + price
-formation, rebuild steps 2-3, still unbuilt). Do NOT substitute a residual-tuned
-discount (the current sigmoid) now that the measured share exists.
+with `coal_takeorpay_from_data=True` **and** `coal_mustrun_online_pmin=True`
+(step 1 + the step-2 floor re-sizing, both now built; the step-3 SRMC tranche +
+price formation still unbuilt). Probe recipe: `scripts/probes/_pjm_online_pmin_run.py`
+(one year per invocation). Do NOT substitute a residual-tuned discount (the
+current sigmoid) now that the measured share exists.
 
 ---
 
