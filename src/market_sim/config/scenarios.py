@@ -1462,6 +1462,34 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
     ercot_zonal_gas_basis: bool = False
 
+    # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
+    # The West/Panhandle basis in data/raw/ercot_zonal_gas_hub.csv is a Waha *hub*
+    # (pooling-point) basis (2024 -2.19): the takeaway-constrained price at which
+    # Permian producers offload associated gas they cannot move, which goes
+    # negative ~42% of days. A power plant does NOT buy at the wellhead/hub — it
+    # buys *delivered* gas at the burner tip, paying intrastate pipeline
+    # transport, fuel retention and a minimum commodity charge on top, so its
+    # delivered cost has a structural positive floor regardless of how negative
+    # the hub goes. Feeding the raw hub basis to the merit order prices the
+    # West/Permian gas units (Morgan Creek, Laredo, Permian Basin, Ector County)
+    # at ~$0/MMBtu, so they offer ~$0-5/MWh and run BASELOAD when in reality they
+    # are peakers (CEMS CF <3% for Morgan Creek/Laredo) — the CT_PEAKER over-run.
+    # The measured TX delivered-to-electric-power series (EIA N3045TX3, $2.11/MMBtu
+    # in 2024 — the gen-weighted statewide level, which already includes the West
+    # plants) is direct evidence that no TX power plant paid near $0 delivered.
+    # When set, each gas unit's per-zone delivered discount (the mean-zero zonal
+    # spread) is floored at this value — the cited measured Waha *delivered* basis
+    # (constants.GAS_BASIS_DIFFERENTIAL["ERCOT"] = -0.50, "Waha discount; EIA NG
+    # Weekly") — so the delivered price never falls below Henry Hub + measured EP
+    # basis - 0.50. This is a transport-grounded physical floor, not a residual
+    # fit: it is the same cited delivered Waha discount already used fleet-wide,
+    # it regenerates for any forward year and tracks Henry Hub (admissibility test
+    # #12), and it leaves every zone already above the floor (North, Houston, etc.)
+    # untouched — only the unphysical deep-negative West tail is truncated. No-op
+    # unless ercot_zonal_gas_basis is also on and iso == ERCOT. See
+    # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
+    ercot_gas_delivered_floor_basis: float | None = None
+
     # Tier 3 (calibration) — daily resolution for the hub-basis overlay above
     # (doc-08 NEISO, the daily-AGT refinement of upload U4). When set (and
     # gas_hub_basis_overlay is on), the covered-month gas price is no longer a
@@ -1909,6 +1937,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,
     "ercot_zonal_gas_basis": 3,
+    "ercot_gas_delivered_floor_basis": 3,
     "gas_hub_basis_daily": 3,
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
