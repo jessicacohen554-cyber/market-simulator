@@ -124,6 +124,50 @@ class TestISOConfig(unittest.TestCase):
         miso = get_iso_config("MISO")
         self.assertEqual(miso.voll, 2000.0)
 
+    def test_miso_import_node_extends_topology(self):
+        """The MISO external import node + per-seam border links append cleanly.
+
+        MISO is a structural net importer; the reference-price seam lives in the
+        ``MISO_external`` zone with one cited border link per neighbor (PJM →
+        Central, SPP → North, SERC/South → South). The extended topology must
+        still validate.
+        """
+        from market_sim.model.transmission import extend_with_import_node
+
+        miso = get_iso_config("MISO")
+        ext = extend_with_import_node(miso)
+        self.assertIn("MISO_external", ext.zone_names)
+        # The external zone carries no load.
+        external = next(z for z in ext.zones if z.name == "MISO_external")
+        self.assertEqual(external.load_share, 0.0)
+        # One border link into each of the three trading zones.
+        border = {
+            link.to_zone: link.ttc_mw
+            for link in ext.links
+            if link.from_zone == "MISO_external"
+        }
+        self.assertEqual(
+            border,
+            {"MISO-Central": 7300.0, "MISO-North": 4000.0, "MISO-South": 3000.0},
+        )
+        ext.validate_topology()
+
+    def test_miso_reference_price_default_on(self):
+        """MISO runs the reference-price interface by default (no CLI flag).
+
+        ERCOT (no neighbor registry) and PJM (measured-schedule default) stay
+        off, so they remain byte-identical.
+        """
+        from market_sim.config.constants import (
+            resolve_reference_price_interface,
+        )
+
+        self.assertTrue(resolve_reference_price_interface(False, "MISO"))
+        self.assertFalse(resolve_reference_price_interface(False, "PJM"))
+        self.assertFalse(resolve_reference_price_interface(False, "ERCOT"))
+        # The explicit CLI flag still forces it on for any ISO.
+        self.assertTrue(resolve_reference_price_interface(True, "PJM"))
+
     def test_pjm_has_eight_zones(self):
         """PJM defines eight LDA-aligned zones across its west-to-east span."""
         pjm = get_iso_config("PJM")
