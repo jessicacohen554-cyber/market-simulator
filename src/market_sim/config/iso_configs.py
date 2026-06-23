@@ -333,28 +333,54 @@ def _miso_config() -> ISOConfig:
     ]
     # MISO transfer links seeded from the MISO/SPP seams agreement and MTEP.
     #
-    # The MISO-Central ↔ MISO-South link is the Regional Directional Transfer
-    # (RDT) contract path: MISO's northern (Midwest) and southern footprints
-    # are not directly interconnected and exchange power only over a contract
-    # path that wheels across SPP, governed by the RDT limits in the MISO/SPP
-    # Joint Operating Agreement — roughly 3,000 MW north→south and 2,500 MW
-    # south→north. The pipe-and-bubble LP carries a single symmetric TTC per
-    # link (build_variable_bounds bounds flow in [-ttc, +ttc]), so this seeds
-    # the link at the 3,000 MW north→south figure; the ~2,500 MW south→north
-    # asymmetry awaits per-direction limits.
+    # The MISO-Central ↔ MISO-South interface is the Regional Directional
+    # Transfer (RDT) contract path: MISO's northern (Midwest) and southern
+    # footprints are not directly interconnected and exchange power only over a
+    # contract path that wheels across SPP, governed by the RDT limits in the
+    # MISO/SPP Joint Operating Agreement. Those limits are explicitly
+    # *directional and asymmetric* — 3,000 MW north→south vs 2,500 MW
+    # south→north — so the interface is encoded as a PAIR of one-way links
+    # (``is_bidirectional=False``, flow in [0, ttc]): Central→South at 3,000 MW
+    # and South→Central at 2,500 MW. The LP's net Central↔South interchange is
+    # then the difference of the two link flows, reproducing the RDT asymmetry
+    # exactly (the old single symmetric 3,000 MW link over-stated south→north
+    # transfer by 500 MW). Source: MISO/SPP Joint Operating Agreement, Attach.
+    # A — Regional Directional Transfer (RDT) limits (3,000 MW N→S / 2,500 MW
+    # S→N); MISO/SPP Coordinated System Plan.
     #
     # The MISO-North ↔ MISO-Central link is the internal Midwest wind-export
     # corridor that moves the wind-rich north's output to the Central load
-    # centers; seeded at an order-of-magnitude internal-interface value
-    # pending an MTEP/OASIS interface limit.
+    # centers. Unlike the RDT seam there is no single posted TTC for this
+    # interface: the model's pipe collapses the many parallel 345 kV ties
+    # between the upper Midwest (LRZ 1/3/5) and the lower-Midwest load centers
+    # (LRZ 2/4/6/7) into one link, whereas MISO posts limits at the flowgate
+    # level. Per CLAUDE.md rule #12 the boundary misalignment is documented
+    # rather than buried in a false-precision number: the value below is a
+    # reconciled aggregate estimate (order-of-magnitude of the summed parallel
+    # 345 kV interface, comfortably above North's ~16 GW coincident peak so the
+    # north's wind surplus can clear south into Central). DATA NEEDED: the
+    # posted MTEP/OASIS firm transfer capability for this interface is an
+    # allowlist-blocked pull (misoenergy.org → HTTP 403; see
+    # docs/multi-iso/miso-data-audit.md Item 5); replace the estimate with the
+    # posted number when the OASIS/MTEP pull is available.
     #
-    # Source: MISO/SPP Joint Operating Agreement (Regional Directional
-    # Transfer); MISO Transmission Expansion Plan (MTEP). Tier 3
-    # (calibration) — verify against MISO OASIS transfer capabilities and
-    # binding-frequency from MISO market/congestion data.
+    # Tier 3 (calibration) — verify binding frequency against MISO
+    # market/congestion data, but never tune either limit to a price residual.
     links = [
         TransferLink(from_zone="MISO-North", to_zone="MISO-Central", ttc_mw=12000.0),
-        TransferLink(from_zone="MISO-Central", to_zone="MISO-South", ttc_mw=3000.0),
+        # RDT directional asymmetry: a one-way link per direction.
+        TransferLink(
+            from_zone="MISO-Central",
+            to_zone="MISO-South",
+            ttc_mw=3000.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="MISO-South",
+            to_zone="MISO-Central",
+            ttc_mw=2500.0,
+            is_bidirectional=False,
+        ),
     ]
     # MISO energy offer cap is $2,000/MWh: FERC Order 831 sets a $2,000/MWh
     # hard cap on incremental energy offers across all RTOs/ISOs (offers above
